@@ -13,6 +13,14 @@ type AnalysisStore interface {
 	// Save stores (or replaces) the analysis for positionID.
 	Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error
 
+	// LoadMany decodes the analyses of the given positions, keyed by position
+	// id, in one round trip per batch. A position without an analysis has no
+	// entry. A stored payload that cannot be decoded has no entry either, and
+	// is logged: one corrupt row must not block reading everything else, and
+	// the caller of a batch — an export, a listing — has nothing to do about
+	// it but leave it out.
+	LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error)
+
 	// Load returns the analysis for positionID, or ErrNotFound.
 	Load(ctx context.Context, scope string, positionID int64) (*domain.PositionAnalysis, error)
 

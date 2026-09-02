@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -65,6 +66,14 @@ type Options struct {
 	// RateLimitBurst is the per-tenant token-bucket size. Defaults to
 	// 2×RateLimitRPS (min 1) when zero and rate limiting is enabled.
 	RateLimitBurst int
+
+	// Identity signs the watermark of an exports.sqlite response that asked
+	// for one — "the daemon's own" identity, as opposed to the desktop's
+	// per-person key (see ingest.SealWatermark). nil (the default) means
+	// this daemon cannot watermark; a request that asks for one anyway fails
+	// with CodeInvalid rather than silently exporting unmarked. RunServe
+	// loads or creates it from --identity-dir.
+	Identity *issuance.Identity
 
 	// now is an injectable clock for deterministic tests. Defaults to
 	// time.Now.

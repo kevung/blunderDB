@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"iter"
-	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -258,58 +257,29 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 	return ids, nil
 }
 
-// loadByIDsChunk bounds one IN (...) list. SQLite's default variable limit is
-// 999 on older builds (32766 since 3.32), so 900 stays under both.
-const loadByIDsChunk = 900
-
 // LoadByIDs returns the listed positions in the caller's order, skipping
-// unknown ids. The lookup runs in chunks of loadByIDsChunk bound variables.
+// unknown ids — see storage.PositionStore. The lookup runs in chunks via
+// forEachIn, staying under SQLite's bound-variable limit.
 func (s *positionStore) LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error) {
 	byID := make(map[int64]domain.Position, len(ids))
-	for start := 0; start < len(ids); start += loadByIDsChunk {
-		if err := s.loadChunk(ctx, ids[start:min(start+loadByIDsChunk, len(ids))], byID); err != nil {
-			return nil, err
-		}
-	}
-	return orderByIDs(ids, byID), nil
-}
-
-// loadChunk reads one IN (...) batch into byID.
-func (s *positionStore) loadChunk(ctx context.Context, batch []int64, byID map[int64]domain.Position) error {
-	placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
-	args := make([]any, len(batch))
-	for i, id := range batch {
-		args[i] = id
-	}
-	rows, err := s.db.QueryContext(ctx, `SELECT `+positionCols+` FROM position WHERE id IN (`+placeholders+`)`, args...)
-	if err != nil {
-		return fmt.Errorf("sqlite: load positions by ids: %w", err)
-	}
-	defer rows.Close()
-	for rows.Next() {
+	err := forEachIn(ctx, s.db, ids, `SELECT `+positionCols+` FROM position WHERE id IN `, ``, func(rows *sql.Rows) error {
 		p, err := scanPosition(rows)
 		if err != nil {
-			return fmt.Errorf("sqlite: load positions by ids: %w", err)
+			return err
 		}
 		byID[p.ID] = p
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: load positions by ids: %w", err)
 	}
-	if err := rows.Err(); err != nil {
-		return fmt.Errorf("sqlite: load positions by ids: %w", err)
-	}
-	return nil
-}
-
-// orderByIDs lays the loaded positions out in the order ids lists them,
-// dropping the ids that were not found. A repeated id yields its position
-// again, so the result stays index-aligned with the request wherever it can.
-func orderByIDs(ids []int64, byID map[int64]domain.Position) []domain.Position {
-	out := make([]domain.Position, 0, len(ids))
+	out := make([]domain.Position, 0, len(byID))
 	for _, id := range ids {
 		if p, ok := byID[id]; ok {
 			out = append(out, p)
 		}
 	}
-	return out
+	return out, nil
 }
 
 func boolToInt(b bool) int {

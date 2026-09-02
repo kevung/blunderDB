@@ -13,6 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"math"
 )
 
 type matchStore struct{ db execer }
@@ -45,7 +46,8 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	COALESCE(m.file_path,''), COALESCE(m.game_count,0),
 	m.tournament_id, COALESCE(t.name,''),
 	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
-	COALESCE(m.tournament_sort_order,0)`
+	COALESCE(m.tournament_sort_order,0),
+	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,'')`
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date is nullable; tournament_id is nullable.
@@ -61,6 +63,7 @@ func scanMatch(sc scanner) (domain.Match, error) {
 		&tournamentID, &m.TournamentName,
 		&m.LastVisitedPosition, &m.Comment,
 		&m.TournamentSortOrder,
+		&m.MatchHash, &m.CanonicalHash,
 	); err != nil {
 		return domain.Match{}, err
 	}
@@ -610,6 +613,120 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 	}
 }
 
+// moveSelectCols reads a domain.Move (scanMove is its counterpart);
+// moveSelectColsMV is the same list qualified with the alias mv for joins.
+const moveSelectCols = `id, game_id, COALESCE(move_number,0), COALESCE(move_type,''),
+	position_id, COALESCE(player,0), COALESCE(dice_1,0), COALESCE(dice_2,0),
+	COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp`
+
+const moveSelectColsMV = `mv.id, mv.game_id, COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
+	mv.position_id, COALESCE(mv.player,0), COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
+	COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp`
+
+func scanMove(sc scanner) (domain.Move, error) {
+	var mv domain.Move
+	var d1, d2 int32
+	var positionID *int64
+	var luckMP *int32
+	if err := sc.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+		return domain.Move{}, err
+	}
+	mv.Dice = [2]int32{d1, d2}
+	if positionID != nil {
+		mv.PositionID = *positionID
+	}
+	mv.LuckMP = luckMP
+	return mv, nil
+}
+
+// MovesByPositions — see storage.MatchStore.
+func (s *matchStore) MovesByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.Move, error) {
+	out := make(map[int64][]*domain.Move)
+	if len(positionIDs) == 0 {
+		return out, nil
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT `+moveSelectCols+` FROM move WHERE position_id = ANY($1) AND tenant_id = $2 ORDER BY id`,
+		positionIDs, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: moves by positions: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		mv, err := scanMove(rows)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: moves by positions: %w", err)
+		}
+		out[mv.PositionID] = append(out[mv.PositionID], &mv)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: moves by positions: %w", err)
+	}
+	return out, nil
+}
+
+// CreateMoveAnalysis — see storage.MatchStore. The rate and equity columns
+// are BIGINT here (schema 001), so the values are stored rounded: nothing
+// writes fractional move analyses any more, and a copy of an old SQLite file
+// carries them only as far as this rounding.
+func (s *matchStore) CreateMoveAnalysis(ctx context.Context, scope string, ma *domain.MoveAnalysis) (int64, error) {
+	var id int64
+	err := s.db.QueryRow(ctx,
+		`INSERT INTO move_analysis (tenant_id, move_id, analysis_type, depth, equity, equity_error,
+		    win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id`,
+		tenantID(scope), ma.MoveID, ma.AnalysisType, ma.Depth,
+		int64(math.Round(ma.Equity)), int64(math.Round(ma.EquityError)),
+		int64(math.Round(ma.WinRate)), int64(math.Round(ma.GammonRate)), int64(math.Round(ma.BackgammonRate)),
+		int64(math.Round(ma.OpponentWinRate)), int64(math.Round(ma.OpponentGammonRate)), int64(math.Round(ma.OpponentBackgammonRate))).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: create move analysis: %w", err)
+	}
+	ma.ID = id
+	return id, nil
+}
+
+// MoveAnalysesByMatch — see storage.MatchStore.
+func (s *matchStore) MoveAnalysesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MoveAnalysis, error] {
+	return func(yield func(*domain.MoveAnalysis, error) bool) {
+		rows, err := s.db.Query(ctx,
+			`SELECT ma.id, ma.move_id, COALESCE(ma.analysis_type,''), COALESCE(ma.depth,''),
+			        COALESCE(ma.equity,0), COALESCE(ma.equity_error,0),
+			        COALESCE(ma.win_rate,0), COALESCE(ma.gammon_rate,0), COALESCE(ma.backgammon_rate,0),
+			        COALESCE(ma.opponent_win_rate,0), COALESCE(ma.opponent_gammon_rate,0), COALESCE(ma.opponent_backgammon_rate,0)
+			 FROM move_analysis ma
+			 INNER JOIN move mv ON ma.move_id = mv.id
+			 INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = $1 AND ma.tenant_id = $2
+			 ORDER BY g.game_number, mv.move_number, ma.id`,
+			matchID, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list move analyses: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var ma domain.MoveAnalysis
+			var eq, eqErr, win, gam, bg, oWin, oGam, oBg int64
+			if err := rows.Scan(&ma.ID, &ma.MoveID, &ma.AnalysisType, &ma.Depth,
+				&eq, &eqErr, &win, &gam, &bg, &oWin, &oGam, &oBg); err != nil {
+				yield(nil, fmt.Errorf("postgres: list move analyses: %w", err))
+				return
+			}
+			ma.Equity, ma.EquityError = float64(eq), float64(eqErr)
+			ma.WinRate, ma.GammonRate, ma.BackgammonRate = float64(win), float64(gam), float64(bg)
+			ma.OpponentWinRate, ma.OpponentGammonRate, ma.OpponentBackgammonRate = float64(oWin), float64(oGam), float64(oBg)
+			if !yield(&ma, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list move analyses: %w", err))
+		}
+	}
+}
+
 const moveInsertSQL = `INSERT INTO move (
 	tenant_id, game_id, move_number, move_type, position_id, player,
 	dice_1, dice_2, checker_move, cube_action, luck_mp
@@ -641,11 +758,7 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT id, game_id, COALESCE(move_number,0), COALESCE(move_type,''),
-			        position_id, COALESCE(player,0),
-			        COALESCE(dice_1,0), COALESCE(dice_2,0),
-			        COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp
-			 FROM move WHERE game_id = $1 AND tenant_id = $2
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = $1 AND tenant_id = $2
 			 ORDER BY move_number`,
 			gameID, tenantID(scope))
 		if err != nil {
@@ -654,20 +767,11 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 		}
 		defer rows.Close()
 		for rows.Next() {
-			var mv domain.Move
-			var d1, d2 int32
-			var positionID *int64
-			var luckMP *int32
-			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+			mv, err := scanMove(rows)
+			if err != nil {
 				yield(nil, fmt.Errorf("postgres: list moves: %w", err))
 				return
 			}
-			mv.Dice = [2]int32{d1, d2}
-			if positionID != nil {
-				mv.PositionID = *positionID
-			}
-			mv.LuckMP = luckMP
 			if !yield(&mv, nil) {
 				return
 			}
@@ -684,10 +788,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.Query(ctx,
-			`SELECT mv.id, mv.game_id, COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
-			        mv.position_id, COALESCE(mv.player,0),
-			        COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp
+			`SELECT `+moveSelectColsMV+`
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = $1 AND mv.tenant_id = $2
 			 ORDER BY g.game_number, mv.move_number`,
@@ -698,20 +799,11 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 		}
 		defer rows.Close()
 		for rows.Next() {
-			var mv domain.Move
-			var d1, d2 int32
-			var positionID *int64
-			var luckMP *int32
-			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+			mv, err := scanMove(rows)
+			if err != nil {
 				yield(nil, fmt.Errorf("postgres: list moves by match: %w", err))
 				return
 			}
-			mv.Dice = [2]int32{d1, d2}
-			if positionID != nil {
-				mv.PositionID = *positionID
-			}
-			mv.LuckMP = luckMP
 			if !yield(&mv, nil) {
 				return
 			}

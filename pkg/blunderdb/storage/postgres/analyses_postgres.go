@@ -10,6 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"log/slog"
 )
 
 type analysisStore struct{ db execer }
@@ -123,6 +124,37 @@ func firstOf(s []string) string {
 		return s[0]
 	}
 	return ""
+}
+
+// LoadMany — see storage.AnalysisStore. One query, decoded in parallel
+// (engine.DecodeAnalysesConcurrently).
+func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error) {
+	raw := make(map[int64][]byte, len(ids))
+	if len(ids) > 0 {
+		rows, err := s.db.Query(ctx,
+			`SELECT position_id, data FROM analysis WHERE position_id = ANY($1) AND tenant_id = $2`,
+			ids, tenantID(scope))
+		if err != nil {
+			return nil, fmt.Errorf("postgres: load analyses: %w", err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var id int64
+			var data []byte
+			if err := rows.Scan(&id, &data); err != nil {
+				return nil, fmt.Errorf("postgres: load analyses: %w", err)
+			}
+			raw[id] = data
+		}
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("postgres: load analyses: %w", err)
+		}
+	}
+	decoded, failed := engine.DecodeAnalysesConcurrently(raw)
+	for id, err := range failed {
+		slog.Warn("decoding stored analysis", "positionID", id, "err", err)
+	}
+	return decoded, nil
 }
 
 // RepairDenormalisedColumns — see storage.AnalysisStore. Scoped to the tenant,

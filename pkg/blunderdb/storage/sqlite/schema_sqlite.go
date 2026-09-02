@@ -4,16 +4,22 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // schemaStatements is the full DDL for a fresh database at the current
-// domain.DatabaseVersion, in dependency order. It is the ONLY fresh-database
-// DDL: the Database wrapper's SetupDatabase delegates to Bootstrap, and
-// ensureAllTablesExist (database/db_schema.go) re-asserts the same tables,
-// columns and indexes on every open of an existing database. The parity test
-// in database/schema_parity_test.go diffs the three paths.
+// domain.DatabaseVersion, in dependency order. It is the ONLY schema DDL in
+// the code base: Bootstrap runs it on a fresh database (the Database
+// wrapper's SetupDatabase delegates to it, and so does every export file),
+// and EnsureSchema derives from it — by introspecting a reference database
+// built with it — what an existing database is missing on open (the Database
+// wrapper's ensureAllTablesExist). The version-by-version migrations in
+// database/db_migration*.go keep their own historical DDL: they describe what
+// each past version looked like, not what the current one is. The parity test
+// in database/schema_parity_test.go diffs the paths.
 var schemaStatements = []string{
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -251,8 +257,8 @@ var schemaStatements = []string{
 	// idx_position_score (match_length, score_1, score_2) is a strict column
 	// prefix of idx_position_score_cube below and is dropped here (E3, index
 	// redundancy pass): any seek idx_position_score could serve, the wider
-	// index serves identically. ensureAllTablesExist drops it from existing
-	// databases on open.
+	// index serves identically. ensureAllTablesExist (db_schema.go) drops it
+	// from existing databases on open.
 	`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
 	// Covering index for the win/gammon combo search (fiche-05 T3): the query
@@ -262,10 +268,10 @@ var schemaStatements = []string{
 	// (no analysis-table row lookup). Supersedes the old 2-column
 	// idx_analysis_win_gammon — a new name because a 3rd-column addition to an
 	// existing index does not retroactively appear in already-created SQLite
-	// indexes; ensureAllTablesExist (db_schema.go) (re)creates this index by
-	// name on every open of an existing database, so no VACUUM/migration is
-	// needed to pick it up. idx_analysis_win_gammon is simply no longer created
-	// here, and ensureAllTablesExist drops it from existing databases on
+	// indexes; EnsureSchema (re)creates this index by name on every open of an
+	// existing database, so no VACUUM/migration is needed to pick it up.
+	// idx_analysis_win_gammon is simply no longer created here, and
+	// ensureAllTablesExist (db_schema.go) drops it from existing databases on
 	// open. idx_analysis_win1 (player1_win_rate alone), a strict prefix of
 	// this covering index, is dropped here too (E3): any WinRateFilter-only
 	// search plans identically against the wider index (verified by EXPLAIN
@@ -328,4 +334,227 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 		return false, fmt.Errorf("sqlite: probe schema: %w", err)
 	}
 	return false, nil
+}
+
+// EnsureSchema brings an existing database up to the current schema without
+// touching what it already has: tables it lacks are created, columns it lacks
+// are added, indexes it lacks are built. Nothing is dropped, renamed or
+// retyped. It is idempotent and cheap on a database that is already current,
+// and it is what the Database wrapper runs on every open, after the migration
+// chain — the chain describes the past, this describes the present.
+//
+// There is deliberately no second list of columns to keep in step with the
+// CREATE TABLE statements above: the columns an existing database is missing
+// are found by comparing it against a reference database built, in memory,
+// from schemaStatements. That is what makes the DDL single-sourced — a column
+// added to a CREATE TABLE above reaches existing databases without anyone
+// remembering to write its ALTER TABLE twin.
+//
+// Tables are created strictly (a failure is returned). Columns and indexes
+// are best-effort and logged: SQLite cannot add a column whose default is not
+// a constant, and a UNIQUE index cannot be built over rows that violate it
+// (idx_position_zobrist before the 2.1.0 dedup, idx_match_canonical before
+// the empty hashes are normalised — the caller does that and calls again).
+// A database in that state must still open; it worked before the index
+// existed.
+func EnsureSchema(ctx context.Context, db *sql.DB) error {
+	ref, err := referenceSchema(ctx)
+	if err != nil {
+		return err
+	}
+	for _, t := range ref.tables {
+		if _, err := db.ExecContext(ctx, t.createSQL); err != nil {
+			return fmt.Errorf("sqlite: ensure table %s: %w", t.name, err)
+		}
+	}
+	for _, t := range ref.tables {
+		have, err := columnNames(ctx, db, t.name)
+		if err != nil {
+			return err
+		}
+		for _, c := range t.columns {
+			if have[c.name] {
+				continue
+			}
+			if err := addColumn(ctx, db, t.name, c); err != nil {
+				slog.Warn("sqlite: cannot add missing column", "table", t.name, "column", c.name, "err", err)
+			}
+		}
+	}
+	for _, stmt := range ref.indexes {
+		if _, err := db.ExecContext(ctx, stmt); err != nil {
+			slog.Warn("sqlite: cannot ensure index", "stmt", stmt, "err", err)
+		}
+	}
+	return nil
+}
+
+// addColumn adds c to table. SQLite refuses to add a column whose default is
+// not a constant (DEFAULT CURRENT_TIMESTAMP, say); rather than leave the column
+// out — every SELECT naming it would then fail — it is added without its
+// default, which only costs new rows the automatic value, and said so.
+func addColumn(ctx context.Context, db *sql.DB, table string, c referenceColumn) error {
+	_, err := db.ExecContext(ctx, `ALTER TABLE `+table+` ADD COLUMN `+c.definition)
+	if err == nil || c.defaultClause == "" {
+		return err
+	}
+	withoutDefault := strings.Replace(c.definition, " "+c.defaultClause, "", 1)
+	if _, retryErr := db.ExecContext(ctx, `ALTER TABLE `+table+` ADD COLUMN `+withoutDefault); retryErr != nil {
+		return err
+	}
+	slog.Warn("sqlite: column added without its default", "table", table, "column", c.name, "default", c.defaultClause, "err", err)
+	return nil
+}
+
+// referenceTable is one table of the reference schema: the statement that
+// creates it and, for every non-primary-key column, the definition an ALTER
+// TABLE ADD COLUMN needs to reproduce it.
+type referenceTable struct {
+	name      string
+	createSQL string
+	columns   []referenceColumn
+}
+
+type referenceColumn struct {
+	name          string
+	definition    string // `name TYPE [NOT NULL] [DEFAULT x] [REFERENCES t(c) ON DELETE …]`
+	defaultClause string // `DEFAULT x` when the column has one, else ""
+}
+
+type reference struct {
+	tables  []referenceTable
+	indexes []string
+}
+
+// referenceSchema builds the current schema in memory and reads it back.
+// pragma_table_info gives every column's declared type, NOT NULL and default
+// exactly as written; pragma_foreign_key_list gives the REFERENCES clause a
+// column carries. Together they reconstruct the ADD COLUMN definition without
+// parsing the CREATE TABLE text.
+func referenceSchema(ctx context.Context) (*reference, error) {
+	db, err := sql.Open("sqlite", ":memory:")
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: open reference schema: %w", err)
+	}
+	defer db.Close()
+	db.SetMaxOpenConns(1)
+	if err := Bootstrap(ctx, db); err != nil {
+		return nil, err
+	}
+
+	ref := &reference{}
+	for _, stmt := range schemaStatements {
+		switch {
+		case strings.HasPrefix(stmt, "CREATE TABLE IF NOT EXISTS "):
+			name := strings.Fields(stmt[len("CREATE TABLE IF NOT EXISTS "):])[0]
+			name = strings.TrimSuffix(name, "(")
+			ref.tables = append(ref.tables, referenceTable{name: name, createSQL: stmt})
+		case strings.HasPrefix(stmt, "CREATE INDEX IF NOT EXISTS "),
+			strings.HasPrefix(stmt, "CREATE UNIQUE INDEX IF NOT EXISTS "),
+			strings.HasPrefix(stmt, "CREATE        INDEX IF NOT EXISTS "):
+			ref.indexes = append(ref.indexes, stmt)
+		}
+	}
+	for i := range ref.tables {
+		cols, err := referenceColumns(ctx, db, ref.tables[i].name)
+		if err != nil {
+			return nil, err
+		}
+		ref.tables[i].columns = cols
+	}
+	return ref, nil
+}
+
+func referenceColumns(ctx context.Context, db *sql.DB, table string) ([]referenceColumn, error) {
+	refs, err := foreignKeyClauses(ctx, db, table)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := db.QueryContext(ctx,
+		`SELECT name, type, "notnull", dflt_value, pk FROM pragma_table_info(?) ORDER BY cid`, table)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: reference columns of %s: %w", table, err)
+	}
+	defer rows.Close()
+	var out []referenceColumn
+	for rows.Next() {
+		var name, typ string
+		var dflt sql.NullString
+		var notnull, pk int
+		if err := rows.Scan(&name, &typ, &notnull, &dflt, &pk); err != nil {
+			return nil, fmt.Errorf("sqlite: reference columns of %s: %w", table, err)
+		}
+		if pk != 0 {
+			continue // a primary key is never added after the fact
+		}
+		def := name + " " + typ
+		if notnull != 0 {
+			def += " NOT NULL"
+		}
+		col := referenceColumn{name: name}
+		if dflt.Valid {
+			col.defaultClause = "DEFAULT " + dflt.String
+			def += " " + col.defaultClause
+		}
+		if clause, ok := refs[name]; ok {
+			def += " " + clause
+		}
+		col.definition = def
+		out = append(out, col)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: reference columns of %s: %w", table, err)
+	}
+	return out, nil
+}
+
+// foreignKeyClauses returns, per column of table, the REFERENCES clause it
+// declares (only single-column keys — the schema has no composite ones).
+func foreignKeyClauses(ctx context.Context, db *sql.DB, table string) (map[string]string, error) {
+	rows, err := db.QueryContext(ctx,
+		`SELECT "table", "from", COALESCE("to", ''), on_update, on_delete FROM pragma_foreign_key_list(?)`, table)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: reference foreign keys of %s: %w", table, err)
+	}
+	defer rows.Close()
+	out := make(map[string]string)
+	for rows.Next() {
+		var ref, from, to, onUpdate, onDelete string
+		if err := rows.Scan(&ref, &from, &to, &onUpdate, &onDelete); err != nil {
+			return nil, fmt.Errorf("sqlite: reference foreign keys of %s: %w", table, err)
+		}
+		clause := "REFERENCES " + ref + "(" + to + ")"
+		if onUpdate != "NO ACTION" {
+			clause += " ON UPDATE " + onUpdate
+		}
+		if onDelete != "NO ACTION" {
+			clause += " ON DELETE " + onDelete
+		}
+		out[from] = clause
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: reference foreign keys of %s: %w", table, err)
+	}
+	return out, nil
+}
+
+// columnNames returns the set of columns table currently has.
+func columnNames(ctx context.Context, db *sql.DB, table string) (map[string]bool, error) {
+	rows, err := db.QueryContext(ctx, `SELECT name FROM pragma_table_info(?)`, table)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: columns of %s: %w", table, err)
+	}
+	defer rows.Close()
+	out := make(map[string]bool)
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, fmt.Errorf("sqlite: columns of %s: %w", table, err)
+		}
+		out[name] = true
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: columns of %s: %w", table, err)
+	}
+	return out, nil
 }

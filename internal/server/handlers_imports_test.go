@@ -18,6 +18,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -325,6 +326,148 @@ func TestExportSQLiteSuccess(t *testing.T) {
 	}
 	if !bytes.HasPrefix(body, []byte("SQLite format 3")) {
 		t.Fatalf("body does not look like a SQLite file (first bytes: %q)", body[:min(32, len(body))])
+	}
+}
+
+// TestExportSQLiteIncludesMatches covers the fix for a known gap: the
+// handler used to call Export with a zero-value ingest.Selection, so
+// exports.sqlite carried nothing at all — no positions, and certainly no
+// matches. It now runs ingest.WholeTenant, so a match imported through this
+// same server must come back out.
+func TestExportSQLiteIncludesMatches(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "test.sgf"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+	events := uploadImportNamed(t, ts, "/v1/imports.gnubg", "test.sgf", fixture)
+	if done := events[len(events)-1]; done["matches"].(float64) != 1 {
+		t.Fatalf("import matches = %v, want 1", done["matches"])
+	}
+
+	resp := post(t, ts, "/v1/exports.sqlite", nil)
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want 200", resp.StatusCode)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	path := filepath.Join(t.TempDir(), "export.db")
+	if err := os.WriteFile(path, body, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	db := database.NewDatabase()
+	if err := db.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase(export): %v", err)
+	}
+	defer db.Close()
+
+	matches, err := db.GetAllMatches()
+	if err != nil {
+		t.Fatalf("GetAllMatches: %v", err)
+	}
+	if len(matches) != 1 {
+		t.Fatalf("exported matches = %d, want 1", len(matches))
+	}
+	positions, err := db.LoadAllPositions()
+	if err != nil {
+		t.Fatalf("LoadAllPositions: %v", err)
+	}
+	if len(positions) == 0 {
+		t.Fatal("exported positions = 0, want > 0")
+	}
+}
+
+// TestExportSQLiteWatermarkRequiresIdentity covers the other known gap: a
+// caller asking for a watermark on a server that was never given a signing
+// identity (no --identity-dir) must get a clear error, not a silently
+// unmarked file.
+func TestExportSQLiteWatermarkRequiresIdentity(t *testing.T) {
+	ts := newTestServer(t)
+
+	resp := post(t, ts, "/v1/exports.sqlite", exportSQLiteReq{WatermarkOrigin: "cours du mardi"})
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		t.Fatal("status = 200, want an error: this server has no identity to sign with")
+	}
+	var env errorEnvelope
+	if err := json.NewDecoder(resp.Body).Decode(&env); err != nil {
+		t.Fatalf("body not a JSON error envelope: %v", err)
+	}
+	if env.Error.Code != CodeInvalid {
+		t.Fatalf("error code = %q, want %q", env.Error.Code, CodeInvalid)
+	}
+}
+
+// TestExportSQLiteWatermark covers a daemon that does have a signing
+// identity (Options.Identity, set by RunServe from --identity-dir): asking
+// for a watermark on exports.sqlite must produce a file whose watermark
+// verifies and carries the origin/note given, exactly like the desktop's
+// export dialog.
+func TestExportSQLiteWatermark(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatalf("sqlite.Open: %v", err)
+	}
+	t.Cleanup(func() { st.Close() })
+
+	identity, err := issuance.NewIdentity("blunderdb-serve-test")
+	if err != nil {
+		t.Fatalf("NewIdentity: %v", err)
+	}
+	srv, err := New(Options{Storage: st, Metrics: metrics.New(), Identity: identity})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	ts := httptest.NewServer(srv.Handler())
+	t.Cleanup(ts.Close)
+
+	p := domain.InitializePosition()
+	post(t, ts, "/v1/positions.save", positionReq{Position: &p}).Body.Close()
+
+	resp := post(t, ts, "/v1/exports.sqlite", exportSQLiteReq{
+		WatermarkOrigin: "cours du mardi",
+		WatermarkNote:   "ne pas redistribuer",
+	})
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		t.Fatalf("status = %d, want 200 (body=%s)", resp.StatusCode, body)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	path := filepath.Join(t.TempDir(), "export.db")
+	if err := os.WriteFile(path, body, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	db := database.NewDatabase()
+	if err := db.OpenDatabase(path); err != nil {
+		t.Fatalf("OpenDatabase(export): %v", err)
+	}
+	defer db.Close()
+
+	info, err := db.GetIssuanceInfo()
+	if err != nil {
+		t.Fatalf("GetIssuanceInfo: %v", err)
+	}
+	if !info.Watermarked || info.Watermark == nil {
+		t.Fatal("exported file is not watermarked")
+	}
+	if !info.Watermark.SignatureValid {
+		t.Fatal("watermark signature does not verify")
+	}
+	if info.Watermark.Origin != "cours du mardi" {
+		t.Fatalf("watermark origin = %q, want %q", info.Watermark.Origin, "cours du mardi")
+	}
+	if info.Watermark.Note != "ne pas redistribuer" {
+		t.Fatalf("watermark note = %q, want %q", info.Watermark.Note, "ne pas redistribuer")
 	}
 }
 

@@ -34,6 +34,11 @@ type CommentStore interface {
 	// Text returns the concatenated comment text of a position (empty if none).
 	Text(ctx context.Context, scope string, positionID int64) (string, error)
 
+	// ByPositions returns the non-empty comments of the given positions, keyed
+	// by position id and oldest first within a position — the order they were
+	// written in, which is the order a copy of them should carry.
+	ByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.CommentEntry, error)
+
 	// ByPosition streams the comment entries of a position.
 	ByPosition(ctx context.Context, scope string, positionID int64) iter.Seq2[*domain.CommentEntry, error]
 

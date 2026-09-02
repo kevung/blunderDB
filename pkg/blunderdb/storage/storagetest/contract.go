@@ -88,6 +88,11 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Stats/PositionIDsByTournament", testStatsPositionIDsByTournament},
 		{"Errors/DanglingReferenceIsNotFound", testDanglingReferenceIsNotFound},
 		{"Errors/MergePlayersRejectsEmptyAsInvalid", testMergePlayersRejectsEmptyAsInvalid},
+		{"Analysis/LoadManyDecodesBatch", testAnalysisLoadMany},
+		{"Comment/ByPositionsGroupsOldestFirst", testCommentByPositions},
+		{"Match/MovesByPositions", testMovesByPositions},
+		{"Match/MoveAnalysisRoundTrip", testMoveAnalysisRoundTrip},
+		{"Match/HashesReadBack", testMatchHashesReadBack},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 
+	"encoding/json"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"log/slog"
 )
 
 type analysisStore struct{ db execer }
@@ -101,6 +103,54 @@ func (s *analysisStore) Load(ctx context.Context, scope string, positionID int64
 		return nil, fmt.Errorf("sqlite: decode analysis for position %d: %w", positionID, err)
 	}
 	return &a, nil
+}
+
+// LoadMany — see storage.AnalysisStore. The payloads are read in one
+// statement per batch and decoded in parallel (engine.DecodeAnalysesConcurrently).
+func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error) {
+	raw := make(map[int64][]byte, len(ids))
+	err := forEachIn(ctx, s.db, ids, `SELECT position_id, data FROM analysis WHERE position_id IN `, ``, func(rows *sql.Rows) error {
+		var id int64
+		var data []byte
+		if err := rows.Scan(&id, &data); err != nil {
+			return err
+		}
+		raw[id] = data
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: load analyses: %w", err)
+	}
+	decoded, failed := engine.DecodeAnalysesConcurrently(raw)
+	for id, err := range failed {
+		slog.Warn("decoding stored analysis", "positionID", id, "err", err)
+	}
+	return decoded, nil
+}
+
+// SaveAnalysisUncompressed writes a's analysis row for positionID with its
+// JSON payload left uncompressed, denormalised columns derived as Save would.
+// It exists for one writer: an exported database is read by whatever version
+// of blunderDB the recipient runs, and versions before 2.3.0 know only plain
+// JSON — a live database compresses (Save), a file handed to someone else
+// does not. The row must not exist yet (an export writes each position once).
+func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64, a *domain.PositionAnalysis) error {
+	a.PositionID = int(positionID)
+	engine.RoundAnalysisForStorage(a)
+	data, err := json.Marshal(a)
+	if err != nil {
+		return fmt.Errorf("sqlite: encode analysis: %w", err)
+	}
+	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+	if _, err := tx.ExecContext(ctx, analysisInsertSQL,
+		positionID, data,
+		c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
+		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
+		c.IsForced, c.IsCloseCube); err != nil {
+		return fmt.Errorf("sqlite: save analysis: %w", err)
+	}
+	return nil
 }
 
 // Delete removes the analysis for positionID.

@@ -35,7 +35,8 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	COALESCE(m.file_path,''), COALESCE(m.game_count,0),
 	m.tournament_id, COALESCE(t.name,''),
 	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
-	COALESCE(m.tournament_sort_order,0)`
+	COALESCE(m.tournament_sort_order,0),
+	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,'')`
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date and tournament_id are nullable.
@@ -51,6 +52,7 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 		&tournamentID, &m.TournamentName,
 		&m.LastVisitedPosition, &m.Comment,
 		&m.TournamentSortOrder,
+		&m.MatchHash, &m.CanonicalHash,
 	); err != nil {
 		return domain.Match{}, err
 	}
@@ -557,6 +559,31 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 	}
 }
 
+// moveSelectCols reads a domain.Move; scanMove is its counterpart.
+const moveSelectCols = `id, COALESCE(game_id,0), COALESCE(move_number,0), COALESCE(move_type,''),
+	position_id, COALESCE(player,0), COALESCE(dice_1,0), COALESCE(dice_2,0),
+	COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp`
+
+func scanMove(sc interface{ Scan(...any) error }) (domain.Move, error) {
+	var mv domain.Move
+	var d1, d2 int32
+	var positionID sql.NullInt64
+	var luckMP sql.NullInt32
+	if err := sc.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+		return domain.Move{}, err
+	}
+	mv.Dice = [2]int32{d1, d2}
+	if positionID.Valid {
+		mv.PositionID = positionID.Int64
+	}
+	if luckMP.Valid {
+		v := luckMP.Int32
+		mv.LuckMP = &v
+	}
+	return mv, nil
+}
+
 const moveInsertSQL = `INSERT INTO move (
 	game_id, move_number, move_type, position_id, player,
 	dice_1, dice_2, checker_move, cube_action, luck_mp
@@ -591,33 +618,17 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT id, COALESCE(game_id,0), COALESCE(move_number,0), COALESCE(move_type,''),
-			        position_id, COALESCE(player,0),
-			        COALESCE(dice_1,0), COALESCE(dice_2,0),
-			        COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp
-			 FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
+			`SELECT `+moveSelectCols+` FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 			return
 		}
 		defer rows.Close()
 		for rows.Next() {
-			var mv domain.Move
-			var d1, d2 int32
-			var positionID sql.NullInt64
-			var luckMP sql.NullInt32
-			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+			mv, err := scanMove(rows)
+			if err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 				return
-			}
-			mv.Dice = [2]int32{d1, d2}
-			if positionID.Valid {
-				mv.PositionID = positionID.Int64
-			}
-			if luckMP.Valid {
-				v := luckMP.Int32
-				mv.LuckMP = &v
 			}
 			if !yield(&mv, nil) {
 				return
@@ -635,10 +646,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT mv.id, COALESCE(mv.game_id,0), COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
-			        mv.position_id, COALESCE(mv.player,0),
-			        COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp
+			`SELECT `+qualify(moveSelectCols, "mv")+`
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 WHERE g.match_id = ?
 			 ORDER BY g.game_number, mv.move_number`, matchID)
@@ -648,22 +656,10 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 		}
 		defer rows.Close()
 		for rows.Next() {
-			var mv domain.Move
-			var d1, d2 int32
-			var positionID sql.NullInt64
-			var luckMP sql.NullInt32
-			if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-				&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+			mv, err := scanMove(rows)
+			if err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
 				return
-			}
-			mv.Dice = [2]int32{d1, d2}
-			if positionID.Valid {
-				mv.PositionID = positionID.Int64
-			}
-			if luckMP.Valid {
-				v := luckMP.Int32
-				mv.LuckMP = &v
 			}
 			if !yield(&mv, nil) {
 				return
@@ -671,6 +667,115 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 		}
 		if err := rows.Err(); err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
+		}
+	}
+}
+
+// qualify prefixes every column of a moveSelectCols-style list with alias —
+// the list is written unqualified so it can serve single-table queries too.
+func qualify(cols, alias string) string {
+	var out []string
+	depth, start := 0, 0
+	emit := func(c string) {
+		c = strings.TrimSpace(c)
+		if strings.HasPrefix(c, "COALESCE(") {
+			c = "COALESCE(" + alias + "." + c[len("COALESCE("):]
+		} else {
+			c = alias + "." + c
+		}
+		out = append(out, c)
+	}
+	for i, r := range cols {
+		switch r {
+		case '(':
+			depth++
+		case ')':
+			depth--
+		case ',':
+			if depth == 0 {
+				emit(cols[start:i])
+				start = i + 1
+			}
+		}
+	}
+	emit(cols[start:])
+	return strings.Join(out, ", ")
+}
+
+// MovesByPositions — see storage.MatchStore.
+func (s *matchStore) MovesByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.Move, error) {
+	out := make(map[int64][]*domain.Move)
+	err := forEachIn(ctx, s.db, positionIDs,
+		`SELECT `+moveSelectCols+` FROM move WHERE position_id IN `, ` ORDER BY id`,
+		func(rows *sql.Rows) error {
+			mv, err := scanMove(rows)
+			if err != nil {
+				return err
+			}
+			out[mv.PositionID] = append(out[mv.PositionID], &mv)
+			return nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: moves by positions: %w", err)
+	}
+	return out, nil
+}
+
+const moveAnalysisCols = `analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
+	opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate`
+
+// CreateMoveAnalysis — see storage.MatchStore.
+func (s *matchStore) CreateMoveAnalysis(ctx context.Context, scope string, ma *domain.MoveAnalysis) (int64, error) {
+	res, err := s.db.ExecContext(ctx,
+		`INSERT INTO move_analysis (move_id, `+moveAnalysisCols+`) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+		ma.MoveID, ma.AnalysisType, ma.Depth, ma.Equity, ma.EquityError,
+		ma.WinRate, ma.GammonRate, ma.BackgammonRate,
+		ma.OpponentWinRate, ma.OpponentGammonRate, ma.OpponentBackgammonRate)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move analysis: %w", err)
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move analysis id: %w", err)
+	}
+	ma.ID = id
+	return id, nil
+}
+
+// MoveAnalysesByMatch — see storage.MatchStore.
+func (s *matchStore) MoveAnalysesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MoveAnalysis, error] {
+	return func(yield func(*domain.MoveAnalysis, error) bool) {
+		rows, err := s.db.QueryContext(ctx,
+			`SELECT ma.id, ma.move_id, `+qualify(moveAnalysisCols, "ma")+`
+			 FROM move_analysis ma
+			 INNER JOIN move mv ON ma.move_id = mv.id
+			 INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = ?
+			 ORDER BY g.game_number, mv.move_number, ma.id`, matchID)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list move analyses: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var ma domain.MoveAnalysis
+			var analysisType, depth sql.NullString
+			var eq, eqErr, win, gam, bg, oWin, oGam, oBg sql.NullFloat64
+			if err := rows.Scan(&ma.ID, &ma.MoveID, &analysisType, &depth,
+				&eq, &eqErr, &win, &gam, &bg, &oWin, &oGam, &oBg); err != nil {
+				yield(nil, fmt.Errorf("sqlite: list move analyses: %w", err))
+				return
+			}
+			ma.AnalysisType, ma.Depth = analysisType.String, depth.String
+			ma.Equity, ma.EquityError = eq.Float64, eqErr.Float64
+			ma.WinRate, ma.GammonRate, ma.BackgammonRate = win.Float64, gam.Float64, bg.Float64
+			ma.OpponentWinRate, ma.OpponentGammonRate, ma.OpponentBackgammonRate = oWin.Float64, oGam.Float64, oBg.Float64
+			if !yield(&ma, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: list move analyses: %w", err))
 		}
 	}
 }

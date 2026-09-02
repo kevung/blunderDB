@@ -94,4 +94,17 @@ type MatchStore interface {
 	// MovePositions streams the positions of a match together with their
 	// game/move context.
 	MovePositions(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MatchMovePosition, error]
+
+	// MovesByPositions returns the moves recorded against each of the given
+	// positions — what was actually played there, in every match that reached
+	// it — keyed by position id, in id order.
+	MovesByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.Move, error)
+
+	// CreateMoveAnalysis stores an evaluation row attached to a move and
+	// returns its id, updating ma.ID in place.
+	CreateMoveAnalysis(ctx context.Context, scope string, ma *domain.MoveAnalysis) (int64, error)
+
+	// MoveAnalysesByMatch streams every move analysis of a match, by game,
+	// move, then id.
+	MoveAnalysesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MoveAnalysis, error]
 }

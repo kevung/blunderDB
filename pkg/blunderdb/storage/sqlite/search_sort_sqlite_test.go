@@ -27,7 +27,7 @@ func TestSearchSortByError(t *testing.T) {
 			a := &domain.PositionAnalysis{
 				PlayedMoves: []string{"24/18 13/11"},
 				CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
-					{Move: "13/11 24/18", Equity: 0.5},                       // best (different order, normalizes equal)
+					{Move: "13/11 24/18", Equity: 0.5}, // best (different order, normalizes equal)
 					{Move: "24/18 13/11", Equity: 0.5, EquityError: equityError},
 				}},
 			}
