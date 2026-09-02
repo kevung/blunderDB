@@ -22,7 +22,7 @@
         StartGammonNetBatch
     } from '../../wailsjs/go/gui/App.js';
     import { Vacuum, CountPositionsWithoutAnalysis } from '../../wailsjs/go/database/Database.js';
-    import { GetBearoffTsPath, SaveBearoffTsPath } from '../../wailsjs/go/main/Config.js';
+    import { GetBearoffTSPath, SaveBearoffTSPath } from '../../wailsjs/go/main/Config.js';
     import {
         GetGammonNetDisplayPly,
         SaveGammonNetDisplayPly,
@@ -197,7 +197,7 @@
     async function refreshBearoff() {
         try {
             bearoff = await BearoffStatus();
-            bearoffExternal = await GetBearoffTsPath();
+            bearoffExternal = await GetBearoffTSPath();
         } catch (error) {
             logger.error('Error loading bearoff status:', error);
         }
@@ -283,7 +283,7 @@
         try {
             const path = await OpenBearoffFileDialog();
             if (!path) return;
-            await SaveBearoffTsPath(path);
+            await SaveBearoffTSPath(path);
             await refreshBearoff();
         } catch (error) {
             bearoffError = String(error);
@@ -293,7 +293,7 @@
     async function clearBearoffExternal() {
         bearoffError = '';
         try {
-            await SaveBearoffTsPath('');
+            await SaveBearoffTSPath('');
             await refreshBearoff();
         } catch (error) {
             bearoffError = String(error);

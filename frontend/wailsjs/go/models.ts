@@ -673,6 +673,20 @@ export namespace domain {
 	        this.totalCount = source["totalCount"];
 	    }
 	}
+	export class AnkiForecastDay {
+	    day: string;
+	    due: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiForecastDay(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.day = source["day"];
+	        this.due = source["due"];
+	    }
+	}
 	export class Cube {
 	    owner: number;
 	    value: number;
@@ -954,6 +968,7 @@ export namespace domain {
 	    exportPath: string;
 	    positions: Position[];
 	    positionIDs: number[];
+	    allPositions: boolean;
 	    metadata: Record<string, string>;
 	    includeAnalysis: boolean;
 	    includeComments: boolean;
@@ -977,6 +992,7 @@ export namespace domain {
 	        this.exportPath = source["exportPath"];
 	        this.positions = this.convertValues(source["positions"], Position);
 	        this.positionIDs = source["positionIDs"];
+	        this.allPositions = source["allPositions"];
 	        this.metadata = source["metadata"];
 	        this.includeAnalysis = source["includeAnalysis"];
 	        this.includeComments = source["includeComments"];
