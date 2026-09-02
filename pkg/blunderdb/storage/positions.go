@@ -30,4 +30,16 @@ type PositionStore interface {
 
 	// List streams stored positions.
 	List(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
+
+	// ListIDs returns the ids of the stored positions, in List's order and
+	// bounded the same way by opts. It is the cheap face of List: a client
+	// that browses a library keeps this list and fetches the positions it
+	// shows with LoadByIDs, instead of materialising every row up front.
+	ListIDs(ctx context.Context, scope string, opts ListOpts) ([]int64, error)
+
+	// LoadByIDs returns the positions whose ids are listed, in the order the
+	// caller gave them. Unknown ids are skipped rather than failing the
+	// call: a position deleted between the moment its id was listed and the
+	// moment it is fetched is not a reason to lose the rest of the window.
+	LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error)
 }

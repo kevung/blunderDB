@@ -101,6 +101,8 @@ export function GetAnkiDeckPositions(arg1:number):Promise<Array<domain.Position>
 
 export function GetAnkiDeckStats(arg1:number):Promise<domain.AnkiDeckStats>;
 
+export function GetAnkiForecast(arg1:number,arg2:number):Promise<Array<domain.AnkiForecastDay>>;
+
 export function GetCollectionByID(arg1:number):Promise<database.Collection>;
 
 export function GetCollectionPositions(arg1:number):Promise<Array<domain.Position>>;
@@ -169,6 +171,8 @@ export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
 
+export function ListPositionIDs():Promise<Array<number>>;
+
 export function LoadAllPositions():Promise<Array<domain.Position>>;
 
 export function LoadAnalysis(arg1:number):Promise<domain.PositionAnalysis>;
@@ -190,6 +194,8 @@ export function LoadPosition(arg1:number):Promise<domain.Position>;
 export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
+
+export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 
 export function LoadSearchHistory():Promise<Array<database.SearchHistory>>;
 

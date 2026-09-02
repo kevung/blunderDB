@@ -149,6 +149,73 @@ func testPositionProvenanceSticky(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testPositionListIDsAndLoadByIDs pins the pair the GUI browses a library
+// with: ListIDs is List's order under List's bounds, and LoadByIDs hands the
+// positions back in the caller's order, silently dropping an id that no
+// longer exists.
+func testPositionListIDsAndLoadByIDs(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps := s.Positions()
+
+	var saved []int64
+	for n := 1; n <= 5; n++ {
+		p := provenancePos(n)
+		id, err := ps.Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %d: %v", n, err)
+		}
+		saved = append(saved, id)
+	}
+
+	ids, err := ps.ListIDs(ctx, "", storage.ListOpts{})
+	if err != nil {
+		t.Fatalf("ListIDs: %v", err)
+	}
+	var listed []int64
+	for p, err := range ps.List(ctx, "", storage.ListOpts{}) {
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		listed = append(listed, p.ID)
+	}
+	if !equalIDs(ids, listed) {
+		t.Errorf("ListIDs order differs from List: ids %v, list %v", ids, listed)
+	}
+
+	window, err := ps.ListIDs(ctx, "", storage.ListOpts{Limit: 2, Offset: 1})
+	if err != nil {
+		t.Fatalf("ListIDs window: %v", err)
+	}
+	if !equalIDs(window, listed[1:3]) {
+		t.Errorf("ListIDs{Limit:2,Offset:1}: got %v, want %v", window, listed[1:3])
+	}
+
+	// Caller's order, not id order; an unknown id is skipped, not an error.
+	want := []int64{saved[3], saved[0], saved[4]}
+	got, err := ps.LoadByIDs(ctx, "", []int64{saved[3], 987654321, saved[0], saved[4]})
+	if err != nil {
+		t.Fatalf("LoadByIDs: %v", err)
+	}
+	var gotIDs []int64
+	for _, p := range got {
+		gotIDs = append(gotIDs, p.ID)
+	}
+	if !equalIDs(gotIDs, want) {
+		t.Errorf("LoadByIDs order: got %v, want %v", gotIDs, want)
+	}
+	if got[1].Score != provenancePos(1).Score {
+		t.Errorf("LoadByIDs did not reconstruct the position: score %v", got[1].Score)
+	}
+
+	empty, err := ps.LoadByIDs(ctx, "", nil)
+	if err != nil {
+		t.Fatalf("LoadByIDs(nil): %v", err)
+	}
+	if len(empty) != 0 {
+		t.Errorf("LoadByIDs(nil): got %d positions, want 0", len(empty))
+	}
+}
+
 func testAnalysisSaveAndCompress(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p := checkerPos()
