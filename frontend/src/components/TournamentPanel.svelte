@@ -6,6 +6,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import { createReorder } from '../utils/reorder.js';
+    import EntityAutocomplete from './EntityAutocomplete.svelte';
     import {
         GetAllTournaments,
         CreateTournament,
@@ -64,12 +65,16 @@
         }
     });
 
-    // Add match to tournament
+    // Add match to tournament: only matches not yet assigned to one are offered
     let addMatchSearch = $state('');
     let allMatches = $state([]);
-    let filteredMatches = $state([]);
-    let addMatchFocused = $state(false);
-    let matchDropdownStyle = $state('');
+    const availableMatches = $derived(allMatches.filter((m) => !m.tournament_id));
+
+    function matchMatchesQuery(m, query) {
+        const q = query.trim().toLowerCase();
+        if (!q) return true;
+        return (m.player1_name || '').toLowerCase().includes(q) || (m.player2_name || '').toLowerCase().includes(q) || String(m.match_length || '').includes(q);
+    }
 
     // Match comment editing (one cell of the matches table)
     const matchCommentEdit = createInlineEdit({
@@ -110,7 +115,6 @@
                 tournamentMatchesStore.set([]);
                 tournamentEdit.cancel();
                 addMatchSearch = '';
-                addMatchFocused = false;
             }
             _prevVisible = v;
         }
@@ -132,14 +136,6 @@
             logger.error('Error loading matches:', error);
             allMatches = [];
         }
-    }
-
-    function computeMatchDropdownPos(inputEl) {
-        if (!inputEl) return;
-        const rect = inputEl.getBoundingClientRect();
-        const spaceAbove = rect.top;
-        const maxH = 90;
-        matchDropdownStyle = `position:fixed; bottom:${window.innerHeight - rect.top}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, spaceAbove)}px;`;
     }
 
     function sortTournaments(list) {
@@ -233,23 +229,6 @@
         tournamentEdit.start(tournament.id, { name: tournament.name, date: tournament.date || '', location: tournament.location || '' });
     }
 
-    function updateFilteredMatches() {
-        // Only show matches not assigned to any tournament
-        let available = allMatches.filter((m) => !m.tournament_id);
-        if (addMatchSearch.trim()) {
-            const q = addMatchSearch.toLowerCase();
-            available = available.filter((m) => (m.player1_name || '').toLowerCase().includes(q) || (m.player2_name || '').toLowerCase().includes(q) || String(m.match_length || '').includes(q));
-        }
-        filteredMatches = available;
-    }
-
-    $effect(() => {
-        // Re-filter when tournamentMatches or search changes. Reading both
-        // here (discarded via void) is what makes the effect re-run on either.
-        void tournamentMatches;
-        void addMatchSearch;
-        updateFilteredMatches();
-    });
     async function addMatchToTournament(matchId) {
         if (!selectedTournament) return;
         try {
@@ -258,7 +237,6 @@
             tournamentMatchesStore.set(matches || []);
             await loadTournaments();
             await loadAllMatches();
-            updateFilteredMatches();
         } catch (error) {
             logger.error('Error adding match:', error);
         }
@@ -807,45 +785,27 @@
                 </div>
                 <div class="add-area">
                     <div class="add-match-wrap">
-                        <input
-                            type="text"
+                        <EntityAutocomplete
                             bind:value={addMatchSearch}
-                            onfocus={(e) => {
-                                addMatchFocused = true;
-                                computeMatchDropdownPos(e.currentTarget);
-                                loadAllMatches().then(updateFilteredMatches);
-                            }}
-                            onblur={() =>
-                                setTimeout(() => {
-                                    addMatchFocused = false;
-                                }, 150)}
-                            onkeydown={(e) => {
-                                if (e.key === 'Escape') {
-                                    e.stopPropagation();
-                                    addMatchSearch = '';
-                                    e.currentTarget.blur();
-                                }
-                            }}
+                            items={availableMatches}
+                            key={(m) => m.id}
+                            label={(m) => `${m.player1_name} ${$t('tournament.vs')} ${m.player2_name}`}
+                            filter={matchMatchesQuery}
+                            variant="field"
+                            placement="above"
+                            maxHeight={90}
+                            fillOnSelect={false}
                             placeholder={$t('tournament.addMatchPlaceholder')}
-                            class="add-match-input"
-                        />
-                        {#if addMatchFocused && filteredMatches.length > 0}
-                            <div class="match-dropdown" style={matchDropdownStyle}>
-                                {#each filteredMatches as match (match.id)}
-                                    <div
-                                        class="dropdown-item"
-                                        onmousedown={(e) => {
-                                            e.preventDefault();
-                                            (() => addMatchToTournament(match.id))();
-                                        }}
-                                    >
-                                        {match.player1_name}
-                                        {$t('tournament.vs')}
-                                        {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
-                                    </div>
-                                {/each}
-                            </div>
-                        {/if}
+                            onFocus={loadAllMatches}
+                            onSelect={(m) => addMatchToTournament(m.id)}
+                            onCancel={() => (addMatchSearch = '')}
+                        >
+                            {#snippet item(match)}
+                                {match.player1_name}
+                                {$t('tournament.vs')}
+                                {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
+                            {/snippet}
+                        </EntityAutocomplete>
                     </div>
                 </div>
             </div>
@@ -1120,35 +1080,6 @@
     .add-match-wrap {
         position: relative;
         flex: 1;
-    }
-    .add-match-input {
-        width: 100%;
-        padding: 2px 6px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: var(--font-size-small);
-        box-sizing: border-box;
-        outline: none;
-    }
-    .add-match-input:focus {
-        border-color: #99c;
-    }
-    .match-dropdown {
-        overflow-y: auto;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-        z-index: 9999;
-    }
-    .dropdown-item {
-        padding: 3px 8px;
-        cursor: pointer;
-        font-size: var(--font-size-small);
-        border-bottom: 1px solid #f5f5f5;
-    }
-    .dropdown-item:hover {
-        background: #e3f2fd;
     }
     .match-pts {
         font-size: var(--font-size-small);

@@ -21,6 +21,7 @@
         GetMatchDetailStats
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
+    import EntityAutocomplete from './EntityAutocomplete.svelte';
     import { exportMatchMat } from '../services/exportService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
@@ -62,9 +63,6 @@
     let sortDirection = $state('asc'); // 'asc' | 'desc'
 
     // Inline tournament editing (autocomplete over the known tournaments)
-    let showTournamentDropdown = $state(false);
-    let filteredTournaments = $state([]);
-    let tournamentDropdownStyle = $state('');
     const tournamentEdit = createInlineEdit({
         onSave: async (matchId, value) => {
             const name = value.trim();
@@ -77,10 +75,6 @@
                 logger.error('Error setting tournament:', error);
                 statusBarTextStore.set(tMsg('match.errorSettingTournament'));
             }
-            showTournamentDropdown = false;
-        },
-        onCancel: () => {
-            showTournamentDropdown = false;
         }
     });
 
@@ -195,44 +189,10 @@
     function startEditTournament(match, event) {
         event.stopPropagation();
         tournamentEdit.start(match.id, match.tournament_name || match.event || '');
-        filteredTournaments = tournaments;
-        setTimeout(() => {
-            const input = document.querySelector('.tournament-edit-input');
-            if (input) {
-                input.focus();
-                computeTournamentDropdownPosition(input);
-            }
-            showTournamentDropdown = true;
-        }, 50);
     }
 
-    function computeTournamentDropdownPosition(inputEl) {
-        if (!inputEl) return;
-        const rect = inputEl.getBoundingClientRect();
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const maxH = 120;
-        if (spaceBelow < maxH && rect.top > spaceBelow) {
-            tournamentDropdownStyle = `position:fixed; bottom:${window.innerHeight - rect.top}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, rect.top)}px;`;
-        } else {
-            tournamentDropdownStyle = `position:fixed; top:${rect.bottom}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, spaceBelow)}px;`;
-        }
-    }
-
-    function filterTournaments() {
-        const val = tournamentEdit.draft.toLowerCase();
-        if (!val) {
-            filteredTournaments = tournaments;
-        } else {
-            filteredTournaments = tournaments.filter((t) => t.name.toLowerCase().includes(val));
-        }
-        const input = document.querySelector('.tournament-edit-input');
-        if (input) computeTournamentDropdownPosition(input);
-        showTournamentDropdown = true;
-    }
-
-    async function selectTournamentOption(name) {
-        tournamentEdit.draft = name;
-        showTournamentDropdown = false;
+    async function selectTournamentOption(tournament) {
+        tournamentEdit.draft = tournament.name;
         await tournamentEdit.save();
     }
 
@@ -729,30 +689,17 @@
                                     >
                                         {#if tournamentEdit.isEditing(match.id)}
                                             <div class="tournament-cell-edit">
-                                                <input
-                                                    type="text"
-                                                    class="tournament-edit-input"
+                                                <EntityAutocomplete
                                                     bind:value={tournamentEdit.draft}
-                                                    oninput={filterTournaments}
-                                                    onkeydown={tournamentEdit.onKeyDown}
-                                                    onblur={() => setTimeout(tournamentEdit.cancel, 200)}
+                                                    items={tournaments}
+                                                    autofocus
+                                                    blurDelay={200}
                                                     placeholder={$t('match.tournamentNamePlaceholder')}
+                                                    onSelect={selectTournamentOption}
+                                                    onSubmit={() => tournamentEdit.save()}
+                                                    onCancel={tournamentEdit.cancel}
+                                                    onDismiss={tournamentEdit.cancel}
                                                 />
-                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                    <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                        {#each filteredTournaments as t (t.name)}
-                                                            <div
-                                                                class="tournament-dropdown-item"
-                                                                onmousedown={(e) => {
-                                                                    e.preventDefault();
-                                                                    (() => selectTournamentOption(t.name))();
-                                                                }}
-                                                            >
-                                                                {t.name}
-                                                            </div>
-                                                        {/each}
-                                                    </div>
-                                                {/if}
                                             </div>
                                         {:else}
                                             <span class="tournament-display" title={$t('match.clickToAssignTournament')}>{match.tournament_name || match.event || ''}</span>
@@ -943,30 +890,17 @@
                                     >
                                         {#if tournamentEdit.isEditing(detailMatch.id)}
                                             <div class="tournament-cell-edit">
-                                                <input
-                                                    type="text"
-                                                    class="tournament-edit-input"
+                                                <EntityAutocomplete
                                                     bind:value={tournamentEdit.draft}
-                                                    oninput={filterTournaments}
-                                                    onkeydown={tournamentEdit.onKeyDown}
-                                                    onblur={() => setTimeout(tournamentEdit.cancel, 200)}
+                                                    items={tournaments}
+                                                    autofocus
+                                                    blurDelay={200}
                                                     placeholder={$t('match.tournamentNamePlaceholder')}
+                                                    onSelect={selectTournamentOption}
+                                                    onSubmit={() => tournamentEdit.save()}
+                                                    onCancel={tournamentEdit.cancel}
+                                                    onDismiss={tournamentEdit.cancel}
                                                 />
-                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                    <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                        {#each filteredTournaments as t (t.name)}
-                                                            <div
-                                                                class="tournament-dropdown-item"
-                                                                onmousedown={(e) => {
-                                                                    e.preventDefault();
-                                                                    (() => selectTournamentOption(t.name))();
-                                                                }}
-                                                            >
-                                                                {t.name}
-                                                            </div>
-                                                        {/each}
-                                                    </div>
-                                                {/if}
                                             </div>
                                         {:else}
                                             <span class="tournament-display" title={$t('match.clickToEdit')}>{detailMatch.tournament_name || detailMatch.event || '—'}</span>
@@ -1525,16 +1459,6 @@
         position: relative;
     }
 
-    .tournament-edit-input {
-        width: 100%;
-        padding: 2px 4px;
-        border: 1px solid #1976d2;
-        border-radius: 2px;
-        font-size: var(--font-size-small);
-        box-sizing: border-box;
-        outline: none;
-    }
-
     .tournament-display {
         color: #666;
         font-size: var(--font-size-small);
@@ -1542,25 +1466,6 @@
 
     .tournament-display:hover {
         color: #1976d2;
-    }
-
-    .tournament-dropdown {
-        overflow-y: auto;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-        z-index: 9999;
-    }
-
-    .tournament-dropdown-item {
-        padding: 3px 6px;
-        font-size: var(--font-size-small);
-        cursor: pointer;
-    }
-
-    .tournament-dropdown-item:hover {
-        background: #e3f2fd;
     }
 
     .match-comment-display {
