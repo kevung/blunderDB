@@ -2,7 +2,8 @@
 
 > `tasks/` also holds the later plans (`plan-amelioration-2026-08/`,
 > `plan-amelioration-2026-09/`, `plan-amelioration-2026-09b/` — the current one), the per-feature sheets (`ts-bearoff/`,
-> `stats-panel/`, `gammonnet-perf/`, …) and the single open-items list, [`BACKLOG.md`](BACKLOG.md).
+> `stats-panel/`, `gammonnet-perf/`, …) the single open-items list, [`BACKLOG.md`](BACKLOG.md), and closed measurement
+> notes such as [`taille-binaire-2026-09.md`](taille-binaire-2026-09.md).
 > The rest of this file is the v2.0.0 sheet index, kept as execution history.
 
 Hierarchical breakdown of `doc/archive/DATABASE_OPTIMIZATION_PLAN.md` (archived since completion). Each sheet is an independent execution unit, sized ≤500 lines, with checkboxes keyed to concrete `file:line` anchors.
