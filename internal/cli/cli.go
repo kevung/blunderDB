@@ -145,6 +145,23 @@ func (cli *CLI) printVersion() {
 
 // initDatabase initializes the database connection
 func (cli *CLI) initDatabase(dbPath string) error {
+	// ":memory:" is SQLite's special in-memory DSN, never a real path on
+	// disk: always fresh, and there is nothing to os.Stat. That distinction
+	// matters on Windows, where the leading/trailing colons make ":memory:"
+	// a syntactically invalid filename (ERROR_INVALID_NAME, syscall errno
+	// 123) rather than "not found" — os.IsNotExist doesn't recognise that as
+	// absence (unlike ERROR_FILE_NOT_FOUND/ERROR_PATH_NOT_FOUND), so the
+	// generic path below left fileExists at its true default and routed to
+	// OpenDatabase, which fails on a schema that SetupDatabase was never
+	// given a chance to create ("no such table: metadata").
+	if dbPath == ":memory:" {
+		if err := cli.db.SetupDatabase(dbPath); err != nil {
+			return fmt.Errorf("failed to open database: %w", err)
+		}
+		fmt.Fprintf(os.Stderr, "Connected to database: %s\n", dbPath)
+		return nil
+	}
+
 	// Check if database file exists
 	fileExists := true
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
