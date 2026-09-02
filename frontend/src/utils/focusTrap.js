@@ -20,8 +20,12 @@ export function trapFocus(node) {
 
     node.addEventListener('keydown', handleKeydown);
 
+    // Nothing focusable inside (a table, a plain message): the node itself takes the
+    // focus when it can, so the keys pressed on the dialog still bubble through it
+    // rather than landing on <body>.
     const first = node.querySelector(focusableSelector);
     if (first) first.focus();
+    else if (node.hasAttribute('tabindex')) node.focus();
 
     return {
         destroy() {
