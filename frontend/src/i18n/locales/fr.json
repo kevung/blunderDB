@@ -493,6 +493,10 @@
         "confirmDelete": "Supprimer le tournoi « {name} » ?"
     },
     "anki": {
+        "limitSession": "Limiter la séance",
+        "limitSessionHint": "Nombre de cartes servies par séance. Sans limite, la séance va jusqu'au bout des cartes dues ; à 0, aucune carte n'est servie.",
+        "sessionLimitReached": "Limite de séance atteinte : {count} cartes révisées, {remaining} encore dues.",
+        "sessionLimitZero": "Ce paquet est réglé sur 0 carte par séance.",
         "retentionMeasured": "Rétention mesurée : {measured} % sur {sample} révisions",
         "retentionNotEnough": "Rétention mesurée : pas assez de révisions ({sample} sur {needed})",
         "retentionNotRetroactive": "S'applique au fil des révisions ; les échéances déjà fixées ne bougent pas.",

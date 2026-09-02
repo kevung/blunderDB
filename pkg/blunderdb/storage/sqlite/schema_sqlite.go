@@ -205,6 +205,7 @@ var schemaStatements = []string{
 		request_retention REAL DEFAULT 0.9,
 		maximum_interval REAL DEFAULT 36500,
 		enable_fuzz INTEGER DEFAULT 1,
+		session_limit INTEGER,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`,

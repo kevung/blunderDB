@@ -151,6 +151,9 @@ export default {
                         e tornare alla lista dei mazzi.
                     </p>
                     <p>
+                        <strong>Limitare la sessione:</strong> Nelle impostazioni del mazzo puoi limitare una sessione a un numero di carte. La sessione si ferma dicendolo, e l'allenamento libero resta disponibile per proseguire senza toccare la pianificazione. Un limite di <em>0</em> non serve alcuna carta: non è la stessa cosa che nessun limite.
+                    </p>
+                    <p>
                         <strong>Ritenzione:</strong> La ritenzione desiderata è la tua scelta sul compromesso carico/qualità. Le impostazioni mostrano accanto la ritenzione <em>misurata</em> sui tuoi ripassi: un'informazione, mai un pilotaggio. Cambiare l'obiettivo non è retroattivo: ogni carta adotta il nuovo ritmo al ripasso successivo.
                     </p>
                     <p>

@@ -211,7 +211,7 @@ describe('deck lifecycle', () => {
         selectedAnkiDeckStore.set({ id: 5, requestRetention: 0.9 });
         db.GetAllAnkiDecks.mockResolvedValueOnce([{ id: 5, requestRetention: 0.95 }]);
         await saveDeckParams(5, { requestRetention: 0.95, maximumInterval: 100, enableFuzz: false });
-        expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(5, 0.95, 100, false);
+        expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(5, 0.95, 100, false, null);
         expect(get(selectedAnkiDeckStore)).toEqual({ id: 5, requestRetention: 0.95 });
     });
 });

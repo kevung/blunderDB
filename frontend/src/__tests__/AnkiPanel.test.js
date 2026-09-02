@@ -154,7 +154,7 @@ describe('AnkiPanel', () => {
 
         await fireEvent.click(container.querySelector('.settings-actions .btn-primary'));
         await settle();
-        expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(1, 0.85, 365, false);
+        expect(db.UpdateAnkiDeckParams).toHaveBeenCalledWith(1, 0.85, 365, false, null);
         expect(get(ankiViewModeStore)).toBe('list');
     });
 });

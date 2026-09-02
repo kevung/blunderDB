@@ -493,6 +493,10 @@
         "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
     },
     "anki": {
+        "limitSession": "Rajoita istuntoa",
+        "limitSessionHint": "Kuinka monta korttia yksi istunto tarjoaa. Ilman rajaa istunto käy läpi kaikki erääntyneet kortit; arvolla 0 ei tarjota yhtään.",
+        "sessionLimitReached": "Istunnon raja saavutettu: {count} korttia kerrattu, {remaining} yhä erääntynyt.",
+        "sessionLimitZero": "Tämä pakka on asetettu 0 korttiin istuntoa kohden.",
         "retentionMeasured": "Mitattu muistiinjäänti: {measured} % / {sample} kertausta",
         "retentionNotEnough": "Mitattu muistiinjäänti: kertauksia ei ole vielä tarpeeksi ({sample}/{needed})",
         "retentionNotRetroactive": "Vaikuttaa kertausten myötä; jo asetetut eräpäivät eivät muutu.",

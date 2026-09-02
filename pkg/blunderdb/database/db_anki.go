@@ -62,15 +62,20 @@ func (d *Database) UpdateAnkiDeck(id int64, name, description string) error {
 	return d.store.Anki().UpdateDeck(context.Background(), "", id, name, description)
 }
 
-// UpdateAnkiDeckParams updates FSRS parameters of a deck
-func (d *Database) UpdateAnkiDeckParams(id int64, requestRetention float64, maximumInterval float64, enableFuzz bool) error {
+// UpdateAnkiDeckParams updates the scheduling settings of a deck.
+//
+// sessionLimit nil means the deck has no session limit; a pointer to 0 means a
+// limit that serves no card. The two are different states (ADR-0026 rule 3),
+// which is why this crosses the Wails boundary as a pointer and not as a
+// sentinel number.
+func (d *Database) UpdateAnkiDeckParams(id int64, requestRetention float64, maximumInterval float64, enableFuzz bool, sessionLimit *int) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-	return d.store.Anki().UpdateDeckParams(context.Background(), "", id, requestRetention, maximumInterval, enableFuzz)
+	return d.store.Anki().UpdateDeckParams(context.Background(), "", id, requestRetention, maximumInterval, enableFuzz, sessionLimit)
 }
 
 // DeleteAnkiDeck deletes a deck and all its cards

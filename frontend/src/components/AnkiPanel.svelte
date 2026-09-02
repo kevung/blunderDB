@@ -119,6 +119,12 @@
     let settingsRetention = $state(0.9);
     let settingsMaxInterval = $state(36500);
     let settingsFuzz = $state(true);
+    // Session limit as the form holds it: a checkbox for "limited at all" plus
+    // a number. Two controls because nil and 0 are different states — one field
+    // alone would make "no limit" and "serve nothing" the same value
+    // (ADR-0026 rule 3).
+    let settingsLimited = $state(false);
+    let settingsSessionLimit = $state(20);
     // What the deck's log measures, read when the settings view opens. Null
     // until it answers, and reported as unavailable below the sample floor.
     let retention = $state(null);
@@ -219,6 +225,12 @@
     // random cards and never schedules anything.
     async function startSession(cram) {
         if (!selectedDeck) return;
+        // A limit of 0 serves nothing, which is a state of its own and not a
+        // mistake (ADR-0026 rule 3). Said rather than shown as an empty deck.
+        if (!cram && anki.sessionLimitReached(selectedDeck, 0)) {
+            statusBarTextStore.set(tMsg('anki.sessionLimitZero'));
+            return;
+        }
         cramMode = cram;
         try {
             const card = await anki.startSession(selectedDeck, { cram });
@@ -243,6 +255,25 @@
             // In cram mode the rating is ignored — just advance, never schedule.
             const next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
             reviewSessionCount++;
+
+            // The session limit stops the sitting here, and says so: reusing
+            // the ordinary "review complete" message would claim the queue is
+            // empty when the limit is what emptied it (ADR-0026 rule 4). No
+            // "keep going" button — cram already serves more positions, and
+            // unlike an override it schedules nothing.
+            if (next && anki.sessionLimitReached(selectedDeck, reviewSessionCount, { cram: cramMode })) {
+                ankiViewModeStore.set('list');
+                ankiPausedSessionStore.set(null);
+                await anki.loadDecks();
+                const fresh = selectedDeck ? await anki.refreshDeckStats(selectedDeck.id) : null;
+                statusBarTextStore.set(
+                    tMsg('anki.sessionLimitReached', {
+                        count: reviewSessionCount,
+                        remaining: fresh?.dueCount ?? stats?.dueCount ?? 0
+                    })
+                );
+                return;
+            }
             if (next) return;
             ankiViewModeStore.set('list');
             if (cramMode) {
@@ -263,6 +294,9 @@
         settingsRetention = selectedDeck.requestRetention;
         settingsMaxInterval = selectedDeck.maximumInterval;
         settingsFuzz = selectedDeck.enableFuzz;
+        const limit = anki.sessionLimitOf(selectedDeck);
+        settingsLimited = limit !== null;
+        settingsSessionLimit = limit === null ? 20 : limit;
         retention = null;
         anki.deckRetention(selectedDeck.id)
             .then((r) => (retention = r))
@@ -273,7 +307,12 @@
     async function saveSettings() {
         if (!selectedDeck) return;
         try {
-            await anki.saveDeckParams(selectedDeck.id, { requestRetention: settingsRetention, maximumInterval: settingsMaxInterval, enableFuzz: settingsFuzz });
+            await anki.saveDeckParams(selectedDeck.id, {
+                requestRetention: settingsRetention,
+                maximumInterval: settingsMaxInterval,
+                enableFuzz: settingsFuzz,
+                sessionLimit: settingsLimited ? Math.max(0, Math.trunc(settingsSessionLimit)) : null
+            });
             ankiViewModeStore.set('list');
             statusBarTextStore.set(tMsg('anki.settingsSaved'));
         } catch (e) {
@@ -430,6 +469,16 @@
                     {$t('anki.enableFuzz')}
                 </label>
             </div>
+            <div class="settings-row">
+                <label>
+                    <input type="checkbox" bind:checked={settingsLimited} />
+                    {$t('anki.limitSession')}
+                </label>
+                {#if settingsLimited}
+                    <input type="number" bind:value={settingsSessionLimit} min="0" max="9999" step="1" />
+                {/if}
+            </div>
+            <div class="settings-note">{$t('anki.limitSessionHint')}</div>
             <div class="settings-actions">
                 <button class="btn-primary wide" onclick={saveSettings}>{$t('common.save')}</button>
                 <button class="btn-outline wide" onclick={backToList}>{$t('common.cancel')}</button>
@@ -526,7 +575,7 @@
                     {/each}
                 </div>
                 <div class="detail-actions">
-                    <button class="btn-primary btn-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats)}>
+                    <button class="btn-primary btn-study" onclick={() => startSession(false)} disabled={!anki.canStudy(stats, selectedDeck)}>
                         {@render icon(ICON.play)}
                         {#if pausedSession && pausedSession.deckId === selectedDeck.id}
                             {$t('anki.resume', { due: stats.dueCount, reviewed: pausedSession.sessionCount })}

@@ -151,6 +151,9 @@ export default {
                         y volver a la lista de mazos.
                     </p>
                     <p>
+                        <strong>Limitar la sesión:</strong> En los ajustes del mazo puede acotar una sesión a un número de tarjetas. La sesión se detiene indicándolo, y el repaso libre sigue disponible para continuar sin tocar la planificación. Un límite de <em>0</em> no sirve ninguna tarjeta, lo que no equivale a no tener límite.
+                    </p>
+                    <p>
                         <strong>Retención:</strong> La retención objetivo es su elección sobre el compromiso carga/calidad. Los ajustes muestran al lado la retención <em>medida</em> en sus repasos: información, nunca un control. Cambiar el objetivo no es retroactivo: cada tarjeta adopta el nuevo ritmo en su próximo repaso.
                     </p>
                     <p>

@@ -28,7 +28,7 @@ func TestAnkiDeckCRUD(t *testing.T) {
 	if err := s.Anki().UpdateDeck(ctx, "", id, "Backgames", "edited"); err != nil {
 		t.Fatalf("UpdateDeck: %v", err)
 	}
-	if err := s.Anki().UpdateDeckParams(ctx, "", id, 0.85, 180, false); err != nil {
+	if err := s.Anki().UpdateDeckParams(ctx, "", id, 0.85, 180, false, nil); err != nil {
 		t.Fatalf("UpdateDeckParams: %v", err)
 	}
 
@@ -48,6 +48,43 @@ func TestAnkiDeckCRUD(t *testing.T) {
 	}
 	if d.RequestRetention != 0.85 || d.MaximumInterval != 180 || d.EnableFuzz {
 		t.Errorf("deck params: %+v", d)
+	}
+	if d.SessionLimit != nil {
+		t.Errorf("a deck written with no session limit must read back as nil, got %d", *d.SessionLimit)
+	}
+
+	// Nil and zero are different states (ADR-0026 rule 3): "no limit" and "a
+	// limit that serves nothing". A schema or scan that collapses them makes
+	// the second unreachable.
+	zero := 0
+	if err := s.Anki().UpdateDeckParams(ctx, "", id, 0.85, 180, false, &zero); err != nil {
+		t.Fatalf("UpdateDeckParams (zero limit): %v", err)
+	}
+	for d, err := range s.Anki().ListDecks(ctx, "") {
+		if err != nil {
+			t.Fatalf("ListDecks: %v", err)
+		}
+		if d.ID != id {
+			continue
+		}
+		if d.SessionLimit == nil || *d.SessionLimit != 0 {
+			t.Errorf("zero session limit read back as %v, want a pointer to 0", d.SessionLimit)
+		}
+	}
+	twenty := 20
+	if err := s.Anki().UpdateDeckParams(ctx, "", id, 0.85, 180, false, &twenty); err != nil {
+		t.Fatalf("UpdateDeckParams (20): %v", err)
+	}
+	if err := s.Anki().UpdateDeckParams(ctx, "", id, 0.85, 180, false, nil); err != nil {
+		t.Fatalf("UpdateDeckParams (back to no limit): %v", err)
+	}
+	for d, err := range s.Anki().ListDecks(ctx, "") {
+		if err != nil {
+			t.Fatalf("ListDecks: %v", err)
+		}
+		if d.ID == id && d.SessionLimit != nil {
+			t.Errorf("clearing the limit left %d behind", *d.SessionLimit)
+		}
 	}
 
 	if err := s.Anki().DeleteDeck(ctx, "", id); err != nil {

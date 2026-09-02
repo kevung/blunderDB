@@ -27,6 +27,9 @@ type deckParamsReq struct {
 	RequestRetention float64 `json:"requestRetention"`
 	MaximumInterval  float64 `json:"maximumInterval"`
 	EnableFuzz       bool    `json:"enableFuzz"`
+	// Absent or null means "no session limit"; 0 is a limit that serves no
+	// card. A plain int would collapse the two (ADR-0026 rule 3).
+	SessionLimit *int `json:"sessionLimit"`
 }
 
 type deckIDReq struct {
@@ -84,7 +87,7 @@ func (s *Server) ankiRoutes() []route {
 			return as().UpdateDeck(ctx, scope, req.ID, req.Name, req.Description)
 		})},
 		{http.MethodPost, "/v1/anki.updateDeckParams", rpcVoid(func(ctx context.Context, scope string, req deckParamsReq) error {
-			return as().UpdateDeckParams(ctx, scope, req.ID, req.RequestRetention, req.MaximumInterval, req.EnableFuzz)
+			return as().UpdateDeckParams(ctx, scope, req.ID, req.RequestRetention, req.MaximumInterval, req.EnableFuzz, req.SessionLimit)
 		})},
 		{http.MethodPost, "/v1/anki.deleteDeck", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return as().DeleteDeck(ctx, scope, req.ID)

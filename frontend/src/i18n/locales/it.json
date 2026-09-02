@@ -493,6 +493,10 @@
         "confirmDelete": "Eliminare il torneo \"{name}\"?"
     },
     "anki": {
+        "limitSession": "Limitare la sessione",
+        "limitSessionHint": "Quante carte serve una sessione. Senza limite la sessione percorre tutte le carte in scadenza; a 0 non ne serve nessuna.",
+        "sessionLimitReached": "Limite di sessione raggiunto: {count} carte ripassate, {remaining} ancora in scadenza.",
+        "sessionLimitZero": "Questo mazzo è impostato su 0 carte per sessione.",
         "retentionMeasured": "Ritenzione misurata: {measured}% su {sample} ripassi",
         "retentionNotEnough": "Ritenzione misurata: ripassi ancora insufficienti ({sample} su {needed})",
         "retentionNotRetroactive": "Si applica man mano che si ripassa; le scadenze già fissate non cambiano.",

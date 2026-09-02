@@ -150,6 +150,9 @@ export default {
                         ja palataksesi pakkalistaan.
                     </p>
                     <p>
+                        <strong>Istunnon rajoittaminen:</strong> Pakan asetuksissa voit rajata istunnon korttimäärään. Istunto päättyy silloin ilmoittaen syyn, ja vapaa harjoittelu on yhä käytettävissä ilman vaikutusta aikatauluun. Raja <em>0</em> ei tarjoa yhtään korttia — se ei ole sama asia kuin rajaton.
+                    </p>
+                    <p>
                         <strong>Muistiinjäänti:</strong> Tavoitetaso on sinun valintasi työmäärän ja laadun välillä. Asetukset näyttävät sen vieressä omista kertauksistasi <em>mitatun</em> tason — tieto, ei ohjaus. Tavoitteen muutos ei ole takautuva: kukin kortti omaksuu uuden rytmin seuraavassa kertauksessaan.
                     </p>
                     <p>

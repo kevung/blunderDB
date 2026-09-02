@@ -29,7 +29,10 @@ type AnkiStore interface {
 	CreateDeck(ctx context.Context, scope string, name, description, sourceType string, sourceID int64, sourceCommand string) (int64, error)
 	ListDecks(ctx context.Context, scope string) iter.Seq2[*domain.AnkiDeck, error]
 	UpdateDeck(ctx context.Context, scope string, id int64, name, description string) error
-	UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool) error
+	// UpdateDeckParams writes a deck's scheduling settings. sessionLimit nil is
+	// "no limit"; a pointer to 0 is a limit that serves no card — the two are
+	// different states (ADR-0026 rule 3).
+	UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool, sessionLimit *int) error
 	DeleteDeck(ctx context.Context, scope string, id int64) error
 	ResetDeck(ctx context.Context, scope string, deckID int64) error
 

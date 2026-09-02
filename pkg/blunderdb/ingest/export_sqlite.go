@@ -909,7 +909,7 @@ func (e *exporter) writeAnkiDecks() error {
 				return fmt.Errorf("ingest: fill deck %q: %w", sd.d.Name, err)
 			}
 		}
-		if err := e.dst.Anki().UpdateDeckParams(e.ctx, "", newID, sd.d.RequestRetention, sd.d.MaximumInterval, sd.d.EnableFuzz); err != nil {
+		if err := e.dst.Anki().UpdateDeckParams(e.ctx, "", newID, sd.d.RequestRetention, sd.d.MaximumInterval, sd.d.EnableFuzz, sd.d.SessionLimit); err != nil {
 			return fmt.Errorf("ingest: deck %q parameters: %w", sd.d.Name, err)
 		}
 		e.report.AnkiDecks++

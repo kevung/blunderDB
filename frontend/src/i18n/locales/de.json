@@ -493,6 +493,10 @@
         "confirmDelete": "Turnier „{name}“ löschen?"
     },
     "anki": {
+        "limitSession": "Sitzung begrenzen",
+        "limitSessionHint": "Wie viele Karten eine Sitzung zeigt. Ohne Begrenzung läuft die Sitzung durch alle fälligen Karten; bei 0 wird keine Karte gezeigt.",
+        "sessionLimitReached": "Sitzungslimit erreicht: {count} Karten wiederholt, {remaining} weiterhin fällig.",
+        "sessionLimitZero": "Dieses Deck ist auf 0 Karten pro Sitzung eingestellt.",
         "retentionMeasured": "Gemessene Behaltensrate: {measured} % über {sample} Wiederholungen",
         "retentionNotEnough": "Gemessene Behaltensrate: noch zu wenige Wiederholungen ({sample} von {needed})",
         "retentionNotRetroactive": "Wirkt sich nach und nach bei den Wiederholungen aus; bereits gesetzte Fälligkeiten ändern sich nicht.",

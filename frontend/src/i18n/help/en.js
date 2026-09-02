@@ -152,6 +152,9 @@ export default {
                         and return to the deck list.
                     </p>
                     <p>
+                        <strong>Limiting the session:</strong> In the deck settings you can bound a sitting to a number of cards. The session then stops and says so, and free drill remains available to carry on without touching the schedule. A limit of <em>0</em> serves no card — which is not the same as no limit.
+                    </p>
+                    <p>
                         <strong>Retention:</strong> Desired retention is your choice on the workload/quality trade-off. The settings show the <em>measured</em> retention from your own reviews beside it — information, never a control. Changing the target is not retroactive: each card adopts the new rhythm at its next review.
                     </p>
                     <p>
