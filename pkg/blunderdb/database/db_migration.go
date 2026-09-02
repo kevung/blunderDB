@@ -72,6 +72,7 @@ var migrationSteps = []migrationStep{
 	{"2.12.0", "2.13.0", (*Database).migrate_2_12_0_to_2_13_0},
 	{"2.13.0", "2.14.0", (*Database).migrate_2_13_0_to_2_14_0},
 	{"2.14.0", "2.15.0", (*Database).migrate_2_14_0_to_2_15_0},
+	{"2.15.0", "2.16.0", (*Database).migrate_2_15_0_to_2_16_0},
 }
 
 // errStepNotApplicable is returned by the 1.0.0 → 1.6.0 steps when the table

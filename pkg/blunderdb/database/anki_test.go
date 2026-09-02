@@ -78,7 +78,8 @@ func TestUpdateAnkiDeckParams(t *testing.T) {
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
-	if err := db.UpdateAnkiDeckParams(id, 0.85, 180.0, true); err != nil {
+	twenty := 20
+	if err := db.UpdateAnkiDeckParams(id, 0.85, 180.0, true, &twenty); err != nil {
 		t.Fatalf("UpdateAnkiDeckParams: %v", err)
 	}
 
@@ -90,6 +91,9 @@ func TestUpdateAnkiDeckParams(t *testing.T) {
 			}
 			if d.MaximumInterval != 180.0 {
 				t.Errorf("maxInterval = %f, want 180", d.MaximumInterval)
+			}
+			if d.SessionLimit == nil || *d.SessionLimit != 20 {
+				t.Errorf("sessionLimit = %v, want 20", d.SessionLimit)
 			}
 			if !d.EnableFuzz {
 				t.Error("enableFuzz should be true")

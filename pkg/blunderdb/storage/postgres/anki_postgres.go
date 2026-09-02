@@ -25,7 +25,7 @@ var _ storage.AnkiStore = (*ankiStore)(nil)
 // parameter — PostgreSQL evaluates it server-side.
 const ankiDeckSelectExpr = `ad.id, ad.name, COALESCE(ad.description,''),
 	ad.source_type, ad.source_id, COALESCE(ad.source_command,''),
-	ad.request_retention, ad.maximum_interval, ad.enable_fuzz,
+	ad.request_retention, ad.maximum_interval, ad.enable_fuzz, ad.session_limit,
 	ad.created_at, ad.updated_at,
 	(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id),
 	(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ac.due <= now()),
@@ -34,13 +34,17 @@ const ankiDeckSelectExpr = `ad.id, ad.name, COALESCE(ad.description,''),
 func scanAnkiDeck(sc scanner) (domain.AnkiDeck, error) {
 	var d domain.AnkiDeck
 	var createdAt, updatedAt time.Time
+	// NULL is "no limit" and stays nil in the domain; 0 is a limit that serves
+	// nothing. The pointer is what keeps the two apart across the boundary.
+	var sessionLimit *int
 	if err := sc.Scan(&d.ID, &d.Name, &d.Description,
 		&d.SourceType, &d.SourceID, &d.SourceCommand,
-		&d.RequestRetention, &d.MaximumInterval, &d.EnableFuzz,
+		&d.RequestRetention, &d.MaximumInterval, &d.EnableFuzz, &sessionLimit,
 		&createdAt, &updatedAt,
 		&d.CardCount, &d.DueCount, &d.NewCount); err != nil {
 		return domain.AnkiDeck{}, err
 	}
+	d.SessionLimit = sessionLimit
 	d.CreatedAt = tsTime(createdAt)
 	d.UpdatedAt = tsTime(updatedAt)
 	return d, nil
@@ -101,11 +105,11 @@ func (s *ankiStore) UpdateDeck(ctx context.Context, scope string, id int64, name
 }
 
 // UpdateDeckParams changes a deck's FSRS scheduling parameters.
-func (s *ankiStore) UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool) error {
+func (s *ankiStore) UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool, sessionLimit *int) error {
 	if _, err := s.db.Exec(ctx,
 		`UPDATE anki_deck SET request_retention = $1, maximum_interval = $2, enable_fuzz = $3,
-		 updated_at = now() WHERE id = $4 AND tenant_id = $5`,
-		requestRetention, maximumInterval, enableFuzz, id, tenantID(scope)); err != nil {
+		 session_limit = $4, updated_at = now() WHERE id = $5 AND tenant_id = $6`,
+		requestRetention, maximumInterval, enableFuzz, sessionLimit, id, tenantID(scope)); err != nil {
 		return fmt.Errorf("postgres: update anki deck %d params: %w", id, err)
 	}
 	return nil

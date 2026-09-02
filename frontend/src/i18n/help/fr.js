@@ -153,6 +153,9 @@ export default {
                         et revenir à la liste des paquets.
                     </p>
                     <p>
+                        <strong>Limiter la séance :</strong> Dans les Paramètres du paquet, vous pouvez borner une séance à un nombre de cartes. La séance s'arrête alors en le disant, et l'entraînement libre reste disponible pour continuer sans toucher au planning. Une limite de <em>0</em> ne sert aucune carte — ce n'est pas la même chose que « pas de limite ».
+                    </p>
+                    <p>
                         <strong>Rétention :</strong> La rétention cible est votre choix sur le compromis charge/qualité. Les Paramètres affichent en regard la rétention <em>mesurée</em> sur vos révisions — une information, jamais un pilotage. Changer la cible n'est pas rétroactif : chaque carte adopte le nouveau rythme à sa prochaine révision.
                     </p>
                     <p>

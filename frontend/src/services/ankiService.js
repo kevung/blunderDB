@@ -143,8 +143,37 @@ export function resumedSessionCount(pausedSession, deck, cram = false) {
 }
 
 /** A study session needs due cards; a cram session only needs cards. */
-export function canStudy(stats) {
-    return !!stats && stats.dueCount > 0;
+/**
+ * Whether a study session can serve anything right now.
+ *
+ * A deck whose session limit is 0 has cards due and serves none of them
+ * (ADR-0026 rule 3), so the button must be inactive: without this, the user
+ * clicks and nothing happens, and discovers the limit by bumping into it.
+ * A null/undefined limit is no limit.
+ */
+export function canStudy(stats, deck) {
+    if (!stats || stats.dueCount <= 0) return false;
+    return sessionLimitOf(deck) !== 0;
+}
+
+/**
+ * A deck's session limit as a number, or null when the deck has none.
+ * `0` is a limit — it is not "no limit" — so this must not use `||`.
+ */
+export function sessionLimitOf(deck) {
+    const v = deck?.sessionLimit;
+    return v === null || v === undefined ? null : v;
+}
+
+/**
+ * Whether a session that has already served `count` cards has reached the
+ * deck's limit. Cram is never bounded by it (ADR-0026 rule 2): free drill
+ * schedules nothing, so there is nothing to pace.
+ */
+export function sessionLimitReached(deck, count, { cram = false } = {}) {
+    if (cram) return false;
+    const limit = sessionLimitOf(deck);
+    return limit !== null && count >= limit;
 }
 
 export function canCram(stats) {
@@ -275,8 +304,8 @@ export async function resetDeck(deckId) {
 }
 
 /** Save FSRS parameters and refresh the selected deck from the reloaded list. */
-export async function saveDeckParams(deckId, { requestRetention, maximumInterval, enableFuzz }) {
-    await UpdateAnkiDeckParams(deckId, requestRetention, maximumInterval, enableFuzz);
+export async function saveDeckParams(deckId, { requestRetention, maximumInterval, enableFuzz, sessionLimit = null }) {
+    await UpdateAnkiDeckParams(deckId, requestRetention, maximumInterval, enableFuzz, sessionLimit);
     const decks = await loadDecks();
     const updated = decks.find((d) => d.id === deckId);
     if (updated && get(selectedAnkiDeckStore)?.id === deckId) selectedAnkiDeckStore.set(updated);

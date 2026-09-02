@@ -216,6 +216,7 @@ CREATE TABLE IF NOT EXISTS anki_deck (
     request_retention  DOUBLE PRECISION DEFAULT 0.9,
     maximum_interval   DOUBLE PRECISION DEFAULT 36500,
     enable_fuzz        BOOLEAN DEFAULT TRUE,
+    session_limit      INTEGER,
     created_at         TIMESTAMPTZ DEFAULT now(),
     updated_at         TIMESTAMPTZ DEFAULT now()
 );

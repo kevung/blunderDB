@@ -39,7 +39,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.15.0"
+	DatabaseVersion = "2.16.0"
 )
 
 // Anki deck source types
@@ -59,11 +59,21 @@ type AnkiDeck struct {
 	RequestRetention float64 `json:"requestRetention"` // target retention rate (0.7-0.99)
 	MaximumInterval  float64 `json:"maximumInterval"`  // max days between reviews
 	EnableFuzz       bool    `json:"enableFuzz"`       // add randomness to intervals
-	CardCount        int     `json:"cardCount"`        // total cards
-	DueCount         int     `json:"dueCount"`         // cards due for review
-	NewCount         int     `json:"newCount"`         // new cards not yet reviewed
-	CreatedAt        string  `json:"createdAt"`
-	UpdatedAt        string  `json:"updatedAt"`
+	// SessionLimit caps how many cards one sitting serves (ADR-0026 rule 2).
+	// Nil is no limit — the default, and what every deck that predates the
+	// column has. Zero is NOT the same thing: it serves no card at all, which
+	// is a real use (freezing a deck while preparing for a tournament) and the
+	// conflation Anki is known for.
+	//
+	// A session, never a day: a deck is a finite corpus, so a daily cap would
+	// either never bite or manufacture a backlog on a deck that fitted in one
+	// sitting. Nothing here needs to know what a "day" is.
+	SessionLimit *int   `json:"sessionLimit"`
+	CardCount    int    `json:"cardCount"` // total cards
+	DueCount     int    `json:"dueCount"`  // cards due for review
+	NewCount     int    `json:"newCount"`  // new cards not yet reviewed
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
 }
 
 // AnkiCard represents a single FSRS card linked to a position

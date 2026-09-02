@@ -560,3 +560,14 @@ func (d *Database) migrate_2_14_0_to_2_15_0(_ context.Context) error {
 
 	return nil
 }
+
+// migrate_2_15_0_to_2_16_0 adds anki_deck.session_limit (ADR-0026 rule 2).
+//
+// Nullable with no default, so every existing deck comes out of the migration
+// with NO limit and behaves exactly as before: a setting that is introduced
+// must never change how existing data behaves.
+func (d *Database) migrate_2_15_0_to_2_16_0(_ context.Context) error {
+	_, _ = d.db.Exec(`ALTER TABLE anki_deck ADD COLUMN session_limit INTEGER`) // may already exist
+
+	return nil
+}

@@ -152,6 +152,9 @@ export default {
                         und zur Deck-Liste zurückzukehren.
                     </p>
                     <p>
+                        <strong>Sitzung begrenzen:</strong> In den Deck-Einstellungen können Sie eine Sitzung auf eine Kartenzahl begrenzen. Die Sitzung endet dann mit einem entsprechenden Hinweis; das freie Üben bleibt verfügbar, ohne den Plan zu verändern. Eine Begrenzung auf <em>0</em> zeigt keine Karte — was nicht dasselbe ist wie keine Begrenzung.
+                    </p>
+                    <p>
                         <strong>Behaltensrate:</strong> Die Zielrate ist Ihre Wahl beim Kompromiss zwischen Aufwand und Qualität. Daneben zeigen die Einstellungen die <em>gemessene</em> Rate aus Ihren Wiederholungen — eine Information, keine Steuerung. Eine Änderung wirkt nicht rückwirkend: Jede Karte übernimmt den neuen Rhythmus bei ihrer nächsten Wiederholung.
                     </p>
                     <p>

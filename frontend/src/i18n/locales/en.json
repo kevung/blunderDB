@@ -493,6 +493,10 @@
         "confirmDelete": "Delete tournament \"{name}\"?"
     },
     "anki": {
+        "limitSession": "Limit the session",
+        "limitSessionHint": "How many cards one sitting serves. With no limit the session runs through every due card; at 0 no card is served.",
+        "sessionLimitReached": "Session limit reached: {count} cards reviewed, {remaining} still due.",
+        "sessionLimitZero": "This deck is set to 0 cards per session.",
         "retentionMeasured": "Measured retention: {measured}% over {sample} reviews",
         "retentionNotEnough": "Measured retention: not enough reviews yet ({sample} of {needed})",
         "retentionNotRetroactive": "Applies as reviews happen; due dates already set do not move.",

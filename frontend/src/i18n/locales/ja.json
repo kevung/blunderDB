@@ -493,6 +493,10 @@
         "confirmDelete": "トーナメント「{name}」を削除しますか?"
     },
     "anki": {
+        "limitSession": "1 セッションの枚数を制限する",
+        "limitSessionHint": "1 回のセッションで出題する枚数です。制限なしの場合は期限切れのカードをすべて出題します。0 の場合は 1 枚も出題しません。",
+        "sessionLimitReached": "セッションの上限に達しました：{count} 枚を復習、残り {remaining} 枚。",
+        "sessionLimitZero": "この덱は 1 セッション 0 枚に設定されています。",
         "retentionMeasured": "実測の保持率：{sample} 回の復習で {measured} %",
         "retentionNotEnough": "実測の保持率：復習回数が不足しています（{needed} 回中 {sample} 回）",
         "retentionNotRetroactive": "以後の復習から順に反映されます。すでに決まっている期日は変わりません。",

@@ -31,7 +31,7 @@ func ankiNow() string { return time.Now().UTC().Format(ankiTimeLayout) }
 // the due-count subquery.
 const ankiDeckSelectCols = `ad.id, ad.name, COALESCE(ad.description,''),
 	ad.source_type, ad.source_id, COALESCE(ad.source_command,''),
-	ad.request_retention, ad.maximum_interval, ad.enable_fuzz,
+	ad.request_retention, ad.maximum_interval, ad.enable_fuzz, ad.session_limit,
 	COALESCE(ad.created_at,''), COALESCE(ad.updated_at,''),
 	(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id),
 	(SELECT COUNT(*) FROM anki_card ac WHERE ac.deck_id = ad.id AND ac.due <= ?),
@@ -40,14 +40,21 @@ const ankiDeckSelectCols = `ad.id, ad.name, COALESCE(ad.description,''),
 func scanAnkiDeck(sc interface{ Scan(...any) error }) (domain.AnkiDeck, error) {
 	var d domain.AnkiDeck
 	var enableFuzz int
+	// NULL is "no limit" and stays nil in the domain; 0 is a limit that serves
+	// nothing. sql.NullInt64 is what keeps the two apart across the boundary.
+	var sessionLimit sql.NullInt64
 	if err := sc.Scan(&d.ID, &d.Name, &d.Description,
 		&d.SourceType, &d.SourceID, &d.SourceCommand,
-		&d.RequestRetention, &d.MaximumInterval, &enableFuzz,
+		&d.RequestRetention, &d.MaximumInterval, &enableFuzz, &sessionLimit,
 		&d.CreatedAt, &d.UpdatedAt,
 		&d.CardCount, &d.DueCount, &d.NewCount); err != nil {
 		return domain.AnkiDeck{}, err
 	}
 	d.EnableFuzz = enableFuzz != 0
+	if sessionLimit.Valid {
+		v := int(sessionLimit.Int64)
+		d.SessionLimit = &v
+	}
 	return d, nil
 }
 
@@ -108,11 +115,15 @@ func (s *ankiStore) UpdateDeck(ctx context.Context, scope string, id int64, name
 }
 
 // UpdateDeckParams changes a deck's FSRS scheduling parameters.
-func (s *ankiStore) UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool) error {
+func (s *ankiStore) UpdateDeckParams(ctx context.Context, scope string, id int64, requestRetention, maximumInterval float64, enableFuzz bool, sessionLimit *int) error {
+	var limit any
+	if sessionLimit != nil {
+		limit = *sessionLimit
+	}
 	if _, err := s.db.ExecContext(ctx,
 		`UPDATE anki_deck SET request_retention = ?, maximum_interval = ?, enable_fuzz = ?,
-		 updated_at = datetime('now') WHERE id = ?`,
-		requestRetention, maximumInterval, boolToInt(enableFuzz), id); err != nil {
+		 session_limit = ?, updated_at = datetime('now') WHERE id = ?`,
+		requestRetention, maximumInterval, boolToInt(enableFuzz), limit, id); err != nil {
 		return fmt.Errorf("sqlite: update anki deck %d params: %w", id, err)
 	}
 	return nil

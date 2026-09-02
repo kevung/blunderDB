@@ -1256,6 +1256,24 @@ panneau Éval ou le commentaire de la position, elle vous attendra au retour.
 Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
 masquée.
 
+**Limiter la séance.** Par défaut, une séance de révision va jusqu'au bout des
+cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les
+Paramètres : cochez *Limiter la séance* et indiquez combien de cartes une séance
+doit servir. Quand la limite est atteinte, la séance s'arrête en le disant — le
+message distingue « limite atteinte, tant de cartes encore dues » d'une file
+réellement épuisée. Pour continuer malgré tout, l'entraînement libre est là : il
+sert d'autres positions sans rien modifier au planning.
+
+Une limite de **0** ne sert aucune carte : c'est un état à part entière, utile
+pour geler un paquet le temps de préparer un tournoi, et ce n'est pas la même
+chose que « pas de limite ». Le bouton *Study* est alors inactif.
+
+La limite porte sur la **séance**, pas sur la journée. Un paquet blunderDB est
+bâti sur une collection ou une recherche : c'est un corpus fini, introduit en
+quelques séances, dont le volume quotidien est déjà borné par sa taille. Un
+plafond par jour n'y mordrait jamais, ou bien créerait un retard sur un paquet
+qui tenait en une séance.
+
 **Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, lance une
 session d'entraînement libre : des positions aléatoires du paquet vous sont
 présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais
