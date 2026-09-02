@@ -197,6 +197,19 @@ One Position of an Anki deck, presented as a question. The question is the Posit
 board; the Answer is its stored Analysis. A card asks one question and receives one grade —
 there is no notion of a partly answered card.
 
+**Session limit** (of an Anki deck):
+How many Review cards one sitting serves before it ends. A property of the deck, like its
+target retention — never a daily quota: a deck is a finite corpus, so the daily volume is
+already bounded by its size, and a cap on a day either never bites or manufactures a
+backlog. Unlimited by default; zero means "no cards this session", which is not the same
+thing as no limit.
+
+**Observed retention** (of an Anki deck):
+The pass rate actually measured over a deck's review log, read against its target
+retention. An observation, never a control: the target is the user's choice on the
+work/knowledge trade-off, and steering it to chase the observation is the one mechanism
+FSRS's authors reject.
+
 **Answer** (of a Review card):
 The stored Analysis of the card's Position — never a live evaluation. A card whose Position
 carries no Analysis has no Answer, which is a state the panel names rather than hides: an
