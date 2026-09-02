@@ -47,16 +47,34 @@ L'intention de #110 sans violer ADR-0006 : après un import, une file ordonnée
 avec quatre gestes par position : commenter / collection / carte Anki /
 passer. Prérequis : I.1.
 
-### I.4 — Import OGXM et codec OGID (rouvre #114) [M] — compét, dev — valeur haute (#260)
-Format MIT entièrement spécifié (HedgeHog/OpenGammon), TLV, jusqu'à 16 blocs
-d'analyse par match signés Ed25519. Parseur dans un module séparé (comme
-`gnubgparser`), version épinglée ; OGID à côté de XGID dans `parser/` et dans
-le collage. Prompt P9 recense la spec et son état.
+### I.4 — Codec OGID et import bgammon.org (remplace « OGXM », #114) [M] — compét, dev — valeur moyenne
+**Fiche réécrite le 2026-09-03 après le rapport [P9](../../docs/recherche/P9-formats-de-fichiers.md).**
+Le format « OGXM / OGXM-JSON » sur lequel reposait la version initiale de cette fiche
+(conteneur binaire TLV, seize blocs d'analyse signés Ed25519) **n'a aucune existence
+publique vérifiable** : ni spécification, ni dépôt, ni trace web. Ne pas écrire ce
+parseur. Ce qui existe et vaut le détour :
+- **OGID** (OpenGammon Position ID) : encodage de position base-26 à champs séparés par
+  deux-points, attesté par le projet AnkiGammon. C'est un identifiant de position, comme
+  XGID : il se range à côté dans `pkg/blunderdb/parser/` et dans la détection au collage
+  (I.6). Effort S une fois la grammaire relevée sur des échantillons réels.
+- **bgammon.org** : serveur open source écrit en Go (Trevor Slocum), la cible d'import la
+  plus facile du paysage — code lisible, format accessible, communauté active. Effort M.
+- Prérequis commun : collecter des échantillons réels et les verser en `testdata/` avant
+  d'écrire quoi que ce soit ; contenir chaque parseur derrière un corpus, comme BGF.
 
-### I.5 — Presse-papier Heroes (rouvre #61) [S/M] — club — valeur moyenne-haute (#261)
-Un parseur de plus dans `pkg/blunderdb/parser/`, détection automatique au
-collage. Prérequis : collecter des échantillons réels (Discord) et les
-verser en `testdata/` ; parseur contenu derrière un corpus, comme BGF.
+### I.5 — Vérifier la couverture indirecte des plateformes en ligne (remplace « Heroes », #61) [S] — club — valeur à mesurer
+**Fiche réécrite le 2026-09-03 après le rapport [P9](../../docs/recherche/P9-formats-de-fichiers.md).**
+Backgammon Studio/Heroes, Backgammon Galaxy et GammonSpace **produisent déjà des fichiers
+importables par XG** (Studio livre même un paquet d'intégration qui se dépose dans le
+dossier XG) : leurs matchs arrivent donc dans blunderDB par le chemin `.xg` existant, sans
+parseur dédié. Avant d'écrire une ligne :
+- [ ] Récupérer un match exporté depuis chacune des trois plateformes, l'importer, et
+      constater ce qui passe et ce qui manque (analyses, luck, marques, commentaires).
+- [ ] Écrire le résultat dans la FAQ (« mes matchs Galaxy/Heroes sont-ils importables ? »),
+      qui est aujourd'hui muette là-dessus.
+- [ ] N'ouvrir un ticket de parseur que si la mesure montre une perte réelle.
+Les formats texte hérités que gnuBG sait déjà lire (`.sgg` GridGammon, `.tmg`, `.gam`,
+Snowie `.txt`) sont une seconde vague possible, à instruire de la même façon.
 
 ### I.6 — Coller un identifiant et enrichir un match depuis un fichier [S] — club, coach (#262)
 Champ / commande `import XGID=…|OGID=…` (le serveur a déjà
@@ -247,7 +265,7 @@ FSRS, réparation des analyses : six capacités qui n'existent que sur `/v1`
 | Fiches | Effort | Prérequis techniques |
 |---|---|---|
 | I.6, I.16, I.22, I.25, I.32 | S | D.11 ; — ; — ; — ; — |
-| I.5, I.8, I.14, I.17, I.24 | S/M | corpus ; — ; — ; — ; — |
+| I.5, I.8, I.14, I.17, I.24 | S/M | mesure ; — ; — ; — ; — |
 | I.1, I.2, I.3, I.4, I.7, I.9, I.10, I.11, I.12, I.13, I.15, I.18-21, I.23, I.26-31, I.33, I.34 | M | voir fiche |
 
 Bumps de schéma demandés par ce lot : I.1 (lot d'import), I.7 (origine des

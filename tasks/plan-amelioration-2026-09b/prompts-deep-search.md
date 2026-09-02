@@ -1,8 +1,18 @@
 <!-- Annexe du plan tasks/plan-amelioration-2026-09b/README.md : les questions
-telles qu'elles sont posées. Les rapports se versent sous docs/recherche/
-(P5 et suivants, la numérotation P1-P4 étant prise par la campagne gammonNet). -->
+telles qu'elles sont posées. Les rapports sont versés sous docs/recherche/. -->
 
 # Prompts de deep search
+
+> **Les quatorze ont été exécutés le 2026-09-03 et leurs rapports sont versés sous
+> [`docs/recherche/`](../../docs/recherche/README.md)** (index et synthèse dans son
+> README). Quatre d'entre eux ont contredit une fiche du plan, qui a été corrigée le
+> jour même : **P9** (le format OGXM n'existe pas → I.4 réécrite ; Heroes passe par XG →
+> I.5 réécrite ; XG n'existe qu'en sept langues → B.7), **P6** (l'efficacité du videau
+> n'est ni par propriétaire chez gnubg ni chez Janowski → C.5 devient une question de
+> modèle, et la forme close de C.7 est confirmée), **P11** (zstd 19 avec dictionnaire
+> plutôt que zlib → B.12), **P13** (une table de correspondance nom→id est l'alternative
+> documentée au refus strict retenu en A.1). Les questions restent ci-dessous telles
+> qu'elles ont été posées.
 
 Chaque prompt est autonome et se donne tel quel à un moteur de recherche
 approfondie. Convention des rapports (`docs/recherche/README.md`) : chaque

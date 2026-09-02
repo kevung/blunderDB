@@ -130,6 +130,9 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
 
 `cube.go:509-526` bissecte 60 fois une fonction **linéaire par morceaux et
 monotone** dont les 3-4 segments sont connus (`levelLive`, `:471-497`) :
+le rapport [P6](../../docs/recherche/P6-videau-janowski.md) confirme que **la bissection
+est superflue** — Janowski donne take point, cash point et too-good en forme close, et au
+score le take point live est un produit récursif fini, donc encore une forme close.
 38,9 % du profil d'une décision 2-ply au score. L'inversion en forme close est
 O(1) et exacte. Gain conceptuel → **gammonNet d'abord** (`gn_cube.c`, mesure,
 spec), régénération de `cube_gold.bin`, puis port. Le « valuer le videau par

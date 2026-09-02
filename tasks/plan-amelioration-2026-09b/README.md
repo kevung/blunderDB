@@ -14,6 +14,13 @@ d'être cités ailleurs.
 
 Chaque fiche a son issue GitHub (#155 à #300, numéro dans le titre de la fiche), rangée dans le jalon de son étape.
 
+**Les quatorze recherches externes (P5-P18) ont été rendues le 2026-09-03** et sont
+versées sous [`docs/recherche/`](../../docs/recherche/README.md). Quatre d'entre elles
+contredisaient une fiche : I.4 et I.5 ont été réécrites (le format OGXM n'existe pas ;
+Heroes passe déjà par XG), C.5 est devenue une question de modèle à trancher en amont
+(ni gnubg ni Janowski ne font dépendre l'efficacité du videau du propriétaire), B.12
+passe à zstd avec dictionnaire. Lire l'index avant d'ouvrir une fiche de recherche.
+
 Format : `[effort S/M/L]` — S ≤ ½ journée, M ≤ 2-3 jours, L = chantier. Une
 fiche = une branche = une PR, dans un worktree (`CLAUDE.md`, « Development
 Workflow »). Toute fiche visible par l'utilisateur embarque sa doc française

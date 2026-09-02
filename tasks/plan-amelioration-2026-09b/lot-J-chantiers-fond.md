@@ -17,16 +17,18 @@ raison qu'un bundle de filtres sauvegardés n'y suffit pas ; un classifieur, si.
 
 - **J.1a Type de jeu** (course, holding, backgame, blitz, prime vs prime,
   containment, ace-point, crunch, mutual holding) par heuristiques publiées
-  (prompt P5 : Robertie, Magriel, Woolsey, Trice, gnubg `ClassifyPosition`,
-  seuils). Étiquette **dérivée, jamais éditable, recalculée à l'ouverture**
+  (rapport [P5](../../docs/recherche/P5-classification-type-de-jeu.md), qui livre un arbre
+  de dix règles ordonnées : frontières de gnubg d'abord, couche « plan de jeu » ensuite,
+  cette dernière assumée comme heuristique locale faute de seuils publiés). Étiquette **dérivée, jamais éditable, recalculée à l'ouverture**
   (comme la phase I.8), donc jamais exportée comme vérité. Corpus étiqueté à
   la main (200 positions) pour valider ; règles publiées dans la doc.
 - **J.1b Thèmes d'erreur** (trop passif, trop agressif, timing, gammon
   sous-estimé, take trop lâche, double trop tôt/tard, sécurité) dérivés de la
   comparaison coup joué / meilleur coup sur des axes mesurables (Δ gammon,
   Δ blots, Δ points faits, direction de l'erreur de videau qui existe déjà).
-  5-6 thèmes défendables, pas 20 (prompt P18 pour ce que font Lichess,
-  Chess.com, GTO Wizard).
+  5-6 thèmes défendables, pas 20 (rapport [P18](../../docs/recherche/P18-taxonomie-erreurs.md) : échecs et poker
+  convergent sur une unité unique de gravité, la perte de probabilité de gain, et sur
+  très peu de catégories).
 - **J.1c Erreurs récurrentes** : regroupement des blunders par signature
   (type + thème + motif du coup manqué), classé par coût MWC cumulé — la
   promesse du nom du produit, tenue à moitié aujourd'hui.
@@ -40,8 +42,9 @@ raison qu'un bundle de filtres sauvegardés n'y suffit pas ; un classifieur, si.
 La seule façon de départager deux coups à 0,005 et la principale raison de
 retourner dans XG. 288/1296 parties tronquées à N coups puis évaluées à
 2-ply, dés en miroir, écart-type et intervalle de confiance affichés, arrêt
-quand l'intervalle sépare les deux meilleurs (prompt P8 : variance, critères
-d'arrêt, paramètres publiés de gnubg/XG).
+quand l'intervalle sépare les deux meilleurs (rapport [P8](../../docs/recherche/P8-rollouts.md) : dés
+quasi-aléatoires par multiples de 36, et surtout la statistique d'arrêt porte sur la
+**différence** entre les deux meilleurs, la JSD de gnubg, pas sur un écart-type isolé).
 - C'est une **Configuration** au sens de CONTEXT.md (nouveau `EngineVersion`,
   jauge de force) → décision amont gammonNet d'abord ; l'infrastructure
   d'ici est prête (`Searcher` réutilisable, `Verdict` exporté pour ça,
@@ -56,8 +59,10 @@ d'arrêt, paramètres publiés de gnubg/XG).
 Personne ne rencontre deux fois la même position ; c'est ce que l'utilisateur
 croit demander quand il cherche par structure. Métrique : distance sur le
 vecteur de 26 points, ou sur l'espace latent de gammonNet (l'avant-dernière
-couche est un embedding gratuit et déjà dans le binaire) ; index : scan
-linéaire SIMD suffit sous 100 k positions, sinon LSH/HNSW pur Go (prompt P7).
+couche est un embedding gratuit et déjà dans le binaire) ; index : le rapport
+[P7](../../docs/recherche/P7-similarite-knn-go.md) établit qu'un **scan linéaire
+exhaustif suffit jusqu'à ~100 k positions** et recommande de commencer par le vecteur
+brut plutôt que par l'espace latent.
 
 - Prototyper d'abord (skill `prototype`) : 50 positions, deux métriques, un
   joueur juge si « proche » selon la métrique = proche selon lui.
@@ -73,8 +78,9 @@ ne relie aux erreurs du joueur.
 - Le mode édition existe ; la reconnaissance « ce coup légal correspond à tel
   candidat » se normalise par la génération de coups du moteur.
 - I.17 (micro-entraînements) en est le prototype ; J.4 est le module complet.
-- Prompt P10 : pratiques pédagogiques et FSRS à note dérivée d'une mesure
-  (I.20/I.19 en profitent).
+- Rapport [P10](../../docs/recherche/P10-pedagogie-fsrs-gradue.md) : dériver la note des
+  **seuils natifs des moteurs** (XG : erreur à 0,020 d'équité normalisée, blunder à
+  0,080) plutôt que d'inventer une échelle. I.19 et I.20 en profitent.
 
 ## J.5 — Interface web sur `serve`, puis mobile en consultation (#295)
 
