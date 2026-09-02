@@ -31,6 +31,15 @@ func (shared) TenantFilter(alias, scope string) (string, []any) {
 	}
 	return col + " = ?", []any{tenantID(scope)}
 }
+func (shared) TenantColumns(scope string) ([]string, []any) {
+	return []string{"tenant_id"}, []any{tenantID(scope)}
+}
+func (shared) Bool(col string, v bool) string {
+	if v {
+		return col + " = TRUE"
+	}
+	return col + " = FALSE"
+}
 func (shared) Bigint(expr string) string { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string             { return "ILIKE" }
 func (shared) TimestampArg() string      { return "?::timestamptz" }

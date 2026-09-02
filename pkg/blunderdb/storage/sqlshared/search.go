@@ -1,9 +1,7 @@
-package sqlite
+package sqlshared
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"iter"
 	"math"
 	"strconv"
@@ -15,9 +13,11 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
 
-type searchStore struct{ db execer }
+// SearchStore implements storage.SearchStore. position is a domain table:
+// the query is confined to the scope's tenant through Dialect.TenantFilter.
+type SearchStore struct{ DB Execer }
 
-var _ storage.SearchStore = (*searchStore)(nil)
+var _ storage.SearchStore = (*SearchStore)(nil)
 
 // statsErrExpr is the SQL CASE expression that selects the correct error
 // column based on a position's decision type.
@@ -26,9 +26,10 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 // Find streams the positions matching f. It is a faithful port of the
 // Database wrapper's LoadPositionsByFiltersCore: the cheap predicates are
 // pushed to SQL, the rest are evaluated in Go on the narrowed result set.
-func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFilters) iter.Seq2[*domain.Position, error] {
+// Results are restricted to the scope's tenant.
+func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFilters) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
-		positions, err := s.find(ctx, f)
+		positions, err := s.find(ctx, scope, f)
 		if err != nil {
 			yield(nil, err)
 			return
@@ -41,7 +42,7 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 	}
 }
 
-func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domain.Position, error) {
+func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
 	// The decoded analysis is consumed by the move-pattern filter, the Go-side
@@ -73,21 +74,23 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	// clear those points from the include filter so the two are not contradictory.
 	effInclude := domain.EffectiveIncludeFilter(f.Filter, f.ExcludeFilter)
 
+	// The tenant predicate comes first, and its arguments first, so the
+	// placeholders line up once the PostgreSQL adapter has rebound them.
 	var where strings.Builder
-	var args []any
-	where.WriteString("1=1")
+	tenant, args := s.DB.TenantFilter("p", scope)
+	where.WriteString(tenant)
 
 	// Provenance is a property of the row, not of the board, so mirroring a
 	// position cannot change it: this one filter stays in SQL even in mirror
 	// search, where every board filter falls back to the Go phase.
 	if f.IndividuallyImportedFilter {
-		where.WriteString(" AND p.individually_imported = 1")
+		where.WriteString(" AND " + s.DB.Bool("p.individually_imported", true))
 	}
 
 	// The source-tool study mark is likewise a property of the row, so it too
 	// stays in SQL even in mirror search.
 	if f.FlaggedFilter {
-		where.WriteString(" AND p.flagged = 1")
+		where.WriteString(" AND " + s.DB.Bool("p.flagged", true))
 	}
 
 	// Whether a position carries a comment is likewise a property of the row and
@@ -101,13 +104,19 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	// `c.text <> ''` evaluates to NULL — not false — on a NULL row, which would
 	// silently drop it from EXISTS and keep it in NOT EXISTS. Empty text counts
 	// as no comment either way (see CONTEXT.md).
-	switch f.CommentFilter {
-	case "has":
-		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c" +
-			" WHERE c.position_id = p.id AND COALESCE(c.text, '') <> '')")
-	case "none":
-		where.WriteString(" AND NOT EXISTS (SELECT 1 FROM comment c" +
-			" WHERE c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+	//
+	// On PostgreSQL the subquery carries tenant_id as well as position_id: it
+	// is what idx_comment_position is keyed on, and RLS aside, a scope must
+	// never read across tenants.
+	if f.CommentFilter == "has" || f.CommentFilter == "none" {
+		cTenant, cArgs := s.DB.TenantFilter("c", scope)
+		not := ""
+		if f.CommentFilter == "none" {
+			not = "NOT "
+		}
+		where.WriteString(" AND " + not + "EXISTS (SELECT 1 FROM comment c" +
+			" WHERE " + cTenant + " AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+		args = append(args, cArgs...)
 	}
 
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
@@ -120,7 +129,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		if f.TournamentIDsFilter != "" {
 			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
 				for _, tID := range tIDs {
-					if matchIDs, err := getMatchIDsForTournament(ctx, s.db, tID); err == nil {
+					if matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID); err == nil {
 						allMatchIDs = append(allMatchIDs, matchIDs...)
 					}
 				}
@@ -141,14 +150,17 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	}
 
 	// Player filter: keep positions that occur in any match where the named
-	// player sat at either seat. LIKE (no wildcards) gives case-insensitive
-	// exact matching for ASCII names, mirroring the match-id subquery shape.
+	// player sat at either seat. A case-insensitive LIKE with no wildcards
+	// (Dialect.ILike: SQLite's LIKE is already case-insensitive for ASCII,
+	// PostgreSQL needs ILIKE) gives exact matching for ASCII names, mirroring
+	// the match-id subquery shape.
 	if f.PlayerFilter != "" {
+		like := s.DB.ILike()
 		where.WriteString(
 			" AND p.id IN (SELECT mv.position_id FROM move mv" +
 				" JOIN game g ON mv.game_id = g.id" +
 				" JOIN match mt ON g.match_id = mt.id" +
-				" WHERE mt.player1_name LIKE ? OR mt.player2_name LIKE ?)")
+				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
 		args = append(args, f.PlayerFilter, f.PlayerFilter)
 	}
 
@@ -197,9 +209,9 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			if f.Filter.DecisionType == domain.CubeAction {
 				switch f.CubeResponseFilter {
 				case "double":
-					where.WriteString(" AND p.is_cube_response = 0")
+					where.WriteString(" AND " + s.DB.Bool("p.is_cube_response", false))
 				case "takepass":
-					where.WriteString(" AND p.is_cube_response = 1")
+					where.WriteString(" AND " + s.DB.Bool("p.is_cube_response", true))
 				}
 			}
 		}
@@ -243,7 +255,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			args = append(args, f.Filter.Score[0], f.Filter.Score[1])
 		}
 		if f.NoContactFilter {
-			where.WriteString(" AND p.no_contact = 1")
+			where.WriteString(" AND " + s.DB.Bool("p.no_contact", true))
 		}
 
 		pMin, pMax, pHasMin, pHasMax := searchfilter.ParseIntFilterExpr(f.PipCountFilter, "p")
@@ -271,6 +283,8 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		// carries position_id as a third column (schema_sqlite.go) so the
 		// subquery is answered from the index alone, no analysis-table lookup.
 		// See FOLLOWUPS.md #4 and fiche-05 T3 for the verified EXPLAIN QUERY PLAN.
+		// PostgreSQL's idx_analysis_win_gammon_covering plays the same role,
+		// which is why the subquery also carries the tenant predicate there.
 		var winGammonWhere strings.Builder
 		var winGammonArgs []any
 		wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
@@ -278,7 +292,9 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		gMin, gMax, gHasMin, gHasMax := searchfilter.ParseFloatFilterExpr(f.GammonRateFilter, "g")
 		searchfilter.AppendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
 		if winGammonWhere.Len() > 0 {
-			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE 1=1" + winGammonWhere.String() + ")")
+			aTenant, aArgs := s.DB.TenantFilter("", scope)
+			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String() + ")")
+			args = append(args, aArgs...)
 			args = append(args, winGammonArgs...)
 		}
 		bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
@@ -294,15 +310,14 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 			eqMin := int(math.Round(eMin))
 			eqMax := int(math.Round(eMax))
-			errExpr := statsErrExpr
 			if eHasMin && eHasMax {
-				where.WriteString(" AND " + errExpr + " BETWEEN ? AND ?")
+				where.WriteString(" AND " + statsErrExpr + " BETWEEN ? AND ?")
 				args = append(args, eqMin, eqMax)
 			} else if eHasMin {
-				where.WriteString(" AND " + errExpr + " >= ?")
+				where.WriteString(" AND " + statsErrExpr + " >= ?")
 				args = append(args, eqMin)
 			} else if eHasMax {
-				where.WriteString(" AND " + errExpr + " <= ?")
+				where.WriteString(" AND " + statsErrExpr + " <= ?")
 				args = append(args, eqMax)
 			}
 		}
@@ -349,18 +364,14 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
 		p.has_jacoby, p.has_beaver, p.is_cube_response,
 		p.individually_imported, p.flagged,
-		a.id, ` + analysisDataCol + ` AS data,
-		a.cube_error, a.best_move_equity_error,
-		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
-		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
-		a.best_cube_action
+		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
 	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort)
 
-	rows, err := s.db.QueryContext(ctx, query, args...)
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("sqlite: search query: %w", err)
+		return nil, errf(s.DB, "search query", err)
 	}
 	defer rows.Close()
 
@@ -369,12 +380,13 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	// their own (comment text, creation date, played-move error, take/pass cube
 	// action). Running them inside the scan loop therefore needs a second
 	// connection for the whole duration of the scan — which an ":memory:"
-	// database can never provide, being pinned to exactly one connection
-	// (ConfigurePool): the nested query waits for a connection only the cursor
-	// can release, and the cursor only advances once the nested query answers.
-	// A file or PostgreSQL pool merely postpones the same shape: once enough
-	// concurrent searches each hold a cursor, every connection is a cursor
-	// waiting for a connection that will never come.
+	// SQLite database can never provide, being pinned to exactly one
+	// connection (sqlite.ConfigurePool): the nested query waits for a
+	// connection only the cursor can release, and the cursor only advances
+	// once the nested query answers. A file or PostgreSQL pool merely
+	// postpones the same shape: once enough concurrent searches each hold a
+	// cursor, every connection is a cursor waiting for a connection that will
+	// never come.
 	//
 	// Buffering costs nothing here: find already materialises its whole result
 	// set, so these rows were going to be held in memory regardless.
@@ -388,61 +400,58 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	var scanned []scannedRow
 
 	for rows.Next() {
+		// Nullable columns scan into pointers, which both drivers leave nil on
+		// NULL; the flags are INTEGER 0/1 on SQLite and BOOLEAN on PostgreSQL,
+		// and both drivers convert either into a *bool.
 		var posID int64
-		var posJSON string
-		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
-		var pICR sql.NullInt64
-		var pII, pFlag sql.NullBool
-		var anaID sql.NullInt64
-		var anaJSON sql.NullString
-		var cubeError, moveError sql.NullFloat64
-		var p1Win, p1Gammon, p1BG, p2Win, p2Gammon, p2BG sql.NullFloat64
-		var bestCubeAction sql.NullString
+		var posState string
+		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2 *int64
+		var pHJ, pHB, pICR, pII, pFlag *bool
+		var anaID *int64
+		var anaData []byte
 
 		if err := rows.Scan(
-			&posID, &posJSON,
+			&posID, &posState,
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pICR,
 			&pII, &pFlag,
-			&anaID, &anaJSON,
-			&cubeError, &moveError,
-			&p1Win, &p1Gammon, &p1BG,
-			&p2Win, &p2Gammon, &p2BG,
-			&bestCubeAction,
+			&anaID, &anaData,
 		); err != nil {
-			return nil, fmt.Errorf("sqlite: search scan: %w", err)
+			return nil, errf(s.DB, "search scan", err)
 		}
 
-		position := engine.ReconstructPosition(posID, posJSON,
-			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
-			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
-			int(pHJ.Int64), int(pHB.Int64))
+		position := engine.ReconstructPosition(posID, posState,
+			derefInt(pDT), derefInt(pPOR), derefInt(pD1), derefInt(pD2),
+			derefInt(pCV), derefInt(pCO), derefInt(pS1), derefInt(pS2),
+			boolToInt(pHJ), boolToInt(pHB))
 		// Row properties rather than board identity, so they are applied on top
 		// of the reconstructed position (ADR-0001, docs/adr/0006). Without this
 		// a searched position always came back unmarked, unlike the same
 		// position read through PositionStore.Load.
-		position.IndividuallyImported = pII.Bool
-		position.Flagged = pFlag.Bool
+		position.IndividuallyImported = pII != nil && *pII
+		position.Flagged = pFlag != nil && *pFlag
 
 		var ana *domain.PositionAnalysis
-		if needAnalysis && anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
-			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage),
-			// so it must be decompressed before unmarshalling — a plain
-			// json.Unmarshal of the raw bytes silently fails (leaving ana nil),
-			// which broke the analysis-dependent Go-side filters (move pattern,
-			// and the win/gammon/equity fallbacks used by mirror search).
-			if a, decErr := engine.DecodeAnalysisFromStorage([]byte(anaJSON.String)); decErr == nil {
+		if needAnalysis && anaID != nil && len(anaData) > 0 {
+			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage;
+			// see AnalysisStore.Save), so it must go through the same decoder as
+			// AnalysisStore.Load. A bare json.Unmarshal of the compressed bytes
+			// silently fails (first byte is the zlib header, never '{'), leaving
+			// ana nil on every row — which broke every analysis-dependent Go-side
+			// filter (move pattern, the win/gammon/equity fallbacks used by
+			// mirror search).
+			if a, decErr := engine.DecodeAnalysisFromStorage(anaData); decErr == nil {
 				ana = &a
 			}
 		}
 
-		scanned = append(scanned, scannedRow{pos: position, ana: ana, isCubeResponse: pICR.Int64 == 1})
+		scanned = append(scanned, scannedRow{pos: position, ana: ana, isCubeResponse: pICR != nil && *pICR})
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("sqlite: search rows: %w", err)
+		return nil, errf(s.DB, "search rows", err)
 	}
 	// Hand the connection back before the predicates start querying.
 	if err := rows.Close(); err != nil {
-		return nil, fmt.Errorf("sqlite: search rows close: %w", err)
+		return nil, errf(s.DB, "search rows close", err)
 	}
 
 	var positions []domain.Position
@@ -614,7 +623,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 						return false
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.db, &pos, ana, f.MoveErrorFilter) {
+				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}
@@ -637,7 +646,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			if f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter) {
 				return false
 			}
-			if f.SearchText != "" && !matchesSearchText(ctx, s.db, &pos, f.SearchText) {
+			if f.SearchText != "" && !matchesSearchText(ctx, s.DB, &pos, f.SearchText) {
 				return false
 			}
 			if f.DateFilter != "" && !searchfilter.MatchesDateFilter(ana, f.DateFilter) {
@@ -650,7 +659,7 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 
 		addPosition := func(pos domain.Position) {
-			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction && isPlayer1TakePassCubeAction(ctx, s.db, &pos) {
+			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction && isPlayer1TakePassCubeAction(ctx, s.DB, &pos) {
 				pos = pos.Mirror()
 			}
 			positions = append(positions, pos)
@@ -671,4 +680,18 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 	}
 
 	return positions, nil
+}
+
+func derefInt(p *int64) int {
+	if p == nil {
+		return 0
+	}
+	return int(*p)
+}
+
+func boolToInt(p *bool) int {
+	if p != nil && *p {
+		return 1
+	}
+	return 0
 }

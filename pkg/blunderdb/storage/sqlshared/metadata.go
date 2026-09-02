@@ -87,7 +87,7 @@ func (s *MetadataStore) Counts(ctx context.Context, scope string) (storage.Count
 	tenant, targs := s.DB.TenantFilter("", scope)
 	tables := []string{
 		"position", "analysis", "match", "game", "move",
-		"position WHERE individually_imported = TRUE AND",
+		"position WHERE " + s.DB.Bool("individually_imported", true) + " AND",
 		"anki_card",
 	}
 	selects := make([]string, len(tables))

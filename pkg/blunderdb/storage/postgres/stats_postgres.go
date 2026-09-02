@@ -10,6 +10,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // statsStore implements storage.StatsStore over PostgreSQL. It is a port of the
@@ -28,8 +29,11 @@ type statsStore struct{ db execer }
 
 var _ storage.StatsStore = (*statsStore)(nil)
 
-// statsErrExpr is defined in search_postgres.go (shared) and reused here:
-//   CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END
+// statsErrExpr selects the error column that applies to a decision.
+const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+
+// rebind rewrites '?' placeholders into the '$N' form.
+func rebind(query string) string { return sqlshared.Rebind(query) }
 
 // blunderThresholdMP is the error threshold (stored millipoints) at or above
 // which a decision counts as a blunder. 100 ≈ 0.1 EMG; the comparison is

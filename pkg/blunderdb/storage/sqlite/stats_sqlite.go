@@ -21,8 +21,8 @@ type statsStore struct{ db execer }
 
 var _ storage.StatsStore = (*statsStore)(nil)
 
-// statsErrExpr is defined in search_sqlite.go (shared) and reused here:
-//   CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END
+// statsErrExpr selects the error column that applies to a decision.
+const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
 
 // blunderThresholdMP is the error threshold (in stored millipoints units) at or
 // above which a decision is counted as a blunder. 100 ≈ 0.1 EMG. The comparison

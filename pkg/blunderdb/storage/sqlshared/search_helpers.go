@@ -1,9 +1,8 @@
-package postgres
+package sqlshared
 
 import (
 	"context"
 	"math"
-	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -12,32 +11,14 @@ import (
 )
 
 // This file holds the search-filter predicates that need database access,
-// ported from the SQLite backend and re-expressed against the pgx execer. The
-// pure parsers and in-memory predicates live in storage/searchfilter, shared
-// with the SQLite backend. The query builders emit '?' placeholders and the
-// assembled query is rebound to '$N' by rebind.
-
-// rebind rewrites a query built with positional '?' placeholders into the
-// PostgreSQL '$1, $2, …' form. The search query contains no string literals,
-// so a straight sequential substitution is correct.
-func rebind(query string) string {
-	var b strings.Builder
-	n := 0
-	for i := 0; i < len(query); i++ {
-		if query[i] == '?' {
-			n++
-			b.WriteByte('$')
-			b.WriteString(strconv.Itoa(n))
-			continue
-		}
-		b.WriteByte(query[i])
-	}
-	return b.String()
-}
+// ported from the Database wrapper's db_search.go and db_filter_match.go and
+// re-expressed against Execer (package database imports storage/sqlite, so
+// the reverse import is not possible). The pure parsers and in-memory
+// predicates live in storage/searchfilter.
 
 // getMatchIDsForTournament returns all match IDs belonging to a tournament.
-func getMatchIDsForTournament(ctx context.Context, db execer, tournamentID int64) ([]int64, error) {
-	rows, err := db.Query(ctx, `SELECT id FROM match WHERE tournament_id = $1`, tournamentID)
+func getMatchIDsForTournament(ctx context.Context, db Execer, tournamentID int64) ([]int64, error) {
+	rows, err := db.Query(ctx, `SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,9 +37,9 @@ func getMatchIDsForTournament(ctx context.Context, db execer, tournamentID int64
 // loadCommentText returns the concatenated comment text of a position. A
 // position may have several comment entries (see AddComment); all of them are
 // joined so the "Search Text" filter can match against any one of them.
-func loadCommentText(ctx context.Context, db execer, positionID int64) (string, error) {
+func loadCommentText(ctx context.Context, db Execer, positionID int64) (string, error) {
 	rows, err := db.Query(ctx,
-		`SELECT text FROM comment WHERE position_id = $1 AND text != '' ORDER BY id ASC`,
+		`SELECT text FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`,
 		positionID)
 	if err != nil {
 		return "", err
@@ -80,9 +61,9 @@ func loadCommentText(ctx context.Context, db execer, positionID int64) (string, 
 
 // getPlayer1MovesForPosition returns player-1's checker moves and cube actions
 // recorded in the move table for a position.
-func getPlayer1MovesForPosition(ctx context.Context, db execer, positionID int64) ([]string, []string) {
+func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64) ([]string, []string) {
 	rows, err := db.Query(ctx,
-		`SELECT checker_move, cube_action FROM move WHERE position_id = $1 AND player = 1`, positionID)
+		`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
 	if err != nil {
 		return nil, nil
 	}
@@ -115,7 +96,7 @@ func getPlayer1MovesForPosition(ctx context.Context, db execer, positionID int64
 }
 
 // matchesSearchText reports whether a position's comment matches a "t"-filter.
-func matchesSearchText(ctx context.Context, db execer, p *domain.Position, searchText string) bool {
+func matchesSearchText(ctx context.Context, db Execer, p *domain.Position, searchText string) bool {
 	keywords := searchfilter.ParseSearchTextKeywords(searchText)
 	if len(keywords) == 0 {
 		return false
@@ -135,7 +116,7 @@ func matchesSearchText(ctx context.Context, db execer, p *domain.Position, searc
 
 // isPlayer1TakePassCubeAction reports whether player-1's recorded cube action
 // for a position was a take or pass.
-func isPlayer1TakePassCubeAction(ctx context.Context, db execer, p *domain.Position) bool {
+func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Position) bool {
 	_, player1CubeActions := getPlayer1MovesForPosition(ctx, db, p.ID)
 	for _, action := range player1CubeActions {
 		if engine.IsResponseCubeAction(action) {
@@ -148,9 +129,9 @@ func isPlayer1TakePassCubeAction(ctx context.Context, db execer, p *domain.Posit
 // matchesMoveErrorFilter filters positions by the equity error of player-1's
 // played move (millipoints): E>x, E<x, Ex,y. analysis is the position's
 // already-decoded analysis (the caller decoded it once from a.data because
-// MoveErrorFilter is in needAnalysis — see search_postgres.go); this
-// predicate no longer re-queries and re-decompresses it per row.
-func matchesMoveErrorFilter(ctx context.Context, db execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) bool {
+// MoveErrorFilter is in needAnalysis — see search.go); this predicate
+// no longer re-queries and re-decompresses it per row.
+func matchesMoveErrorFilter(ctx context.Context, db Execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) bool {
 	if analysis == nil {
 		return false
 	}

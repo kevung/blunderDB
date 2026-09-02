@@ -22,13 +22,20 @@ func (b binder) shared() sqlshared.Execer { return shared(b) }
 func (shared) Name() string                             { return "sqlite" }
 func (shared) ScopeColumn() string                      { return "scope" }
 func (shared) ScopeArg(scope string) any                { return scope }
-func (shared) TenantFilter(_, _ string) (string, []any) { return "TRUE", nil }
-func (shared) Bigint(expr string) string                { return expr }
-func (shared) ILike() string                            { return "LIKE" }
-func (shared) TimestampArg() string                     { return "?" }
-func (shared) DateText(col string) string               { return "COALESCE(" + col + ",'')" }
-func (shared) TimestampText(col string) string          { return "COALESCE(" + col + ",'')" }
-func (shared) Referenced(err error) error               { return referenced(err) }
+func (shared) TenantFilter(_, _ string) (string, []any) { return "1=1", nil }
+func (shared) TenantColumns(string) ([]string, []any)   { return nil, nil }
+func (shared) Bool(col string, v bool) string {
+	if v {
+		return col + " = 1"
+	}
+	return col + " = 0"
+}
+func (shared) Bigint(expr string) string       { return expr }
+func (shared) ILike() string                   { return "LIKE" }
+func (shared) TimestampArg() string            { return "?" }
+func (shared) DateText(col string) string      { return "COALESCE(" + col + ",'')" }
+func (shared) TimestampText(col string) string { return "COALESCE(" + col + ",'')" }
+func (shared) Referenced(err error) error      { return referenced(err) }
 
 func (a shared) Exec(ctx context.Context, query string, args ...any) (int64, error) {
 	res, err := a.db.ExecContext(ctx, query, args...)

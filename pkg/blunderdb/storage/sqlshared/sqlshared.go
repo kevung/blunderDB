@@ -72,7 +72,7 @@ type Execer interface {
 
 // Dialect is the set of facts in which the two backends' SQL actually differs.
 // It is deliberately small: anything that can be written the same way on both
-// (TRUE/FALSE literals, ON CONFLICT upserts, CAST(x AS INTEGER)) is written the
+// (ON CONFLICT upserts, CAST(x AS INTEGER), CURRENT_TIMESTAMP) is written the
 // same way in the shared stores rather than abstracted here.
 type Dialect interface {
 	// Name is the backend's name, used as the prefix of every error message
@@ -95,6 +95,18 @@ type Dialect interface {
 	// first in the WHERE clause and its arguments first in the argument list,
 	// so the '?' placeholders line up after rebinding.
 	TenantFilter(alias, scope string) (pred string, args []any)
+
+	// TenantColumns is TenantFilter's INSERT counterpart: the columns (and
+	// their values) an insert into a domain table must carry to land in the
+	// scope's tenant — none on SQLite, tenant_id on PostgreSQL. Callers put
+	// them first in the column list and the argument list.
+	TenantColumns(scope string) (cols []string, args []any)
+
+	// Bool renders the predicate "col is v". The SQLite schema stores its
+	// flags as INTEGER 0/1 and declares partial indexes on `col = 1`, which
+	// the planner only matches textually, so the literal has to stay 1/0
+	// there; PostgreSQL's BOOLEAN columns take TRUE/FALSE.
+	Bool(col string, v bool) string
 
 	// Bigint wraps an aggregate so it scans into an int64: SUM over BIGINT is
 	// NUMERIC in PostgreSQL (cast back), plain integer in SQLite (unchanged).
