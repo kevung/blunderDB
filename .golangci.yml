@@ -7,6 +7,14 @@ linters:
   # unused, ineffassign, gosimple.  We add nolintlint to enforce hygiene and
   # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
   # an iteration error otherwise truncates the result silently.
+  #
+  # Evaluated and deliberately NOT enabled (2026-09):
+  # - gosec: 202 findings, 108 of them G115 (int width conversions on board
+  #   indices and pip counts that cannot overflow), then G306 file modes in
+  #   tests, G602, G202 (SQL built by concatenation — the search filters,
+  #   parameterised), G404 (math/rand for the Zobrist keys and shuffles).
+  #   None is a bug; enabling it would mean ~200 nolint directives.
+  # - noctx: 874 findings — every database call would need a context first.
   enable:
     - bodyclose
     - copyloopvar

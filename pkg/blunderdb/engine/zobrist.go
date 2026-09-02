@@ -25,7 +25,9 @@ var (
 )
 
 func init() {
-	//nolint:gosec // fixed seed is intentional — hash stability matters
+	// The seed is fixed on purpose: these keys are what makes a Zobrist hash
+	// stable across runs and machines, and every position stored in a database
+	// is identified by one (math/rand, not crypto — nothing here is secret).
 	r := rand.New(rand.NewSource(0xB10DE4DB))
 	next := r.Uint64
 
