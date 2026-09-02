@@ -326,6 +326,45 @@ describe('dice and player rectangles', () => {
         expect(b.pos().dice[0]).toBe(1);
     });
 
+    // The Eval panel's own report: a position pasted from the analysis panel
+    // carries its roll, but previousDice is still the [0, 0] enterEPCMode
+    // seeds an Eval session with. A die click used to restore that [0, 0]
+    // over the pasted roll, leaving half a roll — read as "no dice", i.e. a
+    // cube decision on a board plainly asking a checker question, and the
+    // candidate moves vanished with it.
+    test('a die click steps the roll already on the board instead of restoring a stale one', () => {
+        const b = mount({ position: { ...emptyPos(), dice: [6, 5] } });
+        b.state.previousDice = [0, 0];
+        const t = sideTargets(b.geom, b.cfg, 0);
+        b.click(t.die(0), 0);
+        expect(b.pos().dice).toEqual([1, 5]);
+        b.click(t.die(1), 2);
+        expect(b.pos().dice).toEqual([1, 4]);
+    });
+
+    test('stepping a cleared die brings the other one along — never half a roll', () => {
+        const b = mount({ position: { ...emptyPos(), dice: [0, 0], decision_type: 1 } });
+        b.state.previousDice = [0, 0];
+        const t = sideTargets(b.geom, b.cfg, 0);
+        b.click(t.die(0), 0);
+        expect(b.pos(), 'a die click asks for a checker decision').toMatchObject({ decision_type: 0, dice: [1, 1] });
+        // Right-clicking a cleared die wraps to 6 rather than walking below 0,
+        // which used to leave the position permanently dice-less.
+        const c = mount({ position: { ...emptyPos(), dice: [0, 0] } });
+        c.state.previousDice = [0, 0];
+        c.click(sideTargets(c.geom, c.cfg, 0).die(1), 2);
+        expect(c.pos().dice).toEqual([1, 6]);
+    });
+
+    test('stepping a die never writes through to the remembered roll', () => {
+        const b = mount();
+        const t = sideTargets(b.geom, b.cfg, 0);
+        b.click(t.rect(1)); // clears the dice, remembering [3, 1]
+        b.click(sideTargets(b.geom, b.cfg, 1).die(0), 0);
+        expect(b.pos().dice).toEqual([4, 1]);
+        expect(b.state.previousDice, 'the snapshot is a copy, not the live array').toEqual([3, 1]);
+    });
+
     test("a player's rectangle makes it a cube decision for that player and remembers the dice", () => {
         const b = mount();
         const t = sideTargets(b.geom, b.cfg, 0);

@@ -990,6 +990,15 @@ construction, elle ne sait pas répondre à la question posée au score. Le
 badge devient alors composite (« exact (gain) · évalué (videau) ») pour le
 dire explicitement.
 
+Les **dés** s'éditent enfin de la même façon, et ce sont eux qui décident de
+la question posée : des dés posés font une décision de pions (la liste des
+coups candidats), pas de dés une décision de videau. Clic gauche sur un dé
+fait monter sa valeur (6 revient à 1), clic droit la fait descendre (1 revient
+à 6) ; cliquer un dé sur un plateau qui n'en a pas en pose deux d'un coup —
+un seul dé ne serait ni une décision de pions ni une décision de videau.
+Cliquer le rectangle d'un joueur retire les dés pour poser une question de
+videau, et le clic suivant sur un dé les remet tels qu'ils étaient.
+
 *RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la
 position : plateau vide, score money (-1, -1), pas de dés posés — des
 valeurs propres au panneau Eval, différentes de celles utilisées en mode
