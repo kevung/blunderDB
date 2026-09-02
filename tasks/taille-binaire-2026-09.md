@@ -6,7 +6,8 @@ raisonnable**. Cette note fixe les chiffres pour que la question ne soit pas
 rouverte sans nouvelle contrainte (plainte d'utilisateur, limite d'un canal de
 distribution, budget mémoire).
 
-Décision : aucun chantier ouvert. Sujet clos.
+Décision : aucun chantier ouvert. Sujet clos. Complété le 2026-09-03 par la
+mesure gammonNet contre la table deux faces et la piste du générateur.
 
 ## Ce que pèse la livraison 0.35.0
 
@@ -73,6 +74,48 @@ en RAM au premier verdict de course (le lecteur actuel fait des lectures de
 modification du seul chemin dont l'invariant est « le verdict n'est jamais
 estimé ». Les 160 états de `testdata/money_fixtures.json` rendraient la chose
 sûre, mais 10 % ne justifient pas un format propriétaire. Refusé.
+
+### Remplacer la table deux faces par gammonNet 2-ply — refusé, mesuré
+
+Question du 2026-09-03 : ne plus embarquer `gnubg_ts0.bd`, le proposer au
+téléchargement, et laisser le régime « évalué » (gammonNet) servir de plancher
+sur son domaine. Mesure `TestBearoffFloorMeasure`
+(`pkg/blunderdb/engine/gammonnet/`, `BLUNDERDB_BEAROFF_FLOOR=1`, N = 4000,
+recherche configurée comme le panneau, feuilles valuées avec le videau) :
+
+| | 0-ply | 1-ply | 2-ply |
+|---|---|---|---|
+| \|ΔP gain\| moyenne / p95 / max | 1,7 / 5,6 / 20,3 % | 1,4 / 5,1 / 17,2 % | 0,85 / 3,1 / 8,4 % |
+| accord double / pas double, videau centré | 94,0 % | 95,8 % | 94,8 % |
+| accord double / pas double, videau possédé | 95,5 % | 97,1 % | 96,3 % |
+| coût moyen en équité exacte (centré) | 0,0095 | 0,0051 | 0,0065 |
+| décisions coûtant ≥ 0,08 (centré) | 3,65 % | 2,50 % | 3,00 % |
+| coût maximal | 0,500 | 0,336 | 0,446 |
+| accord take / pass | 95-96 % | 96 % | 96 % |
+
+La probabilité de gain converge avec le pli ; le verdict, non. Les désaccords
+sont presque tous des « double/take » exacts que gammonNet refuse (2-ply
+centré : 189 DT→ND sur 206 désaccords), sur des positions à un ou deux
+lancers de la fin : le modèle de videau vivant (efficacité, vigueur du
+redouble) y sous-évalue le double de 0,3 à 0,45 point alors que le videau est
+mort. C'est précisément le domaine que la table couvre. À titre de
+comparaison, l'estimateur par convolution est à σ = 0,05 % sur la
+probabilité de gain, trente fois plus près que le réseau à 2 plis. Refusé ;
+ADR-0009 et ADR-0012 tiennent.
+
+### Régénérer la table deux faces au lieu de l'embarquer — possible, non fait
+
+La table est une donnée dérivée : `makebearoff -t 6x6` la produit en 24 s, et
+un prototype Go d'induction arrière (port de `generate_ts` / `BearOff2` /
+`CubeEquity`, arithmétique `short int` reproduite, parcours par diagonales
+d'index `us+them` croissant) la reproduit **octet pour octet** en 2,3 s sur
+16 cœurs, 5,5 s mono-cœur sans optimisation. C'est le seul levier qui sort
+6,8 Mo du binaire (un tiers de la livraison compressée) sans toucher à
+l'invariant « le verdict n'est jamais estimé » : exact reste exact, calculé
+au lieu de lu. Prix : ~150 lignes de générateur, un test d'identité contre le
+fichier gnubg gardé en fixture, un cache dans le répertoire de données XDG
+(comme le TS-06-11 téléchargé) ou un calcul en mémoire au premier verdict.
+Non fait, faute de contrainte ; c'est la voie si l'on veut la taille.
 
 ### Exclure pgx du binaire desktop (build tag) — refusé
 
