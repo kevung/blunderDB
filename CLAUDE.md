@@ -128,9 +128,9 @@ Nothing to clean up afterwards: the directory is gitignored.
 
 **A user-visible feature ships with its documentation.** Any new command, shortcut,
 panel, or filter must land in the same branch as its `doc/source/raccourcis.rst` /
-`doc/source/manuel.rst` / `doc/source/cmd_mode.rst` entries (French source only —
-the 8 translations are refreshed at release time). Undocumented features have gone
-undiscovered for whole release cycles; don't add to that pile.
+`doc/source/manuel.rst` / `doc/source/cmd_mode.rst` entries **and** their eight
+`.po` (see Documentation below — the online docs deploy from `main`). Undocumented
+features have gone undiscovered for whole release cycles; don't add to that pile.
 
 ## Documentation
 
@@ -140,6 +140,19 @@ Build with `cd doc && python build.py` (requires `doc/requirements.txt` and LaTe
 for the PDF build). GitHub Pages publishes from `gh-pages` on tag pushes. Historical
 design notes live in `doc/archive/` — consult when touching the related subsystem,
 but they do not reflect current code.
+
+**A modified `.rst` ships with its eight `.po` in the same commit.** The online
+docs deploy from `main` and fall back to French for every untranslated string, so
+a translation gap is a user-visible regression on eight sites, not release
+polish. Refresh the catalogues with **relative** paths (an absolute output path
+rewrites every `#:` reference), translate the empty `msgstr`, and check:
+
+```bash
+source .venv/bin/activate
+(cd doc && sphinx-build -b gettext source build/gettext \
+   && sphinx-intl update -p build/gettext -l en,de,el,es,fi,it,ja,ru)
+scripts/doc-i18n-check.sh      # must end on "all translations complete"
+```
 
 **Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
 Split long documents into a README index + per-topic files.

@@ -1187,6 +1187,8 @@ msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
 msgstr ""
+"``--jobs`` — Number of positions analyzed in parallel (default: the "
+"number of cores of the machine)."
 
 #: ../../source/cli.rst:629
 msgid ""
@@ -1199,6 +1201,13 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
+"**Parallelism (``--jobs``).** The positions of a batch are independent — "
+"no search informs the next one — so they are spread over ``--jobs`` "
+"threads, each with its own evaluator. The analyses written are "
+"**identical whatever the value of** ``--jobs``; only the computation time "
+"changes. ``--jobs 1`` leaves the machine free for something else. "
+"Cancellation is not affected: Ctrl-C stops the batch before any new "
+"position, and everything already computed is written."
 
 #: ../../source/cli.rst:637
 msgid ""
@@ -1451,11 +1460,4 @@ msgstr "``1`` — Error."
 #: ../../source/cli.rst:893
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
-
-#~ msgid ""
-#~ "``stats`` — Statistiques globales (positions,"
-#~ " analyses, matchs, parties, coups)."
-#~ msgstr ""
-#~ "``stats`` — Global statistics (positions, "
-#~ "analyses, matches, games, moves)."
 

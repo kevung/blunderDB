@@ -1108,7 +1108,7 @@ msgstr "``--candidates`` — チェッカープレイの判断ごとに保持す
 msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
-msgstr ""
+msgstr "``--jobs`` — 並列に分析するポジションの数（デフォルト：マシンのコア数）。"
 
 #: ../../source/cli.rst:629
 msgid ""
@@ -1121,6 +1121,11 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
+"**並列処理（``--jobs``）。**\ バッチ内のポジションは互いに独立しており——どの探索も次の探索に影響しない——そのため "
+"``--jobs`` 個のスレッドに分配され、各スレッドは独自の評価器を持ちます。書き込まれる分析は ``--jobs`` の値に\ "
+"**かかわらず同一**\ で、変わるのは計算時間だけです。\ ``--jobs 1`` "
+"はマシンを他の用途のために空けておきます。キャンセルは影響を受けません：Ctrl-C "
+"は新しいポジションに入る前にバッチを停止し、すでに計算済みのものはすべて書き込まれます。"
 
 #: ../../source/cli.rst:637
 msgid ""
@@ -1358,9 +1363,4 @@ msgstr "``1`` — エラー。"
 #: ../../source/cli.rst:893
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
-
-#~ msgid ""
-#~ "``stats`` — Statistiques globales (positions,"
-#~ " analyses, matchs, parties, coups)."
-#~ msgstr "``stats`` — グローバル統計（ポジション、分析、マッチ、ゲーム、手）。"
 

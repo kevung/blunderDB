@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 00:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -606,6 +606,24 @@ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
 #: ../../source/raccourcis.rst:232
+msgid "Panneau Eval"
+msgstr "Панель Eval"
+
+#: ../../source/raccourcis.rst:234
+msgid ""
+"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
+"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
+"qu'un coup a été sélectionné d'un clic."
+msgstr ""
+"Список ходов панели *Eval* (см. :ref:`panneau_epc`) просматривается так "
+"же, как список панели анализа. Эти сочетания действуют, как только ход "
+"выбран кликом."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup."
+msgstr "Отменить выбор хода."
+
+#: ../../source/raccourcis.rst:251
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -641,9 +659,17 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:269
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE, Clic"
+msgstr "SPACE, Клик"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher la réponse (l'analyse enregistrée de la position)."
+msgstr "Показать ответ (записанный анализ позиции)."
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
@@ -689,7 +715,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:287
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
@@ -721,7 +747,7 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:283
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -747,7 +773,7 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:297
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
@@ -782,4 +808,3 @@ msgstr ""
 #~ "Désélectionner le filtre. Si aucun "
 #~ "filtre sélectionné, fermer le panneau."
 #~ msgstr "Отменить выбор фильтра. Если фильтр не выбран, закрыть панель."
-

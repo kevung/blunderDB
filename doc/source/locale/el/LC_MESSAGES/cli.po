@@ -1233,6 +1233,8 @@ msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
 msgstr ""
+"``--jobs`` — Αριθμός θέσεων που αναλύονται παράλληλα (προεπιλογή: ο "
+"αριθμός των πυρήνων του μηχανήματος)."
 
 #: ../../source/cli.rst:629
 msgid ""
@@ -1245,6 +1247,14 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
+"**Ο παραλληλισμός (``--jobs``).** Οι θέσεις μιας δέσμης είναι ανεξάρτητες "
+"— καμία αναζήτηση δεν τροφοδοτεί την επόμενη — οπότε κατανέμονται σε "
+"``--jobs`` νήματα εκτέλεσης, καθένα με τον δικό του αξιολογητή. Οι "
+"αναλύσεις που γράφονται είναι **πανομοιότυπες όποια κι αν είναι η τιμή "
+"του** ``--jobs``· αλλάζει μόνο ο χρόνος υπολογισμού. Το ``--jobs 1`` "
+"αφήνει το μηχάνημα ελεύθερο για άλλες εργασίες. Η ακύρωση δεν "
+"επηρεάζεται: το Ctrl-C σταματά τη δέσμη πριν από κάθε νέα θέση, και ό,τι "
+"είχε ήδη υπολογιστεί γράφεται."
 
 #: ../../source/cli.rst:637
 msgid ""
@@ -1505,11 +1515,4 @@ msgstr "``1`` — Σφάλμα."
 #: ../../source/cli.rst:893
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"
-
-#~ msgid ""
-#~ "``stats`` — Statistiques globales (positions,"
-#~ " analyses, matchs, parties, coups)."
-#~ msgstr ""
-#~ "``stats`` — Συνολικά στατιστικά (θέσεις, "
-#~ "αναλύσεις, αγώνες, παρτίδες, κινήσεις)."
 

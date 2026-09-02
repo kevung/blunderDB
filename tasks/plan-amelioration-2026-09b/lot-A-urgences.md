@@ -190,10 +190,12 @@ Le job `pages` déploie à chaque push sur `main` (`build.yml:1018`) : les sites
 en/de/el/es/fi/it/ja/ru affichent ces paragraphes en français.
 
 **À faire.**
-- [ ] Traduire les 12 msgid dans les 8 `.po` (rappel [[project_sphinx_po_regen]] :
+- [x] Traduire les 12 msgid dans les 8 `.po` (rappel [[project_sphinx_po_regen]] :
       `sphinx-build -b gettext` dans `doc/build/gettext`, chemin relatif).
-- [ ] Règle de process dans `CONTRIBUTING.md` (voir H.2) et dans le template de
-      PR : « un `.rst` modifié = ses `.po` dans le même commit ».
+- [x] Règle de process dans `CONTRIBUTING.md` (voir H.2) et dans le template de
+      PR : « un `.rst` modifié = ses `.po` dans le même commit ». Posée dans
+      `CLAUDE.md` § Documentation et dans `PULL_REQUEST_TEMPLATE.md` ;
+      `CONTRIBUTING.md` n'existe pas encore (H.2 la reprendra).
 - [x] Job `pages` : déployer sur tag **et** sur `main` seulement si
       `docs-i18n-check` est vert (job `needs:` + `--strict`).
 

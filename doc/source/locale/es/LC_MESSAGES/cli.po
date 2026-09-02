@@ -1237,6 +1237,8 @@ msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
 msgstr ""
+"``--jobs`` — Número de posiciones analizadas en paralelo (por defecto: el "
+"número de núcleos de la máquina)."
 
 #: ../../source/cli.rst:629
 msgid ""
@@ -1249,6 +1251,14 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
+"**El paralelismo (``--jobs``).** Las posiciones de un lote son "
+"independientes — ninguna búsqueda informa a la siguiente —, así que se "
+"reparten entre ``--jobs`` hilos de ejecución, cada uno con su propio "
+"evaluador. Los análisis escritos son **idénticos sea cual sea el valor "
+"de** ``--jobs``; solo cambia el tiempo de cálculo. ``--jobs 1`` deja la "
+"máquina libre para otras cosas. La cancelación no se ve afectada: Ctrl-C "
+"detiene el lote antes de cualquier nueva posición, y todo lo ya calculado "
+"se escribe."
 
 #: ../../source/cli.rst:637
 msgid ""
@@ -1508,11 +1518,4 @@ msgstr "``1`` — Error."
 #: ../../source/cli.rst:893
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
-
-#~ msgid ""
-#~ "``stats`` — Statistiques globales (positions,"
-#~ " analyses, matchs, parties, coups)."
-#~ msgstr ""
-#~ "``stats`` — Estadísticas globales (posiciones,"
-#~ " análisis, partidas, juegos, jugadas)."
 
