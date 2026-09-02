@@ -140,7 +140,7 @@ func TestPurgeTenant(t *testing.T) {
 	defer s.Close()
 
 	const scopeA, scopeB = "101", "202"
-	tenantA, tenantB := storage.ParseTenant(scopeA), storage.ParseTenant(scopeB)
+	tenantA, tenantB := tenantID(scopeA), tenantID(scopeB)
 	purgeSeedRows(t, s.pool, tenantA)
 	purgeSeedRows(t, s.pool, tenantB)
 

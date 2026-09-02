@@ -258,8 +258,11 @@ _Avoid_: user, account, customer
 
 **Scope**:
 The storage layer's spelling of Tenant: every persistence call carries a scope,
-and the empty scope denotes the desktop's single implicit Tenant. "Scope" and
-"Tenant" name the same concept; prefer Tenant in prose and design discussion.
+and the empty scope denotes the desktop's single implicit Tenant. In server
+mode a scope is the Tenant's positive decimal integer (`1`, `42`), never a
+name — the proxy maps names to integers, the daemon refuses anything else
+(ADR-0005, amendment 2026-09-03). "Scope" and "Tenant" name the same concept;
+prefer Tenant in prose and design discussion.
 
 ### Handing a database to someone else
 

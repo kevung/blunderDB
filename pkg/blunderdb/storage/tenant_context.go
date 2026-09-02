@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -14,15 +16,36 @@ import (
 
 type tenantCtxKey struct{}
 
+// ErrInvalidTenant is returned (wrapped) by ParseTenant when a scope is not a
+// positive decimal integer. Callers that turn it into a user-facing rejection
+// (the HTTP tenant middleware, `migrate --tenant-id`, `call --scope`) test for
+// it with errors.Is.
+var ErrInvalidTenant = errors.New("invalid tenant")
+
+// TenantFormat describes the only accepted spelling of a tenant, for error
+// messages: the digits of a positive integer, no sign, no leading zero, no
+// surrounding whitespace, at most int64.
+const TenantFormat = "a positive decimal integer (1, 2, 42, …)"
+
 // ParseTenant converts a scope string to the numeric tenant_id used on the
-// PostgreSQL domain tables. An empty or non-numeric scope maps to tenant 0,
-// matching the backend's own scope→tenant_id conversion.
-func ParseTenant(scope string) int64 {
+// PostgreSQL domain tables.
+//
+// The empty scope is the desktop's single implicit tenant and maps to 0. Any
+// other scope must be the canonical decimal spelling of a positive integer —
+// `strconv.FormatInt(n, 10)` for some n ≥ 1. Everything else ("alice",
+// "default", "0", "-1", "007", "1.0", " 7") is an error wrapping
+// ErrInvalidTenant. It used to be silently mapped to tenant 0, so every
+// named tenant shared one set of rows — see ADR-0005, amendment 2026-09-03.
+// A tenant is an integer; mapping a name to that integer is the proxy's job.
+func ParseTenant(scope string) (int64, error) {
 	if scope == "" {
-		return 0
+		return 0, nil
 	}
-	n, _ := strconv.ParseInt(scope, 10, 64)
-	return n
+	n, err := strconv.ParseInt(scope, 10, 64)
+	if err != nil || n < 1 || strconv.FormatInt(n, 10) != scope {
+		return 0, fmt.Errorf("%w: scope %q is not %s", ErrInvalidTenant, scope, TenantFormat)
+	}
+	return n, nil
 }
 
 // WithTenant returns a context carrying the numeric tenant id. The PostgreSQL

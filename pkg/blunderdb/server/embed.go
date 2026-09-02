@@ -32,7 +32,8 @@ type Config struct {
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
 // io.Closer for the storage pool. Mount the handler behind your own auth and
-// inject X-Tenant-ID per request; the engine performs NO authentication.
+// inject X-Tenant-ID per request — the tenant's positive decimal integer, a
+// name is refused with 400 (ADR-0005); the engine performs NO authentication.
 func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error) {
 	logger := cfg.Logger
 	if logger == nil {

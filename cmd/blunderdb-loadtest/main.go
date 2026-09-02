@@ -8,6 +8,9 @@
 //	  --output report.json
 //
 // --rps 0 means unbounded (closed-loop: as fast as --concurrency allows).
+// Tenants are numbered 1..N and sent as their decimal integer, the only form
+// the daemon accepts; the named-tenants scenario sends names instead and
+// expects every request to be refused (see scenario.go).
 package main
 
 import (
@@ -41,22 +44,22 @@ func main() {
 	flag.IntVar(&cfg.rps, "rps", 0, "target requests/sec (0 = unbounded, closed-loop)")
 	flag.DurationVar(&cfg.duration, "duration", 10*time.Second, "measurement duration")
 	flag.DurationVar(&cfg.rampUp, "ramp-up", 2*time.Second, "stagger worker start over this window")
-	flag.StringVar(&cfg.scenario, "scenario", "mixed", "scenario: mixed | read-heavy | write-heavy")
+	flag.StringVar(&cfg.scenario, "scenario", "mixed", "scenario: "+scenarioNames)
 	flag.IntVar(&cfg.concurrency, "concurrency", 50, "number of concurrent worker goroutines")
 	flag.StringVar(&cfg.output, "output", "report.json", "path for the JSON report (a .md companion is written too)")
 	flag.Int64Var(&cfg.seed, "seed", 1, "PRNG seed for reproducible runs")
 	flag.Parse()
 
-	ops, ok := scenarios[cfg.scenario]
+	sc, ok := scenarios[cfg.scenario]
 	if !ok {
-		fmt.Fprintf(os.Stderr, "unknown scenario %q (want mixed|read-heavy|write-heavy)\n", cfg.scenario)
+		fmt.Fprintf(os.Stderr, "unknown scenario %q (want %s)\n", cfg.scenario, scenarioNames)
 		os.Exit(2)
 	}
 	if cfg.tenants < 1 {
 		cfg.tenants = 1
 	}
 
-	rep, err := run(cfg, ops)
+	rep, err := run(cfg, sc)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "loadtest: %v\n", err)
 		os.Exit(1)
@@ -71,8 +74,8 @@ func main() {
 	fmt.Printf("reports: %s + %s\n", cfg.output, mdName(cfg.output))
 }
 
-func run(cfg config, ops []op) (report, error) {
-	pk := newPicker(ops)
+func run(cfg config, sc scenario) (report, error) {
+	pk := newPicker(sc.ops)
 
 	// Keep-alive HTTP client: reuse connections so TCP setup does not dominate.
 	transport := &http.Transport{
@@ -140,7 +143,7 @@ func run(cfg config, ops []op) (report, error) {
 				}
 				o := pk.pick(rng)
 				tenant := rng.Intn(cfg.tenants) + 1
-				local = append(local, doRequest(client, cfg.target, tenant, o, rng))
+				local = append(local, doRequest(client, cfg.target, sc.tenant(tenant), sc.ok, o, rng))
 				if len(local) >= 4096 {
 					flush(&mu, &samples, local)
 					local = local[:0]
@@ -163,11 +166,11 @@ func flush(mu *sync.Mutex, dst *[]sample, src []sample) {
 	mu.Unlock()
 }
 
-// doRequest issues one request for op o on behalf of the given tenant and
-// returns its sample. A non-2xx status, transport error or context expiry
-// counts as a failure (context expiry near the deadline is expected and folded
-// into the error count, which stays tiny relative to total).
-func doRequest(client *http.Client, target string, tenant int, o op, rng *rand.Rand) sample {
+// doRequest issues one request for op o under the given X-Tenant-ID value and
+// returns its sample. A status ok rejects, a transport error or a context
+// expiry counts as a failure (context expiry near the deadline is expected and
+// folded into the error count, which stays tiny relative to total).
+func doRequest(client *http.Client, target, tenant string, ok func(int) bool, o op, rng *rand.Rand) sample {
 	path, body := o.build(rng)
 	t0 := time.Now()
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, target+path, jsonBody(body))
@@ -175,7 +178,7 @@ func doRequest(client *http.Client, target string, tenant int, o op, rng *rand.R
 		return sample{op: o.name, dur: time.Since(t0), fail: true}
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Tenant-ID", tenantHeader(tenant))
+	req.Header.Set("X-Tenant-ID", tenant)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -183,7 +186,7 @@ func doRequest(client *http.Client, target string, tenant int, o op, rng *rand.R
 	}
 	_, _ = io.Copy(io.Discard, resp.Body)
 	resp.Body.Close()
-	return sample{op: o.name, dur: time.Since(t0), fail: resp.StatusCode >= 400}
+	return sample{op: o.name, dur: time.Since(t0), fail: !ok(resp.StatusCode)}
 }
 
 func mdName(jsonPath string) string {

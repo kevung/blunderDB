@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 const callUsage = `blunderdb call <family>.<method> — invoke a Storage method directly.
@@ -52,7 +53,7 @@ func RunCall(args []string) error {
 		backend  = fs.String("backend", envOr("BLUNDERDB_BACKEND", "sqlite"), "storage backend: sqlite|postgres")
 		dsn      = fs.String("dsn", os.Getenv("BLUNDERDB_DSN"), "backend connection string (sqlite path or postgres DSN)")
 		dbPath   = fs.String("db", "", "sqlite database file (shorthand for --backend sqlite --dsn <path>)")
-		scope    = fs.String("scope", "default", "tenant scope (sent as X-Tenant-ID; SQLite ignores it for most families)")
+		scope    = fs.String("scope", "1", "tenant sent as X-Tenant-ID: a positive decimal integer (SQLite ignores it for most families)")
 		jsonBody = fs.String("json", "{}", "request body as JSON")
 		jsonFile = fs.String("json-file", "", "read the request body from a file instead of --json")
 		list     = fs.Bool("list", false, "list every available <family>.<method> and exit")
@@ -63,6 +64,11 @@ func RunCall(args []string) error {
 	if *dbPath != "" {
 		*backend = "sqlite"
 		*dsn = *dbPath
+	}
+	// The same rule the HTTP tenant middleware applies, checked here so the
+	// failure names the flag rather than a header the user never typed.
+	if n, err := storage.ParseTenant(*scope); err != nil || n == 0 {
+		return fmt.Errorf("call: --scope must be %s, got %q", storage.TenantFormat, *scope)
 	}
 
 	ctx := context.Background()

@@ -57,7 +57,7 @@ func newGammonNetTestServer(t *testing.T) (*Server, storage.Storage) {
 func postNDJSON(t *testing.T, srv *Server, path, body string) []map[string]any {
 	t.Helper()
 	req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(body))
-	req.Header.Set(middleware.TenantHeader, "t")
+	req.Header.Set(middleware.TenantHeader, "1")
 	rec := httptest.NewRecorder()
 	srv.Handler().ServeHTTP(rec, req)
 	if rec.Code != http.StatusOK {
@@ -154,7 +154,7 @@ func TestGammonNetAnalyzeMissingCancelUnknownID(t *testing.T) {
 	srv, _ := newGammonNetTestServer(t)
 
 	req := httptest.NewRequest(http.MethodPost, "/v1/gammonnet.analyzeMissing.cancel", strings.NewReader(`{"jobId":"does-not-exist"}`))
-	req.Header.Set(middleware.TenantHeader, "t")
+	req.Header.Set(middleware.TenantHeader, "1")
 	rec := httptest.NewRecorder()
 	srv.Handler().ServeHTTP(rec, req)
 	if rec.Code != http.StatusNotFound {

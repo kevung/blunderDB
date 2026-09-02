@@ -24,6 +24,10 @@ SECURITY: this daemon performs NO authentication. It trusts the X-Tenant-ID
 request header and MUST run behind a reverse-proxy that handles authentication.
 Do NOT expose it directly to the public internet.
 
+X-Tenant-ID is the tenant's positive decimal integer (1, 2, 42, …); the proxy
+maps the authenticated account to that integer. A name ("alice") is refused
+with 400 invalid — it is never mapped to a tenant by the daemon.
+
 Usage:
   blunderdb serve [flags]
 

@@ -296,7 +296,7 @@ func TestImportUnsupportedFormat(t *testing.T) {
 
 func TestImportCancelUnknownID(t *testing.T) {
 	ts := newTestServer(t)
-	resp := post(t, ts, "/v1/imports.cancel", importCancelReq{ImportID: "tenant-a-999"})
+	resp := post(t, ts, "/v1/imports.cancel", importCancelReq{ImportID: "1-999"})
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)

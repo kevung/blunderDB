@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"iter"
-	"strconv"
 
 	"github.com/jackc/pgx/v5"
 
@@ -21,14 +20,22 @@ var _ storage.PositionStore = (*positionStore)(nil)
 // scanner is satisfied by both pgx.Row and pgx.Rows.
 type scanner interface{ Scan(dest ...any) error }
 
-// tenantID maps a scope string to the tenant_id column value. An empty scope
-// maps to tenant 0 (the reserved public tenant). gammonGo sends the numeric
-// tenant identifier via the X-Tenant-ID header for every call.
+// tenantID maps a scope string to the tenant_id column value through
+// storage.ParseTenant: the empty scope is tenant 0 (the desktop's implicit
+// tenant), any other scope must be a positive decimal integer — the numeric
+// identifier the proxy in front of the daemon puts in X-Tenant-ID.
+//
+// A scope ParseTenant rejects is a programming error, not a data condition:
+// every entry point (the HTTP tenant middleware, `migrate --tenant-id`,
+// `call --scope`, PurgeTenant) validates the scope before it reaches a Store
+// method, so this function panics rather than threading an error through the
+// hundred call sites below. It used to map "alice" to 0 silently, which made
+// every named tenant share one set of rows (ADR-0005, amendment 2026-09-03).
 func tenantID(scope string) int64 {
-	if scope == "" {
-		return 0
+	n, err := storage.ParseTenant(scope)
+	if err != nil {
+		panic("postgres: " + err.Error() + " (the caller must validate the scope with storage.ParseTenant)")
 	}
-	n, _ := strconv.ParseInt(scope, 10, 64)
 	return n
 }
 

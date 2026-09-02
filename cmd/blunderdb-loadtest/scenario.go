@@ -17,28 +17,59 @@ type op struct {
 	build  func(rng *rand.Rand) (path string, body []byte)
 }
 
-// scenarios maps a scenario name to its weighted op mix. Reads are
-// list/search/stats; the only write is positions.save.
-var scenarios = map[string][]op{
-	"mixed": {
+// scenario is a weighted op mix plus the way each request names its tenant
+// and what answer counts as a success.
+type scenario struct {
+	ops []op
+	// tenant formats the X-Tenant-ID value for tenant number n (1..N).
+	tenant func(n int) string
+	// ok reports whether a response status is the expected outcome; a request
+	// whose status fails it is counted as an error in the report.
+	ok func(status int) bool
+}
+
+var (
+	mixedOps = []op{
 		{"positions.list", 40, buildList},
 		{"search.find", 25, buildSearch},
 		{"stats.compute", 15, buildStats},
 		{"positions.save", 20, buildSave},
-	},
-	"read-heavy": {
+	}
+	readHeavyOps = []op{
 		{"positions.list", 50, buildList},
 		{"search.find", 30, buildSearch},
 		{"stats.compute", 15, buildStats},
 		{"positions.save", 5, buildSave},
-	},
-	"write-heavy": {
+	}
+	writeHeavyOps = []op{
 		{"positions.list", 20, buildList},
 		{"search.find", 10, buildSearch},
 		{"stats.compute", 5, buildStats},
 		{"positions.save", 65, buildSave},
-	},
+	}
+)
+
+// scenarios maps a scenario name to its definition. Reads are
+// list/search/stats; the only write is positions.save.
+//
+// The three numeric scenarios expect 2xx. "named-tenants" sends the same
+// mixed traffic under tenant NAMES ("tenant-1", "tenant-2", …) and expects
+// every request to be refused with 400: a tenant is a positive decimal
+// integer (ADR-0005, amendment 2026-09-03), and before that amendment such
+// names all landed on tenant 0 and shared its rows. The daemon under test
+// silently accepting them would show up as a wall of errors in the report.
+var scenarios = map[string]scenario{
+	"mixed":         {mixedOps, numericTenant, is2xx},
+	"read-heavy":    {readHeavyOps, numericTenant, is2xx},
+	"write-heavy":   {writeHeavyOps, numericTenant, is2xx},
+	"named-tenants": {mixedOps, namedTenant, isRejected},
 }
+
+// scenarioNames lists the scenario keys for --help and error messages.
+const scenarioNames = "mixed | read-heavy | write-heavy | named-tenants"
+
+func is2xx(status int) bool      { return status >= 200 && status < 300 }
+func isRejected(status int) bool { return status == 400 }
 
 // picker turns a weighted op list into a fast cumulative chooser.
 type picker struct {
@@ -113,5 +144,10 @@ func buildSave(rng *rand.Rand) (string, []byte) {
 // can be replayed across keep-alive connections).
 func jsonBody(b []byte) *bytes.Reader { return bytes.NewReader(b) }
 
-// tenantHeader formats a tenant id 1..n as the X-Tenant-ID value.
-func tenantHeader(n int) string { return fmt.Sprintf("%d", n) }
+// numericTenant formats a tenant id 1..n as the X-Tenant-ID value the daemon
+// accepts: the tenant's decimal integer.
+func numericTenant(n int) string { return fmt.Sprintf("%d", n) }
+
+// namedTenant formats the value a misconfigured proxy would send — a name
+// instead of the tenant's integer — which the daemon must refuse.
+func namedTenant(n int) string { return fmt.Sprintf("tenant-%d", n) }

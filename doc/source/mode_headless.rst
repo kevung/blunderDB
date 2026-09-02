@@ -61,6 +61,10 @@ depuis plusieurs clients.
    reverse-proxy (nginx, Caddy…) chargé de l'authentification. **Ne l'exposez
    jamais directement sur l'Internet public.**
 
+   ``X-Tenant-ID`` est l'**entier** du tenant (``1``, ``2``, ``42``…) : c'est
+   au reverse-proxy de faire correspondre le compte authentifié à cet entier.
+   Un nom (``alice``) est refusé avec ``400 invalid``, jamais converti.
+
 **Options:**
 
 .. list-table::
@@ -291,9 +295,12 @@ par ``--backend postgres`` et la chaîne de connexion ``--dsn``. Le schéma est
 créé et migré automatiquement au démarrage.
 
 Les données sont **cloisonnées par tenant** (locataire) : chaque requête porte
-un identifiant de scope (en-tête ``X-Tenant-ID``, par défaut ``default``), ce
-qui permet à plusieurs utilisateurs de partager la même instance sans voir les
-données des autres. L'option ``--rls`` active en complément la **Row-Level
+l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier décimal
+positif comme ``1`` ou ``42``), ce qui permet à plusieurs utilisateurs de
+partager la même instance sans voir les données des autres. Un identifiant qui
+n'est pas un tel entier — un nom comme ``alice`` ou ``default``, ``0``, ``007``
+— est refusé avec ``400 invalid`` : c'est le reverse-proxy qui associe un
+compte à son entier, le démon ne devine jamais. L'option ``--rls`` active en complément la **Row-Level
 Security** de PostgreSQL : des politiques d'isolation par tenant sont
 installées et ``app.tenant_id`` est fixé par connexion. C'est une défense en
 profondeur facultative, désactivée par défaut.
@@ -323,19 +330,20 @@ Migrer une base SQLite vers PostgreSQL
 ======================================
 
 ``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un backend
-PostgreSQL, sous un scope de tenant choisi — c'est le chemin pour « téléverser »
-une bibliothèque de bureau vers un déploiement serveur.
+PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy enverra dans
+``X-Tenant-ID`` pour cet utilisateur — c'est le chemin pour « téléverser » une
+bibliothèque de bureau vers un déploiement serveur.
 
 .. code-block:: bash
 
    blunderdb migrate \
        --from sqlite:///chemin/vers/base.db \
        --to   "postgres://user:pass@host:5432/db?sslmode=disable" \
-       --tenant-id mon-tenant
+       --tenant-id 42
 
    # Prévisualiser sans rien écrire
    blunderdb migrate --from sqlite:///chemin/vers/base.db \
-       --tenant-id mon-tenant --dry-run
+       --tenant-id 42 --dry-run
 
 La migration copie les **positions, leurs analyses et commentaires, les matchs
 (parties + coups), les tournois (avec leurs liens de match) et les collections
@@ -361,9 +369,10 @@ ne commence.
    * - ``--to <dsn>``
      - –
      - DSN PostgreSQL de destination (``postgres://…``)
-   * - ``--tenant-id <scope>``
+   * - ``--tenant-id <n>``
      - –
-     - scope de tenant de destination (obligatoire sauf en ``--dry-run``)
+     - tenant de destination, un entier décimal positif (obligatoire sauf en
+       ``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)
    * - ``--dry-run``
      - –
      - compte ce qui serait copié sans rien écrire
@@ -422,9 +431,10 @@ les tests d'intégration.
    * - ``--dsn <chaîne>``
      - ``$BLUNDERDB_DSN``
      - chaîne de connexion du backend
-   * - ``--scope <chaîne>``
-     - ``default``
-     - scope de tenant (envoyé comme ``X-Tenant-ID``)
+   * - ``--scope <n>``
+     - ``1``
+     - tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un
+       nom comme ``alice`` est refusé)
    * - ``--json <chaîne>``
      - ``{}``
      - corps de la requête au format JSON
