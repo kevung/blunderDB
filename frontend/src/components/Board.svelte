@@ -4,7 +4,9 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
-    import { parseMoveNotation, mirrorPosition, computePipCount, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
+    import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
+    import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
+    import { attachBoardInteractions } from '../utils/boardInteractions.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -13,9 +15,6 @@
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
     import ContextMenu from './ContextMenu.svelte';
-
-    // Sentinel colour stored on an exclude-structure point that must hold no checker.
-    const EXCLUDE_EMPTY = 2;
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
@@ -69,12 +68,8 @@
     let width;
     let height;
     let unsubscribeBoardRedrawTriggers;
-    let startMousePos = null;
-    // Manual double-click tracking for the Except "must be empty" marker. Native
-    // 'dblclick' is unreliable here because each click redraws (recreates) the
-    // two.js shapes, so the two clicks land on different DOM nodes.
-    let lastExceptClick = null;
-    let cubePosition = { x: 0, y: 0 };
+    let detachInteractions;
+    let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
     let previousDice = get(positionStore).dice; // Save previous dice values
 
     // enterEPCMode() (positionService.js) always starts the Eval panel's
@@ -182,6 +177,7 @@
         boardCfg.dice.fill = colors.dice;
         boardCfg.dice.dot = colors.diceDot;
         boardCfg.cube.fill = colors.cube;
+        invalidateStaticLayer(); // triangles, bar and frame carry the palette
         if (two && canvas) scheduleRedraw();
     });
 
@@ -197,361 +193,6 @@
         const roller = pos.player_on_roll === 0 ? $t('board.player1') : $t('board.player2');
         return $t('board.description', { pip1, pip2, roller });
     });
-    function handleMouseDown(event) {
-        event.preventDefault(); // Prevent text or element selection
-        // Blur any focused text field when clicking the board
-        if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
-            /** @type {HTMLElement} */ (document.activeElement).blur();
-        }
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Normalise into drawing coordinates: the canvas may be CSS-scaled
-        // (interface zoom, side layout), so raw client pixels drift — at 90 %
-        // scale a click on point 1 used to land on point 2.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        startMousePos = {
-            x: mouseX,
-            y: mouseY,
-            button: event.button
-        };
-    }
-
-    function handleMouseMove(event) {
-        event.preventDefault(); // Prevent text or element selection
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-    }
-
-    function handleMouseUp(event) {
-        event.preventDefault(); // Prevent text or element selection
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        const rect = canvas.getBoundingClientRect();
-        const norm = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-        const endMousePos = {
-            x: norm.x,
-            y: norm.y,
-            button: event.button
-        };
-
-        // In the Except structure, a quick second click on the same point blocks it
-        // (must be empty). Detected manually because native 'dblclick' is unreliable
-        // when redraws recreate the shapes between the two clicks.
-        if (mode === 'EDIT' && get(searchStructureModeStore) === 'exclude') {
-            const { checkerPoint } = getCheckerPointAndCount(endMousePos.x, endMousePos.y, 0);
-            if (checkerPoint >= 1 && checkerPoint <= 24) {
-                const isMarker = get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY;
-                const now = Date.now();
-                if (!isMarker && lastExceptClick && lastExceptClick.point === checkerPoint && now - lastExceptClick.time < 450) {
-                    lastExceptClick = null;
-                    setEmptyExcludeMarker(checkerPoint);
-                    return;
-                }
-                // A click on a blocked point unblocks it (see updateCheckerPositionByPoint);
-                // don't let it seed a double-click that would immediately re-block.
-                lastExceptClick = isMarker ? null : { point: checkerPoint, time: now };
-            } else {
-                lastExceptClick = null;
-            }
-        }
-
-        fillCheckersBetween(startMousePos, endMousePos);
-    }
-
-    function fillCheckersBetween(startPos, endPos) {
-        const startChecker = getCheckerPointAndCount(startPos.x, startPos.y, startPos.button);
-        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y, startPos.button);
-
-        const maxCheckers = Math.max(startChecker.checkerCount, endChecker.checkerCount);
-
-        const startPoint = Math.min(startChecker.checkerPoint, endChecker.checkerPoint);
-        const endPoint = Math.max(startChecker.checkerPoint, endChecker.checkerPoint);
-
-        for (let point = startPoint; point <= endPoint; point++) {
-            updateCheckerPositionByPoint(point, maxCheckers, startPos.button);
-        }
-    }
-
-    function getCheckerPointAndCount(x_mouse, y_mouse, _button) {
-        // Pure mapping shared with the unit tests (boardGeometry.js), which
-        // assert it against the drawCheckers() formulas.
-        return checkerPointAndCountAt(x_mouse, y_mouse, width, height, boardCfg.widthFactor, boardCfg.orientation);
-    }
-
-    function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
-        // The Eval panel (EPC mode) merges race analysis and gammonNet position
-        // evaluation (ADR-0012): it is not race-only, so the whole board is
-        // editable, exactly like EDIT mode — colour follows the mouse button
-        // (left → Black, right → White) on every point, not just the home
-        // boards. A position outside the race domain simply gets no race
-        // verdict; the Go side already handles that gracefully.
-
-        // A single click on a blocked ("must be empty") Except point unblocks it
-        // (back to empty) so checkers can be edited again.
-        if (get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY) {
-            positionStore.update((pos) => {
-                pos.board.points = pos.board.points.map((p, i) => (i === checkerPoint ? { checkers: 0, color: -1 } : p));
-                return pos;
-            });
-            return;
-        }
-        const color = checkerPoint === 0 || checkerPoint === 25 ? (checkerPoint === 0 ? 1 : 0) : button === 2 ? 1 : 0;
-
-        // When editing a search structure (Search tab), a point may carry up to 15
-        // checkers and the per-colour total is NOT capped at 15 — a pattern can ask
-        // for e.g. 3 checkers on each of 1-6 ("closed board without a spare"). For a
-        // real position being edited, keep the 15-per-colour cap.
-        const isSearchStructure = get(activeTabStore) === 'search';
-
-        positionStore.update((pos) => {
-            // Cap total checkers of this color at 15 (only for real positions).
-            const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
-                if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
-                return acc;
-            }, 0);
-            const effectiveMaxPerPoint = isSearchStructure ? 15 : 15 - totalOtherPoints;
-            if (effectiveMaxPerPoint <= 0) return pos;
-
-            pos.board.points = pos.board.points.map((point, index) => {
-                if (index === checkerPoint) {
-                    if (point.checkers >= 5 && point.color === color) {
-                        // Only add more checkers if clicked on the 5th checker
-                        if (checkerCount === 5) {
-                            return {
-                                ...point,
-                                checkers: Math.min(point.checkers + 1, effectiveMaxPerPoint)
-                            };
-                        } else {
-                            return {
-                                ...point,
-                                checkers: Math.min(checkerCount, effectiveMaxPerPoint),
-                                color: color
-                            };
-                        }
-                    } else {
-                        return {
-                            ...point,
-                            checkers: Math.min(checkerCount, effectiveMaxPerPoint),
-                            color: color
-                        };
-                    }
-                }
-                return point;
-            });
-
-            // Set color to -1 if no checkers on a point
-            pos.board.points = pos.board.points.map((point) => {
-                if (point.checkers === 0) {
-                    return {
-                        ...point,
-                        color: -1
-                    };
-                }
-                return point;
-            });
-
-            return pos;
-        });
-
-        const position = get(positionStore);
-        const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
-        const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
-        // A search structure can exceed 15 checkers per colour; clamp bearoff at 0
-        // (it is irrelevant to structure search anyway).
-        position.board.bearoff[0] = Math.max(0, 15 - player1Checkers);
-        position.board.bearoff[1] = Math.max(0, 15 - player2Checkers);
-
-        positionStore.update((pos) => {
-            pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
-            return pos;
-        });
-    }
-
-    // setEmptyExcludeMarker flags a point of the "Except" structure as must-be-empty
-    // (sentinel colour EXCLUDE_EMPTY). Used by the double-click handler.
-    function setEmptyExcludeMarker(checkerPoint) {
-        positionStore.update((pos) => {
-            pos.board.points = pos.board.points.map((point, index) => (index === checkerPoint ? { checkers: 1, color: EXCLUDE_EMPTY } : point));
-            return pos;
-        });
-    }
-
-    // Parse move notation like "24/23 13/11" or "8/5 6/5(2)" into array of moves with counts
-    // Draw arrows for a move — arrows start from the top checker being picked up
-    // and end where the checker will land on the destination stack.
-    // displayPosition is the already-mirrored position used by drawCheckers().
-    // In match mode when player 2 is on roll, the display is mirrored (point i → 25-i),
-    // so we must also mirror the move notation point numbers to match.
-    function drawMoveArrows(moveString, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth, displayPosition) {
-        let moves = parseMoveNotation(moveString);
-        if (moves.length === 0) return;
-
-        // In match mode with player 2 on roll, the display position is mirrored
-        // but the move notation uses the original (normalized) point numbers.
-        // Mirror the move points so arrows match the displayed board.
-        const matchCtx = get(matchContextStore);
-        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-            if (currentMovePos && currentMovePos.player_on_roll === 1) {
-                moves = moves.map((m) => ({
-                    ...m,
-                    from: m.from === -1 ? -1 : 25 - m.from,
-                    to: m.to === -1 ? -1 : 25 - m.to
-                }));
-            }
-        }
-
-        // Build simulated checker counts from the DISPLAY position
-        // (the same one drawCheckers uses — already mirrored when player 2 is on roll)
-        const checkerCounts = {};
-        displayPosition.board.points.forEach((point, index) => {
-            checkerCounts[index] = point.checkers;
-        });
-        checkerCounts[-1] = 0; // bearoff tray
-
-        // Get center coordinates of a checker at a given stack position (0-based)
-        // Matches the exact positioning used in drawCheckers()
-        function getCheckerCenter(point, stackIndex) {
-            let x, y;
-
-            if (boardCfg.orientation === 'right') {
-                if (point === 0) {
-                    // bar (player 0) — lower half of bar
-                    x = boardOrigXpos;
-                    const yBase = boardOrigYpos + 0.5 * boardCheckerSize;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point === 25) {
-                    // bar (player 1) — upper half of bar
-                    x = boardOrigXpos;
-                    const yBase = boardOrigYpos - 0.5 * boardCheckerSize;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point === -1) {
-                    // bearoff
-                    x = boardOrigXpos + 0.5 * boardWidth + boardCheckerSize * 0.75;
-                    y = boardOrigYpos;
-                } else if (point <= 6) {
-                    x = boardOrigXpos + (7 - point) * boardCheckerSize;
-                    const yBase = boardOrigYpos + 0.5 * boardHeight;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 12) {
-                    x = boardOrigXpos - (point - 6) * boardCheckerSize;
-                    const yBase = boardOrigYpos + 0.5 * boardHeight;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 18) {
-                    x = boardOrigXpos - (19 - point) * boardCheckerSize;
-                    const yBase = boardOrigYpos - 0.5 * boardHeight;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 24) {
-                    x = boardOrigXpos + (point - 18) * boardCheckerSize;
-                    const yBase = boardOrigYpos - 0.5 * boardHeight;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                }
-            } else if (boardCfg.orientation === 'left') {
-                if (point === 0) {
-                    // bar (player 0) — lower half of bar
-                    x = boardOrigXpos;
-                    const yBase = boardOrigYpos + 0.5 * boardCheckerSize;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point === 25) {
-                    // bar (player 1) — upper half of bar
-                    x = boardOrigXpos;
-                    const yBase = boardOrigYpos - 0.5 * boardCheckerSize;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point === -1) {
-                    // bearoff
-                    x = boardOrigXpos - 0.5 * boardWidth - boardCheckerSize * 0.75;
-                    y = boardOrigYpos;
-                } else if (point <= 6) {
-                    x = boardOrigXpos - (7 - point) * boardCheckerSize;
-                    const yBase = boardOrigYpos + 0.5 * boardHeight;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 12) {
-                    x = boardOrigXpos + (point - 6) * boardCheckerSize;
-                    const yBase = boardOrigYpos + 0.5 * boardHeight;
-                    y = yBase - (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 18) {
-                    x = boardOrigXpos + (19 - point) * boardCheckerSize;
-                    const yBase = boardOrigYpos - 0.5 * boardHeight;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                } else if (point <= 24) {
-                    x = boardOrigXpos - (point - 18) * boardCheckerSize;
-                    const yBase = boardOrigYpos - 0.5 * boardHeight;
-                    y = yBase + (stackIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                }
-            }
-
-            return { x, y };
-        }
-
-        // Process each move sequentially, simulating board state changes
-        moves.forEach((move, _idx) => {
-            // FROM: pick up the topmost checker on the source point
-            const fromCount = checkerCounts[move.from] || 0;
-            const fromStackIndex = Math.min(Math.max(fromCount - 1, 0), 4); // top checker, capped at visual max
-
-            // TO: place checker on top of the destination stack
-            const toCount = checkerCounts[move.to] || 0;
-            const toStackIndex = Math.min(toCount, 4); // next slot on top
-
-            const fromPos = getCheckerCenter(move.from, fromStackIndex);
-            const toPos = getCheckerCenter(move.to, toStackIndex);
-
-            // Update simulated counts for subsequent moves
-            if (checkerCounts[move.from] > 0) checkerCounts[move.from]--;
-            checkerCounts[move.to] = (checkerCounts[move.to] || 0) + 1;
-
-            if (fromPos.x === undefined || toPos.x === undefined) return;
-
-            // Arrow starts and ends at checker/point centers for clarity
-            const fromX = fromPos.x;
-            const fromY = fromPos.y;
-            const toX = toPos.x;
-            const toY = toPos.y;
-
-            // Direction vector
-            const dx = toX - fromX;
-            const dy = toY - fromY;
-            const length = Math.sqrt(dx * dx + dy * dy);
-            if (length < 1) return;
-
-            const ndx = dx / length;
-            const ndy = dy / length;
-
-            // Arrow styling — thick, clearly visible shaft scaled to board
-            const arrowColor = 'rgba(255, 107, 107, 0.85)';
-            const arrowWidth = Math.max(boardCheckerSize * 0.22, 6);
-
-            // Arrowhead — proportional to shaft width for a balanced look
-            const headLength = boardCheckerSize * 0.45;
-            const headWidth = boardCheckerSize * 0.38;
-
-            // Shaft ends at the base of the arrowhead
-            const lineEndX = toX - headLength * ndx;
-            const lineEndY = toY - headLength * ndy;
-
-            // Draw shaft from center to center (arrowhead base)
-            const line = two.makeLine(fromX, fromY, lineEndX, lineEndY);
-            line.stroke = arrowColor;
-            line.linewidth = arrowWidth;
-            line.cap = 'round';
-
-            // Draw arrowhead pointing into the destination checker center
-            const arrowTipX = toX;
-            const arrowTipY = toY;
-            const arrowBase1X = arrowTipX - headLength * ndx - headWidth * ndy;
-            const arrowBase1Y = arrowTipY - headLength * ndy + headWidth * ndx;
-            const arrowBase2X = arrowTipX - headLength * ndx + headWidth * ndy;
-            const arrowBase2Y = arrowTipY - headLength * ndy - headWidth * ndx;
-
-            const arrowHead = two.makePath(arrowTipX, arrowTipY, arrowBase1X, arrowBase1Y, arrowBase2X, arrowBase2Y);
-            arrowHead.fill = arrowColor;
-            arrowHead.stroke = arrowColor;
-            arrowHead.linewidth = 1;
-            arrowHead.closed = true;
-        });
-    }
-
     function resizeBoard() {
         const container = canvas.parentElement;
         const containerWidth = container.clientWidth;
@@ -568,6 +209,7 @@
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
+        invalidateStaticLayer(); // every coordinate depends on the size
         // The measurement above must stay synchronous (it reads the live
         // container box), but the actual repaint is coalesced: a burst of
         // 'resize' events (window drag, panel toggle) must repaint at most
@@ -609,269 +251,6 @@
         });
     }
 
-    function handleDoubleClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-
-        // Note: the Except "must be empty" marker is handled by manual double-click
-        // detection in handleMouseUp (native 'dblclick' is unreliable here because
-        // redraws recreate the shapes between the two clicks).
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = (11 / 13) * boardWidth;
-
-        // Check if the click is outside of the board
-        if (mouseX < boardOrigXpos - boardWidth / 2 || mouseX > boardOrigXpos + boardWidth / 2 || mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
-            if (mode === 'EPC') resetEPCBoard();
-            else resetBoard();
-        }
-    }
-
-    function handleDoublingCubeClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        // Check if the click is within the doubling cube
-        if (
-            mouseX >= cubePosition.x - cubePosition.size / 2 &&
-            mouseX <= cubePosition.x + cubePosition.size / 2 &&
-            mouseY >= cubePosition.y - cubePosition.size / 2 &&
-            mouseY <= cubePosition.y + cubePosition.size / 2
-        ) {
-            positionStore.update((pos) => {
-                // EPC mode: only the owner matters (money equities are in units
-                // of the current cube), so clicks cycle the owner and pin the
-                // value — centered (face 1) → bottom owns (face 2) → top owns
-                // (face 2) → centered; right-click cycles backwards.
-                if (mode === 'EPC') {
-                    const cycle = [-1, 0, 1];
-                    const dir = event.button === 2 ? -1 : 1;
-                    const cur = cycle.indexOf(pos.cube.owner === undefined ? -1 : pos.cube.owner);
-                    const next = cycle[(cur + dir + 3) % 3];
-                    pos.cube.owner = next;
-                    pos.cube.value = next === -1 ? 0 : 1;
-                    return pos;
-                }
-                // Take/pass search: the cube is an offered (centered) cube. Edit its
-                // value while keeping it centered (owner -1); an offered cube is at
-                // least a double, so value stays ≥ 1 (displayed ≥ 2).
-                if (get(searchOfferedCubeStore) && pos.decision_type === 1) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 1);
-                    }
-                    pos.cube.owner = -1;
-                    return pos;
-                }
-                if (pos.cube.owner === -1) {
-                    pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    pos.cube.owner = event.button === 0 ? 0 : 1;
-                } else if (pos.cube.owner === 0) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
-                    }
-                } else if (pos.cube.owner === 1) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    }
-                }
-
-                if (pos.cube.value === 0) {
-                    pos.cube.owner = -1;
-                }
-
-                return pos;
-            });
-        }
-    }
-
-    function handleRectangleAndDiceClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        logger.log('Rectangle or Dice click detected at:', mouseX, mouseY); // Debug log
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-        const boardHeight = (11 / 13) * boardWidth;
-        const gap = 1.2 * boardCheckerSize;
-
-        const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
-        const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
-        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
-
-        const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
-        const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
-        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
-
-        // Exclude score areas from player rectangle detection to avoid overlap with handleScoreClick
-        const scoreHeight = 0.5 * boardCheckerSize;
-        const isInsideScore1 =
-            mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize && mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2;
-        const isInsideScore2 =
-            mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize && mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2;
-
-        const isInsideTopPlayerRectangle =
-            !isInsideScore1 &&
-            mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize &&
-            mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff1Ypos, score1Ypos) &&
-            mouseY <= Math.max(bearoff1Ypos, score1Ypos);
-
-        const isInsideBottomPlayerRectangle =
-            !isInsideScore2 &&
-            mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize &&
-            mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff2Ypos, score2Ypos) &&
-            mouseY <= Math.max(bearoff2Ypos, score2Ypos);
-
-        const diceGap = 0.325 * boardCheckerSize;
-        const diceSize = 0.7 * boardCheckerSize;
-        const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * diceGap;
-        const diceYpos = get(positionStore).player_on_roll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
-
-        let isInsideDie1 = false;
-        let isInsideDie2 = false;
-
-        for (let index = 0; index < 2; index++) {
-            const dieXpos = diceXpos + index * (diceSize + diceGap);
-            if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 && mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
-                if (index === 0) {
-                    isInsideDie1 = true;
-                } else {
-                    isInsideDie2 = true;
-                }
-            }
-        }
-
-        if (isInsideDie1 || isInsideDie2) {
-            logger.log('Die clicked'); // Debug log
-        }
-
-        // EPC mode shares this whole handler with EDIT mode: the Eval panel's
-        // evaluation volet needs real dice to show candidate moves (no dice
-        // means a cube verdict instead, EPCPanel.svelte) — a player's
-        // rectangle clearing the dice to show the cube decision, then a die
-        // click restoring/bumping them for a move decision, is exactly EDIT
-        // mode's own toggle.
-        positionStore.update((pos) => {
-            if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                logger.log("Top player's rectangle clicked"); // Debug log
-                pos.player_on_roll = 0;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                previousDice = pos.dice; // Save previous dice values
-                pos.dice = [0, 0];
-                logger.log('Updated decision_type to 1 for top player'); // Debug log
-            } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                logger.log("Bottom player's rectangle clicked"); // Debug log
-                pos.player_on_roll = 1;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                pos.dice = [0, 0];
-                logger.log('Updated decision_type to 1 for bottom player'); // Debug log
-            } else if (isInsideDie1) {
-                logger.log('Die 1 clicked'); // Debug log
-                pos.decision_type = 0;
-                pos.dice = previousDice; // Restore previous dice values
-                if (event.button === 0) {
-                    pos.dice[0] = (pos.dice[0] % 6) + 1; // Left click to increase
-                } else if (event.button === 2) {
-                    pos.dice[0] = pos.dice[0] === 1 ? 6 : pos.dice[0] - 1; // Right click to decrease
-                }
-            } else if (isInsideDie2) {
-                logger.log('Die 2 clicked'); // Debug log
-                pos.decision_type = 0;
-                pos.dice = previousDice; // Restore previous dice values
-                if (event.button === 0) {
-                    pos.dice[1] = (pos.dice[1] % 6) + 1; // Left click to increase
-                } else if (event.button === 2) {
-                    pos.dice[1] = pos.dice[1] === 1 ? 6 : pos.dice[1] - 1; // Right click to decrease
-                }
-            }
-
-            logger.log('Updated dice values:', pos.dice); // Debug log
-            logger.log('Updated position store:', pos); // Log the updated position store
-            return pos;
-        });
-    }
-
-    function handleScoreClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-        const boardHeight = (11 / 13) * boardWidth; // Define boardHeight
-
-        const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
-        const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
-
-        const scoreWidth = 1.5 * boardCheckerSize;
-        const scoreHeight = 0.5 * boardCheckerSize;
-
-        // Check if the click is inside the top player's green rectangle
-        if (mouseX >= score1Xpos - scoreWidth / 2 && mouseX <= score1Xpos + scoreWidth / 2 && mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2) {
-            positionStore.update((pos) => {
-                if (event.button === 0) {
-                    pos.score[0] = Math.max(pos.score[0] - 1, -1); // Decrement score
-                } else if (event.button === 2) {
-                    pos.score[0] = Math.min(pos.score[0] + 1, 99); // Increment score, max 99
-                }
-                if (pos.score[0] === -1) {
-                    pos.score[1] = -1; // Set other player's score to unlimited
-                } else if (pos.score[1] === -1) {
-                    // Leaving money by editing this side alone must not strand the
-                    // position at [N, -1] — an away score with no opponent away
-                    // score is not a valid match state (EPC's own money default is
-                    // [-1, -1], the only state where a lone -1 is meaningful).
-                    pos.score[1] = pos.score[0];
-                }
-                return pos;
-            });
-        }
-
-        // Check if the click is inside the bottom player's green rectangle
-        if (mouseX >= score2Xpos - scoreWidth / 2 && mouseX <= score2Xpos + scoreWidth / 2 && mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2) {
-            positionStore.update((pos) => {
-                if (event.button === 0) {
-                    pos.score[1] = Math.max(pos.score[1] - 1, -1); // Decrement score
-                } else if (event.button === 2) {
-                    pos.score[1] = Math.min(pos.score[1] + 1, 99); // Increment score, max 99
-                }
-                if (pos.score[1] === -1) {
-                    pos.score[0] = -1; // Set other player's score to unlimited
-                } else if (pos.score[0] === -1) {
-                    pos.score[0] = pos.score[1]; // Leaving money: see the mirrored comment above
-                }
-                return pos;
-            });
-        }
-    }
-
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
@@ -881,6 +260,7 @@
 
     function setBoardOrientation(orientation) {
         boardCfg.orientation = orientation;
+        invalidateStaticLayer(); // labels and bearoff side move
         scheduleRedraw();
     }
 
@@ -925,14 +305,27 @@
         two.height = height;
         two.renderer.setSize(width, height);
 
-        canvas.addEventListener('mousedown', handleMouseDown);
-        canvas.addEventListener('mousemove', handleMouseMove);
-        canvas.addEventListener('mouseup', handleMouseUp);
-        canvas.addEventListener('dblclick', handleDoubleClick);
-        canvas.addEventListener('mousedown', handleDoublingCubeClick);
-        canvas.addEventListener('mousedown', handleRectangleAndDiceClick);
-        canvas.addEventListener('mousedown', handleScoreClick);
-        canvas.addEventListener('contextmenu', handleContextMenu);
+        // Mouse handling lives in boardInteractions.js; it reads the live
+        // mode/size/config through these getters so a redraw or a mode
+        // change needs no re-attach.
+        detachInteractions = attachBoardInteractions(canvas, {
+            getMode: () => mode,
+            getSize: () => ({ width, height }),
+            cfg: boardCfg,
+            getCubeBox: () => cubePosition,
+            stores: {
+                position: positionStore,
+                structureMode: searchStructureModeStore,
+                activeTab: activeTabStore,
+                offeredCube: searchOfferedCubeStore,
+                anyModalOpen: isAnyModalOpen
+            },
+            getPreviousDice: () => previousDice,
+            setPreviousDice: (dice) => (previousDice = dice),
+            reset: () => (mode === 'EPC' ? resetEPCBoard() : resetBoard()),
+            openContextMenu,
+            logger
+        });
         // No direct drawBoard() here: subscribeBoardRedrawTriggers() below
         // fires each subscription once on the spot (svelte/store calls the
         // callback synchronously), which schedules the first paint on the
@@ -949,14 +342,7 @@
     });
 
     onDestroy(() => {
-        canvas.removeEventListener('mousedown', handleMouseDown);
-        canvas.removeEventListener('mousemove', handleMouseMove);
-        canvas.removeEventListener('mouseup', handleMouseUp);
-        canvas.removeEventListener('dblclick', handleDoubleClick);
-        canvas.removeEventListener('mousedown', handleDoublingCubeClick);
-        canvas.removeEventListener('mousedown', handleRectangleAndDiceClick);
-        canvas.removeEventListener('mousedown', handleScoreClick);
-        canvas.removeEventListener('contextmenu', handleContextMenu);
+        if (detachInteractions) detachInteractions();
         window.removeEventListener('resize', resizeBoard);
         window.removeEventListener('resize', logCanvasSize);
         window.removeEventListener('keydown', handleOrientationChange);
@@ -969,19 +355,16 @@
     });
 
     // ── Board context menu ─────────────────────────────────────────────────
-    // Right-clicking the board opens actions on the position it shows, but
-    // ONLY in the modes where the right button is otherwise idle. In EDIT and
-    // EPC the right button already means "place the other colour's checker"
-    // (see handleMouseDown), so the menu stays out of their way.
+    // Right-clicking the board opens actions on the position it shows. The
+    // gating (never in EDIT/EPC where the right button places checkers,
+    // never over a modal) is boardInteractions.js's; this only builds the
+    // menu at the spot it asks for.
     let boardMenu = $state(null);
 
-    function handleContextMenu(event) {
-        event.preventDefault(); // no native menu, in every mode
-        if (mode === 'EDIT' || mode === 'EPC') return;
-        if (get(isAnyModalOpen)) return;
+    function openContextMenu({ x, y }) {
         boardMenu = {
-            x: event.clientX,
-            y: event.clientY,
+            x,
+            y,
             items: [
                 {
                     label: $t('board.menu.evaluate'),
@@ -1043,627 +426,100 @@
         return position;
     }
 
-    // Mirror a position (swap players)
+    // Whether the board is shown from player 2's side: in match mode when
+    // player 2 is on roll for the current move (the stored position is then
+    // mirrored for display), otherwise when the displayed position itself has
+    // player 2 on roll (an edited position before it is saved).
+    function isPlayer2Perspective(displayPosition) {
+        const matchCtx = get(matchContextStore);
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            return !!currentMovePos && currentMovePos.player_on_roll === 1;
+        }
+        return displayPosition.player_on_roll === 1;
+    }
+
+    // A take/pass (response) decision: the cube has been offered to the
+    // player on roll and is drawn in the middle of the board rather than at
+    // its owner spot. The signal is the played cube action — in match mode
+    // the current move's action, otherwise the analysis' recorded played
+    // actions. While editing, the offered cube is shown only when the user is
+    // explicitly building a take/pass search — never from stale analysis of
+    // a previously viewed position.
+    function isOfferedCube(position) {
+        if (position.decision_type !== 1) return false;
+        if (mode === 'EDIT') return get(searchOfferedCubeStore) === true;
+        const matchCtx = get(matchContextStore);
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const mp = matchCtx.movePositions[matchCtx.currentIndex];
+            return !!mp && isResponseCubeAction(mp.cube_action);
+        }
+        const ana = get(analysisStore);
+        const acts = (ana && ana.playedCubeActions) || [];
+        return acts.some(isResponseCubeAction);
+    }
+
+    // The selected move's checkers, in the display position's point numbers.
+    // Move notation uses the stored (normalised) numbering; in match mode with
+    // player 2 on roll the display is mirrored (point i → 25 - i), so the
+    // arrows must be too.
+    function selectedMoveArrows() {
+        const moves = parseMoveNotation(selectedMove);
+        if (moves.length === 0) return moves;
+        const matchCtx = get(matchContextStore);
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos && currentMovePos.player_on_roll === 1) {
+                return moves.map((m) => ({ ...m, from: m.from === -1 ? -1 : 25 - m.from, to: m.to === -1 ? -1 : 25 - m.to }));
+            }
+        }
+        return moves;
+    }
+
+    // ── Static / dynamic layers ────────────────────────────────────────────
+    // A redraw used to two.clear() the whole scene and recreate ~120 SVG
+    // nodes, half of which never change from one position to the next: the
+    // 24 triangles, the 24 point labels, the bar and the outline. They now
+    // live in their own two.js groups, rebuilt only when what they depend on
+    // changes — the drawing size (resize), the orientation (Ctrl-arrows), the
+    // palette (boardColorsStore) or the side the labels are numbered from
+    // (player 2's perspective) — while scheduleRedraw() only empties and
+    // refills the dynamic group (checkers, cube, dice, scores, arrows).
+    // Board.redraw.test.js counts two.clear() as "static layer rebuilt" and
+    // two.update() as "painted".
+    let staticLayer = null; // triangles, labels, bar — null = must be rebuilt
+    let dynamicLayer = null; // emptied and refilled on every redraw
+    let staticFlip = null; // the label side staticLayer was built for
+
+    function invalidateStaticLayer() {
+        staticLayer = null;
+    }
+
+    function rebuildStaticLayers(geom, flip) {
+        two.clear();
+        staticLayer = two.makeGroup();
+        dynamicLayer = two.makeGroup();
+        const frameLayer = two.makeGroup(); // above the checkers so the outline keeps its linewidth
+        drawStaticScene(layerOf(two, staticLayer), geom, boardCfg, flip);
+        drawFrame(layerOf(two, frameLayer), geom, boardCfg);
+        staticFlip = flip;
+    }
+
     export function drawBoard() {
         if (!two) return; // Safety check
 
-        two.clear();
-
-        const boardAspectFactor = 11 / 13;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = boardAspectFactor * boardWidth;
-        const boardCheckerSize = boardHeight / 11;
-        const boardTriangleHeight = 5 * boardCheckerSize;
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        logger.log('width: ', width, 'height: ', height);
-        logger.log('boardOrigXpos: ', boardOrigXpos, 'boardOrigYpos: ', boardOrigYpos);
-        logger.log('two.width: ', two.width, 'two.height: ', two.height);
-
-        // Get the position to display (may be mirrored in match mode)
+        const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
-        logger.log('drawBoard - decision_type: ', position.decision_type); // Debug log
+        const flip = isPlayer2Perspective(position);
+        logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
-        // A take/pass (response) decision: the cube has been offered to the
-        // player on roll. We render the offered cube in the middle of the board
-        // (standard convention) rather than at its owner spot. The signal is the
-        // played cube action — in match mode the current move's action, otherwise
-        // the analysis' recorded played actions.
-        const isCubeResponse = (() => {
-            if (position.decision_type !== 1) return false;
-            // While editing, the centered "offered cube" is shown only when the
-            // user is explicitly building a take/pass (response) search — never
-            // from stale analysis of a previously viewed position.
-            if (mode === 'EDIT') return get(searchOfferedCubeStore) === true;
-            const matchCtx = get(matchContextStore);
-            if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-                const mp = matchCtx.movePositions[matchCtx.currentIndex];
-                return !!mp && isResponseCubeAction(mp.cube_action);
-            }
-            const ana = get(analysisStore);
-            const acts = (ana && ana.playedCubeActions) || [];
-            return acts.some(isResponseCubeAction);
-        })();
-
-        function createTriangle(x, y, flip) {
-            if (flip == false) {
-                const triangle = two.makePath(x, y, x + boardCheckerSize, y, x + 0.5 * boardCheckerSize, y + 5 * boardCheckerSize);
-                triangle.stroke = boardCfg.triangle.stroke;
-                triangle.linewidth = boardCfg.triangle.linewidth;
-                return triangle;
-            } else {
-                const triangle = two.makePath(x, y + boardTriangleHeight, x + boardCheckerSize, y + boardTriangleHeight, x + 0.5 * boardCheckerSize, y + boardTriangleHeight - 5 * boardCheckerSize);
-
-                triangle.stroke = boardCfg.triangle.stroke;
-                triangle.linewidth = boardCfg.triangle.linewidth;
-                return triangle;
-            }
-        }
-
-        function createQuadrant(x, y, flip) {
-            let quadrant = two.makeGroup();
-            for (let i = 0; i < 6; i++) {
-                const offsetX = x + i * boardCheckerSize;
-                const offsetY = y;
-                const t = createTriangle(offsetX, offsetY, flip);
-                if (i % 2 == 1) {
-                    t.fill = boardCfg.triangle.fill1;
-                } else {
-                    t.fill = boardCfg.triangle.fill2;
-                }
-
-                //invert color
-                if (flip) {
-                    if (i % 2 == 1) {
-                        t.fill = boardCfg.triangle.fill2;
-                    } else {
-                        t.fill = boardCfg.triangle.fill1;
-                    }
-                }
-
-                quadrant.add(t);
-            }
-            return quadrant;
-        }
-
-        function createLabels() {
-            let labels = two.makeGroup();
-            // In normal mode: labels from player on roll's perspective (always at bottom)
-            // In match mode: labels from Player 1's perspective (Player 1 always at bottom)
-            // Since positions are normalized (player_on_roll = 0) and in match mode we mirror
-            // when Player 2 is on roll, we need to check match context for flip
-
-            const matchCtx = get(matchContextStore);
-            let flip;
-
-            if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-                // In match mode: flip labels when Player 2 is on roll
-                // so point numbers reflect the player on roll's perspective
-                const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-                flip = currentMovePos && currentMovePos.player_on_roll === 1;
-            } else {
-                // In normal mode: flip if player_on_roll is 1 (for edited positions before save)
-                flip = position.player_on_roll === 1;
-            }
-
-            if (boardCfg.orientation === 'right') {
-                for (let i = 0; i < 6; i++) {
-                    const x = boardOrigXpos + (6 - i) * boardCheckerSize;
-                    const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'top';
-                    labels.add(t);
-                }
-                for (let i = 6; i < 12; i++) {
-                    const x = boardOrigXpos - (i - 5) * boardCheckerSize;
-                    const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'top';
-                    labels.add(t);
-                }
-                for (let i = 12; i < 18; i++) {
-                    const x = boardOrigXpos + (i - 18) * boardCheckerSize;
-                    const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'middle';
-                    labels.add(t);
-                }
-                for (let i = 18; i < 24; i++) {
-                    const x = boardOrigXpos + (i - 17) * boardCheckerSize;
-                    const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'middle';
-                    labels.add(t);
-                }
-            } else if (boardCfg.orientation === 'left') {
-                for (let i = 0; i < 6; i++) {
-                    const x = boardOrigXpos - (6 - i) * boardCheckerSize;
-                    const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'middle';
-                    labels.add(t);
-                }
-                for (let i = 6; i < 12; i++) {
-                    const x = boardOrigXpos + (i - 5) * boardCheckerSize;
-                    const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'middle';
-                    labels.add(t);
-                }
-                for (let i = 12; i < 18; i++) {
-                    const x = boardOrigXpos - (i - 18) * boardCheckerSize;
-                    const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'top';
-                    labels.add(t);
-                }
-                for (let i = 18; i < 24; i++) {
-                    const x = boardOrigXpos - (i - 17) * boardCheckerSize;
-                    const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
-                    t.size = boardCfg.label.size;
-                    t.alignment = 'center';
-                    t.baseline = 'top';
-                    labels.add(t);
-                }
-            }
-            return labels;
-        }
-
-        function drawCheckers() {
-            // Use the already-calculated display position
-            position.board.points.forEach((point, index) => {
-                let x, yBase;
-                if (boardCfg.orientation === 'right') {
-                    if (index === 0) {
-                        x = boardOrigXpos;
-                        yBase = boardOrigYpos + 0.5 * boardCheckerSize;
-                    } else if (index === 25) {
-                        x = boardOrigXpos;
-                        yBase = boardOrigYpos - 0.5 * boardCheckerSize;
-                    } else if (index <= 6) {
-                        x = boardOrigXpos + (7 - index) * boardCheckerSize;
-                        yBase = boardOrigYpos + 0.5 * boardHeight;
-                    } else if (index <= 12) {
-                        x = boardOrigXpos - (index - 6) * boardCheckerSize;
-                        yBase = boardOrigYpos + 0.5 * boardHeight;
-                    } else if (index <= 18) {
-                        x = boardOrigXpos - (19 - index) * boardCheckerSize;
-                        yBase = boardOrigYpos - 0.5 * boardHeight;
-                    } else {
-                        x = boardOrigXpos + (index - 18) * boardCheckerSize;
-                        yBase = boardOrigYpos - 0.5 * boardHeight;
-                    }
-                } else if (boardCfg.orientation === 'left') {
-                    if (index === 0) {
-                        x = boardOrigXpos;
-                        yBase = boardOrigYpos + 0.5 * boardCheckerSize;
-                    } else if (index === 25) {
-                        x = boardOrigXpos;
-                        yBase = boardOrigYpos - 0.5 * boardCheckerSize;
-                    } else if (index <= 6) {
-                        x = boardOrigXpos - (7 - index) * boardCheckerSize;
-                        yBase = boardOrigYpos + 0.5 * boardHeight;
-                    } else if (index <= 12) {
-                        x = boardOrigXpos + (index - 6) * boardCheckerSize;
-                        yBase = boardOrigYpos + 0.5 * boardHeight;
-                    } else if (index <= 18) {
-                        x = boardOrigXpos + (19 - index) * boardCheckerSize;
-                        yBase = boardOrigYpos - 0.5 * boardHeight;
-                    } else {
-                        x = boardOrigXpos - (index - 18) * boardCheckerSize;
-                        yBase = boardOrigYpos - 0.5 * boardHeight;
-                    }
-                }
-                // "Must be empty" exclusion marker: a red hatched, crossed-out cell
-                // spanning the point's checker column to make the block obvious.
-                if (point.color === EXCLUDE_EMPTY) {
-                    const dir = (index !== 0 && index <= 12) || index === 25 ? -1 : 1;
-                    const cs = boardCfg.checker.sizeFactor * boardCheckerSize;
-                    const spanSlots = 3; // cover ~3 checker slots
-                    const cy = yBase + dir * (spanSlots / 2) * cs;
-                    const w = cs;
-                    const h = spanSlots * cs;
-                    const cell = two.makeRectangle(x, cy, w, h);
-                    cell.fill = 'rgba(192,57,43,0.18)';
-                    cell.stroke = '#c0392b';
-                    cell.linewidth = 2;
-                    // Diagonal hatching across the cell.
-                    const top = cy - h / 2;
-                    const left = x - w / 2;
-                    const step = cs / 2;
-                    for (let d = step; d < w + h; d += step) {
-                        let ax = left + d,
-                            ay = top;
-                        let bx = left,
-                            by = top + d;
-                        if (ax > left + w) {
-                            ay = top + (ax - (left + w));
-                            ax = left + w;
-                        }
-                        if (by > top + h) {
-                            bx = left + (by - (top + h));
-                            by = top + h;
-                        }
-                        const hatch = two.makeLine(ax, ay, bx, by);
-                        hatch.stroke = '#c0392b';
-                        hatch.linewidth = 1;
-                    }
-                    return;
-                }
-                const checkersToDraw = Math.min(point.checkers, 5);
-                for (let i = 0; i < checkersToDraw; i++) {
-                    const y = yBase + ((index !== 0 && index <= 12) || index === 25 ? -1 : 1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                    const checker = two.makeCircle(x, y, (boardCfg.checker.sizeFactor * boardCheckerSize) / 2);
-                    checker.fill = boardCfg.checker.colors[point.color];
-                    checker.stroke = boardCfg.triangle.stroke;
-                    checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
-                    if (i === 4 && point.checkers > 5) {
-                        const text = two.makeText(point.checkers.toString(), x, y);
-                        text.size = 20; // Ensure consistent text size
-                        text.alignment = 'center';
-                        text.baseline = 'middle';
-                        text.weight = 'bold'; // Ensure consistent text weight
-                        if (point.color === 0) {
-                            text.fill = '#ffffff'; // Contrast color for black checker
-                        } else if (point.color === 1) {
-                            text.fill = '#333333'; // Contrast color for white checker
-                        }
-                    }
-                }
-            });
-
-            // Draw checkers on the bar above the bar
-            position.board.points.forEach((point, index) => {
-                if (point.color === EXCLUDE_EMPTY) return; // markers live on inner points only
-                if (index === 0 || index === 25) {
-                    let x = boardOrigXpos;
-                    let yBase = index === 0 ? boardOrigYpos + 0.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardCheckerSize;
-                    const checkersToDraw = Math.min(point.checkers, 5);
-                    for (let i = 0; i < checkersToDraw; i++) {
-                        const y = yBase + (index === 0 ? 1 : -1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
-                        const checker = two.makeCircle(x, y, (boardCfg.checker.sizeFactor * boardCheckerSize) / 2);
-                        checker.fill = boardCfg.checker.colors[point.color];
-                        checker.stroke = boardCfg.triangle.stroke;
-                        checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
-                        if (i === 4 && point.checkers > 5) {
-                            const text = two.makeText(point.checkers.toString(), x, y);
-                            text.size = 20; // Ensure consistent text size
-                            text.alignment = 'center';
-                            text.baseline = 'middle';
-                            text.weight = 'bold'; // Ensure consistent text weight
-                            if (point.color === 0) {
-                                text.fill = '#ffffff'; // Contrast color for black checker
-                            } else if (point.color === 1) {
-                                text.fill = '#333333'; // Contrast color for white checker
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function drawDoublingCube() {
-            const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-            const boardOrigXpos = width / 2;
-            const boardOrigYpos = height / 2;
-            const boardWidth = boardCfg.widthFactor * width;
-
-            // Use the already-calculated display position
-            const cubeValue = position.cube.value;
-            const doublingCubeTextValue = Math.pow(2, cubeValue);
-
-            // Determine the position of the doubling cube based on its owner
-            const doublingCubeSize = 0.9 * boardCheckerSize; // Reduce the size of the doubling cube
-            const gap = 0.75 * boardCheckerSize;
-
-            if (isCubeResponse) {
-                // Cube offered (take/pass decision): placed by the opponent in the
-                // middle of the left half of the board, between the triangles. The
-                // board is 13 checkers wide (6 + bar + 6), so the left pan spans
-                // [-6.5, -0.5] checkers from centre and its midpoint is -3.5. Kept
-                // on the left — the same side the cube normally sits — so it never
-                // clashes with the bear-off (checker-off) indication on the right.
-                cubePosition.x = boardOrigXpos - 3.5 * boardCheckerSize;
-                cubePosition.y = boardOrigYpos;
-            } else if (position.cube.owner === -1) {
-                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
-                cubePosition.y = boardOrigYpos;
-            } else if (position.cube.owner === 0) {
-                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
-                cubePosition.y = boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize;
-            } else if (position.cube.owner === 1) {
-                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
-                cubePosition.y = boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
-            }
-            cubePosition.size = doublingCubeSize;
-
-            const doublingCube = two.makeRectangle(cubePosition.x, cubePosition.y, doublingCubeSize, doublingCubeSize);
-            doublingCube.fill = boardCfg.cube.fill;
-            doublingCube.stroke = boardCfg.stroke; // follows the board border colour
-            doublingCube.linewidth = 2.5; // Adjust linewidth accordingly
-            const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), cubePosition.x, cubePosition.y);
-            doublingCubeText.size = 34; // Checker size
-            doublingCubeText.alignment = 'center';
-            doublingCubeText.baseline = 'middle';
-            doublingCubeText.translation.set(cubePosition.x, cubePosition.y + 0.05 * doublingCubeSize); // Center the text
-        }
-
-        function drawPipCounts() {
-            const { pipCount1, pipCount2 } = computePipCount(position);
-
-            const boardOrigXpos = width / 2;
-            const boardOrigYpos = height / 2;
-            const boardWidth = boardCfg.widthFactor * width;
-            const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-
-            const pipCountText1 = `pip: ${pipCount1}`;
-            const pipCountText2 = `pip: ${pipCount2}`;
-
-            const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
-            const pipCount1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize; // Align with score height
-
-            const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
-            const pipCount2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Align with score height
-
-            const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
-            pipCountText1Element.size = 20; // Same size as score
-            pipCountText1Element.alignment = 'center';
-            pipCountText1Element.baseline = 'middle';
-            pipCountText1Element.weight = 'bold';
-
-            const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
-            pipCountText2Element.size = 20; // Same size as score
-            pipCountText2Element.alignment = 'center';
-            pipCountText2Element.baseline = 'middle';
-            pipCountText2Element.weight = 'bold';
-        }
-
-        function drawBearoff() {
-            // Use the already-calculated display position
-            const bearoff1 = position.board.bearoff[0];
-            const bearoff2 = position.board.bearoff[1];
-            const boardOrigXpos = width / 2;
-            const boardOrigYpos = height / 2;
-            const boardWidth = boardCfg.widthFactor * width;
-            const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-            const gap = 1.2 * boardCheckerSize;
-
-            const bearoffText1 = `(${bearoff1} OFF)`;
-            const bearoffText2 = `(${bearoff2} OFF)`;
-
-            let bearoff1Xpos, bearoff1Ypos, bearoff2Xpos, bearoff2Ypos;
-
-            if (boardCfg.orientation === 'right') {
-                bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
-                bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
-
-                bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
-                bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
-            } else if (boardCfg.orientation === 'left') {
-                bearoff1Xpos = boardOrigXpos - boardWidth / 2 - gap;
-                bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
-
-                bearoff2Xpos = boardOrigXpos - boardWidth / 2 - gap;
-                bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
-            }
-
-            const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
-            bearoffText1Element.size = 20;
-            bearoffText1Element.alignment = 'center';
-            bearoffText1Element.baseline = 'middle';
-
-            const bearoffText2Element = two.makeText(bearoffText2, bearoff2Xpos, bearoff2Ypos);
-            bearoffText2Element.size = 20;
-            bearoffText2Element.alignment = 'center';
-            bearoffText2Element.baseline = 'middle';
-
-            // Define score positions
-            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
-            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
-
-            // Add transparent rectangles with red borders
-            const rectangle1 = two.makeRectangle(bearoff1Xpos, (bearoff1Ypos + score1Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff1Ypos - score1Ypos));
-            rectangle1.fill = 'transparent';
-            rectangle1.stroke = 'red'; // Make border visible
-            rectangle1.linewidth = 0;
-
-            const rectangle2 = two.makeRectangle(bearoff2Xpos, (bearoff2Ypos + score2Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff2Ypos - score2Ypos));
-            rectangle2.fill = 'transparent';
-            rectangle2.stroke = 'red'; // Make border visible
-            rectangle2.linewidth = 0;
-        }
-
-        function drawDice() {
-            // Use the already-calculated display position
-            const playerOnRoll = position.player_on_roll;
-            const dice = position.dice;
-            const decisionType = position.decision_type;
-
-            const boardOrigXpos = width / 2;
-            const boardOrigYpos = height / 2;
-            const boardWidth = boardCfg.widthFactor * width;
-            const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-            const gap = 0.325 * boardCheckerSize; // Move the dice closer to the board
-            const diceSize = 0.7 * boardCheckerSize; // Reduce the size of the dice
-
-            const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * gap;
-            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
-
-            dice.forEach((die, index) => {
-                const dieXpos = diceXpos + index * (diceSize + gap);
-                const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
-                dieElement.fill = boardCfg.dice.fill;
-                dieElement.stroke = boardCfg.stroke; // follows the board border colour
-                dieElement.linewidth = 2.5; // Adjust linewidth accordingly
-
-                if (decisionType === 0) {
-                    // Draw dots for traditional dice
-                    const dotPositions = [
-                        [],
-                        [[0, 0]],
-                        [
-                            [-0.7, -0.7],
-                            [0.7, 0.7]
-                        ],
-                        [
-                            [-0.7, -0.7],
-                            [0, 0],
-                            [0.7, 0.7]
-                        ],
-                        [
-                            [-0.7, -0.7],
-                            [0.7, -0.7],
-                            [-0.7, 0.7],
-                            [0.7, 0.7]
-                        ],
-                        [
-                            [-0.7, -0.7],
-                            [0.7, -0.7],
-                            [0, 0],
-                            [-0.7, 0.7],
-                            [0.7, 0.7]
-                        ],
-                        [
-                            [-0.7, -0.7],
-                            [0.7, -0.7],
-                            [-0.7, 0],
-                            [0.7, 0],
-                            [-0.7, 0.7],
-                            [0.7, 0.7]
-                        ]
-                    ];
-
-                    dotPositions[die].forEach(([dx, dy]) => {
-                        const dot = two.makeCircle(dieXpos + (dx * diceSize) / 3, diceYpos + (dy * diceSize) / 3, diceSize / 12);
-                        dot.fill = boardCfg.dice.dot;
-                    });
-                }
-            });
-        }
-
-        function drawScores() {
-            const boardOrigXpos = width / 2;
-            const boardOrigYpos = height / 2;
-            const boardWidth = boardCfg.widthFactor * width;
-            const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-
-            // Use the already-calculated display position
-            const score1 = position.score[0];
-            const score2 = position.score[1];
-
-            const scoreText1 = score1 === 1 ? 'crawford' : score1 === 0 ? 'post' : score1 === -1 ? 'unlimited' : `${score1} away`;
-            const scoreText2 = score2 === 1 ? 'crawford' : score2 === 0 ? 'post' : score2 === -1 ? 'unlimited' : `${score2} away`;
-
-            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize; // Move closer to the middle
-
-            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Move closer to the middle
-
-            // Add visible red rectangles behind the score text
-            const redRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
-            redRectangle1.fill = 'transparent';
-            redRectangle1.stroke = 'red'; // Make border visible
-            redRectangle1.linewidth = 0;
-
-            const redRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
-            redRectangle2.fill = 'transparent';
-            redRectangle2.stroke = 'red'; // Make border visible
-            redRectangle2.linewidth = 0;
-
-            // Add score text
-            const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
-            scoreText1Element.size = 20;
-            scoreText1Element.alignment = 'center';
-            scoreText1Element.baseline = 'middle';
-            scoreText1Element.weight = 'bold';
-            if (score1 === 0) {
-                const scoreText1Element2 = two.makeText('crawford', score1Xpos, score1Ypos + 10);
-                scoreText1Element2.size = 20;
-                scoreText1Element2.alignment = 'center';
-                scoreText1Element2.baseline = 'middle';
-                scoreText1Element2.weight = 'bold';
-            }
-
-            const scoreText2Element = two.makeText(scoreText2, score2Xpos, score2Ypos - (score2 === 0 ? 10 : 0));
-            scoreText2Element.size = 20;
-            scoreText2Element.alignment = 'center';
-            scoreText2Element.baseline = 'middle';
-            scoreText2Element.weight = 'bold';
-            if (score2 === 0) {
-                const scoreText2Element2 = two.makeText('crawford', score2Xpos, score2Ypos + 10);
-                scoreText2Element2.size = 20;
-                scoreText2Element2.alignment = 'center';
-                scoreText2Element2.baseline = 'middle';
-                scoreText2Element2.weight = 'bold';
-            }
-
-            // Add transparent green rectangles on top of the score text
-            const greenRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
-            greenRectangle1.fill = 'transparent';
-            greenRectangle1.stroke = 'transparent'; // Make border invisible
-            greenRectangle1.linewidth = 2;
-
-            const greenRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
-            greenRectangle2.fill = 'transparent';
-            greenRectangle2.stroke = 'transparent'; // Make border invisible
-            greenRectangle2.linewidth = 2;
-        }
-
-        // createLabels()/createQuadrant() draw directly onto the shared two.js
-        // scene via two.makeGroup()/two.makeText() — the returned group is not
-        // used afterwards, but the calls themselves must stay.
-        createLabels();
-
-        createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
-
-        createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos - boardTriangleHeight - 0.5 * boardCheckerSize, false);
-
-        createQuadrant(boardOrigXpos - 0.5 * boardWidth, boardOrigYpos + 0.5 * boardCheckerSize, true);
-
-        createQuadrant(boardOrigXpos + 0.5 * boardCheckerSize, boardOrigYpos + 0.5 * boardCheckerSize, true);
-
-        // draw bar first to ensure checkers on the bar are drawn above it
-        const bar = two.makeRectangle(boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight);
-        bar.fill = boardCfg.fill;
-        bar.stroke = boardCfg.stroke;
-        bar.linewidth = 3.5; // Changed linewidth to 3.5
-
-        drawDoublingCube();
-        drawCheckers();
-        drawBearoff();
-        logger.log('showPipcount: ', showPipcount);
-        if (showPipcount) {
-            drawPipCounts(); // Conditionally draw pip counts
-        }
-        drawDice();
-        drawScores();
-
-        // Draw arrows for selected move if any
-        if (selectedMove) {
-            drawMoveArrows(selectedMove, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth, position);
-        }
-
-        // draw board outline on top to ensure consistent linewidth
-        const board = two.makeRectangle(boardOrigXpos, boardOrigYpos, boardWidth, boardHeight);
-        board.fill = 'transparent'; // No fill to avoid covering other elements
-        board.stroke = boardCfg.stroke;
-        board.linewidth = 3.5;
+        if (!staticLayer || staticFlip !== flip) rebuildStaticLayers(geom, flip);
+        dynamicLayer.remove(dynamicLayer.children);
+        cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
+            offeredCube: isOfferedCube(position),
+            showPipcount,
+            moves: selectedMoveArrows()
+        });
 
         two.update();
     }
