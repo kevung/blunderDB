@@ -616,6 +616,15 @@
     function handleKeyDown(event) {
         if ($activeTabStore !== 'search') return;
         if (event.target.matches('input, textarea, select')) {
+            // Escape belongs to the global dispatcher (App.svelte listens on
+            // `window`, one level above this `document` listener): it blurs
+            // the field so the bare-key shortcuts work again. Stopping it here
+            // left the user stuck in the field with no way out but the mouse.
+            // Tab stays with the field on purpose: the dispatcher still turns
+            // a bare Tab into "open the search tab" with preventDefault
+            // (#204 will decide its fate), which would break moving between
+            // the form's fields.
+            if (event.key === 'Escape') return;
             event.stopPropagation();
             if (event.key === 'Enter') {
                 handleSearch();
