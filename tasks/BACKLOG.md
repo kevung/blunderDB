@@ -13,6 +13,26 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 
 ## Ouvert — Backend
 
+- **gammonNet — frais hors réseau de la recherche** (plan
+  `tasks/gammonnet-perf/README.md`, ADR-0024). Profil du 2026-09-02 d'une
+  décision 2-ply canonique : `Evaluator.Evaluate` 97,6 %, tout le reste 2,4 %
+  (~0,15 s sur 5,5 s). Une fois le noyau batché livré (fiche F1/F2), ce reste
+  pèsera 15-20 % d'une décision ; le reprendre alors, sur un nouveau profil,
+  dans cet ordre de coût présumé : `make([]Candidate, MaxPlays)` de 164 Ko
+  par appel (`search.go:278`, `domaineval.go:279`) ; `sort.SliceStable`
+  réflexif trois fois par nœud (`search.go:563`, le tri stable doit rester :
+  le gold en dépend) ; valuation du videau au score avec ~240 bissections par
+  feuille alors que les lookups MET `metAfter(state, stake, side)` sont
+  invariants sur toute la recherche (`cube.go:509-583`) ; `Valid()` sur des
+  positions légales par construction (`encoding.go:45`, `moves_gen.go:36`) ;
+  dédup O(n²) de la génération (`moves_gen.go:65-70`, `:198-207`) ;
+  `notationForCandidate` O(n²) avec `FromDomain` par paire
+  (`domaineval.go:352-365`) ; un `Searcher` de 5,5 Mo par position dans
+  `EvaluatePosition` (`domaineval.go:186`, réglé par F3 pour le lot, pas pour
+  les appels unitaires). Hors moteur mais même famille : les trois recherches
+  complètes par position de `gammonnet_eval.go` (`:160`, `:220-232`, `:297`),
+  +36 % mesuré par ADR-0017 ; le préambule de `AnalyzeStaleGammonNet` qui
+  décode le JSON compressé de toutes les analyses (`db_gammonnet_batch.go:148-167`).
 - **`statsCountedExpr` et les libellés de videau dégénérés** (#116 lot 0) :
   une décision de videau est comptée comme action *active* dès que
   `move.cube_action` n'est ni `''`, ni `No Double`, ni `NoDouble`. Une valeur
