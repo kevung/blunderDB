@@ -10,6 +10,7 @@
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
+    import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -38,106 +39,15 @@
     let showPickerModal = $state(false);
     let playerName = $state('');
 
-    let pipCountOption = $state('min');
-    let pipCountMin = $state(-375);
-    let pipCountMax = $state(375);
-    let pipCountRangeMin = $state(-375);
-    let pipCountRangeMax = $state(375);
-    let winRateOption = $state('min');
-    let winRateMin = $state(0);
-    let winRateMax = $state(100);
-    let winRateRangeMin = $state(0);
-    let winRateRangeMax = $state(100);
-    let gammonRateOption = $state('min');
-    let gammonRateMin = $state(0);
-    let gammonRateMax = $state(100);
-    let gammonRateRangeMin = $state(0);
-    let gammonRateRangeMax = $state(100);
-    let backgammonRateOption = $state('min');
-    let backgammonRateMin = $state(0);
-    let backgammonRateMax = $state(100);
-    let backgammonRateRangeMin = $state(0);
-    let backgammonRateRangeMax = $state(100);
-    let player2WinRateOption = $state('min');
-    let player2WinRateMin = $state(0);
-    let player2WinRateMax = $state(100);
-    let player2WinRateRangeMin = $state(0);
-    let player2WinRateRangeMax = $state(100);
-    let player2GammonRateOption = $state('min');
-    let player2GammonRateMin = $state(0);
-    let player2GammonRateMax = $state(100);
-    let player2GammonRateRangeMin = $state(0);
-    let player2GammonRateRangeMax = $state(100);
-    let player2BackgammonRateOption = $state('min');
-    let player2BackgammonRateMin = $state(0);
-    let player2BackgammonRateMax = $state(100);
-    let player2BackgammonRateRangeMin = $state(0);
-    let player2BackgammonRateRangeMax = $state(100);
-    let player1CheckerOffOption = $state('min');
-    let player1CheckerOffMin = $state(0);
-    let player1CheckerOffMax = $state(15);
-    let player1CheckerOffRangeMin = $state(0);
-    let player1CheckerOffRangeMax = $state(15);
-    let player2CheckerOffOption = $state('min');
-    let player2CheckerOffMin = $state(0);
-    let player2CheckerOffMax = $state(15);
-    let player2CheckerOffRangeMin = $state(0);
-    let player2CheckerOffRangeMax = $state(15);
-    let player1BackCheckerOption = $state('min');
-    let player1BackCheckerMin = $state(0);
-    let player1BackCheckerMax = $state(15);
-    let player1BackCheckerRangeMin = $state(0);
-    let player1BackCheckerRangeMax = $state(15);
-    let player2BackCheckerOption = $state('min');
-    let player2BackCheckerMin = $state(0);
-    let player2BackCheckerMax = $state(15);
-    let player2BackCheckerRangeMin = $state(0);
-    let player2BackCheckerRangeMax = $state(15);
-    let player1CheckerInZoneOption = $state('min');
-    let player1CheckerInZoneMin = $state(0);
-    let player1CheckerInZoneMax = $state(15);
-    let player1CheckerInZoneRangeMin = $state(0);
-    let player1CheckerInZoneRangeMax = $state(15);
-    let player2CheckerInZoneOption = $state('min');
-    let player2CheckerInZoneMin = $state(0);
-    let player2CheckerInZoneMax = $state(15);
-    let player2CheckerInZoneRangeMin = $state(0);
-    let player2CheckerInZoneRangeMax = $state(15);
-    let player1AbsolutePipCountOption = $state('min');
-    let player1AbsolutePipCountMin = $state(0);
-    let player1AbsolutePipCountMax = $state(375);
-    let player1AbsolutePipCountRangeMin = $state(0);
-    let player1AbsolutePipCountRangeMax = $state(375);
-    let equityOption = $state('min');
-    let equityMin = $state(-1000);
-    let equityMax = $state(1000);
-    let equityRangeMin = $state(-1000);
-    let equityRangeMax = $state(1000);
-    let moveErrorOption = $state('min');
-    let moveErrorMin = $state(0);
-    let moveErrorMax = $state(1000);
-    let moveErrorRangeMin = $state(0);
-    let moveErrorRangeMax = $state(1000);
-    let player1OutfieldBlotOption = $state('min');
-    let player1OutfieldBlotMin = $state(0);
-    let player1OutfieldBlotMax = $state(15);
-    let player1OutfieldBlotRangeMin = $state(0);
-    let player1OutfieldBlotRangeMax = $state(15);
-    let player2OutfieldBlotOption = $state('min');
-    let player2OutfieldBlotMin = $state(0);
-    let player2OutfieldBlotMax = $state(15);
-    let player2OutfieldBlotRangeMin = $state(0);
-    let player2OutfieldBlotRangeMax = $state(15);
-    let player1JanBlotOption = $state('min');
-    let player1JanBlotMin = $state(0);
-    let player1JanBlotMax = $state(15);
-    let player1JanBlotRangeMin = $state(0);
-    let player1JanBlotRangeMax = $state(15);
-    let player2JanBlotOption = $state('min');
-    let player2JanBlotMin = $state(0);
-    let player2JanBlotMax = $state(15);
-    let player2JanBlotRangeMin = $state(0);
-    let player2JanBlotRangeMax = $state(15);
+    // The 20 numeric min/max/range filters live in one reactive object keyed by
+    // filter key — see services/filterModel.js, the table that declares them.
+    // Each entry is { option, min, max, rangeMin, rangeMax }; the rows bind
+    // straight into it, and clear/save/restore/tokenise are loops over the table.
+    let numeric = $state(createFilterState());
+    // The 20 numeric backend arguments (`${key}Filter`), read from a parse
+    // result keyed by short name (parseFilterTokens → `${short}Filter`,
+    // parseSearchCommand → `${short}`).
+    const numericArgs = (get) => Object.fromEntries(NUMERIC_FILTERS.map((f) => [`${f.key}Filter`, get(f.short)]));
     let diceRollOption = $state('both'); // 'both' | 'first'
     // Decision-type filter (Display group). The "Include Decision Type" checkbox is
     // the on/off ("Indifférent") gate; when on, decisionMode reflects the board
@@ -456,87 +366,8 @@
 
         const activeFilters = availableFilters.filter((f) => filterEnabled[f] || (filterEnabled['Matches & Tournaments'] && (f === 'Match IDs' || f === 'Tournament IDs')));
         const transformedFilters = buildFilterTokens(activeFilters, {
+            ...numericToStore(numeric),
             diceRollOption,
-            pipCountOption,
-            pipCountMin,
-            pipCountMax,
-            pipCountRangeMin,
-            pipCountRangeMax,
-            player1AbsolutePipCountOption,
-            player1AbsolutePipCountMin,
-            player1AbsolutePipCountMax,
-            player1AbsolutePipCountRangeMin,
-            player1AbsolutePipCountRangeMax,
-            equityOption,
-            equityMin,
-            equityMax,
-            equityRangeMin,
-            equityRangeMax,
-            moveErrorOption,
-            moveErrorMin,
-            moveErrorMax,
-            moveErrorRangeMin,
-            moveErrorRangeMax,
-            winRateOption,
-            winRateMin,
-            winRateMax,
-            winRateRangeMin,
-            winRateRangeMax,
-            gammonRateOption,
-            gammonRateMin,
-            gammonRateMax,
-            gammonRateRangeMin,
-            gammonRateRangeMax,
-            backgammonRateOption,
-            backgammonRateMin,
-            backgammonRateMax,
-            backgammonRateRangeMin,
-            backgammonRateRangeMax,
-            player2WinRateOption,
-            player2WinRateMin,
-            player2WinRateMax,
-            player2WinRateRangeMin,
-            player2WinRateRangeMax,
-            player2GammonRateOption,
-            player2GammonRateMin,
-            player2GammonRateMax,
-            player2GammonRateRangeMin,
-            player2GammonRateRangeMax,
-            player2BackgammonRateOption,
-            player2BackgammonRateMin,
-            player2BackgammonRateMax,
-            player2BackgammonRateRangeMin,
-            player2BackgammonRateRangeMax,
-            player1CheckerOffOption,
-            player1CheckerOffMin,
-            player1CheckerOffMax,
-            player1CheckerOffRangeMin,
-            player1CheckerOffRangeMax,
-            player2CheckerOffOption,
-            player2CheckerOffMin,
-            player2CheckerOffMax,
-            player2CheckerOffRangeMin,
-            player2CheckerOffRangeMax,
-            player1BackCheckerOption,
-            player1BackCheckerMin,
-            player1BackCheckerMax,
-            player1BackCheckerRangeMin,
-            player1BackCheckerRangeMax,
-            player2BackCheckerOption,
-            player2BackCheckerMin,
-            player2BackCheckerMax,
-            player2BackCheckerRangeMin,
-            player2BackCheckerRangeMax,
-            player1CheckerInZoneOption,
-            player1CheckerInZoneMin,
-            player1CheckerInZoneMax,
-            player1CheckerInZoneRangeMin,
-            player1CheckerInZoneRangeMax,
-            player2CheckerInZoneOption,
-            player2CheckerInZoneMin,
-            player2CheckerInZoneMax,
-            player2CheckerInZoneRangeMin,
-            player2CheckerInZoneRangeMax,
             searchText,
             commentMode,
             movePattern,
@@ -545,26 +376,6 @@
             creationDateMax,
             creationDateRangeMin,
             creationDateRangeMax,
-            player1OutfieldBlotOption,
-            player1OutfieldBlotMin,
-            player1OutfieldBlotMax,
-            player1OutfieldBlotRangeMin,
-            player1OutfieldBlotRangeMax,
-            player2OutfieldBlotOption,
-            player2OutfieldBlotMin,
-            player2OutfieldBlotMax,
-            player2OutfieldBlotRangeMin,
-            player2OutfieldBlotRangeMax,
-            player1JanBlotOption,
-            player1JanBlotMin,
-            player1JanBlotMax,
-            player1JanBlotRangeMin,
-            player1JanBlotRangeMax,
-            player2JanBlotOption,
-            player2JanBlotMin,
-            player2JanBlotMax,
-            player2JanBlotRangeMin,
-            player2JanBlotRangeMax,
             matchIDsSelected,
             tournamentIDsSelected,
             playerName
@@ -577,40 +388,7 @@
             transformedFilters.push(cubeSubType === 'takepass' ? 'dr' : 'dd');
         }
 
-        const {
-            incCube,
-            incScore,
-            ncFilter,
-            mirFilter,
-            iiFilter,
-            flFilter,
-            pcFilter,
-            wrFilter,
-            grFilter,
-            bgFilter,
-            p2wrFilter,
-            p2grFilter,
-            p2bgFilter,
-            p1coFilter,
-            p2coFilter,
-            p1bcFilter,
-            p2bcFilter,
-            p1czFilter,
-            p2czFilter,
-            p1apcFilter,
-            eqFilter,
-            meFilter,
-            p1obFilter,
-            p2obFilter,
-            p1jbFilter,
-            p2jbFilter,
-            matchIDs,
-            tournamentIDs,
-            dtFilter,
-            drFilter,
-            drMode,
-            cdFilter
-        } = parseFilterTokens(transformedFilters);
+        const parsed = parseFilterTokens(transformedFilters);
 
         const searchCommand = buildSearchCommand(excludeActive ? [...transformedFilters, 'x'] : transformedFilters);
 
@@ -630,46 +408,27 @@
 
         onLoadPositionsByFilters({
             filters: activeFilters.length > 0 ? transformedFilters : [],
-            includeCube: incCube,
-            includeScore: incScore,
-            pipCountFilter: pcFilter,
-            winRateFilter: wrFilter,
-            gammonRateFilter: grFilter,
-            backgammonRateFilter: bgFilter,
-            player2WinRateFilter: p2wrFilter,
-            player2GammonRateFilter: p2grFilter,
-            player2BackgammonRateFilter: p2bgFilter,
-            player1CheckerOffFilter: p1coFilter,
-            player2CheckerOffFilter: p2coFilter,
-            player1BackCheckerFilter: p1bcFilter,
-            player2BackCheckerFilter: p2bcFilter,
-            player1CheckerInZoneFilter: p1czFilter,
-            player2CheckerInZoneFilter: p2czFilter,
+            includeCube: parsed.incCube,
+            includeScore: parsed.incScore,
+            ...numericArgs((short) => parsed[`${short}Filter`]),
             // Only the 'contains' mode carries text. In 'has'/'none' the box is
             // disabled but may still hold what the user typed before switching,
             // and sending it would AND a content filter onto a presence one.
             searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
-            player1AbsolutePipCountFilter: p1apcFilter,
-            equityFilter: eqFilter,
-            decisionTypeFilter: dtFilter,
-            diceRollFilter: drFilter,
+            decisionTypeFilter: parsed.dtFilter,
+            diceRollFilter: parsed.drFilter,
             movePatternFilter: movePattern ? `m"${movePattern}"` : '',
-            dateFilter: cdFilter,
-            player1OutfieldBlotFilter: p1obFilter,
-            player2OutfieldBlotFilter: p2obFilter,
-            player1JanBlotFilter: p1jbFilter,
-            player2JanBlotFilter: p2jbFilter,
-            noContactFilter: ncFilter,
-            mirrorPositionFilter: mirFilter,
-            individuallyImportedFilter: iiFilter,
-            flaggedFilter: flFilter,
-            moveErrorFilter: meFilter,
+            dateFilter: parsed.cdFilter,
+            noContactFilter: parsed.ncFilter,
+            mirrorPositionFilter: parsed.mirFilter,
+            individuallyImportedFilter: parsed.iiFilter,
+            flaggedFilter: parsed.flFilter,
             searchCommand,
-            matchIDsFilter: matchIDs,
-            tournamentIDsFilter: tournamentIDs,
+            matchIDsFilter: parsed.matchIDs,
+            tournamentIDsFilter: parsed.tournamentIDs,
             restrictToPositionIDs,
             openInNewTab,
-            diceRollMode: drMode,
+            diceRollMode: parsed.drMode,
             playerFilter: playerName ? `pl"${playerName}"` : ''
         });
 
@@ -680,109 +439,10 @@
         availableFilters.forEach((f) => (filterEnabled[f] = false));
         filterEnabled['Matches & Tournaments'] = false;
         filterEnabled = filterEnabled;
-        pipCountOption = 'min';
-        pipCountMin = -375;
-        pipCountMax = 375;
-        pipCountRangeMin = -375;
-        pipCountRangeMax = 375;
-        winRateOption = 'min';
-        winRateMin = 0;
-        winRateMax = 100;
-        winRateRangeMin = 0;
-        winRateRangeMax = 100;
-        gammonRateOption = 'min';
-        gammonRateMin = 0;
-        gammonRateMax = 100;
-        gammonRateRangeMin = 0;
-        gammonRateRangeMax = 100;
-        backgammonRateOption = 'min';
-        backgammonRateMin = 0;
-        backgammonRateMax = 100;
-        backgammonRateRangeMin = 0;
-        backgammonRateRangeMax = 100;
-        player2WinRateOption = 'min';
-        player2WinRateMin = 0;
-        player2WinRateMax = 100;
-        player2WinRateRangeMin = 0;
-        player2WinRateRangeMax = 100;
-        player2GammonRateOption = 'min';
-        player2GammonRateMin = 0;
-        player2GammonRateMax = 100;
-        player2GammonRateRangeMin = 0;
-        player2GammonRateRangeMax = 100;
-        player2BackgammonRateOption = 'min';
-        player2BackgammonRateMin = 0;
-        player2BackgammonRateMax = 100;
-        player2BackgammonRateRangeMin = 0;
-        player2BackgammonRateRangeMax = 100;
-        player1CheckerOffOption = 'min';
-        player1CheckerOffMin = 0;
-        player1CheckerOffMax = 15;
-        player1CheckerOffRangeMin = 0;
-        player1CheckerOffRangeMax = 15;
-        player2CheckerOffOption = 'min';
-        player2CheckerOffMin = 0;
-        player2CheckerOffMax = 15;
-        player2CheckerOffRangeMin = 0;
-        player2CheckerOffRangeMax = 15;
-        player1BackCheckerOption = 'min';
-        player1BackCheckerMin = 0;
-        player1BackCheckerMax = 15;
-        player1BackCheckerRangeMin = 0;
-        player1BackCheckerRangeMax = 15;
-        player2BackCheckerOption = 'min';
-        player2BackCheckerMin = 0;
-        player2BackCheckerMax = 15;
-        player2BackCheckerRangeMin = 0;
-        player2BackCheckerRangeMax = 15;
-        player1CheckerInZoneOption = 'min';
-        player1CheckerInZoneMin = 0;
-        player1CheckerInZoneMax = 15;
-        player1CheckerInZoneRangeMin = 0;
-        player1CheckerInZoneRangeMax = 15;
-        player2CheckerInZoneOption = 'min';
-        player2CheckerInZoneMin = 0;
-        player2CheckerInZoneMax = 15;
-        player2CheckerInZoneRangeMin = 0;
-        player2CheckerInZoneRangeMax = 15;
-        player1AbsolutePipCountOption = 'min';
-        player1AbsolutePipCountMin = 0;
-        player1AbsolutePipCountMax = 375;
-        player1AbsolutePipCountRangeMin = 0;
-        player1AbsolutePipCountRangeMax = 375;
-        equityOption = 'min';
-        equityMin = -1000;
-        equityMax = 1000;
-        equityRangeMin = -1000;
-        equityRangeMax = 1000;
-        moveErrorOption = 'min';
-        moveErrorMin = 0;
-        moveErrorMax = 1000;
-        moveErrorRangeMin = 0;
-        moveErrorRangeMax = 1000;
+        clearNumeric(numeric);
         searchText = '';
         commentMode = 'contains';
         movePattern = '';
-        player1OutfieldBlotOption = 'min';
-        player1OutfieldBlotMin = 0;
-        player1OutfieldBlotMax = 15;
-        player1OutfieldBlotRangeMin = 0;
-        player1OutfieldBlotRangeMax = 15;
-        player2OutfieldBlotOption = 'min';
-        player2OutfieldBlotMin = 0;
-        player2OutfieldBlotMax = 15;
-        player2OutfieldBlotRangeMin = 0;
-        player2OutfieldBlotRangeMax = 15;
-        player1JanBlotOption = 'min';
-        player1JanBlotMin = 0;
-        player1JanBlotMax = 15;
-        player1JanBlotRangeMin = 0;
-        player1JanBlotRangeMax = 15;
-        player2JanBlotOption = 'min';
-        player2JanBlotMin = 0;
-        player2JanBlotMax = 15;
-        player2JanBlotRangeMin = 0;
-        player2JanBlotRangeMax = 15;
         diceRollOption = 'both';
         decisionMode = 'checker';
         cubeSubType = 'all';
@@ -841,35 +501,16 @@
                 filters: f.cmdFilters,
                 includeCube: f.ic,
                 includeScore: f.is,
-                pipCountFilter: f.pc,
-                winRateFilter: f.wr,
-                gammonRateFilter: f.gr,
-                backgammonRateFilter: f.bg,
-                player2WinRateFilter: f.p2wr,
-                player2GammonRateFilter: f.p2gr,
-                player2BackgammonRateFilter: f.p2bg,
-                player1CheckerOffFilter: f.p1co,
-                player2CheckerOffFilter: f.p2co,
-                player1BackCheckerFilter: f.p1bc,
-                player2BackCheckerFilter: f.p2bc,
-                player1CheckerInZoneFilter: f.p1cz,
-                player2CheckerInZoneFilter: f.p2cz,
+                ...numericArgs((short) => f[short]),
                 searchText: f.st,
-                player1AbsolutePipCountFilter: f.p1apc,
-                equityFilter: f.eq,
                 decisionTypeFilter: f.dt,
                 diceRollFilter: f.dr,
                 movePatternFilter: f.mpf,
                 dateFilter: f.cd,
-                player1OutfieldBlotFilter: f.p1ob,
-                player2OutfieldBlotFilter: f.p2ob,
-                player1JanBlotFilter: f.p1jb,
-                player2JanBlotFilter: f.p2jb,
                 noContactFilter: f.nc,
                 mirrorPositionFilter: f.mp,
                 individuallyImportedFilter: f.ii,
                 flaggedFilter: f.fl,
-                moveErrorFilter: f.me,
                 searchCommand: command,
                 matchIDsFilter: f.matchIDs,
                 tournamentIDsFilter: f.tournamentIDs,
@@ -1003,106 +644,7 @@
             matchIDsSelected,
             tournamentIDsSelected,
             playerName,
-            pipCountOption,
-            pipCountMin,
-            pipCountMax,
-            pipCountRangeMin,
-            pipCountRangeMax,
-            winRateOption,
-            winRateMin,
-            winRateMax,
-            winRateRangeMin,
-            winRateRangeMax,
-            gammonRateOption,
-            gammonRateMin,
-            gammonRateMax,
-            gammonRateRangeMin,
-            gammonRateRangeMax,
-            backgammonRateOption,
-            backgammonRateMin,
-            backgammonRateMax,
-            backgammonRateRangeMin,
-            backgammonRateRangeMax,
-            player2WinRateOption,
-            player2WinRateMin,
-            player2WinRateMax,
-            player2WinRateRangeMin,
-            player2WinRateRangeMax,
-            player2GammonRateOption,
-            player2GammonRateMin,
-            player2GammonRateMax,
-            player2GammonRateRangeMin,
-            player2GammonRateRangeMax,
-            player2BackgammonRateOption,
-            player2BackgammonRateMin,
-            player2BackgammonRateMax,
-            player2BackgammonRateRangeMin,
-            player2BackgammonRateRangeMax,
-            player1CheckerOffOption,
-            player1CheckerOffMin,
-            player1CheckerOffMax,
-            player1CheckerOffRangeMin,
-            player1CheckerOffRangeMax,
-            player2CheckerOffOption,
-            player2CheckerOffMin,
-            player2CheckerOffMax,
-            player2CheckerOffRangeMin,
-            player2CheckerOffRangeMax,
-            player1BackCheckerOption,
-            player1BackCheckerMin,
-            player1BackCheckerMax,
-            player1BackCheckerRangeMin,
-            player1BackCheckerRangeMax,
-            player2BackCheckerOption,
-            player2BackCheckerMin,
-            player2BackCheckerMax,
-            player2BackCheckerRangeMin,
-            player2BackCheckerRangeMax,
-            player1CheckerInZoneOption,
-            player1CheckerInZoneMin,
-            player1CheckerInZoneMax,
-            player1CheckerInZoneRangeMin,
-            player1CheckerInZoneRangeMax,
-            player2CheckerInZoneOption,
-            player2CheckerInZoneMin,
-            player2CheckerInZoneMax,
-            player2CheckerInZoneRangeMin,
-            player2CheckerInZoneRangeMax,
-            player1AbsolutePipCountOption,
-            player1AbsolutePipCountMin,
-            player1AbsolutePipCountMax,
-            player1AbsolutePipCountRangeMin,
-            player1AbsolutePipCountRangeMax,
-            equityOption,
-            equityMin,
-            equityMax,
-            equityRangeMin,
-            equityRangeMax,
-            moveErrorOption,
-            moveErrorMin,
-            moveErrorMax,
-            moveErrorRangeMin,
-            moveErrorRangeMax,
-            player1OutfieldBlotOption,
-            player1OutfieldBlotMin,
-            player1OutfieldBlotMax,
-            player1OutfieldBlotRangeMin,
-            player1OutfieldBlotRangeMax,
-            player2OutfieldBlotOption,
-            player2OutfieldBlotMin,
-            player2OutfieldBlotMax,
-            player2OutfieldBlotRangeMin,
-            player2OutfieldBlotRangeMax,
-            player1JanBlotOption,
-            player1JanBlotMin,
-            player1JanBlotMax,
-            player1JanBlotRangeMin,
-            player1JanBlotRangeMax,
-            player2JanBlotOption,
-            player2JanBlotMin,
-            player2JanBlotMax,
-            player2JanBlotRangeMin,
-            player2JanBlotRangeMax,
+            ...numericToStore(numeric),
             diceRollOption,
             cubeSubType,
             creationDateOption,
@@ -1143,106 +685,7 @@
         matchIDsSelected = Array.isArray(saved.matchIDsSelected) ? saved.matchIDsSelected : [];
         tournamentIDsSelected = Array.isArray(saved.tournamentIDsSelected) ? saved.tournamentIDsSelected : [];
         playerName = saved.playerName ?? '';
-        pipCountOption = saved.pipCountOption;
-        pipCountMin = saved.pipCountMin;
-        pipCountMax = saved.pipCountMax;
-        pipCountRangeMin = saved.pipCountRangeMin;
-        pipCountRangeMax = saved.pipCountRangeMax;
-        winRateOption = saved.winRateOption;
-        winRateMin = saved.winRateMin;
-        winRateMax = saved.winRateMax;
-        winRateRangeMin = saved.winRateRangeMin;
-        winRateRangeMax = saved.winRateRangeMax;
-        gammonRateOption = saved.gammonRateOption;
-        gammonRateMin = saved.gammonRateMin;
-        gammonRateMax = saved.gammonRateMax;
-        gammonRateRangeMin = saved.gammonRateRangeMin;
-        gammonRateRangeMax = saved.gammonRateRangeMax;
-        backgammonRateOption = saved.backgammonRateOption;
-        backgammonRateMin = saved.backgammonRateMin;
-        backgammonRateMax = saved.backgammonRateMax;
-        backgammonRateRangeMin = saved.backgammonRateRangeMin;
-        backgammonRateRangeMax = saved.backgammonRateRangeMax;
-        player2WinRateOption = saved.player2WinRateOption;
-        player2WinRateMin = saved.player2WinRateMin;
-        player2WinRateMax = saved.player2WinRateMax;
-        player2WinRateRangeMin = saved.player2WinRateRangeMin;
-        player2WinRateRangeMax = saved.player2WinRateRangeMax;
-        player2GammonRateOption = saved.player2GammonRateOption;
-        player2GammonRateMin = saved.player2GammonRateMin;
-        player2GammonRateMax = saved.player2GammonRateMax;
-        player2GammonRateRangeMin = saved.player2GammonRateRangeMin;
-        player2GammonRateRangeMax = saved.player2GammonRateRangeMax;
-        player2BackgammonRateOption = saved.player2BackgammonRateOption;
-        player2BackgammonRateMin = saved.player2BackgammonRateMin;
-        player2BackgammonRateMax = saved.player2BackgammonRateMax;
-        player2BackgammonRateRangeMin = saved.player2BackgammonRateRangeMin;
-        player2BackgammonRateRangeMax = saved.player2BackgammonRateRangeMax;
-        player1CheckerOffOption = saved.player1CheckerOffOption;
-        player1CheckerOffMin = saved.player1CheckerOffMin;
-        player1CheckerOffMax = saved.player1CheckerOffMax;
-        player1CheckerOffRangeMin = saved.player1CheckerOffRangeMin;
-        player1CheckerOffRangeMax = saved.player1CheckerOffRangeMax;
-        player2CheckerOffOption = saved.player2CheckerOffOption;
-        player2CheckerOffMin = saved.player2CheckerOffMin;
-        player2CheckerOffMax = saved.player2CheckerOffMax;
-        player2CheckerOffRangeMin = saved.player2CheckerOffRangeMin;
-        player2CheckerOffRangeMax = saved.player2CheckerOffRangeMax;
-        player1BackCheckerOption = saved.player1BackCheckerOption;
-        player1BackCheckerMin = saved.player1BackCheckerMin;
-        player1BackCheckerMax = saved.player1BackCheckerMax;
-        player1BackCheckerRangeMin = saved.player1BackCheckerRangeMin;
-        player1BackCheckerRangeMax = saved.player1BackCheckerRangeMax;
-        player2BackCheckerOption = saved.player2BackCheckerOption;
-        player2BackCheckerMin = saved.player2BackCheckerMin;
-        player2BackCheckerMax = saved.player2BackCheckerMax;
-        player2BackCheckerRangeMin = saved.player2BackCheckerRangeMin;
-        player2BackCheckerRangeMax = saved.player2BackCheckerRangeMax;
-        player1CheckerInZoneOption = saved.player1CheckerInZoneOption;
-        player1CheckerInZoneMin = saved.player1CheckerInZoneMin;
-        player1CheckerInZoneMax = saved.player1CheckerInZoneMax;
-        player1CheckerInZoneRangeMin = saved.player1CheckerInZoneRangeMin;
-        player1CheckerInZoneRangeMax = saved.player1CheckerInZoneRangeMax;
-        player2CheckerInZoneOption = saved.player2CheckerInZoneOption;
-        player2CheckerInZoneMin = saved.player2CheckerInZoneMin;
-        player2CheckerInZoneMax = saved.player2CheckerInZoneMax;
-        player2CheckerInZoneRangeMin = saved.player2CheckerInZoneRangeMin;
-        player2CheckerInZoneRangeMax = saved.player2CheckerInZoneRangeMax;
-        player1AbsolutePipCountOption = saved.player1AbsolutePipCountOption;
-        player1AbsolutePipCountMin = saved.player1AbsolutePipCountMin;
-        player1AbsolutePipCountMax = saved.player1AbsolutePipCountMax;
-        player1AbsolutePipCountRangeMin = saved.player1AbsolutePipCountRangeMin;
-        player1AbsolutePipCountRangeMax = saved.player1AbsolutePipCountRangeMax;
-        equityOption = saved.equityOption;
-        equityMin = saved.equityMin;
-        equityMax = saved.equityMax;
-        equityRangeMin = saved.equityRangeMin;
-        equityRangeMax = saved.equityRangeMax;
-        moveErrorOption = saved.moveErrorOption;
-        moveErrorMin = saved.moveErrorMin;
-        moveErrorMax = saved.moveErrorMax;
-        moveErrorRangeMin = saved.moveErrorRangeMin;
-        moveErrorRangeMax = saved.moveErrorRangeMax;
-        player1OutfieldBlotOption = saved.player1OutfieldBlotOption;
-        player1OutfieldBlotMin = saved.player1OutfieldBlotMin;
-        player1OutfieldBlotMax = saved.player1OutfieldBlotMax;
-        player1OutfieldBlotRangeMin = saved.player1OutfieldBlotRangeMin;
-        player1OutfieldBlotRangeMax = saved.player1OutfieldBlotRangeMax;
-        player2OutfieldBlotOption = saved.player2OutfieldBlotOption;
-        player2OutfieldBlotMin = saved.player2OutfieldBlotMin;
-        player2OutfieldBlotMax = saved.player2OutfieldBlotMax;
-        player2OutfieldBlotRangeMin = saved.player2OutfieldBlotRangeMin;
-        player2OutfieldBlotRangeMax = saved.player2OutfieldBlotRangeMax;
-        player1JanBlotOption = saved.player1JanBlotOption;
-        player1JanBlotMin = saved.player1JanBlotMin;
-        player1JanBlotMax = saved.player1JanBlotMax;
-        player1JanBlotRangeMin = saved.player1JanBlotRangeMin;
-        player1JanBlotRangeMax = saved.player1JanBlotRangeMax;
-        player2JanBlotOption = saved.player2JanBlotOption;
-        player2JanBlotMin = saved.player2JanBlotMin;
-        player2JanBlotMax = saved.player2JanBlotMax;
-        player2JanBlotRangeMin = saved.player2JanBlotRangeMin;
-        player2JanBlotRangeMax = saved.player2JanBlotRangeMax;
+        numericFromStore(numeric, saved);
         if (saved.diceRollOption) diceRollOption = saved.diceRollOption;
         if (saved.cubeSubType) cubeSubType = saved.cubeSubType;
         creationDateOption = saved.creationDateOption;
@@ -1363,200 +806,16 @@
                                                     <label><input type="radio" bind:group={diceRollOption} value="both" /> {$t('search.bothDice')}</label>
                                                     <label><input type="radio" bind:group={diceRollOption} value="first" /> {$t('search.firstDieOnly')}</label>
                                                 </div>
-                                            {:else if filter === 'Pipcount Difference'}
+                                            {:else if NUMERIC_FILTER_BY_LABEL[filter]}
+                                                {@const nf = NUMERIC_FILTER_BY_LABEL[filter]}
                                                 <MinMaxFilterRow
-                                                    bind:option={pipCountOption}
-                                                    bind:minVal={pipCountMin}
-                                                    bind:maxVal={pipCountMax}
-                                                    bind:rangeMin={pipCountRangeMin}
-                                                    bind:rangeMax={pipCountRangeMax}
-                                                />
-                                            {:else if filter === 'Player Absolute Pipcount'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1AbsolutePipCountOption}
-                                                    bind:minVal={player1AbsolutePipCountMin}
-                                                    bind:maxVal={player1AbsolutePipCountMax}
-                                                    bind:rangeMin={player1AbsolutePipCountRangeMin}
-                                                    bind:rangeMax={player1AbsolutePipCountRangeMax}
-                                                    min={0}
-                                                    max={375}
-                                                />
-                                            {:else if filter === 'Equity (millipoints)'}
-                                                <MinMaxFilterRow
-                                                    bind:option={equityOption}
-                                                    bind:minVal={equityMin}
-                                                    bind:maxVal={equityMax}
-                                                    bind:rangeMin={equityRangeMin}
-                                                    bind:rangeMax={equityRangeMax}
-                                                />
-                                            {:else if filter === 'Move Error (millipoints, Player 1)'}
-                                                <MinMaxFilterRow
-                                                    bind:option={moveErrorOption}
-                                                    bind:minVal={moveErrorMin}
-                                                    bind:maxVal={moveErrorMax}
-                                                    bind:rangeMin={moveErrorRangeMin}
-                                                    bind:rangeMax={moveErrorRangeMax}
-                                                    min={0}
-                                                />
-                                            {:else if filter === 'Win Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={winRateOption}
-                                                    bind:minVal={winRateMin}
-                                                    bind:maxVal={winRateMax}
-                                                    bind:rangeMin={winRateRangeMin}
-                                                    bind:rangeMax={winRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Gammon Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={gammonRateOption}
-                                                    bind:minVal={gammonRateMin}
-                                                    bind:maxVal={gammonRateMax}
-                                                    bind:rangeMin={gammonRateRangeMin}
-                                                    bind:rangeMax={gammonRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Backgammon Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={backgammonRateOption}
-                                                    bind:minVal={backgammonRateMin}
-                                                    bind:maxVal={backgammonRateMax}
-                                                    bind:rangeMin={backgammonRateRangeMin}
-                                                    bind:rangeMax={backgammonRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Opponent Win Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2WinRateOption}
-                                                    bind:minVal={player2WinRateMin}
-                                                    bind:maxVal={player2WinRateMax}
-                                                    bind:rangeMin={player2WinRateRangeMin}
-                                                    bind:rangeMax={player2WinRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Opponent Gammon Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2GammonRateOption}
-                                                    bind:minVal={player2GammonRateMin}
-                                                    bind:maxVal={player2GammonRateMax}
-                                                    bind:rangeMin={player2GammonRateRangeMin}
-                                                    bind:rangeMax={player2GammonRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Opponent Backgammon Rate'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2BackgammonRateOption}
-                                                    bind:minVal={player2BackgammonRateMin}
-                                                    bind:maxVal={player2BackgammonRateMax}
-                                                    bind:rangeMin={player2BackgammonRateRangeMin}
-                                                    bind:rangeMax={player2BackgammonRateRangeMax}
-                                                    min={0}
-                                                    max={100}
-                                                />
-                                            {:else if filter === 'Player Checker-Off'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1CheckerOffOption}
-                                                    bind:minVal={player1CheckerOffMin}
-                                                    bind:maxVal={player1CheckerOffMax}
-                                                    bind:rangeMin={player1CheckerOffRangeMin}
-                                                    bind:rangeMax={player1CheckerOffRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Opponent Checker-Off'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2CheckerOffOption}
-                                                    bind:minVal={player2CheckerOffMin}
-                                                    bind:maxVal={player2CheckerOffMax}
-                                                    bind:rangeMin={player2CheckerOffRangeMin}
-                                                    bind:rangeMax={player2CheckerOffRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Player Back Checker'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1BackCheckerOption}
-                                                    bind:minVal={player1BackCheckerMin}
-                                                    bind:maxVal={player1BackCheckerMax}
-                                                    bind:rangeMin={player1BackCheckerRangeMin}
-                                                    bind:rangeMax={player1BackCheckerRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Opponent Back Checker'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2BackCheckerOption}
-                                                    bind:minVal={player2BackCheckerMin}
-                                                    bind:maxVal={player2BackCheckerMax}
-                                                    bind:rangeMin={player2BackCheckerRangeMin}
-                                                    bind:rangeMax={player2BackCheckerRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Player Checker in the Zone'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1CheckerInZoneOption}
-                                                    bind:minVal={player1CheckerInZoneMin}
-                                                    bind:maxVal={player1CheckerInZoneMax}
-                                                    bind:rangeMin={player1CheckerInZoneRangeMin}
-                                                    bind:rangeMax={player1CheckerInZoneRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Opponent Checker in the Zone'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2CheckerInZoneOption}
-                                                    bind:minVal={player2CheckerInZoneMin}
-                                                    bind:maxVal={player2CheckerInZoneMax}
-                                                    bind:rangeMin={player2CheckerInZoneRangeMin}
-                                                    bind:rangeMax={player2CheckerInZoneRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Player Outfield Blot'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1OutfieldBlotOption}
-                                                    bind:minVal={player1OutfieldBlotMin}
-                                                    bind:maxVal={player1OutfieldBlotMax}
-                                                    bind:rangeMin={player1OutfieldBlotRangeMin}
-                                                    bind:rangeMax={player1OutfieldBlotRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Opponent Outfield Blot'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2OutfieldBlotOption}
-                                                    bind:minVal={player2OutfieldBlotMin}
-                                                    bind:maxVal={player2OutfieldBlotMax}
-                                                    bind:rangeMin={player2OutfieldBlotRangeMin}
-                                                    bind:rangeMax={player2OutfieldBlotRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Player Jan Blot'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player1JanBlotOption}
-                                                    bind:minVal={player1JanBlotMin}
-                                                    bind:maxVal={player1JanBlotMax}
-                                                    bind:rangeMin={player1JanBlotRangeMin}
-                                                    bind:rangeMax={player1JanBlotRangeMax}
-                                                    min={0}
-                                                    max={15}
-                                                />
-                                            {:else if filter === 'Opponent Jan Blot'}
-                                                <MinMaxFilterRow
-                                                    bind:option={player2JanBlotOption}
-                                                    bind:minVal={player2JanBlotMin}
-                                                    bind:maxVal={player2JanBlotMax}
-                                                    bind:rangeMin={player2JanBlotRangeMin}
-                                                    bind:rangeMax={player2JanBlotRangeMax}
-                                                    min={0}
-                                                    max={15}
+                                                    bind:option={numeric[nf.key].option}
+                                                    bind:minVal={numeric[nf.key].min}
+                                                    bind:maxVal={numeric[nf.key].max}
+                                                    bind:rangeMin={numeric[nf.key].rangeMin}
+                                                    bind:rangeMax={numeric[nf.key].rangeMax}
+                                                    min={nf.bounds.min}
+                                                    max={nf.bounds.max}
                                                 />
                                             {:else if filter === 'Comment'}
                                                 <div class="minmax-controls">
