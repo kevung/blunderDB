@@ -15,7 +15,10 @@ _Avoid_: board, node, entry
 **Deduplication**:
 The rule that a Position's identity is its Zobrist hash. Any import that produces an
 already-known Position lands on the existing row and enriches it (analyses merged,
-comments appended) rather than creating a second one.
+comments appended) rather than creating a second one. The row therefore carries every
+play ever recorded on it; a filter on the played move's error (`E>x`) scores the Position
+by the largest of those errors — "did I ever blunder here?" — never by whichever play
+happens to be read first (#167).
 
 **Individually imported Position**:
 A Position that entered the database on its own — written from the board, or read from a

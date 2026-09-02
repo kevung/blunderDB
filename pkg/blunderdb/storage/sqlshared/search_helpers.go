@@ -3,6 +3,7 @@ package sqlshared
 import (
 	"context"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -59,8 +60,12 @@ func loadCommentText(ctx context.Context, db Execer, positionID int64) (string, 
 	return strings.Join(parts, "\n\n"), nil
 }
 
-// getPlayer1MovesForPosition returns player-1's checker moves and cube actions
-// recorded in the move table for a position.
+// getPlayer1MovesForPosition returns player-1's distinct checker moves and
+// cube actions recorded in the move table for a position, each list sorted.
+// A position deduplicated across matches (CONTEXT.md, Deduplication) can carry
+// several plays; the order they come back in must not depend on map
+// iteration, or every predicate built on top inherits a run-to-run lottery
+// (#167).
 func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64) ([]string, []string) {
 	rows, err := db.Query(ctx,
 		`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
@@ -85,14 +90,75 @@ func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64
 	if err := rows.Err(); err != nil {
 		return nil, nil
 	}
-	var checkerMovesList, cubeActionsList []string
-	for m := range checkerMoves {
-		checkerMovesList = append(checkerMovesList, m)
+	return sortedKeys(checkerMoves), sortedKeys(cubeActions)
+}
+
+func sortedKeys(set map[string]bool) []string {
+	if len(set) == 0 {
+		return nil
 	}
-	for a := range cubeActions {
-		cubeActionsList = append(cubeActionsList, a)
+	keys := make([]string, 0, len(set))
+	for k := range set {
+		keys = append(keys, k)
 	}
-	return checkerMovesList, cubeActionsList
+	sort.Strings(keys)
+	return keys
+}
+
+// multiPlayedPlayer1Positions lists the positions on which player 1 recorded
+// more than one distinct play (checker move or cube action) in the move
+// table — positions deduplicated across matches and played differently each
+// time. On those the denormalised error column, which scores a single play,
+// cannot answer a move-error filter; SearchStore.find lets them through to
+// matchesMoveErrorFilter instead (#167). The set is small by nature (openings
+// and early replies: 14 positions on the 156-match tournois fixture), which
+// is why it is listed once here rather than tested per row in the search
+// query. The self-join walks idx_move_position once per player-1 move and
+// costs ~15 ms on that fixture's 58 000 moves, against ~25 ms for the
+// equivalent GROUP BY … HAVING COUNT(DISTINCT …), whose distinct count needs a
+// temporary B-tree. A move written two ways ("13/11 24/23" and "24/23 13/11")
+// counts as two plays here; the Go re-check normalises them, so the cost is
+// one needless decode, never a wrong answer.
+func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (map[int64]bool, error) {
+	tenant, args := db.TenantFilter("m1", scope)
+	rows, err := db.Query(ctx,
+		`SELECT DISTINCT m1.position_id FROM move m1
+		 JOIN move m2 ON m2.position_id = m1.position_id AND m2.id > m1.id AND m2.player = 1
+		 WHERE `+tenant+` AND m1.player = 1 AND m1.position_id IS NOT NULL
+		   AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
+		     OR COALESCE(m1.cube_action, '') <> COALESCE(m2.cube_action, ''))`,
+		args...)
+	if err != nil {
+		return nil, errf(db, "multi-played positions", err)
+	}
+	defer rows.Close()
+	ids := make(map[int64]bool)
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(db, "multi-played positions scan", err)
+		}
+		ids[id] = true
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(db, "multi-played positions rows", err)
+	}
+	return ids, nil
+}
+
+// loadAnalysis returns a position's decoded analysis, or nil when it has none
+// or the blob does not decode — the same answer the search scan gives a row
+// it could not decode.
+func loadAnalysis(ctx context.Context, db Execer, positionID int64) *domain.PositionAnalysis {
+	var data []byte
+	if err := db.QueryRow(ctx, `SELECT data FROM analysis WHERE position_id = ?`, positionID).Scan(&data); err != nil {
+		return nil
+	}
+	a, err := engine.DecodeAnalysisFromStorage(data)
+	if err != nil {
+		return nil
+	}
+	return &a
 }
 
 // matchesSearchText reports whether a position's comment matches a "t"-filter.
@@ -128,56 +194,61 @@ func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Posit
 
 // matchesMoveErrorFilter filters positions by the equity error of player-1's
 // played move (millipoints): E>x, E<x, Ex,y. analysis is the position's
-// already-decoded analysis (the caller decoded it once from a.data because
-// MoveErrorFilter is in needAnalysis — see search.go); this predicate
-// no longer re-queries and re-decompresses it per row.
+// already-decoded analysis (the caller decoded it once from a.data — see
+// search.go); this predicate no longer re-queries and re-decompresses it per
+// row.
+//
+// A position played more than once by player 1 (deduplicated across matches)
+// has several recorded plays, possibly with different errors. The filter
+// scores the position by the LARGEST of them: "E>100" asks "did I ever
+// blunder here?", and the answer must not depend on which play the move
+// table happens to yield first — before #167 it did, and the same search
+// returned a different set from one run to the next. The decision is stated
+// in doc/source/cmd_mode.rst next to the E filter; SearchStore.find routes
+// the multi-played positions of a plain (non-mirror) search here too.
 func matchesMoveErrorFilter(ctx context.Context, db Execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) bool {
 	if analysis == nil {
 		return false
 	}
 	player1CheckerMoves, player1CubeActions := getPlayer1MovesForPosition(ctx, db, p.ID)
+	moveError, found := player1MaxMoveError(analysis, player1CheckerMoves, player1CubeActions)
+	if !found {
+		return false
+	}
+	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter)
+}
 
-	var moveError float64
-	found := false
-
-	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-		playedMoves := player1CheckerMoves
-		if len(playedMoves) == 0 {
-			return false
-		}
-		for _, played := range playedMoves {
+// player1MaxMoveError returns the largest absolute equity error among the
+// plays player 1 recorded on a position, as scored by its analysis: a checker
+// move is looked up among the analysed candidates (the best move costs 0), a
+// cube action goes through engine.CubeActionError. A play the analysis does
+// not score (a move absent from the candidate list, an unknown cube label) is
+// skipped; found is false when no play was scored at all.
+func player1MaxMoveError(analysis *domain.PositionAnalysis, checkerMoves, cubeActions []string) (maxError float64, found bool) {
+	switch {
+	case analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0:
+		for _, played := range checkerMoves {
+			normPlayed := engine.NormalizeMove(played)
 			for i, m := range analysis.CheckerAnalysis.Moves {
-				if strings.EqualFold(engine.NormalizeMove(m.Move), engine.NormalizeMove(played)) {
-					if i == 0 {
-						moveError = 0
-					} else if m.EquityError != nil {
-						moveError = math.Abs(*m.EquityError)
-					}
-					found = true
-					break
+				if !strings.EqualFold(engine.NormalizeMove(m.Move), normPlayed) {
+					continue
 				}
-			}
-			if found {
-				break
-			}
-		}
-	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
-		playedActions := player1CubeActions
-		if len(playedActions) == 0 {
-			return false
-		}
-		for _, played := range playedActions {
-			if e, ok := engine.CubeActionError(analysis.DoublingCubeAnalysis, played); ok {
-				moveError = math.Abs(e)
+				var e float64
+				if i > 0 && m.EquityError != nil {
+					e = math.Abs(*m.EquityError)
+				}
+				maxError = math.Max(maxError, e)
 				found = true
 				break
 			}
 		}
+	case analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil:
+		for _, played := range cubeActions {
+			if e, ok := engine.CubeActionError(analysis.DoublingCubeAnalysis, played); ok {
+				maxError = math.Max(maxError, math.Abs(e))
+				found = true
+			}
+		}
 	}
-
-	if !found {
-		return false
-	}
-
-	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter)
+	return maxError, found
 }

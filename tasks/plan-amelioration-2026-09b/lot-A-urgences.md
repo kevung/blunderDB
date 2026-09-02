@@ -327,11 +327,21 @@ retenue dépend de l'itération de la map. Une recherche `E>0.1` change d'un
 lancement à l'autre.
 
 **À faire.**
-- [ ] Décider et écrire : le filtre retient **l'erreur maximale** parmi les
+- [x] Décider et écrire : le filtre retient **l'erreur maximale** parmi les
       coups joués sur la position (c'est ce que l'utilisateur veut : « ai-je
-      un jour fait un blunder ici »).
-- [ ] Trier ou agréger, test avec une position jouée deux fois (fixture
-      `testdata/`), 20 exécutions identiques.
+      un jour fait un blunder ici »). Écrit dans `matchesMoveErrorFilter`,
+      `CONTEXT.md` (Deduplication) et `cmd_mode.rst` (note sous la table des
+      filtres). Le même défaut touchait le videau (`E` sur une décision de
+      cube jouée deux fois) ; la recherche simple (non miroir) filtrait sur la
+      colonne dénormalisée, qui note le premier coup trié — déterministe mais
+      pas le max : elle laisse maintenant passer les positions jouées
+      plusieurs façons vers le prédicat Go (`player1MultiPlayedSQL`), le
+      blob n'étant décodé que pour celles-là. `database/` délègue à
+      `storage` (rien à corriger).
+- [x] Trier ou agréger, test avec une position jouée deux fois (fixture en
+      mémoire via le contrat storage, `Search/MoveErrorFilterMaxOverPlays`,
+      SQLite et PostgreSQL), 20 exécutions identiques, cas « max » explicite
+      côté pion et côté videau, recherche simple et miroir.
 
 ---
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 01:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1166,7 +1166,23 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:216
+msgid ""
+"Une position jouée plusieurs fois par le joueur 1 (le même coup dans deux"
+" matchs, ou deux coups différents) est retenue par les filtres ``E>x``, "
+"``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur cette "
+"position. ``E>100`` répond ainsi à la question « ai-je un jour fait un "
+"blunder ici ? », et ``E<20`` ne garde que les positions où aucun des "
+"coups joués n'a dépassé 20 millipoints."
+msgstr ""
+"Aseman, jonka pelaaja 1 on pelannut useammin kuin kerran (saman siirron "
+"kahdessa ottelussa tai kaksi eri siirtoa), suodattimet ``E>x``, ``E<x`` ja "
+"``Ex,y`` arvioivat tässä asemassa tehdyn **suurimman** virheen mukaan. "
+"``E>100`` vastaa siis kysymykseen ”olenko koskaan tehnyt tässä blunderin?”, "
+"ja ``E<20`` säilyttää vain asemat, joissa yksikään pelatuista siirroista ei "
+"ylittänyt 20 millipistettä."
+
+#: ../../source/cmd_mode.rst:224
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1180,7 +1196,7 @@ msgstr ""
 "ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman "
 "heiton nopan kanssa)."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1194,7 +1210,7 @@ msgstr ""
 "vähintään 10 pippiä edellä. `p50,70` : pelaaja on kilpajuoksussa 50–70 "
 "pippiä jäljessä."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:236
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1206,7 +1222,7 @@ msgstr ""
 " pätee turnauksiin suodattimella ``tn`` ja asemiin suodattimella ``id`` "
 "(esim. ``s id5 id10`` asemille 5 ja 10)."
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1216,7 +1232,7 @@ msgstr ""
 "kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät "
 "vastaavien paneelien ID-sarakkeissa."
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:245
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1224,9 +1240,14 @@ msgid ""
 " cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
 "la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
-msgstr "Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja voitto on todennäköinen vähintään 60 % osuudella."
+msgstr ""
+"Esimerkiksi komento ``s s c p-20,-5 w>60 z>10 K2,3`` suodattaa kaikki "
+"asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen "
+"ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, "
+"vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa "
+"ja voitto on todennäköinen vähintään 60 % osuudella."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:255
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1238,7 +1259,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Tyhjentää komentohistorian."
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:264
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."

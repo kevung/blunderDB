@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 01:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1181,7 +1181,23 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:216
+msgid ""
+"Une position jouée plusieurs fois par le joueur 1 (le même coup dans deux"
+" matchs, ou deux coups différents) est retenue par les filtres ``E>x``, "
+"``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur cette "
+"position. ``E>100`` répond ainsi à la question « ai-je un jour fait un "
+"blunder ici ? », et ``E<20`` ne garde que les positions où aucun des "
+"coups joués n'a dépassé 20 millipoints."
+msgstr ""
+"Μια θέση που ο παίκτης 1 έπαιξε περισσότερες από μία φορές (την ίδια κίνηση "
+"σε δύο αγώνες, ή δύο διαφορετικές κινήσεις) κρατιέται από τα φίλτρα ``E>x``,"
+" ``E<x`` και ``Ex,y`` με βάση το **μεγαλύτερο** λάθος που έγινε σε αυτή τη "
+"θέση. Έτσι το ``E>100`` απαντά στην ερώτηση «έκανα ποτέ blunder εδώ;», και "
+"το ``E<20`` κρατά μόνο τις θέσεις όπου καμία από τις κινήσεις που παίχτηκαν "
+"δεν ξεπέρασε τους 20 χιλιοστοπόντους."
+
+#: ../../source/cmd_mode.rst:224
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1195,7 +1211,7 @@ msgstr ""
 "ζαριού χρησιμοποιείται για την αντιστοίχιση των θέσεων (σε οποιοδήποτε "
 "από τα δύο ζάρια της ζαριάς)."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1209,7 +1225,7 @@ msgstr ""
 "pips μπροστά στην κούρσα. `p50,70` : ο παίκτης είναι μεταξύ 50 και 70 "
 "pips πίσω στην κούρσα."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:236
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1221,7 +1237,7 @@ msgstr ""
 "ίδια αρχή ισχύει για τα τουρνουά με ``tn`` και για τις θέσεις με ``id`` "
 "(π.χ. ``s id5 id10`` για τις θέσεις 5 και 10)."
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1231,7 +1247,7 @@ msgstr ""
 "τους αγώνες του εν λόγω τουρνουά. Τα αναγνωριστικά των αγώνων και των "
 "τουρνουά είναι ορατά στις στήλες ID των αντίστοιχων πάνελ."
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:245
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1247,7 +1263,7 @@ msgstr ""
 "τουλάχιστον 10 πούλια στη ζώνη, και ο αντίπαλος έχει μεταξύ 2 και 3 "
 "οπίσθια πούλια."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:255
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -1259,7 +1275,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Διαγράφει το ιστορικό εντολών."
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:264
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."

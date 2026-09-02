@@ -40,6 +40,10 @@ func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 
 func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
+	// multiPlayed lists the positions player 1 played more than one way;
+	// only filled by a plain move-error search, where those rows escape the
+	// SQL column and are scored in Go (#167).
+	var multiPlayed map[int64]bool
 
 	// The decoded analysis is consumed by the move-pattern filter, the Go-side
 	// analysis re-checks of mirror search, and the date/equity filters below —
@@ -50,13 +54,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	//
 	// MoveErrorFilter is deliberately NOT one of the triggers: it is pushed to
 	// SQL like the rate filters (statsErrExpr in the WHERE builder below), and
-	// its Go-side re-check (matchesMoveErrorFilter) only ever runs inside the
-	// `!useSQLFilters` block, i.e. only when f.MirrorFilter is already true —
-	// already covered by the `|| f.MirrorFilter` term below. Adding it here
-	// too used to force a bulk a.data decode on every plain (non-mirror)
-	// MoveErrorFilter search even though nothing read the result: on the
-	// tournois fixture that turned BenchmarkSearch_ErrorAboveTenth's ~2 200
-	// SQL-matched rows into ~2 200 needless decodes, ~80ms → ~200ms.
+	// its Go-side re-check (matchesMoveErrorFilter) runs on the mirror path
+	// (`!useSQLFilters`, already covered by the `|| f.MirrorFilter` term
+	// below) and, on the plain path, only for the handful of positions player
+	// 1 played more than once (multiPlayed below), whose analysis is loaded
+	// one by one after the scan. Adding it here used to force a bulk a.data
+	// decode on every plain MoveErrorFilter search even though nothing read
+	// the result: on the tournois fixture that turned
+	// BenchmarkSearch_ErrorAboveTenth's ~2 200 SQL-matched rows into ~2 200
+	// needless decodes, ~80ms → ~200ms.
 	//
 	// DateFilter has no SQL pushdown at all (unlike MoveErrorFilter) and used
 	// to decode independently, once per candidate row, inside
@@ -302,19 +308,44 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
 		searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 
+		// The denormalised error column scores ONE play (the first of the
+		// analysis' PlayedMoves, see AnalysisStore.Save) — exact for a position
+		// player 1 played once, and that is the whole table but for a few
+		// openings. A position played several ways is let through regardless
+		// and settled in Go by matchesMoveErrorFilter, which takes the largest
+		// error among the plays (#167): the column, being one of them, can
+		// only under-state it, so "E>x" would silently drop the position and
+		// "E<x" would keep it. The set is listed once, before the scan
+		// (multiPlayedPlayer1Positions): a correlated subquery here ran on
+		// every row the column rejected and doubled the query's time.
 		if f.MoveErrorFilter != "" {
+			var err error
+			if multiPlayed, err = multiPlayedPlayer1Positions(ctx, s.DB, scope); err != nil {
+				return nil, err
+			}
 			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 			eqMin := int(math.Round(eMin))
 			eqMax := int(math.Round(eMax))
+			var cond string
 			if eHasMin && eHasMax {
-				where.WriteString(" AND " + statsErrExpr + " BETWEEN ? AND ?")
+				cond = statsErrExpr + " BETWEEN ? AND ?"
 				args = append(args, eqMin, eqMax)
 			} else if eHasMin {
-				where.WriteString(" AND " + statsErrExpr + " >= ?")
+				cond = statsErrExpr + " >= ?"
 				args = append(args, eqMin)
 			} else if eHasMax {
-				where.WriteString(" AND " + statsErrExpr + " <= ?")
+				cond = statsErrExpr + " <= ?"
 				args = append(args, eqMax)
+			}
+			if cond != "" {
+				if len(multiPlayed) > 0 {
+					placeholders := strings.Repeat("?,", len(multiPlayed))
+					cond = "(" + cond + " OR p.id IN (" + placeholders[:len(placeholders)-1] + "))"
+					for id := range multiPlayed {
+						args = append(args, id)
+					}
+				}
+				where.WriteString(" AND " + cond)
 			}
 		}
 
@@ -620,6 +651,18 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					}
 				}
 				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter) {
+					return false
+				}
+			} else if f.MoveErrorFilter != "" && multiPlayed[pos.ID] {
+				// The SQL column scored one play; a multi-played position is
+				// scored here by its largest error (#167). Its blob was not
+				// fetched with the scan (needAnalysis is false on this path
+				// unless another filter wanted it), so load it now — the set
+				// is a handful of rows, and the cursor is already drained.
+				if ana == nil {
+					ana = loadAnalysis(ctx, s.DB, pos.ID)
+				}
+				if !matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter) {
 					return false
 				}
 			}

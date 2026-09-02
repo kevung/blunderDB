@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 01:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -137,8 +137,8 @@ msgid ""
 "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
 "verdict de videau en bearoff)."
 msgstr ""
-"Открывает панель Eval (Effective Pip Count, вероятность выигрыша и вердикт "
-"по кубу при снятии шашек)."
+"Открывает панель Eval (Effective Pip Count, вероятность выигрыша и "
+"вердикт по кубу при снятии шашек)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -1170,7 +1170,22 @@ msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
 "(напр. pl'Alice'). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:216
+msgid ""
+"Une position jouée plusieurs fois par le joueur 1 (le même coup dans deux"
+" matchs, ou deux coups différents) est retenue par les filtres ``E>x``, "
+"``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur cette "
+"position. ``E>100`` répond ainsi à la question « ai-je un jour fait un "
+"blunder ici ? », et ``E<20`` ne garde que les positions où aucun des "
+"coups joués n'a dépassé 20 millipoints."
+msgstr ""
+"Позиция, которую игрок 1 разыграл несколько раз (тот же ход в двух матчах "
+"или два разных хода), отбирается фильтрами ``E>x``, ``E<x`` и ``Ex,y`` по "
+"**наибольшей** ошибке, допущенной в этой позиции. Так ``E>100`` отвечает на "
+"вопрос «допускал ли я здесь когда-нибудь бландер?», а ``E<20`` оставляет "
+"только позиции, где ни один из сыгранных ходов не превысил 20 миллипунктов."
+
+#: ../../source/cmd_mode.rst:224
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
 " *a fortiori* de filtrer les positions en fonction du type de décision "
@@ -1183,7 +1198,7 @@ msgstr ""
 "игнорирует значение второго кубика: только значение первого кубика "
 "используется для сопоставления позиций (с любым из двух кубиков броска)."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1196,7 +1211,7 @@ msgstr ""
 "Пример: `p<-10`: игрок опережает как минимум на 10 пипов. `p50,70`: игрок"
 " отстаёт на 50–70 пипов в гонке."
 
-#: ../../source/cmd_mode.rst:229
+#: ../../source/cmd_mode.rst:236
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
@@ -1208,7 +1223,7 @@ msgstr ""
 "применяется к турнирам с ``tn`` и к позициям с ``id`` (напр. ``s id5 "
 "id10`` для позиций 5 и 10)."
 
-#: ../../source/cmd_mode.rst:234
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
@@ -1218,7 +1233,7 @@ msgstr ""
 "Идентификаторы матчей и турниров видны в столбцах ID соответствующих "
 "панелей."
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:245
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1232,7 +1247,7 @@ msgstr ""
 "игрока от 20 до 5 пипов преимущества в гонке, вероятность победы не менее"
 " 60%, не менее 10 шашек в зоне, и у противника от 2 до 3 задних шашек."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:255
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
@@ -1244,7 +1259,7 @@ msgstr "clear, cl"
 msgid "Efface l'historique des commandes."
 msgstr "Очищает историю команд."
 
-#: ../../source/cmd_mode.rst:257
+#: ../../source/cmd_mode.rst:264
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
