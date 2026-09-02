@@ -1,7 +1,7 @@
 // Pure board geometry/parsing helpers extracted from Board.svelte so they can
 // be unit-tested without two.js or a mounted component. Everything that touches
-// the canvas (drawBoard, drawCheckers, …) stays in the component; only these
-// side-effect-free transforms live here.
+// two.js lives in boardScene.js (drawing) and boardInteractions.js (mouse);
+// only side-effect-free transforms live here.
 
 /**
  * Parse a move string (e.g. "24/23 13/11(2)", "bar/23", "6/off(4)") into a flat
@@ -87,6 +87,31 @@ export function computePipCount(position) {
     });
 
     return { pipCount1, pipCount2 };
+}
+
+/**
+ * The board's fixed measurements for a drawing surface of `width` × `height`
+ * pixels. Every drawing function (boardScene.js) and every hit test
+ * (boardInteractions.js) derives its coordinates from this one object, so the
+ * two can never disagree on where a point, a die or the cube sits.
+ *
+ * The board is 13 checker widths wide (6 + bar + 6) and 11 tall, centred on
+ * the surface; a triangle is 5 checkers tall.
+ */
+export function boardMetrics(width, height, widthFactor) {
+    const boardWidth = widthFactor * width;
+    const boardHeight = (11 / 13) * boardWidth;
+    const checkerSize = boardHeight / 11;
+    return {
+        width,
+        height,
+        boardWidth,
+        boardHeight,
+        checkerSize,
+        triangleHeight: 5 * checkerSize,
+        originX: width / 2,
+        originY: height / 2
+    };
 }
 
 /**
