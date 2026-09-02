@@ -1,5 +1,5 @@
 <script>
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { t } from '../i18n';
     import { TOURS, startTour } from '../services/tourService.js';
     import { loadDemoDatabase } from '../services/databaseService.js';
@@ -11,99 +11,43 @@
         loadDemoDatabase();
     }
 
-    function handleKeyDown(event) {
-        if (event.key === 'Escape') {
-            onClose();
-        }
-    }
-
     function launch(id) {
         // startTour() closes the active modal itself, then drives the tour.
         startTour(id);
     }
 </script>
 
-{#if visible}
-    <div class="modal-overlay" onclick={onClose} onkeydown={handleKeyDown} role="dialog" aria-modal="true" aria-label={$t('tour.catalogTitle')} use:trapFocus>
-        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
-            <div class="close-button" onclick={onClose}>×</div>
-            <h2>{$t('tour.catalogTitle')}</h2>
-            <p class="catalog-desc">{$t('tour.catalogDesc')}</p>
+<Modal open={visible} onclose={onClose} size="medium" align="center" closeOnOverlay>
+    {#snippet title()}{$t('tour.catalogTitle')}{/snippet}
+    <p class="catalog-desc">{$t('tour.catalogDesc')}</p>
 
-            <ul class="tour-list">
-                {#each TOURS as tour (tour.id)}
-                    <li>
-                        <div class="tour-text">
-                            <span class="tour-title">{$t(tour.titleKey)}</span>
-                            <span class="tour-desc">{$t(tour.descKey)}</span>
-                        </div>
-                        <button class="start-button" onclick={() => launch(tour.id)}>{$t('tour.start')}</button>
-                    </li>
-                {/each}
-            </ul>
+    <ul class="tour-list">
+        {#each TOURS as tour (tour.id)}
+            <li>
+                <div class="tour-text">
+                    <span class="tour-title">{$t(tour.titleKey)}</span>
+                    <span class="tour-desc">{$t(tour.descKey)}</span>
+                </div>
+                <button class="start-button" onclick={() => launch(tour.id)}>{$t('tour.start')}</button>
+            </li>
+        {/each}
+    </ul>
 
-            <div class="demo-row">
-                <span class="demo-hint">{$t('tour.demoHint')}</span>
-                <button class="demo-button" onclick={loadDemo}>{$t('tour.loadDemo')}</button>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
-            </div>
-        </div>
+    <div class="demo-row">
+        <span class="demo-hint">{$t('tour.demoHint')}</span>
+        <button class="demo-button" onclick={loadDemo}>{$t('tour.loadDemo')}</button>
     </div>
-{/if}
+
+    {#snippet footer()}
+        <button class="primary-button" onclick={onClose}>{$t('common.close')}</button>
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 1rem;
-        border-radius: 4px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        width: 90%;
-        max-width: 460px;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    h2 {
-        margin: 0 0 0.5rem;
-        font-size: var(--font-size-dialog-title);
-    }
-
     .catalog-desc {
-        margin: 0 0 1rem;
+        margin: 0;
         color: #555;
         font-size: var(--font-size-title);
-    }
-
-    .close-button {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        font-size: var(--font-size-dialog-close);
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        z-index: 10;
     }
 
     .tour-list {
@@ -157,7 +101,6 @@
     }
 
     .demo-row {
-        margin-top: 14px;
         padding-top: 12px;
         border-top: 1px solid #eee;
         display: flex;
@@ -185,12 +128,6 @@
 
     .demo-button:hover {
         background-color: #f0f0f0;
-    }
-
-    .modal-buttons {
-        margin-top: 14px;
-        display: flex;
-        justify-content: center;
     }
 
     .primary-button {

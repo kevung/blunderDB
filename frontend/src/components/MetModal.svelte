@@ -1,88 +1,39 @@
 <script>
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { t } from '../i18n';
+    import { tableData } from '../stores/metTable';
 
     let { visible = false, onClose } = $props();
-
-    function closeModal() {
-        onClose();
-    }
-
-    import { tableData } from '../stores/metTable';
 
     function formatCell(value) {
         return value.toFixed(1);
     }
-
-    function handleKeyDown(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    }
-
-    // Add event listener on mount and remove on destroy
-    import { onMount, onDestroy } from 'svelte';
-
-    onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-    });
-
-    onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-    });
 </script>
 
-{#if visible}
-    <div class="modal-overlay" onclick={closeModal} role="dialog" aria-modal="true" aria-label={$t('met.title')} use:trapFocus>
-        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        {#each Array(15) as _, colIndex (colIndex)}
-                            <th><strong>{colIndex + 1}</strong></th>
-                        {/each}
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each tableData as row, rowIndex (rowIndex)}
-                        <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
-                            <td><strong>{rowIndex + 1}</strong></td>
-                            {#each row as cell, cellIndex (cellIndex)}
-                                <td>{formatCell(cell)}</td>
-                            {/each}
-                        </tr>
+<Modal open={visible} onclose={onClose} size="auto" closeOnOverlay closeButton={false} label={$t('met.title')}>
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                {#each Array(15) as _, colIndex (colIndex)}
+                    <th><strong>{colIndex + 1}</strong></th>
+                {/each}
+            </tr>
+        </thead>
+        <tbody>
+            {#each tableData as row, rowIndex (rowIndex)}
+                <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
+                    <td><strong>{rowIndex + 1}</strong></td>
+                    {#each row as cell, cellIndex (cellIndex)}
+                        <td>{formatCell(cell)}</td>
                     {/each}
-                </tbody>
-            </table>
-        </div>
-    </div>
-{/if}
+                </tr>
+            {/each}
+        </tbody>
+    </table>
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 4px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        max-width: 90%;
-        max-height: 90%;
-        overflow: auto;
-    }
-
     table {
         width: 100%;
         border-collapse: collapse;

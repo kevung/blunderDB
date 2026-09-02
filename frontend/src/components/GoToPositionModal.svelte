@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { trapFocus } from '../utils/focusTrap.js';
+    import Modal from './Modal.svelte';
     import { positionsStore, matchContextStore, positionStore } from '../stores/positionStore'; // Import stores
     import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
@@ -99,8 +99,6 @@
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
             handleGoToPosition();
-        } else if (event.key === 'Escape') {
-            onClose();
         }
     }
 
@@ -125,74 +123,25 @@
     });
 </script>
 
-{#if visible}
-    <div class="modal-overlay" onclick={onClose} role="dialog" aria-modal="true" aria-label={$t('goToPosition.title')} use:trapFocus>
-        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
-            <div class="close-button" onclick={onClose}>×</div>
-            <h2>{$t('goToPosition.title')}</h2>
-            <input
-                type="number"
-                bind:value={positionNumber}
-                min="1"
-                max={maxPositionNumber}
-                placeholder={$t('goToPosition.placeholder')}
-                class="input-field"
-                bind:this={inputField}
-                onkeydown={handleKeyDown}
-            />
-            <div class="modal-buttons">
-                <button class="primary-button" onclick={handleGoToPosition}>{$t('common.go')}</button>
-                <button class="secondary-button" onclick={onClose}>{$t('common.cancel')}</button>
-            </div>
-        </div>
-    </div>
-{/if}
+<Modal open={visible} onclose={onClose} size="small" align="center" closeOnOverlay>
+    {#snippet title()}{$t('goToPosition.title')}{/snippet}
+    <input
+        type="number"
+        bind:value={positionNumber}
+        min="1"
+        max={maxPositionNumber}
+        placeholder={$t('goToPosition.placeholder')}
+        class="input-field"
+        bind:this={inputField}
+        onkeydown={handleKeyDown}
+    />
+    {#snippet footer()}
+        <button class="primary-button" onclick={handleGoToPosition}>{$t('common.go')}</button>
+        <button class="secondary-button" onclick={onClose}>{$t('common.cancel')}</button>
+    {/snippet}
+</Modal>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 1rem;
-        border-radius: 4px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        width: 90%;
-        max-width: 300px; /* Decrease the max-width */
-        max-height: 80vh; /* Limit the height of the modal */
-        overflow-y: auto; /* Add vertical scrollbar if content exceeds max height */
-        padding-left: 1rem; /* Add left padding to make it symmetric */
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .close-button {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        font-size: var(--font-size-dialog-close);
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        z-index: 10;
-        transition:
-            background-color 0.3s ease,
-            opacity 0.3s ease;
-    }
-
     .input-field {
         width: 80%; /* Adjust the width */
         padding: 8px;
@@ -212,14 +161,7 @@
         box-shadow: 0 0 5px rgba(108, 117, 125, 0.5); /* Slight shadow for focus */
     }
 
-    .modal-buttons {
-        margin-top: 10px;
-        display: flex;
-        justify-content: center;
-        gap: 10px; /* Add space between buttons */
-    }
-
-    .modal-buttons button {
+    button {
         padding: 8px 14px; /* Slightly increase padding */
         border: none;
         border-radius: 4px;
