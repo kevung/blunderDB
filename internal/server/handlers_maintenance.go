@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -28,7 +29,10 @@ func (s *Server) maintenanceRoutes() []route {
 			}
 			res, err := v.Vacuum(r.Context())
 			if err != nil {
-				writeErrorCode(w, CodeInternal, "vacuum failed: "+err.Error())
+				// Never err.Error() to the client: the backend's message
+				// names the database file (#160). writeStorageError masks
+				// it and stashes the cause for the server-side log line.
+				writeStorageError(w, fmt.Errorf("vacuum: %w", err))
 				return
 			}
 			writeJSONResp(w, res)

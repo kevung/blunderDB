@@ -169,7 +169,7 @@ func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	m, games, moves, err := ingest.ReadMatchForMAT(r.Context(), s.opts.Storage, scopeOf(r), req.MatchID)
 	if err != nil {
-		writeErrorCode(w, codeForErr(err), err.Error())
+		writeStorageError(w, err)
 		return
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")

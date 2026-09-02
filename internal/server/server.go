@@ -27,6 +27,10 @@ type Server struct {
 	health     *handlers.Health
 	http       *http.Server
 	knownPaths map[string]bool
+	// uploadPaths is the exact set of routes limitBody exempts from
+	// MaxBodyBytes — the multipart import uploads, which cap themselves at
+	// ImportMaxBodyBytes (see uploadRoutes in handlers_imports.go).
+	uploadPaths map[string]bool
 
 	imports *importRegistry
 	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps (#130), kept
@@ -60,6 +64,7 @@ func New(opts Options) (*Server, error) {
 
 	mux := http.NewServeMux()
 	s.knownPaths = make(map[string]bool)
+	s.uploadPaths = uploadPaths()
 	for _, rt := range s.routes() {
 		mux.HandleFunc(rt.method+" "+rt.pattern, rt.handler)
 		s.knownPaths[rt.pattern] = true
@@ -122,11 +127,19 @@ func (s *Server) publicPaths() map[string]bool {
 }
 
 // limitBody caps request bodies to guard against OOM from a malicious client.
-// Import endpoints are exempt from the small default cap: they carry uploaded
-// match files and apply their own (larger) limit while spooling.
+// The upload endpoints — exactly uploadPaths, not a "/v1/imports." prefix
+// that would also cover imports.cancel (#160) — are exempt from the small
+// default cap: they carry uploaded match files and apply their own (larger)
+// limit while spooling. A declared Content-Length over the cap is refused
+// 413 before a byte of it is read; an undeclared one is cut off by
+// MaxBytesReader and the handler's decoder reports it (writeDecodeError).
 func (s *Server) limitBody(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Body != nil && !strings.HasPrefix(r.URL.Path, "/v1/imports.") {
+		if r.Body != nil && !s.uploadPaths[r.URL.Path] {
+			if r.ContentLength > s.opts.MaxBodyBytes {
+				writeBodyTooLarge(w, s.opts.MaxBodyBytes)
+				return
+			}
 			r.Body = http.MaxBytesReader(w, r.Body, s.opts.MaxBodyBytes)
 		}
 		next.ServeHTTP(w, r)

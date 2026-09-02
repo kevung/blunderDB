@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,56 +11,70 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
-	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // importRegistry tracks in-flight imports so imports.cancel can abort them.
-// Keys are opaque import ids scoped to a tenant.
+// An id is opaque — 16 random bytes, hex — and says nothing about who
+// started the import: the owning tenant is recorded beside the cancel func
+// and checked by equality. The first design encoded the scope into the id
+// ("<scope>-<counter>") and checked it by prefix, which let tenant "a"
+// cancel the imports of tenant "a-1", and let anyone enumerate the counter
+// (#160).
 type importRegistry struct {
-	mu      sync.Mutex
-	cancels map[string]context.CancelFunc
-	seq     atomic.Uint64
+	mu   sync.Mutex
+	jobs map[string]importJob
+}
+
+type importJob struct {
+	scope  string
+	cancel context.CancelFunc
 }
 
 func newImportRegistry() *importRegistry {
-	return &importRegistry{cancels: make(map[string]context.CancelFunc)}
+	return &importRegistry{jobs: make(map[string]importJob)}
+}
+
+// newImportID returns a fresh opaque id: 128 bits from crypto/rand, hex.
+// crypto/rand.Read never fails on Go 1.24+ (it aborts the process rather
+// than return a short read).
+func newImportID() string {
+	var b [16]byte
+	_, _ = rand.Read(b[:])
+	return hex.EncodeToString(b[:])
 }
 
 func (reg *importRegistry) start(scope string, cancel context.CancelFunc) string {
-	id := scope + "-" + strconv.FormatUint(reg.seq.Add(1), 10)
+	id := newImportID()
 	reg.mu.Lock()
-	reg.cancels[id] = cancel
+	reg.jobs[id] = importJob{scope: scope, cancel: cancel}
 	reg.mu.Unlock()
 	return id
 }
 
 func (reg *importRegistry) finish(id string) {
 	reg.mu.Lock()
-	delete(reg.cancels, id)
+	delete(reg.jobs, id)
 	reg.mu.Unlock()
 }
 
 // cancel aborts the import with the given id if it belongs to scope. Returns
-// false if no such in-flight import exists for this tenant.
+// false if no such in-flight import exists for this tenant — the same
+// answer whether the id is unknown or another tenant's, so a caller learns
+// nothing about other tenants' imports.
 func (reg *importRegistry) cancel(scope, id string) bool {
 	reg.mu.Lock()
 	defer reg.mu.Unlock()
-	c, ok := reg.cancels[id]
-	if !ok || !belongsTo(id, scope) {
+	j, ok := reg.jobs[id]
+	if !ok || j.scope != scope {
 		return false
 	}
-	c()
+	j.cancel()
 	return true
-}
-
-func belongsTo(id, scope string) bool {
-	return len(id) > len(scope)+1 && id[:len(scope)] == scope && id[len(scope)] == '-'
 }
 
 // importerFor returns the Importer for a format, or nil if unsupported on this
@@ -93,19 +109,46 @@ func (s *Server) exporterFor(f ingest.Format) ingest.Exporter {
 	}
 }
 
+// uploadRoutes are the import endpoints whose body is a multipart file
+// upload. One table drives both their registration (ingestRoutes) and their
+// exemption from limitBody's default cap (uploadPaths): a new format can
+// never be registered without its exemption, and no other route can inherit
+// the exemption by sharing the "/v1/imports." prefix — imports.cancel carries
+// a small JSON body and stays under the default cap like everything else
+// (#160).
+var uploadRoutes = []struct {
+	pattern string
+	format  ingest.Format
+}{
+	{"/v1/imports.json", ingest.FormatJSON},
+	{"/v1/imports.xg", ingest.FormatXG},
+	{"/v1/imports.gnubg", ingest.FormatGnuBG},
+	{"/v1/imports.bgf", ingest.FormatBGF},
+	{"/v1/imports.db", ingest.FormatNativeDB},
+	{"/v1/imports.position", ingest.FormatPosition},
+}
+
+// uploadPaths is the exact set of routes limitBody leaves to handleImport's
+// own (larger) cap.
+func uploadPaths() map[string]bool {
+	m := make(map[string]bool, len(uploadRoutes))
+	for _, u := range uploadRoutes {
+		m[u.pattern] = true
+	}
+	return m
+}
+
 // ingestRoutes registers the import/export endpoints supported by this build.
 func (s *Server) ingestRoutes() []route {
-	return []route{
-		{http.MethodPost, "/v1/imports.json", s.handleImport(ingest.FormatJSON)},
-		{http.MethodPost, "/v1/imports.xg", s.handleImport(ingest.FormatXG)},
-		{http.MethodPost, "/v1/imports.gnubg", s.handleImport(ingest.FormatGnuBG)},
-		{http.MethodPost, "/v1/imports.bgf", s.handleImport(ingest.FormatBGF)},
-		{http.MethodPost, "/v1/imports.db", s.handleImport(ingest.FormatNativeDB)},
-		{http.MethodPost, "/v1/imports.position", s.handleImport(ingest.FormatPosition)},
-		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
-		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
-		{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
+	rs := make([]route, 0, len(uploadRoutes)+3)
+	for _, u := range uploadRoutes {
+		rs = append(rs, route{http.MethodPost, u.pattern, s.handleImport(u.format)})
 	}
+	return append(rs,
+		route{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
+		route{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
+		route{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
+	)
 }
 
 // exportSQLiteReq optionally asks for a watermark on the export — origin is
@@ -155,7 +198,7 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req exportSQLiteReq
 		if err := decodeJSON(r, &req); err != nil {
-			writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+			writeDecodeError(w, "invalid JSON body", err)
 			return
 		}
 		watermark, err := s.sealExportWatermark(req.WatermarkOrigin, req.WatermarkNote)
@@ -219,7 +262,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 		file, header, err := r.FormFile("file")
 		if err != nil {
-			writeErrorCode(w, CodeInvalid, "missing multipart 'file' field: "+err.Error())
+			writeDecodeError(w, "missing multipart 'file' field", err)
 			return
 		}
 		defer file.Close()
@@ -268,10 +311,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 
 		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath}, prog)
 		if err != nil {
-			emit(map[string]any{
-				"event": "error",
-				"error": errorBody{Code: codeForErr(err), Message: err.Error()},
-			})
+			emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 			return
 		}
 		emit(map[string]any{
@@ -291,7 +331,7 @@ type importCancelReq struct {
 func (s *Server) handleImportCancel(w http.ResponseWriter, r *http.Request) {
 	var req importCancelReq
 	if err := decodeJSON(r, &req); err != nil {
-		writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+		writeDecodeError(w, "invalid JSON body", err)
 		return
 	}
 	if req.ImportID == "" {
@@ -318,9 +358,7 @@ func (s *Server) handleExport(format ingest.Format) http.HandlerFunc {
 		// re-statused once bytes are sent, so this mirrors streamSeq2.
 		if err := exp.Export(r.Context(), scopeOf(r), w, ingest.ExportOptions{Format: format}); err != nil {
 			// Best-effort trailing error line; header may already be 200.
-			_ = json.NewEncoder(w).Encode(errorEnvelope{Error: errorBody{
-				Code: codeForErr(err), Message: err.Error(),
-			}})
+			_ = json.NewEncoder(w).Encode(errorEnvelope{Error: errorBodyFor(w, err)})
 		}
 	}
 }

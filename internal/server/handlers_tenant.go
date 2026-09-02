@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -23,7 +24,11 @@ func (s *Server) tenantRoutes() []route {
 				return
 			}
 			if err := purger.PurgeTenant(r.Context(), scopeOf(r)); err != nil {
-				writeErrorCode(w, CodeInternal, "purge failed: "+err.Error())
+				// Never err.Error() to the client: a PostgreSQL error can
+				// quote the DSN, a table or a statement (#160).
+				// writeStorageError masks it and stashes the cause for the
+				// server-side log line.
+				writeStorageError(w, fmt.Errorf("purge tenant: %w", err))
 				return
 			}
 			writeJSONResp(w, okResp{OK: true})

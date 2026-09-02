@@ -82,7 +82,7 @@ func rpc[Req any, Resp any](fn func(ctx context.Context, scope string, req Req) 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Req
 		if err := decodeJSON(r, &req); err != nil {
-			writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+			writeDecodeError(w, "invalid JSON body", err)
 			return
 		}
 		resp, err := fn(r.Context(), scopeOf(r), req)
@@ -110,7 +110,7 @@ func rpcStream[Req any, T any](fn func(ctx context.Context, scope string, req Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Req
 		if err := decodeJSON(r, &req); err != nil {
-			writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+			writeDecodeError(w, "invalid JSON body", err)
 			return
 		}
 		streamSeq2(w, fn(r.Context(), scopeOf(r), req))
