@@ -10,6 +10,9 @@ Decided 2026-09-03; the decision record is ADR-0027. Two lots, one sheet each:
 Lot 2 depends on lot 1 (the one-sided generator is written for *n* points in lot 1, exposed in
 lot 2).
 
+GitHub issues (2026-09-03): lot 1 = #305 generator, #306 fingerprints, #307 sources and
+first-launch defaults, #308 Bearoff tab, #309 CLI, #310 docs; lot 2 = #311.
+
 ## Key numbers (measured 2026-09-03, prototype in the session scratchpad)
 
 | Fact | Value |
