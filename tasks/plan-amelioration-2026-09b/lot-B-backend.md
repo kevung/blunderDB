@@ -16,7 +16,7 @@ B.10 à B.19 = **étape 2 (consolider)**, perf et dette.
 
 `database/db_import_db.go:132` : `if importMajor > currentMajor` compare
 `"10" > "9"` → faux. `compareVersions` existe (`db_migration.go:232`).
-- [ ] Appeler `compareVersions` ; test avec `10.0.0` vs `2.15.0`.
+- [x] Appeler `compareVersions` ; test avec `10.0.0` vs `2.15.0`.
 
 ## B.2 — Crawford codé en dur à `false` dans la conversion MWC→EMG GnuBG [M] — bug, échelle d'équité (#170)
 

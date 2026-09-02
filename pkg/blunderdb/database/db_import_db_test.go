@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -276,5 +277,66 @@ func TestImport_CommitFillsScalarColumns(t *testing.T) {
 	}
 	if !res.Existed {
 		t.Errorf("SaveIndividualPosition did not recognise the imported position by hash")
+	}
+}
+
+// TestImport_MajorVersionComparedNumerically (issue #169): a source database
+// whose schema major version is newer than the target's is refused, whatever
+// the digits. The check used to compare the major components as strings, so
+// "10" sorted before "2" and a 10.x.x source passed as older than 2.15.0.
+func TestImport_MajorVersionComparedNumerically(t *testing.T) {
+	dir := t.TempDir()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "target.db")); err != nil {
+		t.Fatalf("SetupDatabase(target): %v", err)
+	}
+	defer dst.Close()
+
+	// A source stamped with an arbitrary version: SetupDatabase builds the
+	// current schema, the stamp alone is changed.
+	sourceAt := func(t *testing.T, version string) string {
+		t.Helper()
+		path := filepath.Join(dir, "source_"+version+".db")
+		src := NewDatabase()
+		if err := src.SetupDatabase(path); err != nil {
+			t.Fatalf("SetupDatabase(source %s): %v", version, err)
+		}
+		src.Close()
+		stampVersion(t, path, version)
+		return path
+	}
+
+	for _, c := range []struct {
+		version string
+		wantErr string
+	}{
+		{"10.0.0", "newer major"},
+		{"3.0.0", "newer major"},
+		{DatabaseVersion, ""},
+		{"1.9.0", ""},
+		{"two.point.oh", "import database version"},
+	} {
+		t.Run(c.version, func(t *testing.T) {
+			_, err := dst.AnalyzeImportDatabase(sourceAt(t, c.version))
+			switch {
+			case c.wantErr == "" && err != nil:
+				t.Fatalf("AnalyzeImportDatabase(%s): %v", c.version, err)
+			case c.wantErr != "" && err == nil:
+				t.Fatalf("AnalyzeImportDatabase(%s) accepted the source", c.version)
+			case c.wantErr != "" && !strings.Contains(err.Error(), c.wantErr):
+				t.Fatalf("AnalyzeImportDatabase(%s) = %v, want %q", c.version, err, c.wantErr)
+			}
+		})
+	}
+
+	// checkImportableVersion is the one place both AnalyzeImportDatabase and
+	// CommitImportDatabase ask; the table above covers the first, this covers
+	// the helper the second shares with it.
+	if err := checkImportableVersion("10.0.0", "2.15.0"); err == nil {
+		t.Error("checkImportableVersion(10.0.0, 2.15.0) accepted a newer major")
+	}
+	if err := checkImportableVersion("2.15.0", "10.0.0"); err != nil {
+		t.Errorf("checkImportableVersion(2.15.0, 10.0.0): %v", err)
 	}
 }

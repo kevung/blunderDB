@@ -47,6 +47,27 @@ func queryable(db *sql.DB, q string) bool {
 	return err == nil || err == sql.ErrNoRows
 }
 
+// checkImportableVersion allows a database to be imported into another when
+// its schema major version is the same or older: the importer reads the source
+// with the current code, which knows every past major and none of the future
+// ones. The comparison is numeric (parseVersion, the same reader the migration
+// chain uses): compared as strings, "10" sorts before "2" and a 10.x.x source
+// would have slipped into a 2.x.x database as if it were older.
+func checkImportableVersion(importVersion, currentVersion string) error {
+	iv, err := parseVersion(importVersion)
+	if err != nil {
+		return fmt.Errorf("import database version %q: %w", importVersion, err)
+	}
+	cv, err := parseVersion(currentVersion)
+	if err != nil {
+		return fmt.Errorf("current database version %q: %w", currentVersion, err)
+	}
+	if iv[0] > cv[0] {
+		return fmt.Errorf("cannot import from a newer major database version (import: %s, current: %s)", importVersion, currentVersion)
+	}
+	return nil
+}
+
 // decodeSourcePosition reconstructs a Position from a row of the database
 // being imported. Full-JSON state (every pre-2.2.0 database, and every export
 // before fiche-04) is self-describing: json.Unmarshal is enough. Compact state
@@ -126,12 +147,8 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		return nil, err
 	}
 
-	// Compare major versions - allow importing from same or lower version
-	importMajor := strings.Split(importDBVersion, ".")[0]
-	currentMajor := strings.Split(currentDBVersion, ".")[0]
-
-	if importMajor > currentMajor {
-		return nil, fmt.Errorf("cannot import from a newer major database version (import: %s, current: %s)", importDBVersion, currentDBVersion)
+	if err := checkImportableVersion(importDBVersion, currentDBVersion); err != nil {
+		return nil, err
 	}
 
 	// Count total positions to import
@@ -317,12 +334,8 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
-	// Compare major versions - allow importing from same or lower version
-	importMajor := strings.Split(importDBVersion, ".")[0]
-	currentMajor := strings.Split(currentDBVersion, ".")[0]
-
-	if importMajor > currentMajor {
-		return nil, fmt.Errorf("cannot import from a newer major database version (import: %s, current: %s)", importDBVersion, currentDBVersion)
+	if err := checkImportableVersion(importDBVersion, currentDBVersion); err != nil {
+		return nil, err
 	}
 
 	// First, count total positions to import
