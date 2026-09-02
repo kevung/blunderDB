@@ -30,8 +30,9 @@ export async function exportDatabase() {
         return;
     }
 
-    const positions = get(positionsStore);
-    if (positions.length === 0) {
+    // The export takes ids (ExportOptions.PositionIDs): the list already is one.
+    const positionIds = get(positionsStore).ids;
+    if (positionIds.length === 0) {
         setStatusBarMessage(tMsg('status.noPositionsToExport'));
         await ShowAlert('No positions to export. Please load positions first.');
         return;
@@ -73,7 +74,7 @@ export async function exportDatabase() {
         // writes membership for positions it exports, so a collection can arrive truncated;
         // the screen says so rather than letting it happen quietly.
         try {
-            exportCollectionCoverageStore.set((await CollectionCoverage(positions.map((p) => p.id))) || {});
+            exportCollectionCoverageStore.set((await CollectionCoverage(positionIds)) || {});
         } catch (e) {
             logger.log('Could not measure collection coverage:', e);
             exportCollectionCoverageStore.set({});
@@ -93,7 +94,7 @@ export async function exportDatabase() {
             logger.log('Could not read the source metadata:', e);
         }
 
-        exportPositionCountStore.set(positions.length);
+        exportPositionCountStore.set(positionIds.length);
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
@@ -138,8 +139,6 @@ export async function handleExportCommit() {
     try {
         const metadata = get(exportMetadataStore);
         const exportOptions = get(exportOptionsStore);
-        const positions = get(positionsStore);
-
         const baseOptions = {
             exportPath: pendingExportPath,
             // Send identifiers, not positions. Shipping the whole set was 73 MB of JSON for
@@ -147,7 +146,7 @@ export async function handleExportCommit() {
             // which left the progress dialog blank, then the same volume across the bridge
             // and decoded again. The exporter reads them from the database it already has
             // open. See ExportOptions.PositionIDs.
-            positionIDs: positions.map((p) => p.id),
+            positionIDs: get(positionsStore).ids,
             metadata: {
                 user: metadata.user || '',
                 description: metadata.description || '',

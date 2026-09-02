@@ -72,7 +72,7 @@ describe('importSingleFile — panel shown after the import', () => {
 
         expect(outcome).toEqual({ type: 'position', id: 42 });
         expect(get(activeTabStore)).toBe('analysis');
-        expect(get(positionsStore)[get(currentPositionIndexStore)].id).toBe(42);
+        expect(positionsStore.idAt(get(currentPositionIndexStore))).toBe(42);
         expect(get(openPanels).has(PANEL.MATCH)).toBe(false);
     });
 

@@ -92,7 +92,7 @@ await overrideDbMethodByArg(page, 'LoadAnalysis', { 4033: analysisA, 4030: analy
 
 Simule une mutation du backend : `methodName` répond `returnValue` et, dès son
 premier appel, les méthodes de `afterCall` sont remplacées (une position
-enregistrée apparaît ensuite dans `LoadAllPositions`).
+enregistrée apparaît ensuite dans `ListPositionIDs`).
 
 ## Panneaux ancrés et touches nues
 

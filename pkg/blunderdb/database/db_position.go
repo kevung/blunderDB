@@ -155,6 +155,35 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	return positions, nil
 }
 
+// ListPositionIDs returns every stored position id in LoadAllPositions's
+// order. It is what the GUI keeps for a library: the id list is a few hundred
+// kilobytes where the positions themselves are tens of megabytes of JSON
+// across the Wails bridge, and the board only ever shows one of them.
+func (d *Database) ListPositionIDs() ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return d.store.Positions().ListIDs(context.Background(), "", storage.ListOpts{})
+}
+
+// LoadPositionsByIDs returns the listed positions in the caller's order,
+// skipping ids that no longer exist. The GUI fetches the window it is about
+// to show through it; an export that needs every position walks its id list
+// in batches through it too.
+func (d *Database) LoadPositionsByIDs(ids []int64) ([]Position, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	positions, err := d.store.Positions().LoadByIDs(context.Background(), "", ids)
+	if err != nil {
+		return nil, err
+	}
+	if positions == nil {
+		positions = []Position{}
+	}
+	return positions, nil
+}
+
 func (d *Database) DeletePosition(positionID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

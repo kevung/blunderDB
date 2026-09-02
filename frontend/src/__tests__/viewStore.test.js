@@ -257,14 +257,15 @@ describe('viewStore — serialize/deserialize round trip', () => {
         expect(parsed.views[0].positionIds).toEqual([101, 102]);
         expect(parsed.views[0].commentText).toBe('remember this');
 
-        // Deserialize into the same fresh instance, resolving ids through a
-        // fake "database".
-        const loadAll = async () => [posA, posB];
-        const ok = await ctx.viewStore.deserialize(json, loadAll);
+        // Deserialize into the same fresh instance, checking ids against a
+        // fake "database" (ListPositionIDs). The board comes from the window
+        // cache, still warm from the set() above.
+        const listIds = async () => [101, 102];
+        const ok = await ctx.viewStore.deserialize(json, listIds);
         expect(ok).toBe(true);
 
         expect(get(ctx.positionStore).id).toBe(101);
-        expect(get(ctx.positionsStore).map((p) => p.id)).toEqual([101, 102]);
+        expect(get(ctx.positionsStore).ids).toEqual([101, 102]);
         expect(get(ctx.commentTextStore)).toBe('remember this');
     });
 

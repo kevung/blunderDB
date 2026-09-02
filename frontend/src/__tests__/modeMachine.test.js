@@ -14,7 +14,7 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    LoadAllPositions: vi.fn(() => Promise.resolve([])),
+    ListPositionIDs: vi.fn(() => Promise.resolve([])),
     DeletePosition: vi.fn(),
     DeleteAnalysis: vi.fn(),
     UpdatePosition: vi.fn(),
@@ -40,7 +40,7 @@ vi.mock('../services/sessionService.js', () => ({
     saveSessionState: vi.fn()
 }));
 
-import { LoadAllPositions, LoadAnalysis, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { ListPositionIDs, LoadAnalysis, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore, openPanels, openPanel, PANEL } from '../stores/uiStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
@@ -210,7 +210,7 @@ describe('NORMAL → EDIT → NORMAL', () => {
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(seen).toEqual([-1, 1]);
-        expect(LoadAllPositions, 'la bibliothèque n’est pas rechargée').not.toHaveBeenCalled();
+        expect(ListPositionIDs, 'la bibliothèque n’est pas rechargée').not.toHaveBeenCalled();
     });
 
     test('exitEditMode hors du mode EDIT ne touche à rien', async () => {
@@ -235,7 +235,7 @@ describe('MATCH → EDIT → MATCH (bug 2 : l’onglet recherche ne perd pas la 
         expect(modeState().savedContext.beforeEdit).toMatchObject({ isMatchMode: true, matchID: 7, currentIndex: 1 });
         // C’est loadAllPositions() qui, en résolvant, basculait l’onglet sur
         // 'matches' et écrasait le mode : il ne doit pas être appelé.
-        expect(LoadAllPositions).not.toHaveBeenCalled();
+        expect(ListPositionIDs).not.toHaveBeenCalled();
         expect(get(activeTabStore)).toBe('analysis');
     });
 
@@ -288,7 +288,7 @@ describe('NORMAL → EPC → NORMAL', () => {
         expect(get(currentPositionIndexStore)).toBe(0);
         const { beforeEPC } = modeState().savedContext;
         expect(beforeEPC.mode).toBe(MODE.NORMAL);
-        expect(beforeEPC.positions).toEqual(lib);
+        expect(beforeEPC.ids).toEqual(lib.map((p) => p.id));
         expect(beforeEPC.position.id).toBe(2);
         expect(beforeEPC.positionIndex).toBe(1);
     });
@@ -301,7 +301,7 @@ describe('NORMAL → EPC → NORMAL', () => {
         await exitEPCMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(get(positionsStore)).toEqual(lib);
+        expect(get(positionsStore).ids).toEqual(lib.map((p) => p.id));
         expect(get(currentPositionIndexStore)).toBe(1);
         expect(get(positionStore).id).toBe(2);
         expect(LoadAnalysis).toHaveBeenCalledWith(2);
@@ -317,7 +317,7 @@ describe('NORMAL → EPC → NORMAL', () => {
         await exitEPCMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(LoadAllPositions).toHaveBeenCalledTimes(1);
+        expect(ListPositionIDs).toHaveBeenCalledTimes(1);
     });
 });
 
@@ -457,7 +457,7 @@ describe('une position existante entre dans le panneau Eval et en ressort', () =
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(positionStore).id).toBe(2);
         expect(get(positionStore).board.bearoff, 'l’originale n’a pas bougé').toEqual([3, 3]);
-        expect(get(positionsStore)).toEqual(lib);
+        expect(get(positionsStore).ids).toEqual(lib.map((p) => p.id));
     });
 
     test('depuis une partie : la graine ouvre Eval et la sortie revient à la partie', async () => {
@@ -478,14 +478,14 @@ describe('une position existante entre dans le panneau Eval et en ressort', () =
 describe('toggleMatchMode', () => {
     test('MATCH → NORMAL : persiste le dernier coup, vide le contexte, recharge la bibliothèque', async () => {
         setMatch(2);
-        LoadAllPositions.mockResolvedValueOnce([makePosition(1)]);
+        ListPositionIDs.mockResolvedValueOnce([1]);
 
         await toggleMatchMode();
 
         expect(SaveLastVisitedPosition).toHaveBeenCalledWith(7, 2);
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(matchContextStore).isMatchMode).toBe(false);
-        expect(LoadAllPositions).toHaveBeenCalledTimes(1);
+        expect(ListPositionIDs).toHaveBeenCalledTimes(1);
     });
 
     test('NORMAL → MATCH : reprend la dernière partie visitée à son dernier coup', async () => {
@@ -534,7 +534,7 @@ describe('COLLECTION → NORMAL', () => {
 
         expect(get(statusBarModeStore)).toBe(MODE.COLLECTION);
         expect(get(matchContextStore).isMatchMode).toBe(false);
-        expect(get(positionsStore)).toBe(coll);
+        expect(get(positionsStore).ids).toEqual([2, 3]);
         expect(get(positionStore).id).toBe(2);
         expect(get(currentPositionIndexStore)).toBe(0);
     });
@@ -553,7 +553,7 @@ describe('COLLECTION → NORMAL', () => {
         selectedCollectionStore.set({ id: 4 });
         positionService.setSearchState('s', {}, true);
         lastSearchStore.set({ command: 's' });
-        LoadAllPositions.mockResolvedValueOnce(lib);
+        ListPositionIDs.mockResolvedValueOnce(lib.map((p) => p.id));
 
         await exitCollectionMode();
 
@@ -562,7 +562,7 @@ describe('COLLECTION → NORMAL', () => {
         expect(get(activeCollectionStore)).toBeNull();
         expect(get(selectedCollectionStore)).toBeNull();
         expect(get(collectionPositionsStore)).toEqual([]);
-        expect(get(positionsStore)).toEqual(lib);
+        expect(get(positionsStore).ids).toEqual(lib.map((p) => p.id));
         expect(get(currentPositionIndexStore), 'retrouvée par id dans la bibliothèque').toBe(1);
         expect(positionService.getSearchState()).toEqual({ lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false });
         expect(get(lastSearchStore)).toBeNull();
@@ -570,7 +570,7 @@ describe('COLLECTION → NORMAL', () => {
 
     test('enterEditMode depuis COLLECTION passe par exitCollectionMode', async () => {
         handleOpenCollection({ name: 'Backgames' }, [makePosition(2)]);
-        LoadAllPositions.mockResolvedValueOnce([makePosition(1), makePosition(2)]);
+        ListPositionIDs.mockResolvedValueOnce([1, 2]);
 
         await enterEditMode();
 

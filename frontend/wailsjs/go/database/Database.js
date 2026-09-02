@@ -190,6 +190,10 @@ export function GetAnkiDeckStats(arg1) {
   return window['go']['database']['Database']['GetAnkiDeckStats'](arg1);
 }
 
+export function GetAnkiForecast(arg1, arg2) {
+  return window['go']['database']['Database']['GetAnkiForecast'](arg1, arg2);
+}
+
 export function GetCollectionByID(arg1) {
   return window['go']['database']['Database']['GetCollectionByID'](arg1);
 }
@@ -326,6 +330,10 @@ export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
 }
 
+export function ListPositionIDs() {
+  return window['go']['database']['Database']['ListPositionIDs']();
+}
+
 export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
 }
@@ -368,6 +376,10 @@ export function LoadPositionsByFilters(arg1) {
 
 export function LoadPositionsByFiltersCore(arg1) {
   return window['go']['database']['Database']['LoadPositionsByFiltersCore'](arg1);
+}
+
+export function LoadPositionsByIDs(arg1) {
+  return window['go']['database']['Database']['LoadPositionsByIDs'](arg1);
 }
 
 export function LoadSearchHistory() {

@@ -23,7 +23,7 @@
     let viewMode = $derived($ankiViewModeStore);
     let databaseLoaded = $derived($databaseLoadedStore);
     let collections = $derived($collectionsStore || []);
-    let positions = $derived($positionsStore || []);
+    let positionIds = $derived($positionsStore?.ids || []);
     let lastSearch = $derived($lastSearchStore);
     let pausedSession = $derived($ankiPausedSessionStore);
 
@@ -129,7 +129,7 @@
                 sourceType: newDeckSourceType,
                 sourceId: newDeckSourceId,
                 lastSearch,
-                positionIds: positions.map((p) => p.id)
+                positionIds
             });
             newDeckName = '';
             newDeckSourceType = 'collection';
@@ -364,7 +364,7 @@
                             {/each}
                         </select>
                     {:else}
-                        <span class="search-hint">{$t('anki.positionsCount', { count: positions.length })}</span>
+                        <span class="search-hint">{$t('anki.positionsCount', { count: positionIds.length })}</span>
                     {/if}
                     <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon(ICON.check)}</button>
                     <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon(ICON.cross)}</button>

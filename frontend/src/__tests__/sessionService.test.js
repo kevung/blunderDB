@@ -16,7 +16,7 @@ const { bindings, searchState, positionService, setStatusBarMessage } = vi.hoist
     const searchState = { lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false };
     return {
         searchState,
-        bindings: { SaveSessionState: vi.fn(), LoadSessionState: vi.fn(), LoadAllPositions: vi.fn() },
+        bindings: { SaveSessionState: vi.fn(), LoadSessionState: vi.fn(), ListPositionIDs: vi.fn() },
         positionService: {
             getSearchState: () => ({ ...searchState }),
             setSearchState: vi.fn((next) => Object.assign(searchState, next)),
@@ -47,7 +47,7 @@ beforeEach(() => {
     positionsStore.set([]);
     currentPositionIndexStore.set(-1);
     lastSearchStore.set({ command: 'stale', position: '{}' });
-    bindings.LoadAllPositions.mockResolvedValue(library);
+    bindings.ListPositionIDs.mockResolvedValue(library.map((p) => p.id));
     bindings.SaveSessionState.mockResolvedValue(undefined);
 });
 
@@ -74,7 +74,7 @@ describe('restoreSessionState', () => {
 
         await restoreSessionState();
 
-        expect(get(positionsStore).map((p) => p.id)).toEqual([3, 1]);
+        expect(get(positionsStore).ids).toEqual([3, 1]);
         expect(get(currentPositionIndexStore)).toBe(1);
         expect(searchState).toEqual({ lastSearchCommand: 's p>10', lastSearchPosition: searchBoard, hasActiveSearch: true });
         expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.sessionRestored', i18nParams: { count: 2, index: 2 } });
@@ -95,7 +95,7 @@ describe('restoreSessionState', () => {
 
         await restoreSessionState();
 
-        expect(get(positionsStore).map((p) => p.id)).toEqual([2, 3]);
+        expect(get(positionsStore).ids).toEqual([2, 3]);
         expect(get(currentPositionIndexStore)).toBe(1);
         expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.sessionRestoredViews', i18nParams: null });
         expect(positionService.loadAllPositions).not.toHaveBeenCalled();
@@ -103,11 +103,11 @@ describe('restoreSessionState', () => {
 
     test('positions disparues de la base : repli sur la bibliothèque, sans exception', async () => {
         bindings.LoadSessionState.mockResolvedValue({ hasActiveSearch: true, lastPositionIds: [42, 43], lastPositionIndex: 0 });
-        bindings.LoadAllPositions.mockResolvedValue([]);
+        bindings.ListPositionIDs.mockResolvedValue([]);
 
         await expect(restoreSessionState()).resolves.toBeUndefined();
 
-        expect(get(positionsStore)).toEqual([]);
+        expect(get(positionsStore).ids).toEqual([]);
         expect(positionService.loadAllPositions).toHaveBeenCalledTimes(1);
     });
 

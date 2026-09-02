@@ -147,10 +147,7 @@ function handleSearchCommand(command, positions, { isSubSearch }) {
             statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
-        currentIDs = positions
-            .map((p) => p.id)
-            .filter((id) => id != null)
-            .join(',');
+        currentIDs = positions.ids.filter((id) => id != null).join(',');
     }
 
     const searchHistoryEntry = {
@@ -357,7 +354,7 @@ function insertTags(tags) {
             }
         }, 0);
         // NOTE: SaveComment expects the position *id*, not the array index.
-        const positionId = get(positionsStore)[get(currentPositionIndexStore)]?.id;
+        const positionId = positionsStore.idAt(get(currentPositionIndexStore));
         if (positionId != null) {
             SaveComment(positionId, updatedText);
         }

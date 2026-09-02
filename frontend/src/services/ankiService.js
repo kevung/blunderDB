@@ -282,7 +282,7 @@ export async function saveDeckParams(deckId, { requestRetention, maximumInterval
 /** Put a card's position on the board and point the status bar at it. */
 export function showCard(card) {
     positionStore.set(JSON.parse(JSON.stringify(card.position)));
-    const idx = get(positionsStore).findIndex((p) => p.id === card.position.id);
+    const idx = positionsStore.indexOf(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
 }
 

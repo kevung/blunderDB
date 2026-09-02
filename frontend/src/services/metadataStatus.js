@@ -38,7 +38,7 @@ function formatDate(date) {
 
 export function showDatesAndMetadata() {
     const analysis = get(analysisStore);
-    const positions = get(positionsStore);
+    const positionCount = get(positionsStore).length;
     const currentIndex = get(currentPositionIndexStore);
     const tr = get(t);
 
@@ -51,10 +51,13 @@ export function showDatesAndMetadata() {
     const lastModifiedDate = formatDate(new Date(analysis.lastModifiedDate));
     let statusText = tr('statusBar.createdModified', { created: creationDate, modified: lastModifiedDate });
 
-    if (positions.length === 0 || currentIndex < 0 || currentIndex >= positions.length) {
+    // peek: the shown position is in the window cache (the index effect
+    // loaded it); a miss only happens before that load has landed.
+    const current = positionCount > 0 ? positionsStore.peek(currentIndex) : undefined;
+    if (!current) {
         statusText += ` | ${tr('statusBar.noPositionData')}`;
     } else {
-        const { score, cube } = positions[currentIndex];
+        const { score, cube } = current;
         let metadata = `met: ${lookup(metTable, score, 1, 1, 1)}`;
         if (cube.value === 0) {
             metadata += ` | tp2_live: ${lookup(takePoint2LiveTable, score, 2, 2, 1)}`;

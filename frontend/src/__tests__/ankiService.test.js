@@ -203,7 +203,7 @@ describe('deck lifecycle', () => {
         await selectDeck({ id: 5 });
         expect(get(selectedAnkiDeckStore)).toEqual({ id: 5 });
         expect(get(ankiDeckStatsStore)).toEqual({ dueCount: 1, totalCount: 3 });
-        expect(get(positionsStore)).toEqual([{ id: 10 }, { id: 11 }]);
+        expect(get(positionsStore).ids).toEqual([10, 11]);
         expect(get(currentPositionIndexStore)).toBe(0);
     });
 

@@ -5,9 +5,9 @@
  * `statusBarModeStore` — every component reads it there, so that store *is*
  * the `mode` half of the machine's state and is never duplicated here:
  *
- *   NORMAL      browsing the library (positionsStore + currentPositionIndexStore)
+ *   NORMAL      browsing the library (positionsStore's ids + currentPositionIndexStore)
  *   MATCH       replaying a match (matchContextStore drives the navigation)
- *   COLLECTION  browsing a collection (positionsStore holds its positions)
+ *   COLLECTION  browsing a collection (positionsStore holds its ids)
  *   EDIT        the search tab: the board is a query being drawn
  *   EPC         the Eval tab: the board is a scratch pad for the engine
  *
@@ -46,7 +46,7 @@
  */
 
 import { get } from 'svelte/store';
-import { LoadAllPositions as LoadAllPositionsDB, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { ListPositionIDs, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
@@ -314,7 +314,7 @@ export function enterEPCMode() {
         matchContext: { ...get(matchContextStore) },
         position: get(positionStore) ? { ...get(positionStore) } : null,
         positionIndex: get(currentPositionIndexStore),
-        positions: get(positionsStore) ? [...get(positionsStore)] : null
+        ids: get(positionsStore)?.ids ?? null
     };
 
     const epcPosition = savedContext.epcSeed ?? defaultEPCPosition();
@@ -352,11 +352,11 @@ export async function exitEPCMode() {
         statusBarModeStore.set(MODE.NORMAL);
     }
 
-    if (!saved?.positions) {
+    if (!saved?.ids) {
         loadAllPositions();
         return;
     }
-    positionsStore.set(saved.positions);
+    positionsStore.setIds(saved.ids);
     if (saved.position) {
         currentPositionIndexStore.set(saved.positionIndex);
         // Reload through showPosition (not a bare positionStore.set) so the
@@ -487,17 +487,17 @@ export async function exitCollectionMode() {
     collectionPositionsStore.set([]);
     closePanel(PANEL.COLLECTION);
     try {
-        const allPositions = await LoadAllPositionsDB();
-        positionsStore.set(Array.isArray(allPositions) ? allPositions : []);
-        if (allPositions && allPositions.length > 0) {
-            let targetIdx = allPositions.length - 1;
+        const ids = (await ListPositionIDs()) || [];
+        positionsStore.setIds(ids, { reset: true });
+        if (ids.length > 0) {
+            let targetIdx = ids.length - 1;
             if (lastViewedPosition && lastViewedPosition.id) {
-                const foundIdx = allPositions.findIndex((p) => p.id === lastViewedPosition.id);
+                const foundIdx = ids.indexOf(lastViewedPosition.id);
                 if (foundIdx >= 0) targetIdx = foundIdx;
             }
             currentPositionIndexStore.set(-1);
             currentPositionIndexStore.set(targetIdx);
-            loadAnalysisForPosition(allPositions[targetIdx]);
+            loadAnalysisForPosition({ id: ids[targetIdx] });
             setSearchState('', null, false);
             lastSearchStore.set(null);
         }

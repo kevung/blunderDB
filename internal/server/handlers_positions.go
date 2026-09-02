@@ -57,6 +57,11 @@ type listReq struct {
 	Offset int `json:"offset"`
 }
 
+// idsReq carries the ids of the positions to load, in the order wanted back.
+type idsReq struct {
+	IDs []int64 `json:"ids"`
+}
+
 func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	return []route{
@@ -163,6 +168,15 @@ func (s *Server) positionRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/positions.list", rpcStream(func(ctx context.Context, scope string, req listReq) iterPositions {
 			return ps().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		// The id list of positions.list, without the positions: a client that
+		// browses a library keeps it and fetches windows with positions.loadByIds.
+		{http.MethodPost, "/v1/positions.listIds", rpc(func(ctx context.Context, scope string, req listReq) ([]int64, error) {
+			return ps().ListIDs(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		// Positions in the order the ids were given; unknown ids are skipped.
+		{http.MethodPost, "/v1/positions.loadByIds", rpc(func(ctx context.Context, scope string, req idsReq) ([]domain.Position, error) {
+			return ps().LoadByIDs(ctx, scope, req.IDs)
 		})},
 	}
 }

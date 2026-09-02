@@ -399,11 +399,7 @@
 
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {
-            const currentPositions = $positionsStore || [];
-            restrictToPositionIDs = currentPositions
-                .map((p) => p.id)
-                .filter((id) => id != null)
-                .join(',');
+            restrictToPositionIDs = ($positionsStore?.ids || []).filter((id) => id != null).join(',');
         }
 
         onLoadPositionsByFilters({

@@ -257,3 +257,67 @@ func (s *positionStore) List(ctx context.Context, scope string, opts storage.Lis
 		}
 	}
 }
+
+// ListIDs returns the tenant's stored position ids ordered by id.
+func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.ListOpts) ([]int64, error) {
+	query := `SELECT id FROM position WHERE tenant_id = $1 ORDER BY id`
+	args := []any{tenantID(scope)}
+	if opts.Limit > 0 {
+		args = append(args, opts.Limit)
+		query += fmt.Sprintf(" LIMIT $%d", len(args))
+	}
+	if opts.Offset > 0 {
+		args = append(args, opts.Offset)
+		query += fmt.Sprintf(" OFFSET $%d", len(args))
+	}
+	rows, err := s.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: list position ids: %w", err)
+	}
+	defer rows.Close()
+	ids := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: list position ids: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: list position ids: %w", err)
+	}
+	return ids, nil
+}
+
+// LoadByIDs returns the listed positions in the caller's order, skipping
+// unknown ids. One query: the list travels as an int8[] parameter.
+func (s *positionStore) LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error) {
+	if len(ids) == 0 {
+		return []domain.Position{}, nil
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT `+positionSelectCols+` FROM position WHERE tenant_id = $1 AND id = ANY($2)`,
+		tenantID(scope), ids)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
+	}
+	defer rows.Close()
+	byID := make(map[int64]domain.Position, len(ids))
+	for rows.Next() {
+		p, err := scanPosition(rows)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
+		}
+		byID[p.ID] = p
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
+	}
+	out := make([]domain.Position, 0, len(ids))
+	for _, id := range ids {
+		if p, ok := byID[id]; ok {
+			out = append(out, p)
+		}
+	}
+	return out, nil
+}
