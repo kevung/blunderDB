@@ -193,6 +193,17 @@ type Searcher struct {
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
 	feat  [NumFeatures]float32
+
+	// Le brouillon du lot que shallowFill remplit. Il vit ici, dimensionné
+	// une fois avec le Searcher, parce que shallowFill est le chemin le plus
+	// chaud du moteur : un lot alloué par nœud coûterait 6 Ko à chacun des
+	// milliers de nœuds d'une décision. batchOf[l] dit à quel candidat la
+	// voie l appartient — le lot ne contient que les survivants, pas les
+	// positions terminales ni les hits de cache, donc les voies ne suivent
+	// pas les indices des candidats.
+	batchFeat  [EvalBatchWidth][NumFeatures]float32
+	batchProbs [EvalBatchWidth][NumOutputs]float32
+	batchOf    [EvalBatchWidth]int
 }
 
 // NewSearcher builds a searcher over the embedded networks. Refused, never
@@ -380,12 +391,31 @@ func swapMatchState(state *MatchState) *MatchState {
 // for the pruning pass: letting the small network read or write the cache would
 // make its ordering depend on evaluation history, which is the one way a cache
 // could start changing results.
+//
+// C'est ici que la recherche alimente le noyau groupé (#146, ADR-0024). Les
+// candidats d'un même appel sont les coups d'un même lancer depuis une même
+// position — des frères, dont l'union des entrées actives est petite (~32 sur
+// 196), soit exactement le lot sur lequel le noyau est au mieux : 16,9 µs par
+// position contre 39 µs sur des plateaux sans rapport, et 505 µs en scalaire.
+//
+// La passe se fait en deux temps. D'abord le tri : les positions terminales,
+// les hits de cache et les encodages refusés n'ont pas besoin du réseau et
+// sortent du lot — leur traitement est inchangé. Ensuite les survivants
+// partent par tranches de EvalBatchWidth ; la convention du lot partiel
+// appartient au noyau (les voies au-delà de n dupliquent la position n-1), et
+// l'appelant ne raisonne donc jamais sur la queue.
+//
+// Une nuance sur le cache, qui ne change aucun résultat : la version position
+// par position rangeait le candidat i avant de chercher le candidat i+1, si
+// bien qu'un rangement pouvait évincer, dans cette table à adressage direct,
+// une entrée que le candidat suivant aurait trouvée. Le lot cherche les huit
+// avant de ranger les huit, donc il peut rendre quelques hits de plus. Un hit
+// rend les bits qu'un calcul aurait rendus (cache.go) : seuls les compteurs
+// bougent, jamais l'évaluation. Deux candidats d'un même appel ne peuvent pas
+// être la même position — moves_gen déduplique par plateau résultant — donc
+// aucun doublon ne s'évalue deux fois dans un même lot.
 func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) {
-	filled := 0
-	defer func() {
-		s.batchFilled += uint64(filled)
-		s.batchSlotted += uint64(batchSlots(filled))
-	}()
+	filled, lanes := 0, 0
 	for i := range cands {
 		res := &cands[i].Play.Result
 		if res.isOver() {
@@ -396,15 +426,56 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 			s.cacheHits++
 			continue
 		}
-		if !Encode(res, &s.feat) {
+		if !Encode(res, &s.batchFeat[lanes]) {
 			cands[i].Probs = [NumOutputs]float32{}
 			continue
 		}
-		_ = ev.Evaluate(s.feat[:], &cands[i].Probs)
-		filled++
+		s.batchOf[lanes] = i
+		lanes++
+		if lanes == EvalBatchWidth {
+			s.flushBatch(ev, cands, lanes, useCache)
+			filled += lanes
+			lanes = 0
+		}
+	}
+	if lanes > 0 {
+		s.flushBatch(ev, cands, lanes, useCache)
+		filled += lanes
+	}
+	// Les mêmes deux compteurs qu'avant, et la même mesure : les positions
+	// qu'il a fallu évaluer, contre les voies qu'elles occupent. La différence
+	// est qu'ils ne simulent plus le lot, ils le décrivent — les tranches
+	// envoyées ci-dessus sont pleines sauf la dernière, donc leur total de
+	// voies est exactement batchSlots(filled).
+	s.batchFilled += uint64(filled)
+	s.batchSlotted += uint64(batchSlots(filled))
+}
+
+// flushBatch évalue les n premières voies du brouillon et redistribue les
+// résultats dans les candidats que batchOf désigne, en tenant à jour les
+// mêmes compteurs qu'une évaluation unitaire : evals et le rangement en cache
+// pour la passe grand réseau, pruneEvals pour l'élagage. Le petit réseau passe
+// par ce chemin comme le grand, et n'a toujours ni lecture ni écriture du
+// cache (cache.go) : son ordre ne doit dépendre d'aucun historique.
+//
+// Le repli scalaire est là par prudence, et inatteignable en pratique :
+// EvaluateBatch ne refuse que ce qu'Evaluate refuse aussi (une largeur d'entrée
+// qui n'est pas celle du réseau), et un sélecteur de noyau invalide a déjà fait
+// échouer Load. S'il se déclenche, il reproduit exactement l'ancien
+// comportement — la distribution du candidat est laissée telle quelle —
+// plutôt que d'inventer une valeur.
+func (s *Searcher) flushBatch(ev *Evaluator, cands []Candidate, n int, useCache bool) {
+	err := ev.EvaluateBatch(&s.batchFeat, n, &s.batchProbs)
+	for l := 0; l < n; l++ {
+		i := s.batchOf[l]
+		if err == nil {
+			cands[i].Probs = s.batchProbs[l]
+		} else {
+			_ = ev.Evaluate(s.batchFeat[l][:], &cands[i].Probs)
+		}
 		if useCache {
 			s.evals++
-			s.cache.store(res, &cands[i].Probs)
+			s.cache.store(&cands[i].Play.Result, &cands[i].Probs)
 		} else {
 			s.pruneEvals++
 		}
