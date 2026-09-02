@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // purgeOrder lists every tenant-scoped table PurgeTenant deletes from,
@@ -61,18 +62,14 @@ func (s *Storage) PurgeTenant(ctx context.Context, scope string) error {
 	// metadata keys (sessionScopedKey). Purge those rows too, otherwise a
 	// decommissioned tenant's session crumbs (last search, last position,
 	// open views, ...) linger forever, contradicting "purge deletes
-	// everything". Reusing sessionKeys/sessionScopedKey from
-	// session_postgres.go (rather than re-deriving the "<scope>:" prefix
-	// here) keeps this in lockstep with Save/Load/Clear, and matching the
-	// exact scoped key set (rather than a LIKE prefix pattern) means an
-	// unusual scope value containing SQL LIKE wildcards (%, _) can't cause
-	// over-matching. The unscoped global schema-version row in metadata is
-	// never in this set, so it is never touched.
-	scopedSessionKeys := make([]string, len(sessionKeys))
-	for i, k := range sessionKeys {
-		scopedSessionKeys[i] = sessionScopedKey(scope, k)
-	}
-	if _, err := tx.Exec(ctx, `DELETE FROM metadata WHERE key = ANY($1)`, scopedSessionKeys); err != nil {
+	// everything". Reusing sqlshared.SessionKeys (rather than re-deriving
+	// the "<scope>:" prefix here) keeps this in lockstep with
+	// Save/Load/Clear, and matching the exact scoped key set (rather than a
+	// LIKE prefix pattern) means an unusual scope value containing SQL LIKE
+	// wildcards (%, _) can't cause over-matching. The unscoped global
+	// schema-version row in metadata is never in this set, so it is never
+	// touched.
+	if _, err := tx.Exec(ctx, `DELETE FROM metadata WHERE key = ANY($1)`, sqlshared.SessionKeys(scope)); err != nil {
 		return fmt.Errorf("postgres: purge tenant %q: metadata: %w", scope, err)
 	}
 

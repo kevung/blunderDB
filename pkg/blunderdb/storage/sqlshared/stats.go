@@ -1,0 +1,1323 @@
+package sqlshared
+
+import (
+	"context"
+	"fmt"
+	"math"
+	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
+
+// StatsStore implements storage.StatsStore. The SQL is the aggregate logic
+// that historically lived on the Database wrapper (database/db_stats.go),
+// written once for both backends with the dialect differences woven in:
+//   - tenant scoping: every query is confined to the scope's tenant through
+//     Dialect.TenantFilter on the position root (joins are by global primary
+//     key, so scoping the root confines the whole join graph) — a no-op
+//     predicate on SQLite, whose schema has no tenant column;
+//   - types: is_forced / is_close_cube are INTEGER 0/1 on SQLite and BOOLEAN
+//     on PostgreSQL (Dialect.Bool), match_date is TEXT vs TIMESTAMPTZ
+//     (Dialect.TimestampArg / DateText);
+//   - SUM() over BIGINT yields NUMERIC in PostgreSQL, so the running totals
+//     go through Dialect.Bigint before scanning into int64.
+//
+// DateRange is not implemented here: its predicate on match_date (a text
+// sentinel on SQLite, a plain IS NOT NULL on PostgreSQL) has no shared form,
+// so each backend keeps its own on top of this store.
+type StatsStore struct{ DB Execer }
+
+// statsErrExpr selects the error column that applies to a decision; it is
+// shared with the search store's move-error filter.
+const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+
+// blunderThresholdMP is the error threshold (in stored millipoints units) at or
+// above which a decision is counted as a blunder. 100 ≈ 0.1 EMG. The comparison
+// is inclusive everywhere — an error of exactly 0.100 is a blunder in the cube
+// breakdown as it already was in MatchDetail.
+const blunderThresholdMP = 100
+
+// countedExpr renders the SQL predicate selecting the decisions that count
+// toward PR and decision tallies (XG semantics):
+//   - Checker: unforced positions only (a.is_forced is false).
+//   - Cube: a position is counted when either (a) it is a "close" decision per
+//     gnuBG isCloseCubedecision (a.is_close_cube is true) with the exclusion
+//     below, OR (b) the player took an active cube action other than NoDouble
+//     (Double, Take, Pass). The OR ensures premature doublings — wrong doubles
+//     with a large equity gap that are technically "not close" — are still
+//     counted.
+//
+// Exclusion for close NoDoubles: XG's stored EMG equities at extreme match
+// scores (mover's away ≤ 2 with centered cube) are amplified by a factor of
+// ~3–4× beyond the normal [-1, 1] range, so gnuBG's 0.16 threshold falsely
+// marks these positions as "close". We exclude correctly-played (cube_error=0)
+// NoDouble positions where the cube is still centered (cube_value=0) and the
+// mover needs ≤ 2 points to win, mirroring XG's actual decision counting.
+//
+// The two flags are the only dialect-dependent part (INTEGER 0/1 on SQLite,
+// BOOLEAN on PostgreSQL), hence a function of the dialect rather than a const.
+func countedExpr(d Dialect) string {
+	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + ") OR (p.decision_type = 1 AND (COALESCE(mv.cube_action, '') NOT IN ('', 'No Double', 'NoDouble') OR (" + d.Bool("a.is_close_cube", true) + " AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
+}
+
+// cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
+// exponent. The CAST keeps the shift an integer operation on PostgreSQL, where
+// cube_value is BIGINT and `1 << bigint` is not defined; SQLite accepts it as
+// written.
+const cubeMultiplierExpr = "(1 << CAST(COALESCE(p.cube_value, 0) AS INTEGER))"
+
+// statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
+const statsBaseJoin = `FROM position p
+JOIN analysis a ON a.position_id = p.id
+JOIN move mv ON mv.position_id = p.id
+JOIN game g ON g.id = mv.game_id
+JOIN match m ON m.id = g.match_id
+LEFT JOIN tournament t ON t.id = m.tournament_id`
+
+// pr computes the Performance Rating from a sum of errors (millipoints stored
+// units) and the number of decisions. Formula: 500 × sumErrMP / 1000 / nDecisions.
+func pr(sumErrMP int64, nDecisions int) float64 {
+	if nDecisions == 0 {
+		return 0
+	}
+	return 500 * float64(sumErrMP) / 1000 / float64(nDecisions)
+}
+
+// snowieER computes the Snowie Error Rate from a sum of errors (millipoints
+// stored units) and the total checker move count for both players combined.
+func snowieER(sumErrMP int64, nMovesBoth int) float64 {
+	if nMovesBoth == 0 {
+		return 0
+	}
+	return 500 * float64(sumErrMP) / 1000 / float64(nMovesBoth)
+}
+
+// playerFilterClause renders the player filter two ways. With seatAware, a row
+// is kept only when one of the named players IS the one who took the decision —
+// what every per-player figure needs. Without it, a row is kept as soon as one
+// of them played in the match, whichever side moved: the Snowie denominator
+// counts both players' moves (see Compute).
+//
+// Both forms bind the names twice, so the arguments do not depend on the form.
+func playerFilterClause(names []string, seatAware bool) (clause string, args []any) {
+	ph := strings.TrimSuffix(strings.Repeat("?,", len(names)), ",")
+	if seatAware {
+		clause = "((m.player1_name IN (" + ph + ") AND mv.player = 1) OR (m.player2_name IN (" + ph + ") AND mv.player = -1))"
+	} else {
+		clause = "(m.player1_name IN (" + ph + ") OR m.player2_name IN (" + ph + "))"
+	}
+	for range 2 {
+		for _, n := range names {
+			args = append(args, n)
+		}
+	}
+	return clause, args
+}
+
+// buildBaseWhereClause constructs the base WHERE clause for the given filter,
+// scoped to the tenant, without the countedExpr predicate. The tenant
+// predicate is the first clause and its arguments the first args, so the '?'
+// placeholders line up once rebound.
+func (s *StatsStore) buildBaseWhereClause(scope string, filter storage.StatsFilter) (whereSQL string, args []any) {
+	return s.buildBaseWhereClauseSeat(scope, filter, true)
+}
+
+// buildBaseWhereClauseSeat is buildBaseWhereClause with control over how the
+// player filter is rendered (see playerFilterClause).
+func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.StatsFilter, seatAware bool) (whereSQL string, args []any) {
+	tenant, args := s.DB.TenantFilter("p", scope)
+	clauses := []string{tenant}
+
+	if names := storage.PlayerNameSet(filter); len(names) > 0 {
+		clause, pArgs := playerFilterClause(names, seatAware)
+		clauses = append(clauses, clause)
+		args = append(args, pArgs...)
+	}
+
+	if len(filter.TournamentIDs) > 0 {
+		placeholders := strings.Repeat("?,", len(filter.TournamentIDs))
+		placeholders = placeholders[:len(placeholders)-1]
+		clauses = append(clauses, "m.tournament_id IN ("+placeholders+")")
+		for _, id := range filter.TournamentIDs {
+			args = append(args, id)
+		}
+	}
+
+	clauses, args = appendDateClauses(s.DB, clauses, args, filter)
+
+	if filter.DecisionType >= 0 {
+		clauses = append(clauses, "p.decision_type = ?")
+		args = append(args, filter.DecisionType)
+	}
+
+	if len(filter.MatchLength) > 0 {
+		placeholders := strings.Repeat("?,", len(filter.MatchLength))
+		placeholders = placeholders[:len(placeholders)-1]
+		clauses = append(clauses, "m.match_length IN ("+placeholders+")")
+		for _, ml := range filter.MatchLength {
+			args = append(args, ml)
+		}
+	}
+
+	clauses = append(clauses, "a.position_id IS NOT NULL")
+	clauses = append(clauses, "("+statsErrExpr+") IS NOT NULL")
+
+	whereSQL = " WHERE " + strings.Join(clauses, " AND ")
+	return whereSQL, args
+}
+
+// appendDateClauses adds the filter's match_date bounds. The bound strings are
+// compared as text on SQLite and cast to timestamptz on PostgreSQL
+// (Dialect.TimestampArg).
+func appendDateClauses(d Dialect, clauses []string, args []any, filter storage.StatsFilter) ([]string, []any) {
+	ts := d.TimestampArg()
+	if filter.DateFrom != "" && filter.DateTo != "" {
+		clauses = append(clauses, "m.match_date BETWEEN "+ts+" AND "+ts)
+		args = append(args, filter.DateFrom, filter.DateTo)
+	} else if filter.DateFrom != "" {
+		clauses = append(clauses, "m.match_date >= "+ts)
+		args = append(args, filter.DateFrom)
+	} else if filter.DateTo != "" {
+		clauses = append(clauses, "m.match_date <= "+ts)
+		args = append(args, filter.DateTo)
+	}
+	return clauses, args
+}
+
+// buildStatsWhereClause wraps buildBaseWhereClause and appends the
+// countedExpr predicate (XG/gnuBG semantics).
+func (s *StatsStore) buildStatsWhereClause(scope string, filter storage.StatsFilter) (whereSQL string, args []any) {
+	whereSQL, args = s.buildBaseWhereClause(scope, filter)
+	whereSQL += " AND " + countedExpr(s.DB)
+	return whereSQL, args
+}
+
+// buildSelectionWhereClause produces the extra WHERE fragment and optional
+// ORDER BY / LIMIT fragment for a given SelectionSpec.
+func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orderLimit string, args []any) {
+	switch sel.Kind {
+	case "checker":
+		whereAdd = " AND p.decision_type = 0"
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "cube":
+		whereAdd = " AND p.decision_type = 1"
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "cube_action":
+		whereAdd = " AND p.decision_type = 1 AND a.best_cube_action = ?"
+		args = append(args, sel.CubeAction)
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "error_bucket":
+		whereAdd = " AND (" + statsErrExpr + ") >= ?"
+		args = append(args, sel.BucketMinMP)
+		if sel.BucketMaxMP != -1 {
+			whereAdd += " AND (" + statsErrExpr + ") < ?"
+			args = append(args, sel.BucketMaxMP)
+		}
+	case "tournament":
+		whereAdd = " AND m.tournament_id = ?"
+		args = append(args, sel.TournamentID)
+	case "match":
+		whereAdd = " AND m.id = ?"
+		args = append(args, sel.MatchID)
+	case "last_n":
+		orderLimit = "ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?"
+		args = append(args, sel.LastN)
+	case "position":
+		whereAdd = " AND p.id = ?"
+		args = append(args, sel.PositionID)
+	case "top_blunders":
+		limit := 10
+		if sel.LastN > 0 {
+			limit = sel.LastN
+		}
+		orderLimit = "ORDER BY (" + statsErrExpr + ") DESC LIMIT ?"
+		args = append(args, limit)
+		// "all" → no extra clauses
+	}
+	return whereAdd, orderLimit, args
+}
+
+// scanPositionIDs scans a single-int64-column result set into a slice, closing
+// rows and propagating any iteration error.
+// scanCubeDirectionIDs keeps the ids whose (ruling, action) pair falls in cell.
+// An empty cell name keeps nothing: a drill-down that names no cell is a caller
+// bug, and returning "everything" would look like a working feature.
+func scanCubeDirectionIDs(rows Rows, cell string) ([]int64, error) {
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		var best, played string
+		if err := rows.Scan(&id, &best, &played); err != nil {
+			return nil, fmt.Errorf("scan cube direction row: %w", err)
+		}
+		if cell != "" && storage.ClassifyCubeDirection(best, played) == cell {
+			ids = append(ids, id)
+		}
+	}
+	return ids, rows.Err()
+}
+
+func scanPositionIDs(rows Rows) ([]int64, error) {
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan position id: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
+// Compute aggregates performance metrics for the given filter, scoped to the
+// tenant.
+func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StatsResult, error) {
+	d := s.DB
+	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
+
+	result := &storage.StatsResult{
+		PRRolling: make(map[int]float64),
+	}
+
+	// ── 1. Totals ────────────────────────────────────────────────────────────
+	row := s.DB.QueryRow(ctx,
+		`SELECT COUNT(DISTINCT p.id), COUNT(DISTINCT m.id), COUNT(DISTINCT m.tournament_id), COUNT(*) `+
+			statsBaseJoin+whereSQL,
+		baseArgs...,
+	)
+	if err := row.Scan(
+		&result.Totals.NumPositions,
+		&result.Totals.NumMatches,
+		&result.Totals.NumTournaments,
+		&result.Totals.NumDecisions,
+	); err != nil {
+		return nil, fmt.Errorf("totals query: %w", err)
+	}
+
+	// ── 2. PR global + per decision_type ─────────────────────────────────────
+	rows, err := s.DB.Query(ctx,
+		`SELECT p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
+			statsBaseJoin+whereSQL+
+			` GROUP BY p.decision_type`,
+		baseArgs...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("PR by decision_type query: %w", err)
+	}
+	var totalErrSum int64
+	var totalErrCount int
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var dt int
+			var sumErr int64
+			var cnt int
+			if err2 := rows.Scan(&dt, &sumErr, &cnt); err2 != nil {
+				return
+			}
+			totalErrSum += sumErr
+			totalErrCount += cnt
+			switch dt {
+			case 0:
+				result.PRChecker = pr(sumErr, cnt)
+			case 1:
+				result.PRCube = pr(sumErr, cnt)
+			}
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR by decision_type rows: %w", err)
+	}
+	result.PRGlobal = pr(totalErrSum, totalErrCount)
+
+	// ── Snowie ER (global) ────────────────────────────────────────────────────
+	// The Snowie rate divides ONE player's errors by BOTH players' checker
+	// moves (gnuBG formatgs.c:415-424, anTotalMoves[0] + anTotalMoves[1]), so
+	// numerator and denominator cannot share a WHERE clause: the player filter
+	// must narrow the errors to the decisions that player took, and must NOT
+	// narrow the move count to that player's own seat — it only restricts the
+	// matches counted. Reusing one clause for both halved the denominator and
+	// doubled every filtered Snowie ER; MatchDetail already got this right.
+	{
+		snowieFilter := filter
+		snowieFilter.DecisionType = -1 // count all decision types
+		numWhere, numArgs := s.buildBaseWhereClause(scope, snowieFilter)
+		var snowieSumErr int64
+		_ = s.DB.QueryRow(ctx,
+			`SELECT `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+statsBaseJoin+numWhere,
+			numArgs...,
+		).Scan(&snowieSumErr)
+
+		denWhere, denArgs := s.buildBaseWhereClauseSeat(scope, snowieFilter, false)
+		var snowieCheckerCnt int
+		_ = s.DB.QueryRow(ctx,
+			`SELECT `+d.Bigint(`COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0)`)+` `+
+				statsBaseJoin+denWhere,
+			denArgs...,
+		).Scan(&snowieCheckerCnt)
+
+		result.SnowieGlobal = snowieER(snowieSumErr, snowieCheckerCnt)
+	}
+
+	// ── 3. PR per tournament ──────────────────────────────────────────────────
+	// tournament.date is TEXT (a date string) in both schemas, unlike
+	// match.match_date — use it verbatim. The GROUP BY names every selected
+	// tournament column: PostgreSQL requires it, SQLite accepts it.
+	rows, err = s.DB.Query(ctx,
+		`SELECT m.tournament_id, COALESCE(t.name,''), COALESCE(t.date,''), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
+			statsBaseJoin+whereSQL+
+			` AND m.tournament_id IS NOT NULL`+
+			` GROUP BY m.tournament_id, t.name, t.date, t.created_at ORDER BY t.date, t.created_at`,
+		baseArgs...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("PR per tournament query: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var ts storage.TournamentStats
+			var sumErr int64
+			var cnt int
+			if err2 := rows.Scan(&ts.ID, &ts.Name, &ts.Date, &sumErr, &cnt); err2 != nil {
+				return
+			}
+			ts.NumDecisions = cnt
+			ts.PR = pr(sumErr, cnt)
+			result.PerTournament = append(result.PerTournament, ts)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR per tournament rows: %w", err)
+	}
+
+	// ── 4. PR per match ───────────────────────────────────────────────────────
+	rows, err = s.DB.Query(ctx,
+		`SELECT m.id, `+d.DateText("m.match_date")+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
+			statsBaseJoin+whereSQL+
+			` GROUP BY m.id, m.match_date ORDER BY m.match_date`,
+		baseArgs...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("PR per match query: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var ms storage.MatchStats
+			var sumErr int64
+			var cnt int
+			if err2 := rows.Scan(&ms.ID, &ms.Date, &sumErr, &cnt); err2 != nil {
+				return
+			}
+			ms.NumDecisions = cnt
+			ms.PR = pr(sumErr, cnt)
+			result.PerMatch = append(result.PerMatch, ms)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PR per match rows: %w", err)
+	}
+
+	// ── 5. Cube-action breakdown ──────────────────────────────────────────────
+	{
+		cubeWhere := whereSQL + " AND p.decision_type = 1"
+		rows, err = s.DB.Query(ctx,
+			`SELECT COALESCE(a.best_cube_action,''), `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
+				` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
+				statsBaseJoin+cubeWhere+
+				` GROUP BY a.best_cube_action`,
+			append([]any{blunderThresholdMP}, baseArgs...)...,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cube action breakdown query: %w", err)
+		}
+		func() {
+			defer rows.Close()
+			for rows.Next() {
+				var cs storage.CubeActionStats
+				var sumErr int64
+				if err2 := rows.Scan(&cs.Action, &sumErr, &cs.NumDecisions, &cs.BlunderCount); err2 != nil {
+					return
+				}
+				cs.PR = pr(sumErr, cs.NumDecisions)
+				result.CubeActionBreakdown = append(result.CubeActionBreakdown, cs)
+			}
+		}()
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("cube action breakdown rows: %w", err)
+		}
+	}
+
+	// ── 5b. Cube direction matrix ─────────────────────────────────────────────
+	// Same scope as 5, crossed with the action actually played. The labels are
+	// interpreted in Go (storage.TallyCubeDirections), never in SQL: their
+	// spellings vary by importer and the recognition is stated in exactly one
+	// place — see kevung/blunderDB#115.
+	{
+		cubeWhere := whereSQL + " AND p.decision_type = 1"
+		rows, err = s.DB.Query(ctx,
+			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+				` `+d.Bigint(`COALESCE(SUM(a.cube_error),0)`)+` `+
+				statsBaseJoin+cubeWhere+
+				` GROUP BY a.best_cube_action, mv.cube_action`,
+			baseArgs...,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cube direction query: %w", err)
+		}
+		var cells []storage.CubeDirectionRow
+		func() {
+			defer rows.Close()
+			for rows.Next() {
+				var c storage.CubeDirectionRow
+				if err2 := rows.Scan(&c.Best, &c.Played, &c.Count, &c.ErrorMP); err2 != nil {
+					return
+				}
+				cells = append(cells, c)
+			}
+		}()
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("cube direction rows: %w", err)
+		}
+		result.CubeDirections = storage.TallyCubeDirections(cells)
+	}
+
+	// ── 6. Error histogram ────────────────────────────────────────────────────
+	histogramSQL := `SELECT
+		CASE
+			WHEN (` + statsErrExpr + `) < 5   THEN 0
+			WHEN (` + statsErrExpr + `) < 10  THEN 5
+			WHEN (` + statsErrExpr + `) < 25  THEN 10
+			WHEN (` + statsErrExpr + `) < 50  THEN 25
+			WHEN (` + statsErrExpr + `) < 100 THEN 50
+			ELSE 100
+		END as bucket,
+		COUNT(*) ` +
+		statsBaseJoin + whereSQL +
+		` GROUP BY bucket ORDER BY bucket`
+
+	rows, err = s.DB.Query(ctx, histogramSQL, baseArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("error histogram query: %w", err)
+	}
+	bucketMaxMap := map[int]int{0: 5, 5: 10, 10: 25, 25: 50, 50: 100, 100: -1}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var bucketMin, cnt int
+			if err2 := rows.Scan(&bucketMin, &cnt); err2 != nil {
+				return
+			}
+			result.ErrorHistogram = append(result.ErrorHistogram, storage.ErrorBucket{
+				MinMP: bucketMin,
+				MaxMP: bucketMaxMap[bucketMin],
+				Count: cnt,
+			})
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error histogram rows: %w", err)
+	}
+
+	// ── 7. Top blunders ───────────────────────────────────────────────────────
+	rows, err = s.DB.Query(ctx,
+		`SELECT p.id, m.id, COALESCE(m.tournament_id, 0), (`+statsErrExpr+`) as emg,`+
+			` p.decision_type,`+
+			` `+d.DateText("m.match_date")+` as match_date,`+
+			` COALESCE(m.player1_name, '') || ' vs ' || COALESCE(m.player2_name, '') as player_names `+
+			statsBaseJoin+whereSQL+
+			` ORDER BY emg DESC LIMIT 10`,
+		baseArgs...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("top blunders query: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var be storage.BlunderEntry
+			if err2 := rows.Scan(&be.PositionID, &be.MatchID, &be.TournamentID, &be.ErrorMP,
+				&be.DecisionType, &be.MatchDate, &be.PlayerNames); err2 != nil {
+				return
+			}
+			result.TopBlunders = append(result.TopBlunders, be)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("top blunders rows: %w", err)
+	}
+
+	// ── 8. Rolling PR ─────────────────────────────────────────────────────────
+	rollingNs := []int{5, 10, 50, 100, 250, 500, 1000}
+	maxN := rollingNs[len(rollingNs)-1]
+
+	recentRows, err := s.DB.Query(ctx,
+		`SELECT (`+statsErrExpr+`) as err `+
+			statsBaseJoin+whereSQL+
+			` ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?`,
+		append(baseArgs, maxN)...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("rolling PR query: %w", err)
+	}
+	var recentErrors []int64
+	func() {
+		defer recentRows.Close()
+		for recentRows.Next() {
+			var e int64
+			if err2 := recentRows.Scan(&e); err2 != nil {
+				return
+			}
+			recentErrors = append(recentErrors, e)
+		}
+	}()
+	if err := recentRows.Err(); err != nil {
+		return nil, fmt.Errorf("rolling PR rows: %w", err)
+	}
+
+	var cumSum int64
+	for i, e := range recentErrors {
+		cumSum += e
+		n := i + 1
+		for _, threshold := range rollingNs {
+			if n == threshold {
+				result.PRRolling[threshold] = pr(cumSum, n)
+			}
+		}
+	}
+
+	// ── MWC pass ──────────────────────────────────────────────────────────────
+	// Stream per-row data in most-recent-first order and aggregate MWC losses in
+	// Go. One supplementary SQL pass; O(n_decisions).
+	{
+		mwcPassSQL := `SELECT ` + statsErrExpr + ` as err,` +
+			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
+			` ` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),` +
+			` COALESCE(m.tournament_id, 0), m.id,` +
+			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
+			statsBaseJoin + whereSQL +
+			` ORDER BY m.match_date DESC, mv.move_number DESC`
+
+		mwcRows, mwcErr := s.DB.Query(ctx, mwcPassSQL, baseArgs...)
+		if mwcErr != nil {
+			return nil, fmt.Errorf("MWC pass query: %w", mwcErr)
+		}
+
+		mwcByTournament := make(map[int64]float64)
+		mwcByMatch := make(map[int64]float64)
+		mwcByCubeAction := make(map[string]float64)
+		blunderMWC := make(map[int64]float64)
+
+		var mwcGlobal, mwcChecker, mwcCube float64
+		var mwcAvailable bool
+		var rowIdx int
+		var mwcRollingCum float64
+		mwcRollingThresholds := []int{5, 10, 50, 100, 250, 500, 1000}
+		mwcRollingMap := make(map[int]float64)
+
+		func() {
+			defer mwcRows.Close()
+			for mwcRows.Next() {
+				var errMP int64
+				var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+				var tournamentID, matchID int64
+				var cubeAction string
+				var dt int
+				var posID int64
+				if err2 := mwcRows.Scan(&errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength,
+					&tournamentID, &matchID, &cubeAction, &dt, &posID); err2 != nil {
+					return
+				}
+
+				rowIdx++
+
+				// XG encodes player 0 (bottom) as 1 and player 1 (top) as -1;
+				// gnuBG fMove is 0 or 1.
+				fMove := 0
+				if rawPlayer == -1 {
+					fMove = 1
+				}
+				// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss
+				// expects current scores (games already won).
+				currentScore0 := matchLength - awayScore0
+				currentScore1 := matchLength - awayScore1
+
+				mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+
+				if !math.IsNaN(mwcLoss) {
+					mwcAvailable = true
+					mwcGlobal += mwcLoss
+					if dt == 0 {
+						mwcChecker += mwcLoss
+					} else {
+						mwcCube += mwcLoss
+					}
+					if tournamentID != 0 {
+						mwcByTournament[tournamentID] += mwcLoss
+					}
+					mwcByMatch[matchID] += mwcLoss
+					if dt == 1 {
+						mwcByCubeAction[cubeAction] += mwcLoss
+					}
+					blunderMWC[posID] = mwcLoss
+					mwcRollingCum += mwcLoss
+				}
+
+				for _, threshold := range mwcRollingThresholds {
+					if rowIdx == threshold {
+						mwcRollingMap[threshold] = mwcRollingCum
+					}
+				}
+			}
+		}()
+		if err := mwcRows.Err(); err != nil {
+			return nil, fmt.Errorf("MWC pass rows: %w", err)
+		}
+
+		result.MWCGlobal = mwcGlobal
+		result.MWCChecker = mwcChecker
+		result.MWCCube = mwcCube
+		result.MWCAvailable = mwcAvailable
+		result.MWCRolling = mwcRollingMap
+
+		for i, ts := range result.PerTournament {
+			result.PerTournament[i].MWC = mwcByTournament[ts.ID]
+		}
+		for i, ms := range result.PerMatch {
+			result.PerMatch[i].MWC = mwcByMatch[ms.ID]
+		}
+		for i, cs := range result.CubeActionBreakdown {
+			result.CubeActionBreakdown[i].MWC = mwcByCubeAction[cs.Action]
+		}
+		for i, be := range result.TopBlunders {
+			if loss, ok := blunderMWC[be.PositionID]; ok {
+				result.TopBlunders[i].MWCLoss = loss
+			}
+		}
+	}
+
+	return result, nil
+}
+
+// PositionIDsBySelection resolves a user selection made in the Stats panel into
+// a deduplicated list of position IDs, scoped to the tenant. The StatsFilter is
+// always applied so the IDs correspond exactly to what is displayed in the
+// panel.
+func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
+	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
+
+	// A cube-direction cell cannot be expressed in SQL: which cell a decision
+	// belongs to depends on reading two free-form labels, and that reading is
+	// stated once, in Go (storage.ClassifyCubeDirection). So the rows come back
+	// with their labels and are filtered here — the scope is one player's cube
+	// decisions, not the whole database.
+	if sel.Kind == "cube_direction" {
+		rows, err := s.DB.Query(ctx,
+			"SELECT DISTINCT p.id, COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,'') "+
+				statsBaseJoin+whereSQL+" AND p.decision_type = 1", baseArgs...)
+		if err != nil {
+			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
+		}
+		return scanCubeDirectionIDs(rows, sel.CubeCell)
+	}
+
+	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(sel)
+
+	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd
+	if orderLimit != "" {
+		query += " " + orderLimit
+	}
+
+	allArgs := append(append([]any{}, baseArgs...), selArgs...)
+	rows, err := s.DB.Query(ctx, query, allArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PositionIDsBySelection (%s): %w", sel.Kind, err)
+	}
+	return scanPositionIDs(rows)
+}
+
+// PositionIDsByTournament returns all position IDs belonging to the given
+// tournament for the tenant, regardless of any stats filter.
+func (s *StatsStore) PositionIDsByTournament(ctx context.Context, scope string, tournamentID int64) ([]int64, error) {
+	tenant, args := s.DB.TenantFilter("p", scope)
+	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+		" WHERE " + tenant + " AND m.tournament_id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
+	rows, err := s.DB.Query(ctx, query, append(args, tournamentID)...)
+	if err != nil {
+		return nil, fmt.Errorf("PositionIDsByTournament: %w", err)
+	}
+	return scanPositionIDs(rows)
+}
+
+// PositionIDsByMatch returns all position IDs belonging to the given match for
+// the tenant, regardless of any stats filter.
+func (s *StatsStore) PositionIDsByMatch(ctx context.Context, scope string, matchID int64) ([]int64, error) {
+	tenant, args := s.DB.TenantFilter("p", scope)
+	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+		" WHERE " + tenant + " AND m.id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
+	rows, err := s.DB.Query(ctx, query, append(args, matchID)...)
+	if err != nil {
+		return nil, fmt.Errorf("PositionIDsByMatch: %w", err)
+	}
+	return scanPositionIDs(rows)
+}
+
+// PlayerNames returns all player names found in the tenant's matches, ranked
+// by the total number of matches (player1 + player2 appearances) descending;
+// ties break alphabetically.
+func (s *StatsStore) PlayerNames(ctx context.Context, scope string) ([]storage.PlayerFrequency, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	rows, err := s.DB.Query(ctx, `
+		SELECT name, COUNT(*) AS cnt
+		FROM (
+			SELECT player1_name AS name FROM match WHERE `+tenant+` AND player1_name != ''
+			UNION ALL
+			SELECT player2_name AS name FROM match WHERE `+tenant+` AND player2_name != ''
+		) AS names
+		GROUP BY name
+		ORDER BY cnt DESC, name ASC
+	`, append(append([]any{}, targs...), targs...)...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerNames: %w", err)
+	}
+	defer rows.Close()
+
+	var result []storage.PlayerFrequency
+	for rows.Next() {
+		var pf storage.PlayerFrequency
+		if err := rows.Scan(&pf.Name, &pf.Count); err != nil {
+			return nil, fmt.Errorf("PlayerNames scan: %w", err)
+		}
+		result = append(result, pf)
+	}
+	return result, rows.Err()
+}
+
+// MatchDetail computes per-player statistics for the given match, scoped to
+// the tenant.
+func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int64) (*storage.MatchDetailStats, error) {
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	query := `SELECT mv.player, p.decision_type, COALESCE(mv.cube_action,''),
+		(` + statsErrExpr + `) as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
+		` + cubeMultiplierExpr + `,
+		COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
+
+	rows, err := s.DB.Query(ctx, query, append(append([]any{}, targs...), matchID)...)
+	if err != nil {
+		return nil, fmt.Errorf("MatchDetail query: %w", err)
+	}
+	defer rows.Close()
+
+	type playerAcc struct {
+		totalSumErr   int64
+		totalCnt      int
+		totalErrors   int
+		totalBlunders int
+		totalMWC      float64
+
+		checkerSumErr   int64
+		checkerCnt      int
+		checkerErrors   int
+		checkerBlunders int
+		checkerMWC      float64
+
+		doubleSumErr   int64
+		doubleCnt      int
+		doubleErrors   int
+		doubleBlunders int
+		doubleMWC      float64
+
+		takeSumErr   int64
+		takeCnt      int
+		takeErrors   int
+		takeBlunders int
+		takeMWC      float64
+	}
+
+	var p1, p2 playerAcc
+
+	for rows.Next() {
+		var rawPlayer, decisionType int
+		var cubeAction string
+		var errMP int64
+		var awayScore0, awayScore1, cubeValue, matchLength int
+		if err := rows.Scan(&rawPlayer, &decisionType, &cubeAction, &errMP,
+			&awayScore0, &awayScore1, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		currentScore0 := matchLength - awayScore0
+		currentScore1 := matchLength - awayScore1
+		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+		if math.IsNaN(mwcLoss) {
+			mwcLoss = 0
+		}
+
+		isError := errMP > 0
+		isBlunder := errMP >= blunderThresholdMP
+		isTake := cubeAction == "Take" || cubeAction == "Pass"
+
+		acc := &p1
+		if rawPlayer == -1 {
+			acc = &p2
+		}
+
+		acc.totalSumErr += errMP
+		acc.totalCnt++
+		acc.totalMWC += mwcLoss
+		if isError {
+			acc.totalErrors++
+		}
+		if isBlunder {
+			acc.totalBlunders++
+		}
+
+		if decisionType == 0 {
+			acc.checkerSumErr += errMP
+			acc.checkerCnt++
+			acc.checkerMWC += mwcLoss
+			if isError {
+				acc.checkerErrors++
+			}
+			if isBlunder {
+				acc.checkerBlunders++
+			}
+		} else {
+			if isTake {
+				acc.takeSumErr += errMP
+				acc.takeCnt++
+				acc.takeMWC += mwcLoss
+				if isError {
+					acc.takeErrors++
+				}
+				if isBlunder {
+					acc.takeBlunders++
+				}
+			} else {
+				acc.doubleSumErr += errMP
+				acc.doubleCnt++
+				acc.doubleMWC += mwcLoss
+				if isError {
+					acc.doubleErrors++
+				}
+				if isBlunder {
+					acc.doubleBlunders++
+				}
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("MatchDetail scan: %w", err)
+	}
+
+	// ── Snowie ER pass ────────────────────────────────────────────────────────
+	// Second query without countedExpr: sum all equity errors per player, count
+	// checker positions (decision_type=0, forced included) for both players.
+	// Denominator = anTotalMoves[P1] + anTotalMoves[P2] (gnuBG formatgs.c).
+	var snowieP1SumErr, snowieP2SumErr int64
+	var snowieP1Checker, snowieP2Checker int
+	{
+		snowieRows, snowieErr := s.DB.Query(ctx,
+			`SELECT mv.player, p.decision_type, (`+statsErrExpr+`) as err_mp `+
+				statsBaseJoin+
+				` WHERE `+tenant+` AND m.id = ? AND a.position_id IS NOT NULL AND (`+statsErrExpr+`) IS NOT NULL`,
+			append(append([]any{}, targs...), matchID)...)
+		if snowieErr != nil {
+			return nil, fmt.Errorf("MatchDetail snowie query: %w", snowieErr)
+		}
+		func() {
+			defer snowieRows.Close()
+			for snowieRows.Next() {
+				var rawPlayer, decisionType int
+				var errMP int64
+				if err2 := snowieRows.Scan(&rawPlayer, &decisionType, &errMP); err2 != nil {
+					return
+				}
+				if rawPlayer == 1 {
+					snowieP1SumErr += errMP
+					if decisionType == 0 {
+						snowieP1Checker++
+					}
+				} else {
+					snowieP2SumErr += errMP
+					if decisionType == 0 {
+						snowieP2Checker++
+					}
+				}
+			}
+		}()
+		if err := snowieRows.Err(); err != nil {
+			return nil, fmt.Errorf("MatchDetail snowie rows: %w", err)
+		}
+	}
+	snowieDenom := snowieP1Checker + snowieP2Checker
+
+	buildStats := func(a *playerAcc) storage.MatchPlayerDetailStats {
+		cubeCnt := a.doubleCnt + a.takeCnt
+		cubeSumErr := a.doubleSumErr + a.takeSumErr
+		return storage.MatchPlayerDetailStats{
+			TotalDecisions:   a.totalCnt,
+			TotalErrors:      a.totalErrors,
+			TotalBlunders:    a.totalBlunders,
+			TotalEquityError: float64(a.totalSumErr) / 1000,
+			PR:               pr(a.totalSumErr, a.totalCnt),
+			MWCLoss:          a.totalMWC,
+
+			CheckerDecisions:   a.checkerCnt,
+			CheckerErrors:      a.checkerErrors,
+			CheckerBlunders:    a.checkerBlunders,
+			CheckerEquityError: float64(a.checkerSumErr) / 1000,
+			PRChecker:          pr(a.checkerSumErr, a.checkerCnt),
+			CheckerMWCLoss:     a.checkerMWC,
+
+			DoubleDecisions:   a.doubleCnt,
+			DoubleErrors:      a.doubleErrors,
+			DoubleBlunders:    a.doubleBlunders,
+			DoubleEquityError: float64(a.doubleSumErr) / 1000,
+			DoubleMWCLoss:     a.doubleMWC,
+
+			TakeDecisions:   a.takeCnt,
+			TakeErrors:      a.takeErrors,
+			TakeBlunders:    a.takeBlunders,
+			TakeEquityError: float64(a.takeSumErr) / 1000,
+			TakeMWCLoss:     a.takeMWC,
+
+			PRCube:      pr(cubeSumErr, cubeCnt),
+			CubeMWCLoss: a.doubleMWC + a.takeMWC,
+		}
+	}
+
+	stats := &storage.MatchDetailStats{
+		MatchID: matchID,
+		Player1: buildStats(&p1),
+		Player2: buildStats(&p2),
+	}
+	stats.Player1.SnowieER = snowieER(snowieP1SumErr, snowieDenom)
+	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
+	return stats, nil
+}
+
+// MatchBadges computes the per-player PR and total MWC loss for every match
+// in the tenant, keyed by match id. It is the list-row projection of
+// MatchDetail; both share statsBaseJoin + countedExpr so a match's badge PR
+// equals its detail PR.
+func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []int64) (map[int64]storage.MatchBadge, error) {
+	tenant, args := s.DB.TenantFilter("p", scope)
+	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
+	if len(matchIDs) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(matchIDs)), ",")
+		query += ` AND g.match_id IN (` + ph + `)`
+		for _, id := range matchIDs {
+			args = append(args, id)
+		}
+	}
+
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("MatchBadges query: %w", err)
+	}
+	defer rows.Close()
+
+	type playerAcc struct {
+		sumErr int64
+		cnt    int
+		mwc    float64
+	}
+	type matchAcc struct{ p1, p2 playerAcc }
+	acc := make(map[int64]*matchAcc)
+	for rows.Next() {
+		var matchID, errMP int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+		a := acc[matchID]
+		if a == nil {
+			a = &matchAcc{}
+			acc[matchID] = a
+		}
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss wants current scores.
+		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength)
+		pa := &a.p1
+		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
+			pa = &a.p2
+		}
+		pa.sumErr += errMP
+		pa.cnt++
+		if !math.IsNaN(mwcLoss) {
+			pa.mwc += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	out := make(map[int64]storage.MatchBadge, len(acc))
+	for matchID, a := range acc {
+		out[matchID] = storage.MatchBadge{
+			PR:       pr(a.p1.sumErr, a.p1.cnt),
+			MWCLoss:  a.p1.mwc,
+			PR2:      pr(a.p2.sumErr, a.p2.cnt),
+			MWCLoss2: a.p2.mwc,
+		}
+	}
+	return out, nil
+}
+
+// TournamentBadges computes each tournament's reference-player PR and total MWC
+// loss for the tenant, keyed by tournament id. See storage.TournamentBadge for
+// why the badge is the reference player's own PR rather than a both-players
+// pool.
+func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[int64]storage.TournamentBadge, error) {
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),
+		COALESCE(CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player2_name END, ''),
+		g.match_id ` +
+		statsBaseJoin +
+		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
+		AND m.tournament_id IS NOT NULL AND ` + countedExpr(s.DB)
+
+	rows, err := s.DB.Query(ctx, query, targs...)
+	if err != nil {
+		return nil, fmt.Errorf("TournamentBadges query: %w", err)
+	}
+	defer rows.Close()
+
+	// Accumulate per (tournament, player). The badge reports the reference
+	// player's own PR, not a both-players pool — see storage.TournamentBadge.
+	acc := make(map[int64]map[string]*storage.TournamentPlayerAcc)
+	for rows.Next() {
+		var tournamentID, errMP, matchID int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		var moverName string
+		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength, &moverName, &matchID); err != nil {
+			continue
+		}
+		byPlayer := acc[tournamentID]
+		if byPlayer == nil {
+			byPlayer = make(map[string]*storage.TournamentPlayerAcc)
+			acc[tournamentID] = byPlayer
+		}
+		a := byPlayer[moverName]
+		if a == nil {
+			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{})}
+			byPlayer[moverName] = a
+		}
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		a.SumErr += errMP
+		a.Cnt++
+		a.Matches[matchID] = struct{}{}
+		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), matchLength-awayScore0, matchLength-awayScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+			a.MWC += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	out := make(map[int64]storage.TournamentBadge, len(acc))
+	for tournamentID, byPlayer := range acc {
+		out[tournamentID] = storage.PickReferencePlayer(byPlayer)
+	}
+	return out, nil
+}
+
+// playerTableFilter strips the parts of the filter the players table ignores by
+// design: the player selection (the table is about all of them) and the
+// decision type (the table splits checker from cube in its own columns, so a
+// global filter would only make them inconsistent with one another).
+func playerTableFilter(filter storage.StatsFilter) storage.StatsFilter {
+	f := filter
+	f.PlayerName = ""
+	f.PlayerAliases = nil
+	f.DecisionType = -1
+	return f
+}
+
+// moverNameExpr names the player who took the decision, whichever seat they sat
+// in. It is the players table's GROUP BY key.
+const moverNameExpr = "CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player2_name END"
+
+// buildMatchWhereClause renders the filter's match-level predicates (dates,
+// tournaments, match length) against the match table alone, scoped to the
+// tenant, for the queries that count matches and games rather than decisions.
+func (s *StatsStore) buildMatchWhereClause(scope string, filter storage.StatsFilter) (whereSQL string, args []any) {
+	tenant, args := s.DB.TenantFilter("m", scope)
+	clauses := []string{tenant}
+
+	if len(filter.TournamentIDs) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.TournamentIDs)), ",")
+		clauses = append(clauses, "m.tournament_id IN ("+ph+")")
+		for _, id := range filter.TournamentIDs {
+			args = append(args, id)
+		}
+	}
+
+	clauses, args = appendDateClauses(s.DB, clauses, args, filter)
+
+	if len(filter.MatchLength) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.MatchLength)), ",")
+		clauses = append(clauses, "m.match_length IN ("+ph+")")
+		for _, ml := range filter.MatchLength {
+			args = append(args, ml)
+		}
+	}
+
+	return " WHERE " + strings.Join(clauses, " AND "), args
+}
+
+// PlayerTable computes one row per player over the matches the filter retains,
+// scoped to the tenant. See the StatsStore contract for what the filter honours
+// and how rows are ordered; the arithmetic that turns these queries into rows
+// lives in storage.BuildPlayerRows.
+func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
+	d := s.DB
+	f := playerTableFilter(filter)
+	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
+	baseWhere, baseArgs := s.buildBaseWhereClause(scope, f)
+	matchWhere, matchArgs := s.buildMatchWhereClause(scope, f)
+
+	// ── Counted decisions, per player and decision type ───────────────────────
+	var decisions []storage.PlayerDecisionStat
+	rows, err := s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, p.decision_type,`+
+			` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+`, COUNT(*),`+
+			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) > 0 THEN 1 ELSE 0 END),0)`)+`,`+
+			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+` `+
+			statsBaseJoin+statsWhere+
+			` GROUP BY pname, p.decision_type`,
+		append([]any{blunderThresholdMP}, statsArgs...)...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable decisions: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var d storage.PlayerDecisionStat
+			if err := rows.Scan(&d.Name, &d.DecisionType, &d.SumErrMP, &d.Count, &d.Errors, &d.Blunders); err != nil {
+				continue
+			}
+			decisions = append(decisions, d)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable decisions scan: %w", err)
+	}
+
+	// ── Snowie numerator: every error, counted or not ─────────────────────────
+	snowieErr := map[string]int64{}
+	rows, err = s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+
+			statsBaseJoin+baseWhere+` GROUP BY pname`,
+		baseArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable snowie: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var sum int64
+			if err := rows.Scan(&name, &sum); err != nil {
+				continue
+			}
+			snowieErr[name] = sum
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable snowie scan: %w", err)
+	}
+
+	// ── Luck, over the rolls that carry it ────────────────────────────────────
+	// COUNT(mv.luck_mp) skips NULLs, so the denominator is the number of rolls
+	// actually measured — never the number played (ADR-0010).
+	luck := map[string]storage.PlayerLuckAcc{}
+	rows, err = s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(mv.luck_mp),0)`)+`, COUNT(mv.luck_mp)
+		 FROM move mv
+		 JOIN game g ON g.id = mv.game_id
+		 JOIN match m ON m.id = g.match_id`+matchWhere+
+			` AND mv.luck_mp IS NOT NULL GROUP BY pname`,
+		matchArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable luck: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var acc storage.PlayerLuckAcc
+			if err := rows.Scan(&name, &acc.SumMP, &acc.Rolls); err != nil {
+				continue
+			}
+			luck[name] = acc
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable luck scan: %w", err)
+	}
+
+	// ── Matches: participation, outcome, and the Snowie denominator ───────────
+	var matches []storage.MatchOutcomeRow
+	rows, err = s.DB.Query(ctx,
+		`SELECT COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length,0),
+		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g
+		                  WHERE g.match_id = m.id AND g.winner = 1), 0)`)+`,
+		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g
+		                  WHERE g.match_id = m.id AND g.winner = -1), 0)`)+`,
+		        COALESCE((SELECT COUNT(*) FROM move mv2
+		                  JOIN position p2 ON p2.id = mv2.position_id
+		                  JOIN game g2 ON g2.id = mv2.game_id
+		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)
+		 FROM match m`+matchWhere,
+		matchArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable matches: %w", err)
+	}
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var m storage.MatchOutcomeRow
+			if err := rows.Scan(&m.Player1, &m.Player2, &m.MatchLength,
+				&m.Points1, &m.Points2, &m.CheckerMoves); err != nil {
+				continue
+			}
+			matches = append(matches, m)
+		}
+	}()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerTable matches scan: %w", err)
+	}
+
+	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil
+}

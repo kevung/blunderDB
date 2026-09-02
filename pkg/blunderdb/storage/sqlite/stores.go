@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // execer is satisfied by both *sql.DB (autocommit) and *sql.Tx
@@ -22,20 +23,24 @@ type binder struct {
 	db execer
 }
 
-func (b binder) Positions() storage.PositionStore          { return &positionStore{b.db} }
-func (b binder) Analyses() storage.AnalysisStore           { return &analysisStore{b.db} }
-func (b binder) Matches() storage.MatchStore               { return &matchStore{b.db} }
-func (b binder) Comments() storage.CommentStore            { return &commentStore{b.db} }
-func (b binder) Collections() storage.CollectionStore      { return &collectionStore{b.db} }
-func (b binder) Tournaments() storage.TournamentStore      { return &tournamentStore{b.db} }
-func (b binder) Anki() storage.AnkiStore                   { return &ankiStore{b.db} }
-func (b binder) Filters() storage.FilterStore              { return &filterStore{b.db} }
-func (b binder) Session() storage.SessionStore             { return &sessionStore{b.db} }
-func (b binder) Search() storage.SearchStore               { return &searchStore{b.db} }
-func (b binder) SearchHistory() storage.SearchHistoryStore { return &searchHistoryStore{b.db} }
-func (b binder) Stats() storage.StatsStore                 { return &statsStore{b.db} }
-func (b binder) History() storage.CommandHistoryStore      { return &commandHistoryStore{b.db} }
-func (b binder) Metadata() storage.MetadataStore           { return &metadataStore{b.db} }
+func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db} }
+func (b binder) Analyses() storage.AnalysisStore      { return &analysisStore{b.db} }
+func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db} }
+func (b binder) Comments() storage.CommentStore       { return &sqlshared.CommentStore{DB: b.shared()} }
+func (b binder) Collections() storage.CollectionStore { return &collectionStore{b.db} }
+func (b binder) Tournaments() storage.TournamentStore { return &tournamentStore{b.db} }
+func (b binder) Anki() storage.AnkiStore              { return &ankiStore{b.db} }
+func (b binder) Filters() storage.FilterStore         { return &sqlshared.FilterStore{DB: b.shared()} }
+func (b binder) Session() storage.SessionStore        { return &sqlshared.SessionStore{DB: b.shared()} }
+func (b binder) Search() storage.SearchStore          { return &sqlshared.SearchStore{DB: b.shared()} }
+func (b binder) SearchHistory() storage.SearchHistoryStore {
+	return &sqlshared.SearchHistoryStore{DB: b.shared()}
+}
+func (b binder) Stats() storage.StatsStore { return &statsStore{&sqlshared.StatsStore{DB: b.shared()}} }
+func (b binder) History() storage.CommandHistoryStore {
+	return &sqlshared.CommandHistoryStore{DB: b.shared()}
+}
+func (b binder) Metadata() storage.MetadataStore { return &sqlshared.MetadataStore{DB: b.shared()} }
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a
