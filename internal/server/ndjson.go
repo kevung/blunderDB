@@ -26,10 +26,7 @@ func streamSeq2[T any](w http.ResponseWriter, seq iter.Seq2[T, error]) {
 				writeStorageError(w, err)
 				return
 			}
-			_ = enc.Encode(errorEnvelope{Error: errorBody{
-				Code:    codeForErr(err),
-				Message: err.Error(),
-			}})
+			_ = enc.Encode(errorEnvelope{Error: errorBodyFor(w, err)})
 			if flusher != nil {
 				flusher.Flush()
 			}

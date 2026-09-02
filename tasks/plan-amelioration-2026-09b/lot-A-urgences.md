@@ -163,12 +163,12 @@ plus, contrairement à ce que `fuzz.yml:5-8` affirme.
   tenant `a-1` ; les ids sont un compteur global énumérable.
 
 **À faire.**
-- [ ] Router les six sites par `writeStorageError` ; pour NDJSON, `codeForErr`
+- [x] Router les six sites par `writeStorageError` ; pour NDJSON, `codeForErr`
       + message masqué si `internal`.
-- [ ] Exempter la liste exacte des routes d'upload, pas le préfixe.
-- [ ] Registre d'imports : stocker `scope` à part, comparer par égalité ; id
+- [x] Exempter la liste exacte des routes d'upload, pas le préfixe.
+- [x] Registre d'imports : stocker `scope` à part, comparer par égalité ; id
       opaque aléatoire (`crypto/rand`, 16 octets hex).
-- [ ] Tests : erreur interne → corps `{"code":"internal","message":"internal error"}` ;
+- [x] Tests : erreur interne → corps `{"code":"internal","message":"internal error"}` ;
       `imports.cancel` avec corps de 64 Mio → 413 ; tenant `a` ne peut pas
       annuler l'import de `a-1`.
 

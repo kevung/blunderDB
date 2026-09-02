@@ -50,7 +50,7 @@ func (s *Server) handleGammonNetAnalyzeMissing(w http.ResponseWriter, r *http.Re
 	var req gammonnetAnalyzeReq
 	if r.ContentLength != 0 {
 		if err := decodeJSON(r, &req); err != nil {
-			writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+			writeDecodeError(w, "invalid JSON body", err)
 			return
 		}
 	}
@@ -84,7 +84,7 @@ func (s *Server) handleGammonNetAnalyzeMissing(w http.ResponseWriter, r *http.Re
 
 	missing, err := gammonnetPositionsWithoutAnalysis(ctx, s.opts.Storage, scope)
 	if err != nil {
-		emit(map[string]any{"event": "error", "error": errorBody{Code: codeForErr(err), Message: err.Error()}})
+		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return
 	}
 	total := len(missing)
@@ -174,7 +174,7 @@ type gammonnetCancelReq struct {
 func (s *Server) handleGammonNetAnalyzeCancel(w http.ResponseWriter, r *http.Request) {
 	var req gammonnetCancelReq
 	if err := decodeJSON(r, &req); err != nil {
-		writeErrorCode(w, CodeInvalid, "invalid JSON body: "+err.Error())
+		writeDecodeError(w, "invalid JSON body", err)
 		return
 	}
 	if req.JobID == "" {
