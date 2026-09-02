@@ -9,8 +9,6 @@ import {
     LoadPositionsByFilters,
     ComputeEPCFromPosition,
     SaveLastVisitedPosition,
-    GetLastVisitedMatch,
-    GetMatchMovePositions,
     SaveEditPosition,
     SaveExcludePosition,
     SaveFilter,
@@ -20,47 +18,51 @@ import {
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
-import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
+import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, PANEL, closePanel, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
-import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
+import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
+import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
+import { forgetContextBeforeEPC } from './modeMachine.js';
+// Ctrl-G status line (keyboardService imports it from here).
+export { showDatesAndMetadata } from './metadataStatus.js';
+
+// The mode automaton (NORMAL / MATCH / COLLECTION / EDIT / EPC) lives in
+// modeMachine.js; its transitions stay reachable from here so that callers
+// keep one import for everything position-related.
+export { enterEditMode, exitEditMode, toggleEPCMode, sendPositionToEval, enterEPCMode, exitEPCMode, toggleMatchMode, handleOpenCollection, exitCollectionMode } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
 import { tMsg, t } from '../i18n';
-import { tableData as metTable } from '../stores/metTable';
-import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
-import { takePoint2LastTable } from '../stores/takePoint2LastTable';
-import { gammonValue1Table } from '../stores/gammonValue1Table';
-import { gammonValue2Table } from '../stores/gammonValue2Table';
-import { gammonValue4Table } from '../stores/gammonValue4Table';
-import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
-import { takePoint4LastTable } from '../stores/takePoint4LastTable';
 
-// Module-level state for EPC mode save/restore
-let savedPositionBeforeEPC = null;
-let savedPositionIndexBeforeEPC = -1;
-let savedPositionsBeforeEPC = null;
-// The match context when EPC was entered from a match, so exiting EPC returns to
-// the studied match position instead of dropping to NORMAL (bug 2).
-let savedMatchContextBeforeEPC = null;
-let savedModeBeforeEPC = null;
-// The position the Eval panel must open on instead of its default bearoff,
-// set by sendPositionToEval() just before it switches to the Eval tab and
-// consumed by enterEPCMode(). It is a hand-off between two calls one tick
-// apart (the tab switch reaches enterEPCMode through App.svelte's tab effect,
-// not a direct call), which is why it lives here rather than in a parameter.
-let seedPositionForEPC = null;
-
-// The match context when the search/EDIT tab was entered from a match, so leaving
-// search returns to the studied match position instead of the last of all
-// positions (bug 2). Valid only for the current EDIT session: enterEditMode resets
-// it on every entry based on the mode it was entered from.
-let savedMatchBeforeEdit = null;
+// The cube block an analysis carries when nothing was evaluated: every
+// figure at zero, so the panels render their blank cells.
+function emptyDoublingCubeAnalysis() {
+    return {
+        analysisDepth: '',
+        playerWinChances: 0,
+        playerGammonChances: 0,
+        playerBackgammonChances: 0,
+        opponentWinChances: 0,
+        opponentGammonChances: 0,
+        opponentBackgammonChances: 0,
+        cubelessNoDoubleEquity: 0,
+        cubelessDoubleEquity: 0,
+        cubefulNoDoubleEquity: 0,
+        cubefulNoDoubleError: 0,
+        cubefulDoubleTakeEquity: 0,
+        cubefulDoubleTakeError: 0,
+        cubefulDoublePassEquity: 0,
+        cubefulDoublePassError: 0,
+        bestCubeAction: '',
+        wrongPassPercentage: 0,
+        wrongTakePercentage: 0
+    };
+}
 
 // Session/search tracking state
 let lastSearchCommand = '';
@@ -218,28 +220,7 @@ export async function showPosition(position) {
         analysisType: analysis?.analysisType || '',
         analysisEngineVersion: analysis?.analysisEngineVersion || '',
         checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-        doublingCubeAnalysis: isFirstPositionOfGame
-            ? null
-            : analysis?.doublingCubeAnalysis || {
-                  analysisDepth: '',
-                  playerWinChances: 0,
-                  playerGammonChances: 0,
-                  playerBackgammonChances: 0,
-                  opponentWinChances: 0,
-                  opponentGammonChances: 0,
-                  opponentBackgammonChances: 0,
-                  cubelessNoDoubleEquity: 0,
-                  cubelessDoubleEquity: 0,
-                  cubefulNoDoubleEquity: 0,
-                  cubefulNoDoubleError: 0,
-                  cubefulDoubleTakeEquity: 0,
-                  cubefulDoubleTakeError: 0,
-                  cubefulDoublePassEquity: 0,
-                  cubefulDoublePassError: 0,
-                  bestCubeAction: '',
-                  wrongPassPercentage: 0,
-                  wrongTakePercentage: 0
-              },
+        doublingCubeAnalysis: isFirstPositionOfGame ? null : analysis?.doublingCubeAnalysis || emptyDoublingCubeAnalysis(),
         allCubeAnalyses: isFirstPositionOfGame ? [] : analysis?.allCubeAnalyses || [],
         playedMove: currentPlayedMove,
         playedCubeAction: isFirstPositionOfGame ? '' : currentPlayedCubeAction,
@@ -311,9 +292,7 @@ export async function loadAllPositions() {
             player1Name: '',
             player2Name: ''
         });
-        savedPositionsBeforeEPC = null;
-        savedPositionBeforeEPC = null;
-        savedPositionIndexBeforeEPC = -1;
+        forgetContextBeforeEPC();
         activeCollectionStore.set(null);
 
         positionsStore.set(Array.isArray(positions) ? positions : []);
@@ -813,26 +792,7 @@ export async function updatePosition() {
         analysis.xgid = '';
         analysis.analysisType = '';
         analysis.checkerAnalysis = { moves: [] };
-        analysis.doublingCubeAnalysis = {
-            analysisDepth: '',
-            playerWinChances: 0,
-            playerGammonChances: 0,
-            playerBackgammonChances: 0,
-            opponentWinChances: 0,
-            opponentGammonChances: 0,
-            opponentBackgammonChances: 0,
-            cubelessNoDoubleEquity: 0,
-            cubelessDoubleEquity: 0,
-            cubefulNoDoubleEquity: 0,
-            cubefulNoDoubleError: 0,
-            cubefulDoubleTakeEquity: 0,
-            cubefulDoubleTakeError: 0,
-            cubefulDoublePassEquity: 0,
-            cubefulDoublePassError: 0,
-            bestCubeAction: '',
-            wrongPassPercentage: 0,
-            wrongTakePercentage: 0
-        };
+        analysis.doublingCubeAnalysis = emptyDoublingCubeAnalysis();
         analysis.analysisEngineVersion = '';
 
         if (Array.isArray(analysis.checkerAnalysis)) {
@@ -890,253 +850,12 @@ export async function saveCurrentPosition() {
     analysis.xgid = generateXGID(position);
     analysis.analysisType = '';
     analysis.checkerAnalysis = { moves: [] };
-    analysis.doublingCubeAnalysis = {
-        analysisDepth: '',
-        playerWinChances: 0,
-        playerGammonChances: 0,
-        playerBackgammonChances: 0,
-        opponentWinChances: 0,
-        opponentGammonChances: 0,
-        opponentBackgammonChances: 0,
-        cubelessNoDoubleEquity: 0,
-        cubelessDoubleEquity: 0,
-        cubefulNoDoubleEquity: 0,
-        cubefulNoDoubleError: 0,
-        cubefulDoubleTakeEquity: 0,
-        cubefulDoubleTakeError: 0,
-        cubefulDoublePassEquity: 0,
-        cubefulDoublePassError: 0,
-        bestCubeAction: '',
-        wrongPassPercentage: 0,
-        wrongTakePercentage: 0
-    };
+    analysis.doublingCubeAnalysis = emptyDoublingCubeAnalysis();
     analysis.analysisEngineVersion = '';
 
     const { savePositionAndAnalysis } = await import('./importService.js');
     await savePositionAndAnalysis(position, analysis, tMsg('status.positionSaved'));
     statusBarModeStore.set('NORMAL');
-}
-
-export async function enterEditMode() {
-    logger.log('enterEditMode');
-    if (!get(databasePathStore)) return;
-
-    // Snapshot the studied match (if any) so leaving the search tab restores it.
-    // Reset on every entry so a stale snapshot from an earlier match-entered EDIT
-    // session can never be restored into a later NORMAL-entered one.
-    savedMatchBeforeEdit = get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode ? { ...get(matchContextStore) } : null;
-
-    if (get(statusBarModeStore) === 'MATCH') {
-        logger.log('Exiting MATCH mode to enter EDIT');
-        if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
-            try {
-                await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
-            } catch (e) {
-                logger.error('Error saving last visited position:', e);
-            }
-        }
-        matchContextStore.set({
-            isMatchMode: false,
-            matchID: null,
-            movePositions: [],
-            currentIndex: 0,
-            player1Name: '',
-            player2Name: ''
-        });
-        // Deliberately NOT loadAllPositions() here (bug 2): it runs async without
-        // await and, on resolving, sets mode NORMAL and flips activeTab to
-        // 'matches' — racing this function and bouncing the user off the search
-        // tab (the studied match position was lost). EDIT clears the board below
-        // to build a query and positionsStore isn't consulted in EDIT, so there is
-        // nothing to load; exitEditMode restores the snapshot taken above.
-    }
-
-    if (get(statusBarModeStore) === 'COLLECTION') {
-        await exitCollectionMode();
-    }
-
-    if (get(statusBarModeStore) === 'EPC') {
-        toggleEPCMode();
-    }
-
-    if (get(statusBarModeStore) !== 'EDIT') {
-        statusBarModeStore.set('EDIT');
-        closePanel(PANEL.COMMENT);
-        closePanel(PANEL.ANALYSIS);
-        // Clear the selected analysis move so its move arrows are erased when
-        // leaving a match/analysis position for the search tab. The board only
-        // auto-clears the selection on a position-ID change, and here the id is
-        // unchanged (we blank the same position object below), so the arrows
-        // would otherwise persist over the empty EDIT board.
-        selectedMoveStore.set(null);
-        positionStore.update((pos) => {
-            pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
-            pos.board.bearoff = [15, 15];
-            pos.cube = { owner: -1, value: 0 };
-            pos.score = [7, 7];
-            pos.dice = [3, 1];
-            pos.decision_type = 0;
-            pos.player_on_roll = 0;
-            return pos;
-        });
-    }
-}
-
-export async function exitEditMode() {
-    if (get(statusBarModeStore) === 'EDIT') {
-        // If we entered search from a match, return to that studied position
-        // rather than dropping into the flat "all positions" list (bug 2).
-        if (savedMatchBeforeEdit && savedMatchBeforeEdit.isMatchMode) {
-            const snap = savedMatchBeforeEdit;
-            savedMatchBeforeEdit = null;
-            matchContextStore.set(snap);
-            statusBarModeStore.set('MATCH');
-            const movePos = snap.movePositions?.[snap.currentIndex];
-            if (movePos) {
-                await showPosition(movePos.position);
-                statusBarTextStore.set(`${snap.player1Name} vs ${snap.player2Name}`);
-            }
-            return;
-        }
-        statusBarModeStore.set('NORMAL');
-        const currentIndex = get(currentPositionIndexStore);
-        currentPositionIndexStore.set(-1);
-        currentPositionIndexStore.set(currentIndex);
-    }
-}
-
-export function toggleEPCMode() {
-    if (get(statusBarModeStore) === 'EPC') {
-        exitEPCMode();
-        activeTabStore.set('analysis');
-    } else {
-        activeTabStore.set('epc');
-    }
-}
-
-// The board the Eval panel opens on when nothing was handed to it: the
-// canonical 6-point bearoff the EPC trainer starts from.
-function defaultEPCPosition() {
-    const epcPoints = Array(26).fill({ checkers: 0, color: -1 });
-    epcPoints[1] = { checkers: 2, color: 0 };
-    epcPoints[2] = { checkers: 2, color: 0 };
-    epcPoints[3] = { checkers: 2, color: 0 };
-    epcPoints[4] = { checkers: 3, color: 0 };
-    epcPoints[5] = { checkers: 3, color: 0 };
-    epcPoints[6] = { checkers: 3, color: 0 };
-
-    return {
-        id: 0,
-        board: { points: epcPoints, bearoff: [0, 15] },
-        cube: { owner: -1, value: 0 },
-        dice: [0, 0],
-        score: [-1, -1],
-        player_on_roll: 0,
-        decision_type: 0,
-        has_jacoby: 0,
-        has_beaver: 0
-    };
-}
-
-/**
- * Open the Eval panel on `position` instead of its default bearoff — the
- * "study THIS position" gesture, reached from the board's context menu or
- * from a Ctrl-C/Ctrl-V round trip.
- *
- * The copy is detached and its id cleared: the Eval board is a scratch pad,
- * and a position carrying a database id there would let a later Ctrl-U write
- * an edited board back over the record it came from. Everything else travels
- * as-is, including player_on_roll: the Eval panel reads the on-roll side for
- * its own facts table and gammonNet evaluates from it, so a mirrored match
- * position keeps both its orientation on screen and its meaning to the engine.
- */
-export function sendPositionToEval(position) {
-    if (!position) return;
-    const seed = JSON.parse(JSON.stringify(position));
-    seed.id = 0;
-
-    if (get(statusBarModeStore) === 'EPC') {
-        // Already in the Eval panel: replace the board in place. Going through
-        // the tab store would be a no-op and enterEPCMode() returns early.
-        positionsStore.set([seed]);
-        positionStore.set(seed);
-        currentPositionIndexStore.set(0);
-        return;
-    }
-
-    seedPositionForEPC = seed;
-    // Normally the tab switch reaches enterEPCMode() through App.svelte's tab
-    // effect. If the Eval tab is somehow already selected without EPC mode
-    // being on, that set() is a no-op and the effect never re-runs, so enter
-    // directly rather than leave the seed stranded.
-    if (get(activeTabStore) === 'epc') enterEPCMode();
-    else activeTabStore.set('epc');
-}
-
-export function enterEPCMode() {
-    if (get(statusBarModeStore) === 'EPC') return;
-
-    savedPositionBeforeEPC = get(positionStore) ? { ...get(positionStore) } : null;
-    savedPositionIndexBeforeEPC = get(currentPositionIndexStore);
-    savedPositionsBeforeEPC = get(positionsStore) ? [...get(positionsStore)] : null;
-    // Remember whether EPC was opened from a match so exit can return to it.
-    savedModeBeforeEPC = get(statusBarModeStore);
-    savedMatchContextBeforeEPC = { ...get(matchContextStore) };
-
-    const epcPosition = seedPositionForEPC ? seedPositionForEPC : defaultEPCPosition();
-    seedPositionForEPC = null;
-
-    statusBarModeStore.set('EPC');
-    closePanel(PANEL.COMMENT);
-    closePanel(PANEL.ANALYSIS);
-
-    positionsStore.set([epcPosition]);
-    positionStore.set(epcPosition);
-    currentPositionIndexStore.set(0);
-}
-
-export async function exitEPCMode() {
-    if (get(statusBarModeStore) !== 'EPC') return;
-
-    // Return to the match if EPC was opened from one, instead of dropping to
-    // NORMAL while matchContext still says a match is active (bug 2): that left
-    // an inconsistent MATCH state that broke match navigation.
-    const returnToMatch = savedModeBeforeEPC === 'MATCH' && savedMatchContextBeforeEPC && savedMatchContextBeforeEPC.isMatchMode;
-    statusBarTextStore.set('');
-    epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
-
-    if (returnToMatch) {
-        matchContextStore.set(savedMatchContextBeforeEPC);
-        statusBarModeStore.set('MATCH');
-        statusBarTextStore.set(`${savedMatchContextBeforeEPC.player1Name} vs ${savedMatchContextBeforeEPC.player2Name}`);
-    } else {
-        statusBarModeStore.set('NORMAL');
-    }
-
-    if (savedPositionsBeforeEPC) {
-        positionsStore.set(savedPositionsBeforeEPC);
-        if (savedPositionBeforeEPC) {
-            currentPositionIndexStore.set(savedPositionIndexBeforeEPC);
-            // Reload through showPosition (not a bare positionStore.set) so the
-            // analysis is fetched again and the analysis panel is repopulated on
-            // return. In MATCH mode the nav effect no longer redraws (bug 1
-            // guard), so without this the panel stayed empty after EPC; in
-            // NORMAL mode this simply mirrors the index-driven redraw.
-            const restored = savedPositionBeforeEPC;
-            savedPositionsBeforeEPC = null;
-            savedPositionBeforeEPC = null;
-            savedPositionIndexBeforeEPC = -1;
-            await showPosition(restored);
-        } else {
-            savedPositionsBeforeEPC = null;
-            savedPositionBeforeEPC = null;
-            savedPositionIndexBeforeEPC = -1;
-        }
-    } else {
-        loadAllPositions();
-    }
-    savedMatchContextBeforeEPC = null;
-    savedModeBeforeEPC = null;
 }
 
 export async function updateEPC(position) {
@@ -1172,273 +891,56 @@ export async function updateEPC(position) {
     }
 }
 
-export async function toggleMatchMode() {
-    logger.log('toggleMatchMode');
+// ── Tab toggles ──────────────────────────────────────────────────────────────
+// The `toggleXPanel` names date from when each panel was a floating window;
+// today every one of them selects a tab of the tabbed panel (App.svelte's tab
+// effect opens the matching PANEL). One table, one function; the eight names
+// stay as re-exports for keyboardService, commandProcessor and App.svelte.
+//
+//   tab      the activeTabStore value to select
+//   guard    extra precondition, returning a status-bar message key to refuse
+//   silent   no message when no database is open (metadata: the tab just
+//            stays where it is)
+const TAB_TOGGLES = Object.freeze({
+    analysis: { tab: 'analysis' },
+    comments: {
+        tab: 'comments',
+        guard: () => (get(positionsStore)[get(currentPositionIndexStore)] ? null : 'status.noCurrentPositionComment')
+    },
+    metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
+    anki: { tab: 'anki' },
+    matches: { tab: 'matches' },
+    collections: { tab: 'collections' },
+    tournaments: { tab: 'tournaments' },
+    stats: { tab: 'stats' }
+});
+
+/** Select the tab of `id` (a TAB_TOGGLES key) if a database is open. */
+export function toggleTab(id) {
+    const entry = TAB_TOGGLES[id];
+    if (!entry) throw new Error(`toggleTab: unknown tab '${id}'`);
+    logger.log(`toggleTab ${id}`);
     if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        if (!entry.silent) setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
-
-    if (get(statusBarModeStore) === 'MATCH') {
-        logger.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
-        if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
-            try {
-                await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
-            } catch (e) {
-                logger.error('Error saving last visited position:', e);
-            }
-        }
-        statusBarModeStore.set('NORMAL');
-        matchContextStore.set({
-            isMatchMode: false,
-            matchID: null,
-            movePositions: [],
-            currentIndex: 0,
-            player1Name: '',
-            player2Name: ''
-        });
-        loadAllPositions();
+    const refusal = entry.guard?.();
+    if (refusal) {
+        setStatusBarMessage(tMsg(refusal));
         return;
     }
-
-    if (get(statusBarModeStore) === 'EDIT' || get(statusBarModeStore) === 'EPC' || get(statusBarModeStore) === 'COLLECTION') {
-        statusBarModeStore.set('NORMAL');
-    }
-    activeCollectionStore.set(null);
-
-    try {
-        const match = await GetLastVisitedMatch();
-        if (!match) {
-            setStatusBarMessage(tMsg('status.noMatchesInDb'));
-            return;
-        }
-
-        const movePositions = await GetMatchMovePositions(match.id);
-        if (!movePositions || movePositions.length === 0) {
-            setStatusBarMessage(tMsg('status.noMovesInMatch'));
-            return;
-        }
-
-        let startIndex = 0;
-        if (match.last_visited_position >= 0 && match.last_visited_position < movePositions.length) {
-            startIndex = match.last_visited_position;
-        }
-
-        matchContextStore.set({
-            isMatchMode: true,
-            matchID: match.id,
-            movePositions: movePositions,
-            currentIndex: startIndex,
-            player1Name: match.player1_name,
-            player2Name: match.player2_name
-        });
-
-        const startMovePos = movePositions[startIndex];
-        positionStore.set(startMovePos.position);
-
-        let analysis = null;
-        try {
-            analysis = await LoadAnalysis(startMovePos.position.id);
-        } catch (_error) {
-            /* ignored */
-        }
-
-        const currentPlayedMove = startMovePos.checker_move || '';
-        const currentPlayedCubeAction = startMovePos.cube_action || '';
-
-        analysisStore.set({
-            positionId: analysis?.positionId || null,
-            xgid: analysis?.xgid || '',
-            player1: analysis?.player1 || '',
-            player2: analysis?.player2 || '',
-            analysisType: analysis?.analysisType || '',
-            analysisEngineVersion: analysis?.analysisEngineVersion || '',
-            checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-            doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                analysisDepth: '',
-                playerWinChances: 0,
-                playerGammonChances: 0,
-                playerBackgammonChances: 0,
-                opponentWinChances: 0,
-                opponentGammonChances: 0,
-                opponentBackgammonChances: 0,
-                cubelessNoDoubleEquity: 0,
-                cubelessDoubleEquity: 0,
-                cubefulNoDoubleEquity: 0,
-                cubefulNoDoubleError: 0,
-                cubefulDoubleTakeEquity: 0,
-                cubefulDoubleTakeError: 0,
-                cubefulDoublePassEquity: 0,
-                cubefulDoublePassError: 0,
-                bestCubeAction: '',
-                wrongPassPercentage: 0,
-                wrongTakePercentage: 0
-            },
-            allCubeAnalyses: analysis?.allCubeAnalyses || [],
-            playedMove: currentPlayedMove,
-            playedCubeAction: currentPlayedCubeAction,
-            playedMoves: analysis?.playedMoves || [],
-            playedCubeActions: analysis?.playedCubeActions || [],
-            creationDate: analysis?.creationDate || '',
-            lastModifiedDate: analysis?.lastModifiedDate || ''
-        });
-
-        commentTextStore.set('');
-        selectedMoveStore.set(null);
-        statusBarModeStore.set('MATCH');
-        // Player names are shown in the match-info header bar above the board
-        // (MatchInfoBar.svelte); no longer echoed in the status bar.
-
-        lastVisitedMatchStore.set({
-            matchID: match.id,
-            currentIndex: startIndex,
-            gameNumber: startMovePos.game_number
-        });
-    } catch (error) {
-        logger.error('Error entering match mode:', error);
-        const errMsg = error?.toString() || '';
-        if (errMsg.includes('no matches')) {
-            setStatusBarMessage(tMsg('status.noMatchesInDb'));
-        } else {
-            setStatusBarMessage(tMsg('status.errorEnteringMatchMode'));
-        }
-    }
+    activeTabStore.set(entry.tab);
 }
 
-export function toggleAnalysisPanel() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    logger.log('toggleAnalysisPanel');
-    activeTabStore.set('analysis');
-}
-
-export function toggleCommentPanel() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    const positions = get(positionsStore);
-    if (!positions[get(currentPositionIndexStore)]) {
-        setStatusBarMessage(tMsg('status.noCurrentPositionComment'));
-        return;
-    }
-    logger.log('toggleCommentPanel called');
-    activeTabStore.set('comments');
-}
-
-// Opens the Metadata tab (not a modal — the standalone MetadataModal was removed).
-// Bound to the `meta` command and Ctrl+M.
-export function toggleMetadataPanel() {
-    if (get(databasePathStore)) {
-        if (get(statusBarModeStore) === 'EDIT') {
-            setStatusBarMessage(tMsg('status.cannotShowMetadataEdit'));
-        } else {
-            activeTabStore.set('metadata');
-        }
-    }
-}
-
-export function toggleAnkiPanel() {
-    logger.log('toggleAnkiPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('anki');
-}
-
-export function toggleMatchPanel() {
-    logger.log('toggleMatchPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('matches');
-}
-
-export function toggleCollectionPanelAction() {
-    logger.log('toggleCollectionPanelAction');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('collections');
-}
-
-export function toggleTournamentPanel() {
-    logger.log('toggleTournamentPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('tournaments');
-}
-
-export function toggleStatsPanel() {
-    logger.log('toggleStatsPanel');
-    if (!get(databasePathStore)) {
-        statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
-        return;
-    }
-    activeTabStore.set('stats');
-}
-
-export async function exitCollectionMode() {
-    logger.log('Exiting COLLECTION mode to NORMAL mode');
-    const lastViewedPosition = get(positionStore);
-    statusBarModeStore.set('NORMAL');
-    activeCollectionStore.set(null);
-    selectedCollectionStore.set(null);
-    collectionPositionsStore.set([]);
-    closePanel(PANEL.COLLECTION);
-    try {
-        const allPositions = await LoadAllPositionsDB();
-        positionsStore.set(Array.isArray(allPositions) ? allPositions : []);
-        if (allPositions && allPositions.length > 0) {
-            let targetIdx = allPositions.length - 1;
-            if (lastViewedPosition && lastViewedPosition.id) {
-                const foundIdx = allPositions.findIndex((p) => p.id === lastViewedPosition.id);
-                if (foundIdx >= 0) targetIdx = foundIdx;
-            }
-            currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(targetIdx);
-            loadAnalysisForPosition(allPositions[targetIdx]);
-            hasActiveSearch = false;
-            lastSearchCommand = '';
-            lastSearchPosition = null;
-            lastSearchStore.set(null);
-        }
-    } catch (error) {
-        logger.error('Error reloading positions after collection exit:', error);
-        loadAllPositions();
-    }
-}
-
-export function handleOpenCollection(collection, collectionPositions) {
-    if (!collectionPositions || collectionPositions.length === 0) {
-        statusBarTextStore.set(tMsg('commands.collectionEmpty'));
-        return;
-    }
-
-    if (get(matchContextStore).isMatchMode) {
-        matchContextStore.update((ctx) => ({
-            ...ctx,
-            isMatchMode: false,
-            matchID: null,
-            movePositions: [],
-            currentIndex: 0
-        }));
-    }
-
-    statusBarModeStore.set('COLLECTION');
-    positionsStore.set(collectionPositions);
-    positionStore.set(collectionPositions[0]);
-    currentPositionIndexStore.set(0);
-    loadAnalysisForPosition(collectionPositions[0]);
-    statusBarTextStore.set(tMsg('commands.collectionLoaded', { name: collection.name, count: collectionPositions.length }));
-}
+export const toggleAnalysisPanel = () => toggleTab('analysis');
+export const toggleCommentPanel = () => toggleTab('comments');
+// Bound to the `meta` command and Ctrl+M (a tab, not a modal).
+export const toggleMetadataPanel = () => toggleTab('metadata');
+export const toggleAnkiPanel = () => toggleTab('anki');
+export const toggleMatchPanel = () => toggleTab('matches');
+export const toggleCollectionPanelAction = () => toggleTab('collections');
+export const toggleTournamentPanel = () => toggleTab('tournaments');
+export const toggleStatsPanel = () => toggleTab('stats');
 
 export function togglePipcount() {
     logger.log('togglePipcount');
@@ -1488,87 +990,4 @@ export async function addSearchToFilterLibrary(filterName, filterCommand, positi
         logger.error('Error saving filter:', error);
         statusBarTextStore.set(tMsg('commands.errorSavingFilter'));
     }
-}
-
-// Ctrl-G: show the current analysis dates plus the MET/take-point/gammon-value
-// figures for the position on screen, in the status bar.
-export function showDatesAndMetadata() {
-    const analysis = get(analysisStore);
-    const positions = get(positionsStore);
-    const currentIndex = get(currentPositionIndexStore);
-
-    const tr = get(t);
-
-    if (!analysis || !analysis.creationDate || !analysis.lastModifiedDate) {
-        statusBarTextStore.set(tMsg('statusBar.noDatabaseOpened'));
-        return;
-    }
-
-    const formatDate = (date) => {
-        const [year, month, day] = date.toLocaleDateString('sv-SE').split('-');
-        const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-        return `${year}/${month}/${day} ${time}`;
-    };
-    const creationDate = formatDate(new Date(analysis.creationDate));
-    const lastModifiedDate = formatDate(new Date(analysis.lastModifiedDate));
-    let statusText = tr('statusBar.createdModified', { created: creationDate, modified: lastModifiedDate });
-
-    if (positions.length === 0 || currentIndex < 0 || currentIndex >= positions.length) {
-        statusText += ` | ${tr('statusBar.noPositionData')}`;
-    } else {
-        const position = positions[currentIndex];
-        const cubeValue = position.cube.value;
-        let metValue = 'N/A';
-        let tp2LiveValue = 'N/A';
-        let tp2LastValue = 'N/A';
-        let gv1Value = 'N/A';
-        let gv2Value = 'N/A';
-        let gv4Value = 'N/A';
-        let tp4LiveValue = 'N/A';
-        let tp4LastValue = 'N/A';
-
-        if (position.score[0] - 1 >= 0 && position.score[0] - 1 < metTable.length && position.score[1] - 1 >= 0 && position.score[1] - 1 < metTable[0].length) {
-            metValue = metTable[position.score[0] - 1][position.score[1] - 1].toFixed(1);
-        }
-
-        if (position.score[0] - 2 >= 0 && position.score[0] - 2 < takePoint2LiveTable.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < takePoint2LiveTable[0].length) {
-            tp2LiveValue = takePoint2LiveTable[position.score[0] - 2][position.score[1] - 2].toFixed(1);
-        }
-
-        if (position.score[0] - 2 >= 0 && position.score[0] - 2 < takePoint2LastTable.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < takePoint2LastTable[0].length) {
-            tp2LastValue = takePoint2LastTable[position.score[0] - 2][position.score[1] - 2].toFixed(1);
-        }
-
-        if (position.score[0] - 2 >= 0 && position.score[0] - 2 < gammonValue1Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue1Table[0].length) {
-            gv1Value = gammonValue1Table[position.score[0] - 2][position.score[1] - 2].toFixed(2);
-        }
-
-        if (position.score[0] - 3 >= 0 && position.score[0] - 3 < gammonValue2Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue2Table[0].length) {
-            gv2Value = gammonValue2Table[position.score[0] - 3][position.score[1] - 2].toFixed(2);
-        }
-
-        if (position.score[0] - 5 >= 0 && position.score[0] - 5 < gammonValue4Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue4Table[0].length) {
-            gv4Value = gammonValue4Table[position.score[0] - 5][position.score[1] - 2].toFixed(2);
-        }
-
-        if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LiveTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LiveTable[0].length) {
-            tp4LiveValue = takePoint4LiveTable[position.score[0] - 3][position.score[1] - 3].toFixed(0);
-        }
-
-        if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LastTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LastTable[0].length) {
-            tp4LastValue = takePoint4LastTable[position.score[0] - 3][position.score[1] - 3].toFixed(0);
-        }
-
-        let metadata = `met: ${metValue}`;
-        if (cubeValue === 0) {
-            metadata += ` | tp2_live: ${tp2LiveValue} | tp2_last: ${tp2LastValue} | gv1: ${gv1Value} | gv2: ${gv2Value}`;
-        } else if (cubeValue === 1) {
-            metadata += ` | tp4_live: ${tp4LiveValue} | tp4_last: ${tp4LastValue} | gv2: ${gv2Value} | gv4: ${gv4Value}`;
-        } else if (cubeValue === 2) {
-            metadata += ` | gv4: ${gv4Value}`;
-        }
-        statusText += ` | ${metadata}`;
-    }
-
-    statusBarTextStore.set(statusText);
 }
