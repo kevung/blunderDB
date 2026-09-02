@@ -1,6 +1,7 @@
 <script>
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
+    import PanelTable from '../panels/PanelTable.svelte';
 
     /**
      * @type {{
@@ -32,8 +33,19 @@
         { key: 'luck', labelKey: 'stats.playersColLuck', rate: true }
     ];
 
-    let sortKey = $state('pr');
-    let sortAsc = $state(true);
+    // The header cycles through nextSort (in PanelTable): a column is first
+    // picked in its natural direction — lower is better for a rate, higher is
+    // more for a count — and a second click flips it.
+    let sort = $state({ column: 'pr', direction: 'asc' });
+    const columns = $derived(
+        COLUMNS.map((col) => ({
+            key: col.key,
+            label: $t(col.labelKey),
+            sortable: true,
+            align: col.align === 'left' ? 'left' : 'right',
+            defaultDir: col.rate || col.key === 'name' ? 'asc' : 'desc'
+        }))
+    );
 
     /** Value a row sorts by for a given column; null means "nothing measured". */
     function sortValue(row, key) {
@@ -56,6 +68,8 @@
 
     const sorted = $derived.by(() => {
         if (!rows) return [];
+        const sortKey = sort.column;
+        const sortAsc = sort.direction === 'asc';
         const col = COLUMNS.find((c) => c.key === sortKey);
         const copy = [...rows];
         copy.sort((a, b) => {
@@ -79,16 +93,6 @@
         });
         return copy;
     });
-
-    function toggleSort(key) {
-        if (sortKey === key) {
-            sortAsc = !sortAsc;
-        } else {
-            sortKey = key;
-            // Lower is better for a rate, higher is more for a count.
-            sortAsc = COLUMNS.find((c) => c.key === key)?.rate || key === 'name';
-        }
-    }
 
     /** A rate with nothing behind it is shown as unknown, never as a zero. */
     function fmtRate(value, known) {
@@ -120,47 +124,30 @@
     {#if !rows || rows.length === 0}
         <p class="empty-msg">{$t('stats.playersEmpty')}</p>
     {:else}
-        <div class="table-scroll">
-            <table class="players-table">
-                <thead>
-                    <tr>
-                        {#each COLUMNS as col (col.key)}
-                            <th class:numeric={col.align !== 'left'} aria-sort={sortKey === col.key ? (sortAsc ? 'ascending' : 'descending') : 'none'}>
-                                <button class="sort-btn" onclick={() => toggleSort(col.key)}>
-                                    {$t(col.labelKey)}
-                                    {#if sortKey === col.key}<span class="arrow" aria-hidden="true">{sortAsc ? '▲' : '▼'}</span>{/if}
-                                </button>
-                            </th>
-                        {/each}
-                    </tr>
-                </thead>
-                <tbody>
-                    {#each sorted as row (row.name)}
-                        <tr
-                            class="player-row"
-                            tabindex="0"
-                            role="button"
-                            title={$t('stats.playersRowHint', { name: row.name })}
-                            onclick={() => selectPlayer(row.name)}
-                            onkeydown={(e) => onRowKey(e, row.name)}
-                        >
-                            <td class="name">{row.name}</td>
-                            <td class="numeric">{row.matches}</td>
-                            <td class="numeric">{row.wins}–{row.losses}</td>
-                            <td class="numeric">{row.decisions}</td>
-                            <td class="numeric strong">{fmtRate(row.pr, row.decisions > 0)}</td>
-                            <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>
-                            <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
-                            <td class="numeric">{fmtRate(row.snowie_er, row.decisions > 0)}</td>
-                            <td class="numeric">{row.blunders}</td>
-                            <td class="numeric" title={row.luck_known ? $t('stats.playersLuckRolls', { n: row.luck_rolls }) : $t('stats.playersLuckUnknown')}>
-                                {fmtLuck(row)}
-                            </td>
-                        </tr>
-                    {/each}
-                </tbody>
-            </table>
-        </div>
+        <PanelTable
+            rows={sorted}
+            rowKey={(row) => row.name}
+            {columns}
+            bind:sort
+            pointerRows
+            rowAttrs={(row) => ({ tabindex: 0, role: 'button', title: $t('stats.playersRowHint', { name: row.name }), onkeydown: (e) => onRowKey(e, row.name) })}
+            onSelect={(row) => selectPlayer(row.name)}
+        >
+            {#snippet cells(row)}
+                <td class="name">{row.name}</td>
+                <td class="numeric">{row.matches}</td>
+                <td class="numeric">{row.wins}–{row.losses}</td>
+                <td class="numeric">{row.decisions}</td>
+                <td class="numeric strong">{fmtRate(row.pr, row.decisions > 0)}</td>
+                <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>
+                <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
+                <td class="numeric">{fmtRate(row.snowie_er, row.decisions > 0)}</td>
+                <td class="numeric">{row.blunders}</td>
+                <td class="numeric" title={row.luck_known ? $t('stats.playersLuckRolls', { n: row.luck_rolls }) : $t('stats.playersLuckUnknown')}>
+                    {fmtLuck(row)}
+                </td>
+            {/snippet}
+        </PanelTable>
     {/if}
 </div>
 
@@ -175,80 +162,20 @@
         min-height: 0;
     }
 
-    /* The table scrolls inside its own box, both ways: the panel never scrolls
-       sideways, and the vertical scroll has to happen HERE for the sticky
-       header to have something to stick to. An ancestor scrolling instead
-       would carry the header off-screen along with the rows. */
-    .table-scroll {
-        flex: 1;
-        min-height: 0;
-        overflow: auto;
-    }
-
-    .players-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: var(--font-size-small);
-    }
-
-    .players-table th,
-    .players-table td {
-        padding: 0.3rem 0.5rem;
-        border-bottom: 1px solid var(--border-color, #ddd);
+    /* Every figure is a number set flush right in tabular digits; the name
+       column keeps the left alignment the header gives it. */
+    .players-tab :global(th),
+    .players-tab :global(td) {
         white-space: nowrap;
     }
 
-    .players-table th {
-        text-align: right;
-        font-weight: 600;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        /* Opaque, or the rows show through the labels as they scroll past. */
-        background: var(--panel-bg, #fff);
-        /* A sticky cell leaves its own border behind when it detaches, so the
-           rule under the header is drawn as an inset shadow instead. */
-        border-bottom: none;
-        box-shadow: inset 0 -1px 0 var(--border-color, #ddd);
-    }
-
-    .players-table th:first-child,
-    .players-table td.name {
-        text-align: left;
-    }
-
-    .players-table td.numeric {
+    td.numeric {
         text-align: right;
         font-variant-numeric: tabular-nums;
     }
 
     td.strong {
         font-weight: 600;
-    }
-
-    .sort-btn {
-        color: inherit;
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-    }
-
-    .sort-btn:hover {
-        text-decoration: underline;
-    }
-
-    .arrow {
-        margin-left: 0.2em;
-    }
-
-    .player-row {
-        cursor: pointer;
-    }
-
-    .player-row:hover,
-    .player-row:focus-visible {
-        background: var(--hover-bg, rgba(127, 127, 127, 0.12));
     }
 
     .empty-msg {
