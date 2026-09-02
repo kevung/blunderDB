@@ -1,4 +1,5 @@
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
+import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, numericToken, readFlat } from './filterModel.js';
 
 // searchFilterService — shared logic that turns the search UI's active filter
 // labels + their option/min/max/range state into the backend command tokens
@@ -10,10 +11,12 @@ import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.j
 // `parseFilters()` in `commandProcessor.js` (which parses tokens back into
 // filter flags), so the two are covered by a round-trip test.
 //
-// `options` is a plain object carrying every option/min/max/range field the
-// switch reads; both components already hold these as identically-named state,
-// so they pass them with object shorthand. Missing fields simply produce
-// `undefined` in the token, exactly as the original inline switch did.
+// `options` is a flat object carrying the non-numeric fields the switch reads
+// plus, for each numeric filter, its `<key>Option/Min/Max/RangeMin/RangeMax`
+// fields (the shape `filterModel.toStore` produces). The numeric filters are
+// no longer spelled out here: they come from the NUMERIC_FILTERS table.
+// Missing fields simply produce `undefined` in the token, exactly as the
+// original inline switch did.
 
 /**
  * Map a list of active filter labels to their backend command tokens.
@@ -24,86 +27,6 @@ import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.j
 export function buildFilterTokens(activeFilters, options) {
     const {
         diceRollOption,
-        pipCountOption,
-        pipCountMin,
-        pipCountMax,
-        pipCountRangeMin,
-        pipCountRangeMax,
-        player1AbsolutePipCountOption,
-        player1AbsolutePipCountMin,
-        player1AbsolutePipCountMax,
-        player1AbsolutePipCountRangeMin,
-        player1AbsolutePipCountRangeMax,
-        equityOption,
-        equityMin,
-        equityMax,
-        equityRangeMin,
-        equityRangeMax,
-        moveErrorOption,
-        moveErrorMin,
-        moveErrorMax,
-        moveErrorRangeMin,
-        moveErrorRangeMax,
-        winRateOption,
-        winRateMin,
-        winRateMax,
-        winRateRangeMin,
-        winRateRangeMax,
-        gammonRateOption,
-        gammonRateMin,
-        gammonRateMax,
-        gammonRateRangeMin,
-        gammonRateRangeMax,
-        backgammonRateOption,
-        backgammonRateMin,
-        backgammonRateMax,
-        backgammonRateRangeMin,
-        backgammonRateRangeMax,
-        player2WinRateOption,
-        player2WinRateMin,
-        player2WinRateMax,
-        player2WinRateRangeMin,
-        player2WinRateRangeMax,
-        player2GammonRateOption,
-        player2GammonRateMin,
-        player2GammonRateMax,
-        player2GammonRateRangeMin,
-        player2GammonRateRangeMax,
-        player2BackgammonRateOption,
-        player2BackgammonRateMin,
-        player2BackgammonRateMax,
-        player2BackgammonRateRangeMin,
-        player2BackgammonRateRangeMax,
-        player1CheckerOffOption,
-        player1CheckerOffMin,
-        player1CheckerOffMax,
-        player1CheckerOffRangeMin,
-        player1CheckerOffRangeMax,
-        player2CheckerOffOption,
-        player2CheckerOffMin,
-        player2CheckerOffMax,
-        player2CheckerOffRangeMin,
-        player2CheckerOffRangeMax,
-        player1BackCheckerOption,
-        player1BackCheckerMin,
-        player1BackCheckerMax,
-        player1BackCheckerRangeMin,
-        player1BackCheckerRangeMax,
-        player2BackCheckerOption,
-        player2BackCheckerMin,
-        player2BackCheckerMax,
-        player2BackCheckerRangeMin,
-        player2BackCheckerRangeMax,
-        player1CheckerInZoneOption,
-        player1CheckerInZoneMin,
-        player1CheckerInZoneMax,
-        player1CheckerInZoneRangeMin,
-        player1CheckerInZoneRangeMax,
-        player2CheckerInZoneOption,
-        player2CheckerInZoneMin,
-        player2CheckerInZoneMax,
-        player2CheckerInZoneRangeMin,
-        player2CheckerInZoneRangeMax,
         searchText,
         commentMode = 'contains',
         movePattern,
@@ -112,32 +35,14 @@ export function buildFilterTokens(activeFilters, options) {
         creationDateMax,
         creationDateRangeMin,
         creationDateRangeMax,
-        player1OutfieldBlotOption,
-        player1OutfieldBlotMin,
-        player1OutfieldBlotMax,
-        player1OutfieldBlotRangeMin,
-        player1OutfieldBlotRangeMax,
-        player2OutfieldBlotOption,
-        player2OutfieldBlotMin,
-        player2OutfieldBlotMax,
-        player2OutfieldBlotRangeMin,
-        player2OutfieldBlotRangeMax,
-        player1JanBlotOption,
-        player1JanBlotMin,
-        player1JanBlotMax,
-        player1JanBlotRangeMin,
-        player1JanBlotRangeMax,
-        player2JanBlotOption,
-        player2JanBlotMin,
-        player2JanBlotMax,
-        player2JanBlotRangeMin,
-        player2JanBlotRangeMax,
         matchIDsSelected,
         tournamentIDsSelected,
         playerName
     } = options;
 
     return activeFilters.map((filter) => {
+        const numeric = NUMERIC_FILTER_BY_LABEL[filter];
+        if (numeric) return numericToken(numeric, readFlat(numeric, options));
         switch (filter) {
             case 'Include Cube':
                 return 'cube';
@@ -155,74 +60,6 @@ export function buildFilterTokens(activeFilters, options) {
                 return 'i';
             case 'Flagged':
                 return 'fl';
-            case 'Pipcount Difference':
-                return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
-            case 'Player Absolute Pipcount':
-                return player1AbsolutePipCountOption === 'min'
-                    ? `P>${player1AbsolutePipCountMin}`
-                    : player1AbsolutePipCountOption === 'max'
-                      ? `P<${player1AbsolutePipCountMax}`
-                      : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
-            case 'Equity (millipoints)':
-                return equityOption === 'min' ? `e>${equityMin}` : equityOption === 'max' ? `e<${equityMax}` : `e${equityRangeMin},${equityRangeMax}`;
-            case 'Move Error (millipoints, Player 1)':
-                return moveErrorOption === 'min' ? `E>${moveErrorMin}` : moveErrorOption === 'max' ? `E<${moveErrorMax}` : `E${moveErrorRangeMin},${moveErrorRangeMax}`;
-            case 'Win Rate':
-                return winRateOption === 'min' ? `w>${winRateMin}` : winRateOption === 'max' ? `w<${winRateMax}` : `w${winRateRangeMin},${winRateRangeMax}`;
-            case 'Gammon Rate':
-                return gammonRateOption === 'min' ? `g>${gammonRateMin}` : gammonRateOption === 'max' ? `g<${gammonRateMax}` : `g${gammonRateRangeMin},${gammonRateRangeMax}`;
-            case 'Backgammon Rate':
-                return backgammonRateOption === 'min' ? `b>${backgammonRateMin}` : backgammonRateOption === 'max' ? `b<${backgammonRateMax}` : `b${backgammonRateRangeMin},${backgammonRateRangeMax}`;
-            case 'Opponent Win Rate':
-                return player2WinRateOption === 'min' ? `W>${player2WinRateMin}` : player2WinRateOption === 'max' ? `W<${player2WinRateMax}` : `W${player2WinRateRangeMin},${player2WinRateRangeMax}`;
-            case 'Opponent Gammon Rate':
-                return player2GammonRateOption === 'min'
-                    ? `G>${player2GammonRateMin}`
-                    : player2GammonRateOption === 'max'
-                      ? `G<${player2GammonRateMax}`
-                      : `G${player2GammonRateRangeMin},${player2GammonRateRangeMax}`;
-            case 'Opponent Backgammon Rate':
-                return player2BackgammonRateOption === 'min'
-                    ? `B>${player2BackgammonRateMin}`
-                    : player2BackgammonRateOption === 'max'
-                      ? `B<${player2BackgammonRateMax}`
-                      : `B${player2BackgammonRateRangeMin},${player2BackgammonRateRangeMax}`;
-            case 'Player Checker-Off':
-                return player1CheckerOffOption === 'min'
-                    ? `o>${player1CheckerOffMin}`
-                    : player1CheckerOffOption === 'max'
-                      ? `o<${player1CheckerOffMax}`
-                      : `o${player1CheckerOffRangeMin},${player1CheckerOffRangeMax}`;
-            case 'Opponent Checker-Off':
-                return player2CheckerOffOption === 'min'
-                    ? `O>${player2CheckerOffMin}`
-                    : player2CheckerOffOption === 'max'
-                      ? `O<${player2CheckerOffMax}`
-                      : `O${player2CheckerOffRangeMin},${player2CheckerOffRangeMax}`;
-            case 'Player Back Checker':
-                return player1BackCheckerOption === 'min'
-                    ? `k>${player1BackCheckerMin}`
-                    : player1BackCheckerOption === 'max'
-                      ? `k<${player1BackCheckerMax}`
-                      : `k${player1BackCheckerRangeMin},${player1BackCheckerRangeMax}`;
-            case 'Opponent Back Checker':
-                return player2BackCheckerOption === 'min'
-                    ? `K>${player2BackCheckerMin}`
-                    : player2BackCheckerOption === 'max'
-                      ? `K<${player2BackCheckerMax}`
-                      : `K${player2BackCheckerRangeMin},${player2BackCheckerRangeMax}`;
-            case 'Player Checker in the Zone':
-                return player1CheckerInZoneOption === 'min'
-                    ? `z>${player1CheckerInZoneMin}`
-                    : player1CheckerInZoneOption === 'max'
-                      ? `z<${player1CheckerInZoneMax}`
-                      : `z${player1CheckerInZoneRangeMin},${player1CheckerInZoneRangeMax}`;
-            case 'Opponent Checker in the Zone':
-                return player2CheckerInZoneOption === 'min'
-                    ? `Z>${player2CheckerInZoneMin}`
-                    : player2CheckerInZoneOption === 'max'
-                      ? `Z<${player2CheckerInZoneMax}`
-                      : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
             // One filter, three modes: `t"…"` searches comment content, `co` /
             // `xco` ask only whether a comment is there at all. The modes are
             // mutually exclusive here, so the token is never ambiguous.
@@ -240,30 +77,6 @@ export function buildFilterTokens(activeFilters, options) {
                       ? `T<${formatDate(creationDateMax)}`
                       : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
             }
-            case 'Player Outfield Blot':
-                return player1OutfieldBlotOption === 'min'
-                    ? `bo>${player1OutfieldBlotMin}`
-                    : player1OutfieldBlotOption === 'max'
-                      ? `bo<${player1OutfieldBlotMax}`
-                      : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
-            case 'Opponent Outfield Blot':
-                return player2OutfieldBlotOption === 'min'
-                    ? `BO>${player2OutfieldBlotMin}`
-                    : player2OutfieldBlotOption === 'max'
-                      ? `BO<${player2OutfieldBlotMax}`
-                      : `BO${player2OutfieldBlotRangeMin},${player2OutfieldBlotRangeMax}`;
-            case 'Player Jan Blot':
-                return player1JanBlotOption === 'min'
-                    ? `bj>${player1JanBlotMin}`
-                    : player1JanBlotOption === 'max'
-                      ? `bj<${player1JanBlotMax}`
-                      : `bj${player1JanBlotRangeMin},${player1JanBlotRangeMax}`;
-            case 'Opponent Jan Blot':
-                return player2JanBlotOption === 'min'
-                    ? `BJ>${player2JanBlotMin}`
-                    : player2JanBlotOption === 'max'
-                      ? `BJ<${player2JanBlotMax}`
-                      : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
             case 'Match IDs':
                 return matchIDsSelected && matchIDsSelected.length ? `ma${matchIDsSelected.join(';')}` : '';
             case 'Tournament IDs':
@@ -479,9 +292,9 @@ export function parseSearchCommand(command) {
 
 // Command-line token for each search filter, keyed by its canonical (English)
 // label — the same labels SearchPanel's filterGroups use. Single source of
-// truth for the in-UI token hint shown on hover; the prefixes mirror the
-// buildFilterTokens switch above. `type` drives how filterTokenHint renders the
-// usage forms:
+// truth for the in-UI token hint shown on hover; the range entries come from
+// the NUMERIC_FILTERS table, the others mirror the buildFilterTokens switch
+// above. `type` drives how filterTokenHint renders the usage forms:
 //   flag  — the bare token (cube, nc, M, d)
 //   range — three forms: X>n, X<n, Xn,m
 //   text  — quoted free text: t"…"
@@ -496,26 +309,7 @@ const FILTER_TOKENS = {
     'Mirror Position': { token: 'M', type: 'flag' },
     'Individually Imported': { token: 'i', type: 'flag' },
     Flagged: { token: 'fl', type: 'flag' },
-    'Pipcount Difference': { token: 'p', type: 'range' },
-    'Player Absolute Pipcount': { token: 'P', type: 'range' },
-    'Equity (millipoints)': { token: 'e', type: 'range' },
-    'Move Error (millipoints, Player 1)': { token: 'E', type: 'range' },
-    'Win Rate': { token: 'w', type: 'range' },
-    'Gammon Rate': { token: 'g', type: 'range' },
-    'Backgammon Rate': { token: 'b', type: 'range' },
-    'Opponent Win Rate': { token: 'W', type: 'range' },
-    'Opponent Gammon Rate': { token: 'G', type: 'range' },
-    'Opponent Backgammon Rate': { token: 'B', type: 'range' },
-    'Player Checker-Off': { token: 'o', type: 'range' },
-    'Opponent Checker-Off': { token: 'O', type: 'range' },
-    'Player Back Checker': { token: 'k', type: 'range' },
-    'Opponent Back Checker': { token: 'K', type: 'range' },
-    'Player Checker in the Zone': { token: 'z', type: 'range' },
-    'Opponent Checker in the Zone': { token: 'Z', type: 'range' },
-    'Player Outfield Blot': { token: 'bo', type: 'range' },
-    'Opponent Outfield Blot': { token: 'BO', type: 'range' },
-    'Player Jan Blot': { token: 'bj', type: 'range' },
-    'Opponent Jan Blot': { token: 'BJ', type: 'range' },
+    ...Object.fromEntries(NUMERIC_FILTERS.map((f) => [f.label, { token: f.token, type: 'range' }])),
     // Three modes, so the hint spells all three rather than the `t"…"` form alone.
     Comment: { token: 't', type: 'comment' },
     'Best Move or Cube Decision': { token: 'm', type: 'text' },
