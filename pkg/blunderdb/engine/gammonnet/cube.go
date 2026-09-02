@@ -501,24 +501,126 @@ func levelBlend(lv *matchLevel, p float64, owner CubeOwner, efficiency float64) 
 	return (1.0-efficiency)*levelDead(lv, p) + efficiency*levelLive(lv, p, owner)
 }
 
+// laneCurve est la courbe vive du niveau au-dessus, avec tout ce qui NE
+// DÉPEND PAS de p sorti des soixante itérations : les deux dénominateurs de
+// segment (x1−x0), les deux numérateurs (y1−y0), le drapeau « mort » et le
+// choix de possession.
+//
+// C'EST UNE OPTIMISATION D'IMPLÉMENTATION, PAS UNE RÉVISION DU MODÈLE, et
+// elle est propre à ce portage. gcc inline level_live dans la bissection de
+// gammonNet ; le compilateur Go la juge trop complexe (`go build
+// -gcflags=-m` : cannot inline levelLive), si bien qu'ici chaque pas payait
+// un appel, un switch sur la possession et deux soustractions de segment —
+// soixante fois par point de rupture, six points de rupture par valuation.
+// Mesurée ici sur le poste isolé et entrelacé : ×1,24 à ×1,51 selon la taille
+// de fratrie. L'ADR-0003 range ce genre de gain du côté implémentation, et il
+// reste chez celui qui le porte : il n'a rien à faire remonter en amont, où
+// il n'existe pas.
+//
+// L'ARITHMÉTIQUE EST INCHANGÉE, au bit près. y0 + (y1−y0)·((p−x0)/(x1−x0))
+// s'écrit ici avec (y1−y0) et (x1−x0) calculés une fois : ce sont les mêmes
+// soustractions, sur les mêmes valeurs, et elles ne dépendent pas de p. Ce
+// qui serait faux, et n'est PAS fait, c'est précalculer la pente
+// (y1−y0)/(x1−x0) — une division de moins, mais un résultat différent.
+type laneCurve struct {
+	dead    bool
+	loseAvg float64
+	winAvg  float64
+	brk     float64 // cp sous CubeOwned, tp sous CubeOpponent
+	mid     float64 // cash sous CubeOwned, pass sous CubeOpponent
+	dLo     float64 // brk − 0
+	nLo     float64 // mid − loseAvg
+	dHi     float64 // 1 − brk
+	nHi     float64 // winAvg − mid
+}
+
+// set prépare la courbe vive du niveau lv telle que la voit owner. Rend
+// false pour CubeCentred, dont la courbe a trois segments : resolveLevels ne
+// la demande jamais (tp vient de la possédée, cp de l'adverse), et un
+// troisième segment sortirait `at` du budget d'inlining sans rien servir.
+// L'appelant retombe alors sur levelLive.
+func (c *laneCurve) set(lv *matchLevel, owner CubeOwner) bool {
+	switch owner {
+	case CubeOwned:
+		c.brk, c.mid = lv.cp, lv.cash
+	case CubeOpponent:
+		c.brk, c.mid = lv.tp, lv.pass
+	default:
+		return false
+	}
+	c.dead = lv.dead
+	c.loseAvg, c.winAvg = lv.loseAvg, lv.winAvg
+	c.dLo, c.nLo = c.brk-0.0, c.mid-c.loseAvg
+	c.dHi, c.nHi = 1.0-c.brk, c.winAvg-c.mid
+	return true
+}
+
+// at est levelLive sur cette courbe, terme pour terme : le segment choisi,
+// et lui seul, est calculé. C'est la forme que veut une bissection SÉRIELLE
+// (levelSolve), où la chaîne est bornée par la latence — une division de plus
+// y coûte, et la comparaison p <= brk, elle, devient prévisible dès que
+// l'intervalle de bissection est tombé d'un côté de la rupture.
+func (c *laneCurve) at(p float64) float64 {
+	if c.dead {
+		return (1.0-p)*c.loseAvg + p*c.winAvg
+	}
+	if p <= c.brk {
+		if c.dLo <= 0.0 {
+			return c.mid
+		}
+		return c.loseAvg + c.nLo*((p-0.0)/c.dLo)
+	}
+	if c.dHi <= 0.0 {
+		return c.winAvg
+	}
+	return c.mid + c.nHi*((p-c.brk)/c.dHi)
+}
+
+// cubeSolveLifted éteint la levée. Il n'existe QUE pour la mesure — sa valeur
+// par défaut est la levée allumée, et rien dans l'application ne le pose. Il
+// est ici plutôt que sur le Searcher parce que levelSolve est trois appels
+// sous Value et n'a aucun chemin par lequel un chercheur pourrait le lui
+// transmettre. Il est lu une fois par point de rupture, pas une fois par pas,
+// donc il ne coûte rien ; et il n'est écrit qu'entre deux recherches, jamais
+// pendant, ce qui est la même règle que Counters.
+var cubeSolveLifted = true
+
 // levelSolve finds the p where a monotone level curve crosses target: the
 // functions are piecewise-linear and monotone, so bisection suffices.
 // blend < 0 bisects the fully-live curve (breakpoint resolution inside the
 // recursion); otherwise the curve blended at that efficiency (the reported
 // take point).
+//
+// La courbe est préparée une fois avant les soixante pas (laneCurve) : les
+// dénominateurs et numérateurs des segments ne dépendent pas de p, et le
+// compilateur Go refuse d'inliner levelLive, si bien que chaque pas payait un
+// appel et un switch. Même arithmétique, mêmes bits — la levée est le pendant
+// scalaire de celle du lot, et elle est mesurée séparément d'elle : sans
+// cette levée, le lot rendrait ×1,2 au lieu de ce que le §4 des mesures
+// rapporte, et une bonne moitié de ce gain n'aurait rien eu à voir avec
+// l'entrelacement des voies.
 func levelSolve(lv *matchLevel, owner CubeOwner, blend, target float64) float64 {
+	var c laneCurve
+	lifted := cubeSolveLifted && c.set(lv, owner)
+
 	low, high := 0.0, 1.0
 	for i := 0; i < 60; i++ {
 		mid := 0.5 * (low + high)
-		var value float64
-		if blend < 0.0 {
-			value = levelLive(lv, mid, owner)
+		var live float64
+		if lifted {
+			live = c.at(mid)
 		} else {
-			value = levelBlend(lv, mid, owner, blend)
+			live = levelLive(lv, mid, owner)
 		}
-		if value < target {
+		value := live
+		if blend >= 0.0 {
+			value = (1.0-blend)*levelDead(lv, mid) + blend*live
+		}
+		below := value < target
+		if below {
 			low = mid
-		} else {
+		}
+		if !below {
 			high = mid
 		}
 	}
@@ -535,11 +637,32 @@ func levelSolve(lv *matchLevel, owner CubeOwner, blend, target float64) float64 
 // matchMaxAway bounds away scores, and refused rather than approximated if
 // that bound ever moves).
 //
-// Breakpoints are resolved backwards, deepest first, so each level's
-// bisection targets a fully-built 2k level: an iterative form of the
-// recursion, each (state, k) computed once from the base case down.
+// Coupé en deux (ADR-0003 / spec §7.1) parce que les deux moitiés n'ont pas
+// la même nature : les ANCRES d'un niveau ne dépendent que de ce candidat,
+// les POINTS DE RUPTURE dépendent du niveau au-dessus et se résolvent par
+// bissection. C'est la seconde moitié qui se met en lot, et la coupe est
+// tout ce que le lot demande à ce fichier.
 func buildLevels(state MatchState, outcomes [numOutcomes]float64) ([maxCubeLevels]matchLevel, int) {
 	var levels [maxCubeLevels]matchLevel
+	count := buildLevelAnchors(state, outcomes, &levels)
+	if count == 0 {
+		return levels, 0
+	}
+	resolveLevels(&levels, count)
+	return levels, count
+}
+
+// buildLevelAnchors remplit les ancres de chaque niveau de la chaîne —
+// loseAvg, winAvg, pass, cash — et laisse les points de rupture à leurs
+// bornes triviales (tp = 0, cp = 1). Rend le nombre de niveaux, ou 0 pour
+// refuser.
+//
+// LA FORME DE LA CHAÎNE NE DÉPEND QUE DE state : le nombre de niveaux, les
+// enjeux et lequel est mort se lisent dans state.Cube et les deux away
+// scores, jamais dans outcomes. C'est ce qui permet à toutes les voies d'un
+// lot de résoudre le même niveau au même moment — et cubeValueBatch le
+// VÉRIFIE au lieu de le supposer.
+func buildLevelAnchors(state MatchState, outcomes [numOutcomes]float64, levels *[maxCubeLevels]matchLevel) int {
 	count := 0
 	stake := state.Cube
 	if stake > matchMaxAway {
@@ -558,7 +681,7 @@ func buildLevels(state MatchState, outcomes [numOutcomes]float64) ([maxCubeLevel
 		lv.tp = 0.0
 		lv.cp = 1.0
 		if !okLose || !okWin || !okPass || !okCash {
-			return levels, 0
+			return 0
 		}
 
 		count++
@@ -566,7 +689,7 @@ func buildLevels(state MatchState, outcomes [numOutcomes]float64) ([maxCubeLevel
 			break
 		}
 		if count == maxCubeLevels {
-			return levels, 0
+			return 0
 		}
 		// Same cap on the way up: past the horizon a doubled stake buys
 		// nothing new (every payout already saturated at matchMaxAway).
@@ -574,12 +697,18 @@ func buildLevels(state MatchState, outcomes [numOutcomes]float64) ([maxCubeLevel
 			stake *= 2
 		}
 	}
+	return count
+}
 
+// resolveLevels résout les points de rupture, les plus profonds d'abord, si
+// bien que chaque bissection vise un niveau 2k déjà complet : la forme
+// itérative de la récursion, chaque (état, k) calculé une fois depuis le cas
+// de base.
+func resolveLevels(levels *[maxCubeLevels]matchLevel, count int) {
 	for i := count - 2; i >= 0; i-- {
 		levels[i].tp = levelSolve(&levels[i+1], CubeOwned, -1.0, levels[i].pass)
 		levels[i].cp = levelSolve(&levels[i+1], CubeOpponent, -1.0, levels[i].cash)
 	}
-	return levels, count
 }
 
 // ── The leaf valuation for the search ───────────────────────────────────────
