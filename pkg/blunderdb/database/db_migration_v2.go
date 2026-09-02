@@ -453,6 +453,10 @@ func (d *Database) migrate_2_4_0_to_2_5_0(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("migrate 2.5.0 begin tx: %w", err)
 		}
+		// A Stmt bound to the transaction is a resource of its own; one per
+		// batch loop, closed with the loop, not one per row.
+		txUpdate := tx.Stmt(updateStmt)
+		defer txUpdate.Close()
 
 		const batchSize = 1000
 		var lastID int64
@@ -497,7 +501,7 @@ func (d *Database) migrate_2_4_0_to_2_5_0(ctx context.Context) error {
 					continue
 				}
 				if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) == 1 {
-					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+					if _, err := txUpdate.Exec(r.id); err != nil {
 						tx.Rollback()
 						return fmt.Errorf("migrate 2.5.0 update: %w", err)
 					}

@@ -60,6 +60,10 @@ func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("migrate 2.6.0 begin tx: %w", err)
 		}
+		// A Stmt bound to the transaction is a resource of its own; one per
+		// batch loop, closed with the loop, not one per row.
+		txUpdate := tx.Stmt(updateStmt)
+		defer txUpdate.Close()
 
 		const batchSize = 1000
 		var lastID int64
@@ -119,7 +123,7 @@ func (d *Database) migrate_2_5_0_to_2_6_0(ctx context.Context) error {
 				}
 
 				if computeIsCloseCube(ana.DoublingCubeAnalysis, playedAction) == 1 {
-					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+					if _, err := txUpdate.Exec(r.id); err != nil {
 						tx.Rollback()
 						return fmt.Errorf("migrate 2.6.0 update: %w", err)
 					}
@@ -351,6 +355,10 @@ func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("migrate 2.10.0 begin tx: %w", err)
 		}
+		// A Stmt bound to the transaction is a resource of its own; one per
+		// batch loop, closed with the loop, not one per row.
+		txUpdate := tx.Stmt(updateStmt)
+		defer txUpdate.Close()
 
 		const batchSize = 1000
 		var lastID int64
@@ -391,7 +399,7 @@ func (d *Database) migrate_2_9_0_to_2_10_0(ctx context.Context) error {
 				}
 
 				if isResp {
-					if _, err := tx.Stmt(updateStmt).Exec(id); err != nil {
+					if _, err := txUpdate.Exec(id); err != nil {
 						tx.Rollback()
 						return fmt.Errorf("migrate 2.10.0 update: %w", err)
 					}

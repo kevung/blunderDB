@@ -59,15 +59,11 @@ linters:
       - builtin$
       - examples$
     rules:
-      # db_migration.go is being rewritten on feat/migrations-registry; that
-      # branch removes this rule once the new file lands. Until then, do not
-      # touch the old one — every edit here is a merge conflict there.
-      - linters: [errorlint, sqlclosecheck]
-        path: "db_migration\\.go$"
       # ST1003 (initialisms) is enforced everywhere but the migration
-      # functions, which use underscores (migrate_X_to_Y) by convention.
+      # functions (db_migration.go and its db_migration_v*.go companions),
+      # which use underscores (migrate_X_to_Y) by convention.
       - linters: [staticcheck]
-        path: "db_migration\\.go$"
+        path: "db_migration(_v[0-9_]+)?\\.go$"
         text: "ST1003"
       # stats_legacy_oracle_test.go is the pre-unification statistics SQL,
       # copied verbatim as the oracle the storage backends are checked
