@@ -276,7 +276,10 @@ func MatchStateFromPosition(pos *domain.Position) (MatchState, bool) {
 // the engine's edge (a cold path), never inside the search's own loop
 // (ADR-0011's boundary rule).
 func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, depthLabel string, maxCandidates int, scale EquityScale) ([]domain.CheckerMove, error) {
-	out := make([]Candidate, MaxPlays)
+	// The searcher's own ranking buffer, not a fresh 164 Ko one per
+	// position: nothing below outlives this function — every candidate read
+	// out of it is copied into a domain.CheckerMove.
+	out := searcher.scratch()
 	n, err := searcher.Plays(gnPos, pos.Dice[0], pos.Dice[1], out)
 	if err != nil {
 		return nil, err

@@ -193,6 +193,17 @@ type Searcher struct {
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
 	feat  [NumFeatures]float32
+
+	// best is the candidate buffer the two entry points that do not take
+	// one rank into: BestPlay, and evaluateMoves at the domain edge. A
+	// Candidate is 80 octets and MaxPlays is 2048, so allocating one per
+	// call meant 164 Ko allocated and zeroed for every decision — for a
+	// caller that then reads the first entry and, in the batch job, a
+	// handful more. It belongs with the rest of the searcher's scratch,
+	// which already holds six buffers of exactly this size — but allocated
+	// on first use, not at construction: a worker built by WithWorkers only
+	// ever ranks into its caller's buffer and would never touch this one.
+	best []Candidate
 }
 
 // NewSearcher builds a searcher over the embedded networks. Refused, never
@@ -284,12 +295,20 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 
 // BestPlay returns the highest-valued play. It reports false on a dance.
 func (s *Searcher) BestPlay(pos *Position, d1, d2 int) (Candidate, bool, error) {
-	out := make([]Candidate, MaxPlays)
-	n, err := s.Plays(pos, d1, d2, out)
+	n, err := s.Plays(pos, d1, d2, s.scratch())
 	if err != nil || n == 0 {
 		return Candidate{}, false, err
 	}
-	return out[0], true, nil
+	return s.best[0], true, nil
+}
+
+// scratch is the ranking buffer, allocated on first use. Not goroutine-safe,
+// like every other piece of a Searcher's scratch.
+func (s *Searcher) scratch() []Candidate {
+	if s.best == nil {
+		s.best = make([]Candidate, MaxPlays)
+	}
+	return s.best
 }
 
 // rankPlays generates, scores and orders the plays at one node.
