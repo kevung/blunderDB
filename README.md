@@ -53,6 +53,8 @@ Every asset on the [Releases page](https://github.com/kevung/blunderDB/releases)
 | macOS | Universal `.app` (unsigned — see the security appendix in the docs) |
 | Windows | `.exe` (unsigned — see the security appendix in the docs) |
 
+winget and Homebrew are not published yet: each release ships the rendered manifests (`blunderDB-winget-manifests-x.y.z.zip`, `blunderdb-x.y.z.rb`) — see `packaging/winget/` and `packaging/homebrew/` for the submission steps.
+
 The headless daemon also builds as a container image from `Dockerfile.serve`.
 
 ### Build from source

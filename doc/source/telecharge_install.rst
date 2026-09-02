@@ -86,6 +86,32 @@ exécution :
    |latest_linux_webkit2gtk41_exe|. Les paquets natifs choisissent
    automatiquement la bonne dépendance.
 
+Gestionnaires de paquets Windows et Mac (à venir)
+-------------------------------------------------
+
+Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets (AUR,
+``.deb``, ``.rpm``). L'équivalent pour Windows (`winget
+<https://learn.microsoft.com/windows/package-manager/>`__) et pour Mac
+(`Homebrew <https://brew.sh/>`__) est en préparation : **les manifestes sont
+fournis avec chaque release** (``blunderDB-winget-manifests-x.y.z.zip`` et
+``blunderdb-x.y.z.rb`` sur la page des releases), mais ils ne sont pas encore
+soumis aux dépôts publics. Tant que ce n'est pas le cas, les commandes
+ci-dessous ne fonctionnent pas ; elles décrivent l'installation prévue :
+
+.. code-block:: powershell
+
+   winget install KevinUnger.blunderDB        # Windows, une fois publié
+
+.. code-block:: bash
+
+   brew tap kevung/tap                        # Mac, une fois le tap créé
+   brew install --cask blunderdb
+
+Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il
+reste non signé, et les avertissements décrits ci-dessous s'appliquent tels
+quels. Sur Mac, ``brew install --cask --no-quarantine blunderdb`` évite le
+blocage de Gatekeeper au premier lancement.
+
 Avertissements Windows et Mac
 -----------------------------
 
