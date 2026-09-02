@@ -15,6 +15,8 @@ import {
     cubeFactRows,
     checkerRows,
     orderMoveTokens,
+    condenseMoveTokens,
+    moveLabel,
     playedMovePredicate,
     playedCubePredicate,
     isPlayedOption,
@@ -231,6 +233,55 @@ describe('orderMoveTokens — a play reads from the back', () => {
     });
 });
 
+describe('condenseMoveTokens — one checker, one displacement', () => {
+    test('the steps of a single checker become the move they are', () => {
+        expect(condenseMoveTokens('24/18 18/14')).toBe('24/14');
+        expect(condenseMoveTokens('24/18/14')).toBe('24/14');
+        expect(condenseMoveTokens('bar/24 24/18')).toBe('bar/18');
+        expect(condenseMoveTokens('13/7 7/1 1/off')).toBe('13/off');
+    });
+
+    test('a hit on arrival travels with the condensed move', () => {
+        expect(condenseMoveTokens('24/18 18/14*')).toBe('24/14*');
+    });
+
+    test('a hit on the way through keeps the staging point', () => {
+        expect(condenseMoveTokens('24/18* 18/14')).toBe('24/18* 18/14');
+        expect(condenseMoveTokens('24/18*/14')).toBe('24/18*/14');
+        expect(condenseMoveTokens('24/20 20/16* 16/12')).toBe('24/16* 16/12');
+        expect(condenseMoveTokens('24/20/16*/12')).toBe('24/16*/12');
+    });
+
+    test('the two halves of a journey need not be neighbours', () => {
+        expect(condenseMoveTokens('18/14 24/18')).toBe('24/14');
+        expect(condenseMoveTokens('13/11 12/10 11/9')).toBe('13/9 12/10');
+    });
+
+    test('checkers that stay apart are left alone', () => {
+        expect(condenseMoveTokens('8/5 6/5')).toBe('8/5 6/5');
+        expect(condenseMoveTokens('24/18 13/8')).toBe('24/18 13/8');
+    });
+
+    test('a chain is joined only when the same checkers made both halves', () => {
+        expect(condenseMoveTokens('24/18(2) 18/14(2)')).toBe('24/14(2)');
+        expect(condenseMoveTokens('24/18(2) 18/14')).toBe('24/18(2) 18/14');
+    });
+
+    test('what does not parse as this notation is returned untouched', () => {
+        expect(condenseMoveTokens('Cannot move')).toBe('Cannot move');
+        expect(condenseMoveTokens('')).toBe('');
+        expect(condenseMoveTokens(undefined)).toBe('');
+    });
+});
+
+describe('moveLabel — condensed, then read from the back', () => {
+    test('the play is condensed before it is ordered', () => {
+        expect(moveLabel('18/14 24/18')).toBe('24/14');
+        expect(moveLabel('8/3 24/18 18/14')).toBe('24/14 8/3');
+        expect(moveLabel('8/3 24/18* 18/14')).toBe('24/18* 18/14 8/3');
+    });
+});
+
 describe('checkerRows', () => {
     test('the header follows CHECKER_COLUMNS, with and without provenance', () => {
         expect(checkerRows(moves, { t }).header).toEqual(CHECKER_COLUMNS.map(() => expect.stringMatching(/^analysis\./)));
@@ -269,9 +320,9 @@ describe('checkerRows', () => {
         expect(block.rows.map((r) => r.highlight)).toEqual([true, false]);
     });
 
-    test('the move cell is reordered for reading, the move object is not', () => {
+    test('the move cell is rewritten for reading, the move object is not', () => {
         const row = checkerRows([{ move: '18/14 24/18', index: 0 }], { t }).rows[0];
-        expect(row.label).toBe('24/18 18/14');
+        expect(row.label).toBe('24/14');
         expect(row.move.move).toBe('18/14 24/18');
     });
 

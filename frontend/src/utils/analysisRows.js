@@ -204,6 +204,115 @@ export function orderMoveTokens(move) {
         .join(' ');
 }
 
+// One checker, one displacement: a play the SAME checker made in several steps
+// reads as the single move it is — "24/18 18/14" is "24/14".
+//
+// The step-by-step form carries something the condensed one cannot only when
+// the checker HIT on its way through: "24/18* 18/14" says a blot was picked up
+// on 18, and writing "24/14" would erase it. So a staging point survives
+// exactly when the checker hit on landing there, and disappears otherwise — a
+// hit on the FINAL point travels with the condensed token ("24/18 18/14*"
+// becomes "24/14*"), since nothing about it is lost.
+//
+// The rewrite only ever REMOVES a staging point; the surviving ones keep the
+// separator their producer wrote them with. gnubg's and XG's own chained form
+// stays chained ("24/18*/14"), a play written as separate tokens stays in
+// separate tokens, and no play is ever re-spelled just to look uniform.
+//
+// Two tokens are joined only when they carry the same multiplicity:
+// "24/18(2) 18/14(2)" is two checkers that both went the whole way, so it is
+// "24/14(2)"; "24/18(2) 18/14" is two checkers whose paths diverged, and the
+// notation is already the shortest true statement about them.
+
+const POINT = /^(?:bar|off|[1-9]|1\d|2[0-4])$/i;
+
+// A token is a chain of points ("24/18/14"), each LANDING point optionally
+// starred, with an optional multiplicity: "13/7*(2)". Anything else → null,
+// and the play is then left exactly as it arrived.
+function parseToken(token) {
+    let body = token;
+    let count = 1;
+    const times = /\((\d+)\)$/.exec(body);
+    if (times) {
+        count = Number.parseInt(times[1], 10);
+        body = body.slice(0, times.index);
+    }
+    const parts = body.split('/');
+    if (parts.length < 2) return null;
+    const points = [];
+    const hits = [];
+    for (const [i, part] of parts.entries()) {
+        const hit = part.endsWith('*');
+        const point = hit ? part.slice(0, -1) : part;
+        // A starting point is never hit — only a landing is.
+        if (!POINT.test(point) || (i === 0 && hit)) return null;
+        points.push(point);
+        if (i > 0) hits.push(hit);
+    }
+    return { points, hits, count };
+}
+
+function renderToken({ points, hits, count }) {
+    let text = points[0];
+    for (let i = 1; i < points.length; i++) text += '/' + points[i] + (hits[i - 1] ? '*' : '');
+    return count > 1 ? `${text}(${count})` : text;
+}
+
+// hits[i - 1] is the landing on points[i]: keep that point when the checker hit
+// there, and always keep the point the play ends on.
+function dropIdleStages({ points, hits, count }) {
+    const kept = [points[0]];
+    const keptHits = [];
+    for (let i = 1; i < points.length; i++) {
+        if (hits[i - 1] || i === points.length - 1) {
+            kept.push(points[i]);
+            keptHits.push(hits[i - 1]);
+        }
+    }
+    return { points: kept, hits: keptHits, count };
+}
+
+const landsOn = (play) => play.points[play.points.length - 1];
+const hitOnLanding = (play) => play.hits[play.hits.length - 1];
+
+// The second play continues the first when it starts where the first ended,
+// the same number of checkers made both, and no blot was picked up in between.
+function continues(first, second) {
+    return first.count === second.count && !hitOnLanding(first) && landsOn(first) === second.points[0];
+}
+
+function chain(first, second) {
+    return {
+        points: [...first.points.slice(0, -1), ...second.points.slice(1)],
+        hits: [...first.hits.slice(0, -1), ...second.hits],
+        count: first.count
+    };
+}
+
+export function condenseMoveTokens(move) {
+    if (!move) return '';
+    const parsed = move.trim().split(/\s+/).filter(Boolean).map(parseToken);
+    if (parsed.length === 0 || parsed.some((play) => play === null)) return move;
+    const plays = parsed.map(dropIdleStages);
+    // The two halves of one checker's journey need not be neighbours in the
+    // producer's order ("13/11 12/10 11/9"), so every pair is a candidate; a
+    // join shortens the list, and the result may itself continue further, hence
+    // the restart. At most four steps in a play — the cost is nothing.
+    for (let i = 0; i < plays.length; i++) {
+        const next = plays.findIndex((play, j) => j !== i && continues(plays[i], play));
+        if (next === -1) continue;
+        plays[i] = chain(plays[i], plays[next]);
+        plays.splice(next, 1);
+        i = -1;
+    }
+    return plays.map(renderToken).join(' ');
+}
+
+// The move cell of a candidate list: condensed first, then read from the back.
+export function moveLabel(move) {
+    return orderMoveTokens(condenseMoveTokens(move));
+}
+
 function chanceCells(vector) {
     return [vector?.playerWinChance, vector?.playerGammonChance, vector?.playerBackgammonChance, vector?.opponentWinChance, vector?.opponentGammonChance, vector?.opponentBackgammonChance].map(
         (v) => formatChance(v) ?? DASH
@@ -214,8 +323,10 @@ function chanceCells(vector) {
  * checkerRows lays out a ranked candidate list. Sorting, truncation and
  * selection stay with the caller; the rows come back in the order given.
  *
- * The move cell is rewritten in reading order (orderMoveTokens above): the
- * least advanced checker moves first, whatever order the producer wrote.
+ * The move cell is rewritten by moveLabel above: one checker's several steps
+ * become the single displacement they are (hits excepted), and the play is
+ * then read from the back — the least advanced checker moves first, whatever
+ * order the producer wrote.
  *
  * An absent value is a dash — the project's mark for a value never measured,
  * never for a zero. The one exception is the error column: the best move of a
@@ -242,7 +353,7 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
         rows: (moves ?? []).map((move) => ({
             key: move.index ?? move.move,
             move,
-            label: orderMoveTokens(move.move),
+            label: moveLabel(move.move),
             cells: [formatEquity(move.equity) ?? DASH, formatEquity(move.equityError ?? 0), ...chanceCells(move), ...provenance([move.analysisDepth ?? '', move.analysisEngine ?? ''])],
             highlight: isPlayedMove(move)
         }))
