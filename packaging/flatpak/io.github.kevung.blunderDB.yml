@@ -55,6 +55,14 @@ modules:
             io.github.kevung.blunderDB.metainfo.xml > metainfo.fixed.xml
         install -Dm644 metainfo.fixed.xml \
             /app/share/metainfo/io.github.kevung.blunderDB.metainfo.xml
+      # Licence and third-party notices (Strehl network, GNUbg bearoff tables,
+      # Go/JS libraries, fonts). THIRD_PARTY.md is guarded so a tarball built
+      # before CI staged the file still packages.
+      - install -Dm644 LICENSE /app/share/doc/blunderdb/LICENSE
+      - |
+        if [ -f THIRD_PARTY.md ]; then
+          install -Dm644 THIRD_PARTY.md /app/share/doc/blunderdb/THIRD_PARTY.md
+        fi
     sources:
       - type: archive
         # Updated per release (the flathub-external-data-checker bot can automate

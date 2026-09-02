@@ -25,4 +25,9 @@ package() {
   install -Dm644 "${_srcdir}/io.github.kevung.blunderDB.metainfo.xml" \
                  "${pkgdir}/usr/share/metainfo/io.github.kevung.blunderDB.metainfo.xml"
   install -Dm644 "${_srcdir}/LICENSE"           "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  # Third-party notices (Strehl network, GNUbg bearoff tables, Go/JS libraries,
+  # fonts). Guarded so a tarball built before CI staged the file still packages.
+  if [ -f "${_srcdir}/THIRD_PARTY.md" ]; then
+    install -Dm644 "${_srcdir}/THIRD_PARTY.md" "${pkgdir}/usr/share/licenses/${pkgname}/THIRD_PARTY.md"
+  fi
 }

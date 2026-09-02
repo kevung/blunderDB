@@ -1280,12 +1280,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
-                    <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
-                    <p>The gammonNet <strong>strehl-prob5-512-512-256-128</strong> network is credited to <strong>Alexander Strehl</strong>, derived from <em>alexstrehl/backgammon-ai-engine</em> (MIT). The search, match equity table and cube model around it are <strong>gammonNet</strong>'s own configuration (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
-                    <p>The take point and gammon values tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</p>
-                    <p>
-                        The one-sided 6-point bearoff database used for EPC (Effective Pip Count) computation has been generated with <strong>GNU Backgammon</strong> (GNUbg). GNUbg is a free and open-source
-                        backgammon program licensed under the GNU General Public License.
-                    </p>
+                    <h3>Credits</h3>
+                    <p>blunderDB embeds code, data and fonts written by other people. The essentials:</p>
+                    <ul>
+                        <li>The <strong>strehl-prob5-512-512-256-128</strong> neural network is the work of <strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). The search, cube model and match equity table around it are <strong>gammonNet</strong>'s own configuration (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>, MIT).</li>
+                        <li>The Kazaross-XG2 Match Equity Table (MET) is the work of <strong>Neil Kazaross</strong>.</li>
+                        <li>The take point and gammon value tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</li>
+                        <li>The one-sided (6 points, 15 checkers, for EPC) and two-sided (6 points, 6 checkers, for cube verdicts in races) bearoff databases were generated with <strong>GNU Backgammon</strong> (GNUbg). GNUbg is free software under the GPL; these tables are data it produced, credited as such.</li>
+                        <li>Match files are read by <em>xgparser</em> and <em>gnubgparser</em> (LGPL-2.1) and by <em>bgfparser</em> (MIT).</li>
+                        <li>On the Go side: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> and <em>go-fsrs</em> (MIT).</li>
+                        <li>On the interface side: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> and <em>driver.js</em> (MIT).</li>
+                        <li>The <em>Nunito</em> and <em>Noto Sans JP</em> fonts (SIL Open Font License 1.1).</li>
+                    </ul>
+                    <p>The full inventory, with the licence texts, is the <strong>THIRD_PARTY.md</strong> file shipped with blunderDB (<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>).</p>
 `
 };

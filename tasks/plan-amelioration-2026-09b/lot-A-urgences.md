@@ -238,16 +238,16 @@ Rappel : les tables `.bd` sont des données, pas du code GPL ([[project_audit_20
 il s'agit de créditer, pas de relicencier.
 
 **À faire.**
-- [ ] `THIRD_PARTY.md` racine : gammonNet/Strehl (MIT), MET Kazaross-XG2,
+- [x] `THIRD_PARTY.md` racine : gammonNet/Strehl (MIT), MET Kazaross-XG2,
       Schiemann (coefficients de course), GNUbg one-sided **et** two-sided
       bearoff (données générées), xgparser/gnubgparser/bgfparser, modernc.org/
       sqlite, Wails, Svelte, two.js, chart.js, driver.js, Noto Sans JP (OFL),
       Nunito (OFL).
-- [ ] Installé par nfpm (`.deb`/`.rpm`), PKGBUILD, tarball `INSTALL.txt`,
+- [x] Installé par nfpm (`.deb`/`.rpm`), PKGBUILD, tarball `INSTALL.txt`,
       Flatpak, `Dockerfile.serve` (`/usr/share/doc`).
-- [ ] Section *Crédits* dans `index.rst` (9 langues à la release) et dans
+- [x] Section *Crédits* dans `index.rst` (9 langues à la release) et dans
       l'onglet À propos de l'aide (9 fichiers).
-- [ ] Corriger le lien mort de `NOTICE.gammonNet`.
+- [x] Corriger le lien mort de `NOTICE.gammonNet`.
 
 ---
 

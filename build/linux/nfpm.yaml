@@ -38,6 +38,15 @@ contents:
     dst: /usr/share/icons/hicolor/256x256/apps/blunderdb.png
   - src: build/linux/blunderdb-256.png
     dst: /usr/share/pixmaps/blunderdb.png
+  # Licence and third-party notices: the binary embeds MIT-licensed code and
+  # data (Strehl network, Wails, pgx…) whose licences require the notice to
+  # travel with every copy. /usr/share/doc/<pkg>/ is where both dpkg and rpm
+  # expect them. Plain entries on purpose: nfpm's `type: doc`/`license` are
+  # rpm-only and the deb packager silently drops such files.
+  - src: LICENSE
+    dst: /usr/share/doc/blunderdb/LICENSE
+  - src: THIRD_PARTY.md
+    dst: /usr/share/doc/blunderdb/THIRD_PARTY.md
 
 overrides:
   deb:

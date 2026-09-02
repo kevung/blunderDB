@@ -1279,12 +1279,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>, ένας χαρούμενος σύντροφος για πάνω από μια δεκαετία σε υπέροχες περιπέτειες, και ένας φανταστικός συμπαίκτης από τότε που τον τσίμπησε το μικρόβιο του backgammon.</li>
                     </ul>
-                    <p>Ο πίνακας Kazaross-XG2 Match Equity Table (MET) αποδίδεται στον <strong>Neil Kazaross</strong>.</p>
-                    <p>Το δίκτυο gammonNet <strong>strehl-prob5-512-512-256-128</strong> αποδίδεται στον <strong>Alexander Strehl</strong>, βασισμένο στο <em>alexstrehl/backgammon-ai-engine</em> (MIT). Η αναζήτηση, ο πίνακας match equity και το μοντέλο βιντωού γύρω του αποτελούν τη δική του διαμόρφωση του <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
-                    <p>Οι πίνακες take point και gammon values προέρχονται από το βιβλίο του <strong>Dirk Schiemann</strong> <em>The Theory of Backgammon</em>.</p>
-                    <p>
-                        Η μονόπλευρη βάση δεδομένων bearoff 6 σημείων που χρησιμοποιείται για τον υπολογισμό EPC (Effective Pip Count) έχει δημιουργηθεί με το <strong>GNU Backgammon</strong> (GNUbg). Το GNUbg είναι ένα ελεύθερο και ανοιχτού κώδικα
-                        πρόγραμμα backgammon που διανέμεται υπό την άδεια GNU General Public License.
-                    </p>
+                    <h3>Πιστώσεις</h3>
+                    <p>Το blunderDB ενσωματώνει κώδικα, δεδομένα και γραμματοσειρές άλλων ανθρώπων. Τα βασικά:</p>
+                    <ul>
+                        <li>Το νευρωνικό δίκτυο <strong>strehl-prob5-512-512-256-128</strong> είναι έργο του <strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). Η αναζήτηση, το μοντέλο βιδωτού και ο πίνακας match equity γύρω του αποτελούν τη δική του διαμόρφωση του <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>, MIT).</li>
+                        <li>Ο πίνακας Kazaross-XG2 Match Equity Table (MET) είναι έργο του <strong>Neil Kazaross</strong>.</li>
+                        <li>Οι πίνακες take point και gammon values προέρχονται από το βιβλίο <em>The Theory of Backgammon</em> του <strong>Dirk Schiemann</strong>.</li>
+                        <li>Η μονόπλευρη (6 σημεία, 15 πούλια, για το EPC) και η αμφίπλευρη (6 σημεία, 6 πούλια, για τις αποφάσεις βιδωτού στις κούρσες) βάση δεδομένων bearoff δημιουργήθηκαν με το <strong>GNU Backgammon</strong> (GNUbg). Το GNUbg είναι ελεύθερο λογισμικό υπό την GPL· οι πίνακες αυτοί είναι δεδομένα που παρήγαγε και πιστώνονται ως τέτοια.</li>
+                        <li>Τα αρχεία αγώνων διαβάζονται από τα <em>xgparser</em> και <em>gnubgparser</em> (LGPL-2.1) και από το <em>bgfparser</em> (MIT).</li>
+                        <li>Από την πλευρά της Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> και <em>go-fsrs</em> (MIT).</li>
+                        <li>Από την πλευρά της διεπαφής: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> και <em>driver.js</em> (MIT).</li>
+                        <li>Οι γραμματοσειρές <em>Nunito</em> και <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+                    </ul>
+                    <p>Ο πλήρης κατάλογος, με τα κείμενα των αδειών, είναι το αρχείο <strong>THIRD_PARTY.md</strong> που συνοδεύει το blunderDB (<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>).</p>
 `
 };

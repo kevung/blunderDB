@@ -21,6 +21,9 @@ For system-wide installation prefer the .deb / .rpm packages, the AUR package
 (blunderdb-bin) on Arch, or Flatpak — see the documentation:
 https://kevung.github.io/blunderDB/
 
+LICENSE is blunderDB's own licence (MIT); THIRD_PARTY.md lists the code, data
+and fonts of other people that the binary embeds, with their licences.
+
 Two webkit2gtk variants are published:
   * blunderDB-linux-webkit2gtk-4.1-<version>  → modern distros (webkit2gtk 4.1)
   * blunderDB-linux-<version>                 → older distros (webkit2gtk 4.0)

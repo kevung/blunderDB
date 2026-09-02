@@ -3,7 +3,9 @@ gammonNet — évaluateur de positions de backgammon
 Cet artefact est une copie distribuée. Les notices ci-dessous voyagent donc avec
 lui, comme la licence MIT l'exige pour « all copies or substantial portions of
 the Software ». L'inventaire complet, avec ce qui est effectivement utilisé de
-chaque brique, est dans THIRD-PARTY.md.
+chaque brique, est dans THIRD_PARTY.md à la racine du dépôt blunderDB (installé
+avec les paquets) ; l'inventaire amont est le THIRD-PARTY.md du dépôt gammonNet
+(https://github.com/kevung/gammonNet).
 
 ── Poids du réseau et moteur d'inférence ──────────────────────────────────
 backgammon-ai-engine — Copyright (c) 2026 alexstrehl — licence MIT

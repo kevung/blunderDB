@@ -1279,12 +1279,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>, радостный спутник на протяжении более десятилетия в замечательных приключениях, и фантастический партнёр по игре с тех пор, как он заразился нардами.</li>
                     </ul>
-                    <p>Таблица match equity Kazaross-XG2 (MET) принадлежит <strong>Neil Kazaross</strong>.</p>
-                    <p>Сеть gammonNet <strong>strehl-prob5-512-512-256-128</strong> принадлежит <strong>Alexander Strehl</strong>, основана на <em>alexstrehl/backgammon-ai-engine</em> (MIT). Поиск, таблица match equity и модель куба вокруг неё — собственная конфигурация <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
-                    <p>Таблицы take point и значений gammon взяты из книги <strong>Dirk Schiemann</strong> <em>The Theory of Backgammon</em>.</p>
-                    <p>
-                        Односторонняя база данных вывода на 6 пунктов, используемая для вычисления EPC (Effective Pip Count), была сгенерирована с помощью <strong>GNU Backgammon</strong> (GNUbg). GNUbg — это свободная программа для нард с открытым исходным кодом,
-                        распространяемая под GNU General Public License.
-                    </p>
+                    <h3>Благодарности третьим сторонам</h3>
+                    <p>blunderDB включает код, данные и шрифты других людей. Основное:</p>
+                    <ul>
+                        <li>Нейронная сеть <strong>strehl-prob5-512-512-256-128</strong> — работа <strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). Поиск, модель куба и таблица match equity вокруг неё — собственная конфигурация <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>, MIT).</li>
+                        <li>Таблица match equity Kazaross-XG2 (MET) — работа <strong>Neil Kazaross</strong>.</li>
+                        <li>Таблицы take point и значений gammon взяты из книги <strong>Dirk Schiemann</strong> <em>The Theory of Backgammon</em>.</li>
+                        <li>Односторонняя (6 пунктов, 15 шашек, для EPC) и двусторонняя (6 пунктов, 6 шашек, для решений по кубу в гонках) базы данных вывода были сгенерированы с помощью <strong>GNU Backgammon</strong> (GNUbg). GNUbg — свободная программа под лицензией GPL; эти таблицы — созданные ею данные и указаны как таковые.</li>
+                        <li>Файлы матчей читаются библиотеками <em>xgparser</em> и <em>gnubgparser</em> (LGPL-2.1) и <em>bgfparser</em> (MIT).</li>
+                        <li>Со стороны Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> и <em>go-fsrs</em> (MIT).</li>
+                        <li>Со стороны интерфейса: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> и <em>driver.js</em> (MIT).</li>
+                        <li>Шрифты <em>Nunito</em> и <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+                    </ul>
+                    <p>Полный перечень с текстами лицензий — файл <strong>THIRD_PARTY.md</strong>, поставляемый вместе с blunderDB (<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>).</p>
 `
 };
