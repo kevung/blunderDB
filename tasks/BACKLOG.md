@@ -13,26 +13,30 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 
 ## Ouvert — Backend
 
-- **gammonNet — frais hors réseau de la recherche** (plan
-  `tasks/gammonnet-perf/README.md`, ADR-0024). Profil du 2026-09-02 d'une
-  décision 2-ply canonique : `Evaluator.Evaluate` 97,6 %, tout le reste 2,4 %
-  (~0,15 s sur 5,5 s). Une fois le noyau batché livré (fiche F1/F2), ce reste
-  pèsera 15-20 % d'une décision ; le reprendre alors, sur un nouveau profil,
-  dans cet ordre de coût présumé : `make([]Candidate, MaxPlays)` de 164 Ko
-  par appel (`search.go:278`, `domaineval.go:279`) ; `sort.SliceStable`
-  réflexif trois fois par nœud (`search.go:563`, le tri stable doit rester :
-  le gold en dépend) ; valuation du videau au score avec ~240 bissections par
-  feuille alors que les lookups MET `metAfter(state, stake, side)` sont
-  invariants sur toute la recherche (`cube.go:509-583`) ; `Valid()` sur des
-  positions légales par construction (`encoding.go:45`, `moves_gen.go:36`) ;
-  dédup O(n²) de la génération (`moves_gen.go:65-70`, `:198-207`) ;
-  `notationForCandidate` O(n²) avec `FromDomain` par paire
-  (`domaineval.go:352-365`) ; un `Searcher` de 5,5 Mo par position dans
-  `EvaluatePosition` (`domaineval.go:186`, réglé par F3 pour le lot, pas pour
-  les appels unitaires). Hors moteur mais même famille : les trois recherches
-  complètes par position de `gammonnet_eval.go` (`:160`, `:220-232`, `:297`),
-  +36 % mesuré par ADR-0017 ; le préambule de `AnalyzeStaleGammonNet` qui
-  décode le JSON compressé de toutes les analyses (`db_gammonnet_batch.go:148-167`).
+- **gammonNet — grouper la valuation du videau sur les candidats.** Le seul levier
+  qui reste sur le videau, et il faut le cadrer en amont (`gn_cube.c`) avant de le
+  porter. Mesuré le 2026-09-02 en écrivant puis en annulant l'optimisation
+  annoncée par ADR-0011 : précalculer les `metAfter` **ne vaut rien** (1 % de
+  gain, sous le plancher de bruit de ±15 %), parce que les lookups ne pèsent que
+  11 % de `buildLevels` quand `levelSolve` en pèse 83 %, et que chacune de ses
+  60 bissections est une division sur le chemin critique plus un branchement
+  imprévisible — ~60 cycles irréductibles, les 60 itérations comme la forme des
+  segments étant verrouillées par le gold. **Ne pas rouvrir « précalculer les
+  MET ».** Ce qui marcherait est de valuer le videau *par lot* sur les candidats,
+  exactement comme le noyau groupé a fait pour le réseau (#133). Le poste vaut
+  ~3,9 % du profil au score avant le noyau, donc bien davantage maintenant.
+- **gammonNet — `swapMatchState` alloue un `*MatchState` par nœud**, soit ~1 400
+  allocations par décision au score, tout ce qui reste du compteur après #150
+  (7 432 → 82 hors ce poste). Coût CPU négligeable, déchet évitable. Laissé de
+  côté pour ne pas entrer en collision avec #148.
+- **`internal/gui/gammonnet_eval.go` lance jusqu'à trois recherches complètes par
+  position** : `EvaluatePosition`, puis `preRollFacts` qui construit un second
+  `Searcher` et refait un `Probs` quand les dés sont posés (+36 % mesuré,
+  ADR-0017), puis `evaluateRaceRegime` qui en construit un troisième. Chantier
+  d'interface, pas de moteur ; mérite sa fiche.
+- **`positionIDsWithStaleGammonNet` décode le JSON compressé de toutes les
+  analyses** pour trouver le moteur, qui est dans le blob et non dans une colonne
+  (`db_gammonnet_batch.go:148-167`). Préambule coûteux d'`AnalyzeStaleGammonNet`.
 - **`statsCountedExpr` et les libellés de videau dégénérés** (#116 lot 0) :
   une décision de videau est comptée comme action *active* dès que
   `move.cube_action` n'est ni `''`, ni `No Double`, ni `NoDouble`. Une valeur
