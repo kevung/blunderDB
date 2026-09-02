@@ -133,3 +133,86 @@ func BenchmarkEvaluate(b *testing.B) {
 		}
 	}
 }
+
+// BenchmarkEvaluateBatch is the per-position cost the batched kernel has to
+// beat, measured the way the search actually meets it: a whole batch of
+// DISTINCT positions, evaluated back to back. BenchmarkEvaluate re-evaluates
+// one position, which keeps its features in L1 and its branch history perfect;
+// that figure flatters any kernel and would flatter a batched one most. The
+// distinct-position figure is the honest baseline (#145, ADR-0024).
+//
+// Reported per position, so a scalar run and a batched run print numbers that
+// can be divided by each other.
+func BenchmarkEvaluateBatch(b *testing.B) {
+	net, err := Embedded()
+	if err != nil {
+		b.Fatal(err)
+	}
+	ev := NewEvaluator(net)
+
+	// EvalBatchWidth positions that differ, so no two share an encoding.
+	batch := make([][NumFeatures]float32, EvalBatchWidth)
+	for i := range batch {
+		p := bearoffBoard(24-i, 1+i)
+		gn, err := FromDomain(&p)
+		if err != nil {
+			b.Fatal(err)
+		}
+		if !Encode(&gn, &batch[i]) {
+			b.Fatal("encoding refused")
+		}
+	}
+	var probs [NumOutputs]float32
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := range batch {
+			if err := ev.Evaluate(batch[j][:], &probs); err != nil {
+				b.Fatal(err)
+			}
+		}
+	}
+	b.StopTimer()
+	// b.N iterations of EvalBatchWidth positions: report the unit the kernel
+	// is specified in.
+	b.ReportMetric(float64(b.Elapsed().Nanoseconds())/float64(b.N*EvalBatchWidth), "ns/position")
+}
+
+// BenchmarkDecision2Ply is the number the plan's target is stated in: one
+// canonical 2-ply k=12 decision, serially, on one core. It is a benchmark
+// rather than a probe row so that `go test -bench` yields it without an
+// environment variable, and so that -benchtime can hold it to a single
+// iteration on a slow machine.
+func BenchmarkDecision2Ply(b *testing.B) {
+	if testing.Short() {
+		b.Skip("a 2-ply decision costs seconds")
+	}
+	dp, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		b.Fatal(err)
+	}
+	dp.PlayerOnRoll = domain.White
+	p, err := FromDomain(&dp)
+	if err != nil {
+		b.Fatal(err)
+	}
+	s, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		pos := p
+		if _, ok, err := s.BestPlay(&pos, 3, 1); err != nil || !ok {
+			b.Fatalf("search refused: %v", err)
+		}
+	}
+	b.StopTimer()
+	filled, slotted := s.BatchFill()
+	if slotted > 0 {
+		b.ReportMetric(100*float64(filled)/float64(slotted), "%fill")
+	}
+}

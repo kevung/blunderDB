@@ -175,6 +175,15 @@ type Searcher struct {
 	pruneEvals uint64 // small-network evaluations
 	cacheHits  uint64
 
+	// batchFilled and batchSlotted measure what a batched kernel would carry:
+	// the positions a fill pass actually had to evaluate, against the lanes
+	// those positions would occupy at EvalBatchWidth. Their ratio is the fill,
+	// and the fill is what decides whether the twenty-one rolls need grouping
+	// (#145, #146). Counted whether or not a batched kernel exists yet — the
+	// figure has to be comparable across that change.
+	batchFilled  uint64
+	batchSlotted uint64
+
 	// workers are independent searchers the root farms its roll loop out to.
 	// Each owns its scratch, its generator and its cache; nothing is shared but
 	// the read-only networks.
@@ -372,6 +381,11 @@ func swapMatchState(state *MatchState) *MatchState {
 // make its ordering depend on evaluation history, which is the one way a cache
 // could start changing results.
 func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) {
+	filled := 0
+	defer func() {
+		s.batchFilled += uint64(filled)
+		s.batchSlotted += uint64(batchSlots(filled))
+	}()
 	for i := range cands {
 		res := &cands[i].Play.Result
 		if res.isOver() {
@@ -387,6 +401,7 @@ func (s *Searcher) shallowFill(ev *Evaluator, cands []Candidate, useCache bool) 
 			continue
 		}
 		_ = ev.Evaluate(s.feat[:], &cands[i].Probs)
+		filled++
 		if useCache {
 			s.evals++
 			s.cache.store(res, &cands[i].Probs)
@@ -567,12 +582,42 @@ func sortByEquity(c []Candidate) {
 // Counters reports what the last searches cost: big-network evaluations that
 // actually ran, small-network (pruning) evaluations, and cache hits. A cache
 // hit is an evaluation that did not happen.
+//
+// The workers are counted in. They are where a parallel search does most of
+// its work, so a root-only figure would report a fraction of the cost and
+// shrink as cores are added — the opposite of what a cost probe is for. It is
+// safe to read them here because Counters is called between searches, never
+// during one.
 func (s *Searcher) Counters() (evals, pruneEvals, cacheHits uint64) {
-	return s.evals, s.pruneEvals, s.cacheHits
+	evals, pruneEvals, cacheHits = s.evals, s.pruneEvals, s.cacheHits
+	for _, w := range s.workers {
+		e, pe, ch := w.Counters()
+		evals, pruneEvals, cacheHits = evals+e, pruneEvals+pe, cacheHits+ch
+	}
+	return evals, pruneEvals, cacheHits
 }
 
-// ResetCounters zeroes them.
-func (s *Searcher) ResetCounters() { s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0 }
+// BatchFill reports how many positions the fill passes evaluated, and how many
+// lanes those positions would occupy at EvalBatchWidth. filled/slotted is the
+// batch fill ratio; the shortfall is the work a batched kernel computes and
+// discards. Workers are counted in, for the same reason Counters counts them.
+func (s *Searcher) BatchFill() (filled, slotted uint64) {
+	filled, slotted = s.batchFilled, s.batchSlotted
+	for _, w := range s.workers {
+		f, sl := w.BatchFill()
+		filled, slotted = filled+f, slotted+sl
+	}
+	return filled, slotted
+}
+
+// ResetCounters zeroes them, workers included.
+func (s *Searcher) ResetCounters() {
+	s.evals, s.pruneEvals, s.cacheHits = 0, 0, 0
+	s.batchFilled, s.batchSlotted = 0, 0
+	for _, w := range s.workers {
+		w.ResetCounters()
+	}
+}
 
 // WithWorkers gives the searcher a pool to farm the root's roll loop out to.
 // Each worker is an independent Searcher over the same read-only networks: its

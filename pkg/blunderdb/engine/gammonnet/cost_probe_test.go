@@ -5,6 +5,7 @@ package gammonnet
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -24,22 +25,30 @@ func TestProbeDecisionCost(t *testing.T) {
 	p := openingPosition(t)
 
 	type row struct {
-		label string
-		cfg   SearchConfig
+		label   string
+		cfg     SearchConfig
+		workers int
 	}
 	rows := []row{
-		{"0-ply, k=12", SearchConfig{Ply: 0, PruneK: 12}},
-		{"1-ply, k=12, no filter", SearchConfig{Ply: 1, PruneK: 12}},
-		{"1-ply, k=12, filter[1]=3", SearchConfig{Ply: 1, PruneK: 12, Filter: [MaxPly + 1]int{0, 3}}},
-		{"2-ply, k=12, filter (0,1,3)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}},
-		{"2-ply, k=12, filter (0,2,8)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 2, 8}}},
+		{"0-ply, k=12", SearchConfig{Ply: 0, PruneK: 12}, 1},
+		{"1-ply, k=12, no filter", SearchConfig{Ply: 1, PruneK: 12}, 1},
+		{"1-ply, k=12, filter[1]=3", SearchConfig{Ply: 1, PruneK: 12, Filter: [MaxPly + 1]int{0, 3}}, 1},
+		{"2-ply, k=12, filter (0,1,3)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, 1},
+		{"2-ply, k=12, filter (0,2,8)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 2, 8}}, 1},
+		{"2-ply, k=12, (0,1,3), NumCPU", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, runtime.NumCPU()},
 	}
 
-	fmt.Printf("%-30s %10s %12s %12s %12s\n", "configuration", "durée", "évals", "élagage", "cache")
+	fmt.Printf("noyau %s, largeur de lot %d, %d cœurs logiques\n\n",
+		KernelName(), EvalBatchWidth, runtime.NumCPU())
+	fmt.Printf("%-32s %10s %12s %12s %12s %10s\n",
+		"configuration", "durée", "évals", "élagage", "cache", "remplis.")
 	for _, r := range rows {
 		s, err := NewSearcher(r.cfg)
 		if err != nil {
 			t.Fatal(err)
+		}
+		if r.workers > 1 {
+			s = s.WithWorkers(r.workers)
 		}
 		pos := p
 		start := time.Now()
@@ -49,6 +58,12 @@ func TestProbeDecisionCost(t *testing.T) {
 			t.Fatalf("%s: %v", r.label, err)
 		}
 		e, pe, ch := s.Counters()
-		fmt.Printf("%-30s %10s %12d %12d %12d\n", r.label, d.Round(time.Millisecond), e, pe, ch)
+		filled, slotted := s.BatchFill()
+		fill := "—"
+		if slotted > 0 {
+			fill = fmt.Sprintf("%.1f%%", 100*float64(filled)/float64(slotted))
+		}
+		fmt.Printf("%-32s %10s %12d %12d %12d %10s\n",
+			r.label, d.Round(time.Millisecond), e, pe, ch, fill)
 	}
 }
