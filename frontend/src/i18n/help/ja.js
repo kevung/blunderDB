@@ -482,6 +482,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>評価パネル</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ショートカット</th>
+                                <th>説明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>手を選択/選択解除（矢印を表示/非表示）</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>前の手を選択（手が選択されているとき）</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>次の手を選択（手が選択されているとき）</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>手の選択を解除。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>検索履歴パネル</h3>
                     <table>
                         <thead>

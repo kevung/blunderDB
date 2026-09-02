@@ -484,6 +484,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Eval Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select/deselect a move (show/hide arrows)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Select previous move (when a move is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Select next move (when a move is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deselect move.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Search History Panel</h3>
                     <table>
                         <thead>

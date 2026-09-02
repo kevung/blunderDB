@@ -8,6 +8,7 @@
     import { EvaluatePositionImmediate, StartEvaluationAtRest, CancelEvaluationAtRest } from '../../wailsjs/go/gui/App.js';
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
+    import { isBareLetter } from '../utils/keys.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
     import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
@@ -237,11 +238,54 @@
         BrowserOpenURL('https://github.com/kevung/gammonNet');
     }
 
+    // The panel element itself: focus target for the keyboard navigation
+    // below (a click on a row hands it the keyboard).
+    let panelEl;
+
     function handleMoveRowClick(move) {
         if ($selectedMoveStore === move.move) {
             selectedMoveStore.set(null);
         } else {
             selectedMoveStore.set(move.move);
+        }
+        // The click is also what hands this panel the keyboard: the rows are
+        // plain <tr>s, so focus would otherwise stay wherever it was and the
+        // handler below would never see a key. Explicit rather than relying
+        // on the browser walking up to the nearest focusable ancestor, which
+        // WebKit and Chromium do not do alike.
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    // Walking the candidate list with the keyboard, exactly as the analysis
+    // panel does it (doc/source/raccourcis.rst): once a move is selected,
+    // j/BAS and k/HAUT move the selection — and with it the board's arrows —
+    // one rank at a time, Escape drops it. The list here is the evaluation's
+    // own ranking (never re-sorted, this panel offers no sort), so the order
+    // walked is the order shown.
+    //
+    // This handler is not a convenience: keyboardService withholds
+    // j/k/arrows app-wide while selectedMoveStore is set, so in a panel that
+    // shows candidates and does not handle them itself, those keys did
+    // nothing at all.
+    function handleKeyDown(event) {
+        if (event.key === 'Escape') {
+            if ($selectedMoveStore) selectedMoveStore.set(null);
+            return;
+        }
+
+        if (!$selectedMoveStore || evalMoves.length === 0) return;
+        const currentIndex = evalMoves.findIndex((m) => m.move === $selectedMoveStore);
+
+        if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (currentIndex >= 0 && currentIndex < evalMoves.length - 1) {
+                selectedMoveStore.set(evalMoves[currentIndex + 1].move);
+            }
+        } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (currentIndex > 0) {
+                selectedMoveStore.set(evalMoves[currentIndex - 1].move);
+            }
         }
     }
 
@@ -350,7 +394,10 @@
     let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));
 </script>
 
-<div class="epc-panel">
+<!-- A <section> rather than a <div>: the panel takes focus and listens for
+     keys (handleKeyDown), which is a landmark's business and a static
+     element's a11y warning — the same shape AnalysisPanel already has. -->
+<section class="epc-panel" bind:this={panelEl} role="region" aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
     {#if !isActive}
         <div class="epc-inactive">
             <div class="epc-inactive-message">
@@ -473,7 +520,7 @@
             {/if}
         </div>
     {/if}
-</div>
+</section>
 
 <style>
     .epc-panel {
@@ -488,6 +535,9 @@
         /* Lets CandidateMovesTable/CubeVerdictTable/PositionFactsTable's own
            @container rules stack on a narrow panel (ADR-0017's layout). */
         container-type: inline-size;
+        /* The panel takes focus so the candidate list answers j/k (see
+           handleKeyDown); it is a focus target, not a control. */
+        outline: none;
     }
 
     .epc-inactive {

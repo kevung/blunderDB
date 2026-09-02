@@ -483,6 +483,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Pannello Eval</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Scorciatoia</th>
+                                <th>Descrizione</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Seleziona/deseleziona una mossa (mostra/nascondi frecce)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Seleziona la mossa precedente (quando una mossa è selezionata)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Seleziona la mossa successiva (quando una mossa è selezionata)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deseleziona la mossa.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Pannello cronologia ricerche</h3>
                     <table>
                         <thead>

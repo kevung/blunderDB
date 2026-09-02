@@ -483,6 +483,34 @@ export default {
                         </tbody>
                     </table>
 
+                    <h3>Panel Eval</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Atajo</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Seleccionar/deseleccionar una jugada (mostrar/ocultar flechas)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Seleccionar la jugada anterior (cuando hay una jugada seleccionada)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Seleccionar la jugada siguiente (cuando hay una jugada seleccionada)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deseleccionar la jugada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <h3>Panel de historial de búsquedas</h3>
                     <table>
                         <thead>
