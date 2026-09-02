@@ -1281,12 +1281,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>。10 年以上にわたり素晴らしい冒険を共にした陽気な相棒であり、バックギャモンにはまって以来の最高のゲームパートナーに。</li>
                     </ul>
-                    <p>Kazaross-XG2 マッチエクイティテーブル（MET）は <strong>Neil Kazaross</strong> によるものです。</p>
-                    <p>gammonNet のネットワーク <strong>strehl-prob5-512-512-256-128</strong> は <strong>Alexander Strehl</strong> によるもので、<em>alexstrehl/backgammon-ai-engine</em>（MIT）に由来します。それを取り巻く探索、マッチエクイティテーブル、キューブモデルは <strong>gammonNet</strong> 独自の構成です（<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>）。</p>
-                    <p>テイクポイントとギャモン値の表は <strong>Dirk Schiemann</strong> の著書 <em>The Theory of Backgammon</em> から引用しています。</p>
-                    <p>
-                        EPC（Effective Pip Count）の計算に使用される片側 6 ポイントベアオフデータベースは <strong>GNU Backgammon</strong>（GNUbg）で生成されました。GNUbg は GNU 一般公衆利用許諾契約書の下で提供される
-                        フリーかつオープンソースのバックギャモンプログラムです。
-                    </p>
+                    <h3>クレジット</h3>
+                    <p>blunderDB には他の人々が作成したコード、データ、フォントが含まれています。主なもの:</p>
+                    <ul>
+                        <li>ニューラルネットワーク <strong>strehl-prob5-512-512-256-128</strong> は <strong>Alexander Strehl</strong> の著作物です（<em>alexstrehl/backgammon-ai-engine</em>、MIT）。それを取り巻く探索、キューブモデル、マッチエクイティテーブルは <strong>gammonNet</strong> 独自の構成です（<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>、MIT）。</li>
+                        <li>Kazaross-XG2 マッチエクイティテーブル（MET）は <strong>Neil Kazaross</strong> の著作物です。</li>
+                        <li>テイクポイントとギャモン値の表は <strong>Dirk Schiemann</strong> の著書 <em>The Theory of Backgammon</em> から引用しています。</li>
+                        <li>片側ベアオフデータベース（6 ポイント、15 駒、EPC 用）と両側ベアオフデータベース（6 ポイント、6 駒、レースでのキューブ判定用）は <strong>GNU Backgammon</strong>（GNUbg）で生成されました。GNUbg は GPL の下で提供されるフリーソフトウェアであり、これらの表はそれが生成したデータとしてクレジットされています。</li>
+                        <li>マッチファイルは <em>xgparser</em> と <em>gnubgparser</em>（LGPL-2.1）および <em>bgfparser</em>（MIT）で読み込まれます。</li>
+                        <li>Go 側: <em>modernc.org/sqlite</em>（BSD-3-Clause）、<em>pgx</em>、<em>Wails</em>、<em>go-fsrs</em>（MIT）。</li>
+                        <li>インターフェース側: <em>Svelte</em>、<em>two.js</em>、<em>Chart.js</em>、<em>driver.js</em>（MIT）。</li>
+                        <li>フォント <em>Nunito</em> と <em>Noto Sans JP</em>（SIL Open Font License 1.1）。</li>
+                    </ul>
+                    <p>ライセンス本文を含む完全な一覧は、blunderDB に同梱される <strong>THIRD_PARTY.md</strong> ファイルです（<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>）。</p>
 `
 };

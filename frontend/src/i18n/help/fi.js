@@ -1281,12 +1281,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>, iloinen seuralainen yli vuosikymmenen ajan suurissa seikkailuissa ja loistava pelikumppani siitä lähtien, kun hän sai backgammon-kärpäsen.</li>
                     </ul>
-                    <p>Kazaross-XG2-otteluekvivalenssitaulukon (MET) ansio kuuluu <strong>Neil Kazarossille</strong>.</p>
-                    <p>gammonNet-verkon <strong>strehl-prob5-512-512-256-128</strong> ansio kuuluu <strong>Alexander Strehlille</strong>, joka perustuu projektiin <em>alexstrehl/backgammon-ai-engine</em> (MIT). Haku, otteluekvivalenssitaulukko ja tuplausmalli sen ympärillä muodostavat <strong>gammonNet</strong>-projektin oman kokoonpanon (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
-                    <p>Take point- ja gammon-arvotaulukot on otettu <strong>Dirk Schiemannin</strong> kirjasta <em>The Theory of Backgammon</em>.</p>
-                    <p>
-                        EPC-laskennassa (Effective Pip Count) käytetty yksipuolinen 6-pisteen bearoff-tietokanta on luotu <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on ilmainen ja avoimen lähdekoodin
-                        backgammon-ohjelma, joka on lisensoitu GNU General Public License -lisenssillä.
-                    </p>
+                    <h3>Kiitokset kolmansille osapuolille</h3>
+                    <p>blunderDB sisältää muiden ihmisten koodia, dataa ja fontteja. Olennaisin:</p>
+                    <ul>
+                        <li>Neuroverkko <strong>strehl-prob5-512-512-256-128</strong> on <strong>Alexander Strehlin</strong> työtä (<em>alexstrehl/backgammon-ai-engine</em>, MIT). Haku, tuplausmalli ja otteluekvivalenssitaulukko sen ympärillä ovat <strong>gammonNet</strong>-projektin omaa kokoonpanoa (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>, MIT).</li>
+                        <li>Kazaross-XG2-otteluekvivalenssitaulukko (MET) on <strong>Neil Kazarossin</strong> työtä.</li>
+                        <li>Take point- ja gammon-arvotaulukot on otettu <strong>Dirk Schiemannin</strong> kirjasta <em>The Theory of Backgammon</em>.</li>
+                        <li>Yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta on luotu <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on GPL-lisensoitu vapaa ohjelmisto; nämä taulukot ovat sen tuottamaa dataa ja ne mainitaan sellaisina.</li>
+                        <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em> ja <em>gnubgparser</em> (LGPL-2.1) sekä <em>bgfparser</em> (MIT).</li>
+                        <li>Go-puolella: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> ja <em>go-fsrs</em> (MIT).</li>
+                        <li>Käyttöliittymän puolella: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> ja <em>driver.js</em> (MIT).</li>
+                        <li>Fontit <em>Nunito</em> ja <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+                    </ul>
+                    <p>Täydellinen luettelo lisenssiteksteineen on blunderDB:n mukana toimitettava tiedosto <strong>THIRD_PARTY.md</strong> (<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>).</p>
 `
 };

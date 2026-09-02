@@ -44,6 +44,9 @@ RUN mkdir -p /out/data && chown 65532:65532 /out/data
 FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=build /out/blunderdb /usr/local/bin/blunderdb
 COPY --from=build --chown=65532:65532 /out/data /data
+# The image is a distributed copy of the binary: the MIT notices of what it
+# links (pgx, modernc sqlite, Strehl network…) travel with it.
+COPY --from=build /src/LICENSE /src/THIRD_PARTY.md /usr/share/doc/blunderdb/
 
 # Defaults; override via env (BLUNDERDB_BACKEND/DSN/ADDR/RLS) in compose.
 ENV BLUNDERDB_BACKEND=postgres \

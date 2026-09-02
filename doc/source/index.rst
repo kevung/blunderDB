@@ -251,3 +251,49 @@ fille Perrine. Je tiens à remercier tout particulièrement quelques amis:
 * *Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine
   d'années dans de chouettes aventures, et un fantastique partenaire de jeu
   depuis qu'il a choppé le virus du backgammon.
+
+Crédits
+=======
+
+blunderDB embarque du code, des données et des polices d'autres personnes.
+L'inventaire complet, avec le texte des licences, est le fichier
+``THIRD_PARTY.md`` livré avec chaque paquet (``/usr/share/doc/blunderdb/``)
+et présent à la racine du `dépôt
+<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__.
+L'essentiel :
+
+* le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre
+  d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine
+  <https://github.com/alexstrehl/backgammon-ai-engine>`__, licence MIT) ; la
+  recherche, le modèle de videau et la table d'équité de match qui l'entourent
+  forment la configuration propre de `gammonNet
+  <https://github.com/kevung/gammonNet>`__ (MIT) ;
+
+* la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;
+
+* les tables de take points et de valeurs de gammon sont tirées de *The Theory
+  of Backgammon* de *Dirk Schiemann* ;
+
+* les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et
+  bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été
+  générées avec `GNU Backgammon <https://www.gnu.org/software/gnubg/>`__ ;
+  GNUbg est un logiciel libre sous licence GPL, et ces tables sont des données
+  qu'il a produites, créditées comme telles ;
+
+* les fichiers de match sont lus par `xgparser
+  <https://github.com/kevung/xgparser>`__ et `gnubgparser
+  <https://github.com/kevung/gnubgparser>`__ (LGPL-2.1) et par `bgfparser
+  <https://github.com/kevung/bgfparser>`__ (MIT) ;
+
+* côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__
+  (BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails
+  <https://wails.io>`__ et `go-fsrs
+  <https://github.com/open-spaced-repetition/go-fsrs>`__ (MIT) ;
+
+* côté interface : `Svelte <https://svelte.dev>`__, `two.js
+  <https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et
+  `driver.js <https://driverjs.com>`__ (MIT) ;
+
+* les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto Sans
+  JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL Open Font
+  License 1.1).

@@ -1284,12 +1284,18 @@ export default {
                         </li>
                         <li><strong>Nicolas Harmand</strong>, un joyeux compagnon depuis plus d'une décennie dans de grandes aventures, et un fantastique partenaire de jeu depuis qu'il a attrapé le virus du backgammon.</li>
                     </ul>
-                    <p>La table de match equity Kazaross-XG2 (MET) est attribuée à <strong>Neil Kazaross</strong>.</p>
-                    <p>Le réseau gammonNet <strong>strehl-prob5-512-512-256-128</strong> est attribué à <strong>Alexander Strehl</strong>, dérivé de <em>alexstrehl/backgammon-ai-engine</em> (MIT). La recherche, la table de match equity et le modèle de videau qui l'entourent forment la configuration propre de <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>).</p>
-                    <p>Les tables de take points et de valeurs de gammon sont tirées du livre <em>The Theory of Backgammon</em> de <strong>Dirk Schiemann</strong>.</p>
-                    <p>
-                        La base de données de sortie unilatérale à 6 points utilisée pour le calcul de l'EPC (Effective Pip Count) a été générée avec <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel de backgammon libre et open source
-                        distribué sous la Licence Publique Générale GNU.
-                    </p>
+                    <h3>Crédits</h3>
+                    <p>blunderDB embarque du code, des données et des polices d'autres personnes. L'essentiel :</p>
+                    <ul>
+                        <li>Le réseau de neurones <strong>strehl-prob5-512-512-256-128</strong> est l'œuvre d'<strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). La recherche, le modèle de videau et la table d'équité de match qui l'entourent forment la configuration propre de <strong>gammonNet</strong> (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>, MIT).</li>
+                        <li>La table d'équité de match Kazaross-XG2 (MET) est l'œuvre de <strong>Neil Kazaross</strong>.</li>
+                        <li>Les tables de take points et de valeurs de gammon sont tirées du livre <em>The Theory of Backgammon</em> de <strong>Dirk Schiemann</strong>.</li>
+                        <li>Les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été générées avec <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel libre sous licence GPL ; ces tables sont des données qu'il a produites, créditées comme telles.</li>
+                        <li>Les fichiers de match sont lus par <em>xgparser</em> et <em>gnubgparser</em> (LGPL-2.1) et par <em>bgfparser</em> (MIT).</li>
+                        <li>Côté Go : <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> et <em>go-fsrs</em> (MIT).</li>
+                        <li>Côté interface : <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> et <em>driver.js</em> (MIT).</li>
+                        <li>Les polices <em>Nunito</em> et <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+                    </ul>
+                    <p>L'inventaire complet, avec le texte des licences, est le fichier <strong>THIRD_PARTY.md</strong> livré avec blunderDB (<a href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md" target="_blank" rel="noopener noreferrer">github.com/kevung/blunderDB</a>).</p>
 `
 };

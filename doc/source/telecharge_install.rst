@@ -65,7 +65,13 @@ exécutable, aucun ``chmod`` n'est donc nécessaire :
 
    tar xzf blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
    cd blunderDB-linux-webkit2gtk-4.1-x.y.z
-   ./blunderdb
+   ./blunderDB
+
+.. note:: L'exécutable de l'archive s'appelle ``blunderDB``, avec les
+   majuscules. Les paquets ``.deb``, ``.rpm`` et AUR installent en plus le
+   lien ``blunderdb`` en minuscules, le nom que la documentation de la ligne
+   de commande (:ref:`cli`) utilise ; pour l'obtenir aussi depuis l'archive :
+   ``ln -s "$PWD/blunderDB" ~/.local/bin/blunderdb``.
 
 Binaire brut (méthode avancée)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -20,9 +20,17 @@ _srcdir="blunderDB-linux-webkit2gtk-4.1-${pkgver}"
 
 package() {
   install -Dm755 "${_srcdir}/blunderDB"        "${pkgdir}/usr/bin/blunderDB"
+  # The CLI documentation calls the command `blunderdb` (as do Homebrew and
+  # winget); ship the lowercase name too.
+  ln -s blunderDB "${pkgdir}/usr/bin/blunderdb"
   install -Dm644 "${_srcdir}/blunderdb.desktop" "${pkgdir}/usr/share/applications/blunderdb.desktop"
   install -Dm644 "${_srcdir}/blunderdb-256.png" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/blunderdb.png"
   install -Dm644 "${_srcdir}/io.github.kevung.blunderDB.metainfo.xml" \
                  "${pkgdir}/usr/share/metainfo/io.github.kevung.blunderDB.metainfo.xml"
   install -Dm644 "${_srcdir}/LICENSE"           "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  # Third-party notices (Strehl network, GNUbg bearoff tables, Go/JS libraries,
+  # fonts). Guarded so a tarball built before CI staged the file still packages.
+  if [ -f "${_srcdir}/THIRD_PARTY.md" ]; then
+    install -Dm644 "${_srcdir}/THIRD_PARTY.md" "${pkgdir}/usr/share/licenses/${pkgname}/THIRD_PARTY.md"
+  fi
 }
