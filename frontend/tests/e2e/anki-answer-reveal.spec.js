@@ -47,9 +47,9 @@ const ANALYSIS_11 = {
     playedCubeActions: []
 };
 
-async function startReview(page, { reviewReturns = CARD_11 } = {}) {
+async function startReview(page, { reviewReturns = CARD_11, side = false } = {}) {
     await installWailsMock(page, {
-        config: { GetLastDatabasePath: '/tmp/e2e-anki.db' },
+        config: { GetLastDatabasePath: '/tmp/e2e-anki.db', ...(side ? { GetPanelPosition: 'side', GetPanelWidth: 460 } : {}) },
         // PathExists gates the reopen of the last database at startup; without
         // it the app forgets the path and no deck ever loads.
         app: { PathExists: true, IsProtectedCopyPath: false },
@@ -173,4 +173,30 @@ test('une position sans analyse enregistrée le dit, sans zone masquée', async 
 
     await expect(page.locator('.answer-absent')).toBeVisible();
     await expect(page.locator('.answer-masked')).toHaveCount(0);
+});
+
+test('en colonne latérale, la réponse se pose sous la bande et défile au lieu d’être coupée', async ({ page }) => {
+    // Le panneau peut être une bande basse large ou une colonne étroite. Une
+    // colonne haute avait deux défauts que seule une mesure révèle : la réponse
+    // centrée flottait à une demi-hauteur des boutons qui la notent, et le
+    // tableau de coups, plus large que la colonne, était coupé au lieu de
+    // défiler — on masquait donc des colonnes au moment même de les révéler.
+    await startReview(page, { side: true });
+    await page.keyboard.press('Space');
+    await expect(page.locator('.checker-table')).toBeVisible();
+
+    const strip = await page.locator('.review-strip').boundingBox();
+    const table = await page.locator('.checker-table').boundingBox();
+    expect(table.y - (strip.y + strip.height)).toBeLessThan(40);
+
+    const { scrollable, clipped } = await page.locator('.review-answer').evaluate((el) => ({
+        scrollable: el.scrollWidth > el.clientWidth,
+        clipped: getComputedStyle(el).overflowX === 'hidden'
+    }));
+    expect(clipped).toBe(false);
+    if (scrollable) {
+        await page.locator('.review-answer').evaluate((el) => (el.scrollLeft = el.scrollWidth));
+        const moved = await page.locator('.review-answer').evaluate((el) => el.scrollLeft > 0);
+        expect(moved).toBe(true);
+    }
 });

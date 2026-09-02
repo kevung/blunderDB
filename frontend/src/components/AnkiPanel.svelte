@@ -801,16 +801,21 @@
         max-width: 320px;
     }
 
-    /* The answer, below the strip: the only part that scrolls. */
+    /* The answer, below the strip: the only part that scrolls, on both axes.
+       A candidate table is wider than a side column, and clipping it would
+       hide the very columns being revealed — wide content scrolls inside its
+       own box, it is never cut off. Content sits at the TOP: centred in a tall
+       side column, the answer floated half a panel away from the buttons that
+       grade it. */
     .review-answer {
         flex: 1;
         min-height: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        padding-top: 10px;
     }
 
     /* One opaque stand-in for the whole answer (ADR-0025 rule 3), not the Eval
