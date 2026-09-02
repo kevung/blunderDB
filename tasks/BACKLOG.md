@@ -113,6 +113,15 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   phase 06) : parcourir chaque filtre de la fenêtre de recherche. Priorité
   basse ; couvert indirectement par `searchFilterService.test.js` (unitaires
   + round-trip).
+- **Réponse masquée d'une carte Anki — validation sur une vraie base**
+  (ADR-0025, mergé le 2026-09-02) : les neuf scénarios de
+  `tests/e2e/anki-answer-reveal.spec.js` pilotent l'application réelle, mais
+  avec le backend Wails simulé. Rien n'a donc été exercé contre un SQLite
+  réel ni contre un vrai paquet FSRS : reste à ouvrir une base de production,
+  créer un paquet, réviser quelques cartes et vérifier que l'analyse dévoilée
+  est bien celle que la base contient — en bande basse **et** en colonne
+  latérale. Priorité basse : le chemin de chargement (`showPosition`) est
+  celui que la navigation ordinaire emprunte déjà.
 ## Ouvert — Produit / docs
 
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
