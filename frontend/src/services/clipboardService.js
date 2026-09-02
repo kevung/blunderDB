@@ -1,4 +1,4 @@
-import { tMsg } from '../i18n';
+import { tMsg, translate } from '../i18n';
 import { get } from 'svelte/store';
 import { CopyImageToClipboard } from '../../wailsjs/go/gui/App.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
@@ -11,6 +11,8 @@ import { matchContextStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
 import { logger } from '../utils/logger.js';
+import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
+import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows, playedCubePredicate, playedMovePredicate } from '../utils/analysisRows.js';
 
 // Write a PNG rendered from a <canvas> to the clipboard, walking the image
 // clipboard's fallback ladder (see docs/adr/0004). Rung 1 is the WebView's own
@@ -206,23 +208,10 @@ export async function copyBoardImage() {
 
         const origElements = svgEl.querySelectorAll('*');
         const clonedElements = clonedSvg.querySelectorAll('*');
-        const styleProps = [
-            'fill',
-            'stroke',
-            'stroke-width',
-            'stroke-linecap',
-            'stroke-linejoin',
-            'stroke-miterlimit',
-            'opacity',
-            'font-family',
-            'font-size',
-            'font-weight',
-            'font-style',
-            'text-anchor',
-            'dominant-baseline',
-            'visibility',
-            'display'
-        ];
+        const styleProps =
+            'fill stroke stroke-width stroke-linecap stroke-linejoin stroke-miterlimit opacity font-family font-size font-weight font-style text-anchor dominant-baseline visibility display'.split(
+                ' '
+            );
         for (let i = 0; i < origElements.length; i++) {
             const orig = origElements[i];
             const cloned = clonedElements[i];
@@ -298,7 +287,8 @@ export async function copyBoardWithAnalysisImage() {
 
         const analysis = get(analysisStore);
         const position = get(positionStore);
-        if (!analysis || (!analysis.checkerAnalysis?.moves?.length && !analysis.doublingCubeAnalysis)) {
+        const strip = analysisStrip(analysis);
+        if (!strip) {
             setStatusBarMessage(tMsg('status.noAnalysisToExport'));
             return;
         }
@@ -348,49 +338,20 @@ export async function copyBoardWithAnalysisImage() {
         const img = new Image();
         img.onload = async () => {
             const scale = 2;
-            const bgColor = '#f7f0e6';
-            const font = '12px monospace';
-            const headerFont = 'bold 12px monospace';
-            const charWidth = 7.2;
-            const rowHeight = 18;
-            const padding = 10;
-            const tablePadding = 4;
-
-            const cubeValue = position.cube?.value || 1;
-            const isCubeAnalysis = analysis.analysisType === 'DoublingCube' || (!analysis.checkerAnalysis?.moves?.length && analysis.doublingCubeAnalysis);
-
-            let analysisHeight = 0;
-            let analysisWidth = svgWidth;
-
-            if (isCubeAnalysis && analysis.doublingCubeAnalysis) {
-                analysisHeight = padding + rowHeight * 9 + padding;
-            } else if (analysis.checkerAnalysis?.moves?.length) {
-                const moveCount = Math.min(analysis.checkerAnalysis.moves.length, 6);
-                analysisHeight = padding + rowHeight * (moveCount + 1) + padding;
-            }
-
-            const totalHeight = svgHeight + analysisHeight;
+            const stripHeight = STRIP.padding * 2 + STRIP.rowHeight * strip.rows;
+            const totalHeight = svgHeight + stripHeight;
             const canvas = document.createElement('canvas');
-            canvas.width = analysisWidth * scale;
+            canvas.width = svgWidth * scale;
             canvas.height = totalHeight * scale;
             const ctx = canvas.getContext('2d');
             ctx.scale(scale, scale);
 
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, analysisWidth, totalHeight);
-
+            ctx.fillStyle = '#f7f0e6';
+            ctx.fillRect(0, 0, svgWidth, totalHeight);
             ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
             URL.revokeObjectURL(url);
 
-            const startY = svgHeight + padding;
-            ctx.font = font;
-            ctx.textBaseline = 'middle';
-
-            if (isCubeAnalysis && analysis.doublingCubeAnalysis) {
-                drawCubeAnalysis(ctx, analysis.doublingCubeAnalysis, cubeValue, startY, analysisWidth, rowHeight, tablePadding, headerFont, font, charWidth);
-            } else if (analysis.checkerAnalysis?.moves?.length) {
-                drawCheckerAnalysis(ctx, analysis, startY, analysisWidth, rowHeight, tablePadding, headerFont, font, charWidth);
-            }
+            paintAnalysisStrip(ctx, { analysis, position, isMatchMode: get(matchContextStore).isMatchMode, y: svgHeight + STRIP.padding, width: svgWidth });
 
             try {
                 const res = await writeCanvasToClipboard(canvas);
@@ -415,258 +376,120 @@ export async function copyBoardWithAnalysisImage() {
     }
 }
 
-function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, pad, headerFont, font, _charWidth) {
-    const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
-    const getDecLabel = (d) => (cubeValue >= 1 ? d.replace('Double', 'Redouble') : d);
+// ---------------------------------------------------------------------------
+// The analysis strip painted under the board. Every string it paints comes
+// from utils/analysisRows.js — the rows CubeVerdictTable and
+// CandidateMovesTable render — so the image cannot say something the screen
+// does not; what remains here is geometry: where a cell goes and what colour
+// sits behind it.
+// ---------------------------------------------------------------------------
 
-    const colWidth = Math.floor(totalWidth / 3);
-    const borderColor = '#ddd';
-    const headerBg = '#f2f2f2';
-    const whiteBg = '#ffffff';
-    const playedBg = '#fff3cd';
+const STRIP = { rowHeight: 18, padding: 10, cellPad: 4, font: '12px monospace', headerFont: 'bold 12px monospace' };
+const INK = { border: '#ddd', section: '#ccc', header: '#f2f2f2', white: '#ffffff', even: '#fdfdfd', played: '#fff3cd' };
+// The image ranks the candidates itself and keeps the top of the list.
+const MAX_IMAGE_MOVES = 6;
+// The cube strip is as tall as its tallest block: the facts grid (a header
+// and five rows).
+const CUBE_STRIP_ROWS = 6;
 
-    function drawCell(x, y, w, h, text, opts = {}) {
-        ctx.fillStyle = opts.bg || whiteBg;
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(x, y, w, h);
-        ctx.fillStyle = '#000';
-        ctx.font = opts.bold ? headerFont : font;
-        ctx.textAlign = opts.align || 'center';
-        const tx = opts.align === 'left' ? x + pad : x + w / 2;
-        ctx.fillText(text, tx, y + h / 2);
-    }
-
-    const analysis = get(analysisStore);
-    const matchCtx = get(matchContextStore);
-    function normCubeAction(action) {
-        const s = action.toLowerCase().replace(/\s+/g, '');
-        if (s === 'double/take' || s === 'doubletake') return ['double', 'take'];
-        if (s === 'double/pass' || s === 'doublepass') return ['double', 'pass'];
-        if (s === 'nodouble' || s === 'nodoubleorredouble' || s === 'noredouble') return ['nodouble'];
-        if (s === 'redouble') return ['double'];
-        return [s];
-    }
-    function isPlayedAction(action) {
-        const aParts = normCubeAction(action);
-        if (matchCtx.isMatchMode) {
-            if (analysis.playedCubeAction) {
-                const pp = normCubeAction(analysis.playedCubeAction);
-                return aParts.every((a) => pp.includes(a));
-            }
-            return false;
-        }
-        const allParts = new Set();
-        if (analysis.playedCubeActions?.length) {
-            for (const pa of analysis.playedCubeActions) {
-                for (const p of normCubeAction(pa)) allParts.add(p);
-            }
-        }
-        if (allParts.size === 0 && analysis.playedCubeAction) {
-            for (const p of normCubeAction(analysis.playedCubeAction)) allParts.add(p);
-        }
-        return allParts.size > 0 && aParts.every((a) => allParts.has(a));
-    }
-
-    let y = startY;
-
-    const leftX = 0;
-    const leftW = colWidth;
-    const cellW = Math.floor(leftW / 3);
-
-    drawCell(leftX, y, cellW, rowHeight, '', { bg: headerBg, bold: true });
-    drawCell(leftX + cellW, y, cellW, rowHeight, 'P', { bg: headerBg, bold: true });
-    drawCell(leftX + cellW * 2, y, cellW, rowHeight, 'O', { bg: headerBg, bold: true });
-    y += rowHeight;
-
-    drawCell(leftX, y, cellW, rowHeight, 'W', { bold: true });
-    drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerWinChances || 0).toFixed(2));
-    drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentWinChances || 0).toFixed(2));
-    y += rowHeight;
-
-    drawCell(leftX, y, cellW, rowHeight, 'G', { bold: true });
-    drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerGammonChances || 0).toFixed(2));
-    drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentGammonChances || 0).toFixed(2));
-    y += rowHeight;
-
-    drawCell(leftX, y, cellW, rowHeight, 'B', { bold: true });
-    drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerBackgammonChances || 0).toFixed(2));
-    drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentBackgammonChances || 0).toFixed(2));
-    y += rowHeight;
-
-    drawCell(leftX, y, cellW, rowHeight, 'ND Eq', { bold: true });
-    drawCell(leftX + cellW, y, cellW * 2, rowHeight, formatEq(cube.cubelessNoDoubleEquity));
-    y += rowHeight;
-
-    drawCell(leftX, y, cellW, rowHeight, 'D Eq', { bold: true });
-    drawCell(leftX + cellW, y, cellW * 2, rowHeight, formatEq(cube.cubelessDoubleEquity));
-
-    y = startY;
-    const rightX = colWidth;
-    const rightW = colWidth;
-    const decW = Math.floor(rightW * 0.4);
-    const eqW = Math.floor(rightW * 0.3);
-    const errW = rightW - decW - eqW;
-
-    drawCell(rightX, y, decW, rowHeight, 'Decision', { bg: headerBg, bold: true });
-    drawCell(rightX + decW, y, eqW, rowHeight, 'Equity', { bg: headerBg, bold: true });
-    drawCell(rightX + decW + eqW, y, errW, rowHeight, 'Error', { bg: headerBg, bold: true });
-    y += rowHeight;
-
-    const ndPlayed = isPlayedAction('No Double');
-    const ndBg = ndPlayed ? playedBg : whiteBg;
-    drawCell(rightX, y, decW, rowHeight, getDecLabel('No Double'), { bg: ndBg });
-    drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulNoDoubleEquity), { bg: ndBg });
-    drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulNoDoubleError), { bg: ndBg });
-    y += rowHeight;
-
-    const dtPlayed = isPlayedAction('Double') && isPlayedAction('Take');
-    const dtBg = dtPlayed ? playedBg : whiteBg;
-    drawCell(rightX, y, decW, rowHeight, getDecLabel('Double/Take'), { bg: dtBg });
-    drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulDoubleTakeEquity), { bg: dtBg });
-    drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulDoubleTakeError), { bg: dtBg });
-    y += rowHeight;
-
-    const dpPlayed = isPlayedAction('Double') && isPlayedAction('Pass');
-    const dpBg = dpPlayed ? playedBg : whiteBg;
-    drawCell(rightX, y, decW, rowHeight, getDecLabel('Double/Pass'), { bg: dpBg });
-    drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulDoublePassEquity), { bg: dpBg });
-    drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulDoublePassError), { bg: dpBg });
-    y += rowHeight;
-
-    drawCell(rightX, y, decW, rowHeight, 'Best Action', { bold: true });
-    drawCell(rightX + decW, y, eqW + errW, rowHeight, cube.bestCubeAction || '', { bold: true });
-
-    y = startY;
-    const infoX = colWidth * 2;
-    const infoW = totalWidth - infoX;
-    const infoLabelW = Math.floor(infoW * 0.5);
-    const infoValW = infoW - infoLabelW;
-
-    drawCell(infoX, y, infoLabelW, rowHeight, 'Analysis Depth', { bg: headerBg, bold: true });
-    drawCell(infoX + infoLabelW, y, infoValW, rowHeight, cube.analysisDepth || '');
-    y += rowHeight;
-
-    drawCell(infoX, y, infoLabelW, rowHeight, 'Engine', { bg: headerBg, bold: true });
-    drawCell(infoX + infoLabelW, y, infoValW, rowHeight, cube.analysisEngine || get(analysisStore).analysisEngineVersion || '');
+// analysisStrip says which block the image gets — a cube record, or the top
+// of a checker list — and how many rows it takes. Null when there is nothing
+// to paint.
+export function analysisStrip(analysis) {
+    const cube = analysis?.doublingCubeAnalysis;
+    const moves = analysis?.checkerAnalysis?.moves ?? [];
+    const isCube = analysis?.analysisType === 'DoublingCube' || (!moves.length && !!cube);
+    if (isCube && cube) return { kind: 'cube', rows: CUBE_STRIP_ROWS };
+    if (moves.length) return { kind: 'checker', rows: Math.min(moves.length, MAX_IMAGE_MOVES) + 1 };
+    return null;
 }
 
-function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, headerFont, font, _charWidth) {
-    const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
-    const borderColor = '#ddd';
-    const headerBg = '#f2f2f2';
-    const playedBg = '#fff3cd';
-    const evenBg = '#fdfdfd';
-    const sectionBorder = '#ccc';
+// paintAnalysisStrip paints the strip at y. Exported for the parity test:
+// what it hands fillText is what the DOM tables show.
+export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = false, y, width }) {
+    const strip = analysisStrip(analysis);
+    if (!strip) return;
+    const t = translate;
 
-    const cols = [
-        { label: 'Move', frac: 0.18 },
-        { label: 'Equity', frac: 0.08 },
-        { label: 'Error', frac: 0.08 },
-        { label: 'P W', frac: 0.07 },
-        { label: 'P G', frac: 0.07 },
-        { label: 'P B', frac: 0.07 },
-        { label: 'O W', frac: 0.07 },
-        { label: 'O G', frac: 0.07 },
-        { label: 'O B', frac: 0.07 },
-        { label: 'Depth', frac: 0.1 },
-        { label: 'Engine', frac: 0.14 }
-    ];
+    if (strip.kind === 'cube') {
+        const cube = analysis.doublingCubeAnalysis;
+        const decision = cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
+        const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubePredicate(analysis, isMatchMode) });
+        const third = Math.floor(width / 3);
 
-    let colPositions = [];
-    let x = 0;
-    for (const col of cols) {
-        const w = Math.floor(totalWidth * col.frac);
-        colPositions.push({ x, w, label: col.label });
-        x += w;
-    }
-    colPositions[colPositions.length - 1].w = totalWidth - colPositions[colPositions.length - 1].x;
-
-    const sectionBorders = [0, 2, 5, 8];
-
-    function drawCell(cx, cy, cw, ch, text, opts = {}) {
-        if (opts.bg) {
-            ctx.fillStyle = opts.bg;
-            ctx.fillRect(cx, cy, cw, ch);
-        }
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(cx, cy, cw, ch);
-        ctx.fillStyle = '#000';
-        ctx.font = opts.bold ? headerFont : font;
-        ctx.textAlign = opts.align || 'center';
-        const tx = opts.align === 'left' ? cx + pad : cx + cw / 2;
-        ctx.fillText(text, tx, cy + ch / 2);
+        paintTable(ctx, 0, y, splitWidth(third, [1, 1, 1]), cubeFactRows(cube), { boldLabels: true });
+        paintTable(ctx, third, y, splitWidth(third, [0.4, 0.3, 0.3]), { header: block.header, rows: [...block.rows, { label: block.verdict.label, cells: [block.verdict.text], bold: true }] });
+        paintTable(
+            ctx,
+            third * 2,
+            y,
+            splitWidth(width - third * 2, [0.5, 0.5]),
+            { rows: cubeInfoRows(cube, { t, engineFallback: analysis.analysisEngineVersion }) },
+            { boldLabels: true, labelBg: INK.header }
+        );
+        return;
     }
 
-    function drawSectionBorders(cy) {
-        ctx.strokeStyle = sectionBorder;
+    const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0)).slice(0, MAX_IMAGE_MOVES);
+    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, isMatchMode) });
+    const widths = splitWidth(width, [0.18, 0.08, 0.08, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.14]);
+    paintTable(ctx, 0, y, widths, block, { leftLabels: true, zebra: true, sections: [0, 2, 5, 8] });
+}
+
+// splitWidth cuts a width into columns by fraction; the last column absorbs
+// the rounding so the table ends exactly on its right edge.
+function splitWidth(width, fractions) {
+    const total = fractions.reduce((a, b) => a + b, 0);
+    const widths = fractions.map((f) => Math.floor((width * f) / total));
+    widths[widths.length - 1] += width - widths.reduce((a, b) => a + b, 0);
+    return widths;
+}
+
+function paintCell(ctx, x, y, w, text, { bg = INK.white, bold = false, align = 'center' } = {}) {
+    const h = STRIP.rowHeight;
+    ctx.fillStyle = bg;
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = INK.border;
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = '#000';
+    ctx.font = bold ? STRIP.headerFont : STRIP.font;
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = align;
+    ctx.fillText(text, align === 'left' ? x + STRIP.cellPad : x + w / 2, y + h / 2);
+}
+
+// paintTable lays a {header?, rows} block on the canvas. A row whose cells
+// stop short of the last column spans it with its last cell (the verdict,
+// a cubeless equity). `sections` names the columns after which a heavier
+// rule separates the groups, as the DOM table's borders do.
+function paintTable(ctx, x0, y0, widths, { header = null, rows }, { boldLabels = false, leftLabels = false, labelBg = INK.white, zebra = false, sections = [] } = {}) {
+    const h = STRIP.rowHeight;
+    const edges = widths.reduce((acc, w) => [...acc, acc[acc.length - 1] + w], [x0]);
+    let y = y0;
+
+    function paintRow(cells) {
+        cells.forEach((cell, i) => {
+            const w = i === cells.length - 1 ? edges[widths.length] - edges[i] : widths[i];
+            paintCell(ctx, edges[i], y, w, cell.text, cell);
+        });
+        ctx.strokeStyle = INK.section;
         ctx.lineWidth = 1.5;
-        for (const colIdx of sectionBorders) {
-            const col = colPositions[colIdx];
-            const rx = col.x + col.w;
+        for (const s of sections) {
             ctx.beginPath();
-            ctx.moveTo(rx, cy);
-            ctx.lineTo(rx, cy + rowHeight);
+            ctx.moveTo(edges[s + 1], y);
+            ctx.lineTo(edges[s + 1], y + h);
             ctx.stroke();
         }
+        y += h;
     }
 
-    const matchCtx = get(matchContextStore);
-    function normMove(m) {
-        return m ? m.split(' ').sort().join(' ') : '';
-    }
-    function isPlayed(move) {
-        if (!move.move) return false;
-        const nm = normMove(move.move);
-        if (matchCtx.isMatchMode) {
-            return analysis.playedMove ? normMove(analysis.playedMove) === nm : false;
-        }
-        if (analysis.playedMoves?.length) {
-            for (const pm of analysis.playedMoves) {
-                if (normMove(pm) === nm) return true;
-            }
-        }
-        if (analysis.playedMove) return normMove(analysis.playedMove) === nm;
-        return false;
-    }
-
-    let y = startY;
-
-    const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0));
-    const displayMoves = moves.slice(0, 6);
-
-    for (const col of colPositions) {
-        drawCell(col.x, y, col.w, rowHeight, col.label, { bg: headerBg, bold: true });
-    }
-    drawSectionBorders(y);
-    y += rowHeight;
-
-    for (let i = 0; i < displayMoves.length; i++) {
-        const move = displayMoves[i];
-        const played = isPlayed(move);
-        const rowBg = played ? playedBg : i % 2 === 1 ? evenBg : '#ffffff';
-
-        const values = [
-            move.move || '',
-            formatEq(move.equity),
-            formatEq(move.equityError),
-            (move.playerWinChance || 0).toFixed(2),
-            (move.playerGammonChance || 0).toFixed(2),
-            (move.playerBackgammonChance || 0).toFixed(2),
-            (move.opponentWinChance || 0).toFixed(2),
-            (move.opponentGammonChance || 0).toFixed(2),
-            (move.opponentBackgammonChance || 0).toFixed(2),
-            move.analysisDepth || '',
-            move.analysisEngine || ''
-        ];
-
-        for (let j = 0; j < colPositions.length; j++) {
-            const col = colPositions[j];
-            drawCell(col.x, y, col.w, rowHeight, values[j], { bg: rowBg, align: j === 0 ? 'left' : 'center' });
-        }
-        drawSectionBorders(y);
-        y += rowHeight;
-    }
+    if (header) paintRow(header.map((text) => ({ text, bg: INK.header, bold: true })));
+    rows.forEach((row, i) => {
+        const bg = row.highlight ? INK.played : zebra && i % 2 === 1 ? INK.even : INK.white;
+        paintRow([
+            { text: row.label, bg: row.highlight ? bg : labelBg, bold: boldLabels || !!row.bold, align: leftLabels ? 'left' : 'center' },
+            ...row.cells.map((text) => ({ text, bg, bold: !!row.bold }))
+        ]);
+    });
 }

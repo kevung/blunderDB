@@ -1,11 +1,14 @@
 <script>
     import { t } from '../i18n';
+    import { checkerRows } from '../utils/analysisRows.js';
 
     // Rendering component for a ranked list of checker-move candidates —
     // mounted by AnalysisPanel (a stored record) and by EPCPanel (a live
     // evaluation, wired in #125). It owns no data: sorting, selection and
     // highlighting stay with the caller, which knows whether the moves come
-    // from a database row or a fresh computation.
+    // from a database row or a fresh computation. The cells themselves come
+    // from utils/analysisRows.js — the same rows the copied image paints —
+    // so this component lays them out and nothing more.
     //
     // showProvenance (ADR-0018 rule 4): depth/engine are constant across
     // every row of a live evaluation (EPCPanel), so that caller hides the
@@ -31,13 +34,13 @@
         baseline = null
     } = $props();
 
-    function getSortIndicator(column) {
-        if (sortColumn !== column) return '';
-        return sortDirection === 'asc' ? ' ▲' : ' ▼';
-    }
+    let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline }));
 
-    function formatEquity(value) {
-        return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
+    // The equity column never carried an indicator (it is the default sort,
+    // and the arrow would sit on it at every opening); the others do.
+    function getSortIndicator(column) {
+        if (column === 'equity' || sortColumn !== column) return '';
+        return sortDirection === 'asc' ? ' ▲' : ' ▼';
     }
 </script>
 
@@ -45,133 +48,35 @@
     <table class="checker-table">
         <thead>
             <tr>
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'move'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('move');
-                    }}>{$t('analysis.move')}{getSortIndicator('move')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'equity'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('equity');
-                    }}>{$t('analysis.equity')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'error'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('error');
-                    }}>{$t('analysis.error')}{getSortIndicator('error')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'pw'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('pw');
-                    }}>{$t('analysis.playerWin')}{getSortIndicator('pw')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'pg'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('pg');
-                    }}>{$t('analysis.playerGammon')}{getSortIndicator('pg')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'pb'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('pb');
-                    }}>{$t('analysis.playerBackgammon')}{getSortIndicator('pb')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'ow'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('ow');
-                    }}>{$t('analysis.opponentWin')}{getSortIndicator('ow')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'og'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('og');
-                    }}>{$t('analysis.opponentGammon')}{getSortIndicator('og')}</th
-                >
-                <th
-                    class="sortable"
-                    class:active-sort={sortColumn === 'ob'}
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        onSort('ob');
-                    }}>{$t('analysis.opponentBackgammon')}{getSortIndicator('ob')}</th
-                >
-                {#if showProvenance}
+                {#each block.columns as column, i (column)}
                     <th
                         class="sortable"
-                        class:active-sort={sortColumn === 'depth'}
+                        class:active-sort={sortColumn === column}
                         onclick={(e) => {
                             e.stopPropagation();
-                            onSort('depth');
-                        }}>{$t('analysis.depth')}{getSortIndicator('depth')}</th
+                            onSort(column);
+                        }}>{block.header[i]}{getSortIndicator(column)}</th
                     >
-                    <th
-                        class="sortable"
-                        class:active-sort={sortColumn === 'engine'}
-                        onclick={(e) => {
-                            e.stopPropagation();
-                            onSort('engine');
-                        }}>{$t('analysis.engine')}{getSortIndicator('engine')}</th
-                    >
-                {/if}
+                {/each}
             </tr>
         </thead>
-        {#if baseline}
+        {#if block.baseline}
             <tbody>
                 <tr class="baseline-row" title={$t('eval.baselineTooltip')}>
-                    <td class="baseline-label">{$t('eval.baseline')}</td>
-                    <td>{formatEquity(baseline.cubelessEquity ?? 0)}</td>
-                    <td></td>
-                    <td>{(baseline.playerWinChance ?? 0).toFixed(2)}</td>
-                    <td>{(baseline.playerGammonChance ?? 0).toFixed(2)}</td>
-                    <td>{(baseline.playerBackgammonChance ?? 0).toFixed(2)}</td>
-                    <td>{(baseline.opponentWinChance ?? 0).toFixed(2)}</td>
-                    <td>{(baseline.opponentGammonChance ?? 0).toFixed(2)}</td>
-                    <td>{(baseline.opponentBackgammonChance ?? 0).toFixed(2)}</td>
-                    {#if showProvenance}
-                        <td></td>
-                        <td></td>
-                    {/if}
+                    <td class="baseline-label">{block.baseline.label}</td>
+                    {#each block.baseline.cells as cell, i (i)}
+                        <td>{cell}</td>
+                    {/each}
                 </tr>
             </tbody>
         {/if}
         <tbody>
-            {#each moves as move (move.index ?? move.move)}
-                <tr class:selected={selectedMove === move.move} class:played={isPlayedMove(move)} onclick={() => onRowClick(move)}>
-                    <td>{move.move}</td>
-                    <td>{formatEquity(move.equity || 0)}</td>
-                    <td>{formatEquity(move.equityError || 0)}</td>
-                    <td>{(move.playerWinChance || 0).toFixed(2)}</td>
-                    <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
-                    <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
-                    <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
-                    <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
-                    <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
-                    {#if showProvenance}
-                        <td>{move.analysisDepth}</td>
-                        <td>{move.analysisEngine || ''}</td>
-                    {/if}
+            {#each block.rows as row (row.key)}
+                <tr class:selected={selectedMove === row.move.move} class:played={row.highlight} onclick={() => onRowClick(row.move)}>
+                    <td>{row.label}</td>
+                    {#each row.cells as cell, i (i)}
+                        <td>{cell}</td>
+                    {/each}
                 </tr>
             {/each}
         </tbody>
