@@ -78,9 +78,11 @@ func TestReadyzVersionMatches(t *testing.T) {
 func TestMetricsEndpoint(t *testing.T) {
 	ts := newTestServer(t)
 	// Generate one request so a counter exists.
-	if _, err := http.Get(ts.URL + "/healthz"); err != nil {
+	warm, err := http.Get(ts.URL + "/healthz")
+	if err != nil {
 		t.Fatal(err)
 	}
+	warm.Body.Close()
 	resp, err := http.Get(ts.URL + "/metrics")
 	if err != nil {
 		t.Fatal(err)

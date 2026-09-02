@@ -8,6 +8,8 @@ linters:
   # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
   # an iteration error otherwise truncates the result silently.
   enable:
+    - bodyclose
+    - copyloopvar
     - errorlint
     - nolintlint
     - rowserrcheck
