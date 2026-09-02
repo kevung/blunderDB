@@ -28,7 +28,7 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
-    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, MODAL, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
 
     // Services
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp } from './services/databaseService.js';
@@ -37,11 +37,8 @@
         loadAllPositions,
         reloadAllPositions,
         loadPositionsByFilters,
-        firstPosition,
         previousPosition,
         nextPosition,
-        lastPosition,
-        gotoPosition,
         saveCurrentPosition,
         updatePosition,
         deletePosition,
@@ -59,13 +56,10 @@
         exitEPCMode,
         updateEPC,
         handleOpenCollection,
-        addSearchToFilterLibrary,
-        togglePipcount,
-        loadRandomPosition
+        addSearchToFilterLibrary
     } from './services/positionService.js';
-    import { importDatabase, importPosition, importFolder, pastePosition, handleFileDrop } from './services/importService.js';
+    import { importDatabase, importPosition, handleFileDrop } from './services/importService.js';
     import { exportDatabase } from './services/exportService.js';
-    import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { applyTabPanels } from './services/tabHandler.js';
@@ -341,33 +335,7 @@
         </div>
     {/if}
 
-    <Toolbar
-        onclick={() => {}}
-        onNewDatabase={newDatabase}
-        onOpenDatabase={openDatabase}
-        onImportDatabase={importDatabase}
-        onExportDatabase={exportDatabase}
-        onExit={exitApp}
-        onImportPosition={importPosition}
-        onImportFolder={importFolder}
-        onCopyPosition={copyPosition}
-        onPastePosition={pastePosition}
-        onSavePosition={saveCurrentPosition}
-        onUpdatePosition={updatePosition}
-        onDeletePosition={deletePosition}
-        onFirstPosition={firstPosition}
-        onPreviousPosition={previousPosition}
-        onNextPosition={nextPosition}
-        onLastPosition={lastPosition}
-        onGoToPosition={gotoPosition}
-        onTogglePipcount={togglePipcount}
-        onRandomPosition={loadRandomPosition}
-        onCopyBoardImage={copyBoardImage}
-        onToggleHelp={toggleHelpModal}
-        onToggleConfig={() => toggleModal(MODAL.CONFIG)}
-        onToggleTour={() => toggleModal(MODAL.TOUR)}
-        onLoadAllPositions={reloadAllPositions}
-    />
+    <Toolbar />
 
     <ViewTabs />
 
