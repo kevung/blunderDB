@@ -4,8 +4,9 @@
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { isResponseCubeAction } from '../utils/cubeAction.js';
-    import { parseMoveNotation, mirrorPosition, boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from '../utils/boardGeometry.js';
-    import { EXCLUDE_EMPTY, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
+    import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
+    import { drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
+    import { attachBoardInteractions } from '../utils/boardInteractions.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
@@ -67,11 +68,7 @@
     let width;
     let height;
     let unsubscribeBoardRedrawTriggers;
-    let startMousePos = null;
-    // Manual double-click tracking for the Except "must be empty" marker. Native
-    // 'dblclick' is unreliable here because each click redraws (recreates) the
-    // two.js shapes, so the two clicks land on different DOM nodes.
-    let lastExceptClick = null;
+    let detachInteractions;
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
     let previousDice = get(positionStore).dice; // Save previous dice values
 
@@ -195,186 +192,6 @@
         const roller = pos.player_on_roll === 0 ? $t('board.player1') : $t('board.player2');
         return $t('board.description', { pip1, pip2, roller });
     });
-    function handleMouseDown(event) {
-        event.preventDefault(); // Prevent text or element selection
-        // Blur any focused text field when clicking the board
-        if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
-            /** @type {HTMLElement} */ (document.activeElement).blur();
-        }
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Normalise into drawing coordinates: the canvas may be CSS-scaled
-        // (interface zoom, side layout), so raw client pixels drift — at 90 %
-        // scale a click on point 1 used to land on point 2.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        startMousePos = {
-            x: mouseX,
-            y: mouseY,
-            button: event.button
-        };
-    }
-
-    function handleMouseMove(event) {
-        event.preventDefault(); // Prevent text or element selection
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-    }
-
-    function handleMouseUp(event) {
-        event.preventDefault(); // Prevent text or element selection
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        const rect = canvas.getBoundingClientRect();
-        const norm = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-        const endMousePos = {
-            x: norm.x,
-            y: norm.y,
-            button: event.button
-        };
-
-        // In the Except structure, a quick second click on the same point blocks it
-        // (must be empty). Detected manually because native 'dblclick' is unreliable
-        // when redraws recreate the shapes between the two clicks.
-        if (mode === 'EDIT' && get(searchStructureModeStore) === 'exclude') {
-            const { checkerPoint } = getCheckerPointAndCount(endMousePos.x, endMousePos.y, 0);
-            if (checkerPoint >= 1 && checkerPoint <= 24) {
-                const isMarker = get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY;
-                const now = Date.now();
-                if (!isMarker && lastExceptClick && lastExceptClick.point === checkerPoint && now - lastExceptClick.time < 450) {
-                    lastExceptClick = null;
-                    setEmptyExcludeMarker(checkerPoint);
-                    return;
-                }
-                // A click on a blocked point unblocks it (see updateCheckerPositionByPoint);
-                // don't let it seed a double-click that would immediately re-block.
-                lastExceptClick = isMarker ? null : { point: checkerPoint, time: now };
-            } else {
-                lastExceptClick = null;
-            }
-        }
-
-        fillCheckersBetween(startMousePos, endMousePos);
-    }
-
-    function fillCheckersBetween(startPos, endPos) {
-        const startChecker = getCheckerPointAndCount(startPos.x, startPos.y, startPos.button);
-        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y, startPos.button);
-
-        const maxCheckers = Math.max(startChecker.checkerCount, endChecker.checkerCount);
-
-        const startPoint = Math.min(startChecker.checkerPoint, endChecker.checkerPoint);
-        const endPoint = Math.max(startChecker.checkerPoint, endChecker.checkerPoint);
-
-        for (let point = startPoint; point <= endPoint; point++) {
-            updateCheckerPositionByPoint(point, maxCheckers, startPos.button);
-        }
-    }
-
-    function getCheckerPointAndCount(x_mouse, y_mouse, _button) {
-        // Pure mapping shared with the unit tests (boardGeometry.js), which
-        // assert it against the drawCheckers() formulas.
-        return checkerPointAndCountAt(x_mouse, y_mouse, width, height, boardCfg.widthFactor, boardCfg.orientation);
-    }
-
-    function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
-        // The Eval panel (EPC mode) merges race analysis and gammonNet position
-        // evaluation (ADR-0012): it is not race-only, so the whole board is
-        // editable, exactly like EDIT mode — colour follows the mouse button
-        // (left → Black, right → White) on every point, not just the home
-        // boards. A position outside the race domain simply gets no race
-        // verdict; the Go side already handles that gracefully.
-
-        // A single click on a blocked ("must be empty") Except point unblocks it
-        // (back to empty) so checkers can be edited again.
-        if (get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY) {
-            positionStore.update((pos) => {
-                pos.board.points = pos.board.points.map((p, i) => (i === checkerPoint ? { checkers: 0, color: -1 } : p));
-                return pos;
-            });
-            return;
-        }
-        const color = checkerPoint === 0 || checkerPoint === 25 ? (checkerPoint === 0 ? 1 : 0) : button === 2 ? 1 : 0;
-
-        // When editing a search structure (Search tab), a point may carry up to 15
-        // checkers and the per-colour total is NOT capped at 15 — a pattern can ask
-        // for e.g. 3 checkers on each of 1-6 ("closed board without a spare"). For a
-        // real position being edited, keep the 15-per-colour cap.
-        const isSearchStructure = get(activeTabStore) === 'search';
-
-        positionStore.update((pos) => {
-            // Cap total checkers of this color at 15 (only for real positions).
-            const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
-                if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
-                return acc;
-            }, 0);
-            const effectiveMaxPerPoint = isSearchStructure ? 15 : 15 - totalOtherPoints;
-            if (effectiveMaxPerPoint <= 0) return pos;
-
-            pos.board.points = pos.board.points.map((point, index) => {
-                if (index === checkerPoint) {
-                    if (point.checkers >= 5 && point.color === color) {
-                        // Only add more checkers if clicked on the 5th checker
-                        if (checkerCount === 5) {
-                            return {
-                                ...point,
-                                checkers: Math.min(point.checkers + 1, effectiveMaxPerPoint)
-                            };
-                        } else {
-                            return {
-                                ...point,
-                                checkers: Math.min(checkerCount, effectiveMaxPerPoint),
-                                color: color
-                            };
-                        }
-                    } else {
-                        return {
-                            ...point,
-                            checkers: Math.min(checkerCount, effectiveMaxPerPoint),
-                            color: color
-                        };
-                    }
-                }
-                return point;
-            });
-
-            // Set color to -1 if no checkers on a point
-            pos.board.points = pos.board.points.map((point) => {
-                if (point.checkers === 0) {
-                    return {
-                        ...point,
-                        color: -1
-                    };
-                }
-                return point;
-            });
-
-            return pos;
-        });
-
-        const position = get(positionStore);
-        const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
-        const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
-        // A search structure can exceed 15 checkers per colour; clamp bearoff at 0
-        // (it is irrelevant to structure search anyway).
-        position.board.bearoff[0] = Math.max(0, 15 - player1Checkers);
-        position.board.bearoff[1] = Math.max(0, 15 - player2Checkers);
-
-        positionStore.update((pos) => {
-            pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
-            return pos;
-        });
-    }
-
-    // setEmptyExcludeMarker flags a point of the "Except" structure as must-be-empty
-    // (sentinel colour EXCLUDE_EMPTY). Used by the double-click handler.
-    function setEmptyExcludeMarker(checkerPoint) {
-        positionStore.update((pos) => {
-            pos.board.points = pos.board.points.map((point, index) => (index === checkerPoint ? { checkers: 1, color: EXCLUDE_EMPTY } : point));
-            return pos;
-        });
-    }
-
     function resizeBoard() {
         const container = canvas.parentElement;
         const containerWidth = container.clientWidth;
@@ -432,269 +249,6 @@
         });
     }
 
-    function handleDoubleClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-
-        // Note: the Except "must be empty" marker is handled by manual double-click
-        // detection in handleMouseUp (native 'dblclick' is unreliable here because
-        // redraws recreate the shapes between the two clicks).
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = (11 / 13) * boardWidth;
-
-        // Check if the click is outside of the board
-        if (mouseX < boardOrigXpos - boardWidth / 2 || mouseX > boardOrigXpos + boardWidth / 2 || mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
-            if (mode === 'EPC') resetEPCBoard();
-            else resetBoard();
-        }
-    }
-
-    function handleDoublingCubeClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        // Check if the click is within the doubling cube
-        if (
-            mouseX >= cubePosition.x - cubePosition.size / 2 &&
-            mouseX <= cubePosition.x + cubePosition.size / 2 &&
-            mouseY >= cubePosition.y - cubePosition.size / 2 &&
-            mouseY <= cubePosition.y + cubePosition.size / 2
-        ) {
-            positionStore.update((pos) => {
-                // EPC mode: only the owner matters (money equities are in units
-                // of the current cube), so clicks cycle the owner and pin the
-                // value — centered (face 1) → bottom owns (face 2) → top owns
-                // (face 2) → centered; right-click cycles backwards.
-                if (mode === 'EPC') {
-                    const cycle = [-1, 0, 1];
-                    const dir = event.button === 2 ? -1 : 1;
-                    const cur = cycle.indexOf(pos.cube.owner === undefined ? -1 : pos.cube.owner);
-                    const next = cycle[(cur + dir + 3) % 3];
-                    pos.cube.owner = next;
-                    pos.cube.value = next === -1 ? 0 : 1;
-                    return pos;
-                }
-                // Take/pass search: the cube is an offered (centered) cube. Edit its
-                // value while keeping it centered (owner -1); an offered cube is at
-                // least a double, so value stays ≥ 1 (displayed ≥ 2).
-                if (get(searchOfferedCubeStore) && pos.decision_type === 1) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 1);
-                    }
-                    pos.cube.owner = -1;
-                    return pos;
-                }
-                if (pos.cube.owner === -1) {
-                    pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    pos.cube.owner = event.button === 0 ? 0 : 1;
-                } else if (pos.cube.owner === 0) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
-                    }
-                } else if (pos.cube.owner === 1) {
-                    if (event.button === 0) {
-                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
-                    } else if (event.button === 2) {
-                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
-                    }
-                }
-
-                if (pos.cube.value === 0) {
-                    pos.cube.owner = -1;
-                }
-
-                return pos;
-            });
-        }
-    }
-
-    function handleRectangleAndDiceClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        logger.log('Rectangle or Dice click detected at:', mouseX, mouseY); // Debug log
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-        const boardHeight = (11 / 13) * boardWidth;
-        const gap = 1.2 * boardCheckerSize;
-
-        const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
-        const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
-        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
-
-        const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
-        const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
-        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
-
-        // Exclude score areas from player rectangle detection to avoid overlap with handleScoreClick
-        const scoreHeight = 0.5 * boardCheckerSize;
-        const isInsideScore1 =
-            mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize && mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2;
-        const isInsideScore2 =
-            mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize && mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2;
-
-        const isInsideTopPlayerRectangle =
-            !isInsideScore1 &&
-            mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize &&
-            mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff1Ypos, score1Ypos) &&
-            mouseY <= Math.max(bearoff1Ypos, score1Ypos);
-
-        const isInsideBottomPlayerRectangle =
-            !isInsideScore2 &&
-            mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize &&
-            mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff2Ypos, score2Ypos) &&
-            mouseY <= Math.max(bearoff2Ypos, score2Ypos);
-
-        const diceGap = 0.325 * boardCheckerSize;
-        const diceSize = 0.7 * boardCheckerSize;
-        const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * diceGap;
-        const diceYpos = get(positionStore).player_on_roll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
-
-        let isInsideDie1 = false;
-        let isInsideDie2 = false;
-
-        for (let index = 0; index < 2; index++) {
-            const dieXpos = diceXpos + index * (diceSize + diceGap);
-            if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 && mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
-                if (index === 0) {
-                    isInsideDie1 = true;
-                } else {
-                    isInsideDie2 = true;
-                }
-            }
-        }
-
-        if (isInsideDie1 || isInsideDie2) {
-            logger.log('Die clicked'); // Debug log
-        }
-
-        // EPC mode shares this whole handler with EDIT mode: the Eval panel's
-        // evaluation volet needs real dice to show candidate moves (no dice
-        // means a cube verdict instead, EPCPanel.svelte) — a player's
-        // rectangle clearing the dice to show the cube decision, then a die
-        // click restoring/bumping them for a move decision, is exactly EDIT
-        // mode's own toggle.
-        positionStore.update((pos) => {
-            if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                logger.log("Top player's rectangle clicked"); // Debug log
-                pos.player_on_roll = 0;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                previousDice = pos.dice; // Save previous dice values
-                pos.dice = [0, 0];
-                logger.log('Updated decision_type to 1 for top player'); // Debug log
-            } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                logger.log("Bottom player's rectangle clicked"); // Debug log
-                pos.player_on_roll = 1;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                pos.dice = [0, 0];
-                logger.log('Updated decision_type to 1 for bottom player'); // Debug log
-            } else if (isInsideDie1) {
-                logger.log('Die 1 clicked'); // Debug log
-                pos.decision_type = 0;
-                pos.dice = previousDice; // Restore previous dice values
-                if (event.button === 0) {
-                    pos.dice[0] = (pos.dice[0] % 6) + 1; // Left click to increase
-                } else if (event.button === 2) {
-                    pos.dice[0] = pos.dice[0] === 1 ? 6 : pos.dice[0] - 1; // Right click to decrease
-                }
-            } else if (isInsideDie2) {
-                logger.log('Die 2 clicked'); // Debug log
-                pos.decision_type = 0;
-                pos.dice = previousDice; // Restore previous dice values
-                if (event.button === 0) {
-                    pos.dice[1] = (pos.dice[1] % 6) + 1; // Left click to increase
-                } else if (event.button === 2) {
-                    pos.dice[1] = pos.dice[1] === 1 ? 6 : pos.dice[1] - 1; // Right click to decrease
-                }
-            }
-
-            logger.log('Updated dice values:', pos.dice); // Debug log
-            logger.log('Updated position store:', pos); // Log the updated position store
-            return pos;
-        });
-    }
-
-    function handleScoreClick(event) {
-        if (mode !== 'EDIT' && mode !== 'EPC') return;
-
-        // Same normalisation as checker clicks: the canvas may be CSS-scaled.
-        const rect = canvas.getBoundingClientRect();
-        const { x: mouseX, y: mouseY } = boardMouseToDrawing(event.clientX, event.clientY, rect, width, height);
-
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardCheckerSize = ((11 / 13) * (boardCfg.widthFactor * width)) / 11;
-        const boardHeight = (11 / 13) * boardWidth; // Define boardHeight
-
-        const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
-        const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
-
-        const scoreWidth = 1.5 * boardCheckerSize;
-        const scoreHeight = 0.5 * boardCheckerSize;
-
-        // Check if the click is inside the top player's green rectangle
-        if (mouseX >= score1Xpos - scoreWidth / 2 && mouseX <= score1Xpos + scoreWidth / 2 && mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2) {
-            positionStore.update((pos) => {
-                if (event.button === 0) {
-                    pos.score[0] = Math.max(pos.score[0] - 1, -1); // Decrement score
-                } else if (event.button === 2) {
-                    pos.score[0] = Math.min(pos.score[0] + 1, 99); // Increment score, max 99
-                }
-                if (pos.score[0] === -1) {
-                    pos.score[1] = -1; // Set other player's score to unlimited
-                } else if (pos.score[1] === -1) {
-                    // Leaving money by editing this side alone must not strand the
-                    // position at [N, -1] — an away score with no opponent away
-                    // score is not a valid match state (EPC's own money default is
-                    // [-1, -1], the only state where a lone -1 is meaningful).
-                    pos.score[1] = pos.score[0];
-                }
-                return pos;
-            });
-        }
-
-        // Check if the click is inside the bottom player's green rectangle
-        if (mouseX >= score2Xpos - scoreWidth / 2 && mouseX <= score2Xpos + scoreWidth / 2 && mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2) {
-            positionStore.update((pos) => {
-                if (event.button === 0) {
-                    pos.score[1] = Math.max(pos.score[1] - 1, -1); // Decrement score
-                } else if (event.button === 2) {
-                    pos.score[1] = Math.min(pos.score[1] + 1, 99); // Increment score, max 99
-                }
-                if (pos.score[1] === -1) {
-                    pos.score[0] = -1; // Set other player's score to unlimited
-                } else if (pos.score[0] === -1) {
-                    pos.score[0] = pos.score[1]; // Leaving money: see the mirrored comment above
-                }
-                return pos;
-            });
-        }
-    }
-
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
@@ -748,14 +302,27 @@
         two.height = height;
         two.renderer.setSize(width, height);
 
-        canvas.addEventListener('mousedown', handleMouseDown);
-        canvas.addEventListener('mousemove', handleMouseMove);
-        canvas.addEventListener('mouseup', handleMouseUp);
-        canvas.addEventListener('dblclick', handleDoubleClick);
-        canvas.addEventListener('mousedown', handleDoublingCubeClick);
-        canvas.addEventListener('mousedown', handleRectangleAndDiceClick);
-        canvas.addEventListener('mousedown', handleScoreClick);
-        canvas.addEventListener('contextmenu', handleContextMenu);
+        // Mouse handling lives in boardInteractions.js; it reads the live
+        // mode/size/config through these getters so a redraw or a mode
+        // change needs no re-attach.
+        detachInteractions = attachBoardInteractions(canvas, {
+            getMode: () => mode,
+            getSize: () => ({ width, height }),
+            cfg: boardCfg,
+            getCubeBox: () => cubePosition,
+            stores: {
+                position: positionStore,
+                structureMode: searchStructureModeStore,
+                activeTab: activeTabStore,
+                offeredCube: searchOfferedCubeStore,
+                anyModalOpen: isAnyModalOpen
+            },
+            getPreviousDice: () => previousDice,
+            setPreviousDice: (dice) => (previousDice = dice),
+            reset: () => (mode === 'EPC' ? resetEPCBoard() : resetBoard()),
+            openContextMenu,
+            logger
+        });
         // No direct drawBoard() here: subscribeBoardRedrawTriggers() below
         // fires each subscription once on the spot (svelte/store calls the
         // callback synchronously), which schedules the first paint on the
@@ -772,14 +339,7 @@
     });
 
     onDestroy(() => {
-        canvas.removeEventListener('mousedown', handleMouseDown);
-        canvas.removeEventListener('mousemove', handleMouseMove);
-        canvas.removeEventListener('mouseup', handleMouseUp);
-        canvas.removeEventListener('dblclick', handleDoubleClick);
-        canvas.removeEventListener('mousedown', handleDoublingCubeClick);
-        canvas.removeEventListener('mousedown', handleRectangleAndDiceClick);
-        canvas.removeEventListener('mousedown', handleScoreClick);
-        canvas.removeEventListener('contextmenu', handleContextMenu);
+        if (detachInteractions) detachInteractions();
         window.removeEventListener('resize', resizeBoard);
         window.removeEventListener('resize', logCanvasSize);
         window.removeEventListener('keydown', handleOrientationChange);
@@ -792,19 +352,16 @@
     });
 
     // ── Board context menu ─────────────────────────────────────────────────
-    // Right-clicking the board opens actions on the position it shows, but
-    // ONLY in the modes where the right button is otherwise idle. In EDIT and
-    // EPC the right button already means "place the other colour's checker"
-    // (see handleMouseDown), so the menu stays out of their way.
+    // Right-clicking the board opens actions on the position it shows. The
+    // gating (never in EDIT/EPC where the right button places checkers,
+    // never over a modal) is boardInteractions.js's; this only builds the
+    // menu at the spot it asks for.
     let boardMenu = $state(null);
 
-    function handleContextMenu(event) {
-        event.preventDefault(); // no native menu, in every mode
-        if (mode === 'EDIT' || mode === 'EPC') return;
-        if (get(isAnyModalOpen)) return;
+    function openContextMenu({ x, y }) {
         boardMenu = {
-            x: event.clientX,
-            y: event.clientY,
+            x,
+            y,
             items: [
                 {
                     label: $t('board.menu.evaluate'),
