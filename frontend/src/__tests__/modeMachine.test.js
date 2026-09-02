@@ -539,6 +539,26 @@ describe('toggleMatchMode', () => {
         expect(ListPositionIDs).toHaveBeenCalledTimes(1);
     });
 
+    test('MATCH → NORMAL : reste sur la position quittée quand la bibliothèque la contient (#201)', async () => {
+        setMatch(1); // le coup étudié est la position 102
+        ListPositionIDs.mockResolvedValueOnce([1, 102, 3]);
+
+        await toggleMatchMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(get(positionsStore).ids).toEqual([1, 102, 3]);
+        expect(get(currentPositionIndexStore), 'l’index de la position quittée, pas la dernière').toBe(1);
+    });
+
+    test('MATCH → NORMAL : sur la dernière position quand la position quittée n’est pas dans la liste', async () => {
+        setMatch(1);
+        ListPositionIDs.mockResolvedValueOnce([1, 2, 3]);
+
+        await toggleMatchMode();
+
+        expect(get(currentPositionIndexStore)).toBe(2);
+    });
+
     test('NORMAL → MATCH : reprend la dernière partie visitée à son dernier coup', async () => {
         setLibrary();
         const ctx = makeMatchContext();

@@ -366,7 +366,7 @@ export async function exitEPCMode() {
     }
 
     if (!saved?.ids) {
-        loadAllPositions();
+        loadAllPositions({ focusId: saved?.position?.id ?? null });
         return;
     }
     positionsStore.setIds(saved.ids);
@@ -393,10 +393,13 @@ export async function toggleMatchMode() {
 
     if (currentMode() === MODE.MATCH) {
         logger.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
+        // The move being studied is a library position too: stay on it rather
+        // than land on the last position of the library (#201).
+        const leavingId = get(positionStore)?.id ?? null;
         await persistLastVisitedMatchPosition();
         statusBarModeStore.set(MODE.NORMAL);
         matchContextStore.set({ ...NO_MATCH_CONTEXT });
-        loadAllPositions();
+        await loadAllPositions({ focusId: leavingId });
         return;
     }
 

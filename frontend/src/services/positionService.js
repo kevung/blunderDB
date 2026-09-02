@@ -270,7 +270,15 @@ export async function loadAnalysisForPosition(position) {
     }
 }
 
-export async function loadAllPositions() {
+/**
+ * Reload the whole library and leave every other mode. Lands on `focusId`
+ * when the library holds it — the position the user is leaving, so that
+ * exiting a match keeps the studied position on the board (#201) — and on
+ * the last position otherwise, the historical default of a fresh list.
+ *
+ * @param {{ focusId?: number | null }} [options]
+ */
+export async function loadAllPositions({ focusId = null } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
@@ -300,8 +308,9 @@ export async function loadAllPositions() {
 
         positionsStore.setIds(ids, { reset: true });
         if (ids.length > 0) {
+            const focusIdx = focusId == null ? -1 : ids.indexOf(focusId);
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(ids.length - 1);
+            currentPositionIndexStore.set(focusIdx >= 0 ? focusIdx : ids.length - 1);
             activeTabStore.set('matches');
 
             hasActiveSearch = false;

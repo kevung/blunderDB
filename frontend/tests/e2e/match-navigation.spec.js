@@ -68,9 +68,10 @@ test('sortir du mode match ramène à la bibliothèque', async ({ page }) => {
     await page.keyboard.press('j');
     await expectMove(page, 2, 1);
 
-    // Commande `m` : retour à la bibliothèque, sur sa dernière position
-    // (loadAllPositions repart de la fin), position du match mémorisée côté
-    // backend.
+    // Commande `m` : retour à la bibliothèque. Les positions de ce match ne
+    // figurent pas dans la bibliothèque factice, la sortie retombe donc sur
+    // la dernière position (voir match-exit-keeps-position.spec.js pour le
+    // cas où elles y sont) ; position du match mémorisée côté backend.
     await page.keyboard.press('Space');
     const commandLine = page.getByPlaceholder('Type command...');
     await commandLine.fill('m');
