@@ -1011,7 +1011,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: docs
-    if: github.event_name == 'push'
+    # !cancelled() is required, not decorative: a skipped ancestor propagates
+    # through the whole chain, and docs-changes is skipped on every tag. On the
+    # 0.35.0 tag `docs` ran and succeeded while `pages` was skipped anyway; the
+    # site was only republished because the main push carried the same commit.
+    if: ${{ !cancelled() && github.event_name == 'push' && needs.docs.result == 'success' }}
     # peaceiris/actions-gh-pages pushes the built site to the gh-pages branch
     # using github_token below — needs contents:write.
     permissions:
