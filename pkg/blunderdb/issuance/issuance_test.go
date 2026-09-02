@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -191,8 +192,15 @@ func TestIdentityPersistsAndIsCreatedOnce(t *testing.T) {
 	if err != nil {
 		t.Fatalf("stat identity: %v", err)
 	}
-	if perm := info.Mode().Perm(); perm != 0o600 {
-		t.Fatalf("a signing key must not be world-readable: %v", perm)
+	// POSIX permission bits don't exist on Windows: os.WriteFile's mode
+	// argument only ever controls the read-only attribute there, and Go
+	// reports every file as 0666 (or 0444 read-only) regardless of what was
+	// requested. LoadOrCreateIdentity still asks for 0o600 (identity.go), so
+	// this only skips an assertion Windows structurally cannot satisfy.
+	if runtime.GOOS != "windows" {
+		if perm := info.Mode().Perm(); perm != 0o600 {
+			t.Fatalf("a signing key must not be world-readable: %v", perm)
+		}
 	}
 }
 
