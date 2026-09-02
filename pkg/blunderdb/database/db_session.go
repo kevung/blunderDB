@@ -1,107 +1,63 @@
 package database
 
 import (
-	"database/sql"
-	"encoding/json"
+	"context"
 	"errors"
-	"fmt"
-	"strconv"
-	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// SaveCommand saves a command to the command_history table
+// This file is the GUI-facing adapter for four small families of per-database
+// UI state — the command-line history, the search history, the saved-filter
+// library and the last-session state. Every method takes the wrapper's lock,
+// then delegates to the SQLite Storage backend under the single implicit
+// tenant ("" scope); the SQL lives there (storage/sqlite/{history,search_history,
+// filters,session}_sqlite.go) and is held to the shared contract suite.
+//
+// The public signatures are what Wails binds and the CLI calls; they stay as
+// they were. Errors come back as the backend reports them, wrapped around
+// storage.ErrConflict (a duplicate filter name) or storage.ErrNotFound (an
+// unknown filter id or name), so callers can test with errors.Is.
+
+// errNotOpened is returned by every method here when no database is open. The
+// wrapper's other families say "no database is currently open"; this wording is
+// the one these methods have always used.
+var errNotOpened = errors.New("database is not opened")
+
+// SaveCommand appends a command to the command-line history. The backend keeps
+// the most recent 1000 entries.
 func (d *Database) SaveCommand(command string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.1.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.1.0" {
-		return fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
-	}
-
-	_, err = d.db.Exec(`INSERT INTO command_history (command) VALUES (?)`, command)
-	if err != nil {
-		return err
-	}
-
-	// Keep only the last 1000 entries to prevent unbounded growth
-	_, _ = d.db.Exec(`
-		DELETE FROM command_history
-		WHERE id NOT IN (
-			SELECT id FROM command_history
-			ORDER BY timestamp DESC
-			LIMIT 1000
-		)
-	`)
-
-	return nil
+	return d.store.History().Save(context.Background(), "", command)
 }
 
-// LoadCommandHistory loads the command history from the command_history table
+// LoadCommandHistory returns the command-line history, oldest first.
 func (d *Database) LoadCommandHistory() ([]string, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	// Check if the database version is 1.1.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return nil, err
+	if d.db == nil {
+		return nil, errNotOpened
 	}
-
-	if dbVersion < "1.1.0" {
-		return nil, fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
-	}
-
-	rows, err := d.db.Query(`SELECT command FROM command_history ORDER BY timestamp ASC`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var history []string
-	for rows.Next() {
-		var command string
-		if err = rows.Scan(&command); err != nil {
-			return nil, err
-		}
-		history = append(history, command)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return history, nil
+	return d.store.History().Load(context.Background(), "")
 }
 
+// ClearCommandHistory empties the command-line history.
 func (d *Database) ClearCommandHistory() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.1.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.1.0" {
-		return fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
-	}
-
-	_, err = d.db.Exec(`DELETE FROM command_history`)
-	if err != nil {
-		return err
-	}
-	return nil
+	return d.store.History().Clear(context.Background(), "")
 }
 
-// SearchHistory represents a search history entry
+// SearchHistory represents a search history entry. It mirrors
+// storage.SearchHistory field for field and is kept as a distinct type only
+// because Wails generates the frontend model from this package.
 type SearchHistory struct {
 	ID              int    `json:"id"`
 	Command         string `json:"command"`
@@ -110,90 +66,49 @@ type SearchHistory struct {
 	Timestamp       int64  `json:"timestamp"`
 }
 
-// SaveSearchHistory saves a search command, its include position and its optional
-// exclude ("Sauf") position to the search_history table.
+// SaveSearchHistory records a search command, its include position and its
+// optional exclude ("Sauf") position. The backend keeps the most recent 100
+// entries.
 func (d *Database) SaveSearchHistory(command string, position string, excludePosition string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
 	if d.db == nil {
-		return fmt.Errorf("database is not opened")
+		return errNotOpened
 	}
-
-	// Insert the search history entry
-	_, err := d.db.Exec(`INSERT INTO search_history (command, position, exclude_position, timestamp) VALUES (?, ?, ?, ?)`,
-		command, position, excludePosition, time.Now().UnixMilli())
-	if err != nil {
-		return err
-	}
-
-	// Keep only the last 100 entries
-	_, err = d.db.Exec(`
-		DELETE FROM search_history 
-		WHERE id NOT IN (
-			SELECT id FROM search_history 
-			ORDER BY timestamp DESC 
-			LIMIT 100
-		)
-	`)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return d.store.SearchHistory().Save(context.Background(), "", command, position, excludePosition)
 }
 
-// LoadSearchHistory loads the search history from the search_history table
+// LoadSearchHistory returns the search history, most recent first.
 func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
 	if d.db == nil {
-		return nil, fmt.Errorf("database is not opened")
+		return nil, errNotOpened
 	}
-
-	rows, err := d.db.Query(`SELECT id, command, position, exclude_position, timestamp FROM search_history ORDER BY timestamp DESC LIMIT 100`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var history []SearchHistory
-	for rows.Next() {
-		var entry SearchHistory
-		var excludePosition sql.NullString
-		err := rows.Scan(&entry.ID, &entry.Command, &entry.Position, &excludePosition, &entry.Timestamp)
+	for e, err := range d.store.SearchHistory().List(context.Background(), "") {
 		if err != nil {
 			return nil, err
 		}
-		entry.ExcludePosition = excludePosition.String
-		history = append(history, entry)
+		history = append(history, SearchHistory(*e))
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return history, nil
 }
 
-// DeleteSearchHistoryEntry deletes a search history entry by timestamp
+// DeleteSearchHistoryEntry deletes the search history entries carrying a
+// timestamp.
 func (d *Database) DeleteSearchHistoryEntry(timestamp int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
 	if d.db == nil {
-		return fmt.Errorf("database is not opened")
+		return errNotOpened
 	}
-
-	_, err := d.db.Exec(`DELETE FROM search_history WHERE timestamp = ?`, timestamp)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return d.store.SearchHistory().DeleteEntry(context.Background(), "", timestamp)
 }
 
-// SessionState represents the last session state for restoring when reopening a database
+// SessionState represents the last session state for restoring when reopening
+// a database. Same remark as SearchHistory: a Wails-facing twin of
+// storage.SessionState.
 type SessionState struct {
 	LastSearchCommand  string  `json:"lastSearchCommand"`  // The last search command executed
 	LastSearchPosition string  `json:"lastSearchPosition"` // The position used for the last search (JSON)
@@ -203,402 +118,137 @@ type SessionState struct {
 	ViewsJSON          string  `json:"viewsJSON"`          // Serialized view tabs state
 }
 
-// SaveSessionState saves the current session state to the metadata table
+// SaveSessionState persists the session state (six metadata rows, written in
+// one transaction).
 func (d *Database) SaveSessionState(state SessionState) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
 	if d.db == nil {
-		return fmt.Errorf("database is not opened")
+		return errNotOpened
 	}
-
-	// Serialize position IDs to JSON
-	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
-	if err != nil {
-		return err
-	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Save each session state field as a metadata entry
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_command', ?)`, state.LastSearchCommand)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_position', ?)`, state.LastSearchPosition)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_index', ?)`, strconv.Itoa(state.LastPositionIndex))
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_ids', ?)`, string(positionIDsJSON))
-	if err != nil {
-		return err
-	}
-
-	hasActiveSearchStr := "false"
-	if state.HasActiveSearch {
-		hasActiveSearchStr = "true"
-	}
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
-	if err != nil {
-		return err
-	}
-
-	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_views', ?)`, state.ViewsJSON)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return d.store.Session().Save(context.Background(), "", storage.SessionState(state))
 }
 
-// LoadSessionState loads the last session state from the metadata table
+// LoadSessionState returns the persisted session state; a database that never
+// stored one yields an empty (non-nil) state.
 func (d *Database) LoadSessionState() (*SessionState, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
 	if d.db == nil {
-		return nil, fmt.Errorf("database is not opened")
+		return nil, errNotOpened
 	}
-
-	state := &SessionState{}
-
-	// Load last search command
-	var lastSearchCommand sql.NullString
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_command'`).Scan(&lastSearchCommand)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	s, err := d.store.Session().Load(context.Background(), "")
+	if err != nil {
 		return nil, err
 	}
-	if lastSearchCommand.Valid {
-		state.LastSearchCommand = lastSearchCommand.String
-	}
-
-	// Load last search position
-	var lastSearchPosition sql.NullString
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_position'`).Scan(&lastSearchPosition)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	if lastSearchPosition.Valid {
-		state.LastSearchPosition = lastSearchPosition.String
-	}
-
-	// Load last position index
-	var lastPositionIndex sql.NullString
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_index'`).Scan(&lastPositionIndex)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	if lastPositionIndex.Valid {
-		index, parseErr := strconv.Atoi(lastPositionIndex.String)
-		if parseErr == nil {
-			state.LastPositionIndex = index
-		}
-	}
-
-	// Load last position IDs
-	var lastPositionIDs sql.NullString
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_ids'`).Scan(&lastPositionIDs)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	if lastPositionIDs.Valid && lastPositionIDs.String != "" {
-		var ids []int64
-		if parseErr := json.Unmarshal([]byte(lastPositionIDs.String), &ids); parseErr == nil {
-			state.LastPositionIDs = ids
-		}
-	}
-
-	// Load has active search flag
-	var hasActiveSearch sql.NullString
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_has_active_search'`).Scan(&hasActiveSearch)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	if hasActiveSearch.Valid {
-		state.HasActiveSearch = hasActiveSearch.String == "true"
-	}
-
-	// Load views JSON
-	var viewsJSON sql.NullString
-	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_views'`).Scan(&viewsJSON)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, err
-	}
-	if viewsJSON.Valid {
-		state.ViewsJSON = viewsJSON.String
-	}
-
-	return state, nil
+	state := SessionState(*s)
+	return &state, nil
 }
 
-// ClearSessionState clears the session state from the metadata table
+// ClearSessionState removes the persisted session state.
 func (d *Database) ClearSessionState() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
 	if d.db == nil {
-		return fmt.Errorf("database is not opened")
+		return errNotOpened
 	}
-
-	sessionKeys := []string{
-		"session_last_search_command",
-		"session_last_search_position",
-		"session_last_position_index",
-		"session_last_position_ids",
-		"session_has_active_search",
-		"session_views",
-	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	for _, key := range sessionKeys {
-		_, err := tx.Exec(`DELETE FROM metadata WHERE key = ?`, key)
-		if err != nil {
-			return err
-		}
-	}
-
-	return tx.Commit()
+	return d.store.Session().Clear(context.Background(), "")
 }
 
+// SaveFilter adds a named filter to the library. A name already in use
+// reports storage.ErrConflict.
 func (d *Database) SaveFilter(name, command string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	// Check if a filter with the same name already exists
-	var existingID int64
-	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, name).Scan(&existingID)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return err
-	}
-	if existingID > 0 {
-		return fmt.Errorf("filter name already exists")
-	}
-
-	_, err = d.db.Exec(`INSERT INTO filter_library (name, command) VALUES (?, ?)`, name, command)
-	if err != nil {
-		return err
-	}
-	return nil
+	_, err := d.store.Filters().Save(context.Background(), "", name, command)
+	return err
 }
 
+// UpdateFilter renames and rewrites a filter, or reports storage.ErrNotFound.
 func (d *Database) UpdateFilter(id int64, name, command string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	result, err := d.db.Exec(`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
-	if err != nil {
-		return err
-	}
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking rows affected: %w", err)
-	}
-	if rowsAffected == 0 {
-		return fmt.Errorf("filter with id %d not found", id)
-	}
-	return nil
+	return d.store.Filters().Update(context.Background(), "", id, name, command)
 }
 
+// DeleteFilter removes a filter, or reports storage.ErrNotFound.
 func (d *Database) DeleteFilter(id int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	result, err := d.db.Exec(`DELETE FROM filter_library WHERE id = ?`, id)
-	if err != nil {
-		return err
-	}
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("error checking rows affected: %w", err)
-	}
-	if rowsAffected == 0 {
-		return fmt.Errorf("filter with id %d not found", id)
-	}
-	return nil
+	return d.store.Filters().Delete(context.Background(), "", id)
 }
 
+// LoadFilters returns the filter library, oldest first, as the id/name/command
+// maps the frontend's filter picker consumes.
 func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return nil, err
+	if d.db == nil {
+		return nil, errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return nil, fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	rows, err := d.db.Query(`SELECT id, name, command FROM filter_library`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
 	var filters []map[string]interface{}
-	for rows.Next() {
-		var id int64
-		var name, command string
-		if err = rows.Scan(&id, &name, &command); err != nil {
+	for f, err := range d.store.Filters().List(context.Background(), "") {
+		if err != nil {
 			return nil, err
 		}
 		filters = append(filters, map[string]interface{}{
-			"id":      id,
-			"name":    name,
-			"command": command,
+			"id":      f.ID,
+			"name":    f.Name,
+			"command": f.Command,
 		})
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
 	}
 	return filters, nil
 }
 
+// SaveEditPosition stores the checker structure a saved filter searches for,
+// or reports storage.ErrNotFound for an unknown filter name.
 func (d *Database) SaveEditPosition(filterName, editPosition string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	// Check if a filter with the same name already exists
-	var existingID int64
-	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return err
-	}
-	if existingID > 0 {
-		_, err = d.db.Exec(`UPDATE filter_library SET edit_position = ? WHERE id = ?`, editPosition, existingID)
-		if err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("filter name does not exist")
-	}
-
-	return nil
+	return d.store.Filters().SaveEditPosition(context.Background(), "", filterName, editPosition)
 }
 
+// LoadEditPosition returns the checker structure of a saved filter, or "" when
+// the filter is unknown or carries none.
 func (d *Database) LoadEditPosition(filterName string) (string, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	// Check if the database version is 1.2.0 or higher
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
-	if err != nil {
-		return "", err
+	if d.db == nil {
+		return "", errNotOpened
 	}
-
-	if dbVersion < "1.2.0" {
-		return "", fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
-	}
-
-	var editPosition string
-	err = d.db.QueryRow(`SELECT edit_position FROM filter_library WHERE name = ?`, filterName).Scan(&editPosition)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", nil // No edit position found
-		}
-		return "", err
-	}
-	return editPosition, nil
+	return d.store.Filters().LoadEditPosition(context.Background(), "", filterName)
 }
 
-// SaveExcludePosition stores the "Sauf" (exclusion) structure of a saved filter.
-// Mirrors SaveEditPosition but targets the exclude_position column.
+// SaveExcludePosition stores the "Sauf" (exclusion) structure of a saved
+// filter, or reports storage.ErrNotFound for an unknown filter name.
 func (d *Database) SaveExcludePosition(filterName, excludePosition string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
-	var existingID int64
-	err := d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return err
+	if d.db == nil {
+		return errNotOpened
 	}
-	if existingID > 0 {
-		if _, err = d.db.Exec(`UPDATE filter_library SET exclude_position = ? WHERE id = ?`, excludePosition, existingID); err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("filter name does not exist")
-	}
-	return nil
+	return d.store.Filters().SaveExcludePosition(context.Background(), "", filterName, excludePosition)
 }
 
-// LoadExcludePosition returns the "Sauf" (exclusion) structure of a saved filter,
-// or "" when the filter has none.
+// LoadExcludePosition returns the "Sauf" (exclusion) structure of a saved
+// filter, or "" when the filter is unknown or carries none.
 func (d *Database) LoadExcludePosition(filterName string) (string, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-
-	var excludePosition sql.NullString
-	err := d.db.QueryRow(`SELECT exclude_position FROM filter_library WHERE name = ?`, filterName).Scan(&excludePosition)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return "", nil
-		}
-		return "", err
+	if d.db == nil {
+		return "", errNotOpened
 	}
-	return excludePosition.String, nil
+	return d.store.Filters().LoadExcludePosition(context.Background(), "", filterName)
 }

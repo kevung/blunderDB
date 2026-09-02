@@ -117,3 +117,32 @@ func (s *filterStore) LoadEditPosition(ctx context.Context, scope string, filter
 	}
 	return editPosition.String, nil
 }
+
+// SaveExcludePosition stores the "Sauf" exclusion structure of a named filter,
+// or reports ErrNotFound when no filter carries that name.
+func (s *filterStore) SaveExcludePosition(ctx context.Context, scope string, filterName, excludePosition string) error {
+	res, err := s.db.ExecContext(ctx,
+		`UPDATE filter_library SET exclude_position = ? WHERE name = ? AND scope = ?`, excludePosition, filterName, scope)
+	if err != nil {
+		return fmt.Errorf("sqlite: save exclude position for %q: %w", filterName, err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("sqlite: save exclude position for %q: %w", filterName, storage.ErrNotFound)
+	}
+	return nil
+}
+
+// LoadExcludePosition returns the stored exclusion structure of a named
+// filter, or "" when the filter is unknown or carries none.
+func (s *filterStore) LoadExcludePosition(ctx context.Context, scope string, filterName string) (string, error) {
+	var excludePosition sql.NullString
+	err := s.db.QueryRowContext(ctx,
+		`SELECT exclude_position FROM filter_library WHERE name = ? AND scope = ?`, filterName, scope).Scan(&excludePosition)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", nil
+	}
+	if err != nil {
+		return "", fmt.Errorf("sqlite: load exclude position for %q: %w", filterName, err)
+	}
+	return excludePosition.String, nil
+}

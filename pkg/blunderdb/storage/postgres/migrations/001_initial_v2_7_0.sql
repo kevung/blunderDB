@@ -95,16 +95,18 @@ CREATE TABLE IF NOT EXISTS filter_library (
     id             BIGSERIAL PRIMARY KEY,
     tenant_id      BIGINT NOT NULL,
     name           TEXT,
-    command        TEXT,
-    edit_position  TEXT
+    command          TEXT,
+    edit_position    TEXT,
+    exclude_position TEXT
 );
 
 CREATE TABLE IF NOT EXISTS search_history (
     id         BIGSERIAL PRIMARY KEY,
     tenant_id  BIGINT NOT NULL,
-    command    TEXT,
-    position   TEXT,
-    timestamp  BIGINT
+    command          TEXT,
+    position         TEXT,
+    exclude_position TEXT,
+    timestamp        BIGINT
 );
 
 CREATE TABLE IF NOT EXISTS tournament (

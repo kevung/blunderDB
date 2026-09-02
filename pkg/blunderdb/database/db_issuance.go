@@ -1,11 +1,13 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // This file is the database glue for pkg/blunderdb/issuance: reading and writing the single
@@ -18,16 +20,22 @@ import (
 
 // readMeta returns a metadata value, treating an absent row as empty. The watermark row is
 // absent from most databases, so absence is the normal case and not an error.
+//
+// It goes through the storage contract's Load, which reads the whole table: the contract has
+// no single-key read, and the table holds a dozen short rows, so adding one for this would be
+// an interface for nothing.
 func (d *Database) readMeta(key string) (string, error) {
-	var value string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = ?`, key).Scan(&value)
-	if err == sql.ErrNoRows {
-		return "", nil
-	}
+	return readMetaKey(context.Background(), d.store, key)
+}
+
+// readMetaKey is readMeta over any SQLite Storage — the open wrapper's, or one built around
+// a file InspectIssuance is only peeking into.
+func readMetaKey(ctx context.Context, store *sqlite.Storage, key string) (string, error) {
+	values, err := store.Metadata().Load(ctx, "")
 	if err != nil {
 		return "", err
 	}
-	return value, nil
+	return values[key], nil
 }
 
 // GetIssuanceInfo reports where this database says it comes from. It never writes.
@@ -175,15 +183,18 @@ func InspectIssuance(path string) (IssuanceInfo, error) {
 		return buildIssuanceInfo(header.Watermark), nil
 	}
 
+	// A bare handle, deliberately: no PRAGMAs, no migration, nothing that would write to a
+	// file that is only being looked at. sqlite.New does not own the handle, so it is closed
+	// here.
 	db, err := sql.Open("sqlite", path)
 	if err != nil {
 		return IssuanceInfo{}, err
 	}
 	defer db.Close()
 
-	var raw string
-	if err := db.QueryRow(`SELECT value FROM metadata WHERE key = ?`, issuance.KeyWatermark).Scan(&raw); err != nil {
-		// No row, or no metadata table at all: simply not a watermarked database.
+	raw, err := readMetaKey(context.Background(), sqlite.New(db), issuance.KeyWatermark)
+	if err != nil {
+		// No metadata table at all: simply not a watermarked database.
 		return buildIssuanceInfo(issuance.Envelope{}), nil
 	}
 	env, err := issuance.DecodeEnvelope(raw)

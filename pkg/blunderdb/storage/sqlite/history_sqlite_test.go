@@ -47,7 +47,7 @@ func TestSearchHistory(t *testing.T) {
 		if i > 0 {
 			time.Sleep(2 * time.Millisecond)
 		}
-		if err := s.SearchHistory().Save(ctx, "", c, "{}"); err != nil {
+		if err := s.SearchHistory().Save(ctx, "", c, "{}", ""); err != nil {
 			t.Fatalf("Save %q: %v", c, err)
 		}
 	}

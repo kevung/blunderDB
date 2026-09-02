@@ -51,6 +51,27 @@ func testFilterSaveAndList(t *testing.T, s storage.Storage) {
 	if got, err := fs.LoadEditPosition(ctx, "", "unknown"); err != nil || got != "" {
 		t.Fatalf("LoadEditPosition(unknown): got %q err %v, want empty", got, err)
 	}
+	// The "Sauf" structure lives beside the edit position and is independent
+	// of it: a filter carries none until one is stored, and an unknown filter
+	// reports ErrNotFound rather than silently creating a row.
+	if got, err := fs.LoadExcludePosition(ctx, "", "f1b"); err != nil || got != "" {
+		t.Fatalf("LoadExcludePosition(before save): got %q err %v, want empty", got, err)
+	}
+	if err := fs.SaveExcludePosition(ctx, "", "f1b", "exclX"); err != nil {
+		t.Fatalf("SaveExcludePosition: %v", err)
+	}
+	if got, err := fs.LoadExcludePosition(ctx, "", "f1b"); err != nil || got != "exclX" {
+		t.Fatalf("LoadExcludePosition: got %q err %v, want exclX", got, err)
+	}
+	if got, err := fs.LoadEditPosition(ctx, "", "f1b"); err != nil || got != "editX" {
+		t.Fatalf("LoadEditPosition after SaveExcludePosition: got %q err %v, want editX", got, err)
+	}
+	if err := fs.SaveExcludePosition(ctx, "", "unknown", "x"); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("SaveExcludePosition(unknown): got %v, want ErrNotFound", err)
+	}
+	if got, err := fs.LoadExcludePosition(ctx, "", "unknown"); err != nil || got != "" {
+		t.Fatalf("LoadExcludePosition(unknown): got %q err %v, want empty", got, err)
+	}
 
 	if err := fs.Delete(ctx, "", id2); err != nil {
 		t.Fatalf("Delete: %v", err)
@@ -104,10 +125,10 @@ func testSearchHistory(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	sh := s.SearchHistory()
 
-	if err := sh.Save(ctx, "", "cmd1", "pos1"); err != nil {
+	if err := sh.Save(ctx, "", "cmd1", "pos1", ""); err != nil {
 		t.Fatalf("Save 1: %v", err)
 	}
-	if err := sh.Save(ctx, "", "cmd2", "pos2"); err != nil {
+	if err := sh.Save(ctx, "", "cmd2", "pos2", "excl2"); err != nil {
 		t.Fatalf("Save 2: %v", err)
 	}
 
@@ -125,6 +146,10 @@ func testSearchHistory(t *testing.T, s storage.Storage) {
 	// when both rows share a millisecond timestamp.
 	if entries[0].Command != "cmd2" {
 		t.Fatalf("List order: first = %q, want cmd2", entries[0].Command)
+	}
+	if entries[0].ExcludePosition != "excl2" || entries[1].ExcludePosition != "" {
+		t.Fatalf("List exclude positions: got %q / %q, want excl2 / empty",
+			entries[0].ExcludePosition, entries[1].ExcludePosition)
 	}
 
 	// Delete by timestamp (covers the same-millisecond case: deleting a
@@ -342,10 +367,10 @@ func testScopeIsolation(t *testing.T, s storage.Storage) {
 	}
 
 	// Search history.
-	if err := s.SearchHistory().Save(ctx, "1", "search-a", "pos-a"); err != nil {
+	if err := s.SearchHistory().Save(ctx, "1", "search-a", "pos-a", ""); err != nil {
 		t.Fatalf("SearchHistory.Save scope 1: %v", err)
 	}
-	if err := s.SearchHistory().Save(ctx, "2", "search-b", "pos-b"); err != nil {
+	if err := s.SearchHistory().Save(ctx, "2", "search-b", "pos-b", ""); err != nil {
 		t.Fatalf("SearchHistory.Save scope 2: %v", err)
 	}
 	if got := drainSearch(t, s, "1"); len(got) != 1 || got[0] != "search-a" {

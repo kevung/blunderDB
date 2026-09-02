@@ -48,6 +48,10 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   tenant_id leading. Index-only, like `006` and `008`.
   `index_parity_test.go` (no Docker) keeps the two backends' `idx_*` name sets
   aligned from here on.
+- `011_exclude_position.sql` — `filter_library.exclude_position` and
+  `search_history.exclude_position`, the "Sauf" structure SQLite gained in
+  2.8.0 and this backend never received. A catch-up, not a new schema
+  version: `database_version` and `domain.DatabaseVersion` are left alone.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in
