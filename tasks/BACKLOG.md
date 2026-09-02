@@ -26,16 +26,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
   les 3+1 chemins d'export en un exporteur paramétré par une sélection
   (`ingest/`), consommé par GUI/CLI/serveur. Règle aussi : matchs absents de
   l'export serveur, watermark côté serveur. Effort L.
-- **`runMigrationChain` en table** : remplacer les ~550 lignes de cascades
-  `if version ==` par `[]step{from,to,fn}` + helper `addColumnIfMissing` ;
-  corriger la comparaison lexicographique (`db_migration.go`) et le
-  `defer rows.Close` retardé. Effort M, risque élevé (chemin des bases
-  utilisateurs) — s'appuyer sur `migration_test.go`. Repris en lot 2 du plan
-  2026-09.
-- **Fusion des 13 helpers purs dupliqués** entre
-  `search_helpers_sqlite.go`/`search_helpers_postgres.go` (~290-380 lignes
-  identiques après normalisation des placeholders) → package partagé. La CI
-  Postgres (fiche 01) tourne : plus de précondition.
 - **`SwapPlayers`/`DeleteCascade` partagés** entre backends via closures SQL
   dialectales (~90 lignes dupliquées à l'octet près).
 - **Découpage `db_session.go`** (603 lignes, 5 responsabilités) — les
@@ -72,11 +62,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 
 ## Ouvert — Frontend
 
-- **`utils/rangeFilters.js` / `filterModel.js`** : remplacer les ~120
-  `$state` plats de `SearchPanel` (22 filtres × 5 variables, réénumérées dans
-  4 fonctions) par une table déclarative + round-trip testé. Le plus gros
-  levier sur le coût marginal d'une feature de recherche. Effort L, TDD
-  obligatoire. Filet : `searchFilterService.test.js`.
 - **Parseur de recherche unique** : `commandProcessor.parseFilters` et
   `searchFilterService.parseSearchCommand` divergent déjà ; converger vers
   une grammaire unique testée (les deux suites existantes servent de filet
@@ -84,11 +69,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 - **Composant `<Modal>` unique** (overlay + rôles + focus trap + Escape) :
   13 copies du CSS d'overlay, 2 conventions de z-index, 7 gestionnaires
   d'Escape dupliqués.
-- **`utils/boardRenderer.js` / `boardScene.js`** : extraire les ~600 lignes
-  de dessin pur de `Board.svelte` (précédent réussi : `boardGeometry.js`),
-  séparer décor statique/couches dynamiques — `drawBoard()` recrée ~120
-  nœuds à chaque survol de coup. Précondition : tests de caractérisation sur
-  `getDisplayPosition()`.
 - **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour
   le panneau visible, état incohérent atteignable (onglet surligné, panneau
   vide) ; supprimer `tabHandler.js`.
@@ -112,14 +92,6 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 - **Matrice OS du job `test`** (windows/macos) — s'attendre à de vrais
   échecs (chemins, accents dans testdata) ; à faire quand la suite est
   stabilisée.
-- **E2E des parcours produit** : import de match, recherche, suppression
-  avec confirmation, collections drag, Anki review, export, édition de
-  position. Infra mock Wails déjà en place ; les 5 specs actuelles ne
-  couvrent aucun des 4 flux majeurs.
-- **Job docs** : filtrage par chemins + cache pip + PDF LaTeX sur tag
-  seulement (attention au chemin de publication des PDF sur tag, déjà cassé
-  une fois).
-
 ## Ouvert — Produit / docs
 
 - **Capture d'écran du README** : `doc/source/_static/screenshot.png` date du
@@ -135,6 +107,12 @@ priorise ces items est `tasks/plan-amelioration-2026-09/README.md`.
 
 ## Historique — items faits
 
+- **2026-09-02 — `runMigrationChain` en table** : fait le 2026-09-02 (0503c994) : registre `migrationSteps`, fichiers `db_migration_v*.go`, test de continuité.
+- **2026-09-02 — Fusion des 13 helpers purs dupliqués** : fait le 2026-09-02 (b0054ab3) : paquet `storage/searchfilter`.
+- **2026-09-02 — `utils/rangeFilters.js` / `filterModel.js`** : fait le 2026-09-02 (dd1aa7b1) : `services/filterModel.js`, SearchPanel 2 226 → 1 485 lignes.
+- **2026-09-02 — `utils/boardRenderer.js` / `boardScene.js`** : fait le 2026-09-02 (fcd81620) : `utils/boardScene.js`, `boardInteractions.js`, couche statique/dynamique.
+- **2026-09-02 — E2E des parcours produit** : fait le 2026-09-02 (451ce542) : specs recherche, navigation match, import de position.
+- **2026-09-02 — Job docs** : fait le 2026-09-02 (ba578f9c) : filtrage par chemins, cache pip, PDF sur tag seulement.
 - **2026-09-02 — Bug `CommitImportDatabase`, colonnes scalaires NULL** (commits bd33df8d, 086f5466) : la branche « position neuve » écrit désormais via `PositionStore.Save` (hash + colonnes canoniques), et une réparation idempotente à l'ouverture (`repairPositionsWithoutScalars`, sans bump de `DatabaseVersion`) rattrape les lignes existantes.
 | Fait le | Item | Origine | Où |
 |---|---|---|---|
