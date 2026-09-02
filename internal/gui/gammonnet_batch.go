@@ -2,6 +2,7 @@ package gui
 
 import (
 	"context"
+	goruntime "runtime"
 	"sync"
 	"time"
 
@@ -51,7 +52,11 @@ func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
 	gnBatchMu.Unlock()
 
 	go func() {
-		err := a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates,
+		// goruntime.NumCPU(): the batch spreads its positions over every
+		// core (#147). Nothing is exposed to the user — the desktop has no
+		// reason to ask how many cores to use, and the yield below is what
+		// keeps an interactive evaluation ahead of the batch anyway.
+		err := a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
 			waitForInteractiveEvaluation,
 			func(done, total int) {
 				runtime.EventsEmit(a.ctx, "gammonnet-batch:progress", map[string]int{"done": done, "total": total})
@@ -83,12 +88,16 @@ func (a *App) CancelGammonNetBatch() {
 	gnBatchMu.Unlock()
 }
 
-// waitForInteractiveEvaluation is the batch's yield point ("le lot cède en
-// une position", #129): called before every position, it blocks for as long
-// as gammonnet_eval.go's live evaluation (#125) has a search in flight, so
-// an editing user is never fighting the batch for cores. gammonNetEvalMu and
-// gammonNetEvalCancel are package-level state this file shares with
-// gammonnet_eval.go without an import — both live in package gui.
+// waitForInteractiveEvaluation is the batch's yield point (#129): called by
+// every batch goroutine before every position, it blocks for as long as
+// gammonnet_eval.go's live evaluation (#125) has a search in flight, so an
+// editing user is never fighting the batch for cores. With the batch spread
+// over NumCPU goroutines (#147) the promise is now "the batch gives way
+// within at most NumCPU positions" rather than one — every goroutine passes
+// through here, so the whole batch stalls, just not on the same position.
+//
+// gammonNetEvalMu and gammonNetEvalCancel are package-level state this file
+// shares with gammonnet_eval.go without an import — both live in package gui.
 func waitForInteractiveEvaluation() {
 	for {
 		gammonNetEvalMu.Lock()

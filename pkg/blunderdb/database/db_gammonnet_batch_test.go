@@ -67,7 +67,7 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	}
 
 	var progressCalls [][2]int
-	err = d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, nil, func(done, total int) {
+	err = d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 0, nil, func(done, total int) {
 		progressCalls = append(progressCalls, [2]int{done, total})
 	})
 	if err != nil {
@@ -129,7 +129,10 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	seen := 0
-	err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, func() {
+	// jobs=1: the cancellation this test pins down is "abort between two
+	// positions", which only a single-goroutine batch expresses exactly.
+	// TestAnalyzeGammonNetParallelCancellation covers the parallel form.
+	err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 1, func() {
 		seen++
 		if seen == 2 {
 			cancel() // abort after the first position is written, before the second starts
@@ -148,7 +151,7 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 	}
 
 	// Resume: a fresh call with no cancellation finishes the rest.
-	if err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, nil, nil); err != nil {
+	if err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil); err != nil {
 		t.Fatalf("resume AnalyzeMissingWithGammonNet: %v", err)
 	}
 	n2, err := d.CountPositionsWithoutAnalysis()
@@ -165,7 +168,8 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 // covers the actual signal the GUI wires in): a yield that blocks must
 // genuinely stall the loop before the next position, not just be called and
 // ignored — "un lot qui ne cède pas est exactement la panne qu'on prétend
-// éviter".
+// éviter". Run at jobs=1, where the gate is "one position"; the parallel
+// form ("at most jobs positions") is TestAnalyzeGammonNetParallelYieldGates.
 func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 	d := newBatchTestDB(t)
 
@@ -182,7 +186,7 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 
 	go func() {
 		calls := 0
-		done <- d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, func() {
+		done <- d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, func() {
 			calls++
 			if calls == 2 {
 				<-release // the second position's yield blocks until told to proceed

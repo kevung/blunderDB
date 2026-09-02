@@ -640,3 +640,38 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	}
 	return s
 }
+
+// Reconfigure points an existing searcher at a new configuration — the same
+// networks, the same scratch buffers, the same cache, a different question.
+// It is what makes a Searcher reusable across positions: a batch job builds
+// one per goroutine (NewBatchSearcher) and re-aims it at each position's own
+// referential and cube state instead of allocating a fresh 5.5 MB searcher
+// per position.
+//
+// The cache is DELIBERATELY kept across the change. Its key is the whole
+// position and its value is the network's own output for that position; a hit
+// returns exactly what a miss would have computed, whatever the score, the
+// cube or the depth the search arrived with (cache.go's own contract). So
+// carrying it from one position to the next is free and licit — only the hit
+// rate moves, never a bit of the answer.
+//
+// The networks are never swapped: pruning stays on exactly when the searcher
+// was built with a prune network, whatever the new PruneK says — the same
+// rule NewSearcherWith states. Refused, never degraded, on an invalid match
+// state, exactly like NewSearcher.
+func (s *Searcher) Reconfigure(cfg SearchConfig) error {
+	if cfg.UseMatch && !cfg.Match.IsValid() {
+		return fmt.Errorf("%w: match state %+v", ErrNotEvaluable, cfg.Match)
+	}
+	if cfg.Ply < 0 {
+		cfg.Ply = 0
+	}
+	if cfg.Ply > MaxPly {
+		cfg.Ply = MaxPly
+	}
+	s.cfg = cfg
+	for _, w := range s.workers {
+		w.cfg = cfg
+	}
+	return nil
+}

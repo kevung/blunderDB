@@ -799,6 +799,15 @@ for a tenant.
 - `--ply` - Search depth (default: 2, the canonical parameter)
 - `--prune-k` - Pruning width (default: 12, the canonical parameter)
 - `--candidates` - Candidate moves kept per checker decision (default: 10)
+- `--jobs` - Positions analysed in parallel (default: the number of CPUs)
+
+**Parallelism (`--jobs`).** The positions of a sweep are independent — no
+search informs the next — so they are spread over `--jobs` goroutines, each
+holding one reused searcher. The analyses written are identical whatever
+`--jobs` says, bit for bit; only the wall-clock time changes. Use `--jobs 1`
+to leave the machine free for something else. Cancellation is unaffected:
+Ctrl-C stops the run before any further position is started, and everything
+already computed is still written.
 
 **The gap rule (ADR-0013).** A position already carrying any analysis — from
 XG, GNUbg, BGBlitz, or a prior gammonNet run — is left untouched, regardless
@@ -811,12 +820,15 @@ because "positions with no analysis" is re-derived fresh every time.
 **Example:**
 ```bash
 ./blunderDB analyze --db database.db
-# Analyzing 1204 position(s) with gammonNet (2-ply, k=12)...
+# Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...
 #   1/1204 (0%)
 #   61/1204 (5%)
 #   ...
 #   1204/1204 (100%)
 # Done.
+
+# One core only, on a machine that has other work to do
+./blunderDB analyze --db database.db --jobs 1
 ```
 
 ## Info Command
