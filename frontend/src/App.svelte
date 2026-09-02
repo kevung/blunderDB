@@ -28,35 +28,10 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
-    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, activeModal, MODAL, closeModal, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
-    import {
-        showImportProgressModalStore,
-        importModalModeStore,
-        importAnalysisStore,
-        importResultStore,
-        showFileImportModalStore,
-        fileImportModeStore,
-        fileImportTotalFilesStore,
-        fileImportCurrentIndexStore,
-        fileImportCurrentFileStore,
-        fileImportResultsStore
-    } from './stores/importModalStore.js';
-    import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from './stores/exportModalStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, MODAL, toggleModal, isAnyModalOpen } from './stores/uiStore.js';
 
     // Services
-    import {
-        newDatabase,
-        openDatabase,
-        openDatabaseByPath,
-        loadDemoDatabase,
-        exitApp,
-        closeWarningModal,
-        warningMessageStore,
-        protectedCopyPathStore,
-        protectedCopyErrorStore,
-        unlockProtectedCopy,
-        cancelProtectedCopy
-    } from './services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp } from './services/databaseService.js';
     import {
         showPosition,
         loadAllPositions,
@@ -88,19 +63,8 @@
         togglePipcount,
         loadRandomPosition
     } from './services/positionService.js';
-    import {
-        importDatabase,
-        importPosition,
-        importFolder,
-        handleImportCommit,
-        handleImportCancel,
-        handleImportClose,
-        handleFileImportCancel,
-        handleFileImportClose,
-        pastePosition,
-        handleFileDrop
-    } from './services/importService.js';
-    import { exportDatabase, handleExportCommit, handleExportCancel } from './services/exportService.js';
+    import { importDatabase, importPosition, importFolder, pastePosition, handleFileDrop } from './services/importService.js';
+    import { exportDatabase } from './services/exportService.js';
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
@@ -114,28 +78,10 @@
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
+    import ModalHost from './components/ModalHost.svelte';
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
-    import HelpModal from './components/HelpModal.svelte';
-    import ConfigModal from './components/ConfigModal.svelte';
-    import TourCatalogModal from './components/TourCatalogModal.svelte';
     import { maybeRunFirstRunTour } from './services/tourService.js';
-    import GoToPositionModal from './components/GoToPositionModal.svelte';
-    import MetModal from './components/MetModal.svelte';
-    import DataTableModal from './components/DataTableModal.svelte';
-    import { takePoint2LastTable } from './stores/takePoint2LastTable';
-    import { takePoint2LiveTable } from './stores/takePoint2LiveTable';
-    import { takePoint4LastTable } from './stores/takePoint4LastTable';
-    import { takePoint4LiveTable } from './stores/takePoint4LiveTable';
-    import { gammonValue1Table } from './stores/gammonValue1Table';
-    import { gammonValue2Table } from './stores/gammonValue2Table';
-    import { gammonValue4Table } from './stores/gammonValue4Table';
-    import WarningModal from './components/WarningModal.svelte';
-    import { confirmModalStore, resolveConfirm } from './services/confirmService.js';
-    import ProtectedCopyModal from './components/ProtectedCopyModal.svelte';
-    import ImportProgressModal from './components/ImportProgressModal.svelte';
-    import FileImportProgressModal from './components/FileImportProgressModal.svelte';
-    import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
 
     // Component state
     let mainArea;
@@ -499,89 +445,7 @@
         </div>
     </div>
 
-    <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
-
-    <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} tables={[{ data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LAST} onClose={() => closeModal()} tables={[{ data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_1} onClose={() => closeModal()} tables={[{ data: gammonValue1Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} tables={[{ data: gammonValue2Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 3 }]} />
-    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
-
-    <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
-    <WarningModal
-        message={$confirmModalStore?.message || ''}
-        visible={$confirmModalStore !== null}
-        mode="confirm"
-        confirmLabel={$confirmModalStore?.confirmLabel || ''}
-        cancelLabel={$confirmModalStore?.cancelLabel || ''}
-        onClose={() => resolveConfirm(false)}
-        onConfirm={() => resolveConfirm(true)}
-    />
-
-    <ProtectedCopyModal
-        visible={$activeModal === MODAL.PROTECTED_COPY}
-        fileName={$protectedCopyPathStore}
-        error={$protectedCopyErrorStore}
-        onSubmit={unlockProtectedCopy}
-        onCancel={cancelProtectedCopy}
-    />
-
-    <DataTableModal
-        visible={$activeModal === MODAL.TAKE_POINT_2}
-        onClose={() => closeModal()}
-        tables={[
-            { title: 'Long Races', data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 },
-            { title: 'Last Roll', data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }
-        ]}
-    />
-    <DataTableModal
-        visible={$activeModal === MODAL.TAKE_POINT_4}
-        onClose={() => closeModal()}
-        tables={[
-            { title: 'Long Races', data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 },
-            { title: 'Last Roll', data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }
-        ]}
-    />
-
-    <ImportProgressModal
-        visible={$showImportProgressModalStore}
-        mode={$importModalModeStore}
-        analysis={$importAnalysisStore}
-        result={$importResultStore}
-        onCancel={handleImportCancel}
-        onCommit={handleImportCommit}
-        onClose={handleImportClose}
-    />
-
-    <FileImportProgressModal
-        visible={$showFileImportModalStore}
-        mode={$fileImportModeStore}
-        totalFiles={$fileImportTotalFilesStore}
-        currentIndex={$fileImportCurrentIndexStore}
-        currentFile={$fileImportCurrentFileStore}
-        results={$fileImportResultsStore}
-        onCancel={handleFileImportCancel}
-        onClose={handleFileImportClose}
-    />
-
-    <ExportDatabaseModal
-        visible={$activeModal === MODAL.EXPORT_DATABASE}
-        mode={$exportModalModeStore}
-        positionCount={$exportPositionCountStore}
-        matches={$exportMatchesStore}
-        bind:metadata={$exportMetadataStore}
-        bind:exportOptions={$exportOptionsStore}
-        onCancel={handleExportCancel}
-        onExport={handleExportCommit}
-    />
-
-    <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
-    <ConfigModal visible={$activeModal === MODAL.CONFIG} onClose={() => closeModal()} />
-
-    <TourCatalogModal visible={$activeModal === MODAL.TOUR} onClose={() => closeModal()} />
+    <ModalHost />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>
