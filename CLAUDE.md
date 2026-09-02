@@ -214,7 +214,9 @@ Violating one of these is a bug even if all tests pass:
   differ by SQL dialect).
 - **Schema changes** require bumping `DatabaseVersion` in `pkg/blunderdb/domain/`
   **and** a migration path (`CheckVersion` in `db_schema.go` — it only compares the major version — and
-  `runMigrationChain` in `db_migration.go`, DDL in
+  a `migrate_X_to_Y` step registered in `migrationSteps` in `db_migration.go` —
+  the registry `runMigrationChain` walks, which `TestMigrationSteps_ContinuousChain`
+  requires to run unbroken from 1.0.0 to `DatabaseVersion` — DDL in
   `db_schema.go`, PostgreSQL side under `storage/postgres/migrations/`), covered by
   a test in `migration_test.go`.
 - **The serve daemon performs NO authentication** — it trusts `X-Tenant-ID` and
