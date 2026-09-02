@@ -2,9 +2,15 @@ name: Fuzz
 
 # Continuous fuzzing of the untrusted-input decoders/mappers. Runs on a weekly
 # schedule and on demand — never on push/PR, so it can't flake or block normal
-# CI. The seed corpora (incl. regression seeds) still run on every PR via the
-# `go test -race ./...` step in build.yml; this job is the open-ended search for
-# *new* crashes. A crash fails the job and uploads the minimised input.
+# CI. The seed corpora (f.Add seeds and the committed testdata/fuzz/ regression
+# inputs) run on every push and pull request in the `fuzz-seeds` shard of the
+# `test` job in build.yml, which discovers every Fuzz* target of the module;
+# this job is the open-ended search for *new* crashes. A crash fails the job
+# and uploads the minimised input.
+#
+# The matrix must list every `func Fuzz` of the module
+# (grep -rn 'func Fuzz' --include='*_test.go'): a target missing here is never
+# fuzzed beyond its seeds.
 
 on:
   schedule:
@@ -12,9 +18,9 @@ on:
   workflow_dispatch:
     inputs:
       fuzztime:
-        description: "Duration per fuzz target (Go duration, e.g. 90s, 5m) — keep it comfortably below the 8-minute step timeout"
+        description: "Duration per fuzz target (Go duration, e.g. 90s, 5m) — keep it comfortably below the 12-minute step timeout"
         required: false
-        default: "90s"
+        default: "5m"
 
 permissions:
   contents: read
@@ -22,6 +28,7 @@ permissions:
 jobs:
   fuzz:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -34,10 +41,10 @@ jobs:
     name: ${{ matrix.target }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -50,27 +57,29 @@ jobs:
       # this dedicated cache every run started from an empty corpus and threw
       # away prior progress (330+ "new interesting" inputs lost per run).
       - name: Cache fuzz corpus
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/go-build/fuzz
           key: fuzz-corpus-${{ matrix.target }}-${{ github.run_id }}
           restore-keys: |
             fuzz-corpus-${{ matrix.target }}-
 
-      # -fuzztime stays well below this step's timeout so the fuzzing engine
-      # always gets to shut down cleanly and report its result instead of
-      # being killed mid-flight — a step-timeout kill and a "context deadline
-      # exceeded" from a still-running worker both used to surface as a
-      # failed step even though no crash was ever found. continue-on-error
-      # defers the pass/fail call to the next step, which checks for an
-      # actual crash artifact.
+      # -fuzztime (5 minutes per target by default) stays well below this
+      # step's timeout so the fuzzing engine always gets to shut down cleanly
+      # and report its result instead of being killed mid-flight — a
+      # step-timeout kill and a "context deadline exceeded" from a
+      # still-running worker both used to surface as a failed step even
+      # though no crash was ever found. The margin covers the build of the
+      # instrumented test binary, the corpus replay before fuzzing starts and
+      # the minimisation of a crash. continue-on-error defers the pass/fail
+      # call to the next step, which checks for an actual crash artifact.
       - name: Fuzz ${{ matrix.target }}
         id: fuzz
         continue-on-error: true
-        timeout-minutes: 8
+        timeout-minutes: 12
         run: |
           go test -run '^$' -fuzz "^${{ matrix.target }}$" \
-            -fuzztime "${{ github.event.inputs.fuzztime || '90s' }}" \
+            -fuzztime "${{ github.event.inputs.fuzztime || '5m' }}" \
             ${{ matrix.pkg }}
 
       # A crash writes a minimized reproducer under testdata/fuzz/<Target>/ —
@@ -94,7 +103,7 @@ jobs:
 
       - name: Upload crashing input
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: fuzz-crash-${{ matrix.target }}
           path: ${{ matrix.pkg }}/testdata/fuzz/${{ matrix.target }}/

@@ -17,9 +17,9 @@ name: Publish to AUR
 # tags): the job-level `if` drops everything but tag pushes, and the version
 # step insists on an X.Y.Z tag (data-asset tags such as bearoff-data-1 must
 # never reach the AUR). It does NOT require the run to have succeeded: the
-# tarball is uploaded by the `build` job, and a failure elsewhere in the run
-# (docs, a lint) is no reason to withhold a package whose asset exists — the
-# download step fails loudly if it does not.
+# tarball is attached by the `release` job of build.yml, and a failure
+# elsewhere in the run (docs, a lint) is no reason to withhold a package whose
+# asset exists — the download step fails loudly if it does not.
 #
 # Until 0.34.0 this workflow started on the tag push itself and polled the
 # release for up to 30 minutes on a runner, waiting for the matrix to finish.
@@ -35,6 +35,11 @@ on:
         description: Released tag to publish (e.g. 0.27.1)
         required: true
 
+# The job pushes to the AUR over SSH with its own key, never to this
+# repository: the GITHUB_TOKEN only reads the release asset.
+permissions:
+  contents: read
+
 jobs:
   aur:
     runs-on: ubuntu-latest
@@ -47,7 +52,7 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           # On workflow_run the default checkout is the default branch; take
           # the tagged commit so packaging/aur/PKGBUILD.in matches the release.
@@ -104,7 +109,7 @@ jobs:
             echo "asset $asset not visible yet (attempt $i); waiting..."
             sleep 10
           done
-          test -f "dl/$asset" || { echo "::error::$asset is not on release $VERSION — did the build job fail?"; exit 1; }
+          test -f "dl/$asset" || { echo "::error::$asset is not on release $VERSION — did the build or release job fail?"; exit 1; }
           echo "sha=$(sha256sum "dl/$asset" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Render PKGBUILD

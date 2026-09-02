@@ -61,14 +61,28 @@ jobs:
           # testing.Short() are skipped), the full suite on version tags.
           - shard: gammonnet
             run: go test -timeout 1500s -count=1 $GAMMONNET_FLAGS -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/engine/gammonnet/
+          # Every Fuzz* target of the module in seed mode: without -fuzz, `go
+          # test` replays the f.Add seeds and the committed testdata/fuzz/
+          # corpora (the regression inputs of past crashes) as plain tests.
+          # `-run` filters Fuzz* names too, so a shard selecting by test name
+          # like database-a/-b silently drops them — this shard is the one
+          # place that guarantees they run, whatever the other shards filter
+          # on. Packages are discovered from the sources so a new target needs
+          # no edit here; -v is deliberate: the log must show every
+          # `FuzzXxx/seed#N`. fuzz.yml does the open-ended search.
+          - shard: fuzz-seeds
+            run: |
+              pkgs=$(grep -rl --include='*_test.go' '^func Fuzz' . | xargs -n1 dirname | sed 's|^\./||; s|^|./|' | sort -u)
+              echo "fuzz packages: $pkgs"
+              go test -timeout 600s -race -count=1 -run '^Fuzz' -v $pkgs
     env:
       GAMMONNET_FLAGS: ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -84,7 +98,7 @@ jobs:
 
       - name: Upload coverage shard
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: go-coverage-${{ matrix.shard }}
           path: coverage.out
@@ -99,10 +113,10 @@ jobs:
     if: always()
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version: 1.25.13
           cache: true
@@ -112,7 +126,7 @@ jobs:
         shell: bash
 
       - name: Download coverage shards
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           pattern: go-coverage-*
           path: shards
@@ -133,7 +147,7 @@ jobs:
         shell: bash
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: go-coverage
           path: coverage.out
@@ -151,10 +165,10 @@ jobs:
       BLUNDERDB_REQUIRE_PG: "1"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -200,10 +214,10 @@ jobs:
         shell: bash
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -226,7 +240,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Build & run the hostile backstop image
         run: docker build -f Dockerfile.hostile -t blunderdb-hostile .
@@ -250,7 +264,7 @@ jobs:
       IS_TAG: ${{ startsWith(github.ref, 'refs/tags/') && 'true' || 'false' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
@@ -298,10 +312,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '23.4.0'
           cache: 'npm'
@@ -324,7 +338,7 @@ jobs:
 
       - name: Upload frontend coverage artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: frontend-coverage
           path: frontend/coverage/
@@ -335,10 +349,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '23.4.0'
           cache: 'npm'
@@ -358,7 +372,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
@@ -383,7 +397,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: playwright-report
           path: frontend/playwright-report/
@@ -399,10 +413,10 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -417,7 +431,7 @@ jobs:
         shell: bash
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: benchmark-results
           path: bench.txt
@@ -427,10 +441,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '23.4.0'
           cache: 'npm'
@@ -449,10 +463,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -463,7 +477,7 @@ jobs:
         shell: bash
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
         with:
           version: v2.11.4
 
@@ -483,14 +497,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Create frontend dist stub
         run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
         shell: bash
 
       - name: govulncheck
-        uses: golang/govulncheck-action@v1
+        uses: golang/govulncheck-action@032d45514ae346b1db93c04b0c90b841c370344f # v1.1.0
         with:
           go-version-input: 1.25.13
           check-latest: true
@@ -504,17 +518,12 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
-    # softprops/action-gh-release below (tag pushes only) needs contents:write
-    # to attach binaries to the release. GitHub grants permissions per job,
-    # not per step, so PR/branch runs carry the same token even though they
-    # never reach that step. Narrowing it means moving the Release step to a
-    # separate tag-only job that downloads the matrix artifacts — a change
-    # that can only be verified on a real tag push, so it is left as is.
-    permissions:
-      contents: write
+    # Read-only token (the workflow default): this matrix runs on every pull
+    # request and push. Attaching the binaries to the GitHub release is done
+    # by the tag-only `release` job below, from the artifacts uploaded here.
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set outputs
         id: vars
@@ -528,7 +537,7 @@ jobs:
 
       # Setup and configure GoLang
       - name: Setup GoLang
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
           go-version: 1.25.13
@@ -538,7 +547,7 @@ jobs:
 
       # Setup and configure NodeJS
       - name: Setup NodeJS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: v23.4.0
           cache: 'npm'
@@ -688,17 +697,53 @@ jobs:
             fi
           done
 
-      # Upload build assets
-      - uses: actions/upload-artifact@v4
+      # Upload build assets. The path hierarchy is preserved after the first
+      # wildcard, so the artifact holds build/bin/<asset> — what `release`,
+      # `flatpak` and `package-manifests` download and read.
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Wails Build ${{matrix.os}} blunderDB ${{ steps.vars.outputs.version }}
           path: |
             */bin/
             *\bin\*
 
+  # Attaches the binaries of the four platforms to the GitHub release, tag
+  # pushes only. It is the only job that needs contents:write for them —
+  # until 0.36.0 the `build` matrix carried that permission on every pull
+  # request and push, for a step it only reached on a tag. The four
+  # artifacts are merged back into build/bin/ exactly as `build` left them,
+  # .sha256 files included (they are computed next to the binaries in
+  # `build` and travel in the artifact), and the release glob is the one the
+  # `build` step used, so the release carries the same assets and checksums.
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    # softprops/action-gh-release attaches the files to the release.
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ github.ref_name }}
+    steps:
+      - name: Download the build artifacts of the four platforms
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: Wails Build * blunderDB ${{ env.VERSION }}
+          merge-multiple: true
+
+      # A release with no asset must fail here, not be discovered by a user:
+      # the glob below matches nothing silently if the layout ever changes.
+      - name: Inventory of the release assets
+        run: |
+          set -euo pipefail
+          find . -maxdepth 3 -path '*/bin/*' -type f | sort
+          n=$(find . -maxdepth 3 -path '*/bin/*' -type f | wc -l)
+          test "$n" -gt 0 || { echo "::error::no build asset found under */bin/ — did the build job fail?"; exit 1; }
+        shell: bash
+
       - name: Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             */bin/*
@@ -726,10 +771,10 @@ jobs:
       VERSION: ${{ github.ref_name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Download the Linux build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: Wails Build ubuntu-latest blunderDB ${{ env.VERSION }}
           path: dist
@@ -789,16 +834,16 @@ jobs:
       VERSION: ${{ github.ref_name }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Download the Windows build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: Wails Build windows-latest blunderDB ${{ env.VERSION }}
           path: dist
 
       - name: Download the macOS build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: Wails Build macos-latest blunderDB ${{ env.VERSION }}
           path: dist
@@ -844,7 +889,7 @@ jobs:
       docs: ${{ steps.filter.outputs.docs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Detect documentation changes
         id: filter
@@ -859,11 +904,13 @@ jobs:
   # Are the eight translations complete against the French source? Runs
   # scripts/doc-i18n-check.sh (regenerates the .pot, merges each catalogue in a
   # temp dir, counts untranslated + fuzzy). Same gate as `docs`: documentation
-  # changes, tags and manual runs. On a PR/push a gap is a ::warning::
-  # annotation — CLAUDE.md says translations are refreshed at release time —
-  # on a version tag it fails, so a release cannot ship docs falling back to
-  # French. It marks the run red but blocks nothing else: the release assets
-  # come from `build`, which does not depend on it.
+  # changes, tags and manual runs. On a pull request or a manual run a gap is
+  # a ::warning:: annotation; on a push (main or a version tag) it is strict
+  # and fails: a release cannot ship docs falling back to French, and the
+  # `pages` job below deploys the site from main only when this job is green
+  # (issue #161: eight published sites showed French paragraphs). It blocks
+  # nothing else: the release assets come from `build`, which does not depend
+  # on it.
   docs-i18n-check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -876,10 +923,10 @@ jobs:
       )
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.x'
           cache: 'pip'
@@ -893,7 +940,7 @@ jobs:
         shell: bash
 
       - name: Check translation coverage
-        run: scripts/doc-i18n-check.sh ${{ startsWith(github.ref, 'refs/tags/') && '--strict' || '' }}
+        run: scripts/doc-i18n-check.sh ${{ github.event_name == 'push' && '--strict' || '' }}
         shell: bash
 
   # Builds the docs in all 9 languages; on a version tag it also builds the
@@ -928,10 +975,10 @@ jobs:
       BUILD_PDF: ${{ startsWith(github.ref, 'refs/tags/') && '1' || '0' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.x'
           cache: 'pip'
@@ -978,7 +1025,7 @@ jobs:
           echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
 
       # Upload build assets
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: env.BUILD_PDF == '1'
         with:
           name: blunderDB pdf docs
@@ -994,7 +1041,7 @@ jobs:
 
       # Hand the built site to the `pages` job, which is the only one allowed to
       # queue on gh-pages.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: github.event_name == 'push'
         with:
           name: docs-site
@@ -1006,16 +1053,24 @@ jobs:
   # pollutes the published site and races the real push deploys. When `docs`
   # is skipped (a push that touched no documentation) this job is skipped with
   # it: the site is a pure function of doc/**, so there is nothing new to
-  # publish.
+  # publish. A push on main also waits for `docs-i18n-check` (strict on a
+  # push) and deploys only if it is green: a paragraph left untranslated must
+  # not reach the eight translated sites (issue #161). A tag is not gated
+  # here — its `docs-i18n-check` is strict too, and a release tag whose
+  # translations lag still republishes the site with its release notes.
   pages:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: docs
+    needs: [docs, docs-i18n-check]
     # !cancelled() is required, not decorative: a skipped ancestor propagates
     # through the whole chain, and docs-changes is skipped on every tag. On the
     # 0.35.0 tag `docs` ran and succeeded while `pages` was skipped anyway; the
     # site was only republished because the main push carried the same commit.
-    if: ${{ !cancelled() && github.event_name == 'push' && needs.docs.result == 'success' }}
+    if: >-
+      !cancelled() && github.event_name == 'push' && needs.docs.result == 'success' && (
+        startsWith(github.ref, 'refs/tags/') ||
+        needs.docs-i18n-check.result == 'success'
+      )
     # peaceiris/actions-gh-pages pushes the built site to the gh-pages branch
     # using github_token below — needs contents:write.
     permissions:
@@ -1028,7 +1083,7 @@ jobs:
       group: gh-pages-deploy
       cancel-in-progress: false
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: docs-site
           path: ./doc/build

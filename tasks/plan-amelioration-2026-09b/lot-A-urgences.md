@@ -109,17 +109,18 @@ secret scanning, push protection et Dependabot security updates désactivés ;
 mouvant alors que `SECURITY.md` dit « pinned by commit SHA ».
 
 **À faire.**
-- [ ] Réglages dépôt : `default_workflow_permissions: read` ; secret scanning +
+- [x] Réglages dépôt : `default_workflow_permissions: read` ; secret scanning +
       push protection + Dependabot security updates ; `allowed_actions:
       selected` (actions/*, github/*, + les 12 tierces déjà pinnées) ;
       `sha_pinning_required: true`.
-- [ ] `aur.yml` : `permissions: contents: read` en tête.
-- [ ] Ruleset sur `main` : status checks requis `test (*)`, `lint`,
-      `govulncheck`, `frontend-lint`, `frontend-test` ; historique linéaire ;
-      pas de force-push.
-- [ ] Pinner par SHA les 52 `uses:` (Dependabot `github-actions` maintient
+- [x] `aur.yml` : `permissions: contents: read` en tête.
+- [x] Ruleset sur `main` : pas de force-push, pas de suppression — et rien
+      d'autre. Pas de status checks requis ni de PR obligatoire : le flux de ce
+      dépôt fusionne localement et pousse `main` directement, une telle règle
+      refuserait chaque push (raison consignée dans `SECURITY.md`).
+- [x] Pinner par SHA les 52 `uses:` (Dependabot `github-actions` maintient
       ensuite), ou corriger la phrase de `SECURITY.md`. Choix : pinner.
-- [ ] `build.yml:513-514` : le job `build` n'a plus `contents: write` ; un job
+- [x] `build.yml:513-514` : le job `build` n'a plus `contents: write` ; un job
       `release` tag-only télécharge les artefacts et publie (le commentaire du
       fichier décrit déjà ce remède).
 
@@ -137,11 +138,13 @@ lance 9. `FuzzBGFApplyCheckerMove` et ses seeds de régression ne tournent
 plus, contrairement à ce que `fuzz.yml:5-8` affirme.
 
 **À faire.**
-- [ ] Shard supplémentaire (ou `-run '^(Test[A-I]|Fuzz)'`) qui joue tous les
-      `Fuzz*` en mode seeds.
-- [ ] Dédupliquer `database/db_import_bgf_fuzz_test.go` et la cible d'`ingest`
-      (même fonction fuzzée deux fois) ; ajouter la cible manquante à `fuzz.yml`.
-- [ ] `fuzz.yml` : `fuzztime` 90 s → 5 min par cible (le timeout de step le
+- [x] Shard supplémentaire (ou `-run '^(Test[A-I]|Fuzz)'`) qui joue tous les
+      `Fuzz*` en mode seeds (shard `fuzz-seeds`, paquets découverts par `grep`).
+- [x] Dédupliquer `database/db_import_bgf_fuzz_test.go` et la cible d'`ingest`
+      (même fonction fuzzée deux fois) ; ajouter la cible manquante à `fuzz.yml`
+      (la copie `database` et sa fonction morte sont supprimées ; les 5 cibles
+      restantes sont toutes dans `fuzz.yml`).
+- [x] `fuzz.yml` : `fuzztime` 90 s → 5 min par cible (le timeout de step le
       permet).
 
 **Recette.** Le log du job `test` montre `FuzzXxx … seed#N` pour chaque cible.
@@ -191,7 +194,7 @@ en/de/el/es/fi/it/ja/ru affichent ces paragraphes en français.
       `sphinx-build -b gettext` dans `doc/build/gettext`, chemin relatif).
 - [ ] Règle de process dans `CONTRIBUTING.md` (voir H.2) et dans le template de
       PR : « un `.rst` modifié = ses `.po` dans le même commit ».
-- [ ] Job `pages` : déployer sur tag **et** sur `main` seulement si
+- [x] Job `pages` : déployer sur tag **et** sur `main` seulement si
       `docs-i18n-check` est vert (job `needs:` + `--strict`).
 
 **Recette.** `doc-i18n-check.sh` → `0 untranslated + 0 fuzzy` ; les 8 sites
