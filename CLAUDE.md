@@ -256,6 +256,23 @@ Violating one of these is a bug even if all tests pass:
   where it belongs, in `Decide`'s no-double payoffs. See ADR-0022; and the
   file is a port, so any change here lands in gammonNet's `gn_cube.c` and its
   spec §2 first, then in `testdata/cube_gold.bin`.
+- **The network kernel never fuses and never reassociates**: the batched evaluator
+  vectorises over POSITIONS, one per SIMD lane, each lane accumulating over `j` in
+  ascending order in float32, with multiply and add kept as two operations. No FMA
+  (`vfmadd*`, `fmla`), no tree reduction, no float64 accumulation — the explicit
+  `float32(a*b)` is a fusion barrier guaranteed by the Go spec, and it is on arm64 that
+  it protects, since Go contracts there and never on amd64. Any new arithmetic path
+  (a NEON kernel, a wider tile) must pass `kernel_identity_test.go` against the pure-Go
+  fallback, `==` on every bit — the gold suites tolerate 1e-6 and would let an FMA
+  through. A requested-but-unavailable kernel is an error at load, never a silent
+  fallback. See ADR-0024.
+- **Parallelism is production behaviour, not a test tool**: the analysis batch runs
+  positions across `NumCPU` goroutines, each reusing one serial `Searcher`
+  (`NewBatchSearcher`/`EvaluatePositionWith`); the live panel runs ONE search with
+  `WithWorkers`. The two never stack — a batch path that also took the pool would ask for
+  `NumCPU²` goroutines. Both stay bit-identical because the weighted sum over the 21 rolls
+  is taken serially in ascending roll order: parallelism decides who computes each term,
+  never the order they are added in.
 - **One type scale**: components use the tokens in `frontend/src/style.css`
   (`--font-size-base/-small/-title`), never an absolute `font-size`, and form
   controls carry `font: inherit` — an input inherits neither size nor family, so

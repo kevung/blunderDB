@@ -2,12 +2,28 @@
 
 ## Status
 
-proposed — decided 2026-09-02 in a grilling session, to be accepted when the batched kernel
-passes its bit-identity test. Executes the bounded follow-up ADR-0011 left open ("the kernel
+**accepted** — decided 2026-09-02 in a grilling session, accepted the same day once the
+batched kernel passed its bit-identity test and the whole plan shipped. Executes the bounded follow-up ADR-0011 left open ("the kernel
 vectorises across the BATCH dimension, not across the reduction … a bounded follow-up with a
 measured target"), and turns two of ADR-0011's statements into things the code actually does:
 intra-search parallelism, which it called a *requirement*, is today never enabled outside
-the tests. Plan and measurements: `tasks/gammonnet-perf/README.md`.
+the tests. Plan and measurements: `tasks/gammonnet-perf/` (issues #145, #133, #146, #147, #148, #149,
+and the sibling overhead track #150).
+
+## What it cost and what it bought
+
+Canonical 2-ply decision, same machine and same position, morning to evening of 2026-09-02:
+
+| | before | after |
+|---|---|---|
+| serial | 5.5 s | **0.277 s** |
+| all cores | 1.3 s | **0.072 s** |
+| one forward pass, siblings | 505 µs | **17 µs** |
+| batch of 200 positions | 302 s | 74 s |
+
+Network parity still reports 5.960e-08, the gold suites pass untouched, and
+`TestParallelSearchIsBitIdentical` still demands binary identity. **No equity moved by one
+bit**, which is the whole claim of this record.
 
 ## Context
 
