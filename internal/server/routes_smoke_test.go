@@ -74,6 +74,7 @@ var customContentTypes = map[string][]string{
 	"/v1/exports.sqlite":                  {"application/octet-stream"},
 	"/v1/matches.exportMat":               {"text/plain"},
 	"/v1/tenant.purge":                    {"application/json"},
+	"/v1/maintenance.vacuum":              {"application/json"},
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 }

@@ -77,6 +77,16 @@ type Storage interface {
 	Migrate(ctx context.Context) error
 }
 
+// VacuumResult reports the file-size effect of a backend's Vacuum, in bytes.
+// Vacuum is a backend capability rather than a Storage method: only the
+// SQLite backend has a file to compact (sqlite.Storage.Vacuum), and the
+// daemon duck-types it the way it does PurgeTenant, so PostgreSQL needs no
+// stub. Both sizes are 0 for an in-memory database.
+type VacuumResult struct {
+	SizeBefore int64 `json:"sizeBefore"`
+	SizeAfter  int64 `json:"sizeAfter"`
+}
+
 // Options configures a backend at open time.
 type Options struct {
 	// MigrationProgress, if set, is invoked during Migrate to report progress.

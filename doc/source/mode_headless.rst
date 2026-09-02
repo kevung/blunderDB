@@ -126,7 +126,8 @@ La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exempl
 positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
 filtres, sessions, historique (recherche et commandes), recherche,
 métadonnées, statistiques, import et export, ainsi que le cycle de vie des
-tenants (``tenant.purge``, réservé au backend PostgreSQL). Les endpoints de
+tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance
+(``maintenance.vacuum``, réservé au backend SQLite). Les endpoints de
 listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
 s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
 
@@ -255,6 +256,14 @@ un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant n
 ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
 PostgreSQL — elle renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a
 pas de notion de tenant.
+
+Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier SQLite du
+daemon — le pendant du bouton « Compacter la base » de l'interface graphique
+et de la commande ``blunderdb vacuum`` (voir :ref:`cli`), avec la même garde
+d'espace disque — et renvoie les tailles avant et après (``sizeBefore``,
+``sizeAfter``, en octets). Elle n'est disponible qu'avec le backend SQLite ;
+sur PostgreSQL, qui n'a pas de fichier à compacter, elle renvoie une erreur
+``invalid``.
 
 .. _headless_migrate:
 
