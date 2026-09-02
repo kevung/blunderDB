@@ -335,6 +335,146 @@ func testCollectionRenameAndDelete(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testCollectionMembers pins Members: the membership rows come back in
+// collection order — the same walk as Positions — each naming its
+// collection, its position (loaded, not just its id), its rank and when it
+// was added; a collection with no member, or an unknown one, is an empty
+// stream.
+func testCollectionMembers(t *testing.T, s storage.Storage) {
+	c := context.Background()
+	save := func(n int) int64 {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(c, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	a, b, d := save(1), save(2), save(3)
+
+	col, err := s.Collections().Create(c, "", "members", "")
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if err := s.Collections().AddPositions(c, "", col, []int64{a, b, d}); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+	if err := s.Collections().ReorderPositions(c, "", col, []int64{d, a, b}); err != nil {
+		t.Fatalf("ReorderPositions: %v", err)
+	}
+
+	var members []storage.CollectionPosition
+	for m, err := range s.Collections().Members(c, "", col) {
+		if err != nil {
+			t.Fatalf("Members: %v", err)
+		}
+		members = append(members, *m)
+	}
+	if len(members) != 3 {
+		t.Fatalf("Members: got %d rows, want 3", len(members))
+	}
+	want := []int64{d, a, b}
+	for i, m := range members {
+		if m.PositionID != want[i] {
+			t.Errorf("member %d: PositionID %d, want %d (collection order)", i, m.PositionID, want[i])
+		}
+		if m.Position.ID != m.PositionID {
+			t.Errorf("member %d: Position.ID %d does not match PositionID %d", i, m.Position.ID, m.PositionID)
+		}
+		if m.CollectionID != col {
+			t.Errorf("member %d: CollectionID %d, want %d", i, m.CollectionID, col)
+		}
+		if m.SortOrder != i {
+			t.Errorf("member %d: SortOrder %d, want %d", i, m.SortOrder, i)
+		}
+		if m.ID == 0 {
+			t.Errorf("member %d: ID is 0", i)
+		}
+		if m.AddedAt == "" {
+			t.Errorf("member %d: AddedAt is empty", i)
+		}
+	}
+	// The loaded position is the stored one, not a stub.
+	if members[0].Position.Score != [2]int{3, 0} {
+		t.Errorf("member 0: Position.Score %v, want [3 0] (position %d loaded)", members[0].Position.Score, d)
+	}
+	// Members and Positions are the same walk.
+	if got := collectionPositionIDs(t, s, col); !equalIDs(got, want) {
+		t.Errorf("Positions: got %v, want %v (same order as Members)", got, want)
+	}
+
+	empty, err := s.Collections().Create(c, "", "empty", "")
+	if err != nil {
+		t.Fatalf("Create empty: %v", err)
+	}
+	for _, id := range []int64{empty, 987654321} {
+		n := 0
+		for _, err := range s.Collections().Members(c, "", id) {
+			if err != nil {
+				t.Fatalf("Members of %d: %v", id, err)
+			}
+			n++
+		}
+		if n != 0 {
+			t.Errorf("Members of %d: got %d rows, want none", id, n)
+		}
+	}
+}
+
+// testCollectionCoverage pins Coverage: every collection is a key, the value
+// is how many of its members the selection holds, and a position in several
+// collections counts once in each. An empty selection covers nothing.
+func testCollectionCoverage(t *testing.T, s storage.Storage) {
+	c := context.Background()
+	save := func(n int) int64 {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(c, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		return id
+	}
+	p1, p2, p3 := save(1), save(2), save(3)
+
+	create := func(name string, members ...int64) int64 {
+		id, err := s.Collections().Create(c, "", name, "")
+		if err != nil {
+			t.Fatalf("Create %s: %v", name, err)
+		}
+		if len(members) > 0 {
+			if err := s.Collections().AddPositions(c, "", id, members); err != nil {
+				t.Fatalf("AddPositions %s: %v", name, err)
+			}
+		}
+		return id
+	}
+	both := create("both", p1, p2)
+	one := create("one", p2, p3)
+	none := create("none")
+
+	if got, err := s.Collections().Coverage(c, "", nil); err != nil {
+		t.Fatalf("Coverage of nothing: %v", err)
+	} else if len(got) != 3 || got[both] != 0 || got[one] != 0 || got[none] != 0 {
+		t.Errorf("Coverage of nothing: got %v, want {%d:0 %d:0 %d:0}", got, both, one, none)
+	}
+
+	got, err := s.Collections().Coverage(c, "", []int64{p1, p2, 987654321})
+	if err != nil {
+		t.Fatalf("Coverage: %v", err)
+	}
+	if len(got) != 3 || got[both] != 2 || got[one] != 1 || got[none] != 0 {
+		t.Errorf("Coverage of [p1 p2]: got %v, want {%d:2 %d:1 %d:0}", got, both, one, none)
+	}
+
+	// A collection that was deleted is no longer a key.
+	if err := s.Collections().Delete(c, "", none); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if got, _ := s.Collections().Coverage(c, "", []int64{p3}); len(got) != 2 || got[both] != 0 || got[one] != 1 {
+		t.Errorf("Coverage after Delete: got %v, want {%d:0 %d:1}", got, both, one)
+	}
+}
+
 // testCollectionPositionIndexMap pins PositionIndexMap: every stored
 // position — collected or not — maps to its 1-based rank by id, and an empty
 // database yields an empty map.
