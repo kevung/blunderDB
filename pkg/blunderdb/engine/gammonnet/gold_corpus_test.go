@@ -207,6 +207,17 @@ func buildSearchCubeCorpus() []goldCase {
 		cases = append(cases, mk(p, d1, d2, ply, states[added%len(states)], true))
 		added++
 	}
+
+	// The terminal valuation (#188): three boards where one legal play ends
+	// the game — a single game, a gammon, a backgammon (terminal_test.go's
+	// terminalBoards) — at a score, cubeful, one per ply. Nothing else in
+	// either corpus ends a game, so without these the C and the port were
+	// never compared on terminal_value at all. Appended last so the gold
+	// entries before them are byte-for-byte what they were.
+	terminal := ctx{useMatch: true, away: int8(terminalState.AwayOnRoll), opp: int8(terminalState.AwayOpponent), cube: int8(terminalState.Cube), owner: CubeCentred}
+	for i, board := range terminalBoards() {
+		cases = append(cases, mk(board, terminalD1, terminalD2, int8(i), terminal, true))
+	}
 	return cases
 }
 

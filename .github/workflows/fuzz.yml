@@ -38,6 +38,8 @@ jobs:
           - { pkg: ./pkg/blunderdb/engine, target: FuzzDecodeBoardCompact }
           - { pkg: ./pkg/blunderdb/engine, target: FuzzDecodeAnalysisFromStorage }
           - { pkg: ./pkg/blunderdb/ingest, target: FuzzBGFApplyCheckerMove }
+          - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzLoadBGNN }
+          - { pkg: ./pkg/blunderdb/engine/gammonnet, target: FuzzDecide }
     name: ${{ matrix.target }}
     steps:
       - name: Checkout

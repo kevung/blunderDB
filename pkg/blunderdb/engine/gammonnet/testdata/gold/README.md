@@ -67,6 +67,26 @@ post-Crawford, an owned cube at 2, and random boards through a cycle of states. 
 same gate replays both (`TestSearchMatchesTheGoldFile`, subtests `money-cubeless` and
 `match-and-cube`). `TestSearchCubeCorpusIsInSync` guards it like the first.
 
+**Three terminal decisions close the corpus (#188, 2026-09-03).** Nothing else in either
+corpus has a legal play that ends the game, so `terminal_value` — the match-referential value
+of a finished game, where a backgammon at 2-away is a match and a single game is not — was
+never compared between the C and the port. `terminal_test.go`'s `terminalBoards` (a single
+game, a gammon, a backgammon, each with one game-ending play and one live one on a 6-2) are
+appended last, at 4-away/3-away cubeful, one per ply. Appended so the 123 entries before them
+are byte-for-byte what they were — verified at regeneration by comparing the old file past
+its 8-byte header. Measured on that regeneration: max|Δ| = 3.902e-07 over 126 decisions.
+
+**Building the reference at the pinned tag when the checkout has moved on.** The gold must
+come from the pinned version, not from whatever `HEAD` the checkout happens to be at. A
+`git archive` of the tag into a scratch directory gives exactly that without touching the
+checkout (the vendored `backgammon-ai-engine` is not in the archive; point `V` at the
+checkout's copy):
+
+```sh
+mkdir -p /tmp/gn121 && git -C $GN archive v1.2.1 src | tar -x -C /tmp/gn121
+GN=/tmp/gn121   # then the gcc line above, unchanged
+```
+
 **Generated with no shared two-sided table.** `gn_search.c`'s `node_value` reads exact cubeful
 equities from `gn_bearoff_shared()` for money leaves inside its domain when a table is loaded;
 `gold.c` loads none, and the Go port never takes that shortcut (blunderDB has no such table in

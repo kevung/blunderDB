@@ -467,3 +467,74 @@ func BenchmarkNotationPhase(b *testing.B) {
 }
 
 var sinkNotation string
+
+// TestCrawfordAtDoubleMatchPoint pins the [1,1] score (#188): both players
+// 1-away, which MatchStateFromPosition reads as the Crawford game — the
+// sentinel says Crawford whenever either raw away score is 1, and here both
+// are. It is the one score where every stake is the match: the cube is dead
+// by rule and worthless by arithmetic at once. The decision must be
+// evaluable (not refused), must not double, must price the double branch at
+// exactly the no-double value (a zero-cost non-option, never a "missed
+// double"), and its no-double equity must be the cubeless one — the dead
+// value Value returns for a Crawford game.
+func TestCrawfordAtDoubleMatchPoint(t *testing.T) {
+	pos, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	pos.PlayerOnRoll = domain.White
+	pos.Dice = [2]int{0, 0}
+	pos.Score = [2]int{1, 1}
+
+	state, ok := MatchStateFromPosition(&pos)
+	if !ok {
+		t.Fatal("[1,1] refused by MatchStateFromPosition")
+	}
+	if want := (MatchState{AwayOnRoll: 1, AwayOpponent: 1, Cube: 1, Crawford: true}); state != want {
+		t.Fatalf("[1,1] decoded as %+v, want %+v", state, want)
+	}
+
+	res, err := EvaluatePosition(pos, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("[1,1]: %v", err)
+	}
+	if res.Cube == nil || res.PreRoll == nil {
+		t.Fatal("[1,1]: no cube decision or no pre-roll facts")
+	}
+	if res.CubeAction != NoDouble {
+		t.Errorf("[1,1]: action %v, want NoDouble — there is no cube in the Crawford game", res.CubeAction)
+	}
+	if res.Cube.BestCubeAction != "No Double" {
+		t.Errorf("[1,1]: BestCubeAction %q, want %q", res.Cube.BestCubeAction, "No Double")
+	}
+	nd, dt := res.Cube.CubefulNoDoubleEquity, res.Cube.CubefulDoubleTakeEquity
+	if nd != dt {
+		t.Errorf("[1,1]: double/take %v priced away from no-double %v", dt, nd)
+	}
+	if res.Cube.CubefulNoDoubleError != 0 || res.Cube.CubefulDoubleTakeError != 0 {
+		t.Errorf("[1,1]: errors %v/%v, want 0/0 — neither branch can be a mistake when they are the same number", res.Cube.CubefulNoDoubleError, res.Cube.CubefulDoubleTakeError)
+	}
+	// The dead value: at DMP the normalised no-double equity IS the cubeless
+	// equity — same distribution, same 2×MWC−1, same scale.
+	if math.Abs(nd-res.PreRoll.CubelessEquity) > 1e-9 {
+		t.Errorf("[1,1]: no-double %v is not the cubeless equity %v — the Crawford game is valued at its dead value", nd, res.PreRoll.CubelessEquity)
+	}
+	if nd <= -1 || nd >= 1 {
+		t.Errorf("[1,1]: equity %v outside (-1, 1)", nd)
+	}
+
+	// Directly on the model, without the search: same three facts.
+	probs := [NumOutputs]float32{0.55, 0.15, 0.02, 0.1, 0.01}
+	dec, ok := Decide(&probs, CubeCentred, &state, DefaultEfficiency(CubeCentred), false)
+	if !ok {
+		t.Fatal("Decide refused DMP")
+	}
+	if dec.Action != NoDouble || dec.EquityDouble != dec.EquityNoDouble || dec.EquityDoubleTake != dec.EquityNoDouble {
+		t.Errorf("Decide at DMP: %+v", dec)
+	}
+	// Every stake is the match at DMP, so the MWC is the win probability
+	// itself, on any gammon mix.
+	if math.Abs(dec.EquityNoDouble-float64(probs[PWin])) > 1e-6 {
+		t.Errorf("DMP no-double MWC %v, want the win probability %v", dec.EquityNoDouble, probs[PWin])
+	}
+}

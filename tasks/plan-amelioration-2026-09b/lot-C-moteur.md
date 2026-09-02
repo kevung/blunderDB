@@ -30,11 +30,11 @@ architecture) ; C.13 = amont.
   64-away (`met.go:361-366`) sans test.
 - Crawford `[1,1]` non testé (`domaineval.go:335`) ; `RegimeEvaluated`
   (`race/eval.go:22`) sans test unitaire (pas de `gammonnet_eval_test.go`).
-- [ ] Trois positions terminales (single, gammon, backgammon) au corpus gold ;
+- [x] Trois positions terminales (single, gammon, backgammon) au corpus gold ;
       test unitaire `terminalValue` au score contre `terminalEquity` en money.
-- [ ] Trois tests de propriété sur la MET ; test de bord 64-away.
-- [ ] Cas `[1,1]` ; `internal/gui/gammonnet_eval_test.go` pour les trois régimes.
-- [ ] `FuzzLoadBGNN` (format binaire à longueurs, `network.go:88-197`) et
+- [x] Trois tests de propriété sur la MET ; test de bord 64-away.
+- [x] Cas `[1,1]` ; `internal/gui/gammonnet_eval_test.go` pour les trois régimes.
+- [x] `FuzzLoadBGNN` (format binaire à longueurs, `network.go:88-197`) et
       `FuzzDecide` (probs × états de match arbitraires : NaN, `count < 2`,
       divisions dégénérées de `segment`) ajoutés à `fuzz.yml`.
 
