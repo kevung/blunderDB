@@ -239,7 +239,6 @@
         "dbVersion": "Tietokannan versio: {version}",
         "dbVersionMismatch": "Tietokannan pääversio ei täsmää. Tietokannan rakenne saattaa olla yhteensopimaton nykyisen blunderDB-version kanssa. Tietokannan muokkaamista jatketaan omalla vastuulla. Varmuuskopioi tiedostosi ennen jatkamista.\nTietokannan versio: {dbVersion}\nOdotettu versio: {modelVersion}",
         "epcErrorComputing": "EPC: Laskentavirhe",
-        "epcNotAvailable": "EPC: ei saatavilla (kaikki nappulat eivät ole kotialueella)",
         "errorClearingHistory": "Virhe komentohistorian tyhjentämisessä.",
         "errorCreatingDb": "Virhe uuden tietokannan luonnissa",
         "errorOpeningDb": "Virhe tietokannan avaamisessa",

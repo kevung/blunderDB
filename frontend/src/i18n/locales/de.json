@@ -239,7 +239,6 @@
         "dbVersion": "Datenbankversion: {version}",
         "dbVersionMismatch": "Abweichung der Haupt-Datenbankversion. Das Datenbankschema ist möglicherweise nicht mit der aktuellen Version von blunderDB kompatibel. Die weitere Bearbeitung der Datenbank erfolgt auf eigene Gefahr. Sichern Sie Ihre Datei, bevor Sie fortfahren.\nDatenbankversion: {dbVersion}\nErwartete Version: {modelVersion}",
         "epcErrorComputing": "EPC: Fehler bei der Berechnung",
-        "epcNotAvailable": "EPC: nicht verfügbar (nicht alle Steine im Heimfeld)",
         "errorClearingHistory": "Fehler beim Löschen des Befehlsverlaufs.",
         "errorCreatingDb": "Fehler beim Erstellen der neuen Datenbank",
         "errorOpeningDb": "Fehler beim Öffnen der Datenbank",

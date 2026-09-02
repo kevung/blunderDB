@@ -888,8 +888,12 @@ export async function updateEPC(position) {
             // status-bar copy would leak the answers.
             statusBarTextStore.set('');
         } else {
+            // No race data (the checkers are not all in the home board) is the
+            // ordinary case for the Eval panel, which evaluates any position:
+            // the race block simply stays hidden. Announcing "EPC: N/A" in the
+            // status bar was noise on the majority of positions.
             epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
-            statusBarTextStore.set(tMsg('commands.epcNotAvailable'));
+            statusBarTextStore.set('');
         }
     } catch (error) {
         logger.error('Error computing EPC:', error);
