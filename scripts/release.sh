@@ -22,6 +22,10 @@
 #   - wails.json                   (info.productVersion → Windows .exe version
 #                                   resource, macOS Info.plist CFBundleVersion)
 #   - doc/source/index.rst         (changelog entry, if --changelog given)
+#   - packaging/flatpak/io.github.kevung.blunderDB.yml  (url/sha256 bumped to
+#                                   the latest ALREADY-published release, so
+#                                   the tracked manifest stays buildable —
+#                                   see packaging/flatpak/README.md §3)
 #
 # After running, the CI workflow (.github/workflows/build.yml) is triggered
 # by the pushed tag to build binaries, PDFs, and update GitHub Pages.
@@ -41,6 +45,7 @@ CONF_PY="$REPO_ROOT/doc/source/conf.py"
 META_STORE="$REPO_ROOT/frontend/src/stores/metaStore.js"
 INDEX_RST="$REPO_ROOT/doc/source/index.rst"
 WAILS_JSON="$REPO_ROOT/wails.json"
+FLATPAK_MANIFEST="$REPO_ROOT/packaging/flatpak/io.github.kevung.blunderDB.yml"
 
 # Colors for output
 RED='\033[0;31m'
@@ -307,11 +312,58 @@ do_update_changelog() {
     ok "Added changelog entry for $VERSION ($today)"
 }
 
+# --- Update packaging/flatpak/io.github.kevung.blunderDB.yml ---
+# Points the committed manifest at the latest ALREADY-published release, not
+# the one being cut here (its assets don't exist yet) — so the file checked
+# into the repo always builds as-is with `flatpak-builder`. CI's `flatpak`
+# job never reads this file's url/sha256 (it renders its own copy against
+# the tarball it just built); this is purely for a local/offline build of
+# the tracked manifest. See packaging/flatpak/README.md §3.
+do_update_flatpak_manifest() {
+    local prev_tag asset url
+    prev_tag=$(git -C "$REPO_ROOT" describe --tags --abbrev=0 2>/dev/null || echo "")
+    if [[ -z "$prev_tag" ]]; then
+        warn "No previous git tag found; skipping Flatpak manifest update."
+        return
+    fi
+
+    asset="blunderDB-linux-webkit2gtk-4.1-${prev_tag}.tar.gz"
+    url="https://github.com/kevung/blunderDB/releases/download/${prev_tag}/${asset}"
+
+    info "Updating $FLATPAK_MANIFEST (pointing at published release $prev_tag) ..."
+    if $DRY_RUN; then
+        echo "  url    → $url"
+        echo "  sha256 → (downloaded from ${url}.sha256)"
+        return
+    fi
+
+    local sumfile sha
+    sumfile="$(mktemp)"
+    if ! curl -fsSL "${url}.sha256" -o "$sumfile" 2>/dev/null; then
+        warn "Could not download ${asset}.sha256 (offline, or $prev_tag has no Linux asset). Leaving $FLATPAK_MANIFEST untouched."
+        rm -f "$sumfile"
+        return
+    fi
+    sha="$(cut -d' ' -f1 "$sumfile" | tr '[:upper:]' '[:lower:]')"
+    rm -f "$sumfile"
+    if [[ ! "$sha" =~ ^[0-9a-f]{64}$ ]]; then
+        warn "Malformed checksum for $asset; leaving $FLATPAK_MANIFEST untouched."
+        return
+    fi
+
+    sed -i \
+        -e "s#^\( *\)url: https://github.com/kevung/blunderDB/releases/download/.*#\1url: ${url}#" \
+        -e "s/^\( *\)sha256: [0-9a-fA-F]\{1,\}$/\1sha256: ${sha}/" \
+        "$FLATPAK_MANIFEST"
+    ok "Updated Flatpak manifest: release $prev_tag, sha256 $sha"
+}
+
 # --- Perform updates ---
 do_update_conf_py
 do_update_meta_store
 do_update_wails_json
 do_update_changelog
+do_update_flatpak_manifest
 
 if $DRY_RUN; then
     echo ""
@@ -336,7 +388,7 @@ if [[ "$yn" =~ ^[Nn]$ ]]; then
     exit 0
 fi
 
-git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$INDEX_RST"
+git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$INDEX_RST" "$FLATPAK_MANIFEST"
 git -C "$REPO_ROOT" commit -m "Release $VERSION"
 git -C "$REPO_ROOT" tag "$VERSION"
 ok "Created commit and tag '$VERSION'"

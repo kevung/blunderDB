@@ -7,11 +7,14 @@ release asset `blunderDB-macos-<version>.zip` (one universal arm64 + x86_64
 executable as `blunderdb` on the `PATH`, since the same binary is the
 command-line interface.
 
-Nothing here is pushed anywhere automatically. Homebrew's main cask repository
-(`homebrew/cask`) has notability requirements (GitHub stars/forks thresholds)
-a small project rarely meets, so the intended home is a **tap** under the
-author's account, `kevung/homebrew-tap`. Creating it and pushing each release
-to it is a decision taken by hand.
+Homebrew's main cask repository (`homebrew/cask`) has notability requirements
+(GitHub stars/forks thresholds) a small project rarely meets — and, since
+Homebrew/brew#20755 (2026), casks that fail the Gatekeeper check are dropped
+from it entirely, which an unnotarized `.app` always will. So the intended
+home is a **tap** under the author's account, `kevung/homebrew-tap`. Creating
+that repository is a decision taken by hand (§2, once); pushing the cask to
+it on every release can then run on its own (§3), the same opt-in pattern as
+`aur.yml`.
 
 ---
 
@@ -56,10 +59,34 @@ brew tap kevung/tap
 brew install --cask blunderdb
 ```
 
-## 3. Each release
+## 3. Automatic publish on tag (opt-in, once the tap exists)
 
-Copy the `blunderdb-<version>.rb` release asset over `Casks/blunderdb.rb` in
-the tap, commit, push. `brew upgrade --cask blunderdb` picks it up; the
+`.github/workflows/homebrew-tap.yml` downloads the `blunderdb-<version>.rb`
+asset `package-manifests` attached to the release and pushes it to
+`kevung/homebrew-tap` as `Casks/blunderdb.rb` — same trigger
+(`workflow_run` on "Wails build", tag pushes only) and guard-by-secret
+pattern as `.github/workflows/aur.yml`; it no-ops without the secret, so it
+never fails a release before you opt in.
+
+It needs one repository secret: a GitHub token with write access to
+`kevung/homebrew-tap` (either a classic PAT scoped to that one repository,
+or a fine-grained token with Contents: read-and-write on it), created at
+<https://github.com/settings/tokens?type=beta> and set with:
+
+```bash
+gh secret set HOMEBREW_TAP_TOKEN --body "<token>"
+```
+
+Verify after a release:
+
+```bash
+gh run list --workflow=homebrew-tap.yml --limit 3
+# then check https://github.com/kevung/homebrew-tap/commits/main
+```
+
+**Manual fallback**, if the secret isn't set (or the run failed): copy the
+`blunderdb-<version>.rb` release asset over `Casks/blunderdb.rb` in the tap,
+commit, push. Either way, `brew upgrade --cask blunderdb` picks it up; the
 `livecheck` block lets `brew livecheck blunderdb` compare the tap against the
 latest GitHub release.
 
