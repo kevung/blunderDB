@@ -93,6 +93,15 @@ func (reg *importRegistry) cancelAll() {
 	}
 }
 
+// count returns the number of in-flight jobs, across every tenant — the
+// blunderdb_imports_inflight / blunderdb_gammonnet_sweep_inflight gauges
+// (#238), both backed by an importRegistry (see gammonnetJobs on Server).
+func (reg *importRegistry) count() int {
+	reg.mu.Lock()
+	defer reg.mu.Unlock()
+	return len(reg.jobs)
+}
+
 // spoolQuota bounds the total bytes any in-flight import may hold spooled to
 // $TMPDIR at once, across every tenant: with no ceiling, N concurrent
 // imports each up to ImportMaxBodyBytes have no upper bound on disk usage
@@ -119,6 +128,10 @@ func (q *spoolQuota) reserve(n int64) bool {
 }
 
 func (q *spoolQuota) release(n int64) { q.inFlight.Add(-n) }
+
+// usage returns the bytes currently reserved — blunderdb_import_spool_bytes
+// (#238).
+func (q *spoolQuota) usage() int64 { return q.inFlight.Load() }
 
 // allowedUploadExtensions is the allow-list for the spool file's suffix,
 // taken from the upload's filename. An extension outside it is dropped

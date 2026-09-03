@@ -108,12 +108,18 @@ func TestRateLimitMetrics(t *testing.T) {
 
 // TestWritePrometheus_Format is the exposition golden: HELP/TYPE headers,
 // quoted labels, one "le" line per bucket plus +Inf, then _sum and _count,
-// and the two rate-limit series, in this exact order.
+// the two rate-limit series, the business gauges (#238), and — because
+// SetDatabaseSizeBytes was called — the database size gauge, in this exact
+// order.
 func TestWritePrometheus_Format(t *testing.T) {
 	r := New()
 	r.ObserveRequest("GET", "/healthz", 200, 3*time.Millisecond)
 	r.ObserveRequest("GET", "/healthz", 200, 7*time.Millisecond)
 	r.SetRateLimitBuckets(1)
+	r.SetImportsInFlight(2)
+	r.SetImportSpoolBytes(1024)
+	r.SetGammonNetSweepsInFlight(1)
+	r.SetDatabaseSizeBytes(4096)
 
 	var out strings.Builder
 	r.WritePrometheus(&out)
@@ -144,9 +150,35 @@ blunderdb_ratelimit_rejected_total 0
 # HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.
 # TYPE blunderdb_ratelimit_buckets gauge
 blunderdb_ratelimit_buckets 1
+# HELP blunderdb_imports_inflight In-flight imports.* jobs, across every tenant.
+# TYPE blunderdb_imports_inflight gauge
+blunderdb_imports_inflight 2
+# HELP blunderdb_import_spool_bytes Bytes currently reserved from the import spool quota.
+# TYPE blunderdb_import_spool_bytes gauge
+blunderdb_import_spool_bytes 1024
+# HELP blunderdb_gammonnet_sweep_inflight In-flight gammonNet catch-up sweeps, across every tenant.
+# TYPE blunderdb_gammonnet_sweep_inflight gauge
+blunderdb_gammonnet_sweep_inflight 1
+# HELP blunderdb_database_size_bytes Storage backend size in bytes (SQLite main file, or PostgreSQL's pg_database_size).
+# TYPE blunderdb_database_size_bytes gauge
+blunderdb_database_size_bytes 4096
 `
 	if got := out.String(); got != want {
 		t.Errorf("exposition differs.\n--- got ---\n%s--- want ---\n%s", got, want)
+	}
+}
+
+// TestWritePrometheus_DatabaseSizeOmittedUntilSet mirrors the PostgreSQL pool
+// gauges' convention: blunderdb_database_size_bytes must not appear at all
+// until SetDatabaseSizeBytes has been called at least once (a backend with
+// no meaningful notion of "size" — none exists today, but the interface is
+// optional — must never publish a misleading permanent zero).
+func TestWritePrometheus_DatabaseSizeOmittedUntilSet(t *testing.T) {
+	r := New()
+	var out strings.Builder
+	r.WritePrometheus(&out)
+	if strings.Contains(out.String(), "blunderdb_database_size_bytes") {
+		t.Errorf("blunderdb_database_size_bytes must be omitted before SetDatabaseSizeBytes is ever called:\n%s", out.String())
 	}
 }
 
@@ -162,6 +194,9 @@ func TestWritePrometheus_EmptyRegistryStillExposesHeaders(t *testing.T) {
 		"# TYPE blunderdb_http_request_duration_seconds histogram",
 		"# TYPE blunderdb_ratelimit_rejected_total counter",
 		"# TYPE blunderdb_ratelimit_buckets gauge",
+		"# TYPE blunderdb_imports_inflight gauge",
+		"# TYPE blunderdb_import_spool_bytes gauge",
+		"# TYPE blunderdb_gammonnet_sweep_inflight gauge",
 	} {
 		if !strings.Contains(text, family) {
 			t.Errorf("missing %q in:\n%s", family, text)

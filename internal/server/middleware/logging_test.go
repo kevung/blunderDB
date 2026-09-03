@@ -68,3 +68,58 @@ func TestLogging_NoStashedErrorStaysInfo(t *testing.T) {
 		t.Errorf("log line has an unexpected err field:\n%s", out)
 	}
 }
+
+// TestLogging_IncludesRequestIDAndTraceparent guards #238: a request that
+// went through RequestID must have its correlation id and (when present) its
+// traceparent surface in the same request-completion log line Logging
+// already emits, rather than being a separate, harder-to-correlate log
+// stream.
+func TestLogging_IncludesRequestIDAndTraceparent(t *testing.T) {
+	var buf strings.Builder
+	logger := slog.New(slog.NewTextHandler(&buf, nil))
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	mw := RequestID(Logging(logger, map[string]bool{}, nil)(handler))
+	req := httptest.NewRequest(http.MethodGet, "/v1/positions.list", nil)
+	req.Header.Set(RequestIDHeader, "abc-123")
+	req.Header.Set(TraceparentHeader, "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01")
+	rec := httptest.NewRecorder()
+	mw.ServeHTTP(rec, req)
+
+	out := buf.String()
+	if !strings.Contains(out, "request_id=abc-123") {
+		t.Errorf("log line missing request_id:\n%s", out)
+	}
+	if !strings.Contains(out, "traceparent=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01") {
+		t.Errorf("log line missing traceparent:\n%s", out)
+	}
+}
+
+// TestLogging_NoRequestIDMiddlewareOmitsFields: Logging must not fabricate a
+// request_id/traceparent field when it runs without RequestID ahead of it
+// (e.g. a unit test that exercises Logging alone, as every other test in
+// this file does).
+func TestLogging_NoRequestIDMiddlewareOmitsFields(t *testing.T) {
+	var buf strings.Builder
+	logger := slog.New(slog.NewTextHandler(&buf, nil))
+
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	mw := Logging(logger, map[string]bool{}, nil)(handler)
+	req := httptest.NewRequest(http.MethodGet, "/v1/positions.list", nil)
+	rec := httptest.NewRecorder()
+	mw.ServeHTTP(rec, req)
+
+	out := buf.String()
+	if strings.Contains(out, "request_id=") {
+		t.Errorf("log line has an unexpected request_id field with no RequestID middleware:\n%s", out)
+	}
+	if strings.Contains(out, "traceparent=") {
+		t.Errorf("log line has an unexpected traceparent field with no RequestID middleware:\n%s", out)
+	}
+}

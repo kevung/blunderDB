@@ -208,6 +208,27 @@ func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
 	return nil
 }
 
+// DatabaseSizeBytes reports the current size of the SQLite main file in
+// bytes, for the daemon's blunderdb_database_size_bytes gauge (#238; see
+// server.sizeProvider) — a plain os.Stat, not the more careful
+// wal_checkpoint-then-stat Vacuum does, since this runs on an unattended
+// timer rather than a user-triggered action and a WAL-inclusive
+// approximation is good enough for a gauge. Returns 0, nil on an in-memory
+// database (tests, `:memory:`), which has no file to size.
+func (s *Storage) DatabaseSizeBytes(ctx context.Context) (int64, error) {
+	if s.sqlDB == nil {
+		return 0, fmt.Errorf("database size: no database open")
+	}
+	path, err := mainFilePath(ctx, s.sqlDB)
+	if err != nil {
+		return 0, fmt.Errorf("database size: %w", err)
+	}
+	if path == "" {
+		return 0, nil
+	}
+	return fileSize(path)
+}
+
 // mainFilePath returns the absolute path SQLite has the "main" database open
 // against, or "" for an in-memory database.
 func mainFilePath(ctx context.Context, db execer) (string, error) {
