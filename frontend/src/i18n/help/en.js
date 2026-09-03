@@ -21,7 +21,8 @@ export default {
                         <li>importing matches from various sources (XG, GNUbg, BGBlitz, Jellyfish), including comments from XG files,</li>
                         <li>browsing the moves of an imported match,</li>
                         <li>organizing positions into collections,</li>
-                        <li>organizing matches into tournaments.</li>
+                        <li>organizing matches into tournaments,</li>
+                        <li>batch-analyzing, from a terminal, positions missing an analysis using the embedded gammonNet evaluator (blunderDB's <strong>analyze</strong> command).</li>
                     </ul>
                     <p>The user can freely tag positions and annotate them with comments.</p>
 
@@ -41,7 +42,7 @@ export default {
                         <li>study positions with spaced repetition (Anki panel),</li>
                         <li>manage tournaments (Tournament panel),</li>
                         <li>display performance statistics (Stats panel),</li>
-                        <li>compute EPC values for bearoff positions (Bearoff panel),</li>
+                        <li>compute EPC values for bearoff positions (Eval panel),</li>
                         <li>browse saved search filters (Filter Library panel),</li>
                         <li>browse search history (Search History panel).</li>
                     </ul>
@@ -99,11 +100,11 @@ export default {
                     <h3>EPC Calculator</h3>
                     <p>The EPC (Effective Pip Count) calculator computes the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database for exact EPC values.</p>
                     <p>
-                        To open the Bearoff panel, press <strong>Ctrl+E</strong>, click the Bearoff tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard
+                        To open the Eval panel, press <strong>Ctrl+E</strong>, click the Eval tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard
                         bearoff configuration (15 checkers).
                     </p>
                     <p>
-                        You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated Bearoff panel, showing for each player:
+                        You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated Eval panel, showing for each player:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
@@ -113,7 +114,7 @@ export default {
                         <li><strong>Std Dev</strong>: standard deviation of the number of rolls.</li>
                     </ul>
                     <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
-                    <p>To close the Bearoff panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
+                    <p>To close the Eval panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
                     <p>
                         On a pure bearoff position, a race table additionally shows both players' winning chances and, when the position is covered by a two-sided database (built-in up to 6 checkers per player, extended database downloadable up to 11 from the
                         Bearoff tab of the settings), the exact money equities — with, under each non-optimal decision, the equity gap to the best one — and the best cube decision. Outside that domain the winning chance is estimated ("estimated" badge with its
@@ -175,7 +176,27 @@ export default {
                     <h3>Stats</h3>
                     <p>
                         The Stats panel (<strong>Ctrl+D</strong>) displays performance statistics (PR and MWC cost) computed from all imported positions. Use the filter bar to restrict the analysis by
-                        player, tournament, date range, decision type, or match length. Click any indicator to drill down into the corresponding positions.
+                        player, tournament, date range, decision type, or match length. Click any indicator to drill down into the corresponding positions. The <strong>Players</strong> tab lists, per player, the
+                        number of matches, the record, decisions, PR (checker and cube), Snowie, blunders, and luck measured over the known rolls.
+                    </p>
+
+                    <h3>Watermark and protected export</h3>
+                    <p>
+                        When exporting (<strong>export_db</strong>, or the Export dialog), two independent protections can be turned on freely, one, the other, or both together:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Watermark:</strong> marks the exported file with its origin (who produced it, an optional note). The watermark is signed with your issuer identity: it cannot be altered
+                            or forged in someone else's name — but it is not unremovable and prevents no copy.
+                        </li>
+                        <li>
+                            <strong>Password:</strong> places the export in an encrypted <strong>.dbx</strong> container. It protects the file while it travels, not the database itself — whoever you give
+                            the password to can open it — and the origin stays readable without it.
+                        </li>
+                    </ul>
+                    <p>
+                        Your issuer identity, the key that signs your watermarks, is created automatically on the first export marked with its origin. View it, export it, or regenerate it from the
+                        <strong>Issuer identity</strong> tab of the settings.
                     </p>
 `,
     shortcuts: `
@@ -431,7 +452,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Bearoff Panel</td>
+                                <td>Eval Panel</td>
                             </tr>
 
                             <tr>

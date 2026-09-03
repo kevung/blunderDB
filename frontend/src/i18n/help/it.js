@@ -21,7 +21,8 @@ export default {
                         <li>importare match da varie fonti (XG, GNUbg, BGBlitz, Jellyfish), inclusi i commenti dei file XG,</li>
                         <li>scorrere le mosse di un match importato,</li>
                         <li>organizzare le posizioni in collezioni,</li>
-                        <li>organizzare i match in tornei.</li>
+                        <li>organizzare i match in tornei,</li>
+                        <li>analizzare in blocco, da terminale, le posizioni prive di analisi grazie al valutatore gammonNet integrato (comando <strong>analyze</strong> di blunderDB).</li>
                     </ul>
                     <p>L'utente può etichettare liberamente le posizioni e annotarle con commenti.</p>
 
@@ -41,7 +42,7 @@ export default {
                         <li>studiare posizioni con la ripetizione dilazionata (pannello Anki),</li>
                         <li>gestire i tornei (pannello Torneo),</li>
                         <li>mostrare statistiche di rendimento (pannello Stats),</li>
-                        <li>calcolare i valori di EPC per posizioni di bearoff (pannello Bearoff),</li>
+                        <li>calcolare i valori di EPC per posizioni di bearoff (pannello Eval),</li>
                         <li>consultare i filtri di ricerca salvati (pannello Libreria filtri),</li>
                         <li>consultare la cronologia delle ricerche (pannello Cronologia ricerche).</li>
                     </ul>
@@ -99,11 +100,11 @@ export default {
                     <h3>Calcolatore EPC</h3>
                     <p>Il calcolatore EPC (Effective Pip Count) calcola il pip count effettivo delle posizioni di bearoff. Utilizza il database di bearoff a un lato a 6 punti di GNUbg per ottenere valori di EPC esatti.</p>
                     <p>
-                        Per aprire il pannello Bearoff, premi <strong>Ctrl+E</strong>, fai clic sulla scheda Bearoff del pannello inferiore o digita <strong>epc</strong> nella riga di comando. Il tavoliere viene inizializzato con una configurazione standard
+                        Per aprire il pannello Eval, premi <strong>Ctrl+E</strong>, fai clic sulla scheda Eval del pannello inferiore o digita <strong>epc</strong> nella riga di comando. Il tavoliere viene inizializzato con una configurazione standard
                         di bearoff (15 pedine).
                     </p>
                     <p>
-                        Puoi aggiungere o rimuovere liberamente pedine sui punti del proprio quadrante interno con il mouse. I valori di EPC vengono mostrati in tempo reale nel pannello Bearoff dedicato, indicando per ciascun giocatore:
+                        Puoi aggiungere o rimuovere liberamente pedine sui punti del proprio quadrante interno con il mouse. I valori di EPC vengono mostrati in tempo reale nel pannello Eval dedicato, indicando per ciascun giocatore:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: il numero medio di pip necessari per portare a casa tutte le pedine,</li>
@@ -113,7 +114,7 @@ export default {
                         <li><strong>Std Dev</strong>: deviazione standard del numero di lanci.</li>
                     </ul>
                     <p>Quando entrambi i giocatori hanno pedine nel proprio quadrante interno, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
-                    <p>Per chiudere il pannello Bearoff, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
+                    <p>Per chiudere il pannello Eval, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
                     <p>
                         Su una posizione di bearoff pura, una tabella di corsa mostra inoltre le probabilità di vittoria di entrambi i giocatori e, quando la posizione è coperta da un database two-sided (integrato fino a 6 pedine per giocatore, database esteso
                         scaricabile fino a 11 dalla scheda Bearoff delle impostazioni), le equità money esatte — con, sotto ogni decisione non ottimale, lo scarto di equità dalla migliore — e la migliore decisione del cubo. Fuori da questo dominio la
@@ -174,7 +175,27 @@ export default {
                     <h3>Stats</h3>
                     <p>
                         Il pannello Stats (<strong>Ctrl+D</strong>) mostra statistiche di rendimento (PR e costo in MWC) calcolate a partire da tutte le posizioni importate. Usa la barra dei filtri per restringere l'analisi per
-                        giocatore, torneo, intervallo di date, tipo di decisione o lunghezza del match. Fai clic su un qualsiasi indicatore per approfondire le posizioni corrispondenti.
+                        giocatore, torneo, intervallo di date, tipo di decisione o lunghezza del match. Fai clic su un qualsiasi indicatore per approfondire le posizioni corrispondenti. La scheda
+                        <strong>Giocatori</strong> elenca, per giocatore, il numero di partite, il bilancio, le decisioni, il PR (pedine e cubo), lo Snowie, i blunder e la fortuna misurata sui lanci noti.
+                    </p>
+
+                    <h3>Marca ed esportazione protetta</h3>
+                    <p>
+                        Durante un'esportazione (<strong>export_db</strong> o la finestra Esporta), è possibile attivare liberamente due protezioni indipendenti, l'una, l'altra, o entrambe insieme:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Marca:</strong> marca il file esportato con la sua origine (chi lo ha prodotto, una nota facoltativa). La marca è firmata con la tua identità dell'emittente: non può
+                            essere alterata né contraffatta a nome di qualcun altro — ma non è incancellabile e non impedisce alcuna copia.
+                        </li>
+                        <li>
+                            <strong>Password:</strong> pone l'esportazione in un contenitore cifrato <strong>.dbx</strong>. Protegge il file durante il trasporto, non il database in sé — chi riceve la
+                            password può aprirlo — e l'origine resta leggibile anche senza di essa.
+                        </li>
+                    </ul>
+                    <p>
+                        La tua identità dell'emittente, la chiave che firma le tue marche, si crea automaticamente alla prima esportazione marcata con la sua origine. Consultala, esportala o rigenerala
+                        dalla scheda <strong>Identità dell'emittente</strong> delle impostazioni.
                     </p>
 `,
     shortcuts: `
@@ -430,7 +451,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Pannello EPC</td>
+                                <td>Pannello Eval</td>
                             </tr>
 
                             <tr>

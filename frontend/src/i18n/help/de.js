@@ -21,7 +21,8 @@ export default {
                         <li>Matches aus verschiedenen Quellen importieren (XG, GnuBG, BGBlitz, Jellyfish), einschließlich Kommentaren aus XG-Dateien,</li>
                         <li>die Züge eines importierten Matches durchsehen,</li>
                         <li>Positionen in Sammlungen organisieren,</li>
-                        <li>Matches in Turnieren organisieren.</li>
+                        <li>Matches in Turnieren organisieren,</li>
+                        <li>über ein Terminal Positionen ohne Analyse stapelweise mit dem eingebetteten gammonNet-Auswerter analysieren (Befehl <strong>analyze</strong> von blunderDB).</li>
                     </ul>
                     <p>Der Benutzer kann Positionen frei taggen und mit Kommentaren versehen.</p>
 
@@ -41,7 +42,7 @@ export default {
                         <li>Positionen mit verteilter Wiederholung zu studieren (Anki-Panel),</li>
                         <li>Turniere zu verwalten (Tournament-Panel),</li>
                         <li>Leistungsstatistiken anzuzeigen (Stats-Panel),</li>
-                        <li>EPC-Werte für Auswürfelpositionen zu berechnen (Bearoff-Panel),</li>
+                        <li>EPC-Werte für Auswürfelpositionen zu berechnen (Eval-Panel),</li>
                         <li>gespeicherte Suchfilter durchzusehen (Filter Library-Panel),</li>
                         <li>den Suchverlauf durchzusehen (Search History-Panel).</li>
                     </ul>
@@ -99,11 +100,11 @@ export default {
                     <h3>EPC-Rechner</h3>
                     <p>Der EPC-Rechner (Effective Pip Count) berechnet den effektiven Pip-Count von Auswürfelpositionen. Er verwendet die einseitige 6-Punkte-Auswürfeldatenbank von GnuBG für exakte EPC-Werte.</p>
                     <p>
-                        Zum Öffnen des Bearoff-Panels <strong>Ctrl+E</strong> drücken, im unteren Panel auf den Bearoff-Tab klicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett wird mit einer Standard-Auswürfelkonfiguration
+                        Zum Öffnen des Eval-Panels <strong>Ctrl+E</strong> drücken, im unteren Panel auf den Eval-Tab klicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett wird mit einer Standard-Auswürfelkonfiguration
                         (15 Steine) initialisiert.
                     </p>
                     <p>
-                        Sie können Steine auf den Feldern des Heimbretts mit der Maus frei hinzufügen oder entfernen. Die EPC-Werte werden in Echtzeit im dafür vorgesehenen Bearoff-Panel angezeigt und zeigen für jeden Spieler:
+                        Sie können Steine auf den Feldern des Heimbretts mit der Maus frei hinzufügen oder entfernen. Die EPC-Werte werden in Echtzeit im dafür vorgesehenen Eval-Panel angezeigt und zeigen für jeden Spieler:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: die durchschnittliche Anzahl der Pips, die zum Auswürfeln aller Steine benötigt werden,</li>
@@ -113,7 +114,7 @@ export default {
                         <li><strong>Std Dev</strong>: Standardabweichung der Anzahl der Würfe.</li>
                     </ul>
                     <p>Wenn beide Spieler Steine in ihrem Heimbrett haben, zeigt ein Vergleichsbereich die EPC- und Pip-Count-Differenzen.</p>
-                    <p>Zum Schließen des Bearoff-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
+                    <p>Zum Schließen des Eval-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
                     <p>
                         Bei einer reinen Auswürfelposition zeigt eine Renntabelle zusätzlich die Gewinnchancen beider Spieler und, wenn die Position von einer Two-Sided-Datenbank abgedeckt ist (eingebaut bis 6 Steine pro Spieler, erweiterte Datenbank bis 11
                         über den Bearoff-Tab der Einstellungen herunterladbar), die exakten Money-Equities — mit dem Equity-Abstand jeder nicht optimalen Entscheidung zur besten — sowie die beste Würfel-Entscheidung. Außerhalb dieses Bereichs wird die
@@ -175,7 +176,28 @@ export default {
                     <h3>Stats</h3>
                     <p>
                         Das Stats-Panel (<strong>Ctrl+D</strong>) zeigt Leistungsstatistiken (PR und MWC-Kosten), die aus allen importierten Positionen berechnet werden. Verwenden Sie die Filterleiste, um die Analyse nach
-                        Spieler, Turnier, Datumsbereich, Entscheidungstyp oder Matchlänge einzuschränken. Auf einen beliebigen Indikator klicken, um zu den entsprechenden Positionen zu gelangen.
+                        Spieler, Turnier, Datumsbereich, Entscheidungstyp oder Matchlänge einzuschränken. Auf einen beliebigen Indikator klicken, um zu den entsprechenden Positionen zu gelangen. Der Tab
+                        <strong>Spieler</strong> listet pro Spieler die Anzahl der Matches, die Bilanz, die Entscheidungen, den PR (Steine und Dopplerwürfel), den Snowie, die Blunders und das über die bekannten
+                        Würfe gemessene Glück auf.
+                    </p>
+
+                    <h3>Wasserzeichen und geschützter Export</h3>
+                    <p>
+                        Beim Exportieren (<strong>export_db</strong> oder dem Dialog Exportieren) lassen sich zwei unabhängige Schutzmechanismen frei aktivieren, der eine, der andere oder beide zugleich:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Wasserzeichen:</strong> kennzeichnet die exportierte Datei mit ihrer Herkunft (wer sie erstellt hat, eine optionale Notiz). Das Wasserzeichen ist mit Ihrer
+                            Ausstelleridentität signiert: Es kann nicht verändert oder in fremdem Namen gefälscht werden — es ist aber nicht unentfernbar und verhindert keine Kopie.
+                        </li>
+                        <li>
+                            <strong>Passwort:</strong> legt den Export in einen verschlüsselten <strong>.dbx</strong>-Container. Es schützt die Datei auf dem Transportweg, nicht die Datenbank selbst — wem
+                            Sie das Passwort geben, kann sie öffnen — und die Herkunft bleibt auch ohne Passwort lesbar.
+                        </li>
+                    </ul>
+                    <p>
+                        Ihre Ausstelleridentität, der Schlüssel, der Ihre Wasserzeichen signiert, entsteht automatisch beim ersten Export, der mit seiner Herkunft gekennzeichnet wird. Sehen Sie sie ein,
+                        exportieren oder regenerieren Sie sie über den Tab <strong>Ausstelleridentität</strong> der Einstellungen.
                     </p>
 `,
     shortcuts: `
@@ -431,7 +453,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Bearoff-Panel</td>
+                                <td>Eval-Panel</td>
                             </tr>
 
                             <tr>
