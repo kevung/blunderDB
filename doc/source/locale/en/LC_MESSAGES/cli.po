@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 08:51+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -292,8 +292,8 @@ msgstr "Create a new database file with optional metadata."
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
-#: ../../source/cli.rst:812 ../../source/cli.rst:842
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:791
+#: ../../source/cli.rst:823 ../../source/cli.rst:853
 msgid "**Options:**"
 msgstr "**Options:**"
 
@@ -321,8 +321,8 @@ msgstr ""
 "The ``.db`` extension is added automatically if missing. Parent "
 "directories are created as needed."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
-#: ../../source/cli.rst:854
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:803
+#: ../../source/cli.rst:865
 msgid "**Exemple:**"
 msgstr "**Example:**"
 
@@ -507,7 +507,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:754 ../../source/cli.rst:819
+#: ../../source/cli.rst:765 ../../source/cli.rst:830
 msgid "**Exemples:**"
 msgstr "**Examples:**"
 
@@ -638,7 +638,7 @@ msgstr "**Main options:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:782 ../../source/cli.rst:814
+#: ../../source/cli.rst:793 ../../source/cli.rst:825
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (required)."
 
@@ -1204,8 +1204,8 @@ msgstr ""
 "**Parallelism (``--jobs``).** The positions of a batch are independent — "
 "no search informs the next one — so they are spread over ``--jobs`` "
 "threads, each with its own evaluator. The analyses written are "
-"**identical whatever the value of** ``--jobs``; only the computation time "
-"changes. ``--jobs 1`` leaves the machine free for something else. "
+"**identical whatever the value of** ``--jobs``; only the computation time"
+" changes. ``--jobs 1`` leaves the machine free for something else. "
 "Cancellation is not affected: Ctrl-C stops the batch before any new "
 "position, and everything already computed is written."
 
@@ -1308,12 +1308,12 @@ msgid ""
 "place. La commande se termine tout de même avec le code de sortie 0."
 msgstr ""
 "Every run also checks referential integrity: it counts orphaned rows — "
-"games without a match, moves without a game, move analyses without a move, "
-"analyses without a position — and prints a ``WARNING`` line with the total "
-"when there are any. A healthy database answers ``Orphaned rows: none``. "
-"Orphans can remain in a database written by a version that did not enforce "
-"foreign keys on every connection; they belong to no match and only take up "
-"space. The command still exits with status code 0."
+"games without a match, moves without a game, move analyses without a "
+"move, analyses without a position — and prints a ``WARNING`` line with "
+"the total when there are any. A healthy database answers ``Orphaned rows:"
+" none``. Orphans can remain in a database written by a version that did "
+"not enforce foreign keys on every connection; they belong to no match and"
+" only take up space. The command still exits with status code 0."
 
 #: ../../source/cli.rst:744
 msgid ""
@@ -1327,20 +1327,45 @@ msgid ""
 "matches the reference DDL``. Comme les orphelins, un écart de schéma est "
 "un constat, pas un échec : le code de sortie reste 0."
 msgstr ""
-"Every run also compares the schema against the reference DDL and lists the "
-"tables, columns and indexes the database lacks. Opening a database adds what "
-"is missing when it can and only logs what it cannot add (typically a "
-"``UNIQUE`` index that duplicate rows keep it from rebuilding): this is where "
-"that gap becomes visible, and a query naming one of those elements fails "
-"until the cause is fixed. A healthy database answers ``Schema: matches the "
-"reference DDL``. Like orphans, schema drift is a finding, not a failure: the "
-"exit code stays 0."
+"Every run also compares the schema against the reference DDL and lists "
+"the tables, columns and indexes the database lacks. Opening a database "
+"adds what is missing when it can and only logs what it cannot add "
+"(typically a ``UNIQUE`` index that duplicate rows keep it from "
+"rebuilding): this is where that gap becomes visible, and a query naming "
+"one of those elements fails until the cause is fixed. A healthy database "
+"answers ``Schema: matches the reference DDL``. Like orphans, schema drift"
+" is a finding, not a failure: the exit code stays 0."
 
-#: ../../source/cli.rst:768
+#: ../../source/cli.rst:754
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Every run finally checks the rules the current DDL states but SQLite "
+"cannot add to a table that already exists: the range ``CHECK`` "
+"constraints (dice between 0 and 6, non-negative cube and pip counts, 0 "
+"to 15 checkers off, review ratings between 1 and 4), the Zobrist hash a "
+"row should never be without, and one analysis per position. A database "
+"created since schema version 2.18.0 enforces them; an older one can "
+"still hold rows a new database would refuse, and those are what is "
+"counted here, rule by rule. A healthy database reports ``Constraints: "
+"every row satisfies the current DDL``. One more finding: nothing is "
+"repaired and the exit code stays 0."
+
+#: ../../source/cli.rst:779
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Compacting the database"
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:781
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1355,7 +1380,7 @@ msgstr ""
 " — it never happens automatically when a database is opened, because its "
 "cost is unpredictable on a large one."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:795
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1374,33 +1399,33 @@ msgstr ""
 "the command refuses to start with an explicit message rather than risk an"
 " interrupted compaction."
 
-#: ../../source/cli.rst:804
+#: ../../source/cli.rst:815
 msgid "delete — Supprimer des données"
 msgstr "delete — Delete data"
 
-#: ../../source/cli.rst:806
+#: ../../source/cli.rst:817
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Delete a match and all associated data (games, moves, analyses)."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:826
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Delete type: ``match`` (required)."
 
-#: ../../source/cli.rst:816
+#: ../../source/cli.rst:827
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID of the item to delete (required)."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:828
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Delete without asking for confirmation."
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:841
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Probing a daemon"
 
-#: ../../source/cli.rst:832
+#: ../../source/cli.rst:843
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1409,28 +1434,28 @@ msgid ""
 "l'adresse. Aucun fichier de base n'est ouvert."
 msgstr ""
 "Asks a running ``serve`` daemon (see :doc:`mode_headless`) whether it is "
-"ready: one ``GET /readyz`` request, exit code ``0`` when the daemon answers "
-"200 (storage reachable, schema at the expected version), ``1`` otherwise — "
-"storage unreachable, stale schema, or nothing listening at the address. No "
-"database file is opened."
+"ready: one ``GET /readyz`` request, exit code ``0`` when the daemon "
+"answers 200 (storage reachable, schema at the expected version), ``1`` "
+"otherwise — storage unreachable, stale schema, or nothing listening at "
+"the address. No database file is opened."
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:855
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
 "générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
 msgstr ""
-"``--addr`` — Address the daemon listens on (default ``BLUNDERDB_ADDR``, else"
-" ``:8080``). An address without a host (``:8080``) or with a wildcard host "
-"(``0.0.0.0``, ``[::]``) is probed on the loopback interface."
+"``--addr`` — Address the daemon listens on (default ``BLUNDERDB_ADDR``, "
+"else ``:8080``). An address without a host (``:8080``) or with a wildcard"
+" host (``0.0.0.0``, ``[::]``) is probed on the loopback interface."
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:858
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Give up after this long (``2s`` by default)."
 
-#: ../../source/cli.rst:849
+#: ../../source/cli.rst:860
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1439,46 +1464,46 @@ msgid ""
 msgstr ""
 "This is the command the container image's ``HEALTHCHECK`` runs (a "
 "*distroless* image, without ``curl``); the ``serve`` binary built from "
-"``cmd/serve`` understands it too. It works just as well from a script or a "
-"systemd unit."
+"``cmd/serve`` understands it too. It works just as well from a script or "
+"a systemd unit."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:874
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
 msgstr ""
-"On failure the reason is printed, which ``docker inspect`` reproduces for an"
-" ``unhealthy`` container:"
+"On failure the reason is printed, which ``docker inspect`` reproduces for"
+" an ``unhealthy`` container:"
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:882
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:885
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:899
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:896
+#: ../../source/cli.rst:907
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:918
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:920
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:910
+#: ../../source/cli.rst:921
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:912
+#: ../../source/cli.rst:923
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 

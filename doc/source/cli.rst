@@ -751,6 +751,17 @@ corrigée. Une base saine répond ``Schema: matches the reference DDL``. Comme
 les orphelins, un écart de schéma est un constat, pas un échec : le code de
 sortie reste 0.
 
+Chaque exécution contrôle enfin les règles que la DDL courante énonce mais que
+SQLite ne sait pas ajouter à une table déjà créée : les contraintes ``CHECK``
+de plage (dés entre 0 et 6, videau et pips positifs, sorties entre 0 et 15,
+note de révision entre 1 et 4), le hash Zobrist qu'une ligne ne devrait jamais
+omettre et l'unicité d'une analyse par position. Une base créée depuis la
+version 2.18.0 du schéma les applique ; une base plus ancienne peut encore
+porter des lignes qu'une base neuve refuserait, et ce sont elles qui sont
+comptées ici, règle par règle. Une base saine répond ``Constraints: every row
+satisfies the current DDL``. C'est un constat de plus : rien n'est réparé et le
+code de sortie reste 0.
+
 **Exemples:**
 
 .. code-block:: bash

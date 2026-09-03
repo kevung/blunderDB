@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 08:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -304,8 +304,8 @@ msgstr "Создаёт новый файл базы данных с необяз
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
-#: ../../source/cli.rst:812 ../../source/cli.rst:842
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:791
+#: ../../source/cli.rst:823 ../../source/cli.rst:853
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -333,8 +333,8 @@ msgstr ""
 "Расширение ``.db`` добавляется автоматически, если оно отсутствует. "
 "Родительские каталоги создаются при необходимости."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
-#: ../../source/cli.rst:854
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:803
+#: ../../source/cli.rst:865
 msgid "**Exemple:**"
 msgstr "**Пример:**"
 
@@ -529,7 +529,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:754 ../../source/cli.rst:819
+#: ../../source/cli.rst:765 ../../source/cli.rst:830
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -661,7 +661,7 @@ msgstr "**Основные параметры:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:782 ../../source/cli.rst:814
+#: ../../source/cli.rst:793 ../../source/cli.rst:825
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — База данных (обязательно)."
 
@@ -1363,21 +1363,47 @@ msgid ""
 "matches the reference DDL``. Comme les orphelins, un écart de schéma est "
 "un constat, pas un échec : le code de sortie reste 0."
 msgstr ""
-"Каждый запуск также сравнивает схему с эталонной DDL и перечисляет таблицы, "
-"столбцы и индексы, которых не хватает базе. При открытии базы недостающее "
-"добавляется, когда это возможно, а то, что добавить нельзя (как правило, "
-"индекс ``UNIQUE``, который не удаётся перестроить из-за дублирующихся "
-"строк), лишь записывается в журнал: именно здесь этот разрыв становится "
-"видимым, и запрос, обращающийся к одному из этих элементов, завершается "
-"ошибкой, пока причина не устранена. Здоровая база отвечает ``Schema: matches "
-"the reference DDL``. Как и сироты, расхождение схемы — это наблюдение, а не "
-"сбой: код выхода остаётся 0."
+"Каждый запуск также сравнивает схему с эталонной DDL и перечисляет "
+"таблицы, столбцы и индексы, которых не хватает базе. При открытии базы "
+"недостающее добавляется, когда это возможно, а то, что добавить нельзя "
+"(как правило, индекс ``UNIQUE``, который не удаётся перестроить из-за "
+"дублирующихся строк), лишь записывается в журнал: именно здесь этот "
+"разрыв становится видимым, и запрос, обращающийся к одному из этих "
+"элементов, завершается ошибкой, пока причина не устранена. Здоровая база "
+"отвечает ``Schema: matches the reference DDL``. Как и сироты, расхождение"
+" схемы — это наблюдение, а не сбой: код выхода остаётся 0."
 
-#: ../../source/cli.rst:768
+#: ../../source/cli.rst:754
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Каждый запуск наконец проверяет правила, которые заявляет текущая DDL, "
+"но которые SQLite не может добавить к уже существующей таблице: "
+"ограничения диапазона ``CHECK`` (кости от 0 до 6, куб и пипы "
+"неотрицательны, от 0 до 15 снятых шашек, оценка повторения от 1 до 4), "
+"хеш Zobrist, которого у строки никогда не должно недоставать, и "
+"единственность одного анализа на позицию. База, созданная начиная с "
+"версии схемы 2.18.0, применяет их; более старая может ещё содержать "
+"строки, которые новая база отвергла бы, — именно они здесь и "
+"подсчитываются, правило за правилом. Здоровая база отвечает "
+"``Constraints: every row satisfies the current DDL``. Ещё одна "
+"констатация: ничего не исправляется, а код возврата остаётся 0."
+
+#: ../../source/cli.rst:779
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Сжатие базы данных"
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:781
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1392,7 +1418,7 @@ msgstr ""
 "открытии базы оно не происходит автоматически никогда, поскольку на "
 "большой базе его стоимость непредсказуема."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:795
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1411,33 +1437,33 @@ msgstr ""
 "запросов. Если места на диске не хватает, команда отказывается стартовать"
 " с внятным сообщением, вместо того чтобы рисковать прерванным сжатием."
 
-#: ../../source/cli.rst:804
+#: ../../source/cli.rst:815
 msgid "delete — Supprimer des données"
 msgstr "delete — Удалить данные"
 
-#: ../../source/cli.rst:806
+#: ../../source/cli.rst:817
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Удаляет матч и все связанные данные (партии, ходы, анализы)."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:826
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Тип удаления: ``match`` (обязательно)."
 
-#: ../../source/cli.rst:816
+#: ../../source/cli.rst:827
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Идентификатор элемента для удаления (обязательно)."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:828
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:841
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Проверка демона"
 
-#: ../../source/cli.rst:832
+#: ../../source/cli.rst:843
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1445,23 +1471,24 @@ msgid ""
 "``1`` sinon — stockage injoignable, schéma périmé, ou rien n'écoute à "
 "l'adresse. Aucun fichier de base n'est ouvert."
 msgstr ""
-"Спрашивает у работающего демона ``serve`` (см. :doc:`mode_headless`), готов "
-"ли он: один запрос ``GET /readyz``, код возврата ``0``, если демон отвечает "
-"200 (хранилище доступно, схема ожидаемой версии), иначе ``1`` — хранилище "
-"недоступно, схема устарела или по адресу никто не слушает. Файл базы данных "
-"не открывается."
+"Спрашивает у работающего демона ``serve`` (см. :doc:`mode_headless`), "
+"готов ли он: один запрос ``GET /readyz``, код возврата ``0``, если демон "
+"отвечает 200 (хранилище доступно, схема ожидаемой версии), иначе ``1`` — "
+"хранилище недоступно, схема устарела или по адресу никто не слушает. Файл"
+" базы данных не открывается."
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:855
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
 "générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
 msgstr ""
-"``--addr`` — Адрес, который слушает демон (по умолчанию ``BLUNDERDB_ADDR``, "
-"иначе ``:8080``). Адрес без хоста (``:8080``) или с обобщённым хостом "
-"(``0.0.0.0``, ``[::]``) проверяется через петлевой интерфейс."
+"``--addr`` — Адрес, который слушает демон (по умолчанию "
+"``BLUNDERDB_ADDR``, иначе ``:8080``). Адрес без хоста (``:8080``) или с "
+"обобщённым хостом (``0.0.0.0``, ``[::]``) проверяется через петлевой "
+"интерфейс."
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:858
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1469,7 +1496,7 @@ msgstr ""
 "``--timeout`` — Время, по истечении которого проверка прекращается (по "
 "умолчанию ``2s``)."
 
-#: ../../source/cli.rst:849
+#: ../../source/cli.rst:860
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1478,10 +1505,10 @@ msgid ""
 msgstr ""
 "Это команда, которую выполняет ``HEALTHCHECK`` образа контейнера (образ "
 "*distroless*, без ``curl``); двоичный файл ``serve``, собранный из "
-"``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или юнита "
-"systemd."
+"``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или "
+"юнита systemd."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:874
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1489,35 +1516,35 @@ msgstr ""
 "При неудаче выводится причина, которую ``docker inspect`` показывает для "
 "контейнера в состоянии ``unhealthy``:"
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:882
 msgid "Exemples de flux de travail"
 msgstr "Примеры рабочих процессов"
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:885
 msgid "Import d'un répertoire de tournoi"
 msgstr "Импорт каталога турнира"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:899
 msgid "Sauvegarde régulière"
 msgstr "Регулярное резервное копирование"
 
-#: ../../source/cli.rst:896
+#: ../../source/cli.rst:907
 msgid "Analyse des erreurs"
 msgstr "Анализ ошибок"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:918
 msgid "Codes de retour"
 msgstr "Коды возврата"
 
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:920
 msgid "``0`` — Succès."
 msgstr "``0`` — Успех."
 
-#: ../../source/cli.rst:910
+#: ../../source/cli.rst:921
 msgid "``1`` — Erreur."
 msgstr "``1`` — Ошибка."
 
-#: ../../source/cli.rst:912
+#: ../../source/cli.rst:923
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Это позволяет использовать CLI в скриптах с обработкой ошибок:"
 

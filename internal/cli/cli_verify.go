@@ -97,6 +97,15 @@ func (cli *CLI) runVerify(args []string) error {
 	}
 	printSchemaDrift(drift)
 
+	// Constraints the current DDL states but SQLite cannot add to a table that
+	// already exists (CHECK, NOT NULL): a fresh database enforces them, an
+	// upgraded one is judged against them here.
+	violations, err := cli.db.CheckConstraints()
+	if err != nil {
+		return fmt.Errorf("failed to check the constraints: %w", err)
+	}
+	printConstraintViolations(violations)
+
 	// If match ID specified, verify that match
 	if *matchID != 0 {
 		err := cli.verifyMatch(*matchID, *matFile)
@@ -152,6 +161,29 @@ func printSchemaDrift(d sqlite.SchemaDrift) {
 	fmt.Printf("WARNING: %d schema element(s) missing. Opening the database adds them when it can\n", d.Count())
 	fmt.Println("and logs why it could not (a UNIQUE index over duplicate rows, typically); a query")
 	fmt.Println("that names one of them fails until the cause is fixed.")
+	fmt.Println()
+}
+
+// printConstraintViolations reports the rules of the current DDL an upgraded
+// database does not satisfy. Like orphans and drift it is a finding, not a
+// failure — the command exits 0 — and only the breached rules are listed, so
+// the healthy case is one line.
+func printConstraintViolations(v []database.ConstraintViolation) {
+	total := database.TotalConstraintViolations(v)
+	if total == 0 {
+		fmt.Printf("Constraints: every row satisfies the current DDL (%d rules checked)\n", len(v))
+		fmt.Println()
+		return
+	}
+	fmt.Println("Constraint violations (rules a fresh database enforces, this one does not):")
+	for _, c := range v {
+		if c.Count > 0 {
+			fmt.Printf("  %s: %d row(s)\n", c.Name, c.Count)
+		}
+	}
+	fmt.Printf("WARNING: %d row(s) would not be accepted by the current schema. SQLite cannot add a\n", total)
+	fmt.Println("CHECK or a NOT NULL to a table that already exists, so these rules are enforced on")
+	fmt.Println("databases created since and reported — not repaired — on older ones.")
 	fmt.Println()
 }
 

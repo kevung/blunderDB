@@ -81,3 +81,83 @@ func (d *Database) CheckSchema() (sqlite.SchemaDrift, error) {
 	}
 	return sqlite.CheckSchema(context.Background(), d.db)
 }
+
+// ConstraintViolation is one rule of the current DDL and the number of rows
+// that break it.
+type ConstraintViolation struct {
+	// Name is the rule, as the DDL states it.
+	Name string `json:"name"`
+	// Count is how many rows break it. Zero for a healthy database.
+	Count int64 `json:"count"`
+}
+
+// constraintQueries counts, per rule the fresh schema declares, the rows an
+// existing database holds that would not be accepted today.
+//
+// SQLite adds neither a CHECK nor a NOT NULL through ALTER TABLE: the only way
+// to put them on an existing table is to rebuild it, which on a table holding
+// hundreds of thousands of positions is a long, disk-hungry operation to
+// enforce what the writing code already guarantees. So the constraints are
+// stated by the fresh DDL (storage/sqlite schemaStatements) and an existing
+// database is judged against them here, where `blunderdb verify` can say so.
+//
+// A NULL never counts: a CHECK on a NULL is unknown, not violated, and the
+// scalar columns are nullable by design. The one exception is the hash itself,
+// whose absence is the finding.
+var constraintQueries = []struct {
+	name  string
+	query string
+}{
+	{"position.zobrist_hash NOT NULL",
+		`SELECT COUNT(*) FROM position WHERE zobrist_hash IS NULL`},
+	{"position.dice_1 BETWEEN 0 AND 6",
+		`SELECT COUNT(*) FROM position WHERE dice_1 IS NOT NULL AND dice_1 NOT BETWEEN 0 AND 6`},
+	{"position.dice_2 BETWEEN 0 AND 6",
+		`SELECT COUNT(*) FROM position WHERE dice_2 IS NOT NULL AND dice_2 NOT BETWEEN 0 AND 6`},
+	{"position.cube_value >= 0",
+		`SELECT COUNT(*) FROM position WHERE cube_value IS NOT NULL AND cube_value < 0`},
+	{"position.pip_1 >= 0",
+		`SELECT COUNT(*) FROM position WHERE pip_1 IS NOT NULL AND pip_1 < 0`},
+	{"position.pip_2 >= 0",
+		`SELECT COUNT(*) FROM position WHERE pip_2 IS NOT NULL AND pip_2 < 0`},
+	{"position.off_1 BETWEEN 0 AND 15",
+		`SELECT COUNT(*) FROM position WHERE off_1 IS NOT NULL AND off_1 NOT BETWEEN 0 AND 15`},
+	{"position.off_2 BETWEEN 0 AND 15",
+		`SELECT COUNT(*) FROM position WHERE off_2 IS NOT NULL AND off_2 NOT BETWEEN 0 AND 15`},
+	{"anki_review_log.rating BETWEEN 1 AND 4",
+		`SELECT COUNT(*) FROM anki_review_log WHERE rating NOT BETWEEN 1 AND 4`},
+	{"analysis(position_id) UNIQUE",
+		`SELECT COALESCE(SUM(n - 1), 0) FROM (
+			SELECT COUNT(*) AS n FROM analysis GROUP BY position_id HAVING COUNT(*) > 1)`},
+}
+
+// CheckConstraints reports, rule by rule, how many rows of the open database
+// would not be accepted by the schema a fresh database is created with. It
+// only reads; nothing is repaired. Every rule is returned, breached or not, so
+// a caller reading the JSON sees what was checked and not only what failed.
+func (d *Database) CheckConstraints() ([]ConstraintViolation, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	out := make([]ConstraintViolation, 0, len(constraintQueries))
+	for _, q := range constraintQueries {
+		var n int64
+		if err := d.db.QueryRow(q.query).Scan(&n); err != nil {
+			return nil, fmt.Errorf("checking %s: %w", q.name, err)
+		}
+		out = append(out, ConstraintViolation{Name: q.name, Count: n})
+	}
+	return out, nil
+}
+
+// TotalConstraintViolations is the number of offending rows across every rule.
+func TotalConstraintViolations(v []ConstraintViolation) int64 {
+	var total int64
+	for _, c := range v {
+		total += c.Count
+	}
+	return total
+}

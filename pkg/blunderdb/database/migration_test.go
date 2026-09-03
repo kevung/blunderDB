@@ -2452,3 +2452,93 @@ func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) 
 		}
 	}
 }
+
+// TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition (issue #173): the second
+// half of the 2.18.0 wave. A position had no constraint saying it holds one
+// analysis, and Save's SELECT-then-INSERT let two rows through; the migration
+// keeps the last one written and the index makes the state unreachable.
+func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
+	dbPath := filepath.Join(tempDir(t), "test_v2170_analysis.db")
+
+	setup := NewDatabase()
+	if err := setup.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	pos := InitializePosition()
+	posID, err := setup.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	setup.Close()
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	// Back to 2.17.0: the index of that name was not unique, which is what let
+	// the second row in.
+	for _, stmt := range []string{
+		`DROP INDEX IF EXISTS idx_analysis_position`,
+		`CREATE INDEX idx_analysis_position ON analysis(position_id)`,
+		`UPDATE metadata SET value = '2.17.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := raw.Exec(stmt); err != nil {
+			t.Fatalf("prepare v2.17.0 database (%s): %v", stmt, err)
+		}
+	}
+	for _, action := range []string{"superseded", "kept"} {
+		if _, err := raw.Exec(
+			`INSERT INTO analysis (position_id, data, best_cube_action) VALUES (?, ?, ?)`,
+			posID, []byte(`{}`), action); err != nil {
+			t.Fatalf("plant analysis %q: %v", action, err)
+		}
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.17.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+
+	if version, err := d.CheckDatabaseVersion(); err != nil || version != DatabaseVersion {
+		t.Fatalf("version after migration: got %q (%v), want %s", version, err, DatabaseVersion)
+	}
+
+	var rows int
+	var kept string
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE position_id = ?`, posID).Scan(&rows); err != nil {
+		t.Fatal(err)
+	}
+	if rows != 1 {
+		t.Fatalf("analyses for the position after migration: got %d, want 1", rows)
+	}
+	if err := d.db.QueryRow(`SELECT best_cube_action FROM analysis WHERE position_id = ?`, posID).Scan(&kept); err != nil {
+		t.Fatal(err)
+	}
+	if kept != "kept" {
+		t.Errorf("the surviving analysis is %q, want the last one written (%q)", kept, "kept")
+	}
+
+	// The index is unique now, so the state cannot come back.
+	var unique int
+	if err := d.db.QueryRow(
+		`SELECT "unique" FROM pragma_index_list('analysis') WHERE name = 'idx_analysis_position'`).Scan(&unique); err != nil {
+		t.Fatalf("read idx_analysis_position: %v", err)
+	}
+	if unique != 1 {
+		t.Error("idx_analysis_position must be UNIQUE after the migration")
+	}
+	if _, err := d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, posID, []byte(`{}`)); err == nil {
+		t.Error("a second analysis row for one position must be refused")
+	}
+
+	// And CheckConstraints agrees the file is clean.
+	violations, err := d.CheckConstraints()
+	if err != nil {
+		t.Fatalf("CheckConstraints: %v", err)
+	}
+	if n := TotalConstraintViolations(violations); n != 0 {
+		t.Errorf("CheckConstraints on the migrated database: %d violation(s), want 0: %+v", n, violations)
+	}
+}

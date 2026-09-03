@@ -21,6 +21,28 @@ import (
 // each past version looked like, not what the current one is. The parity test
 // in database/schema_parity_test.go diffs the paths.
 var schemaStatements = []string{
+	// The CHECK constraints below are stated by a FRESH database only: SQLite
+	// adds no constraint through ALTER TABLE, and rebuilding a table holding
+	// hundreds of thousands of positions on upgrade would be a long,
+	// disk-hungry operation to enforce what the writing code already
+	// guarantees. An existing database is judged against them by
+	// `blunderdb verify` instead (database/db_verify.go, CheckConstraints).
+	// A NULL passes a CHECK — unknown, not violated — which is what the
+	// nullable scalar columns need.
+	//
+	// zobrist_hash is deliberately NOT declared NOT NULL, though a row without
+	// a hash is precisely the defect issue #173 set out to close (a nullable
+	// column under a UNIQUE index tolerates any number of NULLs, which is how
+	// the native-.db importer once slipped duplicates past idx_position_zobrist).
+	// Three things stand in the way of the constraint. EnsureSchema adds a
+	// missing column by ALTER TABLE, and SQLite refuses a NOT NULL column with
+	// no default — so an old file that lacks the column entirely would never
+	// receive it and could no longer be opened at all. repairPositionsWithoutScalars
+	// (db_schema.go) exists to FIND rows with a NULL hash and fix them, and runs
+	// on every open. And the constraint would hold only in files created after
+	// 2.18.0, since it cannot reach the others. The rule is therefore stated
+	// where it can be told the truth about every database — CheckConstraints,
+	// reported by `blunderdb verify` — and the repair pass remains the remedy.
 	`CREATE TABLE IF NOT EXISTS position (
 		id                INTEGER PRIMARY KEY AUTOINCREMENT,
 		zobrist_hash      INTEGER,
@@ -52,7 +74,16 @@ var schemaStatements = []string{
 		-- Provenance: set when the position entered the database on its own
 		-- rather than inside a match. Sticky — see ADR-0001.
 		individually_imported INTEGER NOT NULL DEFAULT 0,
-		flagged INTEGER NOT NULL DEFAULT 0
+		flagged INTEGER NOT NULL DEFAULT 0,
+		CHECK (dice_1 BETWEEN 0 AND 6),
+		CHECK (dice_2 BETWEEN 0 AND 6),
+		-- cube_value is the EXPONENT (0 = cube at 1), never negative.
+		CHECK (cube_value >= 0),
+		CHECK (pip_1 >= 0),
+		CHECK (pip_2 >= 0),
+		-- off_1/off_2 are the borne-off counts, at most fifteen checkers.
+		CHECK (off_1 BETWEEN 0 AND 15),
+		CHECK (off_2 BETWEEN 0 AND 15)
 	)`,
 	`CREATE TABLE IF NOT EXISTS analysis (
 		id                          INTEGER PRIMARY KEY,
@@ -250,7 +281,10 @@ var schemaStatements = []string{
 		elapsed_days INTEGER DEFAULT 0,
 		scheduled_days INTEGER DEFAULT 0,
 		reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE
+		FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE,
+		-- The four FSRS grades. anki.ScheduleNext refuses anything else
+		-- (storage.ErrInvalid); go-fsrs indexed its weights with the value.
+		CHECK (rating BETWEEN 1 AND 4)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_deck ON anki_card(deck_id)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`,
@@ -271,7 +305,14 @@ var schemaStatements = []string{
 	// index serves identically. ensureAllTablesExist (db_schema.go) drops it
 	// from existing databases on open.
 	`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+	// One analysis per position, enforced rather than assumed: Save used to
+	// SELECT then INSERT-or-UPDATE, so two concurrent saves inserted two rows
+	// and Load took whichever the planner reached first. The index is what
+	// makes the upsert in analyses_sqlite.go possible at all — an ON CONFLICT
+	// target must name a UNIQUE constraint. It replaces a non-unique index of
+	// the same name; the 2.18.0 migration deduplicates and drops the old one
+	// so EnsureSchema builds this one in its place.
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
 	// Covering index for the win/gammon combo search (fiche-05 T3): the query
 	// narrows via `p.id IN (SELECT position_id FROM analysis WHERE
 	// player1_win_rate … AND player1_gammon_rate …)`, and with position_id as

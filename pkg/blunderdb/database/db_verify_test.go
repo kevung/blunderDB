@@ -105,3 +105,71 @@ func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
 		t.Errorf("unexpected drift beyond the index: %+v", drift)
 	}
 }
+
+// TestCheckConstraints_ReportsWhatSQLiteCannotEnforce (issue #173): the fresh
+// DDL states range constraints SQLite cannot add to a table that already
+// exists, so an upgraded database can hold rows a new one would refuse. That
+// gap is not a silence — `blunderdb verify` reads it here.
+func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
+	d := newTestDB(t)
+
+	violations, err := d.CheckConstraints()
+	if err != nil {
+		t.Fatalf("CheckConstraints on a fresh database: %v", err)
+	}
+	if len(violations) == 0 {
+		t.Fatal("CheckConstraints returned no rule at all")
+	}
+	if n := TotalConstraintViolations(violations); n != 0 {
+		t.Fatalf("fresh database: %d violation(s), want 0: %+v", n, violations)
+	}
+
+	// A fresh database refuses the offending rows outright — which is the point
+	// of the CHECK — so the violation has to be created the way an upgraded
+	// file carries it: on a table built before the rule existed.
+	for _, stmt := range []string{
+		`ALTER TABLE position RENAME TO position_checked`,
+		`CREATE TABLE position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			zobrist_hash INTEGER, decision_type INTEGER, player_on_roll INTEGER,
+			dice_1 INTEGER, dice_2 INTEGER, cube_value INTEGER, cube_owner INTEGER,
+			score_1 INTEGER, score_2 INTEGER, match_length INTEGER,
+			has_jacoby INTEGER, has_beaver INTEGER,
+			pip_1 INTEGER, pip_2 INTEGER, pip_diff INTEGER, off_1 INTEGER, off_2 INTEGER,
+			back_checkers_1 INTEGER, back_checkers_2 INTEGER, no_contact INTEGER,
+			occupancy_1 INTEGER, occupancy_2 INTEGER, point_mask_1 INTEGER, point_mask_2 INTEGER,
+			state TEXT NOT NULL, is_cube_response INTEGER NOT NULL DEFAULT 0,
+			individually_imported INTEGER NOT NULL DEFAULT 0, flagged INTEGER NOT NULL DEFAULT 0)`,
+		// Three rows no current schema would take: no hash, an impossible die,
+		// more than fifteen checkers borne off.
+		`INSERT INTO position (state) VALUES ('{}')`,
+		`INSERT INTO position (zobrist_hash, dice_1, state) VALUES (11, 9, '{}')`,
+		`INSERT INTO position (zobrist_hash, off_1, state) VALUES (12, 42, '{}')`,
+	} {
+		if _, err := d.Conn().Exec(stmt); err != nil {
+			t.Fatalf("build a pre-rule position table (%s): %v", stmt, err)
+		}
+	}
+
+	violations, err = d.CheckConstraints()
+	if err != nil {
+		t.Fatalf("CheckConstraints: %v", err)
+	}
+	got := map[string]int64{}
+	for _, v := range violations {
+		got[v.Name] = v.Count
+	}
+	for name, want := range map[string]int64{
+		"position.zobrist_hash NOT NULL":  1,
+		"position.dice_1 BETWEEN 0 AND 6": 1,
+		"position.off_1 BETWEEN 0 AND 15": 1,
+		"position.dice_2 BETWEEN 0 AND 6": 0,
+	} {
+		if got[name] != want {
+			t.Errorf("%s: got %d, want %d", name, got[name], want)
+		}
+	}
+	if n := TotalConstraintViolations(violations); n != 3 {
+		t.Errorf("total violations: got %d, want 3", n)
+	}
+}

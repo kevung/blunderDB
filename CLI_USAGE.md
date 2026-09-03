@@ -950,6 +950,8 @@ Every run also checks referential integrity: it counts orphaned rows — games w
 
 Every run also compares the schema against the reference DDL and lists the tables, columns and indexes the database lacks. Opening a database adds what is missing when it can and only logs what it cannot — typically a `UNIQUE` index that duplicate rows keep it from rebuilding — so this is where that gap becomes visible; a query naming one of those elements fails until the cause is fixed. A healthy database reports `Schema: matches the reference DDL`. Like orphans, drift is a finding, not a failure: the command still exits 0.
 
+Every run also checks the rules the current DDL states but SQLite cannot add to a table that already exists: the range `CHECK` constraints (dice between 0 and 6, non-negative cube and pip counts, 0 to 15 checkers off, review ratings between 1 and 4), the Zobrist hash a row should never be without, and one analysis per position. A database created since schema 2.18.0 enforces them; an older one can still hold rows a new database would refuse, and those are what is counted here, rule by rule. A healthy database reports `Constraints: every row satisfies the current DDL`. One more finding: nothing is repaired and the command still exits 0.
+
 **Examples:**
 ```bash
 # Verify database overview
@@ -976,6 +978,8 @@ Database Statistics:
 Orphaned rows: none
 
 Schema: matches the reference DDL
+
+Constraints: every row satisfies the current DDL (10 rules checked)
 
 Verifying match 1...
   Match: Alice vs Bob

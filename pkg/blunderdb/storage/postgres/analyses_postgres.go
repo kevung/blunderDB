@@ -25,12 +25,27 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	is_forced, is_close_cube
 ) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14)`
 
-const analysisUpdateSQL = `UPDATE analysis SET
-	data=$1, best_cube_action=$2, cube_error=$3, best_move_equity_error=$4,
-	player1_win_rate=$5, player1_gammon_rate=$6, player1_backgammon_rate=$7,
-	player2_win_rate=$8, player2_gammon_rate=$9, player2_backgammon_rate=$10,
-	is_forced=$11, is_close_cube=$12
-	WHERE id=$13`
+// analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
+// same statement. It replaced a SELECT followed by an INSERT or an UPDATE:
+// two concurrent saves both read "no row" and both inserted, and Load — a
+// plain `WHERE position_id = $1` — then returned whichever row came first.
+// The conflict target names the UNIQUE index idx_analysis_position; position
+// ids are unique across tenants (one BIGSERIAL sequence), so the index needs
+// no tenant_id and the target is position_id alone.
+const analysisUpsertSQL = analysisInsertSQL + `
+ON CONFLICT (position_id) DO UPDATE SET
+	data=excluded.data,
+	best_cube_action=excluded.best_cube_action,
+	cube_error=excluded.cube_error,
+	best_move_equity_error=excluded.best_move_equity_error,
+	player1_win_rate=excluded.player1_win_rate,
+	player1_gammon_rate=excluded.player1_gammon_rate,
+	player1_backgammon_rate=excluded.player1_backgammon_rate,
+	player2_win_rate=excluded.player2_win_rate,
+	player2_gammon_rate=excluded.player2_gammon_rate,
+	player2_backgammon_rate=excluded.player2_backgammon_rate,
+	is_forced=excluded.is_forced,
+	is_close_cube=excluded.is_close_cube`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
 // zlib-compressed into the BYTEA data column and the denormalised scalar
@@ -49,44 +64,31 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	}
 	c := engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction)
 
-	var existingID int64
-	err = s.db.QueryRow(ctx,
-		`SELECT id FROM analysis WHERE position_id = $1 AND tenant_id = $2`,
-		positionID, tenant).Scan(&existingID)
-	switch {
-	case errors.Is(err, pgx.ErrNoRows):
-		_, err = s.db.Exec(ctx, analysisInsertSQL,
+	// The analysis row and the position flag it implies are one write.
+	return withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced != 0, c.IsCloseCube != 0)
-	case err != nil:
-		return fmt.Errorf("postgres: save analysis lookup: %w", err)
-	default:
-		_, err = s.db.Exec(ctx, analysisUpdateSQL,
-			data, c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
-			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
-			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced != 0, c.IsCloseCube != 0, existingID)
-	}
-	if err != nil {
-		return fmt.Errorf("postgres: save analysis: %w", err)
-	}
-
-	// Flag the position as a take/pass cube response if any played cube action is
-	// a response (only ever set to TRUE; OR semantics for a deduped position).
-	for _, action := range a.PlayedCubeActions {
-		if engine.IsResponseCubeAction(action) {
-			if _, err := s.db.Exec(ctx,
-				`UPDATE position SET is_cube_response = TRUE WHERE id = $1 AND tenant_id = $2`,
-				positionID, tenant); err != nil {
-				return fmt.Errorf("postgres: flag cube response: %w", err)
-			}
-			break
+			c.IsForced != 0, c.IsCloseCube != 0); err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", err)
 		}
-	}
-	return nil
+
+		// Flag the position as a take/pass cube response if any played cube action is
+		// a response (only ever set to TRUE; OR semantics for a deduped position).
+		for _, action := range a.PlayedCubeActions {
+			if engine.IsResponseCubeAction(action) {
+				if _, err := tx.Exec(ctx,
+					`UPDATE position SET is_cube_response = TRUE WHERE id = $1 AND tenant_id = $2`,
+					positionID, tenant); err != nil {
+					return fmt.Errorf("postgres: flag cube response: %w", err)
+				}
+				break
+			}
+		}
+		return nil
+	})
 }
 
 // Load returns the decoded analysis for positionID, or ErrNotFound. The

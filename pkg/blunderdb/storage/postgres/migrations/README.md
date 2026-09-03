@@ -72,6 +72,13 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   replaying it would undo the conversion; `schema_migrations` is what stops
   that, and a freshly bootstrapped database carries no pre-2.18.0 hash to
   convert. Bumps `database_version` to 2.18.0.
+- `015_one_analysis_per_position.sql` — `analysis(position_id)` becomes UNIQUE
+  (#173), which is what makes `analyses_postgres.go`'s upsert legal: an
+  `ON CONFLICT` target must name a unique constraint. Deduplicates first,
+  keeping the highest id per position. Also adds the range CHECKs of `001`
+  as `NOT VALID` so a database whose history predates the rule still opens —
+  `blunderdb verify` names the offending rows. Bumps `database_version` to
+  2.18.0 as well; 014 and 015 are one wave.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

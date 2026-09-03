@@ -645,7 +645,65 @@ func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
 	return nil
 }
 
-// migrate_2_17_0_to_2_18_0 takes the Jacoby and beaver flags out of the
+// migrate_2_17_0_to_2_18_0 is the 2.18.0 wave: one schema version for the
+// three repairs of lot B that all needed a bump, applied in one open rather
+// than in three successive upgrades of the same file.
+//
+//   - retireRuleFlagsFromZobrist — Jacoby and beaver leave the position
+//     identity (ADR-0028, issue #171).
+//   - enforceOneAnalysisPerPosition — analysis(position_id) becomes UNIQUE
+//     (issue #173).
+func (d *Database) migrate_2_17_0_to_2_18_0(ctx context.Context) error {
+	if err := d.retireRuleFlagsFromZobrist(ctx); err != nil {
+		return err
+	}
+	return d.enforceOneAnalysisPerPosition(ctx)
+}
+
+// enforceOneAnalysisPerPosition prepares the UNIQUE index on
+// analysis(position_id) the fresh schema now declares (issue #173).
+//
+// analysisStore.Save used to SELECT an existing row and then INSERT or UPDATE.
+// Two saves racing on the same position both read "no row" and both inserted;
+// Load then read `SELECT data FROM analysis WHERE position_id = ?` and took
+// whichever row the planner reached first, so a position could show an
+// analysis that had been superseded — with no way to tell from the outside.
+// Save is a single upsert now, which needs the index to exist: an ON CONFLICT
+// target must name a UNIQUE constraint.
+//
+// The rows already there are deduplicated first, keeping the HIGHEST id per
+// position — the last one written, which is the one Save meant to leave. Then
+// the old non-unique index of the same name is dropped, and EnsureSchema (which
+// runs right after the chain) builds the UNIQUE one in its place: an index is
+// not retyped by `CREATE ... IF NOT EXISTS` under a name that already exists.
+//
+// Idempotent, unlike its sibling above: on a second pass there is nothing left
+// to delete and no index left to drop.
+func (d *Database) enforceOneAnalysisPerPosition(ctx context.Context) error {
+	switch ok, err := d.columnExists("analysis", "position_id"); {
+	case err != nil:
+		return fmt.Errorf("migrate 2.18.0: %w", err)
+	case !ok:
+		return nil
+	}
+
+	res, err := d.db.ExecContext(ctx,
+		`DELETE FROM analysis WHERE id NOT IN (SELECT MAX(id) FROM analysis GROUP BY position_id)`)
+	if err != nil {
+		return fmt.Errorf("migrate 2.18.0: deduplicate analyses: %w", err)
+	}
+	if dropped, err := res.RowsAffected(); err == nil && dropped > 0 {
+		slog.Info("dropped superseded analysis rows before making analysis(position_id) unique",
+			"dropped", dropped)
+	}
+
+	if _, err := d.db.ExecContext(ctx, `DROP INDEX IF EXISTS idx_analysis_position`); err != nil {
+		return fmt.Errorf("migrate 2.18.0: drop the non-unique analysis index: %w", err)
+	}
+	return nil
+}
+
+// retireRuleFlagsFromZobrist takes the Jacoby and beaver flags out of the
 // position identity (ADR-0028, issue #171).
 //
 // Until 2.18.0 engine.ZobristHash folded has_jacoby and has_beaver into the
@@ -679,7 +737,7 @@ func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
 // leaves a file that is still entirely at 2.17.0 and is replayed from the
 // start. Nothing here reads the file to decide whether it applies — the
 // recorded version alone says so, as every step in this chain does.
-func (d *Database) migrate_2_17_0_to_2_18_0(ctx context.Context) error {
+func (d *Database) retireRuleFlagsFromZobrist(ctx context.Context) error {
 	// A real 2.17.0 file has all three columns; the migration-chain fixtures
 	// stamp a 2.x version onto a 1.x table and leave the scalar columns to
 	// ensureAllTablesExist, which runs after the chain. Nothing to convert

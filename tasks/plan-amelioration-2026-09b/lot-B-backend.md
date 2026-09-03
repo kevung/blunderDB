@@ -97,18 +97,37 @@ résumé du lot).
 `schema_sqlite.go:57-73`, `analyses_sqlite.go:39-75` : `SELECT` puis
 `INSERT`/`UPDATE` ; deux `Save` concurrents insèrent deux lignes, `Load` en
 prend une au hasard.
-- [ ] Index UNIQUE + `INSERT … ON CONFLICT(position_id) DO UPDATE` (SQLite et
-      PG). Migration : dédoublonner d'abord (garder la plus récente).
-- [ ] `zobrist_hash NOT NULL` dans la même migration (`schema_sqlite.go:26,248` :
-      NULLABLE sous UNIQUE = plusieurs NULL tolérés, exactement le bug
-      `CommitImportDatabase` corrigé hier). `repairPositionsWithoutScalars`
-      tourne avant.
-- [ ] Contraintes `CHECK` de base : `dice_1/2 BETWEEN 0 AND 6`, `cube_value >= 0`,
-      `pip_1/2 >= 0`, `bearoff_1/2 BETWEEN 0 AND 15`, `rating BETWEEN 1 AND 4`.
-      Sur SQLite, une contrainte ne s'ajoute pas par `ALTER` : les poser dans
-      la DDL fraîche, et dans `verify` pour les bases migrées.
+- [x] Index UNIQUE + `INSERT … ON CONFLICT(position_id) DO UPDATE` (SQLite et
+      PG), les deux écritures de `Save` (l'analyse et le drapeau
+      `is_cube_response`) dans un `withTx`. Migration : dédoublonner d'abord
+      (garder la plus récente, `MAX(id)`), puis **supprimer** l'index non
+      unique du même nom — `CREATE ... IF NOT EXISTS` ne retype pas un index
+      existant — pour qu'`EnsureSchema` reconstruise l'unique à sa place.
+      Contrat partagé : `Analysis/SaveIsAnUpsert` (les deux backends).
+- [x] Contraintes `CHECK` de base dans la DDL fraîche : `dice_1/2 BETWEEN
+      0 AND 6`, `cube_value >= 0`, `pip_1/2 >= 0`, `off_1/2 BETWEEN 0 AND 15`
+      (les colonnes de sortie s'appellent `off_*`, pas `bearoff_*`),
+      `rating BETWEEN 1 AND 4`. Sur SQLite une contrainte ne s'ajoute pas par
+      `ALTER` : elles sont posées dans la DDL fraîche et rapportées par
+      `verify` (`Database.CheckConstraints`, 10 règles) pour les bases
+      migrées. Côté PostgreSQL, `015` les ajoute `NOT VALID` : les nouvelles
+      lignes sont contrôlées, les anciennes laissées telles quelles — même
+      marché.
+- [~] `zobrist_hash NOT NULL` : **refusé, et pour trois raisons mesurées sur
+      le code.** (1) `EnsureSchema` ajoute une colonne manquante par `ALTER
+      TABLE ADD COLUMN`, et SQLite refuse une colonne `NOT NULL` sans
+      défaut : un vieux fichier sans la colonne ne la recevrait plus jamais
+      et ne s'ouvrirait plus du tout (`TestImport_OldFormatExportFixture` le
+      montre). (2) `repairPositionsWithoutScalars` existe précisément pour
+      *trouver* les lignes sans hash et les réparer, à chaque ouverture : la
+      contrainte rendrait son propre cas de test inatteignable. (3) Elle ne
+      vaudrait que pour les fichiers créés après 2.18.0, soit un schéma à deux
+      vitesses pour une règle que le chemin d'écriture garantit déjà. La règle
+      est donc énoncée là où elle peut dire la vérité sur *toutes* les bases —
+      `CheckConstraints`, affichée par `verify` — et la réparation reste le
+      remède. PostgreSQL suit, pour ne pas diverger.
 
-Même bump que A.2/B.3.
+Livrée dans la vague 2.18.0, avec B.3 et B.17.
 
 ## B.6 — Erreurs avalées qui faussent ou vident un résultat [S] — bug (#174)
 
