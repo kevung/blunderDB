@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:38+0200\n"
+"POT-Creation-Date: 2026-09-03 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -360,7 +360,12 @@ msgid ""
 "temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
 "lien, TAB reprend la navigation clavier standard entre les éléments de "
 "l'interface plutôt que de rouvrir ce panneau."
-msgstr "Το TAB ανοίγει το πλαίσιο αναζήτησης μόνο όταν η εστίαση βρίσκεται στο ταμπλό (ή πουθενά συγκεκριμένα, κάτι που ισχύει τις περισσότερες φορές). Μόλις η εστίαση μετακινηθεί σε ένα κουμπί, ένα πεδίο εισαγωγής ή έναν σύνδεσμο, το TAB συνεχίζει την τυπική πλοήγηση με το πληκτρολόγιο μεταξύ των στοιχείων της διεπαφής αντί να ανοίξει ξανά αυτό το πλαίσιο."
+msgstr ""
+"Το TAB ανοίγει το πλαίσιο αναζήτησης μόνο όταν η εστίαση βρίσκεται στο "
+"ταμπλό (ή πουθενά συγκεκριμένα, κάτι που ισχύει τις περισσότερες φορές). "
+"Μόλις η εστίαση μετακινηθεί σε ένα κουμπί, ένα πεδίο εισαγωγής ή έναν "
+"σύνδεσμο, το TAB συνεχίζει την τυπική πλοήγηση με το πληκτρολόγιο μεταξύ "
+"των στοιχείων της διεπαφής αντί να ανοίξει ξανά αυτό το πλαίσιο."
 
 #: ../../source/raccourcis.rst:132
 msgid "Outils"
@@ -448,7 +453,16 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:152
+msgid ""
+"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
+"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
+"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
+"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
+"qui restent joignables entretemps par leur raccourci."
+msgstr "Η σειρά αυτών των καρτελών, μόλις τροποποιηθεί με μεταφορά και απόθεση στη γραμμή, απομνημονεύεται από τη μία συνεδρία στην άλλη. Ένα δεξί κλικ σε μια καρτέλα επιτρέπει την απόκρυψή της· το κουμπί σε σχήμα βέλους που εμφανίζεται τότε στα δεξιά της γραμμής ανοίγει ένα μενού για να εμφανιστούν ξανά οι κρυμμένες καρτέλες — οι οποίες παραμένουν στο μεταξύ προσβάσιμες μέσω της συντόμευσής τους."
+
+#: ../../source/raccourcis.rst:161
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -500,7 +514,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:177
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -516,7 +530,7 @@ msgstr ""
 "προς διόρθωση) — τα SHIFT-J/SHIFT-K ακολουθούν τη σύμβαση CTRL-PageUp"
 "/CTRL-PageDown με την οποία συνδέονται, όχι εκείνη των j/k."
 
-#: ../../source/raccourcis.rst:179
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -536,11 +550,11 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:192
+#: ../../source/raccourcis.rst:200
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:202
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -564,11 +578,11 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:208
+#: ../../source/raccourcis.rst:216
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
-#: ../../source/raccourcis.rst:210
+#: ../../source/raccourcis.rst:218
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -584,7 +598,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:224
+#: ../../source/raccourcis.rst:232
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -620,11 +634,11 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:248
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
-#: ../../source/raccourcis.rst:242
+#: ../../source/raccourcis.rst:250
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -638,7 +652,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:259
+#: ../../source/raccourcis.rst:267
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -674,7 +688,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:277
+#: ../../source/raccourcis.rst:285
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -732,7 +746,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -765,7 +779,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:319
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -793,7 +807,7 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:325
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

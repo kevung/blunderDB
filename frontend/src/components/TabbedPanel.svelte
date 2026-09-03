@@ -8,8 +8,14 @@
   Voir tasks/ui-reactivity/ pour la règle générale.
 -->
 <script>
+    import { onMount } from 'svelte';
+    import { get } from 'svelte/store';
+    import { SvelteSet } from 'svelte/reactivity';
     import { activeTabStore } from '../stores/uiStore';
     import { t } from '../i18n';
+    import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
+    import { logger } from '../utils/logger.js';
+    import ContextMenu from './ContextMenu.svelte';
 
     import AnalysisPanel from './AnalysisPanel.svelte';
     import CommentPanel from './CommentPanel.svelte';
@@ -25,7 +31,11 @@
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
-    let tabs = $state([
+    // Canonical tab list: ids, labels, icons, shortcuts. `tabs` below is this
+    // same set of objects, only ever reordered (never mutated per-field) —
+    // GetTabOrder()/dragging reshuffle it, GetHiddenTabs() doesn't touch it at
+    // all (hiddenIds is the filter applied at render time, see visibleTabs).
+    const DEFAULT_TABS = [
         { id: 'matches', labelKey: 'tabbedPanel.matches', icon: 'matches', shortcut: 'Ctrl+Tab' },
         { id: 'tournaments', labelKey: 'tabbedPanel.tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
         { id: 'collections', labelKey: 'tabbedPanel.collections', icon: 'collections', shortcut: 'Ctrl+B' },
@@ -36,13 +46,54 @@
         { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
         { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
         { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
-    ]);
+    ];
+
+    let tabs = $state([...DEFAULT_TABS]);
+    // A SvelteSet is reactive on its own (add/delete/clear notify, like a
+    // deep-reactive $state object) — mutated in place rather than reassigned,
+    // as CollectionPanel/MergePlayersModal already do for the same pattern.
+    const hiddenIds = new SvelteSet();
+    let visibleTabs = $derived(tabs.filter((tab) => !hiddenIds.has(tab.id)));
+
+    // Reorders DEFAULT_TABS according to a persisted id list, appending any
+    // tab the persisted list predates (a new tab shipped since) at the end so
+    // it is never silently lost from the bar.
+    function applyOrder(order) {
+        if (!Array.isArray(order) || order.length === 0) return [...DEFAULT_TABS];
+        const byId = new Map(DEFAULT_TABS.map((tab) => [tab.id, tab]));
+        const ordered = order.map((id) => byId.get(id)).filter(Boolean);
+        for (const tab of DEFAULT_TABS) {
+            if (!order.includes(tab.id)) ordered.push(tab);
+        }
+        return ordered;
+    }
+
+    onMount(async () => {
+        try {
+            const [order, hidden] = await Promise.all([GetTabOrder(), GetHiddenTabs()]);
+            tabs = applyOrder(order);
+            for (const id of hidden || []) {
+                if (DEFAULT_TABS.some((tab) => tab.id === id)) hiddenIds.add(id);
+            }
+            // A tab hidden in a previous session can still be the active one
+            // (e.g. restored from sessionState) — fall back to the first
+            // visible tab rather than render an empty tab bar with no tab
+            // marked active.
+            if (hiddenIds.has(get(activeTabStore)) && visibleTabs.length > 0) {
+                activeTabStore.set(visibleTabs[0].id);
+            }
+        } catch (err) {
+            logger.error('Failed to load the persisted tab layout, using the default:', err);
+        }
+    });
 
     let draggedIndex = $state(null);
     let dragOverIndex = $state(null);
     let isDragging = $state(false);
     let dragStartX = 0;
     let tabBarEl;
+    let tabMenu = $state(null);
+    let hiddenMenu = $state(null);
 
     // Roving tabindex: only one tab button is in the Tab order at a time (the
     // ARIA "manual activation" tabs pattern — fits this component especially
@@ -53,7 +104,7 @@
     // the focused tab (Enter/Space).
     let rovingIndex = $state(0);
     $effect(() => {
-        const idx = tabs.findIndex((tab) => tab.id === $activeTabStore);
+        const idx = visibleTabs.findIndex((tab) => tab.id === $activeTabStore);
         if (idx !== -1) rovingIndex = idx;
     });
 
@@ -73,15 +124,15 @@
             case 'Enter':
             case ' ':
                 event.preventDefault();
-                selectTab(tabs[index].id);
+                selectTab(visibleTabs[index].id);
                 break;
             case 'ArrowRight':
                 event.preventDefault();
-                focusTabAt((index + 1) % tabs.length);
+                focusTabAt((index + 1) % visibleTabs.length);
                 break;
             case 'ArrowLeft':
                 event.preventDefault();
-                focusTabAt((index - 1 + tabs.length) % tabs.length);
+                focusTabAt((index - 1 + visibleTabs.length) % visibleTabs.length);
                 break;
             case 'Home':
                 event.preventDefault();
@@ -89,7 +140,7 @@
                 break;
             case 'End':
                 event.preventDefault();
-                focusTabAt(tabs.length - 1);
+                focusTabAt(visibleTabs.length - 1);
                 break;
         }
     }
@@ -138,13 +189,24 @@
             window.removeEventListener('mouseup', onMouseUp);
 
             if (isDragging && draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
-                const reordered = [...tabs];
-                const [moved] = reordered.splice(draggedIndex, 1);
-                reordered.splice(dragOverIndex, 0, moved);
-                tabs = reordered;
+                // draggedIndex/dragOverIndex are positions in visibleTabs (the
+                // rendered buttons); reorder the full `tabs` array — hidden
+                // tabs included — by moving the dragged id to just before the
+                // drop target's id, so a later "afficher" restores a hidden
+                // tab next to where it visually was, not always at the end.
+                const draggedId = visibleTabs[draggedIndex]?.id;
+                const overId = visibleTabs[dragOverIndex]?.id;
+                if (draggedId && overId) {
+                    const moved = tabs.find((tab) => tab.id === draggedId);
+                    const reordered = tabs.filter((tab) => tab.id !== draggedId);
+                    const insertAt = reordered.findIndex((tab) => tab.id === overId);
+                    reordered.splice(insertAt === -1 ? reordered.length : insertAt, 0, moved);
+                    tabs = reordered;
+                    SaveTabOrder(tabs.map((tab) => tab.id)).catch((err) => logger.error('Failed to save the tab order:', err));
+                }
             } else if (!isDragging) {
                 // Simple click - select the tab
-                selectTab(tabs[index].id);
+                selectTab(visibleTabs[index].id);
             }
             draggedIndex = null;
             dragOverIndex = null;
@@ -154,11 +216,53 @@
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
     }
+
+    // ── Hide / show tabs ────────────────────────────────────────────────────
+    function handleTabContextMenu(event, index) {
+        event.preventDefault();
+        const tab = visibleTabs[index];
+        if (!tab) return;
+        tabMenu = {
+            x: event.clientX,
+            y: event.clientY,
+            items: [
+                {
+                    label: $t('tabbedPanel.hideTab'),
+                    onClick: () => hideTab(tab.id)
+                }
+            ]
+        };
+    }
+
+    function hideTab(tabId) {
+        const wasActive = get(activeTabStore) === tabId;
+        hiddenIds.add(tabId);
+        SaveHiddenTabs([...hiddenIds]).catch((err) => logger.error('Failed to save hidden tabs:', err));
+        if (wasActive && visibleTabs.length > 0) activeTabStore.set(visibleTabs[0].id);
+    }
+
+    function showTab(tabId) {
+        hiddenIds.delete(tabId);
+        SaveHiddenTabs([...hiddenIds]).catch((err) => logger.error('Failed to save hidden tabs:', err));
+    }
+
+    function openHiddenTabsMenu(event) {
+        const hidden = tabs.filter((tab) => hiddenIds.has(tab.id));
+        if (hidden.length === 0) return;
+        hiddenMenu = {
+            x: event.clientX,
+            y: event.clientY,
+            items: hidden.map((tab) => ({
+                label: $t('tabbedPanel.showTab', { tab: $t(tab.labelKey) }),
+                onClick: () => showTab(tab.id)
+            }))
+        };
+    }
 </script>
 
 <div class="tabbed-panel">
     <div class="tab-bar" bind:this={tabBarEl} onwheel={handleTabBarWheel} role="tablist">
-        {#each tabs as tab, i (tab.id)}
+        {#each visibleTabs as tab, i (tab.id)}
             <button
                 class="tab-button"
                 class:active={$activeTabStore === tab.id}
@@ -172,6 +276,7 @@
                 tabindex={rovingIndex === i ? 0 : -1}
                 onmousedown={(e) => handleMouseDown(e, i)}
                 onkeydown={(e) => handleTabKeyDown(e, i)}
+                oncontextmenu={(e) => handleTabContextMenu(e, i)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
                     {#if tab.icon === 'analysis'}
@@ -235,7 +340,21 @@
                 <span class="tab-label">{$t(tab.labelKey)}</span>
             </button>
         {/each}
+        {#if hiddenIds.size > 0}
+            <button class="hidden-tabs-button" onclick={openHiddenTabsMenu} title={$t('tabbedPanel.hiddenTabs')} aria-label={$t('tabbedPanel.hiddenTabs')}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+            </button>
+        {/if}
     </div>
+
+    {#if tabMenu}
+        <ContextMenu x={tabMenu.x} y={tabMenu.y} items={tabMenu.items} onClose={() => (tabMenu = null)} />
+    {/if}
+    {#if hiddenMenu}
+        <ContextMenu x={hiddenMenu.x} y={hiddenMenu.y} items={hiddenMenu.items} onClose={() => (hiddenMenu = null)} />
+    {/if}
 
     <div class="tab-content" data-testid="tab-content" role="tabpanel">
         {#if $activeTabStore === 'analysis'}
@@ -335,6 +454,24 @@
         width: 14px;
         height: 14px;
         flex-shrink: 0;
+    }
+
+    .hidden-tabs-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 4px 8px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #888;
+        height: 100%;
+    }
+
+    .hidden-tabs-button:hover {
+        background: #e0e0e0;
+        color: #333;
     }
 
     .tab-label {

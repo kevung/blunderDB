@@ -147,6 +147,14 @@ Outils
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "?", "Afficher/cacher l'aide."
 
+.. note::
+
+   L'ordre de ces onglets, une fois modifié par glisser-déposer sur la barre,
+   est mémorisé d'une session à l'autre. Un clic droit sur un onglet permet
+   de le masquer ; le bouton en forme de flèche qui apparaît alors à droite
+   de la barre rouvre un menu pour réafficher les onglets masqués — qui
+   restent joignables entretemps par leur raccourci.
+
 .. _raccourcis_vues:
 
 Onglets de vues

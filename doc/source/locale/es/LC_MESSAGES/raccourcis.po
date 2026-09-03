@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:38+0200\n"
+"POT-Creation-Date: 2026-09-03 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -360,7 +360,12 @@ msgid ""
 "temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
 "lien, TAB reprend la navigation clavier standard entre les éléments de "
 "l'interface plutôt que de rouvrir ce panneau."
-msgstr "TAB solo abre el panel de búsqueda cuando el foco está en el tablero (o en ningún lugar en particular, que es el caso la mayoría de las veces). En cuanto el foco se posa en un botón, un campo de entrada o un enlace, TAB retoma la navegación estándar por teclado entre los elementos de la interfaz en lugar de volver a abrir este panel."
+msgstr ""
+"TAB solo abre el panel de búsqueda cuando el foco está en el tablero (o "
+"en ningún lugar en particular, que es el caso la mayoría de las veces). "
+"En cuanto el foco se posa en un botón, un campo de entrada o un enlace, "
+"TAB retoma la navegación estándar por teclado entre los elementos de la "
+"interfaz en lugar de volver a abrir este panel."
 
 #: ../../source/raccourcis.rst:132
 msgid "Outils"
@@ -446,7 +451,16 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostrar/ocultar la ayuda."
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:152
+msgid ""
+"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
+"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
+"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
+"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
+"qui restent joignables entretemps par leur raccourci."
+msgstr "El orden de estas pestañas, una vez modificado arrastrando en la barra, se recuerda de una sesión a otra. Un clic derecho en una pestaña permite ocultarla; el botón en forma de flecha que aparece entonces a la derecha de la barra abre un menú para volver a mostrar las pestañas ocultas, que mientras tanto siguen siendo accesibles mediante su atajo."
+
+#: ../../source/raccourcis.rst:161
 msgid "Onglets de vues"
 msgstr "Pestañas de vistas"
 
@@ -498,7 +512,7 @@ msgstr "Doble clic en la pestaña"
 msgid "Renommer la vue."
 msgstr "Renombrar la vista."
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:177
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -513,7 +527,7 @@ msgstr ""
 "intencionado (no es un atajo que corregir) — MAYÚS-J/MAYÚS-K siguen la "
 "convención CTRL-RePág/CTRL-AvPág a la que están asociados, no la de j/k."
 
-#: ../../source/raccourcis.rst:179
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Línea de comandos"
 
@@ -533,11 +547,11 @@ msgstr "ABAJO"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Recorrer el historial de comandos hacia abajo."
 
-#: ../../source/raccourcis.rst:192
+#: ../../source/raccourcis.rst:200
 msgid "Historique de recherche"
 msgstr "Historial de búsqueda"
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:202
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -561,11 +575,11 @@ msgstr "Doble clic"
 msgid "Exécuter la recherche."
 msgstr "Ejecutar la búsqueda."
 
-#: ../../source/raccourcis.rst:208
+#: ../../source/raccourcis.rst:216
 msgid "Bibliothèque de filtres"
 msgstr "Biblioteca de filtros"
 
-#: ../../source/raccourcis.rst:210
+#: ../../source/raccourcis.rst:218
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -581,7 +595,7 @@ msgstr "Seleccionar/deseleccionar un filtro (mostrar la posición)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Ejecutar la búsqueda del filtro."
 
-#: ../../source/raccourcis.rst:224
+#: ../../source/raccourcis.rst:232
 msgid "Panneau d'analyse"
 msgstr "Panel de análisis"
 
@@ -619,11 +633,11 @@ msgstr ""
 "Deseleccionar la jugada. Si no hay ninguna jugada seleccionada, cerrar el"
 " panel."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:248
 msgid "Panneau Eval"
 msgstr "Panel Eval"
 
-#: ../../source/raccourcis.rst:242
+#: ../../source/raccourcis.rst:250
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -637,7 +651,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Deseleccionar la jugada."
 
-#: ../../source/raccourcis.rst:259
+#: ../../source/raccourcis.rst:267
 msgid "Panneau des matchs"
 msgstr "Panel de partidas"
 
@@ -673,7 +687,7 @@ msgstr "Eliminar la partida seleccionada."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:277
+#: ../../source/raccourcis.rst:285
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
 
@@ -731,7 +745,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -763,7 +777,7 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:319
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -791,7 +805,7 @@ msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:325
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
