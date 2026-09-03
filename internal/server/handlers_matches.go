@@ -178,5 +178,5 @@ func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="match.mat"`)
-	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves))
+	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves)) //nolint:gosec // G705: naive taint flag on match data reaching the response — served as text/plain + attachment, never rendered as HTML by a browser
 }

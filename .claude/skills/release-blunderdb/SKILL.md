@@ -374,6 +374,35 @@ version from the tag automatically in CI.
 
 ---
 
+## Phase 2c — Regenerate the benchmark baseline (every release)
+
+`tasks/bench/baseline.txt` is what the nightly `benchstat` job (E.9, #225,
+`.github/workflows/nightly.yml`) compares every run against, gated at ±10% on
+the sec/op geomean (`scripts/bench-compare.sh`). A baseline that never moves
+would eventually compare the machine's current speed against a stale one from
+whenever it was last regenerated (a real, intentional perf improvement would
+then look like the *baseline* regressed on the next unrelated PR) — regenerate
+it at every release, feature or patch, same reasoning as Phase 2b's AppStream
+entry (a housekeeping step, not feature-gated):
+
+```bash
+go test -bench=. -benchmem -run '^$' -short -count=1 -timeout=5m \
+  ./pkg/blunderdb/storage/sqlite/... \
+  ./pkg/blunderdb/storage/sqlshared/... \
+  ./pkg/blunderdb/engine/gammonnet/... \
+  > tasks/bench/baseline.txt
+```
+
+Takes a few minutes (the SQLite benchmarks dominate). Sanity-check the diff
+before committing — a huge swing on a single benchmark, when nothing in this
+release plausibly explains it, is more likely a noisy runner than a real
+change (this repo's CI runners are shared/variable hardware, unlike whatever
+machine last regenerated it); re-run once if a number looks implausible.
+Commit `tasks/bench/baseline.txt` with the Phase 2b packaging-metadata commit
+(or its own small commit) before cutting the release in Phase 3.
+
+---
+
 ## Phase 3 — Cut the version with release.sh
 
 `scripts/release.sh` updates the version string in four places

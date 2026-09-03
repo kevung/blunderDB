@@ -16,24 +16,32 @@ name: Nightly
 #   - the Trivy image scan lives in build.yml's docker-serve job, on every
 #     push (non-blocking) — E.7, #223: an image vulnerability is worth
 #     surfacing on the PR that introduced it, not the morning after.
-#   - a benchstat-against-baseline comparison is not built yet (E.9, #225,
-#     still open) — its job lands here once it exists, rather than a
-#     half-built duplicate of build.yml's existing `benchmark` job.
 #   - a short SQLite loadtest (G.11) is not wired up yet either, same
 #     reasoning.
 #
 # What IS new here: the full (non -short) Go suite on the two desktop
 # platforms build.yml only runs with -short on every push (E.1, #217 — the
 # 2-ply gammonnet searches and the schema benchmarks skip themselves under
-# -short), and a full-package gammonnet run under -race with -short — a
+# -short), a full-package gammonnet run under -race with -short — a
 # nightly complement to build.yml's race-gammonnet job, which is deliberately
 # narrow (only Parallel/Concurrent/Batch tests) so it can afford -race on
-# every push without becoming the bottleneck shard.
+# every push without becoming the bottleneck shard — and the `benchstat` job
+# below (E.9, #225): build.yml used to carry a `benchmark` job that ran on
+# every push to main and was never compared against anything (115s/push,
+# "an artefact nobody compares" — that job is gone, this one replaces it).
 
 on:
   schedule:
     - cron: "0 3 * * *" # daily, 03:00 UTC — fuzz.yml's weekly job runs Mondays 04:00
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: >-
+          Pull request to post the benchstat comparison to (optional — a
+          maintainer checking a suspect PR's performance). Leave empty for an
+          ordinary manual run; the nightly schedule never sets this.
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -96,12 +104,100 @@ jobs:
         run: go test -race -short -count=1 -timeout 1200s -v ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
-  # Opens (or reuses) one issue labelled `nightly` when either job above
-  # failed — never one per red night, so a multi-day outage does not flood
-  # the tracker.
+  # Benchmark trend gate (E.9, #225). Runs the stable subset (storage/sqlite,
+  # storage/sqlshared, engine/gammonnet -short — the packages the plan names
+  # as already carrying real benchmarks; B.10/B.11 and C.7-C.10's own gold),
+  # then benchstats the fresh run against the versioned tasks/bench/baseline.txt
+  # (scripts/bench-compare.sh), failing on a sec/op regression past ±10%.
+  #
+  # Both sides are -count=1 (a single sample per benchmark, same as the
+  # baseline's own generation command below) — see bench-compare.sh's own
+  # comment for why the gate reads geomean, not individual per-benchmark
+  # significance, at that sample size. -short matches build.yml's push-time
+  # gammonnet shard (skips the 2-ply searches) so the baseline stays
+  # comparable across both.
+  #
+  # benchstat is pinned to an exact pseudo-version rather than @latest:
+  # golang.org/x/perf carries no tagged releases, so @latest always resolves
+  # to HEAD, and HEAD's go.mod (2026-08) requires go >= 1.26 — installing it
+  # would silently pull in a second Go toolchain download on every run rather
+  # than build with the 1.25.13 this workflow already set up. This pseudo
+  # -version's go.mod asks for go 1.18 (verified locally against 1.25.13).
+  benchstat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Install benchstat
+        run: go install golang.org/x/perf/cmd/benchstat@v0.0.0-20241118162539-34caac850176
+        shell: bash
+
+      - name: Run benchmarks (stable subset)
+        run: |
+          go test -bench=. -benchmem -run '^$' -short -count=1 -timeout=5m \
+            ./pkg/blunderdb/storage/sqlite/... \
+            ./pkg/blunderdb/storage/sqlshared/... \
+            ./pkg/blunderdb/engine/gammonnet/... \
+            > new-bench.txt
+        shell: bash
+
+      - name: Compare against baseline (benchstat, ±10% on sec/op geomean)
+        id: compare
+        run: |
+          PATH="$PATH:$(go env GOPATH)/bin" \
+            scripts/bench-compare.sh tasks/bench/baseline.txt new-bench.txt 10 pr-comment.md \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
+      - name: Upload the fresh benchmark run
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: bench-new
+          path: new-bench.txt
+          if-no-files-found: ignore
+
+      # Only when a maintainer dispatched this workflow by hand against a
+      # specific PR (see the workflow_dispatch input above) — the nightly
+      # schedule never sets pr_number, so an ordinary nightly run never posts
+      # here; it still fails the job (and notify-on-failure below still opens
+      # a tracking issue) on a real regression.
+      - name: Comment on the PR
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### Suivi de performance (benchstat)"
+            echo
+            cat pr-comment.md
+          } > pr-comment-full.md
+          gh pr comment "${{ inputs.pr_number }}" --repo "${{ github.repository }}" --body-file pr-comment-full.md
+        shell: bash
+
+  # Opens (or reuses) one issue labelled `nightly` when any job above failed
+  # — never one per red night, so a multi-day outage does not flood the
+  # tracker. A manual, PR-targeted benchstat dispatch (pr_number set) is
+  # excluded: that failure already reached the PR via the comment above, and
+  # is not the nightly run being red.
   notify-on-failure:
-    needs: [test-os-full, gammonnet-race-full]
-    if: always() && contains(needs.*.result, 'failure')
+    needs: [test-os-full, gammonnet-race-full, benchstat]
+    if: >-
+      always() && contains(needs.*.result, 'failure') &&
+      !(github.event_name == 'workflow_dispatch' && inputs.pr_number != '')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

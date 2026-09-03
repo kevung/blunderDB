@@ -12,6 +12,8 @@ package sqlite_test
 import (
 	"context"
 	"database/sql"
+	"io"
+	"log/slog"
 	"path/filepath"
 	"runtime"
 	"sync"
@@ -335,7 +337,21 @@ func BenchmarkStatsCompute(b *testing.B) {
 		b.Fatalf("SetupDatabase: %v", err)
 	}
 	xg := filepath.Join("..", "..", "..", "..", "testdata", "charlot1-charlot2_7p_2025-11-08-2305.xg")
-	if _, err := d.ImportXGMatch(xg); err != nil {
+	// ImportXGMatch logs an INFO line ("imported match") through the package
+	// slog default, which is unconfigured in a test binary and so falls back
+	// to stdout — the same stream `go test -bench` prints the benchmark table
+	// on. That INFO line used to land mid-row, splitting "BenchmarkStatsCompute-16"
+	// from its iteration count onto the next line and making the whole
+	// benchmark unparsable by benchstat (E.9, #225: silently dropped from every
+	// benchstat comparison, with only a stderr warning nobody reads). Silencing
+	// the default logger for this setup call, then restoring it, keeps the
+	// import's own behaviour untouched while keeping the benchmark's stdout
+	// clean of anything but the `go test` table.
+	prevLogger := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
+	_, err := d.ImportXGMatch(xg)
+	slog.SetDefault(prevLogger)
+	if err != nil {
 		b.Fatalf("seed ImportXGMatch: %v", err)
 	}
 	d.Close()

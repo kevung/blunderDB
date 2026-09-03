@@ -525,19 +525,36 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Frontend tests
+      # `npm ci` always deletes and relinks node_modules from scratch (E.8,
+      # #224 — measured ~25s here even with setup-node's own npm-download
+      # cache, which only caches the tarballs, not the extracted/linked
+      # tree). Caching the tree itself and skipping the reinstall on a hit
+      # is the standard actions/cache pattern; every frontend-* job below
+      # repeats it with the same key so a lockfile change invalidates all
+      # three together.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
         working-directory: frontend
-        run: npm ci && npm test
+        run: npm ci
         shell: bash
 
-      # Non-blocking: no thresholds, coverage is visibility only. Runs after
-      # the real test step above so a coverage-instrumentation issue never
-      # masks an actual test failure.
-      - name: Frontend coverage
-        if: always()
+      # A single `vitest run --coverage` (E.8, #224): this job used to run
+      # the suite twice — once plain, once with --coverage behind
+      # continue-on-error so a coverage-instrumentation issue could never
+      # mask a real failure — but --coverage does not change which tests run
+      # or how they're judged, only which lines get counted alongside them,
+      # so the second run bought no signal, just ~half the job's own wall
+      # time. One authoritative run: a real test failure fails the job.
+      - name: Frontend tests (with coverage)
         working-directory: frontend
-        run: npm test -- --run --coverage
-        continue-on-error: true
+        run: npm test -- --coverage
         shell: bash
 
       - name: Upload frontend coverage artifact
@@ -562,7 +579,18 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
+      # Same node_modules cache as frontend-test above (E.8, #224) — kept
+      # separate from the Playwright browser cache just below, which keys on
+      # the resolved @playwright/test version rather than the whole lockfile.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
       - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
         working-directory: frontend
         run: npm ci
         shell: bash
@@ -606,40 +634,6 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
 
-  # Benchmarks only run on push (main branch or a version tag), never on
-  # pull_request: they take minutes and aren't compared against a baseline,
-  # so they add latency to every PR for no signal. -run '^$' skips the
-  # regular test suite (already covered by the `test` job above); -count=1
-  # keeps a single push run fast instead of the previous -count=3.
-  benchmark:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: github.event_name == 'push'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Setup GoLang
-        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
-        with:
-          check-latest: true
-          go-version: 1.25.13
-          cache: true
-
-      - name: Create frontend dist stub
-        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
-        shell: bash
-
-      - name: Run benchmarks
-        run: go test -bench=. -benchmem -run '^$' -count=1 -timeout=10m ./... 2>&1 | tee bench.txt
-        shell: bash
-
-      - name: Upload benchmark results
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: benchmark-results
-          path: bench.txt
-
   frontend-lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -654,10 +648,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
+      # Same node_modules cache as frontend-test/frontend-e2e above (E.8, #224).
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        working-directory: frontend
+        run: npm ci
+        shell: bash
+
       - name: Frontend lint
         working-directory: frontend
         run: |
-          npm ci
           npm run lint
           npm run format:check
         shell: bash

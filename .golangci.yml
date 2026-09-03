@@ -8,17 +8,40 @@ linters:
   # rowserrcheck so a `for rows.Next()` loop is always followed by rows.Err() —
   # an iteration error otherwise truncates the result silently.
   #
+  # funlen and gocognit (E.6, #222): non-regressive ceilings on function size
+  # and cognitive complexity, the same shape as frontend/.svelte-warnings-budget
+  # and frontend/.color-token-budget — a ratchet that only ever tightens, not
+  # an unreachable strict zero. The thresholds below equal the worst
+  # non-test function measured on 2026-09 (`(*SearchStore).find`, search.go —
+  # 573 lines, 316 statements, cognitive complexity 462); splitting it or any
+  # other flagged function (B.15) must lower these numbers in the same
+  # commit, never leave them where a fatter function could still fit. Test
+  # functions are excluded below: a long table-driven test or a migration
+  # round-trip fixture is not the dette this fiche targets, and forcing them
+  # under the same ceiling would fight the fixture shape instead of real
+  # complexity (see the `_test\.go$` rule under exclusions.rules).
+  #
+  # gosec (E.6, #222): re-evaluated from "deliberately not enabled" (below)
+  # to "enabled, scoped". A repo-wide pass is still ~200 findings, almost all
+  # false positives on this codebase's own domain (board indices/pip counts
+  # that cannot overflow, math/rand for the Zobrist keys, parameterised SQL
+  # gosec's heuristic still flags) — that refusal stays correct for the bulk
+  # of the tree. But two directories ARE the surfaces gosec exists for: the
+  # HTTP daemon that CLAUDE.md says performs no authentication of its own
+  # (internal/server) and the crypto/signing package (issuance) — there,
+  # gosec earns its keep. Scoped via exclusions.rules' path-except below
+  # rather than a second linters.enable entry (gosec has none, one entry
+  # covers both the enable and the scope).
+  #
   # Evaluated and deliberately NOT enabled (2026-09):
-  # - gosec: 202 findings, 108 of them G115 (int width conversions on board
-  #   indices and pip counts that cannot overflow), then G306 file modes in
-  #   tests, G602, G202 (SQL built by concatenation — the search filters,
-  #   parameterised), G404 (math/rand for the Zobrist keys and shuffles).
-  #   None is a bug; enabling it would mean ~200 nolint directives.
   # - noctx: 874 findings — every database call would need a context first.
   enable:
     - bodyclose
     - copyloopvar
     - errorlint
+    - funlen
+    - gocognit
+    - gosec
     - nolintlint
     - rowserrcheck
     - sqlclosecheck
@@ -30,6 +53,13 @@ linters:
         # after a successful Commit, and on failure the deferred call is
         # best-effort cleanup.
         - (*database/sql.Tx).Rollback
+
+    funlen:
+      lines: 573      # (*SearchStore).find, search.go — see the enable-list comment above
+      statements: 316 # same function
+
+    gocognit:
+      min-complexity: 462 # same function; gocognit's own cognitive-complexity count
 
     nolintlint:
       require-explanation: true
@@ -79,10 +109,45 @@ linters:
       - linters: [errcheck]
         path: "^(internal/cli/|cmd/)"
         text: "Error return value of `fmt\\.(Println|Printf|Fprintf|Fprintln)` is not checked"
+      # funlen/gocognit target production complexity (E.6, #222) — see the
+      # enable-list comment. A big table-driven test or migration
+      # round-trip fixture is not the dette either linter exists to catch.
+      - linters: [funlen, gocognit]
+        path: "_test\\.go$"
+      # gosec scoped to the two surfaces it was enabled for (E.6, #222): the
+      # unauthenticated HTTP daemon and the crypto/signing package. Test
+      # files in both are excluded the same way as funlen/gocognit above —
+      # a test's own temp files and fixtures are not the untrusted input
+      # gosec is meant to catch, and everywhere else in the tree the
+      # findings are the same false positives the top-of-file note already
+      # dismisses for a repo-wide enable.
+      - linters: [gosec]
+        path-except: "^(internal/server/|pkg/blunderdb/issuance/)"
+      - linters: [gosec]
+        path: "^(internal/server/|pkg/blunderdb/issuance/).*_test\\.go$"
+      # G304 (file path from a variable) inside issuance is the package
+      # doing exactly what it is for: dbPath/outPath/path are always a local
+      # path the CLI or GUI caller supplied directly, never a request body —
+      # the opposite of the internal/server occurrences, which get a
+      # per-call //nolint because there the caller context varies line by
+      # line. See container.go's and identity.go's own doc comments for the
+      # threat model (protects transport, not the legitimate local user).
+      - linters: [gosec]
+        path: "pkg/blunderdb/issuance/(container|identity)\\.go$"
+        text: "G304"
 
 issues:
   max-issues-per-linter: 0   # no cap — show everything
   max-same-issues: 0         # no cap
+  # Without this, golangci-lint prints at most ONE issue per (file, line) —
+  # picking whichever linter's issue sorts first — so a real gocognit
+  # finding on a function's signature line silently hides a funlen finding
+  # on that SAME line (both attach to the `func` line), and vice versa.
+  # Found while calibrating E.6's funlen/gocognit thresholds above: with the
+  # default (true), CommitImportDatabase's funlen violation disappeared
+  # entirely behind its gocognit one. A complexity gate that can silently
+  # lose half its findings is worse than not having it.
+  uniq-by-line: false
 
 formatters:
   # Neither was enabled before 2026-09: this section only ever held
