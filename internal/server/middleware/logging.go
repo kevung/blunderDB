@@ -29,7 +29,7 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 				"status", rec.status,
 				"bytes", rec.bytes,
 				"tenant", r.Header.Get(TenantHeader),
-				"duration_ms", float64(now().Sub(start).Microseconds())/1000.0,
+				"duration_ms", float64(now().Sub(start).Microseconds()) / 1000.0,
 			}
 			// A masked "internal error" response is otherwise a dead end for
 			// diagnosing what actually failed: the client only ever sees the

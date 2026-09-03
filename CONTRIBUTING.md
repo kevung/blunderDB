@@ -13,14 +13,18 @@ Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Prerequisites
 
-Go 1.25, Node.js 23, the [Wails v2](https://wails.io/) CLI 2.10 (`go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2`) and, on Linux, `webkit2gtk-4.1`. `make check` also needs `golangci-lint` (v2) and `govulncheck`. The documentation build needs Python with `doc/requirements.txt` in a virtualenv, plus GNU gettext.
+Go 1.25, Node.js 23, the [Wails v2](https://wails.io/) CLI 2.10 (`go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2`) and, on Linux, `webkit2gtk-4.1`. `make check` also needs `golangci-lint` (v2) and `govulncheck`; `make check-all` additionally needs Docker (the PostgreSQL contract suite) and a Playwright browser (`npx playwright install`). The documentation build needs Python with `doc/requirements.txt` in a virtualenv, plus GNU gettext. A [devcontainer](.devcontainer/) is available if you would rather not install any of this locally.
 
 ```bash
 git clone https://github.com/kevung/blunderDB.git && cd blunderDB
+git config core.hooksPath .githooks   # versioned pre-commit hook, see Workflow below
 cd frontend && npm install && cd ..
-make dev      # hot-reload desktop app
-make build    # build/bin/blunderDB
-make check    # everything CI enforces: vet, tests, golangci-lint, govulncheck, frontend lint/format/tests
+make dev         # hot-reload desktop app
+make build       # build/bin/blunderDB
+make check       # everything CI's push-time jobs enforce: vet, tests, golangci-lint,
+                 # govulncheck, frontend lint/format/tests
+make check-all   # the above PLUS Docker-backed PostgreSQL tests, Playwright e2e,
+                 # and the release version-string check — full CI parity
 ```
 
 `main.go` embeds `frontend/dist`, so a checkout that never built the frontend fails on the embed pattern; `make check` creates the stub it needs.
@@ -29,7 +33,7 @@ make check    # everything CI enforces: vet, tests, golangci-lint, govulncheck, 
 
 - One change per branch, in its own git worktree: `git worktree add ../blunderDB-<feature> -b feat/<feature>` (absolute path, see CLAUDE.md). Work and commit there, then merge or open the pull request.
 - Commits: conventional prefix (`feat(...)`, `fix(...)`, `docs(...)`, `refactor(...)`), imperative subject, a body that says **why**. The maintainer writes them in French; English is welcome.
-- Run `make check` before pushing. CI runs the same set plus the Playwright end-to-end tests; the pre-commit hook runs the frontend lint and format check (`prettier --check` fails the build).
+- Run `make check` before pushing (`make check-all` if you touched anything Docker or e2e tests would catch). CI runs `check-all`'s full scope. The versioned pre-commit hook (`.githooks/pre-commit`, enabled by the `git config core.hooksPath .githooks` above) runs `make check-fast` on every commit: gofmt, `go vet`, and the frontend's eslint/`prettier --check` — seconds, not minutes. It is not a substitute for `make check` before pushing.
 - Fill in the [pull request template](.github/PULL_REQUEST_TEMPLATE.md): its checklist is the short form of the rules below.
 
 ## Documentation is part of the change

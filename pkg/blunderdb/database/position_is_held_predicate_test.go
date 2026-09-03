@@ -1,4 +1,4 @@
-package tests
+package database
 
 import (
 	"os"
@@ -10,6 +10,11 @@ import (
 	"testing"
 )
 
+// Moved from the legacy tests/position_is_held_predicate_test.go (root
+// "tests" package, invisible to coverage since it built no code — see
+// CLAUDE.md "Invariants" and the project note on the three-copy retention
+// predicate).
+//
 // positionIsHeldSQL is stated three times on purpose (CLAUDE.md "Invariants"):
 // storage/sqlite/matches_sqlite.go, storage/postgres/matches_postgres.go and
 // database/db_match.go (the copy the GUI and CLI actually run). None of the
@@ -42,8 +47,8 @@ func repoRootFromThisFile(t *testing.T) string {
 	if !ok {
 		t.Fatal("cannot determine test file location")
 	}
-	// This file lives directly under <repoRoot>/tests/.
-	return filepath.Join(filepath.Dir(thisFile), "..")
+	// This file lives directly under <repoRoot>/pkg/blunderdb/database/.
+	return filepath.Join(filepath.Dir(thisFile), "..", "..", "..")
 }
 
 // extractPositionIsHeldSQL reads path and returns the raw SQL text of its

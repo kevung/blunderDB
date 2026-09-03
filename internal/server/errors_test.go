@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 

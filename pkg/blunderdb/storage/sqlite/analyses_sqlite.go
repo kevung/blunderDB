@@ -7,10 +7,11 @@ import (
 	"fmt"
 
 	"encoding/json"
+	"log/slog"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-	"log/slog"
 )
 
 type analysisStore struct{ db execer }

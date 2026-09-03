@@ -14,10 +14,10 @@ func TestCompareTXTvsXGPositions(t *testing.T) {
 	txtFile := filepath.Join("testdata", "test.txt")
 
 	if _, err := os.Stat(xgFile); os.IsNotExist(err) {
-		t.Skip("test.xg not found")
+		t.Fatal("test.xg not found")
 	}
 	if _, err := os.Stat(txtFile); os.IsNotExist(err) {
-		t.Skip("test.txt not found")
+		t.Fatal("test.txt not found")
 	}
 
 	// Import XG
@@ -166,10 +166,10 @@ func TestCompareMATvsXGPositions(t *testing.T) {
 	matFile := filepath.Join("testdata", "test.mat")
 
 	if _, err := os.Stat(xgFile); os.IsNotExist(err) {
-		t.Skip("test.xg not found")
+		t.Fatal("test.xg not found")
 	}
 	if _, err := os.Stat(matFile); os.IsNotExist(err) {
-		t.Skip("test.mat not found")
+		t.Fatal("test.mat not found")
 	}
 
 	// Import XG
@@ -313,7 +313,7 @@ func TestImportMatchFromText(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			if _, err := os.Stat(tc.file); os.IsNotExist(err) {
-				t.Skipf("%s not found", tc.file)
+				t.Fatalf("%s not found", tc.file)
 			}
 
 			content, err := os.ReadFile(tc.file)

@@ -15,10 +15,10 @@ func TestParseExceptDice(t *testing.T) {
 		{"65;54", [][2]int{{6, 5}, {5, 4}}},
 		{"11", [][2]int{{1, 1}}},
 		{" 65 ; 54 ", [][2]int{{6, 5}, {5, 4}}},
-		{"70", nil},      // 7 and 0 out of range
-		{"6", nil},       // single digit
-		{"655", nil},     // too long
-		{"6a", nil},      // non-digit
+		{"70", nil},                            // 7 and 0 out of range
+		{"6", nil},                             // single digit
+		{"655", nil},                           // too long
+		{"6a", nil},                            // non-digit
 		{"65;99;54", [][2]int{{6, 5}, {5, 4}}}, // 99 skipped
 	}
 	for _, c := range cases {
