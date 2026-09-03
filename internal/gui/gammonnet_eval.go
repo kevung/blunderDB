@@ -347,9 +347,9 @@ func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, ply, prune
 // exact-table comparison, and Go refuses the resulting cycle for an internal
 // test augmentation (gammonnet-with-tests -> race -> gammonnet). gui already
 // imports both with no such constraint, so the Decision -> race.Eval mapping
-// is done here. cubeStateFor below is a 3-line duplicate of race/eval.go's
-// unexported helper of the same name, kept in sync by inspection — small
-// enough that a shared symbol is not worth reopening the import question.
+// is done here, calling race.CubeStateFor for the one piece that IS shared
+// with race/eval.go's own Evaluate — exported (#197/C.10) rather than kept
+// as a second 3-line copy in sync by inspection.
 //
 // searcher is the pool evaluateGammonNet already acquired for this call
 // (#196/C.9) — reconfigured here, on a dice-cleared clone of pos, rather
@@ -431,7 +431,7 @@ func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, ply,
 		// from Decide (raw MWC) — so converting each from its own source is
 		// what keeps this row internally consistent, and consistent with
 		// the exact table's money equities the panel merges it with.
-		CubeState:  raceCubeStateFor(pos, mover),
+		CubeState:  race.CubeStateFor(pos, mover),
 		Cubeless:   scale.FromSearch(gammonnet.CubelessValue(&probs, state)),
 		NoDouble:   scale.FromDecision(dec.EquityNoDouble),
 		DoubleTake: scale.FromDecision(dec.EquityDoubleTake),
@@ -449,18 +449,6 @@ func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, ply,
 		LoseBackgammon: float64(probs[gammonnet.PLoseBackgammon]),
 		Money:          &money,
 		Depth:          depthLabel,
-	}
-}
-
-// raceCubeStateFor mirrors race/eval.go's unexported cubeStateFor.
-func raceCubeStateFor(pos *domain.Position, onRoll int) race.CubeState {
-	switch pos.Cube.Owner {
-	case onRoll:
-		return race.CubeOwned
-	case domain.None:
-		return race.CubeCentered
-	default:
-		return race.CubeAgainst
 	}
 }
 

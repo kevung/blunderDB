@@ -101,6 +101,9 @@ func (s *Searcher) Probs(pos *Position) ([NumOutputs]float32, bool) {
 // decision at 4-away/2-away. TestProbsMatchEquityMatchesPositionEquity is
 // the identity that catches it.
 func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
+	if level == 0 {
+		s.seedMatchState(state) // #197/C.10: fixes matchStates[0]/[1] for this whole chain
+	}
 	if pos.isOver() {
 		return terminalProbs(pos), true
 	}
@@ -145,13 +148,13 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 		if n > 0 {
 			// The best play's own distribution, at the depth its equity was
 			// scored at (depth-1) — mirroring -V(result, depth-1).
-			theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1, swapMatchState(state), owner.Mirror())
+			theirs, ok = s.probsAt(&cands[0].Play.Result, depth-1, level+1, s.childMatchState(level), owner.Mirror())
 		} else {
 			// No legal play: the turn passes, exactly as the scalar
 			// recursion does — dropping the branch would bias the average.
 			passed := *pos
 			passed.swapTurn()
-			theirs, ok = s.probsAt(&passed, depth-1, level+1, swapMatchState(state), owner.Mirror())
+			theirs, ok = s.probsAt(&passed, depth-1, level+1, s.childMatchState(level), owner.Mirror())
 		}
 		if !ok {
 			return [NumOutputs]float32{}, false
@@ -196,7 +199,9 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 // somme reste sérielle et en float64, ce que la parallélisation change
 // n'est jamais que qui classe et qui approfondit chaque lancer.
 func (s *Searcher) probsAtRootParallel(pos *Position, depth int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
-	theirs := swapMatchState(state)
+	// Always level 0 — probsAt only ever branches here from its own level ==
+	// 0 check, which has already seeded matchStates[0]/[1] for this chain.
+	theirs := s.childMatchState(0)
 	theirOwner := owner.Mirror()
 
 	groups := s.probeGroups[:0]

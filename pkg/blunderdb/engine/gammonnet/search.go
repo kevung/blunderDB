@@ -282,6 +282,23 @@ type Searcher struct {
 	probePassed [NumRolls]Position
 	probeDanced [NumRolls]bool
 
+	// matchStates[i] is the ONLY two match-state values a single decision's
+	// entire recursion ever needs (#197/C.10): level 0 (and every even
+	// level) sees matchStates[0], every odd level matchStates[1] —
+	// MatchState.Swap() only exchanges the two away scores, Cube and
+	// Crawford stay constant for the whole decision, so the value repeats
+	// with period 2 no matter how deep the recursion goes. seedMatchState
+	// fixes both, once, wherever a chain BEGINS at level 0
+	// (rankPlaysShallow/positionEquity/probsAt, each guarded on level == 0);
+	// every deeper level only ever indexes these two slots (childMatchState)
+	// instead of allocating a fresh swapped copy — swapMatchState used to
+	// heap-allocate one at EVERY recursive step, measured at 1 472
+	// allocations for one canonical scored 2-ply decision. hasMatchState is
+	// false for a money decision (state nil at level 0); each worker owns
+	// its own pair, exactly like the rest of its scratch.
+	matchStates   [2]MatchState
+	hasMatchState bool
+
 	gen   [MaxPly + 2]*Generator
 	plays [MaxPly + 2][]Play
 	cands [MaxPly + 2][]Candidate
@@ -447,6 +464,9 @@ func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, sta
 	if level >= len(s.plays) {
 		return -1
 	}
+	if level == 0 {
+		s.seedMatchState(state) // #197/C.10: fixes matchStates[0]/[1] for this whole chain
+	}
 	plays := s.playsAt(level)
 	count := s.genAt(level).LegalPlays(pos, d1, d2, plays)
 	if count <= 0 {
@@ -460,7 +480,7 @@ func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, sta
 		out[i].Play = plays[i]
 	}
 
-	theirs := swapMatchState(state)
+	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
 
 	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
@@ -516,7 +536,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	if depth <= 0 {
 		return written
 	}
-	theirs := swapMatchState(state)
+	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
 	searched := written
 	if f := s.cfg.Filter[depth]; f > 0 && f < searched {
@@ -546,16 +566,37 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	return written
 }
 
-// swapMatchState is state seen from the other side of the table, or nil when
-// state is nil — the one place rankPlays computes gn_search.c's swap_sides,
-// reused for both the value sweep and the deep pass so the two can never
-// drift apart on which state a result is valued in.
-func swapMatchState(state *MatchState) *MatchState {
+// seedMatchState fixes matchStates[0]/[1] — the only two values this
+// decision's whole recursion will ever need (matchStates' own doc comment,
+// #197/C.10) — given state as pos's own mover sees it at level 0. Called
+// once per chain, wherever level == 0: rankPlaysShallow, positionEquity,
+// probsAt. A later call with the SAME state (probsAtRootParallel drives
+// rankPlaysShallow at level 0 once per root roll, all sharing one state)
+// just overwrites both slots with identical values — idempotent, never a
+// bug, only ever redundant.
+func (s *Searcher) seedMatchState(state *MatchState) {
 	if state == nil {
+		s.hasMatchState = false
+		return
+	}
+	s.hasMatchState = true
+	s.matchStates[0] = *state
+	s.matchStates[1] = state.Swap()
+}
+
+// childMatchState is state seen from the other side of the table at level+1
+// — gn_search.c's swap_sides, computed once per decision by seedMatchState
+// rather than allocated fresh at every recursive step: state at level+1 is
+// always exactly one of the two values seedMatchState already fixed for
+// this whole chain (matchStates' own doc comment), so this is a plain array
+// index, never a heap allocation. nil when the decision has no match state
+// at all (a money game) — the same nil swapMatchState used to return for a
+// nil input.
+func (s *Searcher) childMatchState(level int) *MatchState {
+	if !s.hasMatchState {
 		return nil
 	}
-	swapped := state.Swap()
-	return &swapped
+	return &s.matchStates[(level+1)&1]
 }
 
 // shallowFill writes each candidate's resulting distribution. useCache is false
@@ -706,6 +747,9 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 // the search's actual roots — rankPlays' phase three AND, since #195,
 // probsAt's own root loop — farm out to workers instead).
 func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchState, owner CubeOwner) (float64, bool) {
+	if level == 0 {
+		s.seedMatchState(state) // #197/C.10: only a direct test entry point takes this in production
+	}
 	if pos.isOver() {
 		return terminalValue(pos, state), true
 	}
@@ -750,7 +794,7 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 	// owner, mirrored.
 	passed := *pos
 	passed.swapTurn()
-	v, ok := s.positionEquity(&passed, depth-1, level+1, swapMatchState(state), owner.Mirror())
+	v, ok := s.positionEquity(&passed, depth-1, level+1, s.childMatchState(level), owner.Mirror())
 	if !ok {
 		return 0, false
 	}
