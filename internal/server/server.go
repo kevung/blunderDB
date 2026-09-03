@@ -208,6 +208,38 @@ func (s *Server) sweepRateLimiter(ctx context.Context) {
 	}
 }
 
+// poolStatsSweepInterval bounds how stale blunderdb_pg_pool_* can be.
+const poolStatsSweepInterval = 15 * time.Second
+
+// poolStatsProvider is implemented by postgres.Storage — duck-typed so this
+// package need not import the postgres package just for this (it already
+// does, in serve.go, but the interface keeps this specific dependency
+// explicit and minimal). The SQLite backend does not implement it, so the
+// sweep below is simply never started against it.
+type poolStatsProvider interface {
+	PoolStats() (acquired, idle, max int32, waitCount int64)
+}
+
+// sweepPoolStats periodically publishes the PostgreSQL connection pool's
+// state to the metrics registry (#235), until ctx is cancelled.
+func (s *Server) sweepPoolStats(ctx context.Context, pool poolStatsProvider) {
+	t := time.NewTicker(poolStatsSweepInterval)
+	defer t.Stop()
+	publish := func() {
+		acquired, idle, max, waitCount := pool.PoolStats()
+		s.opts.Metrics.SetPoolStats(acquired, idle, max, waitCount)
+	}
+	publish() // first data point without waiting a full interval
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-t.C:
+			publish()
+		}
+	}
+}
+
 // Run starts the server and blocks until ctx is cancelled, then shuts down
 // gracefully within ShutdownTimeout. It returns the listener/serve error, or
 // nil on a clean shutdown.
@@ -226,6 +258,11 @@ func (s *Server) Run(ctx context.Context) error {
 
 	if s.rl != nil {
 		go s.sweepRateLimiter(ctx)
+	}
+	if s.opts.EnableMetrics {
+		if pool, ok := s.opts.Storage.(poolStatsProvider); ok {
+			go s.sweepPoolStats(ctx, pool)
+		}
 	}
 
 	errCh := make(chan error, 1)

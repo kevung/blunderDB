@@ -15,15 +15,37 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// maxConnsEnv overrides the connection-pool upper bound. See pool defaults.
-const maxConnsEnv = "BLUNDERDB_POSTGRES_MAX_CONNS"
+// Environment variables overriding the connection-pool defaults below (#235).
+// Each is a Go duration string ("5s", "30m", "1h") except maxConnsEnv and
+// minConnsEnv, plain integers; absent or unparsable, a setting keeps its
+// default.
+const (
+	maxConnsEnv          = "BLUNDERDB_POSTGRES_MAX_CONNS"
+	minConnsEnv          = "BLUNDERDB_POSTGRES_MIN_CONNS"
+	maxConnLifetimeEnv   = "BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME"
+	healthCheckPeriodEnv = "BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD"
+	connectTimeoutEnv    = "BLUNDERDB_POSTGRES_CONNECT_TIMEOUT"
+	maxConnIdleTimeEnv   = "BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME"
+)
 
-// Connection-pool defaults. MaxConns is overridable via maxConnsEnv.
+// Connection-pool defaults, each overridable via the env vars above (#235).
+//
+// connectTimeout bounds how long dialing a single new connection may take: an
+// unreachable database fails fast (5s) rather than hanging on the operating
+// system's own TCP connect timeout, which is typically much longer and gives
+// no useful signal back to the caller waiting on Open/Acquire.
+//
+// maxConnIdleTime closes a connection that has sat idle in the pool for this
+// long, independent of MaxConnLifetime: a traffic spike that grew the pool
+// well past MinConns should not leave those extra connections open forever
+// once the spike has passed.
 const (
 	defaultMaxConns        = 50
 	defaultMinConns        = 5
 	defaultMaxConnLifetime = time.Hour
 	defaultHealthCheck     = 30 * time.Second
+	defaultConnectTimeout  = 5 * time.Second
+	defaultMaxConnIdleTime = 30 * time.Minute
 )
 
 // Storage is the PostgreSQL implementation of storage.Storage.
@@ -43,10 +65,12 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	if err != nil {
 		return nil, fmt.Errorf("postgres: parse dsn: %w", err)
 	}
-	cfg.MaxConns = maxConnsFromEnv()
-	cfg.MinConns = defaultMinConns
-	cfg.MaxConnLifetime = defaultMaxConnLifetime
-	cfg.HealthCheckPeriod = defaultHealthCheck
+	cfg.MaxConns = int32(intFromEnv(maxConnsEnv, defaultMaxConns))
+	cfg.MinConns = int32(intFromEnv(minConnsEnv, defaultMinConns))
+	cfg.MaxConnLifetime = durationFromEnv(maxConnLifetimeEnv, defaultMaxConnLifetime)
+	cfg.HealthCheckPeriod = durationFromEnv(healthCheckPeriodEnv, defaultHealthCheck)
+	cfg.MaxConnIdleTime = durationFromEnv(maxConnIdleTimeEnv, defaultMaxConnIdleTime)
+	cfg.ConnConfig.ConnectTimeout = durationFromEnv(connectTimeoutEnv, defaultConnectTimeout)
 
 	if opts != nil && opts.EnableRLS {
 		configureRLSPool(cfg)
@@ -69,15 +93,40 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	return s, nil
 }
 
-// maxConnsFromEnv reads the pool upper bound from maxConnsEnv, falling back to
-// defaultMaxConns when the variable is unset or malformed.
-func maxConnsFromEnv() int32 {
-	if v := os.Getenv(maxConnsEnv); v != "" {
+// intFromEnv reads a positive integer from the named environment variable,
+// falling back to def when it is unset, non-numeric, or not positive (#235).
+func intFromEnv(name string, def int) int {
+	if v := os.Getenv(name); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n > 0 {
-			return int32(n)
+			return n
 		}
 	}
-	return defaultMaxConns
+	return def
+}
+
+// durationFromEnv reads a Go duration string ("5s", "30m", "1h") from the
+// named environment variable, falling back to def when it is unset, does not
+// parse, or is not positive (#235).
+func durationFromEnv(name string, def time.Duration) time.Duration {
+	if v := os.Getenv(name); v != "" {
+		if d, err := time.ParseDuration(v); err == nil && d > 0 {
+			return d
+		}
+	}
+	return def
+}
+
+// PoolStats reports a snapshot of the connection pool's state: connections
+// currently checked out, idle connections available, the configured maximum,
+// and the cumulative count of Acquire calls that had to wait for a
+// connection to be released or constructed because the pool was empty
+// (pgxpool's EmptyAcquireCount). Server.sweepPoolStats polls this
+// periodically to feed blunderdb_pg_pool_* (#235); the SQLite backend has no
+// equivalent method, so that sweep is simply never started against it (see
+// poolStatsProvider, internal/server/server.go).
+func (s *Storage) PoolStats() (acquired, idle, max int32, waitCount int64) {
+	stat := s.pool.Stat()
+	return stat.AcquiredConns(), stat.IdleConns(), stat.MaxConns(), stat.EmptyAcquireCount()
 }
 
 // Close shuts the connection pool down.

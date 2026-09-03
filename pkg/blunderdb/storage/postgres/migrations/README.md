@@ -94,13 +94,23 @@ chain committed), never a value in between.
   `ON CONFLICT` target must name a unique constraint. Deduplicates first,
   keeping the highest id per position. Also adds the range CHECKs of `001`
   as `NOT VALID` so a database whose history predates the rule still opens —
-  `blunderdb verify` names the offending rows. Schema-visible: bumped
-  `domain.DatabaseVersion` to 2.18.0 as well; 014, 015 and 016 are one wave.
+  `blunderdb verify` names the offending rows. 014, 015 and 016 are one
+  2.18.0 wave: `domain.DatabaseVersion` moved once, with `014`.
 - `016_review_log_foreign_keys.sql` — `anki_review_log.deck_id` and
-  `.position_id` become real foreign keys (#185). Added `NOT VALID`: every row
-  written from here on is governed, the rows already there are not scanned,
-  and a database carrying a dangling journal row keeps opening — purging a
-  user's review history is not a migration's decision.
+  `.position_id` become real foreign keys (#185), composite (`tenant_id`, …)
+  from the start (#235; `017` promotes every other tenant-scoped foreign key
+  the same way, and this table's own `card_id` follows suit there too — see
+  `017`'s entry below). Added `NOT VALID`: every row written from here on is
+  governed, the rows already there are not scanned, and a database carrying a
+  dangling journal row keeps opening — purging a user's review history is not
+  a migration's decision.
+- `017_composite_tenant_fk.sql` — every foreign key between two tenant-scoped
+  tables becomes composite (`tenant_id`, `parent_id`) `REFERENCES parent
+  (tenant_id, id)` instead of `parent_id REFERENCES parent (id)` alone
+  (#235): `id` is already globally unique (`BIGSERIAL`), so the single-column
+  form was never wrong about *which* row a foreign key points to, only silent
+  about whether that row belongs to the same tenant. Constraint-only, like
+  `006`/`008`/`010`: `domain.DatabaseVersion` is left alone.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql`
 (so fresh databases get it directly), bump `domain.DatabaseVersion` if
