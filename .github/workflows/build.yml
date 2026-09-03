@@ -1419,9 +1419,21 @@ jobs:
           done
         shell: bash
 
-      - name: Create index.html for redirection
+      # H.10 (#252): the root used to be a bare `meta refresh` into `en/` — no
+      # product page, and the language it picked was hardcoded. doc/site/index.html
+      # is the actual home page (screenshot, pitch, per-OS download buttons,
+      # links to the docs/Discord/Releases); its __VERSION__ placeholder names
+      # the same release-asset filenames the `build` job produces, resolved
+      # through GitHub's `/releases/latest/download/` alias so the buttons
+      # always point at whatever shipped last. The Documentation link's
+      # language is picked client-side from navigator.language (see the
+      # template's inline script), not hardcoded to English.
+      - name: Render the home page
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
         run: |
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
+          sed "s/__VERSION__/${VERSION}/g" doc/site/index.html > ./doc/build/index.html
+        shell: bash
 
       # Upload build assets
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
