@@ -25,6 +25,10 @@ Documentation, in nine languages: <https://kevung.github.io/blunderDB/>
 - **Eval panel** with an embedded evaluator: **gammonNet**, ported to Go and compiled into the binary, evaluates any position offline — neural network, 0- to 2-ply search, Janowski cube decisions, match-aware search. The panel shows the facts of the position (win, gammon and backgammon chances, equity) and the one decision the board asks; match equities are normalised, and "too good to double" is a verdict you actually see. Races run in three regimes: **exact** from a two-sided bearoff table (up to 6 checkers embedded, up to 11 with an optional 1.2 GB download), **evaluated** by gammonNet beyond it, and **estimated** — a win probability with an error bound, never a cube verdict. A *challenge* mode hides the numbers until you click.
 - **Batch analysis** fills the positions that have no analysis, after an import or across an existing library (`blunderdb analyze`), without ever overwriting an imported analysis.
 
+| Eval panel (gammonNet) | Stats dashboard |
+|---|---|
+| ![Eval panel](doc/source/img/panel_eval.png) | ![Stats dashboard](doc/source/img/panel_stats_dashboard.png) |
+
 **Sharing a database**
 
 - **Origin watermark**: a signed mark, verified on open, that says what a file is and where it came from — and records nothing on the recipient's side.

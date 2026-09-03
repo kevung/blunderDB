@@ -4,7 +4,258 @@ Guide utilisateur
 =================
 
 Ce guide est une introduction pratique à blunderDB pour une prise en main
-rapide.
+rapide. Quatre tutoriels de bout en bout couvrent les usages les plus
+courants ; la suite du guide reste un catalogue de référence, geste par
+geste, à consulter au besoin.
+
+Tutoriels de bout en bout
+--------------------------
+
+.. _tuto_premier_import:
+
+Mon premier import
+~~~~~~~~~~~~~~~~~~~
+
+Ce tutoriel part d'un fichier de match eXtreme Gammon (``.xg``) et arrive à
+la liste des positions où vous avez le plus perdu.
+
+#. **Créer une base.** Bouton "Nouvelle base de données" de la barre
+   d'outils (ou *CTRL-N*), choisir un emplacement et un nom ; l'extension
+   ``.db`` est ajoutée automatiquement.
+
+#. **Importer le match.** Glisser-déposer le fichier ``.xg`` sur la fenêtre
+   de blunderDB (ou *CTRL-I*, puis le sélectionner). blunderDB détecte le
+   format, importe les positions, l'analyse déjà présente dans le fichier
+   XG (coups, décisions de videau, marques) et affiche le panneau des
+   matchs sur l'import réussi.
+
+#. **Revoir le match.** Double-cliquer sur la ligne du match (ou la
+   sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière
+   position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent
+   les coups ; *PageUp*/*PageDown* changent de partie.
+
+#. **Lire l'analyse.** *CTRL-L* affiche le panneau Analyse : les meilleurs
+   coups, leur équité et l'erreur du coup joué (surligné dans la table).
+   Sur une décision de videau, la même touche affiche la table des
+   équités de videau et le verdict.
+
+   .. figure:: img/panel_analysis.png
+      :width: 100%
+      :alt: Panneau Analyse pendant la revue d'un match
+
+      Le panneau Analyse pendant la revue d'un match : le coup joué est
+      surligné dans la table des coups candidats.
+
+#. **Trouver les plus grosses erreurs.** Depuis n'importe où, la commande
+   ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de commande)
+   charge directement les positions où l'erreur a été la plus coûteuse dans
+   le panneau d'analyse — inutile de construire une recherche à la main
+   pour un premier passage sur un import. Voir :ref:`stats` pour affiner ce
+   choix par joueur ou par plage de dates une fois plusieurs matchs
+   importés.
+
+.. _tuto_etudier_match:
+
+Étudier un match
+~~~~~~~~~~~~~~~~~
+
+Une fois plusieurs matchs importés, ce tutoriel détaille l'étude d'un match
+en particulier — au-delà du simple parcours du tutoriel précédent.
+
+#. **Ouvrir le panneau des matchs** (*CTRL-Tab*). Il liste tous les matchs
+   importés, triables par colonne (joueur, date, longueur, tournoi, PR).
+
+   .. figure:: img/panel_matches.png
+      :width: 100%
+      :alt: Panneau des matchs
+
+      Le panneau des matchs : liste triable, PR et coût MWC par match.
+
+#. **Ouvrir la revue** en double-cliquant sur la ligne, ou en la
+   sélectionnant puis *ENTREE*. La barre d'informations au-dessus du
+   plateau rappelle les deux joueurs, le tournoi et le score.
+
+#. **Basculer coups de pions / décision de videau** avec la touche *d* sur
+   une même position quand les deux analyses sont disponibles (l'une des
+   deux peut être absente selon ce que le fichier importé contenait).
+
+   .. figure:: img/panel_cube.png
+      :width: 100%
+      :alt: Panneau Analyse sur une décision de videau
+
+      Une décision de videau dans le panneau Analyse : équités money,
+      erreur de chaque option, meilleure décision.
+
+#. **Annoter** ce que vous observez : *CTRL-P* ouvre le panneau
+   Commentaires sur la position affichée — utile pour noter *pourquoi* un
+   coup est un blunder, pas seulement *qu'il l'est*.
+
+   .. figure:: img/panel_comments.png
+      :width: 100%
+      :alt: Panneau Commentaires sur une position
+
+      Le panneau Commentaires : un fil d'échanges attaché à la position
+      affichée.
+
+#. **Étiqueter** une position à rejouer plus tard : *ESPACE* pour ouvrir la
+   ligne de commande, ``#`` suivi d'un mot-clé (par exemple ``#blitz``),
+   *ENTREE*. Voir :ref:`guide_edit_position` pour éditer directement la
+   position si le coup joué n'est pas celui que vous voulez étudier.
+
+#. **Sortir du mode match** avec la commande ``m`` : la bibliothèque
+   retrouve son état précédent, la dernière position visitée du match est
+   mémorisée pour la prochaine visite.
+
+.. _tuto_anki:
+
+Une session Anki
+~~~~~~~~~~~~~~~~~~
+
+Le panneau Anki transforme une collection ou une recherche en paquet de
+cartes à réviser selon l'algorithme FSRS (répétition espacée).
+
+#. **Constituer le paquet.** Deux points de départ possibles : une
+   :ref:`collection <guide_collections>` de positions choisies à la main,
+   ou une recherche (*CTRL-F*) — par exemple toutes les décisions de videau
+   marquées comme des erreurs. La commande ``bl 30`` (30 pires erreurs)
+   fournit un point de départ tout indiqué pour un premier paquet.
+
+#. **Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton "New
+   Deck", nommer le paquet ; il se synchronise sur la recherche ou la
+   collection choisie.
+
+   .. figure:: img/panel_anki.png
+      :width: 100%
+      :alt: Panneau Anki, liste des paquets
+
+      Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et
+      dues aujourd'hui.
+
+#. **Réviser** (*Study*) : chaque carte montre une position, vous formulez
+   votre réponse mentalement, dévoilez la solution (le plateau, l'analyse
+   et le commentaire éventuel), puis notez votre estimation de 1 (raté) à 4
+   (facile). FSRS espace la prochaine présentation en conséquence. Rien
+   n'oblige à dévoiler la réponse pour continuer si vous êtes sûr de vous.
+
+#. **S'échauffer sans perturber l'échéancier** (*Cram*) : présente des
+   positions aléatoires du paquet sans toucher au planning FSRS — pratique
+   avant un tournoi, ou pour réviser intensément sans décaler les
+   échéances des autres cartes.
+
+Voir :ref:`panneau_anki` pour le détail des paramètres (limiter la séance,
+taux de rétention visé, réinitialisation d'un paquet).
+
+.. _tuto_serveur_proxy:
+
+Déployer le mode serveur derrière un proxy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Le mode serveur (``blunderdb serve``) expose le moteur de blunderDB en HTTP
++ JSON. Il **n'authentifie personne** (ADR-0005) : il fait confiance à
+l'en-tête ``X-Tenant-ID`` tel qu'il le reçoit, et doit donc toujours être
+placé derrière un reverse-proxy qui, lui, authentifie et fixe cet en-tête.
+Ce tutoriel déploie l'image publiée derrière un nginx minimal, en
+authentification HTTP Basic à un seul tenant — le point de départ le plus
+simple, à adapter (SSO, certificats clients, mapping multi-tenant par
+utilisateur) selon votre contexte.
+
+#. **Lancer le démon**, replié sur ``127.0.0.1`` (jamais exposé
+   directement) :
+
+   .. code-block:: bash
+
+      docker run --rm -p 127.0.0.1:8080:8080 -v blunderdb-data:/data \
+          -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
+          ghcr.io/kevung/blunderdb-serve:0.35.0
+
+#. **Créer un fichier de mot de passe** pour l'authentification Basic :
+
+   .. code-block:: bash
+
+      htpasswd -c /etc/nginx/blunderdb.htpasswd alice
+
+#. **Configurer nginx** pour authentifier puis relayer, en fixant
+   ``X-Tenant-ID`` lui-même — jamais celui envoyé par le client :
+
+   .. code-block:: nginx
+
+      server {
+          listen 443 ssl;
+          server_name blunderdb.exemple.org;
+
+          location /v1/ {
+              auth_basic           "blunderDB";
+              auth_basic_user_file /etc/nginx/blunderdb.htpasswd;
+
+              proxy_pass         http://127.0.0.1:8080;
+              proxy_set_header   X-Tenant-ID "1";
+          }
+      }
+
+#. **Vérifier** avec la sous-commande de santé, qui ne passe pas par le
+   proxy :
+
+   .. code-block:: bash
+
+      docker exec <container> blunderdb healthcheck
+
+Voir :ref:`headless` pour la surface complète (routes, backend PostgreSQL
+multi-tenant avec Row-Level Security, migration depuis SQLite) et l'image
+Docker publiée.
+
+Comment progresser avec blunderDB
+------------------------------------
+
+Au-delà des tutoriels ci-dessus, une routine hebdomadaire simple tire le
+plus de blunderDB pour progresser :
+
+#. **Importer** ses matchs de la semaine (glisser-déposer, ou import de
+   dossier récursif si plusieurs fichiers) dès que possible après les avoir
+   joués — la mémoire du contexte s'estompe vite.
+
+#. **Filtrer les décisions coûteuses** : commande ``bl`` (pires erreurs), ou
+   panneau Stats filtré sur la période et le type de décision (pions /
+   videau) qui pèse le plus dans le PR.
+
+#. **Commenter** chaque position revue : ce qui a été manqué, la structure
+   en cause. Un commentaire écrit force une explication — une position
+   simplement revue sans un mot s'oublie aussi vite qu'elle a été manquée.
+
+#. **Constituer un paquet Anki** à partir de ces positions commentées : la
+   répétition espacée fait revenir les mêmes motifs jusqu'à ce qu'ils
+   deviennent des réflexes.
+
+#. **Suivre le PR par tournoi** dans l'onglet Progression du panneau Stats
+   (:ref:`stats`) : une courbe qui baisse tournoi après tournoi est le seul
+   signal qui ne ment pas.
+
+Cette routine ne vaut que si elle est répétée — dix minutes par semaine,
+tenues, valent mieux qu'une remise à plat ponctuelle et abandonnée.
+
+Scénario de démonstration (3 minutes)
+----------------------------------------
+
+Pour présenter blunderDB sans base personnelle, la commande ``demo``
+charge une base d'exemple (positions et matchs fictifs). Le scénario
+suivant se déroule en trois minutes :
+
+#. *0:00* — ``demo`` en ligne de commande (ou le bouton correspondant de la
+   barre d'outils) charge la base d'exemple. Le panneau des matchs
+   s'affiche.
+
+#. *0:30* — Ouvrir un match (double-clic), parcourir quelques coups aux
+   flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une
+   erreur visible.
+
+#. *1:30* — Commande ``bl`` : la vue bascule directement sur les pires
+   erreurs de la base, toutes positions confondues.
+
+#. *2:15* — Panneau Anki (*CTRL-K*) : créer un paquet à partir de ces
+   positions, lancer une carte en *Study* pour montrer le cycle
+   question/réponse/notation.
+
+#. *2:45* — Retour au panneau Stats (*CTRL-D*), onglet Dashboard, pour
+   montrer où ce travail se lit dans la durée.
 
 Créer une nouvelle base de données
 ----------------------------------
@@ -233,6 +484,8 @@ Le panneau des matchs (*CTRL-Tab*) permet de:
 
 * supprimer un match à l'aide de la touche *Del*.
 
+.. _guide_collections:
+
 Gérer les collections
 ---------------------
 
@@ -290,29 +543,48 @@ Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coû
 
 #. Cliquer sur un indicateur pour accéder directement aux positions correspondantes.
 
-Calculer l'EPC
---------------
+Évaluer une position (panneau Eval)
+------------------------------------
 
-Le panneau Eval calcule l'EPC (Effective Pip Count) et les autres statistiques
-de bearoff d'une position.
+Le panneau Eval évalue n'importe quelle position — pas seulement une course.
+Sur une position de bearoff pur, il calcule l'EPC (Effective Pip Count) et
+les autres statistiques de bearoff ; sur toute autre position, l'évaluateur
+embarqué gammonNet fournit les coups candidats ou la décision de videau,
+hors ligne, sans XG ni GNUbg.
+
+.. figure:: img/panel_eval.png
+   :width: 100%
+   :alt: Panneau Eval sur une décision de coups de pions
+
+   Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de
+   chaque coup candidat, calculées par gammonNet.
 
 #. Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur,
-   ou exécuter la commande ``epc``.
+   ou exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau
+   vierge, prêt à éditer.
 
-#. Éditer la position des pions dans le jan (6 derniers points).
+#. Pour évaluer la position déjà affichée (une position de la bibliothèque,
+   ou celle d'un match en cours de revue) plutôt qu'un plateau vierge,
+   clic droit sur le plateau puis "Evaluate this position" — la position
+   affichée est envoyée telle quelle dans le panneau Eval.
 
-#. Les résultats sont affichés en temps réel dans le panneau Eval dédié:
-   EPC, nombre moyen de lancers, écart type, pip count et wastage — et, en
-   bearoff pur, la probabilité de gain du joueur au trait avec, dans le
-   domaine exact, le verdict de videau money (voir la section
-   « Méthodologie et hypothèses du panneau Eval » du manuel).
+#. Le plateau entier s'édite au clic ou au clavier : pions, dés, score,
+   position du videau, joueur au trait. Éditer uniquement les pions du jan
+   (6 derniers points) des deux côtés place la position en régime bearoff.
+
+#. Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre
+   moyen de lancers, écart type, pip count et wastage, la probabilité de
+   gain du joueur au trait et, dans le domaine exact, le verdict de videau
+   money ; sur toute autre position avec des dés posés, les coups candidats
+   classés par équité ; sans dés, la décision de videau. Voir la section
+   « Méthodologie et hypothèses du panneau Eval » du manuel.
 
 #. Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les
    résultats sont masqués à chaque modification et se révèlent zone par
    zone, d'un clic.
 
 .. note::
-   Le calculateur fonctionne pour les deux joueurs simultanément.
+   Le panneau fonctionne pour les deux joueurs simultanément.
 
 Afficher l'analyse d'une position importée depuis XG
 ----------------------------------------------------

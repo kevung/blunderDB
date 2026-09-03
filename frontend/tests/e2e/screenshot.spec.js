@@ -24,33 +24,17 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { spawnSync } from 'node:child_process';
-import { statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installWailsMock, overrideDbMethodByArg } from './helpers/wailsMock.js';
 import { showcaseMock, showcaseAnalyses, showcasePlayedMove } from './helpers/showcase.js';
+import { captureAndOptimise } from './helpers/screenshotTools.js';
 
 const OUTPUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../doc/source/_static/screenshot.png');
 const MAX_BYTES = 400 * 1024;
 const VIEWPORT = { width: 1280, height: 960 };
 
 test.skip(!process.env.SCREENSHOT, 'Capture documentaire : lancer avec SCREENSHOT=1');
-
-/** Lance le premier optimiseur PNG disponible ; sans-bruit s'il n'y en a pas. */
-function optimise(file) {
-    const candidates = [
-        ['pngquant', ['--force', '--skip-if-larger', '--quality', '70-95', '--output', file, file]],
-        ['oxipng', ['-o', '4', '--strip', 'safe', file]],
-        ['optipng', ['-quiet', '-o2', file]]
-    ];
-    for (const [bin, args] of candidates) {
-        if (spawnSync('which', [bin]).status !== 0) continue;
-        const run = spawnSync(bin, args, { stdio: 'inherit' });
-        return { bin, ok: run.status === 0 };
-    }
-    return null;
-}
 
 test('capture de l’interface pour la documentation', async ({ page }) => {
     test.setTimeout(30000);
@@ -64,8 +48,10 @@ test('capture de l’interface pour la documentation', async ({ page }) => {
 
     // Le panneau Match est l'onglet ouvert au chargement : Entrée sur la ligne
     // du match entre en revue sur son dernier coup visité, onglet Analyse actif.
+    // Clic sur le nom du joueur, pas sur la ligne entière : son centre tombe
+    // sur la cellule tournoi, qui ouvre son propre éditeur et vole Entrée.
     const matchPanel = page.getByRole('region', { name: 'Match navigator' });
-    await matchPanel.getByRole('row', { name: /Alice/ }).click();
+    await matchPanel.getByRole('row', { name: /Alice/ }).getByText('Alice').click();
     await page.keyboard.press('Enter');
     await expect(page.getByTestId('match-info-bar')).toContainText('Alice');
     await expect(statusBar).toContainText('move 32/35');
@@ -91,10 +77,6 @@ test('capture de l’interface pour la documentation', async ({ page }) => {
     expect(body).not.toMatch(/\b[a-z]+\.[a-zA-Z]+\.[a-zA-Z]+\b/);
     await expect(page.locator('.modal, [role="dialog"]')).toHaveCount(0);
 
-    await page.screenshot({ path: OUTPUT, scale: 'css', animations: 'disabled' });
-    const optimised = optimise(OUTPUT);
-    const size = statSync(OUTPUT).size;
-    // eslint-disable-next-line no-console -- le poids du fichier produit est la sortie utile de ce script
-    console.log(`${OUTPUT}: ${(size / 1024).toFixed(0)} KiB${optimised ? ` (${optimised.bin})` : ''}`);
+    const size = await captureAndOptimise(page, OUTPUT);
     expect(size).toBeLessThanOrEqual(MAX_BYTES);
 });
