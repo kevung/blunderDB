@@ -3,7 +3,9 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 It deliberately holds **working rules and invariants, not an architecture tour**. The
-architecture is documented where it lives: the package doc of
+architecture is documented where it lives: `ARCHITECTURE.md` (three diagrams —
+mode dispatch, the `database`/`storage`/backends layering, an import's path
+through parser/ingest/Zobrist), the package doc of
 `pkg/blunderdb/storage/storage.go` (persistence contract and backends), `CONTEXT.md`
 (domain glossary), `docs/adr/` (decisions), `doc/source/mode_headless.rst` (server
 mode, user-facing), and `CLI_USAGE.md` (CLI reference). Read those before changing
@@ -19,9 +21,10 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|collection|anki|verify|vacuum|delete|help|version|info|edit|search|epc|analyze` → **CLI**. The
-  names live in one place — `handlers()` in `internal/cli/cli.go`; `main.go`
-  asks `cli.IsCommand`. Never re-introduce a second list there.
+- `create|import|export|identity|open|list|match|collection|anki|verify|vacuum|delete|healthcheck|completion|help|version|info|edit|search|epc|analyze` →
+  **CLI**. The names live in one place — `handlers()` in `internal/cli/cli.go`
+  (`cli.CommandNames()` is the exported, sorted view `cmd/cli-doc-gen` walks);
+  `main.go` asks `cli.IsCommand`. Never re-introduce a second list there.
 
 ## Build & Run
 
@@ -184,9 +187,19 @@ Backend packages, thinnest description that lets you find things:
   (XDG-persisted window/last-DB config); `logging.go` (slog).
 - `pkg/blunderdb/domain/` — dependency-free domain types and constants
   (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
-- `pkg/blunderdb/engine/` — bitboards, Zobrist hashing, EPC (embeds `gnubg_os6.bd`);
+- `pkg/blunderdb/engine/` — what is computed ABOUT a position: Zobrist hashing
+  (the identity positions dedup on), bitboards, EPC (embeds `gnubg_os6.bd`), the
+  match equity table (`met.go` — Kazaross-XG2 + Zadeh, `GnuBGGetME` the single
+  entry point), and the two storage codecs (compact board, zstd analysis blob,
+  and every derived scalar column). Read its package doc (`doc.go`) for the
+  file-by-file map. Two subpackages, the two evaluators:
   `engine/race/` — bearoff race analysis: two-sided `.bd` reader (embeds
-  `gnubg_ts0.bd`), win-probability estimation, money cube verdicts (ADR-0009).
+  `gnubg_ts0.bd`), win-probability estimation, money cube verdicts (ADR-0009);
+  `engine/gammonnet/` — the neural evaluator, ~5 000 lines and the largest thing
+  in the tree: a Go port of gammonNet's encoding, network (AVX2/pure-Go kernel),
+  expectiminimax search and Janowski cube model (ADR-0011, ADR-0022, ADR-0023,
+  ADR-0024, ADR-0029). Its arithmetic is a contract: read its package doc and
+  `cube.go`'s header first.
 - `pkg/blunderdb/storage/` — the persistence **contract**; backends
   `storage/sqlite/` (desktop/CLI) and `storage/postgres/` (serve daemon, RLS,
   tenant purge); shared contract tests in `storage/storagetest/`. Read this
@@ -206,7 +219,12 @@ Backend packages, thinnest description that lets you find things:
 - `internal/gui/` — Wails `App` (dialogs, clipboard, drag-drop) + bootstrap;
   `internal/cli/` — one `cli_<cmd>.go` per subcommand; `internal/server/` — the
   HTTP daemon (`routes.go`, `handlers_*.go`, middleware, metrics, `call.go`).
-- `cmd/` — `serve` (headless entrypoint), `blunderdb-loadtest`, `extract_gnubg_stats`.
+- `cmd/` — `serve` (headless entrypoint) plus dev-time tools that never ship in
+  the binary and are not CLI subcommands: `blunderdb-loadtest` (drives the
+  `/v1/*` endpoints with a configurable scenario mix), `extract_gnubg_stats`
+  (parses GS tags from a gnuBG SGF file), `calibrace` (fits `engine/race`'s
+  correction against a TS-06-11 oracle) and `train-analysis-dict` (regenerates
+  the embedded zstd dictionary, ADR-0030). Each carries its own package doc.
 
 Match/position parsers for external formats are separate modules
 (`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`
@@ -341,5 +359,14 @@ Violating one of these is a bug even if all tests pass:
   (`TestDemoDatabaseIsCurrent` fails otherwise). Fictional names only — the
   fixtures name real people and `scripts/demodb` disguises them (#162).
 - `tasks/` holds finished task sheets (v2.0.0 optimization, headless refactor,
-  stats parity…) kept as execution history; `tasks/FOLLOWUPS.md` lists still-open
-  follow-ups.
+  stats parity…) kept as execution history; `tasks/FOLLOWUPS.md` is a redirect
+  note only — open follow-ups now live in `tasks/BACKLOG.md`, sorted by domain.
+- `Dockerfile.hostile` is the ADR-0004 backstop image: a deliberately minimal
+  environment (no clipboard tool, no CJK fonts, an exotic locale) that runs the
+  whole Go suite to catch code that inline-assumes a host capability instead of
+  going through the detect-and-fall-back policies; built and run by the
+  `hostile-smoke` job in `build.yml`. There is no dedicated `nightly.yml`: the
+  weekly-scheduled `fuzz.yml` already carries the checks too slow for every push
+  (continuous fuzzing, the `gammonnet-gold` search-parity gold file, the full
+  arm64 kernel-identity sweep); routing the other nightly-only checks there is
+  still open (E.12, #228).

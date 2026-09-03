@@ -1,3 +1,18 @@
+// Package engine holds blunderDB's own low-level backgammon primitives: the
+// bitboard representation and occupancy masks (OccupancyMasks) used by the
+// search's move generation, the Zobrist hashing that gives a Position its
+// per-tenant identity (zobrist.go — see the hashing invariant in CLAUDE.md:
+// the population order is DRAWN once in init() and never reordered without
+// rehashing every database ever written), analysis blob encoding/decoding
+// (analysiscodec.go, zstd with a shared dictionary — ADR-0030), and the
+// classic one-sided EPC/pip-count estimate (epc.go, embeds gnubg_os6.bd).
+//
+// Two sibling packages build on top of it rather than living inside it:
+// engine/race is the two-sided bearoff oracle (exact win chances and money
+// cube verdicts — ADR-0009, ADR-0012, ADR-0027), and engine/gammonnet is the
+// embedded neural evaluator, a Go port of gammonNet (ADR-0011) that supplies
+// checker-play and cube decisions beyond the bearoff domain, including at a
+// match score.
 package engine
 
 import "github.com/kevung/blunderdb/pkg/blunderdb/domain"

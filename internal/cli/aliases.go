@@ -1,3 +1,19 @@
+// Package cli implements the blunderDB command-line interface: one
+// `blunderdb <command>` per file (cli_<cmd>.go), sharing the CLI type and its
+// *database.Database handle. handlers() in cli.go is the single source of
+// truth for what counts as a subcommand — main.go's mode dispatch asks
+// IsCommand instead of keeping a second list, and CommandNames() is the
+// exported, sorted view cmd/cli-doc-gen walks to keep CLI_USAGE.md's flag
+// reference from drifting. Two subcommands (collection, anki) are
+// themselves small dispatchers over their own sub-command table, wired the
+// same way for the same reason: a sub-command missing from the table is a
+// sub-command the parity test (cli_dispatch_test.go) will not find.
+//
+// Every command follows the same shape: build a flag.FlagSet with a custom
+// Usage, parse, open the database, do the one thing the command is for, and
+// print `text` or `json` depending on --format where the command supports
+// both. See CLI_USAGE.md for the reference and doc/source/cli.rst for the
+// user-facing manual.
 package cli
 
 // Domain and persistence symbols are re-exported here so the CLI command

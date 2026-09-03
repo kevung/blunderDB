@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -130,6 +131,20 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 func IsCommand(name string) bool {
 	_, ok := (&CLI{}).handlers()[strings.ToLower(name)]
 	return ok
+}
+
+// CommandNames returns every top-level CLI subcommand name, sorted. It is the
+// exported view of handlers() for callers outside the package that need the
+// list without a second hand-maintained copy — currently cmd/cli-doc-gen,
+// which walks it to capture each subcommand's --help text into CLI_USAGE.md.
+func CommandNames() []string {
+	h := (&CLI{}).handlers()
+	names := make([]string, 0, len(h))
+	for name := range h {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }
 
 // printUsage prints the usage information

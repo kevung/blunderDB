@@ -193,7 +193,7 @@
 <style>
     /* ── Empty state ── */
     .empty-state {
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;
@@ -240,17 +240,17 @@
         font-size: var(--font-size-stat-figure);
         font-weight: 700;
         font-variant-numeric: tabular-nums;
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     .single-label {
         font-size: var(--font-size-base);
-        color: #333;
+        color: var(--color-text);
     }
 
     .single-meta {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .single-grade {
@@ -268,11 +268,11 @@
     .single-actions button {
         font-size: var(--font-size-small);
         padding: 3px 8px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         background: none;
         cursor: pointer;
-        color: #333;
+        color: var(--color-text);
     }
 
     .single-actions button:hover {
@@ -291,7 +291,7 @@
         font-size: var(--font-size-small);
         padding: 2px 7px;
         border-radius: 10px;
-        color: #333;
+        color: var(--color-text);
         white-space: nowrap;
     }
 </style>

@@ -1,3 +1,16 @@
+// Package database is the legacy SQLite-only persistence wrapper the Wails
+// GUI and the CLI run against — the *Database type, historically the sole
+// backend before the storage contract (pkg/blunderdb/storage) was extracted
+// for the serve daemon's PostgreSQL side. It delegates the actual reads and
+// writes to storage/sqlite, and adds nothing on top except the RWMutex the
+// GUI's concurrent goroutines share (mu) and the aliasing this file provides.
+//
+// Schema DDL lives in db_schema.go, migrations in db_migration.go, and
+// everything else is split by domain into per-feature db_*.go files (one
+// each for matches, positions, collections, anki decks, stats, and so on).
+// A schema change needs a DatabaseVersion bump (pkg/blunderdb/domain) and a
+// migration step registered in both this package and storage/sqlite — see
+// the schema-change invariant in CLAUDE.md.
 package database
 
 // Domain types and constants are re-exported from

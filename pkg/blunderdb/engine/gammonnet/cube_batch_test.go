@@ -22,7 +22,7 @@ import (
 // inventées ratent les régimes que le vrai réseau produit.
 func realCubeDistributions(t *testing.T, n int) [][NumOutputs]float32 {
 	t.Helper()
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}

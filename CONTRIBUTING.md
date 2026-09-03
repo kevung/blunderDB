@@ -1,6 +1,6 @@
 # Contributing to blunderDB
 
-Thank you for considering a contribution. blunderDB is a one-person free-software project; a bug report with a match file that reproduces it, a translation fix, or a pull request are all welcome. This page says how to get a change in without friction. The rules that tests do not catch live in [CLAUDE.md](CLAUDE.md): it is written for the coding agent, but its *Invariants* section is the list every contributor is held to.
+Thank you for considering a contribution. blunderDB is a one-person free-software project; a bug report with a match file that reproduces it, a translation fix, or a pull request are all welcome. This page says how to get a change in without friction. Start with [ARCHITECTURE.md](ARCHITECTURE.md) for the shape of the system (mode dispatch, the storage layering, an import's path through the codebase). The rules that tests do not catch live in [CLAUDE.md](CLAUDE.md): it is written for the coding agent, but its *Invariants* section is the list every contributor is held to.
 
 ## Where to talk
 

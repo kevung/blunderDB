@@ -176,7 +176,7 @@
 <style>
     .hint {
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         margin: 0;
         line-height: 1.5;
     }
@@ -185,14 +185,14 @@
         width: 100%;
         padding: 4px 8px;
         font-size: var(--font-size-base);
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         box-sizing: border-box;
         outline: none;
     }
 
     .filter-input:focus {
-        border-color: #1976d2;
+        border-color: var(--color-primary);
     }
 
     .player-list {
@@ -239,13 +239,13 @@
 
     .player-count {
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
         white-space: nowrap;
     }
 
     .use-btn {
         background: none;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
         color: #555;
@@ -263,7 +263,7 @@
 
     .state-msg {
         text-align: center;
-        color: #999;
+        color: var(--color-text-muted);
         padding: 16px;
         font-size: var(--font-size-base);
     }
@@ -285,7 +285,7 @@
         flex: 1;
         padding: 4px 8px;
         font-size: var(--font-size-base);
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 3px;
         outline: none;
         box-sizing: border-box;

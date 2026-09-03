@@ -156,6 +156,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadFilters":                      {Server: "/v1/filters.list", Why: whyGUIState},
 	"LoadMetadata":                     {CLI: "info", Why: whyMetadata},
 	"LoadPosition":                     {CLI: "search --position-ids", Server: "/v1/positions.load"},
+	"LoadPositionIDsByFilters":         {Why: "the id list the GUI browses a search result with (windows are fetched by LoadPositionsByIDs), mirroring ListPositionIDs for a search instead of the whole library (D.8, #208); the CLI's `search` and the daemon's /v1/search.find already page real SQL LIMIT/OFFSET (B.10, #178) and print or stream the positions themselves, which is what a script or a remote client wants"},
 	"LoadPositionsByIDs":               {CLI: "search --position-ids", Server: "/v1/positions.loadByIds"},
 	"LoadPositionsByFilters":           {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCore":       {CLI: "search", Server: "/v1/search.find"},

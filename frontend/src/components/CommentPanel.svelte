@@ -285,20 +285,20 @@
         outline: none;
         background: transparent;
         font-size: var(--font-size-small);
-        color: #333;
+        color: var(--color-text);
         padding: 2px 0;
     }
     .clear-btn {
         border: none;
         background: none;
-        color: #999;
+        color: var(--color-text-muted);
         cursor: pointer;
         font-size: var(--font-size-base);
         padding: 0 2px;
         line-height: 1;
     }
     .clear-btn:hover {
-        color: #333;
+        color: var(--color-text);
     }
 
     /* Feed */
@@ -328,7 +328,7 @@
 
     .msg-text {
         font-size: var(--font-size-base);
-        color: #333;
+        color: var(--color-text);
         white-space: pre-wrap;
         word-break: break-word;
         line-height: 1.35;
@@ -340,7 +340,7 @@
     }
     .msg-date {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         font-style: italic;
     }
     .msg-footer {
@@ -353,7 +353,7 @@
     .msg-action {
         border: none;
         background: none;
-        color: #888;
+        color: var(--color-text-muted);
         cursor: pointer;
         font-size: var(--font-size-title);
         padding: 2px 6px;
@@ -376,7 +376,7 @@
         width: 100%;
         box-sizing: border-box;
         padding: 4px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         font-size: var(--font-size-base);
         font-family: inherit;

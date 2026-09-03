@@ -1,3 +1,13 @@
+// Command blunderdb is the single binary for every mode this project ships:
+// with no arguments it launches the Wails desktop GUI (internal/gui); its
+// first argument otherwise selects `serve` (the headless HTTP+JSON daemon,
+// internal/server), `migrate` (copy a SQLite database into PostgreSQL under
+// a tenant, pkg/blunderdb/migrate), or a CLI subcommand (internal/cli,
+// dispatched through cli.IsCommand against the single handlers() table it
+// owns — never duplicate that list here). The GUI build embeds
+// frontend/dist (go:embed all:frontend/dist) and the app icon; cmd/serve is
+// the sibling entrypoint that builds the daemon alone, without Wails or the
+// embedded frontend, for the container image.
 package main
 
 import (

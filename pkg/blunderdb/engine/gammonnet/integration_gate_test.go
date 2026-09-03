@@ -111,11 +111,11 @@ func TestIntegrationGate(t *testing.T) {
 	xgFile := "../../../../testdata/charlot1-charlot2_7p_2025-11-08-2305.xg"
 
 	cfg := DefaultConfig(2)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -404,7 +404,7 @@ func searcherFor(t *testing.T, net, prune *Network, cfg SearchConfig, state *Mat
 	cfg.UseCube = true
 	cfg.CubeOwner = owner
 	cfg.CubeX = DefaultEfficiency(owner)
-	s := NewSearcherWith(cfg, net, prune)
+	s := newSearcherWith(cfg, net, prune)
 	s.WithWorkers(16)
 	return s, true
 }

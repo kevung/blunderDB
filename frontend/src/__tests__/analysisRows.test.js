@@ -17,8 +17,6 @@ import {
     orderMoveTokens,
     condenseMoveTokens,
     moveLabel,
-    playedMovePredicate,
-    playedCubePredicate,
     isPlayedOption,
     DASH,
     HIDDEN,
@@ -363,39 +361,6 @@ describe('checkerRows', () => {
     });
 });
 
-describe('played predicates — what AnalysisPanel highlights, as pure functions', () => {
-    test('a move is matched regardless of the order its parts are written in', () => {
-        const isPlayed = playedMovePredicate({ playedMove: '13/10 24/23' }, false);
-        expect(isPlayed({ move: '24/23 13/10' })).toBe(true);
-        expect(isPlayed({ move: '24/21 13/12' })).toBe(false);
-        expect(isPlayed({})).toBe(false);
-    });
-
-    test('browsing: every recorded play counts; in a match: only the current one', () => {
-        const analysis = { playedMove: '8/5 6/5', playedMoves: ['24/23 13/10', '8/5 6/5'] };
-        expect(playedMovePredicate(analysis, false)({ move: '24/23 13/10' })).toBe(true);
-        expect(playedMovePredicate(analysis, true)({ move: '24/23 13/10' })).toBe(false);
-        expect(playedMovePredicate(analysis, true)({ move: '8/5 6/5' })).toBe(true);
-        expect(playedMovePredicate({}, true)({ move: '8/5 6/5' })).toBe(false);
-    });
-
-    test('cube actions: the union of recorded plays when browsing, the current one in a match', () => {
-        const browsing = playedCubePredicate({ playedCubeAction: 'Double', playedCubeActions: ['Double', 'Take'] }, false);
-        expect(browsing('Double')).toBe(true);
-        expect(browsing('Take')).toBe(true);
-        expect(browsing('Pass')).toBe(false);
-        expect(browsing('No Double')).toBe(false);
-
-        const inMatch = playedCubePredicate({ playedCubeAction: 'No Double', playedCubeActions: ['Double', 'Take'] }, true);
-        expect(inMatch('No Double')).toBe(true);
-        expect(inMatch('Double')).toBe(false);
-        expect(playedCubePredicate({}, true)('Double')).toBe(false);
-        expect(playedCubePredicate({}, false)('Double')).toBe(false);
-    });
-
-    test('a standalone take/pass response marks the combined double row, as the panel does', () => {
-        const isPlayed = playedCubePredicate({ playedCubeAction: 'Take' }, false);
-        expect(isPlayedOption('double_take', isPlayed)).toBe(true);
-        expect(isPlayedOption('double_pass', isPlayed)).toBe(false);
-    });
-});
+// The "played" predicates themselves (playedMovePredicate/playedCubeActionPredicate,
+// including isPlayedOption's use of one) moved to playedMarks.test.js — they live in
+// utils/playedMarks.js, not here (fiche D.10, #210).

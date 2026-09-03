@@ -266,7 +266,7 @@
 <style>
     /* ── Shared ── */
     .empty-state {
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;

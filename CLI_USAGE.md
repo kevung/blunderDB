@@ -4,10 +4,12 @@ The blunderDB application supports both GUI and command-line interface (CLI) mod
 
 ## Building
 
-Build the blunderDB binary using Wails:
+Build the blunderDB binary using Wails (the `webkit2_41` tag matches
+webkit2gtk-4.1 on Arch and ubuntu-latest; drop it for webkit2gtk-4.0 on
+ubuntu-22.04 — see `CLAUDE.md`):
 
 ```bash
-wails build
+wails build -tags webkit2_41
 ```
 
 The binary will be located at `build/bin/blunderDB`.
@@ -1329,8 +1331,909 @@ place (each has its own tenant-scoped table, `session_state` since schema
 2.16.0); data migration of the core position library and match history is the
 priority.
 
+## Flag reference (generated)
+
+<!-- BEGIN GENERATED CLI REFERENCE (cmd/cli-doc-gen; do not edit by hand, run `go run ./cmd/cli-doc-gen`) -->
+
+Captured verbatim from each subcommand's `--help`. Regenerate with `go run ./cmd/cli-doc-gen` whenever a flag changes; the prose and
+examples above are hand-written and this section never rewrites them.
+
+### `blunderdb analyze`
+
+```
+Usage: blunderdb analyze [options]
+
+Write a gammonNet analysis for every position that has none —
+catching up a library built before this feature existed. A
+Position already carrying any analysis (XG, GNUbg, BGBlitz, or a
+prior gammonNet run) is left untouched: this only ever fills a
+gap (ADR-0013). Interrupted with Ctrl-C, the run is cancelled
+cleanly — nothing is lost, and re-running picks up exactly where
+it left off, with no journal needed.
+
+--stale switches to the other sweep: every position whose stored
+analysis is entirely gammonNet's own (never an XG/GNUbg/BGBlitz
+one — ADR-0013 protects those unconditionally) but was written at
+an older engine version or a different depth than --ply now asks
+for. Use it after an engine upgrade, or after raising --ply for a
+library already analysed at a shallower depth.
+
+Positions are analysed --jobs at a time, on that many cores: the
+positions of a batch are independent, so the result is the same
+whatever --jobs says. Use --jobs 1 to leave the machine free.
+
+A position gammonNet declines to evaluate (a match score beyond
+its MET, a cube state it refuses) is reported separately at the
+end, as "refused": not a failure, and not retried to no effect.
+
+Options:
+  -candidates int
+    	Candidate moves kept per checker decision (default 10)
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -jobs int
+    	Positions analysed in parallel (one CPU each) (default 16)
+  -ply int
+    	Search depth (canonical: 2, k=12) (default 2)
+  -prune-k int
+    	Pruning width (canonical: 12) (default 12)
+  -stale
+    	Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps
+
+Examples:
+  blunderdb analyze --db database.db
+  blunderdb analyze --db database.db --jobs 1
+  blunderdb analyze --db database.db --stale --ply 3
+  blunderdb analyze --db database.db --format json
+```
+
+### `blunderdb anki decks`
+
+```
+Usage: blunderdb anki decks [options]
+
+List the decks of the database with their counters.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text, json or csv (default "text")
+
+Examples:
+  blunderdb anki decks --db database.db
+  blunderdb anki decks --db database.db --format csv
+```
+
+### `blunderdb anki forecast`
+
+```
+Usage: blunderdb anki forecast [options]
+
+Cards coming due per calendar day (UTC). Day 0 holds every overdue card.
+
+Options:
+  -days int
+    	Number of days to project (1-365) (default 30)
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (0 = every deck)
+  -format string
+    	Output format: text, json or csv (default "text")
+
+Examples:
+  blunderdb anki forecast --db database.db --deck 2 --days 14
+  blunderdb anki forecast --db database.db --days 30 --format csv   # every deck
+```
+
+### `blunderdb anki retention`
+
+```
+Usage: blunderdb anki retention [options]
+
+Measured retention of one deck against its target.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb anki retention --db database.db --deck 2
+  blunderdb anki retention --db database.db --deck 2 --format json
+```
+
+### `blunderdb anki stats`
+
+```
+Usage: blunderdb anki stats [options]
+
+Review statistics of one deck.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb anki stats --db database.db --deck 2
+  blunderdb anki stats --db database.db --deck 2 --format json
+```
+
+### `blunderdb anki sync`
+
+```
+Usage: blunderdb anki sync [options]
+
+Resynchronise a deck with its source (collection or stored search).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (required)
+
+Examples:
+  blunderdb anki sync --db database.db --deck 2
+```
+
+### `blunderdb collection create`
+
+```
+Usage: blunderdb collection create [options]
+
+Create an empty collection.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -description string
+    	Collection description
+  -name string
+    	Collection name (required)
+
+Examples:
+  blunderdb collection create --db database.db --name "Blitz openings"
+```
+
+### `blunderdb collection delete`
+
+```
+Usage: blunderdb collection delete [options]
+
+Delete a collection. Its positions stay in the database.
+
+Options:
+  -confirm
+    	Confirm deletion without prompting
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Collection ID (required)
+
+Examples:
+  blunderdb collection delete --db database.db --id 3 --confirm
+```
+
+### `blunderdb collection export`
+
+```
+Usage: blunderdb collection export [options]
+
+Export one or more collections to a new database file.
+
+Options:
+  -analysis
+    	Include analyses (default true)
+  -comments
+    	Include comments (default true)
+  -db string
+    	Path to the database file (required)
+  -id string
+    	Collection ID(s) to export, comma-separated (required)
+  -out string
+    	Path of the database file to write (required)
+  -watermark string
+    	Mark the exported file with where it comes from
+  -watermark-note string
+    	Free text attached to the watermark (terms of use, contact)
+
+Examples:
+  blunderdb collection export --db database.db --id 3 --out openings.db
+  blunderdb collection export --db database.db --id 3,4 --out openings.db --comments=false
+  blunderdb collection export --db database.db --id 3 --out cours.db --watermark "Cours du 12 mars"
+```
+
+### `blunderdb collection list`
+
+```
+Usage: blunderdb collection list [options]
+
+List the collections of the database.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text, json or csv (default "text")
+
+Examples:
+  blunderdb collection list --db database.db
+  blunderdb collection list --db database.db --format csv
+```
+
+### `blunderdb collection rename`
+
+```
+Usage: blunderdb collection rename [options]
+
+Rename a collection (and optionally change its description).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -description string
+    	New description (empty keeps the current one)
+  -id int
+    	Collection ID (required)
+  -name string
+    	New collection name (required)
+
+Examples:
+  blunderdb collection rename --db database.db --id 3 --name "Openings"
+```
+
+### `blunderdb collection show`
+
+```
+Usage: blunderdb collection show [options]
+
+List the positions of one collection.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text, json or csv (default "text")
+  -id int
+    	Collection ID (required)
+
+Examples:
+  blunderdb collection show --db database.db --id 3
+  blunderdb collection show --db database.db --id 3 --format json
+```
+
+### `blunderdb completion`
+
+```
+Usage: blunderdb completion <bash|zsh|fish>
+
+Print a shell completion script for the subcommand names to stdout.
+
+Examples:
+  # bash: load for the current shell session
+  source <(blunderdb completion bash)
+
+  # bash: install system-wide (Debian/Ubuntu/Arch layout)
+  blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null
+
+  # zsh: install into a directory already on $fpath
+  blunderdb completion zsh > "${fpath[1]}/_blunderdb"
+
+  # fish: load for the current shell session
+  blunderdb completion fish | source
+```
+
+### `blunderdb create`
+
+```
+Usage: blunderdb create [options]
+
+Create a new database with the required schema and optional metadata.
+
+Options:
+  -db string
+    	Path to the database file to create (required)
+  -description string
+    	Description of the database
+  -force
+    	Overwrite existing database if it exists
+  -format string
+    	Output format: text or json (default "text")
+  -user string
+    	User name (owner of the database)
+
+Examples:
+  # Create a new database
+  blunderdb create --db mydb.db
+
+  # Create with metadata
+  blunderdb create --db mydb.db --user "John Doe" --description "My backgammon positions"
+
+  # Force overwrite an existing database
+  blunderdb create --db mydb.db --force
+```
+
+### `blunderdb delete`
+
+```
+Usage: blunderdb delete [options]
+
+Delete data from the database.
+
+Options:
+  -confirm
+    	Confirm deletion without prompting
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	ID of the item to delete (required)
+  -type string
+    	Delete type: match (required)
+
+Examples:
+  # Delete match with ID 1
+  blunderdb delete --db database.db --type match --id 1 --confirm
+```
+
+### `blunderdb edit`
+
+```
+Usage: blunderdb edit [options]
+
+Edit database metadata.
+
+Options:
+  -clear-description
+    	Clear description
+  -clear-user
+    	Clear user name
+  -db string
+    	Path to the database file (required)
+  -description string
+    	Set description
+  -format string
+    	Output format: text or json (default "text")
+  -user string
+    	Set user name
+
+Examples:
+  # Set user name
+  blunderdb edit --db database.db --user "John Doe"
+
+  # Set description
+  blunderdb edit --db database.db --description "My positions collection"
+
+  # Clear user name
+  blunderdb edit --db database.db --clear-user
+
+  # Set multiple values
+  blunderdb edit --db database.db --user "John" --description "Tournament positions"
+```
+
+### `blunderdb epc`
+
+```
+Usage: blunderdb epc [options] <XGID>
+
+Compute EPC, win probability and money cube verdict for a position.
+Win probability is exact inside the two-sided database domain and
+estimated (with its error bound) outside; the cube verdict is only
+ever shown when exact.
+
+Options:
+  -bearoff-ts string
+    	Optional two-sided bearoff database (.bd) widening the embedded TS-06-06
+  -format string
+    	Output format: text, json (default "text")
+
+Examples:
+  # EPC and race analysis of a bearoff position
+  blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'
+
+  # With the downloaded/wider database
+  blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'
+```
+
+### `blunderdb export`
+
+```
+Usage: blunderdb export [options]
+
+Export data from the database.
+
+Options:
+  -analysis
+    	Include analysis in database export (default: true) (default true)
+  -collection-ids string
+    	Comma-separated list of collection IDs to export
+  -collections
+    	Include collections in database export (default: false)
+  -comments
+    	Include comments in database export (default: true) (default true)
+  -db string
+    	Path to the database file (required)
+  -dir string
+    	Output directory for .mat batch export (type=mat, multiple matches)
+  -file string
+    	Path to the output file (required)
+  -filters
+    	Include filter library in database export (default: true) (default true)
+  -format string
+    	Output format: text or json (default "text")
+  -match-ids string
+    	Comma-separated list of match IDs to export (empty = all)
+  -matches
+    	Include matches in database export (default: true) (default true)
+  -password string
+    	Protect the exported file with a password (produces a .dbx container)
+  -played-moves
+    	Include played moves in analysis (default: true) (default true)
+  -tournament-ids string
+    	Comma-separated list of tournament IDs to export
+  -type string
+    	Export type: database, positions, matches, mat (required)
+  -watermark string
+    	Mark the exported file with where it comes from, e.g. "Cours de Jean Dupont - 12 mars 2026"
+  -watermark-note string
+    	Free text attached to the watermark (terms of use, contact)
+
+Export Types:
+  database   Export entire database (positions, analysis, comments, matches)
+  positions  Export positions to text file (JSON format)
+  matches    Export only matches to a new database
+  mat        Export match(es) as Jellyfish/gnubg .mat transcript(s)
+
+Examples:
+  # Export entire database with all matches
+  blunderdb export --db database.db --type database --file export.db
+
+  # Export database without matches
+  blunderdb export --db database.db --type database --file export.db --matches=false
+
+  # Export without analysis or played moves
+  blunderdb export --db database.db --type database --file export.db --analysis=false
+
+  # Export with analysis but without played moves
+  blunderdb export --db database.db --type database --file export.db --played-moves=false
+
+  # Export with specific collections
+  blunderdb export --db database.db --type database --file export.db --collections --collection-ids=1,2,3
+
+  # Export with specific tournaments
+  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2
+
+  # Mark the exported file with its origin, and protect it with a password
+  blunderdb export --db database.db --type database --file cours.db \
+      --watermark "Cours de Jean Dupont - 12 mars 2026" --password secret
+
+  # Export positions to text file
+  blunderdb export --db database.db --type positions --file positions.txt
+
+  # Export only matches to a new database
+  blunderdb export --db database.db --type matches --file matches.db
+
+  # Export one match as a .mat transcript
+  blunderdb export --db database.db --type mat --match-ids 5 --file game.mat
+
+  # Export several (or all) matches as .mat files into a directory
+  blunderdb export --db database.db --type mat --match-ids 5,9,12 --dir out/
+  blunderdb export --db database.db --type mat --dir out/
+```
+
+### `blunderdb healthcheck`
+
+```
+blunderdb healthcheck — ask a running daemon whether it is ready.
+
+Performs one GET on the daemon's /readyz endpoint and exits 0 when the answer
+is 200 (storage reachable, schema version as expected), 1 otherwise: the
+storage is down, the schema is stale, or nothing listens at the address. It
+is what the container image's HEALTHCHECK runs — the image is distroless and
+ships no curl or wget — and works just as well from a shell or a systemd unit.
+
+The address defaults to the one the daemon itself would listen on: --addr, or
+BLUNDERDB_ADDR, or :8080. A listen address with no host (":8080") or a
+wildcard host (0.0.0.0, [::]) is probed on the loopback interface.
+
+Usage:
+  blunderdb healthcheck [flags]
+
+Flags:
+  -addr string
+    	address the daemon listens on (host:port) (default ":8080")
+  -timeout duration
+    	give up after this long (default 2s)
+```
+
+### `blunderdb identity`
+
+```
+Usage: blunderdb identity [options]
+
+Show or move your issuer identity.
+
+The identity is created by itself the first time you issue copies; you never
+have to set it up. Copies you have already issued keep verifying whatever you
+do here — the name is only a label, and the key is what signs.
+
+The exported file lets anyone holding it sign in your name. Do not share it.
+
+Options:
+  -export string
+    	Write your identity to a file, to carry to another machine
+  -format string
+    	Output format: text or json (default "text")
+  -import string
+    	Install an identity file on this machine
+  -name string
+    	Change the display name carried by future watermarks
+  -passphrase string
+    	Passphrase for the exported/imported file (optional)
+
+Examples:
+  blunderdb identity
+  blunderdb identity --name "Jean Dupont"
+  blunderdb identity --export jean.bdbid --passphrase secret
+  blunderdb identity --import jean.bdbid --passphrase secret
+```
+
+### `blunderdb import`
+
+```
+Usage: blunderdb import [options]
+
+Import data into the database.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -dir string
+    	Path to directory for batch import (for batch)
+  -fail-on-error
+    	Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported) is an error
+  -file string
+    	Path to the file to import (for match/position)
+  -format string
+    	Output format: text or json (default "text")
+  -recursive
+    	Recursively scan subdirectories for batch import (default true)
+  -type string
+    	Import type: match, position, batch (required)
+
+Import Types:
+  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)
+  position  Import positions from a text file
+  batch     Batch import all match/position files from a directory
+
+Examples:
+  # Import XG match file
+  blunderdb import --db database.db --type match --file match.xg
+
+  # Import position file
+  blunderdb import --db database.db --type position --file positions.txt
+
+  # Batch import all .xg files from a directory (recursive)
+  blunderdb import --db database.db --type batch --dir ./matches/
+
+  # Batch import (non-recursive)
+  blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false
+
+  # Batch import, machine-readable, failing the run if any file errored
+  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error
+```
+
+### `blunderdb info`
+
+```
+Usage: blunderdb info [options]
+
+Display database metadata and statistics.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text, json (default "text")
+
+Examples:
+  # Display database info
+  blunderdb info --db database.db
+
+  # Output as JSON
+  blunderdb info --db database.db --format json
+
+  # See where a database came from (works on a protected .dbx too)
+  blunderdb info --db cours.db
+```
+
+### `blunderdb list`
+
+```
+Usage: blunderdb list [options]
+
+List database contents.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (stats only) (default "all")
+  -format string
+    	Output format: text, json or csv (stats and players only) (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (stats only)
+  -limit int
+    	Maximum number of items to list (default 10)
+  -metric string
+    	Metric to display: pr or mwc (stats only) (default "pr")
+  -player string
+    	Filter by player name (stats only)
+  -to string
+    	End date filter YYYY-MM-DD (stats only)
+  -top-blunders int
+    	Number of top blunders to show (stats only) (default 10)
+  -tournament string
+    	Filter by tournament IDs, comma-separated (stats only)
+  -type string
+    	List type: matches, tournaments, positions, stats, players (required)
+
+Examples:
+  # List all matches
+  blunderdb list --db database.db --type matches
+
+  # List all tournaments
+  blunderdb list --db database.db --type tournaments
+
+  # List first 20 positions
+  blunderdb list --db database.db --type positions --limit 20
+
+  # Show database statistics
+  blunderdb list --db database.db --type stats
+
+  # Show stats as JSON
+  blunderdb list --db database.db --type stats --format json
+
+  # Show stats in MWC with player filter
+  blunderdb list --db database.db --type stats --metric mwc --player "Alice"
+
+  # One statistics row per player, over a competition's dates
+  blunderdb list --db database.db --type players --from 2026-03-01 --to 2026-03-08
+
+  # The same table as CSV, for a spreadsheet or a script
+  blunderdb list --db database.db --type players --format csv
+```
+
+### `blunderdb match`
+
+```
+Usage: blunderdb match [options]
+
+Display match positions and analysis.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: json, text, summary (default "json")
+  -id int
+    	Match ID (required)
+  -output string
+    	Output file (default: stdout)
+
+Examples:
+  # Display match positions in JSON format
+  blunderdb match --db database.db --id 1 --format json
+
+  # Display match summary
+  blunderdb match --db database.db --id 1 --format summary
+
+  # Save match positions to file
+  blunderdb match --db database.db --id 1 --output match.json
+```
+
+### `blunderdb open`
+
+```
+Usage: blunderdb open [options]
+
+Open a password-protected copy into an ordinary database file.
+
+You are asked for the password once. The result is a normal blunderDB
+database you work with as usual.
+
+Options:
+  -db string
+    	Path to the protected copy (required)
+  -file string
+    	Where to write the opened database (default: alongside, with .db)
+  -password string
+    	The password you were given (required)
+
+Example:
+  blunderdb open --db cours.dbx --password secret
+```
+
+### `blunderdb search`
+
+```
+Usage: blunderdb search [options]
+
+Search for positions in the database using filters.
+
+Options:
+  -cube int
+    	Filter by cube value
+  -db string
+    	Path to the database file (required)
+  -decision string
+    	Filter by decision type: checker, cube
+  -dice string
+    	Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die
+  -error-min float
+    	Minimum equity error (blunders)
+  -export string
+    	Export results to a new database file
+  -flagged
+    	Only positions you marked for study in the source tool (eXtreme Gammon flags)
+  -format string
+    	Output format: table, json, xgid (default "table")
+  -has-analysis
+    	Only positions with analysis
+  -has-comment
+    	Only positions carrying a comment (whatever its origin — yours or an imported note)
+  -individual
+    	Only positions imported on their own, not as part of a match
+  -limit int
+    	Maximum number of results (0 = no limit)
+  -match-ids string
+    	Filter by match IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'
+  -match-length int
+    	Filter by match length
+  -move-error-max float
+    	Maximum played move error (millipoints)
+  -move-error-min float
+    	Minimum played move error (millipoints)
+  -no-comment
+    	Only positions carrying no comment
+  -off1-min int
+    	Minimum checkers off for player 1
+  -off2-min int
+    	Minimum checkers off for player 2
+  -pip-max int
+    	Maximum pip count difference
+  -pip-min int
+    	Minimum pip count difference
+  -position-ids string
+    	Filter by position IDs (range '2,7' or explicit list '5;10;15')
+  -score1 int
+    	Filter by player 1 score (default -1)
+  -score2 int
+    	Filter by player 2 score (default -1)
+  -tournament-ids string
+    	Filter by tournament IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'
+  -winrate-max float
+    	Maximum win rate (%)
+  -winrate-min float
+    	Minimum win rate (%)
+
+Examples:
+  # List all positions
+  blunderdb search --db database.db
+
+  # Search cube decisions
+  blunderdb search --db database.db --decision cube
+
+  # Search positions with errors >= 0.1
+  blunderdb search --db database.db --error-min 0.1
+
+  # Search and export to new database
+  blunderdb search --db database.db --decision cube --export cubes.db
+
+  # Search bearoff positions
+  blunderdb search --db database.db --off1-min 1 --off2-min 1
+
+  # Output as JSON
+  blunderdb search --db database.db --format json --limit 10
+
+  # Search in specific matches (2, 5, and 9)
+  blunderdb search --db database.db --match-ids 2,5,9
+
+  # Search in a tournament
+  blunderdb search --db database.db --tournament-ids 1
+
+  # Search positions where dice were 6-5
+  blunderdb search --db database.db --dice 6,5
+
+  # Find the positions you imported yourself, not the ones matches brought in
+  blunderdb search --db database.db --individual
+
+  # Search positions where a 6 was rolled on either die
+  blunderdb search --db database.db --dice 6
+
+  # Positions flagged for study in XG
+  blunderdb search --db database.db --flagged
+
+  # Find every commented position
+  blunderdb search --db database.db --has-comment
+
+  # Blunders still waiting to be annotated
+  blunderdb search --db database.db --no-comment --error-min 0.1
+```
+
+### `blunderdb vacuum`
+
+```
+Usage: blunderdb vacuum [options]
+
+Compact the database file, reclaiming space left behind by
+deletions (matches, tournaments, purges). SQLite needs roughly
+twice the current file size in free disk space to rebuild it;
+blunderdb refuses with a clear error rather than risk running out
+of room partway through. This never runs automatically — it is
+the only way it happens.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb vacuum --db database.db
+  blunderdb vacuum --db database.db --format json
+```
+
+### `blunderdb verify`
+
+```
+Usage: blunderdb verify [options]
+
+Verify database integrity and imported data.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -mat string
+    	MAT file to compare against (optional)
+  -match int
+    	Match ID to verify (optional)
+
+Examples:
+  # Verify database integrity
+  blunderdb verify --db database.db
+
+  # Verify match against MAT file
+  blunderdb verify --db database.db --match 1 --mat test.mat
+
+  # Machine-readable output
+  blunderdb verify --db database.db --format json
+```
+
+<!-- END GENERATED CLI REFERENCE -->
+
 ## See Also
 
-- Main blunderDB documentation
-- `doc/archive/MATCH_IMPORT_ARCHITECTURE.md` - Technical details about match import
-- `doc/archive/POSITION_TRACKING_IMPLEMENTATION.md` - Position data structures
+- `ARCHITECTURE.md` — the current architecture tour (mode dispatch, the
+  `database`/`storage`/backends layering, an import's path through the
+  parser/ingest/Zobrist pipeline).
+- `CLAUDE.md` — working rules and invariants, and pointers to where each
+  subsystem's own documentation lives.
+- `doc/archive/MATCH_IMPORT_ARCHITECTURE.md`,
+  `doc/archive/POSITION_TRACKING_IMPLEMENTATION.md` — historical design notes
+  from when match import and position tracking were first built; useful for
+  the reasoning behind a decision, but they predate the `storage`/`database`
+  split and do not describe current code.

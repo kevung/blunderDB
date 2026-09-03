@@ -464,13 +464,13 @@ func spoolToTemp(r io.Reader, ext string) (string, func(), error) {
 	}
 	if _, err := io.Copy(f, r); err != nil {
 		f.Close()
-		os.Remove(f.Name())
+		os.Remove(f.Name()) //nolint:gosec // G703: ext (part of the CreateTemp pattern above) is allowlisted by sanitizeUploadExt before it ever reaches here (#234) — never a path separator
 		return "", func() {}, fmt.Errorf("server: spool upload: %w", err)
 	}
 	if err := f.Close(); err != nil {
-		os.Remove(f.Name())
+		os.Remove(f.Name()) //nolint:gosec // G703: same allowlisted ext as above
 		return "", func() {}, fmt.Errorf("server: spool close: %w", err)
 	}
 	path := f.Name()
-	return path, func() { os.Remove(path) }, nil
+	return path, func() { os.Remove(path) }, nil //nolint:gosec // G703: same allowlisted ext as above
 }

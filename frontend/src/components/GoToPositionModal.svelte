@@ -146,7 +146,7 @@
         width: 80%; /* Adjust the width */
         padding: 8px;
         margin: 8px auto; /* Center the input field */
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         box-sizing: border-box;
         /* Larger than body text on purpose: this is the number entry the whole

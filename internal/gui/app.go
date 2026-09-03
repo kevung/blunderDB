@@ -1,3 +1,14 @@
+// Package gui is the Wails desktop application: the bound App struct (dialogs,
+// clipboard, drag-drop, the demo/bearoff downloads) that the Svelte frontend
+// calls through wailsjs, plus Run (run.go), the bootstrap Wails itself
+// invokes with the embedded frontend assets and app icon. It is the only
+// caller of package database that also has to cope with host quirks — a
+// missing clipboard tool, absent fonts, an unwritable config dir — detected
+// and degraded per ADR-0004 rather than assumed present; Dockerfile.hostile
+// exercises those fallbacks in CI.
+//
+// Bound methods are regenerated into frontend/wailsjs by `wails dev`/`wails
+// build`; restart `wails dev` after adding or renaming one.
 package gui
 
 import (

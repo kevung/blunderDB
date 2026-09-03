@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -47,6 +48,18 @@ func (cli *CLI) ankiHandlers() map[string]func([]string) error {
 		"sync":      cli.runAnkiSync,
 		"retention": cli.runAnkiRetention,
 	}
+}
+
+// AnkiSubcommands returns the sub-commands of `blunderdb anki`, sorted — the
+// exported view cmd/cli-doc-gen walks.
+func (cli *CLI) AnkiSubcommands() []string {
+	h := cli.ankiHandlers()
+	names := make([]string, 0, len(h))
+	for name := range h {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }
 
 func (cli *CLI) printAnkiUsage() {

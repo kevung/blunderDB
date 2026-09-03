@@ -180,7 +180,7 @@
     .modal-box :global(.modal-title) {
         margin: 0;
         font-size: var(--font-size-dialog-title);
-        color: #333;
+        color: var(--color-text);
     }
 
     .modal-box :global(.modal-title.compact) {
@@ -206,7 +206,7 @@
     }
 
     .modal-box :global(.status-text) {
-        color: #666;
+        color: var(--color-text-muted);
         margin: 0;
     }
 
@@ -219,7 +219,7 @@
 
     .modal-box :global(.summary.warning) {
         background-color: #f5f5f5;
-        border-left-color: #999;
+        border-left-color: var(--color-text-muted);
     }
 
     .modal-box :global(.summary p) {
@@ -228,7 +228,7 @@
     }
 
     .modal-box :global(.summary strong) {
-        color: #333;
+        color: var(--color-text);
     }
 
     .modal-footer {
@@ -248,10 +248,10 @@
        to the modals' own templates, hence :global. */
     .modal-footer :global(button) {
         padding: 8px 16px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         background-color: white;
-        color: #333;
+        color: var(--color-text);
         font-weight: 500;
         cursor: pointer;
         transition:
@@ -261,7 +261,7 @@
 
     .modal-footer :global(button:hover:not(:disabled)) {
         background-color: #f5f5f5;
-        border-color: #999;
+        border-color: var(--color-text-muted);
     }
 
     .modal-footer :global(button:disabled) {
@@ -270,8 +270,8 @@
     }
 
     .modal-footer :global(button.primary) {
-        background-color: #333;
-        border-color: #333;
+        background-color: var(--color-text);
+        border-color: var(--color-text);
         color: white;
     }
 
@@ -301,12 +301,12 @@
         font-size: var(--font-size-dialog-close);
         font-weight: bold;
         line-height: 1;
-        color: #666;
+        color: var(--color-text-muted);
         cursor: pointer;
         z-index: 10;
     }
 
     .modal-close:hover {
-        color: #333;
+        color: var(--color-text);
     }
 </style>

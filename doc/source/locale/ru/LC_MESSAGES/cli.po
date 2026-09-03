@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:41+0200\n"
+"POT-Creation-Date: 2026-09-03 19:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -311,9 +311,9 @@ msgstr "Создаёт новый файл базы данных с необяз
 
 #: ../../source/cli.rst:84 ../../source/cli.rst:111 ../../source/cli.rst:178
 #: ../../source/cli.rst:256 ../../source/cli.rst:282 ../../source/cli.rst:464
-#: ../../source/cli.rst:600 ../../source/cli.rst:640 ../../source/cli.rst:694
-#: ../../source/cli.rst:718 ../../source/cli.rst:750 ../../source/cli.rst:831
-#: ../../source/cli.rst:865 ../../source/cli.rst:897
+#: ../../source/cli.rst:600 ../../source/cli.rst:642 ../../source/cli.rst:696
+#: ../../source/cli.rst:720 ../../source/cli.rst:752 ../../source/cli.rst:833
+#: ../../source/cli.rst:867 ../../source/cli.rst:899
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -349,8 +349,8 @@ msgstr ""
 "Расширение ``.db`` добавляется автоматически, если оно отсутствует. "
 "Родительские каталоги создаются при необходимости."
 
-#: ../../source/cli.rst:96 ../../source/cli.rst:669 ../../source/cli.rst:845
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:96 ../../source/cli.rst:671 ../../source/cli.rst:847
+#: ../../source/cli.rst:911
 msgid "**Exemple:**"
 msgstr "**Пример:**"
 
@@ -583,8 +583,8 @@ msgstr ""
 
 #: ../../source/cli.rst:206 ../../source/cli.rst:346 ../../source/cli.rst:427
 #: ../../source/cli.rst:471 ../../source/cli.rst:519 ../../source/cli.rst:572
-#: ../../source/cli.rst:615 ../../source/cli.rst:699 ../../source/cli.rst:730
-#: ../../source/cli.rst:805 ../../source/cli.rst:874 ../../source/cli.rst:938
+#: ../../source/cli.rst:615 ../../source/cli.rst:701 ../../source/cli.rst:732
+#: ../../source/cli.rst:807 ../../source/cli.rst:876 ../../source/cli.rst:940
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -597,17 +597,19 @@ msgid ""
 " le *transport* du fichier (la copie égarée, la pièce jointe envoyée par "
 "erreur), pas la base elle-même : quiconque a reçu le mot de passe peut "
 "l'ouvrir. blunderDB n'enregistre jamais rien côté destinataire (aucun "
-"registre, aucun journal) — voir ``docs/adr/0007-watermarks-mark-origin-"
-"and-nothing-else.md``."
+"registre, aucun journal) — voir `ADR-0007 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
+"mark-origin-and-nothing-else.md>`__."
 msgstr ""
 "Водяной знак подписывается локальной идентичностью издателя (см. команду "
-"``identity`` ниже): подделать его нельзя, но убрать можно — файл остаётся"
-" обычной базой SQLite. Он ничего не защищает, он лишь говорит, откуда "
-"файл. Пароль защищает *перевозку* файла (затерявшуюся копию, вложение, "
-"отправленное по ошибке), но не саму базу: любой, кто получил пароль, "
-"сможет её открыть. blunderDB никогда ничего не записывает на стороне "
-"получателя (ни реестра, ни журнала) — см. ``docs/adr/0007-watermarks-"
-"mark-origin-and-nothing-else.md``."
+"``identity`` ниже): подделать его нельзя, но убрать можно — файл остаётся "
+"обычной базой SQLite. Он ничего не защищает, он лишь говорит, откуда файл. "
+"Пароль защищает *перевозку* файла (затерявшуюся копию, вложение, "
+"отправленное по ошибке), но не саму базу: любой, кто получил пароль, сможет "
+"её открыть. blunderDB никогда ничего не записывает на стороне получателя (ни"
+" реестра, ни журнала) — см. `ADR-0007 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
+"mark-origin-and-nothing-else.md>`__."
 
 #: ../../source/cli.rst:242
 msgid "identity — Identité d'émetteur"
@@ -722,9 +724,9 @@ msgstr "Поиск позиций в базе данных по комбинир
 msgid "**Options principales:**"
 msgstr "**Основные параметры:**"
 
-#: ../../source/cli.rst:306 ../../source/cli.rst:466 ../../source/cli.rst:642
-#: ../../source/cli.rst:696 ../../source/cli.rst:720 ../../source/cli.rst:752
-#: ../../source/cli.rst:833 ../../source/cli.rst:867
+#: ../../source/cli.rst:306 ../../source/cli.rst:466 ../../source/cli.rst:644
+#: ../../source/cli.rst:698 ../../source/cli.rst:722 ../../source/cli.rst:754
+#: ../../source/cli.rst:835 ../../source/cli.rst:869
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — База данных (обязательно)."
 
@@ -959,7 +961,7 @@ msgstr ""
 "``--top-blunders`` — Количество перечисляемых худших ошибок (по "
 "умолчанию: 10)."
 
-#: ../../source/cli.rst:405 ../../source/cli.rst:602 ../../source/cli.rst:697
+#: ../../source/cli.rst:405 ../../source/cli.rst:602 ../../source/cli.rst:699
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 "``--format`` — Формат вывода: ``text`` или ``json`` (по умолчанию: "
@@ -1231,14 +1233,18 @@ msgid ""
 " verdict) sont **exactes**. En dehors, la probabilité de gain est "
 "**estimée** (convolution des distributions de lancers one-sided plus une "
 "correction calibrée) et affichée avec sa marge d'erreur mesurée ; le "
-"verdict de videau n'est volontairement jamais estimé (voir ADR-0009)."
+"verdict de videau n'est volontairement jamais estimé (voir `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
 msgstr ""
-"**Режимы.** В области, покрытой двусторонней базой, вероятность выигрыша "
-"и анализ куба для игры на деньги (cubeless, ND, D/T, D/P, вердикт) "
-"**точны**. За её пределами вероятность выигрыша **оценивается** (свёртка "
-"односторонних распределений бросков плюс откалиброванная поправка) и "
-"выводится с измеренной погрешностью; вердикт по кубу намеренно никогда не"
-" оценивается (см. ADR-0009)."
+"**Режимы.** В области, покрытой двусторонней базой, вероятность выигрыша и "
+"анализ куба для игры на деньги (cubeless, ND, D/T, D/P, вердикт) **точны**. "
+"За её пределами вероятность выигрыша **оценивается** (свёртка односторонних "
+"распределений бросков плюс откалиброванная поправка) и выводится с "
+"измеренной погрешностью; вердикт по кубу намеренно никогда не оценивается "
+"(см. `ADR-0009 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
+"chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
 
 #: ../../source/cli.rst:626
 msgid "analyze — Rattrapage gammonNet"
@@ -1248,32 +1254,41 @@ msgstr "analyze — Догоняющий анализ gammonNet"
 msgid ""
 "Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
 "rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
-"existe (ADR-0013, ADR-0015). C'est la même opération que le déclenchement"
-" automatique après import et le bouton « Analyser maintenant » de "
-"l'interface graphique, et que le point d'accès "
-"``/v1/gammonnet.analyzeMissing`` du démon ``serve`` pour un tenant — "
-"trois formes différentes de la même opération, pas trois logiques "
-"distinctes (voir :ref:`headless`)."
+"existe (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). "
+"C'est la même opération que le déclenchement automatique après import et "
+"le bouton « Analyser maintenant » de l'interface graphique, et que le "
+"point d'accès ``/v1/gammonnet.analyzeMissing`` du démon ``serve`` pour un"
+" tenant — trois formes différentes de la même opération, pas trois "
+"logiques distinctes (voir :ref:`headless`)."
 msgstr ""
 "Записывает анализ gammonNet для каждой позиции, у которой нет никакого "
-"анализа, — догоняющий анализ библиотеки, собранной до появления этой "
-"функции (ADR-0013, ADR-0015). Это та же операция, что и автоматический "
-"запуск после импорта и кнопка «Анализировать сейчас» графического "
-"интерфейса, и что точка доступа ``/v1/gammonnet.analyzeMissing`` демона "
-"``serve`` для одного арендатора — три разные формы одной операции, а не "
-"три разные логики (см. :ref:`headless`)."
+"анализа, — догоняющий анализ библиотеки, собранной до появления этой функции"
+" (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). Это та "
+"же операция, что и автоматический запуск после импорта и кнопка "
+"«Анализировать сейчас» графического интерфейса, и что точка доступа "
+"``/v1/gammonnet.analyzeMissing`` демона ``serve`` для одного арендатора — "
+"три разные формы одной операции, а не три разные логики (см. "
+":ref:`headless`)."
 
-#: ../../source/cli.rst:643
+#: ../../source/cli.rst:645
 msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
 msgstr "``--ply`` — Глубина поиска (по умолчанию: 2, канонический параметр)."
 
-#: ../../source/cli.rst:644
+#: ../../source/cli.rst:646
 msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
 msgstr ""
 "``--prune-k`` — Ширина отсечения (по умолчанию: 12, канонический "
 "параметр)."
 
-#: ../../source/cli.rst:645
+#: ../../source/cli.rst:647
 msgid ""
 "``--candidates`` — Nombre de coups candidats conservés par décision de "
 "déplacement (défaut: 10)."
@@ -1281,7 +1296,7 @@ msgstr ""
 "``--candidates`` — Число кандидатных ходов, сохраняемых для каждого "
 "решения о ходе (по умолчанию: 10)."
 
-#: ../../source/cli.rst:647
+#: ../../source/cli.rst:649
 msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
@@ -1289,7 +1304,7 @@ msgstr ""
 "``--jobs`` — Число позиций, анализируемых параллельно (по умолчанию: "
 "число ядер машины)."
 
-#: ../../source/cli.rst:649
+#: ../../source/cli.rst:651
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
 "ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
@@ -1297,7 +1312,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию, с индикацией хода "
 "выполнения) или ``json`` (единый итоговый документ, выводимый в конце)."
 
-#: ../../source/cli.rst:652
+#: ../../source/cli.rst:654
 msgid ""
 "**Le parallélisme (``--jobs``).** Les positions d'un lot sont "
 "indépendantes — aucune recherche n'informe la suivante — donc elles sont "
@@ -1316,60 +1331,64 @@ msgstr ""
 "Отмена не затрагивается: Ctrl-C останавливает пакет перед любой новой "
 "позицией, и всё уже вычисленное записывается."
 
-#: ../../source/cli.rst:660
+#: ../../source/cli.rst:662
 msgid ""
-"**La règle du trou (ADR-0013).** Une position portant déjà une analyse — "
-"XG, GNUbg, BGBlitz, ou un précédent passage de gammonNet — n'est jamais "
-"touchée, quel que soit le moteur manquant. Seule une position **sans "
-"aucune** analyse est écrite. La commande peut donc être relancée à tout "
-"moment sans risque, et interrompue proprement : Ctrl-C annule sans rien "
-"perdre de ce qui est déjà écrit, et la prochaine exécution reprend "
-"exactement là où la précédente s'est arrêtée — aucun journal n'est "
-"nécessaire, puisque « les positions sans analyse » est recalculé à chaque"
-" lancement."
+"**La règle du trou** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Une position"
+" portant déjà une analyse — XG, GNUbg, BGBlitz, ou un précédent passage "
+"de gammonNet — n'est jamais touchée, quel que soit le moteur manquant. "
+"Seule une position **sans aucune** analyse est écrite. La commande peut "
+"donc être relancée à tout moment sans risque, et interrompue proprement :"
+" Ctrl-C annule sans rien perdre de ce qui est déjà écrit, et la prochaine"
+" exécution reprend exactement là où la précédente s'est arrêtée — aucun "
+"journal n'est nécessaire, puisque « les positions sans analyse » est "
+"recalculé à chaque lancement."
 msgstr ""
-"**Правило пробела (ADR-0013).** Позиция, уже имеющая анализ — XG, GNUbg, "
-"BGBlitz или предыдущий проход gammonNet, — никогда не затрагивается, "
-"какого бы движка ни недоставало. Записывается только позиция **без "
-"какого-либо** анализа. Поэтому команду можно без риска перезапускать в "
-"любой момент и корректно прерывать: Ctrl-C отменяет её, не теряя ничего "
-"из уже записанного, а следующий запуск возобновляет работу ровно с того "
-"места, где остановился предыдущий, — никакого журнала не нужно, ведь "
-"«позиции без анализа» пересчитываются при каждом запуске."
+"**Правило пробела** (`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Позиция, уже "
+"имеющая анализ — XG, GNUbg, BGBlitz или предыдущий проход gammonNet, — "
+"никогда не затрагивается, какого бы движка ни недоставало. Записывается "
+"только позиция **без какого-либо** анализа. Поэтому команду можно без риска "
+"перезапускать в любой момент и корректно прерывать: Ctrl-C отменяет её, не "
+"теряя ничего из уже записанного, а следующий запуск возобновляет работу "
+"ровно с того места, где остановился предыдущий, — никакого журнала не нужно,"
+" ведь «позиции без анализа» пересчитываются при каждом запуске."
 
-#: ../../source/cli.rst:686
+#: ../../source/cli.rst:688
 msgid "info — Métadonnées de la base"
 msgstr "info — Метаданные базы данных"
 
-#: ../../source/cli.rst:688
+#: ../../source/cli.rst:690
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Отображает метаданные и статистику базы данных."
 
-#: ../../source/cli.rst:710
+#: ../../source/cli.rst:712
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Изменить метаданные"
 
-#: ../../source/cli.rst:712
+#: ../../source/cli.rst:714
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Изменяет имя пользователя или описание базы данных."
 
-#: ../../source/cli.rst:721
+#: ../../source/cli.rst:723
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Новое имя пользователя."
 
-#: ../../source/cli.rst:722
+#: ../../source/cli.rst:724
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Новое описание."
 
-#: ../../source/cli.rst:723
+#: ../../source/cli.rst:725
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Очистить имя пользователя."
 
-#: ../../source/cli.rst:724
+#: ../../source/cli.rst:726
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Очистить описание."
 
-#: ../../source/cli.rst:725
+#: ../../source/cli.rst:727
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1378,15 +1397,15 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:728
+#: ../../source/cli.rst:730
 msgid "Au moins une option de modification est requise."
 msgstr "Требуется хотя бы одна опция изменения."
 
-#: ../../source/cli.rst:741
+#: ../../source/cli.rst:743
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Проверка целостности"
 
-#: ../../source/cli.rst:743
+#: ../../source/cli.rst:745
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -1394,15 +1413,15 @@ msgstr ""
 "Проверяет целостность базы данных и, при необходимости, сравнивает матч с"
 " исходным файлом."
 
-#: ../../source/cli.rst:753
+#: ../../source/cli.rst:755
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — Идентификатор матча для проверки."
 
-#: ../../source/cli.rst:754
+#: ../../source/cli.rst:756
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — Файл MAT для сравнения (используется с ``--match``)."
 
-#: ../../source/cli.rst:755
+#: ../../source/cli.rst:757
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(statistiques, orphelins, écart de schéma, et la vérification du match le"
@@ -1412,7 +1431,7 @@ msgstr ""
 "(статистика, потерянные строки, отклонение схемы и проверка матча, если "
 "она выполнялась)."
 
-#: ../../source/cli.rst:759
+#: ../../source/cli.rst:761
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -1422,7 +1441,7 @@ msgstr ""
 "``--match`` она проверяет данные матча и может сравнить их с оригинальным"
 " исходным файлом."
 
-#: ../../source/cli.rst:763
+#: ../../source/cli.rst:765
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -1445,7 +1464,7 @@ msgstr ""
 "относятся ни к одному матчу и ни к одной колоде и лишь занимают место. "
 "Команда всё равно завершается с кодом 0."
 
-#: ../../source/cli.rst:773
+#: ../../source/cli.rst:775
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1467,7 +1486,7 @@ msgstr ""
 "отвечает ``Schema: matches the reference DDL``. Как и сироты, расхождение"
 " схемы — это наблюдение, а не сбой: код выхода остаётся 0."
 
-#: ../../source/cli.rst:783
+#: ../../source/cli.rst:785
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -1492,7 +1511,7 @@ msgstr ""
 "отвечает ``Constraints: every row satisfies the current DDL``. Ещё одна "
 "констатация: ничего не исправляется, а код возврата остаётся 0."
 
-#: ../../source/cli.rst:794
+#: ../../source/cli.rst:796
 msgid ""
 "Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
 "``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
@@ -1516,11 +1535,11 @@ msgstr ""
 " стоит посмотреть. Здоровая база отвечает ``Counters: game_count and "
 "move_count agree with the rows``."
 
-#: ../../source/cli.rst:819
+#: ../../source/cli.rst:821
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Сжатие базы данных"
 
-#: ../../source/cli.rst:821
+#: ../../source/cli.rst:823
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1535,7 +1554,7 @@ msgstr ""
 "открытии базы оно не происходит автоматически никогда, поскольку на "
 "большой базе его стоимость непредсказуема."
 
-#: ../../source/cli.rst:834
+#: ../../source/cli.rst:836
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1544,7 +1563,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, в байтах)."
 
-#: ../../source/cli.rst:837
+#: ../../source/cli.rst:839
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1563,29 +1582,29 @@ msgstr ""
 "запросов. Если места на диске не хватает, команда отказывается стартовать"
 " с внятным сообщением, вместо того чтобы рисковать прерванным сжатием."
 
-#: ../../source/cli.rst:857
+#: ../../source/cli.rst:859
 msgid "delete — Supprimer des données"
 msgstr "delete — Удалить данные"
 
-#: ../../source/cli.rst:859
+#: ../../source/cli.rst:861
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Удаляет матч и все связанные данные (партии, ходы, анализы)."
 
-#: ../../source/cli.rst:868
+#: ../../source/cli.rst:870
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Тип удаления: ``match`` (обязательно)."
 
-#: ../../source/cli.rst:869
+#: ../../source/cli.rst:871
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Идентификатор элемента для удаления (обязательно)."
 
-#: ../../source/cli.rst:870
+#: ../../source/cli.rst:872
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:873
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1594,11 +1613,11 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:885
+#: ../../source/cli.rst:887
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Проверка демона"
 
-#: ../../source/cli.rst:887
+#: ../../source/cli.rst:889
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1612,7 +1631,7 @@ msgstr ""
 "хранилище недоступно, схема устарела или по адресу никто не слушает. Файл"
 " базы данных не открывается."
 
-#: ../../source/cli.rst:899
+#: ../../source/cli.rst:901
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1623,7 +1642,7 @@ msgstr ""
 "обобщённым хостом (``0.0.0.0``, ``[::]``) проверяется через петлевой "
 "интерфейс."
 
-#: ../../source/cli.rst:902
+#: ../../source/cli.rst:904
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1631,7 +1650,7 @@ msgstr ""
 "``--timeout`` — Время, по истечении которого проверка прекращается (по "
 "умолчанию ``2s``)."
 
-#: ../../source/cli.rst:904
+#: ../../source/cli.rst:906
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1643,7 +1662,7 @@ msgstr ""
 "``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или "
 "юнита systemd."
 
-#: ../../source/cli.rst:918
+#: ../../source/cli.rst:920
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1651,11 +1670,11 @@ msgstr ""
 "При неудаче выводится причина, которую ``docker inspect`` показывает для "
 "контейнера в состоянии ``unhealthy``:"
 
-#: ../../source/cli.rst:926
+#: ../../source/cli.rst:928
 msgid "completion — Complétion shell"
 msgstr "completion — Автодополнение оболочки"
 
-#: ../../source/cli.rst:928
+#: ../../source/cli.rst:930
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -1670,7 +1689,7 @@ msgstr ""
 "(``handlers()``): новая подкоманда предлагается автодополнением сразу "
 "после подключения, и ничего не нужно поддерживать вручную."
 
-#: ../../source/cli.rst:954
+#: ../../source/cli.rst:956
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -1687,35 +1706,35 @@ msgstr ""
 "фиксируется в репозитории, поэтому автодополнение никогда не может "
 "разойтись с таблицей подкоманд."
 
-#: ../../source/cli.rst:962
+#: ../../source/cli.rst:964
 msgid "Exemples de flux de travail"
 msgstr "Примеры рабочих процессов"
 
-#: ../../source/cli.rst:965
+#: ../../source/cli.rst:967
 msgid "Import d'un répertoire de tournoi"
 msgstr "Импорт каталога турнира"
 
-#: ../../source/cli.rst:979
+#: ../../source/cli.rst:981
 msgid "Sauvegarde régulière"
 msgstr "Регулярное резервное копирование"
 
-#: ../../source/cli.rst:987
+#: ../../source/cli.rst:989
 msgid "Analyse des erreurs"
 msgstr "Анализ ошибок"
 
-#: ../../source/cli.rst:998
+#: ../../source/cli.rst:1000
 msgid "Codes de retour"
 msgstr "Коды возврата"
 
-#: ../../source/cli.rst:1000
+#: ../../source/cli.rst:1002
 msgid "``0`` — Succès."
 msgstr "``0`` — Успех."
 
-#: ../../source/cli.rst:1001
+#: ../../source/cli.rst:1003
 msgid "``1`` — Erreur."
 msgstr "``1`` — Ошибка."
 
-#: ../../source/cli.rst:1003
+#: ../../source/cli.rst:1005
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Это позволяет использовать CLI в скриптах с обработкой ошибок:"
 

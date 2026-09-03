@@ -164,7 +164,7 @@
         background: #f7f7f7;
         border-bottom: 1px solid #e0e0e0;
         font-size: var(--font-size-base);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+        font-family: var(--font-family-ui);
         color: #555;
         user-select: none;
         overflow: hidden;
@@ -188,11 +188,11 @@
 
     .name {
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
     }
 
     .vs {
-        color: #999;
+        color: var(--color-text-muted);
         flex-shrink: 0;
     }
 

@@ -236,7 +236,7 @@ seulement d'où vient le fichier. Un mot de passe protège le *transport* du
 fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
 elle-même : quiconque a reçu le mot de passe peut l'ouvrir. blunderDB
 n'enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
-voir ``docs/adr/0007-watermarks-mark-origin-and-nothing-else.md``.
+voir `ADR-0007 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md>`__.
 
 identity — Identité d'émetteur
 -------------------------------
@@ -610,7 +610,7 @@ gain et l'analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
 **exactes**. En dehors, la probabilité de gain est **estimée** (convolution
 des distributions de lancers one-sided plus une correction calibrée) et
 affichée avec sa marge d'erreur mesurée ; le verdict de videau n'est
-volontairement jamais estimé (voir ADR-0009).
+volontairement jamais estimé (voir `ADR-0009 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__).
 
 **Exemples:**
 
@@ -627,7 +627,9 @@ analyze — Rattrapage gammonNet
 
 Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le
 rattrapage d'une bibliothèque constituée avant que cette fonctionnalité
-existe (ADR-0013, ADR-0015). C'est la même opération que le déclenchement
+existe (`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__,
+`ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__).
+C'est la même opération que le déclenchement
 automatique après import et le bouton « Analyser maintenant » de l'interface
 graphique, et que le point d'accès ``/v1/gammonnet.analyzeMissing`` du démon
 ``serve`` pour un tenant — trois formes différentes de la même opération, pas
@@ -657,7 +659,7 @@ temps de calcul change. ``--jobs 1`` laisse la machine libre pour autre
 chose. L'annulation n'est pas affectée : Ctrl-C arrête le lot avant toute
 nouvelle position, et tout ce qui était déjà calculé est écrit.
 
-**La règle du trou (ADR-0013).** Une position portant déjà une analyse —
+**La règle du trou** (`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__). Une position portant déjà une analyse —
 XG, GNUbg, BGBlitz, ou un précédent passage de gammonNet — n'est jamais
 touchée, quel que soit le moteur manquant. Seule une position **sans aucune**
 analyse est écrite. La commande peut donc être relancée à tout moment sans

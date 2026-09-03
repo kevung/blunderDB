@@ -118,14 +118,14 @@
         margin: 0;
         font-size: var(--font-size-base);
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
         flex: 1;
     }
 
     /* ── PR / MWC toggle ── */
     .metric-toggle {
         display: flex;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         overflow: hidden;
     }
@@ -145,7 +145,7 @@
     }
 
     .metric-btn.active {
-        background: #1976d2;
+        background: var(--color-primary);
         color: #fff;
     }
 
@@ -155,14 +155,14 @@
         border: none;
         cursor: pointer;
         font-size: var(--font-size-base);
-        color: #999;
+        color: var(--color-text-muted);
         padding: 2px 4px;
         line-height: 1;
         border-radius: 2px;
     }
 
     .close-btn:hover {
-        color: #333;
+        color: var(--color-text);
         background: #f0f0f0;
     }
 
@@ -188,12 +188,12 @@
     }
 
     .tab-btn:hover {
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     .tab-btn.active {
-        border-bottom-color: #1976d2;
-        color: #1976d2;
+        border-bottom-color: var(--color-primary);
+        color: var(--color-primary);
         font-weight: 600;
     }
 
@@ -208,7 +208,7 @@
     }
 
     .loading-msg {
-        color: #999;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         text-align: center;
         padding: 24px;

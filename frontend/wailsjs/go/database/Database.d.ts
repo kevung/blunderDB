@@ -5,7 +5,7 @@ import {database} from '../models';
 import {sqlite} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
-import {sql} from '../models';
+import {storage} from '../models';
 import {parser} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
@@ -24,6 +24,10 @@ export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:numb
 
 export function CancelImport():Promise<void>;
 
+export function CheckConstraints():Promise<Array<database.ConstraintViolation>>;
+
+export function CheckCounters():Promise<database.CounterDrift>;
+
 export function CheckDatabaseVersion():Promise<string>;
 
 export function CheckMatchExists(arg1:string):Promise<number>;
@@ -31,6 +35,8 @@ export function CheckMatchExists(arg1:string):Promise<number>;
 export function CheckSchema():Promise<sqlite.SchemaDrift>;
 
 export function CheckVersion(arg1:string):Promise<void>;
+
+export function Checkpoint():Promise<void>;
 
 export function ClearCommandHistory():Promise<void>;
 
@@ -45,8 +51,6 @@ export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result>;
 
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
-
-export function Conn():Promise<sql.DB>;
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
@@ -200,9 +204,11 @@ export function LoadMetadata():Promise<Record<string, string>>;
 
 export function LoadPosition(arg1:number):Promise<domain.Position>;
 
+export function LoadPositionIDsByFilters(arg1:domain.SearchFilters):Promise<Array<number>>;
+
 export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
 
-export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
+export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 

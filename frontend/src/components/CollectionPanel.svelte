@@ -737,7 +737,7 @@
 
     .date-cell {
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
     }
 
     /* Row states (the rows are PanelTable's elements) */
@@ -763,7 +763,7 @@
         max-width: 0;
     }
     .desc-text {
-        color: #888;
+        color: var(--color-text-muted);
         font-style: italic;
         cursor: pointer;
         font-size: var(--font-size-small);
@@ -773,10 +773,10 @@
     }
     .idx-cell {
         text-align: right;
-        color: #999;
+        color: var(--color-text-muted);
     }
     .id-cell {
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .inline-edit {
@@ -816,7 +816,7 @@
     .add-input {
         flex: 1;
         padding: 3px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-base);
         outline: none;
@@ -825,10 +825,10 @@
     .add-input.desc {
         flex: 1;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
     }
     .add-input:focus {
-        border-color: #999;
+        border-color: var(--color-text-muted);
     }
 
     /* Detail header (the strip itself is PanelTable's) */
@@ -837,17 +837,17 @@
         border: none;
         cursor: pointer;
         font-size: var(--font-size-title);
-        color: #666;
+        color: var(--color-text-muted);
         padding: 2px 6px;
         line-height: 1;
     }
     .back-btn:hover {
-        color: #333;
+        color: var(--color-text);
     }
     .detail-title {
         font-size: var(--font-size-base);
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -855,7 +855,7 @@
     }
     .detail-count {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         flex-shrink: 0;
     }
 

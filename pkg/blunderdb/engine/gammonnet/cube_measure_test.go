@@ -270,7 +270,7 @@ func TestMeasureCubePost(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
 	}
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -401,7 +401,7 @@ func timeBatchCube(t *testing.T, scratch *cubeScratch, probs []*[NumOutputs]floa
 // n est la taille de fratrie : 12 est ce que l'élagage k=12 laisse à la passe
 // grand réseau, la plus fréquente ; 32 est une passe d'élagage typique.
 func benchCubeValue(b *testing.B, n int, batched bool) {
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		b.Fatal(err)
 	}

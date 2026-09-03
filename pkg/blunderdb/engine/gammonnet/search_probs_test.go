@@ -61,10 +61,10 @@ func TestProbsMoneyEquityMatchesPositionEquity(t *testing.T) {
 			if !ok {
 				t.Fatalf("ply=%d: Probs refused", ply)
 			}
-			gotEquity := float64(MoneyEquity(&probs))
+			gotEquity := float64(moneyEquity(&probs))
 
 			if math.Abs(gotEquity-wantEquity) > 1e-4 {
-				t.Errorf("ply=%d trial=%d: MoneyEquity(Probs(pos))=%v, positionEquity(pos)=%v (Δ=%v)",
+				t.Errorf("ply=%d trial=%d: moneyEquity(Probs(pos))=%v, positionEquity(pos)=%v (Δ=%v)",
 					ply, i, gotEquity, wantEquity, math.Abs(gotEquity-wantEquity))
 			}
 		}
@@ -106,10 +106,10 @@ func TestTerminalProbsMatchesTerminalEquity(t *testing.T) {
 	for i := 0; i < 20; i++ {
 		p := randomTerminalPosition(rng)
 		probs := terminalProbs(&p)
-		got := float64(MoneyEquity(&probs))
+		got := float64(moneyEquity(&probs))
 		want := terminalEquity(&p)
 		if math.Abs(got-want) > 1e-6 {
-			t.Errorf("trial %d: MoneyEquity(terminalProbs)=%v, terminalEquity=%v", i, got, want)
+			t.Errorf("trial %d: moneyEquity(terminalProbs)=%v, terminalEquity=%v", i, got, want)
 		}
 	}
 }

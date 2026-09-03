@@ -395,7 +395,7 @@
     }
 
     .fb-label {
-        color: #888;
+        color: var(--color-text-muted);
         white-space: nowrap;
         user-select: none;
     }
@@ -405,7 +405,7 @@
         padding: 0;
         margin: 0;
         font-size: inherit;
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .fb-select,
@@ -452,7 +452,7 @@
         left: 0;
         z-index: 100;
         background: #fff;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         padding: 4px 0;
@@ -514,7 +514,7 @@
     .fb-ml-btn {
         font-size: var(--font-size-small);
         padding: 1px 5px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         background: #f5f5f5;
         cursor: pointer;
@@ -547,7 +547,7 @@
         margin-left: auto;
         font-size: var(--font-size-small);
         padding: 1px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         background: #f5f5f5;
         cursor: pointer;

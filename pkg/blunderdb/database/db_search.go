@@ -58,7 +58,10 @@ func (d *Database) LoadPositionsByFiltersCoreCtx(
 // LoadPositionsByFilters returns positions matching the supplied filters.
 // This is the public Wails-bound method that accepts a single SearchFilters
 // struct. It delegates to the SQLite Storage backend's SearchStore.Find with
-// an unbounded ListOpts — GUI pagination is tracked separately (D.8).
+// an unbounded ListOpts.
+//
+// Kept for callers that still need whole positions in one round trip (tests,
+// scripting); the GUI itself now goes through LoadPositionIDsByFilters (D.8).
 func (d *Database) LoadPositionsByFilters(f SearchFilters) ([]Position, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -71,4 +74,33 @@ func (d *Database) LoadPositionsByFilters(f SearchFilters) ([]Position, error) {
 		positions = append(positions, *pos)
 	}
 	return positions, nil
+}
+
+// LoadPositionIDsByFilters returns the ids of positions matching f, in the
+// same order LoadPositionsByFilters would return the positions themselves.
+// This is the GUI-facing counterpart of ListPositionIDs for a search result
+// (D.8, #208): a search returning thousands of rows used to ship every one
+// of them whole across the Wails bridge before the board ever showed more
+// than one of them at a time. The frontend now keeps this id list in
+// positionsStore (positionList.js) and fetches the window it is about to
+// show through LoadPositionsByIDs — the same lazy path the library already
+// uses behind ListPositionIDs.
+//
+// A single-return-plus-error method, deliberately not LoadPositionsByFiltersCore
+// (which also returns a preloaded analysis map): Wails v2's binding dispatcher
+// (internal/binding.BoundMethod.Call) only switches on OutputCount() 1 or 2 —
+// a bound method with 3 return values silently resolves to (nil, nil) on the
+// JS side, so a 3-return method must never be called from the frontend.
+func (d *Database) LoadPositionIDsByFilters(f SearchFilters) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	var ids []int64
+	for pos, err := range d.store.Search().Find(context.Background(), "", f, storage.ListOpts{}) {
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, pos.ID)
+	}
+	return ids, nil
 }

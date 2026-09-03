@@ -113,7 +113,7 @@ func WrapContainer(dbPath, outPath string, watermark Envelope, passphrase string
 	if err != nil {
 		return err
 	}
-	out, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o644)
+	out, err := os.OpenFile(outPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("cannot write the protected copy: %w", err)
 	}
@@ -143,7 +143,7 @@ func encodeContainerPrefix(header ContainerHeader) ([]byte, error) {
 	}
 	prefix := make([]byte, 0, len(containerMagic)+4+len(raw))
 	prefix = append(prefix, containerMagic...)
-	prefix = binary.BigEndian.AppendUint32(prefix, uint32(len(raw)))
+	prefix = binary.BigEndian.AppendUint32(prefix, uint32(len(raw))) //nolint:gosec // G115: bounded by the maxContainerHeader check just above, never negative or truncating
 	return append(prefix, raw...), nil
 }
 
@@ -199,7 +199,7 @@ func UnwrapContainer(path, outPath, passphrase string) (ContainerHeader, error) 
 	if err != nil {
 		return header, err
 	}
-	if err := os.WriteFile(outPath, plaintext, 0o644); err != nil {
+	if err := os.WriteFile(outPath, plaintext, 0o600); err != nil {
 		return header, fmt.Errorf("cannot write the opened database: %w", err)
 	}
 	return header, nil

@@ -265,12 +265,6 @@ func TakePoint(in CubeInputs, owner CubeOwner, efficiency float64) (tp float64, 
 	return (l - 0.5) / denom, true
 }
 
-// Equity is the cubeful money equity, in points, from the point of view of
-// the player on roll, for a cube currently at cube under owner.
-func Equity(in CubeInputs, owner CubeOwner, cube int, efficiency float64) float64 {
-	return float64(cube) * janowskiEquity(in.Win, in.WinPoints, in.LosePoints, owner, efficiency)
-}
-
 // ── Match: the redouble recursion at the score ──────────────────────────────
 //
 // Money's live curve exists in closed form because money is scale-invariant:
@@ -376,7 +370,7 @@ func matchWinningChance(state MatchState, probs *[NumOutputs]float32) (float64, 
 }
 
 // matchEquity is 2×MWC−1 — gn_match_equity, the match-referential counterpart
-// of MoneyEquity (ADR-0016). ok is false only when state is not IsValid();
+// of moneyEquity (ADR-0016). ok is false only when state is not IsValid();
 // with a valid state, GnuBGGetME's own clamping means matchWinningChance
 // never itself fails.
 func matchEquity(state MatchState, probs *[NumOutputs]float32) (float64, bool) {
@@ -392,14 +386,22 @@ func matchEquity(state MatchState, probs *[NumOutputs]float32) (float64, bool) {
 
 // valueFromProbs is the value of a distribution from its own side's point of
 // view: cubeless money equity with no match state, 2×MWC−1 otherwise —
-// gn_search.c's value_from_probs, without the cube branch (use_cube is a
-// follow-up tranche, ADR-0016). A failure (only reachable with an invalid
+// gn_search.c's value_from_probs, without its cube branch.
+//
+// Without the cube branch does NOT mean the search is cubeless: `use_cube` was
+// ported by ADR-0023, and the search values its leaves through `Value` above.
+// This function is the CUBELESS reading, which is still what a caller wants
+// when the cube is out of play or when a plain reference value is asked for —
+// `CubelessValue` is its exported face. (This comment said "use_cube is a
+// follow-up tranche, ADR-0016" for two tags after that follow-up landed.)
+//
+// A failure (only reachable with an invalid
 // state, which NewSearcher already refuses at construction) values the
 // distribution as 0 rather than propagating a search-wide failure over one
 // node — the same choice value_from_probs makes.
 func valueFromProbs(probs *[NumOutputs]float32, state *MatchState) float64 {
 	if state == nil {
-		return float64(MoneyEquity(probs))
+		return float64(moneyEquity(probs))
 	}
 	eq, ok := matchEquity(*state, probs)
 	if !ok {
@@ -410,8 +412,10 @@ func valueFromProbs(probs *[NumOutputs]float32, state *MatchState) float64 {
 
 // CubelessValue is valueFromProbs, exported for a cold-path caller outside
 // this package that needs a plain (non-cube) value in a position's own
-// referential — internal/gui's race-regime bonus (evaluateRaceRegime) —
-// same precedent as InvertProbs.
+// referential — internal/gui's race-regime bonus (evaluateRaceRegime). It is
+// exported because that caller EXISTS: the rule this package now follows
+// (#198) is that an exported name names a caller in another package, and the
+// wrappers that named an imaginary one were removed rather than annotated.
 func CubelessValue(probs *[NumOutputs]float32, state *MatchState) float64 {
 	return valueFromProbs(probs, state)
 }
@@ -604,6 +608,24 @@ var cubeSolveLifted = true
 // recursion); otherwise the curve blended at that efficiency (the reported
 // take point).
 //
+// LA BISSECTION N'EST PAS NÉCESSAIRE, ET NE SE CORRIGE PAS ICI. Inverser une
+// fonction affine par morceaux dont on connaît les segments est une forme
+// close : identifier le segment, une division. Le gain est de 35 % d'une
+// décision 2-ply au score et de ×19 sur cette fonction, il survit au
+// changement de langage, donc il se décide en amont (gn_cube.c, spec §9) —
+// c'est l'invariant de CLAUDE.md, la même règle qui a envoyé la levée
+// laneCurve ci-dessus DANS l'autre sens (elle, elle est propre au Go). Et le
+// résultat n'est PAS bit-identique : le gold du videau rend aujourd'hui un
+// max|Δ| RIGOUREUSEMENT NUL contre le C sur 2 320 décisions, et la forme
+// close le porterait à 1,665e-14. Réécrire ici ferait donc mesurer au gold
+// une divergence de portage, ce que l'en-tête de ce fichier interdit.
+//
+// La forme close proposée à l'amont, sa mesure et son dispositif d'exactitude
+// sont dans cube_closedform_measure_test.go ; la décision est l'ADR « The
+// cube's level inversion becomes a closed form, and that is written upstream »
+// (docs/adr/), groupée avec le correctif d'efficacité de l'ADR « Cube
+// efficiency is measured per cube state ».
+//
 // La courbe est préparée une fois avant les soixante pas (laneCurve) : les
 // dénominateurs et numérateurs des segments ne dépendent pas de p, et le
 // compilateur Go refuse d'inliner levelLive, si bien que chaque pas payait un
@@ -782,9 +804,14 @@ const (
 
 // Verdict applies the verdict table to whatever (eND, eDT, eDP) the caller
 // hands in — money points, match MWC or exact table equities all read the
-// same way. Exported so a cubeful rollout or an exact-reference benchmark
-// can share the same four comparisons Decide uses, rather than keeping a
-// second copy of one rule.
+// same way.
+//
+// It is exported WITHOUT an outside caller today, which #198 (C.11) would
+// otherwise have unexported: it is kept because #193 (C.6) is the caller, and
+// naming it here is the point. ADR-0020 says a cube decision has one shape,
+// and race.MoneyFromEntry still reads its own three-way copy of this table —
+// the one that can never produce TooGood. When that goes through
+// race.VerdictFromEquities, this function stops being a promise.
 //
 // The comparison itself lives in race.VerdictFromEquities (#193/C.6: ADR-0020
 // said a cube decision has one shape; before this it had two — this table
