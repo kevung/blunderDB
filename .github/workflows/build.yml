@@ -224,6 +224,43 @@ jobs:
           path: coverage.out
           if-no-files-found: ignore
 
+  # Parallelism is an invariant nothing else guards between two tags (C.2,
+  # #189): the `gammonnet` shard above deliberately runs without -race
+  # (atomic counters cost it five times its run time, per the shard's own
+  # comment) and skips its parallel/concurrent tests under -short, which
+  # every push and PR passes — so on an ordinary push, nothing ever runs
+  # TestParallelSearchIsBitIdentical or TestConcurrentSearchesAgree under the
+  # race detector at all, and the search gold file (gammonnet-gold in
+  # fuzz.yml) never runs at push time either. This job is deliberately
+  # narrow — only tests whose name matches Parallel/Concurrent/Batch, no
+  # -short — so it can afford -race on every push without becoming the new
+  # bottleneck shard: measured 2026-09, ~43s, dominated by
+  # TestKernelIdentityOnPartialBatches (the batched evaluator's own
+  # concurrency-relevant path — CLAUDE.md's "the network kernel never fuses
+  # and never reassociates" invariant, exercised here under the race
+  # detector rather than just for bit-identity).
+  race-gammonnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: go test -race (parallel/concurrent/batch search paths)
+        run: go test -race -count=1 -run 'Parallel|Concurrent|Batch' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        shell: bash
+
   # Runs the shared storage contract, RLS and SQLite→PostgreSQL migration
   # tests against a real PostgreSQL via testcontainers-go. These live behind
   # the `postgres` build tag (see postgres_test.go) because they need Docker;
