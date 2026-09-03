@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TestGetMatchIDsForTournamentPropagatesScanError is B.6's (#174) test on the
@@ -18,72 +19,45 @@ func TestGetMatchIDsForTournamentPropagatesScanError(t *testing.T) {
 	}
 }
 
-// TestGetPlayer1MovesForPositionPropagatesErrors covers both failure shapes:
-// the Query itself failing (a locked database) and a Scan failing on one
-// row — both used to come back as (nil, nil), indistinguishable from "this
-// position recorded no moves".
-func TestGetPlayer1MovesForPositionPropagatesErrors(t *testing.T) {
+// TestLoadPlayer1MovesPropagatesErrors covers both failure shapes on the
+// batched preload (B.10, #178, folding what was getPlayer1MovesForPosition's
+// one-query-per-position into one query per chunk of ids): the Query itself
+// failing (a locked database) and a Scan failing on one row — both used to
+// come back as (nil, nil) from the per-row helper, indistinguishable from
+// "this position recorded no moves", and must still fail loudly now that the
+// query runs once for every candidate instead of once per candidate.
+func TestLoadPlayer1MovesPropagatesErrors(t *testing.T) {
 	t.Run("query failure", func(t *testing.T) {
 		f := &fakeExecer{queryErrToFail: 1}
-		if _, _, err := getPlayer1MovesForPosition(context.Background(), f, 1); err == nil {
-			t.Fatal("getPlayer1MovesForPosition with a failing query = nil error; want a non-nil error")
+		if _, err := loadPlayer1Moves(context.Background(), f, []int64{1}); err == nil {
+			t.Fatal("loadPlayer1Moves with a failing query = nil error; want a non-nil error")
 		}
 	})
 	t.Run("scan failure", func(t *testing.T) {
 		f := &fakeExecer{queryCallToFail: 1}
-		if _, _, err := getPlayer1MovesForPosition(context.Background(), f, 1); err == nil {
-			t.Fatal("getPlayer1MovesForPosition with a corrupted row = nil error; want a non-nil error")
+		if _, err := loadPlayer1Moves(context.Background(), f, []int64{1}); err == nil {
+			t.Fatal("loadPlayer1Moves with a corrupted row = nil error; want a non-nil error")
 		}
 	})
 }
 
-// TestIsPlayer1TakePassCubeActionPropagatesError: this predicate used to
-// report "not a take/pass" (false) on a database error, indistinguishable
-// from a position genuinely played some other way.
-func TestIsPlayer1TakePassCubeActionPropagatesError(t *testing.T) {
-	f := &fakeExecer{queryErrToFail: 1}
-	pos := &domain.Position{ID: 1}
-	ok, err := isPlayer1TakePassCubeAction(context.Background(), f, pos)
-	if err == nil {
-		t.Fatal("isPlayer1TakePassCubeAction with a failing query = nil error; want a non-nil error")
-	}
-	if ok {
-		t.Error("isPlayer1TakePassCubeAction reported true alongside an error")
-	}
-}
-
-// TestMatchesMoveErrorFilterPropagatesError: a query failure while looking
-// up player 1's recorded moves used to report "does not match" instead of
-// the outage it was.
-func TestMatchesMoveErrorFilterPropagatesError(t *testing.T) {
-	f := &fakeExecer{queryErrToFail: 1}
-	pos := &domain.Position{ID: 1}
-	analysis := &domain.PositionAnalysis{
-		AnalysisType:    "CheckerMove",
-		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "13/11"}}},
-	}
-	ok, err := matchesMoveErrorFilter(context.Background(), f, pos, analysis, "E>0")
-	if err == nil {
-		t.Fatal("matchesMoveErrorFilter with a failing query = nil error; want a non-nil error")
-	}
-	if ok {
-		t.Error("matchesMoveErrorFilter reported a match alongside an error")
-	}
-}
-
-// TestMatchesSearchTextPropagatesError: a locked database used to make a
-// position silently disappear from a "t\"…\"" search instead of failing the
-// search outright.
-func TestMatchesSearchTextPropagatesError(t *testing.T) {
-	f := &fakeExecer{queryErrToFail: 1}
-	pos := &domain.Position{ID: 1}
-	ok, err := matchesSearchText(context.Background(), f, pos, "blunder")
-	if err == nil {
-		t.Fatal("matchesSearchText with a failing query = nil error; want a non-nil error")
-	}
-	if ok {
-		t.Error("matchesSearchText reported a match alongside an error")
-	}
+// TestLoadCommentTextsPropagatesErrors is the same regression for the batched
+// comment preload (B.10, #178, folding loadCommentText into loadCommentTexts):
+// a locked database must fail the search outright, not silently answer every
+// id with "no comment".
+func TestLoadCommentTextsPropagatesErrors(t *testing.T) {
+	t.Run("query failure", func(t *testing.T) {
+		f := &fakeExecer{queryErrToFail: 1}
+		if _, err := loadCommentTexts(context.Background(), f, []int64{1}); err == nil {
+			t.Fatal("loadCommentTexts with a failing query = nil error; want a non-nil error")
+		}
+	})
+	t.Run("scan failure", func(t *testing.T) {
+		f := &fakeExecer{queryCallToFail: 1}
+		if _, err := loadCommentTexts(context.Background(), f, []int64{1}); err == nil {
+			t.Fatal("loadCommentTexts with a corrupted row = nil error; want a non-nil error")
+		}
+	})
 }
 
 // TestFindPropagatesTournamentLookupFailure is the search-level regression
@@ -95,7 +69,7 @@ func TestMatchesSearchTextPropagatesError(t *testing.T) {
 func TestFindPropagatesTournamentLookupFailure(t *testing.T) {
 	f := &fakeExecer{queryErrToFail: 1}
 	store := &SearchStore{DB: f}
-	_, err := store.find(context.Background(), "t", domain.SearchFilters{TournamentIDsFilter: "5"})
+	_, err := store.find(context.Background(), "t", domain.SearchFilters{TournamentIDsFilter: "5"}, storage.ListOpts{})
 	if err == nil {
 		t.Fatal("find with a failing tournament lookup = nil error; want a non-nil error")
 	}

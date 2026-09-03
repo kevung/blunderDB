@@ -42,6 +42,18 @@ func (shared) Bool(col string, v bool) string {
 }
 func (shared) Bigint(expr string) string { return "CAST(" + expr + " AS BIGINT)" }
 func (shared) ILike() string             { return "ILIKE" }
+func (shared) LimitOffset(limit, offset int) (string, []any) {
+	switch {
+	case limit <= 0 && offset <= 0:
+		return "", nil
+	case limit <= 0:
+		return " OFFSET ?", []any{offset}
+	case offset <= 0:
+		return " LIMIT ?", []any{limit}
+	default:
+		return " LIMIT ? OFFSET ?", []any{limit, offset}
+	}
+}
 func (shared) TimestampArg() string      { return "?::timestamptz" }
 func (shared) DateText(col string) string {
 	return "COALESCE(TO_CHAR(" + col + " AT TIME ZONE 'UTC','YYYY-MM-DD'),'')"

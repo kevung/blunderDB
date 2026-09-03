@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -89,7 +90,7 @@ func TestFlagsReachStorageAndSurviveReimport(t *testing.T) {
 	countFlagged := func() int {
 		t.Helper()
 		n := 0
-		for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{FlaggedFilter: true}) {
+		for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{FlaggedFilter: true}, storage.ListOpts{}) {
 			if err != nil {
 				t.Fatalf("Find: %v", err)
 			}

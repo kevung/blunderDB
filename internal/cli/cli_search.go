@@ -11,14 +11,16 @@ import (
 	"strings"
 	"text/tabwriter"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // searchParams is what parseSearchFlags extracts from the command line: the
 // query itself (a SearchFilters ready for LoadPositionsByFiltersCore, plus
 // the two client-side filters the query can't express — errorMin and
 // hasAnalysis need the analysis payload the query already returns) and the
-// output options (--format, --limit, --export). Splitting parsing from
-// querying and rendering (B.8, #176) makes each independently testable:
+// output options (--format, --limit/--offset, --export). Splitting parsing
+// from querying and rendering (B.8, #176) makes each independently testable:
 // parseSearchFlags never touches a database, and renderResults never touches
 // a flag.
 type searchParams struct {
@@ -26,6 +28,7 @@ type searchParams struct {
 	errorMin    float64
 	hasAnalysis bool
 	limit       int
+	offset      int
 	format      string
 	outputDB    string
 }
@@ -41,6 +44,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 	dbPath := searchCmd.String("db", "", "Path to the database file (required)")
 	outputDB := searchCmd.String("export", "", "Export results to a new database file")
 	limit := searchCmd.Int("limit", 0, "Maximum number of results (0 = no limit)")
+	offset := searchCmd.Int("offset", 0, "Skip this many results before the first one returned (paging, with --limit)")
 	format := searchCmd.String("format", "table", "Output format: table, json, xgid")
 
 	// Filter flags
@@ -292,6 +296,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		errorMin:    *errorMin,
 		hasAnalysis: *hasAnalysis,
 		limit:       *limit,
+		offset:      *offset,
 		format:      formatLower,
 		outputDB:    *outputDB,
 	}, *dbPath, nil
@@ -309,9 +314,18 @@ func (cli *CLI) runSearch(args []string) error {
 		return err
 	}
 
-	// Use the core implementation to get analysis data in the same query, avoiding
-	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
-	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(params.filters)
+	// --error-min/--has-analysis are applied client-side below, on the
+	// analysis payload the query already returns (no extra round trip), and
+	// can reject a result the SQL scan matched — so --limit/--offset are only
+	// pushed into the SQL scan itself (real pagination, B.10 #178) when
+	// neither is set; otherwise the scan stays unbounded and --limit/--offset
+	// apply after filtering, exactly as before, so a page is never short just
+	// because the SQL page it was drawn from happened to filter out rows.
+	opts := storage.ListOpts{}
+	if params.errorMin <= 0 && !params.hasAnalysis {
+		opts = storage.ListOpts{Limit: params.limit, Offset: params.offset}
+	}
+	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(params.filters, opts)
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %w", err)
 	}
@@ -350,9 +364,21 @@ func (cli *CLI) runSearch(args []string) error {
 		filteredPositions = append(filteredPositions, pos)
 	}
 
-	// Apply limit
-	if params.limit > 0 && len(filteredPositions) > params.limit {
-		filteredPositions = filteredPositions[:params.limit]
+	// Apply limit/offset client-side only when they were not already pushed
+	// into the SQL scan above (opts.Limit/Offset zero): the --error-min/
+	// --has-analysis path queries unbounded, so paging still has to happen
+	// here, on the filtered set.
+	if opts.Limit == 0 && opts.Offset == 0 && (params.limit > 0 || params.offset > 0) {
+		if params.offset > 0 {
+			if params.offset >= len(filteredPositions) {
+				filteredPositions = nil
+			} else {
+				filteredPositions = filteredPositions[params.offset:]
+			}
+		}
+		if params.limit > 0 && len(filteredPositions) > params.limit {
+			filteredPositions = filteredPositions[:params.limit]
+		}
 	}
 
 	// Output results

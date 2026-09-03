@@ -105,13 +105,107 @@ func BenchmarkSearchByFilter(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		n := 0
-		for _, err := range s.Search().Find(ctx, "", f) {
+		for _, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
 			if err != nil {
 				b.Fatalf("Find: %v", err)
 			}
 			n++
 		}
 	}
+}
+
+// seedSearchTextAndMoveErrorFixture saves n positions, each with a comment,
+// one recorded player-1 move, and one analysis — the fixture
+// BenchmarkSearchText and BenchmarkSearchMoveError both search over.
+func seedSearchTextAndMoveErrorFixture(b *testing.B, s *sqlite.Storage, n int) {
+	b.Helper()
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "me", Player2Name: "them", MatchLength: 7}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		b.Fatalf("seed match: %v", err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		b.Fatalf("seed game: %v", err)
+	}
+	small := 0.05
+	for i := 0; i < n; i++ {
+		p := benchPos(i)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			b.Fatalf("seed Save: %v", err)
+		}
+		if _, err := s.Comments().Add(ctx, "", id, "blunder review pending"); err != nil {
+			b.Fatalf("seed comment: %v", err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(i + 1), MoveType: "checker",
+			PositionID: id, Player: 1, CheckerMove: "13/11 24/23"}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			b.Fatalf("seed move: %v", err)
+		}
+		if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{
+			AnalysisType: "CheckerMove",
+			PlayedMoves:  []string{"13/11 24/23"},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{Move: "13/11 24/23", Equity: 0.45, EquityError: &small},
+			}},
+		}); err != nil {
+			b.Fatalf("seed analysis: %v", err)
+		}
+	}
+}
+
+func runSearchFind(b *testing.B, s *sqlite.Storage, f domain.SearchFilters, want int) {
+	b.Helper()
+	ctx := context.Background()
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		cnt := 0
+		for _, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
+			if err != nil {
+				b.Fatalf("Find: %v", err)
+			}
+			cnt++
+		}
+		if cnt != want {
+			b.Fatalf("Find: got %d results, want %d", cnt, want)
+		}
+	}
+}
+
+// BenchmarkSearchText exercises the SearchText ("t\"…\"") N+1 B.10 (#178)
+// folds into a single batched preload (loadCommentTexts): every SQL-matched
+// candidate used to re-query its comment text on its own
+// (loadCommentText), one query per row — n positions all SQL-matched used to
+// mean n extra round trips on top of the search query itself. SearchText
+// alone needs no analysis decode (needAnalysis stays false), so this isolates
+// the comment-preload win from the cost of decoding the analysis blob.
+func BenchmarkSearchText(b *testing.B) {
+	s := openTempDBB(b)
+	const n = 5000
+	seedSearchTextAndMoveErrorFixture(b, s, n)
+	runSearchFind(b, s, domain.SearchFilters{SearchText: `t"blunder"`}, n)
+}
+
+// BenchmarkSearchMoveErrorMirror is BenchmarkSearchText's counterpart for the
+// move-error N+1 (B.10, #178): a MoveErrorFilter used to re-query every
+// row's recorded plays on its own (getPlayer1MovesForPosition), folded into
+// loadPlayer1Moves. A plain (non-mirror) MoveErrorFilter search is mostly
+// settled in SQL already (the equity-error column is pushed down for a
+// position player 1 played once — see the comment above the WHERE clause
+// that builds it) and only re-checks the rare multi-played position in Go,
+// so a mirror search (MirrorFilter, which routes every row through the
+// Go-side predicate regardless) is what actually exercises the row-by-row
+// query this fiche removes.
+func BenchmarkSearchMoveErrorMirror(b *testing.B) {
+	s := openTempDBB(b)
+	const n = 5000
+	seedSearchTextAndMoveErrorFixture(b, s, n)
+	runSearchFind(b, s, domain.SearchFilters{MoveErrorFilter: "E>0", MirrorFilter: true}, n)
 }
 
 func BenchmarkStatsCompute(b *testing.B) {

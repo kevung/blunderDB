@@ -229,13 +229,30 @@ Livrée dans la vague 2.18.0, avec B.3 et B.17.
 n'est câblé nulle part ; `Find` n'a pas de pagination. N+1 sur trois filtres
 (`:645` `t"…"`, `:658` `E`, `addPosition` 2ᵉ requête `move`) : 2 000 lignes
 retenues = 4 000 aller-retours.
-- [ ] `Find(ctx, scope, f, ListOpts)` avec `LIMIT/OFFSET` (ou curseur par id)
-      poussés en SQL ; scan + yield réels.
-- [ ] Pré-charger commentaires et coups joués des ids candidats en une
-      requête `IN (…)` (`forEachIn` existe).
-- [ ] Bench avant/après sur `testdata/` (le job `benchmark` sert enfin, E.9).
-- [ ] Exposer la pagination : `/v1/search.find` (`limit`, `cursor`), CLI
-      `search --limit/--offset`, GUI (voir D.8).
+- [x] `Find(ctx, scope, f, ListOpts)` avec `LIMIT/OFFSET` poussés en SQL
+      (`Dialect.LimitOffset`, les deux backends). `find` continue de
+      matérialiser un `[]domain.Position` avant de re-yielder — les six
+      phases de filtrage Go (masque bitboard non tight, repli mirroir,
+      préchargements) ont toutes besoin du lot candidat complet avant de
+      pouvoir décider une ligne — mais ce lot est désormais borné par
+      `opts.Limit`, pas par la table entière : le vrai problème
+      (matérialisation *non bornée*) est réglé, l'architecture "yield après
+      scan complet" ne l'est pas et reste un chantier à part si besoin.
+- [x] Commentaires (`loadCommentTexts`) et coups joués (`loadPlayer1Moves`)
+      des ids candidats préchargés en requêtes `IN (…)` par lots de 900
+      (`forEachIDBatch`), remplaçant les requêtes une-par-ligne.
+- [x] Bancs avant/après sur `storage/sqlite/bench_test.go`
+      (`BenchmarkSearchText`, `BenchmarkSearchMoveErrorMirror`, 5 000
+      positions) : -14 % d'allocations/op sur le filtre `t"…"` (319305 →
+      274205), -9 % sur `E` en recherche miroir (514306 → 469211) ; le temps
+      mur est resté sur SQLite local dans le bruit de la machine (plusieurs
+      builds Go concurrents d'autres chantiers), l'allocation par opération
+      est la mesure fiable ici — le gain de round-trips compte surtout pour
+      un backend réseau (PostgreSQL, ou un daemon `serve` chargé).
+- [x] Pagination exposée : `/v1/search.find` (`limit`, `offset` dans
+      `searchFindReq`), CLI `search --limit/--offset` (`cli_search.go`,
+      poussés en SQL sauf avec `--error-min`/`--has-analysis`, filtrés
+      après coup). GUI restée hors scope, propriété de D.8.
 
 Préalable de D.8 (pagination front) et de I.x (catégorisation).
 
