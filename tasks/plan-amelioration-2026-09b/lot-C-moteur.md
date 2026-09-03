@@ -239,18 +239,40 @@ frappe, caches froids ×3. Les chiffres « +36 % » et « 376 µs » des comment
   → exporter `race.CubeStateFor`.
 - [ ] Les trois, bench avant/après.
 
-## C.11 — Surface exportée morte [S] — lisibilité (#198)
+## C.11 — Surface exportée morte [S] — lisibilité (#198) — FAIT
 
 `Equity`, `TakePoint`, `Verdict`, `MoneyEquity`, `InvertProbs`, `Counters`,
 `BatchFill`, `ResetCounters`, `KernelName`, `KernelError`,
 `EmbeddedPruneNetwork`, `NewSearcherWith`, `Reconfigure` : 0 usage hors
 paquet, chacun avec une justification pour un appelant qui n'existe pas.
-- [ ] Dé-exporter ce qui n'a que des usages de test ; garder `Verdict`/
-      `TakePoint` **et** les utiliser (C.6) ; les compteurs restent pour le probe
-      mais couverts par un test.
-- [ ] `analysiscodec.go` / `positioncodec.go` / `bearoff_export.go` /
-      `epc.go:61 PipCounts` à 0 % : ce sont les fonctions qui écrivent les
-      colonnes scalaires (le bug `CommitImportDatabase` d'hier) → tests.
+- [x] Audit sur les **quatre** consommateurs (GUI + liaisons Wails, CLI,
+      serveur, tests). Une prise : **`Reconfigure` n'est PAS mort** —
+      `internal/gui/gammonnet_eval.go:297,384` l'appelle comme méthode
+      (`searcher.Reconfigure`), ce qu'un `grep gammonnet.Reconfigure` ne voit
+      pas. Il reste exporté. C'est le seul faux positif de la liste.
+- [x] Supprimés (0 appelant, tests compris) : `Equity` (le modèle sort par
+      `Value` et `Decide`) et le wrapper `InvertProbs`, dont le corps
+      `invertProbs` était déjà là et déjà appelé.
+- [x] Dé-exportés : `MoneyEquity`, `KernelError`, `Embedded`
+      (→ `embeddedNetwork`), `EmbeddedPruneNetwork`, `NewSearcherWith`.
+      `Embedded` n'était pas dans la liste mais est mort de la même façon, et
+      laisser exportée une moitié de la paire de constructeurs aurait été
+      exactement la demi-mesure que la fiche enlève.
+- [x] Gardés : `Verdict` et `TakePoint` — le commentaire de `Verdict`
+      promettait « un rollout cubeful ou un banc de référence » ; il nomme
+      maintenant **C.6/#193** comme appelant, ce qui est vrai et vérifiable.
+      `CubelessValue` dit désormais pourquoi elle, elle a le droit : son
+      appelant existe.
+- [x] Compteurs (`Counters`, `BatchFill`, `CubeValuations`, `ResetCounters`)
+      et `KernelName` gardés pour la sonde et **couverts**
+      (`counters_test.go`) : comptage non nul, succès de cache sur la position
+      rejouée, voies multiples de `EvalBatchWidth`, remise à zéro ouvriers
+      compris, nom de noyau réel.
+- [x] `analysiscodec.go` / `positioncodec.go` / `bearoff_export.go` /
+      `epc.go PipCounts` : `codec_columns_test.go` couvre les onze fonctions
+      qui étaient à 0 % — celles qui écrivent les colonnes scalaires (la
+      famille du bug `CommitImportDatabase`). Couverture `engine`
+      **68,5 % → 92,4 %**, `gammonnet` **87,9 % → 91,0 %**.
 
 ## C.12 — Documentation du moteur [S] — navigation (#199)
 

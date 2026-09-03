@@ -122,11 +122,11 @@ func TestMeasureNetworkCost(t *testing.T) {
 	if os.Getenv("BLUNDERDB_MEASURE") == "" {
 		t.Skip("poser BLUNDERDB_MEASURE pour mesurer ; ce test n'assère rien")
 	}
-	big, err := Embedded()
+	big, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	small, err := EmbeddedPruneNetwork()
+	small, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}

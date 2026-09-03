@@ -66,7 +66,7 @@ func TestNetworkParityAgainstReference(t *testing.T) {
 			ref.numFeatures, ref.numOutputs, NumFeatures, NumOutputs)
 	}
 
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatalf("embedded weights: %v", err)
 	}

@@ -88,15 +88,15 @@ func TestEvalMeasure(t *testing.T) {
 		n = parsed
 	}
 
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatalf("Embedded network: %v", err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatalf("Embedded prune network: %v", err)
 	}
-	searcher := NewSearcherWith(DefaultConfig(2), net, prune)
+	searcher := newSearcherWith(DefaultConfig(2), net, prune)
 
 	ts := race.EmbeddedTwoSided()
 	report := runEvalMeasure(t, searcher, ts, "embedded TS-06-06", n, 1)
@@ -109,7 +109,7 @@ func TestEvalMeasure(t *testing.T) {
 			t.Fatalf("BLUNDERDB_TS11_PATH: open: %v", err)
 		}
 		t.Cleanup(func() { oracle.Close() })
-		searcher2 := NewSearcherWith(DefaultConfig(2), net, prune)
+		searcher2 := newSearcherWith(DefaultConfig(2), net, prune)
 		report2 := runEvalMeasure(t, searcher2, oracle, "TS-06-11 ("+path+")", n, 2)
 		t.Logf("\n%s", report2)
 	} else {
