@@ -362,10 +362,47 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
   filters/session/history.
 - `SwapPlayers`/`DeleteCascade` ~90 lignes identiques.
 - `createPositionFromX` ×3 (B.7 les factorise).
-- [ ] Porter `anki` puis `collections` dans `sqlshared` (closure dialectale sur
-      `Execer`) ; laisser matches/positions/tournaments divergents.
-- [ ] Les tests par backend redondants (`comments_*_test.go`,
-      `collections_*_test.go`) tombent avec.
+- [x] `anki` porté dans `sqlshared` (`sqlshared/anki.go`, `AnkiStore`) : 28 des
+      30 méthodes de `storage.AnkiStore`. Deux découvertes ont rendu le port
+      plus complet que prévu — `TimestampText`/`TimestampArg` (déjà écrits
+      pour d'autres familles) éliminent tout le code de conversion
+      `time.Time`/TEXT que la version PostgreSQL portait seule, en formatant
+      chaque « maintenant » une fois en Go (`anki.TimeLayout`, UTC) plutôt que
+      par SQL par dialecte ; et `ON CONFLICT (deck_id, position_id) DO
+      NOTHING` — déjà utilisé par `metadata.go`/`session.go` — remplace
+      `INSERT OR IGNORE` sans distinction de dialecte (SQLite ≥ 3.24). Deux
+      méthodes `Dialect` ajoutées pour le seul cas qui restait diviser :
+      `BoolAsInt`/`BoolArg` (SQLite stocke ses drapeaux en INTEGER 0/1,
+      PostgreSQL en BOOLEAN natif). `DeckPositions` passe par
+      `storage.PositionStore.LoadByIDs` plutôt qu'une jointure, `NextCard`/
+      `RandomCard`/`ReviewCard` par `Load` — aucune jointure `position` à
+      écrire par dialecte. Seul `Forecast` reste par backend (motif
+      `stats_sqlite.go`/`stats_postgres.go` pour `DateRange`) : le
+      bucketing par jour est une vraie divergence arithmétique de dates —
+      `julianday()`/`date()` côté SQLite (qui n'a pas de type DATE), natif
+      côté PostgreSQL. Preuve d'identité sémantique par la suite de contrat
+      partagée (`storagetest/contract_anki.go`), passée sur SQLite **et** sur
+      un vrai PostgreSQL (Docker, `BLUNDERDB_REQUIRE_PG=1
+      go test -tags postgres ./pkg/blunderdb/storage/postgres/...`), pas
+      supposée.
+- [x] Un test par backend qui dupliquait exactement un cas de la suite de
+      contrat (`TestAnkiReviewUpdatesScheduling` dans `anki_sqlite_test.go`,
+      recouvrant mot pour mot `testAnkiReviewUpdatesScheduling`) est tombé ;
+      les autres (CRUD de deck, Forecast, Retention, suspend/bury/remove,
+      journal de révision, et les tests d'injection de faute — trigger SQL
+      qui refuse le journal, timestamp corrompu, note hors bornes) restent :
+      ils couvrent des cas que la suite partagée ne teste pas.
+- [ ] `collections` : **pas fait** dans ce geste. Même gabarit que ci-dessus
+      en plus petit (455/487 lignes), mais le budget de ce chantier s'arrête
+      à `anki` ; à reprendre séparément.
+- [ ] `SwapPlayers`/`DeleteCascade` (~90 lignes identiques) : **pas touché**.
+      Leur duplication est enchevêtrée avec `positionIsHeldSQL`, le prédicat
+      énoncé trois fois que CLAUDE.md nomme explicitement comme le piège de
+      cette fiche — « si tu le fais, la sémantique doit être prouvée
+      identique par les tests de contrat, pas supposée » — et ils appellent
+      en plus `positionStore` (type propre à chaque backend, délibérément
+      hors `sqlshared` d'après la doc de paquet). Le rapprocher exigerait de
+      régler ce risque nommé en plus du reste ; laissé à une fiche dédiée.
 
 ## B.15 — Découpage des fonctions et fichiers hors gabarit [M] — dette (#183)
 

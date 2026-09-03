@@ -40,8 +40,10 @@ func (shared) Bool(col string, v bool) string {
 	}
 	return col + " = FALSE"
 }
-func (shared) Bigint(expr string) string { return "CAST(" + expr + " AS BIGINT)" }
-func (shared) ILike() string             { return "ILIKE" }
+func (shared) BoolAsInt(col string) string { return "CASE WHEN " + col + " THEN 1 ELSE 0 END" }
+func (shared) BoolArg(v bool) any          { return v }
+func (shared) Bigint(expr string) string   { return "CAST(" + expr + " AS BIGINT)" }
+func (shared) ILike() string               { return "ILIKE" }
 func (shared) LimitOffset(limit, offset int) (string, []any) {
 	switch {
 	case limit <= 0 && offset <= 0:
@@ -54,7 +56,7 @@ func (shared) LimitOffset(limit, offset int) (string, []any) {
 		return " LIMIT ? OFFSET ?", []any{limit, offset}
 	}
 }
-func (shared) TimestampArg() string      { return "?::timestamptz" }
+func (shared) TimestampArg() string { return "?::timestamptz" }
 func (shared) DateText(col string) string {
 	return "COALESCE(TO_CHAR(" + col + " AT TIME ZONE 'UTC','YYYY-MM-DD'),'')"
 }
