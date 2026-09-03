@@ -72,6 +72,14 @@
     let savedFilters = $derived($filterLibraryStore || []);
     let selectedSavedFilter = $state(null);
 
+    // Command-line-only filters (#203): `xD65` (exclude a dice roll) and
+    // `id5,10` (position id) have no panel checkbox — deliberately, not by
+    // omission. Both are repeatable/list-shaped in a way the other checkbox
+    // filters aren't (several `xD`/`id` tokens combine, `xD` also needs a
+    // 21-roll picker), and both are already documented as typed-command-only
+    // in doc/source/cmd_mode.rst. They still parse correctly wherever a
+    // command reaches parseSearchTokens (typed, or a history/library replay —
+    // see searchFilterService.js's doc comment for why that used to matter).
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -511,7 +519,14 @@
                 matchIDsFilter: f.matchIDs,
                 tournamentIDsFilter: f.tournamentIDs,
                 diceRollMode: f.drMode,
-                playerFilter: f.plf
+                playerFilter: f.plf,
+                // Command-line-only tokens with no panel checkbox (#203): unlike
+                // commentFilter/cubeResponseFilter, positionService does not
+                // re-derive these from `filters`, so they must be forwarded
+                // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
+                // the exclusion/restriction on double-click.
+                exceptDiceFilter: f.xd,
+                positionIDsFilter: f.posIds
             });
         }
     }

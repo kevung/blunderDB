@@ -15,7 +15,9 @@
 // re-implementing this whole parse per language).
 //
 // A lighter, one-directional check does the same for search filter tokens:
-// every token commandProcessor.js's parseFilters checks with a plain
+// every token the shared search grammar (searchFilterService.js's
+// parseSearchTokens, called by both commandProcessor.js's parseFilters and
+// this file's parseSearchCommand — see #203) checks with a plain
 // `filters.includes('token')` (boolean flags like `nc`, `fl`, `co`, `xco`,
 // `D1`, `M`, `i`, `x`, plus the cube/score alias groups) must appear in the
 // help's filter table. Range/prefix filters (`p>x`, `e<x`, `max`, `idx`, …)
@@ -88,9 +90,9 @@ describe('help ↔ commandVocabulary sync (fr.js)', () => {
 });
 
 describe('help ↔ parseFilters sync (fr.js)', () => {
-    test('every boolean filters.includes(...) token in commandProcessor.js is documented in the filter table', () => {
-        const processorSrc = fs.readFileSync(path.join(__dirname, '../commandProcessor.js'), 'utf8');
-        const tokens = [...new Set([...processorSrc.matchAll(/filters\.includes\('([^']+)'\)/g)].map((m) => m[1]))];
+    test('every boolean filters.includes(...) token in the search grammar is documented in the filter table', () => {
+        const grammarSrc = fs.readFileSync(path.join(__dirname, '../services/searchFilterService.js'), 'utf8');
+        const tokens = [...new Set([...grammarSrc.matchAll(/filters\.includes\('([^']+)'\)/g)].map((m) => m[1]))];
         expect(tokens.length, 'no filters.includes(...) tokens found — has parseFilters been rewritten?').toBeGreaterThan(0);
 
         const filterTable = tablesByHeading(helpFr.commands).get('Filtres');
