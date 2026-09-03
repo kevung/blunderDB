@@ -5,8 +5,8 @@
     import { isBareLetter } from '../utils/keys.js';
     import { onMount } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
-    import { t } from '../i18n';
-    import { help } from '../i18n/help/index.js';
+    import { t, language } from '../i18n';
+    import { help, loadHelpFor } from '../i18n/help/index.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose } = $props();
@@ -19,6 +19,14 @@
     let applicationVersion = $derived($metaStore.applicationVersion);
 
     let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, applicationVersion).replace(/\{dbVersion\}/g, databaseVersion));
+
+    // The active language's help bundle (~70 kB) is fetched only when the
+    // modal is actually opened, not eagerly at startup (#207). Re-runs if the
+    // language changes while the modal stays open; loadHelpFor() is a no-op
+    // once a bundle is cached.
+    $effect(() => {
+        if (visible) loadHelpFor($language);
+    });
 
     onMount(async () => {
         try {

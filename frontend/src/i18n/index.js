@@ -17,14 +17,6 @@ import { writable, derived, get } from 'svelte/store';
 import { SaveLanguage } from '../../wailsjs/go/main/Config.js';
 
 import en from './locales/en.json';
-import fi from './locales/fi.json';
-import el from './locales/el.json';
-import ja from './locales/ja.json';
-import de from './locales/de.json';
-import es from './locales/es.json';
-import fr from './locales/fr.json';
-import it from './locales/it.json';
-import ru from './locales/ru.json';
 
 // Supported locale codes (order = order shown in the language selector).
 export const LOCALES = ['en', 'fr', 'de', 'it', 'es', 'fi', 'ja', 'el', 'ru'];
@@ -43,7 +35,21 @@ export const LANGUAGE_LABELS = {
     ru: 'Русский'
 };
 
-const messages = { en, fi, el, ja, de, es, fr, it, ru };
+// Every non-English locale is fetched on demand instead of bundled statically:
+// the interface only ever needs the one the user picked, not all nine (#207 —
+// the 9 static imports put 511 kB of JSON in the main chunk). English stays a
+// static import: it is the second link of the fallback chain and the seed
+// value of `language`, so it must be available before any async load resolves.
+const localeLoaders = import.meta.glob('./locales/*.json');
+const messages = { en };
+
+async function ensureLocaleLoaded(lang) {
+    if (messages[lang]) return;
+    const loader = localeLoaders[`./locales/${lang}.json`];
+    if (!loader) return;
+    const mod = await loader();
+    messages[lang] = mod.default ?? mod;
+}
 
 // Resolve a dotted key path against a nested dictionary.
 function lookup(dict, key) {
@@ -96,9 +102,12 @@ export function resolveStatusMessage(value, tfn) {
     return value;
 }
 
-// Change the active language and persist it to the Go config.
+// Change the active language and persist it to the Go config. The dictionary
+// is awaited before the store flips so `$t(...)` never renders raw keys
+// during the load.
 export async function setLanguage(lang) {
     const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
+    await ensureLocaleLoaded(next);
     language.set(next);
     try {
         await SaveLanguage(next);
@@ -110,6 +119,8 @@ export async function setLanguage(lang) {
 }
 
 // Apply a persisted language at startup without re-persisting it.
-export function initLanguage(lang) {
-    language.set(LOCALES.includes(lang) ? lang : FALLBACK_LOCALE);
+export async function initLanguage(lang) {
+    const next = LOCALES.includes(lang) ? lang : FALLBACK_LOCALE;
+    await ensureLocaleLoaded(next);
+    language.set(next);
 }
