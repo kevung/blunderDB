@@ -60,20 +60,26 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="view-tabs">
-    {#each $views as view, _i (view.id)}
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="view-tab" class:active={$activeViewId === view.id} onclick={() => handleTabClick(view.id)} ondblclick={() => handleDoubleClick(view)}>
-            {#if editingId === view.id}
-                <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
-            {:else}
-                <span class="tab-name">{view.name}</span>
-            {/if}
-            {#if $views.length > 1}
+<!--
+  A single view has nothing to switch between and no close button (gated
+  below), so its tab is just a name nobody needs to read — collapse the bar
+  to the bare "+" affordance instead of the full 26px row (#215). It expands
+  back the moment a second view exists.
+-->
+<div class="view-tabs" class:collapsed={$views.length <= 1}>
+    {#if $views.length > 1}
+        {#each $views as view, _i (view.id)}
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div class="view-tab" class:active={$activeViewId === view.id} onclick={() => handleTabClick(view.id)} ondblclick={() => handleDoubleClick(view)}>
+                {#if editingId === view.id}
+                    <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
+                {:else}
+                    <span class="tab-name">{view.name}</span>
+                {/if}
                 <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title={$t('viewTabs.closeView')}>&times;</button>
-            {/if}
-        </div>
-    {/each}
+            </div>
+        {/each}
+    {/if}
     <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}>+</button>
 </div>
 
@@ -89,6 +95,16 @@
         overflow-y: hidden;
         gap: 0;
         padding-left: 4px;
+    }
+
+    .view-tabs.collapsed {
+        height: 14px;
+        padding-left: 0;
+    }
+
+    .view-tabs.collapsed .add-btn {
+        font-size: var(--font-size-small);
+        padding: 0 6px;
     }
 
     .view-tab {

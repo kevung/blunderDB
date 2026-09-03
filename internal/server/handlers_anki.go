@@ -51,6 +51,10 @@ type reviewLogReq struct {
 	Limit  int   `json:"limit"`
 }
 
+// pageLimit implements pagedReq (handlers_rpc.go): rpc/rpcStream enforce
+// maxPageSize on it before anki.reviewLog ever runs.
+func (r reviewLogReq) pageLimit() int { return r.Limit }
+
 type forecastReq struct {
 	DeckID int64 `json:"deckId"`
 	Days   int   `json:"days"`

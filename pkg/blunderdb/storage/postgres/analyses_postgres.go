@@ -49,7 +49,7 @@ ON CONFLICT (position_id) DO UPDATE SET
 	is_close_cube=excluded.is_close_cube`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
-// zlib-compressed into the BYTEA data column and the denormalised scalar
+// compressed (zstd, see engine.CompressAnalysisData) into the BYTEA data column and the denormalised scalar
 // columns are derived. Higher-level merge logic (combining XG and GnuBG
 // analyses) stays in the caller, which loads, merges, then calls Save.
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {

@@ -154,3 +154,18 @@ func writeBodyTooLarge(w http.ResponseWriter, limit int64) {
 		Details: map[string]any{"limit_bytes": limit},
 	}})
 }
+
+// writeMethodNotAllowed answers 405 for a known path called with the wrong
+// method, Allow naming the one it accepts. Another envelope whose status is
+// not statusForCode's, like writeBodyTooLarge's 413 — the error-code set
+// stays near-closed (CodeInvalid) while the HTTP status carries the
+// distinction (#232).
+func writeMethodNotAllowed(w http.ResponseWriter, allow string) {
+	w.Header().Set("Allow", allow)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusMethodNotAllowed)
+	_ = json.NewEncoder(w).Encode(errorEnvelope{Error: errorBody{
+		Code:    CodeInvalid,
+		Message: "method not allowed, use " + allow,
+	}})
+}

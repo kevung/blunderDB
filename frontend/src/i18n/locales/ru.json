@@ -651,7 +651,11 @@
         "player1": "Игрок 1",
         "player2": "Игрок 2",
         "menu": {
-            "evaluate": "Оценить эту позицию"
+            "evaluate": "Оценить эту позицию",
+            "evaluateMirror": "Оценить зеркальное отражение этой позиции",
+            "copyImageWithAnalysis": "Скопировать изображение доски с анализом",
+            "newView": "Новый вид",
+            "addToAnkiDeck": "Добавить в колоду Anki: {deck}"
         }
     },
     "epc": {
@@ -837,7 +841,10 @@
         "stats": "Статистика",
         "epc": "Расчёт",
         "anki": "Anki",
-        "metadata": "Метаданные"
+        "metadata": "Метаданные",
+        "hideTab": "Скрыть эту вкладку",
+        "showTab": "Показать: {tab}",
+        "hiddenTabs": "Скрытые вкладки"
     },
     "status": {
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
@@ -928,7 +935,9 @@
         "pastedPositionSaved": "Вставленные позиция и анализ успешно сохранены",
         "importDone": "Импорт завершён: {succeeded} импортировано, {skipped} пропущено, {failed} не удалось",
         "confirmDeletePosition": "Удалить эту позицию и связанный анализ?",
-        "searching": "Поиск…"
+        "searching": "Поиск…",
+        "positionAddedToDeck": "Позиция добавлена в колоду «{deck}»",
+        "failedAddToDeck": "Не удалось добавить позицию в колоду: {err}"
     },
     "stats": {
         "title": "Статистика",

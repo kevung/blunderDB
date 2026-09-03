@@ -4,6 +4,7 @@
     import MinMaxFilterRow from './MinMaxFilterRow.svelte';
     import MatchTournamentPickerModal from './MatchTournamentPickerModal.svelte';
     import { t, tMsg } from '../i18n';
+    import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy, tick, untrack } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -585,8 +586,7 @@
     }
 
     function formatTimestamp(timestamp) {
-        const date = new Date(timestamp);
-        return date.toLocaleString();
+        return formatDateTime(timestamp);
     }
 
     // --- Saved filter (bookmarked search) functions ---

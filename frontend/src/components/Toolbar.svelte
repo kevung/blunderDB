@@ -39,7 +39,7 @@
             newDatabase(e);
         }}
         aria-label={$t('toolbar.newDatabase')}
-        title="{$t('toolbar.newDatabase')} (Ctrl-N)"
+        title="{$t('toolbar.newDatabase')} (Ctrl+N)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -56,7 +56,7 @@
             openDatabase(e);
         }}
         aria-label={$t('toolbar.openDatabase')}
-        title="{$t('toolbar.openDatabase')} (Ctrl-O)"
+        title="{$t('toolbar.openDatabase')} (Ctrl+O)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -73,7 +73,7 @@
             importDatabase(e);
         }}
         aria-label={$t('toolbar.importDatabase')}
-        title="{$t('toolbar.importDatabase')} (Ctrl-Shift-I)"
+        title="{$t('toolbar.importDatabase')} (Ctrl+Shift+I)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -91,7 +91,7 @@
             exportDatabase(e);
         }}
         aria-label={$t('toolbar.exportDatabase')}
-        title="{$t('toolbar.exportDatabase')} (Ctrl-Shift-S)"
+        title="{$t('toolbar.exportDatabase')} (Ctrl+Shift+S)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -109,7 +109,7 @@
             exitApp(e);
         }}
         aria-label={$t('toolbar.exit')}
-        title="{$t('toolbar.exit')} blunderDB (Ctrl-Q)"
+        title="{$t('toolbar.exit')} blunderDB (Ctrl+Q)"
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -128,7 +128,7 @@
             importPosition(e);
         }}
         aria-label={$t('toolbar.importPosition')}
-        title="{$t('toolbar.importPositionTip')} (Ctrl-I)"
+        title="{$t('toolbar.importPositionTip')} (Ctrl+I)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -146,7 +146,7 @@
             importFolder(e);
         }}
         aria-label={$t('toolbar.importFolder')}
-        title="{$t('toolbar.importFolder')} (Ctrl-Shift-F)"
+        title="{$t('toolbar.importFolder')} (Ctrl+Shift+F)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -164,7 +164,7 @@
             copyPosition(e);
         }}
         aria-label={$t('toolbar.copyPosition')}
-        title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} (Ctrl-C)` : `${$t('toolbar.copyPositionTip')} (Ctrl-C)`}
+        title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} (Ctrl+C)` : `${$t('toolbar.copyPositionTip')} (Ctrl+C)`}
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -182,7 +182,7 @@
             pastePosition(e);
         }}
         aria-label={$t('toolbar.pastePosition')}
-        title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} (Ctrl-V)` : `${$t('toolbar.pastePosition')} (Ctrl-V)`}
+        title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} (Ctrl+V)` : `${$t('toolbar.pastePosition')} (Ctrl+V)`}
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -200,7 +200,7 @@
             saveCurrentPosition(e);
         }}
         aria-label={$t('toolbar.savePosition')}
-        title="{$t('toolbar.savePosition')} (Ctrl-S)"
+        title="{$t('toolbar.savePosition')} (Ctrl+S)"
         disabled={!isSearchTab || !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -214,7 +214,7 @@
             updatePosition(e);
         }}
         aria-label={$t('toolbar.updatePosition')}
-        title="{$t('toolbar.updatePosition')} (Ctrl-U)"
+        title="{$t('toolbar.updatePosition')} (Ctrl+U)"
         disabled={!isSearchTab || !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -252,7 +252,7 @@
             reloadAllPositions(e);
         }}
         aria-label={$t('toolbar.loadAllPositions')}
-        title="{$t('toolbar.loadAllPositions')} (Ctrl-R)"
+        title="{$t('toolbar.loadAllPositions')} (Ctrl+R)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -374,7 +374,7 @@
             copyBoardImage(e);
         }}
         aria-label={$t('toolbar.copyBoardImage')}
-        title="{$t('toolbar.copyBoardImageTip')} (Ctrl-X), {$t('toolbar.copyBoardImageWithAnalysis')} (Ctrl-X Ctrl-X)"
+        title="{$t('toolbar.copyBoardImageTip')} (Ctrl+X), {$t('toolbar.copyBoardImageWithAnalysis')} (Ctrl+X Ctrl+X)"
         disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

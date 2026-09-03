@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:38+0200\n"
+"POT-Creation-Date: 2026-09-03 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -358,7 +358,12 @@ msgid ""
 "temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
 "lien, TAB reprend la navigation clavier standard entre les éléments de "
 "l'interface plutôt que de rouvrir ce panneau."
-msgstr "TAB avaa hakupaneelin vain, kun kohdistus on pelilaudalla (tai ei missään erityisessä kohteessa, mikä on tilanne useimmiten). Kun kohdistus siirtyy painikkeeseen, syöttökenttään tai linkkiin, TAB jatkaa käyttöliittymän elementtien välistä tavanomaista näppäimistönavigointia sen sijaan, että avaisi tämän paneelin uudelleen."
+msgstr ""
+"TAB avaa hakupaneelin vain, kun kohdistus on pelilaudalla (tai ei missään"
+" erityisessä kohteessa, mikä on tilanne useimmiten). Kun kohdistus "
+"siirtyy painikkeeseen, syöttökenttään tai linkkiin, TAB jatkaa "
+"käyttöliittymän elementtien välistä tavanomaista näppäimistönavigointia "
+"sen sijaan, että avaisi tämän paneelin uudelleen."
 
 #: ../../source/raccourcis.rst:132
 msgid "Outils"
@@ -444,7 +449,16 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:152
+msgid ""
+"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
+"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
+"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
+"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
+"qui restent joignables entretemps par leur raccourci."
+msgstr "Näiden välilehtien järjestys, kun sitä on muutettu vetämällä palkilla, muistetaan istunnosta toiseen. Välilehden oikea napsautus mahdollistaa sen piilottamisen; tällöin palkin oikeaan reunaan ilmestyvä nuolipainike avaa valikon piilotettujen välilehtien näyttämiseksi uudelleen — ne pysyvät sillä välin tavoitettavissa omalla pikanäppäimellään."
+
+#: ../../source/raccourcis.rst:161
 msgid "Onglets de vues"
 msgstr "Näkymävälilehdet"
 
@@ -496,7 +510,7 @@ msgstr "Välilehden kaksoisnapsautus"
 msgid "Renommer la vue."
 msgstr "Nimeä näkymä uudelleen."
 
-#: ../../source/raccourcis.rst:169
+#: ../../source/raccourcis.rst:177
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -512,7 +526,7 @@ msgstr ""
 "VAIHTO-J/VAIHTO-K noudattavat CTRL-PageUp/CTRL-PageDown-käytäntöä, johon "
 "ne on liitetty, eivät j/k:n käytäntöä."
 
-#: ../../source/raccourcis.rst:179
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Komentorivi"
 
@@ -532,11 +546,11 @@ msgstr "ALAS"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Selaa komentohistoriaa alaspäin."
 
-#: ../../source/raccourcis.rst:192
+#: ../../source/raccourcis.rst:200
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
-#: ../../source/raccourcis.rst:194
+#: ../../source/raccourcis.rst:202
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -558,11 +572,11 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:208
+#: ../../source/raccourcis.rst:216
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
-#: ../../source/raccourcis.rst:210
+#: ../../source/raccourcis.rst:218
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -578,7 +592,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:224
+#: ../../source/raccourcis.rst:232
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -614,11 +628,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:240
+#: ../../source/raccourcis.rst:248
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
 
-#: ../../source/raccourcis.rst:242
+#: ../../source/raccourcis.rst:250
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -632,7 +646,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Poista siirron valinta."
 
-#: ../../source/raccourcis.rst:259
+#: ../../source/raccourcis.rst:267
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -668,7 +682,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:277
+#: ../../source/raccourcis.rst:285
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -724,7 +738,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des tournois"
 msgstr "Turnauspaneeli"
 
@@ -757,7 +771,7 @@ msgstr ""
 "muuten poista turnauksen valinta, muuten sulje paneeli (askel "
 "kerrallaan)."
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:319
 msgid "Panneau des collections"
 msgstr "Kokoelmapaneeli"
 
@@ -785,7 +799,7 @@ msgstr ""
 "Palaa kokoelmalistaan, muuten poista kokoelman valinta, muuten sulje "
 "paneeli (askel kerrallaan)."
 
-#: ../../source/raccourcis.rst:325
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

@@ -22,6 +22,7 @@ import { takePoint4LastTable } from '../stores/takePoint4LastTable';
 import { gammonValue4Table } from '../stores/gammonValue4Table';
 import { showDatesAndMetadata } from '../services/positionService.js';
 import { showDatesAndMetadata as direct } from '../services/metadataStatus.js';
+import { formatDateTime } from '../utils/format.js';
 
 function setPosition(score, cubeValue) {
     positionsStore.set([{ id: 1, score, cube: { owner: -1, value: cubeValue } }]);
@@ -70,7 +71,12 @@ describe('showDatesAndMetadata', () => {
         positionsStore.set([]);
         currentPositionIndexStore.set(-1);
         showDatesAndMetadata();
-        expect(get(statusBarTextStore)).toMatch(/2026\/09\/01 .* \| /);
+        // The date is formatted per the active UI language (#213), not a
+        // fixed ISO-like order — build the expected substring the same way
+        // metadataStatus.js does rather than pinning one locale's rendering.
+        const created = formatDateTime('2026-09-01T10:00:00Z');
+        expect(get(statusBarTextStore)).toContain(created);
+        expect(get(statusBarTextStore)).toContain(' | ');
     });
 
     test('sans analyse datée : message « pas de base »', () => {

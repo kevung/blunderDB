@@ -25,7 +25,7 @@ Les principales interactions possibles avec blunderDB sont:
 
 * modifier une position existante,
 
-* copier l'image du board dans le presse-papier (PNG) via **Ctrl+X**, ou avec l'analyse complète via **Ctrl+X Ctrl+X**,
+* copier l'image du board dans le presse-papier (PNG) via **CTRL-X**, ou avec l'analyse complète via **CTRL-X CTRL-X**,
 
 * supprimer une position existante,
 
@@ -105,6 +105,18 @@ La zone d'affichage principale met à disposition à l'utilisateur:
   une décision de cube. Lorsque la décision de cube est une réponse à un
   doublement (prise/passe), le videau proposé est affiché au centre du
   plateau, à la valeur offerte.
+
+.. _board_menu_contextuel:
+
+Un clic droit sur le plateau ouvre un menu contextuel proposant : évaluer la
+position affichée dans le panneau Eval, évaluer son miroir, copier l'image
+du plateau avec son analyse dans le presse-papier (l'équivalent de *CTRL-X
+CTRL-X*, moins facile à découvrir), ouvrir une nouvelle vue sur cette
+position, et — si la position vient déjà de la base — l'ajouter à un paquet
+Anki (répétition espacée). Ce menu n'apparaît pas dans le panneau Eval ni
+dans le panneau Recherche, où le bouton droit sert déjà à poser les pions de
+l'autre couleur. Voir :ref:`eval_amener_position` pour amener une position
+dans le panneau Eval.
 
 La barre d'état est structurée de gauche à droite par les informations
 suivantes:

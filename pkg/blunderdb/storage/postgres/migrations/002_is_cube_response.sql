@@ -28,4 +28,3 @@ FROM (
 WHERE resp.position_id = p.id
   AND p.decision_type = 1;
 
-UPDATE metadata SET value = '2.10.0' WHERE key = 'database_version';

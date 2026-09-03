@@ -18,6 +18,8 @@ export function GetGammonNetDisplayPly():Promise<number>;
 
 export function GetGammonNetPruneK():Promise<number>;
 
+export function GetHiddenTabs():Promise<Array<string>>;
+
 export function GetLanguage():Promise<string>;
 
 export function GetLastDatabasePath():Promise<string>;
@@ -29,6 +31,8 @@ export function GetPanelPosition():Promise<string>;
 export function GetPanelWidth():Promise<number>;
 
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
+
+export function GetTabOrder():Promise<Array<string>>;
 
 export function GetTourSeen():Promise<boolean>;
 
@@ -54,6 +58,8 @@ export function SaveGammonNetDisplayPly(arg1:number):Promise<void>;
 
 export function SaveGammonNetPruneK(arg1:number):Promise<void>;
 
+export function SaveHiddenTabs(arg1:Array<string>):Promise<void>;
+
 export function SaveLanguage(arg1:string):Promise<void>;
 
 export function SaveLastDatabasePath(arg1:string):Promise<void>;
@@ -65,6 +71,8 @@ export function SavePanelPosition(arg1:string):Promise<void>;
 export function SavePanelWidth(arg1:number):Promise<void>;
 
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
+
+export function SaveTabOrder(arg1:Array<string>):Promise<void>;
 
 export function SaveTourSeen(arg1:boolean):Promise<void>;
 

@@ -11,7 +11,21 @@
 -- composite unique index (tenant_id, zobrist_hash). The `metadata` table is
 -- database-level infrastructure (schema version) and has no tenant_id.
 --
--- Tables are created in dependency order so inline foreign keys resolve.
+-- Every table another table references carries `UNIQUE (tenant_id, id)`
+-- (redundant with `id`'s own uniqueness, but required for a composite
+-- foreign key to target it), and every foreign key is
+-- `(tenant_id, parent_id) REFERENCES parent (tenant_id, id)` rather than
+-- `parent_id REFERENCES parent (id)` alone (#235): `id` is already globally
+-- unique, so the single-column form was never wrong about WHICH row a
+-- foreign key points to, only silent about whether that row belongs to the
+-- same tenant — a child row's tenant_id could name one tenant while its
+-- parent belonged to another, a bug the application layer's own filtering
+-- was relied on alone to prevent. The composite form makes that
+-- structurally impossible. An `ON DELETE SET NULL` naming the parent-id
+-- column alone (not the pair) where one exists (match.tournament_id,
+-- move.position_id) keeps tenant_id itself from ever being nulled out.
+--
+-- Tables are created in dependency order so foreign keys resolve.
 
 CREATE TABLE IF NOT EXISTS position (
     id                BIGSERIAL PRIMARY KEY,
@@ -56,13 +70,19 @@ CREATE TABLE IF NOT EXISTS position (
     CONSTRAINT position_pip_2_sign    CHECK (pip_2 >= 0),
     -- off_1/off_2 are the borne-off counts, at most fifteen checkers.
     CONSTRAINT position_off_1_range   CHECK (off_1 BETWEEN 0 AND 15),
-    CONSTRAINT position_off_2_range   CHECK (off_2 BETWEEN 0 AND 15)
+    CONSTRAINT position_off_2_range   CHECK (off_2 BETWEEN 0 AND 15),
+    -- Composite target for every child table's (tenant_id, …) foreign key
+    -- below (#235): id alone is already globally unique (BIGSERIAL), so this
+    -- adds nothing to Load-by-id correctness — its job is to let a composite
+    -- FK exist at all, which then rejects a child row whose tenant_id does
+    -- not match its parent's, a mistake `id` alone cannot catch.
+    CONSTRAINT position_tenant_id_key UNIQUE (tenant_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS analysis (
     id                       BIGSERIAL PRIMARY KEY,
     tenant_id                BIGINT  NOT NULL,
-    position_id              BIGINT  REFERENCES position(id) ON DELETE CASCADE,
+    position_id              BIGINT,
     data                     BYTEA,
     best_cube_action         TEXT,
     cube_error               BIGINT,
@@ -74,16 +94,18 @@ CREATE TABLE IF NOT EXISTS analysis (
     player2_gammon_rate      BIGINT,
     player2_backgammon_rate  BIGINT,
     is_forced                BOOLEAN NOT NULL DEFAULT FALSE,
-    is_close_cube            BOOLEAN NOT NULL DEFAULT FALSE
+    is_close_cube            BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT analysis_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS comment (
     id           BIGSERIAL PRIMARY KEY,
     tenant_id    BIGINT NOT NULL,
-    position_id  BIGINT REFERENCES position(id) ON DELETE CASCADE,
+    position_id  BIGINT,
     text         TEXT,
     created_at   TIMESTAMPTZ DEFAULT now(),
-    modified_at  TIMESTAMPTZ
+    modified_at  TIMESTAMPTZ,
+    CONSTRAINT comment_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
 -- Supports the comment-presence search filter's EXISTS subquery (see 006).
@@ -138,7 +160,8 @@ CREATE TABLE IF NOT EXISTS tournament (
     sort_order  BIGINT DEFAULT 0,
     comment     TEXT DEFAULT '',
     created_at  TIMESTAMPTZ DEFAULT now(),
-    updated_at  TIMESTAMPTZ DEFAULT now()
+    updated_at  TIMESTAMPTZ DEFAULT now(),
+    CONSTRAINT tournament_tenant_id_key UNIQUE (tenant_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS match (
@@ -155,44 +178,56 @@ CREATE TABLE IF NOT EXISTS match (
     file_path              TEXT,
     game_count             BIGINT DEFAULT 0,
     match_hash             TEXT,
-    tournament_id          BIGINT REFERENCES tournament(id) ON DELETE SET NULL,
+    tournament_id          BIGINT,
     last_visited_position  BIGINT DEFAULT -1,
     canonical_hash         TEXT,
     comment                TEXT DEFAULT '',
-    tournament_sort_order  BIGINT DEFAULT 0
+    tournament_sort_order  BIGINT DEFAULT 0,
+    CONSTRAINT match_tenant_id_key UNIQUE (tenant_id, id),
+    -- SET NULL names only tournament_id, not the whole (tenant_id,
+    -- tournament_id) pair: tenant_id is this row's own tenant and must never
+    -- be nulled out by a tournament's deletion (#235).
+    CONSTRAINT match_tournament_tenant_fkey FOREIGN KEY (tenant_id, tournament_id) REFERENCES tournament (tenant_id, id) ON DELETE SET NULL (tournament_id)
 );
 
 CREATE TABLE IF NOT EXISTS game (
     id               BIGSERIAL PRIMARY KEY,
     tenant_id        BIGINT NOT NULL,
-    match_id         BIGINT REFERENCES match(id) ON DELETE CASCADE,
+    match_id         BIGINT,
     game_number      BIGINT,
     initial_score_1  BIGINT,
     initial_score_2  BIGINT,
     winner           BIGINT,
     points_won       BIGINT,
-    move_count       BIGINT DEFAULT 0
+    move_count       BIGINT DEFAULT 0,
+    CONSTRAINT game_tenant_id_key UNIQUE (tenant_id, id),
+    CONSTRAINT game_match_tenant_fkey FOREIGN KEY (tenant_id, match_id) REFERENCES match (tenant_id, id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS move (
     id            BIGSERIAL PRIMARY KEY,
     tenant_id     BIGINT NOT NULL,
-    game_id       BIGINT REFERENCES game(id) ON DELETE CASCADE,
+    game_id       BIGINT,
     move_number   BIGINT,
     move_type     TEXT,
-    position_id   BIGINT REFERENCES position(id) ON DELETE SET NULL,
+    position_id   BIGINT,
     player        BIGINT,
     dice_1        BIGINT,
     dice_2        BIGINT,
     checker_move  TEXT,
     cube_action   TEXT,
-    luck_mp       BIGINT
+    luck_mp       BIGINT,
+    CONSTRAINT move_tenant_id_key UNIQUE (tenant_id, id),
+    CONSTRAINT move_game_tenant_fkey FOREIGN KEY (tenant_id, game_id) REFERENCES game (tenant_id, id) ON DELETE CASCADE,
+    -- SET NULL names only position_id, for the same reason as match's
+    -- tournament_id above.
+    CONSTRAINT move_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE SET NULL (position_id)
 );
 
 CREATE TABLE IF NOT EXISTS move_analysis (
     id                        BIGSERIAL PRIMARY KEY,
     tenant_id                 BIGINT NOT NULL,
-    move_id                   BIGINT REFERENCES move(id) ON DELETE CASCADE,
+    move_id                   BIGINT,
     analysis_type             TEXT,
     depth                     TEXT,
     equity                    BIGINT,
@@ -202,7 +237,8 @@ CREATE TABLE IF NOT EXISTS move_analysis (
     backgammon_rate           BIGINT,
     opponent_win_rate         BIGINT,
     opponent_gammon_rate      BIGINT,
-    opponent_backgammon_rate  BIGINT
+    opponent_backgammon_rate  BIGINT,
+    CONSTRAINT move_analysis_move_tenant_fkey FOREIGN KEY (tenant_id, move_id) REFERENCES move (tenant_id, id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS collection (
@@ -212,17 +248,20 @@ CREATE TABLE IF NOT EXISTS collection (
     description  TEXT,
     sort_order   BIGINT DEFAULT 0,
     created_at   TIMESTAMPTZ DEFAULT now(),
-    updated_at   TIMESTAMPTZ DEFAULT now()
+    updated_at   TIMESTAMPTZ DEFAULT now(),
+    CONSTRAINT collection_tenant_id_key UNIQUE (tenant_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS collection_position (
     id             BIGSERIAL PRIMARY KEY,
     tenant_id      BIGINT NOT NULL,
-    collection_id  BIGINT NOT NULL REFERENCES collection(id) ON DELETE CASCADE,
-    position_id    BIGINT NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+    collection_id  BIGINT NOT NULL,
+    position_id    BIGINT NOT NULL,
     sort_order     BIGINT DEFAULT 0,
     added_at       TIMESTAMPTZ DEFAULT now(),
-    UNIQUE (collection_id, position_id)
+    UNIQUE (collection_id, position_id),
+    CONSTRAINT collection_position_collection_tenant_fkey FOREIGN KEY (tenant_id, collection_id) REFERENCES collection (tenant_id, id) ON DELETE CASCADE,
+    CONSTRAINT collection_position_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS anki_deck (
@@ -238,14 +277,15 @@ CREATE TABLE IF NOT EXISTS anki_deck (
     enable_fuzz        BOOLEAN DEFAULT TRUE,
     session_limit      INTEGER,
     created_at         TIMESTAMPTZ DEFAULT now(),
-    updated_at         TIMESTAMPTZ DEFAULT now()
+    updated_at         TIMESTAMPTZ DEFAULT now(),
+    CONSTRAINT anki_deck_tenant_id_key UNIQUE (tenant_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS anki_card (
     id              BIGSERIAL PRIMARY KEY,
     tenant_id       BIGINT NOT NULL,
-    deck_id         BIGINT NOT NULL REFERENCES anki_deck(id) ON DELETE CASCADE,
-    position_id     BIGINT NOT NULL REFERENCES position(id) ON DELETE CASCADE,
+    deck_id         BIGINT NOT NULL,
+    position_id     BIGINT NOT NULL,
     due             TIMESTAMPTZ DEFAULT now(),
     stability       DOUBLE PRECISION DEFAULT 0,
     difficulty      DOUBLE PRECISION DEFAULT 0,
@@ -257,20 +297,23 @@ CREATE TABLE IF NOT EXISTS anki_card (
     last_review     TIMESTAMPTZ,
     suspended       BOOLEAN NOT NULL DEFAULT FALSE,
     buried_until    TIMESTAMPTZ,
-    UNIQUE (deck_id, position_id)
+    UNIQUE (deck_id, position_id),
+    CONSTRAINT anki_card_tenant_id_key UNIQUE (tenant_id, id),
+    CONSTRAINT anki_card_deck_tenant_fkey FOREIGN KEY (tenant_id, deck_id) REFERENCES anki_deck (tenant_id, id) ON DELETE CASCADE,
+    CONSTRAINT anki_card_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS anki_review_log (
     id              BIGSERIAL PRIMARY KEY,
     tenant_id       BIGINT NOT NULL,
-    card_id         BIGINT NOT NULL REFERENCES anki_card(id) ON DELETE CASCADE,
-    -- deck_id and position_id were plain integers until 2.18.0 (issue #185):
-    -- the journal named a deck and a position with nothing to say they had to
-    -- exist. See 016.
-    deck_id         BIGINT NOT NULL CONSTRAINT anki_review_log_deck_fk
-                        REFERENCES anki_deck(id) ON DELETE CASCADE,
-    position_id     BIGINT NOT NULL CONSTRAINT anki_review_log_position_fk
-                        REFERENCES position(id) ON DELETE CASCADE,
+    -- card_id, deck_id and position_id were plain integers until 2.18.0
+    -- (issue #185): the journal named a deck and a position with nothing to
+    -- say they had to exist. All three are composite (tenant_id, …) foreign
+    -- keys (issue #235) rather than the single-column form 016 originally
+    -- added deck_id/position_id with — see this file's header comment.
+    card_id         BIGINT NOT NULL,
+    deck_id         BIGINT NOT NULL,
+    position_id     BIGINT NOT NULL,
     rating          BIGINT NOT NULL,
     state           BIGINT NOT NULL DEFAULT 0,
     stability       DOUBLE PRECISION DEFAULT 0,
@@ -279,7 +322,10 @@ CREATE TABLE IF NOT EXISTS anki_review_log (
     scheduled_days  BIGINT DEFAULT 0,
     reviewed_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
     -- The four FSRS grades; anki.ScheduleNext refuses anything else.
-    CONSTRAINT anki_review_log_rating_range CHECK (rating BETWEEN 1 AND 4)
+    CONSTRAINT anki_review_log_rating_range CHECK (rating BETWEEN 1 AND 4),
+    CONSTRAINT anki_review_log_card_tenant_fkey FOREIGN KEY (tenant_id, card_id) REFERENCES anki_card (tenant_id, id) ON DELETE CASCADE,
+    CONSTRAINT anki_review_log_deck_tenant_fkey FOREIGN KEY (tenant_id, deck_id) REFERENCES anki_deck (tenant_id, id) ON DELETE CASCADE,
+    CONSTRAINT anki_review_log_position_tenant_fkey FOREIGN KEY (tenant_id, position_id) REFERENCES position (tenant_id, id) ON DELETE CASCADE
 );
 
 -- Indexes. Multi-tenant filter columns lead every composite index so the

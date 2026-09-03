@@ -651,7 +651,11 @@
         "player1": "Giocatore 1",
         "player2": "Giocatore 2",
         "menu": {
-            "evaluate": "Valuta questa posizione"
+            "evaluate": "Valuta questa posizione",
+            "evaluateMirror": "Valuta lo specchio di questa posizione",
+            "copyImageWithAnalysis": "Copia l'immagine del tabellone con l'analisi",
+            "newView": "Nuova vista",
+            "addToAnkiDeck": "Aggiungi al mazzo Anki: {deck}"
         }
     },
     "epc": {
@@ -837,7 +841,10 @@
         "stats": "Statistiche",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Metadati"
+        "metadata": "Metadati",
+        "hideTab": "Nascondi questa scheda",
+        "showTab": "Mostra: {tab}",
+        "hiddenTabs": "Schede nascoste"
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
@@ -928,7 +935,9 @@
         "pastedPositionSaved": "Posizione e analisi incollate salvate correttamente",
         "importDone": "Importazione completata: {succeeded} importate, {skipped} ignorate, {failed} non riuscite",
         "confirmDeletePosition": "Eliminare questa posizione e la relativa analisi?",
-        "searching": "Ricerca in corso…"
+        "searching": "Ricerca in corso…",
+        "positionAddedToDeck": "Posizione aggiunta al mazzo «{deck}»",
+        "failedAddToDeck": "Errore durante l'aggiunta della posizione al mazzo: {err}"
     },
     "stats": {
         "title": "Stats",

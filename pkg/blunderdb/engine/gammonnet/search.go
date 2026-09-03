@@ -48,10 +48,20 @@ const (
 	// that four plies are useful: upstream measured a whole extra ply at
 	// +0.00022 equity per decision, inside the noise.
 	MaxPly = 4
+)
 
-	// DefaultPruneK is the pruning width the reference documents as its
-	// default: ×3.9 cheaper for an equity loss in the noise.
-	DefaultPruneK = 12
+// DefaultPly, DefaultPruneK, DefaultPruneEquityLoss and its CI are the
+// canonical "normal" level's own fields (search_levels.go, issue #25) — read
+// from the embedded export instead of retyped as a literal, so this package
+// cannot drift from what gammonNet's `gn_search_level` publishes without the
+// embed itself changing. ×3.9 cheaper than unpruned, for an equity loss the
+// CI keeps honest rather than rounding to "in the noise".
+var (
+	DefaultPly                   = mustLevel("normal").Ply
+	DefaultPruneK                = mustLevel("normal").PruneK
+	DefaultPruneEquityLoss       = mustLevel("normal").PruneEquityLoss
+	DefaultPruneEquityLossCILow  = mustLevel("normal").PruneEquityLossCILow
+	DefaultPruneEquityLossCIHigh = mustLevel("normal").PruneEquityLossCIHigh
 )
 
 //go:embed strehl-prune-32_v1.0.1_2026-08-27.bin
@@ -142,8 +152,12 @@ type SearchConfig struct {
 	CubeX     float64
 }
 
+// defaultFilterPrefix is the "normal" level's own filter — (0,1,3), read
+// from the same embedded export as DefaultPruneK, never retyped.
+var defaultFilterPrefix = mustLevel("normal").Filter
+
 // DefaultConfig returns the canonical configuration for a given depth: pruning
-// at k=12 and the published move filter (0,1,3).
+// at DefaultPruneK and the published move filter (defaultFilterPrefix).
 //
 // The filter is not an optimisation, it is what makes the depth reachable at
 // all. Measured on this build, a 2-ply decision from the opening costs 13 400
@@ -151,6 +165,12 @@ type SearchConfig struct {
 // 760 000, because every one of the twelve survivors at every node is searched
 // deeper. A config with a zero filter at ply 2 is not a slower search, it is an
 // unusable one.
+//
+// Depths beyond what defaultFilterPrefix covers (3 and 4 ply, at MaxPly=4)
+// get 5 — this repository's OWN extension, published nowhere upstream: T3A
+// only measured the 2-ply shape (0,1,3), so a caller relying on the filter
+// staying reasonable at 3-ply or 4-ply is trusting a guess, not a
+// measurement, same as it always was.
 func DefaultConfig(ply int) SearchConfig {
 	if ply < 0 {
 		ply = 0
@@ -158,10 +178,15 @@ func DefaultConfig(ply int) SearchConfig {
 	if ply > MaxPly {
 		ply = MaxPly
 	}
+	var filter [MaxPly + 1]int
+	copy(filter[:], defaultFilterPrefix)
+	for d := len(defaultFilterPrefix); d < len(filter); d++ {
+		filter[d] = 5
+	}
 	return SearchConfig{
 		Ply:    ply,
 		PruneK: DefaultPruneK,
-		Filter: [MaxPly + 1]int{0, 1, 3, 5, 5},
+		Filter: filter,
 	}
 }
 

@@ -1,7 +1,10 @@
-# Weekly dependency bumps, one grouped PR per ecosystem so a routine week is
-# three PRs at most rather than one per module. Minor and patch updates are
-# grouped together; a major bump keeps its own PR because it usually needs a
-# human to read the changelog (Svelte, Wails, golangci-lint...).
+# Grouped dependency bumps, one PR per ecosystem per run instead of one per
+# module. Minor and patch updates are grouped together; a major bump keeps its
+# own PR because it usually needs a human to read the changelog (Svelte,
+# Wails, golangci-lint...). gomod and github-actions run weekly; npm (D.15,
+# #216) runs monthly — the frontend's build-chain majors are handled by hand
+# anyway (see the `ignore` rule below), so a weekly cadence there was mostly
+# minor/patch noise.
 #
 # github-actions bumps rewrite the SHA-pinned `uses:` lines in the workflows
 # and keep the `# vX.Y.Z` comment in step — that is how the pins stay current.
@@ -22,8 +25,7 @@ updates:
   - package-ecosystem: npm
     directory: /frontend
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
     open-pull-requests-limit: 5
     # A major bump of one build-chain package alone (vite 8 while
     # vite-plugin-svelte still wants 7, jest-dom 7, prettier-plugin-svelte 4)

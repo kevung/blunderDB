@@ -90,7 +90,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		addr          = fs.String("addr", envOr("BLUNDERDB_ADDR", ":8080"), "listen address host:port")
 		logLevel      = fs.String("log-level", envOr("BLUNDERDB_LOG_LEVEL", "info"), "log level: debug|info|warn|error")
 		enableMetrics = fs.Bool("metrics", envBoolOr("BLUNDERDB_METRICS", true), "expose /metrics (Prometheus)")
-		corsOrigin    = fs.String("cors-allow-origin", envOr("BLUNDERDB_CORS_ALLOW_ORIGIN", ""), "enable CORS for this origin (off by default)")
+		corsOrigin    = fs.String("cors-allow-origin", envOr("BLUNDERDB_CORS_ALLOW_ORIGIN", ""), "enable CORS for this origin, a comma-separated list of origins, or \"*\" (off by default)")
 		rateLimitRPS  = fs.Float64("rate-limit-rps", envFloatOr("BLUNDERDB_RATE_LIMIT_RPS", defaultRateLimitRPS),
 			fmt.Sprintf("per-tenant sustained requests/second (0 = disabled; default %d, generous headroom for real traffic)", defaultRateLimitRPS))
 		rateLimitBurst = fs.Int("rate-limit-burst", envIntOr("BLUNDERDB_RATE_LIMIT_BURST", defaultRateLimitBurst),

@@ -9,6 +9,7 @@ import (
 
 	"github.com/adrg/xdg"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -127,20 +128,28 @@ const (
 // separately on purpose: display depth is interactive comfort, analysis depth
 // is what the batch (#129) writes to a Position's Analysis row. Conflating
 // them would let a comfort adjustment silently degrade what gets persisted.
-// Both default to the canonical parameters — 2-ply, pruning k=12 — matching
-// gammonnet.DefaultConfig / gammonnet.DefaultPruneK.
+// Both default to the canonical "normal" level (issue #25) —
+// gammonnet.DefaultPly / gammonnet.DefaultPruneK, read from gammonNet's own
+// export rather than retyped as literals here.
 const (
-	MinGammonNetPly     = 0
-	MaxGammonNetPly     = 4 // gammonnet.MaxPly
-	DefaultGammonNetPly = 2
+	MinGammonNetPly = 0
+	MaxGammonNetPly = gammonnet.MaxPly
 
-	MinGammonNetPruneK     = 1
-	MaxGammonNetPruneK     = 64
-	DefaultGammonNetPruneK = 12 // gammonnet.DefaultPruneK
+	MinGammonNetPruneK = 1
+	MaxGammonNetPruneK = 64
 
 	MinGammonNetCandidates     = 1
 	MaxGammonNetCandidates     = 50
 	DefaultGammonNetCandidates = 10
+)
+
+// DefaultGammonNetPly and DefaultGammonNetPruneK are vars, not consts: they
+// are read from gammonnet's embedded canonical export at init time, not
+// typed in by hand. See gammonnet.DefaultPly / gammonnet.DefaultPruneK
+// (search.go there, issue #25) for the source and its measured quality cost.
+var (
+	DefaultGammonNetPly    = gammonnet.DefaultPly
+	DefaultGammonNetPruneK = gammonnet.DefaultPruneK
 )
 
 type Config struct {
@@ -155,6 +164,15 @@ type Config struct {
 	PanelHeight      int                  `json:"panel_height,omitempty"`
 	PanelWidth       int                  `json:"panel_width,omitempty"`
 	TourSeen         bool                 `json:"tour_seen,omitempty"`
+	// TabOrder is the tabbed panel's tab ids (TabbedPanel.svelte's `tabs`
+	// array), in the order the user last dragged them to. Empty means "use
+	// the built-in order" — the frontend owns the canonical id list and
+	// labels, this only ever reorders/filters it (#215).
+	TabOrder []string `json:"tab_order,omitempty"`
+	// HiddenTabs is the subset of tab ids the user chose to hide from the
+	// tabbed panel's tab bar (#215). A tab hidden here can still be reached
+	// by its own keyboard shortcut; hiding only removes the tab button.
+	HiddenTabs []string `json:"hidden_tabs,omitempty"`
 	// BearoffTSPath is an optional user-supplied two-sided bearoff database
 	// (.bd) widening the embedded TS-06-06 (ADR-0009). Empty = none.
 	BearoffTSPath string `json:"bearoff_ts_path,omitempty"`
@@ -354,6 +372,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.PanelWidth = clampPanelWidth(config.PanelWidth)
 	config.PanelWidth = c.PanelWidth
 	c.TourSeen = config.TourSeen
+	c.TabOrder = config.TabOrder
+	c.HiddenTabs = config.HiddenTabs
 	c.BearoffTSPath = config.BearoffTSPath
 	c.EpcChallenge = config.EpcChallenge
 	c.GammonNetDisplayPly = config.GammonNetDisplayPly
@@ -481,6 +501,30 @@ func (c *Config) GetTourSeen() bool {
 // SaveTourSeen persists whether the first-run guided-tour catalog has been shown.
 func (c *Config) SaveTourSeen(seen bool) error {
 	c.TourSeen = seen
+	return c.SaveConfig(c)
+}
+
+// GetTabOrder returns the persisted tab order for the tabbed panel. Empty
+// means "no custom order yet" — the frontend falls back to its built-in order.
+func (c *Config) GetTabOrder() []string {
+	return c.TabOrder
+}
+
+// SaveTabOrder persists the tab order reached after a drag-to-reorder.
+func (c *Config) SaveTabOrder(order []string) error {
+	c.TabOrder = order
+	return c.SaveConfig(c)
+}
+
+// GetHiddenTabs returns the ids of tabs the user chose to hide from the
+// tabbed panel's tab bar.
+func (c *Config) GetHiddenTabs() []string {
+	return c.HiddenTabs
+}
+
+// SaveHiddenTabs persists the set of hidden tab ids.
+func (c *Config) SaveHiddenTabs(hidden []string) error {
+	c.HiddenTabs = hidden
 	return c.SaveConfig(c)
 }
 

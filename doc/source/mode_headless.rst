@@ -94,7 +94,10 @@ depuis plusieurs clients.
      - expose ``/metrics`` (format Prometheus)
    * - ``--cors-allow-origin <origine>``
      - –
-     - active CORS pour cette origine (désactivé par défaut)
+     - active CORS pour cette origine, une liste d'origines séparées par des
+       virgules, ou ``*`` (désactivé par défaut) ; la réponse ne reflète que
+       l'origine de la requête si elle figure dans la liste, avec
+       ``Vary: Origin``
    * - ``--rate-limit-rps <n>``
      - ``50``
      - limite de requêtes par seconde et par tenant (0 = désactivé) ; activée
@@ -179,6 +182,31 @@ tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance
 (``maintenance.vacuum``, réservé au backend SQLite). Les endpoints de
 listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
 s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
+
+Chaque requête ``/v1`` accepte un corps JSON (``Content-Type:
+application/json``, ou aucun en-tête — un corps d'un autre type est refusé
+avec ``400 invalid`` plutôt que d'échouer sur un message d'analyse JSON
+confus) ; une méthode connue appelée avec le mauvais verbe HTTP répond
+``405``, l'en-tête ``Allow`` nommant le seul verbe accepté. Les méthodes de
+liste qui acceptent un ``limit`` refusent au-delà de 1000 lignes par page
+(``400 invalid``) plutôt que d'honorer une valeur sans plafond.
+
+Chaque connexion TCP est bornée en lecture/écriture par requête — un budget
+généreux pour les appels ordinaires, bien plus large pour les routes qui
+streament (listes NDJSON, imports/exports, rattrapage gammonNet) — et leur
+nombre simultané est plafonné, au-delà duquel une connexion supplémentaire
+attend qu'une des premières se libère plutôt que de recevoir sans limite un
+fil d'exécution par connexion. Un arrêt gracieux (``SIGINT``/``SIGTERM``)
+annule d'abord tout import et tout rattrapage gammonNet en cours — chacun
+répond par un dernier évènement ``{"event":"cancelled"}`` plutôt que de voir
+sa connexion coupée sans explication — avant de fermer le serveur dans le
+délai de grâce habituel. Le fichier temporaire d'un import téléversé ne
+retient de l'extension d'origine que celles connues du démon
+(``.xg``, ``.xgp``, ``.sgf``, ``.mat``, ``.bgf``, ``.txt``, ``.db``,
+``.dbx``), et l'ensemble des imports simultanés — tous tenants confondus —
+partage un quota global d'octets déposés sur disque : au-delà, un nouvel
+import est refusé (``too many requests``) plutôt que de laisser croître sans
+borne l'occupation de ``$TMPDIR``.
 
 Deux méthodes de la famille ``positions`` décodent une position sans
 l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
@@ -454,6 +482,22 @@ d'espace disque — et renvoie les tailles avant et après (``sizeBefore``,
 ``sizeAfter``, en octets). Elle n'est disponible qu'avec le backend SQLite ;
 sur PostgreSQL, qui n'a pas de fichier à compacter, elle renvoie une erreur
 ``invalid``.
+
+Le pool de connexions PostgreSQL se règle par variable d'environnement :
+``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 par défaut), ``BLUNDERDB_POSTGRES_MIN_CONNS``
+(5), ``BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME`` (``1h``),
+``BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD`` (``30s``),
+``BLUNDERDB_POSTGRES_CONNECT_TIMEOUT`` (``5s`` — au-delà, une base injoignable
+échoue vite plutôt que de bloquer sur le délai TCP du système
+d'exploitation) et ``BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME`` (``30m`` — une
+connexion ouverte pour un pic de trafic ne reste pas indéfiniment dans le
+pool une fois le pic passé). Chaque valeur est une durée au format Go
+(``5s``, ``30m``, ``1h``) ; absente ou invalide, elle retombe sur son défaut.
+Quand ``--metrics`` est actif, l'état du pool est exposé en continu sur
+``/metrics`` : ``blunderdb_pg_pool_acquired`` (connexions actuellement
+utilisées), ``_idle`` (disponibles), ``_max`` (plafond configuré) et
+``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû attendre une connexion
+libre).
 
 .. _headless_migrate:
 

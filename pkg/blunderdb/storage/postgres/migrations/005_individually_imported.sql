@@ -20,4 +20,3 @@ UPDATE position p
 SET individually_imported = TRUE
 WHERE NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id);
 
-UPDATE metadata SET value = '2.13.0' WHERE key = 'database_version';
