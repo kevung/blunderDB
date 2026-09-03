@@ -734,11 +734,12 @@ avec le fichier source original.
 
 Chaque exécution contrôle aussi l'intégrité référentielle : elle compte les
 lignes orphelines — parties sans match, coups sans partie, analyses de coup
-sans coup, analyses sans position — et affiche une ligne ``WARNING`` avec le
-total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des orphelins
+sans coup, analyses sans position, entrées du journal de révision sans paquet
+ou sans position — et affiche une ligne ``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des orphelins
 peuvent subsister dans une base écrite par une version qui n'appliquait pas les
-clés étrangères sur toutes les connexions ; ils ne sont rattachés à aucun match
-et n'occupent que de la place. La commande se termine tout de même avec le code
+clés étrangères sur toutes les connexions, ou avant que le journal de révision
+ait les siennes ; ils ne sont rattachés à aucun match ni à aucun paquet et
+n'occupent que de la place. La commande se termine tout de même avec le code
 de sortie 0.
 
 Chaque exécution compare aussi le schéma à la DDL de référence et liste les
@@ -750,6 +751,28 @@ requête qui nomme l'un de ces éléments échoue tant que la cause n'est pas
 corrigée. Une base saine répond ``Schema: matches the reference DDL``. Comme
 les orphelins, un écart de schéma est un constat, pas un échec : le code de
 sortie reste 0.
+
+Chaque exécution contrôle enfin les règles que la DDL courante énonce mais que
+SQLite ne sait pas ajouter à une table déjà créée : les contraintes ``CHECK``
+de plage (dés entre 0 et 6, videau et pips positifs, sorties entre 0 et 15,
+note de révision entre 1 et 4), le hash Zobrist qu'une ligne ne devrait jamais
+omettre et l'unicité d'une analyse par position. Une base créée depuis la
+version 2.18.0 du schéma les applique ; une base plus ancienne peut encore
+porter des lignes qu'une base neuve refuserait, et ce sont elles qui sont
+comptées ici, règle par règle. Une base saine répond ``Constraints: every row
+satisfies the current DDL``. C'est un constat de plus : rien n'est réparé et le
+code de sortie reste 0.
+
+Chaque exécution recalcule enfin les deux compteurs dénormalisés,
+``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils
+prétendent compter, et indique combien sont en désaccord et de combien au pire.
+Tous deux sont écrits une seule fois, à l'import, d'après ce que contenait le
+**fichier source**, et ce sont eux que la liste des matchs et la vue d'une
+partie affichent : un petit écart est le plus souvent un import qui a sauté ce
+qu'il ne savait pas convertir. Rien n'est réécrit — remplacer le compteur par
+ce qui a été stocké effacerait justement l'écart qu'il y a lieu de regarder.
+Une base saine répond ``Counters: game_count and move_count agree with the
+rows``.
 
 **Exemples:**
 

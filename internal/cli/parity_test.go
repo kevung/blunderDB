@@ -66,6 +66,8 @@ var databaseParity = map[string]parityEntry{
 	"CancelImport":                     {Server: "/v1/imports.cancel", Why: "the CLI import is a foreground process: Ctrl-C is its cancel"},
 	"CheckDatabaseVersion":             {CLI: "info", Server: "/v1/metadata.version"},
 	"CheckSchema":                      {CLI: "verify", Why: "schema drift is what the desktop open's EnsureSchema could not add to a user's SQLite file (issue #177); the daemon's SQLite backend runs the same EnsureSchema on open, and PostgreSQL's schema comes from its versioned migrations alone — its audit is the operator's database tooling"},
+	"CheckCounters":                    {CLI: "verify", Why: "game_count and move_count are what the desktop match list displays, written once from the source file; recomputing them is a verify finding, not a route"},
+	"CheckConstraints":                 {CLI: "verify", Why: "the rules the fresh DDL states and SQLite cannot add to a table that already exists (CHECK, and the hash a row must not be without); a desktop file upgraded across ten versions is the only place they can be broken, and reporting them is a verify finding, not a route"},
 	"CheckMatchExists":                 {CLI: "import", Server: "/v1/matches.findByHash"},
 	"CheckVersion":                     {Why: whyWrapper},
 	"ClearCommandHistory":              {Server: "/v1/history.clear", Why: whyGUIState},
@@ -201,7 +203,8 @@ var databaseParity = map[string]parityEntry{
 	"UpdatePosition":                   {Server: "/v1/positions.update", Why: whyGUIEdit},
 	"UpdateTournament":                 {Server: "/v1/tournaments.update", Why: whyGUIEdit},
 	"UpdateTournamentComment":          {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
-	"Vacuum":                           {CLI: "vacuum", Server: "/v1/maintenance.vacuum"}}
+	"Vacuum":                           {CLI: "vacuum", Server: "/v1/maintenance.vacuum"},
+}
 
 // serverPaths returns the daemon's /v1 route set, built from the same
 // Server the smoke test walks (Paths() is what `call --list` prints).

@@ -26,12 +26,26 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	is_forced, is_close_cube
 ) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`
 
-const analysisUpdateSQL = `UPDATE analysis SET
-	data=?, best_cube_action=?, cube_error=?, best_move_equity_error=?,
-	player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-	player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
-	is_forced=?, is_close_cube=?
-	WHERE id=?`
+// analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
+// same statement. It replaced a SELECT followed by an INSERT or an UPDATE:
+// two concurrent saves both read "no row" and both inserted, and Load — a
+// plain `WHERE position_id = ?` — then returned whichever row came first.
+// The conflict target names the UNIQUE index idx_analysis_position, which the
+// fresh schema declares and the 2.18.0 migration installs on existing files.
+const analysisUpsertSQL = analysisInsertSQL + `
+ON CONFLICT(position_id) DO UPDATE SET
+	data=excluded.data,
+	best_cube_action=excluded.best_cube_action,
+	cube_error=excluded.cube_error,
+	best_move_equity_error=excluded.best_move_equity_error,
+	player1_win_rate=excluded.player1_win_rate,
+	player1_gammon_rate=excluded.player1_gammon_rate,
+	player1_backgammon_rate=excluded.player1_backgammon_rate,
+	player2_win_rate=excluded.player2_win_rate,
+	player2_gammon_rate=excluded.player2_gammon_rate,
+	player2_backgammon_rate=excluded.player2_backgammon_rate,
+	is_forced=excluded.is_forced,
+	is_close_cube=excluded.is_close_cube`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
 // zlib-compressed and the denormalised scalar columns are derived. Higher-level
@@ -49,42 +63,32 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	}
 	c := engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction)
 
-	var existingID int64
-	err = s.db.QueryRowContext(ctx,
-		`SELECT id FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID)
-	switch {
-	case errors.Is(err, sql.ErrNoRows):
-		_, err = s.db.ExecContext(ctx, analysisInsertSQL,
+	// The analysis row and the position flag it implies are one write: a
+	// caller that already holds a transaction writes inside it, a caller that
+	// does not gets one of its own (withTx).
+	return withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.ExecContext(ctx, analysisUpsertSQL,
 			positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced, c.IsCloseCube)
-	case err != nil:
-		return fmt.Errorf("sqlite: save analysis lookup: %w", err)
-	default:
-		_, err = s.db.ExecContext(ctx, analysisUpdateSQL,
-			data, c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
-			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
-			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced, c.IsCloseCube, existingID)
-	}
-	if err != nil {
-		return fmt.Errorf("sqlite: save analysis: %w", err)
-	}
-
-	// Flag the position as a take/pass cube response if any played cube action is
-	// a response (only ever set to 1; OR semantics for a deduped position).
-	for _, action := range a.PlayedCubeActions {
-		if engine.IsResponseCubeAction(action) {
-			if _, err := s.db.ExecContext(ctx,
-				`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
-				return fmt.Errorf("sqlite: flag cube response: %w", err)
-			}
-			break
+			c.IsForced, c.IsCloseCube); err != nil {
+			return fmt.Errorf("sqlite: save analysis: %w", err)
 		}
-	}
-	return nil
+
+		// Flag the position as a take/pass cube response if any played cube action is
+		// a response (only ever set to 1; OR semantics for a deduped position).
+		for _, action := range a.PlayedCubeActions {
+			if engine.IsResponseCubeAction(action) {
+				if _, err := tx.ExecContext(ctx,
+					`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
+					return fmt.Errorf("sqlite: flag cube response: %w", err)
+				}
+				break
+			}
+		}
+		return nil
+	})
 }
 
 // Load returns the decoded analysis for positionID, or ErrNotFound. The

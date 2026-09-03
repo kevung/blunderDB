@@ -17,12 +17,37 @@ var (
 	zobristCubeOwner    [3]uint64    // 0=Black, 1=White, 2=None (maps -1 → 2)
 	zobristScore1       [64]uint64
 	zobristScore2       [64]uint64
-	zobristMatchLength  [64]uint64 // reserved for future match-length field
-	zobristHasJacoby    uint64
-	zobristHasBeaver    uint64
+	zobristMatchLength  [64]uint64    // reserved for future match-length field
 	zobristDecisionType [2]uint64     // [0]=CheckerAction, [1]=CubeAction
 	zobristBearoff      [2][16]uint64 // [color 0=Black 1=White][checker_count 0..15]
+
+	// Retired: drawn from the stream but no longer hashed. See init() and
+	// RetiredFlagDelta.
+	zobristRetiredJacoby uint64
+	zobristRetiredBeaver uint64
 )
+
+// RetiredFlagDelta returns the value that has to be XORed into a Zobrist hash
+// stored before schema 2.18.0 to obtain the hash the current ZobristHash
+// computes for the same position.
+//
+// Until 2.18.0 the Jacoby and beaver flags were folded into the hash; ADR-0028
+// took them out — they are rules of the *session*, not of the position, and no
+// import format but an XGID carries them, so the same money position reached
+// through two doors landed in two rows. A Zobrist hash is a XOR of keys, so
+// undoing a fold is XORing the same key back in: the migration needs no board
+// and no decode, only the two flag columns it already has. Arguments are the
+// stored column values (0 = clear, anything else = set).
+func RetiredFlagDelta(hasJacoby, hasBeaver int) uint64 {
+	var d uint64
+	if hasJacoby != 0 {
+		d ^= zobristRetiredJacoby
+	}
+	if hasBeaver != 0 {
+		d ^= zobristRetiredBeaver
+	}
+	return d
+}
 
 func init() {
 	// The seed is fixed on purpose: these keys are what makes a Zobrist hash
@@ -61,8 +86,15 @@ func init() {
 	for i := range zobristMatchLength {
 		zobristMatchLength[i] = next()
 	}
-	zobristHasJacoby = next()
-	zobristHasBeaver = next()
+	// Retired keys, still DRAWN, no longer folded in. Jacoby and beaver left
+	// the identity in schema 2.18.0 (ADR-0028); the two draws stay exactly
+	// where they were so every key that follows them in the stream keeps its
+	// value, and a position that never carried either flag — the overwhelming
+	// majority — keeps the hash it was stored under. Removing the draws would
+	// shift zobristDecisionType and zobristBearoff and rehash every row in
+	// every database for nothing.
+	zobristRetiredJacoby = next()
+	zobristRetiredBeaver = next()
 	for i := range zobristDecisionType {
 		zobristDecisionType[i] = next()
 	}
@@ -93,6 +125,13 @@ func cubeOwnerIndex(owner int) int {
 // provenance metadata, and hashing it would split one position into two rows
 // depending on how it was imported, defeating deduplication (ADR-0001).
 // TestZobristIgnoresIndividuallyImported guards this.
+//
+// Position.HasJacoby and Position.HasBeaver are excluded for the same reason
+// since schema 2.18.0 (ADR-0028): they state which optional rules the session
+// was played under, not what is on the board, and only an XGID carries them —
+// every file importer leaves them at 0. Hashing them split one money position
+// into two rows according to the door it came in by.
+// TestZobristIgnoresJacobyAndBeaver guards this.
 func ZobristHash(p *domain.Position) uint64 {
 	norm := p.NormalizeForStorage()
 	norm.ID = 0
@@ -158,13 +197,8 @@ func ZobristHash(p *domain.Position) uint64 {
 	h ^= zobristScore1[s1]
 	h ^= zobristScore2[s2]
 
-	// Boolean flags
-	if norm.HasJacoby != 0 {
-		h ^= zobristHasJacoby
-	}
-	if norm.HasBeaver != 0 {
-		h ^= zobristHasBeaver
-	}
+	// HasJacoby and HasBeaver are deliberately NOT hashed — see ADR-0028 and
+	// the doc comment above.
 
 	// Decision type (0=CheckerAction, 1=CubeAction)
 	dt := norm.DecisionType

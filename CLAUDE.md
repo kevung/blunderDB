@@ -172,7 +172,7 @@ the `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the ta
 triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
 the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 
-The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.17.0**) is
+The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.18.0**) is
 independent of the app version — bump it only when the SQLite schema changes.
 
 ## Architecture in one screen
@@ -226,7 +226,11 @@ Violating one of these is a bug even if all tests pass:
   imports. Always write through `SavePosition`; use `SaveIndividualPosition` when
   the user brings a position in on its own. Provenance
   (`individually_imported`) is sticky and deliberately **not** part of the hash
-  — see ADR-0001 and `CONTEXT.md`.
+  — see ADR-0001 and `CONTEXT.md`. Neither are the session's optional rules
+  (`has_jacoby`, `has_beaver`): only an XGID ever sets them, so hashing them
+  split one money position across two rows — ADR-0028. Both keys are still
+  DRAWN in `engine.init` so every key after them keeps its value; a change to
+  that stream rehashes every database ever written.
 - **The retention predicate (`positionIsHeldSQL`) is stated in three places** —
   `database/db_match.go` (the copy the GUI and CLI run),
   `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`.

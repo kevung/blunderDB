@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 09:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -264,8 +264,7 @@ msgstr "healthcheck"
 
 #: ../../source/cli.rst:1
 msgid "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
-msgstr ""
-"Ρωτά έναν δαίμονα ``serve`` σε λειτουργία: κωδικός 0 αν είναι διαθέσιμος."
+msgstr "Ρωτά έναν δαίμονα ``serve`` σε λειτουργία: κωδικός 0 αν είναι διαθέσιμος."
 
 #: ../../source/cli.rst:1
 msgid "help"
@@ -304,8 +303,8 @@ msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομέ�
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
-#: ../../source/cli.rst:812 ../../source/cli.rst:842
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:803
+#: ../../source/cli.rst:835 ../../source/cli.rst:865
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -335,8 +334,8 @@ msgstr ""
 "Η επέκταση ``.db`` προστίθεται αυτόματα αν λείπει. Οι γονικοί κατάλογοι "
 "δημιουργούνται όταν χρειάζεται."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
-#: ../../source/cli.rst:854
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:815
+#: ../../source/cli.rst:877
 msgid "**Exemple:**"
 msgstr "**Παράδειγμα:**"
 
@@ -528,7 +527,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:754 ../../source/cli.rst:819
+#: ../../source/cli.rst:777 ../../source/cli.rst:842
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -664,7 +663,7 @@ msgstr "**Κύριες επιλογές:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:782 ../../source/cli.rst:814
+#: ../../source/cli.rst:805 ../../source/cli.rst:837
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
 
@@ -1247,8 +1246,8 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
-"**Ο παραλληλισμός (``--jobs``).** Οι θέσεις μιας δέσμης είναι ανεξάρτητες "
-"— καμία αναζήτηση δεν τροφοδοτεί την επόμενη — οπότε κατανέμονται σε "
+"**Ο παραλληλισμός (``--jobs``).** Οι θέσεις μιας δέσμης είναι ανεξάρτητες"
+" — καμία αναζήτηση δεν τροφοδοτεί την επόμενη — οπότε κατανέμονται σε "
 "``--jobs`` νήματα εκτέλεσης, καθένα με τον δικό του αξιολογητή. Οι "
 "αναλύσεις που γράφονται είναι **πανομοιότυπες όποια κι αν είναι η τιμή "
 "του** ``--jobs``· αλλάζει μόνο ο χρόνος υπολογισμού. Το ``--jobs 1`` "
@@ -1348,23 +1347,27 @@ msgstr ""
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
-"de coup sans coup, analyses sans position — et affiche une ligne "
-"``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned "
-"rows: none``. Des orphelins peuvent subsister dans une base écrite par "
-"une version qui n'appliquait pas les clés étrangères sur toutes les "
-"connexions ; ils ne sont rattachés à aucun match et n'occupent que de la "
-"place. La commande se termine tout de même avec le code de sortie 0."
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position — et affiche une ligne ``WARNING`` avec le "
+"total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des "
+"orphelins peuvent subsister dans une base écrite par une version qui "
+"n'appliquait pas les clés étrangères sur toutes les connexions, ou avant "
+"que le journal de révision ait les siennes ; ils ne sont rattachés à "
+"aucun match ni à aucun paquet et n'occupent que de la place. La commande "
+"se termine tout de même avec le code de sortie 0."
 msgstr ""
-"Κάθε εκτέλεση ελέγχει επίσης την αναφορική ακεραιότητα: μετρά τις ορφανές "
-"γραμμές — παιχνίδια χωρίς αγώνα, κινήσεις χωρίς παιχνίδι, αναλύσεις "
-"κίνησης χωρίς κίνηση, αναλύσεις χωρίς θέση — και εμφανίζει μια γραμμή "
-"``WARNING`` με το σύνολο αν υπάρχουν. Μια υγιής βάση απαντά ``Orphaned "
-"rows: none``. Ορφανά μπορεί να παραμείνουν σε μια βάση που γράφτηκε από "
-"έκδοση που δεν επέβαλλε τα ξένα κλειδιά σε όλες τις συνδέσεις· δεν ανήκουν "
-"σε κανέναν αγώνα και απλώς καταλαμβάνουν χώρο. Η εντολή τερματίζει παρ' "
-"όλα αυτά με κωδικό εξόδου 0."
+"Κάθε εκτέλεση ελέγχει επίσης την ακεραιότητα αναφορών: μετρά τις ορφανές "
+"γραμμές — παρτίδες χωρίς αγώνα, κινήσεις χωρίς παρτίδα, αναλύσεις "
+"κίνησης χωρίς κίνηση, αναλύσεις χωρίς θέση, εγγραφές του ημερολογίου "
+"επανάληψης χωρίς τράπουλα ή χωρίς θέση — και εμφανίζει μια γραμμή "
+"``WARNING`` με το σύνολο, αν υπάρχουν. Μια υγιής βάση απαντά ``Orphaned "
+"rows: none``. Ορφανές γραμμές μπορεί να παραμένουν σε μια βάση που "
+"γράφτηκε από έκδοση η οποία δεν επέβαλλε τα ξένα κλειδιά σε κάθε "
+"σύνδεση, ή πριν το ημερολόγιο επανάληψης αποκτήσει τα δικά του· δεν "
+"ανήκουν σε κανέναν αγώνα ούτε σε καμία τράπουλα και απλώς πιάνουν χώρο. "
+"Η εντολή τερματίζει και πάλι με κωδικό 0."
 
-#: ../../source/cli.rst:744
+#: ../../source/cli.rst:745
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1378,19 +1381,70 @@ msgid ""
 msgstr ""
 "Κάθε εκτέλεση συγκρίνει επίσης το σχήμα με το DDL αναφοράς και απαριθμεί "
 "τους πίνακες, τις στήλες και τα ευρετήρια που λείπουν από τη βάση. Το "
-"άνοιγμα μιας βάσης προσθέτει ό,τι λείπει όταν μπορεί και απλώς καταγράφει "
-"ό,τι δεν μπορεί να προσθέσει (συνήθως ένα ευρετήριο ``UNIQUE`` που διπλές "
-"γραμμές το εμποδίζουν να ξαναχτιστεί): εδώ γίνεται ορατό αυτό το κενό, και "
-"ένα ερώτημα που κατονομάζει ένα από αυτά τα στοιχεία αποτυγχάνει μέχρι να "
-"διορθωθεί η αιτία. Μια υγιής βάση απαντά ``Schema: matches the reference "
-"DDL``. Όπως και οι ορφανές γραμμές, μια απόκλιση σχήματος είναι διαπίστωση, "
-"όχι αποτυχία: ο κωδικός εξόδου παραμένει 0."
+"άνοιγμα μιας βάσης προσθέτει ό,τι λείπει όταν μπορεί και απλώς καταγράφει"
+" ό,τι δεν μπορεί να προσθέσει (συνήθως ένα ευρετήριο ``UNIQUE`` που "
+"διπλές γραμμές το εμποδίζουν να ξαναχτιστεί): εδώ γίνεται ορατό αυτό το "
+"κενό, και ένα ερώτημα που κατονομάζει ένα από αυτά τα στοιχεία "
+"αποτυγχάνει μέχρι να διορθωθεί η αιτία. Μια υγιής βάση απαντά ``Schema: "
+"matches the reference DDL``. Όπως και οι ορφανές γραμμές, μια απόκλιση "
+"σχήματος είναι διαπίστωση, όχι αποτυχία: ο κωδικός εξόδου παραμένει 0."
 
-#: ../../source/cli.rst:768
+#: ../../source/cli.rst:755
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Κάθε εκτέλεση ελέγχει τέλος τους κανόνες που ορίζει η τρέχουσα DDL αλλά "
+"που η SQLite δεν μπορεί να προσθέσει σε έναν ήδη υπάρχοντα πίνακα: τους "
+"περιορισμούς εύρους ``CHECK`` (ζάρια από 0 έως 6, κύβος και pips μη "
+"αρνητικά, 0 έως 15 πούλια εκτός, βαθμολογία επανάληψης από 1 έως 4), το "
+"hash Zobrist που δεν θα έπρεπε ποτέ να λείπει από μια γραμμή και τη "
+"μοναδικότητα μιας ανάλυσης ανά θέση. Μια βάση που δημιουργήθηκε από την "
+"έκδοση σχήματος 2.18.0 και μετά τους επιβάλλει· μια παλαιότερη μπορεί να "
+"περιέχει ακόμη γραμμές που μια νέα βάση θα απέρριπτε, και αυτές μετρώνται"
+" εδώ, κανόνα προς κανόνα. Μια υγιής βάση απαντά ``Constraints: every row "
+"satisfies the current DDL``. Άλλη μια διαπίστωση: τίποτα δεν "
+"επιδιορθώνεται και ο κωδικός εξόδου παραμένει 0."
+
+#: ../../source/cli.rst:766
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Κάθε εκτέλεση υπολογίζει τέλος εκ νέου τους δύο αποκανονικοποιημένους "
+"μετρητές, ``match.game_count`` και ``game.move_count``, από τις γραμμές "
+"που ισχυρίζονται ότι μετρούν, και αναφέρει πόσοι διαφωνούν και κατά πόσο "
+"στη χειρότερη περίπτωση. Και οι δύο γράφονται μία φορά, κατά την "
+"εισαγωγή, από ό,τι περιείχε το **αρχείο πηγής**, και είναι αυτοί που "
+"εμφανίζουν η λίστα αγώνων και η προβολή παρτίδας: μια μικρή απόκλιση "
+"είναι συνήθως μια εισαγωγή που παρέλειψε ό,τι δεν μπορούσε να μετατρέψει."
+" Τίποτα δεν ξαναγράφεται — η αντικατάσταση του μετρητή με ό,τι "
+"αποθηκεύτηκε θα έσβηνε ακριβώς την απόκλιση που αξίζει να δει κανείς. Μια"
+" υγιής βάση απαντά ``Counters: game_count and move_count agree with the "
+"rows``."
+
+#: ../../source/cli.rst:791
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Συμπύκνωση της βάσης δεδομένων"
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:793
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1405,7 +1459,7 @@ msgstr ""
 "να ξεκινήσει μια συμπύκνωση — δεν συμβαίνει ποτέ αυτόματα στο άνοιγμα "
 "μιας βάσης, γιατί το κόστος της είναι απρόβλεπτο σε μεγάλη βάση."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:807
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1425,11 +1479,11 @@ msgstr ""
 " δίσκο, η εντολή αρνείται να ξεκινήσει με ρητό μήνυμα αντί να "
 "διακινδυνεύσει μια διακοπείσα συμπύκνωση."
 
-#: ../../source/cli.rst:804
+#: ../../source/cli.rst:827
 msgid "delete — Supprimer des données"
 msgstr "delete — Διαγραφή δεδομένων"
 
-#: ../../source/cli.rst:806
+#: ../../source/cli.rst:829
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -1437,23 +1491,23 @@ msgstr ""
 "Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, "
 "αναλύσεις)."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:838
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Τύπος διαγραφής: ``match`` (υποχρεωτικό)."
 
-#: ../../source/cli.rst:816
+#: ../../source/cli.rst:839
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID του στοιχείου προς διαγραφή (υποχρεωτικό)."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:840
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Διαγραφή χωρίς αίτημα επιβεβαίωσης."
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:853
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Έλεγχος ενός δαίμονα"
 
-#: ../../source/cli.rst:832
+#: ../../source/cli.rst:855
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1462,23 +1516,23 @@ msgid ""
 "l'adresse. Aucun fichier de base n'est ouvert."
 msgstr ""
 "Ρωτά έναν δαίμονα ``serve`` σε λειτουργία (βλ. :doc:`mode_headless`) αν "
-"είναι διαθέσιμος: ένα αίτημα ``GET /readyz``, κωδικός επιστροφής ``0`` αν ο "
-"δαίμονας απαντά 200 (αποθήκευση προσβάσιμη, σχήμα στην αναμενόμενη έκδοση), "
-"``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή τίποτα δεν "
-"ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
+"είναι διαθέσιμος: ένα αίτημα ``GET /readyz``, κωδικός επιστροφής ``0`` αν"
+" ο δαίμονας απαντά 200 (αποθήκευση προσβάσιμη, σχήμα στην αναμενόμενη "
+"έκδοση), ``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή "
+"τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:867
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
 "générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
 msgstr ""
 "``--addr`` — Διεύθυνση στην οποία ακούει ο δαίμονας (προεπιλογή "
-"``BLUNDERDB_ADDR``, αλλιώς ``:8080``). Μια διεύθυνση χωρίς host (``:8080``) "
-"ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της διεπαφής "
-"loopback."
+"``BLUNDERDB_ADDR``, αλλιώς ``:8080``). Μια διεύθυνση χωρίς host "
+"(``:8080``) ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της "
+"διεπαφής loopback."
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:870
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1486,55 +1540,55 @@ msgstr ""
 "``--timeout`` — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (``2s`` από "
 "προεπιλογή)."
 
-#: ../../source/cli.rst:849
+#: ../../source/cli.rst:872
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
 "depuis ``cmd/serve`` la comprend aussi. Elle vaut tout autant dans un "
 "script ou une unité systemd."
 msgstr ""
-"Είναι η εντολή που εκτελεί το ``HEALTHCHECK`` της εικόνας container (εικόνα "
-"*distroless*, χωρίς ``curl``)· το δυαδικό ``serve`` που χτίζεται από το "
-"``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα script ή "
-"σε μια μονάδα systemd."
+"Είναι η εντολή που εκτελεί το ``HEALTHCHECK`` της εικόνας container "
+"(εικόνα *distroless*, χωρίς ``curl``)· το δυαδικό ``serve`` που χτίζεται "
+"από το ``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα"
+" script ή σε μια μονάδα systemd."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:886
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
 msgstr ""
-"Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker inspect`` "
-"αναπαράγει για ένα container ``unhealthy``:"
+"Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker "
+"inspect`` αναπαράγει για ένα container ``unhealthy``:"
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:894
 msgid "Exemples de flux de travail"
 msgstr "Παραδείγματα ροών εργασίας"
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:897
 msgid "Import d'un répertoire de tournoi"
 msgstr "Εισαγωγή ενός καταλόγου τουρνουά"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:911
 msgid "Sauvegarde régulière"
 msgstr "Τακτικό αντίγραφο ασφαλείας"
 
-#: ../../source/cli.rst:896
+#: ../../source/cli.rst:919
 msgid "Analyse des erreurs"
 msgstr "Ανάλυση σφαλμάτων"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:930
 msgid "Codes de retour"
 msgstr "Κωδικοί εξόδου"
 
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:932
 msgid "``0`` — Succès."
 msgstr "``0`` — Επιτυχία."
 
-#: ../../source/cli.rst:910
+#: ../../source/cli.rst:933
 msgid "``1`` — Erreur."
 msgstr "``1`` — Σφάλμα."
 
-#: ../../source/cli.rst:912
+#: ../../source/cli.rst:935
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"
 

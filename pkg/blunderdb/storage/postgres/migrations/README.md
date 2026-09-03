@@ -63,6 +63,28 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   tenants no longer exist, ADR-0005), and installs the `tenant_isolation`
   policy on the new table when the database already enforces RLS. Bumps
   `database_version` to 2.17.0.
+- `014_zobrist_without_rule_flags.sql` — the Jacoby and beaver flags leave the
+  position identity (ADR-0028, #171). A XOR undoes the fold with the two retired
+  Zobrist keys, written as literals and pinned to the engine by
+  `zobrist_retired_keys_test.go`; rows the rehash brings onto one hash were
+  always the same position and are merged onto the oldest of them. The **one
+  migration in this chain that is not idempotent** — XOR is its own inverse, so
+  replaying it would undo the conversion; `schema_migrations` is what stops
+  that, and a freshly bootstrapped database carries no pre-2.18.0 hash to
+  convert. Bumps `database_version` to 2.18.0.
+- `015_one_analysis_per_position.sql` — `analysis(position_id)` becomes UNIQUE
+  (#173), which is what makes `analyses_postgres.go`'s upsert legal: an
+  `ON CONFLICT` target must name a unique constraint. Deduplicates first,
+  keeping the highest id per position. Also adds the range CHECKs of `001`
+  as `NOT VALID` so a database whose history predates the rule still opens —
+  `blunderdb verify` names the offending rows. Bumps `database_version` to
+  2.18.0 as well; 014, 015 and 016 are one wave.
+- `016_review_log_foreign_keys.sql` — `anki_review_log.deck_id` and
+  `.position_id` become real foreign keys (#185). Added `NOT VALID`: every row
+  written from here on is governed, the rows already there are not scanned, and
+  a database carrying a dangling journal row keeps opening — purging a user's
+  review history is not a migration's decision. Bumps `database_version` to
+  2.18.0.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

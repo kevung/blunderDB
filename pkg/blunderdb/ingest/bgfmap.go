@@ -195,8 +195,14 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 	}
 }
 
+// bgfRules are the optional rules a BGF session was played under. Jacoby and
+// beaver are stated once for the whole match ("useJacoby"/"useBeaver" at the
+// top of the file); crawford is stated per game ("isCrawford"), and the three
+// travel together so a position builder is handed the rules in one argument.
+type bgfRules struct{ jacoby, beaver, crawford bool }
+
 // createPositionFromBGF builds a domain.Position from BGF board state.
-func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen, cubeValue, cubeOwner int, isCrawford bool) (*domain.Position, error) {
+func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen, cubeValue, cubeOwner int, rules bgfRules) (*domain.Position, error) {
 	scoreGreen := bgfGetInt(gameData, "scoreGreen")
 	scoreRed := bgfGetInt(gameData, "scoreRed")
 
@@ -240,7 +246,22 @@ func createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, 
 		return nil, err
 	}
 
-	_ = isCrawford // reserved (matches legacy signature; Jacoby/Beaver TODO)
+	// Jacoby and beaver only mean anything in money play, which is where
+	// domain.DecodeXGID reads them from an XGID too (field 7 is the Crawford
+	// flag at a match score and carries no rule information). They are columns
+	// of the position, never part of its identity — ADR-0028.
+	if matchLen == 0 {
+		if rules.jacoby {
+			pos.HasJacoby = 1
+		}
+		if rules.beaver {
+			pos.HasBeaver = 1
+		}
+	}
+	// rules.crawford has no field of its own on domain.Position: the Crawford
+	// game is said by the score (a player 1-away, the game not yet post-
+	// Crawford), which is what every consumer reads.
+	_ = rules.crawford
 	return pos, nil
 }
 

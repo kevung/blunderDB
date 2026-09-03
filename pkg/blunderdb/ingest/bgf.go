@@ -28,6 +28,12 @@ func MapBGF(path string) (*MatchGraph, error) {
 	data := match.Data
 
 	matchLen := bgfGetInt(data, "matchlen")
+	// The optional-rule settings sit once at the top of the file, not on the
+	// game: they describe the session (bgfRules).
+	rules := bgfRules{
+		jacoby: bgfGetBool(data, "useJacoby"),
+		beaver: bgfGetBool(data, "useBeaver"),
+	}
 	gamesData, ok := data["games"].([]interface{})
 	if !ok || len(gamesData) == 0 {
 		return nil, fmt.Errorf("ingest: bgf file contains no games")
@@ -55,7 +61,7 @@ func MapBGF(path string) (*MatchGraph, error) {
 			continue
 		}
 		movesData, _ := gameData["moves"].([]interface{})
-		moves, err := mapBGFGameMoves(gameData, movesData, matchLen)
+		moves, err := mapBGFGameMoves(gameData, movesData, matchLen, rules)
 		if err != nil {
 			return nil, fmt.Errorf("ingest: %s: game %d, %w", filepath.Base(path), gameIdx+1, err)
 		}
@@ -79,13 +85,13 @@ func MapBGF(path string) (*MatchGraph, error) {
 // mirrors the normal-import loop in database.ImportBGFMatch, including the two
 // ways BGBlitz encodes a cube double (a synthetic "amove" with from[0]==-1, and
 // an explicit "adouble").
-func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, matchLen int) ([]MoveGraph, error) {
+func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, matchLen int, rules bgfRules) ([]MoveGraph, error) {
 	var out []MoveGraph
 
 	boardState := bgfInitBoardFromGame(gameData)
 	cubeValue := 1
 	cubeOwner := -1
-	isCrawford := bgfGetBool(gameData, "isCrawford")
+	rules.crawford = bgfGetBool(gameData, "isCrawford")
 	pendingCubeDouble := false
 
 	for moveIdx, moveRaw := range movesData {
@@ -118,7 +124,7 @@ func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, m
 				}
 				pendingCubeDouble = true
 				cubeAction := bgfAmoveDoubleResponse(movesData, moveIdx)
-				mg, err := mapBGFCubeMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cubeAction)
+				mg, err := mapBGFCubeMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, rules, cubeAction)
 				if err != nil {
 					return nil, fmt.Errorf("move %d: %w", moveIdx+1, err)
 				}
@@ -127,7 +133,7 @@ func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, m
 			}
 
 			// Normal checker move.
-			mg, err := mapBGFCheckerMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford)
+			mg, err := mapBGFCheckerMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, rules)
 			if err != nil {
 				return nil, fmt.Errorf("move %d: %w", moveIdx+1, err)
 			}
@@ -139,7 +145,7 @@ func mapBGFGameMoves(gameData map[string]interface{}, movesData []interface{}, m
 
 		case "adouble":
 			cubeAction := bgfADoubleResponse(movesData, moveIdx)
-			mg, err := mapBGFCubeMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cubeAction)
+			mg, err := mapBGFCubeMove(moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, rules, cubeAction)
 			if err != nil {
 				return nil, fmt.Errorf("move %d: %w", moveIdx+1, err)
 			}
@@ -260,12 +266,12 @@ func bgfInferDice(moveData map[string]interface{}) (int, int) {
 
 // mapBGFCheckerMove builds the MoveGraph for a checker decision, with ordered
 // [checker, cube-for-checker] analysis fragments matching the legacy two saves.
-func mapBGFCheckerMove(moveData, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue, cubeOwner int, isCrawford bool) (MoveGraph, error) {
+func mapBGFCheckerMove(moveData, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue, cubeOwner int, rules bgfRules) (MoveGraph, error) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 	die1, die2 := bgfInferDice(moveData)
 
-	pos, err := createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos, err := createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, rules)
 	if err != nil {
 		return MoveGraph{}, err
 	}
@@ -300,11 +306,11 @@ func mapBGFCheckerMove(moveData, gameData map[string]interface{}, matchLen int, 
 }
 
 // mapBGFCubeMove builds the MoveGraph for a cube decision.
-func mapBGFCubeMove(moveData, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue, cubeOwner int, isCrawford bool, cubeAction string) (MoveGraph, error) {
+func mapBGFCubeMove(moveData, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue, cubeOwner int, rules bgfRules, cubeAction string) (MoveGraph, error) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
-	pos, err := createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos, err := createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, rules)
 	if err != nil {
 		return MoveGraph{}, err
 	}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 09:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -263,8 +263,8 @@ msgstr "healthcheck"
 #: ../../source/cli.rst:1
 msgid "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
 msgstr ""
-"Kysyy käynnissä olevalta ``serve``-taustaprosessilta: paluukoodi 0, jos se "
-"on valmis."
+"Kysyy käynnissä olevalta ``serve``-taustaprosessilta: paluukoodi 0, jos "
+"se on valmis."
 
 #: ../../source/cli.rst:1
 msgid "help"
@@ -303,8 +303,8 @@ msgstr "Luo uusi tietokantatiedosto valinnaisilla metatiedoilla."
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:780
-#: ../../source/cli.rst:812 ../../source/cli.rst:842
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:803
+#: ../../source/cli.rst:835 ../../source/cli.rst:865
 msgid "**Options:**"
 msgstr "**Valitsimet:**"
 
@@ -332,8 +332,8 @@ msgstr ""
 "``.db``-pääte lisätään automaattisesti, jos se puuttuu. Ylähakemistot "
 "luodaan tarvittaessa."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:792
-#: ../../source/cli.rst:854
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:815
+#: ../../source/cli.rst:877
 msgid "**Exemple:**"
 msgstr "**Esimerkki:**"
 
@@ -527,7 +527,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:754 ../../source/cli.rst:819
+#: ../../source/cli.rst:777 ../../source/cli.rst:842
 msgid "**Exemples:**"
 msgstr "**Esimerkkejä:**"
 
@@ -661,7 +661,7 @@ msgstr "**Pääasialliset valitsimet:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:782 ../../source/cli.rst:814
+#: ../../source/cli.rst:805 ../../source/cli.rst:837
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Tietokanta (pakollinen)."
 
@@ -1337,22 +1337,26 @@ msgstr ""
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
-"de coup sans coup, analyses sans position — et affiche une ligne "
-"``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned "
-"rows: none``. Des orphelins peuvent subsister dans une base écrite par "
-"une version qui n'appliquait pas les clés étrangères sur toutes les "
-"connexions ; ils ne sont rattachés à aucun match et n'occupent que de la "
-"place. La commande se termine tout de même avec le code de sortie 0."
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position — et affiche une ligne ``WARNING`` avec le "
+"total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des "
+"orphelins peuvent subsister dans une base écrite par une version qui "
+"n'appliquait pas les clés étrangères sur toutes les connexions, ou avant "
+"que le journal de révision ait les siennes ; ils ne sont rattachés à "
+"aucun match ni à aucun paquet et n'occupent que de la place. La commande "
+"se termine tout de même avec le code de sortie 0."
 msgstr ""
 "Jokainen ajo tarkistaa myös viite-eheyden: se laskee orvot rivit — pelit "
 "ilman ottelua, siirrot ilman peliä, siirtoanalyysit ilman siirtoa, "
-"analyysit ilman asemaa — ja tulostaa ``WARNING``-rivin kokonaismäärineen, "
-"jos niitä on. Terve tietokanta vastaa ``Orphaned rows: none``. Orpoja voi "
-"jäädä tietokantaan, jonka on kirjoittanut versio, joka ei pakottanut "
-"viiteavaimia kaikilla yhteyksillä; ne eivät kuulu mihinkään otteluun ja "
-"vievät vain tilaa. Komento päättyy silti poistumiskoodilla 0."
+"analyysit ilman asemaa, kertauspäiväkirjan merkinnät ilman pakkaa tai "
+"ilman asemaa — ja tulostaa ``WARNING``-rivin kokonaismäärällä, jos niitä "
+"on. Terve tietokanta vastaa ``Orphaned rows: none``. Orpoja voi jäädä "
+"tietokantaan, jonka kirjoitti versio joka ei valvonut vierasavaimia "
+"jokaisella yhteydellä, tai ennen kuin kertauspäiväkirjalla oli omansa; "
+"ne eivät kuulu mihinkään otteluun eivätkä mihinkään pakkaan ja vievät "
+"vain tilaa. Komento päättyy silti paluukoodiin 0."
 
-#: ../../source/cli.rst:744
+#: ../../source/cli.rst:745
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1365,20 +1369,69 @@ msgid ""
 "un constat, pas un échec : le code de sortie reste 0."
 msgstr ""
 "Jokainen ajo vertaa myös skeemaa viite-DDL:ään ja luettelee taulut, "
-"sarakkeet ja indeksit, jotka tietokannasta puuttuvat. Tietokannan avaaminen "
-"lisää puuttuvat osat, kun se on mahdollista, ja vain kirjaa lokiin sen, mitä "
-"se ei voi lisätä (tyypillisesti ``UNIQUE``-indeksin, jonka "
-"uudelleenrakentamisen kaksoisrivit estävät): tässä tuo puute tulee näkyviin, "
-"ja kysely, joka nimeää jonkin näistä osista, epäonnistuu, kunnes syy on "
-"korjattu. Terve tietokanta vastaa ``Schema: matches the reference DDL``. "
-"Kuten orporivit, skeemapoikkeama on havainto, ei virhe: paluukoodi pysyy "
-"nollana."
+"sarakkeet ja indeksit, jotka tietokannasta puuttuvat. Tietokannan "
+"avaaminen lisää puuttuvat osat, kun se on mahdollista, ja vain kirjaa "
+"lokiin sen, mitä se ei voi lisätä (tyypillisesti ``UNIQUE``-indeksin, "
+"jonka uudelleenrakentamisen kaksoisrivit estävät): tässä tuo puute tulee "
+"näkyviin, ja kysely, joka nimeää jonkin näistä osista, epäonnistuu, "
+"kunnes syy on korjattu. Terve tietokanta vastaa ``Schema: matches the "
+"reference DDL``. Kuten orporivit, skeemapoikkeama on havainto, ei virhe: "
+"paluukoodi pysyy nollana."
 
-#: ../../source/cli.rst:768
+#: ../../source/cli.rst:755
+msgid ""
+"Chaque exécution contrôle enfin les règles que la DDL courante énonce "
+"mais que SQLite ne sait pas ajouter à une table déjà créée : les "
+"contraintes ``CHECK`` de plage (dés entre 0 et 6, videau et pips "
+"positifs, sorties entre 0 et 15, note de révision entre 1 et 4), le hash "
+"Zobrist qu'une ligne ne devrait jamais omettre et l'unicité d'une analyse"
+" par position. Une base créée depuis la version 2.18.0 du schéma les "
+"applique ; une base plus ancienne peut encore porter des lignes qu'une "
+"base neuve refuserait, et ce sont elles qui sont comptées ici, règle par "
+"règle. Une base saine répond ``Constraints: every row satisfies the "
+"current DDL``. C'est un constat de plus : rien n'est réparé et le code de"
+" sortie reste 0."
+msgstr ""
+"Jokainen ajo tarkistaa lopuksi säännöt, jotka nykyinen DDL esittää mutta "
+"joita SQLite ei osaa lisätä jo olemassa olevaan tauluun: "
+"``CHECK``-rajoitteet (nopat välillä 0–6, tuplauskuutio ja pipit ei-"
+"negatiivisia, 0–15 ulos kannettua nappulaa, kertausarvosana välillä 1–4),"
+" Zobrist-tiivisteen, jota riviltä ei koskaan pitäisi puuttua, sekä yhden "
+"analyysin asemaa kohden. Skeemaversiosta 2.18.0 alkaen luotu tietokanta "
+"valvoo niitä; vanhempi voi yhä sisältää rivejä, jotka uusi tietokanta "
+"hylkäisi, ja juuri ne lasketaan tässä sääntö kerrallaan. Terve tietokanta"
+" vastaa ``Constraints: every row satisfies the current DDL``. Yksi "
+"havainto lisää: mitään ei korjata ja paluukoodi pysyy nollassa."
+
+#: ../../source/cli.rst:766
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Jokainen ajo laskee lopuksi uudelleen kaksi denormalisoitua laskuria, "
+"``match.game_count`` ja ``game.move_count``, niistä riveistä joita ne "
+"väittävät laskevansa, ja kertoo kuinka moni on eri mieltä ja kuinka "
+"paljon pahimmillaan. Molemmat kirjoitetaan kerran, tuonnin yhteydessä, "
+"sen mukaan mitä **lähdetiedosto** sisälsi, ja juuri ne näkyvät "
+"otteluluettelossa ja pelinäkymässä: pieni ero on useimmiten tuonti, joka "
+"ohitti sen mitä ei osannut muuntaa. Mitään ei kirjoiteta uudelleen — "
+"laskurin korvaaminen tallennetulla pyyhkisi juuri sen eron, jota "
+"kannattaa katsoa. Terve tietokanta vastaa ``Counters: game_count and "
+"move_count agree with the rows``."
+
+#: ../../source/cli.rst:791
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Tietokannan tiivistäminen"
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:793
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1393,7 +1446,7 @@ msgstr ""
 "käynnistää tiivistys — se ei tapahdu koskaan automaattisesti tietokantaa "
 "avattaessa, koska sen kustannus on suuressa tietokannassa arvaamaton."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:807
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1413,11 +1466,11 @@ msgstr ""
 "kieltäytyy käynnistymästä selkeällä viestillä sen sijaan, että "
 "riskeeraisi keskeytyneen tiivistyksen."
 
-#: ../../source/cli.rst:804
+#: ../../source/cli.rst:827
 msgid "delete — Supprimer des données"
 msgstr "delete — Poista tietoja"
 
-#: ../../source/cli.rst:806
+#: ../../source/cli.rst:829
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -1425,23 +1478,23 @@ msgstr ""
 "Poista ottelu ja kaikki siihen liittyvät tiedot (pelit, siirrot, "
 "analyysit)."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:838
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Poistotyyppi: ``match`` (pakollinen)."
 
-#: ../../source/cli.rst:816
+#: ../../source/cli.rst:839
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Poistettavan kohteen tunnus (pakollinen)."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:840
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Poista pyytämättä vahvistusta."
 
-#: ../../source/cli.rst:830
+#: ../../source/cli.rst:853
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Taustaprosessin tarkistus"
 
-#: ../../source/cli.rst:832
+#: ../../source/cli.rst:855
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1451,30 +1504,31 @@ msgid ""
 msgstr ""
 "Kysyy käynnissä olevalta ``serve``-taustaprosessilta (ks. "
 ":doc:`mode_headless`), onko se valmis: yksi ``GET /readyz``-pyyntö, "
-"paluukoodi ``0``, jos taustaprosessi vastaa 200 (tallennus tavoitettavissa, "
-"skeema odotetussa versiossa), muuten ``1`` — tallennus ei tavoitettavissa, "
-"vanhentunut skeema tai osoitteessa ei kuuntele mikään. Tietokantatiedostoa "
-"ei avata."
+"paluukoodi ``0``, jos taustaprosessi vastaa 200 (tallennus "
+"tavoitettavissa, skeema odotetussa versiossa), muuten ``1`` — tallennus "
+"ei tavoitettavissa, vanhentunut skeema tai osoitteessa ei kuuntele "
+"mikään. Tietokantatiedostoa ei avata."
 
-#: ../../source/cli.rst:844
+#: ../../source/cli.rst:867
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
 "générique (``0.0.0.0``, ``[::]``) est sondée sur l'interface de bouclage."
 msgstr ""
 "``--addr`` — Osoite, jota taustaprosessi kuuntelee (oletus "
-"``BLUNDERDB_ADDR``, muuten ``:8080``). Osoite ilman isäntää (``:8080``) tai "
-"yleisisännällä (``0.0.0.0``, ``[::]``) tarkistetaan loopback-liitännän "
-"kautta."
+"``BLUNDERDB_ADDR``, muuten ``:8080``). Osoite ilman isäntää (``:8080``) "
+"tai yleisisännällä (``0.0.0.0``, ``[::]``) tarkistetaan loopback-"
+"liitännän kautta."
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:870
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr ""
-"``--timeout`` — Aika, jonka jälkeen tarkistus luovuttaa (oletuksena ``2s``)."
+"``--timeout`` — Aika, jonka jälkeen tarkistus luovuttaa (oletuksena "
+"``2s``)."
 
-#: ../../source/cli.rst:849
+#: ../../source/cli.rst:872
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1486,7 +1540,7 @@ msgstr ""
 "``cmd/serve``-hakemistosta käännetty ``serve``-binääri ymmärtää sen. Se "
 "sopii yhtä hyvin skriptiin tai systemd-yksikköön."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:886
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1494,35 +1548,35 @@ msgstr ""
 "Epäonnistuessa syy tulostetaan, ja ``docker inspect`` näyttää sen "
 "``unhealthy``-tilassa olevalle kontille:"
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:894
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:897
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:888
+#: ../../source/cli.rst:911
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:896
+#: ../../source/cli.rst:919
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:930
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:932
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:910
+#: ../../source/cli.rst:933
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:912
+#: ../../source/cli.rst:935
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "
