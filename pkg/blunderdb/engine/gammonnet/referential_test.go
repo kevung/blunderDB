@@ -79,11 +79,11 @@ func TestEquityScaleNegatesWithThePointOfView(t *testing.T) {
 		for _, mwc := range []float64{0.1, 0.35, 0.5, 0.72, 0.99} {
 			got := theirs.FromDecision(1 - mwc)
 			want := -mine.FromDecision(mwc)
-			// Same 1e-5 margin as cubeGoldTolerance, and for the same
-			// reason: blunderDB stores its MET in float32, so the two sides'
-			// anchors are only symmetric to a float32 rounding — amplified
-			// here by the 1/(cash-pass) the narrow scores carry.
-			if math.Abs(got-want) > 1e-5 {
+			// Same margin as cubeGoldTolerance (#24: blunderDB's MET now
+			// reads gammonNet's float64 export instead of a float32 hand
+			// transcription, closing the gap this tolerance used to paper
+			// over — see engine/met.go and cube_gold_test.go).
+			if math.Abs(got-want) > 1e-6 {
 				t.Errorf("%+v at mwc=%v: opponent's equity %v, want %v", state, mwc, got, want)
 			}
 		}
