@@ -16,7 +16,8 @@
         "save": "Save",
         "search": "Search",
         "errorWithMsg": "Error: {msg}",
-        "reset": "Reset"
+        "reset": "Reset",
+        "contextMenu": "Actions"
     },
     "config": {
         "title": "Settings",

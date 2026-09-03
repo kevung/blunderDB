@@ -16,7 +16,8 @@
         "save": "Speichern",
         "search": "Suchen",
         "errorWithMsg": "Fehler: {msg}",
-        "reset": "Zurücksetzen"
+        "reset": "Zurücksetzen",
+        "contextMenu": "Aktionen"
     },
     "config": {
         "title": "Einstellungen",

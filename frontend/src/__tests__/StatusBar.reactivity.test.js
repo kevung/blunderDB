@@ -186,4 +186,18 @@ describe('StatusBar — réactivité', () => {
 
         expect(get(commandTextStore)).toBe('cmd_new');
     });
+
+    // ── Test 9 : aria-live est scopé au message, pas à toute la barre (#204) ──
+    test('T9 — role="status"/aria-live vivent sur .info-message, pas sur .status-bar', () => {
+        statusBarTextStore.set('Ready');
+        const { container } = render(StatusBar);
+
+        const bar = container.querySelector('.status-bar');
+        expect(bar.getAttribute('role')).toBeNull();
+        expect(bar.getAttribute('aria-live')).toBeNull();
+
+        const message = container.querySelector('.info-message');
+        expect(message.getAttribute('role')).toBe('status');
+        expect(message.getAttribute('aria-live')).toBe('polite');
+    });
 });

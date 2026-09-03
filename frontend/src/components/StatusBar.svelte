@@ -156,7 +156,7 @@
     }
 </script>
 
-<div class="status-bar" role="status" aria-live="polite" data-testid="status-bar" data-tour="statusbar">
+<div class="status-bar" data-testid="status-bar" data-tour="statusbar">
     {#if showInput}
         <div class="command-input-row">
             {#if suggestions.length > 0}
@@ -183,7 +183,13 @@
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder={$t('statusBar.typeCommand')} onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
-        <span class="info-message" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
+        <!-- Scoped to this span, not the whole status bar (#204): the status
+             bar also holds the command-line suggestions listbox, the
+             gammonNet batch chip and the position counter, none of which
+             are status announcements — a live region on the whole bar had a
+             screen reader re-read all of it on every one of those changes,
+             not just an actual status message. -->
+        <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
     {#if gammonNetBatch}
         <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>

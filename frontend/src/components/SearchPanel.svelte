@@ -635,10 +635,11 @@
             // `window`, one level above this `document` listener): it blurs
             // the field so the bare-key shortcuts work again. Stopping it here
             // left the user stuck in the field with no way out but the mouse.
-            // Tab stays with the field on purpose: the dispatcher still turns
-            // a bare Tab into "open the search tab" with preventDefault
-            // (#204 will decide its fate), which would break moving between
-            // the form's fields.
+            // Tab stays with the field on purpose, same as Escape: since #204,
+            // the global dispatcher only hijacks a bare Tab into "open the
+            // search tab" while focus sits on the board — but stopping it here
+            // too means Tab moves between this form's fields even before that
+            // guard is reached, and protects against a future change to it.
             if (event.key === 'Escape') return;
             event.stopPropagation();
             if (event.key === 'Enter') {

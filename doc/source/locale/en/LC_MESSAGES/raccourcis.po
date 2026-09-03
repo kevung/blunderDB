@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:42+0200\n"
+"POT-Creation-Date: 2026-09-03 09:38+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -350,7 +350,16 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Open the command line."
 
-#: ../../source/raccourcis.rst:124
+#: ../../source/raccourcis.rst:123
+msgid ""
+"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
+" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
+"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
+"lien, TAB reprend la navigation clavier standard entre les éléments de "
+"l'interface plutôt que de rouvrir ce panneau."
+msgstr "TAB only opens the search panel when focus is on the board (or nowhere in particular, which is the case most of the time). Once focus is on a button, an input field or a link, TAB resumes standard keyboard navigation between the interface's elements instead of reopening this panel."
+
+#: ../../source/raccourcis.rst:132
 msgid "Outils"
 msgstr "Tools"
 
@@ -434,7 +443,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:153
 msgid "Onglets de vues"
 msgstr "View Tabs"
 
@@ -486,7 +495,7 @@ msgstr "Double-click the tab"
 msgid "Renommer la vue."
 msgstr "Rename the view."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:169
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -502,7 +511,7 @@ msgstr ""
 "SHIFT-J/SHIFT-K follow the CTRL-PageUp/CTRL-PageDown convention they are "
 "paired with, not the j/k one."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:179
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -522,11 +531,11 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:184
+#: ../../source/raccourcis.rst:192
 msgid "Historique de recherche"
 msgstr "Search History"
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:194
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -550,11 +559,11 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:208
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:210
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -570,7 +579,7 @@ msgstr "Select/deselect a filter (show position)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Execute the filter search."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:224
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -604,11 +613,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:240
 msgid "Panneau Eval"
 msgstr "Eval Panel"
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:242
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -622,7 +631,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Deselect move."
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:259
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -658,7 +667,7 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:277
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -714,7 +723,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:295
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -746,7 +755,7 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:311
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -774,7 +783,7 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

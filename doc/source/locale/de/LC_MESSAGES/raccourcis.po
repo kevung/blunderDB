@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:42+0200\n"
+"POT-Creation-Date: 2026-09-03 09:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -354,7 +354,16 @@ msgstr "LEERTASTE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Die Befehlszeile öffnen."
 
-#: ../../source/raccourcis.rst:124
+#: ../../source/raccourcis.rst:123
+msgid ""
+"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
+" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
+"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
+"lien, TAB reprend la navigation clavier standard entre les éléments de "
+"l'interface plutôt que de rouvrir ce panneau."
+msgstr "TAB öffnet das Suchpanel nur, wenn der Fokus auf dem Spielbrett liegt (oder nirgends im Besonderen, was meistens der Fall ist). Sobald der Fokus auf einer Schaltfläche, einem Eingabefeld oder einem Link liegt, setzt TAB die normale Tastaturnavigation zwischen den Oberflächenelementen fort, anstatt dieses Panel erneut zu öffnen."
+
+#: ../../source/raccourcis.rst:132
 msgid "Outils"
 msgstr "Werkzeuge"
 
@@ -438,7 +447,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:153
 msgid "Onglets de vues"
 msgstr "Ansichts-Reiter"
 
@@ -490,7 +499,7 @@ msgstr "Doppelklick auf den Reiter"
 msgid "Renommer la vue."
 msgstr "Die Ansicht umbenennen."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:169
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -506,7 +515,7 @@ msgstr ""
 "Tastenkürzel) — UMSCHALT-J/UMSCHALT-K folgen der Konvention von STRG-"
 "BildAuf/STRG-BildAb, mit der sie verbunden sind, nicht der von j/k."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:179
 msgid "Ligne de commande"
 msgstr "Befehlszeile"
 
@@ -526,11 +535,11 @@ msgstr "UNTEN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Im Befehlsverlauf nach unten blättern."
 
-#: ../../source/raccourcis.rst:184
+#: ../../source/raccourcis.rst:192
 msgid "Historique de recherche"
 msgstr "Suchverlauf"
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:194
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -554,11 +563,11 @@ msgstr "Doppelklick"
 msgid "Exécuter la recherche."
 msgstr "Die Suche ausführen."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:208
 msgid "Bibliothèque de filtres"
 msgstr "Filterbibliothek"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:210
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -574,7 +583,7 @@ msgstr "Einen Filter auswählen/abwählen (Position anzeigen)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Die Suche des Filters ausführen."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:224
 msgid "Panneau d'analyse"
 msgstr "Analyse-Fenster"
 
@@ -608,11 +617,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:240
 msgid "Panneau Eval"
 msgstr "Eval-Fenster"
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:242
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -626,7 +635,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Den Zug abwählen."
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:259
 msgid "Panneau des matchs"
 msgstr "Match-Fenster"
 
@@ -662,7 +671,7 @@ msgstr "Das ausgewählte Match löschen."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Abwählen/Fenster schließen."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:277
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-Fenster (verteiltes Wiederholen)"
 
@@ -720,7 +729,7 @@ msgstr ""
 "Die Wiederholung beenden und zur Stapelliste zurückkehren (später "
 "fortsetzbar)."
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:295
 msgid "Panneau des tournois"
 msgstr "Turnier-Fenster"
 
@@ -753,7 +762,7 @@ msgstr ""
 "Matches leeren, sonst die Turnierauswahl aufheben, sonst das Fenster "
 "schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:311
 msgid "Panneau des collections"
 msgstr "Sammlungs-Fenster"
 
@@ -783,7 +792,7 @@ msgstr ""
 "Zur Liste der Sammlungen zurückkehren, sonst die Sammlungsauswahl "
 "aufheben, sonst das Fenster schließen (schrittweise)."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

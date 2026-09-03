@@ -16,7 +16,8 @@
         "save": "Tallenna",
         "search": "Hae",
         "errorWithMsg": "Virhe: {msg}",
-        "reset": "Nollaa"
+        "reset": "Nollaa",
+        "contextMenu": "Toiminnot"
     },
     "config": {
         "title": "Asetukset",

@@ -19,6 +19,7 @@ import {
     toggleMetadataPanel,
     toggleAnkiPanel,
     toggleCollectionPanelAction,
+    toggleMatchPanel,
     toggleTournamentPanel,
     toggleStatsPanel,
     toggleSearchPanel,
@@ -95,6 +96,23 @@ export function panelKeyGuard(event, { allowNavKeys = false } = {}) {
     if (event.target instanceof Element && event.target.matches(EDITABLE_FIELD_SELECTOR)) return true;
     if (allowNavKeys && NAVIGATION_KEYS.has(event.key)) return true;
     return false;
+}
+
+// Bare Tab only opens the search panel (#204) while focus sits on the board:
+// nothing inside `.scrollable-content` (App.svelte) is itself a focus target
+// (Board.svelte sets no tabindex), so this is effectively "focus is on
+// <body>, or on the board's container" — the default browsing state right
+// after startup, or after a click on the board/background. Before this
+// guard, plain Tab was hijacked everywhere, unconditionally: standard
+// keyboard focus navigation (buttons, links, form fields outside the one
+// SearchPanel field a document-level stopPropagation happened to protect —
+// see its handleKeyDown) did not exist anywhere in the app. Once focus has
+// genuinely moved to a real element, Tab must behave like it does in any
+// other application.
+function isFocusOnBoard() {
+    const active = document.activeElement;
+    if (!active || active === document.body) return true;
+    return !!active.closest('.scrollable-content');
 }
 
 export function toggleHelpModal() {
@@ -306,9 +324,14 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('r')) {
         reloadAllPositions();
     } else if (event.ctrlKey && event.code === 'Tab') {
+        // Ctrl-Tab is not a focus-navigation combo (unlike bare Tab below) and
+        // is documented as "Afficher/cacher" like the other seven Ctrl+letter
+        // panel toggles (raccourcis.rst) — toggleMatchPanel() is the same
+        // toggle-back-if-already-showing behaviour #202 gave the other seven;
+        // this one used to still call the pre-#202 plain `.set()`.
         event.preventDefault();
-        activeTabStore.set('matches');
-    } else if (!event.ctrlKey && event.code === 'Tab') {
+        toggleMatchPanel();
+    } else if (!event.ctrlKey && event.code === 'Tab' && isFocusOnBoard()) {
         event.preventDefault();
         activeTabStore.set('search');
     } else if (!event.ctrlKey && event.code === 'Space') {
