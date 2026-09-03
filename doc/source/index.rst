@@ -4,29 +4,52 @@ blunderDB
 =========
 
 blunderDB est un logiciel pour constituer des bases de données de positions de
-backgammon. Sa force principale est de constituer un lieu unique où aggréger
+backgammon. Sa force principale est de constituer un lieu unique où agréger
 les positions qu'un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir
 réétudier ces positions en les filtrant selon différents filtres combinables
 arbitrairement. blunderDB peut également être utilisé pour constituer des
 catalogues de positions de référence.
 
-La présente documentation est structurée de la manière suivante:
+Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout en
+bout (premier import, étude d'un match, session Anki, mode serveur) et une
+page « comment progresser » — la lecture la plus rentable avant de se lancer.
 
-* la section **téléchargement et installation** explique comment se procurer et
-  lancer blunderDB.
+La présente documentation est structurée en douze sections :
 
-* le **manuel** décrit le fonctionnement général de blunderDB.
+* **téléchargement et installation** explique comment se procurer et lancer
+  blunderDB ;
 
-* le **guide utilisateur** est une introduction pratique pour utiliser
-  rapidement blunderDB.
+* le **guide utilisateur** est une introduction pratique et des tutoriels de
+  bout en bout pour utiliser rapidement blunderDB ;
 
-* la liste des **commandes** ainsi que la liste des **raccourcis**
-  clavier permettent une utilisation efficace de blunderDB.
+* le **manuel** décrit exhaustivement le fonctionnement de blunderDB, panneau
+  par panneau ;
 
-* la section **interface en ligne de commande (CLI)** décrit les commandes
-  disponibles pour l'import en masse, l'automatisation et le scripting.
+* le **mode commande** documente la ligne de commande intégrée à
+  l'application (filtres de recherche, actions) ;
 
-* la **FAQ** fournit quelques réponses aux interrogations les plus fréquentes.
+* la liste des **raccourcis** clavier permet une utilisation efficace au
+  clavier ;
+
+* l'**interface en ligne de commande (CLI)** décrit les commandes du binaire
+  disponibles hors interface graphique, pour l'import en masse,
+  l'automatisation et le scripting ;
+
+* la **FAQ** répond aux interrogations les plus fréquentes ;
+
+* le **mode serveur (headless)** documente le démon ``serve``, ses routes
+  HTTP et ses deux backends (SQLite, PostgreSQL) ;
+
+* l'**annexe des filtres de recherche** détaille chaque critère du panneau
+  de recherche et son jeton en ligne de commande ;
+
+* les **annexes de sécurité** (Windows, macOS) expliquent les avertissements
+  du système d'exploitation à l'installation d'un binaire non signé ;
+
+* l'**annexe du schéma de base de données** décrit le format ``.db`` ;
+
+* la page de **parité des statistiques** énonce les règles de comptage du
+  PR, du Snowie Error Rate et du coût MWC face à eXtreme Gammon et GNUbg.
 
 Historique des versions
 =======================
@@ -175,8 +198,8 @@ Sommaire
    :numbered:
 
    telecharge_install
-   manuel
    guide_utilisateur
+   manuel
    cmd_mode
    raccourcis
    cli
@@ -187,16 +210,6 @@ Sommaire
    annexe_mac_securite
    annexe_db_scheme
    stats_parity
-
-.. youtube:: Ln7XKVFqfUk
-   :width: 100%
-
-.. youtube:: HkY4iXjxMeI
-   :width: 100%
-
-.. raw:: html
-
-   <div style="margin-top: 20px;"></div>
 
 .. _contacts:
 

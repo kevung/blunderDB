@@ -162,12 +162,16 @@
                             class:align-right={col.align === 'right'}
                             title={col.title}
                             aria-sort={ariaSort(col)}
-                            onclick={col.sortable ? () => handleSort(col) : undefined}
                         >
                             {#if col.sortable}
-                                <!-- A real button so the header can be reached and sorted from the keyboard. -->
-                                <button type="button" class="sort-btn" tabindex="-1">{col.label ?? ''}</button>
-                                {#if sort?.column === col.key}<span class="sort-arrow">{sort.direction === 'asc' ? '▲' : '▼'}</span>{/if}
+                                <!-- The button is the actual interactive element: focusable
+                                     (no tabindex override — a previous "-1" here contradicted
+                                     this very comment, #204) and carrying its own click
+                                     handler, rather than a non-interactive <th> relying on the
+                                     click bubbling up to it from a keyboard-unreachable button. -->
+                                <button type="button" class="sort-btn" onclick={() => handleSort(col)}>
+                                    {col.label ?? ''}{#if sort?.column === col.key}<span class="sort-arrow">{sort.direction === 'asc' ? '▲' : '▼'}</span>{/if}
+                                </button>
                             {:else}
                                 {col.label ?? ''}
                             {/if}

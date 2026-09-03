@@ -16,7 +16,8 @@
         "save": "Enregistrer",
         "search": "Rechercher",
         "errorWithMsg": "Erreur : {msg}",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "contextMenu": "Actions"
     },
     "config": {
         "title": "Paramètres",

@@ -16,7 +16,8 @@
         "save": "Salva",
         "search": "Cerca",
         "errorWithMsg": "Errore: {msg}",
-        "reset": "Reimposta"
+        "reset": "Reimposta",
+        "contextMenu": "Azioni"
     },
     "config": {
         "title": "Impostazioni",

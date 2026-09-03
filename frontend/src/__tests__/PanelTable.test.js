@@ -73,16 +73,17 @@ describe('PanelTable', () => {
     test('clicking a sortable header cycles the sort: asc, desc, then (tristate) cleared', async () => {
         const { container } = mount({ sortOptions: { tristate: true } });
         const th = container.querySelector('th');
+        const btn = th.querySelector('.sort-btn');
         const arrow = () => th.querySelector('.sort-arrow')?.textContent ?? null;
 
         expect(th.getAttribute('aria-sort')).toBe('none');
-        await fireEvent.click(th);
+        await fireEvent.click(btn);
         expect(arrow()).toBe('▲');
         expect(th.getAttribute('aria-sort')).toBe('ascending');
-        await fireEvent.click(th);
+        await fireEvent.click(btn);
         expect(arrow()).toBe('▼');
         expect(th.getAttribute('aria-sort')).toBe('descending');
-        await fireEvent.click(th);
+        await fireEvent.click(btn);
         expect(arrow()).toBeNull();
         expect(th.getAttribute('aria-sort')).toBe('none');
     });
@@ -90,13 +91,21 @@ describe('PanelTable', () => {
     test("a column's defaultDir is honoured when it is first picked", async () => {
         const { container } = mount();
         const th = container.querySelectorAll('th')[1];
-        await fireEvent.click(th);
+        await fireEvent.click(th.querySelector('.sort-btn'));
         expect(th.querySelector('.sort-arrow').textContent).toBe('▼');
+    });
+
+    test('the sort button is reachable from the keyboard (#204)', async () => {
+        const { container } = mount();
+        const btn = container.querySelector('th .sort-btn');
+        expect(btn.hasAttribute('tabindex')).toBe(false);
+        expect(btn.tabIndex).toBeGreaterThanOrEqual(0);
     });
 
     test('a non-sortable header ignores clicks', async () => {
         const { container } = mount();
         const th = container.querySelectorAll('th')[2];
+        expect(th.querySelector('.sort-btn')).toBeNull();
         await fireEvent.click(th);
         expect(container.querySelector('.sort-arrow')).toBeNull();
     });

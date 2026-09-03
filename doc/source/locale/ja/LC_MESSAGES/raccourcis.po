@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:42+0200\n"
+"POT-Creation-Date: 2026-09-03 09:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -342,7 +342,16 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "コマンドラインを開く。"
 
-#: ../../source/raccourcis.rst:124
+#: ../../source/raccourcis.rst:123
+msgid ""
+"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
+" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
+"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
+"lien, TAB reprend la navigation clavier standard entre les éléments de "
+"l'interface plutôt que de rouvrir ce panneau."
+msgstr "TAB は、フォーカスが盤面にある場合(あるいは、多くの場合そうであるように、特にどこにもフォーカスがない場合)にのみ検索パネルを開きます。フォーカスがボタン、入力欄、またはリンクに移動すると、TAB はこのパネルを再度開く代わりに、インターフェースの要素間の標準的なキーボード操作を再開します。"
+
+#: ../../source/raccourcis.rst:132
 msgid "Outils"
 msgstr "ツール"
 
@@ -426,7 +435,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:153
 msgid "Onglets de vues"
 msgstr "ビュータブ"
 
@@ -478,7 +487,7 @@ msgstr "タブをダブルクリック"
 msgid "Renommer la vue."
 msgstr "ビューの名前を変更する。"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:169
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -492,7 +501,7 @@ msgstr ""
 "は次のビューへ進みます。これは意図的なもので、修正すべきショートカットではありません。SHIFT-J/SHIFT-K は、対になっている "
 "CTRL-PageUp/CTRL-PageDown の慣習に従っており、j/k の慣習には従いません。"
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:179
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -512,11 +521,11 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:184
+#: ../../source/raccourcis.rst:192
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:194
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -538,11 +547,11 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:208
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:210
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -556,7 +565,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:224
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -590,11 +599,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:240
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:242
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -607,7 +616,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:259
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -643,7 +652,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:277
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -697,7 +706,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:295
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -727,7 +736,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:311
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -751,7 +760,7 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

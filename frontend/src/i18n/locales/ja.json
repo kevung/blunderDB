@@ -16,7 +16,8 @@
         "save": "保存",
         "search": "検索",
         "errorWithMsg": "エラー: {msg}",
-        "reset": "リセット"
+        "reset": "リセット",
+        "contextMenu": "操作"
     },
     "config": {
         "title": "設定",

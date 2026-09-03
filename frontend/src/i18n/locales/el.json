@@ -16,7 +16,8 @@
         "save": "Αποθήκευση",
         "search": "Αναζήτηση",
         "errorWithMsg": "Σφάλμα: {msg}",
-        "reset": "Επαναφορά"
+        "reset": "Επαναφορά",
+        "contextMenu": "Ενέργειες"
     },
     "config": {
         "title": "Ρυθμίσεις",

@@ -16,7 +16,8 @@
         "save": "Сохранить",
         "search": "Поиск",
         "errorWithMsg": "Ошибка: {msg}",
-        "reset": "Сбросить"
+        "reset": "Сбросить",
+        "contextMenu": "Действия"
     },
     "config": {
         "title": "Настройки",

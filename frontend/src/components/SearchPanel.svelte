@@ -72,6 +72,14 @@
     let savedFilters = $derived($filterLibraryStore || []);
     let selectedSavedFilter = $state(null);
 
+    // Command-line-only filters (#203): `xD65` (exclude a dice roll) and
+    // `id5,10` (position id) have no panel checkbox — deliberately, not by
+    // omission. Both are repeatable/list-shaped in a way the other checkbox
+    // filters aren't (several `xD`/`id` tokens combine, `xD` also needs a
+    // 21-roll picker), and both are already documented as typed-command-only
+    // in doc/source/cmd_mode.rst. They still parse correctly wherever a
+    // command reaches parseSearchTokens (typed, or a history/library replay —
+    // see searchFilterService.js's doc comment for why that used to matter).
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -188,9 +196,15 @@
     let structureMode = $state('include');
     let includeBoardStash = $state(null);
 
-    // Initialize all filters as disabled, then restore previous search state if available
-    availableFilters.forEach((f) => (filterEnabled[f] = false));
-    filterEnabled['Matches & Tournaments'] = false;
+    // Initialize all filters as disabled, then restore previous search state if available.
+    // Both keys are set through the same forEach (rather than a lone top-level
+    // `filterEnabled['Matches & Tournaments'] = false` statement, #205): that
+    // stray assignment — every value it wrote was already a literal, not
+    // derived from anything reactive, so there was nothing actually stale
+    // about it — was the one line of this pair the compiler flagged as
+    // "only captures the initial value", unlike the identical-shaped
+    // assignment happening inside this very closure.
+    [...availableFilters, 'Matches & Tournaments'].forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
 
     let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length + (filterEnabled['Matches & Tournaments'] ? 1 : 0));
@@ -511,7 +525,14 @@
                 matchIDsFilter: f.matchIDs,
                 tournamentIDsFilter: f.tournamentIDs,
                 diceRollMode: f.drMode,
-                playerFilter: f.plf
+                playerFilter: f.plf,
+                // Command-line-only tokens with no panel checkbox (#203): unlike
+                // commentFilter/cubeResponseFilter, positionService does not
+                // re-derive these from `filters`, so they must be forwarded
+                // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
+                // the exclusion/restriction on double-click.
+                exceptDiceFilter: f.xd,
+                positionIDsFilter: f.posIds
             });
         }
     }
@@ -620,10 +641,11 @@
             // `window`, one level above this `document` listener): it blurs
             // the field so the bare-key shortcuts work again. Stopping it here
             // left the user stuck in the field with no way out but the mouse.
-            // Tab stays with the field on purpose: the dispatcher still turns
-            // a bare Tab into "open the search tab" with preventDefault
-            // (#204 will decide its fate), which would break moving between
-            // the form's fields.
+            // Tab stays with the field on purpose, same as Escape: since #204,
+            // the global dispatcher only hijacks a bare Tab into "open the
+            // search tab" while focus sits on the board — but stopping it here
+            // too means Tab moves between this form's fields even before that
+            // guard is reached, and protects against a future change to it.
             if (event.key === 'Escape') return;
             event.stopPropagation();
             if (event.key === 'Enter') {

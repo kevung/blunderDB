@@ -82,29 +82,36 @@ FAQ (15 questions) : 0 gammonNet/Anki/filigrane/Docker, `faq.rst:181` sans
 l'évaluateur, #101 fermée sans changement ; « calculateur EPC »
 (`guide_utilisateur.rst:293-296`, `faq.rst:120`) ; vidéos YouTube de janvier
 2025 en tête d'`index.rst:191,194`.
-- [ ] Quatre tutoriels : *mon premier import* (du `.xg` à la première
+- [x] Quatre tutoriels : *mon premier import* (du `.xg` à la première
       recherche d'erreur), *étudier un match*, *une session Anki*, *déployer
       `serve` derrière un proxy* (G.1).
-- [ ] Page « comment progresser avec blunderDB » (routine hebdomadaire :
-      importer → `E>50` → commenter → paquet Anki → PR par tournoi) — la page
-      qui vaut dix fonctionnalités.
-- [ ] FAQ : +6 questions (ai-je besoin d'XG ? que vaut l'évaluateur ? où sont
+- [x] Page « comment progresser avec blunderDB » (routine hebdomadaire :
+      importer → filtrer les décisions coûteuses (`bl`) → commenter → paquet
+      Anki → PR par tournoi) — la page qui vaut dix fonctionnalités.
+- [x] FAQ : +6 questions (ai-je besoin d'XG ? que vaut l'évaluateur ? où sont
       mes données ? partager une base ? mode serveur ? PR vs Snowie) ;
-      corriger les coquilles (`faq.rst:10,52,156,181,203`, `index.rst:7`).
-- [ ] Retirer les vidéos jusqu'à #102 ; script de démo en 3 min
+      corriger les coquilles (`faq.rst` : personalisée, aggrège, philisophie,
+      fonctionne-t'il, architecture logicielle sans gammonNet ; `index.rst:7`
+      aggréger).
+- [x] Retirer les vidéos jusqu'à #102 ; script de démo en 3 min
       (importer → blunders → paquet Anki) sur la base `demo` régénérée (A.8).
-- [ ] Toctree : guide avant manuel ; intro d'`index.rst` cite les 12 sections.
+- [x] Toctree : guide avant manuel ; intro d'`index.rst` cite les 12 sections
+      (les 4 annexes techniques comptées comme 3 : sécurité Windows/macOS
+      regroupée).
 
 ## H.5 — Captures d'écran générées [M] — découvrabilité (#247)
 
 0 `figure::` dans `manuel.rst` (1 436 l.) et `guide_utilisateur.rst` ; 11 PNG
 de janvier 2025 (SmartScreen) ; `img/smartscreen_fr.png` orpheline. Le harnais
 existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
-- [ ] 12-15 captures panneau par panneau sur mock Wails avec la base démo,
-      régénérées par une cible `make screenshots` et vérifiées à la release
-      (skill `release-blunderdb`).
-- [ ] Injectées dans `manuel.rst`, `guide_utilisateur.rst`, `metainfo.xml`,
-      README ; supprimer l'orpheline.
+- [x] 12 captures panneau par panneau sur mock Wails (jeu de données vitrine
+      factice, même esprit que la base `demo` — pas littéralement le fichier
+      `demo.db.gz`, cohérent avec le harnais existant hors-suite), régénérées
+      par une cible `make screenshots` ; à vérifier à la release (skill
+      `release-blunderdb`).
+- [x] Injectées dans `manuel.rst` (6), `guide_utilisateur.rst` (6),
+      `metainfo.xml` (5), README (2) ; orpheline `img/smartscreen_fr.png`
+      supprimée.
 
 ## H.6 — Terminologie périmée dans l'interface et l'aide [S] — qualité (#248)
 
