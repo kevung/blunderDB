@@ -309,8 +309,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		if _, err := io.Copy(w, f); err != nil {
 			// Headers/status are already committed at this point (the copy is
 			// the first write); nothing more to do than let the client see a
-			// truncated download. slog so it is at least visible server-side.
-			slog.Warn("server: stream sqlite export", "err", err)
+			// truncated download with no error field to explain it. The log
+			// line is the only place this failure is ever recorded, which is
+			// exactly the Error case (see logging.go's scale): nobody else
+			// is going to see it.
+			slog.Error("server: stream sqlite export", "err", err)
 		}
 	}
 }

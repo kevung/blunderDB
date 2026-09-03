@@ -29,7 +29,7 @@ func testSearchFilterByDecisionType(t *testing.T, s storage.Storage) {
 	f.Filter.PlayerOnRoll = domain.Black
 
 	var got []domain.Position
-	for pos, err := range s.Search().Find(ctx, "", f) {
+	for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Find: %v", err)
 		}
@@ -84,7 +84,7 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 		f.Filter.DecisionType = domain.CubeAction
 		f.Filter.PlayerOnRoll = takePos.PlayerOnRoll
 		var ids []int64
-		for pos, err := range s.Search().Find(ctx, "", f) {
+		for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
 			if err != nil {
 				t.Fatalf("Find(%q): %v", sub, err)
 			}
@@ -111,7 +111,7 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 	fc.Filter.PlayerOnRoll = takePos.PlayerOnRoll
 	fc.Filter.Cube = domain.Cube{Owner: 0, Value: 1} // owned on the board; forced to -1 for take/pass
 	var ids []int64
-	for pos, err := range s.Search().Find(ctx, "", fc) {
+	for pos, err := range s.Search().Find(ctx, "", fc, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Find(includeCube takepass): %v", err)
 		}
@@ -175,7 +175,7 @@ func testSearchFilterByAnalysisDecodesCompressedBlob(t *testing.T, s storage.Sto
 func searchIDs(t *testing.T, s storage.Storage, f domain.SearchFilters) []int64 {
 	t.Helper()
 	var ids []int64
-	for pos, err := range s.Search().Find(context.Background(), "", f) {
+	for pos, err := range s.Search().Find(context.Background(), "", f, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Find(%+v): %v", f, err)
 		}
@@ -203,7 +203,7 @@ func testSearchFilterByIndividuallyImported(t *testing.T, s storage.Storage) {
 	save(3, false)
 
 	var got []int64
-	for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{IndividuallyImportedFilter: true}) {
+	for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{IndividuallyImportedFilter: true}, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Find: %v", err)
 		}
@@ -216,7 +216,7 @@ func testSearchFilterByIndividuallyImported(t *testing.T, s storage.Storage) {
 	// Without the filter, the match positions are back — and they are the noise
 	// the filter exists to cut through.
 	var all int
-	for _, err := range s.Search().Find(ctx, "", domain.SearchFilters{}) {
+	for _, err := range s.Search().Find(ctx, "", domain.SearchFilters{}, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Find (unfiltered): %v", err)
 		}
@@ -259,7 +259,7 @@ func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
 	find := func(f domain.SearchFilters) []int64 {
 		t.Helper()
 		var got []int64
-		for pos, err := range s.Search().Find(ctx, "", f) {
+		for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
 			if err != nil {
 				t.Fatalf("Find: %v", err)
 			}
@@ -329,7 +329,7 @@ func testSearchFilterByFlagged(t *testing.T, s storage.Storage) {
 	find := func(f domain.SearchFilters) []int64 {
 		t.Helper()
 		var got []int64
-		for pos, err := range s.Search().Find(ctx, "", f) {
+		for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
 			if err != nil {
 				t.Fatalf("Find: %v", err)
 			}
@@ -505,5 +505,56 @@ func testSearchMoveErrorFilterMaxOverPlays(t *testing.T, s storage.Storage) {
 			check(run, false, w)
 			check(run, true, w)
 		}
+	}
+}
+
+// testSearchPagination checks that ListOpts.Limit/Offset are genuinely pushed
+// into the SQL scan (B.10, #178): default order is p.id ascending
+// (domain.SearchOrderByClause), so a window is checkable against a plain
+// slice of the unbounded id list.
+func testSearchPagination(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps := s.Positions()
+
+	var ids []int64
+	for n := 1; n <= 5; n++ {
+		p := provenancePos(n)
+		id, err := ps.Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %d: %v", n, err)
+		}
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+
+	find := func(opts storage.ListOpts) []int64 {
+		t.Helper()
+		var got []int64
+		for pos, err := range s.Search().Find(ctx, "", domain.SearchFilters{}, opts) {
+			if err != nil {
+				t.Fatalf("Find(%+v): %v", opts, err)
+			}
+			got = append(got, pos.ID)
+		}
+		return got
+	}
+
+	if got := find(storage.ListOpts{}); !reflect.DeepEqual(got, ids) {
+		t.Fatalf("Find{}: got %v, want %v (unbounded, p.id order)", got, ids)
+	}
+	if got, want := find(storage.ListOpts{Limit: 2}), ids[:2]; !reflect.DeepEqual(got, want) {
+		t.Errorf("Find{Limit:2}: got %v, want %v", got, want)
+	}
+	if got, want := find(storage.ListOpts{Limit: 2, Offset: 2}), ids[2:4]; !reflect.DeepEqual(got, want) {
+		t.Errorf("Find{Limit:2,Offset:2}: got %v, want %v", got, want)
+	}
+	// Offset with no limit: PostgreSQL accepts a bare OFFSET, SQLite's
+	// adapter turns it into "LIMIT -1 OFFSET ?" — both must agree.
+	if got, want := find(storage.ListOpts{Offset: 3}), ids[3:]; !reflect.DeepEqual(got, want) {
+		t.Errorf("Find{Offset:3}: got %v, want %v", got, want)
+	}
+	// Past the end: an empty page, not an error.
+	if got := find(storage.ListOpts{Limit: 2, Offset: 10}); len(got) != 0 {
+		t.Errorf("Find{Limit:2,Offset:10}: got %v, want empty", got)
 	}
 }

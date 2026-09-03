@@ -116,6 +116,14 @@ type Dialect interface {
 	// case-insensitive for ASCII), ILIKE in PostgreSQL.
 	ILike() string
 
+	// LimitOffset renders a ListOpts as the trailing clause of a SELECT
+	// already carrying its ORDER BY, and the placeholder arguments it needs —
+	// "", nil when both are zero (no bound, today's behaviour). PostgreSQL
+	// accepts a bare OFFSET with no LIMIT; SQLite's grammar requires a LIMIT
+	// whenever OFFSET is given, so an offset with no limit asks SQLite for an
+	// explicit unbounded one (LIMIT -1) instead.
+	LimitOffset(limit, offset int) (clause string, args []any)
+
 	// TimestampArg is the placeholder for a match_date bound as a string:
 	// "?" in SQLite (match_date is TEXT), "?::timestamptz" in PostgreSQL.
 	TimestampArg() string

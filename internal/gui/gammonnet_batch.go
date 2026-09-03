@@ -3,7 +3,6 @@ package gui
 import (
 	"context"
 	goruntime "runtime"
-	"sync"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -26,10 +25,8 @@ import (
 //	gammonnet-batch:done      {evaluated, refused, failed}
 //	gammonnet-batch:cancelled {}
 //	gammonnet-batch:error     {message}
-var (
-	gnBatchMu     sync.Mutex
-	gnBatchCancel context.CancelFunc
-)
+//
+// gnBatchMu/gnBatchCancel live on App (#196/C.9) — see app.go's own comment.
 
 // gnYieldPoll is how often the batch rechecks whether the interactive live
 // evaluation (gammonnet_eval.go) has freed up, once it finds it busy. Small
@@ -45,12 +42,13 @@ const gnYieldPoll = 50 * time.Millisecond
 // happens in tests that construct an App without one.
 func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
 	a.runGammonNetBatch(func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		// goruntime.NumCPU(): the batch spreads its positions over every
-		// core (#147). Nothing is exposed to the user — the desktop has no
-		// reason to ask how many cores to use, and the yield below is what
-		// keeps an interactive evaluation ahead of the batch anyway.
-		return a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
-			waitForInteractiveEvaluation, onProgress)
+		// a.effectiveBatchJobs(): every core (#147), UNLESS an interactive
+		// evaluation is already in flight when this batch starts (#196/C.9)
+		// — the yield below already keeps it that way position by position,
+		// this only shortens the transient window before a goroutine
+		// already mid-position notices.
+		return a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+			a.waitForInteractiveEvaluation, onProgress)
 	})
 }
 
@@ -64,9 +62,31 @@ func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
 // re-run it.
 func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
 	a.runGammonNetBatch(func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
-		return a.db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
-			waitForInteractiveEvaluation, onProgress)
+		return a.db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, a.effectiveBatchJobs(),
+			a.waitForInteractiveEvaluation, onProgress)
 	})
+}
+
+// effectiveBatchJobs is the batch's own #196/C.9 fix: goruntime.NumCPU()
+// batch goroutines PLUS the panel's own WithWorkers(NumCPU) pool is
+// 2×NumCPU worth of live goroutines competing for NumCPU cores whenever an
+// interactive "at rest" evaluation (gammonnet_eval.go) is already running
+// when a batch starts. waitForInteractiveEvaluation already makes every
+// batch goroutine yield fully once it notices — this only shortens the
+// transient window before it does: fewer goroutines means fewer stragglers
+// still mid-position, still racing the panel's pool for cores, when the
+// interactive search began.
+func (a *App) effectiveBatchJobs() int {
+	a.gnEvalMu.Lock()
+	busy := a.gnEvalCancel != nil
+	a.gnEvalMu.Unlock()
+	if !busy {
+		return goruntime.NumCPU()
+	}
+	if n := goruntime.NumCPU() / 4; n > 1 {
+		return n
+	}
+	return 1
 }
 
 // runGammonNetBatch is the goroutine+context+mutex+EventsEmit shell both
@@ -79,22 +99,22 @@ func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(do
 		return
 	}
 
-	gnBatchMu.Lock()
-	if gnBatchCancel != nil {
-		gnBatchCancel()
+	a.gnBatchMu.Lock()
+	if a.gnBatchCancel != nil {
+		a.gnBatchCancel()
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
-	gnBatchCancel = cancel
-	gnBatchMu.Unlock()
+	a.gnBatchCancel = cancel
+	a.gnBatchMu.Unlock()
 
 	go func() {
 		summary, err := run(ctx, func(done, total int) {
 			runtime.EventsEmit(a.ctx, "gammonnet-batch:progress", map[string]int{"done": done, "total": total})
 		})
 
-		gnBatchMu.Lock()
-		gnBatchCancel = nil
-		gnBatchMu.Unlock()
+		a.gnBatchMu.Lock()
+		a.gnBatchCancel = nil
+		a.gnBatchMu.Unlock()
 
 		if err != nil {
 			if ctx.Err() != nil {
@@ -119,29 +139,27 @@ func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(do
 
 // CancelGammonNetBatch aborts an in-flight batch, if any.
 func (a *App) CancelGammonNetBatch() {
-	gnBatchMu.Lock()
-	if gnBatchCancel != nil {
-		gnBatchCancel()
-		gnBatchCancel = nil
+	a.gnBatchMu.Lock()
+	if a.gnBatchCancel != nil {
+		a.gnBatchCancel()
+		a.gnBatchCancel = nil
 	}
-	gnBatchMu.Unlock()
+	a.gnBatchMu.Unlock()
 }
 
 // waitForInteractiveEvaluation is the batch's yield point (#129): called by
 // every batch goroutine before every position, it blocks for as long as
 // gammonnet_eval.go's live evaluation (#125) has a search in flight, so an
 // editing user is never fighting the batch for cores. With the batch spread
-// over NumCPU goroutines (#147) the promise is now "the batch gives way
-// within at most NumCPU positions" rather than one — every goroutine passes
-// through here, so the whole batch stalls, just not on the same position.
-//
-// gammonNetEvalMu and gammonNetEvalCancel are package-level state this file
-// shares with gammonnet_eval.go without an import — both live in package gui.
-func waitForInteractiveEvaluation() {
+// over jobs goroutines (#147, effectiveBatchJobs #196/C.9) the promise is
+// "the batch gives way within at most jobs positions" rather than one —
+// every goroutine passes through here, so the whole batch stalls, just not
+// on the same position.
+func (a *App) waitForInteractiveEvaluation() {
 	for {
-		gammonNetEvalMu.Lock()
-		busy := gammonNetEvalCancel != nil
-		gammonNetEvalMu.Unlock()
+		a.gnEvalMu.Lock()
+		busy := a.gnEvalCancel != nil
+		a.gnEvalMu.Unlock()
 		if !busy {
 			return
 		}

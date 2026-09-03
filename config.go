@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 	"runtime"
 
@@ -327,14 +327,14 @@ func calculateInitialDimensions() (int, int) {
 func (c *Config) LoadConfig() (*Config, error) {
 	configPath, err := xdg.SearchConfigFile(configFilePath)
 	if err != nil {
-		log.Println("Config file not found, creating a new one.")
+		slog.Info("config file not found, creating a new one")
 		config := NewConfig()
 		if err := c.SaveConfig(config); err != nil {
 			return nil, err
 		}
 		return config, nil
 	}
-	log.Println("Config file was found at:", configPath)
+	slog.Info("config file found", "path", configPath)
 
 	file, err := os.Open(configPath)
 	if err != nil {

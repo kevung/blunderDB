@@ -23,9 +23,20 @@ var _ storage.SearchStore = (*SearchStore)(nil)
 // Database wrapper's LoadPositionsByFiltersCore: the cheap predicates are
 // pushed to SQL, the rest are evaluated in Go on the narrowed result set.
 // Results are restricted to the scope's tenant.
-func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFilters) iter.Seq2[*domain.Position, error] {
+//
+// opts.Limit/Offset are pushed into the SQL query itself (LIMIT/OFFSET on the
+// ORDER BY that already picks the result order), bounding what the SQL scan
+// returns before any of it reaches Go. A zero ListOpts keeps today's
+// behaviour: no limit, from the start. Because the Go-side predicates below
+// (mirror search, the checker-structure/date/equity/move-pattern filters)
+// still run AFTER the SQL scan, on the page it returned, they can reject a
+// page's candidates the same way they already reject any SQL-matched row —
+// the guarantee is "at most opts.Limit SQL-matched candidates were
+// considered", not "exactly opts.Limit results returned"; a caller paging
+// through a search that also uses one of those filters may see short pages.
+func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
-		positions, err := s.find(ctx, scope, f)
+		positions, err := s.find(ctx, scope, f, opts)
 		if err != nil {
 			yield(nil, err)
 			return
@@ -38,7 +49,7 @@ func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 	}
 }
 
-func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters) ([]domain.Position, error) {
+func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 	// multiPlayed lists the positions player 1 played more than one way;
 	// only filled by a plain move-error search, where those rows escape the
@@ -393,6 +404,8 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		analysisDataCol = "a.data"
 	}
 
+	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
+
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
@@ -401,9 +414,9 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort)
+	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
 
-	rows, err := s.DB.Query(ctx, query, args...)
+	rows, err := s.DB.Query(ctx, query, append(args, limitArgs...)...)
 	if err != nil {
 		return nil, errf(s.DB, "search query", err)
 	}
@@ -486,6 +499,35 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	// Hand the connection back before the predicates start querying.
 	if err := rows.Close(); err != nil {
 		return nil, errf(s.DB, "search rows close", err)
+	}
+
+	// Preload, in one batched query per family, what the per-row predicates
+	// below used to fetch one row at a time: a SearchText filter checked every
+	// SQL-matched candidate's comment with its own query (loadCommentText),
+	// and a MoveErrorFilter (plus the take/pass mirror check in addPosition)
+	// checked every candidate's recorded plays with another — 2 000 SQL-matched
+	// rows meant 2 000-4 000 extra round trips (B.10, #178). Both preloads are
+	// gated on the filter actually being active, and both run only once the
+	// cursor above is drained and its connection is free.
+	var commentTexts map[int64]string
+	var player1MovesByID map[int64]player1Moves
+	if f.SearchText != "" || f.MoveErrorFilter != "" {
+		ids := make([]int64, len(scanned))
+		for i, row := range scanned {
+			ids[i] = row.pos.ID
+		}
+		if f.SearchText != "" {
+			commentTexts, err = loadCommentTexts(ctx, s.DB, ids)
+			if err != nil {
+				return nil, errf(s.DB, "search preload comments", err)
+			}
+		}
+		if f.MoveErrorFilter != "" {
+			player1MovesByID, err = loadPlayer1Moves(ctx, s.DB, ids)
+			if err != nil {
+				return nil, errf(s.DB, "search preload player-1 moves", err)
+			}
+		}
 	}
 
 	var positions []domain.Position
@@ -658,11 +700,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					}
 				}
 				if f.MoveErrorFilter != "" {
-					ok, err := matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter)
-					if err != nil {
-						return false, err
-					}
-					if !ok {
+					if !matchesMoveErrorFilterPreloaded(ana, player1MovesByID[pos.ID], f.MoveErrorFilter) {
 						return false, nil
 					}
 				}
@@ -675,11 +713,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 				if ana == nil {
 					ana = loadAnalysis(ctx, s.DB, pos.ID)
 				}
-				ok, err := matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter)
-				if err != nil {
-					return false, err
-				}
-				if !ok {
+				if !matchesMoveErrorFilterPreloaded(ana, player1MovesByID[pos.ID], f.MoveErrorFilter) {
 					return false, nil
 				}
 			}
@@ -702,14 +736,8 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 			if f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter) {
 				return false, nil
 			}
-			if f.SearchText != "" {
-				ok, err := matchesSearchText(ctx, s.DB, &pos, f.SearchText)
-				if err != nil {
-					return false, err
-				}
-				if !ok {
-					return false, nil
-				}
+			if f.SearchText != "" && !matchesSearchTextPreloaded(commentTexts[pos.ID], f.SearchText) {
+				return false, nil
 			}
 			if f.DateFilter != "" && !searchfilter.MatchesDateFilter(ana, f.DateFilter) {
 				return false, nil
@@ -720,18 +748,12 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 			return true, nil
 		}
 
-		addPosition := func(pos domain.Position) error {
-			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction {
-				takePass, err := isPlayer1TakePassCubeAction(ctx, s.DB, &pos)
-				if err != nil {
-					return err
-				}
-				if takePass {
-					pos = pos.Mirror()
-				}
+		addPosition := func(pos domain.Position) {
+			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction &&
+				isPlayer1TakePassCubeActionPreloaded(player1MovesByID[pos.ID]) {
+				pos = pos.Mirror()
 			}
 			positions = append(positions, pos)
-			return nil
 		}
 
 		ok, err := matchesGoFilters(position)
@@ -740,9 +762,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		}
 		if ok {
 			if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
-				if err := addPosition(position); err != nil {
-					return nil, err
-				}
+				addPosition(position)
 			}
 		} else if f.MirrorFilter {
 			mirrored := position.Mirror()
@@ -752,9 +772,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 			}
 			if ok2 {
 				if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
-					if err := addPosition(mirrored); err != nil {
-						return nil, err
-					}
+					addPosition(mirrored)
 				}
 			}
 		}

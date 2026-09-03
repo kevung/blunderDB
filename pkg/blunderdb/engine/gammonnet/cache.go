@@ -27,8 +27,32 @@ const (
 
 	// defaultCacheLog2 sizes the table at 65 536 entries, about 3.7 MB. The
 	// reference defaults to 2^19 because it keeps a single shared table; one
-	// per goroutine has to be smaller.
+	// per goroutine has to be smaller. This is the ROOT's own size — the
+	// root is where a transposition across the whole tree can recur, so it
+	// keeps the reference's proportions. A WORKER's cache is workerCacheLog2,
+	// far smaller (#196/C.9): see that constant's own comment for why.
 	defaultCacheLog2 = 16
+
+	// workerCacheLog2 sizes a WORKER's own cache (search.go's WithWorkers) —
+	// deliberately far smaller than the root's: a worker only ever drains
+	// its share of ONE flattened deepenGroups queue (search.go) for the
+	// life of one decision, never the whole tree, so its working set of
+	// distinct positions is small regardless of how many cores share the
+	// job.
+	//
+	// Measured (#196/C.9), Counters() across a canonical 2-ply Probs call at
+	// 16 workers, both the opening position and a busy contact position
+	// (search_test.go's busyXGID): big-network evals stay flat — within
+	// noise (<0.2%) — from 2^10 through 2^16 entries. The "+4.5% d'évals en
+	// double" the ticket opened with is NOT a cache-size effect (shrinking
+	// the cache 64× does not move it) — it is inherent to workers not
+	// sharing state at all, by design (cache.go's own doc comment: a
+	// per-goroutine cache is what lets this scale without a lock). So 2^12
+	// (4 096 entries, ~230 KB/worker) keeps a margin over the measured
+	// floor while cutting the pool's cache footprint 16× — 58.7 MB down to
+	// 3.7 MB total at 16 workers, the same total the OLD single-worker
+	// default cost by itself.
+	workerCacheLog2 = 12
 )
 
 type cacheEntry struct {

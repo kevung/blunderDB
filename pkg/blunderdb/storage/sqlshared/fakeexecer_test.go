@@ -34,6 +34,12 @@ func (fakeDialect) Bool(col string, v bool) string {
 }
 func (fakeDialect) Bigint(expr string) string       { return expr }
 func (fakeDialect) ILike() string                   { return "LIKE" }
+func (fakeDialect) LimitOffset(limit, offset int) (string, []any) {
+	if limit <= 0 && offset <= 0 {
+		return "", nil
+	}
+	return " LIMIT ? OFFSET ?", []any{limit, offset}
+}
 func (fakeDialect) TimestampArg() string            { return "?" }
 func (fakeDialect) DateText(col string) string      { return col }
 func (fakeDialect) TimestampText(col string) string { return col }

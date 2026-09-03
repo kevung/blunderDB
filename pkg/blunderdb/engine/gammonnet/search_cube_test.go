@@ -151,7 +151,7 @@ func TestProbsMatchEquityMatchesPositionEquity(t *testing.T) {
 	if !ok {
 		t.Fatal("matchEquity refused")
 	}
-	want, ok := s.positionEquity(&gnPos, 2, 0, true, &state, CubeCentred)
+	want, ok := s.positionEquity(&gnPos, 2, 0, &state, CubeCentred)
 	if !ok {
 		t.Fatal("positionEquity refused")
 	}

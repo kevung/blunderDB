@@ -18,6 +18,12 @@ type analysisStore struct{ db execer }
 
 var _ storage.AnalysisStore = (*analysisStore)(nil)
 
+// repairPageSize bounds how many analysis rows RepairDenormalisedColumns
+// holds in memory at once (id keyset pagination) — see the SQLite backend's
+// identical constant, `sqlite.repairPageSize` (unexported in both packages,
+// so restated rather than shared).
+const repairPageSize = 500
+
 const analysisInsertSQL = `INSERT INTO analysis (
 	tenant_id, position_id, data,
 	best_cube_action, cube_error, best_move_equity_error,
@@ -163,15 +169,13 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 // RepairDenormalisedColumns — see storage.AnalysisStore. Scoped to the tenant,
 // unlike the SQLite backend (one database, one library): a repair must never
 // reach beyond the tenant it was asked for.
+//
+// Rows are read, decoded and rewritten a page at a time (id keyset
+// pagination, repairPageSize — see the SQLite backend's counterpart), never
+// loaded whole: a real database holds tens of thousands of analyses, and the
+// point of a repair is to run on the biggest ones (B.11, #179).
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope string) (int, error) {
 	tid := tenantID(scope)
-	rows, err := s.db.Query(ctx,
-		`SELECT id, data, COALESCE(best_cube_action,''), COALESCE(cube_error,0),
-		        COALESCE(best_move_equity_error,0), is_forced, is_close_cube
-		 FROM analysis WHERE tenant_id = $1 ORDER BY id`, tid)
-	if err != nil {
-		return 0, fmt.Errorf("postgres: repair: read analyses: %w", err)
-	}
 	type row struct {
 		id                   int64
 		data                 []byte
@@ -179,40 +183,55 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		cubeErr, bestMoveErr int64
 		forced, closeCub     bool
 	}
-	var all []row
-	for rows.Next() {
-		var r row
-		if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
-			rows.Close()
-			return 0, fmt.Errorf("postgres: repair: scan: %w", err)
-		}
-		all = append(all, r)
-	}
-	rows.Close()
-	if err := rows.Err(); err != nil {
-		return 0, fmt.Errorf("postgres: repair: iterate: %w", err)
-	}
-
 	repaired := 0
-	for _, r := range all {
-		a, err := engine.DecodeAnalysisFromStorage(r.data)
-		if err != nil {
-			continue // blob illisible : on laisse en place plutôt que de l'écraser
+	var lastID int64
+	for {
+		var page []row
+		if err := func() error {
+			rows, err := s.db.Query(ctx,
+				`SELECT id, data, COALESCE(best_cube_action,''), COALESCE(cube_error,0),
+				        COALESCE(best_move_equity_error,0), is_forced, is_close_cube
+				 FROM analysis WHERE tenant_id = $1 AND id > $2 ORDER BY id LIMIT $3`,
+				tid, lastID, repairPageSize)
+			if err != nil {
+				return fmt.Errorf("postgres: repair: read analyses: %w", err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
+					return fmt.Errorf("postgres: repair: scan: %w", err)
+				}
+				page = append(page, r)
+			}
+			return rows.Err()
+		}(); err != nil {
+			return repaired, err
 		}
-		c := engine.PopulateAnalysisColumns(&a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
-		if c.BestCubeAction == r.bestCube && c.CubeError == r.cubeErr &&
-			c.BestMoveEquityError == r.bestMoveErr &&
-			(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {
-			continue
+		if len(page) == 0 {
+			return repaired, nil
 		}
-		if _, err := s.db.Exec(ctx,
-			`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
-			 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
-			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
-			c.IsForced == 1, c.IsCloseCube == 1, r.id, tid); err != nil {
-			return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
+		lastID = page[len(page)-1].id
+
+		for _, r := range page {
+			a, err := engine.DecodeAnalysisFromStorage(r.data)
+			if err != nil {
+				continue // blob illisible : on laisse en place plutôt que de l'écraser
+			}
+			c := engine.PopulateAnalysisColumns(&a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+			if c.BestCubeAction == r.bestCube && c.CubeError == r.cubeErr &&
+				c.BestMoveEquityError == r.bestMoveErr &&
+				(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {
+				continue
+			}
+			if _, err := s.db.Exec(ctx,
+				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
+				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
+				c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+				c.IsForced == 1, c.IsCloseCube == 1, r.id, tid); err != nil {
+				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
+			}
+			repaired++
 		}
-		repaired++
 	}
-	return repaired, nil
 }
