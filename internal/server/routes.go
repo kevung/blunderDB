@@ -71,3 +71,20 @@ func (s *Server) Paths() []string {
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
 	writeErrorCode(w, CodeNotFound, "unknown route: "+r.Method+" "+r.URL.Path)
 }
+
+// methodNotAllowed wraps mux so a request to a KNOWN path called with the
+// wrong method answers the API's own JSON error envelope — 405, with an
+// Allow header naming the one method the path accepts — instead of
+// net/http's built-in text/plain "405 method not allowed" (Go's 1.22+
+// method-aware ServeMux already produces that automatically; this only
+// changes its shape to match every other error response on this daemon)
+// (#232).
+func (s *Server) methodNotAllowed(mux http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if want, ok := s.allowedMethod[r.URL.Path]; ok && r.Method != want {
+			writeMethodNotAllowed(w, want)
+			return
+		}
+		mux.ServeHTTP(w, r)
+	})
+}

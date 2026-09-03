@@ -31,6 +31,11 @@ type Server struct {
 	// MaxBodyBytes — the multipart import uploads, which cap themselves at
 	// ImportMaxBodyBytes (see uploadRoutes in handlers_imports.go).
 	uploadPaths map[string]bool
+	// allowedMethod maps every registered pattern to the one HTTP method it
+	// accepts, so a request to a known path with the wrong method gets the
+	// API's own JSON error envelope (405 + Allow) instead of net/http's
+	// automatic text/plain response — see methodNotAllowed (#232).
+	allowedMethod map[string]string
 
 	imports *importRegistry
 	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps (#130), kept
@@ -65,16 +70,18 @@ func New(opts Options) (*Server, error) {
 	mux := http.NewServeMux()
 	s.knownPaths = make(map[string]bool)
 	s.uploadPaths = uploadPaths()
+	s.allowedMethod = make(map[string]string)
 	for _, rt := range s.routes() {
 		mux.HandleFunc(rt.method+" "+rt.pattern, rt.handler)
 		s.knownPaths[rt.pattern] = true
+		s.allowedMethod[rt.pattern] = rt.method
 	}
 	// Catch-all: any unmatched path returns the JSON error envelope.
 	mux.HandleFunc("/", s.notFound)
 
 	s.http = &http.Server{
 		Addr:              opts.Addr,
-		Handler:           s.chain(mux),
+		Handler:           s.chain(s.methodNotAllowed(mux)),
 		ReadHeaderTimeout: opts.ReadHeaderTimeout,
 		// Read/WriteTimeout stay unset — see Options.IdleTimeout's doc
 		// comment for why.
