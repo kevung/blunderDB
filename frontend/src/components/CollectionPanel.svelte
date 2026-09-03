@@ -4,6 +4,7 @@
     import { SvelteSet } from 'svelte/reactivity';
     import { createReorder } from '../utils/reorder.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import { autofocus } from '../utils/autofocus.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -500,7 +501,7 @@
     });
 </script>
 
-<section class="collection-panel" id="collectionPanel" tabindex="-1" role="region" aria-label={$t('collection.title')}>
+<section class="collection-panel" id="collectionPanel" tabindex="-1" aria-label={$t('collection.title')}>
     {#if view === 'list'}
         <!-- Collections list -->
         <div class="table-wrapper">
@@ -525,7 +526,7 @@
                                 onkeydown={collectionEdit.onKeyDown}
                                 onclick={(e) => e.stopPropagation()}
                                 ondblclick={(e) => e.stopPropagation()}
-                                autofocus
+                                use:autofocus
                             />
                         {:else}
                             <span title={collection.name}>{collection.name}</span>
@@ -660,7 +661,7 @@
                                 onblur={collectionEdit.onBlur}
                                 onkeydown={collectionEdit.onKeyDown}
                                 placeholder={$t('collection.descriptionPlaceholder')}
-                                autofocus
+                                use:autofocus
                             />
                         </div>
                     {:else}

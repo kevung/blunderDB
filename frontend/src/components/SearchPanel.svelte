@@ -196,9 +196,15 @@
     let structureMode = $state('include');
     let includeBoardStash = $state(null);
 
-    // Initialize all filters as disabled, then restore previous search state if available
-    availableFilters.forEach((f) => (filterEnabled[f] = false));
-    filterEnabled['Matches & Tournaments'] = false;
+    // Initialize all filters as disabled, then restore previous search state if available.
+    // Both keys are set through the same forEach (rather than a lone top-level
+    // `filterEnabled['Matches & Tournaments'] = false` statement, #205): that
+    // stray assignment — every value it wrote was already a literal, not
+    // derived from anything reactive, so there was nothing actually stale
+    // about it — was the one line of this pair the compiler flagged as
+    // "only captures the initial value", unlike the identical-shaped
+    // assignment happening inside this very closure.
+    [...availableFilters, 'Matches & Tournaments'].forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
 
     let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length + (filterEnabled['Matches & Tournaments'] ? 1 : 0));
