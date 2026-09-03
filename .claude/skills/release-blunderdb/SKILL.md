@@ -37,8 +37,10 @@ that cwd.
 5. **GitHub release notes** — write a changelog-style description (**in English**)
    and publish it with `gh`.
 
-Then, **after** the release is published, the AUR package republishes
-automatically (Phase 5) and the Flatpak manifest can be bumped (follow-up).
+Then, **after** the release is published, the AUR package and the Homebrew
+tap both republish automatically if their secrets are set (Phase 5); the
+committed Flatpak manifest already updated itself in step 4, as part of
+`scripts/release.sh`.
 
 Do them in this order. Steps 1–3 are committed *before* the release commit so the
 tag captures up-to-date docs and packaging metadata.
@@ -356,7 +358,10 @@ version at the **top** of the list (newest first), dated with the release day:
 
 Unlike the Phase 2 changelog table, this is **not** feature-gated — add an entry
 for **every** release, patches included (it's a version list, not a feature log).
-A bare `version`/`date` entry is enough; validate if `appstreamcli` is available:
+A bare `version`/`date` entry is enough to pass validation; since #245 every
+entry also carries a short English `<description>` (a `<ul>` of 2-4 highlights
+for a feature release, a one-line `<p>` for a patch) — condense it from the
+Phase 2 changelog row, don't retranslate the French prose. Validate:
 
 ```bash
 appstreamcli validate --no-net build/linux/io.github.kevung.blunderDB.metainfo.xml
@@ -501,16 +506,37 @@ box: `scripts/aur-publish.sh <version> --push`.
 job renders and uploads the winget manifests (`blunderDB-winget-manifests-<v>.zip`)
 and the Homebrew cask (`blunderdb-<v>.rb`); the `flatpak` job attaches
 `blunderDB-<v>.flatpak`; the `docker-serve` job pushes
-`ghcr.io/kevung/blunderdb-serve:<v>` and `:latest`. Submitting to winget-pkgs and to a
-Homebrew tap stays a human step (`packaging/winget/README.md`,
-`packaging/homebrew/README.md`). Check they all ran on the tag before the final
-report.
+`ghcr.io/kevung/blunderdb-serve:<v>` and `:latest`.
 
-**Flatpak — manual follow-up.** `packaging/flatpak/io.github.kevung.blunderDB.yml`
-pins the tarball `url` + `sha256`. It is **not** wired into CI (Flathub builds on
-its own infra). If/when maintaining a Flatpak, bump those two fields to the new
-release (the `flathub-external-data-checker` bot can automate this once on
-Flathub). Skip unless the user is actively shipping the Flatpak.
+**Homebrew tap (`blunderdb-bin`-style, since #245) — automatic, same pattern
+as AUR.** `.github/workflows/homebrew-tap.yml` triggers on `workflow_run` and
+pushes the rendered cask to `kevung/homebrew-tap`. It only runs if the
+`HOMEBREW_TAP_TOKEN` secret is set AND the tap repository exists (neither
+does until a human creates them once — `packaging/homebrew/README.md` §2-3);
+otherwise it no-ops. Verify:
+
+```bash
+gh run list --workflow=homebrew-tap.yml --limit 3
+```
+
+If the secret isn't configured (or the run failed), publish manually: copy
+the `blunderdb-<v>.rb` release asset into the tap by hand (see the README).
+
+**winget — stays a human step.** Submitting to `microsoft/winget-pkgs` is a
+pull request against a Microsoft repository reviewed by humans; see
+`packaging/winget/README.md`.
+
+**Flatpak — the tracked manifest updates itself, Flathub submission does
+not.** `scripts/release.sh` (Phase 4) rewrites
+`packaging/flatpak/io.github.kevung.blunderDB.yml`'s `url`/`sha256` to the
+latest already-published release on every cut, so the committed template is
+always buildable with a plain `flatpak-builder` — nothing to do here. CI's
+`flatpak` job doesn't read that file anyway (it renders its own copy against
+the tarball it just built). Submitting to **Flathub** itself needs a
+from-source, fully offline build (Go/npm vendoring) — a materially
+different manifest, tracked as a separate, multi-week human effort in
+`tasks/BACKLOG.md` (`docs/recherche/P16-distribution-desktop.md` has the
+recipe). Nothing to do here either.
 
 ---
 

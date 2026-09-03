@@ -1,18 +1,22 @@
-# Flatpak manifest for blunderDB.
+# Flatpak manifest for blunderDB. See packaging/flatpak/README.md.
 #
 # This packages the prebuilt webkit2gtk-4.1 release tarball (the same artifact
 # the GitHub release publishes). It is the simplest route and is enough to build
-# a local .flatpak / self-hosted repo. For a Flathub submission you may instead
-# need a from-source build (Go + Node, offline) — that is the open decision in
-# Phase 4 of the packaging plan.
+# a local .flatpak / self-hosted repo. Flathub itself requires a from-source,
+# fully offline build (Go + Node vendoring) instead — see docs/recherche/
+# P16-distribution-desktop.md; that submission is tracked separately
+# (tasks/BACKLOG.md) and is not what this file does.
 #
-# CI (the `flatpak` job of .github/workflows/build.yml) builds the bundle on
-# every release tag and attaches blunderDB-<version>.flatpak to the release:
-# it renders a copy of this file with a local `path:` source pointing at the
-# tarball the matrix just built and the real sha256, so the url/sha256 below
-# are a template — they are not what the published bundle was built from.
+# The url/sha256 below are kept current, not a dead placeholder:
+# `scripts/release.sh` rewrites them on every release cut to point at the
+# latest already-published tarball (the tag being cut has no assets yet), so
+# the file committed here always builds as-is. CI never reads this checked-in
+# url/sha256: the `flatpak` job of .github/workflows/build.yml renders its own
+# copy with a local `path:` source pointing at the tarball the matrix just
+# built for the tag being released, and that copy — not this file — is what
+# the published bundle is built from.
 #
-# Build & install locally (once a release with the new CI tarball exists):
+# Build & install locally:
 #   flatpak install -y flathub org.gnome.Platform//47 org.gnome.Sdk//47
 #   flatpak-builder --user --install --force-clean build-dir \
 #     packaging/flatpak/io.github.kevung.blunderDB.yml
@@ -67,9 +71,9 @@ modules:
         fi
     sources:
       - type: archive
-        # Updated per release (the flathub-external-data-checker bot can automate
-        # this). The tarball unpacks to blunderDB-linux-webkit2gtk-4.1-<ver>/,
+        # Rewritten by `scripts/release.sh` on every release cut (see the file
+        # header). The tarball unpacks to blunderDB-linux-webkit2gtk-4.1-<ver>/,
         # flattened by strip-components.
-        url: https://github.com/kevung/blunderDB/releases/download/0.27.1/blunderDB-linux-webkit2gtk-4.1-0.27.1.tar.gz
-        sha256: 0000000000000000000000000000000000000000000000000000000000000000
+        url: https://github.com/kevung/blunderDB/releases/download/0.35.0/blunderDB-linux-webkit2gtk-4.1-0.35.0.tar.gz
+        sha256: 90bc93ac5c28ac0a0f5b37dee7bbf537066a599249e35d68478b8ba2bd7522cd
         strip-components: 1

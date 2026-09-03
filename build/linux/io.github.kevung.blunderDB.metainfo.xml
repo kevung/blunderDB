@@ -17,7 +17,7 @@
       <li>Import matches from eXtreme Gammon (.xg/.xgp), GnuBG (.sgf), BGBlitz (.bgf) and Jellyfish (.mat)</li>
       <li>Search positions by checker structure, pip count, equity, error threshold, dice and contact</li>
       <li>Spaced-repetition (FSRS/Anki-style) flash cards for position review</li>
-      <li>Effective Pip Count calculator with embedded GnuBG one-sided bearoff database</li>
+      <li>Embedded evaluator (gammonNet) for offline cube and checker-play analysis, plus a bearoff/race panel with an embedded GNUbg two-sided database</li>
       <li>Collections, tournaments and Match Equity Tables</li>
     </ul>
   </description>
@@ -39,18 +39,107 @@
     <category>BoardGame</category>
   </categories>
 
+  <!-- Sourced from the app itself, not invented: the cream page background
+       (html { background-color } in frontend/src/style.css) for light, the
+       default board border/checker colour (DEFAULT_BOARD_COLORS.border in
+       boardColorsStore.js) for dark. blunderDB has no separate dark theme. -->
+  <branding>
+    <color type="primary" scheme_preference="light">#f7f0e6</color>
+    <color type="primary" scheme_preference="dark">#333333</color>
+  </branding>
+
   <releases>
-    <release version="0.35.0" date="2026-09-02" />
-    <release version="0.34.1" date="2026-09-02" />
-    <release version="0.34.0" date="2026-09-02" />
-    <release version="0.33.1" date="2026-08-27" />
-    <release version="0.33.0" date="2026-08-26" />
-    <release version="0.32.0" date="2026-08-09" />
-    <release version="0.31.0" date="2026-08-04" />
-    <release version="0.30.1" date="2026-08-01" />
-    <release version="0.30.0" date="2026-07-26" />
-    <release version="0.29.0" date="2026-07-18" />
-    <release version="0.28.0" date="2026-07-15" />
-    <release version="0.27.1" date="2026-06-18" />
+    <release version="0.35.0" date="2026-09-02">
+      <description>
+        <ul>
+          <li>CLI: new <code>blunderdb collection</code> and <code>blunderdb anki</code> command families</li>
+          <li>Server mode ships as a Docker image (<code>ghcr.io/kevung/blunderdb-serve</code>) and watermarks its exports</li>
+          <li>Every release now ships winget and Homebrew manifests plus a Flatpak bundle</li>
+          <li>Paginated library view, shared modal dialog foundation, and a smaller binary</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.34.1" date="2026-09-02">
+      <description>
+        <p>Fixes a broken release build caused by a stray go.mod directive; refactors the search panel's numeric filters onto a shared declarative table.</p>
+      </description>
+    </release>
+    <release version="0.34.0" date="2026-09-02">
+      <description>
+        <ul>
+          <li>Embedded evaluator: gammonNet, a neural network ported to Go, analyses any position offline with 0- to 2-ply search and cube decisions</li>
+          <li>The Bearoff panel becomes the Eval panel, with normalised match equities and the "too good to double" verdict</li>
+          <li>Progressive evaluation (instant 0-ply, refined 2-ply at rest) and a bounded, resumable post-import analysis batch</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.33.1" date="2026-08-27">
+      <description>
+        <p>Fixes the Stats panel freezing the interface when no database is open; dependency updates.</p>
+      </description>
+    </release>
+    <release version="0.33.0" date="2026-08-26">
+      <description>
+        <ul>
+          <li>Stats panel gains a Players tab comparing every player in the database</li>
+          <li>Dice luck is now recorded and shown per roll</li>
+          <li>Cube error direction (offer vs. respond) shown in the Errors tab</li>
+          <li>New "Compact database" command (<code>blunderdb vacuum</code>)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.32.0" date="2026-08-09">
+      <description>
+        <ul>
+          <li>The EPC panel becomes the Bearoff panel with full race analysis: win probabilities, money equities and the best cube decision</li>
+          <li>Exact bearoff verdicts up to 6 checkers per side (embedded GNUbg database), estimated regime beyond that</li>
+          <li>Downloadable extended database (up to 11 checkers per side) and full board editing</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.31.0" date="2026-08-04">
+      <description>
+        <ul>
+          <li>Controlled sharing of a database: an origin watermark and optional password protection (encrypted .dbx)</li>
+          <li>Redesigned, faster export window and reorganised preferences</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.30.1" date="2026-08-01">
+      <description>
+        <p>Fixes losing the best-move data when copying a position between databases, plus a dependency security update.</p>
+      </description>
+    </release>
+    <release version="0.30.0" date="2026-07-26">
+      <description>
+        <ul>
+          <li>Search by comment: "contains text", "has a comment" or "no comment"</li>
+          <li>Positions flagged in eXtreme Gammon are now imported and searchable</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.29.0" date="2026-07-18">
+      <description>
+        <ul>
+          <li>Export a match to Jellyfish/gnubg (.mat) format from the interface and the CLI</li>
+          <li>Safe concurrent opening: a database already open for writing elsewhere now opens read-only</li>
+          <li>New "excluded dice" search filter</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.28.0" date="2026-07-15">
+      <description>
+        <ul>
+          <li>Search panel: unified "Matches &amp; Tournaments" picker replacing free-text ID fields</li>
+          <li>New "individually imported" search filter</li>
+          <li>Native Linux packaging: .deb/.rpm packages</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.27.1" date="2026-06-18">
+      <description>
+        <p>Search performance fixes: corrected analysis decompression, added missing indexes, faster large-database queries.</p>
+      </description>
+    </release>
   </releases>
 </component>
