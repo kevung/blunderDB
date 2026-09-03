@@ -1,0 +1,527 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 20:15+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/glossaire.rst:4
+msgid "Glossaire"
+msgstr "Glossar"
+
+#: ../../source/glossaire.rst:6
+msgid ""
+"Les termes ci-dessous reviennent dans tout le reste de la documentation —"
+" manuel, guide utilisateur, FAQ, CLI. Cette page les rassemble en un seul"
+" endroit plutôt que de les redéfinir à chaque section."
+msgstr ""
+"Die folgenden Begriffe kehren im gesamten Rest der Dokumentation wieder — "
+"Handbuch, Benutzerhandbuch, FAQ, CLI. Diese Seite fasst sie an einem Ort "
+"zusammen, statt sie in jedem Abschnitt neu zu definieren."
+
+#: ../../source/glossaire.rst:10
+msgid "Position"
+msgstr "Stellung"
+
+#: ../../source/glossaire.rst:11
+msgid ""
+"Un point de décision au backgammon : plateau, videau, dés, score et "
+"marques du match. Une position importée deux fois ne compte qu'une fois —"
+" c'est son identité, calculée automatiquement, qui la reconnaît, jamais "
+"le fichier d'où elle vient."
+msgstr ""
+"Ein Entscheidungspunkt im Backgammon: Brett, Doppler, Würfel, Spielstand und"
+" Matchmarkierungen. Eine zweimal importierte Stellung zählt nur einmal — "
+"ihre automatisch berechnete Identität erkennt sie, niemals die Datei, aus "
+"der sie stammt."
+
+#: ../../source/glossaire.rst:16
+msgid "Position importée individuellement"
+msgstr "Einzeln importierte Stellung"
+
+#: ../../source/glossaire.rst:17
+msgid ""
+"Une position entrée seule dans la base — écrite depuis le plateau, ou lue"
+" depuis un fichier de position — plutôt qu'apportée par un match. Cette "
+"propriété est durable : une position ainsi importée le reste même si un "
+"match qui la contient est importé ensuite."
+msgstr ""
+"Eine Stellung, die allein in die Datenbank gelangt ist — vom Brett "
+"geschrieben oder aus einer Stellungsdatei gelesen — statt durch ein Match "
+"eingebracht zu werden. Diese Eigenschaft ist dauerhaft: Eine so importierte "
+"Stellung bleibt es, selbst wenn danach ein Match importiert wird, das sie "
+"enthält."
+
+#: ../../source/glossaire.rst:22
+msgid "Position marquée"
+msgstr "Markierte Stellung"
+
+#: ../../source/glossaire.rst:23
+msgid ""
+"Une position que l'utilisateur a signalée comme digne d'étude *dans le "
+"logiciel dont provient le match* — aujourd'hui seul eXtreme Gammon "
+"enregistre cette marque, coup par coup. Une décision de videau marquée "
+"marque les deux positions qui en découlent : le double et la prise/passe."
+msgstr ""
+"Eine Stellung, die der Nutzer *in der Software, aus der das Match stammt*, "
+"als studierenswert markiert hat — heute zeichnet nur eXtreme Gammon diese "
+"Markierung zugbezogen auf. Eine markierte Doppler-Entscheidung markiert "
+"beide daraus entstehenden Stellungen: das Doppeln und die Annahme/Ablehnung."
+
+#: ../../source/glossaire.rst:29
+msgid "Analyse"
+msgstr "Analyse"
+
+#: ../../source/glossaire.rst:30
+msgid ""
+"Ce qu'un moteur (eXtreme Gammon, GNUbg, BGBlitz ou l'évaluateur gammonNet"
+" embarqué) a conclu sur une position, enregistré et relu plus tard. Une "
+"position porte une analyse par moteur ; importer une analyse n'écrase "
+"jamais celle d'un autre moteur, ni une analyse déjà présente (voir "
+":ref:`panneau_epc`)."
+msgstr ""
+"Was eine Engine (eXtreme Gammon, GNUbg, BGBlitz oder der eingebettete "
+"gammonNet-Evaluator) über eine Stellung geschlossen hat, gespeichert und "
+"später wieder gelesen. Eine Stellung trägt eine Analyse pro Engine; das "
+"Importieren einer Analyse überschreibt niemals die einer anderen Engine, "
+"noch eine bereits vorhandene Analyse (siehe :ref:`panneau_epc`)."
+
+#: ../../source/glossaire.rst:36
+msgid "Évaluation"
+msgstr "Bewertung"
+
+#: ../../source/glossaire.rst:37
+msgid ""
+"Le résultat d'un calcul que l'évaluateur embarqué effectue sur la "
+"position actuellement au plateau, enregistrée ou non. Une évaluation "
+"n'est valable que tant que la position ne change pas ; si elle est "
+"enregistrée, elle devient une Analyse."
+msgstr ""
+"Das Ergebnis einer Berechnung, die der eingebettete Evaluator an der gerade "
+"auf dem Brett stehenden Stellung durchführt, ob gespeichert oder nicht. Eine"
+" Bewertung gilt nur so lange, wie sich die Stellung nicht ändert; wird sie "
+"gespeichert, wird sie zu einer Analyse."
+
+#: ../../source/glossaire.rst:42
+msgid "Référentiel"
+msgstr "Referenzsystem"
+
+#: ../../source/glossaire.rst:43
+msgid ""
+"L'échelle dans laquelle un chiffre à propos d'une position s'exprime. "
+"*Money* répond à « combien de points cela vaut-il », un gammon valant "
+"toujours deux points. *Match* répond à « combien vaut-ce vis-à-vis du "
+"match », sur une échelle normalisée où un gammon vaut ce que le score en "
+"fait — presque tout à 2-away/4-away, rien pour un meneur à 1-away. Le "
+"référentiel est une propriété de la position, jamais une préférence "
+"d'affichage : c'est le score away qui le fixe."
+msgstr ""
+"Die Skala, in der eine Zahl zu einer Stellung ausgedrückt wird. *Money* "
+"beantwortet „wie viele Punkte ist das wert“, wobei ein Gammon immer zwei "
+"Punkte wert ist. *Match* beantwortet „wie viel vom Match ist das wert“, auf "
+"einer normalisierten Skala, in der ein Gammon wert ist, was der Spielstand "
+"daraus macht — fast alles bei 2-away/4-away, nichts für einen Führenden bei "
+"1-away. Das Referenzsystem ist eine Eigenschaft der Stellung, niemals eine "
+"Anzeigeeinstellung: Der Away-Spielstand legt es fest."
+
+#: ../../source/glossaire.rst:51
+msgid "Équité normalisée"
+msgstr "Normalisierte Equity"
+
+#: ../../source/glossaire.rst:52
+msgid ""
+"L'équité de match, exprimée sur l'échelle ``2 × MWC − 1`` où ±1 "
+"représente le videau courant gagné ou perdu. C'est l'échelle que "
+"blunderDB affiche et stocke à un score de match, jamais les probabilités "
+"de victoire brutes."
+msgstr ""
+"Die Match-Equity, ausgedrückt auf der Skala ``2 × MWC − 1``, wobei ±1 den "
+"gewonnenen oder verlorenen aktuellen Doppler darstellt. Es ist die Skala, "
+"die blunderDB bei einem Spielstand anzeigt und speichert, niemals die rohen "
+"Gewinnwahrscheinlichkeiten."
+
+#: ../../source/glossaire.rst:57
+msgid "Score away"
+msgstr "Away-Spielstand"
+
+#: ../../source/glossaire.rst:58
+msgid ""
+"Le nombre de points qu'il reste à un joueur pour gagner le match, de son "
+"propre point de vue. Deux valeurs sont des sentinelles plutôt que des "
+"comptes : ``-1`` signifie qu'il n'y a pas de match — le référentiel est "
+"*money* — et ``0``/``1`` distinguent la partie Crawford (``1``) de la "
+"partie qui la suit (``0``), pour la même distance à la victoire."
+msgstr ""
+"Wie viele Punkte ein Spieler noch braucht, um das Match zu gewinnen, aus der"
+" Sicht dieses Spielers. Zwei Werte sind Sentinels statt Zählwerte: ``-1`` "
+"bedeutet, dass es kein Match gibt — das Referenzsystem ist *money* — und "
+"``0``/``1`` unterscheiden das Spiel nach Crawford (``0``) vom Crawford-Spiel"
+" selbst (``1``), bei gleicher Distanz zum Sieg."
+
+#: ../../source/glossaire.rst:64
+msgid "Régime"
+msgstr "Regime"
+
+#: ../../source/glossaire.rst:65
+msgid ""
+"Quel type de réponse le panneau donne sur une course, toujours annoncé à "
+"l'écran plutôt que laissé à deviner :"
+msgstr ""
+"Welche Art von Antwort das Panel zu einem Rennen gibt, immer auf dem "
+"Bildschirm angegeben, statt dem Leser zum Erraten überlassen:"
+
+#: ../../source/glossaire.rst:68
+msgid "*exact* — lu dans une base de bearoff two-sided, jamais estimé ;"
+msgstr ""
+"*exakt* — aus einer zweiseitigen Bearoff-Datenbank gelesen, niemals "
+"geschätzt;"
+
+#: ../../source/glossaire.rst:69
+msgid "*évalué* — calculé par l'évaluateur embarqué, qui rejoue la trajectoire ;"
+msgstr ""
+"*bewertet* — vom eingebetteten Evaluator berechnet, der den Verlauf "
+"durchspielt;"
+
+#: ../../source/glossaire.rst:71
+msgid ""
+"*estimé* — un résumé calibré d'une trajectoire, valable pour une "
+"probabilité de gain, jamais pour un verdict de videau."
+msgstr ""
+"*geschätzt* — eine kalibrierte Zusammenfassung eines Verlaufs, gültig für "
+"eine Gewinnwahrscheinlichkeit, niemals für ein Doppler-Urteil."
+
+#: ../../source/glossaire.rst:74
+msgid "Base bearoff"
+msgstr "Bearoff-Datenbank"
+
+#: ../../source/glossaire.rst:75
+msgid ""
+"Une table de réponses de course two-sided (le verdict de videau) ou one-"
+"sided (l'EPC). blunderDB en génère elle-même une partie au premier "
+"lancement (jusqu'à 6 pions par joueur) ; les domaines plus larges se "
+"génèrent depuis le panneau *Bearoff* ou la CLI. Une base générée est dite"
+" *vérifiée* quand son empreinte correspond exactement à celle produite "
+"par GNUbg."
+msgstr ""
+"Eine Tabelle von Rennantworten, zweiseitig (das Doppler-Urteil) oder "
+"einseitig (das EPC). blunderDB erzeugt einen Teil davon selbst beim ersten "
+"Start (bis zu 6 Steine pro Spieler); breitere Domänen werden über den Reiter"
+" *Bearoff* oder die CLI erzeugt. Eine erzeugte Datenbank gilt als "
+"*verifiziert*, wenn ihr Fingerabdruck genau dem entspricht, den GNUbg "
+"erzeugt."
+
+#: ../../source/glossaire.rst:82
+msgid "EPC (Effective Pip Count)"
+msgstr "EPC (Effective Pip Count)"
+
+#: ../../source/glossaire.rst:83
+msgid ""
+"Une estimation classique, un-côté, du nombre de coups nécessaires pour "
+"sortir tous les pions d'un joueur — corrigée du gaspillage (*wastage*) "
+"par rapport au simple compte de pions."
+msgstr ""
+"Eine klassische, einseitige Schätzung der Anzahl der Würfe, die nötig sind, "
+"um alle Steine eines Spielers abzutragen — korrigiert um die Verschwendung "
+"(*wastage*) gegenüber dem reinen Pip Count."
+
+#: ../../source/glossaire.rst:87
+msgid "Fait de position"
+msgstr "Stellungstatsache"
+
+#: ../../source/glossaire.rst:88
+msgid ""
+"Une grandeur qui appartient au plateau lui-même, indépendante de tout "
+"choix d'un joueur : compte de pions, EPC, chances de gain/gammon/ "
+"backgammon, équité cubeless. Vrai avant le jet de dés."
+msgstr ""
+"Eine Größe, die dem Brett selbst gehört, unabhängig von jeder Wahl, die ein "
+"Spieler treffen könnte: Pip Count, EPC, Gewinn-/Gammon-/Backgammon-Chancen, "
+"cubelose Equity. Wahr vor dem Wurf."
+
+#: ../../source/glossaire.rst:92
+msgid "Ligne avant le jet"
+msgstr "Baseline vor dem Wurf"
+
+#: ../../source/glossaire.rst:93
+msgid ""
+"Le vecteur des chances de gain/gammon/backgammon et de l'équité cubeless,"
+" affiché en tête de la liste des coups candidats une fois les dés jetés. "
+"L'écart entre cette ligne et un coup mesure la chance du lancer, jamais "
+"le mérite du coup joué."
+msgstr ""
+"Der Vektor aus Gewinn-/Gammon-/Backgammon-Chancen und cubeloser Equity, "
+"angezeigt über der Liste der Kandidatenzüge, sobald die Würfel gefallen "
+"sind. Der Abstand zwischen dieser Zeile und einem Zug misst das Würfelglück,"
+" niemals das Verdienst des gespielten Zugs."
+
+#: ../../source/glossaire.rst:98
+msgid "Décision"
+msgstr "Entscheidung"
+
+#: ../../source/glossaire.rst:99
+msgid ""
+"La réponse à la question que le plateau pose : le classement des coups "
+"candidats quand des dés sont jetés, ou les trois options de videau (pas "
+"de double, double-prend, double-passe) et leur verdict sinon. Une "
+"position ne pose jamais les deux questions à la fois."
+msgstr ""
+"Die Antwort auf die Frage, die das Brett stellt: die Rangfolge der "
+"Kandidatenzüge, wenn Würfel gefallen sind, oder sonst die drei Doppler-"
+"Optionen und ihr Urteil. Eine Stellung stellt niemals beide Fragen zugleich."
+
+#: ../../source/glossaire.rst:104
+msgid "Verdict"
+msgstr "Urteil"
+
+#: ../../source/glossaire.rst:105
+msgid ""
+"Laquelle des options d'une décision de videau est la bonne : *pas de "
+"double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
+"Deux cas particuliers ne sont jamais laissés vides : *pas de décision* "
+"(le régime n'y est pas habilité) et *refusé* (le moteur a décliné la "
+"position, typiquement un score hors de portée de sa table)."
+msgstr ""
+"Welche Option einer Doppler-Entscheidung die richtige ist: *kein Doppel*, "
+"*Doppel/Annahme*, *Doppel/Ablehnung* oder *zu gut (zum Doppeln)*. Zwei "
+"Sonderfälle bleiben nie leer: *keine Entscheidung* (das Regime ist dazu "
+"nicht befugt) und *abgelehnt* (die Engine hat die Stellung abgelehnt, "
+"typischerweise ein Spielstand außerhalb der Reichweite ihrer Tabelle)."
+
+#: ../../source/glossaire.rst:111
+msgid "Trop bon"
+msgstr "Zu gut"
+
+#: ../../source/glossaire.rst:112
+msgid ""
+"Le verdict qui dit que la position est si favorable que doubler "
+"inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
+"davantage — un videau qu'il vaut mieux garder."
+msgstr ""
+"Das Urteil, das besagt, dass die Stellung so günstig ist, dass ein Doppel "
+"den Gegner zur Ablehnung veranlassen würde, während Weiterspielen ohne "
+"Doppeln mehr einbringt — ein Doppler, den man besser behält."
+
+#: ../../source/glossaire.rst:116
+msgid "Chance"
+msgstr "Glück"
+
+#: ../../source/glossaire.rst:117
+msgid ""
+"L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
+"source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
+"blunderDB. Les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fournissent jamais, et l'import n'est pas rétroactif."
+msgstr ""
+"Der Beitrag des Würfelwurfs zur Equity eines Zugs, aus der Quelldatei beim "
+"Import gelesen (eXtreme Gammon, GNUbg) und niemals von blunderDB neu "
+"berechnet. Formate, die es nicht mitführen (BGF, Jellyfish ``.mat``), "
+"liefern es nie, und der Import ist nicht rückwirkend."
+
+#: ../../source/glossaire.rst:122
+msgid "Blunder"
+msgstr "Blunder"
+
+#: ../../source/glossaire.rst:123
+msgid ""
+"Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
+" meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
+"charge directement les pires erreurs d'une recherche."
+msgstr ""
+"Ein Zug oder eine Doppler-Entscheidung, dessen Fehler (der Equity-Abstand "
+"zur besten Wahl) einen Schwellenwert überschreitet; der Befehl ``bl`` (oder "
+"``blunders``) lädt direkt die schlimmsten Fehler einer Suche."
+
+#: ../../source/glossaire.rst:127
+msgid "PR (Performance Rate)"
+msgstr "PR (Performance Rate)"
+
+#: ../../source/glossaire.rst:128
+msgid ""
+"Le coût moyen des erreurs d'un joueur, en millièmes de point d'équité par"
+" décision comptée, coups et videau confondus. Voir :ref:`stats_parity` "
+"pour les règles de comptage exactes (parité avec eXtreme Gammon et "
+"GNUbg)."
+msgstr ""
+"Die durchschnittlichen Fehlerkosten eines Spielers, in Tausendstel Equity-"
+"Punkten pro gezählter Entscheidung, Zug- und Doppler-Spiel zusammen. Siehe "
+":ref:`stats_parity` für die genauen Zählregeln (Parität mit eXtreme Gammon "
+"und GNUbg)."
+
+#: ../../source/glossaire.rst:133
+msgid "Snowie Error Rate"
+msgstr "Snowie Error Rate"
+
+#: ../../source/glossaire.rst:134
+msgid ""
+"Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
+"nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
+"stable d'un logiciel à l'autre. Voir :ref:`stats_parity`."
+msgstr ""
+"Derselbe Zähler wie beim PR (die Summe der Fehler), aber geteilt durch die "
+"Anzahl der gespielten Züge statt der Anzahl der gezählten Entscheidungen — "
+"stabiler von Tool zu Tool. Siehe :ref:`stats_parity`."
+
+#: ../../source/glossaire.rst:138
+msgid "Coût MWC"
+msgstr "MWC-Kosten"
+
+#: ../../source/glossaire.rst:139
+msgid ""
+"Une erreur de videau exprimée en points de pourcentage de chances de "
+"gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
+"grandeur naturelle pour comparer un même joueur à des scores de match "
+"différents."
+msgstr ""
+"Ein Doppler-Fehler, ausgedrückt in Prozentpunkten der Match Winning Chance "
+"statt in Equity — die natürliche Größe, um denselben Spieler bei "
+"unterschiedlichen Spielständen zu vergleichen."
+
+#: ../../source/glossaire.rst:144
+msgid "Collection"
+msgstr "Sammlung"
+
+#: ../../source/glossaire.rst:145
+msgid ""
+"Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
+" main, glisser-déposer compris. L'appartenance à une collection est un "
+"geste explicite, contrairement à la position importée individuellement "
+"(voir :ref:`panneau_collections`)."
+msgstr ""
+"Eine benannte, geordnete Menge von Stellungen, die der Nutzer von Hand "
+"zusammenstellt, Drag-and-Drop eingeschlossen. Die Zugehörigkeit zu einer "
+"Sammlung ist eine ausdrückliche Geste, anders als bei einer einzeln "
+"importierten Stellung (siehe :ref:`panneau_collections`)."
+
+#: ../../source/glossaire.rst:150
+msgid "Paquet Anki"
+msgstr "Anki-Deck"
+
+#: ../../source/glossaire.rst:151
+msgid ""
+"Un ensemble de positions transformées en cartes à réviser par répétition "
+"espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
+msgstr ""
+"Eine Menge von Stellungen, die in Karten verwandelt wurden, die per "
+"verteilter Wiederholung (FSRS-Algorithmus) wiederholt werden. Siehe "
+":ref:`panneau_anki`."
+
+#: ../../source/glossaire.rst:154
+msgid "Carte de révision"
+msgstr "Wiederholungskarte"
+
+#: ../../source/glossaire.rst:155
+msgid ""
+"Une position d'un paquet Anki, présentée comme une question : le plateau "
+"est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
+"geste qui la révèle."
+msgstr ""
+"Eine Stellung aus einem Anki-Deck, dargestellt als Frage: Das Brett ist die "
+"Frage, die gespeicherte Analyse ist die Antwort, verborgen bis zur Geste, "
+"die sie enthüllt."
+
+#: ../../source/glossaire.rst:159
+msgid "Commentaire"
+msgstr "Kommentar"
+
+#: ../../source/glossaire.rst:160
+msgid ""
+"Un texte libre attaché à une position, qu'il ait été tapé par "
+"l'utilisateur ou repris tel quel d'un fichier importé — les deux sont "
+"indiscernables. Un `#mot-clé` dans un commentaire est une étiquette, "
+"cherchable comme n'importe quel autre texte."
+msgstr ""
+"Freier Text, der an eine Stellung angehängt ist, sei er vom Nutzer getippt "
+"oder wörtlich aus einer importierten Datei übernommen — die beiden sind "
+"nicht zu unterscheiden. Ein ``#Stichwort`` in einem Kommentar ist ein Tag, "
+"durchsuchbar wie jeder andere Text."
+
+#: ../../source/glossaire.rst:165
+msgid "Joueur"
+msgstr "Spieler"
+
+#: ../../source/glossaire.rst:166
+msgid ""
+"Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
+"devine pas la personne derrière le nom : la même personne signant sous "
+"deux orthographes est deux joueurs distincts, jusqu'à une fusion "
+"explicite (« Fusionner les joueurs »)."
+msgstr ""
+"Ein Name genau so, wie er in einem importierten Match erscheint. blunderDB "
+"errät nicht die Person hinter dem Namen: derselbe Mensch, der unter zwei "
+"Schreibweisen unterschreibt, ist zwei verschiedene Spieler, bis zu einer "
+"ausdrücklichen Zusammenführung („Spieler zusammenführen“)."
+
+#: ../../source/glossaire.rst:171
+msgid "Filigrane"
+msgstr "Wasserzeichen"
+
+#: ../../source/glossaire.rst:172
+msgid ""
+"La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
+"est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
+"consigne jamais rien du côté de qui reçoit la base. Voir "
+":ref:`diffusion_controlee`."
+msgstr ""
+"Die signierte Erklärung, angebracht von demjenigen, der eine Datenbank "
+"exportiert, darüber, was sie ist und woher sie kommt. Fälschungssicher, aber"
+" nicht unentfernbar, zeichnet sie niemals etwas auf der Empfängerseite auf. "
+"Siehe :ref:`diffusion_controlee`."
+
+#: ../../source/glossaire.rst:177
+msgid "Identité d'émetteur"
+msgstr "Aussteller-Identität"
+
+#: ../../source/glossaire.rst:178
+msgid ""
+"La clé qui signe les filigranes d'une personne — créée d'elle-même au "
+"premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
+"seul fichier."
+msgstr ""
+"Der Schlüssel, der die Wasserzeichen einer Person signiert — von selbst beim"
+" ersten angebrachten Wasserzeichen erzeugt, und von einer Maschine zur "
+"anderen als einzelne Datei übertragbar."
+
+#: ../../source/glossaire.rst:182
+msgid "Fichier protégé (.dbx)"
+msgstr "Geschützte Datei (.dbx)"
+
+#: ../../source/glossaire.rst:183
+msgid ""
+"Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
+"ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
+"reçoit le mot de passe peut l'ouvrir."
+msgstr ""
+"Eine exportierte und passwortverschlüsselte Datenbank, einmal geöffnet und "
+"danach gewöhnlich. Sie schützt die Datei beim Transport, nicht ihren Inhalt:"
+" Wer das Passwort erhält, kann sie öffnen."
+
+#: ../../source/glossaire.rst:187
+msgid "Tenant"
+msgstr "Tenant"
+
+#: ../../source/glossaire.rst:188
+msgid ""
+"En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
+"collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "
+"autre. Sur le poste de bureau il n'y en a qu'un seul, implicite : la "
+"personne dont c'est le fichier. Voir :ref:`headless`."
+msgstr ""
+"Im Servermodus der Eigentümer einer Menge von Stellungen, Matches und "
+"Sammlungen. Nichts, was ein Tenant speichert, ist jemals für einen anderen "
+"sichtbar. Auf dem Desktop gibt es nur einen einzigen, impliziten: die "
+"Person, deren Datei es ist. Siehe :ref:`headless`."
+
