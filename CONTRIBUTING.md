@@ -15,8 +15,13 @@ Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
 
 Go 1.25, Node.js 23, the [Wails v2](https://wails.io/) CLI 2.10 (`go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2`) and, on Linux, `webkit2gtk-4.1`. `make check` also needs `golangci-lint` (v2) and `govulncheck`; `make check-all` additionally needs Docker (the PostgreSQL contract suite) and a Playwright browser (`npx playwright install`). The documentation build needs Python with `doc/requirements.txt` in a virtualenv, plus GNU gettext. A [devcontainer](.devcontainer/) is available if you would rather not install any of this locally.
 
+A plain clone also pulls the `gh-pages` branch's own history (built LaTeX
+artefacts from past documentation deploys, over 700 Mio as of 2026-09 —
+`.dvi`/`.doctrees` files nobody ever checks out); `--single-branch` fetches
+only `main` and avoids it:
+
 ```bash
-git clone https://github.com/kevung/blunderDB.git && cd blunderDB
+git clone --single-branch https://github.com/kevung/blunderDB.git && cd blunderDB
 git config core.hooksPath .githooks   # versioned pre-commit hook, see Workflow below
 cd frontend && npm install && cd ..
 make dev         # hot-reload desktop app

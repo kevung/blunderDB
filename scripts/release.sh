@@ -390,8 +390,23 @@ fi
 
 git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$INDEX_RST" "$FLATPAK_MANIFEST"
 git -C "$REPO_ROOT" commit -m "Release $VERSION"
-git -C "$REPO_ROOT" tag "$VERSION"
-ok "Created commit and tag '$VERSION'"
+
+# Signed tag when a GPG (or SSH, see gpg.format) signing key is configured
+# (E.7, #223) — this signs the git TAG object itself, unrelated to the
+# per-asset minisign/attestation signing the release workflow does (see
+# packaging/minisign/README.md). Falls back to a lightweight tag with a
+# warning rather than aborting the release: most contributors' machines
+# have no signing key configured, and CI never runs this script.
+tag_err="$(mktemp)"
+if git -C "$REPO_ROOT" tag -s "$VERSION" -m "Release $VERSION" 2>"$tag_err"; then
+    ok "Created commit and signed tag '$VERSION'"
+else
+    cat "$tag_err" >&2
+    warn "No signing key configured (user.signingkey / gpg.format) — created an unsigned tag."
+    git -C "$REPO_ROOT" tag "$VERSION"
+    ok "Created commit and unsigned tag '$VERSION'"
+fi
+rm -f "$tag_err"
 
 # --- Push ---
 if $DO_PUSH; then
