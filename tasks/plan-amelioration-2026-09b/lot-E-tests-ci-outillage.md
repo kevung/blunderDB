@@ -32,12 +32,12 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
   job `coverage` fusionne même si un shard est rouge.
 - `golangci-lint` sans `--build-tags postgres` (`build.yml:466`) : 13 fichiers
   de `storage/postgres`, 2 de `migrate`, 1 test serveur jamais lintés.
-- [ ] `-coverpkg=./pkg/blunderdb/...` ; `-coverprofile` dans `test-postgres`
+- [x] `-coverpkg=./pkg/blunderdb/...` ; `-coverprofile` dans `test-postgres`
       et merge.
-- [ ] Plancher non régressif (`total >= 51 %`) ; annoter le résumé si
+- [x] Plancher non régressif (`total >= 51 %`) ; annoter le résumé si
       `needs.test.result != 'success'`.
-- [ ] Seconde passe `golangci-lint run --build-tags postgres ./...`.
-- [ ] Publier le top 10 des paquets lents dans le step summary (aujourd'hui :
+- [x] Seconde passe `golangci-lint run --build-tags postgres ./...`.
+- [x] Publier le top 10 des paquets lents dans le step summary (aujourd'hui :
       `database` 54,6 s, `cli` 27,9 s, `gammonnet` 19 s = 88 % du temps).
 
 ## E.3 — Paralléliser les tests Go [M] — vitesse CI ×3 (#219)
