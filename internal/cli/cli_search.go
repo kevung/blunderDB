@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"strconv"
@@ -12,9 +13,29 @@ import (
 	"time"
 )
 
-// runSearch handles the search command
-func (cli *CLI) runSearch(args []string) error {
-	searchCmd := flag.NewFlagSet("search", flag.ExitOnError)
+// searchParams is what parseSearchFlags extracts from the command line: the
+// query itself (a SearchFilters ready for LoadPositionsByFiltersCore, plus
+// the two client-side filters the query can't express — errorMin and
+// hasAnalysis need the analysis payload the query already returns) and the
+// output options (--format, --limit, --export). Splitting parsing from
+// querying and rendering (B.8, #176) makes each independently testable:
+// parseSearchFlags never touches a database, and renderResults never touches
+// a flag.
+type searchParams struct {
+	filters     SearchFilters
+	errorMin    float64
+	hasAnalysis bool
+	limit       int
+	format      string
+	outputDB    string
+}
+
+// parseSearchFlags defines and parses the `search` command's flags, and
+// translates them into a searchParams ready for the database query. It calls
+// the FlagSet's Usage() itself on a validation error, matching every other
+// CLI command's convention of "print usage, then return the error".
+func parseSearchFlags(args []string) (*searchParams, string, error) {
+	searchCmd := flag.NewFlagSet("search", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := searchCmd.String("db", "", "Path to the database file (required)")
@@ -100,18 +121,13 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	if err := searchCmd.Parse(args); err != nil {
-		return err
+		return nil, "", err
 	}
 
 	// Validate required flags
 	if *dbPath == "" {
 		searchCmd.Usage()
-		return fmt.Errorf("missing required flag: --db")
-	}
-
-	// Initialize database
-	if err := cli.initDatabase(*dbPath); err != nil {
-		return err
+		return nil, "", fmt.Errorf("missing required flag: --db")
 	}
 
 	// Build filter parameters for LoadPositionsByFilters
@@ -136,7 +152,7 @@ func (cli *CLI) runSearch(args []string) error {
 		case "cube":
 			filter.DecisionType = CubeAction
 		default:
-			return fmt.Errorf("invalid decision type: %s (must be 'checker' or 'cube')", *decisionType)
+			return nil, "", fmt.Errorf("invalid decision type: %s (must be 'checker' or 'cube')", *decisionType)
 		}
 	}
 
@@ -150,7 +166,7 @@ func (cli *CLI) runSearch(args []string) error {
 		case 1:
 			d1, err := strconv.Atoi(strings.TrimSpace(parts[0]))
 			if err != nil || d1 < 1 || d1 > 6 {
-				return fmt.Errorf("invalid --dice value %q: die must be 1-6", *diceFlag)
+				return nil, "", fmt.Errorf("invalid --dice value %q: die must be 1-6", *diceFlag)
 			}
 			diceRollMode = "first"
 			filter.Dice[0] = d1
@@ -158,13 +174,13 @@ func (cli *CLI) runSearch(args []string) error {
 			d1, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
 			d2, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
 			if err1 != nil || err2 != nil || d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
-				return fmt.Errorf("invalid --dice value %q: each die must be 1-6", *diceFlag)
+				return nil, "", fmt.Errorf("invalid --dice value %q: each die must be 1-6", *diceFlag)
 			}
 			diceRollMode = "both"
 			filter.Dice[0] = d1
 			filter.Dice[1] = d2
 		default:
-			return fmt.Errorf("invalid --dice value %q: expected '5' or '5,3'", *diceFlag)
+			return nil, "", fmt.Errorf("invalid --dice value %q: expected '5' or '5,3'", *diceFlag)
 		}
 		// The dice filter also constrains decision_type; default to CheckerAction
 		// when --decision was not given (cube actions do not have a roll).
@@ -243,35 +259,59 @@ func (cli *CLI) runSearch(args []string) error {
 	commentFilter := ""
 	switch {
 	case *hasComment && *noComment:
-		return fmt.Errorf("--has-comment and --no-comment are mutually exclusive")
+		return nil, "", fmt.Errorf("--has-comment and --no-comment are mutually exclusive")
 	case *hasComment:
 		commentFilter = "has"
 	case *noComment:
 		commentFilter = "none"
 	}
 
+	formatLower := strings.ToLower(*format)
+
+	return &searchParams{
+		filters: SearchFilters{
+			Filter:                  filter,
+			IncludeCube:             includeCube,
+			IncludeScore:            includeScore,
+			PipCountFilter:          pipCountFilter,
+			WinRateFilter:           winRateFilter,
+			MoveErrorFilter:         moveErrorFilter,
+			Player1CheckerOffFilter: player1CheckerOffFilter,
+			Player2CheckerOffFilter: player2CheckerOffFilter,
+			DecisionTypeFilter:      decisionTypeFilter,
+			DiceRollFilter:          diceRollFilter,
+			DiceRollMode:            diceRollMode,
+			MatchIDsFilter:          *matchIDsFlag,
+			TournamentIDsFilter:     *tournamentIDsFlag,
+			PositionIDsFilter:       *positionIDsFlag,
+
+			IndividuallyImportedFilter: *individual,
+			FlaggedFilter:              *flagged,
+			CommentFilter:              commentFilter,
+		},
+		errorMin:    *errorMin,
+		hasAnalysis: *hasAnalysis,
+		limit:       *limit,
+		format:      formatLower,
+		outputDB:    *outputDB,
+	}, *dbPath, nil
+}
+
+// runSearch handles the search command
+func (cli *CLI) runSearch(args []string) error {
+	params, dbPath, err := parseSearchFlags(args)
+	if err != nil {
+		return err
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(dbPath); err != nil {
+		return err
+	}
+
 	// Use the core implementation to get analysis data in the same query, avoiding
 	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
-	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(SearchFilters{
-		Filter:                  filter,
-		IncludeCube:             includeCube,
-		IncludeScore:            includeScore,
-		PipCountFilter:          pipCountFilter,
-		WinRateFilter:           winRateFilter,
-		MoveErrorFilter:         moveErrorFilter,
-		Player1CheckerOffFilter: player1CheckerOffFilter,
-		Player2CheckerOffFilter: player2CheckerOffFilter,
-		DecisionTypeFilter:      decisionTypeFilter,
-		DiceRollFilter:          diceRollFilter,
-		DiceRollMode:            diceRollMode,
-		MatchIDsFilter:          *matchIDsFlag,
-		TournamentIDsFilter:     *tournamentIDsFlag,
-		PositionIDsFilter:       *positionIDsFlag,
-
-		IndividuallyImportedFilter: *individual,
-		FlaggedFilter:              *flagged,
-		CommentFilter:              commentFilter,
-	})
+	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(params.filters)
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %w", err)
 	}
@@ -279,25 +319,25 @@ func (cli *CLI) runSearch(args []string) error {
 	// Apply errorMin / hasAnalysis using the analysis map from the JOIN (no extra DB queries).
 	var filteredPositions []Position
 	for _, pos := range positions {
-		if *errorMin > 0 || *hasAnalysis {
+		if params.errorMin > 0 || params.hasAnalysis {
 			analysis := analysisMap[pos.ID]
 			if analysis == nil {
-				if *hasAnalysis {
+				if params.hasAnalysis {
 					continue
 				}
-			} else if *errorMin > 0 {
+			} else if params.errorMin > 0 {
 				hasError := false
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {
 					if analysis.CheckerAnalysis.Moves[1].EquityError != nil {
-						if math.Round(*analysis.CheckerAnalysis.Moves[1].EquityError*1000)/1000 >= *errorMin {
+						if math.Round(*analysis.CheckerAnalysis.Moves[1].EquityError*1000)/1000 >= params.errorMin {
 							hasError = true
 						}
 					}
 				}
 				if analysis.DoublingCubeAnalysis != nil {
-					if math.Round(analysis.DoublingCubeAnalysis.CubefulNoDoubleError*1000)/1000 >= *errorMin ||
-						math.Round(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError*1000)/1000 >= *errorMin ||
-						math.Round(analysis.DoublingCubeAnalysis.CubefulDoublePassError*1000)/1000 >= *errorMin {
+					if math.Round(analysis.DoublingCubeAnalysis.CubefulNoDoubleError*1000)/1000 >= params.errorMin ||
+						math.Round(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError*1000)/1000 >= params.errorMin ||
+						math.Round(analysis.DoublingCubeAnalysis.CubefulDoublePassError*1000)/1000 >= params.errorMin {
 						hasError = true
 					}
 				}
@@ -311,34 +351,71 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	// Apply limit
-	if *limit > 0 && len(filteredPositions) > *limit {
-		filteredPositions = filteredPositions[:*limit]
+	if params.limit > 0 && len(filteredPositions) > params.limit {
+		filteredPositions = filteredPositions[:params.limit]
 	}
 
 	// Output results
 	fmt.Printf("Found %d position(s)\n\n", len(filteredPositions))
 
-	if len(filteredPositions) == 0 {
-		return nil
+	if len(filteredPositions) > 0 {
+		if err := cli.renderResults(os.Stdout, filteredPositions, params.format); err != nil {
+			return err
+		}
 	}
 
-	// Format output
-	switch strings.ToLower(*format) {
-	case "json":
-		type PositionResult struct {
-			ID           int64   `json:"id"`
-			XGID         string  `json:"xgid,omitempty"`
-			Score        [2]int  `json:"score"`
-			Cube         int     `json:"cube"`
-			DecisionType string  `json:"decision_type"`
-			Dice         [2]int  `json:"dice"`
-			BestMove     string  `json:"best_move,omitempty"`
-			Equity       float64 `json:"equity,omitempty"`
+	// Export to new database if requested
+	if params.outputDB != "" {
+		fmt.Printf("\nExporting %d positions to: %s\n", len(filteredPositions), params.outputDB)
+
+		// Get metadata from source database
+		metadata, _ := cli.db.LoadMetadata()
+		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
+		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
+
+		err = cli.db.ExportDatabase(ExportOptions{
+			ExportPath:         params.outputDB,
+			Positions:          filteredPositions,
+			Metadata:           metadata,
+			IncludeAnalysis:    true,
+			IncludeComments:    true,
+			IncludePlayedMoves: true,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to export database: %w", err)
 		}
 
-		var results []PositionResult
-		for _, pos := range filteredPositions {
-			result := PositionResult{
+		fmt.Println("Export completed successfully")
+	}
+
+	return nil
+}
+
+// searchPositionResult is the --format json shape for one matched position.
+type searchPositionResult struct {
+	ID           int64   `json:"id"`
+	XGID         string  `json:"xgid,omitempty"`
+	Score        [2]int  `json:"score"`
+	Cube         int     `json:"cube"`
+	DecisionType string  `json:"decision_type"`
+	Dice         [2]int  `json:"dice"`
+	BestMove     string  `json:"best_move,omitempty"`
+	Equity       float64 `json:"equity,omitempty"`
+}
+
+// renderResults writes already-filtered, already-limited search results to w
+// in the requested format (table, json, or xgid — anything else falls back
+// to table, matching the flag's own default). It is the second half of the
+// split runSearch used to be (B.8, #176): everything here is pure formatting
+// over positions already in hand, plus one LoadAnalysis call per position to
+// fill in best-move/equity/XGID — the same lookup both the table and json
+// paths always made.
+func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) error {
+	switch format {
+	case "json":
+		var results []searchPositionResult
+		for _, pos := range positions {
+			result := searchPositionResult{
 				ID:    pos.ID,
 				Score: pos.Score,
 				Cube:  pos.Cube.Value,
@@ -368,22 +445,22 @@ func (cli *CLI) runSearch(args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to format JSON: %w", err)
 		}
-		fmt.Println(string(jsonData))
+		fmt.Fprintln(w, string(jsonData))
 
 	case "xgid":
-		for _, pos := range filteredPositions {
+		for _, pos := range positions {
 			analysis, err := cli.db.LoadAnalysis(pos.ID)
 			if err == nil && analysis != nil && analysis.XGID != "" {
-				fmt.Println(analysis.XGID)
+				fmt.Fprintln(w, analysis.XGID)
 			}
 		}
 
 	default: // table format
-		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(w, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity")
-		fmt.Fprintln(w, "--\t-----\t----\t----\t----\t---------\t------")
+		tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(tw, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity")
+		fmt.Fprintln(tw, "--\t-----\t----\t----\t----\t---------\t------")
 
-		for _, pos := range filteredPositions {
+		for _, pos := range positions {
 			decType := "checker"
 			if pos.DecisionType == CubeAction {
 				decType = "cube"
@@ -409,34 +486,10 @@ func (cli *CLI) runSearch(args []string) error {
 				}
 			}
 
-			fmt.Fprintf(w, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\n",
+			fmt.Fprintf(tw, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\n",
 				pos.ID, pos.Score[0], pos.Score[1], pos.Cube.Value, decType, diceStr, bestMove, equityStr)
 		}
-		w.Flush()
-	}
-
-	// Export to new database if requested
-	if *outputDB != "" {
-		fmt.Printf("\nExporting %d positions to: %s\n", len(filteredPositions), *outputDB)
-
-		// Get metadata from source database
-		metadata, _ := cli.db.LoadMetadata()
-		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
-		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
-
-		err = cli.db.ExportDatabase(ExportOptions{
-			ExportPath:         *outputDB,
-			Positions:          filteredPositions,
-			Metadata:           metadata,
-			IncludeAnalysis:    true,
-			IncludeComments:    true,
-			IncludePlayedMoves: true,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to export database: %w", err)
-		}
-
-		fmt.Println("Export completed successfully")
+		tw.Flush()
 	}
 
 	return nil

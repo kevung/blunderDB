@@ -77,9 +77,14 @@ fi
 ( cd doc && "$SPHINX_BUILD" -q -b gettext source build/gettext )
 ( cd doc && "$SPHINX_INTL" update -p build/gettext -l "$LANGS" )
 
-# (2) msgmerge's false positive, normalised after every update.
+# (2) msgmerge's two false positives, normalised after every update. The
+# brace-format one fires on a JSON example in the French text — ``{"a": 1}``
+# reads as a brace template — and it arrives paired with `fuzzy`, which would
+# make doc-i18n-check.sh report a complete catalogue as incomplete.
 grep -rl 'python-format' doc/source/locale/ 2>/dev/null \
-  | xargs -r sed -i -E 's/^#,.*python-format.*$/#, no-python-format/'
+  | xargs -r sed -i -E 's/^#,[^,]*python-format.*$/#, no-python-format/'
+grep -rl 'python-brace-format' doc/source/locale/ 2>/dev/null \
+  | xargs -r sed -i -E 's/^#,.*python-brace-format.*$/#, no-python-brace-format/'
 
 status=0
 for po in doc/source/locale/*/LC_MESSAGES/*.po; do

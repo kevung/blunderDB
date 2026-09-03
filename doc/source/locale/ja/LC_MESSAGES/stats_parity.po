@@ -66,7 +66,7 @@ msgid ""
 msgstr "分子は、スコープ内のすべての決定における EMG エラー（キューブフルエクイティ）の絶対和です。"
 
 #: ../../source/stats_parity.rst:32
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "Le dénominateur :math:`N_\\text{compté}` est le nombre de **décisions "
 "comptées** (voir ci-dessous)."
@@ -154,7 +154,7 @@ msgstr ""
 " MET（Match Equity Table）を使用して MWC に変換されます："
 
 #: ../../source/stats_parity.rst:77
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
 "\\mathrm{score}_i)"
@@ -177,7 +177,7 @@ msgid ""
 msgstr "ある1ロールの\\ **運**\\ とは、実際に出た目がもたらしたものと、平均的にもたらされるものとの差です。"
 
 #: ../../source/stats_parity.rst:89
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "\\mathrm{luck} = \\mathrm{eq}(\\text{meilleur coup avec les dés obtenus})\n"
 "              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{meilleur coup avec } d)"
@@ -380,7 +380,7 @@ msgid "Type de décision"
 msgstr "決定タイプ"
 
 #: ../../source/stats_parity.rst:186
-#, python-brace-format
+#, no-python-brace-format
 msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
 msgstr ":math:`N_\\text{counted}` (PR) に含まれる"
 
@@ -539,7 +539,7 @@ msgid ""
 msgstr "PR または MWC の値が XG の数値と乖離する場合は、以下の点を確認してください："
 
 #: ../../source/stats_parity.rst:249
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les positions "
 "disposant d'une analyse. Des positions sans analyse sont comptées comme "

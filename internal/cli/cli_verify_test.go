@@ -4,6 +4,8 @@ import (
 	"context"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 // TestCLI_Verify_ReportsOrphans: verify counts and names the child rows whose
@@ -23,7 +25,7 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	conn, err := cli.db.Conn().Conn(ctx)
+	conn, err := RawConn(cli.db).Conn(ctx)
 	if err != nil {
 		t.Fatalf("dedicated connection: %v", err)
 	}
@@ -82,7 +84,7 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
 	} {
-		if _, err := cli.db.Conn().Exec(s); err != nil {
+		if _, err := RawConn(cli.db).Exec(s); err != nil {
 			t.Fatalf("%s: %v", s, err)
 		}
 	}
@@ -131,7 +133,7 @@ func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
 		`INSERT INTO game (id, match_id, game_number, move_count) VALUES (7002, 7001, 1, 0)`,
 		`INSERT INTO move (id, game_id, move_number, move_type) VALUES (7003, 7002, 1, 'checker')`,
 	} {
-		if _, err := cli.db.Conn().Exec(s); err != nil {
+		if _, err := database.RawConn(cli.db).Exec(s); err != nil {
 			t.Fatalf("%s: %v", s, err)
 		}
 	}
@@ -154,7 +156,7 @@ func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
 
 	// And nothing was rewritten: the counter still says what the source said.
 	var gameCount int
-	if err := cli.db.Conn().QueryRow(`SELECT game_count FROM match WHERE id = 7001`).Scan(&gameCount); err != nil {
+	if err := database.RawConn(cli.db).QueryRow(`SELECT game_count FROM match WHERE id = 7001`).Scan(&gameCount); err != nil {
 		t.Fatal(err)
 	}
 	if gameCount != 4 {

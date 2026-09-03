@@ -17,7 +17,7 @@ func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int
 	if player != 0 {
 		xgPlayer = -1
 	}
-	res, err := db.Conn().Exec(
+	res, err := RawConn(db).Exec(
 		`INSERT INTO position (decision_type, state) VALUES (?, '')`, dt,
 	)
 	if err != nil {
@@ -34,14 +34,14 @@ func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int
 	} else {
 		moveErr = errMP
 	}
-	if _, err = db.Conn().Exec(
+	if _, err = RawConn(db).Exec(
 		`INSERT INTO analysis (position_id, data, cube_error, best_move_equity_error, is_close_cube) VALUES (?, '{}', ?, ?, ?)`,
 		posID, cubeErr, moveErr, closeCube,
 	); err != nil {
 		t.Fatalf("insert analysis: %v", err)
 	}
 
-	if _, err = db.Conn().Exec(
+	if _, err = RawConn(db).Exec(
 		`INSERT INTO move (game_id, move_number, position_id, player) VALUES (?, ?, ?, ?)`,
 		gameID, moveNum, posID, xgPlayer,
 	); err != nil {
@@ -57,7 +57,7 @@ func createMatch(t *testing.T, db *Database, p1, p2, date string, matchLength in
 	if tournamentID > 0 {
 		tidVal = tournamentID
 	}
-	res, err := db.Conn().Exec(
+	res, err := RawConn(db).Exec(
 		`INSERT INTO match (player1_name, player2_name, match_date, match_length, tournament_id) VALUES (?,?,?,?,?)`,
 		p1, p2, date, matchLength, tidVal,
 	)
@@ -71,7 +71,7 @@ func createMatch(t *testing.T, db *Database, p1, p2, date string, matchLength in
 // createGame creates a game row for a match and returns its id.
 func createGame(t *testing.T, db *Database, matchID int64) int64 {
 	t.Helper()
-	res, err := db.Conn().Exec(
+	res, err := RawConn(db).Exec(
 		`INSERT INTO game (match_id, game_number) VALUES (?, 1)`, matchID,
 	)
 	if err != nil {

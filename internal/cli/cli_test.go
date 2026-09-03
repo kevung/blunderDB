@@ -490,7 +490,7 @@ func TestCLI_DeleteMatch(t *testing.T) {
 	}
 
 	// Delete with confirm=true to skip stdin prompt.
-	if err := cli.deleteMatch(matchID, true); err != nil {
+	if err := cli.deleteMatch(matchID, true, "text"); err != nil {
 		t.Fatalf("deleteMatch: %v", err)
 	}
 
@@ -502,7 +502,7 @@ func TestCLI_DeleteMatch(t *testing.T) {
 
 func TestCLI_DeleteMatchNotFound(t *testing.T) {
 	cli := setupCLI(t)
-	err := cli.deleteMatch(9999, true)
+	err := cli.deleteMatch(9999, true, "text")
 	if err == nil {
 		t.Fatal("expected error when deleting nonexistent match")
 	}

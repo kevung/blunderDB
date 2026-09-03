@@ -74,7 +74,7 @@ func (cli *CLI) printAnkiUsage() {
 
 // ankiFlagSet builds the FlagSet shared by every sub-command.
 func ankiFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
-	fs := flag.NewFlagSet("anki "+sub, flag.ExitOnError)
+	fs := flag.NewFlagSet("anki "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
 		fmt.Printf("Usage: blunderdb anki %s [options]\n\n%s\n\nOptions:\n", sub, summary)

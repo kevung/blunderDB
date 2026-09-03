@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"strings"
 )
 
 // runVacuum handles the vacuum command: it compacts the database file,
@@ -12,9 +13,10 @@ import (
 // ANALYZE — live on Database.Vacuum so the GUI's "Compacter la base" button
 // goes through the exact same path.
 func (cli *CLI) runVacuum(args []string) error {
-	vacuumCmd := flag.NewFlagSet("vacuum", flag.ExitOnError)
+	vacuumCmd := flag.NewFlagSet("vacuum", flag.ContinueOnError)
 
 	dbPath := vacuumCmd.String("db", "", "Path to the database file (required)")
+	format := vacuumCmd.String("format", "text", "Output format: text or json")
 
 	vacuumCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb vacuum [options]")
@@ -31,6 +33,7 @@ func (cli *CLI) runVacuum(args []string) error {
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb vacuum --db database.db")
+		fmt.Println("  blunderdb vacuum --db database.db --format json")
 	}
 
 	if err := vacuumCmd.Parse(args); err != nil {
@@ -42,14 +45,33 @@ func (cli *CLI) runVacuum(args []string) error {
 		return fmt.Errorf("missing required flag: --db")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
 
-	fmt.Println("Compacting database...")
+	if formatLower != "json" {
+		fmt.Println("Compacting database...")
+	}
 	result, err := cli.db.Vacuum()
 	if err != nil {
 		return fmt.Errorf("vacuum failed: %w", err)
+	}
+
+	if formatLower == "json" {
+		return printJSON(struct {
+			SizeBefore int64 `json:"size_before"`
+			SizeAfter  int64 `json:"size_after"`
+			Reclaimed  int64 `json:"reclaimed"`
+		}{
+			SizeBefore: result.SizeBefore,
+			SizeAfter:  result.SizeAfter,
+			Reclaimed:  result.SizeBefore - result.SizeAfter,
+		})
 	}
 
 	fmt.Printf("  Before: %s\n", vacuumCLIHumanBytes(result.SizeBefore))

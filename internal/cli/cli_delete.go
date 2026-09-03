@@ -8,13 +8,14 @@ import (
 
 // runDelete handles the delete command
 func (cli *CLI) runDelete(args []string) error {
-	deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+	deleteCmd := flag.NewFlagSet("delete", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := deleteCmd.String("db", "", "Path to the database file (required)")
 	deleteType := deleteCmd.String("type", "", "Delete type: match (required)")
 	id := deleteCmd.Int64("id", 0, "ID of the item to delete (required)")
 	confirm := deleteCmd.Bool("confirm", false, "Confirm deletion without prompting")
+	format := deleteCmd.String("format", "text", "Output format: text or json")
 
 	deleteCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb delete [options]")
@@ -49,6 +50,11 @@ func (cli *CLI) runDelete(args []string) error {
 		return fmt.Errorf("missing required flag: --id")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -57,14 +63,16 @@ func (cli *CLI) runDelete(args []string) error {
 	// Perform deletion based on type
 	switch strings.ToLower(*deleteType) {
 	case "match":
-		return cli.deleteMatch(*id, *confirm)
+		return cli.deleteMatch(*id, *confirm, formatLower)
 	default:
 		return fmt.Errorf("unknown delete type: %s (must be 'match')", *deleteType)
 	}
 }
 
 // deleteMatch deletes a match from the database
-func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
+func (cli *CLI) deleteMatch(matchID int64, confirm bool, format string) error {
+	text := format != "json"
+
 	// Get match details first
 	match, err := cli.db.GetMatchByID(matchID)
 	if err != nil {
@@ -74,14 +82,16 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 		return fmt.Errorf("match with ID %d not found", matchID)
 	}
 
-	// Show match details
-	fmt.Printf("Match ID: %d\n", match.ID)
-	fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
-	if match.Event != "" {
-		fmt.Printf("  Event: %s\n", match.Event)
+	if text {
+		// Show match details
+		fmt.Printf("Match ID: %d\n", match.ID)
+		fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
+		if match.Event != "" {
+			fmt.Printf("  Event: %s\n", match.Event)
+		}
+		fmt.Printf("  Games: %d\n", match.GameCount)
+		fmt.Println()
 	}
-	fmt.Printf("  Games: %d\n", match.GameCount)
-	fmt.Println()
 
 	// Confirm deletion
 	if !confirm {
@@ -89,8 +99,14 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 		var response string
 		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "yes" {
-			fmt.Println("Deletion cancelled")
-			return nil
+			if text {
+				fmt.Println("Deletion cancelled")
+				return nil
+			}
+			return printJSON(struct {
+				MatchID   int64 `json:"match_id"`
+				Cancelled bool  `json:"cancelled"`
+			}{MatchID: matchID, Cancelled: true})
 		}
 	}
 
@@ -98,6 +114,13 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	err = cli.db.DeleteMatch(matchID)
 	if err != nil {
 		return fmt.Errorf("failed to delete match: %w", err)
+	}
+
+	if !text {
+		return printJSON(struct {
+			MatchID int64 `json:"match_id"`
+			Deleted bool  `json:"deleted"`
+		}{MatchID: matchID, Deleted: true})
 	}
 
 	fmt.Printf("Successfully deleted match ID %d\n", matchID)

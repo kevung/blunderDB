@@ -4,6 +4,10 @@
 # path is fixed rather than an env var). VERSION is read from the environment.
 # Build:
 #   cp build/bin/blunderDB-linux-webkit2gtk-4.1-<ver> build/bin/blunderDB
+#   mkdir -p build/linux/completions
+#   build/bin/blunderDB completion bash > build/linux/completions/blunderdb.bash
+#   build/bin/blunderDB completion zsh  > build/linux/completions/_blunderdb
+#   build/bin/blunderDB completion fish > build/linux/completions/blunderdb.fish
 #   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p deb
 #   VERSION=0.27.1 nfpm package -f build/linux/nfpm.yaml -p rpm
 #
@@ -44,6 +48,15 @@ contents:
     dst: /usr/share/icons/hicolor/256x256/apps/blunderdb.png
   - src: build/linux/blunderdb-256.png
     dst: /usr/share/pixmaps/blunderdb.png
+  # Shell completion — `blunderdb completion <shell>` (B.8, #176), generated
+  # from the staged binary just above rather than committed, so it can never
+  # drift from the subcommand table it reads (handlers()).
+  - src: build/linux/completions/blunderdb.bash
+    dst: /usr/share/bash-completion/completions/blunderdb
+  - src: build/linux/completions/_blunderdb
+    dst: /usr/share/zsh/site-functions/_blunderdb
+  - src: build/linux/completions/blunderdb.fish
+    dst: /usr/share/fish/vendor_completions.d/blunderdb.fish
   # Licence and third-party notices: the binary embeds MIT-licensed code and
   # data (Strehl network, Wails, pgx…) whose licences require the notice to
   # travel with every copy. /usr/share/doc/<pkg>/ is where both dpkg and rpm

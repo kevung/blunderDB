@@ -23,6 +23,16 @@ cask "blunderdb" do
   app "blunderDB-macos-#{version}.app", target: "blunderDB.app"
   binary "#{appdir}/blunderDB.app/Contents/MacOS/blunderDB-macos-#{version}", target: "blunderdb"
 
+  # `blunderdb completion <shell>` prints the script (B.8, #176); Homebrew
+  # runs it once at install time and stows the output where each shell looks
+  # for completions on its own — nothing to source manually.
+  generate_completions_from_executable(
+    "#{appdir}/blunderDB.app/Contents/MacOS/blunderDB-macos-#{version}",
+    "completion",
+    shells: [:bash, :zsh, :fish],
+    shell_parameter_format: :arg,
+  )
+
   zap trash: [
     "~/Library/Application Support/blunderDB",
     "~/Library/Caches/blunderDB",

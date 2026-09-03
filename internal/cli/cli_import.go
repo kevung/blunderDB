@@ -14,7 +14,7 @@ import (
 
 // runImport handles the import command
 func (cli *CLI) runImport(args []string) error {
-	importCmd := flag.NewFlagSet("import", flag.ExitOnError)
+	importCmd := flag.NewFlagSet("import", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := importCmd.String("db", "", "Path to the database file (required)")
@@ -22,6 +22,9 @@ func (cli *CLI) runImport(args []string) error {
 	inputFile := importCmd.String("file", "", "Path to the file to import (for match/position)")
 	inputDir := importCmd.String("dir", "", "Path to directory for batch import (for batch)")
 	recursive := importCmd.Bool("recursive", true, "Recursively scan subdirectories for batch import")
+	format := importCmd.String("format", "text", "Output format: text or json")
+	failOnError := importCmd.Bool("fail-on-error", false,
+		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported) is an error")
 
 	importCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb import [options]")
@@ -48,6 +51,9 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Batch import (non-recursive)")
 		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false")
+		fmt.Println()
+		fmt.Println("  # Batch import, machine-readable, failing the run if any file errored")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error")
 	}
 
 	if err := importCmd.Parse(args); err != nil {
@@ -63,6 +69,11 @@ func (cli *CLI) runImport(args []string) error {
 	if *importType == "" {
 		importCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
+	}
+
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
 	}
 
 	// Initialize database
@@ -81,7 +92,7 @@ func (cli *CLI) runImport(args []string) error {
 		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
 			return fmt.Errorf("input file does not exist: %s", *inputFile)
 		}
-		return cli.importMatch(*inputFile)
+		return cli.importMatch(*inputFile, formatLower)
 	case "position":
 		if *inputFile == "" {
 			importCmd.Usage()
@@ -91,7 +102,7 @@ func (cli *CLI) runImport(args []string) error {
 		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
 			return fmt.Errorf("input file does not exist: %s", *inputFile)
 		}
-		return cli.importPosition(*inputFile)
+		return cli.importPosition(*inputFile, formatLower, *failOnError)
 	case "batch":
 		if *inputDir == "" {
 			importCmd.Usage()
@@ -101,15 +112,32 @@ func (cli *CLI) runImport(args []string) error {
 		if info, err := os.Stat(*inputDir); os.IsNotExist(err) || !info.IsDir() {
 			return fmt.Errorf("directory does not exist or is not a directory: %s", *inputDir)
 		}
-		return cli.importBatch(*inputDir, *recursive)
+		return cli.importBatch(*inputDir, *recursive, formatLower, *failOnError)
 	default:
 		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', or 'batch')", *importType)
 	}
 }
 
+// importMatchResult is the --format json shape for `import --type match`,
+// covering both a whole match and a lone XGP position (Type tells them apart;
+// the fields the other kind doesn't use are omitted rather than zero-valued).
+type importMatchResult struct {
+	Type        string `json:"type"` // "match" or "xgp_position"
+	MatchID     int64  `json:"match_id,omitempty"`
+	PositionID  int64  `json:"position_id,omitempty"`
+	Player1     string `json:"player1,omitempty"`
+	Player2     string `json:"player2,omitempty"`
+	Event       string `json:"event,omitempty"`
+	Location    string `json:"location,omitempty"`
+	MatchLength int32  `json:"match_length,omitempty"`
+	Games       int    `json:"games,omitempty"`
+}
+
 // importMatch imports a match file (XG, SGF, MAT, TXT, BGF) or XGP position file
-func (cli *CLI) importMatch(filePath string) error {
-	fmt.Printf("Importing match from: %s\n", filePath)
+func (cli *CLI) importMatch(filePath, format string) error {
+	if format != "json" {
+		fmt.Printf("Importing match from: %s\n", filePath)
+	}
 
 	// Verify file extension and route to appropriate importer
 	ext := strings.ToLower(filepath.Ext(filePath))
@@ -122,6 +150,9 @@ func (cli *CLI) importMatch(filePath string) error {
 		posID, posErr := cli.db.ImportXGPPosition(filePath)
 		if posErr != nil {
 			return fmt.Errorf("failed to import XGP position: %w", posErr)
+		}
+		if format == "json" {
+			return printJSON(importMatchResult{Type: "xgp_position", PositionID: posID})
 		}
 		fmt.Printf("Successfully imported XGP position (ID: %d)\n", posID)
 		return nil
@@ -143,11 +174,25 @@ func (cli *CLI) importMatch(filePath string) error {
 		return fmt.Errorf("failed to import match: %w", err)
 	}
 
+	// Fetch match details (best-effort; a lookup failure does not undo the import).
+	match, matchErr := cli.db.GetMatchByID(matchID)
+
+	if format == "json" {
+		result := importMatchResult{Type: "match", MatchID: matchID}
+		if matchErr == nil && match != nil {
+			result.Player1 = match.Player1Name
+			result.Player2 = match.Player2Name
+			result.Event = match.Event
+			result.Location = match.Location
+			result.MatchLength = match.MatchLength
+			result.Games = match.GameCount
+		}
+		return printJSON(result)
+	}
+
 	fmt.Printf("Successfully imported match (ID: %d)\n", matchID)
 
-	// Display match details
-	match, err := cli.db.GetMatchByID(matchID)
-	if err == nil && match != nil {
+	if matchErr == nil && match != nil {
 		fmt.Println("\nMatch Details:")
 		fmt.Printf("  Players: %s vs %s\n", match.Player1Name, match.Player2Name)
 		if match.Event != "" {
@@ -163,9 +208,22 @@ func (cli *CLI) importMatch(filePath string) error {
 	return nil
 }
 
-// importPosition imports a position file
-func (cli *CLI) importPosition(filePath string) error {
-	fmt.Printf("Importing positions from: %s\n", filePath)
+// importPositionResult is the --format json shape for `import --type position`.
+type importPositionResult struct {
+	Imported   int   `json:"imported"`
+	Failed     int   `json:"failed"`
+	PositionID int64 `json:"position_id,omitempty"` // set only for a single BGBlitz position file
+}
+
+// importPosition imports a position file. It fails the run (regardless of
+// --fail-on-error) when nothing at all was imported — a file that produced
+// zero positions is never a silent success (#176) — and additionally fails
+// when failOnError is set and any individual line errored despite others
+// succeeding.
+func (cli *CLI) importPosition(filePath, format string, failOnError bool) error {
+	if format != "json" {
+		fmt.Printf("Importing positions from: %s\n", filePath)
+	}
 
 	// Read the file
 	content, err := os.ReadFile(filePath)
@@ -182,6 +240,9 @@ func (cli *CLI) importPosition(filePath string) error {
 		if err != nil {
 			return fmt.Errorf("failed to import BGBlitz position: %w", err)
 		}
+		if format == "json" {
+			return printJSON(importPositionResult{Imported: 1, PositionID: posID})
+		}
 		fmt.Printf("Successfully imported BGBlitz position (ID: %d)\n", posID)
 		return nil
 	}
@@ -189,7 +250,7 @@ func (cli *CLI) importPosition(filePath string) error {
 	// Parse positions (assuming position JSON format, one per line)
 	lines := strings.Split(contentStr, "\n")
 	imported := 0
-	errors := 0
+	failed := 0
 
 	for i, line := range lines {
 		line = strings.TrimSpace(line)
@@ -201,7 +262,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		var pos Position
 		if err := json.Unmarshal([]byte(line), &pos); err != nil {
 			slog.Warn("parsing line", "line", i+1, "err", err)
-			errors++
+			failed++
 			continue
 		}
 
@@ -214,15 +275,28 @@ func (cli *CLI) importPosition(filePath string) error {
 		_, err := cli.db.SavePosition(&pos)
 		if err != nil {
 			slog.Warn("importing line", "line", i+1, "err", err)
-			errors++
+			failed++
 			continue
 		}
 		imported++
 	}
 
-	fmt.Printf("Successfully imported %d positions\n", imported)
-	if errors > 0 {
-		fmt.Printf("Failed to import %d positions\n", errors)
+	if format == "json" {
+		if err := printJSON(importPositionResult{Imported: imported, Failed: failed}); err != nil {
+			return err
+		}
+	} else {
+		fmt.Printf("Successfully imported %d positions\n", imported)
+		if failed > 0 {
+			fmt.Printf("Failed to import %d positions\n", failed)
+		}
+	}
+
+	if imported == 0 {
+		return fmt.Errorf("no positions were imported from %s (%d error(s))", filePath, failed)
+	}
+	if failOnError && failed > 0 {
+		return fmt.Errorf("%d of %d position(s) failed to import from %s", failed, imported+failed, filePath)
 	}
 
 	return nil
@@ -230,19 +304,36 @@ func (cli *CLI) importPosition(filePath string) error {
 
 // BatchImportResult represents the result of a single file import
 type BatchImportResult struct {
-	FilePath  string
-	Success   bool
-	MatchID   int64
-	Error     string
-	Player1   string
-	Player2   string
-	Games     int
-	Positions int
+	FilePath  string `json:"file_path"`
+	Success   bool   `json:"success"`
+	MatchID   int64  `json:"match_id,omitempty"`
+	Error     string `json:"error,omitempty"`
+	Player1   string `json:"player1,omitempty"`
+	Player2   string `json:"player2,omitempty"`
+	Games     int    `json:"games,omitempty"`
+	Positions int    `json:"positions,omitempty"`
 }
 
-// importBatch imports all .xg files from a directory
-func (cli *CLI) importBatch(dirPath string, recursive bool) error {
-	fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
+// importBatchResult is the --format json shape for `import --type batch`.
+type importBatchResult struct {
+	Files             []BatchImportResult `json:"files"`
+	Total             int                 `json:"total"`
+	Success           int                 `json:"success"`
+	Duplicates        int                 `json:"duplicates"`
+	Failed            int                 `json:"failed"`
+	PositionsImported int                 `json:"positions_imported"`
+}
+
+// importBatch imports all .xg files from a directory. Like importPosition, it
+// fails the run when nothing at all was imported (every file either errored
+// or was a duplicate), and additionally fails when failOnError is set and any
+// file errored despite others succeeding (#176). A duplicate is not a
+// failure by itself: re-running a batch import over a directory that was
+// already imported, with no new files added, stays a success.
+func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool) error {
+	if format != "json" {
+		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
+	}
 
 	// Supported match file extensions
 	supportedExts := map[string]bool{
@@ -284,11 +375,13 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 	}
 
 	if len(matchFiles) == 0 {
-		fmt.Println("No match files found in directory (.xg, .sgf, .mat, .txt, .bgf)")
-		return nil
+		return fmt.Errorf("no match files found in directory %s (.xg, .xgp, .sgf, .mat, .txt, .bgf)", dirPath)
 	}
 
-	fmt.Printf("Found %d match file(s) to import\n\n", len(matchFiles))
+	text := format != "json"
+	if text {
+		fmt.Printf("Found %d match file(s) to import\n\n", len(matchFiles))
+	}
 
 	// Import each file and collect results
 	var results []BatchImportResult
@@ -299,7 +392,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 	for i, filePath := range matchFiles {
 		relPath, _ := filepath.Rel(dirPath, filePath)
-		fmt.Printf("[%d/%d] Importing: %s...", i+1, len(matchFiles), relPath)
+		if text {
+			fmt.Printf("[%d/%d] Importing: %s...", i+1, len(matchFiles), relPath)
+		}
 
 		result := BatchImportResult{
 			FilePath: relPath,
@@ -312,7 +407,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 		case ".xgp":
 			posID, posErr := cli.db.ImportXGPPosition(filePath)
 			if posErr != nil {
-				fmt.Printf(" ERROR: %v\n", posErr)
+				if text {
+					fmt.Printf(" ERROR: %v\n", posErr)
+				}
 				result.Error = posErr.Error()
 				failCount++
 			} else {
@@ -320,7 +417,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 				result.Positions = 1
 				totalPositions++
 				successCount++
-				fmt.Printf(" OK (Position ID: %d)\n", posID)
+				if text {
+					fmt.Printf(" OK (Position ID: %d)\n", posID)
+				}
 			}
 			results = append(results, result)
 			continue
@@ -334,11 +433,15 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 		if err != nil {
 			if errors.Is(err, ErrDuplicateMatch) {
-				fmt.Println(" DUPLICATE")
+				if text {
+					fmt.Println(" DUPLICATE")
+				}
 				result.Error = "duplicate"
 				duplicateCount++
 			} else {
-				fmt.Printf(" ERROR: %v\n", err)
+				if text {
+					fmt.Printf(" ERROR: %v\n", err)
+				}
 				result.Error = err.Error()
 				failCount++
 			}
@@ -362,58 +465,83 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 				totalPositions += len(positions)
 			}
 
-			fmt.Printf(" OK (ID: %d, %d positions)\n", matchID, result.Positions)
+			if text {
+				fmt.Printf(" OK (ID: %d, %d positions)\n", matchID, result.Positions)
+			}
 		}
 
 		results = append(results, result)
 
 		// After each successful match import, checkpoint the WAL to keep file size bounded.
 		if result.Success && result.MatchID > 0 {
-			_, _ = cli.db.Conn().Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+			_ = cli.db.Checkpoint()
 		}
 	}
 
 	// After all imports, update query planner statistics.
-	_, _ = cli.db.Conn().Exec("ANALYZE")
+	cli.db.RefreshSearchStatistics()
 
-	// Print summary table
-	fmt.Println("\n" + strings.Repeat("=", 100))
-	fmt.Println("IMPORT SUMMARY")
-	fmt.Println(strings.Repeat("=", 100))
+	if text {
+		// Print summary table
+		fmt.Println("\n" + strings.Repeat("=", 100))
+		fmt.Println("IMPORT SUMMARY")
+		fmt.Println(strings.Repeat("=", 100))
 
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "Status\tFile\tID\tPlayer 1\tPlayer 2\tGames\tPositions\tError")
-	fmt.Fprintln(w, "------\t----\t--\t--------\t--------\t-----\t---------\t-----")
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "Status\tFile\tID\tPlayer 1\tPlayer 2\tGames\tPositions\tError")
+		fmt.Fprintln(w, "------\t----\t--\t--------\t--------\t-----\t---------\t-----")
 
-	for _, r := range results {
-		status := "✗"
-		if r.Success {
-			status = "✓"
-		} else if r.Error == "duplicate" {
-			status = "⊘"
-		}
-
-		idStr := ""
-		if r.MatchID > 0 {
-			idStr = fmt.Sprintf("%d", r.MatchID)
-		}
-
-		errorStr := ""
-		if !r.Success && r.Error != "duplicate" {
-			errorStr = r.Error
-			if len(errorStr) > 30 {
-				errorStr = errorStr[:30] + "..."
+		for _, r := range results {
+			status := "✗"
+			if r.Success {
+				status = "✓"
+			} else if r.Error == "duplicate" {
+				status = "⊘"
 			}
+
+			idStr := ""
+			if r.MatchID > 0 {
+				idStr = fmt.Sprintf("%d", r.MatchID)
+			}
+
+			errorStr := ""
+			if !r.Success && r.Error != "duplicate" {
+				errorStr = r.Error
+				if len(errorStr) > 30 {
+					errorStr = errorStr[:30] + "..."
+				}
+			}
+
+			fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%d\t%d\t%s\n",
+				status, r.FilePath, idStr, r.Player1, r.Player2, r.Games, r.Positions, errorStr)
 		}
+		w.Flush()
 
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%d\t%d\t%s\n",
-			status, r.FilePath, idStr, r.Player1, r.Player2, r.Games, r.Positions, errorStr)
+		fmt.Println(strings.Repeat("-", 100))
+		fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
+			len(matchFiles), successCount, duplicateCount, failCount, totalPositions)
+	} else {
+		if err := printJSON(importBatchResult{
+			Files:             results,
+			Total:             len(matchFiles),
+			Success:           successCount,
+			Duplicates:        duplicateCount,
+			Failed:            failCount,
+			PositionsImported: totalPositions,
+		}); err != nil {
+			return err
+		}
 	}
-	w.Flush()
 
-	fmt.Println(strings.Repeat("-", 100))
-	fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
-		len(matchFiles), successCount, duplicateCount, failCount, totalPositions)
+	// A total failure (nothing imported, whatever the reason) is always an
+	// error; --fail-on-error additionally fails a partial one.
+	if successCount == 0 {
+		return fmt.Errorf("no file was imported from %s (%d duplicate(s), %d failure(s) out of %d file(s))",
+			dirPath, duplicateCount, failCount, len(matchFiles))
+	}
+	if failOnError && failCount > 0 {
+		return fmt.Errorf("%d of %d file(s) failed to import from %s", failCount, len(matchFiles), dirPath)
+	}
 
 	return nil
 }

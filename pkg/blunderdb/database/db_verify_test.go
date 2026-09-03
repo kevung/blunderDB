@@ -44,7 +44,7 @@ func TestCountOrphans(t *testing.T) {
 		t.Fatalf("fresh database reports orphans: %+v", clean)
 	}
 
-	plantOrphans(t, d.Conn())
+	plantOrphans(t, d.conn())
 
 	got, err := d.CountOrphans()
 	if err != nil {
@@ -81,7 +81,7 @@ func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
 	} {
-		if _, err := d.Conn().Exec(stmt); err != nil {
+		if _, err := d.conn().Exec(stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
 		}
 	}
@@ -146,7 +146,7 @@ func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
 		`INSERT INTO position (zobrist_hash, dice_1, state) VALUES (11, 9, '{}')`,
 		`INSERT INTO position (zobrist_hash, off_1, state) VALUES (12, 42, '{}')`,
 	} {
-		if _, err := d.Conn().Exec(stmt); err != nil {
+		if _, err := RawConn(d).Exec(stmt); err != nil {
 			t.Fatalf("build a pre-rule position table (%s): %v", stmt, err)
 		}
 	}
@@ -190,18 +190,18 @@ func TestCheckCounters_RecomputesTheDenormalisedFigures(t *testing.T) {
 	}
 
 	// One match with an honest count, one that claims three games and holds one.
-	honest, err := d.Conn().Exec(`INSERT INTO match (player1_name, game_count) VALUES ('a', 1)`)
+	honest, err := RawConn(d).Exec(`INSERT INTO match (player1_name, game_count) VALUES ('a', 1)`)
 	if err != nil {
 		t.Fatal(err)
 	}
 	honestID, _ := honest.LastInsertId()
-	liar, err := d.Conn().Exec(`INSERT INTO match (player1_name, game_count) VALUES ('b', 3)`)
+	liar, err := RawConn(d).Exec(`INSERT INTO match (player1_name, game_count) VALUES ('b', 3)`)
 	if err != nil {
 		t.Fatal(err)
 	}
 	liarID, _ := liar.LastInsertId()
 	for _, matchID := range []int64{honestID, liarID} {
-		if _, err := d.Conn().Exec(
+		if _, err := RawConn(d).Exec(
 			`INSERT INTO game (match_id, game_number, move_count) VALUES (?, 1, 0)`, matchID); err != nil {
 			t.Fatal(err)
 		}
@@ -222,7 +222,7 @@ func TestCheckCounters_RecomputesTheDenormalisedFigures(t *testing.T) {
 	}
 
 	// A game that claims no move and holds one.
-	if _, err := d.Conn().Exec(
+	if _, err := RawConn(d).Exec(
 		`INSERT INTO move (game_id, move_number, move_type) VALUES (1, 1, 'checker')`); err != nil {
 		t.Fatal(err)
 	}

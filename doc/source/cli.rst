@@ -66,6 +66,7 @@ Commandes disponibles
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
+   "completion", "Affiche un script de complétion shell (bash, zsh, fish)."
    "help", "Affiche l'aide."
    "version", "Affiche la version."
 
@@ -86,6 +87,8 @@ Crée un nouveau fichier de base de données avec des métadonnées optionnelles
 * ``--user`` — Nom du propriétaire de la base.
 * ``--description`` — Description de la base.
 * ``--force`` — Écraser le fichier s'il existe déjà.
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (chemin,
+  version, utilisateur, description, date de création).
 
 L'extension ``.db`` est ajoutée automatiquement si elle est absente. Les
 répertoires parents sont créés si nécessaire.
@@ -112,6 +115,15 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 * ``--file`` — Fichier à importer (pour ``match`` et ``position``).
 * ``--dir`` — Répertoire à importer (pour ``batch``).
 * ``--recursive`` — Scanner récursivement les sous-répertoires (défaut: oui).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
+* ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
+  ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
+
+N'importer aucun élément est **toujours** une erreur, que ``--fail-on-error``
+soit passé ou non: un fichier ou un répertoire dont rien n'a été importé
+n'est jamais un succès silencieux. Un échec **partiel** (certains éléments
+importés, d'autres non) n'échoue la commande que si ``--fail-on-error`` est
+passé.
 
 Import d'un match
 ^^^^^^^^^^^^^^^^^
@@ -146,8 +158,13 @@ C'est la méthode la plus efficace pour importer un grand nombre de matchs.
    # Import non récursif
    ./blunderdb import --db base.db --type batch --dir ./matchs/ --recursive=false
 
+   # Sortie exploitable par un script, échec si un fichier a été refusé
+   ./blunderdb import --db base.db --type batch --dir ./matchs/ --format json --fail-on-error
+
 Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
-(✓), échoué (✗) ou s'il s'agit d'un doublon (⊘).
+(✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas un
+échec en soi: relancer un import par lot sur un répertoire déjà importé,
+sans nouveau fichier, reste un succès.
 
 export — Exporter des données
 ------------------------------
@@ -183,6 +200,8 @@ Exporte le contenu de la base vers des fichiers.
   exporté (voir :ref:`diffusion_controlee`).
 * ``--watermark-note`` — Texte libre associé au filigrane (conditions
   d'usage, contact) ; utilisé avec ``--watermark``.
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document
+  résumant l'export: chemin, taille en octets, nombres).
 
 **Exemples:**
 
@@ -241,6 +260,8 @@ données : tout ce que vous marquez porte une seule empreinte publique.
 * ``--import`` — Importe une identité depuis un fichier ``.bdbid``.
 * ``--passphrase`` — Phrase de passe optionnelle protégeant le fichier
   exporté/importé (l'identité locale, elle, est volontairement non protégée).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom,
+  empreinte, chemin de stockage).
 
 Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
 le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà marqués
@@ -625,6 +646,8 @@ trois logiques distinctes (voir :ref:`headless`).
   déplacement (défaut: 10).
 * ``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre
   de cœurs de la machine).
+* ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
+  ``json`` (un seul document récapitulatif, imprimé à la fin).
 
 **Le parallélisme (``--jobs``).** Les positions d'un lot sont indépendantes —
 aucune recherche n'informe la suivante — donc elles sont réparties sur
@@ -699,6 +722,8 @@ Modifie le nom d'utilisateur ou la description d'une base de données.
 * ``--description`` — Nouvelle description.
 * ``--clear-user`` — Effacer le nom d'utilisateur.
 * ``--clear-description`` — Effacer la description.
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"changes": [...]}``).
 
 Au moins une option de modification est requise.
 
@@ -727,6 +752,9 @@ avec son fichier source.
 * ``--db`` — Base de données (obligatoire).
 * ``--match`` — ID du match à vérifier.
 * ``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (statistiques, orphelins, écart de schéma, et la vérification du match le
+  cas échéant).
 
 Sans l'option ``--match``, la commande affiche les statistiques générales de la
 base. Avec ``--match``, elle vérifie les données du match et peut les comparer
@@ -803,6 +831,8 @@ l'ouverture d'une base, car son coût est imprévisible sur une grosse base.
 **Options:**
 
 * ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"size_before", "size_after", "reclaimed"}``, en octets).
 
 La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la taille
 affichée avant compactage soit honnête, vérifie qu'il reste sur le disque
@@ -838,6 +868,8 @@ Supprime un match et toutes les données associées (parties, coups, analyses).
 * ``--type`` — Type de suppression: ``match`` (obligatoire).
 * ``--id`` — ID de l'élément à supprimer (obligatoire).
 * ``--confirm`` — Supprimer sans demander de confirmation.
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"match_id": N, "deleted": true}``).
 
 **Exemples:**
 
@@ -889,6 +921,42 @@ pour un conteneur ``unhealthy`` :
 .. code-block:: text
 
    Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
+
+completion — Complétion shell
+------------------------------
+
+Affiche sur la sortie standard un script de complétion pour les noms de
+sous-commandes. La liste des commandes intégrée à chaque script est générée
+depuis la même table que ``blunderdb help`` et l'aiguillage de ``main.go``
+(``handlers()``) : une nouvelle sous-commande est donc proposée par la
+complétion dès qu'elle est câblée, sans rien à tenir à jour à la main.
+
+.. code-block:: bash
+
+   ./blunderdb completion <bash|zsh|fish>
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # bash : charger pour la session en cours
+   source <(blunderdb completion bash)
+
+   # bash : installation système (Debian/Ubuntu/Arch)
+   blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null
+
+   # zsh : installer dans un répertoire déjà sur $fpath
+   blunderdb completion zsh > "${fpath[1]}/_blunderdb"
+
+   # fish : charger pour la session en cours
+   blunderdb completion fish | source
+
+Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm) et
+le paquet AUR génèrent les trois scripts depuis le binaire empaqueté au
+moment de la construction, et le cask Homebrew exécute
+``blunderdb completion <shell>`` une fois à l'installation via
+``generate_completions_from_executable``. Rien n'est committé dans le dépôt :
+la complétion ne peut donc jamais dériver de la table des sous-commandes.
 
 Exemples de flux de travail
 -----------------------------

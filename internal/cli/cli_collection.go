@@ -78,7 +78,7 @@ func (cli *CLI) printCollectionUsage() {
 // collectionFlagSet builds the FlagSet shared by every sub-command: the
 // database path, plus the usage banner naming the sub-command.
 func collectionFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
-	fs := flag.NewFlagSet("collection "+sub, flag.ExitOnError)
+	fs := flag.NewFlagSet("collection "+sub, flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
 	fs.Usage = func() {
 		fmt.Printf("Usage: blunderdb collection %s [options]\n\n%s\n\nOptions:\n", sub, summary)

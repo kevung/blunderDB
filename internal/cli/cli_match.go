@@ -10,7 +10,7 @@ import (
 
 // runMatch handles the match command
 func (cli *CLI) runMatch(args []string) error {
-	matchCmd := flag.NewFlagSet("match", flag.ExitOnError)
+	matchCmd := flag.NewFlagSet("match", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := matchCmd.String("db", "", "Path to the database file (required)")

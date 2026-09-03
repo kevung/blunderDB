@@ -133,7 +133,7 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err := disguiseMatches(d); err != nil {
 		return err
 	}
-	blunders, cubes, races, err := pickPositions(d.Conn())
+	blunders, cubes, races, err := pickPositions(database.RawConn(d))
 	if err != nil {
 		return err
 	}
@@ -162,7 +162,7 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err := d.SyncAnkiDeck(deckID); err != nil {
 		return fmt.Errorf("syncing anki deck: %w", err)
 	}
-	return simulateReviews(d.Conn(), deckID, now, seed)
+	return simulateReviews(database.RawConn(d), deckID, now, seed)
 }
 
 // disguiseMatches gives every imported match its fictional identity and
@@ -196,7 +196,7 @@ func disguiseMatches(d *database.Database) error {
 		if err := d.UpdateMatch(m.ID, f.player1, f.player2, f.date); err != nil {
 			return fmt.Errorf("renaming match %d: %w", m.ID, err)
 		}
-		if _, err := d.Conn().Exec(
+		if _, err := database.RawConn(d).Exec(
 			`UPDATE match SET event = ?, location = ?, round = ?, file_path = ? WHERE id = ?`,
 			f.event, f.location, f.round, f.filePath, m.ID); err != nil {
 			return fmt.Errorf("relabelling match %d: %w", m.ID, err)
@@ -311,7 +311,7 @@ func commentPositions(d *database.Database, blunders, cubes []int64) error {
 
 func comment(d *database.Database, positionID int64, column, format string) error {
 	var millipoints int64
-	if err := d.Conn().QueryRow(
+	if err := database.RawConn(d).QueryRow(
 		`SELECT `+column+` FROM analysis WHERE position_id = ?`, positionID).Scan(&millipoints); err != nil {
 		return fmt.Errorf("reading %s of position %d: %w", column, positionID, err)
 	}
