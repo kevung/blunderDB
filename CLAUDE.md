@@ -269,6 +269,16 @@ Violating one of these is a bug even if all tests pass:
   where it belongs, in `Decide`'s no-double payoffs. See ADR-0022; and the
   file is a port, so any change here lands in gammonNet's `gn_cube.c` and its
   spec §2 first, then in `testdata/cube_gold.bin`.
+- **The cube efficiency is a branch coefficient, and the search reads the root's on
+  purpose**: `DefaultEfficiency` returns one value per cube state (owned 0.566, centred
+  0.688, opponent 0.687), each fitted against a different column of gammonNet's exact
+  two-sided table — a deliberate divergence from gnubg and XG, which index it by
+  position class. `SearchConfig.CubeX` is fixed at the root while `CubeOwner` is
+  mirrored, and `Decide` prices `eDT` at the current owner's coefficient: both match
+  `gn_search.c`/`gn_cube.c` line for line, so "fixing" either here manufactures a port
+  divergence and turns the cube gold red. Measured (669 real decisions): 0.005
+  normalised equity per leaf, no verdict flipped, no move changed. The correction is
+  gammonNet's to write. See ADR-0028.
 - **A shared optimisation is decided upstream, in gammonNet** (its ADR-0003). The criterion
   is measurable, not a matter of taste: *an optimisation is conceptual if its gain survives a
   change of language*. Conceptual ones — the shape of the algorithm — are written in

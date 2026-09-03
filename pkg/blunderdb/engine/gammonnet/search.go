@@ -123,6 +123,20 @@ type SearchConfig struct {
 	// leader's and plays 24/18 13/9 with the opening 6-4; with the cube they
 	// double early, at 2 their gammon wins the match, and 8/2 6/2 comes first
 	// — exactly gnubg's cubeful choice (docs/adr/0023).
+	//
+	// CUBEX IS FIXED AT THE ROOT WHILE CUBEOWNER IS MIRRORED, AND THAT IS A
+	// KNOWN DIVERGENCE, NOT AN OVERSIGHT (#192/C.5, ADR-0028).
+	// DefaultEfficiency returns a coefficient PER CUBE STATE, each fitted
+	// against a different column of gammonNet's exact two-sided table, so a
+	// leaf whose owner has been mirrored is priced with the coefficient
+	// fitted for the OTHER branch — one leaf in two, whenever the root cube
+	// is not centred. gn_search.c does exactly the same (`config->cube_x` at
+	// :299 and :740, passed beside the mirrored owner), so correcting it HERE
+	// would manufacture the port divergence cube.go's header forbids and turn
+	// the cube gold red. The correction is gammonNet's to write (cube_x
+	// indexed by the local owner; spec §4 and §8 step 2). Measured meanwhile
+	// on 669 real analysed decisions: 0.005 normalised equity per leaf, and
+	// 0 of 60 best moves changed. Read ADR-0028 before touching this.
 	UseCube   bool
 	CubeOwner CubeOwner
 	CubeX     float64

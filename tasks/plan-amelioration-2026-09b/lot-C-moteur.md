@@ -101,7 +101,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
       `/v1/gammonnet.sweepStale`. Documenté dans `manuel.rst`.
 - [ ] `NOT IN (sous-requête)` → `NOT EXISTS` (`:34,48`).
 
-## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction (#192)
+## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction (#192) — FAIT (ADR-0028)
 
 - `search.go:588` valorise chaque feuille avec `s.cfg.CubeX` fixé à la racine
   (`domaineval.go:159`, `DefaultEfficiency(owner)`) alors que `owner` est
@@ -109,13 +109,26 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
   un ply sur deux, sur chaque feuille.
 - `cube.go:707-708,746-747` : la branche « double pris » (`eDT`, videau
   détenu par l'adversaire) est tarifée à l'efficacité du propriétaire courant.
-- [ ] Lire `gn_search.c` et `gn_cube.c` §2 : si le C miroite `cube_x`, c'est un
-      trou de port → corriger ici + gold ; sinon ouvrir la question amont
-      (gammonNet, issue + spec) et écrire un commentaire explicite à côté de
-      `CubeX` en attendant. Prompt P6 documente ce que font gnubg et XG.
-- [ ] Rejouer les 2 cas rouges de `integration_gate_test.go:62-79` (0,0552 et
-      0,0738) à 3-ply et avec la MET de XG ; écrire le résultat dans l'en-tête
-      du test — l'explication a été réfutée deux fois, une mesure ferme le point.
+- [x] Lu : le C **ne miroite pas** `cube_x` (`gn_search.c:299,740` le passe
+      figé à côté du propriétaire miroité ; `gn_cube.c:754,790,810` tarife
+      `e_dt` à l'efficacité de l'appelant). Ce n'est **pas** un trou de port
+      mais une divergence de modèle — assumée, chiffrée et tranchée par
+      **ADR-0028** : les trois `x` sont des coefficients de BRANCHE ajustés
+      contre trois colonnes d'un oracle exact, gnubg indexe par classe de
+      position (P6), on garde le nôtre et on ne corrige pas ici. Commentaires
+      explicites posés à `SearchConfig.CubeX`, `DefaultEfficiency` et `eDT` ;
+      correctif proposé pour l'amont écrit dans l'ADR (point 4), non appliqué.
+      Mesuré sur 669 décisions réelles (`cube_efficiency_measure_test.go`,
+      `BLUNDERDB_MEASURE_CUBEX`) : 55,2 % à videau tourné, 0,005 d'équité
+      normalisée par feuille, **0 verdict basculé sur 604**, **0 coup changé
+      sur 60**.
+- [x] Rejoués (`TestMeasureGateRedCasesAtDepth`,
+      `BLUNDERDB_MEASURE_GATE_DEPTH`) : **inchangés** à 2-ply k=12, 2-ply sans
+      élagage et 3-ply k=12 — 0,0552 et 0,0738, mêmes coups. Et il n'y a pas
+      de « MET de XG » à essayer : `engine/met.go` **est** Kazaross-XG2. La
+      troisième explication tombe donc comme les deux précédentes ; résultat
+      écrit dans l'en-tête de `integration_gate_test.go`. Reste le jugement du
+      réseau sur deux plateaux, qui n'est pas une question de réglage.
 
 ## C.6 — Deux règles de verdict pour la même question [M] — cohérence (#193)
 
