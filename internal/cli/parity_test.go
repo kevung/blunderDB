@@ -41,7 +41,6 @@ type parityEntry struct {
 // when one exists.
 const (
 	whyLifecycle = "desktop lifecycle: the CLI opens the file through every command's --db and the daemon through --dsn at start-up; no runtime open/close/lock to expose"
-	whyRawHandle = "raw *sql.DB seam for tests and the desktop's own SQL; never a mode's feature"
 	whyGUIState  = "interactive GUI state (session, filter library, command and search history, last visited match): a script has nothing to read or restore there"
 	whyGUIEdit   = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
 	whyTwoPhase  = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
@@ -70,6 +69,7 @@ var databaseParity = map[string]parityEntry{
 	"CheckConstraints":                 {CLI: "verify", Why: "the rules the fresh DDL states and SQLite cannot add to a table that already exists (CHECK, and the hash a row must not be without); a desktop file upgraded across ten versions is the only place they can be broken, and reporting them is a verify finding, not a route"},
 	"CheckMatchExists":                 {CLI: "import", Server: "/v1/matches.findByHash"},
 	"CheckVersion":                     {Why: whyWrapper},
+	"Checkpoint":                       {Why: whyWrapper + "; truncates the WAL after an import (internal/cli/cli_import.go), not a caller-facing step"},
 	"ClearCommandHistory":              {Server: "/v1/history.clear", Why: whyGUIState},
 	"ClearSessionState":                {Server: "/v1/session.clear", Why: whyGUIState},
 	"Close":                            {Why: whyLifecycle},
@@ -77,7 +77,6 @@ var databaseParity = map[string]parityEntry{
 	"CommitImportDatabase":             {Why: whyTwoPhase},
 	"ComputeEPCFromPosition":           {CLI: "epc", Server: "/v1/positions.epc", Why: whyServerEPC},
 	"ComputeStats":                     {CLI: "list --type stats", Server: "/v1/stats.compute"},
-	"Conn":                             {Why: whyRawHandle},
 	"CopyPositionToCollection":         {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
 	"CountOrphans":                     {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
 	"CountPositionsWithoutAnalysis":    {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},

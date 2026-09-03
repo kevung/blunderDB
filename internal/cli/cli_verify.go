@@ -122,14 +122,18 @@ func (cli *CLI) runVerify(args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to check the constraints: %w", err)
 	}
-	printConstraintViolations(violations)
+	if text {
+		printConstraintViolations(violations)
+	}
 
 	// The two denormalised counters, recomputed from the rows.
 	counters, err := cli.db.CheckCounters()
 	if err != nil {
 		return fmt.Errorf("failed to recompute the counters: %w", err)
 	}
-	printCounterDrift(counters)
+	if text {
+		printCounterDrift(counters)
+	}
 
 	// If match ID specified, verify that match
 	var matchResult *verifyMatchResult
@@ -143,12 +147,16 @@ func (cli *CLI) runVerify(args []string) error {
 
 	if !text {
 		return printJSON(verifyResult{
-			Stats:            stats,
-			Orphans:          orphans,
-			OrphanTotal:      orphans.Total(),
-			SchemaDrift:      drift,
-			SchemaDriftCount: drift.Count(),
-			Match:            matchResult,
+			Stats:                    stats,
+			Orphans:                  orphans,
+			OrphanTotal:              orphans.Total(),
+			SchemaDrift:              drift,
+			SchemaDriftCount:         drift.Count(),
+			ConstraintViolations:     violations,
+			ConstraintViolationTotal: database.TotalConstraintViolations(violations),
+			CounterDrift:             counters,
+			CounterDriftTotal:        counters.Total(),
+			Match:                    matchResult,
 		})
 	}
 
@@ -158,12 +166,16 @@ func (cli *CLI) runVerify(args []string) error {
 
 // verifyResult is the --format json shape for `verify`.
 type verifyResult struct {
-	Stats            map[string]interface{} `json:"stats"`
-	Orphans          database.OrphanCounts  `json:"orphans"`
-	OrphanTotal      int64                  `json:"orphan_total"`
-	SchemaDrift      sqlite.SchemaDrift     `json:"schema_drift"`
-	SchemaDriftCount int                    `json:"schema_drift_count"`
-	Match            *verifyMatchResult     `json:"match,omitempty"`
+	Stats                    map[string]interface{}         `json:"stats"`
+	Orphans                  database.OrphanCounts          `json:"orphans"`
+	OrphanTotal              int64                          `json:"orphan_total"`
+	SchemaDrift              sqlite.SchemaDrift             `json:"schema_drift"`
+	SchemaDriftCount         int                            `json:"schema_drift_count"`
+	ConstraintViolations     []database.ConstraintViolation `json:"constraint_violations"`
+	ConstraintViolationTotal int64                          `json:"constraint_violation_total"`
+	CounterDrift             database.CounterDrift          `json:"counter_drift"`
+	CounterDriftTotal        int64                          `json:"counter_drift_total"`
+	Match                    *verifyMatchResult             `json:"match,omitempty"`
 }
 
 // verifyMatchResult is the --format json shape for `verify --match`.
