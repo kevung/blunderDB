@@ -11,6 +11,18 @@ name: Fuzz
 # The matrix must list every `func Fuzz` of the module
 # (grep -rn 'func Fuzz' --include='*_test.go'): a target missing here is never
 # fuzzed beyond its seeds.
+#
+# This file is also where the two gammonNet checks too slow for every push
+# live (C.2, #189): `gammonnet-gold` (the search-parity gold file against
+# gammonNet's own C reference, ~10.3s plain but a >30x blow-up under -race —
+# see the comment on BLUNDERDB_GOLD in gold_test.go) and
+# `gammonnet-kernel-identity-arm64` (the full, non -short kernel-identity
+# sweep on a real arm64 runner — build.yml's `test-os` macOS job only runs
+# the -short quarter of it on every push). Nothing here needed a dedicated
+# `nightly.yml` (E.12, #228, still open, will decide where the OTHER
+# nightly-only checks land): this file already carries the weekly schedule
+# these two need, and workflow_dispatch reruns them on demand like the fuzz
+# targets above.
 
 on:
   schedule:
@@ -110,3 +122,54 @@ jobs:
           name: fuzz-crash-${{ matrix.target }}
           path: ${{ matrix.pkg }}/testdata/fuzz/${{ matrix.target }}/
           if-no-files-found: ignore
+
+  # The search-parity gate of #121, gated behind BLUNDERDB_GOLD so it never
+  # runs on push/PR (gold_test.go explains why: 10.3s plain, still running
+  # past 300s under -race — the very reason C.2/#189 keeps this out of
+  # build.yml and off -race). Neither package tests main, so no frontend/dist
+  # stub is needed here (unlike build.yml's jobs).
+  gammonnet-gold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BLUNDERDB_GOLD: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Search parity against the gammonNet gold file
+        run: go test -count=1 -run '^TestSearchMatchesTheGoldFile$' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        shell: bash
+
+  # The full, non -short kernel_identity_test sweep (span=200 instead of the
+  # 48 every push runs, see the comment on TestKernelIdentityOnPartialBatches)
+  # on a REAL arm64 runner: macOS is the one platform with no accelerated
+  # kernel (NEON is #151, still open), so this is ADR-0024's bit-identity
+  # gate exercising the pure-Go fallback for real, not the AVX2 path
+  # build.yml's Linux shards run on. build.yml's test-os macOS job already
+  # runs the -short quarter of this sweep on every push (E.1, #217); this is
+  # its weekly, full-span complement.
+  gammonnet-kernel-identity-arm64:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Kernel identity, full sweep
+        run: go test -count=1 -run 'TestKernelIdentity' -v -timeout 600s ./pkg/blunderdb/engine/gammonnet/
+        shell: bash

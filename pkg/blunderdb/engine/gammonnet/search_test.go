@@ -332,6 +332,55 @@ func TestParallelSearchIsBitIdentical(t *testing.T) {
 	}
 }
 
+// TestParallelSearchIsBitIdenticalOnePly is TestParallelSearchIsBitIdentical's
+// cheap sibling: same property, one ply instead of two (~20 ms total), so it
+// is NOT skipped under -short and runs on every push through the `gammonnet`
+// shard of build.yml — the 2-ply test above only runs on a version tag or in
+// the race-targeted job that also matches this file by name (C.2, #189).
+func TestParallelSearchIsBitIdenticalOnePly(t *testing.T) {
+	p := openingPosition(t)
+
+	serial, err := NewSearcher(DefaultConfig(1))
+	if err != nil {
+		t.Fatal(err)
+	}
+	a := make([]Candidate, MaxPlays)
+	pa := p
+	na, err := serial.Plays(&pa, 3, 1, a)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, nw := range []int{1, 2, runtime.NumCPU(), 64} {
+		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
+			par, err := NewSearcher(DefaultConfig(1))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par = par.WithWorkers(nw)
+
+			b := make([]Candidate, MaxPlays)
+			pb := p
+			nb, err := par.Plays(&pb, 3, 1, b)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if na != nb {
+				t.Fatalf("%d candidates serial, %d parallel", na, nb)
+			}
+			for i := 0; i < na; i++ {
+				if a[i].Play.Result != b[i].Play.Result {
+					t.Fatalf("candidate %d is a different play", i)
+				}
+				if a[i].Equity != b[i].Equity {
+					t.Fatalf("candidate %d: serial %.17g, parallel %.17g — not bit-identical",
+						i, a[i].Equity, b[i].Equity)
+				}
+			}
+		})
+	}
+}
+
 // BenchmarkSortByEquity measures the ranking sort on the two list lengths a
 // 2-ply search actually produces: the dozen survivors the big network scores,
 // and the pruning pass on a double. It is the per-poste figure behind the
