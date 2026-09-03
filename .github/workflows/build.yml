@@ -1342,6 +1342,15 @@ jobs:
           name: docs-site
           path: ./doc/build
 
+      # force_orphan (E.10, #226): every deploy used to add a new commit on
+      # top of gh-pages' history, and that branch carries LaTeX build
+      # artefacts (.dvi 113 Mio, .doctrees 88 Mio across its history) — a
+      # `git clone` of the whole repository (every branch) pulls all of it
+      # even though gh-pages is never checked out by anyone. An orphan commit
+      # (single commit, no parent) each time stops that history from growing
+      # further; it does not shrink what is already there (that needs a
+      # one-off history rewrite of gh-pages, out of scope here — see the
+      # lighter-clone note in CONTRIBUTING.md instead).
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847 # v3.9.3
         with:
@@ -1349,3 +1358,4 @@ jobs:
           publish_dir: ./doc/build
           publish_branch: gh-pages
           keep_files: false  # This will clean the branch before deploying
+          force_orphan: true

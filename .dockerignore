@@ -27,9 +27,16 @@ tmp/
 tasks/
 .claude/
 
-# Databases opened at the repo root (and their WAL/lock companions) must
-# never end up in an image.
-*.db
-*.db-wal
-*.db-shm
-*.db.lock
+# Entirely gitignored personal fixture tree (not read by any tracked test):
+# testdata/tournois/live-main.db alone measured 215 Mio locally (E.10, #226).
+testdata/tournois/
+
+# Databases (and their WAL/lock companions), wherever they sit in the tree —
+# not just at the repo root. A bare `*.db` here is NOT recursive (unlike
+# .gitignore's matching): it only matched the context root, so
+# testdata/tournois/live-main.db above still rode along into local `docker
+# build` runs before the `**/` prefix was added (E.10, #226).
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.db.lock
