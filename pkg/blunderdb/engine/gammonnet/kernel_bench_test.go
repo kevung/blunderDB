@@ -33,7 +33,7 @@ func BenchmarkEvaluateBatchKernelPartial(b *testing.B) {
 }
 
 func benchmarkBatchKernel(b *testing.B, n int) {
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -77,7 +77,7 @@ func benchmarkBatchKernel(b *testing.B, n int) {
 // as much here as it is in the benchmark above — measuring it on unrelated
 // boards made it look like a regression.
 func BenchmarkEvaluateBatchKernelSiblings(b *testing.B) {
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		b.Fatal(err)
 	}

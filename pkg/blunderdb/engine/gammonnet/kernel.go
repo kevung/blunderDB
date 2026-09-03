@@ -107,9 +107,9 @@ func KernelName() string {
 	return k.name
 }
 
-// KernelError reports a selector that names an unavailable path. It is nil in
+// kernelError reports a selector that names an unavailable path. It is nil in
 // every ordinary run.
-func KernelError() error {
+func kernelError() error {
 	_, err := resolveKernelOnce()
 	return err
 }

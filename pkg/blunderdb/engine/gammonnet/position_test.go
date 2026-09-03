@@ -109,7 +109,7 @@ func TestFromDomainRefusesIncoherentBoards(t *testing.T) {
 // A raw evaluation's cost is the first number the search tranche needs. Run it
 // on an idle machine: under load the figure measures the machine, not the code.
 func BenchmarkEvaluate(b *testing.B) {
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func BenchmarkEvaluate(b *testing.B) {
 // Reported per position, so a scalar run and a batched run print numbers that
 // can be divided by each other.
 func BenchmarkEvaluateBatch(b *testing.B) {
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		b.Fatal(err)
 	}

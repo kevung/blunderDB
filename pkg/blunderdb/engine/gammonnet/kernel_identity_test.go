@@ -89,7 +89,7 @@ func compareBatch(t *testing.T, kernels []denseKernel, evs []*Evaluator, scalar 
 // bits the scalar path returns.
 func TestKernelIdentityOnReferenceVectors(t *testing.T) {
 	ref := loadReference(t)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -121,7 +121,7 @@ func TestKernelIdentityOnReferenceVectors(t *testing.T) {
 // alternative could not offer.
 func TestKernelIdentityOnPartialBatches(t *testing.T) {
 	ref := loadReference(t)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -180,11 +180,11 @@ func TestKernelIdentityOnSearchPositions(t *testing.T) {
 	positions := oneplyCorpus(t, 2000)
 	t.Logf("%d distinct positions from a 1-ply expansion of the opening", len(positions))
 
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}

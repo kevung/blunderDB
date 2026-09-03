@@ -415,7 +415,7 @@ func evaluateMoves(gnPos *Position, pos *domain.Position, searcher *Searcher, de
 			equityError = &diff
 		}
 
-		mine := InvertProbs(&c.Probs) // Candidate.Probs is the RESULTING position's distribution, opponent's POV
+		mine := invertProbs(&c.Probs) // Candidate.Probs is the RESULTING position's distribution, opponent's POV
 		// domain.CheckerMove's chance fields are percentages [0,100] — the
 		// scale every importer (xgmap.go, gnubgmap.go, bgfmap.go) and
 		// CandidateMovesTable.svelte's unscaled .toFixed(2) already use, not

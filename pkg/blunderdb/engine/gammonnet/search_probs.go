@@ -34,15 +34,6 @@ func invertProbs(in *[NumOutputs]float32) [NumOutputs]float32 {
 	return out
 }
 
-// InvertProbs is invertProbs, exported for cold-path callers (the Eval panel,
-// #125) that need a candidate's resulting-position distribution — which
-// Candidate.Probs documents as the OPPONENT's point of view — flipped back to
-// the mover's, without keeping a second copy of the perspective swap this
-// package is otherwise so careful about.
-func InvertProbs(in *[NumOutputs]float32) [NumOutputs]float32 {
-	return invertProbs(in)
-}
-
 // terminalProbs is the distribution of a finished game: all mass on the one
 // outcome that happened. Computed, never evaluated, like terminalEquity —
 // and sharing its convention that Turn names the LOSER at a terminal
@@ -79,7 +70,7 @@ func terminalProbs(p *Position) [NumOutputs]float32 {
 // game the search would actually play.
 //
 // Both money and match valuations are linear in this distribution — a test
-// holds MoneyEquity(Probs(pos)) == the equity BestPlay's own recursion
+// holds moneyEquity(Probs(pos)) == the equity BestPlay's own recursion
 // assigns to pos, rather than trusting the identity.
 func (s *Searcher) Probs(pos *Position) ([NumOutputs]float32, bool) {
 	// The one validation of this walk, as Searcher.Plays does for the other:

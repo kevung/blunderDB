@@ -80,15 +80,34 @@ Deux observations à garder pour F4 (#148) : le parallélisme rend ×5,2 ici sur
 5. **Le lot analyse une position à la fois, avec un `Searcher` neuf de 5,5 Mo par position**
    (`db_gammonnet_batch.go:73-105`, `:177-204`).
 
-### Ce qui n'explique pas ces chiffres (backlog, pas ce plan)
+### Ce qui n'explique pas ces chiffres (backlog, pas ce plan) — REPRIS DEPUIS
 
-Les frais hors réseau listés par l'audit valent 0,15 s au total sur 5,5 s : allocation de
+Les frais hors réseau listés par l'audit valaient 0,15 s au total sur 5,5 s : allocation de
 164 Ko par appel (`search.go:278`), `sort.SliceStable` réflexif trois fois par nœud
 (`search.go:563`), dédup O(n²) dans `moves_gen.go:65-70`, `Valid()` sur des positions légales
 par construction (`encoding.go:45`, `moves_gen.go:36`), ~240 bissections par valuation du
-videau au score (`cube.go:509-526`) alors que les lookups MET sont invariants sur toute la
-recherche. Ils deviendront visibles quand le réseau aura été divisé par huit ; ils sont
-consignés dans `tasks/BACKLOG.md` avec ce profil comme preuve, et seront repris sur mesure.
+videau au score (`cube.go`) alors que les lookups MET sont invariants sur toute la recherche.
+Ils devaient devenir visibles quand le réseau aurait été divisé par huit. Il l'a été, et ils le
+sont devenus — **cette liste n'est plus ouverte** (mise à jour du 2026-09-03, fiche C.12) :
+
+- **Allocation par appel : fait.** `BenchmarkDecision2Ply` rend **6 allocations** par décision
+  (le brouillon vit avec le chercheur ; `NewBatchSearcher` le fait vivre avec la passe, #147).
+- **Tri réflexif : fait.** `sortByEquity` est typé, insertion sous 48 candidats et fusion
+  au-dessus (`search.go`, `BenchmarkSortByEquity`).
+- **Dédup O(n²) : fait.** Table de hachage à époques (`dedupTable`, `moves_gen.go`), FNV-1a
+  quatre octets à la fois.
+- **`Valid()` sur des positions légales : fait.** `encodeLegal` est le chemin interne ;
+  `Encode` garde sa validation pour les appelants extérieurs. C'était la moitié de `Encode`
+  (45 ns sur 91).
+- **Lookups MET invariants : mesuré et ANNULÉ.** Les remonter vaut 1 % — 11 % d'un poste,
+  sous le plancher de bruit (#150). Chaque voie paye les siennes.
+- **Bissections du videau : la seule qui reste, et elle est spécifiée.** Elles valent
+  aujourd'hui **35,4 %** d'une décision 2-ply au score (profil du 2026-09-03, après le noyau et
+  après C.8/C.9/C.10). La forme close les supprime — ×19 sur la fonction, décision au score
+  306 → 193 ms — mais elle n'est pas bit-identique et le gain survit au changement de langage :
+  elle se décide **en amont**, dans gammonNet. Décision, mesure et correctif proposé dans l'ADR
+  « The cube's level inversion becomes a closed form, and that is written upstream » (fiche
+  C.7, #194).
 
 ---
 

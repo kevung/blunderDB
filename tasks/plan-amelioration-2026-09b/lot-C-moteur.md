@@ -8,6 +8,11 @@
 `BenchmarkDecision2Ply` 702 ms contre `…Match` 1 036 ms — l'écart est
 entièrement du videau. Allocations : 85 en money, 1 472 au score.
 
+**Remesuré le 2026-09-03, après C.8/C.9/C.10** (C.7) : 2-ply money **193 ms**,
+2-ply au score **306 ms**, 6 allocations ; profil au score `EvaluateBatch`
+52,6 %, `Value` 39,8 %, `buildLevels` 38,7 %, `levelSolve` 35,4 %. Les
+proportions tiennent, les valeurs absolues non — repartir de celles-ci.
+
 Règle du lot : une modification qui change ce que le moteur calcule passe
 d'abord par gammonNet amont (son ADR-0003, critère « le gain survit au
 changement de langage ») et par le gold ; une modification d'interface ou de
@@ -145,23 +150,51 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
 
 ---
 
-## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf (#194)
+## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf (#194) — FAIT (décision + mesure + patch proposé)
 
-`cube.go:509-526` bissecte 60 fois une fonction **linéaire par morceaux et
-monotone** dont les 3-4 segments sont connus (`levelLive`, `:471-497`) :
-le rapport [P6](../../docs/recherche/P6-videau-janowski.md) confirme que **la bissection
-est superflue** — Janowski donne take point, cash point et too-good en forme close, et au
-score le take point live est un produit récursif fini, donc encore une forme close.
-38,9 % du profil d'une décision 2-ply au score. L'inversion en forme close est
-O(1) et exacte. Gain conceptuel → **gammonNet d'abord** (`gn_cube.c`, mesure,
-spec), régénération de `cube_gold.bin`, puis port. Le « valuer le videau par
-lot » du BACKLOG est la seconde marche.
-- [ ] Amont : PR gammonNet + mesure ; tag.
-- [ ] Ici : port, `cube_gold.bin` régénéré, `EngineVersion` inchangée si le
-      résultat est bit-identique (il doit l'être ; sinon c'est une
-      Configuration et les bases sont périmées).
-- [ ] Benchmarks manquants **avant** : `BenchmarkProbs2Ply`,
-      `BenchmarkCubeDecisionAtScore`, `BenchmarkBuildLevels`, débit du lot.
+`cube.go` bissecte 60 fois une fonction **linéaire par morceaux et monotone**
+dont les 3-4 segments sont connus (`levelLive`) : le rapport
+[P6](../../docs/recherche/P6-videau-janowski.md) confirme que **la bissection
+est superflue**.
+- [x] Remesuré APRÈS C.8/C.9/C.10 (le profil de cette fiche datait d'avant) :
+      2-ply money 193 ms, 2-ply au score 306 ms ; profil de la seconde
+      `levelSolve` **35,4 %** cumulé, `buildLevels` 38,7 %, `Value` 39,8 %,
+      `EvaluateBatch` 52,6 %. Une inversion : 126 ns contre **6,8 ns** en
+      forme close (×19) ; les points de rupture sont **84 %** d'une chaîne
+      d'enjeux (1 160 ns dont 190 d'ancres).
+- [x] Forme close écrite et mesurée bout en bout (rapiécée, mesurée, révoquée) :
+      décision 2-ply au score **306 → 193 ms** (×1,58 — elle coûte alors ce que
+      coûte la même décision en money), `Decide` au score 1 170 → ~600 ns,
+      débit du lot 4 500 → 6 780 pos/s à 0-ply et **12,2 → 15,6 pos/s à 2-ply**.
+- [x] **Pas bit-identique**, et c'est ce qui tranche : 42,7 % des inversions
+      identiques, |Δp| max 2,25e-13, |ΔValue| max **4,4e-16** ; surtout, le
+      gold du videau rend aujourd'hui `max|Δ| = 0,000e+00` contre le C sur
+      2 320 décisions et la forme close le porterait à **1,665e-14**. Réécrire
+      ici ferait mesurer au gold une divergence de PORTAGE. Le gold de
+      recherche et la porte d'intégration, eux, ne bougent pas d'un chiffre
+      (669 décisions, sortie octet pour octet identique).
+- [x] Décision : **amont**. Le gain survit au changement de langage (60 pas
+      d'une chaîne sérielle contre une division = forme de l'algorithme), donc
+      ADR-0003 amont + invariant de CLAUDE.md. C'est une **Configuration** :
+      nouveau tag gammonNet, `EngineVersion`, `cube_gold.bin` et
+      `search_cube_gold.bin` régénérés, analyses stockées périmées — **groupée
+      avec le point 4 de l'ADR-0029** (efficacité de branche), qui périme
+      exactement les mêmes choses. Écrit dans l'ADR « The cube's level
+      inversion becomes a closed form, and that is written upstream ».
+- [x] Repères manquants ajoutés : `BenchmarkLevelSolveBisection`,
+      `BenchmarkLevelSolveClosed`, `BenchmarkBuildLevels`,
+      `BenchmarkBuildLevelAnchors`, `BenchmarkCubeDecisionAtScore`,
+      `BenchmarkCubeDecisionMoney`, `BenchmarkAnalysisBatchThroughput` (pos/s).
+      `BenchmarkProbs2Ply` existe déjà sous les deux noms
+      `BenchmarkProbs{Serial,Parallel}2Ply` (C.8).
+- [x] Dispositif d'exactitude committé et TOUJOURS actif :
+      `TestClosedFormAgreesWithBisection` (725 328 inversions, 1e-9 en p) —
+      c'est lui qui rendra le portage mécanique le jour où l'amont livre.
+- [ ] **Reste en amont** : PR gammonNet (`gn_cube.c` `level_solve`, spec §9),
+      mesure amont, tag ; puis ici, échange du corps de `levelSolve`, deux gold
+      régénérés, `EngineVersion`, `AnalyzeStaleGammonNet`. Le « valuer le
+      videau par lot » du BACKLOG est déjà porté ET RÉFUTÉ ici
+      (`cube_batch_experiment_test.go`, ×0,89).
 
 ## C.8 — La décision de videau du panneau n'utilise qu'une fraction des cœurs [M] — perf (#195)
 
@@ -206,38 +239,78 @@ frappe, caches froids ×3. Les chiffres « +36 % » et « 376 µs » des comment
   → exporter `race.CubeStateFor`.
 - [ ] Les trois, bench avant/après.
 
-## C.11 — Surface exportée morte [S] — lisibilité (#198)
+## C.11 — Surface exportée morte [S] — lisibilité (#198) — FAIT
 
 `Equity`, `TakePoint`, `Verdict`, `MoneyEquity`, `InvertProbs`, `Counters`,
 `BatchFill`, `ResetCounters`, `KernelName`, `KernelError`,
 `EmbeddedPruneNetwork`, `NewSearcherWith`, `Reconfigure` : 0 usage hors
 paquet, chacun avec une justification pour un appelant qui n'existe pas.
-- [ ] Dé-exporter ce qui n'a que des usages de test ; garder `Verdict`/
-      `TakePoint` **et** les utiliser (C.6) ; les compteurs restent pour le probe
-      mais couverts par un test.
-- [ ] `analysiscodec.go` / `positioncodec.go` / `bearoff_export.go` /
-      `epc.go:61 PipCounts` à 0 % : ce sont les fonctions qui écrivent les
-      colonnes scalaires (le bug `CommitImportDatabase` d'hier) → tests.
+- [x] Audit sur les **quatre** consommateurs (GUI + liaisons Wails, CLI,
+      serveur, tests). Une prise : **`Reconfigure` n'est PAS mort** —
+      `internal/gui/gammonnet_eval.go:297,384` l'appelle comme méthode
+      (`searcher.Reconfigure`), ce qu'un `grep gammonnet.Reconfigure` ne voit
+      pas. Il reste exporté. C'est le seul faux positif de la liste.
+- [x] Supprimés (0 appelant, tests compris) : `Equity` (le modèle sort par
+      `Value` et `Decide`) et le wrapper `InvertProbs`, dont le corps
+      `invertProbs` était déjà là et déjà appelé.
+- [x] Dé-exportés : `MoneyEquity`, `KernelError`, `Embedded`
+      (→ `embeddedNetwork`), `EmbeddedPruneNetwork`, `NewSearcherWith`.
+      `Embedded` n'était pas dans la liste mais est mort de la même façon, et
+      laisser exportée une moitié de la paire de constructeurs aurait été
+      exactement la demi-mesure que la fiche enlève.
+- [x] Gardés : `Verdict` et `TakePoint` — le commentaire de `Verdict`
+      promettait « un rollout cubeful ou un banc de référence » ; il nomme
+      maintenant **C.6/#193** comme appelant, ce qui est vrai et vérifiable.
+      `CubelessValue` dit désormais pourquoi elle, elle a le droit : son
+      appelant existe.
+- [x] Compteurs (`Counters`, `BatchFill`, `CubeValuations`, `ResetCounters`)
+      et `KernelName` gardés pour la sonde et **couverts**
+      (`counters_test.go`) : comptage non nul, succès de cache sur la position
+      rejouée, voies multiples de `EvalBatchWidth`, remise à zéro ouvriers
+      compris, nom de noyau réel.
+- [x] `analysiscodec.go` / `positioncodec.go` / `bearoff_export.go` /
+      `epc.go PipCounts` : `codec_columns_test.go` couvre les onze fonctions
+      qui étaient à 0 % — celles qui écrivent les colonnes scalaires (la
+      famille du bug `CommitImportDatabase`). Couverture `engine`
+      **68,5 % → 92,4 %**, `gammonnet` **87,9 % → 91,0 %**.
 
-## C.12 — Documentation du moteur [S] — navigation (#199)
+## C.12 — Documentation du moteur [S] — navigation (#199) — FAIT
 
-- `CLAUDE.md:167-170` ne cite ni `engine/gammonnet` (5 000 l.) ni `met.go` ;
-  `:189` `cmd/` sans `calibrace`.
-- Paquet `engine` sans commentaire de paquet (`epc.go`, `bitboards.go`,
-  `zobrist.go`, `met.go`).
-- `cube.go:382-386` (« use_cube is a follow-up ») périmé ; `tasks/gammonnet-perf/README.md`
-  § « ce qui n'explique pas ces chiffres » liste comme ouvert ce qui est fait.
-- ADR à écrire : « GPU/WASM sont écartés » (ADR-0024 fait de la reproductibilité
-  bit-à-bit la définition de « périmé » ; une ligne évite la question).
-- [ ] Les quatre points.
+- [x] `CLAUDE.md` : le point `pkg/blunderdb/engine/` cite désormais `met.go` et
+      les deux codecs, et nomme les DEUX sous-paquets évaluateurs —
+      `engine/race/` et `engine/gammonnet/` (~5 000 lignes, la plus grosse
+      chose de l'arbre, avec ses ADR et son en-tête de `cube.go`). `cmd/`
+      liste `calibrace` et `train-analysis-dict`, absents jusqu'ici.
+- [x] Paquet `engine` : commentaire de paquet (`doc.go`) — carte fichier par
+      fichier (zobrist / bitboards / epc / bearoff_export / met / les deux
+      codecs), les deux sous-paquets, et la règle qu'ils partagent (une valeur
+      dérivée se calcule ici et se stocke, jamais au moment de la lecture).
+- [x] `cube.go` : « use_cube is a follow-up tranche, ADR-0016 » était périmé de
+      deux tags — `valueFromProbs` dit maintenant ce qu'elle est (la lecture
+      cubeless, dont `CubelessValue` est la face exportée) et que `use_cube`
+      est porté depuis l'ADR-0023.
+- [x] `tasks/gammonnet-perf/README.md` § « ce qui n'explique pas ces
+      chiffres » : les cinq postes listés comme ouverts sont faits ou mesurés
+      et annulés (allocation → 6 allocs/décision, tri typé, dédup par table de
+      hachage, `encodeLegal`, lookups MET annulés à 1 % en #150) ; le seul qui
+      reste est la bissection du videau, et elle est spécifiée en amont (C.7).
+- [x] ADR « The evaluator has one arithmetic contract: no GPU, no WebAssembly
+      kernel » : GPU écarté sur le contrat ET sur la forme du travail (lots de
+      8 voies, ≤ 63 positions à la racine, 17 µs la passe avant, chaîne
+      sérielle) plus cgo contre `CGO_ENABLED=0` ; relaxed-SIMD WASM interdit
+      (`fma`/`min`/`max` « implementation defined »), un build WASM tourne le
+      repli pur Go. Ne concerne QUE l'arithmétique de l'évaluateur : compiler
+      d'autres parties en WASM (P12, générateur SVG) reste ouvert.
 
 ---
 
 ## C.13 — Amont gammonNet (décisions, pas des fiches ici) (#200)
 
 À porter dans le dépôt gammonNet avec leur jauge de force ; blunderDB suit.
-1. Forme close de `levelSolve` (C.7).
-2. Efficacité miroitée / branche DT (C.5) si le C fait pareil.
+1. Forme close de `levelSolve` (C.7) — **spécifiée** : correctif proposé, mesure et
+   dispositif d'exactitude dans l'ADR « The cube's level inversion becomes a closed
+   form ». À cutter avec le point 2, une seule Configuration.
+2. Efficacité de branche / branche DT (C.5) — **spécifiée** par l'ADR-0029 point 4.
 3. Réseau distillé 60-100 k MAC (P4 : ×5-9, priorité 1 amont) — nouvelle
    Configuration, `EngineVersion`, bases périmées.
 4. Filtres de coups à seuil d'équité (movefilter) — approximatif, jauge.
