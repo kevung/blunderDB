@@ -48,6 +48,16 @@
     // (pending) from "estimated, and it declined" (no decision) — see
     // cubeDecision's `settled`.
     let evalSettled = $state(false);
+    // The engine did not decline the position — it never answered at all: the
+    // Wails call rejected, or a `gammonnet-eval:error` event arrived for the
+    // in-flight evaluation-at-rest. Before this state existed, only
+    // `logger.error` (invisible in production) marked the difference, and the
+    // panel stayed on `eval.pending` forever — the residual debt from
+    // ADR-0017 this fixes. `evalFailedMessage` carries the error text shown to
+    // the user; both are cleared the moment a new evaluation starts or one
+    // succeeds (`applyEvalResult`).
+    let evalFailed = $state(false);
+    let evalFailedMessage = $state('');
     // Race panel's "evaluated" regime (#126, ADR-0012): gammonNet's own
     // async result (same 0-ply-then-2-ply escalation as evalMoves/
     // evalCubeAnalysis above), carrying a verdict where the fast synchronous
@@ -127,6 +137,8 @@
         // invalidates it is the gesture that triggers the recomputation).
         selectedMoveStore.set(null);
         evalSettled = false;
+        evalFailed = false;
+        evalFailedMessage = '';
 
         evalGeneration += 1;
         const generation = evalGeneration;
@@ -146,16 +158,31 @@
                     })
                 )
             )
-            .catch((error) => logger.error('gammonNet 0-ply evaluation failed:', error));
+            .catch((error) => {
+                logger.error('gammonNet 0-ply evaluation failed:', error);
+                if (generation !== evalGeneration) return; // superseded while awaiting
+                evalFailed = true;
+                evalFailedMessage = String(error);
+            });
 
         evalRestTimer = setTimeout(() => {
             if (generation !== evalGeneration) return;
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
-                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => logger.error('gammonNet evaluation-at-rest failed to start:', error));
+                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => {
+                        logger.error('gammonNet evaluation-at-rest failed to start:', error);
+                        if (generation !== evalGeneration) return;
+                        evalFailed = true;
+                        evalFailedMessage = String(error);
+                    });
                 })
-                .catch((error) => logger.error('gammonNet evaluation-at-rest settings failed:', error));
+                .catch((error) => {
+                    logger.error('gammonNet evaluation-at-rest settings failed:', error);
+                    if (generation !== evalGeneration) return;
+                    evalFailed = true;
+                    evalFailedMessage = String(error);
+                });
         }, EVAL_REST_DELAY_MS);
     }
 
@@ -173,6 +200,8 @@
     // evaluation is still perfectly valid.
     function applyEvalResult(result) {
         evalSettled = true;
+        evalFailed = false;
+        evalFailedMessage = '';
         evalRefused = !!result?.refused;
         if (evalRefused) {
             // Nothing this build can say about this position: drop both sides
@@ -203,7 +232,11 @@
         unsubEval = [
             EventsOn('gammonnet-eval:done', (result) => applyEvalResult(result)),
             EventsOn('gammonnet-eval:cancelled', () => {}),
-            EventsOn('gammonnet-eval:error', (e) => logger.error('gammonNet evaluation-at-rest error:', e))
+            EventsOn('gammonnet-eval:error', (e) => {
+                logger.error('gammonNet evaluation-at-rest error:', e);
+                evalFailed = true;
+                evalFailedMessage = String(e);
+            })
         ];
     });
 
@@ -414,6 +447,10 @@
     {:else if data.error}
         <div class="epc-error">
             <span class="error-text">{data.error}</span>
+        </div>
+    {:else if evalFailed}
+        <div class="epc-error">
+            <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
         </div>
     {:else}
         <div class="epc-content">

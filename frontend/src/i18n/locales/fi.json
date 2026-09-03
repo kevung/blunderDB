@@ -679,6 +679,7 @@
     },
     "eval": {
         "pending": "Arviointi tulee tähän.",
+        "failed": "Arviointi epäonnistui: {error}",
         "panelLabel": "Eval-paneeli",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysoi: {done}/{total}",
