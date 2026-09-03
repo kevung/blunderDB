@@ -16,7 +16,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     UpdatePosition: vi.fn(),
     SaveAnalysis: vi.fn(),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
-    LoadPositionsByFilters: vi.fn(() => Promise.resolve([])),
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
     ComputeEPCFromPosition: vi.fn(() => Promise.resolve({})),
     SaveLastVisitedPosition: vi.fn(),
     GetLastVisitedMatch: vi.fn(() => Promise.resolve(null)),

@@ -6,7 +6,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
     GetPositionIDsByMatch: vi.fn(),
-    LoadPositionsByFilters: vi.fn()
+    LoadPositionIDsByFilters: vi.fn()
 }));
 
 // Mock uiStore to prevent side-effects
@@ -42,11 +42,18 @@ vi.mock('../stores/databaseStore.js', () => {
     };
 });
 
-// Mock positionStore
+// Mock positionStore: a bare-bones stand-in for positionsStore (positionList.js
+// in the real app) that just remembers the last id list it was given —
+// loadPositionsFromSelection only ever calls setIds() on it now (D.8, #208).
 vi.mock('../stores/positionStore.js', () => {
     const { writable } = require('svelte/store');
+    const store = writable([]);
     return {
-        positionsStore: writable([])
+        positionsStore: {
+            subscribe: store.subscribe,
+            set: store.set,
+            setIds: (ids) => store.set(ids)
+        }
     };
 });
 
@@ -58,7 +65,7 @@ vi.mock('../stores/statsStore.js', () => {
     };
 });
 
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
 
 import {
     loadPositionsFromSelection,
@@ -85,7 +92,7 @@ describe('loadPositionsFromStatsSelection', () => {
 
     test('calls GetPositionIDsByStatsSelection with correct args', async () => {
         GetPositionIDsByStatsSelection.mockResolvedValue([1, 2, 3]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
 
         const filter = { playerName: 'Bob', decisionType: -1 };
         const sel = { kind: 'checker' };
@@ -94,13 +101,13 @@ describe('loadPositionsFromStatsSelection', () => {
         expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, sel);
     });
 
-    test('loads positions into positionsStore and switches to analysis tab', async () => {
+    test('loads position ids into positionsStore and switches to analysis tab', async () => {
         GetPositionIDsByStatsSelection.mockResolvedValue([10, 20]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 10 }, { id: 20 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([10, 20]);
 
         await loadPositionsFromStatsSelection({}, { kind: 'all' });
 
-        expect(get(positionsStore)).toEqual([{ id: 10 }, { id: 20 }]);
+        expect(get(positionsStore)).toEqual([10, 20]);
         expect(get(activeTabStore)).toBe('analysis');
     });
 });
@@ -116,19 +123,19 @@ describe('loadWorstBlunders', () => {
         const filter = { decisionType: 1, playerName: 'Alice', tournamentIDs: [], dateFrom: '', dateTo: '', matchLength: [] };
         statsFilterStore.set(filter);
         GetPositionIDsByStatsSelection.mockResolvedValue([7, 8]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 7 }, { id: 8 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([7, 8]);
 
         await loadWorstBlunders();
 
         expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'top_blunders' });
-        expect(get(positionsStore)).toEqual([{ id: 7 }, { id: 8 }]);
+        expect(get(positionsStore)).toEqual([7, 8]);
         expect(get(activeTabStore)).toBe('analysis');
     });
 
     test('passes a positive count through as LastN', async () => {
         statsFilterStore.set({ decisionType: -1 });
         GetPositionIDsByStatsSelection.mockResolvedValue([1]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([1]);
 
         await loadWorstBlunders(50);
 
@@ -138,7 +145,7 @@ describe('loadWorstBlunders', () => {
     test('ignores a non-positive / non-integer count (backend default applies)', async () => {
         statsFilterStore.set({ decisionType: -1 });
         GetPositionIDsByStatsSelection.mockResolvedValue([1]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([1]);
 
         await loadWorstBlunders(0);
         expect(GetPositionIDsByStatsSelection).toHaveBeenLastCalledWith({ decisionType: -1 }, { Kind: 'top_blunders' });
@@ -148,7 +155,7 @@ describe('loadWorstBlunders', () => {
 describe('loadPositionsFromTournament', () => {
     test('calls GetPositionIDsByTournament with tournamentID', async () => {
         GetPositionIDsByTournament.mockResolvedValue([5, 6]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 5 }, { id: 6 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([5, 6]);
 
         await loadPositionsFromTournament(42);
         expect(GetPositionIDsByTournament).toHaveBeenCalledWith(42);
@@ -158,7 +165,7 @@ describe('loadPositionsFromTournament', () => {
 describe('loadPositionsFromMatch', () => {
     test('calls GetPositionIDsByMatch with matchID', async () => {
         GetPositionIDsByMatch.mockResolvedValue([7, 8]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 7 }, { id: 8 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([7, 8]);
 
         await loadPositionsFromMatch(99);
         expect(GetPositionIDsByMatch).toHaveBeenCalledWith(99);
@@ -174,13 +181,13 @@ describe('loadPositionsFromSelection', () => {
 
     test('sets statusBarTextStore and skips fetch when ids is empty', async () => {
         await loadPositionsFromSelection([]);
-        expect(LoadPositionsByFilters).not.toHaveBeenCalled();
+        expect(LoadPositionIDsByFilters).not.toHaveBeenCalled();
     });
 
     test('passes comma-separated IDs as restrictToPositionIDs', async () => {
-        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
         await loadPositionsFromSelection([1, 2, 3]);
-        expect(LoadPositionsByFilters).toHaveBeenCalledWith(expect.objectContaining({ restrictToPositionIDs: '1,2,3' }));
+        expect(LoadPositionIDsByFilters).toHaveBeenCalledWith(expect.objectContaining({ restrictToPositionIDs: '1,2,3' }));
     });
 });
 

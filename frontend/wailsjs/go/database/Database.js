@@ -34,6 +34,14 @@ export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
 
+export function CheckConstraints() {
+  return window['go']['database']['Database']['CheckConstraints']();
+}
+
+export function CheckCounters() {
+  return window['go']['database']['Database']['CheckCounters']();
+}
+
 export function CheckDatabaseVersion() {
   return window['go']['database']['Database']['CheckDatabaseVersion']();
 }
@@ -48,6 +56,10 @@ export function CheckSchema() {
 
 export function CheckVersion(arg1) {
   return window['go']['database']['Database']['CheckVersion'](arg1);
+}
+
+export function Checkpoint() {
+  return window['go']['database']['Database']['Checkpoint']();
 }
 
 export function ClearCommandHistory() {
@@ -76,10 +88,6 @@ export function ComputeEPCFromPosition(arg1) {
 
 export function ComputeStats(arg1) {
   return window['go']['database']['Database']['ComputeStats'](arg1);
-}
-
-export function Conn() {
-  return window['go']['database']['Database']['Conn']();
 }
 
 export function CopyPositionToCollection(arg1, arg2) {
@@ -386,12 +394,16 @@ export function LoadPosition(arg1) {
   return window['go']['database']['Database']['LoadPosition'](arg1);
 }
 
+export function LoadPositionIDsByFilters(arg1) {
+  return window['go']['database']['Database']['LoadPositionIDsByFilters'](arg1);
+}
+
 export function LoadPositionsByFilters(arg1) {
   return window['go']['database']['Database']['LoadPositionsByFilters'](arg1);
 }
 
-export function LoadPositionsByFiltersCore(arg1) {
-  return window['go']['database']['Database']['LoadPositionsByFiltersCore'](arg1);
+export function LoadPositionsByFiltersCore(arg1, arg2) {
+  return window['go']['database']['Database']['LoadPositionsByFiltersCore'](arg1, arg2);
 }
 
 export function LoadPositionsByIDs(arg1) {

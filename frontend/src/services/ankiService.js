@@ -25,7 +25,7 @@ import {
     ReviewAnkiCard,
     ResetAnkiDeck,
     GetAllCollections,
-    LoadPositionsByFilters
+    LoadPositionIDsByFilters
 } from '../../wailsjs/go/database/Database.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
@@ -216,11 +216,10 @@ export async function resolveSearchDeckIds(sourceCommand) {
                 .map((f) => f.trim());
             payload = buildSearchFilterPayload(position, parseFilters(filters, command), filters);
         }
-        const results = await LoadPositionsByFilters(payload);
-        return mergeIds(
-            (results || []).map((p) => p.id),
-            storedIds
-        );
+        // Ids only (D.8, #208): this only ever reads .id off the results, so
+        // there is no reason to ship every matching position whole.
+        const ids = await LoadPositionIDsByFilters(payload);
+        return mergeIds(ids || [], storedIds);
     } catch (e) {
         logger.error('Error executing search for deck sync:', e);
         return [];

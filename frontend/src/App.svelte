@@ -212,12 +212,21 @@
         else savePanelHeight(size);
     }
 
+    // A trackpad fires many wheel events per gesture; each step used to call
+    // straight into previousPosition()/nextPosition() (a Wails round trip for
+    // the analysis + comment of every intermediate position), stacking up
+    // awaits far faster than the board could show them. 60ms between
+    // navigations keeps one scroll gesture to a handful of steps (D.8, #208).
+    let lastWheelNavTime = 0;
     function handleWheel(event) {
         if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
         const boardArea = mainArea?.querySelector('.scrollable-content');
         if (!boardArea || !boardArea.contains(event.target)) return;
         if (positionCount > 0) {
             event.preventDefault();
+            const now = performance.now();
+            if (now - lastWheelNavTime < 60) return;
+            lastWheelNavTime = now;
             if (event.deltaY < 0) previousPosition();
             else if (event.deltaY > 0) nextPosition();
         }

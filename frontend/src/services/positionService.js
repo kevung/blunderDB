@@ -6,7 +6,7 @@ import {
     UpdatePosition,
     SaveAnalysis,
     LoadAnalysis,
-    LoadPositionsByFilters,
+    LoadPositionIDsByFilters,
     ComputeEPCFromPosition,
     SaveLastVisitedPosition,
     SaveEditPosition,
@@ -159,15 +159,18 @@ export async function showPosition(position) {
         return;
     }
 
-    const positionCopy = JSON.parse(JSON.stringify(position));
+    const positionCopy = structuredClone(position);
     positionStore.set(positionCopy);
 
-    let analysis = null;
-    try {
-        analysis = await LoadAnalysis(position.id);
-    } catch (_error) {
-        /* No analysis for this position */
-    }
+    // The analysis and the comment are two independent round trips over the
+    // Wails bridge; running them concurrently instead of one after the other
+    // halves the latency a browsing step pays for them (D.8, #208). Each call
+    // is deferred into a .then() so a binding that throws synchronously (as
+    // an unmocked one does in a few tests) becomes a rejection allSettled
+    // catches, rather than an exception that skips the settle entirely.
+    const [analysisResult, commentResult] = await Promise.allSettled([Promise.resolve().then(() => LoadAnalysis(position.id)), Promise.resolve().then(() => LoadComment(position.id))]);
+    const analysis = analysisResult.status === 'fulfilled' ? analysisResult.value : null;
+    const comment = commentResult.status === 'fulfilled' ? commentResult.value : '';
 
     const matchCtx = get(matchContextStore);
     const inMatchMode = get(statusBarModeStore) === 'MATCH' && matchCtx.isMatchMode;
@@ -208,12 +211,6 @@ export async function showPosition(position) {
         lastModifiedDate: analysis?.lastModifiedDate || ''
     });
 
-    let comment = '';
-    try {
-        comment = await LoadComment(position.id);
-    } catch (_error) {
-        /* No comment for this position */
-    }
     commentTextStore.set(comment || '');
 }
 
@@ -427,7 +424,13 @@ export async function loadPositionsByFilters({
         // line and replayed history entries all go through one code path.
         const commentFilter = Array.isArray(filters) ? (filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '') : '';
 
-        const loadedPositions = await LoadPositionsByFilters({
+        // Only ids travel the Wails bridge here (D.8, #208): a search
+        // returning thousands of rows used to ship every one of them whole
+        // (megabytes of JSON) before the board ever showed more than one at a
+        // time. positionsStore (positionList.js) keeps the id list and
+        // fetches the window it is about to show through LoadPositionsByIDs —
+        // the same lazy path the library already uses.
+        const ids = await LoadPositionIDsByFilters({
             filter: currentPosition,
             excludeFilter: excludePosition,
             includeCube,
@@ -472,7 +475,7 @@ export async function loadPositionsByFilters({
             restrictToPositionIDs
         });
 
-        if (loadedPositions && loadedPositions.length > 0) {
+        if (ids && ids.length > 0) {
             if (openInNewTab) {
                 viewStore.addView();
             }
@@ -488,7 +491,7 @@ export async function loadPositionsByFilters({
             });
             activeCollectionStore.set(null);
 
-            positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
+            positionsStore.setIds(Array.isArray(ids) ? ids : []);
 
             if (get(currentPositionIndexStore) === 0) {
                 currentPositionIndexStore.set(1);
