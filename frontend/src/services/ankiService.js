@@ -287,6 +287,23 @@ export async function refreshDeckStats(deckId) {
     return stats;
 }
 
+/**
+ * Add one position's card to a deck (the board's context menu, #215) — every
+ * other path grows a deck through its bound source (search/collection) via
+ * syncDeckCards. SyncWithPositions is `INSERT OR IGNORE`, never a removal, so
+ * this is safe to call on a deck of any sourceType: it only ever adds the one
+ * card, never touches the rest of the deck.
+ */
+export async function addPositionToDeck(deckId, positionId) {
+    await SyncAnkiDeckWithPositions(deckId, [positionId]);
+    // Refresh the visible stats only if this is the deck currently open in
+    // the Anki panel — otherwise there is nothing on screen to update, and
+    // stomping a different deck's stats with these would be a bug.
+    if (get(selectedAnkiDeckStore)?.id === deckId) {
+        await refreshDeckStats(deckId);
+    }
+}
+
 /** Select a deck: its stats, and its positions as the list the status bar counts. */
 export async function selectDeck(deck) {
     selectedAnkiDeckStore.set(deck);

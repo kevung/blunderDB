@@ -6,6 +6,9 @@
  *   - setLanguage() updates the store AND persists via SaveLanguage,
  *   - the reactive help store swaps content with the language,
  *   - an unsupported code falls back to English.
+ *
+ * initLanguage() and loadHelpFor() are async (#207: locales and help content
+ * are fetched on demand), so every call here is awaited.
  */
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
@@ -18,19 +21,19 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 
 import { t, language, setLanguage, initLanguage, FALLBACK_LOCALE, tMsg, resolveStatusMessage } from '../i18n';
-import { help } from '../i18n/help/index.js';
+import { help, loadHelpFor } from '../i18n/help/index.js';
 
 describe('i18n reactivity', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         SaveLanguage.mockClear();
-        initLanguage('en');
+        await initLanguage('en');
     });
 
-    test('derived t re-emits when language changes', () => {
+    test('derived t re-emits when language changes', async () => {
         const seen = [];
         const unsub = t.subscribe((fn) => seen.push(fn('common.back')));
-        initLanguage('fr');
-        initLanguage('de');
+        await initLanguage('fr');
+        await initLanguage('de');
         unsub();
         // First emission is English, then French, then German.
         expect(seen).toContain('Back');
@@ -57,10 +60,12 @@ describe('i18n reactivity', () => {
         expect(get(language)).toBe('es');
     });
 
-    test('help store swaps content with the language', () => {
-        initLanguage('en');
+    test('help store swaps content with the language', async () => {
+        await initLanguage('en');
+        await loadHelpFor('en');
         const enManual = get(help).manual;
-        initLanguage('fr');
+        await initLanguage('fr');
+        await loadHelpFor('fr');
         const frManual = get(help).manual;
         expect(typeof enManual).toBe('string');
         expect(typeof frManual).toBe('string');
@@ -71,21 +76,21 @@ describe('i18n reactivity', () => {
 
     // Status-bar messages are stored as tMsg() descriptors and resolved through
     // $t, so an already-displayed message re-translates when the language changes.
-    test('tMsg descriptor re-resolves through $t after a language switch', () => {
+    test('tMsg descriptor re-resolves through $t after a language switch', async () => {
         const descriptor = tMsg('common.back');
         expect(descriptor).toEqual({ i18nKey: 'common.back', i18nParams: null });
 
-        initLanguage('en');
+        await initLanguage('en');
         expect(resolveStatusMessage(descriptor, get(t))).toBe('Back');
-        initLanguage('fr');
+        await initLanguage('fr');
         expect(resolveStatusMessage(descriptor, get(t))).toBe('Retour');
-        initLanguage('de');
+        await initLanguage('de');
         expect(resolveStatusMessage(descriptor, get(t))).toBe('Zurück');
     });
 
-    test('tMsg interpolates params on resolution', () => {
+    test('tMsg interpolates params on resolution', async () => {
         const descriptor = tMsg('commands.goToPosition', { n: 5 });
-        initLanguage('en');
+        await initLanguage('en');
         expect(resolveStatusMessage(descriptor, get(t))).toBe('Go to position 5');
     });
 

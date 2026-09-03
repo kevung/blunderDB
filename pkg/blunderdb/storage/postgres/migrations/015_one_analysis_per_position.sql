@@ -61,5 +61,3 @@ BEGIN
         END IF;
     END LOOP;
 END $$;
-
-UPDATE metadata SET value = '2.18.0' WHERE key = 'database_version';

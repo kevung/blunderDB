@@ -57,6 +57,10 @@ type listReq struct {
 	Offset int `json:"offset"`
 }
 
+// pageLimit implements pagedReq (handlers_rpc.go): rpc/rpcStream enforce
+// maxPageSize on it before positions.list/listIds ever run.
+func (r listReq) pageLimit() int { return r.Limit }
+
 // idsReq carries the ids of the positions to load, in the order wanted back.
 type idsReq struct {
 	IDs []int64 `json:"ids"`

@@ -16,7 +16,8 @@
         "save": "Guardar",
         "search": "Buscar",
         "errorWithMsg": "Error: {msg}",
-        "reset": "Restablecer"
+        "reset": "Restablecer",
+        "contextMenu": "Acciones"
     },
     "config": {
         "title": "Ajustes",
@@ -650,7 +651,11 @@
         "player1": "Jugador 1",
         "player2": "Jugador 2",
         "menu": {
-            "evaluate": "Evaluar esta posición"
+            "evaluate": "Evaluar esta posición",
+            "evaluateMirror": "Evaluar el espejo de esta posición",
+            "copyImageWithAnalysis": "Copiar la imagen del tablero con el análisis",
+            "newView": "Nueva vista",
+            "addToAnkiDeck": "Añadir al mazo de Anki: {deck}"
         }
     },
     "epc": {
@@ -836,7 +841,10 @@
         "stats": "Estadísticas",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Metadatos"
+        "metadata": "Metadatos",
+        "hideTab": "Ocultar esta pestaña",
+        "showTab": "Mostrar: {tab}",
+        "hiddenTabs": "Pestañas ocultas"
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",
@@ -927,7 +935,9 @@
         "pastedPositionSaved": "Posición y análisis pegados guardados correctamente",
         "importDone": "Importación completada: {succeeded} importadas, {skipped} omitidas, {failed} fallidas",
         "confirmDeletePosition": "¿Eliminar esta posición y su análisis asociado?",
-        "searching": "Buscando…"
+        "searching": "Buscando…",
+        "positionAddedToDeck": "Posición añadida al mazo «{deck}»",
+        "failedAddToDeck": "Error al añadir la posición al mazo: {err}"
     },
     "stats": {
         "title": "Stats",

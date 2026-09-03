@@ -7,8 +7,6 @@ import (
 	"io/fs"
 	"sort"
 	"strings"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // migrationsFS holds the forward migration files. 001 is the bootstrap baseline
@@ -25,8 +23,13 @@ var migrationsFS embed.FS
 // harmless; it is simply recorded as applied so it is not replayed on later opens.
 //
 // The v2.7.0 baseline (001) is never replayed here.
-func migrateForward(ctx context.Context, pool *pgxpool.Pool) error {
-	if _, err := pool.Exec(ctx,
+//
+// db is an execer rather than the pool directly: Migrate (postgres.go) calls
+// this over one connection held for the whole migration, the same connection
+// pg_advisory_lock was taken on, so schema changes and the lock live and die
+// together (#231).
+func migrateForward(ctx context.Context, db execer) error {
+	if _, err := db.Exec(ctx,
 		`CREATE TABLE IF NOT EXISTS schema_migrations (
 			version    TEXT PRIMARY KEY,
 			applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -53,7 +56,7 @@ func migrateForward(ctx context.Context, pool *pgxpool.Pool) error {
 		version := strings.TrimSuffix(name, ".sql")
 
 		var applied bool
-		if err := pool.QueryRow(ctx,
+		if err := db.QueryRow(ctx,
 			`SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE version = $1)`, version).Scan(&applied); err != nil {
 			return fmt.Errorf("postgres: check migration %s: %w", version, err)
 		}
@@ -67,10 +70,10 @@ func migrateForward(ctx context.Context, pool *pgxpool.Pool) error {
 		}
 		// Run as one batch via the simple query protocol (Exec with no bound
 		// arguments), which permits the multiple semicolon-separated statements.
-		if _, err := pool.Exec(ctx, string(stmt)); err != nil {
+		if _, err := db.Exec(ctx, string(stmt)); err != nil {
 			return fmt.Errorf("postgres: apply migration %s: %w", version, err)
 		}
-		if _, err := pool.Exec(ctx,
+		if _, err := db.Exec(ctx,
 			`INSERT INTO schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING`, version); err != nil {
 			return fmt.Errorf("postgres: record migration %s: %w", version, err)
 		}

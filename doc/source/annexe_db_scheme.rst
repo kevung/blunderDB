@@ -74,8 +74,10 @@ et réduisent la taille du fichier :
   motifs de structure.
 
 * **Stockage compact** : les positions sont encodées de façon compacte et les
-  données d'analyse sont compressées (zlib), ce qui réduit fortement la taille
-  du fichier.
+  données d'analyse sont compressées (zstd avec dictionnaire partagé ; les
+  bases plus anciennes, compressées en zlib, restent lisibles et sont
+  recompressées progressivement lors d'un ``vacuum``), ce qui réduit fortement
+  la taille du fichier.
 
 * **Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les
   performances en lecture et en écriture.

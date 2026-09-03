@@ -1,5 +1,5 @@
 .PHONY: dev build check check-fast check-all test lint vet gofmt golangci vuln \
-        test-go test-pg test-e2e test-frontend lint-frontend release-check
+        test-go test-pg test-e2e test-frontend lint-frontend release-check screenshots
 
 # VERSION feeds `blunderdb version`'s app-version line (internal/cli.appVersion,
 # see internal/cli/version.go). It tracks the nearest git tag, same as CI
@@ -91,6 +91,16 @@ test-pg: frontend/dist
 # part of check-all/CI.
 test-e2e:
 	cd frontend && npm run test:e2e
+
+# screenshots regenerates the documentation gallery — doc/source/_static/screenshot.png
+# (README/index hero shot) and doc/source/img/panel_*.png (manuel.rst,
+# guide_utilisateur.rst) — from the real UI on a mocked Wails backend, on the
+# same showcase dataset (frontend/tests/e2e/helpers/showcase.js). Writes
+# tracked files: not part of check/check-all, run on demand and verified at
+# release time (skill release-blunderdb). BLUNDERDB_E2E_PORT picks a free
+# port if 5173 is already in use.
+screenshots:
+	cd frontend && SCREENSHOT=1 npx playwright test screenshot
 
 golangci: frontend/dist
 	golangci-lint run ./...

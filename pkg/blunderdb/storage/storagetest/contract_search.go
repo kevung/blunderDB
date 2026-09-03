@@ -124,7 +124,7 @@ func testSearchFilterByCubeResponse(t *testing.T, s storage.Storage) {
 
 // testSearchFilterByAnalysisDecodesCompressedBlob exercises the analysis-driven
 // Go-side filters (move pattern, equity) that only see a match once Find has
-// decoded the stored a.data blob. The blob is always written zlib-compressed
+// decoded the stored a.data blob. The blob is always written compressed (zstd, see engine.CompressAnalysisData)
 // (AnalysisStore.Save), so a decode path that forgot to decompress — as the
 // PostgreSQL backend's search once did, unmarshalling the compressed bytes
 // directly as JSON — silently produced ana == nil for every row and these

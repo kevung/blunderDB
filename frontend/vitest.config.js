@@ -2,7 +2,10 @@ import { defineConfig } from 'vitest/config';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
 export default defineConfig({
-    plugins: [svelte({ hot: !process.env.VITEST })],
+    // @sveltejs/vite-plugin-svelte 7 dropped the `hot` option (it warned
+    // "invalid plugin option `hot` in inline config" on every test run); HMR
+    // was already always off here since VITEST is set for the whole process.
+    plugins: [svelte()],
     resolve: {
         conditions: ['browser']
     },

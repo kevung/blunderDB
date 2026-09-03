@@ -47,21 +47,16 @@ export default [
                     caughtErrorsIgnorePattern: '^_'
                 }
             ],
-            // Adding keys to all each blocks is a large refactor — warn only
-            'svelte/require-each-key': 'warn',
+            // #205: every `{#each}` in the codebase is now keyed (verified
+            // 2026-09-03, zero warnings from either rule below) — promoted
+            // from 'warn' so a future unkeyed each-block or reactive loop
+            // fails CI instead of accumulating silently the way the 35
+            // Svelte-compiler warnings this fiche put a ceiling on did.
+            'svelte/require-each-key': 'error',
             'svelte/prefer-svelte-reactivity': 'error',
-            // Reactive loops are possible but mostly false positives — warn only
-            'svelte/infinite-reactive-loop': 'warn',
+            'svelte/infinite-reactive-loop': 'error',
             // Svelte reactive assignments can look "useless" to the JS analyser
             'no-useless-assignment': 'warn'
-        }
-    },
-    {
-        // HelpModal renders the in-app help, which is app-owned HTML loaded from
-        // src/i18n/help/*.js (no user input), so {@html} is safe here by design.
-        files: ['**/components/HelpModal.svelte'],
-        rules: {
-            'svelte/no-at-html-tags': 'off'
         }
     },
     {

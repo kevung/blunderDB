@@ -19,4 +19,3 @@
 
 ALTER TABLE move ADD COLUMN IF NOT EXISTS luck_mp BIGINT;
 
-UPDATE metadata SET value = '2.15.0' WHERE key = 'database_version';

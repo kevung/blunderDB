@@ -438,7 +438,7 @@
 <!-- A <section> rather than a <div>: the panel takes focus and listens for
      keys (handleKeyDown), which is a landmark's business and a static
      element's a11y warning — the same shape AnalysisPanel already has. -->
-<section class="epc-panel" bind:this={panelEl} role="region" aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
+<section class="epc-panel" bind:this={panelEl} aria-label={$t('eval.panelLabel')} tabindex="-1" onkeydown={handleKeyDown}>
     {#if !isActive}
         <div class="epc-inactive">
             <div class="epc-inactive-message">

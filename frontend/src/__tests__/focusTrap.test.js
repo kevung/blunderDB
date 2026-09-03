@@ -163,6 +163,43 @@ describe('trapFocus', () => {
         outsideButton.remove();
     });
 
+    test('a hidden (display:none) match is excluded from the focusable set (#204)', () => {
+        container = document.createElement('div');
+        container.innerHTML = `
+            <button id="first">First</button>
+            <button id="hidden" style="display: none">Hidden</button>
+            <button id="last">Last</button>
+        `;
+        document.body.appendChild(container);
+        trapFocus(container);
+
+        // Initial focus skips the hidden button.
+        expect(document.activeElement.id).toBe('first');
+
+        document.getElementById('last').focus();
+        keydown(container, 'Tab');
+        expect(document.activeElement.id).toBe('first');
+
+        document.getElementById('first').focus();
+        keydown(container, 'Tab', { shiftKey: true });
+        expect(document.activeElement.id).toBe('last');
+    });
+
+    test("a match inside a display:none ancestor is excluded even though its own computed display is not 'none' (#204)", () => {
+        container = document.createElement('div');
+        container.innerHTML = `
+            <button id="first">First</button>
+            <div id="hidden-section" style="display: none"><button id="in-hidden">In hidden section</button></div>
+            <button id="last">Last</button>
+        `;
+        document.body.appendChild(container);
+        trapFocus(container);
+
+        document.getElementById('last').focus();
+        keydown(container, 'Tab');
+        expect(document.activeElement.id).toBe('first');
+    });
+
     test('destroy removes the keydown listener', () => {
         container = document.createElement('div');
         container.innerHTML = `<button id="first">First</button><button id="last">Last</button>`;

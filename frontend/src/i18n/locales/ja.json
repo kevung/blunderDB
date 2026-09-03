@@ -16,7 +16,8 @@
         "save": "保存",
         "search": "検索",
         "errorWithMsg": "エラー: {msg}",
-        "reset": "リセット"
+        "reset": "リセット",
+        "contextMenu": "操作"
     },
     "config": {
         "title": "設定",
@@ -650,7 +651,11 @@
         "player1": "プレイヤー 1",
         "player2": "プレイヤー 2",
         "menu": {
-            "evaluate": "この局面を評価"
+            "evaluate": "この局面を評価",
+            "evaluateMirror": "この局面の鏡像を評価する",
+            "copyImageWithAnalysis": "盤面画像と分析をコピー",
+            "newView": "新しいビュー",
+            "addToAnkiDeck": "Ankiデッキに追加: {deck}"
         }
     },
     "epc": {
@@ -836,7 +841,10 @@
         "stats": "統計",
         "epc": "評価",
         "anki": "Anki",
-        "metadata": "メタデータ"
+        "metadata": "メタデータ",
+        "hideTab": "このタブを非表示にする",
+        "showTab": "表示: {tab}",
+        "hiddenTabs": "非表示のタブ"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
@@ -927,7 +935,9 @@
         "pastedPositionSaved": "貼り付けたポジションと分析を保存しました",
         "importDone": "インポート完了：{succeeded}件インポート、{skipped}件スキップ、{failed}件失敗",
         "confirmDeletePosition": "このポジションと関連する分析を削除しますか?",
-        "searching": "検索中…"
+        "searching": "検索中…",
+        "positionAddedToDeck": "局面をデッキ「{deck}」に追加しました",
+        "failedAddToDeck": "局面をデッキに追加できませんでした: {err}"
     },
     "stats": {
         "title": "統計",

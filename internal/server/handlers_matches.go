@@ -74,6 +74,10 @@ type matchListReq struct {
 	Offset        int     `json:"offset"`
 }
 
+// pageLimit implements pagedReq (handlers_rpc.go): rpc/rpcStream enforce
+// maxPageSize on it before matches.list ever runs.
+func (r matchListReq) pageLimit() int { return r.Limit }
+
 type gameIDReq struct {
 	GameID int64 `json:"gameId"`
 }

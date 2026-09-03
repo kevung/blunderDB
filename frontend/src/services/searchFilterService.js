@@ -3,13 +3,11 @@ import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, numericToken, readFlat } from
 
 // searchFilterService — shared logic that turns the search UI's active filter
 // labels + their option/min/max/range state into the backend command tokens
-// (`cube`, `p>12`, `e10,50`, `t"foo"`, `T>2026/01/01`, …).
+// (`cube`, `p>12`, `e10,50`, `t"foo"`, `T>2026/01/01`, …), and back.
 //
 // This was originally duplicated verbatim as a 31-case switch inside two search
 // components (the now-removed SearchModal and the live SearchPanel). Extracting
-// it removed the duplication and makes the mapping unit-testable. It is the inverse of
-// `parseFilters()` in `commandProcessor.js` (which parses tokens back into
-// filter flags), so the two are covered by a round-trip test.
+// it removed the duplication and makes the mapping unit-testable.
 //
 // `options` is a flat object carrying the non-numeric fields the switch reads
 // plus, for each numeric filter, its `<key>Option/Min/Max/RangeMin/RangeMax`
@@ -17,6 +15,23 @@ import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, numericToken, readFlat } from
 // no longer spelled out here: they come from the NUMERIC_FILTERS table.
 // Missing fields simply produce `undefined` in the token, exactly as the
 // original inline switch did.
+//
+// `parseSearchTokens` (below) is the single grammar that reads command tokens
+// back into filter values. It used to be forked in two: `commandProcessor.js`
+// had its own copy for the "aller" path (a command the user types or a saved
+// search replayed straight through it, e.g. the Anki deck sync in
+// `ankiService.js`), and this file had a second, less complete copy
+// (`parseSearchCommand`) for the "retour" path (double-clicking a search
+// history or filter-library entry in `SearchPanel.svelte`). The two diverged
+// silently: `xD…` (exclude-dice), `id…` (position id) and the derived
+// comment-presence mode were parsed on the aller path and dropped on the
+// retour path, so replaying `s D xD65` from history brought the 6-5 roll
+// back (#203). `parseFilters` (commandProcessor.js) and `parseSearchCommand`
+// (below) are now both thin adapters over `parseSearchTokens`, keeping their
+// existing return shapes (long field names / short abbreviated keys
+// respectively) so no caller had to change — only the parsing itself is
+// shared. `testdata/search_query_corpus.json` cross-checks both adapters
+// against the same cases (shared with the future Go grammar, B.18).
 
 /**
  * Map a list of active filter labels to their backend command tokens.
@@ -103,190 +118,315 @@ export function buildSearchCommand(tokens) {
     return commandParts.join(' ');
 }
 
+// Quoted filter values — pl"…" (player), m"…" (move pattern) and t"…" (search
+// text / comment) — may contain spaces. A naive whitespace split tears a
+// multi-word value into loose words (`t"big win"` → `t"big`, `win"`) and those
+// words get misclassified as range filters (`win"` → win-rate, the bare `b` →
+// backgammon-rate), silently corrupting the result set. Strip the whole quoted
+// region before splitting so no interior word survives, on both the aller and
+// retour paths. Both quote styles are supported. Moved here (from
+// `commandProcessor.js`, which re-exports it) so `parseSearchTokens` below can
+// tokenize a raw command the same way regardless of caller.
+export function stripQuotedTokens(str) {
+    return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
+}
+
 /**
- * Pick the individual backend filter arguments back out of a token list.
+ * The single grammar behind every search-token parser in the app: reads
+ * filter tokens back into the full `SearchFilters` shape (long field names,
+ * matching what `onLoadPositionsByFilters` / `buildSearchFilterPayload`
+ * expect). Accepts either an already-split token array (paired with the
+ * source command, needed to recover quoted values) or a bare command string,
+ * from which tokens are derived the same way `stripQuotedTokens` +
+ * whitespace-split does everywhere else.
  *
- * `onLoadPositionsByFilters` (in App.svelte) takes ~30 positional filter
- * arguments, each of which SearchPanel derived from the `buildFilterTokens`
- * output by prefix-matching the token array. That dense block of `find`/
- * `includes` calls is pure (it depends only on the tokens), so it lives here
- * where it can be unit-tested rather than inline in the component. Prefix
- * collisions are disambiguated exactly as the original inline code did:
- *   - `b…` is the player-1 backgammon-rate token, but NOT the outfield-blot
- *     (`bo…`) or jan-blot (`bj…`) tokens; likewise `B…` vs `BO…`/`BJ…`.
- *   - the double token may be `D` (both rolls) or `D1` (first roll only),
- *     which also selects `drMode`.
- * Match/tournament id tokens (`ma…`, `tn…`) are returned with their 2-char
- * prefix stripped, as the backend expects.
+ * `parseFilters` (`commandProcessor.js`, the "aller" path: a typed or
+ * replayed-verbatim command) and `parseSearchCommand` (below, the "retour"
+ * path: SearchPanel replaying a history/library entry) are both thin adapters
+ * over this function — see the module doc comment for why that split existed
+ * and what it silently dropped (#203).
+ *
+ * @param {string[]|string} filtersOrCommand - filter tokens (no leading `s`), or the full command.
+ * @param {string} [command] - the raw command, used to recover quoted values; required when
+ *        `filtersOrCommand` is already a token array, derived automatically otherwise.
+ * @returns {object} the parsed filter values, under their long (backend) field names.
+ */
+export function parseSearchTokens(filtersOrCommand, command) {
+    let filters;
+    let cmd;
+    if (Array.isArray(filtersOrCommand)) {
+        filters = filtersOrCommand;
+        cmd = command ?? '';
+    } else {
+        cmd = filtersOrCommand ?? '';
+        filters =
+            cmd === 's' || cmd === ''
+                ? []
+                : stripQuotedTokens(cmd.slice(2).trim())
+                      .split(' ')
+                      .map((f) => f.trim());
+    }
+
+    const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
+    const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
+    const noContactFilter = filters.includes('nc');
+    const decisionTypeFilter = filters.includes('d');
+    const diceRollFilter = filters.includes('D') || filters.includes('D1');
+    const diceRollMode = filters.includes('D1') ? 'first' : 'both';
+    // `xD65` excludes the 6-5 roll (order-insensitive); repeatable (`xD65 xD54`).
+    // Unlike `D`, the value is inline in the token, not read from the board.
+    // Joined into a ";"-separated string for the backend (ExceptDiceFilter).
+    const exceptDiceFilter = filters
+        .filter((f) => typeof f === 'string' && /^xD[1-6][1-6]$/.test(f))
+        .map((f) => f.slice(2))
+        .join(';');
+    const mirrorPositionFilter = filters.includes('M');
+    // Positions the user imported on their own rather than inside a match.
+    // An exact match, so it does not collide with the id<ids> token.
+    const individuallyImportedFilter = filters.includes('i');
+    // Positions the user marked for study in the tool the match came from
+    // (eXtreme Gammon flags). An exact match, like 'i'.
+    const flaggedFilter = filters.includes('fl');
+    // 'x' marks that an exclusion ("Sauf") structure is active. The structure
+    // itself is carried by the exclude board (store), like the include structure.
+    const excludeStructure = filters.includes('x');
+    // Comment presence: `co` (has one) / `xco` (has none). Exact matches, so
+    // they collide neither with each other nor with the `co` alias of the
+    // `comment` command — filter tokens only exist after the `s ` prefix.
+    // Asking for both is contradictory rather than ambiguous; 'none' wins and
+    // the search comes back empty, which is the honest answer.
+    const commentFilter = filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '';
+    // Exclude `pl"…"` (player filter) — it starts with 'p' but is not a pipcount.
+    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+    const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
+    const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
+    const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
+    const player2WinRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
+    const player2GammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));
+    const player2BackgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ'));
+    let player1CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')));
+    if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
+        player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`;
+    }
+    let player2CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')));
+    if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
+        player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`;
+    }
+    let player1BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')));
+    if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
+        player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`;
+    }
+    let player2BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')));
+    if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
+        player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`;
+    }
+    let player1CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')));
+    if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
+        player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`;
+    }
+    let player2CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')));
+    if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
+        player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`;
+    }
+    const player1AbsolutePipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
+    const equityFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
+    const dateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
+    const movePatternMatch = cmd.match(/m["'][^"']*["']/);
+    const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
+    const searchTextMatch = cmd.match(/t["'][^"']*["']/);
+    const searchText = searchTextMatch ? searchTextMatch[0] : '';
+    // Player filter `pl"Name"` — matched on the raw command so names with spaces
+    // survive (the space-split `filters` array would break them).
+    const playerMatch = cmd.match(/pl["'][^"']*["']/);
+    const playerFilter = playerMatch ? playerMatch[0] : '';
+    const player1OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
+    const player2OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
+    const player1JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
+    const player2JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
+    const moveErrorFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
+
+    const matchIDTokens = filters.filter((f) => typeof f === 'string' && /^ma\d/.test(f));
+    let matchIDsFilter = '';
+    if (matchIDTokens.length > 0) {
+        const parts = matchIDTokens.map((token) => token.slice(2));
+        matchIDsFilter = parts.join(';');
+    }
+
+    const tournamentIDTokens = filters.filter((f) => typeof f === 'string' && /^tn\d/.test(f));
+    let tournamentIDsFilter = '';
+    if (tournamentIDTokens.length > 0) {
+        const parts = tournamentIDTokens.map((token) => token.slice(2));
+        tournamentIDsFilter = parts.join(';');
+    }
+
+    // Position-id filter: `id12`, `id5,10` (range 5..10), or several `id` tokens
+    // joined as an explicit list (e.g. `id5 id10`). Mirrors the ma/tn convention.
+    const positionIDTokens = filters.filter((f) => typeof f === 'string' && /^id\d/.test(f));
+    let positionIDsFilter = '';
+    if (positionIDTokens.length > 0) {
+        const parts = positionIDTokens.map((token) => token.slice(2));
+        positionIDsFilter = parts.join(';');
+    }
+
+    return {
+        tokens: filters,
+        includeCube,
+        includeScore,
+        noContactFilter,
+        decisionTypeFilter,
+        diceRollFilter,
+        diceRollMode,
+        exceptDiceFilter,
+        mirrorPositionFilter,
+        individuallyImportedFilter,
+        flaggedFilter,
+        excludeStructure,
+        pipCountFilter,
+        winRateFilter,
+        gammonRateFilter,
+        backgammonRateFilter,
+        player2WinRateFilter,
+        player2GammonRateFilter,
+        player2BackgammonRateFilter,
+        player1CheckerOffFilter,
+        player2CheckerOffFilter,
+        player1BackCheckerFilter,
+        player2BackCheckerFilter,
+        player1CheckerInZoneFilter,
+        player2CheckerInZoneFilter,
+        player1AbsolutePipCountFilter,
+        equityFilter,
+        dateFilter,
+        movePatternFilter,
+        searchText,
+        commentFilter,
+        player1OutfieldBlotFilter,
+        player2OutfieldBlotFilter,
+        player1JanBlotFilter,
+        player2JanBlotFilter,
+        moveErrorFilter,
+        matchIDsFilter,
+        tournamentIDsFilter,
+        playerFilter,
+        positionIDsFilter
+    };
+}
+
+/**
+ * Pick the individual backend filter arguments back out of a freshly built
+ * token list (the "save" path: SearchPanel's checkboxes → `buildFilterTokens`
+ * → this function → `onLoadPositionsByFilters`). A thin adapter over
+ * {@link parseSearchTokens}, reporting the same fields under the short
+ * abbreviated keys this call site (and its tests) have always used.
  *
  * @param {string[]} tokens - the output of {@link buildFilterTokens}.
  * @returns {object} the named filter arguments consumed by onLoadPositionsByFilters.
  */
-// Single source of truth for classifying a search token into a range/checker
-// filter, keyed by canonical short name. Shared by both parseFilterTokens (save
-// path) and parseSearchCommand (restore path) so adding a filter only touches
-// one place. Predicates are operator-agnostic — `w`, `w>5`, `w<5`, `w3,8` all
-// match `wr` — and order-independent (the exclusions on bg/p2bg/pc keep the
-// prefix-overlapping filters, e.g. b vs bo/bj, mutually exclusive).
-const FILTER_TOKEN_MATCHERS = {
-    pc: (f) => f.startsWith('p') && !f.startsWith('pl'),
-    wr: (f) => f.startsWith('w'),
-    gr: (f) => f.startsWith('g'),
-    bg: (f) => f.startsWith('b') && !f.startsWith('bo') && !f.startsWith('bj'),
-    p2wr: (f) => f.startsWith('W'),
-    p2gr: (f) => f.startsWith('G'),
-    p2bg: (f) => f.startsWith('B') && !f.startsWith('BO') && !f.startsWith('BJ'),
-    p1co: (f) => f.startsWith('o'),
-    p2co: (f) => f.startsWith('O'),
-    p1bc: (f) => f.startsWith('k'),
-    p2bc: (f) => f.startsWith('K'),
-    p1cz: (f) => f.startsWith('z'),
-    p2cz: (f) => f.startsWith('Z'),
-    p1apc: (f) => f.startsWith('P'),
-    eq: (f) => f.startsWith('e'),
-    cd: (f) => f.startsWith('T'),
-    p1ob: (f) => f.startsWith('bo'),
-    p2ob: (f) => f.startsWith('BO'),
-    p1jb: (f) => f.startsWith('bj'),
-    p2jb: (f) => f.startsWith('BJ')
-};
-
 export function parseFilterTokens(tokens) {
-    const matchIDToken = tokens.find((f) => f.startsWith('ma'));
-    const tournamentIDToken = tokens.find((f) => f.startsWith('tn'));
-    const find = (key) => tokens.find(FILTER_TOKEN_MATCHERS[key]);
+    // Quoted values (pl"…"/m"…"/t"…") are recovered by parseSearchTokens from the
+    // raw command text, not the split tokens — rebuild a command-shaped string
+    // so a freshly built pl"Name"/m"…"/t"…" token is still found.
+    const p = parseSearchTokens(tokens, tokens.join(' '));
     return {
-        incCube: tokens.includes('cube'),
-        incScore: tokens.includes('score'),
-        ncFilter: tokens.includes('nc'),
-        mirFilter: tokens.includes('M'),
-        iiFilter: tokens.includes('i'),
-        flFilter: tokens.includes('fl'),
-        pcFilter: find('pc'),
-        plFilter: tokens.find((f) => f.startsWith('pl')),
-        wrFilter: find('wr'),
-        grFilter: find('gr'),
-        bgFilter: find('bg'),
-        p2wrFilter: find('p2wr'),
-        p2grFilter: find('p2gr'),
-        p2bgFilter: find('p2bg'),
-        p1coFilter: find('p1co'),
-        p2coFilter: find('p2co'),
-        p1bcFilter: find('p1bc'),
-        p2bcFilter: find('p2bc'),
-        p1czFilter: find('p1cz'),
-        p2czFilter: find('p2cz'),
-        p1apcFilter: find('p1apc'),
-        eqFilter: find('eq'),
-        // meFilter is intentionally looser than parseSearchCommand's `me`: at
-        // save time the token is canonical, so a bare `startsWith('E')` is safe.
-        meFilter: tokens.find((f) => f.startsWith('E')),
-        p1obFilter: find('p1ob'),
-        p2obFilter: find('p2ob'),
-        p1jbFilter: find('p1jb'),
-        p2jbFilter: find('p2jb'),
-        matchIDs: matchIDToken ? matchIDToken.slice(2) : '',
-        tournamentIDs: tournamentIDToken ? tournamentIDToken.slice(2) : '',
-        dtFilter: tokens.includes('d'),
-        drFilter: tokens.includes('D') || tokens.includes('D1'),
-        drMode: tokens.includes('D1') ? 'first' : 'both',
+        incCube: p.includeCube,
+        incScore: p.includeScore,
+        ncFilter: p.noContactFilter,
+        mirFilter: p.mirrorPositionFilter,
+        iiFilter: p.individuallyImportedFilter,
+        flFilter: p.flaggedFilter,
+        pcFilter: p.pipCountFilter,
+        plFilter: p.playerFilter || undefined,
+        wrFilter: p.winRateFilter,
+        grFilter: p.gammonRateFilter,
+        bgFilter: p.backgammonRateFilter,
+        p2wrFilter: p.player2WinRateFilter,
+        p2grFilter: p.player2GammonRateFilter,
+        p2bgFilter: p.player2BackgammonRateFilter,
+        p1coFilter: p.player1CheckerOffFilter,
+        p2coFilter: p.player2CheckerOffFilter,
+        p1bcFilter: p.player1BackCheckerFilter,
+        p2bcFilter: p.player2BackCheckerFilter,
+        p1czFilter: p.player1CheckerInZoneFilter,
+        p2czFilter: p.player2CheckerInZoneFilter,
+        p1apcFilter: p.player1AbsolutePipCountFilter,
+        eqFilter: p.equityFilter,
+        meFilter: p.moveErrorFilter,
+        p1obFilter: p.player1OutfieldBlotFilter,
+        p2obFilter: p.player2OutfieldBlotFilter,
+        p1jbFilter: p.player1JanBlotFilter,
+        p2jbFilter: p.player2JanBlotFilter,
+        matchIDs: p.matchIDsFilter,
+        tournamentIDs: p.tournamentIDsFilter,
+        xdFilter: p.exceptDiceFilter,
+        posIdsFilter: p.positionIDsFilter,
+        dtFilter: p.decisionTypeFilter,
+        drFilter: p.diceRollFilter,
+        drMode: p.diceRollMode,
         // Comment-presence mode; 'contains' is the text-search mode, whose value
         // travels separately as the t"…" token.
-        commentMode: tokens.includes('xco') ? 'none' : tokens.includes('co') ? 'has' : 'contains',
-        cdFilter: find('cd')
+        commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains',
+        cdFilter: p.dateFilter
     };
 }
 
 /**
  * Parse a persisted `s …` search command string back into the flat set of
  * filter values SearchPanel hands to its `onLoadPositionsByFilters` callback
- * when replaying a saved/library search.
- *
- * This is the inverse of buildSearchCommand for the *restore* path and is
- * deliberately more complete than parseFilterTokens (which parses freshly built
- * tokens at save time): it
- *   - expands the shorthand single-value checker tokens (`o5` → `o5,5`) for the
- *     two-sided range filters, and
- *   - pulls the quoted free-text filters (`m"…"`, `t"…"`, `pl"…"`) straight from
- *     the raw command so embedded spaces survive the whitespace split.
- *
- * The range/checker token classification is shared with parseFilterTokens via
- * FILTER_TOKEN_MATCHERS; only the genuinely restore-specific bits live here
- * (abbreviated cube/score flags a user may type, multi-id `ma`/`tn` tokens, the
- * stricter `me` predicate, and the comma/quote post-processing above).
+ * when replaying a saved/library search (the "retour" path). A thin adapter
+ * over {@link parseSearchTokens}, reporting the same fields under the short
+ * abbreviated keys this call site (and its tests) have always used — plus
+ * `xd`/`posIds`/`commentMode`, the three fields the pre-#203 version of this
+ * function silently dropped because it parsed the command on its own instead
+ * of sharing `parseFilters`' (commandProcessor.js) grammar.
  *
  * @param {string} command - a command starting with `s ` (or the bare `s`).
  * @returns {object} the parsed filter values, keyed by short name.
  */
 export function parseSearchCommand(command) {
-    const cmdFilters =
-        command === 's'
-            ? []
-            : command
-                  .slice(2)
-                  .trim()
-                  .split(' ')
-                  .map((f) => f.trim());
-
-    const find = (key) => cmdFilters.find((f) => typeof f === 'string' && FILTER_TOKEN_MATCHERS[key](f));
-
-    // Single-value checker tokens (e.g. `o5`) restore as a `min,max` pair.
-    const expandPair = (tok) => {
-        if (tok && !tok.includes(',') && !tok.includes('>') && !tok.includes('<')) {
-            return `${tok},${tok.slice(1)}`;
-        }
-        return tok;
-    };
-
-    const matchTokens = (re) => cmdFilters.filter((f) => typeof f === 'string' && re.test(f));
-    const quoted = (prefix) => {
-        const m = command.match(new RegExp(`${prefix}["'][^"']*["']`));
-        return m ? m[0] : '';
-    };
-
-    const maTokens = matchTokens(/^ma\d/);
-    const tnTokens = matchTokens(/^tn\d/);
-
+    const p = parseSearchTokens(command);
     return {
-        cmdFilters,
-        ic: cmdFilters.includes('cube') || cmdFilters.includes('cu') || cmdFilters.includes('c') || cmdFilters.includes('cub'),
-        is: cmdFilters.includes('score') || cmdFilters.includes('sco') || cmdFilters.includes('sc') || cmdFilters.includes('s'),
-        nc: cmdFilters.includes('nc'),
-        dt: cmdFilters.includes('d'),
-        dr: cmdFilters.includes('D') || cmdFilters.includes('D1'),
-        drMode: cmdFilters.includes('D1') ? 'first' : 'both',
-        mp: cmdFilters.includes('M'),
-        // Exact match, so it never collides with the id<ids> position-id token.
-        ii: cmdFilters.includes('i'),
-        fl: cmdFilters.includes('fl'),
-        pc: find('pc'),
-        wr: find('wr'),
-        gr: find('gr'),
-        bg: find('bg'),
-        p2wr: find('p2wr'),
-        p2gr: find('p2gr'),
-        p2bg: find('p2bg'),
-        p1co: expandPair(find('p1co')),
-        p2co: expandPair(find('p2co')),
-        p1bc: expandPair(find('p1bc')),
-        p2bc: expandPair(find('p2bc')),
-        p1cz: expandPair(find('p1cz')),
-        p2cz: expandPair(find('p2cz')),
-        p1apc: find('p1apc'),
-        eq: find('eq'),
-        cd: find('cd'),
-        mpf: quoted('m'),
-        st: quoted('t'),
-        plf: quoted('pl'),
-        p1ob: find('p1ob'),
-        p2ob: find('p2ob'),
-        p1jb: find('p1jb'),
-        p2jb: find('p2jb'),
-        // Stricter than parseFilterTokens' meFilter: a restored command may
-        // contain other E-prefixed noise, so require an operator or a digit.
-        me: cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f)))),
-        matchIDs: maTokens.length > 0 ? maTokens.map((t) => t.slice(2)).join(';') : '',
-        tournamentIDs: tnTokens.length > 0 ? tnTokens.map((t) => t.slice(2)).join(';') : ''
+        cmdFilters: p.tokens,
+        ic: p.includeCube,
+        is: p.includeScore,
+        nc: p.noContactFilter,
+        dt: p.decisionTypeFilter,
+        dr: p.diceRollFilter,
+        drMode: p.diceRollMode,
+        mp: p.mirrorPositionFilter,
+        ii: p.individuallyImportedFilter,
+        fl: p.flaggedFilter,
+        pc: p.pipCountFilter,
+        wr: p.winRateFilter,
+        gr: p.gammonRateFilter,
+        bg: p.backgammonRateFilter,
+        p2wr: p.player2WinRateFilter,
+        p2gr: p.player2GammonRateFilter,
+        p2bg: p.player2BackgammonRateFilter,
+        p1co: p.player1CheckerOffFilter,
+        p2co: p.player2CheckerOffFilter,
+        p1bc: p.player1BackCheckerFilter,
+        p2bc: p.player2BackCheckerFilter,
+        p1cz: p.player1CheckerInZoneFilter,
+        p2cz: p.player2CheckerInZoneFilter,
+        p1apc: p.player1AbsolutePipCountFilter,
+        eq: p.equityFilter,
+        cd: p.dateFilter,
+        mpf: p.movePatternFilter,
+        st: p.searchText,
+        plf: p.playerFilter,
+        p1ob: p.player1OutfieldBlotFilter,
+        p2ob: p.player2OutfieldBlotFilter,
+        p1jb: p.player1JanBlotFilter,
+        p2jb: p.player2JanBlotFilter,
+        me: p.moveErrorFilter,
+        matchIDs: p.matchIDsFilter,
+        tournamentIDs: p.tournamentIDsFilter,
+        // Previously dropped on replay (#203): no panel checkbox drives these
+        // (documented as command-line only, cmd_mode.rst), so a saved/history
+        // command carrying them silently lost them here.
+        xd: p.exceptDiceFilter,
+        posIds: p.positionIDsFilter,
+        commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
     };
 }
 

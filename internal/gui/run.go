@@ -24,6 +24,11 @@ func Run(assets embed.FS, icon []byte, width, height int, db *database.Database,
 		Title:  "blunderDB",
 		Width:  width,
 		Height: height,
+		// Below this, the toolbar wraps and panels lose their minimum usable
+		// size — nothing in the layout copes with a window smaller than the
+		// content it was designed for (#215).
+		MinWidth:  900,
+		MinHeight: 600,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

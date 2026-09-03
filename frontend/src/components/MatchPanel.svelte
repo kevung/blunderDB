@@ -570,7 +570,7 @@
     });
 </script>
 
-<section class="match-panel" role="region" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
+<section class="match-panel" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane">

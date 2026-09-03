@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:42+0200\n"
+"POT-Creation-Date: 2026-09-03 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -352,7 +352,21 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Открыть командную строку."
 
-#: ../../source/raccourcis.rst:124
+#: ../../source/raccourcis.rst:123
+msgid ""
+"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
+" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
+"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
+"lien, TAB reprend la navigation clavier standard entre les éléments de "
+"l'interface plutôt que de rouvrir ce panneau."
+msgstr ""
+"TAB открывает панель поиска только тогда, когда фокус находится на доске "
+"(или нигде в частности, что чаще всего и происходит). Как только фокус "
+"оказывается на кнопке, поле ввода или ссылке, TAB возобновляет "
+"стандартную навигацию по клавиатуре между элементами интерфейса вместо "
+"повторного открытия этой панели."
+
+#: ../../source/raccourcis.rst:132
 msgid "Outils"
 msgstr "Инструменты"
 
@@ -436,7 +450,16 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:152
+msgid ""
+"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
+"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
+"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
+"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
+"qui restent joignables entretemps par leur raccourci."
+msgstr "Порядок этих вкладок, изменённый перетаскиванием на панели, запоминается от сеанса к сеансу. Правый клик по вкладке позволяет скрыть её; появляющаяся справа от панели кнопка в виде стрелки открывает меню для повторного отображения скрытых вкладок — они остаются доступными в это время по своей комбинации клавиш."
+
+#: ../../source/raccourcis.rst:161
 msgid "Onglets de vues"
 msgstr "Вкладки представлений"
 
@@ -488,7 +511,7 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:177
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -504,7 +527,7 @@ msgstr ""
 "SHIFT-J/SHIFT-K следуют соглашению CTRL-PageUp/CTRL-PageDown, с которым "
 "они связаны, а не соглашению j/k."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -524,11 +547,11 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Просмотр истории команд вниз."
 
-#: ../../source/raccourcis.rst:184
+#: ../../source/raccourcis.rst:200
 msgid "Historique de recherche"
 msgstr "История поиска"
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:202
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -552,11 +575,11 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:216
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:218
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -572,7 +595,7 @@ msgstr "Выбрать/отменить выбор фильтра (показа�
 msgid "Exécuter la recherche du filtre."
 msgstr "Выполнить поиск по фильтру."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:232
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -606,11 +629,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:248
 msgid "Panneau Eval"
 msgstr "Панель Eval"
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:250
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -624,7 +647,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:267
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -660,7 +683,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:285
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -716,7 +739,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
@@ -748,7 +771,7 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:319
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -774,7 +797,7 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

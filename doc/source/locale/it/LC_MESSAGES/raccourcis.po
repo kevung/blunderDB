@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:42+0200\n"
+"POT-Creation-Date: 2026-09-03 19:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -349,7 +349,21 @@ msgstr "SPAZIO"
 msgid "Ouvrir la ligne de commande."
 msgstr "Apri la riga di comando."
 
-#: ../../source/raccourcis.rst:124
+#: ../../source/raccourcis.rst:123
+msgid ""
+"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
+" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
+"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
+"lien, TAB reprend la navigation clavier standard entre les éléments de "
+"l'interface plutôt que de rouvrir ce panneau."
+msgstr ""
+"TAB apre il pannello di ricerca solo quando il focus si trova sulla "
+"scacchiera (o da nessuna parte in particolare, il che è il caso più delle"
+" volte). Una volta che il focus è su un pulsante, un campo di inserimento"
+" o un link, TAB riprende la normale navigazione da tastiera tra gli "
+"elementi dell'interfaccia invece di riaprire questo pannello."
+
+#: ../../source/raccourcis.rst:132
 msgid "Outils"
 msgstr "Strumenti"
 
@@ -433,7 +447,16 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:152
+msgid ""
+"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
+"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
+"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
+"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
+"qui restent joignables entretemps par leur raccourci."
+msgstr "L'ordine di queste schede, una volta modificato trascinandole sulla barra, viene memorizzato da una sessione all'altra. Un clic destro su una scheda permette di nasconderla; il pulsante a forma di freccia che appare quindi a destra della barra apre un menu per rivisualizzare le schede nascoste, che restano comunque raggiungibili tramite la loro scorciatoia."
+
+#: ../../source/raccourcis.rst:161
 msgid "Onglets de vues"
 msgstr "Schede delle viste"
 
@@ -485,7 +508,7 @@ msgstr "Doppio clic sulla scheda"
 msgid "Renommer la vue."
 msgstr "Rinomina la vista."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:177
 msgid ""
 "Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
 "(position suivante) et *k* recule (position précédente), alors que "
@@ -501,7 +524,7 @@ msgstr ""
 "MAIUSC-J/MAIUSC-K seguono la convenzione CTRL-PagSu/CTRL-PagGiù a cui "
 "sono associati, non quella di j/k."
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:187
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -521,11 +544,11 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:184
+#: ../../source/raccourcis.rst:200
 msgid "Historique de recherche"
 msgstr "Cronologia di ricerca"
 
-#: ../../source/raccourcis.rst:186
+#: ../../source/raccourcis.rst:202
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -549,11 +572,11 @@ msgstr "Doppio clic"
 msgid "Exécuter la recherche."
 msgstr "Esegui la ricerca."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:216
 msgid "Bibliothèque de filtres"
 msgstr "Libreria di filtri"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:218
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -569,7 +592,7 @@ msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Esegui la ricerca del filtro."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:232
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -603,11 +626,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:248
 msgid "Panneau Eval"
 msgstr "Pannello Eval"
 
-#: ../../source/raccourcis.rst:234
+#: ../../source/raccourcis.rst:250
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -621,7 +644,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Deseleziona la mossa."
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:267
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -657,7 +680,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:285
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -713,7 +736,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:303
 msgid "Panneau des tournois"
 msgstr "Pannello dei tornei"
 
@@ -746,7 +769,7 @@ msgstr ""
 "match, altrimenti deseleziona il torneo, altrimenti chiudi il pannello (a"
 " tappe)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:319
 msgid "Panneau des collections"
 msgstr "Pannello delle collezioni"
 
@@ -776,7 +799,7 @@ msgstr ""
 "Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
 "altrimenti chiudi il pannello (a tappe)."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:333
 msgid ""
 "Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
 "GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "

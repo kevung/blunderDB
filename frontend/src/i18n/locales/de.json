@@ -16,7 +16,8 @@
         "save": "Speichern",
         "search": "Suchen",
         "errorWithMsg": "Fehler: {msg}",
-        "reset": "Zurücksetzen"
+        "reset": "Zurücksetzen",
+        "contextMenu": "Aktionen"
     },
     "config": {
         "title": "Einstellungen",
@@ -650,7 +651,11 @@
         "player1": "Spieler 1",
         "player2": "Spieler 2",
         "menu": {
-            "evaluate": "Diese Position auswerten"
+            "evaluate": "Diese Position auswerten",
+            "evaluateMirror": "Das Spiegelbild dieser Stellung auswerten",
+            "copyImageWithAnalysis": "Brettbild mit Analyse kopieren",
+            "newView": "Neue Ansicht",
+            "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}"
         }
     },
     "epc": {
@@ -836,7 +841,10 @@
         "stats": "Statistik",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Metadaten"
+        "metadata": "Metadaten",
+        "hideTab": "Diesen Tab ausblenden",
+        "showTab": "Anzeigen: {tab}",
+        "hiddenTabs": "Ausgeblendete Tabs"
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
@@ -927,7 +935,9 @@
         "pastedPositionSaved": "Eingefügte Position und Analyse erfolgreich gespeichert",
         "importDone": "Import abgeschlossen: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
         "confirmDeletePosition": "Diese Position und die zugehörige Analyse löschen?",
-        "searching": "Suche läuft…"
+        "searching": "Suche läuft…",
+        "positionAddedToDeck": "Position zum Stapel „{deck}“ hinzugefügt",
+        "failedAddToDeck": "Fehler beim Hinzufügen der Position zum Stapel: {err}"
     },
     "stats": {
         "title": "Stats",

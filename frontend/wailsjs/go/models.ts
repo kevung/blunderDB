@@ -1742,6 +1742,8 @@ export namespace main {
 	    panel_height?: number;
 	    panel_width?: number;
 	    tour_seen?: boolean;
+	    tab_order?: string[];
+	    hidden_tabs?: string[];
 	    bearoff_ts_path?: string;
 	    epc_challenge?: boolean;
 	    gammonnet_display_ply?: number;
@@ -1767,6 +1769,8 @@ export namespace main {
 	        this.panel_height = source["panel_height"];
 	        this.panel_width = source["panel_width"];
 	        this.tour_seen = source["tour_seen"];
+	        this.tab_order = source["tab_order"];
+	        this.hidden_tabs = source["hidden_tabs"];
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.epc_challenge = source["epc_challenge"];
 	        this.gammonnet_display_ply = source["gammonnet_display_ply"];

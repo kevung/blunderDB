@@ -16,7 +16,8 @@
         "save": "Tallenna",
         "search": "Hae",
         "errorWithMsg": "Virhe: {msg}",
-        "reset": "Nollaa"
+        "reset": "Nollaa",
+        "contextMenu": "Toiminnot"
     },
     "config": {
         "title": "Asetukset",
@@ -650,7 +651,11 @@
         "player1": "Pelaaja 1",
         "player2": "Pelaaja 2",
         "menu": {
-            "evaluate": "Arvioi tämä asema"
+            "evaluate": "Arvioi tämä asema",
+            "evaluateMirror": "Arvioi tämän aseman peilikuva",
+            "copyImageWithAnalysis": "Kopioi laudan kuva analyysin kanssa",
+            "newView": "Uusi näkymä",
+            "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}"
         }
     },
     "epc": {
@@ -836,7 +841,10 @@
         "stats": "Tilastot",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Metatiedot"
+        "metadata": "Metatiedot",
+        "hideTab": "Piilota tämä välilehti",
+        "showTab": "Näytä: {tab}",
+        "hiddenTabs": "Piilotetut välilehdet"
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
@@ -927,7 +935,9 @@
         "pastedPositionSaved": "Liitetty positio ja analyysi tallennettu onnistuneesti",
         "importDone": "Tuonti valmis: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
         "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?",
-        "searching": "Haetaan…"
+        "searching": "Haetaan…",
+        "positionAddedToDeck": "Asema lisätty pakkaan ”{deck}”",
+        "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}"
     },
     "stats": {
         "title": "Tilastot",

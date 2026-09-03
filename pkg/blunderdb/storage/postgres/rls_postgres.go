@@ -12,7 +12,7 @@ import (
 )
 
 // configureRLSPool installs pool hooks that bind the `app.tenant_id` GUC to the
-// tenant carried in the operation's context (storage.WithTenant). BeforeAcquire
+// tenant carried in the operation's context (storage.WithTenant). PrepareConn
 // receives the Acquire call's context, so a pooled connection is scoped to the
 // requesting tenant for the duration it is checked out; AfterRelease clears the
 // GUC so the connection cannot leak a tenant to the next borrower. A connection

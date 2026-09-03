@@ -16,7 +16,8 @@
         "save": "Enregistrer",
         "search": "Rechercher",
         "errorWithMsg": "Erreur : {msg}",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "contextMenu": "Actions"
     },
     "config": {
         "title": "Paramètres",
@@ -650,7 +651,11 @@
         "player1": "Joueur 1",
         "player2": "Joueur 2",
         "menu": {
-            "evaluate": "Évaluer cette position"
+            "evaluate": "Évaluer cette position",
+            "evaluateMirror": "Évaluer le miroir de cette position",
+            "copyImageWithAnalysis": "Copier l'image du plateau et l'analyse",
+            "newView": "Nouvelle vue",
+            "addToAnkiDeck": "Ajouter au paquet Anki : {deck}"
         }
     },
     "epc": {
@@ -836,7 +841,10 @@
         "stats": "Stats",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Métadonnées"
+        "metadata": "Métadonnées",
+        "hideTab": "Masquer cet onglet",
+        "showTab": "Afficher : {tab}",
+        "hiddenTabs": "Onglets masqués"
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
@@ -927,7 +935,9 @@
         "pastedPositionSaved": "Position et analyse collées enregistrées avec succès",
         "importDone": "Import terminé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
         "confirmDeletePosition": "Supprimer cette position et son analyse associée ?",
-        "searching": "Recherche…"
+        "searching": "Recherche…",
+        "positionAddedToDeck": "Position ajoutée au paquet « {deck} »",
+        "failedAddToDeck": "Erreur lors de l'ajout de la position au paquet : {err}"
     },
     "stats": {
         "title": "Stats",

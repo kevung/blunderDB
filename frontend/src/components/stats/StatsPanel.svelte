@@ -50,7 +50,7 @@
     }
 </script>
 
-<section class="stats-panel" role="region" aria-label={$t('stats.title')}>
+<section class="stats-panel" aria-label={$t('stats.title')}>
     <header class="stats-header">
         <h2 class="stats-title">{$t('stats.title')}</h2>
         <div class="metric-toggle" role="group" aria-label={$t('stats.metricLabel')}>

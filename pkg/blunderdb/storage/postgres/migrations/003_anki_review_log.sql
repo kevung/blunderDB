@@ -22,4 +22,3 @@ CREATE TABLE IF NOT EXISTS anki_review_log (
 CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log (tenant_id, card_id, reviewed_at);
 CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log (tenant_id, deck_id, reviewed_at);
 
-UPDATE metadata SET value = '2.11.0' WHERE key = 'database_version';

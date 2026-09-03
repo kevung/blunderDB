@@ -118,6 +118,14 @@ Actions
    "TAB", "Ouvrir le panneau de recherche (éditeur de position)."
    "ESPACE", "Ouvrir la ligne de commande."
 
+.. note::
+
+   TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le
+   plateau (ou nulle part en particulier, ce qui est le cas la plupart du
+   temps). Une fois le focus posé sur un bouton, un champ de saisie ou un
+   lien, TAB reprend la navigation clavier standard entre les éléments de
+   l'interface plutôt que de rouvrir ce panneau.
+
 .. _raccourcis_outils:
 
 Outils
@@ -138,6 +146,14 @@ Outils
    "CTRL-D", "Afficher/cacher le panneau Stats."
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "?", "Afficher/cacher l'aide."
+
+.. note::
+
+   L'ordre de ces onglets, une fois modifié par glisser-déposer sur la barre,
+   est mémorisé d'une session à l'autre. Un clic droit sur un onglet permet
+   de le masquer ; le bouton en forme de flèche qui apparaît alors à droite
+   de la barre rouvre un menu pour réafficher les onglets masqués — qui
+   restent joignables entretemps par leur raccourci.
 
 .. _raccourcis_vues:
 
