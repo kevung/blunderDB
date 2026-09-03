@@ -5,11 +5,15 @@ package postgres_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
+
+	"github.com/jackc/pgx/v5"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
 // TestTenantIsolation verifies the central multi-tenant promise: rows written
@@ -200,5 +204,76 @@ func TestTenantIsolationNamedScope(t *testing.T) {
 	}
 	if _, err := s.Positions().Load(ctx, "", id); err != nil {
 		t.Errorf("tenant 0's position is gone after the rejected purges: %v", err)
+	}
+}
+
+// TestTenantIsolation_AllFamilies (#235) runs storagetest's per-family
+// isolation loop — one fresh database per family, tenant a writes a row,
+// tenant b must see none of it — against a real PostgreSQL database. It
+// widens isolation coverage from the three hand-rolled tests above
+// (positions, collections, analyses) to eight families; see
+// storagetest/tenant_isolation.go for the full list and why this loop is
+// PostgreSQL-only.
+func TestTenantIsolation_AllFamilies(t *testing.T) {
+	dsn := startPostgres(t)
+	storagetest.RunTenantIsolationTests(t, func() storage.Storage {
+		resetPublicSchema(t, dsn)
+		s, err := pg.Open(context.Background(), dsn, nil)
+		if err != nil {
+			t.Fatalf("Open: %v", err)
+		}
+		return s
+	}, "101", "102")
+}
+
+// TestCompositeForeignKeyRejectsCrossTenant (#235) is the database-level
+// promise behind the composite (tenant_id, parent_id) foreign keys
+// (014_composite_tenant_fk.sql / 001_initial_v2_7_0.sql): a raw INSERT that
+// gets its tenant_id right but points at another tenant's row via the
+// single id column must fail at the constraint, not merely go unnoticed —
+// the exact mistake the old single-column `parent_id REFERENCES
+// parent(id)` form could never catch. comment.position_id is one of twelve
+// such foreign keys; it stands in for the rest, which all follow the same
+// shape.
+func TestCompositeForeignKeyRejectsCrossTenant(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	resetPublicSchema(t, dsn)
+	s, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer s.Close()
+
+	p1 := domain.InitializePosition()
+	id1, err := s.Positions().Save(ctx, "1", &p1)
+	if err != nil {
+		t.Fatalf("save position for tenant 1: %v", err)
+	}
+
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	defer conn.Close(ctx)
+
+	// tenant_id=2 (a real, distinct tenant), position_id naming tenant 1's
+	// position: the composite foreign key must reject this outright.
+	_, err = conn.Exec(ctx,
+		`INSERT INTO comment (tenant_id, position_id, text) VALUES ($1, $2, 'cross-tenant')`,
+		2, id1)
+	if err == nil {
+		t.Fatal("cross-tenant comment insert succeeded, want a foreign key violation")
+	}
+	if !strings.Contains(err.Error(), "foreign key") {
+		t.Errorf("error = %v, want a foreign key violation", err)
+	}
+
+	var n int
+	if err := conn.QueryRow(ctx, `SELECT count(*) FROM comment`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Errorf("comment table holds %d row(s) after a rejected insert, want 0", n)
 	}
 }

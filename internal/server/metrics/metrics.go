@@ -35,6 +35,16 @@ type Registry struct {
 	// Rate-limit metrics (atomics: updated outside the request-metrics lock).
 	rlRejected uint64 // cumulative requests rejected by the rate limiter
 	rlBuckets  uint64 // current number of live per-tenant token buckets
+
+	// PostgreSQL connection-pool gauges (#235), also atomics: polled
+	// periodically from a value the pgxpool backend itself owns (Server
+	// never holds the pool), so a plain snapshot store fits better than the
+	// request-scoped counters/hists above.
+	pgHasPool   uint32 // 1 once SetPoolStats has been called at least once (SQLite backend: never)
+	pgAcquired  int64
+	pgIdle      int64
+	pgMax       int64
+	pgWaitCount int64
 }
 
 // IncRateLimitRejected records one request rejected by the rate limiter.
@@ -51,6 +61,23 @@ func (r *Registry) SetRateLimitBuckets(n int) {
 		return
 	}
 	atomic.StoreUint64(&r.rlBuckets, uint64(n))
+}
+
+// SetPoolStats records a snapshot of the PostgreSQL connection pool's state
+// (acquired/idle/max connections, and the cumulative count of Acquire calls
+// that had to wait for one) — see postgres.Storage.PoolStats, which Server
+// polls periodically when the backend implements it. Never called at all
+// with the SQLite backend, so WritePrometheus omits the pool gauges rather
+// than publish permanent zeros for a pool that does not exist.
+func (r *Registry) SetPoolStats(acquired, idle, max int32, waitCount int64) {
+	if r == nil {
+		return
+	}
+	atomic.StoreUint32(&r.pgHasPool, 1)
+	atomic.StoreInt64(&r.pgAcquired, int64(acquired))
+	atomic.StoreInt64(&r.pgIdle, int64(idle))
+	atomic.StoreInt64(&r.pgMax, int64(max))
+	atomic.StoreInt64(&r.pgWaitCount, waitCount)
 }
 
 type counterKey struct {
@@ -174,4 +201,25 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 	_, _ = fmt.Fprintln(w, "# HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.")
 	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_buckets gauge")
 	_, _ = fmt.Fprintf(w, "blunderdb_ratelimit_buckets %d\n", atomic.LoadUint64(&r.rlBuckets))
+
+	// Only the PostgreSQL backend ever calls SetPoolStats; the SQLite
+	// backend has no pool to report, so these gauges are omitted entirely
+	// rather than published as permanent, misleading zeros.
+	if atomic.LoadUint32(&r.pgHasPool) == 1 {
+		_, _ = fmt.Fprintln(w, "# HELP blunderdb_pg_pool_acquired Connections currently checked out of the PostgreSQL pool.")
+		_, _ = fmt.Fprintln(w, "# TYPE blunderdb_pg_pool_acquired gauge")
+		_, _ = fmt.Fprintf(w, "blunderdb_pg_pool_acquired %d\n", atomic.LoadInt64(&r.pgAcquired))
+
+		_, _ = fmt.Fprintln(w, "# HELP blunderdb_pg_pool_idle Idle connections available in the PostgreSQL pool.")
+		_, _ = fmt.Fprintln(w, "# TYPE blunderdb_pg_pool_idle gauge")
+		_, _ = fmt.Fprintf(w, "blunderdb_pg_pool_idle %d\n", atomic.LoadInt64(&r.pgIdle))
+
+		_, _ = fmt.Fprintln(w, "# HELP blunderdb_pg_pool_max Configured maximum size of the PostgreSQL pool.")
+		_, _ = fmt.Fprintln(w, "# TYPE blunderdb_pg_pool_max gauge")
+		_, _ = fmt.Fprintf(w, "blunderdb_pg_pool_max %d\n", atomic.LoadInt64(&r.pgMax))
+
+		_, _ = fmt.Fprintln(w, "# HELP blunderdb_pg_pool_wait_count Cumulative Acquire calls that had to wait for a free connection.")
+		_, _ = fmt.Fprintln(w, "# TYPE blunderdb_pg_pool_wait_count counter")
+		_, _ = fmt.Fprintf(w, "blunderdb_pg_pool_wait_count %d\n", atomic.LoadInt64(&r.pgWaitCount))
+	}
 }

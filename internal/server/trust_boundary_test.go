@@ -148,6 +148,56 @@ func TestInternalErrorMasked_MatchesExportMat(t *testing.T) {
 	assertMasked(t, "matches.exportMat", env.Error, rec.Body.String(), log.String())
 }
 
+// failingBeginTx wraps a Storage whose BeginTx always fails with a
+// non-sentinel — hence internal — error, the way a genuinely broken backend
+// (a dropped connection, a full disk) would, independent of context
+// cancellation (see failingImportTx's doc comment: since #234 a cancelled
+// context is its own, distinct outcome for imports.json, not a stand-in for
+// this).
+type failingBeginTx struct{ storage.Storage }
+
+func (failingBeginTx) BeginTx(context.Context) (storage.Tx, error) {
+	return nil, errors.New(secretCause)
+}
+
+// TestInternalErrorMasked_ImportsJSON: imports.json's error event masks a
+// genuine internal failure the same way as the three NDJSON sites in
+// TestInternalErrorMasked_NDJSONStreams. It is its own test, not a row in
+// that table, because the table's shared trigger (cancel the request
+// context up front) now produces {"event":"cancelled"} for imports.json —
+// itself a distinct, non-error outcome, see
+// TestHandleImport_ContextCancelledEmitsCancelledEvent
+// (handlers_imports_test.go) — so this one needs its own, cancellation-free
+// trigger.
+func TestInternalErrorMasked_ImportsJSON(t *testing.T) {
+	srv, log := newLoggedServer(t, func(s storage.Storage) storage.Storage { return failingBeginTx{s} })
+
+	var b bytes.Buffer
+	mw := newMultipart(t, &b, "data.ndjson", []byte(`{"kind":"position"}`+"\n"))
+	req := httptest.NewRequest(http.MethodPost, "/v1/imports.json", &b)
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	req.Header.Set("Content-Type", mw)
+	rec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200 (%s)", rec.Code, rec.Body)
+	}
+	raw := rec.Body.String()
+	lines := strings.Split(strings.TrimSpace(raw), "\n")
+	var ev map[string]any
+	if err := json.Unmarshal([]byte(lines[len(lines)-1]), &ev); err != nil {
+		t.Fatal(err)
+	}
+	if ev["event"] != "error" {
+		t.Fatalf("last event = %v, want %q (%s)", ev["event"], "error", raw)
+	}
+	assertMasked(t, "imports.json", lastErrorObject(t, rec.Body.Bytes()), raw, log.String())
+	if !strings.Contains(log.String(), "hunter2") {
+		t.Errorf("server log lost the real cause:\n%s", log.String())
+	}
+}
+
 // lastErrorObject returns the "error" object of the last NDJSON line of an
 // event stream (handleImport / gammonnet emit {"event":"error","error":{…}};
 // streamSeq2 / handleExport emit an envelope {"error":{…}}).
@@ -163,10 +213,15 @@ func lastErrorObject(t *testing.T, raw []byte) errorBody {
 	return last.Error
 }
 
-// TestInternalErrorMasked_NDJSONStreams: the four sites that have already
+// TestInternalErrorMasked_NDJSONStreams: three sites that have already
 // committed a 200 and can only append a trailing error — the streamed rows
-// (rpcStream/streamSeq2), an import's error event, an export's trailing
-// envelope, and the gammonNet sweep's error event — mask the same way.
+// (rpcStream/streamSeq2), an export's trailing envelope, and the gammonNet
+// sweep's error event — mask the same way. imports.json is covered
+// separately (TestInternalErrorMasked_ImportsJSON): since #234, a cancelled
+// context is no longer a stand-in for "an internal error" on that route — it
+// reports {"event":"cancelled"} instead (see
+// TestHandleImport_ContextCancelledEmitsCancelledEvent), so this table's
+// shared "cancel ctx up front" trigger can no longer exercise its masking.
 func TestInternalErrorMasked_NDJSONStreams(t *testing.T) {
 	cases := []struct {
 		name, path  string
@@ -177,11 +232,6 @@ func TestInternalErrorMasked_NDJSONStreams(t *testing.T) {
 		{"positions.list", "/v1/positions.list", func() (io.Reader, string) { return strings.NewReader(`{}`), "application/json" }, "", false},
 		{"exports.json", "/v1/exports.json", func() (io.Reader, string) { return nil, "application/json" }, "", false},
 		{"gammonnet.analyzeMissing", "/v1/gammonnet.analyzeMissing", func() (io.Reader, string) { return nil, "application/json" }, "error", true},
-		{"imports.json", "/v1/imports.json", func() (io.Reader, string) {
-			var b bytes.Buffer
-			mw := newMultipart(t, &b, "data.ndjson", []byte(`{"kind":"position"}`+"\n"))
-			return &b, mw
-		}, "error", true},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

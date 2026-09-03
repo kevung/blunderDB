@@ -284,6 +284,50 @@ func TestImportBGFTextPositionEndToEnd(t *testing.T) {
 	}
 }
 
+// TestHandleImport_ContextCancelledEmitsCancelledEvent (#234): imports.cancel
+// and a graceful shutdown (Server.Run cancelling every in-flight job before
+// Shutdown) both reach the importer through the same cancelled context —
+// this must read as {"event":"cancelled"}, not an "internal error" the
+// masking machinery has to hide the cause of (there is no secret cause here,
+// the client already knows why). See TestInternalErrorMasked_ImportsJSON
+// (trust_boundary_test.go) for the case that IS a genuine internal error.
+func TestHandleImport_ContextCancelledEmitsCancelledEvent(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatalf("sqlite.Open: %v", err)
+	}
+	defer st.Close()
+	srv, err := New(Options{Storage: st})
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+
+	var b bytes.Buffer
+	mw := newMultipart(t, &b, "data.ndjson", []byte(`{"kind":"position"}`+"\n"))
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	req := httptest.NewRequest(http.MethodPost, "/v1/imports.json", &b).WithContext(ctx)
+	req.Header.Set(middleware.TenantHeader, "1")
+	req.Header.Set("Content-Type", mw)
+	rec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200 (%s)", rec.Code, rec.Body)
+	}
+	lines := strings.Split(strings.TrimSpace(rec.Body.String()), "\n")
+	var last map[string]any
+	if err := json.Unmarshal([]byte(lines[len(lines)-1]), &last); err != nil {
+		t.Fatalf("last line not JSON: %v (%s)", err, rec.Body.String())
+	}
+	if last["event"] != "cancelled" {
+		t.Fatalf("last event = %v, want %q (%s)", last["event"], "cancelled", rec.Body.String())
+	}
+	if _, hasError := last["error"]; hasError {
+		t.Errorf("a cancelled event must carry no error object: %s", rec.Body.String())
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
 	// An unknown imports.* verb hits the catch-all 404 (unknown route).

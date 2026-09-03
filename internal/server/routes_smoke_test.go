@@ -7,8 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -34,29 +32,10 @@ import (
 // rejected an empty request on purpose. The catch-all 404 is recognised by
 // its message and is a failure.
 
-// handlerKind is inferred from the name of the function that produced the
-// http.HandlerFunc: rpc/rpcVoid/rpcStream are generic builders whose closures
-// carry the builder's name (server.rpcStream[...].func1). Hand-written
-// handlers are classified as kindCustom and listed in customContentTypes.
-type handlerKind int
-
-const (
-	kindJSON handlerKind = iota
-	kindStream
-	kindCustom
-)
-
-func kindOf(h http.HandlerFunc) handlerKind {
-	name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
-	switch {
-	case strings.Contains(name, ".rpcStream["):
-		return kindStream
-	case strings.Contains(name, ".rpc["), strings.Contains(name, ".rpcVoid["):
-		return kindJSON
-	default:
-		return kindCustom
-	}
-}
+// handlerKind/kindOf live in routes.go (production code): server.go's
+// streamingPaths reuses the exact same classification to give a streaming
+// route a longer read/write deadline (#234), so this test and that behaviour
+// can never quietly drift apart.
 
 // customContentTypes names the hand-written handlers and the Content-Type
 // they are allowed to answer with on success. Keep it exhaustive: a custom

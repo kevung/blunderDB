@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"mime"
 	"net/http"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
@@ -53,6 +54,26 @@ func scopeOf(r *http.Request) string {
 	return scope
 }
 
+// acceptableContentType reports whether ct — a request's Content-Type header,
+// possibly absent — is acceptable for a JSON-bodied /v1 call: empty (many
+// simple clients never set it on a POST body, and a body-less call sends
+// none at all) or "application/json" (parameters such as charset are
+// ignored). Anything else — a stray "text/plain", a browser's
+// "multipart/form-data" from a form that posted here by mistake — is
+// rejected before a single byte is parsed as JSON, rather than surfacing as
+// a confusing "invalid character" message for bytes that were never JSON to
+// begin with (#232).
+func acceptableContentType(ct string) bool {
+	if ct == "" {
+		return true
+	}
+	mediaType, _, err := mime.ParseMediaType(ct)
+	if err != nil {
+		return false
+	}
+	return mediaType == "application/json"
+}
+
 // decodeJSON decodes the request body into dst. An empty body is accepted and
 // leaves dst at its zero value, so methods with all-optional fields can be
 // called with no body.
@@ -60,11 +81,44 @@ func decodeJSON(r *http.Request, dst any) error {
 	if r.Body == nil {
 		return nil
 	}
+	if ct := r.Header.Get("Content-Type"); !acceptableContentType(ct) {
+		return fmt.Errorf("Content-Type must be application/json, got %q", ct)
+	}
 	if err := json.NewDecoder(r.Body).Decode(dst); err != nil {
 		if errors.Is(err, io.EOF) {
 			return nil
 		}
 		return err
+	}
+	return nil
+}
+
+// maxPageSize bounds a client-supplied page size (the family of "limit"
+// request fields backed by storage.ListOpts and its siblings): a request for
+// more than this many rows in one page is refused rather than honoured
+// unbounded (#232). 1000 comfortably covers every real UI page while
+// keeping a single query, and a single response, to a predictable size.
+const maxPageSize = 1000
+
+// pagedReq is implemented by a request type that carries a client-supplied
+// page size — positions.list/listIds' listReq, matches.list's matchListReq,
+// anki.reviewLog's reviewLogReq. rpc and rpcStream check every decoded
+// request against it once, generically, so a new listing route inherits the
+// cap by construction instead of a per-handler check someone has to
+// remember to add.
+type pagedReq interface {
+	pageLimit() int
+}
+
+// checkPageLimit enforces maxPageSize on req when it implements pagedReq;
+// every other request type is untouched.
+func checkPageLimit(req any) error {
+	pr, ok := req.(pagedReq)
+	if !ok {
+		return nil
+	}
+	if limit := pr.pageLimit(); limit > maxPageSize {
+		return fmt.Errorf("%w: limit %d exceeds the maximum page size %d", storage.ErrInvalid, limit, maxPageSize)
 	}
 	return nil
 }
@@ -83,6 +137,10 @@ func rpc[Req any, Resp any](fn func(ctx context.Context, scope string, req Req) 
 		var req Req
 		if err := decodeJSON(r, &req); err != nil {
 			writeDecodeError(w, "invalid JSON body", err)
+			return
+		}
+		if err := checkPageLimit(req); err != nil {
+			writeStorageError(w, err)
 			return
 		}
 		resp, err := fn(r.Context(), scopeOf(r), req)
@@ -111,6 +169,10 @@ func rpcStream[Req any, T any](fn func(ctx context.Context, scope string, req Re
 		var req Req
 		if err := decodeJSON(r, &req); err != nil {
 			writeDecodeError(w, "invalid JSON body", err)
+			return
+		}
+		if err := checkPageLimit(req); err != nil {
+			writeStorageError(w, err)
 			return
 		}
 		streamSeq2(w, fn(r.Context(), scopeOf(r), req))

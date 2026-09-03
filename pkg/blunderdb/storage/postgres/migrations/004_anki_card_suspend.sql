@@ -7,4 +7,3 @@
 ALTER TABLE anki_card ADD COLUMN IF NOT EXISTS suspended BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE anki_card ADD COLUMN IF NOT EXISTS buried_until TIMESTAMPTZ;
 
-UPDATE metadata SET value = '2.12.0' WHERE key = 'database_version';

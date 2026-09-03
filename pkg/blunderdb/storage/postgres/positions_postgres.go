@@ -304,29 +304,46 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 	return ids, nil
 }
 
+// loadByIDsChunk bounds how many ids one `= ANY($2)` query carries.
+// PostgreSQL has no bound-parameter limit forcing this the way SQLite's
+// forEachIn chunking does, but an unbounded id list still lets one query
+// hold a multi-million-element array (the server's own request-body cap
+// admits roughly that many int64 ids) and scan proportionally, with no
+// chance to notice a caller's cancelled context between rounds (#232).
+const loadByIDsChunk = 1000
+
 // LoadByIDs returns the listed positions in the caller's order, skipping
-// unknown ids. One query: the list travels as an int8[] parameter.
+// unknown ids. ids is walked in loadByIDsChunk-sized rounds, each its own
+// `= ANY($2)` query.
 func (s *positionStore) LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error) {
 	if len(ids) == 0 {
 		return []domain.Position{}, nil
 	}
-	rows, err := s.db.Query(ctx,
-		`SELECT `+positionSelectCols+` FROM position WHERE tenant_id = $1 AND id = ANY($2)`,
-		tenantID(scope), ids)
-	if err != nil {
-		return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
-	}
-	defer rows.Close()
 	byID := make(map[int64]domain.Position, len(ids))
-	for rows.Next() {
-		p, err := scanPosition(rows)
-		if err != nil {
+	for start := 0; start < len(ids); start += loadByIDsChunk {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		batch := ids[start:min(start+loadByIDsChunk, len(ids))]
+		if err := func() error {
+			rows, err := s.db.Query(ctx,
+				`SELECT `+positionSelectCols+` FROM position WHERE tenant_id = $1 AND id = ANY($2)`,
+				tenantID(scope), batch)
+			if err != nil {
+				return err
+			}
+			defer rows.Close()
+			for rows.Next() {
+				p, err := scanPosition(rows)
+				if err != nil {
+					return err
+				}
+				byID[p.ID] = p
+			}
+			return rows.Err()
+		}(); err != nil {
 			return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
 		}
-		byID[p.ID] = p
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("postgres: load positions by ids: %w", err)
 	}
 	out := make([]domain.Position, 0, len(ids))
 	for _, id := range ids {

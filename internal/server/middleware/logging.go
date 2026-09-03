@@ -28,7 +28,7 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 				"path", r.URL.Path,
 				"status", rec.status,
 				"bytes", rec.bytes,
-				"tenant", r.Header.Get(TenantHeader),
+				"tenant", truncateForLog(r.Header.Get(TenantHeader)),
 				"duration_ms", float64(now().Sub(start).Microseconds()) / 1000.0,
 			}
 			// A masked "internal error" response is otherwise a dead end for
@@ -45,4 +45,22 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 			logger.Info("http request", args...)
 		})
 	}
+}
+
+// maxLoggedTenantLen bounds how much of the raw X-Tenant-ID header value
+// reaches the log line. This middleware logs it before Tenant validates the
+// header (deliberately — a rejected request must still be traceable), so an
+// oversized or adversarial header value must not blow up a log line; a valid
+// tenant is a short decimal integer (A.1) and is never truncated by this.
+const maxLoggedTenantLen = 64
+
+// truncateForLog bounds v to maxLoggedTenantLen runes, marking a cut with a
+// trailing ellipsis so a truncated value is never mistaken for a complete
+// one (#232).
+func truncateForLog(v string) string {
+	r := []rune(v)
+	if len(r) <= maxLoggedTenantLen {
+		return v
+	}
+	return string(r[:maxLoggedTenantLen]) + "…"
 }
