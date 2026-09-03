@@ -82,7 +82,7 @@ func captureHelp(args []string) string {
 	// Errors are expected here: --help makes every Parse return flag.ErrHelp
 	// (or a missing --db error after printing Usage()); the text already
 	// reached stdout/stderr by the time Run returns.
-	_ = cli.NewCLI().Run(args) //nolint:errcheck // stdout/stderr capture is the point, not the error
+	_ = cli.NewCLI().Run(args)
 
 	w.Close()
 	os.Stdout, os.Stderr = savedOut, savedErr
