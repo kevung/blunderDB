@@ -216,7 +216,7 @@ suppression, la taille du fichier étant rappelée dans le message. L'onglet
 permet aussi de pointer vers un fichier ``.bd`` two-sided externe (par exemple
 une base générée soi-même) plutôt que d'utiliser le téléchargement intégré.
 
-L'onglet **gammonNet** règle l'évaluateur embarqué (voir ADR-0011). Deux
+L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
 séparément — abaisser l'une ne modifie jamais l'autre :
 
@@ -242,8 +242,9 @@ stockée a été écrite par une version de moteur plus ancienne que celle en
 cours d'exécution, ou à une profondeur différente de la profondeur d'analyse
 configurée ci-dessus, y est signalée comme périmée et réévaluée. Une position
 portant en plus une analyse XG, GNUbg ou BGBlitz n'est jamais touchée par ce
-bouton, quel que soit son contenu gammonNet — la protection d'ADR-0013 reste
-inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
+bouton, quel que soit son contenu gammonNet — la protection
+d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__
+reste inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
 analyse, positions périmées) est purement informatif ; le lot recalcule sa
 propre liste au moment de démarrer.
 
@@ -1072,7 +1073,8 @@ La valeur du videau reste épinglée — en money game les équités sont
 exprimées en unités du videau courant, seul son propriétaire compte.
 L'analyse est recalculée aussitôt. En régime estimé, le badge lui-même est
 cliquable et ouvre directement l'onglet *Bearoff* de la configuration ; son
-infobulle explique pourquoi (verdict de videau non estimable, ADR-0009) et
+infobulle explique pourquoi (verdict de videau non estimable,
+`ADR-0009 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__) et
 comment étendre le domaine exact.
 
 Le **score** s'édite lui aussi directement sur le plateau, comme en mode

@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -49,6 +50,18 @@ func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 		"delete": cli.runCollectionDelete,
 		"export": cli.runCollectionExport,
 	}
+}
+
+// CollectionSubcommands returns the sub-commands of `blunderdb collection`,
+// sorted — the exported view cmd/cli-doc-gen walks.
+func (cli *CLI) CollectionSubcommands() []string {
+	h := cli.collectionHandlers()
+	names := make([]string, 0, len(h))
+	for name := range h {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	return names
 }
 
 func (cli *CLI) printCollectionUsage() {

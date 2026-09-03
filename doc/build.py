@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import subprocess
 import zipfile
@@ -13,8 +14,6 @@ SKIP_PDF = os.environ.get("BLUNDERDB_DOC_SKIP_PDF") == "1"
 # LANGUAGES in source/conf.py (the switcher) — same set of codes.
 LANG = ['fr', 'en', 'de', 'el', 'es', 'fi', 'it', 'ja', 'ru']
 
-
-import os
 
 def find_build_folders(root_folder):
     build_folders = []
@@ -52,6 +51,21 @@ def get_latest_commit():
     except Exception as e:
         print("Error:", e)
         return None
+
+def get_version(root_dir):
+    # The app version, read straight from source/conf.py's `release = '…'`
+    # (the single value scripts/release.sh bumps on every cut, in step with
+    # wails.json and metaStore.js — see CLAUDE.md's release process). PDFs
+    # are named from this, not the commit SHA: a SHA tells a reader nothing
+    # about which release they downloaded, and CI already renames the asset
+    # to the version string a second time before publishing it (build.yml).
+    conf_path = os.path.join(root_dir, "source", "conf.py")
+    with open(conf_path, encoding="utf-8") as f:
+        for line in f:
+            match = re.match(r"^release\s*=\s*['\"]([^'\"]+)['\"]", line)
+            if match:
+                return match.group(1)
+    raise RuntimeError(f"no `release = '…'` line found in {conf_path}")
 
 
 def zip_folder(folder_path, zip_file_name):
@@ -110,10 +124,10 @@ def build_latex_docs(path, language):
     subprocess.run(["make"], check=True)
     print(f"LaTeX documentation built for {language} language in {path}")
 
-def rename_pdf(root_dir, language, latest_commit):
+def rename_pdf(root_dir, language, version):
     build_path = os.path.join(root_dir, "build", f"pdf_{language}")
     pdf_filename = "blunderdb.pdf"
-    new_pdf_filename = f"blunderDB-{latest_commit}-{language}.pdf"
+    new_pdf_filename = f"blunderDB-{version}-{language}.pdf"
     pdf_path = os.path.join(build_path, pdf_filename)
     new_pdf_path = os.path.join(build_path, new_pdf_filename)
     if os.path.exists(pdf_path):
@@ -145,11 +159,11 @@ def main():
     if SKIP_PDF:
         print("BLUNDERDB_DOC_SKIP_PDF=1: skipping the LaTeX/PDF builds")
     else:
-        latest_commit = get_latest_commit()
+        version = get_version(root_dir)
 
         for lang in LANG:
             build_latex_docs(root_dir, lang)
-            rename_pdf(root_dir, lang, latest_commit)
+            rename_pdf(root_dir, lang, version)
 
     if CREATE_ARCHIVE:
         build_folders = find_build_folders(root_dir)
