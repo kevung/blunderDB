@@ -80,6 +80,28 @@ import (
 // Still left failing rather than loosened — the block is at 0.05 and two
 // decisions sit just over it — but it is now a DEPTH/MET question to
 // measure, not a missing tranche to write.
+//
+// Result of that depth/MET measurement (2026-09-03, #192/C.5, ADR-0029):
+// THE HYPOTHESIS IS REFUTED TOO. TestMeasureGateRedCasesAtDepth replays every
+// score-[1,5] checker decision of the xg fixture at three settings, and the
+// two red ones do not move:
+//
+//	dice [4,3] "21/17 bar/22"        0.0552 / 0.0552 / 0.0552
+//	dice [1,1] "10/9 13/12 6/5(2)"   0.0738 / (out of xg's net) / 0.0738
+//	                                 2-ply k=12 | 2-ply unpruned | 3-ply k=12
+//
+// Same move chosen at every setting, same cost to the fourth decimal. And
+// there is no "xg MET" left to try: engine/met.go IS Kazaross-XG2, xg's own
+// default table — the sentence above should have said so. Pruning is not the
+// suspect either, and not even monotone: at dice [5,2] turning it OFF made
+// the cost worse, 0.0000 -> 0.0827.
+//
+// That is three hypotheses measured and refuted on the same two decisions —
+// use_cube (ADR-0023), then depth/MET, then cube efficiency (ADR-0029, which
+// cannot move them either: the Crawford game has no cube). What is left is
+// the network's own judgement on two boards against xg's deeper analysis of
+// them, which is not a configuration question. Still left failing, still not
+// loosened; the next reader should not spend another run on the setting.
 func TestIntegrationGate(t *testing.T) {
 	if os.Getenv("BLUNDERDB_GATE") == "" {
 		t.Skip("set BLUNDERDB_GATE to run the integration gate (~8 min at 2-ply k=12, measured 2026-08-29)")
