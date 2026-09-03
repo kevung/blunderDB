@@ -9,10 +9,12 @@
  * the exact document the Go decoder is asserted to produce for `xgid`, and
  * checks the two GUI functions that read such a position:
  *   - generateXGID(position) must equal `xgidCanonical` — the re-encoding
- *     under the GUI's own conventions (lossy on purpose, see the corpus
- *     _comment: match length = larger away score, Crawford inferred from an
- *     away score of 1, Jacoby/Beaver and max cube emitted as 0, an offered
- *     cube re-encoded as dice 00);
+ *     under the GUI's own conventions (see the corpus _comment): Jacoby/Beaver
+ *     round-trip losslessly since D.11/#211, match length is reconstructed as
+ *     the larger away score (harmless — it still decodes to the same away
+ *     scores), Crawford is inferred from an away score of 1, max cube is
+ *     emitted as 0 (blunderDB has no capped-cube concept), and an offered cube
+ *     re-encodes as dice 00;
  *   - computePipCount(position) must equal `pips`, the Go ComputePipCounts.
  * The flat fields (cubeOwner, dice, score, ...) restate `position` for the
  * reader; they are cross-checked so a corpus edit cannot leave them stale.
