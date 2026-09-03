@@ -633,7 +633,7 @@ msgid "wx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr ""
 
@@ -658,7 +658,7 @@ msgid "gx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises à x % et y %."
 msgstr ""
 
@@ -683,7 +683,7 @@ msgid "bx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises à x % et y %."
 msgstr ""
 
@@ -708,7 +708,7 @@ msgid "Wx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises à x % et y %."
 msgstr ""
 
@@ -733,7 +733,7 @@ msgid "Gx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises à x % et y %."
 msgstr ""
 
@@ -758,7 +758,7 @@ msgid "Bx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
 msgstr ""
 
@@ -1160,7 +1160,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/cmd_mode.rst:238
-#, python-format
+#, no-python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"

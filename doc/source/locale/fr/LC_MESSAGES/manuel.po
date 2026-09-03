@@ -1666,7 +1666,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/manuel.rst:958
-#, python-format
+#, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
 "jusqu'au bout** : les recubes futurs sont intégralement valorisés "
@@ -1681,7 +1681,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/manuel.rst:969
-#, python-format
+#, no-python-format
 msgid ""
 "**Pourquoi le verdict n'est-il jamais estimé ?** L'équité cubeful est un "
 "problème de *trajectoire* (quand doubler), qu'aucun résumé statistique de"
