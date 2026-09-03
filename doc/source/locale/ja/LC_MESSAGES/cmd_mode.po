@@ -644,7 +644,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "プレイヤーの勝率が x % から y % の範囲です。"
 
@@ -669,7 +669,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises à x % et y %."
 msgstr "プレイヤーのギャモン率が x % から y % の範囲です。"
 
@@ -694,7 +694,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises à x % et y %."
 msgstr "プレイヤーのバックギャモン率が x % から y % の範囲です。"
 
@@ -719,7 +719,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises à x % et y %."
 msgstr "相手の勝率が x % から y % の範囲です。"
 
@@ -744,7 +744,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises à x % et y %."
 msgstr "相手のギャモン率が x % から y % の範囲です。"
 
@@ -769,7 +769,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
 msgstr "相手のバックギャモン率が x % から y % の範囲です。"
 
@@ -1194,7 +1194,7 @@ msgstr ""
 "列で確認できます。"
 
 #: ../../source/cmd_mode.rst:245
-#, python-format
+#, no-python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1223,19 +1223,4 @@ msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr "データベースのマイグレーションは、データベースを開く際に自動的に実行されるようになりました。"
-
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "フィルタライブラリを表示／非表示にします。"
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "検索履歴を表示／非表示にします。"
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "EPC（実効ピップカウント）パネルを開きます。"
 

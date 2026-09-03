@@ -864,10 +864,3 @@ msgstr ""
 "``blunders``）は、統計パネルの現在のフィルタに従って、最悪のミス（エクイティまたは "
 "MWC）を分析ビューに直接読み込みます。手作業の検索は不要です。:ref:`stats` を参照してください。"
 
-#~ msgid ""
-#~ "Les résultats sont affichés en temps "
-#~ "réel dans le panneau EPC dédié: "
-#~ "EPC, nombre moyen de lancers, écart "
-#~ "type, pip count et wastage."
-#~ msgstr "結果は専用のEPCパネルにリアルタイムで表示されます：EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージ。"
-

@@ -96,10 +96,13 @@ depuis plusieurs clients.
      - –
      - active CORS pour cette origine (désactivé par défaut)
    * - ``--rate-limit-rps <n>``
-     - ``0``
-     - limite de requêtes par seconde et par tenant (0 = désactivé)
+     - ``50``
+     - limite de requêtes par seconde et par tenant (0 = désactivé) ; activée
+       par défaut à une valeur généreuse plutôt que sur option, pour qu'un
+       fichier compose qui ne pense qu'à la base de données n'hérite pas d'un
+       démon sans aucune limite
    * - ``--rate-limit-burst <n>``
-     - ``2×rps``
+     - ``100``
      - taille du seau de jetons pour les pics de requêtes
    * - ``--rls``
      - ``false``
@@ -119,8 +122,23 @@ depuis plusieurs clients.
 
 La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``,
-``BLUNDERDB_IDENTITY_DIR``).
+``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
+``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
+``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``) : un drapeau explicite reste
+prioritaire sur la variable correspondante.
+
+La table de seaux du limiteur de débit porte elle-même un plafond dur
+(10 000 tenants distincts) : au-delà, chaque nouveau tenant évince le seau le
+moins récemment utilisé plutôt que de laisser la table croître sans limite —
+utile si un client envoie beaucoup de valeurs ``X-Tenant-ID`` distinctes,
+volontairement ou non, entre deux purges périodiques des seaux inactifs.
+
+``blunderdb serve`` refuse tout argument positionnel imprévu (au-delà du seul
+``serve`` initial qu'un ``ENTRYPOINT`` déjà réduit au binaire nu laisse
+passer) : sans cette vérification, un drapeau placé après un tel argument
+était silencieusement ignoré — ``docker run image serve --addr :9090``,
+réflexe naturel puisque l'``ENTRYPOINT`` de l'image vaut déjà ``serve``,
+démarrait sur ``:8080`` sans un mot.
 
 Points d'accès
 --------------
@@ -242,10 +260,28 @@ positions et des analyses stockées — jamais un évaluateur nu :
 position. La réponse est un flux NDJSON (``started``, ``progress``, puis
 ``done`` ou ``error``/``cancelled``), sur le même modèle que les points
 d'accès d'import ; ``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` reçu
-dans l'évènement ``started``) annule un rattrapage en cours. C'est la même
+dans l'évènement ``started``) annule un rattrapage en cours et sert
+indifféremment pour un rattrapage ou une réanalyse (ci-dessous). C'est la même
 opération que le déclenchement automatique après import et le geste explicite
 de l'interface graphique, et que la sous-commande ``blunderdb analyze`` (voir
 :ref:`cli`) — trois formes, une seule logique.
+
+``gammonnet.sweepStale`` est le pendant de ``analyzeMissing`` pour la
+réanalyse plutôt que le comblement : chaque position dont l'analyse est
+entièrement issue de gammonNet mais périmée — une version de moteur plus
+ancienne que celle en cours d'exécution, ou une profondeur différente de
+``ply`` — est réévaluée à la profondeur demandée. Le prédicat de péremption
+est partagé avec le même lot de l'interface graphique et de
+``blunderdb analyze --stale`` (aucune duplication de la logique entre les
+trois modes) ; une position portant une analyse XG, GNUbg ou BGBlitz n'est
+jamais touchée, quel que soit son contenu gammonNet — la protection
+d'ADR-0013 reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et
+l'évènement final de chacune des deux routes porte désormais la répartition
+``evaluated``/``refused``/``failed`` : une position que gammonNet refuse
+d'évaluer (un score de match hors de la portée de sa table, une décision de
+videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle
+n'est jamais retentée en vain sur la passe suivante, contrairement à une
+position réellement en échec.
 
 .. _headless_docker:
 
@@ -317,6 +353,67 @@ construire localement ou tirer l'image publiée donne le même binaire.
    reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-même,
    et ne jamais être exposé directement sur l'Internet public. Les exemples
    ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison.
+
+.. _headless_proxy_deployment:
+
+Déploiement derrière un proxy authentifiant
+--------------------------------------------
+
+L'ADR-0005 fait du reverse-proxy **toute** la frontière de sécurité du démon :
+lui seul authentifie l'appelant, lui seul a le droit de poser l'en-tête
+``X-Tenant-ID``, et il doit **retirer** systématiquement toute valeur envoyée
+par le client avant d'y injecter le tenant authentifié — sans quoi n'importe
+qui peut se faire passer pour n'importe quel tenant en le nommant lui-même.
+Le dépôt fournit un exemple complet sous ``deploy/`` :
+
+* ``deploy/docker-compose.yml`` — Caddy (authentification HTTP Basic de
+  démonstration) devant ``blunderdb-serve`` et PostgreSQL (Row-Level Security
+  activée) ; seul Caddy publie un port, ``blunderdb-serve`` et PostgreSQL
+  vivent sur un réseau Docker interne (``internal: true``) qui n'a de route
+  ni vers l'hôte ni vers l'Internet ;
+* ``deploy/Caddyfile`` — la configuration de Caddy : authentifie, associe le
+  compte authentifié à l'entier du tenant (``map``), puis l'injecte dans
+  ``X-Tenant-ID`` après avoir explicitement effacé toute valeur reçue du
+  client (garde ``header_up X-Tenant-ID ""`` suivie de l'injection) ;
+* ``deploy/nginx-tenant-proxy.conf`` — le même schéma en extrait nginx
+  (``proxy_set_header X-Tenant-ID ""`` puis ``proxy_set_header X-Tenant-ID
+  $tenant_id``), pour qui a déjà un nginx en place ;
+* ``deploy/README.md`` — le modèle de menace en trois phrases et ce qu'il ne
+  faut jamais faire (exposer le démon nu).
+
+L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas une
+recommandation de production : elle se remplace par ``forward_auth`` vers un
+fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
+transmet l'identité au même endroit du fichier.
+
+**Scénario complet, de zéro à un démon qui répond :**
+
+.. code-block:: bash
+
+   cd deploy
+   cp .env.example .env    # puis y définir POSTGRES_PASSWORD
+   docker compose up -d --build
+
+   # Sans authentification : rejeté avant même d'atteindre le démon.
+   curl -i http://localhost:8080/v1/metadata.counts -d '{}'
+   # HTTP/1.1 401 Unauthorized
+
+   # Authentifié en tant qu'« alice », qui est mappée au tenant 1 : le démon
+   # répond, quel que soit l'en-tête que le client tente d'envoyer lui-même.
+   curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'
+   curl -u alice:demo-password -H "X-Tenant-ID: 999" \
+        http://localhost:8080/v1/metadata.counts -d '{}'
+   # {"positions":0,"analyses":0,"matches":0,...} dans les deux cas — le journal
+   # du démon (docker compose logs blunderdb-serve) montre tenant=1 pour les
+   # deux requêtes : la valeur 999 envoyée par le client n'a jamais survécu à
+   # la garde du Caddyfile.
+
+   docker compose down -v
+
+Ce scénario a été rejoué tel quel : ``blunderdb-serve`` et PostgreSQL
+démarrent, Caddy authentifie et route, et le journal du démon confirme que
+seul l'entier injecté par le proxy — jamais celui du client — atteint la
+couche applicative.
 
 .. _headless_postgres:
 

@@ -237,7 +237,7 @@ msgid "s d e>1000"
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:1
-#, python-format
+#, no-python-format
 msgid "Blitz avec au moins 20% de gammon"
 msgstr ""
 

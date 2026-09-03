@@ -29,10 +29,34 @@
     // structure stays. The best-row emphasis is suppressed with them — it is
     // the verdict's only other carrier, so leaving it on would let the exercise
     // be solved by looking for the bold line.
-    let { decision, cubeAnalysis = null, cubeValue = 0, isPlayedCubeAction = () => false, engineVersionFallback = '', showInfo = true, masked = false } = $props();
+    //
+    // isMoney (ADR-0016 point 6, #190/C.3): states the equity column's own
+    // referential — undefined (the caller has no position to read one from)
+    // keeps the plain, scale-silent header.
+    //
+    // jacoby / beaver (#190/C.3 point 5): the position's own two money-game
+    // rule flags (domain.Position.HasJacoby/HasBeaver) were stored and hashed
+    // but never shown next to the verdict they change the value of — a
+    // reader had no way to tell a "no double" reached under Jacoby from one
+    // reached without it. Undefined/false renders nothing, so a match-play
+    // position (where the same XGID field means Crawford, not these rules)
+    // is unaffected by a caller that simply never passes them.
+    let {
+        decision,
+        cubeAnalysis = null,
+        cubeValue = 0,
+        isPlayedCubeAction = () => false,
+        engineVersionFallback = '',
+        showInfo = true,
+        masked = false,
+        isMoney = undefined,
+        jacoby = false,
+        beaver = false
+    } = $props();
 
-    let block = $derived(cubeRows(decision, { t: $t, cubeValue, isPlayedCubeAction, masked }));
+    let block = $derived(cubeRows(decision, { t: $t, cubeValue, isPlayedCubeAction, masked, isMoney }));
     let info = $derived(cubeInfoRows(cubeAnalysis, { t: $t, engineFallback: engineVersionFallback }));
+    let rules = $derived([jacoby && $t('cube.jacoby'), beaver && $t('cube.beaver')].filter(Boolean));
 </script>
 
 <table class="cube-table">
@@ -57,6 +81,13 @@
         </tr>
     </tbody>
 </table>
+{#if rules.length > 0}
+    <div class="cube-rules">
+        {#each rules as rule (rule)}
+            <span class="rule-badge">{rule}</span>
+        {/each}
+    </div>
+{/if}
 {#if showInfo && cubeAnalysis}
     <table class="info-table">
         <tbody>
@@ -71,6 +102,25 @@
 {/if}
 
 <style>
+    /* Jacoby/Beaver (#190/C.3 point 5): small, quiet badges next to the table
+       they change the value of — not a fourth column, since they apply to at
+       most a money position and most positions carry neither. */
+    .cube-rules {
+        display: flex;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .rule-badge {
+        font-size: var(--font-size-small);
+        color: #777;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 1px 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
     /* ADR-0018 rule 5's idiom, which ADR-0020 finishes applying here: no cell
        grid, hairline horizontal separators, small grey uppercase headers on a
        transparent ground, tabular figures. Hierarchy comes from weight and

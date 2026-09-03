@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 08:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -212,8 +212,8 @@ msgid ""
 "réinitialisation."
 msgstr ""
 "Nel pannello Eval (vedere :ref:`panneau_epc`), BACKSPACE reimposta ai "
-"valori propri di questo pannello (punteggio money, nessun dado impostato) "
-"anziché a quelli della modalità di modifica (punteggio 7 ovunque, dadi "
+"valori propri di questo pannello (punteggio money, nessun dado impostato)"
+" anziché a quelli della modalità di modifica (punteggio 7 ovunque, dadi "
 "3-1). Un doppio clic fuori dal board produce la stessa reimpostazione."
 
 #: ../../source/raccourcis.rst:68
@@ -414,8 +414,8 @@ msgid "CTRL-D"
 msgstr "CTRL-D"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher le panneau Stats."
-msgstr "Mostra il pannello Statistiche."
+msgid "Afficher/cacher le panneau Stats."
+msgstr "Mostra/nascondi il pannello delle statistiche."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-E"
@@ -787,32 +787,3 @@ msgstr ""
 "SINISTRA/k, DESTRA/j, PagGiù/l scorrono le posizioni della collezione "
 "aperta esattamente come descritto in :ref:`raccourcis_navigation`."
 
-#~ msgid "Exécuter la recherche et fermer le panneau."
-#~ msgstr "Esegui la ricerca e chiudi il pannello."
-
-#~ msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
-#~ msgstr "Seleziona la ricerca precedente (più recente, sopra)."
-
-#~ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-#~ msgstr "Seleziona la ricerca successiva (più vecchia, sotto)."
-
-#~ msgid ""
-#~ "Désélectionner la recherche. Si aucune "
-#~ "recherche sélectionnée, fermer le panneau."
-#~ msgstr ""
-#~ "Deseleziona la ricerca. Se nessuna "
-#~ "ricerca è selezionata, chiudi il "
-#~ "pannello."
-
-#~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-#~ msgstr "Seleziona il filtro precedente (quando un filtro è selezionato)."
-
-#~ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-#~ msgstr "Seleziona il filtro successivo (quando un filtro è selezionato)."
-
-#~ msgid ""
-#~ "Désélectionner le filtre. Si aucun "
-#~ "filtre sélectionné, fermer le panneau."
-#~ msgstr ""
-#~ "Deseleziona il filtro. Se nessun filtro"
-#~ " è selezionato, chiudi il pannello."

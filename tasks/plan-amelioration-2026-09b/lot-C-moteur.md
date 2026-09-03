@@ -45,12 +45,18 @@ l'exclut ; `TestParallelSearchIsBitIdentical` est sauté en `-short`
 (`search_test.go:283-285`) donc sur chaque push ; le gold de recherche
 (`gold_test.go:80`, `BLUNDERDB_GOLD`) ne tourne dans **aucun** job. `test-os`
 macOS (arm64, repli pur Go) est en `continue-on-error` et `-short`.
-- [ ] Job `go test -race -run 'Parallel|Concurrent|Batch' ./pkg/blunderdb/engine/gammonnet/`
-      (court par construction) sur chaque push.
-- [ ] Variante 1-ply non-`short` de la bit-identité parallèle (~20 ms).
-- [ ] Job hebdomadaire (dans `fuzz.yml` ou un `nightly.yml`) : `BLUNDERDB_GOLD=1`
-      sans `-race`, plus `kernel_identity_test` sur macos (arm64).
-- [ ] Retirer `continue-on-error` de `test-os` (E.1) — préalable de #151.
+- [x] Job `go test -race -run 'Parallel|Concurrent|Batch' ./pkg/blunderdb/engine/gammonnet/`
+      (court par construction) sur chaque push. Fait : job `race-gammonnet`
+      (`build.yml`), ~45-65 s.
+- [x] Variante 1-ply non-`short` de la bit-identité parallèle (~20 ms). Fait :
+      `TestParallelSearchIsBitIdenticalOnePly` (`search_test.go`).
+- [x] Job hebdomadaire (dans `fuzz.yml` ou un `nightly.yml`) : `BLUNDERDB_GOLD=1`
+      sans `-race`, plus `kernel_identity_test` sur macos (arm64). Fait dans
+      `fuzz.yml` : jobs `gammonnet-gold` et `gammonnet-kernel-identity-arm64`
+      (pas de `nightly.yml` créé — E.12/#228 décidera où vont les autres
+      jobs hebdomadaires).
+- [x] Retirer `continue-on-error` de `test-os` (E.1) — préalable de #151. Fait
+      dans E.1/#217.
 
 ## C.3 — Incohérences money/match visibles à l'utilisateur [S] — correction (#190)
 

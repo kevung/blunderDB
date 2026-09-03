@@ -137,3 +137,7 @@ export function StartEvaluationAtRest(arg1, arg2, arg3, arg4) {
 export function StartGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetBatch'](arg1, arg2, arg3);
 }
+
+export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['StartGammonNetStaleBatch'](arg1, arg2, arg3);
+}

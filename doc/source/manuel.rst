@@ -220,12 +220,31 @@ automatiquement après import** qui, une fois activée, vérifie après chaque
 import s'il reste des positions **sans aucune analyse** (ni gammonNet, ni XG,
 ni GNUbg, ni BGBlitz — la règle est « une évaluation ne comble qu'un trou »,
 jamais un remplacement) et, le cas échéant, lance en tâche de fond une analyse
-gammonNet à la profondeur d'analyse configurée. Le travail est **borné,
-visible et annulable, jamais un démon silencieux** : sa progression
-(``positions analysées / total``) et un bouton d'annulation apparaissent dans
-la barre de statut pendant toute sa durée, et disparaissent une fois terminé.
-Fermer l'application pendant l'analyse ne perd rien : chaque position
-analysée est écrite au fil de l'eau, et un prochain import concerné reprend
+gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
+maintenant** relance manuellement le même rattrapage, utile pour une
+bibliothèque constituée avant l'existence de cette fonctionnalité.
+
+Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
+inverse : une position déjà analysée par gammonNet, mais dont l'analyse
+stockée a été écrite par une version de moteur plus ancienne que celle en
+cours d'exécution, ou à une profondeur différente de la profondeur d'analyse
+configurée ci-dessus, y est signalée comme périmée et réévaluée. Une position
+portant en plus une analyse XG, GNUbg ou BGBlitz n'est jamais touchée par ce
+bouton, quel que soit son contenu gammonNet — la protection d'ADR-0013 reste
+inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
+analyse, positions périmées) est purement informatif ; le lot recalcule sa
+propre liste au moment de démarrer.
+
+Les deux lots sont **bornés, visibles et annulables, jamais un démon
+silencieux** : leur progression (``positions analysées / total``) et un
+bouton d'annulation apparaissent dans la barre de statut pendant toute leur
+durée, et disparaissent une fois terminés au profit d'un message résumant le
+résultat — combien de positions ont été **analysées**, combien ont été
+**refusées** (une position que gammonNet décline d'évaluer, comme un score de
+match hors de portée de sa table de match, ce qui n'est jamais une panne) et
+combien ont **échoué** (retentées, inchangées, au prochain lancement).
+Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
+analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
@@ -338,6 +357,13 @@ pion se lit ``24/14``, et ``24/14*`` s'il frappe en arrivant. Le détail de
 l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une
 frappe *en cours de route* conserve son point de passage, ``24/18* 18/14``,
 sans quoi la frappe en 18 disparaîtrait de la notation.
+
+L'équité d'une analyse importée suit la même règle que le panneau Eval : la
+colonne annonce son référentiel, « Équité (money) » ou « Équité (match) »
+selon le score de la position analysée, jamais un simple « Équité » muet sur
+l'échelle. Les règles **Jacoby** et **Beaver** actives sur une position en
+money game s'affichent, elles aussi, en badges sous le tableau de décision de
+videau.
 
 .. _panneau_commentaires:
 
@@ -908,7 +934,10 @@ L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en **équité normalisée** — la même échelle que XG et GNU Backgammon,
 où gagner la valeur du videau courant vaut +1 et la perdre −1 — jamais
-mélangées dans un même tableau. Elle tient compte du **videau vivant** : la
+mélangées dans un même tableau. L'en-tête de la colonne le dit explicitement
+plutôt que de laisser deviner l'échelle : « Équité (money) » en money game,
+« Équité (match) » à un score de match. Elle tient compte du **videau
+vivant** : la
 recherche valorise chaque position finale par le modèle de videau (Janowski,
 efficacité mesurée) dans l'état du videau de la position, comme le font XG
 et GNU Backgammon en évaluation *cubeful*. C'est ce qui rend visibles au
@@ -972,6 +1001,12 @@ n'y a **pas** de verdict, plutôt que de laisser croire à un calcul en cours :
   retourné. Les équités restent affichées, à titre indicatif, mais aucune
   option ne porte d'écart : une erreur, c'est ce que coûte un choix, et il
   n'y a pas de choix.
+
+En money game, les règles **Jacoby** et **Beaver** actives sur la position
+apparaissent sous le tableau de videau, en petits badges à côté du verdict
+qu'elles changent : le verdict *pas de double* d'une position sous la règle
+Jacoby n'est pas le même calcul que sans elle, et rien d'autre à l'écran ne
+le disait.
 
 Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
 case *Défi* forment une bande à part, alignée à droite au-dessus des

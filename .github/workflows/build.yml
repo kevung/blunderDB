@@ -47,20 +47,26 @@ jobs:
       matrix:
         include:
           - shard: database-a
-            run: go test -timeout 1200s -race -count=1 -run '^Test[A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/
+            run: go test -timeout 1200s -race -count=1 -run '^Test[A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
           - shard: database-b
-            run: go test -timeout 1200s -race -count=1 -run '^Test[^A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/
+            run: go test -timeout 1200s -race -count=1 -run '^Test[^A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
           - shard: app
-            run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic . ./internal/... ./cmd/...
+            run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic . ./internal/... ./cmd/... 2>&1 | tee test-output.txt
+          # -coverpkg=./pkg/blunderdb/... (E.2, #218): this shard is what
+          # exercises storage/sqlite, and storage/sqlite calls into
+          # storage/sqlshared — without -coverpkg only the package under test
+          # gets attributed, so sqlshared's own lines executed on its behalf
+          # showed as 1.4% covered (measured 2026-09, only rebind_test.go's
+          # direct calls counted). Widening the scope costs ~10s locally.
           - shard: rest
             run: |
               go vet ./...
-              go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
-                $(go list ./pkg/... ./tests/... | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$')
+              go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+                $(go list ./pkg/... ./tests/... | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$') 2>&1 | tee test-output.txt
           # -short on pushes and pull requests (~30 s: the 2-ply searches behind
           # testing.Short() are skipped), the full suite on version tags.
           - shard: gammonnet
-            run: go test -timeout 1500s -count=1 $GAMMONNET_FLAGS -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/engine/gammonnet/
+            run: go test -timeout 1500s -count=1 $GAMMONNET_FLAGS -coverprofile=coverage.out -covermode=set ./pkg/blunderdb/engine/gammonnet/ 2>&1 | tee test-output.txt
           # Every Fuzz* target of the module in seed mode: without -fuzz, `go
           # test` replays the f.Add seeds and the committed testdata/fuzz/
           # corpora (the regression inputs of past crashes) as plain tests.
@@ -74,7 +80,7 @@ jobs:
             run: |
               pkgs=$(grep -rl --include='*_test.go' '^func Fuzz' . | xargs -n1 dirname | sed 's|^\./||; s|^|./|' | sort -u)
               echo "fuzz packages: $pkgs"
-              go test -timeout 600s -race -count=1 -run '^Fuzz' -v $pkgs
+              go test -timeout 600s -race -count=1 -run '^Fuzz' -v $pkgs 2>&1 | tee test-output.txt
     env:
       GAMMONNET_FLAGS: ${{ startsWith(github.ref, 'refs/tags/') && '' || '-short' }}
     steps:
@@ -104,12 +110,26 @@ jobs:
           path: coverage.out
           if-no-files-found: ignore
 
+      # `go test` prints one "ok/FAIL <pkg> <elapsed>" line per package even
+      # without -v (verified locally); `tee` above kept a copy next to the
+      # per-shard exit code, so the coverage job's summary can name the
+      # slowest packages without a second, dedicated timing run (E.2, #218).
+      - name: Upload package timings
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pkg-times-${{ matrix.shard }}
+          path: test-output.txt
+          if-no-files-found: ignore
+
   # Merges the per-shard profiles into the single go-coverage artifact the
-  # summary reads; visibility only, no threshold.
+  # summary reads, checks the merged total against a non-regressive floor,
+  # and reports the slowest packages (E.2, #218 — this used to be visibility
+  # only, no threshold, and merged even when a shard was red).
   coverage:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: test
+    needs: [test, test-postgres]
     if: always()
     steps:
       - name: Checkout
@@ -131,6 +151,20 @@ jobs:
           pattern: go-coverage-*
           path: shards
 
+      - name: Download package timings
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: pkg-times-*
+          path: timings
+
+      # Non-regressive floor (E.2, #218): 51% is where the merged total sat
+      # on 2026-09-03 (measured ~70% without -race locally, comfortably
+      # above — the margin covers the drift race-instrumented runs and a
+      # still-missing test-postgres run add). A number below that is a real
+      # regression, not noise, and now fails the job instead of only being
+      # printed. When an upstream shard was red the merge still runs (so the
+      # partial numbers stay visible) but the summary says so plainly instead
+      # of presenting them as a clean run.
       - name: Merge coverage profiles
         run: |
           first=1
@@ -138,11 +172,48 @@ jobs:
             [ -f "$f" ] || continue
             if [ $first = 1 ]; then cat "$f" > coverage.out; first=0; else tail -n +2 "$f" >> coverage.out; fi
           done
+
+          floor=51
+          floor_failed=0
           if [ -f coverage.out ]; then
             echo '### Go coverage' >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
             go tool cover -func=coverage.out | tail -1 >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+            total=$(go tool cover -func=coverage.out | tail -1 | grep -oE '[0-9]+\.[0-9]+')
+            if awk -v t="$total" -v f="$floor" 'BEGIN{exit !(t < f)}'; then
+              echo "::error::Couverture totale ${total}% sous le plancher non régressif de ${floor}%."
+              echo "**Couverture totale ${total}% — sous le plancher de ${floor}%.**" >> "$GITHUB_STEP_SUMMARY"
+              floor_failed=1
+            else
+              echo "Couverture totale ${total}% (plancher ${floor}%)." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          else
+            echo "::error::Aucun profil de couverture reçu — impossible de vérifier le plancher de ${floor}%."
+            floor_failed=1
+          fi
+
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "::warning::le job test n'a pas fini vert (${{ needs.test.result }}) — la couverture ci-dessus est mesurée sur un run partiel."
+            echo "> ⚠️ Un shard du job \`test\` a échoué (${{ needs.test.result }}) : la couverture ci-dessus ne provient pas d'un run entièrement vert." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "${{ needs.test-postgres.result }}" != "success" ]; then
+            echo "::warning::test-postgres n'a pas fini vert (${{ needs.test-postgres.result }})."
+            echo "> ⚠️ \`test-postgres\` a échoué (${{ needs.test-postgres.result }}) : sa part de la couverture (storage/postgres, migrate) manque ou est partielle." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo '### 10 paquets les plus lents' >> "$GITHUB_STEP_SUMMARY"
+          echo '| Paquet | Durée |' >> "$GITHUB_STEP_SUMMARY"
+          echo '|---|---|' >> "$GITHUB_STEP_SUMMARY"
+          { grep -hE '^(ok|FAIL)[[:space:]]+[^[:space:]]+[[:space:]]+[0-9]+\.[0-9]+s' timings/*/test-output.txt 2>/dev/null || true; } \
+            | awk '{d=$3; sub(/s$/, "", d); print d, $2}' \
+            | sort -rn \
+            | head -10 \
+            | awk '{printf "| `%s` | %ss |\n", $2, $1}' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$floor_failed" = "1" ]; then
+            exit 1
           fi
         shell: bash
 
@@ -152,6 +223,43 @@ jobs:
           name: go-coverage
           path: coverage.out
           if-no-files-found: ignore
+
+  # Parallelism is an invariant nothing else guards between two tags (C.2,
+  # #189): the `gammonnet` shard above deliberately runs without -race
+  # (atomic counters cost it five times its run time, per the shard's own
+  # comment) and skips its parallel/concurrent tests under -short, which
+  # every push and PR passes — so on an ordinary push, nothing ever runs
+  # TestParallelSearchIsBitIdentical or TestConcurrentSearchesAgree under the
+  # race detector at all, and the search gold file (gammonnet-gold in
+  # fuzz.yml) never runs at push time either. This job is deliberately
+  # narrow — only tests whose name matches Parallel/Concurrent/Batch, no
+  # -short — so it can afford -race on every push without becoming the new
+  # bottleneck shard: measured 2026-09, ~43s, dominated by
+  # TestKernelIdentityOnPartialBatches (the batched evaluator's own
+  # concurrency-relevant path — CLAUDE.md's "the network kernel never fuses
+  # and never reassociates" invariant, exercised here under the race
+  # detector rather than just for bit-identity).
+  race-gammonnet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: go test -race (parallel/concurrent/batch search paths)
+        run: go test -race -count=1 -run 'Parallel|Concurrent|Batch' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        shell: bash
 
   # Runs the shared storage contract, RLS and SQLite→PostgreSQL migration
   # tests against a real PostgreSQL via testcontainers-go. These live behind
@@ -178,11 +286,32 @@ jobs:
         run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
         shell: bash
 
+      # -coverpkg/-coverprofile (E.2, #218): this job used to run with no
+      # coverage flag at all, so storage/postgres showed 0% in the merged
+      # report even though this is the only job that exercises it — the
+      # `coverage` job's Merge step now waits on this job too and downloads
+      # its profile the same way it does the `test` matrix's.
       - name: Run PostgreSQL storage + migration tests
         run: |
-          go test -tags postgres -timeout 1200s \
-            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/...
+          go test -tags postgres -timeout 1200s -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
+            ./pkg/blunderdb/storage/postgres/... ./pkg/blunderdb/migrate/... 2>&1 | tee test-output.txt
         shell: bash
+
+      - name: Upload coverage shard
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: go-coverage-postgres
+          path: coverage.out
+          if-no-files-found: ignore
+
+      - name: Upload package timings
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pkg-times-postgres
+          path: test-output.txt
+          if-no-files-found: ignore
 
   # The Go suite on the two other desktop platforms. `test` above is
   # Linux-only, yet the binary ships for Windows and macOS with OS-specific
@@ -193,13 +322,10 @@ jobs:
   # already covers it). The PostgreSQL tests sit behind the `postgres` build
   # tag, so the absence of Docker on these runners changes nothing.
   #
-  # `continue-on-error` — to be removed after the first green run on a real
-  # tag/PR: this job was written without a Windows machine at hand, and the
-  # usual suspects (a SQLite file still open when t.TempDir() is cleaned up,
-  # a golden string compared against a fixture checked out with CRLF) can
-  # only be confirmed by running it. The autocrlf step closes the second
-  # one: GitHub's Windows runners set core.autocrlf=true globally, which
-  # rewrites every text fixture at checkout.
+  # `continue-on-error` was removed 2026-09 (E.1, #217): the first real runs
+  # were green (Windows 154 s, macOS 139 s) and this job is now a prealable
+  # of C.2/#189 and of the arm64 NEON follow-up (#151) — it must actually
+  # block a red run, not just log one.
   test-os:
     strategy:
       fail-fast: false
@@ -207,7 +333,6 @@ jobs:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    continue-on-error: true
     steps:
       - name: Keep LF line endings at checkout
         run: git config --global core.autocrlf false
@@ -229,6 +354,17 @@ jobs:
 
       - name: Run Go tests (short, no race)
         run: go test -short -count=1 -timeout 1500s ./...
+        shell: bash
+
+      # Named separately from the suite above for visibility (C.2, #189):
+      # macOS runners are arm64, the one platform with no accelerated kernel
+      # (NEON is #151, still open), so this is ADR-0024's bit-identity gate
+      # actually exercising the pure-Go fallback rather than AVX2. `-short`
+      # matches the step above (it only shrinks one sweep's span, nothing is
+      # skipped); the full, non-short sweep runs weekly (fuzz.yml, C.2/#189).
+      - name: Kernel identity (arm64 pure-Go fallback)
+        if: runner.os == 'macOS'
+        run: go test -short -count=1 -run 'TestKernelIdentity' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
@@ -480,6 +616,24 @@ jobs:
         uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
         with:
           version: v2.11.4
+
+      # The default pass above never sees the `postgres` build tag, so the 16
+      # files behind it (storage/postgres, migrate, one server test) were
+      # neither vetted nor linted (E.2, #218). golangci-lint's own action only
+      # runs the plain invocation, so the tagged pass is a separate step using
+      # the CLI it just installed.
+      - name: golangci-lint (postgres build tag)
+        run: golangci-lint run --build-tags postgres ./...
+        shell: bash
+
+      # `filelock_windows.go` and `diskspace_windows.go` (storage/sqlite,
+      # database) never build on this Linux runner's default GOOS, so `go
+      # vet` above them never ran (E.1, #217) — cross-compiled vet catches
+      # what `test-os` (build-only on Windows via `go test`) does not
+      # specifically call out.
+      - name: go vet (GOOS=windows)
+        run: GOOS=windows go vet ./...
+        shell: bash
 
       # The app version lives in three files (doc/source/conf.py,
       # frontend/src/stores/metaStore.js, wails.json); scripts/release.sh

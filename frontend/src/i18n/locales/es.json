@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Comprobando posiciones sin análisis…",
         "gammonnetCatchUpCount": "{n} posición(es) sin análisis.",
         "gammonnetCatchUpStart": "Analizar ahora",
-        "gammonnetCatchUpNote": "Ejecuta manualmente el mismo análisis acotado y cancelable — útil para poner al día una biblioteca creada antes de esta función."
+        "gammonnetCatchUpNote": "Ejecuta manualmente el mismo análisis acotado y cancelable — útil para poner al día una biblioteca creada antes de esta función.",
+        "gammonnetStaleUnknown": "Comprobando análisis de gammonNet obsoletos…",
+        "gammonnetStaleCount": "{n} análisis de gammonNet obsoleto(s).",
+        "gammonnetStaleStart": "Reanalizar posiciones obsoletas",
+        "gammonnetStaleNote": "Vuelve a ejecutar gammonNet en posiciones ya analizadas, pero escritas con una versión del motor más antigua o una profundidad distinta a la configurada aquí — los análisis de XG, GNUbg y BGBlitz nunca se tocan."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -567,6 +571,8 @@
         "depth": "Profundidad",
         "engine": "Motor",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Error",
         "move": "Jugada",
         "opponentBackgammon": "O B",
@@ -587,7 +593,9 @@
         "noDecision": "Sin decisión",
         "refused": "No evaluable con este marcador",
         "cubeOpponent": "El oponente tiene el cubo",
-        "crawford": "Cubo muerto (Crawford)"
+        "crawford": "Cubo muerto (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(editado)",
@@ -679,10 +687,12 @@
     },
     "eval": {
         "pending": "La evaluación aparecerá aquí.",
+        "failed": "La evaluación falló: {error}",
         "panelLabel": "Panel Eval",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analizando: {done}/{total}",
         "batchCancel": "Cancelar",
+        "batchDone": "gammonNet: {evaluated} analizada(s), {refused} rechazada(s), {failed} fallida(s)",
         "baseline": "Antes de la tirada",
         "baselineTooltip": "Valores antes de la tirada, en el eje de la lista — una referencia, no una jugada candidata. La diferencia con esta fila es la suerte de la tirada, no el mérito de una jugada."
     },

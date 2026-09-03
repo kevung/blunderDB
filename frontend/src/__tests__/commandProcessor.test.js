@@ -700,6 +700,21 @@ describe('processCommand', () => {
         expect(callbacks.onLoadPositionsByFilters).toHaveBeenCalled();
     });
 
+    test('a command merely starting with "s" is not treated as a search (#202)', () => {
+        statusBarModeStore.set('NORMAL');
+        processCommand('sve');
+        expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
+        expect(statusText()).toBe('Unknown command: sve');
+    });
+
+    test('a command merely starting with "ss" is not treated as a sub-search (#202)', () => {
+        statusBarModeStore.set('NORMAL');
+        positionsStore.set([{ id: 1 }]);
+        processCommand('sstat');
+        expect(callbacks.onLoadPositionsByFilters).not.toHaveBeenCalled();
+        expect(statusText()).toBe('Unknown command: sstat');
+    });
+
     // -- sub-search commands -------------------------------------------------
     test('ss command calls onLoadPositionsByFilters with current IDs', () => {
         statusBarModeStore.set('NORMAL');

@@ -690,7 +690,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "Der Spieler hat Gewinnchancen zwischen x % und y %."
 
@@ -715,7 +715,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises à x % et y %."
 msgstr "Der Spieler hat Gammon-Chancen zwischen x % und y %."
 
@@ -740,7 +740,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises à x % et y %."
 msgstr "Der Spieler hat Backgammon-Chancen zwischen x % und y %."
 
@@ -765,7 +765,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises à x % et y %."
 msgstr "Der Gegner hat Gewinnchancen zwischen x % und y %."
 
@@ -790,7 +790,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises à x % et y %."
 msgstr "Der Gegner hat Gammon-Chancen zwischen x % und y %."
 
@@ -815,7 +815,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
 msgstr "Der Gegner hat Backgammon-Chancen zwischen x % und y %."
 
@@ -1255,7 +1255,7 @@ msgstr ""
 "in den ID-Spalten der entsprechenden Panels sichtbar."
 
 #: ../../source/cmd_mode.rst:245
-#, python-format
+#, no-python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1289,19 +1289,4 @@ msgid ""
 msgstr ""
 "Datenbankmigrationen werden jetzt beim Öffnen einer Datenbank automatisch"
 " durchgeführt."
-
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Filterbibliothek anzeigen/ausblenden."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Suchverlauf anzeigen/ausblenden."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Öffnet das EPC-Panel (Effective Pip Count)."
 

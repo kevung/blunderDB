@@ -671,7 +671,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "Pelaajan voittomahdollisuudet ovat välillä x % – y %."
 
@@ -696,7 +696,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises à x % et y %."
 msgstr "Pelaajan gammon-mahdollisuudet ovat välillä x % – y %."
 
@@ -721,7 +721,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises à x % et y %."
 msgstr "Pelaajan backgammon-mahdollisuudet ovat välillä x % – y %."
 
@@ -746,7 +746,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises à x % et y %."
 msgstr "Vastustajan voittomahdollisuudet ovat välillä x % – y %."
 
@@ -771,7 +771,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises à x % et y %."
 msgstr "Vastustajan gammon-mahdollisuudet ovat välillä x % – y %."
 
@@ -796,7 +796,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
 msgstr "Vastustajan backgammon-mahdollisuudet ovat välillä x % – y %."
 
@@ -1233,7 +1233,7 @@ msgstr ""
 "vastaavien paneelien ID-sarakkeissa."
 
 #: ../../source/cmd_mode.rst:245
-#, python-format
+#, no-python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1266,19 +1266,4 @@ msgid ""
 msgstr ""
 "Tietokantojen migraatiot suoritetaan nyt automaattisesti tietokantaa "
 "avattaessa."
-
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Näytä/piilota suodatinkirjasto."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Näytä/piilota hakuhistoria."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Avaa EPC-paneelin (Effective Pip Count)."
 

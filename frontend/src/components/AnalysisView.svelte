@@ -16,6 +16,11 @@
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
 
+    // isMoney/jacoby/beaver (ADR-0016 point 6, #190/C.3): the position's own
+    // referential and money-game rule flags, read by the caller off its own
+    // position (only it knows about MATCH mode / the current position, this
+    // component stays presentational) and passed straight down to the two
+    // tables that show them next to the equity column and the verdict.
     let {
         analysis,
         kind,
@@ -29,7 +34,10 @@
         isPlayedMove = () => false,
         isPlayedCubeAction = () => false,
         onSort = () => {},
-        onRowClick = () => {}
+        onRowClick = () => {},
+        isMoney = undefined,
+        jacoby = false,
+        beaver = false
     } = $props();
 
     // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
@@ -86,13 +94,13 @@
         {@const decision = cubeDecision({ cubeAnalysis, turnability, stored: true })}
         <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
             <PositionFactsTable bottom={facts.bottom} top={facts.top} />
-            <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysis?.analysisEngineVersion} />
+            <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysis?.analysisEngineVersion} {isMoney} {jacoby} {beaver} />
         </div>
     {/each}
 {/if}
 
 {#if kind === 'checker' && hasMoves}
-    <CandidateMovesTable {moves} {sortColumn} {sortDirection} {selectedMove} {isPlayedMove} {onSort} {onRowClick} />
+    <CandidateMovesTable {moves} {sortColumn} {sortDirection} {selectedMove} {isPlayedMove} {onSort} {onRowClick} {isMoney} />
 {/if}
 
 <style>

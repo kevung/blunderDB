@@ -1,0 +1,39 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Go: gofmt is authoritative (tabs, no fixed width); this just keeps an
+# editor that has not run gofmt from fighting it on every keystroke.
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Svelte/JS/TS/JSON/CSS: matches frontend/.prettierrc (tabWidth 4, singleQuote,
+# no trailing comma) — prettier is still authoritative, this is the fallback
+# for editors without the prettier plugin loaded.
+[*.{js,ts,svelte,json,css}]
+indent_style = space
+indent_size = 4
+
+[*.md]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = false
+
+# Sphinx sources: French is the source language, doc/source/locale/ holds the
+# eight gettext translations as .po (msgfmt is not indentation-sensitive, but
+# .rst directive blocks are).
+[*.{rst,po}]
+indent_style = space
+indent_size = 3
+
+[Makefile]
+indent_style = tab
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2

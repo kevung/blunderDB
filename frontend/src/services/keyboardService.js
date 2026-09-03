@@ -1,13 +1,11 @@
-import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
 import { isAnyModalOpen, showCommandInputStore, activeModal, MODAL, activeTabStore } from '../stores/uiStore.js';
 import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../stores/ankiStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
-import { databasePathStore } from '../stores/databaseStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 
-import { newDatabase, openDatabase, exitApp, setStatusBarMessage } from './databaseService.js';
+import { newDatabase, openDatabase, exitApp } from './databaseService.js';
 import {
     firstPosition,
     previousPosition,
@@ -23,6 +21,7 @@ import {
     toggleCollectionPanelAction,
     toggleTournamentPanel,
     toggleStatsPanel,
+    toggleSearchPanel,
     toggleEPCMode,
     togglePipcount,
     reloadAllPositions,
@@ -116,13 +115,11 @@ export function toggleHelpModal() {
     }
 }
 
-export function focusSearchTab() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('status.searchHistoryRequiresDb'));
-        return;
-    }
-    activeTabStore.set('search');
-}
+// A toggle, not a plain "show" (#202, raccourcis.rst's Ctrl-F "Afficher/
+// cacher"): pressing it again while the search tab is already active
+// switches back to whatever was showing before, via toggleSearchPanel /
+// TAB_TOGGLES.search in positionService.js.
+export const focusSearchTab = toggleSearchPanel;
 
 export function handleKeyDown(event) {
     event.stopPropagation();

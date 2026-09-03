@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Проверка позиций без анализа…",
         "gammonnetCatchUpCount": "{n} позиции(й) без анализа.",
         "gammonnetCatchUpStart": "Анализировать сейчас",
-        "gammonnetCatchUpNote": "Запускает вручную тот же ограниченный, отменяемый анализ — полезно для базы, созданной до появления этой функции."
+        "gammonnetCatchUpNote": "Запускает вручную тот же ограниченный, отменяемый анализ — полезно для базы, созданной до появления этой функции.",
+        "gammonnetStaleUnknown": "Проверка устаревших анализов gammonNet…",
+        "gammonnetStaleCount": "{n} устаревших анализов gammonNet.",
+        "gammonnetStaleStart": "Повторно проанализировать устаревшие позиции",
+        "gammonnetStaleNote": "Повторно запускает gammonNet для позиций, уже проанализированных, но записанных с более старой версией движка или другой глубиной, чем настроено здесь — анализы XG, GNUbg и BGBlitz никогда не затрагиваются."
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",
@@ -567,6 +571,8 @@
         "depth": "Глубина",
         "engine": "Движок",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Ошибка",
         "move": "Ход",
         "opponentBackgammon": "С B",
@@ -587,7 +593,9 @@
         "noDecision": "Нет решения",
         "refused": "Не оценивается при этом счёте",
         "cubeOpponent": "Куб у соперника",
-        "crawford": "Куб не в игре (Кроуфорд)"
+        "crawford": "Куб не в игре (Кроуфорд)",
+        "jacoby": "Джекоби",
+        "beaver": "Бивер"
     },
     "comment": {
         "editedSuffix": "(изменено)",
@@ -679,10 +687,12 @@
     },
     "eval": {
         "pending": "Оценка появится здесь.",
+        "failed": "Оценка не удалась: {error}",
         "panelLabel": "Панель расчёта",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",
         "batchCancel": "Отмена",
+        "batchDone": "gammonNet: проанализировано {evaluated}, отклонено {refused}, не удалось {failed}",
         "baseline": "До броска",
         "baselineTooltip": "Значения до броска, в той же оси, что и список — ориентир, а не кандидат хода. Разница с этой строкой — удача броска, а не заслуга хода."
     },

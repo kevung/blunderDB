@@ -116,6 +116,34 @@ func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, e
 	return pos, nil
 }
 
+// loadJoinedCommentText returns a position's full comment text: every row in
+// the comment table, in a stable order, joined the same way
+// storage/sqlshared's loadCommentText joins them for search and the GUI. A
+// position can carry more than one comment row (AddComment), and comparing
+// only an arbitrary single one — the previous `QueryRow` here had no
+// ORDER BY, so which row came back was undefined — could both miss a
+// genuinely new comment and wrongly flag one already present under a
+// different row as "new" (B.6, #174).
+func loadJoinedCommentText(db *sql.DB, positionID int64) (string, error) {
+	rows, err := db.Query(`SELECT text FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+	var parts []string
+	for rows.Next() {
+		var text string
+		if err := rows.Scan(&text); err != nil {
+			return "", err
+		}
+		parts = append(parts, text)
+	}
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+	return strings.Join(parts, "\n\n"), nil
+}
+
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	d.mu.RLock()
@@ -233,20 +261,27 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 				}
 			}
 
-			// Check for comments to merge
-			var importComment string
-			err = importDB.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, id).Scan(&importComment)
-			if err == nil && importComment != "" {
-				var existingComment string
-				existingErr := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, existingPositionID).Scan(&existingComment)
+			// Check for comments to merge. Both sides join every comment row
+			// the position carries (loadJoinedCommentText) rather than
+			// reading one arbitrary row, matching what loadCommentText
+			// already does for search and what the GUI displays.
+			importComment, err := loadJoinedCommentText(importDB, id)
+			if err != nil {
+				return nil, err
+			}
+			if importComment != "" {
+				existingComment, err := loadJoinedCommentText(d.db, existingPositionID)
+				if err != nil {
+					return nil, err
+				}
 
 				trimmedImport := strings.TrimSpace(importComment)
 				trimmedExisting := strings.TrimSpace(existingComment)
 
-				if existingErr == sql.ErrNoRows {
+				if trimmedExisting == "" && trimmedImport != "" {
 					// New comment to add
 					hasNewData = true
-				} else if existingErr == nil && trimmedImport != "" && !strings.Contains(trimmedExisting, trimmedImport) {
+				} else if trimmedImport != "" && !strings.Contains(trimmedExisting, trimmedImport) {
 					// Comment text to merge
 					hasNewData = true
 				}

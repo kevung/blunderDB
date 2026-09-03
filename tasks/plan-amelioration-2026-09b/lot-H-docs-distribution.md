@@ -38,10 +38,9 @@ position database software » et 3 topics.
 - [x] Section *Community* du README (Discord, Discussions « Annonces »),
       lien Discord dans l'onglet À propos (9 langues) — `contactLinks` n'existe
       pas dans le code, rien à remplir.
-- [ ] Description et topics GitHub (`gnubg`, `extreme-gammon`, `wails`,
-      `svelte`, `go`, `spaced-repetition`, `backgammon-analysis`) — à lancer
-      depuis une session où `gh` atteint le trousseau :
-      `gh repo edit kevung/blunderDB --description "Backgammon blunder analysis: import your matches, search positions by structure and mistake, measure your play, study with spaced repetition — with an embedded evaluator" --add-topic backgammon,blunder,database,gnubg,extreme-gammon,wails,svelte,go,spaced-repetition,backgammon-analysis`
+- [x] Description et dix topics GitHub posés le 2026-09-03 (`backgammon`,
+      `blunder`, `database`, `gnubg`, `extreme-gammon`, `wails`, `svelte`,
+      `go`, `spaced-repetition`, `backgammon-analysis`).
 
 ## H.3 — Homebrew tap, Flatpak, metainfo [S puis M] — adoption (#245)
 
@@ -50,16 +49,31 @@ Flatpak commité non constructible (`0.27.1`, sha `000…`) ; `metainfo.xml`
 périmé (« EPC calculator »), 0 `<screenshots>`, 0 `<branding>`, 12 `<release>`
 sans description ; `packaging/flatpak/` sans README ; winget rendu jamais
 soumis.
-- [ ] Créer le tap, y pousser le cask 0.35.x, ajouter le job qui met à jour le
-      tap sur tag (comme `aur.yml`).
-- [ ] `metainfo.xml` : description à jour, `<screenshots>` (H.5),
-      `<branding>`, `<release>` avec description générée depuis les notes.
-- [ ] `packaging/flatpak/README.md` ; manifeste commité = gabarit **et**
-      constructible (URL de la dernière release, sha renseigné par
-      `release.sh`).
+- [x] Ajouter le job qui met à jour le tap sur tag (comme `aur.yml`) —
+      `.github/workflows/homebrew-tap.yml`, opt-in par le secret
+      `HOMEBREW_TAP_TOKEN`, no-op sans lui. **Reste à la main** : créer le
+      dépôt `kevung/homebrew-tap` et poser le secret (commandes dans
+      `packaging/homebrew/README.md` §3 et `tasks/BACKLOG.md`) — le dépôt et
+      le token n'existent pas, le job ne peut donc rien pousser tant que
+      cela n'est pas fait.
+- [x] `metainfo.xml` : description à jour (mentionne l'évaluateur gammonNet
+      et le panneau Bearoff/Eval au lieu de « EPC calculator ») ; `<branding>`
+      ajouté (couleurs reprises de l'app : `style.css` et
+      `boardColorsStore.js`, pas inventées) ; les 12 `<release>` portent
+      désormais une `<description>` (liste pour les versions majeures,
+      phrase unique pour les correctifs), validé par
+      `appstreamcli validate --no-net`. `<screenshots>` **non traité** :
+      explicitement délégué à H.5 (#247), qui construit le harnais de
+      capture d'écran — rien à insérer ici sans lui.
+- [x] `packaging/flatpak/README.md` créé ; manifeste commité mis à jour vers
+      la 0.35.0 (sha réel, vérifié) et rendu constructible **en continu** :
+      `scripts/release.sh` réécrit désormais `url`/`sha256` à chaque coupe de
+      version, en pointant la dernière release déjà publiée (celle en cours
+      de coupe n'a pas encore d'assets) — voir §3 du README et le nouveau
+      `do_update_flatpak_manifest` de `release.sh`.
 - [ ] Soumission winget (PR `microsoft/winget-pkgs`) et Flathub (build
       from-source offline : prompt P16) — deux tickets humains, suivis au
-      BACKLOG.
+      BACKLOG (commandes exactes dans `tasks/BACKLOG.md`).
 
 ## H.4 — Tutoriels de bout en bout et FAQ [M] — adoption (#246)
 

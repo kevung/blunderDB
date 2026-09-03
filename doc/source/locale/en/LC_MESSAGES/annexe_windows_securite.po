@@ -237,6 +237,3 @@ msgstr "Compare the displayed value with the one in the ``blunderDB-windows-<ver
 msgid "Sous Linux ou macOS :"
 msgstr "On Linux or macOS:"
 
-#~ msgid "l’exécutable que vous souhaitez exclure et sélectionnez-le."
-#~ msgstr "the executable you want to exclude and select it."
-

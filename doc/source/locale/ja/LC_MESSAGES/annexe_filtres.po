@@ -243,7 +243,7 @@ msgid "s d e>1000"
 msgstr "s d e>1000"
 
 #: ../../source/annexe_filtres.rst:1
-#, python-format
+#, no-python-format
 msgid "Blitz avec au moins 20% de gammon"
 msgstr "ギャモン率20%以上のブリッツ"
 
@@ -394,20 +394,3 @@ msgstr "``s tn1``\\ の後、キューブの判断を検索する"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "``TAB``\\ を押して検索パネルを開きます。"
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "``CTRL-K``\\ を押してフィルターライブラリを開きます。"
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "検索コマンドを編集します。"
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "\"Add\"ボタンを使って検索コマンドを保存します。"
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr "コマンドの編集中は、\\ ``UP``\\ キーと\\ ``DOWN``\\ キーを使ってコマンド履歴をナビゲートできます。"

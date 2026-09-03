@@ -116,9 +116,24 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
   10 (ADR-0017/0018/0021). → fiche H.7 (#249).
-- **Soumissions humaines** : PR winget (`microsoft/winget-pkgs`, manifestes attachés à chaque release) et tap Homebrew `kevung/homebrew-tap` (cask attaché à chaque release) — voir `packaging/winget/README.md`, `packaging/homebrew/README.md`. → fiche H.3 (#245).
+- **Soumissions humaines restant après H.3 (#245)** : le tap Homebrew se pousse
+  désormais tout seul sur tag une fois le secret et le dépôt en place (comme
+  `aur.yml`), mais ces deux préalables restent à faire à la main, une fois :
+
+  ```bash
+  gh repo create kevung/homebrew-tap --public \
+    --description "Homebrew tap for blunderDB" --clone
+  # puis créer un token (classique ou fine-grained) donnant l'écriture sur
+  # kevung/homebrew-tap uniquement, à https://github.com/settings/tokens?type=beta
+  gh secret set HOMEBREW_TAP_TOKEN --body "<token>"
+  ```
+
+  Deux canaux restent entièrement manuels, chacun une PR contre un dépôt tiers
+  revue par des humains : **winget** (`wingetcreate submit`, voir
+  `packaging/winget/README.md`) et **Flathub** (build hors-ligne
+  vendorant Go+npm, `docs/recherche/P16-distribution-desktop.md` en donne la
+  recette ; effort de plusieurs semaines, non commencé).
 - **Job `test-os`** : retirer `continue-on-error: true` après le premier run vert sur windows/macos. → fiche E.1 (#217).
-- **Skill `release-blunderdb`** : mentionner les nouveaux assets de release (manifestes winget, cask Homebrew, bundle Flatpak, image GHCR). → fiches H.3 (#245) et H.5 (#247), et README du plan §6.
 
 ## Historique — items faits
 

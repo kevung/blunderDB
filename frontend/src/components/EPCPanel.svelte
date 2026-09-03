@@ -11,7 +11,7 @@
     import { isBareLetter } from '../utils/keys.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
-    import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
+    import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
@@ -28,7 +28,15 @@
     let dice = $derived($positionStore?.dice ?? [0, 0]);
     let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
-    let hasScore = $derived(($positionStore?.score?.[0] ?? -1) !== -1 || ($positionStore?.score?.[1] ?? -1) !== -1);
+    // isMoneyPosition, not a second inline `!= -1` predicate (#190/C.3 point
+    // 2): this used to read `score[0] !== -1 || score[1] !== -1`, which
+    // agrees with the AND form everywhere except the malformed case — one
+    // side carrying the money sentinel, the other a real away score — where
+    // the two silently disagreed on whether the position is money or match.
+    let isMoney = $derived(isMoneyPosition($positionStore));
+    let hasScore = $derived(!isMoney);
+    let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
+    let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
 
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
@@ -48,6 +56,16 @@
     // (pending) from "estimated, and it declined" (no decision) — see
     // cubeDecision's `settled`.
     let evalSettled = $state(false);
+    // The engine did not decline the position — it never answered at all: the
+    // Wails call rejected, or a `gammonnet-eval:error` event arrived for the
+    // in-flight evaluation-at-rest. Before this state existed, only
+    // `logger.error` (invisible in production) marked the difference, and the
+    // panel stayed on `eval.pending` forever — the residual debt from
+    // ADR-0017 this fixes. `evalFailedMessage` carries the error text shown to
+    // the user; both are cleared the moment a new evaluation starts or one
+    // succeeds (`applyEvalResult`).
+    let evalFailed = $state(false);
+    let evalFailedMessage = $state('');
     // Race panel's "evaluated" regime (#126, ADR-0012): gammonNet's own
     // async result (same 0-ply-then-2-ply escalation as evalMoves/
     // evalCubeAnalysis above), carrying a verdict where the fast synchronous
@@ -127,6 +145,8 @@
         // invalidates it is the gesture that triggers the recomputation).
         selectedMoveStore.set(null);
         evalSettled = false;
+        evalFailed = false;
+        evalFailedMessage = '';
 
         evalGeneration += 1;
         const generation = evalGeneration;
@@ -146,16 +166,31 @@
                     })
                 )
             )
-            .catch((error) => logger.error('gammonNet 0-ply evaluation failed:', error));
+            .catch((error) => {
+                logger.error('gammonNet 0-ply evaluation failed:', error);
+                if (generation !== evalGeneration) return; // superseded while awaiting
+                evalFailed = true;
+                evalFailedMessage = String(error);
+            });
 
         evalRestTimer = setTimeout(() => {
             if (generation !== evalGeneration) return;
             Promise.all([GetGammonNetDisplayPly(), GetGammonNetPruneK(), GetGammonNetCandidates()])
                 .then(([ply, pruneK, candidates]) => {
                     if (generation !== evalGeneration) return;
-                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => logger.error('gammonNet evaluation-at-rest failed to start:', error));
+                    StartEvaluationAtRest(pos, ply, pruneK, candidates).catch((error) => {
+                        logger.error('gammonNet evaluation-at-rest failed to start:', error);
+                        if (generation !== evalGeneration) return;
+                        evalFailed = true;
+                        evalFailedMessage = String(error);
+                    });
                 })
-                .catch((error) => logger.error('gammonNet evaluation-at-rest settings failed:', error));
+                .catch((error) => {
+                    logger.error('gammonNet evaluation-at-rest settings failed:', error);
+                    if (generation !== evalGeneration) return;
+                    evalFailed = true;
+                    evalFailedMessage = String(error);
+                });
         }, EVAL_REST_DELAY_MS);
     }
 
@@ -173,6 +208,8 @@
     // evaluation is still perfectly valid.
     function applyEvalResult(result) {
         evalSettled = true;
+        evalFailed = false;
+        evalFailedMessage = '';
         evalRefused = !!result?.refused;
         if (evalRefused) {
             // Nothing this build can say about this position: drop both sides
@@ -203,7 +240,11 @@
         unsubEval = [
             EventsOn('gammonnet-eval:done', (result) => applyEvalResult(result)),
             EventsOn('gammonnet-eval:cancelled', () => {}),
-            EventsOn('gammonnet-eval:error', (e) => logger.error('gammonNet evaluation-at-rest error:', e))
+            EventsOn('gammonnet-eval:error', (e) => {
+                logger.error('gammonNet evaluation-at-rest error:', e);
+                evalFailed = true;
+                evalFailedMessage = String(e);
+            })
         ];
     });
 
@@ -415,6 +456,10 @@
         <div class="epc-error">
             <span class="error-text">{data.error}</span>
         </div>
+    {:else if evalFailed}
+        <div class="epc-error">
+            <span class="error-text">{$t('eval.failed', { error: evalFailedMessage })}</span>
+        </div>
     {:else}
         <div class="epc-content">
             <!-- The strip: regime badge, depth, engine link and the Défi
@@ -493,7 +538,7 @@
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
-                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} />
+                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} />
                     </div>
                 {/if}
             </div>
@@ -511,7 +556,7 @@
                     <div class="decision-cube-masked moves-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
                 {:else}
                     <div class="moves-scroll">
-                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} />
+                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} {isMoney} />
                         {#if evalMoves.length === 0}
                             <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
                         {/if}

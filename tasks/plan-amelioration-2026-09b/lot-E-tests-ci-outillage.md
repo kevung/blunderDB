@@ -18,8 +18,8 @@ E.1 à E.5 = **étape 1** ; E.6 à E.12 = **étape 2**.
 
 `build.yml:196` : `continue-on-error: true` (« à retirer après le premier run
 vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151.
-- [ ] Retirer le flag ; ajouter `kernel_identity_test` explicite sur macOS.
-- [ ] `GOOS=windows go vet ./...` dans le job `lint` (pour `filelock_windows.go`,
+- [x] Retirer le flag ; ajouter `kernel_identity_test` explicite sur macOS.
+- [x] `GOOS=windows go vet ./...` dans le job `lint` (pour `filelock_windows.go`,
       `diskspace_windows.go`).
 
 ## E.2 — La couverture dit faux et n'a pas de seuil [S] — fiabilité (#218)
@@ -32,12 +32,12 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
   job `coverage` fusionne même si un shard est rouge.
 - `golangci-lint` sans `--build-tags postgres` (`build.yml:466`) : 13 fichiers
   de `storage/postgres`, 2 de `migrate`, 1 test serveur jamais lintés.
-- [ ] `-coverpkg=./pkg/blunderdb/...` ; `-coverprofile` dans `test-postgres`
+- [x] `-coverpkg=./pkg/blunderdb/...` ; `-coverprofile` dans `test-postgres`
       et merge.
-- [ ] Plancher non régressif (`total >= 51 %`) ; annoter le résumé si
+- [x] Plancher non régressif (`total >= 51 %`) ; annoter le résumé si
       `needs.test.result != 'success'`.
-- [ ] Seconde passe `golangci-lint run --build-tags postgres ./...`.
-- [ ] Publier le top 10 des paquets lents dans le step summary (aujourd'hui :
+- [x] Seconde passe `golangci-lint run --build-tags postgres ./...`.
+- [x] Publier le top 10 des paquets lents dans le step summary (aujourd'hui :
       `database` 54,6 s, `cli` 27,9 s, `gammonnet` 19 s = 88 % du temps).
 
 ## E.3 — Paralléliser les tests Go [M] — vitesse CI ×3 (#219)

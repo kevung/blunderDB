@@ -10,7 +10,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { cubeDecision, cubeTurnability, CUBE_OPTIONS, DECISION_STATE } from '../utils/cubeDecision.js';
+import { cubeDecision, cubeTurnability, isMoneyPosition, CUBE_OPTIONS, DECISION_STATE } from '../utils/cubeDecision.js';
 
 const money = { cubeless: 0.4, no_double: 0.55, double_take: 0.71, double_pass: 1.0, verdict: 'double_take' };
 
@@ -143,5 +143,31 @@ describe('cubeTurnability', () => {
 
     test('a 1-away money score is not Crawford — money play has no match at all', () => {
         expect(at([-1, -1], -1)).toBeNull();
+    });
+});
+
+// #190/C.3 point 2: THE money/match predicate on the frontend's own position
+// shape, so cubeTurnability above and EPCPanel's own hasScore read the exact
+// same rule instead of two independently-written forms that only agreed on a
+// well-formed score.
+describe('isMoneyPosition', () => {
+    test('both sides at the money sentinel is money play', () => {
+        expect(isMoneyPosition({ score: [-1, -1] })).toBe(true);
+    });
+
+    test('a real away score on both sides is match play', () => {
+        expect(isMoneyPosition({ score: [5, 7] })).toBe(false);
+        expect(isMoneyPosition({ score: [0, 3] })).toBe(false); // post-Crawford sentinel
+        expect(isMoneyPosition({ score: [1, 3] })).toBe(false); // Crawford sentinel
+    });
+
+    test('exactly one side at the money sentinel is malformed, and is NOT money', () => {
+        expect(isMoneyPosition({ score: [-1, 5] })).toBe(false);
+        expect(isMoneyPosition({ score: [5, -1] })).toBe(false);
+    });
+
+    test('a missing position or score defaults to money, like cubeTurnability', () => {
+        expect(isMoneyPosition(undefined)).toBe(true);
+        expect(isMoneyPosition({})).toBe(true);
     });
 });

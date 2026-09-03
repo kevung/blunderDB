@@ -85,8 +85,26 @@ export function setSearchState(cmdOrObj, pos, active) {
     }
 }
 
+// generateXGID re-encodes a blunderDB Position as an XGID string (see
+// pkg/blunderdb/domain/xgid.go for the field layout and domain.DecodeXGID,
+// its inverse). blunderDB's Position only ever stores the AWAY score per
+// side, never the match's absolute length or either player's points-so-far —
+// so at a match score this is necessarily a re-encoding, not a byte-for-byte
+// copy of whatever XGID the position first arrived with: it reconstructs the
+// smallest match length consistent with the away scores shown (an away pair
+// of [2, 4] becomes "4pt match, 2-0" here even if the position was first
+// imported from a 5pt match at 3-1). That reconstruction still round-trips
+// through domain.DecodeXGID to the exact same away scores, cube and board —
+// the position it describes is unchanged, only the cosmetic match-length/
+// score pair differs — and it is the same choice the corpus documents and
+// pins (testdata/xgid_corpus.json). What must NOT be lost, because nothing
+// else recovers it once dropped, is the ruleset a money game is actually
+// played under: Jacoby and Beaver. Field 7 carries the Crawford flag in
+// match play but the Jacoby/Beaver bitmask in a money game (bit 0 = Jacoby,
+// bit 1 = Beaver) — the same dual meaning domain.DecodeXGID documents — so
+// which one it emits is decided by the game type, never both.
 export function generateXGID(position) {
-    const { board, cube, dice, score, player_on_roll, decision_type } = position;
+    const { board, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver } = position;
 
     let positionPart = '';
     for (let i = 0; i < 26; i++) {
@@ -102,14 +120,19 @@ export function generateXGID(position) {
     const cubeValue = cube.value;
     const cubeOwner = cube.owner === 0 ? 1 : cube.owner === 1 ? -1 : 0;
     const dicePart = decision_type === 1 ? '00' : dice.join('');
-    const matchLength = score[0] === -1 || score[1] === -1 ? 0 : Math.max(score[0], score[1]);
-    const actualScore1 = score[0] === -1 ? 0 : matchLength - score[0];
-    const actualScore2 = score[1] === -1 ? 0 : matchLength - score[1];
-    const isCrawford = score[0] === 1 || score[1] === 1 ? 1 : 0;
-    const dummy = 0;
+    const isMoneyGame = score[0] === -1 || score[1] === -1;
+    const matchLength = isMoneyGame ? 0 : Math.max(score[0], score[1]);
+    const actualScore1 = isMoneyGame ? 0 : matchLength - score[0];
+    const actualScore2 = isMoneyGame ? 0 : matchLength - score[1];
+    const isCrawford = !isMoneyGame && (score[0] === 1 || score[1] === 1) ? 1 : 0;
+    const field7 = isMoneyGame ? (has_jacoby ? 1 : 0) | (has_beaver ? 2 : 0) : isCrawford;
     const playerOnRoll = player_on_roll === 0 ? 1 : -1;
+    // Field 9 (max cube): blunderDB does not model a capped-cube rule at all
+    // — 0, XGID's own "no limit" convention, is the honest answer for every
+    // position this app can represent, not a lossy default.
+    const maxCube = 0;
 
-    return `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${isCrawford}:${matchLength}:${dummy}`;
+    return `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${field7}:${matchLength}:${maxCube}`;
 }
 
 export function isValidPosition(position) {
@@ -930,13 +953,17 @@ export async function updateEPC(position) {
 // ── Tab toggles ──────────────────────────────────────────────────────────────
 // The `toggleXPanel` names date from when each panel was a floating window;
 // today every one of them selects a tab of the tabbed panel (App.svelte's tab
-// effect opens the matching PANEL). One table, one function; the eight names
-// stay as re-exports for keyboardService, commandProcessor and App.svelte.
+// effect opens the matching PANEL). One table, one function; the names stay
+// as re-exports for keyboardService, commandProcessor and App.svelte.
 //
-//   tab      the activeTabStore value to select
-//   guard    extra precondition, returning a status-bar message key to refuse
-//   silent   no message when no database is open (metadata: the tab just
-//            stays where it is)
+//   tab         the activeTabStore value to select
+//   guard       extra precondition (checked only when SWITCHING INTO the
+//               tab, never when toggling back out of it), returning a
+//               status-bar message key to refuse
+//   silent      no "no database" message (metadata: the tab just stays where
+//               it is)
+//   noDbMessage status-bar message key to use instead of the generic
+//               "no database" one when no database is open
 const TAB_TOGGLES = Object.freeze({
     analysis: { tab: 'analysis' },
     comments: {
@@ -948,23 +975,56 @@ const TAB_TOGGLES = Object.freeze({
     matches: { tab: 'matches' },
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },
-    stats: { tab: 'stats' }
+    stats: { tab: 'stats' },
+    search: { tab: 'search', noDbMessage: 'status.searchHistoryRequiresDb' }
 });
 
-/** Select the tab of `id` (a TAB_TOGGLES key) if a database is open. */
+// The tab to fall back to on a "toggle back" when there is nothing more
+// specific to return to yet (app just started, database just opened) — the
+// same tab activeTabStore itself starts on.
+const DEFAULT_TAB = 'matches';
+
+// The tab that was active right before the last toggleTab() actually
+// switched INTO a different one — module-level, on purpose: the eight
+// shortcuts below (raccourcis.rst's "Afficher/cacher", #202) share one
+// "previous tab" memory rather than one per shortcut, so Ctrl-L then Ctrl-P
+// then Ctrl-L again returns to "comments", not to whatever was active before
+// Ctrl-L's first press. Read fresh from activeTabStore on every call, so it
+// stays correct even when the active tab changed by some other means
+// (clicking a tab directly, a match/search/import flow selecting one, …).
+let previousTab = null;
+
+/**
+ * Select the tab of `id` (a TAB_TOGGLES key) if a database is open — and,
+ * unlike a plain "show" action, toggle BACK to whichever tab was active
+ * before if `id`'s tab is already the one showing. Every one of these
+ * shortcuts is documented as "Afficher/cacher" (show/hide); before this,
+ * pressing one a second time was a no-op (#202).
+ */
 export function toggleTab(id) {
     const entry = TAB_TOGGLES[id];
     if (!entry) throw new Error(`toggleTab: unknown tab '${id}'`);
     logger.log(`toggleTab ${id}`);
     if (!get(databasePathStore)) {
-        if (!entry.silent) setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        if (!entry.silent) setStatusBarMessage(tMsg(entry.noDbMessage ?? 'commands.noDatabaseOpened'));
         return;
     }
+
+    const current = get(activeTabStore);
+    if (current === entry.tab) {
+        activeTabStore.set(previousTab && previousTab !== entry.tab ? previousTab : DEFAULT_TAB);
+        return;
+    }
+
+    // The guard only gates entering the tab (e.g. "no current position to
+    // comment on") — it never applies to the toggle-back branch above, or
+    // leaving a tab would be blocked by the precondition for being on it.
     const refusal = entry.guard?.();
     if (refusal) {
         setStatusBarMessage(tMsg(refusal));
         return;
     }
+    previousTab = current;
     activeTabStore.set(entry.tab);
 }
 
@@ -977,6 +1037,7 @@ export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
 export const toggleTournamentPanel = () => toggleTab('tournaments');
 export const toggleStatsPanel = () => toggleTab('stats');
+export const toggleSearchPanel = () => toggleTab('search');
 
 export function togglePipcount() {
     logger.log('togglePipcount');

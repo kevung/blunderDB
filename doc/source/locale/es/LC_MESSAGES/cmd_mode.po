@@ -686,7 +686,7 @@ msgid "wx,y"
 msgstr "wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "El jugador tiene probabilidades de victoria entre el x % y el y %."
 
@@ -711,7 +711,7 @@ msgid "gx,y"
 msgstr "gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de gammon comprises à x % et y %."
 msgstr "El jugador tiene probabilidades de gammon entre el x % y el y %."
 
@@ -736,7 +736,7 @@ msgid "bx,y"
 msgstr "bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "Le joueur a des chances de backgammon comprises à x % et y %."
 msgstr "El jugador tiene probabilidades de backgammon entre el x % y el y %."
 
@@ -761,7 +761,7 @@ msgid "Wx,y"
 msgstr "Wx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gain comprises à x % et y %."
 msgstr "El adversario tiene probabilidades de victoria entre el x % y el y %."
 
@@ -786,7 +786,7 @@ msgid "Gx,y"
 msgstr "Gx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de gammon comprises à x % et y %."
 msgstr "El adversario tiene probabilidades de gammon entre el x % y el y %."
 
@@ -811,7 +811,7 @@ msgid "Bx,y"
 msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
-#, python-format
+#, no-python-format
 msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
 msgstr "El adversario tiene probabilidades de backgammon entre el x % y el y %."
 
@@ -1251,7 +1251,7 @@ msgstr ""
 "torneos son visibles en las columnas ID de los paneles correspondientes."
 
 #: ../../source/cmd_mode.rst:245
-#, python-format
+#, no-python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
 "les positions en prenant en compte la structure des pions, le score et le"
@@ -1285,19 +1285,4 @@ msgid ""
 msgstr ""
 "Las migraciones de la base de datos se realizan ahora automáticamente al "
 "abrir una base de datos."
-
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Mostrar/ocultar la biblioteca de filtros."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Mostrar/ocultar el historial de búsqueda."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Abre el panel EPC (Effective Pip Count)."
 

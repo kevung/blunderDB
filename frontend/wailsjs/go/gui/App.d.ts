@@ -70,3 +70,5 @@ export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,ar
 export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;

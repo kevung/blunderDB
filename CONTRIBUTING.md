@@ -13,14 +13,18 @@ Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Prerequisites
 
-Go 1.25, Node.js 23, the [Wails v2](https://wails.io/) CLI 2.10 (`go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2`) and, on Linux, `webkit2gtk-4.1`. `make check` also needs `golangci-lint` (v2) and `govulncheck`. The documentation build needs Python with `doc/requirements.txt` in a virtualenv, plus GNU gettext.
+Go 1.25, Node.js 23, the [Wails v2](https://wails.io/) CLI 2.10 (`go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2`) and, on Linux, `webkit2gtk-4.1`. `make check` also needs `golangci-lint` (v2) and `govulncheck`; `make check-all` additionally needs Docker (the PostgreSQL contract suite) and a Playwright browser (`npx playwright install`). The documentation build needs Python with `doc/requirements.txt` in a virtualenv, plus GNU gettext. A [devcontainer](.devcontainer/) is available if you would rather not install any of this locally.
 
 ```bash
 git clone https://github.com/kevung/blunderDB.git && cd blunderDB
+git config core.hooksPath .githooks   # versioned pre-commit hook, see Workflow below
 cd frontend && npm install && cd ..
-make dev      # hot-reload desktop app
-make build    # build/bin/blunderDB
-make check    # everything CI enforces: vet, tests, golangci-lint, govulncheck, frontend lint/format/tests
+make dev         # hot-reload desktop app
+make build       # build/bin/blunderDB
+make check       # everything CI's push-time jobs enforce: vet, tests, golangci-lint,
+                 # govulncheck, frontend lint/format/tests
+make check-all   # the above PLUS Docker-backed PostgreSQL tests, Playwright e2e,
+                 # and the release version-string check — full CI parity
 ```
 
 `main.go` embeds `frontend/dist`, so a checkout that never built the frontend fails on the embed pattern; `make check` creates the stub it needs.
@@ -29,13 +33,13 @@ make check    # everything CI enforces: vet, tests, golangci-lint, govulncheck, 
 
 - One change per branch, in its own git worktree: `git worktree add ../blunderDB-<feature> -b feat/<feature>` (absolute path, see CLAUDE.md). Work and commit there, then merge or open the pull request.
 - Commits: conventional prefix (`feat(...)`, `fix(...)`, `docs(...)`, `refactor(...)`), imperative subject, a body that says **why**. The maintainer writes them in French; English is welcome.
-- Run `make check` before pushing. CI runs the same set plus the Playwright end-to-end tests; the pre-commit hook runs the frontend lint and format check (`prettier --check` fails the build).
+- Run `make check` before pushing (`make check-all` if you touched anything Docker or e2e tests would catch). CI runs `check-all`'s full scope. The versioned pre-commit hook (`.githooks/pre-commit`, enabled by the `git config core.hooksPath .githooks` above) runs `make check-fast` on every commit: gofmt, `go vet`, and the frontend's eslint/`prettier --check` — seconds, not minutes. It is not a substitute for `make check` before pushing.
 - Fill in the [pull request template](.github/PULL_REQUEST_TEMPLATE.md): its checklist is the short form of the rules below.
 
 ## Documentation is part of the change
 
 - **A user-visible change ships with its documentation, in the same branch.** A new command, shortcut, panel or filter lands with its entry in `doc/source/raccourcis.rst`, `manuel.rst` or `cmd_mode.rst`. Undocumented features have gone undiscovered for whole release cycles.
-- **A modified `.rst` ships with its eight `.po` in the same commit** (en, de, el, es, fi, it, ja, ru). French is the source; the online docs deploy from `main` and fall back to French for every gap. Regenerate the catalogues from `doc/` with `sphinx-build -b gettext source build/gettext` (a relative output path, so the `#:` references stay relative) then `sphinx-intl update -p build/gettext -l en,de,el,es,fi,it,ja,ru`, translate the new `msgstr`, and check with `scripts/doc-i18n-check.sh`: your files must report `0 untranslated, 0 fuzzy`. In Japanese, inline markup touching a CJK character needs an escaped space (`\ `) at that boundary.
+- **A modified `.rst` ships with its eight `.po` in the same commit** (en, de, el, es, fi, it, ja, ru). French is the source; the online docs deploy from `main` and fall back to French for every gap. Regenerate the catalogues with `scripts/doc-po-update.sh` (it keeps the gettext output path relative, so the `#:` references stay relative, and repairs the `python-format` flag msgmerge re-adds at every update), translate the new `msgstr`, and check with `scripts/doc-i18n-check.sh`: your files must report `0 untranslated, 0 fuzzy`. In Japanese, inline markup touching a CJK character needs an escaped space (`\ `) at that boundary.
 - The in-app help (`frontend/src/i18n/help/*.js`) is translated by hand in the nine languages too; `helpVocabulary.sync.test.js` keeps its structure in step across them.
 
 ## Invariants and decisions

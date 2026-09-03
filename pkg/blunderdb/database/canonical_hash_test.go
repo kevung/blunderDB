@@ -20,50 +20,43 @@ func TestCanonicalHashCrossFormat(t *testing.T) {
 	// Check which test files exist
 	hashes := make(map[string]string)
 
-	if _, err := os.Stat(xgFile); err == nil {
-		imp := xgparser.NewImport(xgFile)
-		segments, err := imp.GetFileSegments()
-		if err != nil {
-			t.Fatalf("Failed to import XG file: %v", err)
-		}
-		match, err := xgparser.ParseXG(segments)
-		if err != nil {
-			t.Fatalf("Failed to parse XG file: %v", err)
-		}
-		hash := ComputeCanonicalMatchHashFromXG(match)
-		hashes["XG"] = hash
-		t.Logf("XG canonical hash: %s", hash)
-	} else {
-		t.Log("test.xg not found, skipping")
+	if _, err := os.Stat(xgFile); err != nil {
+		t.Fatalf("test.xg not found in testdata/: %v", err)
 	}
+	imp := xgparser.NewImport(xgFile)
+	segments, err := imp.GetFileSegments()
+	if err != nil {
+		t.Fatalf("Failed to import XG file: %v", err)
+	}
+	match, err := xgparser.ParseXG(segments)
+	if err != nil {
+		t.Fatalf("Failed to parse XG file: %v", err)
+	}
+	hash := ComputeCanonicalMatchHashFromXG(match)
+	hashes["XG"] = hash
+	t.Logf("XG canonical hash: %s", hash)
 
-	if _, err := os.Stat(sgfFile); err == nil {
-		gnuMatch, err := gnubgparser.ParseSGFFile(sgfFile)
-		if err != nil {
-			t.Fatalf("Failed to parse SGF file: %v", err)
-		}
-		hash := ComputeCanonicalMatchHashFromGnuBG(gnuMatch)
-		hashes["SGF"] = hash
-		t.Logf("SGF canonical hash: %s", hash)
-	} else {
-		t.Log("test.sgf not found, skipping")
+	if _, err := os.Stat(sgfFile); err != nil {
+		t.Fatalf("test.sgf not found in testdata/: %v", err)
 	}
+	gnuMatch, err := gnubgparser.ParseSGFFile(sgfFile)
+	if err != nil {
+		t.Fatalf("Failed to parse SGF file: %v", err)
+	}
+	hash = ComputeCanonicalMatchHashFromGnuBG(gnuMatch)
+	hashes["SGF"] = hash
+	t.Logf("SGF canonical hash: %s", hash)
 
-	if _, err := os.Stat(matFile); err == nil {
-		gnuMatch, err := gnubgparser.ParseMATFile(matFile)
-		if err != nil {
-			t.Fatalf("Failed to parse MAT file: %v", err)
-		}
-		hash := ComputeCanonicalMatchHashFromGnuBG(gnuMatch)
-		hashes["MAT"] = hash
-		t.Logf("MAT canonical hash: %s", hash)
-	} else {
-		t.Log("test.mat not found, skipping")
+	if _, err := os.Stat(matFile); err != nil {
+		t.Fatalf("test.mat not found in testdata/: %v", err)
 	}
-
-	if len(hashes) < 2 {
-		t.Skip("Need at least 2 test files to compare canonical hashes")
+	gnuMatch, err = gnubgparser.ParseMATFile(matFile)
+	if err != nil {
+		t.Fatalf("Failed to parse MAT file: %v", err)
 	}
+	hash = ComputeCanonicalMatchHashFromGnuBG(gnuMatch)
+	hashes["MAT"] = hash
+	t.Logf("MAT canonical hash: %s", hash)
 
 	// All hashes should be identical
 	var referenceFormat string
@@ -92,7 +85,7 @@ func TestCanonicalHashCrossFormat_BGF(t *testing.T) {
 	bgfFile := filepath.Join("testdata", "TachiAI_V_player_Nov_2__2025__16_55.bgf")
 
 	if _, err := os.Stat(bgfFile); err != nil {
-		t.Skip("BGF test file not found")
+		t.Fatalf("BGF test file not found: %v", err)
 	}
 
 	bgfMatch, err := bgfparser.ParseBGF(bgfFile)
@@ -112,10 +105,10 @@ func TestCanonicalHashDuplicateImport(t *testing.T) {
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
 	if _, err := os.Stat(xgFile); err != nil {
-		t.Skip("test.xg not found")
+		t.Fatalf("test.xg not found: %v", err)
 	}
 	if _, err := os.Stat(sgfFile); err != nil {
-		t.Skip("test.sgf not found")
+		t.Fatalf("test.sgf not found: %v", err)
 	}
 
 	// Create a temporary database
@@ -166,7 +159,7 @@ func TestCanonicalHashTripleImport(t *testing.T) {
 
 	for _, f := range []string{xgFile, sgfFile, matFile} {
 		if _, err := os.Stat(f); err != nil {
-			t.Skipf("%s not found", f)
+			t.Fatalf("%s not found: %v", f, err)
 		}
 	}
 

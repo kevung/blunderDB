@@ -40,6 +40,7 @@ vi.mock('../services/positionService.js', () => ({
     toggleCollectionPanelAction: vi.fn(),
     toggleTournamentPanel: vi.fn(),
     toggleStatsPanel: vi.fn(),
+    toggleSearchPanel: vi.fn(),
     toggleEPCMode: vi.fn(),
     togglePipcount: vi.fn(),
     reloadAllPositions: vi.fn(),

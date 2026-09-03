@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Checking for positions without an analysis…",
         "gammonnetCatchUpCount": "{n} position(s) without an analysis.",
         "gammonnetCatchUpStart": "Analyze now",
-        "gammonnetCatchUpNote": "Runs the same bounded, cancellable analysis manually — useful to catch up a library built before this feature existed."
+        "gammonnetCatchUpNote": "Runs the same bounded, cancellable analysis manually — useful to catch up a library built before this feature existed.",
+        "gammonnetStaleUnknown": "Checking for stale gammonNet analyses…",
+        "gammonnetStaleCount": "{n} stale gammonNet analysis(es).",
+        "gammonnetStaleStart": "Re-analyze stale positions",
+        "gammonnetStaleNote": "Re-runs gammonNet on positions it already analyzed, but written with an older engine version or a different depth than configured here — XG, GNUbg and BGBlitz analyses are never touched."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -567,6 +571,8 @@
         "depth": "Depth",
         "engine": "Engine",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Error",
         "move": "Move",
         "opponentBackgammon": "O B",
@@ -587,7 +593,9 @@
         "noDecision": "No decision",
         "refused": "Not evaluable at this score",
         "cubeOpponent": "Opponent owns the cube",
-        "crawford": "Cube dead (Crawford)"
+        "crawford": "Cube dead (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(edited)",
@@ -679,10 +687,12 @@
     },
     "eval": {
         "pending": "Evaluation will appear here.",
+        "failed": "Evaluation failed: {error}",
         "panelLabel": "Eval panel",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyzing: {done}/{total}",
         "batchCancel": "Cancel",
+        "batchDone": "gammonNet: {evaluated} analyzed, {refused} refused, {failed} failed",
         "baseline": "Before the roll",
         "baselineTooltip": "Pre-roll figures, in the axis of the list — a reference, not a candidate move. The gap to this row is the luck of the roll, not the merit of a play."
     },

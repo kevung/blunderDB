@@ -35,6 +35,19 @@ export const DECISION_STATE = {
     CRAWFORD: 'crawford' // the Crawford game: no cube in play, by rule
 };
 
+// isMoneyPosition is THE money/match predicate on the frontend's own position
+// shape — the JS twin of gammonnet.IsMoneyPosition (#190/C.3 point 2). Before
+// it existed, cubeTurnability below and EPCPanel's own hasScore each wrote
+// this test independently (`score[0] < 0 && score[1] < 0` here,
+// `score[0] !== -1 || score[1] !== -1` there): equivalent on a well-formed
+// score, and silently NOT equivalent on the malformed one — exactly one side
+// carrying the money sentinel — which is the same divergence the Go side had
+// between gammonnet_eval.go and domaineval.go before this fiche.
+export function isMoneyPosition(position) {
+    const score = position?.score ?? [-1, -1];
+    return score[0] < 0 && score[1] < 0;
+}
+
 // cubeTurnability reports whether the player on roll can turn the cube at all.
 // This is a rule of the game read off the board, never an engine output —
 // which is why it is computed here and not carried on the wire. gammonNet says
@@ -48,7 +61,7 @@ export const DECISION_STATE = {
 export function cubeTurnability(position) {
     if (!position) return null;
     const score = position.score ?? [-1, -1];
-    const isMoney = score[0] < 0 && score[1] < 0;
+    const isMoney = isMoneyPosition(position);
     if (!isMoney && (score[0] === 1 || score[1] === 1)) return DECISION_STATE.CRAWFORD;
 
     const owner = position.cube?.owner ?? -1;

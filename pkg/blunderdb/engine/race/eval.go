@@ -50,8 +50,13 @@ type Eval struct {
 	// checkers per side.
 	Sigma float64 `json:"sigma,omitempty"`
 	P99   float64 `json:"p99,omitempty"`
-	// Exact regime only.
-	Money *Money `json:"money,omitempty"`
+	// Exact regime only. The field keeps its name from before the
+	// CubeVerdict rename (#190/C.3): "money" is still exactly right for
+	// this field specifically, since the exact-regime table it carries is
+	// always money-referential (MoneyFromEntry never reads a match score),
+	// unlike the type itself, which the evaluated regime also uses at a
+	// match score (internal/gui/gammonnet_eval.go's evaluateRaceRegime).
+	Money *CubeVerdict `json:"money,omitempty"`
 	// Evaluated regime only: the search depth that actually produced this
 	// number — never the one requested, same discipline as
 	// domain.CheckerMove/DoublingCubeAnalysis.AnalysisDepth (#125).

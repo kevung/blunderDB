@@ -11,7 +11,7 @@ import { matchContextStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
 import { logger } from '../utils/logger.js';
-import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
+import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
 import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows, playedCubePredicate, playedMovePredicate } from '../utils/analysisRows.js';
 
 // Write a PNG rendered from a <canvas> to the clipboard, walking the image
@@ -410,11 +410,15 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     const strip = analysisStrip(analysis);
     if (!strip) return;
     const t = translate;
+    // ADR-0016 point 6 / #190/C.3: the same referential the DOM tables read
+    // off position, so the copied image's equity header never drifts from
+    // the screen's.
+    const isMoney = isMoneyPosition(position);
 
     if (strip.kind === 'cube') {
         const cube = analysis.doublingCubeAnalysis;
         const decision = cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
-        const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubePredicate(analysis, isMatchMode) });
+        const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubePredicate(analysis, isMatchMode), isMoney });
         const third = Math.floor(width / 3);
 
         paintTable(ctx, 0, y, splitWidth(third, [1, 1, 1]), cubeFactRows(cube), { boldLabels: true });
@@ -431,7 +435,7 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     }
 
     const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0)).slice(0, MAX_IMAGE_MOVES);
-    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, isMatchMode) });
+    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, isMatchMode), isMoney });
     const widths = splitWidth(width, [0.18, 0.08, 0.08, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.14]);
     paintTable(ctx, 0, y, widths, block, { leftLabels: true, zebra: true, sections: [0, 2, 5, 8] });
 }

@@ -131,9 +131,16 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		if f.TournamentIDsFilter != "" {
 			if tIDs, err := searchfilter.ParseFilterIDList(f.TournamentIDsFilter); err == nil {
 				for _, tID := range tIDs {
-					if matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID); err == nil {
-						allMatchIDs = append(allMatchIDs, matchIDs...)
+					// A query failure here (a locked database, a dropped
+					// connection) must not silently narrow the tournament
+					// filter to "no matches" — that reads as "this
+					// tournament has no positions", not as the outage it
+					// is (B.6, #174).
+					matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID)
+					if err != nil {
+						return nil, err
 					}
+					allMatchIDs = append(allMatchIDs, matchIDs...)
 				}
 			}
 		}
@@ -486,11 +493,11 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	for _, row := range scanned {
 		position, ana := row.pos, row.ana
 
-		matchesGoFilters := func(pos domain.Position) bool {
+		matchesGoFilters := func(pos domain.Position) (bool, error) {
 			if searchfilter.HasBoardFilter(effInclude.Board) {
 				if !useSQLFilters || bitboardTight {
 					if !pos.MatchesCheckerPosition(effInclude) {
-						return false
+						return false, nil
 					}
 				}
 			}
@@ -499,64 +506,64 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 			// (authoritative; also covers template counts >2 the SQL mask skips).
 			if searchfilter.HasBoardFilter(f.ExcludeFilter.Board) {
 				if pos.ContainsAnyCheckerOf(f.ExcludeFilter) {
-					return false
+					return false, nil
 				}
 			}
 
 			if !useSQLFilters {
 				if !pos.MatchesCheckerPosition(effInclude) {
-					return false
+					return false, nil
 				}
 				if f.IncludeCube && !pos.MatchesCubePosition(f.Filter) {
-					return false
+					return false, nil
 				}
 				if f.IncludeScore && !pos.MatchesScorePosition(f.Filter) {
-					return false
+					return false, nil
 				}
 				if f.DecisionTypeFilter && !pos.MatchesDecisionType(f.Filter) {
-					return false
+					return false, nil
 				}
 				// Cube sub-type (take/pass vs double/no-double) lives in the
 				// is_cube_response column, scanned separately above.
 				if f.DecisionTypeFilter && f.Filter.DecisionType == domain.CubeAction {
 					isResp := row.isCubeResponse
 					if f.CubeResponseFilter == "double" && isResp {
-						return false
+						return false, nil
 					}
 					if f.CubeResponseFilter == "takepass" && !isResp {
-						return false
+						return false, nil
 					}
 				}
 				if f.DiceRollFilter && !pos.MatchesDiceRollMode(f.Filter, f.DiceRollMode) {
-					return false
+					return false, nil
 				}
 				if f.ExceptDiceFilter != "" && !pos.MatchesExceptDice(domain.ParseExceptDice(f.ExceptDiceFilter)) {
-					return false
+					return false, nil
 				}
 				if f.NoContactFilter && !pos.MatchesNoContact() {
-					return false
+					return false, nil
 				}
 				if f.PipCountFilter != "" && !pos.MatchesPipCountFilter(f.PipCountFilter) {
-					return false
+					return false, nil
 				}
 				if f.Player1AbsolutePipCountFilter != "" && !pos.MatchesPlayer1AbsolutePipCount(f.Player1AbsolutePipCountFilter) {
-					return false
+					return false, nil
 				}
 				if f.Player1CheckerOffFilter != "" && !pos.MatchesPlayer1CheckerOff(f.Player1CheckerOffFilter) {
-					return false
+					return false, nil
 				}
 				if f.Player2CheckerOffFilter != "" && !pos.MatchesPlayer2CheckerOff(f.Player2CheckerOffFilter) {
-					return false
+					return false, nil
 				}
 				if f.Player1BackCheckerFilter != "" && !pos.MatchesPlayer1BackChecker(f.Player1BackCheckerFilter) {
-					return false
+					return false, nil
 				}
 				if f.Player2BackCheckerFilter != "" && !pos.MatchesPlayer2BackChecker(f.Player2BackCheckerFilter) {
-					return false
+					return false, nil
 				}
 				if f.WinRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var wr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -564,15 +571,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						wr = ana.CheckerAnalysis.Moves[0].PlayerWinChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.WinRateFilter, "w", wr) {
-						return false
+						return false, nil
 					}
 				}
 				if f.GammonRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var gr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -580,15 +587,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						gr = ana.CheckerAnalysis.Moves[0].PlayerGammonChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.GammonRateFilter, "g", gr) {
-						return false
+						return false, nil
 					}
 				}
 				if f.BackgammonRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var bgr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -596,15 +603,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						bgr = ana.CheckerAnalysis.Moves[0].PlayerBackgammonChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.BackgammonRateFilter, "b", bgr) {
-						return false
+						return false, nil
 					}
 				}
 				if f.Player2WinRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var wr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -612,15 +619,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						wr = ana.CheckerAnalysis.Moves[0].OpponentWinChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2WinRateFilter, "W", wr) {
-						return false
+						return false, nil
 					}
 				}
 				if f.Player2GammonRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var gr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -628,15 +635,15 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						gr = ana.CheckerAnalysis.Moves[0].OpponentGammonChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2GammonRateFilter, "G", gr) {
-						return false
+						return false, nil
 					}
 				}
 				if f.Player2BackgammonRateFilter != "" {
 					if ana == nil {
-						return false
+						return false, nil
 					}
 					var bgr float64
 					if ana.DoublingCubeAnalysis != nil {
@@ -644,14 +651,20 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
 						bgr = ana.CheckerAnalysis.Moves[0].OpponentBackgammonChance
 					} else {
-						return false
+						return false, nil
 					}
 					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2BackgammonRateFilter, "B", bgr) {
-						return false
+						return false, nil
 					}
 				}
-				if f.MoveErrorFilter != "" && !matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter) {
-					return false
+				if f.MoveErrorFilter != "" {
+					ok, err := matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter)
+					if err != nil {
+						return false, err
+					}
+					if !ok {
+						return false, nil
+					}
 				}
 			} else if f.MoveErrorFilter != "" && multiPlayed[pos.ID] {
 				// The SQL column scored one play; a multi-played position is
@@ -662,57 +675,86 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 				if ana == nil {
 					ana = loadAnalysis(ctx, s.DB, pos.ID)
 				}
-				if !matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter) {
-					return false
+				ok, err := matchesMoveErrorFilter(ctx, s.DB, &pos, ana, f.MoveErrorFilter)
+				if err != nil {
+					return false, err
+				}
+				if !ok {
+					return false, nil
 				}
 			}
 
 			if f.Player1CheckerInZoneFilter != "" && !pos.MatchesPlayer1CheckerInZone(f.Player1CheckerInZoneFilter) {
-				return false
+				return false, nil
 			}
 			if f.Player2CheckerInZoneFilter != "" && !pos.MatchesPlayer2CheckerInZone(f.Player2CheckerInZoneFilter) {
-				return false
+				return false, nil
 			}
 			if f.Player1OutfieldBlotFilter != "" && !pos.MatchesPlayer1OutfieldBlot(f.Player1OutfieldBlotFilter) {
-				return false
+				return false, nil
 			}
 			if f.Player2OutfieldBlotFilter != "" && !pos.MatchesPlayer2OutfieldBlot(f.Player2OutfieldBlotFilter) {
-				return false
+				return false, nil
 			}
 			if f.Player1JanBlotFilter != "" && !pos.MatchesPlayer1JanBlot(f.Player1JanBlotFilter) {
-				return false
+				return false, nil
 			}
 			if f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter) {
-				return false
+				return false, nil
 			}
-			if f.SearchText != "" && !matchesSearchText(ctx, s.DB, &pos, f.SearchText) {
-				return false
+			if f.SearchText != "" {
+				ok, err := matchesSearchText(ctx, s.DB, &pos, f.SearchText)
+				if err != nil {
+					return false, err
+				}
+				if !ok {
+					return false, nil
+				}
 			}
 			if f.DateFilter != "" && !searchfilter.MatchesDateFilter(ana, f.DateFilter) {
-				return false
+				return false, nil
 			}
 			if f.EquityFilter != "" && !searchfilter.AnalysisMatchesEquityFilter(f.EquityFilter, ana) {
-				return false
+				return false, nil
 			}
-			return true
+			return true, nil
 		}
 
-		addPosition := func(pos domain.Position) {
-			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction && isPlayer1TakePassCubeAction(ctx, s.DB, &pos) {
-				pos = pos.Mirror()
+		addPosition := func(pos domain.Position) error {
+			if f.MoveErrorFilter != "" && pos.DecisionType == domain.CubeAction {
+				takePass, err := isPlayer1TakePassCubeAction(ctx, s.DB, &pos)
+				if err != nil {
+					return err
+				}
+				if takePass {
+					pos = pos.Mirror()
+				}
 			}
 			positions = append(positions, pos)
+			return nil
 		}
 
-		if matchesGoFilters(position) {
+		ok, err := matchesGoFilters(position)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
 			if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
-				addPosition(position)
+				if err := addPosition(position); err != nil {
+					return nil, err
+				}
 			}
 		} else if f.MirrorFilter {
 			mirrored := position.Mirror()
-			if matchesGoFilters(mirrored) {
+			ok2, err := matchesGoFilters(mirrored)
+			if err != nil {
+				return nil, err
+			}
+			if ok2 {
 				if searchfilter.AnalysisMatchesMovePattern(f.MovePatternFilter, ana) {
-					addPosition(mirrored)
+					if err := addPosition(mirrored); err != nil {
+						return nil, err
+					}
 				}
 			}
 		}

@@ -266,7 +266,7 @@ msgid "s d e>1000"
 msgstr "s d e>1000"
 
 #: ../../source/annexe_filtres.rst:1
-#, python-format
+#, no-python-format
 msgid "Blitz avec au moins 20% de gammon"
 msgstr "Blitz con al menos un 20% de gammon"
 
@@ -417,22 +417,3 @@ msgstr "Tras ``s tn1``, buscar las decisiones de cubo"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "Pulsar ``TAB`` para abrir el panel de búsqueda."
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "Abrir la biblioteca de filtros pulsando ``CTRL-K``."
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "Editar el comando de búsqueda."
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "Guardar el comando de búsqueda mediante el botón \"Add\"."
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr ""
-#~ "Durante la edición del comando, es posible utilizar las teclas ``ARRIBA`` y "
-#~ "``ABAJO`` para navegar por el historial de comandos."

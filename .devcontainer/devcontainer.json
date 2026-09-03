@@ -1,0 +1,22 @@
+{
+	"name": "blunderDB",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"postCreateCommand": "git config core.hooksPath .githooks && cd frontend && npm install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.go",
+				"svelte.svelte-vscode",
+				"esbenp.prettier-vscode",
+				"dbaeumer.vscode-eslint",
+				"editorconfig.editorconfig"
+			]
+		}
+	},
+	"remoteEnv": {
+		"GOTMPDIR": "/tmp",
+		"TMPDIR": "/tmp"
+	}
+}

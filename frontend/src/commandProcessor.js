@@ -3,7 +3,7 @@ import { commentTextStore, currentPositionIndexStore, statusBarModeStore, status
 import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
-import { searchHistoryStore } from './stores/searchHistoryStore';
+import { searchHistoryStore, MAX_SEARCH_HISTORY } from './stores/searchHistoryStore';
 import { excludePositionHistoryJSON } from './stores/searchExcludePositionStore';
 import { SaveComment, ClearCommandHistory } from '../wailsjs/go/database/Database.js';
 import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
@@ -75,9 +75,9 @@ export function processCommand(command) {
         // Optional count: `bl 50` loads the 50 worst; bare `bl` keeps the default.
         const n = parseInt(command.split(/\s+/)[1], 10);
         callbacks.onLoadBlunders?.(Number.isInteger(n) && n > 0 ? n : undefined);
-    } else if (command.startsWith('ss')) {
+    } else if (command === 'ss' || command.startsWith('ss ')) {
         handleSearchCommand(command, positions, { isSubSearch: true });
-    } else if (command.startsWith('s')) {
+    } else if (command === 's' || command.startsWith('s ')) {
         handleSearchCommand(command, positions, { isSubSearch: false });
     } else if (command === 'history' || command === 'hi') {
         callbacks.focusSearchTab?.();
@@ -156,7 +156,7 @@ function handleSearchCommand(command, positions, { isSubSearch }) {
         timestamp: Date.now()
     };
     searchHistoryStore.update((history) => {
-        const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
+        const newHistory = [searchHistoryEntry, ...history].slice(0, MAX_SEARCH_HISTORY);
         return newHistory;
     });
     SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {

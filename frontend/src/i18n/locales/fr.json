@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Vérification des positions sans analyse…",
         "gammonnetCatchUpCount": "{n} position(s) sans analyse.",
         "gammonnetCatchUpStart": "Analyser maintenant",
-        "gammonnetCatchUpNote": "Lance manuellement la même analyse bornée et annulable — utile pour rattraper une bibliothèque constituée avant cette fonctionnalité."
+        "gammonnetCatchUpNote": "Lance manuellement la même analyse bornée et annulable — utile pour rattraper une bibliothèque constituée avant cette fonctionnalité.",
+        "gammonnetStaleUnknown": "Vérification des positions périmées…",
+        "gammonnetStaleCount": "{n} position(s) périmée(s).",
+        "gammonnetStaleStart": "Ré-analyser les positions périmées",
+        "gammonnetStaleNote": "Relance gammonNet sur les positions déjà analysées par gammonNet mais écrites avec une version du moteur ou une profondeur différente de celle configurée ici — les analyses XG, GNUbg et BGBlitz ne sont jamais touchées."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -567,6 +571,8 @@
         "depth": "Profondeur",
         "engine": "Moteur",
         "equity": "Équité",
+        "equityMoney": "Équité (money)",
+        "equityMatch": "Équité (match)",
         "error": "Erreur",
         "move": "Coup",
         "opponentBackgammon": "O B",
@@ -587,7 +593,9 @@
         "noDecision": "Pas de décision",
         "refused": "Non évaluable à ce score",
         "cubeOpponent": "Videau adverse",
-        "crawford": "Videau mort (Crawford)"
+        "crawford": "Videau mort (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(modifié)",
@@ -679,10 +687,12 @@
     },
     "eval": {
         "pending": "L'évaluation apparaîtra ici.",
+        "failed": "L'évaluation a échoué : {error}",
         "panelLabel": "Panneau Eval",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyse : {done}/{total}",
         "batchCancel": "Annuler",
+        "batchDone": "gammonNet : {evaluated} analysée(s), {refused} refusée(s), {failed} échouée(s)",
         "baseline": "Avant le jet",
         "baselineTooltip": "Valeurs avant le jet, dans l'axe de la liste — un repère, pas un coup candidat. L'écart avec cette ligne est la chance du jet, pas le mérite d'un coup."
     },

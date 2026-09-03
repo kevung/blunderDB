@@ -978,13 +978,3 @@ msgstr ""
 "tilastopaneelin nykyisen suodattimen mukaan, ilman käsin tehtyä hakua. "
 "Katso :ref:`stats`."
 
-#~ msgid ""
-#~ "Les résultats sont affichés en temps "
-#~ "réel dans le panneau EPC dédié: "
-#~ "EPC, nombre moyen de lancers, écart "
-#~ "type, pip count et wastage."
-#~ msgstr ""
-#~ "Tulokset näytetään reaaliajassa erillisessä "
-#~ "EPC-paneelissa: EPC, heittojen keskimäärä, "
-#~ "keskihajonta, pip count ja wastage."
-

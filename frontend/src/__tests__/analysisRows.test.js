@@ -114,6 +114,17 @@ describe('cubeRows', () => {
         expect(cubeRows(decision, { t, cubeValue: 1 }).rows.map((r) => r.label)).toEqual(['analysis.noRedouble', 'analysis.redoubleTake', 'analysis.redoublePass']);
     });
 
+    // ADR-0016 point 6 / #190/C.3 point 4: the equity column states its own
+    // referential — the one thing that told a reader the scale had changed
+    // (money points vs normalised match equity, ADR-0019) — instead of the
+    // same silent "Équité" either way.
+    test('the equity header states the referential when the caller has one, and stays plain otherwise', () => {
+        const decision = cubeDecision({ cubeAnalysis: storedCube, stored: true });
+        expect(cubeRows(decision, { t }).header[1]).toBe('analysis.equity');
+        expect(cubeRows(decision, { t, isMoney: true }).header[1]).toBe('analysis.equityMoney');
+        expect(cubeRows(decision, { t, isMoney: false }).header[1]).toBe('analysis.equityMatch');
+    });
+
     test('the played action is highlighted through the legacy action vocabulary', () => {
         const decision = cubeDecision({ cubeAnalysis: storedCube, stored: true });
         const played = new Set(['Double', 'Pass']);
@@ -290,6 +301,17 @@ describe('checkerRows', () => {
         expect(bare.columns).toEqual(CHECKER_COLUMNS.slice(0, 9));
         expect(bare.header.at(-1)).toBe('analysis.opponentBackgammon');
         expect(bare.rows[0].cells).toHaveLength(8);
+    });
+
+    // ADR-0016 point 6 / #190/C.3 point 4, same rule as cubeRows above: only
+    // the equity column's key changes with the referential, never the rest
+    // of the header.
+    test('the equity column states the referential; the other columns are unaffected', () => {
+        expect(checkerRows(moves, { t }).header[1]).toBe('analysis.equity');
+        expect(checkerRows(moves, { t, isMoney: true }).header[1]).toBe('analysis.equityMoney');
+        expect(checkerRows(moves, { t, isMoney: false }).header[1]).toBe('analysis.equityMatch');
+        expect(checkerRows(moves, { t, isMoney: true }).header[0]).toBe('analysis.move');
+        expect(checkerRows(moves, { t, isMoney: true }).header[2]).toBe('analysis.error');
     });
 
     test('every figure formatted once: equity and error at three decimals, chances at two', () => {

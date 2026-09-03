@@ -340,3 +340,63 @@ func TestImport_MajorVersionComparedNumerically(t *testing.T) {
 		t.Errorf("checkImportableVersion(2.15.0, 10.0.0): %v", err)
 	}
 }
+
+// TestImport_AnalyzeComparesAllCommentRows (B.6, #174): AnalyzeImportDatabase
+// used to read a single, arbitrarily-chosen comment row per position (a bare
+// `QueryRow` with no ORDER BY) and compare only that one against the
+// target's own single row — a position commented on more than once could
+// report "nothing to merge" while a second comment sat unmerged, exactly the
+// gap loadCommentText (storage/sqlshared) already closed for search. The fix
+// joins every comment row on both sides (loadJoinedCommentText) before
+// comparing.
+func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
+	dir := t.TempDir()
+
+	srcPath := filepath.Join(dir, "src.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(srcPath); err != nil {
+		t.Fatalf("SetupDatabase(src): %v", err)
+	}
+	p := InitializePosition()
+	posID, err := src.SavePosition(&p)
+	if err != nil {
+		t.Fatalf("SavePosition(src): %v", err)
+	}
+	// Two comment rows on the same position: the source has more to say than
+	// a single row could hold.
+	if err := src.AddComment(posID, "Alpha"); err != nil {
+		t.Fatalf("AddComment(Alpha): %v", err)
+	}
+	if err := src.AddComment(posID, "NewNote"); err != nil {
+		t.Fatalf("AddComment(NewNote): %v", err)
+	}
+	src.Close()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "dst.db")); err != nil {
+		t.Fatalf("SetupDatabase(dst): %v", err)
+	}
+	defer dst.Close()
+	p2 := InitializePosition() // same board → same Zobrist hash, recognised as the same position
+	dstPosID, err := dst.SavePosition(&p2)
+	if err != nil {
+		t.Fatalf("SavePosition(dst): %v", err)
+	}
+	if err := dst.AddComment(dstPosID, "Alpha"); err != nil {
+		t.Fatalf("AddComment(dst, Alpha): %v", err)
+	}
+
+	analysis, err := dst.AnalyzeImportDatabase(srcPath)
+	if err != nil {
+		t.Fatalf("AnalyzeImportDatabase: %v", err)
+	}
+	if toAdd, _ := analysis["toAdd"].(int); toAdd != 0 {
+		t.Errorf("toAdd = %v, want 0 — the position is recognised by hash", analysis["toAdd"])
+	}
+	if toMerge, _ := analysis["toMerge"].(int); toMerge != 1 {
+		t.Errorf("toMerge = %v, want 1: the source's second comment row, %q, is not on the target", analysis["toMerge"], "NewNote")
+	}
+	if toSkip, _ := analysis["toSkip"].(int); toSkip != 0 {
+		t.Errorf("toSkip = %v, want 0 — the position was wrongly considered fully up to date", analysis["toSkip"])
+	}
+}

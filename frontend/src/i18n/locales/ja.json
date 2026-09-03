@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "解析のないポジションを確認しています…",
         "gammonnetCatchUpCount": "解析のないポジションが {n} 件あります。",
         "gammonnetCatchUpStart": "今すぐ解析",
-        "gammonnetCatchUpNote": "この機能の追加前に作られたライブラリを追いつかせるため、同じ範囲が定まった中断可能な解析を手動で実行します。"
+        "gammonnetCatchUpNote": "この機能の追加前に作られたライブラリを追いつかせるため、同じ範囲が定まった中断可能な解析を手動で実行します。",
+        "gammonnetStaleUnknown": "古くなった gammonNet 解析を確認しています…",
+        "gammonnetStaleCount": "古くなった gammonNet 解析が {n} 件あります。",
+        "gammonnetStaleStart": "古くなったポジションを再解析",
+        "gammonnetStaleNote": "すでに gammonNet で解析済みだが、ここで設定したものより古いエンジンバージョンや異なる深さで書き込まれたポジションに対して、gammonNet を再実行します — XG、GNUbg、BGBlitz の解析には一切触れません。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -567,6 +571,8 @@
         "depth": "深さ",
         "engine": "エンジン",
         "equity": "equity",
+        "equityMoney": "equity (money)",
+        "equityMatch": "equity (match)",
         "error": "エラー",
         "move": "ムーブ",
         "opponentBackgammon": "O B",
@@ -587,7 +593,9 @@
         "noDecision": "判断なし",
         "refused": "このスコアでは評価できません",
         "cubeOpponent": "相手がキューブを保有",
-        "crawford": "キューブ無効（クロフォード）"
+        "crawford": "キューブ無効（クロフォード）",
+        "jacoby": "ジャコビー",
+        "beaver": "ビーバー"
     },
     "comment": {
         "editedSuffix": "（編集済み）",
@@ -679,10 +687,12 @@
     },
     "eval": {
         "pending": "評価はここに表示されます。",
+        "failed": "評価に失敗しました: {error}",
         "panelLabel": "評価パネル",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet 解析中: {done}/{total}",
         "batchCancel": "キャンセル",
+        "batchDone": "gammonNet: {evaluated} 件解析、{refused} 件却下、{failed} 件失敗",
         "baseline": "ロール前",
         "baselineTooltip": "ロール前の数値。リストと同じ軸で表示される基準値であり、候補手ではありません。この行との差はロールの運であり、指し手の巧拙ではありません。"
     },
