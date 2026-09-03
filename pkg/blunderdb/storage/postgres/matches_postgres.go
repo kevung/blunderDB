@@ -431,6 +431,21 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		}
 
 		ps := &positionStore{db: tx}
+		// Every swap position loaded in one round trip (LoadByIDs) instead of
+		// one Load per position (B.11, #179): a match's moves can reference
+		// this position library's biggest table, and this swap used to query
+		// it once per distinct position. Save (below) still runs once per
+		// position — it is what recomputes each one's Zobrist hash and dedups
+		// it against the rest of the library, and that decision is
+		// irreducibly per-position.
+		loaded, err := ps.LoadByIDs(ctx, scope, posIDs)
+		if err != nil {
+			return fmt.Errorf("load swap positions: %w", err)
+		}
+		byID := make(map[int64]*domain.Position, len(loaded))
+		for i := range loaded {
+			byID[loaded[i].ID] = &loaded[i]
+		}
 		// Positions this swap repointed away from: each is a delete candidate
 		// (mirrors the orphan cleanup of DeleteCascade), collected here and
 		// checked in one set-based DELETE after the loop rather than one
@@ -439,9 +454,9 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 		// position's repoint.
 		var swappedAway []int64
 		for _, pid := range posIDs {
-			pos, err := ps.Load(ctx, scope, pid)
-			if err != nil {
-				return fmt.Errorf("load swap position %d: %w", pid, err)
+			pos, ok := byID[pid]
+			if !ok {
+				return fmt.Errorf("load swap position %d: %w", pid, storage.ErrNotFound)
 			}
 			pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
 			if pos.Cube.Owner != domain.None {

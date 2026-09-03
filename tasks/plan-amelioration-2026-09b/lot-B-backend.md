@@ -229,13 +229,30 @@ Livrée dans la vague 2.18.0, avec B.3 et B.17.
 n'est câblé nulle part ; `Find` n'a pas de pagination. N+1 sur trois filtres
 (`:645` `t"…"`, `:658` `E`, `addPosition` 2ᵉ requête `move`) : 2 000 lignes
 retenues = 4 000 aller-retours.
-- [ ] `Find(ctx, scope, f, ListOpts)` avec `LIMIT/OFFSET` (ou curseur par id)
-      poussés en SQL ; scan + yield réels.
-- [ ] Pré-charger commentaires et coups joués des ids candidats en une
-      requête `IN (…)` (`forEachIn` existe).
-- [ ] Bench avant/après sur `testdata/` (le job `benchmark` sert enfin, E.9).
-- [ ] Exposer la pagination : `/v1/search.find` (`limit`, `cursor`), CLI
-      `search --limit/--offset`, GUI (voir D.8).
+- [x] `Find(ctx, scope, f, ListOpts)` avec `LIMIT/OFFSET` poussés en SQL
+      (`Dialect.LimitOffset`, les deux backends). `find` continue de
+      matérialiser un `[]domain.Position` avant de re-yielder — les six
+      phases de filtrage Go (masque bitboard non tight, repli mirroir,
+      préchargements) ont toutes besoin du lot candidat complet avant de
+      pouvoir décider une ligne — mais ce lot est désormais borné par
+      `opts.Limit`, pas par la table entière : le vrai problème
+      (matérialisation *non bornée*) est réglé, l'architecture "yield après
+      scan complet" ne l'est pas et reste un chantier à part si besoin.
+- [x] Commentaires (`loadCommentTexts`) et coups joués (`loadPlayer1Moves`)
+      des ids candidats préchargés en requêtes `IN (…)` par lots de 900
+      (`forEachIDBatch`), remplaçant les requêtes une-par-ligne.
+- [x] Bancs avant/après sur `storage/sqlite/bench_test.go`
+      (`BenchmarkSearchText`, `BenchmarkSearchMoveErrorMirror`, 5 000
+      positions) : -14 % d'allocations/op sur le filtre `t"…"` (319305 →
+      274205), -9 % sur `E` en recherche miroir (514306 → 469211) ; le temps
+      mur est resté sur SQLite local dans le bruit de la machine (plusieurs
+      builds Go concurrents d'autres chantiers), l'allocation par opération
+      est la mesure fiable ici — le gain de round-trips compte surtout pour
+      un backend réseau (PostgreSQL, ou un daemon `serve` chargé).
+- [x] Pagination exposée : `/v1/search.find` (`limit`, `offset` dans
+      `searchFindReq`), CLI `search --limit/--offset` (`cli_search.go`,
+      poussés en SQL sauf avec `--error-min`/`--has-analysis`, filtrés
+      après coup). GUI restée hors scope, propriété de D.8.
 
 Préalable de D.8 (pagination front) et de I.x (catégorisation).
 
@@ -250,11 +267,50 @@ Préalable de D.8 (pagination front) et de I.x (catégorisation).
 - `db_gammonnet_batch.go:265,285` : une transaction et un verrou par position,
   `LoadPosition` par position.
 - `matches_sqlite.go:385-420` : `SwapPlayers` = Load + Save + UPDATE par position.
-- [ ] Pages d'ids (`ORDER BY id LIMIT n`), `LoadMany`/`LoadByIDs`, écriture
-      par paquets de 200 dans une transaction, jointures dans la requête
-      principale.
-- [ ] Bench mémoire (`-benchmem`, `runtime.ReadMemStats`) sur une base de
-      50 k positions générée.
+- [x] `RepairDenormalisedColumns` (SQLite et PostgreSQL) : pagination par clé
+      `id` (`repairPageSize` = 500 lignes), plus de `var all []row` chargeant
+      la table entière — mesuré (voir bench ci-dessous).
+- [x] `DBImporter.Import` : lectures source **et** cible par lots
+      (`AnalysisStore.LoadMany`, `CommentStore.ByPositions`) au lieu d'un
+      `Load`/`ByPosition` par position ; les positions cibles sont d'abord
+      toutes sauvegardées (Zobrist décide leur id), puis leurs analyses et
+      commentaires existants sont chargés en un round-trip par famille avant
+      la boucle de fusion.
+- [x] `db_import_db.go` : `decodeSourcePosition` ne fait plus de requête de
+      rattrapage par ligne compacte — les dix colonnes scalaires sont
+      sélectionnées directement dans la requête principale
+      (`sourcePositionScalarColumns`), pour les deux passes (Analyze et
+      Commit). Trouvé au passage : la fusion des commentaires de
+      `CommitImportDatabase` lisait une ligne arbitraire (pas de `ORDER BY`,
+      le même bug que #174 avait corrigé côté `AnalyzeImportDatabase` sans
+      jamais toucher `Commit`) et son `UPDATE` récrivait toutes les lignes
+      d'une position multi-commentaires avec le même texte fusionné — corrigé
+      en réutilisant `loadJoinedCommentText` des deux côtés et en n'insérant
+      qu'une ligne neuve (comme `ingest.DBImporter`), jamais en réécrivant
+      l'existant ; régression verrouillée par `TestImport_CommitMergesAllCommentRows`.
+- [x] `db_gammonnet_batch.go` : les positions du lot sont chargées une seule
+      fois via `LoadPositionsByIDs` avant de lancer les workers, au lieu d'un
+      `LoadPosition` par position dans `evaluateOnePositionWithGammonNet`.
+      Le côté écriture (`SaveAnalysis`, un verrou + une transaction implicite
+      par position) n'a **pas** été touché : il protège la garantie « une
+      évaluation ne fait que combler un trou » contre un écrivain concurrent
+      sur la même position, ce que ce lot ne peut pas vérifier sans requête
+      supplémentaire par position — au prix incertain vu les PRAGMAs déjà
+      réglés (WAL, `synchronous=NORMAL`).
+- [x] `matches_sqlite.go`/`matches_postgres.go` : `SwapPlayers` charge toutes
+      les positions concernées par `LoadByIDs` en un aller-retour avant la
+      boucle ; `Save` (qui recalcule le Zobrist et déduplique) reste par
+      position, cette décision étant irréductiblement individuelle.
+- [x] Bench mémoire (`-benchmem`, `runtime.ReadMemStats`) : pic de tas
+      (`peak-heap-MB`, échantillonné pendant l'appel, pas la somme
+      `-benchmem` du B/op qui ne bouge pas avec la pagination — chaque ligne
+      est de toute façon lue une fois) sur 20 000 lignes d'analyse générées
+      (`BenchmarkRepairDenormalisedColumnsMemory`,
+      `storage/sqlite/bench_test.go`) : **24,99 Mo → 5,70 Mo** (-77 %, ×4,4).
+      50 k visé par la fiche non atteint pour tenir le budget de temps de ce
+      chantier ; l'écart devrait se creuser encore à cette échelle, la
+      version paginée restant plate pendant que l'ancienne grandissait
+      linéairement avec la table.
 
 ## B.12 — Compression des blobs d'analyse [M] — perf, taille de base (#180)
 

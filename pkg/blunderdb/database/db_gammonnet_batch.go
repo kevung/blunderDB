@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log/slog"
 	"runtime"
@@ -232,6 +233,24 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 	if total == 0 {
 		return GammonNetBatchSummary{}, ctx.Err()
 	}
+
+	// Every position is loaded once, in as few round trips as LoadByIDs's own
+	// batching needs, instead of once per position inside a worker's loop —
+	// evaluateOnePositionWithGammonNet used to call LoadPosition itself, one
+	// RLock and one query per id (B.11, #179). An id missing from the result
+	// (deleted between positionIDsWithoutAnalysis's snapshot and this
+	// prefetch — the only way this map can lack an id it was given) is
+	// reported as a failure below, exactly like a LoadPosition error used to
+	// be.
+	loaded, err := d.LoadPositionsByIDs(ids)
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+	positionsByID := make(map[int64]*Position, len(loaded))
+	for i := range loaded {
+		positionsByID[loaded[i].ID] = &loaded[i]
+	}
+
 	if jobs <= 0 {
 		jobs = runtime.NumCPU()
 	}
@@ -280,7 +299,7 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 				}
 				id := ids[i]
 
-				analysis, err := d.evaluateOnePositionWithGammonNet(searcher, id, ply, pruneK, candidates)
+				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, ply, pruneK, candidates)
 				outcome := gnEvaluated
 				switch {
 				case err != nil:
@@ -337,22 +356,27 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 	return summary, ctx.Err()
 }
 
-// evaluateOnePositionWithGammonNet loads and evaluates one position — the
-// unit of work the resume/idempotence guarantee is built on. It does not
-// write: the caller's single writer goroutine does. A nil analysis with a
-// nil error means "nothing to write, and that is not a failure": a dance (no
-// legal move) or gammonnet.ErrNotEvaluable (a match score beyond the MET's
-// horizon, a cube state the model declines) — before #191 ErrNotEvaluable
-// came back as a plain non-nil error, so the caller counted it as a failure
-// and retried it on every single pass, forever, exactly like a position that
-// genuinely could not be read. Either way the position stays without an
-// analysis and is picked up again on the next run — but only ErrNotEvaluable
-// and a dance are expected to keep coming back unchanged; a real error is
-// not.
-func (d *Database) evaluateOnePositionWithGammonNet(searcher *gammonnet.Searcher, id int64, ply, pruneK, candidates int) (*PositionAnalysis, error) {
-	pos, err := d.LoadPosition(int(id))
-	if err != nil {
-		return nil, err
+// evaluateOnePositionWithGammonNet evaluates one already-loaded position —
+// the unit of work the resume/idempotence guarantee is built on. pos is nil
+// when analyzeIDsWithGammonNet's batched prefetch (LoadPositionsByIDs) did
+// not return this id — deleted between positionIDsWithoutAnalysis's snapshot
+// and the prefetch — reported as sql.ErrNoRows, the same error LoadPosition
+// itself used to return for exactly that case back when this function loaded
+// the position on its own, one query per call (B.11, #179).
+//
+// It does not write: the caller's single writer goroutine does. A nil
+// analysis with a nil error means "nothing to write, and that is not a
+// failure": a dance (no legal move) or gammonnet.ErrNotEvaluable (a match
+// score beyond the MET's horizon, a cube state the model declines) — before
+// #191 ErrNotEvaluable came back as a plain non-nil error, so the caller
+// counted it as a failure and retried it on every single pass, forever,
+// exactly like a position that genuinely could not be read. Either way the
+// position stays without an analysis and is picked up again on the next run
+// — but only ErrNotEvaluable and a dance are expected to keep coming back
+// unchanged; a real error is not.
+func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonnet.Searcher, ply, pruneK, candidates int) (*PositionAnalysis, error) {
+	if pos == nil {
+		return nil, sql.ErrNoRows
 	}
 
 	result, err := gammonnet.EvaluatePositionWith(searcher, *pos, ply, pruneK, candidates)

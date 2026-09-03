@@ -20,8 +20,15 @@ type SearchHistory struct {
 
 // SearchStore runs position searches.
 type SearchStore interface {
-	// Find streams the positions matching the given filters.
-	Find(ctx context.Context, scope string, f domain.SearchFilters) iter.Seq2[*domain.Position, error]
+	// Find streams the positions matching the given filters. opts bounds the
+	// underlying SQL scan (LIMIT/OFFSET); a zero ListOpts means no limit, from
+	// the start — today's behaviour. Because filters that can only be
+	// evaluated in Go (mirror search, checker structure on a non-tight mask,
+	// date/equity/move-pattern) still run on the page opts.Limit bounded, a
+	// caller paging through a search using one of those may see short pages:
+	// opts caps how many SQL-matched candidates are considered, not how many
+	// of them survive.
+	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 }
 
 // SearchHistoryStore persists the log of executed searches.

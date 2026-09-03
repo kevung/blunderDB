@@ -153,7 +153,7 @@ func BenchmarkSearchByFilter(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		for _, err := range s.Search().Find(ctx, scope, f) {
+		for _, err := range s.Search().Find(ctx, scope, f, storage.ListOpts{}) {
 			if err != nil {
 				b.Fatalf("Find: %v", err)
 			}

@@ -32,6 +32,20 @@ func (shared) Bool(col string, v bool) string {
 }
 func (shared) Bigint(expr string) string       { return expr }
 func (shared) ILike() string                   { return "LIKE" }
+func (shared) LimitOffset(limit, offset int) (string, []any) {
+	switch {
+	case limit <= 0 && offset <= 0:
+		return "", nil
+	case limit <= 0:
+		// SQLite's grammar requires a LIMIT whenever OFFSET is given; -1
+		// means unbounded (SQLite's own documented convention).
+		return " LIMIT -1 OFFSET ?", []any{offset}
+	case offset <= 0:
+		return " LIMIT ?", []any{limit}
+	default:
+		return " LIMIT ? OFFSET ?", []any{limit, offset}
+	}
+}
 func (shared) TimestampArg() string            { return "?" }
 func (shared) DateText(col string) string      { return "COALESCE(" + col + ",'')" }
 func (shared) TimestampText(col string) string { return "COALESCE(" + col + ",'')" }
