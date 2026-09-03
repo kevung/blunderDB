@@ -679,6 +679,7 @@
     },
     "eval": {
         "pending": "Оценка появится здесь.",
+        "failed": "Оценка не удалась: {error}",
         "panelLabel": "Панель расчёта",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet анализирует: {done}/{total}",

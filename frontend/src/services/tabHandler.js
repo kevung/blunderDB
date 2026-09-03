@@ -15,7 +15,7 @@ import { PANEL, openPanel, closePanel } from '../stores/uiStore.js';
 /**
  * Open the panel that corresponds to `tab` and close the panels of all other
  * "exclusive" tabs. Tabs that have no associated PANEL (analysis, comments,
- * search, epc, anki, metadata, log) leave those panels untouched.
+ * search, epc, anki, metadata) leave those panels untouched.
  *
  * @param {string} tab - The newly active tab id.
  */

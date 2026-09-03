@@ -679,6 +679,7 @@
     },
     "eval": {
         "pending": "L'évaluation apparaîtra ici.",
+        "failed": "L'évaluation a échoué : {error}",
         "panelLabel": "Panneau Eval",
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analyse : {done}/{total}",
