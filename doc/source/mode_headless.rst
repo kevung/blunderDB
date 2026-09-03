@@ -96,10 +96,13 @@ depuis plusieurs clients.
      - –
      - active CORS pour cette origine (désactivé par défaut)
    * - ``--rate-limit-rps <n>``
-     - ``0``
-     - limite de requêtes par seconde et par tenant (0 = désactivé)
+     - ``50``
+     - limite de requêtes par seconde et par tenant (0 = désactivé) ; activée
+       par défaut à une valeur généreuse plutôt que sur option, pour qu'un
+       fichier compose qui ne pense qu'à la base de données n'hérite pas d'un
+       démon sans aucune limite
    * - ``--rate-limit-burst <n>``
-     - ``2×rps``
+     - ``100``
      - taille du seau de jetons pour les pics de requêtes
    * - ``--rls``
      - ``false``
@@ -119,8 +122,23 @@ depuis plusieurs clients.
 
 La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_RLS``, ``BLUNDERDB_TS_PATH``,
-``BLUNDERDB_IDENTITY_DIR``).
+``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
+``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
+``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``) : un drapeau explicite reste
+prioritaire sur la variable correspondante.
+
+La table de seaux du limiteur de débit porte elle-même un plafond dur
+(10 000 tenants distincts) : au-delà, chaque nouveau tenant évince le seau le
+moins récemment utilisé plutôt que de laisser la table croître sans limite —
+utile si un client envoie beaucoup de valeurs ``X-Tenant-ID`` distinctes,
+volontairement ou non, entre deux purges périodiques des seaux inactifs.
+
+``blunderdb serve`` refuse tout argument positionnel imprévu (au-delà du seul
+``serve`` initial qu'un ``ENTRYPOINT`` déjà réduit au binaire nu laisse
+passer) : sans cette vérification, un drapeau placé après un tel argument
+était silencieusement ignoré — ``docker run image serve --addr :9090``,
+réflexe naturel puisque l'``ENTRYPOINT`` de l'image vaut déjà ``serve``,
+démarrait sur ``:8080`` sans un mot.
 
 Points d'accès
 --------------
