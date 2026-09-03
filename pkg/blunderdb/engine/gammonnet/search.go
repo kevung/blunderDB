@@ -309,6 +309,16 @@ func NewSearcher(cfg SearchConfig) (*Searcher, error) {
 // NewSearcherWith builds a searcher over explicit networks. prune may be nil,
 // which turns pruning off whatever PruneK says.
 func NewSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
+	return newSearcherWithCache(cfg, net, prune, defaultCacheLog2)
+}
+
+// newSearcherWithCache is NewSearcherWith with the cache size broken out —
+// WithWorkers uses it to size a WORKER's cache smaller than the root's
+// (#196/C.9): only the root ever revisits a position across the whole tree
+// (the recursion folds transpositions back to it), so a worker's cache exists
+// to catch repeats WITHIN the one flattened deepenGroups queue it drains, a
+// much smaller working set than the root's.
+func newSearcherWithCache(cfg SearchConfig, net, prune *Network, cacheLog2 uint) *Searcher {
 	if cfg.Ply < 0 {
 		cfg.Ply = 0
 	}
@@ -320,7 +330,7 @@ func NewSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
 		net:   net,
 		prune: prune,
 		ev:    NewEvaluator(net),
-		cache: newEvalCache(defaultCacheLog2),
+		cache: newEvalCache(cacheLog2),
 		rolls: buildRolls(),
 	}
 	if prune != nil {
@@ -1052,7 +1062,7 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	}
 	s.workers = make([]*Searcher, n)
 	for i := range s.workers {
-		s.workers[i] = NewSearcherWith(s.cfg, s.net, s.prune)
+		s.workers[i] = newSearcherWithCache(s.cfg, s.net, s.prune, workerCacheLog2)
 	}
 	return s
 }

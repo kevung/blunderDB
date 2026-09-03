@@ -97,13 +97,72 @@ type PositionFacts struct {
 // (it would be a circular import), so the frontend reads its own settings
 // and passes them here, exactly as any other parameterised RPC call.
 func (a *App) EvaluatePositionImmediate(pos domain.Position, pruneK, candidates int) (GammonNetEvalResult, error) {
-	return evaluateGammonNet(pos, 0, pruneK, candidates)
+	return a.evaluateGammonNet(pos, 0, pruneK, candidates)
 }
 
-var (
-	gammonNetEvalMu     sync.Mutex
-	gammonNetEvalCancel context.CancelFunc
-)
+// gammonNetLivePool is the Eval panel's reused search apparatus (#196/C.9):
+// the up to three searches one evaluateGammonNet call makes — the
+// moves-or-cube decision itself, preRollFacts' own Probs, and
+// evaluateRaceRegime's own Probs — share ONE Searcher (and its worker pool)
+// across a call, and across GESTURES, instead of each allocating and
+// zeroing its own every time. Before this, the display-depth tier (2-ply,
+// LiveWorkers(2) = NumCPU) built up to three WithWorkers(NumCPU) pools per
+// gesture — about 190 MB on a 16-core machine, cold caches every time.
+//
+// Reconfigure carries the risk this pool exists to manage: it keeps the
+// searcher's own scratch AND its cache, but it can never turn the prune
+// network on or off (Reconfigure's own doc comment) — that is fixed at
+// construction. So acquire rebuilds from scratch whenever pruneK changes,
+// and only Reconfigures when it has not.
+//
+// acquire is a no-op pool below LiveWorkers' own ply-2 floor: the
+// SYNCHRONOUS, per-keystroke 0-ply tier (EvaluatePositionImmediate) never
+// takes gnEvalMu at all — LiveWorkers(0) is 1, a searcher with no worker
+// pool is cheap to build and discard, and sharing this pool across tiers
+// would make every keystroke wait behind whatever the background "at rest"
+// search (StartEvaluationAtRest) is doing, exactly the stall the panel's
+// two-tier split exists to avoid.
+//
+// mu also serialises the rare case this file's own KNOWN LIMIT note already
+// accepts: a superseded "at rest" search still runs to completion
+// (cancellation is cooperative, not preemptive — Searcher has no checkpoint
+// inside its own recursion). Before, that superseded search and the new one
+// ran on two independent pools, wasting cores but never blocking each
+// other; now they serialise on one pool instead — still bounded by the same
+// one-search's-worth of latency the KNOWN LIMIT already names, never an
+// orphan, just no longer doubling the memory to get there.
+type gammonNetLivePool struct {
+	mu       sync.Mutex
+	searcher *gammonnet.Searcher
+	pruneK   int // the value the current searcher was BUILT with
+}
+
+// acquire returns a searcher ready for a search at ply/pruneK and a release
+// function the caller must invoke once every phase of this evaluation has
+// run (a single defer around the whole evaluateGammonNet call is right: the
+// three searches inside it are already sequential, never concurrent with
+// each other).
+func (p *gammonNetLivePool) acquire(ply, pruneK int) (*gammonnet.Searcher, func(), error) {
+	if gammonnet.LiveWorkers(ply) <= 1 {
+		s, err := gammonnet.NewBatchSearcher(ply, pruneK)
+		if err != nil {
+			return nil, nil, err
+		}
+		return s, func() {}, nil
+	}
+
+	p.mu.Lock()
+	if p.searcher == nil || p.pruneK != pruneK {
+		s, err := gammonnet.NewBatchSearcher(ply, pruneK)
+		if err != nil {
+			p.mu.Unlock()
+			return nil, nil, err
+		}
+		p.searcher = s.WithWorkers(gammonnet.LiveWorkers(ply))
+		p.pruneK = pruneK
+	}
+	return p.searcher, p.mu.Unlock, nil
+}
 
 // StartEvaluationAtRest starts the display-depth (canonically 2-ply k=12)
 // search in the background — bearoff.go's DownloadBearoffDB pattern. Any
@@ -112,20 +171,20 @@ var (
 // "gammonnet-eval:cancelled" if a newer call superseded this one before it
 // finished (not an error), or "gammonnet-eval:error".
 func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates int) {
-	gammonNetEvalMu.Lock()
-	if gammonNetEvalCancel != nil {
-		gammonNetEvalCancel()
+	a.gnEvalMu.Lock()
+	if a.gnEvalCancel != nil {
+		a.gnEvalCancel()
 	}
 	ctx, cancel := context.WithCancel(a.ctx)
-	gammonNetEvalCancel = cancel
-	gammonNetEvalMu.Unlock()
+	a.gnEvalCancel = cancel
+	a.gnEvalMu.Unlock()
 
 	go func() {
-		result, err := evaluateGammonNet(pos, ply, pruneK, candidates)
+		result, err := a.evaluateGammonNet(pos, ply, pruneK, candidates)
 
-		gammonNetEvalMu.Lock()
-		gammonNetEvalCancel = nil
-		gammonNetEvalMu.Unlock()
+		a.gnEvalMu.Lock()
+		a.gnEvalCancel = nil
+		a.gnEvalMu.Unlock()
 
 		if ctx.Err() != nil {
 			runtime.EventsEmit(a.ctx, "gammonnet-eval:cancelled")
@@ -143,12 +202,12 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 // called by the frontend before starting a new one for a fresh gesture, and
 // on its own when the panel no longer wants an answer at all (e.g. closed).
 func (a *App) CancelEvaluationAtRest() {
-	gammonNetEvalMu.Lock()
-	if gammonNetEvalCancel != nil {
-		gammonNetEvalCancel()
-		gammonNetEvalCancel = nil
+	a.gnEvalMu.Lock()
+	if a.gnEvalCancel != nil {
+		a.gnEvalCancel()
+		a.gnEvalCancel = nil
 	}
-	gammonNetEvalMu.Unlock()
+	a.gnEvalMu.Unlock()
 }
 
 // evaluateGammonNet does the actual work, shared by both tiers. The
@@ -156,8 +215,17 @@ func (a *App) CancelEvaluationAtRest() {
 // (gammonnet.EvaluatePosition, #129) so the batch analysis job — which never
 // touches internal/gui — can call the exact same logic; this function's own
 // job is what stays specific to the live panel: the race-regime bonus.
-func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (GammonNetEvalResult, error) {
-	result, err := gammonnet.EvaluatePosition(pos, ply, pruneK, candidates)
+//
+// All three searches below share the ONE searcher a.gnLivePool.acquire
+// hands back (#196/C.9) — released once, when every phase has run.
+func (a *App) evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (GammonNetEvalResult, error) {
+	searcher, release, err := a.gnLivePool.acquire(ply, pruneK)
+	if err != nil {
+		return GammonNetEvalResult{}, err
+	}
+	defer release()
+
+	result, err := gammonnet.EvaluatePositionWith(searcher, pos, ply, pruneK, candidates)
 	if err != nil {
 		// A refusal is an answer ("this build cannot judge that score"), a
 		// breakage is not. Only the first travels as data.
@@ -167,8 +235,8 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 		return GammonNetEvalResult{}, err
 	}
 
-	raceEval := evaluateRaceRegime(&pos, ply, pruneK)
-	preRoll := preRollFacts(&pos, ply, pruneK, result.PreRoll)
+	raceEval := evaluateRaceRegime(searcher, &pos, ply, pruneK)
+	preRoll := preRollFacts(searcher, &pos, ply, pruneK, result.PreRoll)
 
 	verdict := race.Verdict("")
 	if result.Cube != nil {
@@ -185,7 +253,11 @@ func evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int) (Gammon
 // computes one (evaluateMoves has no reason to), so this pays for a second,
 // dice-independent search — the only case that does, measured at +36% over
 // the moves search itself at display depth (ADR-0017's cost table).
-func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRollFacts) *PositionFacts {
+//
+// searcher is the pool evaluateGammonNet already acquired for this call
+// (#196/C.9) — reconfigured here rather than built fresh, so this second
+// search reuses the same warm cache and worker pool the first one just used.
+func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, ply, pruneK int, free *gammonnet.PreRollFacts) *PositionFacts {
 	if free != nil {
 		return &PositionFacts{
 			PlayerWinChance:          free.PlayerWinChance,
@@ -217,15 +289,14 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 		return nil // no referential to state the equity in (ADR-0019)
 	}
 
-	searcher, err := gammonnet.NewSearcher(cfg)
-	if err != nil {
+	// The same searcher the decision next to it just used (#196/C.9) —
+	// Reconfigure aims it back at cfg, keeping its cache and worker pool
+	// (previously: a second, freshly-built WithWorkers(NumCPU) pool per
+	// call, on top of the one evaluateGammonNet's main search already
+	// built and the one evaluateRaceRegime is about to build).
+	if err := searcher.Reconfigure(cfg); err != nil {
 		return nil
 	}
-	// Le même pool que la décision d'à côté (#148, ADR-0011) : cette marche
-	// est une recherche complète, pas un supplément gratuit — au palier de
-	// fond, Probs re-parcourt l'arbre. Série au palier synchrone, où
-	// LiveWorkers rend 1.
-	searcher = searcher.WithWorkers(gammonnet.LiveWorkers(ply))
 	// pos's own dice-free representation — Searcher.Plays takes the dice
 	// separately (see evaluateMoves), so gnPos here is already the pre-roll
 	// position, no clone/clear needed.
@@ -280,12 +351,12 @@ func preRollFacts(pos *domain.Position, ply, pruneK int, free *gammonnet.PreRoll
 // unexported helper of the same name, kept in sync by inspection — small
 // enough that a shared symbol is not worth reopening the import question.
 //
-// Builds its own Searcher (cheap: gammonnet.Embedded() is sync.Once-cached,
-// see gammonnet.EvaluatePosition) rather than sharing the one Moves/Cube
-// used — the two conversions live in different packages since #129, and this
-// one is a bonus computed on a dice-cleared clone anyway (race.Evaluate
-// ignores dice), so there is no result to share even when they do coincide.
-func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
+// searcher is the pool evaluateGammonNet already acquired for this call
+// (#196/C.9) — reconfigured here, on a dice-cleared clone of pos, rather
+// than built fresh: this used to be the THIRD WithWorkers(NumCPU) pool a
+// single gesture allocated and threw away, on top of Moves/Cube's own and
+// preRollFacts', all three cold-cache every time.
+func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, ply, pruneK int) *race.Eval {
 	fast := race.Evaluate(pos)
 	if fast.Race == nil {
 		return nil
@@ -310,11 +381,9 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	if err != nil {
 		return nil
 	}
-	searcher, err := gammonnet.NewSearcher(cfg)
-	if err != nil {
+	if err := searcher.Reconfigure(cfg); err != nil {
 		return nil
 	}
-	searcher = searcher.WithWorkers(gammonnet.LiveWorkers(ply))
 	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply)
 
 	mover := pos.PlayerOnRoll

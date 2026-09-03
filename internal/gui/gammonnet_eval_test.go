@@ -25,7 +25,7 @@ func racePosition(whitePoint, blackPoint int, dice [2]int, onRoll int) domain.Po
 func TestEvaluateGammonNetMovesCarriesNotationAndDepthLabel(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{6, 5}, domain.White)
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -51,7 +51,7 @@ func TestEvaluateGammonNetMovesCarriesNotationAndDepthLabel(t *testing.T) {
 func TestEvaluateGammonNetCubeDecisionMoneyNoDice(t *testing.T) {
 	pos := racePosition(6, 19, [2]int{0, 0}, domain.White)
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -83,7 +83,7 @@ func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	// pruneK=1, candidates=1: the label rule is about the clamp, not the
 	// search — a full 2-ply on a race position costs five minutes under the
 	// race detector and proves nothing more.
-	result, err := evaluateGammonNet(pos, 99, 1, 1)
+	result, err := (&App{}).evaluateGammonNet(pos, 99, 1, 1)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -159,7 +159,7 @@ func TestEvaluateGammonNetRaceRegimes(t *testing.T) {
 				t.Errorf("an exact lookup without its table or verdict: %+v", fast.Race)
 			}
 
-			result, err := evaluateGammonNet(c.pos, 0, 0, 0)
+			result, err := (&App{}).evaluateGammonNet(c.pos, 0, 0, 0)
 			if err != nil {
 				t.Fatalf("evaluateGammonNet: %v", err)
 			}
@@ -203,7 +203,7 @@ func TestEvaluateGammonNetRefusesBeyondTheHorizon(t *testing.T) {
 		pos := racePosition(24, 1, dice, domain.White)
 		pos.Score = [2]int{65, 65}
 
-		result, err := evaluateGammonNet(pos, 0, 0, 0)
+		result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 		if err != nil {
 			t.Fatalf("dice %v: a refusal must be data, got an error: %v", dice, err)
 		}
@@ -232,7 +232,7 @@ func TestEvaluateGammonNetRaceMatchesCubeAtMatchScore(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
 	pos.Score = [2]int{5, 7} // White 5-away, Black 7-away — not Crawford, well within the MET horizon
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
