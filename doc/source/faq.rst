@@ -117,7 +117,7 @@ Qu'est-ce que l'EPC?
 ---------------------
 
 L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip count
-pour évaluer les positions de bearoff. Le calculateur EPC de blunderDB utilise
+pour évaluer les positions de bearoff. Le panneau Eval de blunderDB utilise
 la base de données de bearoff à 6 points de GNUbg et calcule en temps réel
 l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le wastage.
 

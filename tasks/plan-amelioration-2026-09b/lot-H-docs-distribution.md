@@ -98,7 +98,7 @@ existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
 (« (ADR-0011) ») ×9 ; `help/fr.js` « Bearoff » ×7 vs « Eval » ×1 ; filigrane :
 0 occurrence dans les 9 fichiers d'aide (toute la diffusion contrôlée de
 0.31.0 absente) ; `tasks/BACKLOG.md:118` le notait.
-- [ ] Les 18 chaînes ; remise à niveau des 4 onglets d'aide × 9 (Eval,
+- [x] Les 18 chaînes ; remise à niveau des 4 onglets d'aide × 9 (Eval,
       filigrane, `.dbx`, identité, `analyze`, Stats Joueurs, révision masquée) —
       dernière fois à la main avant H.7.
 

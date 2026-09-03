@@ -21,7 +21,8 @@ export default {
                         <li>ottelujen tuominen eri lähteistä (XG, GNUbg, BGBlitz, Jellyfish), mukaan lukien kommentit XG-tiedostoista,</li>
                         <li>tuodun ottelun siirtojen selaaminen,</li>
                         <li>asemien järjestäminen kokoelmiin,</li>
-                        <li>ottelujen järjestäminen turnauksiin.</li>
+                        <li>ottelujen järjestäminen turnauksiin,</li>
+                        <li>erän analysointi komentoriviltä analyysittä olevista asemista sisäänrakennetun gammonNet-arvioijan avulla (blunderDB:n komento <strong>analyze</strong>).</li>
                     </ul>
                     <p>Käyttäjä voi vapaasti merkitä asemia tunnisteilla ja varustaa ne kommenteilla.</p>
 
@@ -41,7 +42,7 @@ export default {
                         <li>tutkivat asemia välitoistolla (Anki-paneeli),</li>
                         <li>hallitsevat turnauksia (Turnaus-paneeli),</li>
                         <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
-                        <li>laskevat EPC-arvoja bearoff-asemille (Bearoff-paneeli),</li>
+                        <li>laskevat EPC-arvoja bearoff-asemille (Eval-paneeli),</li>
                         <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
                         <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
                     </ul>
@@ -97,11 +98,11 @@ export default {
                     <h3>EPC-laskin</h3>
                     <p>EPC-laskin (Effective Pip Count) laskee bearoff-asemien efektiivisen pip-luvun. Se käyttää GNUbg:n yksipuolista 6-pisteen bearoff-tietokantaa tarkkoihin EPC-arvoihin.</p>
                     <p>
-                        Avaa Bearoff-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Bearoff-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
+                        Avaa Eval-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Eval-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
                         bearoff-asetelmalla (15 nappulaa).
                     </p>
                     <p>
-                        Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä Bearoff-paneelissa, ja niistä näkyy kummankin pelaajan osalta:
+                        Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä Eval-paneelissa, ja niistä näkyy kummankin pelaajan osalta:
                     </p>
                     <ul>
                         <li><strong>EPC</strong>: keskimääräinen pip-määrä, joka tarvitaan kaikkien nappuloiden poistamiseen,</li>
@@ -111,7 +112,7 @@ export default {
                         <li><strong>Keskihajonta</strong>: heittojen määrän keskihajonta.</li>
                     </ul>
                     <p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
-                    <p>Sulje Bearoff-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
+                    <p>Sulje Eval-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
                     <p>
                         Puhtaassa kotiutusasemassa kilpajuoksutaulukko näyttää lisäksi molempien pelaajien voittotodennäköisyydet ja, kun asema on two-sided-tietokannan kattama (sisäänrakennettu 6 nappulaan asti pelaajaa kohden, laajennettu tietokanta
                         ladattavissa 11 nappulaan asti asetusten Bearoff-välilehdeltä), tarkat money-ekviteetit — kunkin ei-optimaalisen päätöksen alla ero parhaaseen — sekä parhaan kuutiopäätöksen. Tämän alueen ulkopuolella voittotodennäköisyys arvioidaan
@@ -173,7 +174,27 @@ export default {
                     <h3>Tilastot</h3>
                     <p>
                         Tilasto-paneeli (<strong>Ctrl+D</strong>) näyttää suoritustilastot (PR ja MWC-kustannus), jotka lasketaan kaikista tuoduista asemista. Käytä suodatinpalkkia rajataksesi analyysiä
-                        pelaajan, turnauksen, päivämääräalueen, päätöstyypin tai ottelun pituuden mukaan. Napsauta mitä tahansa mittaria porautuaksesi vastaaviin asemiin.
+                        pelaajan, turnauksen, päivämääräalueen, päätöstyypin tai ottelun pituuden mukaan. Napsauta mitä tahansa mittaria porautuaksesi vastaaviin asemiin. <strong>Pelaajat</strong>-välilehti
+                        listaa pelaajakohtaisesti otteluiden määrän, tuloksen, päätökset, PR:n (nappulat ja tuplauskuutio), Snowien, blundersit ja tunnettujen heittojen perusteella mitatun tuurin.
+                    </p>
+
+                    <h3>Vesileima ja suojattu vienti</h3>
+                    <p>
+                        Viennin yhteydessä (<strong>export_db</strong> tai Vie-valintaikkuna) voi vapaasti ottaa käyttöön kaksi toisistaan riippumatonta suojausta, jommankumman tai molemmat yhdessä:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Vesileima:</strong> merkitsee vietyyn tiedostoon sen alkuperän (kuka sen tuotti, valinnainen huomautus). Vesileima on allekirjoitettu merkitsijän identiteetilläsi: sitä
+                            ei voi muuttaa eikä väärentää jonkun toisen nimissä — mutta se ei ole poistamaton eikä estä yhtäkään kopiota.
+                        </li>
+                        <li>
+                            <strong>Salasana:</strong> asettaa viennin salattuun <strong>.dbx</strong>-säiliöön. Se suojaa tiedoston siirron ajaksi, ei itse tietokantaa — se, jolle annat salasanan, voi
+                            avata sen — ja alkuperä näkyy ilman salasanaakin.
+                        </li>
+                    </ul>
+                    <p>
+                        Merkitsijän identiteettisi, avain joka allekirjoittaa vesileimasi, luodaan automaattisesti ensimmäisen kerran, kun vienti merkitään alkuperällään. Tarkastele, vie tai luo se
+                        uudelleen asetusten välilehdeltä <strong>Merkitsijän identiteetti</strong>.
                     </p>
 `,
     shortcuts: `
@@ -429,7 +450,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Bearoff-paneeli</td>
+                                <td>Eval-paneeli</td>
                             </tr>
 
                             <tr>

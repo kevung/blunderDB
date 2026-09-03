@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 01:19+0200\n"
+"POT-Creation-Date: 2026-09-03 01:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -567,9 +567,9 @@ msgstr "EPCを計算する"
 
 #: ../../source/guide_utilisateur.rst:296
 msgid ""
-"Le calculateur EPC (Effective Pip Count) permet de calculer les "
+"Le panneau Eval calcule l'EPC (Effective Pip Count) et les autres "
 "statistiques de bearoff d'une position."
-msgstr "EPCカルキュレーター（Effective Pip Count）は、ポジションのベアオフ統計を計算します。"
+msgstr "Eval パネルは、EPC（Effective Pip Count）とポジションのその他のベアオフ統計を計算します。"
 
 #: ../../source/guide_utilisateur.rst:299
 msgid ""

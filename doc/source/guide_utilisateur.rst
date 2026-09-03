@@ -293,8 +293,8 @@ Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coû
 Calculer l'EPC
 --------------
 
-Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
-bearoff d'une position.
+Le panneau Eval calcule l'EPC (Effective Pip Count) et les autres statistiques
+de bearoff d'une position.
 
 #. Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur,
    ou exécuter la commande ``epc``.

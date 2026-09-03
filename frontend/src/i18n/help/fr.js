@@ -21,7 +21,8 @@ export default {
                         <li>importer des matchs depuis diverses sources (XG, GNUbg, BGBlitz, Jellyfish), y compris les commentaires des fichiers XG,</li>
                         <li>parcourir les coups d'un match importé,</li>
                         <li>organiser les positions en collections,</li>
-                        <li>organiser les matchs en tournois.</li>
+                        <li>organiser les matchs en tournois,</li>
+                        <li>analyser en lot, depuis un terminal, les positions dépourvues d'analyse grâce à l'évaluateur gammonNet embarqué (commande <strong>analyze</strong> de blunderDB).</li>
                     </ul>
                     <p>L'utilisateur peut librement étiqueter les positions et les annoter avec des commentaires.</p>
 
@@ -41,7 +42,7 @@ export default {
                         <li>étudier des positions par répétition espacée (panneau Anki),</li>
                         <li>gérer des tournois (panneau Tournoi),</li>
                         <li>afficher des statistiques de performance (panneau Stats),</li>
-                        <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Bearoff),</li>
+                        <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Eval),</li>
                         <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
                         <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
                     </ul>
@@ -99,11 +100,11 @@ export default {
                     <h3>Calculatrice EPC</h3>
                     <p>La calculatrice EPC (Effective Pip Count) calcule le pip count effectif des positions de sortie. Elle utilise la base de données de sortie unilatérale à 6 points de GNUbg pour obtenir des valeurs d'EPC exactes.</p>
                     <p>
-                        Pour ouvrir le panneau Bearoff, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Bearoff du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé avec une configuration standard
+                        Pour ouvrir le panneau Eval, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Eval du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé avec une configuration standard
                         de sortie (15 pions).
                     </p>
                     <p>
-                        Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau Bearoff dédié, indiquant pour chaque joueur :
+                        Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau Eval dédié, indiquant pour chaque joueur :
                     </p>
                     <ul>
                         <li><strong>EPC</strong> : le nombre moyen de pips nécessaires pour sortir tous les pions,</li>
@@ -113,7 +114,7 @@ export default {
                         <li><strong>Std Dev</strong> : écart-type du nombre de jets.</li>
                     </ul>
                     <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
-                    <p>Pour fermer le panneau Bearoff, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
+                    <p>Pour fermer le panneau Eval, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
                     <p>
                         Sur une position de sortie pure, un tableau course affiche en outre les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6 pions par joueur, base étendue
                         téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes — avec, sous chaque décision non optimale, l'écart d'équité à la meilleure décision — et la meilleure décision de videau. Hors de ce
@@ -176,7 +177,27 @@ export default {
                     <h3>Stats</h3>
                     <p>
                         Le panneau Stats (<strong>Ctrl+D</strong>) affiche des statistiques de performance (PR et coût en MWC) calculées à partir de toutes les positions importées. Utilisez la barre de filtres pour restreindre l'analyse par
-                        joueur, tournoi, plage de dates, type de décision ou longueur de match. Cliquez sur n'importe quel indicateur pour explorer en détail les positions correspondantes.
+                        joueur, tournoi, plage de dates, type de décision ou longueur de match. Cliquez sur n'importe quel indicateur pour explorer en détail les positions correspondantes. L'onglet <strong>Joueurs</strong> liste, par joueur, le
+                        nombre de matchs, le bilan, les décisions, le PR (pions et videau), le Snowie, les blunders et la chance mesurée sur les jets connus.
+                    </p>
+
+                    <h3>Filigrane et export protégé</h3>
+                    <p>
+                        Lors d'un export (<strong>export_db</strong> ou la boîte de dialogue Exporter), deux protections indépendantes peuvent être activées librement, l'une, l'autre, ou les deux à la fois :
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Filigrane :</strong> marque le fichier exporté de son origine (qui l'a produit, une note facultative). Le filigrane est signé par votre identité d'émetteur : il ne peut être ni modifié ni contrefait au nom
+                            de quelqu'un d'autre — mais il n'est pas ineffaçable et n'empêche aucune copie.
+                        </li>
+                        <li>
+                            <strong>Mot de passe :</strong> place l'export dans un conteneur chiffré <strong>.dbx</strong>. Il protège le fichier pendant son transport, pas la base elle-même — celui à qui vous donnez le mot de passe peut
+                            l'ouvrir — et l'origine reste lisible sans lui.
+                        </li>
+                    </ul>
+                    <p>
+                        Votre identité d'émetteur, la clé qui signe vos filigranes, se crée automatiquement au premier export marqué de son origine. Consultez-la, exportez-la ou régénérez-la depuis l'onglet
+                        <strong>Identité d'émetteur</strong> de la configuration.
                     </p>
 `,
     shortcuts: `
@@ -432,7 +453,7 @@ export default {
 
                             <tr>
                                 <td>Ctrl + E</td>
-                                <td>Panneau Bearoff</td>
+                                <td>Panneau Eval</td>
                             </tr>
 
                             <tr>
