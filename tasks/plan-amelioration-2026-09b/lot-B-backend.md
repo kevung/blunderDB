@@ -411,13 +411,53 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
 `CommitImportDatabase` 306 l., `migrate_1_9_0_to_2_0_0` 320 l. Fichiers
 > 600 l. : `stats.go` 1323, `export_sqlite.go` 938, `matches_postgres.go` 905,
 `xgmap.go` 878, `matches_sqlite.go` 864, `position_match.go` 703.
-- [ ] `find` → `buildWhere` / `scanRows` / `applyGoFilters` (struct portant
-      `f`, `ana`, `ctx`) ; table `{filtre, extracteur}` pour les six taux.
-- [ ] `Compute` → une fonction par section, clause de base factorisée.
-- [ ] `CommitImportDatabase` → décision / écriture.
-- [ ] Linter `funlen`/`gocognit` non régressif (E.6) verrouille le résultat.
-- [ ] Tests unitaires directs de `buildWhere` (entrées → SQL + args) : c'est
-      ce qui fait remonter `sqlshared` de 1 % (E.2).
+- [x] `find` → `buildWhere` / `scanRows` / `applyGoFilters` (`search.go`).
+      `buildWhere` rend un petit struct porteur (`searchWhereClause` : le
+      texte WHERE, ses arguments, et l'état que la suite doit connaître —
+      `needAnalysis`, `useSQLFilters`, `bitboardTight`, `multiPlayed`,
+      `effInclude`) plutôt que les cinq retours nommés du plan — même idée,
+      un seul type au lieu de cinq valeurs de retour. `scanRows` vide le
+      curseur en `[]scannedRow` (type maintenant au niveau paquet, plus
+      local à `find`). `applyGoFilters` porte la boucle par ligne et les
+      deux préchargements par lot (commentaires, coups joueur 1). `find`
+      lui-même tombe de ~730 à 48 lignes : ouvrir la requête, enchaîner les
+      trois étapes.
+- [x] Les six blocs de taux (win/gammon/backgammon, joueur 1 et joueur 2)
+      pliés en une table `[6]rateFilterCheck` (filtre, jeton, extracteur) et
+      une fonction `matchesRateFilters` — construite une fois par recherche,
+      pas par ligne. ~90 lignes copiées → ~10 lignes d'appel plus la table.
+- [x] Tests unitaires directs de `buildWhere` (entrées → SQL + args) :
+      12 cas dans `search_build_where_test.go`, contre `fakeExecer`/
+      `fakeDialect` (aucune base réelle) — tenant nu, drapeaux de ligne,
+      restriction par identifiants (liste et liste vide → `0=1`), joueur
+      (ILIKE ×2), type de décision + sous-type videau, cube/score, effet de
+      `MirrorFilter` sur `useSQLFilters`/le texte WHERE, les quatre
+      déclencheurs de `needAnalysis`, la sous-requête win/gammon, et
+      `effInclude` qui efface un point partagé avec `ExcludeFilter`. Les six
+      blocs de taux (ci-dessus) gagnent aussi 9 cas directs
+      (`search_rate_filters_test.go`) : cube vs repli sur le premier coup,
+      cube qui l'emporte quand les deux sont présents, `Moves` vide qui
+      échoue comme une analyse absente — aucun des deux n'avait de test
+      direct avant ce geste, seulement la suite d'équivalence recherche
+      côté `pkg/blunderdb/database`.
+- [x] Preuve de non-régression : suite de recherche complète (équivalence
+      legacy/nouveau, pagination, motif de prime, exclusion, chevauchement)
+      sur SQLite **et** sur un vrai PostgreSQL (Docker) — `sqlshared` sert
+      les deux backends, donc toucher `search.go` engage les deux à la fois.
+- [ ] `Compute` (`stats.go`, 433 l., 12 requêtes) → **pas fait** dans ce
+      geste : budget de ce chantier épuisé par `find`. Même méthode
+      applicable (une fonction par section, clause de base factorisée) ;
+      à reprendre séparément.
+- [ ] `CommitImportDatabase` (306 l.) → **pas fait**, même raison.
+- [ ] Réduction des fichiers > 600 lignes (`stats.go` 1392, `export_sqlite.go`
+      938, `matches_postgres.go` 921, `xgmap.go` 857, `matches_sqlite.go` 879,
+      `position_match.go` 703) : **pas fait**. `search.go` est passé de 796 à
+      872 lignes (plus de fonctions, chacune commentée ; le fichier n'a pas
+      rétréci, `find` si) — le découpage de B.15 vise la lisibilité par
+      fonction, pas la taille totale du fichier.
+- [ ] Linter `funlen`/`gocognit` non régressif : dépend de E.6 (#222), non
+      fait — rien ne verrouille encore ce résultat contre une régression
+      future.
 
 ## B.16 — Observabilité du backend [S] — dette (#184)
 
