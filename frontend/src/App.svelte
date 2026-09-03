@@ -267,9 +267,9 @@
         // Apply the persisted UI language before anything renders; fall back to
         // English if the config read fails.
         try {
-            initLanguage(await GetLanguage());
+            await initLanguage(await GetLanguage());
         } catch (_e) {
-            initLanguage('en');
+            await initLanguage('en');
         }
 
         // Load the persisted board palette (falls back to defaults internally).

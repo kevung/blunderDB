@@ -5,8 +5,8 @@
     import { isBareLetter } from '../utils/keys.js';
     import { onMount } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
-    import { t } from '../i18n';
-    import { help } from '../i18n/help/index.js';
+    import { t, language } from '../i18n';
+    import { help, loadHelpFor } from '../i18n/help/index.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose } = $props();
@@ -18,7 +18,22 @@
     let databaseVersion = $state('');
     let applicationVersion = $derived($metaStore.applicationVersion);
 
-    let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, applicationVersion).replace(/\{dbVersion\}/g, databaseVersion));
+    // appVersion/dbVersion are spliced into raw HTML below ({@html}); escape them even
+    // though today's sources (metaStore, GetDatabaseVersion()) are trusted, so a future
+    // caller can't turn this interpolation into an XSS hole without also touching this line.
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    }
+
+    let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, escapeHtml(applicationVersion)).replace(/\{dbVersion\}/g, escapeHtml(databaseVersion)));
+
+    // The active language's help bundle (~70 kB) is fetched only when the
+    // modal is actually opened, not eagerly at startup (#207). Re-runs if the
+    // language changes while the modal stays open; loadHelpFor() is a no-op
+    // once a bundle is cached.
+    $effect(() => {
+        if (visible) loadHelpFor($language);
+    });
 
     onMount(async () => {
         try {
@@ -109,18 +124,22 @@
     <!-- Tab Content -->
     <div class="tab-content" bind:this={contentArea}>
         {#if activeTab === 'manual'}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
             {@html $help.manual}
         {/if}
 
         {#if activeTab === 'shortcuts'}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
             {@html $help.shortcuts}
         {/if}
 
         {#if activeTab === 'commands'}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
             {@html $help.commands}
         {/if}
 
         {#if activeTab === 'about'}
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- the only interpolated placeholders (appVersion/dbVersion) are HTML-escaped in aboutHtml above -->
             {@html aboutHtml}
         {/if}
     </div>

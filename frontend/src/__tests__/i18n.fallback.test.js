@@ -6,6 +6,8 @@
  * plus {placeholder} substitution.
  *
  * SaveLanguage is mocked so setLanguage() doesn't reach into Wails bindings.
+ * initLanguage() is async (#207: it fetches the locale dictionary on demand),
+ * so every call here is awaited.
  */
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
@@ -19,19 +21,19 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 import { t, translate, language, initLanguage } from '../i18n';
 
 describe('i18n fallback chain', () => {
-    beforeEach(() => {
-        initLanguage('en');
+    beforeEach(async () => {
+        await initLanguage('en');
     });
 
-    test('resolves a known key in the active locale', () => {
-        initLanguage('fr');
+    test('resolves a known key in the active locale', async () => {
+        await initLanguage('fr');
         expect(get(t)('common.back')).toBe('Retour');
     });
 
-    test('falls back to English when the key is missing in the active locale', () => {
-        initLanguage('fr');
+    test('falls back to English when the key is missing in the active locale', async () => {
+        await initLanguage('fr');
         const fr = get(t)('common.back');
-        initLanguage('en');
+        await initLanguage('en');
         const en = get(t)('common.back');
         // Sanity: the two locales genuinely differ for this key, and English resolves.
         expect(fr).not.toBe(en);
@@ -52,8 +54,8 @@ describe('i18n fallback chain', () => {
         expect(get(t)('commands.goToPosition', { other: 1 })).toBe('Go to position {n}');
     });
 
-    test('non-reactive translate() matches the reactive store for the current language', () => {
-        initLanguage('de');
+    test('non-reactive translate() matches the reactive store for the current language', async () => {
+        await initLanguage('de');
         expect(translate('common.back')).toBe(get(t)('common.back'));
         expect(get(language)).toBe('de');
     });

@@ -8,6 +8,7 @@
     import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/database/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
+    import { formatDateTime } from '../utils/format.js';
 
     let allComments = $state([]);
     let searchQuery = $state('');
@@ -174,7 +175,7 @@
             if (diffMin < 60) return $t('comment.minutesAgo', { n: diffMin });
             const diffHr = Math.floor(diffMin / 60);
             if (diffHr < 24) return $t('comment.hoursAgo', { n: diffHr });
-            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            return formatDateTime(d, { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
         } catch {
             return '';
         }

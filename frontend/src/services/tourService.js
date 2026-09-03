@@ -1,5 +1,3 @@
-import { driver } from 'driver.js';
-import 'driver.js/dist/driver.css';
 import { translate } from '../i18n';
 import { openModal, closeModal, MODAL, activeTabStore } from '../stores/uiStore';
 import { GetTourSeen, SaveTourSeen } from '../../wailsjs/go/main/Config.js';
@@ -29,8 +27,13 @@ function buildSteps(tour) {
         }));
 }
 
-/** Start a guided tour by id. Closes any open modal first. */
-export function startTour(tourId) {
+/**
+ * Start a guided tour by id. Closes any open modal first.
+ *
+ * driver.js (~104 kB) is fetched on demand rather than bundled statically
+ * (#207): tours are a first-run/help feature most sessions never trigger.
+ */
+export async function startTour(tourId) {
     const tour = getTourById(tourId);
     if (!tour) {
         logger.error('Unknown tour:', tourId);
@@ -39,6 +42,7 @@ export function startTour(tourId) {
     closeModal();
     const steps = buildSteps(tour);
     if (steps.length === 0) return;
+    const [{ driver }] = await Promise.all([import('driver.js'), import('driver.js/dist/driver.css')]);
     const d = driver({
         showProgress: true,
         // driver.js replaces {{current}}/{{total}} itself — keep it i18n-neutral.

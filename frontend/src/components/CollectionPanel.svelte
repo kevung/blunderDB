@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
     import { createReorder } from '../utils/reorder.js';
@@ -181,10 +182,7 @@
             // SQLite format "YYYY-MM-DD HH:MM:SS" — take only the first 19 chars to avoid timezone suffix
             normalized = normalized.substring(0, 19).replace(' ', 'T') + 'Z';
         }
-        const d = new Date(normalized);
-        if (isNaN(d.getTime())) return '';
-        const pad = (n) => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        return formatDateTime(normalized);
     }
 
     async function togglePositionInCollection(collectionId, event) {
