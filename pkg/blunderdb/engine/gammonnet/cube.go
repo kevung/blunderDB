@@ -27,6 +27,7 @@ import (
 	"math"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
 // CubeOwner is who may turn the cube — gn_cube.h's GnCubeOwner. The three
@@ -643,15 +644,32 @@ const (
 // same way. Exported so a cubeful rollout or an exact-reference benchmark
 // can share the same four comparisons Decide uses, rather than keeping a
 // second copy of one rule.
+//
+// The comparison itself lives in race.VerdictFromEquities (#193/C.6: ADR-0020
+// said a cube decision has one shape; before this it had two — this table
+// here, and MoneyFromEntry's own 3-way copy that could never produce
+// TooGood). It moved to race rather than the other way round because
+// gammonNet may import race — nothing there depends back on gammonNet — while
+// race must never import gammonNet: its own internal test files already
+// import race for the exact-table comparison, and Go refuses the resulting
+// cycle. eps is 0 here: this package's inputs are exact floats, with no
+// uint16 quantisation to absorb (contrast MoneyFromEntry's moneyEps).
 func Verdict(eND, eDT, eDP float64) CubeAction {
-	eDouble := math.Min(eDT, eDP)
-	switch {
-	case eND > eDP && eND >= eDouble:
-		return TooGood
-	case eDT >= eDP:
-		return DoublePass
-	case eDouble > eND:
+	return cubeActionFromVerdict(race.VerdictFromEquities(eND, eDT, eDP, 0))
+}
+
+// cubeActionFromVerdict is a straight rename between the two enums that name
+// the same four outcomes — race.Verdict (shared with the exact-table
+// verdict and the wire payload internal/gui builds) and gammonnet.CubeAction
+// (this package's own internal currency, threaded through Decision.Action).
+func cubeActionFromVerdict(v race.Verdict) CubeAction {
+	switch v {
+	case race.VerdictDoubleTake:
 		return DoubleTake
+	case race.VerdictDoublePass:
+		return DoublePass
+	case race.VerdictTooGood:
+		return TooGood
 	default:
 		return NoDouble
 	}
@@ -693,6 +711,19 @@ type Decision struct {
 // it — and in a match the question does not arise at all: the equity table
 // already prices gammons at the score, which is what Jacoby exists to
 // approximate in money play.
+//
+// There is no beaver parameter, deliberately, not by omission (#193/C.6):
+// domain.Position.HasBeaver is stored and hashed like HasJacoby, but nothing
+// in this decision reads it. Beaver ("take → beaver": the taker immediately
+// redoubles, keeping the cube) changes who owns the cube and at what value
+// the SAME instant a take is decided, which this function cannot express —
+// Decide answers "double, take, or pass" for a single cube state, not a
+// sequence of two decisions at two cube values. Modelling it (the plan's own
+// candidate rule: money, centred cube, taker redoubles when eDT > +1) is a
+// gammonNet spec question first (its own spec §2), same as movefilters and
+// distillation in C.13 — until that lands, HasBeaver is read nowhere past
+// storage, and is exactly as decorative as this comment says, not a bug this
+// fiche is silently leaving behind.
 //
 // ok is false when the state is not evaluable.
 func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, efficiency float64, jacoby bool) (Decision, bool) {

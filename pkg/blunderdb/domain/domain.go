@@ -217,7 +217,10 @@ type Position struct {
 	PlayerOnRoll int    `json:"player_on_roll"`
 	DecisionType int    `json:"decision_type"`
 	HasJacoby    int    `json:"has_jacoby"` // Add HasJacoby field
-	HasBeaver    int    `json:"has_beaver"` // Add HasBeaver field
+	// HasBeaver is stored and hashed alongside HasJacoby, but is read by
+	// nothing else in the engine: gammonnet.Decide has no beaver parameter,
+	// deliberately, not by omission — see its own doc comment (#193/C.6).
+	HasBeaver int `json:"has_beaver"` // Add HasBeaver field
 
 	// IndividuallyImported records that the position entered the database on
 	// its own rather than as part of a match (ADR-0001). It is NOT part of the

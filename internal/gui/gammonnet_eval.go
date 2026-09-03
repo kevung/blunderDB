@@ -62,7 +62,7 @@ type GammonNetEvalResult struct {
 	PreRoll *PositionFacts `json:"preRoll,omitempty"`
 	// CubeVerdict is the cube verdict as a KEY the panel translates —
 	// "no_double", "double_take", "double_pass" or "too_good", the same four
-	// race.Money.Verdict already carries (ADR-0019 rule 3). Cube's own
+	// race.CubeVerdict.Verdict already carries (ADR-0019 rule 3). Cube's own
 	// BestCubeAction string stays what it has always been: a stored field
 	// carrying an analysing engine's own words, which is right for an
 	// imported record and wrong for our own live evaluation (it arrived in
@@ -340,7 +340,7 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 		return nil
 	}
 
-	money := race.Money{
+	money := race.CubeVerdict{
 		// Uniform with evaluateCube above: ND/DT/DP are reported regardless
 		// of who owns the cube, exactly as the Eval panel's own cube table
 		// already does — no separate "cube against" special case invented

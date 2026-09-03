@@ -25,7 +25,7 @@ import (
 //
 // Planes 1–2 are continuation values (the "ND" of the cube decision), NOT the
 // decision-tree optimum; the money verdict is reconstructed from them and
-// plane 3 (see Money). Semantics pinned against gnubg cfevaluate on 160
+// plane 3 (see CubeVerdict). Semantics pinned against gnubg cfevaluate on 160
 // fixture states in testdata/money_fixtures.json (exact to quantisation).
 
 //go:embed gnubg_ts0.bd
