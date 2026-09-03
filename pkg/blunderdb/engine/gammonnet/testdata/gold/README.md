@@ -212,31 +212,38 @@ gcc -O2 -o cube_gold cube_gold.o $GN/build/*.o -lm
 
 ## What the gate asserts, and what it deliberately does not
 
-- **Refusal, the action, and the reported equities/take point agree to `1e-5`.** Looser than
-  the search gold's `1e-6`: blunderDB's own MET stores Kazaross-XG2 in **float32**
-  (`engine/met.go`) where gammonNet's table — and the Zadeh recursion that extends it — is
-  **double** (`gn_met_table.h`'s own header notes the two tables were cross-checked and the 625
-  pre-Crawford entries "agree exactly" at full precision; float32 storage still loses about
-  seven decimal digits of it). The redouble recursion (#122) combines several such lookups per
-  stake level, so the two ports' outputs sit a few `1e-6` apart rather than a few `1e-7`.
-  Measured on v1.0.1: **max|Δ| = 2.463e-06** over 2320 decisions — and unchanged after
-  ADR-0022's tail correction, which moves both sides identically.
+- **Refusal, the action, and the reported equities/take point agree to `1e-6`** — the same
+  tolerance as the search gold (#24). It used to be `1e-5`: blunderDB's own MET stored
+  Kazaross-XG2 in **float32**, transcribed by hand (`engine/met.go`), where gammonNet's table —
+  and the Zadeh recursion that extends it — is **double** (`gn_met_table.h`'s own header notes
+  the two tables were cross-checked and the 625 pre-Crawford entries "agree exactly" at full
+  precision; float32 storage still loses about seven decimal digits of it). The redouble
+  recursion (#122) combined several such lookups per stake level, so the two ports' outputs sat a
+  few `1e-6` apart rather than a few `1e-7`. Measured on v1.0.1: **max|Δ| = 2.463e-06** over 2320
+  decisions — and unchanged after ADR-0022's tail correction, which moves both sides identically.
+  **Closed by #24**: blunderDB's MET now reads gammonNet's own float64 export
+  (`data/met_kazaross_xg2.json`, embedded as `met_kazaross_xg2.json` and read through
+  `metPre`/`metPost` in `engine/met.go`) for every index this corpus exercises, instead of a hand
+  transcription — measured **max|Δ| = 0.000e+00** over 2320 decisions after the change.
 - **A decision tie zone, separate from the equity tolerance.** At an exact boundary — most
-  visibly a perfectly symmetric score with `p(win) = 0.5` — the float32-vs-double MET noise can
+  visibly a perfectly symmetric score with `p(win) = 0.5` — residual floating-point noise can
   land a strict `equity_double > equity_no_double` on either side of zero, flipping
   `NoDouble`/`DoubleTake` even though both engines agree on the equities to `1e-8`. Tolerated
-  only there (`cubeActionTieTolerance`), and counted; 4 such ties, before and after ADR-0022, all at cube
-  values whose stake chain reaches a dead level exactly at a symmetric away score.
-- **Match states beyond `cubeGoldMaxAway` (24) are out of scope for this file on purpose.**
+  only there (`cubeActionTieTolerance`), and counted; 0 such ties after #24 (the float32-vs-double
+  MET noise that produced 4 of them, before and after ADR-0022, is gone with the tolerance gap
+  it came from).
+- **Match states beyond `cubeGoldMaxAway` (25) are out of scope for this file on purpose.**
   gammonNet's `gn_match_state_is_valid` refuses any match past `GN_MET_MAX_AWAY` (25);
   blunderDB's own MET extends Kazaross-XG2 with a Zadeh fallback to 64 (`engine.MaxScore`) and
   answers there instead of refusing (see `matchMaxAway` in `cube.go`) — a deliberate, documented
   divergence from the reference, not something a gold file comparison could express. It is
-  exercised by Go-only tests in `cube_test.go`. The corpus also stops one point short of 25
-  even within the reference's own range: `gn_met_table.h` documents that blunderDB's
-  post-Crawford transcription carries one fewer explicit entry (24) than gammonNet's XML
-  source (25), so post-Crawford trailer-at-25 is a second, narrower, already-known boundary
-  disagreement — avoided the same way, by not asking the question there.
+  exercised by Go-only tests in `cube_test.go`. **Before #24** the corpus stopped one point short
+  of 25 even within the reference's own range: `gn_met_table.h` documented that blunderDB's
+  post-Crawford transcription carried one fewer explicit entry (24) than gammonNet's XML source
+  (25), so post-Crawford trailer-at-25 was a second, narrower, already-known boundary
+  disagreement — avoided by not asking the question there. #24 closes it: blunderDB's export
+  carries all 25 post-Crawford entries, `cubeGoldMaxAway` is gammonNet's own horizon (25) rather
+  than one short of it, and the corpus exercises trailer-at-25 directly.
 - **A crawford flag without either away score at match point is refused, not compared.**
   `MatchState.IsValid` treats `Crawford: true` at an away score where nobody is 1-away as an
   incoherent input (see `cube.go`): gammonNet's `gn_met_after` silently falls back to the

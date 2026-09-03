@@ -16,31 +16,33 @@ import (
 // reference (gn_cube_decide) must answer identically.
 //
 // Match-state cases are held to away scores <= cubeGoldMaxAway: gammonNet's
-// own gn_match_state_is_valid refuses beyond GN_MET_MAX_AWAY (25), and its
-// post-Crawford table stops one entry short of that anyway (gn_met_table.h's
-// own header: "blunderDB's transcription stops at 24 post-Crawford entries
-// where the XML carries 25"). Coverage beyond that boundary — where
-// blunderDB's Zadeh-extended MET answers and gammonNet refuses — is a
-// deliberate, documented divergence (see matchMaxAway) and is exercised by
-// Go-only tests in cube_test.go, not by this gold file.
+// own gn_match_state_is_valid refuses beyond GN_MET_MAX_AWAY (25). Its
+// post-Crawford table now carries the full 25 entries on both sides of the
+// port (#24: blunderDB's own MET reads the same gammonNet export instead of
+// a hand transcription, so the trailer-at-25-away boundary this file used to
+// avoid is answered identically by both engines) — cubeGoldMaxAway is
+// therefore 25, gammonNet's own horizon, not one short of it.
 const (
 	cubeCorpusMagic = "GNCB"
 	cubeGoldMagic   = "GNCG"
 	cubeCorpusPath  = "testdata/cube_corpus.bin"
 	cubeGoldPath    = "testdata/cube_gold.bin"
-	cubeGoldMaxAway = 24
+	cubeGoldMaxAway = 25
 
-	// cubeGoldTolerance is looser than the search gold's 1e-6: blunderDB's
-	// own MET stores Kazaross-XG2 in float32 where gammonNet's table (and the
-	// Zadeh recursion that fills it in) is double, and the redouble recursion
-	// combines several such lookups per level. See README.md for the
-	// measured margin.
-	cubeGoldTolerance = 1e-5
+	// cubeGoldTolerance matches the search gold's 1e-6 (#24): blunderDB's own
+	// MET used to store Kazaross-XG2 in float32, transcribed by hand, where
+	// gammonNet's table is double — that gap (measured max|Δ| = 2.463e-06
+	// over 2320 decisions, see README.md) forced a tolerance ten times
+	// looser than the rest of this harness. blunderDB's MET now reads
+	// gammonNet's own float64 export for every index this file exercises
+	// (metPre/metPost in engine/met.go), closing the gap this tolerance
+	// existed to paper over.
+	cubeGoldTolerance = 1e-6
 
 	// cubeActionTieTolerance is the decision tie zone: an action disagreement
 	// is tolerated only when the reported equity_no_double and equity_double
 	// already agree to within this — i.e. the two engines are disagreeing
-	// about which side of an exact tie the float32-vs-double MET noise falls
+	// about which side of an exact tie residual floating-point noise falls
 	// on, not about the decision itself. See TestCubeDecideMatchesTheGoldFile.
 	cubeActionTieTolerance = 1e-8
 )
@@ -321,9 +323,10 @@ func TestCubeDecideMatchesTheGoldFile(t *testing.T) {
 		if int32(dec.Action) != want.action {
 			// At an exact decision boundary (eND == eDouble in real
 			// arithmetic — e.g. a perfectly symmetric score with p = 0.5),
-			// blunderDB's own MET stores Kazaross-XG2 in float32 where
-			// gammonNet's is double; that last-digit noise can push a strict
-			// eDouble > eND either side of zero and flip NoDouble/DoubleTake.
+			// residual floating-point noise can push a strict eDouble > eND
+			// either side of zero and flip NoDouble/DoubleTake. Rarer since
+			// #24 (blunderDB's MET now reads gammonNet's own float64 export
+			// instead of a float32 hand transcription), but still possible.
 			// Verdict's own comparisons are strict for exactly this reason
 			// (an exact tie must read NoDouble), so this is a tie-zone
 			// disagreement, not a computed-value one — tolerated only within

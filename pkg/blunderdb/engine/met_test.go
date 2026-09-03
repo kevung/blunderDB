@@ -193,9 +193,11 @@ func TestNormalMatchEquityIsUnchanged(t *testing.T) {
 // A handful of the published Kazaross-XG2 values, as Tom Keith's article
 // (https://bkgm.com/articles/Keith/KazarossXG2MET/index.html) and GNU
 // Backgammon's met/Kazaross-XG2.xml print them: the textbook cells everyone
-// quotes, and the four corners of the explicit table. Checked on 2026-09-03
-// against gammonNet's own extraction of the XML (tests/data/met_reference.json,
-// 625 pre-Crawford entries, worst |Δ| = 2.96e-8 — float32 rounding).
+// quotes, and the four corners of the explicit table. Checked against
+// gammonNet's canonical export (data/met_kazaross_xg2.json, embedded here as
+// met_kazaross_xg2.json — #24), which is now this file's actual source: the
+// float64 checks below compare EXACTLY (the export IS these numbers), the
+// float32 "live table" checks tolerate the overlay's rounding.
 func TestKazarossXG2MatchesThePublication(t *testing.T) {
 	pre := []struct {
 		awayA, awayB int
@@ -220,12 +222,14 @@ func TestKazarossXG2MatchesThePublication(t *testing.T) {
 		{25, 25, 0.50000},
 	}
 	for _, c := range pre {
-		got := float64(kazarossXG2PreCrawford[c.awayA-1][c.awayB-1])
+		got := kazarossXG2PreCrawford[c.awayA-1][c.awayB-1]
 		if math.Abs(got-c.mwc) > 1e-6 {
 			t.Errorf("pre-Crawford %d-away/%d-away: table %.6f, published %.6f", c.awayA, c.awayB, got, c.mwc)
 		}
-		// And the live table reads the same cell: the overlay covers it.
-		if live := float64(preCrawfordMET[c.awayA-1][c.awayB-1]); live != got {
+		// And the live float32 table reads the same cell, to float32 rounding:
+		// the overlay covers it (overlayKazarossXG2), GnuBGGetME's own lookups
+		// go through metPre at the full float64 precision instead (see #24).
+		if live := float64(preCrawfordMET[c.awayA-1][c.awayB-1]); math.Abs(live-got) > 1e-6 {
 			t.Errorf("pre-Crawford %d-away/%d-away: live table %.6f differs from the explicit %.6f", c.awayA, c.awayB, live, got)
 		}
 	}
@@ -240,27 +244,45 @@ func TestKazarossXG2MatchesThePublication(t *testing.T) {
 		{4, 0.31002},
 		{5, 0.19012},
 		{24, 0.00182},
+		// The 25th post-Crawford entry: this file used to stop at 24 explicit
+		// entries where gammonNet's table (and now its export) carries 25,
+		// so this cell answered the Zadeh fallback instead of Kazaross's own
+		// published 0.00123. Closed by #24 — the export supplies it directly.
+		{25, 0.00123},
 	}
 	for _, c := range post {
-		got := float64(kazarossXG2PostCrawford[c.away-1])
+		got := kazarossXG2PostCrawford[c.away-1]
 		if math.Abs(got-c.mwc) > 1e-6 {
 			t.Errorf("post-Crawford %d-away: table %.6f, published %.6f", c.away, got, c.mwc)
 		}
-		if live := float64(postCrawfordMET[c.away-1]); live != got {
+		if live := float64(postCrawfordMET[c.away-1]); math.Abs(live-got) > 1e-6 {
 			t.Errorf("post-Crawford %d-away: live table %.6f differs from the explicit %.6f", c.away, live, got)
 		}
 	}
+}
 
-	// The 25th post-Crawford entry is a known, documented divergence, not a
-	// transcription error: the XML publishes 0.00123 for the 25-away trailer
-	// and this file's explicit table stops at 24, so the live cell is the
-	// Zadeh extension (0.000888 — see the gold README's note on
-	// "post-Crawford trailer-at-25"). Pinned here so the divergence is a
-	// fact the suite states rather than one it rediscovers.
-	if got := float64(postCrawfordMET[24]); math.Abs(got-0.00123) < 1e-6 {
-		t.Errorf("post-Crawford 25-away = %.6f: the explicit table now reaches 25 entries; drop this note and pin the published value", got)
-	} else if got <= 0 || got >= float64(postCrawfordMET[23]) {
-		t.Errorf("post-Crawford 25-away (Zadeh) = %.6f, want strictly inside (0, %.6f)", got, postCrawfordMET[23])
+// GnuBGGetME's own lookup (metPost/metPre) must answer the 25-away
+// post-Crawford trailer at the export's full precision — not the float32
+// overlay, and not the Zadeh fallback this file used to answer there. This
+// is the exact case the gold README documented as a "second, narrower,
+// already-known boundary disagreement" with gammonNet; #24 closes it.
+func TestPostCrawford25AwayIsTheExplicitValue(t *testing.T) {
+	got := metPost(24) // index 24 = trailer 25-away
+	if math.Abs(got-0.00123) > 1e-9 {
+		t.Errorf("metPost(24) = %.9f, want the published 0.00123 (exactly, from the export)", got)
+	}
+
+	// GnuBGGetME's raw post-Crawford lookup, nPoints=0 so it reads the current
+	// score rather than a hypothetical outcome: a 26-point match at leader
+	// 25 / trailer 1 puts the leader at 1-away (n0=0) and the trailer at
+	// 25-away (n1=24), which the "n0 == 0" branch answers via metPost(n1).
+	trailer := GnuBGGetME(25, 1, 26, 1, 0, 0, false)
+	if math.Abs(trailer-0.00123) > 1e-9 {
+		t.Errorf("GnuBGGetME trailer at 25-away post-Crawford = %.9f, want 0.00123", trailer)
+	}
+	leader := GnuBGGetME(25, 1, 26, 0, 0, 0, false)
+	if math.Abs(leader-(1-0.00123)) > 1e-9 {
+		t.Errorf("GnuBGGetME leader at 1-away post-Crawford (trailer 25-away) = %.9f, want %.9f", leader, 1-0.00123)
 	}
 }
 
@@ -303,10 +325,12 @@ func TestMETIsAntisymmetric(t *testing.T) {
 func TestZadehExtensionJoinsKazarossAtTheSeam(t *testing.T) {
 	const last, first = 24, 25
 	for j := 0; j < 25; j++ {
-		if preCrawfordMET[last][j] != kazarossXG2PreCrawford[last][j] {
+		// The float32 overlay rounds the float64 export cell; compared to
+		// float32 precision, not bit-exact (see overlayKazarossXG2).
+		if preCrawfordMET[last][j] != float32(kazarossXG2PreCrawford[last][j]) {
 			t.Errorf("row %d, column %d is not the explicit value", last, j)
 		}
-		if preCrawfordMET[j][last] != kazarossXG2PreCrawford[j][last] {
+		if preCrawfordMET[j][last] != float32(kazarossXG2PreCrawford[j][last]) {
 			t.Errorf("row %d, column %d is not the explicit value", j, last)
 		}
 	}
