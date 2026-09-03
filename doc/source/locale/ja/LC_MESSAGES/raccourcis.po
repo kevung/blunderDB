@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:28+0200\n"
+"POT-Creation-Date: 2026-09-03 08:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -407,8 +407,8 @@ msgid "CTRL-D"
 msgstr "CTRL-D"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher le panneau Stats."
-msgstr "スタッツパネルを表示する。"
+msgid "Afficher/cacher le panneau Stats."
+msgstr "統計パネルを表示/非表示にする。"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-E"
@@ -785,3 +785,7 @@ msgstr ""
 #~ "Désélectionner le filtre. Si aucun "
 #~ "filtre sélectionné, fermer le panneau."
 #~ msgstr "フィルターの選択を解除する。フィルターが選択されていない場合はパネルを閉じる。"
+
+#~ msgid "Afficher le panneau Stats."
+#~ msgstr "スタッツパネルを表示する。"
+

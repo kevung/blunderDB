@@ -8,7 +8,7 @@
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
-    import { searchHistoryStore } from '../stores/searchHistoryStore';
+    import { searchHistoryStore, MAX_SEARCH_HISTORY } from '../stores/searchHistoryStore';
     import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
     import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
@@ -394,7 +394,7 @@
 
         const excludePositionJSON = excludeActive ? JSON.stringify($searchExcludePositionStore) : '';
         const entry = { command: searchCommand, position: JSON.stringify($positionStore), excludePosition: excludePositionJSON, timestamp: Date.now() };
-        searchHistoryStore.update((h) => [entry, ...h].slice(0, 100));
+        searchHistoryStore.update((h) => [entry, ...h].slice(0, MAX_SEARCH_HISTORY));
         SaveSearchHistory(searchCommand, JSON.stringify($positionStore), excludePositionJSON).catch((err) => logger.error('Error saving search history:', err));
 
         let restrictToPositionIDs = '';
