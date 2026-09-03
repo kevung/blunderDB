@@ -20,7 +20,7 @@ func TestImport_PopulatesIsCubeResponse(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.sgf not found in testdata/")
+		t.Fatal("test.sgf not found in testdata/")
 	}
 	if _, err := db.ImportGnuBGMatch(testFile); err != nil {
 		t.Fatalf("ImportGnuBGMatch: %v", err)
@@ -93,7 +93,7 @@ func TestImportGnuBGSGF(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.sgf not found in testdata/")
+		t.Fatal("test.sgf not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -192,7 +192,7 @@ func TestImportGnuBGMAT(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.mat")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.mat not found in testdata/")
+		t.Fatal("test.mat not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -249,7 +249,7 @@ func TestImportGnuBGTXT(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.txt")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.txt not found in testdata/")
+		t.Fatal("test.txt not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -292,7 +292,7 @@ func TestImportGnuBGDuplicate(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.sgf not found in testdata/")
+		t.Fatal("test.sgf not found in testdata/")
 	}
 
 	// First import should succeed
@@ -319,7 +319,7 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("test.sgf not found in testdata/")
+		t.Fatal("test.sgf not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -493,10 +493,10 @@ func TestImportGnuBGMATvsTXT(t *testing.T) {
 	matFile := filepath.Join("testdata", "test.mat")
 	txtFile := filepath.Join("testdata", "test.txt")
 	if _, err := os.Stat(matFile); os.IsNotExist(err) {
-		t.Skip("test.mat not found")
+		t.Fatal("test.mat not found")
 	}
 	if _, err := os.Stat(txtFile); os.IsNotExist(err) {
-		t.Skip("test.txt not found")
+		t.Fatal("test.txt not found")
 	}
 
 	// Import MAT
@@ -657,7 +657,7 @@ func TestImportCharlotSGF(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("charlot SGF not found in testdata/")
+		t.Fatal("charlot SGF not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -687,7 +687,7 @@ func TestImportCharlotMAT(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("charlot MAT not found in testdata/")
+		t.Fatal("charlot MAT not found in testdata/")
 	}
 
 	matchID, err := db.ImportGnuBGMatch(testFile)
@@ -720,10 +720,10 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
 	if _, err := os.Stat(xgFile); os.IsNotExist(err) {
-		t.Skip("test.xg not found in testdata/")
+		t.Fatal("test.xg not found in testdata/")
 	}
 	if _, err := os.Stat(sgfFile); os.IsNotExist(err) {
-		t.Skip("test.sgf not found in testdata/")
+		t.Fatal("test.sgf not found in testdata/")
 	}
 
 	// Import XG into a fresh DB
@@ -1179,7 +1179,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 func TestMATImportCheckerCounts(t *testing.T) {
 	matFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
 	if _, err := os.Stat(matFile); os.IsNotExist(err) {
-		t.Skip("charlot match file not found")
+		t.Fatal("charlot match file not found")
 	}
 
 	db := newTestDB(t)
@@ -1264,7 +1264,7 @@ func TestImportXGComments(t *testing.T) {
 
 	testFile := filepath.Join("testdata", "match_with_comment.xg")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
-		t.Skip("match_with_comment.xg not found in testdata/")
+		t.Fatal("match_with_comment.xg not found in testdata/")
 	}
 
 	matchID, err := db.ImportXGMatch(testFile)

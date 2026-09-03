@@ -16,7 +16,7 @@ func TestExportMatchMAT(t *testing.T) {
 	matFile := filepath.Join("testdata", "test.mat")
 	content, err := os.ReadFile(matFile)
 	if err != nil {
-		t.Skipf("test.mat not found: %v", err)
+		t.Fatalf("test.mat not found: %v", err)
 	}
 
 	db := newTestDB(t)
