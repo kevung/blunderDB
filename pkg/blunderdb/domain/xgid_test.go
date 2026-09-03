@@ -97,10 +97,10 @@ func TestDecodeXGIDFull(t *testing.T) {
 
 func TestDecodeXGIDErrors(t *testing.T) {
 	cases := []string{
-		"",                            // empty
-		"XGID=",                       // empty after prefix
-		"tooshort:0:0:1:00",           // board not 26 chars
-		"a--aB-BBA--acDa-Ab-db---B1",  // bad board char '1'
+		"",                           // empty
+		"XGID=",                      // empty after prefix
+		"tooshort:0:0:1:00",          // board not 26 chars
+		"a--aB-BBA--acDa-Ab-db---B1", // bad board char '1'
 	}
 	for _, c := range cases {
 		if _, err := DecodeXGID(c); err == nil {

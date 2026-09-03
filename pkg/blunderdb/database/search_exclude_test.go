@@ -66,7 +66,7 @@ func savePos(t *testing.T, db *Database, b Board) int64 {
 func TestSearch_Exclude_NonTight(t *testing.T) {
 	db := newTestDB(t)
 
-	idWith := savePos(t, db, initialBoard())        // Black on 8 → must be excluded
+	idWith := savePos(t, db, initialBoard())            // Black on 8 → must be excluded
 	idWithout := savePos(t, db, boardWithoutBlackOn8()) // no Black on 8 → must be kept
 
 	include := Position{}
@@ -137,7 +137,7 @@ func TestSearch_Exclude_MadePoint(t *testing.T) {
 	db := newTestDB(t)
 
 	idMade := savePos(t, db, initialBoard())        // 3 Black on point 8 (made) → excluded
-	idOne := savePos(t, db, boardWithOneBlackOn8())  // 1 Black on point 8 → kept
+	idOne := savePos(t, db, boardWithOneBlackOn8()) // 1 Black on point 8 → kept
 
 	include := Position{}
 	include.Board.Points[6] = Point{Color: Black, Checkers: 1}
@@ -274,8 +274,8 @@ func TestSearch_Exclude_NoSpare(t *testing.T) {
 func TestSearch_Exclude_EmptyMarker(t *testing.T) {
 	db := newTestDB(t)
 
-	idBlackOn8 := savePos(t, db, initialBoard())          // Black on point 8 → excluded
-	idEmptyOn8 := savePos(t, db, boardWithoutBlackOn8())   // point 8 empty → kept
+	idBlackOn8 := savePos(t, db, initialBoard())         // Black on point 8 → excluded
+	idEmptyOn8 := savePos(t, db, boardWithoutBlackOn8()) // point 8 empty → kept
 
 	// A position with White on point 8 must also be excluded by an empty marker.
 	bWhite := boardWithoutBlackOn8()
@@ -315,7 +315,7 @@ func TestSearch_Exclude_Tight(t *testing.T) {
 	db := newTestDB(t)
 
 	idThree := savePos(t, db, initialBoard())       // 3 Black on 8 → excluded
-	idTwo := savePos(t, db, boardWithTwoBlackOn8())  // 2 Black on 8 → kept
+	idTwo := savePos(t, db, boardWithTwoBlackOn8()) // 2 Black on 8 → kept
 
 	include := Position{}
 	include.Board.Points[6] = Point{Color: Black, Checkers: 1}

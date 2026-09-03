@@ -85,6 +85,13 @@ issues:
   max-same-issues: 0         # no cap
 
 formatters:
+  # Neither was enabled before 2026-09: this section only ever held
+  # exclusions, so `golangci-lint run` never caught the 8 files gofmt itself
+  # disagreed with (E.5, #221) — nothing but a manual `gofmt -l` did.
+  enable:
+    - gofmt
+    - goimports
+
   exclusions:
     generated: lax
     paths:

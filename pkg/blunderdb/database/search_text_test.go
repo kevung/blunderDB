@@ -22,14 +22,14 @@ func TestParseSearchTextKeywords(t *testing.T) {
 	}{
 		{`t"blitz"`, []string{"blitz"}},
 		{`t"blitz;prime"`, []string{"blitz", "prime"}},
-		{`t"blitz; prime"`, []string{"blitz", "prime"}},   // space after ';'
-		{`t"prime ;blitz"`, []string{"prime", "blitz"}},   // space before ';'
-		{`t"timing"`, []string{"timing"}},                 // leading 't' tag preserved
-		{`t"timing;take"`, []string{"timing", "take"}},    // both 't' tags preserved
-		{`t"blitz;"`, []string{"blitz"}},                  // trailing ';' drops empty tag
-		{`t"  blitz  "`, []string{"blitz"}},               // surrounding spaces
-		{`t""`, nil},                                      // empty wrapper -> no keywords
-		{`blitz`, []string{"blitz"}},                      // unwrapped raw value
+		{`t"blitz; prime"`, []string{"blitz", "prime"}}, // space after ';'
+		{`t"prime ;blitz"`, []string{"prime", "blitz"}}, // space before ';'
+		{`t"timing"`, []string{"timing"}},               // leading 't' tag preserved
+		{`t"timing;take"`, []string{"timing", "take"}},  // both 't' tags preserved
+		{`t"blitz;"`, []string{"blitz"}},                // trailing ';' drops empty tag
+		{`t"  blitz  "`, []string{"blitz"}},             // surrounding spaces
+		{`t""`, nil},                                    // empty wrapper -> no keywords
+		{`blitz`, []string{"blitz"}},                    // unwrapped raw value
 	}
 	for _, tc := range cases {
 		got := parseSearchTextKeywords(tc.in)
@@ -81,13 +81,13 @@ func TestSearchTextFilter(t *testing.T) {
 		{`t"blitz"`, []int64{id1}},
 		{`t"blitz;prime"`, []int64{id1}},
 		{`t"race"`, []int64{id2}},
-		{`t"timing"`, []int64{id1}},        // leading 't' tag must still match
-		{`t"foo; timing"`, []int64{id1}},   // space after ';' must not break the tag
+		{`t"timing"`, []int64{id1}},      // leading 't' tag must still match
+		{`t"foo; timing"`, []int64{id1}}, // space after ';' must not break the tag
 		{`t"blitz; race"`, []int64{id1, id2}},
-		{`t"blitz;"`, []int64{id1}},        // trailing ';' must not match everything
-		{`t"foo;bar"`, nil},                // no tag present
-		{`t"toto"`, []int64{id1}},          // 2nd comment entry of a position
-		{`t"cocorico"`, []int64{id1}},      // 3rd comment entry of a position
+		{`t"blitz;"`, []int64{id1}},   // trailing ';' must not match everything
+		{`t"foo;bar"`, nil},           // no tag present
+		{`t"toto"`, []int64{id1}},     // 2nd comment entry of a position
+		{`t"cocorico"`, []int64{id1}}, // 3rd comment entry of a position
 	}
 	for _, tc := range cases {
 		positions, err := db.LoadPositionsByFilters(SearchFilters{SearchText: tc.searchText})

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Versioned pre-commit hook (E.5, #221): the previous hook lived only in
+# .git/hooks, which git never tracks — a fresh clone had no hook at all, and
+# it only ever ran the frontend's lint/format check, never gofmt or `go vet`
+# on the Go side. Wire it in once per clone with:
+#
+#   git config core.hooksPath .githooks
+#
+# (see CONTRIBUTING.md). Runs `make check-fast`: gofmt, `go vet`, eslint,
+# prettier --check — seconds, no network, no Docker. The full suite
+# (`make check` / `make check-all`) is for before a push, not every commit.
+set -e
+cd "$(git rev-parse --show-toplevel)"
+echo "Running make check-fast (gofmt, go vet, eslint, prettier)..."
+make check-fast

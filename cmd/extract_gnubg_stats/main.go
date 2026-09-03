@@ -46,16 +46,16 @@ type statContext struct {
 	ErrorCheckerMWC [2]float64
 	HasMoves        bool
 	// C section
-	TotalCube        [2]int
-	Double           [2]int
-	Take             [2]int
-	Pass             [2]int
-	MissedDoubleDP   [2]int
-	MissedDoubleTG   [2]int
-	WrongDoubleDP    [2]int
-	WrongDoubleTG    [2]int
-	WrongTake        [2]int
-	WrongPass        [2]int
+	TotalCube         [2]int
+	Double            [2]int
+	Take              [2]int
+	Pass              [2]int
+	MissedDoubleDP    [2]int
+	MissedDoubleTG    [2]int
+	WrongDoubleDP     [2]int
+	WrongDoubleTG     [2]int
+	WrongTake         [2]int
+	WrongPass         [2]int
 	ErrMissedDoubleDP [2][2]float64
 	ErrMissedDoubleTG [2][2]float64
 	ErrWrongDoubleDP  [2][2]float64
@@ -67,36 +67,36 @@ type statContext struct {
 
 // PlayerStats is the per-player output structure.
 type PlayerStats struct {
-	CheckerUnforced     int      `json:"checker_unforced"`
-	CheckerTotal        int      `json:"checker_total"`
-	CheckerForced       int      `json:"checker_forced"`
-	CheckerErrors       *int     `json:"checker_errors"`
-	CheckerBlunders     *int     `json:"checker_blunders"`
-	CheckerEquityEMG    *float64 `json:"checker_equity_error_emg"`
-	CheckerMWCLossPct   *float64 `json:"checker_mwc_loss_pct"`
-	CheckerPRGnuBG1000  *float64 `json:"checker_pr_gnubg_1000"`
-	CheckerPRXG500      *float64 `json:"checker_pr_xg_500"`
-	TotalCube           int      `json:"total_cube"`
-	DoubleDecisions     int      `json:"double_decisions"`
-	TakeDecisions       int      `json:"take_decisions"`
-	PassDecisions       int      `json:"pass_decisions"`
-	CubeMissedDoubleDP  int      `json:"cube_missed_double_dp"`
-	CubeMissedDoubleTG  int      `json:"cube_missed_double_tg"`
-	CubeWrongDoubleDP   int      `json:"cube_wrong_double_dp"`
-	CubeWrongDoubleTG   int      `json:"cube_wrong_double_tg"`
-	CubeWrongTake       int      `json:"cube_wrong_take"`
-	CubeWrongPass       int      `json:"cube_wrong_pass"`
-	CubeEquityEMG       *float64 `json:"cube_equity_error_emg"`
-	CubeMWCLossPct      *float64 `json:"cube_mwc_loss_pct"`
-	TotalEquityEMG      *float64 `json:"total_equity_error_emg"`
-	TotalMWCLossPct     *float64 `json:"total_mwc_loss_pct"`
-	CloseCubeDecisions  *int     `json:"close_cube_decisions"`
-	PRGnuBG             *float64 `json:"pr_gnubg"`
+	CheckerUnforced    int      `json:"checker_unforced"`
+	CheckerTotal       int      `json:"checker_total"`
+	CheckerForced      int      `json:"checker_forced"`
+	CheckerErrors      *int     `json:"checker_errors"`
+	CheckerBlunders    *int     `json:"checker_blunders"`
+	CheckerEquityEMG   *float64 `json:"checker_equity_error_emg"`
+	CheckerMWCLossPct  *float64 `json:"checker_mwc_loss_pct"`
+	CheckerPRGnuBG1000 *float64 `json:"checker_pr_gnubg_1000"`
+	CheckerPRXG500     *float64 `json:"checker_pr_xg_500"`
+	TotalCube          int      `json:"total_cube"`
+	DoubleDecisions    int      `json:"double_decisions"`
+	TakeDecisions      int      `json:"take_decisions"`
+	PassDecisions      int      `json:"pass_decisions"`
+	CubeMissedDoubleDP int      `json:"cube_missed_double_dp"`
+	CubeMissedDoubleTG int      `json:"cube_missed_double_tg"`
+	CubeWrongDoubleDP  int      `json:"cube_wrong_double_dp"`
+	CubeWrongDoubleTG  int      `json:"cube_wrong_double_tg"`
+	CubeWrongTake      int      `json:"cube_wrong_take"`
+	CubeWrongPass      int      `json:"cube_wrong_pass"`
+	CubeEquityEMG      *float64 `json:"cube_equity_error_emg"`
+	CubeMWCLossPct     *float64 `json:"cube_mwc_loss_pct"`
+	TotalEquityEMG     *float64 `json:"total_equity_error_emg"`
+	TotalMWCLossPct    *float64 `json:"total_mwc_loss_pct"`
+	CloseCubeDecisions *int     `json:"close_cube_decisions"`
+	PRGnuBG            *float64 `json:"pr_gnubg"`
 }
 
 // MatchOutput is the top-level JSON output.
 type MatchOutput struct {
-	SGFFile string      `json:"sgf_file"`
+	SGFFile string `json:"sgf_file"`
 	GnuBG   struct {
 		Player1 PlayerStats `json:"player1"`
 		Player2 PlayerStats `json:"player2"`
