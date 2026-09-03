@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	goruntime "runtime"
 	"strings"
+	"sync"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -39,6 +40,24 @@ type App struct {
 	// Wails event emission in the same place, so it earns the exception
 	// rather than inventing a fourth bound object.
 	db *database.Database
+
+	// gnEvalMu/gnEvalCancel govern the Eval panel's background "at rest"
+	// tier (gammonnet_eval.go, #196/C.9): one search in flight at a time, a
+	// new gesture cancels it. gnLivePool is the searcher its up to three
+	// per-gesture searches share and reuse (gammonNetLivePool's own doc
+	// comment). All three used to be package-level vars — every App
+	// instance (a fresh one per test, per CLAUDE.md's CLI/GUI/server
+	// parity notwithstanding) shared one global search-in-flight flag and
+	// one global pool; moved here so instances are actually independent.
+	gnEvalMu     sync.Mutex
+	gnEvalCancel context.CancelFunc
+	gnLivePool   gammonNetLivePool
+
+	// gnBatchMu/gnBatchCancel are the same shape for the background batch
+	// job (gammonnet_batch.go) — also moved off package vars for the same
+	// reason.
+	gnBatchMu     sync.Mutex
+	gnBatchCancel context.CancelFunc
 }
 
 // NewApp creates a new App application struct.
