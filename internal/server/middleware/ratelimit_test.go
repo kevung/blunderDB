@@ -84,3 +84,43 @@ func TestRateLimiterBurstFloor(t *testing.T) {
 		t.Fatal("second request should be throttled")
 	}
 }
+
+// TestRateLimiterMaxBucketsEvictsLRU guards the hard cap (#230): without it,
+// a client sending many distinct X-Tenant-ID values grows the bucket map
+// without bound between the periodic Sweep calls. A tiny cap here (via
+// newRateLimiterCapped, production always uses DefaultMaxBuckets) makes the
+// eviction observable in a handful of requests.
+func TestRateLimiterMaxBucketsEvictsLRU(t *testing.T) {
+	now := time.Unix(1_700_000_000, 0)
+	rl := newRateLimiterCapped(1, 1, func() time.Time { return now }, 2) // cap of 2 buckets
+
+	// Exhaust tenant "a"'s single-token bucket, and touch it again so it is
+	// the most-recently-used of the two entries below.
+	if !rl.Allow("a") {
+		t.Fatal("first request for a should pass")
+	}
+	if rl.Allow("a") {
+		t.Fatal("second immediate request for a should be throttled (bucket empty)")
+	}
+
+	// Fill the second (and last) slot with tenant "b".
+	rl.Allow("b")
+	if got := rl.Len(); got != 2 {
+		t.Fatalf("Len = %d, want 2 (at cap)", got)
+	}
+
+	// A third tenant "c" breaches the cap: the least-recently-used bucket
+	// ("a", not touched since before "b" arrived) is evicted to make room,
+	// and the cap still holds afterwards.
+	rl.Allow("c")
+	if got := rl.Len(); got != 2 {
+		t.Fatalf("Len after cap breach = %d, want 2 (hard cap enforced, not just eventual Sweep)", got)
+	}
+
+	// Tenant "a" was evicted: its next request starts a brand new, full
+	// bucket and is allowed — even though, had the original bucket survived,
+	// it would still read empty from the exhaustion above.
+	if !rl.Allow("a") {
+		t.Fatal("tenant a should have a fresh bucket after LRU eviction")
+	}
+}
