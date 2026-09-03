@@ -361,6 +361,13 @@ de videau, magnitude d'erreur, dates, tags, etc. La touche *TAB* ouvre
 simultanément le panneau de recherche et l'éditeur de position, permettant de
 définir une structure de pions à rechercher sur le plateau.
 
+.. figure:: img/panel_search.png
+   :width: 100%
+   :alt: Panneau Recherche
+
+   Le panneau Recherche : filtres numériques, structure de pions au plateau,
+   onglets *At least* / *Except*.
+
 Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). Le panneau
 de recherche propose également une case à cocher *Search in current results*
@@ -433,6 +440,13 @@ correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
 Panneau Collections
 -------------------
 
+.. figure:: img/panel_collections.png
+   :width: 100%
+   :alt: Panneau Collections
+
+   Le panneau Collections : nom, nombre de positions, description,
+   dernière modification.
+
 Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
 positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation
@@ -502,6 +516,13 @@ commencer immédiatement la navigation.
 
 Panneau Tournois
 ----------------
+
+.. figure:: img/panel_tournaments.png
+   :width: 100%
+   :alt: Panneau Tournois
+
+   Le panneau Tournois : un tournoi par ligne, nombre de matchs, PR du
+   joueur de référence.
 
 Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en tournois
 pour un suivi organisé et une analyse statistique par événement. Les tournois
@@ -644,6 +665,12 @@ Onglet Dashboard
 
 L'onglet **Dashboard** donne une vue synthétique des indicateurs clés.
 
+.. figure:: img/panel_stats_dashboard.png
+   :width: 100%
+   :alt: Onglet Dashboard du panneau Stats
+
+   L'onglet Dashboard : PR global, PR pions, PR videau.
+
 Cartes de niveau
 ^^^^^^^^^^^^^^^^
 
@@ -710,6 +737,12 @@ Onglet Erreurs
 
 L'onglet **Erreurs** décompose les sources d'erreurs.
 
+.. figure:: img/panel_stats_errors.png
+   :width: 100%
+   :alt: Onglet Erreurs du panneau Stats
+
+   L'onglet Erreurs : répartition du PR par action de videau.
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -771,6 +804,13 @@ Les trois onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** l
 compare tous. Il affiche une ligne par joueur de la base, ce qui répond au
 besoin d'un organisateur suivant une compétition entière plutôt qu'un joueur en
 particulier.
+
+.. figure:: img/panel_stats_players.png
+   :width: 100%
+   :alt: Onglet Joueurs du panneau Stats
+
+   L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle
+   colonne.
 
 Colonnes, dans l'ordre :
 

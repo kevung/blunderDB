@@ -39,6 +39,13 @@ la liste des positions où vous avez le plus perdu.
    Sur une décision de videau, la même touche affiche la table des
    équités de videau et le verdict.
 
+   .. figure:: img/panel_analysis.png
+      :width: 100%
+      :alt: Panneau Analyse pendant la revue d'un match
+
+      Le panneau Analyse pendant la revue d'un match : le coup joué est
+      surligné dans la table des coups candidats.
+
 #. **Trouver les plus grosses erreurs.** Depuis n'importe où, la commande
    ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de commande)
    charge directement les positions où l'erreur a été la plus coûteuse dans
@@ -58,6 +65,12 @@ en particulier — au-delà du simple parcours du tutoriel précédent.
 #. **Ouvrir le panneau des matchs** (*CTRL-Tab*). Il liste tous les matchs
    importés, triables par colonne (joueur, date, longueur, tournoi, PR).
 
+   .. figure:: img/panel_matches.png
+      :width: 100%
+      :alt: Panneau des matchs
+
+      Le panneau des matchs : liste triable, PR et coût MWC par match.
+
 #. **Ouvrir la revue** en double-cliquant sur la ligne, ou en la
    sélectionnant puis *ENTREE*. La barre d'informations au-dessus du
    plateau rappelle les deux joueurs, le tournoi et le score.
@@ -66,9 +79,23 @@ en particulier — au-delà du simple parcours du tutoriel précédent.
    une même position quand les deux analyses sont disponibles (l'une des
    deux peut être absente selon ce que le fichier importé contenait).
 
+   .. figure:: img/panel_cube.png
+      :width: 100%
+      :alt: Panneau Analyse sur une décision de videau
+
+      Une décision de videau dans le panneau Analyse : équités money,
+      erreur de chaque option, meilleure décision.
+
 #. **Annoter** ce que vous observez : *CTRL-P* ouvre le panneau
    Commentaires sur la position affichée — utile pour noter *pourquoi* un
    coup est un blunder, pas seulement *qu'il l'est*.
+
+   .. figure:: img/panel_comments.png
+      :width: 100%
+      :alt: Panneau Commentaires sur une position
+
+      Le panneau Commentaires : un fil d'échanges attaché à la position
+      affichée.
 
 #. **Étiqueter** une position à rejouer plus tard : *ESPACE* pour ouvrir la
    ligne de commande, ``#`` suivi d'un mot-clé (par exemple ``#blitz``),
@@ -96,6 +123,13 @@ cartes à réviser selon l'algorithme FSRS (répétition espacée).
 #. **Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton "New
    Deck", nommer le paquet ; il se synchronise sur la recherche ou la
    collection choisie.
+
+   .. figure:: img/panel_anki.png
+      :width: 100%
+      :alt: Panneau Anki, liste des paquets
+
+      Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et
+      dues aujourd'hui.
 
 #. **Réviser** (*Study*) : chaque carte montre une position, vous formulez
    votre réponse mentalement, dévoilez la solution (le plateau, l'analyse
@@ -517,6 +551,13 @@ Sur une position de bearoff pur, il calcule l'EPC (Effective Pip Count) et
 les autres statistiques de bearoff ; sur toute autre position, l'évaluateur
 embarqué gammonNet fournit les coups candidats ou la décision de videau,
 hors ligne, sans XG ni GNUbg.
+
+.. figure:: img/panel_eval.png
+   :width: 100%
+   :alt: Panneau Eval sur une décision de coups de pions
+
+   Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de
+   chaque coup candidat, calculées par gammonNet.
 
 #. Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur,
    ou exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau

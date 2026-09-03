@@ -90,11 +90,14 @@ l'évaluateur, #101 fermée sans changement ; « calculateur EPC »
 0 `figure::` dans `manuel.rst` (1 436 l.) et `guide_utilisateur.rst` ; 11 PNG
 de janvier 2025 (SmartScreen) ; `img/smartscreen_fr.png` orpheline. Le harnais
 existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
-- [ ] 12-15 captures panneau par panneau sur mock Wails avec la base démo,
-      régénérées par une cible `make screenshots` et vérifiées à la release
-      (skill `release-blunderdb`).
-- [ ] Injectées dans `manuel.rst`, `guide_utilisateur.rst`, `metainfo.xml`,
-      README ; supprimer l'orpheline.
+- [x] 12 captures panneau par panneau sur mock Wails (jeu de données vitrine
+      factice, même esprit que la base `demo` — pas littéralement le fichier
+      `demo.db.gz`, cohérent avec le harnais existant hors-suite), régénérées
+      par une cible `make screenshots` ; à vérifier à la release (skill
+      `release-blunderdb`).
+- [x] Injectées dans `manuel.rst` (6), `guide_utilisateur.rst` (6),
+      `metainfo.xml` (5), README (2) ; orpheline `img/smartscreen_fr.png`
+      supprimée.
 
 ## H.6 — Terminologie périmée dans l'interface et l'aide [S] — qualité (#248)
 
