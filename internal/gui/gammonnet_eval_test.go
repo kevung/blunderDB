@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"math"
 	"strings"
 	"testing"
 
@@ -212,5 +213,45 @@ func TestEvaluateGammonNetRefusesBeyondTheHorizon(t *testing.T) {
 		if result.Moves != nil || result.Cube != nil || result.Race != nil || result.PreRoll != nil || result.CubeVerdict != "" {
 			t.Errorf("dice %v: a refused result carries values: %+v", dice, result)
 		}
+	}
+}
+
+// TestEvaluateGammonNetRaceMatchesCubeAtMatchScore is #190/C.3 point 1's own
+// regression. Before the fix, evaluateRaceRegime built its own plain
+// gammonnet.DefaultConfig (money, cubeless) and only fed the match state and
+// cube owner to Decide at the very end — a verdict tariffed at the score,
+// read off a distribution that was never searched with the score, or the
+// cube, in view (ADR-0023 already has a name for that mismatch: "Open").
+// evaluateGammonNet's main Cube branch (evaluateMoves/evaluateCube in
+// package gammonnet) already went through gammonnet.ConfigForPosition; now
+// evaluateRaceRegime does too, on the SAME position, so the two must land on
+// bit-identical equities (the parallel search is bit-identical by
+// construction — CLAUDE.md's parallelism invariant — and at 0-ply here there
+// is no ply-order sum to even reorder).
+func TestEvaluateGammonNetRaceMatchesCubeAtMatchScore(t *testing.T) {
+	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
+	pos.Score = [2]int{5, 7} // White 5-away, Black 7-away — not Crawford, well within the MET horizon
+
+	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	if err != nil {
+		t.Fatalf("evaluateGammonNet: %v", err)
+	}
+	if result.Cube == nil {
+		t.Fatal("expected a cube decision — no dice are set on the board")
+	}
+	if result.Race == nil || result.Race.Money == nil {
+		t.Fatal("expected an evaluated-regime race verdict at this score (ADR-0012)")
+	}
+
+	const tol = 1e-9
+	cube, money := result.Cube, result.Race.Money
+	if diff := math.Abs(cube.CubefulNoDoubleEquity - money.NoDouble); diff > tol {
+		t.Errorf("NoDouble disagrees between Cube (%.9f) and Race.Money (%.9f), diff %.2e — evaluateRaceRegime is not reading pos's own match/cube configuration", cube.CubefulNoDoubleEquity, money.NoDouble, diff)
+	}
+	if diff := math.Abs(cube.CubefulDoubleTakeEquity - money.DoubleTake); diff > tol {
+		t.Errorf("DoubleTake disagrees between Cube (%.9f) and Race.Money (%.9f), diff %.2e", cube.CubefulDoubleTakeEquity, money.DoubleTake, diff)
+	}
+	if diff := math.Abs(cube.CubefulDoublePassEquity - money.DoublePass); diff > tol {
+		t.Errorf("DoublePass disagrees between Cube (%.9f) and Race.Money (%.9f), diff %.2e", cube.CubefulDoublePassEquity, money.DoublePass, diff)
 	}
 }

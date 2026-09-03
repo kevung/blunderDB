@@ -567,6 +567,8 @@
         "depth": "Tiefe",
         "engine": "Engine",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Fehler",
         "move": "Zug",
         "opponentBackgammon": "G B",
@@ -587,7 +589,9 @@
         "noDecision": "Keine Entscheidung",
         "refused": "Bei diesem Stand nicht auswertbar",
         "cubeOpponent": "Gegner besitzt den Doppler",
-        "crawford": "Doppler tot (Crawford)"
+        "crawford": "Doppler tot (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(bearbeitet)",

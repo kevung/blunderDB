@@ -567,6 +567,8 @@
         "depth": "Depth",
         "engine": "Engine",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Error",
         "move": "Move",
         "opponentBackgammon": "O B",
@@ -587,7 +589,9 @@
         "noDecision": "No decision",
         "refused": "Not evaluable at this score",
         "cubeOpponent": "Opponent owns the cube",
-        "crawford": "Cube dead (Crawford)"
+        "crawford": "Cube dead (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(edited)",

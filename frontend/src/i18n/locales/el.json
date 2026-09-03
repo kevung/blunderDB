@@ -567,6 +567,8 @@
         "depth": "Βάθος",
         "engine": "Μηχανή",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Σφάλμα",
         "move": "Κίνηση",
         "opponentBackgammon": "O B",
@@ -587,7 +589,9 @@
         "noDecision": "Καμία απόφαση",
         "refused": "Μη αξιολογήσιμο σε αυτό το σκορ",
         "cubeOpponent": "Ο αντίπαλος κατέχει τον κύβο",
-        "crawford": "Νεκρός κύβος (Crawford)"
+        "crawford": "Νεκρός κύβος (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(επεξεργασμένο)",

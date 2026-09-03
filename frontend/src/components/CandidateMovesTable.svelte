@@ -22,6 +22,10 @@
     // below the header. It is not a candidate: no selection, no play
     // notation, no error figure (rule 3 — the gap to it is the luck of the
     // roll, ADR-0010, never the merit of a play).
+    // isMoney (ADR-0016 point 6, #190/C.3): states the equity column's own
+    // referential (money points vs normalised match equity, ADR-0019);
+    // undefined keeps the plain, scale-silent header a caller with no
+    // position to read one from (a bare unit test) already relied on.
     let {
         moves = [],
         sortColumn = 'equity',
@@ -31,10 +35,11 @@
         onSort = () => {},
         onRowClick = () => {},
         showProvenance = true,
-        baseline = null
+        baseline = null,
+        isMoney = undefined
     } = $props();
 
-    let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline }));
+    let block = $derived(checkerRows(moves, { t: $t, isPlayedMove, showProvenance, baseline, isMoney }));
 
     // The equity column never carried an indicator (it is the default sort,
     // and the arrow would sit on it at every opening); the others do.

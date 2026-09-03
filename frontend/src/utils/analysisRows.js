@@ -32,6 +32,22 @@ export function formatEquity(value) {
     return (value >= 0 ? '+' : '') + value.toFixed(3);
 }
 
+// The equity column's header key (ADR-0016 point 6, #190/C.3): the figures
+// beneath it are on two different scales depending on the position's own
+// referential (ADR-0019) — money points at money play, normalised match
+// equity at a score — and before this the header just said "Équité" either
+// way, the one thing that could have told the reader the scale had changed.
+// `isMoney` is undefined at call sites with no position to read a
+// referential from (a bare formatting test, the search filter's own
+// "Équité (millièmes)" label, which names a stored column across the whole
+// database rather than one position's referential and is out of this
+// fiche's scope) — those keep the plain, referential-silent label.
+function equityHeaderKey(isMoney) {
+    if (isMoney === true) return 'analysis.equityMoney';
+    if (isMoney === false) return 'analysis.equityMatch';
+    return 'analysis.equity';
+}
+
 // The single probability rule: two decimals, on the scale the value arrives in
 // (the backend's percentages — no ×100 here, ADR-0019).
 export function formatChance(value) {
@@ -95,7 +111,7 @@ function verdictText(decision, state, t) {
  *
  * @returns {{ header: string[], rows: {key, label, cells: string[], highlight: boolean, best: boolean}[], verdict: {label, text, unavailable} }}
  */
-export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () => false, masked = false } = {}) {
+export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () => false, masked = false, isMoney } = {}) {
     const options = decision?.options ?? CUBE_OPTIONS.map((key) => ({ key, equity: null, error: null }));
     const state = decision?.state ?? DECISION_STATE.PENDING;
     // The best-row emphasis is suppressed under the mask — it is the verdict's
@@ -103,7 +119,7 @@ export function cubeRows(decision, { t, cubeValue = 0, isPlayedCubeAction = () =
     const best = masked ? null : decision?.best;
     const cell = (v) => (masked ? HIDDEN : (formatEquity(v) ?? ''));
     return {
-        header: [t('analysis.decision'), t('analysis.equity'), t('analysis.error')],
+        header: [t('analysis.decision'), t(equityHeaderKey(isMoney)), t('analysis.error')],
         rows: options.map((option) => ({
             key: option.key,
             label: t(OPTION_LABEL_KEYS[option.key][cubeValue >= 1 ? 1 : 0]),
@@ -336,12 +352,12 @@ function chanceCells(vector) {
  *
  * @returns {{ columns: string[], header: string[], baseline: object|null, rows: {key, move, label, cells: string[], highlight: boolean}[] }}
  */
-export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null } = {}) {
+export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenance = true, baseline = null, isMoney } = {}) {
     const columns = showProvenance ? CHECKER_COLUMNS : CHECKER_COLUMNS.slice(0, 9);
     const provenance = (cells) => (showProvenance ? cells : []);
     return {
         columns,
-        header: columns.map((c) => t(CHECKER_HEADER_KEYS[c])),
+        header: columns.map((c) => (c === 'equity' ? t(equityHeaderKey(isMoney)) : t(CHECKER_HEADER_KEYS[c]))),
         // The pre-roll vector (ADR-0018 rule 2): no error figure — the gap to
         // it is the luck of the roll, never the merit of a play (rule 3).
         baseline: baseline

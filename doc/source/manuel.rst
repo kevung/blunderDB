@@ -339,6 +339,13 @@ l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une
 frappe *en cours de route* conserve son point de passage, ``24/18* 18/14``,
 sans quoi la frappe en 18 disparaîtrait de la notation.
 
+L'équité d'une analyse importée suit la même règle que le panneau Eval : la
+colonne annonce son référentiel, « Équité (money) » ou « Équité (match) »
+selon le score de la position analysée, jamais un simple « Équité » muet sur
+l'échelle. Les règles **Jacoby** et **Beaver** actives sur une position en
+money game s'affichent, elles aussi, en badges sous le tableau de décision de
+videau.
+
 .. _panneau_commentaires:
 
 Panneau Commentaires
@@ -908,7 +915,10 @@ L'équité des coups candidats et de la décision de videau suit le score de
 la position : en money game elle est exprimée en points, à un score de
 match en **équité normalisée** — la même échelle que XG et GNU Backgammon,
 où gagner la valeur du videau courant vaut +1 et la perdre −1 — jamais
-mélangées dans un même tableau. Elle tient compte du **videau vivant** : la
+mélangées dans un même tableau. L'en-tête de la colonne le dit explicitement
+plutôt que de laisser deviner l'échelle : « Équité (money) » en money game,
+« Équité (match) » à un score de match. Elle tient compte du **videau
+vivant** : la
 recherche valorise chaque position finale par le modèle de videau (Janowski,
 efficacité mesurée) dans l'état du videau de la position, comme le font XG
 et GNU Backgammon en évaluation *cubeful*. C'est ce qui rend visibles au
@@ -972,6 +982,12 @@ n'y a **pas** de verdict, plutôt que de laisser croire à un calcul en cours :
   retourné. Les équités restent affichées, à titre indicatif, mais aucune
   option ne porte d'écart : une erreur, c'est ce que coûte un choix, et il
   n'y a pas de choix.
+
+En money game, les règles **Jacoby** et **Beaver** actives sur la position
+apparaissent sous le tableau de videau, en petits badges à côté du verdict
+qu'elles changent : le verdict *pas de double* d'une position sous la règle
+Jacoby n'est pas le même calcul que sans elle, et rien d'autre à l'écran ne
+le disait.
 
 Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
 case *Défi* forment une bande à part, alignée à droite au-dessus des
