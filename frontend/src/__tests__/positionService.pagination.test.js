@@ -19,7 +19,7 @@ const bindings = vi.hoisted(() => {
         UpdatePosition: vi.fn(),
         SaveAnalysis: vi.fn(),
         LoadAnalysis: vi.fn(() => Promise.resolve(null)),
-        LoadPositionsByFilters: vi.fn(() => Promise.resolve([])),
+        LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
         ComputeEPCFromPosition: vi.fn(() => Promise.resolve({})),
         SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
         GetLastVisitedMatch: vi.fn(() => Promise.resolve(null)),

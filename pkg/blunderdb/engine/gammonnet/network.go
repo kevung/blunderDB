@@ -77,7 +77,7 @@ var (
 // float32 reference artifact, not the float16 transport variant: a desktop
 // application transports nothing, so the format that halves a download answers
 // a constraint that does not exist here.
-func Embedded() (*Network, error) {
+func embeddedNetwork() (*Network, error) {
 	embeddedOnce.Do(func() {
 		embeddedNet, embeddedErr = Load(embeddedWeights)
 	})
@@ -191,7 +191,7 @@ func Load(raw []byte) (*Network, error) {
 	// A kernel selector that names an unavailable path fails HERE, at the
 	// first door into the package, rather than silently downgrading to a
 	// slower one much later (decision D7 of the plan, criterion 4 of #133).
-	if err := KernelError(); err != nil {
+	if err := kernelError(); err != nil {
 		return nil, err
 	}
 	return n, nil
@@ -313,12 +313,12 @@ func postprocess(p *[NumOutputs]float32) {
 	}
 }
 
-// MoneyEquity reduces a distribution to cubeless money equity.
+// moneyEquity reduces a distribution to cubeless money equity.
 //
 //	  1·(p0−p1) + 2·(p1−p2) + 3·p2            winning single, gammon, backgammon
 //	− 1·((1−p0)−p3) − 2·(p3−p4) − 3·p4        losing the same three ways
 //	= 2·p0 + p1 + p2 − p3 − p4 − 1
-func MoneyEquity(p *[NumOutputs]float32) float32 {
+func moneyEquity(p *[NumOutputs]float32) float32 {
 	return 2*p[PWin] + p[PWinGammon] + p[PWinBackgammon] - p[PLoseGammon] - p[PLoseBackgammon] - 1
 }
 

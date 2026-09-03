@@ -52,6 +52,38 @@ export namespace database {
 	        this.positionCount = source["positionCount"];
 	    }
 	}
+	export class ConstraintViolation {
+	    name: string;
+	    count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ConstraintViolation(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.count = source["count"];
+	    }
+	}
+	export class CounterDrift {
+	    matches_with_wrong_game_count: number;
+	    games_with_wrong_move_count: number;
+	    worst_game_count_gap: number;
+	    worst_move_count_gap: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CounterDrift(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matches_with_wrong_game_count = source["matches_with_wrong_game_count"];
+	        this.games_with_wrong_move_count = source["games_with_wrong_move_count"];
+	        this.worst_game_count_gap = source["worst_game_count_gap"];
+	        this.worst_move_count_gap = source["worst_move_count_gap"];
+	    }
+	}
 	export class CubeActionStats {
 	    Action: string;
 	    PR: number;
@@ -313,6 +345,8 @@ export namespace database {
 	    moves_without_game: number;
 	    move_analyses_without_move: number;
 	    analyses_without_position: number;
+	    reviews_without_deck: number;
+	    reviews_without_position: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new OrphanCounts(source);
@@ -324,6 +358,8 @@ export namespace database {
 	        this.moves_without_game = source["moves_without_game"];
 	        this.move_analyses_without_move = source["move_analyses_without_move"];
 	        this.analyses_without_position = source["analyses_without_position"];
+	        this.reviews_without_deck = source["reviews_without_deck"];
+	        this.reviews_without_position = source["reviews_without_position"];
 	    }
 	}
 	export class PlayerFrequency {
@@ -1990,23 +2026,6 @@ export namespace race {
 
 }
 
-export namespace sql {
-	
-	export class DB {
-	
-	
-	    static createFrom(source: any = {}) {
-	        return new DB(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	
-	    }
-	}
-
-}
-
 export namespace sqlite {
 	
 	export class SchemaDrift {
@@ -2023,6 +2042,25 @@ export namespace sqlite {
 	        this.missing_tables = source["missing_tables"];
 	        this.missing_columns = source["missing_columns"];
 	        this.missing_indexes = source["missing_indexes"];
+	    }
+	}
+
+}
+
+export namespace storage {
+	
+	export class ListOpts {
+	    Limit: number;
+	    Offset: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ListOpts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Limit = source["Limit"];
+	        this.Offset = source["Offset"];
 	    }
 	}
 
