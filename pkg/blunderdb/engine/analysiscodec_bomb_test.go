@@ -7,7 +7,25 @@ import (
 	"io"
 	"testing"
 	"time"
+
+	"github.com/klauspost/compress/zstd"
 )
+
+// zstdZeroBomb compresses n zero bytes into a real zstd frame (with this
+// package's shared dictionary, so it exercises the exact decode path
+// DecompressAnalysisData uses) using the fastest encoder level. Unlike
+// zlibZeroBomb this shells out to the actual compressor rather than
+// hand-assembling bits: zstd's ratio on an all-zero run is high enough
+// (~1 GB → ~200 KB) that even at the fastest level this stays well under a
+// second, which a hand-rolled RLE-block frame would only save a few hundred
+// milliseconds on at the cost of a much harder to verify implementation.
+func zstdZeroBomb(n int64) []byte {
+	enc, err := zstd.NewWriter(nil, zstd.WithEncoderLevel(zstd.SpeedFastest))
+	if err != nil {
+		panic(err)
+	}
+	return enc.EncodeAll(make([]byte, n), nil)
+}
 
 // zlibZeroBomb hand-assembles a zlib stream that inflates to n zero bytes,
 // without running a compressor: one fixed-Huffman deflate block holding a
@@ -151,6 +169,39 @@ func TestDecompressAnalysisDataAcceptsUpToTheCap(t *testing.T) {
 		t.Fatalf("a blob of exactly the cap must inflate (%d bytes, %v)", len(out), err)
 	}
 	if _, err := DecompressAnalysisData(zlibZeroBomb(MaxAnalysisBytes + 1)); !errors.Is(err, ErrAnalysisTooLarge) {
+		t.Fatalf("one byte past the cap must be refused, got %v", err)
+	}
+}
+
+// TestDecompressAnalysisDataRefusesAZstdDecompressionBomb is
+// TestDecompressAnalysisDataRefusesADecompressionBomb's zstd counterpart:
+// the same cap (WithDecoderMaxMemory(MaxAnalysisBytes) at init) must reject a
+// crafted zstd frame with a known, huge content size before decoding it, not
+// after allocating for it.
+func TestDecompressAnalysisDataRefusesAZstdDecompressionBomb(t *testing.T) {
+	const nominal = 1 << 30 // 1 GiB; compresses to ~200 KB of zeros in under a second
+	bomb := zstdZeroBomb(nominal)
+	start := time.Now()
+	_, err := DecompressAnalysisData(bomb)
+	elapsed := time.Since(start)
+	if !errors.Is(err, ErrAnalysisTooLarge) {
+		t.Fatalf("expected ErrAnalysisTooLarge, got %v", err)
+	}
+	t.Logf("refused in %s", elapsed)
+	if elapsed > time.Second && !raceEnabled {
+		t.Fatalf("refusing a %d-byte zstd bomb took %s, expected under a second", int64(nominal), elapsed)
+	}
+}
+
+// TestDecompressAnalysisDataAcceptsUpToTheCapZstd is
+// TestDecompressAnalysisDataAcceptsUpToTheCap's zstd counterpart.
+func TestDecompressAnalysisDataAcceptsUpToTheCapZstd(t *testing.T) {
+	atCap := zstdZeroBomb(MaxAnalysisBytes)
+	out, err := DecompressAnalysisData(atCap)
+	if err != nil || len(out) != MaxAnalysisBytes {
+		t.Fatalf("a blob of exactly the cap must inflate (%d bytes, %v)", len(out), err)
+	}
+	if _, err := DecompressAnalysisData(zstdZeroBomb(MaxAnalysisBytes + 1)); !errors.Is(err, ErrAnalysisTooLarge) {
 		t.Fatalf("one byte past the cap must be refused, got %v", err)
 	}
 }
