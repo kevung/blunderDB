@@ -9,6 +9,7 @@ import (
 
 	"github.com/adrg/xdg"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -127,20 +128,28 @@ const (
 // separately on purpose: display depth is interactive comfort, analysis depth
 // is what the batch (#129) writes to a Position's Analysis row. Conflating
 // them would let a comfort adjustment silently degrade what gets persisted.
-// Both default to the canonical parameters — 2-ply, pruning k=12 — matching
-// gammonnet.DefaultConfig / gammonnet.DefaultPruneK.
+// Both default to the canonical "normal" level (issue #25) —
+// gammonnet.DefaultPly / gammonnet.DefaultPruneK, read from gammonNet's own
+// export rather than retyped as literals here.
 const (
-	MinGammonNetPly     = 0
-	MaxGammonNetPly     = 4 // gammonnet.MaxPly
-	DefaultGammonNetPly = 2
+	MinGammonNetPly = 0
+	MaxGammonNetPly = gammonnet.MaxPly
 
-	MinGammonNetPruneK     = 1
-	MaxGammonNetPruneK     = 64
-	DefaultGammonNetPruneK = 12 // gammonnet.DefaultPruneK
+	MinGammonNetPruneK = 1
+	MaxGammonNetPruneK = 64
 
 	MinGammonNetCandidates     = 1
 	MaxGammonNetCandidates     = 50
 	DefaultGammonNetCandidates = 10
+)
+
+// DefaultGammonNetPly and DefaultGammonNetPruneK are vars, not consts: they
+// are read from gammonnet's embedded canonical export at init time, not
+// typed in by hand. See gammonnet.DefaultPly / gammonnet.DefaultPruneK
+// (search.go there, issue #25) for the source and its measured quality cost.
+var (
+	DefaultGammonNetPly    = gammonnet.DefaultPly
+	DefaultGammonNetPruneK = gammonnet.DefaultPruneK
 )
 
 type Config struct {

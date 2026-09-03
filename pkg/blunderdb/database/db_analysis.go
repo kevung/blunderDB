@@ -11,7 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The analysis-encoding helpers (zlib compression, scalar-column derivation,
+// The analysis-encoding helpers (zstd compression, scalar-column derivation,
 // float rounding) live in package engine so the SQLite Storage backend can
 // share them. These aliases keep this package compiling against the
 // unqualified names. See pkg/blunderdb/engine/analysiscodec.go.

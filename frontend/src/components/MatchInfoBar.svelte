@@ -12,6 +12,7 @@
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
+    import { formatDate as formatDateI18n } from '../utils/format.js';
     import { SvelteSet } from 'svelte/reactivity';
 
     let match = $state(null);
@@ -80,8 +81,7 @@
         const d = new Date(value);
         // Guard against Go's zero time (year 0001) and invalid dates.
         if (isNaN(d.getTime()) || d.getFullYear() < 1900) return '';
-        const [year, month, day] = d.toLocaleDateString('sv-SE').split('-');
-        return `${year}/${month}/${day}`;
+        return formatDateI18n(d);
     }
 
     // Optional metadata fields, in display order, empties omitted. Tournament
