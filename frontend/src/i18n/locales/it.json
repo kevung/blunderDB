@@ -566,6 +566,8 @@
         "depth": "Profondità",
         "engine": "Motore",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Errore",
         "move": "Mossa",
         "opponentBackgammon": "O B",
@@ -586,7 +588,9 @@
         "noDecision": "Nessuna decisione",
         "refused": "Non valutabile a questo punteggio",
         "cubeOpponent": "Cubo dell'avversario",
-        "crawford": "Cubo morto (Crawford)"
+        "crawford": "Cubo morto (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(modificato)",

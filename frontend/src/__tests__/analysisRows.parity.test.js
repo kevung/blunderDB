@@ -167,7 +167,12 @@ describe('the copied image paints exactly what the tables show', () => {
                 cubeAnalysis: cubeAnalysis.doublingCubeAnalysis,
                 cubeValue: position.cube.value,
                 isPlayedCubeAction: playedCubePredicate(cubeAnalysis, false),
-                engineVersionFallback: cubeAnalysis.analysisEngineVersion
+                engineVersionFallback: cubeAnalysis.analysisEngineVersion,
+                // `position.score` is [-1, -1] (money) — the same isMoney
+                // paintAnalysisStrip now derives from the same position
+                // (#190/C.3 point 4), kept in sync here so the DOM's equity
+                // header and the canvas's stay identical.
+                isMoney: true
             }
         });
         const dom = domTexts(container);
@@ -203,7 +208,8 @@ describe('the copied image paints exactly what the tables show', () => {
             props: {
                 moves: checkerAnalysis.checkerAnalysis.moves,
                 sortColumn: '',
-                isPlayedMove: playedMovePredicate(checkerAnalysis, false)
+                isPlayedMove: playedMovePredicate(checkerAnalysis, false),
+                isMoney: true
             }
         });
         const dom = domTexts(container);

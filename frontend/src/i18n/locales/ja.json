@@ -566,6 +566,8 @@
         "depth": "深さ",
         "engine": "エンジン",
         "equity": "equity",
+        "equityMoney": "equity (money)",
+        "equityMatch": "equity (match)",
         "error": "エラー",
         "move": "ムーブ",
         "opponentBackgammon": "O B",
@@ -586,7 +588,9 @@
         "noDecision": "判断なし",
         "refused": "このスコアでは評価できません",
         "cubeOpponent": "相手がキューブを保有",
-        "crawford": "キューブ無効（クロフォード）"
+        "crawford": "キューブ無効（クロフォード）",
+        "jacoby": "ジャコビー",
+        "beaver": "ビーバー"
     },
     "comment": {
         "editedSuffix": "（編集済み）",

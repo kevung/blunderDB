@@ -566,6 +566,8 @@
         "depth": "Profondeur",
         "engine": "Moteur",
         "equity": "Équité",
+        "equityMoney": "Équité (money)",
+        "equityMatch": "Équité (match)",
         "error": "Erreur",
         "move": "Coup",
         "opponentBackgammon": "O B",
@@ -586,7 +588,9 @@
         "noDecision": "Pas de décision",
         "refused": "Non évaluable à ce score",
         "cubeOpponent": "Videau adverse",
-        "crawford": "Videau mort (Crawford)"
+        "crawford": "Videau mort (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(modifié)",

@@ -290,14 +290,25 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 	if fast.Race == nil {
 		return nil
 	}
-	hasScore := pos.Score[0] != -1 || pos.Score[1] != -1
+	hasScore := !gammonnet.IsMoneyPosition(pos)
 	if fast.Race.Regime == race.RegimeExact && !hasScore {
 		return nil // exact and money: nothing this regime can add
 	}
 
-	cfg := gammonnet.DefaultConfig(ply)
-	if pruneK > 0 {
-		cfg.PruneK = pruneK
+	// The exact configuration EvaluatePosition itself would build for pos
+	// (#190/C.3 point 1). Before this fix, the bonus below built a plain
+	// DefaultConfig — money, cubeless — and only fed its OWN, separately
+	// built match state and cube owner to Decide at the very end: a
+	// distribution read off a money-cubeless tree, tariffed by a
+	// match-cubeful verdict. ADR-0023 already has a name for that
+	// inconsistency ("Open"). ConfigForPosition also refuses a score it
+	// cannot evaluate (beyond the MET horizon, or a mixed money/match
+	// score) rather than silently degrading to money, which the manual
+	// construction below used to do whenever its own inline
+	// MatchStateFromPosition call failed.
+	cfg, state, err := gammonnet.ConfigForPosition(pos, ply, pruneK)
+	if err != nil {
+		return nil
 	}
 	searcher, err := gammonnet.NewSearcher(cfg)
 	if err != nil {
@@ -320,16 +331,14 @@ func evaluateRaceRegime(pos *domain.Position, ply, pruneK int) *race.Eval {
 		return nil
 	}
 
-	owner := gammonnet.CubeOwnerOf(pos)
-	efficiency := gammonnet.DefaultEfficiency(owner)
+	// cfg.CubeOwner/cfg.CubeX are the same CubeOwnerOf/DefaultEfficiency
+	// ConfigForPosition itself derived from pos — read back off cfg rather
+	// than recomputed, so this can never drift from what the search above
+	// actually ran with.
+	owner := cfg.CubeOwner
+	efficiency := cfg.CubeX
 	jacoby := pos.HasJacoby == 1
 
-	// One translation (ADR-0016): the same MatchStateFromPosition
-	// EvaluatePosition itself uses, not a second inline copy of it.
-	var state *gammonnet.MatchState
-	if m, ok := gammonnet.MatchStateFromPosition(pos); ok {
-		state = &m
-	}
 	scale, ok := gammonnet.NewEquityScale(state)
 	if !ok {
 		return nil // no referential to state the equity in (ADR-0019)

@@ -7,7 +7,7 @@
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
-    import { cubeTurnability } from '../utils/cubeDecision.js';
+    import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import AnalysisView from './AnalysisView.svelte';
     let { onClose } = $props();
 
@@ -22,6 +22,13 @@
     // records exactly as it does to a live evaluation — the equities still
     // inform, nothing advises.
     let turnability = $derived(cubeTurnability($positionStore));
+    // The equity column's referential and the two money-game rule flags
+    // (ADR-0016 point 6, #190/C.3): read off the SAME position the cube tab
+    // switches to (loadCubeAnalysisForCurrentPosition below), never a second
+    // copy of the score.
+    let isMoney = $derived(isMoneyPosition($positionStore));
+    let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
+    let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
     let matchCtx = $derived($matchContextStore);
 
     let activeTab = $state('checker'); // 'checker' or 'cube'
@@ -354,6 +361,9 @@
             {isPlayedCubeAction}
             onSort={handleSort}
             onRowClick={handleMoveRowClick}
+            {isMoney}
+            {jacoby}
+            {beaver}
         />
     </div>
 </section>

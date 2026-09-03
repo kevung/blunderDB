@@ -123,6 +123,19 @@ func CubeOwnerOf(pos *domain.Position) CubeOwner {
 	}
 }
 
+// IsMoneyPosition reports whether pos is unscored — both away scores at the
+// -1 sentinel (CONTEXT.md) — as opposed to played at a match score. This is
+// THE predicate every caller asking "money or match" reads: before #190/C.3
+// it had two independent, silently divergent forms (this package's own
+// `Score[0] < 0 && Score[1] < 0` here, internal/gui/gammonnet_eval.go's
+// `Score[0] != -1 || Score[1] != -1` there), which agreed on a clean score
+// and could disagree on a malformed one — exactly the mixed money/match case
+// ConfigForPosition below now names instead of silently refusing under the
+// same message as a genuine horizon refusal.
+func IsMoneyPosition(pos *domain.Position) bool {
+	return pos.Score[0] < 0 && pos.Score[1] < 0
+}
+
 // ConfigForPosition is THE search configuration gammonNet runs for pos: the
 // canonical depth and pruning (DefaultConfig, pruneK overriding when > 0),
 // the position's own referential (ADR-0016: UseMatch at a score, refused
@@ -132,9 +145,9 @@ func CubeOwnerOf(pos *domain.Position) CubeOwner {
 // money play) so a caller builds its EquityScale from the same translation.
 //
 // One function, every caller — EvaluatePosition, internal/gui's pre-roll
-// facts — so "what gammonNet was asked" has exactly one definition, and a
-// panel can never show a fact vector from a differently configured search
-// than the decision next to it.
+// facts and race-regime bonus — so "what gammonNet was asked" has exactly
+// one definition, and a panel can never show a fact vector or a race verdict
+// from a differently configured search than the decision next to it.
 func ConfigForPosition(pos *domain.Position, ply, pruneK int) (SearchConfig, *MatchState, error) {
 	cfg := DefaultConfig(ply)
 	if pruneK > 0 {
@@ -142,11 +155,17 @@ func ConfigForPosition(pos *domain.Position, ply, pruneK int) (SearchConfig, *Ma
 	}
 
 	var state *MatchState
-	isMoney := pos.Score[0] < 0 && pos.Score[1] < 0
-	if !isMoney {
+	if !IsMoneyPosition(pos) {
+		// Exactly one side carrying the -1 sentinel is neither money nor a
+		// valid match state — malformed data, not merely a score past the
+		// MET's horizon. Naming the two apart is #190/C.3's point 3: they
+		// used to collapse into the same "not evaluable at this score".
+		if pos.Score[0] < 0 || pos.Score[1] < 0 {
+			return SearchConfig{}, nil, fmt.Errorf("%w: mixed money/match score %v (one side carries the -1 money sentinel, the other a real away score)", ErrNotEvaluable, pos.Score)
+		}
 		m, ok := MatchStateFromPosition(pos)
 		if !ok {
-			return SearchConfig{}, nil, fmt.Errorf("%w: match state at score %v", ErrNotEvaluable, pos.Score)
+			return SearchConfig{}, nil, fmt.Errorf("%w: match score %v is beyond this build's MET horizon", ErrNotEvaluable, pos.Score)
 		}
 		cfg.UseMatch = true
 		cfg.Match = m

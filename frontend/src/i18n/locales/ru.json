@@ -566,6 +566,8 @@
         "depth": "Глубина",
         "engine": "Движок",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Ошибка",
         "move": "Ход",
         "opponentBackgammon": "С B",
@@ -586,7 +588,9 @@
         "noDecision": "Нет решения",
         "refused": "Не оценивается при этом счёте",
         "cubeOpponent": "Куб у соперника",
-        "crawford": "Куб не в игре (Кроуфорд)"
+        "crawford": "Куб не в игре (Кроуфорд)",
+        "jacoby": "Джекоби",
+        "beaver": "Бивер"
     },
     "comment": {
         "editedSuffix": "(изменено)",

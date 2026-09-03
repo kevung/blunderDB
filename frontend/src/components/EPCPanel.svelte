@@ -11,7 +11,7 @@
     import { isBareLetter } from '../utils/keys.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
-    import { cubeDecision, cubeTurnability } from '../utils/cubeDecision.js';
+    import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
@@ -28,7 +28,15 @@
     let dice = $derived($positionStore?.dice ?? [0, 0]);
     let hasDiceSet = $derived(dice[0] > 0 && dice[1] > 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
-    let hasScore = $derived(($positionStore?.score?.[0] ?? -1) !== -1 || ($positionStore?.score?.[1] ?? -1) !== -1);
+    // isMoneyPosition, not a second inline `!= -1` predicate (#190/C.3 point
+    // 2): this used to read `score[0] !== -1 || score[1] !== -1`, which
+    // agrees with the AND form everywhere except the malformed case — one
+    // side carrying the money sentinel, the other a real away score — where
+    // the two silently disagreed on whether the position is money or match.
+    let isMoney = $derived(isMoneyPosition($positionStore));
+    let hasScore = $derived(!isMoney);
+    let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
+    let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
 
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
@@ -493,7 +501,7 @@
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
-                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} />
+                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} />
                     </div>
                 {/if}
             </div>
@@ -511,7 +519,7 @@
                     <div class="decision-cube-masked moves-masked" onclick={() => reveal('decision')} title={$t('epc.clickToReveal')}>{HIDDEN}</div>
                 {:else}
                     <div class="moves-scroll">
-                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} />
+                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} {isMoney} />
                         {#if evalMoves.length === 0}
                             <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
                         {/if}

@@ -566,6 +566,8 @@
         "depth": "Syvyys",
         "engine": "Moottori",
         "equity": "Equity",
+        "equityMoney": "Equity (money)",
+        "equityMatch": "Equity (match)",
         "error": "Virhe",
         "move": "Siirto",
         "opponentBackgammon": "O B",
@@ -586,7 +588,9 @@
         "noDecision": "Ei päätöstä",
         "refused": "Ei arvioitavissa tässä tilanteessa",
         "cubeOpponent": "Vastustaja omistaa kuution",
-        "crawford": "Kuutio kuollut (Crawford)"
+        "crawford": "Kuutio kuollut (Crawford)",
+        "jacoby": "Jacoby",
+        "beaver": "Beaver"
     },
     "comment": {
         "editedSuffix": "(muokattu)",

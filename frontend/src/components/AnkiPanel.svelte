@@ -15,7 +15,7 @@
     } from '../stores/ankiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { positionStore } from '../stores/positionStore';
-    import { cubeTurnability } from '../utils/cubeDecision.js';
+    import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { statusBarTextStore, activeTabStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -61,6 +61,11 @@
     let turnability = $derived(cubeTurnability($positionStore));
     let cubeValue = $derived($positionStore?.cube?.value ?? 0);
     let onRoll = $derived($positionStore?.player_on_roll ?? 0);
+    // ADR-0016 point 6 / #190/C.3: same referential and rule flags as
+    // AnalysisPanel, read off the card's own position.
+    let isMoney = $derived(isMoneyPosition($positionStore));
+    let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
+    let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
 
     // A review is never in MATCH mode, so every play recorded on this position
     // is highlighted — including the blunder that put the card in the deck.
@@ -429,6 +434,9 @@
                         {isPlayedMove}
                         {isPlayedCubeAction}
                         onRowClick={handleMoveRowClick}
+                        {isMoney}
+                        {jacoby}
+                        {beaver}
                     />
                 {:else}
                     <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
