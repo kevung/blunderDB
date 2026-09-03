@@ -49,6 +49,10 @@ type Server struct {
 	// spool bounds the total bytes concurrently in-flight imports may hold
 	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes (#234).
 	spool *spoolQuota
+	// idempotency backs withIdempotency: at most one cached response per
+	// (tenant, route, Idempotency-Key) triple, for the handful of routes
+	// with no natural dedup key (#236) — see idempotency.go.
+	idempotency *idempotencyStore
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -68,6 +72,7 @@ func New(opts Options) (*Server, error) {
 		imports:       newImportRegistry(),
 		gammonnetJobs: newImportRegistry(),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
+		idempotency:   newIdempotencyStore(opts.now),
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)

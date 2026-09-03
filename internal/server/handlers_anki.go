@@ -114,9 +114,15 @@ func (s *Server) ankiRoutes() []route {
 		{http.MethodPost, "/v1/anki.nextCard", rpc(func(ctx context.Context, scope string, req deckIDReq) (*domain.AnkiReviewCard, error) {
 			return as().NextCard(ctx, scope, req.DeckID)
 		})},
-		{http.MethodPost, "/v1/anki.reviewCard", rpc(func(ctx context.Context, scope string, req reviewCardReq) (*domain.AnkiReviewCard, error) {
+		// Wrapped with withIdempotency (#236): ReviewCard applies a spaced-
+		// repetition rating and advances scheduling state on every call —
+		// unlike positions.save, calling it twice is not a no-op, it grades
+		// the same review twice. A client retrying a dropped response with
+		// the same Idempotency-Key gets the first attempt's result replayed
+		// instead of a second, phantom review.
+		{http.MethodPost, "/v1/anki.reviewCard", s.withIdempotency(rpc(func(ctx context.Context, scope string, req reviewCardReq) (*domain.AnkiReviewCard, error) {
 			return as().ReviewCard(ctx, scope, req.CardID, req.Rating)
-		})},
+		}))},
 		{http.MethodPost, "/v1/anki.reviewLog", rpcStream(func(ctx context.Context, scope string, req reviewLogReq) iterReviewLog {
 			return as().ReviewLog(ctx, scope, req.DeckID, req.Limit)
 		})},

@@ -1,0 +1,68 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 21:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: en <LL@li.org>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/api_reference.rst:4
+msgid "Contrat d'API"
+msgstr "API contract"
+
+#: ../../source/api_reference.rst:6
+msgid ""
+"Cette annexe est générée depuis le code source (``go run ./cmd/openapi-"
+"gen``, voir ``openapi.yaml`` à la racine du dépôt pour le contrat complet, "
+"schémas compris) : ne pas éditer directement, la prochaine génération "
+"écraserait toute modification. Chaque famille regroupe les méthodes ``POST "
+"/v1/<famille>.<méthode>`` exposées par le démon (voir :ref:`headless`), avec"
+" leur forme de réponse (JSON, ou NDJSON pour une liste en flux) et, quand "
+"elle existe, la mention de l'en-tête ``Idempotency-Key`` optionnel."
+msgstr ""
+"This annex is generated from the source code (``go run ./cmd/openapi-gen``; "
+"see ``openapi.yaml`` at the repository root for the full contract, schemas "
+"included): do not edit it directly, the next generation would overwrite any "
+"change. Each family groups the ``POST /v1/<family>.<method>`` methods the "
+"daemon exposes (see :ref:`headless`), with their response shape (JSON, or "
+"NDJSON for a streamed list) and, where it exists, a note of the optional "
+"``Idempotency-Key`` header."
+
+#: ../../source/api_reference.rst:171
+msgid "Idempotence"
+msgstr "Idempotency"
+
+#: ../../source/api_reference.rst:173
+msgid ""
+"La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
+"lectures sont sans effet de bord, et ``positions.save`` (comme le reste de "
+"``positions.*``) est naturellement idempotente grâce au hachage Zobrist du "
+"contenu — enregistrer deux fois la même position renvoie la même ligne, "
+"jamais un doublon. 3 méthodes n'ont pas cette propriété (deux appels sont "
+"deux effets distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel"
+" : un appel rejoué avec la même clé renvoie le résultat de la première "
+"tentative au lieu de répéter son effet — voir la marque « (Idempotency-Key) "
+"» dans le tableau ci-dessus. Aucune autre méthode n'a besoin ou n'accepte "
+"cet en-tête."
+msgstr ""
+"Most methods need no special mechanism at all: reads have no side effect, "
+"and ``positions.save`` (like the rest of ``positions.*``) is naturally "
+"idempotent through its Zobrist content hash — saving the same position twice"
+" returns the same row, never a duplicate. 3 methods lack that property (two "
+"calls are two distinct effects) and accept an optional ``Idempotency-Key`` "
+"header: a call retried with the same key returns the first attempt's result "
+"instead of repeating its effect — see the \"(Idempotency-Key)\" mark in the "
+"table above. No other method needs or accepts that header."

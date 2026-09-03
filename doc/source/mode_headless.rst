@@ -190,6 +190,13 @@ tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance
 listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
 s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
 
+Le contrat complet — chaque méthode, sa requête et sa réponse — est généré
+depuis le code source et versionné : ``openapi.yaml`` à la racine du dépôt
+(format OpenAPI, schémas compris) et son annexe lisible, :ref:`api_reference`
+(tableau famille par famille). Les deux sont régénérés par
+``go run ./cmd/openapi-gen`` et un test dédié échoue si l'un des deux prend du
+retard sur les routes réellement enregistrées.
+
 Chaque requête ``/v1`` accepte un corps JSON (``Content-Type:
 application/json``, ou aucun en-tête — un corps d'un autre type est refusé
 avec ``400 invalid`` plutôt que d'échouer sur un message d'analyse JSON

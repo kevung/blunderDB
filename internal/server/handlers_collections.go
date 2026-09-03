@@ -50,10 +50,15 @@ type collectionIDReq struct {
 func (s *Server) collectionRoutes() []route {
 	cs := func() storage.CollectionStore { return s.opts.Storage.Collections() }
 	return []route{
-		{http.MethodPost, "/v1/collections.create", rpc(func(ctx context.Context, scope string, req collectionCreateReq) (idResp, error) {
+		// Wrapped with withIdempotency (#236): Create has no natural dedup
+		// key (two collections named the same are still two rows), unlike
+		// positions.save's Zobrist hash — a client retrying a dropped
+		// response with the same Idempotency-Key gets the first attempt's
+		// id back rather than a second, identically-named collection.
+		{http.MethodPost, "/v1/collections.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req collectionCreateReq) (idResp, error) {
 			id, err := cs().Create(ctx, scope, req.Name, req.Description)
 			return idResp{ID: id}, err
-		})},
+		}))},
 		{http.MethodPost, "/v1/collections.get", rpc(func(ctx context.Context, scope string, req idReq) (*storage.Collection, error) {
 			return cs().Get(ctx, scope, req.ID)
 		})},

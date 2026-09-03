@@ -416,6 +416,7 @@ Sommaire
    faq
    roadmap
    mode_headless
+   api_reference
    annexe_filtres
    annexe_windows_securite
    annexe_mac_securite
