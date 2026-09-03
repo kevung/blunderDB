@@ -400,3 +400,67 @@ func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
 		t.Errorf("toSkip = %v, want 0 — the position was wrongly considered fully up to date", analysis["toSkip"])
 	}
 }
+
+// TestImport_CommitMergesAllCommentRows is TestImport_AnalyzeComparesAllCommentRows's
+// counterpart for the actual write: CommitImportDatabase's own comment merge
+// used to read a single arbitrary comment row (no ORDER BY) instead of
+// joining every row the position carries, and its UPDATE rewrote every one of
+// a multi-row position's comment rows to the same merged text (B.11, #179).
+// A target position with an unrelated existing comment must end up holding
+// both after the merge: its own comment, untouched, and a new row for the
+// source's comment that was missing.
+func TestImport_CommitMergesAllCommentRows(t *testing.T) {
+	dir := t.TempDir()
+
+	srcPath := filepath.Join(dir, "src.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(srcPath); err != nil {
+		t.Fatalf("SetupDatabase(src): %v", err)
+	}
+	p := InitializePosition()
+	posID, err := src.SavePosition(&p)
+	if err != nil {
+		t.Fatalf("SavePosition(src): %v", err)
+	}
+	if err := src.AddComment(posID, "Alpha"); err != nil {
+		t.Fatalf("AddComment(Alpha): %v", err)
+	}
+	if err := src.AddComment(posID, "NewNote"); err != nil {
+		t.Fatalf("AddComment(NewNote): %v", err)
+	}
+	src.Close()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "dst.db")); err != nil {
+		t.Fatalf("SetupDatabase(dst): %v", err)
+	}
+	defer dst.Close()
+	p2 := InitializePosition() // same board → same Zobrist hash, recognised as the same position
+	dstPosID, err := dst.SavePosition(&p2)
+	if err != nil {
+		t.Fatalf("SavePosition(dst): %v", err)
+	}
+	if err := dst.AddComment(dstPosID, "Alpha"); err != nil {
+		t.Fatalf("AddComment(dst, Alpha): %v", err)
+	}
+
+	if _, err := dst.CommitImportDatabase(srcPath); err != nil {
+		t.Fatalf("CommitImportDatabase: %v", err)
+	}
+
+	entries, err := dst.GetCommentsByPosition(dstPosID)
+	if err != nil {
+		t.Fatalf("GetCommentsByPosition: %v", err)
+	}
+	var texts []string
+	for _, e := range entries {
+		texts = append(texts, e.Text)
+	}
+	joined := strings.Join(texts, "\n\n")
+	if !strings.Contains(joined, "Alpha") {
+		t.Errorf("target's own comment %q was lost across the merge; rows = %q", "Alpha", texts)
+	}
+	if !strings.Contains(joined, "NewNote") {
+		t.Errorf("source's second comment row %q was not merged in; rows = %q", "NewNote", texts)
+	}
+}

@@ -11,9 +11,13 @@ package sqlite_test
 
 import (
 	"context"
+	"database/sql"
 	"path/filepath"
+	"runtime"
+	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -206,6 +210,121 @@ func BenchmarkSearchMoveErrorMirror(b *testing.B) {
 	const n = 5000
 	seedSearchTextAndMoveErrorFixture(b, s, n)
 	runSearchFind(b, s, domain.SearchFilters{MoveErrorFilter: "E>0", MirrorFilter: true}, n)
+}
+
+// peakHeapAlloc starts a background sampler of runtime.MemStats.HeapAlloc and
+// returns a function that stops it and reports the maximum it observed. Used
+// by BenchmarkRepairDenormalisedColumnsMemory to see the *peak* memory a call
+// holds, not the total bytes it ever allocated (-benchmem's B/op sums
+// allocations over the call's whole lifetime — paging does not shrink that
+// sum, since every row's blob is still read and processed exactly once
+// either way; what paging bounds is how many of those blobs are alive in
+// memory *at once*, which only a live sample during the call can see).
+func peakHeapAlloc() (stop func() uint64) {
+	var peak atomic.Uint64
+	done := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var m runtime.MemStats
+		ticker := time.NewTicker(time.Millisecond)
+		defer ticker.Stop()
+		sample := func() {
+			runtime.ReadMemStats(&m)
+			for {
+				cur := peak.Load()
+				if m.HeapAlloc <= cur || peak.CompareAndSwap(cur, m.HeapAlloc) {
+					return
+				}
+			}
+		}
+		for {
+			select {
+			case <-done:
+				sample()
+				return
+			case <-ticker.C:
+				sample()
+			}
+		}
+	}()
+	return func() uint64 {
+		close(done)
+		wg.Wait()
+		return peak.Load()
+	}
+}
+
+// BenchmarkRepairDenormalisedColumnsMemory is B.11's (#179) memory bench:
+// RepairDenormalisedColumns used to read every analysis row's blob into one
+// slice (`var all []row`) before decoding any of them — a real database
+// holds tens of thousands, and the point of a repair is to run on the
+// biggest ones. Paged (repairPageSize, 500 rows at a time), peak HeapAlloc
+// should stay roughly flat as n grows instead of scaling with the table.
+//
+// Run alone, once: go test -run=^$ -bench BenchmarkRepairDenormalisedColumnsMemory
+// -benchtime=1x ./pkg/blunderdb/storage/sqlite/
+func BenchmarkRepairDenormalisedColumnsMemory(b *testing.B) {
+	const n = 20000
+	dsn := filepath.Join(b.TempDir(), "repair.db")
+	ctx := context.Background()
+
+	s, err := sqlite.Open(ctx, dsn, nil)
+	if err != nil {
+		b.Fatalf("sqlite.Open: %v", err)
+	}
+	for i := 0; i < n; i++ {
+		p := benchPos(i)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			b.Fatalf("seed Save: %v", err)
+		}
+		if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{
+			AnalysisType: "CheckerMove",
+			PlayedMoves:  []string{"13/11 24/23"},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{Move: "13/11 24/23", Equity: 0.45},
+			}},
+		}); err != nil {
+			b.Fatalf("seed analysis: %v", err)
+		}
+	}
+	s.Close()
+
+	// A second, raw connection corrupts every row's denormalised column
+	// directly — Analyses().Save would just recompute it correctly, defeating
+	// the point: RepairDenormalisedColumns must have something to fix on
+	// every single row (decode the blob, compare, write back), not skip it.
+	raw, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		b.Fatalf("sql.Open: %v", err)
+	}
+	if _, err := raw.Exec(`UPDATE analysis SET best_move_equity_error = -999999`); err != nil {
+		b.Fatalf("corrupt columns: %v", err)
+	}
+	raw.Close()
+
+	s2, err := sqlite.Open(ctx, dsn, nil)
+	if err != nil {
+		b.Fatalf("reopen: %v", err)
+	}
+	defer s2.Close()
+
+	runtime.GC()
+	stop := peakHeapAlloc()
+	b.ResetTimer()
+	repaired, err := s2.Analyses().RepairDenormalisedColumns(ctx, "")
+	b.StopTimer()
+	peak := stop()
+
+	if err != nil {
+		b.Fatalf("RepairDenormalisedColumns: %v", err)
+	}
+	if repaired != n {
+		b.Fatalf("repaired = %d, want %d (every row was corrupted)", repaired, n)
+	}
+	b.ReportMetric(float64(peak)/(1024*1024), "peak-heap-MB")
 }
 
 func BenchmarkStatsCompute(b *testing.B) {

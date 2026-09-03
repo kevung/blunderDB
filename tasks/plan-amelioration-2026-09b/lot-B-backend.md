@@ -267,11 +267,50 @@ Préalable de D.8 (pagination front) et de I.x (catégorisation).
 - `db_gammonnet_batch.go:265,285` : une transaction et un verrou par position,
   `LoadPosition` par position.
 - `matches_sqlite.go:385-420` : `SwapPlayers` = Load + Save + UPDATE par position.
-- [ ] Pages d'ids (`ORDER BY id LIMIT n`), `LoadMany`/`LoadByIDs`, écriture
-      par paquets de 200 dans une transaction, jointures dans la requête
-      principale.
-- [ ] Bench mémoire (`-benchmem`, `runtime.ReadMemStats`) sur une base de
-      50 k positions générée.
+- [x] `RepairDenormalisedColumns` (SQLite et PostgreSQL) : pagination par clé
+      `id` (`repairPageSize` = 500 lignes), plus de `var all []row` chargeant
+      la table entière — mesuré (voir bench ci-dessous).
+- [x] `DBImporter.Import` : lectures source **et** cible par lots
+      (`AnalysisStore.LoadMany`, `CommentStore.ByPositions`) au lieu d'un
+      `Load`/`ByPosition` par position ; les positions cibles sont d'abord
+      toutes sauvegardées (Zobrist décide leur id), puis leurs analyses et
+      commentaires existants sont chargés en un round-trip par famille avant
+      la boucle de fusion.
+- [x] `db_import_db.go` : `decodeSourcePosition` ne fait plus de requête de
+      rattrapage par ligne compacte — les dix colonnes scalaires sont
+      sélectionnées directement dans la requête principale
+      (`sourcePositionScalarColumns`), pour les deux passes (Analyze et
+      Commit). Trouvé au passage : la fusion des commentaires de
+      `CommitImportDatabase` lisait une ligne arbitraire (pas de `ORDER BY`,
+      le même bug que #174 avait corrigé côté `AnalyzeImportDatabase` sans
+      jamais toucher `Commit`) et son `UPDATE` récrivait toutes les lignes
+      d'une position multi-commentaires avec le même texte fusionné — corrigé
+      en réutilisant `loadJoinedCommentText` des deux côtés et en n'insérant
+      qu'une ligne neuve (comme `ingest.DBImporter`), jamais en réécrivant
+      l'existant ; régression verrouillée par `TestImport_CommitMergesAllCommentRows`.
+- [x] `db_gammonnet_batch.go` : les positions du lot sont chargées une seule
+      fois via `LoadPositionsByIDs` avant de lancer les workers, au lieu d'un
+      `LoadPosition` par position dans `evaluateOnePositionWithGammonNet`.
+      Le côté écriture (`SaveAnalysis`, un verrou + une transaction implicite
+      par position) n'a **pas** été touché : il protège la garantie « une
+      évaluation ne fait que combler un trou » contre un écrivain concurrent
+      sur la même position, ce que ce lot ne peut pas vérifier sans requête
+      supplémentaire par position — au prix incertain vu les PRAGMAs déjà
+      réglés (WAL, `synchronous=NORMAL`).
+- [x] `matches_sqlite.go`/`matches_postgres.go` : `SwapPlayers` charge toutes
+      les positions concernées par `LoadByIDs` en un aller-retour avant la
+      boucle ; `Save` (qui recalcule le Zobrist et déduplique) reste par
+      position, cette décision étant irréductiblement individuelle.
+- [x] Bench mémoire (`-benchmem`, `runtime.ReadMemStats`) : pic de tas
+      (`peak-heap-MB`, échantillonné pendant l'appel, pas la somme
+      `-benchmem` du B/op qui ne bouge pas avec la pagination — chaque ligne
+      est de toute façon lue une fois) sur 20 000 lignes d'analyse générées
+      (`BenchmarkRepairDenormalisedColumnsMemory`,
+      `storage/sqlite/bench_test.go`) : **24,99 Mo → 5,70 Mo** (-77 %, ×4,4).
+      50 k visé par la fiche non atteint pour tenir le budget de temps de ce
+      chantier ; l'écart devrait se creuser encore à cette échelle, la
+      version paginée restant plate pendant que l'ancienne grandissait
+      linéairement avec la table.
 
 ## B.12 — Compression des blobs d'analyse [M] — perf, taille de base (#180)
 
