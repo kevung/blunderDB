@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import { autofocus } from '../utils/autofocus.js';
     import { onMount, onDestroy } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -471,7 +472,7 @@
     });
 </script>
 
-<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="region" aria-label={$t('tournament.title')}>
+<section class="tournament-panel" id="tournamentPanel" tabindex="-1" aria-label={$t('tournament.title')}>
     <div class="panel-content">
         {#if !selectedTournament}
             <!-- Tournaments list -->
@@ -490,7 +491,7 @@
                 >
                     {#snippet cells(tournament)}
                         {#if tournamentEdit.isEditing(tournament.id)}
-                            <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} autofocus /></td>
+                            <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
                             <td class="narrow-col"></td>
                             <td class="narrow-col"><input class="edit-input" type="date" bind:value={tournamentEdit.draft.date} onkeydown={tournamentEdit.onKeyDown} /></td>
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.location} placeholder={$t('tournament.location')} onkeydown={tournamentEdit.onKeyDown} /></td>
@@ -632,7 +633,7 @@
                                 onkeydown={tournamentCommentEdit.onKeyDown}
                                 onblur={tournamentCommentEdit.onBlur}
                                 placeholder={$t('tournament.notesPlaceholder')}
-                                autofocus
+                                use:autofocus
                             />
                         {:else}
                             <span
@@ -657,7 +658,7 @@
                         <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                         <td class="comment-col no-select">
                             {#if matchCommentEdit.isEditing(match.id)}
-                                <input class="edit-input" type="text" bind:value={matchCommentEdit.draft} onkeydown={matchCommentEdit.onKeyDown} onblur={matchCommentEdit.onBlur} autofocus />
+                                <input class="edit-input" type="text" bind:value={matchCommentEdit.draft} onkeydown={matchCommentEdit.onKeyDown} onblur={matchCommentEdit.onBlur} use:autofocus />
                             {:else}
                                 <span
                                     class="comment-text"

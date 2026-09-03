@@ -16,7 +16,8 @@
         "save": "Guardar",
         "search": "Buscar",
         "errorWithMsg": "Error: {msg}",
-        "reset": "Restablecer"
+        "reset": "Restablecer",
+        "contextMenu": "Acciones"
     },
     "config": {
         "title": "Ajustes",

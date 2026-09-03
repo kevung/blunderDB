@@ -33,19 +33,6 @@
         };
     });
 
-    const baseOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: datasets?.length > 1 },
-            tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-            x: { grid: { color: GRIDLINE } },
-            y: { grid: { color: GRIDLINE }, beginAtZero: true }
-        }
-    };
-
     $effect(() => {
         if (!canvas || !Chart) return;
 
@@ -53,6 +40,24 @@
             chart.destroy();
             chart = null;
         }
+
+        // Read live inside the effect (#205): a top-level `const` only captures
+        // `datasets` at the component's first run, so a chart created with one
+        // series would keep its legend hidden forever, even after a second
+        // series was added — the exact bug `datasets?.length > 1` is meant to
+        // guard against.
+        const baseOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: datasets?.length > 1 },
+                tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+                x: { grid: { color: GRIDLINE } },
+                y: { grid: { color: GRIDLINE }, beginAtZero: true }
+            }
+        };
 
         const mergedOptions = deepMerge(baseOptions, options ?? {});
 

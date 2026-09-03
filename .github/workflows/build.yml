@@ -594,6 +594,18 @@ jobs:
           npm run format:check
         shell: bash
 
+      # `npm run lint`/`format:check` above never look at `npm run build`'s own
+      # Svelte-compiler warnings (a11y roles, stale-closure reactivity bugs,
+      # unused CSS selectors, …) — 35 of them shipped silently until #205.
+      # This does not require a full `vite build`: it compiles every .svelte
+      # file with the compiler directly and fails if the count exceeds the
+      # ceiling in frontend/.svelte-warnings-budget (see that script's doc
+      # comment). The ceiling is lowered, never raised, as warnings get fixed.
+      - name: Frontend Svelte compiler warnings budget
+        working-directory: frontend
+        run: npm run check:svelte-warnings
+        shell: bash
+
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 15

@@ -15,7 +15,8 @@
     "lint": "eslint src/ tests/ *.config.js",
     "lint:fix": "eslint src/ tests/ *.config.js --fix",
     "format": "prettier --write src/ tests/ *.config.js",
-    "format:check": "prettier --check src/ tests/ *.config.js"
+    "format:check": "prettier --check src/ tests/ *.config.js",
+    "check:svelte-warnings": "node scripts/check-svelte-warnings.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

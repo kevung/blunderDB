@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { t } from '../i18n';
 
     /**
      * Reusable context-menu popover.
@@ -57,7 +58,7 @@
 
 <svelte:window onkeydown={handleKeyDown} onclick={handleWindowClick} />
 
-<div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label="Actions">
+<div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label={$t('common.contextMenu')}>
     {#each items as item (item.label)}
         <button class="context-menu-item" role="menuitem" onclick={() => handleItemClick(item)}>{item.label}</button>
     {/each}

@@ -11,6 +11,13 @@ import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
+// The search-token grammar (parseSearchTokens) and its quote-stripping helper
+// live in searchFilterService.js, shared with the "retour" replay path
+// (parseSearchCommand) — see that module's doc comment and #203. Re-exported
+// here unchanged so existing importers (this file's own tests, ankiService.js)
+// do not have to change their import path.
+import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
+export { stripQuotedTokens };
 
 let callbacks = {};
 
@@ -184,161 +191,18 @@ function handleSearchCommand(command, positions, { isSubSearch }) {
     }
 }
 
-// Quoted filter values — pl"…" (player), m"…" (move pattern) and t"…" (search
-// text / comment) — may contain spaces. Their values are recovered later via
-// regexes on the raw command, but the naive `.split(' ')` that builds the token
-// array would tear a multi-word value into loose words (`t"big win"` → `t"big`,
-// `win"`; `t"a b c"` → `t"a`, `b`, `c"`) and those words get misclassified as
-// range filters (`win"` → winRateFilter, the bare `b` → backgammonRateFilter),
-// silently zeroing the result set. Strip the whole quoted region before splitting
-// so no interior word survives. Both quote styles are supported.
-export function stripQuotedTokens(str) {
-    return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
-}
-
+/**
+ * Parse the `s …`/`ss …` filter tokens typed on the command line (the
+ * "aller" path). A thin wrapper over {@link parseSearchTokens}
+ * (searchFilterService.js) — see that function's doc comment for the shared
+ * grammar and #203, the bug this split used to hide.
+ *
+ * @param {string[]} filters - filter tokens, already split and quote-stripped by the caller.
+ * @param {string} command - the raw command, used to recover quoted values (`t"…"`, `m"…"`, `pl"…"`).
+ * @returns {object} the parsed filter values, under their long (backend) field names.
+ */
 export function parseFilters(filters, command) {
-    const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
-    const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
-    const noContactFilter = filters.includes('nc');
-    const decisionTypeFilter = filters.includes('d');
-    const diceRollFilter = filters.includes('D') || filters.includes('D1');
-    const diceRollMode = filters.includes('D1') ? 'first' : 'both';
-    // `xD65` excludes the 6-5 roll (order-insensitive); repeatable (`xD65 xD54`).
-    // Unlike `D`, the value is inline in the token, not read from the board.
-    // Joined into a ";"-separated string for the backend (ExceptDiceFilter).
-    const exceptDiceFilter = filters
-        .filter((f) => typeof f === 'string' && /^xD[1-6][1-6]$/.test(f))
-        .map((f) => f.slice(2))
-        .join(';');
-    const mirrorPositionFilter = filters.includes('M');
-    // Positions the user imported on their own rather than inside a match.
-    // An exact match, so it does not collide with the id<ids> token.
-    const individuallyImportedFilter = filters.includes('i');
-    // Positions the user marked for study in the tool the match came from
-    // (eXtreme Gammon flags). An exact match, like 'i'.
-    const flaggedFilter = filters.includes('fl');
-    // 'x' marks that an exclusion ("Sauf") structure is active. The structure
-    // itself is carried by the exclude board (store), like the include structure.
-    const excludeStructure = filters.includes('x');
-    // Comment presence: `co` (has one) / `xco` (has none). Exact matches, so
-    // they collide neither with each other nor with the `co` alias of the
-    // `comment` command — filter tokens only exist after the `s ` prefix.
-    // Asking for both is contradictory rather than ambiguous; 'none' wins and
-    // the search comes back empty, which is the honest answer.
-    const commentFilter = filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '';
-    // Exclude `pl"…"` (player filter) — it starts with 'p' but is not a pipcount.
-    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
-    const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
-    const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
-    const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
-    const player2WinRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
-    const player2GammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));
-    const player2BackgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ'));
-    let player1CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')));
-    if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
-        player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`;
-    }
-    let player2CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')));
-    if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
-        player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`;
-    }
-    let player1BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')));
-    if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
-        player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`;
-    }
-    let player2BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')));
-    if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
-        player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`;
-    }
-    let player1CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')));
-    if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
-        player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`;
-    }
-    let player2CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')));
-    if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
-        player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`;
-    }
-    const player1AbsolutePipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
-    const equityFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
-    const dateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
-    const movePatternMatch = command.match(/m["'][^"']*["']/);
-    const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
-    const searchTextMatch = command.match(/t["'][^"']*["']/);
-    const searchText = searchTextMatch ? searchTextMatch[0] : '';
-    // Player filter `pl"Name"` — matched on the raw command so names with spaces
-    // survive (the space-split `filters` array would break them).
-    const playerMatch = command.match(/pl["'][^"']*["']/);
-    const playerFilter = playerMatch ? playerMatch[0] : '';
-    const player1OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
-    const player2OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
-    const player1JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
-    const player2JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
-    const moveErrorFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
-
-    const matchIDTokens = filters.filter((f) => typeof f === 'string' && /^ma\d/.test(f));
-    let matchIDsFilter = '';
-    if (matchIDTokens.length > 0) {
-        const parts = matchIDTokens.map((token) => token.slice(2));
-        matchIDsFilter = parts.join(';');
-    }
-
-    const tournamentIDTokens = filters.filter((f) => typeof f === 'string' && /^tn\d/.test(f));
-    let tournamentIDsFilter = '';
-    if (tournamentIDTokens.length > 0) {
-        const parts = tournamentIDTokens.map((token) => token.slice(2));
-        tournamentIDsFilter = parts.join(';');
-    }
-
-    // Position-id filter: `id12`, `id5,10` (range 5..10), or several `id` tokens
-    // joined as an explicit list (e.g. `id5 id10`). Mirrors the ma/tn convention.
-    const positionIDTokens = filters.filter((f) => typeof f === 'string' && /^id\d/.test(f));
-    let positionIDsFilter = '';
-    if (positionIDTokens.length > 0) {
-        const parts = positionIDTokens.map((token) => token.slice(2));
-        positionIDsFilter = parts.join(';');
-    }
-
-    return {
-        includeCube,
-        includeScore,
-        noContactFilter,
-        decisionTypeFilter,
-        diceRollFilter,
-        diceRollMode,
-        exceptDiceFilter,
-        mirrorPositionFilter,
-        individuallyImportedFilter,
-        flaggedFilter,
-        excludeStructure,
-        pipCountFilter,
-        winRateFilter,
-        gammonRateFilter,
-        backgammonRateFilter,
-        player2WinRateFilter,
-        player2GammonRateFilter,
-        player2BackgammonRateFilter,
-        player1CheckerOffFilter,
-        player2CheckerOffFilter,
-        player1BackCheckerFilter,
-        player2BackCheckerFilter,
-        player1CheckerInZoneFilter,
-        player2CheckerInZoneFilter,
-        player1AbsolutePipCountFilter,
-        equityFilter,
-        dateFilter,
-        movePatternFilter,
-        searchText,
-        commentFilter,
-        player1OutfieldBlotFilter,
-        player2OutfieldBlotFilter,
-        player1JanBlotFilter,
-        player2JanBlotFilter,
-        moveErrorFilter,
-        matchIDsFilter,
-        tournamentIDsFilter,
-        playerFilter,
-        positionIDsFilter
-    };
+    return parseSearchTokens(filters, command);
 }
 
 function insertTags(tags) {
