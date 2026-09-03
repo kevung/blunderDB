@@ -386,8 +386,16 @@ func matchEquity(state MatchState, probs *[NumOutputs]float32) (float64, bool) {
 
 // valueFromProbs is the value of a distribution from its own side's point of
 // view: cubeless money equity with no match state, 2×MWC−1 otherwise —
-// gn_search.c's value_from_probs, without the cube branch (use_cube is a
-// follow-up tranche, ADR-0016). A failure (only reachable with an invalid
+// gn_search.c's value_from_probs, without its cube branch.
+//
+// Without the cube branch does NOT mean the search is cubeless: `use_cube` was
+// ported by ADR-0023, and the search values its leaves through `Value` above.
+// This function is the CUBELESS reading, which is still what a caller wants
+// when the cube is out of play or when a plain reference value is asked for —
+// `CubelessValue` is its exported face. (This comment said "use_cube is a
+// follow-up tranche, ADR-0016" for two tags after that follow-up landed.)
+//
+// A failure (only reachable with an invalid
 // state, which NewSearcher already refuses at construction) values the
 // distribution as 0 rather than propagating a search-wide failure over one
 // node — the same choice value_from_probs makes.

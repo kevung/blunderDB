@@ -274,17 +274,33 @@ paquet, chacun avec une justification pour un appelant qui n'existe pas.
       famille du bug `CommitImportDatabase`). Couverture `engine`
       **68,5 % → 92,4 %**, `gammonnet` **87,9 % → 91,0 %**.
 
-## C.12 — Documentation du moteur [S] — navigation (#199)
+## C.12 — Documentation du moteur [S] — navigation (#199) — FAIT
 
-- `CLAUDE.md:167-170` ne cite ni `engine/gammonnet` (5 000 l.) ni `met.go` ;
-  `:189` `cmd/` sans `calibrace`.
-- Paquet `engine` sans commentaire de paquet (`epc.go`, `bitboards.go`,
-  `zobrist.go`, `met.go`).
-- `cube.go:382-386` (« use_cube is a follow-up ») périmé ; `tasks/gammonnet-perf/README.md`
-  § « ce qui n'explique pas ces chiffres » liste comme ouvert ce qui est fait.
-- ADR à écrire : « GPU/WASM sont écartés » (ADR-0024 fait de la reproductibilité
-  bit-à-bit la définition de « périmé » ; une ligne évite la question).
-- [ ] Les quatre points.
+- [x] `CLAUDE.md` : le point `pkg/blunderdb/engine/` cite désormais `met.go` et
+      les deux codecs, et nomme les DEUX sous-paquets évaluateurs —
+      `engine/race/` et `engine/gammonnet/` (~5 000 lignes, la plus grosse
+      chose de l'arbre, avec ses ADR et son en-tête de `cube.go`). `cmd/`
+      liste `calibrace` et `train-analysis-dict`, absents jusqu'ici.
+- [x] Paquet `engine` : commentaire de paquet (`doc.go`) — carte fichier par
+      fichier (zobrist / bitboards / epc / bearoff_export / met / les deux
+      codecs), les deux sous-paquets, et la règle qu'ils partagent (une valeur
+      dérivée se calcule ici et se stocke, jamais au moment de la lecture).
+- [x] `cube.go` : « use_cube is a follow-up tranche, ADR-0016 » était périmé de
+      deux tags — `valueFromProbs` dit maintenant ce qu'elle est (la lecture
+      cubeless, dont `CubelessValue` est la face exportée) et que `use_cube`
+      est porté depuis l'ADR-0023.
+- [x] `tasks/gammonnet-perf/README.md` § « ce qui n'explique pas ces
+      chiffres » : les cinq postes listés comme ouverts sont faits ou mesurés
+      et annulés (allocation → 6 allocs/décision, tri typé, dédup par table de
+      hachage, `encodeLegal`, lookups MET annulés à 1 % en #150) ; le seul qui
+      reste est la bissection du videau, et elle est spécifiée en amont (C.7).
+- [x] ADR « The evaluator has one arithmetic contract: no GPU, no WebAssembly
+      kernel » : GPU écarté sur le contrat ET sur la forme du travail (lots de
+      8 voies, ≤ 63 positions à la racine, 17 µs la passe avant, chaîne
+      sérielle) plus cgo contre `CGO_ENABLED=0` ; relaxed-SIMD WASM interdit
+      (`fma`/`min`/`max` « implementation defined »), un build WASM tourne le
+      repli pur Go. Ne concerne QUE l'arithmétique de l'évaluateur : compiler
+      d'autres parties en WASM (P12, générateur SVG) reste ouvert.
 
 ---
 
