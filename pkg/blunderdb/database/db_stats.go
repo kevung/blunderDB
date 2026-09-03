@@ -150,10 +150,23 @@ type CubeDirections struct {
 // ComputeStats delegates to the storage StatsStore (the single production
 // implementation, shared with the headless server). legacyComputeStats keeps
 // the original SQL as the parity-test reference.
+//
+// This is the context.Background() convenience for callers with no context of
+// their own (the GUI's stats panel); ComputeStatsCtx is the one to call when
+// the caller can offer a real deadline/cancellation (B.13, #181: the CLI's
+// `list --type stats` cancels a long aggregation on Ctrl-C through it).
 func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
+	return d.ComputeStatsCtx(context.Background(), filter)
+}
+
+// ComputeStatsCtx is ComputeStats with a caller-supplied context: ctx is
+// threaded into the aggregation query, so cancelling it aborts an in-flight
+// computation instead of running the full ~twelve-query aggregation (stats.go,
+// B.15) for a result nobody will read.
+func (d *Database) ComputeStatsCtx(ctx context.Context, filter StatsFilter) (*StatsResult, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	r, err := d.store.Stats().Compute(context.Background(), "", toStorageStatsFilter(filter))
+	r, err := d.store.Stats().Compute(ctx, "", toStorageStatsFilter(filter))
 	if err != nil {
 		return nil, err
 	}

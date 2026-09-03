@@ -216,8 +216,15 @@ func (d *Database) SetupDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
+	// Close the currently opened database, if any. Best-effort like the
+	// analogous close in Close() itself: the handle is discarded and replaced
+	// right below regardless, but a failure here (e.g. a pooled connection
+	// that would not release) is worth a log line rather than silence (B.13,
+	// #181 — this used to swallow the error outright).
 	if d.db != nil {
-		d.db.Close() // Close the currently opened database
+		if err := d.db.Close(); err != nil {
+			slog.Warn("closing the previously open database failed", "err", err)
+		}
 	}
 
 	// Creating/erasing a database requires the write lock. If another instance
@@ -294,8 +301,15 @@ func (d *Database) OpenDatabase(path string) (err error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
+	// Close the currently opened database, if any. Best-effort like the
+	// analogous close in Close() itself: the handle is discarded and replaced
+	// right below regardless, but a failure here (e.g. a pooled connection
+	// that would not release) is worth a log line rather than silence (B.13,
+	// #181 — this used to swallow the error outright).
 	if d.db != nil {
-		d.db.Close() // Close the currently opened database
+		if err := d.db.Close(); err != nil {
+			slog.Warn("closing the previously open database failed", "err", err)
+		}
 	}
 
 	// Take the single-writer lock before opening. If another instance holds it

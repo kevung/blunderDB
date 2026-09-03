@@ -335,11 +335,24 @@ chaque fusion pendant l'import, pas de dictionnaire.
 
 135 méthodes exportées, 14 avec `ctx`, 104 `context.Background()` ; une
 recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
-- [ ] Variantes `…Ctx` sur les trois chemins longs (recherche, stats, export),
-      le front passe un `AbortController` traduit en annulation Wails (motif
-      de `beginCancellableImport`).
-- [ ] `db_import_common.go:50` utilise le contexte annulable disponible.
-- [ ] `db.go:189,263` : vérifier `d.db.Close()`.
+- [x] Variantes `…Ctx` sur les trois chemins longs (recherche, stats, export) :
+      `LoadPositionsByFiltersCoreCtx`, `ComputeStatsCtx`, `ExportDatabaseCtx`.
+      Les méthodes historiques deviennent de simples enveloppes
+      `context.Background()` — signature Wails inchangée, la GUI ne bouge pas
+      encore. Câblées côté CLI (`search`, `list --type stats`, `export`) avec
+      le même motif Ctrl-C que `cli_analyze.go` avait déjà pour `analyze`,
+      extrait en un helper partagé `withInterruptibleContext` (`cli.go`). Ce
+      qui **reste** pour cette tranche : le front qui traduit un
+      `AbortController` en annulation Wails (bouton d'annulation GUI) —
+      tranche suivante, volontairement pas dans ce geste (progressif).
+- [x] `db_import_common.go` : `writeImportedPosition` prend désormais le
+      contexte annulable de `beginCancellableImport` au lieu de coder en dur
+      `context.Background()` ; les trois imports mono-position
+      (`ImportBGFPosition`, `ImportBGFPositionFromText`, `ImportXGPPosition`)
+      ouvrent ce contexte comme les imports de match le font déjà.
+- [x] `db.go` : les deux `d.db.Close()` non vérifiés avant réouverture
+      (`SetupDatabase`, `OpenDatabase`) journalisent désormais leur erreur
+      (`slog.Warn`) au lieu de l'avaler.
 - [ ] Le reste famille par famille, sans date.
 
 ## B.14 — Duplication résiduelle entre backends [M] — dette (#182)

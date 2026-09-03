@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"context"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -267,8 +269,21 @@ func (cli *CLI) listPositions(limit int) error {
 // top blunders to display (only relevant for text format, JSON always includes
 // the full TopBlunders slice).
 func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) error {
-	result, err := cli.db.ComputeStats(filter)
+	textOutput := strings.ToLower(format) != "json"
+	var result *StatsResult
+	err := withInterruptibleContext(func() {
+		if textOutput {
+			fmt.Println("\nCancelling...")
+		}
+	}, func(ctx context.Context) error {
+		var err error
+		result, err = cli.db.ComputeStatsCtx(ctx, filter)
+		return err
+	})
 	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return fmt.Errorf("stats cancelled")
+		}
 		return fmt.Errorf("failed to compute stats: %w", err)
 	}
 

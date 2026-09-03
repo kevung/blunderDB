@@ -61,12 +61,14 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 // writeImportedPosition persists the positions of a single-position import
 // (XGP / BGF text) through the storage backend and returns the id of the first
 // stored position. Positions dedup by Zobrist hash, so re-importing the same
-// position returns its existing id. Callers must hold d.mu.
-func (d *Database) writeImportedPosition(graphs []ingest.PositionGraph) (int64, error) {
+// position returns its existing id. Callers must hold d.mu and pass the
+// context from their own beginCancellableImport (B.13, #181: this used to
+// hardcode context.Background(), the one write path CancelImport could not
+// reach even though every caller already opens one).
+func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.PositionGraph) (int64, error) {
 	if len(graphs) == 0 {
 		return 0, fmt.Errorf("no position to import")
 	}
-	ctx := context.Background()
 	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
 		return 0, err

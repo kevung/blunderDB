@@ -15,7 +15,20 @@ import (
 // seals the watermark with this machine's identity and translates the
 // dialog's options into a Selection. The public signature is bound to Wails
 // and stays.
+//
+// This is the context.Background() convenience for callers with no context of
+// their own (the GUI); ExportDatabaseCtx is the one to call when the caller
+// can offer a real deadline/cancellation (B.13, #181: the CLI's `export`
+// cancels a large export on Ctrl-C through it).
 func (d *Database) ExportDatabase(opts ExportOptions) error {
+	return d.ExportDatabaseCtx(context.Background(), opts)
+}
+
+// ExportDatabaseCtx is ExportDatabase with a caller-supplied context: ctx is
+// threaded into ingest.ExportSQLite, so cancelling it aborts an in-flight
+// export — a large selection can run long enough to matter — instead of
+// writing a file nobody will read to completion.
+func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if d.db == nil {
@@ -54,7 +67,7 @@ func (d *Database) ExportDatabase(opts ExportOptions) error {
 		sel.AllMatches = len(opts.MatchIDs) == 0
 	}
 
-	_, err = ingest.ExportSQLite(context.Background(), d.store, "", opts.ExportPath, ingest.ExportOptions{
+	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, ingest.ExportOptions{
 		Format:        ingest.FormatSQLite,
 		Selection:     sel,
 		Analysis:      opts.IncludeAnalysis,
