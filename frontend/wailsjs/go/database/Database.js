@@ -42,6 +42,10 @@ export function CheckMatchExists(arg1) {
   return window['go']['database']['Database']['CheckMatchExists'](arg1);
 }
 
+export function CheckSchema() {
+  return window['go']['database']['Database']['CheckSchema']();
+}
+
 export function CheckVersion(arg1) {
   return window['go']['database']['Database']['CheckVersion'](arg1);
 }
@@ -80,6 +84,14 @@ export function Conn() {
 
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
+}
+
+export function CountOrphans() {
+  return window['go']['database']['Database']['CountOrphans']();
+}
+
+export function CountPositionsWithStaleGammonNet(arg1) {
+  return window['go']['database']['Database']['CountPositionsWithStaleGammonNet'](arg1);
 }
 
 export function CountPositionsWithoutAnalysis() {
@@ -184,6 +196,10 @@ export function GetAllTournaments() {
 
 export function GetAnkiDeckPositions(arg1) {
   return window['go']['database']['Database']['GetAnkiDeckPositions'](arg1);
+}
+
+export function GetAnkiDeckRetention(arg1) {
+  return window['go']['database']['Database']['GetAnkiDeckRetention'](arg1);
 }
 
 export function GetAnkiDeckStats(arg1) {
@@ -530,8 +546,8 @@ export function UpdateAnkiDeck(arg1, arg2, arg3) {
   return window['go']['database']['Database']['UpdateAnkiDeck'](arg1, arg2, arg3);
 }
 
-export function UpdateAnkiDeckParams(arg1, arg2, arg3, arg4) {
-  return window['go']['database']['Database']['UpdateAnkiDeckParams'](arg1, arg2, arg3, arg4);
+export function UpdateAnkiDeckParams(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['UpdateAnkiDeckParams'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function UpdateCollection(arg1, arg2, arg3) {

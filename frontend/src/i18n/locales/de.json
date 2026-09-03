@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Positionen ohne Analyse werden geprüft…",
         "gammonnetCatchUpCount": "{n} Position(en) ohne Analyse.",
         "gammonnetCatchUpStart": "Jetzt analysieren",
-        "gammonnetCatchUpNote": "Startet manuell dieselbe begrenzte, abbrechbare Analyse — nützlich, um eine vor dieser Funktion angelegte Bibliothek nachzuholen."
+        "gammonnetCatchUpNote": "Startet manuell dieselbe begrenzte, abbrechbare Analyse — nützlich, um eine vor dieser Funktion angelegte Bibliothek nachzuholen.",
+        "gammonnetStaleUnknown": "Veraltete gammonNet-Analysen werden geprüft…",
+        "gammonnetStaleCount": "{n} veraltete gammonNet-Analyse(n).",
+        "gammonnetStaleStart": "Veraltete Positionen erneut analysieren",
+        "gammonnetStaleNote": "Wiederholt gammonNet für bereits analysierte Positionen, die aber mit einer älteren Engine-Version oder einer anderen Tiefe als hier eingestellt geschrieben wurden — XG-, GNUbg- und BGBlitz-Analysen werden nie angerührt."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -682,6 +686,7 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysiert: {done}/{total}",
         "batchCancel": "Abbrechen",
+        "batchDone": "gammonNet: {evaluated} analysiert, {refused} abgelehnt, {failed} fehlgeschlagen",
         "baseline": "Vor dem Wurf",
         "baselineTooltip": "Werte vor dem Wurf, in der Achse der Liste — ein Bezugspunkt, kein Zugkandidat. Der Abstand zu dieser Zeile ist das Würfelglück, nicht das Verdienst eines Zuges."
     },

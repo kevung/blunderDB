@@ -242,10 +242,28 @@ positions et des analyses stockées — jamais un évaluateur nu :
 position. La réponse est un flux NDJSON (``started``, ``progress``, puis
 ``done`` ou ``error``/``cancelled``), sur le même modèle que les points
 d'accès d'import ; ``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` reçu
-dans l'évènement ``started``) annule un rattrapage en cours. C'est la même
+dans l'évènement ``started``) annule un rattrapage en cours et sert
+indifféremment pour un rattrapage ou une réanalyse (ci-dessous). C'est la même
 opération que le déclenchement automatique après import et le geste explicite
 de l'interface graphique, et que la sous-commande ``blunderdb analyze`` (voir
 :ref:`cli`) — trois formes, une seule logique.
+
+``gammonnet.sweepStale`` est le pendant de ``analyzeMissing`` pour la
+réanalyse plutôt que le comblement : chaque position dont l'analyse est
+entièrement issue de gammonNet mais périmée — une version de moteur plus
+ancienne que celle en cours d'exécution, ou une profondeur différente de
+``ply`` — est réévaluée à la profondeur demandée. Le prédicat de péremption
+est partagé avec le même lot de l'interface graphique et de
+``blunderdb analyze --stale`` (aucune duplication de la logique entre les
+trois modes) ; une position portant une analyse XG, GNUbg ou BGBlitz n'est
+jamais touchée, quel que soit son contenu gammonNet — la protection
+d'ADR-0013 reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et
+l'évènement final de chacune des deux routes porte désormais la répartition
+``evaluated``/``refused``/``failed`` : une position que gammonNet refuse
+d'évaluer (un score de match hors de la portée de sa table, une décision de
+videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle
+n'est jamais retentée en vain sur la passe suivante, contrairement à une
+position réellement en échec.
 
 .. _headless_docker:
 

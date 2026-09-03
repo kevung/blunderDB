@@ -7,21 +7,25 @@ import (
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
-// The gammonNet batch job (#129, ADR-0013): a bounded, visible, cancellable,
-// resumable sweep that writes an analysis for every position that has none.
-// The actual query/evaluate/write loop lives on *database.Database
-// (AnalyzeMissingWithGammonNet, database/db_gammonnet_batch.go) so the CLI
-// (#130) can reuse it without a GUI dependency; this file is the same
+// The gammonNet batch (#129, ADR-0013): a bounded, visible, cancellable,
+// resumable sweep that writes an analysis for every position that has none —
+// or, with StartGammonNetStaleBatch (#191), re-runs gammonNet on every
+// position whose stored analysis is entirely its own but stale. The actual
+// query/evaluate/write loops live on *database.Database
+// (AnalyzeMissingWithGammonNet/AnalyzeStaleGammonNet,
+// database/db_gammonnet_batch.go) so the CLI (#130) and the serve daemon
+// (#191) can reuse them without a GUI dependency; this file is the same
 // goroutine+context+mutex+EventsEmit shell DownloadBearoffDB (bearoff.go)
 // already established, wired to the batch's own events:
 //
-//	gammonnet-batch:progress {done, total}
-//	gammonnet-batch:done     {}
+//	gammonnet-batch:progress  {done, total}
+//	gammonnet-batch:done      {evaluated, refused, failed}
 //	gammonnet-batch:cancelled {}
-//	gammonnet-batch:error    {message}
-
+//	gammonnet-batch:error     {message}
 var (
 	gnBatchMu     sync.Mutex
 	gnBatchCancel context.CancelFunc
@@ -35,10 +39,42 @@ var (
 const gnYieldPoll = 50 * time.Millisecond
 
 // StartGammonNetBatch analyses every position without an analysis, in the
-// background. A batch already in flight is cancelled first — one at a time,
-// like DownloadBearoffDB. No-op (emits nothing) when db is nil, which only
+// background. A batch already in flight (of either kind — this one or
+// StartGammonNetStaleBatch) is cancelled first — one at a time, like
+// DownloadBearoffDB. No-op (emits nothing) when db is nil, which only
 // happens in tests that construct an App without one.
 func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
+	a.runGammonNetBatch(func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+		// goruntime.NumCPU(): the batch spreads its positions over every
+		// core (#147). Nothing is exposed to the user — the desktop has no
+		// reason to ask how many cores to use, and the yield below is what
+		// keeps an interactive evaluation ahead of the batch anyway.
+		return a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
+			waitForInteractiveEvaluation, onProgress)
+	})
+}
+
+// StartGammonNetStaleBatch re-runs gammonNet on every position whose stored
+// analysis is entirely its own but stale at ply — a different EngineVersion
+// than the running build's, or a different AnalysisDepth than ply now asks
+// for (#191). The config modal's "re-analyse stale positions" button; before
+// this there was no way to trigger AnalyzeStaleGammonNet at all — an
+// EngineVersion bump (ADR-0016, ADR-0022, ADR-0023 each moved it) left every
+// already-analysed position looking perfectly current with nothing to
+// re-run it.
+func (a *App) StartGammonNetStaleBatch(ply, pruneK, candidates int) {
+	a.runGammonNetBatch(func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error) {
+		return a.db.AnalyzeStaleGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
+			waitForInteractiveEvaluation, onProgress)
+	})
+}
+
+// runGammonNetBatch is the goroutine+context+mutex+EventsEmit shell both
+// StartGammonNetBatch and StartGammonNetStaleBatch share: run does the
+// query/evaluate/write work and returns the batch's evaluated/refused/failed
+// summary (#191), this function only owns the single-in-flight bookkeeping
+// and the events.
+func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(done, total int)) (database.GammonNetBatchSummary, error)) {
 	if a.db == nil {
 		return
 	}
@@ -52,15 +88,9 @@ func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
 	gnBatchMu.Unlock()
 
 	go func() {
-		// goruntime.NumCPU(): the batch spreads its positions over every
-		// core (#147). Nothing is exposed to the user — the desktop has no
-		// reason to ask how many cores to use, and the yield below is what
-		// keeps an interactive evaluation ahead of the batch anyway.
-		err := a.db.AnalyzeMissingWithGammonNet(ctx, ply, pruneK, candidates, goruntime.NumCPU(),
-			waitForInteractiveEvaluation,
-			func(done, total int) {
-				runtime.EventsEmit(a.ctx, "gammonnet-batch:progress", map[string]int{"done": done, "total": total})
-			})
+		summary, err := run(ctx, func(done, total int) {
+			runtime.EventsEmit(a.ctx, "gammonnet-batch:progress", map[string]int{"done": done, "total": total})
+		})
 
 		gnBatchMu.Lock()
 		gnBatchCancel = nil
@@ -74,7 +104,16 @@ func (a *App) StartGammonNetBatch(ply, pruneK, candidates int) {
 			runtime.EventsEmit(a.ctx, "gammonnet-batch:error", map[string]string{"message": err.Error()})
 			return
 		}
-		runtime.EventsEmit(a.ctx, "gammonnet-batch:done")
+		// The three-way split (#191): the toast this event feeds tells the
+		// user how many positions actually got a new analysis, how many
+		// were legitimately out of gammonNet's reach (a dance, a match
+		// score beyond the MET), and how many failed and will be retried
+		// next time — never a bare "Done." that can't distinguish those.
+		runtime.EventsEmit(a.ctx, "gammonnet-batch:done", map[string]int{
+			"evaluated": summary.Evaluated,
+			"refused":   summary.Refused,
+			"failed":    summary.Failed,
+		})
 	}()
 }
 

@@ -77,6 +77,7 @@ var customContentTypes = map[string][]string{
 	"/v1/maintenance.vacuum":              {"application/json"},
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
+	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test

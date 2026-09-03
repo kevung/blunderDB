@@ -7,7 +7,7 @@
     import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
     import { CancelGammonNetBatch } from '../../wailsjs/go/gui/App.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-    import { t, resolveStatusMessage } from '../i18n';
+    import { t, tMsg, resolveStatusMessage } from '../i18n';
     import { getCommandSuggestions } from '../commandVocabulary.js';
 
     /** @type {function(string): void} */
@@ -75,7 +75,14 @@
 
     const unsubGammonNetBatch = [
         EventsOn('gammonnet-batch:progress', (p) => gammonNetBatchStore.set(p)),
-        EventsOn('gammonnet-batch:done', () => gammonNetBatchStore.set(null)),
+        // The evaluated/refused/failed split (#191) is the batch's own
+        // end-of-run figure — refused is deliberate (a dance, a match score
+        // beyond the MET) and never worth a warning; failed positions are
+        // retried, unchanged, the next time this batch runs.
+        EventsOn('gammonnet-batch:done', (summary) => {
+            gammonNetBatchStore.set(null);
+            statusBarTextStore.set(tMsg('eval.batchDone', summary ?? { evaluated: 0, refused: 0, failed: 0 }));
+        }),
         EventsOn('gammonnet-batch:cancelled', () => gammonNetBatchStore.set(null)),
         EventsOn('gammonnet-batch:error', () => gammonNetBatchStore.set(null))
     ];

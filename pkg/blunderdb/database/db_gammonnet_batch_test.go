@@ -67,7 +67,7 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	}
 
 	var progressCalls [][2]int
-	err = d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 0, nil, func(done, total int) {
+	summary, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 0, nil, func(done, total int) {
 		progressCalls = append(progressCalls, [2]int{done, total})
 	})
 	if err != nil {
@@ -75,6 +75,9 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	}
 	if len(progressCalls) != 1 || progressCalls[0] != [2]int{1, 1} {
 		t.Errorf("progress calls = %v, want exactly one {1,1}", progressCalls)
+	}
+	if summary.Evaluated != 1 || summary.Refused != 0 || summary.Failed != 0 {
+		t.Errorf("summary = %+v, want {Evaluated:1 Refused:0 Failed:0}", summary)
 	}
 
 	// The pre-existing XG analysis is untouched.
@@ -111,6 +114,103 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 	}
 }
 
+// TestAnalyzeMissingWithGammonNetRefusesBeyondMET (#191): a position
+// gammonnet.ErrNotEvaluable declines to answer — here, a match score past
+// the MET's away-score horizon (engine.MaxScore = 64) — is counted as
+// Refused, never Failed. Before this fix ErrNotEvaluable came back as a
+// plain error and was indistinguishable from a genuine failure: it was
+// retried on every single pass, forever, for no reason, since the same
+// score is refused every time.
+func TestAnalyzeMissingWithGammonNetRefusesBeyondMET(t *testing.T) {
+	d := newBatchTestDB(t)
+
+	pos := racePosition(8, 17, domain.White)
+	pos.Dice = [2]int{0, 0} // a cube decision, not a checker one
+	pos.Score = [2]int{100, 100}
+	if _, err := d.SavePosition(&pos); err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	summary, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil)
+	if err != nil {
+		t.Fatalf("AnalyzeMissingWithGammonNet: %v", err)
+	}
+	if summary.Refused != 1 || summary.Evaluated != 0 || summary.Failed != 0 {
+		t.Errorf("summary = %+v, want {Evaluated:0 Refused:1 Failed:0}", summary)
+	}
+
+	// A refused position is exactly like a missing one afterwards: nothing
+	// was written, and it is still reported as needing analysis.
+	n, err := d.CountPositionsWithoutAnalysis()
+	if err != nil {
+		t.Fatalf("CountPositionsWithoutAnalysis: %v", err)
+	}
+	if n != 1 {
+		t.Errorf("CountPositionsWithoutAnalysis = %d, want 1 (nothing was written for the refused position)", n)
+	}
+}
+
+// TestAnalyzeStaleGammonNetRerunsDepthOnlyChange (#191) is the batch-level
+// twin of gammonnet.TestIsStaleAnalysisDifferentDepthIsStale: a position
+// analysed once at 0-ply is neither missing (AnalyzeMissingWithGammonNet
+// leaves it alone) nor stale AT THE SAME DEPTH, but IS reported and
+// re-analysed by AnalyzeStaleGammonNet once the caller asks for a different
+// depth — before #191, moving the canonical depth up left every
+// already-analysed position looking perfectly current, because
+// EngineVersion alone never changed just because the requested depth did.
+func TestAnalyzeStaleGammonNetRerunsDepthOnlyChange(t *testing.T) {
+	d := newBatchTestDB(t)
+
+	pos := racePosition(8, 17, domain.White)
+	id, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+
+	summary, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil)
+	if err != nil {
+		t.Fatalf("AnalyzeMissingWithGammonNet (0-ply pass): %v", err)
+	}
+	if summary.Evaluated != 1 {
+		t.Fatalf("first pass summary = %+v, want Evaluated=1", summary)
+	}
+
+	got, err := d.LoadAnalysis(id)
+	if err != nil {
+		t.Fatalf("LoadAnalysis: %v", err)
+	}
+	if got.DoublingCubeAnalysis == nil || got.DoublingCubeAnalysis.AnalysisDepth != "0-ply" {
+		t.Fatalf("expected a 0-ply cube analysis, got %+v", got.DoublingCubeAnalysis)
+	}
+
+	if n, err := d.CountPositionsWithStaleGammonNet(0); err != nil || n != 0 {
+		t.Errorf("CountPositionsWithStaleGammonNet(0) = %d (err=%v), want 0 (same depth as stored)", n, err)
+	}
+	if n, err := d.CountPositionsWithStaleGammonNet(1); err != nil || n != 1 {
+		t.Errorf("CountPositionsWithStaleGammonNet(1) = %d (err=%v), want 1 (depth-only staleness)", n, err)
+	}
+
+	staleSummary, err := d.AnalyzeStaleGammonNet(context.Background(), 1, 0, 0, 1, nil, nil)
+	if err != nil {
+		t.Fatalf("AnalyzeStaleGammonNet: %v", err)
+	}
+	if staleSummary.Evaluated != 1 {
+		t.Errorf("AnalyzeStaleGammonNet summary = %+v, want Evaluated=1", staleSummary)
+	}
+
+	got2, err := d.LoadAnalysis(id)
+	if err != nil {
+		t.Fatalf("LoadAnalysis (after re-analysis): %v", err)
+	}
+	if got2.DoublingCubeAnalysis == nil || got2.DoublingCubeAnalysis.AnalysisDepth != "1-ply" {
+		t.Errorf("expected the position re-analysed at 1-ply, got %+v", got2.DoublingCubeAnalysis)
+	}
+
+	if n, err := d.CountPositionsWithStaleGammonNet(1); err != nil || n != 0 {
+		t.Errorf("CountPositionsWithStaleGammonNet(1) after re-analysis = %d (err=%v), want 0", n, err)
+	}
+}
+
 // TestAnalyzeMissingWithGammonNetResumeIsIdempotent: a cancelled run leaves
 // already-written positions alone, and a second call only ever sees what is
 // still missing — the resume mechanism ADR-0013 asks for, with no journal.
@@ -132,7 +232,7 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 	// jobs=1: the cancellation this test pins down is "abort between two
 	// positions", which only a single-goroutine batch expresses exactly.
 	// TestAnalyzeGammonNetParallelCancellation covers the parallel form.
-	err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 1, func() {
+	_, err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 1, func() {
 		seen++
 		if seen == 2 {
 			cancel() // abort after the first position is written, before the second starts
@@ -151,7 +251,7 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 	}
 
 	// Resume: a fresh call with no cancellation finishes the rest.
-	if err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil); err != nil {
+	if _, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil); err != nil {
 		t.Fatalf("resume AnalyzeMissingWithGammonNet: %v", err)
 	}
 	n2, err := d.CountPositionsWithoutAnalysis()
@@ -186,12 +286,13 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 
 	go func() {
 		calls := 0
-		done <- d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, func() {
+		_, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, func() {
 			calls++
 			if calls == 2 {
 				<-release // the second position's yield blocks until told to proceed
 			}
 		}, nil)
+		done <- err
 	}()
 
 	// While the second position's yield is blocked, only the first must have

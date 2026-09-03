@@ -151,6 +151,23 @@ func DefaultConfig(ply int) SearchConfig {
 	}
 }
 
+// DepthLabel is the exact AnalysisDepth string a search at ply produces,
+// after the same clamp to [0, MaxPly] DefaultConfig applies. A caller that
+// decides whether a stored analysis is stale at some target depth (the
+// gammonNet batch's staleness predicate, database/db_gammonnet_batch.go)
+// must compare against this, not against the raw ply it was asked for —
+// asking for ply 9 and getting a MaxPly search back must not read as
+// "stale forever" against a target that was silently clamped the same way.
+func DepthLabel(ply int) string {
+	if ply < 0 {
+		ply = 0
+	}
+	if ply > MaxPly {
+		ply = MaxPly
+	}
+	return fmt.Sprintf("%d-ply", ply)
+}
+
 // Candidate is one legal play with what the search concluded about it.
 type Candidate struct {
 	Play Play

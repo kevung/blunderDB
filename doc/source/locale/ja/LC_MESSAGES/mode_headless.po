@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 00:52+0200\n"
+"POT-Creation-Date: 2026-09-03 08:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: ja\n"
 "Language-Team: ja <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/mode_headless.rst:5
@@ -24,13 +24,12 @@ msgstr "ヘッドレスモード（サーバー）"
 
 #: ../../source/mode_headless.rst:9
 msgid ""
-"Cette section décrit un **mode avancé et facultatif** de blunderDB, "
-"destiné aux déploiements sur serveur, au multi-utilisateur et à "
-"l'automatisation. **L'usage normal et recommandé de blunderDB reste "
-"l'application de bureau** décrite dans les chapitres précédents. Si vous "
-"utilisez blunderDB seul, sur votre ordinateur, vous n'avez pas besoin de "
-"ce mode : vous pouvez ignorer ce chapitre sans rien perdre des "
-"fonctionnalités d'analyse."
+"Cette section décrit un **mode avancé et facultatif** de blunderDB, destiné "
+"aux déploiements sur serveur, au multi-utilisateur et à l'automatisation. "
+"**L'usage normal et recommandé de blunderDB reste l'application de bureau** "
+"décrite dans les chapitres précédents. Si vous utilisez blunderDB seul, sur "
+"votre ordinateur, vous n'avez pas besoin de ce mode : vous pouvez ignorer ce"
+" chapitre sans rien perdre des fonctionnalités d'analyse."
 msgstr ""
 "このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDBの\\ **高度かつ任意のモード**\\ "
 "について説明します。\\ **blunderDBの通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション**\\ "
@@ -42,10 +41,10 @@ msgstr "概要"
 
 #: ../../source/mode_headless.rst:20
 msgid ""
-"Le même binaire ``blunderdb`` peut, en plus de l'application de bureau et"
-" des commandes en ligne (voir :ref:`cli`), fonctionner en **mode "
-"headless** : sans interface graphique, piloté entièrement en ligne de "
-"commande ou par le réseau. Ce mode regroupe trois usages :"
+"Le même binaire ``blunderdb`` peut, en plus de l'application de bureau et "
+"des commandes en ligne (voir :ref:`cli`), fonctionner en **mode headless** :"
+" sans interface graphique, piloté entièrement en ligne de commande ou par le"
+" réseau. Ce mode regroupe trois usages :"
 msgstr ""
 "同じバイナリ ``blunderdb`` は、デスクトップアプリケーションやコマンドライン（:ref:`cli` を参照）に加えて、\\ "
 "**ヘッドレスモード** "
@@ -53,9 +52,9 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:25
 msgid ""
-"**le démon** ``serve`` — expose le moteur de blunderDB comme un service "
-"HTTP + JSON, pour faire tourner une base partagée sur un serveur et y "
-"accéder à plusieurs ;"
+"**le démon** ``serve`` — expose le moteur de blunderDB comme un service HTTP"
+" + JSON, pour faire tourner une base partagée sur un serveur et y accéder à "
+"plusieurs ;"
 msgstr ""
 "**デーモン** ``serve`` — blunderDBのエンジンをHTTP + "
 "JSONサービスとして公開し、共有データベースをサーバー上で稼働させ、複数人でアクセスできるようにします；"
@@ -68,16 +67,17 @@ msgstr "汎用ディスパッチャ ``call`` — スクリプティングやテ�
 
 #: ../../source/mode_headless.rst:30
 msgid ""
-"la commande ``migrate`` — transfère une base SQLite mono-utilisateur vers"
-" un backend PostgreSQL multi-utilisateur."
-msgstr "``migrate`` コマンド — シングルユーザーのSQLiteデータベースをマルチユーザーのPostgreSQLバックエンドに転送します。"
+"la commande ``migrate`` — transfère une base SQLite mono-utilisateur vers un"
+" backend PostgreSQL multi-utilisateur."
+msgstr ""
+"``migrate`` コマンド — シングルユーザーのSQLiteデータベースをマルチユーザーのPostgreSQLバックエンドに転送します。"
 
 #: ../../source/mode_headless.rst:33
 msgid ""
-"Ces trois usages s'appuient sur une **couche de stockage** commune qui "
-"sait parler à deux backends : **SQLite** (le format de fichier ``.db`` "
-"habituel de l'application de bureau) et **PostgreSQL** (pour les "
-"déploiements serveur multi-utilisateurs)."
+"Ces trois usages s'appuient sur une **couche de stockage** commune qui sait "
+"parler à deux backends : **SQLite** (le format de fichier ``.db`` habituel "
+"de l'application de bureau) et **PostgreSQL** (pour les déploiements serveur"
+" multi-utilisateurs)."
 msgstr ""
 "これら3つの用途は、2つのバックエンドと対話できる共通の\\ **ストレージレイヤー**\\ に依存しています：\\ **SQLite**\\ "
 "（デスクトップアプリケーションの通常の ``.db`` ファイル形式）と **PostgreSQL**\\ "
@@ -98,10 +98,10 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:59
 msgid ""
-"**Le démon n'effectue aucune authentification.** Il fait confiance à l"
-"'en-tête de requête ``X-Tenant-ID`` et **doit** tourner derrière un "
-"reverse-proxy (nginx, Caddy…) chargé de l'authentification. **Ne "
-"l'exposez jamais directement sur l'Internet public.**"
+"**Le démon n'effectue aucune authentification.** Il fait confiance à l'en-"
+"tête de requête ``X-Tenant-ID`` et **doit** tourner derrière un reverse-"
+"proxy (nginx, Caddy…) chargé de l'authentification. **Ne l'exposez jamais "
+"directement sur l'Internet public.**"
 msgstr ""
 "**デーモンは認証を一切行いません。** リクエストヘッダー ``X-Tenant-ID`` "
 "を信頼しており、認証を担うリバースプロキシ（nginx、Caddy…）の背後で動作させる\\ **必要があります**\\ 。\\ "
@@ -109,54 +109,55 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:64
 msgid ""
-"``X-Tenant-ID`` est l'**entier** du tenant (``1``, ``2``, ``42``…) : "
-"c'est au reverse-proxy de faire correspondre le compte authentifié à cet "
-"entier. Un nom (``alice``) est refusé avec ``400 invalid``, jamais "
-"converti."
+"``X-Tenant-ID`` est l'**entier** du tenant (``1``, ``2``, ``42``…) : c'est "
+"au reverse-proxy de faire correspondre le compte authentifié à cet entier. "
+"Un nom (``alice``) est refusé avec ``400 invalid``, jamais converti."
 msgstr ""
-"``X-Tenant-ID``\\ はテナントの\\ **整数**\\ （\\ ``1``\\ 、\\ ``2``\\ 、\\ ``42``\\ …）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（\\ ``alice``\\ ）は\\ ``400 invalid``\\ で拒否され、決して変換されません。"
+"``X-Tenant-ID``\\ はテナントの\\ **整数**\\ （\\ ``1``\\ 、\\ ``2``\\ 、\\ ``42``\\ "
+"…）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（\\ ``alice``\\ ）は\\ ``400 "
+"invalid``\\ で拒否され、決して変換されません。"
 
-#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:450
+#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:468
 msgid "**Options:**"
 msgstr "**オプション：**"
 
-#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:397
-#: ../../source/mode_headless.rst:456
+#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:415
+#: ../../source/mode_headless.rst:474
 msgid "Option"
 msgstr "オプション"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:398
-#: ../../source/mode_headless.rst:457
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:416
+#: ../../source/mode_headless.rst:475
 msgid "Défaut"
 msgstr "デフォルト"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:399
-#: ../../source/mode_headless.rst:458
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:417
+#: ../../source/mode_headless.rst:476
 msgid "Signification"
 msgstr "意味"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:459
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:477
 msgid "``--db <chemin>``"
 msgstr "``--db <chemin>``"
 
 #: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:96
 #: ../../source/mode_headless.rst:109 ../../source/mode_headless.rst:115
-#: ../../source/mode_headless.rst:401 ../../source/mode_headless.rst:404
-#: ../../source/mode_headless.rst:407 ../../source/mode_headless.rst:411
-#: ../../source/mode_headless.rst:460 ../../source/mode_headless.rst:476
-#: ../../source/mode_headless.rst:479
+#: ../../source/mode_headless.rst:419 ../../source/mode_headless.rst:422
+#: ../../source/mode_headless.rst:425 ../../source/mode_headless.rst:429
+#: ../../source/mode_headless.rst:478 ../../source/mode_headless.rst:494
+#: ../../source/mode_headless.rst:497
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:461
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:479
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "SQLiteファイル（\\ ``--backend sqlite --dsn <chemin>`` のショートカット）"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:462
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:480
 msgid "``--backend <type>``"
 msgstr "``--backend <type>``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:463
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:481
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -164,15 +165,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "ストレージバックエンド：\\ ``sqlite`` または ``postgres``"
 
-#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:465
+#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:483
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <chaîne>``"
 
-#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:466
+#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:484
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:467
+#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:485
 msgid "chaîne de connexion du backend"
 msgstr "バックエンドの接続文字列"
 
@@ -254,8 +255,8 @@ msgstr "``false``"
 
 #: ../../source/mode_headless.rst:106
 msgid ""
-"PostgreSQL : active la Row-Level Security par tenant (défense en "
-"profondeur, sur option)"
+"PostgreSQL : active la Row-Level Security par tenant (défense en profondeur,"
+" sur option)"
 msgstr "PostgreSQL：テナントごとのRow-Level Securityを有効にする（多層防御、オプション）"
 
 #: ../../source/mode_headless.rst:108
@@ -264,14 +265,13 @@ msgstr "``--bearoff-ts <fichier>``"
 
 #: ../../source/mode_headless.rst:110
 msgid ""
-"base de bearoff two-sided (``.bd``) optionnelle élargissant la base "
-"intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ; le "
-"démon ne télécharge jamais de base lui-même — monter le fichier en volume"
-" et le désigner ici"
+"base de bearoff two-sided (``.bd``) optionnelle élargissant la base intégrée"
+" TS-06-06 pour l'analyse de course du point d'accès EPC ; le démon ne "
+"télécharge jamais de base lui-même — monter le fichier en volume et le "
+"désigner ici"
 msgstr ""
 "EPCエンドポイントのレース分析のために内蔵のTS-06-06データベースを拡張する、オプションのtwo-sidedベアオフデータベース（\\ "
-"``.bd``\\ "
-"）；デーモンは自らデータベースをダウンロードすることはありません——ファイルをボリュームとしてマウントし、ここで指定してください"
+"``.bd``\\ ）；デーモンは自らデータベースをダウンロードすることはありません——ファイルをボリュームとしてマウントし、ここで指定してください"
 
 #: ../../source/mode_headless.rst:114
 msgid "``--identity-dir <répertoire>``"
@@ -279,10 +279,11 @@ msgstr "``--identity-dir <répertoire>``"
 
 #: ../../source/mode_headless.rst:116
 msgid ""
-"répertoire de l'identité de signature du démon (créée au premier usage) ;"
-" nécessaire pour qu'``exports.sqlite`` puisse apposer un filigrane — voir"
-" plus bas"
-msgstr "デーモンの署名用識別情報のディレクトリ（初回使用時に作成される）；``exports.sqlite``\\ が透かしを付けるために必要——詳細は後述"
+"répertoire de l'identité de signature du démon (créée au premier usage) ; "
+"nécessaire pour qu'``exports.sqlite`` puisse apposer un filigrane — voir "
+"plus bas"
+msgstr ""
+"デーモンの署名用識別情報のディレクトリ（初回使用時に作成される）；``exports.sqlite``\\ が透かしを付けるために必要——詳細は後述"
 
 #: ../../source/mode_headless.rst:120
 msgid ""
@@ -292,16 +293,16 @@ msgid ""
 "``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``)."
 msgstr ""
 "ほとんどのオプションは環境変数（\\ ``BLUNDERDB_BACKEND``\\ 、\\ ``BLUNDERDB_DSN``\\ 、\\ "
-"``BLUNDERDB_ADDR``\\ 、\\ ``BLUNDERDB_LOG_LEVEL``\\ 、\\ "
-"``BLUNDERDB_RLS``\\ 、\\ ``BLUNDERDB_TS_PATH``\\ 、\\ "
-"``BLUNDERDB_IDENTITY_DIR``\\ ）でも指定できます。"
+"``BLUNDERDB_ADDR``\\ 、\\ ``BLUNDERDB_LOG_LEVEL``\\ 、\\ ``BLUNDERDB_RLS``\\ "
+"、\\ ``BLUNDERDB_TS_PATH``\\ 、\\ ``BLUNDERDB_IDENTITY_DIR``\\ ）でも指定できます。"
 
 #: ../../source/mode_headless.rst:126
 msgid "Points d'accès"
 msgstr "エンドポイント"
 
 #: ../../source/mode_headless.rst:128
-msgid "Le service expose des points d'accès d'exploitation, toujours présents :"
+msgid ""
+"Le service expose des points d'accès d'exploitation, toujours présents :"
 msgstr "サービスは、常に利用可能な運用用のエンドポイントを公開しています："
 
 #: ../../source/mode_headless.rst:130
@@ -310,8 +311,8 @@ msgstr "``GET /healthz`` — 生存確認（プロセスが稼働中）；"
 
 #: ../../source/mode_headless.rst:131
 msgid ""
-"``GET /readyz`` — disponibilité (le stockage répond et son schéma est à "
-"la version attendue) ;"
+"``GET /readyz`` — disponibilité (le stockage répond et son schéma est à la "
+"version attendue) ;"
 msgstr "``GET /readyz`` — 準備状態（ストレージが応答し、そのスキーマが期待されるバージョンである）；"
 
 #: ../../source/mode_headless.rst:133
@@ -322,12 +323,12 @@ msgstr "``GET /metrics`` — Prometheusメトリクス（\\ ``--metrics`` が有
 msgid ""
 "Vivacité et disponibilité répondent à deux questions différentes. "
 "``/healthz`` répond toujours 200 dès que le processus sert des requêtes, "
-"sans jamais interroger le stockage : un orchestrateur redémarre le "
-"conteneur dont la vivacité échoue, et une base momentanément injoignable "
-"ne doit pas relancer en boucle un démon sain. ``/readyz`` répond 503 "
-"(avec ``status`` à ``down`` ou ``version_mismatch``) tant que la base ne "
-"répond pas ou que son schéma n'est pas celui du binaire : le trafic est "
-"simplement détourné jusqu'à ce qu'elle revienne."
+"sans jamais interroger le stockage : un orchestrateur redémarre le conteneur"
+" dont la vivacité échoue, et une base momentanément injoignable ne doit pas "
+"relancer en boucle un démon sain. ``/readyz`` répond 503 (avec ``status`` à "
+"``down`` ou ``version_mismatch``) tant que la base ne répond pas ou que son "
+"schéma n'est pas celui du binaire : le trafic est simplement détourné "
+"jusqu'à ce qu'elle revienne."
 msgstr ""
 "生存確認と準備状態は別々の問いに答えます。\\ ``/healthz``\\ はプロセスがリクエストを処理できる状態になれば常に 200 "
 "を返し、ストレージには一切問い合わせません。オーケストレーターは生存確認に失敗したコンテナを再起動するため、一時的に到達できないデータベースのせいで健全なデーモンが再起動を繰り返してはならないからです。\\"
@@ -337,37 +338,35 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:144
 msgid ""
-"La sous-commande ``blunderdb healthcheck`` (présente aussi dans le "
-"binaire ``serve`` de l'image conteneur) effectue une requête ``GET "
-"/readyz`` sur le démon local et rend ``0`` s'il est disponible, ``1`` "
-"sinon ; l'adresse est celle de ``--addr`` ou de ``BLUNDERDB_ADDR``, par "
-"défaut ``:8080``. C'est le ``HEALTHCHECK`` de l'image Docker, et elle "
-"vaut tout autant dans un script ou une unité systemd :"
+"La sous-commande ``blunderdb healthcheck`` (présente aussi dans le binaire "
+"``serve`` de l'image conteneur) effectue une requête ``GET /readyz`` sur le "
+"démon local et rend ``0`` s'il est disponible, ``1`` sinon ; l'adresse est "
+"celle de ``--addr`` ou de ``BLUNDERDB_ADDR``, par défaut ``:8080``. C'est le"
+" ``HEALTHCHECK`` de l'image Docker, et elle vaut tout autant dans un script "
+"ou une unité systemd :"
 msgstr ""
 "サブコマンド\\ ``blunderdb healthcheck``\\ （コンテナイメージの\\ ``serve``\\ "
 "バイナリにも含まれます）はローカルのデーモンに\\ ``GET /readyz``\\ リクエストを送り、準備ができていれば\\ ``0``\\ "
 "、それ以外は\\ ``1``\\ を返します。アドレスは\\ ``--addr``\\ または\\ ``BLUNDERDB_ADDR``\\ "
-"のもので、既定は\\ ``:8080``\\ です。これが Docker イメージの\\ ``HEALTHCHECK``\\ であり、スクリプトや"
-" systemd ユニットからも同様に使えます："
+"のもので、既定は\\ ``:8080``\\ です。これが Docker イメージの\\ ``HEALTHCHECK``\\ であり、スクリプトや "
+"systemd ユニットからも同様に使えます："
 
 #: ../../source/mode_headless.rst:155
 msgid ""
 "La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par "
-"exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles "
-"couvrent les positions, analyses, matchs, commentaires, collections, "
-"tournois, cartes Anki, filtres, sessions, historique (recherche et "
-"commandes), recherche, métadonnées, statistiques, import et export, ainsi"
-" que le cycle de vie des tenants (``tenant.purge``, réservé au backend "
-"PostgreSQL) et la maintenance (``maintenance.vacuum``, réservé au backend"
-" SQLite). Les endpoints de listing renvoient un flux NDJSON (un objet "
-"JSON par ligne). Le serveur s'arrête proprement sur ``SIGINT`` / "
-"``SIGTERM``."
+"exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent "
+"les positions, analyses, matchs, commentaires, collections, tournois, cartes"
+" Anki, filtres, sessions, historique (recherche et commandes), recherche, "
+"métadonnées, statistiques, import et export, ainsi que le cycle de vie des "
+"tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance "
+"(``maintenance.vacuum``, réservé au backend SQLite). Les endpoints de "
+"listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur "
+"s'arrête proprement sur ``SIGINT`` / ``SIGTERM``."
 msgstr ""
 "ビジネスロジックのインターフェースは\\ ``POST /v1/<famille>.<méthode>``\\ のスキーマに従います（例：\\ "
 "``/v1/positions.save``\\ 、\\ ``/v1/matches.get``\\ "
 "）。ファミリーには、ポジション、分析、マッチ、コメント、コレクション、トーナメント、Ankiカード、フィルター、セッション、履歴（検索とコマンド）、検索、メタデータ、統計、インポート、エクスポート、さらにテナントのライフサイクル（\\"
-" ``tenant.purge``\\ 、PostgreSQLバックエンド専用）および保守（\\ ``maintenance.vacuum``\\"
-" "
+" ``tenant.purge``\\ 、PostgreSQLバックエンド専用）および保守（\\ ``maintenance.vacuum``\\ "
 "、SQLiteバックエンド専用）が含まれます。一覧取得のエンドポイントはNDJSONストリーム（1行につき1つのJSONオブジェクト）を返します。サーバーは\\"
 " ``SIGINT``\\ / \\ ``SIGTERM``\\ で正常に停止します。"
 
@@ -385,20 +384,20 @@ msgstr ""
 msgid ""
 "``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions, "
 "collections, matchs, tournois, analyses, commentaires, coups joués, "
-"bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable"
-" tel quel par le poste de travail ; il n'existe pas encore d'export "
-"partiel côté serveur (cette sélection est un geste du bureau ou de la "
-"CLI). Le corps JSON de la requête est optionnel et n'accepte que "
-"``watermarkOrigin`` / ``watermarkNote``, pour apposer un filigrane signé "
-"de l'identité propre du démon (``--identity-dir``) — sans ces champs, "
-"l'export ne porte aucun filigrane ; les demander sans identité configurée"
-" échoue avec le code ``invalid``."
+"bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable "
+"tel quel par le poste de travail ; il n'existe pas encore d'export partiel "
+"côté serveur (cette sélection est un geste du bureau ou de la CLI). Le corps"
+" JSON de la requête est optionnel et n'accepte que ``watermarkOrigin`` / "
+"``watermarkNote``, pour apposer un filigrane signé de l'identité propre du "
+"démon (``--identity-dir``) — sans ces champs, l'export ne porte aucun "
+"filigrane ; les demander sans identité configurée échoue avec le code "
+"``invalid``."
 msgstr ""
 "``POST /v1/exports.sqlite``\\ "
 "は現在のテナント全体——ポジション、コレクション、マッチ、トーナメント、分析、コメント、打たれた着手、フィルターライブラリ、Anki "
 "デッキ——を、デスクトップ機でそのまま開ける SQLite "
-"ファイルにエクスポートします。サーバー側での部分エクスポートはまだ存在しません（この選別はデスクトップ側または CLI "
-"側の操作です）。リクエストの JSON 本文は省略可能で、``watermarkOrigin`` / ``watermarkNote``\\ "
+"ファイルにエクスポートします。サーバー側での部分エクスポートはまだ存在しません（この選別はデスクトップ側または CLI 側の操作です）。リクエストの "
+"JSON 本文は省略可能で、``watermarkOrigin`` / ``watermarkNote``\\ "
 "のみを受け付け、デーモン自身の識別情報（``--identity-"
 "dir``）で署名した透かしを付けます——これらのフィールドがなければエクスポートに透かしは付きません；識別情報が設定されていない状態でこれらを指定すると、``invalid``\\"
 " コードで失敗します。"
@@ -407,44 +406,42 @@ msgstr ""
 #, fuzzy
 msgid ""
 "La famille ``anki`` gagne six méthodes qui étendent le planificateur à "
-"répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque "
-"révision — notation et résultat FSRS — pour les statistiques de rétention"
-" et un historique fidèle), ``anki.forecast`` (projection du nombre de "
-"cartes dues sur les prochains jours, cartes en retard comprises), "
-"``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard`` (retirer "
-"une carte de la file de révision temporairement ou définitivement) et "
-"``anki.retention`` (taux de réussite mesuré sur les révisions d'un "
-"paquet, lu en regard de la cible que son propriétaire a fixée)."
+"répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —"
+" notation et résultat FSRS — pour les statistiques de rétention et un "
+"historique fidèle), ``anki.forecast`` (projection du nombre de cartes dues "
+"sur les prochains jours, cartes en retard comprises), ``anki.suspendCard`` /"
+" ``anki.buryCard`` / ``anki.removeCard`` (retirer une carte de la file de "
+"révision temporairement ou définitivement) et ``anki.retention`` (taux de "
+"réussite mesuré sur les révisions d'un paquet, lu en regard de la cible que "
+"son propriétaire a fixée)."
 msgstr ""
-"``anki`` ファミリーには、間隔反復スケジューラ（FSRS）を拡張する6つの新しいメソッドが加わります： "
-"``anki.reviewLog``\\ （各復習の記録 — 評価とFSRSの結果 — 保持率の統計と正確な履歴のため）、\\ "
-"``anki.forecast``\\ （今後数日間に期限が来るカード数の予測、期限超過のカードを含む）、\\ "
-"``anki.suspendCard`` / ``anki.buryCard`` / ``anki.removeCard``\\ "
-"（カードを復習キューから一時的または完全に取り除く）、および ``anki.optimizeParams``\\ "
-"（デッキの目標保持率を、その復習で観測された成功率に近づける）。"
+"``anki`` ファミリーには、間隔反復スケジューラ（FSRS）を拡張する6つの新しいメソッドが加わります： ``anki.reviewLog``\\"
+" （各復習の記録 — 評価とFSRSの結果 — 保持率の統計と正確な履歴のため）、\\ ``anki.forecast``\\ "
+"（今後数日間に期限が来るカード数の予測、期限超過のカードを含む）、\\ ``anki.suspendCard`` / ``anki.buryCard``"
+" / ``anki.removeCard``\\ （カードを復習キューから一時的または完全に取り除く）、および "
+"``anki.optimizeParams``\\ （デッキの目標保持率を、その復習で観測された成功率に近づける）。"
 
 #: ../../source/mode_headless.rst:193
 msgid ""
-"``anki.retention`` remplace ``anki.optimizeParams``, qui ajustait la "
-"cible vers le taux observé et pouvait l'écrire. La cible de rétention est"
-" un **choix** sur le compromis charge/qualité, le taux mesuré en est le "
-"**résultat**, et asservir l'un à l'autre est le mécanisme que les auteurs"
-" de FSRS écartent. La méthode mesure désormais, sans jamais écrire."
+"``anki.retention`` remplace ``anki.optimizeParams``, qui ajustait la cible "
+"vers le taux observé et pouvait l'écrire. La cible de rétention est un "
+"**choix** sur le compromis charge/qualité, le taux mesuré en est le "
+"**résultat**, et asservir l'un à l'autre est le mécanisme que les auteurs de"
+" FSRS écartent. La méthode mesure désormais, sans jamais écrire."
 msgstr ""
 
 #: ../../source/mode_headless.rst:199
 msgid ""
-"La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne"
-" de statistiques par joueur (matchs, victoires/défaites, décisions "
-"comptées, PR global / pions / videau, Snowie Error Rate, erreurs, "
-"blunders et chance) sur les matchs retenus par le filtre transmis. Comme "
-"dans l'interface graphique, ce tableau n'honore du filtre que la période,"
-" les tournois et la longueur des matchs : la sélection d'un joueur et le "
-"type de décision sont ignorés, puisque le tableau porte sur tous les "
-"joueurs et ventile déjà pions et videau en colonnes distinctes. Le champ "
-"``luck_known`` indique si la chance a été mesurée pour ce joueur ; "
-"``luck_rate_mp`` ne doit pas être lu quand il vaut ``false``, une chance "
-"inconnue n'étant pas une chance nulle."
+"La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne de"
+" statistiques par joueur (matchs, victoires/défaites, décisions comptées, PR"
+" global / pions / videau, Snowie Error Rate, erreurs, blunders et chance) "
+"sur les matchs retenus par le filtre transmis. Comme dans l'interface "
+"graphique, ce tableau n'honore du filtre que la période, les tournois et la "
+"longueur des matchs : la sélection d'un joueur et le type de décision sont "
+"ignorés, puisque le tableau porte sur tous les joueurs et ventile déjà pions"
+" et videau en colonnes distinctes. Le champ ``luck_known`` indique si la "
+"chance a été mesurée pour ce joueur ; ``luck_rate_mp`` ne doit pas être lu "
+"quand il vaut ``false``, une chance inconnue n'étant pas une chance nulle."
 msgstr ""
 "``stats`` ファミリーは ``stats.playerTable`` "
 "を提供します。これは、渡されたフィルタが残した対戦について、プレイヤーごとに1行の統計（対戦数、勝敗、集計された判断数、PR "
@@ -455,16 +452,15 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:210
 msgid ""
-"Le filtre transmis aux méthodes ``stats`` accepte, à côté de "
-"``PlayerName``, un champ ``PlayerAliases`` : les autres orthographes sous"
-" lesquelles la même personne a signé. Le nom d'un joueur étant saisi à la"
-" main dans chaque fichier, une même personne apparaît couramment sous "
-"plusieurs graphies, et un filtre qui n'en retient qu'une calcule sur une "
-"partie des matchs sans que rien n'ait l'air anormal. Le champ est "
-"purement additif : les décisions de n'importe lequel des noms sont "
-"retenues. Fusionner les noms en base (``MergePlayers``) est l'autre "
-"réponse, à réserver aux bases qu'on n'a pas reçues de quelqu'un d'autre —"
-" elle réécrit les matchs de tout le monde."
+"Le filtre transmis aux méthodes ``stats`` accepte, à côté de ``PlayerName``,"
+" un champ ``PlayerAliases`` : les autres orthographes sous lesquelles la "
+"même personne a signé. Le nom d'un joueur étant saisi à la main dans chaque "
+"fichier, une même personne apparaît couramment sous plusieurs graphies, et "
+"un filtre qui n'en retient qu'une calcule sur une partie des matchs sans que"
+" rien n'ait l'air anormal. Le champ est purement additif : les décisions de "
+"n'importe lequel des noms sont retenues. Fusionner les noms en base "
+"(``MergePlayers``) est l'autre réponse, à réserver aux bases qu'on n'a pas "
+"reçues de quelqu'un d'autre — elle réécrit les matchs de tout le monde."
 msgstr ""
 "``stats`` の各メソッドに渡すフィルタは、``PlayerName`` に加えて ``PlayerAliases`` "
 "フィールドを受け付けます。これは同じ人物が用いた別の表記のことです。プレイヤー名は各ファイルに手で入力されるため、同一人物が複数の表記で現れるのは珍しくなく、そのうち1つだけを見るフィルタは、何も異常に見えないまま一部の対戦だけで計算してしまいます。このフィールドは純粋に加算的で、いずれかの名前に該当する判断がすべて残ります。もう一つの答えはデータベース上で名前を統合すること（``MergePlayers``）ですが、これは他人から受け取ったものではないデータベースに限るべきです。全員の対戦を書き換えてしまうからです。"
@@ -474,31 +470,28 @@ msgid ""
 "Deux méthodes complètent la parité avec l'interface graphique : "
 "``stats.tournamentBadges`` renvoie, pour chaque tournoi de la base, "
 "l'indicateur affiché sur sa vignette (PR du joueur de référence), et "
-"``matches.findByHash`` indique si un match donné est déjà présent, à "
-"partir des deux empreintes de détection de doublon — de quoi éviter un "
-"import redondant avant de l'engager."
+"``matches.findByHash`` indique si un match donné est déjà présent, à partir "
+"des deux empreintes de détection de doublon — de quoi éviter un import "
+"redondant avant de l'engager."
 msgstr ""
 "2つのメソッドがグラフィカルインターフェースとの対等性を完成させます。``stats.tournamentBadges`` "
-"はデータベース内の各トーナメントについて、そのカードに表示される指標（基準プレイヤーの "
-"PR）を返します。``matches.findByHash`` "
+"はデータベース内の各トーナメントについて、そのカードに表示される指標（基準プレイヤーの PR）を返します。``matches.findByHash`` "
 "は重複検出用の2つのフィンガープリントから、その対戦がすでに存在するかどうかを示します。重複したインポートを、始める前に避けるのに十分です。"
 
 #: ../../source/mode_headless.rst:226
 msgid ""
-"``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse "
-"(dont ``cube_error``) à partir de son analyse complète, et renvoie le "
-"nombre de lignes **réellement** corrigées. Ces colonnes ne sont qu'une "
-"projection : une erreur de projection se répare donc sans réimporter les "
-"fichiers source. L'opération est explicite et n'est jamais déclenchée "
-"toute seule — ni à l'ouverture d'une base, ni par une migration, le "
-"schéma n'étant pas en cause. Une analyse illisible est laissée telle "
-"quelle plutôt que remise à zéro. Le cas d'usage connu : les non-doubles "
-"étiquetés « Double No » par gnuBG, dont la lecture était fautive avant la"
-" version 0.33.0 et qui portaient l'erreur d'un double qui n'a jamais eu "
-"lieu."
+"``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse (dont"
+" ``cube_error``) à partir de son analyse complète, et renvoie le nombre de "
+"lignes **réellement** corrigées. Ces colonnes ne sont qu'une projection : "
+"une erreur de projection se répare donc sans réimporter les fichiers source."
+" L'opération est explicite et n'est jamais déclenchée toute seule — ni à "
+"l'ouverture d'une base, ni par une migration, le schéma n'étant pas en "
+"cause. Une analyse illisible est laissée telle quelle plutôt que remise à "
+"zéro. Le cas d'usage connu : les non-doubles étiquetés « Double No » par "
+"gnuBG, dont la lecture était fautive avant la version 0.33.0 et qui "
+"portaient l'erreur d'un double qui n'a jamais eu lieu."
 msgstr ""
-"``analyses.repair`` は、分析の非正規化列（``cube_error`` を含む）を完全な分析から再計算し、\\ "
-"**実際に**\\ "
+"``analyses.repair`` は、分析の非正規化列（``cube_error`` を含む）を完全な分析から再計算し、\\ **実際に**\\ "
 "修正された行数を返します。これらの列は射影にすぎません。したがって射影の誤りは、元ファイルを再インポートせずに修復できます。この操作は明示的であり、決して自動では実行されません。データベースを開いたときにも、マイグレーションによっても実行されません。スキーマに原因はないからです。読み取れない分析はゼロに戻すのではなく、そのまま残します。既知の事例は、gnuBG"
 " が「Double No」と記録するノーダブルです。バージョン 0.33.0 "
 "より前は読み取りが誤っており、実際には起きなかったダブルの誤差を抱えていました。"
@@ -507,75 +500,106 @@ msgstr ""
 msgid ""
 "``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant "
 "courant : écrire une analyse pour chaque position qui n'en a aucune "
-"(ADR-0013, ADR-0015). C'est une opération de **bibliothèque** — elle lit "
-"et écrit des positions et des analyses stockées — jamais un évaluateur nu"
-" : ``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` "
-"évalue une position. La réponse est un flux NDJSON (``started``, "
-"``progress``, puis ``done`` ou ``error``/``cancelled``), sur le même "
-"modèle que les points d'accès d'import ; "
-"``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` reçu dans "
-"l'évènement ``started``) annule un rattrapage en cours. C'est la même "
-"opération que le déclenchement automatique après import et le geste "
+"(ADR-0013, ADR-0015). C'est une opération de **bibliothèque** — elle lit et "
+"écrit des positions et des analyses stockées — jamais un évaluateur nu : "
+"``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` évalue "
+"une position. La réponse est un flux NDJSON (``started``, ``progress``, puis"
+" ``done`` ou ``error``/``cancelled``), sur le même modèle que les points "
+"d'accès d'import ; ``gammonnet.analyzeMissing.cancel`` (avec le ``job_id`` "
+"reçu dans l'évènement ``started``) annule un rattrapage en cours et sert "
+"indifféremment pour un rattrapage ou une réanalyse (ci-dessous). C'est la "
+"même opération que le déclenchement automatique après import et le geste "
 "explicite de l'interface graphique, et que la sous-commande ``blunderdb "
 "analyze`` (voir :ref:`cli`) — trois formes, une seule logique."
 msgstr ""
 "``gammonnet.analyzeMissing`` は現在のテナントの gammonNet "
-"補完分析を起動します：分析を一つも持たないポジションごとに分析を書き込みます（ADR-0013、ADR-0015）。これは\\ "
-"**ライブラリ**\\ の操作であり——保存されたポジションと分析を読み書きします——決して素の評価エンジンではありません：\\ "
-"``blunderdb serve`` はライブラリに対して動作し、\\ ``gammonnet serve`` "
-"は一つのポジションを評価します。応答は NDJSON ストリーム（``started``、``progress``、次いで ``done`` "
-"または ``error``/``cancelled``）で、インポートのエンドポイントと同じモデルに従います；\\ "
+"補完分析を起動します：分析を一つも持たないポジションごとに分析を書き込みます（ADR-0013、ADR-0015）。これは\\ **ライブラリ**\\ "
+"の操作であり——保存されたポジションと分析を読み書きします——決して素の評価エンジンではありません：\\ ``blunderdb serve`` "
+"はライブラリに対して動作し、\\ ``gammonnet serve`` は一つのポジションを評価します。応答は NDJSON "
+"ストリーム（``started``、``progress``、次いで ``done`` または "
+"``error``/``cancelled``）で、インポートのエンドポイントと同じモデルに従います；\\ "
 "``gammonnet.analyzeMissing.cancel``\\ （``started`` イベントで受け取った ``job_id`` "
-"を添えて）は進行中の補完分析をキャンセルします。これはインポート後の自動起動や GUI の明示的な操作、そして ``blunderdb "
-"analyze`` サブコマンド（:ref:`cli` を参照）と同じ操作です——三つの形、一つのロジック。"
+"を添えて）は進行中の補完分析をキャンセルし、補完分析にも再解析（下記）にも区別なく使えます。これはインポート後の自動起動や GUI "
+"の明示的な操作、そして ``blunderdb analyze`` サブコマンド（:ref:`cli` "
+"を参照）と同じ操作です——三つの形、一つのロジック。"
 
-#: ../../source/mode_headless.rst:253
+#: ../../source/mode_headless.rst:251
+msgid ""
+"``gammonnet.sweepStale`` est le pendant de ``analyzeMissing`` pour la "
+"réanalyse plutôt que le comblement : chaque position dont l'analyse est "
+"entièrement issue de gammonNet mais périmée — une version de moteur plus "
+"ancienne que celle en cours d'exécution, ou une profondeur différente de "
+"``ply`` — est réévaluée à la profondeur demandée. Le prédicat de péremption "
+"est partagé avec le même lot de l'interface graphique et de ``blunderdb "
+"analyze --stale`` (aucune duplication de la logique entre les trois modes) ;"
+" une position portant une analyse XG, GNUbg ou BGBlitz n'est jamais touchée,"
+" quel que soit son contenu gammonNet — la protection d'ADR-0013 reste "
+"inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et l'évènement "
+"final de chacune des deux routes porte désormais la répartition "
+"``evaluated``/``refused``/``failed`` : une position que gammonNet refuse "
+"d'évaluer (un score de match hors de la portée de sa table, une décision de "
+"videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle"
+" n'est jamais retentée en vain sur la passe suivante, contrairement à une "
+"position réellement en échec."
+msgstr ""
+"``gammonnet.sweepStale`` は、穴埋めではなく再解析のための ``analyzeMissing`` "
+"の対になるものです：その解析が完全に gammonNet "
+"自身のものでありながら古くなっているポジション——現在実行中のものより古いエンジンバージョン、または ``ply`` "
+"と異なる深度——は、要求された深度で再評価されます。この陳腐化の述語は、GUI の同じロットと ``blunderdb analyze "
+"--stale`` とで共有されています（三つのモードの間でロジックが重複することはありません）；XG、GNUbg、BGBlitz "
+"のいずれかの解析を持つポジションは、その gammonNet の内容にかかわらず決して触れられません——ADR-0013 "
+"の保護は無条件のままです。``analyzeMissing`` と同じ NDJSON 形式であり、二つのルートそれぞれの最終イベントは、今や "
+"``evaluated``/``refused``/``failed`` の内訳を持ちます：gammonNet "
+"が評価を拒否するポジション（そのテーブルの範囲を超えたマッチスコア、モデルが拒否するダブリングの決定など）は\\ ``refused``\\ "
+"として数えられ、\\ ``failed``\\ "
+"としては数えられません——本当に失敗したポジションとは異なり、次のパスで無駄に再試行されることは決してありません。"
+
+#: ../../source/mode_headless.rst:271
 msgid "Déploiement avec Docker"
 msgstr "Docker によるデプロイ"
 
-#: ../../source/mode_headless.rst:255
+#: ../../source/mode_headless.rst:273
 msgid ""
-"Le dépôt fournit un ``Dockerfile.serve`` qui construit une image "
-"conteneur minimale du démon : seul le binaire ``serve`` est compilé (Go "
-"pur, sans interface graphique et sans CGO, donc lié statiquement), puis "
-"placé dans une image *distroless*."
+"Le dépôt fournit un ``Dockerfile.serve`` qui construit une image conteneur "
+"minimale du démon : seul le binaire ``serve`` est compilé (Go pur, sans "
+"interface graphique et sans CGO, donc lié statiquement), puis placé dans une"
+" image *distroless*."
 msgstr ""
-"リポジトリには、デーモンの最小限のコンテナイメージを構築する ``Dockerfile.serve`` が含まれています：\\ "
-"``serve``\\ バイナリのみがコンパイルされ（純粋なGo、グラフィカルインターフェースなし、CGOなしで静的リンク）、\\ "
-"*distroless*\\ イメージに配置されます。"
+"リポジトリには、デーモンの最小限のコンテナイメージを構築する ``Dockerfile.serve`` が含まれています：\\ ``serve``\\ "
+"バイナリのみがコンパイルされ（純粋なGo、グラフィカルインターフェースなし、CGOなしで静的リンク）、\\ *distroless*\\ "
+"イメージに配置されます。"
 
-#: ../../source/mode_headless.rst:270
+#: ../../source/mode_headless.rst:288
 msgid ""
 "L'image écoute sur le port 8080 et se configure par variables "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
-"``BLUNDERDB_ADDR``, ``BLUNDERDB_RLS``). Elle déclare un ``HEALTHCHECK`` "
-"qui lance toutes les 30 secondes ``blunderdb healthcheck`` (une requête "
-"sur ``/readyz`` — l'image *distroless* n'a ni ``curl`` ni shell) : "
-"``docker ps`` affiche l'état ``healthy`` ou ``unhealthy`` du conteneur, "
-"et Compose ou un orchestrateur peuvent attendre que le démon soit "
-"disponible avant de démarrer ce qui en dépend."
+"``BLUNDERDB_ADDR``, ``BLUNDERDB_RLS``). Elle déclare un ``HEALTHCHECK`` qui "
+"lance toutes les 30 secondes ``blunderdb healthcheck`` (une requête sur "
+"``/readyz`` — l'image *distroless* n'a ni ``curl`` ni shell) : ``docker ps``"
+" affiche l'état ``healthy`` ou ``unhealthy`` du conteneur, et Compose ou un "
+"orchestrateur peuvent attendre que le démon soit disponible avant de "
+"démarrer ce qui en dépend."
 msgstr ""
-"イメージはポート8080でリッスンし、環境変数（\\ ``BLUNDERDB_BACKEND``\\ 、\\ "
-"``BLUNDERDB_DSN``\\ 、\\ ``BLUNDERDB_ADDR``\\ 、\\ ``BLUNDERDB_RLS``\\ "
-"）で設定します。イメージは 30 秒ごとに\\ ``blunderdb healthcheck``\\ を実行する\\ "
-"``HEALTHCHECK``\\ を宣言しています（\\ ``/readyz``\\ へのリクエスト — *distroless* "
-"イメージには\\ ``curl``\\ もシェルもありません）。\\ ``docker ps``\\ はコンテナの状態を\\ "
-"``healthy``\\ または\\ ``unhealthy``\\ と表示し、Compose "
-"やオーケストレーターはデーモンの準備が整うのを待ってから、それに依存するものを起動できます。"
+"イメージはポート8080でリッスンし、環境変数（\\ ``BLUNDERDB_BACKEND``\\ 、\\ ``BLUNDERDB_DSN``\\ "
+"、\\ ``BLUNDERDB_ADDR``\\ 、\\ ``BLUNDERDB_RLS``\\ ）で設定します。イメージは 30 秒ごとに\\ "
+"``blunderdb healthcheck``\\ を実行する\\ ``HEALTHCHECK``\\ を宣言しています（\\ "
+"``/readyz``\\ へのリクエスト — *distroless* イメージには\\ ``curl``\\ もシェルもありません）。\\ "
+"``docker ps``\\ はコンテナの状態を\\ ``healthy``\\ または\\ ``unhealthy``\\ と表示し、Compose"
+" やオーケストレーターはデーモンの準備が整うのを待ってから、それに依存するものを起動できます。"
 
-#: ../../source/mode_headless.rst:282
+#: ../../source/mode_headless.rst:300
 msgid "Image publiée"
 msgstr "公開イメージ"
 
-#: ../../source/mode_headless.rst:284
+#: ../../source/mode_headless.rst:302
 msgid ""
 "Il n'est pas nécessaire de construire l'image soi-même : chaque version "
-"publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous"
-" le nom ``ghcr.io/kevung/blunderdb-serve``. Deux étiquettes sont "
-"disponibles : le numéro de version (par exemple ``0.34.0``), figé à "
-"jamais, et ``latest``, qui suit la dernière version publiée. L'image est "
-"fournie pour ``linux/amd64`` et ``linux/arm64`` ; Docker choisit "
-"l'architecture de l'hôte."
+"publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous le"
+" nom ``ghcr.io/kevung/blunderdb-serve``. Deux étiquettes sont disponibles : "
+"le numéro de version (par exemple ``0.34.0``), figé à jamais, et ``latest``,"
+" qui suit la dernière version publiée. L'image est fournie pour "
+"``linux/amd64`` et ``linux/arm64`` ; Docker choisit l'architecture de "
+"l'hôte."
 msgstr ""
 "イメージを自分でビルドする必要はありません：blunderDBの公開バージョンごとに、GitHubレジストリ（GHCR）に\\ "
 "``ghcr.io/kevung/blunderdb-serve``\\ "
@@ -583,80 +607,82 @@ msgstr ""
 "）と、最新の公開バージョンを追う\\ ``latest``\\ です。イメージは\\ ``linux/amd64``\\ と\\ "
 "``linux/arm64``\\ 向けに提供されており、Dockerがホストのアーキテクチャを選択します。"
 
-#: ../../source/mode_headless.rst:306
+#: ../../source/mode_headless.rst:324
 msgid ""
 "L'image porte les étiquettes OCI usuelles "
 "(``org.opencontainers.image.source``, ``.version``, ``.revision``, "
-"``.licenses``) : ``docker inspect`` dit de quel commit et de quelle "
-"version elle provient. Elle est construite par l'intégration continue à "
-"partir du ``Dockerfile.serve`` du dépôt, exactement comme ci-dessus ; "
-"construire localement ou tirer l'image publiée donne le même binaire."
+"``.licenses``) : ``docker inspect`` dit de quel commit et de quelle version "
+"elle provient. Elle est construite par l'intégration continue à partir du "
+"``Dockerfile.serve`` du dépôt, exactement comme ci-dessus ; construire "
+"localement ou tirer l'image publiée donne le même binaire."
 msgstr ""
-"イメージには通常のOCIラベル（\\ ``org.opencontainers.image.source``\\ 、\\ "
-"``.version``\\ 、\\ ``.revision``\\ 、\\ ``.licenses``\\ ）が付いており、\\ "
-"``docker inspect``\\ "
-"でどのコミットとバージョンに由来するかが分かります。イメージは、上記とまったく同じ手順で、リポジトリの\\ "
-"``Dockerfile.serve``\\ "
-"から継続的インテグレーションによってビルドされます。ローカルでビルドしても公開イメージを取得しても、同じバイナリが得られます。"
+"イメージには通常のOCIラベル（\\ ``org.opencontainers.image.source``\\ 、\\ ``.version``\\ "
+"、\\ ``.revision``\\ 、\\ ``.licenses``\\ ）が付いており、\\ ``docker inspect``\\ "
+"でどのコミットとバージョンに由来するかが分かります。イメージは、上記とまったく同じ手順で、リポジトリの\\ ``Dockerfile.serve``\\"
+" から継続的インテグレーションによってビルドされます。ローカルでビルドしても公開イメージを取得しても、同じバイナリが得られます。"
 
-#: ../../source/mode_headless.rst:314
+#: ../../source/mode_headless.rst:332
 msgid ""
-"Comme le démon lui-même, le conteneur n'effectue **aucune "
-"authentification** (ADR-0005) : il fait confiance à l'en-tête ``X-Tenant-"
-"ID`` tel qu'il le reçoit. Il doit être placé derrière un reverse-proxy "
-"chargé de l'authentification, qui fixe cet en-tête lui-même, et ne jamais"
-" être exposé directement sur l'Internet public. Les exemples ci-dessus "
-"publient le port sur ``127.0.0.1`` seulement pour cette raison."
+"Comme le démon lui-même, le conteneur n'effectue **aucune authentification**"
+" (ADR-0005) : il fait confiance à l'en-tête ``X-Tenant-ID`` tel qu'il le "
+"reçoit. Il doit être placé derrière un reverse-proxy chargé de "
+"l'authentification, qui fixe cet en-tête lui-même, et ne jamais être exposé "
+"directement sur l'Internet public. Les exemples ci-dessus publient le port "
+"sur ``127.0.0.1`` seulement pour cette raison."
 msgstr ""
-"デーモン自体と同様に、コンテナは\\ **一切の認証を行いません**\\ （ADR-0005）：受け取った\\ ``X-Tenant-ID``\\"
-" "
+"デーモン自体と同様に、コンテナは\\ **一切の認証を行いません**\\ （ADR-0005）：受け取った\\ ``X-Tenant-ID``\\ "
 "ヘッダーをそのまま信頼します。認証を担い、このヘッダー自体を設定するリバースプロキシの背後に配置しなければならず、公開インターネット上に直接公開してはいけません。上記の例がポートを\\"
 " ``127.0.0.1``\\ のみに公開しているのはこのためです。"
 
-#: ../../source/mode_headless.rst:324
+#: ../../source/mode_headless.rst:342
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "PostgreSQLバックエンドとマルチユーザー"
 
-#: ../../source/mode_headless.rst:326
+#: ../../source/mode_headless.rst:344
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
-"**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
-"sélectionné par ``--backend postgres`` et la chaîne de connexion "
-"``--dsn``. Le schéma est créé et migré automatiquement au démarrage."
+"**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est sélectionné"
+" par ``--backend postgres`` et la chaîne de connexion ``--dsn``. Le schéma "
+"est créé et migré automatiquement au démarrage."
 msgstr ""
 "共有デプロイの場合、blunderDBはSQLiteファイルではなく **PostgreSQL** にデータを保存できます。バックエンドは "
-"``--backend postgres`` と接続文字列 ``--dsn`` "
-"で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。"
+"``--backend postgres`` と接続文字列 ``--dsn`` で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。"
 
-#: ../../source/mode_headless.rst:331
+#: ../../source/mode_headless.rst:349
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier "
 "décimal positif comme ``1`` ou ``42``), ce qui permet à plusieurs "
-"utilisateurs de partager la même instance sans voir les données des "
-"autres. Un identifiant qui n'est pas un tel entier — un nom comme "
-"``alice`` ou ``default``, ``0``, ``007`` — est refusé avec ``400 "
-"invalid`` : c'est le reverse-proxy qui associe un compte à son entier, le"
-" démon ne devine jamais. L'option ``--rls`` active en complément la "
-"**Row-Level Security** de PostgreSQL : des politiques d'isolation par "
-"tenant sont installées et ``app.tenant_id`` est fixé par connexion. C'est"
-" une défense en profondeur facultative, désactivée par défaut."
+"utilisateurs de partager la même instance sans voir les données des autres. "
+"Un identifiant qui n'est pas un tel entier — un nom comme ``alice`` ou "
+"``default``, ``0``, ``007`` — est refusé avec ``400 invalid`` : c'est le "
+"reverse-proxy qui associe un compte à son entier, le démon ne devine jamais."
+" L'option ``--rls`` active en complément la **Row-Level Security** de "
+"PostgreSQL : des politiques d'isolation par tenant sont installées et "
+"``app.tenant_id`` est fixé par connexion. C'est une défense en profondeur "
+"facultative, désactivée par défaut."
 msgstr ""
-"データは\\ **テナント（利用者）ごとに分離**\\ されています：各リクエストには自身のテナントの識別子（ヘッダー ``X-Tenant-ID``\\ 、\\ ``1``\\ や\\ ``42``\\ のような正の10進整数）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。そのような整数でない識別子 — \\ ``alice``\\ や\\ ``default``\\ のような名前、\\ ``0``\\ 、\\ ``007`` — は\\ ``400 invalid``\\ で拒否されます：アカウントをその整数に対応付けるのはリバースプロキシであり、デーモンは決して推測しません。\\ ``--rls`` オプションは、補完的にPostgreSQLの **Row-Level Security** を有効にします：テナントごとの分離ポリシーがインストールされ、\\ ``app.tenant_id`` が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
+"データは\\ **テナント（利用者）ごとに分離**\\ されています：各リクエストには自身のテナントの識別子（ヘッダー ``X-Tenant-"
+"ID``\\ 、\\ ``1``\\ や\\ ``42``\\ "
+"のような正の10進整数）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。そのような整数でない識別子 — "
+"\\ ``alice``\\ や\\ ``default``\\ のような名前、\\ ``0``\\ 、\\ ``007`` — は\\ ``400 "
+"invalid``\\ で拒否されます：アカウントをその整数に対応付けるのはリバースプロキシであり、デーモンは決して推測しません。\\ "
+"``--rls`` オプションは、補完的にPostgreSQLの **Row-Level Security** "
+"を有効にします：テナントごとの分離ポリシーがインストールされ、\\ ``app.tenant_id`` "
+"が接続ごとに設定されます。これは任意の多層防御であり、デフォルトでは無効です。"
 
-#: ../../source/mode_headless.rst:342
+#: ../../source/mode_headless.rst:360
 msgid ""
 "Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
-"historique, etc.) sur le tenant courant (celui porté par ``X-Tenant-"
-"ID``), **ainsi que son état de session** (dernière recherche, dernière "
-"position, onglets ouverts — les quelques lignes ``metadata`` préfixées "
-"par ce scope) : l'opération s'exécute dans une seule transaction, est "
-"idempotente (aucune erreur à purger un tenant déjà vide ou à répéter "
-"l'appel) et n'affecte aucun autre tenant ni la ligne globale de version "
-"de schéma. Elle n'est disponible qu'avec le backend PostgreSQL — elle "
-"renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a pas de "
-"notion de tenant."
+"historique, etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``), "
+"**ainsi que son état de session** (dernière recherche, dernière position, "
+"onglets ouverts — les quelques lignes ``metadata`` préfixées par ce scope) :"
+" l'opération s'exécute dans une seule transaction, est idempotente (aucune "
+"erreur à purger un tenant déjà vide ou à répéter l'appel) et n'affecte aucun"
+" autre tenant ni la ligne globale de version de schéma. Elle n'est "
+"disponible qu'avec le backend PostgreSQL — elle renvoie une erreur "
+"``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant."
 msgstr ""
 "テナントが廃止される際、\\ ``POST /v1/tenant.purge`` は現在のテナント（\\ ``X-Tenant-ID`` "
 "が示すテナント）のすべてのデータ（ポジション、マッチ、コレクション、履歴など）を完全に削除し、\\ **そのセッションの状態**\\ "
@@ -664,49 +690,50 @@ msgstr ""
 "の数行）も削除します：この操作は単一のトランザクション内で実行され、冪等です（既に空のテナントをパージしてもエラーにはならず、呼び出しを繰り返しても問題ありません）。また、他のテナントにも、スキーマバージョンのグローバルな行にも一切影響しません。この機能はPostgreSQLバックエンドでのみ利用可能で、テナントという概念を持たないSQLiteバックエンドでは"
 " ``invalid`` エラーを返します。"
 
-#: ../../source/mode_headless.rst:353
+#: ../../source/mode_headless.rst:371
 msgid ""
-"Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier "
-"SQLite du daemon — le pendant du bouton « Compacter la base » de "
-"l'interface graphique et de la commande ``blunderdb vacuum`` (voir "
-":ref:`cli`), avec la même garde d'espace disque — et renvoie les tailles "
-"avant et après (``sizeBefore``, ``sizeAfter``, en octets). Elle n'est "
-"disponible qu'avec le backend SQLite ; sur PostgreSQL, qui n'a pas de "
-"fichier à compacter, elle renvoie une erreur ``invalid``."
+"Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier SQLite "
+"du daemon — le pendant du bouton « Compacter la base » de l'interface "
+"graphique et de la commande ``blunderdb vacuum`` (voir :ref:`cli`), avec la "
+"même garde d'espace disque — et renvoie les tailles avant et après "
+"(``sizeBefore``, ``sizeAfter``, en octets). Elle n'est disponible qu'avec le"
+" backend SQLite ; sur PostgreSQL, qui n'a pas de fichier à compacter, elle "
+"renvoie une erreur ``invalid``."
 msgstr ""
 "同様に、\\ ``POST /v1/maintenance.vacuum``\\ "
 "はデーモンのSQLiteファイルを最適化します——グラフィカルインターフェースの「データベースの最適化」ボタンおよび\\ ``blunderdb "
-"vacuum``\\ コマンド（:ref:`cli`\\ を参照）に相当し、同じディスク容量の保護を備えています——そして最適化前後のサイズ（\\"
-" ``sizeBefore``\\ 、\\ ``sizeAfter``\\ "
+"vacuum``\\ コマンド（:ref:`cli`\\ を参照）に相当し、同じディスク容量の保護を備えています——そして最適化前後のサイズ（\\ "
+"``sizeBefore``\\ 、\\ ``sizeAfter``\\ "
 "、バイト単位）を返します。この機能はSQLiteバックエンドでのみ利用可能です。圧縮すべきファイルを持たないPostgreSQLでは、\\ "
 "``invalid``\\ エラーを返します。"
 
-#: ../../source/mode_headless.rst:364
+#: ../../source/mode_headless.rst:382
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "SQLiteデータベースをPostgreSQLへ移行する"
 
-#: ../../source/mode_headless.rst:366
+#: ../../source/mode_headless.rst:384
 msgid ""
-"``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
-"backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
-" enverra dans ``X-Tenant-ID`` pour cet utilisateur — c'est le chemin pour"
-" « téléverser » une bibliothèque de bureau vers un déploiement serveur."
+"``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un backend"
+" PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy enverra "
+"dans ``X-Tenant-ID`` pour cet utilisateur — c'est le chemin pour « "
+"téléverser » une bibliothèque de bureau vers un déploiement serveur."
 msgstr ""
-"``blunderdb migrate``\\ は、単一ユーザーのSQLiteデータベースを、選択したテナント — このユーザーのためにリバースプロキシが\\ ``X-Tenant-ID``\\ で送る整数 — の下でPostgreSQLバックエンドにコピーします。これはデスクトップのライブラリをサーバー環境に「アップロード」する手段です。"
+"``blunderdb migrate``\\ は、単一ユーザーのSQLiteデータベースを、選択したテナント — "
+"このユーザーのためにリバースプロキシが\\ ``X-Tenant-ID``\\ で送る整数 — "
+"の下でPostgreSQLバックエンドにコピーします。これはデスクトップのライブラリをサーバー環境に「アップロード」する手段です。"
 
-#: ../../source/mode_headless.rst:382
+#: ../../source/mode_headless.rst:400
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
-"matchs (parties + coups), les tournois (avec leurs liens de match) et les"
-" collections (avec leur composition)**, en réattribuant les clés "
-"primaires et étrangères, le tout dans une **seule transaction** côté "
-"destination : l'opération est atomique (un échec laisse la destination "
-"intacte, il suffit de relancer). La progression et le bilan final sont "
-"émis en NDJSON sur la sortie standard. Si la base source est assez "
-"ancienne pour nécessiter sa propre mise à niveau de schéma sur place, "
-"celle-ci s'exécute d'abord et émet ses propres événements ``\"schema-"
-"migration\"`` (phase/effectué/total) avant que la copie ligne à ligne ne "
-"commence."
+"matchs (parties + coups), les tournois (avec leurs liens de match) et les "
+"collections (avec leur composition)**, en réattribuant les clés primaires et"
+" étrangères, le tout dans une **seule transaction** côté destination : "
+"l'opération est atomique (un échec laisse la destination intacte, il suffit "
+"de relancer). La progression et le bilan final sont émis en NDJSON sur la "
+"sortie standard. Si la base source est assez ancienne pour nécessiter sa "
+"propre mise à niveau de schéma sur place, celle-ci s'exécute d'abord et émet"
+" ses propres événements ``\"schema-migration\"`` (phase/effectué/total) "
+"avant que la copie ligne à ligne ne commence."
 msgstr ""
 "このマイグレーションは、\\ **ポジション、その分析とコメント、マッチ（ゲーム + "
 "手）、トーナメント（そのマッチリンクを含む）、コレクション（その構成を含む）** "
@@ -714,51 +741,49 @@ msgstr ""
 "内で行われます：操作はアトミックです（失敗しても宛先はそのまま残るため、再実行するだけで済みます）。進捗と最終的な集計は、標準出力にNDJSONで出力されます。移行元のデータベースが古く、その場でのスキーマ更新を必要とする場合は、それが先に実行され、行単位のコピーが始まる前に独自の"
 " ``\"schema-migration\"`` イベント（フェーズ／完了数／総数）を出力します。"
 
-#: ../../source/mode_headless.rst:400
+#: ../../source/mode_headless.rst:418
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:402
+#: ../../source/mode_headless.rst:420
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr "ソースのSQLiteデータベース（\\ ``sqlite:///chemin`` または単なるパス）"
 
-#: ../../source/mode_headless.rst:403
+#: ../../source/mode_headless.rst:421
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:405
+#: ../../source/mode_headless.rst:423
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "宛先のPostgreSQL DSN（\\ ``postgres://…``\\ ）"
 
-#: ../../source/mode_headless.rst:406
+#: ../../source/mode_headless.rst:424
 msgid "``--tenant-id <n>``"
-msgstr ""
-"``--tenant-id <n>``"
+msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:408
+#: ../../source/mode_headless.rst:426
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
-msgstr ""
-"移行先のテナント。正の10進整数（\\ ``--dry-run``\\ 時を除き必須。\\ ``mon-tenant``\\ のような名前は拒否されます）"
+msgstr "移行先のテナント。正の10進整数（\\ ``--dry-run``\\ 時を除き必須。\\ ``mon-tenant``\\ のような名前は拒否されます）"
 
-#: ../../source/mode_headless.rst:410
+#: ../../source/mode_headless.rst:428
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:412
+#: ../../source/mode_headless.rst:430
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "何も書き込まずに、コピーされる内容を数える"
 
-#: ../../source/mode_headless.rst:413
+#: ../../source/mode_headless.rst:431
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politique>``"
 
-#: ../../source/mode_headless.rst:414
+#: ../../source/mode_headless.rst:432
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:415
+#: ../../source/mode_headless.rst:433
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -766,89 +791,86 @@ msgstr ""
 "``\"\"`` はテナントにすでにデータがある場合に中断します；\\ ``skip`` "
 "はマージします（Zobristハッシュによるポジションの重複排除）"
 
-#: ../../source/mode_headless.rst:420
+#: ../../source/mode_headless.rst:438
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
-"métadonnées de session. La priorité est la migration de la bibliothèque "
-"de positions et de l'historique de matchs."
-msgstr "アプリケーションの状態は（まだ）移行されません：Ankiのデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。"
+"métadonnées de session. La priorité est la migration de la bibliothèque de "
+"positions et de l'historique de matchs."
+msgstr ""
+"アプリケーションの状態は（まだ）移行されません：Ankiのデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。"
 
-#: ../../source/mode_headless.rst:428
+#: ../../source/mode_headless.rst:446
 msgid "Le dispatcher générique ``call``"
 msgstr "汎用ディスパッチャ ``call``"
 
-#: ../../source/mode_headless.rst:430
+#: ../../source/mode_headless.rst:448
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
-"call`` expose **toutes** les opérations de stockage directement, en "
-"local. Il passe par les mêmes gestionnaires que le démon ``serve`` : le "
-"comportement est donc identique à ``POST /v1/<famille>.<méthode>``. C'est"
-" utile pour le scripting et les tests d'intégration."
+"call`` expose **toutes** les opérations de stockage directement, en local. "
+"Il passe par les mêmes gestionnaires que le démon ``serve`` : le "
+"comportement est donc identique à ``POST /v1/<famille>.<méthode>``. C'est "
+"utile pour le scripting et les tests d'intégration."
 msgstr ""
 "従来のサブコマンド（:ref:`cli`）を補完するものとして、\\ ``blunderdb call`` は\\ **すべての**\\ "
 "ストレージ操作をローカルで直接公開します。デーモン ``serve`` と同じハンドラを経由するため、動作は ``POST "
 "/v1/<famille>.<méthode>`` と同一です。スクリプティングや統合テストに便利です。"
 
-#: ../../source/mode_headless.rst:464
+#: ../../source/mode_headless.rst:482
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` または ``postgres``"
 
-#: ../../source/mode_headless.rst:468
+#: ../../source/mode_headless.rst:486
 msgid "``--scope <n>``"
-msgstr ""
-"``--scope <n>``"
+msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:469
+#: ../../source/mode_headless.rst:487
 msgid "``1``"
-msgstr ""
-"``1``"
+msgstr "``1``"
 
-#: ../../source/mode_headless.rst:470
+#: ../../source/mode_headless.rst:488
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
-msgstr ""
-"テナント。正の10進整数（\\ ``X-Tenant-ID``\\ として送信。\\ ``alice``\\ のような名前は拒否されます）"
+msgstr "テナント。正の10進整数（\\ ``X-Tenant-ID``\\ として送信。\\ ``alice``\\ のような名前は拒否されます）"
 
-#: ../../source/mode_headless.rst:472
+#: ../../source/mode_headless.rst:490
 msgid "``--json <chaîne>``"
 msgstr "``--json <chaîne>``"
 
-#: ../../source/mode_headless.rst:473
+#: ../../source/mode_headless.rst:491
 #, python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:474
+#: ../../source/mode_headless.rst:492
 msgid "corps de la requête au format JSON"
 msgstr "JSON形式のリクエストボディ"
 
-#: ../../source/mode_headless.rst:475
+#: ../../source/mode_headless.rst:493
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <chemin>``"
 
-#: ../../source/mode_headless.rst:477
+#: ../../source/mode_headless.rst:495
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "ファイルからリクエストボディを読み込む"
 
-#: ../../source/mode_headless.rst:478
+#: ../../source/mode_headless.rst:496
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:480
+#: ../../source/mode_headless.rst:498
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "すべての ``<famille>.<méthode>`` メソッドを表示して終了する"
 
-#: ../../source/mode_headless.rst:482
+#: ../../source/mode_headless.rst:500
 #, python-brace-format
 msgid ""
-"La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
-"écrite sur la sortie standard. En cas d'erreur, le processus se termine "
-"avec un code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur "
-"la sortie standard pour rester analysable (par exemple avec ``jq``)."
+"La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est écrite"
+" sur la sortie standard. En cas d'erreur, le processus se termine avec un "
+"code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur la sortie "
+"standard pour rester analysable (par exemple avec ``jq``)."
 msgstr ""
 "JSONレスポンス（または ``*.list`` "
 "エンドポイントの場合はNDJSONストリーム）は標準出力に書き込まれます。エラーが発生した場合、プロセスは非ゼロのコードで終了し、解析可能な状態を保つために（例えば"
 " ``jq`` で）、\\ ``{\"error\":{…}}`` というエンベロープが標準出力に出力されます。"
-

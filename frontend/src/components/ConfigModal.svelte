@@ -19,9 +19,10 @@
         CancelBearoffDownload,
         DeleteBearoffDB,
         OpenBearoffFileDialog,
-        StartGammonNetBatch
+        StartGammonNetBatch,
+        StartGammonNetStaleBatch
     } from '../../wailsjs/go/gui/App.js';
-    import { Vacuum, CountPositionsWithoutAnalysis } from '../../wailsjs/go/database/Database.js';
+    import { Vacuum, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTSPath, SaveBearoffTSPath } from '../../wailsjs/go/main/Config.js';
     import {
         GetGammonNetDisplayPly,
@@ -314,6 +315,14 @@
     // informational only — StartGammonNetBatch re-derives its own list.
     let gnMissingCount = $state(null);
     let gnCatchUpStarting = $state(false);
+    // Re-analysis of stale positions (#191): a position whose gammonNet
+    // analysis is entirely its own but was written at an older EngineVersion
+    // or a different depth than gnAnalysisPly now asks for. The count is
+    // informational only — StartGammonNetStaleBatch re-derives its own list
+    // — and depends on gnAnalysisPly, so it is refreshed whenever that
+    // changes, not just when the tab opens.
+    let gnStaleCount = $state(null);
+    let gnStaleStarting = $state(false);
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
 
@@ -335,6 +344,16 @@
             logger.error('Error counting positions without analysis:', error);
             gnMissingCount = null;
         }
+        await refreshGammonNetStaleCount();
+    }
+
+    async function refreshGammonNetStaleCount() {
+        try {
+            gnStaleCount = await CountPositionsWithStaleGammonNet(gnAnalysisPly);
+        } catch (error) {
+            logger.error('Error counting stale gammonNet positions:', error);
+            gnStaleCount = null;
+        }
     }
 
     // StatusBar.svelte owns the live progress chip/cancel button for every
@@ -351,6 +370,18 @@
         }
     }
 
+    // Re-analysis (#191): same fire-and-forget shape as the catch-up above —
+    // StartGammonNetStaleBatch shares gnBatchCancel with StartGammonNetBatch
+    // on the Go side, so only one of the two ever runs at a time.
+    async function startGammonNetStaleRerun() {
+        gnStaleStarting = true;
+        try {
+            StartGammonNetStaleBatch(gnAnalysisPly, gnPruneK, gnCandidates);
+        } finally {
+            gnStaleStarting = false;
+        }
+    }
+
     $effect(() => {
         if (visible) {
             refreshGammonNet();
@@ -364,6 +395,7 @@
 
     function onGnAnalysisPlyChange(event) {
         gnAnalysisPly = Number(event.currentTarget.value);
+        refreshGammonNetStaleCount();
         SaveGammonNetAnalysisPly(gnAnalysisPly).catch((error) => logger.error('Error saving gammonNet analysis ply:', error));
     }
 
@@ -540,6 +572,15 @@
                 </button>
             </div>
             <p class="setting-note">{$t('config.gammonnetCatchUpNote')}</p>
+            <div class="setting-row">
+                <span class="setting-label">
+                    {gnStaleCount === null ? $t('config.gammonnetStaleUnknown') : $t('config.gammonnetStaleCount', { n: gnStaleCount })}
+                </span>
+                <button class="secondary-button" disabled={gnStaleStarting || gnStaleCount === 0} onclick={startGammonNetStaleRerun}>
+                    {$t('config.gammonnetStaleStart')}
+                </button>
+            </div>
+            <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
         {:else if activeTab === 'identity'}
             <p class="setting-note">{$t('config.identityIntro')}</p>
             {#if identity?.present}

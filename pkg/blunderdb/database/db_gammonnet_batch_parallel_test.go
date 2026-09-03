@@ -71,7 +71,7 @@ func TestAnalyzeGammonNetParallelMatchesSerial(t *testing.T) {
 	run := func(jobs int) map[int64]*PositionAnalysis {
 		d := newBatchTestDB(t)
 		ids := seedBatchPositions(t, d, n)
-		if err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, jobs, nil, nil); err != nil {
+		if _, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, jobs, nil, nil); err != nil {
 			t.Fatalf("AnalyzeMissingWithGammonNet(jobs=%d): %v", jobs, err)
 		}
 		if missing, err := d.CountPositionsWithoutAnalysis(); err != nil || missing != 0 {
@@ -100,7 +100,7 @@ func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
 
 	var last int
 	var calls int
-	err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, runtime.NumCPU(), nil, func(done, total int) {
+	summary, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, runtime.NumCPU(), nil, func(done, total int) {
 		calls++
 		if done <= last {
 			t.Errorf("progress went from %d to %d: not monotone", last, done)
@@ -115,6 +115,9 @@ func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
 	}
 	if calls != n || last != n {
 		t.Errorf("progress ended at %d after %d call(s), want %d/%d", last, calls, n, n)
+	}
+	if got := summary.Processed(); got != n {
+		t.Errorf("summary.Processed() = %d, want %d", got, n)
 	}
 }
 
@@ -132,7 +135,7 @@ func TestAnalyzeGammonNetParallelCancellation(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
-		if err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 4, nil, nil); err == nil {
+		if _, err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 4, nil, nil); err == nil {
 			t.Fatal("expected context.Canceled")
 		}
 		if missing, _ := d.CountPositionsWithoutAnalysis(); missing != n {
@@ -146,7 +149,7 @@ func TestAnalyzeGammonNetParallelCancellation(t *testing.T) {
 
 		ctx, cancel := context.WithCancel(context.Background())
 		var yields atomic.Int64
-		err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 2, func() {
+		_, err := d.AnalyzeMissingWithGammonNet(ctx, 0, 0, 0, 2, func() {
 			if yields.Add(1) == 3 {
 				cancel()
 			}
@@ -164,7 +167,7 @@ func TestAnalyzeGammonNetParallelCancellation(t *testing.T) {
 		}
 
 		// Resume finishes the rest: nothing was lost, nothing was written twice.
-		if err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 4, nil, nil); err != nil {
+		if _, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 4, nil, nil); err != nil {
 			t.Fatalf("resume: %v", err)
 		}
 		if missing, _ := d.CountPositionsWithoutAnalysis(); missing != 0 {
@@ -185,9 +188,10 @@ func TestAnalyzeGammonNetParallelYieldGates(t *testing.T) {
 	release := make(chan struct{})
 	done := make(chan error, 1)
 	go func() {
-		done <- d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 4, func() {
+		_, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 4, func() {
 			<-release
 		}, nil)
+		done <- err
 	}()
 
 	time.Sleep(100 * time.Millisecond)

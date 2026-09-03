@@ -2,8 +2,9 @@ package database
 
 import (
 	"context"
+	"errors"
+	"log/slog"
 	"runtime"
-	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -31,7 +32,7 @@ func (d *Database) CountPositionsWithoutAnalysis() (int, error) {
 	defer d.mu.RUnlock()
 
 	var n int
-	err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id NOT IN (SELECT position_id FROM analysis)`).Scan(&n)
+	err := d.db.QueryRow(`SELECT COUNT(*) FROM position p WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id)`).Scan(&n)
 	return n, err
 }
 
@@ -45,7 +46,7 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	rows, err := d.db.Query(`SELECT id FROM position WHERE id NOT IN (SELECT position_id FROM analysis) ORDER BY id`)
+	rows, err := d.db.Query(`SELECT p.id FROM position p WHERE NOT EXISTS (SELECT 1 FROM analysis a WHERE a.position_id = p.id) ORDER BY p.id`)
 	if err != nil {
 		return nil, err
 	}
@@ -79,60 +80,34 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 // within at most jobs positions, not one; that is the contract now.
 //
 // onProgress is called from the single writer goroutine, with a monotone
-// counter — never a loop index, which parallel goroutines would report out
-// of order. A position that fails to load or evaluate reports nothing and
-// stops nothing: it stays without analysis and is picked up again, unchanged,
-// the next time this runs.
-func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) error {
+// counter over positions PROCESSED — evaluated, refused and failed alike
+// (#191) — never a loop index, which parallel goroutines would report out
+// of order. The returned GammonNetBatchSummary is the caller's end-of-run
+// figure: how many of the positions the snapshot named actually got a new
+// analysis, how many were legitimately skipped, and how many failed outright
+// and are picked up again, unchanged, the next time this runs.
+func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
 	ids, err := d.positionIDsWithoutAnalysis()
 	if err != nil {
-		return err
+		return GammonNetBatchSummary{}, err
 	}
 	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
 }
 
-// gammonNetEngineVersionPrefix identifies an analysis entry as gammonNet's
-// own, whatever its exact version — "gammonNet v1.0.1", "gammonNet v1.1.0",
-// … — the prefix that separates "our own past opinion, safe to recompute"
-// from "someone else's, permanently hands-off" below.
-const gammonNetEngineVersionPrefix = "gammonNet "
-
-// isStaleGammonNetOnly reports whether a's every entry is gammonNet's own
-// and at least one is older than the running build's EngineVersion —
-// ADR-0016's narrow exception to ADR-0013: a position that also carries an
-// XG, GNUbg or BGBlitz entry is never reported stale here, whatever its
-// gammonNet entries say, because ADR-0013 protects an imported analysis
-// unconditionally and this batch only ever touches its own past output.
-func isStaleGammonNetOnly(a *PositionAnalysis) bool {
-	allOurs, anyStale, sawAny := true, false, false
-	check := func(engine string) {
-		sawAny = true
-		if !strings.HasPrefix(engine, gammonNetEngineVersionPrefix) {
-			allOurs = false
-			return
-		}
-		if engine != gammonnet.EngineVersion {
-			anyStale = true
-		}
-	}
-	if a.CheckerAnalysis != nil {
-		for _, m := range a.CheckerAnalysis.Moves {
-			check(m.AnalysisEngine)
-		}
-	}
-	if a.DoublingCubeAnalysis != nil {
-		check(a.DoublingCubeAnalysis.AnalysisEngine)
-	}
-	return sawAny && allOurs && anyStale
-}
-
-// positionIDsWithStaleGammonNet snapshots the ids isStaleGammonNetOnly
-// accepts. Unlike positionIDsWithoutAnalysis this cannot be a single SQL
-// WHERE clause — AnalysisEngine lives inside the compressed JSON blob, not a
-// column — so every analysed position is loaded and decoded once. Run
-// deliberately (a version bump, not automatically), the same posture as the
-// existing gap-fill batch.
-func (d *Database) positionIDsWithStaleGammonNet() ([]int64, error) {
+// positionIDsWithStaleGammonNet snapshots the ids gammonnet.IsStaleAnalysis
+// accepts at targetDepth (gammonnet.DepthLabel(ply) — the exact string a run
+// at that ply will write). Unlike positionIDsWithoutAnalysis this cannot be
+// a single SQL WHERE clause — AnalysisEngine and AnalysisDepth live inside
+// the compressed JSON blob, not a column — so every analysed position is
+// loaded and decoded once. Run deliberately (a version bump, not
+// automatically), the same posture as the existing gap-fill batch.
+//
+// A position whose stored analysis cannot be loaded at all is logged and
+// skipped rather than silently counted as "up to date" (B.6, #174): the
+// distinction matters because the two look identical to a caller that only
+// reads the count that comes back, and an operator investigating why a
+// position never gets swept needs the log line, not a guess.
+func (d *Database) positionIDsWithStaleGammonNet(targetDepth string) ([]int64, error) {
 	d.mu.RLock()
 	ids, err := queryInt64s(d.db, `SELECT position_id FROM analysis ORDER BY position_id`)
 	d.mu.RUnlock()
@@ -143,42 +118,97 @@ func (d *Database) positionIDsWithStaleGammonNet() ([]int64, error) {
 	var stale []int64
 	for _, id := range ids {
 		a, err := d.LoadAnalysis(id)
-		if err != nil || a == nil {
+		if err != nil {
+			slog.Warn("gammonnet stale sweep: loading stored analysis failed, position left out of the sweep", "position_id", id, "error", err)
 			continue
 		}
-		if isStaleGammonNetOnly(a) {
+		if a == nil {
+			continue
+		}
+		if gammonnet.IsStaleAnalysis(a, targetDepth) {
 			stale = append(stale, id)
 		}
 	}
 	return stale, nil
 }
 
+// CountPositionsWithStaleGammonNet is len(positionIDsWithStaleGammonNet) at
+// the depth ply would write — the number a "re-analyse stale positions (N)"
+// button needs before committing to the full decode/scan, the same shape as
+// CountPositionsWithoutAnalysis.
+func (d *Database) CountPositionsWithStaleGammonNet(ply int) (int, error) {
+	ids, err := d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
+	if err != nil {
+		return 0, err
+	}
+	return len(ids), nil
+}
+
 // AnalyzeStaleGammonNet re-runs gammonNet on every position whose stored
 // analysis is entirely its own, at an EngineVersion older than the running
-// build's — ADR-0016's use_match changed what a money-only number MEANS at a
-// match score, so a v1.0.1 row is not merely outdated, it can be silently
-// wrong. Same shape and cancellation contract as AnalyzeMissingWithGammonNet;
-// kept as a separate pass because the two query different things (no
-// analysis at all, vs. an entirely-ours but stale one) and ADR-0013 must
-// never be read as licensing a general re-analysis switch.
-func (d *Database) AnalyzeStaleGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) error {
-	ids, err := d.positionIDsWithStaleGammonNet()
+// build's or a different depth than ply now asks for (#191) — ADR-0016's
+// use_match changed what a money-only number MEANS at a match score, so a
+// v1.0.1 row is not merely outdated, it can be silently wrong, and a 0-ply
+// row is not what a 2-ply canonical depth promises either. Same shape and
+// cancellation contract as AnalyzeMissingWithGammonNet; kept as a separate
+// pass because the two query different things (no analysis at all, vs. an
+// entirely-ours but stale one) and ADR-0013 must never be read as licensing
+// a general re-analysis switch.
+func (d *Database) AnalyzeStaleGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	ids, err := d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
 	if err != nil {
-		return err
+		return GammonNetBatchSummary{}, err
 	}
 	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
 }
 
+// gammonNetOutcome is what evaluateOnePositionWithGammonNet's caller decided
+// happened to one position, once a write (if any) has been attempted.
+type gammonNetOutcome int
+
+const (
+	// gnEvaluated: a new analysis was computed and written.
+	gnEvaluated gammonNetOutcome = iota
+	// gnRefused: nothing to write, and that is not a failure — a dance (no
+	// legal move) or gammonnet.ErrNotEvaluable (a match score beyond the
+	// MET's horizon, a cube state the model declines). Before #191 this was
+	// indistinguishable from gnFailed: ErrNotEvaluable arrived as a plain
+	// error, so a position this build will NEVER be able to answer was
+	// retried on every single pass, forever, and counted as a failure each
+	// time.
+	gnRefused
+	// gnFailed: the position could not be loaded, could not be evaluated for
+	// a reason other than ErrNotEvaluable, or its analysis could not be
+	// saved. Retried on the next run, unchanged.
+	gnFailed
+)
+
+// GammonNetBatchSummary is a batch's outcome, split three ways (#191):
+// Evaluated is how many positions got a new analysis written; Refused is how
+// many were legitimately skipped (gnRefused above) — not failures, and a
+// caller should not read a nonzero Refused as anything being wrong; Failed
+// is how many could not be loaded, evaluated or saved, and are retried the
+// next time this runs. Evaluated+Refused+Failed is the number of positions
+// actually processed, which can be less than the snapshot's total when the
+// run is cancelled partway through.
+type GammonNetBatchSummary struct {
+	Evaluated int
+	Refused   int
+	Failed    int
+}
+
+// Processed is Evaluated+Refused+Failed — the positions this run actually
+// looked at, the number progress reporting counts up to.
+func (s GammonNetBatchSummary) Processed() int {
+	return s.Evaluated + s.Refused + s.Failed
+}
+
 // gammonNetBatchResult is one position's outcome on its way from a worker
-// goroutine to the single goroutine that writes. analysis is nil when there
-// is nothing to write (a dance, an unevaluable cube state) — which is not a
-// failure; failed marks a position that could not be loaded or evaluated at
-// all, the only case that reports no progress, exactly as the sequential
-// batch did by skipping its onProgress call.
+// goroutine to the single goroutine that writes.
 type gammonNetBatchResult struct {
 	id       int64
 	analysis *PositionAnalysis
-	failed   bool
+	outcome  gammonNetOutcome
 }
 
 // analyzeIDsWithGammonNet is the batch both passes run: jobs goroutines take
@@ -197,10 +227,10 @@ type gammonNetBatchResult struct {
 // cancelled run starts no further position, loses nothing already computed
 // (the results still in flight are drained and written), and re-running
 // simply finds whatever is still missing.
-func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) error {
+func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
 	total := len(ids)
 	if total == 0 {
-		return ctx.Err()
+		return GammonNetBatchSummary{}, ctx.Err()
 	}
 	if jobs <= 0 {
 		jobs = runtime.NumCPU()
@@ -223,8 +253,13 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 			// network) leaves the goroutine idle rather than falling back to
 			// one-per-position: EvaluatePositionWith takes nil and builds
 			// its own, so the batch still runs, just without the saving.
+			// Logged (B.6, #174) — this failure used to be entirely silent,
+			// so a build missing its embedded network ran the whole batch
+			// at a quiet, permanent slowdown with nothing in the log to
+			// explain it.
 			searcher, err := gammonnet.NewBatchSearcher(ply, pruneK)
 			if err != nil {
+				slog.Warn("gammonnet batch: building the shared searcher failed; this worker falls back to one searcher per position", "error", err)
 				searcher = nil
 			}
 
@@ -246,7 +281,15 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 				id := ids[i]
 
 				analysis, err := d.evaluateOnePositionWithGammonNet(searcher, id, ply, pruneK, candidates)
-				results <- gammonNetBatchResult{id: id, analysis: analysis, failed: err != nil}
+				outcome := gnEvaluated
+				switch {
+				case err != nil:
+					outcome = gnFailed
+					slog.Warn("gammonnet batch: evaluating a position failed", "position_id", id, "error", err)
+				case analysis == nil:
+					outcome = gnRefused
+				}
+				results <- gammonNetBatchResult{id: id, analysis: analysis, outcome: outcome}
 			}
 		}()
 	}
@@ -256,33 +299,56 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 		close(results)
 	}()
 
+	var summary GammonNetBatchSummary
 	done := 0
 	for res := range results {
-		ok := !res.failed
-		if ok && res.analysis != nil {
+		outcome := res.outcome
+		if outcome == gnEvaluated {
 			// A write failure is the same kind of skip as an evaluation
 			// failure: the position stays as it was and is picked up again
-			// on the next run.
+			// on the next run. Logged (B.6, #174) — silent before, and the
+			// only signal a caller had was a lower count than expected.
 			if err := d.SaveAnalysis(res.id, *res.analysis); err != nil {
-				ok = false
+				outcome = gnFailed
+				slog.Warn("gammonnet batch: saving the computed analysis failed", "position_id", res.id, "error", err)
 			}
 		}
+
+		switch outcome {
+		case gnEvaluated:
+			summary.Evaluated++
+		case gnRefused:
+			summary.Refused++
+		case gnFailed:
+			summary.Failed++
+		}
+
+		// Monotone over positions PROCESSED, failures and refusals included
+		// (#191) — before this, a failed or refused position reported no
+		// progress at all, so a batch with any unevaluable positions in it
+		// never visibly finished: the progress bar stalled short of total
+		// even though every position had in fact been looked at.
 		done++
-		if ok && onProgress != nil {
+		if onProgress != nil {
 			onProgress(done, total)
 		}
 	}
 
-	return ctx.Err()
+	return summary, ctx.Err()
 }
 
 // evaluateOnePositionWithGammonNet loads and evaluates one position — the
 // unit of work the resume/idempotence guarantee is built on. It does not
-// write: the caller's single writer goroutine does. A nil analysis with a nil
-// error means "nothing to write": a dance (no legal move) or an unevaluable
-// cube state (e.g. beyond the MET's range) — not an error, the position stays
-// without analysis and is retried on the next run exactly like any other
-// still-missing position.
+// write: the caller's single writer goroutine does. A nil analysis with a
+// nil error means "nothing to write, and that is not a failure": a dance (no
+// legal move) or gammonnet.ErrNotEvaluable (a match score beyond the MET's
+// horizon, a cube state the model declines) — before #191 ErrNotEvaluable
+// came back as a plain non-nil error, so the caller counted it as a failure
+// and retried it on every single pass, forever, exactly like a position that
+// genuinely could not be read. Either way the position stays without an
+// analysis and is picked up again on the next run — but only ErrNotEvaluable
+// and a dance are expected to keep coming back unchanged; a real error is
+// not.
 func (d *Database) evaluateOnePositionWithGammonNet(searcher *gammonnet.Searcher, id int64, ply, pruneK, candidates int) (*PositionAnalysis, error) {
 	pos, err := d.LoadPosition(int(id))
 	if err != nil {
@@ -291,6 +357,9 @@ func (d *Database) evaluateOnePositionWithGammonNet(searcher *gammonnet.Searcher
 
 	result, err := gammonnet.EvaluatePositionWith(searcher, *pos, ply, pruneK, candidates)
 	if err != nil {
+		if errors.Is(err, gammonnet.ErrNotEvaluable) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

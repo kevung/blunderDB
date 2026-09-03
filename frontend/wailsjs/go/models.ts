@@ -161,6 +161,22 @@ export namespace database {
 	        this.Count = source["Count"];
 	    }
 	}
+	export class GammonNetBatchSummary {
+	    Evaluated: number;
+	    Refused: number;
+	    Failed: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new GammonNetBatchSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Evaluated = source["Evaluated"];
+	        this.Refused = source["Refused"];
+	        this.Failed = source["Failed"];
+	    }
+	}
 	export class IndividualSaveResult {
 	    id: number;
 	    existed: boolean;
@@ -290,6 +306,24 @@ export namespace database {
 	        this.PR = source["PR"];
 	        this.MWC = source["MWC"];
 	        this.NumDecisions = source["NumDecisions"];
+	    }
+	}
+	export class OrphanCounts {
+	    games_without_match: number;
+	    moves_without_game: number;
+	    move_analyses_without_move: number;
+	    analyses_without_position: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new OrphanCounts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.games_without_match = source["games_without_match"];
+	        this.moves_without_game = source["moves_without_game"];
+	        this.move_analyses_without_move = source["move_analyses_without_move"];
+	        this.analyses_without_position = source["analyses_without_position"];
 	    }
 	}
 	export class PlayerFrequency {
@@ -625,6 +659,7 @@ export namespace domain {
 	    requestRetention: number;
 	    maximumInterval: number;
 	    enableFuzz: boolean;
+	    sessionLimit?: number;
 	    cardCount: number;
 	    dueCount: number;
 	    newCount: number;
@@ -646,6 +681,7 @@ export namespace domain {
 	        this.requestRetention = source["requestRetention"];
 	        this.maximumInterval = source["maximumInterval"];
 	        this.enableFuzz = source["enableFuzz"];
+	        this.sessionLimit = source["sessionLimit"];
 	        this.cardCount = source["cardCount"];
 	        this.dueCount = source["dueCount"];
 	        this.newCount = source["newCount"];
@@ -685,6 +721,22 @@ export namespace domain {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.day = source["day"];
 	        this.due = source["due"];
+	    }
+	}
+	export class AnkiRetention {
+	    sampleSize: number;
+	    observedRetention: number;
+	    targetRetention: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiRetention(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.sampleSize = source["sampleSize"];
+	        this.observedRetention = source["observedRetention"];
+	        this.targetRetention = source["targetRetention"];
 	    }
 	}
 	export class Cube {
@@ -1947,6 +1999,27 @@ export namespace sql {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	
+	    }
+	}
+
+}
+
+export namespace sqlite {
+	
+	export class SchemaDrift {
+	    missing_tables: string[];
+	    missing_columns: string[];
+	    missing_indexes: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SchemaDrift(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.missing_tables = source["missing_tables"];
+	        this.missing_columns = source["missing_columns"];
+	        this.missing_indexes = source["missing_indexes"];
 	    }
 	}
 
