@@ -97,7 +97,7 @@ func TestBGFImportNamesTheMoveWithSixteenCheckers(t *testing.T) {
 	}
 	// bgfInitBoardFromGame reads the board from the game record; feed the
 	// mapper directly with the corrupt state instead.
-	_, err := mapBGFCheckerMove(moves[0].(map[string]interface{}), gameData, 7, board, 1, -1, false)
+	_, err := mapBGFCheckerMove(moves[0].(map[string]interface{}), gameData, 7, board, 1, -1, bgfRules{})
 	var tooMany *domain.TooManyCheckersError
 	if !errors.As(err, &tooMany) || tooMany.OnBoard != 16 {
 		t.Fatalf("got %v, want *domain.TooManyCheckersError with 16 on board", err)

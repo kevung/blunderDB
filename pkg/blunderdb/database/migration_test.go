@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -2233,5 +2235,220 @@ func TestMigrate_2_16_0_to_2_17_0_SessionState(t *testing.T) {
 	}
 	if again, _ := d.LoadSessionState(); again.ViewsJSON != desktop.ViewsJSON {
 		t.Errorf("second run altered the desktop session: %+v", *again)
+	}
+}
+
+// legacyPositionColumns is the row copy the 2.18.0 test uses to plant, beside a
+// position, the second row the old hash let in: every column but the hash and
+// has_jacoby is carried over, so the two rows genuinely describe one position.
+const legacyPositionColumns = `zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+	cube_value, cube_owner, score_1, score_2, match_length, has_jacoby, has_beaver,
+	pip_1, pip_2, pip_diff, off_1, off_2, back_checkers_1, back_checkers_2,
+	no_contact, occupancy_1, occupancy_2, point_mask_1, point_mask_2, state,
+	is_cube_response, individually_imported, flagged`
+
+// planLegacyJacobyTwin inserts the row a pre-2.18.0 blunderDB created when the
+// same position was reached once with the Jacoby flag and once without: same
+// board, same everything, hash XORed with the retired Jacoby key. It returns
+// the new row's id.
+func planLegacyJacobyTwin(t *testing.T, db *sql.DB, sourceID int64, hash uint64) int64 {
+	t.Helper()
+	res, err := db.Exec(`INSERT INTO position (`+legacyPositionColumns+`)
+		SELECT ?, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2, match_length, 1, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2, back_checkers_1, back_checkers_2,
+			no_contact, occupancy_1, occupancy_2, point_mask_1, point_mask_2, state,
+			is_cube_response, individually_imported, flagged
+		FROM position WHERE id = ?`,
+		int64(hash^engine.RetiredFlagDelta(1, 0)), sourceID)
+	if err != nil {
+		t.Fatalf("plant legacy twin of position %d: %v", sourceID, err)
+	}
+	id, _ := res.LastInsertId()
+	return id
+}
+
+// TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity (issue #171,
+// ADR-0028): the rule flags come out of the Zobrist hash, every stored hash
+// that carried one is converted, and the rows the conversion brings together —
+// which were one position all along — are merged onto the oldest of them.
+func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) {
+	dbPath := filepath.Join(tempDir(t), "test_v2170.db")
+
+	// Build the fixture at the current schema through the normal write path,
+	// then walk the hashes back to what 2.17.0 would have stored.
+	setup := NewDatabase()
+	if err := setup.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+
+	untouched := InitializePosition()
+
+	lone := InitializePosition()
+	lone.Board.Points[13].Checkers = 4
+	lone.Board.Points[8].Checkers = 2
+	lone.HasJacoby = 1
+
+	younger := InitializePosition() // the twin planted below is NEWER than it
+	younger.Board.Points[6].Checkers = 4
+	younger.Board.Points[24].Checkers = 1
+
+	elder := InitializePosition() // the flagged row is OLDER than its twin
+	elder.Board.Points[19].Checkers = 4
+	elder.Board.Points[17].Checkers = 1
+	elder.HasJacoby = 1
+
+	ids := map[string]int64{}
+	for name, pos := range map[string]*Position{
+		"untouched": &untouched, "lone": &lone, "younger": &younger,
+	} {
+		id, err := setup.SavePosition(pos)
+		if err != nil {
+			t.Fatalf("SavePosition(%s): %v", name, err)
+		}
+		ids[name] = id
+	}
+	// The elder flagged row must precede its twin, so it is written first and
+	// the twin is planted afterwards.
+	elderID, err := setup.SavePosition(&elder)
+	if err != nil {
+		t.Fatalf("SavePosition(elder): %v", err)
+	}
+	ids["elder"] = elderID
+	if err := setup.SaveComment(ids["younger"], "note du plus ancien"); err != nil {
+		t.Fatalf("SaveComment: %v", err)
+	}
+	setup.Close()
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	// The twin of `younger`: a newer row carrying the Jacoby flag, hashed the
+	// 2.17.0 way. It is the one that must disappear.
+	youngerTwin := planLegacyJacobyTwin(t, raw, ids["younger"], engine.ZobristHash(&younger))
+	if _, err := raw.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`,
+		youngerTwin, "note du doublon"); err != nil {
+		t.Fatalf("comment on the twin: %v", err)
+	}
+	if _, err := raw.Exec(`UPDATE position SET individually_imported = 1 WHERE id = ?`, youngerTwin); err != nil {
+		t.Fatalf("mark the twin: %v", err)
+	}
+	// Walk every flagged row's hash back to what 2.17.0 stored, and stamp the
+	// file with that version.
+	for _, tc := range []struct {
+		id   int64
+		hash uint64
+	}{
+		{ids["lone"], engine.ZobristHash(&lone) ^ engine.RetiredFlagDelta(1, 0)},
+		{ids["elder"], engine.ZobristHash(&elder) ^ engine.RetiredFlagDelta(1, 0)},
+	} {
+		if _, err := raw.Exec(`UPDATE position SET zobrist_hash = ? WHERE id = ?`, int64(tc.hash), tc.id); err != nil {
+			t.Fatalf("legacy hash for %d: %v", tc.id, err)
+		}
+	}
+
+	// The twin of `elder`: a NEWER row without the flag, at the hash `elder`
+	// is about to take — which is free only now that `elder` has moved back to
+	// its 2.17.0 hash. Here the flagged row is the keeper.
+	res, err := raw.Exec(`INSERT INTO position (`+legacyPositionColumns+`)
+		SELECT ?, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2, match_length, 0, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2, back_checkers_1, back_checkers_2,
+			no_contact, occupancy_1, occupancy_2, point_mask_1, point_mask_2, state,
+			is_cube_response, individually_imported, flagged
+		FROM position WHERE id = ?`, int64(engine.ZobristHash(&elder)), ids["elder"])
+	if err != nil {
+		t.Fatalf("plant the elder's twin: %v", err)
+	}
+	elderTwin, _ := res.LastInsertId()
+
+	if _, err := raw.Exec(`UPDATE metadata SET value = '2.17.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatalf("stamp 2.17.0: %v", err)
+	}
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.17.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+
+	if version, err := d.CheckDatabaseVersion(); err != nil || version != DatabaseVersion {
+		t.Fatalf("version after migration: got %q (%v), want %s", version, err, DatabaseVersion)
+	}
+
+	hashOf := func(id int64) (uint64, bool) {
+		var h sql.NullInt64
+		switch err := d.db.QueryRow(`SELECT zobrist_hash FROM position WHERE id = ?`, id).Scan(&h); {
+		case errors.Is(err, sql.ErrNoRows):
+			return 0, false
+		case err != nil:
+			t.Fatalf("read hash of %d: %v", id, err)
+		}
+		return uint64(h.Int64), true
+	}
+
+	// A row that never carried a flag is not touched at all.
+	if got, ok := hashOf(ids["untouched"]); !ok || got != engine.ZobristHash(&untouched) {
+		t.Errorf("untouched position: hash %#x (present=%v), want %#x", got, ok, engine.ZobristHash(&untouched))
+	}
+	// A flagged row with no counterpart is simply rehashed.
+	if got, ok := hashOf(ids["lone"]); !ok || got != engine.ZobristHash(&lone) {
+		t.Errorf("lone flagged position: hash %#x (present=%v), want %#x", got, ok, engine.ZobristHash(&lone))
+	}
+	// The newer flagged twin is folded into the older row, which keeps its id,
+	// takes the duplicate's comment and inherits its sticky mark.
+	if _, ok := hashOf(youngerTwin); ok {
+		t.Error("the newer duplicate should have been merged away")
+	}
+	if got, ok := hashOf(ids["younger"]); !ok || got != engine.ZobristHash(&younger) {
+		t.Errorf("kept position: hash %#x (present=%v), want %#x", got, ok, engine.ZobristHash(&younger))
+	}
+	var comments int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM comment WHERE position_id = ?`, ids["younger"]).Scan(&comments); err != nil {
+		t.Fatal(err)
+	}
+	if comments != 2 {
+		t.Errorf("comments on the kept position: got %d, want 2 (its own and the duplicate's)", comments)
+	}
+	var individual int
+	if err := d.db.QueryRow(`SELECT individually_imported FROM position WHERE id = ?`, ids["younger"]).Scan(&individual); err != nil {
+		t.Fatal(err)
+	}
+	if individual != 1 {
+		t.Error("the duplicate's sticky provenance must be raised on the kept row (ADR-0001)")
+	}
+	// The other direction: the flagged row is the older one, so it survives and
+	// takes the hash the unflagged twin was holding.
+	if _, ok := hashOf(elderTwin); ok {
+		t.Error("the newer unflagged duplicate should have been merged away")
+	}
+	if got, ok := hashOf(ids["elder"]); !ok || got != engine.ZobristHash(&elder) {
+		t.Errorf("elder flagged position: hash %#x (present=%v), want %#x", got, ok, engine.ZobristHash(&elder))
+	}
+
+	// The step is not idempotent — XOR is its own inverse — so what has to hold
+	// is that reopening the file never runs it again: the version is stamped,
+	// and a second open leaves every hash where the first one put it.
+	d.Close()
+	again := NewDatabase()
+	if err := again.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("reopen the migrated database: %v", err)
+	}
+	closeOnCleanup(t, again)
+	for name, want := range map[string]uint64{
+		"untouched": engine.ZobristHash(&untouched),
+		"lone":      engine.ZobristHash(&lone),
+		"younger":   engine.ZobristHash(&younger),
+		"elder":     engine.ZobristHash(&elder),
+	} {
+		var h int64
+		if err := again.db.QueryRow(`SELECT zobrist_hash FROM position WHERE id = ?`, ids[name]).Scan(&h); err != nil {
+			t.Fatalf("reopen: read hash of %s: %v", name, err)
+		}
+		if uint64(h) != want {
+			t.Errorf("reopen moved the hash of %s: got %#x, want %#x", name, uint64(h), want)
+		}
 	}
 }

@@ -44,18 +44,40 @@ sont converties avec la mauvaise référence. Touche l'invariant ADR-0019.
 pas ces champs ; seul `domain/xgid.go:138,141` le fait. `engine/zobrist.go:162-166`
 les hache : une position d'argent importée d'un `.xg` (Jacoby=0) et collée en
 XGID (Jacoby=1) donne deux lignes. Invariant n°1 cassé sur ce cas.
-- [ ] Décision (ADR court, amendement de l'ADR-0001) : **Jacoby et beaver
-      sortent du hash** — ce sont des règles de la partie, pas de la
+- [x] Décision : ADR-0028, amendement de l'ADR-0001. **Jacoby et beaver
+      sortent du hash** — ce sont des règles de la *session*, pas de la
       position ; ils restent des colonnes. Alternative rejetée : les
-      renseigner partout (les formats ne les portent pas tous).
-- [ ] Bump `DatabaseVersion` → migration qui recalcule `zobrist_hash` et
-      fusionne les doublons révélés (conserver la ligne la plus ancienne,
-      re-pointer `move`, `collection_position`, `comment`, `anki_card`).
-- [ ] Renseigner quand même Jacoby/beaver/Crawford depuis BGF (`bgfmap.go:264`,
-      seul TODO du dépôt) et GnuBG.
-- [ ] Test : même position, deux drapeaux → une ligne.
+      renseigner partout (les formats ne les portent pas tous, et deux
+      sessions d'argent aux réglages différents stockeraient encore deux fois
+      le même damier).
+- [x] Bump `DatabaseVersion` → **2.18.0**. La migration ne décode aucun
+      damier : un hash Zobrist est un XOR de clés, donc défaire un pliage,
+      c'est réinjecter la même clé (`engine.RetiredFlagDelta`). Les deux clés
+      restent **tirées** dans `engine.init` — les retirer décalerait toutes
+      les clés suivantes et referait le hash de chaque position jamais
+      stockée. Les lignes réunies par la conversion sont fusionnées sur la
+      **plus ancienne** via `mergePositionInto` (déplace `move`,
+      `collection_position`, `anki_card`, `anki_review_log`, `comment`,
+      l'analyse si la gardée n'en a pas, et lève les marques collantes).
+      Côté PostgreSQL : `migrations/014_zobrist_without_rule_flags.sql`, les
+      deux clés en littéraux épinglés au moteur par
+      `zobrist_retired_keys_test.go` ; seule migration non idempotente de la
+      chaîne (le XOR est son propre inverse), `schema_migrations` en est le
+      garde-fou.
+- [x] Renseigner Jacoby/beaver depuis BGF (`useJacoby`/`useBeaver` en tête de
+      fichier, uniquement en partie d'argent) : `bgfRules` remplace le
+      paramètre `isCrawford` mort et clôt le seul TODO du dépôt.
+      **Pas fait pour XG ni GnuBG** : les analyseurs n'exposent pas
+      l'information (`gnubgparser.MatchMetadata` n'a pas le champ, `xgparser`
+      non plus). Crawford n'a pas de champ sur `domain.Position` — le score le
+      dit déjà — et n'en gagne pas un ici.
+- [x] Tests : `TestZobristIgnoresJacobyAndBeaver` (deux drapeaux, un hash),
+      `TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity` (les deux
+      sens de fusion, la ligne intacte, le commentaire et la marque collante
+      qui suivent), `TestBGFRulesReachThePosition`.
 
-Dépendance : coordonner avec A.2 et B.7 (un seul bump 2.16.0 pour les trois).
+Livrée avec B.5 et B.17 dans une **seule vague de schéma, 2.18.0** (voir le
+résumé du lot).
 
 ## B.4 — Une révision Anki écrit la carte et le journal hors transaction [S] — bug (#172)
 

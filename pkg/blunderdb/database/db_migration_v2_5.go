@@ -10,6 +10,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -641,5 +642,151 @@ func (d *Database) migrate_2_16_0_to_2_17_0(_ context.Context) error {
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("migrate 2.17.0: commit: %w", err)
 	}
+	return nil
+}
+
+// migrate_2_17_0_to_2_18_0 takes the Jacoby and beaver flags out of the
+// position identity (ADR-0028, issue #171).
+//
+// Until 2.18.0 engine.ZobristHash folded has_jacoby and has_beaver into the
+// hash. They are rules of the *session*, not facts of the board, and no import
+// format but an XGID carries them — every file importer leaves both at 0. The
+// same money position pasted from an XGID (Jacoby set) and imported from a .xg
+// file (Jacoby clear) therefore hashed differently and landed on two rows, with
+// the analyses, comments and collection memberships of one position split
+// across both. That is invariant no. 1 broken; this step repairs the databases
+// that lived through it.
+//
+// A Zobrist hash is a XOR of keys, so undoing a fold is XORing the same key
+// back in (engine.RetiredFlagDelta): no board is decoded and no state is read,
+// only the two flag columns the row already carries. The rows that carry
+// neither flag — nearly all of them — keep the hash they were stored under and
+// are not touched at all.
+//
+// Rehashing can bring two rows onto one hash: those two rows were always the
+// same position and are merged, the OLDER row (lowest id) kept, exactly as
+// mergePositionInto folds the duplicates repairPositionsWithoutScalars finds.
+// The candidates release their hash first (set to NULL, which the UNIQUE index
+// tolerates any number of) and take their new one in id order, so a collision
+// is always judged against the hash the other row will END with, never against
+// the one it is about to leave.
+//
+// One transaction, and — uniquely in this chain — a step that is NOT
+// idempotent: XOR is its own inverse, so running it twice would put the flag
+// keys back. What makes that safe is atomicity, not re-runnability. The
+// conversion either commits whole or rolls back whole, and runMigrationChain
+// stamps 2.18.0 only after it returns nil; an interrupted upgrade therefore
+// leaves a file that is still entirely at 2.17.0 and is replayed from the
+// start. Nothing here reads the file to decide whether it applies — the
+// recorded version alone says so, as every step in this chain does.
+func (d *Database) migrate_2_17_0_to_2_18_0(ctx context.Context) error {
+	// A real 2.17.0 file has all three columns; the migration-chain fixtures
+	// stamp a 2.x version onto a 1.x table and leave the scalar columns to
+	// ensureAllTablesExist, which runs after the chain. Nothing to convert
+	// where there is no hash to convert.
+	for _, column := range []string{"zobrist_hash", "has_jacoby", "has_beaver"} {
+		switch ok, err := d.columnExists("position", column); {
+		case err != nil:
+			return fmt.Errorf("migrate 2.18.0: %w", err)
+		case !ok:
+			return nil
+		}
+	}
+
+	type candidate struct {
+		id      int64
+		newHash int64
+	}
+
+	var todo []candidate
+	if err := func() error {
+		rows, err := d.db.QueryContext(ctx, `SELECT id, zobrist_hash,
+				COALESCE(has_jacoby, 0), COALESCE(has_beaver, 0)
+			FROM position
+			WHERE zobrist_hash IS NOT NULL AND (COALESCE(has_jacoby, 0) <> 0 OR COALESCE(has_beaver, 0) <> 0)
+			ORDER BY id`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.18.0: list positions carrying a rule flag: %w", err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var id, hash int64
+			var jacoby, beaver int
+			if err := rows.Scan(&id, &hash, &jacoby, &beaver); err != nil {
+				return fmt.Errorf("migrate 2.18.0: scan position: %w", err)
+			}
+			// int64 ↔ uint64 is a reinterpretation of the same 64 bits: the
+			// hash is stored in SQLite's signed INTEGER and XOR does not care.
+			todo = append(todo, candidate{id, int64(uint64(hash) ^ engine.RetiredFlagDelta(jacoby, beaver))})
+		}
+		return rows.Err()
+	}(); err != nil {
+		return err
+	}
+	if len(todo) == 0 {
+		return nil
+	}
+
+	tx, err := d.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("migrate 2.18.0: begin: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Release every candidate's hash before any is reassigned. A UNIQUE index
+	// holds as many NULLs as it likes, so the table now states, for every row,
+	// the hash it will end with — or nothing at all.
+	for _, c := range todo {
+		if _, err := tx.ExecContext(ctx, `UPDATE position SET zobrist_hash = NULL WHERE id = ?`, c.id); err != nil {
+			return fmt.Errorf("migrate 2.18.0: release hash of position %d: %w", c.id, err)
+		}
+	}
+
+	var rehashed, merged int
+	for i, c := range todo {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		var other int64
+		switch err := tx.QueryRowContext(ctx,
+			`SELECT id FROM position WHERE zobrist_hash = ?`, c.newHash).Scan(&other); {
+		case errors.Is(err, sql.ErrNoRows):
+			other = 0
+		case err != nil:
+			return fmt.Errorf("migrate 2.18.0: probe hash of position %d: %w", c.id, err)
+		}
+		switch {
+		case other == 0:
+			if _, err := tx.ExecContext(ctx,
+				`UPDATE position SET zobrist_hash = ? WHERE id = ?`, c.newHash, c.id); err != nil {
+				return fmt.Errorf("migrate 2.18.0: rehash position %d: %w", c.id, err)
+			}
+			rehashed++
+		case other < c.id:
+			// The row already holding this hash is the older one: it keeps it.
+			if err := mergePositionInto(ctx, tx, other, c.id); err != nil {
+				return err
+			}
+			merged++
+		default:
+			// The candidate is the older row: it takes the hash, and the row
+			// that held it is folded in first so the index is free.
+			if err := mergePositionInto(ctx, tx, c.id, other); err != nil {
+				return err
+			}
+			if _, err := tx.ExecContext(ctx,
+				`UPDATE position SET zobrist_hash = ? WHERE id = ?`, c.newHash, c.id); err != nil {
+				return fmt.Errorf("migrate 2.18.0: rehash position %d: %w", c.id, err)
+			}
+			merged++
+		}
+		d.emitMigrationProgress("zobrist_rule_flags", i+1, len(todo))
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("migrate 2.18.0: commit: %w", err)
+	}
+	slog.Info("Jacoby and beaver left the position identity",
+		"rehashed", rehashed, "merged", merged)
 	return nil
 }
