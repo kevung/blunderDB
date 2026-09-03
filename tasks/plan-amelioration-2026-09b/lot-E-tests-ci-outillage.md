@@ -18,8 +18,8 @@ E.1 à E.5 = **étape 1** ; E.6 à E.12 = **étape 2**.
 
 `build.yml:196` : `continue-on-error: true` (« à retirer après le premier run
 vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151.
-- [ ] Retirer le flag ; ajouter `kernel_identity_test` explicite sur macOS.
-- [ ] `GOOS=windows go vet ./...` dans le job `lint` (pour `filelock_windows.go`,
+- [x] Retirer le flag ; ajouter `kernel_identity_test` explicite sur macOS.
+- [x] `GOOS=windows go vet ./...` dans le job `lint` (pour `filelock_windows.go`,
       `diskspace_windows.go`).
 
 ## E.2 — La couverture dit faux et n'a pas de seuil [S] — fiabilité (#218)
