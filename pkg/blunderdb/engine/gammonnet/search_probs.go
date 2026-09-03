@@ -121,6 +121,15 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 	if level >= len(s.cands) {
 		return [NumOutputs]float32{}, false
 	}
+
+	// À la racine — level 0, la seule où s.workers est jamais consulté (les
+	// ouvriers n'ont pas d'ouvriers à eux, #195/C.8) — les 21 lancers PROPRES
+	// vont dans une file combinée au lieu d'ouvrir chacun sa propre barrière ;
+	// ailleurs, la boucle sérielle ci-dessous, terme pour terme identique.
+	if level == 0 && len(s.workers) > 0 {
+		return s.probsAtRootParallel(pos, depth, state, owner)
+	}
+
 	cands := s.candsAt(level)
 
 	var total [NumOutputs]float64
@@ -149,6 +158,99 @@ func (s *Searcher) probsAt(pos *Position, depth, level int, state *MatchState, o
 		}
 
 		mine := invertProbs(&theirs)
+		for i := range total {
+			total[i] += roll.weight * float64(mine[i])
+		}
+	}
+
+	var out [NumOutputs]float32
+	for i := range out {
+		out[i] = float32(total[i])
+	}
+	return out, true
+}
+
+// probsAtRootParallel est probsAt's own root loop, aplati exactement comme
+// la phase trois de rankPlays l'est (deepenGroups, #195/C.8) : au lieu de
+// classer chacun des 21 lancers propres tour à tour et de laisser SON
+// rankPlays ouvrir puis refermer sa propre barrière avant que le suivant ne
+// commence, les candidats à approfondir de chaque lancer sont d'abord
+// rassemblés, puis approfondis TOUS ENSEMBLE dans une seule file.
+//
+// Pass A (sérielle, bon marché — un tri de plateaux frères par lancer, déjà
+// groupé sur le noyau) classe chaque lancer et garde ses meilleurs candidats
+// dans un brouillon qui lui est propre (s.probeCands[r]) : contrairement à
+// candsAt(level), qui serait écrasé par le lancer suivant, ce brouillon doit
+// rester valide jusqu'à ce que TOUS les lancers soient approfondis. Une
+// danse (aucun coup légal) ne rentre dans aucun groupe ; la position après
+// passage est ce qu'il y a à approfondir, et elle n'a besoin d'aucune
+// recherche supplémentaire à CE niveau.
+//
+// Pass B (deepenGroups) approfondit tous les groupes non vides d'un coup :
+// une file, une barrière, au lieu de 21.
+//
+// Pass C (sérielle, en index de lancer croissant) reproduit exactement la
+// réduction de la boucle d'origine : trier le groupe du lancer (l'équité que
+// deepenGroups vient d'écrire change l'ordre), prendre le meilleur, recourir
+// à probsAt pour SA distribution, l'inverser, l'accumuler pondérée — la
+// somme reste sérielle et en float64, ce que la parallélisation change
+// n'est jamais que qui classe et qui approfondit chaque lancer.
+func (s *Searcher) probsAtRootParallel(pos *Position, depth int, state *MatchState, owner CubeOwner) ([NumOutputs]float32, bool) {
+	theirs := swapMatchState(state)
+	theirOwner := owner.Mirror()
+
+	groups := s.probeGroups[:0]
+	scratch := s.candsAt(0)
+
+	for r := 0; r < NumRolls; r++ {
+		roll := s.rolls[r]
+		n := s.rankPlaysShallow(pos, int(roll.d1), int(roll.d2), depth-1, 0, state, owner, scratch)
+		if n < 0 {
+			return [NumOutputs]float32{}, false
+		}
+		if n == 0 {
+			s.probeDanced[r] = true
+			s.probePassed[r] = *pos
+			s.probePassed[r].swapTurn()
+			s.probeCands[r] = s.probeCands[r][:0]
+			continue
+		}
+		s.probeDanced[r] = false
+		searched := n
+		if f := s.cfg.Filter[depth-1]; f > 0 && f < searched {
+			searched = f
+		}
+		if cap(s.probeCands[r]) < searched {
+			s.probeCands[r] = make([]Candidate, searched)
+		}
+		s.probeCands[r] = s.probeCands[r][:searched]
+		copy(s.probeCands[r], scratch[:searched])
+		groups = append(groups, s.probeCands[r])
+	}
+	s.probeGroups = groups
+
+	if !s.deepenGroups(groups, depth-1, theirs, theirOwner) {
+		return [NumOutputs]float32{}, false
+	}
+
+	var total [NumOutputs]float64
+	for r := 0; r < NumRolls; r++ {
+		roll := s.rolls[r]
+
+		var result *Position
+		if s.probeDanced[r] {
+			result = &s.probePassed[r]
+		} else {
+			sortByEquity(s.probeCands[r])
+			result = &s.probeCands[r][0].Play.Result
+		}
+
+		theirsProbs, ok := s.probsAt(result, depth-1, 1, theirs, theirOwner)
+		if !ok {
+			return [NumOutputs]float32{}, false
+		}
+
+		mine := invertProbs(&theirsProbs)
 		for i := range total {
 			total[i] += roll.weight * float64(mine[i])
 		}

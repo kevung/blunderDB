@@ -232,15 +232,30 @@ type Searcher struct {
 	// the read-only networks.
 	workers []*Searcher
 
-	// La file d'un niveau aplati et ses résultats (deepenLevel). Elles vivent
-	// avec le chercheur, comme le reste du brouillon : la racine les remplit
-	// une fois par décision, et une allocation par décision suffirait à faire
-	// travailler le ramasse-miettes pendant que les ouvriers calculent.
-	// frontierBest[i*NumRolls+r] est la valeur du lancer r pour le candidat i
-	// — un emplacement par tâche, fixé avant que la file ne démarre, jamais
-	// partagé entre deux ouvriers.
+	// La file d'un ou plusieurs groupes aplatis et ses résultats
+	// (deepenGroups). Elles vivent avec le chercheur, comme le reste du
+	// brouillon : la racine les remplit une fois par décision, et une
+	// allocation par décision suffirait à faire travailler le ramasse-miettes
+	// pendant que les ouvriers calculent. frontierBest[(groupOffset+i)*NumRolls+r]
+	// est la valeur du lancer r pour le candidat i d'un groupe — un
+	// emplacement par tâche, fixé avant que la file ne démarre, jamais
+	// partagé entre deux ouvriers ni entre deux groupes.
 	frontier     []rollTask
 	frontierBest []float64
+
+	// probeCands, probePassed et probeDanced sont le brouillon PROPRE de
+	// probsAt's own root loop (search_probs.go, #195/C.8) : un groupe de
+	// candidats par lancer RACINE (les siens, pas ceux d'un candidat), tenu
+	// vivant assez longtemps pour que les 21 lancers passent ENSEMBLE par
+	// deepenGroups au lieu d'ouvrir chacun sa propre barrière. probeGroups est
+	// la sous-tranche de probeCands effectivement soumise à deepenGroups,
+	// reconstruite à chaque appel ; probePassed et probeDanced tiennent la
+	// position après passage pour un lancer qui danse (aucun coup légal), qui
+	// ne rentre dans aucun groupe et se résout directement.
+	probeCands  [NumRolls][]Candidate
+	probeGroups [][]Candidate
+	probePassed [NumRolls]Position
+	probeDanced [NumRolls]bool
 
 	gen   [MaxPly + 2]*Generator
 	plays [MaxPly + 2][]Play
@@ -387,6 +402,45 @@ func (s *Searcher) Plays(pos *Position, d1, d2 int, out []Candidate) (int, error
 	return n, nil
 }
 
+// rankPlaysShallow fait les phases une et deux de rankPlays — générer,
+// élaguer, valoriser et trier — sans approfondir aucun survivant. C'est cette
+// séparation qui permet à un appelant d'assembler PLUSIEURS racines de
+// candidats avant que le premier ne soit approfondi (probsAt's own root,
+// #195/C.8) : rankPlays lui-même reste ce qu'il était, un simple appel à
+// rankPlaysShallow suivi de la phase trois.
+func (s *Searcher) rankPlaysShallow(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
+	if level >= len(s.plays) {
+		return -1
+	}
+	plays := s.playsAt(level)
+	count := s.genAt(level).LegalPlays(pos, d1, d2, plays)
+	if count <= 0 {
+		return count // 0 is a dance, -1 a refusal
+	}
+	written := count
+	if written > len(out) {
+		return -1
+	}
+	for i := 0; i < written; i++ {
+		out[i].Play = plays[i]
+	}
+
+	theirs := swapMatchState(state)
+	theirOwner := owner.Mirror()
+
+	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
+		s.shallowFill(s.pruneEv, out[:written], false)
+		s.valueSweep(out[:written], theirs, theirOwner)
+		sortByEquity(out[:written])
+		written = keep
+	}
+
+	s.shallowFill(s.ev, out[:written], true)
+	s.valueSweep(out[:written], theirs, theirOwner)
+	sortByEquity(out[:written])
+	return written
+}
+
 // BestPlay returns the highest-valued play. It reports false on a dance.
 func (s *Searcher) BestPlay(pos *Position, d1, d2 int) (Candidate, bool, error) {
 	n, err := s.Plays(pos, d1, d2, s.scratch())
@@ -417,58 +471,28 @@ func (s *Searcher) scratch() []Candidate {
 // rank_plays_finish/rank_plays_deepen both derive them exactly this way,
 // from the SAME unswapped pair, never from one another's swap.
 func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *MatchState, owner CubeOwner, out []Candidate) int {
-	if level >= len(s.plays) {
-		return -1
-	}
-	plays := s.playsAt(level)
-	count := s.genAt(level).LegalPlays(pos, d1, d2, plays)
-	if count <= 0 {
-		return count // 0 is a dance, -1 a refusal
-	}
-	written := count
-	if written > len(out) {
-		// The reference truncates here, keeping the first max_out plays in
-		// generation order. Refusing is the same choice it makes everywhere
-		// else, and a silently short candidate list is exactly what it warns
-		// about: indistinguishable from a position with fewer options.
-		return -1
-	}
-	for i := 0; i < written; i++ {
-		out[i].Play = plays[i]
+	// Phases one et deux : générer, élaguer, valoriser, trier.
+	written := s.rankPlaysShallow(pos, d1, d2, depth, level, state, owner, out)
+	if written <= 0 {
+		return written // 0 est une danse, -1 un refus
 	}
 
-	theirs := swapMatchState(state)
-	theirOwner := owner.Mirror()
-
-	// Phase one: the small network sorts, and only the survivors go on.
-	if keep := s.pruneKeep(depth); keep > 0 && written > keep {
-		s.shallowFill(s.pruneEv, out[:written], false)
-		s.valueSweep(out[:written], theirs, theirOwner)
-		sortByEquity(out[:written])
-		written = keep
-	}
-
-	// Phase two: the big network scores what survived. It overwrites the small
-	// network's probabilities — five plausible numbers from the wrong network
-	// must never reach a caller.
-	s.shallowFill(s.ev, out[:written], true)
-	s.valueSweep(out[:written], theirs, theirOwner)
-	sortByEquity(out[:written])
-
-	// Phase three: search the best few deeper.
+	// Phase trois : approfondir les meilleurs.
 	if depth <= 0 {
 		return written
 	}
+	theirs := swapMatchState(state)
+	theirOwner := owner.Mirror()
 	searched := written
 	if f := s.cfg.Filter[depth]; f > 0 && f < searched {
 		searched = f
 	}
 	// À la racine, tous les candidats à approfondir partent dans une seule
-	// file (deepenLevel) : une barrière par décision au lieu d'une par
+	// file (deepenGroups) : une barrière par décision au lieu d'une par
 	// candidat, et trois fois plus de tâches à répartir. Ailleurs — et sans
 	// ouvriers — la boucle sérielle, terme pour terme identique.
 	if level == 0 && len(s.workers) > 0 {
-		if !s.deepenLevel(out[:searched], depth, theirs, theirOwner) {
+		if !s.deepenGroups([][]Candidate{out[:searched]}, depth, theirs, theirOwner) {
 			return -1
 		}
 	} else {
@@ -476,7 +500,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 			if out[i].Play.Result.isOver() {
 				continue // keeps the exact terminal value from the sweep
 			}
-			v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, false, theirs, theirOwner)
+			v, ok := s.positionEquity(&out[i].Play.Result, depth, level+1, theirs, theirOwner)
 			if !ok {
 				return -1
 			}
@@ -637,7 +661,16 @@ func (s *Searcher) nodeValue(probs *[NumOutputs]float32, state *MatchState, owne
 // positionEquity is the value of a position to the player on turn, at depth.
 // state is the match state as pos's OWN mover sees it, or nil under money
 // valuation; owner the cube as that mover sees it.
-func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool, state *MatchState, owner CubeOwner) (float64, bool) {
+//
+// Always serial — the only two callers of this function are already BELOW
+// the search's root (rankPlays' phase three serial branch, and oneRoll's
+// pass branch), where level is never 0 and s.workers is therefore never
+// consulted anyway (#195/C.8 removed the constant `parallel` parameter this
+// used to carry: the one call site that ever passed true was a test
+// exercising rollsInParallel, itself replaced by deepenGroups, which is what
+// the search's actual roots — rankPlays' phase three AND, since #195,
+// probsAt's own root loop — farm out to workers instead).
+func (s *Searcher) positionEquity(pos *Position, depth, level int, state *MatchState, owner CubeOwner) (float64, bool) {
 	if pos.isOver() {
 		return terminalValue(pos, state), true
 	}
@@ -649,24 +682,13 @@ func (s *Searcher) positionEquity(pos *Position, depth, level int, parallel bool
 	}
 	cands := s.candsAt(level)
 
-	// The twenty-one rolls are independent, so the root farms them out. The
-	// weighted sum is still accumulated afterwards in ascending roll index
-	// order, in float64 — the parallelism changes who computes each term, never
-	// the order they are added in, so the answer is bit-identical to the serial
-	// one. A parallel reduction would not be.
 	var best [NumRolls]float64
-	if parallel && len(s.workers) > 0 {
-		if !s.rollsInParallel(pos, depth, state, owner, &best) {
+	for r := 0; r < NumRolls; r++ {
+		v, ok := s.oneRoll(pos, depth, level, r, state, owner, cands)
+		if !ok {
 			return 0, false
 		}
-	} else {
-		for r := 0; r < NumRolls; r++ {
-			v, ok := s.oneRoll(pos, depth, level, r, state, owner, cands)
-			if !ok {
-				return 0, false
-			}
-			best[r] = v
-		}
+		best[r] = v
 	}
 
 	var sum float64
@@ -693,7 +715,7 @@ func (s *Searcher) oneRoll(pos *Position, depth, level, r int, state *MatchState
 	// owner, mirrored.
 	passed := *pos
 	passed.swapTurn()
-	v, ok := s.positionEquity(&passed, depth-1, level+1, false, swapMatchState(state), owner.Mirror())
+	v, ok := s.positionEquity(&passed, depth-1, level+1, swapMatchState(state), owner.Mirror())
 	if !ok {
 		return 0, false
 	}
@@ -741,27 +763,50 @@ type rollTask struct {
 // recoupent d'ailleurs largement.
 var rollsByCost = [NumRolls]int{10, 14, 7, 12, 3, 9, 16, 19, 4, 1, 6, 8, 15, 17, 2, 5, 13, 18, 11, 0, 20}
 
-// deepenLevel approfondit d'un coup TOUS les candidats d'un niveau de la
-// racine, au lieu d'en approfondir un, d'attendre, puis de passer au suivant.
+// deepenGroups approfondit d'un coup TOUS les candidats d'UN OU PLUSIEURS
+// groupes à la fois, au lieu d'approfondir un groupe, d'attendre, puis de
+// passer au suivant.
 //
-// C'est le point trois de la fiche F4. Avant, chaque candidat approfondi
-// ouvrait sa propre file de 21 lancers et sa propre barrière : à 2 ply, trois
-// barrières de 21 tâches pour 8 ouvriers, soit trois fois ⌈21/8⌉ = 9 tours
-// pour 7,875 tours de travail — 14 % perdus en quantification, avant même de
-// compter le déséquilibre entre lancers. En une seule file de 3 × 21 = 63
-// tâches, ⌈63/8⌉ = 8 tours : 1,6 % de quantification, et une seule barrière
-// par décision.
+// C'était le point trois de la fiche F4, pour UN groupe : avant, chaque
+// candidat approfondi ouvrait sa propre file de 21 lancers et sa propre
+// barrière — à 2 ply, trois barrières de 21 tâches pour 8 ouvriers, soit
+// trois fois ⌈21/8⌉ = 9 tours pour 7,875 tours de travail, 14 % perdus en
+// quantification, avant même de compter le déséquilibre entre lancers. En
+// une seule file de 3 × 21 = 63 tâches, ⌈63/8⌉ = 8 tours : 1,6 % de
+// quantification, et une seule barrière par décision — c'est ce que
+// rankPlays continue de demander, un seul groupe (deepenLevel documentait
+// exactement ce cas).
 //
-// Le résultat ne bouge pas d'un bit. La somme pondérée reste sérielle, par
-// candidat, en index de lancer croissant, en float64 (voir positionEquity,
-// dont ceci est l'exact équivalent aplati) ; le parallélisme choisit qui
-// calcule chaque terme, jamais l'ordre où ils s'ajoutent.
+// #195/C.8 généralise à PLUSIEURS groupes pour probsAt's own root loop
+// (search_probs.go) : ses 21 lancers PROPRES produisaient chacun son propre
+// (petit) ensemble de candidats à approfondir, et appelaient ce qui était
+// alors deepenLevel 21 FOIS — 21 barrières là où celle-ci n'en pose qu'une,
+// même perte de quantification que ci-dessus mais RÉPÉTÉE 21 fois plutôt que
+// fondue en une seule file plus large. Ici, groups[g] est l'ensemble de
+// candidats du groupe g (un niveau de rankPlays, un lancer racine de
+// probsAt…) ; les groupes sont indépendants, mais partagent la même file et
+// la même barrière.
 //
-// state et owner sont ceux de la position RÉSULTANTE — rankPlays les a déjà
-// échangés et miroités —, les mêmes pour tous les candidats du niveau puisque
-// tous naissent du même coup de dés depuis la même position.
-func (s *Searcher) deepenLevel(cands []Candidate, depth int, state *MatchState, owner CubeOwner) bool {
-	need := len(cands) * NumRolls
+// Le résultat ne bouge pas d'un bit, groupe par groupe. La somme pondérée
+// reste sérielle, par candidat, en index de lancer croissant, en float64
+// (voir positionEquity, dont ceci est l'exact équivalent aplati) ; le
+// parallélisme choisit qui calcule chaque terme, jamais l'ordre où ils
+// s'ajoutent, et un groupe ne lit ni n'écrit jamais l'emplacement d'un autre.
+//
+// state et owner sont ceux de la position RÉSULTANTE — l'appelant les a déjà
+// échangés et miroités —, les mêmes pour tous les candidats de tous les
+// groupes : rankPlays' seul groupe naît d'un même coup de dés depuis une même
+// position ; probsAt's own root, elle, partage le MÊME état/propriétaire de
+// videau à travers ses 21 lancers propres, puisque ceux-ci ne changent que
+// les dés, jamais le joueur au trait ni le score.
+func (s *Searcher) deepenGroups(groups [][]Candidate, depth int, state *MatchState, owner CubeOwner) bool {
+	need := 0
+	for _, g := range groups {
+		need += len(g) * NumRolls
+	}
+	if need == 0 {
+		return true
+	}
 	if cap(s.frontierBest) < need {
 		s.frontierBest = make([]float64, need)
 		s.frontier = make([]rollTask, 0, need)
@@ -769,15 +814,31 @@ func (s *Searcher) deepenLevel(cands []Candidate, depth int, state *MatchState, 
 	best := s.frontierBest[:need]
 	tasks := s.frontier[:0]
 
-	// Ordre LPT : lancer par lancer, du plus cher au moins cher, tous
-	// candidats confondus. Les copies du lancer le plus lourd partent donc en
-	// premier, ce qui est exactement ce que la borne de Graham demande.
+	// groupOffset[g] est le nombre total de candidats des groupes AVANT g :
+	// avec les groupes mis bout à bout, le candidat i du groupe g occupe donc
+	// l'emplacement (groupOffset[g]+i)*NumRolls+r, jamais celui d'un candidat
+	// d'un autre groupe. len(groups) ne dépasse jamais NumRolls (un groupe par
+	// niveau de rankPlays, ou un par lancer racine de probsAt).
+	var groupOffset [NumRolls]int
+	off := 0
+	for g, cands := range groups {
+		groupOffset[g] = off
+		off += len(cands)
+	}
+
+	// Ordre LPT : lancer par lancer, du plus cher au moins cher, tous groupes
+	// et tous candidats confondus. Les copies du lancer le plus lourd partent
+	// donc en premier, ce qui est exactement ce que la borne de Graham demande
+	// — sur la file entière, pas groupe par groupe.
 	for _, r := range rollsByCost {
-		for i := range cands {
-			if cands[i].Play.Result.isOver() {
-				continue // la valeur terminale du sweep est déjà la bonne
+		for g, cands := range groups {
+			base := groupOffset[g] * NumRolls
+			for i := range cands {
+				if cands[i].Play.Result.isOver() {
+					continue // la valeur terminale du sweep est déjà la bonne
+				}
+				tasks = append(tasks, rollTask{pos: &cands[i].Play.Result, roll: r, slot: base + i*NumRolls + r})
 			}
-			tasks = append(tasks, rollTask{pos: &cands[i].Play.Result, roll: r, slot: i*NumRolls + r})
 		}
 	}
 	s.frontier = tasks
@@ -785,16 +846,19 @@ func (s *Searcher) deepenLevel(cands []Candidate, depth int, state *MatchState, 
 		return false
 	}
 
-	for i := range cands {
-		if cands[i].Play.Result.isOver() {
-			continue
+	for g, cands := range groups {
+		base := groupOffset[g] * NumRolls
+		for i := range cands {
+			if cands[i].Play.Result.isOver() {
+				continue
+			}
+			var sum float64
+			b := base + i*NumRolls
+			for r := 0; r < NumRolls; r++ {
+				sum += s.rolls[r].weight * best[b+r]
+			}
+			cands[i].Equity = -sum
 		}
-		var sum float64
-		base := i * NumRolls
-		for r := 0; r < NumRolls; r++ {
-			sum += s.rolls[r].weight * best[base+r]
-		}
-		cands[i].Equity = -sum
 	}
 	return true
 }
@@ -849,18 +913,6 @@ func (s *Searcher) runRollTasks(tasks []rollTask, depth int, state *MatchState, 
 		}
 	}
 	return true
-}
-
-// rollsInParallel est le cas à une seule position de la même file : les 21
-// lancers d'une position, ordonnés LPT, piochés par compteur atomique. Il
-// reste le chemin des appelants qui entrent par positionEquity plutôt que par
-// la racine de rankPlays.
-func (s *Searcher) rollsInParallel(pos *Position, depth int, state *MatchState, owner CubeOwner, best *[NumRolls]float64) bool {
-	var tasks [NumRolls]rollTask
-	for i, r := range rollsByCost {
-		tasks[i] = rollTask{pos: pos, roll: r, slot: r}
-	}
-	return s.runRollTasks(tasks[:], depth, state, owner, best[:])
 }
 
 // leafValue is the value of a position from its own turn's point of view:
@@ -1005,15 +1057,23 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 	return s
 }
 
-// maxUsefulWorkers est le nombre de tâches que le plus gros niveau de cette
+// maxUsefulWorkers est le nombre de tâches que la plus grosse file de cette
 // configuration peut offrir : au-delà, un ouvrier de plus ne fait qu'ajouter
 // sa table d'évaluation (3,7 Mo) et une goroutine qui ne pioche jamais rien.
 //
 // Le plafond était NumRolls, ce qui était juste tant qu'un candidat
 // approfondi ouvrait sa propre file de 21 lancers. Depuis l'aplatissement
-// (deepenLevel), un niveau porte Filter[depth] × 21 tâches — 63 à la
-// configuration canonique 2 ply —, et brider à 21 laisserait les machines à
-// plus de vingt cœurs sur la table.
+// (deepenGroups), un niveau de rankPlays porte Filter[depth] × 21 tâches —
+// 63 à la configuration canonique 2 ply —, et brider à 21 laisserait les
+// machines à plus de vingt cœurs sur la table.
+//
+// probsAt's own root loop (search_probs.go, #195/C.8) fond ses 21 lancers
+// PROPRES en une file plus large encore : jusqu'à 21 groupes, chacun
+// jusqu'à Filter[Ply-1] candidats, chacun 21 tâches — NumRolls² ×
+// Filter[Ply-1] au pire, qui dépasse la file de rankPlays dès que
+// Filter[Ply-1] dépasse widest/NumRolls (déjà le cas à la configuration
+// canonique : 1 contre 3/21). Ignorer cette file laisserait, elle,
+// des machines à plus de 63 cœurs sur la table pour un appel à Probs.
 func (s *Searcher) maxUsefulWorkers() int {
 	widest := 1
 	for depth := 1; depth <= s.cfg.Ply && depth < len(s.cfg.Filter); depth++ {
@@ -1021,7 +1081,18 @@ func (s *Searcher) maxUsefulWorkers() int {
 			widest = f
 		}
 	}
-	return NumRolls * widest
+	tasks := NumRolls * widest
+	if s.cfg.Ply >= 1 {
+		rootDepth := s.cfg.Ply - 1
+		rootWidth := 1
+		if rootDepth >= 0 && rootDepth < len(s.cfg.Filter) && s.cfg.Filter[rootDepth] > rootWidth {
+			rootWidth = s.cfg.Filter[rootDepth]
+		}
+		if probeTasks := NumRolls * NumRolls * rootWidth; probeTasks > tasks {
+			tasks = probeTasks
+		}
+	}
+	return tasks
 }
 
 // LiveWorkers is how many goroutines a FOREGROUND search — one the user is
