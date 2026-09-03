@@ -34,10 +34,12 @@ func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db}
 func (b binder) Comments() storage.CommentStore       { return &sqlshared.CommentStore{DB: b.shared()} }
 func (b binder) Collections() storage.CollectionStore { return &collectionStore{b.db} }
 func (b binder) Tournaments() storage.TournamentStore { return &tournamentStore{b.db} }
-func (b binder) Anki() storage.AnkiStore              { return &ankiStore{b.db} }
-func (b binder) Filters() storage.FilterStore         { return &sqlshared.FilterStore{DB: b.shared()} }
-func (b binder) Session() storage.SessionStore        { return &sqlshared.SessionStore{DB: b.shared()} }
-func (b binder) Search() storage.SearchStore          { return &sqlshared.SearchStore{DB: b.shared()} }
+func (b binder) Anki() storage.AnkiStore {
+	return &ankiStore{&sqlshared.AnkiStore{DB: b.shared(), Positions: b.Positions()}}
+}
+func (b binder) Filters() storage.FilterStore  { return &sqlshared.FilterStore{DB: b.shared()} }
+func (b binder) Session() storage.SessionStore { return &sqlshared.SessionStore{DB: b.shared()} }
+func (b binder) Search() storage.SearchStore   { return &sqlshared.SearchStore{DB: b.shared()} }
 func (b binder) SearchHistory() storage.SearchHistoryStore {
 	return &sqlshared.SearchHistoryStore{DB: b.shared()}
 }

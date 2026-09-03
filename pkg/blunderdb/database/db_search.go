@@ -18,13 +18,27 @@ import (
 // 2 000 positions this used to double the round trips, one per result on top
 // of the search query itself). Positions without an analysis are simply
 // absent from the map.
+//
+// This is the context.Background() convenience for callers with no context of
+// their own (the GUI's LoadPositionsByFilters, tests); LoadPositionsByFiltersCoreCtx
+// is the one to call when the caller can offer a real deadline/cancellation
+// (B.13, #181: the CLI's `search` cancels a long scan on Ctrl-C through it).
 func (d *Database) LoadPositionsByFiltersCore(
 	f SearchFilters, opts storage.ListOpts,
+) ([]Position, map[int64]*PositionAnalysis, error) {
+	return d.LoadPositionsByFiltersCoreCtx(context.Background(), f, opts)
+}
+
+// LoadPositionsByFiltersCoreCtx is LoadPositionsByFiltersCore with a caller-supplied
+// context: ctx is threaded into both the search scan and the batched analysis
+// load, so cancelling it (deadline, or the CLI's Ctrl-C) aborts an in-flight
+// query instead of running it to completion for a result nobody will read.
+func (d *Database) LoadPositionsByFiltersCoreCtx(
+	ctx context.Context, f SearchFilters, opts storage.ListOpts,
 ) ([]Position, map[int64]*PositionAnalysis, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	ctx := context.Background()
 	var positions []Position
 	var ids []int64
 	for pos, err := range d.store.Search().Find(ctx, "", f, opts) {

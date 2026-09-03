@@ -40,17 +40,18 @@ type parityEntry struct {
 // Reasons shared by several entries. Each names the decision, and the ADR
 // when one exists.
 const (
-	whyLifecycle = "desktop lifecycle: the CLI opens the file through every command's --db and the daemon through --dsn at start-up; no runtime open/close/lock to expose"
-	whyGUIState  = "interactive GUI state (session, filter library, command and search history, last visited match): a script has nothing to read or restore there"
-	whyGUIEdit   = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
-	whyTwoPhase  = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
-	whyIssuance  = "issuance is a person's act on a file they are producing (ADR-0007); the daemon operates on a library and signs, seals or opens nothing on anyone's behalf (ADR-0015)"
-	whySubsetExp = "the daemon's exports.sqlite writes the whole tenant, optionally watermarked with the daemon's own signing identity (Options.Identity, --identity-dir); a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
-	whyReview    = "reviewing a card needs the board in front of the player: a GUI gesture (the daemon serves a client that has one)"
-	whyCram      = "cram mode picks a random card for the board; the daemon's review loop goes through anki.nextCard and the CLI reviews nothing"
-	whyWrapper   = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"
-	whyServerEPC = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
-	whyMetadata  = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
+	whyLifecycle  = "desktop lifecycle: the CLI opens the file through every command's --db and the daemon through --dsn at start-up; no runtime open/close/lock to expose"
+	whyGUIState   = "interactive GUI state (session, filter library, command and search history, last visited match): a script has nothing to read or restore there"
+	whyGUIEdit    = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
+	whyTwoPhase   = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
+	whyIssuance   = "issuance is a person's act on a file they are producing (ADR-0007); the daemon operates on a library and signs, seals or opens nothing on anyone's behalf (ADR-0015)"
+	whySubsetExp  = "the daemon's exports.sqlite writes the whole tenant, optionally watermarked with the daemon's own signing identity (Options.Identity, --identity-dir); a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
+	whyReview     = "reviewing a card needs the board in front of the player: a GUI gesture (the daemon serves a client that has one)"
+	whyCram       = "cram mode picks a random card for the board; the daemon's review loop goes through anki.nextCard and the CLI reviews nothing"
+	whyWrapper    = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"
+	whyServerEPC  = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
+	whyMetadata   = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
+	whyCtxVariant = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
 )
 
 // databaseParity is the allow-list. Keep it sorted by method name.
@@ -77,6 +78,7 @@ var databaseParity = map[string]parityEntry{
 	"CommitImportDatabase":             {Why: whyTwoPhase},
 	"ComputeEPCFromPosition":           {CLI: "epc", Server: "/v1/positions.epc", Why: whyServerEPC},
 	"ComputeStats":                     {CLI: "list --type stats", Server: "/v1/stats.compute"},
+	"ComputeStatsCtx":                  {Why: whyCtxVariant},
 	"CopyPositionToCollection":         {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
 	"CountOrphans":                     {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
 	"CountPositionsWithoutAnalysis":    {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
@@ -97,6 +99,7 @@ var databaseParity = map[string]parityEntry{
 	"DeleteTournament":                 {Server: "/v1/tournaments.delete", Why: whyGUIEdit},
 	"ExportCollections":                {CLI: "collection export", Why: whySubsetExp},
 	"ExportDatabase":                   {CLI: "export", Server: "/v1/exports.sqlite"},
+	"ExportDatabaseCtx":                {Why: whyCtxVariant},
 	"ExportMatchMAT":                   {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
 	"ExportTournaments":                {CLI: "export --tournament-ids", Why: whySubsetExp},
 	"GetAllAnkiDecks":                  {CLI: "anki decks", Server: "/v1/anki.listDecks"},
@@ -157,6 +160,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadPositionsByIDs":               {CLI: "search --position-ids", Server: "/v1/positions.loadByIds"},
 	"LoadPositionsByFilters":           {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCore":       {CLI: "search", Server: "/v1/search.find"},
+	"LoadPositionsByFiltersCoreCtx":    {Why: whyCtxVariant},
 	"LoadSearchHistory":                {Server: "/v1/searchHistory.list", Why: whyGUIState},
 	"LoadSessionState":                 {Server: "/v1/session.load", Why: whyGUIState},
 	"MergePlayers":                     {Server: "/v1/matches.mergePlayers", Why: whyGUIEdit},

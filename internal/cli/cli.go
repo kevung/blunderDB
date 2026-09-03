@@ -1,13 +1,43 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 )
+
+// withInterruptibleContext runs fn with a context cancelled by SIGINT
+// (Ctrl-C) — the CLI's answer to a long-running Database call that cannot
+// otherwise be aborted from a foreground process (B.13, #181; the pattern
+// cli_analyze.go established for `analyze` before this helper existed).
+// onInterrupt, if non-nil, runs once when the signal arrives, before ctx is
+// cancelled — e.g. to print "Cancelling..." only in text output mode.
+//
+// A caller that wants to tell a genuine failure from a cancellation checks
+// errors.Is(err, context.Canceled) on the error fn returns, exactly as a
+// context-cancelled query surfaces it (database/sql, and every Storage
+// backend's Query/Exec built on it).
+func withInterruptibleContext(onInterrupt func(), fn func(ctx context.Context) error) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+	defer signal.Stop(sig)
+	go func() {
+		if _, ok := <-sig; ok {
+			if onInterrupt != nil {
+				onInterrupt()
+			}
+			cancel()
+		}
+	}()
+	return fn(ctx)
+}
 
 // parseIDList parses a comma-separated string of int64 IDs.
 func parseIDList(s string) ([]int64, error) {

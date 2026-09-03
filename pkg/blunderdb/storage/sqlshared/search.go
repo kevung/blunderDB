@@ -49,7 +49,32 @@ func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 	}
 }
 
-func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]domain.Position, error) {
+// searchWhereClause is what buildWhere hands find: the WHERE clause text and
+// its bound arguments, plus the state later phases need that buildWhere
+// already had to compute while reading f (B.15, #183 — find used to carry
+// all of this, and the query execution, the row scan and the Go-side filter
+// pass, as one 730-line function).
+type searchWhereClause struct {
+	where         string
+	args          []any
+	needAnalysis  bool
+	useSQLFilters bool
+	bitboardTight bool
+	// multiPlayed lists the positions player 1 played more than one way;
+	// only filled by a plain move-error search, where those rows escape the
+	// SQL column and are scored in Go (#167).
+	multiPlayed map[int64]bool
+	// effInclude is f.Filter with the points shared with ExcludeFilter
+	// cleared, so "Except" wins over "At least" on those points.
+	effInclude domain.Position
+}
+
+// buildWhere translates f into the WHERE clause of the search query: cheap
+// predicates that can be pushed to SQL become clause text and bound
+// arguments; the rest are left to applyGoFilters (matchesGoFilters below),
+// which is what needAnalysis/useSQLFilters/bitboardTight/multiPlayed/
+// effInclude in the returned searchWhereClause are for.
+func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	useSQLFilters := !f.MirrorFilter
 	// multiPlayed lists the positions player 1 played more than one way;
 	// only filled by a plain move-error search, where those rows escape the
@@ -149,7 +174,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 					// is (B.6, #174).
 					matchIDs, err := getMatchIDsForTournament(ctx, s.DB, tID)
 					if err != nil {
-						return nil, err
+						return searchWhereClause{}, err
 					}
 					allMatchIDs = append(allMatchIDs, matchIDs...)
 				}
@@ -339,7 +364,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		if f.MoveErrorFilter != "" {
 			var err error
 			if multiPlayed, err = multiPlayedPlayer1Positions(ctx, s.DB, scope); err != nil {
-				return nil, err
+				return searchWhereClause{}, err
 			}
 			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 			eqMin := int(math.Round(eMin))
@@ -391,16 +416,33 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		}
 	}
 
+	return searchWhereClause{
+		where:         where.String(),
+		args:          args,
+		needAnalysis:  needAnalysis,
+		useSQLFilters: useSQLFilters,
+		bitboardTight: bitboardTight,
+		multiPlayed:   multiPlayed,
+		effInclude:    effInclude,
+	}, nil
+}
+
+func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]domain.Position, error) {
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return nil, err
+	}
+
 	// a.data is the compressed analysis blob (~600 bytes/row on the tournois
-	// fixture) and is the only column here needAnalysis gates: every other
+	// fixture) and is the only column here wc.needAnalysis gates: every other
 	// selected analysis column is a cheap denormalised scalar used by the SQL
 	// WHERE clause itself. A search that needs none of the Go-side
 	// analysis-dependent filters (move pattern, mirror, date, move-error,
-	// equity — see needAnalysis above) has no use for the blob, so skip
+	// equity — see wc.needAnalysis above) has no use for the blob, so skip
 	// fetching and transporting it: NULL is 1 byte on the wire instead of ~600,
 	// for every row, sorted or not.
 	analysisDataCol := "NULL"
-	if needAnalysis {
+	if wc.needAnalysis {
 		analysisDataCol = "a.data"
 	}
 
@@ -414,14 +456,36 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + where.String() + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
+	WHERE ` + wc.where + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
 
-	rows, err := s.DB.Query(ctx, query, append(args, limitArgs...)...)
+	rows, err := s.DB.Query(ctx, query, append(wc.args, limitArgs...)...)
 	if err != nil {
 		return nil, errf(s.DB, "search query", err)
 	}
 	defer rows.Close()
 
+	scanned, err := s.scanRows(rows, wc.needAnalysis)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.applyGoFilters(ctx, f, wc, scanned)
+}
+
+// scannedRow is one row of buildWhere's query, decoded into the shape
+// applyGoFilters works with. is_cube_response is read from its own column
+// rather than the position blob, so it has to travel with the row to the
+// filter phase.
+type scannedRow struct {
+	pos            domain.Position
+	ana            *domain.PositionAnalysis
+	isCubeResponse bool
+}
+
+// scanRows drains rows into a []scannedRow before any Go-side filtering
+// starts, decoding each row's compressed analysis blob when needAnalysis
+// says a later filter will read it.
+func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, error) {
 	// Drain the cursor before filtering. A cursor holds a pooled connection
 	// until it is exhausted, and the Go-side predicates below open queries of
 	// their own (comment text, creation date, played-move error, take/pass cube
@@ -437,13 +501,6 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	//
 	// Buffering costs nothing here: find already materialises its whole result
 	// set, so these rows were going to be held in memory regardless.
-	type scannedRow struct {
-		pos domain.Position
-		ana *domain.PositionAnalysis
-		// is_cube_response, read from its own column rather than the position
-		// blob, so it has to travel with the row to the filter phase.
-		isCubeResponse bool
-	}
 	var scanned []scannedRow
 
 	for rows.Next() {
@@ -501,6 +558,16 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		return nil, errf(s.DB, "search rows close", err)
 	}
 
+	return scanned, nil
+}
+
+// applyGoFilters runs the Go-side predicates buildWhere could not push to
+// SQL against each scanned row (and, for MirrorFilter, its mirror image
+// too), preloading per-family batch queries first — exactly what find used
+// to do inline, now split out so buildWhere/scanRows/applyGoFilters can each
+// be read (and in buildWhere's case, tested) on their own (B.15, #183).
+func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, scanned []scannedRow) ([]domain.Position, error) {
+	var err error
 	// Preload, in one batched query per family, what the per-row predicates
 	// below used to fetch one row at a time: a SearchText filter checked every
 	// SQL-matched candidate's comment with its own query (loadCommentText),
@@ -531,14 +598,17 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	}
 
 	var positions []domain.Position
+	// Built once for the whole scan: the six checks only depend on f, not on
+	// the row being tested.
+	rates := rateFilterChecks(f)
 
 	for _, row := range scanned {
 		position, ana := row.pos, row.ana
 
 		matchesGoFilters := func(pos domain.Position) (bool, error) {
-			if searchfilter.HasBoardFilter(effInclude.Board) {
-				if !useSQLFilters || bitboardTight {
-					if !pos.MatchesCheckerPosition(effInclude) {
+			if searchfilter.HasBoardFilter(wc.effInclude.Board) {
+				if !wc.useSQLFilters || wc.bitboardTight {
+					if !pos.MatchesCheckerPosition(wc.effInclude) {
 						return false, nil
 					}
 				}
@@ -552,8 +622,8 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 				}
 			}
 
-			if !useSQLFilters {
-				if !pos.MatchesCheckerPosition(effInclude) {
+			if !wc.useSQLFilters {
+				if !pos.MatchesCheckerPosition(wc.effInclude) {
 					return false, nil
 				}
 				if f.IncludeCube && !pos.MatchesCubePosition(f.Filter) {
@@ -603,111 +673,18 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 				if f.Player2BackCheckerFilter != "" && !pos.MatchesPlayer2BackChecker(f.Player2BackCheckerFilter) {
 					return false, nil
 				}
-				if f.WinRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var wr float64
-					if ana.DoublingCubeAnalysis != nil {
-						wr = ana.DoublingCubeAnalysis.PlayerWinChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						wr = ana.CheckerAnalysis.Moves[0].PlayerWinChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.WinRateFilter, "w", wr) {
-						return false, nil
-					}
-				}
-				if f.GammonRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var gr float64
-					if ana.DoublingCubeAnalysis != nil {
-						gr = ana.DoublingCubeAnalysis.PlayerGammonChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						gr = ana.CheckerAnalysis.Moves[0].PlayerGammonChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.GammonRateFilter, "g", gr) {
-						return false, nil
-					}
-				}
-				if f.BackgammonRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var bgr float64
-					if ana.DoublingCubeAnalysis != nil {
-						bgr = ana.DoublingCubeAnalysis.PlayerBackgammonChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						bgr = ana.CheckerAnalysis.Moves[0].PlayerBackgammonChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.BackgammonRateFilter, "b", bgr) {
-						return false, nil
-					}
-				}
-				if f.Player2WinRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var wr float64
-					if ana.DoublingCubeAnalysis != nil {
-						wr = ana.DoublingCubeAnalysis.OpponentWinChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						wr = ana.CheckerAnalysis.Moves[0].OpponentWinChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2WinRateFilter, "W", wr) {
-						return false, nil
-					}
-				}
-				if f.Player2GammonRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var gr float64
-					if ana.DoublingCubeAnalysis != nil {
-						gr = ana.DoublingCubeAnalysis.OpponentGammonChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						gr = ana.CheckerAnalysis.Moves[0].OpponentGammonChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2GammonRateFilter, "G", gr) {
-						return false, nil
-					}
-				}
-				if f.Player2BackgammonRateFilter != "" {
-					if ana == nil {
-						return false, nil
-					}
-					var bgr float64
-					if ana.DoublingCubeAnalysis != nil {
-						bgr = ana.DoublingCubeAnalysis.OpponentBackgammonChances
-					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
-						bgr = ana.CheckerAnalysis.Moves[0].OpponentBackgammonChance
-					} else {
-						return false, nil
-					}
-					if !searchfilter.AnalysisMatchesFloatFilter(f.Player2BackgammonRateFilter, "B", bgr) {
-						return false, nil
-					}
+				if !matchesRateFilters(rates, ana) {
+					return false, nil
 				}
 				if f.MoveErrorFilter != "" {
 					if !matchesMoveErrorFilterPreloaded(ana, player1MovesByID[pos.ID], f.MoveErrorFilter) {
 						return false, nil
 					}
 				}
-			} else if f.MoveErrorFilter != "" && multiPlayed[pos.ID] {
+			} else if f.MoveErrorFilter != "" && wc.multiPlayed[pos.ID] {
 				// The SQL column scored one play; a multi-played position is
 				// scored here by its largest error (#167). Its blob was not
-				// fetched with the scan (needAnalysis is false on this path
+				// fetched with the scan (wc.needAnalysis is false on this path
 				// unless another filter wanted it), so load it now — the set
 				// is a handful of rows, and the cursor is already drained.
 				if ana == nil {
@@ -779,6 +756,105 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	}
 
 	return positions, nil
+
+}
+
+// rateFilterCheck is one of the six win/gammon/backgammon-rate search
+// filters, folded into a table (B.15, #183): find used to carry each as its
+// own ~15-line copy — parse the filter, read the rate from the cube
+// analysis or, failing that, the first checker move, compare — differing
+// only in which domain.SearchFilters field it read, the token
+// AnalysisMatchesFloatFilter names in a parse error, and which two
+// PositionAnalysis fields hold the rate.
+type rateFilterCheck struct {
+	filter  string
+	token   string
+	extract func(*domain.PositionAnalysis) (float64, bool)
+}
+
+// rateFilterChecks builds the six checks active for f. All six are always
+// present; an empty filter field simply passes every row in
+// matchesRateFilters, exactly as an absent `if f.XRateFilter != ""` used to.
+func rateFilterChecks(f domain.SearchFilters) [6]rateFilterCheck {
+	return [6]rateFilterCheck{
+		{f.WinRateFilter, "w", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.PlayerWinChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].PlayerWinChance, true
+			}
+			return 0, false
+		}},
+		{f.GammonRateFilter, "g", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.PlayerGammonChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].PlayerGammonChance, true
+			}
+			return 0, false
+		}},
+		{f.BackgammonRateFilter, "b", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.PlayerBackgammonChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].PlayerBackgammonChance, true
+			}
+			return 0, false
+		}},
+		{f.Player2WinRateFilter, "W", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.OpponentWinChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].OpponentWinChance, true
+			}
+			return 0, false
+		}},
+		{f.Player2GammonRateFilter, "G", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.OpponentGammonChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].OpponentGammonChance, true
+			}
+			return 0, false
+		}},
+		{f.Player2BackgammonRateFilter, "B", func(ana *domain.PositionAnalysis) (float64, bool) {
+			if ana.DoublingCubeAnalysis != nil {
+				return ana.DoublingCubeAnalysis.OpponentBackgammonChances, true
+			}
+			if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+				return ana.CheckerAnalysis.Moves[0].OpponentBackgammonChance, true
+			}
+			return 0, false
+		}},
+	}
+}
+
+// matchesRateFilters reports whether ana satisfies every active check (an
+// empty filter string is inactive and always passes); a nil ana fails any
+// active check, and an analysis with neither a cube nor a checker-move rate
+// to read fails it too — both match the six original blocks' behaviour.
+func matchesRateFilters(checks [6]rateFilterCheck, ana *domain.PositionAnalysis) bool {
+	for _, c := range checks {
+		if c.filter == "" {
+			continue
+		}
+		if ana == nil {
+			return false
+		}
+		v, ok := c.extract(ana)
+		if !ok {
+			return false
+		}
+		if !searchfilter.AnalysisMatchesFloatFilter(c.filter, c.token, v) {
+			return false
+		}
+	}
+	return true
 }
 
 func derefInt(p *int64) int {
