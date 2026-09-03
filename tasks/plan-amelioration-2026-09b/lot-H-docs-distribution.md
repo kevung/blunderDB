@@ -68,18 +68,22 @@ FAQ (15 questions) : 0 gammonNet/Anki/filigrane/Docker, `faq.rst:181` sans
 l'évaluateur, #101 fermée sans changement ; « calculateur EPC »
 (`guide_utilisateur.rst:293-296`, `faq.rst:120`) ; vidéos YouTube de janvier
 2025 en tête d'`index.rst:191,194`.
-- [ ] Quatre tutoriels : *mon premier import* (du `.xg` à la première
+- [x] Quatre tutoriels : *mon premier import* (du `.xg` à la première
       recherche d'erreur), *étudier un match*, *une session Anki*, *déployer
       `serve` derrière un proxy* (G.1).
-- [ ] Page « comment progresser avec blunderDB » (routine hebdomadaire :
-      importer → `E>50` → commenter → paquet Anki → PR par tournoi) — la page
-      qui vaut dix fonctionnalités.
-- [ ] FAQ : +6 questions (ai-je besoin d'XG ? que vaut l'évaluateur ? où sont
+- [x] Page « comment progresser avec blunderDB » (routine hebdomadaire :
+      importer → filtrer les décisions coûteuses (`bl`) → commenter → paquet
+      Anki → PR par tournoi) — la page qui vaut dix fonctionnalités.
+- [x] FAQ : +6 questions (ai-je besoin d'XG ? que vaut l'évaluateur ? où sont
       mes données ? partager une base ? mode serveur ? PR vs Snowie) ;
-      corriger les coquilles (`faq.rst:10,52,156,181,203`, `index.rst:7`).
-- [ ] Retirer les vidéos jusqu'à #102 ; script de démo en 3 min
+      corriger les coquilles (`faq.rst` : personalisée, aggrège, philisophie,
+      fonctionne-t'il, architecture logicielle sans gammonNet ; `index.rst:7`
+      aggréger).
+- [x] Retirer les vidéos jusqu'à #102 ; script de démo en 3 min
       (importer → blunders → paquet Anki) sur la base `demo` régénérée (A.8).
-- [ ] Toctree : guide avant manuel ; intro d'`index.rst` cite les 12 sections.
+- [x] Toctree : guide avant manuel ; intro d'`index.rst` cite les 12 sections
+      (les 4 annexes techniques comptées comme 3 : sécurité Windows/macOS
+      regroupée).
 
 ## H.5 — Captures d'écran générées [M] — découvrabilité (#247)
 
