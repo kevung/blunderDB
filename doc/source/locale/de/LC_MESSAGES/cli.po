@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:51+0200\n"
+"POT-Creation-Date: 2026-09-03 09:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -307,8 +307,8 @@ msgstr "Erstellt eine neue Datenbankdatei mit optionalen Metadaten."
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:791
-#: ../../source/cli.rst:823 ../../source/cli.rst:853
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:803
+#: ../../source/cli.rst:835 ../../source/cli.rst:865
 msgid "**Options:**"
 msgstr "**Optionen:**"
 
@@ -336,8 +336,8 @@ msgstr ""
 "Die Erweiterung ``.db`` wird automatisch hinzugefügt, falls sie fehlt. "
 "Übergeordnete Verzeichnisse werden bei Bedarf erstellt."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:803
-#: ../../source/cli.rst:865
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:815
+#: ../../source/cli.rst:877
 msgid "**Exemple:**"
 msgstr "**Beispiel:**"
 
@@ -534,7 +534,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:765 ../../source/cli.rst:830
+#: ../../source/cli.rst:777 ../../source/cli.rst:842
 msgid "**Exemples:**"
 msgstr "**Beispiele:**"
 
@@ -669,7 +669,7 @@ msgstr "**Hauptoptionen:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:793 ../../source/cli.rst:825
+#: ../../source/cli.rst:805 ../../source/cli.rst:837
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Datenbank (erforderlich)."
 
@@ -1355,23 +1355,28 @@ msgstr ""
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
-"de coup sans coup, analyses sans position — et affiche une ligne "
-"``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned "
-"rows: none``. Des orphelins peuvent subsister dans une base écrite par "
-"une version qui n'appliquait pas les clés étrangères sur toutes les "
-"connexions ; ils ne sont rattachés à aucun match et n'occupent que de la "
-"place. La commande se termine tout de même avec le code de sortie 0."
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position — et affiche une ligne ``WARNING`` avec le "
+"total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des "
+"orphelins peuvent subsister dans une base écrite par une version qui "
+"n'appliquait pas les clés étrangères sur toutes les connexions, ou avant "
+"que le journal de révision ait les siennes ; ils ne sont rattachés à "
+"aucun match ni à aucun paquet et n'occupent que de la place. La commande "
+"se termine tout de même avec le code de sortie 0."
 msgstr ""
-"Jeder Lauf prüft außerdem die referentielle Integrität: Er zählt "
-"verwaiste Zeilen — Spiele ohne Match, Züge ohne Spiel, Zuganalysen ohne "
-"Zug, Analysen ohne Stellung — und gibt eine ``WARNING``-Zeile mit der "
-"Gesamtzahl aus, wenn es welche gibt. Eine gesunde Datenbank antwortet "
-"``Orphaned rows: none``. Waisen können in einer Datenbank zurückbleiben, "
-"die von einer Version geschrieben wurde, die Fremdschlüssel nicht auf "
-"allen Verbindungen erzwang; sie gehören zu keinem Match und belegen nur "
-"Platz. Der Befehl endet dennoch mit dem Exit-Code 0."
+"Jeder Durchlauf prüft außerdem die referenzielle Integrität: Er zählt "
+"verwaiste Zeilen — Partien ohne Match, Züge ohne Partie, Zuganalysen "
+"ohne Zug, Analysen ohne Stellung, Einträge des Wiederholungsjournals "
+"ohne Stapel oder ohne Stellung — und gibt eine ``WARNING``-Zeile mit der "
+"Gesamtzahl aus, wenn es welche gibt. Eine gesunde Datenbank meldet "
+"``Orphaned rows: none``. Verwaiste Zeilen können in einer Datenbank "
+"zurückbleiben, die von einer Version geschrieben wurde, die "
+"Fremdschlüssel nicht auf jeder Verbindung durchsetzte, oder bevor das "
+"Wiederholungsjournal eigene hatte; sie gehören zu keinem Match und zu "
+"keinem Stapel und belegen nur Platz. Der Befehl endet dennoch mit dem "
+"Exit-Code 0."
 
-#: ../../source/cli.rst:744
+#: ../../source/cli.rst:745
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1394,7 +1399,7 @@ msgstr ""
 "verwaisten Zeilen ist eine Schemaabweichung ein Befund, kein Fehlschlag: "
 "der Exit-Code bleibt 0."
 
-#: ../../source/cli.rst:754
+#: ../../source/cli.rst:755
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -1410,21 +1415,45 @@ msgid ""
 msgstr ""
 "Jeder Durchlauf prüft schließlich die Regeln, die die aktuelle DDL "
 "aufstellt, die SQLite einer bereits bestehenden Tabelle aber nicht "
-"hinzufügen kann: die ``CHECK``-Bereichsbedingungen (Würfel zwischen 0 "
-"und 6, Dopplerwürfel und Pips nicht negativ, 0 bis 15 abgetragene "
-"Steine, Bewertungen zwischen 1 und 4), den Zobrist-Hash, der einer Zeile "
-"nie fehlen dürfte, und eine Analyse je Position. Eine seit Schemaversion "
+"hinzufügen kann: die ``CHECK``-Bereichsbedingungen (Würfel zwischen 0 und"
+" 6, Dopplerwürfel und Pips nicht negativ, 0 bis 15 abgetragene Steine, "
+"Bewertungen zwischen 1 und 4), den Zobrist-Hash, der einer Zeile nie "
+"fehlen dürfte, und eine Analyse je Position. Eine seit Schemaversion "
 "2.18.0 angelegte Datenbank erzwingt sie; eine ältere kann noch Zeilen "
 "enthalten, die eine neue Datenbank ablehnen würde — genau diese werden "
 "hier Regel für Regel gezählt. Eine gesunde Datenbank meldet "
 "``Constraints: every row satisfies the current DDL``. Ein weiterer "
 "Befund: Es wird nichts repariert, und der Exit-Code bleibt 0."
 
-#: ../../source/cli.rst:779
+#: ../../source/cli.rst:766
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Jeder Durchlauf berechnet schließlich die beiden denormalisierten Zähler "
+"``match.game_count`` und ``game.move_count`` aus den Zeilen neu, die sie "
+"zu zählen vorgeben, und meldet, wie viele abweichen und um wie viel im "
+"schlimmsten Fall. Beide werden einmal beim Import aus dem geschrieben, "
+"was die **Quelldatei** enthielt, und sind das, was die Matchliste und die"
+" Partieansicht anzeigen: eine kleine Abweichung ist meist ein Import, der"
+" übersprungen hat, was er nicht umwandeln konnte. Es wird nichts "
+"überschrieben — den Zähler durch das Gespeicherte zu ersetzen würde genau"
+" die Abweichung tilgen, die man sehen will. Eine gesunde Datenbank meldet"
+" ``Counters: game_count and move_count agree with the rows``."
+
+#: ../../source/cli.rst:791
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Die Datenbank komprimieren"
 
-#: ../../source/cli.rst:781
+#: ../../source/cli.rst:793
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1440,7 +1469,7 @@ msgstr ""
 " einer Datenbank geschieht sie nie automatisch, da ihre Kosten bei einer "
 "großen Datenbank unvorhersehbar sind."
 
-#: ../../source/cli.rst:795
+#: ../../source/cli.rst:807
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1460,33 +1489,33 @@ msgstr ""
 "Befehl den Start mit einer eindeutigen Meldung, statt eine abgebrochene "
 "Komprimierung zu riskieren."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:827
 msgid "delete — Supprimer des données"
 msgstr "delete — Daten löschen"
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:829
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Löscht ein Match und alle zugehörigen Daten (Spiele, Züge, Analysen)."
 
-#: ../../source/cli.rst:826
+#: ../../source/cli.rst:838
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Löschtyp: ``match`` (erforderlich)."
 
-#: ../../source/cli.rst:827
+#: ../../source/cli.rst:839
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID des zu löschenden Elements (erforderlich)."
 
-#: ../../source/cli.rst:828
+#: ../../source/cli.rst:840
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Ohne Bestätigungsabfrage löschen."
 
-#: ../../source/cli.rst:841
+#: ../../source/cli.rst:853
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Einen Daemon abfragen"
 
-#: ../../source/cli.rst:843
+#: ../../source/cli.rst:855
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1500,7 +1529,7 @@ msgstr ""
 "Version), sonst ``1`` — Speicher nicht erreichbar, veraltetes Schema oder"
 " nichts lauscht an der Adresse. Es wird keine Datenbankdatei geöffnet."
 
-#: ../../source/cli.rst:855
+#: ../../source/cli.rst:867
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1511,13 +1540,13 @@ msgstr ""
 "oder mit einem Platzhalter-Host (``0.0.0.0``, ``[::]``) wird über die "
 "Loopback-Schnittstelle abgefragt."
 
-#: ../../source/cli.rst:858
+#: ../../source/cli.rst:870
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
 msgstr "``--timeout`` — Zeit, nach der die Sonde aufgibt (standardmäßig ``2s``)."
 
-#: ../../source/cli.rst:860
+#: ../../source/cli.rst:872
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1529,7 +1558,7 @@ msgstr ""
 "``serve``-Binary versteht ihn ebenfalls. Er eignet sich genauso für ein "
 "Skript oder eine systemd-Unit."
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:886
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1537,35 +1566,35 @@ msgstr ""
 "Im Fehlerfall wird der Grund ausgegeben, den ``docker inspect`` für einen"
 " ``unhealthy``-Container wiedergibt:"
 
-#: ../../source/cli.rst:882
+#: ../../source/cli.rst:894
 msgid "Exemples de flux de travail"
 msgstr "Workflow-Beispiele"
 
-#: ../../source/cli.rst:885
+#: ../../source/cli.rst:897
 msgid "Import d'un répertoire de tournoi"
 msgstr "Ein Turnierverzeichnis importieren"
 
-#: ../../source/cli.rst:899
+#: ../../source/cli.rst:911
 msgid "Sauvegarde régulière"
 msgstr "Regelmäßige Sicherung"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:919
 msgid "Analyse des erreurs"
 msgstr "Fehleranalyse"
 
-#: ../../source/cli.rst:918
+#: ../../source/cli.rst:930
 msgid "Codes de retour"
 msgstr "Rückgabecodes"
 
-#: ../../source/cli.rst:920
+#: ../../source/cli.rst:932
 msgid "``0`` — Succès."
 msgstr "``0`` — Erfolg."
 
-#: ../../source/cli.rst:921
+#: ../../source/cli.rst:933
 msgid "``1`` — Erreur."
 msgstr "``1`` — Fehler."
 
-#: ../../source/cli.rst:923
+#: ../../source/cli.rst:935
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Dadurch lässt sich die CLI in Skripten mit Fehlerbehandlung verwenden:"
 

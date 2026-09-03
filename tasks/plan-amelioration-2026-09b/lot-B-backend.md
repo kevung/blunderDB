@@ -113,7 +113,7 @@ prend une au hasard.
       migrées. Côté PostgreSQL, `015` les ajoute `NOT VALID` : les nouvelles
       lignes sont contrôlées, les anciennes laissées telles quelles — même
       marché.
-- [~] `zobrist_hash NOT NULL` : **refusé, et pour trois raisons mesurées sur
+- [x] `zobrist_hash NOT NULL` : **refusé, et pour trois raisons mesurées sur
       le code.** (1) `EnsureSchema` ajoute une colonne manquante par `ALTER
       TABLE ADD COLUMN`, et SQLite refuse une colonne `NOT NULL` sans
       défaut : un vieux fichier sans la colonne ne la recevrait plus jamais
@@ -326,8 +326,31 @@ sont muets ; `config.go:6,312,319` utilise `log` standard.
 
 `match.game_count`, `game.move_count` sans garde ; `anki_review_log.deck_id`/
 `position_id` sans FK ; `index_parity_test.go:41` ne compare que les noms.
-- [ ] `verify` recalcule les compteurs et signale l'écart ; FK ajoutées dans la
-      vague 2.16.0 ; parité d'index sur les colonnes (normalisées).
+- [x] `verify` recalcule `match.game_count` et `game.move_count` à partir des
+      lignes (`Database.CheckCounters`) et signale combien sont en désaccord
+      et de combien au pire. **Rien n'est réécrit** : les deux compteurs
+      enregistrent ce que contenait le *fichier source*
+      (`GameCount: len(match.Games)`, `MoveCount: len(movesData)` dans
+      `ingest`), et ce sont eux que la liste des matchs affiche — les
+      remplacer par le décompte des lignes effacerait justement l'écart qu'il
+      y a lieu de regarder.
+- [x] FK sur `anki_review_log.deck_id` et `.position_id` dans la vague 2.18.0
+      (DDL fraîche côté SQLite, `016_review_log_foreign_keys.sql` en
+      `NOT VALID` côté PostgreSQL). SQLite n'ajoute aucune FK à une table
+      existante : la différence est inscrite dans `migratedFromV1Allowed`
+      (`schema_parity_test.go`) avec sa raison, et `CountOrphans` gagne les
+      deux relations correspondantes pour compter ce qui pend dans une base
+      migrée.
+- [x] `index_parity_test.go` compare désormais **les colonnes et l'unicité**,
+      pas seulement les noms : `tenant_id` (qui n'existe pas côté SQLite) est
+      retiré, les colonnes du prédicat d'un index partiel sont repliées avec
+      les colonnes de clé (`ON position(individually_imported) WHERE … = 1`
+      d'un côté, `ON position (tenant_id) WHERE individually_imported` de
+      l'autre), et une déclaration répétée dans plusieurs migrations est prise
+      à sa **dernière** occurrence — celle avec laquelle la base finit. L'ordre
+      des colonnes n'est délibérément pas comparé : il diffère légitimement dès
+      que `tenant_id` mène d'un côté. 38 index SQLite, 35 PostgreSQL, trois
+      exceptions justifiées.
 
 ## B.18 — Grammaire de recherche côté Go [L] — DX, parité (#186)
 
@@ -368,12 +391,21 @@ Dépendance : D.3 (parseur unique côté JS) est l'étape 1 ; B.18 l'étape 2.
 
 | Fiche | Effort | Étape | Bump schéma |
 |---|---|---|---|
-| B.1, B.4, B.6, B.8, B.9, B.16, B.17, B.19 | S | 1 | — (B.17 : FK en vague 2.16.0) |
-| B.2, B.3, B.5, B.7 | M | 1 | B.3, B.5 : **2.16.0** avec A.2 |
+| B.1, B.4, B.6, B.8, B.9, B.16, B.19 | S | 1 | — |
+| B.17 | S | 1 | FK livrées en vague **2.18.0** |
+| B.2, B.7 | M | 1 | — |
+| B.3, B.5 | M | 1 | livrées en vague **2.18.0** |
 | B.10, B.11, B.12, B.14, B.15 | M | 2 | B.12 étape 2 : version de blob |
 | B.13, B.18 | L | 2-3 | — |
 
-**Une seule vague de schéma** (2.16.0) regroupe A.2 (session), B.3 (hash sans
-Jacoby/beaver), B.5 (UNIQUE analysis, NOT NULL hash, CHECK), B.12 (colonnes
-`analysis_engine`/`analysis_depth`), B.17 (FK). Triple synchro + migration +
-test de continuité SQLite **et** PG (G.7).
+**Une seule vague de schéma**, livrée en **2.18.0** — et non 2.16.0 : A.2
+(session) est partie seule en 2.17.0 avant celle-ci. La vague regroupe B.3
+(hash sans Jacoby/beaver), B.5 (UNIQUE analysis, CHECK ; le `NOT NULL` sur le
+hash est refusé, raisons en fiche) et B.17 (FK du journal de révision).
+Trois commits, une seule version de schéma : trois versions successives
+auraient imposé trois régénérations de la base de démonstration et trois
+migrations à l'ouverture pour un même lot de corrections. B.12 (colonnes
+`analysis_engine`/`analysis_depth`) n'est pas dedans et demandera sa propre
+vague. Triple synchro faite : `database` (étape + DDL), `storage/sqlite`
+(schéma frais), `storage/postgres` (migrations 014, 015, 016), plus
+`migration_test.go` et le test de continuité de la chaîne.

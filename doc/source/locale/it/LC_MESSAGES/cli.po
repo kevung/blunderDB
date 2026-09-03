@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 08:51+0200\n"
+"POT-Creation-Date: 2026-09-03 09:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -301,8 +301,8 @@ msgstr "Crea un nuovo file di database con metadati opzionali."
 #: ../../source/cli.rst:83 ../../source/cli.rst:108 ../../source/cli.rst:161
 #: ../../source/cli.rst:237 ../../source/cli.rst:261 ../../source/cli.rst:443
 #: ../../source/cli.rst:579 ../../source/cli.rst:619 ../../source/cli.rst:671
-#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:791
-#: ../../source/cli.rst:823 ../../source/cli.rst:853
+#: ../../source/cli.rst:695 ../../source/cli.rst:725 ../../source/cli.rst:803
+#: ../../source/cli.rst:835 ../../source/cli.rst:865
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
@@ -330,8 +330,8 @@ msgstr ""
 "L'estensione ``.db`` viene aggiunta automaticamente se assente. Le "
 "cartelle superiori vengono create se necessario."
 
-#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:803
-#: ../../source/cli.rst:865
+#: ../../source/cli.rst:93 ../../source/cli.rst:646 ../../source/cli.rst:815
+#: ../../source/cli.rst:877
 msgid "**Exemple:**"
 msgstr "**Esempio:**"
 
@@ -527,7 +527,7 @@ msgstr ""
 #: ../../source/cli.rst:187 ../../source/cli.rst:325 ../../source/cli.rst:406
 #: ../../source/cli.rst:450 ../../source/cli.rst:498 ../../source/cli.rst:551
 #: ../../source/cli.rst:594 ../../source/cli.rst:676 ../../source/cli.rst:705
-#: ../../source/cli.rst:765 ../../source/cli.rst:830
+#: ../../source/cli.rst:777 ../../source/cli.rst:842
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
@@ -661,7 +661,7 @@ msgstr "**Opzioni principali:**"
 
 #: ../../source/cli.rst:285 ../../source/cli.rst:445 ../../source/cli.rst:621
 #: ../../source/cli.rst:673 ../../source/cli.rst:697 ../../source/cli.rst:727
-#: ../../source/cli.rst:793 ../../source/cli.rst:825
+#: ../../source/cli.rst:805 ../../source/cli.rst:837
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Database (obbligatorio)."
 
@@ -1346,23 +1346,27 @@ msgstr ""
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
-"de coup sans coup, analyses sans position — et affiche une ligne "
-"``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned "
-"rows: none``. Des orphelins peuvent subsister dans une base écrite par "
-"une version qui n'appliquait pas les clés étrangères sur toutes les "
-"connexions ; ils ne sont rattachés à aucun match et n'occupent que de la "
-"place. La commande se termine tout de même avec le code de sortie 0."
+"de coup sans coup, analyses sans position, entrées du journal de révision"
+" sans paquet ou sans position — et affiche une ligne ``WARNING`` avec le "
+"total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des "
+"orphelins peuvent subsister dans une base écrite par une version qui "
+"n'appliquait pas les clés étrangères sur toutes les connexions, ou avant "
+"que le journal de révision ait les siennes ; ils ne sont rattachés à "
+"aucun match ni à aucun paquet et n'occupent que de la place. La commande "
+"se termine tout de même avec le code de sortie 0."
 msgstr ""
 "Ogni esecuzione controlla anche l'integrità referenziale: conta le righe "
-"orfane — partite senza match, mosse senza partita, analisi di mossa senza"
-" mossa, analisi senza posizione — e mostra una riga ``WARNING`` con il "
-"totale se ce ne sono. Un database sano risponde ``Orphaned rows: none``. "
-"Possono restare orfani in un database scritto da una versione che non "
-"applicava le chiavi esterne su tutte le connessioni; non appartengono ad "
-"alcun match e occupano solo spazio. Il comando termina comunque con il "
+"orfane — partite senza incontro, mosse senza partita, analisi di mossa "
+"senza mossa, analisi senza posizione, voci del diario di ripasso senza "
+"mazzo o senza posizione — e stampa una riga ``WARNING`` con il totale se "
+"ce ne sono. Un database sano risponde ``Orphaned rows: none``. Delle "
+"orfane possono restare in un database scritto da una versione che non "
+"applicava le chiavi esterne su ogni connessione, o prima che il diario "
+"di ripasso avesse le proprie; non appartengono ad alcun incontro né ad "
+"alcun mazzo e occupano soltanto spazio. Il comando termina comunque con "
 "codice di uscita 0."
 
-#: ../../source/cli.rst:744
+#: ../../source/cli.rst:745
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1385,7 +1389,7 @@ msgstr ""
 "scarto di schema è una constatazione, non un fallimento: il codice di "
 "uscita resta 0."
 
-#: ../../source/cli.rst:754
+#: ../../source/cli.rst:755
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -1403,19 +1407,44 @@ msgstr ""
 "che SQLite non sa aggiungere a una tabella già creata: i vincoli "
 "``CHECK`` di intervallo (dadi tra 0 e 6, cubo e pip non negativi, da 0 a "
 "15 pedine uscite, voto di ripasso tra 1 e 4), l'hash Zobrist che a una "
-"riga non dovrebbe mai mancare e l'unicità di un'analisi per posizione. "
-"Un database creato a partire dalla versione 2.18.0 dello schema li "
-"applica; uno più vecchio può ancora contenere righe che un database "
-"nuovo rifiuterebbe, ed è quello che viene contato qui, regola per "
-"regola. Un database sano risponde ``Constraints: every row satisfies the "
-"current DDL``. Una constatazione in più: non viene riparato nulla e il "
-"codice di uscita resta 0."
+"riga non dovrebbe mai mancare e l'unicità di un'analisi per posizione. Un"
+" database creato a partire dalla versione 2.18.0 dello schema li applica;"
+" uno più vecchio può ancora contenere righe che un database nuovo "
+"rifiuterebbe, ed è quello che viene contato qui, regola per regola. Un "
+"database sano risponde ``Constraints: every row satisfies the current "
+"DDL``. Una constatazione in più: non viene riparato nulla e il codice di "
+"uscita resta 0."
 
-#: ../../source/cli.rst:779
+#: ../../source/cli.rst:766
+msgid ""
+"Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
+"``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
+"prétendent compter, et indique combien sont en désaccord et de combien au"
+" pire. Tous deux sont écrits une seule fois, à l'import, d'après ce que "
+"contenait le **fichier source**, et ce sont eux que la liste des matchs "
+"et la vue d'une partie affichent : un petit écart est le plus souvent un "
+"import qui a sauté ce qu'il ne savait pas convertir. Rien n'est réécrit —"
+" remplacer le compteur par ce qui a été stocké effacerait justement "
+"l'écart qu'il y a lieu de regarder. Une base saine répond ``Counters: "
+"game_count and move_count agree with the rows``."
+msgstr ""
+"Ogni esecuzione ricalcola infine i due contatori denormalizzati, "
+"``match.game_count`` e ``game.move_count``, a partire dalle righe che "
+"dichiarano di contare, e indica quanti sono in disaccordo e di quanto nel"
+" caso peggiore. Entrambi vengono scritti una sola volta, "
+"all'importazione, in base a quanto conteneva il **file sorgente**, e sono"
+" quelli mostrati dall'elenco degli incontri e dalla vista di una partita:"
+" uno scarto piccolo è di solito un'importazione che ha saltato ciò che "
+"non sapeva convertire. Non viene riscritto nulla — sostituire il "
+"contatore con ciò che è stato memorizzato cancellerebbe proprio lo scarto"
+" che vale la pena guardare. Un database sano risponde ``Counters: "
+"game_count and move_count agree with the rows``."
+
+#: ../../source/cli.rst:791
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Compattare il database"
 
-#: ../../source/cli.rst:781
+#: ../../source/cli.rst:793
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1430,7 +1459,7 @@ msgstr ""
 "compattazione — non avviene mai automaticamente all'apertura di un "
 "database, perché il suo costo è imprevedibile su un database grande."
 
-#: ../../source/cli.rst:795
+#: ../../source/cli.rst:807
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1450,33 +1479,33 @@ msgstr ""
 "rifiuta di partire con un messaggio esplicito anziché rischiare una "
 "compattazione interrotta."
 
-#: ../../source/cli.rst:815
+#: ../../source/cli.rst:827
 msgid "delete — Supprimer des données"
 msgstr "delete — Eliminare dati"
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:829
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Elimina un match e tutti i dati associati (partite, mosse, analisi)."
 
-#: ../../source/cli.rst:826
+#: ../../source/cli.rst:838
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Tipo di eliminazione: ``match`` (obbligatorio)."
 
-#: ../../source/cli.rst:827
+#: ../../source/cli.rst:839
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID dell'elemento da eliminare (obbligatorio)."
 
-#: ../../source/cli.rst:828
+#: ../../source/cli.rst:840
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Eliminare senza chiedere conferma."
 
-#: ../../source/cli.rst:841
+#: ../../source/cli.rst:853
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Sondare un demone"
 
-#: ../../source/cli.rst:843
+#: ../../source/cli.rst:855
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1491,7 +1520,7 @@ msgstr ""
 "obsoleto o nulla in ascolto all'indirizzo. Nessun file di database viene "
 "aperto."
 
-#: ../../source/cli.rst:855
+#: ../../source/cli.rst:867
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1502,7 +1531,7 @@ msgstr ""
 "(``:8080``) o con un host generico (``0.0.0.0``, ``[::]``) viene sondato "
 "sull'interfaccia di loopback."
 
-#: ../../source/cli.rst:858
+#: ../../source/cli.rst:870
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1510,7 +1539,7 @@ msgstr ""
 "``--timeout`` — Tempo oltre il quale la sonda rinuncia (``2s`` per "
 "impostazione predefinita)."
 
-#: ../../source/cli.rst:860
+#: ../../source/cli.rst:872
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1522,7 +1551,7 @@ msgstr ""
 "compilato da ``cmd/serve`` lo comprende. Vale altrettanto in uno script o"
 " in un'unità systemd."
 
-#: ../../source/cli.rst:874
+#: ../../source/cli.rst:886
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1530,35 +1559,35 @@ msgstr ""
 "In caso di fallimento viene mostrato il motivo, che ``docker inspect`` "
 "riproduce per un container ``unhealthy``:"
 
-#: ../../source/cli.rst:882
+#: ../../source/cli.rst:894
 msgid "Exemples de flux de travail"
 msgstr "Esempi di flusso di lavoro"
 
-#: ../../source/cli.rst:885
+#: ../../source/cli.rst:897
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import di una cartella di torneo"
 
-#: ../../source/cli.rst:899
+#: ../../source/cli.rst:911
 msgid "Sauvegarde régulière"
 msgstr "Backup periodico"
 
-#: ../../source/cli.rst:907
+#: ../../source/cli.rst:919
 msgid "Analyse des erreurs"
 msgstr "Analisi degli errori"
 
-#: ../../source/cli.rst:918
+#: ../../source/cli.rst:930
 msgid "Codes de retour"
 msgstr "Codici di uscita"
 
-#: ../../source/cli.rst:920
+#: ../../source/cli.rst:932
 msgid "``0`` — Succès."
 msgstr "``0`` — Successo."
 
-#: ../../source/cli.rst:921
+#: ../../source/cli.rst:933
 msgid "``1`` — Erreur."
 msgstr "``1`` — Errore."
 
-#: ../../source/cli.rst:923
+#: ../../source/cli.rst:935
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Questo permette di utilizzare la CLI in script con gestione degli errori:"
 

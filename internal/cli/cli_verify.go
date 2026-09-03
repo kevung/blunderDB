@@ -106,6 +106,13 @@ func (cli *CLI) runVerify(args []string) error {
 	}
 	printConstraintViolations(violations)
 
+	// The two denormalised counters, recomputed from the rows.
+	counters, err := cli.db.CheckCounters()
+	if err != nil {
+		return fmt.Errorf("failed to recompute the counters: %w", err)
+	}
+	printCounterDrift(counters)
+
 	// If match ID specified, verify that match
 	if *matchID != 0 {
 		err := cli.verifyMatch(*matchID, *matFile)
@@ -133,9 +140,12 @@ func printOrphans(o database.OrphanCounts) {
 	fmt.Printf("  Moves without game: %d\n", o.MovesWithoutGame)
 	fmt.Printf("  Move analyses without move: %d\n", o.MoveAnalysesWithoutMove)
 	fmt.Printf("  Analyses without position: %d\n", o.AnalysesWithoutPosition)
+	fmt.Printf("  Reviews without deck: %d\n", o.ReviewsWithoutDeck)
+	fmt.Printf("  Reviews without position: %d\n", o.ReviewsWithoutPosition)
 	fmt.Printf("WARNING: %d orphaned row(s) found. They were left behind by deletions made while\n", o.Total())
-	fmt.Println("foreign keys were not enforced on every connection (issue #157); the rows are")
-	fmt.Println("unreachable from any match and only take up space.")
+	fmt.Println("foreign keys were not enforced on every connection (issue #157), or before the")
+	fmt.Println("review journal's own keys existed (issue #185); the rows are unreachable from any")
+	fmt.Println("match or deck and only take up space.")
 	fmt.Println()
 }
 
@@ -184,6 +194,32 @@ func printConstraintViolations(v []database.ConstraintViolation) {
 	fmt.Printf("WARNING: %d row(s) would not be accepted by the current schema. SQLite cannot add a\n", total)
 	fmt.Println("CHECK or a NOT NULL to a table that already exists, so these rules are enforced on")
 	fmt.Println("databases created since and reported — not repaired — on older ones.")
+	fmt.Println()
+}
+
+// printCounterDrift reports the two denormalised counters against the rows
+// they claim to count. Like every other section of verify it is a finding and
+// not a failure: game_count and move_count record what the SOURCE FILE held, so
+// a small gap can be an importer that skipped what it could not map, and the
+// worst gap is what separates that from a figure that means nothing.
+func printCounterDrift(c database.CounterDrift) {
+	if c.Total() == 0 {
+		fmt.Println("Counters: game_count and move_count agree with the rows")
+		fmt.Println()
+		return
+	}
+	fmt.Println("Counter drift (the stored figure against the rows it counts):")
+	if c.MatchesWithWrongGameCount > 0 {
+		fmt.Printf("  Matches whose game_count is wrong: %d (worst gap: %d game(s))\n",
+			c.MatchesWithWrongGameCount, c.WorstGameCountGap)
+	}
+	if c.GamesWithWrongMoveCount > 0 {
+		fmt.Printf("  Games whose move_count is wrong: %d (worst gap: %d move(s))\n",
+			c.GamesWithWrongMoveCount, c.WorstMoveCountGap)
+	}
+	fmt.Println("NOTE: both counters record what the SOURCE FILE held and are never recomputed;")
+	fmt.Println("they are what the match list and the game view display. A small gap is usually an")
+	fmt.Println("import that skipped what it could not map. Nothing is rewritten here.")
 	fmt.Println()
 }
 

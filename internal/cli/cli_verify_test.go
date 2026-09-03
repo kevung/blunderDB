@@ -102,3 +102,62 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 		}
 	}
 }
+
+// TestCLI_Verify_ReportsCounterDrift (issue #185): match.game_count and
+// game.move_count are written once, at import, from what the source file held
+// and are what the match list displays. verify recomputes them from the rows
+// and says how far apart they are — without rewriting either.
+func TestCLI_Verify_ReportsCounterDrift(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+
+	clean := captureStdout(t, func() {
+		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
+			t.Fatalf("verify (clean): %v", err)
+		}
+	})
+	for _, want := range []string{
+		"Counters: game_count and move_count agree with the rows",
+		"Constraints: every row satisfies the current DDL",
+	} {
+		if !strings.Contains(clean, want) {
+			t.Errorf("clean database should report %q:\n%s", want, clean)
+		}
+	}
+
+	// A match that claims four games and holds one, whose single game claims
+	// no move and holds one.
+	for _, s := range []string{
+		`INSERT INTO match (id, player1_name, player2_name, game_count) VALUES (7001, 'a', 'b', 4)`,
+		`INSERT INTO game (id, match_id, game_number, move_count) VALUES (7002, 7001, 1, 0)`,
+		`INSERT INTO move (id, game_id, move_number, move_type) VALUES (7003, 7002, 1, 'checker')`,
+	} {
+		if _, err := cli.db.Conn().Exec(s); err != nil {
+			t.Fatalf("%s: %v", s, err)
+		}
+	}
+
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"verify", "--db", dbPath}); err != nil {
+			t.Fatalf("verify (drift): %v", err)
+		}
+	})
+	for _, want := range []string{
+		"Matches whose game_count is wrong: 1 (worst gap: 3 game(s))",
+		"Games whose move_count is wrong: 1 (worst gap: 1 move(s))",
+		"Nothing is rewritten here.",
+		"Verification complete!",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("verify output lacks %q:\n%s", want, out)
+		}
+	}
+
+	// And nothing was rewritten: the counter still says what the source said.
+	var gameCount int
+	if err := cli.db.Conn().QueryRow(`SELECT game_count FROM match WHERE id = 7001`).Scan(&gameCount); err != nil {
+		t.Fatal(err)
+	}
+	if gameCount != 4 {
+		t.Errorf("verify rewrote game_count to %d; it must only report", gameCount)
+	}
+}

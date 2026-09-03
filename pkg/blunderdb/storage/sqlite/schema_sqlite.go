@@ -282,6 +282,15 @@ var schemaStatements = []string{
 		scheduled_days INTEGER DEFAULT 0,
 		reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		FOREIGN KEY(card_id) REFERENCES anki_card(id) ON DELETE CASCADE,
+		-- deck_id and position_id were plain integers until 2.18.0 (issue #185):
+		-- the journal named a deck and a position with nothing to say they had
+		-- to exist. They do cascade in practice — the card is deleted with
+		-- either, and the log row with the card — but "in practice" is what the
+		-- orphans of issue #157 were made of. SQLite adds no foreign key to a
+		-- table that already exists, so an upgraded database keeps the two
+		-- unconstrained columns and "blunderdb verify" counts what dangles.
+		FOREIGN KEY(deck_id) REFERENCES anki_deck(id) ON DELETE CASCADE,
+		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
 		-- The four FSRS grades. anki.ScheduleNext refuses anything else
 		-- (storage.ErrInvalid); go-fsrs indexed its weights with the value.
 		CHECK (rating BETWEEN 1 AND 4)

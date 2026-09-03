@@ -173,3 +173,68 @@ func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
 		t.Errorf("total violations: got %d, want 3", n)
 	}
 }
+
+// TestCheckCounters_RecomputesTheDenormalisedFigures (issue #185):
+// match.game_count and game.move_count are written once, at import, from what
+// the source file held, and are what the match list displays. Nothing else in
+// the database says the figure and the rows disagree.
+func TestCheckCounters_RecomputesTheDenormalisedFigures(t *testing.T) {
+	d := newTestDB(t)
+
+	drift, err := d.CheckCounters()
+	if err != nil {
+		t.Fatalf("CheckCounters on an empty database: %v", err)
+	}
+	if drift.Total() != 0 {
+		t.Fatalf("empty database: %+v, want no drift", drift)
+	}
+
+	// One match with an honest count, one that claims three games and holds one.
+	honest, err := d.Conn().Exec(`INSERT INTO match (player1_name, game_count) VALUES ('a', 1)`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	honestID, _ := honest.LastInsertId()
+	liar, err := d.Conn().Exec(`INSERT INTO match (player1_name, game_count) VALUES ('b', 3)`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	liarID, _ := liar.LastInsertId()
+	for _, matchID := range []int64{honestID, liarID} {
+		if _, err := d.Conn().Exec(
+			`INSERT INTO game (match_id, game_number, move_count) VALUES (?, 1, 0)`, matchID); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	drift, err = d.CheckCounters()
+	if err != nil {
+		t.Fatalf("CheckCounters: %v", err)
+	}
+	if drift.MatchesWithWrongGameCount != 1 {
+		t.Errorf("matches with a wrong game_count: got %d, want 1", drift.MatchesWithWrongGameCount)
+	}
+	if drift.WorstGameCountGap != 2 {
+		t.Errorf("worst game_count gap: got %d, want 2", drift.WorstGameCountGap)
+	}
+	if drift.GamesWithWrongMoveCount != 0 {
+		t.Errorf("games with a wrong move_count: got %d, want 0", drift.GamesWithWrongMoveCount)
+	}
+
+	// A game that claims no move and holds one.
+	if _, err := d.Conn().Exec(
+		`INSERT INTO move (game_id, move_number, move_type) VALUES (1, 1, 'checker')`); err != nil {
+		t.Fatal(err)
+	}
+	drift, err = d.CheckCounters()
+	if err != nil {
+		t.Fatalf("CheckCounters: %v", err)
+	}
+	if drift.GamesWithWrongMoveCount != 1 || drift.WorstMoveCountGap != 1 {
+		t.Errorf("move_count drift: got %d game(s), worst gap %d, want 1 and 1",
+			drift.GamesWithWrongMoveCount, drift.WorstMoveCountGap)
+	}
+	if drift.Total() != 2 {
+		t.Errorf("total drift: got %d, want 2", drift.Total())
+	}
+}

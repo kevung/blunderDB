@@ -78,7 +78,13 @@ freshly bootstrapped database — whose `001` baseline already contains the chan
   keeping the highest id per position. Also adds the range CHECKs of `001`
   as `NOT VALID` so a database whose history predates the rule still opens —
   `blunderdb verify` names the offending rows. Bumps `database_version` to
-  2.18.0 as well; 014 and 015 are one wave.
+  2.18.0 as well; 014, 015 and 016 are one wave.
+- `016_review_log_foreign_keys.sql` — `anki_review_log.deck_id` and
+  `.position_id` become real foreign keys (#185). Added `NOT VALID`: every row
+  written from here on is governed, the rows already there are not scanned, and
+  a database carrying a dangling journal row keeps opening — purging a user's
+  review history is not a migration's decision. Bumps `database_version` to
+  2.18.0.
 
 When you add a migration, also fold the change into `001_initial_v2_7_0.sql` (so
 fresh databases get it directly), have the migration bump `database_version` in

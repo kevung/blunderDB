@@ -946,11 +946,13 @@ Verify database integrity and optionally compare match data against source files
 
 When run without `--match`, displays database statistics. When a match ID is specified, verifies the match data. When a MAT file is also provided, cross-references the database positions with the source file.
 
-Every run also checks referential integrity: it counts orphaned rows — games without a match, moves without a game, move analyses without a move, analyses without a position — and prints a `WARNING` line with the total when any exist. A healthy database reports `Orphaned rows: none`. Orphans can be left behind in databases written by versions that did not enforce foreign keys on every connection (issue #157); they are unreachable from any match and only take up space. The command still exits 0 when it finds some.
+Every run also checks referential integrity: it counts orphaned rows — games without a match, moves without a game, move analyses without a move, analyses without a position, review-journal entries without a deck or without a position — and prints a `WARNING` line with the total when any exist. A healthy database reports `Orphaned rows: none`. Orphans can be left behind in databases written by versions that did not enforce foreign keys on every connection (issue #157), or before the review journal's own foreign keys existed (issue #185); the rows are unreachable from any match or deck and only take up space. The command still exits 0 when it finds some.
 
 Every run also compares the schema against the reference DDL and lists the tables, columns and indexes the database lacks. Opening a database adds what is missing when it can and only logs what it cannot — typically a `UNIQUE` index that duplicate rows keep it from rebuilding — so this is where that gap becomes visible; a query naming one of those elements fails until the cause is fixed. A healthy database reports `Schema: matches the reference DDL`. Like orphans, drift is a finding, not a failure: the command still exits 0.
 
 Every run also checks the rules the current DDL states but SQLite cannot add to a table that already exists: the range `CHECK` constraints (dice between 0 and 6, non-negative cube and pip counts, 0 to 15 checkers off, review ratings between 1 and 4), the Zobrist hash a row should never be without, and one analysis per position. A database created since schema 2.18.0 enforces them; an older one can still hold rows a new database would refuse, and those are what is counted here, rule by rule. A healthy database reports `Constraints: every row satisfies the current DDL`. One more finding: nothing is repaired and the command still exits 0.
+
+Every run finally recomputes the two denormalised counters, `match.game_count` and `game.move_count`, from the rows they claim to count, and reports how many disagree and by how much at worst. Both are written once, at import, from what the **source file** held, and are what the match list and the game view display; a small gap is usually an import that skipped what it could not map. Nothing is rewritten — overwriting the counter with what was stored would erase the very discrepancy worth looking at. A healthy database reports `Counters: game_count and move_count agree with the rows`.
 
 **Examples:**
 ```bash
@@ -980,6 +982,8 @@ Orphaned rows: none
 Schema: matches the reference DDL
 
 Constraints: every row satisfies the current DDL (10 rules checked)
+
+Counters: game_count and move_count agree with the rows
 
 Verifying match 1...
   Match: Alice vs Bob

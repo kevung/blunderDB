@@ -18,11 +18,14 @@ type OrphanCounts struct {
 	MovesWithoutGame        int64 `json:"moves_without_game"`
 	MoveAnalysesWithoutMove int64 `json:"move_analyses_without_move"`
 	AnalysesWithoutPosition int64 `json:"analyses_without_position"`
+	ReviewsWithoutDeck      int64 `json:"reviews_without_deck"`
+	ReviewsWithoutPosition  int64 `json:"reviews_without_position"`
 }
 
-// Total is the number of orphaned rows across all four relations.
+// Total is the number of orphaned rows across all six relations.
 func (o OrphanCounts) Total() int64 {
-	return o.GamesWithoutMatch + o.MovesWithoutGame + o.MoveAnalysesWithoutMove + o.AnalysesWithoutPosition
+	return o.GamesWithoutMatch + o.MovesWithoutGame + o.MoveAnalysesWithoutMove +
+		o.AnalysesWithoutPosition + o.ReviewsWithoutDeck + o.ReviewsWithoutPosition
 }
 
 // orphanQueries counts, per child table, the rows whose parent no longer
@@ -46,6 +49,16 @@ var orphanQueries = []struct {
 	{"analysis without position",
 		`SELECT COUNT(*) FROM analysis a LEFT JOIN position p ON p.id = a.position_id WHERE p.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.AnalysesWithoutPosition }},
+	// The review journal's deck_id and position_id became foreign keys in
+	// 2.18.0 (issue #185); databases created before that had nothing saying
+	// the deck and the position had to exist, and SQLite adds no foreign key
+	// to a table that already exists, so an upgraded file still has none.
+	{"anki_review_log without deck",
+		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN anki_deck d ON d.id = l.deck_id WHERE d.id IS NULL`,
+		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutDeck }},
+	{"anki_review_log without position",
+		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN position p ON p.id = l.position_id WHERE p.id IS NULL`,
+		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutPosition }},
 }
 
 // CountOrphans counts the child rows whose parent row is missing (see
@@ -160,4 +173,71 @@ func TotalConstraintViolations(v []ConstraintViolation) int64 {
 		total += c.Count
 	}
 	return total
+}
+
+// CounterDrift is what blunderdb verify reports about the two denormalised
+// counters, match.game_count and game.move_count.
+//
+// Both are written once, at import, from what the SOURCE FILE held —
+// `len(match.Games)`, `len(movesData)` in ingest — and are never recomputed.
+// They are what the match list and the game view display. A difference from
+// the rows actually stored is therefore not automatically corruption: an
+// importer that skipped a game it could not map, or a move that produced no
+// row, leaves a legitimate gap. It is still worth seeing, because nothing else
+// in the database says the displayed figure and the stored rows disagree.
+type CounterDrift struct {
+	// MatchesWithWrongGameCount is the number of matches whose game_count is
+	// not the number of game rows they hold.
+	MatchesWithWrongGameCount int64 `json:"matches_with_wrong_game_count"`
+	// GamesWithWrongMoveCount is the number of games whose move_count is not
+	// the number of move rows they hold.
+	GamesWithWrongMoveCount int64 `json:"games_with_wrong_move_count"`
+	// WorstGameCountGap and WorstMoveCountGap are the largest absolute
+	// differences found, which is what tells a handful of skipped games from a
+	// counter that means nothing at all.
+	WorstGameCountGap int64 `json:"worst_game_count_gap"`
+	WorstMoveCountGap int64 `json:"worst_move_count_gap"`
+}
+
+// Total is the number of rows whose counter disagrees with what they hold.
+func (c CounterDrift) Total() int64 {
+	return c.MatchesWithWrongGameCount + c.GamesWithWrongMoveCount
+}
+
+// CheckCounters recomputes match.game_count and game.move_count from the rows
+// and reports how many disagree, and by how much at worst. It only reads;
+// nothing is rewritten — the counter records what the source file said, and
+// overwriting it with what was stored would erase the very discrepancy that is
+// worth looking at.
+func (d *Database) CheckCounters() (CounterDrift, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	var drift CounterDrift
+	if d.db == nil {
+		return drift, fmt.Errorf("no database is currently open")
+	}
+	for _, q := range []struct {
+		name      string
+		query     string
+		rows, gap *int64
+	}{
+		{"match.game_count",
+			`SELECT COUNT(*), COALESCE(MAX(gap), 0) FROM (
+				SELECT ABS(COALESCE(m.game_count, 0) -
+					(SELECT COUNT(*) FROM game g WHERE g.match_id = m.id)) AS gap
+				FROM match m) WHERE gap > 0`,
+			&drift.MatchesWithWrongGameCount, &drift.WorstGameCountGap},
+		{"game.move_count",
+			`SELECT COUNT(*), COALESCE(MAX(gap), 0) FROM (
+				SELECT ABS(COALESCE(g.move_count, 0) -
+					(SELECT COUNT(*) FROM move mv WHERE mv.game_id = g.id)) AS gap
+				FROM game g) WHERE gap > 0`,
+			&drift.GamesWithWrongMoveCount, &drift.WorstMoveCountGap},
+	} {
+		if err := d.db.QueryRow(q.query).Scan(q.rows, q.gap); err != nil {
+			return drift, fmt.Errorf("recomputing %s: %w", q.name, err)
+		}
+	}
+	return drift, nil
 }

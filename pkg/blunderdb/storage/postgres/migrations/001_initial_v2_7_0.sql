@@ -264,8 +264,13 @@ CREATE TABLE IF NOT EXISTS anki_review_log (
     id              BIGSERIAL PRIMARY KEY,
     tenant_id       BIGINT NOT NULL,
     card_id         BIGINT NOT NULL REFERENCES anki_card(id) ON DELETE CASCADE,
-    deck_id         BIGINT NOT NULL,
-    position_id     BIGINT NOT NULL,
+    -- deck_id and position_id were plain integers until 2.18.0 (issue #185):
+    -- the journal named a deck and a position with nothing to say they had to
+    -- exist. See 016.
+    deck_id         BIGINT NOT NULL CONSTRAINT anki_review_log_deck_fk
+                        REFERENCES anki_deck(id) ON DELETE CASCADE,
+    position_id     BIGINT NOT NULL CONSTRAINT anki_review_log_position_fk
+                        REFERENCES position(id) ON DELETE CASCADE,
     rating          BIGINT NOT NULL,
     state           BIGINT NOT NULL DEFAULT 0,
     stability       DOUBLE PRECISION DEFAULT 0,
