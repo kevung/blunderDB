@@ -32,8 +32,8 @@ func (fakeDialect) Bool(col string, v bool) string {
 	}
 	return col + " = 0"
 }
-func (fakeDialect) Bigint(expr string) string       { return expr }
-func (fakeDialect) ILike() string                   { return "LIKE" }
+func (fakeDialect) Bigint(expr string) string { return expr }
+func (fakeDialect) ILike() string             { return "LIKE" }
 func (fakeDialect) LimitOffset(limit, offset int) (string, []any) {
 	if limit <= 0 && offset <= 0 {
 		return "", nil
