@@ -1,0 +1,126 @@
+name: Nightly
+
+# Checks too slow, or too platform-specific, for every push, but distinct
+# from what already runs weekly (E.12, #228 — C.2/#189 deferred the decision
+# of where these live to this ticket).
+#
+# Decision: NOTHING that already has a schedule moves here — moving a check
+# that already runs regularly, just to have them all "in one file", is churn
+# with no reader benefit and risks losing the comment that explains why it
+# runs where it does. Concretely, NOT duplicated here:
+#   - the search-parity gold file and the arm64 kernel-identity sweep already
+#     live in fuzz.yml (gammonnet-gold, gammonnet-kernel-identity-arm64),
+#     weekly (Mondays) since C.2; so do the fuzz targets themselves. That
+#     file's own header explains why it doesn't need a nightly.yml of its
+#     own — read it before adding a third schedule for the same package.
+#   - the Trivy image scan lives in build.yml's docker-serve job, on every
+#     push (non-blocking) — E.7, #223: an image vulnerability is worth
+#     surfacing on the PR that introduced it, not the morning after.
+#   - a benchstat-against-baseline comparison is not built yet (E.9, #225,
+#     still open) — its job lands here once it exists, rather than a
+#     half-built duplicate of build.yml's existing `benchmark` job.
+#   - a short SQLite loadtest (G.11) is not wired up yet either, same
+#     reasoning.
+#
+# What IS new here: the full (non -short) Go suite on the two desktop
+# platforms build.yml only runs with -short on every push (E.1, #217 — the
+# 2-ply gammonnet searches and the schema benchmarks skip themselves under
+# -short), and a full-package gammonnet run under -race with -short — a
+# nightly complement to build.yml's race-gammonnet job, which is deliberately
+# narrow (only Parallel/Concurrent/Batch tests) so it can afford -race on
+# every push without becoming the bottleneck shard.
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # daily, 03:00 UTC — fuzz.yml's weekly job runs Mondays 04:00
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-os-full:
+    name: test-os-full (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - name: Keep LF line endings at checkout
+        run: git config --global core.autocrlf false
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      # No -short: the 2-ply gammonnet searches and schema benchmarks that
+      # build.yml's test-os job skips every push run here in full, on real
+      # Windows/macOS runners rather than only on Linux (the `test` job's
+      # `gammonnet` shard already runs the full suite, but only on tag
+      # pushes and only on ubuntu-latest).
+      - name: Run Go tests (full, no -short, no -race)
+        run: go test -count=1 -timeout 1800s ./...
+        shell: bash
+
+  gammonnet-race-full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: 1.25.13
+          cache: true
+
+      # Full package, not just Parallel/Concurrent/Batch (build.yml's
+      # race-gammonnet): -short keeps the 2-ply searches inside this job's
+      # timeout even under the race detector's slowdown.
+      - name: go test -race -short (full gammonnet package)
+        run: go test -race -short -count=1 -timeout 1200s -v ./pkg/blunderdb/engine/gammonnet/
+        shell: bash
+
+  # Opens (or reuses) one issue labelled `nightly` when either job above
+  # failed — never one per red night, so a multi-day outage does not flood
+  # the tracker.
+  notify-on-failure:
+    needs: [test-os-full, gammonnet-race-full]
+    if: always() && contains(needs.*.result, 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Open (or leave) a tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          existing=$(gh issue list --repo "${{ github.repository }}" --label nightly --state open --json number -q '. | length')
+          if [ "$existing" -gt 0 ]; then
+            echo "An open 'nightly' issue already exists — not creating a duplicate."
+            exit 0
+          fi
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Nightly failed: $(date -u +%Y-%m-%d)" \
+            --label nightly \
+            --body "The nightly workflow failed. Run: $RUN_URL"
+        shell: bash

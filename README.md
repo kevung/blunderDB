@@ -5,6 +5,7 @@
 A backgammon blunder analysis tool. Import your matches from eXtreme Gammon, GnuBG and BGBlitz, store every position once, search them by structure and by mistake, measure your play, and study the positions you keep getting wrong — with an evaluator built in.
 
 [![CI](https://github.com/kevung/blunderDB/actions/workflows/build.yml/badge.svg)](https://github.com/kevung/blunderDB/actions/workflows/build.yml)
+[![Nightly](https://github.com/kevung/blunderDB/actions/workflows/nightly.yml/badge.svg)](https://github.com/kevung/blunderDB/actions/workflows/nightly.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Documentation, in nine languages: <https://kevung.github.io/blunderDB/>
