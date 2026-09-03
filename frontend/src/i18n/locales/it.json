@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Verifica delle posizioni senza analisi…",
         "gammonnetCatchUpCount": "{n} posizione/i senza analisi.",
         "gammonnetCatchUpStart": "Analizza ora",
-        "gammonnetCatchUpNote": "Avvia manualmente la stessa analisi limitata e annullabile — utile per recuperare una libreria creata prima di questa funzione."
+        "gammonnetCatchUpNote": "Avvia manualmente la stessa analisi limitata e annullabile — utile per recuperare una libreria creata prima di questa funzione.",
+        "gammonnetStaleUnknown": "Verifica delle analisi gammonNet obsolete…",
+        "gammonnetStaleCount": "{n} analisi gammonNet obsoleta/e.",
+        "gammonnetStaleStart": "Rianalizza le posizioni obsolete",
+        "gammonnetStaleNote": "Riesegue gammonNet sulle posizioni già analizzate, ma scritte con una versione del motore più vecchia o una profondità diversa da quella configurata qui — le analisi XG, GNUbg e BGBlitz non vengono mai toccate."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -688,6 +692,7 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet sta analizzando: {done}/{total}",
         "batchCancel": "Annulla",
+        "batchDone": "gammonNet: {evaluated} analizzata/e, {refused} rifiutata/e, {failed} fallita/e",
         "baseline": "Prima del tiro",
         "baselineTooltip": "Valori prima del tiro, nello stesso asse della lista — un riferimento, non una mossa candidata. Lo scarto rispetto a questa riga è la fortuna del tiro, non il merito di una mossa."
     },

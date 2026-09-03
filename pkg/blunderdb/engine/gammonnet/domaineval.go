@@ -285,7 +285,7 @@ func EvaluatePositionWith(searcher *Searcher, pos domain.Position, ply, pruneK, 
 // already aimed at cfg, all that is left is to ask the position's own
 // question and convert the answer once.
 func evaluateConfigured(gnPos *Position, pos *domain.Position, searcher *Searcher, cfg SearchConfig, state *MatchState, candidates int) (EvalResult, error) {
-	depthLabel := fmt.Sprintf("%d-ply", cfg.Ply)
+	depthLabel := DepthLabel(cfg.Ply)
 
 	// The one referential conversion (ADR-0019): the search and the cube
 	// model keep gammonNet's own scales inside, everything that leaves this

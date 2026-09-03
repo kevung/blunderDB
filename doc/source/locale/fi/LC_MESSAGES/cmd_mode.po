@@ -1267,18 +1267,3 @@ msgstr ""
 "Tietokantojen migraatiot suoritetaan nyt automaattisesti tietokantaa "
 "avattaessa."
 
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Näytä/piilota suodatinkirjasto."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Näytä/piilota hakuhistoria."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Avaa EPC-paneelin (Effective Pip Count)."
-

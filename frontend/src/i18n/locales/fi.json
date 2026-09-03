@@ -94,7 +94,11 @@
         "gammonnetCatchUpUnknown": "Tarkistetaan positioita ilman analyysiä…",
         "gammonnetCatchUpCount": "{n} positiota ilman analyysiä.",
         "gammonnetCatchUpStart": "Analysoi nyt",
-        "gammonnetCatchUpNote": "Käynnistää saman rajatun, peruutettavan analyysin manuaalisesti — hyödyllinen ennen tätä ominaisuutta luodun kirjaston saattamiseksi ajan tasalle."
+        "gammonnetCatchUpNote": "Käynnistää saman rajatun, peruutettavan analyysin manuaalisesti — hyödyllinen ennen tätä ominaisuutta luodun kirjaston saattamiseksi ajan tasalle.",
+        "gammonnetStaleUnknown": "Tarkistetaan vanhentuneita gammonNet-analyysejä…",
+        "gammonnetStaleCount": "{n} vanhentunutta gammonNet-analyysiä.",
+        "gammonnetStaleStart": "Analysoi vanhentuneet positiot uudelleen",
+        "gammonnetStaleNote": "Suorittaa gammonNetin uudelleen jo analysoiduille positioille, jotka on kirjoitettu vanhemmalla moottoriversiolla tai eri syvyydellä kuin tässä on asetettu — XG-, GNUbg- ja BGBlitz-analyyseihin ei koskaan kosketa."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -688,6 +692,7 @@
         "engineTooltip": "gammonNet",
         "batchProgress": "gammonNet analysoi: {done}/{total}",
         "batchCancel": "Peruuta",
+        "batchDone": "gammonNet: {evaluated} analysoitu, {refused} hylätty, {failed} epäonnistui",
         "baseline": "Ennen heittoa",
         "baselineTooltip": "Arvot ennen heittoa, listan akselissa — vertailukohta, ei ehdokassiirto. Ero tähän riviin on heiton onni, ei siirron ansio."
     },

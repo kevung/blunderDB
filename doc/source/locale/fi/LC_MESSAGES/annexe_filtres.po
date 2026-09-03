@@ -411,22 +411,3 @@ msgstr "Komennon ``s tn1`` jälkeen hae tuplauskuution päätöksiä"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "Avaa hakupaneeli painamalla ``TAB``."
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "Avaa suodatinkirjasto painamalla ``CTRL-K``."
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "Muokkaa hakukomentoa."
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "Tallenna hakukomento \"Add\"-painikkeella."
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr ""
-#~ "Komentoa muokattaessa voit käyttää ``YLÖS``- ja ``ALAS``-nuolinäppäimiä "
-#~ "komentohistoriassa liikkumiseen."

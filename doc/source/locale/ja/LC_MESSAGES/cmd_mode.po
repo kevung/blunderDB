@@ -1224,18 +1224,3 @@ msgid ""
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr "データベースのマイグレーションは、データベースを開く際に自動的に実行されるようになりました。"
 
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "フィルタライブラリを表示／非表示にします。"
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "検索履歴を表示／非表示にします。"
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "EPC（実効ピップカウント）パネルを開きます。"
-

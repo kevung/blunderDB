@@ -418,22 +418,3 @@ msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "Πατήστε ``TAB`` για να ανοίξετε τον πίνακα αναζήτησης."
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "Ανοίξτε τη βιβλιοθήκη φίλτρων πατώντας ``CTRL-K``."
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "Επεξεργαστείτε την εντολή αναζήτησης."
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "Αποθηκεύστε την εντολή αναζήτησης με το κουμπί \"Add\"."
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr ""
-#~ "Κατά την επεξεργασία της εντολής, μπορείτε να χρησιμοποιήσετε τα πλήκτρα "
-#~ "``ΕΠΑΝΩ`` και ``ΚΑΤΩ`` για να περιηγηθείτε στο ιστορικό των εντολών."

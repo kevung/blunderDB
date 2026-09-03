@@ -787,34 +787,3 @@ msgstr ""
 "OIKEA/j, PageDown/l liikkuvat avoimen kokoelman asemissa täsmälleen kuten"
 " kohdassa :ref:`raccourcis_navigation` kuvataan."
 
-#~ msgid "Exécuter la recherche et fermer le panneau."
-#~ msgstr "Suorita haku ja sulje paneeli."
-
-#~ msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
-#~ msgstr "Valitse edellinen haku (uudempi, ylempänä)."
-
-#~ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-#~ msgstr "Valitse seuraava haku (vanhempi, alempana)."
-
-#~ msgid ""
-#~ "Désélectionner la recherche. Si aucune "
-#~ "recherche sélectionnée, fermer le panneau."
-#~ msgstr "Poista haun valinta. Jos mitään hakua ei ole valittu, sulje paneeli."
-
-#~ msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
-#~ msgstr "Valitse edellinen suodatin (kun suodatin on valittu)."
-
-#~ msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
-#~ msgstr "Valitse seuraava suodatin (kun suodatin on valittu)."
-
-#~ msgid ""
-#~ "Désélectionner le filtre. Si aucun "
-#~ "filtre sélectionné, fermer le panneau."
-#~ msgstr ""
-#~ "Poista suodattimen valinta. Jos mitään "
-#~ "suodatinta ei ole valittu, sulje "
-#~ "paneeli."
-
-#~ msgid "Afficher le panneau Stats."
-#~ msgstr "Näytä tilastopaneeli."
-

@@ -16,8 +16,17 @@ import (
 // re-expressed against Execer (package database imports storage/sqlite, so
 // the reverse import is not possible). The pure parsers and in-memory
 // predicates live in storage/searchfilter.
+//
+// Every predicate below that touches the database returns an error alongside
+// its bool: a locked database or a dropped connection must surface as a
+// search failure, never as a silent "does not match" that empties or shrinks
+// the result set without saying why (B.6, #174).
 
 // getMatchIDsForTournament returns all match IDs belonging to a tournament.
+// A scan failure is propagated rather than skipped: silently dropping one
+// row here used to shrink a tournament filter to fewer matches than the
+// tournament actually has, indistinguishable from "the tournament really
+// only has that many".
 func getMatchIDsForTournament(ctx context.Context, db Execer, tournamentID int64) ([]int64, error) {
 	rows, err := db.Query(ctx, `SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
 	if err != nil {
@@ -28,7 +37,7 @@ func getMatchIDsForTournament(ctx context.Context, db Execer, tournamentID int64
 	for rows.Next() {
 		var id int64
 		if err := rows.Scan(&id); err != nil {
-			continue
+			return nil, err
 		}
 		ids = append(ids, id)
 	}
@@ -65,12 +74,14 @@ func loadCommentText(ctx context.Context, db Execer, positionID int64) (string, 
 // A position deduplicated across matches (CONTEXT.md, Deduplication) can carry
 // several plays; the order they come back in must not depend on map
 // iteration, or every predicate built on top inherits a run-to-run lottery
-// (#167).
-func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64) ([]string, []string) {
+// (#167). The returned error is a genuine query/scan failure — it is never
+// used to mean "this position recorded no moves", which is simply two empty
+// slices with a nil error.
+func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64) ([]string, []string, error) {
 	rows, err := db.Query(ctx,
 		`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
 	if err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
 	defer rows.Close()
 	checkerMoves := make(map[string]bool)
@@ -78,7 +89,7 @@ func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64
 	for rows.Next() {
 		var cm, ca *string
 		if err := rows.Scan(&cm, &ca); err != nil {
-			continue
+			return nil, nil, err
 		}
 		if cm != nil && *cm != "" {
 			checkerMoves[engine.NormalizeMove(*cm)] = true
@@ -88,9 +99,9 @@ func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64
 		}
 	}
 	if err := rows.Err(); err != nil {
-		return nil, nil
+		return nil, nil, err
 	}
-	return sortedKeys(checkerMoves), sortedKeys(cubeActions)
+	return sortedKeys(checkerMoves), sortedKeys(cubeActions), nil
 }
 
 func sortedKeys(set map[string]bool) []string {
@@ -162,34 +173,37 @@ func loadAnalysis(ctx context.Context, db Execer, positionID int64) *domain.Posi
 }
 
 // matchesSearchText reports whether a position's comment matches a "t"-filter.
-func matchesSearchText(ctx context.Context, db Execer, p *domain.Position, searchText string) bool {
+func matchesSearchText(ctx context.Context, db Execer, p *domain.Position, searchText string) (bool, error) {
 	keywords := searchfilter.ParseSearchTextKeywords(searchText)
 	if len(keywords) == 0 {
-		return false
+		return false, nil
 	}
 	comment, err := loadCommentText(ctx, db, p.ID)
 	if err != nil {
-		return false
+		return false, err
 	}
 	comment = strings.ToLower(comment)
 	for _, kw := range keywords {
 		if strings.Contains(comment, kw) {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 // isPlayer1TakePassCubeAction reports whether player-1's recorded cube action
 // for a position was a take or pass.
-func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Position) bool {
-	_, player1CubeActions := getPlayer1MovesForPosition(ctx, db, p.ID)
+func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Position) (bool, error) {
+	_, player1CubeActions, err := getPlayer1MovesForPosition(ctx, db, p.ID)
+	if err != nil {
+		return false, err
+	}
 	for _, action := range player1CubeActions {
 		if engine.IsResponseCubeAction(action) {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
 // matchesMoveErrorFilter filters positions by the equity error of player-1's
@@ -206,16 +220,19 @@ func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Posit
 // returned a different set from one run to the next. The decision is stated
 // in doc/source/cmd_mode.rst next to the E filter; SearchStore.find routes
 // the multi-played positions of a plain (non-mirror) search here too.
-func matchesMoveErrorFilter(ctx context.Context, db Execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) bool {
+func matchesMoveErrorFilter(ctx context.Context, db Execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) (bool, error) {
 	if analysis == nil {
-		return false
+		return false, nil
 	}
-	player1CheckerMoves, player1CubeActions := getPlayer1MovesForPosition(ctx, db, p.ID)
+	player1CheckerMoves, player1CubeActions, err := getPlayer1MovesForPosition(ctx, db, p.ID)
+	if err != nil {
+		return false, err
+	}
 	moveError, found := player1MaxMoveError(analysis, player1CheckerMoves, player1CubeActions)
 	if !found {
-		return false
+		return false, nil
 	}
-	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter)
+	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter), nil
 }
 
 // player1MaxMoveError returns the largest absolute equity error among the

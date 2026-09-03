@@ -315,6 +315,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	}
 	var totalErrSum int64
 	var totalErrCount int
+	var scanErr error
 	func() {
 		defer rows.Close()
 		for rows.Next() {
@@ -322,6 +323,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			var sumErr int64
 			var cnt int
 			if err2 := rows.Scan(&dt, &sumErr, &cnt); err2 != nil {
+				scanErr = err2
 				return
 			}
 			totalErrSum += sumErr
@@ -334,6 +336,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			}
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("PR by decision_type scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("PR by decision_type rows: %w", err)
 	}
@@ -352,18 +357,22 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		snowieFilter.DecisionType = -1 // count all decision types
 		numWhere, numArgs := s.buildBaseWhereClause(scope, snowieFilter)
 		var snowieSumErr int64
-		_ = s.DB.QueryRow(ctx,
+		if err := s.DB.QueryRow(ctx,
 			`SELECT `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+statsBaseJoin+numWhere,
 			numArgs...,
-		).Scan(&snowieSumErr)
+		).Scan(&snowieSumErr); err != nil {
+			return nil, fmt.Errorf("snowie ER (global) numerator: %w", err)
+		}
 
 		denWhere, denArgs := s.buildBaseWhereClauseSeat(scope, snowieFilter, false)
 		var snowieCheckerCnt int
-		_ = s.DB.QueryRow(ctx,
+		if err := s.DB.QueryRow(ctx,
 			`SELECT `+d.Bigint(`COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0)`)+` `+
 				statsBaseJoin+denWhere,
 			denArgs...,
-		).Scan(&snowieCheckerCnt)
+		).Scan(&snowieCheckerCnt); err != nil {
+			return nil, fmt.Errorf("snowie ER (global) denominator: %w", err)
+		}
 
 		result.SnowieGlobal = snowieER(snowieSumErr, snowieCheckerCnt)
 	}
@@ -389,6 +398,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			var sumErr int64
 			var cnt int
 			if err2 := rows.Scan(&ts.ID, &ts.Name, &ts.Date, &sumErr, &cnt); err2 != nil {
+				scanErr = err2
 				return
 			}
 			ts.NumDecisions = cnt
@@ -396,6 +406,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			result.PerTournament = append(result.PerTournament, ts)
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("PR per tournament scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("PR per tournament rows: %w", err)
 	}
@@ -417,6 +430,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			var sumErr int64
 			var cnt int
 			if err2 := rows.Scan(&ms.ID, &ms.Date, &sumErr, &cnt); err2 != nil {
+				scanErr = err2
 				return
 			}
 			ms.NumDecisions = cnt
@@ -424,6 +438,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			result.PerMatch = append(result.PerMatch, ms)
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("PR per match scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("PR per match rows: %w", err)
 	}
@@ -441,18 +458,23 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		if err != nil {
 			return nil, fmt.Errorf("cube action breakdown query: %w", err)
 		}
+		var scanErr error
 		func() {
 			defer rows.Close()
 			for rows.Next() {
 				var cs storage.CubeActionStats
 				var sumErr int64
 				if err2 := rows.Scan(&cs.Action, &sumErr, &cs.NumDecisions, &cs.BlunderCount); err2 != nil {
+					scanErr = err2
 					return
 				}
 				cs.PR = pr(sumErr, cs.NumDecisions)
 				result.CubeActionBreakdown = append(result.CubeActionBreakdown, cs)
 			}
 		}()
+		if scanErr != nil {
+			return nil, fmt.Errorf("cube action breakdown scan: %w", scanErr)
+		}
 		if err := rows.Err(); err != nil {
 			return nil, fmt.Errorf("cube action breakdown rows: %w", err)
 		}
@@ -476,16 +498,21 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			return nil, fmt.Errorf("cube direction query: %w", err)
 		}
 		var cells []storage.CubeDirectionRow
+		var scanErr error
 		func() {
 			defer rows.Close()
 			for rows.Next() {
 				var c storage.CubeDirectionRow
 				if err2 := rows.Scan(&c.Best, &c.Played, &c.Count, &c.ErrorMP); err2 != nil {
+					scanErr = err2
 					return
 				}
 				cells = append(cells, c)
 			}
 		}()
+		if scanErr != nil {
+			return nil, fmt.Errorf("cube direction scan: %w", scanErr)
+		}
 		if err := rows.Err(); err != nil {
 			return nil, fmt.Errorf("cube direction rows: %w", err)
 		}
@@ -516,6 +543,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		for rows.Next() {
 			var bucketMin, cnt int
 			if err2 := rows.Scan(&bucketMin, &cnt); err2 != nil {
+				scanErr = err2
 				return
 			}
 			result.ErrorHistogram = append(result.ErrorHistogram, storage.ErrorBucket{
@@ -525,6 +553,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			})
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("error histogram scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error histogram rows: %w", err)
 	}
@@ -548,11 +579,15 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			var be storage.BlunderEntry
 			if err2 := rows.Scan(&be.PositionID, &be.MatchID, &be.TournamentID, &be.ErrorMP,
 				&be.DecisionType, &be.MatchDate, &be.PlayerNames); err2 != nil {
+				scanErr = err2
 				return
 			}
 			result.TopBlunders = append(result.TopBlunders, be)
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("top blunders scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("top blunders rows: %w", err)
 	}
@@ -576,11 +611,15 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		for recentRows.Next() {
 			var e int64
 			if err2 := recentRows.Scan(&e); err2 != nil {
+				scanErr = err2
 				return
 			}
 			recentErrors = append(recentErrors, e)
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("rolling PR scan: %w", scanErr)
+	}
 	if err := recentRows.Err(); err != nil {
 		return nil, fmt.Errorf("rolling PR rows: %w", err)
 	}
@@ -625,6 +664,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		mwcRollingThresholds := []int{5, 10, 50, 100, 250, 500, 1000}
 		mwcRollingMap := make(map[int]float64)
 
+		var scanErr error
 		func() {
 			defer mwcRows.Close()
 			for mwcRows.Next() {
@@ -636,6 +676,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 				var posID int64
 				if err2 := mwcRows.Scan(&errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength,
 					&tournamentID, &matchID, &cubeAction, &dt, &posID); err2 != nil {
+					scanErr = err2
 					return
 				}
 
@@ -680,6 +721,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 				}
 			}
 		}()
+		if scanErr != nil {
+			return nil, fmt.Errorf("MWC pass scan: %w", scanErr)
+		}
 		if err := mwcRows.Err(); err != nil {
 			return nil, fmt.Errorf("MWC pass rows: %w", err)
 		}
@@ -856,7 +900,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		var awayScore0, awayScore1, cubeValue, matchLength int
 		if err := rows.Scan(&rawPlayer, &decisionType, &cubeAction, &errMP,
 			&awayScore0, &awayScore1, &cubeValue, &matchLength); err != nil {
-			continue
+			return nil, fmt.Errorf("MatchDetail scan: %w", err)
 		}
 
 		fMove := 0
@@ -942,12 +986,14 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		if snowieErr != nil {
 			return nil, fmt.Errorf("MatchDetail snowie query: %w", snowieErr)
 		}
+		var scanErr error
 		func() {
 			defer snowieRows.Close()
 			for snowieRows.Next() {
 				var rawPlayer, decisionType int
 				var errMP int64
 				if err2 := snowieRows.Scan(&rawPlayer, &decisionType, &errMP); err2 != nil {
+					scanErr = err2
 					return
 				}
 				if rawPlayer == 1 {
@@ -963,6 +1009,9 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 				}
 			}
 		}()
+		if scanErr != nil {
+			return nil, fmt.Errorf("MatchDetail snowie scan: %w", scanErr)
+		}
 		if err := snowieRows.Err(); err != nil {
 			return nil, fmt.Errorf("MatchDetail snowie rows: %w", err)
 		}
@@ -1050,7 +1099,7 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 		var matchID, errMP int64
 		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
 		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
-			continue
+			return nil, fmt.Errorf("MatchBadges scan: %w", err)
 		}
 		a := acc[matchID]
 		if a == nil {
@@ -1118,7 +1167,7 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
 		var moverName string
 		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength, &moverName, &matchID); err != nil {
-			continue
+			return nil, fmt.Errorf("TournamentBadges scan: %w", err)
 		}
 		byPlayer := acc[tournamentID]
 		if byPlayer == nil {
@@ -1220,18 +1269,23 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable decisions: %w", err)
 	}
+	var scanErr error
 	func() {
 		defer rows.Close()
 		for rows.Next() {
 			var d storage.PlayerDecisionStat
 			if err := rows.Scan(&d.Name, &d.DecisionType, &d.SumErrMP, &d.Count, &d.Errors, &d.Blunders); err != nil {
-				continue
+				scanErr = err
+				return
 			}
 			decisions = append(decisions, d)
 		}
 	}()
+	if scanErr != nil {
+		return nil, fmt.Errorf("PlayerTable decisions scan: %w", scanErr)
+	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable decisions scan: %w", err)
+		return nil, fmt.Errorf("PlayerTable decisions rows: %w", err)
 	}
 
 	// ── Snowie numerator: every error, counted or not ─────────────────────────
@@ -1243,19 +1297,24 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable snowie: %w", err)
 	}
+	var snowieScanErr error
 	func() {
 		defer rows.Close()
 		for rows.Next() {
 			var name string
 			var sum int64
 			if err := rows.Scan(&name, &sum); err != nil {
-				continue
+				snowieScanErr = err
+				return
 			}
 			snowieErr[name] = sum
 		}
 	}()
+	if snowieScanErr != nil {
+		return nil, fmt.Errorf("PlayerTable snowie scan: %w", snowieScanErr)
+	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable snowie scan: %w", err)
+		return nil, fmt.Errorf("PlayerTable snowie rows: %w", err)
 	}
 
 	// ── Luck, over the rolls that carry it ────────────────────────────────────
@@ -1272,19 +1331,24 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable luck: %w", err)
 	}
+	var luckScanErr error
 	func() {
 		defer rows.Close()
 		for rows.Next() {
 			var name string
 			var acc storage.PlayerLuckAcc
 			if err := rows.Scan(&name, &acc.SumMP, &acc.Rolls); err != nil {
-				continue
+				luckScanErr = err
+				return
 			}
 			luck[name] = acc
 		}
 	}()
+	if luckScanErr != nil {
+		return nil, fmt.Errorf("PlayerTable luck scan: %w", luckScanErr)
+	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable luck scan: %w", err)
+		return nil, fmt.Errorf("PlayerTable luck rows: %w", err)
 	}
 
 	// ── Matches: participation, outcome, and the Snowie denominator ───────────
@@ -1304,19 +1368,24 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable matches: %w", err)
 	}
+	var matchesScanErr error
 	func() {
 		defer rows.Close()
 		for rows.Next() {
 			var m storage.MatchOutcomeRow
 			if err := rows.Scan(&m.Player1, &m.Player2, &m.MatchLength,
 				&m.Points1, &m.Points2, &m.CheckerMoves); err != nil {
-				continue
+				matchesScanErr = err
+				return
 			}
 			matches = append(matches, m)
 		}
 	}()
+	if matchesScanErr != nil {
+		return nil, fmt.Errorf("PlayerTable matches scan: %w", matchesScanErr)
+	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable matches scan: %w", err)
+		return nil, fmt.Errorf("PlayerTable matches rows: %w", err)
 	}
 
 	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil

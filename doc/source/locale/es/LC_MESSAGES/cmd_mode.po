@@ -1286,18 +1286,3 @@ msgstr ""
 "Las migraciones de la base de datos se realizan ahora automáticamente al "
 "abrir una base de datos."
 
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Mostrar/ocultar la biblioteca de filtros."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Mostrar/ocultar el historial de búsqueda."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Abre el panel EPC (Effective Pip Count)."
-

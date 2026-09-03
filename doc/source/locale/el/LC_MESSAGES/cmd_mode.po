@@ -1283,18 +1283,3 @@ msgstr ""
 "Οι μεταβάσεις της βάσης δεδομένων πραγματοποιούνται πλέον αυτόματα κατά "
 "το άνοιγμα μιας βάσης δεδομένων."
 
-#~ msgid "blunders, bl"
-#~ msgstr "blunders, bl"
-
-#~ msgid "filter, fl"
-#~ msgstr "filter, fl"
-
-#~ msgid "Afficher/cacher la bibliothèque de filtres."
-#~ msgstr "Εμφάνιση/απόκρυψη της βιβλιοθήκης φίλτρων."
-
-#~ msgid "Afficher/cacher l'historique de recherche."
-#~ msgstr "Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης."
-
-#~ msgid "Ouvre le panneau EPC (Effective Pip Count)."
-#~ msgstr "Ανοίγει το πάνελ EPC (Effective Pip Count)."
-

@@ -415,22 +415,3 @@ msgstr "Nach ``s tn1`` die Cube-Entscheidungen suchen"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "``TAB`` drücken, um das Suchfenster zu öffnen."
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "Die Filterbibliothek durch Drücken von ``CTRL-K`` öffnen."
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "Den Suchbefehl bearbeiten."
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "Den Suchbefehl mit der Schaltfläche \"Add\" speichern."
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr ""
-#~ "Beim Bearbeiten des Befehls können die Tasten ``OBEN`` und ``UNTEN`` "
-#~ "verwendet werden, um durch den Befehlsverlauf zu navigieren."

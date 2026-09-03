@@ -161,6 +161,22 @@ export namespace database {
 	        this.Count = source["Count"];
 	    }
 	}
+	export class GammonNetBatchSummary {
+	    Evaluated: number;
+	    Refused: number;
+	    Failed: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new GammonNetBatchSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Evaluated = source["Evaluated"];
+	        this.Refused = source["Refused"];
+	        this.Failed = source["Failed"];
+	    }
+	}
 	export class IndividualSaveResult {
 	    id: number;
 	    existed: boolean;
@@ -643,6 +659,7 @@ export namespace domain {
 	    requestRetention: number;
 	    maximumInterval: number;
 	    enableFuzz: boolean;
+	    sessionLimit?: number;
 	    cardCount: number;
 	    dueCount: number;
 	    newCount: number;
@@ -664,6 +681,7 @@ export namespace domain {
 	        this.requestRetention = source["requestRetention"];
 	        this.maximumInterval = source["maximumInterval"];
 	        this.enableFuzz = source["enableFuzz"];
+	        this.sessionLimit = source["sessionLimit"];
 	        this.cardCount = source["cardCount"];
 	        this.dueCount = source["dueCount"];
 	        this.newCount = source["newCount"];
@@ -1820,7 +1838,7 @@ export namespace parser {
 
 export namespace race {
 	
-	export class Money {
+	export class CubeVerdict {
 	    cube_state: string;
 	    cubeless: number;
 	    no_double: number;
@@ -1829,7 +1847,7 @@ export namespace race {
 	    verdict?: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new Money(source);
+	        return new CubeVerdict(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -1853,7 +1871,7 @@ export namespace race {
 	    lose_backgammon?: number;
 	    sigma?: number;
 	    p99?: number;
-	    money?: Money;
+	    money?: CubeVerdict;
 	    depth?: string;
 	
 	    static createFrom(source: any = {}) {
@@ -1872,7 +1890,7 @@ export namespace race {
 	        this.lose_backgammon = source["lose_backgammon"];
 	        this.sigma = source["sigma"];
 	        this.p99 = source["p99"];
-	        this.money = this.convertValues(source["money"], Money);
+	        this.money = this.convertValues(source["money"], CubeVerdict);
 	        this.depth = source["depth"];
 	    }
 	
@@ -1894,7 +1912,6 @@ export namespace race {
 		    return a;
 		}
 	}
-	
 	export class Side {
 	    all_in_home: boolean;
 	    checker_count: number;
@@ -1981,6 +1998,27 @@ export namespace sql {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	
+	    }
+	}
+
+}
+
+export namespace sqlite {
+	
+	export class SchemaDrift {
+	    missing_tables: string[];
+	    missing_columns: string[];
+	    missing_indexes: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SchemaDrift(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.missing_tables = source["missing_tables"];
+	        this.missing_columns = source["missing_columns"];
+	        this.missing_indexes = source["missing_indexes"];
 	    }
 	}
 

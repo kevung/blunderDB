@@ -409,28 +409,3 @@ msgstr "After ``s tn1``, search for cube decisions"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-
-#~ msgid "Basculer en mode EDIT avec la touche ``TAB``."
-#~ msgstr "Switch to EDIT mode using the ``TAB`` key."
-
-#~ msgid "Basculer dans le mode EDIT."
-#~ msgstr "Switch to EDIT mode."
-
-#~ msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
-#~ msgstr "Press ``TAB`` to open the search panel."
-
-#~ msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-#~ msgstr "Open the filter library by pressing ``CTRL-K``."
-
-#~ msgid "Editer la commande de recherche."
-#~ msgstr "Edit the search command."
-
-#~ msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-#~ msgstr "Save the search command using the \"Add\" button."
-
-#~ msgid ""
-#~ "Lors de l'édition de la commande, il est possible d'utiliser les touches "
-#~ "``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-#~ msgstr ""
-#~ "While editing the command, you can use the ``UP`` and ``DOWN`` arrow keys to"
-#~ " navigate through the command history."

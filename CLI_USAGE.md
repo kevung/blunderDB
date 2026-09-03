@@ -792,6 +792,13 @@ The same operation as the GUI's automatic post-import analysis and its
 explicit "analyze now" button, and as `serve`'s `/v1/gammonnet.analyzeMissing`
 for a tenant.
 
+With `--stale`, the command instead re-runs gammonNet on every position whose
+stored analysis is entirely its own but was written at an older engine
+version, or at a different depth than `--ply` now asks for (#191) — the GUI's
+"re-analyse stale positions" button and `serve`'s `/v1/gammonnet.sweepStale`.
+A position carrying any XG, GNUbg or BGBlitz analysis is never touched by
+either sweep (ADR-0013's protection is unconditional).
+
 ```bash
 ./blunderDB analyze --db database.db [options]
 ```
@@ -801,6 +808,8 @@ for a tenant.
 - `--prune-k` - Pruning width (default: 12, the canonical parameter)
 - `--candidates` - Candidate moves kept per checker decision (default: 10)
 - `--jobs` - Positions analysed in parallel (default: the number of CPUs)
+- `--stale` - Re-analyse positions whose gammonNet analysis is outdated,
+  instead of filling gaps
 
 **Parallelism (`--jobs`).** The positions of a sweep are independent — no
 search informs the next — so they are spread over `--jobs` goroutines, each
@@ -818,6 +827,14 @@ interrupt: Ctrl-C cancels cleanly, nothing already written is lost, and the
 next run picks up exactly where the last one left off — no journal needed,
 because "positions with no analysis" is re-derived fresh every time.
 
+**Refused, not failed.** A position gammonNet declines to evaluate — a match
+score beyond its MET's horizon, a cube decision the model refuses — reports
+"refused" in the end-of-run summary, not "failed": it is not retried to no
+effect, because the same request would be refused again every time. The
+summary always breaks the run down as `evaluated / refused / failed`; only
+`failed` positions (a read, evaluation or write error unrelated to
+refusal) are retried on the next run.
+
 **Example:**
 ```bash
 ./blunderDB analyze --db database.db
@@ -827,9 +844,14 @@ because "positions with no analysis" is re-derived fresh every time.
 #   ...
 #   1204/1204 (100%)
 # Done.
+# evaluated: 1198, refused: 6, failed: 0
 
 # One core only, on a machine that has other work to do
 ./blunderDB analyze --db database.db --jobs 1
+
+# Re-analyse everything gammonNet wrote at an outdated version or depth,
+# at 3-ply
+./blunderDB analyze --db database.db --stale --ply 3
 ```
 
 ## Info Command

@@ -220,12 +220,31 @@ automatiquement après import** qui, une fois activée, vérifie après chaque
 import s'il reste des positions **sans aucune analyse** (ni gammonNet, ni XG,
 ni GNUbg, ni BGBlitz — la règle est « une évaluation ne comble qu'un trou »,
 jamais un remplacement) et, le cas échéant, lance en tâche de fond une analyse
-gammonNet à la profondeur d'analyse configurée. Le travail est **borné,
-visible et annulable, jamais un démon silencieux** : sa progression
-(``positions analysées / total``) et un bouton d'annulation apparaissent dans
-la barre de statut pendant toute sa durée, et disparaissent une fois terminé.
-Fermer l'application pendant l'analyse ne perd rien : chaque position
-analysée est écrite au fil de l'eau, et un prochain import concerné reprend
+gammonNet à la profondeur d'analyse configurée. Un bouton **Analyser
+maintenant** relance manuellement le même rattrapage, utile pour une
+bibliothèque constituée avant l'existence de cette fonctionnalité.
+
+Un second bouton, **Ré-analyser les positions périmées**, couvre le cas
+inverse : une position déjà analysée par gammonNet, mais dont l'analyse
+stockée a été écrite par une version de moteur plus ancienne que celle en
+cours d'exécution, ou à une profondeur différente de la profondeur d'analyse
+configurée ci-dessus, y est signalée comme périmée et réévaluée. Une position
+portant en plus une analyse XG, GNUbg ou BGBlitz n'est jamais touchée par ce
+bouton, quel que soit son contenu gammonNet — la protection d'ADR-0013 reste
+inconditionnelle. Le nombre affiché à côté de chaque bouton (positions sans
+analyse, positions périmées) est purement informatif ; le lot recalcule sa
+propre liste au moment de démarrer.
+
+Les deux lots sont **bornés, visibles et annulables, jamais un démon
+silencieux** : leur progression (``positions analysées / total``) et un
+bouton d'annulation apparaissent dans la barre de statut pendant toute leur
+durée, et disparaissent une fois terminés au profit d'un message résumant le
+résultat — combien de positions ont été **analysées**, combien ont été
+**refusées** (une position que gammonNet décline d'évaluer, comme un score de
+match hors de portée de sa table de match, ce qui n'est jamais une panne) et
+combien ont **échoué** (retentées, inchangées, au prochain lancement).
+Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
+analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
