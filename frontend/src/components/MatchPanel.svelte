@@ -2,8 +2,10 @@
     import { logger } from '../utils/logger.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
+    import { SvelteSet } from 'svelte/reactivity';
     import {
         GetAllMatches,
         DeleteMatch,
@@ -133,35 +135,37 @@
     // tab by default, before openDatabaseByPath completes); that case is covered
     // by the matchPanelRefreshTriggerStore bump fired once the DB is open and the
     // session restored — see openDatabaseByPath.
-    let _prevVisible = false;
-    $effect(() => {
-        const opened = visible; // $derived — tracked
-        const wasVisible = _prevVisible;
-        _prevVisible = opened;
-        if (opened && !wasVisible && databaseLoaded) {
-            loadMatches().then(() => {
-                const lvm = lastVisitedMatch;
-                if (lvm && lvm.matchID) {
-                    const m = matches.find((mm) => mm.id === lvm.matchID);
-                    if (m) {
-                        selectedMatch = m;
-                        loadMatchDetail(m);
-                    } else {
-                        selectedMatch = null;
-                        detailMatch = null;
-                    }
-                } else {
+    $effect(
+        onChange(
+            () => visible, // $derived — tracked
+            (opened) => {
+                if (opened && databaseLoaded) {
+                    loadMatches().then(() => {
+                        const lvm = lastVisitedMatch;
+                        if (lvm && lvm.matchID) {
+                            const m = matches.find((mm) => mm.id === lvm.matchID);
+                            if (m) {
+                                selectedMatch = m;
+                                loadMatchDetail(m);
+                            } else {
+                                selectedMatch = null;
+                                detailMatch = null;
+                            }
+                        } else {
+                            selectedMatch = null;
+                            detailMatch = null;
+                        }
+                    });
+                } else if (!opened) {
                     selectedMatch = null;
                     detailMatch = null;
+                    detailStats = null;
+                    tournamentEdit.cancel();
                 }
-            });
-        } else if (!opened && wasVisible) {
-            selectedMatch = null;
-            detailMatch = null;
-            detailStats = null;
-            tournamentEdit.cancel();
-        }
-    });
+            },
+            false
+        )
+    );
 
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {
@@ -267,17 +271,21 @@
         }
     }
 
-    // Group move positions by game number for transcript display
+    // Group move positions by game number for transcript display. Each move
+    // carries its globalIdx (its position in detailMovePositions) precomputed
+    // here — the template used to recover it with detailMovePositions.indexOf(mp)
+    // inside the {#each} of rows, an O(n) scan per row that made a 500-move
+    // match cost ~250 000 comparisons per render (D.8, #208).
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
-        for (const mp of detailMovePositions) {
+        detailMovePositions.forEach((mp, globalIdx) => {
             if (!gameMap.has(mp.game_number)) {
                 gameMap.set(mp.game_number, []);
             }
-            gameMap.get(mp.game_number).push(mp);
-        }
+            gameMap.get(mp.game_number).push({ mp, globalIdx });
+        });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
             // Find corresponding game info
@@ -285,6 +293,51 @@
             result.push({ gameNumber: gameNum, moves, gameInfo });
         }
         return result;
+    });
+
+    // Which games' transcript tables are actually mounted: collapsed games
+    // render only their <summary> header, not their (potentially long) move
+    // table, so a many-game match keeps most of its transcript out of the DOM
+    // until the user opens it (D.8, #208). Mutated in place — the template
+    // tracks this one SvelteSet instance, already reactive on its own — and
+    // reseeded to just the game holding the current move whenever a
+    // different match's moves load.
+    const openGames = new SvelteSet();
+
+    $effect(() => {
+        const moves = detailMovePositions; // tracked dep: reseed on a new match's moves
+        untrack(() => {
+            openGames.clear();
+            if (!moves.length) return;
+            const ctx = get(matchContextStore);
+            let targetIndex = null;
+            if (ctx.isMatchMode && detailMatch && ctx.matchID === detailMatch.id) {
+                targetIndex = ctx.currentIndex;
+            } else if (lastVisitedMatch && detailMatch && lastVisitedMatch.matchID === detailMatch.id) {
+                targetIndex = lastVisitedMatch.currentIndex;
+            }
+            const targetMove = targetIndex != null ? moves[targetIndex] : null;
+            const defaultGame = targetMove ? targetMove.game_number : moves[moves.length - 1].game_number;
+            openGames.add(defaultGame);
+        });
+    });
+
+    function setGameOpen(gameNumber, isOpen) {
+        if (isOpen) openGames.add(gameNumber);
+        else openGames.delete(gameNumber);
+    }
+
+    // Keep the transcript following along while reviewing this match in MATCH
+    // mode: crossing into a collapsed game reopens it (games are only ever
+    // added here, never closed, so a review pass just accumulates the games
+    // actually visited).
+    $effect(() => {
+        const ctx = $matchContextStore;
+        if (!ctx.isMatchMode || !detailMatch || ctx.matchID !== detailMatch.id) return;
+        const move = detailMovePositions[ctx.currentIndex];
+        if (move && !openGames.has(move.game_number)) {
+            setGameOpen(move.game_number, true);
+        }
     });
 
     async function navigateToMove(moveIndex) {
@@ -749,8 +802,9 @@
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
                             {#each transcriptGames as game (game.gameNumber)}
-                                <div class="game-section">
-                                    <div class="game-header">
+                                {@const isOpen = openGames.has(game.gameNumber)}
+                                <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
+                                    <summary class="game-header">
                                         <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
                                         {#if game.gameInfo}
                                             <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
@@ -763,41 +817,42 @@
                                                 >
                                             {/if}
                                         {/if}
-                                    </div>
-                                    <table class="transcript-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="transcript-num">#</th>
-                                                <th class="transcript-player">{$t('match.player')}</th>
-                                                <th class="transcript-dice">{$t('match.dice')}</th>
-                                                <th class="transcript-move">{$t('match.move')}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {#each game.moves as mp, mi (mi)}
-                                                {@const globalIdx = detailMovePositions.indexOf(mp)}
-                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
-                                                    <td class="transcript-num">{mi + 1}</td>
-                                                    <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
-                                                        {getPlayerName(mp)}
-                                                    </td>
-                                                    <td class="transcript-dice">
-                                                        {#if mp.move_type === 'checker'}
-                                                            {formatDiceShort(mp.position.dice)}
-                                                        {/if}
-                                                    </td>
-                                                    <td class="transcript-move">
-                                                        {#if mp.move_type === 'cube'}
-                                                            <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
-                                                        {:else}
-                                                            {mp.checker_move || '—'}
-                                                        {/if}
-                                                    </td>
+                                    </summary>
+                                    {#if isOpen}
+                                        <table class="transcript-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="transcript-num">#</th>
+                                                    <th class="transcript-player">{$t('match.player')}</th>
+                                                    <th class="transcript-dice">{$t('match.dice')}</th>
+                                                    <th class="transcript-move">{$t('match.move')}</th>
                                                 </tr>
-                                            {/each}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </thead>
+                                            <tbody>
+                                                {#each game.moves as { mp, globalIdx }, mi (globalIdx)}
+                                                    <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
+                                                        <td class="transcript-num">{mi + 1}</td>
+                                                        <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
+                                                            {getPlayerName(mp)}
+                                                        </td>
+                                                        <td class="transcript-dice">
+                                                            {#if mp.move_type === 'checker'}
+                                                                {formatDiceShort(mp.position.dice)}
+                                                            {/if}
+                                                        </td>
+                                                        <td class="transcript-move">
+                                                            {#if mp.move_type === 'cube'}
+                                                                <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
+                                                            {:else}
+                                                                {mp.checker_move || '—'}
+                                                            {/if}
+                                                        </td>
+                                                    </tr>
+                                                {/each}
+                                            </tbody>
+                                        </table>
+                                    {/if}
+                                </details>
                             {/each}
                         {/if}
                     </div>
@@ -969,7 +1024,7 @@
 
     .toolbar-btn {
         background: none;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
         color: #555;
@@ -980,7 +1035,7 @@
 
     .toolbar-btn:hover:not(:disabled) {
         background: #e3f2fd;
-        border-color: #1976d2;
+        border-color: var(--color-primary);
         color: #1565c0;
     }
 
@@ -996,13 +1051,13 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .match-edit-input {
         width: 100%;
         padding: 1px 4px;
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 2px;
         font-size: var(--font-size-small);
         box-sizing: border-box;
@@ -1013,7 +1068,7 @@
     .empty-state,
     .loading-state {
         text-align: center;
-        color: #999;
+        color: var(--color-text-muted);
         padding: 24px;
         font-size: var(--font-size-base);
     }
@@ -1046,7 +1101,7 @@
     }
 
     .vs-label {
-        color: #999;
+        color: var(--color-text-muted);
         font-weight: 400;
         font-size: var(--font-size-small);
     }
@@ -1067,7 +1122,7 @@
         flex-wrap: wrap;
         gap: 4px 12px;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         margin-bottom: 6px;
     }
 
@@ -1076,7 +1131,7 @@
     }
 
     .meta-tournament {
-        color: #1976d2;
+        color: var(--color-primary);
         font-weight: 500;
     }
 
@@ -1094,24 +1149,24 @@
         padding: 4px 12px;
         cursor: pointer;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         transition:
             color 0.15s,
             border-color 0.15s;
     }
 
     .detail-tab:hover {
-        color: #333;
+        color: var(--color-text);
     }
 
     .detail-tab.active {
-        color: #1976d2;
-        border-bottom-color: #1976d2;
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
     }
 
     .enter-match-btn {
         margin-left: auto;
-        color: #1976d2;
+        color: var(--color-primary);
         font-weight: 600;
     }
 
@@ -1142,11 +1197,30 @@
         color: #555;
         border-bottom: 1px solid #e0e0e0;
         z-index: 1;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    /* .game-header is a <summary>: a game's move table is only mounted while
+       its <details> is open (D.8, perf ticket 208), so collapsed games cost
+       one row of DOM instead of their whole transcript. Replace the native
+       marker with a small disclosure triangle that flips with [open]. */
+    .game-header::-webkit-details-marker {
+        display: none;
+    }
+
+    .game-header::before {
+        content: '▸';
+        color: var(--color-text-muted);
+    }
+
+    .game-section[open] > .game-header::before {
+        content: '▾';
     }
 
     .game-title {
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
     }
 
     .game-score {
@@ -1169,7 +1243,7 @@
         text-align: left;
         font-weight: 600;
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
         border-bottom: 1px solid #eee;
         background: #fafafa;
     }
@@ -1203,23 +1277,23 @@
     }
 
     .transcript-player.player1 {
-        color: #333;
+        color: var(--color-text);
     }
 
     .transcript-player.player2 {
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .transcript-dice {
         width: 32px;
         text-align: center;
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #555;
     }
 
     .transcript-move {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #222;
     }
@@ -1259,25 +1333,25 @@
 
     .meta-label {
         width: 100px;
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
     .meta-value {
-        color: #333;
+        color: var(--color-text);
     }
 
     .source-file {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         word-break: break-all;
     }
 
     .id-value {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .tournament-meta-cell {
@@ -1289,12 +1363,12 @@
     }
 
     .tournament-display {
-        color: #666;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
     .tournament-display:hover {
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     .match-comment-display {
@@ -1366,7 +1440,7 @@
 
     .sub-label {
         padding-left: 20px;
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
@@ -1379,7 +1453,7 @@
     }
 
     .sub-val {
-        color: #666;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 

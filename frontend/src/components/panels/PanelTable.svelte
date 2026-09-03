@@ -241,7 +241,7 @@
 
     th {
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
         font-size: var(--font-size-small);
     }
 
@@ -274,7 +274,7 @@
     .sort-arrow {
         font-size: var(--font-size-small);
         margin-left: 3px;
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     tbody tr {
@@ -303,7 +303,7 @@
     }
 
     tbody tr.drag-over {
-        border-top: 2px solid #1976d2;
+        border-top: 2px solid var(--color-primary);
     }
 
     tbody tr.dragging {
@@ -336,16 +336,16 @@
 
     .panel-table :global(.index-cell) {
         text-align: center;
-        color: #999;
+        color: var(--color-text-muted);
     }
 
     .panel-table :global(.count-cell) {
         text-align: center;
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .panel-table :global(.stat-col) {
-        color: #666;
+        color: var(--color-text-muted);
         font-variant-numeric: tabular-nums;
     }
 
@@ -360,7 +360,7 @@
         border: none;
         cursor: pointer;
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         padding: 2px 4px;
         line-height: 1;
     }
@@ -393,7 +393,7 @@
 
     .empty-state {
         text-align: center;
-        color: #999;
+        color: var(--color-text-muted);
         padding: 24px;
         font-size: var(--font-size-base);
     }

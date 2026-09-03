@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // ---------- legacy implementation (kept in test code only) ----------
@@ -434,14 +435,15 @@ func TestSearch_PaginationStable(t *testing.T) {
 		t.Skipf("not enough positions (%d < 10) for pagination test", total)
 	}
 
-	// Full result (no pagination in the public API — use the core with empty filters).
-	full, _, err := db.LoadPositionsByFiltersCore(SearchFilters{Filter: Position{}})
+	// Full result (unbounded ListOpts).
+	full, _, err := db.LoadPositionsByFiltersCore(SearchFilters{Filter: Position{}}, storage.ListOpts{})
 	if err != nil {
 		t.Fatalf("full query: %v", err)
 	}
 
-	// Simulate 2 pages of 5 using restrictToPositionIDs (a proxy for real LIMIT/OFFSET).
-	// We take the first 10 IDs from the full result and verify page1+page2 = first 10.
+	// Two pages of ListOpts.Limit/Offset, pushed into the SQL scan itself
+	// (B.10, #178 — this used to be simulated via RestrictToPositionIDs
+	// because Find had no real LIMIT/OFFSET).
 	n := 10
 	if len(full) < n {
 		n = len(full)
@@ -451,15 +453,12 @@ func TestSearch_PaginationStable(t *testing.T) {
 		first10IDs[i] = full[i].ID
 	}
 
-	// Build comma-separated ID list for each "page".
-	page1IDs := idsToCSV(first10IDs[:n/2])
-	page2IDs := idsToCSV(first10IDs[n/2:])
-
-	page1, err := db.LoadPositionsByFilters(SearchFilters{Filter: Position{}, RestrictToPositionIDs: page1IDs})
+	half := n / 2
+	page1, _, err := db.LoadPositionsByFiltersCore(SearchFilters{Filter: Position{}}, storage.ListOpts{Limit: half})
 	if err != nil {
 		t.Fatalf("page1: %v", err)
 	}
-	page2, err := db.LoadPositionsByFilters(SearchFilters{Filter: Position{}, RestrictToPositionIDs: page2IDs})
+	page2, _, err := db.LoadPositionsByFiltersCore(SearchFilters{Filter: Position{}}, storage.ListOpts{Limit: n - half, Offset: half})
 	if err != nil {
 		t.Fatalf("page2: %v", err)
 	}
@@ -529,14 +528,4 @@ func TestSearch_PrimePattern_BitboardOnly(t *testing.T) {
 		}
 	}
 	t.Logf("prime pattern: %d matches, tight=%v", len(gotIDs), tight)
-}
-
-// ---------- helpers ----------
-
-func idsToCSV(ids []int64) string {
-	parts := make([]string, len(ids))
-	for i, id := range ids {
-		parts[i] = fmt.Sprintf("%d", id)
-	}
-	return strings.Join(parts, ",")
 }

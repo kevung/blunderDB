@@ -5,6 +5,7 @@
 A backgammon blunder analysis tool. Import your matches from eXtreme Gammon, GnuBG and BGBlitz, store every position once, search them by structure and by mistake, measure your play, and study the positions you keep getting wrong — with an evaluator built in.
 
 [![CI](https://github.com/kevung/blunderDB/actions/workflows/build.yml/badge.svg)](https://github.com/kevung/blunderDB/actions/workflows/build.yml)
+[![Nightly](https://github.com/kevung/blunderDB/actions/workflows/nightly.yml/badge.svg)](https://github.com/kevung/blunderDB/actions/workflows/nightly.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Documentation, in nine languages: <https://kevung.github.io/blunderDB/>
@@ -48,7 +49,7 @@ The interface is available in English, French, German, Italian, Spanish, Finnish
 
 ## Installation
 
-Every asset on the [Releases page](https://github.com/kevung/blunderDB/releases) comes with a `.sha256` file; verify with `sha256sum -c`.
+Every asset on the [Releases page](https://github.com/kevung/blunderDB/releases) comes with a `.sha256` file (or the consolidated `SHA256SUMS`); verify with `sha256sum -c`. Every asset also carries a build-provenance attestation, verifiable with `gh attestation verify <asset> --repo kevung/blunderDB` — no key to manage. A minisign signature over `SHA256SUMS` is opt-in and not yet enabled; see [`packaging/minisign/`](packaging/minisign/README.md).
 
 | Platform | How |
 |---|---|

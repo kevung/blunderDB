@@ -28,7 +28,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReviewAnkiCard: vi.fn(() => Promise.resolve(null)),
     ResetAnkiDeck: vi.fn(),
     GetAllCollections: vi.fn(() => Promise.resolve([])),
-    LoadPositionsByFilters: vi.fn(() => Promise.resolve([]))
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) => f() } }));
 

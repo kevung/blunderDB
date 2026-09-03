@@ -625,7 +625,7 @@
         align-items: center;
         gap: 4px;
         padding: 3px 8px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         background: #fff;
         cursor: pointer;
@@ -681,7 +681,7 @@
     .input-source,
     .edit-field {
         padding: 2px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
     }
@@ -693,7 +693,7 @@
 
     .search-hint {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     /* --- Deck table cells --- */
@@ -710,12 +710,12 @@
     }
     .desc-cell {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
     .source-cell {
         font-size: var(--font-size-small);
-        color: #666;
-        font-family: monospace;
+        color: var(--color-text-muted);
+        font-family: var(--font-family-mono);
     }
 
     .deck-edit {
@@ -755,7 +755,7 @@
     }
     .stat-label {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         text-transform: uppercase;
     }
 
@@ -787,7 +787,7 @@
         background: #e8f7fa;
     }
     .btn-cram:disabled {
-        border-color: #ccc;
+        border-color: var(--color-border);
         color: #ccc;
         cursor: default;
     }
@@ -808,18 +808,18 @@
         border: none;
         cursor: pointer;
         font-size: var(--font-size-title);
-        color: #666;
+        color: var(--color-text-muted);
         padding: 2px 6px;
         line-height: 1;
     }
     .btn-back:hover {
-        color: #333;
+        color: var(--color-text);
     }
 
     .view-title {
         font-size: var(--font-size-base);
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
         flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -827,7 +827,7 @@
     }
     .review-count {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .card-state {
@@ -867,7 +867,7 @@
 
     .review-position-id {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .review-buttons {
@@ -904,18 +904,18 @@
         border: 1px dashed #ccc;
         border-radius: 3px;
         background: #f7f7f7;
-        color: #999;
+        color: var(--color-text-muted);
         letter-spacing: 3px;
         cursor: pointer;
     }
     .answer-masked:hover {
         background: #eee;
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .answer-absent {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .btn-rating {
@@ -952,7 +952,7 @@
 
     .settings-note {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         margin: -2px 0 6px;
     }
 
@@ -973,14 +973,14 @@
     .settings-row input[type='number'] {
         width: 80px;
         padding: 2px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
     }
 
     .settings-hint {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .settings-actions {

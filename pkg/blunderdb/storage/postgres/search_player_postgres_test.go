@@ -14,6 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/migrate"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -21,7 +22,7 @@ import (
 func findPlayer(t *testing.T, dst *pg.Storage, scope string, f domain.SearchFilters) int {
 	t.Helper()
 	n := 0
-	for _, err := range dst.Search().Find(context.Background(), scope, f) {
+	for _, err := range dst.Search().Find(context.Background(), scope, f, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Search.Find: %v", err)
 		}

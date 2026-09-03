@@ -13,7 +13,35 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// sourcePositionQuery selects (id, state, individually_imported) from the
+// sourcePositionScalarColumns is the SELECT-list fragment for the scalar
+// columns a compact-state row needs (decision type, dice, cube, score,
+// jacoby, beaver), qualified with alias (e.g. "p." or ""). Selecting them
+// alongside id/state — in both sourcePositionQuery and
+// AnalyzeImportDatabase's own query — means decodeSourcePosition never
+// issues its own follow-up query per compact row (B.11, #179: this used to
+// run once per compact-state position, played twice across the analyze and
+// commit passes, on top of the per-row analysis/comment lookups already
+// there).
+//
+// A database that predates these columns (pre-2.2.0) can never hold a
+// compact-state row in the first place — see decodeSourcePosition — so the
+// NULL stand-ins below are never actually read; they exist only so the SELECT
+// itself does not fail with "no such column" against that old a schema.
+func sourcePositionScalarColumns(importDB *sql.DB, alias string) string {
+	if !queryable(importDB, `SELECT decision_type FROM position LIMIT 1`) {
+		return "NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL"
+	}
+	cols := []string{"decision_type", "player_on_roll", "dice_1", "dice_2",
+		"cube_value", "cube_owner", "score_1", "score_2", "has_jacoby", "has_beaver"}
+	qualified := make([]string, len(cols))
+	for i, c := range cols {
+		qualified[i] = alias + c
+	}
+	return strings.Join(qualified, ", ")
+}
+
+// sourcePositionQuery selects (id, state, the ten scalar columns
+// sourcePositionScalarColumns lists, individually_imported) from the
 // database being imported.
 //
 // Databases older than 2.13.0 have no individually_imported column, so the flag
@@ -24,11 +52,11 @@ import (
 // positions were individually imported.
 func sourcePositionQuery(importDB *sql.DB) string {
 	if queryable(importDB, `SELECT individually_imported FROM position LIMIT 1`) {
-		return `SELECT id, state, individually_imported FROM position`
+		return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, individually_imported FROM position`
 	}
 	if queryable(importDB, `SELECT 1 FROM move LIMIT 1`) {
 		slog.Debug("import database predates individually_imported; deriving it from the move graph")
-		return `SELECT p.id, p.state,
+		return `SELECT p.id, p.state, ` + sourcePositionScalarColumns(importDB, "p.") + `,
 			       NOT EXISTS (SELECT 1 FROM move m WHERE m.position_id = p.id)
 			FROM position p`
 	}
@@ -36,7 +64,7 @@ func sourcePositionQuery(importDB *sql.DB) string {
 	// it stands on its own. This is the same rule as the derivation above, taken
 	// to its limit.
 	slog.Debug("import database has no move table; all its positions are individually imported")
-	return `SELECT id, state, 1 FROM position`
+	return `SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + `, 1 FROM position`
 }
 
 // queryable reports whether q runs against db — used to probe for a column or a
@@ -72,23 +100,29 @@ func checkImportableVersion(importVersion, currentVersion string) error {
 // being imported. Full-JSON state (every pre-2.2.0 database, and every export
 // before fiche-04) is self-describing: json.Unmarshal is enough. Compact state
 // is not — it holds only the board — so the scalar columns that carry
-// everything else (dice, score, cube, decision type) have to be read from the
-// same row.
+// everything else (dice, score, cube, decision type) have to come from the
+// same row: dt, por, d1, d2, cv, co, s1, s2, hj, hb, selected alongside id and
+// state by every query that calls this (sourcePositionScalarColumns) instead
+// of a follow-up query per compact row (B.11, #179 — this used to run once
+// per compact-state position, played twice across the analyze and commit
+// passes).
 //
 // Compact state is only ever produced by a database on the 2.2.0+ schema,
 // which always has those columns (storage/sqlite.Bootstrap creates them
-// unconditionally), so the lookup below cannot fail for a genuine compact
-// export or an ordinary user database. It exists so a hand-built or corrupted
-// fixture degrades to a board-only Position — losing dice/score identity, so
-// it can be merged as "new" rather than aborting the whole import — instead
-// of erroring out.
+// unconditionally), so a genuine compact export or an ordinary user database
+// always has real values here, never the NULL sourcePositionScalarColumns
+// substitutes for a database that predates them (which, by the same fact,
+// can never hold a compact row to read them for). A hand-built or corrupted
+// fixture that manages both at once degrades to a board-only Position —
+// losing dice/score identity, so it can be merged as "new" rather than
+// aborting the whole import.
 //
 // Without this, importing one current-schema database into another (the
 // "Import database" GUI feature, and fiche-04's own exports once they started
 // writing compact state) silently duplicated every position: the decode used
 // to zero every field but the board, so positionIdentityJSON never matched an
 // existing row.
-func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, error) {
+func decodeSourcePosition(state string, dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64) (Position, error) {
 	var pos Position
 	if !isCompactState(state) {
 		if err := json.Unmarshal([]byte(state), &pos); err != nil {
@@ -97,15 +131,6 @@ func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, e
 		return pos, nil
 	}
 	pos.Board = decodeBoardCompact(state)
-	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
-	err := importDB.QueryRow(`SELECT decision_type, player_on_roll, dice_1, dice_2,
-		cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver
-		FROM position WHERE id = ?`, id).
-		Scan(&dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb)
-	if err != nil {
-		slog.Warn("reading scalar columns for a compact-state import position; identity will be board-only", "id", id, "err", err)
-		return pos, nil
-	}
 	pos.DecisionType = int(dt.Int64)
 	pos.PlayerOnRoll = int(por.Int64)
 	pos.Dice = [2]int{int(d1.Int64), int(d2.Int64)}
@@ -116,6 +141,14 @@ func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, e
 	return pos, nil
 }
 
+// queryer is satisfied by both *sql.DB (the import source, and
+// AnalyzeImportDatabase's read-only current database) and *sql.Tx
+// (CommitImportDatabase's write transaction) — loadJoinedCommentText runs
+// against either.
+type queryer interface {
+	Query(query string, args ...any) (*sql.Rows, error)
+}
+
 // loadJoinedCommentText returns a position's full comment text: every row in
 // the comment table, in a stable order, joined the same way
 // storage/sqlshared's loadCommentText joins them for search and the GUI. A
@@ -123,8 +156,13 @@ func decodeSourcePosition(importDB *sql.DB, id int64, state string) (Position, e
 // only an arbitrary single one — the previous `QueryRow` here had no
 // ORDER BY, so which row came back was undefined — could both miss a
 // genuinely new comment and wrongly flag one already present under a
-// different row as "new" (B.6, #174).
-func loadJoinedCommentText(db *sql.DB, positionID int64) (string, error) {
+// different row as "new" (B.6, #174). CommitImportDatabase's own merge used
+// to have this exact bug independently — a raw single-row `QueryRow` of its
+// own, never switched over to this helper when #174 fixed the preview pass —
+// which on top of misjudging "already present" could rewrite every one of a
+// multi-row position's comment rows to the same merged text (B.11, #179:
+// found while folding both passes' comment merge onto the same helper).
+func loadJoinedCommentText(db queryer, positionID int64) (string, error) {
 	rows, err := db.Query(`SELECT text FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
 	if err != nil {
 		return "", err
@@ -195,8 +233,12 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 	slog.Debug("built position index", "count", len(currentPositionsMap))
 
-	// Analyze what would happen
-	rows, err := importDB.Query(`SELECT id, state FROM position`)
+	// Analyze what would happen. The scalar columns are selected alongside
+	// state so decodeSourcePosition never issues its own follow-up query per
+	// compact row (B.11, #179) — this pass has no use for
+	// individually_imported, so it is left out of its own query rather than
+	// reusing sourcePositionQuery (CommitImportDatabase's, which needs it).
+	rows, err := importDB.Query(`SELECT id, state, ` + sourcePositionScalarColumns(importDB, "") + ` FROM position`)
 	if err != nil {
 		return nil, err
 	}
@@ -209,13 +251,14 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	for rows.Next() {
 		var id int64
 		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
+		var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+		if err = rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb); err != nil {
 			slog.Warn("scanning position", "err", err)
 			positionsToSkip++
 			continue
 		}
 
-		importPosition, decErr := decodeSourcePosition(importDB, id, stateJSON)
+		importPosition, decErr := decodeSourcePosition(stateJSON, dt, por, d1, d2, cv, co, s1, s2, hj, hb)
 		if decErr != nil {
 			slog.Warn("unmarshalling position", "err", decErr)
 			positionsToSkip++
@@ -409,13 +452,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		var id int64
 		var stateJSON string
+		var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
 		var sourceIndividual bool
-		if err = rows.Scan(&id, &stateJSON, &sourceIndividual); err != nil {
+		if err = rows.Scan(&id, &stateJSON, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &sourceIndividual); err != nil {
 			slog.Warn("scanning position", "err", err)
 			continue
 		}
 
-		importPosition, decErr := decodeSourcePosition(importDB, id, stateJSON)
+		importPosition, decErr := decodeSourcePosition(stateJSON, dt, por, d1, d2, cv, co, s1, s2, hj, hb)
 		if decErr != nil {
 			slog.Warn("unmarshalling position", "err", decErr)
 			continue
@@ -495,40 +539,28 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				}
 			}
 
-			// Merge comments
-			var importComment string
-			err = importDB.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, id).Scan(&importComment)
-
-			if err == nil && importComment != "" {
-				var existingComment string
-				existingErr := tx.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, existingPositionID).Scan(&existingComment)
-
-				trimmedImport := strings.TrimSpace(importComment)
-				trimmedExisting := strings.TrimSpace(existingComment)
-
-				if existingErr == sql.ErrNoRows {
-					// No existing comment, insert the imported one
-					_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, existingPositionID, importComment)
-					if err != nil {
+			// Merge comments. Both sides join every comment row the position
+			// carries (loadJoinedCommentText) rather than reading one
+			// arbitrary row: this merge used to have its own raw
+			// single-row QueryRow, never switched over when #174 fixed
+			// AnalyzeImportDatabase's identical bug, and its UPDATE
+			// rewrote every one of a multi-row position's comment rows to
+			// the same merged text (B.11, #179). A new row is appended
+			// for the imported text when it is not already contained,
+			// matching ingest.DBImporter's merge: existing rows are never
+			// rewritten.
+			importComment, err := loadJoinedCommentText(importDB, id)
+			if err != nil {
+				slog.Warn("reading import comment", "positionID", id, "err", err)
+			} else if trimmedImport := strings.TrimSpace(importComment); trimmedImport != "" {
+				existingComment, err := loadJoinedCommentText(tx, existingPositionID)
+				if err != nil {
+					slog.Warn("reading existing comment", "positionID", existingPositionID, "err", err)
+				} else if !strings.Contains(existingComment, trimmedImport) {
+					if _, err := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, existingPositionID, trimmedImport); err != nil {
 						slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", err)
 					} else {
 						hasMerged = true
-					}
-				} else if existingErr == nil {
-					// Merge comments - only add if not already present
-					if trimmedImport != "" && !strings.Contains(trimmedExisting, trimmedImport) {
-						var mergedComment string
-						if trimmedExisting != "" {
-							mergedComment = trimmedExisting + "\n\n" + trimmedImport
-						} else {
-							mergedComment = trimmedImport
-						}
-						_, err = tx.Exec(`UPDATE comment SET text = ? WHERE position_id = ?`, mergedComment, existingPositionID)
-						if err != nil {
-							slog.Warn("updating comment for position", "positionID", existingPositionID, "err", err)
-						} else {
-							hasMerged = true
-						}
 					}
 				}
 			}

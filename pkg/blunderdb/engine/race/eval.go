@@ -97,7 +97,7 @@ func Evaluate(pos *domain.Position) Result {
 			// vanished file); degrade to the estimate rather than go mute.
 			slog.Warn("two-sided lookup failed, falling back to estimate", "source", src.Origin(), "err", err)
 		} else {
-			money := MoneyFromEntry(entry, cubeStateFor(pos, onRoll))
+			money := MoneyFromEntry(entry, CubeStateFor(pos, onRoll))
 			res.Race = &Eval{
 				Regime:         RegimeExact,
 				OnRoll:         onRoll,
@@ -124,8 +124,12 @@ func Evaluate(pos *domain.Position) Result {
 	return res
 }
 
-// cubeStateFor maps the position's cube to the on-roll player's viewpoint.
-func cubeStateFor(pos *domain.Position, onRoll int) CubeState {
+// CubeStateFor maps the position's cube to the on-roll player's viewpoint.
+// Exported (#197/C.10) so gui.evaluateRaceRegime (gammonnet_eval.go) can call
+// this instead of keeping its own 3-line duplicate in sync by inspection —
+// gammonnet's own internal tests import race, so race importing gammonnet
+// back would cycle; gui already imports both with no such constraint.
+func CubeStateFor(pos *domain.Position, onRoll int) CubeState {
 	switch pos.Cube.Owner {
 	case onRoll:
 		return CubeOwned

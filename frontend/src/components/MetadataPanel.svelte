@@ -142,7 +142,7 @@
     .label {
         font-size: inherit;
         font-weight: 600;
-        color: #888;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.3px;
         user-select: none;
@@ -167,13 +167,13 @@
 
     input:read-only {
         background: #f5f5f5;
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     input:focus,
     textarea:focus {
         outline: none;
-        border-color: #1a73e8;
+        border-color: var(--color-primary);
     }
 
     hr {
@@ -202,7 +202,7 @@
        it takes the small token to sit level with the base-size text beside it (ADR-0008
        rule 4). */
     code {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #5f6368;
     }

@@ -89,11 +89,11 @@ func TestBearoffFloorMeasure(t *testing.T) {
 		maxPly = p
 	}
 
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -131,7 +131,7 @@ func TestBearoffFloorMeasure(t *testing.T) {
 			cfg.UseCube = true
 			cfg.CubeOwner = st.gn
 			cfg.CubeX = DefaultEfficiency(st.gn)
-			searcher := NewSearcherWith(cfg, net, prune)
+			searcher := newSearcherWith(cfg, net, prune)
 			eff := DefaultEfficiency(st.gn)
 
 			var rows []floorRow
@@ -151,7 +151,7 @@ func TestBearoffFloorMeasure(t *testing.T) {
 					pExact:   s.entry.WinProb,
 					pGN:      float64(probs[PWin]),
 					cubeless: s.entry.Cubeless,
-					cubelGN:  float64(MoneyEquity(&probs)),
+					cubelGN:  float64(moneyEquity(&probs)),
 					ndExact:  money.NoDouble,
 					dtExact:  money.DoubleTake,
 					dpExact:  money.DoublePass,

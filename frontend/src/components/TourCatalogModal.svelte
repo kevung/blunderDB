@@ -82,7 +82,7 @@
 
     .tour-desc {
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .start-button {
@@ -112,7 +112,7 @@
 
     .demo-hint {
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .demo-button {

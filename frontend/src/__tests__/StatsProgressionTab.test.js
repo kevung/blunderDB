@@ -7,7 +7,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn().mockResolvedValue([]),
     GetPositionIDsByTournament: vi.fn().mockResolvedValue([10, 11, 12]),
     GetPositionIDsByMatch: vi.fn().mockResolvedValue([20, 21]),
-    LoadPositionsByFilters: vi.fn().mockResolvedValue([])
+    LoadPositionIDsByFilters: vi.fn().mockResolvedValue([])
 }));
 
 vi.mock('../stores/uiStore.js', () => {
@@ -34,7 +34,8 @@ vi.mock('../stores/databaseStore.js', () => {
 
 vi.mock('../stores/positionStore.js', () => {
     const { writable } = require('svelte/store');
-    return { positionsStore: writable([]) };
+    const store = writable([]);
+    return { positionsStore: { subscribe: store.subscribe, set: store.set, setIds: (ids) => store.set(ids) } };
 });
 
 // Import after mocks

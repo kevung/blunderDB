@@ -383,12 +383,13 @@ jobs:
         shell: bash
 
   # Container image of the headless daemon (Dockerfile.serve, see
-  # doc/source/mode_headless.rst). Every PR/push builds it for linux/amd64 as
-  # a compile check; a version tag builds linux/amd64 + linux/arm64 and pushes
-  # ghcr.io/kevung/blunderdb-serve:<tag> and :latest. No QEMU: the Dockerfile
-  # cross-compiles from the build platform, so both architectures come out of
-  # one native `go build` each. GITHUB_TOKEN publishes the package — packages:
-  # write is scoped to this job only.
+  # doc/source/mode_headless.rst). Every PR/push builds it for linux/amd64 +
+  # linux/arm64 as a compile check (E.7, #223 — arm64 used to only be built on
+  # a tag, so a cross-compile regression there was found a release too late);
+  # a version tag also pushes ghcr.io/kevung/blunderdb-serve:<tag> and
+  # :latest. No QEMU: the Dockerfile cross-compiles from the build platform,
+  # so both architectures come out of one native `go build` each. GITHUB_TOKEN
+  # publishes the package — packages: write is scoped to this job only.
   docker-serve:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -431,17 +432,84 @@ jobs:
             org.opencontainers.image.description=Headless blunderDB engine (HTTP + JSON daemon). No authentication — run behind an authenticating reverse proxy.
             org.opencontainers.image.licenses=MIT
 
+      # provenance/sbom (E.7, #223): buildx attaches an in-toto SLSA
+      # provenance predicate and a syft SBOM to the pushed image as OCI
+      # referrers/attestation manifests — only meaningful for a pushed image,
+      # so both are off when this build is push:false (every PR and every
+      # push to main). `false` is an explicit string here, not an omission:
+      # docker/build-push-action defaults provenance to `mode=max` even
+      # without push, which then fails because there is nowhere to attach it.
       - name: Build (and push on a release tag)
+        id: build
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
           context: .
           file: Dockerfile.serve
-          platforms: ${{ env.IS_TAG == 'true' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+          platforms: linux/amd64,linux/arm64
           push: ${{ env.IS_TAG == 'true' }}
+          provenance: ${{ env.IS_TAG == 'true' }}
+          sbom: ${{ env.IS_TAG == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # A multi-platform build above cannot be `load`ed into the local Docker
+      # engine (the docker exporter refuses a manifest list) and, off a tag,
+      # is not pushed either — so scanning and the readiness smoke test below
+      # need their own single-arch (native, linux/amd64) build. On a tag this
+      # reuses the GHA cache from the build above almost entirely; off a tag
+      # it IS the only linux/amd64 image this job produces anywhere.
+      - name: Build linux/amd64 image for scan + smoke test
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: Dockerfile.serve
+          platforms: linux/amd64
+          load: true
+          tags: blunderdb-serve:scan
+          cache-from: type=gha
+
+      # Non-blocking (E.7, #223 — "trivy sur l'image (non bloquant d'abord)"):
+      # surfaces known CVEs in the base image/Go modules without failing a
+      # build over a vulnerability nobody has triaged yet. Tighten to
+      # `exit-code: '1'` once a baseline pass has been reviewed.
+      - name: Trivy image scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: blunderdb-serve:scan
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+
+      # The image is never actually started anywhere else in CI (E.7, #223):
+      # this is the first time anyone runs it, catching a broken ENTRYPOINT or
+      # a /readyz that never comes up, not just "it compiled". sqlite keeps
+      # the smoke test to one container with no external dependency; /data is
+      # already owned by the nonroot user the Dockerfile creates it for.
+      - name: Smoke test (docker run + /readyz)
+        run: |
+          set -euo pipefail
+          docker run --rm -d --name blunderdb-smoke -p 127.0.0.1:8080:8080 \
+            -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
+            blunderdb-serve:scan
+          ready=0
+          for _ in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/readyz >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          docker logs blunderdb-smoke || true
+          docker stop blunderdb-smoke >/dev/null
+          if [ "$ready" -ne 1 ]; then
+            echo "::error::/readyz never answered within 30s"
+            exit 1
+          fi
+          echo "/readyz answered within 30s — image starts and serves."
+        shell: bash
 
   frontend-test:
     runs-on: ubuntu-latest
@@ -457,19 +525,36 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Frontend tests
+      # `npm ci` always deletes and relinks node_modules from scratch (E.8,
+      # #224 — measured ~25s here even with setup-node's own npm-download
+      # cache, which only caches the tarballs, not the extracted/linked
+      # tree). Caching the tree itself and skipping the reinstall on a hit
+      # is the standard actions/cache pattern; every frontend-* job below
+      # repeats it with the same key so a lockfile change invalidates all
+      # three together.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
         working-directory: frontend
-        run: npm ci && npm test
+        run: npm ci
         shell: bash
 
-      # Non-blocking: no thresholds, coverage is visibility only. Runs after
-      # the real test step above so a coverage-instrumentation issue never
-      # masks an actual test failure.
-      - name: Frontend coverage
-        if: always()
+      # A single `vitest run --coverage` (E.8, #224): this job used to run
+      # the suite twice — once plain, once with --coverage behind
+      # continue-on-error so a coverage-instrumentation issue could never
+      # mask a real failure — but --coverage does not change which tests run
+      # or how they're judged, only which lines get counted alongside them,
+      # so the second run bought no signal, just ~half the job's own wall
+      # time. One authoritative run: a real test failure fails the job.
+      - name: Frontend tests (with coverage)
         working-directory: frontend
-        run: npm test -- --run --coverage
-        continue-on-error: true
+        run: npm test -- --coverage
         shell: bash
 
       - name: Upload frontend coverage artifact
@@ -494,7 +579,18 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
+      # Same node_modules cache as frontend-test above (E.8, #224) — kept
+      # separate from the Playwright browser cache just below, which keys on
+      # the resolved @playwright/test version rather than the whole lockfile.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
       - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
         working-directory: frontend
         run: npm ci
         shell: bash
@@ -538,40 +634,6 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
 
-  # Benchmarks only run on push (main branch or a version tag), never on
-  # pull_request: they take minutes and aren't compared against a baseline,
-  # so they add latency to every PR for no signal. -run '^$' skips the
-  # regular test suite (already covered by the `test` job above); -count=1
-  # keeps a single push run fast instead of the previous -count=3.
-  benchmark:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    if: github.event_name == 'push'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Setup GoLang
-        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
-        with:
-          check-latest: true
-          go-version: 1.25.13
-          cache: true
-
-      - name: Create frontend dist stub
-        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
-        shell: bash
-
-      - name: Run benchmarks
-        run: go test -bench=. -benchmem -run '^$' -count=1 -timeout=10m ./... 2>&1 | tee bench.txt
-        shell: bash
-
-      - name: Upload benchmark results
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: benchmark-results
-          path: bench.txt
-
   frontend-lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -586,10 +648,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
+      # Same node_modules cache as frontend-test/frontend-e2e above (E.8, #224).
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: frontend/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        working-directory: frontend
+        run: npm ci
+        shell: bash
+
       - name: Frontend lint
         working-directory: frontend
         run: |
-          npm ci
           npm run lint
           npm run format:check
         shell: bash
@@ -932,9 +1007,15 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
     # softprops/action-gh-release attaches the files to the release; `gh`
-    # reads the existing notes with the same token.
+    # reads the existing notes with the same token. id-token/attestations
+    # are for actions/attest-build-provenance below (E.7, #223): it mints a
+    # Sigstore-backed SLSA provenance attestation per asset using GitHub's own
+    # OIDC identity — no secret to manage, unlike the opt-in minisign
+    # signature a few steps down.
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     env:
       VERSION: ${{ github.ref_name }}
     steps:
@@ -959,6 +1040,68 @@ jobs:
           test "$n" -gt 0 || { echo "::error::no build asset found under */bin/ — did the build job fail?"; exit 1; }
         shell: bash
 
+      # SLSA build provenance (E.7, #223): one Sigstore-backed attestation
+      # per release asset, binding it to this workflow run/commit. Verifiable
+      # with `gh attestation verify <file> --repo kevung/blunderDB` — no key
+      # to distribute, GitHub's OIDC identity is the trust root. subject-path
+      # is built dynamically (same listing as the inventory step above)
+      # rather than a static glob, so a new asset never needs an edit here.
+      - name: Attest build provenance of the release assets
+        id: assets
+        run: |
+          {
+            echo 'paths<<ASSET_PATHS_EOF'
+            find . -maxdepth 3 -path '*/bin/*' -type f | sed 's#^\./##'
+            echo 'ASSET_PATHS_EOF'
+          } >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: ${{ steps.assets.outputs.paths }}
+
+      # Consolidated checksum manifest (E.7, #223): one SHA256SUMS listing
+      # every asset next to the per-file .sha256 the `build` job already
+      # produces (kept for anyone verifying a single download) — this is
+      # what an optional detached signature below signs, instead of thirty
+      # separate .sha256 files.
+      - name: Consolidate checksums into SHA256SUMS
+        run: |
+          set -euo pipefail
+          : > SHA256SUMS
+          for f in build/bin/*.sha256; do
+            [ -f "$f" ] || continue
+            cat "$f" >> SHA256SUMS
+          done
+          sort -k2 -o SHA256SUMS SHA256SUMS
+          cat SHA256SUMS
+        shell: bash
+
+      # Detached minisign signature over SHA256SUMS (E.7, #223) — OPT-IN,
+      # like homebrew-tap.yml's HOMEBREW_TAP_TOKEN guard: without the
+      # MINISIGN_SECRET_KEY repo secret this step no-ops and the release
+      # ships unsigned exactly as before, so setting it up is never a
+      # prerequisite for a release to go out. See
+      # packaging/minisign/README.md for the one-time setup (key generation,
+      # secret, and committing the public key that verification needs).
+      - name: Sign SHA256SUMS with minisign (opt-in)
+        env:
+          MINISIGN_SECRET_KEY: ${{ secrets.MINISIGN_SECRET_KEY }}
+          MINISIGN_PASSWORD: ${{ secrets.MINISIGN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${MINISIGN_SECRET_KEY}" ]; then
+            echo "MINISIGN_SECRET_KEY not set — SHA256SUMS ships unsigned (see packaging/minisign/README.md)."
+            exit 0
+          fi
+          sudo apt-get update -qq && sudo apt-get install -y -qq minisign
+          umask 077
+          tmpkey="$(mktemp)"
+          printf '%s' "$MINISIGN_SECRET_KEY" > "$tmpkey"
+          printf '%s\n' "${MINISIGN_PASSWORD:-}" | minisign -S -s "$tmpkey" -m SHA256SUMS -x SHA256SUMS.minisig -t "blunderDB ${VERSION}"
+          rm -f "$tmpkey"
+        shell: bash
+
       - name: Installation block of the release notes
         env:
           GH_TOKEN: ${{ github.token }}
@@ -979,7 +1122,7 @@ jobs:
             echo "| Windows | \`blunderDB-windows-${VERSION}.exe\` (unsigned: *More info* → *Run anyway*) | run it, nothing to install |"
             echo "| Server | \`ghcr.io/kevung/blunderdb-serve:${VERSION}\` (amd64, arm64) | \`docker pull ghcr.io/kevung/blunderdb-serve:${VERSION}\` |"
             echo
-            echo "Every asset has a \`.sha256\` next to it: \`sha256sum -c <asset>.sha256\`. Full guide, nine languages: https://kevung.github.io/blunderDB/en/telecharge_install.html — winget and Homebrew manifests are attached, not yet submitted. ${adr} architecture decisions are indexed in [docs/adr](https://github.com/kevung/blunderDB/blob/${VERSION}/docs/adr/README.md)."
+            echo "Every asset has a \`.sha256\` next to it (\`sha256sum -c <asset>.sha256\`) and a consolidated \`SHA256SUMS\`; every asset also carries a build-provenance attestation (\`gh attestation verify <asset> --repo ${GITHUB_REPOSITORY}\`). Full guide, nine languages: https://kevung.github.io/blunderDB/en/telecharge_install.html — winget and Homebrew manifests are attached, not yet submitted. ${adr} architecture decisions are indexed in [docs/adr](https://github.com/kevung/blunderDB/blob/${VERSION}/docs/adr/README.md)."
             echo '<!-- /installation -->'
           } > installation.md
           # Keep whatever notes the release already carries, minus a previous
@@ -1001,6 +1144,8 @@ jobs:
           body_path: release-notes.md
           files: |
             */bin/*
+            SHA256SUMS
+            SHA256SUMS.minisig
 
   # Flatpak bundle, release tags only. packaging/flatpak/*.yml repackages the
   # webkit2gtk-4.1 release tarball, so the job waits for the matrix (`needs:
@@ -1342,6 +1487,15 @@ jobs:
           name: docs-site
           path: ./doc/build
 
+      # force_orphan (E.10, #226): every deploy used to add a new commit on
+      # top of gh-pages' history, and that branch carries LaTeX build
+      # artefacts (.dvi 113 Mio, .doctrees 88 Mio across its history) — a
+      # `git clone` of the whole repository (every branch) pulls all of it
+      # even though gh-pages is never checked out by anyone. An orphan commit
+      # (single commit, no parent) each time stops that history from growing
+      # further; it does not shrink what is already there (that needs a
+      # one-off history rewrite of gh-pages, out of scope here — see the
+      # lighter-clone note in CONTRIBUTING.md instead).
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@373f7f263a76c20808c831209c920827a82a2847 # v3.9.3
         with:
@@ -1349,3 +1503,4 @@ jobs:
           publish_dir: ./doc/build
           publish_branch: gh-pages
           keep_files: false  # This will clean the branch before deploying
+          force_orphan: true

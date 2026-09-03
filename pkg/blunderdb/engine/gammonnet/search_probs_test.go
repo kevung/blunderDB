@@ -3,8 +3,10 @@
 package gammonnet
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
+	"runtime"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -50,7 +52,7 @@ func TestProbsMoneyEquityMatchesPositionEquity(t *testing.T) {
 				continue
 			}
 
-			wantEquity, ok := s.positionEquity(&pos, cfg.Ply, 0, false, nil, CubeCentred)
+			wantEquity, ok := s.positionEquity(&pos, cfg.Ply, 0, nil, CubeCentred)
 			if !ok {
 				t.Fatalf("ply=%d: positionEquity refused", ply)
 			}
@@ -59,10 +61,10 @@ func TestProbsMoneyEquityMatchesPositionEquity(t *testing.T) {
 			if !ok {
 				t.Fatalf("ply=%d: Probs refused", ply)
 			}
-			gotEquity := float64(MoneyEquity(&probs))
+			gotEquity := float64(moneyEquity(&probs))
 
 			if math.Abs(gotEquity-wantEquity) > 1e-4 {
-				t.Errorf("ply=%d trial=%d: MoneyEquity(Probs(pos))=%v, positionEquity(pos)=%v (Δ=%v)",
+				t.Errorf("ply=%d trial=%d: moneyEquity(Probs(pos))=%v, positionEquity(pos)=%v (Δ=%v)",
 					ply, i, gotEquity, wantEquity, math.Abs(gotEquity-wantEquity))
 			}
 		}
@@ -104,10 +106,119 @@ func TestTerminalProbsMatchesTerminalEquity(t *testing.T) {
 	for i := 0; i < 20; i++ {
 		p := randomTerminalPosition(rng)
 		probs := terminalProbs(&p)
-		got := float64(MoneyEquity(&probs))
+		got := float64(moneyEquity(&probs))
 		want := terminalEquity(&p)
 		if math.Abs(got-want) > 1e-6 {
-			t.Errorf("trial %d: MoneyEquity(terminalProbs)=%v, terminalEquity=%v", i, got, want)
+			t.Errorf("trial %d: moneyEquity(terminalProbs)=%v, terminalEquity=%v", i, got, want)
 		}
 	}
+}
+
+// TestParallelProbsIsBitIdentical is TestParallelSearchIsBitIdentical
+// (search_test.go), extended to Probs (#195/C.8): the panel's cube decision
+// calls Probs on a searcher built with WithWorkers, and probsAt's own root
+// loop is the one place this file lets a worker count change which core
+// computes a term — never the order the twenty-one are summed in. Any
+// worker count must return the exact same five floats, to the bit.
+func TestParallelProbsIsBitIdentical(t *testing.T) {
+	if testing.Short() {
+		t.Skip("a 2-ply Probs call costs seconds")
+	}
+	p := openingPosition(t)
+
+	serial, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, ok := serial.Probs(&p)
+	if !ok {
+		t.Fatal("serial Probs refused")
+	}
+
+	// Comme TestParallelSearchIsBitIdentical : un, deux, la machine, et un
+	// chiffre au-delà de ce que la file peut porter (WithWorkers borne à
+	// Filter[depth] × 21).
+	for _, nw := range []int{1, 2, runtime.NumCPU(), 64} {
+		t.Run(fmt.Sprintf("workers=%d", nw), func(t *testing.T) {
+			par, err := NewSearcher(DefaultConfig(2))
+			if err != nil {
+				t.Fatal(err)
+			}
+			par = par.WithWorkers(nw)
+			pp := p
+			got, ok := par.Probs(&pp)
+			if !ok {
+				t.Fatal("parallel Probs refused")
+			}
+			for i := range want {
+				if got[i] != want[i] {
+					t.Fatalf("output %d: serial %.17g, parallel(nw=%d) %.17g — not bit-identical",
+						i, want[i], nw, got[i])
+				}
+			}
+		})
+	}
+}
+
+// BenchmarkProbsSerial2Ply and BenchmarkProbsParallel2Ply are the pair C.8
+// (#195) is measured against: one canonical 2-ply Probs call — the panel's
+// cube decision (gammonnet_eval.go) — serially and with a worker per core.
+// Before the fix, probsAt's own twenty-one root rolls each opened and closed
+// their own worker barrier (21 separate deepenLevel calls of ~21 tasks each);
+// after, they are combined into deepenGroups' single queue, exactly as
+// rankPlays' phase three already does for Plays/BestPlay.
+func BenchmarkProbsSerial2Ply(b *testing.B) {
+	if testing.Short() {
+		b.Skip("a 2-ply decision costs seconds")
+	}
+	p, err := probsBenchPosition()
+	if err != nil {
+		b.Fatal(err)
+	}
+	s, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		pos := p
+		if _, ok := s.Probs(&pos); !ok {
+			b.Fatal("Probs refused")
+		}
+	}
+}
+
+func BenchmarkProbsParallel2Ply(b *testing.B) {
+	if testing.Short() {
+		b.Skip("a 2-ply decision costs seconds")
+	}
+	p, err := probsBenchPosition()
+	if err != nil {
+		b.Fatal(err)
+	}
+	s, err := NewSearcher(DefaultConfig(2))
+	if err != nil {
+		b.Fatal(err)
+	}
+	s = s.WithWorkers(runtime.NumCPU())
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		pos := p
+		if _, ok := s.Probs(&pos); !ok {
+			b.Fatal("Probs refused")
+		}
+	}
+}
+
+func probsBenchPosition() (Position, error) {
+	dp, err := domain.DecodeXGID(openingXGID)
+	if err != nil {
+		return Position{}, err
+	}
+	dp.PlayerOnRoll = domain.White
+	return FromDomain(&dp)
 }

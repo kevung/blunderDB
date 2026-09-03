@@ -18,6 +18,29 @@
     let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
 
+    // MATCH-mode move/game counters. These used to be {@const} in the
+    // template, recomputed with three O(n) passes (filter, slice+filter,
+    // map+Math.max) on every navigated move of a match — 500 moves ×
+    // however many re-renders a review pass triggers (D.8, #208). Now
+    // computed once per movePositions change; the per-move counter is an O(1)
+    // array lookup in the template.
+    let checkerMoves = $derived($matchContextStore.movePositions.filter((p) => p.move_type === 'checker'));
+    let checkerCountUpTo = $derived.by(() => {
+        const moves = $matchContextStore.movePositions;
+        const counts = new Array(moves.length);
+        let running = 0;
+        for (let i = 0; i < moves.length; i++) {
+            if (moves[i].move_type === 'checker') running++;
+            counts[i] = running;
+        }
+        return counts;
+    });
+    let lastGameNumber = $derived.by(() => {
+        let max = 1;
+        for (const p of $matchContextStore.movePositions) if (p.game_number > max) max = p.game_number;
+        return max;
+    });
+
     // --- Command autocompletion ------------------------------------------------
     // Suggestions for the typed command word. Tab / Shift-Tab cycle through them;
     // Escape dismisses the dropdown (a second Escape closes the command line).
@@ -205,12 +228,10 @@
         </span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
-        {@const checkerMoves = $matchContextStore.movePositions.filter((p) => p.move_type === 'checker')}
-        {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter((p) => p.move_type === 'checker').length}
-        <span class="position-info">{$t('statusBar.move')} {currentCheckerIndex}/{checkerMoves.length}</span>
+        <span class="position-info">{$t('statusBar.move')} {checkerCountUpTo[$matchContextStore.currentIndex] ?? 0}/{checkerMoves.length}</span>
         <span class="position-info"
             >{$t('statusBar.game')}
-            {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{Math.max(...$matchContextStore.movePositions.map((p) => p.game_number))}</span
+            {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{lastGameNumber}</span
         >
     {:else}
         <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
@@ -227,7 +248,7 @@
         flex-shrink: 0;
         width: 100%;
         font-size: var(--font-size-base);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+        font-family: var(--font-family-ui);
         gap: 0;
         user-select: none;
         height: 22px;
@@ -262,7 +283,7 @@
         background: none;
         border: none;
         padding: 0;
-        color: #1a56c4;
+        color: var(--color-primary);
         text-decoration: underline;
         cursor: pointer;
         font-size: var(--font-size-small);
@@ -324,22 +345,22 @@
     }
 
     .cmd-name {
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
     }
 
     .cmd-aliases {
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .prompt-char {
-        color: #1a73e8;
+        color: var(--color-primary);
         font-weight: bold;
         margin-right: 4px;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         line-height: 22px;
     }
@@ -349,8 +370,8 @@
         background: transparent;
         border: none;
         outline: none;
-        color: #333;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        color: var(--color-text);
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         padding: 0;
         line-height: 22px;

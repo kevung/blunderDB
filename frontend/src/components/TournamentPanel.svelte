@@ -2,6 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
+    import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -124,23 +125,24 @@
     });
 
     // Load/unload data when the panel is shown or hidden
-    let _prevVisible = false;
-    $effect(() => {
-        const v = $openPanels.has(PANEL.TOURNAMENT);
-        if (v !== _prevVisible) {
-            if (v) {
-                if ($databaseLoadedStore) loadTournaments();
-                selectedTournamentStore.set(null);
-                tournamentMatchesStore.set([]);
-            } else {
-                selectedTournamentStore.set(null);
-                tournamentMatchesStore.set([]);
-                tournamentEdit.cancel();
-                addMatchSearch = '';
-            }
-            _prevVisible = v;
-        }
-    });
+    $effect(
+        onChange(
+            () => $openPanels.has(PANEL.TOURNAMENT),
+            (v) => {
+                if (v) {
+                    if ($databaseLoadedStore) loadTournaments();
+                    selectedTournamentStore.set(null);
+                    tournamentMatchesStore.set([]);
+                } else {
+                    selectedTournamentStore.set(null);
+                    tournamentMatchesStore.set([]);
+                    tournamentEdit.cancel();
+                    addMatchSearch = '';
+                }
+            },
+            false
+        )
+    );
 
     async function loadTournaments() {
         try {
@@ -756,7 +758,7 @@
     }
     .panel-content {
         font-size: var(--font-size-base);
-        color: #333;
+        color: var(--color-text);
         height: 100%;
         display: flex;
         overflow: hidden;
@@ -774,7 +776,7 @@
     .edit-input {
         width: 100%;
         padding: 1px 4px;
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 2px;
         font-size: var(--font-size-small);
         box-sizing: border-box;
@@ -787,13 +789,13 @@
         background: none;
         cursor: pointer;
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         padding: 0 4px;
         line-height: 1;
         flex-shrink: 0;
     }
     .back-btn:hover {
-        color: #333;
+        color: var(--color-text);
     }
     .header-name {
         font-weight: 600;
@@ -803,7 +805,7 @@
     }
     .header-meta {
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
         flex-shrink: 0;
     }
     .edit-header-btn {
@@ -822,7 +824,7 @@
         flex: 1;
         min-width: 80px;
         padding: 1px 4px;
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 2px;
         font-size: var(--font-size-small);
         box-sizing: border-box;
@@ -840,10 +842,10 @@
         font-style: italic;
     }
     .tournament-comment-text.has-comment {
-        color: #888;
+        color: var(--color-text-muted);
     }
     .tournament-comment-text:hover {
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     /* Add area */
@@ -858,7 +860,7 @@
     }
     .add-input {
         padding: 2px 4px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 2px;
         font-size: var(--font-size-small);
         outline: none;
@@ -887,7 +889,7 @@
     }
     .match-pts {
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
     }
 
     /* Match comment column, header and cells alike (the header is PanelTable's) */
@@ -906,9 +908,9 @@
         min-height: 16px;
     }
     .comment-text.has-comment {
-        color: #666;
+        color: var(--color-text-muted);
     }
     .comment-text:hover {
-        color: #1976d2;
+        color: var(--color-primary);
     }
 </style>

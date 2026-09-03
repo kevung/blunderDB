@@ -38,9 +38,15 @@ export const MODAL = {
 };
 
 // ── Panel identifiers (can be open simultaneously) ──
+//
+// There is no ANALYSIS or COMMENT entry: those two tabs have never driven a PANEL since
+// the tabHandler.js refactor (applyTabPanels only wires matches/stats/tournaments/
+// collections here) — AnalysisPanel and CommentPanel instead read `$activeTabStore`
+// directly, because TabbedPanel mounts/destroys each tab's component on every switch
+// (see that file's header comment), which is the actual "opens"/"closes" signal for a
+// component that is never kept alive off-tab. Fiche D.10 (#210) removed the two dead
+// entries and the closePanel() calls that always followed them as guaranteed no-ops.
 export const PANEL = {
-    ANALYSIS: 'analysis',
-    COMMENT: 'comment',
     MATCH: 'match',
     COLLECTION: 'collection',
     TOURNAMENT: 'tournament',

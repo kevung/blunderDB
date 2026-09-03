@@ -20,7 +20,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
     GetPositionIDsByMatch: vi.fn(),
-    LoadPositionsByFilters: vi.fn()
+    LoadPositionIDsByFilters: vi.fn()
 }));
 
 vi.mock('../stores/uiStore.js', () => {
@@ -54,12 +54,13 @@ vi.mock('../stores/databaseStore.js', () => {
 
 vi.mock('../stores/positionStore.js', () => {
     const { writable } = require('svelte/store');
-    return { positionsStore: writable([]) };
+    const store = writable([]);
+    return { positionsStore: { subscribe: store.subscribe, set: store.set, setIds: (ids) => store.set(ids) } };
 });
 
 // ── Imports (after mocks) ─────────────────────────────────────────────────────
 
-import { ComputeStats, GetPositionIDsByStatsSelection, GetPositionIDsByTournament, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, GetPositionIDsByStatsSelection, GetPositionIDsByTournament, LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
 
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
@@ -207,7 +208,7 @@ describe('Integration: Dashboard card click triggers drill-down', () => {
     beforeEach(() => {
         resetAll();
         GetPositionIDsByStatsSelection.mockResolvedValue([1, 2, 3]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([1, 2, 3]);
     });
 
     test('clicking "all" card calls GetPositionIDsByStatsSelection with Kind=all', async () => {
@@ -231,7 +232,7 @@ describe('Integration: Dashboard card click triggers drill-down', () => {
     test('drill-down loads positions into positionsStore', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'all', OnlyWithError: false });
-        expect(get(positionsStore)).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
+        expect(get(positionsStore)).toEqual([1, 2, 3]);
     });
 
     test('drill-down switches the active tab to analysis', async () => {
@@ -248,7 +249,7 @@ describe('Integration: rolling-N click triggers last_n drill-down', () => {
     beforeEach(() => {
         resetAll();
         GetPositionIDsByStatsSelection.mockResolvedValue([10, 11, 12]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 10 }, { id: 11 }, { id: 12 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([10, 11, 12]);
     });
 
     test('clicking N=10 calls GetPositionIDsByStatsSelection with Kind=last_n LastN=10', async () => {
@@ -311,7 +312,7 @@ describe('Integration: Progression tab — tournament context menu', () => {
     beforeEach(() => {
         resetAll();
         GetPositionIDsByTournament.mockResolvedValue([20, 21, 22]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 20 }, { id: 21 }, { id: 22 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([20, 21, 22]);
     });
 
     test('openTournamentInPanel sets selectedTournamentStore', () => {
@@ -332,7 +333,7 @@ describe('Integration: Progression tab — tournament context menu', () => {
 
     test('"Open positions" for a tournament loads positions into positionsStore', async () => {
         await loadPositionsFromTournament(10);
-        expect(get(positionsStore)).toEqual([{ id: 20 }, { id: 21 }, { id: 22 }]);
+        expect(get(positionsStore)).toEqual([20, 21, 22]);
     });
 });
 
@@ -342,7 +343,7 @@ describe('Integration: Errors tab — cube action bar click', () => {
     beforeEach(() => {
         resetAll();
         GetPositionIDsByStatsSelection.mockResolvedValue([30, 31]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 30 }, { id: 31 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([30, 31]);
     });
 
     test('clicking DoubleTake bar calls loadPositionsFromStatsSelection with correct SelectionSpec', async () => {
@@ -380,7 +381,7 @@ describe('Integration: Errors tab — cube action bar click', () => {
             CubeAction: 'DoubleTake',
             OnlyWithError: true
         });
-        expect(get(positionsStore)).toEqual([{ id: 30 }, { id: 31 }]);
+        expect(get(positionsStore)).toEqual([30, 31]);
     });
 });
 
@@ -391,7 +392,7 @@ describe('Integration: full journey — filter, result, toggle, drill-down', () 
         resetAll();
         ComputeStats.mockResolvedValue(SAMPLE_RESULT);
         GetPositionIDsByStatsSelection.mockResolvedValue([5, 6, 7]);
-        LoadPositionsByFilters.mockResolvedValue([{ id: 5 }, { id: 6 }, { id: 7 }]);
+        LoadPositionIDsByFilters.mockResolvedValue([5, 6, 7]);
     });
 
     test('full scenario completes without error', async () => {
@@ -412,7 +413,7 @@ describe('Integration: full journey — filter, result, toggle, drill-down', () 
         // 4. Click checker card — drill-down
         await loadPositionsFromStatsSelection(filter, { Kind: 'checker', OnlyWithError: false });
         expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'checker', OnlyWithError: false });
-        expect(get(positionsStore)).toEqual([{ id: 5 }, { id: 6 }, { id: 7 }]);
+        expect(get(positionsStore)).toEqual([5, 6, 7]);
         expect(get(activeTabStore)).toBe('analysis');
     });
 });

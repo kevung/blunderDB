@@ -7,7 +7,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn().mockResolvedValue([1, 2, 3]),
     GetPositionIDsByTournament: vi.fn().mockResolvedValue([]),
     GetPositionIDsByMatch: vi.fn().mockResolvedValue([]),
-    LoadPositionsByFilters: vi.fn().mockResolvedValue([])
+    LoadPositionIDsByFilters: vi.fn().mockResolvedValue([])
 }));
 
 vi.mock('../stores/uiStore.js', () => {
@@ -34,7 +34,8 @@ vi.mock('../stores/databaseStore.js', () => {
 
 vi.mock('../stores/positionStore.js', () => {
     const { writable } = require('svelte/store');
-    return { positionsStore: writable([]) };
+    const store = writable([]);
+    return { positionsStore: { subscribe: store.subscribe, set: store.set, setIds: (ids) => store.set(ids) } };
 });
 
 // Import after mocks
@@ -277,8 +278,8 @@ describe('StatsDashboardTab — drill-down calls (via positionLoader)', () => {
 
     test('successful drill-down switches to analysis tab', async () => {
         GetPositionIDsByStatsSelection.mockResolvedValue([10, 20]);
-        const { LoadPositionsByFilters } = await import('../../wailsjs/go/database/Database.js');
-        LoadPositionsByFilters.mockResolvedValue([{ id: 10 }, { id: 20 }]);
+        const { LoadPositionIDsByFilters } = await import('../../wailsjs/go/database/Database.js');
+        LoadPositionIDsByFilters.mockResolvedValue([10, 20]);
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'all', OnlyWithError: false });
         expect(get(activeTabStore)).toBe('analysis');

@@ -1,8 +1,8 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { trapFocus } from '../utils/focusTrap.js';
     import MinMaxFilterRow from './MinMaxFilterRow.svelte';
     import MatchTournamentPickerModal from './MatchTournamentPickerModal.svelte';
+    import Modal from './Modal.svelte';
     import { t, tMsg } from '../i18n';
     import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy, tick, untrack } from 'svelte';
@@ -553,14 +553,6 @@
         filterName = '';
     }
 
-    function handleSaveDialogKeyDown(event) {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            event.stopPropagation();
-            cancelSaveDialog();
-        }
-    }
-
     async function saveToFilterLibrary() {
         if (!filterName || !selectedSearch) {
             statusBarTextStore.set(tMsg('searchHistory.enterFilterName'));
@@ -1008,44 +1000,18 @@
     onCancel={() => (showPickerModal = false)}
 />
 
-{#if showSaveDialog}
-    <div
-        class="save-dialog-overlay"
-        onclick={(e) => {
-            if (e.target === e.currentTarget) cancelSaveDialog(e);
-        }}
-        onkeydown={handleSaveDialogKeyDown}
-        role="dialog"
-        aria-modal="true"
-        aria-label={$t('search.saveSearch')}
-        use:trapFocus
-    >
-        <div class="save-dialog">
-            <h3>{$t('search.saveSearch')}</h3>
-            <p class="command-preview">{selectedSearch?.command || ''}</p>
-            <div class="dialog-form">
-                <label for="filterNameInput">{$t('search.name')}</label>
-                <input type="text" id="filterNameInput" bind:value={filterName} placeholder={$t('search.enterName')} onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
-            </div>
-            <div class="dialog-actions">
-                <button
-                    class="btn-search"
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        saveToFilterLibrary(e);
-                    }}>{$t('common.save')}</button
-                >
-                <button
-                    class="btn-clear"
-                    onclick={(e) => {
-                        e.stopPropagation();
-                        cancelSaveDialog(e);
-                    }}>{$t('common.cancel')}</button
-                >
-            </div>
-        </div>
+<Modal open={showSaveDialog} onclose={cancelSaveDialog} size="small" closeButton={false} closeOnOverlay={true} label={$t('search.saveSearch')}>
+    <h3 class="dialog-title">{$t('search.saveSearch')}</h3>
+    <p class="command-preview">{selectedSearch?.command || ''}</p>
+    <div class="dialog-form">
+        <label for="filterNameInput">{$t('search.name')}</label>
+        <input type="text" id="filterNameInput" bind:value={filterName} placeholder={$t('search.enterName')} onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
     </div>
-{/if}
+    {#snippet footer()}
+        <button class="btn-search" onclick={saveToFilterLibrary}>{$t('common.save')}</button>
+        <button class="btn-clear" onclick={cancelSaveDialog}>{$t('common.cancel')}</button>
+    {/snippet}
+</Modal>
 
 <style>
     .search-panel {
@@ -1075,7 +1041,7 @@
         background: transparent;
         padding: 8px 4px;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         cursor: pointer;
         border-left: 2px solid transparent;
         text-align: center;
@@ -1087,7 +1053,7 @@
         background: #e8e8e8;
     }
     .sub-tab-btn.active {
-        color: #333;
+        color: var(--color-text);
         font-weight: 600;
         background: #fff;
         border-left-color: #555;
@@ -1121,7 +1087,7 @@
     .structure-btn {
         font-size: var(--font-size-small);
         padding: 3px 10px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         background: #fff;
         color: #555;
         border-radius: 3px;
@@ -1131,7 +1097,7 @@
         background: #f0f0f0;
     }
     .structure-btn.active {
-        color: #333;
+        color: var(--color-text);
         font-weight: 600;
         border-color: #555;
         background: #fff;
@@ -1196,7 +1162,7 @@
     }
     .filter-label {
         font-size: var(--font-size-base);
-        color: #333;
+        color: var(--color-text);
         user-select: none;
     }
     .filter-item.active .filter-label {
@@ -1213,7 +1179,7 @@
     }
     .active-count {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         margin-right: auto;
     }
     .search-in-results {
@@ -1221,7 +1187,7 @@
         align-items: center;
         gap: 3px;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
@@ -1245,7 +1211,7 @@
         cursor: pointer;
         font-size: var(--font-size-base);
         background: #ccc;
-        color: #333;
+        color: var(--color-text);
     }
     .btn-clear:hover {
         background: #999;
@@ -1262,7 +1228,7 @@
     .decision-btn {
         font-size: var(--font-size-small);
         padding: 3px 10px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         background: #fff;
         color: #555;
         border-radius: 3px;
@@ -1272,7 +1238,7 @@
         background: #f0f0f0;
     }
     .decision-btn.active {
-        color: #333;
+        color: var(--color-text);
         font-weight: 600;
         border-color: #555;
         background: #fff;
@@ -1309,7 +1275,7 @@
     }
     .hint {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
         white-space: nowrap;
     }
     .text-input {
@@ -1325,7 +1291,7 @@
         cursor: pointer;
         font-size: var(--font-size-small);
         background: #ccc;
-        color: #333;
+        color: var(--color-text);
     }
     .small-btn:hover {
         background: #999;
@@ -1340,7 +1306,7 @@
     }
     .empty-message {
         text-align: center;
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
         padding: 12px;
     }
@@ -1386,7 +1352,7 @@
         white-space: nowrap;
     }
     .command-cell {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
     }
     .actions-cell {
         width: 60px;
@@ -1396,15 +1362,15 @@
         border: none;
         cursor: pointer;
         padding: 1px 3px;
-        color: #666;
+        color: var(--color-text-muted);
         display: inline-flex;
         align-items: center;
     }
     .action-btn:hover {
-        color: #333;
+        color: var(--color-text);
     }
     .action-btn.in-library {
-        color: #333;
+        color: var(--color-text);
     }
     .delete-btn:hover {
         color: #c00;
@@ -1441,7 +1407,7 @@
     }
     .saved-cmd {
         flex: 1;
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #555;
         overflow: hidden;
@@ -1452,35 +1418,15 @@
     input:disabled {
         background-color: #e0e0e0;
     }
-    .save-dialog-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1001;
-    }
-    .save-dialog {
-        background: white;
-        border-radius: 8px;
-        padding: 24px;
-        width: 90%;
-        max-width: 400px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .save-dialog h3 {
+    .dialog-title {
         margin: 0 0 12px;
         font-size: var(--font-size-base);
     }
     .command-preview {
-        background: #f5f5f5;
+        background: var(--color-surface-alt);
         padding: 8px;
-        border-radius: 4px;
-        font-family: monospace;
+        border-radius: var(--radius);
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         margin-bottom: 12px;
         word-break: break-all;
@@ -1499,14 +1445,9 @@
     .dialog-form input {
         width: 100%;
         padding: 6px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
         font-size: var(--font-size-base);
         box-sizing: border-box;
-    }
-    .dialog-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
     }
 </style>

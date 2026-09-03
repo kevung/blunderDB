@@ -148,11 +148,34 @@ principal. `driver.js` (104 kB) est aussi dans le chunk principal
 - `positionService.js:189,235` : `LoadAnalysis` puis `LoadComment` sérialisés
   + deep copy JSON ; molette sans debounce (`App.svelte:215-224`).
 - `StatusBar.svelte:195-200` : trois parcours O(n) dans le template.
-- [ ] Index global pré-calculé dans le `$derived` ; `Promise.all` + debounce
+- [x] Index global pré-calculé dans le `$derived` ; `Promise.all` + debounce
       60 ms ; trois `$derived` dans StatusBar. (S, immédiat.)
-- [ ] La recherche renvoie des ids (B.10) et réutilise `positionList` ;
-      `MatchListOpts` câblé ; collections paginées ; transcript par partie
-      (`<details>`) ou virtualisé. (M, après B.10.)
+- [x] La recherche renvoie des ids (B.10) et réutilise `positionList` ;
+      transcript par partie (`<details>`), une seule partie montée à la fois.
+      (M, après B.10.)
+  - `LoadPositionIDsByFilters` (Go) ajoutée à côté de `LoadPositionsByFilters` :
+    même filtre, ids seuls (parité CLI/serveur documentée dans
+    `parity_test.go` — le script garde `search`/`/v1/search.find`, déjà
+    paginés en SQL par B.10). `positionService.js` et `positionLoader.js`
+    (drill-down Stats) l'utilisent avec `positionsStore.setIds` ;
+    `ankiService.resolveSearchDeckIds` aussi (elle ne lisait que `.id`).
+  - `MatchPanel` : `transcriptGames` porte désormais `globalIdx` précalculé
+    (fin de l'`indexOf` O(n²)) ; chaque partie est un `<details>` — seule
+    celle contenant le coup courant est ouverte par défaut, la table de coups
+    d'une partie fermée n'est pas montée (pas seulement masquée).
+  - `MatchListOpts` câblé et collections paginées : **non faits**.
+    `Database.GetAllMatches` (legacy, `db_match.go`) est une requête SQL à la
+    main qui ne délègue pas à `storage.MatchStore.List` — contrairement à
+    `LoadPositionsByFiltersCore`, câbler `MatchListOpts` ici veut dire migrer
+    tout l'appelant (GUI + `cli_export.go`/`cli_list.go`) vers le backend
+    Storage, un chantier en soi. Côté collections, la table de
+    `CollectionPanel` (réordonnancement, sélection multiple,
+    `collectionPositionsStore`) n'affiche que `position.id` par ligne mais
+    mélange son rôle de vue locale et de liste globale de navigation
+    (`handleOpenCollection`) avec des resynchronisations pas uniformes
+    (`togglePositionInCollection` ne resynchronise pas la liste globale) :
+    passer aux ids seuls sans casser ces invariants demande sa propre passe,
+    testée à part. Les deux restent sur la liste de suivi.
 
 ## D.9 — Tokens de couleur, puis thème sombre [M puis M] — design system (#209)
 

@@ -187,12 +187,19 @@ Backend packages, thinnest description that lets you find things:
   (XDG-persisted window/last-DB config); `logging.go` (slog).
 - `pkg/blunderdb/domain/` — dependency-free domain types and constants
   (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
-- `pkg/blunderdb/engine/` — bitboards, Zobrist hashing, EPC (embeds `gnubg_os6.bd`);
+- `pkg/blunderdb/engine/` — what is computed ABOUT a position: Zobrist hashing
+  (the identity positions dedup on), bitboards, EPC (embeds `gnubg_os6.bd`), the
+  match equity table (`met.go` — Kazaross-XG2 + Zadeh, `GnuBGGetME` the single
+  entry point), and the two storage codecs (compact board, zstd analysis blob,
+  and every derived scalar column). Read its package doc (`doc.go`) for the
+  file-by-file map. Two subpackages, the two evaluators:
   `engine/race/` — bearoff race analysis: two-sided `.bd` reader (embeds
   `gnubg_ts0.bd`), win-probability estimation, money cube verdicts (ADR-0009);
-  `engine/gammonnet/` — the embedded evaluator, a Go port of gammonNet
-  (ADR-0011): neural network, 0–2-ply search with pruning, and the Janowski
-  cube model (ADR-0022, ADR-0023, ADR-0029).
+  `engine/gammonnet/` — the neural evaluator, ~5 000 lines and the largest thing
+  in the tree: a Go port of gammonNet's encoding, network (AVX2/pure-Go kernel),
+  expectiminimax search and Janowski cube model (ADR-0011, ADR-0022, ADR-0023,
+  ADR-0024, ADR-0029). Its arithmetic is a contract: read its package doc and
+  `cube.go`'s header first.
 - `pkg/blunderdb/storage/` — the persistence **contract**; backends
   `storage/sqlite/` (desktop/CLI) and `storage/postgres/` (serve daemon, RLS,
   tenant purge); shared contract tests in `storage/storagetest/`. Read this
@@ -212,12 +219,12 @@ Backend packages, thinnest description that lets you find things:
 - `internal/gui/` — Wails `App` (dialogs, clipboard, drag-drop) + bootstrap;
   `internal/cli/` — one `cli_<cmd>.go` per subcommand; `internal/server/` — the
   HTTP daemon (`routes.go`, `handlers_*.go`, middleware, metrics, `call.go`).
-- `cmd/` — `serve` (headless entrypoint); `blunderdb-loadtest` (drives the
-  `/v1/*` endpoints with a configurable scenario mix, `cmd/blunderdb-loadtest`);
-  `extract_gnubg_stats` (parses GS tags from a gnuBG SGF file); `calibrace`
-  and `train-analysis-dict` (dev-time asset generators — bearoff-correction
-  calibration and the zstd analysis dictionary — not shipped, not CLI
-  subcommands, each documented in its own package doc comment).
+- `cmd/` — `serve` (headless entrypoint) plus dev-time tools that never ship in
+  the binary and are not CLI subcommands: `blunderdb-loadtest` (drives the
+  `/v1/*` endpoints with a configurable scenario mix), `extract_gnubg_stats`
+  (parses GS tags from a gnuBG SGF file), `calibrace` (fits `engine/race`'s
+  correction against a TS-06-11 oracle) and `train-analysis-dict` (regenerates
+  the embedded zstd dictionary, ADR-0030). Each carries its own package doc.
 
 Match/position parsers for external formats are separate modules
 (`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`

@@ -170,7 +170,7 @@
 
     tbody tr.best td {
         font-weight: 600;
-        color: #1a56c4;
+        color: var(--color-primary);
     }
 
     /* The verdict is the one cell whose text can be a sentence rather than a
@@ -180,7 +180,7 @@
     .verdict-row td {
         border-top: 2px solid #e0e0e0;
         font-weight: 600;
-        color: #1a56c4;
+        color: var(--color-primary);
         white-space: normal;
     }
 

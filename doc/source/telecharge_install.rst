@@ -88,6 +88,14 @@ valeur affichée avec le contenu du fichier ``.sha256``. Cette vérification est
 la garantie disponible en l'absence de signature de code (voir
 :numref:`annexe_windows_malware` et :numref:`annexe_mac_malware`).
 
+Chaque fichier publié est également accompagné d'une attestation de
+provenance (SLSA, via Sigstore), qui prouve qu'il a bien été produit par le
+run de compilation officiel du dépôt GitHub, sans clé à gérer :
+
+.. code-block:: bash
+
+   gh attestation verify blunderdb_x.y.z_amd64.deb --repo kevung/blunderDB
+
 Installation sous Linux
 -----------------------
 
