@@ -193,13 +193,10 @@ jobs:
   # already covers it). The PostgreSQL tests sit behind the `postgres` build
   # tag, so the absence of Docker on these runners changes nothing.
   #
-  # `continue-on-error` — to be removed after the first green run on a real
-  # tag/PR: this job was written without a Windows machine at hand, and the
-  # usual suspects (a SQLite file still open when t.TempDir() is cleaned up,
-  # a golden string compared against a fixture checked out with CRLF) can
-  # only be confirmed by running it. The autocrlf step closes the second
-  # one: GitHub's Windows runners set core.autocrlf=true globally, which
-  # rewrites every text fixture at checkout.
+  # `continue-on-error` was removed 2026-09 (E.1, #217): the first real runs
+  # were green (Windows 154 s, macOS 139 s) and this job is now a prealable
+  # of C.2/#189 and of the arm64 NEON follow-up (#151) — it must actually
+  # block a red run, not just log one.
   test-os:
     strategy:
       fail-fast: false
@@ -207,7 +204,6 @@ jobs:
         os: [windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-    continue-on-error: true
     steps:
       - name: Keep LF line endings at checkout
         run: git config --global core.autocrlf false
@@ -229,6 +225,17 @@ jobs:
 
       - name: Run Go tests (short, no race)
         run: go test -short -count=1 -timeout 1500s ./...
+        shell: bash
+
+      # Named separately from the suite above for visibility (C.2, #189):
+      # macOS runners are arm64, the one platform with no accelerated kernel
+      # (NEON is #151, still open), so this is ADR-0024's bit-identity gate
+      # actually exercising the pure-Go fallback rather than AVX2. `-short`
+      # matches the step above (it only shrinks one sweep's span, nothing is
+      # skipped); the full, non-short sweep runs weekly (fuzz.yml, C.2/#189).
+      - name: Kernel identity (arm64 pure-Go fallback)
+        if: runner.os == 'macOS'
+        run: go test -short -count=1 -run 'TestKernelIdentity' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
@@ -480,6 +487,15 @@ jobs:
         uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
         with:
           version: v2.11.4
+
+      # `filelock_windows.go` and `diskspace_windows.go` (storage/sqlite,
+      # database) never build on this Linux runner's default GOOS, so `go
+      # vet` above them never ran (E.1, #217) — cross-compiled vet catches
+      # what `test-os` (build-only on Windows via `go test`) does not
+      # specifically call out.
+      - name: go vet (GOOS=windows)
+        run: GOOS=windows go vet ./...
+        shell: bash
 
       # The app version lives in three files (doc/source/conf.py,
       # frontend/src/stores/metaStore.js, wails.json); scripts/release.sh
