@@ -1,0 +1,71 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. The version and the file that reproduces the
+        bug are what usually turn a report into a fix in minutes instead of days.
+
+  - type: input
+    id: version
+    attributes:
+      label: blunderDB version
+      description: Output of `blunderdb version` (CLI), or Help → About in the desktop app.
+      placeholder: "0.35.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - Windows
+        - macOS
+        - Docker (serve daemon)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Installation channel
+      options:
+        - .deb / .rpm package
+        - AUR (blunderdb-bin)
+        - Flatpak
+        - Raw Linux tarball
+        - macOS .zip / Homebrew cask
+        - Windows .exe / winget
+        - Docker image (ghcr.io/kevung/blunderdb-serve)
+        - Built from source
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What you expected instead, and the exact steps to reproduce it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: source-file
+    attributes:
+      label: Match or position file
+      description: >-
+        Drag and drop the file that reproduces the bug (.xg/.xgp, .sgf, .bgf,
+        .mat, or a .db database) — this is usually what makes a report
+        actionable. If it is private, say so here instead and a maintainer
+        will follow up.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: Console output, or the daemon's log for `serve`.
+      render: shell

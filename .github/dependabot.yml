@@ -8,6 +8,12 @@
 #
 # github-actions bumps rewrite the SHA-pinned `uses:` lines in the workflows
 # and keep the `# vX.Y.Z` comment in step — that is how the pins stay current.
+#
+# `docker` (E.11, #227): the three ecosystems above only ever covered version
+# updates of tracked dependency manifests — the two base images in
+# Dockerfile.serve/Dockerfile.hostile (golang:1.25-alpine,
+# golang:1.25-bookworm, gcr.io/distroless/static-debian12) had no Dependabot
+# coverage at all, version-pinned tags that would otherwise drift silently.
 version: 2
 updates:
   - package-ecosystem: gomod
@@ -48,6 +54,18 @@ updates:
     open-pull-requests-limit: 3
     groups:
       actions-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      docker-minor-patch:
         update-types:
           - minor
           - patch
