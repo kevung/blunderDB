@@ -34,6 +34,10 @@ export function GetGammonNetPruneK() {
   return window['go']['main']['Config']['GetGammonNetPruneK']();
 }
 
+export function GetHiddenTabs() {
+  return window['go']['main']['Config']['GetHiddenTabs']();
+}
+
 export function GetLanguage() {
   return window['go']['main']['Config']['GetLanguage']();
 }
@@ -56,6 +60,10 @@ export function GetPanelWidth() {
 
 export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
+}
+
+export function GetTabOrder() {
+  return window['go']['main']['Config']['GetTabOrder']();
 }
 
 export function GetTourSeen() {
@@ -106,6 +114,10 @@ export function SaveGammonNetPruneK(arg1) {
   return window['go']['main']['Config']['SaveGammonNetPruneK'](arg1);
 }
 
+export function SaveHiddenTabs(arg1) {
+  return window['go']['main']['Config']['SaveHiddenTabs'](arg1);
+}
+
 export function SaveLanguage(arg1) {
   return window['go']['main']['Config']['SaveLanguage'](arg1);
 }
@@ -128,6 +140,10 @@ export function SavePanelWidth(arg1) {
 
 export function SaveStatsFilter(arg1) {
   return window['go']['main']['Config']['SaveStatsFilter'](arg1);
+}
+
+export function SaveTabOrder(arg1) {
+  return window['go']['main']['Config']['SaveTabOrder'](arg1);
 }
 
 export function SaveTourSeen(arg1) {

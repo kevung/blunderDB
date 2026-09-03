@@ -651,7 +651,11 @@
         "player1": "Player 1",
         "player2": "Player 2",
         "menu": {
-            "evaluate": "Evaluate this position"
+            "evaluate": "Evaluate this position",
+            "evaluateMirror": "Evaluate the mirror of this position",
+            "copyImageWithAnalysis": "Copy the board image with the analysis",
+            "newView": "New view",
+            "addToAnkiDeck": "Add to Anki deck: {deck}"
         }
     },
     "epc": {
@@ -837,7 +841,10 @@
         "stats": "Stats",
         "epc": "Eval",
         "anki": "Anki",
-        "metadata": "Metadata"
+        "metadata": "Metadata",
+        "hideTab": "Hide this tab",
+        "showTab": "Show: {tab}",
+        "hiddenTabs": "Hidden tabs"
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
@@ -928,7 +935,9 @@
         "pastedPositionSaved": "Pasted position and analysis saved successfully",
         "importDone": "Import done: {succeeded} imported, {skipped} skipped, {failed} failed",
         "confirmDeletePosition": "Delete this position and its associated analysis?",
-        "searching": "Searching…"
+        "searching": "Searching…",
+        "positionAddedToDeck": "Position added to deck \"{deck}\"",
+        "failedAddToDeck": "Failed to add the position to the deck: {err}"
     },
     "stats": {
         "title": "Stats",

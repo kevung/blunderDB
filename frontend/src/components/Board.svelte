@@ -1,5 +1,5 @@
 <script>
-    import { t } from '../i18n';
+    import { t, tMsg } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
@@ -14,6 +14,11 @@
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
+    import { copyBoardWithAnalysisImage } from '../services/clipboardService.js';
+    import { setStatusBarMessage } from '../services/databaseService.js';
+    import { viewStore } from '../stores/viewStore.js';
+    import * as anki from '../services/ankiService.js';
+    import { ankiDecksStore } from '../stores/ankiStore.js';
     import ContextMenu from './ContextMenu.svelte';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -362,20 +367,71 @@
     let boardMenu = $state(null);
 
     function openContextMenu({ x, y }) {
-        boardMenu = {
-            x,
-            y,
-            items: [
-                {
-                    label: $t('board.menu.evaluate'),
-                    // The position AS DISPLAYED, not the stored record: in a
-                    // match with player 2 on roll the board is mirrored, and
-                    // the Eval panel must open on the board the user is
-                    // actually looking at.
-                    onClick: () => sendPositionToEval(getDisplayPosition())
-                }
-            ]
-        };
+        const items = [
+            {
+                label: $t('board.menu.evaluate'),
+                // The position AS DISPLAYED, not the stored record: in a
+                // match with player 2 on roll the board is mirrored, and
+                // the Eval panel must open on the board the user is
+                // actually looking at.
+                onClick: () => sendPositionToEval(getDisplayPosition())
+            },
+            {
+                label: $t('board.menu.evaluateMirror'),
+                onClick: () => sendPositionToEval(mirrorPosition(getDisplayPosition()))
+            },
+            {
+                label: $t('board.menu.copyImageWithAnalysis'),
+                onClick: () => copyBoardWithAnalysisImage()
+            },
+            {
+                label: $t('board.menu.newView'),
+                onClick: () => viewStore.addView()
+            }
+        ];
+
+        // "Add to Anki deck" only makes sense for a position that already has
+        // a database row (SyncAnkiDeckWithPositions inserts a card by
+        // position id) — a scratch board (Eval/Search panel, id 0) has
+        // nothing to add.
+        const position = get(positionStore);
+        if (position?.id) {
+            items.push(...ankiDeckMenuItems(position.id));
+        }
+
+        boardMenu = { x, y, items };
+
+        // Decks are only loaded once the Anki panel has been visited (see
+        // ankiService.loadDecks callers); refresh them here so the menu can
+        // still offer them on a session that never opened that tab. Best
+        // effort and non-blocking: the static items above show immediately,
+        // the deck items are appended once the fetch resolves.
+        if (position?.id && get(ankiDecksStore).length === 0) {
+            anki.loadDecks()
+                .then(() => {
+                    if (boardMenu?.x !== x || boardMenu?.y !== y) return; // menu closed/reopened meanwhile
+                    const extra = ankiDeckMenuItems(position.id);
+                    if (extra.length > 0) boardMenu = { ...boardMenu, items: [...boardMenu.items, ...extra] };
+                })
+                .catch((err) => logger.error('Failed to load Anki decks for the board context menu:', err));
+        }
+    }
+
+    function ankiDeckMenuItems(positionId) {
+        return get(ankiDecksStore).map((deck) => ({
+            label: $t('board.menu.addToAnkiDeck', { deck: deck.name }),
+            onClick: () => addPositionToAnkiDeck(deck, positionId)
+        }));
+    }
+
+    async function addPositionToAnkiDeck(deck, positionId) {
+        try {
+            await anki.addPositionToDeck(deck.id, positionId);
+            setStatusBarMessage(tMsg('status.positionAddedToDeck', { deck: deck.name }));
+        } catch (err) {
+            logger.error('Failed to add the position to the Anki deck:', err);
+            setStatusBarMessage(tMsg('status.failedAddToDeck', { err }));
+        }
     }
 
     // Helper function to get the position to display
