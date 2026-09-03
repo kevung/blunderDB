@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/netutil"
+
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -44,6 +46,9 @@ type Server struct {
 	// its own instance rather than a new type for the same three methods.
 	gammonnetJobs *importRegistry
 	rl            *middleware.RateLimiter // nil when rate limiting is disabled
+	// spool bounds the total bytes concurrently in-flight imports may hold
+	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes (#234).
+	spool *spoolQuota
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -62,6 +67,7 @@ func New(opts Options) (*Server, error) {
 		},
 		imports:       newImportRegistry(),
 		gammonnetJobs: newImportRegistry(),
+		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)
@@ -81,13 +87,37 @@ func New(opts Options) (*Server, error) {
 
 	s.http = &http.Server{
 		Addr:              opts.Addr,
-		Handler:           s.chain(s.methodNotAllowed(mux)),
+		Handler:           s.chain(s.withDeadlines(s.methodNotAllowed(mux))),
 		ReadHeaderTimeout: opts.ReadHeaderTimeout,
 		// Read/WriteTimeout stay unset — see Options.IdleTimeout's doc
-		// comment for why.
+		// comment for why; withDeadlines is the per-request replacement.
 		IdleTimeout: opts.IdleTimeout,
 	}
 	return s, nil
+}
+
+// withDeadlines sets a per-request read/write deadline via
+// http.ResponseController before dispatching to next: RequestTimeout for an
+// ordinary call, the far more generous StreamTimeout for a route
+// streamingPaths names (#234). Errors from SetReadDeadline/SetWriteDeadline
+// are ignored — they fail only when the underlying connection genuinely
+// cannot support a deadline (e.g. it has been hijacked already), in which
+// case there is nothing more useful to do than proceed without one.
+func (s *Server) withDeadlines(next http.Handler) http.Handler {
+	streaming := s.streamingPaths()
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		timeout := s.opts.RequestTimeout
+		if streaming[r.URL.Path] {
+			timeout = s.opts.StreamTimeout
+		}
+		if timeout > 0 {
+			deadline := time.Now().Add(timeout)
+			rc := http.NewResponseController(w)
+			_ = rc.SetReadDeadline(deadline)
+			_ = rc.SetWriteDeadline(deadline)
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 // chain wraps the mux with the middleware stack. Order (outermost first):
@@ -186,6 +216,13 @@ func (s *Server) Run(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("server: listen %s: %w", s.opts.Addr, err)
 	}
+	if s.opts.MaxConnections > 0 {
+		// The (n+1)-th concurrent connection blocks in Accept until one of
+		// the first n closes, instead of every connection a client opens
+		// getting its own goroutine and file descriptor unconditionally
+		// (#234).
+		ln = netutil.LimitListener(ln, s.opts.MaxConnections)
+	}
 
 	if s.rl != nil {
 		go s.sweepRateLimiter(ctx)
@@ -200,6 +237,16 @@ func (s *Server) Run(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
 		s.opts.Logger.Info("shutting down")
+		// Cancel every in-flight import/gammonNet job BEFORE Shutdown: each
+		// one's handler is watching its own context and, once cancelled,
+		// emits a trailing {"event":"cancelled"} and returns on its own —
+		// see runGammonNetSweep and handleImport. Left to Shutdown alone,
+		// a streaming handler is either waited on past ShutdownTimeout (an
+		// import mid a 512 MiB upload) or has its connection cut the moment
+		// the deadline passes, with no chance to tell the client why
+		// (#234).
+		s.imports.cancelAll()
+		s.gammonnetJobs.cancelAll()
 		shutCtx, cancel := context.WithTimeout(context.Background(), s.opts.ShutdownTimeout)
 		defer cancel()
 		if err := s.http.Shutdown(shutCtx); err != nil {

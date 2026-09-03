@@ -62,3 +62,12 @@ func (r *responseRecorder) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	}
 	return nil, nil, http.ErrNotSupported
 }
+
+// Unwrap exposes the wrapped writer to http.ResponseController (the
+// documented mechanism a wrapping ResponseWriter uses to let
+// SetReadDeadline/SetWriteDeadline reach the real connection through it).
+// Both Metrics and Logging wrap with a responseRecorder, so a handler's `w`
+// is two of these deep; without Unwrap the controller would stop at the
+// first one — which does not itself implement SetWriteDeadline — and every
+// call would fail with http.ErrNotSupported (#234).
+func (r *responseRecorder) Unwrap() http.ResponseWriter { return r.ResponseWriter }
