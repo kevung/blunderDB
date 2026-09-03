@@ -28,7 +28,7 @@ func TestFilePoolEveryConnectionCarriesPragmas(t *testing.T) {
 	if err := seed.SetupDatabase(path); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
-	assertPoolPragmas(t, "SetupDatabase", seed.Conn())
+	assertPoolPragmas(t, "SetupDatabase", seed.conn())
 	if err := seed.Close(); err != nil {
 		t.Fatalf("Close: %v", err)
 	}
@@ -38,7 +38,7 @@ func TestFilePoolEveryConnectionCarriesPragmas(t *testing.T) {
 		t.Fatalf("OpenDatabase: %v", err)
 	}
 	t.Cleanup(func() { _ = opened.Close() })
-	assertPoolPragmas(t, "OpenDatabase", opened.Conn())
+	assertPoolPragmas(t, "OpenDatabase", opened.conn())
 }
 
 func assertPoolPragmas(t *testing.T, via string, db *sql.DB) {

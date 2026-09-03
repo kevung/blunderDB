@@ -101,7 +101,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
       `/v1/gammonnet.sweepStale`. Documenté dans `manuel.rst`.
 - [ ] `NOT IN (sous-requête)` → `NOT EXISTS` (`:34,48`).
 
-## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction (#192) — FAIT (ADR-0028)
+## C.5 — Efficacité du videau : deux questions de modèle à trancher en amont [S vérif / M fix] — correction (#192) — FAIT (ADR-0029)
 
 - `search.go:588` valorise chaque feuille avec `s.cfg.CubeX` fixé à la racine
   (`domaineval.go:159`, `DefaultEfficiency(owner)`) alors que `owner` est
@@ -113,7 +113,7 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
       figé à côté du propriétaire miroité ; `gn_cube.c:754,790,810` tarife
       `e_dt` à l'efficacité de l'appelant). Ce n'est **pas** un trou de port
       mais une divergence de modèle — assumée, chiffrée et tranchée par
-      **ADR-0028** : les trois `x` sont des coefficients de BRANCHE ajustés
+      **ADR-0029** : les trois `x` sont des coefficients de BRANCHE ajustés
       contre trois colonnes d'un oracle exact, gnubg indexe par classe de
       position (P6), on garde le nôtre et on ne corrige pas ici. Commentaires
       explicites posés à `SearchConfig.CubeX`, `DefaultEfficiency` et `eDT` ;

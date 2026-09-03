@@ -70,7 +70,7 @@ msgstr ""
 "tarkasteltavien päätösten yli."
 
 #: ../../source/stats_parity.rst:32
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "Le dénominateur :math:`N_\\text{compté}` est le nombre de **décisions "
 "comptées** (voir ci-dessous)."
@@ -169,7 +169,7 @@ msgstr ""
 "nykyisellä pistetilanteella:"
 
 #: ../../source/stats_parity.rst:77
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
 "\\mathrm{score}_i)"
@@ -194,7 +194,7 @@ msgstr ""
 "antavat keskimäärin:"
 
 #: ../../source/stats_parity.rst:89
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "\\mathrm{luck} = \\mathrm{eq}(\\text{meilleur coup avec les dés obtenus})\n"
 "              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{meilleur coup avec } d)"
@@ -422,7 +422,7 @@ msgid "Type de décision"
 msgstr "Päätöksen tyyppi"
 
 #: ../../source/stats_parity.rst:186
-#, python-brace-format
+#, no-python-brace-format
 msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
 msgstr "Sisältyy lukuun :math:`N_\\text{compté}` (PR)"
 
@@ -586,7 +586,7 @@ msgstr ""
 "Jos PR- tai MWC-arvosi poikkeavat XG:n luvuista, tarkista seuraavat seikat:"
 
 #: ../../source/stats_parity.rst:249
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les positions "
 "disposant d'une analyse. Des positions sans analyse sont comptées comme "

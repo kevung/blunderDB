@@ -13,12 +13,13 @@ import (
 
 // runVerify handles the verify command
 func (cli *CLI) runVerify(args []string) error {
-	verifyCmd := flag.NewFlagSet("verify", flag.ExitOnError)
+	verifyCmd := flag.NewFlagSet("verify", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := verifyCmd.String("db", "", "Path to the database file (required)")
 	matchID := verifyCmd.Int64("match", 0, "Match ID to verify (optional)")
 	matFile := verifyCmd.String("mat", "", "MAT file to compare against (optional)")
+	format := verifyCmd.String("format", "text", "Output format: text or json")
 
 	verifyCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb verify [options]")
@@ -34,6 +35,9 @@ func (cli *CLI) runVerify(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Verify match against MAT file")
 		fmt.Println("  blunderdb verify --db database.db --match 1 --mat test.mat")
+		fmt.Println()
+		fmt.Println("  # Machine-readable output")
+		fmt.Println("  blunderdb verify --db database.db --format json")
 	}
 
 	if err := verifyCmd.Parse(args); err != nil {
@@ -46,13 +50,21 @@ func (cli *CLI) runVerify(args []string) error {
 		return fmt.Errorf("missing required flag: --db")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
+
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
 
-	fmt.Println("Verifying database...")
-	fmt.Println()
+	if text {
+		fmt.Println("Verifying database...")
+		fmt.Println()
+	}
 
 	// Get database stats
 	stats, err := cli.db.GetDatabaseStats()
@@ -60,24 +72,26 @@ func (cli *CLI) runVerify(args []string) error {
 		return fmt.Errorf("failed to get database stats: %w", err)
 	}
 
-	// Display stats
-	fmt.Println("Database Statistics:")
-	if posCount, ok := stats["position_count"].(int64); ok {
-		fmt.Printf("  Positions: %d\n", posCount)
+	if text {
+		// Display stats
+		fmt.Println("Database Statistics:")
+		if posCount, ok := stats["position_count"].(int64); ok {
+			fmt.Printf("  Positions: %d\n", posCount)
+		}
+		if analysisCount, ok := stats["analysis_count"].(int64); ok {
+			fmt.Printf("  Analyses: %d\n", analysisCount)
+		}
+		if matchCount, ok := stats["match_count"].(int64); ok {
+			fmt.Printf("  Matches: %d\n", matchCount)
+		}
+		if gameCount, ok := stats["game_count"].(int64); ok {
+			fmt.Printf("  Games: %d\n", gameCount)
+		}
+		if moveCount, ok := stats["move_count"].(int64); ok {
+			fmt.Printf("  Moves: %d\n", moveCount)
+		}
+		fmt.Println()
 	}
-	if analysisCount, ok := stats["analysis_count"].(int64); ok {
-		fmt.Printf("  Analyses: %d\n", analysisCount)
-	}
-	if matchCount, ok := stats["match_count"].(int64); ok {
-		fmt.Printf("  Matches: %d\n", matchCount)
-	}
-	if gameCount, ok := stats["game_count"].(int64); ok {
-		fmt.Printf("  Games: %d\n", gameCount)
-	}
-	if moveCount, ok := stats["move_count"].(int64); ok {
-		fmt.Printf("  Moves: %d\n", moveCount)
-	}
-	fmt.Println()
 
 	// Referential integrity: child rows whose parent is gone. The schema
 	// cascades every one of these deletes, so a healthy database has none;
@@ -86,7 +100,9 @@ func (cli *CLI) runVerify(args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to count orphaned rows: %w", err)
 	}
-	printOrphans(orphans)
+	if text {
+		printOrphans(orphans)
+	}
 
 	// Schema drift: what opening the database could not add against the
 	// reference DDL (EnsureSchema warns and goes on rather than refuse the
@@ -95,18 +111,70 @@ func (cli *CLI) runVerify(args []string) error {
 	if err != nil {
 		return fmt.Errorf("failed to check the schema: %w", err)
 	}
-	printSchemaDrift(drift)
+	if text {
+		printSchemaDrift(drift)
+	}
+
+	// Constraints the current DDL states but SQLite cannot add to a table that
+	// already exists (CHECK, NOT NULL): a fresh database enforces them, an
+	// upgraded one is judged against them here.
+	violations, err := cli.db.CheckConstraints()
+	if err != nil {
+		return fmt.Errorf("failed to check the constraints: %w", err)
+	}
+	printConstraintViolations(violations)
+
+	// The two denormalised counters, recomputed from the rows.
+	counters, err := cli.db.CheckCounters()
+	if err != nil {
+		return fmt.Errorf("failed to recompute the counters: %w", err)
+	}
+	printCounterDrift(counters)
 
 	// If match ID specified, verify that match
+	var matchResult *verifyMatchResult
 	if *matchID != 0 {
-		err := cli.verifyMatch(*matchID, *matFile)
+		var err error
+		matchResult, err = cli.verifyMatch(*matchID, *matFile, text)
 		if err != nil {
 			return fmt.Errorf("match verification failed: %w", err)
 		}
 	}
 
+	if !text {
+		return printJSON(verifyResult{
+			Stats:            stats,
+			Orphans:          orphans,
+			OrphanTotal:      orphans.Total(),
+			SchemaDrift:      drift,
+			SchemaDriftCount: drift.Count(),
+			Match:            matchResult,
+		})
+	}
+
 	fmt.Println("Verification complete!")
 	return nil
+}
+
+// verifyResult is the --format json shape for `verify`.
+type verifyResult struct {
+	Stats            map[string]interface{} `json:"stats"`
+	Orphans          database.OrphanCounts  `json:"orphans"`
+	OrphanTotal      int64                  `json:"orphan_total"`
+	SchemaDrift      sqlite.SchemaDrift     `json:"schema_drift"`
+	SchemaDriftCount int                    `json:"schema_drift_count"`
+	Match            *verifyMatchResult     `json:"match,omitempty"`
+}
+
+// verifyMatchResult is the --format json shape for `verify --match`.
+type verifyMatchResult struct {
+	MatchID           int64  `json:"match_id"`
+	Player1           string `json:"player1"`
+	Player2           string `json:"player2"`
+	DatabasePositions int    `json:"database_positions"`
+	MatFile           string `json:"mat_file,omitempty"`
+	MatCheckerMoves   int    `json:"mat_checker_moves,omitempty"`
+	MatCubeActions    int    `json:"mat_cube_actions,omitempty"`
 }
 
 // printOrphans reports the referential-integrity check. Orphans are a
@@ -124,9 +192,12 @@ func printOrphans(o database.OrphanCounts) {
 	fmt.Printf("  Moves without game: %d\n", o.MovesWithoutGame)
 	fmt.Printf("  Move analyses without move: %d\n", o.MoveAnalysesWithoutMove)
 	fmt.Printf("  Analyses without position: %d\n", o.AnalysesWithoutPosition)
+	fmt.Printf("  Reviews without deck: %d\n", o.ReviewsWithoutDeck)
+	fmt.Printf("  Reviews without position: %d\n", o.ReviewsWithoutPosition)
 	fmt.Printf("WARNING: %d orphaned row(s) found. They were left behind by deletions made while\n", o.Total())
-	fmt.Println("foreign keys were not enforced on every connection (issue #157); the rows are")
-	fmt.Println("unreachable from any match and only take up space.")
+	fmt.Println("foreign keys were not enforced on every connection (issue #157), or before the")
+	fmt.Println("review journal's own keys existed (issue #185); the rows are unreachable from any")
+	fmt.Println("match or deck and only take up space.")
 	fmt.Println()
 }
 
@@ -155,33 +226,96 @@ func printSchemaDrift(d sqlite.SchemaDrift) {
 	fmt.Println()
 }
 
+// printConstraintViolations reports the rules of the current DDL an upgraded
+// database does not satisfy. Like orphans and drift it is a finding, not a
+// failure — the command exits 0 — and only the breached rules are listed, so
+// the healthy case is one line.
+func printConstraintViolations(v []database.ConstraintViolation) {
+	total := database.TotalConstraintViolations(v)
+	if total == 0 {
+		fmt.Printf("Constraints: every row satisfies the current DDL (%d rules checked)\n", len(v))
+		fmt.Println()
+		return
+	}
+	fmt.Println("Constraint violations (rules a fresh database enforces, this one does not):")
+	for _, c := range v {
+		if c.Count > 0 {
+			fmt.Printf("  %s: %d row(s)\n", c.Name, c.Count)
+		}
+	}
+	fmt.Printf("WARNING: %d row(s) would not be accepted by the current schema. SQLite cannot add a\n", total)
+	fmt.Println("CHECK or a NOT NULL to a table that already exists, so these rules are enforced on")
+	fmt.Println("databases created since and reported — not repaired — on older ones.")
+	fmt.Println()
+}
+
+// printCounterDrift reports the two denormalised counters against the rows
+// they claim to count. Like every other section of verify it is a finding and
+// not a failure: game_count and move_count record what the SOURCE FILE held, so
+// a small gap can be an importer that skipped what it could not map, and the
+// worst gap is what separates that from a figure that means nothing.
+func printCounterDrift(c database.CounterDrift) {
+	if c.Total() == 0 {
+		fmt.Println("Counters: game_count and move_count agree with the rows")
+		fmt.Println()
+		return
+	}
+	fmt.Println("Counter drift (the stored figure against the rows it counts):")
+	if c.MatchesWithWrongGameCount > 0 {
+		fmt.Printf("  Matches whose game_count is wrong: %d (worst gap: %d game(s))\n",
+			c.MatchesWithWrongGameCount, c.WorstGameCountGap)
+	}
+	if c.GamesWithWrongMoveCount > 0 {
+		fmt.Printf("  Games whose move_count is wrong: %d (worst gap: %d move(s))\n",
+			c.GamesWithWrongMoveCount, c.WorstMoveCountGap)
+	}
+	fmt.Println("NOTE: both counters record what the SOURCE FILE held and are never recomputed;")
+	fmt.Println("they are what the match list and the game view display. A small gap is usually an")
+	fmt.Println("import that skipped what it could not map. Nothing is rewritten here.")
+	fmt.Println()
+}
+
 // verifyMatch verifies a match against a MAT file
-func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
-	fmt.Printf("Verifying match %d...\n", matchID)
+func (cli *CLI) verifyMatch(matchID int64, matFile string, text bool) (*verifyMatchResult, error) {
+	if text {
+		fmt.Printf("Verifying match %d...\n", matchID)
+	}
 
 	// Get match info
 	match, err := cli.db.GetMatchByID(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match: %w", err)
+		return nil, fmt.Errorf("failed to get match: %w", err)
 	}
 
 	// Get match positions
 	positions, err := cli.db.GetMatchMovePositions(matchID)
 	if err != nil {
-		return fmt.Errorf("failed to get match positions: %w", err)
+		return nil, fmt.Errorf("failed to get match positions: %w", err)
 	}
 
-	fmt.Printf("  Match: %s vs %s\n", match.Player1Name, match.Player2Name)
-	fmt.Printf("  Database positions: %d\n", len(positions))
+	result := &verifyMatchResult{
+		MatchID:           matchID,
+		Player1:           match.Player1Name,
+		Player2:           match.Player2Name,
+		DatabasePositions: len(positions),
+	}
+
+	if text {
+		fmt.Printf("  Match: %s vs %s\n", match.Player1Name, match.Player2Name)
+		fmt.Printf("  Database positions: %d\n", len(positions))
+	}
 
 	// If MAT file specified, compare
 	if matFile != "" {
-		fmt.Printf("  Comparing with MAT file: %s\n", matFile)
+		result.MatFile = matFile
+		if text {
+			fmt.Printf("  Comparing with MAT file: %s\n", matFile)
+		}
 
 		// Read MAT file
 		content, err := os.ReadFile(matFile)
 		if err != nil {
-			return fmt.Errorf("failed to read MAT file: %w", err)
+			return nil, fmt.Errorf("failed to read MAT file: %w", err)
 		}
 
 		// Count actual dice rolls in MAT file (each represents a checker move)
@@ -194,32 +328,38 @@ func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
 		// Count cube actions
 		cubePattern := regexp.MustCompile(`(?i)(Doubles|Takes|Drops|Beaver|Passes)`)
 		matCubeActions := len(cubePattern.FindAllString(contentStr, -1))
+		result.MatCheckerMoves = matCheckerMoves
+		result.MatCubeActions = matCubeActions
 
-		fmt.Printf("  MAT file checker moves: %d\n", matCheckerMoves)
-		fmt.Printf("  MAT file cube actions: %d\n", matCubeActions)
-		fmt.Printf("  MAT file total: %d\n", matCheckerMoves+matCubeActions)
+		if text {
+			fmt.Printf("  MAT file checker moves: %d\n", matCheckerMoves)
+			fmt.Printf("  MAT file cube actions: %d\n", matCubeActions)
+			fmt.Printf("  MAT file total: %d\n", matCheckerMoves+matCubeActions)
 
-		fmt.Printf("  Database total positions: %d\n", len(positions))
+			fmt.Printf("  Database total positions: %d\n", len(positions))
 
-		// Verify player1 is always displayed on bottom (stored from POV of player on roll)
-		fmt.Println("\n  Verifying position storage (player on roll POV):")
-		playerNeg1Count := 0 // XG format: -1 represents Player 1 (X)
-		playerPos1Count := 0 // XG format: 1 represents Player 2 (O)
-		for _, pos := range positions {
-			if pos.PlayerOnRoll == -1 {
-				playerNeg1Count++
-			} else if pos.PlayerOnRoll == 1 {
-				playerPos1Count++
+			// Verify player1 is always displayed on bottom (stored from POV of player on roll)
+			fmt.Println("\n  Verifying position storage (player on roll POV):")
+			playerNeg1Count := 0 // XG format: -1 represents Player 1 (X)
+			playerPos1Count := 0 // XG format: 1 represents Player 2 (O)
+			for _, pos := range positions {
+				if pos.PlayerOnRoll == -1 {
+					playerNeg1Count++
+				} else if pos.PlayerOnRoll == 1 {
+					playerPos1Count++
+				}
 			}
-		}
-		fmt.Printf("    Positions with Player 1 (X/-1) on roll: %d\n", playerNeg1Count)
-		fmt.Printf("    Positions with Player 2 (O/+1) on roll: %d\n", playerPos1Count)
-		fmt.Println("    Note: Positions stored from player on roll POV (frontend handles display)")
+			fmt.Printf("    Positions with Player 1 (X/-1) on roll: %d\n", playerNeg1Count)
+			fmt.Printf("    Positions with Player 2 (O/+1) on roll: %d\n", playerPos1Count)
+			fmt.Println("    Note: Positions stored from player on roll POV (frontend handles display)")
 
-		fmt.Println("\n  Note: Run database query for accurate move type counts:")
-		fmt.Println("    SELECT move_type, COUNT(*) FROM move GROUP BY move_type;")
+			fmt.Println("\n  Note: Run database query for accurate move type counts:")
+			fmt.Println("    SELECT move_type, COUNT(*) FROM move GROUP BY move_type;")
+		}
 	}
 
-	fmt.Println()
-	return nil
+	if text {
+		fmt.Println()
+	}
+	return result, nil
 }

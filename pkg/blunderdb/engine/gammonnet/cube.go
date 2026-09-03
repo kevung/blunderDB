@@ -145,12 +145,12 @@ func CubeInputsFromProbs(probs *[NumOutputs]float32) CubeInputs {
 // that is a deliberate divergence from gnubg and XG, which index the cube
 // efficiency by POSITION CLASS (contact 0.68, one-sided bearoff 0.6, race
 // interpolated 0.6→0.7 on pip count) and never by the owner —
-// docs/recherche/P6-videau-janowski.md documents theirs, ADR-0028 decides
+// docs/recherche/P6-videau-janowski.md documents theirs, ADR-0029 decides
 // ours. gammonNet's spec §3 forbids borrowing another engine's constants, and
 // each of the three above was fitted against a DIFFERENT column of the exact
 // two-sided table. Two callers read one where the model asks for another —
 // SearchConfig.CubeX at a mirrored leaf, and Decide's eDT below — and both
-// match the C exactly; ADR-0028 measures the gap and says why the correction
+// match the C exactly; ADR-0029 measures the gap and says why the correction
 // belongs upstream.
 func DefaultEfficiency(owner CubeOwner) float64 {
 	switch owner {
@@ -883,7 +883,7 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 		// :754 passes the caller's just the same, so this stays until
 		// gammonNet moves. Measured on 604 real cube decisions at a score:
 		// the take point shifts 0.0011 on average (0.0069 at worst) and NO
-		// verdict flips. #192/C.5, ADR-0028 — the match branch below and its
+		// verdict flips. #192/C.5, ADR-0029 — the match branch below and its
 		// levelSolve take point have the same shape.
 		eND := janowskiEquity(in.Win, wND, lND, owner, efficiency)
 		eDT := 2.0 * janowskiEquity(in.Win, in.WinPoints, in.LosePoints, CubeOpponent, efficiency)

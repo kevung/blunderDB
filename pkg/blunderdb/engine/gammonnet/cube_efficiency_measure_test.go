@@ -32,7 +32,7 @@ import (
 //
 // Le C fait exactement pareil (`gn_search.c:299,740`, `gn_cube.c:754,790`) :
 // ce n'est pas un trou de portage, c'est une question de modèle. Ces mesures
-// la chiffrent avant de la trancher (ADR-0028).
+// la chiffrent avant de la trancher (ADR-0029).
 //
 // CE QU'ELLES ONT DONNÉ le 2026-09-03, 16 cœurs, sur les 669 décisions
 // analysées réelles des fixtures de la porte d'intégration :

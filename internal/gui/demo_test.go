@@ -1,14 +1,17 @@
 package gui
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	_ "modernc.org/sqlite"
 )
 
@@ -52,6 +55,72 @@ func TestDemoDatabaseIsCurrent(t *testing.T) {
 		t.Errorf("demo.db.gz carries database_version %s, want %s: run scripts/build-demo-db.sh", version, domain.DatabaseVersion)
 	}
 }
+
+// TestDemoDatabaseHasTheCurrentSchema: the version stamp alone is not enough.
+// A schema change that does not move DatabaseVersion — or one made after the
+// last rebuild — leaves the embedded file stamped current and shaped like the
+// past, and the open path cannot always repair that: EnsureSchema creates
+// nothing under a name that already exists, so a non-unique index does not
+// become unique and a table keeps the foreign keys it was created with. The
+// demo is compared against the DDL a fresh database is bootstrapped from,
+// statement by statement.
+func TestDemoDatabaseHasTheCurrentSchema(t *testing.T) {
+	demo := schemaStatementsOf(t, openDemoRaw(t))
+
+	path := filepath.Join(t.TempDir(), "fresh.db")
+	fresh, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatalf("open fresh: %v", err)
+	}
+	defer fresh.Close()
+	if err := sqlite.Bootstrap(context.Background(), fresh); err != nil {
+		t.Fatalf("Bootstrap: %v", err)
+	}
+	want := schemaStatementsOf(t, fresh)
+
+	for name, sqlText := range want {
+		got, ok := demo[name]
+		if !ok {
+			t.Errorf("demo.db.gz has no %s: run scripts/build-demo-db.sh", name)
+			continue
+		}
+		if got != sqlText {
+			t.Errorf("demo.db.gz declares %s as\n  %s\nwant\n  %s\nrun scripts/build-demo-db.sh", name, got, sqlText)
+		}
+	}
+	for name := range demo {
+		if _, ok := want[name]; !ok {
+			t.Errorf("demo.db.gz declares %s, which the current schema does not: run scripts/build-demo-db.sh", name)
+		}
+	}
+}
+
+// schemaStatementsOf returns the CREATE statement of every table and index of
+// db, whitespace-normalised, keyed by name. Implicit objects (sqlite_*) carry
+// no sql and are skipped.
+func schemaStatementsOf(t *testing.T, db *sql.DB) map[string]string {
+	t.Helper()
+	rows, err := db.Query(`SELECT name, COALESCE(sql, '') FROM sqlite_master
+		WHERE name NOT LIKE 'sqlite_%' AND sql IS NOT NULL ORDER BY name`)
+	if err != nil {
+		t.Fatalf("read sqlite_master: %v", err)
+	}
+	defer rows.Close()
+	out := map[string]string{}
+	for rows.Next() {
+		var name, stmt string
+		if err := rows.Scan(&name, &stmt); err != nil {
+			t.Fatalf("scan sqlite_master: %v", err)
+		}
+		out[name] = whitespaceRE.ReplaceAllString(strings.TrimSpace(stmt), " ")
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("iterate sqlite_master: %v", err)
+	}
+	return out
+}
+
+var whitespaceRE = regexp.MustCompile(`\s+`)
 
 func TestDemoDatabaseNamesNobodyReal(t *testing.T) {
 	db := openDemoRaw(t)

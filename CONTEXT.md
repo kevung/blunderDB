@@ -12,6 +12,13 @@ A backgammon decision point: board, cube, dice, score and match flags. Identifie
 Zobrist hash, so the same position imported twice is one row, never two.
 _Avoid_: board, node, entry
 
+**Session rules (Jacoby, beaver)**:
+Which optional rules the *session* was played under. They are columns of the Position and
+are shown on the board, but they are not part of its identity (ADR-0028): only an XGID
+ever carries them, so hashing them split one money position into two rows depending on
+whether it came in pasted or from a file.
+_Avoid_: match flags, position rules
+
 **Deduplication**:
 The rule that a Position's identity is its Zobrist hash. Any import that produces an
 already-known Position lands on the existing row and enriches it (analyses merged,

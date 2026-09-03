@@ -3,11 +3,12 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"strings"
 )
 
 // runEdit handles the edit command
 func (cli *CLI) runEdit(args []string) error {
-	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
+	editCmd := flag.NewFlagSet("edit", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := editCmd.String("db", "", "Path to the database file (required)")
@@ -15,6 +16,7 @@ func (cli *CLI) runEdit(args []string) error {
 	description := editCmd.String("description", "", "Set description")
 	clearUser := editCmd.Bool("clear-user", false, "Clear user name")
 	clearDescription := editCmd.Bool("clear-description", false, "Clear description")
+	format := editCmd.String("format", "text", "Output format: text or json")
 
 	editCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb edit [options]")
@@ -54,6 +56,12 @@ func (cli *CLI) runEdit(args []string) error {
 		return fmt.Errorf("no edit options provided")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
+
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -83,6 +91,12 @@ func (cli *CLI) runEdit(args []string) error {
 	err := cli.db.SaveMetadata(metadata)
 	if err != nil {
 		return fmt.Errorf("failed to save metadata: %w", err)
+	}
+
+	if !text {
+		return printJSON(struct {
+			Changes []string `json:"changes"`
+		}{Changes: changes})
 	}
 
 	fmt.Println("Database metadata updated:")

@@ -15,7 +15,7 @@ func TestCLI_Vacuum_ReclaimsSpace(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 
 	blob := strings.Repeat("x", 2000)
-	tx, err := cli.db.Conn().Begin()
+	tx, err := RawConn(cli.db).Begin()
 	if err != nil {
 		t.Fatalf("begin: %v", err)
 	}
@@ -33,7 +33,7 @@ func TestCLI_Vacuum_ReclaimsSpace(t *testing.T) {
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("commit padding: %v", err)
 	}
-	if _, err := cli.db.Conn().Exec(`DELETE FROM position`); err != nil {
+	if _, err := RawConn(cli.db).Exec(`DELETE FROM position`); err != nil {
 		t.Fatalf("delete padding: %v", err)
 	}
 

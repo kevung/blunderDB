@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
@@ -23,7 +24,7 @@ import (
 // to yield to, so it passes no yield func and simply runs at full speed, on
 // --jobs cores at once (#147).
 func (cli *CLI) runAnalyze(args []string) error {
-	analyzeCmd := flag.NewFlagSet("analyze", flag.ExitOnError)
+	analyzeCmd := flag.NewFlagSet("analyze", flag.ContinueOnError)
 
 	dbPath := analyzeCmd.String("db", "", "Path to the database file (required)")
 	ply := analyzeCmd.Int("ply", 2, "Search depth (canonical: 2, k=12)")
@@ -31,6 +32,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 	candidates := analyzeCmd.Int("candidates", 10, "Candidate moves kept per checker decision")
 	jobs := analyzeCmd.Int("jobs", runtime.NumCPU(), "Positions analysed in parallel (one CPU each)")
 	stale := analyzeCmd.Bool("stale", false, "Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps")
+	format := analyzeCmd.String("format", "text", "Output format: text or json")
 
 	analyzeCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb analyze [options]")
@@ -65,6 +67,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("  blunderdb analyze --db database.db")
 		fmt.Println("  blunderdb analyze --db database.db --jobs 1")
 		fmt.Println("  blunderdb analyze --db database.db --stale --ply 3")
+		fmt.Println("  blunderdb analyze --db database.db --format json")
 	}
 
 	if err := analyzeCmd.Parse(args); err != nil {
@@ -75,6 +78,12 @@ func (cli *CLI) runAnalyze(args []string) error {
 		analyzeCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
+
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
 
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -93,12 +102,15 @@ func (cli *CLI) runAnalyze(args []string) error {
 		return fmt.Errorf("counting positions to analyze: %w", err)
 	}
 	if total == 0 {
-		if *stale {
-			fmt.Println("Nothing to do: no gammonNet analysis is stale at this depth.")
-		} else {
-			fmt.Println("Nothing to do: every position already has an analysis.")
+		if text {
+			if *stale {
+				fmt.Println("Nothing to do: no gammonNet analysis is stale at this depth.")
+			} else {
+				fmt.Println("Nothing to do: every position already has an analysis.")
+			}
+			return nil
 		}
-		return nil
+		return printJSON(analyzeResult{Total: 0, Analyzed: 0, Stale: *stale, Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs})
 	}
 	if *jobs < 1 {
 		*jobs = 1
@@ -107,7 +119,9 @@ func (cli *CLI) runAnalyze(args []string) error {
 	if *stale {
 		verb = "Re-analyzing stale"
 	}
-	fmt.Printf("%s %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", verb, total, *ply, *pruneK, *jobs)
+	if text {
+		fmt.Printf("%s %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", verb, total, *ply, *pruneK, *jobs)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -116,13 +130,20 @@ func (cli *CLI) runAnalyze(args []string) error {
 	defer signal.Stop(sig)
 	go func() {
 		if _, ok := <-sig; ok {
-			fmt.Println("\nCancelling...")
+			if text {
+				fmt.Println("\nCancelling...")
+			}
 			cancel()
 		}
 	}()
 
 	lastReported := -1
+	analyzed := 0
 	onProgress := func(done, total int) {
+		analyzed = done
+		if !text {
+			return
+		}
 		// A line per position would flood a large library's output; report
 		// on the first, the last, and every 5% in between.
 		pct := done * 100 / total
@@ -138,15 +159,42 @@ func (cli *CLI) runAnalyze(args []string) error {
 	} else {
 		summary, err = cli.db.AnalyzeMissingWithGammonNet(ctx, *ply, *pruneK, *candidates, *jobs, nil, onProgress)
 	}
-	if err != nil {
-		if ctx.Err() != nil {
-			fmt.Println("Cancelled.")
-			fmt.Printf("evaluated: %d, refused: %d, failed: %d\n", summary.Evaluated, summary.Refused, summary.Failed)
-			return nil
-		}
+	cancelled := ctx.Err() != nil && err != nil
+	if err != nil && !cancelled {
 		return fmt.Errorf("analyze failed: %w", err)
 	}
-	fmt.Println("Done.")
+
+	if !text {
+		return printJSON(analyzeResult{
+			Total: total, Analyzed: analyzed, Cancelled: cancelled, Stale: *stale,
+			Evaluated: summary.Evaluated, Refused: summary.Refused, Failed: summary.Failed,
+			Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs,
+		})
+	}
+	if cancelled {
+		fmt.Println("Cancelled.")
+	} else {
+		fmt.Println("Done.")
+	}
 	fmt.Printf("evaluated: %d, refused: %d, failed: %d\n", summary.Evaluated, summary.Refused, summary.Failed)
 	return nil
+}
+
+// analyzeResult is the --format json shape for `analyze`.
+type analyzeResult struct {
+	Total     int  `json:"total"`
+	Analyzed  int  `json:"analyzed"`
+	Cancelled bool `json:"cancelled,omitempty"`
+	// Stale says which sweep ran: filling gaps, or re-analysing what is
+	// outdated (#191). Evaluated/Refused/Failed are the same three counters
+	// the text output prints — a position gammonNet declines to judge is not
+	// a failure, and the JSON must not flatten the two either (C.4).
+	Stale      bool `json:"stale,omitempty"`
+	Evaluated  int  `json:"evaluated"`
+	Refused    int  `json:"refused"`
+	Failed     int  `json:"failed"`
+	Ply        int  `json:"ply"`
+	PruneK     int  `json:"prune_k"`
+	Candidates int  `json:"candidates"`
+	Jobs       int  `json:"jobs"`
 }

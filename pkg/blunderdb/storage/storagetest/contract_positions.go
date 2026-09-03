@@ -349,3 +349,57 @@ func testRepairDenormalisedColumns(t *testing.T, s storage.Storage) {
 	// n'a que l'interface : il vérifie ce qu'il peut, et ce qu'il vérifie est
 	// justement ce qui rend le compteur lisible.
 }
+
+// testAnalysisSaveIsAnUpsert pins the fix for issue #173: a position has ONE
+// analysis, and saving twice replaces it rather than adding a second row.
+//
+// Save used to SELECT an existing row and then INSERT or UPDATE. Two saves
+// racing on the same position both read "no row" and both inserted, and Load —
+// a plain `WHERE position_id = ?` — then returned whichever the planner reached
+// first, so a position could keep showing an analysis that had been superseded.
+// Save is a single upsert now, over a UNIQUE index on analysis(position_id).
+//
+// The check that matters is the SECOND save: what Load returns afterwards must
+// be the second analysis, every time, on any backend.
+func testAnalysisSaveIsAnUpsert(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+
+	analysisWith := func(move string) *domain.PositionAnalysis {
+		return &domain.PositionAnalysis{
+			AnalysisType: "CheckerMove",
+			CheckerAnalysis: &domain.CheckerAnalysis{
+				Moves: []domain.CheckerMove{{Index: 0, Move: move, Equity: 0.1}},
+			},
+		}
+	}
+
+	for _, move := range []string{"13/11 24/23", "8/5 6/5", "24/18"} {
+		if err := s.Analyses().Save(ctx, "", posID, analysisWith(move)); err != nil {
+			t.Fatalf("Save analysis %q: %v", move, err)
+		}
+	}
+
+	got, err := s.Analyses().Load(ctx, "", posID)
+	if err != nil {
+		t.Fatalf("Load analysis: %v", err)
+	}
+	if got.CheckerAnalysis == nil || len(got.CheckerAnalysis.Moves) != 1 {
+		t.Fatalf("CheckerAnalysis not round-tripped: %+v", got.CheckerAnalysis)
+	}
+	if last := got.CheckerAnalysis.Moves[0].Move; last != "24/18" {
+		t.Errorf("Load after three saves returned %q, want the last one written (%q)", last, "24/18")
+	}
+
+	// And there is exactly one row to load: Delete leaves nothing behind.
+	if err := s.Analyses().Delete(ctx, "", posID); err != nil {
+		t.Fatalf("Delete analysis: %v", err)
+	}
+	if _, err := s.Analyses().Load(ctx, "", posID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Load after Delete: got %v, want ErrNotFound — a second row survived the upsert", err)
+	}
+}

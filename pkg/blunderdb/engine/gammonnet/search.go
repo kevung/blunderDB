@@ -125,7 +125,7 @@ type SearchConfig struct {
 	// — exactly gnubg's cubeful choice (docs/adr/0023).
 	//
 	// CUBEX IS FIXED AT THE ROOT WHILE CUBEOWNER IS MIRRORED, AND THAT IS A
-	// KNOWN DIVERGENCE, NOT AN OVERSIGHT (#192/C.5, ADR-0028).
+	// KNOWN DIVERGENCE, NOT AN OVERSIGHT (#192/C.5, ADR-0029).
 	// DefaultEfficiency returns a coefficient PER CUBE STATE, each fitted
 	// against a different column of gammonNet's exact two-sided table, so a
 	// leaf whose owner has been mirrored is priced with the coefficient
@@ -136,7 +136,7 @@ type SearchConfig struct {
 	// the cube gold red. The correction is gammonNet's to write (cube_x
 	// indexed by the local owner; spec §4 and §8 step 2). Measured meanwhile
 	// on 669 real analysed decisions: 0.005 normalised equity per leaf, and
-	// 0 of 60 best moves changed. Read ADR-0028 before touching this.
+	// 0 of 60 best moves changed. Read ADR-0029 before touching this.
 	UseCube   bool
 	CubeOwner CubeOwner
 	CubeX     float64

@@ -81,7 +81,7 @@ moteur tenue de bout en bout ; `EngineVersion` exemplairement documentée.
 | Étape | Objectif | Lots | Durée indicative | Sortie |
 |---|---|---|---|---|
 | **0 — Colmater** | Sécurité, données, promesses écrites | [A](lot-A-urgences.md) | 1 semaine | **0.35.1** |
-| **1 — Fiabiliser** | Bugs, tests manquants, CI qui bloque, serveur sûr | B.1-9, C.1-6, D.1-6, E.1-5, G.1-7, H.1-6 | 3-4 semaines | **0.36.0**, schéma **2.16.0** |
+| **1 — Fiabiliser** | Bugs, tests manquants, CI qui bloque, serveur sûr | B.1-9, C.1-6, D.1-6, E.1-5, G.1-7, H.1-6 | 3-4 semaines | **0.36.0**, schéma **2.18.0** |
 | **2 — Consolider** | Perf, dette, design system, API, docs, distribution | B.10-19, C.7-12, D.7-15, E.6-12, G.8-14, H.7-14 | 4-6 semaines | **0.37.0** |
 | **3 — Étendre** | Produit : import sans friction, catégorisation courte, pédagogie, partage | [I](lot-I-produit.md) | un trimestre, au fil de la demande | 0.38 → 0.40, schéma **2.17.0** |
 | **4 — Fond** | Classification, rollouts, similarité, quiz, web, club | [J](lot-J-chantiers-fond.md) | chacun sa décision | 1.0 ? |
@@ -117,7 +117,8 @@ A (semaine 1) ──► 0.35.1
    └─ A.14 hygiène ──► BACKLOG à jour, #119 fermé
 
 Étape 1
-   B.3 + B.5 + A.2 + B.17 ──► une vague de schéma 2.16.0 (triple synchro + G.7 continuité PG)
+   B.3 + B.5 + B.17 ──► une vague de schéma 2.18.0 (triple synchro + G.7 continuité PG)
+   [A.2 est partie seule en 2.17.0, avant la vague]
    E.1 test-os bloquant ──► C.2 filet arm64/-race ──► (#151 NEON, plus tard)
    D.3 parseur JS unique ──► B.18 grammaire Go ──► I.27 intentions
    C.1 + C.2 ──► C.5 (vérif amont) ──► C.7 forme close (amont puis port)
@@ -137,10 +138,13 @@ A (semaine 1) ──► 0.35.1
    I.22 rendu SVG unique ──► I.23 rapport, I.31 planche-contact, J.5 web
 ```
 
-**Deux vagues de schéma seulement** : 2.16.0 (étape 1 : session scopée, hash
-sans Jacoby/beaver, UNIQUE analysis, NOT NULL hash, CHECK, FK, colonnes
-`analysis_engine`/`analysis_depth`) et 2.17.0 (étape 3 : lot d'import, origine
-des commentaires, phase de partie, soft delete). Chaque bump : `DatabaseVersion`,
+**Deux vagues de schéma seulement** — les numéros ont bougé à l'exécution :
+A.2 (session scopée) est partie seule en **2.17.0**, et la vague de l'étape 1
+est **2.18.0** (hash sans Jacoby/beaver, UNIQUE analysis, CHECK, FK du journal
+de révision ; le `NOT NULL` sur le hash a été refusé, raisons en fiche B.5, et
+les colonnes `analysis_engine`/`analysis_depth` de B.12 demanderont leur propre
+vague). La seconde vague reste à venir (étape 3 : lot d'import, origine des
+commentaires, phase de partie, soft delete). Chaque bump : `DatabaseVersion`,
 triple synchro ([[project_schema_triple_sync]]), migration SQLite + PG, test de
 continuité des deux côtés (G.7 ajoute celui de PG).
 
@@ -165,7 +169,7 @@ l'efficacité miroitée (C.5). Le prompt P6 est à lancer en premier.
 | 9 | D.7 charger une seule locale | M | −1 Mo brut, −250 ko gzip (65 % du bundle) |
 | 10 | D.3 parseur de recherche unique | M | trois filtres perdus au rejeu, silencieusement |
 | 11 | B.2 Crawford GnuBG à `false` | M | équités de videau fausses sur la partie de Crawford |
-| 12 | B.3 Jacoby/beaver dans le hash | M | dédup cassée `.xg` vs XGID ; vague 2.16.0 |
+| 12 | B.3 Jacoby/beaver dans le hash | M | dédup cassée `.xg` vs XGID ; vague 2.18.0, ADR-0028 |
 | 13 | C.7 forme close de `levelSolve` | M amont + S | 39 % d'une décision au score |
 | 14 | C.4 lot : refus retenté à l'infini, `--stale` sans déclencheur | S | trois bumps d'`EngineVersion`, aucun moyen d'en profiter |
 | 15 | D.1 six bugs d'ergonomie (Escape, EPC vide, saut de layout, MatchInfoBar, double-clic, sortie de match) | S | irritants quotidiens |

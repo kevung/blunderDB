@@ -45,7 +45,18 @@ CREATE TABLE IF NOT EXISTS position (
     -- Provenance: the position entered the database on its own rather than
     -- inside a match. Sticky — see docs/adr/0001.
     individually_imported BOOLEAN NOT NULL DEFAULT FALSE,
-    flagged               BOOLEAN NOT NULL DEFAULT FALSE
+    flagged               BOOLEAN NOT NULL DEFAULT FALSE,
+    -- Range constraints, named so 015 can tell whether it still has to add
+    -- them. A NULL passes: the constraint is unknown, not violated.
+    CONSTRAINT position_dice_1_range  CHECK (dice_1 BETWEEN 0 AND 6),
+    CONSTRAINT position_dice_2_range  CHECK (dice_2 BETWEEN 0 AND 6),
+    -- cube_value is the EXPONENT (0 = cube at 1), never negative.
+    CONSTRAINT position_cube_value_sign CHECK (cube_value >= 0),
+    CONSTRAINT position_pip_1_sign    CHECK (pip_1 >= 0),
+    CONSTRAINT position_pip_2_sign    CHECK (pip_2 >= 0),
+    -- off_1/off_2 are the borne-off counts, at most fifteen checkers.
+    CONSTRAINT position_off_1_range   CHECK (off_1 BETWEEN 0 AND 15),
+    CONSTRAINT position_off_2_range   CHECK (off_2 BETWEEN 0 AND 15)
 );
 
 CREATE TABLE IF NOT EXISTS analysis (
@@ -253,15 +264,22 @@ CREATE TABLE IF NOT EXISTS anki_review_log (
     id              BIGSERIAL PRIMARY KEY,
     tenant_id       BIGINT NOT NULL,
     card_id         BIGINT NOT NULL REFERENCES anki_card(id) ON DELETE CASCADE,
-    deck_id         BIGINT NOT NULL,
-    position_id     BIGINT NOT NULL,
+    -- deck_id and position_id were plain integers until 2.18.0 (issue #185):
+    -- the journal named a deck and a position with nothing to say they had to
+    -- exist. See 016.
+    deck_id         BIGINT NOT NULL CONSTRAINT anki_review_log_deck_fk
+                        REFERENCES anki_deck(id) ON DELETE CASCADE,
+    position_id     BIGINT NOT NULL CONSTRAINT anki_review_log_position_fk
+                        REFERENCES position(id) ON DELETE CASCADE,
     rating          BIGINT NOT NULL,
     state           BIGINT NOT NULL DEFAULT 0,
     stability       DOUBLE PRECISION DEFAULT 0,
     difficulty      DOUBLE PRECISION DEFAULT 0,
     elapsed_days    BIGINT DEFAULT 0,
     scheduled_days  BIGINT DEFAULT 0,
-    reviewed_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+    reviewed_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    -- The four FSRS grades; anki.ScheduleNext refuses anything else.
+    CONSTRAINT anki_review_log_rating_range CHECK (rating BETWEEN 1 AND 4)
 );
 
 -- Indexes. Multi-tenant filter columns lead every composite index so the
@@ -288,7 +306,11 @@ CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position (tena
 CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position (tenant_id, back_checkers_2);
 CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position (tenant_id, pip_1);
 CREATE        INDEX IF NOT EXISTS idx_position_no_contact     ON position (tenant_id) WHERE no_contact IS TRUE;
-CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis (position_id);
+-- One analysis per position, enforced rather than assumed: it is what makes
+-- the upsert in analyses_postgres.go possible (an ON CONFLICT target must name
+-- a UNIQUE constraint). Position ids are unique across tenants — one BIGSERIAL
+-- sequence — so no tenant_id is needed here. See 015.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_analysis_position       ON analysis (position_id);
 -- Covering index for the win/gammon combo search (fiche-05 T3): position_id
 -- as a trailing column lets `p.id IN (SELECT position_id FROM analysis WHERE
 -- tenant_id = … AND player1_win_rate … AND player1_gammon_rate …)` be

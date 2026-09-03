@@ -81,7 +81,7 @@ import (
 // decisions sit just over it — but it is now a DEPTH/MET question to
 // measure, not a missing tranche to write.
 //
-// Result of that depth/MET measurement (2026-09-03, #192/C.5, ADR-0028):
+// Result of that depth/MET measurement (2026-09-03, #192/C.5, ADR-0029):
 // THE HYPOTHESIS IS REFUTED TOO. TestMeasureGateRedCasesAtDepth replays every
 // score-[1,5] checker decision of the xg fixture at three settings, and the
 // two red ones do not move:
@@ -97,7 +97,7 @@ import (
 // the cost worse, 0.0000 -> 0.0827.
 //
 // That is three hypotheses measured and refuted on the same two decisions —
-// use_cube (ADR-0023), then depth/MET, then cube efficiency (ADR-0028, which
+// use_cube (ADR-0023), then depth/MET, then cube efficiency (ADR-0029, which
 // cannot move them either: the Crawford game has no cube). What is left is
 // the network's own judgement on two boards against xg's deeper analysis of
 // them, which is not a configuration question. Still left failing, still not

@@ -56,7 +56,7 @@ finir, puis fusionner depuis la racine (`git merge --no-ff`), vérifier
 | `feat/e4-e5-hygiene-tests` | E.4, E.5 — fixtures qui ne sautent plus en silence, paquet `tests/` redistribué, `gofmt` appliqué, hooks versionnés, `make check` aligné | #220, #221 |
 | `feat/h6-terminologie` | H.6 — « Bearoff » → « Eval » et diffusion contrôlée dans l'aide intégrée, neuf langues | #248 |
 | `feat/d2-d6-d11-front` | D.2, D.6, D.11 — bascule réelle des panneaux, état d'erreur nommé du panneau Eval, XGID encodé sans perte | #202, #206, #211 |
-| `feat/c5-cube-efficiency` | C.5 — l'efficacité du videau tranchée par **ADR-0028** : divergence de modèle assumée (pas un trou de port, le C fait pareil), correctif proposé pour l'amont gammonNet, instrument de mesure et réplique en profondeur des deux cas rouges de la porte. Aucun changement de comportement | #192 |
+| `feat/c5-cube-efficiency` | C.5 — l'efficacité du videau tranchée par **ADR-0029** : divergence de modèle assumée (pas un trou de port, le C fait pareil), correctif proposé pour l'amont gammonNet, instrument de mesure et réplique en profondeur des deux cas rouges de la porte. Aucun changement de comportement | #192 |
 
 ## Bloqué sur une action humaine
 
@@ -83,7 +83,7 @@ il touche toute la suite), G.3, G.4, G.6, G.7 (verrou de migration PostgreSQL, p
 délais, tests d'isolation), H.3, H.4, H.5 (canaux de distribution, tutoriels, captures).
 Puis l'étape 2, et le lot I pour le produit.
 
-**Un passage amont gammonNet est désormais à ouvrir** : ADR-0028 point 4 décrit le
+**Un passage amont gammonNet est désormais à ouvrir** : ADR-0029 point 4 décrit le
 correctif (`cube_x` indexé par le propriétaire LOCAL, spec §4 et §8 step 2) que C.5 a
 tranché mais qui ne peut pas être écrit ici. Il rejoint la forme close de `levelSolve`
 (C.7) dans la file amont ; les deux régénèrent les golds et périment les analyses

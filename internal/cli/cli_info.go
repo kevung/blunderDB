@@ -13,7 +13,7 @@ import (
 
 // runInfo handles the info command
 func (cli *CLI) runInfo(args []string) error {
-	infoCmd := flag.NewFlagSet("info", flag.ExitOnError)
+	infoCmd := flag.NewFlagSet("info", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := infoCmd.String("db", "", "Path to the database file (required)")

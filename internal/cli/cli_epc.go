@@ -15,7 +15,7 @@ import (
 // database is opened; the same engine/race code serves the GUI panel and the
 // serve daemon (ADR-0009).
 func (cli *CLI) runEpc(args []string) error {
-	epcCmd := flag.NewFlagSet("epc", flag.ExitOnError)
+	epcCmd := flag.NewFlagSet("epc", flag.ContinueOnError)
 
 	format := epcCmd.String("format", "text", "Output format: text, json")
 	tsPath := epcCmd.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"),

@@ -98,7 +98,10 @@ var stabilityPositions = []struct {
 	{"cube256_white", cubePosition(8, White), 0x8f32f1f41e49851f},
 	{"cube512_none", cubePosition(9, None), 0x7ab8e476a429c748},
 	{"cube1024_black", cubePosition(10, Black), 0x40bac1cafb12aefe},
-	{"money_jacoby_beaver", moneyPosition(), 0x1128e30862a692b9},
+	// Same hash as "initial": the Jacoby and beaver flags left the identity in
+	// schema 2.18.0 (ADR-0028). The case is kept — a change of that value would
+	// mean the flags found their way back into the hash.
+	{"money_jacoby_beaver", moneyPosition(), 0x5aab493a553eacc1},
 	{"score_6_4", scorePosition(6, 4), 0x2b51a32d7e178238},
 	{"score_0_1", scorePosition(0, 1), 0x4572d8103da80e14},
 	{"score_1_1", scorePosition(1, 1), 0x157df587cf37c8bf},
@@ -302,5 +305,56 @@ func TestZobristIgnoresIndividuallyImported(t *testing.T) {
 
 	if got, want := ZobristHash(&marked), ZobristHash(&plain); got != want {
 		t.Fatalf("IndividuallyImported changed the Zobrist hash: got %#x, want %#x", got, want)
+	}
+}
+
+// TestZobristIgnoresJacobyAndBeaver guards ADR-0028: the two optional-rule
+// flags say how the session was played, not what is on the board, and only an
+// XGID carries them — every file importer leaves them at 0. While they were
+// hashed, the same money position pasted as an XGID and imported from a match
+// file landed on two rows.
+func TestZobristIgnoresJacobyAndBeaver(t *testing.T) {
+	plain := initialPosition()
+	for _, tc := range []struct {
+		name           string
+		jacoby, beaver int
+	}{
+		{"jacoby", 1, 0},
+		{"beaver", 0, 1},
+		{"both", 1, 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			marked := initialPosition()
+			marked.HasJacoby = tc.jacoby
+			marked.HasBeaver = tc.beaver
+			if got, want := ZobristHash(&marked), ZobristHash(&plain); got != want {
+				t.Fatalf("%s changed the Zobrist hash: got %#x, want %#x", tc.name, got, want)
+			}
+		})
+	}
+}
+
+// TestRetiredFlagDeltaUndoesTheOldFold pins the migration's arithmetic: XORing
+// RetiredFlagDelta into a hash stored before 2.18.0 must give exactly what
+// ZobristHash returns today. The pre-2.18.0 hash is rebuilt here from the
+// current one and the retired keys, which is the same identity read the other
+// way round — what it guards is that the two keys keep their place in the
+// key stream, which is what makes an existing database migratable at all.
+func TestRetiredFlagDeltaUndoesTheOldFold(t *testing.T) {
+	for _, tc := range []struct{ jacoby, beaver int }{{1, 0}, {0, 1}, {1, 1}, {0, 0}} {
+		pos := initialPosition()
+		pos.HasJacoby = tc.jacoby
+		pos.HasBeaver = tc.beaver
+		legacy := ZobristHash(&pos) ^ RetiredFlagDelta(tc.jacoby, tc.beaver)
+		if got := legacy ^ RetiredFlagDelta(tc.jacoby, tc.beaver); got != ZobristHash(&pos) {
+			t.Fatalf("jacoby=%d beaver=%d: delta does not round-trip", tc.jacoby, tc.beaver)
+		}
+	}
+	if RetiredFlagDelta(0, 0) != 0 {
+		t.Error("a position with neither flag must keep the hash it was stored under")
+	}
+	if RetiredFlagDelta(1, 0) == 0 || RetiredFlagDelta(0, 1) == 0 ||
+		RetiredFlagDelta(1, 0) == RetiredFlagDelta(0, 1) {
+		t.Error("the two retired keys must be distinct and non-zero")
 	}
 }

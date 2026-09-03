@@ -144,15 +144,22 @@ but they do not reflect current code.
 **A modified `.rst` ships with its eight `.po` in the same commit.** The online
 docs deploy from `main` and fall back to French for every untranslated string, so
 a translation gap is a user-visible regression on eight sites, not release
-polish. Refresh the catalogues with **relative** paths (an absolute output path
-rewrites every `#:` reference), translate the empty `msgstr`, and check:
+polish. Refresh the catalogues, translate the empty `msgstr`, and check:
 
 ```bash
 source .venv/bin/activate
-(cd doc && sphinx-build -b gettext source build/gettext \
-   && sphinx-intl update -p build/gettext -l en,de,el,es,fi,it,ja,ru)
+scripts/doc-po-update.sh       # regenerates the eight catalogues, then repairs
 scripts/doc-i18n-check.sh      # must end on "all translations complete"
 ```
+
+Run `doc-po-update.sh` rather than sphinx-build/sphinx-intl by hand: it keeps
+the gettext output path **relative** (an absolute one rewrites every `#:`
+reference and buries the real diff), and it normalises the `python-format`
+flag that `msgmerge` re-adds behind an existing `no-python-format` at every
+update — gettext honours the last flag, so the false positive comes back each
+time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po` with
+`msgcat`: Babel and msgcat disagree on line breaks, so one pass rewrites the
+whole file.
 
 **Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
 Split long documents into a README index + per-topic files.
@@ -165,7 +172,7 @@ the `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the ta
 triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
 the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 
-The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.17.0**) is
+The `DatabaseVersion` constant in `pkg/blunderdb/domain/` (currently **2.18.0**) is
 independent of the app version — bump it only when the SQLite schema changes.
 
 ## Architecture in one screen
@@ -219,7 +226,11 @@ Violating one of these is a bug even if all tests pass:
   imports. Always write through `SavePosition`; use `SaveIndividualPosition` when
   the user brings a position in on its own. Provenance
   (`individually_imported`) is sticky and deliberately **not** part of the hash
-  — see ADR-0001 and `CONTEXT.md`.
+  — see ADR-0001 and `CONTEXT.md`. Neither are the session's optional rules
+  (`has_jacoby`, `has_beaver`): only an XGID ever sets them, so hashing them
+  split one money position across two rows — ADR-0028. Both keys are still
+  DRAWN in `engine.init` so every key after them keeps its value; a change to
+  that stream rehashes every database ever written.
 - **The retention predicate (`positionIsHeldSQL`) is stated in three places** —
   `database/db_match.go` (the copy the GUI and CLI run),
   `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`.
@@ -278,7 +289,7 @@ Violating one of these is a bug even if all tests pass:
   `gn_search.c`/`gn_cube.c` line for line, so "fixing" either here manufactures a port
   divergence and turns the cube gold red. Measured (669 real decisions): 0.005
   normalised equity per leaf, no verdict flipped, no move changed. The correction is
-  gammonNet's to write. See ADR-0028.
+  gammonNet's to write. See ADR-0029.
 - **A shared optimisation is decided upstream, in gammonNet** (its ADR-0003). The criterion
   is measurable, not a matter of taste: *an optimisation is conceptual if its gain survives a
   change of language*. Conceptual ones — the shape of the algorithm — are written in

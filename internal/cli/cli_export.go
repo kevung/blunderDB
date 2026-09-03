@@ -11,7 +11,7 @@ import (
 
 // runExport handles the export command
 func (cli *CLI) runExport(args []string) error {
-	exportCmd := flag.NewFlagSet("export", flag.ExitOnError)
+	exportCmd := flag.NewFlagSet("export", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := exportCmd.String("db", "", "Path to the database file (required)")
@@ -30,6 +30,7 @@ func (cli *CLI) runExport(args []string) error {
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
 	password := exportCmd.String("password", "", "Protect the exported file with a password (produces a .dbx container)")
+	format := exportCmd.String("format", "text", "Output format: text or json")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -97,6 +98,12 @@ func (cli *CLI) runExport(args []string) error {
 		return fmt.Errorf("missing required flag: --type")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
+
 	// The .mat export accepts either --file (single match) or --dir (batch);
 	// every other type writes one output file and requires --file.
 	if strings.ToLower(*exportType) == "mat" {
@@ -145,13 +152,13 @@ func (cli *CLI) runExport(args []string) error {
 	case "database":
 		return cli.exportDatabaseWithOptions(*outputFile, *includeAnalysis, *includeComments,
 			*includeFilterLibrary, *includePlayedMoves, *includeMatches,
-			*includeCollections, collectionIDs, matchIDs, tournamentIDs, marking)
+			*includeCollections, collectionIDs, matchIDs, tournamentIDs, marking, text)
 	case "positions":
-		return cli.exportPositions(*outputFile)
+		return cli.exportPositions(*outputFile, text)
 	case "matches":
-		return cli.exportMatchesOnly(*outputFile, marking)
+		return cli.exportMatchesOnly(*outputFile, marking, text)
 	case "mat":
-		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir)
+		return cli.exportMatchesMAT(matchIDs, *outputFile, *outputDir, text)
 	default:
 		return fmt.Errorf("unknown export type: %s (must be 'database', 'positions', 'matches', or 'mat')", *exportType)
 	}
@@ -162,7 +169,7 @@ func (cli *CLI) runExport(args []string) error {
 // match to that path, while --dir writes one auto-named file per match (all
 // matches when matchIDs is empty). Auto-names come from the same helper the GUI
 // dialog uses; on a name collision within the batch the match id is appended.
-func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string) error {
+func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string, text bool) error {
 	ids := matchIDs
 	if len(ids) == 0 {
 		matches, err := cli.db.GetAllMatches()
@@ -186,6 +193,11 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 		if err := cli.db.ExportMatchMAT(ids[0], path); err != nil {
 			return fmt.Errorf("failed to export match %d: %w", ids[0], err)
 		}
+		if !text {
+			return printJSON(struct {
+				Files []string `json:"files"`
+			}{Files: []string{path}})
+		}
 		fmt.Printf("Successfully exported match %d to %s\n", ids[0], path)
 		return nil
 	}
@@ -195,6 +207,7 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 	used := make(map[string]bool)
+	var files []string
 	for _, id := range ids {
 		name, err := cli.db.SuggestMatFilename(id)
 		if err != nil {
@@ -209,7 +222,15 @@ func (cli *CLI) exportMatchesMAT(matchIDs []int64, outputFile, outputDir string)
 		if err := cli.db.ExportMatchMAT(id, path); err != nil {
 			return fmt.Errorf("failed to export match %d: %w", id, err)
 		}
-		fmt.Printf("Exported match %d -> %s\n", id, path)
+		files = append(files, path)
+		if text {
+			fmt.Printf("Exported match %d -> %s\n", id, path)
+		}
+	}
+	if !text {
+		return printJSON(struct {
+			Files []string `json:"files"`
+		}{Files: files})
 	}
 	fmt.Printf("Successfully exported %d match(es) to %s\n", len(ids), outputDir)
 	return nil
@@ -248,8 +269,10 @@ type exportMarking struct {
 func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
 	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
 	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64,
-	marking exportMarking) error {
-	fmt.Printf("Exporting database to: %s\n", outputFile)
+	marking exportMarking, text bool) error {
+	if text {
+		fmt.Printf("Exporting database to: %s\n", outputFile)
+	}
 
 	// Get all positions
 	positions, err := cli.db.LoadAllPositions()
@@ -287,9 +310,19 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 	}
 
 	// Get file size
-	info, err := os.Stat(outputFile)
-	if err == nil {
-		fmt.Printf("Successfully exported database (%d bytes)\n", info.Size())
+	var size int64
+	if info, err := os.Stat(outputFile); err == nil {
+		size = info.Size()
+	}
+
+	if !text {
+		return printJSON(struct {
+			File  string `json:"file"`
+			Bytes int64  `json:"bytes"`
+		}{File: outputFile, Bytes: size})
+	}
+	if size > 0 {
+		fmt.Printf("Successfully exported database (%d bytes)\n", size)
 	} else {
 		fmt.Println("Successfully exported database")
 	}
@@ -298,8 +331,10 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 }
 
 // exportMatchesOnly exports only the matches to a new database
-func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) error {
-	fmt.Printf("Exporting matches to: %s\n", outputFile)
+func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text bool) error {
+	if text {
+		fmt.Printf("Exporting matches to: %s\n", outputFile)
+	}
 
 	// Get matches count first
 	matches, err := cli.db.GetAllMatches()
@@ -311,7 +346,9 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 		return fmt.Errorf("no matches found in database")
 	}
 
-	fmt.Printf("Found %d match(es) to export\n", len(matches))
+	if text {
+		fmt.Printf("Found %d match(es) to export\n", len(matches))
+	}
 
 	// Export with empty positions but with matches
 	metadata := make(map[string]string)
@@ -342,9 +379,20 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 	}
 
 	// Get file size
-	info, err := os.Stat(outputFile)
-	if err == nil {
-		fmt.Printf("Successfully exported matches (%d bytes)\n", info.Size())
+	var size int64
+	if info, err := os.Stat(outputFile); err == nil {
+		size = info.Size()
+	}
+
+	if !text {
+		return printJSON(struct {
+			File    string `json:"file"`
+			Bytes   int64  `json:"bytes"`
+			Matches int    `json:"matches"`
+		}{File: outputFile, Bytes: size, Matches: len(matches)})
+	}
+	if size > 0 {
+		fmt.Printf("Successfully exported matches (%d bytes)\n", size)
 	} else {
 		fmt.Println("Successfully exported matches")
 	}
@@ -353,8 +401,10 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking) erro
 }
 
 // exportPositions exports positions to a text file
-func (cli *CLI) exportPositions(outputFile string) error {
-	fmt.Printf("Exporting positions to: %s\n", outputFile)
+func (cli *CLI) exportPositions(outputFile string, text bool) error {
+	if text {
+		fmt.Printf("Exporting positions to: %s\n", outputFile)
+	}
 
 	// Get all positions
 	positions, err := cli.db.LoadAllPositions()
@@ -378,6 +428,12 @@ func (cli *CLI) exportPositions(outputFile string) error {
 		fmt.Fprintf(file, "%s\n", string(posJSON))
 	}
 
+	if !text {
+		return printJSON(struct {
+			File      string `json:"file"`
+			Positions int    `json:"positions"`
+		}{File: outputFile, Positions: len(positions)})
+	}
 	fmt.Printf("Successfully exported %d positions\n", len(positions))
 	return nil
 }
