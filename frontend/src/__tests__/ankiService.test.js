@@ -20,7 +20,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReviewAnkiCard: vi.fn(() => Promise.resolve(null)),
     ResetAnkiDeck: vi.fn(() => Promise.resolve()),
     GetAllCollections: vi.fn(() => Promise.resolve([])),
-    LoadPositionsByFilters: vi.fn(() => Promise.resolve([]))
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) => f() } }));
 
@@ -114,26 +114,26 @@ describe('pure helpers', () => {
 describe('resolveSearchDeckIds', () => {
     test('returns the stored ids when no command was stored', async () => {
         expect(await resolveSearchDeckIds(JSON.stringify({ ids: [4, 5] }))).toEqual([4, 5]);
-        expect(db.LoadPositionsByFilters).not.toHaveBeenCalled();
+        expect(db.LoadPositionIDsByFilters).not.toHaveBeenCalled();
     });
 
     test('re-runs a bare `s` on the stored board and merges the stored ids in', async () => {
-        db.LoadPositionsByFilters.mockResolvedValueOnce([{ id: 9 }, { id: 4 }]);
+        db.LoadPositionIDsByFilters.mockResolvedValueOnce([9, 4]);
         const ids = await resolveSearchDeckIds(JSON.stringify({ command: 's', position: '{"cube":1}', ids: [4, 5] }));
-        expect(db.LoadPositionsByFilters).toHaveBeenCalledTimes(1);
+        expect(db.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
         expect(ids).toEqual([9, 4, 5]);
     });
 
     test('a filtered command goes through the command parser', async () => {
-        db.LoadPositionsByFilters.mockResolvedValueOnce([{ id: 1 }]);
+        db.LoadPositionIDsByFilters.mockResolvedValueOnce([1]);
         const ids = await resolveSearchDeckIds(JSON.stringify({ command: 's e>0.1', position: '{}', ids: [] }));
         expect(ids).toEqual([1]);
-        const payload = db.LoadPositionsByFilters.mock.calls[0][0];
+        const payload = db.LoadPositionIDsByFilters.mock.calls[0][0];
         expect(payload).toBeTruthy();
     });
 
     test('a failing search is logged and yields no ids', async () => {
-        db.LoadPositionsByFilters.mockRejectedValueOnce(new Error('boom'));
+        db.LoadPositionIDsByFilters.mockRejectedValueOnce(new Error('boom'));
         expect(await resolveSearchDeckIds(JSON.stringify({ command: 's', position: '{}', ids: [1] }))).toEqual([]);
         expect(logger.error).toHaveBeenCalled();
     });
@@ -179,7 +179,7 @@ describe('deck lifecycle', () => {
     });
 
     test('createDeck from a search stores the search and syncs the matched ids', async () => {
-        db.LoadPositionsByFilters.mockResolvedValueOnce([{ id: 8 }]);
+        db.LoadPositionIDsByFilters.mockResolvedValueOnce([8]);
         await createDeck({ name: 'S', sourceType: 'search', sourceId: 99, lastSearch: { command: 's', position: '{}' }, positionIds: [8, 9] });
         const [, , type, sourceId, sourceCommand] = db.CreateAnkiDeck.mock.calls[0];
         expect(type).toBe('search');

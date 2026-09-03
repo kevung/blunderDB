@@ -5,6 +5,7 @@
     import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
+    import { SvelteSet } from 'svelte/reactivity';
     import {
         GetAllMatches,
         DeleteMatch,
@@ -270,17 +271,21 @@
         }
     }
 
-    // Group move positions by game number for transcript display
+    // Group move positions by game number for transcript display. Each move
+    // carries its globalIdx (its position in detailMovePositions) precomputed
+    // here — the template used to recover it with detailMovePositions.indexOf(mp)
+    // inside the {#each} of rows, an O(n) scan per row that made a 500-move
+    // match cost ~250 000 comparisons per render (D.8, #208).
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
-        for (const mp of detailMovePositions) {
+        detailMovePositions.forEach((mp, globalIdx) => {
             if (!gameMap.has(mp.game_number)) {
                 gameMap.set(mp.game_number, []);
             }
-            gameMap.get(mp.game_number).push(mp);
-        }
+            gameMap.get(mp.game_number).push({ mp, globalIdx });
+        });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
             // Find corresponding game info
@@ -288,6 +293,51 @@
             result.push({ gameNumber: gameNum, moves, gameInfo });
         }
         return result;
+    });
+
+    // Which games' transcript tables are actually mounted: collapsed games
+    // render only their <summary> header, not their (potentially long) move
+    // table, so a many-game match keeps most of its transcript out of the DOM
+    // until the user opens it (D.8, #208). Mutated in place — the template
+    // tracks this one SvelteSet instance, already reactive on its own — and
+    // reseeded to just the game holding the current move whenever a
+    // different match's moves load.
+    const openGames = new SvelteSet();
+
+    $effect(() => {
+        const moves = detailMovePositions; // tracked dep: reseed on a new match's moves
+        untrack(() => {
+            openGames.clear();
+            if (!moves.length) return;
+            const ctx = get(matchContextStore);
+            let targetIndex = null;
+            if (ctx.isMatchMode && detailMatch && ctx.matchID === detailMatch.id) {
+                targetIndex = ctx.currentIndex;
+            } else if (lastVisitedMatch && detailMatch && lastVisitedMatch.matchID === detailMatch.id) {
+                targetIndex = lastVisitedMatch.currentIndex;
+            }
+            const targetMove = targetIndex != null ? moves[targetIndex] : null;
+            const defaultGame = targetMove ? targetMove.game_number : moves[moves.length - 1].game_number;
+            openGames.add(defaultGame);
+        });
+    });
+
+    function setGameOpen(gameNumber, isOpen) {
+        if (isOpen) openGames.add(gameNumber);
+        else openGames.delete(gameNumber);
+    }
+
+    // Keep the transcript following along while reviewing this match in MATCH
+    // mode: crossing into a collapsed game reopens it (games are only ever
+    // added here, never closed, so a review pass just accumulates the games
+    // actually visited).
+    $effect(() => {
+        const ctx = $matchContextStore;
+        if (!ctx.isMatchMode || !detailMatch || ctx.matchID !== detailMatch.id) return;
+        const move = detailMovePositions[ctx.currentIndex];
+        if (move && !openGames.has(move.game_number)) {
+            setGameOpen(move.game_number, true);
+        }
     });
 
     async function navigateToMove(moveIndex) {
@@ -752,8 +802,9 @@
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
                             {#each transcriptGames as game (game.gameNumber)}
-                                <div class="game-section">
-                                    <div class="game-header">
+                                {@const isOpen = openGames.has(game.gameNumber)}
+                                <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
+                                    <summary class="game-header">
                                         <span class="game-title">{$t('match.game', { n: game.gameNumber })}</span>
                                         {#if game.gameInfo}
                                             <span class="game-score">{$t('match.score')}: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
@@ -766,41 +817,42 @@
                                                 >
                                             {/if}
                                         {/if}
-                                    </div>
-                                    <table class="transcript-table">
-                                        <thead>
-                                            <tr>
-                                                <th class="transcript-num">#</th>
-                                                <th class="transcript-player">{$t('match.player')}</th>
-                                                <th class="transcript-dice">{$t('match.dice')}</th>
-                                                <th class="transcript-move">{$t('match.move')}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {#each game.moves as mp, mi (mi)}
-                                                {@const globalIdx = detailMovePositions.indexOf(mp)}
-                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
-                                                    <td class="transcript-num">{mi + 1}</td>
-                                                    <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
-                                                        {getPlayerName(mp)}
-                                                    </td>
-                                                    <td class="transcript-dice">
-                                                        {#if mp.move_type === 'checker'}
-                                                            {formatDiceShort(mp.position.dice)}
-                                                        {/if}
-                                                    </td>
-                                                    <td class="transcript-move">
-                                                        {#if mp.move_type === 'cube'}
-                                                            <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
-                                                        {:else}
-                                                            {mp.checker_move || '—'}
-                                                        {/if}
-                                                    </td>
+                                    </summary>
+                                    {#if isOpen}
+                                        <table class="transcript-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="transcript-num">#</th>
+                                                    <th class="transcript-player">{$t('match.player')}</th>
+                                                    <th class="transcript-dice">{$t('match.dice')}</th>
+                                                    <th class="transcript-move">{$t('match.move')}</th>
                                                 </tr>
-                                            {/each}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                            </thead>
+                                            <tbody>
+                                                {#each game.moves as { mp, globalIdx }, mi (globalIdx)}
+                                                    <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title={$t('match.clickToReview')}>
+                                                        <td class="transcript-num">{mi + 1}</td>
+                                                        <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
+                                                            {getPlayerName(mp)}
+                                                        </td>
+                                                        <td class="transcript-dice">
+                                                            {#if mp.move_type === 'checker'}
+                                                                {formatDiceShort(mp.position.dice)}
+                                                            {/if}
+                                                        </td>
+                                                        <td class="transcript-move">
+                                                            {#if mp.move_type === 'cube'}
+                                                                <span class="cube-action">{mp.cube_action || $t('match.cube')}</span>
+                                                            {:else}
+                                                                {mp.checker_move || '—'}
+                                                            {/if}
+                                                        </td>
+                                                    </tr>
+                                                {/each}
+                                            </tbody>
+                                        </table>
+                                    {/if}
+                                </details>
                             {/each}
                         {/if}
                     </div>
@@ -1145,6 +1197,25 @@
         color: #555;
         border-bottom: 1px solid #e0e0e0;
         z-index: 1;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    /* .game-header is a <summary>: a game's move table is only mounted while
+       its <details> is open (D.8, perf ticket 208), so collapsed games cost
+       one row of DOM instead of their whole transcript. Replace the native
+       marker with a small disclosure triangle that flips with [open]. */
+    .game-header::-webkit-details-marker {
+        display: none;
+    }
+
+    .game-header::before {
+        content: '▸';
+        color: var(--color-text-muted);
+    }
+
+    .game-section[open] > .game-header::before {
+        content: '▾';
     }
 
     .game-title {
