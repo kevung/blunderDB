@@ -85,7 +85,7 @@
         padding: 6px 14px;
         font-size: var(--font-size-base);
         cursor: pointer;
-        color: #333;
+        color: var(--color-text);
         border-radius: 0;
     }
 
@@ -96,7 +96,7 @@
     }
 
     .context-menu-item:focus-visible {
-        outline: 2px solid #1976d2;
+        outline: 2px solid var(--color-primary);
         outline-offset: -2px;
     }
 </style>

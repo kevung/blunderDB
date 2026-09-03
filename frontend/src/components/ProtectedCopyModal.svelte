@@ -73,7 +73,7 @@
 <style>
     .file {
         margin: 0 0 8px;
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         color: #555;
         word-break: break-all;
@@ -82,7 +82,7 @@
     .hint {
         margin: 0 0 10px;
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         line-height: 1.35;
     }
 

@@ -196,13 +196,13 @@
 
     .input.inline {
         padding: 2px 4px;
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 2px;
     }
 
     .input.field {
         padding: 2px 6px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
     }
 
@@ -213,7 +213,7 @@
     .dropdown {
         overflow-y: auto;
         background: white;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
         z-index: 9999;

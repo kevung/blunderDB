@@ -129,7 +129,7 @@
 
     .stat-label {
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         margin-bottom: 5px;
     }
@@ -137,6 +137,6 @@
     .stat-value {
         font-size: var(--font-size-stat-figure);
         font-weight: bold;
-        color: #333;
+        color: var(--color-text);
     }
 </style>

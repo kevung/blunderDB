@@ -227,7 +227,7 @@
         flex-shrink: 0;
         width: 100%;
         font-size: var(--font-size-base);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+        font-family: var(--font-family-ui);
         gap: 0;
         user-select: none;
         height: 22px;
@@ -262,7 +262,7 @@
         background: none;
         border: none;
         padding: 0;
-        color: #1a56c4;
+        color: var(--color-primary);
         text-decoration: underline;
         cursor: pointer;
         font-size: var(--font-size-small);
@@ -324,22 +324,22 @@
     }
 
     .cmd-name {
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
     }
 
     .cmd-aliases {
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .prompt-char {
-        color: #1a73e8;
+        color: var(--color-primary);
         font-weight: bold;
         margin-right: 4px;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         line-height: 22px;
     }
@@ -349,8 +349,8 @@
         background: transparent;
         border: none;
         outline: none;
-        color: #333;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        color: var(--color-text);
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-base);
         padding: 0;
         line-height: 22px;

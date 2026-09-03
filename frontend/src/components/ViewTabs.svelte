@@ -113,7 +113,7 @@
         gap: 4px;
         padding: 0 8px;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         cursor: pointer;
         border-right: 1px solid #e0e0e0;
         white-space: nowrap;
@@ -128,7 +128,7 @@
 
     .view-tab.active {
         background: #fff;
-        color: #333;
+        color: var(--color-text);
         font-weight: 600;
         border-bottom: 1px solid #fff;
         margin-bottom: -1px;
@@ -152,7 +152,7 @@
         border: none;
         background: none;
         font-size: var(--font-size-base);
-        color: #999;
+        color: var(--color-text-muted);
         cursor: pointer;
         padding: 0 2px;
         line-height: 1;
@@ -168,7 +168,7 @@
         border: none;
         background: none;
         font-size: var(--font-size-title);
-        color: #888;
+        color: var(--color-text-muted);
         cursor: pointer;
         padding: 0 8px;
         display: flex;
@@ -176,6 +176,6 @@
     }
 
     .add-btn:hover {
-        color: #333;
+        color: var(--color-text);
     }
 </style>

@@ -167,7 +167,7 @@
 <style>
     /* ── Empty state ── */
     .empty-state {
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         text-align: center;
         padding: 32px 16px;
@@ -222,7 +222,7 @@
 
     .card-unit {
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
     }
 
     /* ── Totals line ── */
@@ -277,7 +277,7 @@
 
     .rolling-n {
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .rolling-val {
@@ -329,7 +329,7 @@
     }
 
     .blunder-rank {
-        color: #999;
+        color: var(--color-text-muted);
         min-width: 24px;
         font-variant-numeric: tabular-nums;
     }
@@ -356,7 +356,7 @@
     }
 
     .blunder-date {
-        color: #888;
+        color: var(--color-text-muted);
         margin-left: 4px;
         font-size: var(--font-size-small);
     }
@@ -364,7 +364,7 @@
     .blunder-open-match {
         background: transparent;
         border: none;
-        color: #999;
+        color: var(--color-text-muted);
         cursor: pointer;
         padding: 4px 6px;
         font-size: var(--font-size-base);
@@ -373,7 +373,7 @@
     }
 
     .blunder-open-match:hover {
-        color: #1976d2;
+        color: var(--color-primary);
         background: #e3f2fd;
     }
 

@@ -188,7 +188,7 @@
 
     .main-value {
         font-weight: 600;
-        color: #1a56c4;
+        color: var(--color-primary);
         font-variant-numeric: tabular-nums;
     }
 
@@ -198,11 +198,11 @@
     }
 
     .delta-row td {
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .delta-row .main-value {
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     tr.masked {

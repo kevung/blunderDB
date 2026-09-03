@@ -969,7 +969,7 @@
 
     .toolbar-btn {
         background: none;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 3px;
         font-size: var(--font-size-small);
         color: #555;
@@ -980,7 +980,7 @@
 
     .toolbar-btn:hover:not(:disabled) {
         background: #e3f2fd;
-        border-color: #1976d2;
+        border-color: var(--color-primary);
         color: #1565c0;
     }
 
@@ -996,13 +996,13 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .match-edit-input {
         width: 100%;
         padding: 1px 4px;
-        border: 1px solid #1976d2;
+        border: 1px solid var(--color-primary);
         border-radius: 2px;
         font-size: var(--font-size-small);
         box-sizing: border-box;
@@ -1013,7 +1013,7 @@
     .empty-state,
     .loading-state {
         text-align: center;
-        color: #999;
+        color: var(--color-text-muted);
         padding: 24px;
         font-size: var(--font-size-base);
     }
@@ -1046,7 +1046,7 @@
     }
 
     .vs-label {
-        color: #999;
+        color: var(--color-text-muted);
         font-weight: 400;
         font-size: var(--font-size-small);
     }
@@ -1067,7 +1067,7 @@
         flex-wrap: wrap;
         gap: 4px 12px;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         margin-bottom: 6px;
     }
 
@@ -1076,7 +1076,7 @@
     }
 
     .meta-tournament {
-        color: #1976d2;
+        color: var(--color-primary);
         font-weight: 500;
     }
 
@@ -1094,24 +1094,24 @@
         padding: 4px 12px;
         cursor: pointer;
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         transition:
             color 0.15s,
             border-color 0.15s;
     }
 
     .detail-tab:hover {
-        color: #333;
+        color: var(--color-text);
     }
 
     .detail-tab.active {
-        color: #1976d2;
-        border-bottom-color: #1976d2;
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
     }
 
     .enter-match-btn {
         margin-left: auto;
-        color: #1976d2;
+        color: var(--color-primary);
         font-weight: 600;
     }
 
@@ -1146,7 +1146,7 @@
 
     .game-title {
         font-weight: 600;
-        color: #333;
+        color: var(--color-text);
     }
 
     .game-score {
@@ -1169,7 +1169,7 @@
         text-align: left;
         font-weight: 600;
         font-size: var(--font-size-small);
-        color: #999;
+        color: var(--color-text-muted);
         border-bottom: 1px solid #eee;
         background: #fafafa;
     }
@@ -1203,23 +1203,23 @@
     }
 
     .transcript-player.player1 {
-        color: #333;
+        color: var(--color-text);
     }
 
     .transcript-player.player2 {
-        color: #666;
+        color: var(--color-text-muted);
     }
 
     .transcript-dice {
         width: 32px;
         text-align: center;
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #555;
     }
 
     .transcript-move {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
         color: #222;
     }
@@ -1259,25 +1259,25 @@
 
     .meta-label {
         width: 100px;
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
     .meta-value {
-        color: #333;
+        color: var(--color-text);
     }
 
     .source-file {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #666;
+        color: var(--color-text-muted);
         word-break: break-all;
     }
 
     .id-value {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .tournament-meta-cell {
@@ -1289,12 +1289,12 @@
     }
 
     .tournament-display {
-        color: #666;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
     .tournament-display:hover {
-        color: #1976d2;
+        color: var(--color-primary);
     }
 
     .match-comment-display {
@@ -1366,7 +1366,7 @@
 
     .sub-label {
         padding-left: 20px;
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
@@ -1379,7 +1379,7 @@
     }
 
     .sub-val {
-        color: #666;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 

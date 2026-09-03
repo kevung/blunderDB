@@ -433,7 +433,7 @@
     }
 
     .tab-button.drag-over {
-        border-left: 2px solid #1a73e8;
+        border-left: 2px solid var(--color-primary);
     }
 
     .tab-button.dragging {
@@ -445,8 +445,8 @@
     }
 
     .tab-button.active {
-        color: #1a73e8;
-        border-bottom-color: #1a73e8;
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
         background: #fff;
     }
 
@@ -465,13 +465,13 @@
         border: none;
         background: transparent;
         cursor: pointer;
-        color: #888;
+        color: var(--color-text-muted);
         height: 100%;
     }
 
     .hidden-tabs-button:hover {
         background: #e0e0e0;
-        color: #333;
+        color: var(--color-text);
     }
 
     .tab-label {

@@ -656,7 +656,7 @@
         flex: 0 0 auto;
         min-width: 160px;
         padding: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         box-sizing: border-box;
         background-color: white;
@@ -705,7 +705,7 @@
     }
 
     .setting-note {
-        color: #666;
+        color: var(--color-text-muted);
         margin: 2px 0 6px;
         line-height: 1.35;
     }
@@ -731,7 +731,7 @@
        it takes the small token to sit level with the base-size text beside it (ADR-0008
        rule 4). */
     .identity-fingerprint {
-        font-family: monospace;
+        font-family: var(--font-family-mono);
         font-size: var(--font-size-small);
     }
 
@@ -757,8 +757,8 @@
     }
 
     .tab.active {
-        color: #1a73e8;
-        border-bottom-color: #1a73e8;
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
         font-weight: 600;
     }
 
@@ -792,7 +792,7 @@
         width: 48px;
         height: 28px;
         padding: 0;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         background: none;
         cursor: pointer;
@@ -800,7 +800,7 @@
 
     .secondary-button {
         padding: 4px 10px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         background-color: #f5f5f5;
         cursor: pointer;

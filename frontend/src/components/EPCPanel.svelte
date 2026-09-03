@@ -575,7 +575,7 @@
            itself never grows a scrollbar. */
         overflow: hidden;
         padding: 3px 14px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+        font-family: var(--font-family-ui);
         font-size: var(--font-size-base);
         /* Lets CandidateMovesTable/CubeVerdictTable/PositionFactsTable's own
            @container rules stack on a narrow panel (ADR-0017's layout). */
@@ -590,7 +590,7 @@
         align-items: center;
         justify-content: center;
         height: 100%;
-        color: #888;
+        color: var(--color-text-muted);
     }
 
     .epc-inactive-message {
@@ -654,7 +654,7 @@
     }
 
     .eval-placeholder {
-        color: #888;
+        color: var(--color-text-muted);
         font-size: var(--font-size-small);
     }
 
@@ -731,7 +731,7 @@
     .badge-evaluated {
         background: #e8f0fe;
         border: 1px solid #c4d8f5;
-        color: #1a56c4;
+        color: var(--color-primary);
     }
 
     /* ADR-0017 decision 4: exact's win probability, evaluated's equities and
@@ -740,7 +740,7 @@
     .badge-composite {
         background: linear-gradient(90deg, #e5f3e8 0 50%, #e8f0fe 50% 100%);
         border: 1px solid #c4d8f5;
-        color: #1a56c4;
+        color: var(--color-primary);
     }
 
     /* #131: a discreet mention that gammonNet is the engine, one character
@@ -751,7 +751,7 @@
         height: 14px;
         line-height: 14px;
         padding: 0;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 50%;
         background: transparent;
         color: #aaa;
@@ -761,8 +761,8 @@
     }
 
     .eval-engine-badge:hover {
-        color: #1a56c4;
-        border-color: #1a56c4;
+        color: var(--color-primary);
+        border-color: var(--color-primary);
     }
 
     .challenge-toggle {
