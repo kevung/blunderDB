@@ -336,6 +336,67 @@ construire localement ou tirer l'image publiée donne le même binaire.
    et ne jamais être exposé directement sur l'Internet public. Les exemples
    ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison.
 
+.. _headless_proxy_deployment:
+
+Déploiement derrière un proxy authentifiant
+--------------------------------------------
+
+L'ADR-0005 fait du reverse-proxy **toute** la frontière de sécurité du démon :
+lui seul authentifie l'appelant, lui seul a le droit de poser l'en-tête
+``X-Tenant-ID``, et il doit **retirer** systématiquement toute valeur envoyée
+par le client avant d'y injecter le tenant authentifié — sans quoi n'importe
+qui peut se faire passer pour n'importe quel tenant en le nommant lui-même.
+Le dépôt fournit un exemple complet sous ``deploy/`` :
+
+* ``deploy/docker-compose.yml`` — Caddy (authentification HTTP Basic de
+  démonstration) devant ``blunderdb-serve`` et PostgreSQL (Row-Level Security
+  activée) ; seul Caddy publie un port, ``blunderdb-serve`` et PostgreSQL
+  vivent sur un réseau Docker interne (``internal: true``) qui n'a de route
+  ni vers l'hôte ni vers l'Internet ;
+* ``deploy/Caddyfile`` — la configuration de Caddy : authentifie, associe le
+  compte authentifié à l'entier du tenant (``map``), puis l'injecte dans
+  ``X-Tenant-ID`` après avoir explicitement effacé toute valeur reçue du
+  client (garde ``header_up X-Tenant-ID ""`` suivie de l'injection) ;
+* ``deploy/nginx-tenant-proxy.conf`` — le même schéma en extrait nginx
+  (``proxy_set_header X-Tenant-ID ""`` puis ``proxy_set_header X-Tenant-ID
+  $tenant_id``), pour qui a déjà un nginx en place ;
+* ``deploy/README.md`` — le modèle de menace en trois phrases et ce qu'il ne
+  faut jamais faire (exposer le démon nu).
+
+L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas une
+recommandation de production : elle se remplace par ``forward_auth`` vers un
+fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
+transmet l'identité au même endroit du fichier.
+
+**Scénario complet, de zéro à un démon qui répond :**
+
+.. code-block:: bash
+
+   cd deploy
+   cp .env.example .env    # puis y définir POSTGRES_PASSWORD
+   docker compose up -d --build
+
+   # Sans authentification : rejeté avant même d'atteindre le démon.
+   curl -i http://localhost:8080/v1/metadata.counts -d '{}'
+   # HTTP/1.1 401 Unauthorized
+
+   # Authentifié en tant qu'« alice », qui est mappée au tenant 1 : le démon
+   # répond, quel que soit l'en-tête que le client tente d'envoyer lui-même.
+   curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'
+   curl -u alice:demo-password -H "X-Tenant-ID: 999" \
+        http://localhost:8080/v1/metadata.counts -d '{}'
+   # {"positions":0,"analyses":0,"matches":0,...} dans les deux cas — le journal
+   # du démon (docker compose logs blunderdb-serve) montre tenant=1 pour les
+   # deux requêtes : la valeur 999 envoyée par le client n'a jamais survécu à
+   # la garde du Caddyfile.
+
+   docker compose down -v
+
+Ce scénario a été rejoué tel quel : ``blunderdb-serve`` et PostgreSQL
+démarrent, Caddy authentifie et route, et le journal du démon confirme que
+seul l'entier injecté par le proxy — jamais celui du client — atteint la
+couche applicative.
+
 .. _headless_postgres:
 
 Backend PostgreSQL et multi-utilisateurs
