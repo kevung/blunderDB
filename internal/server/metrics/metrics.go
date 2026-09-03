@@ -60,7 +60,7 @@ func (r *Registry) SetRateLimitBuckets(n int) {
 	if r == nil {
 		return
 	}
-	atomic.StoreUint64(&r.rlBuckets, uint64(n))
+	atomic.StoreUint64(&r.rlBuckets, uint64(n)) //nolint:gosec // G115: n is a live-bucket count (a map length), never negative
 }
 
 // SetPoolStats records a snapshot of the PostgreSQL connection pool's state

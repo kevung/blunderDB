@@ -111,7 +111,7 @@ func (id *Identity) Rename(configDir, name string) error {
 }
 
 func (id *Identity) save(configDir string) error {
-	if err := os.MkdirAll(configDir, 0o755); err != nil {
+	if err := os.MkdirAll(configDir, 0o750); err != nil {
 		return fmt.Errorf("cannot create config directory: %w", err)
 	}
 	raw, err := json.Marshal(storedIdentity{

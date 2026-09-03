@@ -529,4 +529,3 @@ func TestSearch_PrimePattern_BitboardOnly(t *testing.T) {
 	}
 	t.Logf("prime pattern: %d matches, tight=%v", len(gotIDs), tight)
 }
-
