@@ -281,7 +281,7 @@ func testAnalysisSaveAndCompress(t *testing.T, s storage.Storage) {
 		t.Fatalf("Save analysis: %v", err)
 	}
 
-	// Load round-trips through the zlib-compressed data column.
+	// Load round-trips through the compressed data column (zstd, see engine.CompressAnalysisData).
 	got, err := s.Analyses().Load(ctx, "", posID)
 	if err != nil {
 		t.Fatalf("Load analysis: %v", err)

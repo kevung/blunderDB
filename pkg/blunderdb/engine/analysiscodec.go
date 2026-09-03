@@ -3,7 +3,9 @@ package engine
 import (
 	"bytes"
 	"compress/zlib"
+	_ "embed"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -15,52 +17,151 @@ import (
 	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/klauspost/compress/zstd"
 )
 
 // This file holds the pure analysis-encoding helpers shared by the Database
-// wrapper and the SQLite Storage backend: zlib (de)compression of the analysis
-// JSON blob, derivation of the denormalised scalar columns, and float
-// rounding for compact storage. They perform no database I/O.
+// wrapper and both Storage backends: compression of the analysis JSON blob,
+// derivation of the denormalised scalar columns, and float rounding for
+// compact storage. They perform no database I/O.
+//
+// # Blob codec and format compatibility (#180, ADR-0030)
+//
+// analysis.data has carried three formats over the project's life, and a
+// blob always names which one it is instead of the reader assuming: raw JSON
+// (first byte '{', from databases old enough to predate compression), zlib
+// level 9 (a valid zlib stream — CMF/FLG header — written by every 2.x
+// release before this one), and now zstd level 19 with the shared dictionary
+// embedded below (a valid zstd frame — magic number 0x28 0xB5 0x2F 0xFD).
+// These three signatures cannot collide, so DecompressAnalysisData tells them
+// apart by content, not by a schema version or a side channel: a database
+// exported years ago, or one produced by an older binary, still opens and
+// decodes correctly with today's code. The dictionary's own Dictionary_ID is
+// embedded in every zstd frame that used it, so klauspost's decoder always
+// picks the matching one automatically — introducing a second dictionary
+// later (a bigger corpus, a schema change to PositionAnalysis) needs no
+// migration of existing rows, only registering the new bytes alongside this
+// one in zstdDecoder's dict set.
+//
+// Every new write goes out as zstd (CompressAnalysisData); nothing new is
+// ever written as zlib or raw JSON again. Existing zlib/raw rows are read
+// forever, and are upgraded to zstd opportunistically — RecompressAnalysisData
+// on the native-.db import path, and a background pass over the whole table
+// triggered by `vacuum` (sqlite.Storage.Vacuum) — never in a schema
+// migration: there is no DatabaseVersion bump for this change; the blob
+// itself carries enough information for any past or future reader to make
+// sense of it, per the invariant that a schema bump is for DDL, not for the
+// bytes inside an unchanged BLOB column.
+//
+// The dictionary (analysis_dict.bin) was trained offline with the reference
+// `zstd --train` CLI on real analysis blobs already in this repository
+// (testdata/ match fixtures, the demo database) — see
+// cmd/train-analysis-dict and docs/recherche/P11-compression-blobs.md.
+// Nothing at runtime needs zstd itself or cgo: the trained bytes are read by
+// the pure-Go github.com/klauspost/compress/zstd, the same way
+// gnubg_os6.bd is read by the bearoff engine.
 
-// CompressAnalysisData compresses raw JSON bytes using zlib (best compression).
-func CompressAnalysisData(jsonData []byte) ([]byte, error) {
-	var buf bytes.Buffer
-	w, err := zlib.NewWriterLevel(&buf, zlib.BestCompression)
+//go:embed analysis_dict.bin
+var analysisZstdDict []byte
+
+// zstdMagic is the four-byte signature every zstd frame starts with (RFC 8878
+// §3.1.1). Checked before the "raw JSON vs zlib" fallback so a blob need not
+// pay for a failed zlib-header parse on the common (post-migration) case.
+var zstdMagic = []byte{0x28, 0xB5, 0x2F, 0xFD}
+
+// zstdEncoder and zstdDecoder are created once and reused for every call:
+// klauspost/compress/zstd documents EncodeAll and DecodeAll as safe to call
+// concurrently on a shared instance (each call runs on its own goroutine
+// internally), and creating one per call is the memory blow-up the upstream
+// maintainers warn against under many concurrent decodes. Concurrency is
+// pinned to 1 inside each instance (no internal fan-out per call) rather than
+// left at GOMAXPROCS, trading a little single-call latency for bounded
+// memory — the right trade for blobs that are a few kilobytes, not streams.
+var (
+	zstdEncoder *zstd.Encoder
+	zstdDecoder *zstd.Decoder
+)
+
+func init() {
+	enc, err := zstd.NewWriter(nil,
+		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(19)),
+		zstd.WithEncoderDict(analysisZstdDict),
+		zstd.WithEncoderConcurrency(1),
+	)
 	if err != nil {
-		return nil, err
+		// The embedded dictionary is a build-time asset, not user input: a
+		// failure here means the binary itself is broken, not that some
+		// database has a problem. Fail loudly rather than silently falling
+		// back to an un-dictionaried (much worse) codec — see CLAUDE.md's
+		// "requested-but-unavailable kernel is an error at load" rule.
+		panic(fmt.Sprintf("engine: zstd encoder init: %v", err))
 	}
-	if _, err := w.Write(jsonData); err != nil {
-		w.Close()
-		return nil, err
+	zstdEncoder = enc
+
+	dec, err := zstd.NewReader(nil,
+		zstd.WithDecoderDicts(analysisZstdDict),
+		// Bounded to the same cap the zlib path enforces below, and far
+		// below klauspost's 64 GiB default: a real analysis blob is a few
+		// kilobytes, so nothing legitimate ever approaches this, while a
+		// crafted frame claiming gigabytes is refused before it is decoded
+		// (see MaxAnalysisBytes and the decompression-bomb tests).
+		zstd.WithDecoderMaxMemory(MaxAnalysisBytes),
+		zstd.WithDecoderConcurrency(1),
+		zstd.WithDecoderLowmem(true),
+	)
+	if err != nil {
+		panic(fmt.Sprintf("engine: zstd decoder init: %v", err))
 	}
-	if err := w.Close(); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	zstdDecoder = dec
+}
+
+// CompressAnalysisData compresses raw JSON bytes with zstd level 19 and the
+// shared dictionary embedded in this package (analysis_dict.bin). This is the
+// only format ever written from here on; DecompressAnalysisData still reads
+// the two formats every prior release wrote (see the package-level doc
+// comment above).
+func CompressAnalysisData(jsonData []byte) ([]byte, error) {
+	return zstdEncoder.EncodeAll(jsonData, nil), nil
 }
 
 // MaxAnalysisBytes bounds what one analysis blob may inflate to. A real one is
 // a few kilobytes of JSON — the largest rollout ever stored is well under a
-// megabyte — while zlib can inflate a few kilobytes into gigabytes. The blob
-// comes from the `analysis.data` column of a database that may have been
-// imported from a third party, so a crafted row must be refused rather than
-// allowed to exhaust memory.
+// megabyte — while both zlib and zstd can inflate a few kilobytes into
+// gigabytes. The blob comes from the `analysis.data` column of a database
+// that may have been imported from a third party, so a crafted row must be
+// refused rather than allowed to exhaust memory.
 const MaxAnalysisBytes = 16 << 20
 
 // ErrAnalysisTooLarge is returned when a compressed analysis inflates past
 // MaxAnalysisBytes.
 var ErrAnalysisTooLarge = fmt.Errorf("analysis blob inflates past %d bytes", MaxAnalysisBytes)
 
-// DecompressAnalysisData auto-detects zlib-compressed data vs raw JSON. If the
-// first byte is '{' the data is returned as-is; otherwise zlib is attempted.
-// Inflation stops at MaxAnalysisBytes: a blob claiming more is an error, not a
-// bigger allocation.
+// isZstdFrame reports whether data starts with the zstd frame magic number.
+func isZstdFrame(data []byte) bool {
+	return len(data) >= len(zstdMagic) && bytes.Equal(data[:len(zstdMagic)], zstdMagic)
+}
+
+// DecompressAnalysisData auto-detects which of the three formats a blob is
+// in (raw JSON, zlib, zstd — see the package doc comment) from its own
+// content, never from a version elsewhere. Inflation stops at
+// MaxAnalysisBytes: a blob claiming more is an error, not a bigger
+// allocation.
 func DecompressAnalysisData(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
 	}
 	if data[0] == '{' {
 		return data, nil
+	}
+	if isZstdFrame(data) {
+		out, err := zstdDecoder.DecodeAll(data, nil)
+		if err != nil {
+			if errors.Is(err, zstd.ErrDecoderSizeExceeded) {
+				return nil, ErrAnalysisTooLarge
+			}
+			return nil, err
+		}
+		return out, nil
 	}
 	r, err := zlib.NewReader(bytes.NewReader(data))
 	if err != nil {
@@ -79,16 +180,34 @@ func DecompressAnalysisData(data []byte) ([]byte, error) {
 	return out, nil
 }
 
-// RecompressAnalysisData ensures data is in compressed form: raw JSON is
-// compressed, already-compressed data is returned unchanged.
+// NeedsRecompression reports whether data is NOT already in the current zstd
+// format (i.e. it is raw JSON or legacy zlib) — a cheap, allocation-free
+// check on the first bytes, so a full-table pass (sqlite.Storage's vacuum
+// recompression step) can skip every row that is already current without
+// decompressing it first.
+func NeedsRecompression(data []byte) bool {
+	return len(data) > 0 && !isZstdFrame(data)
+}
+
+// RecompressAnalysisData ensures data is in the current codec's compressed
+// form: raw JSON and legacy zlib data are both (re)compressed to zstd;
+// already-zstd data is returned unchanged. This is the opportunistic upgrade
+// path — called on the native-.db import merge (db_import_db.go) and by the
+// background pass sqlite.Storage.Vacuum runs before compacting the file — so
+// a database migrates to the smaller format gradually, through the writes
+// and vacuums it already does, without a dedicated migration step.
 func RecompressAnalysisData(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
 	}
-	if data[0] != '{' {
+	if isZstdFrame(data) {
 		return data, nil
 	}
-	return CompressAnalysisData(data)
+	jsonData, err := DecompressAnalysisData(data)
+	if err != nil {
+		return nil, err
+	}
+	return CompressAnalysisData(jsonData)
 }
 
 // EncodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.

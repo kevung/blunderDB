@@ -16,4 +16,3 @@ ALTER TABLE position ADD COLUMN IF NOT EXISTS flagged BOOLEAN NOT NULL DEFAULT F
 
 CREATE INDEX IF NOT EXISTS idx_position_flagged ON position (tenant_id) WHERE flagged;
 
-UPDATE metadata SET value = '2.14.0' WHERE key = 'database_version';

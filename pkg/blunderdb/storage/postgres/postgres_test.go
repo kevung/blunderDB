@@ -267,15 +267,15 @@ func TestMigrate_013_SessionOutOfMetadata(t *testing.T) {
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("Migrate: %v", err)
 	}
-	// 013 stamps the version it introduced, not the current one, and this test
-	// replays 013 ALONE: it deletes that one row from schema_migrations, so the
-	// later migrations stay recorded as applied and Migrate does not re-run
-	// them. Replaying the whole tail instead would be worse than a stale stamp
-	// — 014 XORs the retired Zobrist keys out of every hash and is deliberately
-	// not idempotent (see its header), so a second pass would XOR them back in.
-	const versionStampedBy013 = "2.17.0"
-	if v, _ := s.Version(ctx); v != versionStampedBy013 {
-		t.Errorf("Version after 013: got %q, want %q", v, versionStampedBy013)
+	// Migrate writes database_version from domain.DatabaseVersion exactly
+	// once, after bootstrap and every forward migration have succeeded
+	// (#231) — never a migration's own intermediate stamp, so replaying 013
+	// ALONE (it deletes that one row from schema_migrations, so the later
+	// migrations stay recorded as applied and Migrate does not re-run them)
+	// still leaves Version reporting the current constant, not "whatever
+	// 013 used to write".
+	if v, _ := s.Version(ctx); v != domain.DatabaseVersion {
+		t.Errorf("Version after 013: got %q, want %q", v, domain.DatabaseVersion)
 	}
 
 	seven, err := s.Session().Load(ctx, "7")

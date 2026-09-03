@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -13,6 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -75,6 +77,71 @@ func (reg *importRegistry) cancel(scope, id string) bool {
 	}
 	j.cancel()
 	return true
+}
+
+// cancelAll aborts every in-flight job across every tenant, regardless of
+// scope. Server.Run calls this on both registries just before Shutdown
+// (#234): each job's own handler is watching its context and, once
+// cancelled, emits a trailing {"event":"cancelled"} and returns on its own,
+// so shutdown does not have to wait out the fixed ShutdownTimeout only to
+// cut every remaining stream's connection with no explanation.
+func (reg *importRegistry) cancelAll() {
+	reg.mu.Lock()
+	defer reg.mu.Unlock()
+	for _, j := range reg.jobs {
+		j.cancel()
+	}
+}
+
+// spoolQuota bounds the total bytes any in-flight import may hold spooled to
+// $TMPDIR at once, across every tenant: with no ceiling, N concurrent
+// imports each up to ImportMaxBodyBytes have no upper bound on disk usage
+// (#234). A reservation claims the worst case (ImportMaxBodyBytes) up front
+// rather than metering bytes as they arrive — simpler, and conservative in
+// the direction that matters: the quota is never under-counted while an
+// import is still spooling, only ever released once it (successfully or
+// not) is done.
+type spoolQuota struct {
+	max      int64
+	inFlight atomic.Int64
+}
+
+func newSpoolQuota(max int64) *spoolQuota { return &spoolQuota{max: max} }
+
+// reserve claims n bytes of the quota, reverting and refusing if that would
+// exceed max.
+func (q *spoolQuota) reserve(n int64) bool {
+	if q.inFlight.Add(n) > q.max {
+		q.inFlight.Add(-n)
+		return false
+	}
+	return true
+}
+
+func (q *spoolQuota) release(n int64) { q.inFlight.Add(-n) }
+
+// allowedUploadExtensions is the allow-list for the spool file's suffix,
+// taken from the upload's filename. An extension outside it is dropped
+// rather than the upload refused: the suffix is load-bearing only for the
+// formats that dispatch on it (GnuBG's .sgf vs .mat/.txt, single-position's
+// .xgp vs .txt — see ingest.MapGnuBG / ingest.PositionImporter) and purely
+// cosmetic for the rest (the endpoint's fixed ingest.Format already says
+// what to parse); either way, an attacker-controlled filename — arbitrary
+// bytes, a path separator — must never reach os.CreateTemp's pattern
+// unfiltered (#234).
+var allowedUploadExtensions = map[string]bool{
+	".xg": true, ".xgp": true, ".sgf": true, ".mat": true,
+	".bgf": true, ".txt": true, ".db": true, ".dbx": true,
+}
+
+// sanitizeUploadExt returns ext lower-cased when it is on
+// allowedUploadExtensions, or "" otherwise.
+func sanitizeUploadExt(ext string) string {
+	ext = strings.ToLower(ext)
+	if allowedUploadExtensions[ext] {
+		return ext
+	}
+	return ""
 }
 
 // importerFor returns the Importer for a format, or nil if unsupported on this
@@ -259,6 +326,16 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			return
 		}
 
+		// Claim the worst case (ImportMaxBodyBytes) against the global spool
+		// quota before touching the body at all: N concurrent imports each up
+		// to ImportMaxBodyBytes would otherwise have no ceiling on
+		// $TMPDIR usage (#234).
+		if !s.spool.reserve(s.opts.ImportMaxBodyBytes) {
+			writeErrorCode(w, CodeRateLimited, "too many imports in flight, try again shortly")
+			return
+		}
+		defer s.spool.release(s.opts.ImportMaxBodyBytes)
+
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 		file, header, err := r.FormFile("file")
 		if err != nil {
@@ -267,11 +344,14 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		defer file.Close()
 
-		// Preserve the upload's extension on the spool file: parser-backed
-		// formats dispatch on it (e.g. GnuBG .sgf vs .mat).
+		// Preserve the upload's extension on the spool file when it is on
+		// allowedUploadExtensions: parser-backed formats dispatch on it
+		// (e.g. GnuBG .sgf vs .mat) — anything else is dropped rather than
+		// letting an attacker-controlled filename reach the temp name
+		// unfiltered (#234).
 		ext := ""
 		if header != nil {
-			ext = filepath.Ext(header.Filename)
+			ext = sanitizeUploadExt(filepath.Ext(header.Filename))
 		}
 		tmpPath, cleanup, err := spoolToTemp(file, ext)
 		if err != nil {
@@ -280,7 +360,9 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		}
 		defer cleanup()
 
-		// A cancellable context, registered so imports.cancel can abort it.
+		// A cancellable context, registered so imports.cancel can abort it —
+		// and so can Server.Run, on every in-flight import, just before
+		// Shutdown (#234).
 		ctx, cancel := context.WithCancel(r.Context())
 		defer cancel()
 		scope := scopeOf(r)
@@ -311,6 +393,13 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 
 		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath}, prog)
 		if err != nil {
+			if errors.Is(err, context.Canceled) {
+				// imports.cancel, or a graceful shutdown cancelling every
+				// in-flight job (Server.Run) — either way the client asked
+				// for or was told about this, not a failure (#234).
+				emit(map[string]any{"event": "cancelled"})
+				return
+			}
 			emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 			return
 		}

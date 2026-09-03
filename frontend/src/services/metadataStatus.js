@@ -12,6 +12,7 @@ import { positionsStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore, statusBarTextStore } from '../stores/uiStore.js';
 import { tMsg, t } from '../i18n';
+import { formatDateTime } from '../utils/format.js';
 import { tableData as metTable } from '../stores/metTable';
 import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
 import { takePoint2LastTable } from '../stores/takePoint2LastTable';
@@ -31,9 +32,7 @@ function lookup(table, score, rowOffset, colOffset, decimals) {
 }
 
 function formatDate(date) {
-    const [year, month, day] = date.toLocaleDateString('sv-SE').split('-');
-    const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-    return `${year}/${month}/${day} ${time}`;
+    return formatDateTime(date);
 }
 
 export function showDatesAndMetadata() {
