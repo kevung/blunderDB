@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 10:07+0200\n"
+"POT-Creation-Date: 2026-09-03 19:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -132,47 +132,47 @@ msgstr ""
 " ese entero. Un nombre (``alice``) se rechaza con ``400 invalid``, nunca "
 "se convierte."
 
-#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:591
+#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:595
 msgid "**Options:**"
 msgstr "**Opciones:**"
 
-#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:538
-#: ../../source/mode_headless.rst:597
+#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:542
+#: ../../source/mode_headless.rst:601
 msgid "Option"
 msgstr "Opción"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:539
-#: ../../source/mode_headless.rst:598
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:543
+#: ../../source/mode_headless.rst:602
 msgid "Défaut"
 msgstr "Por defecto"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:540
-#: ../../source/mode_headless.rst:599
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:544
+#: ../../source/mode_headless.rst:603
 msgid "Signification"
 msgstr "Significado"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:600
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:604
 msgid "``--db <chemin>``"
 msgstr "``--db <chemin>``"
 
 #: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:96
 #: ../../source/mode_headless.rst:115 ../../source/mode_headless.rst:121
-#: ../../source/mode_headless.rst:542 ../../source/mode_headless.rst:545
-#: ../../source/mode_headless.rst:548 ../../source/mode_headless.rst:552
-#: ../../source/mode_headless.rst:601 ../../source/mode_headless.rst:617
-#: ../../source/mode_headless.rst:620
+#: ../../source/mode_headless.rst:546 ../../source/mode_headless.rst:549
+#: ../../source/mode_headless.rst:552 ../../source/mode_headless.rst:556
+#: ../../source/mode_headless.rst:605 ../../source/mode_headless.rst:621
+#: ../../source/mode_headless.rst:624
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:602
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:606
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "archivo SQLite (atajo de ``--backend sqlite --dsn <chemin>``)"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:603
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:607
 msgid "``--backend <type>``"
 msgstr "``--backend <type>``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:604
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:608
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -180,15 +180,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "backend de almacenamiento: ``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:606
+#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:610
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <chaîne>``"
 
-#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:607
+#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:611
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:608
+#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:612
 msgid "chaîne de connexion du backend"
 msgstr "cadena de conexión del backend"
 
@@ -239,9 +239,9 @@ msgid ""
 "l'origine de la requête si elle figure dans la liste, avec ``Vary: "
 "Origin``"
 msgstr ""
-"activa CORS para este origen, una lista de orígenes separados por comas, o "
-"``*`` (desactivado por defecto); la respuesta solo refleja el origen de la "
-"solicitud si figura en la lista, con ``Vary: Origin``"
+"activa CORS para este origen, una lista de orígenes separados por comas, "
+"o ``*`` (desactivado por defecto); la respuesta solo refleja el origen de"
+" la solicitud si figura en la lista, con ``Vary: Origin``"
 
 #: ../../source/mode_headless.rst:101
 msgid "``--rate-limit-rps <n>``"
@@ -468,12 +468,13 @@ msgid ""
 "plafond."
 msgstr ""
 "Cada solicitud ``/v1`` acepta un cuerpo JSON (``Content-Type: "
-"application/json``, o ningún encabezado — un cuerpo de otro tipo se rechaza "
-"con ``400 invalid`` en lugar de fallar con un mensaje de análisis JSON "
-"confuso); un método conocido invocado con el verbo HTTP equivocado responde "
-"``405``, con el encabezado ``Allow`` nombrando el único verbo aceptado. Los "
-"métodos de listado que aceptan un ``limit`` rechazan más de 1000 filas por "
-"página (``400 invalid``) en lugar de aceptar un valor sin límite."
+"application/json``, o ningún encabezado — un cuerpo de otro tipo se "
+"rechaza con ``400 invalid`` en lugar de fallar con un mensaje de análisis"
+" JSON confuso); un método conocido invocado con el verbo HTTP equivocado "
+"responde ``405``, con el encabezado ``Allow`` nombrando el único verbo "
+"aceptado. Los métodos de listado que aceptan un ``limit`` rechazan más de"
+" 1000 filas por página (``400 invalid``) en lugar de aceptar un valor sin"
+" límite."
 
 #: ../../source/mode_headless.rst:194
 #, no-python-brace-format
@@ -496,24 +497,24 @@ msgid ""
 " (``too many requests``) plutôt que de laisser croître sans borne "
 "l'occupation de ``$TMPDIR``."
 msgstr ""
-"Cada conexión TCP tiene un límite de lectura/escritura por solicitud — un "
-"margen generoso para las llamadas ordinarias, mucho mayor para las rutas que "
-"transmiten (listas NDJSON, importaciones/exportaciones, el barrido de "
-"recuperación de gammonNet) — y el número de ellas abiertas a la vez está "
-"limitado: superado ese número, una conexión adicional espera a que se libere "
-"una de las existentes en lugar de que cada conexión reciba "
+"Cada conexión TCP tiene un límite de lectura/escritura por solicitud — un"
+" margen generoso para las llamadas ordinarias, mucho mayor para las rutas"
+" que transmiten (listas NDJSON, importaciones/exportaciones, el barrido "
+"de recuperación de gammonNet) — y el número de ellas abiertas a la vez "
+"está limitado: superado ese número, una conexión adicional espera a que "
+"se libere una de las existentes en lugar de que cada conexión reciba "
 "incondicionalmente su propio hilo de ejecución. Un cierre ordenado "
-"(``SIGINT``/``SIGTERM``) cancela primero toda importación y todo barrido de "
-"recuperación de gammonNet en curso — cada uno responde con un evento final "
-"``{\"event\":\"cancelled\"}`` en lugar de que su conexión se corte sin "
-"explicación — antes de cerrar el servidor dentro del plazo de gracia "
+"(``SIGINT``/``SIGTERM``) cancela primero toda importación y todo barrido "
+"de recuperación de gammonNet en curso — cada uno responde con un evento "
+"final ``{\"event\":\"cancelled\"}`` en lugar de que su conexión se corte "
+"sin explicación — antes de cerrar el servidor dentro del plazo de gracia "
 "habitual. El archivo temporal de una importación subida conserva de la "
 "extensión original solo las que el daemon reconoce (``.xg``, ``.xgp``, "
 "``.sgf``, ``.mat``, ``.bgf``, ``.txt``, ``.db``, ``.dbx``), y todas las "
 "importaciones simultáneas — de todos los tenants — comparten una cuota "
-"global de bytes volcados a disco: superada, una nueva importación se rechaza "
-"(``too many requests``) en lugar de dejar crecer sin límite la ocupación de "
-"``$TMPDIR``."
+"global de bytes volcados a disco: superada, una nueva importación se "
+"rechaza (``too many requests``) en lugar de dejar crecer sin límite la "
+"ocupación de ``$TMPDIR``."
 
 #: ../../source/mode_headless.rst:211
 msgid ""
@@ -683,9 +684,13 @@ msgstr ""
 msgid ""
 "``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant "
 "courant : écrire une analyse pour chaque position qui n'en a aucune "
-"(ADR-0013, ADR-0015). C'est une opération de **bibliothèque** — elle lit "
-"et écrit des positions et des analyses stockées — jamais un évaluateur nu"
-" : ``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` "
+"(`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013"
+"-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, "
+"`ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015"
+"-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-"
+"evaluator.md>`__). C'est une opération de **bibliothèque** — elle lit et "
+"écrit des positions et des analyses stockées — jamais un évaluateur nu : "
+"``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` "
 "évalue une position. La réponse est un flux NDJSON (``started``, "
 "``progress``, puis ``done`` ou ``error``/``cancelled``), sur le même "
 "modèle que les points d'accès d'import ; "
@@ -696,22 +701,26 @@ msgid ""
 " explicite de l'interface graphique, et que la sous-commande ``blunderdb "
 "analyze`` (voir :ref:`cli`) — trois formes, une seule logique."
 msgstr ""
-"``gammonnet.analyzeMissing`` dispara la puesta al día gammonNet del "
-"tenant actual: escribir un análisis para cada posición que no tiene "
-"ninguno (ADR-0013, ADR-0015). Es una operación de **biblioteca** — lee y "
-"escribe posiciones y análisis almacenados — nunca un evaluador desnudo: "
-"``blunderdb serve`` opera sobre una biblioteca, ``gammonnet serve`` "
-"evalúa una posición. La respuesta es un flujo NDJSON (``started``, "
-"``progress``, luego ``done`` o ``error``/``cancelled``), con el mismo "
-"modelo que los puntos de acceso de importación; "
-"``gammonnet.analyzeMissing.cancel`` (con el ``job_id`` recibido en el "
-"evento ``started``) cancela una puesta al día en curso y sirve "
-"indistintamente para una puesta al día o una reanálisis (más abajo). Es "
-"la misma operación que el disparo automático tras la importación y el "
-"gesto explícito de la interfaz gráfica, y que el subcomando ``blunderdb "
-"analyze`` (véase :ref:`cli`) — tres formas, una sola lógica."
+"``gammonnet.analyzeMissing`` dispara la puesta al día gammonNet del tenant "
+"actual: escribir un análisis para cada posición que no tiene ninguno "
+"(`ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__, `ADR-0015 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-"
+"serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__). Es una "
+"operación de **biblioteca** — lee y escribe posiciones y análisis "
+"almacenados — nunca un evaluador desnudo: ``blunderdb serve`` opera sobre "
+"una biblioteca, ``gammonnet serve`` evalúa una posición. La respuesta es un "
+"flujo NDJSON (``started``, ``progress``, luego ``done`` o "
+"``error``/``cancelled``), con el mismo modelo que los puntos de acceso de "
+"importación; ``gammonnet.analyzeMissing.cancel`` (con el ``job_id`` recibido"
+" en el evento ``started``) cancela una puesta al día en curso y sirve "
+"indistintamente para una puesta al día o una reanálisis (más abajo). Es la "
+"misma operación que el disparo automático tras la importación y el gesto "
+"explícito de la interfaz gráfica, y que el subcomando ``blunderdb analyze`` "
+"(véase :ref:`cli`) — tres formas, una sola lógica."
 
-#: ../../source/mode_headless.rst:297
+#: ../../source/mode_headless.rst:299
 msgid ""
 "``gammonnet.sweepStale`` est le pendant de ``analyzeMissing`` pour la "
 "réanalyse plutôt que le comblement : chaque position dont l'analyse est "
@@ -722,36 +731,40 @@ msgid ""
 "``blunderdb analyze --stale`` (aucune duplication de la logique entre les"
 " trois modes) ; une position portant une analyse XG, GNUbg ou BGBlitz "
 "n'est jamais touchée, quel que soit son contenu gammonNet — la protection"
-" d'ADR-0013 reste inconditionnelle. Même forme NDJSON "
-"qu'``analyzeMissing``, et l'évènement final de chacune des deux routes "
-"porte désormais la répartition ``evaluated``/``refused``/``failed`` : une"
-" position que gammonNet refuse d'évaluer (un score de match hors de la "
-"portée de sa table, une décision de videau que le modèle refuse) compte "
-"comme ``refused``, pas ``failed`` — elle n'est jamais retentée en vain "
-"sur la passe suivante, contrairement à une position réellement en échec."
+" d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013"
+"-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__ "
+"reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et "
+"l'évènement final de chacune des deux routes porte désormais la "
+"répartition ``evaluated``/``refused``/``failed`` : une position que "
+"gammonNet refuse d'évaluer (un score de match hors de la portée de sa "
+"table, une décision de videau que le modèle refuse) compte comme "
+"``refused``, pas ``failed`` — elle n'est jamais retentée en vain sur la "
+"passe suivante, contrairement à une position réellement en échec."
 msgstr ""
-"``gammonnet.sweepStale`` es la contrapartida de ``analyzeMissing`` para "
-"la reanálisis en lugar de la puesta al día: cada posición cuyo análisis "
-"proviene enteramente de gammonNet pero está obsoleto — una versión del "
-"motor más antigua que la que se ejecuta, o una profundidad distinta de "
-"``ply`` — se reevalúa a la profundidad solicitada. El predicado de "
-"obsolescencia se comparte con el mismo lote de la interfaz gráfica y de "
-"``blunderdb analyze --stale`` (ninguna lógica duplicada entre los tres "
-"modos); una posición que lleva un análisis de XG, GNUbg o BGBlitz nunca "
-"es tocada, sea cual sea su contenido de gammonNet — la protección de "
-"ADR-0013 sigue siendo incondicional. Misma forma NDJSON que "
-"``analyzeMissing``, y el evento final de cada una de las dos rutas lleva "
-"ahora el desglose ``evaluated``/``refused``/``failed``: una posición que "
-"gammonNet se niega a evaluar (una puntuación de partida fuera del alcance"
-" de su tabla, una decisión de doblaje que el modelo rechaza) cuenta como "
-"``refused``, no ``failed`` — nunca se reintenta en vano en el siguiente "
-"pase, a diferencia de una posición que realmente falló."
+"``gammonnet.sweepStale`` es la contrapartida de ``analyzeMissing`` para la "
+"reanálisis en lugar de la puesta al día: cada posición cuyo análisis "
+"proviene enteramente de gammonNet pero está obsoleto — una versión del motor"
+" más antigua que la que se ejecuta, o una profundidad distinta de ``ply`` — "
+"se reevalúa a la profundidad solicitada. El predicado de obsolescencia se "
+"comparte con el mismo lote de la interfaz gráfica y de ``blunderdb analyze "
+"--stale`` (ninguna lógica duplicada entre los tres modos); una posición que "
+"lleva un análisis de XG, GNUbg o BGBlitz nunca es tocada, sea cual sea su "
+"contenido de gammonNet — la protección de `ADR-0013 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
+"fill-gaps-an-imported-analysis-is-never-overwritten.md>`__ sigue siendo "
+"incondicional. Misma forma NDJSON que ``analyzeMissing``, y el evento final "
+"de cada una de las dos rutas lleva ahora el desglose "
+"``evaluated``/``refused``/``failed``: una posición que gammonNet se niega a "
+"evaluar (una puntuación de partida fuera del alcance de su tabla, una "
+"decisión de doblaje que el modelo rechaza) cuenta como ``refused``, no "
+"``failed`` — nunca se reintenta en vano en el siguiente pase, a diferencia "
+"de una posición que realmente falló."
 
-#: ../../source/mode_headless.rst:317
+#: ../../source/mode_headless.rst:320
 msgid "Déploiement avec Docker"
 msgstr "Despliegue con Docker"
 
-#: ../../source/mode_headless.rst:319
+#: ../../source/mode_headless.rst:322
 msgid ""
 "Le dépôt fournit un ``Dockerfile.serve`` qui construit une image "
 "conteneur minimale du démon : seul le binaire ``serve`` est compilé (Go "
@@ -763,7 +776,7 @@ msgstr ""
 "``serve`` (Go puro, sin interfaz gráfica y sin CGO, por lo que está "
 "enlazado estáticamente), que luego se coloca en una imagen *distroless*."
 
-#: ../../source/mode_headless.rst:334
+#: ../../source/mode_headless.rst:337
 msgid ""
 "L'image écoute sur le port 8080 et se configure par variables "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
@@ -783,11 +796,11 @@ msgstr ""
 "orquestador pueden esperar a que el demonio esté disponible antes de "
 "arrancar lo que depende de él."
 
-#: ../../source/mode_headless.rst:346
+#: ../../source/mode_headless.rst:349
 msgid "Image publiée"
 msgstr "Imagen publicada"
 
-#: ../../source/mode_headless.rst:348
+#: ../../source/mode_headless.rst:351
 msgid ""
 "Il n'est pas nécessaire de construire l'image soi-même : chaque version "
 "publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous"
@@ -805,7 +818,7 @@ msgstr ""
 "para ``linux/amd64`` y ``linux/arm64``; Docker elige la arquitectura del "
 "host."
 
-#: ../../source/mode_headless.rst:370
+#: ../../source/mode_headless.rst:373
 msgid ""
 "L'image porte les étiquettes OCI usuelles "
 "(``org.opencontainers.image.source``, ``.version``, ``.revision``, "
@@ -822,45 +835,53 @@ msgstr ""
 "construirla localmente o descargar la imagen publicada da el mismo "
 "binario."
 
-#: ../../source/mode_headless.rst:378
+#: ../../source/mode_headless.rst:381
 msgid ""
 "Comme le démon lui-même, le conteneur n'effectue **aucune "
-"authentification** (ADR-0005) : il fait confiance à l'en-tête ``X-Tenant-"
-"ID`` tel qu'il le reçoit. Il doit être placé derrière un reverse-proxy "
-"chargé de l'authentification, qui fixe cet en-tête lui-même, et ne jamais"
-" être exposé directement sur l'Internet public. Les exemples ci-dessus "
-"publient le port sur ``127.0.0.1`` seulement pour cette raison."
+"authentification** (`ADR-0005 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-"
+"daemon-delegates-authentication.md>`__) : il fait confiance à l'en-tête "
+"``X-Tenant-ID`` tel qu'il le reçoit. Il doit être placé derrière un "
+"reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-"
+"même, et ne jamais être exposé directement sur l'Internet public. Les "
+"exemples ci-dessus publient le port sur ``127.0.0.1`` seulement pour "
+"cette raison."
 msgstr ""
 "Al igual que el propio demonio, el contenedor no realiza **ninguna "
-"autenticación** (ADR-0005): confía en la cabecera ``X-Tenant-ID`` tal "
-"como la recibe. Debe colocarse detrás de un reverse-proxy encargado de la"
-" autenticación, que fije él mismo esa cabecera, y no exponerse nunca "
+"autenticación** (`ADR-0005 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-"
+"delegates-authentication.md>`__): confía en la cabecera ``X-Tenant-ID`` tal "
+"como la recibe. Debe colocarse detrás de un reverse-proxy encargado de la "
+"autenticación, que fije él mismo esa cabecera, y no exponerse nunca "
 "directamente en la Internet pública. Los ejemplos anteriores publican el "
 "puerto solo en ``127.0.0.1`` por esta razón."
 
-#: ../../source/mode_headless.rst:388
+#: ../../source/mode_headless.rst:391
 msgid "Déploiement derrière un proxy authentifiant"
 msgstr "Despliegue detrás de un proxy autenticador"
 
-#: ../../source/mode_headless.rst:390
+#: ../../source/mode_headless.rst:393
 msgid ""
-"L'ADR-0005 fait du reverse-proxy **toute** la frontière de sécurité du "
-"démon : lui seul authentifie l'appelant, lui seul a le droit de poser l"
-"'en-tête ``X-Tenant-ID``, et il doit **retirer** systématiquement toute "
-"valeur envoyée par le client avant d'y injecter le tenant authentifié — "
-"sans quoi n'importe qui peut se faire passer pour n'importe quel tenant "
-"en le nommant lui-même. Le dépôt fournit un exemple complet sous "
-"``deploy/`` :"
+"L'`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005"
+"-serve-daemon-delegates-authentication.md>`__ fait du reverse-proxy "
+"**toute** la frontière de sécurité du démon : lui seul authentifie "
+"l'appelant, lui seul a le droit de poser l'en-tête ``X-Tenant-ID``, et il"
+" doit **retirer** systématiquement toute valeur envoyée par le client "
+"avant d'y injecter le tenant authentifié — sans quoi n'importe qui peut "
+"se faire passer pour n'importe quel tenant en le nommant lui-même. Le "
+"dépôt fournit un exemple complet sous ``deploy/`` :"
 msgstr ""
-"El ADR-0005 convierte al reverse-proxy en **toda** la frontera de "
-"seguridad del demonio: solo él autentica al que llama, solo él tiene "
-"derecho a fijar la cabecera ``X-Tenant-ID``, y debe **eliminar** "
-"sistemáticamente cualquier valor enviado por el cliente antes de inyectar"
-" el tenant autenticado — de lo contrario, cualquiera puede hacerse pasar "
-"por cualquier tenant simplemente nombrándolo. El repositorio ofrece un "
-"ejemplo completo en ``deploy/``:"
+"El `ADR-0005 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-"
+"delegates-authentication.md>`__ convierte al reverse-proxy en **toda** la "
+"frontera de seguridad del demonio: solo él autentica al que llama, solo él "
+"tiene derecho a fijar la cabecera ``X-Tenant-ID``, y debe **eliminar** "
+"sistemáticamente cualquier valor enviado por el cliente antes de inyectar el"
+" tenant autenticado — de lo contrario, cualquiera puede hacerse pasar por "
+"cualquier tenant simplemente nombrándolo. El repositorio ofrece un ejemplo "
+"completo en ``deploy/``:"
 
-#: ../../source/mode_headless.rst:397
+#: ../../source/mode_headless.rst:401
 msgid ""
 "``deploy/docker-compose.yml`` — Caddy (authentification HTTP Basic de "
 "démonstration) devant ``blunderdb-serve`` et PostgreSQL (Row-Level "
@@ -874,7 +895,7 @@ msgstr ""
 "PostgreSQL viven en una red Docker interna (``internal: true``) sin ruta "
 "ni hacia el host ni hacia Internet;"
 
-#: ../../source/mode_headless.rst:402
+#: ../../source/mode_headless.rst:406
 msgid ""
 "``deploy/Caddyfile`` — la configuration de Caddy : authentifie, associe "
 "le compte authentifié à l'entier du tenant (``map``), puis l'injecte dans"
@@ -887,7 +908,7 @@ msgstr ""
 "recibido del cliente (guardia ``header_up X-Tenant-ID \"\"`` seguida de "
 "la inyección);"
 
-#: ../../source/mode_headless.rst:406
+#: ../../source/mode_headless.rst:410
 msgid ""
 "``deploy/nginx-tenant-proxy.conf`` — le même schéma en extrait nginx "
 "(``proxy_set_header X-Tenant-ID \"\"`` puis ``proxy_set_header X-Tenant-"
@@ -897,7 +918,7 @@ msgstr ""
 "nginx (``proxy_set_header X-Tenant-ID \"\"`` y luego ``proxy_set_header X"
 "-Tenant-ID $tenant_id``), para quien ya tenga un nginx en marcha;"
 
-#: ../../source/mode_headless.rst:409
+#: ../../source/mode_headless.rst:413
 msgid ""
 "``deploy/README.md`` — le modèle de menace en trois phrases et ce qu'il "
 "ne faut jamais faire (exposer le démon nu)."
@@ -905,7 +926,7 @@ msgstr ""
 "``deploy/README.md`` — el modelo de amenaza en tres frases y lo que nunca"
 " debe hacerse (exponer el demonio desnudo)."
 
-#: ../../source/mode_headless.rst:412
+#: ../../source/mode_headless.rst:416
 msgid ""
 "L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas"
 " une recommandation de production : elle se remplace par ``forward_auth``"
@@ -917,11 +938,11 @@ msgstr ""
 "proveedor de identidad real (OIDC, SSO corporativo…), que autentica y "
 "luego transmite la identidad en el mismo punto del fichero."
 
-#: ../../source/mode_headless.rst:417
+#: ../../source/mode_headless.rst:421
 msgid "**Scénario complet, de zéro à un démon qui répond :**"
 msgstr "**Escenario completo, de cero a un demonio que responde:**"
 
-#: ../../source/mode_headless.rst:441
+#: ../../source/mode_headless.rst:445
 msgid ""
 "Ce scénario a été rejoué tel quel : ``blunderdb-serve`` et PostgreSQL "
 "démarrent, Caddy authentifie et route, et le journal du démon confirme "
@@ -933,11 +954,11 @@ msgstr ""
 "que solo el entero inyectado por el proxy — nunca el del cliente — llega "
 "a la capa de aplicación."
 
-#: ../../source/mode_headless.rst:449
+#: ../../source/mode_headless.rst:453
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "Backend PostgreSQL y multiusuario"
 
-#: ../../source/mode_headless.rst:451
+#: ../../source/mode_headless.rst:455
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -949,7 +970,7 @@ msgstr ""
 " mediante ``--backend postgres`` y la cadena de conexión ``--dsn``. El "
 "esquema se crea y se migra automáticamente al arrancar."
 
-#: ../../source/mode_headless.rst:456
+#: ../../source/mode_headless.rst:460
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier "
@@ -975,7 +996,7 @@ msgstr ""
 "``app.tenant_id`` se fija por conexión. Es una defensa en profundidad "
 "opcional, desactivada por defecto."
 
-#: ../../source/mode_headless.rst:467
+#: ../../source/mode_headless.rst:471
 msgid ""
 "Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
@@ -1001,7 +1022,7 @@ msgstr ""
 "devuelve un error ``invalid`` en un backend SQLite, que no tiene noción "
 "de tenant."
 
-#: ../../source/mode_headless.rst:478
+#: ../../source/mode_headless.rst:482
 msgid ""
 "Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier "
 "SQLite du daemon — le pendant du bouton « Compacter la base » de "
@@ -1019,7 +1040,7 @@ msgstr ""
 "disponible con el backend SQLite; en PostgreSQL, que no tiene archivo que"
 " compactar, devuelve un error ``invalid``."
 
-#: ../../source/mode_headless.rst:486
+#: ../../source/mode_headless.rst:490
 msgid ""
 "Le pool de connexions PostgreSQL se règle par variable d'environnement : "
 "``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 par défaut), "
@@ -1038,29 +1059,29 @@ msgid ""
 "configuré) et ``_wait_count`` (nombre cumulé d'``Acquire`` ayant dû "
 "attendre une connexion libre)."
 msgstr ""
-"El pool de conexiones de PostgreSQL se ajusta mediante variables de entorno: "
-"``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 por defecto), "
+"El pool de conexiones de PostgreSQL se ajusta mediante variables de "
+"entorno: ``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 por defecto), "
 "``BLUNDERDB_POSTGRES_MIN_CONNS`` (5), "
 "``BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME`` (``1h``), "
 "``BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD`` (``30s``), "
-"``BLUNDERDB_POSTGRES_CONNECT_TIMEOUT`` (``5s`` — superado ese tiempo, una "
-"base de datos inalcanzable falla rápido en lugar de bloquearse en el tiempo "
-"de espera TCP del sistema operativo) y "
-"``BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME`` (``30m`` — una conexión abierta "
-"para un pico de tráfico no permanece indefinidamente en el pool una vez "
-"pasado el pico). Cada valor es una duración en formato Go (``5s``, ``30m``, "
-"``1h``); ausente o inválida, se aplica su valor por defecto. Cuando "
-"``--metrics`` está activo, el estado del pool se expone continuamente en "
-"``/metrics``: ``blunderdb_pg_pool_acquired`` (conexiones actualmente en "
-"uso), ``_idle`` (disponibles), ``_max`` (el límite configurado) y "
-"``_wait_count`` (el número acumulado de llamadas ``Acquire`` que tuvieron "
-"que esperar una conexión libre)."
+"``BLUNDERDB_POSTGRES_CONNECT_TIMEOUT`` (``5s`` — superado ese tiempo, una"
+" base de datos inalcanzable falla rápido en lugar de bloquearse en el "
+"tiempo de espera TCP del sistema operativo) y "
+"``BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME`` (``30m`` — una conexión abierta"
+" para un pico de tráfico no permanece indefinidamente en el pool una vez "
+"pasado el pico). Cada valor es una duración en formato Go (``5s``, "
+"``30m``, ``1h``); ausente o inválida, se aplica su valor por defecto. "
+"Cuando ``--metrics`` está activo, el estado del pool se expone "
+"continuamente en ``/metrics``: ``blunderdb_pg_pool_acquired`` (conexiones"
+" actualmente en uso), ``_idle`` (disponibles), ``_max`` (el límite "
+"configurado) y ``_wait_count`` (el número acumulado de llamadas "
+"``Acquire`` que tuvieron que esperar una conexión libre)."
 
-#: ../../source/mode_headless.rst:505
+#: ../../source/mode_headless.rst:509
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "Migrar una base SQLite a PostgreSQL"
 
-#: ../../source/mode_headless.rst:507
+#: ../../source/mode_headless.rst:511
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
@@ -1072,7 +1093,7 @@ msgstr ""
 "enviará en ``X-Tenant-ID`` para ese usuario — es el camino para « subir »"
 " una biblioteca de escritorio a un despliegue en servidor."
 
-#: ../../source/mode_headless.rst:523
+#: ../../source/mode_headless.rst:527
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -1097,27 +1118,27 @@ msgstr ""
 "primero y emite sus propios eventos ``\"schema-migration\"`` "
 "(fase/hecho/total) antes de que empiece la copia línea a línea."
 
-#: ../../source/mode_headless.rst:541
+#: ../../source/mode_headless.rst:545
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:543
+#: ../../source/mode_headless.rst:547
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr "base SQLite de origen (``sqlite:///chemin`` o una simple ruta)"
 
-#: ../../source/mode_headless.rst:544
+#: ../../source/mode_headless.rst:548
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:546
+#: ../../source/mode_headless.rst:550
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "DSN PostgreSQL de destino (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:547
+#: ../../source/mode_headless.rst:551
 msgid "``--tenant-id <n>``"
 msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:549
+#: ../../source/mode_headless.rst:553
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
@@ -1125,23 +1146,23 @@ msgstr ""
 "tenant de destino, un entero decimal positivo (obligatorio salvo en "
 "``--dry-run``; un nombre como ``mon-tenant`` se rechaza)"
 
-#: ../../source/mode_headless.rst:551
+#: ../../source/mode_headless.rst:555
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:553
+#: ../../source/mode_headless.rst:557
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "cuenta lo que se copiaría sin escribir nada"
 
-#: ../../source/mode_headless.rst:554
+#: ../../source/mode_headless.rst:558
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politique>``"
 
-#: ../../source/mode_headless.rst:555
+#: ../../source/mode_headless.rst:559
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:556
+#: ../../source/mode_headless.rst:560
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -1149,7 +1170,7 @@ msgstr ""
 "``\"\"`` se interrumpe si el tenant ya tiene datos; ``skip`` fusiona "
 "(deduplicación de las posiciones por hash Zobrist)"
 
-#: ../../source/mode_headless.rst:561
+#: ../../source/mode_headless.rst:565
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -1161,11 +1182,11 @@ msgstr ""
 "de sesión. La prioridad es la migración de la biblioteca de posiciones y "
 "del historial de partidas."
 
-#: ../../source/mode_headless.rst:569
+#: ../../source/mode_headless.rst:573
 msgid "Le dispatcher générique ``call``"
 msgstr "El despachador genérico ``call``"
 
-#: ../../source/mode_headless.rst:571
+#: ../../source/mode_headless.rst:575
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -1180,19 +1201,19 @@ msgstr ""
 "/v1/<famille>.<méthode>``. Resulta útil para el scripting y las pruebas "
 "de integración."
 
-#: ../../source/mode_headless.rst:605
+#: ../../source/mode_headless.rst:609
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:609
+#: ../../source/mode_headless.rst:613
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:610
+#: ../../source/mode_headless.rst:614
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:611
+#: ../../source/mode_headless.rst:615
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -1200,36 +1221,36 @@ msgstr ""
 "tenant, un entero decimal positivo (enviado como ``X-Tenant-ID``; un "
 "nombre como ``alice`` se rechaza)"
 
-#: ../../source/mode_headless.rst:613
+#: ../../source/mode_headless.rst:617
 msgid "``--json <chaîne>``"
 msgstr "``--json <chaîne>``"
 
-#: ../../source/mode_headless.rst:614
+#: ../../source/mode_headless.rst:618
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:615
+#: ../../source/mode_headless.rst:619
 msgid "corps de la requête au format JSON"
 msgstr "cuerpo de la petición en formato JSON"
 
-#: ../../source/mode_headless.rst:616
+#: ../../source/mode_headless.rst:620
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <chemin>``"
 
-#: ../../source/mode_headless.rst:618
+#: ../../source/mode_headless.rst:622
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "lee el cuerpo de la petición desde un archivo"
 
-#: ../../source/mode_headless.rst:619
+#: ../../source/mode_headless.rst:623
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:621
+#: ../../source/mode_headless.rst:625
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "muestra todos los métodos ``<famille>.<méthode>`` y sale"
 
-#: ../../source/mode_headless.rst:623
+#: ../../source/mode_headless.rst:627
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "

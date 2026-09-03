@@ -281,8 +281,10 @@ lecture était fautive avant la version 0.33.0 et qui portaient l'erreur d'un
 double qui n'a jamais eu lieu.
 
 ``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant
-courant : écrire une analyse pour chaque position qui n'en a aucune (ADR-0013,
-ADR-0015). C'est une opération de **bibliothèque** — elle lit et écrit des
+courant : écrire une analyse pour chaque position qui n'en a aucune
+(`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__,
+`ADR-0015 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md>`__).
+C'est une opération de **bibliothèque** — elle lit et écrit des
 positions et des analyses stockées — jamais un évaluateur nu :
 ``blunderdb serve`` opère sur une bibliothèque, ``gammonnet serve`` évalue une
 position. La réponse est un flux NDJSON (``started``, ``progress``, puis
@@ -303,7 +305,8 @@ est partagé avec le même lot de l'interface graphique et de
 ``blunderdb analyze --stale`` (aucune duplication de la logique entre les
 trois modes) ; une position portant une analyse XG, GNUbg ou BGBlitz n'est
 jamais touchée, quel que soit son contenu gammonNet — la protection
-d'ADR-0013 reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et
+d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__
+reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et
 l'évènement final de chacune des deux routes porte désormais la répartition
 ``evaluated``/``refused``/``failed`` : une position que gammonNet refuse
 d'évaluer (un score de match hors de la portée de sa table, une décision de
@@ -376,7 +379,7 @@ construire localement ou tirer l'image publiée donne le même binaire.
 .. warning::
 
    Comme le démon lui-même, le conteneur n'effectue **aucune
-   authentification** (ADR-0005) : il fait confiance à l'en-tête
+   authentification** (`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md>`__) : il fait confiance à l'en-tête
    ``X-Tenant-ID`` tel qu'il le reçoit. Il doit être placé derrière un
    reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-même,
    et ne jamais être exposé directement sur l'Internet public. Les exemples
@@ -387,7 +390,8 @@ construire localement ou tirer l'image publiée donne le même binaire.
 Déploiement derrière un proxy authentifiant
 --------------------------------------------
 
-L'ADR-0005 fait du reverse-proxy **toute** la frontière de sécurité du démon :
+L'`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md>`__
+fait du reverse-proxy **toute** la frontière de sécurité du démon :
 lui seul authentifie l'appelant, lui seul a le droit de poser l'en-tête
 ``X-Tenant-ID``, et il doit **retirer** systématiquement toute valeur envoyée
 par le client avant d'y injecter le tenant authentifié — sans quoi n'importe

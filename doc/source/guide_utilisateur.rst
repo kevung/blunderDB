@@ -151,7 +151,7 @@ Déployer le mode serveur derrière un proxy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le mode serveur (``blunderdb serve``) expose le moteur de blunderDB en HTTP
-+ JSON. Il **n'authentifie personne** (ADR-0005) : il fait confiance à
++ JSON. Il **n'authentifie personne** (`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md>`__) : il fait confiance à
 l'en-tête ``X-Tenant-ID`` tel qu'il le reçoit, et doit donc toujours être
 placé derrière un reverse-proxy qui, lui, authentifie et fixe cet en-tête.
 Ce tutoriel déploie l'image publiée derrière un nginx minimal, en

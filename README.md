@@ -113,7 +113,7 @@ Everyone taking part is bound by the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Contributing
 
-Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md): prerequisites, `make check` (everything CI enforces), the worktree workflow, and the two documentation rules — a user-visible change ships with its French documentation in the same branch, and a modified `.rst` ships with its eight `.po` in the same commit. The invariants that tests do not catch are listed in [CLAUDE.md](CLAUDE.md); design decisions are recorded in [docs/adr/](docs/adr/README.md).
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md): prerequisites, `make check` (everything CI enforces), the worktree workflow, and the two documentation rules — a user-visible change ships with its French documentation in the same branch, and a modified `.rst` ships with its eight `.po` in the same commit. [ARCHITECTURE.md](ARCHITECTURE.md) is a diagram-first tour of the system; the invariants that tests do not catch are listed in [CLAUDE.md](CLAUDE.md); design decisions are recorded in [docs/adr/](docs/adr/README.md).
 
 ## License
 
