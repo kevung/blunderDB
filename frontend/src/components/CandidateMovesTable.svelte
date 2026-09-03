@@ -178,7 +178,7 @@
         box-sizing: border-box;
         vertical-align: middle;
         background: #fafafa;
-        color: #999;
+        color: var(--color-text-muted);
         font-style: italic;
         border-bottom: 2px solid #ddd;
         position: sticky;
@@ -197,11 +197,11 @@
     }
 
     .sortable:hover {
-        color: #1a56c4;
+        color: var(--color-primary);
     }
 
     .active-sort {
-        color: #1a56c4;
+        color: var(--color-primary);
     }
 
     @container (max-width: 600px) {

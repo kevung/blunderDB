@@ -152,12 +152,15 @@ describe('applyTabPanels — rapid switching', () => {
     });
 
     test('panels managed by applyTabPanels do not bleed onto unmanaged panels', () => {
-        // Put a non-managed panel in openPanels before switching
-        openPanel(PANEL.ANALYSIS);
+        // Put an arbitrary, unmanaged name in openPanels before switching — applyTabPanels
+        // only ever touches MATCH/STATS/TOURNAMENT/COLLECTION (see uiStore.js's PANEL
+        // comment: there is no ANALYSIS or COMMENT entry to use as this sentinel any more).
+        const UNMANAGED = 'sentinel-unmanaged-panel';
+        openPanel(UNMANAGED);
         applyTabPanels('stats');
 
-        // ANALYSIS was not managed by applyTabPanels — must still be open
-        expect(get(openPanels).has(PANEL.ANALYSIS)).toBe(true);
+        // The sentinel was not managed by applyTabPanels — must still be open
+        expect(get(openPanels).has(UNMANAGED)).toBe(true);
         // STATS must be open
         expect(get(openPanels).has(PANEL.STATS)).toBe(true);
     });

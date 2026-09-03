@@ -25,12 +25,10 @@
     let mode = $derived($statusBarModeStore);
     let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
     let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
-    // openPanels/PANEL.COMMENT is never set: the 'comments' tab has driven no
-    // PANEL since the tabHandler.js refactor (applyTabPanels only wires
-    // matches/stats/tournaments/collections there), so that flag reads as
-    // permanently closed. The comment panel is the CommentPanel instance
-    // TabbedPanel mounts, one-to-one with the active tab (see that file's
-    // {#if} — same fix as AnalysisPanel's stuck selectedMoveStore).
+    // There is no PANEL entry for the comment tab (see uiStore.js's PANEL comment).
+    // The comment panel is the CommentPanel instance TabbedPanel mounts, one-to-one
+    // with the active tab (see that file's {#if} — same fix as AnalysisPanel's stuck
+    // selectedMoveStore).
     let showComment = $derived($activeTabStore === 'comments');
     let showPipcount = $derived($showPipcountStore);
 

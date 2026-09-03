@@ -8,6 +8,14 @@
  * utils/analysisRows.js; this test holds them to it: every string the DOM
  * tables render is a string the canvas hands fillText, in the same order,
  * with the same row highlighted, in whatever language is active.
+ *
+ * The "played" highlight is built from utils/playedMarks.js — the same
+ * predicates AnalysisPanel and AnkiPanel call — not a second copy local to
+ * this test or to clipboardService: fiche D.10 (#210) removed
+ * analysisRows.js's own playedMovePredicate/playedCubePredicate (a duplicate
+ * with a different, positional-boolean signature) once nothing needed it any
+ * more, so this file now imports the same functions the production panel
+ * does and actually exercises the two sides it claims to compare.
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
@@ -22,7 +30,7 @@ const { paintAnalysisStrip, analysisStrip } = await import('../services/clipboar
 const { default: CubeVerdictTable } = await import('../components/CubeVerdictTable.svelte');
 const { default: CandidateMovesTable } = await import('../components/CandidateMovesTable.svelte');
 const { cubeDecision, cubeTurnability } = await import('../utils/cubeDecision.js');
-const { playedCubePredicate, playedMovePredicate } = await import('../utils/analysisRows.js');
+const { playedMovePredicate, playedCubeActionPredicate } = await import('../utils/playedMarks.js');
 const { language } = await import('../i18n');
 
 const PLAYED_BG = '#fff3cd';
@@ -166,7 +174,7 @@ describe('the copied image paints exactly what the tables show', () => {
                 decision: cubeDecision({ cubeAnalysis: cubeAnalysis.doublingCubeAnalysis, turnability: cubeTurnability(position), stored: true }),
                 cubeAnalysis: cubeAnalysis.doublingCubeAnalysis,
                 cubeValue: position.cube.value,
-                isPlayedCubeAction: playedCubePredicate(cubeAnalysis, false),
+                isPlayedCubeAction: playedCubeActionPredicate(cubeAnalysis, { matchMode: false }),
                 engineVersionFallback: cubeAnalysis.analysisEngineVersion,
                 // `position.score` is [-1, -1] (money) — the same isMoney
                 // paintAnalysisStrip now derives from the same position
@@ -208,7 +216,7 @@ describe('the copied image paints exactly what the tables show', () => {
             props: {
                 moves: checkerAnalysis.checkerAnalysis.moves,
                 sortColumn: '',
-                isPlayedMove: playedMovePredicate(checkerAnalysis, false),
+                isPlayedMove: playedMovePredicate(checkerAnalysis, { matchMode: false }),
                 isMoney: true
             }
         });

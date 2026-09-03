@@ -1,6 +1,7 @@
 <script>
     import { untrack } from 'svelte';
     import Modal from './Modal.svelte';
+    import PickList from './PickList.svelte';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
@@ -234,31 +235,6 @@
     }
 </script>
 
-<!-- A titled list of tick boxes with All/None, for matches, tournaments and collections
-     alike. `describe` names an item and gives its count; `partial` flags a count short
-     of the whole. -->
-{#snippet pickList(header, items, isChecked, toggle, selectAll, selectNone, describe)}
-    <div class="collections-section">
-        <div class="collections-header">
-            <span>{header}</span>
-            <div class="collections-buttons">
-                <button type="button" class="small-btn" onclick={selectAll}>{$t('export.all')}</button>
-                <button type="button" class="small-btn" onclick={selectNone}>{$t('export.none')}</button>
-            </div>
-        </div>
-        <div class="collections-list">
-            {#each items as item (item.id)}
-                {@const d = describe(item)}
-                <label class="collection-checkbox">
-                    <input type="checkbox" checked={isChecked(item.id)} onchange={() => toggle(item.id)} />
-                    <span class="coll-name">{d.name}</span>
-                    <span class="coll-count" class:partial={d.partial}>({d.count})</span>
-                </label>
-            {/each}
-        </div>
-    </div>
-{/snippet}
-
 <Modal open={visible} onclose={onCancel} size="large" layer="top" closeButton={false} label={$t('export.dialogLabel')}>
     {#if mode === 'metadata' || mode === 'exporting'}
         <h2 class="modal-title">{$t('export.titleExport')}</h2>
@@ -406,42 +382,42 @@
         {/if}
 
         {#if exportOptions.includeMatches && matches.length > 0}
-            {@render pickList(
-                $t('export.selectMatches'),
-                matches,
-                (id) => exportOptions.matchIDs.includes(id),
-                toggleMatchSelection,
-                selectAllMatches,
-                selectNoMatches,
-                (m) => ({ name: `${m.player1_name} vs ${m.player2_name}`, count: `${m.game_count}g` })
-            )}
+            <PickList
+                header={$t('export.selectMatches')}
+                items={matches}
+                isChecked={(id) => exportOptions.matchIDs.includes(id)}
+                toggle={toggleMatchSelection}
+                selectAll={selectAllMatches}
+                selectNone={selectNoMatches}
+                describe={(m) => ({ name: `${m.player1_name} vs ${m.player2_name}`, count: `(${m.game_count}g)` })}
+            />
         {/if}
 
         {#if exportOptions.includeTournaments && tournaments.length > 0}
-            {@render pickList(
-                $t('export.selectTournaments'),
-                tournaments,
-                (id) => exportOptions.includeTournamentIDs.includes(id),
-                toggleTournamentSelection,
-                selectAllTournaments,
-                selectNoTournaments,
-                (tournament) => ({ name: tournament.name, count: tournament.matchCount })
-            )}
+            <PickList
+                header={$t('export.selectTournaments')}
+                items={tournaments}
+                isChecked={(id) => exportOptions.includeTournamentIDs.includes(id)}
+                toggle={toggleTournamentSelection}
+                selectAll={selectAllTournaments}
+                selectNone={selectNoTournaments}
+                describe={(tournament) => ({ name: tournament.name, count: `(${tournament.matchCount})` })}
+            />
         {/if}
 
         {#if exportOptions.includeCollections && collections.length > 0}
             <!-- Covered / total. The export writes membership only for positions it
                  exports, so a partial collection arrives truncated — said here rather
                  than discovered by the recipient. -->
-            {@render pickList(
-                $t('export.selectCollections'),
-                collections,
-                (id) => exportOptions.collectionIDs.includes(id),
-                toggleCollectionSelection,
-                selectAllCollections,
-                selectNoCollections,
-                (collection) => ({ name: collection.name, count: `${covered(collection)}/${collection.positionCount}`, partial: isPartial(collection) })
-            )}
+            <PickList
+                header={$t('export.selectCollections')}
+                items={collections}
+                isChecked={(id) => exportOptions.collectionIDs.includes(id)}
+                toggle={toggleCollectionSelection}
+                selectAll={selectAllCollections}
+                selectNone={selectNoCollections}
+                describe={(collection) => ({ name: collection.name, count: `(${covered(collection)}/${collection.positionCount})`, partial: isPartial(collection) })}
+            />
         {/if}
     {/if}
 
@@ -487,13 +463,13 @@
     label {
         font-size: var(--font-size-base);
         font-weight: 500;
-        color: #333;
+        color: var(--color-text);
     }
 
     input,
     textarea {
         padding: 8px 12px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         font-size: var(--font-size-base);
         font-family: inherit;
@@ -502,7 +478,7 @@
     input:focus,
     textarea:focus {
         outline: none;
-        border-color: #666;
+        border-color: var(--color-text-muted);
     }
 
     textarea {
@@ -530,7 +506,7 @@
         width: 18px;
         height: 18px;
         cursor: pointer;
-        accent-color: #333;
+        accent-color: var(--color-text);
     }
 
     .checkbox-item input[type='checkbox']:disabled {
@@ -549,18 +525,17 @@
         opacity: 0.5;
     }
 
-    .small-btn,
     .reveal,
     .busy-overlay button {
         padding: 10px 20px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-border);
         border-radius: 4px;
         font-size: var(--font-size-base);
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
         background-color: white;
-        color: #333;
+        color: var(--color-text);
     }
 
     .busy-overlay button:disabled {
@@ -568,78 +543,10 @@
         cursor: not-allowed;
     }
 
-    .small-btn:hover,
     .reveal:hover,
     .busy-overlay button:hover:not(:disabled) {
         background-color: #f5f5f5;
-        border-color: #999;
-    }
-
-    .collections-section {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-
-    .collections-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-        background-color: #f9f9f9;
-        border-bottom: 1px solid #ddd;
-        font-size: var(--font-size-base);
-        font-weight: 500;
-    }
-
-    .collections-buttons {
-        display: flex;
-        gap: 4px;
-    }
-
-    .small-btn {
-        font-size: var(--font-size-small);
-        padding: 2px 8px;
-    }
-
-    .collections-list {
-        max-height: 120px;
-        overflow-y: auto;
-        padding: 4px;
-    }
-
-    .collection-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
-        cursor: pointer;
-        font-size: var(--font-size-base);
-    }
-
-    .collection-checkbox:hover {
-        background-color: #f5f5f5;
-    }
-
-    .collection-checkbox input[type='checkbox'] {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        accent-color: #333;
-    }
-
-    .coll-name {
-        flex: 1;
-    }
-
-    .coll-count.partial {
-        color: #b3261e;
-        font-weight: 600;
-    }
-
-    .coll-count {
-        color: #888;
-        font-size: var(--font-size-base);
+        border-color: var(--color-text-muted);
     }
 
     .issuance-toggle {
@@ -648,7 +555,7 @@
     }
 
     .issuance-section {
-        border-left: 3px solid #1a73e8;
+        border-left: 3px solid var(--color-primary);
         padding-left: 10px;
         margin-bottom: 8px;
     }
@@ -693,7 +600,7 @@
         margin: 6px 0 0;
         font-size: var(--font-size-small);
         font-weight: 600;
-        color: #888;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.3px;
     }

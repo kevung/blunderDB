@@ -69,7 +69,7 @@
 
 <style>
     .current-file {
-        color: #999;
+        color: var(--color-text-muted);
         font-size: var(--font-size-base);
         margin: 4px 0 0 0;
         white-space: nowrap;
@@ -87,14 +87,14 @@
 
     .progress-bar {
         height: 100%;
-        background-color: #333;
+        background-color: var(--color-text);
         transition: width 0.2s ease;
         border-radius: 4px;
     }
 
     .progress-text {
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         text-align: right;
         margin-top: 4px;
     }
@@ -116,7 +116,7 @@
 
     .stat-label {
         font-size: var(--font-size-base);
-        color: #666;
+        color: var(--color-text-muted);
         text-transform: uppercase;
         margin-bottom: 5px;
     }
@@ -124,7 +124,7 @@
     .stat-value {
         font-size: var(--font-size-stat-figure);
         font-weight: bold;
-        color: #333;
+        color: var(--color-text);
     }
 
     .stat-value.errors {
