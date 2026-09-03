@@ -8,6 +8,11 @@
 `BenchmarkDecision2Ply` 702 ms contre `…Match` 1 036 ms — l'écart est
 entièrement du videau. Allocations : 85 en money, 1 472 au score.
 
+**Remesuré le 2026-09-03, après C.8/C.9/C.10** (C.7) : 2-ply money **193 ms**,
+2-ply au score **306 ms**, 6 allocations ; profil au score `EvaluateBatch`
+52,6 %, `Value` 39,8 %, `buildLevels` 38,7 %, `levelSolve` 35,4 %. Les
+proportions tiennent, les valeurs absolues non — repartir de celles-ci.
+
 Règle du lot : une modification qui change ce que le moteur calcule passe
 d'abord par gammonNet amont (son ADR-0003, critère « le gain survit au
 changement de langage ») et par le gold ; une modification d'interface ou de
@@ -145,23 +150,51 @@ front, 0 CLI) alors qu'`EngineVersion` a bougé trois fois en trois jours.
 
 ---
 
-## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf (#194)
+## C.7 — Le videau est devenu le poste dominant au score : forme close de `levelSolve` [M amont + S port] — perf (#194) — FAIT (décision + mesure + patch proposé)
 
-`cube.go:509-526` bissecte 60 fois une fonction **linéaire par morceaux et
-monotone** dont les 3-4 segments sont connus (`levelLive`, `:471-497`) :
-le rapport [P6](../../docs/recherche/P6-videau-janowski.md) confirme que **la bissection
-est superflue** — Janowski donne take point, cash point et too-good en forme close, et au
-score le take point live est un produit récursif fini, donc encore une forme close.
-38,9 % du profil d'une décision 2-ply au score. L'inversion en forme close est
-O(1) et exacte. Gain conceptuel → **gammonNet d'abord** (`gn_cube.c`, mesure,
-spec), régénération de `cube_gold.bin`, puis port. Le « valuer le videau par
-lot » du BACKLOG est la seconde marche.
-- [ ] Amont : PR gammonNet + mesure ; tag.
-- [ ] Ici : port, `cube_gold.bin` régénéré, `EngineVersion` inchangée si le
-      résultat est bit-identique (il doit l'être ; sinon c'est une
-      Configuration et les bases sont périmées).
-- [ ] Benchmarks manquants **avant** : `BenchmarkProbs2Ply`,
-      `BenchmarkCubeDecisionAtScore`, `BenchmarkBuildLevels`, débit du lot.
+`cube.go` bissecte 60 fois une fonction **linéaire par morceaux et monotone**
+dont les 3-4 segments sont connus (`levelLive`) : le rapport
+[P6](../../docs/recherche/P6-videau-janowski.md) confirme que **la bissection
+est superflue**.
+- [x] Remesuré APRÈS C.8/C.9/C.10 (le profil de cette fiche datait d'avant) :
+      2-ply money 193 ms, 2-ply au score 306 ms ; profil de la seconde
+      `levelSolve` **35,4 %** cumulé, `buildLevels` 38,7 %, `Value` 39,8 %,
+      `EvaluateBatch` 52,6 %. Une inversion : 126 ns contre **6,8 ns** en
+      forme close (×19) ; les points de rupture sont **84 %** d'une chaîne
+      d'enjeux (1 160 ns dont 190 d'ancres).
+- [x] Forme close écrite et mesurée bout en bout (rapiécée, mesurée, révoquée) :
+      décision 2-ply au score **306 → 193 ms** (×1,58 — elle coûte alors ce que
+      coûte la même décision en money), `Decide` au score 1 170 → ~600 ns,
+      débit du lot 4 500 → 6 780 pos/s à 0-ply et **12,2 → 15,6 pos/s à 2-ply**.
+- [x] **Pas bit-identique**, et c'est ce qui tranche : 42,7 % des inversions
+      identiques, |Δp| max 2,25e-13, |ΔValue| max **4,4e-16** ; surtout, le
+      gold du videau rend aujourd'hui `max|Δ| = 0,000e+00` contre le C sur
+      2 320 décisions et la forme close le porterait à **1,665e-14**. Réécrire
+      ici ferait mesurer au gold une divergence de PORTAGE. Le gold de
+      recherche et la porte d'intégration, eux, ne bougent pas d'un chiffre
+      (669 décisions, sortie octet pour octet identique).
+- [x] Décision : **amont**. Le gain survit au changement de langage (60 pas
+      d'une chaîne sérielle contre une division = forme de l'algorithme), donc
+      ADR-0003 amont + invariant de CLAUDE.md. C'est une **Configuration** :
+      nouveau tag gammonNet, `EngineVersion`, `cube_gold.bin` et
+      `search_cube_gold.bin` régénérés, analyses stockées périmées — **groupée
+      avec le point 4 de l'ADR-0029** (efficacité de branche), qui périme
+      exactement les mêmes choses. Écrit dans l'ADR « The cube's level
+      inversion becomes a closed form, and that is written upstream ».
+- [x] Repères manquants ajoutés : `BenchmarkLevelSolveBisection`,
+      `BenchmarkLevelSolveClosed`, `BenchmarkBuildLevels`,
+      `BenchmarkBuildLevelAnchors`, `BenchmarkCubeDecisionAtScore`,
+      `BenchmarkCubeDecisionMoney`, `BenchmarkAnalysisBatchThroughput` (pos/s).
+      `BenchmarkProbs2Ply` existe déjà sous les deux noms
+      `BenchmarkProbs{Serial,Parallel}2Ply` (C.8).
+- [x] Dispositif d'exactitude committé et TOUJOURS actif :
+      `TestClosedFormAgreesWithBisection` (725 328 inversions, 1e-9 en p) —
+      c'est lui qui rendra le portage mécanique le jour où l'amont livre.
+- [ ] **Reste en amont** : PR gammonNet (`gn_cube.c` `level_solve`, spec §9),
+      mesure amont, tag ; puis ici, échange du corps de `levelSolve`, deux gold
+      régénérés, `EngineVersion`, `AnalyzeStaleGammonNet`. Le « valuer le
+      videau par lot » du BACKLOG est déjà porté ET RÉFUTÉ ici
+      (`cube_batch_experiment_test.go`, ×0,89).
 
 ## C.8 — La décision de videau du panneau n'utilise qu'une fraction des cœurs [M] — perf (#195)
 
@@ -236,8 +269,10 @@ paquet, chacun avec une justification pour un appelant qui n'existe pas.
 ## C.13 — Amont gammonNet (décisions, pas des fiches ici) (#200)
 
 À porter dans le dépôt gammonNet avec leur jauge de force ; blunderDB suit.
-1. Forme close de `levelSolve` (C.7).
-2. Efficacité miroitée / branche DT (C.5) si le C fait pareil.
+1. Forme close de `levelSolve` (C.7) — **spécifiée** : correctif proposé, mesure et
+   dispositif d'exactitude dans l'ADR « The cube's level inversion becomes a closed
+   form ». À cutter avec le point 2, une seule Configuration.
+2. Efficacité de branche / branche DT (C.5) — **spécifiée** par l'ADR-0029 point 4.
 3. Réseau distillé 60-100 k MAC (P4 : ×5-9, priorité 1 amont) — nouvelle
    Configuration, `EngineVersion`, bases périmées.
 4. Filtres de coups à seuil d'équité (movefilter) — approximatif, jauge.

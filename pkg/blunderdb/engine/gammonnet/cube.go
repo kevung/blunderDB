@@ -604,6 +604,24 @@ var cubeSolveLifted = true
 // recursion); otherwise the curve blended at that efficiency (the reported
 // take point).
 //
+// LA BISSECTION N'EST PAS NÉCESSAIRE, ET NE SE CORRIGE PAS ICI. Inverser une
+// fonction affine par morceaux dont on connaît les segments est une forme
+// close : identifier le segment, une division. Le gain est de 35 % d'une
+// décision 2-ply au score et de ×19 sur cette fonction, il survit au
+// changement de langage, donc il se décide en amont (gn_cube.c, spec §9) —
+// c'est l'invariant de CLAUDE.md, la même règle qui a envoyé la levée
+// laneCurve ci-dessus DANS l'autre sens (elle, elle est propre au Go). Et le
+// résultat n'est PAS bit-identique : le gold du videau rend aujourd'hui un
+// max|Δ| RIGOUREUSEMENT NUL contre le C sur 2 320 décisions, et la forme
+// close le porterait à 1,665e-14. Réécrire ici ferait donc mesurer au gold
+// une divergence de portage, ce que l'en-tête de ce fichier interdit.
+//
+// La forme close proposée à l'amont, sa mesure et son dispositif d'exactitude
+// sont dans cube_closedform_measure_test.go ; la décision est l'ADR « The
+// cube's level inversion becomes a closed form, and that is written upstream »
+// (docs/adr/), groupée avec le correctif d'efficacité de l'ADR « Cube
+// efficiency is measured per cube state ».
+//
 // La courbe est préparée une fois avant les soixante pas (laneCurve) : les
 // dénominateurs et numérateurs des segments ne dépendent pas de p, et le
 // compilateur Go refuse d'inliner levelLive, si bien que chaque pas payait un
