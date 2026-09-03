@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  shared-mime-info definition for blunderDB's password-protected export
+  container (.dbx — pkg/blunderdb/issuance, ADR-0007). Deliberately scoped to
+  .dbx only: .db is a generic SQLite extension many unrelated applications
+  also use, and claiming it here would make blunderDB the system default
+  handler for every .db file on the machine, not just its own (#241). A
+  plain .db database is still opened normally through blunderDB's own
+  "Open" dialog — it is simply not double-click-associated at the OS level.
+
+  Installed at /usr/share/mime/packages/blunderdb-dbx.xml (see nfpm.yaml);
+  `update-mime-database` picks it up after install (see nfpm.yaml's
+  postinstall/postremove scripts).
+-->
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-blunderdb-dbx">
+    <comment>blunderDB Protected Database</comment>
+    <comment xml:lang="fr">Base blunderDB protégée</comment>
+    <glob pattern="*.dbx"/>
+    <icon name="blunderdb"/>
+  </mime-type>
+</mime-info>

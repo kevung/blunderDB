@@ -81,6 +81,8 @@
         "vacuumDone": "Base compactée : {mb} Mo libérés",
         "vacuumNothing": "Base compactée : rien à libérer",
         "vacuumError": "Échec du compactage : {error}",
+        "logsIntro": "Le journal enregistre des détails de diagnostic utiles pour signaler un problème.",
+        "logsButton": "Ouvrir le dossier des journaux",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "Réglages de l'évaluateur gammonNet embarqué : la profondeur d'affichage et la profondeur d'analyse sont deux réglages distincts — abaisser l'affichage ne dégrade jamais ce que le lot d'analyse écrit en base.",
         "gammonnetDisplayPly": "Profondeur d'affichage",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "Vérification des positions périmées…",
         "gammonnetStaleCount": "{n} position(s) périmée(s).",
         "gammonnetStaleStart": "Ré-analyser les positions périmées",
-        "gammonnetStaleNote": "Relance gammonNet sur les positions déjà analysées par gammonNet mais écrites avec une version du moteur ou une profondeur différente de celle configurée ici — les analyses XG, GNUbg et BGBlitz ne sont jamais touchées."
+        "gammonnetStaleNote": "Relance gammonNet sur les positions déjà analysées par gammonNet mais écrites avec une version du moteur ou une profondeur différente de celle configurée ici — les analyses XG, GNUbg et BGBlitz ne sont jamais touchées.",
+        "checkForUpdates": "Vérifier les mises à jour au démarrage",
+        "checkForUpdatesNote": "Interroge une fois la page des versions GitHub au démarrage. Désactivé par défaut, et jamais activé automatiquement sur une installation via un gestionnaire de paquets (Flatpak, paquet de distribution, Homebrew…)."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "Supprimer cette position et son analyse associée ?",
         "searching": "Recherche…",
         "positionAddedToDeck": "Position ajoutée au paquet « {deck} »",
-        "failedAddToDeck": "Erreur lors de l'ajout de la position au paquet : {err}"
+        "failedAddToDeck": "Erreur lors de l'ajout de la position au paquet : {err}",
+        "updateAvailable": "Une nouvelle version de blunderDB est disponible : {version}"
     },
     "stats": {
         "title": "Stats",

@@ -81,6 +81,8 @@
         "vacuumDone": "Base compactada: {mb} MB recuperados",
         "vacuumNothing": "Base compactada: nada que recuperar",
         "vacuumError": "Error al compactar: {error}",
+        "logsIntro": "El archivo de registro guarda detalles de diagnóstico útiles al informar un problema.",
+        "logsButton": "Abrir carpeta de registros",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "Ajustes del evaluador gammonNet integrado: la profundidad de visualización y la de análisis son dos ajustes separados — reducir la visualización nunca degrada lo que el lote de análisis escribe en la base de datos.",
         "gammonnetDisplayPly": "Profundidad de visualización",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "Comprobando análisis de gammonNet obsoletos…",
         "gammonnetStaleCount": "{n} análisis de gammonNet obsoleto(s).",
         "gammonnetStaleStart": "Reanalizar posiciones obsoletas",
-        "gammonnetStaleNote": "Vuelve a ejecutar gammonNet en posiciones ya analizadas, pero escritas con una versión del motor más antigua o una profundidad distinta a la configurada aquí — los análisis de XG, GNUbg y BGBlitz nunca se tocan."
+        "gammonnetStaleNote": "Vuelve a ejecutar gammonNet en posiciones ya analizadas, pero escritas con una versión del motor más antigua o una profundidad distinta a la configurada aquí — los análisis de XG, GNUbg y BGBlitz nunca se tocan.",
+        "checkForUpdates": "Buscar actualizaciones al iniciar",
+        "checkForUpdatesNote": "Consulta una vez la página de versiones de GitHub al iniciar. Desactivado por defecto, y nunca se activa automáticamente en una instalación gestionada por un gestor de paquetes (Flatpak, paquete de la distribución, Homebrew…)."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "¿Eliminar esta posición y su análisis asociado?",
         "searching": "Buscando…",
         "positionAddedToDeck": "Posición añadida al mazo «{deck}»",
-        "failedAddToDeck": "Error al añadir la posición al mazo: {err}"
+        "failedAddToDeck": "Error al añadir la posición al mazo: {err}",
+        "updateAvailable": "Hay una nueva versión de blunderDB disponible: {version}"
     },
     "stats": {
         "title": "Stats",

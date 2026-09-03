@@ -91,6 +91,7 @@ func (a *App) DownloadBearoffDB() error {
 	bearoffMu.Unlock()
 
 	go func() {
+		defer recoverBackground(a.ctx, "bearoff download")
 		err := a.downloadBearoff(ctx)
 		bearoffMu.Lock()
 		bearoffCancel = nil

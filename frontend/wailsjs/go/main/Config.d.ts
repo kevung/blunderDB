@@ -6,6 +6,8 @@ export function GetBearoffTSPath():Promise<string>;
 
 export function GetBoardColors():Promise<main.BoardColors>;
 
+export function GetCheckForUpdates():Promise<boolean>;
+
 export function GetEpcChallenge():Promise<boolean>;
 
 export function GetGammonNetAnalysisPly():Promise<number>;
@@ -43,6 +45,8 @@ export function LoadConfig():Promise<main.Config>;
 export function SaveBearoffTSPath(arg1:string):Promise<void>;
 
 export function SaveBoardColors(arg1:main.BoardColors):Promise<void>;
+
+export function SaveCheckForUpdates(arg1:boolean):Promise<void>;
 
 export function SaveConfig(arg1:main.Config):Promise<void>;
 

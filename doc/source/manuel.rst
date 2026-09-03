@@ -197,6 +197,21 @@ de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'a
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
 
+Le bouton **Ouvrir le dossier des journaux**, juste en dessous, ouvre le
+dossier contenant le journal de l'application — utile pour joindre des
+détails à un signalement de problème, en particulier quand blunderDB est
+lancé depuis un raccourci ou un double-clic, sans terminal attaché pour
+afficher quoi que ce soit.
+
+La case **Vérifier les mises à jour au démarrage**, désactivée par défaut,
+interroge une fois la page des dernières versions du dépôt GitHub à chaque
+lancement et affiche, dans la barre d'état, un message si une version plus
+récente est disponible — jamais une fenêtre qui bloque l'utilisation.
+Cette vérification reste désactivée automatiquement sur une installation
+passée par un gestionnaire de paquets (Flatpak, Homebrew, un paquet de
+distribution…) : c'est ce canal-là qui gère alors les mises à jour, pas
+blunderDB lui-même.
+
 L'onglet *Couleurs* permet de personnaliser les couleurs du
 plateau. Chaque élément dispose de son propre sélecteur de couleur : le fond,
 la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur

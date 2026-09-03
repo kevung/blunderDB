@@ -180,6 +180,7 @@ func (a *App) StartEvaluationAtRest(pos domain.Position, ply, pruneK, candidates
 	a.gnEvalMu.Unlock()
 
 	go func() {
+		defer recoverBackground(a.ctx, "gammonNet evaluation at rest")
 		result, err := a.evaluateGammonNet(pos, ply, pruneK, candidates)
 
 		a.gnEvalMu.Lock()

@@ -11,3 +11,4 @@ Categories=Game;BoardGame;
 Keywords=backgammon;blunder;analysis;xg;gnubg;
 StartupNotify=true
 StartupWMClass=blunderDB
+MimeType=application/x-blunderdb-dbx;

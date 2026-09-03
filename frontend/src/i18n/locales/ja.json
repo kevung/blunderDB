@@ -81,6 +81,8 @@
         "vacuumDone": "データベースをコンパクト化しました:{mb} MB を回収",
         "vacuumNothing": "データベースをコンパクト化しました:回収するものはありません",
         "vacuumError": "コンパクト化に失敗しました:{error}",
+        "logsIntro": "ログファイルには問題を報告する際に役立つ診断情報が記録されます。",
+        "logsButton": "ログフォルダを開く",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "内蔵の gammonNet 評価エンジンの設定。表示深度と解析深度は別々の設定であり、表示深度を下げてもバッチ解析がデータベースに書き込む内容が劣化することはありません。",
         "gammonnetDisplayPly": "表示深度",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "古くなった gammonNet 解析を確認しています…",
         "gammonnetStaleCount": "古くなった gammonNet 解析が {n} 件あります。",
         "gammonnetStaleStart": "古くなったポジションを再解析",
-        "gammonnetStaleNote": "すでに gammonNet で解析済みだが、ここで設定したものより古いエンジンバージョンや異なる深さで書き込まれたポジションに対して、gammonNet を再実行します — XG、GNUbg、BGBlitz の解析には一切触れません。"
+        "gammonnetStaleNote": "すでに gammonNet で解析済みだが、ここで設定したものより古いエンジンバージョンや異なる深さで書き込まれたポジションに対して、gammonNet を再実行します — XG、GNUbg、BGBlitz の解析には一切触れません。",
+        "checkForUpdates": "起動時に更新を確認する",
+        "checkForUpdatesNote": "起動時に一度だけGitHubのリリースページを確認します。既定では無効で、パッケージ管理でインストールされた場合(Flatpak、ディストリビューションのパッケージ、Homebrewなど)は自動的に有効になることはありません。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "このポジションと関連する分析を削除しますか?",
         "searching": "検索中…",
         "positionAddedToDeck": "局面をデッキ「{deck}」に追加しました",
-        "failedAddToDeck": "局面をデッキに追加できませんでした: {err}"
+        "failedAddToDeck": "局面をデッキに追加できませんでした: {err}",
+        "updateAvailable": "blunderDBの新しいバージョンがあります: {version}"
     },
     "stats": {
         "title": "統計",

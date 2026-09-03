@@ -16,10 +16,13 @@ import (
 
 // Run starts the Wails GUI. The caller supplies the embedded frontend assets
 // and icon, the initial window dimensions, the Database the gammonNet batch
-// job (#129) runs against, and any extra structs to bind for the frontend
-// (the App struct is created and bound here).
-func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}) error {
+// job (#129) runs against, any extra structs to bind for the frontend (the
+// App struct is created and bound here), and startupFilePath — the database
+// file path the OS handed this process on the command line, "" on an
+// ordinary launch (#241; see App.StartupFilePath).
+func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}, startupFilePath string) error {
 	app := NewApp(db)
+	app.startupFilePath = startupFilePath
 	return wails.Run(&options.App{
 		Title:  "blunderDB",
 		Width:  width,

@@ -18,6 +18,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CheckForUpdate() {
+  return window['go']['gui']['App']['CheckForUpdate']();
+}
+
 export function CollectImportableFiles(arg1) {
   return window['go']['gui']['App']['CollectImportableFiles'](arg1);
 }
@@ -78,8 +82,8 @@ export function OpenImportDatabaseDialog() {
   return window['go']['gui']['App']['OpenImportDatabaseDialog']();
 }
 
-export function OpenPositionDialog() {
-  return window['go']['gui']['App']['OpenPositionDialog']();
+export function OpenLogsFolder() {
+  return window['go']['gui']['App']['OpenLogsFolder']();
 }
 
 export function OpenPositionFilesDialog() {
@@ -88,10 +92,6 @@ export function OpenPositionFilesDialog() {
 
 export function OpenPositionFolderDialog() {
   return window['go']['gui']['App']['OpenPositionFolderDialog']();
-}
-
-export function OpenXGFileDialog() {
-  return window['go']['gui']['App']['OpenXGFileDialog']();
 }
 
 export function PathExists(arg1) {
@@ -140,4 +140,8 @@ export function StartGammonNetBatch(arg1, arg2, arg3) {
 
 export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetStaleBatch'](arg1, arg2, arg3);
+}
+
+export function StartupFilePath() {
+  return window['go']['gui']['App']['StartupFilePath']();
 }

@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"io"
+	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"runtime"
 
 	"github.com/adrg/xdg"
@@ -13,7 +14,23 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-const configFilePath = "blunderDB/config.yaml"
+// configFilePath is the current config file name. It was named
+// "config.yaml" from the first release through 2026-09, even though its
+// content was always JSON (encoding/json in, encoding/json out) — a
+// misnomer, not a format that ever changed (#241). legacyConfigFilePath is
+// read once, on a machine that still only has the old file: LoadConfig
+// migrates it to configFilePath and every subsequent run finds the new name
+// directly, so this fallback costs nothing once migrated.
+const (
+	configFilePath       = "blunderDB/config.json"
+	legacyConfigFilePath = "blunderDB/config.yaml"
+)
+
+// currentConfigVersion is bumped whenever a future change needs a real
+// migration step (a field renamed or reshaped, not just added) — the same
+// idea as domain.DatabaseVersion, at a much smaller scale: today there is
+// only version 1, and every config file this build writes carries it.
+const currentConfigVersion = 1
 
 type StatsFilterPersisted struct {
 	PlayerName    string  `json:"player_name"`
@@ -153,6 +170,11 @@ var (
 )
 
 type Config struct {
+	// ConfigVersion names the shape of this file, so a future field rename
+	// or reshape has something to branch a migration step on (#241). Always
+	// currentConfigVersion once loaded/saved by this build; 0 on a file
+	// written before this field existed.
+	ConfigVersion    int                  `json:"config_version"`
 	WindowWidth      int                  `json:"window_width"`
 	WindowHeight     int                  `json:"window_height"`
 	LastDatabasePath string               `json:"last_database_path"`
@@ -191,6 +213,14 @@ type Config struct {
 	GammonNetPruneK      int  `json:"gammonnet_prune_k,omitempty"`
 	GammonNetCandidates  int  `json:"gammonnet_candidates,omitempty"`
 	GammonNetAutoAnalyze bool `json:"gammonnet_auto_analyze,omitempty"`
+	// CheckForUpdates opts into gui.App.CheckForUpdate querying the GitHub
+	// Releases API at startup (#241) — off by default (a network call an
+	// offline-first tool must never make unasked) and forced off regardless
+	// of this setting on a package-managed install (see
+	// gui.isPackageManaged): the package manager is that channel's own
+	// update mechanism, and blunderDB pointing at a GitHub release the
+	// distro hasn't packaged yet would just confuse the user.
+	CheckForUpdates bool `json:"check_for_updates,omitempty"`
 }
 
 // clampUIScale coerces a persisted/incoming scale into the supported range,
@@ -297,6 +327,7 @@ func clampGammonNetCandidates(n int) int {
 func NewConfig() *Config {
 	initialWidth, initialHeight := calculateInitialDimensions()
 	return &Config{
+		ConfigVersion: currentConfigVersion,
 		WindowWidth:   initialWidth,
 		WindowHeight:  initialHeight,
 		Language:      "en",
@@ -324,9 +355,34 @@ func calculateInitialDimensions() (int, int) {
 	return initialWidth, initialHeight
 }
 
+// LoadConfig reads the persisted config, tolerating three situations that
+// used to either crash the GUI at startup or silently misbehave (#241):
+//
+//   - No file at all (first run, or a fresh XDG_CONFIG_HOME): a fresh
+//     default Config is created and saved under the current name.
+//   - Only the pre-2026-09 legacy name (config.yaml, holding the same JSON):
+//     read once, then immediately re-saved under the current name — every
+//     later run finds it directly and this branch never runs again.
+//   - A file that exists under the current name but fails to parse as JSON
+//     (truncated by a crash mid-write, hand-edited into invalid JSON, disk
+//     corruption): rather than propagating the error up to main.go, which
+//     used to os.Exit(1) and leave the user with an app that will not start
+//     until they find and fix or delete a file they likely do not know
+//     exists, the unreadable file is backed up next to itself
+//     (config.json.bak) and a fresh default Config takes its place. The
+//     backup means nothing is silently destroyed — a user who cares can
+//     recover their old settings from it — but the app starts either way.
 func (c *Config) LoadConfig() (*Config, error) {
 	configPath, err := xdg.SearchConfigFile(configFilePath)
+	migrating := false
 	if err != nil {
+		if legacyPath, legacyErr := xdg.SearchConfigFile(legacyConfigFilePath); legacyErr == nil {
+			configPath = legacyPath
+			migrating = true
+			slog.Info("config file found under its legacy name, migrating", "path", configPath)
+		}
+	}
+	if configPath == "" {
 		slog.Info("config file not found, creating a new one")
 		config := NewConfig()
 		if err := c.SaveConfig(config); err != nil {
@@ -336,20 +392,30 @@ func (c *Config) LoadConfig() (*Config, error) {
 	}
 	slog.Info("config file found", "path", configPath)
 
-	file, err := os.Open(configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	bytes, err := io.ReadAll(file)
+	raw, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, err
 	}
 
 	var config Config
-	if err := json.Unmarshal(bytes, &config); err != nil {
-		return nil, err
+	if err := json.Unmarshal(raw, &config); err != nil {
+		backupPath := configPath + ".bak"
+		if werr := os.WriteFile(backupPath, raw, 0o600); werr != nil {
+			slog.Warn("config file is corrupt and could not be backed up; resetting to defaults", "path", configPath, "parse_err", err, "backup_err", werr)
+		} else {
+			slog.Warn("config file is corrupt, backed up and reset to defaults", "path", configPath, "backup", backupPath, "parse_err", err)
+		}
+		config = *NewConfig()
+		if err := c.SaveConfig(&config); err != nil {
+			return nil, err
+		}
+		return &config, nil
+	}
+	if config.ConfigVersion == 0 {
+		// A file written before this field existed: there is nothing to
+		// actually migrate yet (every field so far still reads the same
+		// way), so this only stamps the version going forward.
+		config.ConfigVersion = currentConfigVersion
 	}
 
 	// Update the receiver so the Wails-bound instance has the loaded values
@@ -383,22 +449,73 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.GammonNetCandidates = clampGammonNetCandidates(config.GammonNetCandidates)
 	config.GammonNetCandidates = c.GammonNetCandidates
 	c.GammonNetAutoAnalyze = config.GammonNetAutoAnalyze
+	c.CheckForUpdates = config.CheckForUpdates
+	c.ConfigVersion = config.ConfigVersion
+
+	if migrating {
+		// Best-effort: failing to write the new name must not fail startup —
+		// the legacy file is still there and will be found again next run.
+		if err := c.SaveConfig(&config); err != nil {
+			slog.Warn("could not migrate config to its current file name", "from", configPath, "to", configFilePath, "err", err)
+		} else {
+			slog.Info("config migrated to its current file name", "from", configPath)
+		}
+	}
 
 	return &config, nil
 }
 
+// SaveConfig writes config as indented JSON to the current config file,
+// atomically: it writes to a sibling temp file, fsyncs it, then renames it
+// over the real path (the same write-then-rename shape
+// resumableDownload/bearoff_download.go already uses for the bearoff
+// database download). A crash or power loss mid-write can therefore never
+// leave config.json truncated or half-written — the rename either lands
+// completely or the old file is untouched (#241).
 func (c *Config) SaveConfig(config *Config) error {
 	configPath, err := xdg.ConfigFile(configFilePath)
 	if err != nil {
 		return err
 	}
 
-	bytes, err := json.MarshalIndent(config, "", "  ")
+	data, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(configPath, bytes, 0644)
+	dir := filepath.Dir(configPath)
+	tmp, err := os.CreateTemp(dir, ".config-*.json.tmp")
+	if err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	tmpPath := tmp.Name()
+	// Any early return below must not leave the temp file behind.
+	success := false
+	defer func() {
+		if !success {
+			os.Remove(tmpPath)
+		}
+	}()
+
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return fmt.Errorf("config: %w", err)
+	}
+	if err := tmp.Sync(); err != nil {
+		tmp.Close()
+		return fmt.Errorf("config: %w", err)
+	}
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	if err := os.Chmod(tmpPath, 0o644); err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	if err := os.Rename(tmpPath, configPath); err != nil {
+		return fmt.Errorf("config: %w", err)
+	}
+	success = true
+	return nil
 }
 
 func (c *Config) SaveWindowDimensions(width, height int) error {
@@ -630,5 +747,17 @@ func (c *Config) GetStatsFilter() StatsFilterPersisted {
 // SaveStatsFilter persists the given stats filter to disk.
 func (c *Config) SaveStatsFilter(filter StatsFilterPersisted) error {
 	c.StatsFilter = filter
+	return c.SaveConfig(c)
+}
+
+// GetCheckForUpdates returns whether gui.App.CheckForUpdate is allowed to
+// query the GitHub Releases API. Off by default (#241).
+func (c *Config) GetCheckForUpdates() bool {
+	return c.CheckForUpdates
+}
+
+// SaveCheckForUpdates persists the update-check opt-in.
+func (c *Config) SaveCheckForUpdates(on bool) error {
+	c.CheckForUpdates = on
 	return c.SaveConfig(c)
 }

@@ -81,6 +81,8 @@
         "vacuumDone": "Tietokanta tiivistetty: {mb} Mt vapautettu",
         "vacuumNothing": "Tietokanta tiivistetty: ei vapautettavaa",
         "vacuumError": "Tiivistäminen epäonnistui: {error}",
+        "logsIntro": "Lokitiedosto tallentaa diagnostiikkatietoja, jotka ovat hyödyllisiä ongelmasta ilmoitettaessa.",
+        "logsButton": "Avaa lokikansio",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "Sisäänrakennetun gammonNet-arvioijan asetukset: näyttösyvyys ja analyysisyvyys ovat kaksi erillistä asetusta — näyttösyvyyden alentaminen ei koskaan heikennä sitä, mitä analyysierä kirjoittaa tietokantaan.",
         "gammonnetDisplayPly": "Näyttösyvyys",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "Tarkistetaan vanhentuneita gammonNet-analyysejä…",
         "gammonnetStaleCount": "{n} vanhentunutta gammonNet-analyysiä.",
         "gammonnetStaleStart": "Analysoi vanhentuneet positiot uudelleen",
-        "gammonnetStaleNote": "Suorittaa gammonNetin uudelleen jo analysoiduille positioille, jotka on kirjoitettu vanhemmalla moottoriversiolla tai eri syvyydellä kuin tässä on asetettu — XG-, GNUbg- ja BGBlitz-analyyseihin ei koskaan kosketa."
+        "gammonnetStaleNote": "Suorittaa gammonNetin uudelleen jo analysoiduille positioille, jotka on kirjoitettu vanhemmalla moottoriversiolla tai eri syvyydellä kuin tässä on asetettu — XG-, GNUbg- ja BGBlitz-analyyseihin ei koskaan kosketa.",
+        "checkForUpdates": "Tarkista päivitykset käynnistyksen yhteydessä",
+        "checkForUpdatesNote": "Kysyy kerran GitHubin julkaisusivulta käynnistyksen yhteydessä. Oletuksena pois päältä, eikä koskaan oteta automaattisesti käyttöön pakettienhallinnan kautta asennetussa versiossa (Flatpak, jakelupaketti, Homebrew…)."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "Poistetaanko tämä positio ja siihen liittyvä analyysi?",
         "searching": "Haetaan…",
         "positionAddedToDeck": "Asema lisätty pakkaan ”{deck}”",
-        "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}"
+        "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}",
+        "updateAvailable": "Uusi blunderDB-versio on saatavilla: {version}"
     },
     "stats": {
         "title": "Tilastot",

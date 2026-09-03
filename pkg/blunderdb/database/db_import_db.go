@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -12,6 +13,27 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
+
+// ErrImportCancelled is returned by CommitImportDatabase when the user
+// cancels an in-flight import via CancelImport (beginCancellableImport's
+// context is what actually gets cancelled) — an outcome the user asked for,
+// not a failure. It wraps the context's own error (context.Canceled or
+// context.DeadlineExceeded) alongside itself, so a caller can check either
+// errors.Is(err, ErrImportCancelled) or errors.Is(err, context.Canceled)
+// (#241). The GUI import flow (frontend/src/services/importService.js) used
+// to show "Error committing import: import cancelled by user" for exactly
+// this case — indistinguishable from a real failure — because the previous
+// error carried no way to tell the two apart at all, wrapped or not.
+var ErrImportCancelled = errors.New("import cancelled by user")
+
+// wrapImportCancelled builds the error CommitImportDatabase returns once
+// ctx.Err() is non-nil: wraps both ErrImportCancelled and the context's own
+// error, so either is visible to errors.Is. Kept as its own function so the
+// wrapping itself is unit-testable without racing a real CancelImport call
+// against a real commit (#241).
+func wrapImportCancelled(ctxErr error) error {
+	return fmt.Errorf("%w: %w", ErrImportCancelled, ctxErr)
+}
 
 // sourcePositionScalarColumns is the SELECT-list fragment for the scalar
 // columns a compact-state row needs (decision type, dice, cube, score,
@@ -447,7 +469,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		// Check for cancellation
 		if err = ctx.Err(); err != nil {
 			slog.Info("import cancelled by user during processing")
-			return nil, fmt.Errorf("import cancelled by user")
+			return nil, wrapImportCancelled(err)
 		}
 
 		var id int64
@@ -626,7 +648,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// Final check for cancellation before committing
 	if err = ctx.Err(); err != nil {
 		slog.Info("import cancelled by user before commit")
-		return nil, fmt.Errorf("import cancelled by user")
+		return nil, wrapImportCancelled(err)
 	}
 
 	// Commit the transaction - this makes all changes atomic

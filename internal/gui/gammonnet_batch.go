@@ -108,6 +108,7 @@ func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(do
 	a.gnBatchMu.Unlock()
 
 	go func() {
+		defer recoverBackground(a.ctx, "gammonNet batch analysis")
 		summary, err := run(ctx, func(done, total int) {
 			runtime.EventsEmit(a.ctx, "gammonnet-batch:progress", map[string]int{"done": done, "total": total})
 		})

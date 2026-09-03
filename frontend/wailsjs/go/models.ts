@@ -1633,16 +1633,18 @@ export namespace gui {
 	    file_path: string;
 	    content: string;
 	    error?: string;
-	
+	    cancelled?: boolean;
+
 	    static createFrom(source: any = {}) {
 	        return new FileDialogResponse(source);
 	    }
-	
+
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.file_path = source["file_path"];
 	        this.content = source["content"];
 	        this.error = source["error"];
+	        this.cancelled = source["cancelled"];
 	    }
 	}
 	export class PositionFacts {
@@ -1709,6 +1711,22 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class UpdateCheckResult {
+	    packageManaged: boolean;
+	    latestVersion?: string;
+	    htmlUrl?: string;
+
+	    static createFrom(source: any = {}) {
+	        return new UpdateCheckResult(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.packageManaged = source["packageManaged"];
+	        this.latestVersion = source["latestVersion"];
+	        this.htmlUrl = source["htmlUrl"];
+	    }
+	}
 
 }
 
@@ -1767,6 +1785,7 @@ export namespace main {
 	    }
 	}
 	export class Config {
+	    config_version: number;
 	    window_width: number;
 	    window_height: number;
 	    last_database_path: string;
@@ -1787,13 +1806,15 @@ export namespace main {
 	    gammonnet_prune_k?: number;
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
-	
+	    check_for_updates?: boolean;
+
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-	
+
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.config_version = source["config_version"];
 	        this.window_width = source["window_width"];
 	        this.window_height = source["window_height"];
 	        this.last_database_path = source["last_database_path"];
@@ -1814,6 +1835,7 @@ export namespace main {
 	        this.gammonnet_prune_k = source["gammonnet_prune_k"];
 	        this.gammonnet_candidates = source["gammonnet_candidates"];
 	        this.gammonnet_auto_analyze = source["gammonnet_auto_analyze"];
+	        this.check_for_updates = source["check_for_updates"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

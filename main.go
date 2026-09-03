@@ -55,10 +55,21 @@ func main() {
 			runCLI()
 			return
 		}
+		// Anything else positional is a database file path the OS handed this
+		// process — build/linux/blunderdb.desktop's `Exec=blunderDB %f`, or a
+		// Windows/macOS file-association double-click (#241) — not a flag
+		// (which would start with "-"): GUI mode, opening that file. A
+		// leading "-" is left alone rather than treated as a startup path, so
+		// an unrecognised flag reports itself sanely instead of being handed
+		// to the GUI as if it were a database.
+		if !strings.HasPrefix(os.Args[1], "-") {
+			runGUI(os.Args[1])
+			return
+		}
 	}
 
 	// Run GUI mode
-	runGUI()
+	runGUI("")
 }
 
 func runCLI() {
@@ -96,7 +107,7 @@ func runMigrate() {
 	}
 }
 
-func runGUI() {
+func runGUI(startupFilePath string) {
 	initLogging("gui")
 	db := database.NewDatabase()
 	cfg := NewConfig()
@@ -120,7 +131,7 @@ func runGUI() {
 	}
 
 	// Bind the database and config alongside the GUI App struct.
-	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, db, []interface{}{db, cfg}); err != nil {
+	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, db, []interface{}{db, cfg}, startupFilePath); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
