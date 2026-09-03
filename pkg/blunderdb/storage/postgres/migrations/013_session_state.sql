@@ -68,4 +68,3 @@ BEGIN
     END IF;
 END $$;
 
-UPDATE metadata SET value = '2.17.0' WHERE key = 'database_version';
