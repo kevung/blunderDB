@@ -141,7 +141,7 @@ type metKazarossXG2PostEntry struct {
 	MWC  float64 `json:"mwc"`
 }
 
-// metKazarossXG2Export is the JSON shape gammonNet's tools/extract_met.py
+// metKazarossXG2Doc is the JSON shape gammonNet's tools/extract_met.py
 // writes to data/met_kazaross_xg2.json — see that file's own docstring for
 // the full field-by-field description.
 type metKazarossXG2Doc struct {
