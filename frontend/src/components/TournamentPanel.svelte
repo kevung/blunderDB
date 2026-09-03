@@ -2,6 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
+    import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -124,23 +125,24 @@
     });
 
     // Load/unload data when the panel is shown or hidden
-    let _prevVisible = false;
-    $effect(() => {
-        const v = $openPanels.has(PANEL.TOURNAMENT);
-        if (v !== _prevVisible) {
-            if (v) {
-                if ($databaseLoadedStore) loadTournaments();
-                selectedTournamentStore.set(null);
-                tournamentMatchesStore.set([]);
-            } else {
-                selectedTournamentStore.set(null);
-                tournamentMatchesStore.set([]);
-                tournamentEdit.cancel();
-                addMatchSearch = '';
-            }
-            _prevVisible = v;
-        }
-    });
+    $effect(
+        onChange(
+            () => $openPanels.has(PANEL.TOURNAMENT),
+            (v) => {
+                if (v) {
+                    if ($databaseLoadedStore) loadTournaments();
+                    selectedTournamentStore.set(null);
+                    tournamentMatchesStore.set([]);
+                } else {
+                    selectedTournamentStore.set(null);
+                    tournamentMatchesStore.set([]);
+                    tournamentEdit.cancel();
+                    addMatchSearch = '';
+                }
+            },
+            false
+        )
+    );
 
     async function loadTournaments() {
         try {

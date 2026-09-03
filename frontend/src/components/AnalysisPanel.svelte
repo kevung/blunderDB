@@ -60,10 +60,8 @@
     // Side effects when the analysis panel opens or closes. TabbedPanel mounts
     // and destroys this component on every tab switch (its {#if} pattern, see
     // that file's header comment) — onMount/onDestroy are the events that
-    // actually fire "opens"/"closes" here, unlike openPanels/PANEL.ANALYSIS,
-    // which the 'analysis' tab has never driven since the tabHandler.js
-    // refactor (applyTabPanels only wires matches/stats/tournaments/
-    // collections to a PANEL) and so is always empty for this panel.
+    // actually fire "opens"/"closes" here (there is no PANEL entry for the
+    // analysis tab; see uiStore.js's PANEL comment).
     onMount(() => {
         const ctx = matchCtx;
         if (ctx.isMatchMode) {

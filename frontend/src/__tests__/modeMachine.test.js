@@ -171,17 +171,13 @@ describe('positionService ré-exporte les transitions', () => {
 // ── NORMAL → EDIT → NORMAL ────────────────────────────────────────────────────
 
 describe('NORMAL → EDIT → NORMAL', () => {
-    test('enterEditMode vide le damier, ferme les panneaux, efface le coup sélectionné', async () => {
+    test('enterEditMode vide le damier, efface le coup sélectionné', async () => {
         setLibrary();
-        openPanel(PANEL.ANALYSIS);
-        openPanel(PANEL.COMMENT);
         selectedMoveStore.set({ move: '8/5 6/5' });
 
         await enterEditMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
-        expect(get(openPanels).has(PANEL.ANALYSIS)).toBe(false);
-        expect(get(openPanels).has(PANEL.COMMENT)).toBe(false);
         expect(get(selectedMoveStore)).toBeNull();
         const board = get(positionStore);
         expect(board.board.bearoff).toEqual([15, 15]);

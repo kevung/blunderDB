@@ -224,11 +224,9 @@ export function handleKeyDown(event) {
         }
     }
 
-    // Panel focus handling. openPanels/PANEL.COMMENT is never set — the
-    // 'comments' tab has driven no PANEL since the tabHandler.js refactor
-    // (applyTabPanels only wires matches/stats/tournaments/collections there)
-    // — so the tab itself is the only live signal that the comment panel is
-    // the one TabbedPanel currently has mounted.
+    // Panel focus handling. There is no PANEL entry for the comment tab (see
+    // uiStore.js's PANEL comment) — the active tab is the only live signal that
+    // CommentPanel is the one TabbedPanel currently has mounted.
     const showComment = get(activeTabStore) === 'comments';
     if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {

@@ -12,7 +12,9 @@ import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
 import { logger } from '../utils/logger.js';
 import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
-import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows, playedCubePredicate, playedMovePredicate } from '../utils/analysisRows.js';
+import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows } from '../utils/analysisRows.js';
+import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
+import { STRIP, INK, splitWidth, paintTable } from '../utils/canvasTable.js';
 
 // Write a PNG rendered from a <canvas> to the clipboard, walking the image
 // clipboard's fallback ladder (see docs/adr/0004). Rung 1 is the WebView's own
@@ -384,8 +386,6 @@ export async function copyBoardWithAnalysisImage() {
 // sits behind it.
 // ---------------------------------------------------------------------------
 
-const STRIP = { rowHeight: 18, padding: 10, cellPad: 4, font: '12px monospace', headerFont: 'bold 12px monospace' };
-const INK = { border: '#ddd', section: '#ccc', header: '#f2f2f2', white: '#ffffff', even: '#fdfdfd', played: '#fff3cd' };
 // The image ranks the candidates itself and keeps the top of the list.
 const MAX_IMAGE_MOVES = 6;
 // The cube strip is as tall as its tallest block: the facts grid (a header
@@ -418,7 +418,7 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     if (strip.kind === 'cube') {
         const cube = analysis.doublingCubeAnalysis;
         const decision = cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
-        const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubePredicate(analysis, isMatchMode), isMoney });
+        const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubeActionPredicate(analysis, { matchMode: isMatchMode }), isMoney });
         const third = Math.floor(width / 3);
 
         paintTable(ctx, 0, y, splitWidth(third, [1, 1, 1]), cubeFactRows(cube), { boldLabels: true });
@@ -435,65 +435,7 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     }
 
     const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0)).slice(0, MAX_IMAGE_MOVES);
-    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, isMatchMode), isMoney });
+    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, { matchMode: isMatchMode }), isMoney });
     const widths = splitWidth(width, [0.18, 0.08, 0.08, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.14]);
     paintTable(ctx, 0, y, widths, block, { leftLabels: true, zebra: true, sections: [0, 2, 5, 8] });
-}
-
-// splitWidth cuts a width into columns by fraction; the last column absorbs
-// the rounding so the table ends exactly on its right edge.
-function splitWidth(width, fractions) {
-    const total = fractions.reduce((a, b) => a + b, 0);
-    const widths = fractions.map((f) => Math.floor((width * f) / total));
-    widths[widths.length - 1] += width - widths.reduce((a, b) => a + b, 0);
-    return widths;
-}
-
-function paintCell(ctx, x, y, w, text, { bg = INK.white, bold = false, align = 'center' } = {}) {
-    const h = STRIP.rowHeight;
-    ctx.fillStyle = bg;
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeStyle = INK.border;
-    ctx.lineWidth = 0.5;
-    ctx.strokeRect(x, y, w, h);
-    ctx.fillStyle = '#000';
-    ctx.font = bold ? STRIP.headerFont : STRIP.font;
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = align;
-    ctx.fillText(text, align === 'left' ? x + STRIP.cellPad : x + w / 2, y + h / 2);
-}
-
-// paintTable lays a {header?, rows} block on the canvas. A row whose cells
-// stop short of the last column spans it with its last cell (the verdict,
-// a cubeless equity). `sections` names the columns after which a heavier
-// rule separates the groups, as the DOM table's borders do.
-function paintTable(ctx, x0, y0, widths, { header = null, rows }, { boldLabels = false, leftLabels = false, labelBg = INK.white, zebra = false, sections = [] } = {}) {
-    const h = STRIP.rowHeight;
-    const edges = widths.reduce((acc, w) => [...acc, acc[acc.length - 1] + w], [x0]);
-    let y = y0;
-
-    function paintRow(cells) {
-        cells.forEach((cell, i) => {
-            const w = i === cells.length - 1 ? edges[widths.length] - edges[i] : widths[i];
-            paintCell(ctx, edges[i], y, w, cell.text, cell);
-        });
-        ctx.strokeStyle = INK.section;
-        ctx.lineWidth = 1.5;
-        for (const s of sections) {
-            ctx.beginPath();
-            ctx.moveTo(edges[s + 1], y);
-            ctx.lineTo(edges[s + 1], y + h);
-            ctx.stroke();
-        }
-        y += h;
-    }
-
-    if (header) paintRow(header.map((text) => ({ text, bg: INK.header, bold: true })));
-    rows.forEach((row, i) => {
-        const bg = row.highlight ? INK.played : zebra && i % 2 === 1 ? INK.even : INK.white;
-        paintRow([
-            { text: row.label, bg: row.highlight ? bg : labelBg, bold: boldLabels || !!row.bold, align: leftLabels ? 'left' : 'center' },
-            ...row.cells.map((text) => ({ text, bg, bold: !!row.bold }))
-        ]);
-    });
 }

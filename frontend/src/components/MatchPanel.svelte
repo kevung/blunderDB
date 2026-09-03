@@ -2,6 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import {
@@ -133,35 +134,37 @@
     // tab by default, before openDatabaseByPath completes); that case is covered
     // by the matchPanelRefreshTriggerStore bump fired once the DB is open and the
     // session restored — see openDatabaseByPath.
-    let _prevVisible = false;
-    $effect(() => {
-        const opened = visible; // $derived — tracked
-        const wasVisible = _prevVisible;
-        _prevVisible = opened;
-        if (opened && !wasVisible && databaseLoaded) {
-            loadMatches().then(() => {
-                const lvm = lastVisitedMatch;
-                if (lvm && lvm.matchID) {
-                    const m = matches.find((mm) => mm.id === lvm.matchID);
-                    if (m) {
-                        selectedMatch = m;
-                        loadMatchDetail(m);
-                    } else {
-                        selectedMatch = null;
-                        detailMatch = null;
-                    }
-                } else {
+    $effect(
+        onChange(
+            () => visible, // $derived — tracked
+            (opened) => {
+                if (opened && databaseLoaded) {
+                    loadMatches().then(() => {
+                        const lvm = lastVisitedMatch;
+                        if (lvm && lvm.matchID) {
+                            const m = matches.find((mm) => mm.id === lvm.matchID);
+                            if (m) {
+                                selectedMatch = m;
+                                loadMatchDetail(m);
+                            } else {
+                                selectedMatch = null;
+                                detailMatch = null;
+                            }
+                        } else {
+                            selectedMatch = null;
+                            detailMatch = null;
+                        }
+                    });
+                } else if (!opened) {
                     selectedMatch = null;
                     detailMatch = null;
+                    detailStats = null;
+                    tournamentEdit.cancel();
                 }
-            });
-        } else if (!opened && wasVisible) {
-            selectedMatch = null;
-            detailMatch = null;
-            detailStats = null;
-            tournamentEdit.cancel();
-        }
-    });
+            },
+            false
+        )
+    );
 
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {

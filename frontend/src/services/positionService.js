@@ -16,13 +16,13 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore } from '../stores/positionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
@@ -85,55 +85,10 @@ export function setSearchState(cmdOrObj, pos, active) {
     }
 }
 
-// generateXGID re-encodes a blunderDB Position as an XGID string (see
-// pkg/blunderdb/domain/xgid.go for the field layout and domain.DecodeXGID,
-// its inverse). blunderDB's Position only ever stores the AWAY score per
-// side, never the match's absolute length or either player's points-so-far —
-// so at a match score this is necessarily a re-encoding, not a byte-for-byte
-// copy of whatever XGID the position first arrived with: it reconstructs the
-// smallest match length consistent with the away scores shown (an away pair
-// of [2, 4] becomes "4pt match, 2-0" here even if the position was first
-// imported from a 5pt match at 3-1). That reconstruction still round-trips
-// through domain.DecodeXGID to the exact same away scores, cube and board —
-// the position it describes is unchanged, only the cosmetic match-length/
-// score pair differs — and it is the same choice the corpus documents and
-// pins (testdata/xgid_corpus.json). What must NOT be lost, because nothing
-// else recovers it once dropped, is the ruleset a money game is actually
-// played under: Jacoby and Beaver. Field 7 carries the Crawford flag in
-// match play but the Jacoby/Beaver bitmask in a money game (bit 0 = Jacoby,
-// bit 1 = Beaver) — the same dual meaning domain.DecodeXGID documents — so
-// which one it emits is decided by the game type, never both.
-export function generateXGID(position) {
-    const { board, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver } = position;
-
-    let positionPart = '';
-    for (let i = 0; i < 26; i++) {
-        const point = board.points[i];
-        if (point.checkers > 0) {
-            const charCode = point.color === 0 ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
-            positionPart += String.fromCharCode(charCode + point.checkers - 1);
-        } else {
-            positionPart += '-';
-        }
-    }
-
-    const cubeValue = cube.value;
-    const cubeOwner = cube.owner === 0 ? 1 : cube.owner === 1 ? -1 : 0;
-    const dicePart = decision_type === 1 ? '00' : dice.join('');
-    const isMoneyGame = score[0] === -1 || score[1] === -1;
-    const matchLength = isMoneyGame ? 0 : Math.max(score[0], score[1]);
-    const actualScore1 = isMoneyGame ? 0 : matchLength - score[0];
-    const actualScore2 = isMoneyGame ? 0 : matchLength - score[1];
-    const isCrawford = !isMoneyGame && (score[0] === 1 || score[1] === 1) ? 1 : 0;
-    const field7 = isMoneyGame ? (has_jacoby ? 1 : 0) | (has_beaver ? 2 : 0) : isCrawford;
-    const playerOnRoll = player_on_roll === 0 ? 1 : -1;
-    // Field 9 (max cube): blunderDB does not model a capped-cube rule at all
-    // — 0, XGID's own "no limit" convention, is the honest answer for every
-    // position this app can represent, not a lossy default.
-    const maxCube = 0;
-
-    return `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${field7}:${matchLength}:${maxCube}`;
-}
+// generateXGID lives in xgid.js — re-exported so existing callers keep one import,
+// and imported here too since this module still calls it directly.
+export { generateXGID } from './xgid.js';
+import { generateXGID } from './xgid.js';
 
 export function isValidPosition(position) {
     const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
@@ -573,200 +528,9 @@ export async function loadPositionsByFilters({
     }
 }
 
-function saveCurrentMatchPosition() {
-    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
-        const matchCtx = get(matchContextStore);
-        const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-        if (currentMovePos) {
-            lastVisitedMatchStore.set({
-                matchID: matchCtx.matchID,
-                currentIndex: matchCtx.currentIndex,
-                gameNumber: currentMovePos.game_number
-            });
-            SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch((e) => {
-                logger.error('Error persisting last visited position:', e);
-            });
-        }
-    }
-}
-
-export async function firstPosition() {
-    if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
-        return;
-    }
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-
-    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
-        const matchCtx = get(matchContextStore);
-        const currentGameNumber = matchCtx.movePositions[matchCtx.currentIndex].game_number;
-
-        let targetIndex = -1;
-        for (let i = matchCtx.currentIndex - 1; i >= 0; i--) {
-            if (matchCtx.movePositions[i].game_number < currentGameNumber) {
-                targetIndex = i;
-                break;
-            }
-        }
-
-        if (targetIndex === -1) {
-            targetIndex = 0;
-        } else {
-            const targetGameNumber = matchCtx.movePositions[targetIndex].game_number;
-            for (let i = 0; i < matchCtx.movePositions.length; i++) {
-                if (matchCtx.movePositions[i].game_number === targetGameNumber) {
-                    targetIndex = i;
-                    break;
-                }
-            }
-        }
-
-        matchContextStore.update((ctx) => ({ ...ctx, currentIndex: targetIndex }));
-        const movePos = matchCtx.movePositions[targetIndex];
-        await showPosition(movePos.position);
-        statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
-        saveCurrentMatchPosition();
-    } else {
-        const positions = get(positionsStore);
-        if (positions && positions.length > 0) {
-            currentPositionIndexStore.set(0);
-        }
-    }
-}
-
-export async function previousPosition() {
-    if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
-        return;
-    }
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-
-    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
-        const matchCtx = get(matchContextStore);
-        if (matchCtx.currentIndex > 0) {
-            let newIndex = matchCtx.currentIndex - 1;
-            while (newIndex >= 0) {
-                const movePos = matchCtx.movePositions[newIndex];
-                if (movePos.move_type === 'checker' || movePos.move_type === 'cube') break;
-                newIndex--;
-            }
-
-            if (newIndex >= 0) {
-                matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
-                const movePos = matchCtx.movePositions[newIndex];
-                await showPosition(movePos.position);
-                statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
-                saveCurrentMatchPosition();
-            }
-        }
-    } else {
-        const positions = get(positionsStore);
-        if (positions && get(currentPositionIndexStore) > 0) {
-            currentPositionIndexStore.set(get(currentPositionIndexStore) - 1);
-        }
-    }
-}
-
-export async function nextPosition() {
-    if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
-        return;
-    }
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-
-    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
-        const matchCtx = get(matchContextStore);
-        if (matchCtx.currentIndex < matchCtx.movePositions.length - 1) {
-            let newIndex = matchCtx.currentIndex + 1;
-            while (newIndex < matchCtx.movePositions.length) {
-                const movePos = matchCtx.movePositions[newIndex];
-                if (movePos.move_type === 'checker' || movePos.move_type === 'cube') break;
-                newIndex++;
-            }
-
-            if (newIndex < matchCtx.movePositions.length) {
-                matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
-                const movePos = matchCtx.movePositions[newIndex];
-                await showPosition(movePos.position);
-                statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
-                saveCurrentMatchPosition();
-            }
-        }
-    } else {
-        const positions = get(positionsStore);
-        if (positions && get(currentPositionIndexStore) < positions.length - 1) {
-            currentPositionIndexStore.set(get(currentPositionIndexStore) + 1);
-        }
-    }
-}
-
-export async function lastPosition() {
-    if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
-        return;
-    }
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-
-    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
-        const matchCtx = get(matchContextStore);
-        const currentGameNumber = matchCtx.movePositions[matchCtx.currentIndex].game_number;
-
-        let targetIndex = -1;
-        for (let i = matchCtx.currentIndex + 1; i < matchCtx.movePositions.length; i++) {
-            if (matchCtx.movePositions[i].game_number > currentGameNumber) {
-                targetIndex = i;
-                break;
-            }
-        }
-
-        if (targetIndex === -1) {
-            const maxGameNumber = Math.max(...matchCtx.movePositions.map((p) => p.game_number));
-            for (let i = 0; i < matchCtx.movePositions.length; i++) {
-                if (matchCtx.movePositions[i].game_number === maxGameNumber) {
-                    targetIndex = i;
-                    break;
-                }
-            }
-        }
-
-        if (targetIndex !== -1) {
-            matchContextStore.update((ctx) => ({ ...ctx, currentIndex: targetIndex }));
-            const movePos = matchCtx.movePositions[targetIndex];
-            await showPosition(movePos.position);
-            statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
-            saveCurrentMatchPosition();
-        }
-    } else {
-        const positions = get(positionsStore);
-        if (positions && positions.length > 0) {
-            currentPositionIndexStore.set(positions.length - 1);
-        }
-    }
-}
-
-export function gotoPosition() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    if (get(statusBarModeStore) === 'EDIT') {
-        setStatusBarMessage(tMsg('status.cannotGoToEdit'));
-        return;
-    }
-    openModal(MODAL.GO_TO_POSITION);
-}
+// Position navigation (first/previous/next/last/goto/random) lives in
+// positionNavigation.js — re-exported so existing callers keep one import.
+export { firstPosition, previousPosition, nextPosition, lastPosition, gotoPosition } from './positionNavigation.js';
 
 export async function deletePosition() {
     if (!get(databasePathStore)) {
@@ -950,128 +714,24 @@ export async function updateEPC(position) {
     }
 }
 
-// ── Tab toggles ──────────────────────────────────────────────────────────────
-// The `toggleXPanel` names date from when each panel was a floating window;
-// today every one of them selects a tab of the tabbed panel (App.svelte's tab
-// effect opens the matching PANEL). One table, one function; the names stay
-// as re-exports for keyboardService, commandProcessor and App.svelte.
-//
-//   tab         the activeTabStore value to select
-//   guard       extra precondition (checked only when SWITCHING INTO the
-//               tab, never when toggling back out of it), returning a
-//               status-bar message key to refuse
-//   silent      no "no database" message (metadata: the tab just stays where
-//               it is)
-//   noDbMessage status-bar message key to use instead of the generic
-//               "no database" one when no database is open
-const TAB_TOGGLES = Object.freeze({
-    analysis: { tab: 'analysis' },
-    comments: {
-        tab: 'comments',
-        guard: () => (positionsStore.idAt(get(currentPositionIndexStore)) != null ? null : 'status.noCurrentPositionComment')
-    },
-    metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
-    anki: { tab: 'anki' },
-    matches: { tab: 'matches' },
-    collections: { tab: 'collections' },
-    tournaments: { tab: 'tournaments' },
-    stats: { tab: 'stats' },
-    search: { tab: 'search', noDbMessage: 'status.searchHistoryRequiresDb' }
-});
+// Tab toggles ("Afficher/cacher", #202) live in tabToggles.js — re-exported so
+// existing callers (keyboardService, commandProcessor, App.svelte, Toolbar.svelte)
+// keep one import.
+export {
+    toggleTab,
+    toggleAnalysisPanel,
+    toggleCommentPanel,
+    toggleMetadataPanel,
+    toggleAnkiPanel,
+    toggleMatchPanel,
+    toggleCollectionPanelAction,
+    toggleTournamentPanel,
+    toggleStatsPanel,
+    toggleSearchPanel,
+    togglePipcount
+} from './tabToggles.js';
 
-// The tab to fall back to on a "toggle back" when there is nothing more
-// specific to return to yet (app just started, database just opened) — the
-// same tab activeTabStore itself starts on.
-const DEFAULT_TAB = 'matches';
-
-// The tab that was active right before the last toggleTab() actually
-// switched INTO a different one — module-level, on purpose: the eight
-// shortcuts below (raccourcis.rst's "Afficher/cacher", #202) share one
-// "previous tab" memory rather than one per shortcut, so Ctrl-L then Ctrl-P
-// then Ctrl-L again returns to "comments", not to whatever was active before
-// Ctrl-L's first press. Read fresh from activeTabStore on every call, so it
-// stays correct even when the active tab changed by some other means
-// (clicking a tab directly, a match/search/import flow selecting one, …).
-let previousTab = null;
-
-/**
- * Select the tab of `id` (a TAB_TOGGLES key) if a database is open — and,
- * unlike a plain "show" action, toggle BACK to whichever tab was active
- * before if `id`'s tab is already the one showing. Every one of these
- * shortcuts is documented as "Afficher/cacher" (show/hide); before this,
- * pressing one a second time was a no-op (#202).
- */
-export function toggleTab(id) {
-    const entry = TAB_TOGGLES[id];
-    if (!entry) throw new Error(`toggleTab: unknown tab '${id}'`);
-    logger.log(`toggleTab ${id}`);
-    if (!get(databasePathStore)) {
-        if (!entry.silent) setStatusBarMessage(tMsg(entry.noDbMessage ?? 'commands.noDatabaseOpened'));
-        return;
-    }
-
-    const current = get(activeTabStore);
-    if (current === entry.tab) {
-        activeTabStore.set(previousTab && previousTab !== entry.tab ? previousTab : DEFAULT_TAB);
-        return;
-    }
-
-    // The guard only gates entering the tab (e.g. "no current position to
-    // comment on") — it never applies to the toggle-back branch above, or
-    // leaving a tab would be blocked by the precondition for being on it.
-    const refusal = entry.guard?.();
-    if (refusal) {
-        setStatusBarMessage(tMsg(refusal));
-        return;
-    }
-    previousTab = current;
-    activeTabStore.set(entry.tab);
-}
-
-export const toggleAnalysisPanel = () => toggleTab('analysis');
-export const toggleCommentPanel = () => toggleTab('comments');
-// Bound to the `meta` command and Ctrl+M (a tab, not a modal).
-export const toggleMetadataPanel = () => toggleTab('metadata');
-export const toggleAnkiPanel = () => toggleTab('anki');
-export const toggleMatchPanel = () => toggleTab('matches');
-export const toggleCollectionPanelAction = () => toggleTab('collections');
-export const toggleTournamentPanel = () => toggleTab('tournaments');
-export const toggleStatsPanel = () => toggleTab('stats');
-export const toggleSearchPanel = () => toggleTab('search');
-
-export function togglePipcount() {
-    logger.log('togglePipcount');
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    showPipcountStore.set(!get(showPipcountStore));
-    if (get(statusBarModeStore) === 'MATCH') {
-        const currentPosition = get(positionStore);
-        positionStore.set({ ...currentPosition });
-    } else {
-        const currentIndex = get(currentPositionIndexStore);
-        currentPositionIndexStore.set(-1);
-        currentPositionIndexStore.set(currentIndex);
-    }
-}
-
-export function loadRandomPosition() {
-    logger.log('loadRandomPosition');
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
-    const positions = get(positionsStore);
-    if (positions && positions.length > 0) {
-        let randomIndex = Math.floor(Math.random() * positions.length);
-        while (randomIndex === get(currentPositionIndexStore)) {
-            randomIndex = Math.floor(Math.random() * positions.length);
-        }
-        logger.log('Random position index:', randomIndex);
-        currentPositionIndexStore.set(randomIndex);
-    }
-}
+export { loadRandomPosition } from './positionNavigation.js';
 
 export async function addSearchToFilterLibrary(filterName, filterCommand, positionJson, excludePositionJson = '') {
     try {

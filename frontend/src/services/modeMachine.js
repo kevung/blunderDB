@@ -184,8 +184,6 @@ export async function enterEditMode() {
 
     if (currentMode() !== MODE.EDIT) {
         statusBarModeStore.set(MODE.EDIT);
-        closePanel(PANEL.COMMENT);
-        closePanel(PANEL.ANALYSIS);
         // Clear the selected analysis move so its move arrows are erased when
         // leaving a match/analysis position for the search tab. The board only
         // auto-clears the selection on a position-ID change, and here the id is
@@ -334,8 +332,6 @@ export async function enterEPCMode() {
     savedContext.epcSeed = null;
 
     statusBarModeStore.set(MODE.EPC);
-    closePanel(PANEL.COMMENT);
-    closePanel(PANEL.ANALYSIS);
 
     positionsStore.set([epcPosition]);
     positionStore.set(epcPosition);

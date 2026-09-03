@@ -17,7 +17,6 @@
 // (reactive `$t`) get identical labels from identical code.
 
 import { CUBE_OPTIONS, DECISION_STATE } from './cubeDecision.js';
-import { normalizeCubeAction } from './cubeAction.js';
 
 // An absent fact — PositionFactsTable's own mark, so a value that does not
 // exist reads the same way in every table of the panel.
@@ -376,39 +375,10 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
     };
 }
 
-// ---------------------------------------------------------------------------
-// "Was this played?" — the predicates AnalysisPanel applies to a stored
-// record, as pure functions so the copied image highlights exactly the rows
-// the panel does. In match mode only the current match's own action counts;
-// browsing positions, every recorded play does.
-// ---------------------------------------------------------------------------
-
-function normalizeMove(move) {
-    return move ? move.split(' ').sort().join(' ') : '';
-}
-
-export function playedMovePredicate(analysis, isMatchMode) {
-    return (move) => {
-        if (!move?.move) return false;
-        const target = normalizeMove(move.move);
-        if (isMatchMode) return analysis.playedMove ? normalizeMove(analysis.playedMove) === target : false;
-        if (analysis.playedMoves?.some((pm) => normalizeMove(pm) === target)) return true;
-        return analysis.playedMove ? normalizeMove(analysis.playedMove) === target : false;
-    };
-}
-
-export function playedCubePredicate(analysis, isMatchMode) {
-    return (action) => {
-        const parts = normalizeCubeAction(action);
-        if (isMatchMode) {
-            if (!analysis.playedCubeAction) return false;
-            const played = normalizeCubeAction(analysis.playedCubeAction);
-            return parts.every((p) => played.includes(p));
-        }
-        const played = new Set((analysis.playedCubeActions ?? []).flatMap(normalizeCubeAction));
-        if (played.size === 0 && analysis.playedCubeAction) {
-            for (const p of normalizeCubeAction(analysis.playedCubeAction)) played.add(p);
-        }
-        return played.size > 0 && parts.every((p) => played.has(p));
-    };
-}
+// "Was this played?" (highlighting a row) is NOT this module's rule: it lives
+// once in utils/playedMarks.js (playedMovePredicate/playedCubeActionPredicate),
+// which AnalysisPanel and AnkiPanel both already call. clipboardService (the
+// canvas painter) calls the same two functions — fiche D.10, #210: this file
+// used to carry its own second copy, with its own positional-boolean
+// signature instead of playedMarks.js's `{ matchMode }`, and nothing checked
+// the two stayed in step.

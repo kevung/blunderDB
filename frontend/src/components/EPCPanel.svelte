@@ -9,6 +9,7 @@
     import { EventsOn, BrowserOpenURL } from '../../wailsjs/runtime/runtime.js';
     import { logger } from '../utils/logger.js';
     import { isBareLetter } from '../utils/keys.js';
+    import { onChange } from '../utils/onChange.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
     import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
@@ -125,14 +126,15 @@
     // Leaving the Eval tab clears the board's selected-move arrow — the same
     // visibility-driven clearing AnalysisPanel already does, so a move
     // picked here does not linger once a different panel is showing.
-    let _prevActive = false;
-    $effect(() => {
-        const v = isActive;
-        if (v !== _prevActive) {
-            if (!v) selectedMoveStore.set(null);
-            _prevActive = v;
-        }
-    });
+    $effect(
+        onChange(
+            () => isActive,
+            (v) => {
+                if (!v) selectedMoveStore.set(null);
+            },
+            false
+        )
+    );
 
     function runEvaluationEscalation() {
         const pos = $positionStore;
