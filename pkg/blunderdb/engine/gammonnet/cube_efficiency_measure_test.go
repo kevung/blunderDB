@@ -131,11 +131,11 @@ func TestMeasureCubeXLeafGap(t *testing.T) {
 		t.Skip("set BLUNDERDB_MEASURE_CUBEX to measure the cube-efficiency model gap")
 	}
 	corpus := cubeXCorpus(t)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -160,7 +160,7 @@ func TestMeasureCubeXLeafGap(t *testing.T) {
 		// leafValue prices.
 		cfg := DefaultConfig(0)
 		cfg.UseMatch, cfg.Match = true, state
-		s := NewSearcherWith(cfg, net, prune)
+		s := newSearcherWith(cfg, net, prune)
 		pos, err := FromDomain(d.pos)
 		if err != nil {
 			continue
@@ -207,11 +207,11 @@ func TestMeasureCubeXDecisionEDT(t *testing.T) {
 		t.Skip("set BLUNDERDB_MEASURE_CUBEX to measure the cube-efficiency model gap")
 	}
 	corpus := cubeXCorpus(t)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -228,7 +228,7 @@ func TestMeasureCubeXDecisionEDT(t *testing.T) {
 		}
 		cfg := DefaultConfig(0)
 		cfg.UseMatch, cfg.Match = true, state
-		s := NewSearcherWith(cfg, net, prune)
+		s := newSearcherWith(cfg, net, prune)
 		pos, err := FromDomain(d.pos)
 		if err != nil {
 			continue
@@ -295,11 +295,11 @@ func TestMeasureCubeXSearchSensitivity(t *testing.T) {
 		t.Skip("set BLUNDERDB_MEASURE_CUBEX to measure the cube-efficiency model gap")
 	}
 	corpus := cubeXCorpus(t)
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -335,7 +335,7 @@ func TestMeasureCubeXSearchSensitivity(t *testing.T) {
 			cfg := DefaultConfig(2)
 			cfg.UseMatch, cfg.Match = true, state
 			cfg.UseCube, cfg.CubeOwner, cfg.CubeX = true, owner, x
-			s := NewSearcherWith(cfg, net, prune).WithWorkers(16)
+			s := newSearcherWith(cfg, net, prune).WithWorkers(16)
 			c, ok, err := s.BestPlay(&gp, d.dice[0], d.dice[1])
 			if err != nil || !ok {
 				okBoth = false
@@ -384,11 +384,11 @@ func TestMeasureGateRedCasesAtDepth(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}
-	prune, err := EmbeddedPruneNetwork()
+	prune, err := embeddedPruneNetwork()
 	if err != nil {
 		t.Fatal(err)
 	}

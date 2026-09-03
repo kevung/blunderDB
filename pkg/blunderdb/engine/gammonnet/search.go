@@ -73,10 +73,10 @@ var (
 	pruneErr  error
 )
 
-// EmbeddedPruneNetwork returns the pruning network: 196→32→5, distilled from
+// embeddedPruneNetwork returns the pruning network: 196→32→5, distilled from
 // the big one and measured 92.5× cheaper per evaluation. It sorts the
 // candidates so the big network only ever scores the survivors.
-func EmbeddedPruneNetwork() (*Network, error) {
+func embeddedPruneNetwork() (*Network, error) {
 	pruneOnce.Do(func() { pruneNet, pruneErr = Load(embeddedPruneWeights) })
 	return pruneNet, pruneErr
 }
@@ -335,26 +335,26 @@ func NewSearcher(cfg SearchConfig) (*Searcher, error) {
 	if cfg.UseMatch && !cfg.Match.IsValid() {
 		return nil, fmt.Errorf("%w: match state %+v", ErrNotEvaluable, cfg.Match)
 	}
-	net, err := Embedded()
+	net, err := embeddedNetwork()
 	if err != nil {
 		return nil, err
 	}
 	var pn *Network
 	if cfg.PruneK > 0 {
-		if pn, err = EmbeddedPruneNetwork(); err != nil {
+		if pn, err = embeddedPruneNetwork(); err != nil {
 			return nil, err
 		}
 	}
-	return NewSearcherWith(cfg, net, pn), nil
+	return newSearcherWith(cfg, net, pn), nil
 }
 
-// NewSearcherWith builds a searcher over explicit networks. prune may be nil,
+// newSearcherWith builds a searcher over explicit networks. prune may be nil,
 // which turns pruning off whatever PruneK says.
-func NewSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
+func newSearcherWith(cfg SearchConfig, net, prune *Network) *Searcher {
 	return newSearcherWithCache(cfg, net, prune, defaultCacheLog2)
 }
 
-// newSearcherWithCache is NewSearcherWith with the cache size broken out —
+// newSearcherWithCache is newSearcherWith with the cache size broken out —
 // WithWorkers uses it to size a WORKER's cache smaller than the root's
 // (#196/C.9): only the root ever revisits a position across the whole tree
 // (the recursion folds transpositions back to it), so a worker's cache exists
@@ -1224,7 +1224,7 @@ func LiveWorkers(ply int) int {
 //
 // The networks are never swapped: pruning stays on exactly when the searcher
 // was built with a prune network, whatever the new PruneK says — the same
-// rule NewSearcherWith states. Refused, never degraded, on an invalid match
+// rule newSearcherWith states. Refused, never degraded, on an invalid match
 // state, exactly like NewSearcher.
 func (s *Searcher) Reconfigure(cfg SearchConfig) error {
 	if cfg.UseMatch && !cfg.Match.IsValid() {
