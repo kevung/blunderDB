@@ -13,7 +13,7 @@ import (
 
 // runList handles the list command
 func (cli *CLI) runList(args []string) error {
-	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")

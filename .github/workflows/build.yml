@@ -665,6 +665,14 @@ jobs:
           # at the fixed path nfpm.yaml expects, then remove the bare copy so it
           # is not uploaded to the release.
           cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderDB
+          # `blunderdb completion <shell>` prints the script (B.8, #176); generate
+          # it here from the binary just staged, rather than committing one, so it
+          # can never drift from the subcommand table it reads (handlers()). The
+          # CLI path never touches webkit2gtk, so this runs fine on the runner.
+          mkdir -p build/linux/completions
+          build/bin/blunderDB completion bash > build/linux/completions/blunderdb.bash
+          build/bin/blunderDB completion zsh  > build/linux/completions/_blunderdb
+          build/bin/blunderDB completion fish > build/linux/completions/blunderdb.fish
           nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
           nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
           rm -f build/bin/blunderDB

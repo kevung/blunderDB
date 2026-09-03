@@ -143,13 +143,47 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
-// Conn returns the underlying *sql.DB handle. It is exposed for callers
-// outside the database package that need to run maintenance statements or
-// raw queries (CLI maintenance, tests). It may be nil before Setup/Open.
-func (d *Database) Conn() *sql.DB {
+// conn returns the underlying *sql.DB handle. It is deliberately unexported:
+// *Database is bound wholesale to the Wails frontend (main.go passes it in
+// extraBinds), so an exported method here becomes a JS-callable binding that
+// hands the raw handle straight to the frontend — never a mode's feature
+// (B.8, #176). Code within this package calls it directly; a caller outside
+// the package (scripts/demodb, tests in other packages) goes through RawConn.
+// It may be nil before Setup/Open.
+func (d *Database) conn() *sql.DB {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	return d.db
+}
+
+// RawConn returns d's underlying *sql.DB handle, for maintenance scripts and
+// tests that need direct SQL access outside the Storage contract (e.g.
+// scripts/demodb, which builds the embedded demo database with queries
+// Database has no method for). It is a package-level function rather than a
+// method so that binding *Database to the Wails frontend never exposes it to
+// the GUI — see the unexported conn() above. Never call this from
+// GUI-reachable code; add a named Database method instead (see Checkpoint).
+func RawConn(d *Database) *sql.DB {
+	return d.conn()
+}
+
+// Checkpoint truncates the write-ahead log into the main database file
+// (PRAGMA wal_checkpoint(TRUNCATE)). The CLI's batch importer calls this
+// after every successfully imported match to keep the WAL file bounded
+// during a long run, rather than reaching for Conn().Exec directly at the
+// call site (which also read d.db without going through the lock every other
+// writer takes). Best-effort: a checkpoint that cannot complete (e.g. a
+// concurrent reader holding an older snapshot open) is not a reason to fail
+// the import, so the error is returned for the caller to log rather than
+// treated as fatal.
+func (d *Database) Checkpoint() error {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return nil
+	}
+	_, err := d.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+	return err
 }
 
 // Close closes the underlying connection and clears it. It is safe to call

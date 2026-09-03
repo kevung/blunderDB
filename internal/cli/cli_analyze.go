@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 )
 
 // runAnalyze handles the analyze command: gammonNet's catch-up sweep (#130,
@@ -17,13 +18,14 @@ import (
 // evaluation to yield to, so it passes no yield func and simply runs at full
 // speed, on --jobs cores at once (#147).
 func (cli *CLI) runAnalyze(args []string) error {
-	analyzeCmd := flag.NewFlagSet("analyze", flag.ExitOnError)
+	analyzeCmd := flag.NewFlagSet("analyze", flag.ContinueOnError)
 
 	dbPath := analyzeCmd.String("db", "", "Path to the database file (required)")
 	ply := analyzeCmd.Int("ply", 2, "Search depth (canonical: 2, k=12)")
 	pruneK := analyzeCmd.Int("prune-k", 12, "Pruning width (canonical: 12)")
 	candidates := analyzeCmd.Int("candidates", 10, "Candidate moves kept per checker decision")
 	jobs := analyzeCmd.Int("jobs", runtime.NumCPU(), "Positions analysed in parallel (one CPU each)")
+	format := analyzeCmd.String("format", "text", "Output format: text or json")
 
 	analyzeCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb analyze [options]")
@@ -46,6 +48,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb analyze --db database.db")
 		fmt.Println("  blunderdb analyze --db database.db --jobs 1")
+		fmt.Println("  blunderdb analyze --db database.db --format json")
 	}
 
 	if err := analyzeCmd.Parse(args); err != nil {
@@ -57,6 +60,12 @@ func (cli *CLI) runAnalyze(args []string) error {
 		return fmt.Errorf("missing required flag: --db")
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
+
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
@@ -66,13 +75,18 @@ func (cli *CLI) runAnalyze(args []string) error {
 		return fmt.Errorf("counting positions without analysis: %w", err)
 	}
 	if total == 0 {
-		fmt.Println("Nothing to do: every position already has an analysis.")
-		return nil
+		if text {
+			fmt.Println("Nothing to do: every position already has an analysis.")
+			return nil
+		}
+		return printJSON(analyzeResult{Total: 0, Analyzed: 0, Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs})
 	}
 	if *jobs < 1 {
 		*jobs = 1
 	}
-	fmt.Printf("Analyzing %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", total, *ply, *pruneK, *jobs)
+	if text {
+		fmt.Printf("Analyzing %d position(s) with gammonNet (%d-ply, k=%d, %d job(s))...\n", total, *ply, *pruneK, *jobs)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -81,13 +95,20 @@ func (cli *CLI) runAnalyze(args []string) error {
 	defer signal.Stop(sig)
 	go func() {
 		if _, ok := <-sig; ok {
-			fmt.Println("\nCancelling...")
+			if text {
+				fmt.Println("\nCancelling...")
+			}
 			cancel()
 		}
 	}()
 
 	lastReported := -1
+	analyzed := 0
 	onProgress := func(done, total int) {
+		analyzed = done
+		if !text {
+			return
+		}
 		// A line per position would flood a large library's output; report
 		// on the first, the last, and every 5% in between.
 		pct := done * 100 / total
@@ -98,13 +119,32 @@ func (cli *CLI) runAnalyze(args []string) error {
 	}
 
 	err = cli.db.AnalyzeMissingWithGammonNet(ctx, *ply, *pruneK, *candidates, *jobs, nil, onProgress)
-	if err != nil {
-		if ctx.Err() != nil {
-			fmt.Println("Cancelled.")
-			return nil
-		}
+	cancelled := ctx.Err() != nil && err != nil
+	if err != nil && !cancelled {
 		return fmt.Errorf("analyze failed: %w", err)
+	}
+
+	if !text {
+		return printJSON(analyzeResult{
+			Total: total, Analyzed: analyzed, Cancelled: cancelled,
+			Ply: *ply, PruneK: *pruneK, Candidates: *candidates, Jobs: *jobs,
+		})
+	}
+	if cancelled {
+		fmt.Println("Cancelled.")
+		return nil
 	}
 	fmt.Println("Done.")
 	return nil
+}
+
+// analyzeResult is the --format json shape for `analyze`.
+type analyzeResult struct {
+	Total      int  `json:"total"`
+	Analyzed   int  `json:"analyzed"`
+	Cancelled  bool `json:"cancelled,omitempty"`
+	Ply        int  `json:"ply"`
+	PruneK     int  `json:"prune_k"`
+	Candidates int  `json:"candidates"`
+	Jobs       int  `json:"jobs"`
 }

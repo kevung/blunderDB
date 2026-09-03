@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
@@ -12,7 +13,7 @@ import (
 // runOpen turns a protected copy back into an ordinary database. It is the one time a
 // password is ever asked for: from then on the recipient works with a normal file.
 func (cli *CLI) runOpen(args []string) error {
-	openCmd := flag.NewFlagSet("open", flag.ExitOnError)
+	openCmd := flag.NewFlagSet("open", flag.ContinueOnError)
 
 	path := openCmd.String("db", "", "Path to the protected copy (required)")
 	password := openCmd.String("password", "", "The password you were given (required)")
@@ -66,12 +67,13 @@ func (cli *CLI) runOpen(args []string) error {
 // signed with. It belongs to a person, not to a database, which is why it lives in the
 // config directory and travels as a single file.
 func (cli *CLI) runIdentity(args []string) error {
-	idCmd := flag.NewFlagSet("identity", flag.ExitOnError)
+	idCmd := flag.NewFlagSet("identity", flag.ContinueOnError)
 
 	name := idCmd.String("name", "", "Change the display name carried by future watermarks")
 	exportPath := idCmd.String("export", "", "Write your identity to a file, to carry to another machine")
 	importPath := idCmd.String("import", "", "Install an identity file on this machine")
 	passphrase := idCmd.String("passphrase", "", "Passphrase for the exported/imported file (optional)")
+	format := idCmd.String("format", "text", "Output format: text or json")
 
 	idCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb identity [options]")
@@ -98,6 +100,12 @@ func (cli *CLI) runIdentity(args []string) error {
 		return err
 	}
 
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
+
 	if *importPath != "" {
 		needs, err := issuance.IdentityFileNeedsPassphrase(*importPath)
 		if err != nil {
@@ -109,6 +117,12 @@ func (cli *CLI) runIdentity(args []string) error {
 		id, err := issuance.ImportIdentity(issuance.ConfigDir(), *importPath, *passphrase)
 		if err != nil {
 			return err
+		}
+		if !text {
+			return printJSON(struct {
+				Name        string `json:"name"`
+				Fingerprint string `json:"fingerprint"`
+			}{Name: id.Name, Fingerprint: id.Fingerprint()})
 		}
 		fmt.Printf("Identity installed: %s (%s)\n", id.Name, id.Fingerprint())
 		return nil
@@ -127,11 +141,27 @@ func (cli *CLI) runIdentity(args []string) error {
 		if err := identity.ExportIdentity(*exportPath, *passphrase); err != nil {
 			return err
 		}
-		fmt.Printf("Identity written to %s\n", *exportPath)
-		if *passphrase == "" {
-			fmt.Println("It is NOT protected: anyone holding this file can sign in your name.")
+		if text {
+			fmt.Printf("Identity written to %s\n", *exportPath)
+			if *passphrase == "" {
+				fmt.Println("It is NOT protected: anyone holding this file can sign in your name.")
+			}
+			fmt.Println()
 		}
-		fmt.Println()
+	}
+
+	if !text {
+		return printJSON(struct {
+			Name        string `json:"name"`
+			Fingerprint string `json:"fingerprint"`
+			StoredIn    string `json:"stored_in"`
+			ExportedTo  string `json:"exported_to,omitempty"`
+		}{
+			Name:        identity.Name,
+			Fingerprint: identity.Fingerprint(),
+			StoredIn:    issuance.IdentityPath(issuance.ConfigDir()),
+			ExportedTo:  *exportPath,
+		})
 	}
 
 	fmt.Println("Issuer identity")

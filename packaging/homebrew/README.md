@@ -70,8 +70,16 @@ brew style --fix Casks/blunderdb.rb       # rubocop, Homebrew's cask rules
 brew audit --cask --online Casks/blunderdb.rb
 brew install --cask ./Casks/blunderdb.rb  # local install test
 blunderdb version
+ls "$(brew --prefix)"/etc/bash_completion.d/blunderdb \
+   "$(brew --prefix)"/share/zsh/site-functions/_blunderdb \
+   "$(brew --prefix)"/share/fish/vendor_completions.d/blunderdb.fish
 brew uninstall --cask blunderdb
 ```
+
+The three completion files come from `generate_completions_from_executable`
+in the cask (B.8, #176): Homebrew runs `blunderdb completion <shell>` once at
+install time and stows each script where the shell looks for it, so there is
+nothing to commit or keep in sync by hand.
 
 ## 5. Not notarized: what it means for `brew install --cask`
 

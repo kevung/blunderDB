@@ -30,7 +30,7 @@ func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
 	if !d2.IsReadOnly() {
 		t.Fatal("instance 2 should be read-only while instance 1 holds the lock")
 	}
-	if _, err := d2.Conn().Exec(`INSERT INTO position (state) VALUES ('x')`); err == nil {
+	if _, err := d2.conn().Exec(`INSERT INTO position (state) VALUES ('x')`); err == nil {
 		t.Error("write on the read-only instance should have been rejected")
 	}
 
@@ -43,7 +43,7 @@ func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
 
 	// Reads still work on the read-only instance.
 	var n int
-	if err := d2.Conn().QueryRow(`SELECT count(*) FROM position`).Scan(&n); err != nil {
+	if err := d2.conn().QueryRow(`SELECT count(*) FROM position`).Scan(&n); err != nil {
 		t.Errorf("read on the read-only instance should succeed: %v", err)
 	}
 	d2.Close()
@@ -60,7 +60,7 @@ func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
 	if d3.IsReadOnly() {
 		t.Fatal("after the holder closed, the database should open writable")
 	}
-	if _, err := d3.Conn().Exec(`INSERT INTO position (state) VALUES ('y')`); err != nil {
+	if _, err := d3.conn().Exec(`INSERT INTO position (state) VALUES ('y')`); err != nil {
 		t.Errorf("write after reacquiring the lock should succeed: %v", err)
 	}
 }

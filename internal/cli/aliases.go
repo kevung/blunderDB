@@ -102,6 +102,7 @@ var (
 	NewDatabase       = database.NewDatabase
 	DeleteFile        = database.DeleteFile
 	ErrDuplicateMatch = database.ErrDuplicateMatch
+	RawConn           = database.RawConn
 
 	ComputeMatchHash                   = database.ComputeMatchHash
 	ComputeGnuBGMatchHash              = database.ComputeGnuBGMatchHash

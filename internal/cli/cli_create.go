@@ -11,13 +11,14 @@ import (
 
 // runCreate handles the create command
 func (cli *CLI) runCreate(args []string) error {
-	createCmd := flag.NewFlagSet("create", flag.ExitOnError)
+	createCmd := flag.NewFlagSet("create", flag.ContinueOnError)
 
 	// Define flags
 	dbPath := createCmd.String("db", "", "Path to the database file to create (required)")
 	force := createCmd.Bool("force", false, "Overwrite existing database if it exists")
 	user := createCmd.String("user", "", "User name (owner of the database)")
 	description := createCmd.String("description", "", "Description of the database")
+	format := createCmd.String("format", "text", "Output format: text or json")
 
 	createCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb create [options]")
@@ -47,6 +48,12 @@ func (cli *CLI) runCreate(args []string) error {
 		createCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
+
+	formatLower := strings.ToLower(*format)
+	if formatLower != "text" && formatLower != "json" {
+		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
+	}
+	text := formatLower != "json"
 
 	// Ensure .db extension is present
 	if !strings.HasSuffix(strings.ToLower(*dbPath), ".db") {
@@ -80,7 +87,9 @@ func (cli *CLI) runCreate(args []string) error {
 	}
 
 	// Create the database
-	fmt.Printf("Creating database: %s\n", *dbPath)
+	if text {
+		fmt.Printf("Creating database: %s\n", *dbPath)
+	}
 	err := cli.db.SetupDatabase(*dbPath)
 	if err != nil {
 		return fmt.Errorf("failed to create database: %w", err)
@@ -101,6 +110,22 @@ func (cli *CLI) runCreate(args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to save metadata: %w", err)
 		}
+	}
+
+	if !text {
+		return printJSON(struct {
+			Path        string `json:"path"`
+			Version     string `json:"version"`
+			User        string `json:"user,omitempty"`
+			Description string `json:"description,omitempty"`
+			Created     string `json:"created"`
+		}{
+			Path:        *dbPath,
+			Version:     DatabaseVersion,
+			User:        *user,
+			Description: *description,
+			Created:     metadata["dateOfCreation"],
+		})
 	}
 
 	fmt.Printf("Successfully created database with schema version %s\n", DatabaseVersion)

@@ -46,6 +46,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `vacuum` - Compact the database file, reclaiming freed space
 - `delete` - Delete data from the database
 - `healthcheck` - Probe a running `serve` daemon's `/readyz`; exit 0 when it is ready
+- `completion` - Print a shell completion script (bash, zsh, fish)
 - `help` - Show help message
 - `version` - Show version information
 
@@ -64,6 +65,7 @@ Create a new blunderDB database file with optional metadata.
 - `--user` - Set the database owner name
 - `--description` - Set a description for the database
 - `--force` - Overwrite if the file already exists
+- `--format` - Output format: `text` (default) or `json` (path, version, user, description, created)
 
 The `.db` extension is added automatically if missing. Parent directories are created as needed.
 
@@ -114,6 +116,7 @@ the position along with its analysis (checker moves and/or cube decisions).
 - `--db` - Path to the database file (required)
 - `--type` - Import type: `match` or `position` (required)
 - `--file` - Path to the file to import (required)
+- `--format` - Output format: `text` (default) or `json` (match/position details as one document)
 
 **Example:**
 ```bash
@@ -143,6 +146,15 @@ Import positions from a text file (JSON format, one position per line):
 **Position file format:**
 Each line should be a JSON-serialized Position object.
 
+**Options:**
+- `--format` - Output format: `text` (default) or `json` (an `{"imported": N, "failed": N}` summary)
+- `--fail-on-error` - Exit non-zero when any line failed, even if others succeeded
+
+Importing nothing at all — every line failed, or the file had no position
+lines — is always an error, whatever `--fail-on-error` says: nothing imported
+is never a silent success. A **partial** failure (some lines succeeded, some
+did not) only fails the run when `--fail-on-error` is passed.
+
 ### Batch Import
 
 Import all match files from a directory at once:
@@ -154,8 +166,15 @@ Import all match files from a directory at once:
 **Options:**
 - `--dir` - Path to the directory to scan (required for batch)
 - `--recursive` - Recursively scan subdirectories (default: true)
+- `--format` - Output format: `text` (default, the summary table below) or `json`
+- `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
 
 Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
+
+A batch that finds no supported file, or where every file failed or was a
+duplicate (nothing at all got imported), is always an error. A duplicate is
+not a failure by itself: re-running a batch import over a directory that was
+already imported, with no new files added, stays a success.
 
 **Examples:**
 ```bash
@@ -164,6 +183,9 @@ Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
 
 # Batch import (non-recursive)
 ./blunderDB import --db database.db --type batch --dir ./matches/ --recursive=false
+
+# Machine-readable output, failing the run if any file errored
+./blunderDB import --db database.db --type batch --dir ./matches/ --format json --fail-on-error
 ```
 
 **Example output:**
@@ -216,6 +238,7 @@ Each position is exported as a JSON object on a separate line.
 - `--collection-ids` - Comma-separated collection IDs to export
 - `--match-ids` - Comma-separated match IDs to export (empty = all)
 - `--tournament-ids` - Comma-separated tournament IDs to export
+- `--format` - Output format: `text` (default) or `json` (a summary document — file path, byte count, counts)
 
 ### Export Database Without Matches
 
@@ -287,6 +310,7 @@ Show or move your **issuer identity** — the Ed25519 key every watermark is sig
 ./blunderDB identity --name "Jean Dupont"                   # change the display name
 ./blunderDB identity --export jean.bdbid --passphrase pw    # carry it to another machine
 ./blunderDB identity --import jean.bdbid --passphrase pw
+./blunderDB identity --format json                          # name, fingerprint, storage path
 ```
 
 The exported file lets anyone holding it sign in your name — do not share it. The passphrase is optional and applies only to that transferred file; the local one is deliberately unprotected, so an ordinary user never meets a secret they did not ask for.
@@ -572,6 +596,7 @@ Deletes a match and all associated data (games, moves, analyses). Without `--con
 - `--type` - Delete type: `match` (required)
 - `--id` - ID of the item to delete (required)
 - `--confirm` - Skip confirmation prompt (optional)
+- `--format` - Output format: `text` (default) or `json` (`{"match_id": N, "deleted": true}`)
 
 **Example:**
 ```bash
@@ -801,6 +826,7 @@ for a tenant.
 - `--prune-k` - Pruning width (default: 12, the canonical parameter)
 - `--candidates` - Candidate moves kept per checker decision (default: 10)
 - `--jobs` - Positions analysed in parallel (default: the number of CPUs)
+- `--format` - Output format: `text` (default, progress lines) or `json` (a single summary document, printed at the end)
 
 **Parallelism (`--jobs`).** The positions of a sweep are independent — no
 search informs the next — so they are spread over `--jobs` goroutines, each
@@ -903,6 +929,7 @@ Edit database metadata (user name and description).
 - `--description` - Set the description
 - `--clear-user` - Clear the user name
 - `--clear-description` - Clear the description
+- `--format` - Output format: `text` (default) or `json` (`{"changes": [...]}`)
 
 At least one edit option is required.
 
@@ -943,6 +970,7 @@ Verify database integrity and optionally compare match data against source files
 - `--db` - Path to the database file (required)
 - `--match` - Match ID to verify (optional — verifies specific match)
 - `--mat` - Path to a MAT file to compare against (optional — used with `--match`)
+- `--format` - Output format: `text` (default) or `json` (stats, orphans, schema drift, and the match check if any)
 
 When run without `--match`, displays database statistics. When a match ID is specified, verifies the match data. When a MAT file is also provided, cross-references the database positions with the source file.
 
@@ -1002,6 +1030,7 @@ since the cost is unpredictable on a large database.
 
 **Options:**
 - `--db` - Path to the database file (required)
+- `--format` - Output format: `text` (default) or `json` (`{"size_before", "size_after", "reclaimed"}`, in bytes)
 
 The command first runs a WAL checkpoint so the reported "before" size is
 honest, then checks that the volume has roughly twice the current file size
@@ -1060,6 +1089,39 @@ is unhealthy:
 ```
 Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
 ```
+
+## Completion Command
+
+Print a shell completion script for the subcommand names to stdout. The
+command list embedded in every script is generated from the same table
+`blunderdb help` and `main.go`'s dispatch read (`handlers()`), so a new
+subcommand is offered by completion the moment it ships — nothing here is
+maintained by hand.
+
+```bash
+./blunderDB completion <bash|zsh|fish>
+```
+
+**Examples:**
+```bash
+# bash: load for the current shell session
+source <(blunderdb completion bash)
+
+# bash: install system-wide (Debian/Ubuntu/Arch layout)
+blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null
+
+# zsh: install into a directory already on $fpath
+blunderdb completion zsh > "${fpath[1]}/_blunderdb"
+
+# fish: load for the current shell session
+blunderdb completion fish | source
+```
+
+Packages install this automatically: the `.deb`/`.rpm` (nfpm) and the AUR
+package generate the three scripts from the packaged binary at build time,
+and the Homebrew cask runs `blunderdb completion <shell>` once at install
+time via `generate_completions_from_executable`. Nothing is committed to the
+repository, so completions can never drift from the subcommand table.
 
 ## Common Workflows
 

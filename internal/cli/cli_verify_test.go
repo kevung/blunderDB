@@ -23,7 +23,7 @@ func TestCLI_Verify_ReportsOrphans(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	conn, err := cli.db.Conn().Conn(ctx)
+	conn, err := RawConn(cli.db).Conn(ctx)
 	if err != nil {
 		t.Fatalf("dedicated connection: %v", err)
 	}
@@ -82,7 +82,7 @@ func TestCLI_Verify_ReportsSchemaDrift(t *testing.T) {
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
 	} {
-		if _, err := cli.db.Conn().Exec(s); err != nil {
+		if _, err := RawConn(cli.db).Exec(s); err != nil {
 			t.Fatalf("%s: %v", s, err)
 		}
 	}

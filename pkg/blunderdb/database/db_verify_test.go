@@ -44,7 +44,7 @@ func TestCountOrphans(t *testing.T) {
 		t.Fatalf("fresh database reports orphans: %+v", clean)
 	}
 
-	plantOrphans(t, d.Conn())
+	plantOrphans(t, d.conn())
 
 	got, err := d.CountOrphans()
 	if err != nil {
@@ -81,7 +81,7 @@ func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('a', 'b', 'same')`,
 		`INSERT INTO match (player1_name, player2_name, canonical_hash) VALUES ('c', 'd', 'same')`,
 	} {
-		if _, err := d.Conn().Exec(stmt); err != nil {
+		if _, err := d.conn().Exec(stmt); err != nil {
 			t.Fatalf("%s: %v", stmt, err)
 		}
 	}

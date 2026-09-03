@@ -89,6 +89,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
 		"healthcheck": cli.runHealthcheck,
+		"completion":  cli.runCompletion,
 		"help":        func([]string) error { cli.printUsage(); return nil },
 		"version":     func([]string) error { cli.printVersion(); return nil },
 	}
@@ -126,6 +127,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
 	fmt.Println("  delete    Delete data from the database")
+	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")
 	fmt.Println("  help      Show this help message")
 	fmt.Println("  version   Show version information")
 	fmt.Println()

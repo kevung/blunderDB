@@ -22,7 +22,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	// A row that must survive the whole exercise, so Vacuum's "the file
 	// shrinks" is checked alongside "and nothing legitimate was lost".
 	survivorState := "kept-position"
-	res, err := d.Conn().Exec(`INSERT INTO position (state) VALUES (?)`, survivorState)
+	res, err := d.conn().Exec(`INSERT INTO position (state) VALUES (?)`, survivorState)
 	if err != nil {
 		t.Fatalf("insert survivor: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	// Vacuum runs, the file must still reflect the padding having existed.
 	const numPadding = 3000
 	blob := strings.Repeat("x", 2000)
-	tx, err := d.Conn().Begin()
+	tx, err := d.conn().Begin()
 	if err != nil {
 		t.Fatalf("begin: %v", err)
 	}
@@ -55,7 +55,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 		t.Fatalf("commit padding: %v", err)
 	}
 
-	if _, err := d.Conn().Exec(`DELETE FROM position WHERE id != ?`, survivorID); err != nil {
+	if _, err := d.conn().Exec(`DELETE FROM position WHERE id != ?`, survivorID); err != nil {
 		t.Fatalf("delete padding: %v", err)
 	}
 
@@ -88,7 +88,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 
 	// The survivor row must still be there, untouched.
 	var gotState string
-	if err := d.Conn().QueryRow(`SELECT state FROM position WHERE id = ?`, survivorID).Scan(&gotState); err != nil {
+	if err := d.conn().QueryRow(`SELECT state FROM position WHERE id = ?`, survivorID).Scan(&gotState); err != nil {
 		t.Fatalf("select survivor after vacuum: %v", err)
 	}
 	if gotState != survivorState {
@@ -96,7 +96,7 @@ func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
 	}
 
 	var remaining int
-	if err := d.Conn().QueryRow(`SELECT COUNT(*) FROM position`).Scan(&remaining); err != nil {
+	if err := d.conn().QueryRow(`SELECT COUNT(*) FROM position`).Scan(&remaining); err != nil {
 		t.Fatalf("count after vacuum: %v", err)
 	}
 	if remaining != 1 {
