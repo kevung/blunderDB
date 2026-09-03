@@ -218,7 +218,7 @@ func TestMixedWorkload(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		for time.Now().Before(deadline) {
-			for _, err := range s.Search().Find(ctx, "", domain.SearchFilters{}) {
+			for _, err := range s.Search().Find(ctx, "", domain.SearchFilters{}, storage.ListOpts{}) {
 				if err != nil {
 					fail(err)
 					return

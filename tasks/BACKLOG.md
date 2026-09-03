@@ -133,9 +133,19 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   `packaging/winget/README.md`) et **Flathub** (build hors-ligne
   vendorant Go+npm, `docs/recherche/P16-distribution-desktop.md` en donne la
   recette ; effort de plusieurs semaines, non commencé).
-- **Job `test-os`** : retirer `continue-on-error: true` après le premier run vert sur windows/macos. → fiche E.1 (#217).
+- **Catalogues `doc/source/locale/fr/`** : ils existent, sont suivis par git, et
+  contiennent 324 entrées **toutes vides** — le français est la langue source,
+  Sphinx le rend depuis les `.rst`. Ils portent en outre des `msgid` dupliqués
+  qui font échouer `msgfmt -c` (sans conséquence : rien ne les compile, et
+  `doc-i18n-check.sh` ne les regarde pas). Ce sont des fichiers inertes qui
+  brouillent toute vérification globale des catalogues. Candidats à la
+  suppression pure et simple ; à trancher avant, la question de savoir si un
+  jour on voudra traduire *depuis* le français vers un français simplifié.
+  Constaté le 2026-09-03 en refermant l'écart de traduction.
 
 ## Historique — items faits
+
+- **Job `test-os`** : `continue-on-error: true` retiré, le job est bloquant. Fiche E.1 (#217), fusionnée le 2026-09-03.
 
 - **2026-09-02 — `use_cube` à la recherche** (ADR-0016, point 4) : fait le
   2026-09-02 (3657ea1a, ADR-0023) : chaque feuille de la recherche est valuée

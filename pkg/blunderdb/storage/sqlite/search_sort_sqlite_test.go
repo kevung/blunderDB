@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TestSearchSortByError exercises the search ORDER BY added for POS-B-T05: the
@@ -45,7 +46,7 @@ func TestSearchSortByError(t *testing.T) {
 
 	order := func(sort string) []int64 {
 		var ids []int64
-		for p, err := range s.Search().Find(ctx, "", domain.SearchFilters{Sort: sort}) {
+		for p, err := range s.Search().Find(ctx, "", domain.SearchFilters{Sort: sort}, storage.ListOpts{}) {
 			if err != nil {
 				t.Fatalf("find(%q): %v", sort, err)
 			}

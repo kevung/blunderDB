@@ -1,0 +1,38 @@
+name: Stale
+
+# Labels inactive issues and pull requests after 90 days — a signal that they
+# may need a fresh look, never an automatic close (E.11, #227): a one-person
+# project's backlog does not get shorter by silently discarding old reports,
+# and CLAUDE.md's own release history shows issues staying open for months
+# between passes without going stale in any useful sense.
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # daily, 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          days-before-stale: 90
+          days-before-close: -1 # never auto-close
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: "pinned,security"
+          exempt-pr-labels: "pinned"
+          stale-issue-message: >-
+            This issue has had no activity for 90 days and is labelled stale.
+            It stays open — nothing here closes automatically — this is only
+            a signal that it may need a fresh look.
+          stale-pr-message: >-
+            This pull request has had no activity for 90 days and is labelled
+            stale. It stays open — nothing here closes automatically.

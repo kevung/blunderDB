@@ -19,7 +19,7 @@ import (
 func TestEvaluateGammonNetRaceEvaluatedRegimeNoDice(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -48,7 +48,7 @@ func TestEvaluateGammonNetRaceEvaluatedRegimeNoDice(t *testing.T) {
 func TestEvaluateGammonNetRacePopulatedAlongsideMoves(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{6, 5}, domain.White)
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -70,7 +70,7 @@ func TestEvaluateGammonNetRaceEvaluatedAtMatchScore(t *testing.T) {
 	pos := racePosition(24, 1, [2]int{0, 0}, domain.White)
 	pos.Score = [2]int{5, 7} // White 5-away, Black 7-away — not Crawford
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}
@@ -93,7 +93,7 @@ func TestEvaluateGammonNetRaceExactDomainStaysExact(t *testing.T) {
 	pos.Board.Bearoff[domain.White] = 12 // the other 12 already off — 15 total, structurally valid
 	pos.Board.Bearoff[domain.Black] = 12
 
-	result, err := evaluateGammonNet(pos, 0, 0, 0)
+	result, err := (&App{}).evaluateGammonNet(pos, 0, 0, 0)
 	if err != nil {
 		t.Fatalf("evaluateGammonNet: %v", err)
 	}

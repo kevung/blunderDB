@@ -44,64 +44,130 @@ func getMatchIDsForTournament(ctx context.Context, db Execer, tournamentID int64
 	return ids, rows.Err()
 }
 
-// loadCommentText returns the concatenated comment text of a position. A
-// position may have several comment entries (see AddComment); all of them are
-// joined so the "Search Text" filter can match against any one of them.
-func loadCommentText(ctx context.Context, db Execer, positionID int64) (string, error) {
-	rows, err := db.Query(ctx,
-		`SELECT text FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`,
-		positionID)
-	if err != nil {
-		return "", err
-	}
-	defer rows.Close()
-	var parts []string
-	for rows.Next() {
-		var text string
-		if err := rows.Scan(&text); err != nil {
-			return "", err
+// forEachIDBatch runs `prefix (?,?,…) suffix` over ids in chunks that stay
+// under SQLite's bound-variable limit (32766 by default — a real search
+// narrows to tens of thousands of candidates), handing every row to scan. It
+// restates storage/sqlite's forEachIn against the dialect-agnostic Execer, so
+// the batched preloads below run unchanged on both backends.
+func forEachIDBatch(ctx context.Context, db Execer, ids []int64, prefix, suffix string, scan func(Rows) error) error {
+	const chunk = 900
+	for start := 0; start < len(ids); start += chunk {
+		end := start + chunk
+		if end > len(ids) {
+			end = len(ids)
 		}
-		parts = append(parts, text)
+		batch := ids[start:end]
+		placeholders := strings.TrimSuffix(strings.Repeat("?,", len(batch)), ",")
+		args := make([]any, len(batch))
+		for i, id := range batch {
+			args[i] = id
+		}
+		if err := func() error {
+			rows, err := db.Query(ctx, prefix+"("+placeholders+")"+suffix, args...)
+			if err != nil {
+				return err
+			}
+			defer rows.Close()
+			for rows.Next() {
+				if err := scan(rows); err != nil {
+					return err
+				}
+			}
+			return rows.Err()
+		}(); err != nil {
+			return err
+		}
 	}
-	if err := rows.Err(); err != nil {
-		return "", err
-	}
-	return strings.Join(parts, "\n\n"), nil
+	return nil
 }
 
-// getPlayer1MovesForPosition returns player-1's distinct checker moves and
-// cube actions recorded in the move table for a position, each list sorted.
-// A position deduplicated across matches (CONTEXT.md, Deduplication) can carry
-// several plays; the order they come back in must not depend on map
-// iteration, or every predicate built on top inherits a run-to-run lottery
-// (#167). The returned error is a genuine query/scan failure — it is never
-// used to mean "this position recorded no moves", which is simply two empty
-// slices with a nil error.
-func getPlayer1MovesForPosition(ctx context.Context, db Execer, positionID int64) ([]string, []string, error) {
-	rows, err := db.Query(ctx,
-		`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
+// loadCommentTexts returns the concatenated comment text of every id in
+// positionIDs, keyed by position id — the batched form of what used to be a
+// per-position query (loadCommentText), run once per SQL-matched candidate
+// of a SearchText filter (B.10, #178). A position with no comment text is
+// simply absent from the map. A position may have several comment entries
+// (see AddComment); all of them are joined, in id order, so the "Search
+// Text" filter can match against any one of them.
+func loadCommentTexts(ctx context.Context, db Execer, positionIDs []int64) (map[int64]string, error) {
+	parts := make(map[int64][]string)
+	err := forEachIDBatch(ctx, db, positionIDs,
+		`SELECT position_id, text FROM comment WHERE position_id IN `,
+		` AND text != '' ORDER BY position_id ASC, id ASC`,
+		func(rows Rows) error {
+			var id int64
+			var text string
+			if err := rows.Scan(&id, &text); err != nil {
+				return err
+			}
+			parts[id] = append(parts[id], text)
+			return nil
+		})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	defer rows.Close()
-	checkerMoves := make(map[string]bool)
-	cubeActions := make(map[string]bool)
-	for rows.Next() {
-		var cm, ca *string
-		if err := rows.Scan(&cm, &ca); err != nil {
-			return nil, nil, err
-		}
-		if cm != nil && *cm != "" {
-			checkerMoves[engine.NormalizeMove(*cm)] = true
-		}
-		if ca != nil && *ca != "" {
-			cubeActions[*ca] = true
-		}
+	out := make(map[int64]string, len(parts))
+	for id, ps := range parts {
+		out[id] = strings.Join(ps, "\n\n")
 	}
-	if err := rows.Err(); err != nil {
-		return nil, nil, err
+	return out, nil
+}
+
+// player1Moves is one position's distinct player-1 plays: the batched
+// counterpart of getPlayer1MovesForPosition's two return values.
+type player1Moves struct {
+	checkerMoves []string
+	cubeActions  []string
+}
+
+// loadPlayer1Moves returns, for every id in positionIDs, player-1's distinct
+// checker moves and cube actions recorded in the move table — the batched
+// form of what used to be a per-position query (getPlayer1MovesForPosition),
+// run once per candidate needing the move-error filter or the take/pass
+// mirror check (B.10, #178). A position deduplicated across matches
+// (CONTEXT.md, Deduplication) can carry several plays; each list is sorted so
+// the predicates built on top do not inherit a run-to-run lottery from map
+// iteration (#167).
+func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[int64]player1Moves, error) {
+	checkerSets := make(map[int64]map[string]bool)
+	cubeSets := make(map[int64]map[string]bool)
+	err := forEachIDBatch(ctx, db, positionIDs,
+		`SELECT position_id, checker_move, cube_action FROM move WHERE player = 1 AND position_id IN `,
+		``,
+		func(rows Rows) error {
+			var id int64
+			var cm, ca *string
+			if err := rows.Scan(&id, &cm, &ca); err != nil {
+				return err
+			}
+			if cm != nil && *cm != "" {
+				if checkerSets[id] == nil {
+					checkerSets[id] = make(map[string]bool)
+				}
+				checkerSets[id][engine.NormalizeMove(*cm)] = true
+			}
+			if ca != nil && *ca != "" {
+				if cubeSets[id] == nil {
+					cubeSets[id] = make(map[string]bool)
+				}
+				cubeSets[id][*ca] = true
+			}
+			return nil
+		})
+	if err != nil {
+		return nil, err
 	}
-	return sortedKeys(checkerMoves), sortedKeys(cubeActions), nil
+	out := make(map[int64]player1Moves, len(checkerSets)+len(cubeSets))
+	for id, set := range checkerSets {
+		m := out[id]
+		m.checkerMoves = sortedKeys(set)
+		out[id] = m
+	}
+	for id, set := range cubeSets {
+		m := out[id]
+		m.cubeActions = sortedKeys(set)
+		out[id] = m
+	}
+	return out, nil
 }
 
 func sortedKeys(set map[string]bool) []string {
@@ -172,45 +238,39 @@ func loadAnalysis(ctx context.Context, db Execer, positionID int64) *domain.Posi
 	return &a
 }
 
-// matchesSearchText reports whether a position's comment matches a "t"-filter.
-func matchesSearchText(ctx context.Context, db Execer, p *domain.Position, searchText string) (bool, error) {
+// matchesSearchTextPreloaded reports whether comment (the position's
+// concatenated comment text, from loadCommentTexts) matches a "t"-filter.
+func matchesSearchTextPreloaded(comment, searchText string) bool {
 	keywords := searchfilter.ParseSearchTextKeywords(searchText)
 	if len(keywords) == 0 {
-		return false, nil
-	}
-	comment, err := loadCommentText(ctx, db, p.ID)
-	if err != nil {
-		return false, err
+		return false
 	}
 	comment = strings.ToLower(comment)
 	for _, kw := range keywords {
 		if strings.Contains(comment, kw) {
-			return true, nil
+			return true
 		}
 	}
-	return false, nil
+	return false
 }
 
-// isPlayer1TakePassCubeAction reports whether player-1's recorded cube action
-// for a position was a take or pass.
-func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Position) (bool, error) {
-	_, player1CubeActions, err := getPlayer1MovesForPosition(ctx, db, p.ID)
-	if err != nil {
-		return false, err
-	}
-	for _, action := range player1CubeActions {
+// isPlayer1TakePassCubeActionPreloaded reports whether player-1's recorded
+// cube action for a position (moves, from loadPlayer1Moves) was a take or
+// pass.
+func isPlayer1TakePassCubeActionPreloaded(moves player1Moves) bool {
+	for _, action := range moves.cubeActions {
 		if engine.IsResponseCubeAction(action) {
-			return true, nil
+			return true
 		}
 	}
-	return false, nil
+	return false
 }
 
-// matchesMoveErrorFilter filters positions by the equity error of player-1's
-// played move (millipoints): E>x, E<x, Ex,y. analysis is the position's
-// already-decoded analysis (the caller decoded it once from a.data — see
-// search.go); this predicate no longer re-queries and re-decompresses it per
-// row.
+// matchesMoveErrorFilterPreloaded filters positions by the equity error of
+// player-1's played move (millipoints): E>x, E<x, Ex,y. analysis is the
+// position's already-decoded analysis (the caller decoded it once from
+// a.data — see search.go) and moves its preloaded plays (loadPlayer1Moves);
+// neither is fetched here, so this predicate makes no query of its own.
 //
 // A position played more than once by player 1 (deduplicated across matches)
 // has several recorded plays, possibly with different errors. The filter
@@ -220,19 +280,15 @@ func isPlayer1TakePassCubeAction(ctx context.Context, db Execer, p *domain.Posit
 // returned a different set from one run to the next. The decision is stated
 // in doc/source/cmd_mode.rst next to the E filter; SearchStore.find routes
 // the multi-played positions of a plain (non-mirror) search here too.
-func matchesMoveErrorFilter(ctx context.Context, db Execer, p *domain.Position, analysis *domain.PositionAnalysis, filter string) (bool, error) {
+func matchesMoveErrorFilterPreloaded(analysis *domain.PositionAnalysis, moves player1Moves, filter string) bool {
 	if analysis == nil {
-		return false, nil
+		return false
 	}
-	player1CheckerMoves, player1CubeActions, err := getPlayer1MovesForPosition(ctx, db, p.ID)
-	if err != nil {
-		return false, err
-	}
-	moveError, found := player1MaxMoveError(analysis, player1CheckerMoves, player1CubeActions)
+	moveError, found := player1MaxMoveError(analysis, moves.checkerMoves, moves.cubeActions)
 	if !found {
-		return false, nil
+		return false
 	}
-	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter), nil
+	return searchfilter.MatchesMoveError(math.Round(moveError*1000), filter)
 }
 
 // player1MaxMoveError returns the largest absolute equity error among the

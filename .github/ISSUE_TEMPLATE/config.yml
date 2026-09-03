@@ -1,0 +1,14 @@
+# blank_issues_enabled: false forces every report through one of the forms
+# above, so a bug report always carries the version and channel fields
+# instead of a paragraph missing both (E.11, #227).
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/kevung/blunderDB/discussions
+    about: Longer threads, questions, release announcements.
+  - name: Discord
+    url: https://discord.gg/DA5PpzM9En
+    about: Quick questions and feedback.
+  - name: Security vulnerability
+    url: https://github.com/kevung/blunderDB/security/advisories/new
+    about: Please do not open a public issue for a security problem — see SECURITY.md.

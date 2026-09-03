@@ -2,29 +2,34 @@ package gui
 
 import (
 	"context"
+	goruntime "runtime"
 	"testing"
 	"time"
 )
 
 // TestWaitForInteractiveEvaluationBlocksWhileBusy is #129's non-negotiable
 // preemption criterion made concrete: "un lot qui ne cède pas est exactement
-// la panne qu'on prétend éviter". gammonNetEvalCancel is the exact package
-// state StartEvaluationAtRest sets while a live 2-ply search is in flight
+// la panne qu'on prétend éviter". a.gnEvalCancel is the exact App field
+// StartEvaluationAtRest sets while a live 2-ply search is in flight
 // (gammonnet_eval.go); this test drives it directly rather than through a
-// real Wails app, since nothing here needs event emission.
+// real Wails app, since nothing here needs event emission. gnEvalMu/
+// gnEvalCancel moved from package vars onto App (#196/C.9), so each test
+// now gets its own instance instead of sharing global state.
 func TestWaitForInteractiveEvaluationBlocksWhileBusy(t *testing.T) {
-	gammonNetEvalMu.Lock()
-	gammonNetEvalCancel = func() {} // simulate an interactive search in flight
-	gammonNetEvalMu.Unlock()
+	a := NewApp(nil)
+
+	a.gnEvalMu.Lock()
+	a.gnEvalCancel = func() {} // simulate an interactive search in flight
+	a.gnEvalMu.Unlock()
 	t.Cleanup(func() {
-		gammonNetEvalMu.Lock()
-		gammonNetEvalCancel = nil
-		gammonNetEvalMu.Unlock()
+		a.gnEvalMu.Lock()
+		a.gnEvalCancel = nil
+		a.gnEvalMu.Unlock()
 	})
 
 	returned := make(chan struct{})
 	go func() {
-		waitForInteractiveEvaluation()
+		a.waitForInteractiveEvaluation()
 		close(returned)
 	}()
 
@@ -35,9 +40,9 @@ func TestWaitForInteractiveEvaluationBlocksWhileBusy(t *testing.T) {
 		// Still blocked after several poll intervals — as required.
 	}
 
-	gammonNetEvalMu.Lock()
-	gammonNetEvalCancel = nil // the interactive search "finishes"
-	gammonNetEvalMu.Unlock()
+	a.gnEvalMu.Lock()
+	a.gnEvalCancel = nil // the interactive search "finishes"
+	a.gnEvalMu.Unlock()
 
 	select {
 	case <-returned:
@@ -50,13 +55,11 @@ func TestWaitForInteractiveEvaluationBlocksWhileBusy(t *testing.T) {
 // TestWaitForInteractiveEvaluationReturnsImmediatelyWhenIdle: the common
 // case — no interactive search in flight — must never pay the poll delay.
 func TestWaitForInteractiveEvaluationReturnsImmediatelyWhenIdle(t *testing.T) {
-	gammonNetEvalMu.Lock()
-	gammonNetEvalCancel = nil
-	gammonNetEvalMu.Unlock()
+	a := NewApp(nil)
 
 	done := make(chan struct{})
 	go func() {
-		waitForInteractiveEvaluation()
+		a.waitForInteractiveEvaluation()
 		close(done)
 	}()
 
@@ -64,6 +67,36 @@ func TestWaitForInteractiveEvaluationReturnsImmediatelyWhenIdle(t *testing.T) {
 	case <-done:
 	case <-time.After(gnYieldPoll):
 		t.Fatal("waitForInteractiveEvaluation blocked despite no interactive search in flight")
+	}
+}
+
+// TestEffectiveBatchJobsReducedWhileInteractiveBusy is #196/C.9's own
+// criterion: a batch starting while the panel already has an "at rest"
+// search in flight asks for fewer goroutines, not a full NumCPU on top of
+// the panel's own WithWorkers(NumCPU) pool.
+func TestEffectiveBatchJobsReducedWhileInteractiveBusy(t *testing.T) {
+	if goruntime.NumCPU() < 2 {
+		t.Skip("needs at least two cores to have any reduction to measure")
+	}
+	a := NewApp(nil)
+
+	idle := a.effectiveBatchJobs()
+
+	a.gnEvalMu.Lock()
+	a.gnEvalCancel = func() {}
+	a.gnEvalMu.Unlock()
+	t.Cleanup(func() {
+		a.gnEvalMu.Lock()
+		a.gnEvalCancel = nil
+		a.gnEvalMu.Unlock()
+	})
+
+	busy := a.effectiveBatchJobs()
+	if busy >= idle {
+		t.Fatalf("effectiveBatchJobs while busy = %d, want fewer than idle's %d", busy, idle)
+	}
+	if busy < 1 {
+		t.Fatalf("effectiveBatchJobs = %d, want at least 1", busy)
 	}
 }
 
