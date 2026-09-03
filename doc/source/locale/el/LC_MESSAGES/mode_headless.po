@@ -479,7 +479,7 @@ msgstr ""
 "(``400 invalid``) αντί να τις τιμούν χωρίς όριο."
 
 #: ../../source/mode_headless.rst:194
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "Chaque connexion TCP est bornée en lecture/écriture par requête — un "
 "budget généreux pour les appels ordinaires, bien plus large pour les "
@@ -1213,7 +1213,7 @@ msgid "``--json <chaîne>``"
 msgstr "``--json <chaîne>``"
 
 #: ../../source/mode_headless.rst:614
-#, python-brace-format
+#, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
@@ -1238,7 +1238,7 @@ msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "εμφανίζει όλες τις μεθόδους ``<famille>.<méthode>`` και τερματίζει"
 
 #: ../../source/mode_headless.rst:623
-#, python-brace-format
+#, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
 "écrite sur la sortie standard. En cas d'erreur, le processus se termine "
