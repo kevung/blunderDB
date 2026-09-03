@@ -3,8 +3,10 @@ package sqlite
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -38,6 +40,19 @@ import (
 //     checkpointed back. Skipping this step would report a false "nothing
 //     reclaimed" even though the rebuild succeeded.
 //
+// Before any of that, recompressLegacyAnalyses (#180) walks the analysis
+// table and upgrades any row still holding the pre-zstd codec (raw JSON or
+// zlib — see engine.RecompressAnalysisData) to the current zstd+dictionary
+// format. Vacuum already rewrites the whole file and already asks the user
+// to accept an unpredictable cost, which makes it the natural trigger for a
+// pass that is otherwise easy to never get around to: a database opened
+// only with today's binary would otherwise carry its original-import codec
+// forever. The upgrade errs are non-fatal (logged, not returned) — a handful
+// of rows this pass could not read stay in their old format and are picked
+// up by ordinary reads/writes or the next vacuum; refusing the whole
+// compaction over that would be a worse outcome for the user than a few
+// bytes not yet reclaimed.
+//
 // Returns the file size in bytes before and after. On an in-memory database
 // (tests, `:memory:`) there is no file to size or free-space-check against;
 // VACUUM and ANALYZE still run, and both sizes are reported as 0.
@@ -49,6 +64,10 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	path, err := mainFilePath(ctx, s.sqlDB)
 	if err != nil {
 		return storage.VacuumResult{}, fmt.Errorf("vacuum: %w", err)
+	}
+
+	if err := s.recompressLegacyAnalyses(ctx); err != nil {
+		return storage.VacuumResult{}, fmt.Errorf("vacuum: recompress analyses: %w", err)
 	}
 
 	// Fold the WAL back into the main file before sizing or checking free
@@ -104,6 +123,89 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	}
 
 	return storage.VacuumResult{SizeBefore: sizeBefore, SizeAfter: sizeAfter}, nil
+}
+
+// recompressLegacyAnalysesBatchSize is how many analysis rows are read and,
+// if needed, rewritten per transaction — small enough that a big table does
+// not hold one giant transaction open for the whole pass (within the report's
+// suggested 1,000-5,000 range, see docs/recherche/P11-compression-blobs.md).
+const recompressLegacyAnalysesBatchSize = 2000
+
+type legacyAnalysisRow struct {
+	id   int64
+	data []byte
+}
+
+// fetchLegacyAnalysisBatch reads one page of analysis.data ordered by id,
+// closing its cursor before returning so the caller is free to write on the
+// same connection right after.
+func fetchLegacyAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int) ([]legacyAnalysisRow, error) {
+	rows, err := db.QueryContext(ctx,
+		`SELECT id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, afterID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var batch []legacyAnalysisRow
+	for rows.Next() {
+		var r legacyAnalysisRow
+		if err := rows.Scan(&r.id, &r.data); err != nil {
+			return nil, err
+		}
+		batch = append(batch, r)
+	}
+	return batch, rows.Err()
+}
+
+// recompressLegacyAnalyses walks analysis.data in id order and rewrites any
+// row not already in the current zstd format. engine.NeedsRecompression is a
+// cheap prefix check, so a database that has already been through one vacuum
+// (or was created after #180) costs one full-table SELECT of already-current
+// rows and no writes at all.
+func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
+	var lastID int64
+	var scanned, upgraded int
+	for {
+		batch, err := fetchLegacyAnalysisBatch(ctx, s.sqlDB, lastID, recompressLegacyAnalysesBatchSize)
+		if err != nil {
+			return err
+		}
+		if len(batch) == 0 {
+			break
+		}
+		lastID = batch[len(batch)-1].id
+		scanned += len(batch)
+
+		err = withTx(ctx, s.sqlDB, func(tx execer) error {
+			for _, r := range batch {
+				if !engine.NeedsRecompression(r.data) {
+					continue
+				}
+				fresh, err := engine.RecompressAnalysisData(r.data)
+				if err != nil {
+					// A row this pass cannot read is left exactly as it was:
+					// still readable by DecompressAnalysisData's fallback
+					// paths, just not upgraded this time.
+					slog.Warn("vacuum: skipping unreadable analysis row", "id", r.id, "error", err)
+					continue
+				}
+				if _, err := tx.ExecContext(ctx,
+					`UPDATE analysis SET data = ? WHERE id = ?`, fresh, r.id); err != nil {
+					return fmt.Errorf("id %d: %w", r.id, err)
+				}
+				upgraded++
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+	}
+	if upgraded > 0 {
+		slog.Info("vacuum: recompressed legacy analysis blobs", "scanned", scanned, "upgraded", upgraded)
+	}
+	return nil
 }
 
 // mainFilePath returns the absolute path SQLite has the "main" database open

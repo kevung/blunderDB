@@ -380,7 +380,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 		}
 	}
 
-	// a.data is the zlib-compressed analysis blob (~600 bytes/row on the tournois
+	// a.data is the compressed analysis blob (~600 bytes/row on the tournois
 	// fixture) and is the only column here needAnalysis gates: every other
 	// selected analysis column is a cheap denormalised scalar used by the SQL
 	// WHERE clause itself. A search that needs none of the Go-side
@@ -466,10 +466,10 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 
 		var ana *domain.PositionAnalysis
 		if needAnalysis && anaID != nil && len(anaData) > 0 {
-			// a.data is stored zlib-compressed (engine.EncodeAnalysisForStorage;
+			// a.data is stored compressed (engine.EncodeAnalysisForStorage;
 			// see AnalysisStore.Save), so it must go through the same decoder as
 			// AnalysisStore.Load. A bare json.Unmarshal of the compressed bytes
-			// silently fails (first byte is the zlib header, never '{'), leaving
+			// silently fails (first byte is the zstd/zlib header, never '{'), leaving
 			// ana nil on every row — which broke every analysis-dependent Go-side
 			// filter (move pattern, the win/gammon/equity fallbacks used by
 			// mirror search).
