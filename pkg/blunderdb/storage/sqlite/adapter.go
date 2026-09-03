@@ -30,8 +30,8 @@ func (shared) Bool(col string, v bool) string {
 	}
 	return col + " = 0"
 }
-func (shared) Bigint(expr string) string       { return expr }
-func (shared) ILike() string                   { return "LIKE" }
+func (shared) Bigint(expr string) string { return expr }
+func (shared) ILike() string             { return "LIKE" }
 func (shared) LimitOffset(limit, offset int) (string, []any) {
 	switch {
 	case limit <= 0 && offset <= 0:
