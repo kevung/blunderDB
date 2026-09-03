@@ -144,15 +144,22 @@ but they do not reflect current code.
 **A modified `.rst` ships with its eight `.po` in the same commit.** The online
 docs deploy from `main` and fall back to French for every untranslated string, so
 a translation gap is a user-visible regression on eight sites, not release
-polish. Refresh the catalogues with **relative** paths (an absolute output path
-rewrites every `#:` reference), translate the empty `msgstr`, and check:
+polish. Refresh the catalogues, translate the empty `msgstr`, and check:
 
 ```bash
 source .venv/bin/activate
-(cd doc && sphinx-build -b gettext source build/gettext \
-   && sphinx-intl update -p build/gettext -l en,de,el,es,fi,it,ja,ru)
+scripts/doc-po-update.sh       # regenerates the eight catalogues, then repairs
 scripts/doc-i18n-check.sh      # must end on "all translations complete"
 ```
+
+Run `doc-po-update.sh` rather than sphinx-build/sphinx-intl by hand: it keeps
+the gettext output path **relative** (an absolute one rewrites every `#:`
+reference and buries the real diff), and it normalises the `python-format`
+flag that `msgmerge` re-adds behind an existing `no-python-format` at every
+update — gettext honours the last flag, so the false positive comes back each
+time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po` with
+`msgcat`: Babel and msgcat disagree on line breaks, so one pass rewrites the
+whole file.
 
 **Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
 Split long documents into a README index + per-topic files.
