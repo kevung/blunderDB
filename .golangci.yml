@@ -18,19 +18,23 @@ linters:
   # Re-measured 2026-09-04, twice: after B.15 split `find` into
   # buildWhere/scanRows/applyGoFilters (573/316/462 → 438/180/200), then after
   # the same fiche split `Compute` into eleven passes (438 → 280 lines).
-  # The line ceiling is now held by `migrate_1_9_0_to_2_0_0`, a migration frozen
-  # by definition (its DDL is what a 1.9.0 database needs, forever) — the next
-  # real target is `parseSearchFlags`, which sets the statement ceiling at 180
-  # and is 280 lines behind it. `applyGoFilters` sets the cognitive one. Splitting a flagged function must lower the
+  # The line ceiling is held by `migrate_1_9_0_to_2_0_0`, a migration frozen by
+  # definition (its DDL is what a 1.9.0 database needs, forever). The statement
+  # ceiling moved from `parseSearchFlags` (180) to `buildWhere` (146) when the
+  # former was split; `applyGoFilters` sets the cognitive one. Splitting a flagged function must lower the
   # number it set in the same commit, never leave it where a fatter function
   # could still slip in.
   #
   # Measure the real ceiling by RAISING each threshold until the linter goes
-  # quiet, never by lowering it to 1: funlen reports at most one violation per
-  # function (lines first, then statements), so at 1 almost every function
-  # answers "too many statements" and the longest ones never say how long they
-  # are. That mistake put this ratchet at 77 lines for a tree whose longest
-  # function is 438. Test
+  # quiet, never by lowering it to 1, and iterate the two funlen numbers to a
+  # fixed point: funlen reports at most one violation per function — lines
+  # first, then statements — so a function under one threshold hides how far it
+  # is over the other. At 1, almost every function answers "too many
+  # statements" and the longest ones never say how long they are (that mistake
+  # put this ratchet at 77 lines for a tree whose longest function was 438);
+  # symmetrically, lowering `statements` alone made three functions surface that
+  # a laxer `lines` had been masking. Change one, re-run, change the other,
+  # re-run, until the linter is quiet with both. Test
   # functions are excluded below: a long table-driven test or a migration
   # round-trip fixture is not the dette this fiche targets, and forcing them
   # under the same ceiling would fight the fixture shape instead of real
@@ -71,7 +75,7 @@ linters:
 
     funlen:
       lines: 296      # migrate_1_9_0_to_2_0_0, db_migration_v1.go — a frozen migration, left alone
-      statements: 180 # parseSearchFlags, same function
+      statements: 146 # (*SearchStore).buildWhere, sqlshared/search.go
 
     gocognit:
       min-complexity: 200 # (*SearchStore).applyGoFilters, sqlshared/search.go

@@ -9,7 +9,6 @@ import (
 	"io"
 	"math"
 	"os"
-	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -48,109 +47,19 @@ type searchParams struct {
 // CLI command's convention of "print usage, then return the error".
 func parseSearchFlags(args []string) (*searchParams, string, error) {
 	searchCmd := flag.NewFlagSet("search", flag.ContinueOnError)
-
-	// Define flags
-	dbPath := searchCmd.String("db", "", "Path to the database file (required)")
-	outputDB := searchCmd.String("export", "", "Export results to a new database file")
-	limit := searchCmd.Int("limit", 0, "Maximum number of results (0 = no limit)")
-	offset := searchCmd.Int("offset", 0, "Skip this many results before the first one returned (paging, with --limit)")
-	format := searchCmd.String("format", "table", "Output format: table, json, xgid")
-
-	// Filter flags
-	decisionType := searchCmd.String("decision", "", "Filter by decision type: checker, cube")
-	pipMin := searchCmd.Int("pip-min", 0, "Minimum pip count difference")
-	pipMax := searchCmd.Int("pip-max", 0, "Maximum pip count difference")
-	winRateMin := searchCmd.Float64("winrate-min", 0, "Minimum win rate (%)")
-	winRateMax := searchCmd.Float64("winrate-max", 0, "Maximum win rate (%)")
-	cubeValue := searchCmd.Int("cube", 0, "Filter by cube value")
-	score1 := searchCmd.Int("score1", -1, "Filter by player 1 score")
-	score2 := searchCmd.Int("score2", -1, "Filter by player 2 score")
-	matchLength := searchCmd.Int("match-length", 0, "Filter by match length")
-	errorMin := searchCmd.Float64("error-min", 0, "Minimum equity error (blunders)")
-	moveErrorMin := searchCmd.Float64("move-error-min", 0, "Minimum played move error (millipoints)")
-	moveErrorMax := searchCmd.Float64("move-error-max", 0, "Maximum played move error (millipoints)")
-	hasAnalysis := searchCmd.Bool("has-analysis", false, "Only positions with analysis")
-	checkerOff1Min := searchCmd.Int("off1-min", 0, "Minimum checkers off for player 1")
-	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
-	matchIDsFlag := searchCmd.String("match-ids", "", "Filter by match IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'")
-	tournamentIDsFlag := searchCmd.String("tournament-ids", "", "Filter by tournament IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'")
-	positionIDsFlag := searchCmd.String("position-ids", "", "Filter by position IDs (range '2,7' or explicit list '5;10;15')")
-	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
-	individual := searchCmd.Bool("individual", false, "Only positions imported on their own, not as part of a match")
-	flagged := searchCmd.Bool("flagged", false, "Only positions you marked for study in the source tool (eXtreme Gammon flags)")
-	hasComment := searchCmd.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)")
-	noComment := searchCmd.Bool("no-comment", false, "Only positions carrying no comment")
-	query := searchCmd.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags")
-	queryHelp := searchCmd.Bool("query-help", false, "List the tokens --query understands, and exit")
-
-	searchCmd.Usage = func() {
-		fmt.Println("Usage: blunderdb search [options]")
-		fmt.Println()
-		fmt.Println("Search for positions in the database using filters.")
-		fmt.Println()
-		fmt.Println("Options:")
-		searchCmd.PrintDefaults()
-		fmt.Println()
-		fmt.Println("Examples:")
-		fmt.Println("  # List all positions")
-		fmt.Println("  blunderdb search --db database.db")
-		fmt.Println()
-		fmt.Println("  # Search cube decisions")
-		fmt.Println("  blunderdb search --db database.db --decision cube")
-		fmt.Println()
-		fmt.Println("  # Search positions with errors >= 0.1")
-		fmt.Println("  blunderdb search --db database.db --error-min 0.1")
-		fmt.Println()
-		fmt.Println("  # Search and export to new database")
-		fmt.Println("  blunderdb search --db database.db --decision cube --export cubes.db")
-		fmt.Println()
-		fmt.Println("  # Search bearoff positions")
-		fmt.Println("  blunderdb search --db database.db --off1-min 1 --off2-min 1")
-		fmt.Println()
-		fmt.Println("  # Output as JSON")
-		fmt.Println("  blunderdb search --db database.db --format json --limit 10")
-		fmt.Println()
-		fmt.Println("  # Search in specific matches (2, 5, and 9)")
-		fmt.Println("  blunderdb search --db database.db --match-ids 2,5,9")
-		fmt.Println()
-		fmt.Println("  # Search in a tournament")
-		fmt.Println("  blunderdb search --db database.db --tournament-ids 1")
-		fmt.Println()
-		fmt.Println("  # Search positions where dice were 6-5")
-		fmt.Println("  blunderdb search --db database.db --dice 6,5")
-		fmt.Println()
-		fmt.Println("  # Find the positions you imported yourself, not the ones matches brought in")
-		fmt.Println("  blunderdb search --db database.db --individual")
-		fmt.Println()
-		fmt.Println("  # Search positions where a 6 was rolled on either die")
-		fmt.Println("  blunderdb search --db database.db --dice 6")
-		fmt.Println()
-		fmt.Println("  # Positions flagged for study in XG")
-		fmt.Println("  blunderdb search --db database.db --flagged")
-		fmt.Println()
-		fmt.Println("  # Find every commented position")
-		fmt.Println("  blunderdb search --db database.db --has-comment")
-		fmt.Println()
-		fmt.Println("  # Blunders still waiting to be annotated")
-		fmt.Println("  blunderdb search --db database.db --no-comment --error-min 0.1")
-		fmt.Println()
-		fmt.Println("  # The interface's own query language: cube decisions, 30+ pips behind, 50 millipoints of error")
-		fmt.Println("  blunderdb search --db database.db --query 's cube p>30 E>50'")
-		fmt.Println()
-		fmt.Println("  # Filters no flag exposes: a move pattern, a comment tag, a player, a date")
-		fmt.Println("  blunderdb search --db database.db --query 's m\"13/11\" t\"blunder\" pl\"Alice\" T>2026/01/01'")
-	}
+	f := defineSearchFlags(searchCmd)
+	searchCmd.Usage = func() { printSearchUsage(searchCmd) }
 
 	if err := searchCmd.Parse(args); err != nil {
 		return nil, "", err
 	}
 
-	if *queryHelp {
+	if *f.queryHelp {
 		return &searchParams{queryHelp: true}, "", nil
 	}
 
 	// Validate required flags
-	if *dbPath == "" {
+	if *f.dbPath == "" {
 		searchCmd.Usage()
 		return nil, "", fmt.Errorf("missing required flag: --db")
 	}
@@ -164,11 +73,11 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 	// flag setting the same filter would need a precedence rule nobody could
 	// remember, and one that quietly loses a filter is worse than a refusal.
 	// The flags that say where to search and how to print stay valid.
-	if *query != "" {
+	if *f.query != "" {
 		if named := filterFlagsSet(searchCmd); len(named) > 0 {
 			return nil, "", fmt.Errorf("--query cannot be combined with the filter flags (%s): put every filter in the query, or use the flags alone", strings.Join(named, ", "))
 		}
-		filters, diags := searchquery.Parse(*query)
+		filters, diags := searchquery.Parse(*f.query)
 		var unknown []string
 		for _, d := range diags {
 			if d.Kind == searchquery.DiagUnknown {
@@ -181,179 +90,26 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		return &searchParams{
 			filters:  filters,
 			diags:    diags,
-			limit:    *limit,
-			offset:   *offset,
-			format:   strings.ToLower(*format),
-			outputDB: *outputDB,
-		}, *dbPath, nil
+			limit:    *f.limit,
+			offset:   *f.offset,
+			format:   strings.ToLower(*f.format),
+			outputDB: *f.outputDB,
+		}, *f.dbPath, nil
 	}
 
-	// Build filter parameters for LoadPositionsByFilters
-	// Create a base filter position with EMPTY board (no checker position filtering)
-	// This is different from InitializePosition() which sets up starting position
-	filter := Position{
-		Board:        Board{Points: [26]Point{}}, // Empty board - matches any position
-		Cube:         Cube{Owner: None, Value: 0},
-		Dice:         [2]int{0, 0},
-		Score:        [2]int{-1, -1}, // -1 means no score filter
-		PlayerOnRoll: 0,
-		DecisionType: CheckerAction,
+	filters, err := f.toFilters()
+	if err != nil {
+		return nil, "", err
 	}
-
-	// Set decision type filter
-	decisionTypeFilter := false
-	if *decisionType != "" {
-		decisionTypeFilter = true
-		switch strings.ToLower(*decisionType) {
-		case "checker":
-			filter.DecisionType = CheckerAction
-		case "cube":
-			filter.DecisionType = CubeAction
-		default:
-			return nil, "", fmt.Errorf("invalid decision type: %s (must be 'checker' or 'cube')", *decisionType)
-		}
-	}
-
-	// Set dice roll filter
-	diceRollFilter := false
-	diceRollMode := ""
-	if *diceFlag != "" {
-		diceRollFilter = true
-		parts := strings.Split(*diceFlag, ",")
-		switch len(parts) {
-		case 1:
-			d1, err := strconv.Atoi(strings.TrimSpace(parts[0]))
-			if err != nil || d1 < 1 || d1 > 6 {
-				return nil, "", fmt.Errorf("invalid --dice value %q: die must be 1-6", *diceFlag)
-			}
-			diceRollMode = "first"
-			filter.Dice[0] = d1
-		case 2:
-			d1, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
-			d2, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
-			if err1 != nil || err2 != nil || d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
-				return nil, "", fmt.Errorf("invalid --dice value %q: each die must be 1-6", *diceFlag)
-			}
-			diceRollMode = "both"
-			filter.Dice[0] = d1
-			filter.Dice[1] = d2
-		default:
-			return nil, "", fmt.Errorf("invalid --dice value %q: expected '5' or '5,3'", *diceFlag)
-		}
-		// The dice filter also constrains decision_type; default to CheckerAction
-		// when --decision was not given (cube actions do not have a roll).
-		if !decisionTypeFilter {
-			decisionTypeFilter = true
-			filter.DecisionType = CheckerAction
-		}
-	}
-
-	// Build filter strings for the search function
-	var pipCountFilter string
-	if *pipMin > 0 || *pipMax > 0 {
-		if *pipMin > 0 && *pipMax > 0 {
-			pipCountFilter = fmt.Sprintf("p%d,%d", *pipMin, *pipMax)
-		} else if *pipMin > 0 {
-			pipCountFilter = fmt.Sprintf("p>%d", *pipMin)
-		} else {
-			pipCountFilter = fmt.Sprintf("p<%d", *pipMax)
-		}
-	}
-
-	var winRateFilter string
-	if *winRateMin > 0 || *winRateMax > 0 {
-		if *winRateMin > 0 && *winRateMax > 0 {
-			winRateFilter = fmt.Sprintf("w%f,%f", *winRateMin, *winRateMax)
-		} else if *winRateMin > 0 {
-			winRateFilter = fmt.Sprintf("w>%f", *winRateMin)
-		} else {
-			winRateFilter = fmt.Sprintf("w<%f", *winRateMax)
-		}
-	}
-
-	var moveErrorFilter string
-	if *moveErrorMin > 0 || *moveErrorMax > 0 {
-		if *moveErrorMin > 0 && *moveErrorMax > 0 {
-			moveErrorFilter = fmt.Sprintf("E%f,%f", *moveErrorMin, *moveErrorMax)
-		} else if *moveErrorMin > 0 {
-			moveErrorFilter = fmt.Sprintf("E>%f", *moveErrorMin)
-		} else {
-			moveErrorFilter = fmt.Sprintf("E<%f", *moveErrorMax)
-		}
-	}
-
-	var player1CheckerOffFilter string
-	if *checkerOff1Min > 0 {
-		player1CheckerOffFilter = fmt.Sprintf("o>%d", *checkerOff1Min-1)
-	}
-
-	var player2CheckerOffFilter string
-	if *checkerOff2Min > 0 {
-		player2CheckerOffFilter = fmt.Sprintf("O>%d", *checkerOff2Min-1)
-	}
-
-	// Set cube value filter
-	includeCube := false
-	if *cubeValue > 0 {
-		includeCube = true
-		filter.Cube.Value = *cubeValue
-	}
-
-	// Set score filter
-	includeScore := false
-	if *score1 >= 0 || *score2 >= 0 || *matchLength > 0 {
-		includeScore = true
-		if *score1 >= 0 {
-			filter.Score[0] = *score1
-		}
-		if *score2 >= 0 {
-			filter.Score[1] = *score2
-		}
-	}
-
-	// Comment-presence filter. The two flags are the CLI spelling of one
-	// tri-state, so asking for both at once is a user error worth naming rather
-	// than an empty result set to puzzle over.
-	commentFilter := ""
-	switch {
-	case *hasComment && *noComment:
-		return nil, "", fmt.Errorf("--has-comment and --no-comment are mutually exclusive")
-	case *hasComment:
-		commentFilter = "has"
-	case *noComment:
-		commentFilter = "none"
-	}
-
-	formatLower := strings.ToLower(*format)
-
 	return &searchParams{
-		filters: SearchFilters{
-			Filter:                  filter,
-			IncludeCube:             includeCube,
-			IncludeScore:            includeScore,
-			PipCountFilter:          pipCountFilter,
-			WinRateFilter:           winRateFilter,
-			MoveErrorFilter:         moveErrorFilter,
-			Player1CheckerOffFilter: player1CheckerOffFilter,
-			Player2CheckerOffFilter: player2CheckerOffFilter,
-			DecisionTypeFilter:      decisionTypeFilter,
-			DiceRollFilter:          diceRollFilter,
-			DiceRollMode:            diceRollMode,
-			MatchIDsFilter:          *matchIDsFlag,
-			TournamentIDsFilter:     *tournamentIDsFlag,
-			PositionIDsFilter:       *positionIDsFlag,
-
-			IndividuallyImportedFilter: *individual,
-			FlaggedFilter:              *flagged,
-			CommentFilter:              commentFilter,
-		},
-		errorMin:    *errorMin,
-		hasAnalysis: *hasAnalysis,
-		limit:       *limit,
-		offset:      *offset,
-		format:      formatLower,
-		outputDB:    *outputDB,
-	}, *dbPath, nil
+		filters:     filters,
+		errorMin:    *f.errorMin,
+		hasAnalysis: *f.hasAnalysis,
+		limit:       *f.limit,
+		offset:      *f.offset,
+		format:      strings.ToLower(*f.format),
+		outputDB:    *f.outputDB,
+	}, *f.dbPath, nil
 }
 
 // filterFlagsSet names the filter flags the user actually passed. Only the

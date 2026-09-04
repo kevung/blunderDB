@@ -453,7 +453,15 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
       (`computeMWCPass` relit ce que les autres ont collecté, donc passe en
       dernier). `stats.go` : 1392 → 920 lignes. Le plafond `funlen` descend de
       438 à 296 dans le même geste (E.6).
-- [ ] `CommitImportDatabase` (306 l.) → **pas fait**, même raison.
+- [x] `parseSearchFlags` (280 l., 180 instructions — le plafond `funlen` après
+      le découpage de `Compute`) → `cli_search_flags.go` : trois de ses quatre
+      parties n'étaient pas de la logique (trente déclarations de drapeaux,
+      cinquante lignes d'aide, la construction du `SearchFilters`). Ce qui
+      reste dans `cli_search.go` est la décision : `--query` ou les drapeaux,
+      et ce qu'il faut refuser. `search --help` sort octet pour octet
+      identique avant et après.
+- [ ] `CommitImportDatabase` (235 l.) → **pas fait**, même raison. C'est
+      désormais la deuxième plus longue fonction de l'arbre.
 - [ ] Réduction des fichiers > 600 lignes (`stats.go` 1392, `export_sqlite.go`
       938, `matches_postgres.go` 921, `xgmap.go` 857, `matches_sqlite.go` 879,
       `position_match.go` 703) : **pas fait**. `search.go` est passé de 796 à
