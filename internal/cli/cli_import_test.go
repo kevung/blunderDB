@@ -38,6 +38,7 @@ func validPositionLine(t *testing.T) string {
 }
 
 func TestCLI_ImportPosition_NoneImportedIsAnError(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	path := writePositionFile(t, "not json", "also not json")
 
@@ -48,6 +49,7 @@ func TestCLI_ImportPosition_NoneImportedIsAnError(t *testing.T) {
 }
 
 func TestCLI_ImportPosition_EmptyFileIsAnError(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	path := writePositionFile(t)
 
@@ -58,6 +60,7 @@ func TestCLI_ImportPosition_EmptyFileIsAnError(t *testing.T) {
 }
 
 func TestCLI_ImportPosition_PartialFailureDefaultsToSuccess(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	path := writePositionFile(t, validPositionLine(t), "garbage line")
 
@@ -68,6 +71,7 @@ func TestCLI_ImportPosition_PartialFailureDefaultsToSuccess(t *testing.T) {
 }
 
 func TestCLI_ImportPosition_FailOnErrorFailsPartialImport(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	path := writePositionFile(t, validPositionLine(t), "garbage line")
 
@@ -102,6 +106,7 @@ func TestCLI_ImportPosition_JSON(t *testing.T) {
 }
 
 func TestCLI_ImportBatch_NoFilesIsAnError(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	emptyDir := tempDir(t)
 
@@ -112,6 +117,7 @@ func TestCLI_ImportBatch_NoFilesIsAnError(t *testing.T) {
 }
 
 func TestCLI_ImportBatch_AllFailedIsAnError(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	dir := tempDir(t)
 	if err := os.WriteFile(filepath.Join(dir, "bad.xg"), []byte("not a real match file"), 0o644); err != nil {
@@ -125,6 +131,7 @@ func TestCLI_ImportBatch_AllFailedIsAnError(t *testing.T) {
 }
 
 func TestCLI_ImportBatch_PartialFailureDefaultsToSuccess(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	dir := tempDir(t)
 	if err := os.WriteFile(filepath.Join(dir, "bad.xg"), []byte("not a real match file"), 0o644); err != nil {
@@ -145,6 +152,7 @@ func TestCLI_ImportBatch_PartialFailureDefaultsToSuccess(t *testing.T) {
 }
 
 func TestCLI_ImportBatch_FailOnErrorFailsPartialImport(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	dir := tempDir(t)
 	if err := os.WriteFile(filepath.Join(dir, "bad.xg"), []byte("not a real match file"), 0o644); err != nil {
@@ -219,6 +227,7 @@ func TestCLI_ImportMatch_JSON(t *testing.T) {
 }
 
 func TestCLI_Import_UnknownFormat(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg"), "--format", "yaml"})
 	if err == nil {

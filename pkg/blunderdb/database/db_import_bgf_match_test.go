@@ -12,6 +12,7 @@ import (
 // (the GUI/CLI contract). The detailed position/analysis correctness of the
 // ingest BGF path is covered by the server's TestImportBGFEndToEnd.
 func TestImportBGFMatch(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	fixture := filepath.Join("testdata", "TachiAI_V_player_Nov_2__2025__16_55.bgf")
 

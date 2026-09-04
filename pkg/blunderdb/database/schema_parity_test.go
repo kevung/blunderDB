@@ -303,6 +303,7 @@ var fixtureVersions = []string{
 // (GUI "new database", CLI create, :memory:) must be the one storage/sqlite
 // bootstraps for the daemon.
 func TestSchemaParity_FreshWrapperVsBackend(t *testing.T) {
+	t.Parallel()
 	diffSchemas(t,
 		"fresh wrapper (SetupDatabase)", freshWrapperSchema(t),
 		"fresh backend (sqlite.Open)", freshBackendSchema(t),
@@ -312,6 +313,7 @@ func TestSchemaParity_FreshWrapperVsBackend(t *testing.T) {
 // TestSchemaParity_MigratedVsFresh: a database migrated from any past version
 // must end up with the same tables, columns and indexes as a fresh one.
 func TestSchemaParity_MigratedVsFresh(t *testing.T) {
+	t.Parallel()
 	fresh := freshWrapperSchema(t)
 	for _, v := range fixtureVersions {
 		t.Run("wrapper_from_"+v, func(t *testing.T) {
@@ -327,6 +329,7 @@ func TestSchemaParity_MigratedVsFresh(t *testing.T) {
 // (storage/sqlite.Migrate through the registered migrator) must produce the
 // same schema as the GUI/CLI upgrade path for the oldest fixture.
 func TestSchemaParity_MigratedBackendVsWrapper(t *testing.T) {
+	t.Parallel()
 	for _, v := range []string{"1.0.0", "2.14.0"} {
 		t.Run("from_"+v, func(t *testing.T) {
 			diffSchemas(t,

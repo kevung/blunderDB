@@ -12,6 +12,7 @@ import (
 // disk and then fail on the missing metadata table. Both entry points, and
 // the issuance inspector that opens a file the same way, refuse first.
 func TestImportDatabase_MissingFileIsNotCreated(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	cur := NewDatabase()
 	if err := cur.SetupDatabase(filepath.Join(dir, "current.db")); err != nil {

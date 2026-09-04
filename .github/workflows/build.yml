@@ -32,12 +32,21 @@ permissions:
 
 jobs:
   # The Go suite is sharded so the wall clock is bounded by the slowest shard
-  # (about 6 minutes on a 4-vCPU runner) instead of their sum (20 minutes
-  # measured on 2026-09-02). Shards select packages by path, so a new package
+  # instead of their sum. Shards select packages by path, so a new package
   # lands in `rest` without editing this file; `database` is one package
-  # carrying ten minutes of race-instrumented tests, so it is split by test
-  # name instead. engine/gammonnet runs without the race detector and with
-  # `-covermode=set`: atomic counters cost it five times its run time.
+  # carrying more than forty minutes of race-instrumented tests, so it is
+  # split in FOUR by scripts/go-test-shard.sh — by test INDEX, not by first
+  # letter as until E.3 (#219): two halves cut by initial have no reason to
+  # weigh the same (they measured 279 s and 419 s) and renaming a test moved
+  # load silently from one job to the other. Four and not two because the race
+  # detector is what dominates here, and it does not parallelise away: with
+  # t.Parallel() on 289 of the package's 308 tests, one HALF still ran past
+  # 21 minutes under `-race -parallel 4` (measured 2026-09-04, 4 GOMAXPROCS,
+  # the shape of a runner) — past the 1200 s a job is given. Without the race
+  # detector the same package went from 159 s to 57 s on 16 cores; the
+  # parallelism is real, it is simply not what bounds this job. engine/gammonnet runs without the
+  # race detector and with `-covermode=set`: atomic counters cost it five
+  # times its run time.
   test:
     name: test (${{ matrix.shard }})
     runs-on: ubuntu-latest
@@ -47,11 +56,29 @@ jobs:
       matrix:
         include:
           - shard: database-a
-            run: go test -timeout 1200s -race -count=1 -run '^Test[A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 0 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: database-b
-            run: go test -timeout 1200s -race -count=1 -run '^Test[^A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 1 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-c
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 2 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-d
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 3 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          # internal/cli is the other package that filled a whole job on its
+          # own (FAIL … 1200.079s, 2026-09-03). t.Parallel() does not help it:
+          # its slowest tests are precisely the ones that capture os.Stdout —
+          # process-wide state, so 53 of its 99 tests must stay serial (see
+          # tasks/BACKLOG.md, "Le CLI écrit sur os.Stdout"). Splitting by index
+          # is what shares that serial cost out, so it gets the same treatment
+          # as database, and `app` covers everything else — a new package under
+          # internal/ or cmd/ still lands here with no edit.
           - shard: app
-            run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic . ./internal/... ./cmd/... 2>&1 | tee test-output.txt
+            run: |
+              go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
+                $(go list . ./internal/... ./cmd/... | grep -v '/internal/cli$') 2>&1 | tee test-output.txt
+          - shard: cli-a
+            run: scripts/go-test-shard.sh ./internal/cli/ 0 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: cli-b
+            run: scripts/go-test-shard.sh ./internal/cli/ 1 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           # -coverpkg=./pkg/blunderdb/... (E.2, #218): this shard is what
           # exercises storage/sqlite, and storage/sqlite calls into
           # storage/sqlshared — without -coverpkg only the package under test

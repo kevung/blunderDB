@@ -5,6 +5,7 @@ import (
 )
 
 func TestPopulatePositionColumns_Initial(t *testing.T) {
+	t.Parallel()
 	pos := initialPosition()
 	c := populatePositionColumns(&pos)
 
@@ -54,6 +55,7 @@ func TestPopulatePositionColumns_Initial(t *testing.T) {
 }
 
 func TestPopulatePositionColumns_BackCheckers(t *testing.T) {
+	t.Parallel()
 	// A position where Black has checkers in opponent's home (points 19-24).
 	var b Board
 	b.Points[20] = Point{Checkers: 2, Color: Black} // back checker
@@ -72,6 +74,7 @@ func TestPopulatePositionColumns_BackCheckers(t *testing.T) {
 }
 
 func TestPopulatePositionColumns_NoContact(t *testing.T) {
+	t.Parallel()
 	// Pure race: Black at points 1-3, White at points 20-22 — no contact.
 	var b Board
 	b.Points[1] = Point{Checkers: 5, Color: Black}
@@ -89,6 +92,7 @@ func TestPopulatePositionColumns_NoContact(t *testing.T) {
 }
 
 func TestPopulatePositionColumns_Normalization(t *testing.T) {
+	t.Parallel()
 	// PlayerOnRoll=0 and its mirror (PlayerOnRoll=1) should produce the same ZobristHash.
 	pos0 := initialPosition()
 	pos1 := pos0.Mirror()
@@ -106,6 +110,7 @@ func TestPopulatePositionColumns_Normalization(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestPopulateAnalysisColumns_Nil(t *testing.T) {
+	t.Parallel()
 	c := populateAnalysisColumns(nil, "", "")
 	if c.BestCubeAction != "" || c.CubeError != 0 || c.BestMoveEquityError != 0 {
 		t.Error("nil analysis should produce zero-value columns")
@@ -113,6 +118,7 @@ func TestPopulateAnalysisColumns_Nil(t *testing.T) {
 }
 
 func TestPopulateAnalysisColumns_WinRates(t *testing.T) {
+	t.Parallel()
 	errVal := 0.12
 	a := &PositionAnalysis{
 		DoublingCubeAnalysis: &DoublingCubeAnalysis{
@@ -158,6 +164,7 @@ func TestPopulateAnalysisColumns_WinRates(t *testing.T) {
 }
 
 func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
+	t.Parallel()
 	a := &PositionAnalysis{
 		DoublingCubeAnalysis: &DoublingCubeAnalysis{
 			BestCubeAction:         "Double/Take",
@@ -196,6 +203,7 @@ func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
 }
 
 func TestPopulateAnalysisColumns_NoPlayedMove(t *testing.T) {
+	t.Parallel()
 	a := &PositionAnalysis{
 		CheckerAnalysis: &CheckerAnalysis{
 			Moves: []CheckerMove{

@@ -12,6 +12,7 @@ import (
 // decisions, so they must agree exactly; this guards the badge port against
 // drifting from the detail computation.
 func TestMatchBadgesEqualDetail(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "T", "2025-07-01")
@@ -63,6 +64,7 @@ func TestMatchBadgesEqualDetail(t *testing.T) {
 // excludes the others — the property that lets a list page compute PR without
 // scanning every decision in the library.
 func TestMatchBadgesScopedByIDs(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	ctx := context.Background()
 	ss := db.store.Stats()
@@ -108,6 +110,7 @@ func TestMatchBadgesScopedByIDs(t *testing.T) {
 // matches (vs B, then vs C), so A is the reference; the badge PR must equal
 // ComputeStats filtered on A — never the pooled value that blends in B and C.
 func TestTournamentBadgesReferencePlayer(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "TB", "2025-07-01")

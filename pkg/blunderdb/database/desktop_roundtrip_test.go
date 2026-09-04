@@ -13,6 +13,7 @@ import (
 )
 
 func TestDesktopWrapperRoundTrip(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "desktop.db")
 
 	d := NewDatabase()

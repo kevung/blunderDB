@@ -15,6 +15,7 @@ import (
 // TestCompressDecompressRoundTrip verifies that analysis data survives
 // compression/decompression unchanged.
 func TestCompressDecompressRoundTrip(t *testing.T) {
+	t.Parallel()
 	analysis := PositionAnalysis{
 		PositionID:            42,
 		XGID:                  "XGID=test",
@@ -90,6 +91,7 @@ func TestCompressDecompressRoundTrip(t *testing.T) {
 // TestDecompressRawJSON verifies backward compat: raw JSON (uncompressed) is
 // accepted by decodeAnalysisFromStorage.
 func TestDecompressRawJSON(t *testing.T) {
+	t.Parallel()
 	analysis := PositionAnalysis{
 		PositionID:   1,
 		AnalysisType: "DoublingCube",
@@ -111,6 +113,7 @@ func TestDecompressRawJSON(t *testing.T) {
 
 // TestRecompressAnalysisData verifies the helper that ensures data is compressed.
 func TestRecompressAnalysisData(t *testing.T) {
+	t.Parallel()
 	rawJSON := []byte(`{"positionId":1,"analysisType":"CheckerMove"}`)
 
 	// Raw JSON should be compressed
@@ -144,6 +147,7 @@ func TestRecompressAnalysisData(t *testing.T) {
 // TestMigrate_2_2_0_to_2_3_0 verifies that the migration compresses analysis
 // data and that the compressed data is readable.
 func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v220.db")
 
@@ -328,6 +332,7 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 // TestSaveAndLoadAnalysisCompressed verifies the full save→load round trip
 // with compressed storage on a fresh database.
 func TestSaveAndLoadAnalysisCompressed(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_compressed.db")
 
@@ -417,6 +422,7 @@ func TestSaveAndLoadAnalysisCompressed(t *testing.T) {
 // TestExportWritesUncompressedJSON verifies that ExportDatabase writes
 // uncompressed JSON to the export file for backward compatibility.
 func TestExportWritesUncompressedJSON(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_export_src.db")
 
@@ -487,6 +493,7 @@ func TestExportWritesUncompressedJSON(t *testing.T) {
 // TestAnalysisCompressionSavings measures the compression ratio on a larger
 // analysis dataset to confirm storage savings.
 func TestAnalysisCompressionSavings(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_savings.db")
 
@@ -565,6 +572,7 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 // TestImportV220DatabaseIntoV230 verifies that importing an older v2.2.0 database
 // (with uncompressed analysis JSON) into a v2.3.0 database works correctly.
 func TestImportV220DatabaseIntoV230(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 
 	// Create a v2.3.0 "current" database with one position

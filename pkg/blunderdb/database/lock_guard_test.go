@@ -77,6 +77,7 @@ var lockGuardOverrides = map[string]func(t *testing.T) []any{
 // Run it under -race as well: a method that reaches d.db or d.store without
 // the lock shows up there, not here.
 func TestPublicMethods_ReturnUnderLock(t *testing.T) {
+	t.Parallel()
 	typ := reflect.TypeOf(&Database{})
 	if typ.NumMethod() < 100 {
 		t.Fatalf("only %d exported methods found on *Database, reflection is not seeing the whole type", typ.NumMethod())

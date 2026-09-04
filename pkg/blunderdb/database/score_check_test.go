@@ -7,6 +7,7 @@ import (
 )
 
 func TestScoreCheck(t *testing.T) {
+	t.Parallel()
 	matchFile := filepath.Join(
 		"testdata",
 		"2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation",

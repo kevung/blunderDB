@@ -24,6 +24,7 @@ func setupAnkiCollectionWithPositions(t *testing.T, n int) (*Database, int64, []
 }
 
 func TestCreateAnkiDeck(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, err := db.CreateAnkiDeck("MyDeck", "A deck", "collection", colID, "")
@@ -36,6 +37,7 @@ func TestCreateAnkiDeck(t *testing.T) {
 }
 
 func TestGetAllAnkiDecks(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	if _, err := db.CreateAnkiDeck("D1", "", "collection", colID, ""); err != nil {
@@ -55,6 +57,7 @@ func TestGetAllAnkiDecks(t *testing.T) {
 }
 
 func TestUpdateAnkiDeck(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("Old", "OldDesc", "collection", colID, "")
@@ -75,6 +78,7 @@ func TestUpdateAnkiDeck(t *testing.T) {
 }
 
 func TestUpdateAnkiDeckParams(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -105,6 +109,7 @@ func TestUpdateAnkiDeckParams(t *testing.T) {
 }
 
 func TestDeleteAnkiDeck(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -132,6 +137,7 @@ func TestDeleteAnkiDeck(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_Collection(t *testing.T) {
+	t.Parallel()
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -149,6 +155,7 @@ func TestSyncAnkiDeck_Collection(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_Idempotent(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -162,6 +169,7 @@ func TestSyncAnkiDeck_Idempotent(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_AddNew(t *testing.T) {
+	t.Parallel()
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -196,6 +204,7 @@ func TestSyncAnkiDeck_AddNew(t *testing.T) {
 }
 
 func TestGetNextAnkiCard(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -217,6 +226,7 @@ func TestGetNextAnkiCard(t *testing.T) {
 }
 
 func TestGetNextAnkiCard_Empty(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	colID, _ := db.CreateCollection("Empty", "")
@@ -232,6 +242,7 @@ func TestGetNextAnkiCard_Empty(t *testing.T) {
 }
 
 func TestGetRandomAnkiCard(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -250,6 +261,7 @@ func TestGetRandomAnkiCard(t *testing.T) {
 }
 
 func TestGetRandomAnkiCard_Empty(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	colID, _ := db.CreateCollection("Empty", "")
@@ -267,6 +279,7 @@ func TestGetRandomAnkiCard_Empty(t *testing.T) {
 // TestGetRandomAnkiCard_DoesNotMutateSchedule is the defining property of cram
 // mode: drawing cards must never touch the FSRS schedule, unlike ReviewAnkiCard.
 func TestGetRandomAnkiCard_DoesNotMutateSchedule(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -299,6 +312,7 @@ func TestGetRandomAnkiCard_DoesNotMutateSchedule(t *testing.T) {
 // TestGetRandomAnkiCard_ExcludePosition checks that the exclusion avoids
 // repeats but still serves a single-card deck.
 func TestGetRandomAnkiCard_ExcludePosition(t *testing.T) {
+	t.Parallel()
 	// Two-card deck: excluding one must return the other (deterministic).
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 2)
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -327,6 +341,7 @@ func TestGetRandomAnkiCard_ExcludePosition(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Again(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -359,6 +374,7 @@ func TestReviewAnkiCard_Again(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Good(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -390,6 +406,7 @@ func TestReviewAnkiCard_Good(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Easy(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -417,6 +434,7 @@ func TestReviewAnkiCard_Easy(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Progression(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -446,6 +464,7 @@ func TestReviewAnkiCard_Progression(t *testing.T) {
 }
 
 func TestResetAnkiDeck(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -474,6 +493,7 @@ func TestResetAnkiDeck(t *testing.T) {
 }
 
 func TestGetAnkiDeckStats(t *testing.T) {
+	t.Parallel()
 	db, colID, _ := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -493,6 +513,7 @@ func TestGetAnkiDeckStats(t *testing.T) {
 }
 
 func TestGetAnkiDeckPositions(t *testing.T) {
+	t.Parallel()
 	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")

@@ -154,6 +154,7 @@ func testdataPath(name string) string {
 // ---------------------------------------------------------------------------
 
 func TestCLI_ImportXG(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")})
 	if err != nil {
@@ -170,6 +171,7 @@ func TestCLI_ImportXG(t *testing.T) {
 }
 
 func TestCLI_ImportSGF(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.sgf")})
 	if err != nil {
@@ -182,6 +184,7 @@ func TestCLI_ImportSGF(t *testing.T) {
 }
 
 func TestCLI_ImportMAT(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.mat")})
 	if err != nil {
@@ -194,6 +197,7 @@ func TestCLI_ImportMAT(t *testing.T) {
 }
 
 func TestCLI_ImportBGF(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("TachiAI_V_player_Nov_2__2025__16_55.bgf")})
 	if err != nil {
@@ -206,6 +210,7 @@ func TestCLI_ImportBGF(t *testing.T) {
 }
 
 func TestCLI_ImportDuplicate(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	// First import should succeed.
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")})
@@ -298,6 +303,7 @@ func TestCLI_ListPositions(t *testing.T) {
 // chain is opaque and errors.Is can never see the underlying
 // strconv.ErrSyntax; with %w (the fix) it does, at both wrapping levels.
 func TestCLI_ListStats_TournamentIDsErrorUnwraps(t *testing.T) {
+	t.Parallel()
 	cli := setupCLI(t)
 
 	err := cli.Run([]string{"list", "--db", ":memory:", "--type", "stats", "--tournament", "not-a-number"})
@@ -426,6 +432,7 @@ func TestCLI_SearchJSON(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_Export(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
 		t.Fatalf("import: %v", err)
@@ -447,6 +454,7 @@ func TestCLI_Export(t *testing.T) {
 }
 
 func TestCLI_ExportRoundTrip(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
 		t.Fatalf("import: %v", err)
@@ -483,6 +491,7 @@ func TestCLI_ExportRoundTrip(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_DeleteMatch(t *testing.T) {
+	t.Parallel()
 	cli := setupCLI(t)
 	matchID, err := cli.db.ImportXGMatch(testdataPath("test.xg"))
 	if err != nil {
@@ -501,6 +510,7 @@ func TestCLI_DeleteMatch(t *testing.T) {
 }
 
 func TestCLI_DeleteMatchNotFound(t *testing.T) {
+	t.Parallel()
 	cli := setupCLI(t)
 	err := cli.deleteMatch(9999, true, "text")
 	if err == nil {
@@ -513,6 +523,7 @@ func TestCLI_DeleteMatchNotFound(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_Create(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "created.db")
 	cli := &CLI{db: NewDatabase()}
 	closeOnCleanup(t, cli.db)
@@ -532,6 +543,7 @@ func TestCLI_Create(t *testing.T) {
 }
 
 func TestCLI_CreateExistingNoForce(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "existing.db")
 	// Create the file first.
 	if err := os.WriteFile(dbPath, []byte("x"), 0644); err != nil {
@@ -547,6 +559,7 @@ func TestCLI_CreateExistingNoForce(t *testing.T) {
 }
 
 func TestCLI_CreateForce(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "force.db")
 	if err := os.WriteFile(dbPath, []byte("x"), 0644); err != nil {
 		t.Fatal(err)
@@ -626,6 +639,7 @@ func TestCLI_InfoJSON(t *testing.T) {
 }
 
 func TestCLI_Edit(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 
 	err := cli.Run([]string{"edit", "--db", dbPath, "--user", "Alice", "--description", "My games"})
@@ -676,6 +690,7 @@ func TestCLI_MatchJSON(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_ImportBatch(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	// Use the testdata directory itself — it contains .xg, .sgf, .mat, .bgf files.
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", "testdata", "--recursive=false"})
@@ -694,6 +709,7 @@ func TestCLI_ImportBatch(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCLI_ImportNonexistentFile(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", "testdata/nonexistent.xg"})
 	if err == nil {
@@ -702,6 +718,7 @@ func TestCLI_ImportNonexistentFile(t *testing.T) {
 }
 
 func TestCLI_ImportCorruptFile(t *testing.T) {
+	t.Parallel()
 	// Create a temp file with garbage content and a .xg extension.
 	tmp := filepath.Join(tempDir(t), "corrupt.xg")
 	if err := os.WriteFile(tmp, []byte("not a valid xg file"), 0644); err != nil {
@@ -716,6 +733,7 @@ func TestCLI_ImportCorruptFile(t *testing.T) {
 }
 
 func TestCLI_ExportNoData(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	exportPath := filepath.Join(tempDir(t), "empty_export.db")
 	// Export from empty DB should not panic.
@@ -727,6 +745,7 @@ func TestCLI_ExportNoData(t *testing.T) {
 }
 
 func TestCLI_UnknownCommand(t *testing.T) {
+	t.Parallel()
 	cli := &CLI{db: NewDatabase()}
 	err := cli.Run([]string{"bogus"})
 	if err == nil {
@@ -735,6 +754,7 @@ func TestCLI_UnknownCommand(t *testing.T) {
 }
 
 func TestCLI_MissingRequiredFlags(t *testing.T) {
+	t.Parallel()
 	cli := &CLI{db: NewDatabase()}
 
 	// import without --db
@@ -744,7 +764,7 @@ func TestCLI_MissingRequiredFlags(t *testing.T) {
 	}
 
 	// list without --type
-	err = cli.Run([]string{"list", "--db", "x.db"})
+	err = cli.Run([]string{"list", "--db", filepath.Join(t.TempDir(), "x.db")})
 	if err == nil {
 		t.Error("expected error for list without --type")
 	}

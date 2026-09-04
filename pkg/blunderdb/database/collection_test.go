@@ -7,6 +7,7 @@ import (
 )
 
 func TestCreateCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	id, err := db.CreateCollection("Test Collection", "A description")
@@ -30,6 +31,7 @@ func TestCreateCollection(t *testing.T) {
 }
 
 func TestGetAllCollections(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	for i := 0; i < 3; i++ {
@@ -53,6 +55,7 @@ func TestGetAllCollections(t *testing.T) {
 }
 
 func TestUpdateCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	id, _ := db.CreateCollection("Old", "OldDesc")
@@ -66,6 +69,7 @@ func TestUpdateCollection(t *testing.T) {
 }
 
 func TestDeleteCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -91,6 +95,7 @@ func TestDeleteCollection(t *testing.T) {
 }
 
 func TestAddPositionToCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -111,6 +116,7 @@ func TestAddPositionToCollection(t *testing.T) {
 }
 
 func TestAddPositionsToCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -131,6 +137,7 @@ func TestAddPositionsToCollection(t *testing.T) {
 }
 
 func TestAddDuplicatePosition(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -151,6 +158,7 @@ func TestAddDuplicatePosition(t *testing.T) {
 }
 
 func TestRemovePositionFromCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -169,6 +177,7 @@ func TestRemovePositionFromCollection(t *testing.T) {
 }
 
 func TestRemovePositionsFromCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -187,6 +196,7 @@ func TestRemovePositionsFromCollection(t *testing.T) {
 }
 
 func TestReorderCollections(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	id1, _ := db.CreateCollection("A", "")
@@ -209,6 +219,7 @@ func TestReorderCollections(t *testing.T) {
 }
 
 func TestReorderCollectionPositions(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -232,6 +243,7 @@ func TestReorderCollectionPositions(t *testing.T) {
 }
 
 func TestMovePositionBetweenCollections(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -255,6 +267,7 @@ func TestMovePositionBetweenCollections(t *testing.T) {
 }
 
 func TestCopyPositionToCollection(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -275,6 +288,7 @@ func TestCopyPositionToCollection(t *testing.T) {
 }
 
 func TestGetPositionCollections(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -294,6 +308,7 @@ func TestGetPositionCollections(t *testing.T) {
 }
 
 func TestExportCollections(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -324,6 +339,7 @@ func TestExportCollections(t *testing.T) {
 // before the fix, ExportCollections hand-rolled its own two-column position
 // table and never wrote zobrist_hash or any scalar column.
 func TestExportCollections_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -406,6 +422,7 @@ func TestExportCollections_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 // (`for key, value := range metadata { INSERT ... }`), and no watermark was
 // ever written. See ADR-0007 and issuance.CarriedMetadataKeys.
 func TestExportCollections_MetadataAllowListAndWatermark(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)

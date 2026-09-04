@@ -11,6 +11,7 @@ import (
 // unchanged, so a caller can tell a duplicate name from an unknown filter with
 // errors.Is rather than by matching message text.
 func TestFilterLibraryErrorsAreStorageSentinels(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	if err := db.SaveFilter("blunders", "s e>0.1"); err != nil {
@@ -45,6 +46,7 @@ func TestFilterLibraryErrorsAreStorageSentinels(t *testing.T) {
 // Every method of the family refuses cleanly before a database is open instead
 // of dereferencing a nil handle.
 func TestSessionFamilyRefusesWhenNotOpened(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	calls := map[string]func() error{
 		"SaveCommand":              func() error { return db.SaveCommand("s") },

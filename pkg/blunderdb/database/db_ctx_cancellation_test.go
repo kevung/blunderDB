@@ -17,6 +17,7 @@ import (
 // database/sql refuses to even dispatch the statement once ctx.Err() != nil.
 
 func TestLoadPositionsByFiltersCoreCtxRespectsCancellation(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -32,6 +33,7 @@ func TestLoadPositionsByFiltersCoreCtxRespectsCancellation(t *testing.T) {
 }
 
 func TestComputeStatsCtxRespectsCancellation(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -66,6 +68,7 @@ func TestExportDatabaseCtxRespectsCancellation(t *testing.T) {
 // The context.Background() convenience methods must still work exactly as
 // before: they are what the GUI calls, unchanged.
 func TestLoadPositionsByFiltersCoreStillWorksWithoutContext(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	positions, _, err := db.LoadPositionsByFiltersCore(SearchFilters{Filter: emptyFilter()}, storage.ListOpts{})

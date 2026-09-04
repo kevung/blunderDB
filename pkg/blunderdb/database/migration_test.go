@@ -263,6 +263,7 @@ func columnExists(t *testing.T, db *sql.DB, table, column string) bool {
 // TestMigrate_2_7_0_to_2_8_0 verifies the exclude_position column is added to
 // search_history and filter_library and that the "Sauf" structure round-trips.
 func TestMigrate_2_7_0_to_2_8_0(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v270.db")
 	createOldDatabase(t, dbPath, "2.7.0")
@@ -338,6 +339,7 @@ func allExpectedTables() []string {
 
 // TestMigrationFromV100 tests migration from a v1.0.0 database (only base tables)
 func TestMigrationFromV100(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v100.db")
 	createOldDatabase(t, dbPath, "1.0.0")
@@ -368,6 +370,7 @@ func TestMigrationFromV100(t *testing.T) {
 
 // TestMigrationFromV110 tests migration from v1.1.0 (has command_history)
 func TestMigrationFromV110(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v110.db")
 	createOldDatabase(t, dbPath, "1.1.0")
@@ -396,6 +399,7 @@ func TestMigrationFromV110(t *testing.T) {
 
 // TestMigrationFromV120 tests migration from v1.2.0 (has filter_library)
 func TestMigrationFromV120(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v120.db")
 	createOldDatabase(t, dbPath, "1.2.0")
@@ -424,6 +428,7 @@ func TestMigrationFromV120(t *testing.T) {
 
 // TestMigrationFromV130 tests migration from v1.3.0 (has search_history)
 func TestMigrationFromV130(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v130.db")
 	createOldDatabase(t, dbPath, "1.3.0")
@@ -452,6 +457,7 @@ func TestMigrationFromV130(t *testing.T) {
 
 // TestMigrationFromV140 tests migration from v1.4.0 (has match tables)
 func TestMigrationFromV140(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v140.db")
 	createOldDatabase(t, dbPath, "1.4.0")
@@ -480,6 +486,7 @@ func TestMigrationFromV140(t *testing.T) {
 
 // TestMigrationFromV150 tests migration from v1.5.0 (has collection tables)
 func TestMigrationFromV150(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v150.db")
 	createOldDatabase(t, dbPath, "1.5.0")
@@ -508,6 +515,7 @@ func TestMigrationFromV150(t *testing.T) {
 
 // TestCurrentVersionNoMigration tests that an old database opens and migrates to current version
 func TestCurrentVersionNoMigration(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v170.db")
 	createOldDatabase(t, dbPath, "1.7.0")
@@ -530,6 +538,7 @@ func TestCurrentVersionNoMigration(t *testing.T) {
 
 // TestMigrationFromV160 tests migration from v1.6.0 (has tournament table)
 func TestMigrationFromV160(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v160.db")
 	createOldDatabase(t, dbPath, "1.6.0")
@@ -558,6 +567,7 @@ func TestMigrationFromV160(t *testing.T) {
 
 // TestMigrationPreservesData tests that existing data survives migration
 func TestMigrationPreservesData(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_data_preserve.db")
 
@@ -649,6 +659,7 @@ func TestMigrationPreservesData(t *testing.T) {
 
 // TestMigrationChainVersionProgression tests version is correctly updated at each step
 func TestMigrationChainVersionProgression(t *testing.T) {
+	t.Parallel()
 	versions := []string{"1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0"}
 
 	for _, startVersion := range versions {
@@ -686,6 +697,7 @@ func TestMigrationChainVersionProgression(t *testing.T) {
 
 // TestSetupThenOpen tests that a database created by SetupDatabase can be opened
 func TestSetupThenOpen(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_setup.db")
 
@@ -736,6 +748,7 @@ func TestSetupThenOpen(t *testing.T) {
 // are missing the filter_library table (skipped during a past migration path).
 // OpenDatabase must repair such databases instead of failing.
 func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_filter_library.db")
 
@@ -798,6 +811,7 @@ func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
 // TestOpenDatabaseMissingCanonicalHash tests that databases migrated to v1.7.0
 // without the canonical_hash column on match table get repaired.
 func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_canonical_hash.db")
 
@@ -840,6 +854,7 @@ func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
 // TestOpenDatabaseMissingMultipleTables tests repair of a database missing
 // multiple tables (e.g. filter_library AND search_history).
 func TestOpenDatabaseMissingMultipleTables(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "missing_multiple.db")
 
@@ -1037,6 +1052,7 @@ func createV190Database(t *testing.T, path string) {
 //   - stored column values match what populatePositionColumns recomputes
 //   - the v2.0.0 indexes exist
 func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190.db")
 	createV190Database(t, dbPath)
@@ -1116,6 +1132,7 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 // TestMigrate_1_9_0_Duplicates verifies that two positions with the same
 // Zobrist hash are merged during migration and FK references are remapped.
 func TestMigrate_1_9_0_Duplicates(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190_dups.db")
 
@@ -1220,6 +1237,7 @@ func TestMigrate_1_9_0_Duplicates(t *testing.T) {
 // TestMigrate_Idempotent verifies that running migration twice (opening a
 // fully migrated 2.0.0 DB a second time) is a no-op.
 func TestMigrate_Idempotent(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v190_idempotent.db")
 	createV190Database(t, dbPath)
@@ -1260,6 +1278,7 @@ func TestMigrate_Idempotent(t *testing.T) {
 // migration correctly backfills best_move_equity_error for positions where
 // PlayedMoves was missing from the analysis JSON blob.
 func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v230_repair.db")
 
@@ -1404,6 +1423,7 @@ func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
 //   - leaves is_forced=0 for positions with multiple legal moves
 //   - leaves is_forced=0 for cube positions
 func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v240_is_forced.db")
 
@@ -1587,6 +1607,7 @@ func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
 //   - leaves is_close_cube=0 for clearly-not-close cube decisions
 //   - leaves is_close_cube=0 for checker positions
 func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v250_is_close_cube.db")
 
@@ -1768,6 +1789,7 @@ func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
 // action is a take/pass response get 1, doubling decisions and checker positions
 // stay 0.
 func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "v290_is_cube_response.db")
 
@@ -1905,6 +1927,7 @@ func TestMigrate_2_9_0_to_2_10_0_IsCubeResponse(t *testing.T) {
 // signal such a database carries: a position reachable from no move never came
 // from a match, so it must be the user's own.
 func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2120.db")
 	createOldDatabase(t, dbPath, "2.12.0")
@@ -1984,6 +2007,7 @@ func TestMigrate_2_12_0_to_2_13_0_Backfill(t *testing.T) {
 // source-file mark, so every existing position starts unflagged and only gains
 // the mark when its match is imported again (docs/adr/0006).
 func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2130.db")
 	createOldDatabase(t, dbPath, "2.13.0")
@@ -2030,6 +2054,7 @@ func TestMigrate_2_13_0_to_2_14_0_Flagged(t *testing.T) {
 }
 
 func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2140.db")
 	createOldDatabase(t, dbPath, "2.14.0")
@@ -2095,6 +2120,7 @@ func TestMigrate_2_14_0_to_2_15_0_LuckMP(t *testing.T) {
 // steps used to stop the chain on finding their table already there, which
 // left such a file at 1.0.0 for good and skipped every later step.
 func TestMigration_TablesAheadOfVersion(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "ahead.db")
 	// Every 1.6.0 table, stamped 1.0.0.
 	createOldDatabase(t, dbPath, "1.6.0")
@@ -2132,6 +2158,7 @@ func TestMigration_TablesAheadOfVersion(t *testing.T) {
 // same search and views, that the tenant's session still belongs to that
 // tenant only, and that metadata keeps nothing but its infrastructure rows.
 func TestMigrate_2_16_0_to_2_17_0_SessionState(t *testing.T) {
+	t.Parallel()
 	tmpDir := tempDir(t)
 	dbPath := filepath.Join(tmpDir, "test_v2160.db")
 
@@ -2273,6 +2300,7 @@ func planLegacyJacobyTwin(t *testing.T, db *sql.DB, sourceID int64, hash uint64)
 // that carried one is converted, and the rows the conversion brings together —
 // which were one position all along — are merged onto the oldest of them.
 func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "test_v2170.db")
 
 	// Build the fixture at the current schema through the normal write path,
@@ -2458,6 +2486,7 @@ func TestMigrate_2_17_0_to_2_18_0_JacobyAndBeaverLeaveTheIdentity(t *testing.T) 
 // analysis, and Save's SELECT-then-INSERT let two rows through; the migration
 // keeps the last one written and the index makes the state unreachable.
 func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(tempDir(t), "test_v2170_analysis.db")
 
 	setup := NewDatabase()

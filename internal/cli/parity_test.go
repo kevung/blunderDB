@@ -234,6 +234,7 @@ func serverPaths(t *testing.T) map[string]bool {
 // databaseParity, the CLI's handlers() (and its sub-command tables) and the
 // daemon's Paths().
 func TestDatabaseParity(t *testing.T) {
+	t.Parallel()
 	c := &CLI{}
 	commands := c.handlers()
 	subcommands := map[string]map[string]func([]string) error{

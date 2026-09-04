@@ -11,6 +11,7 @@ import (
 // and no entry in main.go's hand-kept list, and `blunderdb vacuum` opened the
 // GUI.
 func TestIsCommandCoversEveryHandler(t *testing.T) {
+	t.Parallel()
 	for name := range (&CLI{}).handlers() {
 		if !IsCommand(name) {
 			t.Errorf("handlers() knows %q but IsCommand rejects it", name)

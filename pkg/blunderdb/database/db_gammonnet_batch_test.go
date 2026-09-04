@@ -36,6 +36,7 @@ func newBatchTestDB(t *testing.T) *Database {
 // position that already has ANY analysis is left alone, and one with none
 // gets a gammonNet analysis written.
 func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	analysed := racePosition(6, 19, domain.White)
@@ -122,6 +123,7 @@ func TestAnalyzeMissingWithGammonNetFillsOnlyTheGap(t *testing.T) {
 // retried on every single pass, forever, for no reason, since the same
 // score is refused every time.
 func TestAnalyzeMissingWithGammonNetRefusesBeyondMET(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	pos := racePosition(8, 17, domain.White)
@@ -159,6 +161,7 @@ func TestAnalyzeMissingWithGammonNetRefusesBeyondMET(t *testing.T) {
 // already-analysed position looking perfectly current, because
 // EngineVersion alone never changed just because the requested depth did.
 func TestAnalyzeStaleGammonNetRerunsDepthOnlyChange(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	pos := racePosition(8, 17, domain.White)
@@ -215,6 +218,7 @@ func TestAnalyzeStaleGammonNetRerunsDepthOnlyChange(t *testing.T) {
 // already-written positions alone, and a second call only ever sees what is
 // still missing — the resume mechanism ADR-0013 asks for, with no journal.
 func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	var ids []int64
@@ -271,6 +275,7 @@ func TestAnalyzeMissingWithGammonNetResumeIsIdempotent(t *testing.T) {
 // éviter". Run at jobs=1, where the gate is "one position"; the parallel
 // form ("at most jobs positions") is TestAnalyzeGammonNetParallelYieldGates.
 func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 
 	for i, pt := range []int{8, 17} {
@@ -283,12 +288,16 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 	release := make(chan struct{})
 	var processedBeforeRelease int
 	done := make(chan error, 1)
+	// `blocked` dit que le second yield est ENTRÉ ; l'attendre remplace un
+	// time.Sleep qui pariait sur la vitesse de la machine (E.3, #219).
+	blocked := make(chan struct{}, 1)
 
 	go func() {
 		calls := 0
 		_, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, func() {
 			calls++
 			if calls == 2 {
+				blocked <- struct{}{}
 				<-release // the second position's yield blocks until told to proceed
 			}
 		}, nil)
@@ -297,10 +306,27 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 
 	// While the second position's yield is blocked, only the first must have
 	// been written — the loop must not have raced ahead of its own gate.
-	time.Sleep(100 * time.Millisecond)
-	n, err := d.CountPositionsWithoutAnalysis()
-	if err != nil {
-		t.Fatalf("CountPositionsWithoutAnalysis (mid-block): %v", err)
+	//
+	// `blocked` says the second yield is ENTERED, so the worker will take no
+	// further position; but the WRITE is done by the goroutine draining
+	// `results`, not by the worker, so the first analysis may still be in
+	// flight at that instant. Hence: wait for the count to reach 1, bounded.
+	// Once the yield is held, 1 is where the count stays — nothing else can
+	// be computed — so this waits for a state that is reached or never will
+	// be, rather than sleeping for a duration and hoping (E.3, #219).
+	<-blocked
+	deadline := time.Now().Add(10 * time.Second)
+	var n int
+	for {
+		var err error
+		n, err = d.CountPositionsWithoutAnalysis()
+		if err != nil {
+			t.Fatalf("CountPositionsWithoutAnalysis (mid-block): %v", err)
+		}
+		if n == 1 || time.Now().After(deadline) {
+			break
+		}
+		time.Sleep(time.Millisecond)
 	}
 	processedBeforeRelease = 2 - n
 	if processedBeforeRelease != 1 {

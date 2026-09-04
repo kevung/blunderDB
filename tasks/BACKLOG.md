@@ -111,6 +111,16 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   phase 06) : parcourir chaque filtre de la fenêtre de recherche. Priorité
   basse ; couvert indirectement par `searchFilterService.test.js` (unitaires
   + round-trip).
+- **Le CLI écrit sur `os.Stdout`, pas sur un `io.Writer`** (constaté par E.3,
+  #219, le 2026-09-04). 765 `fmt.Print*` répartis dans `internal/cli/` et un
+  `captureStdout` de test qui remplace `os.Stdout` : un état global du
+  PROCESSUS, donc 53 des 99 tests du paquet ne peuvent pas prendre
+  `t.Parallel()` — c'est ce qui borne le gain sur ce shard, pas la durée des
+  tests eux-mêmes. Le geste est de donner au `CLI` un `out io.Writer` (défaut
+  `os.Stdout`) et de faire passer les écritures par lui ; il touche beaucoup de
+  fichiers mais aucun comportement, et il débloque aussi les tests de sortie
+  `--format json` qui aujourd'hui sérialisent. Chantier à part, pas « en
+  passant ».
 ## Ouvert — Produit / docs
 
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée

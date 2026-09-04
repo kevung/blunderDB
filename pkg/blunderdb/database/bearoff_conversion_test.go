@@ -5,6 +5,7 @@ import (
 )
 
 func TestImplicitBearoffConversion(t *testing.T) {
+	t.Parallel()
 	db := &Database{}
 
 	// Test case 1: Implicit bear-off with to=-1 from home board

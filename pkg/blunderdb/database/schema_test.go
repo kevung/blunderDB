@@ -10,6 +10,7 @@ import (
 // TestSchemaV200_PositionColumns verifies that a fresh v2.0.0 database has all
 // expected scalar columns on the position table and all v2.0.0 indexes.
 func TestSchemaV200_PositionColumns(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
@@ -61,6 +62,7 @@ func TestSchemaV200_PositionColumns(t *testing.T) {
 // strict column prefixes of an index still in the list
 // (idx_position_score_cube, idx_analysis_win_gammon_covering respectively).
 func TestSchemaV200_Indexes(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
@@ -109,6 +111,7 @@ func TestSchemaV200_Indexes(t *testing.T) {
 
 // TestSchemaV200_SavePositionColumns verifies that SavePosition writes scalar columns.
 func TestSchemaV200_SavePositionColumns(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
@@ -145,6 +148,7 @@ func TestSchemaV200_SavePositionColumns(t *testing.T) {
 
 // TestSchemaV200_DatabaseVersion verifies that SetupDatabase writes the current DatabaseVersion.
 func TestSchemaV200_DatabaseVersion(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase failed: %v", err)
@@ -169,6 +173,7 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 // carrying the analysis, comment and collection membership across — without a
 // schema version bump.
 func TestOpen_RepairsPositionsWithoutScalars(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(tempDir(t), "damaged.db")
 	d := NewDatabase()
 	if err := d.SetupDatabase(path); err != nil {

@@ -10,6 +10,7 @@ import (
 // on demand. The two calls have to agree with LoadAllPositions on order, and
 // the window loader must keep the caller's order and skip a missing id.
 func TestListPositionIDsAndLoadPositionsByIDs(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "test.db")); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)

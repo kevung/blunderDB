@@ -12,6 +12,7 @@ import (
 )
 
 func TestSearchPositionIDFilter(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "search_position_id.db")); err != nil {
