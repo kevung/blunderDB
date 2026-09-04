@@ -1,13 +1,13 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-03** (seconde session d'exécution). Ce fichier est
+Dernière mise à jour : **2026-09-04** (troisième session d'exécution). Ce fichier est
 le point de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et
 ce qui est bloqué. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
 dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
 ## Où en est-on
 
-**49 des 145 issues sont fermées.** L'étape 0 (lot A) est entièrement livrée,
+**58 des 145 issues sont fermées** (les neuf dernières le seront au premier `push` : GitHub ne lit les `Closes` qu'à l'arrivée sur la branche par défaut). L'étape 0 (lot A) est entièrement livrée,
 l'étape 1 l'est à l'exception de trois fiches, et l'étape 2 est commencée.
 
 Les quatorze recherches externes P5-P18 sont versées sous
@@ -41,6 +41,16 @@ zstd avec dictionnaire — B.12).
 | H.3 | #245 | Tap Homebrew, manifeste Flatpak constructible en continu, `metainfo.xml` à jour. |
 | H.4, H.5 | #246, #247 | Quatre tutoriels de bout en bout, FAQ élargie, et vingt-deux captures réelles régénérables par `make screenshots`. |
 | H.6 | #248 | « Bearoff » → « Eval » dans l'aide intégrée et la doc, neuf langues. |
+| B.15 | #183 | `find` découpé en `buildWhere`/`scanRows`/`applyGoFilters`. |
+| B.18 | #186 | **Une seule grammaire de recherche.** `pkg/blunderdb/searchquery` porte `parseSearchTokens` côté Go, tenu au même corpus que le JS ; `search --query`/`--query-help`, `/v1/search.query` et `/v1/search.parse`. Trouvé en chemin : le filtre joueur `pl"Nom"` ne correspondait à personne. |
+| B.19 | #187 | Versions de Go et de Node dites une seule fois par workflow ; gouvernance des dépendances. |
+| D.13 | #214 | Fiabilité des tests frontend (dont la régression D.8 : la navigation dans un match ne redessinait plus le plateau). |
+| E.3 | #219 | Tests Go parallèles et sharding par index : le paquet `database` de 159 s à 57 s, chaque job dans son budget. |
+| H.7 | #249 | L'aide intégrée engendrée depuis les sources Sphinx (ADR-0034). |
+| H.10, H.11 | #252, #253 | Page d'accueil du site et négociation de langue ; feuille de route publique et annonces. |
+| H.12 | #254 | Trois visites guidées de plus (Eval, Anki, Stats), chacune ouvrant son onglet. Le panneau de bienvenue reste à I.28. |
+| — | #304 | Coquilles de la source française. |
+| — | — | `.gitattributes` : `* -text`, sans quoi un checkout Windows convertit les fins de ligne de `met_kazaross_xg2.json` et fait paniquer `engine.init` sur son SHA-256. |
 
 Hors fiches, trouvés en chemin :
 
@@ -54,25 +64,23 @@ Hors fiches, trouvés en chemin :
 
 ## Branches en cours
 
-Chacune est un worktree `../blunderDB-<nom>` sur `feat/<nom>`.
+Chacune est un worktree `../blunderDB-<nom>` sur `feat/<nom>`. **Toutes les
+branches listées ici au 2026-09-03 ont été fusionnées** ; il n'en reste qu'une.
 
 | Branche | Fiches | Issues |
 |---|---|---|
-| `feat/g3-g4-g6-g7-serveur` | G.3, G.4, G.6, G.7 — verrou de migration PostgreSQL, plafonds et validation, délais et arrêt gracieux, tests d'isolation | #231, #232, #234, #235 |
-| `feat/b10-b11-b16-perf` | B.10, B.11, B.16 — recherche qui matérialise, imports en mémoire, observabilité | #178, #179, #184 |
-| `feat/b12-compression` | B.12 — compression des blobs (zstd + dictionnaire, conclusion de P11) | #180 |
-| `feat/c8-c9-c10-perf-videau` | C.8, C.9, C.10 — cœurs du panneau videau, pools par frappe, allocations | #195, #196, #197 |
-| `feat/d7-d12-d15-front` | D.7, D.12, D.15 — locale unique, formats liés à la langue, outillage front | #207, #213, #216 |
-| `feat/d14-ergonomies` | D.14 — petites ergonomies | #215 |
+| `feat/g8-g10-g13-serveur` | G.8, G.10, G.13 — contrat d'API, observabilité, GUI Go | #236, #238, #241 |
+
+Cette branche porte une fusion interrompue (`MERGE_HEAD` présent, ~50 commits de
+retard sur `main`) : à reprendre dans une passe dédiée, pas au fil d'une autre.
 
 ## Ce qui reste
 
-**Étape 1**, trois fiches : E.3 (`t.Parallel`, à faire **seule** — elle touche toute
-la suite de tests), G.5 (routes d'opération, dépend d'A.2, déjà livrée).
+**Étape 1**, une fiche : G.5 (routes d'opération, dépend d'A.2, déjà livrée).
 
-**Étape 2** : B.13, B.14, B.15, B.18, B.19 ; C.7 (forme close de `levelSolve`, à
-grouper avec le passage amont d'ADR-0029) ; C.11, C.12 ; D.8, D.9, D.10 ; E.6-E.12 ;
-G.8-G.14 ; H.7-H.14.
+**Étape 2** : B.13, B.14 ; C.7 (forme close de `levelSolve`, à grouper avec le
+passage amont d'ADR-0029) ; C.11, C.12 ; D.9, D.10 ; E.6-E.12 ; G.8-G.14 (dont
+trois attendent dans la branche ci-dessus) ; H.13, H.14.
 
 **Étape 3** : le lot I, 34 fiches de produit. **Étape 4** : le lot J.
 

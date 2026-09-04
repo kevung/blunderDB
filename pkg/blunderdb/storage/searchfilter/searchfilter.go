@@ -183,6 +183,24 @@ func AnalysisMatchesEquityFilter(filter string, ana *domain.PositionAnalysis) bo
 	return true
 }
 
+// PlayerName unwraps the player filter the frontend sends. The command bar and
+// the search panel both build the token `pl"Name"` and hand it over whole, the
+// same way they do for t"…" (comment text) and m"…" (move pattern) — both of
+// which are unwrapped where they are read (ParseSearchTextKeywords,
+// AnalysisMatchesMovePattern). The player filter was not, so it reached the SQL
+// comparison with its wrapper still on and matched no player at all: searching
+// by player from the GUI silently returned nothing (B.18, #186).
+//
+// A bare name is returned unchanged, so the CLI and the server — which pass the
+// name on its own — are unaffected.
+func PlayerName(filter string) string {
+	s := strings.TrimSpace(filter)
+	if len(s) >= 4 && strings.HasPrefix(s, "pl") && (s[2] == '"' || s[2] == '\'') && s[len(s)-1] == s[2] {
+		return s[3 : len(s)-1]
+	}
+	return s
+}
+
 // AnalysisMatchesMovePattern checks a move-pattern filter against pre-fetched analysis.
 func AnalysisMatchesMovePattern(filter string, ana *domain.PositionAnalysis) bool {
 	if filter == "" {

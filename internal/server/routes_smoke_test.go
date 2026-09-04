@@ -57,6 +57,9 @@ var customContentTypes = map[string][]string{
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
+	// search.query streams positions like search.find; it is hand-written only
+	// so an unreadable query is refused before the 200 is committed (B.18).
+	"/v1/search.query": {ndjsonContentType},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test

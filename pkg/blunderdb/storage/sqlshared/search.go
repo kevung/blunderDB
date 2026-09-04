@@ -199,14 +199,16 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// (Dialect.ILike: SQLite's LIKE is already case-insensitive for ASCII,
 	// PostgreSQL needs ILIKE) gives exact matching for ASCII names, mirroring
 	// the match-id subquery shape.
-	if f.PlayerFilter != "" {
+	// The frontend sends the token whole (`pl"Name"`); the CLI and the server
+	// send a bare name. searchfilter.PlayerName accepts both.
+	if playerName := searchfilter.PlayerName(f.PlayerFilter); playerName != "" {
 		like := s.DB.ILike()
 		where.WriteString(
 			" AND p.id IN (SELECT mv.position_id FROM move mv" +
 				" JOIN game g ON mv.game_id = g.id" +
 				" JOIN match mt ON g.match_id = mt.id" +
 				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
-		args = append(args, f.PlayerFilter, f.PlayerFilter)
+		args = append(args, playerName, playerName)
 	}
 
 	if f.RestrictToPositionIDs != "" {

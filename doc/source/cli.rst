@@ -343,6 +343,36 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--no-comment`` — Uniquement les positions sans commentaire. Mutuellement
   exclusif avec ``--has-comment``.
 
+**Le langage de requête:**
+
+Les drapeaux ci-dessus couvrent une partie des filtres seulement. ``--query``
+donne accès au langage de requête de l'application — celui de la barre de
+commande, décrit dans :doc:`cmd_mode` — et donc à tous les filtres qui ne se
+dessinent pas sur le plateau : motif de coup, texte de commentaire, joueur,
+date, équité, dés exclus, zones et blots.
+
+.. code-block:: bash
+
+   # Décisions de videau, 30 pips de retard, 50 millipoints d'erreur
+   ./blunderdb search --db base.db --query 's cube p>30 E>50'
+
+   # Filtres qu'aucun drapeau n'expose
+   ./blunderdb search --db base.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
+
+   # La liste des jetons compris
+   ./blunderdb search --query-help
+
+``--query`` remplace les drapeaux de filtre au lieu de s'y ajouter : les
+combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui disent
+*où* chercher et *comment* afficher — ``--db``, ``--format``, ``--limit``,
+``--offset``, ``--export`` — restent valides.
+
+Un jeton que rien ne reconnaît fait échouer la commande plutôt que de réduire
+la recherche en silence. Deux limites tiennent à l'absence de plateau en ligne
+de commande : le motif de damier ne se tape pas, et ``cube``, ``score`` et
+``D`` se comparent au plateau de recherche, vide ici — utilisez ``--dice``,
+``--cube`` et ``--score1``/``--score2``.
+
 **Exemples:**
 
 .. code-block:: bash

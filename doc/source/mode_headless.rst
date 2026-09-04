@@ -208,6 +208,25 @@ partage un quota global d'octets déposés sur disque : au-delà, un nouvel
 import est refusé (``too many requests``) plutôt que de laisser croître sans
 borne l'occupation de ``$TMPDIR``.
 
+La famille ``search`` offre trois portes sur la même recherche.
+``search.find`` prend l'objet de filtres complet, champ par champ.
+``search.query`` prend une requête écrite dans le langage de la barre de
+commande de l'application (``s cube p>30 E>50``, décrit dans
+:doc:`cmd_mode`) et streame les mêmes positions ; c'est la seule façon
+d'atteindre depuis le réseau les filtres qui n'ont pas de champ évident —
+motif de coup, texte de commentaire, joueur, date, dés exclus, zones et
+blots. ``search.parse`` ne cherche rien : elle répond ce qu'une requête veut
+dire — les filtres qu'elle dénote, sa forme canonique (deux requêtes
+équivalentes ont la même, ce qui rend une recherche enregistrée comparable)
+et ses diagnostics.
+
+Une requête portant un jeton que rien ne reconnaît est refusée
+(``400 invalid``, le jeton nommé) plutôt qu'exécutée en réduisant la
+recherche en silence. Un jeton compris mais sans effet ici — ``x``, qui
+active la structure d'exclusion, laquelle est un plateau et non du texte —
+voyage dans l'en-tête ``X-BlunderDB-Query-Diagnostics`` afin que le corps
+reste du NDJSON de positions pour tous les clients existants.
+
 Deux méthodes de la famille ``positions`` décodent une position sans
 l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir d'une
 chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
