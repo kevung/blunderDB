@@ -211,12 +211,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Los atajos de teclado son independientes de la disposición del teclado: siguen siendo accesibles de la misma manera sea cual sea la disposición utilizada (AZERTY, QWERTY, QWERTZ, etc.).</p>
-</div>
-<div class="admonition note">
-<p>Cuando el cursor se encuentra en un campo de texto (comentario, campo de búsqueda, línea de comandos), los atajos habituales de edición de texto se aplican al texto y no a la posición: CTRL-C, CTRL-X y CTRL-V copian, cortan y pegan la selección, CTRL-A la selecciona por completo, CTRL-Z y CTRL-Y deshacen y rehacen.</p>
-</div>
 <h3>Base de datos</h3>
 <table>
 <thead>
@@ -307,12 +301,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>En el panel Eval (véase Panel Eval), RETROCESO reinicia a los valores propios de ese panel (marcador money, sin dados colocados) en lugar de a los del modo edición (marcador 7 en ambos lados, dados 3-1). Un doble clic fuera del tablero produce el mismo reinicio.</p>
-</div>
-<div class="admonition note">
-<p>En el panel Eval y en el panel de búsqueda, el tablero es un borrador y no una posición de la base: CTRL-V <strong>coloca allí la posición en el tablero</strong> en lugar de importarla en la base, y CTRL-C copia el tablero mostrado — su XGID se recalcula a partir de las fichas colocadas, sin el análisis de la posición consultada anteriormente. La posición copiada se pega así tal cual en eXtreme Gammon o en otra instancia de blunderDB.</p>
-</div>
 <h3>Navegación</h3>
 <table>
 <thead>
@@ -398,9 +386,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB solo abre el panel de búsqueda cuando el foco está en el tablero (o en ningún lugar en particular, que es el caso la mayoría de las veces). En cuanto el foco se posa en un botón, un campo de entrada o un enlace, TAB retoma la navegación estándar por teclado entre los elementos de la interfaz en lugar de volver a abrir este panel.</p>
-</div>
 <h3>Herramientas</h3>
 <table>
 <thead>
@@ -452,9 +437,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>El orden de estas pestañas, una vez modificado arrastrando en la barra, se recuerda de una sesión a otra. Un clic derecho en una pestaña permite ocultarla; el botón en forma de flecha que aparece entonces a la derecha de la barra abre un menú para volver a mostrar las pestañas ocultas, que mientras tanto siguen siendo accesibles mediante su atajo.</p>
-</div>
 <h3>Pestañas de vistas</h3>
 <table>
 <thead>
@@ -490,9 +472,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>El sentido de MAYÚS-J / MAYÚS-K es inverso al de j / k: <em>j</em> avanza (posición siguiente) y <em>k</em> retrocede (posición anterior), mientras que <em>MAYÚS-J</em> vuelve a la vista anterior y <em>MAYÚS-K</em> pasa a la siguiente. Es intencionado (no es un atajo que corregir) — MAYÚS-J/MAYÚS-K siguen la convención CTRL-RePág/CTRL-AvPág a la que están asociados, no la de j/k.</p>
-</div>
 <h3>Línea de comandos</h3>
 <table>
 <thead>
@@ -747,9 +726,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Este panel no captura los atajos de navegación: RePág/h, IZQUIERDA/k, DERECHA/j, AvPág/l recorren las posiciones de la colección abierta exactamente como se describe en Navegación.</p>
-</div>
 `,
     commands: `
 <p>La línea de comandos, situada en la barra de estado, se abre pulsando la tecla <em>ESPACIO</em>. Al escribir un comando, aparece automáticamente una lista de sugerencias: la tecla <em>TAB</em> (o <em>MAYÚS-TAB</em>) recorre las propuestas y completa el comando, mientras que <em>ESC</em> cierra la lista (un segundo <em>ESC</em> cierra la línea de comandos). Las teclas <em>ARRIBA</em> y <em>ABAJO</em> siguen reservadas al historial de comandos.</p>
@@ -936,27 +912,6 @@ export default {
 </table>
 <h3>Filtros de búsqueda</h3>
 <p>Los filtros siguientes deben yuxtaponerse durante una búsqueda, es decir, después del inicio del comando <code>s</code>.</p>
-<div class="admonition warning">
-<p>En la búsqueda de posiciones, por defecto, blunderDB tiene en cuenta la estructura de fichas actual e ignora la posición del cubo, el marcador y los dados. Para tener en cuenta la posición del cubo, el marcador y los dados, hay que mencionarlo explícitamente en la búsqueda.</p>
-</div>
-<div class="admonition note">
-<p>El comando de búsqueda <code>s</code> está disponible en el panel de búsqueda (tecla <code>TAB</code>). El comando <code>ss</code> permite buscar entre los resultados actualmente filtrados.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera que una ficha rezagada (backchecker) es una ficha situada entre el punto 24 y el punto 19.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera que el número de fichas en la zona es el número de fichas situadas entre el punto 12 y el punto 1.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera que el outfield se extiende entre el punto 18 y el punto 7.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera que el jan se extiende entre el punto 1 y el punto 6.</p>
-</div>
-<div class="admonition tip">
-<p>Los parámetros para filtrar posiciones pueden combinarse arbitrariamente.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1311,21 +1266,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Una posición jugada varias veces por el jugador 1 (la misma jugada en dos partidas, o dos jugadas distintas) es retenida por los filtros <code>E&gt;x</code>, <code>E&lt;x</code> y <code>Ex,y</code> según el <strong>mayor</strong> error cometido en esa posición. <code>E&gt;100</code> responde así a la pregunta «¿alguna vez cometí un blunder aquí?», y <code>E&lt;20</code> conserva solo las posiciones en las que ninguna de las jugadas realizadas superó los 20 milipuntos.</p>
-</div>
-<div class="admonition note">
-<p>Filtrar las posiciones según la tirada de dados (<code>D</code> o <code>D1</code>) implica <em>a fortiori</em> filtrar las posiciones según el tipo de decisión (<code>d</code>). El filtro <code>D1</code> ignora el valor del segundo dado: solo se utiliza el valor del primer dado para emparejar las posiciones (sobre cualquiera de los dos dados de la tirada).</p>
-</div>
-<div class="admonition note">
-<p>Para el filtro de diferencia relativa en la carrera (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>), el jugador va por detrás en la carrera respecto al adversario si <code>x&gt;0</code> y por delante si <code>x&lt;0</code>. Ejemplo: <code>p&lt;-10</code> : el jugador tiene al menos 10 pips de ventaja en la carrera. <code>p50,70</code> : el jugador tiene entre 50 y 70 pips de desventaja en la carrera.</p>
-</div>
-<div class="admonition note">
-<p>Para buscar en varias partidas no contiguas, repetir el filtro <code>ma</code> varias veces (p. ej. <code>s ma23 ma43</code> para las partidas 23 y 43). El mismo principio se aplica a los torneos con <code>tn</code> y a las posiciones con <code>id</code> (p. ej. <code>s id5 id10</code> para las posiciones 5 y 10).</p>
-</div>
-<div class="admonition note">
-<p>Buscar en un torneo (<code>tn</code>) equivale a buscar en el conjunto de los matches de dicho torneo. Los identificadores de los matches y de los torneos son visibles en las columnas ID de los paneles correspondientes.</p>
-</div>
 <p>Por ejemplo, el comando <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtra todas las posiciones teniendo en cuenta la estructura de fichas, el marcador y el cubo de la posición editada donde el jugador tiene entre 20 y 5 pips de ventaja en la carrera, con al menos un 60% de probabilidades de victoria, al menos 10 fichas en la zona, y el adversario tiene entre 2 y 3 fichas rezagadas.</p>
 <h3>Comandos diversos</h3>
 <table>
@@ -1342,9 +1282,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Las migraciones de la base de datos se realizan ahora automáticamente al abrir una base de datos.</p>
-</div>
 `,
     about: `
 <h3>Versión</h3>

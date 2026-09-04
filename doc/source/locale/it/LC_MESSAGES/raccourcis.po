@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 19:09+0200\n"
+"POT-Creation-Date: 2026-09-05 01:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -23,31 +23,7 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Scorciatoie da tastiera"
 
-#: ../../source/raccourcis.rst:8
-msgid ""
-"Les raccourcis clavier sont indépendants de la disposition du clavier : "
-"ils restent accessibles de la même manière quelle que soit la disposition"
-" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
-msgstr ""
-"Le scorciatoie da tastiera sono indipendenti dal layout della tastiera: "
-"restano accessibili allo stesso modo qualunque sia il layout utilizzato "
-"(AZERTY, QWERTY, QWERTZ, ecc.)."
-
-#: ../../source/raccourcis.rst:14
-msgid ""
-"Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ "
-"de recherche, ligne de commande), les raccourcis d'édition de texte "
-"habituels s'appliquent au texte et non à la position : CTRL-C, CTRL-X et "
-"CTRL-V copient, coupent et collent la sélection, CTRL-A la sélectionne "
-"entièrement, CTRL-Z et CTRL-Y annulent et rétablissent."
-msgstr ""
-"Quando il cursore si trova in un campo di testo (commento, campo di "
-"ricerca, riga di comando), le consuete scorciatoie di modifica del testo "
-"si applicano al testo e non alla posizione: CTRL-C, CTRL-X e CTRL-V "
-"copiano, tagliano e incollano la selezione, CTRL-A la seleziona "
-"interamente, CTRL-Z e CTRL-Y annullano e ripristinano."
-
-#: ../../source/raccourcis.rst:23
+#: ../../source/raccourcis.rst:9
 msgid "Base de données"
 msgstr "Database"
 
@@ -107,7 +83,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Modifica i metadati del database."
 
-#: ../../source/raccourcis.rst:40
+#: ../../source/raccourcis.rst:26
 msgid "Position"
 msgstr "Posizione"
 
@@ -203,37 +179,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Mostra i metadati della posizione."
 
-#: ../../source/raccourcis.rst:61
-msgid ""
-"Dans le panneau Eval (voir :ref:`panneau_epc`), RETOUR ARRIERE "
-"réinitialise vers les valeurs propres à ce panneau (score money, pas de "
-"dés posés) plutôt que vers celles du mode édition (score 7 partout, dés "
-"3-1). Un double-clic en dehors du plateau produit la même "
-"réinitialisation."
-msgstr ""
-"Nel pannello Eval (vedere :ref:`panneau_epc`), BACKSPACE reimposta ai "
-"valori propri di questo pannello (punteggio money, nessun dado impostato)"
-" anziché a quelli della modalità di modifica (punteggio 7 ovunque, dadi "
-"3-1). Un doppio clic fuori dal board produce la stessa reimpostazione."
-
-#: ../../source/raccourcis.rst:68
-msgid ""
-"Dans le panneau Eval et dans le panneau Recherche, le plateau est un "
-"brouillon et non une position de la base : CTRL-V y **pose la position "
-"sur le plateau** au lieu de l'importer dans la base, et CTRL-C copie le "
-"plateau affiché — son XGID est recalculé à partir des pions posés, sans "
-"l'analyse de la position consultée auparavant. La position copiée se "
-"colle ainsi telle quelle dans eXtreme Gammon ou dans une autre instance "
-"de blunderDB."
-msgstr ""
-"Nel pannello Eval e nel pannello Ricerca, il board è una bozza e non una "
-"posizione del database: CTRL-V vi **posa la posizione sul board** invece "
-"di importarla nel database, e CTRL-C copia il board mostrato — il suo "
-"XGID viene ricalcolato dalle pedine posizionate, senza l'analisi della "
-"posizione consultata in precedenza. La posizione copiata si incolla così "
-"tale e quale in eXtreme Gammon o in un'altra istanza di blunderDB."
-
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:48
 msgid "Navigation"
 msgstr "Navigazione"
 
@@ -301,7 +247,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Carica una posizione casuale."
 
-#: ../../source/raccourcis.rst:97
+#: ../../source/raccourcis.rst:67
 msgid "Affichage"
 msgstr "Visualizzazione"
 
@@ -329,7 +275,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Mostra/nascondi il conteggio dei pip."
 
-#: ../../source/raccourcis.rst:111
+#: ../../source/raccourcis.rst:81
 msgid "Actions"
 msgstr "Azioni"
 
@@ -349,21 +295,7 @@ msgstr "SPAZIO"
 msgid "Ouvrir la ligne de commande."
 msgstr "Apri la riga di comando."
 
-#: ../../source/raccourcis.rst:123
-msgid ""
-"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
-" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
-"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
-"lien, TAB reprend la navigation clavier standard entre les éléments de "
-"l'interface plutôt que de rouvrir ce panneau."
-msgstr ""
-"TAB apre il pannello di ricerca solo quando il focus si trova sulla "
-"scacchiera (o da nessuna parte in particolare, il che è il caso più delle"
-" volte). Una volta che il focus è su un pulsante, un campo di inserimento"
-" o un link, TAB riprende la normale navigazione da tastiera tra gli "
-"elementi dell'interfaccia invece di riaprire questo pannello."
-
-#: ../../source/raccourcis.rst:132
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr "Strumenti"
 
@@ -447,16 +379,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
 
-#: ../../source/raccourcis.rst:152
-msgid ""
-"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
-"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
-"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
-"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
-"qui restent joignables entretemps par leur raccourci."
-msgstr "L'ordine di queste schede, una volta modificato trascinandole sulla barra, viene memorizzato da una sessione all'altra. Un clic destro su una scheda permette di nasconderla; il pulsante a forma di freccia che appare quindi a destra della barra apre un menu per rivisualizzare le schede nascoste, che restano comunque raggiungibili tramite la loro scorciatoia."
-
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:115
 msgid "Onglets de vues"
 msgstr "Schede delle viste"
 
@@ -508,23 +431,7 @@ msgstr "Doppio clic sulla scheda"
 msgid "Renommer la vue."
 msgstr "Rinomina la vista."
 
-#: ../../source/raccourcis.rst:177
-msgid ""
-"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
-"(position suivante) et *k* recule (position précédente), alors que "
-"*MAJ-J* revient à la vue précédente et *MAJ-K* passe à la vue suivante. "
-"C'est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la "
-"convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas "
-"celle de j/k."
-msgstr ""
-"Il verso di MAIUSC-J / MAIUSC-K è invertito rispetto a j / k: *j* avanza "
-"(posizione successiva) e *k* indietreggia (posizione precedente), mentre "
-"*MAIUSC-J* torna alla vista precedente e *MAIUSC-K* passa alla "
-"successiva. È voluto (non è una scorciatoia da correggere) — "
-"MAIUSC-J/MAIUSC-K seguono la convenzione CTRL-PagSu/CTRL-PagGiù a cui "
-"sono associati, non quella di j/k."
-
-#: ../../source/raccourcis.rst:187
+#: ../../source/raccourcis.rst:132
 msgid "Ligne de commande"
 msgstr "Riga di comando"
 
@@ -544,11 +451,11 @@ msgstr "GIÙ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Scorri la cronologia dei comandi verso il basso."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:145
 msgid "Historique de recherche"
 msgstr "Cronologia di ricerca"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:147
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -572,11 +479,11 @@ msgstr "Doppio clic"
 msgid "Exécuter la recherche."
 msgstr "Esegui la ricerca."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Libreria di filtri"
 
-#: ../../source/raccourcis.rst:218
+#: ../../source/raccourcis.rst:163
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -592,7 +499,7 @@ msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Esegui la ricerca del filtro."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:177
 msgid "Panneau d'analyse"
 msgstr "Pannello di analisi"
 
@@ -626,11 +533,11 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:193
 msgid "Panneau Eval"
 msgstr "Pannello Eval"
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:195
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -644,7 +551,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Deseleziona la mossa."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:212
 msgid "Panneau des matchs"
 msgstr "Pannello dei match"
 
@@ -680,7 +587,7 @@ msgstr "Elimina il match selezionato."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleziona/chiudi il pannello."
 
-#: ../../source/raccourcis.rst:285
+#: ../../source/raccourcis.rst:230
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Pannello Anki (ripetizione dilazionata)"
 
@@ -736,7 +643,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:248
 msgid "Panneau des tournois"
 msgstr "Pannello dei tornei"
 
@@ -769,7 +676,7 @@ msgstr ""
 "match, altrimenti deseleziona il torneo, altrimenti chiudi il pannello (a"
 " tappe)."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:264
 msgid "Panneau des collections"
 msgstr "Pannello delle collezioni"
 
@@ -799,14 +706,171 @@ msgstr ""
 "Torna all'elenco delle collezioni, altrimenti deseleziona la collezione, "
 "altrimenti chiudi il pannello (a tappe)."
 
-#: ../../source/raccourcis.rst:333
-msgid ""
-"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
-"GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
-"collection ouverte exactement comme décrit dans "
-":ref:`raccourcis_navigation`."
-msgstr ""
-"Questo pannello non cattura le scorciatoie di navigazione: PagSu/h, "
-"SINISTRA/k, DESTRA/j, PagGiù/l scorrono le posizioni della collezione "
-"aperta esattamente come descritto in :ref:`raccourcis_navigation`."
+#~ msgid ""
+#~ "Les raccourcis clavier sont indépendants "
+#~ "de la disposition du clavier : ils"
+#~ " restent accessibles de la même "
+#~ "manière quelle que soit la disposition"
+#~ " utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+#~ msgstr ""
+#~ "Le scorciatoie da tastiera sono "
+#~ "indipendenti dal layout della tastiera: "
+#~ "restano accessibili allo stesso modo "
+#~ "qualunque sia il layout utilizzato "
+#~ "(AZERTY, QWERTY, QWERTZ, ecc.)."
+
+#~ msgid ""
+#~ "Lorsque le curseur se trouve dans "
+#~ "une zone de saisie (commentaire, champ"
+#~ " de recherche, ligne de commande), "
+#~ "les raccourcis d'édition de texte "
+#~ "habituels s'appliquent au texte et non"
+#~ " à la position : CTRL-C, CTRL-X "
+#~ "et CTRL-V copient, coupent et collent"
+#~ " la sélection, CTRL-A la sélectionne "
+#~ "entièrement, CTRL-Z et CTRL-Y annulent "
+#~ "et rétablissent."
+#~ msgstr ""
+#~ "Quando il cursore si trova in un"
+#~ " campo di testo (commento, campo di"
+#~ " ricerca, riga di comando), le "
+#~ "consuete scorciatoie di modifica del "
+#~ "testo si applicano al testo e non"
+#~ " alla posizione: CTRL-C, CTRL-X e "
+#~ "CTRL-V copiano, tagliano e incollano la"
+#~ " selezione, CTRL-A la seleziona "
+#~ "interamente, CTRL-Z e CTRL-Y annullano e"
+#~ " ripristinano."
+
+#~ msgid ""
+#~ "Dans le panneau Eval (voir "
+#~ ":ref:`panneau_epc`), RETOUR ARRIERE réinitialise "
+#~ "vers les valeurs propres à ce "
+#~ "panneau (score money, pas de dés "
+#~ "posés) plutôt que vers celles du "
+#~ "mode édition (score 7 partout, dés "
+#~ "3-1). Un double-clic en dehors du"
+#~ " plateau produit la même réinitialisation."
+#~ msgstr ""
+#~ "Nel pannello Eval (vedere :ref:`panneau_epc`),"
+#~ " BACKSPACE reimposta ai valori propri "
+#~ "di questo pannello (punteggio money, "
+#~ "nessun dado impostato) anziché a quelli"
+#~ " della modalità di modifica (punteggio "
+#~ "7 ovunque, dadi 3-1). Un doppio "
+#~ "clic fuori dal board produce la "
+#~ "stessa reimpostazione."
+
+#~ msgid ""
+#~ "Dans le panneau Eval et dans le"
+#~ " panneau Recherche, le plateau est un"
+#~ " brouillon et non une position de "
+#~ "la base : CTRL-V y **pose la "
+#~ "position sur le plateau** au lieu "
+#~ "de l'importer dans la base, et "
+#~ "CTRL-C copie le plateau affiché — "
+#~ "son XGID est recalculé à partir "
+#~ "des pions posés, sans l'analyse de "
+#~ "la position consultée auparavant. La "
+#~ "position copiée se colle ainsi telle "
+#~ "quelle dans eXtreme Gammon ou dans "
+#~ "une autre instance de blunderDB."
+#~ msgstr ""
+#~ "Nel pannello Eval e nel pannello "
+#~ "Ricerca, il board è una bozza e"
+#~ " non una posizione del database: "
+#~ "CTRL-V vi **posa la posizione sul "
+#~ "board** invece di importarla nel "
+#~ "database, e CTRL-C copia il board "
+#~ "mostrato — il suo XGID viene "
+#~ "ricalcolato dalle pedine posizionate, senza"
+#~ " l'analisi della posizione consultata in"
+#~ " precedenza. La posizione copiata si "
+#~ "incolla così tale e quale in "
+#~ "eXtreme Gammon o in un'altra istanza "
+#~ "di blunderDB."
+
+#~ msgid ""
+#~ "TAB n'ouvre le panneau de recherche "
+#~ "que lorsque le focus se trouve sur"
+#~ " le plateau (ou nulle part en "
+#~ "particulier, ce qui est le cas la"
+#~ " plupart du temps). Une fois le "
+#~ "focus posé sur un bouton, un champ"
+#~ " de saisie ou un lien, TAB "
+#~ "reprend la navigation clavier standard "
+#~ "entre les éléments de l'interface plutôt"
+#~ " que de rouvrir ce panneau."
+#~ msgstr ""
+#~ "TAB apre il pannello di ricerca "
+#~ "solo quando il focus si trova "
+#~ "sulla scacchiera (o da nessuna parte "
+#~ "in particolare, il che è il caso"
+#~ " più delle volte). Una volta che "
+#~ "il focus è su un pulsante, un "
+#~ "campo di inserimento o un link, "
+#~ "TAB riprende la normale navigazione da"
+#~ " tastiera tra gli elementi dell'interfaccia"
+#~ " invece di riaprire questo pannello."
+
+#~ msgid ""
+#~ "L'ordre de ces onglets, une fois "
+#~ "modifié par glisser-déposer sur la "
+#~ "barre, est mémorisé d'une session à "
+#~ "l'autre. Un clic droit sur un "
+#~ "onglet permet de le masquer ; le"
+#~ " bouton en forme de flèche qui "
+#~ "apparaît alors à droite de la "
+#~ "barre rouvre un menu pour réafficher "
+#~ "les onglets masqués — qui restent "
+#~ "joignables entretemps par leur raccourci."
+#~ msgstr ""
+#~ "L'ordine di queste schede, una volta "
+#~ "modificato trascinandole sulla barra, viene"
+#~ " memorizzato da una sessione all'altra. "
+#~ "Un clic destro su una scheda "
+#~ "permette di nasconderla; il pulsante a"
+#~ " forma di freccia che appare quindi"
+#~ " a destra della barra apre un "
+#~ "menu per rivisualizzare le schede "
+#~ "nascoste, che restano comunque raggiungibili"
+#~ " tramite la loro scorciatoia."
+
+#~ msgid ""
+#~ "Le sens de MAJ-J / MAJ-K est "
+#~ "inversé par rapport à j / k "
+#~ ": *j* avance (position suivante) et "
+#~ "*k* recule (position précédente), alors "
+#~ "que *MAJ-J* revient à la vue "
+#~ "précédente et *MAJ-K* passe à la "
+#~ "vue suivante. C'est voulu (pas un "
+#~ "raccourci à corriger) — MAJ-J/MAJ-K "
+#~ "suivent la convention CTRL-PageUp/CTRL-"
+#~ "PageDown à laquelle ils sont associés,"
+#~ " pas celle de j/k."
+#~ msgstr ""
+#~ "Il verso di MAIUSC-J / MAIUSC-K è"
+#~ " invertito rispetto a j / k: "
+#~ "*j* avanza (posizione successiva) e *k*"
+#~ " indietreggia (posizione precedente), mentre "
+#~ "*MAIUSC-J* torna alla vista precedente e"
+#~ " *MAIUSC-K* passa alla successiva. È "
+#~ "voluto (non è una scorciatoia da "
+#~ "correggere) — MAIUSC-J/MAIUSC-K seguono la "
+#~ "convenzione CTRL-PagSu/CTRL-PagGiù a cui"
+#~ " sono associati, non quella di j/k."
+
+#~ msgid ""
+#~ "Ce panneau ne capture pas les "
+#~ "raccourcis de navigation : PageUp/h, "
+#~ "GAUCHE/k, DROITE/j, PageDown/l naviguent dans"
+#~ " les positions de la collection "
+#~ "ouverte exactement comme décrit dans "
+#~ ":ref:`raccourcis_navigation`."
+#~ msgstr ""
+#~ "Questo pannello non cattura le "
+#~ "scorciatoie di navigazione: PagSu/h, "
+#~ "SINISTRA/k, DESTRA/j, PagGiù/l scorrono le "
+#~ "posizioni della collezione aperta esattamente"
+#~ " come descritto in :ref:`raccourcis_navigation`."
 

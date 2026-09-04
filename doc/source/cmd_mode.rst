@@ -65,7 +65,6 @@ Positions et navigation
    "blunders, bl [n]", "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le filtre courant des statistiques. Un nombre optionnel choisit combien en charger (``bl 50``) ; par défaut 10."
    "m", "Naviguer dans le dernier match visité."
 
-
 .. _cmd_edition:
 
 Édition et recherche
@@ -82,7 +81,6 @@ Positions et navigation
    "ss", "Chercher parmi les positions actuellement filtrées."
    
 
-
 .. _cmd_filter:
 
 Filtres de recherche
@@ -92,34 +90,6 @@ Les filtres ci-dessous doivent être juxtaposés lors d'une recherche,
 c'est-à-dire après le début de commande ``s``.
 
 .. _cmd_filter_pos:
-
-.. warning:: Dans la recherche de positions, par défaut, blunderDB prend en
-   compte la structure de pions courante, ignore la position du videau, du
-   score et des dés. Pour prendre en compte la position du videau, du score,
-   des dés, il faut le mentionner explicitement dans la recherche.
-
-.. note::
-   La commande de recherche ``s`` est disponible dans le panneau de recherche
-   (touche ``TAB``). La commande ``ss`` permet de chercher parmi les
-   résultats actuellement filtrés.
-
-.. note::
-   blunderDB considère qu'un pion arriéré (backchecker) est un pion
-   situé entre le point 24 et le point 19.
-
-.. note::
-   blunderDB considère que le nombre de pions dans la zone est le nombre
-   de pions situés entre le point 12 et le point 1.
-
-.. note::
-   blunderDB considère que l'outfield s'étend entre le point 18 et le point 7.
-
-.. note::
-   blunderDB considère que le jan s'étend entre le point 1 et le point 6.
-   
-.. tip::
-   Les paramètres pour filtrer des positions peuvent être arbitrairement
-   combinés.
 
 .. csv-table::
    :header: "Requête", "Action"
@@ -213,35 +183,6 @@ c'est-à-dire après le début de commande ``s``.
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
    "pl'nom'", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 
-.. note:: Une position jouée plusieurs fois par le joueur 1 (le même coup
-   dans deux matchs, ou deux coups différents) est retenue par les filtres
-   ``E>x``, ``E<x`` et ``Ex,y`` d'après la **plus grande** erreur commise sur
-   cette position. ``E>100`` répond ainsi à la question « ai-je un jour fait
-   un blunder ici ? », et ``E<20`` ne garde que les positions où aucun des
-   coups joués n'a dépassé 20 millipoints.
-
-
-.. note:: Filtrer les positions en fonction du lancer de dés (`D` ou `D1`)
-   implique *a fortiori* de filtrer les positions en fonction du type de
-   décision (`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la
-   valeur du premier dé est utilisée pour matcher les positions (sur l'un ou
-   l'autre des deux dés du lancer).
-
-.. note:: Pour le filtre de différence relative à la course (`p>x`, `p<x`,
-   `px,y`), le joueur est en retard à la course par rapport à l'adversaire si
-   `x>0` et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips
-   d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à
-   la course.
-
-.. note:: Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
-   filtre ``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43).
-   Le même principe s'applique pour les tournois avec ``tn`` et pour les
-   positions avec ``id`` (ex: ``s id5 id10`` pour les positions 5 et 10).
-
-.. note:: Rechercher dans un tournoi (``tn``) revient à rechercher dans
-   l'ensemble des matchs du tournoi concerné. Les identifiants des matchs et des
-   tournois sont visibles dans les colonnes ID des panneaux correspondants.
-
 Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube
 de la position éditée où le joueur a entre 20 et 5 pips d'avance à la
@@ -249,7 +190,6 @@ course, avec au moins 60% de chances de gain, au moins 10 pions dans la
 zone, et l'adversaire a entre 2 et 3 pions arriérés.
 
 .. _cmd_misc:
-
 
 Commandes diverses
 ------------------
@@ -260,7 +200,3 @@ Commandes diverses
    :align: center
 
    "clear, cl", "Efface l'historique des commandes."
-
-.. note:: Les migrations de base de données sont désormais effectuées
-   automatiquement lors de l'ouverture d'une base de données.
-

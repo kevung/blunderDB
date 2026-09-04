@@ -200,12 +200,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Keyboard shortcuts are independent of the keyboard layout: they remain accessible the same way regardless of the layout used (AZERTY, QWERTY, QWERTZ, etc.).</p>
-</div>
-<div class="admonition note">
-<p>When the cursor is inside a text field (comment, search box, command line), the usual text-editing shortcuts apply to the text rather than to the position: CTRL-C, CTRL-X and CTRL-V copy, cut and paste the selection, CTRL-A selects all of it, CTRL-Z and CTRL-Y undo and redo.</p>
-</div>
 <h3>Database</h3>
 <table>
 <thead>
@@ -296,12 +290,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>In the Eval panel (see Eval Panel), BACKSPACE resets to the values specific to that panel (money score, no dice showing) rather than to those of edit mode (score 7 everywhere, dice 3-1). A double-click outside the board performs the same reset.</p>
-</div>
-<div class="admonition note">
-<p>In the Eval panel and in the Search panel, the board is a draft, not a position from the database: CTRL-V there <strong>puts the position on the board</strong> instead of importing it into the database, and CTRL-C copies the displayed board — its XGID is recomputed from the checkers on the board, without the analysis of the position previously viewed. The copied position thus pastes as is into eXtreme Gammon or into another instance of blunderDB.</p>
-</div>
 <h3>Navigation</h3>
 <table>
 <thead>
@@ -387,9 +375,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB only opens the search panel when focus is on the board (or nowhere in particular, which is the case most of the time). Once focus is on a button, an input field or a link, TAB resumes standard keyboard navigation between the interface's elements instead of reopening this panel.</p>
-</div>
 <h3>Tools</h3>
 <table>
 <thead>
@@ -441,9 +426,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>The order of these tabs, once changed by dragging on the bar, is remembered from one session to the next. Right-clicking a tab lets you hide it; the arrow-shaped button that then appears on the right of the bar reopens a menu to show hidden tabs again — which remain reachable in the meantime via their shortcut.</p>
-</div>
 <h3>View Tabs</h3>
 <table>
 <thead>
@@ -479,9 +461,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>The direction of SHIFT-J / SHIFT-K is reversed with respect to j / k: <em>j</em> moves forward (next position) and <em>k</em> backward (previous position), whereas <em>SHIFT-J</em> goes back to the previous view and <em>SHIFT-K</em> to the next one. This is deliberate (not a shortcut to be fixed) — SHIFT-J/SHIFT-K follow the CTRL-PageUp/CTRL-PageDown convention they are paired with, not the j/k one.</p>
-</div>
 <h3>Command Line</h3>
 <table>
 <thead>
@@ -736,9 +715,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>This panel does not capture the navigation shortcuts: PageUp/h, LEFT/k, RIGHT/j, PageDown/l move through the positions of the open collection exactly as described in Navigation.</p>
-</div>
 `,
     commands: `
 <p>The command line, located in the status bar, opens by pressing the <em>SPACE</em> key. As you type a command, a list of suggestions appears automatically: the <em>TAB</em> key (or <em>SHIFT-TAB</em>) cycles through the suggestions and completes the command, while <em>ESC</em> closes the list (a second <em>ESC</em> closes the command line). The <em>UP</em> and <em>DOWN</em> keys remain reserved for the command history.</p>
@@ -925,27 +901,6 @@ export default {
 </table>
 <h3>Search Filters</h3>
 <p>The filters below must be juxtaposed during a search, i.e., after the start of the <code>s</code> command.</p>
-<div class="admonition warning">
-<p>In the position search, by default, blunderDB takes into account the current checker structure, ignoring the position of the cube, the score, and the dice. To consider the position of the cube, the score, and the dice, it must be explicitly mentioned in the search.</p>
-</div>
-<div class="admonition note">
-<p>The search command <code>s</code> is available in the search panel (<code>TAB</code> key). The <code>ss</code> command allows searching among the currently filtered results.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considers that a backchecker is a checker located between point 24 and point 19.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considers that the number of checkers in the zone is the number of checkers located between point 12 and point 1.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considers the outfield to extend between point 18 and point 7.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considers the jan to extend between point 1 and point 6.</p>
-</div>
-<div class="admonition tip">
-<p>The parameters for filtering positions can be combined arbitrarily.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1300,21 +1255,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>A position player 1 played more than once (the same move in two matches, or two different moves) is retained by the <code>E&gt;x</code>, <code>E&lt;x</code> and <code>Ex,y</code> filters according to the <strong>largest</strong> error made on that position. <code>E&gt;100</code> thus answers the question "did I ever blunder here?", and <code>E&lt;20</code> keeps only the positions where none of the played moves exceeded 20 millipoints.</p>
-</div>
-<div class="admonition note">
-<p>Filtering positions based on the dice roll (<code>D</code> or <code>D1</code>) necessarily implies filtering positions based on the type of decision (<code>d</code>). The <code>D1</code> filter ignores the second die: only the first die's value is used to match positions (against either die of the roll).</p>
-</div>
-<div class="admonition note">
-<p>For the relative difference filter in the race (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>), the player is behind in the race compared to the opponent if <code>x&gt;0</code> and ahead if <code>x&lt;0</code>. For example: <code>p&lt;-10</code>: the player is at least 10 pips ahead in the race. <code>p50,70</code>: the player is between 50 and 70 pips behind in the race.</p>
-</div>
-<div class="admonition note">
-<p>To search across several non-contiguous matches, repeat the <code>ma</code> filter (e.g. <code>s ma23 ma43</code> for matches 23 and 43). The same principle applies to tournaments with <code>tn</code> and to positions with <code>id</code> (e.g. <code>s id5 id10</code> for positions 5 and 10).</p>
-</div>
-<div class="admonition note">
-<p>Searching in a tournament (<code>tn</code>) means searching in all the matches of that tournament. Match and tournament IDs are visible in the ID columns of the corresponding panels.</p>
-</div>
 <p>For example, the command <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filters all positions taking into account the checker structure, the score, and the cube of the edited position where the player has between 20 and 5 pips ahead in the race, with at least 60% winning chances, at least 10 checkers in the zone, and the opponent has between 2 and 3 backcheckers.</p>
 <h3>Various commands</h3>
 <table>
@@ -1331,9 +1271,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Database migrations are now performed automatically when opening a database.</p>
-</div>
 `,
     about: `
 <h3>Version</h3>

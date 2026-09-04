@@ -217,12 +217,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Die Tastenkürzel sind unabhängig von der Tastaturbelegung: Sie bleiben unabhängig von der verwendeten Belegung (AZERTY, QWERTY, QWERTZ usw.) auf die gleiche Weise erreichbar.</p>
-</div>
-<div class="admonition note">
-<p>Befindet sich der Cursor in einem Eingabefeld (Kommentar, Suchfeld, Befehlszeile), gelten die üblichen Tastenkürzel zur Textbearbeitung für den Text und nicht für die Stellung: CTRL-C, CTRL-X und CTRL-V kopieren, schneiden aus und fügen die Auswahl ein, CTRL-A wählt sie vollständig aus, CTRL-Z und CTRL-Y machen rückgängig und stellen wieder her.</p>
-</div>
 <h3>Datenbank</h3>
 <table>
 <thead>
@@ -313,12 +307,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Im Eval-Panel (siehe Eval-Panel) setzt RÜCKTASTE auf die panel-eigenen Werte zurück (Money-Spielstand, keine gelegten Würfel) statt auf die des Bearbeitungsmodus (Punktestand 7 überall, Würfel 3-1). Ein Doppelklick außerhalb des Bretts löst dieselbe Zurücksetzung aus.</p>
-</div>
-<div class="admonition note">
-<p>Im Eval-Panel und im Suchpanel ist das Brett ein Entwurf und keine Stellung der Datenbank: CTRL-V <strong>legt die Stellung dort auf das Brett</strong>, statt sie in die Datenbank zu importieren, und CTRL-C kopiert das angezeigte Brett — seine XGID wird aus den gesetzten Steinen neu berechnet, ohne die Analyse der zuvor betrachteten Stellung. Die kopierte Stellung lässt sich so unverändert in eXtreme Gammon oder in eine andere blunderDB-Instanz einfügen.</p>
-</div>
 <h3>Navigation</h3>
 <table>
 <thead>
@@ -404,9 +392,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB öffnet das Suchpanel nur, wenn der Fokus auf dem Spielbrett liegt (oder nirgends im Besonderen, was meistens der Fall ist). Sobald der Fokus auf einer Schaltfläche, einem Eingabefeld oder einem Link liegt, setzt TAB die normale Tastaturnavigation zwischen den Oberflächenelementen fort, anstatt dieses Panel erneut zu öffnen.</p>
-</div>
 <h3>Werkzeuge</h3>
 <table>
 <thead>
@@ -458,9 +443,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Die Reihenfolge dieser Tabs wird, sobald sie per Drag &amp; Drop auf der Leiste geändert wurde, sitzungsübergreifend gespeichert. Ein Rechtsklick auf einen Tab ermöglicht es, ihn auszublenden; die dann rechts in der Leiste erscheinende Pfeil-Schaltfläche öffnet ein Menü, um ausgeblendete Tabs wieder einzublenden — sie bleiben in der Zwischenzeit über ihre Tastenkombination erreichbar.</p>
-</div>
 <h3>Ansichts-Reiter</h3>
 <table>
 <thead>
@@ -496,9 +478,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Die Richtung von UMSCHALT-J / UMSCHALT-K ist gegenüber j / k umgekehrt: <em>j</em> geht vorwärts (nächste Stellung) und <em>k</em> zurück (vorherige Stellung), während <em>UMSCHALT-J</em> zur vorherigen Ansicht zurückkehrt und <em>UMSCHALT-K</em> zur nächsten wechselt. Das ist beabsichtigt (kein zu korrigierendes Tastenkürzel) — UMSCHALT-J/UMSCHALT-K folgen der Konvention von STRG-BildAuf/STRG-BildAb, mit der sie verbunden sind, nicht der von j/k.</p>
-</div>
 <h3>Befehlszeile</h3>
 <table>
 <thead>
@@ -753,9 +732,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Dieses Fenster fängt die Navigationskürzel nicht ab: BildAuf/h, LINKS/k, RECHTS/j, BildAb/l bewegen sich durch die Stellungen der geöffneten Sammlung genau wie in Navigation beschrieben.</p>
-</div>
 `,
     commands: `
 <p>Die Kommandozeile in der Statusleiste öffnet sich durch Drücken der <em>LEERTASTE</em>. Während der Eingabe eines Befehls erscheint automatisch eine Liste mit Vorschlägen: Die <em>TAB</em>-Taste (oder <em>UMSCHALT-TAB</em>) durchläuft die Vorschläge und vervollständigt den Befehl, während <em>ESC</em> die Liste schließt (ein zweites <em>ESC</em> schließt die Kommandozeile). Die Tasten <em>AUF</em> und <em>AB</em> bleiben dem Befehlsverlauf vorbehalten.</p>
@@ -942,27 +918,6 @@ export default {
 </table>
 <h3>Suchfilter</h3>
 <p>Die folgenden Filter müssen bei einer Suche aneinandergereiht werden, das heißt nach dem Befehlsbeginn <code>s</code>.</p>
-<div class="admonition warning">
-<p>Bei der Positionssuche berücksichtigt blunderDB standardmäßig die aktuelle Steinstruktur und ignoriert die Stellung des Dopplers, den Spielstand und die Würfel. Um die Stellung des Dopplers, den Spielstand und die Würfel zu berücksichtigen, muss dies in der Suche ausdrücklich angegeben werden.</p>
-</div>
-<div class="admonition note">
-<p>Der Suchbefehl <code>s</code> ist im Suchpanel verfügbar (Taste <code>TAB</code>). Mit dem Befehl <code>ss</code> kann unter den aktuell gefilterten Ergebnissen gesucht werden.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB betrachtet einen rückständigen Stein (Backchecker) als einen Stein, der sich zwischen Punkt 24 und Punkt 19 befindet.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB betrachtet die Anzahl der Steine in der Zone als die Anzahl der Steine, die sich zwischen Punkt 12 und Punkt 1 befinden.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB betrachtet das Outfield als den Bereich zwischen Punkt 18 und Punkt 7.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB betrachtet das Heimfeld als den Bereich zwischen Punkt 1 und Punkt 6.</p>
-</div>
-<div class="admonition tip">
-<p>Die Parameter zum Filtern von Positionen können beliebig kombiniert werden.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1317,21 +1272,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Eine Position, die Spieler 1 mehrmals gespielt hat (derselbe Zug in zwei Matches oder zwei verschiedene Züge), wird von den Filtern <code>E&gt;x</code>, <code>E&lt;x</code> und <code>Ex,y</code> anhand des <strong>größten</strong> auf dieser Position begangenen Fehlers beurteilt. <code>E&gt;100</code> beantwortet damit die Frage „Habe ich hier jemals einen Blunder gemacht?“, und <code>E&lt;20</code> behält nur die Positionen, auf denen keiner der gespielten Züge 20 Millipunkte überschritten hat.</p>
-</div>
-<div class="admonition note">
-<p>Das Filtern von Positionen nach dem Würfelwurf (<code>D</code> oder <code>D1</code>) bedeutet <em>erst recht</em>, die Positionen nach dem Entscheidungstyp (<code>d</code>) zu filtern. Der Filter <code>D1</code> ignoriert den Wert des zweiten Würfels: Nur der Wert des ersten Würfels wird verwendet, um Positionen zuzuordnen (auf einem der beiden Würfel des Wurfs).</p>
-</div>
-<div class="admonition note">
-<p>Beim Filter für die relative Renndifferenz (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>) liegt der Spieler im Rennen gegenüber dem Gegner zurück, wenn <code>x&gt;0</code>, und in Führung, wenn <code>x&lt;0</code>. Beispiel: <code>p&lt;-10</code>: Der Spieler liegt im Rennen mindestens 10 Pips in Führung. <code>p50,70</code>: Der Spieler liegt im Rennen zwischen 50 und 70 Pips zurück.</p>
-</div>
-<div class="admonition note">
-<p>Um in mehreren nicht zusammenhängenden Matches zu suchen, wird der Filter <code>ma</code> mehrfach aneinandergereiht (z. B. <code>s ma23 ma43</code> für die Matches 23 und 43). Dasselbe Prinzip gilt für Turniere mit <code>tn</code> und für Positionen mit <code>id</code> (z. B. <code>s id5 id10</code> für die Positionen 5 und 10).</p>
-</div>
-<div class="admonition note">
-<p>Eine Suche in einem Turnier (<code>tn</code>) entspricht einer Suche in allen Matches des betreffenden Turniers. Die IDs der Matches und Turniere sind in den ID-Spalten der entsprechenden Panels sichtbar.</p>
-</div>
 <p>Zum Beispiel filtert der Befehl <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> alle Positionen unter Berücksichtigung der Steinstruktur, des Spielstands und des Dopplers der bearbeiteten Position, bei denen der Spieler im Rennen zwischen 20 und 5 Pips in Führung liegt, mit mindestens 60 % der Gewinnchancen, mindestens 10 Steinen in der Zone, und der Gegner zwischen 2 und 3 rückständige Steine hat.</p>
 <h3>Verschiedene Befehle</h3>
 <table>
@@ -1348,9 +1288,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Datenbankmigrationen werden jetzt beim Öffnen einer Datenbank automatisch durchgeführt.</p>
-</div>
 `,
     about: `
 <h3>Version</h3>

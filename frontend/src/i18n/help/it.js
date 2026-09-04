@@ -211,12 +211,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Le scorciatoie da tastiera sono indipendenti dal layout della tastiera: restano accessibili allo stesso modo qualunque sia il layout utilizzato (AZERTY, QWERTY, QWERTZ, ecc.).</p>
-</div>
-<div class="admonition note">
-<p>Quando il cursore si trova in un campo di testo (commento, campo di ricerca, riga di comando), le consuete scorciatoie di modifica del testo si applicano al testo e non alla posizione: CTRL-C, CTRL-X e CTRL-V copiano, tagliano e incollano la selezione, CTRL-A la seleziona interamente, CTRL-Z e CTRL-Y annullano e ripristinano.</p>
-</div>
 <h3>Database</h3>
 <table>
 <thead>
@@ -307,12 +301,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Nel pannello Eval (vedere Pannello Eval), BACKSPACE reimposta ai valori propri di questo pannello (punteggio money, nessun dado impostato) anziché a quelli della modalità di modifica (punteggio 7 ovunque, dadi 3-1). Un doppio clic fuori dal board produce la stessa reimpostazione.</p>
-</div>
-<div class="admonition note">
-<p>Nel pannello Eval e nel pannello Ricerca, il board è una bozza e non una posizione del database: CTRL-V vi <strong>posa la posizione sul board</strong> invece di importarla nel database, e CTRL-C copia il board mostrato — il suo XGID viene ricalcolato dalle pedine posizionate, senza l'analisi della posizione consultata in precedenza. La posizione copiata si incolla così tale e quale in eXtreme Gammon o in un'altra istanza di blunderDB.</p>
-</div>
 <h3>Navigazione</h3>
 <table>
 <thead>
@@ -398,9 +386,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB apre il pannello di ricerca solo quando il focus si trova sulla scacchiera (o da nessuna parte in particolare, il che è il caso più delle volte). Una volta che il focus è su un pulsante, un campo di inserimento o un link, TAB riprende la normale navigazione da tastiera tra gli elementi dell'interfaccia invece di riaprire questo pannello.</p>
-</div>
 <h3>Strumenti</h3>
 <table>
 <thead>
@@ -452,9 +437,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>L'ordine di queste schede, una volta modificato trascinandole sulla barra, viene memorizzato da una sessione all'altra. Un clic destro su una scheda permette di nasconderla; il pulsante a forma di freccia che appare quindi a destra della barra apre un menu per rivisualizzare le schede nascoste, che restano comunque raggiungibili tramite la loro scorciatoia.</p>
-</div>
 <h3>Schede delle viste</h3>
 <table>
 <thead>
@@ -490,9 +472,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Il verso di MAIUSC-J / MAIUSC-K è invertito rispetto a j / k: <em>j</em> avanza (posizione successiva) e <em>k</em> indietreggia (posizione precedente), mentre <em>MAIUSC-J</em> torna alla vista precedente e <em>MAIUSC-K</em> passa alla successiva. È voluto (non è una scorciatoia da correggere) — MAIUSC-J/MAIUSC-K seguono la convenzione CTRL-PagSu/CTRL-PagGiù a cui sono associati, non quella di j/k.</p>
-</div>
 <h3>Riga di comando</h3>
 <table>
 <thead>
@@ -747,9 +726,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Questo pannello non cattura le scorciatoie di navigazione: PagSu/h, SINISTRA/k, DESTRA/j, PagGiù/l scorrono le posizioni della collezione aperta esattamente come descritto in Navigazione.</p>
-</div>
 `,
     commands: `
 <p>La riga di comando, situata nella barra di stato, si apre premendo il tasto <em>SPAZIO</em>. Durante la digitazione di un comando, appare automaticamente un elenco di suggerimenti: il tasto <em>TAB</em> (o <em>MAIUSC-TAB</em>) scorre le proposte e completa il comando, mentre <em>ESC</em> chiude l'elenco (un secondo <em>ESC</em> chiude la riga di comando). I tasti <em>SU</em> e <em>GIÙ</em> restano riservati alla cronologia dei comandi.</p>
@@ -936,27 +912,6 @@ export default {
 </table>
 <h3>Filtri di ricerca</h3>
 <p>I filtri sottostanti devono essere giustapposti durante una ricerca, ovvero dopo l'inizio del comando <code>s</code>.</p>
-<div class="admonition warning">
-<p>Nella ricerca di posizioni, per impostazione predefinita, blunderDB tiene conto della struttura di pedine corrente e ignora la posizione del cubo, il punteggio e i dadi. Per tenere conto della posizione del cubo, del punteggio e dei dadi, occorre indicarlo esplicitamente nella ricerca.</p>
-</div>
-<div class="admonition note">
-<p>Il comando di ricerca <code>s</code> è disponibile nel pannello di ricerca (tasto <code>TAB</code>). Il comando <code>ss</code> permette di cercare tra i risultati attualmente filtrati.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera che una pedina arretrata (backchecker) sia una pedina situata tra il punto 24 e il punto 19.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera che il numero di pedine nella zona sia il numero di pedine situate tra il punto 12 e il punto 1.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera che l'outfield si estenda tra il punto 18 e il punto 7.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considera che il jan si estenda tra il punto 1 e il punto 6.</p>
-</div>
-<div class="admonition tip">
-<p>I parametri per filtrare le posizioni possono essere combinati a piacere.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1311,21 +1266,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Una posizione giocata più volte dal giocatore 1 (la stessa mossa in due match, o due mosse diverse) è trattenuta dai filtri <code>E&gt;x</code>, <code>E&lt;x</code> ed <code>Ex,y</code> in base al <strong>più grande</strong> errore commesso su quella posizione. <code>E&gt;100</code> risponde così alla domanda «ho mai fatto un blunder qui?», ed <code>E&lt;20</code> conserva solo le posizioni in cui nessuna delle mosse giocate ha superato i 20 millipunti.</p>
-</div>
-<div class="admonition note">
-<p>Filtrare le posizioni in base al lancio dei dadi (<code>D</code> o <code>D1</code>) implica <em>a fortiori</em> filtrare le posizioni in base al tipo di decisione (<code>d</code>). Il filtro <code>D1</code> ignora il valore del secondo dado: solo il valore del primo dado viene usato per far corrispondere le posizioni (su uno qualsiasi dei due dadi del lancio).</p>
-</div>
-<div class="admonition note">
-<p>Per il filtro di differenza relativa nella corsa (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>), il giocatore è in svantaggio nella corsa rispetto all'avversario se <code>x&gt;0</code> e in vantaggio se <code>x&lt;0</code>. Esempio: <code>p&lt;-10</code> : il giocatore ha almeno 10 pip di vantaggio nella corsa. <code>p50,70</code> : il giocatore ha tra 50 e 70 pip di svantaggio nella corsa.</p>
-</div>
-<div class="admonition note">
-<p>Per cercare in più partite non contigue, ripetere più volte il filtro <code>ma</code> (es. <code>s ma23 ma43</code> per le partite 23 e 43). Lo stesso principio si applica ai tornei con <code>tn</code> e alle posizioni con <code>id</code> (es. <code>s id5 id10</code> per le posizioni 5 e 10).</p>
-</div>
-<div class="admonition note">
-<p>Cercare in un torneo (<code>tn</code>) equivale a cercare in tutte le partite del torneo interessato. Gli identificatori delle partite e dei tornei sono visibili nelle colonne ID dei pannelli corrispondenti.</p>
-</div>
 <p>Ad esempio, il comando <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtra tutte le posizioni tenendo conto della struttura delle pedine, del punteggio e del cubo della posizione modificata in cui il giocatore ha tra 20 e 5 pip di vantaggio nella corsa, con almeno il 60% di probabilità di vittoria, almeno 10 pedine nella zona, e l'avversario ha tra 2 e 3 pedine arretrate.</p>
 <h3>Comandi vari</h3>
 <table>
@@ -1342,9 +1282,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Le migrazioni del database vengono ora eseguite automaticamente all'apertura di un database.</p>
-</div>
 `,
     about: `
 <h3>Versione</h3>

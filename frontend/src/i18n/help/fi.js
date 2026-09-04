@@ -208,12 +208,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Näppäimistöoikotiet ovat riippumattomia näppäimistöasettelusta: ne pysyvät käytettävissä samalla tavalla riippumatta käytetystä asettelusta (AZERTY, QWERTY, QWERTZ jne.).</p>
-</div>
-<div class="admonition note">
-<p>Kun kohdistin on tekstikentässä (kommentti, hakukenttä, komentorivi), tavalliset tekstinmuokkauksen pikanäppäimet kohdistuvat tekstiin eivätkä asemaan: CTRL-C, CTRL-X ja CTRL-V kopioivat, leikkaavat ja liittävät valinnan, CTRL-A valitsee sen kokonaan, CTRL-Z ja CTRL-Y kumoavat ja tekevät uudelleen.</p>
-</div>
 <h3>Tietokanta</h3>
 <table>
 <thead>
@@ -304,12 +298,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Eval-paneelissa (katso Eval-paneeli) ASKELPALAUTIN palauttaa paneelin omat arvot (money-pistetilanne, ei asetettuja noppia) muokkaustilan arvojen (pistetilanne 7 molemmilla, nopat 3-1) sijaan. Kaksoisnapsautus laudan ulkopuolella tekee saman palautuksen.</p>
-</div>
-<div class="admonition note">
-<p>Eval-paneelissa ja Hakupaneelissa lauta on luonnos, ei tietokannan asema: CTRL-V <strong>asettaa aseman laudalle</strong> sen sijaan, että toisi sen tietokantaan, ja CTRL-C kopioi näytetyn laudan — sen XGID lasketaan uudelleen asetetuista nappuloista, ilman aiemmin tarkastellun aseman analyysiä. Kopioitu asema liitetään siten sellaisenaan eXtreme Gammoniin tai toiseen blunderDB-instanssiin.</p>
-</div>
 <h3>Navigointi</h3>
 <table>
 <thead>
@@ -395,9 +383,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB avaa hakupaneelin vain, kun kohdistus on pelilaudalla (tai ei missään erityisessä kohteessa, mikä on tilanne useimmiten). Kun kohdistus siirtyy painikkeeseen, syöttökenttään tai linkkiin, TAB jatkaa käyttöliittymän elementtien välistä tavanomaista näppäimistönavigointia sen sijaan, että avaisi tämän paneelin uudelleen.</p>
-</div>
 <h3>Työkalut</h3>
 <table>
 <thead>
@@ -449,9 +434,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Näiden välilehtien järjestys, kun sitä on muutettu vetämällä palkilla, muistetaan istunnosta toiseen. Välilehden oikea napsautus mahdollistaa sen piilottamisen; tällöin palkin oikeaan reunaan ilmestyvä nuolipainike avaa valikon piilotettujen välilehtien näyttämiseksi uudelleen — ne pysyvät sillä välin tavoitettavissa omalla pikanäppäimellään.</p>
-</div>
 <h3>Näkymävälilehdet</h3>
 <table>
 <thead>
@@ -487,9 +469,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>VAIHTO-J:n / VAIHTO-K:n suunta on päinvastainen kuin j:n / k:n: <em>j</em> etenee (seuraava asema) ja <em>k</em> palaa (edellinen asema), kun taas <em>VAIHTO-J</em> palaa edelliseen näkymään ja <em>VAIHTO-K</em> siirtyy seuraavaan. Näin on tarkoitettu (kyse ei ole korjattavasta pikanäppäimestä) — VAIHTO-J/VAIHTO-K noudattavat CTRL-PageUp/CTRL-PageDown-käytäntöä, johon ne on liitetty, eivät j/k:n käytäntöä.</p>
-</div>
 <h3>Komentorivi</h3>
 <table>
 <thead>
@@ -744,9 +723,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Tämä paneeli ei kaappaa navigointipikanäppäimiä: PageUp/h, VASEN/k, OIKEA/j, PageDown/l liikkuvat avoimen kokoelman asemissa täsmälleen kuten kohdassa Navigointi kuvataan.</p>
-</div>
 `,
     commands: `
 <p>Komentorivi, joka sijaitsee tilarivillä, avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy automaattisesti: <em>TAB</em>-näppäin (tai <em>VAIHTO-TAB</em>) selaa ehdotuksia ja täydentää komennon, kun taas <em>ESC</em> sulkee luettelon (toinen <em>ESC</em> sulkee komentorivin). <em>YLÖS</em>- ja <em>ALAS</em>-näppäimet on edelleen varattu komentohistorialle.</p>
@@ -933,27 +909,6 @@ export default {
 </table>
 <h3>Hakusuodattimet</h3>
 <p>Alla olevat suodattimet on asetettava peräkkäin haun aikana, eli komennon <code>s</code> aloituksen jälkeen.</p>
-<div class="admonition warning">
-<p>Asemien haussa blunderDB ottaa oletuksena huomioon nykyisen nappularakenteen ja jättää huomiotta kuution aseman, pistetilanteen ja nopat. Jotta kuution asema, pistetilanne ja nopat otetaan huomioon, ne on mainittava nimenomaisesti haussa.</p>
-</div>
-<div class="admonition note">
-<p>Hakukomento <code>s</code> on käytettävissä hakupaneelissa (<code>TAB</code>-näppäin). Komennon <code>ss</code> avulla voi etsiä tällä hetkellä suodatettujen tulosten joukosta.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB pitää takanappulana (backchecker) nappulaa, joka sijaitsee pisteiden 24 ja 19 välissä.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB pitää vyöhykkeen (zone) nappuloiden määränä niiden nappuloiden määrää, jotka sijaitsevat pisteiden 12 ja 1 välissä.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB pitää ulkokentän (outfield) ulottuvan pisteiden 18 ja 7 välillä.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB pitää kotialueen (jan) ulottuvan pisteiden 1 ja 6 välillä.</p>
-</div>
-<div class="admonition tip">
-<p>Asemien suodatuksen parametreja voi yhdistellä mielivaltaisesti.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1308,21 +1263,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Aseman, jonka pelaaja 1 on pelannut useammin kuin kerran (saman siirron kahdessa ottelussa tai kaksi eri siirtoa), suodattimet <code>E&gt;x</code>, <code>E&lt;x</code> ja <code>Ex,y</code> arvioivat tässä asemassa tehdyn <strong>suurimman</strong> virheen mukaan. <code>E&gt;100</code> vastaa siis kysymykseen ”olenko koskaan tehnyt tässä blunderin?”, ja <code>E&lt;20</code> säilyttää vain asemat, joissa yksikään pelatuista siirroista ei ylittänyt 20 millipistettä.</p>
-</div>
-<div class="admonition note">
-<p>Asemien suodattaminen nopanheiton perusteella (<code>D</code> tai <code>D1</code>) merkitsee <em>sitäkin suuremmalla syyllä</em> asemien suodattamista päätöstyypin (<code>d</code>) perusteella. Suodatin <code>D1</code> jättää huomiotta toisen nopan arvon: vain ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman heiton nopan kanssa).</p>
-</div>
-<div class="admonition note">
-<p>Kilpajuoksun suhteellisen eron suodattimessa (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>) pelaaja on kilpajuoksussa vastustajaan nähden jäljessä, jos <code>x&gt;0</code>, ja edellä, jos <code>x&lt;0</code>. Esimerkki: <code>p&lt;-10</code> : pelaaja on kilpajuoksussa vähintään 10 pippiä edellä. <code>p50,70</code> : pelaaja on kilpajuoksussa 50–70 pippiä jäljessä.</p>
-</div>
-<div class="admonition note">
-<p>Useista ei-peräkkäisistä otteluista hakeaksesi toista suodatin <code>ma</code> useita kertoja (esim. <code>s ma23 ma43</code> otteluille 23 ja 43). Sama periaate pätee turnauksiin suodattimella <code>tn</code> ja asemiin suodattimella <code>id</code> (esim. <code>s id5 id10</code> asemille 5 ja 10).</p>
-</div>
-<div class="admonition note">
-<p>Turnauksesta etsiminen (<code>tn</code>) tarkoittaa etsimistä kyseisen turnauksen kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät vastaavien paneelien ID-sarakkeissa.</p>
-</div>
 <p>Esimerkiksi komento <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> suodattaa kaikki asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja voitto on todennäköinen vähintään 60 % osuudella.</p>
 <h3>Sekalaisia komentoja</h3>
 <table>
@@ -1339,9 +1279,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Tietokantojen migraatiot suoritetaan nyt automaattisesti tietokantaa avattaessa.</p>
-</div>
 `,
     about: `
 <h3>Versio</h3>
