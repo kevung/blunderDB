@@ -571,6 +571,13 @@ peuvent être créés, renommés et supprimés ; les matchs peuvent leur être
 assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi.
 Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
+Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
+BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
+dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et
+le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match déjà
+présent dans la base n'est jamais reclassé : réimporter son fichier ne défait
+pas le rangement fait à la main.
+
 La colonne **PR** de chaque tournoi affiche le PR du **joueur de référence** —
 c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
 (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc

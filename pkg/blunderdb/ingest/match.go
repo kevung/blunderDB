@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -45,6 +46,9 @@ type WriteResult struct {
 	FlagsApplied   int  // source-tool study marks raised on already-stored positions of a skipped duplicate
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	SavedPositions int
+	// Tournament is the event name the match was filed under, empty when the
+	// file named none or when the match already existed.
+	Tournament string
 }
 
 // WriteMatch persists a MatchGraph through tx. It is the single Storage-based
@@ -109,6 +113,24 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			return res, err
 		}
 		matchID = id
+
+		// The file names its event; make it a tournament. XG, GnuBG and BGF
+		// all carry an event name, every importer stored it in match.event,
+		// and nothing ever turned it into a row of the tournament table — so
+		// the Tournaments panel stayed empty on a library imported entirely
+		// from files that say which tournament each match belongs to.
+		//
+		// Only on a match this import created. A match already in the
+		// database was put in its tournament by someone, possibly by hand
+		// and under another name; re-importing its file must not move it.
+		// The tournament is created with an empty date and location (that is
+		// all SetMatchByName can do): the panel is where those get filled in.
+		if name := strings.TrimSpace(g.Match.Event); name != "" {
+			if err := tx.Tournaments().SetMatchByName(ctx, scope, matchID, name); err != nil {
+				return res, err
+			}
+			res.Tournament = name
+		}
 	}
 	res.MatchID = matchID
 	res.Enriched = enrich
