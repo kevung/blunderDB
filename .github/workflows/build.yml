@@ -1012,10 +1012,14 @@ jobs:
     # Sigstore-backed SLSA provenance attestation per asset using GitHub's own
     # OIDC identity — no secret to manage, unlike the opt-in minisign
     # signature a few steps down.
+    # discussions:write is for the "Announce the release" step below
+    # (H.11, #253): it posts to the Announcements category over the GraphQL
+    # API, which needs its own scope distinct from contents/issues.
     permissions:
       contents: write
       id-token: write
       attestations: write
+      discussions: write
     env:
       VERSION: ${{ github.ref_name }}
     steps:
@@ -1146,6 +1150,33 @@ jobs:
             */bin/*
             SHA256SUMS
             SHA256SUMS.minisig
+
+      # H.11 (#253): the roadmap page points here for what already shipped.
+      # Discussions were enabled with GitHub's default categories (kevung,
+      # 2026-09) and nobody had posted to Announcements yet — this is the one
+      # automated poster. repositoryId/categoryId are the node IDs of this
+      # repository and its "Announcements" category (GraphQL `id`, `gh api
+      # graphql`); both are immutable as long as neither is deleted, so they
+      # are inlined rather than looked up on every run. continue-on-error:
+      # true — a broken announcement must never fail a release that already
+      # shipped its assets above.
+      - name: Announce the release on Discussions
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          repository_id="R_kgDOLw9sVQ"
+          category_id="DIC_kwDOLw9sVc4CluSa"
+          body="blunderDB ${VERSION} is out. Release notes and downloads: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${VERSION}"
+          gh api graphql \
+            -f query='mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{url}}}' \
+            -f repositoryId="$repository_id" \
+            -f categoryId="$category_id" \
+            -f title="blunderDB ${VERSION}" \
+            -f body="$body"
+        shell: bash
 
   # Flatpak bundle, release tags only. packaging/flatpak/*.yml repackages the
   # webkit2gtk-4.1 release tarball, so the job waits for the matrix (`needs:
