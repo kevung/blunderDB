@@ -41,6 +41,7 @@ vi.mock('../services/sessionService.js', () => ({
 }));
 
 import { ListPositionIDs, LoadAnalysis, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { setStatusBarMessage } from '../services/databaseService.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore, openPanels, openPanel, PANEL } from '../stores/uiStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
@@ -588,6 +589,26 @@ describe('toggleMatchMode', () => {
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(matchContextStore).isMatchMode).toBe(false);
     });
+
+    test('GetLastVisitedMatch qui échoue avec "no matches" affiche le message dédié', async () => {
+        setLibrary();
+        GetLastVisitedMatch.mockRejectedValueOnce(new Error('no matches found'));
+
+        await toggleMatchMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.noMatchesInDb', i18nParams: null });
+    });
+
+    test('GetLastVisitedMatch qui échoue autrement affiche le message générique', async () => {
+        setLibrary();
+        GetLastVisitedMatch.mockRejectedValueOnce(new Error('bridge disconnected'));
+
+        await toggleMatchMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.errorEnteringMatchMode', i18nParams: null });
+    });
 });
 
 // ── COLLECTION → NORMAL ───────────────────────────────────────────────────────
@@ -633,6 +654,19 @@ describe('COLLECTION → NORMAL', () => {
         expect(get(currentPositionIndexStore), 'retrouvée par id dans la bibliothèque').toBe(1);
         expect(positionService.getSearchState()).toEqual({ lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false });
         expect(get(lastSearchStore)).toBeNull();
+    });
+
+    test('exitCollectionMode : ListPositionIDs qui échoue retombe sur loadAllPositions au lieu de rester bloqué', async () => {
+        handleOpenCollection({ name: 'Backgames' }, [makePosition(2)]);
+        ListPositionIDs.mockRejectedValueOnce(new Error('db locked'));
+        ListPositionIDs.mockResolvedValueOnce([1, 2, 3]); // l'appel de repli, dans loadAllPositions
+
+        await exitCollectionMode();
+
+        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+        expect(get(activeCollectionStore)).toBeNull();
+        expect(get(collectionPositionsStore)).toEqual([]);
+        expect(ListPositionIDs).toHaveBeenCalledTimes(2);
     });
 
     test('enterEditMode depuis COLLECTION passe par exitCollectionMode', async () => {
