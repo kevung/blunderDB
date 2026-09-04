@@ -16,10 +16,14 @@
     "lint:fix": "eslint src/ tests/ *.config.js --fix",
     "format": "prettier --write src/ tests/ *.config.js",
     "format:check": "prettier --check src/ tests/ *.config.js",
-    "check:svelte-warnings": "node scripts/check-svelte-warnings.mjs"
+    "check:svelte-warnings": "node scripts/check-svelte-warnings.mjs",
+    "check:e2e-flaky": "node scripts/check-e2e-flaky.mjs",
+    "check": "svelte-check --tsconfig ./jsconfig.json",
+    "check:types": "node scripts/check-svelte-types.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.1",
     "@playwright/test": "^1.59.1",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@testing-library/jest-dom": "^7.0.1",
@@ -34,6 +38,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-svelte": "^4.1.1",
     "svelte": "^5.55.0",
+    "svelte-check": "^4.7.6",
     "svelte-eslint-parser": "^1.6.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.4"

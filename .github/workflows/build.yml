@@ -627,6 +627,15 @@ jobs:
           CI: true
         shell: bash
 
+      # `retries: 2` (CI only, playwright.config.js) can turn a genuinely
+      # broken spec green — Playwright reports it "flaky", not "failed", the
+      # moment a retry passes. D.13 (#214): treat that as a real instability
+      # signal instead of letting the retry silently absorb it.
+      - name: Frontend E2E flaky-spec gate
+        working-directory: frontend
+        run: npm run check:e2e-flaky
+        shell: bash
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -679,6 +688,17 @@ jobs:
       - name: Frontend Svelte compiler warnings budget
         working-directory: frontend
         run: npm run check:svelte-warnings
+        shell: bash
+
+      # jsconfig.json turns on `checkJs: true`, but nothing had ever run
+      # svelte-check itself in CI (D.13, #214) — so JS type errors across the
+      # whole frontend accumulated with a green build the whole time. Same
+      # ceiling pattern as the Svelte-warnings budget just above: fails only
+      # if the error count exceeds frontend/.svelte-check-budget, lowered
+      # (never raised) as errors get fixed.
+      - name: Frontend svelte-check type budget
+        working-directory: frontend
+        run: npm run check:types
         shell: bash
 
   lint:

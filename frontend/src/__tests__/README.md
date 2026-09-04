@@ -12,12 +12,13 @@ npm run test:watch # vitest (mode watch)
 
 ```
 src/__tests__/
-├── helpers/
-│   └── wailsMock.js          # Helper pour mocker window.go.main.Database
 ├── StatusBar.reactivity.test.js  # Canari de réactivité (composant monté)
 ├── StatsPanel.test.js            # Tests store/logique
 ├── commandProcessor.test.js      # Tests pure fonctions
 └── ...
+
+src/__mocks__/
+└── wails.js   # create{Database,App,Config,Runtime}Mock() — mock complet, réfléchi sur wailsjs/go/**
 ```
 
 ## Pattern : mount + mutate store + assert DOM
@@ -51,7 +52,7 @@ test('réactivité', async () => {
 
 Deux approches selon le besoin :
 
-### `vi.mock` (recommandé, par fichier de test)
+### `vi.mock` à la main (un test qui n'exerce que quelques fonctions)
 
 ```js
 vi.mock('../../../wailsjs/go/database/Database.js', () => ({
@@ -62,16 +63,22 @@ vi.mock('../../../wailsjs/go/database/Database.js', () => ({
 
 Vitest hisse automatiquement `vi.mock` en tête de fichier — déclarer avant ou après les imports ne change rien.
 
-### `installWailsMock` (overrides dynamiques par test)
+### `src/__mocks__/wails.js` (mock complet, un vi.fn() par fonction exportée)
+
+Pour un composant qui touche beaucoup de bindings sans que le test se soucie
+de chacune d'elles (`CollectionPanel.test.js`, `databaseService.test.js`) :
 
 ```js
-import { installWailsMock, uninstallWailsMock } from './helpers/wailsMock.js';
-
-beforeEach(() => installWailsMock({ LoadCommandHistory: () => Promise.resolve(['cmd1']) }));
-afterEach(uninstallWailsMock);
+vi.mock('../../wailsjs/go/database/Database.js', async () => {
+    const { createDatabaseMock } = await import('../__mocks__/wails.js');
+    return createDatabaseMock({ GetAllCollections: vi.fn().mockResolvedValue(SAMPLE) });
+});
 ```
 
-Utile lorsque chaque test a besoin d'une réponse différente.
+`createDatabaseMock`/`createAppMock`/`createConfigMock`/`createRuntimeMock` lisent
+la liste des fonctions exportées par le fichier généré réel — un renommage côté
+Go ne peut donc pas laisser un mock partiel silencieusement en retard ; voir la
+docstring de `src/__mocks__/wails.js` et `wailsMock.sync.test.js`.
 
 ## Règle
 

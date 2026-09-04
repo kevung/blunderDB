@@ -312,6 +312,7 @@
     // Select a position and display it
     async function selectAndDisplayPosition(index, event) {
         event.stopPropagation();
+        const isMultiSelectClick = event.shiftKey || event.ctrlKey || event.metaKey;
         if (event.shiftKey && selectedPositionIndices.size > 0) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
             const last = sorted[sorted.length - 1];
@@ -331,6 +332,13 @@
             selectedPositionIndices.clear();
             if (!wasOnlySelection) selectedPositionIndices.add(index);
         }
+
+        // A Shift/Ctrl click builds a multi-selection for a batch action — it
+        // must not move the single "current position" cursor: doing so sets
+        // currentPositionIndexStore, and the mode-sync effect above reacts to
+        // ANY change of that store by collapsing selectedPositionIndices back
+        // to that one index, silently undoing the multi-selection just built.
+        if (isMultiSelectClick) return;
 
         const position = collectionPositions[index];
         if (position) {
