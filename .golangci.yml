@@ -11,11 +11,22 @@ linters:
   # funlen and gocognit (E.6, #222): non-regressive ceilings on function size
   # and cognitive complexity, the same shape as frontend/.svelte-warnings-budget
   # and frontend/.color-token-budget — a ratchet that only ever tightens, not
-  # an unreachable strict zero. The thresholds below equal the worst
-  # non-test function measured on 2026-09 (`(*SearchStore).find`, search.go —
-  # 573 lines, 316 statements, cognitive complexity 462); splitting it or any
-  # other flagged function (B.15) must lower these numbers in the same
-  # commit, never leave them where a fatter function could still fit. Test
+  # an unreachable strict zero. Each threshold equals the worst non-test
+  # function measured today, and each is a DIFFERENT function: the ceiling is
+  # three independent high-water marks, not one function's profile.
+  #
+  # Re-measured 2026-09-04, after B.15 split `find` into
+  # buildWhere/scanRows/applyGoFilters: 573/316/462 → 438/180/200, each set by
+  # a different function now. Splitting a flagged function must lower the
+  # number it set in the same commit, never leave it where a fatter function
+  # could still slip in.
+  #
+  # Measure the real ceiling by RAISING each threshold until the linter goes
+  # quiet, never by lowering it to 1: funlen reports at most one violation per
+  # function (lines first, then statements), so at 1 almost every function
+  # answers "too many statements" and the longest ones never say how long they
+  # are. That mistake put this ratchet at 77 lines for a tree whose longest
+  # function is 438. Test
   # functions are excluded below: a long table-driven test or a migration
   # round-trip fixture is not the dette this fiche targets, and forcing them
   # under the same ceiling would fight the fixture shape instead of real
@@ -55,11 +66,11 @@ linters:
         - (*database/sql.Tx).Rollback
 
     funlen:
-      lines: 573      # (*SearchStore).find, search.go — see the enable-list comment above
-      statements: 316 # same function
+      lines: 438      # (*StatsStore).Compute, sqlshared/stats.go
+      statements: 180 # parseSearchFlags, internal/cli/cli_search.go
 
     gocognit:
-      min-complexity: 462 # same function; gocognit's own cognitive-complexity count
+      min-complexity: 200 # (*SearchStore).applyGoFilters, sqlshared/search.go
 
     nolintlint:
       require-explanation: true
