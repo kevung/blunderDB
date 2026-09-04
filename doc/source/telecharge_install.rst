@@ -53,6 +53,10 @@ votre système ; remplacez ``x.y.z`` par le numéro de la version.
    * - Autre distribution Linux
      - ``blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz``
      - ``tar xzf`` puis ``./blunderDB``
+   * - Linux sur ARM 64 bits
+     - ``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` ou
+       ``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``
+     - Comme ci-dessus, avec le fichier ``arm64``/``aarch64``
    * - macOS (Intel et Apple Silicon)
      - ``blunderDB-macos-x.y.z.zip``
      - Décompresser, puis glisser ``blunderDB.app`` dans *Applications*
@@ -62,6 +66,13 @@ votre système ; remplacez ``x.y.z`` par le numéro de la version.
    * - Serveur (mode ``serve``, Docker)
      - image ``ghcr.io/kevung/blunderdb-serve``
      - ``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``
+
+Les fichiers ``amd64`` et ``x86_64`` sont pour un processeur Intel ou AMD,
+c'est-à-dire la quasi-totalité des ordinateurs de bureau. Les fichiers
+``arm64`` et ``aarch64`` sont pour un processeur ARM 64 bits : Raspberry Pi 4
+et 5, Mac à puce Apple faisant tourner Linux, serveurs ARM. En cas de doute,
+``uname -m`` répond : ``x86_64`` ou ``aarch64``. Le paquet AUR
+``blunderdb-bin`` couvre les deux et choisit tout seul.
 
 Les autres fichiers de la page sont les binaires Linux bruts (voir plus bas),
 les manifestes winget et Homebrew (voir :ref:`install_winget_homebrew`), la

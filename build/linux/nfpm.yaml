@@ -14,7 +14,11 @@
 # Only the webkit2gtk-4.1 variant is packaged (Ubuntu 22.04+/Debian 12+/
 # Fedora 36+/openSUSE recent). Older distros keep the raw binary + tar.gz.
 name: blunderdb
-arch: amd64
+# Set by the workflow (H.14, #256): amd64 on ubuntu-latest, arm64 on the
+# native arm64 runner. nfpm expands ${...} from the environment, the same way
+# it reads `version` below, so one spec serves both — no second file to keep
+# in step. A local `nfpm package` needs NFPM_ARCH set too.
+arch: ${NFPM_ARCH}
 platform: linux
 version: ${VERSION}
 version_schema: none

@@ -229,9 +229,26 @@ diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
 ## H.14 — Binaire Linux arm64 [M] — adoption (#256)
 
 31 assets, tous x86_64 sauf l'image Docker et le `.app` universel.
-- [ ] Job `build` sur `ubuntu-24.04-arm` (webkit2gtk-4.1), `.deb`/`.rpm`/tarball
-      arm64 ; AUR `blunderdb-bin` avec `aarch64`. Utile aussi comme filet
-      NEON (#151).
+- [x] Cinquième entrée de matrice `ubuntu-24.04-arm` (runner arm64 natif :
+      Wails a besoin de cgo contre le webkit2gtk de l'hôte, donc l'arm64 ne se
+      compile pas de façon croisée). Le geste est **additif** — chaque étape
+      qui produisait un asset amd64 continue de se déclencher sur
+      `ubuntu-latest` et n'est pas touchée, si bien qu'un échec arm64 ne peut
+      pas coûter à la release ses trente-et-un assets existants.
+- [x] `.deb`/`.rpm` arm64 par le même `nfpm.yaml` : son `arch:` est lu dans
+      l'environnement (`NFPM_ARCH`), comme sa `version:` l'était déjà, plutôt
+      qu'un second fichier à tenir en phase. Les paquets arm64 sont installés
+      et sondés sur le runner qui les a produits, comme les amd64.
+- [x] AUR `blunderdb-bin` en `arch=('x86_64' 'aarch64')` : deux paires
+      `source_`/`sha256sums_`, `_srcdir` choisi sur `$CARCH`, et `aur.yml`
+      télécharge et hache les deux archives. La substitution `@SHA256_AARCH64@`
+      passe **avant** `@SHA256@`, dont elle contient le motif.
+- [x] `telecharge_install.rst` : une ligne de tableau et un paragraphe qui dit
+      comment choisir (`uname -m`), traduits dans les huit langues ; le bloc
+      « Installation » des notes de release nomme les fichiers arm64.
+
+Reste ouvert : le Flatpak (`packaging/flatpak/`) pointe encore une URL x86_64
+en dur, et le filet NEON (#151) attendra un noyau NEON à filer.
 
 ---
 
