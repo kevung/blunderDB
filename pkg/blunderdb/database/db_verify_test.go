@@ -30,6 +30,7 @@ func plantOrphans(t *testing.T, db *sql.DB) {
 }
 
 func TestCountOrphans(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
@@ -64,6 +65,7 @@ func TestCountOrphans(t *testing.T) {
 // is what CheckSchema reports after the open. Two matches sharing a
 // canonical hash keep idx_match_canonical (UNIQUE) from being rebuilt.
 func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "drift.db")
 	d := NewDatabase()
 	if err := d.SetupDatabase(path); err != nil {
@@ -111,6 +113,7 @@ func TestCheckSchema_ReportsWhatEnsureSchemaCouldNotAdd(t *testing.T) {
 // exists, so an upgraded database can hold rows a new one would refuse. That
 // gap is not a silence — `blunderdb verify` reads it here.
 func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 
 	violations, err := d.CheckConstraints()
@@ -179,6 +182,7 @@ func TestCheckConstraints_ReportsWhatSQLiteCannotEnforce(t *testing.T) {
 // the source file held, and are what the match list displays. Nothing else in
 // the database says the figure and the rows disagree.
 func TestCheckCounters_RecomputesTheDenormalisedFigures(t *testing.T) {
+	t.Parallel()
 	d := newTestDB(t)
 
 	drift, err := d.CheckCounters()

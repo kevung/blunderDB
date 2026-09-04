@@ -27,6 +27,7 @@ func countMatFiles(t *testing.T, dir string) int {
 // TestCLI_ExportMAT_Batch imports two distinct matches and exports them all as
 // .mat files into a directory (no --match-ids = all matches).
 func TestCLI_ExportMAT_Batch(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.mat")}); err != nil {
 		t.Fatalf("import mat: %v", err)
@@ -46,6 +47,7 @@ func TestCLI_ExportMAT_Batch(t *testing.T) {
 
 // TestCLI_ExportMAT_Single exports one match by id to an explicit --file.
 func TestCLI_ExportMAT_Single(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.mat")}); err != nil {
 		t.Fatalf("import mat: %v", err)
@@ -72,6 +74,7 @@ func TestCLI_ExportMAT_Single(t *testing.T) {
 // TestCLI_ExportMAT_FileWithMultipleErrors: --file with several matches must be
 // rejected (a .mat file holds exactly one match).
 func TestCLI_ExportMAT_FileWithMultipleErrors(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.mat")}); err != nil {
 		t.Fatalf("import mat: %v", err)
@@ -88,6 +91,7 @@ func TestCLI_ExportMAT_FileWithMultipleErrors(t *testing.T) {
 
 // TestCLI_ExportMAT_RequiresFileOrDir: type mat with neither --file nor --dir.
 func TestCLI_ExportMAT_RequiresFileOrDir(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.mat")}); err != nil {
 		t.Fatalf("import mat: %v", err)

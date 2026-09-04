@@ -66,6 +66,7 @@ func analysesOf(t *testing.T, d *Database, ids []int64) map[int64]*PositionAnaly
 // structs, so every float32 that reaches the database is compared bit for
 // bit.
 func TestAnalyzeGammonNetParallelMatchesSerial(t *testing.T) {
+	t.Parallel()
 	const n = 8
 
 	run := func(jobs int) map[int64]*PositionAnalysis {
@@ -94,6 +95,7 @@ func TestAnalyzeGammonNetParallelMatchesSerial(t *testing.T) {
 // owns. It must never go backwards, never exceed the total, and must end on
 // the total when nothing failed.
 func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
+	t.Parallel()
 	const n = 8
 	d := newBatchTestDB(t)
 	seedBatchPositions(t, d, n)
@@ -127,6 +129,7 @@ func TestAnalyzeGammonNetProgressIsMonotone(t *testing.T) {
 // it (whatever was computed is still written, and re-running picks up the
 // rest).
 func TestAnalyzeGammonNetParallelCancellation(t *testing.T) {
+	t.Parallel()
 	const n = 12
 
 	t.Run("cancelled before it starts", func(t *testing.T) {
@@ -182,19 +185,28 @@ func TestAnalyzeGammonNetParallelCancellation(t *testing.T) {
 // one goroutine. That is what internal/gui relies on to let an interactive
 // evaluation through.
 func TestAnalyzeGammonNetParallelYieldGates(t *testing.T) {
+	t.Parallel()
 	d := newBatchTestDB(t)
 	seedBatchPositions(t, d, 8)
 
 	release := make(chan struct{})
+	// `blocked` dit que le premier yield est ENTRÉ, donc que le lot est
+	// effectivement arrêté à sa grille — un fait, là où un time.Sleep n'était
+	// qu'un pari sur la vitesse de la machine (E.3, #219).
+	blocked := make(chan struct{}, 1)
 	done := make(chan error, 1)
 	go func() {
 		_, err := d.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 4, func() {
+			select {
+			case blocked <- struct{}{}:
+			default:
+			}
 			<-release
 		}, nil)
 		done <- err
 	}()
 
-	time.Sleep(100 * time.Millisecond)
+	<-blocked
 	if missing, err := d.CountPositionsWithoutAnalysis(); err != nil || missing != 8 {
 		t.Fatalf("%d position(s) missing while every yield was blocked (err=%v), want 8: the batch did not yield", missing, err)
 	}

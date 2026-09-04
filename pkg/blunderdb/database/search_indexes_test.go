@@ -8,6 +8,7 @@ import "testing"
 // backgammon rate). They are results-neutral; they only let the planner use an
 // index for selective filters instead of scanning.
 func TestSearchFilterIndexesExist(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	want := []string{
 		"idx_position_back_checkers_1",

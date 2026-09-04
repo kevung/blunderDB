@@ -11,6 +11,7 @@ import (
 // yields a stored position, and importing the same content again (via the
 // clipboard/text path) deduplicates to the same position id.
 func TestImportBGFPosition(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	fixture := filepath.Join("testdata", "bgf_positions", "01_checkerPosition_FR.txt")
 

@@ -321,6 +321,7 @@ func doExport(t *testing.T, db *Database, exportPath string, p exportParams) {
 // --- Test: Export everything (baseline) ---
 
 func TestExport_AllOptions_Baseline(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -388,6 +389,7 @@ func TestExport_AllOptions_Baseline(t *testing.T) {
 // --- Test: includeAnalysis=false ---
 
 func TestExport_NoAnalysis(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -416,6 +418,7 @@ func TestExport_NoAnalysis(t *testing.T) {
 // --- Test: includeComments=false ---
 
 func TestExport_NoComments(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -440,6 +443,7 @@ func TestExport_NoComments(t *testing.T) {
 // --- Test: includeFilterLibrary=false ---
 
 func TestExport_NoFilterLibrary(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -459,6 +463,7 @@ func TestExport_NoFilterLibrary(t *testing.T) {
 // --- Test: includePlayedMoves=false (CRITICAL: reported bug) ---
 
 func TestExport_NoPlayedMoves(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -503,6 +508,7 @@ func TestExport_NoPlayedMoves(t *testing.T) {
 // --- Test: includeMatches=false ---
 
 func TestExport_NoMatches(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -539,6 +545,7 @@ func TestExport_NoMatches(t *testing.T) {
 // --- Test: specific match IDs ---
 
 func TestExport_SpecificMatchIDs(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -578,6 +585,7 @@ func TestExport_SpecificMatchIDs(t *testing.T) {
 // --- Test: includeCollections=true with collection IDs ---
 
 func TestExport_WithCollections(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -608,6 +616,7 @@ func TestExport_WithCollections(t *testing.T) {
 // --- Test: includeCollections=false ---
 
 func TestExport_NoCollections(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -631,6 +640,7 @@ func TestExport_NoCollections(t *testing.T) {
 // --- Test: tournaments ---
 
 func TestExport_WithTournaments(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -665,6 +675,7 @@ func TestExport_WithTournaments(t *testing.T) {
 }
 
 func TestExport_NoTournaments(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -692,6 +703,7 @@ func TestExport_NoTournaments(t *testing.T) {
 // instead of nothing. The export itself must still succeed: an unknown id is
 // exactly the kind of single-row problem that must not fail the whole run.
 func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -728,6 +740,7 @@ func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) 
 // --- Test: everything disabled except positions ---
 
 func TestExport_PositionsOnly(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -775,6 +788,7 @@ func TestExport_PositionsOnly(t *testing.T) {
 // --- Test: PlayedMoves=true properly merges from move table ---
 
 func TestExport_PlayedMovesMergeFromMoveTable(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -802,6 +816,7 @@ func TestExport_PlayedMovesMergeFromMoveTable(t *testing.T) {
 // --- Test: analysis without analysis means no played moves either ---
 
 func TestExport_NoAnalysis_ImpliesNoPlayedMoves(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -822,6 +837,7 @@ func TestExport_NoAnalysis_ImpliesNoPlayedMoves(t *testing.T) {
 // --- Test: position ID remapping ---
 
 func TestExport_PositionIDRemapping(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -899,6 +915,7 @@ func TestExport_PositionIDRemapping(t *testing.T) {
 // --- Test: move position_id remapping in match export ---
 
 func TestExport_MovePositionIDRemapping(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -940,6 +957,7 @@ func TestExport_MovePositionIDRemapping(t *testing.T) {
 // --- Test: metadata ---
 
 func TestExport_Metadata(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -992,6 +1010,7 @@ func TestExport_Metadata(t *testing.T) {
 // --- Test: default dateOfCreation ---
 
 func TestExport_DefaultDateOfCreation(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -1028,6 +1047,7 @@ func TestExport_DefaultDateOfCreation(t *testing.T) {
 // --- Test: export overwrites existing file ---
 
 func TestExport_OverwritesExistingFile(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -1052,6 +1072,7 @@ func TestExport_OverwritesExistingFile(t *testing.T) {
 // --- Test: export with no database open ---
 
 func TestExport_NoDatabaseOpen(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	dir := tempDir(t)
 	exportPath := filepath.Join(dir, "export.db")
@@ -1074,6 +1095,7 @@ func TestExport_NoDatabaseOpen(t *testing.T) {
 // part of the game transcription, not the "played move" annotation on analysis.
 
 func TestExport_MoveTableCheckerMovePresent_EvenWithoutPlayedMoves(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -1099,6 +1121,7 @@ func TestExport_MoveTableCheckerMovePresent_EvenWithoutPlayedMoves(t *testing.T)
 // --- Test: DoublingCubeAnalysis preserved when includePlayedMoves=false ---
 
 func TestExport_CubeAnalysisPreserved_NoPlayedMoves(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 
@@ -1137,6 +1160,7 @@ func TestExport_CubeAnalysisPreserved_NoPlayedMoves(t *testing.T) {
 // search were silently dead on a reopened export.
 
 func TestExportDatabase_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
+	t.Parallel()
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 

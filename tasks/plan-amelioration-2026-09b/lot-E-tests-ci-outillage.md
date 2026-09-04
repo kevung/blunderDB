@@ -45,18 +45,39 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
 0 `t.Parallel()` sur 862 tests ; `database` 54,6 s en série, 419 s sous
 `-race` (chemin critique) ; sharding par première lettre déséquilibré
 (279 s / 419 s) et fragile (renommer un test déplace la charge).
-- [ ] `t.Parallel()` sur les tests indépendants (125 sites `t.TempDir()`
-      déjà) ; corriger d'abord les deux `os.Chdir` vers la racine
-      (`database/main_test.go:20`, `internal/cli/main_test.go:20`) qui
-      interdisent le parallélisme et laissent `a.db`, `c.db`, `toto*.db`,
-      `Quiz*.db-wal`, `*.lock` à la racine → chemin de fixtures absolu via
-      `runtime.Caller`.
-- [ ] Sharder par index (`go test -list` + modulo) ou supprimer le sharding
-      une fois parallélisé.
-- [ ] Les 6 `time.Sleep` sur chemins concurrents (`busy_retry_test.go`,
-      `history_sqlite_test.go`, `db_gammonnet_batch*_test.go`,
-      `parallel_probe_test.go`) → canaux / horloge injectable (motif
-      `middleware.RateLimiter` avec `now func()`).
+- [x] `t.Parallel()` sur 335 des 407 tests de `database` et `cli`. Les 72
+      autres touchent l'état du PROCESSUS (`t.Setenv`, `os.Stdout`) et sont
+      exclus par fermeture transitive sur les helpers — un grep direct les
+      manquait (`isolateIdentity` cache un `t.Setenv`, `captureStdout`
+      remplace `os.Stdout`).
+- [x] Les `os.Chdir` de `TestMain` sont restés : ils s'exécutent une fois
+      avant les tests, pas pendant, et n'empêchent donc rien. Ce qui salissait
+      la racine était `test_real_migration_test.go`, un test de mise au point
+      SANS UNE SEULE ASSERTION (que des `t.Logf`) qui ouvrait `c.db` à la
+      racine — donc le créait. Supprimé. Un `x.db` de `cli_test.go` est passé
+      en `t.TempDir()`. Racine vérifiée propre après une suite complète.
+- [x] Sharding par index : `scripts/go-test-shard.sh <paquet> <i> <n>`, câblé
+      pour `database` (4 tranches) et `internal/cli` (2). Pas de suppression du
+      sharding : **le détecteur de courses est ce qui borne ce job, et il ne se
+      parallélise pas**. Mesuré le 2026-09-04 à 4 GOMAXPROCS (la forme d'un
+      runner) : une MOITIÉ de `database` = 1352 s sous `-race -parallel 4`,
+      pour un budget de 1200 s — d'où quatre tranches (~675 s). Sans `-race`
+      et sur 16 cœurs, le même paquet passe de 159 s à 57 s, et son chemin
+      critique de 112 s à 49 s (sous-tests de `TestStatsParity` parallélisés) :
+      le parallélisme est réel, il n'est simplement pas ce qui borne la CI.
+      `internal/cli` est sorti du shard `app` : ses tests les PLUS LENTS sont
+      justement ceux qui capturent `os.Stdout`, donc sériels — seul le
+      découpage par index répartit ce coût-là.
+- [x] Les deux `time.Sleep(100 ms)` de `db_gammonnet_batch*_test.go` →
+      synchronisation par canal sur l'entrée du yield. Pour le test qui compte
+      les écritures, l'attente reste bornée mais porte sur un ÉTAT et non sur
+      une durée : l'écriture est faite par la goroutine qui draine `results`,
+      pas par le worker, donc le yield seul ne la garantit pas. Les autres
+      (`busy_retry_test.go` 60 ms, `history_sqlite_test.go` 2 ms,
+      `parallel_probe_test.go`) sont laissés : ils mesurent une fenêtre de
+      temps ou fabriquent une contention, ce sont leurs sujets.
+- Reste ouvert, consigné au BACKLOG : le CLI écrit sur `os.Stdout` (765
+  `fmt.Print*`) au lieu d'un `io.Writer`, ce qui borne le gain sur ce paquet.
 
 ## E.4 — Tests qui passent pour de mauvaises raisons [S] — fiabilité (#220)
 

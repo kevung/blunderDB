@@ -106,6 +106,7 @@ func createTournament(t *testing.T, db *Database, name, date string) int64 {
 // TestBuildStatsWhereClause_PlayerName checks that a PlayerName filter produces
 // the correct SQL fragment and argument list.
 func TestBuildStatsWhereClause_PlayerName(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{PlayerName: "Alice", DecisionType: -1}
 	where, args := buildStatsWhereClause(f)
 
@@ -125,6 +126,7 @@ func TestBuildStatsWhereClause_PlayerName(t *testing.T) {
 
 // TestBuildStatsWhereClause_TournamentIDs checks tournament ID IN clause.
 func TestBuildStatsWhereClause_TournamentIDs(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{TournamentIDs: []int64{1, 2, 3}, DecisionType: -1}
 	where, args := buildStatsWhereClause(f)
 
@@ -147,6 +149,7 @@ func TestBuildStatsWhereClause_TournamentIDs(t *testing.T) {
 
 // TestBuildStatsWhereClause_DateRange checks the date range clause.
 func TestBuildStatsWhereClause_DateRange(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{DateFrom: "2025-01-01", DateTo: "2025-12-31", DecisionType: -1}
 	where, args := buildStatsWhereClause(f)
 
@@ -169,6 +172,7 @@ func TestBuildStatsWhereClause_DateRange(t *testing.T) {
 
 // TestBuildStatsWhereClause_DecisionType checks the decision_type filter.
 func TestBuildStatsWhereClause_DecisionType(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{DecisionType: 1}
 	where, args := buildStatsWhereClause(f)
 
@@ -188,6 +192,7 @@ func TestBuildStatsWhereClause_DecisionType(t *testing.T) {
 
 // TestBuildStatsWhereClause_MatchLength checks the match_length IN clause.
 func TestBuildStatsWhereClause_MatchLength(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{MatchLength: []int{7, 11}, DecisionType: -1}
 	where, args := buildStatsWhereClause(f)
 
@@ -210,6 +215,7 @@ func TestBuildStatsWhereClause_MatchLength(t *testing.T) {
 
 // TestBuildStatsWhereClause_Combined checks a fully specified filter.
 func TestBuildStatsWhereClause_Combined(t *testing.T) {
+	t.Parallel()
 	f := StatsFilter{
 		PlayerName:    "Bob",
 		TournamentIDs: []int64{5},
@@ -250,6 +256,7 @@ func TestBuildStatsWhereClause_Combined(t *testing.T) {
 //	Wrong (mean of PRs) = 7.5
 //	Correct (weighted)  = 500 × 1200 / 1000 / 110 ≈ 5.45
 func TestComputeStats_AntiAveragingBias(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tidA := createTournament(t, db, "TournamentA", "2025-01-01")
@@ -288,6 +295,7 @@ func TestComputeStats_AntiAveragingBias(t *testing.T) {
 // TestComputeStats_PlayerFilter verifies that filtering by player correctly
 // joins move.player to find the right player's decisions in both match roles.
 func TestComputeStats_PlayerFilter(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// Match A: Alice is player1 (player=0), 3 decisions
@@ -319,6 +327,7 @@ func TestComputeStats_PlayerFilter(t *testing.T) {
 
 // TestComputeStats_CombinedFilter tests player + tournament + date range.
 func TestComputeStats_CombinedFilter(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid1 := createTournament(t, db, "T1", "2025-03-01")
@@ -358,6 +367,7 @@ func TestComputeStats_CombinedFilter(t *testing.T) {
 // TestComputeStats_TopBlundersOrdered verifies that top blunders are returned
 // in descending error order.
 func TestComputeStats_TopBlundersOrdered(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "X", "Y", "2025-05-01", 7, 0)
@@ -389,6 +399,7 @@ func TestComputeStats_TopBlundersOrdered(t *testing.T) {
 // TestComputeStats_HistogramSumEqualsTotal verifies that the sum of histogram
 // bucket counts equals the total decision count.
 func TestComputeStats_HistogramSumEqualsTotal(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-06-01", 7, 0)
@@ -415,6 +426,7 @@ func TestComputeStats_HistogramSumEqualsTotal(t *testing.T) {
 // TestComputeStats_TournamentPRWeighted cross-checks that per-tournament PR
 // uses direct aggregation, not a mean of per-match PRs.
 func TestComputeStats_TournamentPRWeighted(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "TW", "2025-07-01")
@@ -522,6 +534,7 @@ func insertStatsFixtureRowMWC(t *testing.T, db *Database, matchID, gameID int64,
 // one match-play decision is present, that MWCGlobal > 0, and that the
 // per-tournament and per-match MWC values are populated.
 func TestComputeStats_MWCMatchPlay(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "MWCTournament", "2025-08-01")
@@ -560,6 +573,7 @@ func TestComputeStats_MWCMatchPlay(t *testing.T) {
 // TestComputeStats_MWCMoneyGame verifies that a 100% money-game dataset yields
 // MWCAvailable = false.
 func TestComputeStats_MWCMoneyGame(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// match_length=0 → money game
@@ -582,6 +596,7 @@ func TestComputeStats_MWCMoneyGame(t *testing.T) {
 // TestComputeStats_MWCMixedMatchMoney checks that money-game positions are
 // excluded from MWCGlobal but not from PRGlobal.
 func TestComputeStats_MWCMixedMatchMoney(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// Match-play: 3 decisions; cube_value=0 = exponent for 1-cube (2^0=1).
@@ -638,6 +653,7 @@ func containsStr(s, sub string) bool {
 
 // TestGetAllPlayerNames_EmptyDB verifies an empty database returns an empty slice.
 func TestGetAllPlayerNames_EmptyDB(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	players, err := db.GetAllPlayerNames()
 	if err != nil {
@@ -656,6 +672,7 @@ func TestGetAllPlayerNames_EmptyDB(t *testing.T) {
 //
 // Expected order: Alice and Bob (both 5) alphabetically, then Carol.
 func TestGetAllPlayerNames_CountsAndOrder(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	insertMatchName := func(p1, p2 string) {
@@ -703,6 +720,7 @@ func TestGetAllPlayerNames_CountsAndOrder(t *testing.T) {
 
 // TestGetAllPlayerNames_AlphabeticTiebreak verifies alphabetical order for equal counts.
 func TestGetAllPlayerNames_AlphabeticTiebreak(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	for _, name := range []string{"Zara", "Alice", "Mike"} {

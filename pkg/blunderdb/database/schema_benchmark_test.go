@@ -23,6 +23,7 @@ import (
 //
 //	go test -v -run TestSchemaBenchmark_CrossVersion -timeout 30m
 func TestSchemaBenchmark_CrossVersion(t *testing.T) {
+	t.Parallel()
 	t.Skip("skipping cross-version benchmark: takes 10+ min, run manually when needed")
 	if testing.Short() {
 		t.Skip("skipping cross-version benchmark in short mode")

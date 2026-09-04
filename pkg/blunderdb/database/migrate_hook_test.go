@@ -15,6 +15,7 @@ import (
 )
 
 func TestStorageMigratesLegacyDatabase(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	// Start versions the synthetic createOldDatabase fixture builds faithfully.
 	// "1.0.0" already traverses every step of the chain (1.0→2.8), so the
@@ -63,6 +64,7 @@ func TestStorageMigratesLegacyDatabase(t *testing.T) {
 // TestStorageMigrateCurrentIsNoop confirms migrating an already-current database
 // through the storage path is a safe idempotent no-op.
 func TestStorageMigrateCurrentIsNoop(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "current.db")
 

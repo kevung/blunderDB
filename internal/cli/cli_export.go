@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -287,8 +289,9 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		metadata["database_version"] = version
 	}
 
-	// Export with the specified options
-	err = cli.db.ExportDatabase(ExportOptions{
+	// Export with the specified options. Ctrl-C cancels a large export in
+	// flight instead of waiting it out (B.13, #181).
+	opts := ExportOptions{
 		ExportPath:           outputFile,
 		Positions:            positions,
 		Metadata:             metadata,
@@ -304,7 +307,17 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		Watermark:            marking.watermark,
 		WatermarkNote:        marking.note,
 		Password:             marking.password,
+	}
+	err = withInterruptibleContext(func() {
+		if text {
+			fmt.Println("\nCancelling...")
+		}
+	}, func(ctx context.Context) error {
+		return cli.db.ExportDatabaseCtx(ctx, opts)
 	})
+	if err != nil && errors.Is(err, context.Canceled) {
+		return fmt.Errorf("export cancelled")
+	}
 	if err != nil {
 		return fmt.Errorf("failed to export database: %w", err)
 	}
@@ -364,8 +377,9 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 		return fmt.Errorf("failed to load positions: %w", err)
 	}
 
-	// Export with positions, analysis, comments disabled, but matches enabled
-	err = cli.db.ExportDatabase(ExportOptions{
+	// Export with positions, analysis, comments disabled, but matches enabled.
+	// Ctrl-C cancels it in flight instead of waiting it out (B.13, #181).
+	opts := ExportOptions{
 		ExportPath:         outputFile,
 		Positions:          positions,
 		Metadata:           metadata,
@@ -373,7 +387,17 @@ func (cli *CLI) exportMatchesOnly(outputFile string, marking exportMarking, text
 		IncludeComments:    true,
 		IncludePlayedMoves: true,
 		IncludeMatches:     true,
+	}
+	err = withInterruptibleContext(func() {
+		if text {
+			fmt.Println("\nCancelling...")
+		}
+	}, func(ctx context.Context) error {
+		return cli.db.ExportDatabaseCtx(ctx, opts)
 	})
+	if err != nil && errors.Is(err, context.Canceled) {
+		return fmt.Errorf("export cancelled")
+	}
 	if err != nil {
 		return fmt.Errorf("failed to export matches: %w", err)
 	}

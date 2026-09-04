@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -325,8 +327,25 @@ func (cli *CLI) runSearch(args []string) error {
 	if params.errorMin <= 0 && !params.hasAnalysis {
 		opts = storage.ListOpts{Limit: params.limit, Offset: params.offset}
 	}
-	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(params.filters, opts)
+
+	// Ctrl-C cancels the scan in flight instead of waiting it out (B.13,
+	// #181), the same contract `analyze` already gives a long batch.
+	textOutput := strings.ToLower(params.format) != "json"
+	var positions []Position
+	var analysisMap map[int64]*PositionAnalysis
+	err = withInterruptibleContext(func() {
+		if textOutput {
+			fmt.Println("\nCancelling...")
+		}
+	}, func(ctx context.Context) error {
+		var err error
+		positions, analysisMap, err = cli.db.LoadPositionsByFiltersCoreCtx(ctx, params.filters, opts)
+		return err
+	})
 	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return fmt.Errorf("search cancelled")
+		}
 		return fmt.Errorf("failed to search positions: %w", err)
 	}
 

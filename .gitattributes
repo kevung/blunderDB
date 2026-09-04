@@ -1,0 +1,19 @@
+# Le dépôt est la référence : aucun fichier ne voit ses fins de ligne
+# réécrites au checkout ni au commit.
+#
+# Ce n'est pas une préférence de style. Plusieurs fichiers embarqués par
+# //go:embed sont vérifiés par un SHA-256 codé en dur — met_kazaross_xg2.json
+# (engine/met.go), search_levels.json (gammonnet), les tables .bd, les poids
+# du réseau. Le checksum porte sur les octets du fichier : un checkout Windows
+# avec le core.autocrlf par défaut convertit LF → CRLF, le hash ne tombe plus
+# juste, et le paquet engine panique à son init — donc AVANT que quoi que ce
+# soit puisse rattraper l'erreur. C'est ce qui a cassé le job build Windows
+# (wails build, génération des bindings) le 2026-09-03.
+#
+# `git config core.autocrlf false` dans un job de CI corrige un job à la fois
+# et s'oublie au job suivant ; ce fichier corrige la classe entière, pour la
+# CI comme pour un contributeur qui clone sous Windows.
+* -text
+
+# Aucune exception n'est nécessaire : doc/make.bat, le seul script destiné à
+# cmd.exe, est déjà stocké avec ses CRLF et ressort tel quel.

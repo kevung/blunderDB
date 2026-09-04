@@ -159,56 +159,12 @@ func TestAnkiSyncMissingDeck(t *testing.T) {
 	}
 }
 
-// TestAnkiReviewUpdatesScheduling checks that NextCard, ReviewCard and
-// ResetDeck move a card through its FSRS lifecycle.
-func TestAnkiReviewUpdatesScheduling(t *testing.T) {
-	ctx := context.Background()
-	s := openMem(t)
-
-	deckID, _ := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
-	pos := savePos(t, s, domain.CheckerAction)
-	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{pos}); err != nil {
-		t.Fatalf("SyncWithPositions: %v", err)
-	}
-
-	next, err := s.Anki().NextCard(ctx, "", deckID)
-	if err != nil {
-		t.Fatalf("NextCard: %v", err)
-	}
-	if next.Card.PositionID != pos {
-		t.Errorf("NextCard position: got %d, want %d", next.Card.PositionID, pos)
-	}
-	if next.Card.State != 0 {
-		t.Errorf("NextCard state: got %d, want 0 (new)", next.Card.State)
-	}
-
-	// Reviewing the only card with Easy schedules it into the future, so it
-	// leaves the new state and is no longer due.
-	following, err := s.Anki().ReviewCard(ctx, "", next.Card.ID, 4)
-	if err != nil {
-		t.Fatalf("ReviewCard: %v", err)
-	}
-	if following != nil {
-		t.Errorf("ReviewCard next card: got %+v, want nil", following)
-	}
-
-	stats, _ := s.Anki().DeckStats(ctx, "", deckID)
-	if stats.NewCount != 0 {
-		t.Errorf("NewCount after review: got %d, want 0", stats.NewCount)
-	}
-	if _, err := s.Anki().NextCard(ctx, "", deckID); !errors.Is(err, storage.ErrNotFound) {
-		t.Errorf("NextCard after review: got %v, want ErrNotFound", err)
-	}
-
-	// Resetting the deck returns every card to the new, due state.
-	if err := s.Anki().ResetDeck(ctx, "", deckID); err != nil {
-		t.Fatalf("ResetDeck: %v", err)
-	}
-	stats, _ = s.Anki().DeckStats(ctx, "", deckID)
-	if stats.NewCount != 1 || stats.DueCount != 1 {
-		t.Errorf("DeckStats after reset: %+v", stats)
-	}
-}
+// TestAnkiReviewUpdatesScheduling used to live here, checking that NextCard,
+// ReviewCard and ResetDeck move a card through its FSRS lifecycle — it is now
+// storagetest's testAnkiReviewUpdatesScheduling (contract_anki.go), run
+// against this backend as TestContract_SQLite/Anki/ReviewUpdatesScheduling
+// (B.14, #182): the two were exercising the exact same sequence, so this copy
+// added no coverage the shared one does not already give both backends.
 
 // TestAnkiReviewMissingCard verifies ReviewCard reports ErrNotFound for an
 // unknown card.

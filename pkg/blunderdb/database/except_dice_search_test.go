@@ -10,6 +10,7 @@ import (
 // others survive. Data-driven against the imported XG fixture so it doesn't hard
 // code the fixture's roll distribution.
 func TestSearch_ExceptDice(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 
 	all, err := db.LoadPositionsByFilters(SearchFilters{Filter: Position{}})
