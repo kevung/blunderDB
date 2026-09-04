@@ -124,17 +124,17 @@
     <!-- Tab Content -->
     <div class="tab-content" bind:this={contentArea}>
         {#if activeTab === 'manual'}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.manual}
         {/if}
 
         {#if activeTab === 'shortcuts'}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.shortcuts}
         {/if}
 
         {#if activeTab === 'commands'}
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -- static help corpus (src/i18n/help/*.js), no runtime interpolation -->
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.commands}
         {/if}
 
@@ -186,7 +186,9 @@
 
     /* Help tab content is injected via {@html}, so Svelte's scoped-CSS hash is
        not applied to those elements. Use :global() nested under .tab-content so
-       the styling targets the injected HTML without leaking to the rest of the app. */
+       the styling targets the injected HTML without leaking to the rest of the app.
+       The vocabulary below is the whole of what cmd/help-gen emits (h3, p, ul/li,
+       table, code, div.admonition) plus what the hand-written prose fragments use. */
     .tab-content :global(p),
     .tab-content :global(ul),
     .tab-content :global(h2),
@@ -215,5 +217,34 @@
 
     .tab-content :global(tr:hover) {
         background-color: #f1f1f1;
+    }
+
+    /* A .. note:: / .. warning:: / .. tip:: carried over from the documentation. */
+    .tab-content :global(.admonition) {
+        margin: 0 20px 20px 20px;
+        padding: var(--space-2) var(--space-3);
+        border-left: 3px solid var(--color-border);
+        background-color: var(--color-surface-alt);
+        border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .tab-content :global(.admonition.warning) {
+        border-left-color: var(--color-danger);
+    }
+
+    .tab-content :global(.admonition p) {
+        margin: 0 0 var(--space-2) 0;
+    }
+
+    .tab-content :global(.admonition p:last-child) {
+        margin-bottom: 0;
+    }
+
+    /* ``literal`` from the .rst sources: command names, filter tokens, keys. */
+    .tab-content :global(code) {
+        font-family: var(--font-family-mono);
+        background-color: var(--color-surface-alt);
+        padding: 0 3px;
+        border-radius: var(--radius);
     }
 </style>

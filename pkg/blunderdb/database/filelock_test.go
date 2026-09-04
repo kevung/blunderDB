@@ -11,6 +11,7 @@ import (
 // again. Two in-process *Database values stand in for two app instances — flock
 // treats their separate lock-file descriptors as distinct holders.
 func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "shared.db")
 
 	d1 := NewDatabase()
@@ -68,6 +69,7 @@ func TestFileLock_SecondInstanceReadOnly(t *testing.T) {
 // TestFileLock_MemorySkipsLock ensures in-memory databases (tests) are never
 // locked or forced read-only.
 func TestFileLock_MemorySkipsLock(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase(:memory:): %v", err)
@@ -106,6 +108,7 @@ func assertLockFree(t *testing.T, path string) {
 // "unable to open database file". Both the lock and the handle must be
 // rolled back so the wrapper is usable again.
 func TestSetupDatabase_MidSetupFailureReleasesLock(t *testing.T) {
+	t.Parallel()
 	badPath := t.TempDir() // a directory, not a file: every Exec on it fails
 
 	d := NewDatabase()
@@ -132,6 +135,7 @@ func TestSetupDatabase_MidSetupFailureReleasesLock(t *testing.T) {
 // TestSetupDatabase_MidSetupFailureReleasesLock: applyPragmas fails on a
 // directory path, after the write lock was already taken.
 func TestOpenDatabase_MidOpenFailureReleasesLock(t *testing.T) {
+	t.Parallel()
 	badPath := t.TempDir()
 
 	d := NewDatabase()

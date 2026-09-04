@@ -64,6 +64,7 @@ func TestCLI_Vacuum_ReclaimsSpace(t *testing.T) {
 // TestCLI_Vacuum_MissingDBFlag guards the required-flag validation shared
 // with the other commands.
 func TestCLI_Vacuum_MissingDBFlag(t *testing.T) {
+	t.Parallel()
 	cli := setupCLI(t)
 	err := cli.Run([]string{"vacuum"})
 	if err == nil {

@@ -304,6 +304,7 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 // ── Main test ─────────────────────────────────────────────────────────────────
 
 func TestStatsParity(t *testing.T) {
+	t.Parallel()
 	fixtures := []string{
 		"testdata/stats_reference/aachen-double-7pt.json",
 		"testdata/stats_reference/test.json",
@@ -325,6 +326,11 @@ func TestStatsParity(t *testing.T) {
 
 	for _, jsonPath := range fixtures {
 		t.Run(filepath.Base(jsonPath), func(t *testing.T) {
+			// Une fixture par sous-test, chacune sa base : rien à partager, et
+			// c'est ce test qui fixait le chemin critique du paquet (112 s sur
+			// 157 s ; le parallélisme d'un paquet ne descend jamais sous son
+			// test le plus long — E.3, #219).
+			t.Parallel()
 			ref := loadRefMatch(t, jsonPath)
 
 			// ── XG import ─────────────────────────────────────────────────

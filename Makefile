@@ -1,5 +1,5 @@
 .PHONY: dev build check check-fast check-all test lint vet gofmt golangci vuln \
-        test-go test-pg test-e2e test-frontend lint-frontend release-check screenshots
+        test-go test-pg test-e2e test-frontend lint-frontend release-check screenshots help
 
 # VERSION feeds `blunderdb version`'s app-version line (internal/cli.appVersion,
 # see internal/cli/version.go). It tracks the nearest git tag, same as CI
@@ -101,6 +101,16 @@ test-e2e:
 # port if 5173 is already in use.
 screenshots:
 	cd frontend && SCREENSHOT=1 npx playwright test screenshot
+
+# help regenerates the in-app help bundles (frontend/src/i18n/help/*.js) from
+# the documentation they duplicate — doc/source/raccourcis.rst, cmd_mode.rst and
+# the eight gettext catalogues — plus the hand-written prose fragments under
+# frontend/src/i18n/help/prose/. Writes tracked files: not part of check, but
+# TestHelpBundlesAreCurrent (go test ./cmd/help-gen) fails when they are stale,
+# so a documentation change that forgets this target stops the build.
+help:
+	go run ./cmd/help-gen
+	cd frontend && npx prettier --write src/i18n/help/
 
 golangci: frontend/dist
 	golangci-lint run ./...

@@ -6,6 +6,7 @@ import (
 )
 
 func TestCheckErrorColumns(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	if _, err := db.ImportGnuBGMatch("testdata/test.sgf"); err != nil {
 		t.Fatal("import:", err)

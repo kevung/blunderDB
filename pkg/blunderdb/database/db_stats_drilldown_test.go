@@ -37,6 +37,7 @@ func insertCubeFixtureRow(t *testing.T, db *Database, matchID, gameID int64,
 // ── buildSelectionWhereClause unit tests ─────────────────────────────────────
 
 func TestBuildSelectionWhereClause_All(t *testing.T) {
+	t.Parallel()
 	whereAdd, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "all"})
 	if whereAdd != "" {
 		t.Errorf("expected empty whereAdd for 'all', got %q", whereAdd)
@@ -50,6 +51,7 @@ func TestBuildSelectionWhereClause_All(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_Checker(t *testing.T) {
+	t.Parallel()
 	whereAdd, _, args := buildSelectionWhereClause(SelectionSpec{Kind: "checker"})
 	if !containsStr(whereAdd, "decision_type = 0") {
 		t.Errorf("missing decision_type=0 in whereAdd: %q", whereAdd)
@@ -60,6 +62,7 @@ func TestBuildSelectionWhereClause_Checker(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_CheckerOnlyWithError(t *testing.T) {
+	t.Parallel()
 	whereAdd, _, _ := buildSelectionWhereClause(SelectionSpec{Kind: "checker", OnlyWithError: true})
 	if !containsStr(whereAdd, "decision_type = 0") {
 		t.Errorf("missing decision_type=0: %q", whereAdd)
@@ -70,6 +73,7 @@ func TestBuildSelectionWhereClause_CheckerOnlyWithError(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_CubeAction(t *testing.T) {
+	t.Parallel()
 	whereAdd, _, args := buildSelectionWhereClause(SelectionSpec{Kind: "cube_action", CubeAction: "DoubleTake"})
 	if !containsStr(whereAdd, "best_cube_action = ?") {
 		t.Errorf("missing best_cube_action=? in whereAdd: %q", whereAdd)
@@ -80,6 +84,7 @@ func TestBuildSelectionWhereClause_CubeAction(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_ErrorBucket(t *testing.T) {
+	t.Parallel()
 	whereAdd, _, args := buildSelectionWhereClause(SelectionSpec{Kind: "error_bucket", BucketMinMP: 50, BucketMaxMP: 100})
 	if !containsStr(whereAdd, ">= ?") {
 		t.Errorf("missing >= ? in whereAdd: %q", whereAdd)
@@ -93,6 +98,7 @@ func TestBuildSelectionWhereClause_ErrorBucket(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_ErrorBucketUnbounded(t *testing.T) {
+	t.Parallel()
 	whereAdd, _, args := buildSelectionWhereClause(SelectionSpec{Kind: "error_bucket", BucketMinMP: 100, BucketMaxMP: -1})
 	if !containsStr(whereAdd, ">= ?") {
 		t.Errorf("missing >= ? in whereAdd: %q", whereAdd)
@@ -106,6 +112,7 @@ func TestBuildSelectionWhereClause_ErrorBucketUnbounded(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_LastN(t *testing.T) {
+	t.Parallel()
 	whereAdd, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "last_n", LastN: 50})
 	if whereAdd != "" {
 		t.Errorf("expected empty whereAdd for last_n, got %q", whereAdd)
@@ -119,6 +126,7 @@ func TestBuildSelectionWhereClause_LastN(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_TopBlunders(t *testing.T) {
+	t.Parallel()
 	// Default (LastN unset) keeps the historical limit of 10.
 	whereAdd, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "top_blunders"})
 	if whereAdd != "" {
@@ -133,6 +141,7 @@ func TestBuildSelectionWhereClause_TopBlunders(t *testing.T) {
 }
 
 func TestBuildSelectionWhereClause_TopBlundersLastN(t *testing.T) {
+	t.Parallel()
 	// LastN overrides the limit so `bl 50` can review the 50 worst decisions.
 	_, orderLimit, args := buildSelectionWhereClause(SelectionSpec{Kind: "top_blunders", LastN: 50})
 	if !containsStr(orderLimit, "LIMIT ?") {
@@ -149,6 +158,7 @@ func TestBuildSelectionWhereClause_TopBlundersLastN(t *testing.T) {
 // GetPositionIDsByStatsSelection with Kind="cube_action" matches the
 // NumDecisions in the CubeActionBreakdown from ComputeStats.
 func TestDrilldown_InvariantCubeAction(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-01-01", 7, 0)
@@ -193,6 +203,7 @@ func TestDrilldown_InvariantCubeAction(t *testing.T) {
 // TestDrilldown_InvariantErrorBucket verifies that the count from drilldown
 // matches ErrorBucket.Count for each bucket.
 func TestDrilldown_InvariantErrorBucket(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-02-01", 7, 0)
@@ -233,6 +244,7 @@ func TestDrilldown_InvariantErrorBucket(t *testing.T) {
 // TestDrilldown_InvariantChecker verifies that Kind="checker" returns exactly
 // the checker-play positions in the fixture.
 func TestDrilldown_InvariantChecker(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-03-01", 7, 0)
@@ -259,6 +271,7 @@ func TestDrilldown_InvariantChecker(t *testing.T) {
 // TestDrilldown_OnlyWithError verifies that OnlyWithError=true filters out
 // positions with zero error, returning only genuine blunders.
 func TestDrilldown_OnlyWithError(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-04-01", 7, 0)
@@ -296,6 +309,7 @@ func TestDrilldown_OnlyWithError(t *testing.T) {
 // TestDrilldown_TournamentShortcut verifies that GetPositionIDsByTournament
 // ignores any player/date filter that would otherwise exclude all positions.
 func TestDrilldown_TournamentShortcut(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tid := createTournament(t, db, "Open2025", "2025-05-01")
@@ -339,6 +353,7 @@ func TestDrilldown_TournamentShortcut(t *testing.T) {
 // TestDrilldown_MatchShortcut verifies that GetPositionIDsByMatch ignores any
 // filter that would otherwise exclude all positions.
 func TestDrilldown_MatchShortcut(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "Alice", "Bob", "2025-06-01", 7, 0)
@@ -371,6 +386,7 @@ func TestDrilldown_MatchShortcut(t *testing.T) {
 // 10 IDs and that their order is consistent with result.TopBlunders from
 // ComputeStats.
 func TestDrilldown_TopBlunders(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-07-01", 7, 0)
@@ -416,6 +432,7 @@ func TestDrilldown_TopBlunders(t *testing.T) {
 
 // TestDrilldown_LastN verifies that Kind="last_n" returns at most N IDs.
 func TestDrilldown_LastN(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-08-01", 7, 0)
@@ -440,6 +457,7 @@ func TestDrilldown_LastN(t *testing.T) {
 // TestDrilldown_Position verifies that Kind="position" returns exactly the
 // targeted position ID.
 func TestDrilldown_Position(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	m := createMatch(t, db, "A", "B", "2025-09-01", 7, 0)

@@ -19,6 +19,7 @@ import (
 //
 // Fix: ConfigurePool pins ":memory:" to a single connection (db.go).
 func TestInMemoryConcurrentReadsShareSchema(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase(:memory:): %v", err)

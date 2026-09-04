@@ -10,6 +10,7 @@ import (
 // TestCompareTXTvsXGPositions compares positions imported from TXT and XG formats
 // to verify that MAT/TXT player-relative moves produce correct absolute positions.
 func TestCompareTXTvsXGPositions(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	txtFile := filepath.Join("testdata", "test.txt")
 
@@ -162,6 +163,7 @@ func TestCompareTXTvsXGPositions(t *testing.T) {
 // TestCompareMATvsXGPositions compares positions imported from MAT and XG formats
 // to verify that MAT numeric bar (25) and bearoff (0) conventions are handled correctly.
 func TestCompareMATvsXGPositions(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	matFile := filepath.Join("testdata", "test.mat")
 
@@ -301,6 +303,7 @@ func TestCompareMATvsXGPositions(t *testing.T) {
 // TestImportMatchFromText simulates clipboard import by importing both MAT and TXT
 // content as strings and validating checker counts are correct (15 per player).
 func TestImportMatchFromText(t *testing.T) {
+	t.Parallel()
 	matFile := filepath.Join("testdata", "test.mat")
 	txtFile := filepath.Join("testdata", "test.txt")
 

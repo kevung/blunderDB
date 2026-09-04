@@ -10,6 +10,7 @@ import (
 // TestStatsReferenceJSON verifies that all JSON files in testdata/stats_reference/
 // are valid and parseable, and that each file's sanity checks pass.
 func TestStatsReferenceJSON(t *testing.T) {
+	t.Parallel()
 	files, err := filepath.Glob("testdata/stats_reference/*.json")
 	if err != nil {
 		t.Fatalf("glob: %v", err)

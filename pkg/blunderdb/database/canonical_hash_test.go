@@ -13,6 +13,7 @@ import (
 // TestCanonicalHashCrossFormat verifies that the same match imported from
 // different file formats (XG, SGF, MAT) produces identical canonical hashes.
 func TestCanonicalHashCrossFormat(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 	matFile := filepath.Join("testdata", "test.mat")
@@ -82,6 +83,7 @@ func TestCanonicalHashCrossFormat(t *testing.T) {
 
 // TestCanonicalHashCrossFormat_BGF tests BGF canonical hash against other formats
 func TestCanonicalHashCrossFormat_BGF(t *testing.T) {
+	t.Parallel()
 	bgfFile := filepath.Join("testdata", "TachiAI_V_player_Nov_2__2025__16_55.bgf")
 
 	if _, err := os.Stat(bgfFile); err != nil {
@@ -101,6 +103,7 @@ func TestCanonicalHashCrossFormat_BGF(t *testing.T) {
 // TestCanonicalHashDuplicateImport tests that importing the same match from
 // different formats results in a single match row in the database.
 func TestCanonicalHashDuplicateImport(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
@@ -153,6 +156,7 @@ func TestCanonicalHashDuplicateImport(t *testing.T) {
 
 // TestCanonicalHashTripleImport tests XG + SGF + MAT import produces one match row
 func TestCanonicalHashTripleImport(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 	matFile := filepath.Join("testdata", "test.mat")

@@ -1,0 +1,258 @@
+<!-- tab: manual -->
+<h3>Johdanto</h3>
+<p>
+    blunderDB on ohjelmisto backgammon-asematietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka, johon koota asemat, joita pelaaja on kohdannut (verkossa, turnauksissa), ja
+    mahdollistaa näiden asemien uudelleentutkiminen suodattamalla niitä erilaisilla mielivaltaisesti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luettelojen luomiseen.
+</p>
+<p>Asemat tallennetaan tietokantaan, jota edustaa .db-tiedosto.</p>
+
+<h3>Päätoiminnot</h3>
+<p>blunderDB:n tärkeimmät mahdolliset toiminnot ovat:</p>
+<ul>
+    <li>uuden aseman lisääminen,</li>
+    <li>olemassa olevan aseman muokkaaminen,</li>
+    <li>laudan kopioiminen PNG-kuvana leikepöydälle (<strong>Ctrl+X</strong>) tai laudan ja sen analyysin kopioiminen (<strong>Ctrl+X, Ctrl+X</strong>),</li>
+    <li>olemassa olevan aseman poistaminen,</li>
+    <li>yhden tai useamman aseman hakeminen,</li>
+    <li>ottelujen tuominen eri lähteistä (XG, GNUbg, BGBlitz, Jellyfish), mukaan lukien kommentit XG-tiedostoista,</li>
+    <li>tuodun ottelun siirtojen selaaminen,</li>
+    <li>asemien järjestäminen kokoelmiin,</li>
+    <li>ottelujen järjestäminen turnauksiin,</li>
+    <li>erän analysointi komentoriviltä analyysittä olevista asemista sisäänrakennetun gammonNet-arvioijan avulla (blunderDB:n komento <strong>analyze</strong>).</li>
+</ul>
+<p>Käyttäjä voi vapaasti merkitä asemia tunnisteilla ja varustaa ne kommenteilla.</p>
+
+<h3>Käyttöliittymän kuvaus</h3>
+<p>blunderDB:n käyttöliittymä on rakenteeltaan ylhäältä alas seuraava:</p>
+<ul>
+    <li>[ylhäällä] työkalupalkki, joka kokoaa kaikki tietokantaan kohdistuvat päätoiminnot,</li>
+    <li>[keskellä] päänäyttöalue, jolla voi näyttää tai muokata backgammon-asemia,</li>
+    <li>[alhaalla] tilapalkki, joka sisältää komentorivin ja esittää erilaista tietoa nykyisestä asemasta.</li>
+</ul>
+<p>Voit avata paneeleja, jotka:</p>
+<ul>
+    <li>näyttävät nykyiseen asemaan liittyvät analyysitiedot (XG:stä, GNUbg:stä tai BGBlitzistä),</li>
+    <li>näyttävät, lisäävät tai muokkaavat kommentteja,</li>
+    <li>selaavat tuotuja otteluja ja navigoivat niiden siirtojen läpi (Ottelu-paneeli),</li>
+    <li>hallitsevat asemakokoelmia (Kokoelma-paneeli),</li>
+    <li>tutkivat asemia välitoistolla (Anki-paneeli),</li>
+    <li>hallitsevat turnauksia (Turnaus-paneeli),</li>
+    <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
+    <li>laskevat EPC-arvoja bearoff-asemille (Eval-paneeli),</li>
+    <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
+    <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
+</ul>
+<p>Päänäyttöalue tarjoaa käyttäjälle:</p>
+<ul>
+    <li>laudan backgammon-aseman näyttämiseen tai muokkaamiseen,</li>
+    <li>kuution tason ja omistajan,</li>
+    <li>kummankin pelaajan pip-luvun,</li>
+    <li>kummankin pelaajan pistetilanteen,</li>
+    <li>pelattavat nopat. Jos nopissa ei näy arvoa, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös.</li>
+</ul>
+<p>Tilapalkki näyttää vasemmalta oikealle:</p>
+<ul>
+    <li>komentorivin (avaa painamalla <strong>välilyönti</strong>),</li>
+    <li>viimeiseen suoritettuun toimintoon liittyvän ilmoituksen,</li>
+    <li>nykyisen aseman indeksin, jota seuraa asemien kokonaismäärä (tai siirto-/pelitiedot otteluja selattaessa).</li>
+</ul>
+<p>Käyttäjän hausta tulleiden asemien tapauksessa tilapalkissa ilmoitettu asemien määrä vastaa suodatettujen asemien määrää.</p>
+
+<h3>Asemien selaaminen</h3>
+<p>Oletuksena blunderDB mahdollistaa:</p>
+<ul>
+    <li>nykyisen kirjaston eri asemien selaamisen,</li>
+    <li>asemaan liittyvien analyysitietojen näyttämisen,</li>
+    <li>asemaa koskevien kommenttien näyttämisen, lisäämisen ja muokkaamisen.</li>
+</ul>
+
+<h3>Asemien muokkaaminen</h3>
+<p>
+    <strong>Tab</strong>-näppäimen painaminen avaa hakupaneelin ja mahdollistaa aseman muokkaamisen laudalla sen lisäämiseksi tietokantaan tai haettavan asemarakenteen määrittämiseksi. Nappuloiden
+    jakauman, kuution, pistetilanteen ja vuoron voi muokata hiirellä.
+</p>
+
+<h3>Komentorivi</h3>
+<p>
+    Tilapalkkiin sisältyvä komentorivi mahdollistaa kaikkien blunderDB:n toimintojen suorittamisen: tietokantatoiminnot, asemanavigoinnin, analyysin ja kommenttien näyttämisen, asemien hakemisen
+    suodattimilla... Käyttöliittymään tutustumisen jälkeen on suositeltavaa siirtyä vähitellen käyttämään komentoriviä, joka mahdollistaa tehokkaan ja sujuvan blunderDB:n käytön, erityisesti
+    asemahakutoiminnoissa.
+</p>
+<p>
+    Avaa komentorivi painamalla <strong>välilyönti</strong>-näppäintä. Tilapalkkiin ilmestyy kehote. Kirjoita komentosi ja suorita se painamalla <strong>Enter</strong>. Peruuta painamalla
+    <strong>Escape</strong>.
+</p>
+<p>
+    blunderDB suorittaa käyttäjän lähettämät kyselyt edellyttäen, että ne ovat kelvollisia, ja muuttaa tarvittaessa välittömästi tietokannan tilaa. Käyttäjältä ei vaadita erillisiä
+    tallennustoimintoja.
+</p>
+<p>
+    Tarkentaaksesi hakua aiemmin suodatettujen asemien sisällä käytä <strong>ss</strong>-komentoa, jota seuraavat suodattimet (esim. <strong>ss nc</strong>). Tämä rajaa haun vain parhaillaan
+    näytettäviin asemiin, mikä mahdollistaa tulosten asteittaisen kaventamisen. Hakupaneeli (<strong>Ctrl+F</strong>) tarjoaa myös "Hae nykyisistä tuloksista" -valintaruudun samaa toiminnallisuutta
+    varten.
+</p>
+
+<h3>EPC-laskin</h3>
+<p>EPC-laskin (Effective Pip Count) laskee bearoff-asemien efektiivisen pip-luvun. Se käyttää GNUbg:n yksipuolista 6-pisteen bearoff-tietokantaa tarkkoihin EPC-arvoihin.</p>
+<p>
+    Avaa Eval-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Eval-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
+    bearoff-asetelmalla (15 nappulaa).
+</p>
+<p>Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä Eval-paneelissa, ja niistä näkyy kummankin pelaajan osalta:</p>
+<ul>
+    <li><strong>EPC</strong>: keskimääräinen pip-määrä, joka tarvitaan kaikkien nappuloiden poistamiseen,</li>
+    <li><strong>Pip-luku</strong>: raaka pip-luku,</li>
+    <li><strong>Wastage</strong>: EPC:n ja pip-luvun erotus,</li>
+    <li><strong>Heittojen ka.</strong>: keskimääräinen heittojen määrä nappuloiden poistamiseen,</li>
+    <li><strong>Keskihajonta</strong>: heittojen määrän keskihajonta.</li>
+</ul>
+<p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
+<p>Sulje Eval-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
+<p>
+    Puhtaassa kotiutusasemassa kilpajuoksutaulukko näyttää lisäksi molempien pelaajien voittotodennäköisyydet ja, kun asema on two-sided-tietokannan kattama (sisäänrakennettu 6 nappulaan asti pelaajaa
+    kohden, laajennettu tietokanta ladattavissa 11 nappulaan asti asetusten Bearoff-välilehdeltä), tarkat money-ekviteetit — kunkin ei-optimaalisen päätöksen alla ero parhaaseen — sekä parhaan
+    kuutiopäätöksen. Tämän alueen ulkopuolella voittotodennäköisyys arvioidaan («arvioitu»-merkki virhemarginaaleineen) eikä päätöstä näytetä. Vuorossa olevaa pelaajaa vaihdetaan napsauttamalla
+    pelaajan kotiutus-/pistesuorakulmiota, kuution sijaintia napsauttamalla kuutiota.
+</p>
+<p>
+    <strong>Haaste</strong>-valinta piilottaa tulokset jokaisen muokkauksen jälkeen; paljasta vyöhyke napsauttamalla — erinomainen tapa harjoitella EPC:n ja kuutiopäätöksen arviointia ennen
+    tarkistusta.
+</p>
+
+<h3>Ottelunavigointi</h3>
+<p>
+    blunderDB mahdollistaa tuotujen ottelujen siirtojen selaamisen. Avaa Ottelu-paneeli painamalla <strong>Ctrl+Tab</strong> ja kaksoisnapsauta ottelua (tai paina <strong>Enter</strong>) ladataksesi
+    sen asemat.
+</p>
+<p>
+    Ottelua selattaessa viimeksi vierailtu asema tallennetaan ja palautetaan automaattisesti. Käytä <strong>vasen</strong>/<strong>oikea</strong>-näppäimiä asemien välillä liikkumiseen ja
+    <strong>PageUp</strong>/<strong>PageDown</strong> pelien välillä hyppäämiseen.
+</p>
+<p>Analyysipaneeli (<strong>Ctrl+L</strong>) näyttää kunkin siirron analyysin, jossa pelattu siirto on korostettu. Paina <strong>d</strong> vaihtaaksesi nappula- ja kuutioanalyysin välillä.</p>
+
+<h3>Kokoelmat</h3>
+<p>
+    Kokoelmat mahdollistavat asemien järjestämisen mukautettuihin ryhmiin. Avaa Kokoelma-paneeli painamalla <strong>Ctrl+B</strong> ja kaksoisnapsauta sitten kokoelmaa selataksesi sen asemia.
+    Kokoelmat ja niiden sisältämät asemat voi järjestää uudelleen vetämällä ja pudottamalla.
+</p>
+
+<h3>Anki (välitoisto)</h3>
+<p>Anki-paneeli (<strong>Ctrl+K</strong>) tarjoaa välitoiston backgammon-asemien tutkimiseen FSRS-algoritmilla.</p>
+<p>
+    <strong>Pakkojen luominen:</strong> Napsauta <em>Uusi pakka</em> luodaksesi pakan kokoelmasta tai nykyisistä hakutuloksista. Hakuun perustuvat pakat synkronoituvat automaattisesti, kun Anki-
+    välilehti aktivoidaan.
+</p>
+<p>
+    <strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Opiskele</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman
+    laudalla. Arvioi muistisi näppäimillä <strong>1</strong> (Uudelleen), <strong>2</strong> (Vaikea), <strong>3</strong> (Hyvä) tai <strong>4</strong> (Helppo). Paina
+    <strong>Esc</strong> lopettaaksesi ja palataksesi pakkalistaan.
+</p>
+<p>
+    <strong>Istunnon rajoittaminen:</strong> Pakan asetuksissa voit rajata istunnon korttimäärään. Istunto päättyy silloin ilmoittaen syyn, ja vapaa harjoittelu on yhä käytettävissä ilman vaikutusta
+    aikatauluun. Raja <em>0</em> ei tarjoa yhtään korttia — se ei ole sama asia kuin rajaton.
+</p>
+<p>
+    <strong>Muistiinjäänti:</strong> Tavoitetaso on sinun valintasi työmäärän ja laadun välillä. Asetukset näyttävät sen vieressä omista kertauksistasi <em>mitatun</em> tason — tieto, ei ohjaus.
+    Tavoitteen muutos ei ole takautuva: kukin kortti omaksuu uuden rytmin seuraavassa kertauksessaan.
+</p>
+<p>
+    <strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen; mieti se ensin ja paina sitten <strong>välilyöntiä</strong> (tai napsauta peitettyä aluetta) paljastaaksesi aseman tallennetun
+    analyysin. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät ulottuvilla. Vastausta ei tarvitse paljastaa arvioidakseen, ja se peittyy taas seuraavan kortin kohdalla — ei kuitenkaan pelkästä
+    välilehden vaihdosta.
+</p>
+<p>
+    <strong>Pysäytä/jatka:</strong> Voit pysäyttää kertausistunnon milloin tahansa painamalla <strong>Esc</strong>. Painike muuttuu muotoon <em>Jatka</em> ja näyttää edistymisesi. Napsauta sitä
+    jatkaaksesi siitä, mihin jäit.
+</p>
+<p>
+    <strong>Pakkojen hallinta:</strong> Käytä toimintopainikkeita pakkojen nimeämiseen uudelleen, synkronointiin, nollaamiseen tai poistamiseen. FSRS-parametrit (muistitavoite, maksimiväli, fuzz)
+    voidaan määrittää pakkakohtaisesti Asetuksissa (ratas-kuvake).
+</p>
+
+<h3>Turnaukset</h3>
+<p>Turnaukset mahdollistavat ottelujen ryhmittelyn tapahtuman mukaan. Avaa Turnaus-paneeli painamalla <strong>Ctrl+Y</strong> hallitaksesi turnauksia ja liittääksesi otteluita niihin.</p>
+
+<h3>Tilastot</h3>
+<p>
+    Tilasto-paneeli (<strong>Ctrl+D</strong>) näyttää suoritustilastot (PR ja MWC-kustannus), jotka lasketaan kaikista tuoduista asemista. Käytä suodatinpalkkia rajataksesi analyysiä pelaajan,
+    turnauksen, päivämääräalueen, päätöstyypin tai ottelun pituuden mukaan. Napsauta mitä tahansa mittaria porautuaksesi vastaaviin asemiin. <strong>Pelaajat</strong>-välilehti listaa
+    pelaajakohtaisesti otteluiden määrän, tuloksen, päätökset, PR:n (nappulat ja tuplauskuutio), Snowien, blundersit ja tunnettujen heittojen perusteella mitatun tuurin.
+</p>
+
+<h3>Vesileima ja suojattu vienti</h3>
+<p>Viennin yhteydessä (<strong>export_db</strong> tai Vie-valintaikkuna) voi vapaasti ottaa käyttöön kaksi toisistaan riippumatonta suojausta, jommankumman tai molemmat yhdessä:</p>
+<ul>
+    <li>
+        <strong>Vesileima:</strong> merkitsee vietyyn tiedostoon sen alkuperän (kuka sen tuotti, valinnainen huomautus). Vesileima on allekirjoitettu merkitsijän identiteetilläsi: sitä ei voi muuttaa
+        eikä väärentää jonkun toisen nimissä — mutta se ei ole poistamaton eikä estä yhtäkään kopiota.
+    </li>
+    <li>
+        <strong>Salasana:</strong> asettaa viennin salattuun <strong>.dbx</strong>-säiliöön. Se suojaa tiedoston siirron ajaksi, ei itse tietokantaa — se, jolle annat salasanan, voi avata sen — ja
+        alkuperä näkyy ilman salasanaakin.
+    </li>
+</ul>
+<p>
+    Merkitsijän identiteettisi, avain joka allekirjoittaa vesileimasi, luodaan automaattisesti ensimmäisen kerran, kun vienti merkitään alkuperällään. Tarkastele, vie tai luo se uudelleen asetusten
+    välilehdeltä <strong>Merkitsijän identiteetti</strong>.
+</p>
+
+<!-- tab: about -->
+<h3>Versio</h3>
+<p>Sovelluksen versio: {appVersion}</p>
+<p>Tietokannan versio: {dbVersion}</p>
+
+<h3>Tekijä</h3>
+<p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
+<p>Minut löytää myös Heroesista nimimerkillä <strong>postmanpat</strong>.</p>
+<p>
+    Kehitin blunderDB:n alun perin omaan käyttööni havaitakseni kaavoja virheissäni. Mutta on erittäin mukavaa saada palautetta, etenkin kun suunnitteluun, koodaamiseen ja virheenkorjaukseen on
+    käytetty paljon tunteja... Joten kirjoita minulle vapaasti jakaaksesi palautteesi.
+</p>
+<p>Tässä useita tapoja ottaa yhteyttä:</p>
+<ul>
+    <li>Liity blunderDB:n Discord-palvelimelle: <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
+    <li>Keskustele kanssani, jos tapaamme turnauksessa,</li>
+    <li>Lähetä minulle sähköpostia,</li>
+</ul>
+<h3>Lisenssi</h3>
+<p>
+    blunderDB on lisensoitu MIT-lisenssillä. Tämä tarkoittaa, että voit vapaasti käyttää, kopioida, muokata, yhdistää, julkaista, jakaa, alilisensoida ja/tai myydä ohjelmiston kopioita edellyttäen,
+    että alkuperäinen tekijänoikeusilmoitus ja tämä lupailmoitus sisällytetään kaikkiin kopioihin tai ohjelmiston olennaisiin osiin.
+</p>
+<h3>Kiitokset</h3>
+<p>Omistan tämän pienen ohjelmiston kumppanilleni <strong>Anne-Clairelle</strong> ja rakkaalle tyttärellemme <strong>Perrinelle</strong>. Haluan kiittää erityisesti muutamia ystäviä:</p>
+<ul>
+    <li>
+        <strong>Tristan Remille</strong>, joka esitteli minulle backgammonin ilolla ja ystävällisyydellä; joka näytti Tien tämän upean pelin ymmärtämiseen; joka jatkaa tukemistani huolimatta huonoista
+        yrityksistäni pelata paremmin.
+    </li>
+    <li><strong>Nicolas Harmand</strong>, iloinen seuralainen yli vuosikymmenen ajan suurissa seikkailuissa ja loistava pelikumppani siitä lähtien, kun hän sai backgammon-kärpäsen.</li>
+</ul>
+<h3>Kiitokset kolmansille osapuolille</h3>
+<p>blunderDB sisältää muiden ihmisten koodia, dataa ja fontteja. Olennaisin:</p>
+<ul>
+    <li>
+        Neuroverkko <strong>strehl-prob5-512-512-256-128</strong> on <strong>Alexander Strehlin</strong> työtä (<em>alexstrehl/backgammon-ai-engine</em>, MIT). Haku, tuplausmalli ja
+        otteluekvivalenssitaulukko sen ympärillä ovat <strong>gammonNet</strong>-projektin omaa kokoonpanoa (<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer"
+            >github.com/kevung/gammonNet</a
+        >, MIT).
+    </li>
+    <li>Kazaross-XG2-otteluekvivalenssitaulukko (MET) on <strong>Neil Kazarossin</strong> työtä.</li>
+    <li>Take point- ja gammon-arvotaulukot on otettu <strong>Dirk Schiemannin</strong> kirjasta <em>The Theory of Backgammon</em>.</li>
+    <li>
+        Yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta on luotu
+        <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on GPL-lisensoitu vapaa ohjelmisto; nämä taulukot ovat sen tuottamaa dataa ja ne mainitaan sellaisina.
+    </li>
+    <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em> ja <em>gnubgparser</em> (LGPL-2.1) sekä <em>bgfparser</em> (MIT).</li>
+    <li>Go-puolella: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> ja <em>go-fsrs</em> (MIT).</li>
+    <li>Käyttöliittymän puolella: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> ja <em>driver.js</em> (MIT).</li>
+    <li>Fontit <em>Nunito</em> ja <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+</ul>
+<p>
+    Täydellinen luettelo lisenssiteksteineen on blunderDB:n mukana toimitettava tiedosto <strong>THIRD_PARTY.md</strong> (<a
+        href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md"
+        target="_blank"
+        rel="noopener noreferrer"
+        >github.com/kevung/blunderDB</a
+    >).
+</p>

@@ -8,6 +8,7 @@ import "testing"
 //	rDouble = min(DoubleTakeEquity, 1.0)
 //	isClose = (OptimalEquity - rDouble) < 0.16
 func TestComputeIsCloseCube(t *testing.T) {
+	t.Parallel()
 	cases := []struct {
 		name             string
 		noDouble         float64

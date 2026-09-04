@@ -16,6 +16,7 @@ import (
 )
 
 func TestParseSearchTextKeywords(t *testing.T) {
+	t.Parallel()
 	cases := []struct {
 		in   string
 		want []string
@@ -40,6 +41,7 @@ func TestParseSearchTextKeywords(t *testing.T) {
 }
 
 func TestSearchTextFilter(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "search_text.db")); err != nil {

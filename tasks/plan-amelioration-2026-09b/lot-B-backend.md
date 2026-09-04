@@ -335,11 +335,24 @@ chaque fusion pendant l'import, pas de dictionnaire.
 
 135 méthodes exportées, 14 avec `ctx`, 104 `context.Background()` ; une
 recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
-- [ ] Variantes `…Ctx` sur les trois chemins longs (recherche, stats, export),
-      le front passe un `AbortController` traduit en annulation Wails (motif
-      de `beginCancellableImport`).
-- [ ] `db_import_common.go:50` utilise le contexte annulable disponible.
-- [ ] `db.go:189,263` : vérifier `d.db.Close()`.
+- [x] Variantes `…Ctx` sur les trois chemins longs (recherche, stats, export) :
+      `LoadPositionsByFiltersCoreCtx`, `ComputeStatsCtx`, `ExportDatabaseCtx`.
+      Les méthodes historiques deviennent de simples enveloppes
+      `context.Background()` — signature Wails inchangée, la GUI ne bouge pas
+      encore. Câblées côté CLI (`search`, `list --type stats`, `export`) avec
+      le même motif Ctrl-C que `cli_analyze.go` avait déjà pour `analyze`,
+      extrait en un helper partagé `withInterruptibleContext` (`cli.go`). Ce
+      qui **reste** pour cette tranche : le front qui traduit un
+      `AbortController` en annulation Wails (bouton d'annulation GUI) —
+      tranche suivante, volontairement pas dans ce geste (progressif).
+- [x] `db_import_common.go` : `writeImportedPosition` prend désormais le
+      contexte annulable de `beginCancellableImport` au lieu de coder en dur
+      `context.Background()` ; les trois imports mono-position
+      (`ImportBGFPosition`, `ImportBGFPositionFromText`, `ImportXGPPosition`)
+      ouvrent ce contexte comme les imports de match le font déjà.
+- [x] `db.go` : les deux `d.db.Close()` non vérifiés avant réouverture
+      (`SetupDatabase`, `OpenDatabase`) journalisent désormais leur erreur
+      (`slog.Warn`) au lieu de l'avaler.
 - [ ] Le reste famille par famille, sans date.
 
 ## B.14 — Duplication résiduelle entre backends [M] — dette (#182)
@@ -349,10 +362,47 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
   filters/session/history.
 - `SwapPlayers`/`DeleteCascade` ~90 lignes identiques.
 - `createPositionFromX` ×3 (B.7 les factorise).
-- [ ] Porter `anki` puis `collections` dans `sqlshared` (closure dialectale sur
-      `Execer`) ; laisser matches/positions/tournaments divergents.
-- [ ] Les tests par backend redondants (`comments_*_test.go`,
-      `collections_*_test.go`) tombent avec.
+- [x] `anki` porté dans `sqlshared` (`sqlshared/anki.go`, `AnkiStore`) : 28 des
+      30 méthodes de `storage.AnkiStore`. Deux découvertes ont rendu le port
+      plus complet que prévu — `TimestampText`/`TimestampArg` (déjà écrits
+      pour d'autres familles) éliminent tout le code de conversion
+      `time.Time`/TEXT que la version PostgreSQL portait seule, en formatant
+      chaque « maintenant » une fois en Go (`anki.TimeLayout`, UTC) plutôt que
+      par SQL par dialecte ; et `ON CONFLICT (deck_id, position_id) DO
+      NOTHING` — déjà utilisé par `metadata.go`/`session.go` — remplace
+      `INSERT OR IGNORE` sans distinction de dialecte (SQLite ≥ 3.24). Deux
+      méthodes `Dialect` ajoutées pour le seul cas qui restait diviser :
+      `BoolAsInt`/`BoolArg` (SQLite stocke ses drapeaux en INTEGER 0/1,
+      PostgreSQL en BOOLEAN natif). `DeckPositions` passe par
+      `storage.PositionStore.LoadByIDs` plutôt qu'une jointure, `NextCard`/
+      `RandomCard`/`ReviewCard` par `Load` — aucune jointure `position` à
+      écrire par dialecte. Seul `Forecast` reste par backend (motif
+      `stats_sqlite.go`/`stats_postgres.go` pour `DateRange`) : le
+      bucketing par jour est une vraie divergence arithmétique de dates —
+      `julianday()`/`date()` côté SQLite (qui n'a pas de type DATE), natif
+      côté PostgreSQL. Preuve d'identité sémantique par la suite de contrat
+      partagée (`storagetest/contract_anki.go`), passée sur SQLite **et** sur
+      un vrai PostgreSQL (Docker, `BLUNDERDB_REQUIRE_PG=1
+      go test -tags postgres ./pkg/blunderdb/storage/postgres/...`), pas
+      supposée.
+- [x] Un test par backend qui dupliquait exactement un cas de la suite de
+      contrat (`TestAnkiReviewUpdatesScheduling` dans `anki_sqlite_test.go`,
+      recouvrant mot pour mot `testAnkiReviewUpdatesScheduling`) est tombé ;
+      les autres (CRUD de deck, Forecast, Retention, suspend/bury/remove,
+      journal de révision, et les tests d'injection de faute — trigger SQL
+      qui refuse le journal, timestamp corrompu, note hors bornes) restent :
+      ils couvrent des cas que la suite partagée ne teste pas.
+- [ ] `collections` : **pas fait** dans ce geste. Même gabarit que ci-dessus
+      en plus petit (455/487 lignes), mais le budget de ce chantier s'arrête
+      à `anki` ; à reprendre séparément.
+- [ ] `SwapPlayers`/`DeleteCascade` (~90 lignes identiques) : **pas touché**.
+      Leur duplication est enchevêtrée avec `positionIsHeldSQL`, le prédicat
+      énoncé trois fois que CLAUDE.md nomme explicitement comme le piège de
+      cette fiche — « si tu le fais, la sémantique doit être prouvée
+      identique par les tests de contrat, pas supposée » — et ils appellent
+      en plus `positionStore` (type propre à chaque backend, délibérément
+      hors `sqlshared` d'après la doc de paquet). Le rapprocher exigerait de
+      régler ce risque nommé en plus du reste ; laissé à une fiche dédiée.
 
 ## B.15 — Découpage des fonctions et fichiers hors gabarit [M] — dette (#183)
 
@@ -361,13 +411,53 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
 `CommitImportDatabase` 306 l., `migrate_1_9_0_to_2_0_0` 320 l. Fichiers
 > 600 l. : `stats.go` 1323, `export_sqlite.go` 938, `matches_postgres.go` 905,
 `xgmap.go` 878, `matches_sqlite.go` 864, `position_match.go` 703.
-- [ ] `find` → `buildWhere` / `scanRows` / `applyGoFilters` (struct portant
-      `f`, `ana`, `ctx`) ; table `{filtre, extracteur}` pour les six taux.
-- [ ] `Compute` → une fonction par section, clause de base factorisée.
-- [ ] `CommitImportDatabase` → décision / écriture.
-- [ ] Linter `funlen`/`gocognit` non régressif (E.6) verrouille le résultat.
-- [ ] Tests unitaires directs de `buildWhere` (entrées → SQL + args) : c'est
-      ce qui fait remonter `sqlshared` de 1 % (E.2).
+- [x] `find` → `buildWhere` / `scanRows` / `applyGoFilters` (`search.go`).
+      `buildWhere` rend un petit struct porteur (`searchWhereClause` : le
+      texte WHERE, ses arguments, et l'état que la suite doit connaître —
+      `needAnalysis`, `useSQLFilters`, `bitboardTight`, `multiPlayed`,
+      `effInclude`) plutôt que les cinq retours nommés du plan — même idée,
+      un seul type au lieu de cinq valeurs de retour. `scanRows` vide le
+      curseur en `[]scannedRow` (type maintenant au niveau paquet, plus
+      local à `find`). `applyGoFilters` porte la boucle par ligne et les
+      deux préchargements par lot (commentaires, coups joueur 1). `find`
+      lui-même tombe de ~730 à 48 lignes : ouvrir la requête, enchaîner les
+      trois étapes.
+- [x] Les six blocs de taux (win/gammon/backgammon, joueur 1 et joueur 2)
+      pliés en une table `[6]rateFilterCheck` (filtre, jeton, extracteur) et
+      une fonction `matchesRateFilters` — construite une fois par recherche,
+      pas par ligne. ~90 lignes copiées → ~10 lignes d'appel plus la table.
+- [x] Tests unitaires directs de `buildWhere` (entrées → SQL + args) :
+      12 cas dans `search_build_where_test.go`, contre `fakeExecer`/
+      `fakeDialect` (aucune base réelle) — tenant nu, drapeaux de ligne,
+      restriction par identifiants (liste et liste vide → `0=1`), joueur
+      (ILIKE ×2), type de décision + sous-type videau, cube/score, effet de
+      `MirrorFilter` sur `useSQLFilters`/le texte WHERE, les quatre
+      déclencheurs de `needAnalysis`, la sous-requête win/gammon, et
+      `effInclude` qui efface un point partagé avec `ExcludeFilter`. Les six
+      blocs de taux (ci-dessus) gagnent aussi 9 cas directs
+      (`search_rate_filters_test.go`) : cube vs repli sur le premier coup,
+      cube qui l'emporte quand les deux sont présents, `Moves` vide qui
+      échoue comme une analyse absente — aucun des deux n'avait de test
+      direct avant ce geste, seulement la suite d'équivalence recherche
+      côté `pkg/blunderdb/database`.
+- [x] Preuve de non-régression : suite de recherche complète (équivalence
+      legacy/nouveau, pagination, motif de prime, exclusion, chevauchement)
+      sur SQLite **et** sur un vrai PostgreSQL (Docker) — `sqlshared` sert
+      les deux backends, donc toucher `search.go` engage les deux à la fois.
+- [ ] `Compute` (`stats.go`, 433 l., 12 requêtes) → **pas fait** dans ce
+      geste : budget de ce chantier épuisé par `find`. Même méthode
+      applicable (une fonction par section, clause de base factorisée) ;
+      à reprendre séparément.
+- [ ] `CommitImportDatabase` (306 l.) → **pas fait**, même raison.
+- [ ] Réduction des fichiers > 600 lignes (`stats.go` 1392, `export_sqlite.go`
+      938, `matches_postgres.go` 921, `xgmap.go` 857, `matches_sqlite.go` 879,
+      `position_match.go` 703) : **pas fait**. `search.go` est passé de 796 à
+      872 lignes (plus de fonctions, chacune commentée ; le fichier n'a pas
+      rétréci, `find` si) — le découpage de B.15 vise la lisibilité par
+      fonction, pas la taille totale du fichier.
+- [ ] Linter `funlen`/`gocognit` non régressif : dépend de E.6 (#222), non
+      fait — rien ne verrouille encore ce résultat contre une régression
+      future.
 
 ## B.16 — Observabilité du backend [S] — dette (#184)
 

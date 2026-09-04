@@ -7,6 +7,7 @@ import (
 )
 
 func TestCreateTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	id, err := db.CreateTournament("Grand Prix", "2025-01-15", "Paris")
@@ -19,6 +20,7 @@ func TestCreateTournament(t *testing.T) {
 }
 
 func TestGetAllTournaments(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	for i := 0; i < 3; i++ {
@@ -42,6 +44,7 @@ func TestGetAllTournaments(t *testing.T) {
 }
 
 func TestUpdateTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	id, _ := db.CreateTournament("Old", "2025-01-01", "Old City")
@@ -66,6 +69,7 @@ func TestUpdateTournament(t *testing.T) {
 }
 
 func TestDeleteTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -90,6 +94,7 @@ func TestDeleteTournament(t *testing.T) {
 }
 
 func TestAddMatchToTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -111,6 +116,7 @@ func TestAddMatchToTournament(t *testing.T) {
 }
 
 func TestRemoveMatchFromTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -137,6 +143,7 @@ func TestRemoveMatchFromTournament(t *testing.T) {
 }
 
 func TestSetMatchTournamentByName(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -158,6 +165,7 @@ func TestSetMatchTournamentByName(t *testing.T) {
 }
 
 func TestSetMatchTournamentByName_Existing(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -184,6 +192,7 @@ func TestSetMatchTournamentByName_Existing(t *testing.T) {
 }
 
 func TestReorderTournamentMatches(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// Import two different matches
@@ -212,6 +221,7 @@ func TestReorderTournamentMatches(t *testing.T) {
 }
 
 func TestGetMatchTournament(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -231,6 +241,7 @@ func TestGetMatchTournament(t *testing.T) {
 }
 
 func TestUpdateTournamentComment(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	tID, _ := db.CreateTournament("T", "", "")
@@ -251,6 +262,7 @@ func TestUpdateTournamentComment(t *testing.T) {
 }
 
 func TestUpdateMatchComment(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -274,6 +286,7 @@ func TestUpdateMatchComment(t *testing.T) {
 }
 
 func TestExportTournaments(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -304,6 +317,7 @@ func TestExportTournaments(t *testing.T) {
 // hand-rolled its own two-column position table and never wrote
 // zobrist_hash or any scalar column.
 func TestExportTournaments_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)
@@ -386,6 +400,7 @@ func TestExportTournaments_RoundTrip_ScalarColumnsAndDedup(t *testing.T) {
 // tournament-export defect: metadata used to be copied by raw inclusion, and
 // no watermark was ever written. See ADR-0007 and issuance.CarriedMetadataKeys.
 func TestExportTournaments_MetadataAllowListAndWatermark(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	importTestMatch(t, db)

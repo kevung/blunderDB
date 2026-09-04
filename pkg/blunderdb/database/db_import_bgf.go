@@ -138,6 +138,9 @@ func ComputeCanonicalMatchHashFromBGF(match *bgfparser.Match) string {
 
 // ImportBGFPosition imports a single BGBlitz position from a TXT file
 func (d *Database) ImportBGFPosition(filePath string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -145,11 +148,14 @@ func (d *Database) ImportBGFPosition(filePath string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse BGBlitz position file: %w", err)
 	}
-	return d.writeImportedPosition(graphs)
+	return d.writeImportedPosition(ctx, graphs)
 }
 
 // ImportBGFPositionFromText imports a BGBlitz position from text content (clipboard/string)
 func (d *Database) ImportBGFPositionFromText(content string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -157,12 +163,15 @@ func (d *Database) ImportBGFPositionFromText(content string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse BGBlitz position text: %w", err)
 	}
-	return d.writeImportedPosition(graphs)
+	return d.writeImportedPosition(ctx, graphs)
 }
 
 // ImportXGPPosition imports an XG position file (.xgp) as a standalone position with analysis.
 // XGP files use the same binary format as .xg match files but contain a single position.
 func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
+	ctx, done := d.beginCancellableImport()
+	defer done()
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -170,7 +179,7 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse XGP file: %w", err)
 	}
-	return d.writeImportedPosition(graphs)
+	return d.writeImportedPosition(ctx, graphs)
 }
 
 func bgfGetString(m map[string]interface{}, key string) string {

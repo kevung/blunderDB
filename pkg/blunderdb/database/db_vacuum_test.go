@@ -11,6 +11,7 @@ import (
 // database inflated by deletions shrinks back down after Vacuum, and the
 // rows that were not deleted survive intact.
 func TestVacuum_ReclaimsSpaceAfterDeletes(t *testing.T) {
+	t.Parallel()
 	dbPath := filepath.Join(t.TempDir(), "vacuum.db")
 
 	d := NewDatabase()
@@ -121,6 +122,7 @@ func fileSizeOf(t *testing.T, path string) int64 {
 // there is no file to size or free-space-check, but VACUUM/ANALYZE must
 // still run without error.
 func TestVacuum_InMemoryDatabase(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
@@ -139,6 +141,7 @@ func TestVacuum_InMemoryDatabase(t *testing.T) {
 // TestVacuum_NoDatabaseOpen guards the nil-db error path (e.g. a fresh
 // Database that was never Setup/Open'd).
 func TestVacuum_NoDatabaseOpen(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	if _, err := d.Vacuum(); err == nil {
 		t.Fatal("Vacuum on an unopened Database: want error, got nil")
