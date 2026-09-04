@@ -5,9 +5,10 @@
  * et une structure (XGID collé sur le plateau d'édition), lance la recherche,
  * vérifie les résultats et leur parcours (j/k, flèches), puis réinitialise.
  *
- * Le backend est mocké : LoadPositionsByFilters renvoie deux positions quelle
- * que soit la requête ; c'est la requête elle-même que la spec vérifie, via le
- * journal d'appels du mock.
+ * Le backend est mocké : LoadPositionIDsByFilters renvoie deux ids quelle que
+ * soit la requête (depuis D.8/#208 une recherche ne rapporte que des ids, le
+ * plateau charge ensuite la fenêtre affichée) ; c'est la requête elle-même que
+ * la spec vérifie, via le journal d'appels du mock.
  */
 
 import { test, expect } from '@playwright/test';
@@ -22,7 +23,7 @@ test.beforeEach(async ({ page }) => {
     await installWailsMock(
         page,
         openLibraryMock({
-            database: { LoadPositionsByFilters: [positionB, positionC], ParsePositionText: parsedPositionResult },
+            database: { LoadPositionIDsByFilters: [positionB.id, positionC.id], ParsePositionText: parsedPositionResult },
             runtime: { ClipboardGetText: xgidSample }
         })
     );
@@ -60,7 +61,7 @@ test('recherche : deux filtres numériques + structure, résultats, navigation, 
     await expect(statusBar(page)).toContainText('1 / 2');
     await expect(tab(page, 'analysis')).toHaveClass(/active/);
 
-    const searches = await getWailsCalls(page, 'LoadPositionsByFilters');
+    const searches = await getWailsCalls(page, 'LoadPositionIDsByFilters');
     expect(searches).toHaveLength(1);
     const query = searches[0].args[0];
     expect(query.pipCountFilter).toBe('p>10');
@@ -95,7 +96,7 @@ test('recherche : deux filtres numériques + structure, résultats, navigation, 
 });
 
 test('recherche sans résultat : message et plateau d’édition conservé', async ({ page }) => {
-    await installWailsMock(page, openLibraryMock({ database: { LoadPositionsByFilters: [] } }));
+    await installWailsMock(page, openLibraryMock({ database: { LoadPositionIDsByFilters: [] } }));
     await page.goto('/');
     await expect(statusBar(page)).toContainText('3 / 3');
 
