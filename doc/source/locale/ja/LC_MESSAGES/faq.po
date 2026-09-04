@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:33+0200\n"
+"POT-Creation-Date: 2026-09-04 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ja <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Foire aux questions"
 msgstr "よくある質問（FAQ）"
 
 #: ../../source/faq.rst:8
-msgid "Quel est l'utilité de blunderDB?"
+msgid "Quelle est l'utilité de blunderDB?"
 msgstr "blunderDB の用途は何ですか？"
 
 #: ../../source/faq.rst:10
@@ -52,7 +52,7 @@ msgstr ""
 " がプレイヤー間でのポジション共有を促進することを願っています。"
 
 #: ../../source/faq.rst:25
-msgid "Qu'est ce qui a motivé la création de blunderDB?"
+msgid "Qu'est-ce qui a motivé la création de blunderDB?"
 msgstr "blunderDB 作成の動機は何ですか？"
 
 #: ../../source/faq.rst:27
@@ -409,7 +409,7 @@ msgstr ""
 "データベースは単純な SQLite ファイルです。blunderDB がない場合でも、任意の SQLite ファイルエディターで開くことができます。"
 
 #: ../../source/faq.rst:234
-msgid "Quelles ont été les principes de conception de blunderDB?"
+msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "blunderDB の設計原則は何でしたか？"
 
 #: ../../source/faq.rst:236
@@ -456,13 +456,13 @@ msgstr ""
 ":ref:`headless` を参照してください。"
 
 #: ../../source/faq.rst:259
-msgid "Quel est l'architecture logicielle de blunderDB?"
+msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "blunderDB のソフトウェアアーキテクチャは何ですか？"
 
 #: ../../source/faq.rst:261
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
-"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"l'ensemble des opérations sur la base de données SQLite qui stocke les "
 "positions."
 msgstr ""
 "バックエンドは `Go <https://go.dev/>`_ でコーディングされています。ポジションを保存する SQLite "

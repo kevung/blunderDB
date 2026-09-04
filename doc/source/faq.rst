@@ -4,8 +4,8 @@ Foire aux questions
 ===================
 
 
-Quel est l'utilité de blunderDB?
---------------------------------
+Quelle est l'utilité de blunderDB?
+----------------------------------
 
 blunderDB permet de constituer une base de données personnalisée de
 positions. Sa force est de ne présupposer aucune classification *a
@@ -21,7 +21,7 @@ manière structurée à l'aide d'un unique fichier. Je souhaite que blunderDB
 facilite le partage de positions entre joueurs.
 
 
-Qu'est ce qui a motivé la création de blunderDB?
+Qu'est-ce qui a motivé la création de blunderDB?
 ------------------------------------------------
 
 J'avais l'habitude de stocker dans différents dossiers des positions
@@ -230,7 +230,7 @@ La base de données est un simple fichier Sqlite. En l'absence de
 blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
 
 
-Quelles ont été les principes de conception de blunderDB?
+Quels ont été les principes de conception de blunderDB?
 ---------------------------------------------------------
 
 Je voulais une interface accessible, mais pensée pour un usage avancé et
@@ -255,11 +255,11 @@ normal reste toutefois l'application de bureau. Voir :ref:`cli` et
 :ref:`headless`.
 
 
-Quel est l'architecture logicielle de blunderDB?
-------------------------------------------------
+Quelle est l'architecture logicielle de blunderDB?
+--------------------------------------------------
 
 * Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de
-  l'ensemble des opérations sur la base de données Sqlite qui stocke les
+  l'ensemble des opérations sur la base de données SQLite qui stocke les
   positions.
 
 * Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge du

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:33+0200\n"
+"POT-Creation-Date: 2026-09-04 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Foire aux questions"
 msgstr "Häufig gestellte Fragen (FAQ)"
 
 #: ../../source/faq.rst:8
-msgid "Quel est l'utilité de blunderDB?"
+msgid "Quelle est l'utilité de blunderDB?"
 msgstr "Wozu dient blunderDB?"
 
 #: ../../source/faq.rst:10
@@ -58,7 +58,7 @@ msgstr ""
 " von Positionen zwischen Spielern erleichtert."
 
 #: ../../source/faq.rst:25
-msgid "Qu'est ce qui a motivé la création de blunderDB?"
+msgid "Qu'est-ce qui a motivé la création de blunderDB?"
 msgstr "Was hat die Entwicklung von blunderDB motiviert?"
 
 #: ../../source/faq.rst:27
@@ -484,7 +484,7 @@ msgstr ""
 "sich somit mit jedem SQLite-Datei-Editor öffnen."
 
 #: ../../source/faq.rst:234
-msgid "Quelles ont été les principes de conception de blunderDB?"
+msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Was waren die Entwurfsprinzipien von blunderDB?"
 
 #: ../../source/faq.rst:236
@@ -538,13 +538,13 @@ msgstr ""
 "Anwendung. Siehe :ref:`cli` und :ref:`headless`."
 
 #: ../../source/faq.rst:259
-msgid "Quel est l'architecture logicielle de blunderDB?"
+msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Wie ist die Softwarearchitektur von blunderDB aufgebaut?"
 
 #: ../../source/faq.rst:261
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
-"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"l'ensemble des opérations sur la base de données SQLite qui stocke les "
 "positions."
 msgstr ""
 "Das Backend ist in `Go <https://go.dev/>`_ programmiert. Es ist für "

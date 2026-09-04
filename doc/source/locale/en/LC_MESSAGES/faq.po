@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:33+0200\n"
+"POT-Creation-Date: 2026-09-04 14:43+0200\n"
 "PO-Revision-Date: 2025-02-13 00:02+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -23,7 +23,7 @@ msgid "Foire aux questions"
 msgstr "Frequently Asked Questions (FAQ)"
 
 #: ../../source/faq.rst:8
-msgid "Quel est l'utilité de blunderDB?"
+msgid "Quelle est l'utilité de blunderDB?"
 msgstr "What is the purpose of blunderDB?"
 
 #: ../../source/faq.rst:10
@@ -55,7 +55,7 @@ msgstr ""
 "blunderDB facilitates the sharing of positions between players."
 
 #: ../../source/faq.rst:25
-msgid "Qu'est ce qui a motivé la création de blunderDB?"
+msgid "Qu'est-ce qui a motivé la création de blunderDB?"
 msgstr "What motivated the creation of blunderDB?"
 
 #: ../../source/faq.rst:27
@@ -463,7 +463,7 @@ msgstr ""
 "thus be opened with any SQLite file editor."
 
 #: ../../source/faq.rst:234
-msgid "Quelles ont été les principes de conception de blunderDB?"
+msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "What were the design principles of blunderDB?"
 
 #: ../../source/faq.rst:236
@@ -515,13 +515,13 @@ msgstr ""
 ":ref:`headless`."
 
 #: ../../source/faq.rst:259
-msgid "Quel est l'architecture logicielle de blunderDB?"
+msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "What is the software architecture of blunderDB?"
 
 #: ../../source/faq.rst:261
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
-"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"l'ensemble des opérations sur la base de données SQLite qui stocke les "
 "positions."
 msgstr ""
 "The backend is coded in `Go <https://go.dev/>`_. It is responsible for all "
@@ -597,4 +597,3 @@ msgid ""
 msgstr ""
 "The blunderDB icon is the \"goggling\" emoticon from the  `SMirC series "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
-

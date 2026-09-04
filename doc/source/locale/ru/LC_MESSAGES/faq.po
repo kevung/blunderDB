@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:33+0200\n"
+"POT-Creation-Date: 2026-09-04 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Foire aux questions"
 msgstr "Часто задаваемые вопросы"
 
 #: ../../source/faq.rst:8
-msgid "Quel est l'utilité de blunderDB?"
+msgid "Quelle est l'utilité de blunderDB?"
 msgstr "Для чего нужен blunderDB?"
 
 #: ../../source/faq.rst:10
@@ -57,7 +57,7 @@ msgstr ""
 "чтобы blunderDB упрощал обмен позициями между игроками."
 
 #: ../../source/faq.rst:25
-msgid "Qu'est ce qui a motivé la création de blunderDB?"
+msgid "Qu'est-ce qui a motivé la création de blunderDB?"
 msgstr "Что побудило создать blunderDB?"
 
 #: ../../source/faq.rst:27
@@ -467,7 +467,7 @@ msgstr ""
 "открыть любым редактором файлов SQLite."
 
 #: ../../source/faq.rst:234
-msgid "Quelles ont été les principes de conception de blunderDB?"
+msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Каковы были принципы проектирования blunderDB?"
 
 #: ../../source/faq.rst:236
@@ -520,13 +520,13 @@ msgstr ""
 ":ref:`headless`."
 
 #: ../../source/faq.rst:259
-msgid "Quel est l'architecture logicielle de blunderDB?"
+msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Какова программная архитектура blunderDB?"
 
 #: ../../source/faq.rst:261
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
-"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"l'ensemble des opérations sur la base de données SQLite qui stocke les "
 "positions."
 msgstr ""
 "Бэкенд написан на `Go <https://go.dev/>`_. Он отвечает за все операции с "
