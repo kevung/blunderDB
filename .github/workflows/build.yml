@@ -811,8 +811,14 @@ jobs:
   build:
     strategy:
       fail-fast: false
+      # ubuntu-24.04-arm is a native arm64 runner (H.14, #256): no
+      # cross-compilation, no emulation — Wails needs cgo against the host's
+      # webkit2gtk, so an arm64 desktop build has to happen on arm64 hardware.
+      # It is additive: every step below that produced an amd64 asset still
+      # keys on `ubuntu-latest` and is untouched, so a failure here cannot
+      # cost the release its existing thirty-one assets.
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-22.04]
+        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-22.04, ubuntu-24.04-arm]
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -872,6 +878,14 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
         shell: bash
 
+      # Same packages on the arm64 runner, minus the cross-compiler: the build
+      # is native there, so gcc-aarch64-linux-gnu would be the host's own gcc
+      # under another name.
+      - name: Install Linux Wails deps for libwebkit2gtk-4.1 (arm64)
+        if: matrix.os == 'ubuntu-24.04-arm'
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev
+        shell: bash
+
       - name: Build App Linux for libwebkit2gtk-4.0
         if: matrix.os == 'ubuntu-22.04'
         run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
@@ -880,6 +894,15 @@ jobs:
       - name: Build App Linux for libwebkit2gtk-4.1
         if: matrix.os == 'ubuntu-latest'
         run: wails build --platform 'linux' -o blunderDB-linux-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
+        shell: bash
+
+      # No -upx here: UPX is not installed on the Linux runners (the step above
+      # installs it on Windows only), and the amd64 Linux builds pass -upx to a
+      # Wails that simply warns and moves on. Spelling it out rather than
+      # copying a flag that does nothing.
+      - name: Build App Linux arm64 for libwebkit2gtk-4.1
+        if: matrix.os == 'ubuntu-24.04-arm'
+        run: wails build --platform 'linux/arm64' -o blunderDB-linux-arm64-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -clean -tags webkit2_41 -ldflags "-X github.com/kevung/blunderdb/internal/cli.appVersion=${{ steps.vars.outputs.version }}"
         shell: bash
 
       - name: Build App Windows
@@ -959,6 +982,9 @@ jobs:
           set -euo pipefail
           go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.46.3
           export PATH="$PATH:$(go env GOPATH)/bin"
+          # nfpm.yaml reads its architecture from the environment (H.14, #256):
+          # one spec, two runners.
+          export NFPM_ARCH=amd64
           # Two different version strings, on purpose:
           #   ART — how every artefact of this run is NAMED (tag, or short SHA
           #         off a tag). Unchanged, and what the test step greps for.
@@ -991,6 +1017,63 @@ jobs:
           nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${ART}_amd64.deb"
           nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${ART}.x86_64.rpm"
           rm -f build/bin/blunderDB
+
+      # The arm64 counterpart of the step above. Same nfpm spec, overridden to
+      # arm64/aarch64 on the command line so a second, near-identical
+      # nfpm.yaml does not have to be kept in step with the first.
+      - name: Build .deb and .rpm (arm64, webkit2gtk-4.1)
+        if: matrix.os == 'ubuntu-24.04-arm'
+        shell: bash
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
+        run: |
+          set -euo pipefail
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.46.3
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          # nfpm.yaml reads its architecture from the environment, so one spec
+          # serves both runners.
+          export NFPM_ARCH=arm64
+          # ART names the artefacts, PKG goes inside the control data — see the
+          # amd64 step above for why they differ off a tag.
+          ART="$VERSION"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            PKG="${ART#v}"
+          else
+            PKG="0.0.0~git${ART}"
+          fi
+          export VERSION="$PKG"
+          cp "build/bin/blunderDB-linux-arm64-webkit2gtk-4.1-${ART}" build/bin/blunderDB
+          mkdir -p build/linux/completions
+          build/bin/blunderDB completion bash > build/linux/completions/blunderdb.bash
+          build/bin/blunderDB completion zsh  > build/linux/completions/_blunderdb
+          build/bin/blunderDB completion fish > build/linux/completions/blunderdb.fish
+          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${ART}_arm64.deb"
+          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${ART}.aarch64.rpm"
+          rm -f build/bin/blunderDB
+
+      # The arm64 packages, installed on the arm64 runner that built them —
+      # the same check the amd64 step makes, and the only place a broken
+      # symlink or a missing notice would show before a user hits it.
+      - name: Test the Linux packages (arm64)
+        if: matrix.os == 'ubuntu-24.04-arm'
+        shell: bash
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
+        run: |
+          set -euo pipefail
+          dpkg-deb -f "build/bin/blunderdb_${VERSION}_arm64.deb" Version
+          dpkg-deb -f "build/bin/blunderdb_${VERSION}_arm64.deb" Architecture | grep -Fx arm64
+          sudo dpkg -i "build/bin/blunderdb_${VERSION}_arm64.deb"
+          blunderdb version | tee /dev/stderr | grep -F -- "$VERSION"
+          test -f /usr/share/doc/blunderdb/THIRD_PARTY.md
+          test -f /usr/share/doc/blunderdb/LICENSE
+          sudo dpkg -r blunderdb
+          tmp="$(mktemp -d)"
+          tar -xzf "build/bin/blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}.tar.gz" -C "$tmp"
+          dir="$tmp/blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}"
+          "$dir/blunderdb" version | grep -F -- "$VERSION"
+          test -f "$dir/THIRD_PARTY.md"
+          rm -rf "$tmp"
 
       # Install what was just packaged, on the runner that built it (the
       # webkit2gtk-4.1 deps are already there). A .deb whose symlink points
@@ -1196,10 +1279,10 @@ jobs:
             echo
             echo '| System | Take | Then |'
             echo '|---|---|---|'
-            echo "| Debian, Ubuntu, Mint | \`blunderdb_${VERSION}_amd64.deb\` | \`sudo apt install ./blunderdb_${VERSION}_amd64.deb\` |"
-            echo "| Fedora, openSUSE | \`blunderdb-${VERSION}.x86_64.rpm\` | \`sudo dnf install ./blunderdb-${VERSION}.x86_64.rpm\` |"
-            echo "| Arch Linux | AUR \`blunderdb-bin\` | \`yay -S blunderdb-bin\` |"
-            echo "| Any Linux | \`blunderDB-${VERSION}.flatpak\`, or the \`webkit2gtk-4.1\` tarball (the plain one on Ubuntu 22.04-era systems) | \`flatpak install ./blunderDB-${VERSION}.flatpak\` |"
+            echo "| Debian, Ubuntu, Mint | \`blunderdb_${VERSION}_amd64.deb\` (arm64: \`blunderdb_${VERSION}_arm64.deb\`) | \`sudo apt install ./blunderdb_${VERSION}_amd64.deb\` |"
+            echo "| Fedora, openSUSE | \`blunderdb-${VERSION}.x86_64.rpm\` (arm64: \`blunderdb-${VERSION}.aarch64.rpm\`) | \`sudo dnf install ./blunderdb-${VERSION}.x86_64.rpm\` |"
+            echo "| Arch Linux | AUR \`blunderdb-bin\` (x86_64 and aarch64) | \`yay -S blunderdb-bin\` |"
+            echo "| Any Linux | \`blunderDB-${VERSION}.flatpak\`, or the \`webkit2gtk-4.1\` tarball — \`blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}.tar.gz\` on arm64 (Raspberry Pi 4/5, Apple Silicon under Linux, arm64 servers), the plain one on Ubuntu 22.04-era systems | \`flatpak install ./blunderDB-${VERSION}.flatpak\` |"
             echo "| macOS | \`blunderDB-macos-${VERSION}.zip\` (universal, unsigned: right-click → *Open* the first time) | drag \`blunderDB.app\` to *Applications* |"
             echo "| Windows | \`blunderDB-windows-${VERSION}.exe\` (unsigned: *More info* → *Run anyway*) | run it, nothing to install |"
             echo "| Server | \`ghcr.io/kevung/blunderdb-serve:${VERSION}\` (amd64, arm64) | \`docker pull ghcr.io/kevung/blunderdb-serve:${VERSION}\` |"

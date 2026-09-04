@@ -90,7 +90,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "enabled=true" >> "$GITHUB_OUTPUT"
 
-      - name: Download the webkit2gtk-4.1 tarball and compute checksum
+      - name: Download the webkit2gtk-4.1 tarballs and compute checksums
         id: dl
         if: steps.v.outputs.enabled == 'true'
         env:
@@ -98,28 +98,44 @@ jobs:
           VERSION: ${{ steps.v.outputs.version }}
         run: |
           set -euo pipefail
-          asset="blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz"
-          # The build run is complete, so the asset is either there or never
-          # will be; the short retry only absorbs the release API's eventual
-          # consistency right after the upload.
-          for i in $(seq 1 6); do
-            if gh release download "$VERSION" -R "$GITHUB_REPOSITORY" -p "$asset" -D dl --clobber 2>/dev/null; then
-              break
-            fi
-            echo "asset $asset not visible yet (attempt $i); waiting..."
-            sleep 10
-          done
-          test -f "dl/$asset" || { echo "::error::$asset is not on release $VERSION — did the build or release job fail?"; exit 1; }
-          echo "sha=$(sha256sum "dl/$asset" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          # One tarball per architecture since H.14 (#256); the PKGBUILD carries
+          # a source_/sha256sums_ pair for each.
+          fetch() {
+            local asset="$1"
+            # The build run is complete, so the asset is either there or never
+            # will be; the short retry only absorbs the release API's eventual
+            # consistency right after the upload.
+            for i in $(seq 1 6); do
+              if gh release download "$VERSION" -R "$GITHUB_REPOSITORY" -p "$asset" -D dl --clobber 2>/dev/null; then
+                return 0
+              fi
+              echo "asset $asset not visible yet (attempt $i); waiting..." >&2
+              sleep 10
+            done
+            echo "::error::$asset is not on release $VERSION — did the build or release job fail?" >&2
+            return 1
+          }
+          amd64="blunderDB-linux-webkit2gtk-4.1-${VERSION}.tar.gz"
+          arm64="blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}.tar.gz"
+          fetch "$amd64"
+          fetch "$arm64"
+          echo "sha=$(sha256sum "dl/$amd64" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "sha_aarch64=$(sha256sum "dl/$arm64" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
       - name: Render PKGBUILD
         if: steps.v.outputs.enabled == 'true'
         env:
           VERSION: ${{ steps.v.outputs.version }}
           SHA: ${{ steps.dl.outputs.sha }}
+          SHA_AARCH64: ${{ steps.dl.outputs.sha_aarch64 }}
         run: |
           set -euo pipefail
-          sed -e "s/@PKGVER@/${VERSION}/g" -e "s/@SHA256@/${SHA}/g" \
+          # @SHA256_AARCH64@ is substituted first: it contains @SHA256@ as a
+          # prefix, so the shorter pattern would eat it and leave a stray
+          # "_AARCH64@" behind.
+          sed -e "s/@PKGVER@/${VERSION}/g" \
+              -e "s/@SHA256_AARCH64@/${SHA_AARCH64}/g" \
+              -e "s/@SHA256@/${SHA}/g" \
             packaging/aur/PKGBUILD.in > PKGBUILD
           cat PKGBUILD
 

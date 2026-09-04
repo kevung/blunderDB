@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 19:44+0200\n"
+"POT-Creation-Date: 2026-09-04 17:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -156,42 +156,74 @@ msgid "``tar xzf`` puis ``./blunderDB``"
 msgstr "``tar xzf`` y luego ``./blunderDB``"
 
 #: ../../source/telecharge_install.rst:56
+msgid "Linux sur ARM 64 bits"
+msgstr "Linux en ARM de 64 bits"
+
+#: ../../source/telecharge_install.rst:57
+msgid ""
+"``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` ou "
+"``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``"
+msgstr ""
+"``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` o "
+"``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``"
+
+#: ../../source/telecharge_install.rst:59
+msgid "Comme ci-dessus, avec le fichier ``arm64``/``aarch64``"
+msgstr "Como arriba, con el archivo ``arm64``/``aarch64``"
+
+#: ../../source/telecharge_install.rst:60
 msgid "macOS (Intel et Apple Silicon)"
 msgstr "macOS (Intel y Apple Silicon)"
 
-#: ../../source/telecharge_install.rst:57
+#: ../../source/telecharge_install.rst:61
 msgid "``blunderDB-macos-x.y.z.zip``"
 msgstr "``blunderDB-macos-x.y.z.zip``"
 
-#: ../../source/telecharge_install.rst:58
+#: ../../source/telecharge_install.rst:62
 msgid "Décompresser, puis glisser ``blunderDB.app`` dans *Applications*"
 msgstr "Descomprimir y arrastrar ``blunderDB.app`` a *Aplicaciones*"
 
-#: ../../source/telecharge_install.rst:59
+#: ../../source/telecharge_install.rst:63
 msgid "Windows"
 msgstr "Windows"
 
-#: ../../source/telecharge_install.rst:60
+#: ../../source/telecharge_install.rst:64
 msgid "``blunderDB-windows-x.y.z.exe``"
 msgstr "``blunderDB-windows-x.y.z.exe``"
 
-#: ../../source/telecharge_install.rst:61
+#: ../../source/telecharge_install.rst:65
 msgid "Exécuter directement, sans installation"
 msgstr "Ejecutar directamente, sin instalación"
 
-#: ../../source/telecharge_install.rst:62
+#: ../../source/telecharge_install.rst:66
 msgid "Serveur (mode ``serve``, Docker)"
 msgstr "Servidor (modo ``serve``, Docker)"
 
-#: ../../source/telecharge_install.rst:63
+#: ../../source/telecharge_install.rst:67
 msgid "image ``ghcr.io/kevung/blunderdb-serve``"
 msgstr "imagen ``ghcr.io/kevung/blunderdb-serve``"
 
-#: ../../source/telecharge_install.rst:64
+#: ../../source/telecharge_install.rst:68
 msgid "``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``"
 msgstr "``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``"
 
-#: ../../source/telecharge_install.rst:66
+#: ../../source/telecharge_install.rst:70
+msgid ""
+"Les fichiers ``amd64`` et ``x86_64`` sont pour un processeur Intel ou "
+"AMD, c'est-à-dire la quasi-totalité des ordinateurs de bureau. Les "
+"fichiers ``arm64`` et ``aarch64`` sont pour un processeur ARM 64 bits : "
+"Raspberry Pi 4 et 5, Mac à puce Apple faisant tourner Linux, serveurs "
+"ARM. En cas de doute, ``uname -m`` répond : ``x86_64`` ou ``aarch64``. Le"
+" paquet AUR ``blunderdb-bin`` couvre les deux et choisit tout seul."
+msgstr ""
+"Los archivos ``amd64`` y ``x86_64`` son para un procesador Intel o AMD, "
+"es decir, casi todos los ordenadores de escritorio. Los archivos "
+"``arm64`` y ``aarch64`` son para un procesador ARM de 64 bits: Raspberry "
+"Pi 4 y 5, Mac con chip Apple ejecutando Linux, servidores ARM. En caso de"
+" duda, ``uname -m`` responde: ``x86_64`` o ``aarch64``. El paquete AUR "
+"``blunderdb-bin`` cubre ambos y elige solo."
+
+#: ../../source/telecharge_install.rst:77
 msgid ""
 "Les autres fichiers de la page sont les binaires Linux bruts (voir plus "
 "bas), les manifestes winget et Homebrew (voir "
@@ -203,11 +235,11 @@ msgstr ""
 ":ref:`install_winget_homebrew`), la documentación en PDF en nueve idiomas"
 " y las huellas ``.sha256``."
 
-#: ../../source/telecharge_install.rst:71
+#: ../../source/telecharge_install.rst:82
 msgid "Vérifier un téléchargement"
 msgstr "Verificar una descarga"
 
-#: ../../source/telecharge_install.rst:73
+#: ../../source/telecharge_install.rst:84
 msgid ""
 "Chaque fichier publié est accompagné de son empreinte SHA-256, dans un "
 "fichier du même nom suivi de ``.sha256``. Téléchargez les deux dans le "
@@ -218,7 +250,7 @@ msgstr ""
 "del mismo nombre seguido de ``.sha256``. Descargue ambos en la misma "
 "carpeta y compruebe que el archivo recibido es el que se publicó:"
 
-#: ../../source/telecharge_install.rst:86
+#: ../../source/telecharge_install.rst:97
 msgid ""
 "Sous Linux et macOS, la commande affiche ``OK`` ; sous Windows, comparez "
 "la valeur affichée avec le contenu du fichier ``.sha256``. Cette "
@@ -230,22 +262,22 @@ msgstr ""
 "la garantía disponible a falta de firma de código (véase "
 ":numref:`annexe_windows_malware` y :numref:`annexe_mac_malware`)."
 
-#: ../../source/telecharge_install.rst:91
+#: ../../source/telecharge_install.rst:102
 msgid ""
 "Chaque fichier publié est également accompagné d'une attestation de "
 "provenance (SLSA, via Sigstore), qui prouve qu'il a bien été produit par "
 "le run de compilation officiel du dépôt GitHub, sans clé à gérer :"
 msgstr ""
 "Cada archivo publicado va acompañado también de una atestación de "
-"procedencia (SLSA, mediante Sigstore), que demuestra que fue efectivamente "
-"producido por la ejecución de compilación oficial del repositorio en "
-"GitHub, sin necesidad de gestionar ninguna clave:"
+"procedencia (SLSA, mediante Sigstore), que demuestra que fue "
+"efectivamente producido por la ejecución de compilación oficial del "
+"repositorio en GitHub, sin necesidad de gestionar ninguna clave:"
 
-#: ../../source/telecharge_install.rst:100
+#: ../../source/telecharge_install.rst:111
 msgid "Installation sous Linux"
 msgstr "Instalación en Linux"
 
-#: ../../source/telecharge_install.rst:102
+#: ../../source/telecharge_install.rst:113
 msgid ""
 "Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
 "dessous **rendent blunderDB exécutable automatiquement** : contrairement "
@@ -259,11 +291,11 @@ msgstr ""
 "que ejecutar ``chmod +x`` en cada descarga o actualización. También crean"
 " una entrada en el menú de aplicaciones."
 
-#: ../../source/telecharge_install.rst:109
+#: ../../source/telecharge_install.rst:120
 msgid "Paquets natifs (.deb / .rpm)"
 msgstr "Paquetes nativos (.deb / .rpm)"
 
-#: ../../source/telecharge_install.rst:111
+#: ../../source/telecharge_install.rst:122
 msgid ""
 "Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que"
 " sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
@@ -275,11 +307,11 @@ msgstr ""
 "automáticamente la dependencia webkit2gtk adecuada. Reemplace ``x.y.z`` "
 "por la versión descargada:"
 
-#: ../../source/telecharge_install.rst:122
+#: ../../source/telecharge_install.rst:133
 msgid "Arch Linux (AUR)"
 msgstr "Arch Linux (AUR)"
 
-#: ../../source/telecharge_install.rst:124
+#: ../../source/telecharge_install.rst:135
 msgid ""
 "Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
 "automatiquement par les assistants AUR :"
@@ -287,11 +319,11 @@ msgstr ""
 "El paquete ``blunderdb-bin`` está disponible en el AUR y se actualiza "
 "automáticamente mediante los asistentes de AUR:"
 
-#: ../../source/telecharge_install.rst:132
+#: ../../source/telecharge_install.rst:143
 msgid "Flatpak"
 msgstr "Flatpak"
 
-#: ../../source/telecharge_install.rst:134
+#: ../../source/telecharge_install.rst:145
 msgid ""
 "Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution "
 "où Flatpak est installé. Il repose sur l'environnement GNOME 47, que "
@@ -301,7 +333,7 @@ msgstr ""
 "donde Flatpak esté instalado. Se apoya en el entorno GNOME 47, que "
 "Flatpak descarga de Flathub si falta:"
 
-#: ../../source/telecharge_install.rst:143
+#: ../../source/telecharge_install.rst:154
 msgid ""
 "blunderDB n'est pas encore publié sur Flathub : le bundle s'installe "
 "depuis le fichier téléchargé, et se met à jour en installant celui de la "
@@ -315,11 +347,11 @@ msgstr ""
 "bases. La línea de comandos (:ref:`cli`) se obtiene con ``flatpak run "
 "io.github.kevung.blunderDB <comando>``."
 
-#: ../../source/telecharge_install.rst:150
+#: ../../source/telecharge_install.rst:161
 msgid "Archive .tar.gz"
 msgstr "Archivo .tar.gz"
 
-#: ../../source/telecharge_install.rst:152
+#: ../../source/telecharge_install.rst:163
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -327,7 +359,7 @@ msgstr ""
 "Para otras distribuciones. La extracción de un archivo conserva el bit de"
 " ejecución, por lo que no es necesario ``chmod``:"
 
-#: ../../source/telecharge_install.rst:161
+#: ../../source/telecharge_install.rst:172
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -343,11 +375,11 @@ msgstr ""
 " al ejecutable. Para tenerlo en su ``PATH``: ``ln -s \"$PWD/blunderDB\" "
 "~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:169
+#: ../../source/telecharge_install.rst:180
 msgid "Binaire brut (méthode avancée)"
 msgstr "Binario sin procesar (método avanzado)"
 
-#: ../../source/telecharge_install.rst:171
+#: ../../source/telecharge_install.rst:182
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -357,7 +389,7 @@ msgstr ""
 " un navegador elimina el bit de ejecución al descargar, debe "
 "restablecerlo antes de la primera ejecución:"
 
-#: ../../source/telecharge_install.rst:179
+#: ../../source/telecharge_install.rst:190
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -373,11 +405,11 @@ msgstr ""
 " |latest_linux_webkit2gtk41_exe|. Los paquetes nativos seleccionan la "
 "dependencia correcta automáticamente."
 
-#: ../../source/telecharge_install.rst:188
+#: ../../source/telecharge_install.rst:199
 msgid "Image Docker (mode serveur)"
 msgstr "Imagen Docker (modo servidor)"
 
-#: ../../source/telecharge_install.rst:190
+#: ../../source/telecharge_install.rst:201
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -389,7 +421,7 @@ msgstr ""
 "serve`` en el registro de GitHub, para ``linux/amd64`` y ``linux/arm64``,"
 " bajo la etiqueta de la versión y bajo ``latest``:"
 
-#: ../../source/telecharge_install.rst:199
+#: ../../source/telecharge_install.rst:210
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -397,11 +429,11 @@ msgstr ""
 "El arranque, la configuración y la advertencia sobre el proxy de "
 "autenticación se describen en :ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:205
+#: ../../source/telecharge_install.rst:216
 msgid "Gestionnaires de paquets Windows et Mac (à venir)"
 msgstr "Gestores de paquetes para Windows y Mac (próximamente)"
 
-#: ../../source/telecharge_install.rst:207
+#: ../../source/telecharge_install.rst:218
 msgid ""
 "Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets "
 "(AUR, ``.deb``, ``.rpm``). L'équivalent pour Windows (`winget "
@@ -423,7 +455,7 @@ msgstr ""
 "sea el caso, los siguientes comandos no funcionan; describen la "
 "instalación prevista:"
 
-#: ../../source/telecharge_install.rst:225
+#: ../../source/telecharge_install.rst:236
 msgid ""
 "Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il"
 " reste non signé, et les avertissements décrits ci-dessous s'appliquent "
@@ -435,11 +467,11 @@ msgstr ""
 "tal cual. En Mac, ``brew install --cask --no-quarantine blunderdb`` evita"
 " el bloqueo de Gatekeeper en el primer lanzamiento."
 
-#: ../../source/telecharge_install.rst:231
+#: ../../source/telecharge_install.rst:242
 msgid "Avertissements Windows et Mac"
 msgstr "Advertencias para Windows y Mac"
 
-#: ../../source/telecharge_install.rst:233
+#: ../../source/telecharge_install.rst:244
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
@@ -449,7 +481,7 @@ msgstr ""
 " Consulte :numref:`annexe_windows_malware` para entender por qué y eludir"
 " los posibles bloqueos."
 
-#: ../../source/telecharge_install.rst:237
+#: ../../source/telecharge_install.rst:248
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"

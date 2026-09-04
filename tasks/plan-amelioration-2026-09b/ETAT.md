@@ -52,6 +52,7 @@ zstd avec dictionnaire — B.12).
 | — | #304 | Coquilles de la source française. |
 | — | — | `.gitattributes` : `* -text`, sans quoi un checkout Windows convertit les fins de ligne de `met_kazaross_xg2.json` et fait paniquer `engine.init` sur son SHA-256. |
 | B.15 (suite) | #183 | `StatsStore.Compute` (438 l., onze passes SQL) découpée en `stats_compute.go` ; le plafond `funlen` passe de 438 à 296 lignes. |
+| H.14 | #256 | **Binaire Linux arm64.** Cinquième runner (`ubuntu-24.04-arm`, natif), tarball + `.deb` + `.rpm` arm64, AUR bi-architecture, doc en neuf langues. Additif : aucune étape amd64 n'est touchée. |
 | **E.6-E.12** | #222-#228 | **Le lot E est clos.** L'essentiel était déjà livré au fil des autres fiches sans être coché ; l'audit du 2026-09-04 l'a constaté et a fini le reste : crans de complexité remesurés (573/316/462 → 438/180/200), note « clone allégé » et méthode d'édition programmatique des `.po` dans `doc/README.txt`, et `CLAUDE.md` corrigé — il affirmait qu'il n'existait pas de `nightly.yml`. |
 
 Hors fiches, trouvés en chemin :
@@ -82,7 +83,7 @@ retard sur `main`) : à reprendre dans une passe dédiée, pas au fil d'une autr
 
 **Étape 2** : B.13, B.14 ; C.7 (forme close de `levelSolve`, à grouper avec le
 passage amont d'ADR-0029) ; C.11, C.12 ; D.9, D.10 ; G.8-G.14 (dont trois
-attendent dans la branche ci-dessus) ; H.13, H.14.
+attendent dans la branche ci-dessus).
 
 **Une leçon d'audit** : plusieurs fiches du lot E étaient faites depuis des
 jours sans être cochées, parce qu'elles avaient été livrées en passant par
