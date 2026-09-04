@@ -457,13 +457,20 @@
         }
     }
 
+    // The focus is deferred so it lands after the panel has been laid out, and
+    // the timer is cleared when the effect re-runs or the component goes away.
+    // Without that, the callback fires into a torn-down document: in the test
+    // run it throws "document is not defined" a hundred milliseconds after the
+    // suite has moved on (vitest reports it as an unhandled error and exits
+    // non-zero even though every test passed), and in the application it
+    // focuses a panel the user has already closed.
     $effect(() => {
-        if (visible) {
-            setTimeout(() => {
-                const panel = document.getElementById('tournamentPanel');
-                if (panel) panel.focus();
-            }, 100);
-        }
+        if (!visible) return;
+        const timer = setTimeout(() => {
+            const panel = document.getElementById('tournamentPanel');
+            if (panel) panel.focus();
+        }, 100);
+        return () => clearTimeout(timer);
     });
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
