@@ -1,0 +1,275 @@
+<!-- tab: manual -->
+<h3>Introduction</h3>
+<p>
+    blunderDB est un logiciel permettant de créer des bases de données de positions de backgammon. Sa principale force est d'offrir un endroit unique où regrouper les positions qu'un joueur a
+    rencontrées (en ligne, en tournoi) et de pouvoir réétudier ces positions en les filtrant selon divers filtres combinables de façon arbitraire. blunderDB peut aussi être utilisé pour créer des
+    catalogues de positions de référence.
+</p>
+<p>Les positions sont stockées dans une base de données représentée par un fichier .db.</p>
+
+<h3>Interactions principales</h3>
+<p>Les principales interactions possibles avec blunderDB sont :</p>
+<ul>
+    <li>ajouter une nouvelle position,</li>
+    <li>modifier une position existante,</li>
+    <li>copier le plateau sous forme d'image PNG dans le presse-papiers (<strong>Ctrl+X</strong>), ou le plateau avec son analyse (<strong>Ctrl+X, Ctrl+X</strong>),</li>
+    <li>supprimer une position existante,</li>
+    <li>rechercher une ou plusieurs positions,</li>
+    <li>importer des matchs depuis diverses sources (XG, GNUbg, BGBlitz, Jellyfish), y compris les commentaires des fichiers XG,</li>
+    <li>parcourir les coups d'un match importé,</li>
+    <li>organiser les positions en collections,</li>
+    <li>organiser les matchs en tournois,</li>
+    <li>analyser en lot, depuis un terminal, les positions dépourvues d'analyse grâce à l'évaluateur gammonNet embarqué (commande <strong>analyze</strong> de blunderDB).</li>
+</ul>
+<p>L'utilisateur peut librement étiqueter les positions et les annoter avec des commentaires.</p>
+
+<h3>Description de l'interface</h3>
+<p>L'interface de blunderDB est structurée de haut en bas de la manière suivante :</p>
+<ul>
+    <li>[en haut] la barre d'outils, qui rassemble toutes les opérations principales pouvant être effectuées sur la base de données,</li>
+    <li>[au milieu] la zone d'affichage principale, qui permet d'afficher ou d'éditer des positions de backgammon,</li>
+    <li>[en bas] la barre d'état, qui intègre la ligne de commande et présente diverses informations sur la position courante.</li>
+</ul>
+<p>Des panneaux peuvent être affichés pour :</p>
+<ul>
+    <li>afficher les données d'analyse associées à la position courante (de XG, GNUbg ou BGBlitz),</li>
+    <li>afficher, ajouter ou modifier des commentaires,</li>
+    <li>parcourir les matchs importés et naviguer dans leurs coups (panneau Match),</li>
+    <li>gérer des collections de positions (panneau Collection),</li>
+    <li>étudier des positions par répétition espacée (panneau Anki),</li>
+    <li>gérer des tournois (panneau Tournoi),</li>
+    <li>afficher des statistiques de performance (panneau Stats),</li>
+    <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Eval),</li>
+    <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
+    <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
+</ul>
+<p>La zone d'affichage principale fournit à l'utilisateur :</p>
+<ul>
+    <li>un plateau pour afficher ou éditer une position de backgammon,</li>
+    <li>le niveau et le propriétaire du videau,</li>
+    <li>le pip count de chaque joueur,</li>
+    <li>le score de chaque joueur,</li>
+    <li>les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position des dés indique quel joueur a le trait et que la position est une décision de videau.</li>
+</ul>
+<p>La barre d'état affiche de gauche à droite :</p>
+<ul>
+    <li>la ligne de commande (appuyez sur <strong>Espace</strong> pour l'ouvrir),</li>
+    <li>un message d'information lié à la dernière opération effectuée,</li>
+    <li>l'indice de la position courante, suivi du nombre total de positions (ou des informations de coup/partie lors de la navigation dans un match).</li>
+</ul>
+<p>Dans le cas de positions issues d'une recherche de l'utilisateur, le nombre de positions indiqué dans la barre d'état correspond au nombre de positions filtrées.</p>
+
+<h3>Parcourir les positions</h3>
+<p>Par défaut, blunderDB vous permet de :</p>
+<ul>
+    <li>faire défiler les différentes positions de la bibliothèque courante,</li>
+    <li>afficher les informations d'analyse associées à une position,</li>
+    <li>afficher, ajouter et modifier des commentaires sur une position.</li>
+</ul>
+
+<h3>Éditer des positions</h3>
+<p>
+    Appuyer sur la touche <strong>Tab</strong> ouvre le panneau de recherche et permet d'éditer une position sur le plateau afin de l'ajouter à la base de données ou de définir une structure de
+    position à rechercher. La répartition des pions, le videau, le score et le trait peuvent être modifiés à l'aide de la souris.
+</p>
+
+<h3>Ligne de commande</h3>
+<p>
+    La ligne de commande, intégrée dans la barre d'état, permet d'exécuter toutes les fonctionnalités de blunderDB : opérations sur la base de données, navigation dans les positions, affichage des
+    analyses et des commentaires, recherche de positions avec filtres... Après vous être familiarisé avec l'interface, il est recommandé d'utiliser progressivement la ligne de commande, qui permet une
+    utilisation puissante et fluide de blunderDB, en particulier pour les fonctionnalités de recherche de positions.
+</p>
+<p>
+    Pour ouvrir la ligne de commande, appuyez sur la touche <strong>Espace</strong>. Une invite apparaît dans la barre d'état. Tapez votre commande et appuyez sur <strong>Entrée</strong> pour
+    l'exécuter. Appuyez sur
+    <strong>Échap</strong>
+    pour annuler.
+</p>
+<p>
+    blunderDB exécute les requêtes envoyées par l'utilisateur dès lors qu'elles sont valides et modifie immédiatement l'état de la base de données si nécessaire. Aucune action d'enregistrement
+    explicite n'est requise de la part de l'utilisateur.
+</p>
+<p>
+    Pour affiner une recherche au sein de positions préalablement filtrées, utilisez la commande <strong>ss</strong> suivie de filtres (par ex. <strong>ss nc</strong>). Cela restreint la recherche aux
+    seules positions actuellement affichées, ce qui permet de réduire progressivement les résultats. Le panneau de recherche (<strong>Ctrl+F</strong>) propose aussi une case « Rechercher dans les
+    résultats courants » pour la même fonctionnalité.
+</p>
+
+<h3>Calculatrice EPC</h3>
+<p>
+    La calculatrice EPC (Effective Pip Count) calcule le pip count effectif des positions de sortie. Elle utilise la base de données de sortie unilatérale à 6 points de GNUbg pour obtenir des valeurs
+    d'EPC exactes.
+</p>
+<p>
+    Pour ouvrir le panneau Eval, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Eval du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé
+    avec une configuration standard de sortie (15 pions).
+</p>
+<p>
+    Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau Eval dédié, indiquant pour
+    chaque joueur :
+</p>
+<ul>
+    <li><strong>EPC</strong> : le nombre moyen de pips nécessaires pour sortir tous les pions,</li>
+    <li><strong>Pip Count</strong> : le pip count brut,</li>
+    <li><strong>Wastage</strong> : la différence entre l'EPC et le pip count,</li>
+    <li><strong>Avg Rolls</strong> : nombre moyen de jets pour sortir tous les pions,</li>
+    <li><strong>Std Dev</strong> : écart-type du nombre de jets.</li>
+</ul>
+<p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
+<p>Pour fermer le panneau Eval, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
+<p>
+    Sur une position de sortie pure, un tableau course affiche en outre les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6
+    pions par joueur, base étendue téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes — avec, sous chaque décision non optimale, l'écart d'équité à la
+    meilleure décision — et la meilleure décision de videau. Hors de ce domaine, la probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le
+    joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la position du videau en cliquant le videau du plateau.
+</p>
+<p>
+    La case <strong>Défi</strong> masque les résultats à chaque modification de la position ; cliquez une zone pour la révéler — idéal pour s'entraîner à estimer l'EPC et la décision de videau avant
+    de vérifier.
+</p>
+
+<h3>Navigation dans les matchs</h3>
+<p>
+    blunderDB permet de parcourir les coups des matchs importés. Ouvrez le panneau Match avec <strong>Ctrl+Tab</strong> et double-cliquez sur un match (ou appuyez sur <strong>Entrée</strong>) pour
+    charger ses positions.
+</p>
+<p>
+    Lors de la navigation dans un match, la dernière position visitée est automatiquement enregistrée et restaurée. Utilisez les touches <strong>Gauche</strong>/<strong>Droite</strong> pour vous
+    déplacer entre les positions, et <strong>PageUp</strong>/<strong>PageDown</strong> pour sauter d'une partie à l'autre.
+</p>
+<p>
+    Le panneau d'analyse (<strong>Ctrl+L</strong>) affiche l'analyse de chaque coup, le coup joué étant mis en évidence. Appuyez sur <strong>d</strong> pour basculer entre l'analyse de pions et
+    l'analyse de videau.
+</p>
+
+<h3>Collections</h3>
+<p>
+    Les collections permettent d'organiser les positions en groupes personnalisés. Ouvrez le panneau Collection avec <strong>Ctrl+B</strong>, puis double-cliquez sur une collection pour parcourir ses
+    positions. Les collections et les positions qu'elles contiennent peuvent être réordonnées par glisser-déposer.
+</p>
+
+<h3>Anki (répétition espacée)</h3>
+<p>Le panneau Anki (<strong>Ctrl+K</strong>) offre la répétition espacée pour étudier des positions de backgammon à l'aide de l'algorithme FSRS.</p>
+<p>
+    <strong>Créer des paquets :</strong> Cliquez sur <em>Nouveau paquet</em> pour créer un paquet à partir d'une collection ou des résultats de recherche courants. Les paquets basés sur une recherche
+    se synchronisent automatiquement lorsque l'onglet Anki est activé.
+</p>
+<p>
+    <strong>Réviser :</strong> Sélectionnez un paquet et cliquez sur <em>Étudier</em> (ou double-cliquez sur un paquet) pour commencer à réviser les cartes à échéance. Chaque carte affiche la position
+    correspondante sur le plateau. Notez votre rappel avec les touches <strong>1</strong> (À revoir), <strong>2</strong> (Difficile), <strong>3</strong> (Correct) ou <strong>4</strong> (Facile).
+    Appuyez sur <strong>Échap</strong> pour arrêter et revenir à la liste des paquets.
+</p>
+<p>
+    <strong>Limiter la séance :</strong> Dans les Paramètres du paquet, vous pouvez borner une séance à un nombre de cartes. La séance s'arrête alors en le disant, et l'entraînement libre reste
+    disponible pour continuer sans toucher au planning. Une limite de <em>0</em> ne sert aucune carte — ce n'est pas la même chose que « pas de limite ».
+</p>
+<p>
+    <strong>Rétention :</strong> La rétention cible est votre choix sur le compromis charge/qualité. Les Paramètres affichent en regard la rétention <em>mesurée</em> sur vos révisions — une
+    information, jamais un pilotage. Changer la cible n'est pas rétroactif : chaque carte adopte le nouveau rythme à sa prochaine révision.
+</p>
+<p>
+    <strong>Afficher la réponse :</strong> La carte pose une question ; réfléchissez, puis appuyez sur <strong>Espace</strong> (ou cliquez sur la zone masquée) pour dévoiler l'analyse enregistrée de
+    la position. Elle s'affiche sous les boutons de notation, qui restent à portée. Rien ne vous oblige à la dévoiler pour noter, et elle se remasque à la carte suivante — pas si vous changez
+    simplement d'onglet.
+</p>
+<p>
+    <strong>Arrêter/Reprendre :</strong> Vous pouvez arrêter une session de révision à tout moment en appuyant sur <strong>Échap</strong>. Le bouton devient <em>Reprendre</em> et affiche votre
+    progression. Cliquez dessus pour continuer là où vous vous êtes arrêté.
+</p>
+<p>
+    <strong>Gestion des paquets :</strong> Utilisez les boutons d'action pour renommer, synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS (rétention cible, intervalle maximal,
+    fuzz) peuvent être configurés par paquet dans les Réglages (icône d'engrenage).
+</p>
+
+<h3>Tournois</h3>
+<p>Les tournois permettent de regrouper les matchs par événement. Ouvrez le panneau Tournoi avec <strong>Ctrl+Y</strong> pour gérer les tournois et leur affecter des matchs.</p>
+
+<h3>Stats</h3>
+<p>
+    Le panneau Stats (<strong>Ctrl+D</strong>) affiche des statistiques de performance (PR et coût en MWC) calculées à partir de toutes les positions importées. Utilisez la barre de filtres pour
+    restreindre l'analyse par joueur, tournoi, plage de dates, type de décision ou longueur de match. Cliquez sur n'importe quel indicateur pour explorer en détail les positions correspondantes.
+    L'onglet <strong>Joueurs</strong> liste, par joueur, le nombre de matchs, le bilan, les décisions, le PR (pions et videau), le Snowie, les blunders et la chance mesurée sur les jets connus.
+</p>
+
+<h3>Filigrane et export protégé</h3>
+<p>Lors d'un export (<strong>export_db</strong> ou la boîte de dialogue Exporter), deux protections indépendantes peuvent être activées librement, l'une, l'autre, ou les deux à la fois :</p>
+<ul>
+    <li>
+        <strong>Filigrane :</strong> marque le fichier exporté de son origine (qui l'a produit, une note facultative). Le filigrane est signé par votre identité d'émetteur : il ne peut être ni modifié
+        ni contrefait au nom de quelqu'un d'autre — mais il n'est pas ineffaçable et n'empêche aucune copie.
+    </li>
+    <li>
+        <strong>Mot de passe :</strong> place l'export dans un conteneur chiffré <strong>.dbx</strong>. Il protège le fichier pendant son transport, pas la base elle-même — celui à qui vous donnez le
+        mot de passe peut l'ouvrir — et l'origine reste lisible sans lui.
+    </li>
+</ul>
+<p>
+    Votre identité d'émetteur, la clé qui signe vos filigranes, se crée automatiquement au premier export marqué de son origine. Consultez-la, exportez-la ou régénérez-la depuis l'onglet
+    <strong>Identité d'émetteur</strong> de la configuration.
+</p>
+
+<!-- tab: about -->
+<h3>Version</h3>
+<p>Version de l'application : {appVersion}</p>
+<p>Version de la base de données : {dbVersion}</p>
+
+<h3>Auteur</h3>
+<p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
+<p>Vous pouvez aussi me retrouver sur Heroes sous le pseudo <strong>postmanpat</strong>.</p>
+<p>
+    J'ai développé blunderDB au départ pour mon usage personnel, afin de détecter des schémas dans mes erreurs. Mais il est très agréable de recevoir des retours, surtout lorsqu'on a passé beaucoup
+    d'heures sur la conception, le code, le débogage... Alors n'hésitez pas à m'écrire pour partager vos retours.
+</p>
+<p>Voici plusieurs façons de me contacter :</p>
+<ul>
+    <li>Rejoignez le serveur Discord de blunderDB : <a href="https://discord.gg/DA5PpzM9En" target="_blank" rel="noopener noreferrer">discord.gg/DA5PpzM9En</a>,</li>
+    <li>Discutez avec moi si nous nous croisons en tournoi,</li>
+    <li>Envoyez-moi un e-mail,</li>
+</ul>
+<h3>Licence</h3>
+<p>
+    blunderDB est distribué sous licence MIT. Cela signifie que vous êtes libre d'utiliser, copier, modifier, fusionner, publier, distribuer, sous-licencier et/ou vendre des copies du logiciel, à
+    condition que la notice de copyright originale et cette notice d'autorisation soient incluses dans toutes les copies ou parties substantielles du logiciel.
+</p>
+<h3>Remerciements</h3>
+<p>Je dédie ce petit logiciel à ma compagne <strong>Anne-Claire</strong> et à notre chère fille <strong>Perrine</strong>. Je tiens à remercier tout particulièrement quelques amis :</p>
+<ul>
+    <li>
+        <strong>Tristan Remille</strong>, pour m'avoir initié au backgammon avec joie et bienveillance ; pour m'avoir montré la Voie dans la compréhension de ce jeu merveilleux ; pour continuer à me
+        soutenir malgré mes piètres tentatives de mieux jouer.
+    </li>
+    <li>
+        <strong>Nicolas Harmand</strong>, un joyeux compagnon depuis plus d'une décennie dans de grandes aventures, et un fantastique partenaire de jeu depuis qu'il a attrapé le virus du backgammon.
+    </li>
+</ul>
+<h3>Crédits</h3>
+<p>blunderDB embarque du code, des données et des polices d'autres personnes. L'essentiel :</p>
+<ul>
+    <li>
+        Le réseau de neurones <strong>strehl-prob5-512-512-256-128</strong> est l'œuvre d'<strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). La recherche, le modèle de
+        videau et la table d'équité de match qui l'entourent forment la configuration propre de <strong>gammonNet</strong> (<a
+            href="https://github.com/kevung/gammonNet"
+            target="_blank"
+            rel="noopener noreferrer"
+            >github.com/kevung/gammonNet</a
+        >, MIT).
+    </li>
+    <li>La table d'équité de match Kazaross-XG2 (MET) est l'œuvre de <strong>Neil Kazaross</strong>.</li>
+    <li>Les tables de take points et de valeurs de gammon sont tirées du livre <em>The Theory of Backgammon</em> de <strong>Dirk Schiemann</strong>.</li>
+    <li>
+        Les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été générées avec
+        <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel libre sous licence GPL ; ces tables sont des données qu'il a produites, créditées comme telles.
+    </li>
+    <li>Les fichiers de match sont lus par <em>xgparser</em> et <em>gnubgparser</em> (LGPL-2.1) et par <em>bgfparser</em> (MIT).</li>
+    <li>Côté Go : <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> et <em>go-fsrs</em> (MIT).</li>
+    <li>Côté interface : <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> et <em>driver.js</em> (MIT).</li>
+    <li>Les polices <em>Nunito</em> et <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
+</ul>
+<p>
+    L'inventaire complet, avec le texte des licences, est le fichier <strong>THIRD_PARTY.md</strong> livré avec blunderDB (<a
+        href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md"
+        target="_blank"
+        rel="noopener noreferrer"
+        >github.com/kevung/blunderDB</a
+    >).
+</p>

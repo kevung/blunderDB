@@ -7,6 +7,7 @@ import "testing"
 // copy-on-write). Importing a real .mat, swapping, and reading back must show
 // the names exchanged with no error.
 func TestSwapMatchPlayersDelegates(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	matchID, err := db.ImportGnuBGMatch("testdata/test.mat")

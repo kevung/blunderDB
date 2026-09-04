@@ -14,6 +14,7 @@ import (
 )
 
 func TestLoadPositionIDsByFilters_MatchesLoadPositionsByFilters(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "search_ids.db")); err != nil {

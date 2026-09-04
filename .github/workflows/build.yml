@@ -32,12 +32,21 @@ permissions:
 
 jobs:
   # The Go suite is sharded so the wall clock is bounded by the slowest shard
-  # (about 6 minutes on a 4-vCPU runner) instead of their sum (20 minutes
-  # measured on 2026-09-02). Shards select packages by path, so a new package
+  # instead of their sum. Shards select packages by path, so a new package
   # lands in `rest` without editing this file; `database` is one package
-  # carrying ten minutes of race-instrumented tests, so it is split by test
-  # name instead. engine/gammonnet runs without the race detector and with
-  # `-covermode=set`: atomic counters cost it five times its run time.
+  # carrying more than forty minutes of race-instrumented tests, so it is
+  # split in FOUR by scripts/go-test-shard.sh — by test INDEX, not by first
+  # letter as until E.3 (#219): two halves cut by initial have no reason to
+  # weigh the same (they measured 279 s and 419 s) and renaming a test moved
+  # load silently from one job to the other. Four and not two because the race
+  # detector is what dominates here, and it does not parallelise away: with
+  # t.Parallel() on 289 of the package's 308 tests, one HALF still ran past
+  # 21 minutes under `-race -parallel 4` (measured 2026-09-04, 4 GOMAXPROCS,
+  # the shape of a runner) — past the 1200 s a job is given. Without the race
+  # detector the same package went from 159 s to 57 s on 16 cores; the
+  # parallelism is real, it is simply not what bounds this job. engine/gammonnet runs without the
+  # race detector and with `-covermode=set`: atomic counters cost it five
+  # times its run time.
   test:
     name: test (${{ matrix.shard }})
     runs-on: ubuntu-latest
@@ -47,11 +56,29 @@ jobs:
       matrix:
         include:
           - shard: database-a
-            run: go test -timeout 1200s -race -count=1 -run '^Test[A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 0 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: database-b
-            run: go test -timeout 1200s -race -count=1 -run '^Test[^A-I]' -coverprofile=coverage.out -covermode=atomic ./pkg/blunderdb/database/ 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 1 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-c
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 2 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-d
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 3 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          # internal/cli is the other package that filled a whole job on its
+          # own (FAIL … 1200.079s, 2026-09-03). t.Parallel() does not help it:
+          # its slowest tests are precisely the ones that capture os.Stdout —
+          # process-wide state, so 53 of its 99 tests must stay serial (see
+          # tasks/BACKLOG.md, "Le CLI écrit sur os.Stdout"). Splitting by index
+          # is what shares that serial cost out, so it gets the same treatment
+          # as database, and `app` covers everything else — a new package under
+          # internal/ or cmd/ still lands here with no edit.
           - shard: app
-            run: go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic . ./internal/... ./cmd/... 2>&1 | tee test-output.txt
+            run: |
+              go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
+                $(go list . ./internal/... ./cmd/... | grep -v '/internal/cli$') 2>&1 | tee test-output.txt
+          - shard: cli-a
+            run: scripts/go-test-shard.sh ./internal/cli/ 0 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: cli-b
+            run: scripts/go-test-shard.sh ./internal/cli/ 1 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           # -coverpkg=./pkg/blunderdb/... (E.2, #218): this shard is what
           # exercises storage/sqlite, and storage/sqlite calls into
           # storage/sqlshared — without -coverpkg only the package under test
@@ -334,6 +361,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
+      # Belt to .gitattributes' braces (`* -text`, added 2026-09-04): that
+      # file is what actually protects the SHA-256-checked embedded assets on
+      # every clone, this only covers a runner whose git predates it.
       - name: Keep LF line endings at checkout
         run: git config --global core.autocrlf false
         shell: bash
@@ -922,10 +952,27 @@ jobs:
           set -euo pipefail
           go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.46.3
           export PATH="$PATH:$(go env GOPATH)/bin"
+          # Two different version strings, on purpose:
+          #   ART — how every artefact of this run is NAMED (tag, or short SHA
+          #         off a tag). Unchanged, and what the test step greps for.
+          #   PKG — what goes INSIDE the .deb/.rpm control data. dpkg refuses a
+          #         version that does not start with a digit, so off a tag the
+          #         short SHA cannot be it: `dpkg -i` failed with "parsing file
+          #         '/var/lib/dpkg/tmp.ci/control' near line 2" on every branch
+          #         build until 2026-09-04. '~' sorts BEFORE everything, so a
+          #         real 0.36.0 still supersedes any 0.0.0~git… built earlier.
+          # nfpm reads ${VERSION} from the environment (nfpm.yaml, version:).
+          ART="$VERSION"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            PKG="${ART#v}"
+          else
+            PKG="0.0.0~git${ART}"
+          fi
+          export VERSION="$PKG"
           # nfpm does not expand env vars in the `src` glob, so stage the binary
           # at the fixed path nfpm.yaml expects, then remove the bare copy so it
           # is not uploaded to the release.
-          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderDB
+          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${ART}" build/bin/blunderDB
           # `blunderdb completion <shell>` prints the script (B.8, #176); generate
           # it here from the binary just staged, rather than committing one, so it
           # can never drift from the subcommand table it reads (handlers()). The
@@ -934,8 +981,8 @@ jobs:
           build/bin/blunderDB completion bash > build/linux/completions/blunderdb.bash
           build/bin/blunderDB completion zsh  > build/linux/completions/_blunderdb
           build/bin/blunderDB completion fish > build/linux/completions/blunderdb.fish
-          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
-          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
+          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${ART}_amd64.deb"
+          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${ART}.x86_64.rpm"
           rm -f build/bin/blunderDB
 
       # Install what was just packaged, on the runner that built it (the
@@ -951,6 +998,10 @@ jobs:
           VERSION: ${{ steps.vars.outputs.version }}
         run: |
           set -euo pipefail
+          # The control version is not VERSION off a tag (see the packaging step
+          # above); what must hold is that dpkg accepts it at all, and that the
+          # binary inside still answers with the version this run built.
+          dpkg-deb -f "build/bin/blunderdb_${VERSION}_amd64.deb" Version
           sudo dpkg -i "build/bin/blunderdb_${VERSION}_amd64.deb"
           blunderdb version | tee /dev/stderr | grep -F -- "$VERSION"
           test -f /usr/share/doc/blunderdb/THIRD_PARTY.md
@@ -1032,10 +1083,14 @@ jobs:
     # Sigstore-backed SLSA provenance attestation per asset using GitHub's own
     # OIDC identity — no secret to manage, unlike the opt-in minisign
     # signature a few steps down.
+    # discussions:write is for the "Announce the release" step below
+    # (H.11, #253): it posts to the Announcements category over the GraphQL
+    # API, which needs its own scope distinct from contents/issues.
     permissions:
       contents: write
       id-token: write
       attestations: write
+      discussions: write
     env:
       VERSION: ${{ github.ref_name }}
     steps:
@@ -1166,6 +1221,33 @@ jobs:
             */bin/*
             SHA256SUMS
             SHA256SUMS.minisig
+
+      # H.11 (#253): the roadmap page points here for what already shipped.
+      # Discussions were enabled with GitHub's default categories (kevung,
+      # 2026-09) and nobody had posted to Announcements yet — this is the one
+      # automated poster. repositoryId/categoryId are the node IDs of this
+      # repository and its "Announcements" category (GraphQL `id`, `gh api
+      # graphql`); both are immutable as long as neither is deleted, so they
+      # are inlined rather than looked up on every run. continue-on-error:
+      # true — a broken announcement must never fail a release that already
+      # shipped its assets above.
+      - name: Announce the release on Discussions
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          repository_id="R_kgDOLw9sVQ"
+          category_id="DIC_kwDOLw9sVc4CluSa"
+          body="blunderDB ${VERSION} is out. Release notes and downloads: https://github.com/${GITHUB_REPOSITORY}/releases/tag/${VERSION}"
+          gh api graphql \
+            -f query='mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{url}}}' \
+            -f repositoryId="$repository_id" \
+            -f categoryId="$category_id" \
+            -f title="blunderDB ${VERSION}" \
+            -f body="$body"
+        shell: bash
 
   # Flatpak bundle, release tags only. packaging/flatpak/*.yml repackages the
   # webkit2gtk-4.1 release tarball, so the job waits for the matrix (`needs:
@@ -1439,9 +1521,21 @@ jobs:
           done
         shell: bash
 
-      - name: Create index.html for redirection
+      # H.10 (#252): the root used to be a bare `meta refresh` into `en/` — no
+      # product page, and the language it picked was hardcoded. doc/site/index.html
+      # is the actual home page (screenshot, pitch, per-OS download buttons,
+      # links to the docs/Discord/Releases); its __VERSION__ placeholder names
+      # the same release-asset filenames the `build` job produces, resolved
+      # through GitHub's `/releases/latest/download/` alias so the buttons
+      # always point at whatever shipped last. The Documentation link's
+      # language is picked client-side from navigator.language (see the
+      # template's inline script), not hardcoded to English.
+      - name: Render the home page
+        env:
+          VERSION: ${{ steps.vars.outputs.version }}
         run: |
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
+          sed "s/__VERSION__/${VERSION}/g" doc/site/index.html > ./doc/build/index.html
+        shell: bash
 
       # Upload build assets
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

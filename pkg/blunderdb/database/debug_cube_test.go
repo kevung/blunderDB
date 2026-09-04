@@ -8,6 +8,7 @@ import (
 )
 
 func TestDebugCubePositions(t *testing.T) {
+	t.Parallel()
 	imp := xgparser.NewImport("testdata/test.xg")
 	segments, err := imp.GetFileSegments()
 	if err != nil {

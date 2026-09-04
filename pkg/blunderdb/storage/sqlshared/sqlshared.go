@@ -13,8 +13,13 @@
 //
 // What stays in the backends: the families whose statements differ in shape
 // (RETURNING, ON CONFLICT targets, tenant_id on every insert — positions,
-// analyses, matches, collections, tournaments, anki) and the one-off methods
-// noted on each shared store.
+// analyses, matches, collections, tournaments) and the one-off methods noted
+// on each shared store. anki (B.14, #182) is the shared AnkiStore here save
+// for Forecast — its day-offset bucketing is genuine date-arithmetic
+// divergence (SQLite has no DATE type and computes it through julianday(),
+// PostgreSQL natively) — which each backend still writes itself, embedding
+// AnkiStore and shadowing that one method (the stats_sqlite.go/
+// stats_postgres.go precedent for DateRange).
 //
 // Every query in this package is written with '?' placeholders; the PostgreSQL
 // adapter rebinds them to '$N' before execution. No query here contains a
@@ -107,6 +112,16 @@ type Dialect interface {
 	// the planner only matches textually, so the literal has to stay 1/0
 	// there; PostgreSQL's BOOLEAN columns take TRUE/FALSE.
 	Bool(col string, v bool) string
+
+	// BoolAsInt renders a boolean-shaped column in a SELECT list so the same
+	// Go int destination scans it on both backends: unchanged on SQLite
+	// (already INTEGER 0/1), a CASE on PostgreSQL (native BOOLEAN).
+	BoolAsInt(col string) string
+
+	// BoolArg converts v into the argument a boolean-shaped column's INSERT/
+	// UPDATE wants bound: SQLite stores its flags as INTEGER 0/1 (see Bool),
+	// so this returns 0/1; PostgreSQL's BOOLEAN column takes v unchanged.
+	BoolArg(v bool) any
 
 	// Bigint wraps an aggregate so it scans into an int64: SUM over BIGINT is
 	// NUMERIC in PostgreSQL (cast back), plain integer in SQLite (unchanged).

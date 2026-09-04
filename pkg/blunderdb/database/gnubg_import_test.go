@@ -16,6 +16,7 @@ import (
 // position.is_cube_response exactly for the cube positions whose played cube
 // action is a take/pass response (engine.IsResponseCubeAction).
 func TestImport_PopulatesIsCubeResponse(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
@@ -89,6 +90,7 @@ func testLoadPositionFromRow(db *Database, id int64) (Position, error) {
 
 // TestImportGnuBGSGF tests importing a GnuBG SGF match file.
 func TestImportGnuBGSGF(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
@@ -188,6 +190,7 @@ func TestImportGnuBGSGF(t *testing.T) {
 
 // TestImportGnuBGMAT tests importing a Jellyfish MAT match file.
 func TestImportGnuBGMAT(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.mat")
@@ -245,6 +248,7 @@ func TestImportGnuBGMAT(t *testing.T) {
 
 // TestImportGnuBGTXT tests importing a Jellyfish TXT match file.
 func TestImportGnuBGTXT(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.txt")
@@ -288,6 +292,7 @@ func TestImportGnuBGTXT(t *testing.T) {
 
 // TestImportGnuBGDuplicate tests that importing the same match twice is rejected.
 func TestImportGnuBGDuplicate(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
@@ -315,6 +320,7 @@ func TestImportGnuBGDuplicate(t *testing.T) {
 
 // TestImportGnuBGSGFGameDetails verifies detailed game/move data from SGF import.
 func TestImportGnuBGSGFGameDetails(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
@@ -488,6 +494,7 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 
 // TestImportGnuBGMATvsTXT verifies that MAT and TXT produce same match structure.
 func TestImportGnuBGMATvsTXT(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	matFile := filepath.Join("testdata", "test.mat")
@@ -574,6 +581,7 @@ func TestImportGnuBGMATvsTXT(t *testing.T) {
 
 // TestConvertGnuBGMoveToString tests the move notation converter.
 func TestConvertGnuBGMoveToString(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name     string
 		move     [8]int
@@ -642,6 +650,7 @@ func TestConvertGnuBGMoveToString(t *testing.T) {
 
 // TestImportGnuBGUnsupportedFormat tests that unsupported extensions are rejected.
 func TestImportGnuBGUnsupportedFormat(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	_, err := db.ImportGnuBGMatch("test.bgf")
@@ -653,6 +662,7 @@ func TestImportGnuBGUnsupportedFormat(t *testing.T) {
 
 // TestImportCharlotSGF tests importing the charlot SGF match file (second test dataset).
 func TestImportCharlotSGF(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.sgf")
@@ -683,6 +693,7 @@ func TestImportCharlotSGF(t *testing.T) {
 
 // TestImportCharlotMAT tests importing the charlot MAT match file (second test dataset).
 func TestImportCharlotMAT(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
@@ -716,6 +727,7 @@ func TestImportCharlotMAT(t *testing.T) {
 // The match content (games, moves, positions) should be identical;
 // analysis values may differ by up to 60% since different engines analyzed them.
 func TestCompareXGvsSGFImport(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
@@ -1177,6 +1189,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 // have exactly 15 checkers per player (on board + bar + borne off).
 // This catches bugs where bar entries (25/...) or bearoffs (.../0) are not parsed.
 func TestMATImportCheckerCounts(t *testing.T) {
+	t.Parallel()
 	matFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
 	if _, err := os.Stat(matFile); os.IsNotExist(err) {
 		t.Fatal("charlot match file not found")
@@ -1260,6 +1273,7 @@ func TestMATImportCheckerCounts(t *testing.T) {
 
 // TestImportXGComments tests that XG file comments are imported into the comment table.
 func TestImportXGComments(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "match_with_comment.xg")

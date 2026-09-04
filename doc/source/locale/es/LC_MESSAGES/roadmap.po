@@ -1,0 +1,532 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 21:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: es <LL@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/roadmap.rst:4
+msgid "Feuille de route"
+msgstr "Hoja de ruta"
+
+#: ../../source/roadmap.rst:6
+msgid ""
+"Cette page recense les pistes d'évolution envisagées pour blunderDB — ce "
+"n'est **pas** un engagement de date ni d'ordre. blunderDB est développé par "
+"une seule personne, sur son temps libre : une piste peut avancer vite, "
+"attendre des mois, ou être abandonnée si une meilleure idée la remplace."
+msgstr ""
+"Esta página recoge las ideas que se están considerando para blunderDB — "
+"**no** es un compromiso de fechas ni de orden. blunderDB lo desarrolla una "
+"sola persona, en su tiempo libre: una idea puede avanzar rápido, esperar "
+"meses o ser abandonada si otra mejor la sustituye."
+
+#: ../../source/roadmap.rst:11
+msgid "Le suivi précis se passe sur GitHub :"
+msgstr "El seguimiento detallado se hace en GitHub:"
+
+#: ../../source/roadmap.rst:13
+msgid ""
+"les tickets ouverts sont regroupés par étape dans les jalons `Étape 3 — "
+"Étendre <https://github.com/kevung/blunderDB/milestone/4>`__ (ce qui suit "
+"cette page) et `Étape 4 — Fond "
+"<https://github.com/kevung/blunderDB/milestone/5>`__ (les chantiers plus "
+"lourds) ;"
+msgstr ""
+"los tickets abiertos se agrupan por etapa en los hitos `Étape 3 — Étendre "
+"<https://github.com/kevung/blunderDB/milestone/4>`__ (lo que sigue en esta "
+"página) y `Étape 4 — Fond "
+"<https://github.com/kevung/blunderDB/milestone/5>`__ (los proyectos más "
+"pesados);"
+
+#: ../../source/roadmap.rst:18
+msgid ""
+"pour proposer une idée ou en discuter, direction les `Discussions — "
+"catégorie Idées "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__ ;"
+msgstr ""
+"para proponer o comentar una idea, hay que ir a `Discussions – categoría "
+"Ideas <https://github.com/kevung/blunderDB/discussions/categories/ideas>`__;"
+
+#: ../../source/roadmap.rst:21
+msgid ""
+"chaque version publiée est annoncée dans les `Discussions — catégorie "
+"Annonces "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+msgstr ""
+"cada versión publicada se anuncia en `Discussions – categoría Announcements "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+
+#: ../../source/roadmap.rst:26
+msgid "Étape 3 — Étendre"
+msgstr "Etapa 3 — Ampliar"
+
+#: ../../source/roadmap.rst:29
+msgid "Import et flux"
+msgstr "Importación y flujo"
+
+#: ../../source/roadmap.rst:31
+msgid ""
+"Un panneau de fin d'import : nombre de matchs importés, positions marquées, "
+"positions sans analyse, cinq pires erreurs (`#257 "
+"<https://github.com/kevung/blunderDB/issues/257>`__)."
+msgstr ""
+"Un panel al final de la importación: número de partidas importadas, "
+"posiciones marcadas, posiciones sin análisis, los cinco peores errores "
+"(`#257 <https://github.com/kevung/blunderDB/issues/257>`__)."
+
+#: ../../source/roadmap.rst:34
+msgid ""
+"Surveiller un dossier (celui d'eXtreme Gammon par exemple) et importer "
+"automatiquement tout nouveau fichier (`#258 "
+"<https://github.com/kevung/blunderDB/issues/258>`__)."
+msgstr ""
+"Vigilar una carpeta (la de eXtreme Gammon, por ejemplo) e importar "
+"automáticamente cada archivo nuevo (`#258 "
+"<https://github.com/kevung/blunderDB/issues/258>`__)."
+
+#: ../../source/roadmap.rst:37
+msgid ""
+"Après un import, parcourir une file d'étude qui ne montre que les blunders, "
+"les positions marquées et les décisions serrées du lot (`#259 "
+"<https://github.com/kevung/blunderDB/issues/259>`__)."
+msgstr ""
+"Tras una importación, recorrer una cola de estudio que solo muestra los "
+"blunders, las posiciones marcadas y las decisiones ajustadas del lote (`#259"
+" <https://github.com/kevung/blunderDB/issues/259>`__)."
+
+#: ../../source/roadmap.rst:40
+msgid ""
+"Importer les matchs joués sur bgammon.org et reconnaître un identifiant de "
+"position OGID collé dans l'application (`#262 "
+"<https://github.com/kevung/blunderDB/issues/262>`__)."
+msgstr ""
+"Importar las partidas jugadas en bgammon.org y reconocer un identificador de"
+" posición OGID pegado en la aplicación (`#262 "
+"<https://github.com/kevung/blunderDB/issues/262>`__)."
+
+#: ../../source/roadmap.rst:43
+msgid ""
+"Garder trace de l'origine de chaque commentaire (utilisateur, eXtreme "
+"Gammon, GNUbg…) et les afficher tous, plutôt qu'un seul choisi au hasard "
+"(`#263 <https://github.com/kevung/blunderDB/issues/263>`__)."
+msgstr ""
+"Registrar el origen de cada comentario (usuario, eXtreme Gammon, GNUbg…) y "
+"mostrarlos todos, en vez de uno elegido al azar (`#263 "
+"<https://github.com/kevung/blunderDB/issues/263>`__)."
+
+#: ../../source/roadmap.rst:48
+msgid "Catégoriser sans imposer de classification"
+msgstr "Categorizar sin imponer una clasificación"
+
+#: ../../source/roadmap.rst:50
+msgid ""
+"Étiqueter automatiquement chaque position selon la phase de la partie "
+"(ouverture, milieu, course, bearoff), pour la filtrer et la retrouver dans "
+"les statistiques (`#264 "
+"<https://github.com/kevung/blunderDB/issues/264>`__)."
+msgstr ""
+"Etiquetar automáticamente cada posición según la fase de la partida "
+"(apertura, medio juego, carrera, bearoff), para filtrarla y encontrarla en "
+"las estadísticas (`#264 "
+"<https://github.com/kevung/blunderDB/issues/264>`__)."
+
+#: ../../source/roadmap.rst:53
+msgid ""
+"Un vocabulaire de tags suggérés (``#blitz``, ``#backgame``, "
+"``#containment``…) avec autocomplétion et un panneau qui les liste par "
+"fréquence (`#265 <https://github.com/kevung/blunderDB/issues/265>`__)."
+msgstr ""
+"Un vocabulario de etiquetas sugeridas (``#blitz``, ``#backgame``, "
+"``#containment``…) con autocompletado y un panel que las lista por "
+"frecuencia (`#265 <https://github.com/kevung/blunderDB/issues/265>`__)."
+
+#: ../../source/roadmap.rst:56
+msgid ""
+"Un cinquième onglet de statistiques ventilant le PR et le taux d'erreur par "
+"phase, par tag et par score away, sous forme de matrice (`#266 "
+"<https://github.com/kevung/blunderDB/issues/266>`__)."
+msgstr ""
+"Una quinta pestaña de estadísticas que desglosa el PR y la tasa de error por"
+" fase, por etiqueta y por marcador away, en forma de matriz (`#266 "
+"<https://github.com/kevung/blunderDB/issues/266>`__)."
+
+#: ../../source/roadmap.rst:61
+msgid "Analyse et évaluation"
+msgstr "Análisis y evaluación"
+
+#: ../../source/roadmap.rst:63
+msgid ""
+"Sur la position courante, le verdict de videau à tous les scores d'un match "
+"de 5, 7 ou 9 points, en une seule grille (`#267 "
+"<https://github.com/kevung/blunderDB/issues/267>`__)."
+msgstr ""
+"Sobre la posición actual, el veredicto de cubo en todos los marcadores de "
+"una partida a 5, 7 o 9 puntos, en una sola cuadrícula (`#267 "
+"<https://github.com/kevung/blunderDB/issues/267>`__)."
+
+#: ../../source/roadmap.rst:66
+msgid ""
+"Un PR calculé sur les matchs sans analyse importée, en comparant le coup "
+"joué à la recommandation de l'évaluateur intégré (`#268 "
+"<https://github.com/kevung/blunderDB/issues/268>`__)."
+msgstr ""
+"Un PR calculado sobre partidas sin análisis importado, comparando la jugada "
+"realizada con la recomendación del evaluador integrado (`#268 "
+"<https://github.com/kevung/blunderDB/issues/268>`__)."
+
+#: ../../source/roadmap.rst:69
+msgid ""
+"Comparer côte à côte, sur une même position, ce que disent les différents "
+"moteurs déjà présents dans la base (`#269 "
+"<https://github.com/kevung/blunderDB/issues/269>`__)."
+msgstr ""
+"Comparar, uno al lado del otro sobre la misma posición, lo que dicen los "
+"distintos motores ya presentes en la base (`#269 "
+"<https://github.com/kevung/blunderDB/issues/269>`__)."
+
+#: ../../source/roadmap.rst:72
+msgid ""
+"Publier ce que vaut l'évaluateur intégré face à une table de référence "
+"exacte, et le mesurer en continu face aux imports eXtreme Gammon (`#270 "
+"<https://github.com/kevung/blunderDB/issues/270>`__)."
+msgstr ""
+"Publicar cuánto vale realmente el evaluador integrado frente a una tabla de "
+"referencia exacta, y medirlo de forma continua frente a las importaciones de"
+" eXtreme Gammon (`#270 <https://github.com/kevung/blunderDB/issues/270>`__)."
+
+#: ../../source/roadmap.rst:75
+msgid ""
+"Afficher les règles en vigueur (cube max, Jacoby, beaver) à côté du verdict,"
+" et permettre de choisir la table d'équités de match par base (`#271 "
+"<https://github.com/kevung/blunderDB/issues/271>`__)."
+msgstr ""
+"Mostrar las reglas vigentes (límite de cubo, Jacoby, beaver) junto al "
+"veredicto, y permitir elegir la tabla de equities de partida por base (`#271"
+" <https://github.com/kevung/blunderDB/issues/271>`__)."
+
+#: ../../source/roadmap.rst:78
+msgid ""
+"Publier une mesure du 3-ply (temps, gain de précision) et l'exposer comme "
+"réglage si le compromis le justifie (`#272 "
+"<https://github.com/kevung/blunderDB/issues/272>`__)."
+msgstr ""
+"Publicar una medición del 3-ply (tiempo, ganancia de precisión) y ofrecerlo "
+"como ajuste si el compromiso lo justifica (`#272 "
+"<https://github.com/kevung/blunderDB/issues/272>`__)."
+
+#: ../../source/roadmap.rst:83
+msgid "Pédagogie"
+msgstr "Pedagogía"
+
+#: ../../source/roadmap.rst:85
+msgid ""
+"Un premier module d'entraînement chronométré : compte de pips, EPC, point de"
+" prise (`#273 <https://github.com/kevung/blunderDB/issues/273>`__)."
+msgstr ""
+"Un primer módulo de entrenamiento cronometrado: recuento de pips, EPC, punto"
+" de take (`#273 <https://github.com/kevung/blunderDB/issues/273>`__)."
+
+#: ../../source/roadmap.rst:87
+msgid ""
+"Se fixer un objectif de progression (« PR sous 5 d'ici trois mois ») et "
+"suivre l'écart sur la courbe (`#274 "
+"<https://github.com/kevung/blunderDB/issues/274>`__)."
+msgstr ""
+"Fijarse un objetivo de progreso («PR por debajo de 5 en tres meses») y "
+"seguir la diferencia en la curva (`#274 "
+"<https://github.com/kevung/blunderDB/issues/274>`__)."
+
+#: ../../source/roadmap.rst:90
+msgid ""
+"Relier les statistiques d'étude (Anki) aux statistiques de jeu réel : est-ce"
+" qu'une catégorie révisée s'améliore vraiment (`#275 "
+"<https://github.com/kevung/blunderDB/issues/275>`__) ?"
+msgstr ""
+"Relacionar las estadísticas de estudio (Anki) con las estadísticas de juego "
+"real: ¿mejora de verdad una categoría repasada (`#275 "
+"<https://github.com/kevung/blunderDB/issues/275>`__)?"
+
+#: ../../source/roadmap.rst:93
+msgid ""
+"Des cartes de videau chaînées : doubler, puis prendre, comme deux questions "
+"distinctes plutôt qu'une seule carte à deux temps (`#276 "
+"<https://github.com/kevung/blunderDB/issues/276>`__)."
+msgstr ""
+"Tarjetas de cubo encadenadas: doblar y luego aceptar, como dos preguntas "
+"separadas en vez de una sola tarjeta en dos tiempos (`#276 "
+"<https://github.com/kevung/blunderDB/issues/276>`__)."
+
+#: ../../source/roadmap.rst:96
+msgid ""
+"Des parcours pédagogiques : une séquence ordonnée de positions commentées, "
+"distribuable comme une base filigranée, pensée pour un coach (`#277 "
+"<https://github.com/kevung/blunderDB/issues/277>`__)."
+msgstr ""
+"Itinerarios pedagógicos: una secuencia ordenada de posiciones comentadas, "
+"distribuible como una base con marca de agua, pensada para un entrenador "
+"(`#277 <https://github.com/kevung/blunderDB/issues/277>`__)."
+
+#: ../../source/roadmap.rst:101
+msgid "Partager une analyse"
+msgstr "Compartir un análisis"
+
+#: ../../source/roadmap.rst:103
+msgid ""
+"Un rendu unique du plateau, exportable en SVG ou PNG, fidèle à ce que montre"
+" l'écran (`#278 <https://github.com/kevung/blunderDB/issues/278>`__)."
+msgstr ""
+"Un único renderizado del tablero, exportable en SVG o PNG, fiel a lo que "
+"muestra la pantalla (`#278 "
+"<https://github.com/kevung/blunderDB/issues/278>`__)."
+
+#: ../../source/roadmap.rst:105
+msgid ""
+"Un rapport HTML autonome d'une session, d'un match ou d'un tournoi, "
+"imprimable en PDF par le navigateur (`#279 "
+"<https://github.com/kevung/blunderDB/issues/279>`__)."
+msgstr ""
+"Un informe HTML autónomo de una sesión, una partida o un torneo, imprimible "
+"en PDF desde el navegador (`#279 "
+"<https://github.com/kevung/blunderDB/issues/279>`__)."
+
+#: ../../source/roadmap.rst:108
+msgid ""
+"Exporter en CSV ou Parquet, avec un carnet Jupyter d'exemple tenu à jour "
+"(`#280 <https://github.com/kevung/blunderDB/issues/280>`__)."
+msgstr ""
+"Exportar a CSV o Parquet, con un cuaderno Jupyter de ejemplo mantenido al "
+"día (`#280 <https://github.com/kevung/blunderDB/issues/280>`__)."
+
+#: ../../source/roadmap.rst:110
+msgid ""
+"Un index, sur ce site, des bases filigranées que d'autres joueurs partagent "
+"avec une identité vérifiable (`#281 "
+"<https://github.com/kevung/blunderDB/issues/281>`__)."
+msgstr ""
+"Un índice, en este sitio, de bases con marca de agua que otros jugadores "
+"comparten con una identidad verificable (`#281 "
+"<https://github.com/kevung/blunderDB/issues/281>`__)."
+
+#: ../../source/roadmap.rst:115
+msgid "Recherche et bibliothèque"
+msgstr "Búsqueda y biblioteca"
+
+#: ../../source/roadmap.rst:117
+msgid ""
+"Des collections qui se réévaluent à l'ouverture (un filtre nommé, jamais "
+"figé), et la comparaison de deux joueurs côte à côte dans l'onglet Joueurs "
+"(`#282 <https://github.com/kevung/blunderDB/issues/282>`__)."
+msgstr ""
+"Colecciones que se reevalúan al abrir (un filtro con nombre, nunca "
+"congelado), y la comparación de dos jugadores lado a lado en la pestaña "
+"Jugadores (`#282 <https://github.com/kevung/blunderDB/issues/282>`__)."
+
+#: ../../source/roadmap.rst:120
+msgid ""
+"Écrire une recherche en langage courant (« mes blunders de videau au score "
+"») plutôt qu'en jetons, de façon déterministe et hors ligne (`#283 "
+"<https://github.com/kevung/blunderDB/issues/283>`__)."
+msgstr ""
+"Escribir una búsqueda en lenguaje corriente («mis blunders de cubo en el "
+"marcador») en vez de tokens, de forma determinista y sin conexión (`#283 "
+"<https://github.com/kevung/blunderDB/issues/283>`__)."
+
+#: ../../source/roadmap.rst:125
+msgid "Interface et plateforme"
+msgstr "Interfaz y plataforma"
+
+#: ../../source/roadmap.rst:127
+msgid ""
+"Un écran d'accueil qui propose, quand aucune base récente n'est ouverte : "
+"visite guidée, base d'exemple, importer mes matchs, ouvrir une base (`#284 "
+"<https://github.com/kevung/blunderDB/issues/284>`__)."
+msgstr ""
+"Una pantalla de bienvenida que propone, cuando no hay ninguna base reciente "
+"abierta: visita guiada, base de ejemplo, importar mis partidas, abrir una "
+"base (`#284 <https://github.com/kevung/blunderDB/issues/284>`__)."
+
+#: ../../source/roadmap.rst:130
+msgid ""
+"Une corbeille pour les positions supprimées et un « annuler » sur les "
+"suppressions les plus courantes (`#285 "
+"<https://github.com/kevung/blunderDB/issues/285>`__)."
+msgstr ""
+"Una papelera para las posiciones eliminadas y un «deshacer» sobre las "
+"eliminaciones más frecuentes (`#285 "
+"<https://github.com/kevung/blunderDB/issues/285>`__)."
+
+#: ../../source/roadmap.rst:133
+msgid ""
+"Des thèmes nommés — clair, sombre, contraste élevé, imprimable (`#286 "
+"<https://github.com/kevung/blunderDB/issues/286>`__)."
+msgstr ""
+"Temas con nombre — claro, oscuro, alto contraste, imprimible (`#286 "
+"<https://github.com/kevung/blunderDB/issues/286>`__)."
+
+#: ../../source/roadmap.rst:135
+msgid ""
+"Une série de petits conforts d'usage quotidien : journal d'activité "
+"consultable, palette de commandes, badges de recherche plus lisibles (`#287 "
+"<https://github.com/kevung/blunderDB/issues/287>`__)."
+msgstr ""
+"Una serie de pequeñas comodidades del uso diario: registro de actividad "
+"consultable, paleta de comandos, insignias de búsqueda más legibles (`#287 "
+"<https://github.com/kevung/blunderDB/issues/287>`__)."
+
+#: ../../source/roadmap.rst:138
+msgid ""
+"Dire clairement ce qui marche pour synchroniser une base entre plusieurs "
+"postes (et ce qui ne marche pas), et un bouton pour fusionner deux bases "
+"(`#288 <https://github.com/kevung/blunderDB/issues/288>`__)."
+msgstr ""
+"Decir claramente qué funciona para sincronizar una base entre varios equipos"
+" (y qué no), y un botón para fusionar dos bases (`#288 "
+"<https://github.com/kevung/blunderDB/issues/288>`__)."
+
+#: ../../source/roadmap.rst:141
+msgid ""
+"Un client minimal et une politique de version pour l'API du mode serveur "
+"(`#289 <https://github.com/kevung/blunderDB/issues/289>`__)."
+msgstr ""
+"Un cliente mínimo y una política de versionado para la API del modo servidor"
+" (`#289 <https://github.com/kevung/blunderDB/issues/289>`__)."
+
+#: ../../source/roadmap.rst:143
+msgid ""
+"Remonter dans l'application des capacités qui n'existent aujourd'hui que "
+"côté serveur : suspendre une carte, journal de révision, optimisation FSRS "
+"(`#290 <https://github.com/kevung/blunderDB/issues/290>`__)."
+msgstr ""
+"Llevar a la aplicación capacidades que hoy solo existen en el servidor: "
+"suspender una tarjeta, historial de repasos, optimización FSRS (`#290 "
+"<https://github.com/kevung/blunderDB/issues/290>`__)."
+
+#: ../../source/roadmap.rst:148
+msgid "Étape 4 — Chantiers de fond"
+msgstr "Etapa 4 — Grandes proyectos"
+
+#: ../../source/roadmap.rst:150
+msgid ""
+"Ces pistes changent la nature d'une partie du logiciel ; chacune attend une "
+"décision explicite avant d'être lancée."
+msgstr ""
+"Estas ideas cambian la naturaleza de una parte del software; cada una espera"
+" una decisión explícita antes de empezar."
+
+#: ../../source/roadmap.rst:153
+msgid ""
+"Classer automatiquement le type de jeu d'une position (course, holding, "
+"backgame, blitz…), nommer les thèmes d'erreur récurrents (trop passif, "
+"timing, gammon sous-estimé…) et regrouper les blunders qui se répètent par "
+"coût cumulé — la promesse du nom du produit (`#291 "
+"<https://github.com/kevung/blunderDB/issues/291>`__)."
+msgstr ""
+"Clasificar automáticamente el tipo de juego de una posición (carrera, "
+"holding, backgame, blitz…), nombrar los temas de error recurrentes "
+"(demasiado pasivo, timing, gammon subestimado…) y agrupar los blunders que "
+"se repiten por coste acumulado — la promesa que hace el nombre del producto "
+"(`#291 <https://github.com/kevung/blunderDB/issues/291>`__)."
+
+#: ../../source/roadmap.rst:158
+msgid ""
+"Des rollouts tronqués pour départager deux coups très proches, avec "
+"intervalle de confiance affiché (`#292 "
+"<https://github.com/kevung/blunderDB/issues/292>`__)."
+msgstr ""
+"Rollouts truncados para desempatar dos jugadas muy próximas, con un "
+"intervalo de confianza mostrado (`#292 "
+"<https://github.com/kevung/blunderDB/issues/292>`__)."
+
+#: ../../source/roadmap.rst:161
+msgid ""
+"« Des positions comme celle-ci » : retrouver les positions les plus proches "
+"de celle à l'écran (`#293 "
+"<https://github.com/kevung/blunderDB/issues/293>`__)."
+msgstr ""
+"«Posiciones como esta»: encontrar las posiciones más parecidas a la que está"
+" en pantalla (`#293 <https://github.com/kevung/blunderDB/issues/293>`__)."
+
+#: ../../source/roadmap.rst:164
+msgid ""
+"Un mode quiz qui teste plutôt qu'il ne mémorise, avec un PR d'entraînement "
+"comparable au PR réel (`#294 "
+"<https://github.com/kevung/blunderDB/issues/294>`__)."
+msgstr ""
+"Un modo cuestionario que evalúa en vez de memorizar, con un PR de "
+"entrenamiento comparable al PR real (`#294 "
+"<https://github.com/kevung/blunderDB/issues/294>`__)."
+
+#: ../../source/roadmap.rst:167
+msgid ""
+"Une interface web en consultation sur le mode serveur, pour tablette et "
+"mobile (`#295 <https://github.com/kevung/blunderDB/issues/295>`__)."
+msgstr ""
+"Una interfaz web de solo consulta sobre el modo servidor, para tableta y "
+"móvil (`#295 <https://github.com/kevung/blunderDB/issues/295>`__)."
+
+#: ../../source/roadmap.rst:169
+msgid ""
+"Un mode club ou coach sur le serveur : partager une bibliothèque en lecture,"
+" recevoir les matchs des élèves (`#296 "
+"<https://github.com/kevung/blunderDB/issues/296>`__)."
+msgstr ""
+"Un modo club o entrenador en el servidor: compartir una biblioteca de solo "
+"lectura, recibir las partidas de los alumnos (`#296 "
+"<https://github.com/kevung/blunderDB/issues/296>`__)."
+
+#: ../../source/roadmap.rst:172
+msgid ""
+"Un réseau d'évaluation distillé, beaucoup plus rapide, et un cache "
+"d'évaluation qui survit à la fermeture de l'application (`#297 "
+"<https://github.com/kevung/blunderDB/issues/297>`__)."
+msgstr ""
+"Una red de evaluación destilada, mucho más rápida, y una caché de evaluación"
+" que sobrevive al cierre de la aplicación (`#297 "
+"<https://github.com/kevung/blunderDB/issues/297>`__)."
+
+#: ../../source/roadmap.rst:175
+msgid ""
+"Expliquer un blunder en une phrase, sans recourir à un modèle de langage "
+"(`#298 <https://github.com/kevung/blunderDB/issues/298>`__)."
+msgstr ""
+"Explicar un blunder en una frase, sin recurrir a un modelo de lenguaje "
+"(`#298 <https://github.com/kevung/blunderDB/issues/298>`__)."
+
+#: ../../source/roadmap.rst:177
+msgid ""
+"Un assistant optionnel, strictement local et jamais activé par défaut, via "
+"Ollama (`#299 <https://github.com/kevung/blunderDB/issues/299>`__)."
+msgstr ""
+"Un asistente opcional, estrictamente local y nunca activado por defecto, vía"
+" Ollama (`#299 <https://github.com/kevung/blunderDB/issues/299>`__)."
+
+#: ../../source/roadmap.rst:181
+msgid "Ce qui n'est **pas** prévu"
+msgstr "Lo que **no** está previsto"
+
+#: ../../source/roadmap.rst:183
+msgid ""
+"Jouer contre l'évaluateur intégré changerait la nature du produit (un moteur"
+" de jeu complet : règles, saisie, historique de partie) ; ce n'est pas à "
+"l'ordre du jour de blunderDB (`#300 "
+"<https://github.com/kevung/blunderDB/issues/300>`__)."
+msgstr ""
+"Jugar contra el evaluador integrado cambiaría la naturaleza del producto (un"
+" motor de juego completo: reglas, entrada, historial de partida); no está en"
+" la agenda de blunderDB (`#300 "
+"<https://github.com/kevung/blunderDB/issues/300>`__)."

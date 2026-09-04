@@ -30,6 +30,13 @@ func (shared) Bool(col string, v bool) string {
 	}
 	return col + " = 0"
 }
+func (shared) BoolAsInt(col string) string { return col }
+func (shared) BoolArg(v bool) any {
+	if v {
+		return 1
+	}
+	return 0
+}
 func (shared) Bigint(expr string) string { return expr }
 func (shared) ILike() string             { return "LIKE" }
 func (shared) LimitOffset(limit, offset int) (string, []any) {

@@ -44,7 +44,7 @@ gnubg_ts6x11.bd
 # Python virtualenvs for the Sphinx toolchain (doc/requirements.txt), at the
 # root or under doc/ — sphinx-build is not on the system PATH, so each machine
 # creates its own.
-.venv/
+.venv
 doc/.venv/
 
 # Compiled test binaries (`go test -c -o <name>.test`). Nothing builds or reads

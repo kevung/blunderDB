@@ -198,6 +198,7 @@ func TestCLI_AnalyzeJSON_NothingToDo(t *testing.T) {
 // database — it used to be inseparable from runSearch's 400+ lines.
 
 func TestParseSearchFlags_MissingDB(t *testing.T) {
+	t.Parallel()
 	_, _, err := parseSearchFlags([]string{"--decision", "cube"})
 	if err == nil {
 		t.Fatal("expected an error for a missing --db")
@@ -205,6 +206,7 @@ func TestParseSearchFlags_MissingDB(t *testing.T) {
 }
 
 func TestParseSearchFlags_BuildsParams(t *testing.T) {
+	t.Parallel()
 	params, dbPath, err := parseSearchFlags([]string{
 		"--db", "database.db", "--format", "JSON", "--limit", "5",
 		"--decision", "cube", "--cube", "2",
@@ -230,6 +232,7 @@ func TestParseSearchFlags_BuildsParams(t *testing.T) {
 }
 
 func TestParseSearchFlags_InvalidDice(t *testing.T) {
+	t.Parallel()
 	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--dice", "7"})
 	if err == nil {
 		t.Fatal("expected an error for an out-of-range die")
@@ -237,6 +240,7 @@ func TestParseSearchFlags_InvalidDice(t *testing.T) {
 }
 
 func TestParseSearchFlags_MutuallyExclusiveComments(t *testing.T) {
+	t.Parallel()
 	_, _, err := parseSearchFlags([]string{"--db", "database.db", "--has-comment", "--no-comment"})
 	if err == nil {
 		t.Fatal("expected an error for --has-comment and --no-comment together")
@@ -244,6 +248,7 @@ func TestParseSearchFlags_MutuallyExclusiveComments(t *testing.T) {
 }
 
 func TestRenderResults_Formats(t *testing.T) {
+	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)
 	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
 		t.Fatalf("import: %v", err)

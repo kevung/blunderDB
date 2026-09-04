@@ -22,6 +22,7 @@ import (
 // PRAGMAs that matter on each. Both SetupDatabase and OpenDatabase open the
 // file, so both are exercised.
 func TestFilePoolEveryConnectionCarriesPragmas(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "pool.db")
 
 	seed := NewDatabase()

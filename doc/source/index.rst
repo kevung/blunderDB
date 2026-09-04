@@ -14,7 +14,7 @@ Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout en
 bout (premier import, étude d'un match, session Anki, mode serveur) et une
 page « comment progresser » — la lecture la plus rentable avant de se lancer.
 
-La présente documentation est structurée en treize sections :
+La présente documentation est structurée en quatorze sections :
 
 * **téléchargement et installation** explique comment se procurer et lancer
   blunderDB ;
@@ -40,6 +40,9 @@ La présente documentation est structurée en treize sections :
   documentation ;
 
 * la **FAQ** répond aux interrogations les plus fréquentes ;
+
+* la **feuille de route** recense les pistes d'évolution envisagées, sans
+  engagement de date ;
 
 * le **mode serveur (headless)** documente le démon ``serve``, ses routes
   HTTP et ses deux backends (SQLite, PostgreSQL) ;
@@ -411,6 +414,7 @@ Sommaire
    cli
    glossaire
    faq
+   roadmap
    mode_headless
    annexe_filtres
    annexe_windows_securite

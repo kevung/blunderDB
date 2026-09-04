@@ -159,7 +159,15 @@ export async function showPosition(position) {
         return;
     }
 
-    const positionCopy = structuredClone(position);
+    // JSON round-trip, not structuredClone: a position reaching here in MATCH
+    // mode comes out of a Svelte 5 reactive proxy, and structuredClone throws
+    // DataCloneError on a Proxy ("#<Object> could not be cloned"). The throw
+    // landed BEFORE the LoadAnalysis below, so browsing a match advanced the
+    // status bar — its move counter reads the match context, updated by the
+    // caller — while the board and the analysis stayed on the previous move
+    // (D.8, #208, fixed 2026-09-04; e2e match-navigation caught it). A
+    // position is plain JSON off the Wails bridge, so the round trip is exact.
+    const positionCopy = JSON.parse(JSON.stringify(position));
     positionStore.set(positionCopy);
 
     // The analysis and the comment are two independent round trips over the

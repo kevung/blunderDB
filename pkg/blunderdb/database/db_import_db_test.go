@@ -62,6 +62,7 @@ func buildOldFormatExportFixture(t *testing.T, path string, positions []Position
 }
 
 func TestImport_OldFormatExportFixture(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	fixturePath := filepath.Join(dir, "old_export.db")
 
@@ -186,6 +187,7 @@ func countPositionsMissingScalars(t *testing.T, d *Database) int {
 // invisible to every SQL filter and, because ReconstructPosition trusts the
 // columns over the state, it no longer matched itself on the next import.
 func TestImport_CommitFillsScalarColumns(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 
 	// Source A: two positions saved the ordinary way.
@@ -285,6 +287,7 @@ func TestImport_CommitFillsScalarColumns(t *testing.T) {
 // the digits. The check used to compare the major components as strings, so
 // "10" sorted before "2" and a 10.x.x source passed as older than 2.15.0.
 func TestImport_MajorVersionComparedNumerically(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 
 	dst := NewDatabase()
@@ -350,6 +353,7 @@ func TestImport_MajorVersionComparedNumerically(t *testing.T) {
 // joins every comment row on both sides (loadJoinedCommentText) before
 // comparing.
 func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 
 	srcPath := filepath.Join(dir, "src.db")
@@ -410,6 +414,7 @@ func TestImport_AnalyzeComparesAllCommentRows(t *testing.T) {
 // both after the merge: its own comment, untouched, and a new row for the
 // source's comment that was missing.
 func TestImport_CommitMergesAllCommentRows(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 
 	srcPath := filepath.Join(dir, "src.db")

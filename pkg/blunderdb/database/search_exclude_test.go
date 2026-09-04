@@ -64,6 +64,7 @@ func savePos(t *testing.T, db *Database, b Board) int64 {
 // (Black ≥1 on point 8) removes positions that contain it while keeping
 // positions that match the include structure (Black ≥1 on point 6) only.
 func TestSearch_Exclude_NonTight(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	idWith := savePos(t, db, initialBoard())            // Black on 8 → must be excluded
@@ -96,6 +97,7 @@ func TestSearch_Exclude_NonTight(t *testing.T) {
 // TestSearch_Exclude_AnyOf verifies OR semantics: a position is excluded if it
 // contains ANY one of the excluded points, not only when it contains all of them.
 func TestSearch_Exclude_AnyOf(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// p1: Black single checker on point 5 (moved from point 6's stack) + point 4 kept.
@@ -134,6 +136,7 @@ func TestSearch_Exclude_AnyOf(t *testing.T) {
 // drops positions where that point is made (≥2) but keeps positions with a single
 // checker there — exercising the point_mask SQL pre-filter path.
 func TestSearch_Exclude_MadePoint(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	idMade := savePos(t, db, initialBoard())        // 3 Black on point 8 (made) → excluded
@@ -164,6 +167,7 @@ func TestSearch_Exclude_MadePoint(t *testing.T) {
 // point 1. The exclusion must win on the shared point 1, so the search becomes
 // "5 made points on 2-6 with point 1 free of Black" instead of returning nothing.
 func TestSearch_Exclude_PrecedenceOverInclude(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// Closeout 1-6 (point 1 made by Black).
@@ -225,6 +229,7 @@ func TestSearch_Exclude_PrecedenceOverInclude(t *testing.T) {
 // Because the exclude count (3) is greater than the include count (2) the include
 // is kept, so the search is "exactly 2 on each of 1-6" (no spare).
 func TestSearch_Exclude_NoSpare(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	// Exactly 2 on each of 1-6 (12) + 3 elsewhere → 15.
@@ -272,6 +277,7 @@ func TestSearch_Exclude_NoSpare(t *testing.T) {
 // TestSearch_Exclude_EmptyMarker verifies the "must be empty" marker: a point
 // flagged empty in Except drops positions with ANY checker (either colour) there.
 func TestSearch_Exclude_EmptyMarker(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	idBlackOn8 := savePos(t, db, initialBoard())         // Black on point 8 → excluded
@@ -312,6 +318,7 @@ func TestSearch_Exclude_EmptyMarker(t *testing.T) {
 // excluded structure even though its point-8 bits are set), while the position
 // with 3 must be removed.
 func TestSearch_Exclude_Tight(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 
 	idThree := savePos(t, db, initialBoard())       // 3 Black on 8 → excluded

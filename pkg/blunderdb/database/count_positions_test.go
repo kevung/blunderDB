@@ -8,6 +8,7 @@ import (
 )
 
 func TestCountPositionsAfterImports(t *testing.T) {
+	t.Parallel()
 	xgFile := filepath.Join("testdata", "test.xg")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 	matFile := filepath.Join("testdata", "test.mat")
@@ -101,6 +102,7 @@ func TestCountPositionsAfterImports(t *testing.T) {
 // TestDiagnosePositionDifferences shows what's different between positions
 // created by different parsers for the same physical state
 func TestDiagnosePositionDifferences(t *testing.T) {
+	t.Parallel()
 	matFile := filepath.Join("testdata", "test.mat")
 	sgfFile := filepath.Join("testdata", "test.sgf")
 
