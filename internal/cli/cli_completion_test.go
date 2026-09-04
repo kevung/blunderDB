@@ -45,6 +45,7 @@ func TestCLI_CompletionFish(t *testing.T) {
 }
 
 func TestCLI_CompletionUnknownShell(t *testing.T) {
+	t.Parallel()
 	cli := &CLI{db: NewDatabase()}
 	if err := cli.Run([]string{"completion", "powershell"}); err == nil {
 		t.Fatal("expected an error for an unsupported shell")
@@ -52,6 +53,7 @@ func TestCLI_CompletionUnknownShell(t *testing.T) {
 }
 
 func TestCLI_CompletionRequiresOneArg(t *testing.T) {
+	t.Parallel()
 	cli := &CLI{db: NewDatabase()}
 	if err := cli.Run([]string{"completion"}); err == nil {
 		t.Fatal("expected an error when no shell name is given")
@@ -65,6 +67,7 @@ func TestCLI_CompletionRequiresOneArg(t *testing.T) {
 // it directly), so every registered command, including completion itself,
 // must show up in every generated script.
 func TestCommandNames_IncludesEveryHandler(t *testing.T) {
+	t.Parallel()
 	cli := &CLI{}
 	names := cli.commandNames()
 	set := make(map[string]bool, len(names))

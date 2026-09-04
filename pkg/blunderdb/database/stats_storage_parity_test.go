@@ -34,6 +34,7 @@ func jsonEqual(t *testing.T, label string, legacy, got any) {
 }
 
 func TestStatsStorageParity(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 	fixtures := []string{
 		"testdata/charlot1-charlot2_7p_2025-11-08-2305.xg",
@@ -44,6 +45,7 @@ func TestStatsStorageParity(t *testing.T) {
 
 	for _, xg := range fixtures {
 		t.Run(filepath.Base(xg), func(t *testing.T) {
+			t.Parallel()
 			path := filepath.Join(t.TempDir(), "parity.db")
 
 			// 1. Import via the legacy Database wrapper into a file-backed DB.

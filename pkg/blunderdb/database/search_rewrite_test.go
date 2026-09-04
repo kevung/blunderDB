@@ -314,6 +314,7 @@ func assertEquivalent(t *testing.T, db *Database, label string,
 // ---------- equivalence tests ----------
 
 func TestSearch_Equivalence_NoFilter(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	assertEquivalent(t, db, "no filter",
 		Position{}, false, false,
@@ -323,6 +324,7 @@ func TestSearch_Equivalence_NoFilter(t *testing.T) {
 }
 
 func TestSearch_Equivalence_DecisionType(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	filter := Position{DecisionType: CubeAction, PlayerOnRoll: 0}
 	assertEquivalent(t, db, "decision=cube",
@@ -339,6 +341,7 @@ func TestSearch_Equivalence_DecisionType(t *testing.T) {
 }
 
 func TestSearch_Equivalence_PipDiff(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	for _, f := range []string{"p>0", "p<0", "p-10,10"} {
 		assertEquivalent(t, db, "pipCountFilter="+f,
@@ -350,6 +353,7 @@ func TestSearch_Equivalence_PipDiff(t *testing.T) {
 }
 
 func TestSearch_Equivalence_CheckerOff(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	assertEquivalent(t, db, "off1>=1",
 		Position{}, false, false,
@@ -359,6 +363,7 @@ func TestSearch_Equivalence_CheckerOff(t *testing.T) {
 }
 
 func TestSearch_Equivalence_BackCheckers(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	assertEquivalent(t, db, "back_checkers_1>=2",
 		Position{}, false, false,
@@ -368,6 +373,7 @@ func TestSearch_Equivalence_BackCheckers(t *testing.T) {
 }
 
 func TestSearch_Equivalence_NoContact(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	assertEquivalent(t, db, "no_contact",
 		Position{}, false, false,
@@ -377,6 +383,7 @@ func TestSearch_Equivalence_NoContact(t *testing.T) {
 }
 
 func TestSearch_Equivalence_IncludeCube(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	filter := Position{Cube: Cube{Value: 1, Owner: 0}} // exponent 1 = cube at 2
 	assertEquivalent(t, db, "cube=2 owner=0",
@@ -387,6 +394,7 @@ func TestSearch_Equivalence_IncludeCube(t *testing.T) {
 }
 
 func TestSearch_Equivalence_MirrorFilter(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 	// Mirror filter: should match same total set as no-filter (all positions appear either
 	// as-is or mirrored), just check the count is at least as large as no-filter.
@@ -416,6 +424,7 @@ func TestSearch_Equivalence_MirrorFilter(t *testing.T) {
 // a stable, non-overlapping result whose union equals the full result.
 // The implementation uses ORDER BY p.id, so results are deterministic.
 func TestSearch_PaginationStable(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 
 	// Import a second file to have more positions.
@@ -485,6 +494,7 @@ func TestSearch_PaginationStable(t *testing.T) {
 // TestSearch_PrimePattern_BitboardOnly seeds a known prime position and verifies
 // that the bitboard SQL pre-filter matches it (tight=false path: SQL is sufficient).
 func TestSearch_PrimePattern_BitboardOnly(t *testing.T) {
+	t.Parallel()
 	db := setupSearchTestDB(t)
 
 	// Build a filter board requesting Black ≥1 checker on each of points 8-12

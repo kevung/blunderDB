@@ -12,6 +12,7 @@ import (
 // registered import context is cancelled by CancelImport, the done func
 // clears the registration, and CancelImport is a safe no-op when idle.
 func TestCancelImportWiring(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 
 	// Idle: CancelImport must not panic and must do nothing.
@@ -44,6 +45,7 @@ func TestCancelImportWiring(t *testing.T) {
 // goroutines call CancelImport while imports are repeatedly begun and
 // finished, mirroring a frontend hammering the cancel button.
 func TestCancelImportConcurrent(t *testing.T) {
+	t.Parallel()
 	d := NewDatabase()
 	var wg sync.WaitGroup
 

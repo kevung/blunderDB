@@ -6,6 +6,7 @@ import "testing"
 // match reports that match as its provenance, and that a position no match
 // references reports none.
 func TestGetPositionProvenance(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	// A position referenced by a move in the imported match, and its match.
@@ -55,6 +56,7 @@ func TestGetPositionProvenance(t *testing.T) {
 // TestGetMatchByID_IncludesTournamentName checks the tournament LEFT JOIN added
 // to GetMatchByID: empty before assignment, the tournament name after.
 func TestGetMatchByID_IncludesTournamentName(t *testing.T) {
+	t.Parallel()
 	db := newTestDBWithXG(t)
 
 	var matchID int64

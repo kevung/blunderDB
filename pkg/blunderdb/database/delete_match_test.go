@@ -22,6 +22,7 @@ func assertTableCount(t *testing.T, rawDB *sql.DB, table string, expected int) {
 // associated data: games, moves, move_analysis, and orphaned positions
 // (along with their analysis and comments).
 func TestDeleteMatchCleansUpAllData(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test_delete.db")
 
@@ -158,6 +159,7 @@ func TestDeleteMatchCleansUpAllData(t *testing.T) {
 // TestDeleteMatchPreservesSharedPositions verifies that positions referenced by
 // another match or belonging to a collection are NOT deleted when deleting a match.
 func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	dbPath := filepath.Join(dir, "test_shared.db")
 
@@ -333,6 +335,7 @@ func TestDeleteMatchPreservesSharedPositions(t *testing.T) {
 // then delete it, and any position the user had saved on their own that happened
 // to occur in it went with it.
 func TestDeleteMatchKeepsIndividuallyImportedPosition(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "keep.db")); err != nil {
@@ -403,6 +406,7 @@ func TestDeleteMatchKeepsIndividuallyImportedPosition(t *testing.T) {
 // (docs/adr/0006) must survive deleting the match it happened to occur in,
 // the same way an individually-imported position does.
 func TestDeleteMatchKeepsFlaggedPosition(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "keep-flagged.db")); err != nil {
@@ -469,6 +473,7 @@ func TestDeleteMatchKeepsFlaggedPosition(t *testing.T) {
 // TestDeleteMatchPreservesSharedPositions don't reach: a position that backs
 // an Anki card must survive deleting the match it occurred in.
 func TestDeleteMatchKeepsAnkiCardPosition(t *testing.T) {
+	t.Parallel()
 	dir := t.TempDir()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(dir, "keep-anki.db")); err != nil {

@@ -132,6 +132,7 @@ func sortedKeys(set map[string]bool) []string {
 // references, not the SQL text, so placeholder syntax and boolean spelling
 // are not significant differences — only gaining or losing a whole clause is.
 func TestPositionIsHeldPredicateParity(t *testing.T) {
+	t.Parallel()
 	root := repoRootFromThisFile(t)
 
 	sets := make(map[string]map[string]bool, len(positionIsHeldSourceFiles))

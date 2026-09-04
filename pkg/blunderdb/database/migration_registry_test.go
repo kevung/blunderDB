@@ -13,6 +13,7 @@ import (
 // the one before, no version reached twice. A gap here is what a forgotten
 // registry line looks like after a DatabaseVersion bump.
 func TestMigrationSteps_ContinuousChain(t *testing.T) {
+	t.Parallel()
 	if len(migrationSteps) == 0 {
 		t.Fatal("migrationSteps is empty")
 	}
@@ -59,6 +60,7 @@ func TestMigrationSteps_ContinuousChain(t *testing.T) {
 }
 
 func TestCompareVersions(t *testing.T) {
+	t.Parallel()
 	cases := []struct {
 		a, b string
 		want int
@@ -96,6 +98,7 @@ func TestCompareVersions(t *testing.T) {
 // reported by name. The lookup's sql.ErrNoRows used to be returned as is,
 // which made the "required table X does not exist" message unreachable.
 func TestRequireTables(t *testing.T) {
+	t.Parallel()
 	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatal(err)
@@ -127,6 +130,7 @@ func TestRequireTables(t *testing.T) {
 // wording of "duplicate column" is irrelevant. A genuine failure still
 // surfaces.
 func TestAddColumn(t *testing.T) {
+	t.Parallel()
 	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatal(err)
@@ -177,6 +181,7 @@ func stampVersion(t *testing.T, path, version string) {
 // is refused when it is older than DatabaseVersion (nothing could bring it
 // forward) and opened as is when it is newer (the schema only grows).
 func TestRunMigrationChain_UnknownVersion(t *testing.T) {
+	t.Parallel()
 	newDB := func(t *testing.T, version string) string {
 		t.Helper()
 		path := filepath.Join(t.TempDir(), "v.db")

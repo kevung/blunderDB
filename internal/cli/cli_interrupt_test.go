@@ -18,6 +18,7 @@ import (
 // signal arrives — the two ways a careless refactor of the shared helper
 // could silently break every caller at once.
 func TestWithInterruptibleContextPassesThroughWithoutSignal(t *testing.T) {
+	t.Parallel()
 	called := false
 	sentinel := errors.New("sentinel")
 
@@ -39,6 +40,7 @@ func TestWithInterruptibleContextPassesThroughWithoutSignal(t *testing.T) {
 }
 
 func TestWithInterruptibleContextNilOnInterrupt(t *testing.T) {
+	t.Parallel()
 	// onInterrupt is optional; passing nil must not panic when fn returns
 	// normally (the only path this test can exercise without sending a
 	// signal).

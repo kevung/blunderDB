@@ -54,6 +54,7 @@ func saveCubeDecision(t *testing.T, db *Database, gameID int64, cubeValue int, c
 }
 
 func TestMoveErrorFilter_BadDoubleRetained(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "move_error_cube.db")); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
@@ -73,6 +74,7 @@ func TestMoveErrorFilter_BadDoubleRetained(t *testing.T) {
 }
 
 func TestMoveErrorFilter_DoublePassUsesDoublingError(t *testing.T) {
+	t.Parallel()
 	db := NewDatabase()
 	if err := db.SetupDatabase(filepath.Join(t.TempDir(), "move_error_cube_dp.db")); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)

@@ -13,6 +13,7 @@ import (
 // the desktop path (scope ""), and checks the written file re-parses and has the
 // same game count as the original — the GUI/CLI export wiring end to end.
 func TestExportMatchMAT(t *testing.T) {
+	t.Parallel()
 	matFile := filepath.Join("testdata", "test.mat")
 	content, err := os.ReadFile(matFile)
 	if err != nil {
@@ -63,6 +64,7 @@ func TestExportMatchMAT(t *testing.T) {
 // TestExportMatchMATReadErrorLeavesNoFile: a failing read (unknown match id)
 // must not create a truncated output file.
 func TestExportMatchMATReadErrorLeavesNoFile(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	out := filepath.Join(t.TempDir(), "should-not-exist.mat")
 	if err := db.ExportMatchMAT(999999, out); err == nil {

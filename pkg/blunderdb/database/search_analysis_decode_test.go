@@ -12,6 +12,7 @@ import (
 // silently failed, leaving the decoded analysis nil and making the move-pattern
 // filter (and the mirror-search win/gammon fallbacks) match nothing.
 func TestSearchMovePatternDecodesAnalysis(t *testing.T) {
+	t.Parallel()
 	db := newTestDB(t)
 	if _, err := db.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
 		t.Fatalf("ImportXGMatch: %v", err)

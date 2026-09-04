@@ -11,6 +11,7 @@ import (
 // results-neutral, so search correctness is covered by the existing search
 // tests; this only asserts the stats are created.
 func TestEnsureSearchStatsOnOpen(t *testing.T) {
+	t.Parallel()
 	path := filepath.Join(t.TempDir(), "stats.db")
 
 	db := NewDatabase()

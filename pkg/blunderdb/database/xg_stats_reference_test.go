@@ -37,6 +37,7 @@ import (
 //   - Checker unforced: bDB may detect ≤6 more unforced moves (boundary classification).
 //   - Equity / MWC: analysis engine rounding produces residuals < 1 pp.
 func TestXGStatsReference(t *testing.T) {
+	t.Parallel()
 	matchFile := filepath.Join(
 		"testdata",
 		"2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation",
