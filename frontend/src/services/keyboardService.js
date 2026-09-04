@@ -93,6 +93,12 @@ export function panelKeyGuard(event, { allowNavKeys = false } = {}) {
     if (event.ctrlKey || event.metaKey) return true;
     if (event.code === 'Space') return true;
     if (event.key === '?') return true;
+    // Switching views is global, and its bare-Shift spelling had no way
+    // through: a panel's guard let Ctrl combos pass, so Ctrl-PageUp/PageDown
+    // worked, while SHIFT-J/SHIFT-K — the same two actions — were swallowed
+    // by the panel's stopPropagation the whole time the Matches, Tournaments
+    // or Collections panel was open. None of the three binds Shift+letter.
+    if (isShiftLetter(event, 'j') || isShiftLetter(event, 'k')) return true;
     if (event.target instanceof Element && event.target.matches(EDITABLE_FIELD_SELECTOR)) return true;
     if (allowNavKeys && NAVIGATION_KEYS.has(event.key)) return true;
     return false;

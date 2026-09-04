@@ -120,6 +120,14 @@ describe('MatchPanel keyboard guard', () => {
         expect(windowSpy).toHaveBeenCalled();
     });
 
+    test('SHIFT-J and SHIFT-K traverse (they switch views, like Ctrl-PageUp/PageDown)', () => {
+        keyOnDocument({ key: 'J', shiftKey: true });
+        expect(windowSpy).toHaveBeenCalled();
+        windowSpy.mockClear();
+        keyOnDocument({ key: 'K', shiftKey: true });
+        expect(windowSpy).toHaveBeenCalled();
+    });
+
     test('typing "j" in an editable field traverses instead of navigating rows', () => {
         keyInEditableField({ key: 'j' });
         expect(windowSpy).toHaveBeenCalled();
@@ -154,6 +162,14 @@ describe('TournamentPanel keyboard guard', () => {
         expect(windowSpy).toHaveBeenCalled();
     });
 
+    test('SHIFT-J and SHIFT-K traverse (they switch views, like Ctrl-PageUp/PageDown)', () => {
+        keyOnDocument({ key: 'J', shiftKey: true });
+        expect(windowSpy).toHaveBeenCalled();
+        windowSpy.mockClear();
+        keyOnDocument({ key: 'K', shiftKey: true });
+        expect(windowSpy).toHaveBeenCalled();
+    });
+
     test('typing in an editable field traverses', () => {
         keyInEditableField({ key: 'j' });
         expect(windowSpy).toHaveBeenCalled();
@@ -185,6 +201,14 @@ describe('CollectionPanel keyboard guard', () => {
 
     test('"?" traverses (opens help)', () => {
         keyOnDocument({ key: '?' });
+        expect(windowSpy).toHaveBeenCalled();
+    });
+
+    test('SHIFT-J and SHIFT-K traverse (they switch views, like Ctrl-PageUp/PageDown)', () => {
+        keyOnDocument({ key: 'J', shiftKey: true });
+        expect(windowSpy).toHaveBeenCalled();
+        windowSpy.mockClear();
+        keyOnDocument({ key: 'K', shiftKey: true });
         expect(windowSpy).toHaveBeenCalled();
     });
 
