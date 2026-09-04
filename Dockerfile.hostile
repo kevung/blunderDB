@@ -28,7 +28,7 @@
 # Pinned to the patch for the same reason as Dockerfile.serve (B.19, #187):
 # this image runs the whole Go suite, so the compiler it carries must be the
 # one go.mod names rather than whatever the 1.25 tag points at today.
-FROM golang:1.25.13-bookworm
+FROM golang:1.27.1-bookworm
 
 # Fail the build if the base image ever starts shipping the optional tools we
 # rely on being ABSENT — the whole point is a hostile, stripped host. Then
