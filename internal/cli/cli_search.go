@@ -14,6 +14,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -26,6 +27,12 @@ import (
 // parseSearchFlags never touches a database, and renderResults never touches
 // a flag.
 type searchParams struct {
+	// queryHelp short-circuits everything else: --query-help prints the token
+	// list and exits, without needing a database.
+	queryHelp bool
+	// diags carries what --query understood but could not act on, so runSearch
+	// can say so rather than filtering silently.
+	diags       []searchquery.Diag
 	filters     SearchFilters
 	errorMin    float64
 	hasAnalysis bool
@@ -73,6 +80,8 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 	flagged := searchCmd.Bool("flagged", false, "Only positions you marked for study in the source tool (eXtreme Gammon flags)")
 	hasComment := searchCmd.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)")
 	noComment := searchCmd.Bool("no-comment", false, "Only positions carrying no comment")
+	query := searchCmd.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags")
+	queryHelp := searchCmd.Bool("query-help", false, "List the tokens --query understands, and exit")
 
 	searchCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb search [options]")
@@ -124,16 +133,59 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		fmt.Println()
 		fmt.Println("  # Blunders still waiting to be annotated")
 		fmt.Println("  blunderdb search --db database.db --no-comment --error-min 0.1")
+		fmt.Println()
+		fmt.Println("  # The interface's own query language: cube decisions, 30+ pips behind, 50 millipoints of error")
+		fmt.Println("  blunderdb search --db database.db --query 's cube p>30 E>50'")
+		fmt.Println()
+		fmt.Println("  # Filters no flag exposes: a move pattern, a comment tag, a player, a date")
+		fmt.Println("  blunderdb search --db database.db --query 's m\"13/11\" t\"blunder\" pl\"Alice\" T>2026/01/01'")
 	}
 
 	if err := searchCmd.Parse(args); err != nil {
 		return nil, "", err
 	}
 
+	if *queryHelp {
+		return &searchParams{queryHelp: true}, "", nil
+	}
+
 	// Validate required flags
 	if *dbPath == "" {
 		searchCmd.Usage()
 		return nil, "", fmt.Errorf("missing required flag: --db")
+	}
+
+	// --query is the interface's own query language, parsed by the one grammar
+	// the command bar uses (pkg/blunderdb/searchquery). It reaches the twenty-odd
+	// filters no flag exposes — board-free ones at least: patterns, move
+	// patterns, dates, equity, comment text, excluded dice, zones and blots.
+	//
+	// It replaces the filter flags rather than merging with them: a query and a
+	// flag setting the same filter would need a precedence rule nobody could
+	// remember, and one that quietly loses a filter is worse than a refusal.
+	// The flags that say where to search and how to print stay valid.
+	if *query != "" {
+		if named := filterFlagsSet(searchCmd); len(named) > 0 {
+			return nil, "", fmt.Errorf("--query cannot be combined with the filter flags (%s): put every filter in the query, or use the flags alone", strings.Join(named, ", "))
+		}
+		filters, diags := searchquery.Parse(*query)
+		var unknown []string
+		for _, d := range diags {
+			if d.Kind == searchquery.DiagUnknown {
+				unknown = append(unknown, d.Token)
+			}
+		}
+		if len(unknown) > 0 {
+			return nil, "", fmt.Errorf("unknown token(s) in --query: %s (see --query-help)", strings.Join(unknown, ", "))
+		}
+		return &searchParams{
+			filters:  filters,
+			diags:    diags,
+			limit:    *limit,
+			offset:   *offset,
+			format:   strings.ToLower(*format),
+			outputDB: *outputDB,
+		}, *dbPath, nil
 	}
 
 	// Build filter parameters for LoadPositionsByFilters
@@ -304,11 +356,84 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 	}, *dbPath, nil
 }
 
+// filterFlagsSet names the filter flags the user actually passed. Only the
+// flags that select positions count: --db, --format, --limit, --offset and
+// --export say where to look and how to print, and stay compatible with
+// --query.
+func filterFlagsSet(fs *flag.FlagSet) []string {
+	passthrough := map[string]bool{
+		"db": true, "format": true, "limit": true, "offset": true,
+		"export": true, "query": true, "query-help": true,
+	}
+	var named []string
+	fs.Visit(func(f *flag.Flag) {
+		if !passthrough[f.Name] {
+			named = append(named, "--"+f.Name)
+		}
+	})
+	return named
+}
+
+// printQueryHelp lists the query language's tokens. It is deliberately terse
+// and points at the manual: the grammar's reference is doc/source/cmd_mode.rst,
+// and duplicating it here would be a second thing to keep in step.
+func printQueryHelp(w io.Writer) {
+	fmt.Fprintln(w, "blunderdb search --query — the interface's query language")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "A query is the same text the application's command bar takes:")
+	fmt.Fprintln(w, "  s cube p>30 E>50        cube decisions, 30+ pips behind, 50+ millipoints of error")
+	fmt.Fprintln(w, "  s m\"13/11\" T>2026/01/01 played 13/11, imported this year")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Flags (no value):")
+	fmt.Fprintln(w, "  cube score   match the cube / the score of the position on the board")
+	fmt.Fprintln(w, "  d            match the decision type (checker or cube)")
+	fmt.Fprintln(w, "  D  D1        match both dice / the first die")
+	fmt.Fprintln(w, "  nc           no contact")
+	fmt.Fprintln(w, "  M            search the mirrored position too")
+	fmt.Fprintln(w, "  i            imported on its own, not inside a match")
+	fmt.Fprintln(w, "  fl           flagged for study in the source tool")
+	fmt.Fprintln(w, "  co  xco      carries a comment / carries none")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Ranges — each takes x>n, x<n or xa,b (lower-case: you; upper-case: the opponent):")
+	fmt.Fprintln(w, "  p P          pip count difference / absolute pip count")
+	fmt.Fprintln(w, "  w W  g G  b B   win / gammon / backgammon rate")
+	fmt.Fprintln(w, "  o O          checkers borne off        k K   checkers back")
+	fmt.Fprintln(w, "  z Z          checkers in the zone      bo BO  outfield blots")
+	fmt.Fprintln(w, "  bj BJ        blots in the jan          e      equity")
+	fmt.Fprintln(w, "  E            error of the played move, in millipoints")
+	fmt.Fprintln(w, "  T            creation date, T>2026/01/01")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Values:")
+	fmt.Fprintln(w, "  t\"tag\"       comment text (\";\" separates alternatives)")
+	fmt.Fprintln(w, "  m\"13/11\"     best move or cube decision")
+	fmt.Fprintln(w, "  pl\"Name\"     a player, at either seat")
+	fmt.Fprintln(w, "  xD65         exclude the 6-5 roll (repeatable)")
+	fmt.Fprintln(w, "  ma1 tn2 id7  match / tournament / position ids (repeatable)")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "The board pattern itself cannot be typed: it is drawn in the application.")
+	fmt.Fprintln(w, "For the same reason `cube`, `score` and `D` compare against the search board,")
+	fmt.Fprintln(w, "which on the command line is empty — they match positions with no cube, no")
+	fmt.Fprintln(w, "score and no dice. Use --dice, --cube, --score1/--score2 for those.")
+	fmt.Fprintln(w, "Full reference: doc/source/cmd_mode.rst, or the in-app help (?).")
+}
+
 // runSearch handles the search command
 func (cli *CLI) runSearch(args []string) error {
 	params, dbPath, err := parseSearchFlags(args)
 	if err != nil {
 		return err
+	}
+
+	if params.queryHelp {
+		printQueryHelp(os.Stdout)
+		return nil
+	}
+
+	// A token the query language understands but cannot act on here (`x`, the
+	// exclusion structure, which is a board rather than text) is said out loud
+	// on stderr: silently narrowing nothing is how a query lies.
+	for _, d := range params.diags {
+		fmt.Fprintf(os.Stderr, "note: %s\n", d)
 	}
 
 	// Initialize database

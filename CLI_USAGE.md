@@ -2111,12 +2111,18 @@ Options:
     	Minimum checkers off for player 1
   -off2-min int
     	Minimum checkers off for player 2
+  -offset int
+    	Skip this many results before the first one returned (paging, with --limit)
   -pip-max int
     	Maximum pip count difference
   -pip-min int
     	Minimum pip count difference
   -position-ids string
     	Filter by position IDs (range '2,7' or explicit list '5;10;15')
+  -query string
+    	Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags
+  -query-help
+    	List the tokens --query understands, and exit
   -score1 int
     	Filter by player 1 score (default -1)
   -score2 int
@@ -2170,6 +2176,12 @@ Examples:
 
   # Blunders still waiting to be annotated
   blunderdb search --db database.db --no-comment --error-min 0.1
+
+  # The interface's own query language: cube decisions, 30+ pips behind, 50 millipoints of error
+  blunderdb search --db database.db --query 's cube p>30 E>50'
+
+  # Filters no flag exposes: a move pattern, a comment tag, a player, a date
+  blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
 ### `blunderdb vacuum`

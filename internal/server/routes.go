@@ -63,6 +63,10 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/exports.sqlite":           true,
 	"/v1/gammonnet.analyzeMissing": true,
 	"/v1/gammonnet.sweepStale":     true,
+	// search.query streams a whole result set, exactly like the rpcStream
+	// search.find it delegates to; it is hand-written only to refuse an
+	// unreadable query before the 200 is committed (B.18, #186).
+	"/v1/search.query": true,
 }
 
 // routes returns the full routing table. Ops endpoints (health, readiness,

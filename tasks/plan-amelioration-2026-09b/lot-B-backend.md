@@ -505,14 +505,33 @@ Aucun `ParseSearchCommand` dans `pkg/` : la grammaire vit dans
 `domain.SearchFilters` a 45 champs, `blunderdb search` 24 drapeaux ; motif de
 damier, `mirror`, `movePattern`, `date`, `equity`, `t"…"`, `xD`, zones/blots,
 tri n'existent pas en CLI ni sur `/v1`.
-- [ ] Paquet `pkg/blunderdb/searchquery` : `Parse(string) (SearchFilters, []Diag)`
+- [x] Paquet `pkg/blunderdb/searchquery` : `Parse(string) (SearchFilters, []Diag)`
       + `Format(SearchFilters) string` (aller-retour), corpus de test partagé
       avec le JS (`testdata/search_query_corpus.json`, comme le corpus XGID).
-- [ ] `blunderdb search --query "…"`, `/v1/search.query`.
-- [ ] Le JS garde l'autocomplétion (`commandVocabulary.js`) et délègue le
-      parsing au Go via un binding (ou conserve un parseur JS **généré** depuis
-      le même corpus — décision à prendre en fiche).
-- [ ] `parity_test.go` : les 45 champs ont chacun un jeton.
+      Port ligne à ligne de `parseSearchTokens` ; 32 cas de corpus, plus un
+      aller-retour sur 2 000 jeux de filtres engendrés.
+- [x] `blunderdb search --query "…"` (+ `--query-help`), `/v1/search.query` et
+      `/v1/search.parse` (ce qu'une requête veut dire : filtres, forme
+      canonique, diagnostics). Un jeton inconnu fait échouer la commande ou
+      répond 400 plutôt que de réduire la recherche en silence.
+- [x] **Décision : ni binding, ni parseur engendré — deux implémentations, un
+      corpus.** La barre de commande analyse à chaque frappe pour
+      l'autocomplétion : un aller-retour Wails par frappe échangerait une
+      fonctionnalité qui marche contre une préférence d'architecture, et les
+      suites vitest/Playwright tournent sans processus Go, donc la grammaire
+      deviendrait intestable là où elle sert. Engendrer le JS depuis le corpus
+      échoue pour la même raison, plus une : le corpus dit ce que la grammaire
+      doit faire sur 32 cas, pas ce qu'elle fait ailleurs. Le raisonnement est
+      dans le doc de paquet.
+- [x] `parity_test.go` : chacun des 45 champs a un jeton ou figure dans
+      `Unrepresentable` avec sa raison (quatre : les deux plateaux,
+      `RestrictToPositionIDs`, `Sort`).
+
+Trouvé en chemin : **le filtre joueur ne fonctionnait pas depuis l'interface.**
+Le front envoie le jeton entier `pl"Nom"`, comme pour `t"…"` et `m"…"`, mais
+seuls ces deux-là étaient déshabillés côté Go ; `pl"Nom"` arrivait tel quel dans
+la comparaison SQL et ne correspondait à aucun joueur. `searchfilter.PlayerName`
+corrige les deux backends, avec un test de non-régression.
 
 Dépendance : D.3 (parseur unique côté JS) est l'étape 1 ; B.18 l'étape 2.
 

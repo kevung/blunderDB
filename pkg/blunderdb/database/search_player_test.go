@@ -81,3 +81,40 @@ func TestSearchPlayerFilter(t *testing.T) {
 		t.Errorf("unknown player returned %d positions, want 0", len(none))
 	}
 }
+
+// TestSearchPlayerFilterQuotedToken pins what the frontend actually sends: the
+// command bar and SearchPanel both hand `pl"Name"` — the token, quotes included
+// — straight to LoadPositionIDsByFilters, where the storage search compares it
+// to match.player1_name. If nothing strips the wrapper, searching by player
+// from the GUI silently returns nothing.
+func TestSearchPlayerFilterQuotedToken(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	db := NewDatabase()
+	if err := db.SetupDatabase(filepath.Join(dir, "search_player_quoted.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.Close()
+
+	importTestMatch(t, db)
+	matches, err := db.GetAllMatches()
+	if err != nil || len(matches) == 0 {
+		t.Fatalf("GetAllMatches: %v (%d matches)", err, len(matches))
+	}
+	p1 := matches[0].Player1Name
+	if p1 == "" {
+		t.Skip("imported match carries no player1 name")
+	}
+
+	bare, err := db.LoadPositionsByFilters(SearchFilters{PlayerFilter: p1})
+	if err != nil {
+		t.Fatalf("bare: %v", err)
+	}
+	quoted, err := db.LoadPositionsByFilters(SearchFilters{PlayerFilter: `pl"` + p1 + `"`})
+	if err != nil {
+		t.Fatalf("quoted: %v", err)
+	}
+	if len(quoted) != len(bare) {
+		t.Errorf("pl%q returned %d positions, bare %q returned %d: the quoted token is not unwrapped", p1, len(quoted), p1, len(bare))
+	}
+}
