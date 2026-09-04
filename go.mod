@@ -9,6 +9,15 @@ go 1.25.13
 // platform build of the 0.34.0 tag. Filter with `go list ./... | grep -v
 // node_modules` where it matters (Makefile) instead.
 
+// testcontainers-go is a DIRECT dependency for tests only — eight test files
+// behind the `postgres` build tag — and it drags 112 edges into the module
+// graph. Reviewed for B.19 (#187) on 2026-09-04 and ACCEPTED as is, rather
+// than split into a `tests/postgres/` submodule or a go.work: `go list -deps
+// ./cmd/serve` shows zero testcontainers packages, so the shipped daemon
+// carries none of it, and govulncheck reports on the call graph it can reach,
+// not on go.sum. The cost is a longer `go mod download` in CI; the price of a
+// submodule would be a second module to keep in step at every bump, for a
+// dependency no released artefact contains.
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/jackc/pgx/v5 v5.9.2
@@ -111,4 +120,12 @@ require (
 // otherwise resolve. The pin predates the current Wails version and its reason
 // was never recorded; lift it only after a Windows build and a smoke test of
 // the packaged .exe, since it cannot be exercised on Linux.
+//
+// Reviewed for B.19 (#187) on 2026-09-04 and KEPT. Lifting it is not a
+// judgement call that can be made from here: the package is `//go:build
+// windows`, so nothing on this machine or in the Linux CI compiles it, and the
+// only evidence that would settle it is a packaged .exe that opens a window.
+// That evidence is cheap to gather at the next Windows release and expensive
+// to fake; until someone has it, an unexplained pin that works beats an
+// unexplained bump that might not.
 replace github.com/wailsapp/go-webview2 => github.com/wailsapp/go-webview2 v1.0.16

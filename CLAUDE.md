@@ -39,7 +39,9 @@ The `webkit2_41` tag matches webkit2gtk-4.1 (Arch, ubuntu-latest); plain
 `wails build` targets webkit2gtk-4.0 (ubuntu-22.04 in CI). CI
 (`.github/workflows/build.yml`) builds ubuntu-latest, ubuntu-22.04,
 windows-latest, macos-latest (`darwin/universal`). Toolchain: Go 1.25.13 (CI and
-`go.mod`), Node 23.4.0, Wails CLI v2.10.2 (library v2.10.1).
+`go.mod`), Node 22 LTS, Wails CLI v2.10.2 (library v2.10.1). The Go and Node
+versions are stated ONCE per workflow, as `env: GO_VERSION` / `NODE_VERSION`
+(B.19, #187) — bump them there, not at each `setup-go`/`setup-node`.
 
 `cmd/serve/` builds the daemon alone — pure Go, CGO disabled, no Wails — for the
 container image (`Dockerfile.serve`).

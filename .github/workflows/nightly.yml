@@ -46,6 +46,10 @@ on:
 permissions:
   contents: read
 
+# Single statement of the Go version for this file (B.19, #187).
+env:
+  GO_VERSION: "1.25.13"
+
 jobs:
   test-os-full:
     name: test-os-full (${{ matrix.os }})
@@ -70,7 +74,7 @@ jobs:
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
-          go-version: 1.25.13
+          go-version: ${{ env.GO_VERSION }}
           cache: true
 
       - name: Create frontend dist stub
@@ -97,7 +101,7 @@ jobs:
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
-          go-version: 1.25.13
+          go-version: ${{ env.GO_VERSION }}
           cache: true
 
       # Full package, not just Parallel/Concurrent/Batch (build.yml's
@@ -137,7 +141,7 @@ jobs:
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           check-latest: true
-          go-version: 1.25.13
+          go-version: ${{ env.GO_VERSION }}
           cache: true
 
       - name: Create frontend dist stub

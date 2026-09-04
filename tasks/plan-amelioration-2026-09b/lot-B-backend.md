@@ -524,12 +524,28 @@ Dépendance : D.3 (parseur unique côté JS) est l'étape 1 ; B.18 l'étape 2.
 - `replace go-webview2 => v1.0.16` (`go.mod:117-121`) « reason never recorded ».
 - Pas de directive `toolchain` ; `go-version` répété 8× en CI ; Dockerfile
   `golang:1.25-alpine` flottant ; Node 23 (ligne impaire) répété 4×.
-- [ ] Sous-module `tests/postgres/` (ou build tag + `go.work`) pour isoler
-      testcontainers ; sinon l'accepter et l'écrire dans `go.mod`.
-- [ ] Lever le `replace` à la prochaine release Windows après smoke test du
-      `.exe` ; sinon justifier.
-- [ ] `toolchain go1.25.13`, `env: GO_VERSION` unique, Dockerfile épinglé au
-      patch ; Node 22 LTS.
+- [x] testcontainers **accepté et écrit dans `go.mod`**, pas isolé. Mesuré le
+      2026-09-04 : 112 arêtes dans le graphe de modules, mais
+      `go list -deps ./cmd/serve` en compte **zéro** — le démon publié n'en
+      porte rien, et govulncheck raisonne sur le graphe d'appels atteignable,
+      pas sur `go.sum`. Un sous-module coûterait un second module à tenir en
+      phase à chaque montée de version, pour une dépendance qu'aucun artefact
+      livré ne contient.
+- [x] `replace go-webview2` **conservé**, avec sa raison écrite. Ce n'est pas
+      un arbitrage qui se tranche d'ici : le paquet est `//go:build windows`,
+      donc ni cette machine ni la CI Linux ne le compilent, et la seule preuve
+      qui déciderait est un `.exe` empaqueté qui ouvre une fenêtre. Elle est
+      bon marché à obtenir à la prochaine release Windows.
+- [x] `env: GO_VERSION` / `NODE_VERSION` uniques par workflow (7 + 4
+      occurrences dans `build.yml`, 3 dans `fuzz.yml` et `nightly.yml`, plus
+      le `go-version-input` de govulncheck) ; `Dockerfile.serve` et
+      `Dockerfile.hostile` épinglés à `golang:1.25.13-*` (tags vérifiés
+      existants sur Docker Hub) ; Node 23, ligne impaire hors support, devient
+      22 LTS.
+- [x] `toolchain go1.25.13` **non ajoutée** : `go mod tidy` la retire aussitôt.
+      La ligne `go` porte déjà la version au patch près, donc la directive est
+      redondante et Go la considère comme telle. La fiche demandait ici quelque
+      chose que l'outil refuse ; rien à faire.
 
 ---
 
