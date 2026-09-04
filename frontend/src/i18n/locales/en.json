@@ -225,6 +225,66 @@
                 "title": "Drill down",
                 "body": "Jump from a tournament to its matches and positions."
             }
+        },
+        "eval": {
+            "title": "Eval panel",
+            "desc": "Evaluate the position on the board.",
+            "intro": {
+                "title": "Evaluating a position",
+                "body": "blunderDB carries its own evaluator: you do not need an imported analysis to know what a position is worth."
+            },
+            "tab": {
+                "title": "The Eval tab",
+                "body": "Ctrl+E. It gives the best move, the cube decision and the effective pip count (EPC)."
+            },
+            "position": {
+                "title": "The position being evaluated",
+                "body": "Always the one on the board: set the checkers, the dice and the score, and the evaluation follows."
+            },
+            "scale": {
+                "title": "Money or match",
+                "body": "At money play equity is in points; at a score it is normalised — ±1 is the current cube won or lost."
+            }
+        },
+        "anki": {
+            "title": "Anki review",
+            "desc": "Review your positions by spaced repetition.",
+            "intro": {
+                "title": "Reviewing your mistakes",
+                "body": "A review deck turns the positions you got wrong into cards and shows them again at the right moment."
+            },
+            "tab": {
+                "title": "The Anki tab",
+                "body": "Ctrl+K. Build a deck here, review it, and follow what is left to see."
+            },
+            "deck": {
+                "title": "Building a deck",
+                "body": "A deck starts from a search or a collection: it resynchronises as the database changes."
+            },
+            "review": {
+                "title": "Answering a card",
+                "body": "The answer stays hidden until you ask for it; your grade sets the next due date."
+            }
+        },
+        "stats": {
+            "title": "Statistics",
+            "desc": "Read your level and your progress.",
+            "intro": {
+                "title": "Measuring your play",
+                "body": "Statistics cover the matches imported with their analysis — that is where the level shows."
+            },
+            "tab": {
+                "title": "The Stats tab",
+                "body": "Ctrl+D. Four views: dashboard, errors, progression and players."
+            },
+            "pr": {
+                "title": "The PR",
+                "body": "The average error per decision, in millipoints. Lower is better; it compares with XG's."
+            },
+            "filters": {
+                "title": "Narrowing the measure",
+                "body": "Period, opponent, match length, tournament: every filter recomputes the whole table."
+            }
         }
     },
     "help": {

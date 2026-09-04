@@ -55,6 +55,39 @@ export const TOURS = [
             { element: '[data-tour="panels"]', activateTab: 'tournaments', titleKey: 'tour.tournaments.tab.title', bodyKey: 'tour.tournaments.tab.body', side: 'top' },
             { titleKey: 'tour.tournaments.drill.title', bodyKey: 'tour.tournaments.drill.body' }
         ]
+    },
+    {
+        id: 'eval',
+        titleKey: 'tour.eval.title',
+        descKey: 'tour.eval.desc',
+        steps: [
+            { titleKey: 'tour.eval.intro.title', bodyKey: 'tour.eval.intro.body' },
+            { element: '[data-tour="panels"]', activateTab: 'epc', titleKey: 'tour.eval.tab.title', bodyKey: 'tour.eval.tab.body', side: 'top' },
+            { element: '[data-tour="board"]', titleKey: 'tour.eval.position.title', bodyKey: 'tour.eval.position.body', side: 'top' },
+            { titleKey: 'tour.eval.scale.title', bodyKey: 'tour.eval.scale.body' }
+        ]
+    },
+    {
+        id: 'anki',
+        titleKey: 'tour.anki.title',
+        descKey: 'tour.anki.desc',
+        steps: [
+            { titleKey: 'tour.anki.intro.title', bodyKey: 'tour.anki.intro.body' },
+            { element: '[data-tour="panels"]', activateTab: 'anki', titleKey: 'tour.anki.tab.title', bodyKey: 'tour.anki.tab.body', side: 'top' },
+            { titleKey: 'tour.anki.deck.title', bodyKey: 'tour.anki.deck.body' },
+            { titleKey: 'tour.anki.review.title', bodyKey: 'tour.anki.review.body' }
+        ]
+    },
+    {
+        id: 'stats',
+        titleKey: 'tour.stats.title',
+        descKey: 'tour.stats.desc',
+        steps: [
+            { titleKey: 'tour.stats.intro.title', bodyKey: 'tour.stats.intro.body' },
+            { element: '[data-tour="panels"]', activateTab: 'stats', titleKey: 'tour.stats.tab.title', bodyKey: 'tour.stats.tab.body', side: 'top' },
+            { titleKey: 'tour.stats.pr.title', bodyKey: 'tour.stats.pr.body' },
+            { titleKey: 'tour.stats.filters.title', bodyKey: 'tour.stats.filters.body' }
+        ]
     }
 ];
 

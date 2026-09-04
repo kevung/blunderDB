@@ -225,6 +225,66 @@
                 "title": "Im Detail erkunden",
                 "body": "Von einem Turnier aus können Sie zu seinen Partien und den zugrunde liegenden Stellungen navigieren."
             }
+        },
+        "eval": {
+            "title": "Eval-Panel",
+            "desc": "Die angezeigte Stellung bewerten.",
+            "intro": {
+                "title": "Eine Stellung bewerten",
+                "body": "blunderDB bringt einen eigenen Evaluator mit: für den Wert einer Stellung ist keine importierte Analyse nötig."
+            },
+            "tab": {
+                "title": "Der Eval-Reiter",
+                "body": "Strg+E. Er liefert den besten Zug, die Doppler-Entscheidung und den effektiven Pip-Count (EPC)."
+            },
+            "position": {
+                "title": "Die bewertete Stellung",
+                "body": "Immer die auf dem Brett: Steine, Würfel und Stand setzen, die Bewertung folgt."
+            },
+            "scale": {
+                "title": "Money oder Match",
+                "body": "Im Money-Spiel steht die Equity in Punkten; beim Matchstand ist sie normiert — ±1 entspricht dem aktuellen Doppler gewonnen oder verloren."
+            }
+        },
+        "anki": {
+            "title": "Anki-Wiederholung",
+            "desc": "Stellungen mit verteilter Wiederholung üben.",
+            "intro": {
+                "title": "Fehler wiederholen",
+                "body": "Ein Wiederholungsstapel macht aus verpatzten Stellungen Karten und zeigt sie zum richtigen Zeitpunkt erneut."
+            },
+            "tab": {
+                "title": "Der Anki-Reiter",
+                "body": "Strg+K. Hier wird ein Stapel angelegt, wiederholt und der Rest verfolgt."
+            },
+            "deck": {
+                "title": "Einen Stapel bauen",
+                "body": "Ein Stapel geht von einer Suche oder einer Sammlung aus und gleicht sich ab, wenn sich die Datenbank ändert."
+            },
+            "review": {
+                "title": "Eine Karte beantworten",
+                "body": "Die Antwort bleibt verborgen, bis Sie sie anfordern; Ihre Note bestimmt den nächsten Termin."
+            }
+        },
+        "stats": {
+            "title": "Statistiken",
+            "desc": "Niveau und Fortschritt ablesen.",
+            "intro": {
+                "title": "Das eigene Spiel messen",
+                "body": "Die Statistiken beziehen sich auf die mit Analyse importierten Matches — dort zeigt sich das Niveau."
+            },
+            "tab": {
+                "title": "Der Stats-Reiter",
+                "body": "Strg+D. Vier Ansichten: Übersicht, Fehler, Verlauf und Spieler."
+            },
+            "pr": {
+                "title": "Der PR",
+                "body": "Der mittlere Fehler pro Entscheidung in Millipunkten. Niedriger ist besser; vergleichbar mit dem von XG."
+            },
+            "filters": {
+                "title": "Die Messung eingrenzen",
+                "body": "Zeitraum, Gegner, Matchlänge, Turnier: jeder Filter berechnet die ganze Tabelle neu."
+            }
         }
     },
     "help": {

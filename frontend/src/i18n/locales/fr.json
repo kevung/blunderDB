@@ -225,6 +225,66 @@
                 "title": "Explorer",
                 "body": "Passez d'un tournoi à ses matchs et positions."
             }
+        },
+        "eval": {
+            "title": "Panneau Eval",
+            "desc": "Évaluer la position affichée.",
+            "intro": {
+                "title": "Évaluer une position",
+                "body": "blunderDB embarque son propre évaluateur : pas besoin d'une analyse importée pour savoir ce que vaut une position."
+            },
+            "tab": {
+                "title": "L'onglet Eval",
+                "body": "Ctrl+E. Il donne le meilleur coup, la décision de videau et le compte de pips effectif (EPC)."
+            },
+            "position": {
+                "title": "La position évaluée",
+                "body": "C'est toujours celle du plateau : posez les pions, les dés et le score, l'évaluation suit."
+            },
+            "scale": {
+                "title": "Money ou match",
+                "body": "À l'argent l'équité est en points ; au score elle est normalisée — ±1 vaut le videau courant gagné ou perdu."
+            }
+        },
+        "anki": {
+            "title": "Révision Anki",
+            "desc": "Réviser ses positions par répétition espacée.",
+            "intro": {
+                "title": "Réviser ses erreurs",
+                "body": "Un paquet de révision transforme les positions ratées en cartes, et vous les représente au bon moment."
+            },
+            "tab": {
+                "title": "L'onglet Anki",
+                "body": "Ctrl+K. On y crée un paquet, on le révise, et on suit ce qui reste à voir."
+            },
+            "deck": {
+                "title": "Construire un paquet",
+                "body": "Un paquet part d'une recherche ou d'une collection : il se resynchronise quand la base change."
+            },
+            "review": {
+                "title": "Répondre à une carte",
+                "body": "La réponse reste masquée jusqu'à ce que vous la demandiez ; votre note règle la prochaine échéance."
+            }
+        },
+        "stats": {
+            "title": "Statistiques",
+            "desc": "Lire son niveau et sa progression.",
+            "intro": {
+                "title": "Mesurer son jeu",
+                "body": "Les statistiques portent sur les matchs importés avec leur analyse — c'est là que se lit le niveau."
+            },
+            "tab": {
+                "title": "L'onglet Stats",
+                "body": "Ctrl+D. Quatre vues : tableau de bord, erreurs, progression et joueurs."
+            },
+            "pr": {
+                "title": "Le PR",
+                "body": "L'erreur moyenne par décision, en millipoints. Plus il est bas, mieux c'est ; il se compare à celui d'XG."
+            },
+            "filters": {
+                "title": "Restreindre la mesure",
+                "body": "Période, adversaire, longueur de match, tournoi : chaque filtre recalcule tout le tableau."
+            }
         }
     },
     "help": {
