@@ -164,6 +164,13 @@ time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po` with
 `msgcat`: Babel and msgcat disagree on line breaks, so one pass rewrites the
 whole file.
 
+**The in-app help is generated from these same sources.** `raccourcis.rst` and
+`cmd_mode.rst` are the only statement of the keyboard shortcuts and of the command
+line; `frontend/src/i18n/help/*.js` is a build artefact rendered from them and their
+eight catalogues (ADR-0034). After changing either file — or a prose fragment under
+`frontend/src/i18n/help/prose/` — run `make help`; `go test ./cmd/help-gen` fails
+while a bundle is stale, and the bundles are never edited by hand.
+
 **Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
 Split long documents into a README index + per-topic files.
 
@@ -223,8 +230,10 @@ Backend packages, thinnest description that lets you find things:
   the binary and are not CLI subcommands: `blunderdb-loadtest` (drives the
   `/v1/*` endpoints with a configurable scenario mix), `extract_gnubg_stats`
   (parses GS tags from a gnuBG SGF file), `calibrace` (fits `engine/race`'s
-  correction against a TS-06-11 oracle) and `train-analysis-dict` (regenerates
-  the embedded zstd dictionary, ADR-0030). Each carries its own package doc.
+  correction against a TS-06-11 oracle), `train-analysis-dict` (regenerates
+  the embedded zstd dictionary, ADR-0030) and `help-gen` (renders the in-app
+  help bundles from the Sphinx sources, ADR-0034). Each carries its own package
+  doc.
 
 Match/position parsers for external formats are separate modules
 (`github.com/kevung/xgparser`, `gnubgparser`, `bgfparser`); Jellyfish `.mat`
@@ -344,7 +353,8 @@ Violating one of these is a bug even if all tests pass:
   post-migration reactivity bugs). Rare exceptions must be justified in the
   commit message.
 - `frontend/wailsjs/` is **generated** (namespaced `gui`/`database`/`main`); never
-  hand-edit; restart `wails dev` after changing exported bound methods.
+  hand-edit; restart `wails dev` after changing exported bound methods. So is
+  `frontend/src/i18n/help/*.js` — `make help`, see ADR-0034 and Documentation above.
 
 ## Notes & Gotchas
 

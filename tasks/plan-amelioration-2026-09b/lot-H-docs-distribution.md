@@ -131,13 +131,30 @@ existe (`SCREENSHOT=1 npx playwright test screenshot`, commit `e46b896d`).
 dupliquant `manuel.rst`/`raccourcis.rst`/`cmd_mode.rst` ; aucun mécanisme de
 synchronisation ; effet mesuré en H.6. Ces fichiers sont aussi injectés via
 `{@html}` et exclus du lint (D.15).
-- [ ] Décision (ADR) entre : (a) `help/*.js` = artefact de build produit par
-      Sphinx (`-b html` par section, 9 langues, CSS réduite) à
-      `npm run build`, versionné ou non ; (b) aide réduite à un sommaire +
-      liens profonds vers le site, 11 000 lignes supprimées, mode hors ligne
-      perdu. Recommandation : (a), avec un test qui compare les titres de
-      sections aux `.rst`.
-- [ ] `helpVocabulary.sync.test.js` étendu aux 4 onglets × 9.
+- [x] Décision : **ADR-0034** — (a) dans sa forme, sans son runtime. `help/*.js`
+      devient un artefact de build **versionné**, rendu par `cmd/help-gen` (Go,
+      bibliothèque standard) directement depuis les `.rst` et les `.po`, sans
+      Sphinx ni Python sur le chemin de `npm run build` / `wails dev`. (b)
+      rejetée sur le mode hors ligne : l'aide s'ouvre par `?` pendant qu'on
+      joue, et ce qu'on y cherche (la liste exhaustive des raccourcis et des
+      filtres) est justement ce qu'un lien ne sert pas hors réseau.
+- [x] Onglets *Raccourcis* et *Commandes* générés depuis `raccourcis.rst` et
+      `cmd_mode.rst` × 9 langues (`make help`, garde
+      `TestHelpBundlesAreCurrent`) ; un `msgstr` manquant est une erreur, jamais
+      un repli français. HTML écrit à la main : 11 920 → 2 348 lignes (−80 %).
+- [x] `helpVocabulary.sync.test.js` : titre de la table des filtres lu depuis
+      l'ancre `.. _cmd_filter:` du `.rst`, et vérification des libellés de
+      commandes et des jetons de filtre **dans les 9 langues** (ils voyagent
+      non traduits) ; comptes `h3`/`li`/`tr` par onglet conservés.
+- [x] `help.safety.test.js` : le corpus livré (9 langues × 4 onglets) est
+      inspecté pour ce que `{@html}` exécuterait — c'est ce qui remplace
+      l'exclusion eslint pointée par D.15.
+- [ ] **Reste** : l'onglet *Manuel* (digest éditorial de 210 lignes) et
+      l'onglet *À propos* restent des fragments écrits à la main
+      (`frontend/src/i18n/help/prose/<lang>.html`). *À propos* le restera
+      (métadonnées de l'application, aucun `.rst`) ; *Manuel* demande un
+      manifeste de sections sur les ancres de `manuel.rst` — voir les
+      *Consequences* de l'ADR.
 
 ## H.8 — Doc développeur [S/M] — onboarding contributeur (#250)
 
@@ -223,7 +240,7 @@ diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
 | H.4, H.5 | M | 1 |
 | H.9, H.10, H.11, H.13 | S/M | 2 |
 | H.8, H.12, H.14 | M | 2 |
-| H.7 | L | 2-3 |
+| H.7 | L | 2-3 (décision + 2 onglets sur 4 livrés) |
 
 Règle transverse : tout `.rst` modifié embarque ses 8 `.po` dans le même
 commit ; les captures et le bloc « dernière version » sont régénérés par la
