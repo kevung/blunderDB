@@ -90,10 +90,9 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
 - 6 paquets sans test : `migrate` (logique de remap pure, testable sur deux
   `sqlite.Storage` en mémoire), `storagetest`, `cmd/serve` (entrypoint publié
   en image), `calibrace`, `loadtest`, `extract_gnubg_stats`.
-- [ ] `t.Fatal` sur fixture manquante (ou test-sentinelle) ; redistribuer
-      `tests/` vers `ingest`/`database` ; corriger `embed_test` (400 +
-      `code=invalid` + message nommant `X-Tenant-ID`) ; test de câblage
-      `cmd/serve` ; test `migrate` sans Docker.
+- [x] `t.Fatal` sur fixture manquante ; `tests/` redistribué vers
+      `ingest`/`database` (le répertoire n'existe plus) ; `embed_test`
+      corrigé ; `cmd/serve/main_test.go` et `migrate/remap_test.go` écrits.
 
 ## E.5 — Formatage Go, hooks et `make check` [S] — DX (#221)
 
@@ -101,13 +100,11 @@ vert ») ; Windows 154 s et macOS 139 s sont verts. Préalable de C.2 et de #151
 pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
 ≠ CI (manque e2e, `release.sh --check`, PG, gofmt) malgré le commentaire
 `Makefile:30` ; ni `.editorconfig`, ni devcontainer.
-- [ ] `formatters: enable: [gofmt, goimports]` ; corriger les 8 fichiers.
-- [ ] `.githooks/pre-commit` versionné (`make check-fast` : gofmt, vet, eslint,
-      prettier) + `core.hooksPath` documenté dans `CONTRIBUTING.md`.
-- [ ] `make check` (rapide) / `make check-all` (parité CI, y compris
-      `make test-pg` qui dit clairement s'il a besoin de Docker).
-- [ ] `.editorconfig` ; `.devcontainer/` minimal (Go 1.25.13, Node 22,
-      webkit2gtk-4.1) — utile aussi pour un contributeur occasionnel.
+- [x] `formatters: enable: [gofmt, goimports]` ; l'arbre est propre au `gofmt -l`.
+- [x] `.githooks/pre-commit` versionné (`make check-fast`) + `core.hooksPath`
+      documenté dans `CONTRIBUTING.md`.
+- [x] `make check-fast` / `check` / `check-all`.
+- [x] `.editorconfig` et `.devcontainer/`.
 
 ---
 

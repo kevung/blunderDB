@@ -15,9 +15,13 @@ linters:
   # function measured today, and each is a DIFFERENT function: the ceiling is
   # three independent high-water marks, not one function's profile.
   #
-  # Re-measured 2026-09-04, after B.15 split `find` into
-  # buildWhere/scanRows/applyGoFilters: 573/316/462 → 438/180/200, each set by
-  # a different function now. Splitting a flagged function must lower the
+  # Re-measured 2026-09-04, twice: after B.15 split `find` into
+  # buildWhere/scanRows/applyGoFilters (573/316/462 → 438/180/200), then after
+  # the same fiche split `Compute` into eleven passes (438 → 280 lines).
+  # The line ceiling is now held by `migrate_1_9_0_to_2_0_0`, a migration frozen
+  # by definition (its DDL is what a 1.9.0 database needs, forever) — the next
+  # real target is `parseSearchFlags`, which sets the statement ceiling at 180
+  # and is 280 lines behind it. `applyGoFilters` sets the cognitive one. Splitting a flagged function must lower the
   # number it set in the same commit, never leave it where a fatter function
   # could still slip in.
   #
@@ -66,8 +70,8 @@ linters:
         - (*database/sql.Tx).Rollback
 
     funlen:
-      lines: 438      # (*StatsStore).Compute, sqlshared/stats.go
-      statements: 180 # parseSearchFlags, internal/cli/cli_search.go
+      lines: 296      # migrate_1_9_0_to_2_0_0, db_migration_v1.go — a frozen migration, left alone
+      statements: 180 # parseSearchFlags, same function
 
     gocognit:
       min-complexity: 200 # (*SearchStore).applyGoFilters, sqlshared/search.go

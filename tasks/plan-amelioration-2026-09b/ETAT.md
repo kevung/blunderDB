@@ -51,6 +51,7 @@ zstd avec dictionnaire — B.12).
 | H.12 | #254 | Trois visites guidées de plus (Eval, Anki, Stats), chacune ouvrant son onglet. Le panneau de bienvenue reste à I.28. |
 | — | #304 | Coquilles de la source française. |
 | — | — | `.gitattributes` : `* -text`, sans quoi un checkout Windows convertit les fins de ligne de `met_kazaross_xg2.json` et fait paniquer `engine.init` sur son SHA-256. |
+| B.15 (suite) | #183 | `StatsStore.Compute` (438 l., onze passes SQL) découpée en `stats_compute.go` ; le plafond `funlen` passe de 438 à 296 lignes. |
 | **E.6-E.12** | #222-#228 | **Le lot E est clos.** L'essentiel était déjà livré au fil des autres fiches sans être coché ; l'audit du 2026-09-04 l'a constaté et a fini le reste : crans de complexité remesurés (573/316/462 → 438/180/200), note « clone allégé » et méthode d'édition programmatique des `.po` dans `doc/README.txt`, et `CLAUDE.md` corrigé — il affirmait qu'il n'existait pas de `nightly.yml`. |
 
 Hors fiches, trouvés en chemin :

@@ -444,10 +444,15 @@ recherche ou un `ComputeStats` de 30 s ne peut pas être annulé depuis la GUI.
       legacy/nouveau, pagination, motif de prime, exclusion, chevauchement)
       sur SQLite **et** sur un vrai PostgreSQL (Docker) — `sqlshared` sert
       les deux backends, donc toucher `search.go` engage les deux à la fois.
-- [ ] `Compute` (`stats.go`, 433 l., 12 requêtes) → **pas fait** dans ce
-      geste : budget de ce chantier épuisé par `find`. Même méthode
-      applicable (une fonction par section, clause de base factorisée) ;
-      à reprendre séparément.
+- [x] `Compute` (`stats.go`, 438 l., onze passes SQL) → découpée le 2026-09-04
+      en `stats_compute.go` : une méthode par bannière de section, chacune avec
+      son nom, son commentaire et ses variables locales — là où `rows`, `err` et
+      `scanErr` étaient partagés sur quatre cents lignes. Aucun SQL, aucune
+      arithmétique ne change : les passes tournent dans le même ordre, sur la
+      même clause WHERE, et l'ordre est documenté comme une contrainte
+      (`computeMWCPass` relit ce que les autres ont collecté, donc passe en
+      dernier). `stats.go` : 1392 → 920 lignes. Le plafond `funlen` descend de
+      438 à 296 dans le même geste (E.6).
 - [ ] `CommitImportDatabase` (306 l.) → **pas fait**, même raison.
 - [ ] Réduction des fichiers > 600 lignes (`stats.go` 1392, `export_sqlite.go`
       938, `matches_postgres.go` 921, `xgmap.go` 857, `matches_sqlite.go` 879,
