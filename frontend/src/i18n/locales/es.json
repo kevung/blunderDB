@@ -225,6 +225,66 @@
                 "title": "Explorar en detalle",
                 "body": "Desde un torneo puedes descender a sus partidas y a las posiciones subyacentes."
             }
+        },
+        "eval": {
+            "title": "Panel Eval",
+            "desc": "Evaluar la posición mostrada.",
+            "intro": {
+                "title": "Evaluar una posición",
+                "body": "blunderDB lleva su propio evaluador: no hace falta un análisis importado para saber cuánto vale una posición."
+            },
+            "tab": {
+                "title": "La pestaña Eval",
+                "body": "Ctrl+E. Da la mejor jugada, la decisión de cubo y el recuento de pips efectivo (EPC)."
+            },
+            "position": {
+                "title": "La posición evaluada",
+                "body": "Siempre la del tablero: coloque las fichas, los dados y el marcador, y la evaluación sigue."
+            },
+            "scale": {
+                "title": "Money o match",
+                "body": "En money la equidad va en puntos; con marcador está normalizada — ±1 es el cubo actual ganado o perdido."
+            }
+        },
+        "anki": {
+            "title": "Repaso Anki",
+            "desc": "Repasar posiciones por repetición espaciada.",
+            "intro": {
+                "title": "Repasar los errores",
+                "body": "Un mazo de repaso convierte las posiciones falladas en tarjetas y se las vuelve a mostrar en el momento oportuno."
+            },
+            "tab": {
+                "title": "La pestaña Anki",
+                "body": "Ctrl+K. Aquí se crea un mazo, se repasa y se sigue lo que queda por ver."
+            },
+            "deck": {
+                "title": "Construir un mazo",
+                "body": "Un mazo parte de una búsqueda o de una colección: se resincroniza cuando cambia la base."
+            },
+            "review": {
+                "title": "Responder una tarjeta",
+                "body": "La respuesta queda oculta hasta que la pida; su nota fija el próximo vencimiento."
+            }
+        },
+        "stats": {
+            "title": "Estadísticas",
+            "desc": "Leer su nivel y su progreso.",
+            "intro": {
+                "title": "Medir su juego",
+                "body": "Las estadísticas se basan en los partidos importados con su análisis: ahí se ve el nivel."
+            },
+            "tab": {
+                "title": "La pestaña Stats",
+                "body": "Ctrl+D. Cuatro vistas: panel, errores, progresión y jugadores."
+            },
+            "pr": {
+                "title": "El PR",
+                "body": "El error medio por decisión, en milipuntos. Cuanto más bajo, mejor; se compara con el de XG."
+            },
+            "filters": {
+                "title": "Acotar la medida",
+                "body": "Periodo, rival, duración del partido, torneo: cada filtro recalcula toda la tabla."
+            }
         }
     },
     "help": {

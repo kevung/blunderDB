@@ -209,10 +209,14 @@ milestone, 0 Project ; Discussions vides.
 Visites guidées : 4 zones sur 9 (0 pour Eval, Anki, Stats, Collections,
 diffusion) ; pas d'écran de bienvenue (plateau vide au premier lancement,
 `tour`/`demo` indécouvrables).
-- [ ] Trois visites (eval, anki, stats) via le mécanisme générique de
-      `tours.js`.
+- [x] Trois visites (eval, anki, stats) via le mécanisme générique de
+      `tours.js`, chacune ouvrant au passage l'onglet dont elle parle
+      (`activateTab`) ; 9 locales, `manuel.rst` + 8 `.po`, 6 tests e2e.
 - [ ] Panneau de bienvenue quand aucune base récente : *Visite guidée*,
-      *Base d'exemple*, *Importer mes matchs*, *Ouvrir une base* (lié à I.28).
+      *Base d'exemple*, *Importer mes matchs*, *Ouvrir une base*. **Reporté à
+      I.28 (#284)**, qui redéfinit entièrement l'écran d'accueil : livrer ici un
+      panneau à quatre boutons serait à refaire dans la foulée. #254 reste donc
+      ouverte le temps de I.28.
 
 ## H.13 — Traductions : outillage [S] — qualité (#255)
 

@@ -225,6 +225,66 @@
                 "title": "Tarkastele yksityiskohtia",
                 "body": "Turnauksesta voit porautua sen otteluihin ja taustalla oleviin asemiin."
             }
+        },
+        "eval": {
+            "title": "Eval-paneeli",
+            "desc": "Arvioi näytetty asema.",
+            "intro": {
+                "title": "Aseman arviointi",
+                "body": "blunderDB:llä on oma arviointimoottori: aseman arvon näkemiseen ei tarvita tuotua analyysiä."
+            },
+            "tab": {
+                "title": "Eval-välilehti",
+                "body": "Ctrl+E. Antaa parhaan siirron, tuplauspäätöksen ja tehollisen pip-luvun (EPC)."
+            },
+            "position": {
+                "title": "Arvioitava asema",
+                "body": "Aina laudalla oleva: aseta nappulat, nopat ja tilanne, arvio seuraa."
+            },
+            "scale": {
+                "title": "Money vai ottelu",
+                "body": "Money-pelissä ekviteetti on pisteinä; ottelutilanteessa se on normalisoitu — ±1 on nykyinen tuplauskuutio voitettuna tai hävittynä."
+            }
+        },
+        "anki": {
+            "title": "Anki-kertaus",
+            "desc": "Kertaa asemia välisteisellä toistolla.",
+            "intro": {
+                "title": "Virheiden kertaus",
+                "body": "Kertauspakka muuttaa väärin menneet asemat korteiksi ja näyttää ne uudelleen oikeaan aikaan."
+            },
+            "tab": {
+                "title": "Anki-välilehti",
+                "body": "Ctrl+K. Täällä luodaan pakka, kerrataan se ja seurataan mitä on jäljellä."
+            },
+            "deck": {
+                "title": "Pakan rakentaminen",
+                "body": "Pakka lähtee hausta tai kokoelmasta: se synkronoituu uudelleen tietokannan muuttuessa."
+            },
+            "review": {
+                "title": "Korttiin vastaaminen",
+                "body": "Vastaus pysyy piilossa kunnes pyydät sitä; arvosanasi asettaa seuraavan ajankohdan."
+            }
+        },
+        "stats": {
+            "title": "Tilastot",
+            "desc": "Lue tasosi ja edistymisesi.",
+            "intro": {
+                "title": "Pelin mittaaminen",
+                "body": "Tilastot koskevat analyysin kanssa tuotuja otteluita — siellä taso näkyy."
+            },
+            "tab": {
+                "title": "Stats-välilehti",
+                "body": "Ctrl+D. Neljä näkymää: kojelauta, virheet, edistyminen ja pelaajat."
+            },
+            "pr": {
+                "title": "PR-luku",
+                "body": "Keskimääräinen virhe päätöstä kohti, millipisteinä. Pienempi on parempi; vertautuu XG:n lukuun."
+            },
+            "filters": {
+                "title": "Mittauksen rajaaminen",
+                "body": "Ajanjakso, vastustaja, ottelun pituus, turnaus: jokainen suodatin laskee koko taulukon uudelleen."
+            }
         }
     },
     "help": {

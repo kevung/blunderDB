@@ -225,6 +225,66 @@
                 "title": "Esplorare in dettaglio",
                 "body": "Da un torneo puoi scendere fino alle sue partite e alle posizioni sottostanti."
             }
+        },
+        "eval": {
+            "title": "Pannello Eval",
+            "desc": "Valutare la posizione mostrata.",
+            "intro": {
+                "title": "Valutare una posizione",
+                "body": "blunderDB ha il proprio valutatore: non serve un'analisi importata per sapere quanto vale una posizione."
+            },
+            "tab": {
+                "title": "La scheda Eval",
+                "body": "Ctrl+E. Dà la mossa migliore, la decisione di cubo e il conteggio pip effettivo (EPC)."
+            },
+            "position": {
+                "title": "La posizione valutata",
+                "body": "Sempre quella sulla board: sistemate pedine, dadi e punteggio, la valutazione segue."
+            },
+            "scale": {
+                "title": "Money o match",
+                "body": "Nel money l'equity è in punti; al punteggio è normalizzata — ±1 è il cubo corrente vinto o perso."
+            }
+        },
+        "anki": {
+            "title": "Ripasso Anki",
+            "desc": "Ripassare le posizioni a ripetizione dilazionata.",
+            "intro": {
+                "title": "Ripassare i propri errori",
+                "body": "Un mazzo di ripasso trasforma le posizioni sbagliate in carte e ve le ripropone al momento giusto."
+            },
+            "tab": {
+                "title": "La scheda Anki",
+                "body": "Ctrl+K. Qui si crea un mazzo, lo si ripassa e si segue ciò che resta."
+            },
+            "deck": {
+                "title": "Costruire un mazzo",
+                "body": "Un mazzo parte da una ricerca o da una raccolta: si risincronizza quando il database cambia."
+            },
+            "review": {
+                "title": "Rispondere a una carta",
+                "body": "La risposta resta nascosta finché non la chiedete; il vostro voto fissa la scadenza successiva."
+            }
+        },
+        "stats": {
+            "title": "Statistiche",
+            "desc": "Leggere il proprio livello e i progressi.",
+            "intro": {
+                "title": "Misurare il proprio gioco",
+                "body": "Le statistiche riguardano le partite importate con la loro analisi: è lì che si legge il livello."
+            },
+            "tab": {
+                "title": "La scheda Stats",
+                "body": "Ctrl+D. Quattro viste: cruscotto, errori, progressione e giocatori."
+            },
+            "pr": {
+                "title": "Il PR",
+                "body": "L'errore medio per decisione, in millipunti. Più è basso meglio è; si confronta con quello di XG."
+            },
+            "filters": {
+                "title": "Restringere la misura",
+                "body": "Periodo, avversario, lunghezza del match, torneo: ogni filtro ricalcola l'intera tabella."
+            }
         }
     },
     "help": {

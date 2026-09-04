@@ -276,11 +276,13 @@ Visites guidées et base d'exemple
 
 Pour faciliter la prise en main, blunderDB propose des **visites guidées** de
 l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou avec
-la commande ``tour`` (alias ``tutorial``). Quatre visites sont disponibles : un
+la commande ``tour`` (alias ``tutorial``). Sept visites sont disponibles : un
 tour général de l'interface, et des visites dédiées à la recherche de positions,
-à la revue des matchs et à la revue des tournois. Chaque visite met en évidence
-les éléments concernés de l'interface, étape par étape, et peut être rejouée à
-tout moment. Au premier démarrage, le tour général est proposé automatiquement.
+à la revue des matchs, à la revue des tournois, au panneau Eval, à la révision
+Anki et aux statistiques. Chaque visite met en évidence les éléments concernés
+de l'interface, étape par étape, ouvre au passage le panneau dont elle parle, et
+peut être rejouée à tout moment. Au premier démarrage, le tour général est
+proposé automatiquement.
 
 La commande ``demo`` charge une **base d'exemple** permettant de découvrir les
 fonctionnalités de l'outil sans importer ses propres parties : trois matchs
