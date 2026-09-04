@@ -1,14 +1,16 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-04** (troisième session d'exécution). Ce fichier est
-le point de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et
-ce qui est bloqué. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
-dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
+Dernière mise à jour : **2026-09-05** (quatrième session — audit de reprise). Ce
+fichier est le point de reprise : il dit ce qui est fusionné, ce qui attend dans une
+branche, et ce qui reste. Le plan lui-même est dans [README.md](README.md) ; les
+fiches sont dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
 ## Où en est-on
 
-**58 des 145 issues sont fermées** (les neuf dernières le seront au premier `push` : GitHub ne lit les `Closes` qu'à l'arrivée sur la branche par défaut). L'étape 0 (lot A) est entièrement livrée,
-l'étape 1 l'est à l'exception de trois fiches, et l'étape 2 est commencée.
+**93 des 145 issues du plan sont fermées.** Les étapes 0 et 1 sont livrées
+en entier. L'étape 2 est livrée **sauf le lot G** (serveur). Restent, hors plan,
+sept issues du générateur de bearoff (ADR-0027, conçu et non exécuté), trois
+issues de moteur/amont et la vidéo de démo.
 
 Les quatorze recherches externes P5-P18 sont versées sous
 [`docs/recherche/`](../../docs/recherche/README.md) ; quatre ont corrigé une fiche
@@ -16,44 +18,47 @@ avant qu'un agent n'y travaille (le format OGXM n'existe pas — I.4 et I.5 ré�
 l'efficacité du videau est une question de modèle et non un trou de port — C.5 ;
 zstd avec dictionnaire — B.12).
 
+### L'audit du 2026-09-05 a corrigé ce fichier
+
+La session précédente l'avait laissé en retard d'une journée de travail. Étaient
+annoncées « restantes » huit fiches en réalité fermées et livrées le 2026-09-03 :
+
+| Fiche | Issue | Commit |
+|---|---|---|
+| B.13 — contexte annulable | #181 | `fdfa179b5` |
+| B.14 — duplication entre backends | #182 | `3447d90ef` |
+| C.7 — forme close de `levelSolve` | #194 | `46e4e8f0b` → **ADR-0032** : la forme close se décide en amont |
+| C.10 — allocations résiduelles | #197 | `04643aa6e` |
+| C.11 — surface exportée morte | #198 | `4bdc4f926` |
+| C.12 — documentation du moteur | #199 | `d4012a0a9` |
+| D.9 — jetons de couleur | #209 | `ffda2996b` → **ADR-0031** |
+| D.10 — modules-dieux | #210 | `af121a43e` |
+
+Deux issues étaient restées ouvertes alors que leur travail était sur `main` — le
+`Closes` n'avait pas pris à la fusion : **#214** (D.13, `04d5a26fe`) et **#254**
+(H.12, `4d86e4af6`). Fermées à la main le 2026-09-05.
+
+**#317, « Nightly failed: 2026-09-04 », est un faux positif** : le run a tourné sur
+`aff3b79da`, antérieur de dix heures au correctif `fb61d10f4` qui fait sauter
+`TestDSN_PathWithQuestionMarkOpensTheRightFile` sur Windows. Le correctif est sur
+`main` depuis. Relance manuelle du workflow pour le prouver, puis fermeture.
+
+**La leçon vaut d'être répétée** : avant d'ouvrir un chantier, lire le code plutôt
+que la case. Elle a maintenant coûté deux fois.
+
 ## Fusionné sur `main`
 
 | Fiches | Issues | Ce qui a changé |
 |---|---|---|
 | **Lot A entier** (A.1-A.14) | #155-#168 | Étape 0 : `X-Tenant-ID` non numérique refusé, `metadata` hors `/v1`, PRAGMAs sur toutes les connexions, dépôt et workflows durcis, sept fuites d'erreur serveur, 96 chaînes traduites, base de démo régénérée, notices tierces, conteneur `.dbx` v2, `/healthz` sans stockage, filtre d'erreur déterministe. |
-| B.1, B.9 | #169, #177 | Versions majeures comparées numériquement ; migrations réparables ; `verify` diffe le schéma. |
-| B.2, B.7 | #170, #175 | Crawford propagé à la conversion GnuBG ; import qui refuse un plateau à plus de quinze pions. |
-| B.4 | #172 | Révision Anki transactionnelle ; note hors bornes refusée (elle faisait paniquer le démon). |
-| B.6 | #174 | Une trentaine d'erreurs SQL cessent d'être avalées par un `continue` invisible à `rows.Err()`. |
-| **B.3, B.5, B.17** | #171, #173, #185 | **Schéma 2.18.0.** Jacoby et beaver quittent l'identité Zobrist (ADR-0028) : seul un XGID les renseignait, donc la même position d'argent entrait par deux portes. `analysis` devient unique par position, `CHECK` de plage, clés étrangères du journal de révision. `zobrist_hash NOT NULL` **refusé**, avec argument. |
-| B.8 | #176 | `--format json` sur neuf commandes, plus d'`os.Exit(2)` caché, sous-commande `completion`, `Conn()` dépubliée. |
-| C.1 | #188 | Tests moteur manquants ; gold régénéré depuis le C amont. |
-| C.2, E.1, E.2 | #189, #217, #218 | `test-os` bloquant, `GOOS=windows go vet`, couverture mesurée juste avec plancher, job `-race` sur le moteur. |
-| C.3, C.6 | #190, #193 | Une seule règle de verdict de videau ; « Équité (money) / (match) » ; badges Jacoby/Beaver enfin affichés. |
-| C.4 | #191 | Le lot d'analyse ne retente plus l'inévaluable ; `AnalyzeStaleGammonNet` câblée (CLI, GUI, route). |
-| C.5 | #192 | **ADR-0029** : ce n'est pas un trou de port, le C fait pareil. Mesuré : 0 verdict basculé sur 604, 0 coup changé sur 60. Le travail est en amont. |
-| D.1 | #201 | Six corrections d'ergonomie + régénération de `frontend/wailsjs`. |
-| D.2, D.6, D.11 | #202, #206, #211 | Vraie bascule des panneaux, état d'erreur nommé du panneau Eval, XGID encode enfin Jacoby/beaver. |
-| D.3, D.4, D.5 | #203, #204, #205 | Parseur de recherche unique, `Tab` rendu à la navigation clavier, plafond de warnings Svelte (35 → 20) câblé en CI. |
-| E.4, E.5 | #220, #221 | `t.Skip` silencieux devenus `t.Fatal`, paquet `tests/` redistribué, hooks versionnés, `make check` aligné sur la CI. |
-| G.1, G.2 | #229, #230 | Compose avec proxy authentifiant, arguments positionnels refusés, rate limit par défaut. |
-| H.1, H.2 | #243, #244 | Page d'installation, `CONTRIBUTING.md`, code de conduite, description et dix sujets du dépôt. |
-| H.3 | #245 | Tap Homebrew, manifeste Flatpak constructible en continu, `metainfo.xml` à jour. |
-| H.4, H.5 | #246, #247 | Quatre tutoriels de bout en bout, FAQ élargie, et vingt-deux captures réelles régénérables par `make screenshots`. |
-| H.6 | #248 | « Bearoff » → « Eval » dans l'aide intégrée et la doc, neuf langues. |
-| B.15 | #183 | `find` découpé en `buildWhere`/`scanRows`/`applyGoFilters`. |
-| B.18 | #186 | **Une seule grammaire de recherche.** `pkg/blunderdb/searchquery` porte `parseSearchTokens` côté Go, tenu au même corpus que le JS ; `search --query`/`--query-help`, `/v1/search.query` et `/v1/search.parse`. Trouvé en chemin : le filtre joueur `pl"Nom"` ne correspondait à personne. |
-| B.19 | #187 | Versions de Go et de Node dites une seule fois par workflow ; gouvernance des dépendances. |
-| D.13 | #214 | Fiabilité des tests frontend (dont la régression D.8 : la navigation dans un match ne redessinait plus le plateau). |
-| E.3 | #219 | Tests Go parallèles et sharding par index : le paquet `database` de 159 s à 57 s, chaque job dans son budget. |
-| H.7 | #249 | L'aide intégrée engendrée depuis les sources Sphinx (ADR-0034). |
-| H.10, H.11 | #252, #253 | Page d'accueil du site et négociation de langue ; feuille de route publique et annonces. |
-| H.12 | #254 | Trois visites guidées de plus (Eval, Anki, Stats), chacune ouvrant son onglet. Le panneau de bienvenue reste à I.28. |
+| **Lot B entier** (B.1-B.19) | #169-#187 | Versions majeures numériques et migrations réparables ; Crawford propagé ; import qui refuse plus de quinze pions ; Anki transactionnel ; erreurs SQL cessent d'être avalées ; **schéma 2.18.0** (Jacoby et beaver hors identité Zobrist — ADR-0028 ; `analysis` unique par position ; `CHECK` de plage ; clés étrangères du journal) ; `--format json` sur neuf commandes et `completion` ; zstd à dictionnaire partagé (ADR-0030) ; contexte annulable ; duplication entre backends résorbée ; `find` et `StatsStore.Compute` découpées ; **une seule grammaire de recherche** portée en Go (`pkg/blunderdb/searchquery`) ; gouvernance des versions et dépendances. |
+| **Lot C** (C.1-C.6, C.8-C.12) | #188-#193, #195-#199 | Tests moteur manquants et gold régénéré ; une seule règle de verdict de videau ; le lot d'analyse ne retente plus l'inévaluable ; **ADR-0029** (efficacité du videau mesurée par état, lue à la racine) ; **ADR-0032** (l'inversion du videau passe en forme close en amont) ; allocations, surface morte et documentation du moteur. |
+| **Lot D entier** (D.1-D.15) | #201-#216 (sauf #212, hors plan) | Six corrections d'ergonomie ; vraie bascule des panneaux ; XGID encode Jacoby/beaver ; parseur de recherche unique ; `Tab` rendu à la navigation clavier ; plafond de warnings Svelte câblé en CI ; **ADR-0031** (une palette, migration progressive) ; modules-dieux découpés ; fiabilité des tests frontend. |
+| **Lot E entier** (E.1-E.12) | #217-#228 | `test-os` bloquant, `GOOS=windows go vet`, couverture mesurée juste avec plancher, job `-race` sur le moteur, `t.Skip` silencieux devenus `t.Fatal`, hooks versionnés, `make check` aligné sur la CI, tests Go parallèles et shardés (paquet `database` 159 s → 57 s), crans de complexité remesurés, `nightly.yml`. |
+| G.1-G.4, G.6, G.7 | #229-#232, #234, #235 | Compose avec proxy authentifiant, arguments positionnels refusés, rate limit par défaut, tests d'isolation multi-tenant. |
+| **Lot H entier** (H.1-H.14) | #243-#256 | Page d'installation, `CONTRIBUTING.md`, code de conduite ; tap Homebrew, Flatpak, `metainfo.xml` ; quatre tutoriels, FAQ élargie, vingt-deux captures régénérables par `make screenshots` ; « Bearoff » → « Eval » en neuf langues ; **aide intégrée engendrée depuis les sources Sphinx** (ADR-0034) ; page d'accueil du site et négociation de langue ; feuille de route publique ; visites guidées ; **binaire Linux arm64** (cinquième runner natif, `.deb`/`.rpm`/AUR bi-architecture). |
 | — | #304 | Coquilles de la source française. |
 | — | — | `.gitattributes` : `* -text`, sans quoi un checkout Windows convertit les fins de ligne de `met_kazaross_xg2.json` et fait paniquer `engine.init` sur son SHA-256. |
-| B.15 (suite) | #183 | `StatsStore.Compute` (438 l., onze passes SQL) découpée en `stats_compute.go` ; le plafond `funlen` passe de 438 à 296 lignes. |
-| H.14 | #256 | **Binaire Linux arm64.** Cinquième runner (`ubuntu-24.04-arm`, natif), tarball + `.deb` + `.rpm` arm64, AUR bi-architecture, doc en neuf langues. Additif : aucune étape amd64 n'est touchée. |
-| **E.6-E.12** | #222-#228 | **Le lot E est clos.** L'essentiel était déjà livré au fil des autres fiches sans être coché ; l'audit du 2026-09-04 l'a constaté et a fini le reste : crans de complexité remesurés (573/316/462 → 438/180/200), note « clone allégé » et méthode d'édition programmatique des `.po` dans `doc/README.txt`, et `CLAUDE.md` corrigé — il affirmait qu'il n'existait pas de `nightly.yml`. |
 
 Hors fiches, trouvés en chemin :
 
@@ -65,37 +70,36 @@ Hors fiches, trouvés en chemin :
   Corrigé, et `scripts/doc-po-update.sh` écrit pour que le faux positif — qui revient
   à chaque régénération — soit traité une fois pour toutes.
 
-## Branches en cours
+## Ce qui reste, et dans quel ordre
 
-Chacune est un worktree `../blunderDB-<nom>` sur `feat/<nom>`. **Toutes les
-branches listées ici au 2026-09-03 ont été fusionnées** ; il n'en reste qu'une.
+L'objectif tenu depuis le 2026-09-05 : **vider le compteur d'issues**, par vagues,
+chacune close par une release.
 
-| Branche | Fiches | Issues |
-|---|---|---|
-| `feat/g8-g10-g13-serveur` | G.8, G.10, G.13 — contrat d'API, observabilité, GUI Go | #236, #238, #241 |
+| Vague | Contenu | Issues | Sortie |
+|---|---|---|---|
+| **0 — hygiène** | Faux positif nightly, issues fantômes, ce fichier | #317, #214, #254 | — |
+| **1 — release** | Publier ce que `main` porte déjà | — | **0.36.0** |
+| **2 — lot G** | Reprendre la fusion bloquée, puis les cinq fiches restantes | #233, #236-#242 | **0.37.0** |
+| **3 — bearoff** | ADR-0027 exécuté : générateur pur, empreintes, rien d'embarqué, onglet, CLI, doc, EPC au-delà du jan | #305-#311 | **0.38.0** |
+| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | 0.39 → 0.40 |
+| **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | — |
+| **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | 1.0 ? |
+| **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | — |
 
-Cette branche porte une fusion interrompue (`MERGE_HEAD` présent, ~50 commits de
-retard sur `main`) : à reprendre dans une passe dédiée, pas au fil d'une autre.
+### La branche qui attend
 
-## Ce qui reste
+`feat/g8-g10-g13-serveur` (worktree `../blunderDB-g8-g10-g13-serveur`) porte G.8
+(contrat d'API), G.10 (observabilité) et G.13 (GUI Go). Elle est **au milieu d'une
+fusion** : tous les conflits sont résolus et indexés, le commit de merge n'a jamais
+été conclu, et elle a 81 commits de retard sur `main`. À reprendre en ouverture de
+la vague 2, dans une passe dédiée — pas au fil d'une autre fiche.
 
-**Étape 1**, une fiche : G.5 (routes d'opération, dépend d'A.2, déjà livrée).
+### Ce qui ne se ferme pas par du code
 
-**Étape 2** : B.13, B.14 ; C.7 (forme close de `levelSolve`, à grouper avec le
-passage amont d'ADR-0029) ; C.11, C.12 ; D.9, D.10 ; G.8-G.14 (dont trois
-attendent dans la branche ci-dessus).
-
-**Une leçon d'audit** : plusieurs fiches du lot E étaient faites depuis des
-jours sans être cochées, parce qu'elles avaient été livrées en passant par
-une autre fiche. Avant d'ouvrir un chantier, lire le code plutôt que la case.
-
-**Étape 3** : le lot I, 34 fiches de produit. **Étape 4** : le lot J.
-
-**Une release est due.** Le plan appelait une 0.35.1 en sortie du lot A, mais il y a
-maintenant bien plus que des correctifs sur `main` : schéma 2.18.0, conteneur `.dbx`
-v2, `--format json`, sous-commande `completion`, tutoriels et captures. C'est une
-**0.36.0**, avec sa ligne de changelog. Le skill `release-blunderdb` exige une
-confirmation humaine avant de pousser le tag.
+- **Lot J** : #300 (jouer contre gammonNet) est déjà écarté ; #299 (Ollama) et #296
+  (mode club) demandent un arbitrage produit avant d'être chiffrés. Une fiche de ce
+  lot peut légitimement se fermer sur un ADR « écarté, et pourquoi ».
+- **#102** : refaire la vidéo de démo suppose un enregistrement d'écran commenté.
 
 ## Deux pièges qui ont coûté cher
 
@@ -105,8 +109,7 @@ confirmation humaine avant de pousser le tag.
    échouait. `po_graft.py` a le même piège en interne.
 2. **`go test ./... | grep … | head -N; echo $?` ment** : `$?` est celui de `head`,
    et les lignes de journal poussent le `FAIL` hors des N premières. Écrire
-   `go test ./... > log 2>&1; echo $?` et relire le journal. `merge.sh` (dans le
-   scratchpad de session) a été réécrit en conséquence.
+   `go test ./... > log 2>&1; echo $?` et relire le journal.
 
 `internal/cli/parity_test.go` est le fichier que tout le monde percute : ajouter la
 ligne en même temps que la méthode évite d'en découvrir le trou à la fusion.
