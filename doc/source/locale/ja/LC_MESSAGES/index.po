@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 20:17+0200\n"
+"POT-Creation-Date: 2026-09-03 21:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -46,8 +46,8 @@ msgstr ""
 "セッション、サーバーモード）と「上達するには」のページを用意しています — 始める前に読む価値が最も高い内容です。"
 
 #: ../../source/index.rst:17
-msgid "La présente documentation est structurée en treize sections :"
-msgstr "本ドキュメントは十三の節から構成されています。"
+msgid "La présente documentation est structurée en quatorze sections :"
+msgstr "本ドキュメントは十四の節から構成されています。"
 
 #: ../../source/index.rst:19
 msgid ""
@@ -101,19 +101,27 @@ msgstr "\\ **FAQ**\\ は最も頻繁な質問に答えます。"
 
 #: ../../source/index.rst:44
 msgid ""
+"la **feuille de route** recense les pistes d'évolution envisagées, sans "
+"engagement de date ;"
+msgstr ""
+"**ロードマップ**\\ は、検討中の発展の方向性を挙げたものです。時期の確約はありませ"
+"ん。"
+
+#: ../../source/index.rst:47
+msgid ""
 "le **mode serveur (headless)** documente le démon ``serve``, ses routes "
 "HTTP et ses deux backends (SQLite, PostgreSQL) ;"
 msgstr ""
 "\\ **サーバーモード（headless）**\\ は ``serve`` デーモン、その HTTP "
 "ルート、二つのバックエンド（SQLite、PostgreSQL）を説明します。"
 
-#: ../../source/index.rst:47
+#: ../../source/index.rst:50
 msgid ""
 "l'**annexe des filtres de recherche** détaille chaque critère du panneau "
 "de recherche et son jeton en ligne de commande ;"
 msgstr "\\ **検索フィルターの付録**\\ は、検索パネルの各条件とそのコマンドライントークンを詳細に説明します。"
 
-#: ../../source/index.rst:50
+#: ../../source/index.rst:53
 msgid ""
 "les **annexes de sécurité** (Windows, macOS) expliquent les "
 "avertissements du système d'exploitation à l'installation d'un binaire "
@@ -122,11 +130,11 @@ msgstr ""
 "\\ **セキュリティの付録**\\ "
 "（Windows、macOS）は、署名されていないバイナリをインストールする際のオペレーティングシステムの警告を説明します。"
 
-#: ../../source/index.rst:53
+#: ../../source/index.rst:56
 msgid "l'**annexe du schéma de base de données** décrit le format ``.db`` ;"
 msgstr "\\ **データベーススキーマの付録**\\ は ``.db`` 形式を説明します。"
 
-#: ../../source/index.rst:55
+#: ../../source/index.rst:58
 msgid ""
 "la page de **parité des statistiques** énonce les règles de comptage du "
 "PR, du Snowie Error Rate et du coût MWC face à eXtreme Gammon et GNUbg."
@@ -134,15 +142,15 @@ msgstr ""
 "\\ **統計の整合性**\\ のページは、eXtreme Gammon と GNUbg に対する PR、Snowie Error "
 "Rate、MWC コストの計算規則を規定します。"
 
-#: ../../source/index.rst:59
+#: ../../source/index.rst:62
 msgid "Historique des versions"
 msgstr "バージョン履歴"
 
-#: ../../source/index.rst:62
+#: ../../source/index.rst:65
 msgid "Dernière version — 0.35.0 (2026-09-02)"
 msgstr "最新バージョン — 0.35.0（2026-09-02）"
 
-#: ../../source/index.rst:64 ../../source/index.rst:83
+#: ../../source/index.rst:67 ../../source/index.rst:86
 msgid ""
 "La ligne de commande gagne deux familles : ``blunderdb collection`` "
 "(lister, afficher, créer, renommer, supprimer, exporter une collection) "
@@ -153,7 +161,7 @@ msgstr ""
 "（コレクションの一覧表示、表示、作成、名前変更、削除、エクスポート）と ``blunderdb anki``\\ "
 "（デッキ、統計、復習予測、デッキの再同期）。"
 
-#: ../../source/index.rst:65 ../../source/index.rst:84
+#: ../../source/index.rst:68 ../../source/index.rst:87
 msgid ""
 "Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
 "/blunderdb-serve``, amd64 et arm64), gagne la route "
@@ -161,10 +169,10 @@ msgid ""
 "d'émetteur du serveur (``--identity-dir``)."
 msgstr ""
 "サーバーモードは **Docker イメージ**（``ghcr.io/kevung/blunderdb-serve``、amd64 と "
-"arm64）として公開され、``maintenance.vacuum`` ルートを獲得し、サーバーの発行者アイデンティティ（``--identity-"
-"dir``）で**エクスポートに透かしを入れます**。"
+"arm64）として公開され、``maintenance.vacuum`` ルートを獲得し、サーバーの発行者アイデンティティ"
+"（``--identity-dir``）で**エクスポートに透かしを入れます**。"
 
-#: ../../source/index.rst:66 ../../source/index.rst:85
+#: ../../source/index.rst:69 ../../source/index.rst:88
 msgid ""
 "L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
 "les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
@@ -172,7 +180,7 @@ msgstr ""
 "gammonNet 評価エンジンは**キューブで葉ノードを評価します**：マッチスコアにおいて、検索の判断は eXtreme Gammon "
 "のものに近づきます。"
 
-#: ../../source/index.rst:67 ../../source/index.rst:86
+#: ../../source/index.rst:70 ../../source/index.rst:89
 msgid ""
 "Chaque release livre désormais les **manifestes winget et Homebrew** et "
 "un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
@@ -180,17 +188,16 @@ msgstr ""
 "各リリースは、Debian、RPM、AUR パッケージに加えて、\\ **winget と Homebrew のマニフェスト**\\ および "
 "Flatpak バンドルを提供するようになりました。"
 
-#: ../../source/index.rst:68 ../../source/index.rst:87
+#: ../../source/index.rst:71 ../../source/index.rst:90
 msgid ""
 "Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
 "positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
 "fenêtres modales partagent un même socle (focus, Échap, accessibilité), "
 "le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de "
 "police japonaise inutile."
-msgstr ""
-"インターフェースでは、ライブラリが**ページ分割**されるようになりました（5万ポジションのデータベースが、更新のたびにすべてをメモリに読み込むことがなくなりました）。モーダルウィンドウは共通の基盤（フォーカス、Escape、アクセシビリティ）を共有し、盤面は変化した部分のみを再描画し、バイナリは不要な日本語フォント5.5MBを失いました。"
+msgstr "インターフェースでは、ライブラリが**ページ分割**されるようになりました（5万ポジションのデータベースが、更新のたびにすべてをメモリに読み込むことがなくなりました）。モーダルウィンドウは共通の基盤（フォーカス、Escape、アクセシビリティ）を共有し、盤面は変化した部分のみを再描画し、バイナリは不要な日本語フォント5.5MBを失いました。"
 
-#: ../../source/index.rst:69 ../../source/index.rst:88
+#: ../../source/index.rst:72 ../../source/index.rst:91
 msgid ""
 "Corrections notables : une base importée par « Importer une base » "
 "gardait des positions invisibles aux filtres et dédoublées au second "
@@ -202,31 +209,30 @@ msgstr ""
 "主な修正：「データベースをインポート」でインポートしたデータベースは、フィルタに表示されないポジションや2回目のインポートで重複したポジションを保持していました（開いた際に修復されます）。プレイヤー統合ウィンドウの「統合」ボタンがグレーのままでした。サーバーのエクスポートが空でした。Windows"
 " では、ダウンロード済みのベアオフデータベースの削除と ``create --force`` が失敗していました。"
 
-#: ../../source/index.rst:71 ../../source/index.rst:89
+#: ../../source/index.rst:74 ../../source/index.rst:92
 msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
 msgstr ":ref:`cli`、:ref:`headless`、:ref:`manuel` を参照してください。"
 
-#: ../../source/index.rst:74
+#: ../../source/index.rst:77
 msgid "Historique complet"
 msgstr "完全な履歴"
 
-#: ../../source/index.rst:76
+#: ../../source/index.rst:79
 msgid ""
 "Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une"
 " correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une "
 "puce et non la traduction de toute la version."
-msgstr ""
-"以下の各バージョンは、その変更点を箇条書きで一つずつリストしています。これにより、後からの修正（誤字、遅れた追加）は1つの箇条書きの翻訳のみを無効にし、バージョン全体の翻訳を無効にすることはありません。"
+msgstr "以下の各バージョンは、その変更点を箇条書きで一つずつリストしています。これにより、後からの修正（誤字、遅れた追加）は1つの箇条書きの翻訳のみを無効にし、バージョン全体の翻訳を無効にすることはありません。"
 
-#: ../../source/index.rst:81
+#: ../../source/index.rst:84
 msgid "0.35.0 (2026-09-02)"
 msgstr "0.35.0 (2026-09-02)"
 
-#: ../../source/index.rst:92
+#: ../../source/index.rst:95
 msgid "0.34.0 (2026-09-02)"
 msgstr "0.34.0 (2026-09-02)"
 
-#: ../../source/index.rst:94
+#: ../../source/index.rst:97
 msgid ""
 "Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
 "blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
@@ -235,10 +241,10 @@ msgid ""
 "recherche qui honore le score du match."
 msgstr ""
 "**内蔵の評価エンジン**：gammonNet は Go に移植され blunderDB にコンパイルされており、XG も gnuBG "
-"も使わずにオフラインで任意のポジションを評価します——ニューラルネットワーク、枝刈りを伴う0〜2プライ探索、Janowski とblunderDB "
-"のマッチエクイティテーブルによるキューブ判断、そしてマッチスコアを尊重する探索。"
+"も使わずにオフラインで任意のポジションを評価します——ニューラルネットワーク、枝刈りを伴う0〜2プライ探索、Janowski とblunderDB"
+" のマッチエクイティテーブルによるキューブ判断、そしてマッチスコアを尊重する探索。"
 
-#: ../../source/index.rst:95
+#: ../../source/index.rst:98
 msgid ""
 "Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
 " la position (chances de gain, gammon et backgammon des deux camps, "
@@ -249,35 +255,33 @@ msgstr ""
 "Bearoff パネルは **Eval** "
 "パネルになります：ポジションの事実（両サイドの勝ち・ギャモン・バックギャモンの確率、エクイティ）を提示し、続いて盤面が求める唯一の決定を、スクロールのない安定したグリッド上に表示します。マッチエクイティは**正規化**され、「ダブルするには良すぎる」という判断が再び見えるようになりました。"
 
-#: ../../source/index.rst:96
+#: ../../source/index.rst:99
 msgid ""
 "L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
 " repos, annulable par tout nouveau geste, l'étiquette de profondeur "
 "disant toujours celle qui a produit le chiffre."
-msgstr ""
-"評価は**段階的**です：操作の瞬間に即座の0プライ、静止時には2プライで、新たな操作があればいつでもキャンセルされ、深度ラベルは常にその数値を生成した深度を示します。"
+msgstr "評価は**段階的**です：操作の瞬間に即座の0プライ、静止時には2プライで、新たな操作があればいつでもキャンセルされ、深度ラベルは常にその数値を生成した深度を示します。"
 
-#: ../../source/index.rst:97
+#: ../../source/index.rst:100
 msgid ""
 "Le plateau entier, les dés et le score s'y éditent, au clic comme au "
 "clavier, et une position de la bibliothèque entre dans le panneau et en "
 "ressort."
 msgstr "盤面全体、ダイス、スコアはそこで編集可能で、クリックでもキーボードでも操作でき、ライブラリのポジションがパネルに出入りします。"
 
-#: ../../source/index.rst:98
+#: ../../source/index.rst:101
 msgid ""
 "Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
 " fournit le verdict de videau au score que le panneau ne donnait pas."
-msgstr ""
-"両面データベースを超えるレースでは、3つ目の**評価済み**レジームが、これまでパネルが与えていなかったスコアにおけるキューブの判断を提供します。"
+msgstr "両面データベースを超えるレースでは、3つ目の**評価済み**レジームが、これまでパネルが与えていなかったスコアにおけるキューブの判断を提供します。"
 
-#: ../../source/index.rst:99
+#: ../../source/index.rst:102
 msgid ""
 "Un onglet **gammonNet** de la configuration sépare la profondeur "
 "d'affichage de la profondeur d'analyse."
 msgstr "設定の **gammonNet** タブが、表示深度と分析深度を分離します。"
 
-#: ../../source/index.rst:100
+#: ../../source/index.rst:103
 msgid ""
 "Après un import, un **lot d'analyse** borné, visible, annulable et "
 "reprenable comble les positions sans aucune analyse, sans jamais écraser "
@@ -288,7 +292,7 @@ msgstr ""
 "インポート後、範囲が限定され、可視化され、キャンセル可能で再開可能な**分析バッチ**が、分析を一切持たないポジションを埋めます。インポート済みの分析を上書きすることは決してありません。既存の**ライブラリの追いつき**は、インターフェース、新しい"
 " ``blunderdb analyze`` コマンド、またはサーバーモードから開始できます。"
 
-#: ../../source/index.rst:101
+#: ../../source/index.rst:104
 msgid ""
 "Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
 "héritait de l'analyse du doubleur sans être retournée, la notation des "
@@ -300,15 +304,15 @@ msgstr ""
 "からインポートされたキューブへの応答が、反転されずにダブラー側の分析を引き継いでいました。白の手とバーからの入着の記法が gnuBG と XG "
 "に準拠するようになりました。gnuBG 分析の深度が正しく読み取られるようになりました。サイドパネルのサイズが記憶されるようになりました。"
 
-#: ../../source/index.rst:102
+#: ../../source/index.rst:105
 msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
 msgstr ":ref:`panneau_epc`、:ref:`manuel`、:ref:`cli` を参照してください。"
 
-#: ../../source/index.rst:105
+#: ../../source/index.rst:108
 msgid "0.33.0 (2026-08-26)"
 msgstr "0.33.0 (2026-08-26)"
 
-#: ../../source/index.rst:107
+#: ../../source/index.rst:110
 msgid ""
 "Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
 "précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
@@ -327,7 +331,7 @@ msgstr ""
 "Rate、ブランダー数、そして運です。任意の列で並べ替えられ、通常のフィルタで大会の期間に絞り込め、行をクリックするとそのプレイヤーの詳細に切り替わります。ダッシュは一度も測定されていない値を示すもので、ゼロではありません。この表はコマンドライン（``blunderdb"
 " list --type players``、テキスト・JSON・CSV）とサーバーモードからも利用できます。"
 
-#: ../../source/index.rst:108
+#: ../../source/index.rst:111
 msgid ""
 "La **chance** de chaque lancer est désormais conservée en base et "
 "affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
@@ -343,7 +347,7 @@ msgstr ""
 "のファイルからも読み取られます。遡及はしません。以前にインポートした対戦はダッシュのままで、取り戻すには元ファイルを再インポートする必要があります。運を運ばない形式（BGF、Jellyfish"
 " の ``.mat``）からは決して得られません。"
 
-#: ../../source/index.rst:109
+#: ../../source/index.rst:112
 msgid ""
 "L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
 "décisions de videau, et non plus seulement combien elles coûtent : une "
@@ -357,7 +361,7 @@ msgstr ""
 "*提示*\\ （見送ったダブル、早すぎたダブル）と\\ *応答*\\ "
 "（誤ったパス、誤ったテイク）の2つで、意図的に分けてあります。同じ人が遅めにダブルしつつ緩めにテイクすることはありうるからです。各セルには件数、ツールチップには失ったエクイティが表示され、クリックすると該当する局面が読み込まれます。"
 
-#: ../../source/index.rst:110
+#: ../../source/index.rst:113
 msgid ""
 "Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
 " les suppressions : bouton dans les paramètres et sous-commande "
@@ -366,7 +370,7 @@ msgstr ""
 "新しい\\ **データベースの最適化**\\ コマンドが加わり、削除によって空いた領域を回収できます。設定画面のボタンと ``blunderdb "
 "vacuum`` サブコマンドから実行します。自動では決して実行されません。"
 
-#: ../../source/index.rst:111
+#: ../../source/index.rst:114
 msgid ""
 "Ergonomie : les actions destructives demandent confirmation, une "
 "recherche en cours est signalée, une commande inconnue reçoit un message "
@@ -375,7 +379,7 @@ msgid ""
 "sensiblement plus rapide."
 msgstr "操作性の改善：破壊的な操作には確認を求め、検索中であることを表示し、未知のコマンドには沈黙ではなくメッセージを返します。タブ、ドッキングされたパネル、小さなダイアログはすべてキーボードで操作できます。検索も体感できるほど高速になりました。"
 
-#: ../../source/index.rst:112
+#: ../../source/index.rst:115
 msgid ""
 "Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
 "étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
@@ -389,21 +393,21 @@ msgstr ""
 "の分母を不当に縮めていました。エクスポートが古いスキーマで書き出していました。``blunderdb vacuum`` "
 "がデータベースを最適化せずグラフィカルインターフェースを開いていました。"
 
-#: ../../source/index.rst:113
+#: ../../source/index.rst:116
 msgid "Voir :ref:`stats` et :ref:`cli`."
 msgstr ":ref:`stats` と :ref:`cli` を参照してください。"
 
-#: ../../source/index.rst:116
+#: ../../source/index.rst:119
 msgid "0.32.0 (2026-08-09)"
 msgstr "0.32.0 (2026-08-09)"
 
-#: ../../source/index.rst:118
+#: ../../source/index.rst:121
 msgid ""
 "Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
 "course complète."
 msgstr "EPC パネルは **Bearoff** パネルになり、完全なレース分析を獲得します。"
 
-#: ../../source/index.rst:119
+#: ../../source/index.rst:122
 msgid ""
 "Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
 "count, du wastage et du nombre moyen de lancers de chaque joueur, "
@@ -411,20 +415,19 @@ msgid ""
 " de gain des deux joueurs et les équités money (cubeless, sans double, "
 "double/prend, double/passe, avec l'écart de chaque décision à la "
 "meilleure) ainsi que la **meilleure décision de videau**."
-msgstr ""
-"純粋なベアオフポジションでは、EPC、ピップカウント、無駄（wastage）、各プレイヤーの平均ロール数（符号付きのΔ行を持つ表として提示されるようになりました）に加えて、両プレイヤーの勝率とマネーエクイティ（キューブレス、ノーダブル、ダブル／テイク、ダブル／パス、各決定の最善との差付き）、そして**最善のキューブ決定**を表示します。"
+msgstr "純粋なベアオフポジションでは、EPC、ピップカウント、無駄（wastage）、各プレイヤーの平均ロール数（符号付きのΔ行を持つ表として提示されるようになりました）に加えて、両プレイヤーの勝率とマネーエクイティ（キューブレス、ノーダブル、ダブル／テイク、ダブル／パス、各決定の最善との差付き）、そして**最善のキューブ決定**を表示します。"
 
-#: ../../source/index.rst:120
+#: ../../source/index.rst:123
 msgid ""
 "Deux régimes clairement distingués : *exact* (lecture dans une base two-"
 "sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
 "joueur) et *estimé* (convolution calibrée, marge d'erreur affichée — le "
 "verdict de videau n'est jamais estimé)."
 msgstr ""
-"明確に区別された2つのレジーム：\\ *厳密*\\ （両面データベースからの読み取り。プレイヤーごとに最大6個のチェッカーをカバーする GNUbg の "
-"TS-06-06 データベースを内蔵）と *推定*\\ （較正済みの畳み込み、誤差幅を表示——キューブの判断は決して推定されません）。"
+"明確に区別された2つのレジーム：\\ *厳密*\\ （両面データベースからの読み取り。プレイヤーごとに最大6個のチェッカーをカバーする GNUbg"
+" の TS-06-06 データベースを内蔵）と *推定*\\ （較正済みの畳み込み、誤差幅を表示——キューブの判断は決して推定されません）。"
 
-#: ../../source/index.rst:121
+#: ../../source/index.rst:124
 msgid ""
 "La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
 "Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
@@ -432,58 +435,57 @@ msgid ""
 "; un fichier ``.bd`` two-sided quelconque de gnubg peut aussi être "
 "désigné."
 msgstr ""
-"拡張された TS-06-11 データベース（プレイヤーごとに最大11個のチェッカーまで厳密な判断、1.2 GB）は、設定の新しい *Bearoff* "
-"タブからダウンロードでき、整合性の検証と中断したダウンロードの再開に対応しています。gnubg の任意の両面 ``.bd`` "
+"拡張された TS-06-11 データベース（プレイヤーごとに最大11個のチェッカーまで厳密な判断、1.2 GB）は、設定の新しい "
+"*Bearoff* タブからダウンロードでき、整合性の検証と中断したダウンロードの再開に対応しています。gnubg の任意の両面 ``.bd`` "
 "ファイルを指定することもできます。"
 
-#: ../../source/index.rst:122
+#: ../../source/index.rst:125
 msgid ""
 "**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
 "modification et se révèlent zone par zone, d'un clic."
 msgstr "トレーニング用の**チャレンジモード**：結果は変更のたびに隠され、クリック1つでゾーンごとに明らかになります。"
 
-#: ../../source/index.rst:123
+#: ../../source/index.rst:126
 msgid ""
 "Édition entièrement au plateau : pions des deux jans, joueur au trait "
 "(clic sur le rectangle sortie/score) et position du videau (clic sur le "
 "videau)."
 msgstr "盤面上で完結する編集：両サイドのチェッカー、手番のプレイヤー（ベアオフ／スコアの長方形をクリック）、キューブの位置（キューブをクリック）。"
 
-#: ../../source/index.rst:124
+#: ../../source/index.rst:127
 msgid ""
 "Le clic sur le plateau est désormais exact à toute échelle d'interface "
 "(un clic sur le point 1 pouvait atterrir sur le point 2)."
-msgstr ""
-"盤面のクリックは、インターフェースの拡大率にかかわらず正確になりました（ポイント1をクリックしたつもりがポイント2に当たることがありました）。"
+msgstr "盤面のクリックは、インターフェースの拡大率にかかわらず正確になりました（ポイント1をクリックしたつもりがポイント2に当たることがありました）。"
 
-#: ../../source/index.rst:125
+#: ../../source/index.rst:128
 msgid ""
 "Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
 "``--bearoff-ts`` du mode serveur."
 msgstr "新しいコマンドライン ``blunderdb epc`` と、サーバーモードの ``--bearoff-ts`` オプション。"
 
-#: ../../source/index.rst:126
+#: ../../source/index.rst:129
 msgid ""
 "Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
 "Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
 "affichée."
 msgstr "マニュアルの新しいセクション「Bearoff パネルの方法論と前提」が、表示される各値の背後にある前提を網羅的に述べています。"
 
-#: ../../source/index.rst:127
+#: ../../source/index.rst:130
 msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
 msgstr ":ref:`panneau_epc` と :ref:`epc_methodologie` を参照してください。"
 
-#: ../../source/index.rst:130
+#: ../../source/index.rst:133
 msgid "0.31.0 (2026-08-04)"
 msgstr "0.31.0 (2026-08-04)"
 
-#: ../../source/index.rst:132
+#: ../../source/index.rst:135
 msgid ""
 "Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
 "deux facultatifs et choisis au moment de l'export."
 msgstr "第三者へのデータベースの配布：2つの独立した仕組みがあり、どちらも任意で、エクスポート時に選択できます。"
 
-#: ../../source/index.rst:133
+#: ../../source/index.rst:136
 msgid ""
 "Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
 "il vient, signé par une identité d'émetteur créée toute seule au premier "
@@ -496,7 +498,7 @@ msgstr ""
 "は、それが何であり、どこから来たかをファイルに記録します。初回使用時に自動的に作成される発行者アイデンティティによって署名され、そのマークは偽造不可能で、メタデータパネルの先頭（またはファイルに書き込むことなく"
 " ``blunderdb info`` 経由）で読み取れます。受け取る側には何も記録されません——ログもトラッキングもありません。"
 
-#: ../../source/index.rst:134
+#: ../../source/index.rst:137
 msgid ""
 "La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
 "(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
@@ -506,32 +508,31 @@ msgstr ""
 "**パスワード保護**\\ は、暗号化された ``.dbx`` ファイル（AES-256-GCM、Argon2id "
 "で導出した鍵）を生成し、開くたびに検証されますが、そのヘッダーは平文のまま読み取れます。アイデンティティは設定から単一のファイルとしてエクスポート・インポートできます。"
 
-#: ../../source/index.rst:135
+#: ../../source/index.rst:138
 msgid ""
 "Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
 " qui part réellement (les positions affichées), part couverte de chaque "
 "collection signalée en rouge lorsqu'elle est partielle, tournois "
 "exportables seulement avec leurs matchs — et un export trois fois plus "
 "rapide."
-msgstr ""
-"エクスポートウィンドウを再設計：4画面ではなく1画面に、実際に出ていくもの（表示されているポジション）を思い出させる表示、部分的な場合は赤で示される各コレクションのカバー率、対局とともにしかエクスポートできないトーナメント——そしてエクスポートは3倍高速になりました。"
+msgstr "エクスポートウィンドウを再設計：4画面ではなく1画面に、実際に出ていくもの（表示されているポジション）を思い出させる表示、部分的な場合は赤で示される各コレクションのカバー率、対局とともにしかエクスポートできないトーナメント——そしてエクスポートは3倍高速になりました。"
 
-#: ../../source/index.rst:136
+#: ../../source/index.rst:139
 msgid ""
 "Fenêtre de configuration réorganisée en trois onglets (Interface, "
 "Couleurs du plateau, Identité d'émetteur), de taille et de position "
 "stables."
 msgstr "設定ウィンドウを3つのタブ（インターフェース、盤面の色、発行者アイデンティティ）に再編成し、サイズと位置が安定するようになりました。"
 
-#: ../../source/index.rst:137
+#: ../../source/index.rst:140
 msgid "Panneau Métadonnées redisposé en une seule grille."
 msgstr "メタデータパネルは1つのグリッドに再配置されました。"
 
-#: ../../source/index.rst:138
+#: ../../source/index.rst:141
 msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
 msgstr "コマンドのエコーしか受け取っていなかったログパネルは削除されました。"
 
-#: ../../source/index.rst:139
+#: ../../source/index.rst:142
 msgid ""
 "Corrections notables : un mot de passe erroné n'ouvre plus une base "
 "protégée, les champs des fenêtres modales ne perdent plus le focus au "
@@ -540,17 +541,18 @@ msgid ""
 "nettoyés à la fermeture."
 msgstr ""
 "主な修正：誤ったパスワードでは保護されたデータベースが開かなくなりました。モーダルウィンドウのフィールドがクリックでフォーカスを失わなくなりました。マネーゲームで"
-" PR/MWC 指標の計算がクラッシュしなくなりました。一時ファイル（``-wal``、``-shm``、ロック）は終了時にクリーンアップされます。"
+" PR/MWC "
+"指標の計算がクラッシュしなくなりました。一時ファイル（``-wal``、``-shm``、ロック）は終了時にクリーンアップされます。"
 
-#: ../../source/index.rst:140
+#: ../../source/index.rst:143
 msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr ":ref:`diffusion_controlee` と :ref:`manuel` を参照してください。"
 
-#: ../../source/index.rst:143
+#: ../../source/index.rst:146
 msgid "0.30.0 (2026-07-26)"
 msgstr "0.30.0 (2026-07-26)"
 
-#: ../../source/index.rst:145
+#: ../../source/index.rst:148
 msgid ""
 "Recherche par commentaire : le filtre « Texte de recherche » devient le "
 "filtre « Commentaire » et propose trois modes exclusifs — *contient le "
@@ -560,11 +562,11 @@ msgid ""
 " reste à commenter."
 msgstr ""
 "コメントによる検索：「検索テキスト」フィルタが「コメント」フィルタになり、3つの排他的なモードを提供します——\\ *テキストを含む*\\ "
-"（従来の動作、トークン ``t\"\"word1;word2\"\"``\\ ）、\\ *コメントがある*\\ （トークン ``co``\\ ）、\\ "
-"*コメントがない*\\ （トークン ``xco``\\ "
+"（従来の動作、トークン ``t\"\"word1;word2\"\"``\\ ）、\\ *コメントがある*\\ （トークン ``co``\\ "
+"）、\\ *コメントがない*\\ （トークン ``xco``\\ "
 "）——これにより、注釈の付いたポジション、あるいは逆にまだコメントが必要なポジションを一度の操作で見つけられます。"
 
-#: ../../source/index.rst:146
+#: ../../source/index.rst:149
 msgid ""
 "Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
 "lors de l'analyse d'un match XG sont désormais lues à l'import et "
@@ -576,7 +578,7 @@ msgstr ""
 "の対局を分析する際に付けられたマーク（フラグ）は、インポート時に読み取られ、「マークされた」フィルタ（トークン "
 "``fl``）で検索できるようになりました。他の条件と組み合わせ可能です。マークされたキューブの決定は、ダブルとテイク／パスの2つのマークされたポジションを生みます。"
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:150
 msgid ""
 "Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
 "``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
@@ -585,7 +587,7 @@ msgstr ""
 "マーキングは遡及的ではないため、該当する ``.xg`` "
 "ファイルを再インポートするだけで、そのマークがデータベースに反映されます。既存のコメントや分析に影響はありません。"
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:151
 msgid ""
 "Corrections notables : le PR affiché sur le badge d'un tournoi se "
 "rapporte au joueur de référence et non plus au cumul des deux joueurs, "
@@ -594,18 +596,19 @@ msgid ""
 "blocage de la recherche combinant certains filtres (texte, date, erreur "
 "du coup joué) est corrigé."
 msgstr ""
-"主な修正：トーナメントのバッジに表示される PR は、両プレイヤーの合計ではなく、基準プレイヤーを基準にするようになりました。検索に基づく Anki "
+"主な修正：トーナメントのバッジに表示される PR は、両プレイヤーの合計ではなく、基準プレイヤーを基準にするようになりました。検索に基づく "
+"Anki "
 "デッキは、データベース全体を取り込むのではなく、再びその検索のフィルタを尊重するようになりました。特定のフィルタ（テキスト、日付、指された手の誤り）を組み合わせた際の検索のフリーズが修正されました。"
 
-#: ../../source/index.rst:149
+#: ../../source/index.rst:152
 msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
 msgstr ":ref:`cmd_mode` と :ref:`manuel` を参照してください。"
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:155
 msgid "0.29.0 (2026-07-18)"
 msgstr "0.29.0 (2026-07-18)"
 
-#: ../../source/index.rst:154
+#: ../../source/index.rst:157
 msgid ""
 "Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
 " (panneau Matchs) comme en ligne de commande, avec la route serveur "
@@ -615,14 +618,14 @@ msgstr ""
 "対局を Jellyfish/gnubg "
 "形式（``.mat``）でエクスポートする機能を、インターフェース（対局パネル）とコマンドラインの両方に追加し、対応するサーバールートも用意しました——別のバックギャモンソフトで対局を再生するのに便利です。"
 
-#: ../../source/index.rst:155
+#: ../../source/index.rst:158
 msgid ""
 "Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
 "plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
 " un jet donné."
 msgstr "検索：「除外するダイス」の新しい判別子（トークン ``xD65``、複数指定可）で、指定した目に一致するロールのポジションを除外します。"
 
-#: ../../source/index.rst:156
+#: ../../source/index.rst:159
 msgid ""
 "Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
 "une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
@@ -633,23 +636,22 @@ msgstr ""
 "安全な同時オープン：別の blunderDB "
 "ウィンドウですでに書き込み用に開かれているデータベースは、破損のリスクを冒す代わりに、読み取り専用で開かれるようになりました（閲覧、検索、分析は引き続き可能ですが、変更は無効になり、タイトルバーに「［読み取り専用］」と表示されます）。"
 
-#: ../../source/index.rst:157
+#: ../../source/index.rst:160
 msgid ""
 "Provenance des positions : hors mode match, la barre d'informations au-"
 "dessus du plateau indique le match — et son tournoi — d'où provient la "
 "position étudiée, avec un badge « +N » lorsqu'elle apparaît dans "
 "plusieurs matchs."
-msgstr ""
-"ポジションの由来：対局モード以外では、盤面上の情報バーに、検討中のポジションがどの対局（およびそのトーナメント）に由来するかが表示され、複数の対局に現れる場合は「+N」バッジが付きます。"
+msgstr "ポジションの由来：対局モード以外では、盤面上の情報バーに、検討中のポジションがどの対局（およびそのトーナメント）に由来するかが表示され、複数の対局に現れる場合は「+N」バッジが付きます。"
 
-#: ../../source/index.rst:158
+#: ../../source/index.rst:161
 msgid ""
 "Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
 "police, le presse-papier ou la dernière base ouverte ne sont pas "
 "disponibles."
 msgstr "環境に対する堅牢性の向上：フォント、クリップボード、最後に開いたデータベースが利用できない場合の自動フォールバック。"
 
-#: ../../source/index.rst:159
+#: ../../source/index.rst:162
 msgid ""
 "Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
 "barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
@@ -658,25 +660,24 @@ msgstr ""
 "ライブラリの明示的な再読み込み（``CTRL-R``、ツールバーのボタン、または ``e`` "
 "コマンド）により、表示中のポジションの分析パネルが再び開きます。"
 
-#: ../../source/index.rst:160
+#: ../../source/index.rst:163
 msgid ""
 "Corrections notables : suppression d'un blocage à l'export de grosses "
 "bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
 "match, filtre par commentaire multi-mots, dédoublonnage de l'événement et"
 " du tournoi dans la barre d'informations, et divers ajustements "
 "d'affichage."
-msgstr ""
-"主な修正：大規模なデータベースのエクスポート時のフリーズを解消。エクスポートの「なし」ボタンが実際には何も除外していなかった問題を修正。複数単語のコメントフィルタ。情報バーにおけるイベントとトーナメントの重複排除。その他表示上の各種調整。"
+msgstr "主な修正：大規模なデータベースのエクスポート時のフリーズを解消。エクスポートの「なし」ボタンが実際には何も除外していなかった問題を修正。複数単語のコメントフィルタ。情報バーにおけるイベントとトーナメントの重複排除。その他表示上の各種調整。"
 
-#: ../../source/index.rst:161
+#: ../../source/index.rst:164
 msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
 msgstr ":ref:`cmd_mode`、:ref:`panneau_matchs`、:ref:`manuel` を参照してください。"
 
-#: ../../source/index.rst:164
+#: ../../source/index.rst:167
 msgid "0.28.0 (2026-07-15)"
 msgstr "0.28.0 (2026-07-15)"
 
-#: ../../source/index.rst:166
+#: ../../source/index.rst:169
 msgid ""
 "Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
 " champs de saisie d'identifiants par une fenêtre de sélection (listes à "
@@ -691,17 +692,18 @@ msgstr ""
 " PR/MWC 指標を再計算するようになりました。\\ ``cli list --type tournaments`` "
 "が対応するパリティのギャップを埋めます。"
 
-#: ../../source/index.rst:167
+#: ../../source/index.rst:170
 msgid ""
 "Nouveau filtre « Importée individuellement » (case à cocher du groupe "
 "Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
 " CLI via ``--individual``) pour retrouver une position enregistrée ou "
 "importée seule plutôt que noyée dans un import de match."
 msgstr ""
-"新しい「個別にインポート」フィルタ（「その他」グループのチェックボックス、またはコマンドラインのトークン ``i``、``s i``。CLI では "
-"``--individual`` でも利用可能）で、対局のインポートに埋もれることなく、単独で保存またはインポートされたポジションを見つけられます。"
+"新しい「個別にインポート」フィルタ（「その他」グループのチェックボックス、またはコマンドラインのトークン ``i``、``s i``。CLI では"
+" ``--individual`` "
+"でも利用可能）で、対局のインポートに埋もれることなく、単独で保存またはインポートされたポジションを見つけられます。"
 
-#: ../../source/index.rst:168
+#: ../../source/index.rst:171
 msgid ""
 "Correction d'une perte de données : la suppression d'un match ne supprime"
 " plus les positions individuellement importées, mises en collection ou "
@@ -710,7 +712,7 @@ msgstr ""
 "データ損失を修正：対局を削除しても、その対局が含んでいた個別インポート済みのポジション、コレクションに配置されたポジション、Anki "
 "デッキに含まれたポジションは削除されなくなりました。"
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:172
 msgid ""
 "Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
 "Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
@@ -723,22 +725,21 @@ msgid ""
 "nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et "
 "``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs)."
 msgstr ""
-"サーバー（ヘッドレス）モード：間隔反復の Anki スケジューラ向けに6つの新しいメソッド——復習ログ（\\ ``anki.reviewLog``\\ "
-"）、期限が来るカードの予測（\\ ``anki.forecast``\\ ）、カードの一時停止／保留／削除（\\ "
-"``anki.suspendCard``\\ 、\\ ``anki.buryCard``\\ 、\\ ``anki.removeCard``\\ "
-"）、デッキの目標保持率を観測された成功率に向けて自動調整（\\ ``anki.optimizeParams``\\ ）。マルチユーザー "
-"PostgreSQL 環境でテナントのデータを完全に削除する新しいメソッド ``tenant.purge``\\ 。新しいメソッド "
-"``matches.list``\\ （フィルタリング／ソート／ページネーション）と ``stats.matchBadges``\\ "
-"（対局リストに限定した PR/MWC 指標）。"
+"サーバー（ヘッドレス）モード：間隔反復の Anki スケジューラ向けに6つの新しいメソッド——復習ログ（\\ "
+"``anki.reviewLog``\\ ）、期限が来るカードの予測（\\ ``anki.forecast``\\ "
+"）、カードの一時停止／保留／削除（\\ ``anki.suspendCard``\\ 、\\ ``anki.buryCard``\\ 、\\ "
+"``anki.removeCard``\\ ）、デッキの目標保持率を観測された成功率に向けて自動調整（\\ "
+"``anki.optimizeParams``\\ ）。マルチユーザー PostgreSQL 環境でテナントのデータを完全に削除する新しいメソッド"
+" ``tenant.purge``\\ 。新しいメソッド ``matches.list``\\ （フィルタリング／ソート／ページネーション）と "
+"``stats.matchBadges``\\ （対局リストに限定した PR/MWC 指標）。"
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:173
 msgid ""
 "Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
 "bit d'exécution perdu lors du téléchargement du binaire brut."
-msgstr ""
-"ネイティブな Linux 配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する ``.deb``／``.rpm`` パッケージ。"
+msgstr "ネイティブな Linux 配布：生のバイナリをダウンロードした際に失われていた実行ビットを保持する ``.deb``／``.rpm`` パッケージ。"
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:174
 msgid ""
 "Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
 "positions importées sont immédiatement visibles ; après l'import d'une "
@@ -755,15 +756,15 @@ msgstr ""
 " からフランス語またはドイツ語の eXtreme Gammon "
 "分析を貼り付けると空になっていた問題を修正しました（システムのクリップボードによりアクセント記号が分解されていました）。"
 
-#: ../../source/index.rst:172
+#: ../../source/index.rst:175
 msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
 msgstr ":ref:`headless`、:ref:`cmd_mode`、:ref:`telecharge_install` を参照してください。"
 
-#: ../../source/index.rst:175
+#: ../../source/index.rst:178
 msgid "0.27.0 (2026-06-13)"
 msgstr "0.27.0 (2026-06-13)"
 
-#: ../../source/index.rst:177
+#: ../../source/index.rst:180
 msgid ""
 "Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
 "accessible par le bouton *Cram* à côté de *Study*, qui présente des "
@@ -774,7 +775,7 @@ msgstr ""
 "Anki パネル：*Study* の隣の *Cram* "
 "ボタンから利用できる新しいフリー練習（*cram*）モード。間隔反復のスケジュールを変更せずにデッキからランダムな局面を表示します。トーナメント前のウォームアップや、順序を乱さずにデッキを集中的に復習するのに最適です。"
 
-#: ../../source/index.rst:178
+#: ../../source/index.rst:181
 msgid ""
 "Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
 "directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
@@ -789,7 +790,7 @@ msgstr ""
 "）。指定したプレイヤーが（どちらの席でも）参加した対局のすべての局面を見つける新しいプレイヤーフィルター ``pl'名前'``\\ "
 "。また、検索パネルの各フィルターにマウスを合わせると対応するコマンドトークンを表示するツールチップ。"
 
-#: ../../source/index.rst:179
+#: ../../source/index.rst:182
 msgid ""
 "Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
 "(tous les coups d'un match en un seul appel) et ``positions.epc`` "
@@ -798,48 +799,47 @@ msgstr ""
 "サーバー（ヘッドレス）モード：新しいメソッド ``matches.movesByMatch``\\ （1回の呼び出しで対局のすべての手を取得）と "
 "``positions.epc``\\ （両プレイヤーの Effective Pip Count）。"
 
-#: ../../source/index.rst:180
+#: ../../source/index.rst:183
 msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
 msgstr ":ref:`panneau_anki` と :ref:`cmd_mode` を参照してください。"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:186
 msgid "0.26.0 (2026-06-09)"
 msgstr "0.26.0 (2026-06-09)"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:188
 msgid ""
 "Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
 " curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
 " un choix de position des panneaux (en bas, sur le côté ou automatique) "
 "afin de mieux exploiter les écrans larges."
-msgstr ""
-"設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大・縮小するスケールスライダーと、ワイド画面をより有効活用するためのパネル位置の選択（下、横、または自動）。"
+msgstr "設定ウィンドウにおけるインターフェースの表示設定：インターフェース全体を拡大・縮小するスケールスライダーと、ワイド画面をより有効活用するためのパネル位置の選択（下、横、または自動）。"
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:189
 msgid ""
 "Ajout d'une barre d'informations au-dessus du plateau rappelant les "
 "joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
 msgstr "盤面の上に、プレイヤーと対局の文脈（イベント、会場、ラウンド、日付、長さ）を示す情報バーを追加しました。"
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:190
 msgid ""
 "À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
 "la revue débute sur la première position."
 msgstr "データベースを開くと、対局パネルがすぐに表示されるようになり、レビューは最初のポジションから始まります。"
 
-#: ../../source/index.rst:188
+#: ../../source/index.rst:191
 msgid ""
 "Les raccourcis clavier sont désormais indépendants de la disposition du "
 "clavier (AZERTY, QWERTY, QWERTZ…)."
 msgstr "キーボードショートカットは、キーボード配列（AZERTY、QWERTY、QWERTZ……）に依存しなくなりました。"
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:192
 msgid ""
 "Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
 "videau)."
 msgstr "XGID のデコードを修正（Jacoby/Beaver フラグとキューブの値）。"
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:193
 msgid ""
 "Ajout des onglets de vues multiples : plusieurs espaces de travail "
 "indépendants (liste de positions, position courante, recherche) avec les "
@@ -851,15 +851,15 @@ msgstr ""
 "（新規ビュー）、\\ *CTRL-W*\\ （閉じる）、\\ *CTRL-PageUp*\\ ／\\ *CTRL-PageDown*\\ "
 "（ビュー切り替え）、タブのダブルクリックによる名前変更とともに提供します。"
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:194
 msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
 msgstr ":ref:`configuration` と :ref:`onglets_vues` を参照してください。"
 
-#: ../../source/index.rst:194
+#: ../../source/index.rst:197
 msgid "0.25.0 (2026-06-07)"
 msgstr "0.25.0 (2026-06-07)"
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:199
 msgid ""
 "Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
@@ -869,16 +869,16 @@ msgstr ""
 "サーバー（ヘッドレス）モード：局面を保存せずに再構築する2つの新しいメソッド —— ``positions.fromXGID`` は XGID "
 "文字列を局面にデコードし、\\ ``positions.fromXGP`` は単一局面ファイル ``.xgp`` を読み込みます。"
 
-#: ../../source/index.rst:197 ../../source/index.rst:203
-#: ../../source/index.rst:222
+#: ../../source/index.rst:200 ../../source/index.rst:206
+#: ../../source/index.rst:225
 msgid "Voir :ref:`headless`."
 msgstr ":ref:`headless` を参照してください。"
 
-#: ../../source/index.rst:200
+#: ../../source/index.rst:203
 msgid "0.24.0 (2026-06-06)"
 msgstr "0.24.0 (2026-06-06)"
 
-#: ../../source/index.rst:202
+#: ../../source/index.rst:205
 msgid ""
 "Ajout d'une image conteneur (Docker) pour le mode headless : un point "
 "d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
@@ -889,11 +889,11 @@ msgstr ""
 "と、グラフィカルインターフェースを持たない静的バイナリを生成する ``Dockerfile.serve`` を用意し、blunderDB "
 "エンジンをリバースプロキシの背後でサービスとしてデプロイできるようにしました。"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:209
 msgid "0.23.0 (2026-06-05)"
 msgstr "0.23.0 (2026-06-05)"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:211
 msgid ""
 "Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
 " tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
@@ -904,42 +904,41 @@ msgstr ""
 "コマンドから再生できます。また、自分の対局をインポートせずにツールを体験できる、``demo`` "
 "コマンドで読み込めるサンプルデータベースを追加しました。"
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:212
 msgid ""
 "Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
 "dés, videau) depuis la fenêtre de configuration."
 msgstr "設定ウィンドウからの盤面の色（背景、枠、矢印、チェッカー、ダイス、キューブ）のカスタマイズ。"
 
-#: ../../source/index.rst:210
+#: ../../source/index.rst:213
 msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
 msgstr "コマンドラインのオートコンプリート（*TAB* キー）。"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:214
 msgid ""
 "Panneau de recherche : contrôle explicite du type de décision (Pions / "
 "Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
 "les décisions de cube, synchronisé avec le plateau ; le videau proposé "
 "est affiché au centre du plateau pour les décisions de prise/passe."
-msgstr ""
-"検索パネル：決定タイプ（駒／キューブ）の明示的な制御、キューブの決定にはダブル／ノーダブルまたはテイク／パスのサブタイプがあり、盤面と同期します。テイク／パスの決定では、提示されるキューブが盤面の中央に表示されます。"
+msgstr "検索パネル：決定タイプ（駒／キューブ）の明示的な制御、キューブの決定にはダブル／ノーダブルまたはテイク／パスのサブタイプがあり、盤面と同期します。テイク／パスの決定では、提示されるキューブが盤面の中央に表示されます。"
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:215
 msgid "Recherche d'une position par son identifiant (filtre ``id``)."
 msgstr "識別子によるポジションの検索（``id`` フィルタ）。"
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:216
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "キューブの誤りがプレイヤー1に帰属される問題を修正しました。"
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:217
 msgid "Voir :ref:`visites_guidees`."
 msgstr ":ref:`visites_guidees` を参照してください。"
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:220
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/index.rst:219
+#: ../../source/index.rst:222
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -954,7 +953,7 @@ msgstr ""
 "Security）を備えたマルチユーザーのPostgreSQLバックエンド、SQLiteデータベースをPostgreSQLへ転送する "
 "``migrate`` コマンド、すべてのストレージ操作にコマンドラインからアクセスできる汎用ディスパッチャ ``call``\\ 。"
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:223
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -963,44 +962,43 @@ msgstr ""
 "新しい形式（eXtreme Gammon ``.xgp``、BGBlitz テキスト、ネイティブライブラリ "
 "``.db``）からの単一ポジションのインポートと、形式間での重複の補完。"
 
-#: ../../source/index.rst:221
+#: ../../source/index.rst:224
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
 msgstr "修正：データベースが開かれていない状態でもパネルがエラーを起こさなくなり、コメントパネルが開く際にループしなくなりました。"
 
-#: ../../source/index.rst:225
+#: ../../source/index.rst:228
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/index.rst:227
+#: ../../source/index.rst:230
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
 " en anglais, français, allemand, italien, espagnol, finnois, japonais, "
 "grec ou russe."
-msgstr ""
-"インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。"
+msgstr "インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。"
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:231
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
 msgstr "ツールバーの歯車型ボタンからアクセスできる設定ウィンドウを追加し、言語を選択できるようにしました。"
 
-#: ../../source/index.rst:229
+#: ../../source/index.rst:232
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "言語の選択はセッション間で保持されます。"
 
-#: ../../source/index.rst:230
+#: ../../source/index.rst:233
 msgid "Voir :ref:`configuration`."
 msgstr ":ref:`configuration` を参照してください。"
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:236
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/index.rst:235
+#: ../../source/index.rst:238
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -1011,29 +1009,29 @@ msgstr ""
 "を追加：描画されたチェッカーのいずれかを含むポジションを除外し、「空でなければならない」マーカー（ダブルクリック）と、ポイントごとの無制限のチェッカー数（``x``"
 " コマンド）に対応します。"
 
-#: ../../source/index.rst:236
+#: ../../source/index.rst:239
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
 msgstr "ロールフィルタに「最初のダイスのみ」オプションを追加（D1 バリアント、CLI オプション ``--dice``）。"
 
-#: ../../source/index.rst:237
+#: ../../source/index.rst:240
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
 msgstr "コメントパネル：開いたときに入力欄へ自動的にフォーカスし、編集／削除ボタンを常に表示します。"
 
-#: ../../source/index.rst:238
+#: ../../source/index.rst:241
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
 msgstr "すべてのコメントタグを検出できなかった「Search Text」フィルタを修正しました。"
 
-#: ../../source/index.rst:241
+#: ../../source/index.rst:244
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/index.rst:243
+#: ../../source/index.rst:246
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
 "Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
@@ -1046,44 +1044,45 @@ msgstr ""
 "Chance "
 "cost）の各指標、フィルターバー（プレイヤー、トーナメント、日付、決定の種類、マッチ長）、レベルカード／移動平均PR／トップブランダーを表示するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示する進捗タブ、キューブアクションごとの内訳とエラーの大きさのヒストグラムを表示するエラータブ。"
 
-#: ../../source/index.rst:244
+#: ../../source/index.rst:247
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
 msgstr "すべての指標からポジション／対局／トーナメントへのインタラクティブなドリルダウン。"
 
-#: ../../source/index.rst:245
+#: ../../source/index.rst:248
 msgid "Toggle PR / MWC instantané."
 msgstr "PR／MWC の即時切り替え。"
 
-#: ../../source/index.rst:246
+#: ../../source/index.rst:249
 msgid "Commande CLI list --type stats."
 msgstr "CLI コマンド list --type stats。"
 
-#: ../../source/index.rst:247
+#: ../../source/index.rst:250
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
 msgstr ""
-"PR／Snowie ER／MWC 指標を eXtremeGammon および gnuBG に整合（僅差のキューブに対するエクイティしきい値 0.16）。"
+"PR／Snowie ER／MWC 指標を eXtremeGammon および gnuBG に整合（僅差のキューブに対するエクイティしきい値 "
+"0.16）。"
 
-#: ../../source/index.rst:248
+#: ../../source/index.rst:251
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Double/Pass 決定に対する cube_error の計算を修正しました。"
 
-#: ../../source/index.rst:249
+#: ../../source/index.rst:252
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "統計モデルのドキュメント化（:ref:`stats_parity`）。"
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:253
 msgid "Voir :ref:`stats`."
 msgstr ":ref:`stats` を参照してください。"
 
-#: ../../source/index.rst:253
+#: ../../source/index.rst:256
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/index.rst:255
+#: ../../source/index.rst:258
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -1092,47 +1091,47 @@ msgstr ""
 "大規模なコードリファクタリング：db.go（1万行）を19の専門ファイルに分割、App.svelte "
 "から7つのサービスモジュールを抽出（4888→469行）、モーダル／パネルストアの統合。"
 
-#: ../../source/index.rst:256
+#: ../../source/index.rst:259
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Svelte 5 runes への完全な移行。"
 
-#: ../../source/index.rst:257
+#: ../../source/index.rst:260
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "9個のテーブルモーダルを汎用の DataTableModal コンポーネントに置き換え。"
 
-#: ../../source/index.rst:258
+#: ../../source/index.rst:261
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "ESLint + Prettier + vitest（125件のフロントエンドテスト）を CI とともに追加。"
 
-#: ../../source/index.rst:259
+#: ../../source/index.rst:262
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr "WCAG 2.1 AA 準拠（フォーカスの可視化、ARIA ロール、キーボードナビゲーション）。"
 
-#: ../../source/index.rst:260
+#: ../../source/index.rst:263
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
 msgstr "読み取りの並列性を高めるため、Database の mutex を RWMutex に変更。"
 
-#: ../../source/index.rst:261
+#: ../../source/index.rst:264
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "完全な CLI ドキュメント（CLI_USAGE.md + Sphinx FR/EN）。"
 
-#: ../../source/index.rst:262
+#: ../../source/index.rst:265
 msgid "Réécriture du README."
 msgstr "README の書き直し。"
 
-#: ../../source/index.rst:263
+#: ../../source/index.rst:266
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "すべての ESLint（46→0）および Vite（6→0）の警告を修正。"
 
-#: ../../source/index.rst:266
+#: ../../source/index.rst:269
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/index.rst:268
+#: ../../source/index.rst:271
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -1140,33 +1139,33 @@ msgid ""
 "taille)."
 msgstr "ストレージの最適化：分析データの zlib 圧縮（約80%削減）、ポジションのコンパクトなエンコーディング（サイズを約90%削減）。"
 
-#: ../../source/index.rst:269
+#: ../../source/index.rst:272
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "検索性能を向上させるため、不足していた5つのインデックスを追加。"
 
-#: ../../source/index.rst:270
+#: ../../source/index.rst:273
 msgid "Correction de la recherche par erreur de cube."
 msgstr "キューブの誤りによる検索を修正。"
 
-#: ../../source/index.rst:271
+#: ../../source/index.rst:274
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "結果のない検索後の EDIT モードを修正。"
 
-#: ../../source/index.rst:272
+#: ../../source/index.rst:275
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "タブ切り替え時の検索パネルの状態の復元。"
 
-#: ../../source/index.rst:273
+#: ../../source/index.rst:276
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "クリティカルパスから62件のデバッグ命令を削除。"
 
-#: ../../source/index.rst:276
+#: ../../source/index.rst:279
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/index.rst:278
+#: ../../source/index.rst:281
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -1175,113 +1174,112 @@ msgstr ""
 "データベーススキーマ v2.0.0：Zobrist "
 "ハッシュによるポジションの重複排除、非正規化されたフィルタリング列、ビットボードによるパターンの事前フィルター、WAL ジャーナリング。"
 
-#: ../../source/index.rst:279
+#: ../../source/index.rst:282
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
 msgstr "一括インポートが3倍以上高速化し、1万件以上のポジションに対するフィルター検索が100ミリ秒以内に。"
 
-#: ../../source/index.rst:280
+#: ../../source/index.rst:283
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
 "automatiquement sur place (faire une sauvegarde d'abord)."
-msgstr ""
-"注意：v0.16.0で作成したDBファイルは古いバージョンでは開けません。古いDBはその場で自動的にマイグレーションされます（先にバックアップを取ってください）。"
+msgstr "注意：v0.16.0で作成したDBファイルは古いバージョンでは開けません。古いDBはその場で自動的にマイグレーションされます（先にバックアップを取ってください）。"
 
-#: ../../source/index.rst:283
+#: ../../source/index.rst:286
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/index.rst:285
+#: ../../source/index.rst:288
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
 msgstr "ポジションをPNG画像としてクリップボードにエクスポート（Ctrl+X でボードのみ、Ctrl+X Ctrl+X で分析付きのボード）。"
 
-#: ../../source/index.rst:288
+#: ../../source/index.rst:291
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/index.rst:290
+#: ../../source/index.rst:293
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr "間隔反復学習（FSRSアルゴリズム）のための専用Ankiパネル。"
 
-#: ../../source/index.rst:291
+#: ../../source/index.rst:294
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "XGファイルからのコメントのインポート。"
 
-#: ../../source/index.rst:294
+#: ../../source/index.rst:297
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/index.rst:296
+#: ../../source/index.rst:299
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
 msgstr "インターフェースの簡素化：マッチおよびコレクション内のナビゲーションはパネルから直接行えるようになりました。"
 
-#: ../../source/index.rst:297
+#: ../../source/index.rst:300
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "ステータスバーに統合されたコマンドライン。"
 
-#: ../../source/index.rst:298
+#: ../../source/index.rst:301
 msgid "Panneau Console renommé en panneau Log."
 msgstr "コンソールパネルをログパネルに名称変更。"
 
-#: ../../source/index.rst:299
+#: ../../source/index.rst:302
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "下部パネルに専用のベアオフパネル。"
 
-#: ../../source/index.rst:300
+#: ../../source/index.rst:303
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "検索パネルでのポジションのコピー／貼り付け。"
 
-#: ../../source/index.rst:301
+#: ../../source/index.rst:304
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
 msgstr "ドラッグアンドドロップによる、コレクション、コレクション内のポジション、トーナメント内のマッチの並べ替え。"
 
-#: ../../source/index.rst:302
+#: ../../source/index.rst:305
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "マッチパネルへのトーナメント列の追加とインライン編集。"
 
-#: ../../source/index.rst:303
+#: ../../source/index.rst:306
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "検索後の分析パネルの自動表示。"
 
-#: ../../source/index.rst:306
+#: ../../source/index.rst:309
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/index.rst:308
+#: ../../source/index.rst:311
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "分析付きのeXtreme Gammonポジションファイル（XGP）のインポート。"
 
-#: ../../source/index.rst:311
+#: ../../source/index.rst:314
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/index.rst:313
+#: ../../source/index.rst:316
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "現在のポジションに対する検索フィルター。"
 
-#: ../../source/index.rst:314
+#: ../../source/index.rst:317
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "マッチごと、トーナメントごとのフィルターの追加。"
 
-#: ../../source/index.rst:315
+#: ../../source/index.rst:318
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "検索パネルを開いた際のボードの自動クリア。"
 
-#: ../../source/index.rst:318
+#: ../../source/index.rst:321
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/index.rst:320
+#: ../../source/index.rst:323
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -1289,218 +1287,218 @@ msgstr ""
 "eXtreme Gammon (XG/XGP)、GNUbg (SGF)、Jellyfish (MAT/TXT)、BGBlitz (BGF/TXT)"
 " からのマッチのインポート。"
 
-#: ../../source/index.rst:321
+#: ../../source/index.rst:324
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
 msgstr "マッチ内のナビゲーション：インポートしたマッチの着手をたどり、実際に打たれた着手を強調表示します。"
 
-#: ../../source/index.rst:322
+#: ../../source/index.rst:325
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
 msgstr "マッチパネル：一覧、ソート、インライン編集、プレイヤーの入れ替え、トーナメントの割り当て。"
 
-#: ../../source/index.rst:323
+#: ../../source/index.rst:326
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "フォルダーの再帰的インポートおよびドラッグアンドドロップによるインポート。"
 
-#: ../../source/index.rst:324
+#: ../../source/index.rst:327
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée."
 msgstr "EPC（実効ピップカウント）計算機。GNUbgのベアオフデータベースを内蔵しています。"
 
-#: ../../source/index.rst:325
+#: ../../source/index.rst:328
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "コレクション：ポジションのカスタムなグループ化。"
 
-#: ../../source/index.rst:326
+#: ../../source/index.rst:329
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "トーナメント：イベントごとのマッチのグループ化。"
 
-#: ../../source/index.rst:327
+#: ../../source/index.rst:330
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
 msgstr "セッション状態（最後の検索、現在のポジション）の保存と復元。"
 
-#: ../../source/index.rst:328
+#: ../../source/index.rst:331
 msgid "Migration automatique du schéma de base de données."
 msgstr "データベーススキーマの自動マイグレーション。"
 
-#: ../../source/index.rst:329
+#: ../../source/index.rst:332
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "分析における複数エンジンの表示。"
 
-#: ../../source/index.rst:330
+#: ../../source/index.rst:333
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "検索におけるプレイヤー1のエラー／ブランダーのフィルター。"
 
-#: ../../source/index.rst:331
+#: ../../source/index.rst:334
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
 msgstr "きめ細かな選択によるデータベースのエクスポート（マッチ、コレクション、トーナメント、打たれた着手）。"
 
-#: ../../source/index.rst:332
+#: ../../source/index.rst:335
 msgid "Bouton de navigation dans les matchs."
 msgstr "マッチ内ナビゲーション用ボタン。"
 
-#: ../../source/index.rst:333
+#: ../../source/index.rst:336
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "マッチナビゲーションにおけるピップカウントの表示。"
 
-#: ../../source/index.rst:334
+#: ../../source/index.rst:337
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "完全なコマンドラインインターフェース（CLI）。"
 
-#: ../../source/index.rst:335
+#: ../../source/index.rst:338
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "最後に開いたデータベースの自動再オープン。"
 
-#: ../../source/index.rst:336
+#: ../../source/index.rst:339
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "ツールバーとアイコンの改善。"
 
-#: ../../source/index.rst:339
+#: ../../source/index.rst:342
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/index.rst:341
+#: ../../source/index.rst:344
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "フィルターライブラリのバグ修正。"
 
-#: ../../source/index.rst:342
+#: ../../source/index.rst:345
 msgid "Import/export de base de données."
 msgstr "データベースのインポート／エクスポート。"
 
-#: ../../source/index.rst:343
+#: ../../source/index.rst:346
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "選択した着手に対する矢印の表示。"
 
-#: ../../source/index.rst:344
+#: ../../source/index.rst:347
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "インポート／エクスポート用のキーボードショートカット。"
 
-#: ../../source/index.rst:347
+#: ../../source/index.rst:350
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/index.rst:349
+#: ../../source/index.rst:352
 msgid "Possibilité de cacher le compte de course."
 msgstr "ピップカウントを非表示にする機能。"
 
-#: ../../source/index.rst:350
+#: ../../source/index.rst:353
 msgid "Chargement d'une position aléatoire."
 msgstr "ランダムなポジションの読み込み。"
 
-#: ../../source/index.rst:353
+#: ../../source/index.rst:356
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/index.rst:355
+#: ../../source/index.rst:358
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "XGエクスポートにおける日本語およびドイツ語のサポート。"
 
-#: ../../source/index.rst:358
+#: ../../source/index.rst:361
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/index.rst:360
+#: ../../source/index.rst:363
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "フィルターライブラリの追加。"
 
-#: ../../source/index.rst:361
+#: ../../source/index.rst:364
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "メタデータでのデータベースバージョンの表示。"
 
-#: ../../source/index.rst:364
+#: ../../source/index.rst:367
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/index.rst:366
+#: ../../source/index.rst:369
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr "新しいフィルター（ミラー、ノンコンタクト、内野ブロット、外野ブロット）の追加。"
 
-#: ../../source/index.rst:369
+#: ../../source/index.rst:372
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/index.rst:371 ../../source/index.rst:379
-#: ../../source/index.rst:386
+#: ../../source/index.rst:374 ../../source/index.rst:382
+#: ../../source/index.rst:389
 msgid "Résolutions de bugs divers."
 msgstr "各種バグの修正。"
 
-#: ../../source/index.rst:372
+#: ../../source/index.rst:375
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "blunderDBのアイコンの追加。"
 
-#: ../../source/index.rst:373
+#: ../../source/index.rst:376
 msgid "Corrections de filtres."
 msgstr "フィルターの修正。"
 
-#: ../../source/index.rst:374
+#: ../../source/index.rst:377
 msgid "Ajout du support de MacOS."
 msgstr "MacOSのサポートの追加。"
 
-#: ../../source/index.rst:377
+#: ../../source/index.rst:380
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/index.rst:380
+#: ../../source/index.rst:383
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "ウィンドウサイズの自動保存。"
 
-#: ../../source/index.rst:381
+#: ../../source/index.rst:384
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "XGからのコメントのインポート（存在する場合）。"
 
-#: ../../source/index.rst:384
+#: ../../source/index.rst:387
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/index.rst:387
+#: ../../source/index.rst:390
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "マッチ／TP／GV テーブルの追加。"
 
-#: ../../source/index.rst:388
+#: ../../source/index.rst:391
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "検索フィルター（着手、キューブの決定、日付）の追加。"
 
-#: ../../source/index.rst:389
+#: ../../source/index.rst:392
 msgid "Ajout de métadonnées sur les positions."
 msgstr "ポジションへのメタデータの追加。"
 
-#: ../../source/index.rst:390
+#: ../../source/index.rst:393
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "blunderDBインスタンス間のインポート／エクスポート機能。"
 
-#: ../../source/index.rst:391
+#: ../../source/index.rst:394
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "データベースへのメタデータ機能の追加。"
 
-#: ../../source/index.rst:392
+#: ../../source/index.rst:395
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "バージョン番号（データベースおよびアプリケーション）の導入。"
 
-#: ../../source/index.rst:395
+#: ../../source/index.rst:398
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/index.rst:397
+#: ../../source/index.rst:400
 msgid "Création version bêta."
 msgstr "ベータ版の作成。"
 
-#: ../../source/index.rst:400
+#: ../../source/index.rst:403
 msgid "Sommaire"
 msgstr "目次"
 
-#: ../../source/index.rst:424
+#: ../../source/index.rst:428
 msgid "Contacts"
 msgstr "連絡先"
 
-#: ../../source/index.rst:426
+#: ../../source/index.rst:430
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1508,7 +1506,7 @@ msgstr ""
 "作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
 "でも見つけられます。"
 
-#: ../../source/index.rst:429
+#: ../../source/index.rst:433
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1518,59 +1516,59 @@ msgid ""
 "sont bienvenus."
 msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
 
-#: ../../source/index.rst:436
+#: ../../source/index.rst:440
 msgid "Voici plusieurs manières de discuter:"
 msgstr "やり取りの方法はいくつかあります。"
 
-#: ../../source/index.rst:438
+#: ../../source/index.rst:442
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:440
+#: ../../source/index.rst:444
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "blunderdb@proton.me 宛にメールを送る、"
 
-#: ../../source/index.rst:442
+#: ../../source/index.rst:446
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "トーナメントで会うことがあれば直接話す、"
 
-#: ../../source/index.rst:444
+#: ../../source/index.rst:448
 msgid "sur Github,"
 msgstr "Githubで、"
 
-#: ../../source/index.rst:446
+#: ../../source/index.rst:450
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:448
+#: ../../source/index.rst:452
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
 
-#: ../../source/index.rst:452
+#: ../../source/index.rst:456
 msgid "Faire un don"
 msgstr "寄付する"
 
-#: ../../source/index.rst:454
+#: ../../source/index.rst:458
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
 
-#: ../../source/index.rst:456
+#: ../../source/index.rst:460
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "お会いする機会があれば、一杯おごってください！"
 
-#: ../../source/index.rst:458
+#: ../../source/index.rst:462
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
 
-#: ../../source/index.rst:461
+#: ../../source/index.rst:465
 msgid "Remerciements"
 msgstr "謝辞"
 
-#: ../../source/index.rst:463
+#: ../../source/index.rst:467
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1578,7 +1576,7 @@ msgstr ""
 "このささやかなソフトウェアを、パートナーのAnne-"
 "Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
 
-#: ../../source/index.rst:466
+#: ../../source/index.rst:470
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1588,7 +1586,7 @@ msgstr ""
 "*Tristan Remille* "
 "には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
 
-#: ../../source/index.rst:471
+#: ../../source/index.rst:475
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1597,11 +1595,11 @@ msgstr ""
 "*Nicolas Harmand* "
 "には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。"
 
-#: ../../source/index.rst:476
+#: ../../source/index.rst:480
 msgid "Crédits"
 msgstr "クレジット"
 
-#: ../../source/index.rst:478
+#: ../../source/index.rst:482
 msgid ""
 "blunderDB embarque du code, des données et des polices d'autres "
 "personnes. L'inventaire complet, avec le texte des licences, est le "
@@ -1615,7 +1613,7 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__\\ "
 "のルートにもあります。主なもの:"
 
-#: ../../source/index.rst:485
+#: ../../source/index.rst:489
 msgid ""
 "le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre "
 "d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
@@ -1629,11 +1627,11 @@ msgstr ""
 "/backgammon-ai-engine>`__、MIT ライセンス）。それを取り巻く探索、キューブモデル、マッチエクイティテーブルは\\ "
 "`gammonNet <https://github.com/kevung/gammonNet>`__\\ 独自の構成です（MIT）。"
 
-#: ../../source/index.rst:492
+#: ../../source/index.rst:496
 msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
 msgstr "Kazaross-XG2 マッチエクイティテーブルは\\ *Neil Kazaross*\\ の著作物です。"
 
-#: ../../source/index.rst:494
+#: ../../source/index.rst:498
 msgid ""
 "les tables de take points et de valeurs de gammon sont tirées de *The "
 "Theory of Backgammon* de *Dirk Schiemann* ;"
@@ -1641,7 +1639,7 @@ msgstr ""
 "テイクポイントとギャモン値の表は\\ *Dirk Schiemann*\\ の著書\\ *The Theory of Backgammon*\\ "
 "から引用しています。"
 
-#: ../../source/index.rst:497
+#: ../../source/index.rst:501
 msgid ""
 "les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
 "bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
@@ -1654,7 +1652,7 @@ msgstr ""
 "`GNU Backgammon <https://www.gnu.org/software/gnubg/>`__\\ で生成されました。GNUbg"
 " は GPL の下で提供されるフリーソフトウェアであり、これらの表はそれが生成したデータとしてクレジットされています。"
 
-#: ../../source/index.rst:503
+#: ../../source/index.rst:507
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__ et `gnubgparser "
@@ -1665,7 +1663,7 @@ msgstr ""
 "`gnubgparser <https://github.com/kevung/gnubgparser>`__\\ （LGPL-2.1）および\\"
 " `bgfparser <https://github.com/kevung/bgfparser>`__\\ （MIT）で読み込まれます。"
 
-#: ../../source/index.rst:508
+#: ../../source/index.rst:512
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -1677,7 +1675,7 @@ msgstr ""
 "<https://wails.io>`__、\\ `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__\\ （MIT）。"
 
-#: ../../source/index.rst:513
+#: ../../source/index.rst:517
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -1687,7 +1685,7 @@ msgstr ""
 "<https://two.js.org>`__、\\ `Chart.js <https://www.chartjs.org>`__、\\ "
 "`driver.js <https://driverjs.com>`__\\ （MIT）。"
 
-#: ../../source/index.rst:517
+#: ../../source/index.rst:521
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "

@@ -1,0 +1,168 @@
+<!--
+  Template for the GitHub Pages root (gh-pages/index.html), rendered by
+  .github/workflows/build.yml's "pages" pipeline (see the "Render the home
+  page" step in the `docs` job).
+
+  This used to be a one-line `meta refresh` straight into `en/` — visitors
+  never saw a product page, only the Sphinx table of contents in whatever
+  language the redirect happened to name (H.10, #252). This page is the
+  actual home page; its only piece of language negotiation is the
+  Documentation button below, whose target is computed from
+  `navigator.language` against the nine languages the docs ship in, falling
+  back to English — see the inline script. The __VERSION__ placeholder is
+  substituted by the CI step with the release tag (or the short commit SHA
+  on non-tag builds, same convention as doc/build.py's PDF naming); the
+  per-OS buttons reuse the exact asset names the `build` job produces
+  (blunderDB-windows-<ver>.exe, blunderDB-macos-<ver>.zip,
+  blunderdb_<ver>_amd64.deb) through GitHub's `/releases/latest/download/`
+  alias, so they always resolve to whatever was published last.
+-->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>blunderDB — backgammon blunder analysis</title>
+<link rel="icon" href="en/_static/favicon.ico">
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #5a5a5a;
+    --accent: #2c5f8a;
+    --accent-fg: #ffffff;
+    --border: #e0e0e0;
+    --card-bg: #f7f8fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181d;
+      --fg: #e8e8e8;
+      --muted: #a3a9b0;
+      --accent: #6fb0e8;
+      --accent-fg: #0b1218;
+      --border: #2b323a;
+      --card-bg: #1b2027;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181d;
+    --fg: #e8e8e8;
+    --muted: #a3a9b0;
+    --accent: #6fb0e8;
+    --accent-fg: #0b1218;
+    --border: #2b323a;
+    --card-bg: #1b2027;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+  .hero { text-align: center; margin-bottom: 2.5rem; }
+  .hero img.logo { width: 72px; height: 72px; margin-bottom: 1rem; }
+  h1 { font-size: 2.1rem; margin: 0 0 0.75rem; }
+  .pitch { color: var(--muted); font-size: 1.1rem; max-width: 620px; margin: 0 auto; }
+  .pitch p { margin: 0.4rem 0; }
+  .screenshot {
+    display: block;
+    max-width: 100%;
+    margin: 2rem auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 2rem 0 0.75rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.3rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--fg);
+    font-weight: 600;
+    background: var(--card-bg);
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  .fine-print { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 2.5rem; }
+  .fine-print a { color: inherit; }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .links a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+  <div class="hero">
+    <img class="logo" src="en/_static/logo.png" alt="">
+    <h1>blunderDB</h1>
+    <div class="pitch">
+      <p>A backgammon blunder analysis tool: import your matches from eXtreme Gammon, GnuBG and BGBlitz, store every position once, and search them by structure and by mistake.</p>
+      <p>A built-in evaluator (gammonNet) judges any position offline — no internet connection, no external engine to install.</p>
+      <p>Free and open source (MIT), one binary, five modes: desktop app, command line, headless server.</p>
+    </div>
+  </div>
+
+  <img class="screenshot" src="en/_static/screenshot.png" alt="blunderDB screenshot">
+
+  <div class="downloads">
+    <a class="btn primary" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-__VERSION__.exe">Windows (.exe)</a>
+    <a class="btn primary" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-__VERSION__.zip">macOS (.zip)</a>
+    <a class="btn primary" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderdb___VERSION___amd64.deb">Linux (.deb)</a>
+  </div>
+  <p class="fine-print">Every asset is checksummed and attestable — see the <a id="install-link" href="en/telecharge_install.html">full install guide</a> for Fedora, Arch, Flatpak, arm64 and raw binaries.</p>
+
+  <div class="links">
+    <a id="doc-link" href="en/">Documentation</a>
+    <a href="https://discord.gg/DA5PpzM9En">Discord</a>
+    <a href="https://github.com/kevung/blunderDB/releases">Releases</a>
+    <a href="https://github.com/kevung/blunderDB">GitHub</a>
+  </div>
+</main>
+<script>
+(function () {
+  // The nine languages the docs are built in (doc/source/conf.py's
+  // LANGUAGES); English is the fallback when nothing matches, same as the
+  // meta-refresh this page replaces.
+  var supported = ['fr', 'en', 'de', 'el', 'es', 'fi', 'it', 'ja', 'ru'];
+  var prefs = navigator.languages && navigator.languages.length
+    ? navigator.languages
+    : [navigator.language || 'en'];
+  var chosen = 'en';
+  outer:
+  for (var i = 0; i < prefs.length; i++) {
+    var code = String(prefs[i] || '').toLowerCase().split('-')[0];
+    for (var j = 0; j < supported.length; j++) {
+      if (supported[j] === code) { chosen = code; break outer; }
+    }
+  }
+  var doc = document.getElementById('doc-link');
+  if (doc) doc.href = chosen + '/';
+  var install = document.getElementById('install-link');
+  if (install) install.href = chosen + '/telecharge_install.html';
+})();
+</script>
+</body>
+</html>
