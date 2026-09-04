@@ -63,3 +63,35 @@ propre style de découpe des lignes longues, distinct de celui de Babel,
 et un `save()` sur le fichier entier produit le même effet qu'un passage
 par `msgcat` (un diff de plusieurs milliers de lignes pour une poignée de
 chaînes changées). Ne réécrivez que le nécessaire.
+
+La méthode qui marche, quand un lot d'entrées est à écrire par programme :
+rendre CHAQUE entrée séparément avec Babel — la bibliothèque qui a engendré
+les catalogues (« Generated-By: Babel » dans leur en-tête), donc la seule
+qui coupe les lignes comme eux —, puis remplacer le bloc correspondant dans
+le texte du fichier.
+
+    from babel.messages.catalog import Catalog
+    from babel.messages.pofile import write_po
+    cat = Catalog(); cat.add(msgid, msgstr, locations=[(chemin, ligne)])
+    buf = io.BytesIO(); write_po(buf, cat, omit_header=True, sort_output=False)
+    bloc = buf.getvalue().decode("utf-8").strip("\n")
+
+Le fichier se découpe en blocs sur la ligne vide (`texte.split("\n\n")`) ;
+repérez le bloc par sa référence `#:` ou par un fragment de son `msgid`,
+remplacez-le, réécrivez. Le diff ne contient alors que les entrées voulues.
+Vérifiez toujours par `git diff --numstat` : quelques dizaines de lignes par
+catalogue est normal (les numéros de ligne `#:` se décalent dès qu'un
+paragraphe du .rst change de longueur) ; plusieurs milliers signifie que le
+fichier a été réécrit en entier, et il faut recommencer.
+
+Clone allégé
+============
+
+Le dépôt pèse environ 730 Mio à cause de l'historique de `gh-pages` (les
+`.dvi` et `.doctrees` d'anciennes constructions ; `force_orphan: true` fait
+que la branche publiée ne s'allonge plus, mais son passé reste). Pour ne
+récupérer que ce qui sert à travailler :
+
+    git clone --single-branch https://github.com/kevung/blunderDB.git
+
+Ajoutez `--depth 1` si l'historique ne vous intéresse pas non plus.

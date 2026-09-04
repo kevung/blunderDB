@@ -51,6 +51,7 @@ zstd avec dictionnaire — B.12).
 | H.12 | #254 | Trois visites guidées de plus (Eval, Anki, Stats), chacune ouvrant son onglet. Le panneau de bienvenue reste à I.28. |
 | — | #304 | Coquilles de la source française. |
 | — | — | `.gitattributes` : `* -text`, sans quoi un checkout Windows convertit les fins de ligne de `met_kazaross_xg2.json` et fait paniquer `engine.init` sur son SHA-256. |
+| **E.6-E.12** | #222-#228 | **Le lot E est clos.** L'essentiel était déjà livré au fil des autres fiches sans être coché ; l'audit du 2026-09-04 l'a constaté et a fini le reste : crans de complexité remesurés (573/316/462 → 438/180/200), note « clone allégé » et méthode d'édition programmatique des `.po` dans `doc/README.txt`, et `CLAUDE.md` corrigé — il affirmait qu'il n'existait pas de `nightly.yml`. |
 
 Hors fiches, trouvés en chemin :
 
@@ -79,8 +80,12 @@ retard sur `main`) : à reprendre dans une passe dédiée, pas au fil d'une autr
 **Étape 1**, une fiche : G.5 (routes d'opération, dépend d'A.2, déjà livrée).
 
 **Étape 2** : B.13, B.14 ; C.7 (forme close de `levelSolve`, à grouper avec le
-passage amont d'ADR-0029) ; C.11, C.12 ; D.9, D.10 ; E.6-E.12 ; G.8-G.14 (dont
-trois attendent dans la branche ci-dessus) ; H.13, H.14.
+passage amont d'ADR-0029) ; C.11, C.12 ; D.9, D.10 ; G.8-G.14 (dont trois
+attendent dans la branche ci-dessus) ; H.13, H.14.
+
+**Une leçon d'audit** : plusieurs fiches du lot E étaient faites depuis des
+jours sans être cochées, parce qu'elles avaient été livrées en passant par
+une autre fiche. Avant d'ouvrir un chantier, lire le code plutôt que la case.
 
 **Étape 3** : le lot I, 34 fiches de produit. **Étape 4** : le lot J.
 

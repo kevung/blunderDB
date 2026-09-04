@@ -377,8 +377,13 @@ Violating one of these is a bug even if all tests pass:
   environment (no clipboard tool, no CJK fonts, an exotic locale) that runs the
   whole Go suite to catch code that inline-assumes a host capability instead of
   going through the detect-and-fall-back policies; built and run by the
-  `hostile-smoke` job in `build.yml`. There is no dedicated `nightly.yml`: the
-  weekly-scheduled `fuzz.yml` already carries the checks too slow for every push
-  (continuous fuzzing, the `gammonnet-gold` search-parity gold file, the full
-  arm64 kernel-identity sweep); routing the other nightly-only checks there is
-  still open (E.12, #228).
+  `hostile-smoke` job in `build.yml`.
+- **Three schedules, on purpose** (E.12, #228). `nightly.yml` (daily, 03:00 UTC)
+  runs what every push cannot afford: the full non-`-short` Go suite on macOS
+  and Windows, a full-package gammonNet run under `-race -short`, and
+  `benchstat` against the versioned baseline. `fuzz.yml` (Mondays) keeps the
+  continuous fuzzing, the `gammonnet-gold` search-parity file and the arm64
+  kernel-identity sweep. `build.yml` keeps everything a reviewer should see on
+  the PR itself, Trivy included. Nothing that already has a schedule was moved
+  to "have them in one file"; each workflow's header says why its checks live
+  there — read it before adding a fourth.

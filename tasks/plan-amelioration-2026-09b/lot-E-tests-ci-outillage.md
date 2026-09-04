@@ -116,11 +116,18 @@ pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
 5 fonctions > 300 lignes (`find` 638, `Compute` 427, `runSearch` 427,
 `migrate_1_9_0_to_2_0_0` 320, `CommitImportDatabase` 303), 20 > 120 ;
 `gocyclo`/`gocognit`/`dupl` ni installés ni configurés.
-- [ ] `funlen` et `gocognit` activés avec seuil = maximum actuel, abaissé à
-      chaque découpage (B.15).
-- [ ] `gosec` limité à `./internal/server/... ./pkg/blunderdb/issuance/...`
+- [x] `funlen` et `gocognit` activés avec seuil = maximum actuel. Remesurés le
+      2026-09-04 après le découpage de `find` par B.15 : 573/316/462 →
+      **438/180/200**, fixés chacun par une fonction différente
+      (`Compute`, `parseSearchFlags`, `applyGoFilters`). La méthode compte :
+      on mesure en **montant** le seuil jusqu'au silence, jamais en le
+      descendant à 1 — `funlen` ne signale qu'une violation par fonction
+      (lignes d'abord, puis instructions), donc à 1 presque tout répond
+      « trop d'instructions » et les fonctions les plus longues ne disent
+      jamais leur longueur.
+- [x] `gosec` limité à `./internal/server/... ./pkg/blunderdb/issuance/...`
       (surfaces réseau + crypto), le refus global reste justifié
-      (`.golangci.yml:14-22`).
+      (`.golangci.yml`).
 
 ## E.7 — Supply chain : attestations, SBOM, signatures [S] — sécurité (#223)
 
@@ -128,32 +135,32 @@ pre-commit local (`.git/hooks`, front seulement, non versionné) ; `make check`
 (`build.yml:285-295`) ; `.sha256` sans signature détachée ; tag non signé
 (`scripts/release.sh:202`) ; l'image n'est jamais démarrée en CI ; multi-arch
 seulement sur tag (`build.yml:289`).
-- [ ] `actions/attest-build-provenance` sur les assets ; `provenance: true`,
-      `sbom: true` dans `build-push-action` ; `trivy` sur l'image (non
-      bloquant d'abord).
-- [ ] `minisign` (ou cosign keyless) sur `SHA256SUMS` ; tag `-s` dans
-      `release.sh` ; clé publique dans le README et `telecharge_install.rst`.
-- [ ] `docker run --rm -d` + `curl /readyz` après le build ; construire
-      amd64+arm64 sans push sur `main`.
+- [x] `actions/attest-build-provenance` sur les assets ; `provenance`/`sbom`
+      sur l'image poussée (sur tag) ; `trivy` non bloquant sur l'image.
+- [x] `minisign` optionnel sur `SHA256SUMS` (voir `packaging/minisign/`) ;
+      signature du tag dans `release.sh` avec repli sur un tag léger.
+- [x] Image démarrée et sondée en CI ; amd64+arm64 construits sans push.
 
 ## E.8 — Hygiène des jobs front [S] — vitesse CI (#224)
 
 `frontend-test` lance vitest deux fois (`build.yml:311-322`) ; `npm ci` à
 froid dans 3 jobs ; Playwright `workers` non fixé, retries sans signal flaky.
-- [ ] Un seul `npm test -- --coverage` ; job front unique (lint + test + e2e)
-      ou cache `node_modules` clé `package-lock.json`.
-- [ ] Voir D.13 pour Playwright.
+- [x] Un seul `npm test -- --coverage` : le second passage n'apportait aucun
+      signal (la couverture ne change ni les tests joués ni leur verdict) et
+      coûtait la moitié du temps du job.
+- [x] Cache `node_modules` clé `package-lock.json`, la même dans les trois
+      jobs front ; cache des navigateurs Playwright clé sur la version
+      résolue de `@playwright/test`. Playwright : voir D.13 (livrée).
 
 ## E.9 — Suivi de performance dans le temps [M] — DX (#225)
 
 Job `benchmark` 115 s par push, artefact que personne ne compare ; 0
 `benchstat` ; `tasks/bench-*.txt` datent d'avril ; 11 benchmarks gammonNet
 mais aucun sur `Probs`/`Decide`/lot (C.7).
-- [ ] `benchstat` contre une baseline versionnée
-      (`tasks/bench/baseline.txt`) sur un sous-ensemble stable
-      (`storage/sqlite`, `sqlshared`, `gammonnet -short`), seuil ±10 %,
-      commentaire de PR ; le job passe en `workflow_dispatch` + nightly.
-- [ ] Baseline régénérée à chaque release (skill `release-blunderdb`).
+- [x] `benchstat` contre une baseline versionnée, en `workflow_dispatch` +
+      nightly ; le job `benchmark` de `build.yml`, qui tournait à chaque push
+      sans jamais être comparé à quoi que ce soit, a disparu.
+- [x] Baseline régénérée à chaque release.
 
 ## E.10 — Dépôt : poids du clone, `.dockerignore`, fixtures [S] — DX (#226)
 
@@ -161,20 +168,23 @@ Clone à 730 Mio (historique `gh-pages` : `.dvi` 113 Mo, `.doctrees` 88 Mo) ;
 `.dockerignore` `*.db` non récursif → `testdata/tournois/live-main.db`
 (215 Mo, gitignoré) part dans le contexte Docker local ; `testdata/` local
 248 Mo.
-- [ ] `force_orphan: true` sur `peaceiris/actions-gh-pages` ; note dans le
-      README de doc sur le clone allégé (`--single-branch`).
-- [ ] `.dockerignore` : `**/*.db`, `testdata/tournois/`, `.venv/`.
-- [ ] Nettoyer la racine du checkout (E.3 supprime la cause).
+- [x] `force_orphan: true` sur `peaceiris/actions-gh-pages` ; note « clone
+      allégé » (`--single-branch`) à la fin de `doc/README.txt`, à côté d'une
+      section neuve : **comment écrire un lot d'entrées `.po` par programme
+      sans réécrire le fichier** (rendre chaque entrée avec Babel, remplacer
+      le bloc), et comment vérifier au `--numstat` qu'on ne l'a pas fait.
+- [x] `.dockerignore` : `**/*.db` (le motif nu n'est pas récursif, contrairement
+      à `.gitignore`), `testdata/tournois/`, `.venv`.
+- [x] Racine du checkout nettoyée (E.3 a supprimé la cause).
 
 ## E.11 — Modèles d'issue et automatisations GitHub [S] — communauté/DX (#227)
 
 Pas d'`ISSUE_TEMPLATE` (le template de PR est excellent) ; Dependabot ne
 couvre que les version updates ; Discussions activées et vides.
-- [ ] Deux formulaires YAML (bug : version, OS, canal d'installation, fichier
-      source ; suggestion) + `config.yml` (Discord, Discussions).
-- [ ] Dependabot : npm mensuel groupé, gomod hebdo, actions hebdo.
-- [ ] Action « stale » douce (90 jours, label seulement, jamais de fermeture
-      automatique).
+- [x] Deux formulaires YAML + `config.yml`.
+- [x] Dependabot : npm mensuel groupé, gomod hebdo, actions hebdo, plus
+      `docker` — les images de base n'avaient aucune couverture.
+- [x] Action « stale » douce, label seulement.
 
 ## E.12 — Nightly [S] — fiabilité (#228)
 
@@ -182,8 +192,12 @@ Un seul `nightly.yml` regroupe ce qui ne doit pas tourner à chaque push :
 gold de recherche (`BLUNDERDB_GOLD=1`), `-race -short` sur `gammonnet`,
 fuzz 5 min/cible, benchstat, trivy, loadtest SQLite court (G.11), `test-os`
 complet sans `-short`.
-- [ ] Le fichier ; badge « nightly » dans le README ; notification en cas
-      de rouge (issue automatique avec label `nightly`).
+- [x] `nightly.yml` (quotidien, 03:00 UTC) ; issue automatique étiquetée
+      `nightly` en cas de rouge — c'est elle qui a ouvert #317. **Décision
+      écrite en tête du fichier : rien de ce qui a déjà un calendrier ne
+      déménage.** `fuzz.yml` garde le fuzzing, le gold de recherche et le
+      balayage arm64 ; `build.yml` garde Trivy, qu'un relecteur doit voir sur
+      la PR qui l'a introduit. Trois calendriers, chacun justifié chez lui.
 
 ---
 
