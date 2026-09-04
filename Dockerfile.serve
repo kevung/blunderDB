@@ -20,7 +20,10 @@
 # the legacy builder TARGETOS/TARGETARCH stay empty, which Go reads as the
 # host platform.
 ARG BUILDPLATFORM=${BUILDPLATFORM:-linux/amd64}
-FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS build
+# Pinned to the patch, not the 1.25 line (B.19, #187): a floating tag makes
+# the image built from a given commit depend on the day it was built, and the
+# compiler here must be the one go.mod names (GO_VERSION in the workflows).
+FROM --platform=$BUILDPLATFORM golang:1.25.13-alpine AS build
 WORKDIR /src
 
 # Cache module downloads.
