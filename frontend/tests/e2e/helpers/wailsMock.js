@@ -47,9 +47,27 @@ export async function installWailsMock(page, overrides = {}) {
             if (calls.length > 500) calls.shift();
         }
 
+        /**
+         * LoadPositionsByIDs est la seule méthode que le mock ne peut pas
+         * servir par une constante : depuis D.8 (#208) la recherche, le
+         * drill-down Stats et le deck Anki ne rapportent QUE des ids, et c'est
+         * elle qui charge la fenêtre affichée. Une constante ferait montrer au
+         * plateau la bibliothèque entière quels que soient les ids demandés —
+         * la spec dirait « 3 / 3 » là où l'app affiche « 1 / 2 ».
+         *
+         * Sa valeur déclarée est donc lue comme LE CATALOGUE du backend
+         * factice : elle répond aux ids demandés, dans l'ordre demandé. Exposée
+         * sur window pour que les overrides d'après chargement
+         * (overrideDbMethod, overrideDbMethodThen) suivent la même règle.
+         */
+        window.__mockPositionsByIDs = (catalog) => (ids) =>
+            Promise.resolve((Array.isArray(ids) ? ids : []).map((id) => (Array.isArray(catalog) ? catalog.find((p) => p && p.id === id) : undefined)).filter(Boolean));
+
         /** Applique les constantes d'override sur un objet de base. */
         function withOverrides(base, ns) {
-            for (const [method, value] of Object.entries(overrides[ns] || {})) base[method] = constant(value);
+            for (const [method, value] of Object.entries(overrides[ns] || {})) {
+                base[method] = method === 'LoadPositionsByIDs' && Array.isArray(value) ? window.__mockPositionsByIDs(value) : constant(value);
+            }
             return base;
         }
 
@@ -157,6 +175,10 @@ export async function installWailsMock(page, overrides = {}) {
                             ComputeStats: asyncNull,
                             ListPositionIDs: asyncArr,
                             LoadPositionsByIDs: asyncArr,
+                            // D.8 (#208) : la recherche, Stats et Anki ne
+                            // rendent plus que des ids ; sans stub la méthode
+                            // renverrait null et toute recherche paraîtrait vide.
+                            LoadPositionIDsByFilters: asyncArr,
                             LoadAnalysis: asyncNull,
                             SaveSessionState: asyncVoid,
                             LoadSessionState: asyncNull,
@@ -216,7 +238,7 @@ export async function installWailsMock(page, overrides = {}) {
 export async function overrideDbMethod(page, methodName, returnValue) {
     await page.evaluate(
         ({ method, value }) => {
-            window.go.database.Database[method] = () => Promise.resolve(value);
+            window.go.database.Database[method] = method === 'LoadPositionsByIDs' && Array.isArray(value) ? window.__mockPositionsByIDs(value) : () => Promise.resolve(value);
         },
         { method: methodName, value: returnValue }
     );
@@ -258,7 +280,9 @@ export async function overrideDbMethodThen(page, methodName, returnValue, afterC
     await page.evaluate(
         ({ method, value, after }) => {
             window.go.database.Database[method] = () => {
-                for (const [m, v] of Object.entries(after)) window.go.database.Database[m] = () => Promise.resolve(v);
+                for (const [m, v] of Object.entries(after)) {
+                    window.go.database.Database[m] = m === 'LoadPositionsByIDs' && Array.isArray(v) ? window.__mockPositionsByIDs(v) : () => Promise.resolve(v);
+                }
                 return Promise.resolve(value);
             };
         },

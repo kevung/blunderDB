@@ -14,9 +14,19 @@ import { openLibraryMock, matchSample, matchGames, matchMovePositions } from './
 const statusBar = (page) => page.getByTestId('status-bar');
 const infoBar = (page) => page.getByTestId('match-info-bar');
 
-async function expectMove(page, move, game) {
+// La barre d'état lit le contexte de match, que l'appelant met à jour AVANT
+// d'afficher la position : son compteur avance donc même quand l'affichage
+// échoue. C'est ce qui est arrivé le 2026-09-03 (structuredClone jetait sur un
+// proxy Svelte dans showPosition, et la seule assertion qui l'a vu était le
+// bilan des LoadAnalysis en fin de test). `expectsId` fait donc constater, coup
+// par coup, que le coup demandé a bien été chargé — l'échec nomme alors le
+// coup fautif au lieu d'un tableau final.
+async function expectMove(page, move, game, expectsId = null) {
     await expect(statusBar(page)).toContainText(`move ${move}/6`);
     await expect(statusBar(page)).toContainText(`game ${game}/2`);
+    if (expectsId !== null) {
+        await expect.poll(async () => (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]).at(-1)).toBe(expectsId);
+    }
 }
 
 test.beforeEach(async ({ page }) => {
@@ -46,17 +56,17 @@ test('ouvrir un match depuis le panneau et parcourir ses coups (j/k, flèches)',
     await expect(infoBar(page)).toContainText('Bob');
 
     await page.keyboard.press('j');
-    await expectMove(page, 2, 1);
+    await expectMove(page, 2, 1, 2012);
     await page.keyboard.press('ArrowRight');
-    await expectMove(page, 3, 1);
+    await expectMove(page, 3, 1, 2013);
     await page.keyboard.press('k');
-    await expectMove(page, 2, 1);
+    await expectMove(page, 2, 1, 2012);
     await page.keyboard.press('ArrowLeft');
-    await expectMove(page, 1, 1);
+    await expectMove(page, 1, 1, 2011);
 
     // Franchir la frontière de partie
     for (let i = 0; i < 3; i++) await page.keyboard.press('j');
-    await expectMove(page, 4, 2);
+    await expectMove(page, 4, 2, 2021);
 
     // Chaque coup affiché a chargé son analyse
     const analysed = (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]);

@@ -334,6 +334,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
+      # Belt to .gitattributes' braces (`* -text`, added 2026-09-04): that
+      # file is what actually protects the SHA-256-checked embedded assets on
+      # every clone, this only covers a runner whose git predates it.
       - name: Keep LF line endings at checkout
         run: git config --global core.autocrlf false
         shell: bash
@@ -902,10 +905,27 @@ jobs:
           set -euo pipefail
           go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.46.3
           export PATH="$PATH:$(go env GOPATH)/bin"
+          # Two different version strings, on purpose:
+          #   ART — how every artefact of this run is NAMED (tag, or short SHA
+          #         off a tag). Unchanged, and what the test step greps for.
+          #   PKG — what goes INSIDE the .deb/.rpm control data. dpkg refuses a
+          #         version that does not start with a digit, so off a tag the
+          #         short SHA cannot be it: `dpkg -i` failed with "parsing file
+          #         '/var/lib/dpkg/tmp.ci/control' near line 2" on every branch
+          #         build until 2026-09-04. '~' sorts BEFORE everything, so a
+          #         real 0.36.0 still supersedes any 0.0.0~git… built earlier.
+          # nfpm reads ${VERSION} from the environment (nfpm.yaml, version:).
+          ART="$VERSION"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            PKG="${ART#v}"
+          else
+            PKG="0.0.0~git${ART}"
+          fi
+          export VERSION="$PKG"
           # nfpm does not expand env vars in the `src` glob, so stage the binary
           # at the fixed path nfpm.yaml expects, then remove the bare copy so it
           # is not uploaded to the release.
-          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${VERSION}" build/bin/blunderDB
+          cp "build/bin/blunderDB-linux-webkit2gtk-4.1-${ART}" build/bin/blunderDB
           # `blunderdb completion <shell>` prints the script (B.8, #176); generate
           # it here from the binary just staged, rather than committing one, so it
           # can never drift from the subcommand table it reads (handlers()). The
@@ -914,8 +934,8 @@ jobs:
           build/bin/blunderDB completion bash > build/linux/completions/blunderdb.bash
           build/bin/blunderDB completion zsh  > build/linux/completions/_blunderdb
           build/bin/blunderDB completion fish > build/linux/completions/blunderdb.fish
-          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${VERSION}_amd64.deb"
-          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${VERSION}.x86_64.rpm"
+          nfpm package -f build/linux/nfpm.yaml -p deb -t "build/bin/blunderdb_${ART}_amd64.deb"
+          nfpm package -f build/linux/nfpm.yaml -p rpm -t "build/bin/blunderdb-${ART}.x86_64.rpm"
           rm -f build/bin/blunderDB
 
       # Install what was just packaged, on the runner that built it (the
@@ -931,6 +951,10 @@ jobs:
           VERSION: ${{ steps.vars.outputs.version }}
         run: |
           set -euo pipefail
+          # The control version is not VERSION off a tag (see the packaging step
+          # above); what must hold is that dpkg accepts it at all, and that the
+          # binary inside still answers with the version this run built.
+          dpkg-deb -f "build/bin/blunderdb_${VERSION}_amd64.deb" Version
           sudo dpkg -i "build/bin/blunderdb_${VERSION}_amd64.deb"
           blunderdb version | tee /dev/stderr | grep -F -- "$VERSION"
           test -f /usr/share/doc/blunderdb/THIRD_PARTY.md

@@ -56,6 +56,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
+      # Belt to .gitattributes' braces (`* -text`, added 2026-09-04): that
+      # file is what actually protects the SHA-256-checked embedded assets on
+      # every clone, this only covers a runner whose git predates it.
       - name: Keep LF line endings at checkout
         run: git config --global core.autocrlf false
         shell: bash
