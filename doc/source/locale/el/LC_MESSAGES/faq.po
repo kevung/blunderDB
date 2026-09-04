@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 09:33+0200\n"
+"POT-Creation-Date: 2026-09-04 14:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: el <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Foire aux questions"
 msgstr "Συχνές ερωτήσεις (FAQ)"
 
 #: ../../source/faq.rst:8
-msgid "Quel est l'utilité de blunderDB?"
+msgid "Quelle est l'utilité de blunderDB?"
 msgstr "Ποιος είναι ο σκοπός του blunderDB;"
 
 #: ../../source/faq.rst:10
@@ -58,7 +58,7 @@ msgstr ""
 "θέσεων μεταξύ των παικτών."
 
 #: ../../source/faq.rst:25
-msgid "Qu'est ce qui a motivé la création de blunderDB?"
+msgid "Qu'est-ce qui a motivé la création de blunderDB?"
 msgstr "Τι ώθησε στη δημιουργία του blunderDB;"
 
 #: ../../source/faq.rst:27
@@ -481,7 +481,7 @@ msgstr ""
 " μπορεί να ανοιχτεί με οποιονδήποτε επεξεργαστή αρχείων SQLite."
 
 #: ../../source/faq.rst:234
-msgid "Quelles ont été les principes de conception de blunderDB?"
+msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;"
 
 #: ../../source/faq.rst:236
@@ -533,13 +533,13 @@ msgstr ""
 "ωστόσο η εφαρμογή επιφάνειας εργασίας. Δείτε :ref:`cli` και :ref:`headless`."
 
 #: ../../source/faq.rst:259
-msgid "Quel est l'architecture logicielle de blunderDB?"
+msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;"
 
 #: ../../source/faq.rst:261
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
-"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"l'ensemble des opérations sur la base de données SQLite qui stocke les "
 "positions."
 msgstr ""
 "Το backend είναι γραμμένο σε `Go <https://go.dev/>`_. Είναι υπεύθυνο για το "
