@@ -452,7 +452,6 @@
         "mwcLoss": "MWC Loss",
         "noAnalysedPositions": "No analysed positions found for this match.",
         "noMatchesImported": "No matches imported yet",
-        "selectMatchHint": "Select a match to show its transcript",
         "noMovesRecorded": "No moves recorded",
         "overallPr": "Overall PR",
         "performanceRating": "Performance Rating",
