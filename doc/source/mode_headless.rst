@@ -420,6 +420,20 @@ d'accès n'ont aucune notion de tenant.
 
 .. _headless_docker:
 
+Compression des flux
+---------------------
+
+Les listes NDJSON répètent les mêmes noms de champs à chaque ligne. Le démon
+les compresse quand le client l'accepte : envoyez ``Accept-Encoding: gzip`` et
+la réponse revient en ``Content-Encoding: gzip``. Mesuré sur une liste de
+matchs : **13,5 %** de la taille d'origine sur mille lignes, 14,6 % sur cent.
+
+La compression ne change rien au caractère incrémental du flux — chaque
+enregistrement est poussé au client comme avant, il est seulement compressé en
+chemin. Elle ne s'applique qu'aux réponses NDJSON, JSON et texte : un export de
+base ou un conteneur ``.dbx`` est déjà compressé, le regzipper ne ferait que le
+grossir. ``Accept-Encoding: gzip;q=0`` la refuse explicitement.
+
 Un seul tenant sur SQLite
 --------------------------
 
