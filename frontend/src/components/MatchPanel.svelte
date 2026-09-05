@@ -327,17 +327,30 @@
         else openGames.delete(gameNumber);
     }
 
+    // The game the review last stepped into. Reopening is a reaction to
+    // *crossing into* a game, not a standing rule that the reviewed game is
+    // open: without this, collapsing the game holding the current move
+    // reopened it at once — the effect re-ran on the openGames read and put it
+    // straight back. Game 1 bore the brunt of it, since a review starts there.
+    let lastCrossedGame = null;
+
     // Keep the transcript following along while reviewing this match in MATCH
     // mode: crossing into a collapsed game reopens it (games are only ever
     // added here, never closed, so a review pass just accumulates the games
     // actually visited).
     $effect(() => {
         const ctx = $matchContextStore;
-        if (!ctx.isMatchMode || !detailMatch || ctx.matchID !== detailMatch.id) return;
-        const move = detailMovePositions[ctx.currentIndex];
-        if (move && !openGames.has(move.game_number)) {
-            setGameOpen(move.game_number, true);
+        if (!ctx.isMatchMode || !detailMatch || ctx.matchID !== detailMatch.id) {
+            lastCrossedGame = null;
+            return;
         }
+        const move = detailMovePositions[ctx.currentIndex];
+        if (!move) return;
+        if (move.game_number === untrack(() => lastCrossedGame)) return; // still in the same game: leave the user's fold alone
+        lastCrossedGame = move.game_number;
+        untrack(() => {
+            if (!openGames.has(move.game_number)) setGameOpen(move.game_number, true);
+        });
     });
 
     async function navigateToMove(moveIndex) {
