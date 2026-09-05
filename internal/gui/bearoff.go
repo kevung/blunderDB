@@ -69,7 +69,10 @@ type BearoffFile struct {
 // memory while it is made, how long it should take here, and whether this
 // machine can do it at all.
 type BearoffCandidate struct {
-	Domain    string `json:"domain"`
+	Domain string `json:"domain"`
+	// Kind is "two-sided" or "one-sided": the first widens the exact cube
+	// verdict, the second how far from home the EPC can answer.
+	Kind      string `json:"kind"`
 	Points    int    `json:"points"`
 	Checkers  int    `json:"checkers"`
 	Size      int64  `json:"size"`
@@ -279,6 +282,7 @@ func (a *App) GenerateBearoffTable(kind string, points, checkers, cores int) err
 	d := bearoffgen.Domain{Kind: bearoffgen.TwoSidedKind, Points: points, Checkers: checkers}
 	if kind == "one-sided" {
 		d = bearoffgen.Domain{Kind: bearoffgen.OneSidedKind, Points: points, Checkers: 15}
+		cores = 1 // sequential by construction
 	}
 
 	bearoffMu.Lock()
@@ -364,19 +368,30 @@ func (a *App) BearoffPlan(rate float64, cores int) BearoffPlan {
 		})
 	}
 
-	for _, d := range bearoffgen.Candidates() {
+	domains := append(bearoffgen.Candidates(), bearoffgen.OneSidedCandidates()...)
+	for _, d := range domains {
+		// The one-sided sweep is strictly sequential, so its estimate must not
+		// pretend the core count helps.
+		w := workers
+		kind := "two-sided"
+		if d.Kind == bearoffgen.OneSidedKind {
+			w, kind = 1, "one-sided"
+		}
 		c := BearoffCandidate{
 			Domain:    d.String(),
+			Kind:      kind,
 			Points:    d.Points,
 			Checkers:  d.Checkers,
 			Size:      d.Size(),
 			RAMNeeded: d.RAMNeeded(),
-			Seconds:   d.EstimateDuration(rate, workers).Seconds(),
+			Seconds:   d.EstimateDuration(rate, w).Seconds(),
 			Fits:      true,
 		}
 		if verdict, got, err := bearoffgen.Verify(filepath.Join(dir, d.FileName())); err == nil && got == d {
 			c.Present, c.Verdict = true, verdict.String()
 		}
+		// Only the two-sided sweep checkpoints; asking for a one-sided one is
+		// harmless and always answers "none".
 		if done, total, err := bearoffgen.CheckpointProgress(dir, d); err == nil && total > 0 {
 			c.Interrupted = true
 			c.Percent = 100 * float64(done) / float64(total)

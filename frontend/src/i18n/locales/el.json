@@ -75,6 +75,11 @@
         "bearoffCores": "Πυρήνες",
         "bearoffCoresDefault": "Προεπιλογή ({n})",
         "bearoffCost": "{size} στον δίσκο, {ram} μνήμης, περίπου {time} σε {cores} πυρήνες.",
+        "bearoffTwoSided": "Ακριβής ετυμηγορία κύβου (αμφίπλευρη)",
+        "bearoffOneSided": "EPC εκτός του σπιτιού (μονόπλευρη)",
+        "bearoffCostSequential": "{size} στον δίσκο, {ram} μνήμης, περίπου {time} σε έναν πυρήνα.",
+        "bearoffPurposeTwoSided": "Διευρύνει την ακριβή ετυμηγορία κύβου.",
+        "bearoffPurposeOneSided": "Δίνει το EPC όταν ένα πούλι είναι εκτός του σπιτιού.",
         "bearoffTooBig": "Αυτό το μηχάνημα δεν μπορεί να τον υπολογίσει: θα χρειαζόταν {ram} μνήμης, απομένουν {available}.",
         "bearoffEstimateUnmeasured": "(εκτίμηση· ο πραγματικός χρόνος μετριέται στην πρώτη εκτέλεση)",
         "bearoffGenerate": "Υπολογισμός",
@@ -772,7 +777,8 @@
             "gammon": "Γκαμόν (%)",
             "backgammon": "Μπακγκαμόν (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC από τον πίνακα {domain}: ένα πούλι είναι εκτός του σπιτιού."
     },
     "eval": {
         "pending": "Η αξιολόγηση θα εμφανιστεί εδώ.",

@@ -75,6 +75,11 @@
         "bearoffCores": "Core",
         "bearoffCoresDefault": "Predefinito ({n})",
         "bearoffCost": "{size} su disco, {ram} di memoria, circa {time} su {cores} core.",
+        "bearoffTwoSided": "Verdetto del cubo esatto (due lati)",
+        "bearoffOneSided": "EPC fuori dalla casa (un lato)",
+        "bearoffCostSequential": "{size} su disco, {ram} di memoria, circa {time} su un core.",
+        "bearoffPurposeTwoSided": "Amplia il verdetto del cubo esatto.",
+        "bearoffPurposeOneSided": "Dà l'EPC quando una pedina è fuori dalla casa.",
         "bearoffTooBig": "Questa macchina non può calcolarla: servirebbero {ram} di memoria, ne restano {available}.",
         "bearoffEstimateUnmeasured": "(stima; il tempo reale è misurato alla prima passata)",
         "bearoffGenerate": "Calcola",
@@ -772,7 +777,8 @@
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC letto dalla tabella {domain}: una pedina è fuori dalla casa."
     },
     "eval": {
         "pending": "La valutazione apparirà qui.",

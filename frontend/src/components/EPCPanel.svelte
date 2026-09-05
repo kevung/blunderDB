@@ -521,6 +521,8 @@
                         top={facts.top}
                         bottomEPC={data.bottomEPC}
                         topEPC={data.topEPC}
+                        bottomPoints={data.bottomPoints}
+                        topPoints={data.topPoints}
                         {maskedBottom}
                         {maskedTop}
                         onRevealBottom={() => reveal('bottom')}

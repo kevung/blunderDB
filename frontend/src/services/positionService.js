@@ -691,11 +691,18 @@ export async function saveCurrentPosition() {
 export async function updateEPC(position) {
     try {
         // Typed contract from engine/race (ADR-0009):
-        // { bottom: {all_in_home, checker_count, epc?}, top: {…}, race?: {…} }.
+        // { bottom: {all_in_home, checker_count, farthest, points, epc?},
+        //   top: {…}, race?: {…} }.
         const result = await ComputeEPCFromPosition(position);
         const bottomEPC = result?.bottom?.epc || null;
         const topEPC = result?.top?.epc || null;
         const race = result?.race || null;
+        // The width of the one-sided table each side was answered from
+        // (ADR-0027 §9). It is only worth showing when it is not the ordinary
+        // six: a side answered from OS-08 has a chequer outside its home
+        // board, and the reader would otherwise assume it could not have.
+        const bottomPoints = result?.bottom?.points ?? 0;
+        const topPoints = result?.top?.points ?? 0;
         // Any recomputation re-masks the challenge overlays: this runs on the
         // same signal as the data itself, so keyboard edits re-mask too.
         resetEpcReveal();
@@ -703,6 +710,8 @@ export async function updateEPC(position) {
             epcDataStore.set({
                 bottomEPC,
                 topEPC,
+                bottomPoints,
+                topPoints,
                 race,
                 error: null
             });
@@ -715,12 +724,12 @@ export async function updateEPC(position) {
             // ordinary case for the Eval panel, which evaluates any position:
             // the race block simply stays hidden. Announcing "EPC: N/A" in the
             // status bar was noise on the majority of positions.
-            epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });
+            epcDataStore.set({ bottomEPC: null, topEPC: null, bottomPoints: 0, topPoints: 0, race: null, error: null });
             statusBarTextStore.set('');
         }
     } catch (error) {
         logger.error('Error computing EPC:', error);
-        epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: 'Error computing EPC' });
+        epcDataStore.set({ bottomEPC: null, topEPC: null, bottomPoints: 0, topPoints: 0, race: null, error: 'Error computing EPC' });
         statusBarTextStore.set(tMsg('commands.epcErrorComputing'));
     }
 }

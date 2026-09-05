@@ -75,6 +75,11 @@
         "bearoffCores": "コア数",
         "bearoffCoresDefault": "既定 ({n})",
         "bearoffCost": "ディスク {size}、メモリ {ram}、{cores} コアで約 {time}。",
+        "bearoffTwoSided": "厳密なキューブ判定（両面）",
+        "bearoffOneSided": "内奥の外の EPC（片面）",
+        "bearoffCostSequential": "ディスク {size}、メモリ {ram}、1 コアで約 {time}。",
+        "bearoffPurposeTwoSided": "厳密なキューブ判定の範囲を広げます。",
+        "bearoffPurposeOneSided": "駒が内奥の外にあるときも EPC を出します。",
         "bearoffTooBig": "この計算機では作れません。メモリが {ram} 必要ですが、残りは {available} です。",
         "bearoffEstimateUnmeasured": "(推定値。実測値は初回の生成で求めます)",
         "bearoffGenerate": "計算",
@@ -772,7 +777,8 @@
             "gammon": "ギャモン (%)",
             "backgammon": "バックギャモン (%)",
             "cubelessEquity": "キューブレス"
-        }
+        },
+        "raceDomainTooltip": "{domain} の表から求めた EPC。駒が内奥の外にあります。"
     },
     "eval": {
         "pending": "評価はここに表示されます。",

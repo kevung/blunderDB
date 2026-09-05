@@ -75,6 +75,11 @@
         "bearoffCores": "Cores",
         "bearoffCoresDefault": "Default ({n})",
         "bearoffCost": "{size} on disk, {ram} of memory, about {time} on {cores} cores.",
+        "bearoffTwoSided": "Exact cube (two-sided)",
+        "bearoffOneSided": "EPC beyond the home board (one-sided)",
+        "bearoffCostSequential": "{size} on disk, {ram} of memory, about {time} on one core.",
+        "bearoffPurposeTwoSided": "Widens the exact cube verdict.",
+        "bearoffPurposeOneSided": "Gives the EPC when a chequer is outside the home board.",
         "bearoffTooBig": "This machine cannot compute it: it would need {ram} of memory, {available} are left.",
         "bearoffEstimateUnmeasured": "(estimate; the real time is measured on the first run)",
         "bearoffGenerate": "Compute",
@@ -772,7 +777,8 @@
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC read from the {domain} table: a chequer is outside the home board."
     },
     "eval": {
         "pending": "Evaluation will appear here.",

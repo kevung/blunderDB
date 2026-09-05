@@ -182,23 +182,34 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 	if plan.RateMeasured {
 		t.Error("no rate was given, so none is measured")
 	}
-	if len(plan.Candidates) != len(bearoffgen.Candidates()) {
-		t.Fatalf("%d candidates, want %d", len(plan.Candidates), len(bearoffgen.Candidates()))
+	want := len(bearoffgen.Candidates()) + len(bearoffgen.OneSidedCandidates())
+	if len(plan.Candidates) != want {
+		t.Fatalf("%d candidates, want %d", len(plan.Candidates), want)
 	}
 
-	var lastSize int64
-	var lastSeconds float64
+	// Each axis is priced and ordered on its own: a one-sided table widens how
+	// far from home the EPC answers, a two-sided one widens the exact cube
+	// verdict, and their sizes have no reason to interleave.
+	last := map[string]struct {
+		size    int64
+		seconds float64
+	}{}
 	for _, c := range plan.Candidates {
-		if c.Size <= lastSize {
-			t.Errorf("%s: size %d does not exceed the previous domain's", c.Domain, c.Size)
+		if c.Kind != "two-sided" && c.Kind != "one-sided" {
+			t.Errorf("%s: Kind = %q", c.Domain, c.Kind)
 		}
-		if c.Seconds <= lastSeconds {
-			t.Errorf("%s: estimate %g s does not exceed the previous domain's", c.Domain, c.Seconds)
+		prev := last[c.Kind]
+		if c.Size <= prev.size {
+			t.Errorf("%s: size %d does not exceed the previous %s domain's", c.Domain, c.Size, c.Kind)
+		}
+		if c.Seconds <= prev.seconds {
+			t.Errorf("%s: estimate %g s does not exceed the previous %s domain's", c.Domain, c.Seconds, c.Kind)
 		}
 		if !c.Fits && c.Reason == "" {
 			t.Errorf("%s does not fit but says nothing about why", c.Domain)
 		}
-		lastSize, lastSeconds = c.Size, c.Seconds
+		prev.size, prev.seconds = c.Size, c.Seconds
+		last[c.Kind] = prev
 	}
 
 	// TS-06-06 is on disk here, and it is the one the fixture verifies.
@@ -215,11 +226,11 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 		t.Error("TS-06-06 is not among the candidates")
 	}
 
-	// The widest domain is 22 GB of table: no machine this test runs on has
-	// that available, so it must be greyed rather than offered.
-	last := plan.Candidates[len(plan.Candidates)-1]
-	if plan.RAMAvailable > 0 && last.Fits {
-		t.Errorf("%s (%d bytes of RAM) is offered on a machine with %d available", last.Domain, last.RAMNeeded, plan.RAMAvailable)
+	// The widest two-sided domain is 22 GB of table: no machine this test runs
+	// on has that available, so it must be greyed rather than offered.
+	widest := plan.Candidates[len(bearoffgen.Candidates())-1]
+	if plan.RAMAvailable > 0 && widest.Fits {
+		t.Errorf("%s (%d bytes of RAM) is offered on a machine with %d available", widest.Domain, widest.RAMNeeded, plan.RAMAvailable)
 	}
 
 	// The files block lists the two tables, and nothing else in the directory.

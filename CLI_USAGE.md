@@ -1546,7 +1546,7 @@ Options:
   -data-dir string
     	Where to look (default: the application's data directory)
   -ts string
-    	Domain to delete, as 6x9; 'os' for the one-sided table (required)
+    	Domain to delete, as 6x9, or os8 for a one-sided table (required)
 
 Examples:
   blunderdb bearoff delete --ts 6x11
@@ -1570,14 +1570,17 @@ Options:
     	Cores to use (default: every core but one)
   -data-dir string
     	Where to write it (default: the application's data directory)
+  -os int
+    	One-sided domain to generate, as a point count: 6 … 12
   -quiet
     	No progress line
   -ts string
-    	Domain to generate, as 6x9; 'os' for the one-sided table (required)
+    	Two-sided domain to generate, as 6x9
 
 Examples:
   blunderdb bearoff generate --ts 6x9
   blunderdb bearoff generate --ts 6x11 --cores 4 --data-dir /srv/bearoff
+  blunderdb bearoff generate --os 8       # the EPC beyond the home board
 ```
 
 ### `blunderdb bearoff list`

@@ -86,12 +86,29 @@ func (cli *CLI) printBearoffUsage() {
 	fmt.Println("Run 'blunderdb bearoff <sub-command> --help' for its options.")
 }
 
+// parseOneSided turns a point count into a one-sided domain — the table the
+// EPC reads, whose width is how far from home a chequer may stand and still be
+// answered for (ADR-0027 §9).
+func parseOneSided(points int) (bearoffgen.Domain, error) {
+	if points < 6 || points > 12 {
+		return bearoffgen.Domain{}, fmt.Errorf("bad one-sided domain %d: the point count runs from 6 to 12", points)
+	}
+	return bearoffgen.Domain{Kind: bearoffgen.OneSidedKind, Points: points, Checkers: 15}, nil
+}
+
 // parseDomain turns "6x9" — the notation makebearoff uses — into a domain.
-// "os" and "os6" name the one-sided table the EPC reads.
+// "os" and "os8" name the one-sided table the EPC reads.
 func parseDomain(spec string) (bearoffgen.Domain, error) {
 	s := strings.ToLower(strings.TrimSpace(spec))
-	if s == "os" || s == "os6" || s == "one-sided" {
+	if s == "os" || s == "one-sided" {
 		return bearoffgen.Domain{Kind: bearoffgen.OneSidedKind, Points: 6, Checkers: 15}, nil
+	}
+	if rest, ok := strings.CutPrefix(s, "os"); ok {
+		p, err := strconv.Atoi(rest)
+		if err != nil {
+			return bearoffgen.Domain{}, fmt.Errorf("bad domain %q: %w", spec, err)
+		}
+		return parseOneSided(p)
 	}
 	points, checkers, ok := strings.Cut(s, "x")
 	if !ok {
@@ -147,7 +164,8 @@ func humanDuration(d time.Duration) string {
 
 func (cli *CLI) runBearoffGenerate(args []string) error {
 	fs := flag.NewFlagSet("bearoff generate", flag.ContinueOnError)
-	ts := fs.String("ts", "", "Domain to generate, as 6x9; 'os' for the one-sided table (required)")
+	ts := fs.String("ts", "", "Two-sided domain to generate, as 6x9")
+	osPoints := fs.Int("os", 0, "One-sided domain to generate, as a point count: 6 … 12")
 	dataDir := fs.String("data-dir", "", "Where to write it (default: the application's data directory)")
 	cores := fs.Int("cores", 0, "Cores to use (default: every core but one)")
 	quiet := fs.Bool("quiet", false, "No progress line")
@@ -168,15 +186,22 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb bearoff generate --ts 6x9")
 		fmt.Println("  blunderdb bearoff generate --ts 6x11 --cores 4 --data-dir /srv/bearoff")
+		fmt.Println("  blunderdb bearoff generate --os 8       # the EPC beyond the home board")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
-	if *ts == "" {
+	if (*ts == "") == (*osPoints == 0) {
 		fs.Usage()
-		return fmt.Errorf("missing required flag: --ts")
+		return fmt.Errorf("give exactly one of --ts and --os")
 	}
-	domain, err := parseDomain(*ts)
+	var domain bearoffgen.Domain
+	var err error
+	if *osPoints != 0 {
+		domain, err = parseOneSided(*osPoints)
+	} else {
+		domain, err = parseDomain(*ts)
+	}
 	if err != nil {
 		return err
 	}
@@ -197,12 +222,15 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 	if done, total, err := bearoffgen.CheckpointProgress(dir, domain); err == nil && total > 0 {
 		resumed = fmt.Sprintf(", resuming at %.0f%%", 100*float64(done)/float64(total))
 	}
-	fmt.Printf("Generating %s in %s on %d core(s)%s\n", domain, dir, workers, resumed)
-	if domain.Kind == bearoffgen.TwoSidedKind {
-		fmt.Printf("  %s on disk, %s of memory, about %s\n",
-			humanBytes(domain.Size()), humanBytes(domain.RAMNeeded()),
-			humanDuration(domain.EstimateDuration(0, workers)))
+	if domain.Kind == bearoffgen.OneSidedKind {
+		// The one-sided sweep reads only positions below the one it is on, so
+		// there is nothing to spread across cores.
+		workers = 1
 	}
+	fmt.Printf("Generating %s in %s on %d core(s)%s\n", domain, dir, workers, resumed)
+	fmt.Printf("  %s on disk, %s of memory, about %s\n",
+		humanBytes(domain.Size()), humanBytes(domain.RAMNeeded()),
+		humanDuration(domain.EstimateDuration(0, workers)))
 
 	// Ctrl-C pauses. The signal is caught rather than left to kill the
 	// process: half an hour of arithmetic is worth writing down, and the run
@@ -300,7 +328,7 @@ func (cli *CLI) runBearoffList(args []string) error {
 		}
 	}
 
-	domains := append(bearoffgen.Candidates(), bearoffgen.Domain{Kind: bearoffgen.OneSidedKind, Points: 6, Checkers: 15})
+	domains := append(bearoffgen.Candidates(), bearoffgen.OneSidedCandidates()...)
 	rows := make([]bearoffListEntry, 0, len(domains))
 	for _, d := range domains {
 		row := bearoffListEntry{
@@ -341,12 +369,6 @@ func (cli *CLI) runBearoffList(args []string) error {
 			state = fmt.Sprintf("paused at %.0f%%", r.Percent)
 		}
 		size, ram, est := humanBytes(r.Size), humanBytes(r.RAMNeeded), humanDuration(time.Duration(r.Seconds*float64(time.Second)))
-		if r.Size == 0 {
-			size = "—"
-		}
-		if r.RAMNeeded == 0 {
-			ram = "—"
-		}
 		fmt.Printf("%-10s %-18s %10s %10s %10s  %s\n", r.Domain, r.File, size, ram, est, state)
 	}
 	return nil
@@ -415,7 +437,7 @@ func (cli *CLI) runBearoffVerify(args []string) error {
 
 func (cli *CLI) runBearoffDelete(args []string) error {
 	fs := flag.NewFlagSet("bearoff delete", flag.ContinueOnError)
-	ts := fs.String("ts", "", "Domain to delete, as 6x9; 'os' for the one-sided table (required)")
+	ts := fs.String("ts", "", "Domain to delete, as 6x9, or os8 for a one-sided table (required)")
 	dataDir := fs.String("data-dir", "", "Where to look (default: the application's data directory)")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb bearoff delete --ts <domain> [options]")

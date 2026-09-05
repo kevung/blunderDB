@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 07:16+0200\n"
+"POT-Creation-Date: 2026-09-05 08:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -311,9 +311,9 @@ msgstr "Создаёт новый файл базы данных с необяз
 
 #: ../../source/cli.rst:84 ../../source/cli.rst:111 ../../source/cli.rst:178
 #: ../../source/cli.rst:256 ../../source/cli.rst:282 ../../source/cli.rst:494
-#: ../../source/cli.rst:645 ../../source/cli.rst:750 ../../source/cli.rst:804
-#: ../../source/cli.rst:828 ../../source/cli.rst:860 ../../source/cli.rst:941
-#: ../../source/cli.rst:977 ../../source/cli.rst:1010 ../../source/cli.rst:1042
+#: ../../source/cli.rst:645 ../../source/cli.rst:762 ../../source/cli.rst:816
+#: ../../source/cli.rst:840 ../../source/cli.rst:872 ../../source/cli.rst:953
+#: ../../source/cli.rst:989 ../../source/cli.rst:1022 ../../source/cli.rst:1054
 msgid "**Options:**"
 msgstr "**Параметры:**"
 
@@ -349,8 +349,8 @@ msgstr ""
 "Расширение ``.db`` добавляется автоматически, если оно отсутствует. "
 "Родительские каталоги создаются при необходимости."
 
-#: ../../source/cli.rst:96 ../../source/cli.rst:779 ../../source/cli.rst:955
-#: ../../source/cli.rst:993 ../../source/cli.rst:1054
+#: ../../source/cli.rst:96 ../../source/cli.rst:791 ../../source/cli.rst:967
+#: ../../source/cli.rst:1005 ../../source/cli.rst:1066
 msgid "**Exemple:**"
 msgstr "**Пример:**"
 
@@ -583,9 +583,9 @@ msgstr ""
 
 #: ../../source/cli.rst:206 ../../source/cli.rst:376 ../../source/cli.rst:457
 #: ../../source/cli.rst:501 ../../source/cli.rst:549 ../../source/cli.rst:615
-#: ../../source/cli.rst:660 ../../source/cli.rst:717 ../../source/cli.rst:809
-#: ../../source/cli.rst:840 ../../source/cli.rst:915 ../../source/cli.rst:1019
-#: ../../source/cli.rst:1083
+#: ../../source/cli.rst:660 ../../source/cli.rst:726 ../../source/cli.rst:821
+#: ../../source/cli.rst:852 ../../source/cli.rst:927 ../../source/cli.rst:1031
+#: ../../source/cli.rst:1095
 msgid "**Exemples:**"
 msgstr "**Примеры:**"
 
@@ -725,9 +725,9 @@ msgstr "Поиск позиций в базе данных по комбинир
 msgid "**Options principales:**"
 msgstr "**Основные параметры:**"
 
-#: ../../source/cli.rst:306 ../../source/cli.rst:496 ../../source/cli.rst:752
-#: ../../source/cli.rst:806 ../../source/cli.rst:830 ../../source/cli.rst:862
-#: ../../source/cli.rst:943 ../../source/cli.rst:979 ../../source/cli.rst:1012
+#: ../../source/cli.rst:306 ../../source/cli.rst:496 ../../source/cli.rst:764
+#: ../../source/cli.rst:818 ../../source/cli.rst:842 ../../source/cli.rst:874
+#: ../../source/cli.rst:955 ../../source/cli.rst:991 ../../source/cli.rst:1024
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — База данных (обязательно)."
 
@@ -1006,7 +1006,7 @@ msgstr ""
 "``--top-blunders`` — Количество перечисляемых худших ошибок (по "
 "умолчанию: 10)."
 
-#: ../../source/cli.rst:435 ../../source/cli.rst:647 ../../source/cli.rst:807
+#: ../../source/cli.rst:435 ../../source/cli.rst:647 ../../source/cli.rst:819
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 "``--format`` — Формат вывода: ``text`` или ``json`` (по умолчанию: "
@@ -1352,14 +1352,27 @@ msgstr ""
 #: ../../source/cli.rst:686
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
-"two-sided à neuf pions par joueur, ``os`` pour la table une face que lit "
-"l'EPC."
+"two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
+"points (``os`` seul vaut ``os6``)."
 msgstr ""
 "Область записывается как в ``makebearoff``: ``6x9`` для двусторонней "
-"таблицы с девятью шашками у игрока, ``os`` для односторонней таблицы, "
-"которую читает EPC."
+"таблицы с девятью шашками у игрока, ``os8`` для односторонней таблицы на "
+"восемь пунктов (одно ``os`` означает ``os6``)."
 
 #: ../../source/cli.rst:690
+msgid ""
+"Les deux familles ne répondent pas à la même question. Une table **deux "
+"faces** élargit le domaine où la probabilité de gain et le verdict de "
+"videau sont exacts ; une table **une face** élargit la distance à "
+"laquelle un pion peut se trouver sans que l'EPC se taise (jusqu'à dix "
+"points)."
+msgstr ""
+"Два семейства отвечают на разные вопросы. **Двусторонняя** таблица "
+"расширяет область, где вероятность выигрыша и вердикт куба точны; "
+"**односторонняя** расширяет расстояние, на котором может стоять шашка без "
+"того, чтобы EPC умолк (до десяти пунктов)."
+
+#: ../../source/cli.rst:695
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -1367,50 +1380,61 @@ msgstr ""
 "**generate.** Называет размер, память и оценку времени до начала, затем "
 "показывает процент и измеренное оставшееся время."
 
-#: ../../source/cli.rst:693
-msgid "``--ts`` — Domaine à calculer, par exemple ``6x9`` (requis)."
-msgstr "``--ts`` — Вычисляемая область, например ``6x9`` (обязательно)."
+#: ../../source/cli.rst:698
+msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
+msgstr "``--ts`` — Вычисляемая двусторонняя область, например ``6x9``."
 
-#: ../../source/cli.rst:694
+#: ../../source/cli.rst:699
+msgid ""
+"``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
+"et un seul des deux est requis."
+msgstr ""
+"``--os`` — Вычисляемая односторонняя область, числом пунктов: от 6 до 12. "
+"Требуется ровно одно из двух."
+
+#: ../../source/cli.rst:701
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Используемые ядра (по умолчанию: все, кроме одного)."
 
-#: ../../source/cli.rst:695
+#: ../../source/cli.rst:702
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
-msgstr ""
-"``--data-dir`` — Куда писать (по умолчанию: каталог данных приложения)."
+msgstr "``--data-dir`` — Куда писать (по умолчанию: каталог данных приложения)."
 
-#: ../../source/cli.rst:696
+#: ../../source/cli.rst:703
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Без строки прогресса."
 
-#: ../../source/cli.rst:698
+#: ../../source/cli.rst:705
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
 "arrêtée, au lieu de tout recalculer. Une demi-heure d'arithmétique mérite"
-" d'être écrite. ``bearoff delete`` jette une reprise en attente."
+" d'être écrite. ``bearoff delete`` jette une reprise en attente. Seul le "
+"balayage deux faces se met en pause ; le balayage une face est séquentiel"
+" et ``--cores`` ne lui sert à rien."
 msgstr ""
 "**CTRL-C ставит на паузу.** Сигнал перехватывается: состояние записывается "
 "рядом с таблицей, и та же команда, запущенная снова, продолжает с места "
 "остановки, а не пересчитывает всё. Полчаса арифметики стоит записать. "
-"``bearoff delete`` выбрасывает отложенное продолжение."
+"``bearoff delete`` выбрасывает отложенное продолжение. На паузу встаёт "
+"только двусторонний проход; односторонний последователен, и ``--cores`` "
+"ему ничего не даёт."
 
-#: ../../source/cli.rst:703
+#: ../../source/cli.rst:712
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
 "lesquels ont un calcul en pause. ``--format json`` pour un script, "
 "``--cores`` pour changer l'hypothèse de l'estimation."
 msgstr ""
-"**list.** Оценивает каждую область — размер, память, время на этой машине "
-"— и говорит, какие уже есть, с их вердиктом, и у каких есть "
-"приостановленный проход. ``--format json`` для сценария, ``--cores`` чтобы "
-"изменить допущение оценки."
+"**list.** Оценивает каждую область — размер, память, время на этой машине"
+" — и говорит, какие уже есть, с их вердиктом, и у каких есть "
+"приостановленный проход. ``--format json`` для сценария, ``--cores`` "
+"чтобы изменить допущение оценки."
 
-#: ../../source/cli.rst:708
+#: ../../source/cli.rst:717
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1418,11 +1442,11 @@ msgid ""
 " le dernier cas : cette commande est faite pour être mise dans un script."
 msgstr ""
 "**verify.** Отвечает ``verified`` (те же байты, что у эталона), "
-"``unverified`` (корректная, но для этой области отпечаток не записан) или "
-"``corrupt`` (файл противоречит сам себе). В последнем случае завершается с "
-"ошибкой: эта команда сделана для сценария."
+"``unverified`` (корректная, но для этой области отпечаток не записан) или"
+" ``corrupt`` (файл противоречит сам себе). В последнем случае завершается"
+" с ошибкой: эта команда сделана для сценария."
 
-#: ../../source/cli.rst:713
+#: ../../source/cli.rst:722
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1432,11 +1456,11 @@ msgstr ""
 "прохода. Область по умолчанию пересчитывается при следующем запуске "
 "приложения; более широкая — нет."
 
-#: ../../source/cli.rst:734
+#: ../../source/cli.rst:746
 msgid "analyze — Rattrapage gammonNet"
 msgstr "analyze — Догоняющий анализ gammonNet"
 
-#: ../../source/cli.rst:736
+#: ../../source/cli.rst:748
 msgid ""
 "Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
 "rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
@@ -1464,17 +1488,17 @@ msgstr ""
 " три разные формы одной операции, а не три разные логики (см. "
 ":ref:`headless`)."
 
-#: ../../source/cli.rst:753
+#: ../../source/cli.rst:765
 msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
 msgstr "``--ply`` — Глубина поиска (по умолчанию: 2, канонический параметр)."
 
-#: ../../source/cli.rst:754
+#: ../../source/cli.rst:766
 msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
 msgstr ""
 "``--prune-k`` — Ширина отсечения (по умолчанию: 12, канонический "
 "параметр)."
 
-#: ../../source/cli.rst:755
+#: ../../source/cli.rst:767
 msgid ""
 "``--candidates`` — Nombre de coups candidats conservés par décision de "
 "déplacement (défaut: 10)."
@@ -1482,7 +1506,7 @@ msgstr ""
 "``--candidates`` — Число кандидатных ходов, сохраняемых для каждого "
 "решения о ходе (по умолчанию: 10)."
 
-#: ../../source/cli.rst:757
+#: ../../source/cli.rst:769
 msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
@@ -1490,7 +1514,7 @@ msgstr ""
 "``--jobs`` — Число позиций, анализируемых параллельно (по умолчанию: "
 "число ядер машины)."
 
-#: ../../source/cli.rst:759
+#: ../../source/cli.rst:771
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
 "ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
@@ -1498,7 +1522,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию, с индикацией хода "
 "выполнения) или ``json`` (единый итоговый документ, выводимый в конце)."
 
-#: ../../source/cli.rst:762
+#: ../../source/cli.rst:774
 msgid ""
 "**Le parallélisme (``--jobs``).** Les positions d'un lot sont "
 "indépendantes — aucune recherche n'informe la suivante — donc elles sont "
@@ -1517,7 +1541,7 @@ msgstr ""
 "Отмена не затрагивается: Ctrl-C останавливает пакет перед любой новой "
 "позицией, и всё уже вычисленное записывается."
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:782
 msgid ""
 "**La règle du trou** (`ADR-0013 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
@@ -1542,39 +1566,39 @@ msgstr ""
 "работу ровно с того места, где остановился предыдущий, — никакого журнала"
 " не нужно, ведь «позиции без анализа» пересчитываются при каждом запуске."
 
-#: ../../source/cli.rst:796
+#: ../../source/cli.rst:808
 msgid "info — Métadonnées de la base"
 msgstr "info — Метаданные базы данных"
 
-#: ../../source/cli.rst:798
+#: ../../source/cli.rst:810
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Отображает метаданные и статистику базы данных."
 
-#: ../../source/cli.rst:820
+#: ../../source/cli.rst:832
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Изменить метаданные"
 
-#: ../../source/cli.rst:822
+#: ../../source/cli.rst:834
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Изменяет имя пользователя или описание базы данных."
 
-#: ../../source/cli.rst:831
+#: ../../source/cli.rst:843
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Новое имя пользователя."
 
-#: ../../source/cli.rst:832
+#: ../../source/cli.rst:844
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Новое описание."
 
-#: ../../source/cli.rst:833
+#: ../../source/cli.rst:845
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Очистить имя пользователя."
 
-#: ../../source/cli.rst:834
+#: ../../source/cli.rst:846
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Очистить описание."
 
-#: ../../source/cli.rst:835
+#: ../../source/cli.rst:847
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1583,15 +1607,15 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:838
+#: ../../source/cli.rst:850
 msgid "Au moins une option de modification est requise."
 msgstr "Требуется хотя бы одна опция изменения."
 
-#: ../../source/cli.rst:851
+#: ../../source/cli.rst:863
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Проверка целостности"
 
-#: ../../source/cli.rst:853
+#: ../../source/cli.rst:865
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -1599,15 +1623,15 @@ msgstr ""
 "Проверяет целостность базы данных и, при необходимости, сравнивает матч с"
 " исходным файлом."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:875
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — Идентификатор матча для проверки."
 
-#: ../../source/cli.rst:864
+#: ../../source/cli.rst:876
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — Файл MAT для сравнения (используется с ``--match``)."
 
-#: ../../source/cli.rst:865
+#: ../../source/cli.rst:877
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(statistiques, orphelins, écart de schéma, et la vérification du match le"
@@ -1617,7 +1641,7 @@ msgstr ""
 "(статистика, потерянные строки, отклонение схемы и проверка матча, если "
 "она выполнялась)."
 
-#: ../../source/cli.rst:869
+#: ../../source/cli.rst:881
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -1627,7 +1651,7 @@ msgstr ""
 "``--match`` она проверяет данные матча и может сравнить их с оригинальным"
 " исходным файлом."
 
-#: ../../source/cli.rst:873
+#: ../../source/cli.rst:885
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -1650,7 +1674,7 @@ msgstr ""
 "относятся ни к одному матчу и ни к одной колоде и лишь занимают место. "
 "Команда всё равно завершается с кодом 0."
 
-#: ../../source/cli.rst:883
+#: ../../source/cli.rst:895
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1672,7 +1696,7 @@ msgstr ""
 "отвечает ``Schema: matches the reference DDL``. Как и сироты, расхождение"
 " схемы — это наблюдение, а не сбой: код выхода остаётся 0."
 
-#: ../../source/cli.rst:893
+#: ../../source/cli.rst:905
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -1697,7 +1721,7 @@ msgstr ""
 "отвечает ``Constraints: every row satisfies the current DDL``. Ещё одна "
 "констатация: ничего не исправляется, а код возврата остаётся 0."
 
-#: ../../source/cli.rst:904
+#: ../../source/cli.rst:916
 msgid ""
 "Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
 "``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
@@ -1721,11 +1745,11 @@ msgstr ""
 " стоит посмотреть. Здоровая база отвечает ``Counters: game_count and "
 "move_count agree with the rows``."
 
-#: ../../source/cli.rst:929
+#: ../../source/cli.rst:941
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Сжатие базы данных"
 
-#: ../../source/cli.rst:931
+#: ../../source/cli.rst:943
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -1740,7 +1764,7 @@ msgstr ""
 "открытии базы оно не происходит автоматически никогда, поскольку на "
 "большой базе его стоимость непредсказуема."
 
-#: ../../source/cli.rst:944
+#: ../../source/cli.rst:956
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1749,7 +1773,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, в байтах)."
 
-#: ../../source/cli.rst:947
+#: ../../source/cli.rst:959
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -1768,11 +1792,11 @@ msgstr ""
 "запросов. Если места на диске не хватает, команда отказывается стартовать"
 " с внятным сообщением, вместо того чтобы рисковать прерванным сжатием."
 
-#: ../../source/cli.rst:967
+#: ../../source/cli.rst:979
 msgid "repair — Recalculer les colonnes d'analyse"
 msgstr "repair — Пересчитать столбцы анализа"
 
-#: ../../source/cli.rst:969
+#: ../../source/cli.rst:981
 msgid ""
 "Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse "
 "elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas"
@@ -1782,7 +1806,7 @@ msgstr ""
 "проекцией которого они только и являются. Сами анализы не трогаются: "
 "переделываются значения, которые из них были выведены."
 
-#: ../../source/cli.rst:980
+#: ../../source/cli.rst:992
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1791,7 +1815,7 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:983
+#: ../../source/cli.rst:995
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit : l'importeur XG écrit un « pas de double » de"
@@ -1806,7 +1830,7 @@ msgstr ""
 "никогда не было. Исправление чтения ничего не изменило для уже записанных"
 " строк; эта команда их переделывает."
 
-#: ../../source/cli.rst:989
+#: ../../source/cli.rst:1001
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde à la simple ouverture d'une base "
@@ -1817,29 +1841,29 @@ msgstr ""
 "столбцы анализа у всех при одном лишь открытии базы — не то, что "
 "инструмент должен делать за спиной пользователя."
 
-#: ../../source/cli.rst:1002
+#: ../../source/cli.rst:1014
 msgid "delete — Supprimer des données"
 msgstr "delete — Удалить данные"
 
-#: ../../source/cli.rst:1004
+#: ../../source/cli.rst:1016
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
 msgstr "Удаляет матч и все связанные данные (партии, ходы, анализы)."
 
-#: ../../source/cli.rst:1013
+#: ../../source/cli.rst:1025
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Тип удаления: ``match`` (обязательно)."
 
-#: ../../source/cli.rst:1014
+#: ../../source/cli.rst:1026
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — Идентификатор элемента для удаления (обязательно)."
 
-#: ../../source/cli.rst:1015
+#: ../../source/cli.rst:1027
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Удалить без запроса подтверждения."
 
-#: ../../source/cli.rst:1016
+#: ../../source/cli.rst:1028
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1848,11 +1872,11 @@ msgstr ""
 "``--format`` — Формат вывода: ``text`` (по умолчанию) или ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1030
+#: ../../source/cli.rst:1042
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Проверка демона"
 
-#: ../../source/cli.rst:1032
+#: ../../source/cli.rst:1044
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -1866,7 +1890,7 @@ msgstr ""
 "хранилище недоступно, схема устарела или по адресу никто не слушает. Файл"
 " базы данных не открывается."
 
-#: ../../source/cli.rst:1044
+#: ../../source/cli.rst:1056
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -1877,7 +1901,7 @@ msgstr ""
 "обобщённым хостом (``0.0.0.0``, ``[::]``) проверяется через петлевой "
 "интерфейс."
 
-#: ../../source/cli.rst:1047
+#: ../../source/cli.rst:1059
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -1885,7 +1909,7 @@ msgstr ""
 "``--timeout`` — Время, по истечении которого проверка прекращается (по "
 "умолчанию ``2s``)."
 
-#: ../../source/cli.rst:1049
+#: ../../source/cli.rst:1061
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -1897,7 +1921,7 @@ msgstr ""
 "``cmd/serve``, тоже её понимает. Она так же пригодна для скрипта или "
 "юнита systemd."
 
-#: ../../source/cli.rst:1063
+#: ../../source/cli.rst:1075
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -1905,11 +1929,11 @@ msgstr ""
 "При неудаче выводится причина, которую ``docker inspect`` показывает для "
 "контейнера в состоянии ``unhealthy``:"
 
-#: ../../source/cli.rst:1071
+#: ../../source/cli.rst:1083
 msgid "completion — Complétion shell"
 msgstr "completion — Автодополнение оболочки"
 
-#: ../../source/cli.rst:1073
+#: ../../source/cli.rst:1085
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -1924,7 +1948,7 @@ msgstr ""
 "(``handlers()``): новая подкоманда предлагается автодополнением сразу "
 "после подключения, и ничего не нужно поддерживать вручную."
 
-#: ../../source/cli.rst:1099
+#: ../../source/cli.rst:1111
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -1941,35 +1965,35 @@ msgstr ""
 "фиксируется в репозитории, поэтому автодополнение никогда не может "
 "разойтись с таблицей подкоманд."
 
-#: ../../source/cli.rst:1107
+#: ../../source/cli.rst:1119
 msgid "Exemples de flux de travail"
 msgstr "Примеры рабочих процессов"
 
-#: ../../source/cli.rst:1110
+#: ../../source/cli.rst:1122
 msgid "Import d'un répertoire de tournoi"
 msgstr "Импорт каталога турнира"
 
-#: ../../source/cli.rst:1124
+#: ../../source/cli.rst:1136
 msgid "Sauvegarde régulière"
 msgstr "Регулярное резервное копирование"
 
-#: ../../source/cli.rst:1132
+#: ../../source/cli.rst:1144
 msgid "Analyse des erreurs"
 msgstr "Анализ ошибок"
 
-#: ../../source/cli.rst:1143
+#: ../../source/cli.rst:1155
 msgid "Codes de retour"
 msgstr "Коды возврата"
 
-#: ../../source/cli.rst:1145
+#: ../../source/cli.rst:1157
 msgid "``0`` — Succès."
 msgstr "``0`` — Успех."
 
-#: ../../source/cli.rst:1146
+#: ../../source/cli.rst:1158
 msgid "``1`` — Erreur."
 msgstr "``1`` — Ошибка."
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1160
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Это позволяет использовать CLI в скриптах с обработкой ошибок:"
 

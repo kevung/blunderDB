@@ -78,13 +78,6 @@ func OneSidedReady() bool {
 	return globalBearoffDB != nil
 }
 
-// oneSided returns the loaded table, or nil.
-func oneSided() *BearoffDatabase {
-	bearoffMu.RLock()
-	defer bearoffMu.RUnlock()
-	return globalBearoffDB
-}
-
 // PipCounts returns the pip counts for both players from a Board.
 // pip1 is Black's pip count (player on roll when PlayerOnRoll==0),
 // pip2 is White's pip count. The pip count is purely positional and

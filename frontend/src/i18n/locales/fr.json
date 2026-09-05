@@ -75,6 +75,11 @@
         "bearoffCores": "Cœurs",
         "bearoffCoresDefault": "Par défaut ({n})",
         "bearoffCost": "{size} sur le disque, {ram} de mémoire, environ {time} sur {cores} cœurs.",
+        "bearoffTwoSided": "Videau exact (deux faces)",
+        "bearoffOneSided": "EPC hors du jan (une face)",
+        "bearoffCostSequential": "{size} sur le disque, {ram} de mémoire, environ {time} sur un cœur.",
+        "bearoffPurposeTwoSided": "Élargit le verdict de videau exact.",
+        "bearoffPurposeOneSided": "Permet l'EPC quand un pion est hors du jan.",
         "bearoffTooBig": "Cette machine ne peut pas la calculer : il faudrait {ram} de mémoire, il en reste {available}.",
         "bearoffEstimateUnmeasured": "(estimation ; le temps réel sera mesuré à la première passe)",
         "bearoffGenerate": "Calculer",
@@ -772,7 +777,8 @@
             "gammon": "Gammon (%)",
             "backgammon": "BG (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC calculé depuis la table {domain} : un pion est hors du jan."
     },
     "eval": {
         "pending": "L'évaluation apparaîtra ici.",

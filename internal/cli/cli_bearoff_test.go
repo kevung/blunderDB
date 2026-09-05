@@ -18,6 +18,8 @@ func TestParseDomain(t *testing.T) {
 		" 6x15 ":    {Kind: bearoffgen.TwoSidedKind, Points: 6, Checkers: 15},
 		"os":        {Kind: bearoffgen.OneSidedKind, Points: 6, Checkers: 15},
 		"one-sided": {Kind: bearoffgen.OneSidedKind, Points: 6, Checkers: 15},
+		"os6":       {Kind: bearoffgen.OneSidedKind, Points: 6, Checkers: 15},
+		"OS8":       {Kind: bearoffgen.OneSidedKind, Points: 8, Checkers: 15},
 	}
 	for spec, want := range ok {
 		got, err := parseDomain(spec)
@@ -32,7 +34,7 @@ func TestParseDomain(t *testing.T) {
 	// A bearoff table describes the six-point home board, and the chequer
 	// count runs from 1 to 15: everything else is a typo the user should be
 	// told about rather than a run that fails an hour later.
-	for _, bad := range []string{"", "6", "8x6", "6x0", "6x16", "6xy", "zx6"} {
+	for _, bad := range []string{"", "6", "8x6", "6x0", "6x16", "6xy", "zx6", "os5", "os13", "osx"} {
 		if _, err := parseDomain(bad); err == nil {
 			t.Errorf("parseDomain(%q) accepted a domain that does not exist", bad)
 		}
@@ -144,6 +146,41 @@ func TestCLI_BearoffGenerateAndDelete(t *testing.T) {
 	}
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		t.Error("the table survived delete")
+	}
+}
+
+// The one-sided axis: `--os p` makes the table the EPC reads beyond the home
+// board, and list prices it alongside the two-sided domains.
+func TestCLI_BearoffOneSidedAxis(t *testing.T) {
+	dir := t.TempDir()
+	captureStdout(t, func() {
+		if err := NewCLI().Run([]string{"bearoff", "generate", "--ts", "6x3", "--os", "6", "--data-dir", dir}); err == nil {
+			t.Error("both --ts and --os were accepted")
+		}
+		if err := NewCLI().Run([]string{"bearoff", "generate", "--data-dir", dir}); err == nil {
+			t.Error("neither --ts nor --os was accepted")
+		}
+		if err := NewCLI().Run([]string{"bearoff", "generate", "--os", "5", "--data-dir", dir}); err == nil {
+			t.Error("a one-sided domain below six points was accepted")
+		}
+	})
+
+	out := captureStdout(t, func() {
+		if err := NewCLI().Run([]string{"bearoff", "list", "--data-dir", dir}); err != nil {
+			t.Fatal(err)
+		}
+	})
+	for _, want := range []string{"OS-06", "OS-10", "gnubg_os10.bd"} {
+		if !strings.Contains(out, want) {
+			t.Errorf("bearoff list does not price %q:\n%s", want, out)
+		}
+	}
+	// A one-sided row must carry a size and a time like any other: a dash
+	// there would be the interface admitting it has not been asked.
+	for _, line := range strings.Split(out, "\n") {
+		if strings.HasPrefix(line, "OS-") && strings.Contains(line, " — ") {
+			t.Errorf("a one-sided row is missing a figure: %q", line)
+		}
 	}
 }
 

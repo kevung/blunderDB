@@ -40,7 +40,19 @@
     // bottomEPC/topEPC: race.EPCResult-shaped {epc, pipCount, wastage,
     // meanRolls, stdDev} | null — the race block appears only when at least
     // one is present.
-    let { bottom = null, top = null, bottomEPC = null, topEPC = null, maskedBottom = false, maskedTop = false, onRevealBottom = () => {}, onRevealTop = () => {}, showProbabilities = true } = $props();
+    let {
+        bottom = null,
+        top = null,
+        bottomEPC = null,
+        topEPC = null,
+        bottomPoints = 0,
+        topPoints = 0,
+        maskedBottom = false,
+        maskedTop = false,
+        onRevealBottom = () => {},
+        onRevealTop = () => {},
+        showProbabilities = true
+    } = $props();
 
     let showRace = $derived(!!(bottomEPC || topEPC));
     let bothShown = $derived(!maskedBottom && !maskedTop);
@@ -53,11 +65,22 @@
     let probHeaders = $derived([$t('epc.facts.gain'), $t('epc.facts.gammon'), $t('epc.facts.backgammon'), $t('epc.facts.cubelessEquity')]);
     let raceHeaders = $derived([$t('epc.epc'), $t('epc.pipCount'), $t('epc.wastage'), $t('epc.avgRolls'), $t('epc.stdDev')]);
 
+    // The one-sided table these numbers came from, shown only when it is not
+    // the ordinary six points (ADR-0027 §9). At six the label would be noise;
+    // beyond it, it is the difference between "this side is home" and "this
+    // side has a chequer on the 8-point and was answered anyway", which the
+    // reader has no other way of knowing. It goes in the race block's empty
+    // corner cell, so no column moves (ADR-0021).
+    let raceDomain = $derived.by(() => {
+        const width = Math.max(bottomPoints ?? 0, topPoints ?? 0);
+        return width > 6 ? `OS-${String(width).padStart(2, '0')}` : '';
+    });
+
     const HIDDEN = '···';
     const DASH = '—';
-    const show = (masked, v) => (masked ? HIDDEN : (v ?? DASH));
-    const pct = (x) => (x == null ? null : (100 * x).toFixed(2));
-    const eq = (x) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(3));
+    const show = (/** @type {boolean} */ masked, /** @type {any} */ v) => (masked ? HIDDEN : (v ?? DASH));
+    const pct = (/** @type {number|null|undefined} */ x) => (x == null ? null : (100 * x).toFixed(2));
+    const eq = (/** @type {number|null|undefined} */ x) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(3));
     const sd = (x, digits) => (x == null ? null : (x >= 0 ? '+' : '') + x.toFixed(digits));
 
     function delta(a, b, fmt) {
@@ -94,7 +117,7 @@
     });
 </script>
 
-{#snippet cells(row, masked)}
+{#snippet cells(/** @type {any[]} */ row, /** @type {boolean} */ masked)}
     {#each Array(dataCols) as _, i (i)}
         {#if i < row.length}
             <td class:main-value={i === 0}>{show(masked, row[i])}</td>
@@ -104,10 +127,10 @@
     {/each}
 {/snippet}
 
-{#snippet block(headers, rows)}
+{#snippet block(/** @type {any[]} */ headers, /** @type {any} */ rows, /** @type {string} */ corner = '')}
     <tbody class="facts-block">
         <tr class="head-row">
-            <th></th>
+            <th class="corner" title={corner ? $t('epc.raceDomainTooltip', { domain: corner }) : undefined}>{corner}</th>
             {#each Array(dataCols) as _, i (i)}
                 <th>{headers[i] ?? ''}</th>
             {/each}
@@ -136,7 +159,7 @@
         {@render block(probHeaders, probCells)}
     {/if}
     {#if showRace}
-        {@render block(raceHeaders, raceCells)}
+        {@render block(raceHeaders, raceCells, raceDomain)}
     {/if}
 </table>
 

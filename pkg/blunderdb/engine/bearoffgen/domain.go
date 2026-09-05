@@ -39,22 +39,48 @@ func (d Domain) FileName() string {
 }
 
 // Size is the exact byte size of a two-sided table: a 40-byte header plus four
-// int16 per pair. For a one-sided table the data section is only known after
-// generation, and Size returns 0 — ask the generator.
+// int16 per pair.
+//
+// A one-sided table is compressed — each distribution is stored as the run of
+// its non-zero entries — so its size is only known once it is made. What is
+// returned for it is the MEASURED size of the file gnubg produces, for the
+// domains that have one, and an interpolation for the rest; both are labelled
+// as estimates in the interface, which is what they are.
 func (d Domain) Size() int64 {
-	if d.Kind != TwoSidedKind {
-		return 0
+	if d.Kind == OneSidedKind {
+		return oneSidedSize[d.Points]
 	}
 	n := int64(NumPositions(d.Points, d.Checkers))
 	return 40 + n*n*planeCount*2
+}
+
+// oneSidedSize is what `makebearoff -o p` actually produced (gnubg 1.08,
+// 2026-09-05), byte for byte what this generator writes. The compression makes
+// the size a fact about the data rather than arithmetic on the domain, so it
+// is measured and recorded rather than derived.
+var oneSidedSize = map[int]int64{
+	6:  1465788,
+	7:  4934186,
+	8:  15162106,
+	9:  43558706,
+	10: 117196140,
+}
+
+// RAMNeededOneSided is what generating a one-sided table holds: the whole set
+// of distributions, 64 uint16 per position, plus the successor lists.
+func (d Domain) ramOneSided() int64 {
+	n := int64(NumPositions(d.Points, osCheckers))
+	dists := n * 64 * 2
+	reach := n * 21 * 8 * 6
+	return dists + reach
 }
 
 // RAMNeeded is what generating this domain holds in memory: the table itself
 // plus the precomputed successor lists. The caller compares it to what the
 // machine has before starting a run that would otherwise die hours in.
 func (d Domain) RAMNeeded() int64 {
-	if d.Kind != TwoSidedKind {
-		return 0
+	if d.Kind == OneSidedKind {
+		return d.ramOneSided()
 	}
 	n := int64(NumPositions(d.Points, d.Checkers))
 	table := n * n * planeCount * 2

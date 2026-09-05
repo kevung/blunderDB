@@ -75,6 +75,11 @@
         "bearoffCores": "Ядра",
         "bearoffCoresDefault": "По умолчанию ({n})",
         "bearoffCost": "{size} на диске, {ram} памяти, около {time} на {cores} ядрах.",
+        "bearoffTwoSided": "Точный вердикт куба (двусторонняя)",
+        "bearoffOneSided": "EPC вне дома (односторонняя)",
+        "bearoffCostSequential": "{size} на диске, {ram} памяти, около {time} на одном ядре.",
+        "bearoffPurposeTwoSided": "Расширяет точный вердикт куба.",
+        "bearoffPurposeOneSided": "Даёт EPC, когда шашка вне дома.",
         "bearoffTooBig": "Эта машина не может её вычислить: нужно {ram} памяти, доступно {available}.",
         "bearoffEstimateUnmeasured": "(оценка; настоящее время измеряется при первом проходе)",
         "bearoffGenerate": "Вычислить",
@@ -772,7 +777,8 @@
             "gammon": "Гаммон (%)",
             "backgammon": "Бэкгаммон (%)",
             "cubelessEquity": "Без куба"
-        }
+        },
+        "raceDomainTooltip": "EPC из таблицы {domain}: шашка вне дома."
     },
     "eval": {
         "pending": "Оценка появится здесь.",

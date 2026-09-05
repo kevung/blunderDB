@@ -203,7 +203,10 @@
     /** @type {any} */
     let bearoffPlan = $state(null);
     let bearoffExternal = $state('');
-    let bearoffCheckers = $state(11);
+    // The domain to generate, named by its label ("TS-06-11", "OS-08"): one
+    // picker for both axes, because each row already says which it is and two
+    // blocks would only ask the user to know the difference first.
+    let bearoffDomain = $state('TS-06-11');
     let bearoffCores = $state(0);
     let bearoffRate = $state(0);
     // A run outlives this modal, so its progress lives in a store.
@@ -232,7 +235,7 @@
 
     // The selected domain, which is what the size / memory / time line and the
     // Generate button both speak about.
-    let bearoffSelected = $derived(bearoffPlan?.candidates?.find((/** @type {any} */ c) => c.checkers === bearoffCheckers) ?? null);
+    let bearoffSelected = $derived(bearoffPlan?.candidates?.find((/** @type {any} */ c) => c.domain === bearoffDomain) ?? null);
 
     // Anything paused, whatever the domain: the "TS-06-09 interrompue à 43 %"
     // line at launch.
@@ -263,13 +266,14 @@
         return get(t)('config.bearoffHours', { n: (seconds / 3600).toFixed(1) });
     }
 
-    /** @param {number} checkers */
-    async function startBearoffGeneration(checkers = bearoffCheckers) {
+    /** @param {any} candidate */
+    async function startBearoffGeneration(candidate = bearoffSelected) {
+        if (!candidate) return;
         bearoffErrorStore.set('');
         bearoffProgressStore.set({ domain: '', done: 0, total: 0, startedAt: Date.now(), firstDone: 0 });
         try {
             await SaveBearoffCores(bearoffCores);
-            await GenerateBearoffTable('two-sided', 6, checkers, bearoffCores);
+            await GenerateBearoffTable(candidate.kind, candidate.points, candidate.checkers, bearoffCores);
         } catch (error) {
             bearoffErrorStore.set(String(error));
             bearoffProgressStore.set(null);
@@ -656,7 +660,7 @@
                     <div class="setting-row">
                         <span class="setting-label">{$t('config.bearoffInterrupted', { domain: paused.domain, percent: paused.percent.toFixed(0) })}</span>
                         <span class="tab-actions">
-                            <button class="secondary-button" onclick={() => startBearoffGeneration(paused.checkers)}>{$t('config.bearoffResume')}</button>
+                            <button class="secondary-button" onclick={() => startBearoffGeneration(paused)}>{$t('config.bearoffResume')}</button>
                             <button class="danger-button" onclick={() => discardBearoffCheckpoint(paused.checkers)}>{$t('common.delete')}</button>
                         </span>
                     </div>
@@ -682,15 +686,24 @@
                     <p class="setting-note">{$t('config.bearoffWiderNote')}</p>
                     <div class="setting-row">
                         <label for="config-bearoff-checkers">{$t('config.bearoffCheckers')}</label>
-                        <select id="config-bearoff-checkers" class="setting-select" bind:value={bearoffCheckers}>
-                            {#each bearoffPlan.candidates as candidate (candidate.domain)}
-                                <option value={candidate.checkers} disabled={!candidate.fits}>{candidate.domain}</option>
-                            {/each}
+                        <select id="config-bearoff-checkers" class="setting-select" bind:value={bearoffDomain}>
+                            <optgroup label={$t('config.bearoffTwoSided')}>
+                                {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'two-sided') as candidate (candidate.domain)}
+                                    <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
+                                {/each}
+                            </optgroup>
+                            <optgroup label={$t('config.bearoffOneSided')}>
+                                {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'one-sided') as candidate (candidate.domain)}
+                                    <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
+                                {/each}
+                            </optgroup>
                         </select>
                     </div>
                     <div class="setting-row">
                         <label for="config-bearoff-cores">{$t('config.bearoffCores')}</label>
-                        <select id="config-bearoff-cores" class="setting-select" bind:value={bearoffCores} onchange={refreshBearoff}>
+                        <!-- The one-sided sweep reads only positions below the one it
+                             is on, so cores buy it nothing and the picker says so. -->
+                        <select id="config-bearoff-cores" class="setting-select" disabled={bearoffSelected?.kind === 'one-sided'} bind:value={bearoffCores} onchange={refreshBearoff}>
                             <option value={0}>{$t('config.bearoffCoresDefault', { n: bearoffPlan.default_cores })}</option>
                             {#each Array.from({ length: bearoffPlan.default_cores + 1 }, (/** @type {unknown} */ _, /** @type {number} */ i) => i + 1) as n (n)}
                                 <option value={n}>{n}</option>
@@ -700,12 +713,13 @@
                     {#if bearoffSelected}
                         <p class="setting-note">
                             {#if bearoffSelected.fits}
-                                {$t('config.bearoffCost', {
+                                {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffCostSequential' : 'config.bearoffCost', {
                                     size: bearoffBytes(bearoffSelected.size),
                                     ram: bearoffBytes(bearoffSelected.ram_needed),
                                     time: bearoffDuration(bearoffSelected.seconds),
                                     cores: bearoffPlan.cores
                                 })}
+                                <span class="setting-value"> {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffPurposeOneSided' : 'config.bearoffPurposeTwoSided')}</span>
                                 {#if !bearoffPlan.rate_measured}<span class="setting-value"> {$t('config.bearoffEstimateUnmeasured')}</span>{/if}
                             {:else}
                                 {$t('config.bearoffTooBig', {

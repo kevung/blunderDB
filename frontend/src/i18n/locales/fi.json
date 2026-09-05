@@ -75,6 +75,11 @@
         "bearoffCores": "Ytimet",
         "bearoffCoresDefault": "Oletus ({n})",
         "bearoffCost": "{size} levyllä, {ram} muistia, noin {time} {cores} ytimellä.",
+        "bearoffTwoSided": "Tarkka kuution tuomio (kaksipuolinen)",
+        "bearoffOneSided": "EPC kotialueen ulkopuolella (yksipuolinen)",
+        "bearoffCostSequential": "{size} levyllä, {ram} muistia, noin {time} yhdellä ytimellä.",
+        "bearoffPurposeTwoSided": "Laajentaa tarkkaa kuution tuomiota.",
+        "bearoffPurposeOneSided": "Antaa EPC:n, kun nappula on kotialueen ulkopuolella.",
         "bearoffTooBig": "Tämä kone ei pysty laskemaan sitä: tarvittaisiin {ram} muistia, jäljellä on {available}.",
         "bearoffEstimateUnmeasured": "(arvio; todellinen aika mitataan ensimmäisellä ajolla)",
         "bearoffGenerate": "Laske",
@@ -772,7 +777,8 @@
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC luettu taulukosta {domain}: nappula on kotialueen ulkopuolella."
     },
     "eval": {
         "pending": "Arviointi tulee tähän.",

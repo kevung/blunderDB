@@ -243,10 +243,21 @@ pas d'empreinte enregistrée — rien ne lui est reproché, simplement personne 
 l'a comparée à la référence. Une table *corrompue* se contredit elle-même et
 n'est jamais lue ; elle est recalculée.
 
-**Calculer une table plus large.** Le domaine se choisit dans une liste, de
-TS-06-06 à TS-06-15, avec le nombre de cœurs à y consacrer (par défaut tous
-sauf un, pour que la machine reste utilisable). Avant de lancer quoi que ce
-soit, l'onglet annonce trois chiffres pour le domaine choisi : la taille sur le
+**Calculer une table plus large.** Le domaine se choisit dans une liste à deux
+familles, avec le nombre de cœurs à y consacrer (par défaut tous sauf un, pour
+que la machine reste utilisable) :
+
+* **videau exact (deux faces)**, de TS-06-06 à TS-06-15 : élargit le domaine où
+  la probabilité de gain et le verdict de videau sont lus plutôt qu'estimés ;
+
+* **EPC hors du jan (une face)**, de OS-06 à OS-10 : élargit la distance à
+  laquelle un pion peut se trouver sans que le bloc EPC se taise. Ce balayage
+  ne lit que des positions plus petites que celle qu'il calcule, donc il est
+  séquentiel par construction et le nombre de cœurs ne lui sert à rien — le
+  sélecteur le dit en se grisant.
+
+Avant de lancer quoi que ce soit, l'onglet annonce trois chiffres pour le
+domaine choisi : la taille sur le
 disque, la mémoire nécessaire pendant le calcul, et le temps que cela devrait
 prendre *sur cette machine*. Ce dernier commence par une estimation, puis
 devient une mesure : chaque calcul assez large relève sa propre vitesse et la
@@ -257,7 +268,8 @@ ligne absente n'en serait pas une.
 À titre d'ordre de grandeur, sur une machine à seize fils : TS-06-09 pèse
 191 Mo et demande une dizaine de secondes, TS-06-11 pèse 1,2 Go et quelques
 minutes, TS-06-13 dépasse ce que la plupart des machines peuvent tenir en
-mémoire.
+mémoire. Du côté une face, sur un cœur : OS-07 pèse 4,9 Mo et prend 17 s,
+OS-08 15 Mo et 1 min 20, OS-10 117 Mo et une demi-heure.
 
 **Pause et reprise.** Pendant le calcul, la progression affiche le temps
 restant *mesuré*, et deux boutons distincts : *Pause* et *Annuler*. La pause
@@ -1246,10 +1258,11 @@ régimes et de leurs hypothèses.
 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la
 configuration :
 
-* calculer une table plus large — jusqu'à TS-06-15 si la machine a la mémoire
-  pour. L'onglet annonce la taille, la mémoire et le temps sur cette machine
-  avant de commencer, et le calcul se met en pause et se reprend. Un calcul
-  annulé laisse un fichier ``.part`` qui n'est jamais lu comme une table ;
+* calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine a
+  la mémoire pour. L'onglet annonce la taille, la mémoire et le temps sur cette
+  machine avant de commencer, et le calcul se met en pause et se reprend. Un
+  calcul annulé laisse un fichier ``.part`` qui n'est jamais lu comme une
+  table ;
 
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
@@ -1291,19 +1304,29 @@ Méthodologie et hypothèses du panneau Eval
 Chaque valeur affichée par le panneau repose sur des hypothèses précises,
 énoncées ici exhaustivement.
 
-**Domaine.** Le panneau ne traite que le bearoff pur : tous les pions restants
-des deux joueurs dans leur jan intérieur. La position est évaluée *avant le
-lancer* ; les dés éventuellement posés sont ignorés. Les courses sans contact
-dont des pions sont hors du jan ne sont pas traitées.
+**Domaine.** La *zone course* — probabilité de gain et verdict de videau — ne
+traite que le bearoff pur : tous les pions restants des deux joueurs dans leur
+jan intérieur. La position est évaluée *avant le lancer* ; les dés
+éventuellement posés sont ignorés.
+
+Les **blocs EPC**, eux, vont plus loin depuis la 0.37.0 : un camp obtient son
+EPC dès que son pion le plus éloigné tient dans la table une face chargée. Avec
+la table par défaut (six points) c'est l'ancienne règle du jan ; avec une table
+à huit points, calculée depuis l'onglet *Bearoff*, un camp dont un pion est sur
+la 8 est traité comme les autres. Rien n'est extrapolé : un pion un point trop
+loin n'a simplement pas d'EPC, exactement comme un pion sur la 7 n'en avait pas
+avant. Quand la table qui a répondu n'est pas celle à six points, son nom
+apparaît dans le coin du bloc course (« OS-08 ») — sans lui, on lirait « six »
+par défaut et on croirait le camp entièrement rentré.
 
 **Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et
 l'écart type proviennent de la distribution exacte du nombre de lancers pour
-sortir tous les pions, lue dans la base one-sided de GNUbg (6 points,
-15 pions, intégrée). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167 est la moyenne
-exacte de pips par lancer, doubles comptés quatre fois) ; wastage = EPC − pip
-count. L'unique idéalisation est le *jeu one-sided optimal* : chaque joueur
-minimise ses propres lancers en ignorant l'adversaire — c'est la définition
-standard de l'EPC.
+sortir tous les pions, lue dans la base one-sided de GNUbg (6 à 10 points,
+15 pions, calculée sur la machine). EPC = lancers moyens × 49/6 (49/6 ≈ 8,167
+est la moyenne exacte de pips par lancer, doubles comptés quatre fois) ;
+wastage = EPC − pip count. L'unique idéalisation est le *jeu one-sided
+optimal* : chaque joueur minimise ses propres lancers en ignorant
+l'adversaire — c'est la définition standard de l'EPC.
 
 **Probabilité de gain, régime exact.** Lecture directe dans la base two-sided
 disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11

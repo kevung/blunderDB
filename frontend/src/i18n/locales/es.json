@@ -75,6 +75,11 @@
         "bearoffCores": "Núcleos",
         "bearoffCoresDefault": "Predeterminado ({n})",
         "bearoffCost": "{size} en disco, {ram} de memoria, unos {time} en {cores} núcleos.",
+        "bearoffTwoSided": "Veredicto de cubo exacto (dos lados)",
+        "bearoffOneSided": "EPC fuera del cuadro (un lado)",
+        "bearoffCostSequential": "{size} en disco, {ram} de memoria, unos {time} en un núcleo.",
+        "bearoffPurposeTwoSided": "Amplía el veredicto de cubo exacto.",
+        "bearoffPurposeOneSided": "Da el EPC cuando una ficha está fuera del cuadro.",
         "bearoffTooBig": "Esta máquina no puede calcularla: haría falta {ram} de memoria y quedan {available}.",
         "bearoffEstimateUnmeasured": "(estimación; el tiempo real se mide en la primera pasada)",
         "bearoffGenerate": "Calcular",
@@ -772,7 +777,8 @@
             "gammon": "Gamón (%)",
             "backgammon": "Backgamón (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC leído de la tabla {domain}: una ficha está fuera del cuadro."
     },
     "eval": {
         "pending": "La evaluación aparecerá aquí.",

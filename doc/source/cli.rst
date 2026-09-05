@@ -684,13 +684,20 @@ quelqu'un — donc aucune ne prend ``--db``.
    ./blunderdb bearoff delete --ts <domaine> [options]
 
 Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table
-two-sided à neuf pions par joueur, ``os`` pour la table une face que lit
-l'EPC.
+two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit
+points (``os`` seul vaut ``os6``).
+
+Les deux familles ne répondent pas à la même question. Une table **deux
+faces** élargit le domaine où la probabilité de gain et le verdict de videau
+sont exacts ; une table **une face** élargit la distance à laquelle un pion
+peut se trouver sans que l'EPC se taise (jusqu'à dix points).
 
 **generate.** Annonce la taille, la mémoire et le temps estimé avant de
 commencer, puis affiche le pourcentage et le temps restant mesuré.
 
-* ``--ts`` — Domaine à calculer, par exemple ``6x9`` (requis).
+* ``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``.
+* ``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un et
+  un seul des deux est requis.
 * ``--cores`` — Cœurs à utiliser (défaut : tous sauf un).
 * ``--data-dir`` — Où écrire (défaut : le dossier de données de l'application).
 * ``--quiet`` — Pas de ligne de progression.
@@ -698,7 +705,9 @@ commencer, puis affiche le pourcentage et le temps restant mesuré.
 **CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de la
 table et la même commande relancée reprend là où elle s'était arrêtée, au lieu
 de tout recalculer. Une demi-heure d'arithmétique mérite d'être écrite.
-``bearoff delete`` jette une reprise en attente.
+``bearoff delete`` jette une reprise en attente. Seul le balayage deux faces
+se met en pause ; le balayage une face est séquentiel et ``--cores`` ne lui
+sert à rien.
 
 **list.** Chiffre chaque domaine — taille, mémoire, temps sur cette machine —
 et dit lesquels sont déjà présents, avec leur verdict, et lesquels ont un
@@ -723,6 +732,9 @@ l'application ; un domaine plus large ne l'est pas.
 
    # Calculer TS-06-09 sur quatre cœurs
    ./blunderdb bearoff generate --ts 6x9 --cores 4
+
+   # Calculer OS-08 : l'EPC répond alors jusqu'à un pion sur la 8
+   ./blunderdb bearoff generate --os 8
 
    # Sur un serveur, dans le volume que lit le démon
    ./blunderdb bearoff generate --ts 6x11 --data-dir /srv/bearoff

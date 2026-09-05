@@ -133,8 +133,33 @@ func TestDomain_NamesAndSizes(t *testing.T) {
 	if os6.String() != "OS-06" || os6.FileName() != "gnubg_os6.bd" {
 		t.Errorf("one-sided: %s / %s", os6, os6.FileName())
 	}
-	if os6.Size() != 0 {
-		t.Error("a one-sided size is only known after generation")
+	// A one-sided table is compressed, so its size is a measurement and not
+	// arithmetic: it must be the size of the file gnubg actually produced,
+	// which is the fixture in testdata.
+	fixture, err := os.Stat("testdata/gnubg_os6.bd")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if os6.Size() != fixture.Size() {
+		t.Errorf("OS-06 size = %d, want the fixture's %d", os6.Size(), fixture.Size())
+	}
+
+	// And the one-sided candidates must be priced and ordered like the
+	// two-sided ones: no zero, monotone in the width.
+	var lastSize int64
+	var lastCost time.Duration
+	for _, d := range OneSidedCandidates() {
+		if d.Size() <= lastSize {
+			t.Errorf("%s: size %d does not exceed the previous domain's %d", d, d.Size(), lastSize)
+		}
+		if d.RAMNeeded() < d.Size() {
+			t.Errorf("%s: RAM needed %d is below the table itself (%d)", d, d.RAMNeeded(), d.Size())
+		}
+		cost := d.EstimateDuration(0, 8)
+		if cost <= lastCost {
+			t.Errorf("%s: estimate %v does not exceed the previous domain's %v", d, cost, lastCost)
+		}
+		lastSize, lastCost = d.Size(), cost
 	}
 }
 

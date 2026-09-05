@@ -75,6 +75,11 @@
         "bearoffCores": "Kerne",
         "bearoffCoresDefault": "Standard ({n})",
         "bearoffCost": "{size} auf der Platte, {ram} Speicher, etwa {time} auf {cores} Kernen.",
+        "bearoffTwoSided": "Exaktes Doppler-Urteil (zweiseitig)",
+        "bearoffOneSided": "EPC außerhalb des Heimfelds (einseitig)",
+        "bearoffCostSequential": "{size} auf der Platte, {ram} Speicher, etwa {time} auf einem Kern.",
+        "bearoffPurposeTwoSided": "Erweitert das exakte Doppler-Urteil.",
+        "bearoffPurposeOneSided": "Liefert den EPC, wenn ein Stein außerhalb des Heimfelds steht.",
         "bearoffTooBig": "Dieser Rechner kann sie nicht berechnen: nötig wären {ram} Speicher, verfügbar sind {available}.",
         "bearoffEstimateUnmeasured": "(Schätzung; die echte Dauer wird beim ersten Lauf gemessen)",
         "bearoffGenerate": "Berechnen",
@@ -772,7 +777,8 @@
             "gammon": "Gammon (%)",
             "backgammon": "Backgammon (%)",
             "cubelessEquity": "Cubeless"
-        }
+        },
+        "raceDomainTooltip": "EPC aus der Tabelle {domain}: ein Stein steht außerhalb des Heimfelds."
     },
     "eval": {
         "pending": "Die Auswertung erscheint hier.",

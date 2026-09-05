@@ -25,6 +25,10 @@ const (
 	// ReferenceRate is `a` on the reference machine: seconds per n³ per core.
 	ReferenceRate = 6.5e-10
 
+	// oneSidedRate is the one-sided sweep's cost per n², seconds. Fitted on
+	// OS-08 (n = 490 314, 77 s), which the neighbouring domains bracket.
+	oneSidedRate = 3.2e-10
+
 	// ParallelEfficiency is what a core is worth beyond the first. The sweep
 	// is memory-bound at these sizes: 16 threads measured 8.1× on TS-06-09
 	// (78.9 s → 9.8 s) and 6.7× on TS-06-08.
@@ -38,10 +42,22 @@ const (
 // It is an estimate and reads like one in the interface: the measured ETA
 // takes over as soon as the run reports its first progress.
 func (d Domain) EstimateDuration(rate float64, workers int) time.Duration {
-	if d.Kind != TwoSidedKind {
-		// The one-sided table is seconds, and its shape is different enough
-		// that a shared model would be a guess dressed as arithmetic.
-		return 6 * time.Second
+	if d.Kind == OneSidedKind {
+		// The one-sided sweep is strictly sequential — position i reads only
+		// positions j < i — so cores buy it nothing, and its cost is its own
+		// curve. Measured on the reference machine: OS-06 5.5 s, OS-07 17 s,
+		// OS-08 77 s, OS-09 ~6 min, OS-10 ~28 min, which is n² within a few
+		// percent (n = C(p+15, p)).
+		//
+		// A measured rate still applies, as a ratio: what a two-sided run
+		// learned is how fast THIS MACHINE is, and that is not a property of
+		// which sweep measured it.
+		speed := 1.0
+		if rate > 0 {
+			speed = rate / ReferenceRate
+		}
+		n := float64(NumPositions(d.Points, osCheckers))
+		return time.Duration(speed * oneSidedRate * n * n * float64(time.Second))
 	}
 	if rate <= 0 {
 		rate = ReferenceRate
@@ -76,12 +92,25 @@ func (d Domain) MeasuredRate(elapsed time.Duration, workers int) float64 {
 }
 
 // Candidates lists the two-sided domains the interface offers, widest last.
-// Six points is the only board a bearoff table describes; the chequer count is
-// what the user chooses, and what decides whether the table is 6 MB or 22 GB.
+// Six points is the board the cube verdict is defined over (ADR-0009); the
+// chequer count is what the user chooses, and what decides whether the table
+// is 6 MB or 22 GB.
 func Candidates() []Domain {
 	out := make([]Domain, 0, 10)
 	for c := 6; c <= 15; c++ {
 		out = append(out, Domain{Kind: TwoSidedKind, Points: 6, Checkers: c})
+	}
+	return out
+}
+
+// OneSidedCandidates lists the one-sided domains the interface offers: the
+// width of the board the EPC can answer for (ADR-0027 §9). It stops at ten
+// points, where the file is already 117 MB and half an hour of one core, and
+// where a "race" with a chequer on the 11-point has stopped being one.
+func OneSidedCandidates() []Domain {
+	out := make([]Domain, 0, 5)
+	for p := 6; p <= 10; p++ {
+		out = append(out, Domain{Kind: OneSidedKind, Points: p, Checkers: osCheckers})
 	}
 	return out
 }
