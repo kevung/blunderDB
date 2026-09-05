@@ -167,6 +167,10 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 	h = middleware.Tenant(s.publicPaths(), s.opts.SingleTenant, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		writeErrorCode(w, CodeInvalid, msg)
 	})(h)
+	// Compression sits outside the tenant gate and inside logging/metrics: it
+	// must see the handler's Content-Type (hence inside the mux's own layers)
+	// while the byte counts the log line reports stay the uncompressed ones.
+	h = middleware.Compress(h)
 	h = middleware.CORS(s.opts.CORSAllowOrigin)(h)
 	h = middleware.Logging(s.opts.Logger, s.knownPaths, s.opts.now)(h)
 	if s.opts.EnableMetrics {
