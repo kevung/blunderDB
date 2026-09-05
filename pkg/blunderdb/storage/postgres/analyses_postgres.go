@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"iter"
 
 	"github.com/jackc/pgx/v5"
 
@@ -232,6 +233,38 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
 			repaired++
+		}
+	}
+}
+
+// WithoutAnalysis streams the positions of a tenant carrying no analysis at
+// all, by ascending id. See the contract's doc comment for why this exists
+// rather than a Load per position.
+func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
+	return func(yield func(*domain.Position, error) bool) {
+		query := `SELECT ` + qualifiedPositionCols("p") + `
+			 FROM position p LEFT JOIN analysis a
+			   ON a.position_id = p.id AND a.tenant_id = p.tenant_id
+			 WHERE p.tenant_id = $1 AND a.position_id IS NULL
+			 ORDER BY p.id` + opts.SQL("")
+		rows, err := s.db.Query(ctx, query, tenantID(scope))
+		if err != nil {
+			yield(nil, fmt.Errorf("postgres: list positions without analysis: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			p, err := scanPosition(rows)
+			if err != nil {
+				yield(nil, fmt.Errorf("postgres: list positions without analysis: %w", err))
+				return
+			}
+			if !yield(&p, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("postgres: list positions without analysis: %w", err))
 		}
 	}
 }

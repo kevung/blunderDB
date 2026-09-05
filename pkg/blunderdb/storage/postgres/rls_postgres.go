@@ -19,6 +19,18 @@ import (
 // acquired without a tenant in context is left with the GUC unset, which the
 // fail-closed policies treat as "no rows" — safe for the non-tenant operations
 // (the schema version) that touch only the unprotected metadata table.
+// Measured cost (G.11, #239, 2026-09-06): +73.8 % on LoadPosition — 101.8 µs
+// against 177.0 µs on the same container and rows, two pools differing only in
+// EnableRLS (BenchmarkLoadPosition / BenchmarkLoadPositionRLS). The plan
+// carried "≈ +100 %" as an unmeasured guess; the shape was right, the size
+// overstated.
+//
+// Folding the set into the transaction with SET LOCAL would remove the RESET
+// and hide the set in a round trip that already happens — and would only take
+// effect inside a transaction, leaving the GUC unset for every single-statement
+// read. That turns a fail-closed mechanism into a fail-open one, which is the
+// one direction tenant isolation must not move in. See
+// tasks/headless/perf-baseline.md.
 func configureRLSPool(cfg *pgxpool.Config) {
 	cfg.PrepareConn = func(ctx context.Context, conn *pgx.Conn) (bool, error) {
 		if tenant, ok := storage.TenantFromContext(ctx); ok {

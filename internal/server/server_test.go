@@ -18,6 +18,14 @@ import (
 // newTestServer builds a Server backed by a fresh in-memory SQLite database.
 func newTestServer(t *testing.T) *httptest.Server {
 	t.Helper()
+	ts, _ := newTestServerAndHandler(t)
+	return ts
+}
+
+// newTestServerAndHandler is newTestServer for a test that needs the Server
+// itself — to stage a job registry, say, rather than race one into existence.
+func newTestServerAndHandler(t *testing.T) (*httptest.Server, *Server) {
+	t.Helper()
 	st, err := sqlite.Open(context.Background(), ":memory:", nil)
 	if err != nil {
 		t.Fatalf("sqlite.Open: %v", err)
@@ -34,7 +42,7 @@ func newTestServer(t *testing.T) *httptest.Server {
 	}
 	ts := httptest.NewServer(srv.Handler())
 	t.Cleanup(ts.Close)
-	return ts
+	return ts, srv
 }
 
 func TestHealthz(t *testing.T) {

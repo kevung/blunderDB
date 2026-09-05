@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -32,6 +33,7 @@ import (
 var (
 	benchOnce   sync.Once
 	benchStore  *pg.Storage
+	benchDSN    string // recorded so a second pool can be opened on the same database
 	benchSkip   string
 	benchTenant int64 // atomic; hands each benchmark a private scope
 )
@@ -65,7 +67,7 @@ func benchPG(b *testing.B) (*pg.Storage, string) {
 			benchSkip = fmt.Sprintf("migrate: %v", err)
 			return
 		}
-		benchStore = st
+		benchStore, benchDSN = st, dsn
 		// container is intentionally left to the ryuk reaper.
 	})
 	if benchSkip != "" {
@@ -210,4 +212,75 @@ func BenchmarkConcurrentInsert(b *testing.B) {
 			}
 		}
 	})
+}
+
+// What Row-Level Security costs per request, measured rather than asserted.
+//
+// The claim G.11 (#239) recorded was "RLS = 2 RTT per request, so about +100%
+// on a 89 µs LoadPosition, never measured". The cost is real and its shape is
+// visible in rls_postgres.go: PrepareConn issues a `set_config` when a
+// connection is handed out with a tenant in context, and AfterRelease issues a
+// `RESET` when it goes back. Two extra round trips — but only when the pool
+// hands out a connection, which under load is not once per request.
+//
+// This benchmark opens a SECOND pool on the same database with EnableRLS, and
+// runs the same Load against both. Everything else is equal: same container,
+// same rows, same query.
+//
+//	go test -tags postgres -run '^$' -bench 'LoadPositionRLS|BenchmarkLoadPosition$' \
+//	    ./pkg/blunderdb/storage/postgres/
+func BenchmarkLoadPositionRLS(b *testing.B) {
+	s, scope := benchPG(b)
+	ctx := context.Background()
+	p := benchPosPG(2)
+	id, err := s.Positions().Save(ctx, scope, &p)
+	if err != nil {
+		b.Fatalf("seed Save: %v", err)
+	}
+
+	rls := benchRLSStore(b)
+	tenant, err := strconv.ParseInt(scope, 10, 64)
+	if err != nil {
+		b.Fatalf("scope %q is not a tenant id: %v", scope, err)
+	}
+	// RLS reads the tenant from the context, not from the scope string: that
+	// is the whole mechanism, and a benchmark that forgot it would measure the
+	// pool without ever setting the GUC.
+	rlsCtx := storage.WithTenant(ctx, tenant)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, err := rls.Positions().Load(rlsCtx, scope, id); err != nil {
+			b.Fatalf("Load: %v", err)
+		}
+	}
+}
+
+var (
+	benchRLSOnce   sync.Once
+	benchRLSStore_ *pg.Storage
+	benchRLSSkip   string
+)
+
+// benchRLSStore opens a second pool on the benchmark database, with RLS on.
+func benchRLSStore(b *testing.B) *pg.Storage {
+	b.Helper()
+	benchPG(b) // ensures the container and the DSN exist
+	benchRLSOnce.Do(func() {
+		if benchDSN == "" {
+			benchRLSSkip = "no DSN recorded for the benchmark container"
+			return
+		}
+		st, err := pg.Open(context.Background(), benchDSN, &storage.Options{EnableRLS: true})
+		if err != nil {
+			benchRLSSkip = fmt.Sprintf("open with RLS: %v", err)
+			return
+		}
+		benchRLSStore_ = st
+	})
+	if benchRLSSkip != "" {
+		b.Skip(benchRLSSkip)
+	}
+	return benchRLSStore_
 }

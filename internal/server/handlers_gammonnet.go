@@ -108,7 +108,16 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel()
 	scope := scopeOf(r)
-	jobID := s.gammonnetJobs.start(scope, cancel)
+	// One sweep per tenant (G.11, #239). Two of them do not go twice as fast:
+	// they halve each other's cores while both writing analyses into the rows
+	// the other is reading as missing. The refusal comes BEFORE the NDJSON
+	// stream opens, so the caller gets an ordinary 409 rather than an error
+	// event inside a 200.
+	jobID, err := s.gammonnetJobs.startExclusive(scope, cancel)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
 	defer s.gammonnetJobs.finish(jobID)
 
 	w.Header().Set("Content-Type", ndjsonContentType)
@@ -254,32 +263,28 @@ func (s *Server) handleGammonNetAnalyzeCancel(w http.ResponseWriter, r *http.Req
 // gammonnetPositionsWithoutAnalysis snapshots every position in scope that has
 // no analysis row at all (ADR-0013's gap rule: not "no gammonNet analysis" —
 // a Position already analysed by XG/GNUbg/BGBlitz is never touched).
+//
+// One query, not one per position. It used to list every position and then ask
+// Analyses().Load about each one, keeping the ErrNotFound ones: a round trip
+// per row to learn something the database states in a join, and the whole
+// library materialised first because the SQLite pool is a single connection
+// and Load could not run while List still held its rows (G.11, #239).
+//
+// Still a snapshot rather than a live cursor, and deliberately so: the sweep
+// writes the analyses it computes, so a position it has just filled must not
+// be a row the cursor has yet to reach. Draining first is also the resume
+// mechanism ADR-0013 asks for — a fresh call finds whatever is still missing,
+// with no journal.
 func gammonnetPositionsWithoutAnalysis(ctx context.Context, s storage.Storage, scope string) ([]domain.Position, error) {
-	// Two passes, deliberately not one: the SQLite backend pins its pool to a
-	// single connection (main.go's ConfigurePool doc comment), so calling
-	// Analyses().Load while Positions().List still holds its *sql.Rows open
-	// on that one connection deadlocks — List never gets a second connection
-	// to lend Load, and Load never runs to let List's Rows advance and close.
-	// Draining List into a slice first closes its Rows before any Load runs.
-	all, err := drainPositions(ctx, s, scope)
-	if err != nil {
-		return nil, err
-	}
-
 	var missing []domain.Position
-	for _, p := range all {
+	for p, err := range s.Analyses().WithoutAnalysis(ctx, scope, storage.ListOpts{}) {
+		if err != nil {
+			return nil, err
+		}
 		if ctx.Err() != nil {
 			return missing, nil
 		}
-		_, err := s.Analyses().Load(ctx, scope, p.ID)
-		switch {
-		case err == nil:
-			continue // already analysed by something — the gap rule leaves it alone
-		case errors.Is(err, storage.ErrNotFound):
-			missing = append(missing, p)
-		default:
-			return nil, err
-		}
+		missing = append(missing, *p)
 	}
 	return missing, nil
 }

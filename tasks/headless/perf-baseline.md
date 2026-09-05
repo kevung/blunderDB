@@ -104,6 +104,41 @@ laptop does not reach 10 k RPS because client + server + database share 16
 threads and `stats.compute` is intentionally heavy. The 10 k scenario on a
 dedicated reference server remains a manual pre-release run.
 
+## What Row-Level Security costs (G.11, #239, measured 2026-09-06)
+
+`--rls` sets `app.tenant_id` on a connection when the pool hands it out and
+`RESET`s it when it goes back (`rls_postgres.go`). Two extra round trips per
+acquire/release pair. The figure carried in the plan was "≈ +100% on a 89 µs
+`LoadPosition`, never measured"; it is now measured, on the same container,
+same rows, same query, two pools differing only in `EnableRLS`:
+
+| | ns/op | allocs/op |
+|---|---:|---:|
+| `LoadPosition` | 101 839 | 51 |
+| `LoadPositionRLS` | 176 995 | 61 |
+
+**+73.8 %**, not +100 %. The prediction had the right shape and overstated the
+size. Reproduce with:
+
+```bash
+go test -tags postgres -run '^$' -bench 'BenchmarkLoadPosition$|BenchmarkLoadPositionRLS'     -benchtime 3000x -count 3 ./pkg/blunderdb/storage/postgres/
+```
+
+This is the worst case by construction: a serial benchmark acquires and
+releases a connection per call, so it pays both round trips every time.
+
+**`SET LOCAL` inside the transaction — considered and refused.** It would fold
+the set into a round trip that already happens and drop the `RESET` entirely.
+It also only takes effect inside a transaction, and most reads here are single
+statements outside one — so the GUC would silently not be set for them. The
+current mechanism is fail-CLOSED (a connection whose `set_config` fails is
+discarded rather than lent out with an unset GUC, and one that will not `RESET`
+is dropped); `SET LOCAL` would make the same code fail-OPEN for every
+non-transactional read, which is the one direction a tenant-isolation mechanism
+must not move in. 74 % of 100 µs is a price worth paying for that. Revisit only
+if every tenant-scoped read is first moved inside a transaction — a much larger
+change, and one to decide on its own merits.
+
 ## Identified bottlenecks
 
 1. **`stats.compute`** is the dominant read cost (6-way join + per-row MWC pass

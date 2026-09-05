@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"iter"
 
 	"encoding/json"
 	"log/slog"
@@ -247,6 +248,41 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
 			}
 			repaired++
+		}
+	}
+}
+
+// WithoutAnalysis streams the positions carrying no analysis at all, by
+// ascending id. See the contract's doc comment for why this exists rather than
+// a Load per position.
+//
+// LEFT JOIN … IS NULL rather than NOT EXISTS: the two are equivalent here and
+// SQLite plans them the same way, but the join says in one line what the sweep
+// is looking for.
+func (s *analysisStore) WithoutAnalysis(ctx context.Context, _ string, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
+	return func(yield func(*domain.Position, error) bool) {
+		query := `SELECT ` + qualify(positionCols, "p") + `
+			 FROM position p LEFT JOIN analysis a ON a.position_id = p.id
+			 WHERE a.position_id IS NULL
+			 ORDER BY p.id` + opts.SQL("LIMIT -1")
+		rows, err := s.db.QueryContext(ctx, query)
+		if err != nil {
+			yield(nil, fmt.Errorf("sqlite: list positions without analysis: %w", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			p, err := scanPosition(rows)
+			if err != nil {
+				yield(nil, fmt.Errorf("sqlite: list positions without analysis: %w", err))
+				return
+			}
+			if !yield(&p, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, fmt.Errorf("sqlite: list positions without analysis: %w", err))
 		}
 	}
 }

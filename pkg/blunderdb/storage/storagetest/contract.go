@@ -64,6 +64,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Collection/Members", testCollectionMembers},
 		{"Collection/Coverage", testCollectionCoverage},
 		{"List/PagingIsAWindow", testListPaging},
+		{"Analysis/WithoutAnalysisIsTheGapRule", testWithoutAnalysis},
 		{"Comment/CRUD", testCommentCRUD},
 		{"Comment/Upsert", testCommentUpsert},
 		{"Comment/SearchAcrossPositions", testCommentSearchAcrossPositions},

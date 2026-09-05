@@ -58,6 +58,28 @@ func (reg *importRegistry) start(scope string, cancel context.CancelFunc) string
 	return id
 }
 
+// startExclusive is start for a job a tenant may only have one of at a time.
+// It returns ErrConflict rather than a second id when one is already running
+// for that scope.
+//
+// The gammonNet sweep is the case (G.11, #239): it takes every core the daemon
+// has for as long as it runs, and two of them for the same tenant do not go
+// twice as fast — they halve each other while both writing analyses into the
+// same rows the other is reading as missing. One per tenant, and the second
+// caller is told so instead of being quietly queued behind the first.
+func (reg *importRegistry) startExclusive(scope string, cancel context.CancelFunc) (string, error) {
+	reg.mu.Lock()
+	defer reg.mu.Unlock()
+	for _, j := range reg.jobs {
+		if j.scope == scope {
+			return "", fmt.Errorf("%w: an analysis is already running for this tenant", storage.ErrConflict)
+		}
+	}
+	id := newImportID()
+	reg.jobs[id] = importJob{scope: scope, cancel: cancel}
+	return id, nil
+}
+
 func (reg *importRegistry) finish(id string) {
 	reg.mu.Lock()
 	delete(reg.jobs, id)

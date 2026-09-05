@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -42,4 +43,23 @@ type AnalysisStore interface {
 	// mere act of opening a database is not something a tool should do behind
 	// their back.
 	RepairDenormalisedColumns(ctx context.Context, scope string) (int, error)
+
+	// WithoutAnalysis streams the positions in scope that carry no analysis at
+	// all, by ascending id, bounded by opts.
+	//
+	// It exists because the alternative is a query per position: the daemon's
+	// catch-up sweep used to list every position, then ask Load about each one
+	// and keep the ErrNotFound ones (G.11, #239). On a library of any size that
+	// is one round trip per row to learn a fact the database can state in one
+	// join — and it had to materialise the whole library first, because the
+	// SQLite pool is a single connection and a second query cannot run while
+	// the first still holds its rows open.
+	//
+	// A stream, not a snapshot: the caller decides how much of it to hold. What
+	// it must NOT do is write analyses while reading it — a position the sweep
+	// has just filled would otherwise be a row the cursor has yet to reach, and
+	// what the query means would depend on the backend's isolation. The sweep
+	// drains it first, deliberately, which is also the resume mechanism
+	// ADR-0013 asks for: a fresh call finds whatever is still missing.
+	WithoutAnalysis(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 
@@ -45,6 +46,13 @@ func tenantID(scope string) int64 {
 // docs/adr/0001).
 const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, ` +
 	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
+
+// qualifiedPositionCols is positionSelectCols with every column prefixed by a
+// table alias, so a query that joins selects the same list rather than a second
+// copy of it that would drift from the first.
+func qualifiedPositionCols(alias string) string {
+	return alias + "." + strings.ReplaceAll(positionSelectCols, ", ", ", "+alias+".")
+}
 
 // scanPosition reconstructs a Position from a row selected with
 // positionSelectCols. The denormalised integer columns are nullable, so they

@@ -16,8 +16,8 @@ name: Nightly
 #   - the Trivy image scan lives in build.yml's docker-serve job, on every
 #     push (non-blocking) — E.7, #223: an image vulnerability is worth
 #     surfacing on the PR that introduced it, not the morning after.
-#   - a short SQLite loadtest (G.11) is not wired up yet either, same
-#     reasoning.
+#   - nothing else. The short SQLite loadtest (G.11, #239) IS here now, as
+#     the `loadtest` job below.
 #
 # What IS new here: the full (non -short) Go suite on the two desktop
 # platforms build.yml only runs with -short on every push (E.1, #217 — the
@@ -195,13 +195,95 @@ jobs:
           gh pr comment "${{ inputs.pr_number }}" --repo "${{ github.repository }}" --body-file pr-comment-full.md
         shell: bash
 
+  # A short loadtest against a real daemon (G.11, #239).
+  #
+  # SQLite and one tenant: the point is not to measure a fleet, it is to notice
+  # the day a change makes the daemon fall over or crawl under a few hundred
+  # concurrent requests. The 10 k-tenant PostgreSQL run stays a manual
+  # pre-release exercise on a dedicated machine — a shared CI runner cannot
+  # produce a number worth comparing, and pretending otherwise would put a
+  # meaningless graph in front of whoever reads this.
+  #
+  # So this job asserts two things a runner CAN answer honestly: the daemon
+  # survives the run, and every request it accepted came back 2xx. The report
+  # is kept as an artefact for anyone who wants to look at the latencies, and
+  # deliberately not gated on a threshold.
+  loadtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Run a short loadtest against the daemon
+        run: |
+          set -euo pipefail
+          go build -o /tmp/blunderdb-serve ./cmd/serve
+          # --rate-limit-rps 0 disables the per-tenant throttle. With it on,
+          # one tenant at a few thousand rps is refused with 429 within the
+          # first second and the run measures the limiter rather than the
+          # daemon — 58 556 of 59 056 requests, when this was first tried
+          # locally. The limiter has its own tests; this job is about what
+          # happens behind it.
+          /tmp/blunderdb-serve --backend sqlite --db /tmp/loadtest.db --addr 127.0.0.1:8099 --rate-limit-rps 0 &
+          serve_pid=$!
+          trap 'kill $serve_pid 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:8099/healthz >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8099/healthz >/dev/null
+
+          go run ./cmd/blunderdb-loadtest \
+            --target http://127.0.0.1:8099 \
+            --tenants 1 --concurrency 32 --duration 20s --scenario mixed \
+            --output /tmp/loadtest-report.json
+
+          # The daemon must still be alive, and every request it took must have
+          # succeeded: a run that "passed" with a third of its requests failing
+          # would be a green tick over a broken daemon.
+          kill -0 $serve_pid
+          python3 - <<'PY'
+          import json, sys
+          r = json.load(open('/tmp/loadtest-report.json'))
+          total = r.get('total_requests') or r.get('totalRequests') or 0
+          errors = r.get('errors') or r.get('error_count') or 0
+          print(f"{total} requests, {errors} errors")
+          if total == 0:
+              sys.exit("the loadtest issued no request at all")
+          if errors:
+              sys.exit(f"{errors} of {total} requests failed")
+          PY
+        shell: bash
+
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: loadtest-report
+          path: |
+            /tmp/loadtest-report.json
+            /tmp/loadtest-report.md
+          if-no-files-found: warn
+
   # Opens (or reuses) one issue labelled `nightly` when any job above failed
   # — never one per red night, so a multi-day outage does not flood the
   # tracker. A manual, PR-targeted benchstat dispatch (pr_number set) is
   # excluded: that failure already reached the PR via the comment above, and
   # is not the nightly run being red.
   notify-on-failure:
-    needs: [test-os-full, gammonnet-race-full, benchstat]
+    needs: [test-os-full, gammonnet-race-full, benchstat, loadtest]
     if: >-
       always() && contains(needs.*.result, 'failure') &&
       !(github.event_name == 'workflow_dispatch' && inputs.pr_number != '')

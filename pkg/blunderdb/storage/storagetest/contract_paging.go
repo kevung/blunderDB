@@ -126,3 +126,81 @@ func drainTournaments(t *testing.T, seq func(func(*domain.Tournament, error) boo
 	}
 	return out
 }
+
+// WithoutAnalysis is what the daemon's catch-up sweep asks for (G.11, #239),
+// and its meaning is ADR-0013's gap rule: a position with NO analysis row, not
+// a position with no gammonNet analysis. One already analysed by XG or GNUbg is
+// not a gap and must never come back from here — filling it would overwrite
+// somebody's imported analysis with a computed one.
+func testWithoutAnalysis(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	var bare, analysed int64
+	for i := 0; i < 6; i++ {
+		p := checkerPos()
+		p.Board.Points[11].Checkers = i + 1
+		p.Board.Points[11].Color = domain.Black
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("save %d: %v", i, err)
+		}
+		// Every other one gets an analysis.
+		if i%2 == 0 {
+			if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{}); err != nil {
+				t.Fatalf("save analysis %d: %v", i, err)
+			}
+			analysed = id
+		} else {
+			bare = id
+		}
+	}
+
+	ids := func(opts storage.ListOpts) []int64 {
+		var out []int64
+		for p, err := range s.Analyses().WithoutAnalysis(ctx, "", opts) {
+			if err != nil {
+				t.Fatalf("WithoutAnalysis: %v", err)
+			}
+			out = append(out, p.ID)
+		}
+		return out
+	}
+
+	got := ids(storage.ListOpts{})
+	if len(got) == 0 {
+		t.Fatal("WithoutAnalysis returned nothing at all")
+	}
+	seen := map[int64]bool{}
+	for _, id := range got {
+		seen[id] = true
+	}
+	if !seen[bare] {
+		t.Errorf("a position with no analysis (%d) is missing from the result", bare)
+	}
+	if seen[analysed] {
+		t.Errorf("a position that already has an analysis (%d) came back as a gap", analysed)
+	}
+
+	// Ascending id, and the same bound the listing families take.
+	for i := 1; i < len(got); i++ {
+		if got[i] <= got[i-1] {
+			t.Fatalf("not ordered by ascending id: %v", got)
+		}
+	}
+	if page := ids(storage.ListOpts{Limit: 2}); len(page) != 2 || page[0] != got[0] || page[1] != got[1] {
+		t.Errorf("limit 2 = %v, want the first two of %v", page, got)
+	}
+	if page := ids(storage.ListOpts{Limit: 1, Offset: 1}); len(page) != 1 || page[0] != got[1] {
+		t.Errorf("limit 1 offset 1 = %v, want the second of %v", page, got)
+	}
+
+	// Filling a gap closes it.
+	if err := s.Analyses().Save(ctx, "", bare, &domain.PositionAnalysis{}); err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range ids(storage.ListOpts{}) {
+		if id == bare {
+			t.Errorf("position %d still reads as a gap after its analysis was saved", bare)
+		}
+	}
+}
