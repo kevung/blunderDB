@@ -1633,6 +1633,100 @@ export namespace domain {
 
 export namespace gui {
 	
+	export class BearoffCandidate {
+	    domain: string;
+	    points: number;
+	    checkers: number;
+	    size: number;
+	    ram_needed: number;
+	    seconds: number;
+	    fits: boolean;
+	    reason: string;
+	    present: boolean;
+	    verdict: string;
+	    interrupted: boolean;
+	    percent: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffCandidate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.domain = source["domain"];
+	        this.points = source["points"];
+	        this.checkers = source["checkers"];
+	        this.size = source["size"];
+	        this.ram_needed = source["ram_needed"];
+	        this.seconds = source["seconds"];
+	        this.fits = source["fits"];
+	        this.reason = source["reason"];
+	        this.present = source["present"];
+	        this.verdict = source["verdict"];
+	        this.interrupted = source["interrupted"];
+	        this.percent = source["percent"];
+	    }
+	}
+	export class BearoffFile {
+	    name: string;
+	    domain: string;
+	    size: number;
+	    verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffFile(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.domain = source["domain"];
+	        this.size = source["size"];
+	        this.verdict = source["verdict"];
+	    }
+	}
+	export class BearoffPlan {
+	    cores: number;
+	    default_cores: number;
+	    ram_available: number;
+	    rate_measured: boolean;
+	    data_dir: string;
+	    files: BearoffFile[];
+	    candidates: BearoffCandidate[];
+	
+	    static createFrom(source: any = {}) {
+	        return new BearoffPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.cores = source["cores"];
+	        this.default_cores = source["default_cores"];
+	        this.ram_available = source["ram_available"];
+	        this.rate_measured = source["rate_measured"];
+	        this.data_dir = source["data_dir"];
+	        this.files = this.convertValues(source["files"], BearoffFile);
+	        this.candidates = this.convertValues(source["candidates"], BearoffCandidate);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class BearoffStatus {
 	    ready: boolean;
 	    generating: string;
@@ -1831,6 +1925,8 @@ export namespace main {
 	    tab_order?: string[];
 	    hidden_tabs?: string[];
 	    bearoff_ts_path?: string;
+	    bearoff_rate?: number;
+	    bearoff_cores?: number;
 	    epc_challenge?: boolean;
 	    gammonnet_display_ply?: number;
 	    gammonnet_analysis_ply?: number;
@@ -1860,6 +1956,8 @@ export namespace main {
 	        this.tab_order = source["tab_order"];
 	        this.hidden_tabs = source["hidden_tabs"];
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
+	        this.bearoff_rate = source["bearoff_rate"];
+	        this.bearoff_cores = source["bearoff_cores"];
 	        this.epc_challenge = source["epc_challenge"];
 	        this.gammonnet_display_ply = source["gammonnet_display_ply"];
 	        this.gammonnet_analysis_ply = source["gammonnet_analysis_ply"];

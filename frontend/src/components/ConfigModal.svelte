@@ -15,8 +15,11 @@
         ImportIssuerIdentity,
         RegenerateIssuerIdentity,
         BearoffStatus,
+        BearoffPlan,
         GenerateBearoffTable,
+        PauseBearoffGeneration,
         CancelBearoffGeneration,
+        DiscardBearoffCheckpoint,
         DeleteBearoffTable,
         OpenBearoffFileDialog,
         StartGammonNetBatch,
@@ -24,7 +27,8 @@
         OpenLogsFolder
     } from '../../wailsjs/go/gui/App.js';
     import { Vacuum, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
-    import { GetBearoffTSPath, SaveBearoffTSPath } from '../../wailsjs/go/main/Config.js';
+    import { GetBearoffTSPath, SaveBearoffTSPath, GetBearoffRate, SaveBearoffRate, GetBearoffCores, SaveBearoffCores } from '../../wailsjs/go/main/Config.js';
+    import { bearoffProgressStore, bearoffErrorStore, remainingSeconds } from '../stores/bearoffStore.js';
     import {
         GetGammonNetDisplayPly,
         SaveGammonNetDisplayPly,
@@ -191,17 +195,29 @@
         setPanelPosition(event.currentTarget.value);
     }
 
-    // Two-sided bearoff data sources (ADR-0009): status of the optional
-    // TS-06-11 download plus the user-supplied external .bd path.
+    // The Bearoff tab (ADR-0027, #308). Nothing is downloaded and nothing is
+    // embedded: every table is generated here, and this tab is where the user
+    // sees what that costs before asking for it.
+    /** @type {any} */
     let bearoff = $state(null);
+    /** @type {any} */
+    let bearoffPlan = $state(null);
     let bearoffExternal = $state('');
-    let bearoffProgress = $state(null); // {received, total} while downloading
-    let bearoffError = $state('');
+    let bearoffCheckers = $state(11);
+    let bearoffCores = $state(0);
+    let bearoffRate = $state(0);
+    // A run outlives this modal, so its progress lives in a store.
+    const bearoffProgress = bearoffProgressStore;
+    const bearoffErrorStoreRef = bearoffErrorStore;
 
     async function refreshBearoff() {
         try {
             bearoff = await BearoffStatus();
             bearoffExternal = await GetBearoffTSPath();
+            bearoffRate = await GetBearoffRate();
+            const cores = await GetBearoffCores();
+            if (bearoffCores === 0 && cores > 0) bearoffCores = cores;
+            bearoffPlan = await BearoffPlan(bearoffRate, bearoffCores);
         } catch (error) {
             logger.error('Error loading bearoff status:', error);
         }
@@ -209,10 +225,97 @@
 
     $effect(() => {
         if (visible) {
-            bearoffError = '';
+            bearoffErrorStore.set('');
             refreshBearoff();
         }
     });
+
+    // The selected domain, which is what the size / memory / time line and the
+    // Generate button both speak about.
+    let bearoffSelected = $derived(bearoffPlan?.candidates?.find((/** @type {any} */ c) => c.checkers === bearoffCheckers) ?? null);
+
+    // Anything paused, whatever the domain: the "TS-06-09 interrompue à 43 %"
+    // line at launch.
+    let bearoffInterrupted = $derived(bearoffPlan?.candidates?.filter((/** @type {any} */ c) => c.interrupted) ?? []);
+
+    // The measured remaining time, recomputed on a ticking clock so it counts
+    // down between two progress reports rather than freezing.
+    let bearoffNow = $state(Date.now());
+    $effect(() => {
+        if (!$bearoffProgress) return;
+        const id = setInterval(() => (bearoffNow = Date.now()), 1000);
+        return () => clearInterval(id);
+    });
+    let bearoffRemaining = $derived(remainingSeconds($bearoffProgress, bearoffNow));
+
+    /** @param {number} n */
+    function bearoffBytes(n) {
+        if (!n) return '—';
+        if (n >= 1e9) return `${(n / 1e9).toFixed(1)} ${get(t)('config.bearoffGB')}`;
+        return `${Math.round(n / 1e6)} ${get(t)('config.bearoffMB')}`;
+    }
+
+    /** @param {number|null} seconds */
+    function bearoffDuration(seconds) {
+        if (!seconds || seconds < 0) return '—';
+        if (seconds < 90) return get(t)('config.bearoffSeconds', { n: Math.max(1, Math.round(seconds)) });
+        if (seconds < 5400) return get(t)('config.bearoffMinutes', { n: Math.round(seconds / 60) });
+        return get(t)('config.bearoffHours', { n: (seconds / 3600).toFixed(1) });
+    }
+
+    /** @param {number} checkers */
+    async function startBearoffGeneration(checkers = bearoffCheckers) {
+        bearoffErrorStore.set('');
+        bearoffProgressStore.set({ domain: '', done: 0, total: 0, startedAt: Date.now(), firstDone: 0 });
+        try {
+            await SaveBearoffCores(bearoffCores);
+            await GenerateBearoffTable('two-sided', 6, checkers, bearoffCores);
+        } catch (error) {
+            bearoffErrorStore.set(String(error));
+            bearoffProgressStore.set(null);
+        }
+    }
+
+    // Pause keeps the checkpoint, Cancel does not — the two buttons are two
+    // different promises and must not share a handler.
+    async function pauseBearoffGeneration() {
+        try {
+            await PauseBearoffGeneration();
+        } finally {
+            bearoffProgressStore.set(null);
+            await refreshBearoff();
+        }
+    }
+
+    async function cancelBearoffGeneration() {
+        try {
+            await CancelBearoffGeneration();
+        } finally {
+            bearoffProgressStore.set(null);
+            await refreshBearoff();
+        }
+    }
+
+    /** @param {number} checkers */
+    async function discardBearoffCheckpoint(checkers) {
+        try {
+            await DiscardBearoffCheckpoint(6, checkers);
+        } finally {
+            await refreshBearoff();
+        }
+    }
+
+    /** @param {string} name */
+    async function deleteBearoffTable(name) {
+        if (!(await confirmAction(get(t)('config.confirmDeleteBearoff', { name }), { confirmLabel: get(t)('common.delete') }))) return;
+        bearoffErrorStore.set('');
+        try {
+            await DeleteBearoffTable(name);
+            await refreshBearoff();
+        } catch (error) {
+            bearoffErrorStore.set(String(error));
+        }
+    }
 
     // Opt-in update check (#241): off by default, loaded/saved the same way
     // every other plain-boolean setting on this modal is.
@@ -238,53 +341,34 @@
     }
 
     const unsubBearoff = [
-        EventsOn('bearoff:progress', (p) => (bearoffProgress = p)),
-        EventsOn('bearoff:done', () => {
-            bearoffProgress = null;
-            bearoffError = '';
+        EventsOn('bearoff:progress', (p) => {
+            bearoffProgressStore.update((cur) => {
+                // Time the run from its FIRST progress report: the successor
+                // lists are built before any of them, and counting that
+                // set-up would inflate every remaining time that follows.
+                if (!cur || cur.domain !== p.domain) {
+                    return { ...p, startedAt: Date.now(), firstDone: p.done };
+                }
+                return { ...cur, ...p };
+            });
+        }),
+        EventsOn('bearoff:done', (d) => {
+            bearoffProgressStore.set(null);
+            bearoffErrorStore.set('');
+            // The rate this machine just measured, so the next estimate is
+            // about it rather than about the machine the constant came from.
+            if (d?.rate > 0) {
+                SaveBearoffRate(d.rate).catch((error) => logger.error('Error saving the bearoff rate:', error));
+            }
             refreshBearoff();
         }),
         EventsOn('bearoff:error', (e) => {
-            bearoffProgress = null;
-            bearoffError = e?.message ?? String(e);
+            bearoffProgressStore.set(null);
+            bearoffErrorStore.set(e?.message ?? String(e));
             refreshBearoff();
         })
     ];
     onDestroy(() => unsubBearoff.forEach((off) => off && off()));
-
-    // The wider two-sided table is generated here now, not downloaded
-    // (ADR-0027): TS-06-11 is about twenty minutes of one core and 1.2 GB on
-    // disk, against a download of the same size fetched from a release asset.
-    async function startBearoffGeneration() {
-        bearoffError = '';
-        bearoffProgress = { done: 0, total: 0 };
-        try {
-            await GenerateBearoffTable('two-sided', 6, 11);
-        } catch (error) {
-            bearoffError = String(error);
-            bearoffProgress = null;
-        }
-    }
-
-    async function cancelBearoffGeneration() {
-        try {
-            await CancelBearoffGeneration();
-        } finally {
-            bearoffProgress = null;
-            await refreshBearoff();
-        }
-    }
-
-    async function deleteBearoffTable(name) {
-        if (!(await confirmAction(get(t)('config.confirmDeleteBearoff', { gb: name }), { confirmLabel: get(t)('common.delete') }))) return;
-        bearoffError = '';
-        try {
-            await DeleteBearoffTable(name);
-            await refreshBearoff();
-        } catch (error) {
-            bearoffError = String(error);
-        }
-    }
 
     // Compacts the currently open database file. Goes through the same
     // Database.Vacuum() the CLI's `blunderdb vacuum` uses (CLI/GUI parity) —
@@ -320,24 +404,24 @@
     }
 
     async function pickBearoffExternal() {
-        bearoffError = '';
+        bearoffErrorStore.set('');
         try {
             const path = await OpenBearoffFileDialog();
             if (!path) return;
             await SaveBearoffTSPath(path);
             await refreshBearoff();
         } catch (error) {
-            bearoffError = String(error);
+            bearoffErrorStore.set(String(error));
         }
     }
 
     async function clearBearoffExternal() {
-        bearoffError = '';
+        bearoffErrorStore.set('');
         try {
             await SaveBearoffTSPath('');
             await refreshBearoff();
         } catch (error) {
-            bearoffError = String(error);
+            bearoffErrorStore.set(String(error));
         }
     }
 
@@ -539,22 +623,102 @@
                         {bearoff.active_domain > 0 ? `TS-06-${String(bearoff.active_domain).padStart(2, '0')} — ${bearoff.active_origin}` : $t('config.bearoffNone')}
                     </code>
                 </div>
-
-                {#if bearoffProgress || bearoff.generating}
+                <div class="setting-row">
+                    <span class="setting-label">{$t('config.bearoffEpc')}</span>
+                    <span class="setting-value">{bearoff.one_sided_ready ? $t('config.bearoffEpcReady') : $t('config.bearoffEpcMissing')}</span>
+                </div>
+                {#if bearoffPlan}
                     <div class="setting-row">
-                        <span class="setting-label">{$t('config.bearoffGenerating', { domain: bearoffProgress?.domain ?? bearoff.generating })}</span>
-                        <progress class="bearoff-progress" max={bearoffProgress?.total ?? 0} value={bearoffProgress?.done ?? 0}></progress>
+                        <span class="setting-label">{$t('config.bearoffDataDir')}</span>
+                        <code class="identity-fingerprint">{bearoffPlan.data_dir}</code>
                     </div>
+                {/if}
+
+                <!-- What is on disk, with a Delete on each: the only place a
+                     user can see the space these take and get it back. -->
+                {#if bearoffPlan?.files?.length}
+                    <p class="setting-note">{$t('config.bearoffFilesTitle')}</p>
+                    <ul class="bearoff-files">
+                        {#each bearoffPlan.files as file (file.name)}
+                            <li>
+                                <code class="identity-fingerprint">{file.name}</code>
+                                <span class="setting-value">{bearoffBytes(file.size)} · {$t(`config.bearoffVerdict_${file.verdict}`)}</span>
+                                <button class="danger-button" onclick={() => deleteBearoffTable(file.name)}>{$t('common.delete')}</button>
+                            </li>
+                        {/each}
+                    </ul>
+                {/if}
+
+                <!-- A run that was paused, offered by name and percentage. It
+                     is never restarted on its own: the user asked for it to
+                     stop. -->
+                {#each bearoffInterrupted as paused (paused.domain)}
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.bearoffInterrupted', { domain: paused.domain, percent: paused.percent.toFixed(0) })}</span>
+                        <span class="tab-actions">
+                            <button class="secondary-button" onclick={() => startBearoffGeneration(paused.checkers)}>{$t('config.bearoffResume')}</button>
+                            <button class="danger-button" onclick={() => discardBearoffCheckpoint(paused.checkers)}>{$t('common.delete')}</button>
+                        </span>
+                    </div>
+                {/each}
+
+                {#if $bearoffProgress || bearoff.generating}
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.bearoffGenerating', { domain: $bearoffProgress?.domain || bearoff.generating })}</span>
+                        <progress class="bearoff-progress" max={$bearoffProgress?.total ?? 0} value={$bearoffProgress?.done ?? 0}></progress>
+                    </div>
+                    <p class="setting-note">
+                        {#if bearoffRemaining !== null}
+                            {$t('config.bearoffRemaining', { time: bearoffDuration(bearoffRemaining) })}
+                        {:else}
+                            {$t('config.bearoffStarting')}
+                        {/if}
+                    </p>
                     <div class="tab-actions">
+                        <button class="secondary-button" onclick={pauseBearoffGeneration}>{$t('config.bearoffPause')}</button>
                         <button class="secondary-button" onclick={cancelBearoffGeneration}>{$t('common.cancel')}</button>
                     </div>
-                {:else}
+                {:else if bearoffPlan}
                     <p class="setting-note">{$t('config.bearoffWiderNote')}</p>
+                    <div class="setting-row">
+                        <label for="config-bearoff-checkers">{$t('config.bearoffCheckers')}</label>
+                        <select id="config-bearoff-checkers" class="setting-select" bind:value={bearoffCheckers}>
+                            {#each bearoffPlan.candidates as candidate (candidate.domain)}
+                                <option value={candidate.checkers} disabled={!candidate.fits}>{candidate.domain}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label for="config-bearoff-cores">{$t('config.bearoffCores')}</label>
+                        <select id="config-bearoff-cores" class="setting-select" bind:value={bearoffCores} onchange={refreshBearoff}>
+                            <option value={0}>{$t('config.bearoffCoresDefault', { n: bearoffPlan.default_cores })}</option>
+                            {#each Array.from({ length: bearoffPlan.default_cores + 1 }, (/** @type {unknown} */ _, /** @type {number} */ i) => i + 1) as n (n)}
+                                <option value={n}>{n}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    {#if bearoffSelected}
+                        <p class="setting-note">
+                            {#if bearoffSelected.fits}
+                                {$t('config.bearoffCost', {
+                                    size: bearoffBytes(bearoffSelected.size),
+                                    ram: bearoffBytes(bearoffSelected.ram_needed),
+                                    time: bearoffDuration(bearoffSelected.seconds),
+                                    cores: bearoffPlan.cores
+                                })}
+                                {#if !bearoffPlan.rate_measured}<span class="setting-value"> {$t('config.bearoffEstimateUnmeasured')}</span>{/if}
+                            {:else}
+                                {$t('config.bearoffTooBig', {
+                                    ram: bearoffBytes(bearoffSelected.ram_needed),
+                                    available: bearoffBytes(bearoffPlan.ram_available)
+                                })}
+                            {/if}
+                        </p>
+                    {/if}
                     <div class="tab-actions">
-                        <button class="secondary-button" onclick={startBearoffGeneration}>{$t('config.bearoffGenerateWider')}</button>
-                        {#if bearoff.active_domain > 6}
-                            <button class="danger-button" onclick={() => deleteBearoffTable(`gnubg_ts6x${bearoff.active_domain}.bd`)}>{$t('config.bearoffDelete')}</button>
-                        {/if}
+                        <button class="secondary-button" disabled={!bearoffSelected?.fits || bearoffSelected?.present} onclick={() => startBearoffGeneration()}>
+                            {bearoffSelected?.present ? $t('config.bearoffAlreadyThere') : $t('config.bearoffGenerate')}
+                        </button>
                     </div>
                 {/if}
 
@@ -569,7 +733,7 @@
                     {/if}
                 </div>
 
-                {#if bearoffError}<p class="setting-note warn">{bearoffError}</p>{/if}
+                {#if $bearoffErrorStoreRef}<p class="setting-note warn">{$bearoffErrorStoreRef}</p>{/if}
             {/if}
         {:else if activeTab === 'gammonnet'}
             <p class="setting-note">{$t('config.gammonnetIntro')}</p>
@@ -675,6 +839,23 @@
 </Modal>
 
 <style>
+    .bearoff-files {
+        list-style: none;
+        margin: 0 0 0.5rem;
+        padding: 0;
+    }
+
+    .bearoff-files li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.15rem 0;
+    }
+
+    .bearoff-files li .setting-value {
+        margin-left: auto;
+    }
+
     .bearoff-progress {
         flex: 1;
         min-width: 120px;

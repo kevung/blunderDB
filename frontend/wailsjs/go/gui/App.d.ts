@@ -3,6 +3,8 @@
 import {gui} from '../models';
 import {domain} from '../models';
 
+export function BearoffPlan(arg1:number,arg2:number):Promise<gui.BearoffPlan>;
+
 export function BearoffStatus():Promise<gui.BearoffStatus>;
 
 export function CancelBearoffGeneration():Promise<void>;
@@ -21,13 +23,15 @@ export function DeleteBearoffTable(arg1:string):Promise<void>;
 
 export function DeleteFile(arg1:string):Promise<void>;
 
+export function DiscardBearoffCheckpoint(arg1:number,arg2:number):Promise<void>;
+
 export function EnsureBearoffTables():Promise<void>;
 
 export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:number):Promise<gui.GammonNetEvalResult>;
 
 export function ExportIssuerIdentity(arg1:string):Promise<string>;
 
-export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number):Promise<void>;
+export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
 
@@ -52,6 +56,8 @@ export function OpenPositionFilesDialog():Promise<Array<string>>;
 export function OpenPositionFolderDialog():Promise<string>;
 
 export function PathExists(arg1:string):Promise<boolean>;
+
+export function PauseBearoffGeneration():Promise<void>;
 
 export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 
