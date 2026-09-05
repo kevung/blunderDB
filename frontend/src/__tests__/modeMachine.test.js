@@ -165,7 +165,7 @@ describe('positionService ré-exporte les transitions', () => {
     });
 
     test('modeState expose { mode, savedContext } et démarre vide', () => {
-        expect(modeState()).toEqual({ mode: MODE.NORMAL, savedContext: { beforeEPC: null, beforeEdit: null, epcSeed: null } });
+        expect(modeState()).toEqual({ mode: MODE.NORMAL, savedContext: { beforeEPC: null, beforeEdit: null, epcSeed: null, lastEPCBoard: null } });
     });
 });
 

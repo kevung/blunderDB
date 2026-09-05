@@ -97,11 +97,23 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               enterEPCMode(), which run one tick apart (the tab switch reaches
  *               enterEPCMode through App.svelte's tab effect, not a direct
  *               call) — hence a slot rather than a parameter.
+ *   lastEPCBoard  the board the Eval panel was last left on, photographed by
+ *               exitEPCMode and reused by the next enterEPCMode. Unlike the
+ *               slots above it is NOT consumed on use: leaving and returning
+ *               to the panel used to hand back the default bearoff, throwing
+ *               away whatever the user had built. It is a board, never a
+ *               library record — id is forced to 0 and no analysis travels
+ *               with it (the panel evaluates live, and a stale analysis
+ *               describing another position is exactly the bug the scratch
+ *               boards had). It outlives a library reload on purpose —
+ *               forgetContextBeforeEPC drops beforeEPC, not this: a scratch
+ *               board belongs to the session, not to the open database.
  */
 const savedContext = {
     beforeEPC: null,
     beforeEdit: null,
-    epcSeed: null
+    epcSeed: null,
+    lastEPCBoard: null
 };
 
 /** Read-only snapshot of the machine's state, for tests and debugging. */
@@ -328,7 +340,10 @@ export async function enterEPCMode() {
         ids: get(positionsStore)?.ids ?? null
     };
 
-    const epcPosition = savedContext.epcSeed ?? defaultEPCPosition();
+    // A position sent from the library wins; otherwise pick up the board the
+    // panel was last left on, and only fall back to the default bearoff the
+    // first time it is opened.
+    const epcPosition = savedContext.epcSeed ?? savedContext.lastEPCBoard ?? defaultEPCPosition();
     savedContext.epcSeed = null;
 
     statusBarModeStore.set(MODE.EPC);
@@ -348,6 +363,12 @@ export async function exitEPCMode() {
 
     const saved = savedContext.beforeEPC;
     savedContext.beforeEPC = null;
+
+    // Photograph the board on the way out so returning to the panel finds the
+    // work rather than the default bearoff. A board, not a record: the id is
+    // dropped so it can never be mistaken for a library position.
+    const leaving = get(positionStore);
+    savedContext.lastEPCBoard = leaving ? { ...leaving, id: 0 } : null;
 
     statusBarTextStore.set('');
     epcDataStore.set({ bottomEPC: null, topEPC: null, race: null, error: null });

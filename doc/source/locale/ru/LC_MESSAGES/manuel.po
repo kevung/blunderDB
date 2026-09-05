@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 02:23+0200\n"
+"POT-Creation-Date: 2026-09-05 02:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -2663,6 +2663,25 @@ msgstr ""
 
 #: ../../source/manuel.rst:1200
 msgid ""
+"**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
+"panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
+"laissé, et non le plateau de sortie par défaut : ce dernier n'est servi "
+"qu'à la première ouverture de la session. Envoyer une position de la base"
+" vers le panneau l'emporte sur ce souvenir, et *RETOUR ARRIERE* rend le "
+"plateau par défaut à tout moment. Rien n'est enregistré dans la base au "
+"passage — le brouillon n'a pas d'identité de position, et son évaluation "
+"est recalculée à l'arrivée plutôt que transportée."
+msgstr ""
+"**Доска панели — черновик, и она запоминается.** Если выйти из панели Eval и "
+"вернуться, вы найдёте позицию, на которой её оставили, а не доску "
+"выбрасывания по умолчанию: та выдаётся только при первом открытии панели за "
+"сеанс. Отправка позиции из базы в панель имеет приоритет над этой памятью, а "
+"*BACKSPACE* в любой момент возвращает доску по умолчанию. По пути в базу "
+"ничего не записывается — у черновика нет идентичности позиции, а его оценка "
+"пересчитывается по прибытии, а не переносится."
+
+#: ../../source/manuel.rst:1209
+msgid ""
 "**Mode défi.** La case *Défi*, dans la bande de badges, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
 " zones sont masquées (remplacées par « ··· ») ; un clic sur une zone "
@@ -2697,7 +2716,7 @@ msgstr ""
 "оценивать EPC каждой стороны, затем принимать решение по кубу или по "
 "ходу, прежде чем проверить. Настройка запоминается."
 
-#: ../../source/manuel.rst:1218
+#: ../../source/manuel.rst:1227
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -2705,11 +2724,11 @@ msgstr ""
 "Для закрытия панели Eval нажмите *CTRL-E* или переключитесь на другую "
 "вкладку."
 
-#: ../../source/manuel.rst:1223
+#: ../../source/manuel.rst:1232
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Методология и допущения панели Eval"
 
-#: ../../source/manuel.rst:1225
+#: ../../source/manuel.rst:1234
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -2717,7 +2736,7 @@ msgstr ""
 "Каждое значение, отображаемое панелью, опирается на точные допущения, "
 "исчерпывающе изложенные здесь."
 
-#: ../../source/manuel.rst:1228
+#: ../../source/manuel.rst:1237
 msgid ""
 "**Domaine.** Le panneau ne traite que le bearoff pur : tous les pions "
 "restants des deux joueurs dans leur jan intérieur. La position est "
@@ -2730,7 +2749,7 @@ msgstr ""
 "Позиция оценивается *до броска*; уже выставленные кости игнорируются. "
 "Бесконтактные гонки, в которых есть шашки вне дома, не обрабатываются."
 
-#: ../../source/manuel.rst:1233
+#: ../../source/manuel.rst:1242
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -2750,7 +2769,7 @@ msgstr ""
 "игра*: каждый игрок минимизирует собственное число бросков, игнорируя "
 "соперника, — это стандартное определение EPC."
 
-#: ../../source/manuel.rst:1242
+#: ../../source/manuel.rst:1251
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (intégrée TS-06-06, fichier externe, ou "
@@ -2764,7 +2783,7 @@ msgstr ""
 " оптимальной two-sided игре обеих сторон: никаких дополнительных "
 "допущений, ошибка ограничена квантованием (< 0,002 %)."
 
-#: ../../source/manuel.rst:1248
+#: ../../source/manuel.rst:1257
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -2778,7 +2797,7 @@ msgstr ""
 "соперника) с последующей фиксированной полиномиальной поправкой, "
 "откалиброванной офлайн по базе TS-06-11. Три допущения:"
 
-#: ../../source/manuel.rst:1254
+#: ../../source/manuel.rst:1263
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -2786,7 +2805,7 @@ msgstr ""
 "**независимость** двух процессов снятия — структурная в гонке: без "
 "контакта нет никакого взаимодействия;"
 
-#: ../../source/manuel.rst:1257
+#: ../../source/manuel.rst:1266
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -2799,7 +2818,7 @@ msgstr ""
 " преувеличивает преимущество лидера), которое поправка статистически "
 "поглощает;"
 
-#: ../../source/manuel.rst:1262
+#: ../../source/manuel.rst:1271
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -2814,7 +2833,7 @@ msgstr ""
 "экстраполируется** — тенденция монотонна, но никакой оракул её не "
 "подтверждает."
 
-#: ../../source/manuel.rst:1268
+#: ../../source/manuel.rst:1277
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -2832,7 +2851,7 @@ msgstr ""
 "восстанавливается из сохранённых эквити по правилу GNUbg, проверенному "
 "один в один против его анализа."
 
-#: ../../source/manuel.rst:1276
+#: ../../source/manuel.rst:1285
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -2856,7 +2875,7 @@ msgstr ""
 "пункте 2: 62 % выигрыша, точное D/T +0,006 против +0,475 у XG). "
 "Отображаемое **решение** при этом совпадает с решением движков."
 
-#: ../../source/manuel.rst:1287
+#: ../../source/manuel.rst:1296
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -2876,7 +2895,7 @@ msgstr ""
 "позволяет, единственный из трёх режимов наряду с точным, дать вердикт "
 "**при счёте матча**."
 
-#: ../../source/manuel.rst:1295
+#: ../../source/manuel.rst:1304
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -2907,7 +2926,7 @@ msgstr ""
 "расходятся на близком решении, — а не размытая ошибка, которая стоила бы "
 "эквити повсюду."
 
-#: ../../source/manuel.rst:1308
+#: ../../source/manuel.rst:1317
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -2937,7 +2956,7 @@ msgstr ""
 " показывать вердикт — этот пробел заполняет поиск, разыгрывающий "
 "траекторию, а не статистическая сводка."
 
-#: ../../source/manuel.rst:1321
+#: ../../source/manuel.rst:1330
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables, "
 "régénérables avec l'outil ``makebearoff`` de GNUbg."
@@ -2945,11 +2964,11 @@ msgstr ""
 "Базы bearoff — неизменяемые математические таблицы, которые можно заново "
 "сгенерировать инструментом ``makebearoff`` из GNUbg."
 
-#: ../../source/manuel.rst:1327
+#: ../../source/manuel.rst:1336
 msgid "Panneau Anki"
 msgstr "Панель Anki"
 
-#: ../../source/manuel.rst:1329
+#: ../../source/manuel.rst:1338
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
 "répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
@@ -2959,7 +2978,7 @@ msgstr ""
 "интервального повторения с использованием алгоритма FSRS. Пользователи "
 "могут создавать колоды из коллекций или результатов поиска."
 
-#: ../../source/manuel.rst:1333
+#: ../../source/manuel.rst:1342
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -2970,7 +2989,7 @@ msgstr ""
 "или текущих результатов поиска. Колоды на основе поиска синхронизируются "
 "автоматически при открытии вкладки Anki."
 
-#: ../../source/manuel.rst:1337
+#: ../../source/manuel.rst:1346
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -2985,7 +3004,7 @@ msgstr ""
 "запоминание клавишами *1* (Снова), *2* (Сложно), *3* (Хорошо) или *4* "
 "(Легко). Нажмите *Esc* для остановки и возврата к списку колод."
 
-#: ../../source/manuel.rst:1343
+#: ../../source/manuel.rst:1352
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "ou quelle action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou "
@@ -3001,7 +3020,7 @@ msgstr ""
 "появляется под кнопками оценки, которые остаются на своём месте и под "
 "рукой. Клик по ходу в списке показывает его на доске."
 
-#: ../../source/manuel.rst:1350
+#: ../../source/manuel.rst:1359
 msgid ""
 "Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr"
 " de vous, les touches *1* à *4* restent actives. La réponse se remasque à"
@@ -3014,7 +3033,7 @@ msgstr ""
 "следующей карточке, но не при простом переключении вкладки — сходите в "
 "панель Eval или к комментарию позиции, он будет ждать вас по возвращении."
 
-#: ../../source/manuel.rst:1355
+#: ../../source/manuel.rst:1364
 msgid ""
 "Une position dépourvue d'analyse enregistrée l'indique directement, sans "
 "zone masquée."
@@ -3022,7 +3041,7 @@ msgstr ""
 "Позиция без записанного анализа сообщает об этом напрямую, без скрытой "
 "области."
 
-#: ../../source/manuel.rst:1358
+#: ../../source/manuel.rst:1367
 msgid ""
 "**Limiter la séance.** Par défaut, une séance de révision va jusqu'au "
 "bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par "
@@ -3042,7 +3061,7 @@ msgstr ""
 "очереди. Чтобы всё же продолжить, есть свободная тренировка: она "
 "показывает другие позиции, ничего не меняя в расписании."
 
-#: ../../source/manuel.rst:1366
+#: ../../source/manuel.rst:1375
 msgid ""
 "Une limite de **0** ne sert aucune carte : c'est un état à part entière, "
 "utile pour geler un paquet le temps de préparer un tournoi, et ce n'est "
@@ -3053,7 +3072,7 @@ msgstr ""
 "удобное, чтобы заморозить колоду на время подготовки к турниру, и это не "
 "то же самое, что «без предела». Кнопка *Study* при этом неактивна."
 
-#: ../../source/manuel.rst:1370
+#: ../../source/manuel.rst:1379
 msgid ""
 "La limite porte sur la **séance**, pas sur la journée. Un paquet "
 "blunderDB est bâti sur une collection ou une recherche : c'est un corpus "
@@ -3067,7 +3086,7 @@ msgstr ""
 "либо никогда не сработал бы, либо создал бы отставание на колоде, которая"
 " укладывалась в одну сессию."
 
-#: ../../source/manuel.rst:1376
+#: ../../source/manuel.rst:1385
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -3088,7 +3107,7 @@ msgstr ""
 "*1*–*4*) перелистывает позиции. *Esc* возвращает к списку, не сохраняя "
 "прерванную сессию."
 
-#: ../../source/manuel.rst:1385
+#: ../../source/manuel.rst:1394
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -3098,7 +3117,7 @@ msgstr ""
 " с помощью *Esc*. Кнопка меняется на *Resume* и показывает ваш прогресс. "
 "Нажмите её, чтобы продолжить с того места, где остановились."
 
-#: ../../source/manuel.rst:1389
+#: ../../source/manuel.rst:1398
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets (confirmation "
@@ -3112,7 +3131,7 @@ msgstr ""
 "максимальный интервал, разброс) настраиваются для каждой колоды в "
 "Настройках (значок шестерёнки)."
 
-#: ../../source/manuel.rst:1395
+#: ../../source/manuel.rst:1404
 msgid ""
 "**Rétention : la cible et la mesure.** La *rétention cible* est votre "
 "choix sur le compromis entre charge de travail et qualité du rappel : "
@@ -3131,7 +3150,7 @@ msgstr ""
 "вашим процентом успеха. Меньше чем при двух десятках повторений измерение"
 " не показывается: оно читалось бы как факт, будучи всего лишь шумом."
 
-#: ../../source/manuel.rst:1404
+#: ../../source/manuel.rst:1413
 msgid ""
 "Changer la rétention **n'est pas rétroactif** : chaque carte adopte le "
 "nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne "
@@ -3141,7 +3160,7 @@ msgstr ""
 "перенимает новый ритм на следующем повторении, а уже назначенные сроки не"
 " сдвигаются. Поэтому эффект постепенный и в тот же день незаметен."
 
-#: ../../source/manuel.rst:1408
+#: ../../source/manuel.rst:1417
 msgid ""
 "L'*intervalle maximum* borne l'espacement. Un paquet créé récemment "
 "démarre à un an : une position que l'algorithme reporterait de plusieurs "
@@ -3155,11 +3174,11 @@ msgstr ""
 "игра меняется быстрее этого. Более старые колоды сохраняют то значение, "
 "которое у них было."
 
-#: ../../source/manuel.rst:1416
+#: ../../source/manuel.rst:1425
 msgid "Panneau Métadonnées"
 msgstr "Панель метаданных"
 
-#: ../../source/manuel.rst:1418
+#: ../../source/manuel.rst:1427
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -3170,7 +3189,7 @@ msgstr ""
 "имя, описание, количество позиций, матчей и партий, версия схемы. "
 "Доступна через команду ``meta``."
 
-#: ../../source/manuel.rst:1422
+#: ../../source/manuel.rst:1431
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -3179,11 +3198,11 @@ msgstr ""
 "Она также показывает, **если она есть**, происхождение базы — см. "
 ":ref:`diffusion_controlee`. У обычной базы этот раздел не отображается."
 
-#: ../../source/manuel.rst:1428
+#: ../../source/manuel.rst:1437
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Распространение базы: происхождение и пароль"
 
-#: ../../source/manuel.rst:1430
+#: ../../source/manuel.rst:1439
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -3194,7 +3213,7 @@ msgstr ""
 "друга механизма, оба необязательные и выбираемые **в момент экспорта**: "
 "пометить файл его происхождением и защитить его паролем."
 
-#: ../../source/manuel.rst:1437
+#: ../../source/manuel.rst:1446
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -3206,11 +3225,11 @@ msgstr ""
 " же самое, что открыть любую другую, и нигде не фиксируется, кто её "
 "открыл, когда и откуда взялось её содержимое."
 
-#: ../../source/manuel.rst:1443
+#: ../../source/manuel.rst:1452
 msgid "Marquer une base de son origine"
 msgstr "Пометить базу её происхождением"
 
-#: ../../source/manuel.rst:1445
+#: ../../source/manuel.rst:1454
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -3221,11 +3240,11 @@ msgstr ""
 "выполнения на время записи. По завершении окно закрывается само, а "
 "результат появляется в строке состояния."
 
-#: ../../source/manuel.rst:1449
+#: ../../source/manuel.rst:1458
 msgid "Trois points méritent l'attention :"
 msgstr "Три момента заслуживают внимания:"
 
-#: ../../source/manuel.rst:1451
+#: ../../source/manuel.rst:1460
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -3235,7 +3254,7 @@ msgstr ""
 "После поиска выгружаются только результаты — окно напоминает об этом "
 "сверху."
 
-#: ../../source/manuel.rst:1454
+#: ../../source/manuel.rst:1463
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -3245,7 +3264,7 @@ msgstr ""
 "усечённой.** Поэтому в списке для каждой коллекции указана охваченная "
 "доля («12/40»), выделенная красным, когда она неполная."
 
-#: ../../source/manuel.rst:1457
+#: ../../source/manuel.rst:1466
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -3255,7 +3274,7 @@ msgstr ""
 "«турнир — матч» не существует и турнир пришёл бы пустым. Флажок остаётся "
 "недоступным, пока не отмечено «включить матчи»."
 
-#: ../../source/manuel.rst:1461
+#: ../../source/manuel.rst:1470
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -3268,13 +3287,13 @@ msgstr ""
 "фильтры* стоит особняком: он экспортирует не содержимое, а ваши "
 "собственные сохранённые запросы, бесполезные в чужой базе."
 
-#: ../../source/manuel.rst:1467
+#: ../../source/manuel.rst:1476
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "При установке флажка **Пометить этот файл его происхождением** появляются"
 " два поля:"
 
-#: ../../source/manuel.rst:1469
+#: ../../source/manuel.rst:1478
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -3284,7 +3303,7 @@ msgstr ""
 " Жана Дюпона — 12 марта 2026». Это поле **обязательно**: пока оно пусто, "
 "кнопка экспорта неактивна."
 
-#: ../../source/manuel.rst:1472
+#: ../../source/manuel.rst:1481
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -3292,7 +3311,7 @@ msgstr ""
 "**Примечание**, необязательное — условия использования, контактный адрес,"
 " просьба не распространять дальше."
 
-#: ../../source/manuel.rst:1475
+#: ../../source/manuel.rst:1484
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -3306,11 +3325,11 @@ msgstr ""
 "представляет собой обычную базу SQLite, а blunderDB — свободная "
 "программа. Она ничему не препятствует: она говорит, откуда файл."
 
-#: ../../source/manuel.rst:1482
+#: ../../source/manuel.rst:1491
 msgid "Identité d'émetteur"
 msgstr "Идентичность автора"
 
-#: ../../source/manuel.rst:1484
+#: ../../source/manuel.rst:1493
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -3323,7 +3342,7 @@ msgstr ""
 "принадлежит человеку, а не базе: все ваши файлы несут один и тот же "
 "публичный отпечаток вида ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:1489
+#: ../../source/manuel.rst:1498
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -3337,7 +3356,7 @@ msgstr ""
 "парольной фразой. **Этот файл позволяет подписывать от вашего имени: не "
 "передавайте его.**"
 
-#: ../../source/manuel.rst:1495
+#: ../../source/manuel.rst:1504
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -3347,7 +3366,7 @@ msgstr ""
 "*Идентичность автора* показывает ваше имя и отпечаток и предлагает "
 "*Сохранить идентичность…*, *Загрузить идентичность…* и *Создать заново…*."
 
-#: ../../source/manuel.rst:1501
+#: ../../source/manuel.rst:1510
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -3360,7 +3379,7 @@ msgstr ""
 "подписывать под вашим прежним отпечатком, и такие отметки останутся "
 "действительными."
 
-#: ../../source/manuel.rst:1506
+#: ../../source/manuel.rst:1515
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -3369,7 +3388,7 @@ msgstr ""
 "После утечки вас защищает не программа: нужно опубликовать новый "
 "отпечаток и объявить прежний недействительным перед вашими получателями."
 
-#: ../../source/manuel.rst:1510
+#: ../../source/manuel.rst:1519
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -3377,11 +3396,11 @@ msgstr ""
 "Создание заново перезаписывает текущий ключ; blunderDB предлагает "
 "сохранить его перед заменой."
 
-#: ../../source/manuel.rst:1514
+#: ../../source/manuel.rst:1523
 msgid "Protéger une base par un mot de passe"
 msgstr "Защита базы паролем"
 
-#: ../../source/manuel.rst:1516
+#: ../../source/manuel.rst:1525
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -3391,7 +3410,7 @@ msgstr ""
 "значок в виде глаза показывает его, **пока его удерживают нажатым**, и "
 "снова скрывает, как только его отпускают."
 
-#: ../../source/manuel.rst:1520
+#: ../../source/manuel.rst:1529
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -3408,7 +3427,7 @@ msgstr ""
 "blunderDB запрашивает пароль и создаёт рядом обычную базу; дальше ничего "
 "не спрашивается."
 
-#: ../../source/manuel.rst:1528
+#: ../../source/manuel.rst:1537
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -3421,7 +3440,7 @@ msgstr ""
 "снят — защищённый файл остаётся у вас, если вы собираетесь его передать, "
 "— а удаление происходит только после успешного открытия."
 
-#: ../../source/manuel.rst:1535
+#: ../../source/manuel.rst:1544
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -3432,7 +3451,7 @@ msgstr ""
 "постороннему открыть файл, забытый в папке загрузок, или вложение, "
 "пересланное по ошибке. Он не защищает от того, кому вы сообщили пароль."
 
-#: ../../source/manuel.rst:1540
+#: ../../source/manuel.rst:1549
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -3440,7 +3459,7 @@ msgstr ""
 "Пароль проверяется при **каждом** открытии, в том числе если файл уже "
 "открывали на этом компьютере ранее."
 
-#: ../../source/manuel.rst:1543
+#: ../../source/manuel.rst:1552
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -3456,7 +3475,7 @@ msgstr ""
 "равно как и любое изменение зашифрованного файла — молча испорченной базы"
 " не получится никогда."
 
-#: ../../source/manuel.rst:1550
+#: ../../source/manuel.rst:1559
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -3464,11 +3483,11 @@ msgstr ""
 "Заголовок защищённого файла остаётся **открытым**: его происхождение "
 "читается и без пароля."
 
-#: ../../source/manuel.rst:1554
+#: ../../source/manuel.rst:1563
 msgid "Lire l'origine d'un fichier"
 msgstr "Как прочитать происхождение файла"
 
-#: ../../source/manuel.rst:1556
+#: ../../source/manuel.rst:1565
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -3480,7 +3499,7 @@ msgstr ""
 "доступный только для чтения; он сообщает, что было записано, кем, когда и"
 " в каком состоянии подпись:"
 
-#: ../../source/manuel.rst:1561
+#: ../../source/manuel.rst:1570
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -3488,7 +3507,7 @@ msgstr ""
 "«✓ подпись проверена — помечено вами»: файл несёт вашу отметку, "
 "нетронутую;"
 
-#: ../../source/manuel.rst:1563
+#: ../../source/manuel.rst:1572
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -3496,15 +3515,15 @@ msgstr ""
 "«✓ подпись проверена»: отметка нетронута и сделана другим ключом — "
 "сравните её отпечаток с тем, который сообщил вам автор;"
 
-#: ../../source/manuel.rst:1565
+#: ../../source/manuel.rst:1574
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ подпись недействительна»: документ был изменён или подделан."
 
-#: ../../source/manuel.rst:1567
+#: ../../source/manuel.rst:1576
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "У обычной базы этот раздел не появляется."
 
-#: ../../source/manuel.rst:1569
+#: ../../source/manuel.rst:1578
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
