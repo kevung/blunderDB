@@ -491,7 +491,6 @@ export default {
 </tbody>
 </table>
 <h3>Hakuhistoria</h3>
-<p>Hakuhistoria on hakupaneelin (<em>CTRL-F</em> tai <em>TAB</em>) <em>Historique</em>-välilehti.</p>
 <table>
 <thead>
 <tr>
@@ -511,7 +510,6 @@ export default {
 </tbody>
 </table>
 <h3>Suodatinkirjasto</h3>
-<p>Suodatinkirjasto on hakupaneelin (<em>CTRL-F</em> tai <em>TAB</em>) <em>Enregistrés</em>-välilehti.</p>
 <table>
 <thead>
 <tr>
@@ -562,7 +560,6 @@ export default {
 </tbody>
 </table>
 <h3>Eval-paneeli</h3>
-<p><em>Eval</em>-paneelin siirtolistaa (katso Eval-paneeli) selataan kuten analyysipaneelin listaa. Nämä pikanäppäimet toimivat heti, kun siirto on valittu napsauttamalla.</p>
 <table>
 <thead>
 <tr>
@@ -910,7 +907,6 @@ export default {
 </tbody>
 </table>
 <h3>Hakusuodattimet</h3>
-<p>Alla olevat suodattimet on asetettava peräkkäin haun aikana, eli komennon <code>s</code> aloituksen jälkeen.</p>
 <table>
 <thead>
 <tr>
@@ -1265,7 +1261,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Esimerkiksi komento <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> suodattaa kaikki asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja voitto on todennäköinen vähintään 60 % osuudella.</p>
 <h3>Sekalaisia komentoja</h3>
 <table>
 <thead>

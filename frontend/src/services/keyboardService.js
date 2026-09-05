@@ -90,17 +90,39 @@ function isBoardNavigationKey(event) {
  * @returns {boolean} true if the panel must return without handling the event.
  */
 export function panelKeyGuard(event, { allowNavKeys = false } = {}) {
+    if (isAlwaysGlobal(event)) return true;
+    if (event.target instanceof Element && event.target.matches(EDITABLE_FIELD_SELECTOR)) return true;
+    if (allowNavKeys && NAVIGATION_KEYS.has(event.key)) return true;
+    return false;
+}
+
+/**
+ * The keys no panel may ever swallow, stated once.
+ *
+ * There are two layers of filtering between a keystroke and its action, and
+ * they used to disagree. A docked panel's own document-level listener asks
+ * panelKeyGuard() what to let through; the global dispatcher then asks *again*,
+ * per focused panel, in a handful of hand-written branches (.comment-panel,
+ * .analysis-panel, .match-panel, …). Each branch had its own copy of "Ctrl
+ * combos, Space, '?' " — so a shortcut added to one list stayed dead behind the
+ * others. SHIFT-J/SHIFT-K were exactly that: added to panelKeyGuard, still
+ * dropped by the dispatcher's branches, hence "they work or not depending on
+ * which panel is open".
+ *
+ * One predicate, used by both layers. Adding a global shortcut means adding it
+ * here, once.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean}
+ */
+export function isAlwaysGlobal(event) {
     if (event.ctrlKey || event.metaKey) return true;
     if (event.code === 'Space') return true;
     if (event.key === '?') return true;
-    // Switching views is global, and its bare-Shift spelling had no way
-    // through: a panel's guard let Ctrl combos pass, so Ctrl-PageUp/PageDown
-    // worked, while SHIFT-J/SHIFT-K — the same two actions — were swallowed
-    // by the panel's stopPropagation the whole time the Matches, Tournaments
-    // or Collections panel was open. None of the three binds Shift+letter.
+    // Switching views: SHIFT-J / SHIFT-K are the bare-Shift spelling of
+    // Ctrl-PageUp / Ctrl-PageDown, and must reach the dispatcher from
+    // anywhere, exactly as the Ctrl form does. No panel binds Shift+letter.
     if (isShiftLetter(event, 'j') || isShiftLetter(event, 'k')) return true;
-    if (event.target instanceof Element && event.target.matches(EDITABLE_FIELD_SELECTOR)) return true;
-    if (allowNavKeys && NAVIGATION_KEYS.has(event.key)) return true;
     return false;
 }
 
@@ -210,7 +232,7 @@ export function handleKeyDown(event) {
     // Comment panel: while focus is anywhere inside the panel, suppress single-key
     // shortcuts (navigation h/j/k/l, p, space, …) so they never conflict with
     // typing or editing comments. Ctrl-combos, Escape (blur) and Tab still pass.
-    if (document.activeElement.closest('.comment-panel') && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
+    if (document.activeElement.closest('.comment-panel') && !isAlwaysGlobal(event) && event.key !== 'Escape' && event.key !== 'Tab') {
         return;
     }
 
@@ -219,7 +241,7 @@ export function handleKeyDown(event) {
     // app-wide escape hatches every other panel guarantees via panelKeyGuard()
     // — Ctrl/Meta combos, Space (opens the command line) and '?' (opens help).
     if (document.activeElement.closest('.analysis-panel')) {
-        if (event.ctrlKey || event.metaKey || event.key === 'Escape' || event.key === 'Tab' || event.code === 'Space' || event.key === '?') {
+        if (isAlwaysGlobal(event) || event.key === 'Escape' || event.key === 'Tab') {
             // Let shortcut through
         } else {
             if (isBoardNavigationKey(event) && !get(selectedMoveStore)) {
@@ -237,12 +259,9 @@ export function handleKeyDown(event) {
     if (document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();
-        } else if (event.key === 'Escape' || event.key === 'Tab') {
-            // Allow
-        } else if (event.code === 'Space') {
-            // Allow command line to open
-        } else if (event.key === '?') {
-            // Allow help modal to open
+        } else if (event.key === 'Escape' || event.key === 'Tab' || isAlwaysGlobal(event)) {
+            // Allow: Escape, Tab, and every always-global shortcut (Space opens
+            // the command line, '?' the help, SHIFT-J/K switch views).
         } else {
             if (isBoardNavigationKey(event)) {
                 const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');

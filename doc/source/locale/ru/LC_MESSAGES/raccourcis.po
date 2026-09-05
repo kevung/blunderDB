@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -458,14 +458,6 @@ msgstr "Просмотр истории команд вниз."
 msgid "Historique de recherche"
 msgstr "История поиска"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"История поиска — это вкладка *Historique* панели поиска (*CTRL-F* или "
-"*TAB*)."
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "Клик"
@@ -482,17 +474,9 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"Библиотека фильтров — это вкладка *Enregistrés* панели поиска (*CTRL-F* "
-"или *TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -502,7 +486,7 @@ msgstr "Выбрать/отменить выбор фильтра (показа�
 msgid "Exécuter la recherche du filtre."
 msgstr "Выполнить поиск по фильтру."
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -536,25 +520,15 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Панель Eval"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"Список ходов панели *Eval* (см. :ref:`panneau_epc`) просматривается так "
-"же, как список панели анализа. Эти сочетания действуют, как только ход "
-"выбран кликом."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -590,7 +564,7 @@ msgstr "Удалить выбранный матч."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -646,7 +620,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
@@ -678,7 +652,7 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -865,4 +839,35 @@ msgstr ""
 #~ "PageDown/l перемещаются по позициям открытой"
 #~ " коллекции ровно так, как описано в"
 #~ " :ref:`raccourcis_navigation`."
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "История поиска — это вкладка "
+#~ "*Historique* панели поиска (*CTRL-F* или "
+#~ "*TAB*)."
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "Библиотека фильтров — это вкладка "
+#~ "*Enregistrés* панели поиска (*CTRL-F* или "
+#~ "*TAB*)."
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "Список ходов панели *Eval* (см. "
+#~ ":ref:`panneau_epc`) просматривается так же, "
+#~ "как список панели анализа. Эти сочетания"
+#~ " действуют, как только ход выбран "
+#~ "кликом."
 

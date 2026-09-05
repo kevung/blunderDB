@@ -502,7 +502,6 @@ export default {
 </tbody>
 </table>
 <h3>Suchverlauf</h3>
-<p>Der Suchverlauf ist der Reiter <em>Verlauf</em> des Suchfensters (<em>CTRL-F</em> oder <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -522,7 +521,6 @@ export default {
 </tbody>
 </table>
 <h3>Filterbibliothek</h3>
-<p>Die Filterbibliothek ist der Reiter <em>Gespeichert</em> des Suchfensters (<em>CTRL-F</em> oder <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -573,7 +571,6 @@ export default {
 </tbody>
 </table>
 <h3>Eval-Fenster</h3>
-<p>Die Zugliste des Fensters <em>Eval</em> (siehe Eval-Panel) wird wie die des Analyse-Fensters durchlaufen. Diese Tastenkürzel wirken, sobald ein Zug per Klick ausgewählt wurde.</p>
 <table>
 <thead>
 <tr>
@@ -921,7 +918,6 @@ export default {
 </tbody>
 </table>
 <h3>Suchfilter</h3>
-<p>Die folgenden Filter müssen bei einer Suche aneinandergereiht werden, das heißt nach dem Befehlsbeginn <code>s</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1276,7 +1272,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Zum Beispiel filtert der Befehl <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> alle Positionen unter Berücksichtigung der Steinstruktur, des Spielstands und des Dopplers der bearbeiteten Position, bei denen der Spieler im Rennen zwischen 20 und 5 Pips in Führung liegt, mit mindestens 60 % der Gewinnchancen, mindestens 10 Steinen in der Zone, und der Gegner zwischen 2 und 3 rückständige Steine hat.</p>
 <h3>Verschiedene Befehle</h3>
 <table>
 <thead>

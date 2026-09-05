@@ -86,9 +86,6 @@ Positions et navigation
 Filtres de recherche
 --------------------
 
-Les filtres ci-dessous doivent être juxtaposés lors d'une recherche,
-c'est-à-dire après le début de commande ``s``.
-
 .. _cmd_filter_pos:
 
 .. csv-table::
@@ -182,12 +179,6 @@ c'est-à-dire après le début de commande ``s``.
    "idx", "Rechercher la position d'identifiant x (ex: id12)."
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
    "pl'nom'", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
-
-Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
-positions en prenant en compte la structure des pions, le score et le cube
-de la position éditée où le joueur a entre 20 et 5 pips d'avance à la
-course, avec au moins 60% de chances de gain, au moins 10 pions dans la
-zone, et l'adversaire a entre 2 et 3 pions arriérés.
 
 .. _cmd_misc:
 

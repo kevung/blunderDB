@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -457,12 +457,6 @@ msgstr "Selaa komentohistoriaa alaspäin."
 msgid "Historique de recherche"
 msgstr "Hakuhistoria"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr "Hakuhistoria on hakupaneelin (*CTRL-F* tai *TAB*) *Historique*-välilehti."
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "Napsautus"
@@ -479,17 +473,9 @@ msgstr "Kaksoisnapsautus"
 msgid "Exécuter la recherche."
 msgstr "Suorita haku."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"Suodatinkirjasto on hakupaneelin (*CTRL-F* tai *TAB*) "
-"*Enregistrés*-välilehti."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -499,7 +485,7 @@ msgstr "Valitse/poista valinta suodattimelta (näytä asema)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Suorita suodattimen haku."
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "Analyysipaneeli"
 
@@ -535,25 +521,15 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli."
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Eval-paneeli"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"*Eval*-paneelin siirtolistaa (katso :ref:`panneau_epc`) selataan kuten "
-"analyysipaneelin listaa. Nämä pikanäppäimet toimivat heti, kun siirto on "
-"valittu napsauttamalla."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "Poista siirron valinta."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "Ottelupaneeli"
 
@@ -589,7 +565,7 @@ msgstr "Poista valittu ottelu."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Poista valinta / sulje paneeli."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki-paneeli (välitoistoharjoittelu)"
 
@@ -645,7 +621,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Lopeta kertaus ja palaa pakkaluetteloon (voidaan jatkaa myöhemmin)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "Turnauspaneeli"
 
@@ -678,7 +654,7 @@ msgstr ""
 "muuten poista turnauksen valinta, muuten sulje paneeli (askel "
 "kerrallaan)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "Kokoelmapaneeli"
 
@@ -863,4 +839,32 @@ msgstr ""
 #~ " PageDown/l liikkuvat avoimen kokoelman "
 #~ "asemissa täsmälleen kuten kohdassa "
 #~ ":ref:`raccourcis_navigation` kuvataan."
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "Hakuhistoria on hakupaneelin (*CTRL-F* tai "
+#~ "*TAB*) *Historique*-välilehti."
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "Suodatinkirjasto on hakupaneelin (*CTRL-F* tai"
+#~ " *TAB*) *Enregistrés*-välilehti."
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "*Eval*-paneelin siirtolistaa (katso "
+#~ ":ref:`panneau_epc`) selataan kuten analyysipaneelin"
+#~ " listaa. Nämä pikanäppäimet toimivat heti,"
+#~ " kun siirto on valittu napsauttamalla."
 
