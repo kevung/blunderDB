@@ -1197,6 +1197,15 @@ Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
 
+**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le
+panneau Eval puis y revenir retrouve la position sur laquelle on l'a laissé,
+et non le plateau de sortie par défaut : ce dernier n'est servi qu'à la
+première ouverture de la session. Envoyer une position de la base vers le
+panneau l'emporte sur ce souvenir, et *RETOUR ARRIERE* rend le plateau par
+défaut à tout moment. Rien n'est enregistré dans la base au passage — le
+brouillon n'a pas d'identité de position, et son évaluation est recalculée à
+l'arrivée plutôt que transportée.
+
 **Mode défi.** La case *Défi*, dans la bande de badges, active un mode
 entraînement : à chaque modification de la position, les valeurs de trois
 zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle
