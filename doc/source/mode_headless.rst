@@ -113,10 +113,9 @@ depuis plusieurs clients.
        profondeur, sur option)
    * - ``--bearoff-ts <fichier>``
      - –
-     - base de bearoff two-sided (``.bd``) optionnelle élargissant la base
-       intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ;
-       le démon ne télécharge jamais de base lui-même — monter le fichier
-       en volume et le désigner ici
+     - base de bearoff two-sided (``.bd``) optionnelle élargissant la table
+       TS-06-06 pour l'analyse de course du point d'accès EPC ; le démon ne
+       télécharge jamais de base — voir :ref:`headless_bearoff`
    * - ``--identity-dir <répertoire>``
      - –
      - répertoire de l'identité de signature du démon (créée au premier
@@ -193,6 +192,37 @@ filtres, sessions, historique (recherche et commandes), recherche,
 métadonnées, statistiques, import et export. Les endpoints de listing
 renvoient un flux NDJSON (un objet JSON par ligne). Le serveur s'arrête
 proprement sur ``SIGINT`` / ``SIGTERM``.
+
+.. _headless_bearoff:
+
+Les bases de bearoff
+--------------------
+
+Le démon calcule ses deux tables par défaut au démarrage, en arrière-plan
+(TS-06-06 pour le verdict de videau, OS-06 pour l'EPC) : environ six secondes
+d'un cœur, une fois, dans le dossier de données. Rien n'est téléchargé et rien
+n'est embarqué dans le binaire (`ADR-0027 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md>`__).
+Si ce dossier est en lecture seule, les tables sont tenues en mémoire pour la
+durée du processus : le service démarre, il paie simplement le calcul à chaque
+redémarrage.
+
+Un domaine plus large ne se calcule pas au démarrage — TS-06-11 pèse 1,2 Go et
+prend des minutes, ce n'est pas quelque chose qu'un service décide seul. C'est
+à l'opérateur de le fabriquer, avec la CLI, dans le volume que le démon lira :
+
+.. code-block:: bash
+
+   # dans le volume monté, une fois
+   blunderdb bearoff generate --ts 6x11 --data-dir /srv/bearoff
+
+   # puis le démon le trouve tout seul, ou on le désigne explicitement
+   blunderdb serve --data-dir /srv/bearoff
+   blunderdb serve --bearoff-ts /srv/bearoff/gnubg_ts6x11.bd
+
+``blunderdb bearoff list --data-dir /srv/bearoff`` dit ce que le volume
+contient et ce que chaque domaine coûterait ; ``blunderdb bearoff verify`` sort
+en erreur sur une table corrompue, ce qui en fait une sonde de démarrage
+utilisable telle quelle. Voir :ref:`cli` pour le détail.
 
 .. _headless_ops_routes:
 

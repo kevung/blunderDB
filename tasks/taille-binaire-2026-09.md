@@ -103,7 +103,7 @@ comparaison, l'estimateur par convolution est à σ = 0,05 % sur la
 probabilité de gain, trente fois plus près que le réseau à 2 plis. Refusé ;
 ADR-0009 et ADR-0012 tiennent.
 
-### Régénérer la table deux faces au lieu de l'embarquer — possible, non fait
+### Régénérer les tables au lieu de les embarquer — FAIT (ADR-0027, 0.36.0)
 
 La table est une donnée dérivée : `makebearoff -t 6x6` la produit en 24 s, et
 un prototype Go d'induction arrière (port de `generate_ts` / `BearOff2` /
@@ -115,7 +115,26 @@ l'invariant « le verdict n'est jamais estimé » : exact reste exact, calculé
 au lieu de lu. Prix : ~150 lignes de générateur, un test d'identité contre le
 fichier gnubg gardé en fixture, un cache dans le répertoire de données XDG
 (comme le TS-06-11 téléchargé) ou un calcul en mémoire au premier verdict.
-Non fait, faute de contrainte ; c'est la voie si l'on veut la taille.
+
+**Fait en 0.36.0**, et davantage : la table une face de l'EPC (`gnubg_os6.bd`,
+8,2 Mo) est partie avec, ainsi que l'asset de téléchargement de 1,2 Go. Le
+paquet `pkg/blunderdb/engine/bearoffgen` porte les deux générateurs, chacun
+identique octet pour octet à `makebearoff` et vérifié contre une empreinte
+SHA-256 enregistrée.
+
+Mesure sur le binaire Linux `-tags webkit2_41`, entre 0.35.0 et le retrait des
+deux `go:embed` :
+
+| | 0.35.0 | après | écart |
+|---|---:|---:|---:|
+| brut, strippé | 34,6 Mo | 27,3 Mo | −7,33 Mo (−21,2 %) |
+
+C'est le plus gros levier de toute cette note, et le seul qui n'ait rien coûté
+à l'utilisateur : les deux tables par défaut se refont au premier lancement en
+arrière-plan, six secondes d'un cœur, et le domaine étendu se calcule sur
+demande au lieu de se télécharger. Le générateur deux faces est parallèle par
+diagonale (TS-06-09 : 78,9 s → 9,8 s sur seize fils) et reprend après une
+pause.
 
 ### Exclure pgx du binaire desktop (build tag) — refusé
 

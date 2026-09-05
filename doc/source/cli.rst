@@ -664,8 +664,71 @@ volontairement jamais estimé (voir `ADR-0009 <https://github.com/kevung/blunder
    # Régime exact (les deux joueurs ont 6 pions ou moins)
    ./blunderdb epc 'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'
 
-   # Avec la base TS-06-11 téléchargée (exact jusqu'à 11 pions par joueur)
+   # Avec la base TS-06-11 calculée (exact jusqu'à 11 pions par joueur)
    ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
+
+bearoff — Bases de sortie
+--------------------------
+
+Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien n'est
+embarqué : une table est calculée ici et vérifiée contre l'empreinte que gnubg
+produit pour son domaine. Aucune sous-commande ne parle à une base de données —
+une table de bearoff est de l'arithmétique sur le jeu, pas sur les positions de
+quelqu'un — donc aucune ne prend ``--db``.
+
+.. code-block:: bash
+
+   ./blunderdb bearoff generate --ts <domaine> [options]
+   ./blunderdb bearoff list [options]
+   ./blunderdb bearoff verify <fichier.bd> [options]
+   ./blunderdb bearoff delete --ts <domaine> [options]
+
+Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table
+two-sided à neuf pions par joueur, ``os`` pour la table une face que lit
+l'EPC.
+
+**generate.** Annonce la taille, la mémoire et le temps estimé avant de
+commencer, puis affiche le pourcentage et le temps restant mesuré.
+
+* ``--ts`` — Domaine à calculer, par exemple ``6x9`` (requis).
+* ``--cores`` — Cœurs à utiliser (défaut : tous sauf un).
+* ``--data-dir`` — Où écrire (défaut : le dossier de données de l'application).
+* ``--quiet`` — Pas de ligne de progression.
+
+**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de la
+table et la même commande relancée reprend là où elle s'était arrêtée, au lieu
+de tout recalculer. Une demi-heure d'arithmétique mérite d'être écrite.
+``bearoff delete`` jette une reprise en attente.
+
+**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette machine —
+et dit lesquels sont déjà présents, avec leur verdict, et lesquels ont un
+calcul en pause. ``--format json`` pour un script, ``--cores`` pour changer
+l'hypothèse de l'estimation.
+
+**verify.** Répond ``verified`` (les mêmes octets que la référence),
+``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour ce
+domaine) ou ``corrupt`` (le fichier se contredit). Sort en erreur sur le
+dernier cas : cette commande est faite pour être mise dans un script.
+
+**delete.** Retire la table, la reprise en attente et les débris d'un calcul
+mort. Un domaine par défaut est recalculé au prochain lancement de
+l'application ; un domaine plus large ne l'est pas.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Ce que cette machine a, et ce que chaque domaine coûterait
+   ./blunderdb bearoff list
+
+   # Calculer TS-06-09 sur quatre cœurs
+   ./blunderdb bearoff generate --ts 6x9 --cores 4
+
+   # Sur un serveur, dans le volume que lit le démon
+   ./blunderdb bearoff generate --ts 6x11 --data-dir /srv/bearoff
+
+   # Vérifier une table reçue d'ailleurs
+   ./blunderdb bearoff verify /srv/bearoff/gnubg_ts6x11.bd
 
 analyze — Rattrapage gammonNet
 ---------------------------------

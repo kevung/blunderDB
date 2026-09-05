@@ -231,13 +231,47 @@ demander : environ six secondes sur un cœur, pendant lesquelles l'application
 s'utilise normalement. Le panneau Eval ne le signale que si l'on y pose une
 position qui a besoin d'une table pas encore prête.
 
-L'onglet affiche le domaine actif et son origine, et permet de calculer la
-table étendue **TS-06-11** — verdict exact jusqu'à onze pions par joueur,
-environ vingt minutes sur un cœur et 1,2 Go sur le disque — avec une barre de
-progression et un bouton d'annulation. Une table calculée peut être supprimée
-au même endroit, après confirmation. L'onglet permet aussi de pointer vers un
-fichier ``.bd`` two-sided externe, par exemple une base produite par gnubg
-lui-même : la table au domaine le plus large l'emporte.
+L'onglet affiche le domaine actif et son origine, l'état de la table une face
+que lit l'EPC, le dossier où tout cela vit, et la liste des tables présentes
+avec leur taille et leur verdict. Chaque ligne se supprime individuellement,
+après confirmation.
+
+**Vérifiée ou non vérifiée.** Une table *vérifiée* a exactement les octets que
+gnubg produit pour son domaine : son empreinte SHA-256 figure dans blunderDB et
+a été retrouvée. Une table *non vérifiée* est bien formée mais son domaine n'a
+pas d'empreinte enregistrée — rien ne lui est reproché, simplement personne ne
+l'a comparée à la référence. Une table *corrompue* se contredit elle-même et
+n'est jamais lue ; elle est recalculée.
+
+**Calculer une table plus large.** Le domaine se choisit dans une liste, de
+TS-06-06 à TS-06-15, avec le nombre de cœurs à y consacrer (par défaut tous
+sauf un, pour que la machine reste utilisable). Avant de lancer quoi que ce
+soit, l'onglet annonce trois chiffres pour le domaine choisi : la taille sur le
+disque, la mémoire nécessaire pendant le calcul, et le temps que cela devrait
+prendre *sur cette machine*. Ce dernier commence par une estimation, puis
+devient une mesure : chaque calcul assez large relève sa propre vitesse et la
+conserve. Un domaine que la mémoire disponible ne permet pas est proposé grisé,
+avec la raison — « il faudrait 24 Go, il en reste 12 » est une réponse, une
+ligne absente n'en serait pas une.
+
+À titre d'ordre de grandeur, sur une machine à seize fils : TS-06-09 pèse
+191 Mo et demande une dizaine de secondes, TS-06-11 pèse 1,2 Go et quelques
+minutes, TS-06-13 dépasse ce que la plupart des machines peuvent tenir en
+mémoire.
+
+**Pause et reprise.** Pendant le calcul, la progression affiche le temps
+restant *mesuré*, et deux boutons distincts : *Pause* et *Annuler*. La pause
+écrit l'état du calcul à côté de la table ; le relancer reprend là où il s'est
+arrêté au lieu de tout recommencer. Annuler ne garde rien. Fermer la fenêtre de
+configuration n'interrompt rien — le calcul continue en arrière-plan.
+
+Un calcul mis en pause se retrouve au lancement suivant, nommé et chiffré
+(« TS-06-09 interrompue à 43 % »), avec *Reprendre* et *Supprimer*. Rien ne
+redémarre tout seul : c'est l'utilisateur qui a demandé l'arrêt.
+
+L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided externe, par
+exemple une base produite par gnubg lui-même : la table au domaine le plus
+large l'emporte.
 
 L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
@@ -1212,10 +1246,10 @@ régimes et de leurs hypothèses.
 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la
 configuration :
 
-* calculer la table étendue TS-06-11 (environ vingt minutes sur un cœur,
-  1,2 Go sur le disque, supprimable au même endroit après confirmation) :
-  verdict exact jusqu'à 11 pions par joueur. Un calcul annulé laisse un
-  fichier ``.part`` qui n'est jamais lu comme une table ;
+* calculer une table plus large — jusqu'à TS-06-15 si la machine a la mémoire
+  pour. L'onglet annonce la taille, la mémoire et le temps sur cette machine
+  avant de commencer, et le calcul se met en pause et se reprend. Un calcul
+  annulé laisse un fichier ``.part`` qui n'est jamais lu comme une table ;
 
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.
@@ -1350,8 +1384,10 @@ de match a été mesurée insuffisante (12 % de désaccords avec l'analyse
 d'afficher de verdict — c'est une recherche qui joue la trajectoire, pas un
 résumé statistique, qui comble ce trou.
 
-.. note:: Les bases de bearoff sont des tables mathématiques immuables,
-   régénérables avec l'outil ``makebearoff`` de GNUbg.
+.. note:: Les bases de bearoff sont des tables mathématiques immuables.
+   blunderDB les calcule lui-même, à l'identique de l'outil ``makebearoff`` de
+   GNUbg — octet pour octet — dans l'onglet *Bearoff* de la configuration ou
+   avec ``blunderdb bearoff generate``.
 
 .. _panneau_anki:
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 04:32+0200\n"
+"POT-Creation-Date: 2026-09-05 07:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -133,48 +133,48 @@ msgstr ""
 "πιστοποιημένο λογαριασμό σε αυτόν τον ακέραιο. Ένα όνομα (``alice``) "
 "απορρίπτεται με ``400 invalid``, ποτέ δεν μετατρέπεται."
 
-#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:761
+#: ../../source/mode_headless.rst:68 ../../source/mode_headless.rst:791
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
-#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:708
-#: ../../source/mode_headless.rst:767
+#: ../../source/mode_headless.rst:74 ../../source/mode_headless.rst:738
+#: ../../source/mode_headless.rst:797
 msgid "Option"
 msgstr "Επιλογή"
 
-#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:709
-#: ../../source/mode_headless.rst:768
+#: ../../source/mode_headless.rst:75 ../../source/mode_headless.rst:739
+#: ../../source/mode_headless.rst:798
 msgid "Défaut"
 msgstr "Προεπιλογή"
 
-#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:710
-#: ../../source/mode_headless.rst:769
+#: ../../source/mode_headless.rst:76 ../../source/mode_headless.rst:740
+#: ../../source/mode_headless.rst:799
 msgid "Signification"
 msgstr "Σημασία"
 
-#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:770
+#: ../../source/mode_headless.rst:77 ../../source/mode_headless.rst:800
 msgid "``--db <chemin>``"
 msgstr "``--db <chemin>``"
 
 #: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:96
-#: ../../source/mode_headless.rst:115 ../../source/mode_headless.rst:121
-#: ../../source/mode_headless.rst:126 ../../source/mode_headless.rst:132
-#: ../../source/mode_headless.rst:712 ../../source/mode_headless.rst:715
-#: ../../source/mode_headless.rst:718 ../../source/mode_headless.rst:722
-#: ../../source/mode_headless.rst:771 ../../source/mode_headless.rst:787
-#: ../../source/mode_headless.rst:790
+#: ../../source/mode_headless.rst:115 ../../source/mode_headless.rst:120
+#: ../../source/mode_headless.rst:125 ../../source/mode_headless.rst:131
+#: ../../source/mode_headless.rst:742 ../../source/mode_headless.rst:745
+#: ../../source/mode_headless.rst:748 ../../source/mode_headless.rst:752
+#: ../../source/mode_headless.rst:801 ../../source/mode_headless.rst:817
+#: ../../source/mode_headless.rst:820
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:772
+#: ../../source/mode_headless.rst:79 ../../source/mode_headless.rst:802
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "αρχείο SQLite (συντόμευση για ``--backend sqlite --dsn <chemin>``)"
 
-#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:773
+#: ../../source/mode_headless.rst:80 ../../source/mode_headless.rst:803
 msgid "``--backend <type>``"
 msgstr "``--backend <type>``"
 
-#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:774
+#: ../../source/mode_headless.rst:81 ../../source/mode_headless.rst:804
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -182,15 +182,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "backend αποθήκευσης: ``sqlite`` ή ``postgres``"
 
-#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:776
+#: ../../source/mode_headless.rst:83 ../../source/mode_headless.rst:806
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <chaîne>``"
 
-#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:777
+#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:807
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:778
+#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:808
 msgid "chaîne de connexion du backend"
 msgstr "συμβολοσειρά σύνδεσης του backend"
 
@@ -300,21 +300,19 @@ msgstr "``--bearoff-ts <fichier>``"
 
 #: ../../source/mode_headless.rst:116
 msgid ""
-"base de bearoff two-sided (``.bd``) optionnelle élargissant la base "
-"intégrée TS-06-06 pour l'analyse de course du point d'accès EPC ; le "
-"démon ne télécharge jamais de base lui-même — monter le fichier en volume"
-" et le désigner ici"
+"base de bearoff two-sided (``.bd``) optionnelle élargissant la table "
+"TS-06-06 pour l'analyse de course du point d'accès EPC ; le démon ne "
+"télécharge jamais de base — voir :ref:`headless_bearoff`"
 msgstr ""
-"προαιρετική βάση bearoff two-sided (``.bd``) που διευρύνει την "
-"ενσωματωμένη βάση TS-06-06 για την ανάλυση κούρσας του σημείου πρόσβασης "
-"EPC· ο δαίμονας δεν κατεβάζει ποτέ βάση από μόνος του — προσαρτήστε το "
-"αρχείο ως volume και ορίστε το εδώ"
+"προαιρετική αμφίπλευρη βάση bearoff (``.bd``) που διευρύνει τον πίνακα "
+"TS-06-06 για την ανάλυση κούρσας του σημείου πρόσβασης EPC· ο δαίμονας δεν "
+"κατεβάζει ποτέ βάση — δείτε :ref:`headless_bearoff`"
 
-#: ../../source/mode_headless.rst:120
+#: ../../source/mode_headless.rst:119
 msgid "``--identity-dir <répertoire>``"
 msgstr "``--identity-dir <répertoire>``"
 
-#: ../../source/mode_headless.rst:122
+#: ../../source/mode_headless.rst:121
 msgid ""
 "répertoire de l'identité de signature du démon (créée au premier usage) ;"
 " nécessaire pour qu'``exports.sqlite`` puisse apposer un filigrane — voir"
@@ -324,11 +322,11 @@ msgstr ""
 "της στην πρώτη χρήση)· απαραίτητος για να μπορεί η ``exports.sqlite`` να "
 "επιθέτει σήμανση — βλ. παρακάτω"
 
-#: ../../source/mode_headless.rst:125
+#: ../../source/mode_headless.rst:124
 msgid "``--ops-addr <hôte:port>``"
 msgstr "``--ops-addr <κόμβος:θύρα>``"
 
-#: ../../source/mode_headless.rst:127
+#: ../../source/mode_headless.rst:126
 msgid ""
 "sert la famille ``/ops/`` (``maintenance.vacuum``, ``tenant.purge``) sur "
 "une adresse **séparée** de ``--addr``, et l'en retire ; vide (le défaut) "
@@ -341,11 +339,11 @@ msgstr ""
 "όπου η άρνηση του προθέματος είναι δουλειά του proxy — βλ. "
 ":ref:`headless_ops_routes`"
 
-#: ../../source/mode_headless.rst:131
+#: ../../source/mode_headless.rst:130
 msgid "``--pprof-addr <hôte:port>``"
 msgstr "``--pprof-addr <κόμβος:θύρα>``"
 
-#: ../../source/mode_headless.rst:133
+#: ../../source/mode_headless.rst:132
 msgid ""
 "expose ``net/http/pprof`` sur une adresse **séparée** de ``--addr`` "
 "(désactivé par défaut) ; débogage uniquement — ces points d'accès n'ont "
@@ -359,7 +357,7 @@ msgstr ""
 " ολόκληρης της διεργασίας· ποτέ δημόσια ούτε στην ίδια διεύθυνση με το "
 "``/v1``"
 
-#: ../../source/mode_headless.rst:139
+#: ../../source/mode_headless.rst:138
 msgid ""
 "La plupart des options peuvent aussi être fournies par variable "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
@@ -379,7 +377,7 @@ msgstr ""
 "``BLUNDERDB_PPROF_ADDR``): μια ρητή σημαία υπερισχύει πάντα της "
 "αντίστοιχης μεταβλητής."
 
-#: ../../source/mode_headless.rst:146
+#: ../../source/mode_headless.rst:145
 msgid ""
 "La table de seaux du limiteur de débit porte elle-même un plafond dur (10"
 " 000 tenants distincts) : au-delà, chaque nouveau tenant évince le seau "
@@ -395,7 +393,7 @@ msgstr ""
 "τιμές ``X-Tenant-ID``, εκούσια ή μη, ανάμεσα σε δύο περιοδικούς "
 "καθαρισμούς ανενεργών κάδων."
 
-#: ../../source/mode_headless.rst:152
+#: ../../source/mode_headless.rst:151
 msgid ""
 "``blunderdb serve`` refuse tout argument positionnel imprévu (au-delà du "
 "seul ``serve`` initial qu'un ``ENTRYPOINT`` déjà réduit au binaire nu "
@@ -412,19 +410,19 @@ msgstr ""
 "κίνηση αφού το ``ENTRYPOINT`` της εικόνας είναι ήδη ``serve``, ξεκινούσε "
 "στο ``:8080`` χωρίς καμία προειδοποίηση."
 
-#: ../../source/mode_headless.rst:160
+#: ../../source/mode_headless.rst:159
 msgid "Points d'accès"
 msgstr "Σημεία πρόσβασης"
 
-#: ../../source/mode_headless.rst:162
+#: ../../source/mode_headless.rst:161
 msgid "Le service expose des points d'accès d'exploitation, toujours présents :"
 msgstr "Η υπηρεσία εκθέτει σημεία πρόσβασης λειτουργίας, πάντα διαθέσιμα:"
 
-#: ../../source/mode_headless.rst:164
+#: ../../source/mode_headless.rst:163
 msgid "``GET /healthz`` — vivacité (le processus tourne) ;"
 msgstr "``GET /healthz`` — ζωτικότητα (η διεργασία τρέχει)·"
 
-#: ../../source/mode_headless.rst:165
+#: ../../source/mode_headless.rst:164
 msgid ""
 "``GET /readyz`` — disponibilité (le stockage répond et son schéma est à "
 "la version attendue) ;"
@@ -432,11 +430,11 @@ msgstr ""
 "``GET /readyz`` — διαθεσιμότητα (η αποθήκευση απαντά και το σχήμα της "
 "είναι στην αναμενόμενη έκδοση)·"
 
-#: ../../source/mode_headless.rst:167
+#: ../../source/mode_headless.rst:166
 msgid "``GET /metrics`` — métriques Prometheus (si ``--metrics`` est actif)."
 msgstr "``GET /metrics`` — μετρικές Prometheus (αν το ``--metrics`` είναι ενεργό)."
 
-#: ../../source/mode_headless.rst:169
+#: ../../source/mode_headless.rst:168
 msgid ""
 "Vivacité et disponibilité répondent à deux questions différentes. "
 "``/healthz`` répond toujours 200 dès que le processus sert des requêtes, "
@@ -456,7 +454,7 @@ msgstr ""
 "``version_mismatch``) όσο η βάση δεν απαντά ή το σχήμα της δεν είναι αυτό"
 " του δυαδικού: η κίνηση απλώς εκτρέπεται μέχρι να επιστρέψει."
 
-#: ../../source/mode_headless.rst:178
+#: ../../source/mode_headless.rst:177
 msgid ""
 "La sous-commande ``blunderdb healthcheck`` (présente aussi dans le "
 "binaire ``serve`` de l'image conteneur) effectue une requête ``GET "
@@ -472,7 +470,7 @@ msgstr ""
 "προεπιλογή ``:8080``. Είναι το ``HEALTHCHECK`` της εικόνας Docker και "
 "είναι εξίσου χρήσιμη σε ένα script ή σε μια μονάδα systemd:"
 
-#: ../../source/mode_headless.rst:189
+#: ../../source/mode_headless.rst:188
 msgid ""
 "La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par "
 "exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles "
@@ -491,11 +489,61 @@ msgstr ""
 "JSON ανά γραμμή). Ο διακομιστής τερματίζει καθαρά με ``SIGINT`` / "
 "``SIGTERM``."
 
-#: ../../source/mode_headless.rst:200
+#: ../../source/mode_headless.rst:199
+msgid "Les bases de bearoff"
+msgstr "Οι βάσεις bearoff"
+
+#: ../../source/mode_headless.rst:201
+msgid ""
+"Le démon calcule ses deux tables par défaut au démarrage, en arrière-plan"
+" (TS-06-06 pour le verdict de videau, OS-06 pour l'EPC) : environ six "
+"secondes d'un cœur, une fois, dans le dossier de données. Rien n'est "
+"téléchargé et rien n'est embarqué dans le binaire (`ADR-0027 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-"
+"databases-are-generated-not-shipped-and-verified-against-gnubg.md>`__). "
+"Si ce dossier est en lecture seule, les tables sont tenues en mémoire "
+"pour la durée du processus : le service démarre, il paie simplement le "
+"calcul à chaque redémarrage."
+msgstr ""
+"Ο δαίμονας υπολογίζει τους δύο προεπιλεγμένους πίνακές του κατά την "
+"εκκίνηση, στο παρασκήνιο (TS-06-06 για την ετυμηγορία κύβου, OS-06 για το "
+"EPC): περίπου έξι δευτερόλεπτα ενός πυρήνα, μία φορά, στον φάκελο "
+"δεδομένων. Τίποτα δεν κατεβαίνει και τίποτα δεν είναι ενσωματωμένο στο "
+"εκτελέσιμο (`ADR-0027 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md>`__). "
+"Αν ο φάκελος είναι μόνο για ανάγνωση, οι πίνακες κρατιούνται στη μνήμη για "
+"τη διάρκεια ζωής της διεργασίας: η υπηρεσία ξεκινά, απλώς πληρώνει τον "
+"υπολογισμό σε κάθε επανεκκίνηση."
+
+#: ../../source/mode_headless.rst:209
+msgid ""
+"Un domaine plus large ne se calcule pas au démarrage — TS-06-11 pèse 1,2 "
+"Go et prend des minutes, ce n'est pas quelque chose qu'un service décide "
+"seul. C'est à l'opérateur de le fabriquer, avec la CLI, dans le volume "
+"que le démon lira :"
+msgstr ""
+"Ένας ευρύτερος τομέας δεν υπολογίζεται στην εκκίνηση — ο TS-06-11 ζυγίζει "
+"1,2 GB και θέλει λεπτά, δεν είναι κάτι που αποφασίζει μόνη της μια "
+"υπηρεσία. Είναι έργο του διαχειριστή να τον φτιάξει, με τη γραμμή εντολών, "
+"στον τόμο που θα διαβάσει ο δαίμονας:"
+
+#: ../../source/mode_headless.rst:222
+msgid ""
+"``blunderdb bearoff list --data-dir /srv/bearoff`` dit ce que le volume "
+"contient et ce que chaque domaine coûterait ; ``blunderdb bearoff "
+"verify`` sort en erreur sur une table corrompue, ce qui en fait une sonde"
+" de démarrage utilisable telle quelle. Voir :ref:`cli` pour le détail."
+msgstr ""
+"Το ``blunderdb bearoff list --data-dir /srv/bearoff`` λέει τι περιέχει ο "
+"τόμος και τι θα κόστιζε κάθε τομέας· το ``blunderdb bearoff verify`` "
+"τερματίζει με σφάλμα σε κατεστραμμένο πίνακα, πράγμα που το κάνει έλεγχο "
+"εκκίνησης χρησιμοποιήσιμο ως έχει. Δείτε :ref:`cli` για λεπτομέρειες."
+
+#: ../../source/mode_headless.rst:230
 msgid "Les routes d'exploitation"
 msgstr "Οι διαδρομές λειτουργίας"
 
-#: ../../source/mode_headless.rst:202
+#: ../../source/mode_headless.rst:232
 msgid ""
 "Deux appels ne s'arrêtent pas au tenant qui les passe, et vivent donc "
 "sous un préfixe à part, ``POST /ops/<famille>.<méthode>`` :"
@@ -503,7 +551,7 @@ msgstr ""
 "Δύο κλήσεις δεν σταματούν στον tenant που τις κάνει και ζουν επομένως "
 "κάτω από δικό τους πρόθεμα, ``POST /ops/<οικογένεια>.<μέθοδος>``:"
 
-#: ../../source/mode_headless.rst:205
+#: ../../source/mode_headless.rst:235
 msgid ""
 "``/ops/maintenance.vacuum`` (backend SQLite) réécrit **tout** le fichier,"
 " données de tous les tenants comprises, et tient un verrou d'écriture "
@@ -513,7 +561,7 @@ msgstr ""
 "αρχείο, μαζί με τα δεδομένα όλων των tenants, και κρατά κλείδωμα εγγραφής"
 " για όσο διαρκεί·"
 
-#: ../../source/mode_headless.rst:208
+#: ../../source/mode_headless.rst:238
 msgid ""
 "``/ops/tenant.purge`` (backend PostgreSQL) détruit les données d'un "
 "tenant, et le tenant détruit est celui que nomme l'en-tête que l'appelant"
@@ -523,7 +571,7 @@ msgstr ""
 "tenant, και ο tenant που καταστρέφεται είναι αυτός που ονομάζει η "
 "κεφαλίδα την οποία ελέγχει ο καλών."
 
-#: ../../source/mode_headless.rst:211
+#: ../../source/mode_headless.rst:241
 msgid ""
 "Le démon n'authentifie personne (voir plus bas) : une route joignable par"
 " un tenant est une route que **tout** tenant peut appeler. Le préfixe "
@@ -535,7 +583,7 @@ msgstr ""
 " πρόθεμα υπάρχει ώστε ο proxy να μπορεί να αρνηθεί και τις δύο με έναν "
 "μόνο κανόνα. **Ποτέ μην εκθέτετε το ``/ops/`` μέσω του δημόσιου proxy.**"
 
-#: ../../source/mode_headless.rst:216
+#: ../../source/mode_headless.rst:246
 msgid ""
 "L'option ``--ops-addr <hôte:port>`` va plus loin : les deux routes "
 "quittent alors l'adresse ``--addr`` et ne sont plus servies que sur ce "
@@ -549,7 +597,7 @@ msgstr ""
 "διαχείρισης. Χωρίς την επιλογή παραμένουν στον κύριο ακροατή και ο "
 "αποκλεισμός τους είναι δουλειά του proxy."
 
-#: ../../source/mode_headless.rst:221
+#: ../../source/mode_headless.rst:251
 msgid ""
 "Ces routes exigent l'en-tête ``X-Tenant-ID`` comme toutes les autres — "
 "une purge nomme le tenant qu'elle détruit, elle en a besoin plus que "
@@ -561,7 +609,7 @@ msgstr ""
 "χρειάζεται περισσότερο από οποιαδήποτε άλλη. Μόνο οι ανιχνευτές "
 "(``/healthz``, ``/readyz``) και το ``/metrics`` την παρακάμπτουν."
 
-#: ../../source/mode_headless.rst:225
+#: ../../source/mode_headless.rst:255
 msgid ""
 "Ce qui n'est **pas** passé sous ``/ops/`` : ``/v1/gammonnet.sweepStale``."
 " Le rattrapage est coûteux mais il est cadré au tenant appelant ; ce sont"
@@ -573,7 +621,7 @@ msgstr ""
 "τη φράζει είναι το όριο ρυθμού και οι δείκτες εργασίας εν εξελίξει, όχι "
 "ένα όριο εμπιστοσύνης."
 
-#: ../../source/mode_headless.rst:230
+#: ../../source/mode_headless.rst:260
 msgid ""
 "Le contrat complet — chaque méthode, sa requête et sa réponse — est "
 "généré depuis le code source et versionné : ``openapi.yaml`` à la racine "
@@ -590,7 +638,7 @@ msgstr ""
 " ένα ειδικό τεστ αποτυγχάνει αν κάποιο από τα δύο μείνει πίσω από τις "
 "πραγματικά καταχωρημένες διαδρομές."
 
-#: ../../source/mode_headless.rst:237
+#: ../../source/mode_headless.rst:267
 msgid ""
 "Chaque requête ``/v1`` accepte un corps JSON (``Content-Type: "
 "application/json``, ou aucun en-tête — un corps d'un autre type est "
@@ -610,7 +658,7 @@ msgstr ""
 " πέραν των 1000 γραμμών ανά σελίδα (``400 invalid``) αντί να τις τιμούν "
 "χωρίς όριο."
 
-#: ../../source/mode_headless.rst:245
+#: ../../source/mode_headless.rst:275
 #, no-python-brace-format
 msgid ""
 "Chaque connexion TCP est bornée en lecture/écriture par requête — un "
@@ -650,7 +698,7 @@ msgstr ""
 "(``too many requests``) αντί να αφήνεται η χρήση του ``$TMPDIR`` να "
 "μεγαλώνει απεριόριστα."
 
-#: ../../source/mode_headless.rst:262
+#: ../../source/mode_headless.rst:292
 msgid ""
 "La famille ``search`` offre trois portes sur la même recherche. "
 "``search.find`` prend l'objet de filtres complet, champ par champ. "
@@ -676,7 +724,7 @@ msgstr ""
 " ισοδύναμα ερωτήματα τη μοιράζονται, πράγμα που καθιστά μια αποθηκευμένη "
 "αναζήτηση συγκρίσιμη) και τα διαγνωστικά του."
 
-#: ../../source/mode_headless.rst:274
+#: ../../source/mode_headless.rst:304
 msgid ""
 "Une requête portant un jeton que rien ne reconnaît est refusée (``400 "
 "invalid``, le jeton nommé) plutôt qu'exécutée en réduisant la recherche "
@@ -693,7 +741,7 @@ msgstr ""
 "Query-Diagnostics``, ώστε το σώμα να παραμένει NDJSON θέσεων για όλους "
 "τους υπάρχοντες πελάτες."
 
-#: ../../source/mode_headless.rst:281
+#: ../../source/mode_headless.rst:311
 msgid ""
 "Deux méthodes de la famille ``positions`` décodent une position sans "
 "l'enregistrer : ``positions.fromXGID`` reconstruit une position à partir "
@@ -705,7 +753,7 @@ msgstr ""
 " μια συμβολοσειρά XGID και η ``positions.fromXGP`` από ένα αρχείο "
 "μεμονωμένης θέσης ``.xgp``."
 
-#: ../../source/mode_headless.rst:286
+#: ../../source/mode_headless.rst:316
 msgid ""
 "``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions, "
 "collections, matchs, tournois, analyses, commentaires, coups joués, "
@@ -730,7 +778,7 @@ msgstr ""
 "σήμανση· η αίτησή τους χωρίς ρυθμισμένη ταυτότητα αποτυγχάνει με τον "
 "κωδικό ``invalid``."
 
-#: ../../source/mode_headless.rst:297
+#: ../../source/mode_headless.rst:327
 msgid ""
 "La famille ``anki`` gagne six méthodes qui étendent le planificateur à "
 "répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque "
@@ -753,7 +801,7 @@ msgstr ""
 "επιτυχίας που μετριέται στις επαναλήψεις ενός deck, σε σχέση με τον στόχο"
 " που έχει ορίσει ο ιδιοκτήτης του)."
 
-#: ../../source/mode_headless.rst:309
+#: ../../source/mode_headless.rst:339
 msgid ""
 "``anki.retention`` remplace ``anki.optimizeParams``, qui ajustait la "
 "cible vers le taux observé et pouvait l'écrire. La cible de rétention est"
@@ -768,7 +816,7 @@ msgstr ""
 "η σύζευξη του ενός με το άλλο είναι ακριβώς ο μηχανισμός που απορρίπτουν "
 "οι συγγραφείς του FSRS. Η μέθοδος πλέον μόνο μετρά, χωρίς ποτέ να γράφει."
 
-#: ../../source/mode_headless.rst:315
+#: ../../source/mode_headless.rst:345
 msgid ""
 "La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne"
 " de statistiques par joueur (matchs, victoires/défaites, décisions "
@@ -794,7 +842,7 @@ msgstr ""
 "διαβάζεται όταν είναι ``false``, καθώς άγνωστη τύχη δεν σημαίνει μηδενική"
 " τύχη."
 
-#: ../../source/mode_headless.rst:326
+#: ../../source/mode_headless.rst:356
 msgid ""
 "Le filtre transmis aux méthodes ``stats`` accepte, à côté de "
 "``PlayerName``, un champ ``PlayerAliases`` : les autres orthographes sous"
@@ -818,7 +866,7 @@ msgstr ""
 " και προορίζεται για βάσεις που δεν λάβατε από κάποιον άλλον — ξαναγράφει"
 " τους αγώνες όλων."
 
-#: ../../source/mode_headless.rst:336
+#: ../../source/mode_headless.rst:366
 msgid ""
 "Deux méthodes complètent la parité avec l'interface graphique : "
 "``stats.tournamentBadges`` renvoie, pour chaque tournoi de la base, "
@@ -834,7 +882,7 @@ msgstr ""
 " αποτυπώματα ανίχνευσης διπλότυπων — αρκετό για να αποφευχθεί μια περιττή"
 " εισαγωγή πριν ξεκινήσει."
 
-#: ../../source/mode_headless.rst:342
+#: ../../source/mode_headless.rst:372
 msgid ""
 "``analyses.repair`` recalcule les colonnes dénormalisées d'une analyse "
 "(dont ``cube_error``) à partir de son analyse complète, et renvoie le "
@@ -860,7 +908,7 @@ msgstr ""
 "διαβάζονταν εσφαλμένα πριν από την έκδοση 0.33.0 και έφεραν το σφάλμα "
 "ενός διπλασιασμού που δεν έγινε ποτέ."
 
-#: ../../source/mode_headless.rst:353
+#: ../../source/mode_headless.rst:383
 msgid ""
 "``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant "
 "courant : écrire une analyse pour chaque position qui n'en a aucune "
@@ -900,7 +948,7 @@ msgstr ""
 "ρητό χειρισμό της γραφικής διεπαφής, καθώς και με την υποεντολή "
 "``blunderdb analyze`` (βλ. :ref:`cli`) — τρεις μορφές, μία μόνο λογική."
 
-#: ../../source/mode_headless.rst:369
+#: ../../source/mode_headless.rst:399
 msgid ""
 "``gammonnet.sweepStale`` est le pendant de ``analyzeMissing`` pour la "
 "réanalyse plutôt que le comblement : chaque position dont l'analyse est "
@@ -940,11 +988,11 @@ msgstr ""
 " ``failed`` — δεν ξαναδοκιμάζεται μάταια στην επόμενη διέλευση, σε "
 "αντίθεση με μια θέση που πράγματι απέτυχε."
 
-#: ../../source/mode_headless.rst:388
+#: ../../source/mode_headless.rst:418
 msgid "Corrélation et métriques métier"
 msgstr "Συσχέτιση και επιχειρησιακές μετρικές"
 
-#: ../../source/mode_headless.rst:390
+#: ../../source/mode_headless.rst:420
 msgid ""
 "Chaque requête reçoit un identifiant de corrélation : celui que le client"
 " (ou un reverse-proxy) envoie dans l'en-tête ``X-Request-Id``, sinon un "
@@ -968,7 +1016,7 @@ msgstr ""
 "γέφυρα για τη συσχέτιση αυτών των καταγραφών με έναν μηχανισμό "
 "ιχνηλάτησης που τρέχει ανάντη, τίποτε περισσότερο."
 
-#: ../../source/mode_headless.rst:401
+#: ../../source/mode_headless.rst:431
 msgid ""
 "Au-delà du volume de requêtes et de leur latence, ``/metrics`` publie des"
 " jauges sur le travail en vol, invisible autrement à un import ou un lot "
@@ -980,7 +1028,7 @@ msgstr ""
 " κολλημένη εισαγωγή ή παρτίδα gammonNet (ένα μοναδικό πολύ μακρύ αίτημα, "
 "όχι πολλά αιτήματα):"
 
-#: ../../source/mode_headless.rst:405
+#: ../../source/mode_headless.rst:435
 msgid ""
 "``blunderdb_imports_inflight`` — imports en cours, tous tenants confondus"
 " ;"
@@ -988,7 +1036,7 @@ msgstr ""
 "``blunderdb_imports_inflight`` — εισαγωγές σε εξέλιξη, για όλους τους "
 "tenants·"
 
-#: ../../source/mode_headless.rst:406
+#: ../../source/mode_headless.rst:436
 msgid ""
 "``blunderdb_import_spool_bytes`` — octets actuellement réservés sur le "
 "quota de spool d'import (voir ``--rate-limit-*`` plus haut pour le "
@@ -998,7 +1046,7 @@ msgstr ""
 "όριο spool εισαγωγής (βλ. ``--rate-limit-*`` παραπάνω για το αντίστοιχο "
 "σε αιτήματα ανά δευτερόλεπτο)·"
 
-#: ../../source/mode_headless.rst:409
+#: ../../source/mode_headless.rst:439
 msgid ""
 "``blunderdb_gammonnet_sweep_inflight`` — rattrapages gammonNet en cours, "
 "tous tenants confondus ;"
@@ -1006,7 +1054,7 @@ msgstr ""
 "``blunderdb_gammonnet_sweep_inflight`` — σαρώσεις ανάκτησης gammonNet σε "
 "εξέλιξη, για όλους τους tenants·"
 
-#: ../../source/mode_headless.rst:411
+#: ../../source/mode_headless.rst:441
 msgid ""
 "``blunderdb_database_size_bytes`` — taille du fichier SQLite principal, "
 "ou ``pg_database_size`` sous PostgreSQL (base entière, pas par tenant, "
@@ -1018,7 +1066,7 @@ msgstr ""
 "όπως και οι δείκτες δεξαμενής συνδέσεων παρακάτω)· απουσιάζει όσο δεν "
 "έχει δημοσιευθεί ακόμη καμία μέτρηση."
 
-#: ../../source/mode_headless.rst:416
+#: ../../source/mode_headless.rst:446
 msgid ""
 "Un profil mémoire ou CPU du processus est accessible en démarrant avec "
 "``--pprof-addr <hôte:port>`` (``net/http/pprof``) : désactivé par défaut,"
@@ -1030,12 +1078,11 @@ msgstr ""
 " προεπιλογή και σκόπιμα σε διεύθυνση ξεχωριστή από την ``--addr``, αφού "
 "τα σημεία αυτά δεν έχουν καμία έννοια tenant."
 
-#: ../../source/mode_headless.rst:424
+#: ../../source/mode_headless.rst:454
 msgid "Compression des flux"
-msgstr ""
-"Συμπίεση των ροών"
+msgstr "Συμπίεση των ροών"
 
-#: ../../source/mode_headless.rst:426
+#: ../../source/mode_headless.rst:456
 #, no-python-format
 msgid ""
 "Les listes NDJSON répètent les mêmes noms de champs à chaque ligne. Le "
@@ -1045,12 +1092,12 @@ msgid ""
 "mille lignes, 14,6 % sur cent."
 msgstr ""
 "Οι λίστες NDJSON επαναλαμβάνουν τα ίδια ονόματα πεδίων σε κάθε γραμμή. Ο "
-"δαίμονας τις συμπιέζει όταν ο πελάτης το δέχεται: στείλτε ``Accept-Encoding: "
-"gzip`` και η απόκριση επιστρέφει ως ``Content-Encoding: gzip``. Μετρημένο σε "
-"λίστα αγώνων: **13,5 %** του αρχικού μεγέθους στις χίλιες γραμμές, 14,6 % "
-"στις εκατό."
+"δαίμονας τις συμπιέζει όταν ο πελάτης το δέχεται: στείλτε ``Accept-"
+"Encoding: gzip`` και η απόκριση επιστρέφει ως ``Content-Encoding: gzip``."
+" Μετρημένο σε λίστα αγώνων: **13,5 %** του αρχικού μεγέθους στις χίλιες "
+"γραμμές, 14,6 % στις εκατό."
 
-#: ../../source/mode_headless.rst:431
+#: ../../source/mode_headless.rst:461
 msgid ""
 "La compression ne change rien au caractère incrémental du flux — chaque "
 "enregistrement est poussé au client comme avant, il est seulement "
@@ -1061,15 +1108,15 @@ msgid ""
 msgstr ""
 "Η συμπίεση δεν αλλάζει σε τίποτα τον σταδιακό χαρακτήρα της ροής — κάθε "
 "εγγραφή στέλνεται στον πελάτη όπως πριν, απλώς συμπιεσμένη στον δρόμο. "
-"Ισχύει μόνο για απαντήσεις NDJSON, JSON και κειμένου: μια εξαγωγή βάσης ή "
-"ένα δοχείο ``.dbx`` είναι ήδη συμπιεσμένο, και το εκ νέου gzip θα το "
+"Ισχύει μόνο για απαντήσεις NDJSON, JSON και κειμένου: μια εξαγωγή βάσης ή"
+" ένα δοχείο ``.dbx`` είναι ήδη συμπιεσμένο, και το εκ νέου gzip θα το "
 "μεγάλωνε μόνο. Το ``Accept-Encoding: gzip;q=0`` την αρνείται ρητά."
 
-#: ../../source/mode_headless.rst:438
+#: ../../source/mode_headless.rst:468
 msgid "Un seul tenant sur SQLite"
 msgstr "Ένας μόνο tenant σε SQLite"
 
-#: ../../source/mode_headless.rst:440
+#: ../../source/mode_headless.rst:470
 msgid ""
 "Le backend SQLite n'a **pas** de colonne de tenant : toutes les données y"
 " sont dans les mêmes tables, sans cloison. Le démon refuse donc, sur ce "
@@ -1085,15 +1132,15 @@ msgstr ""
 "που ισχυρίζεται το αντίθετο. Μια εγκατάσταση με πραγματικά πολλούς "
 "tenants χρειάζεται το backend PostgreSQL."
 
-#: ../../source/mode_headless.rst:449
+#: ../../source/mode_headless.rst:479
 msgid "Sauvegarde et restauration"
 msgstr "Αντίγραφα ασφαλείας και επαναφορά"
 
-#: ../../source/mode_headless.rst:451
+#: ../../source/mode_headless.rst:481
 msgid "Trois gestes, selon ce qu'on veut récupérer."
 msgstr "Τρεις κινήσεις, ανάλογα με το τι θέλουμε να ανακτήσουμε."
 
-#: ../../source/mode_headless.rst:453
+#: ../../source/mode_headless.rst:483
 msgid ""
 "**Tout, sous PostgreSQL** — ``pg_dump`` est l'outil, et blunderDB n'a "
 "rien à ajouter :"
@@ -1101,7 +1148,7 @@ msgstr ""
 "**Τα πάντα, υπό PostgreSQL** — το ``pg_dump`` είναι το εργαλείο, και το "
 "blunderDB δεν έχει τίποτα να προσθέσει:"
 
-#: ../../source/mode_headless.rst:461
+#: ../../source/mode_headless.rst:491
 msgid ""
 "**Un tenant seul** — ``/v1/exports.sqlite`` écrit la base d'un tenant "
 "dans un fichier ``.db`` ordinaire, celui que l'application de bureau "
@@ -1111,7 +1158,7 @@ msgstr ""
 "tenant σε ένα συνηθισμένο αρχείο ``.db``, αυτό που ανοίγει η εφαρμογή "
 "γραφείου:"
 
-#: ../../source/mode_headless.rst:469
+#: ../../source/mode_headless.rst:499
 msgid ""
 "**Remettre ce fichier en place** — ``migrate`` le recopie sous le tenant "
 "voulu :"
@@ -1119,7 +1166,7 @@ msgstr ""
 "**Επαναφορά αυτού του αρχείου** — το ``migrate`` το αντιγράφει στον "
 "tenant που ορίζετε:"
 
-#: ../../source/mode_headless.rst:475
+#: ../../source/mode_headless.rst:505
 msgid ""
 "``migrate`` refuse d'écrire dans un tenant qui contient déjà quelque "
 "chose, et dit quoi (« 128 positions, 3 matchs ») ; ``--on-conflict skip``"
@@ -1130,7 +1177,7 @@ msgstr ""
 "λέει τι («128 θέσεις, 3 αγώνες»)· το ``--on-conflict skip`` προχωρά παρ' "
 "όλα αυτά και αφήνει την αποδιπλοποίηση Zobrist να συγχωνεύσει τις θέσεις."
 
-#: ../../source/mode_headless.rst:479
+#: ../../source/mode_headless.rst:509
 msgid ""
 "Ce que ``migrate`` **ne copie pas**, et qu'il annonce en fin de course "
 "avec le compte exact : les paquets Anki et leurs cartes, la bibliothèque "
@@ -1144,11 +1191,11 @@ msgstr ""
 " Πρόκειται για δεδομένα χρήσης της εφαρμογής γραφείου· οι θέσεις στις "
 "οποίες παραπέμπουν έχουν όντως μεταφερθεί."
 
-#: ../../source/mode_headless.rst:486
+#: ../../source/mode_headless.rst:516
 msgid "Déploiement avec Docker"
 msgstr "Ανάπτυξη με Docker"
 
-#: ../../source/mode_headless.rst:488
+#: ../../source/mode_headless.rst:518
 msgid ""
 "Le dépôt fournit un ``Dockerfile.serve`` qui construit une image "
 "conteneur minimale du démon : seul le binaire ``serve`` est compilé (Go "
@@ -1160,7 +1207,7 @@ msgstr ""
 " ``serve`` (καθαρή Go, χωρίς γραφική διεπαφή και χωρίς CGO, άρα στατικά "
 "συνδεδεμένο), και στη συνέχεια τοποθετείται σε μια εικόνα *distroless*."
 
-#: ../../source/mode_headless.rst:503
+#: ../../source/mode_headless.rst:533
 msgid ""
 "L'image écoute sur le port 8080 et se configure par variables "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
@@ -1180,11 +1227,11 @@ msgstr ""
 "container, και το Compose ή ένας ενορχηστρωτής μπορούν να περιμένουν να "
 "γίνει διαθέσιμος ο δαίμονας πριν ξεκινήσουν ό,τι εξαρτάται από αυτόν."
 
-#: ../../source/mode_headless.rst:515
+#: ../../source/mode_headless.rst:545
 msgid "Image publiée"
 msgstr "Δημοσιευμένη εικόνα"
 
-#: ../../source/mode_headless.rst:517
+#: ../../source/mode_headless.rst:547
 msgid ""
 "Il n'est pas nécessaire de construire l'image soi-même : chaque version "
 "publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous"
@@ -1202,7 +1249,7 @@ msgstr ""
 "παρέχεται για ``linux/amd64`` και ``linux/arm64``· το Docker επιλέγει την"
 " αρχιτεκτονική του υπολογιστή-υποδοχής."
 
-#: ../../source/mode_headless.rst:539
+#: ../../source/mode_headless.rst:569
 msgid ""
 "L'image porte les étiquettes OCI usuelles "
 "(``org.opencontainers.image.source``, ``.version``, ``.revision``, "
@@ -1218,7 +1265,7 @@ msgstr ""
 "``Dockerfile.serve`` του αποθετηρίου, ακριβώς όπως παραπάνω· η τοπική "
 "κατασκευή ή η λήψη της δημοσιευμένης εικόνας δίνουν το ίδιο εκτελέσιμο."
 
-#: ../../source/mode_headless.rst:547
+#: ../../source/mode_headless.rst:577
 msgid ""
 "Comme le démon lui-même, le conteneur n'effectue **aucune "
 "authentification** (`ADR-0005 "
@@ -1240,11 +1287,11 @@ msgstr ""
 " Διαδίκτυο. Τα παραδείγματα παραπάνω δημοσιεύουν τη θύρα μόνο στο "
 "``127.0.0.1`` ακριβώς για αυτόν τον λόγο."
 
-#: ../../source/mode_headless.rst:557
+#: ../../source/mode_headless.rst:587
 msgid "Déploiement derrière un proxy authentifiant"
 msgstr "Ανάπτυξη πίσω από έναν proxy πιστοποίησης ταυτότητας"
 
-#: ../../source/mode_headless.rst:559
+#: ../../source/mode_headless.rst:589
 msgid ""
 "L'`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005"
 "-serve-daemon-delegates-authentication.md>`__ fait du reverse-proxy "
@@ -1264,7 +1311,7 @@ msgstr ""
 "να υποδυθεί οποιονδήποτε tenant απλώς ονομάζοντάς τον. Το αποθετήριο "
 "παρέχει ένα πλήρες παράδειγμα στον κατάλογο ``deploy/``:"
 
-#: ../../source/mode_headless.rst:567
+#: ../../source/mode_headless.rst:597
 msgid ""
 "``deploy/docker-compose.yml`` — Caddy (authentification HTTP Basic de "
 "démonstration) devant ``blunderdb-serve`` et PostgreSQL (Row-Level "
@@ -1278,7 +1325,7 @@ msgstr ""
 "serve`` και PostgreSQL ζουν σε ένα εσωτερικό δίκτυο Docker (``internal: "
 "true``) που δεν έχει διαδρομή ούτε προς τον host ούτε προς το Internet·"
 
-#: ../../source/mode_headless.rst:572
+#: ../../source/mode_headless.rst:602
 msgid ""
 "``deploy/Caddyfile`` — la configuration de Caddy : authentifie, associe "
 "le compte authentifié à l'entier du tenant (``map``), puis l'injecte dans"
@@ -1291,7 +1338,7 @@ msgstr ""
 " από τον πελάτη (φρουρός ``header_up X-Tenant-ID \"\"`` ακολουθούμενος "
 "από την εισαγωγή)·"
 
-#: ../../source/mode_headless.rst:576
+#: ../../source/mode_headless.rst:606
 msgid ""
 "``deploy/nginx-tenant-proxy.conf`` — le même schéma en extrait nginx "
 "(``proxy_set_header X-Tenant-ID \"\"`` puis ``proxy_set_header X-Tenant-"
@@ -1301,7 +1348,7 @@ msgstr ""
 "(``proxy_set_header X-Tenant-ID \"\"`` και έπειτα ``proxy_set_header X"
 "-Tenant-ID $tenant_id``), για όσους έχουν ήδη έναν nginx σε λειτουργία·"
 
-#: ../../source/mode_headless.rst:579
+#: ../../source/mode_headless.rst:609
 msgid ""
 "``deploy/README.md`` — le modèle de menace en trois phrases et ce qu'il "
 "ne faut jamais faire (exposer le démon nu)."
@@ -1309,7 +1356,7 @@ msgstr ""
 "``deploy/README.md`` — το μοντέλο απειλής σε τρεις προτάσεις και τι δεν "
 "πρέπει ποτέ να γίνει (η έκθεση του γυμνού δαίμονα)."
 
-#: ../../source/mode_headless.rst:582
+#: ../../source/mode_headless.rst:612
 msgid ""
 "L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas"
 " une recommandation de production : elle se remplace par ``forward_auth``"
@@ -1321,11 +1368,11 @@ msgstr ""
 "πραγματικό πάροχο ταυτότητας (OIDC, εταιρικό SSO…), ο οποίος πιστοποιεί "
 "και έπειτα μεταβιβάζει την ταυτότητα στο ίδιο σημείο του αρχείου."
 
-#: ../../source/mode_headless.rst:587
+#: ../../source/mode_headless.rst:617
 msgid "**Scénario complet, de zéro à un démon qui répond :**"
 msgstr "**Πλήρες σενάριο, από το μηδέν έως έναν δαίμονα που απαντά:**"
 
-#: ../../source/mode_headless.rst:611
+#: ../../source/mode_headless.rst:641
 msgid ""
 "Ce scénario a été rejoué tel quel : ``blunderdb-serve`` et PostgreSQL "
 "démarrent, Caddy authentifie et route, et le journal du démon confirme "
@@ -1337,11 +1384,11 @@ msgstr ""
 "το αρχείο καταγραφής του δαίμονα επιβεβαιώνει ότι μόνο ο ακέραιος που "
 "εισήγαγε ο proxy — ποτέ αυτός του πελάτη — φτάνει στο επίπεδο εφαρμογής."
 
-#: ../../source/mode_headless.rst:619
+#: ../../source/mode_headless.rst:649
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "Backend PostgreSQL και πολλαπλοί χρήστες"
 
-#: ../../source/mode_headless.rst:621
+#: ../../source/mode_headless.rst:651
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -1354,7 +1401,7 @@ msgstr ""
 " ``--dsn``. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την "
 "εκκίνηση."
 
-#: ../../source/mode_headless.rst:626
+#: ../../source/mode_headless.rst:656
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier "
@@ -1381,7 +1428,7 @@ msgstr ""
 "ορίζεται ανά σύνδεση. Πρόκειται για προαιρετική άμυνα σε βάθος, "
 "απενεργοποιημένη από προεπιλογή."
 
-#: ../../source/mode_headless.rst:637
+#: ../../source/mode_headless.rst:667
 msgid ""
 "Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
@@ -1407,7 +1454,7 @@ msgstr ""
 "PostgreSQL — επιστρέφει σφάλμα ``invalid`` σε ένα backend SQLite, το "
 "οποίο δεν έχει έννοια tenant."
 
-#: ../../source/mode_headless.rst:648
+#: ../../source/mode_headless.rst:678
 msgid ""
 "Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier "
 "SQLite du daemon — le pendant du bouton « Compacter la base » de "
@@ -1425,7 +1472,7 @@ msgstr ""
 "backend SQLite· στην PostgreSQL, που δεν έχει αρχείο προς συμπύκνωση, "
 "επιστρέφει σφάλμα ``invalid``."
 
-#: ../../source/mode_headless.rst:656
+#: ../../source/mode_headless.rst:686
 msgid ""
 "Le pool de connexions PostgreSQL se règle par variable d'environnement : "
 "``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 par défaut), "
@@ -1463,11 +1510,11 @@ msgstr ""
 "``_wait_count`` (ο αθροιστικός αριθμός κλήσεων ``Acquire`` που χρειάστηκε"
 " να περιμένουν μια ελεύθερη σύνδεση)."
 
-#: ../../source/mode_headless.rst:675
+#: ../../source/mode_headless.rst:705
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "Μετανάστευση μιας βάσης SQLite προς PostgreSQL"
 
-#: ../../source/mode_headless.rst:677
+#: ../../source/mode_headless.rst:707
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
@@ -1480,7 +1527,7 @@ msgstr ""
 " ο δρόμος για να « ανεβάσετε » μια βιβλιοθήκη επιφάνειας εργασίας σε μια "
 "εγκατάσταση διακομιστή."
 
-#: ../../source/mode_headless.rst:693
+#: ../../source/mode_headless.rst:723
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -1506,27 +1553,27 @@ msgstr ""
 "συμβάντα ``\"schema-migration\"`` (φάση/ολοκληρωμένα/σύνολο) πριν "
 "ξεκινήσει η αντιγραφή γραμμή προς γραμμή."
 
-#: ../../source/mode_headless.rst:711
+#: ../../source/mode_headless.rst:741
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:713
+#: ../../source/mode_headless.rst:743
 msgid "base SQLite source (``sqlite:///chemin`` ou un simple chemin)"
 msgstr "βάση SQLite πηγής (``sqlite:///chemin`` ή μια απλή διαδρομή)"
 
-#: ../../source/mode_headless.rst:714
+#: ../../source/mode_headless.rst:744
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:716
+#: ../../source/mode_headless.rst:746
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "DSN PostgreSQL προορισμού (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:717
+#: ../../source/mode_headless.rst:747
 msgid "``--tenant-id <n>``"
 msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:719
+#: ../../source/mode_headless.rst:749
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
@@ -1534,23 +1581,23 @@ msgstr ""
 "tenant προορισμού, ένας θετικός δεκαδικός ακέραιος (υποχρεωτικό εκτός από"
 " ``--dry-run`` · ένα όνομα όπως ``mon-tenant`` απορρίπτεται)"
 
-#: ../../source/mode_headless.rst:721
+#: ../../source/mode_headless.rst:751
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:723
+#: ../../source/mode_headless.rst:753
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "μετρά τι θα αντιγραφόταν χωρίς να γράψει τίποτα"
 
-#: ../../source/mode_headless.rst:724
+#: ../../source/mode_headless.rst:754
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politique>``"
 
-#: ../../source/mode_headless.rst:725
+#: ../../source/mode_headless.rst:755
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:726
+#: ../../source/mode_headless.rst:756
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -1558,7 +1605,7 @@ msgstr ""
 "``\"\"`` διακόπτει αν ο tenant έχει ήδη δεδομένα· το ``skip`` συγχωνεύει "
 "(αφαίρεση διπλότυπων θέσεων μέσω hash Zobrist)"
 
-#: ../../source/mode_headless.rst:731
+#: ../../source/mode_headless.rst:761
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -1570,11 +1617,11 @@ msgstr ""
 "μεταδεδομένα συνεδρίας. Η προτεραιότητα είναι η μετανάστευση της "
 "βιβλιοθήκης θέσεων και του ιστορικού αγώνων."
 
-#: ../../source/mode_headless.rst:739
+#: ../../source/mode_headless.rst:769
 msgid "Le dispatcher générique ``call``"
 msgstr "Ο γενικός dispatcher ``call``"
 
-#: ../../source/mode_headless.rst:741
+#: ../../source/mode_headless.rst:771
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -1588,19 +1635,19 @@ msgstr ""
 "είναι επομένως πανομοιότυπη με το ``POST /v1/<famille>.<méthode>``. Είναι"
 " χρήσιμο για το scripting και τις δοκιμές ολοκλήρωσης."
 
-#: ../../source/mode_headless.rst:775
+#: ../../source/mode_headless.rst:805
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` ή ``postgres``"
 
-#: ../../source/mode_headless.rst:779
+#: ../../source/mode_headless.rst:809
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:780
+#: ../../source/mode_headless.rst:810
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:781
+#: ../../source/mode_headless.rst:811
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -1608,36 +1655,36 @@ msgstr ""
 "tenant, ένας θετικός δεκαδικός ακέραιος (αποστέλλεται ως ``X-Tenant-ID`` "
 "· ένα όνομα όπως ``alice`` απορρίπτεται)"
 
-#: ../../source/mode_headless.rst:783
+#: ../../source/mode_headless.rst:813
 msgid "``--json <chaîne>``"
 msgstr "``--json <chaîne>``"
 
-#: ../../source/mode_headless.rst:784
+#: ../../source/mode_headless.rst:814
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:785
+#: ../../source/mode_headless.rst:815
 msgid "corps de la requête au format JSON"
 msgstr "σώμα του αιτήματος σε μορφή JSON"
 
-#: ../../source/mode_headless.rst:786
+#: ../../source/mode_headless.rst:816
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <chemin>``"
 
-#: ../../source/mode_headless.rst:788
+#: ../../source/mode_headless.rst:818
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "διαβάζει το σώμα του αιτήματος από ένα αρχείο"
 
-#: ../../source/mode_headless.rst:789
+#: ../../source/mode_headless.rst:819
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:791
+#: ../../source/mode_headless.rst:821
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "εμφανίζει όλες τις μεθόδους ``<famille>.<méthode>`` και τερματίζει"
 
-#: ../../source/mode_headless.rst:793
+#: ../../source/mode_headless.rst:823
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
