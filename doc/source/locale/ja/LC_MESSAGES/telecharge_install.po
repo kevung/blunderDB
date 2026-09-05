@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-04 17:07+0200\n"
+"POT-Creation-Date: 2026-09-05 03:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -275,11 +275,27 @@ msgstr ""
 "。ブラウザ経由でダウンロードした生のバイナリとは異なり、ダウンロードや更新のたびに ``chmod +x`` "
 "を実行する必要がありません。アプリケーションメニューにエントリも作成されます。"
 
-#: ../../source/telecharge_install.rst:120
+#: ../../source/telecharge_install.rst:119
+msgid ""
+"Les paquets ``.deb`` et ``.rpm`` associent l'extension ``.dbx`` (une base"
+" exportée avec mot de passe, voir :ref:`diffusion_controlee`) à blunderDB"
+" : double-cliquer sur un fichier ``.dbx`` reçu d'un tiers l'ouvre "
+"directement. L'extension ``.db`` d'une base ordinaire n'est "
+"volontairement **pas** associée — elle est trop générique et partagée par"
+" d'autres logiciels — mais reste ouvrable normalement depuis le menu "
+"*Ouvrir* de blunderDB."
+msgstr ""
+"``.deb``\\ パッケージと\\ ``.rpm``\\ パッケージは、\\ ``.dbx``\\ "
+"拡張子（パスワード付きでエクスポートしたデータベース。:ref:`diffusion_controlee` を参照）を blunderDB "
+"に関連付けます。誰かから受け取った\\ ``.dbx``\\ ファイルをダブルクリックすると、そのまま開きます。通常のデータベースの\\ "
+"``.db``\\ 拡張子は意図的に関連付け\\ **ません**\\ 。あまりに一般的で、他のソフトウェアと共用されているためです。ただし "
+"blunderDB の\\ *開く*\\ メニューからは通常どおり開けます。"
+
+#: ../../source/telecharge_install.rst:128
 msgid "Paquets natifs (.deb / .rpm)"
 msgstr "ネイティブパッケージ (.deb / .rpm)"
 
-#: ../../source/telecharge_install.rst:122
+#: ../../source/telecharge_install.rst:130
 msgid ""
 "Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que"
 " sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
@@ -290,21 +306,21 @@ msgstr ""
 "で推奨される方法です。パッケージマネージャが適切な webkit2gtk 依存関係を自動的にインストールします。\\ ``x.y.z`` "
 "をダウンロードしたバージョンに置き換えてください:"
 
-#: ../../source/telecharge_install.rst:133
+#: ../../source/telecharge_install.rst:141
 msgid "Arch Linux (AUR)"
 msgstr "Arch Linux (AUR)"
 
-#: ../../source/telecharge_install.rst:135
+#: ../../source/telecharge_install.rst:143
 msgid ""
 "Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
 "automatiquement par les assistants AUR :"
 msgstr "``blunderdb-bin`` パッケージは AUR で利用でき、AUR ヘルパーによって自動的に更新されます:"
 
-#: ../../source/telecharge_install.rst:143
+#: ../../source/telecharge_install.rst:151
 msgid "Flatpak"
 msgstr "Flatpak"
 
-#: ../../source/telecharge_install.rst:145
+#: ../../source/telecharge_install.rst:153
 msgid ""
 "Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution "
 "où Flatpak est installé. Il repose sur l'environnement GNOME 47, que "
@@ -314,7 +330,7 @@ msgstr ""
 "がインストールされている任意のディストリビューションで動作します。GNOME 47 ランタイムに依存しており、なければ Flatpak が "
 "Flathub からダウンロードします："
 
-#: ../../source/telecharge_install.rst:154
+#: ../../source/telecharge_install.rst:162
 msgid ""
 "blunderDB n'est pas encore publié sur Flathub : le bundle s'installe "
 "depuis le fichier téléchargé, et se met à jour en installant celui de la "
@@ -326,17 +342,17 @@ msgstr ""
 "に公開されていません。バンドルはダウンロードしたファイルからインストールし、次のバージョンのものをインストールすることで更新します。アプリケーションはデータベースを開いたり保存したりするためにホームフォルダにアクセスできます。コマンドライン（:ref:`cli`\\"
 " ）は ``flatpak run io.github.kevung.blunderDB <コマンド>`` で利用できます。"
 
-#: ../../source/telecharge_install.rst:161
+#: ../../source/telecharge_install.rst:169
 msgid "Archive .tar.gz"
 msgstr ".tar.gz アーカイブ"
 
-#: ../../source/telecharge_install.rst:163
+#: ../../source/telecharge_install.rst:171
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
 msgstr "その他のディストリビューション向け。アーカイブを展開すると実行ビットが保持されるため、\\ ``chmod`` は不要です:"
 
-#: ../../source/telecharge_install.rst:172
+#: ../../source/telecharge_install.rst:180
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -351,11 +367,11 @@ msgstr ""
 "）が使う名前で、アーカイブにも実行ファイルの隣に同じリンクが含まれています。\\ ``PATH`` に置くには：\\ ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``"
 
-#: ../../source/telecharge_install.rst:180
+#: ../../source/telecharge_install.rst:188
 msgid "Binaire brut (méthode avancée)"
 msgstr "生のバイナリ (上級者向けの方法)"
 
-#: ../../source/telecharge_install.rst:182
+#: ../../source/telecharge_install.rst:190
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -364,7 +380,7 @@ msgstr ""
 "生のバイナリ |latest_linux_exe| "
 "も引き続き利用できます。ブラウザはダウンロード時に実行ビットを削除するため、最初の実行前に復元する必要があります:"
 
-#: ../../source/telecharge_install.rst:190
+#: ../../source/telecharge_install.rst:198
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -380,11 +396,11 @@ msgstr ""
 "|latest_linux_webkit2gtk41_exe| "
 "をダウンロードしてください。ネイティブパッケージは正しい依存関係を自動的に選択します。"
 
-#: ../../source/telecharge_install.rst:199
+#: ../../source/telecharge_install.rst:207
 msgid "Image Docker (mode serveur)"
 msgstr "Docker イメージ（サーバーモード）"
 
-#: ../../source/telecharge_install.rst:201
+#: ../../source/telecharge_install.rst:209
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -395,17 +411,17 @@ msgstr ""
 "のレジストリにイメージ ``ghcr.io/kevung/blunderdb-serve`` を ``linux/amd64`` と "
 "``linux/arm64`` 向けに、バージョンタグと ``latest`` タグで公開します："
 
-#: ../../source/telecharge_install.rst:210
+#: ../../source/telecharge_install.rst:218
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
 msgstr "起動、設定、および認証プロキシに関する警告は :ref:`headless_docker_image` に記載されています。"
 
-#: ../../source/telecharge_install.rst:216
+#: ../../source/telecharge_install.rst:224
 msgid "Gestionnaires de paquets Windows et Mac (à venir)"
 msgstr "Windows と Mac のパッケージマネージャ (近日公開)"
 
-#: ../../source/telecharge_install.rst:218
+#: ../../source/telecharge_install.rst:226
 msgid ""
 "Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets "
 "(AUR, ``.deb``, ``.rpm``). L'équivalent pour Windows (`winget "
@@ -424,7 +440,7 @@ msgstr ""
 "manifests-x.y.z.zip``\\ と\\ ``blunderdb-x.y.z.rb``) "
 "が、まだ公開リポジトリには提出されていません。それが済むまでは、以下のコマンドは動作しません。ここでは想定しているインストール方法を説明します："
 
-#: ../../source/telecharge_install.rst:236
+#: ../../source/telecharge_install.rst:244
 msgid ""
 "Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il"
 " reste non signé, et les avertissements décrits ci-dessous s'appliquent "
@@ -436,11 +452,11 @@ msgstr ""
 "install --cask --no-quarantine blunderdb``\\ によって初回起動時の Gatekeeper "
 "のブロックを回避できます。"
 
-#: ../../source/telecharge_install.rst:242
+#: ../../source/telecharge_install.rst:250
 msgid "Avertissements Windows et Mac"
 msgstr "Windows と Mac に関する警告"
 
-#: ../../source/telecharge_install.rst:244
+#: ../../source/telecharge_install.rst:252
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
@@ -449,7 +465,7 @@ msgstr ""
 "Windows では、blunderDB の実行を拒否する場合があります。理由と回避方法については "
 ":numref:`annexe_windows_malware` を参照してください。"
 
-#: ../../source/telecharge_install.rst:248
+#: ../../source/telecharge_install.rst:256
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"

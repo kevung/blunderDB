@@ -66,3 +66,53 @@ func TestBootstrapServesHealthz(t *testing.T) {
 		t.Errorf("message = %q, want it to name %q", env.Error.Message, middleware.TenantHeader)
 	}
 }
+
+// TestBootstrapAppliesCORSAllowOrigin guards #236: Config.CORSAllowOrigin
+// used to have no way to reach internal/server.Options at all — an embedder
+// could never turn CORS on for its own front end. A request with a matching
+// Origin header must now get it echoed back.
+func TestBootstrapAppliesCORSAllowOrigin(t *testing.T) {
+	h, closer, err := Bootstrap(context.Background(), Config{
+		Backend:         "sqlite",
+		DSN:             ":memory:",
+		CORSAllowOrigin: "https://example.test",
+	})
+	if err != nil {
+		t.Fatalf("Bootstrap: %v", err)
+	}
+	defer closer.Close()
+
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	req.Header.Set("Origin", "https://example.test")
+	h.ServeHTTP(rec, req)
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != "https://example.test" {
+		t.Errorf("Access-Control-Allow-Origin = %q, want %q", got, "https://example.test")
+	}
+}
+
+// TestBootstrapAppliesMaxBodyBytes guards #236: Config.MaxBodyBytes used to
+// have no way to reach internal/server.Options — every embedder was stuck
+// with the internal daemon's own default cap, unable to tighten (or loosen)
+// it for its own deployment. A body over the configured cap must be refused
+// with 413, declared Content-Length or not.
+func TestBootstrapAppliesMaxBodyBytes(t *testing.T) {
+	h, closer, err := Bootstrap(context.Background(), Config{
+		Backend:      "sqlite",
+		DSN:          ":memory:",
+		MaxBodyBytes: 16,
+	})
+	if err != nil {
+		t.Fatalf("Bootstrap: %v", err)
+	}
+	defer closer.Close()
+
+	body := bytes.NewReader([]byte(`{"zobrist": 1, "padding": "this is well over sixteen bytes"}`))
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/v1/positions.exists", body)
+	req.Header.Set(middleware.TenantHeader, "1")
+	h.ServeHTTP(rec, req)
+	if rec.Code != http.StatusRequestEntityTooLarge {
+		t.Errorf("status = %d, want %d (body %q)", rec.Code, http.StatusRequestEntityTooLarge, rec.Body.String())
+	}
+}

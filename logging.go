@@ -1,8 +1,11 @@
 package main
 
 import (
+	"io"
 	"log/slog"
 	"os"
+
+	"github.com/kevung/blunderdb/internal/applog"
 )
 
 // Log-level scale used across the whole backend (database, storage, ingest,
@@ -26,6 +29,14 @@ import (
 //     mode, GUI included — these are exactly the messages a support request
 //     needs, and a raised GUI default made them effectively unreachable.
 //   - Debug: verbose detail, opt-in only (BLUNDERDB_DEBUG=1).
+
+// initLogging sets the process-wide default slog logger. Every mode logs to
+// stderr; GUI mode additionally writes to applog's rotating file
+// ($XDG_STATE_HOME/blunderDB/blunderdb.log, see internal/applog), since
+// stderr is invisible once the app is launched by a double-click or a
+// desktop-file entry with no attached terminal (#241) — `serve`/CLI/`call`/
+// `migrate` keep their existing stderr-only behaviour, since they already
+// run attached to whatever launched them.
 func initLogging(mode string) {
 	// mode is no longer consulted: every mode shares one level policy now
 	// (see the scale above). Kept as a parameter for call-site symmetry in
@@ -34,7 +45,19 @@ func initLogging(mode string) {
 	if os.Getenv("BLUNDERDB_DEBUG") == "1" {
 		level = slog.LevelDebug
 	}
-	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+
+	var w io.Writer = os.Stderr
+	if mode == "gui" {
+		if lw, err := applog.Open(); err != nil {
+			// No default logger is set up yet at this point, so this can
+			// only reach the user via stderr directly.
+			_, _ = os.Stderr.WriteString("blunderdb: could not open the log file, logging to stderr only: " + err.Error() + "\n")
+		} else {
+			w = io.MultiWriter(os.Stderr, lw)
+		}
+	}
+
+	handler := slog.NewTextHandler(w, &slog.HandlerOptions{
 		Level: level,
 	})
 	slog.SetDefault(slog.New(handler))

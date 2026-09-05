@@ -1,8 +1,10 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -467,5 +469,35 @@ func TestImport_CommitMergesAllCommentRows(t *testing.T) {
 	}
 	if !strings.Contains(joined, "NewNote") {
 		t.Errorf("source's second comment row %q was not merged in; rows = %q", "NewNote", texts)
+	}
+}
+
+// TestWrapImportCancelled guards #241: a user hitting Cancel mid-commit
+// (CancelImport, wired to the GUI's Cancel button) used to surface as a
+// fresh, unwrapped "import cancelled by user" error — indistinguishable from
+// a real failure to anything checking errors.Is, and the GUI showed it in an
+// "Error committing import" alert (frontend/src/services/importService.js).
+// CommitImportDatabase's two ctx.Err() checks both build their error through
+// wrapImportCancelled, tested directly here rather than by racing a real
+// CancelImport call against a real commit (that race is real but not
+// deterministic enough for a unit test — see the doc comment on
+// wrapImportCancelled).
+func TestWrapImportCancelled(t *testing.T) {
+	err := wrapImportCancelled(context.Canceled)
+	if !errors.Is(err, ErrImportCancelled) {
+		t.Errorf("errors.Is(err, ErrImportCancelled) = false; err = %v", err)
+	}
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("errors.Is(err, context.Canceled) = false; err = %v", err)
+	}
+	if !strings.HasPrefix(err.Error(), "import cancelled by user") {
+		t.Errorf("err.Error() = %q, want a message starting with %q (importService.js matches on this prefix)", err.Error(), "import cancelled by user")
+	}
+
+	// DeadlineExceeded is the other context error CommitImportDatabase's
+	// ctx.Err() can return; the wrapping must not special-case Canceled.
+	err2 := wrapImportCancelled(context.DeadlineExceeded)
+	if !errors.Is(err2, ErrImportCancelled) || !errors.Is(err2, context.DeadlineExceeded) {
+		t.Errorf("wrapImportCancelled(context.DeadlineExceeded) = %v, want both sentinels visible via errors.Is", err2)
 	}
 }

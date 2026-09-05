@@ -14,12 +14,16 @@ func Recover(logger *slog.Logger, errFn func(http.ResponseWriter, *http.Request)
 			defer func() {
 				if rec := recover(); rec != nil {
 					if logger != nil {
-						logger.Error("panic recovered",
+						args := []any{
 							"panic", rec,
 							"method", r.Method,
 							"path", r.URL.Path,
 							"stack", string(debug.Stack()),
-						)
+						}
+						if id, ok := RequestIDFromContext(r.Context()); ok {
+							args = append(args, "request_id", id)
+						}
+						logger.Error("panic recovered", args...)
 					}
 					errFn(w, r)
 				}

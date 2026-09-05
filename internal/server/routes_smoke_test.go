@@ -60,6 +60,14 @@ var customContentTypes = map[string][]string{
 	// search.query streams positions like search.find; it is hand-written only
 	// so an unreadable query is refused before the 200 is committed (B.18).
 	"/v1/search.query": {ndjsonContentType},
+
+	// These three are ordinary rpc-shaped JSON handlers, but wrapped with
+	// withIdempotency (#236) — the closure kindOf sees at runtime is
+	// withIdempotency's, not rpc's, so they classify as kindCustom despite
+	// answering exactly like any other rpc route.
+	"/v1/collections.create": {"application/json"},
+	"/v1/tournaments.create": {"application/json"},
+	"/v1/anki.reviewCard":    {"application/json"},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test

@@ -31,6 +31,16 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 				"tenant", truncateForLog(r.Header.Get(TenantHeader)),
 				"duration_ms", float64(now().Sub(start).Microseconds()) / 1000.0,
 			}
+			if id, ok := RequestIDFromContext(r.Context()); ok {
+				args = append(args, "request_id", id)
+			}
+			// traceparent is relayed verbatim (see TraceparentHeader's doc
+			// comment) so a request that also went through an upstream
+			// tracing pipeline can still be found in this daemon's logs by
+			// grep, without this daemon parsing the W3C format itself.
+			if tp, ok := TraceparentFromContext(r.Context()); ok {
+				args = append(args, "traceparent", tp)
+			}
 			// A masked "internal error" response is otherwise a dead end for
 			// diagnosing what actually failed: the client only ever sees the
 			// generic message (backend internals must not leak), so the real

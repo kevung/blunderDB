@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 21:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: fi <LL@li.org>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/api_reference.rst:4
+msgid "Contrat d'API"
+msgstr "API-sopimus"
+
+#: ../../source/api_reference.rst:6
+msgid ""
+"Cette annexe est générée depuis le code source (``go run ./cmd/openapi-"
+"gen``, voir ``openapi.yaml`` à la racine du dépôt pour le contrat complet, "
+"schémas compris) : ne pas éditer directement, la prochaine génération "
+"écraserait toute modification. Chaque famille regroupe les méthodes ``POST "
+"/v1/<famille>.<méthode>`` exposées par le démon (voir :ref:`headless`), avec"
+" leur forme de réponse (JSON, ou NDJSON pour une liste en flux) et, quand "
+"elle existe, la mention de l'en-tête ``Idempotency-Key`` optionnel."
+msgstr ""
+"Tämä liite luodaan lähdekoodista (``go run ./cmd/openapi-gen``; katso "
+"``openapi.yaml`` repositorion juuressa täydellistä sopimusta varten, kaaviot"
+" mukaan lukien): älä muokkaa sitä suoraan, seuraava luonti korvaisi kaikki "
+"muutokset. Jokainen perhe kokoaa palvelimen tarjoamat ``POST "
+"/v1/<perhe>.<metodi>`` -metodit (ks. :ref:`headless`), niiden vastausmuodon "
+"kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos se on olemassa, "
+"maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
+
+#: ../../source/api_reference.rst:171
+msgid "Idempotence"
+msgstr "Idempotenssi"
+
+#: ../../source/api_reference.rst:173
+msgid ""
+"La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
+"lectures sont sans effet de bord, et ``positions.save`` (comme le reste de "
+"``positions.*``) est naturellement idempotente grâce au hachage Zobrist du "
+"contenu — enregistrer deux fois la même position renvoie la même ligne, "
+"jamais un doublon. 3 méthodes n'ont pas cette propriété (deux appels sont "
+"deux effets distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel"
+" : un appel rejoué avec la même clé renvoie le résultat de la première "
+"tentative au lieu de répéter son effet — voir la marque « (Idempotency-Key) "
+"» dans le tableau ci-dessus. Aucune autre méthode n'a besoin ou n'accepte "
+"cet en-tête."
+msgstr ""
+"Useimmat metodit eivät tarvitse mitään erityistä mekanismia: luvuilla ei ole"
+" sivuvaikutuksia, ja ``positions.save`` (kuten muutkin ``positions.*``) on "
+"luonnostaan idempotentti Zobrist-sisältötiivisteensä ansiosta — saman "
+"position tallentaminen kahdesti palauttaa saman rivin, ei koskaan "
+"kaksoiskappaletta. 3 metodilta puuttuu tämä ominaisuus (kaksi kutsua ovat "
+"kaksi erillistä vaikutusta), ja ne hyväksyvät valinnaisen ``Idempotency-"
+"Key``-otsakkeen: samalla avaimella uudelleen yritetty kutsu palauttaa "
+"ensimmäisen yrityksen tuloksen sen sijaan, että toistaisi vaikutuksensa — "
+"ks. merkintä «(Idempotency-Key)» yllä olevassa taulukossa. Mikään muu metodi"
+" ei tarvitse tai hyväksy tätä otsaketta."

@@ -11,6 +11,8 @@ export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
 
+export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
+
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
@@ -41,13 +43,11 @@ export function OpenExportMatDialog(arg1:string):Promise<string>;
 
 export function OpenImportDatabaseDialog():Promise<string>;
 
-export function OpenPositionDialog():Promise<gui.FileDialogResponse>;
+export function OpenLogsFolder():Promise<void>;
 
 export function OpenPositionFilesDialog():Promise<Array<string>>;
 
 export function OpenPositionFolderDialog():Promise<string>;
-
-export function OpenXGFileDialog():Promise<string>;
 
 export function PathExists(arg1:string):Promise<boolean>;
 
@@ -72,3 +72,5 @@ export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:numb
 export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartupFilePath():Promise<string>;

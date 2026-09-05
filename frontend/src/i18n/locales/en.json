@@ -81,6 +81,8 @@
         "vacuumDone": "Database compacted: {mb} MB reclaimed",
         "vacuumNothing": "Database compacted: nothing to reclaim",
         "vacuumError": "Compacting failed: {error}",
+        "logsIntro": "The log file records diagnostic details useful when reporting a problem.",
+        "logsButton": "Open logs folder",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "Settings for the embedded gammonNet evaluator: display depth and analysis depth are two separate settings — lowering the display never degrades what the analysis batch writes to the database.",
         "gammonnetDisplayPly": "Display depth",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "Checking for stale gammonNet analyses…",
         "gammonnetStaleCount": "{n} stale gammonNet analysis(es).",
         "gammonnetStaleStart": "Re-analyze stale positions",
-        "gammonnetStaleNote": "Re-runs gammonNet on positions it already analyzed, but written with an older engine version or a different depth than configured here — XG, GNUbg and BGBlitz analyses are never touched."
+        "gammonnetStaleNote": "Re-runs gammonNet on positions it already analyzed, but written with an older engine version or a different depth than configured here — XG, GNUbg and BGBlitz analyses are never touched.",
+        "checkForUpdates": "Check for updates at startup",
+        "checkForUpdatesNote": "Queries GitHub's release page once at startup. Off by default, and never enabled automatically on a package-managed install (Flatpak, a distro package, Homebrew…)."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "Delete this position and its associated analysis?",
         "searching": "Searching…",
         "positionAddedToDeck": "Position added to deck \"{deck}\"",
-        "failedAddToDeck": "Failed to add the position to the deck: {err}"
+        "failedAddToDeck": "Failed to add the position to the deck: {err}",
+        "updateAvailable": "A new blunderDB version is available: {version}"
     },
     "stats": {
         "title": "Stats",

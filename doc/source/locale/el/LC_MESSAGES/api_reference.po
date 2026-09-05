@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 21:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: el <LL@li.org>\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/api_reference.rst:4
+msgid "Contrat d'API"
+msgstr "Σύμβαση API"
+
+#: ../../source/api_reference.rst:6
+msgid ""
+"Cette annexe est générée depuis le code source (``go run ./cmd/openapi-"
+"gen``, voir ``openapi.yaml`` à la racine du dépôt pour le contrat complet, "
+"schémas compris) : ne pas éditer directement, la prochaine génération "
+"écraserait toute modification. Chaque famille regroupe les méthodes ``POST "
+"/v1/<famille>.<méthode>`` exposées par le démon (voir :ref:`headless`), avec"
+" leur forme de réponse (JSON, ou NDJSON pour une liste en flux) et, quand "
+"elle existe, la mention de l'en-tête ``Idempotency-Key`` optionnel."
+msgstr ""
+"Αυτό το παράρτημα παράγεται από τον πηγαίο κώδικα (``go run ./cmd/openapi-"
+"gen``· βλ. ``openapi.yaml`` στη ρίζα του αποθετηρίου για την πλήρη σύμβαση, "
+"μαζί με τα σχήματα): μην το επεξεργάζεστε απευθείας, η επόμενη παραγωγή θα "
+"αντικαταστήσει κάθε αλλαγή. Κάθε οικογένεια ομαδοποιεί τις μεθόδους ``POST "
+"/v1/<οικογένεια>.<μέθοδος>`` που εκθέτει ο δαίμονας (βλ. :ref:`headless`), "
+"με τη μορφή απόκρισής τους (JSON, ή NDJSON για μια ροή λίστας) και, όπου "
+"υπάρχει, μια σημείωση για την προαιρετική κεφαλίδα ``Idempotency-Key``."
+
+#: ../../source/api_reference.rst:171
+msgid "Idempotence"
+msgstr "Ιδεμποτότητα"
+
+#: ../../source/api_reference.rst:173
+msgid ""
+"La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
+"lectures sont sans effet de bord, et ``positions.save`` (comme le reste de "
+"``positions.*``) est naturellement idempotente grâce au hachage Zobrist du "
+"contenu — enregistrer deux fois la même position renvoie la même ligne, "
+"jamais un doublon. 3 méthodes n'ont pas cette propriété (deux appels sont "
+"deux effets distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel"
+" : un appel rejoué avec la même clé renvoie le résultat de la première "
+"tentative au lieu de répéter son effet — voir la marque « (Idempotency-Key) "
+"» dans le tableau ci-dessus. Aucune autre méthode n'a besoin ou n'accepte "
+"cet en-tête."
+msgstr ""
+"Οι περισσότερες μέθοδοι δεν χρειάζονται κανέναν ειδικό μηχανισμό: οι "
+"αναγνώσεις δεν έχουν παρενέργειες, και η ``positions.save`` (όπως και οι "
+"υπόλοιπες ``positions.*``) είναι εκ φύσεως ιδεμπότοτη χάρη στο hash "
+"περιεχομένου Zobrist — η αποθήκευση της ίδιας θέσης δύο φορές επιστρέφει την"
+" ίδια γραμμή, ποτέ ένα αντίγραφο. 3 μέθοδοι δεν έχουν αυτή την ιδιότητα (δύο"
+" κλήσεις είναι δύο διακριτά αποτελέσματα) και δέχονται μια προαιρετική "
+"κεφαλίδα ``Idempotency-Key``: μια κλήση που επαναλαμβάνεται με το ίδιο "
+"κλειδί επιστρέφει το αποτέλεσμα της πρώτης προσπάθειας αντί να επαναλάβει το"
+" αποτέλεσμά της — βλ. την ένδειξη «(Idempotency-Key)» στον παραπάνω πίνακα. "
+"Καμία άλλη μέθοδος δεν χρειάζεται ή δέχεται αυτή την κεφαλίδα."

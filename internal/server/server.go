@@ -49,6 +49,10 @@ type Server struct {
 	// spool bounds the total bytes concurrently in-flight imports may hold
 	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes (#234).
 	spool *spoolQuota
+	// idempotency backs withIdempotency: at most one cached response per
+	// (tenant, route, Idempotency-Key) triple, for the handful of routes
+	// with no natural dedup key (#236) — see idempotency.go.
+	idempotency *idempotencyStore
 }
 
 // New builds a Server from opts. It returns an error if no Storage is set.
@@ -68,6 +72,7 @@ func New(opts Options) (*Server, error) {
 		imports:       newImportRegistry(),
 		gammonnetJobs: newImportRegistry(),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
+		idempotency:   newIdempotencyStore(opts.now),
 	}
 	if opts.RateLimitRPS > 0 {
 		s.rl = middleware.NewRateLimiter(opts.RateLimitRPS, opts.RateLimitBurst, opts.now)
@@ -121,9 +126,12 @@ func (s *Server) withDeadlines(next http.Handler) http.Handler {
 }
 
 // chain wraps the mux with the middleware stack. Order (outermost first):
-// recover → metrics → logging → cors → tenant → mux. recover is outermost so
-// it catches panics from every layer; tenant is innermost so r.Pattern is set
-// by the mux for the metrics/logging labels read after next returns.
+// requestID → recover → metrics → logging → cors → tenant → mux. requestID
+// is outermost so every log line below it — including a panic's, and a
+// rejected request's — can carry the correlation id; recover is next so it
+// catches panics from every remaining layer; tenant is innermost so
+// r.Pattern is set by the mux for the metrics/logging labels read after next
+// returns.
 func (s *Server) chain(mux http.Handler) http.Handler {
 	h := mux
 	// Rate limiting sits just inside Tenant so it can read the tenant from the
@@ -146,6 +154,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 	h = middleware.Recover(s.opts.Logger, func(w http.ResponseWriter, _ *http.Request) {
 		writeErrorCode(w, CodeInternal, "internal error")
 	})(h)
+	h = middleware.RequestID(h)
 	return h
 }
 
@@ -240,6 +249,48 @@ func (s *Server) sweepPoolStats(ctx context.Context, pool poolStatsProvider) {
 	}
 }
 
+// businessMetricsSweepInterval bounds how stale the imports/gammonNet/spool
+// gauges and blunderdb_database_size_bytes can be (#238). Cheap enough (an
+// in-memory map length, an atomic load, and one query against the already-
+// open backend) to run this often even though database size does not
+// actually change every 15 seconds in practice.
+const businessMetricsSweepInterval = 15 * time.Second
+
+// sizeProvider is implemented by a storage backend that can report its own
+// on-disk (or server-side) footprint — sqlite.Storage stats its main file,
+// postgres.Storage asks pg_database_size. Duck-typed like poolStatsProvider
+// above: a backend that doesn't implement it simply never has
+// blunderdb_database_size_bytes published (#238).
+type sizeProvider interface {
+	DatabaseSizeBytes(ctx context.Context) (int64, error)
+}
+
+// sweepBusinessMetrics periodically publishes in-flight-work and database-
+// size gauges to the metrics registry (#238), until ctx is cancelled.
+func (s *Server) sweepBusinessMetrics(ctx context.Context) {
+	t := time.NewTicker(businessMetricsSweepInterval)
+	defer t.Stop()
+	publish := func() {
+		s.opts.Metrics.SetImportsInFlight(s.imports.count())
+		s.opts.Metrics.SetImportSpoolBytes(s.spool.usage())
+		s.opts.Metrics.SetGammonNetSweepsInFlight(s.gammonnetJobs.count())
+		if sp, ok := s.opts.Storage.(sizeProvider); ok {
+			if n, err := sp.DatabaseSizeBytes(ctx); err == nil {
+				s.opts.Metrics.SetDatabaseSizeBytes(n)
+			}
+		}
+	}
+	publish() // first data point without waiting a full interval
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-t.C:
+			publish()
+		}
+	}
+}
+
 // Run starts the server and blocks until ctx is cancelled, then shuts down
 // gracefully within ShutdownTimeout. It returns the listener/serve error, or
 // nil on a clean shutdown.
@@ -263,6 +314,7 @@ func (s *Server) Run(ctx context.Context) error {
 		if pool, ok := s.opts.Storage.(poolStatsProvider); ok {
 			go s.sweepPoolStats(ctx, pool)
 		}
+		go s.sweepBusinessMetrics(ctx)
 	}
 
 	errCh := make(chan error, 1)

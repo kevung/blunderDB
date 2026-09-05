@@ -20,7 +20,8 @@
         DeleteBearoffDB,
         OpenBearoffFileDialog,
         StartGammonNetBatch,
-        StartGammonNetStaleBatch
+        StartGammonNetStaleBatch,
+        OpenLogsFolder
     } from '../../wailsjs/go/gui/App.js';
     import { Vacuum, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTSPath, SaveBearoffTSPath } from '../../wailsjs/go/main/Config.js';
@@ -34,7 +35,9 @@
         GetGammonNetCandidates,
         SaveGammonNetCandidates,
         GetGammonNetAutoAnalyze,
-        SaveGammonNetAutoAnalyze
+        SaveGammonNetAutoAnalyze,
+        GetCheckForUpdates,
+        SaveCheckForUpdates
     } from '../../wailsjs/go/main/Config.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { onDestroy } from 'svelte';
@@ -211,6 +214,29 @@
         }
     });
 
+    // Opt-in update check (#241): off by default, loaded/saved the same way
+    // every other plain-boolean setting on this modal is.
+    let checkForUpdates = $state(false);
+
+    async function refreshCheckForUpdates() {
+        try {
+            checkForUpdates = await GetCheckForUpdates();
+        } catch (error) {
+            logger.error('Error loading check-for-updates setting:', error);
+        }
+    }
+
+    $effect(() => {
+        if (visible) {
+            refreshCheckForUpdates();
+        }
+    });
+
+    function onCheckForUpdatesChange(event) {
+        checkForUpdates = event.currentTarget.checked;
+        SaveCheckForUpdates(checkForUpdates).catch((error) => logger.error('Error saving check-for-updates setting:', error));
+    }
+
     const unsubBearoff = [
         EventsOn('bearoff:progress', (p) => (bearoffProgress = p)),
         EventsOn('bearoff:done', () => {
@@ -276,6 +302,18 @@
             statusBarTextStore.set(tMsg('config.vacuumError', { error: String(error) }));
         } finally {
             vacuumBusy = false;
+        }
+    }
+
+    // Opens the folder holding blunderDB's GUI log file
+    // ($XDG_STATE_HOME/blunderDB, see internal/applog) in the platform's
+    // file manager — logging.go writes only to stderr otherwise, invisible
+    // once the app is launched by a double-click with no attached terminal.
+    async function openLogsFolder() {
+        try {
+            await OpenLogsFolder();
+        } catch (error) {
+            statusBarTextStore.set(String(error));
         }
     }
 
@@ -473,6 +511,15 @@
                     {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
                 </button>
             </div>
+            <p class="setting-note">{$t('config.logsIntro')}</p>
+            <div class="tab-actions">
+                <button class="secondary-button" onclick={openLogsFolder}>{$t('config.logsButton')}</button>
+            </div>
+            <div class="setting-row">
+                <label for="config-check-for-updates">{$t('config.checkForUpdates')}</label>
+                <input id="config-check-for-updates" type="checkbox" checked={checkForUpdates} onchange={onCheckForUpdatesChange} />
+            </div>
+            <p class="setting-note">{$t('config.checkForUpdatesNote')}</p>
         {:else if activeTab === 'colors'}
             {#each COLOR_SETTINGS as setting (setting.key)}
                 <div class="setting-row">

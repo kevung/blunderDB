@@ -116,6 +116,14 @@ téléchargé via un navigateur, ils évitent d'avoir à lancer ``chmod +x`` à 
 téléchargement ou mise à jour. Ils créent également une entrée dans le menu des
 applications.
 
+.. note:: Les paquets ``.deb`` et ``.rpm`` associent l'extension ``.dbx`` (une
+   base exportée avec mot de passe, voir :ref:`diffusion_controlee`) à
+   blunderDB : double-cliquer sur un fichier ``.dbx`` reçu d'un tiers l'ouvre
+   directement. L'extension ``.db`` d'une base ordinaire n'est volontairement
+   **pas** associée — elle est trop générique et partagée par d'autres
+   logiciels — mais reste ouvrable normalement depuis le menu *Ouvrir* de
+   blunderDB.
+
 Paquets natifs (.deb / .rpm)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

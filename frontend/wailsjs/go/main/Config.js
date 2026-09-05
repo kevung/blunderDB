@@ -10,6 +10,10 @@ export function GetBoardColors() {
   return window['go']['main']['Config']['GetBoardColors']();
 }
 
+export function GetCheckForUpdates() {
+  return window['go']['main']['Config']['GetCheckForUpdates']();
+}
+
 export function GetEpcChallenge() {
   return window['go']['main']['Config']['GetEpcChallenge']();
 }
@@ -84,6 +88,10 @@ export function SaveBearoffTSPath(arg1) {
 
 export function SaveBoardColors(arg1) {
   return window['go']['main']['Config']['SaveBoardColors'](arg1);
+}
+
+export function SaveCheckForUpdates(arg1) {
+  return window['go']['main']['Config']['SaveCheckForUpdates'](arg1);
 }
 
 export function SaveConfig(arg1) {

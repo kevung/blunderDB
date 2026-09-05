@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"os"
+	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/adrg/xdg"
@@ -211,6 +215,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		GammonNetPruneK:      20,
 		GammonNetCandidates:  15,
 		GammonNetAutoAnalyze: true,
+		CheckForUpdates:      true,
 		StatsFilter: StatsFilterPersisted{
 			PlayerName:    "Kévin Unger",
 			TournamentIDs: []int64{3, 7, 11},
@@ -256,6 +261,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"GammonNetPruneK", loaded.GetGammonNetPruneK(), original.GammonNetPruneK},
 		{"GammonNetCandidates", loaded.GetGammonNetCandidates(), original.GammonNetCandidates},
 		{"GammonNetAutoAnalyze", loaded.GetGammonNetAutoAnalyze(), original.GammonNetAutoAnalyze},
+		{"CheckForUpdates", loaded.GetCheckForUpdates(), original.CheckForUpdates},
 		{"StatsFilter", loaded.GetStatsFilter(), original.StatsFilter},
 	}
 	for _, c := range checks {
@@ -324,6 +330,9 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	}
 	if got := loaded.GetGammonNetAutoAnalyze(); got != false {
 		t.Errorf("GetGammonNetAutoAnalyze() = %v, want false", got)
+	}
+	if got := loaded.GetCheckForUpdates(); got != false {
+		t.Errorf("GetCheckForUpdates() = %v, want false (opt-in, off by default)", got)
 	}
 }
 
@@ -422,3 +431,157 @@ func TestGammonNetZeroPlyExplicitlySavedSurvivesReload(t *testing.T) {
 }
 
 func intPtr(v int) *int { return &v }
+
+// TestSaveConfig_WritesCurrentFileName guards #241's rename from
+// config.yaml to config.json: SaveConfig must create the file under
+// configFilePath (config.json), never the legacy name, and must leave no
+// temp file behind (the atomic write-then-rename's tmp file, created
+// alongside the real path).
+func TestSaveConfig_WritesCurrentFileName(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if err := c.SaveConfig(c); err != nil {
+		t.Fatalf("SaveConfig: %v", err)
+	}
+
+	path, err := xdg.SearchConfigFile(configFilePath)
+	if err != nil {
+		t.Fatalf("config.json was not created: %v", err)
+	}
+	if !strings.HasSuffix(path, "config.json") {
+		t.Errorf("config file path = %q, want it to end in config.json", path)
+	}
+
+	entries, err := os.ReadDir(filepath.Dir(path))
+	if err != nil {
+		t.Fatalf("ReadDir: %v", err)
+	}
+	for _, e := range entries {
+		if strings.Contains(e.Name(), ".tmp") {
+			t.Errorf("leftover temp file after SaveConfig: %s", e.Name())
+		}
+	}
+}
+
+// TestLoadConfig_MigratesLegacyFileName guards #241: a machine that only has
+// the pre-2026-09 config.yaml (content was always JSON despite the
+// extension) must still load correctly, and LoadConfig must migrate it to
+// config.json so every later run finds the current name directly — without
+// losing the legacy file, in case migration itself cannot write (e.g. a
+// read-only config directory).
+func TestLoadConfig_MigratesLegacyFileName(t *testing.T) {
+	isolateXDGConfig(t)
+
+	legacyPath, err := xdg.ConfigFile(legacyConfigFilePath)
+	if err != nil {
+		t.Fatalf("xdg.ConfigFile(legacy): %v", err)
+	}
+	legacy := NewConfig()
+	legacy.LastDatabasePath = "/tmp/legacy.db"
+	data, err := json.MarshalIndent(legacy, "", "  ")
+	if err != nil {
+		t.Fatalf("MarshalIndent: %v", err)
+	}
+	if err := os.WriteFile(legacyPath, data, 0o644); err != nil {
+		t.Fatalf("WriteFile(legacy): %v", err)
+	}
+
+	loaded := &Config{}
+	got, err := loaded.LoadConfig()
+	if err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got.LastDatabasePath != "/tmp/legacy.db" {
+		t.Errorf("LastDatabasePath = %q, want the legacy file's value", got.LastDatabasePath)
+	}
+
+	if _, err := xdg.SearchConfigFile(configFilePath); err != nil {
+		t.Errorf("config.json was not created by the migration: %v", err)
+	}
+	if _, err := os.Stat(legacyPath); err != nil {
+		t.Errorf("legacy config.yaml was removed or lost during migration: %v", err)
+	}
+}
+
+// TestLoadConfig_CorruptFileResetsToDefaultsWithBackup guards #241: a
+// config.json that fails to parse as JSON (truncated write, hand edit,
+// corruption) used to fail LoadConfig outright, which main.go turned into
+// os.Exit(1) — the app refused to start at all until a user found and fixed
+// or deleted a file most never knew existed. It must instead back the bad
+// file up (so nothing is silently lost) and start from a fresh default
+// Config.
+func TestLoadConfig_CorruptFileResetsToDefaultsWithBackup(t *testing.T) {
+	isolateXDGConfig(t)
+
+	path, err := xdg.ConfigFile(configFilePath)
+	if err != nil {
+		t.Fatalf("xdg.ConfigFile: %v", err)
+	}
+	if err := os.WriteFile(path, []byte("{not valid json"), 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	loaded := &Config{}
+	got, err := loaded.LoadConfig()
+	if err != nil {
+		t.Fatalf("LoadConfig on a corrupt file: %v (want it to recover, not fail)", err)
+	}
+	if got.WindowWidth == 0 {
+		t.Error("LoadConfig did not fall back to a populated default Config")
+	}
+
+	backup, err := os.ReadFile(path + ".bak")
+	if err != nil {
+		t.Fatalf("backup file not created: %v", err)
+	}
+	if string(backup) != "{not valid json" {
+		t.Errorf("backup content = %q, want the original corrupt bytes", backup)
+	}
+
+	// The reset must itself have been persisted, so a second load does not
+	// hit the same corrupt file again.
+	reloaded := &Config{}
+	if _, err := reloaded.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig after reset: %v", err)
+	}
+}
+
+// TestConfig_ConfigVersionStamped guards #241's config_version field: both a
+// freshly created Config and one loaded from a pre-existing file that
+// predates the field must end up stamped with currentConfigVersion.
+func TestConfig_ConfigVersionStamped(t *testing.T) {
+	isolateXDGConfig(t)
+
+	if v := NewConfig().ConfigVersion; v != currentConfigVersion {
+		t.Errorf("NewConfig().ConfigVersion = %d, want %d", v, currentConfigVersion)
+	}
+
+	// Simulate a file written before config_version existed: marshal a
+	// config, then strip the field back out by hand.
+	old := NewConfig()
+	old.ConfigVersion = 0
+	data, err := json.Marshal(old)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	path, err := xdg.ConfigFile(configFilePath)
+	if err != nil {
+		t.Fatalf("xdg.ConfigFile: %v", err)
+	}
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	loaded := &Config{}
+	got, err := loaded.LoadConfig()
+	if err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got.ConfigVersion != currentConfigVersion {
+		t.Errorf("ConfigVersion after loading a version-less file = %d, want %d", got.ConfigVersion, currentConfigVersion)
+	}
+	if loaded.ConfigVersion != currentConfigVersion {
+		t.Errorf("receiver ConfigVersion = %d, want %d (mirrors every other field's receiver copy)", loaded.ConfigVersion, currentConfigVersion)
+	}
+}

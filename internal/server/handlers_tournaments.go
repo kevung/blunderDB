@@ -48,10 +48,12 @@ type tournamentIDReq struct {
 func (s *Server) tournamentRoutes() []route {
 	ts := func() storage.TournamentStore { return s.opts.Storage.Tournaments() }
 	return []route{
-		{http.MethodPost, "/v1/tournaments.create", rpc(func(ctx context.Context, scope string, req tournamentCreateReq) (idResp, error) {
+		// Wrapped with withIdempotency (#236): Create has no natural dedup
+		// key — see the identical reasoning on collections.create.
+		{http.MethodPost, "/v1/tournaments.create", s.withIdempotency(rpc(func(ctx context.Context, scope string, req tournamentCreateReq) (idResp, error) {
 			id, err := ts().Create(ctx, scope, req.Name, req.Date, req.Location)
 			return idResp{ID: id}, err
-		})},
+		}))},
 		{http.MethodPost, "/v1/tournaments.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Tournament, error) {
 			return ts().Get(ctx, scope, req.ID)
 		})},

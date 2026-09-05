@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-04 17:07+0200\n"
+"POT-Creation-Date: 2026-09-05 03:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -296,11 +296,29 @@ msgstr ""
 "``chmod +x`` bei jedem Download oder Update. Sie legen außerdem einen "
 "Eintrag im Anwendungsmenü an."
 
-#: ../../source/telecharge_install.rst:120
+#: ../../source/telecharge_install.rst:119
+msgid ""
+"Les paquets ``.deb`` et ``.rpm`` associent l'extension ``.dbx`` (une base"
+" exportée avec mot de passe, voir :ref:`diffusion_controlee`) à blunderDB"
+" : double-cliquer sur un fichier ``.dbx`` reçu d'un tiers l'ouvre "
+"directement. L'extension ``.db`` d'une base ordinaire n'est "
+"volontairement **pas** associée — elle est trop générique et partagée par"
+" d'autres logiciels — mais reste ouvrable normalement depuis le menu "
+"*Ouvrir* de blunderDB."
+msgstr ""
+"Die Pakete ``.deb`` und ``.rpm`` verknüpfen die Erweiterung ``.dbx`` (eine "
+"mit Passwort exportierte Datenbank, siehe :ref:`diffusion_controlee`) mit "
+"blunderDB: ein Doppelklick auf eine von jemandem erhaltene ``.dbx``-Datei "
+"öffnet sie direkt. Die Erweiterung ``.db`` einer gewöhnlichen Datenbank wird "
+"bewusst **nicht** verknüpft — sie ist zu allgemein und wird von anderer "
+"Software mitbenutzt — lässt sich aber weiterhin normal über das Menü "
+"*Öffnen* von blunderDB öffnen."
+
+#: ../../source/telecharge_install.rst:128
 msgid "Paquets natifs (.deb / .rpm)"
 msgstr "Native Pakete (.deb / .rpm)"
 
-#: ../../source/telecharge_install.rst:122
+#: ../../source/telecharge_install.rst:130
 msgid ""
 "Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que"
 " sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
@@ -312,11 +330,11 @@ msgstr ""
 "die passende webkit2gtk-Abhängigkeit. Ersetzen Sie ``x.y.z`` durch die "
 "heruntergeladene Version:"
 
-#: ../../source/telecharge_install.rst:133
+#: ../../source/telecharge_install.rst:141
 msgid "Arch Linux (AUR)"
 msgstr "Arch Linux (AUR)"
 
-#: ../../source/telecharge_install.rst:135
+#: ../../source/telecharge_install.rst:143
 msgid ""
 "Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
 "automatiquement par les assistants AUR :"
@@ -324,11 +342,11 @@ msgstr ""
 "Das Paket ``blunderdb-bin`` ist im AUR verfügbar und wird von AUR-Helfern"
 " automatisch aktualisiert:"
 
-#: ../../source/telecharge_install.rst:143
+#: ../../source/telecharge_install.rst:151
 msgid "Flatpak"
 msgstr "Flatpak"
 
-#: ../../source/telecharge_install.rst:145
+#: ../../source/telecharge_install.rst:153
 msgid ""
 "Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution "
 "où Flatpak est installé. Il repose sur l'environnement GNOME 47, que "
@@ -338,7 +356,7 @@ msgstr ""
 "der Flatpak installiert ist. Es baut auf der GNOME-47-Laufzeitumgebung "
 "auf, die Flatpak bei Bedarf von Flathub herunterlädt:"
 
-#: ../../source/telecharge_install.rst:154
+#: ../../source/telecharge_install.rst:162
 msgid ""
 "blunderDB n'est pas encore publié sur Flathub : le bundle s'installe "
 "depuis le fichier téléchargé, et se met à jour en installant celui de la "
@@ -353,11 +371,11 @@ msgstr ""
 "Befehlszeile (:ref:`cli`) erreicht man mit ``flatpak run "
 "io.github.kevung.blunderDB <Befehl>``."
 
-#: ../../source/telecharge_install.rst:161
+#: ../../source/telecharge_install.rst:169
 msgid "Archive .tar.gz"
 msgstr ".tar.gz-Archiv"
 
-#: ../../source/telecharge_install.rst:163
+#: ../../source/telecharge_install.rst:171
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -365,7 +383,7 @@ msgstr ""
 "Für andere Distributionen. Das Entpacken eines Archivs bewahrt das "
 "Ausführbar-Bit, sodass kein ``chmod`` nötig ist:"
 
-#: ../../source/telecharge_install.rst:172
+#: ../../source/telecharge_install.rst:180
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -381,11 +399,11 @@ msgstr ""
 " denselben Link neben der ausführbaren Datei. Um ihn in Ihrem ``PATH`` zu"
 " haben: ``ln -s \"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:180
+#: ../../source/telecharge_install.rst:188
 msgid "Binaire brut (méthode avancée)"
 msgstr "Rohbinärdatei (fortgeschrittene Methode)"
 
-#: ../../source/telecharge_install.rst:182
+#: ../../source/telecharge_install.rst:190
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -395,7 +413,7 @@ msgstr ""
 "beim Herunterladen das Ausführbar-Bit entfernt, müssen Sie es vor dem "
 "ersten Start wiederherstellen:"
 
-#: ../../source/telecharge_install.rst:190
+#: ../../source/telecharge_install.rst:198
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -411,11 +429,11 @@ msgstr ""
 "oder laden Sie die dedizierte Version |latest_linux_webkit2gtk41_exe| "
 "herunter. Native Pakete wählen die richtige Abhängigkeit automatisch aus."
 
-#: ../../source/telecharge_install.rst:199
+#: ../../source/telecharge_install.rst:207
 msgid "Image Docker (mode serveur)"
 msgstr "Docker-Image (Servermodus)"
 
-#: ../../source/telecharge_install.rst:201
+#: ../../source/telecharge_install.rst:209
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -427,7 +445,7 @@ msgstr ""
 "in der GitHub-Registry, für ``linux/amd64`` und ``linux/arm64``, unter "
 "dem Versions-Tag und unter ``latest``:"
 
-#: ../../source/telecharge_install.rst:210
+#: ../../source/telecharge_install.rst:218
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -435,11 +453,11 @@ msgstr ""
 "Start, Konfiguration und die Warnung zum authentifizierenden Proxy sind "
 "in :ref:`headless_docker_image` beschrieben."
 
-#: ../../source/telecharge_install.rst:216
+#: ../../source/telecharge_install.rst:224
 msgid "Gestionnaires de paquets Windows et Mac (à venir)"
 msgstr "Paketmanager für Windows und Mac (in Vorbereitung)"
 
-#: ../../source/telecharge_install.rst:218
+#: ../../source/telecharge_install.rst:226
 msgid ""
 "Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets "
 "(AUR, ``.deb``, ``.rpm``). L'équivalent pour Windows (`winget "
@@ -461,7 +479,7 @@ msgstr ""
 "Solange das nicht der Fall ist, funktionieren die folgenden Befehle "
 "nicht; sie beschreiben die geplante Installation:"
 
-#: ../../source/telecharge_install.rst:236
+#: ../../source/telecharge_install.rst:244
 msgid ""
 "Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il"
 " reste non signé, et les avertissements décrits ci-dessous s'appliquent "
@@ -473,11 +491,11 @@ msgstr ""
 "gelten unverändert. Unter Mac vermeidet ``brew install --cask --no-"
 "quarantine blunderdb`` die Blockade durch Gatekeeper beim ersten Start."
 
-#: ../../source/telecharge_install.rst:242
+#: ../../source/telecharge_install.rst:250
 msgid "Avertissements Windows et Mac"
 msgstr "Hinweise für Windows und Mac"
 
-#: ../../source/telecharge_install.rst:244
+#: ../../source/telecharge_install.rst:252
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
@@ -487,7 +505,7 @@ msgstr ""
 "blunderDB auszuführen. Siehe :numref:`annexe_windows_malware`, um zu "
 "verstehen, warum, und um etwaige Blockaden zu umgehen."
 
-#: ../../source/telecharge_install.rst:248
+#: ../../source/telecharge_install.rst:256
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"

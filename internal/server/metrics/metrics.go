@@ -45,6 +45,16 @@ type Registry struct {
 	pgIdle      int64
 	pgMax       int64
 	pgWaitCount int64
+
+	// Business gauges (#238): in-flight work and database footprint, none of
+	// which the request-count/latency metrics above say anything about — a
+	// stuck import or a runaway gammonNet sweep is invisible to
+	// blunderdb_http_requests_total (it is one long-lived request, not many).
+	importsInFlight   int64
+	importSpoolBytes  int64
+	gammonnetInFlight int64
+	hasDBSize         uint32 // 1 once SetDatabaseSizeBytes has been called at least once
+	dbSizeBytes       int64
 }
 
 // IncRateLimitRejected records one request rejected by the rate limiter.
@@ -78,6 +88,51 @@ func (r *Registry) SetPoolStats(acquired, idle, max int32, waitCount int64) {
 	atomic.StoreInt64(&r.pgIdle, int64(idle))
 	atomic.StoreInt64(&r.pgMax, int64(max))
 	atomic.StoreInt64(&r.pgWaitCount, waitCount)
+}
+
+// SetImportsInFlight records the current number of in-flight
+// imports.* jobs, across every tenant (Server.sweepBusinessMetrics polls
+// importRegistry's live job count periodically).
+func (r *Registry) SetImportsInFlight(n int) {
+	if r == nil {
+		return
+	}
+	atomic.StoreInt64(&r.importsInFlight, int64(n))
+}
+
+// SetImportSpoolBytes records the current number of bytes reserved from the
+// import spool quota (see spoolQuota, handlers_imports.go) — how close the
+// daemon is to BLUNDERDB_MAX_SPOOL_BYTES, not just whether an import is
+// running at all.
+func (r *Registry) SetImportSpoolBytes(n int64) {
+	if r == nil {
+		return
+	}
+	atomic.StoreInt64(&r.importSpoolBytes, n)
+}
+
+// SetGammonNetSweepsInFlight records the current number of in-flight
+// gammonnet.*sweep* jobs, across every tenant.
+func (r *Registry) SetGammonNetSweepsInFlight(n int) {
+	if r == nil {
+		return
+	}
+	atomic.StoreInt64(&r.gammonnetInFlight, int64(n))
+}
+
+// SetDatabaseSizeBytes records the storage backend's current size in bytes
+// (the SQLite main file, or PostgreSQL's pg_database_size) — polled
+// periodically from whichever backend implements it (see
+// server.sizeProvider); a backend that doesn't (there is none today, but the
+// duck-typed interface keeps this optional) simply never calls this, and
+// WritePrometheus omits the gauge entirely, the same convention the
+// PostgreSQL pool gauges already use.
+func (r *Registry) SetDatabaseSizeBytes(n int64) {
+	if r == nil {
+		return
+	}
+	atomic.StoreUint32(&r.hasDBSize, 1)
+	atomic.StoreInt64(&r.dbSizeBytes, n)
 }
 
 type counterKey struct {
@@ -201,6 +256,28 @@ func (r *Registry) WritePrometheus(w io.Writer) {
 	_, _ = fmt.Fprintln(w, "# HELP blunderdb_ratelimit_buckets Live per-tenant token buckets.")
 	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_ratelimit_buckets gauge")
 	_, _ = fmt.Fprintf(w, "blunderdb_ratelimit_buckets %d\n", atomic.LoadUint64(&r.rlBuckets))
+
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_imports_inflight In-flight imports.* jobs, across every tenant.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_imports_inflight gauge")
+	_, _ = fmt.Fprintf(w, "blunderdb_imports_inflight %d\n", atomic.LoadInt64(&r.importsInFlight))
+
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_import_spool_bytes Bytes currently reserved from the import spool quota.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_import_spool_bytes gauge")
+	_, _ = fmt.Fprintf(w, "blunderdb_import_spool_bytes %d\n", atomic.LoadInt64(&r.importSpoolBytes))
+
+	_, _ = fmt.Fprintln(w, "# HELP blunderdb_gammonnet_sweep_inflight In-flight gammonNet catch-up sweeps, across every tenant.")
+	_, _ = fmt.Fprintln(w, "# TYPE blunderdb_gammonnet_sweep_inflight gauge")
+	_, _ = fmt.Fprintf(w, "blunderdb_gammonnet_sweep_inflight %d\n", atomic.LoadInt64(&r.gammonnetInFlight))
+
+	// Only published once the backend has actually reported a size (see
+	// SetDatabaseSizeBytes) — the same convention as the pg_pool_* gauges
+	// below, so a backend without a meaningful notion of "database size"
+	// never publishes a misleading permanent zero.
+	if atomic.LoadUint32(&r.hasDBSize) == 1 {
+		_, _ = fmt.Fprintln(w, "# HELP blunderdb_database_size_bytes Storage backend size in bytes (SQLite main file, or PostgreSQL's pg_database_size).")
+		_, _ = fmt.Fprintln(w, "# TYPE blunderdb_database_size_bytes gauge")
+		_, _ = fmt.Fprintf(w, "blunderdb_database_size_bytes %d\n", atomic.LoadInt64(&r.dbSizeBytes))
+	}
 
 	// Only the PostgreSQL backend ever calls SetPoolStats; the SQLite
 	// backend has no pool to report, so these gauges are omitted entirely

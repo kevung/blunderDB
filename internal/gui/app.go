@@ -28,6 +28,7 @@ import (
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/kevung/blunderdb/internal/applog"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
@@ -69,6 +70,12 @@ type App struct {
 	// reason.
 	gnBatchMu     sync.Mutex
 	gnBatchCancel context.CancelFunc
+
+	// startupFilePath is the database file the OS handed this process on the
+	// command line — a .desktop's Exec=blunderDB %f, a Windows/macOS file
+	// association double-click (#241) — set by run.go right after
+	// construction, never by the frontend. Empty on an ordinary launch.
+	startupFilePath string
 }
 
 // NewApp creates a new App application struct.
@@ -177,65 +184,81 @@ func (a *App) OpenExportMatDialog(defaultName string) (string, error) {
 	return filePath, nil
 }
 
+// deletableExtensions is DeleteFile's allow-list: both of blunderDB's own
+// database file shapes, never an arbitrary suffix (#241).
+var deletableExtensions = map[string]bool{".db": true, ".dbx": true}
+
+// DeleteFile removes a database file the frontend created and no longer
+// wants (an abandoned "New Database" file, a cancelled export). It used to
+// check only the suffix of whatever string it was handed — a relative path
+// resolves against a cwd the caller does not control, and any string ending
+// in ".db" passed regardless of what it pointed at. It now additionally
+// requires an absolute path (so there is no ambient cwd to reason about) and
+// that the target is a regular file, not a directory or something stranger
+// (#241).
 func (a *App) DeleteFile(filePath string) error {
-	// Validate that the file has a .db extension to prevent arbitrary file deletion
-	if !strings.HasSuffix(strings.ToLower(filePath), ".db") {
-		return fmt.Errorf("only .db files can be deleted")
+	ext := strings.ToLower(filepath.Ext(filePath))
+	if !deletableExtensions[ext] {
+		return newGUIError(CodeInvalid, "only .db or .dbx files can be deleted")
 	}
-	err := os.Remove(filePath)
+	if !filepath.IsAbs(filePath) {
+		return newGUIError(CodeInvalid, "path must be absolute")
+	}
+	info, err := os.Lstat(filePath)
 	if err != nil {
-		return err
+		if os.IsNotExist(err) {
+			return newGUIError(CodeNotFound, "file not found: "+filePath)
+		}
+		return newGUIError(CodeInternal, err.Error())
+	}
+	if !info.Mode().IsRegular() {
+		return newGUIError(CodeInvalid, "not a regular file: "+filePath)
+	}
+	if err := os.Remove(filePath); err != nil {
+		return newGUIError(CodeInternal, err.Error())
 	}
 	return nil
 }
 
+// maxReadFileBytes bounds ReadFileContent: it loads the whole file into one
+// JS string, so an unexpectedly huge file (a wrong pick, or a directory
+// symlink trick) must be refused with a clear message rather than attempted
+// — a multi-gigabyte read can stall or crash the webview well before it
+// reaches the frontend at all (#241). Position/match text files are
+// realistically kilobytes to a few megabytes; 64 MiB is generous headroom.
+const maxReadFileBytes = 64 << 20
+
+// FileDialogResponse is the wire shape ReadFileContent returns.
+// Cancelled distinguishes "the user picked nothing" from a genuine failure
+// (Error non-empty) — both used to collapse onto the same Error field, so a
+// dialog the user simply dismissed looked identical to an I/O error to
+// anything that checked Error != "" (#241).
 type FileDialogResponse struct {
-	FilePath string `json:"file_path"`
-	Content  string `json:"content"`
-	Error    string `json:"error,omitempty"` // Optional field to capture any errors
+	FilePath  string `json:"file_path"`
+	Content   string `json:"content"`
+	Error     string `json:"error,omitempty"`     // Optional field to capture any errors
+	Cancelled bool   `json:"cancelled,omitempty"` // true when the user dismissed the dialog with no selection
 }
 
-func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
-	// Open the file dialog with position and match file types
-	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Import Position or Match File",
-		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf"},
-			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
-			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
-			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
-			{DisplayName: "GnuBG Match Files (*.sgf)", Pattern: "*.sgf"},
-			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
-			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
-			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
-		},
-	})
-
+// readFileCapped reads path into a FileDialogResponse, refusing anything
+// over maxReadFileBytes rather than loading it (#241).
+func readFileCapped(filePath string) (*FileDialogResponse, error) {
+	info, err := os.Stat(filePath)
 	if err != nil {
-		return &FileDialogResponse{Error: err.Error()}, err
+		return &FileDialogResponse{FilePath: filePath, Error: err.Error()}, newGUIError(CodeNotFound, err.Error())
 	}
-
-	if filePath == "" {
-		return &FileDialogResponse{Error: "No file selected"}, nil
+	if info.Size() > maxReadFileBytes {
+		msg := fmt.Sprintf("file too large (%.1f MiB, max %.0f MiB)", float64(info.Size())/(1<<20), float64(maxReadFileBytes)/(1<<20))
+		return &FileDialogResponse{FilePath: filePath, Error: msg}, newGUIError(CodeInvalid, msg)
 	}
-
-	// Read the file content
 	content, err := os.ReadFile(filePath)
 	if err != nil {
-		return &FileDialogResponse{Error: err.Error()}, err
+		return &FileDialogResponse{FilePath: filePath, Error: err.Error()}, newGUIError(CodeInternal, err.Error())
 	}
-
 	return &FileDialogResponse{
 		FilePath: filePath,
 		Content:  string(content),
 	}, nil
-}
-
-func (a *App) OpenXGFileDialog() (string, error) {
-	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title:   "Import XG Match File",
-		Filters: []runtime.FileFilter{{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"}},
-	})
 }
 
 // OpenPositionFilesDialog opens a multi-file selection dialog for position and match files.
@@ -317,16 +340,10 @@ func (a *App) CollectImportableFiles(dirPath string) ([]string, error) {
 	return files, nil
 }
 
-// ReadFileContent reads and returns the content of a file as a string.
+// ReadFileContent reads and returns the content of a file as a string,
+// refusing anything over maxReadFileBytes (#241).
 func (a *App) ReadFileContent(filePath string) (*FileDialogResponse, error) {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return &FileDialogResponse{FilePath: filePath, Error: err.Error()}, err
-	}
-	return &FileDialogResponse{
-		FilePath: filePath,
-		Content:  string(content),
-	}, nil
+	return readFileCapped(filePath)
 }
 
 func (a *App) ShowAlert(message string) {
@@ -354,6 +371,45 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
+// StartupFilePath returns the database file path the OS handed this process
+// on the command line, or "" on an ordinary launch with none (#241). The
+// frontend calls this once at boot and opens it in preference to (or
+// alongside) the last-used database from Config.
+func (a *App) StartupFilePath() string {
+	return a.startupFilePath
+}
+
+// OpenLogsFolder opens the directory holding blunderDB's GUI log file
+// (applog.Dir()) in the platform's file manager, creating it first if this
+// is a fresh install that has not logged anything yet (#241).
+func (a *App) OpenLogsFolder() error {
+	dir := applog.Dir()
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return newGUIError(CodeInternal, err.Error())
+	}
+	if err := openFolder(dir); err != nil {
+		return newGUIError(CodeInternal, err.Error())
+	}
+	return nil
+}
+
+// openFolder opens dir in the platform's file manager: xdg-open on Linux,
+// `open` on macOS, `explorer` on Windows — each invoked with dir as its own
+// exec.Command argument, never string-interpolated into a shell command
+// line (#241).
+func openFolder(dir string) error {
+	var cmd *exec.Cmd
+	switch goruntime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", dir)
+	case "windows":
+		cmd = exec.Command("explorer", dir)
+	default:
+		cmd = exec.Command("xdg-open", dir)
+	}
+	return cmd.Run()
+}
+
 // CopyImageToClipboard takes base64-encoded PNG data and copies it to the system
 // clipboard. The image clipboard is an Optional host capability (docs/adr/0004):
 // this is the *last* line of defence, reached only after the frontend's native
@@ -373,17 +429,32 @@ func (a *App) CopyImageToClipboard(base64Data string) (string, error) {
 		return copyImageLinux(pngData)
 
 	case "darwin":
+		// The path flows in as an environment variable, read back with
+		// AppleScript's `system attribute`, rather than interpolated into
+		// the script text (#241) — the previous version built the script
+		// with fmt.Sprintf around the path, which is safe only as long as
+		// the path (today, always our own os.CreateTemp name) never
+		// contains a `"` or backslash AppleScript's string literal would
+		// choke on.
 		if err := copyImageViaTempFile(pngData, func(path string) *exec.Cmd {
-			return exec.Command("osascript", "-e", fmt.Sprintf(`set the clipboard to (read (POSIX file "%s") as «class PNGf»)`, path))
+			cmd := exec.Command("osascript", "-e",
+				`set the clipboard to (read (POSIX file (system attribute "BLUNDERDB_CLIPBOARD_PATH")) as «class PNGf»)`)
+			cmd.Env = append(os.Environ(), "BLUNDERDB_CLIPBOARD_PATH="+path)
+			return cmd
 		}); err != nil {
 			return saveImageFallback(pngData)
 		}
 		return "", nil
 
 	case "windows":
+		// Same reasoning as the darwin branch above: the path travels as an
+		// environment variable PowerShell reads back with $env:, never
+		// interpolated into the -Command string (#241).
 		if err := copyImageViaTempFile(pngData, func(path string) *exec.Cmd {
-			script := fmt.Sprintf(`Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'))`, path)
-			return exec.Command("powershell", "-Command", script)
+			cmd := exec.Command("powershell", "-NoProfile", "-Command",
+				`Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile($env:BLUNDERDB_CLIPBOARD_PATH))`)
+			cmd.Env = append(os.Environ(), "BLUNDERDB_CLIPBOARD_PATH="+path)
+			return cmd
 		}); err != nil {
 			return saveImageFallback(pngData)
 		}

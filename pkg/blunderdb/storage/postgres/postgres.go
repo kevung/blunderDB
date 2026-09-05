@@ -129,6 +129,21 @@ func (s *Storage) PoolStats() (acquired, idle, max int32, waitCount int64) {
 	return stat.AcquiredConns(), stat.IdleConns(), stat.MaxConns(), stat.EmptyAcquireCount()
 }
 
+// DatabaseSizeBytes reports the current database's on-disk size in bytes via
+// pg_database_size(current_database()) — this is a whole-database figure
+// (every tenant sharing the instance), not a per-tenant one, the same way
+// PoolStats is one number for the whole pool rather than per tenant. Feeds
+// the daemon's blunderdb_database_size_bytes gauge (#238; see
+// server.sizeProvider).
+func (s *Storage) DatabaseSizeBytes(ctx context.Context) (int64, error) {
+	var n int64
+	err := s.pool.QueryRow(ctx, `SELECT pg_database_size(current_database())`).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: database size: %w", err)
+	}
+	return n, nil
+}
+
 // Close shuts the connection pool down.
 func (s *Storage) Close() error {
 	if s.pool != nil {

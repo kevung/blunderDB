@@ -85,3 +85,34 @@ func TestParseServeArgs_RateLimitDefaultsOn(t *testing.T) {
 		t.Errorf("rateLimitBurst default = %v, want %v", cfg.rateLimitBurst, defaultRateLimitBurst)
 	}
 }
+
+// TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv guards #238:
+// --pprof-addr must default to empty (no pprof listener at all — it exposes
+// heap/CPU profiling with no tenant scoping, see startPprofServer's doc
+// comment), while both the flag and BLUNDERDB_PPROF_ADDR can turn it on.
+func TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv(t *testing.T) {
+	cfg, err := parseServeArgs(nil)
+	if err != nil {
+		t.Fatalf("parseServeArgs: %v", err)
+	}
+	if cfg.pprofAddr != "" {
+		t.Errorf("pprofAddr default = %q, want empty (disabled)", cfg.pprofAddr)
+	}
+
+	cfg2, err := parseServeArgs([]string{"--pprof-addr", "127.0.0.1:6060"})
+	if err != nil {
+		t.Fatalf("parseServeArgs: %v", err)
+	}
+	if cfg2.pprofAddr != "127.0.0.1:6060" {
+		t.Errorf("pprofAddr = %q, want %q from --pprof-addr", cfg2.pprofAddr, "127.0.0.1:6060")
+	}
+
+	t.Setenv("BLUNDERDB_PPROF_ADDR", "127.0.0.1:6061")
+	cfg3, err := parseServeArgs(nil)
+	if err != nil {
+		t.Fatalf("parseServeArgs: %v", err)
+	}
+	if cfg3.pprofAddr != "127.0.0.1:6061" {
+		t.Errorf("pprofAddr = %q, want %q from BLUNDERDB_PPROF_ADDR", cfg3.pprofAddr, "127.0.0.1:6061")
+	}
+}

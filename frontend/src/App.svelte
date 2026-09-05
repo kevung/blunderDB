@@ -7,8 +7,11 @@
     // Wails runtime
     import { WindowGetSize } from '../wailsjs/runtime/runtime.js';
     import { SaveWindowDimensions, GetLastDatabasePath, SaveLastDatabasePath, GetLanguage } from '../wailsjs/go/main/Config.js';
-    import { PathExists } from '../wailsjs/go/gui/App.js';
-    import { initLanguage, t } from './i18n';
+    import { PathExists, StartupFilePath, CheckForUpdate } from '../wailsjs/go/gui/App.js';
+    import { GetCheckForUpdates } from '../wailsjs/go/main/Config.js';
+    import { metaStore } from './stores/metaStore.js';
+    import { isNewerVersion } from './utils/semver.js';
+    import { initLanguage, t, tMsg } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
     import {
@@ -31,7 +34,7 @@
     import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
 
     // Services
-    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp } from './services/databaseService.js';
+    import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
     import {
         showPosition,
         loadAllPositions,
@@ -243,7 +246,29 @@
 
     // ── Lifecycle ──────────────────────────────────────────────────
 
+    // Opt-in, non-blocking update notice (#241): fires once at startup, never
+    // awaited by onMount (a slow/unreachable network must not delay
+    // anything else here), and only ever shows a status-bar line — never a
+    // dialog the user has to dismiss. CheckForUpdate itself is a no-op
+    // (PackageManaged: true) on an install detected as package-managed, so
+    // this is safe to call unconditionally once the opt-in is on.
+    async function maybeCheckForUpdate() {
+        try {
+            if (!(await GetCheckForUpdates())) return;
+            const result = await CheckForUpdate();
+            if (result.packageManaged || !result.latestVersion) return;
+            const current = get(metaStore).applicationVersion;
+            if (isNewerVersion(result.latestVersion, current)) {
+                setStatusBarMessage(tMsg('status.updateAvailable', { version: result.latestVersion }));
+            }
+        } catch (error) {
+            logger.error('Error checking for an update:', error);
+        }
+    }
+
     onMount(async () => {
+        maybeCheckForUpdate();
+
         initCommandProcessor({
             onToggleHelp: toggleHelpModal,
             onNewDatabase: newDatabase,
@@ -300,6 +325,21 @@
 
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();
+
+        // A database file the OS handed this process on the command line — a
+        // .desktop's Exec=blunderDB %f, a Windows/macOS file-association
+        // double-click (#241) — takes priority over the remembered last
+        // database: opening it is presumably why the user launched the app
+        // this time.
+        try {
+            const startupPath = await StartupFilePath();
+            if (startupPath && (await PathExists(startupPath))) {
+                await openDatabaseByPath(startupPath);
+                return;
+            }
+        } catch (error) {
+            logger.error('Error opening the database passed on the command line:', error);
+        }
 
         // Reopen the last database, but treat the remembered path as a *host
         // capability* (the filesystem it lives on may be unmounted, the file may

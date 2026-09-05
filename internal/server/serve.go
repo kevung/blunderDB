@@ -2,13 +2,17 @@ package server
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
+	"net/http"
+	"net/http/pprof"
 	"os"
 	"os/signal"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
@@ -62,6 +66,7 @@ type serveConfig struct {
 	enableRLS      bool
 	tsPath         string
 	identityDir    string
+	pprofAddr      string
 }
 
 // parseServeArgs parses the `serve` subcommand's flags.
@@ -98,6 +103,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableRLS   = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
 		tsPath      = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
 		identityDir = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		pprofAddr   = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return nil, err
@@ -119,6 +125,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableRLS:      *enableRLS,
 		tsPath:         *tsPath,
 		identityDir:    *identityDir,
+		pprofAddr:      *pprofAddr,
 	}
 	if cfg.dbPath != "" {
 		cfg.backend = "sqlite"
@@ -192,8 +199,59 @@ func RunServe(args []string) error {
 		return err
 	}
 
+	if cfg.pprofAddr != "" {
+		stopPprof := startPprofServer(ctx, logger, cfg.pprofAddr)
+		defer stopPprof()
+	}
+
 	logger.Warn("authentication is delegated to the reverse-proxy; do not expose this daemon to the public internet")
 	return srv.Run(ctx)
+}
+
+// startPprofServer starts net/http/pprof on its own listener, entirely
+// separate from the domain server's Addr — never register these handlers on
+// the same mux as /v1/*, since they let a caller pull heap dumps and CPU
+// profiles with no tenant scoping at all (#238). It returns a function that
+// shuts the pprof listener down; RunServe also stops it once ctx is
+// cancelled, so a caller that forgets to invoke the returned func still sees
+// it go away with the rest of the daemon.
+func startPprofServer(ctx context.Context, logger *slog.Logger, addr string) (stop func()) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/debug/pprof/", pprof.Index)
+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           mux,
+		ReadHeaderTimeout: defaultReadHeaderTimeout,
+	}
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		logger.Warn("pprof listening — debug only, do not expose this address to the public internet", "addr", addr)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.Error("pprof server error", "err", err)
+		}
+	}()
+	go func() {
+		<-ctx.Done()
+		shutCtx, cancel := context.WithTimeout(context.Background(), defaultShutdownTimeout)
+		defer cancel()
+		_ = srv.Shutdown(shutCtx)
+	}()
+
+	var once sync.Once
+	return func() {
+		once.Do(func() {
+			shutCtx, cancel := context.WithTimeout(context.Background(), defaultShutdownTimeout)
+			defer cancel()
+			_ = srv.Shutdown(shutCtx)
+			<-done
+		})
+	}
 }
 
 // OpenStorage opens the requested backend. enableRLS turns on PostgreSQL

@@ -81,6 +81,8 @@
         "vacuumDone": "Datenbank komprimiert: {mb} MB zurückgewonnen",
         "vacuumNothing": "Datenbank komprimiert: nichts zurückzugewinnen",
         "vacuumError": "Komprimierung fehlgeschlagen: {error}",
+        "logsIntro": "Die Protokolldatei enthält Diagnosedetails, die beim Melden eines Problems hilfreich sind.",
+        "logsButton": "Protokollordner öffnen",
         "gammonnetTitle": "gammonNet",
         "gammonnetIntro": "Einstellungen für den eingebetteten gammonNet-Auswerter: Anzeigetiefe und Analysetiefe sind zwei getrennte Einstellungen — eine niedrigere Anzeigetiefe beeinträchtigt nie, was der Analyselauf in die Datenbank schreibt.",
         "gammonnetDisplayPly": "Anzeigetiefe",
@@ -99,7 +101,9 @@
         "gammonnetStaleUnknown": "Veraltete gammonNet-Analysen werden geprüft…",
         "gammonnetStaleCount": "{n} veraltete gammonNet-Analyse(n).",
         "gammonnetStaleStart": "Veraltete Positionen erneut analysieren",
-        "gammonnetStaleNote": "Wiederholt gammonNet für bereits analysierte Positionen, die aber mit einer älteren Engine-Version oder einer anderen Tiefe als hier eingestellt geschrieben wurden — XG-, GNUbg- und BGBlitz-Analysen werden nie angerührt."
+        "gammonnetStaleNote": "Wiederholt gammonNet für bereits analysierte Positionen, die aber mit einer älteren Engine-Version oder einer anderen Tiefe als hier eingestellt geschrieben wurden — XG-, GNUbg- und BGBlitz-Analysen werden nie angerührt.",
+        "checkForUpdates": "Beim Start nach Updates suchen",
+        "checkForUpdatesNote": "Fragt beim Start einmal die GitHub-Release-Seite ab. Standardmäßig deaktiviert und bei einer paketverwalteten Installation (Flatpak, Distributionspaket, Homebrew …) nie automatisch aktiviert."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -996,7 +1000,8 @@
         "confirmDeletePosition": "Diese Position und die zugehörige Analyse löschen?",
         "searching": "Suche läuft…",
         "positionAddedToDeck": "Position zum Stapel „{deck}“ hinzugefügt",
-        "failedAddToDeck": "Fehler beim Hinzufügen der Position zum Stapel: {err}"
+        "failedAddToDeck": "Fehler beim Hinzufügen der Position zum Stapel: {err}",
+        "updateAvailable": "Eine neue Version von blunderDB ist verfügbar: {version}"
     },
     "stats": {
         "title": "Stats",

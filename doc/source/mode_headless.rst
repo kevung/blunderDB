@@ -122,13 +122,20 @@ depuis plusieurs clients.
      - répertoire de l'identité de signature du démon (créée au premier
        usage) ; nécessaire pour qu'``exports.sqlite`` puisse apposer un
        filigrane — voir plus bas
+   * - ``--pprof-addr <hôte:port>``
+     - –
+     - expose ``net/http/pprof`` sur une adresse **séparée** de ``--addr``
+       (désactivé par défaut) ; débogage uniquement — ces points d'accès
+       n'ont aucune notion de tenant et permettent de récupérer un profil
+       mémoire ou CPU du processus entier, jamais à exposer publiquement ni
+       sur la même adresse que ``/v1``
 
 La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
-``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``) : un drapeau explicite reste
-prioritaire sur la variable correspondante.
+``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_PPROF_ADDR``) :
+un drapeau explicite reste prioritaire sur la variable correspondante.
 
 La table de seaux du limiteur de débit porte elle-même un plafond dur
 (10 000 tenants distincts) : au-delà, chaque nouveau tenant évince le seau le
@@ -182,6 +189,13 @@ tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance
 (``maintenance.vacuum``, réservé au backend SQLite). Les endpoints de
 listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
 s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
+
+Le contrat complet — chaque méthode, sa requête et sa réponse — est généré
+depuis le code source et versionné : ``openapi.yaml`` à la racine du dépôt
+(format OpenAPI, schémas compris) et son annexe lisible, :ref:`api_reference`
+(tableau famille par famille). Les deux sont régénérés par
+``go run ./cmd/openapi-gen`` et un test dédié échoue si l'un des deux prend du
+retard sur les routes réellement enregistrées.
 
 Chaque requête ``/v1`` accepte un corps JSON (``Content-Type:
 application/json``, ou aucun en-tête — un corps d'un autre type est refusé
@@ -332,6 +346,40 @@ d'évaluer (un score de match hors de la portée de sa table, une décision de
 videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle
 n'est jamais retentée en vain sur la passe suivante, contrairement à une
 position réellement en échec.
+
+Corrélation et métriques métier
+--------------------------------
+
+Chaque requête reçoit un identifiant de corrélation : celui que le client (ou
+un reverse-proxy) envoie dans l'en-tête ``X-Request-Id``, sinon un
+identifiant généré, dans les deux cas renvoyé sur la même en-tête de la
+réponse et ajouté à la ligne de journal de fin de requête (champ
+``request_id``). Un ``traceparent`` (`W3C Trace Context
+<https://www.w3.org/TR/trace-context/>`__) éventuellement présent est relayé
+tel quel dans cette même ligne de journal — le démon ne l'analyse ni ne le
+valide, il n'embarque aucune bibliothèque de traçage : c'est un pont pour
+corréler ces journaux avec un pipeline de traçage qui tournerait en amont,
+rien de plus.
+
+Au-delà du volume de requêtes et de leur latence, ``/metrics`` publie des
+jauges sur le travail en vol, invisible autrement à un import ou un lot
+gammonNet bloqué (une seule requête très longue, pas beaucoup de requêtes) :
+
+* ``blunderdb_imports_inflight`` — imports en cours, tous tenants confondus ;
+* ``blunderdb_import_spool_bytes`` — octets actuellement réservés sur le
+  quota de spool d'import (voir ``--rate-limit-*`` plus haut pour le
+  pendant requêtes/seconde) ;
+* ``blunderdb_gammonnet_sweep_inflight`` — rattrapages gammonNet en cours,
+  tous tenants confondus ;
+* ``blunderdb_database_size_bytes`` — taille du fichier SQLite principal, ou
+  ``pg_database_size`` sous PostgreSQL (base entière, pas par tenant, comme
+  les jauges de pool de connexions ci-dessous) ; absente tant qu'aucune
+  mesure n'a encore été publiée.
+
+Un profil mémoire ou CPU du processus est accessible en démarrant avec
+``--pprof-addr <hôte:port>`` (``net/http/pprof``) : désactivé par défaut, et
+volontairement sur une adresse séparée de ``--addr`` puisque ces points
+d'accès n'ont aucune notion de tenant.
 
 .. _headless_docker:
 

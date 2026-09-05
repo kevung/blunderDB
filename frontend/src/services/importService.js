@@ -180,6 +180,18 @@ async function handleImportCommitCore() {
 
         await reloadPositions();
     } catch (error) {
+        // The user hitting Cancel mid-commit surfaces here as a rejected
+        // promise too (CommitImportDatabase's context is what CancelImport
+        // actually cancels) — Go wraps that case in ErrImportCancelled
+        // (pkg/blunderdb/database/db_import_db.go), whose message always
+        // starts with "import cancelled by user". Treat it as the
+        // successful cancellation it is, not a failure: no error alert (#241).
+        if (String(error).includes('import cancelled by user')) {
+            logger.log('Import commit cancelled by user');
+            showImportProgressModalStore.set(false);
+            statusBarModeStore.set('NORMAL');
+            return;
+        }
         logger.error('Error committing import:', error);
         showImportProgressModalStore.set(false);
         setStatusBarMessage(tMsg('status.errorCommittingImport', { error }));

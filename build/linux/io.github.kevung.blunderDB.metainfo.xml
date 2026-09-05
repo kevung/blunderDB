@@ -69,6 +69,13 @@
     <category>BoardGame</category>
   </categories>
 
+  <!-- .dbx only, deliberately: .db is a generic SQLite extension shared with
+       unrelated applications, so it is not claimed at the OS level (#241) —
+       see build/linux/blunderdb-dbx.xml. -->
+  <provides>
+    <mediatype>application/x-blunderdb-dbx</mediatype>
+  </provides>
+
   <!-- Sourced from the app itself, not invented: the cream page background
        (html { background-color } in frontend/src/style.css) for light, the
        default board border/checker colour (DEFAULT_BOARD_COLORS.border in

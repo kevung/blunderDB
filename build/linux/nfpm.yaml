@@ -48,6 +48,12 @@ contents:
     dst: /usr/share/applications/blunderdb.desktop
   - src: build/linux/io.github.kevung.blunderDB.metainfo.xml
     dst: /usr/share/metainfo/io.github.kevung.blunderDB.metainfo.xml
+  # .dbx file association (#241) — .db is deliberately NOT claimed, see the
+  # comment at the top of blunderdb-dbx.xml. update-mime-database/
+  # update-desktop-database (scripts below) make it take effect immediately
+  # rather than only after the next full desktop/mime cache rebuild.
+  - src: build/linux/blunderdb-dbx.xml
+    dst: /usr/share/mime/packages/blunderdb-dbx.xml
   - src: build/linux/blunderdb-256.png
     dst: /usr/share/icons/hicolor/256x256/apps/blunderdb.png
   - src: build/linux/blunderdb-256.png
@@ -70,6 +76,13 @@ contents:
     dst: /usr/share/doc/blunderdb/LICENSE
   - src: THIRD_PARTY.md
     dst: /usr/share/doc/blunderdb/THIRD_PARTY.md
+
+# Refresh the shared-mime-info/desktop-file caches so the .dbx association
+# (blunderdb-dbx.xml, #241) and blunderdb.desktop take effect right after
+# install/remove rather than at the next full cache rebuild.
+scripts:
+  postinstall: build/linux/postinstall.sh
+  postremove: build/linux/postremove.sh
 
 overrides:
   deb:
