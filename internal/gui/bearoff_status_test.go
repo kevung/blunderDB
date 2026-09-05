@@ -3,6 +3,7 @@ package gui
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -172,9 +173,17 @@ func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
 		}
 	}
 
+	// The core count asked for is capped at what the machine has: a CI runner
+	// with three cores must not be told it has four. Asking for four and
+	// expecting four fails there and nowhere else, which is the worst kind of
+	// red — the code is right and the test is about the runner.
+	asked := 4
+	if n := runtime.NumCPU(); asked > n {
+		asked = n
+	}
 	plan := (&App{}).BearoffPlan(0, 4)
-	if plan.Cores != 4 {
-		t.Errorf("Cores = %d, want the 4 asked for", plan.Cores)
+	if plan.Cores != asked {
+		t.Errorf("Cores = %d, want %d (4 asked for, %d on this machine)", plan.Cores, asked, runtime.NumCPU())
 	}
 	if plan.DefaultCores < 1 {
 		t.Errorf("DefaultCores = %d, want at least one", plan.DefaultCores)
