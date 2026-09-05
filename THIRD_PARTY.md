@@ -39,8 +39,8 @@ directory of each one).
 
 | Module | Version | Licence | Copyright | Used for |
 |---|---|---|---|---|
-| [github.com/kevung/xgparser](https://github.com/kevung/xgparser) | v1.3.0 | LGPL-2.1 (same licence as the Python `xgdatatools` it ports) | (c) 2013-2014 Michael Petch (xgdatatools), (c) 2025 Kévin Unger (Go port) | eXtreme Gammon `.xg` / `.xgp` import |
-| [github.com/kevung/gnubgparser](https://github.com/kevung/gnubgparser) | v1.5.0 | LGPL-2.1 (stated in its README, matching GNU Backgammon; the module carries no LICENSE file) | Kévin Unger | GNU Backgammon `.sgf` and Jellyfish `.mat` import |
+| [github.com/kevung/xgparser](https://github.com/kevung/xgparser) | v1.4.0 | MIT | (c) 2025 Kévin Unger; the `.xg` format was first documented publicly by Michael Petch in `xgdatatools` | eXtreme Gammon `.xg` / `.xgp` import |
+| [github.com/kevung/gnubgparser](https://github.com/kevung/gnubgparser) | v1.6.0 | MIT | (c) 2025 Kévin Unger | GNU Backgammon `.sgf` and Jellyfish `.mat` import |
 | [github.com/kevung/bgfparser](https://github.com/kevung/bgfparser) | v1.2.0 | MIT | (c) 2025 bgfparser contributors | BGBlitz `.bgf` import |
 | [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.49.1 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
 | [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | v5.9.2 | MIT | (c) 2013-2021 Jack Christensen | PostgreSQL driver of the `serve` daemon (with `pgpassfile`, `pgservicefile`, `puddle`, MIT) |
@@ -132,13 +132,6 @@ Contributors, Kamran Ahmed (driver.js).
     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
-
-### GNU Lesser General Public License 2.1 — xgparser, gnubgparser
-
-Full text: <https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html>. The
-complete source of blunderDB, which links these libraries, is published under
-the MIT License at <https://github.com/kevung/blunderDB>, so the binaries can be
-rebuilt against a modified copy of either library as the LGPL requires.
 
 ### SIL Open Font License 1.1 — Nunito, Noto Sans JP
 

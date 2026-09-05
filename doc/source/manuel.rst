@@ -948,10 +948,11 @@ MWC : limitations
 Panneau Eval
 ------------
 
-Le panneau **Eval** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une
-position de bearoff et l'évaluation en direct de la position sur le plateau.
-Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet Eval dans le
-panneau inférieur, ou en exécutant la commande ``epc``.
+Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le
+plateau, quelle qu'elle soit ; sur une position de bearoff il se spécialise et
+calcule en plus l'EPC (Effective Pip Count). Il est activé en appuyant sur
+*CTRL-E*, en cliquant sur l'onglet Eval dans le panneau inférieur, ou en
+exécutant la commande ``epc``.
 
 Le panneau montre toujours la **seule décision** que la position posée sur
 le plateau appelle — jamais deux à la fois — et les faits qui vont avec.

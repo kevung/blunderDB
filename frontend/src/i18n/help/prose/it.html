@@ -94,34 +94,39 @@
     funzionalità.
 </p>
 
-<h3>Calcolatore EPC</h3>
+<h3>Pannello Eval</h3>
 <p>
-    Il calcolatore EPC (Effective Pip Count) calcola il pip count effettivo delle posizioni di bearoff. Utilizza il database di bearoff a un lato a 6 punti di GNUbg per ottenere valori di EPC esatti.
+    Il pannello <strong>Eval</strong> valuta qualunque posizione si trovi sul tavoliere: probabilità di vittoria, gammon e backgammon, equity, mosse candidate ordinate e l'unica decisione che la
+    posizione richiede — giocare una mossa o raddoppiare. Il calcolo è fatto da gammonNet, integrato: non servono né eXtreme Gammon né GNU Backgammon.
 </p>
 <p>
-    Per aprire il pannello Eval, premi <strong>Ctrl+E</strong>, fai clic sulla scheda Eval del pannello inferiore o digita <strong>epc</strong> nella riga di comando. Il tavoliere viene inizializzato
-    con una configurazione standard di bearoff (15 pedine).
+    Per aprirlo premere <strong>Ctrl+E</strong>, fare clic sulla scheda Eval del pannello inferiore oppure digitare <strong>epc</strong> nella riga di comando. Il tavoliere si apre su una
+    configurazione di bearoff standard (15 pedine), a meno che non vi sia stata inviata una posizione dal database. Le pedine si aggiungono e si tolgono liberamente con il mouse; la valutazione segue
+    ogni modifica.
 </p>
 <p>
-    Puoi aggiungere o rimuovere liberamente pedine sui punti del proprio quadrante interno con il mouse. I valori di EPC vengono mostrati in tempo reale nel pannello Eval dedicato, indicando per
-    ciascun giocatore:
+    Su una posizione di bearoff il pannello <strong>si specializza</strong>: una seconda tabella, per giocatore, riporta l'EPC (Effective Pip Count) calcolato dal database di bearoff unilaterale a 6
+    punti di GNUbg —
 </p>
 <ul>
-    <li><strong>EPC</strong>: il numero medio di pip necessari per portare a casa tutte le pedine,</li>
+    <li><strong>EPC</strong>: il numero medio di pip necessari per portare fuori tutte le pedine,</li>
     <li><strong>Pip Count</strong>: il pip count grezzo,</li>
     <li><strong>Wastage</strong>: la differenza tra EPC e pip count,</li>
-    <li><strong>Avg Rolls</strong>: numero medio di lanci per portare a casa tutte le pedine,</li>
-    <li><strong>Std Dev</strong>: deviazione standard del numero di lanci.</li>
+    <li><strong>Avg Rolls</strong>: il numero medio di lanci per portare fuori tutte le pedine,</li>
+    <li><strong>Std Dev</strong>: la deviazione standard di quel numero di lanci.</li>
 </ul>
-<p>Quando entrambi i giocatori hanno pedine nel proprio quadrante interno, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
-<p>Per chiudere il pannello Eval, premi di nuovo <strong>Ctrl+E</strong> oppure passa a un'altra scheda.</p>
+<p>Quando entrambi i giocatori hanno pedine nella propria casa, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
 <p>
-    Su una posizione di bearoff pura, una tabella di corsa mostra inoltre le probabilità di vittoria di entrambi i giocatori e, quando la posizione è coperta da un database two-sided (integrato fino a
-    6 pedine per giocatore, database esteso scaricabile fino a 11 dalla scheda Bearoff delle impostazioni), le equità money esatte — con, sotto ogni decisione non ottimale, lo scarto di equità dalla
-    migliore — e la migliore decisione del cubo. Fuori da questo dominio la probabilità è stimata (badge «stimato» con il margine d'errore) e nessuna decisione viene mostrata. Il giocatore al tiro si
-    modifica cliccando il rettangolo bearoff/punteggio di un giocatore, la posizione del cubo cliccando il cubo.
+    Su una corsa pura, un'ulteriore tabella mostra le probabilità di vittoria dei due giocatori e, quando la posizione è coperta da un database two-sided (quello integrato fino a 6 pedine per
+    giocatore, quello esteso scaricabile fino a 11 dalla scheda Bearoff della configurazione), le equity money esatte e la migliore decisione di cubo. Fuori da quel dominio la probabilità di vittoria
+    è stimata (badge «stimato» con il suo margine d'errore) e non viene mostrata alcuna decisione. Il giocatore di turno si modifica facendo clic sul rettangolo uscita/punteggio di un giocatore, la
+    posizione del cubo facendo clic sul cubo del tavoliere.
 </p>
-<p>La casella <strong>Sfida</strong> nasconde i risultati dopo ogni modifica; cliccare una zona per rivelarla — ideale per allenarsi a stimare l'EPC e la decisione del cubo prima di verificare.</p>
+<p>
+    La casella <strong>Sfida</strong> nasconde i risultati a ogni modifica della posizione; fare clic su un'area per rivelarla — ideale per allenarsi a stimare un'equity, un EPC o una decisione di
+    cubo prima di verificare.
+</p>
+<p>Per chiudere il pannello Eval, premere di nuovo <strong>Ctrl+E</strong> oppure passare a un'altra scheda.</p>
 
 <h3>Navigazione dei match</h3>
 <p>
@@ -249,7 +254,7 @@
         I database di bearoff a un lato (6 punti, 15 pedine, per l'EPC) e a due lati (6 punti, 6 pedine, per i verdetti di cubo nelle corse) sono stati generati con
         <strong>GNU Backgammon</strong> (GNUbg). GNUbg è software libero sotto licenza GPL; queste tabelle sono dati da esso prodotti, accreditati come tali.
     </li>
-    <li>I file di match sono letti da <em>xgparser</em> e <em>gnubgparser</em> (LGPL-2.1) e da <em>bgfparser</em> (MIT).</li>
+    <li>I file di match sono letti da <em>xgparser</em>, <em>gnubgparser</em> e <em>bgfparser</em> (MIT).</li>
     <li>Lato Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> e <em>go-fsrs</em> (MIT).</li>
     <li>Lato interfaccia: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> e <em>driver.js</em> (MIT).</li>
     <li>I caratteri <em>Nunito</em> e <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

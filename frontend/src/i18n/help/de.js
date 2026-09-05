@@ -105,35 +105,39 @@ export default {
     Ergebnissen suchen" für dieselbe Funktion.
 </p>
 
-<h3>EPC-Rechner</h3>
-<p>Der EPC-Rechner (Effective Pip Count) berechnet den effektiven Pip-Count von Auswürfelpositionen. Er verwendet die einseitige 6-Punkte-Auswürfeldatenbank von GnuBG für exakte EPC-Werte.</p>
+<h3>Eval-Panel</h3>
 <p>
-    Zum Öffnen des Eval-Panels <strong>Ctrl+E</strong> drücken, im unteren Panel auf den Eval-Tab klicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett wird mit einer
-    Standard-Auswürfelkonfiguration (15 Steine) initialisiert.
+    Das <strong>Eval</strong>-Panel bewertet jede Stellung, die auf dem Brett steht: Gewinn-, Gammon- und Backgammon-Wahrscheinlichkeiten, Equity, gereihte Zugkandidaten und die eine Entscheidung, die
+    die Stellung verlangt — einen Zug spielen oder verdoppeln. Gerechnet wird mit dem eingebauten gammonNet: weder eXtreme Gammon noch GNU Backgammon werden benötigt.
 </p>
 <p>
-    Sie können Steine auf den Feldern des Heimbretts mit der Maus frei hinzufügen oder entfernen. Die EPC-Werte werden in Echtzeit im dafür vorgesehenen Eval-Panel angezeigt und zeigen für jeden
-    Spieler:
+    Zum Öffnen <strong>Strg+E</strong> drücken, im unteren Panel den Reiter Eval anklicken oder <strong>epc</strong> in die Befehlszeile eingeben. Das Brett öffnet sich mit einer
+    Standard-Ausspielstellung (15 Steine), sofern nicht eine Stellung aus der Datenbank dorthin geschickt wurde. Steine lassen sich mit der Maus frei setzen und entfernen; die Bewertung folgt jeder
+    Änderung.
+</p>
+<p>
+    Bei einer Ausspielstellung <strong>spezialisiert</strong> sich das Panel: eine zweite Tabelle, pro Spieler, trägt den EPC (Effective Pip Count), berechnet aus GNUbgs einseitiger
+    6-Punkte-Ausspieldatenbank —
 </p>
 <ul>
-    <li><strong>EPC</strong>: die durchschnittliche Anzahl der Pips, die zum Auswürfeln aller Steine benötigt werden,</li>
-    <li><strong>Pip Count</strong>: der reine Pip-Count,</li>
+    <li><strong>EPC</strong>: die durchschnittliche Zahl der Pips, um alle Steine auszuspielen,</li>
+    <li><strong>Pip Count</strong>: der rohe Pip-Count,</li>
     <li><strong>Wastage</strong>: die Differenz zwischen EPC und Pip-Count,</li>
-    <li><strong>Avg Rolls</strong>: durchschnittliche Anzahl der Würfe zum Auswürfeln,</li>
-    <li><strong>Std Dev</strong>: Standardabweichung der Anzahl der Würfe.</li>
+    <li><strong>Avg Rolls</strong>: die durchschnittliche Zahl der Würfe, um alle Steine auszuspielen,</li>
+    <li><strong>Std Dev</strong>: die Standardabweichung dieser Wurfzahl.</li>
 </ul>
-<p>Wenn beide Spieler Steine in ihrem Heimbrett haben, zeigt ein Vergleichsbereich die EPC- und Pip-Count-Differenzen.</p>
-<p>Zum Schließen des Eval-Panels erneut <strong>Ctrl+E</strong> drücken oder zu einem anderen Tab wechseln.</p>
+<p>Haben beide Spieler Steine im Heimfeld, zeigt ein Vergleichsabschnitt die Differenzen bei EPC und Pip-Count.</p>
 <p>
-    Bei einer reinen Auswürfelposition zeigt eine Renntabelle zusätzlich die Gewinnchancen beider Spieler und, wenn die Position von einer Two-Sided-Datenbank abgedeckt ist (eingebaut bis 6 Steine pro
-    Spieler, erweiterte Datenbank bis 11 über den Bearoff-Tab der Einstellungen herunterladbar), die exakten Money-Equities — mit dem Equity-Abstand jeder nicht optimalen Entscheidung zur besten —
-    sowie die beste Würfel-Entscheidung. Außerhalb dieses Bereichs wird die Gewinnchance geschätzt (Badge „geschätzt" mit Fehlermarge) und keine Entscheidung angezeigt. Der Spieler am Zug wird durch
-    Klick auf das Auswürfel-/Punkterechteck eines Spielers geändert, die Würfelposition durch Klick auf den Würfel.
+    In einem reinen Wettlauf zeigt eine weitere Tabelle die Gewinnwahrscheinlichkeiten beider Spieler und, sofern die Stellung von einer zweiseitigen Datenbank abgedeckt ist (die eingebaute bis 6
+    Steine je Spieler, die herunterladbare erweiterte bis 11 über den Reiter Bearoff der Konfiguration), die exakten Money-Equities und die beste Verdopplungsentscheidung. Außerhalb dieses Bereichs
+    wird die Gewinnwahrscheinlichkeit geschätzt (Badge „geschätzt“ mit Fehlerspanne) und keine Entscheidung angezeigt. Der Spieler am Zug wird durch Klick auf das Aus-/Punktefeld eines Spielers
+    geändert, die Verdopplungsstellung durch Klick auf den Doppler auf dem Brett.
 </p>
 <p>
-    Das Kontrollkästchen <strong>Challenge</strong> verdeckt die Ergebnisse nach jeder Änderung; ein Klick auf eine Zone deckt sie auf — ideal, um EPC und Würfel-Entscheidung erst zu schätzen und dann
-    zu prüfen.
+    Das Kontrollkästchen <strong>Challenge</strong> verbirgt die Ergebnisse bei jeder Änderung der Stellung; ein Klick auf einen Bereich deckt ihn auf — ideal, um eine Equity, einen EPC oder eine
+    Verdopplungsentscheidung zu üben, bevor man nachsieht.
 </p>
+<p>Zum Schließen des Eval-Panels erneut <strong>Strg+E</strong> drücken oder zu einem anderen Reiter wechseln.</p>
 
 <h3>Match-Navigation</h3>
 <p>
@@ -1342,7 +1346,7 @@ export default {
         Die einseitige (6 Punkte, 15 Steine, für den EPC) und die zweiseitige (6 Punkte, 6 Steine, für Cube-Urteile im Rennen) Auswürfeldatenbank wurden mit <strong>GNU Backgammon</strong> (GnuBG)
         erzeugt. GnuBG ist freie Software unter der GPL; diese Tabellen sind von ihm erzeugte Daten und werden als solche genannt.
     </li>
-    <li>Matchdateien werden von <em>xgparser</em> und <em>gnubgparser</em> (LGPL-2.1) sowie von <em>bgfparser</em> (MIT) gelesen.</li>
+    <li>Matchdateien werden von <em>xgparser</em>, <em>gnubgparser</em> und <em>bgfparser</em> (MIT) gelesen.</li>
     <li>Auf der Go-Seite: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> und <em>go-fsrs</em> (MIT).</li>
     <li>Auf der Oberflächenseite: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> und <em>driver.js</em> (MIT).</li>
     <li>Die Schriften <em>Nunito</em> und <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

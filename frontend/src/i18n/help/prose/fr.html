@@ -95,38 +95,38 @@
     résultats courants » pour la même fonctionnalité.
 </p>
 
-<h3>Calculatrice EPC</h3>
+<h3>Panneau Eval</h3>
 <p>
-    La calculatrice EPC (Effective Pip Count) calcule le pip count effectif des positions de sortie. Elle utilise la base de données de sortie unilatérale à 6 points de GNUbg pour obtenir des valeurs
-    d'EPC exactes.
+    Le panneau <strong>Eval</strong> évalue la position posée sur le plateau, quelle qu'elle soit : probabilités de gain, de gammon et de backgammon, équité, coups candidats classés, et la seule
+    décision que la position appelle — jouer un coup, ou doubler. Le calcul est fait par gammonNet, embarqué : ni eXtreme Gammon ni GNU Backgammon ne sont requis.
 </p>
 <p>
-    Pour ouvrir le panneau Eval, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Eval du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau est initialisé
-    avec une configuration standard de sortie (15 pions).
+    Pour l'ouvrir, appuyez sur <strong>Ctrl+E</strong>, cliquez sur l'onglet Eval du panneau inférieur ou tapez <strong>epc</strong> dans la ligne de commande. Le plateau s'ouvre sur une configuration
+    de sortie standard (15 pions), à moins qu'une position de la base n'y ait été envoyée. Les pions s'ajoutent et se retirent librement à la souris ; l'évaluation suit chaque geste.
 </p>
 <p>
-    Vous pouvez librement ajouter ou retirer des pions sur les flèches du jan intérieur à l'aide de la souris. Les valeurs d'EPC s'affichent en temps réel dans le panneau Eval dédié, indiquant pour
-    chaque joueur :
+    Sur une position de sortie, le panneau <strong>se spécialise</strong> : un second tableau, par joueur, porte le calcul de l'EPC (Effective Pip Count) à partir de la base de sortie unilatérale à 6
+    points de GNUbg —
 </p>
 <ul>
     <li><strong>EPC</strong> : le nombre moyen de pips nécessaires pour sortir tous les pions,</li>
     <li><strong>Pip Count</strong> : le pip count brut,</li>
     <li><strong>Wastage</strong> : la différence entre l'EPC et le pip count,</li>
-    <li><strong>Avg Rolls</strong> : nombre moyen de jets pour sortir tous les pions,</li>
-    <li><strong>Std Dev</strong> : écart-type du nombre de jets.</li>
+    <li><strong>Avg Rolls</strong> : le nombre moyen de jets pour sortir tous les pions,</li>
+    <li><strong>Std Dev</strong> : l'écart-type du nombre de jets.</li>
 </ul>
 <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
+<p>
+    Sur une position de course pure, un tableau supplémentaire affiche les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6
+    pions par joueur, base étendue téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes et la meilleure décision de videau. Hors de ce domaine, la
+    probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la
+    position du videau en cliquant le videau du plateau.
+</p>
+<p>
+    La case <strong>Défi</strong> masque les résultats à chaque modification de la position ; cliquez une zone pour la révéler — idéal pour s'entraîner à estimer une équité, un EPC ou une décision de
+    videau avant de vérifier.
+</p>
 <p>Pour fermer le panneau Eval, appuyez de nouveau sur <strong>Ctrl+E</strong> ou passez à un autre onglet.</p>
-<p>
-    Sur une position de sortie pure, un tableau course affiche en outre les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6
-    pions par joueur, base étendue téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes — avec, sous chaque décision non optimale, l'écart d'équité à la
-    meilleure décision — et la meilleure décision de videau. Hors de ce domaine, la probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le
-    joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la position du videau en cliquant le videau du plateau.
-</p>
-<p>
-    La case <strong>Défi</strong> masque les résultats à chaque modification de la position ; cliquez une zone pour la révéler — idéal pour s'entraîner à estimer l'EPC et la décision de videau avant
-    de vérifier.
-</p>
 
 <h3>Navigation dans les matchs</h3>
 <p>
@@ -260,7 +260,7 @@
         Les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été générées avec
         <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel libre sous licence GPL ; ces tables sont des données qu'il a produites, créditées comme telles.
     </li>
-    <li>Les fichiers de match sont lus par <em>xgparser</em> et <em>gnubgparser</em> (LGPL-2.1) et par <em>bgfparser</em> (MIT).</li>
+    <li>Les fichiers de match sont lus par <em>xgparser</em>, <em>gnubgparser</em> et <em>bgfparser</em> (MIT).</li>
     <li>Côté Go : <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> et <em>go-fsrs</em> (MIT).</li>
     <li>Côté interface : <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> et <em>driver.js</em> (MIT).</li>
     <li>Les polices <em>Nunito</em> et <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
