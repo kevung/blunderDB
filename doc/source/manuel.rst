@@ -219,17 +219,25 @@ la bordure, les flèches claires et foncées, les pions du joueur 1 et du joueur
 l'ensemble des couleurs par défaut. Comme la langue, les couleurs choisies sont
 conservées d'une session à l'autre.
 
-L'onglet *Bearoff* gère la base two-sided qui étend le domaine exact du
-panneau Eval (voir :ref:`panneau_epc`) au-delà de la base TS-06-06
-embarquée dans l'exécutable. Il affiche le domaine actuellement actif
-(``TS-06-06`` ou ``TS-06-11`` une fois téléchargée) et son origine, propose de
-lancer le téléchargement de la base étendue TS-06-11 avec une barre de
-progression, et **reprend automatiquement un téléchargement interrompu** au
-lieu de repartir de zéro (requêtes HTTP par plage). Une fois téléchargée, la
-base peut être supprimée — une confirmation est demandée avant toute
-suppression, la taille du fichier étant rappelée dans le message. L'onglet
-permet aussi de pointer vers un fichier ``.bd`` two-sided externe (par exemple
-une base générée soi-même) plutôt que d'utiliser le téléchargement intégré.
+L'onglet *Bearoff* gère les tables de sortie du panneau Eval (voir
+:ref:`panneau_epc`). Elles ne sont **ni embarquées dans l'exécutable, ni
+téléchargées** : blunderDB les calcule sur la machine qui s'en sert, et le
+résultat est identique octet pour octet à ce que produit gnubg — l'empreinte
+SHA-256 est vérifiée avant que la table ne soit acceptée.
+
+Les deux tables ordinaires (TS-06-06 pour le verdict de videau, OS-06 pour
+l'EPC) sont calculées au premier lancement, en arrière-plan et sans rien
+demander : environ six secondes sur un cœur, pendant lesquelles l'application
+s'utilise normalement. Le panneau Eval ne le signale que si l'on y pose une
+position qui a besoin d'une table pas encore prête.
+
+L'onglet affiche le domaine actif et son origine, et permet de calculer la
+table étendue **TS-06-11** — verdict exact jusqu'à onze pions par joueur,
+environ vingt minutes sur un cœur et 1,2 Go sur le disque — avec une barre de
+progression et un bouton d'annulation. Une table calculée peut être supprimée
+au même endroit, après confirmation. L'onglet permet aussi de pointer vers un
+fichier ``.bd`` two-sided externe, par exemple une base produite par gnubg
+lui-même : la table au domaine le plus large l'emporte.
 
 L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
@@ -1200,14 +1208,14 @@ fini de calculer, remplaçant en place le régime estimé montré pendant
 l'attente. Voir :ref:`epc_methodologie` pour la définition précise des trois
 régimes et de leurs hypothèses.
 
-**Élargir le domaine exact.** La base intégrée couvre 6 pions par joueur.
-Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la configuration :
+**Élargir le domaine exact.** La table calculée au premier lancement couvre
+6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet *Bearoff* de la
+configuration :
 
-* télécharger la base étendue TS-06-11 (1,2 Go, vérifiée par SHA-256,
-  supprimable au même endroit après confirmation) : verdict exact jusqu'à
-  11 pions par joueur. Un téléchargement interrompu ou annulé **reprend où
-  il s'était arrêté** (le fichier partiel est conservé et complété par
-  requête HTTP Range) ;
+* calculer la table étendue TS-06-11 (environ vingt minutes sur un cœur,
+  1,2 Go sur le disque, supprimable au même endroit après confirmation) :
+  verdict exact jusqu'à 11 pions par joueur. Un calcul annulé laisse un
+  fichier ``.part`` qui n'est jamais lu comme une table ;
 
 * indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au
   domaine le plus large l'emporte automatiquement.

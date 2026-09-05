@@ -59,7 +59,7 @@ func parseDecision(dec string) (double, take bool) {
 }
 
 func TestTwoSided_PlanesMatchGnubg(t *testing.T) {
-	ts := EmbeddedTwoSided()
+	ts := testTwoSided(t)
 	if ts.Checkers() != 6 {
 		t.Fatalf("embedded database is TS-06-%02d, want TS-06-06", ts.Checkers())
 	}
@@ -89,7 +89,7 @@ func TestTwoSided_PlanesMatchGnubg(t *testing.T) {
 }
 
 func TestMoney_VerdictsMatchGnubg(t *testing.T) {
-	ts := EmbeddedTwoSided()
+	ts := testTwoSided(t)
 	checked := 0
 	for _, f := range loadFixtures(t) {
 		e, err := ts.Lookup(board6(f.Us), board6(f.Them))

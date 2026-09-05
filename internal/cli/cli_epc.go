@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -55,6 +57,10 @@ func (cli *CLI) runEpc(args []string) error {
 	if *tsPath != "" {
 		race.SetExternalPath(*tsPath)
 	}
+	// Generated, not embedded (ADR-0027): make the tables if this machine has
+	// none. Six seconds once, rather than an estimate where an exact answer
+	// was asked for.
+	bearoffgen.EnsureDefaultsOnce(race.DataDir(), engine.LoadOneSided)
 
 	res := race.Evaluate(&pos)
 

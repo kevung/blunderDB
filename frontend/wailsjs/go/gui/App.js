@@ -6,8 +6,8 @@ export function BearoffStatus() {
   return window['go']['gui']['App']['BearoffStatus']();
 }
 
-export function CancelBearoffDownload() {
-  return window['go']['gui']['App']['CancelBearoffDownload']();
+export function CancelBearoffGeneration() {
+  return window['go']['gui']['App']['CancelBearoffGeneration']();
 }
 
 export function CancelEvaluationAtRest() {
@@ -30,16 +30,16 @@ export function CopyImageToClipboard(arg1) {
   return window['go']['gui']['App']['CopyImageToClipboard'](arg1);
 }
 
-export function DeleteBearoffDB() {
-  return window['go']['gui']['App']['DeleteBearoffDB']();
+export function DeleteBearoffTable(arg1) {
+  return window['go']['gui']['App']['DeleteBearoffTable'](arg1);
 }
 
 export function DeleteFile(arg1) {
   return window['go']['gui']['App']['DeleteFile'](arg1);
 }
 
-export function DownloadBearoffDB() {
-  return window['go']['gui']['App']['DownloadBearoffDB']();
+export function EnsureBearoffTables() {
+  return window['go']['gui']['App']['EnsureBearoffTables']();
 }
 
 export function EvaluatePositionImmediate(arg1, arg2, arg3) {
@@ -48,6 +48,10 @@ export function EvaluatePositionImmediate(arg1, arg2, arg3) {
 
 export function ExportIssuerIdentity(arg1) {
   return window['go']['gui']['App']['ExportIssuerIdentity'](arg1);
+}
+
+export function GenerateBearoffTable(arg1, arg2, arg3) {
+  return window['go']['gui']['App']['GenerateBearoffTable'](arg1, arg2, arg3);
 }
 
 export function GetIssuerIdentity() {

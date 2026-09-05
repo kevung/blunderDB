@@ -12,7 +12,7 @@ import (
 // generates, byte for byte. gnubg_ts0.bd is the TS-06-06 table shipped with
 // blunderDB until now, produced by `makebearoff -t 6x6`.
 func TestTwoSided_6x6_IdenticalToGnubg(t *testing.T) {
-	want, err := os.ReadFile("../race/gnubg_ts0.bd")
+	want, err := os.ReadFile("testdata/gnubg_ts0.bd")
 	if err != nil {
 		t.Skipf("reference table not available: %v", err)
 	}

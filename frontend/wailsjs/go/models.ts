@@ -917,6 +917,38 @@ export namespace domain {
 		    return a;
 		}
 	}
+	export class AnkiReviewLog {
+	    id: number;
+	    cardId: number;
+	    deckId: number;
+	    positionId: number;
+	    rating: number;
+	    state: number;
+	    stability: number;
+	    difficulty: number;
+	    elapsedDays: number;
+	    scheduledDays: number;
+	    reviewedAt: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiReviewLog(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.cardId = source["cardId"];
+	        this.deckId = source["deckId"];
+	        this.positionId = source["positionId"];
+	        this.rating = source["rating"];
+	        this.state = source["state"];
+	        this.stability = source["stability"];
+	        this.difficulty = source["difficulty"];
+	        this.elapsedDays = source["elapsedDays"];
+	        this.scheduledDays = source["scheduledDays"];
+	        this.reviewedAt = source["reviewedAt"];
+	    }
+	}
 	
 	export class CheckerMove {
 	    index: number;
@@ -1602,15 +1634,14 @@ export namespace domain {
 export namespace gui {
 	
 	export class BearoffStatus {
-	    downloaded: boolean;
-	    downloading: boolean;
-	    path: string;
-	    size_bytes: number;
+	    ready: boolean;
+	    generating: string;
+	    missing: string[];
+	    data_dir: string;
 	    active_domain: number;
 	    active_origin: string;
 	    external_path: string;
-	    expected_bytes: number;
-	    partial_bytes: number;
+	    one_sided_ready: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new BearoffStatus(source);
@@ -1618,15 +1649,14 @@ export namespace gui {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.downloaded = source["downloaded"];
-	        this.downloading = source["downloading"];
-	        this.path = source["path"];
-	        this.size_bytes = source["size_bytes"];
+	        this.ready = source["ready"];
+	        this.generating = source["generating"];
+	        this.missing = source["missing"];
+	        this.data_dir = source["data_dir"];
 	        this.active_domain = source["active_domain"];
 	        this.active_origin = source["active_origin"];
 	        this.external_path = source["external_path"];
-	        this.expected_bytes = source["expected_bytes"];
-	        this.partial_bytes = source["partial_bytes"];
+	        this.one_sided_ready = source["one_sided_ready"];
 	    }
 	}
 	export class FileDialogResponse {
@@ -1634,11 +1664,11 @@ export namespace gui {
 	    content: string;
 	    error?: string;
 	    cancelled?: boolean;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new FileDialogResponse(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.file_path = source["file_path"];
@@ -1711,15 +1741,16 @@ export namespace gui {
 		    return a;
 		}
 	}
+	
 	export class UpdateCheckResult {
 	    packageManaged: boolean;
 	    latestVersion?: string;
 	    htmlUrl?: string;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new UpdateCheckResult(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.packageManaged = source["packageManaged"];
@@ -1807,11 +1838,11 @@ export namespace main {
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
 	    check_for_updates?: boolean;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.config_version = source["config_version"];

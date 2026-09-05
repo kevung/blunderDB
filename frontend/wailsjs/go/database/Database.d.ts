@@ -22,6 +22,8 @@ export function AnalyzeMissingWithGammonNet(arg1:context.Context,arg2:number,arg
 
 export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:any,arg7:any):Promise<database.GammonNetBatchSummary>;
 
+export function BuryAnkiCard(arg1:number):Promise<void>;
+
 export function CancelImport():Promise<void>;
 
 export function CheckConstraints():Promise<Array<database.ConstraintViolation>>;
@@ -119,6 +121,8 @@ export function GetAnkiDeckRetention(arg1:number):Promise<domain.AnkiRetention>;
 export function GetAnkiDeckStats(arg1:number):Promise<domain.AnkiDeckStats>;
 
 export function GetAnkiForecast(arg1:number,arg2:number):Promise<Array<domain.AnkiForecastDay>>;
+
+export function GetAnkiReviewLog(arg1:number,arg2:number):Promise<Array<domain.AnkiReviewLog>>;
 
 export function GetCollectionByID(arg1:number):Promise<database.Collection>;
 
@@ -234,6 +238,8 @@ export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function RefreshSearchStatistics():Promise<void>;
 
+export function RemoveAnkiCard(arg1:number):Promise<void>;
+
 export function RemoveMatchFromTournament(arg1:number):Promise<void>;
 
 export function RemovePositionFromCollection(arg1:number,arg2:number):Promise<void>;
@@ -245,6 +251,8 @@ export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promi
 export function ReorderCollections(arg1:Array<number>):Promise<void>;
 
 export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function RepairAnalyses():Promise<number>;
 
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
@@ -275,6 +283,8 @@ export function SaveSearchHistory(arg1:string,arg2:string,arg3:string):Promise<v
 export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
+
+export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 

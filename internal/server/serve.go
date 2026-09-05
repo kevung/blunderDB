@@ -16,6 +16,8 @@ import (
 	"syscall"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -148,6 +150,11 @@ func RunServe(args []string) error {
 	if cfg.tsPath != "" {
 		race.SetExternalPath(cfg.tsPath)
 	}
+	// The bearoff tables are generated, not embedded (ADR-0027). The daemon
+	// makes whatever it lacks before serving: about six seconds, once, on the
+	// first start with an empty data directory — as opposed to answering
+	// "unavailable" to every EPC request for the life of the process.
+	bearoffgen.EnsureDefaultsOnce(race.DataDir(), engine.LoadOneSided)
 
 	logger := newLogger(cfg.logLevel)
 

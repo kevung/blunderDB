@@ -15,7 +15,8 @@ func BearoffIndex(anBoard [6]int, nPoints, nCheckers int) int {
 // the embedded OS-06-15 database: probs[n] = P(bear off in exactly n rolls),
 // n = 0..31, under gnubg's one-sided optimal play.
 func RollDistribution(anBoard [6]int) ([]float64, error) {
-	if globalBearoffDB == nil {
+	db := oneSided()
+	if db == nil {
 		return nil, fmt.Errorf("bearoff database not loaded")
 	}
 	total := 0
@@ -25,9 +26,9 @@ func RollDistribution(anBoard [6]int) ([]float64, error) {
 		}
 		total += c
 	}
-	if total > globalBearoffDB.nCheckers {
-		return nil, fmt.Errorf("too many checkers: %d (max %d)", total, globalBearoffDB.nCheckers)
+	if total > db.nCheckers {
+		return nil, fmt.Errorf("too many checkers: %d (max %d)", total, db.nCheckers)
 	}
-	posID := positionBearoff(anBoard, globalBearoffDB.nPoints, globalBearoffDB.nCheckers)
-	return globalBearoffDB.getDistribution(posID)
+	posID := positionBearoff(anBoard, db.nPoints, db.nCheckers)
+	return db.getDistribution(posID)
 }

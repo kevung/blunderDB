@@ -5,11 +5,16 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // isolateSources points the resolver at an empty temp dir so tests never pick
-// up a real downloaded database from the developer's XDG data dir.
+// up a real table from the developer's XDG data dir.
+//
+// Empty means empty: since ADR-0027 there is no embedded floor, so a test that
+// needs an actual table calls withDefaultTable instead.
 func isolateSources(t *testing.T) string {
 	t.Helper()
 	dir := t.TempDir()
@@ -25,7 +30,7 @@ func isolateSources(t *testing.T) string {
 		// before this one, so it runs after, per t.Cleanup's LIFO order)
 		// does not race an open file handle on Windows.
 		srcMu.Lock()
-		if cachedDB != nil && cachedDB != embeddedDB {
+		if cachedDB != nil {
 			cachedDB.Close()
 		}
 		cachedDB, cachedStamp = nil, ""
@@ -47,7 +52,7 @@ func put(b *domain.Board, point, color, n int) {
 }
 
 func TestEvaluate_ExactRegime(t *testing.T) {
-	isolateSources(t)
+	withDefaultTable(t)
 	var pos domain.Position
 	pos.Board = clearBoard()
 	put(&pos.Board, 1, domain.Black, 2)
@@ -100,7 +105,7 @@ func TestEvaluate_ExactRegime(t *testing.T) {
 }
 
 func TestEvaluate_EstimatedRegime(t *testing.T) {
-	isolateSources(t)
+	withDefaultTable(t)
 	var pos domain.Position
 	pos.Board = clearBoard()
 	// 8 checkers for Black: outside the embedded TS-06-06 domain.
@@ -127,7 +132,7 @@ func TestEvaluate_EstimatedRegime(t *testing.T) {
 }
 
 func TestEvaluate_OutsideDomain(t *testing.T) {
-	isolateSources(t)
+	withDefaultTable(t)
 	var pos domain.Position
 	pos.Board = clearBoard()
 	put(&pos.Board, 1, domain.Black, 2)
@@ -174,13 +179,27 @@ func twoDigits(n int) string {
 }
 
 func TestResolve_WidestDomainWins(t *testing.T) {
+	// Since ADR-0027 there is no embedded floor: an empty data directory means
+	// no table at all, and Resolve says so rather than inventing one.
 	dir := isolateSources(t)
-
-	if got := Resolve(); got.Checkers() != 6 {
-		t.Fatalf("floor must be the embedded TS-06-06, got %d", got.Checkers())
+	if got := Resolve(); got != nil {
+		t.Fatalf("an empty data dir must resolve to nothing, got TS-06-%02d", got.Checkers())
 	}
 
-	// A wider external file wins over the embedded one.
+	// The generated default is the ordinary case.
+	src, err := os.ReadFile(bearofftest.TwoSidedPath(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "gnubg_ts6x6.bd"), src, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	Invalidate()
+	if got := Resolve(); got == nil || got.Checkers() != 6 {
+		t.Fatalf("the generated TS-06-06 must resolve, got %v", got)
+	}
+
+	// A wider external file wins over it.
 	ext := filepath.Join(dir, "wide.bd")
 	writeSyntheticTS(t, ext, 8)
 	SetExternalPath(ext)
@@ -188,35 +207,33 @@ func TestResolve_WidestDomainWins(t *testing.T) {
 		t.Fatalf("external TS-06-08 must win, got TS-06-%02d", got.Checkers())
 	}
 
-	// A wider downloaded file wins over both.
-	writeSyntheticTS(t, filepath.Join(dir, DownloadedFileName), 9)
+	// A wider generated file wins over both.
+	writeSyntheticTS(t, filepath.Join(dir, "gnubg_ts6x11.bd"), 9)
 	if got := Resolve(); got.Checkers() != 9 {
-		t.Fatalf("downloaded TS-06-09 must win, got TS-06-%02d", got.Checkers())
+		t.Fatalf("generated TS-06-09 must win, got TS-06-%02d", got.Checkers())
 	}
 
-	// A NARROWER external file must lose to the embedded database. The cache
-	// still holds the TS-06-09 open: release it first, or Windows refuses the
-	// removal and the stale file wins the next probe.
+	// A NARROWER external file must lose to the generated one. The cache still
+	// holds the TS-06-09 open: release it first, or Windows refuses the removal
+	// and the stale file wins the next probe.
 	SetExternalPath("")
 	Invalidate()
-	if err := os.Remove(filepath.Join(dir, DownloadedFileName)); err != nil {
+	if err := os.Remove(filepath.Join(dir, "gnubg_ts6x11.bd")); err != nil {
 		t.Fatal(err)
 	}
 	narrow := filepath.Join(dir, "narrow.bd")
 	writeSyntheticTS(t, narrow, 3)
 	SetExternalPath(narrow)
 	if got := Resolve(); got.Checkers() != 6 {
-		t.Fatalf("embedded TS-06-06 must beat a TS-06-03, got TS-06-%02d", got.Checkers())
+		t.Fatalf("the generated TS-06-06 must beat a TS-06-03, got TS-06-%02d", got.Checkers())
 	}
 
-	// An invalid candidate is skipped, never fatal.
-	bad := filepath.Join(dir, "bad.bd")
-	if err := os.WriteFile(bad, []byte("garbage"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	SetExternalPath(bad)
-	if got := Resolve(); got.Checkers() != 6 {
-		t.Fatalf("invalid external must fall back to embedded, got TS-06-%02d", got.Checkers())
+	// A .part file is an interrupted run, never a candidate.
+	SetExternalPath("")
+	writeSyntheticTS(t, filepath.Join(dir, "gnubg_ts6x12.bd.part"), 12)
+	Invalidate()
+	if got := Resolve(); got == nil || got.Checkers() != 6 {
+		t.Fatalf("a .part must be ignored, got %v", got)
 	}
 }
 
@@ -243,4 +260,21 @@ func TestLookup_ZeroedFileDecodesToFloor(t *testing.T) {
 		ts.Covers([6]int{2, 1, 0, 0, 0, 0}, [6]int{0, 0, 0, 0, 0, 2}) {
 		t.Fatal("Covers must enforce the per-player checker capacity")
 	}
+}
+
+// withDefaultTable isolates the resolver in a temp dir holding a real
+// TS-06-06, generated once and cached by bearofftest. It is what the embedded
+// table used to give every test for free.
+func withDefaultTable(t *testing.T) string {
+	t.Helper()
+	dir := isolateSources(t)
+	src, err := os.ReadFile(bearofftest.TwoSidedPath(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "gnubg_ts6x6.bd"), src, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	Invalidate()
+	return dir
 }

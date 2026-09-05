@@ -5,7 +5,7 @@ import {domain} from '../models';
 
 export function BearoffStatus():Promise<gui.BearoffStatus>;
 
-export function CancelBearoffDownload():Promise<void>;
+export function CancelBearoffGeneration():Promise<void>;
 
 export function CancelEvaluationAtRest():Promise<void>;
 
@@ -17,15 +17,17 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
 
-export function DeleteBearoffDB():Promise<void>;
+export function DeleteBearoffTable(arg1:string):Promise<void>;
 
 export function DeleteFile(arg1:string):Promise<void>;
 
-export function DownloadBearoffDB():Promise<void>;
+export function EnsureBearoffTables():Promise<void>;
 
 export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:number):Promise<gui.GammonNetEvalResult>;
 
 export function ExportIssuerIdentity(arg1:string):Promise<string>;
+
+export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number):Promise<void>;
 
 export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
 

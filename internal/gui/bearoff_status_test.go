@@ -4,109 +4,154 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
-// isolateBearoffDataDir points the download directory at a throwaway
-// directory and restores the real one on cleanup, so a test run never sees
-// (or races against) whatever the developer's machine has already downloaded.
-func isolateBearoffDataDir(t *testing.T) string {
+// The bearoff sources after ADR-0027: nothing embedded, nothing downloaded.
+// What the status has to report is therefore new — whether this machine has
+// its tables yet, and which one is being made — and the empty case is a real
+// state rather than an impossible one.
+
+func isolate(t *testing.T) string {
 	t.Helper()
+	// Capture the shared cache path and table now: the cleanup below runs
+	// after the test has finished, and a helper that calls t.Fatalf then would
+	// panic rather than report.
+	shared := bearofftest.DataDir(t)
+	oneSided := bearofftest.OneSidedPath(t)
 	dir := t.TempDir()
 	race.SetDataDir(dir)
-	t.Cleanup(func() { race.SetDataDir("") })
+	race.SetExternalPath("")
+	race.Invalidate()
+	t.Cleanup(func() {
+		race.SetDataDir(shared)
+		race.SetExternalPath("")
+		race.Invalidate()
+		// Put the package-wide table back: TestMain loaded it for every test
+		// here, and leaving it unloaded would break whatever runs next.
+		_ = engine.LoadOneSided(oneSided)
+	})
 	return dir
 }
 
-func TestBearoffStatusNothingDownloaded(t *testing.T) {
-	isolateBearoffDataDir(t)
-	a := NewApp(nil)
+func TestBearoffStatus_EmptyMachineReportsWhatIsMissing(t *testing.T) {
+	dir := isolate(t)
+	_ = engine.LoadOneSided("")
 
-	st := a.BearoffStatus()
-
-	if st.Downloaded {
-		t.Errorf("Downloaded = true, want false: %+v", st)
+	st := (&App{}).BearoffStatus()
+	if st.Ready {
+		t.Error("an empty data dir cannot be ready")
 	}
-	if st.Downloading {
-		t.Errorf("Downloading = true, want false (no download in flight): %+v", st)
+	if len(st.Missing) != 2 {
+		t.Errorf("Missing = %v, want both default domains", st.Missing)
 	}
-	if st.SizeBytes != 0 {
-		t.Errorf("SizeBytes = %d, want 0: %+v", st.SizeBytes, st)
+	if st.DataDir != dir {
+		t.Errorf("DataDir = %q, want %q", st.DataDir, dir)
 	}
-	if st.PartialBytes != 0 {
-		t.Errorf("PartialBytes = %d, want 0 (no .part file): %+v", st.PartialBytes, st)
+	if st.ActiveDomain != 0 || st.ActiveOrigin != "" {
+		t.Errorf("no table means no active source, got %d / %q", st.ActiveDomain, st.ActiveOrigin)
 	}
-	if st.ExpectedBytes != bearoffExpectedBytes {
-		t.Errorf("ExpectedBytes = %d, want %d", st.ExpectedBytes, bearoffExpectedBytes)
+	if st.OneSidedReady {
+		t.Error("the EPC has no table either")
 	}
-	if st.Path != race.DownloadedPath() {
-		t.Errorf("Path = %q, want %q", st.Path, race.DownloadedPath())
-	}
-	// With nothing downloaded and no external path, Resolve() falls back to
-	// the embedded TS-06-06 source, which is always present.
-	if st.ActiveOrigin == "" {
-		t.Errorf("ActiveOrigin should always name a source, got empty: %+v", st)
+	if st.Generating != "" {
+		t.Errorf("nothing is being generated, got %q", st.Generating)
 	}
 }
 
-func TestBearoffStatusDownloadedFilePresent(t *testing.T) {
-	dir := isolateBearoffDataDir(t)
-	a := NewApp(nil)
-
-	target := filepath.Join(dir, race.DownloadedFileName)
-	content := []byte("not a real bearoff database, just sized content")
-	if err := os.WriteFile(target, content, 0644); err != nil {
-		t.Fatalf("write fake downloaded db: %v", err)
+func TestBearoffStatus_WithBothTablesItIsReady(t *testing.T) {
+	dir := isolate(t)
+	for _, d := range bearoffgen.DefaultDomains() {
+		src, err := os.ReadFile(bearofftest.Path(t, d))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, d.FileName()), src, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	race.Invalidate()
+	if err := engine.LoadOneSided(filepath.Join(dir, "gnubg_os6.bd")); err != nil {
+		t.Fatal(err)
 	}
 
-	st := a.BearoffStatus()
-
-	if !st.Downloaded {
-		t.Errorf("Downloaded = false, want true: %+v", st)
+	st := (&App{}).BearoffStatus()
+	if !st.Ready || len(st.Missing) != 0 {
+		t.Errorf("both tables are there: Ready=%v Missing=%v", st.Ready, st.Missing)
 	}
-	if st.SizeBytes != int64(len(content)) {
-		t.Errorf("SizeBytes = %d, want %d", st.SizeBytes, len(content))
+	if st.ActiveDomain != 6 {
+		t.Errorf("ActiveDomain = %d, want the TS-06-06 that is present", st.ActiveDomain)
 	}
-	if st.PartialBytes != 0 {
-		t.Errorf("PartialBytes = %d, want 0 (no .part file present): %+v", st.PartialBytes, st)
-	}
-}
-
-func TestBearoffStatusPartialDownload(t *testing.T) {
-	dir := isolateBearoffDataDir(t)
-	a := NewApp(nil)
-
-	partial := filepath.Join(dir, race.DownloadedFileName+".part")
-	content := []byte("partial content, download was interrupted")
-	if err := os.WriteFile(partial, content, 0644); err != nil {
-		t.Fatalf("write fake partial db: %v", err)
-	}
-
-	st := a.BearoffStatus()
-
-	if st.Downloaded {
-		t.Errorf("Downloaded = true, want false: a .part file is not a completed download: %+v", st)
-	}
-	if st.PartialBytes != int64(len(content)) {
-		t.Errorf("PartialBytes = %d, want %d", st.PartialBytes, len(content))
+	if !st.OneSidedReady {
+		t.Error("the EPC table is loaded")
 	}
 }
 
-func TestBearoffStatusExternalPath(t *testing.T) {
-	isolateBearoffDataDir(t)
-	a := NewApp(nil)
-
-	race.SetExternalPath("/some/external/gnubg_ts0.bd")
-	t.Cleanup(func() { race.SetExternalPath("") })
-
-	// BearoffStatus itself doesn't read config.BearoffTSPath (the GUI's
-	// external-path setting is applied to the race engine separately, from
-	// config.SaveBearoffTSPath / main.go's startup); it reports the engine's
-	// currently resolved source, so this only exercises that the struct
-	// reflects race.Resolve() consistently while an external path is set.
-	st := a.BearoffStatus()
-	if st.ActiveOrigin == "" {
-		t.Errorf("ActiveOrigin should name a source even with an (invalid) external path set: %+v", st)
+// A corrupt table counts as missing: it will be regenerated rather than read.
+func TestBearoffStatus_ACorruptTableCountsAsMissing(t *testing.T) {
+	dir := isolate(t)
+	src, err := os.ReadFile(bearofftest.TwoSidedPath(t))
+	if err != nil {
+		t.Fatal(err)
 	}
+	src[len(src)/2] ^= 0xFF
+	if err := os.WriteFile(filepath.Join(dir, "gnubg_ts6x6.bd"), src, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	st := (&App{}).BearoffStatus()
+	for _, m := range st.Missing {
+		if m == "TS-06-06" {
+			return
+		}
+	}
+	t.Errorf("a corrupt TS-06-06 must be listed as missing, got %v", st.Missing)
+}
+
+// EnsureBearoffTables is what start-up calls: it must make both tables and
+// leave the engine able to answer.
+func TestEnsureBearoffTables_MakesWhatIsMissing(t *testing.T) {
+	if testing.Short() {
+		t.Skip("generating both default tables takes a few seconds")
+	}
+	dir := isolate(t)
+	_ = engine.LoadOneSided("")
+
+	app := &App{}
+	app.EnsureBearoffTables()
+
+	// The work is a goroutine; wait for it the way the panel does, by polling
+	// the status.
+	deadline := 120
+	for i := 0; i < deadline; i++ {
+		if st := app.BearoffStatus(); st.Ready && st.Generating == "" {
+			break
+		}
+		sleepMillis(500)
+	}
+
+	st := app.BearoffStatus()
+	if !st.Ready {
+		t.Fatalf("both tables must exist after EnsureBearoffTables: %v", st.Missing)
+	}
+	if !st.OneSidedReady {
+		t.Error("the EPC table must be loaded once generated")
+	}
+	if got := race.Resolve(); got == nil || got.Checkers() != 6 {
+		t.Errorf("the two-sided table must resolve, got %v", got)
+	}
+	for _, d := range bearoffgen.DefaultDomains() {
+		if _, err := os.Stat(filepath.Join(dir, d.FileName()+".part")); err == nil {
+			t.Errorf("%s left a .part behind", d)
+		}
+	}
+}
+
+func sleepMillis(n int) {
+	time.Sleep(time.Duration(n) * time.Millisecond)
 }

@@ -369,6 +369,13 @@ func (a *App) ShowQuestionDialog(title, message string, buttons []string, defaul
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	// The bearoff tables are generated on this machine, not shipped
+	// (ADR-0027). Make whatever is missing, in the background and without a
+	// word: a first launch spends about six seconds of one core while the user
+	// gets on with what they opened the application for. The Eval panel is the
+	// only place that mentions it, and only when a position needs a table that
+	// is not ready yet.
+	a.EnsureBearoffTables()
 }
 
 // StartupFilePath returns the database file path the OS handed this process

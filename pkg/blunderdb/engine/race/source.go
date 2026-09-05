@@ -4,23 +4,29 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 	"sync"
 )
 
-// Source resolution (ADR-0009): three candidates feed one reader — the
-// embedded TS-06-06 (always available), an optional user-supplied .bd path,
-// and the optionally downloaded TS-06-11. The widest valid domain wins; an
-// invalid candidate is skipped with a log warning, never a fatal error.
+// Source resolution (ADR-0009, amended by ADR-0027): the candidates are an
+// optional user-supplied .bd path and every generated table in the data
+// directory. The widest valid domain wins; an invalid candidate is skipped
+// with a log warning, never a fatal error.
 //
-// The daemon never downloads: it only ever sees the embedded database plus
-// whatever path its operator configures (volume mount + SetExternalPath).
+// There is no floor any more. The TS-06-06 table used to be compiled into the
+// binary, so Resolve could promise a database; since ADR-0027 the tables are
+// generated on the machine that needs them, and there is a window — the first
+// launch, until the background generation finishes — where there is none.
+// Resolve returns nil for that, and callers say "not yet" rather than
+// pretending to an exact answer they do not have.
+//
+// A `.part` file is never a candidate: it is an interrupted run, not a table.
 
-// DownloadedFileName is the fixed name of the optionally downloaded TS-06-11
-// database inside DataDir (published as the bearoff-data-1 release asset).
-const DownloadedFileName = "gnubg_ts6x11.bd"
-
-// DownloadedSHA256 is the checksum of the published bearoff-data-1 asset.
-const DownloadedSHA256 = "c52133cd59a7db478a71d18c8f2093ba343200fa72ede8004c32c6778c724f46"
+// GeneratedGlob matches the two-sided tables the generator writes into the
+// data directory: gnubg_ts6x6.bd, gnubg_ts6x11.bd, and any wider domain the
+// user asked for.
+const GeneratedGlob = "gnubg_ts*.bd"
 
 var (
 	srcMu       sync.Mutex
@@ -74,9 +80,10 @@ func dataDirLocked() string {
 	return DefaultDataDir()
 }
 
-// DownloadedPath returns where the downloaded TS-06-11 lives (may not exist).
-func DownloadedPath() string {
-	return filepath.Join(DataDir(), DownloadedFileName)
+// GeneratedPath returns where a generated table of the given name lives (it
+// may not exist).
+func GeneratedPath(name string) string {
+	return filepath.Join(DataDir(), name)
 }
 
 // stamp fingerprints the candidate set so Resolve can cache the open handle
@@ -115,14 +122,16 @@ func itoa64(n int64) string {
 func Invalidate() {
 	srcMu.Lock()
 	defer srcMu.Unlock()
-	if cachedDB != nil && cachedDB != EmbeddedTwoSided() {
+	if cachedDB != nil {
 		cachedDB.Close()
 	}
 	cachedDB, cachedStamp = nil, ""
 }
 
-// Resolve returns the widest available two-sided database. It never returns
-// nil: the embedded TS-06-06 is the floor.
+// Resolve returns the widest available two-sided database, or nil when the
+// machine has none yet. Callers must handle nil: it is the first launch, or a
+// data directory somebody emptied, and the honest answer is that the exact
+// regime is unavailable rather than a guess dressed as a lookup.
 func Resolve() *TwoSided {
 	srcMu.Lock()
 	defer srcMu.Unlock()
@@ -131,28 +140,30 @@ func Resolve() *TwoSided {
 	if externalP != "" {
 		candidates = append(candidates, externalP)
 	}
-	candidates = append(candidates, filepath.Join(dataDirLocked(), DownloadedFileName))
+	generated, _ := filepath.Glob(filepath.Join(dataDirLocked(), GeneratedGlob))
+	sort.Strings(generated) // a stable candidate order makes the stamp stable
+	candidates = append(candidates, generated...)
 
 	st := stamp(candidates)
 	if cachedDB != nil && st == cachedStamp {
 		return cachedDB
 	}
 
-	// The stamp changed: whatever cachedDB currently holds open (an external
-	// or downloaded file) is about to be superseded. Close it *before*
-	// probing the candidates below — on Windows a file the caller just
-	// replaced or removed keeps its old directory entry alive (and refuses a
-	// fresh open) for as long as this stale handle stays open, which would
-	// make the stat/open loop below see the outgoing file instead of the
-	// caller's change.
-	embedded := EmbeddedTwoSided()
-	if cachedDB != nil && cachedDB != embedded {
+	// The stamp changed: whatever cachedDB currently holds open is about to be
+	// superseded. Close it *before* probing the candidates below — on Windows a
+	// file the caller just replaced or removed keeps its old directory entry
+	// alive (and refuses a fresh open) for as long as this stale handle stays
+	// open, which would make the loop below see the outgoing file.
+	if cachedDB != nil {
 		cachedDB.Close()
 	}
 	cachedDB = nil
 
-	best := embedded
+	var best *TwoSided
 	for _, p := range candidates {
+		if strings.HasSuffix(p, ".part") {
+			continue // an interrupted generation, not a table
+		}
 		if _, err := os.Stat(p); err != nil {
 			continue
 		}
@@ -161,14 +172,14 @@ func Resolve() *TwoSided {
 			slog.Warn("ignoring invalid two-sided bearoff database", "path", p, "err", err)
 			continue
 		}
-		if ts.Checkers() > best.Checkers() {
-			if best != embedded {
+		if best == nil || ts.Checkers() > best.Checkers() {
+			if best != nil {
 				best.Close()
 			}
 			best = ts
-		} else {
-			ts.Close()
+			continue
 		}
+		ts.Close()
 	}
 	cachedDB, cachedStamp = best, st
 	return best

@@ -77,7 +77,7 @@ func TestMoneyFromEntry_TooGoodSynthetic(t *testing.T) {
 //     A future gammon-aware money table would exercise the branch that was
 //     silently unreachable before this fiche.
 func TestMoneyFromEntry_RealBearoffDomainNeverProducesTooGood(t *testing.T) {
-	ts := EmbeddedTwoSided()
+	ts := testTwoSided(t)
 	n := ts.Checkers()
 	var boards [][6]int
 	var gen func(remaining, idx int, cur [6]int)
