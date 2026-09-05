@@ -1,16 +1,19 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-05** (quatrième session — audit de reprise). Ce
+Dernière mise à jour : **2026-09-05** (quatrième session — audit de reprise, puis
+exécution des vagues 0 à 3 et publication de la **0.36.0**). Ce
 fichier est le point de reprise : il dit ce qui est fusionné, ce qui attend dans une
 branche, et ce qui reste. Le plan lui-même est dans [README.md](README.md) ; les
 fiches sont dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
 ## Où en est-on
 
-**93 des 145 issues du plan sont fermées.** Les étapes 0 et 1 sont livrées
-en entier. L'étape 2 est livrée **sauf le lot G** (serveur). Restent, hors plan,
-sept issues du générateur de bearoff (ADR-0027, conçu et non exécuté), trois
-issues de moteur/amont et la vidéo de démo.
+**98 des 145 issues du plan sont fermées.** Les étapes 0, 1 et 2 sont livrées,
+le lot G compris — cinq de ses fiches fermées, trois livrées à moitié et
+documentées comme telles ci-dessous. Hors plan, le générateur de bearoff
+(ADR-0027) est exécuté pour moitié : les deux générateurs et la sortie des
+tables du binaire sont faits (#305, #306, #307), l'interface et la CLI ne le
+sont pas. Restent aussi les trois issues de moteur/amont et la vidéo de démo.
 
 Les quatorze recherches externes P5-P18 sont versées sous
 [`docs/recherche/`](../../docs/recherche/README.md) ; quatre ont corrigé une fiche
@@ -75,16 +78,53 @@ Hors fiches, trouvés en chemin :
 L'objectif tenu depuis le 2026-09-05 : **vider le compteur d'issues**, par vagues,
 chacune close par une release.
 
-| Vague | Contenu | Issues | Sortie |
+| Vague | Contenu | Issues | État |
 |---|---|---|---|
-| **0 — hygiène** | Faux positif nightly, issues fantômes, ce fichier | #317, #214, #254 | — |
-| **1 — release** | Publier ce que `main` porte déjà | — | **0.36.0** |
-| **2 — lot G** | Reprendre la fusion bloquée, puis les cinq fiches restantes | #233, #236-#242 | **0.37.0** |
-| **3 — bearoff** | ADR-0027 exécuté : générateur pur, empreintes, rien d'embarqué, onglet, CLI, doc, EPC au-delà du jan | #305-#311 | **0.38.0** |
-| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | 0.39 → 0.40 |
-| **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | — |
-| **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | 1.0 ? |
-| **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | — |
+| **0 — hygiène** | Faux positif nightly, issues fantômes, ce fichier | #317, #214, #254 | ✅ |
+| **1 — release** | | | ✅ **0.36.0** publiée le 2026-09-05 |
+| **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ ; #237, #239, #242 restent (voir plus bas) |
+| **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305, #306, #307 | ✅ ; #308-#311 restent |
+| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | à faire |
+| **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | à faire |
+| **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | à faire |
+| **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
+
+### Ce qui est livré à moitié, et pourquoi
+
+Trois fiches sont utiles en l'état et leur reste est écrit dans leur commit ;
+l'issue est restée ouverte plutôt que fermée à tort.
+
+- **G.9 (#237)** — la compression gzip des flux NDJSON est livrée et mesurée
+  (13,5 % de la taille sur mille lignes). Manque la pagination des familles
+  listantes : elle touche le contrat Storage et ses trois implémentations, et
+  une limite par défaut côté serveur serait une rupture d'API pour un démon
+  qui a déjà des clients.
+- **G.14 (#242)** — l'assertion inverse de parité est en place, et les cinq
+  capacités qui n'existaient que sur le démon ont leur `Database` et leur CLI.
+  Manque leur face GUI (menu contextuel d'une carte, journal dans l'onglet
+  Anki, bouton de réparation dans la configuration).
+- **G.11 (#239)** — non commencée.
+
+Du lot bearoff, restent l'onglet complet (#308), la CLI `bearoff` (#309), sa
+doc (#310) et le lot 2 (#311, l'EPC au-delà du jan). Le socle est là : les
+deux générateurs sont identiques à gnubg octet pour octet, vérifiés par
+empreinte, et le binaire a perdu 7,33 Mio (−21,2 %).
+
+### Ce que la traversée a appris
+
+- **Un préfixe de route peut déplacer une frontière de sécurité.** Passer
+  `vacuum` et `purge` sous `/ops/` les a rendues *publiques*, parce que
+  `publicPaths` disait « tout ce qui n'est pas /v1/ ». Les deux appels les
+  plus destructeurs du démon seraient devenus les seuls sans tenant. Le test
+  l'a dit dans la minute ; la leçon est que les listes écrites en négatif
+  changent de sens quand l'ensemble change.
+- **Le tenant SQLite était une fiction** : `TenantFilter` valait `1=1`, donc
+  deux tenants lisaient les mêmes lignes derrière un en-tête exigé et accepté.
+  Trouvé en traitant G.12, sans rapport avec la fiche.
+- **Un portage se juge à l'octet.** Les deux générateurs ont été écrits contre
+  un test d'identité avec le fichier de gnubg ; c'est ce test, et non la
+  relecture, qui a attrapé le complément à un, l'ordre des diagonales et le
+  mode qui absorbe l'arrondi.
 
 ### La branche qui attend
 
