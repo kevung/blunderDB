@@ -48,7 +48,7 @@ func TestTournamentCRUD(t *testing.T) {
 		t.Fatalf("Create second: %v", err)
 	}
 	n := 0
-	for _, err := range s.Tournaments().List(ctx, "") {
+	for _, err := range s.Tournaments().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
@@ -159,7 +159,7 @@ func TestTournamentSetMatchByName(t *testing.T) {
 		t.Fatalf("SetMatchByName reuse: %v", err)
 	}
 	n := 0
-	for _, err := range s.Tournaments().List(ctx, "") {
+	for _, err := range s.Tournaments().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}

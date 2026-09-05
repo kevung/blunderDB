@@ -222,12 +222,20 @@ func (s *CommentStore) ByPositions(ctx context.Context, scope string, positionID
 	return out, nil
 }
 
-// ListAll streams every non-empty comment entry, most recent first.
-func (s *CommentStore) ListAll(ctx context.Context, scope string) iter.Seq2[*domain.CommentEntry, error] {
+// ListAll streams every non-empty comment entry, most recent first, bounded by
+// opts.
+//
+// The bound is the caller's, and there is no default: a stream is not held in
+// memory, so an unbounded one costs time and bandwidth but never the server's
+// footing. A silent default limit would be worse than a slow answer — the
+// client would read a truncated list believing it complete. What opts buys is
+// the ability to PAGE, for a client that wants to (issue #237).
+func (s *CommentStore) ListAll(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.CommentEntry, error] {
 	tenant, targs := s.DB.TenantFilter("", scope)
+	limit, largs := s.DB.LimitOffset(opts.Limit, opts.Offset)
 	return s.commentSeq(ctx, "list comments",
-		`SELECT `+s.selectCols()+` FROM comment WHERE `+tenant+` AND text != '' ORDER BY id DESC`,
-		targs...)
+		`SELECT `+s.selectCols()+` FROM comment WHERE `+tenant+` AND text != '' ORDER BY id DESC`+limit,
+		append(targs, largs...)...)
 }
 
 // Search streams non-empty comment entries whose text contains query

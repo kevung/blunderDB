@@ -272,6 +272,17 @@ confus) ; une méthode connue appelée avec le mauvais verbe HTTP répond
 liste qui acceptent un ``limit`` refusent au-delà de 1000 lignes par page
 (``400 invalid``) plutôt que d'honorer une valeur sans plafond.
 
+Les familles listantes acceptent toutes ``limit`` et ``offset`` :
+``positions.list``, ``positions.listIds``, ``matches.list``, ``search.find``,
+``anki.reviewLog``, et depuis la 0.37.0 ``comments.listAll``,
+``tournaments.list`` et ``collections.positions``. Les deux valent zéro par
+défaut, ce qui veut dire ce que cela a toujours voulu dire : tout. **Il n'y a
+pas de plafond implicite** — un flux n'est pas retenu en mémoire, donc une
+liste sans borne coûte du temps et de la bande passante mais jamais l'équilibre
+du démon, alors qu'une limite par défaut silencieuse ferait lire à un client
+une liste tronquée en la croyant complète. Ce que ces deux paramètres apportent
+est la possibilité de paginer, à qui le veut.
+
 Chaque connexion TCP est bornée en lecture/écriture par requête — un budget
 généreux pour les appels ordinaires, bien plus large pour les routes qui
 streament (listes NDJSON, imports/exports, rattrapage gammonNet) — et leur

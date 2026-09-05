@@ -12,7 +12,7 @@ import (
 func tournamentNames(t *testing.T, s storage.Storage) map[string]int {
 	t.Helper()
 	got := map[string]int{}
-	for tr, err := range s.Tournaments().List(context.Background(), "") {
+	for tr, err := range s.Tournaments().List(context.Background(), "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}

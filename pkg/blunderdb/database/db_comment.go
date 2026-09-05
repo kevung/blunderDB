@@ -145,7 +145,7 @@ func (d *Database) GetAllComments() ([]CommentEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	return collectComments(cs.ListAll(context.Background(), ""))
+	return collectComments(cs.ListAll(context.Background(), "", storage.ListOpts{}))
 }
 
 // SearchComments searches for comments containing the given query string (case-insensitive)

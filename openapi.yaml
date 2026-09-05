@@ -635,7 +635,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/collectionIDReq"
+              $ref: "#/components/schemas/collectionPositionsReq"
       responses:
         "200":
           description: OK
@@ -811,7 +811,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: "#/components/schemas/listReq"
       responses:
         "200":
           description: OK
@@ -2219,7 +2219,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              $ref: "#/components/schemas/listReq"
       responses:
         "200":
           description: OK
@@ -2396,12 +2396,18 @@ components:
           type: string
         description:
           type: string
-    collectionIDReq:
+    collectionPositionsReq:
       type: object
       properties:
         collectionId:
           type: integer
           format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     collectionReorderReq:
       type: object
       properties:

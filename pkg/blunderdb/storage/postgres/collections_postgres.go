@@ -315,13 +315,13 @@ const collectionPositionCols = `p.id, p.state, p.decision_type, p.player_on_roll
 	`p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver, p.individually_imported, p.flagged`
 
 // Positions streams the positions of a collection in their collection order.
-func (s *collectionStore) Positions(ctx context.Context, scope string, collectionID int64) iter.Seq2[*domain.Position, error] {
+func (s *collectionStore) Positions(ctx context.Context, scope string, collectionID int64, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
 		rows, err := s.db.Query(ctx,
 			`SELECT `+collectionPositionCols+` FROM position p
 			 INNER JOIN collection_position cp ON p.id = cp.position_id
 			 WHERE cp.collection_id = $1 AND cp.tenant_id = $2
-			 ORDER BY cp.sort_order ASC`,
+			 ORDER BY cp.sort_order ASC`+opts.SQL(""),
 			collectionID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list collection positions: %w", err))

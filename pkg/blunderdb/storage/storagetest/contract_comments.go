@@ -289,7 +289,7 @@ func testCommentSearchAcrossPositions(t *testing.T, s storage.Storage) {
 	c1 := add(posC, "another blunder, missed the double")
 	a2 := add(posA, "revisited: still wrong")
 
-	all := drainComments(t, "ListAll", comments.ListAll(ctx, ""))
+	all := drainComments(t, "ListAll", comments.ListAll(ctx, "", storage.ListOpts{}))
 	if got := commentIDs(all); len(got) != 4 ||
 		got[0] != a2 || got[1] != c1 || got[2] != b1 || got[3] != a1 {
 		t.Errorf("ListAll ids: got %v, want [%d %d %d %d] (most recent first, empty entry hidden)",
@@ -323,7 +323,7 @@ func testCommentSearchAcrossPositions(t *testing.T, s storage.Storage) {
 	if got := commentIDs(drainComments(t, "Search after blanking", comments.Search(ctx, "", "blunder"))); len(got) != 1 || got[0] != c1 {
 		t.Errorf("Search after blanking %d: got %v, want [%d]", a1, got, c1)
 	}
-	if n := len(drainComments(t, "ListAll after blanking", comments.ListAll(ctx, ""))); n != 3 {
+	if n := len(drainComments(t, "ListAll after blanking", comments.ListAll(ctx, "", storage.ListOpts{}))); n != 3 {
 		t.Errorf("ListAll after blanking: got %d entries, want 3", n)
 	}
 }
@@ -358,7 +358,7 @@ func testCommentPositionDeleteCascades(t *testing.T, s storage.Storage) {
 	if n := len(drainComments(t, "ByPosition doomed", comments.ByPosition(ctx, "", doomed))); n != 0 {
 		t.Errorf("comments of the deleted position: got %d, want 0", n)
 	}
-	if got := commentIDs(drainComments(t, "ListAll", comments.ListAll(ctx, ""))); len(got) != 1 || got[0] != survivor {
+	if got := commentIDs(drainComments(t, "ListAll", comments.ListAll(ctx, "", storage.ListOpts{}))); len(got) != 1 || got[0] != survivor {
 		t.Errorf("ListAll after position delete: got %v, want [%d]", got, survivor)
 	}
 	if got := commentIDs(drainComments(t, "Search", comments.Search(ctx, "", "position"))); len(got) != 1 || got[0] != survivor {

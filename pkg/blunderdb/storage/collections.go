@@ -46,7 +46,7 @@ type CollectionStore interface {
 	CopyPosition(ctx context.Context, scope string, toCollectionID, positionID int64) error
 
 	// Positions streams the positions of a collection in order.
-	Positions(ctx context.Context, scope string, collectionID int64) iter.Seq2[*domain.Position, error]
+	Positions(ctx context.Context, scope string, collectionID int64, opts ListOpts) iter.Seq2[*domain.Position, error]
 
 	// Members streams a collection's membership rows in collection order,
 	// each carrying the position it links. Positions is the same walk

@@ -68,11 +68,11 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 }
 
 // List streams every tournament, most recent first.
-func (s *tournamentStore) List(ctx context.Context, scope string) iter.Seq2[*domain.Tournament, error] {
+func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT `+tournamentSelectCols+` FROM tournament t
-			 ORDER BY t.date DESC, t.created_at DESC`)
+			 ORDER BY t.date DESC, t.created_at DESC`+opts.SQL("LIMIT -1"))
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list tournaments: %w", err))
 			return

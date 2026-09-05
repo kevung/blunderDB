@@ -39,7 +39,10 @@
 // than failing with SQLITE_BUSY.
 package storage
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 // Stores groups the per-family accessors shared by Storage and Tx.
 type Stores interface {
@@ -105,4 +108,28 @@ type Options struct {
 type ListOpts struct {
 	Limit  int
 	Offset int
+}
+
+// SQL renders a bound as a query suffix, with the values INLINED rather than
+// bound as parameters.
+//
+// They are Go ints, so there is nothing to inject, and inlining keeps the
+// clause independent of each backend's placeholder numbering — the stores that
+// write their own SQL number theirs `$1`, `$2` while the shared ones use `?`,
+// and a bound that has to be appended to both cannot use either.
+//
+// `unboundedLimit` is what the dialect writes for "no limit, but an offset":
+// SQLite's grammar requires a LIMIT before OFFSET and documents -1 as
+// unbounded; PostgreSQL takes an OFFSET alone.
+func (o ListOpts) SQL(unboundedLimit string) string {
+	switch {
+	case o.Limit <= 0 && o.Offset <= 0:
+		return ""
+	case o.Limit <= 0:
+		return fmt.Sprintf(" %s OFFSET %d", unboundedLimit, o.Offset)
+	case o.Offset <= 0:
+		return fmt.Sprintf(" LIMIT %d", o.Limit)
+	default:
+		return fmt.Sprintf(" LIMIT %d OFFSET %d", o.Limit, o.Offset)
+	}
 }

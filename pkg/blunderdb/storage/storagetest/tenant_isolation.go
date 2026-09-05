@@ -122,7 +122,7 @@ func checkTournamentIsolation(t *testing.T, ctx context.Context, s storage.Stora
 	}
 
 	n := 0
-	for _, err := range s.Tournaments().List(ctx, b) {
+	for _, err := range s.Tournaments().List(ctx, b, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("List(%s): %v", b, err)
 		}

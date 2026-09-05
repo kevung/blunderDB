@@ -79,7 +79,7 @@ func (s *tournamentStore) Get(ctx context.Context, scope string, id int64) (*dom
 }
 
 // List streams every tournament, most recent first.
-func (s *tournamentStore) List(ctx context.Context, scope string) iter.Seq2[*domain.Tournament, error] {
+func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.Tournament, error] {
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.Query(ctx,
 			`SELECT `+tournamentSelectExpr+` FROM tournament t

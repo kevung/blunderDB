@@ -190,7 +190,7 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 		return nil, err
 	}
 	var positions []Position
-	for p, err := range cs.Positions(context.Background(), "", collectionID) {
+	for p, err := range cs.Positions(context.Background(), "", collectionID, storage.ListOpts{}) {
 		if err != nil {
 			return nil, err
 		}

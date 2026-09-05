@@ -52,8 +52,8 @@ func (s *Server) commentRoutes() []route {
 		{http.MethodPost, "/v1/comments.byPosition", rpcStream(func(ctx context.Context, scope string, req positionIDReq) iterComments {
 			return cs().ByPosition(ctx, scope, req.PositionID)
 		})},
-		{http.MethodPost, "/v1/comments.listAll", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterComments {
-			return cs().ListAll(ctx, scope)
+		{http.MethodPost, "/v1/comments.listAll", rpcStream(func(ctx context.Context, scope string, req listReq) iterComments {
+			return cs().ListAll(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
 		{http.MethodPost, "/v1/comments.search", rpcStream(func(ctx context.Context, scope string, req commentSearchReq) iterComments {
 			return cs().Search(ctx, scope, req.Query)

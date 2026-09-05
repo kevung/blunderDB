@@ -171,13 +171,13 @@ func assertSameExportedContent(t *testing.T, ctx context.Context, a, b *sqlite.S
 	}
 
 	var toursA, toursB []string
-	for tt, err := range a.Tournaments().List(ctx, "") {
+	for tt, err := range a.Tournaments().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}
 		toursA = append(toursA, tt.Name)
 	}
-	for tt, err := range b.Tournaments().List(ctx, "") {
+	for tt, err := range b.Tournaments().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}

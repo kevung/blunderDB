@@ -181,7 +181,7 @@ func (s *commentStore) ByPositions(ctx context.Context, scope string, positionID
 }
 
 // ListAll streams every non-empty comment entry, most recent first.
-func (s *commentStore) ListAll(ctx context.Context, scope string) iter.Seq2[*domain.CommentEntry, error] {
+func (s *commentStore) ListAll(ctx context.Context, scope string, opts storage.ListOpts) iter.Seq2[*domain.CommentEntry, error] {
 	return s.commentSeq(ctx, "list comments",
 		`SELECT `+commentSelectExpr+` FROM comment
 		 WHERE tenant_id = $1 AND text != '' ORDER BY id DESC`, tenantID(scope))

@@ -50,7 +50,7 @@ func testCollectionMoveBetween(t *testing.T, s storage.Storage) {
 
 	// The moved position is reachable through the destination collection.
 	var ids []int64
-	for p, err := range s.Collections().Positions(ctx, "", dst) {
+	for p, err := range s.Collections().Positions(ctx, "", dst, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Positions: %v", err)
 		}
@@ -129,7 +129,7 @@ func testCollectionCopyPosition(t *testing.T, s storage.Storage) {
 func collectionPositionIDs(t *testing.T, s storage.Storage, collectionID int64) []int64 {
 	t.Helper()
 	var ids []int64
-	for p, err := range s.Collections().Positions(context.Background(), "", collectionID) {
+	for p, err := range s.Collections().Positions(context.Background(), "", collectionID, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Positions of collection %d: %v", collectionID, err)
 		}

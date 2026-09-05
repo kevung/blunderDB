@@ -108,7 +108,7 @@ func TestCollectionMembership(t *testing.T) {
 		t.Fatalf("ReorderPositions: %v", err)
 	}
 	var order []int64
-	for p, err := range s.Collections().Positions(ctx, "", cID) {
+	for p, err := range s.Collections().Positions(ctx, "", cID, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("Positions: %v", err)
 		}

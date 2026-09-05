@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -86,7 +87,7 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 
 	// Comment carried across (the position id is reassigned, so read by listing).
 	var sawComment bool
-	for c, err := range dst.Comments().ListAll(ctx, "") {
+	for c, err := range dst.Comments().ListAll(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -112,7 +113,7 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 		t.Fatalf("exported collections = %d, want 1", collCount)
 	}
 	var members int
-	for _, err := range dst.Collections().Positions(ctx, "", collID) {
+	for _, err := range dst.Collections().Positions(ctx, "", collID, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatal(err)
 		}

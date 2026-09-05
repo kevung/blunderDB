@@ -342,7 +342,7 @@ func (e *exporter) resolveSelection() error {
 	var err error
 
 	if e.tournamentIDs, err = e.resolveIDs(sel.AllTournaments, sel.TournamentIDs, func(yield func(int64)) error {
-		for t, err := range e.src.Tournaments().List(e.ctx, e.scope) {
+		for t, err := range e.src.Tournaments().List(e.ctx, e.scope, storage.ListOpts{}) {
 			if err != nil {
 				return err
 			}
@@ -407,7 +407,7 @@ func (e *exporter) resolveSelection() error {
 	extra := make(map[int64]bool)
 	if sel.CollectionPositions {
 		for _, cid := range e.collectionIDs {
-			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid) {
+			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
 				if err != nil {
 					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
 				}
@@ -660,7 +660,7 @@ func (e *exporter) writeCollections() error {
 		e.report.Collections++
 
 		var members []int64
-		for p, err := range e.src.Collections().Positions(e.ctx, e.scope, id) {
+		for p, err := range e.src.Collections().Positions(e.ctx, e.scope, id, storage.ListOpts{}) {
 			if err != nil {
 				return fmt.Errorf("ingest: list positions of collection %d: %w", id, err)
 			}

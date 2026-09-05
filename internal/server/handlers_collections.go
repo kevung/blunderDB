@@ -43,9 +43,17 @@ type copyPositionReq struct {
 	PositionID     int64 `json:"positionId"`
 }
 
-type collectionIDReq struct {
+// collectionPositionsReq names a collection and, optionally, a page of it. A
+// collection can hold a whole library's worth of positions, and a client that
+// wants ten should not have to read all of them (issue #237). Both bounds
+// default to zero, which is what it has always meant: the whole thing.
+type collectionPositionsReq struct {
 	CollectionID int64 `json:"collectionId"`
+	Limit        int   `json:"limit"`
+	Offset       int   `json:"offset"`
 }
+
+func (r collectionPositionsReq) pageLimit() int { return r.Limit }
 
 func (s *Server) collectionRoutes() []route {
 	cs := func() storage.CollectionStore { return s.opts.Storage.Collections() }
@@ -95,8 +103,8 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.copyPosition", rpcVoid(func(ctx context.Context, scope string, req copyPositionReq) error {
 			return cs().CopyPosition(ctx, scope, req.ToCollectionID, req.PositionID)
 		})},
-		{http.MethodPost, "/v1/collections.positions", rpcStream(func(ctx context.Context, scope string, req collectionIDReq) iterPositions {
-			return cs().Positions(ctx, scope, req.CollectionID)
+		{http.MethodPost, "/v1/collections.positions", rpcStream(func(ctx context.Context, scope string, req collectionPositionsReq) iterPositions {
+			return cs().Positions(ctx, scope, req.CollectionID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
 		{http.MethodPost, "/v1/collections.collectionsOf", rpcStream(func(ctx context.Context, scope string, req positionIDReq) iterColls {
 			return cs().CollectionsOf(ctx, scope, req.PositionID)

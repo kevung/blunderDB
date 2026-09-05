@@ -11,7 +11,7 @@ import (
 type TournamentStore interface {
 	Create(ctx context.Context, scope string, name, date, location string) (int64, error)
 	Get(ctx context.Context, scope string, id int64) (*domain.Tournament, error)
-	List(ctx context.Context, scope string) iter.Seq2[*domain.Tournament, error]
+	List(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Tournament, error]
 	Update(ctx context.Context, scope string, id int64, name, date, location string) error
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 	Delete(ctx context.Context, scope string, id int64) error

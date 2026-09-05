@@ -242,7 +242,7 @@ func TestRunRemapsIdentifiers(t *testing.T) {
 	}
 
 	var members []int64
-	for p, err := range dst.Collections().Positions(ctx, "", dstCollID) {
+	for p, err := range dst.Collections().Positions(ctx, "", dstCollID, storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("list dst collection positions: %v", err)
 		}

@@ -42,7 +42,7 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 	}
 
 	var tournaments []Tournament
-	for t, err := range d.store.Tournaments().List(context.Background(), "") {
+	for t, err := range d.store.Tournaments().List(context.Background(), "", storage.ListOpts{}) {
 		if err != nil {
 			return nil, err
 		}

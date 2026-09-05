@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TestCommentAddUpdateDelete covers Add, Update, Delete and that a comment's
@@ -120,7 +121,7 @@ func TestCommentListAllAndSearch(t *testing.T) {
 	}
 
 	n := 0
-	for _, err := range s.Comments().ListAll(ctx, "") {
+	for _, err := range s.Comments().ListAll(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			t.Fatalf("ListAll: %v", err)
 		}

@@ -43,7 +43,7 @@ type CommentStore interface {
 	ByPosition(ctx context.Context, scope string, positionID int64) iter.Seq2[*domain.CommentEntry, error]
 
 	// ListAll streams every comment entry in the database.
-	ListAll(ctx context.Context, scope string) iter.Seq2[*domain.CommentEntry, error]
+	ListAll(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.CommentEntry, error]
 
 	// Search streams comment entries whose text matches query.
 	Search(ctx context.Context, scope string, query string) iter.Seq2[*domain.CommentEntry, error]

@@ -212,7 +212,7 @@ func (m *mover) copyPositions(rep *Report) error {
 
 func (m *mover) copyTournaments(rep *Report) error {
 	var tournaments []*domain.Tournament
-	for tr, err := range m.src.Tournaments().List(m.ctx, "") {
+	for tr, err := range m.src.Tournaments().List(m.ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			return fmt.Errorf("migrate: list tournaments: %w", err)
 		}
@@ -357,7 +357,7 @@ func (m *mover) copyCollections(rep *Report) error {
 
 		// Drain the membership before mapping ids (avoid nested source reads).
 		var posIDs []int64
-		for p, err := range m.src.Collections().Positions(m.ctx, "", c.id) {
+		for p, err := range m.src.Collections().Positions(m.ctx, "", c.id, storage.ListOpts{}) {
 			if err != nil {
 				return fmt.Errorf("migrate: list collection %d positions: %w", c.id, err)
 			}
@@ -401,7 +401,7 @@ func dryRun(ctx context.Context, src storage.Storage, scope string) (Report, err
 			rep.Comments++
 		}
 	}
-	for _, err := range src.Tournaments().List(ctx, "") {
+	for _, err := range src.Tournaments().List(ctx, "", storage.ListOpts{}) {
 		if err != nil {
 			return rep, err
 		}

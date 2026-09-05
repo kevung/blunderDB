@@ -57,8 +57,8 @@ func (s *Server) tournamentRoutes() []route {
 		{http.MethodPost, "/v1/tournaments.get", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Tournament, error) {
 			return ts().Get(ctx, scope, req.ID)
 		})},
-		{http.MethodPost, "/v1/tournaments.list", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterTours {
-			return ts().List(ctx, scope)
+		{http.MethodPost, "/v1/tournaments.list", rpcStream(func(ctx context.Context, scope string, req listReq) iterTours {
+			return ts().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
 		{http.MethodPost, "/v1/tournaments.update", rpcVoid(func(ctx context.Context, scope string, req tournamentUpdateReq) error {
 			return ts().Update(ctx, scope, req.ID, req.Name, req.Date, req.Location)
