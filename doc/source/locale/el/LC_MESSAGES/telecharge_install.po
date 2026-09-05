@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:32+0200\n"
+"POT-Creation-Date: 2026-09-06 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -258,12 +258,12 @@ msgid ""
 "Sous Linux et macOS, la commande affiche ``OK`` ; sous Windows, comparez "
 "la valeur affichée avec le contenu du fichier ``.sha256``. Cette "
 "vérification est la garantie disponible en l'absence de signature de code"
-" (voir :numref:`annexe_windows_malware` et :numref:`annexe_mac_malware`)."
+" (voir :ref:`annexe_windows_malware` et :ref:`annexe_mac_malware`)."
 msgstr ""
 "Σε Linux και macOS η εντολή εμφανίζει ``OK``· στα Windows συγκρίνετε την "
 "τιμή που εμφανίζεται με το περιεχόμενο του αρχείου ``.sha256``. Αυτός ο "
 "έλεγχος είναι η εγγύηση που διατίθεται ελλείψει υπογραφής κώδικα (βλ. "
-":numref:`annexe_windows_malware` και :numref:`annexe_mac_malware`)."
+":ref:`annexe_windows_malware` και :ref:`annexe_mac_malware`)."
 
 #: ../../source/telecharge_install.rst:102
 msgid ""
@@ -304,12 +304,13 @@ msgid ""
 " d'autres logiciels — mais reste ouvrable normalement depuis le menu "
 "*Ouvrir* de blunderDB."
 msgstr ""
-"Τα πακέτα ``.deb`` και ``.rpm`` συσχετίζουν την επέκταση ``.dbx`` (μια βάση "
-"εξαγόμενη με κωδικό, βλ. :ref:`diffusion_controlee`) με το blunderDB: το "
-"διπλό κλικ σε ένα αρχείο ``.dbx`` που λάβατε από κάποιον το ανοίγει "
-"απευθείας. Η επέκταση ``.db`` μιας συνηθισμένης βάσης **δεν** συσχετίζεται "
-"σκόπιμα — είναι υπερβολικά γενική και κοινή με άλλα προγράμματα — αλλά "
-"παραμένει κανονικά ανοίξιμη από το μενού *Άνοιγμα* του blunderDB."
+"Τα πακέτα ``.deb`` και ``.rpm`` συσχετίζουν την επέκταση ``.dbx`` (μια "
+"βάση εξαγόμενη με κωδικό, βλ. :ref:`diffusion_controlee`) με το "
+"blunderDB: το διπλό κλικ σε ένα αρχείο ``.dbx`` που λάβατε από κάποιον το"
+" ανοίγει απευθείας. Η επέκταση ``.db`` μιας συνηθισμένης βάσης **δεν** "
+"συσχετίζεται σκόπιμα — είναι υπερβολικά γενική και κοινή με άλλα "
+"προγράμματα — αλλά παραμένει κανονικά ανοίξιμη από το μενού *Άνοιγμα* του"
+" blunderDB."
 
 #: ../../source/telecharge_install.rst:128
 msgid "Paquets natifs (.deb / .rpm)"
@@ -355,23 +356,23 @@ msgstr ""
 
 #: ../../source/telecharge_install.rst:162
 msgid ""
-"blunderDB n'est pas encore publié sur Flathub : le bundle s'installe "
-"depuis le fichier téléchargé, et se met à jour en installant celui de la "
-"version suivante. L'application a accès au dossier personnel pour ouvrir "
-"et enregistrer les bases. La ligne de commande (:ref:`cli`) s'obtient par"
-" ``flatpak run io.github.kevung.blunderDB <commande>``."
+"Le bundle s'installe depuis le fichier téléchargé, et se met à jour en "
+"installant celui de la version suivante. L'application a accès au dossier"
+" personnel pour ouvrir et enregistrer les bases. La ligne de commande "
+"(:ref:`cli`) s'obtient par ``flatpak run io.github.kevung.blunderDB "
+"<commande>``."
 msgstr ""
-"Το blunderDB δεν έχει δημοσιευτεί ακόμη στο Flathub: το bundle "
-"εγκαθίσταται από το αρχείο που κατεβάσατε και ενημερώνεται εγκαθιστώντας "
-"αυτό της επόμενης έκδοσης. Η εφαρμογή έχει πρόσβαση στον προσωπικό φάκελο"
-" για να ανοίγει και να αποθηκεύει βάσεις. Η γραμμή εντολών (:ref:`cli`) "
-"είναι διαθέσιμη μέσω ``flatpak run io.github.kevung.blunderDB <εντολή>``."
+"Το bundle εγκαθίσταται από το αρχείο που κατεβάσατε και ενημερώνεται "
+"εγκαθιστώντας αυτό της επόμενης έκδοσης. Η εφαρμογή έχει πρόσβαση στον "
+"προσωπικό φάκελο για να ανοίγει και να αποθηκεύει βάσεις. Η γραμμή εντολών "
+"(:ref:`cli`) είναι διαθέσιμη μέσω ``flatpak run io.github.kevung.blunderDB "
+"<εντολή>``."
 
-#: ../../source/telecharge_install.rst:169
+#: ../../source/telecharge_install.rst:168
 msgid "Archive .tar.gz"
 msgstr "Αρχείο .tar.gz"
 
-#: ../../source/telecharge_install.rst:171
+#: ../../source/telecharge_install.rst:170
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -379,7 +380,7 @@ msgstr ""
 "Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, "
 "οπότε δεν χρειάζεται ``chmod``:"
 
-#: ../../source/telecharge_install.rst:180
+#: ../../source/telecharge_install.rst:179
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -395,11 +396,11 @@ msgstr ""
 "δίπλα στο εκτελέσιμο. Για να τον έχετε στο ``PATH`` σας: ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:188
+#: ../../source/telecharge_install.rst:187
 msgid "Binaire brut (méthode avancée)"
 msgstr "Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)"
 
-#: ../../source/telecharge_install.rst:190
+#: ../../source/telecharge_install.rst:189
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -409,7 +410,7 @@ msgstr ""
 "ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να"
 " το αποκαταστήσετε πριν από την πρώτη εκτέλεση:"
 
-#: ../../source/telecharge_install.rst:198
+#: ../../source/telecharge_install.rst:197
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -425,11 +426,11 @@ msgstr ""
 " ειδική έκδοση |latest_linux_webkit2gtk41_exe|. Τα εγγενή πακέτα "
 "επιλέγουν αυτόματα τη σωστή εξάρτηση."
 
-#: ../../source/telecharge_install.rst:207
+#: ../../source/telecharge_install.rst:206
 msgid "Image Docker (mode serveur)"
 msgstr "Εικόνα Docker (λειτουργία διακομιστή)"
 
-#: ../../source/telecharge_install.rst:209
+#: ../../source/telecharge_install.rst:208
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -442,7 +443,7 @@ msgstr ""
 "``linux/arm64``, με την ετικέτα της έκδοσης και με την ετικέτα "
 "``latest``:"
 
-#: ../../source/telecharge_install.rst:218
+#: ../../source/telecharge_install.rst:217
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -450,66 +451,53 @@ msgstr ""
 "Η εκκίνηση, η ρύθμιση και η προειδοποίηση για τον διαμεσολαβητή "
 "ταυτοποίησης περιγράφονται στο :ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:224
-msgid "Gestionnaires de paquets Windows et Mac (à venir)"
-msgstr "Διαχειριστές πακέτων για Windows και Mac (προσεχώς)"
+#: ../../source/telecharge_install.rst:223
+msgid "Manifestes winget et Homebrew"
+msgstr "Μανιφέστα winget και Homebrew"
 
-#: ../../source/telecharge_install.rst:226
+#: ../../source/telecharge_install.rst:225
 msgid ""
-"Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets "
-"(AUR, ``.deb``, ``.rpm``). L'équivalent pour Windows (`winget "
-"<https://learn.microsoft.com/windows/package-manager/>`__) et pour Mac "
-"(`Homebrew <https://brew.sh/>`__) est en préparation : **les manifestes "
-"sont fournis avec chaque release** (``blunderDB-winget-"
-"manifests-x.y.z.zip`` et ``blunderdb-x.y.z.rb`` sur la page des "
-"releases), mais ils ne sont pas encore soumis aux dépôts publics. Tant "
-"que ce n'est pas le cas, les commandes ci-dessous ne fonctionnent pas ; "
-"elles décrivent l'installation prévue :"
+"Chaque release fournit un manifeste `winget "
+"<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
+"winget-manifests-x.y.z.zip``) et une formule `Homebrew "
+"<https://brew.sh/>`__ (``blunderdb-x.y.z.rb``) sur la page des releases, "
+"pour qui souhaite installer blunderDB par ces gestionnaires depuis un "
+"fichier local. Aucun des deux ne figure dans les dépôts publics de winget"
+" ou de Homebrew. Ni l'un ni l'autre ne change la nature de l'exécutable :"
+" il reste non signé, et les avertissements décrits ci-dessous "
+"s'appliquent tels quels."
 msgstr ""
-"Σε Linux, το blunderDB εγκαθίσταται ήδη μέσω του διαχειριστή πακέτων "
-"(AUR, ``.deb``, ``.rpm``). Το αντίστοιχο για Windows (`winget "
-"<https://learn.microsoft.com/windows/package-manager/>`__) και για Mac "
-"(`Homebrew <https://brew.sh/>`__) βρίσκεται σε προετοιμασία: **τα "
-"manifests παρέχονται με κάθε release** (``blunderDB-winget-"
-"manifests-x.y.z.zip`` και ``blunderdb-x.y.z.rb`` στη σελίδα των "
-"releases), αλλά δεν έχουν υποβληθεί ακόμη στα δημόσια αποθετήρια. Όσο "
-"αυτό δεν ισχύει, οι παρακάτω εντολές δεν λειτουργούν· περιγράφουν την "
-"προβλεπόμενη εγκατάσταση:"
+"Κάθε έκδοση παρέχει στη σελίδα των εκδόσεων ένα μανιφέστο `winget "
+"<https://learn.microsoft.com/windows/package-manager/>`__ "
+"(``blunderDB-winget-manifests-x.y.z.zip``) και μια φόρμουλα `Homebrew "
+"<https://brew.sh/>`__ (``blunderdb-x.y.z.rb``), για όποιον θέλει να "
+"εγκαταστήσει το blunderDB μέσω αυτών των διαχειριστών πακέτων από τοπικό "
+"αρχείο. Κανένα από τα δύο δεν περιλαμβάνεται στα δημόσια αποθετήρια του "
+"winget ή του Homebrew. Κανένα από τα δύο δεν αλλάζει τη φύση του "
+"εκτελέσιμου: παραμένει ανυπόγραφο, και οι προειδοποιήσεις που περιγράφονται "
+"παρακάτω ισχύουν ως έχουν."
 
-#: ../../source/telecharge_install.rst:244
-msgid ""
-"Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il"
-" reste non signé, et les avertissements décrits ci-dessous s'appliquent "
-"tels quels. Sur Mac, ``brew install --cask --no-quarantine blunderdb`` "
-"évite le blocage de Gatekeeper au premier lancement."
-msgstr ""
-"Ούτε το πακέτο winget ούτε το cask αλλάζουν τη φύση του εκτελέσιμου: "
-"παραμένει μη υπογεγραμμένο, και οι προειδοποιήσεις που περιγράφονται "
-"παρακάτω ισχύουν όπως έχουν. Σε Mac, η ``brew install --cask --no-"
-"quarantine blunderdb`` αποφεύγει τον αποκλεισμό του Gatekeeper κατά την "
-"πρώτη εκκίνηση."
-
-#: ../../source/telecharge_install.rst:250
+#: ../../source/telecharge_install.rst:235
 msgid "Avertissements Windows et Mac"
 msgstr "Προειδοποιήσεις για Windows και Mac"
 
-#: ../../source/telecharge_install.rst:252
+#: ../../source/telecharge_install.rst:237
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
-"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
-" pourquoi et contourner les éventuels blocages."
+"exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
+"pourquoi et contourner les éventuels blocages."
 msgstr ""
 "Στα Windows, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
-"blunderDB. Δείτε :numref:`annexe_windows_malware` για να κατανοήσετε "
-"γιατί και πώς να παρακάμψετε τυχόν εμπόδια."
+"blunderDB. Δείτε :ref:`annexe_windows_malware` για να κατανοήσετε γιατί και "
+"πώς να παρακάμψετε τυχόν εμπόδια."
 
-#: ../../source/telecharge_install.rst:256
+#: ../../source/telecharge_install.rst:241
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
-" blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"
-" contourner les éventuels blocages."
+" blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "
+"contourner les éventuels blocages."
 msgstr ""
-"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
-"blunderDB. Δείτε :numref:`annexe_mac_malware` για να κατανοήσετε γιατί "
-"και πώς να παρακάμψετε τυχόν εμπόδια."
+"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του blunderDB. "
+"Δείτε :ref:`annexe_mac_malware` για να κατανοήσετε γιατί και πώς να "
+"παρακάμψετε τυχόν εμπόδια."
 

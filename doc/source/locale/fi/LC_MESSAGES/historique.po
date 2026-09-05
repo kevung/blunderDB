@@ -1,0 +1,1684 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 01:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/historique.rst:4
+msgid "Historique des versions"
+msgstr "Versiohistoria"
+
+#: ../../source/historique.rst:6
+msgid ""
+"Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une"
+" correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une "
+"puce et non la traduction de toute la version."
+msgstr ""
+"Jokainen alla oleva versio luettelee muutoksensa kohta kohdalta, jotta "
+"myöhempi korjaus (kirjoitusvirhe, myöhäinen lisäys) mitätöi vain yhden "
+"kohdan käännöksen, ei koko version käännöstä."
+
+#: ../../source/historique.rst:11
+msgid "0.36.0 (2026-09-05)"
+msgstr "0.36.0 (5.9.2026)"
+
+#: ../../source/historique.rst:13
+msgid ""
+"Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus "
+"embarquées ni téléchargées, mais calculées à la première ouverture, en "
+"arrière-plan et en silence — identiques octet pour octet à celles de "
+"gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule "
+"dans l'onglet *Bearoff* au lieu d'un téléchargement de 1,2 Go."
+msgstr ""
+"Ohjelmatiedosto on **7,3 Mt pienempi**: ulosmenotaulukoita ei enää "
+"upoteta eikä ladata, vaan ne lasketaan ensimmäisellä käynnistyksellä "
+"taustalla ja hiljaa — tavu tavulta samat kuin gnubg:n, SHA-256-tiiviste "
+"tarkistettuna. Laajennettu TS-06-11-taulukko lasketaan "
+"*Bearoff*-välilehdellä 1,2 Gt:n latauksen sijaan."
+
+#: ../../source/historique.rst:14
+msgid ""
+"**Les tournois se remplissent à l'import** : un match entre dans le "
+"tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est"
+" jamais déplacé."
+msgstr ""
+"**Turnaukset täyttyvät itsestään tuonnissa**: ottelu sijoitetaan "
+"turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo "
+"sijoitettua ottelua ei koskaan siirretä."
+
+#: ../../source/historique.rst:15
+msgid ""
+"**Une seule grammaire de recherche**, désormais lisible depuis la ligne "
+"de commande (``blunderdb search --query``) autant que depuis "
+"l'application."
+msgstr ""
+"**Yksi ainoa hakukielioppi**, nyt luettavissa komentoriviltä (``blunderdb"
+" search --query``) yhtä lailla kuin sovelluksesta."
+
+#: ../../source/historique.rst:16
+msgid ""
+"La ligne de commande gagne ``--format json`` sur neuf commandes, la "
+"**complétion pour bash, zsh et fish**, la commande ``repair`` et les "
+"sous-commandes ``anki card`` et ``anki log``."
+msgstr ""
+"Komentorivi saa ``--format json``-valitsimen yhdeksään komentoon, "
+"**täydennyksen bashille, zsh:lle ja fishille**, ``repair``-komennon sekä "
+"``anki card``- ja ``anki log``-alikomennot."
+
+#: ../../source/historique.rst:17
+msgid ""
+"L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus "
+"prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, "
+"Stats), et les pages Raccourcis et Ligne de commande deviennent des "
+"tableaux, sans encarts."
+msgstr ""
+"**Sovelluksen ohje tuotetaan käsikirjasta**: se ei voi enää jäädä siitä "
+"jälkeen. Kolme opastettua kierrosta lisää (Eval, Anki, Stats), ja "
+"Pikanäppäimet- ja Komentorivi-sivut muuttuvat taulukoiksi ilman "
+"laatikoita."
+
+#: ../../source/historique.rst:18
+msgid ""
+"Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et "
+"paquet AUR."
+msgstr ""
+"**Linux arm64 -ohjelmatiedosto**, toimitettuna tar-pakettina sekä "
+"``.deb``-, ``.rpm``- ja AUR-pakettina."
+
+#: ../../source/historique.rst:19
+msgid ""
+"Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, "
+"distingue l'équité *money* de l'équité *match*, et se parcourt au "
+"clavier."
+msgstr ""
+"**Eval**-paneeli löytää taas laudan, johon se jätettiin, erottaa "
+"*money*-equityn *match*-equitystä ja on selattavissa näppäimistöltä."
+
+#: ../../source/historique.rst:20
+#, no-python-format
+msgid ""
+"Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et "
+"son annexe, 135 routes), identifiant de corrélation par requête, "
+"métriques de travail en vol, compression des flux NDJSON (13,5 % de la "
+"taille), et les deux appels qui dépassent le tenant — vidange et purge — "
+"passent sous ``/ops/``."
+msgstr ""
+"Palvelinpuolella: **koodista tuotettu API-sopimus** (``openapi.yaml`` ja "
+"sen liite, 135 reittiä), korrelaatiotunniste jokaiselle pyynnölle, "
+"mittarit käynnissä olevasta työstä, NDJSON-virtojen pakkaus (13,5 % "
+"koosta), ja kaksi tenantin ylittävää kutsua — vacuum ja purge — siirtyvät"
+" ``/ops/``-etuliitteen alle."
+
+#: ../../source/historique.rst:21
+msgid ""
+"**Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, "
+"si bien qu'une même position d'argent n'entre plus deux fois par des "
+"portes différentes."
+msgstr ""
+"**Skeema 2.18.0**: Jacoby ja beaver poistuvat aseman identiteetistä, "
+"joten sama rahapeliasema ei enää tule sisään kahdesti eri ovista."
+
+#: ../../source/historique.rst:22
+msgid ""
+"Corrections notables : le volet de détail du panneau Matchs n'occupe plus"
+" la moitié de l'écran quand rien n'est sélectionné, la première partie "
+"d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent "
+"de vue depuis n'importe quel panneau, et huit raccourcis « "
+"afficher/cacher » cachent enfin."
+msgstr ""
+"Merkittäviä korjauksia: Ottelut-paneelin yksityiskohtaruutu ei enää vie "
+"puolta ruudusta, kun mitään ei ole valittuna, pelipöytäkirjan ensimmäinen"
+" peli taittuu kuten muutkin, SHIFT-J ja SHIFT-K vaihtavat näkymää mistä "
+"tahansa paneelista, ja kahdeksan ”näytä/piilota”-pikanäppäintä vihdoin "
+"piilottaa."
+
+#: ../../source/historique.rst:23 ../../source/historique.rst:34
+msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr "Katso :ref:`cli`, :ref:`headless` ja :ref:`manuel`."
+
+#: ../../source/historique.rst:26
+msgid "0.35.0 (2026-09-02)"
+msgstr "0.35.0 (2026-09-02)"
+
+#: ../../source/historique.rst:28
+msgid ""
+"La ligne de commande gagne deux familles : ``blunderdb collection`` "
+"(lister, afficher, créer, renommer, supprimer, exporter une collection) "
+"et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, "
+"resynchronisation d'un paquet)."
+msgstr ""
+"Komentorivi saa kaksi uutta perhettä: ``blunderdb collection`` (kokoelman"
+" listaus, näyttö, luonti, uudelleennimeäminen, poisto, vienti) ja "
+"``blunderdb anki`` (pakat, tilastot, kertausennuste, pakan "
+"uudelleensynkronointi)."
+
+#: ../../source/historique.rst:29
+msgid ""
+"Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
+"/blunderdb-serve``, amd64 et arm64), gagne la route "
+"``maintenance.vacuum`` et **filigrane ses exports** avec l'identité "
+"d'émetteur du serveur (``--identity-dir``)."
+msgstr ""
+"Palvelintila julkaistaan **Docker-imagena** (``ghcr.io/kevung/blunderdb-"
+"serve``, amd64 ja arm64), saa ``maintenance.vacuum``-reitin ja "
+"**vesileimaa vientinsä** palvelimen liikkeeseenlaskijan identiteetillä "
+"(``--identity-dir``)."
+
+#: ../../source/historique.rst:30
+msgid ""
+"L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
+"les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
+msgstr ""
+"gammonNet-evaluaattori **hinnoittelee lehtensä kuutiolla**: ottelun "
+"tuloksessa haun tuomiot lähestyvät eXtreme Gammonin antamia."
+
+#: ../../source/historique.rst:31
+msgid ""
+"Chaque release livre désormais les **manifestes winget et Homebrew** et "
+"un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
+msgstr ""
+"Jokainen julkaisu toimittaa nyt **winget- ja Homebrew-manifestit** ja "
+"Flatpak-paketin, Debian-, RPM- ja AUR-pakettien lisäksi."
+
+#: ../../source/historique.rst:32
+msgid ""
+"Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
+"positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
+"fenêtres modales partagent un même socle (focus, Échap, accessibilité), "
+"le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de "
+"police japonaise inutile."
+msgstr ""
+"Käyttöliittymässä kirjasto on nyt **sivutettu** (50 000 position "
+"tietokanta ei enää lataa kaikkea muistiin joka päivityksellä), modaalit "
+"ikkunat jakavat yhteisen perustan (fokus, Escape, saavutettavuus), lauta "
+"piirtää uudelleen vain sen, mikä muuttuu, ja binääri menettää 5,5 Mt "
+"tarpeetonta japanilaista fonttia."
+
+#: ../../source/historique.rst:33
+msgid ""
+"Corrections notables : une base importée par « Importer une base » "
+"gardait des positions invisibles aux filtres et dédoublées au second "
+"import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de "
+"fusion des joueurs restait grisé, l'export du serveur était vide, et sous"
+" Windows la suppression de la base bearoff téléchargée et ``create "
+"--force`` échouaient."
+msgstr ""
+"Merkittävät korjaukset: ”Tuo tietokanta” -toiminnolla tuotu tietokanta "
+"piti positioita suodattimille näkymättöminä ja kahdennettuina toisessa "
+"tuonnissa (korjattu avattaessa), pelaajien yhdistämisikkunan "
+"Yhdistä-painike pysyi harmaana, palvelimen vienti oli tyhjä, ja "
+"Windowsissa ladatun bearoff-tietokannan poistaminen sekä ``create "
+"--force`` epäonnistuivat."
+
+#: ../../source/historique.rst:37
+msgid "0.34.0 (2026-09-02)"
+msgstr "0.34.0 (2026-09-02)"
+
+#: ../../source/historique.rst:39
+msgid ""
+"Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
+"blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
+"— réseau de neurones, recherche 0 à 2-ply avec élagage, décision de "
+"videau selon Janowski et la table d'équité de match de blunderDB, et une "
+"recherche qui honore le score du match."
+msgstr ""
+"**Sisäänrakennettu evaluaattori**: gammonNet, siirretty Go-kielelle ja "
+"käännetty blunderDB:hen, arvioi minkä tahansa aseman ilman "
+"verkkoyhteyttä, ilman XG:tä tai gnuBG:tä — neuroverkko, 0–2-ply-haku "
+"karsinnalla, kuutiopäätös Janowskin mukaan ja blunderDB:n ottelun "
+"ekviteettitaulukon mukaan, sekä haku, joka kunnioittaa ottelun tulosta."
+
+#: ../../source/historique.rst:40
+msgid ""
+"Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
+" la position (chances de gain, gammon et backgammon des deux camps, "
+"équité) puis la seule décision que le plateau demande, sur une grille "
+"stable et sans défilement ; les équités de match sont **normalisées** et "
+"le verdict « trop bon pour doubler » redevient visible."
+msgstr ""
+"Bearoff-paneelista tulee **Eval**-paneeli: se esittää aseman tosiseikat "
+"(molempien puolten voitto-, gammon- ja backgammon-mahdollisuudet, "
+"ekviteetti) ja sitten sen yhden päätöksen, jota lauta kysyy, vakaassa "
+"ruudukossa ilman vierittämistä; ottelun ekviteetit ovat "
+"**normalisoituja**, ja tuomio ”liian hyvä tuplattavaksi” on jälleen "
+"näkyvissä."
+
+#: ../../source/historique.rst:41
+msgid ""
+"L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
+" repos, annulable par tout nouveau geste, l'étiquette de profondeur "
+"disant toujours celle qui a produit le chiffre."
+msgstr ""
+"Arviointi on **asteittainen**: 0-ply välittömästi eleen yhteydessä, "
+"sitten 2-ply levossa, peruutettavissa millä tahansa uudella eleellä, "
+"syvyysmerkinnän ilmoittaessa aina sen, joka tuotti luvun."
+
+#: ../../source/historique.rst:42
+msgid ""
+"Le plateau entier, les dés et le score s'y éditent, au clic comme au "
+"clavier, et une position de la bibliothèque entre dans le panneau et en "
+"ressort."
+msgstr ""
+"Koko lauta, nopat ja tulos ovat siellä muokattavissa, hiirellä tai "
+"näppäimistöllä, ja kirjaston asema siirtyy paneeliin ja pois siitä."
+
+#: ../../source/historique.rst:43
+msgid ""
+"Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
+" fournit le verdict de videau au score que le panneau ne donnait pas."
+msgstr ""
+"Kaksipuolisen tietokannan ulkopuolella olevassa juoksussa kolmas, "
+"**arvioitu** tila tarjoaa kuutiotuomion ottelun tuloksessa, jota paneeli "
+"ei aiemmin antanut."
+
+#: ../../source/historique.rst:44
+msgid ""
+"Un onglet **gammonNet** de la configuration sépare la profondeur "
+"d'affichage de la profondeur d'analyse."
+msgstr ""
+"Asetusten **gammonNet**-välilehti erottaa näyttösyvyyden "
+"analyysisyvyydestä."
+
+#: ../../source/historique.rst:45
+msgid ""
+"Après un import, un **lot d'analyse** borné, visible, annulable et "
+"reprenable comble les positions sans aucune analyse, sans jamais écraser "
+"une analyse importée ; le **rattrapage d'une bibliothèque** existante se "
+"lance depuis l'interface, par la nouvelle commande ``blunderdb analyze`` "
+"ou en mode serveur."
+msgstr ""
+"Tuonnin jälkeen rajattu, näkyvä, peruutettavissa oleva ja jatkettavissa "
+"oleva **analyysierä** täyttää asemat, joilla ei ole yhtään analyysiä, "
+"korvaamatta koskaan tuotua analyysiä; olemassa olevan **kirjaston "
+"täydentäminen** käynnistetään käyttöliittymästä, uudella ``blunderdb "
+"analyze``-komennolla tai palvelintilassa."
+
+#: ../../source/historique.rst:46
+msgid ""
+"Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
+"héritait de l'analyse du doubleur sans être retournée, la notation des "
+"coups des Blancs et des entrées de barre suit gnuBG et XG, la profondeur "
+"d'une analyse gnuBG est lue correctement, et la taille du panneau latéral"
+" est mémorisée."
+msgstr ""
+"Merkittävät korjaukset: eXtreme Gammonista tuotu kuutiovastaus peri "
+"aiemmin tuplaajan analyysin kääntämättä sitä, Valkoisten siirtojen ja "
+"baarista tulon merkintä noudattaa nyt gnuBG:tä ja XG:tä, gnuBG-analyysin "
+"syvyys luetaan oikein, ja sivupaneelin koko muistetaan."
+
+#: ../../source/historique.rst:47
+msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
+msgstr "Katso :ref:`panneau_epc`, :ref:`manuel` ja :ref:`cli`."
+
+#: ../../source/historique.rst:50
+msgid "0.33.0 (2026-08-26)"
+msgstr "0.33.0 (2026-08-26)"
+
+#: ../../source/historique.rst:52
+msgid ""
+"Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
+"précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
+"joueur de la base — matchs, victoires/défaites, décisions comptées, PR "
+"global / pions / videau, Snowie Error Rate, blunders et chance. Le "
+"tableau se trie par n'importe quelle colonne, se restreint aux dates "
+"d'une compétition par les filtres habituels, et un clic sur une ligne "
+"bascule sur le détail du joueur. Un tiret y signale une valeur jamais "
+"mesurée, jamais un zéro. Le tableau est également disponible en ligne de "
+"commande (``blunderdb list --type players``, en texte, JSON ou CSV) et en"
+" mode serveur."
+msgstr ""
+"Tilastopaneeliin tulee **Pelaajat**-välilehti: kolme aiempaa välilehteä "
+"kuvaavat yhtä pelaajaa, tämä vertaa heitä kaikkia — yksi rivi kutakin "
+"tietokannan pelaajaa kohden: ottelut, voitot/tappiot, lasketut päätökset,"
+" PR yhteensä / nappulat / tuplauskuutio, Snowie Error Rate, karkeat "
+"virheet ja tuuri. Taulukon voi järjestää mistä tahansa sarakkeesta, "
+"rajata tavallisilla suodattimilla yhden kilpailun päiviin, ja rivin "
+"napsautus siirtyy kyseisen pelaajan tietoihin. Viiva tarkoittaa arvoa, "
+"jota ei ole koskaan mitattu — ei koskaan nollaa. Taulukko on saatavilla "
+"myös komentoriviltä (``blunderdb list --type players``, tekstinä, JSON- "
+"tai CSV-muodossa) ja palvelintilassa."
+
+#: ../../source/historique.rst:53
+msgid ""
+"La **chance** de chaque lancer est désormais conservée en base et "
+"affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
+" est lue à l'import depuis les fichiers eXtreme Gammon comme depuis "
+"gnuBG. Elle n'est pas rétroactive — les matchs importés auparavant "
+"portent un tiret, et il faut réimporter les fichiers source pour la "
+"récupérer ; les formats qui ne la transportent pas (BGF, Jellyfish "
+"``.mat``) n'en fourniront jamais."
+msgstr ""
+"Jokaisen heiton **tuuri** tallennetaan nyt tietokantaan ja näytetään: "
+"keskimääräinen tuuri heittoa kohden, pisteen tuhannesosina, etumerkillä. "
+"Se luetaan tuonnissa sekä eXtreme Gammon- että gnuBG-tiedostoista. Se ei "
+"ole takautuva — aiemmin tuodut ottelut näyttävät viivan, ja "
+"lähdetiedostot on tuotava uudelleen sen saamiseksi; muodot, jotka eivät "
+"sitä kuljeta (BGF, Jellyfish ``.mat``), eivät sitä koskaan tarjoa."
+
+#: ../../source/historique.rst:54
+msgid ""
+"L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
+"décisions de videau, et non plus seulement combien elles coûtent : une "
+"ligne *Offrir* (doubles manqués, doubles prématurés) et une ligne "
+"*Répondre* (passes à tort, prises à tort), les deux séparées à dessein "
+"puisqu'un même joueur peut doubler tard et prendre large. Chaque case "
+"porte son nombre, l'infobulle l'équité perdue, et le clic charge les "
+"positions correspondantes."
+msgstr ""
+"**Virheet**-välilehti kertoo nyt, mihin *suuntaan* tuplauspäätökset "
+"menevät pieleen, ei vain paljonko ne maksavat: rivi *Tarjoaminen* "
+"(jääneet tuplaukset, ennenaikaiset tuplaukset) ja rivi *Vastaaminen* "
+"(virheelliset luovutukset, virheelliset vastaanotot), tarkoituksella "
+"erillään, sillä sama pelaaja voi tuplata myöhään ja ottaa vastaan "
+"löysästi. Kussakin ruudussa on lukumäärä, työkaluvihjeessä menetetty "
+"equity, ja napsautus lataa vastaavat asemat."
+
+#: ../../source/historique.rst:55
+msgid ""
+"Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
+" les suppressions : bouton dans les paramètres et sous-commande "
+"``blunderdb vacuum``. Elle ne se déclenche jamais toute seule."
+msgstr ""
+"Uusi **Tiivistä tietokanta** -toiminto, joka ottaa takaisin poistojen "
+"jättämän tilan: painike asetuksissa ja alikomento ``blunderdb vacuum``. "
+"Se ei käynnisty koskaan itsestään."
+
+#: ../../source/historique.rst:56
+msgid ""
+"Ergonomie : les actions destructives demandent confirmation, une "
+"recherche en cours est signalée, une commande inconnue reçoit un message "
+"au lieu du silence, et les onglets, panneaux dockés et petites fenêtres "
+"se pilotent entièrement au clavier. La recherche est par ailleurs "
+"sensiblement plus rapide."
+msgstr ""
+"Käytettävyys: tuhoavat toiminnot pyytävät vahvistuksen, käynnissä "
+"olevasta hausta ilmoitetaan, tuntematon komento saa viestin hiljaisuuden "
+"sijaan, ja välilehtiä, telakoituja paneeleja ja pieniä valintaikkunoita "
+"voi käyttää täysin näppäimistöllä. Haku on lisäksi tuntuvasti nopeampi."
+
+#: ../../source/historique.rst:57
+msgid ""
+"Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
+"étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
+" déjà constituée se répare sans réimport, en mode serveur) ; le filtre "
+"joueur rétrécissait à tort le dénominateur du Snowie Error Rate ; les "
+"exports écrivaient un schéma périmé ; et ``blunderdb vacuum`` ouvrait "
+"l'interface graphique au lieu de compacter la base."
+msgstr ""
+"Merkittävät korjaukset: gnuBG:n ”Double No” -merkinnällä varustetut ei-"
+"tuplaukset laskettiin tuplauksiksi, mikä vääristi kuution PR:ää (jo "
+"kertynyt tietokanta korjataan palvelintilassa ilman uudelleentuontia); "
+"pelaajasuodatin kavensi virheellisesti Snowie Error Raten nimittäjää; "
+"viennit kirjoittivat vanhentuneen skeeman; ja ``blunderdb vacuum`` avasi "
+"graafisen käyttöliittymän tietokannan tiivistämisen sijaan."
+
+#: ../../source/historique.rst:58
+msgid "Voir :ref:`stats` et :ref:`cli`."
+msgstr "Katso :ref:`stats` ja :ref:`cli`."
+
+#: ../../source/historique.rst:61
+msgid "0.32.0 (2026-08-09)"
+msgstr "0.32.0 (2026-08-09)"
+
+#: ../../source/historique.rst:63
+msgid ""
+"Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
+"course complète."
+msgstr ""
+"EPC-paneelista tulee **Bearoff**-paneeli, ja se saa täyden "
+"juoksuanalyysin."
+
+#: ../../source/historique.rst:64
+msgid ""
+"Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
+"count, du wastage et du nombre moyen de lancers de chaque joueur, "
+"désormais présentés en tableau avec une ligne Δ signée — les probabilités"
+" de gain des deux joueurs et les équités money (cubeless, sans double, "
+"double/prend, double/passe, avec l'écart de chaque décision à la "
+"meilleure) ainsi que la **meilleure décision de videau**."
+msgstr ""
+"Puhtaassa bearoff-asemassa se näyttää — EPC:n, pip countin, hukan ja "
+"kummankin pelaajan keskimääräisten heittojen lisäksi, nyt taulukkona "
+"etumerkillisellä Δ-rivillä — molempien pelaajien voittotodennäköisyydet "
+"ja money-ekviteetit (cubeless, ei tuplausta, tuplaus/otto, "
+"tuplaus/hylkäys, kunkin päätöksen erolla parhaaseen) sekä **parhaan "
+"kuutiopäätöksen**."
+
+#: ../../source/historique.rst:65
+msgid ""
+"Deux régimes clairement distingués : *exact* (lecture dans une base two-"
+"sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
+"joueur) et *estimé* (convolution calibrée, marge d'erreur affichée — le "
+"verdict de videau n'est jamais estimé)."
+msgstr ""
+"Kaksi selvästi erotettua tilaa: *tarkka* (luku kaksipuolisesta "
+"tietokannasta; GNUbg:n TS-06-06-tietokanta sisäänrakennettuna, kattaen "
+"enintään 6 tammaa pelaajaa kohti) ja *arvioitu* (kalibroitu konvoluutio, "
+"virhemarginaali näytetään — kuutiotuomiota ei koskaan arvioida)."
+
+#: ../../source/historique.rst:66
+msgid ""
+"La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
+"Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
+"avec vérification d'intégrité et reprise des téléchargements interrompus "
+"; un fichier ``.bd`` two-sided quelconque de gnubg peut aussi être "
+"désigné."
+msgstr ""
+"Laajennettu TS-06-11-tietokanta (tarkka tuomio enintään 11 tamman osalta "
+"pelaajaa kohti, 1,2 Gt) ladataan asetusten uudelta "
+"*Bearoff*-välilehdeltä, eheystarkistuksella ja keskeytyneen latauksen "
+"jatkamisella; myös mikä tahansa gnubg:n kaksipuolinen ``.bd``-tiedosto "
+"voidaan osoittaa."
+
+#: ../../source/historique.rst:67
+msgid ""
+"**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
+"modification et se révèlent zone par zone, d'un clic."
+msgstr ""
+"**Haastetila** harjoittelua varten: tulokset piilotetaan jokaisen "
+"muutoksen yhteydessä ja paljastetaan alue kerrallaan yhdellä "
+"napsautuksella."
+
+#: ../../source/historique.rst:68
+msgid ""
+"Édition entièrement au plateau : pions des deux jans, joueur au trait "
+"(clic sur le rectangle sortie/score) et position du videau (clic sur le "
+"videau)."
+msgstr ""
+"Muokkaus kokonaan laudalla: molempien pelaajien tammat, vuorossa oleva "
+"pelaaja (napsauta bearoff/tulos-suorakulmiota) ja kuution sijainti "
+"(napsauta kuutiota)."
+
+#: ../../source/historique.rst:69
+msgid ""
+"Le clic sur le plateau est désormais exact à toute échelle d'interface "
+"(un clic sur le point 1 pouvait atterrir sur le point 2)."
+msgstr ""
+"Laudalle napsauttaminen on nyt tarkkaa millä tahansa käyttöliittymän "
+"skaalauksella (napsautus pisteeseen 1 saattoi osua pisteeseen 2)."
+
+#: ../../source/historique.rst:70
+msgid ""
+"Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
+"``--bearoff-ts`` du mode serveur."
+msgstr ""
+"Uusi ``blunderdb epc``-komento komentorivillä ja ``--bearoff-"
+"ts``-valitsin palvelintilassa."
+
+#: ../../source/historique.rst:71
+msgid ""
+"Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
+"Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
+"affichée."
+msgstr ""
+"Uusi käsikirjan osio, ”Bearoff-paneelin menetelmät ja oletukset”, esittää"
+" tyhjentävästi jokaisen näytetyn arvon taustalla olevat oletukset."
+
+#: ../../source/historique.rst:72
+msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
+msgstr "Katso :ref:`panneau_epc` ja :ref:`epc_methodologie`."
+
+#: ../../source/historique.rst:75
+msgid "0.31.0 (2026-08-04)"
+msgstr "0.31.0 (2026-08-04)"
+
+#: ../../source/historique.rst:77
+msgid ""
+"Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
+"deux facultatifs et choisis au moment de l'export."
+msgstr ""
+"Tietokannan jakaminen kolmansille osapuolille: kaksi riippumatonta "
+"mekanismia, molemmat valinnaisia ja valittavissa viennin yhteydessä."
+
+#: ../../source/historique.rst:78
+msgid ""
+"Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
+"il vient, signé par une identité d'émetteur créée toute seule au premier "
+"usage ; la marque est infalsifiable, se lit en tête du panneau "
+"Métadonnées (ou par ``blunderdb info``, sans jamais écrire dans le "
+"fichier) et ne consigne rien du côté de celui qui reçoit la base — aucun "
+"journal, aucun suivi."
+msgstr ""
+"**Alkuperän vesileima** merkitsee tiedostoon, mikä se on ja mistä se on "
+"peräisin, allekirjoitettuna ensimmäisessä käytössä itsestään luodulla "
+"liikkeeseenlaskijan identiteetillä; merkintä on väärentämätön, näkyy "
+"Metatiedot-paneelin yläreunassa (tai komennolla ``blunderdb info``, "
+"kirjoittamatta koskaan tiedostoon) eikä tallenna mitään vastaanottajan "
+"puolelle — ei lokia, ei seurantaa."
+
+#: ../../source/historique.rst:79
+msgid ""
+"La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
+"(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
+" l'en-tête reste lisible en clair ; l'identité s'exporte et s'importe en "
+"un seul fichier depuis les préférences."
+msgstr ""
+"**Salasanasuojaus** tuottaa salatun ``.dbx``-tiedoston (AES-256-GCM, "
+"Argon2id:llä johdettu avain), tarkistettuna joka avauskerralla, jonka "
+"otsikko pysyy selväkielisenä; identiteetti viedään ja tuodaan yhtenä "
+"tiedostona asetuksista."
+
+#: ../../source/historique.rst:80
+msgid ""
+"Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
+" qui part réellement (les positions affichées), part couverte de chaque "
+"collection signalée en rouge lorsqu'elle est partielle, tournois "
+"exportables seulement avec leurs matchs — et un export trois fois plus "
+"rapide."
+msgstr ""
+"Vienti-ikkuna uudistettu: yksi näyttö neljän sijaan, muistutus siitä, "
+"mitä todella lähtee (näytetyt asemat), kunkin kokoelman katettu osuus "
+"punaisella merkittynä, kun se on osittainen, turnaukset vietävissä vain "
+"otteluidensa kanssa — ja vienti kolme kertaa nopeampi."
+
+#: ../../source/historique.rst:81
+msgid ""
+"Fenêtre de configuration réorganisée en trois onglets (Interface, "
+"Couleurs du plateau, Identité d'émetteur), de taille et de position "
+"stables."
+msgstr ""
+"Asetusikkuna järjestetty uudelleen kolmeen välilehteen (Käyttöliittymä, "
+"Laudan värit, Liikkeeseenlaskijan identiteetti), vakaalla koolla ja "
+"sijainnilla."
+
+#: ../../source/historique.rst:82
+msgid "Panneau Métadonnées redisposé en une seule grille."
+msgstr "Metatiedot-paneeli järjestetty uudelleen yhdeksi ruudukoksi."
+
+#: ../../source/historique.rst:83
+msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
+msgstr "Loki-paneeli, joka vastaanotti vain komentojen kaiun, poistetaan."
+
+#: ../../source/historique.rst:84
+msgid ""
+"Corrections notables : un mot de passe erroné n'ouvre plus une base "
+"protégée, les champs des fenêtres modales ne perdent plus le focus au "
+"clic, le calcul des indicateurs PR/MWC ne plante plus sur une partie "
+"d'argent, et les fichiers temporaires (``-wal``, ``-shm``, verrou) sont "
+"nettoyés à la fermeture."
+msgstr ""
+"Merkittävät korjaukset: väärä salasana ei enää avaa suojattua "
+"tietokantaa, modaali-ikkunoiden kentät eivät enää menetä fokusta "
+"napsautettaessa, PR/MWC-indikaattoreiden laskenta ei enää kaadu money-"
+"pelissä, ja väliaikaiset tiedostot (``-wal``, ``-shm``, lukko) siivotaan "
+"suljettaessa."
+
+#: ../../source/historique.rst:85
+msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
+msgstr "Katso :ref:`diffusion_controlee` ja :ref:`manuel`."
+
+#: ../../source/historique.rst:88
+msgid "0.30.0 (2026-07-26)"
+msgstr "0.30.0 (2026-07-26)"
+
+#: ../../source/historique.rst:90
+msgid ""
+"Recherche par commentaire : le filtre « Texte de recherche » devient le "
+"filtre « Commentaire » et propose trois modes exclusifs — *contient le "
+"texte* (comportement précédent, jeton ``t\"\"mot1;mot2\"\"``), *a un "
+"commentaire* (jeton ``co``) et *sans commentaire* (jeton ``xco``) — pour "
+"retrouver d'un geste les positions annotées, ou au contraire celles qu'il"
+" reste à commenter."
+msgstr ""
+"Haku kommentin mukaan: ”Hakuteksti”-suodattimesta tulee "
+"”Kommentti”-suodatin, joka tarjoaa kolme toisensa poissulkevaa tilaa — "
+"*sisältää tekstin* (aiempi käytös, tunnus ``t\"\"sana1;sana2\"\"``), "
+"*sisältää kommentin* (tunnus ``co``) ja *ilman kommenttia* (tunnus "
+"``xco``) — löytääkseen yhdellä eleellä kommentoidut asemat, tai "
+"päinvastoin ne, jotka on vielä kommentoitava."
+
+#: ../../source/historique.rst:91
+msgid ""
+"Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
+"lors de l'analyse d'un match XG sont désormais lues à l'import et "
+"retrouvables par le filtre « Marquée » (jeton ``fl``), combinable avec "
+"tous les autres critères ; une décision de videau marquée donne deux "
+"positions marquées, le double et la prise/passe."
+msgstr ""
+"eXtreme Gammonissa merkityt asemat: XG-ottelun analysoinnin aikana "
+"asetetut merkinnät (*flags*) luetaan nyt tuonnin yhteydessä ja löydetään "
+"”Merkitty”-suodattimella (tunnus ``fl``), yhdistettävissä mihin tahansa "
+"muuhun kriteeriin; merkitty kuutiopäätös antaa kaksi merkittyä asemaa, "
+"tuplauksen ja oton/hylkäyksen."
+
+#: ../../source/historique.rst:92
+msgid ""
+"Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
+"``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
+"aux commentaires ni aux analyses existants."
+msgstr ""
+"Koska merkintä ei ole takautuva, riittää, että kyseinen ``.xg``-tiedosto "
+"tuodaan uudelleen, jotta sen merkinnät liittyvät tietokantaan, koskematta"
+" olemassa oleviin kommentteihin tai analyyseihin."
+
+#: ../../source/historique.rst:93
+msgid ""
+"Corrections notables : le PR affiché sur le badge d'un tournoi se "
+"rapporte au joueur de référence et non plus au cumul des deux joueurs, "
+"les paquets Anki fondés sur une recherche respectent de nouveau les "
+"filtres de cette recherche au lieu de reprendre toute la base, et un "
+"blocage de la recherche combinant certains filtres (texte, date, erreur "
+"du coup joué) est corrigé."
+msgstr ""
+"Merkittävät korjaukset: turnauksen merkissä näkyvä PR viittaa nyt "
+"vertailupelaajaan eikä molempien pelaajien summaan, hakuun perustuvat "
+"Anki-pakat kunnioittavat jälleen kyseisen haun suodattimia sen sijaan, "
+"että ottaisivat koko tietokannan, ja tiettyjen suodattimien (teksti, "
+"päivämäärä, pelatun siirron virhe) yhdistämisestä johtuva haun "
+"jumiutuminen on korjattu."
+
+#: ../../source/historique.rst:94
+msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
+msgstr "Katso :ref:`cmd_mode` ja :ref:`manuel`."
+
+#: ../../source/historique.rst:97
+msgid "0.29.0 (2026-07-18)"
+msgstr "0.29.0 (2026-07-18)"
+
+#: ../../source/historique.rst:99
+msgid ""
+"Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
+" (panneau Matchs) comme en ligne de commande, avec la route serveur "
+"correspondante — pratique pour rejouer un match dans un autre logiciel de"
+" backgammon."
+msgstr ""
+"Ottelun vienti Jellyfish/gnubg-muodossa (``.mat``) käyttöliittymästä "
+"(Ottelut-paneeli) sekä komentoriviltä, vastaavalla palvelinreitillä — "
+"kätevä ottelun uudelleenpelaamiseen toisessa backgammon-ohjelmassa."
+
+#: ../../source/historique.rst:100
+msgid ""
+"Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
+"plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
+" un jet donné."
+msgstr ""
+"Haku: uusi ”poissuljetut nopat” -erottelija (tunnus ``xD65``, useita "
+"sallitaan), joka sulkee pois asemat, joiden heitto vastaa annettua "
+"heittoa."
+
+#: ../../source/historique.rst:101
+msgid ""
+"Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
+"une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
+"(navigation, recherche et analyse possibles, modifications désactivées, "
+"mention « [lecture seule] » dans la barre de titre) au lieu de risquer "
+"une corruption."
+msgstr ""
+"Turvallinen samanaikainen avaus: toisessa blunderDB-ikkunassa jo "
+"kirjoitusta varten avattu tietokanta avataan nyt vain luku -tilassa "
+"(selaus, haku ja analyysi edelleen mahdollisia, muutokset pois käytöstä, "
+"”[vain luku]” -maininta otsikkopalkissa) korruption riskeeraamisen "
+"sijaan."
+
+#: ../../source/historique.rst:102
+msgid ""
+"Provenance des positions : hors mode match, la barre d'informations au-"
+"dessus du plateau indique le match — et son tournoi — d'où provient la "
+"position étudiée, avec un badge « +N » lorsqu'elle apparaît dans "
+"plusieurs matchs."
+msgstr ""
+"Asemien alkuperä: ottelutilan ulkopuolella laudan yläpuolella oleva "
+"tietopalkki näyttää ottelun — ja sen turnauksen — josta tutkittava asema "
+"on peräisin, ”+N”-merkillä, kun se esiintyy useassa ottelussa."
+
+#: ../../source/historique.rst:103
+msgid ""
+"Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
+"police, le presse-papier ou la dernière base ouverte ne sont pas "
+"disponibles."
+msgstr ""
+"Lisääntynyt kestävyys ympäristöä vastaan: automaattinen vaihtoehtoinen "
+"toiminta, kun fontti, leikepöytä tai viimeksi avattu tietokanta eivät ole"
+" käytettävissä."
+
+#: ../../source/historique.rst:104
+msgid ""
+"Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
+"barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
+"position affichée."
+msgstr ""
+"Kirjaston nimenomainen uudelleenlataus (``CTRL-R``, työkalupalkin painike"
+" tai komento ``e``) avaa uudelleen analyysipaneelin näkyvillä olevaan "
+"asemaan."
+
+#: ../../source/historique.rst:105
+msgid ""
+"Corrections notables : suppression d'un blocage à l'export de grosses "
+"bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
+"match, filtre par commentaire multi-mots, dédoublonnage de l'événement et"
+" du tournoi dans la barre d'informations, et divers ajustements "
+"d'affichage."
+msgstr ""
+"Merkittävät korjaukset: poistettu suurten tietokantojen viennin "
+"jumiutuminen, viennin ”Ei mitään” -painike, joka ei todellisuudessa "
+"vienyt oikeasti mitään, monisanainen kommenttisuodatus, tapahtuman ja "
+"turnauksen kahdennuksen poisto tietopalkista, sekä useita "
+"näyttömuutoksia."
+
+#: ../../source/historique.rst:106
+msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
+msgstr "Katso :ref:`cmd_mode`, :ref:`panneau_matchs` ja :ref:`manuel`."
+
+#: ../../source/historique.rst:109
+msgid "0.28.0 (2026-07-15)"
+msgstr "0.28.0 (2026-07-15)"
+
+#: ../../source/historique.rst:111
+msgid ""
+"Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
+" champs de saisie d'identifiants par une fenêtre de sélection (listes à "
+"cocher filtrables par texte, boutons *Tout*/*Aucun*, cocher un tournoi "
+"coche ses matchs membres) — plus rapide sur les grosses bases, l'onglet "
+"Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que "
+"pour les matchs affichés ; ``cli list --type tournaments`` comble l'écart"
+" de parité correspondant."
+msgstr ""
+"Hakupaneeli: yhtenäistetty ”Ottelut & Turnaukset” -suodatin, joka korvaa "
+"tunnistekentät valintaikkunalla (tekstillä suodatettavat valintalistat, "
+"*Kaikki*/*Ei mitään* -painikkeet, turnauksen valinta valitsee sen "
+"jäsenottelut) — nopeampi suurilla tietokannoilla, Ottelut-välilehti ja "
+"Turnaukset-näkymä laskevat nyt PR/MWC-indikaattorit vain näytetyille "
+"otteluille; ``cli list --type tournaments`` sulkee vastaavan "
+"pariteettiaukon."
+
+#: ../../source/historique.rst:112
+msgid ""
+"Nouveau filtre « Importée individuellement » (case à cocher du groupe "
+"Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
+" CLI via ``--individual``) pour retrouver une position enregistrée ou "
+"importée seule plutôt que noyée dans un import de match."
+msgstr ""
+"Uusi ”Yksittäin tuotu” -suodatin (valintaruutu Muut-ryhmässä, tai tunnus "
+"``i`` komentorivillä, ``s i``; saatavilla myös CLI:ssä "
+"``--individual``-valitsimella) löytääkseen aseman, joka on tallennettu "
+"tai tuotu yksinään sen sijaan, että se hukkuisi ottelun tuontiin."
+
+#: ../../source/historique.rst:113
+msgid ""
+"Correction d'une perte de données : la suppression d'un match ne supprime"
+" plus les positions individuellement importées, mises en collection ou "
+"intégrées à un paquet Anki que ce match contenait aussi."
+msgstr ""
+"Korjattu tietojen menetys: ottelun poistaminen ei enää poista yksittäin "
+"tuotuja, kokoelmaan sijoitettuja tai Anki-pakkaan sisällytettyjä asemia, "
+"jotka ottelu myös sisälsi."
+
+#: ../../source/historique.rst:114
+msgid ""
+"Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
+"Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
+"prévision des cartes dues (``anki.forecast``), suspension / mise en "
+"veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, "
+"``anki.removeCard``) et ajustement automatique du taux de rétention visé "
+"d'un paquet vers son taux de réussite observé (``anki.optimizeParams``) ;"
+" nouvelle méthode ``tenant.purge`` pour supprimer définitivement les "
+"données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; "
+"nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et "
+"``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs)."
+msgstr ""
+"Palvelintila (headless): kuusi uutta metodia hajautetun toiston Anki-"
+"ajastimelle — kertauslokia (``anki.reviewLog``), erääntyvien korttien "
+"ennustetta (``anki.forecast``), kortin keskeyttämistä/hautaamista/poistoa"
+" (``anki.suspendCard``, ``anki.buryCard``, ``anki.removeCard``) ja pakan "
+"tavoiteretention automaattista säätöä havaittua onnistumisastetta kohti "
+"(``anki.optimizeParams``); uusi ``tenant.purge``-metodi vuokralaisen "
+"tietojen pysyvään poistamiseen monikäyttäjäisessä PostgreSQL-"
+"käyttöönotossa; uudet ``matches.list`` (suodatus/lajittelu/sivutus) ja "
+"``stats.matchBadges`` (PR/MWC-indikaattorit rajattuna ottelulistaan) "
+"-metodit."
+
+#: ../../source/historique.rst:115
+msgid ""
+"Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
+"bit d'exécution perdu lors du téléchargement du binaire brut."
+msgstr ""
+"Natiivi Linux-jakelu: ``.deb``/``.rpm``-paketit, jotka säilyttävät "
+"suoritusbitin, joka katosi raakabinäärin latauksessa."
+
+#: ../../source/historique.rst:116
+msgid ""
+"Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
+"positions importées sont immédiatement visibles ; après l'import d'une "
+"position isolée (fichier XGP, position BGBlitz, fichier de position "
+"texte, position collée ou lot de positions), l'onglet Analyse s'ouvre "
+"directement sur la position importée, au lieu de l'onglet Matchs ; "
+"correction du collage d'une analyse eXtreme Gammon en français ou en "
+"allemand depuis macOS, qui restait vide (accents décomposés par le "
+"presse-papier du système)."
+msgstr ""
+"Tuonti: ottelun tuonnin jälkeen Ottelut-välilehti näkyy nyt, ja tuodut "
+"asemat ovat välittömästi näkyvissä; yksittäisen aseman (XGP-tiedosto, "
+"BGBlitz-asema, tekstimuotoinen asematiedosto, liitetty asema tai "
+"asemaerä) tuonnin jälkeen Analyysi-välilehti avautuu nyt suoraan tuotuun "
+"asemaan, Ottelut-välilehden sijaan; korjattu ranskan- tai saksankielisen "
+"eXtreme Gammon -analyysin liittäminen macOS:stä, joka jäi aiemmin "
+"tyhjäksi (järjestelmän leikepöytä hajotti aksentit)."
+
+#: ../../source/historique.rst:117
+msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
+msgstr "Katso :ref:`headless`, :ref:`cmd_mode` ja :ref:`telecharge_install`."
+
+#: ../../source/historique.rst:120
+msgid "0.27.0 (2026-06-13)"
+msgstr "0.27.0 (2026-06-13)"
+
+#: ../../source/historique.rst:122
+msgid ""
+"Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
+"accessible par le bouton *Cram* à côté de *Study*, qui présente des "
+"positions aléatoires du paquet sans modifier le planning de révision "
+"espacée — idéal pour s'échauffer avant un tournoi ou réviser intensément "
+"un paquet sans en perturber l'ordonnancement."
+msgstr ""
+"Anki-paneeli: uusi vapaan harjoittelun (*cram*) tila, käytettävissä "
+"*Cram*-painikkeesta *Study*-painikkeen vierestä, joka näyttää satunnaisia"
+" asemia pakasta muuttamatta kertausaikataulua — ihanteellinen "
+"lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen "
+"järjestystä häiritsemättä."
+
+#: ../../source/historique.rst:123
+msgid ""
+"Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
+"directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
+" nombre optionnel pour en choisir la quantité (``bl 50``) ; nouveau "
+"filtre par joueur ``pl'nom'`` qui retrouve toutes les positions issues "
+"d'un match impliquant un joueur donné, sur l'un ou l'autre camp ; et des "
+"info-bulles, au survol de chaque filtre du panneau de recherche, "
+"indiquant le jeton de commande correspondant."
+msgstr ""
+"Haku: uusi komento ``blunders`` (alias ``bl``), joka lataa pahimmat "
+"virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla "
+"määrän valitsemiseksi (``bl 50``); uusi pelaajasuodatin ``pl'nimi'``, "
+"joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui "
+"kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin "
+"suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen."
+
+#: ../../source/historique.rst:124
+msgid ""
+"Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
+"(tous les coups d'un match en un seul appel) et ``positions.epc`` "
+"(Effective Pip Count des deux joueurs)."
+msgstr ""
+"Palvelintila (headless): uudet metodit ``matches.movesByMatch`` (ottelun "
+"kaikki siirrot yhdellä kutsulla) ja ``positions.epc`` (molempien "
+"pelaajien Effective Pip Count)."
+
+#: ../../source/historique.rst:125
+msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
+msgstr "Katso :ref:`panneau_anki` ja :ref:`cmd_mode`."
+
+#: ../../source/historique.rst:128
+msgid "0.26.0 (2026-06-09)"
+msgstr "0.26.0 (2026-06-09)"
+
+#: ../../source/historique.rst:130
+msgid ""
+"Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
+" curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
+" un choix de position des panneaux (en bas, sur le côté ou automatique) "
+"afin de mieux exploiter les écrans larges."
+msgstr ""
+"Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko"
+" käyttöliittymän suurentamiseen tai pienentämiseen, ja paneelien "
+"sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden "
+"näyttöjen paremmaksi hyödyntämiseksi."
+
+#: ../../source/historique.rst:131
+msgid ""
+"Ajout d'une barre d'informations au-dessus du plateau rappelant les "
+"joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
+msgstr ""
+"Lisätty laudan yläpuolelle tietopalkki, joka muistuttaa pelaajista ja "
+"ottelun kontekstista (tapahtuma, paikka, kierros, päivämäärä, pituus)."
+
+#: ../../source/historique.rst:132
+msgid ""
+"À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
+"la revue débute sur la première position."
+msgstr ""
+"Tietokantaa avattaessa Ottelut-paneeli näytetään nyt heti, ja tarkastelu "
+"alkaa ensimmäisestä asemasta."
+
+#: ../../source/historique.rst:133
+msgid ""
+"Les raccourcis clavier sont désormais indépendants de la disposition du "
+"clavier (AZERTY, QWERTY, QWERTZ…)."
+msgstr ""
+"Näppäinoikotiet ovat nyt riippumattomia näppäimistöasettelusta (AZERTY, "
+"QWERTY, QWERTZ…)."
+
+#: ../../source/historique.rst:134
+msgid ""
+"Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
+"videau)."
+msgstr "Korjattu XGID:n dekoodaus (Jacoby/Beaver-liput ja kuution arvo)."
+
+#: ../../source/historique.rst:135
+msgid ""
+"Ajout des onglets de vues multiples : plusieurs espaces de travail "
+"indépendants (liste de positions, position courante, recherche) avec les "
+"raccourcis *CTRL-T* (nouvelle vue), *CTRL-W* (fermer), *CTRL-PageUp"
+"*/*CTRL-PageDown* (changer de vue) et renommage par double-clic sur "
+"l'onglet."
+msgstr ""
+"Lisätty monivälilehtiset näkymät: useita riippumattomia työtiloja "
+"(positioluettelo, nykyinen positio, haku) pikanäppäimillä *CTRL-T* (uusi "
+"näkymä), *CTRL-W* (sulje), *CTRL-PageUp*/*CTRL-PageDown* (vaihda näkymää)"
+" ja uudelleennimeäminen kaksoisnapsauttamalla välilehteä."
+
+#: ../../source/historique.rst:136
+msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
+msgstr "Katso :ref:`configuration` ja :ref:`onglets_vues`."
+
+#: ../../source/historique.rst:139
+msgid "0.25.0 (2026-06-07)"
+msgstr "0.25.0 (2026-06-07)"
+
+#: ../../source/historique.rst:141
+msgid ""
+"Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
+"position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
+"XGID en position, et ``positions.fromXGP`` lit un fichier de position "
+"unique ``.xgp``."
+msgstr ""
+"Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen "
+"tallentamatta sitä — ``positions.fromXGID`` purkaa XGID-merkkijonon "
+"asemaksi ja ``positions.fromXGP`` lukee yksittäisen aseman "
+"``.xgp``-tiedoston."
+
+#: ../../source/historique.rst:142 ../../source/historique.rst:148
+#: ../../source/historique.rst:167
+msgid "Voir :ref:`headless`."
+msgstr "Katso :ref:`headless`."
+
+#: ../../source/historique.rst:145
+msgid "0.24.0 (2026-06-06)"
+msgstr "0.24.0 (2026-06-06)"
+
+#: ../../source/historique.rst:147
+msgid ""
+"Ajout d'une image conteneur (Docker) pour le mode headless : un point "
+"d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
+" statique sans interface graphique, afin de déployer le moteur de "
+"blunderDB comme service derrière un reverse-proxy."
+msgstr ""
+"Lisätty konttikuva (Docker) headless-tilaa varten: erillinen "
+"``serve``-aloituspiste ja ``Dockerfile.serve``, joka tuottaa staattisen "
+"binaarin ilman graafista käyttöliittymää, jotta blunderDB-moottori "
+"voidaan ottaa käyttöön palveluna käänteisvälityspalvelimen takana."
+
+#: ../../source/historique.rst:151
+msgid "0.23.0 (2026-06-05)"
+msgstr "0.23.0 (2026-06-05)"
+
+#: ../../source/historique.rst:153
+msgid ""
+"Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
+" tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
+"et d'une base d'exemple chargeable par la commande ``demo`` pour "
+"découvrir l'outil sans importer ses propres parties."
+msgstr ""
+"Lisätty käyttöliittymän opastetut kierrokset (yleinen kierros, haku, "
+"ottelut, turnaukset), toistettavissa työkalupalkista tai "
+"``tour``-komennolla, sekä esimerkkitietokanta, joka voidaan ladata "
+"``demo``-komennolla työkalun tutustumiseksi tuomatta omia pelejä."
+
+#: ../../source/historique.rst:154
+msgid ""
+"Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
+"dés, videau) depuis la fenêtre de configuration."
+msgstr ""
+"Laudan värien mukauttaminen (tausta, reunus, nuolet, tammat, nopat, "
+"kuutio) asetusikkunasta."
+
+#: ../../source/historique.rst:155
+msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
+msgstr "Komentorivin automaattinen täydentäminen (*TAB*-näppäin)."
+
+#: ../../source/historique.rst:156
+msgid ""
+"Panneau de recherche : contrôle explicite du type de décision (Pions / "
+"Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
+"les décisions de cube, synchronisé avec le plateau ; le videau proposé "
+"est affiché au centre du plateau pour les décisions de prise/passe."
+msgstr ""
+"Hakupaneeli: päätöstyypin (Tammat / Kuutio) nimenomainen hallinta, "
+"kuutiopäätöksille alatyypillä Tuplaus / Ei tuplausta tai Otto / Hylkäys, "
+"synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä "
+"otto/hylkäys-päätöksille."
+
+#: ../../source/historique.rst:157
+msgid "Recherche d'une position par son identifiant (filtre ``id``)."
+msgstr "Aseman haku sen tunnisteen perusteella (suodatin ``id``)."
+
+#: ../../source/historique.rst:158
+msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
+msgstr "Korjattu kuutiovirheen kohdistuminen pelaajalle 1."
+
+#: ../../source/historique.rst:159
+msgid "Voir :ref:`visites_guidees`."
+msgstr "Katso :ref:`visites_guidees`."
+
+#: ../../source/historique.rst:162
+msgid "0.22.0 (2026-06-02)"
+msgstr "0.22.0 (2026-06-02)"
+
+#: ../../source/historique.rst:164
+msgid ""
+"Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
+"l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
+" JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par "
+"tenant (et Row-Level Security en option), une commande ``migrate`` pour "
+"transférer une base SQLite vers PostgreSQL, et un dispatcher générique "
+"``call`` donnant accès en ligne de commande à toutes les opérations de "
+"stockage."
+msgstr ""
+"Lisätty headless-tila (palvelin), edistynyt ja valinnainen, joka "
+"täydentää työpöytäsovellusta: ``serve``-demoni, joka tarjoaa moottorin "
+"HTTP + JSON -rajapinnan kautta, monikäyttäjäinen PostgreSQL-"
+"taustajärjestelmä, jossa tiedot on eristetty vuokralaisittain (sekä "
+"valinnainen Row-Level Security), ``migrate``-komento SQLite-tietokannan "
+"siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen ``call``-välittäjä, "
+"joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin."
+
+#: ../../source/historique.rst:165
+msgid ""
+"Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
+"``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
+" des doublons entre formats."
+msgstr ""
+"Yksittäisten asemien tuonti uusista muodoista (eXtreme Gammon ``.xgp``, "
+"BGBlitz-teksti, natiivi ``.db``-kirjasto) muotojen välisten duplikaattien"
+" rikastamisella."
+
+#: ../../source/historique.rst:166
+msgid ""
+"Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
+" n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
+msgstr ""
+"Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa "
+"ei ole avattu, eikä Kommentit-paneeli enää jää silmukkaan avattaessa."
+
+#: ../../source/historique.rst:170
+msgid "0.21.0 (2026-06-01)"
+msgstr "0.21.0 (2026-06-01)"
+
+#: ../../source/historique.rst:172
+msgid ""
+"Internationalisation de l'interface : l'intégralité de blunderDB (barre "
+"d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
+" en anglais, français, allemand, italien, espagnol, finnois, japonais, "
+"grec ou russe."
+msgstr ""
+"Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, "
+"paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi,"
+" ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, "
+"kreikaksi tai venäjäksi."
+
+#: ../../source/historique.rst:173
+msgid ""
+"Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
+"de rouage dans la barre d'outils, permettant de sélectionner la langue."
+msgstr ""
+"Lisätty asetusikkuna, käytettävissä työkalupalkin "
+"hammasrataspainikkeesta, jonka avulla voi valita kielen."
+
+#: ../../source/historique.rst:174
+msgid "Le choix de la langue est conservé d'une session à l'autre."
+msgstr "Kielivalinta säilyy istunnosta toiseen."
+
+#: ../../source/historique.rst:175
+msgid "Voir :ref:`configuration`."
+msgstr "Katso :ref:`configuration`."
+
+#: ../../source/historique.rst:178
+msgid "0.20.0 (2026-05-31)"
+msgstr "0.20.0 (2026-05-31)"
+
+#: ../../source/historique.rst:180
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : "
+"exclut les positions contenant l'un des pions dessinés, avec marqueur « "
+"doit être vide » (double-clic) et nombre de pions par point non limité "
+"(commande x)."
+msgstr ""
+"Lisätty poissulkeva *Except*-rakenne hakupaneeliin: sulkee pois asemat, "
+"jotka sisältävät jonkin piirretyistä tammoista, ”pitää olla tyhjä” "
+"-merkinnällä (kaksoisnapsautus) ja rajoittamattomalla tammojen määrällä "
+"per piste (komento ``x``)."
+
+#: ../../source/historique.rst:181
+msgid ""
+"Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
+"(variante D1, option CLI --dice)."
+msgstr ""
+"Lisätty ”vain ensimmäinen noppa” -vaihtoehto heittosuodattimeen "
+"(D1-muunnelma, CLI-valitsin ``--dice``)."
+
+#: ../../source/historique.rst:182
+msgid ""
+"Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
+" et boutons éditer / supprimer toujours visibles."
+msgstr ""
+"Kommentit-paneeli: syöttökentän automaattinen fokus avattaessa, ja "
+"muokkaa/poista-painikkeet aina näkyvissä."
+
+#: ../../source/historique.rst:183
+msgid ""
+"Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
+" commentaires."
+msgstr ""
+"Korjattu ”Search Text” -suodatin, joka ei löytänyt kaikkia kommenttien "
+"tunnisteita."
+
+#: ../../source/historique.rst:186
+msgid "0.19.0 (2026-05-07)"
+msgstr "0.19.0 (2026-05-07)"
+
+#: ../../source/historique.rst:188
+msgid ""
+"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
+"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
+"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
+"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes."
+msgstr ""
+"Lisätty Stats-paneeli: PR (Performance Rate)-, Snowie Error Rate- ja MWC "
+"cost (Match Winning Chance cost) -indikaattorit, suodatinpalkki (pelaaja,"
+" turnaus, päivämäärät, päätöstyyppi, ottelun pituus), Dashboard-välilehti"
+" tasokorteilla / liukuvalla PR:llä / pahimmilla blundereilla, "
+"Progression-välilehti turnauskohtaisella käyrällä ja ottelukohtaisella "
+"hajontakaaviolla, Errors-välilehti tuplaustoimintojen erittelyllä ja "
+"virheiden suuruuksien histogrammilla."
+
+#: ../../source/historique.rst:189
+msgid ""
+"Drill-down interactif vers les positions / matchs / tournois depuis tous "
+"les indicateurs."
+msgstr ""
+"Interaktiivinen porautuminen positioihin / otteluihin / turnauksiin "
+"kaikista indikaattoreista."
+
+#: ../../source/historique.rst:190
+msgid "Toggle PR / MWC instantané."
+msgstr "Välitön PR / MWC -vaihto."
+
+#: ../../source/historique.rst:191
+msgid "Commande CLI list --type stats."
+msgstr "CLI-komento list --type stats."
+
+#: ../../source/historique.rst:192
+msgid ""
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
+"gnuBG (seuil 0.16 d'équité pour les cubes proches)."
+msgstr ""
+"PR / Snowie ER / MWC -indikaattoreiden yhtenäistäminen eXtremeGammonin ja"
+" gnuBG:n kanssa (0.16 ekviteettikynnys läheisille kuutioille)."
+
+#: ../../source/historique.rst:193
+msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
+msgstr "Korjattu cube_error-laskenta Double/Pass-päätöksille."
+
+#: ../../source/historique.rst:194
+msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
+msgstr "Tilastomallin dokumentaatio (:ref:`stats_parity`)."
+
+#: ../../source/historique.rst:195
+msgid "Voir :ref:`stats`."
+msgstr "Katso :ref:`stats`."
+
+#: ../../source/historique.rst:198
+msgid "0.18.0 (2026-04-20)"
+msgstr "0.18.0 (2026-04-20)"
+
+#: ../../source/historique.rst:200
+msgid ""
+"Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
+"fichiers spécialisés, extraction de 7 modules de service depuis "
+"App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux."
+msgstr ""
+"Suuri koodin refaktorointi: db.go:n (10 000 riviä) jakaminen 19 "
+"erikoistuneeseen tiedostoon, 7 palvelumoduulin erottaminen App.svelte:stä"
+" (4888→469 riviä), modaali-/paneelivarastojen yhdistäminen."
+
+#: ../../source/historique.rst:201
+msgid "Migration complète vers Svelte 5 runes."
+msgstr "Täydellinen siirtyminen Svelte 5 -runeihin."
+
+#: ../../source/historique.rst:202
+msgid ""
+"Remplacement de 9 modales de tableau par un composant générique "
+"DataTableModal."
+msgstr "9 taulukkomodaalin korvaaminen yleisellä DataTableModal-komponentilla."
+
+#: ../../source/historique.rst:203
+msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
+msgstr "Lisätty ESLint + Prettier + vitest (125 frontend-testiä) CI:llä."
+
+#: ../../source/historique.rst:204
+msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
+msgstr ""
+"WCAG 2.1 AA -yhdenmukaisuus (näkyvä fokus, ARIA-roolit, "
+"näppäimistönavigointi)."
+
+#: ../../source/historique.rst:205
+msgid ""
+"Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
+"lecture."
+msgstr ""
+"Database-mutexin vaihtaminen RWMutexiksi paremman lukurinnakkaisuuden "
+"saavuttamiseksi."
+
+#: ../../source/historique.rst:206
+msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
+msgstr "Täydellinen CLI-dokumentaatio (CLI_USAGE.md + Sphinx FR/EN)."
+
+#: ../../source/historique.rst:207
+msgid "Réécriture du README."
+msgstr "README uudelleenkirjoitettu."
+
+#: ../../source/historique.rst:208
+msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
+msgstr "Korjattu kaikki ESLint (46→0)- ja Vite (6→0) -varoitukset."
+
+#: ../../source/historique.rst:211
+msgid "0.17.0 (2026-04-20)"
+msgstr "0.17.0 (2026-04-20)"
+
+#: ../../source/historique.rst:213
+#, no-python-format
+msgid ""
+"Optimisation du stockage : compression zlib des données d'analyse (~80% "
+"de réduction), encodage compact des positions (~90% de réduction de la "
+"taille)."
+msgstr ""
+"Tallennuksen optimointi: analyysidatan zlib-pakkaus (~80 % pienennys), "
+"kompakti positioiden koodaus (~90 % koon pienennys)."
+
+#: ../../source/historique.rst:214
+msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
+msgstr "Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi."
+
+#: ../../source/historique.rst:215
+msgid "Correction de la recherche par erreur de cube."
+msgstr "Korjattu haku kuutiovirheen mukaan."
+
+#: ../../source/historique.rst:216
+msgid "Correction du mode EDIT après une recherche sans résultats."
+msgstr "Korjattu EDIT-tila tuloksettoman haun jälkeen."
+
+#: ../../source/historique.rst:217
+msgid ""
+"Restauration de l'état du panneau de recherche lors du changement "
+"d'onglets."
+msgstr "Hakupaneelin tilan palauttaminen välilehteä vaihdettaessa."
+
+#: ../../source/historique.rst:218
+msgid "Suppression de 62 instructions de débogage des chemins critiques."
+msgstr "62 debug-lauseen poistaminen kriittisiltä poluilta."
+
+#: ../../source/historique.rst:221
+msgid "0.16.0 (2026-04-18)"
+msgstr "0.16.0 (2026-04-18)"
+
+#: ../../source/historique.rst:223
+msgid ""
+"Schéma de base de données v2.0.0 : déduplication des positions via hash "
+"Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
+"bitboard, journalisation WAL."
+msgstr ""
+"Tietokantaskeema v2.0.0: positioiden deduplikointi Zobrist-hashilla, "
+"denormalisoidut suodatussarakkeet, bittilautakuvioiden esisuodatus, WAL-"
+"journalointi."
+
+#: ../../source/historique.rst:224
+msgid ""
+"Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
+"positions."
+msgstr "Erätuonti >=3x nopeampi, suodatettu haku <=100 ms yli 10 000 positiolla."
+
+#: ../../source/historique.rst:225
+msgid ""
+"NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
+"par les versions plus anciennes ; les anciennes DB sont migrées "
+"automatiquement sur place (faire une sauvegarde d'abord)."
+msgstr ""
+"HUOM: v0.16.0:lla luotuja DB-tiedostoja ei voi avata vanhemmilla "
+"versioilla; vanhat DB:t migratoidaan automaattisesti paikallaan (ota "
+"ensin varmuuskopio)."
+
+#: ../../source/historique.rst:228
+msgid "0.15.0 (2026-03-31)"
+msgstr "0.15.0 (2026-03-31)"
+
+#: ../../source/historique.rst:230
+msgid ""
+"Export de la position en image PNG dans le presse-papier (board seul via "
+"Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
+msgstr ""
+"Position vienti PNG-kuvana leikepöydälle (pelkkä lauta painikkeella "
+"Ctrl+X, tai lauta analyysin kanssa painikkeella Ctrl+X Ctrl+X)."
+
+#: ../../source/historique.rst:233
+msgid "0.14.0 (2026-03-30)"
+msgstr "0.14.0 (2026-03-30)"
+
+#: ../../source/historique.rst:235
+msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr "Oma Anki-paneeli kertausvälioppimiseen (FSRS-algoritmi)."
+
+#: ../../source/historique.rst:236
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr "Kommenttien tuonti XG-tiedostoista."
+
+#: ../../source/historique.rst:239
+msgid "0.13.0 (2026-03-28)"
+msgstr "0.13.0 (2026-03-28)"
+
+#: ../../source/historique.rst:241
+msgid ""
+"Simplification de l'interface : la navigation dans les matchs et les "
+"collections se fait directement via les panneaux."
+msgstr ""
+"Käyttöliittymän yksinkertaistaminen: otteluiden ja kokoelmien selaus "
+"tapahtuu nyt suoraan paneeleiden kautta."
+
+#: ../../source/historique.rst:242
+msgid "Ligne de commande intégrée dans la barre d'état."
+msgstr "Tilariviin integroitu komentorivi."
+
+#: ../../source/historique.rst:243
+msgid "Panneau Console renommé en panneau Log."
+msgstr "Console-paneeli nimetty uudelleen Log-paneeliksi."
+
+#: ../../source/historique.rst:244
+msgid "Panneau Bearoff dédié dans le panneau inférieur."
+msgstr "Oma Bearoff-paneeli alapaneelissa."
+
+#: ../../source/historique.rst:245
+msgid "Copier/coller de position dans le panneau de recherche."
+msgstr "Position kopiointi/liittäminen hakupaneelissa."
+
+#: ../../source/historique.rst:246
+msgid ""
+"Glisser-déposer pour réordonner les collections, les positions dans les "
+"collections, et les matchs dans les tournois."
+msgstr ""
+"Vedä-ja-pudota kokoelmien, kokoelmien sisäisten positioiden sekä "
+"turnausten sisäisten otteluiden uudelleenjärjestämiseen."
+
+#: ../../source/historique.rst:247
+msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
+msgstr "Turnaussarake ottelupaneelissa suoralla muokkauksella."
+
+#: ../../source/historique.rst:248
+msgid "Affichage automatique du panneau d'analyse après une recherche."
+msgstr "Analyysipaneelin automaattinen näyttö haun jälkeen."
+
+#: ../../source/historique.rst:251
+msgid "0.12.0 (2026-03-19)"
+msgstr "0.12.0 (2026-03-19)"
+
+#: ../../source/historique.rst:253
+msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
+msgstr "eXtreme Gammon -positiotiedostojen (XGP) tuonti analyysin kanssa."
+
+#: ../../source/historique.rst:256
+msgid "0.11.0 (2026-03-06)"
+msgstr "0.11.0 (2026-03-06)"
+
+#: ../../source/historique.rst:258
+msgid "Filtre de recherche dans les positions courantes."
+msgstr "Hakusuodatin nykyisissä positioissa."
+
+#: ../../source/historique.rst:259
+msgid "Ajout de filtres par match et par tournoi."
+msgstr "Lisätty ottelu- ja turnaussuodattimet."
+
+#: ../../source/historique.rst:260
+msgid ""
+"Effacement automatique du plateau lors de l'ouverture du panneau de "
+"recherche."
+msgstr "Laudan automaattinen tyhjennys hakupaneelia avattaessa."
+
+#: ../../source/historique.rst:263
+msgid "0.10.0 (2026-02-25)"
+msgstr "0.10.0 (2026-02-25)"
+
+#: ../../source/historique.rst:265
+msgid ""
+"Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) et BGBlitz (BGF/TXT)."
+msgstr ""
+"Otteluiden tuonti eXtreme Gammonista (XG/XGP), GNUbg:stä (SGF), "
+"Jellyfishistä (MAT/TXT) ja BGBlitzistä (BGF/TXT)."
+
+#: ../../source/historique.rst:266
+msgid ""
+"Navigation dans les matchs : parcours des coups d'un match importé, avec "
+"mise en évidence du coup joué."
+msgstr ""
+"Otteluiden selaaminen: tuodun ottelun siirtojen läpikäynti, pelatun "
+"siirron korostuksella."
+
+#: ../../source/historique.rst:267
+msgid ""
+"Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
+" assignation de tournoi."
+msgstr ""
+"Ottelupaneeli: luettelo, lajittelu, suora muokkaus, pelaajien vaihto, "
+"turnauksen määritys."
+
+#: ../../source/historique.rst:268
+msgid "Import par dossier récursif et import par glisser-déposer."
+msgstr "Rekursiivinen kansiotuonti ja vedä-ja-pudota-tuonti."
+
+#: ../../source/historique.rst:269
+msgid ""
+"Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
+"GNUbg intégrée."
+msgstr ""
+"EPC-laskuri (Effective Pip Count) sisäänrakennetulla GNUbg:n bearoff-"
+"tietokannalla."
+
+#: ../../source/historique.rst:270
+msgid "Collections : regroupement personnalisé de positions."
+msgstr "Kokoelmat: positioiden mukautettu ryhmittely."
+
+#: ../../source/historique.rst:271
+msgid "Tournois : regroupement de matchs par événement."
+msgstr "Turnaukset: otteluiden ryhmittely tapahtuman mukaan."
+
+#: ../../source/historique.rst:272
+msgid ""
+"Sauvegarde et restauration de l'état de session (dernière recherche, "
+"position courante)."
+msgstr "Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio)."
+
+#: ../../source/historique.rst:273
+msgid "Migration automatique du schéma de base de données."
+msgstr "Tietokantaskeeman automaattinen migraatio."
+
+#: ../../source/historique.rst:274
+msgid "Affichage multi-moteurs dans l'analyse."
+msgstr "Useiden moottoreiden näyttö analyysissä."
+
+#: ../../source/historique.rst:275
+msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
+msgstr "Pelaajan 1 virheiden/blundereiden suodatin hauissa."
+
+#: ../../source/historique.rst:276
+msgid ""
+"Export de la base de données avec sélection granulaire (matchs, "
+"collections, tournois, coups joués)."
+msgstr ""
+"Tietokannan vienti tarkalla valinnalla (ottelut, kokoelmat, turnaukset, "
+"pelatut siirrot)."
+
+#: ../../source/historique.rst:277
+msgid "Bouton de navigation dans les matchs."
+msgstr "Otteluiden selauspainike."
+
+#: ../../source/historique.rst:278
+msgid "Compte de course (pipcount) dans la navigation des matchs."
+msgstr "Pip-laskuri otteluiden selauksessa."
+
+#: ../../source/historique.rst:279
+msgid "Interface en ligne de commande (CLI) complète."
+msgstr "Täydellinen komentorivikäyttöliittymä (CLI)."
+
+#: ../../source/historique.rst:280
+msgid "Réouverture automatique de la dernière base de données."
+msgstr "Viimeisimmän tietokannan automaattinen uudelleenavaus."
+
+#: ../../source/historique.rst:281
+msgid "Amélioration de la barre d'outils et des icônes."
+msgstr "Parannettu työkalupalkki ja kuvakkeet."
+
+#: ../../source/historique.rst:284
+msgid "0.9.0 (2025-11-02)"
+msgstr "0.9.0 (2025-11-02)"
+
+#: ../../source/historique.rst:286
+msgid "Correction de bug de la bibliothèque de filtres."
+msgstr "Suodatinkirjaston virhekorjaus."
+
+#: ../../source/historique.rst:287
+msgid "Import/export de base de données."
+msgstr "Tietokannan tuonti/vienti."
+
+#: ../../source/historique.rst:288
+msgid "Affichage de flèches pour les coups sélectionnés."
+msgstr "Nuolien näyttäminen valituille siirroille."
+
+#: ../../source/historique.rst:289
+msgid "Raccourcis clavier pour l'import/export."
+msgstr "Pikanäppäimet tuontiin/vientiin."
+
+#: ../../source/historique.rst:292
+msgid "0.8.0 (2025-05-03)"
+msgstr "0.8.0 (2025-05-03)"
+
+#: ../../source/historique.rst:294
+msgid "Possibilité de cacher le compte de course."
+msgstr "Mahdollisuus piilottaa pip-laskuri."
+
+#: ../../source/historique.rst:295
+msgid "Chargement d'une position aléatoire."
+msgstr "Satunnaisen position lataaminen."
+
+#: ../../source/historique.rst:298
+msgid "0.7.0 (2025-02-16)"
+msgstr "0.7.0 (2025-02-16)"
+
+#: ../../source/historique.rst:300
+msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
+msgstr "Japanin- ja saksankielisten XG-vientien tuki."
+
+#: ../../source/historique.rst:303
+msgid "0.6.0 (2025-02-13)"
+msgstr "0.6.0 (2025-02-13)"
+
+#: ../../source/historique.rst:305
+msgid "Ajout de la bibliothèque de filtres."
+msgstr "Lisätty suodatinkirjasto."
+
+#: ../../source/historique.rst:306
+msgid "Affichage de la version de la base de données dans les métadonnées."
+msgstr "Tietokannan version näyttäminen metatiedoissa."
+
+#: ../../source/historique.rst:309
+msgid "0.5.0 (2025-02-04)"
+msgstr "0.5.0 (2025-02-04)"
+
+#: ../../source/historique.rst:311
+msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
+msgstr ""
+"Lisätty uusia suodattimia (peilikuva, ei kosketusta, jan blot, outfield "
+"blot)."
+
+#: ../../source/historique.rst:314
+msgid "0.4.0 (2025-02-03)"
+msgstr "0.4.0 (2025-02-03)"
+
+#: ../../source/historique.rst:316 ../../source/historique.rst:324
+#: ../../source/historique.rst:331
+msgid "Résolutions de bugs divers."
+msgstr "Erinäisiä virhekorjauksia."
+
+#: ../../source/historique.rst:317
+msgid "Ajout d'une icône pour blunderDB."
+msgstr "Lisätty kuvake blunderDB:lle."
+
+#: ../../source/historique.rst:318
+msgid "Corrections de filtres."
+msgstr "Suodattimien korjauksia."
+
+#: ../../source/historique.rst:319
+msgid "Ajout du support de MacOS."
+msgstr "Lisätty macOS-tuki."
+
+#: ../../source/historique.rst:322
+msgid "0.3.0 (2025-01-27)"
+msgstr "0.3.0 (2025-01-27)"
+
+#: ../../source/historique.rst:325
+msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
+msgstr "Tallentaa ikkunan koon automaattisesti."
+
+#: ../../source/historique.rst:326
+msgid "Importe les éventuels commentaires depuis XG."
+msgstr "Tuo mahdolliset kommentit XG:stä."
+
+#: ../../source/historique.rst:329
+msgid "0.2.0 (2025-01-06)"
+msgstr "0.2.0 (2025-01-06)"
+
+#: ../../source/historique.rst:332
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr "Lisätty ottelu-/TP/GV-taulukot."
+
+#: ../../source/historique.rst:333
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr "Lisätty hakusuodattimet (siirrot, tuplauspäätös, päivämäärä)."
+
+#: ../../source/historique.rst:334
+msgid "Ajout de métadonnées sur les positions."
+msgstr "Lisätty positioiden metatiedot."
+
+#: ../../source/historique.rst:335
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr "Tuonti-/vientitoiminto blunderDB-instanssien välillä."
+
+#: ../../source/historique.rst:336
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr "Lisätty tietokantojen metatietotoiminto."
+
+#: ../../source/historique.rst:337
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr "Versionumeroiden käyttöönotto (tietokanta ja sovellus)."
+
+#: ../../source/historique.rst:340
+msgid "0.1.0 (2024-12-31)"
+msgstr "0.1.0 (2024-12-31)"
+
+#: ../../source/historique.rst:342
+msgid "Création version bêta."
+msgstr "Beta-versio."
+

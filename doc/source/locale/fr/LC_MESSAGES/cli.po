@@ -967,16 +967,3 @@ msgstr ""
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 
-#~ msgid ""
-#~ "``--type`` — Type d'export: ``database``, "
-#~ "``positions`` ou ``matches`` (obligatoire)."
-#~ msgstr ""
-
-#~ msgid "``--file`` — Fichier de sortie (obligatoire)."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "``stats`` — Statistiques globales (positions,"
-#~ " analyses, matchs, parties, coups)."
-#~ msgstr ""
-

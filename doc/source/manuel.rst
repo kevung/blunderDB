@@ -425,7 +425,7 @@ qu'elles soient valides et modifie immédiatement l'état de la base de données
 le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la part
 de l'utilisateur.
 
-.. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
+.. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste de commandes
    disponible en ligne de commande.
 
 .. _panneau_analyse:
@@ -550,7 +550,7 @@ double-cliquer sur un filtre enregistré pour relancer la recherche
 correspondante (voir :ref:`annexe_filtres`). La commande ``history`` (alias
 ``hi``) ouvre le panneau de recherche.
 
-.. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
+.. tip:: Se référer à la :ref:`liste des commandes <cmd_mode>` pour la liste des filtres
    disponibles.
 
 .. _panneau_collections:

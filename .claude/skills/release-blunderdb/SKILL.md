@@ -2,9 +2,10 @@
 name: release-blunderdb
 description: >-
   Drive a full blunderDB release: audit the Sphinx docs for staleness across all
-  9 languages (French source + 8 gettext translations), update the version/history
-  changelog table (FR source + every translation) with the new user-facing
-  features only, cut the version with scripts/release.sh, and publish a
+  9 languages (French source + 8 gettext translations), check they stay strictly
+  factual (no roadmap, no "coming soon"), add the release's section to the version
+  history page (FR source + every translation) with the new user-facing features
+  only, cut the version with scripts/release.sh, and publish a
   changelog-style GitHub release with gh. Use when the user asks to "release",
   "faire une release", "publier une version", "cut a release", or "release
   blunderDB <version>".
@@ -27,7 +28,7 @@ that cwd.
    the French source plus the 8 gettext translations (en, de, el, es, fi, it, ja,
    ru). New/changed features documented in the French source and translated in
    every catalog.
-2. **Version history table** — add a new row mentioning **only the new
+2. **Version history page** — add a new section mentioning **only the new
    user-facing features** (not refactors, CI fixes, internal plumbing), updated in
    the **French source and every translation**.
 3. **Linux packaging metadata** — add the new version to the AppStream
@@ -65,7 +66,7 @@ conventional-commit prefixes as a guide:
 - `fix(...)` → a user-visible bug fix → mention if it matters to users.
 - `docs`, `refactor`, `chore`, `ci`, `test`, `build` → **exclude** from the
   feature changelog (they are not new features). The user was explicit: the
-  history table lists **new functionalities only**.
+  history page lists **new functionalities only**.
 
 Decide the new version number with semver against the *current* version:
 
@@ -74,7 +75,7 @@ Decide the new version number with semver against the *current* version:
 - Breaking change → bump **major**.
 
 **Patch releases skip the changelog table.** If the bump is a patch (X.Y.Z, Z>0),
-**skip Phase 2 entirely** — the history table in the docs lists only X.Y.0
+**skip Phase 2 entirely** — the history page in the docs lists only X.Y.0
 (minor/major) releases, never patches. Do Phase 1 (if any doc prose needs fixing),
 then go straight to Phase 3 with `scripts/release.sh <ver>` (no `--changelog`), and
 write the English GitHub release notes in Phase 4.
@@ -123,7 +124,7 @@ reference its own `|latest_<code>_pdf|` substitution (all 9 are defined in
 > **Translation quality caveat.** The non-French translations were seeded by LLM
 > and the maintainer cannot proofread ja/fi/ru/el. Treat empty/`fuzzy` `msgstr`
 > as the source of truth for what still needs human attention, and surface the
-> per-language staleness report (step 3 below) so the user can decide whether to
+> per-language staleness report (step 4 below) so the user can decide whether to
 > ship or defer a given language.
 
 Steps:
@@ -160,7 +161,23 @@ Steps:
    package doc of `pkg/blunderdb/storage/storage.go` (it is the architecture
    reference). Fix drift *now*, in this release's doc commit.
 
-3. Regenerate **all** translation catalogs so new/changed French strings get
+3. **Factuality gate.** The documentation describes the published version, in
+   the present tense, and nothing else (CLAUDE.md, Documentation): no
+   announcement, no "not yet", no command that does not work today. The
+   future lives on GitHub (milestones, Discussions) and the docs point there
+   from `a_propos.rst` only. Grep the French sources for the tell-tale
+   phrases and rewrite every hit as a statement of what ships — or delete it:
+
+   ```bash
+   grep -nE "à venir|en préparation|pas encore (publié|soumis|disponible)|une fois (publié|créé)|sera (publié|disponible|ajouté)|prochainement|bientôt|prévu(e|s)? (pour|dans)" doc/source/*.rst
+   ```
+
+   Read each hit: « bientôt » inside an Anki rating label or « prévu » in an
+   FSRS sentence is vocabulary, not a promise — leave those. **Block the
+   release while a real promise remains.** Never add a roadmap page back
+   (one was tried in H.11 and removed four days later).
+
+4. Regenerate **all** translation catalogs so new/changed French strings get
    fresh `msgid` entries, then translate them. The repo's `doc/README.txt`
    documents the workflow:
 
@@ -213,83 +230,81 @@ Steps:
 
 ---
 
-## Phase 2 — Version history / changelog table (FR source + all translations)
+## Phase 2 — Version history page (FR source + all translations)
 
 > **MAJOR/MINOR RELEASES ONLY — skip this entire phase for patch releases.**
-> The history table lists only **X.Y.0** (minor/major) releases. A patch/fix
-> release (X.Y.Z with Z>0, e.g. `0.26.1`) gets **no row** — no FR row, no `.po`
-> retranslation, no `make gettext`. The user considers patches too minor for the
-> table; it is a high-level feature history, not an exhaustive log. For a patch
-> release, jump straight from Phase 1 to Phase 3, run `scripts/release.sh <ver>`
-> **without** `--changelog`, and still write the English GitHub release notes in
-> Phase 4. Only do the steps below when cutting an X.Y.0.
+> The history page lists only **X.Y.0** (minor/major) releases. A patch/fix
+> release (X.Y.Z with Z>0, e.g. `0.26.1`) gets **no section** — no FR text, no
+> `.po` retranslation. The user considers patches too minor for the page; it is
+> a high-level feature history, not an exhaustive log. For a patch release,
+> jump straight from Phase 1 to Phase 3, run `scripts/release.sh <ver>`
+> **without** `--changelog` (it refuses to touch the page for a patch anyway),
+> and still write the English GitHub release notes in Phase 4.
 
-The version-history table is the **"Historique des versions"** `csv-table` in
-`doc/source/index.rst` (French source). Its rows look exactly like:
+The version history is its own page, `doc/source/historique.rst` (French
+source; label `historique`, last-but-one entry of the *Annexes* toctree). The
+front page `index.rst` carries **no** changelog and no "latest version" block
+— don't put one back. Each release is a section, newest first, whose body is a
+bulleted list, **one bullet per change**, so a later correction (a typo, a
+late addition) invalidates one translated string and not the whole release:
 
 ```rst
-.. csv-table::
-   :header: "Version", "Date", "Cause et/ou nature des évolutions"
-   :widths: 5, 7, 20
-   :align: center
-   :class: align-center-table
+0.36.0 (2026-09-05)
+-------------------
 
-   0.1.0, 31/12/2024, "Création version beta."
-   ...
-   0.19.0, 07/05/2026, "Ajout du panneau Stats : ... Voir :ref:`stats`."
+- Le binaire **maigrit de 7,3 Mo** : …
+- **Les tournois se remplissent à l'import** : …
+- Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 ```
 
-Each row is `   X.Y.Z, dd/mm/yyyy, "<French description>"` — 3-space indented, the
-description double-quoted and allowed to span multiple lines (blank lines inside
-the quotes separate sub-items). There is **only one table, in French**; each
-language's rendering comes from its gettext catalog
-`doc/source/locale/<code>/LC_MESSAGES/index.po` (Sphinx extracts each table cell
-as a translatable string). So the changelog work = **French row in `index.rst`**
-plus the `msgstr` for that cell in **every** `locale/<code>/LC_MESSAGES/index.po`
-(en, de, el, es, fi, it, ja, ru).
+Heading = `X.Y.0 (YYYY-MM-DD)` with a `-` underline of the same length. There
+is **only one page, in French**; each language's rendering comes from its
+gettext catalog `doc/source/locale/<code>/LC_MESSAGES/historique.po` (Sphinx
+extracts each bullet as a translatable string). So the changelog work =
+**French section in `historique.rst`** plus the `msgstr` for every new bullet
+in **every** `locale/<code>/LC_MESSAGES/historique.po` (en, de, el, es, fi,
+it, ja, ru).
 
 Steps:
 
-1. **Write the new row's description** — a short, user-facing summary listing
-   **only the new features** from Phase 0 (exclude refactors/CI/test/chore),
-   phrased for end users, in the same tone as recent rows. Reference doc sections
-   with `:ref:` where the existing rows do. Write it in **French** (it's the
-   source cell).
+1. **Write the bullets** — user-facing, listing **only the new features** from
+   Phase 0 (exclude refactors/CI/test/chore), in the same tone as the recent
+   sections; one bullet per feature, a last bullet of `:ref:` pointers where
+   the existing sections have one, and a final "Corrections notables" bullet
+   if there are user-visible fixes. Write them in **French** (source). Present
+   tense, facts only (Phase 1 step 3 applies to this page too).
 
-2. **Add the French row.** Either:
-   - let `scripts/release.sh <version> --changelog "<French text>"` insert it
-     automatically in Phase 3 (it appends `   <version>, <dd/mm/yyyy>, "<text>"`
-     before the `Sommaire`/toctree section — note this produces a **single-line**
-     cell), **or**
-   - add it by hand now if you want a multi-line cell matching the richer recent
-     rows. Match indentation, date format `dd/mm/yyyy`, and quoting exactly.
+2. **Add the French section.** Either:
+   - let `scripts/release.sh <version> --changelog "<one French bullet>"`
+     insert it in Phase 3 — it creates the heading and **one** bullet before
+     the newest existing section, fine for a single-line entry, **or**
+   - add it by hand now (the usual case: several bullets). Match the heading
+     format and underline length exactly.
 
-   Show the user the resulting row before committing.
+   Show the user the resulting section before committing.
 
-3. **Add every translation.** After the French row exists, regenerate and
-   translate all catalogs so the table's other-language columns update:
+3. **Add every translation.** After the French section exists, regenerate and
+   translate all catalogs:
 
    ```bash
-   cd doc
-   make gettext
-   sphinx-intl update -l fr -l en -l de -l el -l es -l fi -l it -l ja -l ru
+   source .venv/bin/activate
+   scripts/doc-po-update.sh       # regenerates the eight catalogues, then repairs
    ```
 
-   Then set the `msgstr` for the new changelog cell (and any other new/`fuzzy`
-   index entries) in **each** `doc/source/locale/<code>/LC_MESSAGES/index.po`,
-   matching the wording style of previous entries in that language. This is the
-   step that keeps every version table in sync — don't skip it. Run the
-   per-language freshness scan from Phase 1 step 3 against `index.po` to confirm no
-   catalog was left with an untranslated changelog cell.
+   Then set the `msgstr` for every new bullet (and any other new/`fuzzy`
+   entry) in **each** `doc/source/locale/<code>/LC_MESSAGES/historique.po`,
+   matching the wording style of previous entries in that language. This is
+   the step that keeps every version history in sync — don't skip it.
+   `scripts/doc-i18n-check.sh` must end on "all translations complete".
 
 4. Commit the doc + changelog work **before** cutting the release, e.g.
    `docs(release): update docs and changelog (9 languages) for <version>`.
    (release.sh warns on a dirty tree; committing first keeps the `Release
-   <version>` commit clean.) If you let release.sh insert the French row in Phase
-   3, do the `.po` translations + commit either right after, or fold it into the
-   release commit — just make sure the pushed tag contains every language.
-   Releases go out from `main`; only branch first if the user isn't on the
-   intended branch.
+   <version>` commit clean.) If you let release.sh insert the French section in
+   Phase 3, do the `.po` translations + commit either right after, or fold it
+   into the release commit — just make sure the pushed tag contains every
+   language. Releases go out from `main`; only branch first if the user isn't
+   on the intended branch.
 
 ---
 
@@ -361,7 +376,7 @@ for **every** release, patches included (it's a version list, not a feature log)
 A bare `version`/`date` entry is enough to pass validation; since #245 every
 entry also carries a short English `<description>` (a `<ul>` of 2-4 highlights
 for a feature release, a one-line `<p>` for a patch) — condense it from the
-Phase 2 changelog row, don't retranslate the French prose. Validate:
+Phase 2 changelog bullets, don't retranslate the French prose. Validate:
 
 ```bash
 appstreamcli validate --no-net build/linux/io.github.kevung.blunderDB.metainfo.xml
@@ -407,16 +422,16 @@ Commit `tasks/bench/baseline.txt` with the Phase 2b packaging-metadata commit
 
 `scripts/release.sh` updates the version string in four places
 (`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, `wails.json`, and — if
-`--changelog` is given — `doc/source/index.rst`), then commits `Release <version>`
+`--changelog` is given — `doc/source/historique.rst`), then commits `Release <version>`
 and creates the `<version>` tag.
 
 Recommended invocation (do **not** auto-push yet so the user can review):
 
 ```bash
-# If you already inserted both changelog rows manually in Phase 2:
+# If you already inserted the changelog section manually in Phase 2:
 ./scripts/release.sh <version>
 
-# Or let it insert the French changelog row for you:
+# Or let it insert a one-bullet French changelog section for you:
 ./scripts/release.sh <version> --changelog "<concise FR feature summary>"
 ```
 
@@ -475,7 +490,7 @@ user-facing. A good shape:
 Derive the bullets from the same `feat(...)`/`fix(...)` set as Phase 0 — keep
 internal commits out. Note that the Phase 2 changelog has a French source row;
 the GitHub release notes are the **English** rendering of the same feature list —
-reuse the English wording you wrote into `locale/en/LC_MESSAGES/index.po`. Check
+reuse the English wording you wrote into `locale/en/LC_MESSAGES/historique.po`. Check
 `gh release view <prevTag>` for tone/formatting, but the **language is always
 English** even if older notes were French.
 
@@ -573,7 +588,7 @@ recipe). Nothing to do here either.
 
 Summarize: version released, the doc files touched (French source + which
 translation catalogs), the per-language translation-freshness counts, the
-changelog rows added, the AppStream `<releases>` entry, the tag pushed, the
+changelog section added, the AppStream `<releases>` entry, the tag pushed, the
 GitHub release URL, the CI run status/URL, and the AUR publish status (workflow
 run + package page, or "skipped — secret not set"). Flag anything skipped (e.g. a
 PDF build that needed LaTeX, or a language left partially untranslated) so the
@@ -583,10 +598,10 @@ user can follow up.
 
 - Confirm the version number, and confirm again before the tag **push** and the
   GitHub release publish — both are outward-facing.
-- New-features-only in the history table and release notes; exclude refactors,
+- New-features-only in the history page and release notes; exclude refactors,
   CI/build/test/chore commits.
-- The history table is **major/minor (X.Y.0) only** — patch releases (X.Y.Z, Z>0)
-  get no changelog row and skip Phase 2 entirely. But the AppStream `<releases>`
+- The history page is **major/minor (X.Y.0) only** — patch releases (X.Y.Z, Z>0)
+  get no changelog section and skip Phase 2 entirely. But the AppStream `<releases>`
   entry (Phase 2b) is added for **every** release, patches included.
 - GitHub release notes are always written in **English**.
 - Keep all 9 languages in lockstep — every feature documented in the French

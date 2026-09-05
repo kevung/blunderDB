@@ -97,7 +97,7 @@ vérifiez que le fichier reçu est bien celui qui a été publié :
 Sous Linux et macOS, la commande affiche ``OK`` ; sous Windows, comparez la
 valeur affichée avec le contenu du fichier ``.sha256``. Cette vérification est
 la garantie disponible en l'absence de signature de code (voir
-:numref:`annexe_windows_malware` et :numref:`annexe_mac_malware`).
+:ref:`annexe_windows_malware` et :ref:`annexe_mac_malware`).
 
 Chaque fichier publié est également accompagné d'une attestation de
 provenance (SLSA, via Sigstore), qui prouve qu'il a bien été produit par le
@@ -159,10 +159,9 @@ télécharge depuis Flathub s'il manque :
    flatpak install ./blunderDB-x.y.z.flatpak
    flatpak run io.github.kevung.blunderDB
 
-blunderDB n'est pas encore publié sur Flathub : le bundle s'installe depuis le
-fichier téléchargé, et se met à jour en installant celui de la version
-suivante. L'application a accès au dossier personnel pour ouvrir et
-enregistrer les bases. La ligne de commande (:ref:`cli`) s'obtient par
+Le bundle s'installe depuis le fichier téléchargé, et se met à jour en
+installant celui de la version suivante. L'application a accès au dossier
+personnel pour ouvrir et enregistrer les bases. La ligne de commande (:ref:`cli`) s'obtient par
 ``flatpak run io.github.kevung.blunderDB <commande>``.
 
 Archive .tar.gz
@@ -220,39 +219,25 @@ d'authentification sont décrits dans :ref:`headless_docker_image`.
 
 .. _install_winget_homebrew:
 
-Gestionnaires de paquets Windows et Mac (à venir)
--------------------------------------------------
+Manifestes winget et Homebrew
+-----------------------------
 
-Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets (AUR,
-``.deb``, ``.rpm``). L'équivalent pour Windows (`winget
-<https://learn.microsoft.com/windows/package-manager/>`__) et pour Mac
-(`Homebrew <https://brew.sh/>`__) est en préparation : **les manifestes sont
-fournis avec chaque release** (``blunderDB-winget-manifests-x.y.z.zip`` et
-``blunderdb-x.y.z.rb`` sur la page des releases), mais ils ne sont pas encore
-soumis aux dépôts publics. Tant que ce n'est pas le cas, les commandes
-ci-dessous ne fonctionnent pas ; elles décrivent l'installation prévue :
-
-.. code-block:: powershell
-
-   winget install KevinUnger.blunderDB        # Windows, une fois publié
-
-.. code-block:: bash
-
-   brew tap kevung/tap                        # Mac, une fois le tap créé
-   brew install --cask blunderdb
-
-Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il
-reste non signé, et les avertissements décrits ci-dessous s'appliquent tels
-quels. Sur Mac, ``brew install --cask --no-quarantine blunderdb`` évite le
-blocage de Gatekeeper au premier lancement.
+Chaque release fournit un manifeste `winget
+<https://learn.microsoft.com/windows/package-manager/>`__
+(``blunderDB-winget-manifests-x.y.z.zip``) et une formule `Homebrew
+<https://brew.sh/>`__ (``blunderdb-x.y.z.rb``) sur la page des releases, pour
+qui souhaite installer blunderDB par ces gestionnaires depuis un fichier
+local. Aucun des deux ne figure dans les dépôts publics de winget ou de
+Homebrew. Ni l'un ni l'autre ne change la nature de l'exécutable : il reste
+non signé, et les avertissements décrits ci-dessous s'appliquent tels quels.
 
 Avertissements Windows et Mac
 -----------------------------
 
 .. warning:: Sous Windows, il est possible que ce dernier émette des réticences
-   à exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre
+   à exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre
    pourquoi et contourner les éventuels blocages.
 
 .. warning:: Sous Mac, il est possible que ce dernier émette des réticences
-   à exécuter blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre
+   à exécuter blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre
    pourquoi et contourner les éventuels blocages.

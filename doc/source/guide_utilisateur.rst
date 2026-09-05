@@ -680,7 +680,7 @@ Méthode 2 (avancée):
 
 * écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple
   *cube* ou *score* pour prendre respectivement en compte le cube et le
-  score. Voir :numref:`cmd_filter` pour une liste exhaustive des
+  score. Voir :ref:`cmd_filter` pour une liste exhaustive des
   filtres disponibles).
 
 * valider la requête en appuyant sur *ENTREE*.

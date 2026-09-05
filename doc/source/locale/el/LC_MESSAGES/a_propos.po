@@ -1,0 +1,265 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/a_propos.rst:4
+msgid "À propos"
+msgstr "Σχετικά"
+
+#: ../../source/a_propos.rst:9
+msgid "Contacts"
+msgstr "Επικοινωνία"
+
+#: ../../source/a_propos.rst:11
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+"Συγγραφέας: Kévin Unger <blunderdb@proton.me>. Μπορείτε επίσης να με "
+"βρείτε στο Heroes με το ψευδώνυμο postmanpat."
+
+#: ../../source/a_propos.rst:14
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr ""
+"Ανέπτυξα αρχικά το blunderDB για προσωπική μου χρήση, ώστε να μπορώ να "
+"εντοπίζω μοτίβα στα λάθη μου. Ωστόσο, είναι πολύ ευχάριστο να λαμβάνεις "
+"σχόλια, ειδικά όταν έχεις ξοδέψει πολλές ώρες σε σχεδιασμό, "
+"προγραμματισμό, αποσφαλμάτωση... Γι' αυτό μη διστάσετε να μου γράψετε για"
+" να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι "
+"ευπρόσδεκτα."
+
+#: ../../source/a_propos.rst:21
+msgid "Voici plusieurs manières de discuter:"
+msgstr "Ακολουθούν διάφοροι τρόποι για να επικοινωνήσετε:"
+
+#: ../../source/a_propos.rst:23
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr ""
+"συμμετάσχετε στον διακομιστή Discord του blunderDB: "
+"https://discord.gg/DA5PpzM9En"
+
+#: ../../source/a_propos.rst:25
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "στείλτε μου email στο blunderdb@proton.me,"
+
+#: ../../source/a_propos.rst:27
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "μιλήστε μαζί μου, αν συναντηθούμε σε κάποιο τουρνουά,"
+
+#: ../../source/a_propos.rst:29
+msgid "sur Github,"
+msgstr "στο Github,"
+
+#: ../../source/a_propos.rst:31
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "ανοίξτε ένα ζήτημα: https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/a_propos.rst:33
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr ""
+"για διορθώσεις σφαλμάτων ή προτάσεις βελτίωσης, δημιουργήστε ένα pull "
+"request."
+
+#: ../../source/a_propos.rst:36
+msgid ""
+"Les tickets ouverts sont regroupés par `jalon "
+"<https://github.com/kevung/blunderDB/milestones>`__ sur GitHub. Les idées"
+" se discutent dans les `Discussions — catégorie Idées "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, et"
+" chaque version publiée est annoncée dans la `catégorie Annonces "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+msgstr ""
+"Τα ανοικτά αιτήματα ομαδοποιούνται ανά `ορόσημο "
+"<https://github.com/kevung/blunderDB/milestones>`__ στο GitHub. Οι ιδέες "
+"συζητούνται στις `Discussions — κατηγορία Ideas "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, και "
+"κάθε δημοσιευμένη έκδοση ανακοινώνεται στην `κατηγορία Announcements "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+
+#: ../../source/a_propos.rst:44
+msgid "Faire un don"
+msgstr "Κάντε μια δωρεά"
+
+#: ../../source/a_propos.rst:46
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr ""
+"Αν εκτιμάτε το blunderDB και θέλετε να στηρίξετε την παρελθούσα και "
+"μελλοντική ανάπτυξή του, μπορείτε"
+
+#: ../../source/a_propos.rst:48
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "να με κεράσετε ένα ποτό αν έχουμε τη χαρά να συναντηθούμε!"
+
+#: ../../source/a_propos.rst:50
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "να κάνετε μια μικρή δωρεά μέσω PayPal στη διεύθυνση blunderdb@proton.me"
+
+#: ../../source/a_propos.rst:53
+msgid "Remerciements"
+msgstr "Ευχαριστίες"
+
+#: ../../source/a_propos.rst:55
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"Αφιερώνω αυτό το μικρό λογισμικό στη σύντροφό μου Anne-Claire και στη "
+"γλυκιά μας κόρη Perrine. Θέλω να ευχαριστήσω ιδιαίτερα μερικούς φίλους:"
+
+#: ../../source/a_propos.rst:58
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille*, για τη μύησή μου στο τάβλι με χαρά και καλοσύνη· για "
+"το ότι μου δείχνει τον Δρόμο στην κατανόηση αυτού του υπέροχου "
+"παιχνιδιού· για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου "
+"προσπάθειες να παίξω καλύτερα."
+
+#: ../../source/a_propos.rst:63
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
+" depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand*, χαρούμενος σύντροφος εδώ και πάνω από μια δεκαετία σε "
+"υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον"
+" ιό του τάβλι."
+
+#: ../../source/a_propos.rst:68
+msgid "Crédits"
+msgstr "Πιστώσεις"
+
+#: ../../source/a_propos.rst:70
+msgid ""
+"blunderDB embarque du code, des données et des polices d'autres "
+"personnes. L'inventaire complet, avec le texte des licences, est le "
+"fichier ``THIRD_PARTY.md`` livré avec chaque paquet "
+"(``/usr/share/doc/blunderdb/``) et présent à la racine du `dépôt "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__. "
+"L'essentiel :"
+msgstr ""
+"Το blunderDB ενσωματώνει κώδικα, δεδομένα και γραμματοσειρές άλλων "
+"ανθρώπων. Ο πλήρης κατάλογος, με τα κείμενα των αδειών, είναι το αρχείο "
+"``THIRD_PARTY.md`` που συνοδεύει κάθε πακέτο "
+"(``/usr/share/doc/blunderdb/``) και βρίσκεται στη ρίζα του `αποθετηρίου "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__. Τα "
+"βασικά:"
+
+#: ../../source/a_propos.rst:77
+msgid ""
+"le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre "
+"d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
+"<https://github.com/alexstrehl/backgammon-ai-engine>`__, licence MIT) ; "
+"la recherche, le modèle de videau et la table d'équité de match qui "
+"l'entourent forment la configuration propre de `gammonNet "
+"<https://github.com/kevung/gammonNet>`__ (MIT) ;"
+msgstr ""
+"το νευρωνικό δίκτυο ``strehl-prob5-512-512-256-128`` είναι έργο του "
+"*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
+"<https://github.com/alexstrehl/backgammon-ai-engine>`__, άδεια MIT)· η "
+"αναζήτηση, το μοντέλο βιδωτού και ο πίνακας match equity γύρω του "
+"αποτελούν τη δική του διαμόρφωση του `gammonNet "
+"<https://github.com/kevung/gammonNet>`__ (MIT)·"
+
+#: ../../source/a_propos.rst:84
+msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
+msgstr "ο πίνακας match equity Kazaross-XG2 είναι έργο του *Neil Kazaross*·"
+
+#: ../../source/a_propos.rst:86
+msgid ""
+"les tables de take points et de valeurs de gammon sont tirées de *The "
+"Theory of Backgammon* de *Dirk Schiemann* ;"
+msgstr ""
+"οι πίνακες take point και gammon values προέρχονται από το *The Theory of"
+" Backgammon* του *Dirk Schiemann*·"
+
+#: ../../source/a_propos.rst:89
+msgid ""
+"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
+" été générées avec `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
+"sous licence GPL, et ces tables sont des données qu'il a produites, "
+"créditées comme telles ;"
+msgstr ""
+"η μονόπλευρη (6 σημεία, 15 πούλια, για το EPC) και η αμφίπλευρη (6 "
+"σημεία, 6 πούλια, για τις αποφάσεις βιδωτού στις κούρσες) βάση δεδομένων "
+"bearoff δημιουργήθηκαν με το `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__· το GNUbg είναι ελεύθερο "
+"λογισμικό υπό την GPL, και οι πίνακες αυτοί είναι δεδομένα που παρήγαγε, "
+"πιστωμένα ως τέτοια·"
+
+#: ../../source/a_propos.rst:95
+msgid ""
+"les fichiers de match sont lus par `xgparser "
+"<https://github.com/kevung/xgparser>`__, `gnubgparser "
+"<https://github.com/kevung/gnubgparser>`__ et `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ (MIT) ;"
+msgstr ""
+"τα αρχεία αγώνων διαβάζονται από τα `xgparser "
+"<https://github.com/kevung/xgparser>`__, `gnubgparser "
+"<https://github.com/kevung/gnubgparser>`__ και `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ (MIT)·"
+
+#: ../../source/a_propos.rst:100
+msgid ""
+"côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
+"(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
+"<https://wails.io>`__ et `go-fsrs <https://github.com/open-spaced-"
+"repetition/go-fsrs>`__ (MIT) ;"
+msgstr ""
+"από την πλευρά της Go: `modernc.org/sqlite "
+"<https://gitlab.com/cznic/sqlite>`__ (BSD-3-Clause), `pgx "
+"<https://github.com/jackc/pgx>`__, `Wails <https://wails.io>`__ και `go-"
+"fsrs <https://github.com/open-spaced-repetition/go-fsrs>`__ (MIT)·"
+
+#: ../../source/a_propos.rst:105
+msgid ""
+"côté interface : `Svelte <https://svelte.dev>`__, `two.js "
+"<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
+"`driver.js <https://driverjs.com>`__ (MIT) ;"
+msgstr ""
+"από την πλευρά της διεπαφής: `Svelte <https://svelte.dev>`__, `two.js "
+"<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ και "
+"`driver.js <https://driverjs.com>`__ (MIT)·"
+
+#: ../../source/a_propos.rst:109
+msgid ""
+"les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
+"Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
+"Open Font License 1.1)."
+msgstr ""
+"οι γραμματοσειρές `Nunito <https://github.com/googlefonts/nunito>`__ και "
+"`Noto Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ "
+"(SIL Open Font License 1.1)."
+

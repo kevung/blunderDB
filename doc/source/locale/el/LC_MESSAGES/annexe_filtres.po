@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 21:51+0200\n"
+"POT-Creation-Date: 2026-09-06 01:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: el <LL@li.org>\n"
 "Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
@@ -25,27 +25,29 @@ msgstr "Παράρτημα: Προχωρημένη χρήση των φίλτρ�
 
 #: ../../source/annexe_filtres.rst:8
 msgid ""
-"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
-" exploiter pleinement les fonctionnalités de recherche de positions."
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
+"souhaitent exploiter pleinement les fonctionnalités de recherche de "
+"positions."
 msgstr ""
 "Αυτή η ενότητα απευθύνεται στους προχωρημένους χρήστες του blunderDB που "
 "επιθυμούν να αξιοποιήσουν πλήρως τις δυνατότητες αναζήτησης θέσεων."
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
-"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
-"utilisation permet de rechercher des positions spécifiques relativement "
-"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
-"commande est détaillée. La ligne de commande est accessible en appuyant sur "
-"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
-"rapidement des filtres et d'utiliser la bibliothèque de filtres."
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
+" utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne "
+"de commande est détaillée. La ligne de commande est accessible en "
+"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
+"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
+"filtres."
 msgstr ""
-"Τα φίλτρα βρίσκονται στον πυρήνα της ανάλυσης θέσεων στο blunderDB. Η χρήση "
-"τους επιτρέπει την αναζήτηση συγκεκριμένων θέσεων με σχετικά μεγάλη "
-"ακρίβεια. Σε αυτή την ενότητα περιγράφεται αναλυτικά η χρήση των φίλτρων "
-"μέσω της γραμμής εντολών. Η γραμμή εντολών είναι προσβάσιμη πατώντας το "
-"πλήκτρο ``ΚΕΝΟ``. Επιτρέπει, με τη συνήθεια, να συνδυάζονται πολύ γρήγορα "
-"φίλτρα και να χρησιμοποιείται η βιβλιοθήκη φίλτρων."
+"Τα φίλτρα βρίσκονται στον πυρήνα της ανάλυσης θέσεων στο blunderDB. Η "
+"χρήση τους επιτρέπει την αναζήτηση συγκεκριμένων θέσεων με σχετικά μεγάλη"
+" ακρίβεια. Σε αυτή την ενότητα περιγράφεται αναλυτικά η χρήση των φίλτρων"
+" μέσω της γραμμής εντολών. Η γραμμή εντολών είναι προσβάσιμη πατώντας το "
+"πλήκτρο ``ΚΕΝΟ``. Επιτρέπει, με τη συνήθεια, να συνδυάζονται πολύ γρήγορα"
+" φίλτρα και να χρησιμοποιείται η βιβλιοθήκη φίλτρων."
 
 #: ../../source/annexe_filtres.rst:19
 msgid "Recherche de positions en ligne de commande"
@@ -77,21 +79,21 @@ msgstr "Ξεκινήστε την αναζήτηση με το πλήκτρο ``
 
 #: ../../source/annexe_filtres.rst:30
 msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
-"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
-" risque de filtrer abusivement des structures de pions."
+"Ne pas oublier d'effacer la position courante avant de lancer une "
+"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
+"souhaitée, au risque de filtrer abusivement des structures de pions."
 msgstr ""
-"Μην ξεχάσετε να καθαρίσετε την τρέχουσα θέση πριν ξεκινήσετε μια αναζήτηση "
-"(πλήκτρο ``BACKSPACE``), αν αυτή δεν είναι η επιθυμητή, ώστε να αποφύγετε το"
-" υπερβολικό φιλτράρισμα των δομών των πουλιών."
+"Μην ξεχάσετε να καθαρίσετε την τρέχουσα θέση πριν ξεκινήσετε μια "
+"αναζήτηση (πλήκτρο ``BACKSPACE``), αν αυτή δεν είναι η επιθυμητή, ώστε να"
+" αποφύγετε το υπερβολικό φιλτράρισμα των δομών των πουλιών."
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la "
-":numref:`cmd_filter`."
+"La liste des filtres disponibles en ligne de commande est fournie dans la"
+" section :ref:`cmd_filter` de la liste des commandes."
 msgstr ""
-"Η λίστα των διαθέσιμων φίλτρων στη γραμμή εντολών παρέχεται στο "
-":numref:`cmd_filter`."
+"Η λίστα των διαθέσιμων φίλτρων στη γραμμή εντολών παρέχεται στην ενότητα "
+":ref:`cmd_filter` της λίστας εντολών."
 
 #: ../../source/annexe_filtres.rst:39
 msgid "Recherche dans les résultats courants"
@@ -103,19 +105,19 @@ msgid ""
 "actuellement filtrées. Cela permet de restreindre progressivement les "
 "résultats."
 msgstr ""
-"Είναι δυνατό να βελτιώσετε μια αναζήτηση ψάχνοντας ανάμεσα στις θέσεις που "
-"είναι ήδη φιλτραρισμένες. Αυτό σας επιτρέπει να περιορίζετε σταδιακά τα "
-"αποτελέσματα."
+"Είναι δυνατό να βελτιώσετε μια αναζήτηση ψάχνοντας ανάμεσα στις θέσεις "
+"που είναι ήδη φιλτραρισμένες. Αυτό σας επιτρέπει να περιορίζετε σταδιακά "
+"τα αποτελέσματα."
 
 #: ../../source/annexe_filtres.rst:44
 msgid ""
 "En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
-"préalable."
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
+"recherche préalable."
 msgstr ""
 "Στη γραμμή εντολών, χρησιμοποιήστε την εντολή ``ss`` ακολουθούμενη από "
-"φίλτρα (π.χ.: ``ss nc``, ``ss E>40``). Η εντολή ``ss`` λειτουργεί μετά από "
-"μια προηγούμενη αναζήτηση."
+"φίλτρα (π.χ.: ``ss nc``, ``ss E>40``). Η εντολή ``ss`` λειτουργεί μετά "
+"από μια προηγούμενη αναζήτηση."
 
 #: ../../source/annexe_filtres.rst:47
 msgid ""
@@ -134,8 +136,8 @@ msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
 msgstr ""
-"Η βιβλιοθήκη φίλτρων επιτρέπει στον χρήστη να αποθηκεύει εντολές αναζήτησης "
-"ώστε να διευκολύνει τις θεματικές του μελέτες."
+"Η βιβλιοθήκη φίλτρων επιτρέπει στον χρήστη να αποθηκεύει εντολές "
+"αναζήτησης ώστε να διευκολύνει τις θεματικές του μελέτες."
 
 #: ../../source/annexe_filtres.rst:56
 msgid "Pour ajouter un filtre à la bibliothèque,"
@@ -190,8 +192,7 @@ msgid "Exemples"
 msgstr "Παραδείγματα"
 
 #: ../../source/annexe_filtres.rst:74
-msgid ""
-"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ακολουθούν μερικά παραδείγματα χρήσης των φίλτρων στη γραμμή εντολών:"
 
 #: ../../source/annexe_filtres.rst:1
@@ -418,3 +419,4 @@ msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
+

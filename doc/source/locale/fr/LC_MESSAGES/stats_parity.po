@@ -549,12 +549,3 @@ msgid ""
 "0.16)."
 msgstr ""
 
-#~ msgid ""
-#~ "Cette page décrit comment blunderDB "
-#~ "calcule le **PR** (Performance Rate), le"
-#~ " **Snowie Error Rate** et la **perte"
-#~ " MWC**, et comment ces métriques sont"
-#~ " alignées sur eXtreme Gammon (XG) et"
-#~ " gnuBG (référence ouverte)."
-#~ msgstr ""
-

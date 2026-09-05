@@ -166,6 +166,16 @@ time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po` with
 `msgcat`: Babel and msgcat disagree on line breaks, so one pass rewrites the
 whole file.
 
+**The documentation describes the published version, in the present tense, and
+nothing else.** No announcement, no "not yet", no "coming soon", no command that
+does not work today. The future has exactly one home — the GitHub milestones and
+Discussions — and the docs point there from the *À propos* page only. The
+release skill's Phase 1 audit greps the French sources for the tell-tale
+phrases (« à venir », « en préparation », « pas encore publié », « prévu »,
+« une fois publié ») and blocks while one remains. A roadmap page was tried
+once (H.11, 2026-09) and removed four days later: a page titled "roadmap"
+invites the future back in at every release.
+
 **The in-app help is generated from these same sources.** `raccourcis.rst` and
 `cmd_mode.rst` are the only statement of the keyboard shortcuts and of the command
 line; `frontend/src/i18n/help/*.js` is a build artefact rendered from them and their
@@ -180,7 +190,7 @@ Split long documents into a README index + per-topic files.
 
 Use `scripts/release.sh <version>` — it updates the version in **four** places
 (`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, `wails.json`, optionally
-the `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the tag
+the `doc/source/historique.rst` changelog) and creates a commit + tag. Pushing the tag
 triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. Use
 the `release-blunderdb` skill to drive the whole thing, including the doc audit.
 

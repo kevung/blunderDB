@@ -87,18 +87,3 @@ msgid ""
 "vous pourrez ouvrir blunderDB sans avoir à passer par ces étapes."
 msgstr ""
 
-#~ msgid "Annexe Windows : Blocage éventuel de blunderDB"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Partageant blunderDB gratuitement, je ne "
-#~ "souhaite pas m'orienter vers ces "
-#~ "possibilités onéreuses. Par conséquent, il "
-#~ "est fort probable que Mac vous "
-#~ "avertisse d'un potentiel danger, voire "
-#~ "bloque complètement l'exécution de blunderDB."
-#~ " Les sections suivantes expliquent les "
-#~ "opérations à réaliser pour passer outre"
-#~ " les réticences de Windows."
-#~ msgstr ""
-

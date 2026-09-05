@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/a_propos.rst:4
+msgid "À propos"
+msgstr "Tietoja"
+
+#: ../../source/a_propos.rst:9
+msgid "Contacts"
+msgstr "Yhteystiedot"
+
+#: ../../source/a_propos.rst:11
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+"Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
+"palvelusta käyttäjänimellä postmanpat."
+
+#: ../../source/a_propos.rst:14
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr ""
+"Kehitin blunderDB:n alun perin omaan käyttööni voidakseni havaita "
+"toistuvia kaavoja virheissäni. On kuitenkin hyvin palkitsevaa saada "
+"palautetta, etenkin kun on käyttänyt paljon tunteja suunnitteluun, "
+"koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
+"jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
+
+#: ../../source/a_propos.rst:21
+msgid "Voici plusieurs manières de discuter:"
+msgstr "Tässä useita tapoja keskustella:"
+
+#: ../../source/a_propos.rst:23
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
+
+#: ../../source/a_propos.rst:25
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
+
+#: ../../source/a_propos.rst:27
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
+
+#: ../../source/a_propos.rst:29
+msgid "sur Github,"
+msgstr "GitHubissa,"
+
+#: ../../source/a_propos.rst:31
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/a_propos.rst:33
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
+
+#: ../../source/a_propos.rst:36
+msgid ""
+"Les tickets ouverts sont regroupés par `jalon "
+"<https://github.com/kevung/blunderDB/milestones>`__ sur GitHub. Les idées"
+" se discutent dans les `Discussions — catégorie Idées "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, et"
+" chaque version publiée est annoncée dans la `catégorie Annonces "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+msgstr ""
+"Avoimet tiketit on ryhmitelty GitHubissa `virstanpylväiden "
+"<https://github.com/kevung/blunderDB/milestones>`__ mukaan. Ideoista "
+"keskustellaan `Discussions-osion Ideas-kategoriassa "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, ja "
+"jokainen julkaistu versio ilmoitetaan `Announcements-kategoriassa "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+
+#: ../../source/a_propos.rst:44
+msgid "Faire un don"
+msgstr "Lahjoita"
+
+#: ../../source/a_propos.rst:46
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr ""
+"Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
+"kehitystä, voit"
+
+#: ../../source/a_propos.rst:48
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
+
+#: ../../source/a_propos.rst:50
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
+
+#: ../../source/a_propos.rst:53
+msgid "Remerciements"
+msgstr "Kiitokset"
+
+#: ../../source/a_propos.rst:55
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"Omistan tämän pienen ohjelman kumppanilleni Anne-Clairelle ja rakkaalle "
+"tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
+"ystäviä:"
+
+#: ../../source/a_propos.rst:58
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille*, joka johdatti minut backgammonin pariin ilolla ja "
+"ystävällisyydellä; joka näyttää tien tämän upean pelin ymmärtämiseen; ja "
+"joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
+"paremmin huolimatta."
+
+#: ../../source/a_propos.rst:63
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
+" depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand*, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa"
+" seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
+"backgammon-tartunnan."
+
+#: ../../source/a_propos.rst:68
+msgid "Crédits"
+msgstr "Kiitokset kolmansille osapuolille"
+
+#: ../../source/a_propos.rst:70
+msgid ""
+"blunderDB embarque du code, des données et des polices d'autres "
+"personnes. L'inventaire complet, avec le texte des licences, est le "
+"fichier ``THIRD_PARTY.md`` livré avec chaque paquet "
+"(``/usr/share/doc/blunderdb/``) et présent à la racine du `dépôt "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__. "
+"L'essentiel :"
+msgstr ""
+"blunderDB sisältää muiden ihmisten koodia, dataa ja fontteja. Täydellinen"
+" luettelo lisenssiteksteineen on tiedosto ``THIRD_PARTY.md``, joka "
+"toimitetaan jokaisen paketin mukana (``/usr/share/doc/blunderdb/``) ja on"
+" `tietovaraston "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__ "
+"juuressa. Olennaisin:"
+
+#: ../../source/a_propos.rst:77
+msgid ""
+"le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre "
+"d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
+"<https://github.com/alexstrehl/backgammon-ai-engine>`__, licence MIT) ; "
+"la recherche, le modèle de videau et la table d'équité de match qui "
+"l'entourent forment la configuration propre de `gammonNet "
+"<https://github.com/kevung/gammonNet>`__ (MIT) ;"
+msgstr ""
+"neuroverkko ``strehl-prob5-512-512-256-128`` on *Alexander Strehlin* "
+"työtä (`alexstrehl/backgammon-ai-engine <https://github.com/alexstrehl"
+"/backgammon-ai-engine>`__, MIT-lisenssi); haku, tuplausmalli ja "
+"otteluekvivalenssitaulukko sen ympärillä ovat `gammonNet "
+"<https://github.com/kevung/gammonNet>`__-projektin omaa kokoonpanoa "
+"(MIT);"
+
+#: ../../source/a_propos.rst:84
+msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
+msgstr "Kazaross-XG2-otteluekvivalenssitaulukko on *Neil Kazarossin* työtä;"
+
+#: ../../source/a_propos.rst:86
+msgid ""
+"les tables de take points et de valeurs de gammon sont tirées de *The "
+"Theory of Backgammon* de *Dirk Schiemann* ;"
+msgstr ""
+"take point- ja gammon-arvotaulukot on otettu *Dirk Schiemannin* kirjasta "
+"*The Theory of Backgammon*;"
+
+#: ../../source/a_propos.rst:89
+msgid ""
+"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
+" été générées avec `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
+"sous licence GPL, et ces tables sont des données qu'il a produites, "
+"créditées comme telles ;"
+msgstr ""
+"yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6"
+" pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-"
+"tietokanta on luotu ohjelmalla `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__; GNUbg on GPL-lisensoitu vapaa "
+"ohjelmisto, ja nämä taulukot ovat sen tuottamaa dataa, joka mainitaan "
+"sellaisena;"
+
+#: ../../source/a_propos.rst:95
+msgid ""
+"les fichiers de match sont lus par `xgparser "
+"<https://github.com/kevung/xgparser>`__, `gnubgparser "
+"<https://github.com/kevung/gnubgparser>`__ et `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ (MIT) ;"
+msgstr ""
+"ottelutiedostot luetaan kirjastoilla `xgparser "
+"<https://github.com/kevung/xgparser>`__, `gnubgparser "
+"<https://github.com/kevung/gnubgparser>`__ ja `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ (MIT);"
+
+#: ../../source/a_propos.rst:100
+msgid ""
+"côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
+"(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
+"<https://wails.io>`__ et `go-fsrs <https://github.com/open-spaced-"
+"repetition/go-fsrs>`__ (MIT) ;"
+msgstr ""
+"Go-puolella: `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
+"(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
+"<https://wails.io>`__ ja `go-fsrs <https://github.com/open-spaced-"
+"repetition/go-fsrs>`__ (MIT);"
+
+#: ../../source/a_propos.rst:105
+msgid ""
+"côté interface : `Svelte <https://svelte.dev>`__, `two.js "
+"<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
+"`driver.js <https://driverjs.com>`__ (MIT) ;"
+msgstr ""
+"käyttöliittymän puolella: `Svelte <https://svelte.dev>`__, `two.js "
+"<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ ja "
+"`driver.js <https://driverjs.com>`__ (MIT);"
+
+#: ../../source/a_propos.rst:109
+msgid ""
+"les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
+"Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
+"Open Font License 1.1)."
+msgstr ""
+"fontit `Nunito <https://github.com/googlefonts/nunito>`__ ja `Noto Sans "
+"JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL Open "
+"Font License 1.1)."
+

@@ -1,0 +1,243 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/a_propos.rst:4
+msgid "À propos"
+msgstr "blunderDB について"
+
+#: ../../source/a_propos.rst:9
+msgid "Contacts"
+msgstr "連絡先"
+
+#: ../../source/a_propos.rst:11
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+"作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム postmanpat "
+"でも見つけられます。"
+
+#: ../../source/a_propos.rst:14
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr "私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。"
+
+#: ../../source/a_propos.rst:21
+msgid "Voici plusieurs manières de discuter:"
+msgstr "やり取りの方法はいくつかあります。"
+
+#: ../../source/a_propos.rst:23
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr "blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
+
+#: ../../source/a_propos.rst:25
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "blunderdb@proton.me 宛にメールを送る、"
+
+#: ../../source/a_propos.rst:27
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "トーナメントで会うことがあれば直接話す、"
+
+#: ../../source/a_propos.rst:29
+msgid "sur Github,"
+msgstr "Githubで、"
+
+#: ../../source/a_propos.rst:31
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/a_propos.rst:33
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr "バグ修正や改善の提案には、プルリクエストを作成してください。"
+
+#: ../../source/a_propos.rst:36
+msgid ""
+"Les tickets ouverts sont regroupés par `jalon "
+"<https://github.com/kevung/blunderDB/milestones>`__ sur GitHub. Les idées"
+" se discutent dans les `Discussions — catégorie Idées "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, et"
+" chaque version publiée est annoncée dans la `catégorie Annonces "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
+msgstr ""
+"未解決のチケットは GitHub 上で `マイルストーン "
+"<https://github.com/kevung/blunderDB/milestones>`__\\ ごとにまとめられています。アイデアは "
+"`Discussions の Ideas カテゴリ "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__\\ "
+"で議論され、公開された各バージョンは `Announcements カテゴリ "
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__\\ "
+"で告知されます。"
+
+#: ../../source/a_propos.rst:44
+msgid "Faire un don"
+msgstr "寄付する"
+
+#: ../../source/a_propos.rst:46
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr "blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます"
+
+#: ../../source/a_propos.rst:48
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "お会いする機会があれば、一杯おごってください！"
+
+#: ../../source/a_propos.rst:50
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
+
+#: ../../source/a_propos.rst:53
+msgid "Remerciements"
+msgstr "謝辞"
+
+#: ../../source/a_propos.rst:55
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"このささやかなソフトウェアを、パートナーのAnne-"
+"Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
+
+#: ../../source/a_propos.rst:58
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille* "
+"には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
+
+#: ../../source/a_propos.rst:63
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
+" depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand* "
+"には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。"
+
+#: ../../source/a_propos.rst:68
+msgid "Crédits"
+msgstr "クレジット"
+
+#: ../../source/a_propos.rst:70
+msgid ""
+"blunderDB embarque du code, des données et des polices d'autres "
+"personnes. L'inventaire complet, avec le texte des licences, est le "
+"fichier ``THIRD_PARTY.md`` livré avec chaque paquet "
+"(``/usr/share/doc/blunderdb/``) et présent à la racine du `dépôt "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__. "
+"L'essentiel :"
+msgstr ""
+"blunderDB には他の人々が作成したコード、データ、フォントが含まれています。ライセンス本文を含む完全な一覧は、各パッケージに同梱される\\"
+" ``THIRD_PARTY.md``\\ ファイル（``/usr/share/doc/blunderdb/``）であり、\\ `リポジトリ "
+"<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__\\ "
+"のルートにもあります。主なもの:"
+
+#: ../../source/a_propos.rst:77
+msgid ""
+"le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre "
+"d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
+"<https://github.com/alexstrehl/backgammon-ai-engine>`__, licence MIT) ; "
+"la recherche, le modèle de videau et la table d'équité de match qui "
+"l'entourent forment la configuration propre de `gammonNet "
+"<https://github.com/kevung/gammonNet>`__ (MIT) ;"
+msgstr ""
+"ニューラルネットワーク\\ ``strehl-prob5-512-512-256-128``\\ は\\ *Alexander Strehl*\\"
+" の著作物です（`alexstrehl/backgammon-ai-engine <https://github.com/alexstrehl"
+"/backgammon-ai-engine>`__、MIT ライセンス）。それを取り巻く探索、キューブモデル、マッチエクイティテーブルは\\ "
+"`gammonNet <https://github.com/kevung/gammonNet>`__\\ 独自の構成です（MIT）。"
+
+#: ../../source/a_propos.rst:84
+msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
+msgstr "Kazaross-XG2 マッチエクイティテーブルは\\ *Neil Kazaross*\\ の著作物です。"
+
+#: ../../source/a_propos.rst:86
+msgid ""
+"les tables de take points et de valeurs de gammon sont tirées de *The "
+"Theory of Backgammon* de *Dirk Schiemann* ;"
+msgstr ""
+"テイクポイントとギャモン値の表は\\ *Dirk Schiemann*\\ の著書\\ *The Theory of Backgammon*\\ "
+"から引用しています。"
+
+#: ../../source/a_propos.rst:89
+msgid ""
+"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
+" été générées avec `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
+"sous licence GPL, et ces tables sont des données qu'il a produites, "
+"créditées comme telles ;"
+msgstr ""
+"片側ベアオフデータベース（6 ポイント、15 駒、EPC 用）と両側ベアオフデータベース（6 ポイント、6 駒、レースでのキューブ判定用）は\\ "
+"`GNU Backgammon <https://www.gnu.org/software/gnubg/>`__\\ で生成されました。GNUbg"
+" は GPL の下で提供されるフリーソフトウェアであり、これらの表はそれが生成したデータとしてクレジットされています。"
+
+#: ../../source/a_propos.rst:95
+msgid ""
+"les fichiers de match sont lus par `xgparser "
+"<https://github.com/kevung/xgparser>`__, `gnubgparser "
+"<https://github.com/kevung/gnubgparser>`__ et `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ (MIT) ;"
+msgstr ""
+"マッチファイルは\\ `xgparser <https://github.com/kevung/xgparser>`__\\ 、\\ "
+"`gnubgparser <https://github.com/kevung/gnubgparser>`__\\ 、\\ `bgfparser "
+"<https://github.com/kevung/bgfparser>`__\\ （MIT）で読み込まれます。"
+
+#: ../../source/a_propos.rst:100
+msgid ""
+"côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
+"(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
+"<https://wails.io>`__ et `go-fsrs <https://github.com/open-spaced-"
+"repetition/go-fsrs>`__ (MIT) ;"
+msgstr ""
+"Go 側: `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__\\ "
+"（BSD-3-Clause）、\\ `pgx <https://github.com/jackc/pgx>`__、\\ `Wails "
+"<https://wails.io>`__、\\ `go-fsrs <https://github.com/open-spaced-"
+"repetition/go-fsrs>`__\\ （MIT）。"
+
+#: ../../source/a_propos.rst:105
+msgid ""
+"côté interface : `Svelte <https://svelte.dev>`__, `two.js "
+"<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
+"`driver.js <https://driverjs.com>`__ (MIT) ;"
+msgstr ""
+"インターフェース側: `Svelte <https://svelte.dev>`__、\\ `two.js "
+"<https://two.js.org>`__、\\ `Chart.js <https://www.chartjs.org>`__、\\ "
+"`driver.js <https://driverjs.com>`__\\ （MIT）。"
+
+#: ../../source/a_propos.rst:109
+msgid ""
+"les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
+"Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
+"Open Font License 1.1)."
+msgstr ""
+"フォント\\ `Nunito <https://github.com/googlefonts/nunito>`__\\ と\\ `Noto "
+"Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__\\ （SIL "
+"Open Font License 1.1）。"
+

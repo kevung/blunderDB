@@ -21,7 +21,7 @@
 #   - frontend/src/stores/metaStore.js  (application version in UI)
 #   - wails.json                   (info.productVersion → Windows .exe version
 #                                   resource, macOS Info.plist CFBundleVersion)
-#   - doc/source/index.rst         (changelog entry, if --changelog given)
+#   - doc/source/historique.rst    (changelog entry, if --changelog given)
 #   - packaging/flatpak/io.github.kevung.blunderDB.yml  (url/sha256 bumped to
 #                                   the latest ALREADY-published release, so
 #                                   the tracked manifest stays buildable —
@@ -43,7 +43,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 CONF_PY="$REPO_ROOT/doc/source/conf.py"
 META_STORE="$REPO_ROOT/frontend/src/stores/metaStore.js"
-INDEX_RST="$REPO_ROOT/doc/source/index.rst"
+HISTORIQUE_RST="$REPO_ROOT/doc/source/historique.rst"
 WAILS_JSON="$REPO_ROOT/wails.json"
 FLATPAK_MANIFEST="$REPO_ROOT/packaging/flatpak/io.github.kevung.blunderDB.yml"
 
@@ -68,7 +68,7 @@ Arguments:
   <version>       New version number (semver format: X.Y.Z)
 
 Options:
-  --changelog|-c <text>   Changelog description for doc/source/index.rst
+  --changelog|-c <text>   Changelog bullet for doc/source/historique.rst (X.Y.0 only)
   --push|-p               Push commit and tag to origin after creating them
   --dry-run|-n            Show what would be changed without modifying files
   --check                 Show current version numbers and exit
@@ -271,45 +271,51 @@ do_update_wails_json() {
     ok "Updated wails.json: productVersion = \"$VERSION\""
 }
 
-# --- Update doc/source/index.rst changelog ---
+# --- Update doc/source/historique.rst changelog ---
+# The version history is a page of its own (historique.rst): one section per
+# X.Y.0 release, newest first, each a bulleted list — one bullet per change so
+# a later correction invalidates one translated string, not the whole entry.
+# Patch releases (X.Y.Z, Z>0) get no section (CLAUDE.md, "major-only").
 do_update_changelog() {
     if [[ -z "$CHANGELOG" ]]; then
-        warn "No changelog text provided (use --changelog). Skipping index.rst update."
+        warn "No changelog text provided (use --changelog). Skipping historique.rst update."
+        return
+    fi
+    if [[ "$VERSION" != *.0 ]]; then
+        warn "Patch release $VERSION: the version history lists X.Y.0 only, skipping historique.rst."
         return
     fi
 
-    info "Updating $INDEX_RST changelog ..."
+    info "Updating $HISTORIQUE_RST changelog ..."
 
-    local today
-    today=$(date +%d/%m/%Y)
-
-    # Build the new changelog row
-    local new_entry="   $VERSION, $today, \"$CHANGELOG\""
+    local today heading underline
+    today=$(date +%Y-%m-%d)
+    heading="$VERSION ($today)"
+    underline=$(printf '%*s' "${#heading}" '' | tr ' ' '-')
 
     if $DRY_RUN; then
-        echo "  New row: $new_entry"
+        echo "  New section: $heading"
+        echo "  - $CHANGELOG"
         return
     fi
 
-    # Find the last changelog entry line (last line starting with whitespace + digit before "Sommaire")
-    # and append the new entry after it
-    # Strategy: find "Sommaire" section and insert before it
-    # The changelog entries end with a blank line before "Sommaire"
-    local last_entry_line
-    last_entry_line=$(grep -n "^Sommaire" "$INDEX_RST" | head -1 | cut -d: -f1)
-
-    if [[ -z "$last_entry_line" ]]; then
-        error "Could not find 'Sommaire' section in index.rst to insert changelog entry."
+    # Insert before the first existing version heading ("X.Y.Z (YYYY-MM-DD)").
+    local first_version_line
+    first_version_line=$(grep -nE '^[0-9]+\.[0-9]+\.[0-9]+ \(' "$HISTORIQUE_RST" | head -1 | cut -d: -f1)
+    if [[ -z "$first_version_line" ]]; then
+        error "Could not find a version heading in historique.rst to insert the new section before."
         return
     fi
 
-    # Insert the new entry 2 lines before "Sommaire" (before the blank line)
-    # We need to find the actual last content line of the changelog
-    local insert_line=$((last_entry_line - 1))
-
-    # Use sed to insert the new entry before the blank line preceding Sommaire
-    sed -i "${insert_line}i\\${new_entry}" "$INDEX_RST"
-    ok "Added changelog entry for $VERSION ($today)"
+    local tmp
+    tmp=$(mktemp)
+    {
+        head -n $((first_version_line - 1)) "$HISTORIQUE_RST"
+        printf '%s\n%s\n\n- %s\n\n' "$heading" "$underline" "$CHANGELOG"
+        tail -n +"$first_version_line" "$HISTORIQUE_RST"
+    } > "$tmp"
+    mv "$tmp" "$HISTORIQUE_RST"
+    ok "Added changelog section for $heading"
 }
 
 # --- Update packaging/flatpak/io.github.kevung.blunderDB.yml ---
@@ -388,7 +394,7 @@ if [[ "$yn" =~ ^[Nn]$ ]]; then
     exit 0
 fi
 
-git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$INDEX_RST" "$FLATPAK_MANIFEST"
+git -C "$REPO_ROOT" add "$CONF_PY" "$META_STORE" "$WAILS_JSON" "$HISTORIQUE_RST" "$FLATPAK_MANIFEST"
 git -C "$REPO_ROOT" commit -m "Release $VERSION"
 
 # Signed tag when a GPG (or SSH, see gpg.format) signing key is configured

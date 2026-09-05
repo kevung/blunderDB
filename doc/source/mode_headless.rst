@@ -327,8 +327,8 @@ chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
 collections, matchs, tournois, analyses, commentaires, coups joués,
 bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
-quel par le poste de travail ; il n'existe pas encore d'export partiel côté
-serveur (cette sélection est un geste du bureau ou de la CLI). Le corps JSON
+quel par le poste de travail ; l'export porte toujours toute la base, la
+sélection d'un sous-ensemble est un geste du bureau ou de la CLI. Le corps JSON
 de la requête est optionnel et n'accepte que ``watermarkOrigin`` /
 ``watermarkNote``, pour apposer un filigrane signé de l'identité propre du
 démon (``--identity-dir``) — sans ces champs, l'export ne porte aucun

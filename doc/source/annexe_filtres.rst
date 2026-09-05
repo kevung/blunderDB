@@ -33,7 +33,7 @@ Pour faire une recherche à l'aide de filtres,
 
 .. note:: 
    La liste des filtres disponibles en ligne de commande est fournie dans la
-   :numref:`cmd_filter`.
+   section :ref:`cmd_filter` de la liste des commandes.
 
 Recherche dans les résultats courants
 -------------------------------------
