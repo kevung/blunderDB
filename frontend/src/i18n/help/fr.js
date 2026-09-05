@@ -501,7 +501,6 @@ export default {
 </tbody>
 </table>
 <h3>Historique de recherche</h3>
-<p>L'historique de recherche est l'onglet <em>Historique</em> du panneau de recherche (<em>CTRL-F</em> ou <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -521,7 +520,6 @@ export default {
 </tbody>
 </table>
 <h3>Bibliothèque de filtres</h3>
-<p>La bibliothèque de filtres est l'onglet <em>Enregistrés</em> du panneau de recherche (<em>CTRL-F</em> ou <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -572,7 +570,6 @@ export default {
 </tbody>
 </table>
 <h3>Panneau Eval</h3>
-<p>La liste des coups du panneau <em>Eval</em> (voir Panneau Eval) se parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès qu'un coup a été sélectionné d'un clic.</p>
 <table>
 <thead>
 <tr>
@@ -920,7 +917,6 @@ export default {
 </tbody>
 </table>
 <h3>Filtres de recherche</h3>
-<p>Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-à-dire après le début de commande <code>s</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1275,7 +1271,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Par exemple, la commande <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtre toutes les positions en prenant en compte la structure des pions, le score et le cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à la course, avec au moins 60% de chances de gain, au moins 10 pions dans la zone, et l'adversaire a entre 2 et 3 pions arriérés.</p>
 <h3>Commandes diverses</h3>
 <table>
 <thead>

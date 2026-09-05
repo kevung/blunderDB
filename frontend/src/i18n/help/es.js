@@ -498,7 +498,6 @@ export default {
 </tbody>
 </table>
 <h3>Historial de búsqueda</h3>
-<p>El historial de búsqueda es la pestaña <em>Historial</em> del panel de búsqueda (<em>CTRL-F</em> o <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -518,7 +517,6 @@ export default {
 </tbody>
 </table>
 <h3>Biblioteca de filtros</h3>
-<p>La biblioteca de filtros es la pestaña <em>Guardados</em> del panel de búsqueda (<em>CTRL-F</em> o <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -569,7 +567,6 @@ export default {
 </tbody>
 </table>
 <h3>Panel Eval</h3>
-<p>La lista de jugadas del panel <em>Eval</em> (véase Panel Eval) se recorre como la del panel de análisis. Estos atajos actúan en cuanto se ha seleccionado una jugada con un clic.</p>
 <table>
 <thead>
 <tr>
@@ -917,7 +914,6 @@ export default {
 </tbody>
 </table>
 <h3>Filtros de búsqueda</h3>
-<p>Los filtros siguientes deben yuxtaponerse durante una búsqueda, es decir, después del inicio del comando <code>s</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1272,7 +1268,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Por ejemplo, el comando <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtra todas las posiciones teniendo en cuenta la estructura de fichas, el marcador y el cubo de la posición editada donde el jugador tiene entre 20 y 5 pips de ventaja en la carrera, con al menos un 60% de probabilidades de victoria, al menos 10 fichas en la zona, y el adversario tiene entre 2 y 3 fichas rezagadas.</p>
 <h3>Comandos diversos</h3>
 <table>
 <thead>

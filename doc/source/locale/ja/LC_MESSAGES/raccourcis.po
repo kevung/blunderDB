@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -455,12 +455,6 @@ msgstr "コマンド履歴を下方向に参照する。"
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr "検索履歴は、検索パネル（\\ *CTRL-F*\\ または\\ *TAB*\\ ）の\\ *履歴*\\ タブです。"
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "クリック"
@@ -477,15 +471,9 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr "フィルターライブラリは、検索パネル（\\ *CTRL-F*\\ または\\ *TAB*\\ ）の\\ *保存済み*\\ タブです。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -495,7 +483,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -529,24 +517,15 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Eval パネル"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"*Eval*\\ パネルの手のリスト（:ref:`panneau_epc` "
-"を参照）は分析パネルのリストと同じように移動できます。これらのショートカットは、クリックで手を選択した時点から有効になります。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -582,7 +561,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -636,7 +615,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -666,7 +645,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -812,4 +791,26 @@ msgstr "コレクション一覧に戻り、そうでなければコレクショ
 #~ msgstr ""
 #~ "このパネルはナビゲーション用のショートカットを横取りしません。PageUp/h、左/k、右/j、PageDown/l "
 #~ "は、:ref:`raccourcis_navigation` に記載のとおり、開いているコレクションの局面を移動します。"
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr "検索履歴は、検索パネル（\\ *CTRL-F*\\ または\\ *TAB*\\ ）の\\ *履歴*\\ タブです。"
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr "フィルターライブラリは、検索パネル（\\ *CTRL-F*\\ または\\ *TAB*\\ ）の\\ *保存済み*\\ タブです。"
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "*Eval*\\ パネルの手のリスト（:ref:`panneau_epc` "
+#~ "を参照）は分析パネルのリストと同じように移動できます。これらのショートカットは、クリックで手を選択した時点から有効になります。"
 

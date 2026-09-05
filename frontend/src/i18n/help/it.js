@@ -497,7 +497,6 @@ export default {
 </tbody>
 </table>
 <h3>Cronologia di ricerca</h3>
-<p>La cronologia di ricerca è la scheda <em>Cronologia</em> del pannello di ricerca (<em>CTRL-F</em> o <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -517,7 +516,6 @@ export default {
 </tbody>
 </table>
 <h3>Libreria di filtri</h3>
-<p>La libreria di filtri è la scheda <em>Salvati</em> del pannello di ricerca (<em>CTRL-F</em> o <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -568,7 +566,6 @@ export default {
 </tbody>
 </table>
 <h3>Pannello Eval</h3>
-<p>L'elenco delle mosse del pannello <em>Eval</em> (vedere Pannello Eval) si scorre come quello del pannello di analisi. Queste scorciatoie agiscono non appena una mossa è stata selezionata con un clic.</p>
 <table>
 <thead>
 <tr>
@@ -916,7 +913,6 @@ export default {
 </tbody>
 </table>
 <h3>Filtri di ricerca</h3>
-<p>I filtri sottostanti devono essere giustapposti durante una ricerca, ovvero dopo l'inizio del comando <code>s</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1271,7 +1267,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Ad esempio, il comando <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtra tutte le posizioni tenendo conto della struttura delle pedine, del punteggio e del cubo della posizione modificata in cui il giocatore ha tra 20 e 5 pip di vantaggio nella corsa, con almeno il 60% di probabilità di vittoria, almeno 10 pedine nella zona, e l'avversario ha tra 2 e 3 pedine arretrate.</p>
 <h3>Comandi vari</h3>
 <table>
 <thead>

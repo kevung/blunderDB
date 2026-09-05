@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -459,14 +459,6 @@ msgstr "Περιήγηση στο ιστορικό εντολών προς τα 
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"Το ιστορικό αναζήτησης είναι η καρτέλα *Historique* του πίνακα αναζήτησης"
-" (*CTRL-F* ή *TAB*)."
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "Κλικ"
@@ -483,17 +475,9 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"Η βιβλιοθήκη φίλτρων είναι η καρτέλα *Enregistrés* του πίνακα αναζήτησης "
-"(*CTRL-F* ή *TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -503,7 +487,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -539,25 +523,15 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"Η λίστα κινήσεων του πίνακα *Eval* (βλ. :ref:`panneau_epc`) διατρέχεται "
-"όπως εκείνη του πίνακα ανάλυσης. Αυτές οι συντομεύσεις ενεργούν μόλις "
-"επιλεγεί μια κίνηση με κλικ."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -593,7 +567,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -651,7 +625,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -684,7 +658,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -882,4 +856,35 @@ msgstr ""
 #~ "ΔΕΞΙΑ/j, PageDown/l πλοηγούν στις θέσεις "
 #~ "της ανοικτής συλλογής ακριβώς όπως "
 #~ "περιγράφεται στο :ref:`raccourcis_navigation`."
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "Το ιστορικό αναζήτησης είναι η καρτέλα"
+#~ " *Historique* του πίνακα αναζήτησης "
+#~ "(*CTRL-F* ή *TAB*)."
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "Η βιβλιοθήκη φίλτρων είναι η καρτέλα "
+#~ "*Enregistrés* του πίνακα αναζήτησης (*CTRL-F*"
+#~ " ή *TAB*)."
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "Η λίστα κινήσεων του πίνακα *Eval* "
+#~ "(βλ. :ref:`panneau_epc`) διατρέχεται όπως "
+#~ "εκείνη του πίνακα ανάλυσης. Αυτές οι "
+#~ "συντομεύσεις ενεργούν μόλις επιλεγεί μια "
+#~ "κίνηση με κλικ."
 

@@ -485,7 +485,6 @@ export default {
 </tbody>
 </table>
 <h3>Search History</h3>
-<p>The search history is the <em>History</em> tab of the search panel (<em>CTRL-F</em> or <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -505,7 +504,6 @@ export default {
 </tbody>
 </table>
 <h3>Filter Library</h3>
-<p>The filter library is the <em>Saved</em> tab of the search panel (<em>CTRL-F</em> or <em>TAB</em>).</p>
 <table>
 <thead>
 <tr>
@@ -556,7 +554,6 @@ export default {
 </tbody>
 </table>
 <h3>Eval Panel</h3>
-<p>The move list of the <em>Eval</em> panel (see Eval Panel) is browsed like that of the analysis panel. These shortcuts act as soon as a move has been selected with a click.</p>
 <table>
 <thead>
 <tr>
@@ -904,7 +901,6 @@ export default {
 </tbody>
 </table>
 <h3>Search Filters</h3>
-<p>The filters below must be juxtaposed during a search, i.e., after the start of the <code>s</code> command.</p>
 <table>
 <thead>
 <tr>
@@ -1259,7 +1255,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>For example, the command <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filters all positions taking into account the checker structure, the score, and the cube of the edited position where the player has between 20 and 5 pips ahead in the race, with at least 60% winning chances, at least 10 checkers in the zone, and the opponent has between 2 and 3 backcheckers.</p>
 <h3>Various commands</h3>
 <table>
 <thead>

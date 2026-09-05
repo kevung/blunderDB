@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -459,14 +459,6 @@ msgstr "Recorrer el historial de comandos hacia abajo."
 msgid "Historique de recherche"
 msgstr "Historial de búsqueda"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"El historial de búsqueda es la pestaña *Historial* del panel de búsqueda "
-"(*CTRL-F* o *TAB*)."
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "Clic"
@@ -483,17 +475,9 @@ msgstr "Doble clic"
 msgid "Exécuter la recherche."
 msgstr "Ejecutar la búsqueda."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "Biblioteca de filtros"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"La biblioteca de filtros es la pestaña *Guardados* del panel de búsqueda "
-"(*CTRL-F* o *TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -503,7 +487,7 @@ msgstr "Seleccionar/deseleccionar un filtro (mostrar la posición)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Ejecutar la búsqueda del filtro."
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "Panel de análisis"
 
@@ -541,25 +525,15 @@ msgstr ""
 "Deseleccionar la jugada. Si no hay ninguna jugada seleccionada, cerrar el"
 " panel."
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Panel Eval"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"La lista de jugadas del panel *Eval* (véase :ref:`panneau_epc`) se "
-"recorre como la del panel de análisis. Estos atajos actúan en cuanto se "
-"ha seleccionado una jugada con un clic."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "Deseleccionar la jugada."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "Panel de partidas"
 
@@ -595,7 +569,7 @@ msgstr "Eliminar la partida seleccionada."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
 
@@ -653,7 +627,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -685,7 +659,7 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -882,4 +856,36 @@ msgstr ""
 #~ "DERECHA/j, AvPág/l recorren las posiciones "
 #~ "de la colección abierta exactamente como"
 #~ " se describe en :ref:`raccourcis_navigation`."
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "El historial de búsqueda es la "
+#~ "pestaña *Historial* del panel de "
+#~ "búsqueda (*CTRL-F* o *TAB*)."
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "La biblioteca de filtros es la "
+#~ "pestaña *Guardados* del panel de "
+#~ "búsqueda (*CTRL-F* o *TAB*)."
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "La lista de jugadas del panel "
+#~ "*Eval* (véase :ref:`panneau_epc`) se recorre"
+#~ " como la del panel de análisis. "
+#~ "Estos atajos actúan en cuanto se "
+#~ "ha seleccionado una jugada con un "
+#~ "clic."
 

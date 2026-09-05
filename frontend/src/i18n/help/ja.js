@@ -480,7 +480,6 @@ export default {
 </tbody>
 </table>
 <h3>検索履歴</h3>
-<p>検索履歴は、検索パネル（<em>CTRL-F</em>または<em>TAB</em>）の<em>履歴</em>タブです。</p>
 <table>
 <thead>
 <tr>
@@ -500,7 +499,6 @@ export default {
 </tbody>
 </table>
 <h3>フィルターライブラリ</h3>
-<p>フィルターライブラリは、検索パネル（<em>CTRL-F</em>または<em>TAB</em>）の<em>保存済み</em>タブです。</p>
 <table>
 <thead>
 <tr>
@@ -551,7 +549,6 @@ export default {
 </tbody>
 </table>
 <h3>Eval パネル</h3>
-<p><em>Eval</em>パネルの手のリスト（Eval パネル を参照）は分析パネルのリストと同じように移動できます。これらのショートカットは、クリックで手を選択した時点から有効になります。</p>
 <table>
 <thead>
 <tr>
@@ -899,7 +896,6 @@ export default {
 </tbody>
 </table>
 <h3>検索フィルタ</h3>
-<p>以下のフィルタは検索時、すなわちコマンドの先頭 <code>s</code> の後に並べて指定する必要があります。</p>
 <table>
 <thead>
 <tr>
@@ -1254,7 +1250,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>例えば、コマンド <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> は、編集中の局面の駒の配置、スコア、キューブを考慮し、プレイヤーがレースで 20 から 5 ピップ進んでおり、勝率が少なくとも 60%、ゾーン内に少なくとも 10 個の駒があり、相手が 2 から 3 個の後方の駒を持つすべての局面をフィルタします。</p>
 <h3>その他のコマンド</h3>
 <table>
 <thead>

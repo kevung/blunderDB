@@ -144,9 +144,6 @@ Ligne de commande
 Historique de recherche
 -----------------------
 
-L'historique de recherche est l'onglet *Historique* du panneau de recherche
-(*CTRL-F* ou *TAB*).
-
 .. csv-table::
    :header: "Raccourci", "Action"
    :widths: 7, 20
@@ -159,9 +156,6 @@ L'historique de recherche est l'onglet *Historique* du panneau de recherche
 
 Bibliothèque de filtres
 -----------------------
-
-La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de recherche
-(*CTRL-F* ou *TAB*).
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -191,10 +185,6 @@ Panneau d'analyse
 
 Panneau Eval
 ------------
-
-La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se parcourt
-comme celle du panneau d'analyse. Ces raccourcis agissent dès qu'un coup a été
-sélectionné d'un clic.
 
 .. csv-table::
    :header: "Raccourci", "Action"

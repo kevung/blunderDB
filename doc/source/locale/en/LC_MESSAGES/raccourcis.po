@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 01:55+0200\n"
+"POT-Creation-Date: 2026-09-05 03:17+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -456,14 +456,6 @@ msgstr "Browse command history down."
 msgid "Historique de recherche"
 msgstr "Search History"
 
-#: ../../source/raccourcis.rst:147
-msgid ""
-"L'historique de recherche est l'onglet *Historique* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"The search history is the *History* tab of the search panel (*CTRL-F* or "
-"*TAB*)."
-
 #: ../../source/raccourcis.rst:1
 msgid "Clic"
 msgstr "Click"
@@ -480,17 +472,9 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:158
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
-
-#: ../../source/raccourcis.rst:163
-msgid ""
-"La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
-"recherche (*CTRL-F* ou *TAB*)."
-msgstr ""
-"The filter library is the *Saved* tab of the search panel (*CTRL-F* or "
-"*TAB*)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner un filtre (afficher la position)."
@@ -500,7 +484,7 @@ msgstr "Select/deselect a filter (show position)."
 msgid "Exécuter la recherche du filtre."
 msgstr "Execute the filter search."
 
-#: ../../source/raccourcis.rst:177
+#: ../../source/raccourcis.rst:171
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -534,25 +518,15 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:187
 msgid "Panneau Eval"
 msgstr "Eval Panel"
-
-#: ../../source/raccourcis.rst:195
-msgid ""
-"La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
-"parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
-"qu'un coup a été sélectionné d'un clic."
-msgstr ""
-"The move list of the *Eval* panel (see :ref:`panneau_epc`) is browsed "
-"like that of the analysis panel. These shortcuts act as soon as a move "
-"has been selected with a click."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup."
 msgstr "Deselect move."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:202
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -588,7 +562,7 @@ msgstr "Delete the selected match."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:230
+#: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -644,7 +618,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:238
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -676,7 +650,7 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:254
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -869,4 +843,36 @@ msgstr ""
 #~ "RIGHT/j, PageDown/l move through the "
 #~ "positions of the open collection exactly"
 #~ " as described in :ref:`raccourcis_navigation`."
+
+#~ msgid ""
+#~ "L'historique de recherche est l'onglet "
+#~ "*Historique* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "The search history is the *History* "
+#~ "tab of the search panel (*CTRL-F* "
+#~ "or *TAB*)."
+
+#~ msgid ""
+#~ "La bibliothèque de filtres est l'onglet"
+#~ " *Enregistrés* du panneau de recherche "
+#~ "(*CTRL-F* ou *TAB*)."
+#~ msgstr ""
+#~ "The filter library is the *Saved* "
+#~ "tab of the search panel (*CTRL-F* "
+#~ "or *TAB*)."
+
+#~ msgid ""
+#~ "La liste des coups du panneau "
+#~ "*Eval* (voir :ref:`panneau_epc`) se parcourt"
+#~ " comme celle du panneau d'analyse. "
+#~ "Ces raccourcis agissent dès qu'un coup"
+#~ " a été sélectionné d'un clic."
+#~ msgstr ""
+#~ "The move list of the *Eval* panel"
+#~ " (see :ref:`panneau_epc`) is browsed like"
+#~ " that of the analysis panel. These"
+#~ " shortcuts act as soon as a "
+#~ "move has been selected with a "
+#~ "click."
 
