@@ -15,9 +15,9 @@
         ImportIssuerIdentity,
         RegenerateIssuerIdentity,
         BearoffStatus,
-        DownloadBearoffDB,
-        CancelBearoffDownload,
-        DeleteBearoffDB,
+        GenerateBearoffTable,
+        CancelBearoffGeneration,
+        DeleteBearoffTable,
         OpenBearoffFileDialog,
         StartGammonNetBatch,
         StartGammonNetStaleBatch,
@@ -252,32 +252,34 @@
     ];
     onDestroy(() => unsubBearoff.forEach((off) => off && off()));
 
-    async function startBearoffDownload() {
+    // The wider two-sided table is generated here now, not downloaded
+    // (ADR-0027): TS-06-11 is about twenty minutes of one core and 1.2 GB on
+    // disk, against a download of the same size fetched from a release asset.
+    async function startBearoffGeneration() {
         bearoffError = '';
-        bearoffProgress = { received: bearoff?.partial_bytes ?? 0, total: bearoff?.expected_bytes ?? 0 };
+        bearoffProgress = { done: 0, total: 0 };
         try {
-            await DownloadBearoffDB();
-            await refreshBearoff();
+            await GenerateBearoffTable('two-sided', 6, 11);
         } catch (error) {
             bearoffError = String(error);
             bearoffProgress = null;
         }
     }
 
-    async function cancelBearoffDownload() {
+    async function cancelBearoffGeneration() {
         try {
-            await CancelBearoffDownload();
+            await CancelBearoffGeneration();
         } finally {
             bearoffProgress = null;
             await refreshBearoff();
         }
     }
 
-    async function deleteBearoffDownload() {
-        if (!(await confirmAction(get(t)('config.confirmDeleteBearoff', { gb: gb(bearoff.size_bytes) }), { confirmLabel: get(t)('common.delete') }))) return;
+    async function deleteBearoffTable(name) {
+        if (!(await confirmAction(get(t)('config.confirmDeleteBearoff', { gb: name }), { confirmLabel: get(t)('common.delete') }))) return;
         bearoffError = '';
         try {
-            await DeleteBearoffDB();
+            await DeleteBearoffTable(name);
             await refreshBearoff();
         } catch (error) {
             bearoffError = String(error);
@@ -455,8 +457,6 @@
         gnAutoAnalyze = event.currentTarget.checked;
         SaveGammonNetAutoAnalyze(gnAutoAnalyze).catch((error) => logger.error('Error saving gammonNet auto-analyze:', error));
     }
-
-    const gb = (bytes) => (bytes / 1e9).toFixed(2);
 </script>
 
 <Modal open={visible} onclose={onClose} size="medium" align="center" compactTitle closeOnOverlay>
@@ -535,32 +535,26 @@
             {#if bearoff}
                 <div class="setting-row">
                     <span class="setting-label">{$t('config.bearoffActive')}</span>
-                    <code class="identity-fingerprint">TS-06-{String(bearoff.active_domain).padStart(2, '0')} — {bearoff.active_origin}</code>
+                    <code class="identity-fingerprint">
+                        {bearoff.active_domain > 0 ? `TS-06-${String(bearoff.active_domain).padStart(2, '0')} — ${bearoff.active_origin}` : $t('config.bearoffNone')}
+                    </code>
                 </div>
 
-                {#if bearoffProgress || bearoff.downloading}
+                {#if bearoffProgress || bearoff.generating}
                     <div class="setting-row">
-                        <span class="setting-label">{$t('config.bearoffDownloading')}</span>
-                        <progress class="bearoff-progress" max={bearoffProgress?.total ?? bearoff.expected_bytes} value={bearoffProgress?.received ?? 0}></progress>
-                        <span class="setting-label">{gb(bearoffProgress?.received ?? 0)} / {gb(bearoffProgress?.total ?? bearoff.expected_bytes)} {$t('config.bearoffGB')}</span>
+                        <span class="setting-label">{$t('config.bearoffGenerating', { domain: bearoffProgress?.domain ?? bearoff.generating })}</span>
+                        <progress class="bearoff-progress" max={bearoffProgress?.total ?? 0} value={bearoffProgress?.done ?? 0}></progress>
                     </div>
                     <div class="tab-actions">
-                        <button class="secondary-button" onclick={cancelBearoffDownload}>{$t('common.cancel')}</button>
-                    </div>
-                {:else if bearoff.downloaded}
-                    <p class="setting-note ok">{$t('config.bearoffDownloaded', { gb: gb(bearoff.size_bytes) })}</p>
-                    <div class="tab-actions">
-                        <button class="danger-button" onclick={deleteBearoffDownload}>{$t('config.bearoffDelete')}</button>
+                        <button class="secondary-button" onclick={cancelBearoffGeneration}>{$t('common.cancel')}</button>
                     </div>
                 {:else}
-                    <p class="setting-note">{$t('config.bearoffDownloadNote', { gb: gb(bearoff.expected_bytes) })}</p>
-                    {#if bearoff.partial_bytes > 0}
-                        <p class="setting-note">{$t('config.bearoffPartial', { gb: gb(bearoff.partial_bytes) })}</p>
-                    {/if}
+                    <p class="setting-note">{$t('config.bearoffWiderNote')}</p>
                     <div class="tab-actions">
-                        <button class="secondary-button" onclick={startBearoffDownload}>
-                            {bearoff.partial_bytes > 0 ? $t('config.bearoffResume') : $t('config.bearoffDownload')}
-                        </button>
+                        <button class="secondary-button" onclick={startBearoffGeneration}>{$t('config.bearoffGenerateWider')}</button>
+                        {#if bearoff.active_domain > 6}
+                            <button class="danger-button" onclick={() => deleteBearoffTable(`gnubg_ts6x${bearoff.active_domain}.bd`)}>{$t('config.bearoffDelete')}</button>
+                        {/if}
                     </div>
                 {/if}
 

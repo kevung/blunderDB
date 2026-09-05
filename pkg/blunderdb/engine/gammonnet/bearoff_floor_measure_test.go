@@ -97,7 +97,7 @@ func TestBearoffFloorMeasure(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	ts := race.EmbeddedTwoSided()
+	ts := raceTestTwoSided(t)
 
 	// Draw the sample once; every ply and cube state sees the same positions.
 	rng := rand.New(rand.NewSource(1))

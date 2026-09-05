@@ -13,8 +13,8 @@ func TestVerify_TheShippedTablesAreVerified(t *testing.T) {
 		path string
 		want Domain
 	}{
-		{"../race/gnubg_ts0.bd", Domain{Kind: TwoSidedKind, Points: 6, Checkers: 6}},
-		{"../gnubg_os6.bd", Domain{Kind: OneSidedKind, Points: 6, Checkers: 15}},
+		{"testdata/gnubg_ts0.bd", Domain{Kind: TwoSidedKind, Points: 6, Checkers: 6}},
+		{"testdata/gnubg_os6.bd", Domain{Kind: OneSidedKind, Points: 6, Checkers: 15}},
 	} {
 		if _, err := os.Stat(tc.path); err != nil {
 			t.Skipf("reference table not available: %v", err)
@@ -62,7 +62,7 @@ func TestVerify_AFreshlyGeneratedTableVerifies(t *testing.T) {
 
 func TestVerify_ATruncatedFileIsCorrupt(t *testing.T) {
 	dir := t.TempDir()
-	full, err := os.ReadFile("../race/gnubg_ts0.bd")
+	full, err := os.ReadFile("testdata/gnubg_ts0.bd")
 	if err != nil {
 		t.Skipf("reference table not available: %v", err)
 	}
@@ -77,7 +77,7 @@ func TestVerify_ATruncatedFileIsCorrupt(t *testing.T) {
 
 func TestVerify_AFlippedByteIsCorrupt(t *testing.T) {
 	dir := t.TempDir()
-	full, err := os.ReadFile("../race/gnubg_ts0.bd")
+	full, err := os.ReadFile("testdata/gnubg_ts0.bd")
 	if err != nil {
 		t.Skipf("reference table not available: %v", err)
 	}

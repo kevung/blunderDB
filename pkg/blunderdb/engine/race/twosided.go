@@ -1,15 +1,12 @@
 package race
 
 import (
-	"bytes"
-	_ "embed"
 	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
@@ -27,9 +24,6 @@ import (
 // decision-tree optimum; the money verdict is reconstructed from them and
 // plane 3 (see CubeVerdict). Semantics pinned against gnubg cfevaluate on 160
 // fixture states in testdata/money_fixtures.json (exact to quantisation).
-
-//go:embed gnubg_ts0.bd
-var embeddedTS0 []byte
 
 // TwoSided reads one gnubg two-sided bearoff database through an io.ReaderAt;
 // lookups are 8-byte reads, the file is never loaded into memory.
@@ -91,29 +85,11 @@ func OpenTwoSided(path string) (*TwoSided, error) {
 	return ts, nil
 }
 
-var (
-	embeddedOnce sync.Once
-	embeddedDB   *TwoSided
-)
-
-// EmbeddedTwoSided returns the built-in TS-06-06 database (gnubg's default
-// gnubg_ts0.bd). It never fails: the file is compiled in.
-func EmbeddedTwoSided() *TwoSided {
-	embeddedOnce.Do(func() {
-		ts, err := newTwoSided(bytes.NewReader(embeddedTS0), int64(len(embeddedTS0)), "embedded gnubg_ts0.bd")
-		if err != nil {
-			panic(fmt.Sprintf("embedded gnubg_ts0.bd invalid: %v", err))
-		}
-		embeddedDB = ts
-	})
-	return embeddedDB
-}
-
 // Origin describes where this database came from (path or "embedded …").
 func (t *TwoSided) Origin() string { return t.origin }
 
 // Close releases the underlying file handle opened by OpenTwoSided. It is a
-// safe no-op for the embedded database (backed by a bytes.Reader, which does
+// safe no-op for a database that owns no handle (one backed by a reader, which does
 // not implement io.Closer). Windows in particular keeps a removed or
 // replaced file's directory entry alive — and refuses to reopen the path —
 // until every handle on it is closed, so any code that opens a TwoSided

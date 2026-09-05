@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/bearoffgen/bearofftest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -94,17 +95,23 @@ func TestEvaluateGammonNetDepthLabelReflectsWhatRan(t *testing.T) {
 	}
 }
 
-// isolateRaceSources points the race resolver at an empty directory so the
-// regime a test sees is decided by the embedded TS-06-06 and not by whatever
-// the developer has downloaded — race/eval_test.go's isolateSources, from
-// outside the package.
+// isolateRaceSources points the race resolver at the generated default table
+// and nothing else, so the regime a test sees is decided by TS-06-06 and not
+// by whatever wider table the developer happens to have.
+//
+// It used to point at an *empty* directory and rely on the embedded TS-06-06
+// as a floor. There is no floor since ADR-0027: an empty directory now means
+// no table at all, and every regime would come out estimated. It also restores
+// the package's shared directory rather than the developer's own — clearing it
+// to "" left the tests that follow reading whatever is in $XDG_DATA_HOME.
 func isolateRaceSources(t *testing.T) {
 	t.Helper()
-	race.SetDataDir(t.TempDir())
+	shared := bearofftest.DataDir(t)
+	race.SetDataDir(shared)
 	race.SetExternalPath("")
 	race.Invalidate()
 	t.Cleanup(func() {
-		race.SetDataDir("")
+		race.SetDataDir(shared)
 		race.SetExternalPath("")
 		race.Invalidate()
 	})

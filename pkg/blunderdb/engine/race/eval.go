@@ -89,8 +89,13 @@ func Evaluate(pos *domain.Position) Result {
 		us, them = topHome, bottomHome
 	}
 
+	// Resolve returns nil while the machine has no table yet — the first
+	// launch, until the background generation finishes (ADR-0027). The exact
+	// regime is simply unavailable then, and the estimate below answers, with
+	// its own badge: the one thing that must not happen is an exact-looking
+	// verdict pulled from nowhere (ADR-0009).
 	src := Resolve()
-	if src.Covers(us, them) {
+	if src != nil && src.Covers(us, them) {
 		entry, err := src.Lookup(us, them)
 		if err != nil {
 			// Covers() passed, so this is an I/O problem (truncated or

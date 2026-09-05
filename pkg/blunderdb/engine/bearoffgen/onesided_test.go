@@ -11,7 +11,7 @@ import (
 // produced by `makebearoff -o 6`. Same rule as the two-sided one: identical or
 // it is a failure.
 func TestOneSided_6_IdenticalToGnubg(t *testing.T) {
-	want, err := os.ReadFile("../gnubg_os6.bd")
+	want, err := os.ReadFile("testdata/gnubg_os6.bd")
 	if err != nil {
 		t.Skipf("reference table not available: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestOneSided_6_IdenticalToGnubg(t *testing.T) {
 }
 
 func TestOneSided_HeaderMatchesTheShippedFile(t *testing.T) {
-	want, err := os.ReadFile("../gnubg_os6.bd")
+	want, err := os.ReadFile("testdata/gnubg_os6.bd")
 	if err != nil {
 		t.Skipf("reference table not available: %v", err)
 	}

@@ -98,7 +98,7 @@ func TestEvalMeasure(t *testing.T) {
 	}
 	searcher := newSearcherWith(DefaultConfig(2), net, prune)
 
-	ts := race.EmbeddedTwoSided()
+	ts := raceTestTwoSided(t)
 	report := runEvalMeasure(t, searcher, ts, "embedded TS-06-06", n, 1)
 
 	t.Logf("\n%s", report)

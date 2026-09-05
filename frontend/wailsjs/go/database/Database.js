@@ -30,6 +30,10 @@ export function AnalyzeStaleGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) 
   return window['go']['database']['Database']['AnalyzeStaleGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
+export function BuryAnkiCard(arg1) {
+  return window['go']['database']['Database']['BuryAnkiCard'](arg1);
+}
+
 export function CancelImport() {
   return window['go']['database']['Database']['CancelImport']();
 }
@@ -224,6 +228,10 @@ export function GetAnkiDeckStats(arg1) {
 
 export function GetAnkiForecast(arg1, arg2) {
   return window['go']['database']['Database']['GetAnkiForecast'](arg1, arg2);
+}
+
+export function GetAnkiReviewLog(arg1, arg2) {
+  return window['go']['database']['Database']['GetAnkiReviewLog'](arg1, arg2);
 }
 
 export function GetCollectionByID(arg1) {
@@ -454,6 +462,10 @@ export function RefreshSearchStatistics() {
   return window['go']['database']['Database']['RefreshSearchStatistics']();
 }
 
+export function RemoveAnkiCard(arg1) {
+  return window['go']['database']['Database']['RemoveAnkiCard'](arg1);
+}
+
 export function RemoveMatchFromTournament(arg1) {
   return window['go']['database']['Database']['RemoveMatchFromTournament'](arg1);
 }
@@ -476,6 +488,10 @@ export function ReorderCollections(arg1) {
 
 export function ReorderTournamentMatches(arg1, arg2) {
   return window['go']['database']['Database']['ReorderTournamentMatches'](arg1, arg2);
+}
+
+export function RepairAnalyses() {
+  return window['go']['database']['Database']['RepairAnalyses']();
 }
 
 export function ResetAnkiDeck(arg1) {
@@ -536,6 +552,10 @@ export function SaveSessionState(arg1) {
 
 export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
+}
+
+export function SetAnkiCardSuspended(arg1, arg2) {
+  return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }
 
 export function SetMatchTournamentByName(arg1, arg2) {

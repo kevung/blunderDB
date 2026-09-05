@@ -169,7 +169,7 @@ const (
 )
 
 var correctionCoeffs = [nCorrectionCoeffs]float64{
-`, race.DownloadedFileName, maxC, *samples, filepath.Base(*out), nCoeffs, maxC, sigma, p99, maxAbs)
+`, "gnubg_ts6x11.bd", maxC, *samples, filepath.Base(*out), nCoeffs, maxC, sigma, p99, maxAbs)
 	for _, c := range coeffs {
 		fmt.Fprintf(f, "\t%v,\n", c)
 	}

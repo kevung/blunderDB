@@ -1,17 +1,14 @@
 package engine
 
 import (
-	"embed"
 	"encoding/binary"
 	"fmt"
-	"log/slog"
 	"math"
+	"os"
+	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
-
-//go:embed gnubg_os6.bd
-var bearoffDB embed.FS
 
 // BearoffDatabase holds the loaded one-sided 6-point bearoff database.
 type BearoffDatabase struct {
@@ -44,14 +41,47 @@ type EPCResult struct {
 // = 294/36 = 8.16667
 const avgPipsPerRoll = 294.0 / 36.0
 
-var globalBearoffDB *BearoffDatabase
+var (
+	bearoffMu       sync.RWMutex
+	globalBearoffDB *BearoffDatabase
+)
 
-func init() {
-	var err error
-	globalBearoffDB, err = loadBearoffDatabase()
-	if err != nil {
-		slog.Warn("failed to load bearoff database", "err", err)
+// LoadOneSided points the EPC at a one-sided table on disk, replacing whatever
+// was loaded. An empty path unloads it.
+//
+// The table is no longer compiled into the binary (ADR-0027): it is generated
+// on the machine that needs it, which means there is a moment — the first
+// launch, until the background generation finishes — when there is none. The
+// EPC answers that it cannot compute rather than pretending; see OneSidedReady.
+func LoadOneSided(path string) error {
+	bearoffMu.Lock()
+	defer bearoffMu.Unlock()
+	if path == "" {
+		globalBearoffDB = nil
+		return nil
 	}
+	db, err := loadBearoffDatabaseFrom(path)
+	if err != nil {
+		return err
+	}
+	globalBearoffDB = db
+	return nil
+}
+
+// OneSidedReady reports whether a one-sided table is loaded. The Eval panel
+// asks before telling the user anything: silence while the table is being
+// generated, a message only when a position actually needs it.
+func OneSidedReady() bool {
+	bearoffMu.RLock()
+	defer bearoffMu.RUnlock()
+	return globalBearoffDB != nil
+}
+
+// oneSided returns the loaded table, or nil.
+func oneSided() *BearoffDatabase {
+	bearoffMu.RLock()
+	defer bearoffMu.RUnlock()
+	return globalBearoffDB
 }
 
 // PipCounts returns the pip counts for both players from a Board.
@@ -90,11 +120,11 @@ func combination(n, k int) int {
 	return result
 }
 
-// loadBearoffDatabase loads the embedded gnubg_os6.bd file.
-func loadBearoffDatabase() (*BearoffDatabase, error) {
-	raw, err := bearoffDB.ReadFile("gnubg_os6.bd")
+// loadBearoffDatabaseFrom reads a one-sided gnubg table from disk.
+func loadBearoffDatabaseFrom(path string) (*BearoffDatabase, error) {
+	raw, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read embedded bearoff database: %w", err)
+		return nil, fmt.Errorf("failed to read bearoff database %s: %w", path, err)
 	}
 
 	if len(raw) < 40 {

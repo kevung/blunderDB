@@ -20,7 +20,7 @@ func randHome(rng *rand.Rand, n int) [6]int {
 // embedded TS-06-06 domain. Bound from the design measurements (ADR-0009):
 // raw error peaks around 1.3 % of win probability at 5–6 checkers.
 func TestConvolution_RawAgainstEmbeddedExact(t *testing.T) {
-	ts := EmbeddedTwoSided()
+	ts := testTwoSided(t)
 	rng := rand.New(rand.NewSource(7))
 	worst := 0.0
 	for i := 0; i < 3000; i++ {
