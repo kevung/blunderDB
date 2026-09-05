@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -37,6 +38,18 @@ type Options struct {
 	Progress func(Report)
 }
 
+// NotMigrated counts what the source holds and the migration deliberately
+// leaves behind (see the package doc). A migration that says "done" while a
+// user's Anki decks stayed on the old machine is a migration that lied by
+// omission; Run fills this in from the source's own counts so the caller can
+// name the numbers rather than a category.
+type NotMigrated struct {
+	AnkiCards int `json:"anki_cards"`
+}
+
+// Any reports whether anything at all was left behind.
+func (n NotMigrated) Any() bool { return n.AnkiCards > 0 }
+
 // Report tallies what was copied (or, in a dry run, what would be).
 type Report struct {
 	Positions   int `json:"positions"`
@@ -47,6 +60,9 @@ type Report struct {
 	Games       int `json:"games"`
 	Moves       int `json:"moves"`
 	Collections int `json:"collections"`
+
+	// NotMigrated is what the source holds and this tool does not copy.
+	NotMigrated NotMigrated `json:"not_migrated"`
 }
 
 // Run migrates src into dst under scope. All destination writes happen inside a
@@ -63,11 +79,16 @@ func Run(ctx context.Context, src, dst storage.Storage, scope string, opts Optio
 	}
 
 	if !opts.DryRun && opts.OnConflict != "skip" {
-		for _, err := range dst.Positions().List(ctx, scope, storage.ListOpts{Limit: 1}) {
-			if err != nil {
-				return rep, fmt.Errorf("migrate: probe destination: %w", err)
-			}
-			return rep, fmt.Errorf("migrate: destination scope %q already has positions; use --on-conflict skip to merge", scope)
+		// Ask for the headline counts rather than listing one position: a
+		// destination holding matches but no position — a partial run, or a
+		// tenant used for something else — used to read as empty and be
+		// written into (#240).
+		counts, err := dst.Metadata().Counts(ctx, scope)
+		if err != nil {
+			return rep, fmt.Errorf("migrate: probe destination: %w", err)
+		}
+		if held := nonEmpty(counts); held != "" {
+			return rep, fmt.Errorf("migrate: destination scope %q already holds %s; use --on-conflict skip to merge", scope, held)
 		}
 	}
 
@@ -98,6 +119,7 @@ func Run(ctx context.Context, src, dst storage.Storage, scope string, opts Optio
 		return rep, fmt.Errorf("migrate: commit: %w", err)
 	}
 	committed = true
+	rep.NotMigrated = leftBehind(ctx, src)
 	return rep, nil
 }
 
@@ -417,10 +439,56 @@ func dryRun(ctx context.Context, src storage.Storage, scope string) (Report, err
 		}
 		rep.Collections++
 	}
+	rep.NotMigrated = leftBehind(ctx, src)
 	return rep, nil
+}
+
+// leftBehind counts, in the source, what this tool does not copy. Errors are
+// swallowed on purpose: a count that cannot be read must not fail a migration
+// that has otherwise succeeded — the warning is a courtesy, and its absence is
+// the worst it can cost.
+func leftBehind(ctx context.Context, src storage.Storage) NotMigrated {
+	counts, err := src.Metadata().Counts(ctx, "")
+	if err != nil {
+		return NotMigrated{}
+	}
+	return NotMigrated{AnkiCards: counts.AnkiCards}
 }
 
 // isNotFound reports whether err is the storage "not found" sentinel.
 func isNotFound(err error) bool {
 	return errors.Is(err, storage.ErrNotFound)
+}
+
+// nonEmpty describes what a destination already holds, or "" when it holds
+// nothing. The message names the families rather than saying "not empty": the
+// user's next question is always which ones.
+func nonEmpty(c storage.Counts) string {
+	var parts []string
+	for _, f := range []struct {
+		n     int
+		label string
+	}{
+		{c.Positions, "position"},
+		{c.Analyses, "analysis"},
+		{c.Matches, "match"},
+		{c.AnkiCards, "Anki card"},
+	} {
+		if f.n > 0 {
+			parts = append(parts, plural(f.n, f.label))
+		}
+	}
+	return strings.Join(parts, ", ")
+}
+
+// plural renders "1 match" / "3 matches" without a table of irregulars: the
+// four labels above are all regular but for "analysis".
+func plural(n int, label string) string {
+	if n == 1 {
+		return fmt.Sprintf("%d %s", n, label)
+	}
+	if strings.HasSuffix(label, "is") {
+		return fmt.Sprintf("%d %ses", n, strings.TrimSuffix(label, "is"))
+	}
+	return fmt.Sprintf("%d %ss", n, label)
 }

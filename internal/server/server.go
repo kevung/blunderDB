@@ -164,7 +164,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 			writeErrorCode(w, CodeRateLimited, "too many requests")
 		})(h)
 	}
-	h = middleware.Tenant(s.publicPaths(), func(w http.ResponseWriter, _ *http.Request, msg string) {
+	h = middleware.Tenant(s.publicPaths(), s.opts.SingleTenant, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		writeErrorCode(w, CodeInvalid, msg)
 	})(h)
 	h = middleware.CORS(s.opts.CORSAllowOrigin)(h)

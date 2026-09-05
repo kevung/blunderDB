@@ -20,6 +20,13 @@ type tenantProbe struct {
 }
 
 func probeTenant(public map[string]bool, path, header string) (tenantProbe, int) {
+	return probeTenantMode(public, path, header, false)
+}
+
+// probeTenantMode drives the middleware with the single-tenant rule on or off
+// (#240: the SQLite backend has no tenant column and must refuse the tenants it
+// cannot actually separate).
+func probeTenantMode(public map[string]bool, path, header string, singleTenant bool) (tenantProbe, int) {
 	var p tenantProbe
 	inner := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		p.ran = true
@@ -27,7 +34,7 @@ func probeTenant(public map[string]bool, path, header string) (tenantProbe, int)
 		p.numeric, _ = storage.TenantFromContext(r.Context())
 		w.WriteHeader(http.StatusNoContent)
 	})
-	mw := Tenant(public, func(w http.ResponseWriter, _ *http.Request, msg string) {
+	mw := Tenant(public, singleTenant, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		p.reject = msg
 		w.WriteHeader(http.StatusBadRequest)
 	})(inner)
@@ -126,5 +133,33 @@ func TestTenant_MalformedValues(t *testing.T) {
 				t.Errorf("numeric tenant = %d, want %d", p.numeric, tc.numeric)
 			}
 		})
+	}
+}
+
+// A single-tenant backend answers for tenant 1 and refuses the rest, rather
+// than serving every caller the same rows behind a header that says otherwise.
+func TestTenant_SingleTenantBackendRefusesTheOthers(t *testing.T) {
+	public := map[string]bool{"/healthz": true}
+
+	if p, code := probeTenantMode(public, "/v1/positions.list", SingleTenantID, true); !p.ran || code != http.StatusNoContent {
+		t.Errorf("tenant %s must pass on a single-tenant backend: ran=%v code=%d", SingleTenantID, p.ran, code)
+	}
+
+	p, code := probeTenantMode(public, "/v1/positions.list", "2", true)
+	if p.ran || code != http.StatusBadRequest {
+		t.Errorf("tenant 2 must be refused on a single-tenant backend: ran=%v code=%d", p.ran, code)
+	}
+	if !strings.Contains(p.reject, "single-tenant") || !strings.Contains(p.reject, "PostgreSQL") {
+		t.Errorf("the refusal must say why and what to do instead, got %q", p.reject)
+	}
+
+	// The same request is fine on a multi-tenant backend.
+	if p, code := probeTenantMode(public, "/v1/positions.list", "2", false); !p.ran || code != http.StatusNoContent {
+		t.Errorf("tenant 2 must pass on a multi-tenant backend: ran=%v code=%d", p.ran, code)
+	}
+
+	// A probe stays public either way.
+	if p, code := probeTenantMode(public, "/healthz", "", true); !p.ran || code != http.StatusNoContent {
+		t.Errorf("/healthz must stay public: ran=%v code=%d", p.ran, code)
 	}
 }

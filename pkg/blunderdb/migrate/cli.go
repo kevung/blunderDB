@@ -48,7 +48,6 @@ func RunCLI(args []string) error {
 		tenant     = fs.String("tenant-id", "", "destination tenant: a positive decimal integer (the X-Tenant-ID value)")
 		dryRun     = fs.Bool("dry-run", false, "count what would be copied without writing")
 		onConflict = fs.String("on-conflict", "", "destination-not-empty policy: \"\" (abort) | skip")
-		_          = fs.Int("batch-size", 1000, "reserved for future batching (currently unused)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -105,6 +104,7 @@ func RunCLI(args []string) error {
 		if err != nil {
 			return err
 		}
+		warnNotMigrated(rep)
 		return emit.Encode(progressEvent{Event: "dry-run", Report: rep})
 	}
 
@@ -121,6 +121,7 @@ func RunCLI(args []string) error {
 	if err != nil {
 		return err
 	}
+	warnNotMigrated(rep)
 	return emit.Encode(progressEvent{Event: "done", Report: rep})
 }
 
@@ -138,4 +139,21 @@ type schemaMigrationEvent struct {
 	Phase string `json:"phase"`
 	Done  int    `json:"done"`
 	Total int    `json:"total"`
+}
+
+// warnNotMigrated names, on stderr, what stayed behind. The scope of this tool
+// is written in the package doc, but a user reading "done" after a migration
+// has no reason to go and look: an omission has to be said at the moment it
+// happens, with its number, or it is not said at all (#240).
+//
+// stderr, not the NDJSON stream: the stream is a machine's, and the report it
+// carries already holds the same figures under `not_migrated`.
+func warnNotMigrated(rep Report) {
+	if !rep.NotMigrated.Any() {
+		return
+	}
+	fmt.Fprintf(os.Stderr, "migrate: not copied — %s. Anki decks, the filter library, "+
+		"search and command history and the session state stay on the source; "+
+		"the positions they refer to have moved.\n",
+		plural(rep.NotMigrated.AnkiCards, "Anki card"))
 }

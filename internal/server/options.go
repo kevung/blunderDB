@@ -23,6 +23,19 @@ type Options struct {
 	// ADR-0005 for why the daemon cannot make that decision itself.
 	OpsAddr string
 
+	// SingleTenant refuses any X-Tenant-ID other than "1".
+	//
+	// The SQLite backend has no tenant column: its TenantFilter is "1=1", so
+	// every scope reads and writes the same rows. Serving it with the tenant
+	// header accepted but ignored means two tenants share one library while
+	// the protocol says otherwise — an isolation that exists in the caller's
+	// mind and nowhere else (#240). Refusing is the honest answer: a
+	// deployment that genuinely needs tenants needs PostgreSQL.
+	//
+	// Set by `serve` for the SQLite backend; the default (false) leaves every
+	// valid tenant through, which is what PostgreSQL wants.
+	SingleTenant bool
+
 	// Storage is the backend the handlers operate on. Required.
 	Storage storage.Storage
 

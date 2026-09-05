@@ -33,7 +33,16 @@ type tenantKey struct{}
 // used to pass such values through verbatim, and every backend then mapped
 // them to tenant 0, so all named tenants shared one set of rows. Mapping a
 // name to its integer is the proxy's job (ADR-0005).
-func Tenant(public map[string]bool, errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
+// SingleTenantID is the only tenant a single-tenant backend answers for. It is
+// "1" rather than "0" because a tenant is a POSITIVE integer (ADR-0005's
+// 2026-09-03 amendment) — 0 is what a bad parse used to collapse onto.
+const SingleTenantID = "1"
+
+// Tenant enforces the X-Tenant-ID header. singleTenant, when true, additionally
+// refuses any value but SingleTenantID — see Options.SingleTenant for why a
+// backend without a tenant column must say so rather than quietly serve
+// everyone the same rows.
+func Tenant(public map[string]bool, singleTenant bool, errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if public[r.URL.Path] {
@@ -48,6 +57,12 @@ func Tenant(public map[string]bool, errFn func(http.ResponseWriter, *http.Reques
 			numeric, err := storage.ParseTenant(tenant)
 			if err != nil {
 				errFn(w, r, TenantHeader+" header must be "+storage.TenantFormat+", got "+quoteHeader(tenant))
+				return
+			}
+			if singleTenant && tenant != SingleTenantID {
+				errFn(w, r, "this daemon runs on a single-tenant backend (SQLite) and answers only for "+
+					TenantHeader+" "+SingleTenantID+", got "+quoteHeader(tenant)+
+					"; a deployment with real tenants needs the PostgreSQL backend")
 				return
 			}
 			ctx := context.WithValue(r.Context(), tenantKey{}, tenant)
