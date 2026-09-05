@@ -54,7 +54,12 @@ func TestGetPositionProvenance(t *testing.T) {
 }
 
 // TestGetMatchByID_IncludesTournamentName checks the tournament LEFT JOIN added
-// to GetMatchByID: empty before assignment, the tournament name after.
+// to GetMatchByID: empty when the match belongs to no tournament, the
+// tournament name once it does.
+//
+// The fixture is imported, and an import now files a match under the event its
+// file names (testdata/test.xg says "HSBT Paris 2023"), so the unassigned side
+// of the join has to be set up rather than assumed.
 func TestGetMatchByID_IncludesTournamentName(t *testing.T) {
 	t.Parallel()
 	db := newTestDBWithXG(t)
@@ -64,6 +69,9 @@ func TestGetMatchByID_IncludesTournamentName(t *testing.T) {
 		t.Fatalf("finding a match: %v", err)
 	}
 
+	if err := db.SetMatchTournamentByName(matchID, ""); err != nil {
+		t.Fatalf("detaching the match from its imported tournament: %v", err)
+	}
 	m, err := db.GetMatchByID(matchID)
 	if err != nil {
 		t.Fatalf("GetMatchByID: %v", err)
