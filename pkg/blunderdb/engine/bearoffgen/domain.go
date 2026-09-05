@@ -70,11 +70,18 @@ func (d Domain) RAMNeeded() int64 {
 // is *unverified* — usable, but nobody has compared it to gnubg.
 //
 // TS-06-06 and OS-06 are the two tables blunderDB shipped until ADR-0027;
-// TS-06-11 is the retired `bearoff-data-1` download asset.
+// TS-06-11 is the retired `bearoff-data-1` download asset. OS-07 … OS-10 are
+// the wider one-sided tables the EPC reads beyond the home board, each taken
+// from `makebearoff -o <p>` on gnubg 1.08 and reproduced byte for byte by this
+// generator (TestOneSided_WiderDomainsIdenticalToGnubg).
 var KnownFingerprints = map[Domain]string{
-	{Kind: TwoSidedKind, Points: 6, Checkers: 6}:  "9eac8a2c697dae8a09f2e5653022084b9e725df6c32950cb5299b273fc64500f",
-	{Kind: TwoSidedKind, Points: 6, Checkers: 11}: "c52133cd59a7db478a71d18c8f2093ba343200fa72ede8004c32c6778c724f46",
-	{Kind: OneSidedKind, Points: 6, Checkers: 15}: "38089567e87a681682bb4ff53f30d781af215fc04debbdff3f61b6db68547a49",
+	{Kind: TwoSidedKind, Points: 6, Checkers: 6}:   "9eac8a2c697dae8a09f2e5653022084b9e725df6c32950cb5299b273fc64500f",
+	{Kind: TwoSidedKind, Points: 6, Checkers: 11}:  "c52133cd59a7db478a71d18c8f2093ba343200fa72ede8004c32c6778c724f46",
+	{Kind: OneSidedKind, Points: 6, Checkers: 15}:  "38089567e87a681682bb4ff53f30d781af215fc04debbdff3f61b6db68547a49",
+	{Kind: OneSidedKind, Points: 7, Checkers: 15}:  "35ba8efc361e858c468dd28684f4c5c5edc845ae5d4dbdb2dcb289efa6809e99",
+	{Kind: OneSidedKind, Points: 8, Checkers: 15}:  "28446a06018c2350e3c1b9ea18ca60a783fb76175fb1b643d547c38ec33c76b2",
+	{Kind: OneSidedKind, Points: 9, Checkers: 15}:  "4d2930498332a736c7c951c1715d9663d8a0ee597636226627cdb7e292b72dc3",
+	{Kind: OneSidedKind, Points: 10, Checkers: 15}: "dcfa1fb32360cbc7474344f680cf5054fae86756b1e5a19a696b4cd01254642a",
 }
 
 // Verdict is what Verify concluded about a file.

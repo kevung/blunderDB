@@ -20,6 +20,35 @@ import (
 // Measured residual after correction, on the oracle domain (7–11 checkers):
 // see the constants in correction_coeffs.go. Beyond 11 checkers per side the
 // bound is an extrapolation (monotone trend, no oracle).
+//
+// Beyond the HOME BOARD the question is different and was measured rather
+// than assumed (ADR-0027 §9): the polynomial was fitted on six-point races,
+// and a seven-point one-sided table asks it to describe positions it never
+// saw. Against a TS-07-06 oracle, 20 000 positions per sample:
+//
+//	                      raw                        corrected
+//	six  against six      σ .00105 p99 .00490 max .0129   σ .00125 p99 .00450 max .0102
+//	seven against six     σ .00125 p99 .00510 max .0097   σ .00111 p99 .00436 max .0075
+//	seven against seven   σ .00127 p99 .00463 max .0085   σ .00086 p99 .00316 max .0064
+//
+// The correction transfers: it improves p99 and the maximum in all three
+// samples and σ in the two that actually leave the home board. So it is
+// applied beyond six points unchanged, with BeyondHomeP99/Max as the bound
+// that was measured there — not the six-point bound extrapolated.
+// TestCorrection_BeyondTheHomeBoard re-measures it and fails if it stops
+// holding.
+
+// The residual measured beyond the home board, against the TS-07-06 oracle,
+// plus a tenth. Larger than the six-point bound because the sample is a
+// different regime (≤ 6 chequers per side, where the calibration saw 7–11),
+// not because the estimator degrades with width. The headroom is there so the
+// guard catches a change in the estimator and not the last digit of a
+// floating-point sum.
+const (
+	BeyondHomeSigma = 0.00140 // measured 0.00125
+	BeyondHomeP99   = 0.00500 // measured 0.00450
+	BeyondHomeMax   = 0.01150 // measured 0.01023
+)
 
 // moments summarises a roll distribution for the correction features.
 type moments struct {
@@ -48,12 +77,18 @@ func distMoments(p []float64) moments {
 
 // winProbRaw computes P(N_us ≤ N_them) by convolution and returns the two
 // distributions' moments for the correction features.
-func winProbRaw(us, them [6]int) (p float64, mu, mt moments, err error) {
-	du, err := engine.RollDistribution(us)
+//
+// The boards are as wide as the loaded table: the convolution itself never
+// looked at a point, only at two roll distributions of 32 entries, so widening
+// the domain costs it nothing. What the width DOES put in question is the
+// correction below, which was fitted on six-point races — see
+// TestCorrection_BeyondTheHomeBoard.
+func winProbRaw(us, them []int) (p float64, mu, mt moments, err error) {
+	du, err := engine.RollDistributionPoints(us)
 	if err != nil {
 		return 0, mu, mt, err
 	}
-	dt, err := engine.RollDistribution(them)
+	dt, err := engine.RollDistributionPoints(them)
 	if err != nil {
 		return 0, mu, mt, err
 	}
@@ -90,7 +125,7 @@ func correctionFeatures(p float64, mu, mt moments) []float64 {
 // TS-06-11 oracle) and for the env-gated oracle tests; the panel path is
 // EstimatedWinProb.
 func RawWinProbFeatures(us, them [6]int) (p float64, features []float64, err error) {
-	p, mu, mt, err := winProbRaw(us, them)
+	p, mu, mt, err := winProbRaw(us[:], them[:])
 	if err != nil {
 		return 0, nil, err
 	}
@@ -101,6 +136,12 @@ func RawWinProbFeatures(us, them [6]int) (p float64, features []float64, err err
 // pure-bearoff position outside the exact domain: raw convolution plus the
 // calibrated correction, clamped to [0, 1].
 func EstimatedWinProb(us, them [6]int) (float64, error) {
+	return EstimatedWinProbPoints(us[:], them[:])
+}
+
+// EstimatedWinProbPoints is EstimatedWinProb for boards of any width the
+// loaded one-sided table covers.
+func EstimatedWinProbPoints(us, them []int) (float64, error) {
 	p, mu, mt, err := winProbRaw(us, them)
 	if err != nil {
 		return 0, err

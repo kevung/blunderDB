@@ -75,18 +75,22 @@ type Result struct {
 // at least one checker left (pure bearoff, the panel's domain). The position
 // is evaluated before the roll; dice on the position are ignored.
 func Evaluate(pos *domain.Position) Result {
-	bottom, bottomHome := computeSide(&pos.Board, domain.Black)
-	top, topHome := computeSide(&pos.Board, domain.White)
+	bottom, bottomBoard := computeSide(&pos.Board, domain.Black)
+	top, topBoard := computeSide(&pos.Board, domain.White)
 	res := Result{EPC: EPC{Bottom: bottom, Top: top}}
 
+	// The race zone stays a pure-bearoff zone. A side whose farthest chequer is
+	// on the 8-point now has an EPC (ADR-0027 §9), but the two-sided table has
+	// no wider form and widening the zone is a display decision, not a data one
+	// — ADR-0017/0021, deliberately left out of this lot.
 	if !bottom.AllInHome || !top.AllInHome || bottom.CheckerCount == 0 || top.CheckerCount == 0 {
 		return res
 	}
 
 	onRoll := pos.PlayerOnRoll
-	us, them := bottomHome, topHome
+	us, them := homeBoardOf(bottomBoard), homeBoardOf(topBoard)
 	if onRoll == domain.White {
-		us, them = topHome, bottomHome
+		us, them = homeBoardOf(topBoard), homeBoardOf(bottomBoard)
 	}
 
 	// Resolve returns nil while the machine has no table yet — the first

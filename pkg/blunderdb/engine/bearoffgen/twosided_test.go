@@ -3,8 +3,10 @@ package bearoffgen
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -226,5 +228,43 @@ func TestTwoSided_ResumingFromAPauseGivesTheSameTable(t *testing.T) {
 	}
 	if !bytes.Equal(a.Bytes(), b.Bytes()) {
 		t.Fatal("the resumed run produced a different table")
+	}
+}
+
+// The same trap as the one-sided oracle test guards: bearing off is
+// unconditional inside a six-point table, so TS-06-06 cannot tell a generator
+// that forgets the home board rule from one that respects it. A table over
+// seven points can, and gnubg's own makebearoff is the reference.
+//
+//	makebearoff -t 7x6 -f $DIR/ts7x6.bd     # 20 s, 23 MB
+//	BLUNDERDB_TS_ORACLE_DIR=$DIR go test ./pkg/blunderdb/engine/bearoffgen/
+func TestTwoSided_WiderBoardIdenticalToGnubg(t *testing.T) {
+	dir := os.Getenv("BLUNDERDB_TS_ORACLE_DIR")
+	if dir == "" {
+		t.Skip("set BLUNDERDB_TS_ORACLE_DIR to a directory holding makebearoff's ts7x6.bd, ts8x6.bd, …")
+	}
+	for _, d := range []Domain{
+		{Kind: TwoSidedKind, Points: 7, Checkers: 6},
+		{Kind: TwoSidedKind, Points: 8, Checkers: 6},
+	} {
+		path := filepath.Join(dir, fmt.Sprintf("ts%dx%d.bd", d.Points, d.Checkers))
+		want, err := os.ReadFile(path)
+		if err != nil || len(want) == 0 {
+			t.Logf("%s: no oracle at %s, skipped", d, path)
+			continue
+		}
+		var got bytes.Buffer
+		if err := TwoSided(context.Background(), &got, d.Points, d.Checkers, nil); err != nil {
+			t.Fatalf("%s: %v", d, err)
+		}
+		if !bytes.Equal(want, got.Bytes()) {
+			t.Errorf("%s differs from gnubg: %d bytes against %d", d, got.Len(), len(want))
+			for i := 0; i < len(want) && i < got.Len(); i++ {
+				if want[i] != got.Bytes()[i] {
+					t.Errorf("  first difference at byte %d: %02x against %02x", i, want[i], got.Bytes()[i])
+					break
+				}
+			}
+		}
 	}
 }

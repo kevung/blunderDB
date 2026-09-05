@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -138,10 +139,26 @@ func loadBearoffDatabaseFrom(path string) (*BearoffDatabase, error) {
 	// Position 15: fGammon (1)
 	// Position 17: fCompressed (1)
 	// Position 19: fND (0)
+	//
+	// The point count is READ, not assumed to be six. A table over seven points
+	// or more is what lets the EPC answer for a side whose farthest chequer is
+	// outside the home board, and it differs from the six-point one in nothing
+	// but its width — same header, same index, same runs (ADR-0027 §9).
+	if string(raw[:9]) != "gnubg-OS-" {
+		return nil, fmt.Errorf("%s is not a one-sided bearoff database", path)
+	}
+	points, err := strconv.Atoi(string(raw[9:11]))
+	if err != nil || points < 1 || points > 24 {
+		return nil, fmt.Errorf("%s: unreadable point count %q", path, raw[9:11])
+	}
+	checkers, err := strconv.Atoi(string(raw[12:14]))
+	if err != nil || checkers < 1 || checkers > 15 {
+		return nil, fmt.Errorf("%s: unreadable chequer count %q", path, raw[12:14])
+	}
 
 	db := &BearoffDatabase{
-		nPoints:   6,
-		nCheckers: 15,
+		nPoints:   points,
+		nCheckers: checkers,
 	}
 	db.nPos = combination(db.nPoints+db.nCheckers, db.nPoints)
 
@@ -172,10 +189,11 @@ func loadBearoffDatabaseFrom(path string) (*BearoffDatabase, error) {
 	return db, nil
 }
 
-// positionBearoff converts a checker arrangement on 6 points to a combinatorial index.
-// anBoard[0..5] = number of checkers on points 1-6 (point 1 = bearing off next).
+// positionBearoff converts a checker arrangement on nPoints points to a
+// combinatorial index. anBoard[i] = checkers on point i+1 (point 1 = bearing
+// off next), and must be at least nPoints long.
 // This implements the GNUbg PositionBearoff function using combinatorial number system.
-func positionBearoff(anBoard [6]int, nPoints, nCheckers int) int {
+func positionBearoff(anBoard []int, nPoints, nCheckers int) int {
 	// Encode as combination index using "stars and bars"
 	// Total bits = nCheckers + nPoints, with nPoints bits set
 	j := nPoints - 1
@@ -257,8 +275,37 @@ func averageRolls(probs []float64) (mean, stddev float64) {
 
 // ComputeEPC computes the EPC for a one-sided checker position on 6 points.
 // anBoard[0..5] = number of checkers on points 1-6.
+//
+// It is the six-point form of ComputeEPCPoints, kept because most callers have
+// a home board and nothing else.
 func ComputeEPC(anBoard [6]int) (*EPCResult, error) {
+	return ComputeEPCPoints(anBoard[:])
+}
+
+// OneSidedPoints is how wide the loaded table is: the highest point a chequer
+// may stand on and still have an EPC. 0 when no table is loaded.
+//
+// A caller asks this before deciding whether a side is answerable, which is
+// what makes the answer honest: the panel says "exact, OS-08" rather than
+// silently extrapolating a six-point table past its domain.
+func OneSidedPoints() int {
+	bearoffMu.RLock()
+	defer bearoffMu.RUnlock()
 	if globalBearoffDB == nil {
+		return 0
+	}
+	return globalBearoffDB.nPoints
+}
+
+// ComputeEPCPoints computes the EPC for a one-sided position of any width the
+// loaded table covers. anBoard[i] = checkers on point i+1; a board longer than
+// the table's width is refused rather than truncated, and a shorter one is
+// padded (a position inside a narrower domain is inside a wider table too).
+func ComputeEPCPoints(anBoard []int) (*EPCResult, error) {
+	bearoffMu.RLock()
+	db := globalBearoffDB
+	bearoffMu.RUnlock()
+	if db == nil {
 		return nil, fmt.Errorf("bearoff database not loaded")
 	}
 
@@ -270,16 +317,23 @@ func ComputeEPC(anBoard [6]int) (*EPCResult, error) {
 		}
 		total += c
 	}
-	if total > 15 {
-		return nil, fmt.Errorf("too many checkers: %d (max 15)", total)
+	if total > db.nCheckers {
+		return nil, fmt.Errorf("too many checkers: %d (max %d)", total, db.nCheckers)
 	}
 	if total == 0 {
 		return &EPCResult{EPC: 0, MeanRolls: 0, StdDev: 0, PipCount: 0, Wastage: 0}, nil
 	}
+	for i := db.nPoints; i < len(anBoard); i++ {
+		if anBoard[i] > 0 {
+			return nil, fmt.Errorf("a chequer stands on point %d, outside the %d-point table", i+1, db.nPoints)
+		}
+	}
 
-	posID := positionBearoff(anBoard, 6, 15)
+	board := make([]int, db.nPoints)
+	copy(board, anBoard)
+	posID := positionBearoff(board, db.nPoints, db.nCheckers)
 
-	probs, err := globalBearoffDB.getDistribution(posID)
+	probs, err := db.getDistribution(posID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get distribution: %w", err)
 	}
@@ -289,8 +343,8 @@ func ComputeEPC(anBoard [6]int) (*EPCResult, error) {
 
 	// Compute pip count
 	pipCount := 0
-	for i := 0; i < 6; i++ {
-		pipCount += anBoard[i] * (i + 1)
+	for i := range board {
+		pipCount += board[i] * (i + 1)
 	}
 
 	wastage := epc - float64(pipCount)

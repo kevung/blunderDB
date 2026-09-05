@@ -66,13 +66,13 @@ func TestComputeEPC(t *testing.T) {
 
 func TestPositionBearoff(t *testing.T) {
 	// Position with 0 checkers should be index 0
-	idx := positionBearoff([6]int{0, 0, 0, 0, 0, 0}, 6, 15)
+	idx := positionBearoff([]int{0, 0, 0, 0, 0, 0}, 6, 15)
 	if idx != 0 {
 		t.Errorf("Expected index 0 for empty board, got %d", idx)
 	}
 
 	// Position with 1 checker on point 1 should be index 1
-	idx = positionBearoff([6]int{1, 0, 0, 0, 0, 0}, 6, 15)
+	idx = positionBearoff([]int{1, 0, 0, 0, 0, 0}, 6, 15)
 	if idx != 1 {
 		t.Errorf("Expected index 1 for 1 checker on point 1, got %d", idx)
 	}

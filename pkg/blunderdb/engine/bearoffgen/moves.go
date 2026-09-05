@@ -14,17 +14,45 @@ package bearoffgen
 // the 5 plays the 5 alone, not the 2. The search therefore goes to the deepest
 // reachable ply and keeps only what is found there.
 
+// homeBoard is the six points a chequer must be on before ANY chequer may come
+// off. It is a rule of the game and has nothing to do with how wide the table
+// is: a table over seven points describes positions whose farthest chequer
+// stands on the 7-point, and in those positions bearing off is simply illegal
+// until that chequer comes home.
+const homeBoard = 6
+
 // canBearOff reports whether the chequer on point `pt` (1-based) may come off
-// with a die of `die`: exactly (die == pt), or with a larger die when no
-// chequer sits further back.
+// with a die of `die`.
+//
+// Three conditions, and the first one is the one a six-point table can never
+// notice: every chequer must be inside the home board, then the die must match
+// the point exactly, or exceed it with no chequer further back.
+//
+// Leaving the first condition out is correct for every table over six points —
+// there is nothing outside the home board to check — and wrong for every wider
+// one, where it lets a position bear a chequer off while another still sits on
+// the 7-point. That produces a table that is better than the game allows, and
+// it diverges from gnubg only from OS-07 on. gnubg gets this for free: it calls
+// its ordinary GenerateMoves on a full board.
 func canBearOff(board []int, pt, die int) bool {
+	for outside := homeBoard + 1; outside <= len(board); outside++ {
+		if board[outside-1] > 0 {
+			return false
+		}
+	}
 	if die == pt {
 		return true
 	}
 	if die < pt {
 		return false
 	}
-	for higher := pt + 1; higher <= len(board); higher++ {
+	// A table narrower than the home board — the small domains the tests use —
+	// has no points above its own width to look at.
+	top := homeBoard
+	if len(board) < top {
+		top = len(board)
+	}
+	for higher := pt + 1; higher <= top; higher++ {
 		if board[higher-1] > 0 {
 			return false
 		}

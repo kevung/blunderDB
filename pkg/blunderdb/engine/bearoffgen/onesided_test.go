@@ -3,7 +3,10 @@ package bearoffgen
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"fmt"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -105,5 +108,59 @@ func TestOneSided_CancellationStops(t *testing.T) {
 	var buf bytes.Buffer
 	if err := OneSided(ctx, &buf, 6, nil); err == nil {
 		t.Error("a cancelled context must stop the sweep")
+	}
+}
+
+// The six-point identity above is necessary and not sufficient: bearing off is
+// unconditional inside a six-point table, so a generator that forgets the home
+// board rule passes it and diverges from OS-07 on. That is exactly what
+// happened — see canBearOff's comment.
+//
+// The wider oracles are 5 MB, 15 MB, 45 MB and 130 MB and are not in the
+// repository. Produce them once with gnubg's own tool and point the test at
+// them:
+//
+//	makebearoff -o 7 -f $DIR/os7.bd     # 5 s
+//	makebearoff -o 8 -f $DIR/os8.bd     # 20 s
+//	BLUNDERDB_OS_ORACLE_DIR=$DIR go test ./pkg/blunderdb/engine/bearoffgen/
+//
+// Their fingerprints ARE recorded (KnownFingerprints), so a table generated on
+// any machine can still be verified without the oracle; this test is what
+// proves those fingerprints describe gnubg's file and not merely our own.
+func TestOneSided_WiderDomainsIdenticalToGnubg(t *testing.T) {
+	dir := os.Getenv("BLUNDERDB_OS_ORACLE_DIR")
+	if dir == "" {
+		t.Skip("set BLUNDERDB_OS_ORACLE_DIR to a directory holding makebearoff's os7.bd, os8.bd, …")
+	}
+	for _, points := range []int{7, 8, 9, 10} {
+		path := filepath.Join(dir, fmt.Sprintf("os%d.bd", points))
+		want, err := os.ReadFile(path)
+		if err != nil {
+			t.Logf("OS-%02d: no oracle at %s, skipped", points, path)
+			continue
+		}
+		var got bytes.Buffer
+		if err := OneSided(context.Background(), &got, points, nil); err != nil {
+			t.Fatalf("OS-%02d: %v", points, err)
+		}
+		if !bytes.Equal(want, got.Bytes()) {
+			t.Errorf("OS-%02d differs from gnubg: %d bytes against %d", points, got.Len(), len(want))
+			for i := 0; i < len(want) && i < got.Len(); i++ {
+				if want[i] != got.Bytes()[i] {
+					t.Errorf("  first difference at byte %d: %02x against %02x", i, want[i], got.Bytes()[i])
+					break
+				}
+			}
+			continue
+		}
+		// And the fingerprint recorded for it must be that file's.
+		d := Domain{Kind: OneSidedKind, Points: points, Checkers: osCheckers}
+		if want, ok := KnownFingerprints[d]; ok {
+			if sum := fmt.Sprintf("%x", sha256.Sum256(got.Bytes())); sum != want {
+				t.Errorf("OS-%02d: recorded fingerprint %s, file hashes to %s", points, want, sum)
+			}
+		} else {
+			t.Errorf("OS-%02d: no fingerprint recorded, %x", points, sha256.Sum256(got.Bytes()))
+		}
 	}
 }
