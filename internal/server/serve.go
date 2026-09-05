@@ -188,8 +188,11 @@ func RunServe(args []string) error {
 	}
 
 	srv, err := New(Options{
-		Addr:            cfg.addr,
-		OpsAddr:         cfg.opsAddr,
+		Addr:    cfg.addr,
+		OpsAddr: cfg.opsAddr,
+		// SQLite has no tenant column: serving several tenants from it would
+		// hand them all the same rows (#240).
+		SingleTenant:    cfg.backend == "sqlite",
 		Storage:         st,
 		Logger:          logger,
 		Metrics:         metrics.New(),

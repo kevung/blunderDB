@@ -420,6 +420,54 @@ d'accès n'ont aucune notion de tenant.
 
 .. _headless_docker:
 
+Un seul tenant sur SQLite
+--------------------------
+
+Le backend SQLite n'a **pas** de colonne de tenant : toutes les données y sont
+dans les mêmes tables, sans cloison. Le démon refuse donc, sur ce backend, tout
+``X-Tenant-ID`` autre que ``1`` — accepter les autres reviendrait à servir à
+chacun les lignes de tous derrière un en-tête qui prétend le contraire. Un
+déploiement qui a réellement plusieurs tenants a besoin du backend PostgreSQL.
+
+.. _headless_sauvegarde:
+
+Sauvegarde et restauration
+---------------------------
+
+Trois gestes, selon ce qu'on veut récupérer.
+
+**Tout, sous PostgreSQL** — ``pg_dump`` est l'outil, et blunderDB n'a rien à
+ajouter :
+
+.. code-block:: bash
+
+   pg_dump --format=custom --file=blunderdb.dump "postgres://…"
+   pg_restore --dbname="postgres://…" blunderdb.dump
+
+**Un tenant seul** — ``/v1/exports.sqlite`` écrit la base d'un tenant dans un
+fichier ``.db`` ordinaire, celui que l'application de bureau ouvre :
+
+.. code-block:: bash
+
+   curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
+     -H "X-Tenant-ID: 42" -o tenant-42.db
+
+**Remettre ce fichier en place** — ``migrate`` le recopie sous le tenant voulu :
+
+.. code-block:: bash
+
+   ./blunderdb migrate --from tenant-42.db --to "postgres://…" --tenant-id 42
+
+``migrate`` refuse d'écrire dans un tenant qui contient déjà quelque chose, et
+dit quoi (« 128 positions, 3 matchs ») ; ``--on-conflict skip`` passe outre et
+laisse la déduplication par empreinte Zobrist fusionner les positions.
+
+Ce que ``migrate`` **ne copie pas**, et qu'il annonce en fin de course avec le
+compte exact : les paquets Anki et leurs cartes, la bibliothèque de filtres,
+les historiques de recherche et de commandes, et l'état de session. Ce sont des
+données d'usage de l'application de bureau ; les positions auxquelles elles
+renvoient, elles, ont bien été déplacées.
+
 Déploiement avec Docker
 -----------------------
 
