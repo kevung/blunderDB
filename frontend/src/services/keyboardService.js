@@ -44,6 +44,7 @@ let lastCtrlXTime = 0;
 const TEXT_EDITING_LETTERS = new Set(['a', 'c', 'v', 'x', 'y', 'z']);
 const TEXT_EDITING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Backspace', 'Delete', 'Insert']);
 
+/** @param {KeyboardEvent} event */
 function isTextEditingCombo(event) {
     if (event.key.length === 1) return TEXT_EDITING_LETTERS.has(event.key.toLowerCase());
     return TEXT_EDITING_KEYS.has(event.key);
@@ -58,6 +59,7 @@ const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 
 // The keys that browse positions on the board: bare h/j/k/l (Shift-J/K switch
 // views instead — see the dispatch below), arrows and PageUp/PageDown. Docked
 // panels that hold a selection keep these for their own list.
+/** @param {KeyboardEvent} event */
 function isBoardNavigationKey(event) {
     return (
         isBareLetter(event, 'j') ||
@@ -167,6 +169,7 @@ export function toggleHelpModal() {
 // TAB_TOGGLES.search in positionService.js.
 export const focusSearchTab = toggleSearchPanel;
 
+/** @param {KeyboardEvent} event */
 export function handleKeyDown(event) {
     event.stopPropagation();
 
@@ -176,6 +179,7 @@ export function handleKeyDown(event) {
     // mapping to the US-QWERTY physical position. Non-letter keys (Space, Tab,
     // Delete, arrows, digits) stay positional below. `letter` is the shared
     // helper from utils/keys.js, bound to this event for the Ctrl-combos.
+    /** @param {string} ch */
     const letter = (ch) => isLetter(event, ch);
 
     if (get(isAnyModalOpen)) return;

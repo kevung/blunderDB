@@ -109,6 +109,12 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               forgetContextBeforeEPC drops beforeEPC, not this: a scratch
  *               board belongs to the session, not to the open database.
  */
+/**
+ * The slots are all `null` at rest, so without this annotation the checker
+ * infers the type `null` for each and rejects every assignment to them.
+ *
+ * @type {{beforeEPC: any, beforeEdit: any, epcSeed: any, lastEPCBoard: any}}
+ */
 const savedContext = {
     beforeEPC: null,
     beforeEdit: null,
@@ -148,6 +154,7 @@ async function persistLastVisitedMatchPosition() {
     }
 }
 
+/** @param {any} pos */
 function blankEditBoard(pos) {
     pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
     pos.board.bearoff = [15, 15];
@@ -289,6 +296,8 @@ function defaultEPCPosition() {
  * as-is, including player_on_roll: the Eval panel reads the on-roll side for
  * its own facts table and gammonNet evaluates from it, so a mirrored match
  * position keeps both its orientation on screen and its meaning to the engine.
+ *
+ * @param {any} position
  */
 export function sendPositionToEval(position) {
     if (!position) return;
@@ -485,7 +494,12 @@ export async function toggleMatchMode() {
 
 // ── COLLECTION ───────────────────────────────────────────────────────────────
 
-/** Any mode → COLLECTION, browsing `collectionPositions`. */
+/**
+ * Any mode → COLLECTION, browsing `collectionPositions`.
+ *
+ * @param {any} collection
+ * @param {any[]} collectionPositions
+ */
 export function handleOpenCollection(collection, collectionPositions) {
     if (!collectionPositions || collectionPositions.length === 0) {
         statusBarTextStore.set(tMsg('commands.collectionEmpty'));

@@ -42,16 +42,20 @@ jobs:
   # instead of their sum. Shards select packages by path, so a new package
   # lands in `rest` without editing this file; `database` is one package
   # carrying more than forty minutes of race-instrumented tests, so it is
-  # split in FOUR by scripts/go-test-shard.sh — by test INDEX, not by first
+  # split in SIX by scripts/go-test-shard.sh — by test INDEX, not by first
   # letter as until E.3 (#219): two halves cut by initial have no reason to
   # weigh the same (they measured 279 s and 419 s) and renaming a test moved
-  # load silently from one job to the other. Four and not two because the race
-  # detector is what dominates here, and it does not parallelise away: with
-  # t.Parallel() on 289 of the package's 308 tests, one HALF still ran past
-  # 21 minutes under `-race -parallel 4` (measured 2026-09-04, 4 GOMAXPROCS,
-  # the shape of a runner) — past the 1200 s a job is given. Without the race
-  # detector the same package went from 159 s to 57 s on 16 cores; the
-  # parallelism is real, it is simply not what bounds this job. engine/gammonnet runs without the
+  # load silently from one job to the other. Not two because the race detector
+  # is what dominates here, and it does not parallelise away: with t.Parallel()
+  # on 289 of the package's 308 tests, one HALF still ran past 21 minutes under
+  # `-race -parallel 4` (measured 2026-09-04, 4 GOMAXPROCS, the shape of a
+  # runner) — past the 1200 s a job is given. Without the race detector the
+  # same package went from 159 s to 57 s on 16 cores; the parallelism is real,
+  # it is simply not what bounds this job. Six and not four since 0.36.0: at
+  # four, the slowest quarter measured 1164 s and 1262 s on consecutive green
+  # runs and then timed out on a slower runner — a quarter that fits only when
+  # the runner is fast is a shard that fails on schedule, not a shard that
+  # passes. engine/gammonnet runs without the
   # race detector and with `-covermode=set`: atomic counters cost it five
   # times its run time.
   test:
@@ -63,13 +67,17 @@ jobs:
       matrix:
         include:
           - shard: database-a
-            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 0 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 0 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: database-b
-            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 1 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 1 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: database-c
-            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 2 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 2 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: database-d
-            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 3 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 3 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-e
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 4 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: database-f
+            run: scripts/go-test-shard.sh ./pkg/blunderdb/database/ 5 6 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           # internal/cli is the other package that filled a whole job on its
           # own (FAIL … 1200.079s, 2026-09-03). t.Parallel() does not help it:
           # its slowest tests are precisely the ones that capture os.Stdout —

@@ -10,11 +10,16 @@ import (
 
 // The daemon serves the EPC, and the one-sided table it reads left the binary
 // with ADR-0027. In production `serve` generates or is pointed at one; here it
-// is generated once, and cached across packages, by bearofftest.
+// is taken from the repository fixture, and cached across packages, by
+// bearofftest. Failures panic: a TestMain has no *testing.T, and a zero-value
+// one turns any failure into an unreadable "main called runtime.Goexit".
 func TestMain(m *testing.M) {
-	t := &testing.T{}
-	if err := engine.LoadOneSided(bearofftest.OneSidedPath(t)); err != nil {
-		panic("server tests: loading the generated one-sided table: " + err.Error())
+	path, err := bearofftest.EnsureOneSided()
+	if err != nil {
+		panic("server tests: " + err.Error())
+	}
+	if err := engine.LoadOneSided(path); err != nil {
+		panic("server tests: loading the one-sided table: " + err.Error())
 	}
 	os.Exit(m.Run())
 }
