@@ -1389,6 +1389,30 @@ Examples:
   blunderdb analyze --db database.db --format json
 ```
 
+### `blunderdb anki card`
+
+```
+Usage: blunderdb anki card [options]
+
+Suspend, bury or remove one card.
+
+Options:
+  -action string
+    	suspend, unsuspend, bury or remove (required)
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Card ID (required)
+
+Examples:
+  blunderdb anki card --db database.db --id 12 --action suspend
+  blunderdb anki card --db database.db --id 12 --action unsuspend
+  blunderdb anki card --db database.db --id 12 --action bury
+  blunderdb anki card --db database.db --id 12 --action remove
+```
+
 ### `blunderdb anki decks`
 
 ```
@@ -1427,6 +1451,29 @@ Options:
 Examples:
   blunderdb anki forecast --db database.db --deck 2 --days 14
   blunderdb anki forecast --db database.db --days 30 --format csv   # every deck
+```
+
+### `blunderdb anki log`
+
+```
+Usage: blunderdb anki log [options]
+
+Recorded review events, most recent first.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -deck int
+    	Deck ID (0 = every deck)
+  -format string
+    	Output format: text or json (default "text")
+  -limit int
+    	Maximum number of events (default 20)
+
+Examples:
+  blunderdb anki log --db database.db
+  blunderdb anki log --db database.db --deck 2 --limit 50
+  blunderdb anki log --db database.db --format json
 ```
 
 ### `blunderdb anki retention`
@@ -2063,6 +2110,28 @@ Options:
 
 Example:
   blunderdb open --db cours.dbx --password secret
+```
+
+### `blunderdb repair`
+
+```
+Usage: blunderdb repair [options]
+
+Recompute the scalar columns of every analysis from the JSON
+they are a projection of. The analyses themselves are left
+untouched: this repairs what was derived from them, and is
+useful after a fix to how an imported analysis is read.
+Nothing runs it automatically.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb repair --db database.db
+  blunderdb repair --db database.db --format json
 ```
 
 ### `blunderdb search`

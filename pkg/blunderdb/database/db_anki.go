@@ -244,3 +244,70 @@ func (d *Database) GetAnkiDeckRetention(deckID int64) (*domain.AnkiRetention, er
 	}
 	return d.store.Anki().Retention(context.Background(), "", deckID)
 }
+
+// SetAnkiCardSuspended suspends or unsuspends one card. A suspended card stays
+// in its deck and keeps its schedule, but never comes up in a session: it is
+// how a card that is wrong, or not worth studying yet, is set aside without
+// losing the history attached to it.
+//
+// The three card gestures below (suspend, bury, remove) were served over HTTP
+// and reachable from nowhere else — the same gap GetAnkiDeckRetention names,
+// found systematically this time by the reverse half of the parity check
+// (G.14, #242).
+func (d *Database) SetAnkiCardSuspended(cardID int64, suspended bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().SetCardSuspended(context.Background(), "", cardID, suspended)
+}
+
+// BuryAnkiCard hides one card until the start of the next day. Unlike
+// suspending, burying says nothing about the card's worth: it is for the one
+// you have just seen elsewhere, or would rather not meet twice in an evening.
+func (d *Database) BuryAnkiCard(cardID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().BuryCard(context.Background(), "", cardID)
+}
+
+// RemoveAnkiCard deletes one card from its deck. The position itself is
+// untouched — a deck is a study list over the library, never a copy of it.
+func (d *Database) RemoveAnkiCard(cardID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().RemoveCard(context.Background(), "", cardID)
+}
+
+// GetAnkiReviewLog returns the recorded review events, most recent first, for
+// one deck (deckID 0 = every deck) and at most limit of them.
+//
+// The log is what the scheduler was actually told, as opposed to what it
+// currently plans: the only place a grade that was entered by mistake can be
+// seen at all (ADR-0026 keeps the schedule itself out of reach).
+func (d *Database) GetAnkiReviewLog(deckID int64, limit int) ([]domain.AnkiReviewLog, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	var out []domain.AnkiReviewLog
+	for entry, err := range d.store.Anki().ReviewLog(context.Background(), "", deckID, limit) {
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, *entry)
+	}
+	return out, nil
+}

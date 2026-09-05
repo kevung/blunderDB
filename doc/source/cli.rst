@@ -590,6 +590,19 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
 * ``sync --deck <id>`` — Ajoute une carte pour chaque position de la source du
   paquet qui n'en a pas encore ; les cartes existantes gardent leur
   planification.
+* ``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un
+  paquet, comparée à la cible que son propriétaire a choisie.
+* ``card --id <id> --action suspend|unsuspend|bury|remove [--format text|json]``
+  — Agit sur une carte. *Suspendre* la met de côté sans perdre son historique
+  (elle ne ressort plus en séance) ; *enterrer* la masque jusqu'au lendemain,
+  sans rien dire de sa valeur ; *retirer* la supprime du paquet — la position,
+  elle, reste dans la base, un paquet n'étant qu'une liste d'étude posée
+  dessus.
+* ``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des
+  révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous les
+  paquets ; ``--limit`` vaut 20 par défaut). Le journal est ce que le
+  planificateur a réellement reçu, par opposition à ce qu'il prévoit
+  aujourd'hui : c'est le seul endroit où une note entrée par erreur se voit.
 
 Un paquet fondé sur une collection relit sa collection. Un paquet fondé sur
 une recherche conserve la recherche telle que l'interface graphique l'a
@@ -607,6 +620,8 @@ recherche elle-même.
    ./blunderdb anki stats --db base.db --deck 2 --format json
    ./blunderdb anki forecast --db base.db --deck 2 --days 14
    ./blunderdb anki sync --db base.db --deck 2
+   ./blunderdb anki card --db base.db --id 12 --action suspend
+   ./blunderdb anki log --db base.db --deck 2 --limit 50
 
    # Day         Due
    # ---         ---
@@ -884,6 +899,41 @@ message explicite plutôt que de risquer un compactage interrompu.
    #   Before: 128.4 MiB
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
+
+repair — Recalculer les colonnes d'analyse
+------------------------------------------
+
+Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse
+elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas
+touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites.
+
+.. code-block:: bash
+
+   ./blunderdb repair --db <chemin>
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"repaired"}``, le nombre de lignes réellement changées).
+
+Utile après une correction de la façon dont une analyse importée est lue. Le
+cas s'est déjà produit : l'importeur XG écrit un « pas de double » de deux
+façons, et la seconde était comprise comme un vrai double — la colonne portait
+alors l'erreur d'un double qui n'avait jamais eu lieu. Corriger la lecture ne
+changeait rien aux lignes déjà écrites ; cette commande les refait.
+
+Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes
+d'analyse de tout le monde à la simple ouverture d'une base n'est pas quelque
+chose qu'un outil doit faire dans le dos de son utilisateur.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb repair --db base.db
+
+   # 42 analyses repaired.
 
 delete — Supprimer des données
 -------------------------------
