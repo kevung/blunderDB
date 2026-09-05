@@ -1,12 +1,17 @@
 /**
- * MatchPanel.detailPaneReserved.test.js
+ * MatchPanel.detailPaneOnDemand.test.js
  *
- * #201 (D.1): the detail pane used to appear on the first click on a match,
- * narrowing the list from 100% to 45% (`has-detail`) — the clicked row moved
- * under the cursor before the second click of a double-click. The pane's
- * width is now reserved: it is always mounted (a hint when nothing is
- * selected) and the list's class list — hence its CSS width — does not
- * depend on the selection.
+ * The detail pane exists only while a match is selected. #201 (D.1) had
+ * reserved its width instead — always mounted, a "select a match" hint
+ * standing in — so that the first click could not move the clicked row out
+ * from under the cursor before the second click of a double-click. That cure
+ * cost 55% of the panel to display one sentence and left the match list too
+ * narrow to read, so the reservation is gone: the list spans the full width
+ * until a selection gives the pane something to show.
+ *
+ * What this test pins is the pair: no pane and a full-width list before any
+ * selection, pane and `has-detail` list after one, and back again when the
+ * selection is dropped.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -46,7 +51,7 @@ async function settle() {
     for (let i = 0; i < 4; i++) await tick();
 }
 
-describe('MatchPanel — the detail pane keeps its width whether or not a match is selected', () => {
+describe('MatchPanel — the detail pane appears only for a selected match', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         databasePathStore.set('/tmp/test.db');
@@ -54,32 +59,30 @@ describe('MatchPanel — the detail pane keeps its width whether or not a match 
     });
     afterEach(cleanup);
 
-    test('a hint stands in for the detail before any selection, and the list does not change class on selection', async () => {
+    test('no pane and a full-width list until a match is selected', async () => {
         const { container } = render(MatchPanel);
         await settle();
 
         const list = container.querySelector('.match-list-pane');
         const detail = () => container.querySelector('.detail-pane');
         expect(list).not.toBeNull();
-        expect(detail(), 'the pane is mounted before any selection').not.toBeNull();
-        expect(detail().textContent).toContain('Select a match');
-        expect(detail().querySelector('.detail-header')).toBeNull();
-        const classesBefore = list.className;
+        expect(detail(), 'nothing is selected, so there is no pane to show').toBeNull();
+        expect(list.classList.contains('has-detail'), 'the list spans the full width').toBe(false);
 
         const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes('Alice'));
         expect(cell()).toBeTruthy();
         await fireEvent.click(cell());
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).not.toBeNull());
 
-        expect(list.className, 'the list keeps its class list, hence its width').toBe(classesBefore);
-        expect(detail().querySelector('.detail-header'), 'the selected match fills the pane').not.toBeNull();
+        expect(detail(), 'the selection opens the pane').not.toBeNull();
+        expect(detail().querySelector('.detail-header')).not.toBeNull();
         expect(detail().textContent).toContain('Alice');
+        expect(list.classList.contains('has-detail'), 'the list makes room for it').toBe(true);
 
-        // Deselecting brings the hint back, still without touching the list.
+        // Dropping the selection closes the pane and gives the width back.
         await fireEvent.click(cell());
         await vi.waitFor(() => expect(container.querySelector('tbody tr.selected')).toBeNull());
-        expect(list.className).toBe(classesBefore);
-        expect(detail().textContent).toContain('Select a match');
-        expect(detail().querySelector('.detail-header')).toBeNull();
+        expect(detail()).toBeNull();
+        expect(list.classList.contains('has-detail')).toBe(false);
     });
 });

@@ -626,7 +626,7 @@
 <section class="match-panel" aria-label={$t('match.ariaLabel')} id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
-        <div class="match-list-pane">
+        <div class="match-list-pane" class:has-detail={detailMatch}>
             <div class="match-list-toolbar">
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
@@ -756,10 +756,15 @@
             </PanelTable>
         </div>
 
-        <!-- Detail pane (right side). Its width is reserved whether or not a
-             match is selected: when the pane appeared on the first click, the
-             list narrowed from 100% to 45% and the clicked row moved under the
-             cursor before the second click of a double-click (#201). -->
+        <!-- Detail pane (right side). It exists only while a match is
+             selected: an empty pane holding nothing but "select a match" took
+             55% of the panel for a sentence, so the list now spans the full
+             width until there is something to show. The first click therefore
+             narrows the list from 100% to 45% again; that used to move the
+             clicked row out from under the cursor before the second click of a
+             double-click (#201), which is why the change of width carries no
+             transition — and why Enter on the selection and the pane's
+             "Review" button are the two other ways to open a match. -->
         {#if detailMatch}
             <div class="detail-pane">
                 <!-- Match metadata header -->
@@ -963,10 +968,6 @@
                     </div>
                 {/if}
             </div>
-        {:else}
-            <div class="detail-pane">
-                <div class="empty-state">{$t('match.selectMatchHint')}</div>
-            </div>
         {/if}
     </div>
 </section>
@@ -1002,13 +1003,22 @@
     /* Fixed split with the detail pane (see the template's note): the list
        never changes width, so a row never moves under the cursor. */
     .match-list-pane {
-        flex: 0 0 45%;
-        max-width: 45%;
+        flex: 1 1 100%;
+        max-width: 100%;
         min-width: 0;
         height: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
+    }
+
+    /* No transition on purpose: the row must reach its final width before the
+       second click of a double-click, not travel under the cursor (see the
+       template comment above the pane). NB: no `#nnn` issue reference inside a
+       <style> block — colorTokens.sync.test.js reads it as a hex colour. */
+    .match-list-pane.has-detail {
+        flex: 0 0 45%;
+        max-width: 45%;
         border-right: 1px solid #ddd;
     }
 

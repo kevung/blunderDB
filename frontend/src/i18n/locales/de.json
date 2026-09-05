@@ -452,7 +452,6 @@
         "mwcLoss": "MWC-Verlust",
         "noAnalysedPositions": "Keine analysierten Positionen für dieses Match gefunden.",
         "noMatchesImported": "Noch keine Matches importiert",
-        "selectMatchHint": "Ein Match auswählen, um seine Mitschrift anzuzeigen",
         "noMovesRecorded": "Keine Züge erfasst",
         "overallPr": "Gesamt-PR",
         "performanceRating": "Performance Rating",

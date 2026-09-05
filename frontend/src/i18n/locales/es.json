@@ -452,7 +452,6 @@
         "mwcLoss": "Pérdida de MWC",
         "noAnalysedPositions": "No se encontraron posiciones analizadas para esta partida.",
         "noMatchesImported": "Aún no se han importado partidas",
-        "selectMatchHint": "Seleccione una partida para mostrar su transcripción",
         "noMovesRecorded": "No hay jugadas registradas",
         "overallPr": "PR global",
         "performanceRating": "Performance Rating",
