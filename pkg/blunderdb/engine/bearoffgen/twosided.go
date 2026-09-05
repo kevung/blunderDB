@@ -74,7 +74,7 @@ func TwoSided(ctx context.Context, w io.Writer, points, checkers int, progress f
 	// r indexes the 21 distinct rolls. Precomputed once: the sweep asks for
 	// them nPos² times, and they do not depend on the opponent at all.
 	reach := make([][][]int, n)
-	seen := make(map[int]struct{}, 64)
+	g := newGen(points, checkers)
 	for i := 0; i < n; i++ {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -82,7 +82,8 @@ func TwoSided(ctx context.Context, w io.Writer, points, checkers int, progress f
 		reach[i] = make([][]int, 0, 21)
 		for d1 := 1; d1 <= 6; d1++ {
 			for d2 := 1; d2 <= d1; d2++ {
-				reach[i] = append(reach[i], successors(boards[i], d1, d2, points, checkers, seen))
+				// g owns its result slice, so copy what we keep.
+				reach[i] = append(reach[i], append([]int(nil), g.successors(boards[i], d1, d2)...))
 			}
 		}
 	}
