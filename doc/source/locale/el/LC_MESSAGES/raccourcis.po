@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 19:09+0200\n"
+"POT-Creation-Date: 2026-09-05 01:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -23,31 +23,7 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Συντομεύσεις πληκτρολογίου"
 
-#: ../../source/raccourcis.rst:8
-msgid ""
-"Les raccourcis clavier sont indépendants de la disposition du clavier : "
-"ils restent accessibles de la même manière quelle que soit la disposition"
-" utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
-msgstr ""
-"Οι συντομεύσεις πληκτρολογίου είναι ανεξάρτητες από τη διάταξη του "
-"πληκτρολογίου: παραμένουν προσβάσιμες με τον ίδιο τρόπο ανεξάρτητα από τη"
-" διάταξη που χρησιμοποιείται (AZERTY, QWERTY, QWERTZ, κ.λπ.)."
-
-#: ../../source/raccourcis.rst:14
-msgid ""
-"Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ "
-"de recherche, ligne de commande), les raccourcis d'édition de texte "
-"habituels s'appliquent au texte et non à la position : CTRL-C, CTRL-X et "
-"CTRL-V copient, coupent et collent la sélection, CTRL-A la sélectionne "
-"entièrement, CTRL-Z et CTRL-Y annulent et rétablissent."
-msgstr ""
-"Όταν ο δρομέας βρίσκεται σε πεδίο κειμένου (σχόλιο, πεδίο αναζήτησης, "
-"γραμμή εντολών), οι συνήθεις συντομεύσεις επεξεργασίας κειμένου "
-"εφαρμόζονται στο κείμενο και όχι στη θέση: CTRL-C, CTRL-X και CTRL-V "
-"αντιγράφουν, αποκόπτουν και επικολλούν την επιλογή, CTRL-A την επιλέγει "
-"ολόκληρη, CTRL-Z και CTRL-Y αναιρούν και επαναλαμβάνουν."
-
-#: ../../source/raccourcis.rst:23
+#: ../../source/raccourcis.rst:9
 msgid "Base de données"
 msgstr "Βάση δεδομένων"
 
@@ -107,7 +83,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Επεξεργασία των μεταδεδομένων της βάσης δεδομένων."
 
-#: ../../source/raccourcis.rst:40
+#: ../../source/raccourcis.rst:26
 msgid "Position"
 msgstr "Θέση"
 
@@ -205,39 +181,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Εμφάνιση των μεταδεδομένων της θέσης."
 
-#: ../../source/raccourcis.rst:61
-msgid ""
-"Dans le panneau Eval (voir :ref:`panneau_epc`), RETOUR ARRIERE "
-"réinitialise vers les valeurs propres à ce panneau (score money, pas de "
-"dés posés) plutôt que vers celles du mode édition (score 7 partout, dés "
-"3-1). Un double-clic en dehors du plateau produit la même "
-"réinitialisation."
-msgstr ""
-"Στον πίνακα Eval (βλ. :ref:`panneau_epc`), το BACKSPACE επαναφέρει στις "
-"τιμές που είναι ειδικές για αυτόν τον πίνακα (σκορ money, χωρίς "
-"τοποθετημένα ζάρια) και όχι σε εκείνες της λειτουργίας επεξεργασίας (σκορ"
-" 7 παντού, ζάρια 3-1). Ένα διπλό κλικ έξω από το ταμπλό προκαλεί την ίδια"
-" επαναφορά."
-
-#: ../../source/raccourcis.rst:68
-msgid ""
-"Dans le panneau Eval et dans le panneau Recherche, le plateau est un "
-"brouillon et non une position de la base : CTRL-V y **pose la position "
-"sur le plateau** au lieu de l'importer dans la base, et CTRL-C copie le "
-"plateau affiché — son XGID est recalculé à partir des pions posés, sans "
-"l'analyse de la position consultée auparavant. La position copiée se "
-"colle ainsi telle quelle dans eXtreme Gammon ou dans une autre instance "
-"de blunderDB."
-msgstr ""
-"Στον πίνακα Eval και στον πίνακα Αναζήτησης, το ταμπλό είναι ένα "
-"προσχέδιο και όχι μια θέση της βάσης: το CTRL-V **τοποθετεί εκεί τη θέση "
-"στο ταμπλό** αντί να την εισάγει στη βάση, και το CTRL-C αντιγράφει το "
-"εμφανιζόμενο ταμπλό — το XGID του επανυπολογίζεται από τα τοποθετημένα "
-"πούλια, χωρίς την ανάλυση της θέσης που εξεταζόταν προηγουμένως. Η "
-"αντιγραμμένη θέση επικολλάται έτσι ως έχει στο eXtreme Gammon ή σε άλλη "
-"εμφάνιση (instance) του blunderDB."
-
-#: ../../source/raccourcis.rst:78
+#: ../../source/raccourcis.rst:48
 msgid "Navigation"
 msgstr "Πλοήγηση"
 
@@ -305,7 +249,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Φόρτωση τυχαίας θέσης."
 
-#: ../../source/raccourcis.rst:97
+#: ../../source/raccourcis.rst:67
 msgid "Affichage"
 msgstr "Εμφάνιση"
 
@@ -333,7 +277,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Εμφάνιση/απόκρυψη της μέτρησης πόντων (pipcount)."
 
-#: ../../source/raccourcis.rst:111
+#: ../../source/raccourcis.rst:81
 msgid "Actions"
 msgstr "Ενέργειες"
 
@@ -353,21 +297,7 @@ msgstr "ΔΙΑΣΤΗΜΑ"
 msgid "Ouvrir la ligne de commande."
 msgstr "Άνοιγμα της γραμμής εντολών."
 
-#: ../../source/raccourcis.rst:123
-msgid ""
-"TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le"
-" plateau (ou nulle part en particulier, ce qui est le cas la plupart du "
-"temps). Une fois le focus posé sur un bouton, un champ de saisie ou un "
-"lien, TAB reprend la navigation clavier standard entre les éléments de "
-"l'interface plutôt que de rouvrir ce panneau."
-msgstr ""
-"Το TAB ανοίγει το πλαίσιο αναζήτησης μόνο όταν η εστίαση βρίσκεται στο "
-"ταμπλό (ή πουθενά συγκεκριμένα, κάτι που ισχύει τις περισσότερες φορές). "
-"Μόλις η εστίαση μετακινηθεί σε ένα κουμπί, ένα πεδίο εισαγωγής ή έναν "
-"σύνδεσμο, το TAB συνεχίζει την τυπική πλοήγηση με το πληκτρολόγιο μεταξύ "
-"των στοιχείων της διεπαφής αντί να ανοίξει ξανά αυτό το πλαίσιο."
-
-#: ../../source/raccourcis.rst:132
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr "Εργαλεία"
 
@@ -453,16 +383,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Εμφάνιση/απόκρυψη της βοήθειας."
 
-#: ../../source/raccourcis.rst:152
-msgid ""
-"L'ordre de ces onglets, une fois modifié par glisser-déposer sur la "
-"barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet "
-"permet de le masquer ; le bouton en forme de flèche qui apparaît alors à "
-"droite de la barre rouvre un menu pour réafficher les onglets masqués — "
-"qui restent joignables entretemps par leur raccourci."
-msgstr "Η σειρά αυτών των καρτελών, μόλις τροποποιηθεί με μεταφορά και απόθεση στη γραμμή, απομνημονεύεται από τη μία συνεδρία στην άλλη. Ένα δεξί κλικ σε μια καρτέλα επιτρέπει την απόκρυψή της· το κουμπί σε σχήμα βέλους που εμφανίζεται τότε στα δεξιά της γραμμής ανοίγει ένα μενού για να εμφανιστούν ξανά οι κρυμμένες καρτέλες — οι οποίες παραμένουν στο μεταξύ προσβάσιμες μέσω της συντόμευσής τους."
-
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:115
 msgid "Onglets de vues"
 msgstr "Καρτέλες προβολών"
 
@@ -514,23 +435,7 @@ msgstr "Διπλό κλικ στην καρτέλα"
 msgid "Renommer la vue."
 msgstr "Μετονομασία της προβολής."
 
-#: ../../source/raccourcis.rst:177
-msgid ""
-"Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance "
-"(position suivante) et *k* recule (position précédente), alors que "
-"*MAJ-J* revient à la vue précédente et *MAJ-K* passe à la vue suivante. "
-"C'est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la "
-"convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas "
-"celle de j/k."
-msgstr ""
-"Η φορά των SHIFT-J / SHIFT-K είναι αντίστροφη σε σχέση με τα j / k: το "
-"*j* προχωρά (επόμενη θέση) και το *k* γυρίζει πίσω (προηγούμενη θέση), "
-"ενώ το *SHIFT-J* επιστρέφει στην προηγούμενη προβολή και το *SHIFT-K* "
-"πηγαίνει στην επόμενη. Αυτό είναι σκόπιμο (δεν πρόκειται για συντόμευση "
-"προς διόρθωση) — τα SHIFT-J/SHIFT-K ακολουθούν τη σύμβαση CTRL-PageUp"
-"/CTRL-PageDown με την οποία συνδέονται, όχι εκείνη των j/k."
-
-#: ../../source/raccourcis.rst:187
+#: ../../source/raccourcis.rst:132
 msgid "Ligne de commande"
 msgstr "Γραμμή εντολών"
 
@@ -550,11 +455,11 @@ msgstr "ΚΑΤΩ"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Περιήγηση στο ιστορικό εντολών προς τα κάτω."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:145
 msgid "Historique de recherche"
 msgstr "Ιστορικό αναζήτησης"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:147
 msgid ""
 "L'historique de recherche est l'onglet *Historique* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -578,11 +483,11 @@ msgstr "Διπλό κλικ"
 msgid "Exécuter la recherche."
 msgstr "Εκτέλεση της αναζήτησης."
 
-#: ../../source/raccourcis.rst:216
+#: ../../source/raccourcis.rst:161
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
-#: ../../source/raccourcis.rst:218
+#: ../../source/raccourcis.rst:163
 msgid ""
 "La bibliothèque de filtres est l'onglet *Enregistrés* du panneau de "
 "recherche (*CTRL-F* ou *TAB*)."
@@ -598,7 +503,7 @@ msgstr "Επιλογή/αποεπιλογή ενός φίλτρου (εμφάν�
 msgid "Exécuter la recherche du filtre."
 msgstr "Εκτέλεση της αναζήτησης του φίλτρου."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:177
 msgid "Panneau d'analyse"
 msgstr "Πίνακας ανάλυσης"
 
@@ -634,11 +539,11 @@ msgstr ""
 "Αποεπιλογή της κίνησης. Αν δεν υπάρχει επιλεγμένη κίνηση, κλείσιμο του "
 "πίνακα."
 
-#: ../../source/raccourcis.rst:248
+#: ../../source/raccourcis.rst:193
 msgid "Panneau Eval"
 msgstr "Πίνακας Eval"
 
-#: ../../source/raccourcis.rst:250
+#: ../../source/raccourcis.rst:195
 msgid ""
 "La liste des coups du panneau *Eval* (voir :ref:`panneau_epc`) se "
 "parcourt comme celle du panneau d'analyse. Ces raccourcis agissent dès "
@@ -652,7 +557,7 @@ msgstr ""
 msgid "Désélectionner le coup."
 msgstr "Αποεπιλογή της κίνησης."
 
-#: ../../source/raccourcis.rst:267
+#: ../../source/raccourcis.rst:212
 msgid "Panneau des matchs"
 msgstr "Πίνακας αγώνων"
 
@@ -688,7 +593,7 @@ msgstr "Διαγραφή του επιλεγμένου αγώνα."
 msgid "Désélectionner/fermer le panneau."
 msgstr "Αποεπιλογή/κλείσιμο του πίνακα."
 
-#: ../../source/raccourcis.rst:285
+#: ../../source/raccourcis.rst:230
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)"
 
@@ -746,7 +651,7 @@ msgstr ""
 "Διακοπή της επανάληψης και επιστροφή στη λίστα πακέτων (δυνατότητα "
 "συνέχισης αργότερα)."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:248
 msgid "Panneau des tournois"
 msgstr "Πίνακας τουρνουά"
 
@@ -779,7 +684,7 @@ msgstr ""
 "προσθήκης αγώνα, αλλιώς αποεπιλογή του τουρνουά, αλλιώς κλείσιμο του "
 "πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:264
 msgid "Panneau des collections"
 msgstr "Πίνακας συλλογών"
 
@@ -807,14 +712,174 @@ msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
 
-#: ../../source/raccourcis.rst:333
-msgid ""
-"Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, "
-"GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la "
-"collection ouverte exactement comme décrit dans "
-":ref:`raccourcis_navigation`."
-msgstr ""
-"Αυτός ο πίνακας δεν δεσμεύει τις συντομεύσεις πλοήγησης: PageUp/h, "
-"ΑΡΙΣΤΕΡΑ/k, ΔΕΞΙΑ/j, PageDown/l πλοηγούν στις θέσεις της ανοικτής "
-"συλλογής ακριβώς όπως περιγράφεται στο :ref:`raccourcis_navigation`."
+#~ msgid ""
+#~ "Les raccourcis clavier sont indépendants "
+#~ "de la disposition du clavier : ils"
+#~ " restent accessibles de la même "
+#~ "manière quelle que soit la disposition"
+#~ " utilisée (AZERTY, QWERTY, QWERTZ, etc.)."
+#~ msgstr ""
+#~ "Οι συντομεύσεις πληκτρολογίου είναι "
+#~ "ανεξάρτητες από τη διάταξη του "
+#~ "πληκτρολογίου: παραμένουν προσβάσιμες με τον"
+#~ " ίδιο τρόπο ανεξάρτητα από τη διάταξη"
+#~ " που χρησιμοποιείται (AZERTY, QWERTY, "
+#~ "QWERTZ, κ.λπ.)."
+
+#~ msgid ""
+#~ "Lorsque le curseur se trouve dans "
+#~ "une zone de saisie (commentaire, champ"
+#~ " de recherche, ligne de commande), "
+#~ "les raccourcis d'édition de texte "
+#~ "habituels s'appliquent au texte et non"
+#~ " à la position : CTRL-C, CTRL-X "
+#~ "et CTRL-V copient, coupent et collent"
+#~ " la sélection, CTRL-A la sélectionne "
+#~ "entièrement, CTRL-Z et CTRL-Y annulent "
+#~ "et rétablissent."
+#~ msgstr ""
+#~ "Όταν ο δρομέας βρίσκεται σε πεδίο "
+#~ "κειμένου (σχόλιο, πεδίο αναζήτησης, γραμμή "
+#~ "εντολών), οι συνήθεις συντομεύσεις "
+#~ "επεξεργασίας κειμένου εφαρμόζονται στο κείμενο"
+#~ " και όχι στη θέση: CTRL-C, CTRL-X "
+#~ "και CTRL-V αντιγράφουν, αποκόπτουν και "
+#~ "επικολλούν την επιλογή, CTRL-A την "
+#~ "επιλέγει ολόκληρη, CTRL-Z και CTRL-Y "
+#~ "αναιρούν και επαναλαμβάνουν."
+
+#~ msgid ""
+#~ "Dans le panneau Eval (voir "
+#~ ":ref:`panneau_epc`), RETOUR ARRIERE réinitialise "
+#~ "vers les valeurs propres à ce "
+#~ "panneau (score money, pas de dés "
+#~ "posés) plutôt que vers celles du "
+#~ "mode édition (score 7 partout, dés "
+#~ "3-1). Un double-clic en dehors du"
+#~ " plateau produit la même réinitialisation."
+#~ msgstr ""
+#~ "Στον πίνακα Eval (βλ. :ref:`panneau_epc`), "
+#~ "το BACKSPACE επαναφέρει στις τιμές που"
+#~ " είναι ειδικές για αυτόν τον πίνακα"
+#~ " (σκορ money, χωρίς τοποθετημένα ζάρια) "
+#~ "και όχι σε εκείνες της λειτουργίας "
+#~ "επεξεργασίας (σκορ 7 παντού, ζάρια 3-1)."
+#~ " Ένα διπλό κλικ έξω από το "
+#~ "ταμπλό προκαλεί την ίδια επαναφορά."
+
+#~ msgid ""
+#~ "Dans le panneau Eval et dans le"
+#~ " panneau Recherche, le plateau est un"
+#~ " brouillon et non une position de "
+#~ "la base : CTRL-V y **pose la "
+#~ "position sur le plateau** au lieu "
+#~ "de l'importer dans la base, et "
+#~ "CTRL-C copie le plateau affiché — "
+#~ "son XGID est recalculé à partir "
+#~ "des pions posés, sans l'analyse de "
+#~ "la position consultée auparavant. La "
+#~ "position copiée se colle ainsi telle "
+#~ "quelle dans eXtreme Gammon ou dans "
+#~ "une autre instance de blunderDB."
+#~ msgstr ""
+#~ "Στον πίνακα Eval και στον πίνακα "
+#~ "Αναζήτησης, το ταμπλό είναι ένα "
+#~ "προσχέδιο και όχι μια θέση της "
+#~ "βάσης: το CTRL-V **τοποθετεί εκεί τη "
+#~ "θέση στο ταμπλό** αντί να την "
+#~ "εισάγει στη βάση, και το CTRL-C "
+#~ "αντιγράφει το εμφανιζόμενο ταμπλό — το"
+#~ " XGID του επανυπολογίζεται από τα "
+#~ "τοποθετημένα πούλια, χωρίς την ανάλυση "
+#~ "της θέσης που εξεταζόταν προηγουμένως. Η"
+#~ " αντιγραμμένη θέση επικολλάται έτσι ως "
+#~ "έχει στο eXtreme Gammon ή σε άλλη"
+#~ " εμφάνιση (instance) του blunderDB."
+
+#~ msgid ""
+#~ "TAB n'ouvre le panneau de recherche "
+#~ "que lorsque le focus se trouve sur"
+#~ " le plateau (ou nulle part en "
+#~ "particulier, ce qui est le cas la"
+#~ " plupart du temps). Une fois le "
+#~ "focus posé sur un bouton, un champ"
+#~ " de saisie ou un lien, TAB "
+#~ "reprend la navigation clavier standard "
+#~ "entre les éléments de l'interface plutôt"
+#~ " que de rouvrir ce panneau."
+#~ msgstr ""
+#~ "Το TAB ανοίγει το πλαίσιο αναζήτησης "
+#~ "μόνο όταν η εστίαση βρίσκεται στο "
+#~ "ταμπλό (ή πουθενά συγκεκριμένα, κάτι που"
+#~ " ισχύει τις περισσότερες φορές). Μόλις "
+#~ "η εστίαση μετακινηθεί σε ένα κουμπί, "
+#~ "ένα πεδίο εισαγωγής ή έναν σύνδεσμο, "
+#~ "το TAB συνεχίζει την τυπική πλοήγηση "
+#~ "με το πληκτρολόγιο μεταξύ των στοιχείων"
+#~ " της διεπαφής αντί να ανοίξει ξανά"
+#~ " αυτό το πλαίσιο."
+
+#~ msgid ""
+#~ "L'ordre de ces onglets, une fois "
+#~ "modifié par glisser-déposer sur la "
+#~ "barre, est mémorisé d'une session à "
+#~ "l'autre. Un clic droit sur un "
+#~ "onglet permet de le masquer ; le"
+#~ " bouton en forme de flèche qui "
+#~ "apparaît alors à droite de la "
+#~ "barre rouvre un menu pour réafficher "
+#~ "les onglets masqués — qui restent "
+#~ "joignables entretemps par leur raccourci."
+#~ msgstr ""
+#~ "Η σειρά αυτών των καρτελών, μόλις "
+#~ "τροποποιηθεί με μεταφορά και απόθεση στη"
+#~ " γραμμή, απομνημονεύεται από τη μία "
+#~ "συνεδρία στην άλλη. Ένα δεξί κλικ "
+#~ "σε μια καρτέλα επιτρέπει την απόκρυψή"
+#~ " της· το κουμπί σε σχήμα βέλους "
+#~ "που εμφανίζεται τότε στα δεξιά της "
+#~ "γραμμής ανοίγει ένα μενού για να "
+#~ "εμφανιστούν ξανά οι κρυμμένες καρτέλες —"
+#~ " οι οποίες παραμένουν στο μεταξύ "
+#~ "προσβάσιμες μέσω της συντόμευσής τους."
+
+#~ msgid ""
+#~ "Le sens de MAJ-J / MAJ-K est "
+#~ "inversé par rapport à j / k "
+#~ ": *j* avance (position suivante) et "
+#~ "*k* recule (position précédente), alors "
+#~ "que *MAJ-J* revient à la vue "
+#~ "précédente et *MAJ-K* passe à la "
+#~ "vue suivante. C'est voulu (pas un "
+#~ "raccourci à corriger) — MAJ-J/MAJ-K "
+#~ "suivent la convention CTRL-PageUp/CTRL-"
+#~ "PageDown à laquelle ils sont associés,"
+#~ " pas celle de j/k."
+#~ msgstr ""
+#~ "Η φορά των SHIFT-J / SHIFT-K είναι"
+#~ " αντίστροφη σε σχέση με τα j /"
+#~ " k: το *j* προχωρά (επόμενη θέση) "
+#~ "και το *k* γυρίζει πίσω (προηγούμενη "
+#~ "θέση), ενώ το *SHIFT-J* επιστρέφει στην"
+#~ " προηγούμενη προβολή και το *SHIFT-K* "
+#~ "πηγαίνει στην επόμενη. Αυτό είναι "
+#~ "σκόπιμο (δεν πρόκειται για συντόμευση "
+#~ "προς διόρθωση) — τα SHIFT-J/SHIFT-K "
+#~ "ακολουθούν τη σύμβαση CTRL-PageUp/CTRL-"
+#~ "PageDown με την οποία συνδέονται, όχι"
+#~ " εκείνη των j/k."
+
+#~ msgid ""
+#~ "Ce panneau ne capture pas les "
+#~ "raccourcis de navigation : PageUp/h, "
+#~ "GAUCHE/k, DROITE/j, PageDown/l naviguent dans"
+#~ " les positions de la collection "
+#~ "ouverte exactement comme décrit dans "
+#~ ":ref:`raccourcis_navigation`."
+#~ msgstr ""
+#~ "Αυτός ο πίνακας δεν δεσμεύει τις "
+#~ "συντομεύσεις πλοήγησης: PageUp/h, ΑΡΙΣΤΕΡΑ/k, "
+#~ "ΔΕΞΙΑ/j, PageDown/l πλοηγούν στις θέσεις "
+#~ "της ανοικτής συλλογής ακριβώς όπως "
+#~ "περιγράφεται στο :ref:`raccourcis_navigation`."
 

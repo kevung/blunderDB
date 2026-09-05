@@ -3,20 +3,6 @@
 Raccourcis clavier
 ==================
 
-.. note::
-
-   Les raccourcis clavier sont indépendants de la disposition du clavier : ils
-   restent accessibles de la même manière quelle que soit la disposition
-   utilisée (AZERTY, QWERTY, QWERTZ, etc.).
-
-.. note::
-
-   Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de
-   recherche, ligne de commande), les raccourcis d'édition de texte habituels
-   s'appliquent au texte et non à la position : CTRL-C, CTRL-X et CTRL-V
-   copient, coupent et collent la sélection, CTRL-A la sélectionne
-   entièrement, CTRL-Z et CTRL-Y annulent et rétablissent.
-
 .. _raccourcis_generaux:
 
 Base de données
@@ -55,22 +41,6 @@ Position
    "Del", "Supprimer la position courante (confirmation demandée)."
    "RETOUR ARRIERE", "Réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
-
-.. note::
-
-   Dans le panneau Eval (voir :ref:`panneau_epc`), RETOUR ARRIERE réinitialise
-   vers les valeurs propres à ce panneau (score money, pas de dés posés) plutôt
-   que vers celles du mode édition (score 7 partout, dés 3-1). Un double-clic
-   en dehors du plateau produit la même réinitialisation.
-
-.. note::
-
-   Dans le panneau Eval et dans le panneau Recherche, le plateau est un
-   brouillon et non une position de la base : CTRL-V y **pose la position sur
-   le plateau** au lieu de l'importer dans la base, et CTRL-C copie le plateau
-   affiché — son XGID est recalculé à partir des pions posés, sans l'analyse
-   de la position consultée auparavant. La position copiée se colle ainsi
-   telle quelle dans eXtreme Gammon ou dans une autre instance de blunderDB.
 
 .. _raccourcis_navigation:
 
@@ -118,14 +88,6 @@ Actions
    "TAB", "Ouvrir le panneau de recherche (éditeur de position)."
    "ESPACE", "Ouvrir la ligne de commande."
 
-.. note::
-
-   TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le
-   plateau (ou nulle part en particulier, ce qui est le cas la plupart du
-   temps). Une fois le focus posé sur un bouton, un champ de saisie ou un
-   lien, TAB reprend la navigation clavier standard entre les éléments de
-   l'interface plutôt que de rouvrir ce panneau.
-
 .. _raccourcis_outils:
 
 Outils
@@ -147,14 +109,6 @@ Outils
    "CTRL-E", "Afficher/cacher le panneau Eval."
    "?", "Afficher/cacher l'aide."
 
-.. note::
-
-   L'ordre de ces onglets, une fois modifié par glisser-déposer sur la barre,
-   est mémorisé d'une session à l'autre. Un clic droit sur un onglet permet
-   de le masquer ; le bouton en forme de flèche qui apparaît alors à droite
-   de la barre rouvre un menu pour réafficher les onglets masqués — qui
-   restent joignables entretemps par leur raccourci.
-
 .. _raccourcis_vues:
 
 Onglets de vues
@@ -171,15 +125,6 @@ Onglets de vues
    "CTRL-PageDown, MAJ-K", "Vue suivante."
    "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
    "Double-clic sur l'onglet", "Renommer la vue."
-
-.. note::
-
-   Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : *j* avance
-   (position suivante) et *k* recule (position précédente), alors que
-   *MAJ-J* revient à la vue précédente et *MAJ-K* passe à la vue suivante.
-   C'est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la
-   convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas
-   celle de j/k.
 
 .. _raccourcis_command:
 
@@ -327,11 +272,3 @@ Panneau des collections
    "Double-clic", "Ouvrir la collection."
    "Del", "Retirer la position courante (ou les positions cochées) de la collection ouverte."
    "Esc", "Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers)."
-
-.. note::
-
-   Ce panneau ne capture pas les raccourcis de navigation :
-   PageUp/h, GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de
-   la collection ouverte exactement comme décrit dans
-   :ref:`raccourcis_navigation`.
-

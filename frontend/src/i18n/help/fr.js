@@ -220,12 +220,6 @@ export default {
 </p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>Les raccourcis clavier sont indépendants de la disposition du clavier : ils restent accessibles de la même manière quelle que soit la disposition utilisée (AZERTY, QWERTY, QWERTZ, etc.).</p>
-</div>
-<div class="admonition note">
-<p>Lorsque le curseur se trouve dans une zone de saisie (commentaire, champ de recherche, ligne de commande), les raccourcis d'édition de texte habituels s'appliquent au texte et non à la position : CTRL-C, CTRL-X et CTRL-V copient, coupent et collent la sélection, CTRL-A la sélectionne entièrement, CTRL-Z et CTRL-Y annulent et rétablissent.</p>
-</div>
 <h3>Base de données</h3>
 <table>
 <thead>
@@ -316,12 +310,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Dans le panneau Eval (voir Panneau Eval), RETOUR ARRIERE réinitialise vers les valeurs propres à ce panneau (score money, pas de dés posés) plutôt que vers celles du mode édition (score 7 partout, dés 3-1). Un double-clic en dehors du plateau produit la même réinitialisation.</p>
-</div>
-<div class="admonition note">
-<p>Dans le panneau Eval et dans le panneau Recherche, le plateau est un brouillon et non une position de la base : CTRL-V y <strong>pose la position sur le plateau</strong> au lieu de l'importer dans la base, et CTRL-C copie le plateau affiché — son XGID est recalculé à partir des pions posés, sans l'analyse de la position consultée auparavant. La position copiée se colle ainsi telle quelle dans eXtreme Gammon ou dans une autre instance de blunderDB.</p>
-</div>
 <h3>Navigation</h3>
 <table>
 <thead>
@@ -407,9 +395,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB n'ouvre le panneau de recherche que lorsque le focus se trouve sur le plateau (ou nulle part en particulier, ce qui est le cas la plupart du temps). Une fois le focus posé sur un bouton, un champ de saisie ou un lien, TAB reprend la navigation clavier standard entre les éléments de l'interface plutôt que de rouvrir ce panneau.</p>
-</div>
 <h3>Outils</h3>
 <table>
 <thead>
@@ -461,9 +446,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>L'ordre de ces onglets, une fois modifié par glisser-déposer sur la barre, est mémorisé d'une session à l'autre. Un clic droit sur un onglet permet de le masquer ; le bouton en forme de flèche qui apparaît alors à droite de la barre rouvre un menu pour réafficher les onglets masqués — qui restent joignables entretemps par leur raccourci.</p>
-</div>
 <h3>Onglets de vues</h3>
 <table>
 <thead>
@@ -499,9 +481,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Le sens de MAJ-J / MAJ-K est inversé par rapport à j / k : <em>j</em> avance (position suivante) et <em>k</em> recule (position précédente), alors que <em>MAJ-J</em> revient à la vue précédente et <em>MAJ-K</em> passe à la vue suivante. C'est voulu (pas un raccourci à corriger) — MAJ-J/MAJ-K suivent la convention CTRL-PageUp/CTRL-PageDown à laquelle ils sont associés, pas celle de j/k.</p>
-</div>
 <h3>Ligne de commande</h3>
 <table>
 <thead>
@@ -756,9 +735,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Ce panneau ne capture pas les raccourcis de navigation : PageUp/h, GAUCHE/k, DROITE/j, PageDown/l naviguent dans les positions de la collection ouverte exactement comme décrit dans Navigation.</p>
-</div>
 `,
     commands: `
 <p>La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur la touche <em>ESPACE</em>. Lors de la saisie d'une commande, une liste de suggestions apparaît automatiquement : la touche <em>TAB</em> (ou <em>MAJ-TAB</em>) parcourt les propositions et complète la commande, tandis que <em>ÉCHAP</em> referme la liste (un second <em>ÉCHAP</em> ferme la ligne de commande). Les touches <em>HAUT</em> et <em>BAS</em> restent réservées à l'historique des commandes.</p>
@@ -945,27 +921,6 @@ export default {
 </table>
 <h3>Filtres de recherche</h3>
 <p>Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-à-dire après le début de commande <code>s</code>.</p>
-<div class="admonition warning">
-<p>Dans la recherche de positions, par défaut, blunderDB prend en compte la structure de pions courante, ignore la position du videau, du score et des dés. Pour prendre en compte la position du videau, du score, des dés, il faut le mentionner explicitement dans la recherche.</p>
-</div>
-<div class="admonition note">
-<p>La commande de recherche <code>s</code> est disponible dans le panneau de recherche (touche <code>TAB</code>). La commande <code>ss</code> permet de chercher parmi les résultats actuellement filtrés.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre le point 24 et le point 19.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considère que le nombre de pions dans la zone est le nombre de pions situés entre le point 12 et le point 1.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considère que l'outfield s'étend entre le point 18 et le point 7.</p>
-</div>
-<div class="admonition note">
-<p>blunderDB considère que le jan s'étend entre le point 1 et le point 6.</p>
-</div>
-<div class="admonition tip">
-<p>Les paramètres pour filtrer des positions peuvent être arbitrairement combinés.</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1320,21 +1275,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Une position jouée plusieurs fois par le joueur 1 (le même coup dans deux matchs, ou deux coups différents) est retenue par les filtres <code>E&gt;x</code>, <code>E&lt;x</code> et <code>Ex,y</code> d'après la <strong>plus grande</strong> erreur commise sur cette position. <code>E&gt;100</code> répond ainsi à la question « ai-je un jour fait un blunder ici ? », et <code>E&lt;20</code> ne garde que les positions où aucun des coups joués n'a dépassé 20 millipoints.</p>
-</div>
-<div class="admonition note">
-<p>Filtrer les positions en fonction du lancer de dés (<code>D</code> ou <code>D1</code>) implique <em>a fortiori</em> de filtrer les positions en fonction du type de décision (<code>d</code>). Le filtre <code>D1</code> ignore la valeur du deuxième dé : seule la valeur du premier dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés du lancer).</p>
-</div>
-<div class="admonition note">
-<p>Pour le filtre de différence relative à la course (<code>p&gt;x</code>, <code>p&lt;x</code>, <code>px,y</code>), le joueur est en retard à la course par rapport à l'adversaire si <code>x&gt;0</code> et en avance si <code>x&lt;0</code>. Exemple: <code>p&lt;-10</code> : le joueur a au moins 10 pips d'avance à la course. <code>p50,70</code> : le joueur a entre 50 et 70 pips de retard à la course.</p>
-</div>
-<div class="admonition note">
-<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre <code>ma</code> plusieurs fois (ex: <code>s ma23 ma43</code> pour les matchs 23 et 43). Le même principe s'applique pour les tournois avec <code>tn</code> et pour les positions avec <code>id</code> (ex: <code>s id5 id10</code> pour les positions 5 et 10).</p>
-</div>
-<div class="admonition note">
-<p>Rechercher dans un tournoi (<code>tn</code>) revient à rechercher dans l'ensemble des matchs du tournoi concerné. Les identifiants des matchs et des tournois sont visibles dans les colonnes ID des panneaux correspondants.</p>
-</div>
 <p>Par exemple, la commande <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> filtre toutes les positions en prenant en compte la structure des pions, le score et le cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à la course, avec au moins 60% de chances de gain, au moins 10 pions dans la zone, et l'adversaire a entre 2 et 3 pions arriérés.</p>
 <h3>Commandes diverses</h3>
 <table>
@@ -1351,9 +1291,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Les migrations de base de données sont désormais effectuées automatiquement lors de l'ouverture d'une base de données.</p>
-</div>
 `,
     about: `
 <h3>Version</h3>

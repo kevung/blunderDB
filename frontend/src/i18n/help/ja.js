@@ -192,12 +192,6 @@ export default {
 <p>あなたの発行者の識別情報（透かしに署名する鍵）は、出所を記載した最初のエクスポート時に自動的に作成されます。設定の<strong>発行者の識別情報</strong>タブから確認、エクスポート、再生成できます。</p>
 `,
     shortcuts: `
-<div class="admonition note">
-<p>キーボードショートカットはキーボードレイアウトに依存しません： 使用するレイアウト（AZERTY、QWERTY、QWERTZ など）に関わらず、同じ方法でアクセスできます。</p>
-</div>
-<div class="admonition note">
-<p>カーソルが入力欄（コメント、検索欄、コマンドライン）にあるときは、通常のテキスト編集ショートカットが局面ではなくテキストに適用されます： CTRL-C、CTRL-X、CTRL-V は選択範囲をコピー・切り取り・貼り付けし、CTRL-A はすべてを選択し、CTRL-Z と CTRL-Y は元に戻す・やり直しを行います。</p>
-</div>
 <h3>データベース</h3>
 <table>
 <thead>
@@ -288,12 +282,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>Eval パネル（Eval パネル を参照）では、BACKSPACE は編集モードの値（両者スコア 7、ダイス 3-1）ではなく、このパネル固有の値（マネースコア、ダイスなし）にリセットします。ボードの外でのダブルクリックも同じリセットを行います。</p>
-</div>
-<div class="admonition note">
-<p>Eval パネルと検索パネルでは、ボードはデータベースのポジションではなく下書きです：CTRL-V はデータベースにインポートする代わりに<strong>ポジションをボードに置き</strong>、CTRL-C は表示中のボードをコピーします——その XGID は置かれたチェッカーから再計算され、直前に閲覧していたポジションの分析は含みません。コピーしたポジションはそのまま eXtreme Gammon や別の blunderDB インスタンスに貼り付けられます。</p>
-</div>
 <h3>ナビゲーション</h3>
 <table>
 <thead>
@@ -379,9 +367,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>TAB は、フォーカスが盤面にある場合(あるいは、多くの場合そうであるように、特にどこにもフォーカスがない場合)にのみ検索パネルを開きます。フォーカスがボタン、入力欄、またはリンクに移動すると、TAB はこのパネルを再度開く代わりに、インターフェースの要素間の標準的なキーボード操作を再開します。</p>
-</div>
 <h3>ツール</h3>
 <table>
 <thead>
@@ -433,9 +418,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>これらのタブの順序は、バー上でドラッグして変更すると、セッションをまたいで記憶されます。タブを右クリックすると非表示にできます。すると、バーの右側に表示される矢印形のボタンから、非表示のタブを再表示するメニューを開けます — 非表示の間もそのショートカットから引き続きアクセスできます。</p>
-</div>
 <h3>ビュータブ</h3>
 <table>
 <thead>
@@ -471,9 +453,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>SHIFT-J / SHIFT-K の向きは j / k とは逆です。<em>j</em>は先へ進み（次の局面）、<em>k</em>は戻ります（前の局面）が、<em>SHIFT-J</em>は前のビューに戻り、<em>SHIFT-K</em>は次のビューへ進みます。これは意図的なもので、修正すべきショートカットではありません。SHIFT-J/SHIFT-K は、対になっている CTRL-PageUp/CTRL-PageDown の慣習に従っており、j/k の慣習には従いません。</p>
-</div>
 <h3>コマンドライン</h3>
 <table>
 <thead>
@@ -728,9 +707,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>このパネルはナビゲーション用のショートカットを横取りしません。PageUp/h、左/k、右/j、PageDown/l は、ナビゲーション に記載のとおり、開いているコレクションの局面を移動します。</p>
-</div>
 `,
     commands: `
 <p>コマンドラインはステータスバーにあり、 <em>スペース</em> キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 <em>TAB</em> キー（または <em>Shift-TAB</em> ）は候補を順に巡回してコマンドを補完し、 <em>ESC</em> はリストを閉じます（2回目の <em>ESC</em> でコマンドラインが閉じます）。 <em>上</em> キーと <em>下</em> キーは引き続きコマンド履歴用に予約されています。</p>
@@ -917,27 +893,6 @@ export default {
 </table>
 <h3>検索フィルタ</h3>
 <p>以下のフィルタは検索時、すなわちコマンドの先頭 <code>s</code> の後に並べて指定する必要があります。</p>
-<div class="admonition warning">
-<p>現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。オプションの数値で読み込む件数を指定できます（<code>bl 50</code>）。既定値は10です。局面検索では、デフォルトで blunderDB は現在の駒の配置を考慮し、キューブ、スコア、ダイスの状態は無視します。キューブ、スコア、ダイスを考慮させるには、検索時に明示的に指定する必要があります。</p>
-</div>
-<div class="admonition note">
-<p>検索コマンド <code>s</code> は検索パネル（<code>TAB</code> キー）で利用できます。コマンド <code>ss</code> を使うと、現在フィルタされている結果の中から検索できます。</p>
-</div>
-<div class="admonition note">
-<p>blunderDB は、後方の駒（バックチェッカー）を 24 ポイントから 19 ポイントの間にある駒とみなします。</p>
-</div>
-<div class="admonition note">
-<p>blunderDB は、ゾーン内の駒数を 12 ポイントから 1 ポイントの間にある駒数とみなします。</p>
-</div>
-<div class="admonition note">
-<p>blunderDB は、アウトフィールドが 18 ポイントから 7 ポイントに及ぶとみなします。</p>
-</div>
-<div class="admonition note">
-<p>blunderDB は、内盤（jan）が 1 ポイントから 6 ポイントに及ぶとみなします。</p>
-</div>
-<div class="admonition tip">
-<p>局面をフィルタするパラメータは自由に組み合わせることができます。</p>
-</div>
 <table>
 <thead>
 <tr>
@@ -1292,21 +1247,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>プレイヤー1が複数回プレイしたポジション（2つのマッチで同じ手、または異なる2つの手）は、そのポジションで犯した<strong>最大の</strong>エラーに基づいて <code>E&gt;x</code>、<code>E&lt;x</code>、<code>Ex,y</code> フィルタで判定されます。したがって <code>E&gt;100</code> は「ここで一度でもブランダーをしたことがあるか」という問いに答え、<code>E&lt;20</code> はプレイしたどの手も20ミリポイントを超えなかったポジションだけを残します。</p>
-</div>
-<div class="admonition note">
-<p>ダイスの目（<code>D</code> または <code>D1</code>）に応じて局面をフィルタすると、<em>当然ながら</em> 決定の種類（<code>d</code>）に応じても局面がフィルタされます。フィルタ <code>D1</code> は 2 つ目のダイスの値を無視します。局面のマッチには 1 つ目のダイスの値のみが使われます（出目の 2 つのダイスのいずれかに対して）。</p>
-</div>
-<div class="admonition note">
-<p>レースの相対差フィルタ（<code>p&gt;x</code>、<code>p&lt;x</code>、<code>px,y</code>）では、<code>x&gt;0</code> のときプレイヤーは相手に対してレースで遅れており、<code>x&lt;0</code> のとき進んでいます。例: <code>p&lt;-10</code> : プレイヤーがレースで少なくとも 10 ピップ進んでいます。<code>p50,70</code> : プレイヤーがレースで 50 から 70 ピップ遅れています。</p>
-</div>
-<div class="admonition note">
-<p>連続していない複数のマッチ内を検索するには、フィルタ <code>ma</code> を複数回並べて指定します（例: マッチ 23 と 43 の場合は <code>s ma23 ma43</code> ）。同じ原則がトーナメントの <code>tn</code> にも、ポジションの <code>id</code> にも適用されます（例: ポジション 5 と 10 の場合は <code>s id5 id10</code> ）。</p>
-</div>
-<div class="admonition note">
-<p>トーナメント（<code>tn</code>）内を検索することは、該当トーナメントのすべてのマッチ内を検索することと同じです。マッチとトーナメントの識別子は、対応するパネルの ID 列で確認できます。</p>
-</div>
 <p>例えば、コマンド <code>s s c p-20,-5 w&gt;60 z&gt;10 K2,3</code> は、編集中の局面の駒の配置、スコア、キューブを考慮し、プレイヤーがレースで 20 から 5 ピップ進んでおり、勝率が少なくとも 60%、ゾーン内に少なくとも 10 個の駒があり、相手が 2 から 3 個の後方の駒を持つすべての局面をフィルタします。</p>
 <h3>その他のコマンド</h3>
 <table>
@@ -1323,9 +1263,6 @@ export default {
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p>データベースのマイグレーションは、データベースを開く際に自動的に実行されるようになりました。</p>
-</div>
 `,
     about: `
 <h3>バージョン</h3>
