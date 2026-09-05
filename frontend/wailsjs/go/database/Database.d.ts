@@ -52,6 +52,8 @@ export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result
 
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 
+export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
+
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
@@ -91,6 +93,8 @@ export function DeleteTournament(arg1:number):Promise<void>;
 export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
 export function ExportDatabase(arg1:domain.ExportOptions):Promise<void>;
+
+export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions):Promise<void>;
 
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
@@ -209,6 +213,8 @@ export function LoadPositionIDsByFilters(arg1:domain.SearchFilters):Promise<Arra
 export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;
+
+export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 

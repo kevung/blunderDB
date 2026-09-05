@@ -90,6 +90,10 @@ export function ComputeStats(arg1) {
   return window['go']['database']['Database']['ComputeStats'](arg1);
 }
 
+export function ComputeStatsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
@@ -168,6 +172,10 @@ export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
 
 export function ExportDatabase(arg1) {
   return window['go']['database']['Database']['ExportDatabase'](arg1);
+}
+
+export function ExportDatabaseCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ExportDatabaseCtx'](arg1, arg2);
 }
 
 export function ExportMatchMAT(arg1, arg2) {
@@ -404,6 +412,10 @@ export function LoadPositionsByFilters(arg1) {
 
 export function LoadPositionsByFiltersCore(arg1, arg2) {
   return window['go']['database']['Database']['LoadPositionsByFiltersCore'](arg1, arg2);
+}
+
+export function LoadPositionsByFiltersCoreCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['LoadPositionsByFiltersCoreCtx'](arg1, arg2, arg3);
 }
 
 export function LoadPositionsByIDs(arg1) {
