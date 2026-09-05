@@ -228,8 +228,12 @@ func (cli *CLI) runBearoffGenerate(args []string) error {
 		workers = 1
 	}
 	fmt.Printf("Generating %s in %s on %d core(s)%s\n", domain, dir, workers, resumed)
+	size := humanBytes(domain.Size())
+	if domain.Size() == 0 {
+		size = "an unmeasured size"
+	}
 	fmt.Printf("  %s on disk, %s of memory, about %s\n",
-		humanBytes(domain.Size()), humanBytes(domain.RAMNeeded()),
+		size, humanBytes(domain.RAMNeeded()),
 		humanDuration(domain.EstimateDuration(0, workers)))
 
 	// Ctrl-C pauses. The signal is caught rather than left to kill the
@@ -369,6 +373,11 @@ func (cli *CLI) runBearoffList(args []string) error {
 			state = fmt.Sprintf("paused at %.0f%%", r.Percent)
 		}
 		size, ram, est := humanBytes(r.Size), humanBytes(r.RAMNeeded), humanDuration(time.Duration(r.Seconds*float64(time.Second)))
+		if r.Size == 0 {
+			// A one-sided domain nobody has measured: say so rather than
+			// print a zero that reads as "empty file".
+			size = "?"
+		}
 		fmt.Printf("%-10s %-18s %10s %10s %10s  %s\n", r.Domain, r.File, size, ram, est, state)
 	}
 	return nil

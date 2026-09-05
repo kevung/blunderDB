@@ -42,10 +42,11 @@ func (d Domain) FileName() string {
 // int16 per pair.
 //
 // A one-sided table is compressed — each distribution is stored as the run of
-// its non-zero entries — so its size is only known once it is made. What is
-// returned for it is the MEASURED size of the file gnubg produces, for the
-// domains that have one, and an interpolation for the rest; both are labelled
-// as estimates in the interface, which is what they are.
+// its non-zero entries — so its size is a fact about the data and not
+// arithmetic on the domain. What is returned for it is the MEASURED size of
+// the file gnubg produces, and 0 for a domain nobody has made yet: a caller
+// that shows the figure must show that it does not have one, rather than
+// print a number it invented.
 func (d Domain) Size() int64 {
 	if d.Kind == OneSidedKind {
 		return oneSidedSize[d.Points]
