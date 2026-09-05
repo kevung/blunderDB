@@ -40,24 +40,70 @@ type parityEntry struct {
 // Reasons shared by several entries. Each names the decision, and the ADR
 // when one exists.
 const (
-	whyLifecycle  = "desktop lifecycle: the CLI opens the file through every command's --db and the daemon through --dsn at start-up; no runtime open/close/lock to expose"
-	whyGUIState   = "interactive GUI state (session, filter library, command and search history, last visited match): a script has nothing to read or restore there"
-	whyGUIEdit    = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
-	whyTwoPhase   = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
-	whyIssuance   = "issuance is a person's act on a file they are producing (ADR-0007); the daemon operates on a library and signs, seals or opens nothing on anyone's behalf (ADR-0015)"
-	whySubsetExp  = "the daemon's exports.sqlite writes the whole tenant, optionally watermarked with the daemon's own signing identity (Options.Identity, --identity-dir); a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
-	whyReview     = "reviewing a card needs the board in front of the player: a GUI gesture (the daemon serves a client that has one)"
-	whyCram       = "cram mode picks a random card for the board; the daemon's review loop goes through anki.nextCard and the CLI reviews nothing"
-	whyWrapper    = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"
-	whyServerEPC  = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
-	whyMetadata   = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
-	whyCtxVariant = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
+	whyLifecycle        = "desktop lifecycle: the CLI opens the file through every command's --db and the daemon through --dsn at start-up; no runtime open/close/lock to expose"
+	whyGUIState         = "interactive GUI state (session, filter library, command and search history, last visited match): a script has nothing to read or restore there"
+	whyGUIEdit          = "an editing gesture of the GUI (a position, a comment, a match's metadata or a list's order); a script imports, searches, lists and exports"
+	whyTwoPhase         = "two-phase native .db import (analyse -> preview -> commit) is the shape of the GUI dialog; the CLI and the daemon import in one step (import --type database, /v1/imports.db)"
+	whyIssuance         = "issuance is a person's act on a file they are producing (ADR-0007); the daemon operates on a library and signs, seals or opens nothing on anyone's behalf (ADR-0015)"
+	whySubsetExp        = "the daemon's exports.sqlite writes the whole tenant, optionally watermarked with the daemon's own signing identity (Options.Identity, --identity-dir); a subset export carrying its origin is the producer's desktop gesture (ADR-0007, ADR-0015)"
+	whyReview           = "reviewing a card needs the board in front of the player: a GUI gesture (the daemon serves a client that has one)"
+	whyCram             = "cram mode picks a random card for the board; the daemon's review loop goes through anki.nextCard and the CLI reviews nothing"
+	whyWrapper          = "internal to the desktop wrapper: run by OpenDatabase / the importers themselves, not something a caller invokes"
+	whyServerEPC        = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
+	whyMetadata         = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
+	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
+	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
+	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
+	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
+	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
 )
+
+// serverOnly is the other half of the parity check (G.14, #242).
+//
+// databaseParity walks Database → (CLI, route) and catches a capability the
+// desktop has and the headless modes lack. It says nothing about the other
+// direction: a route the daemon serves and the Database wrapper never grew
+// stayed invisible, and twenty-one of them had. Six were real gaps nobody had
+// decided on; the rest are deliberate, and now say so here.
+//
+// Every /v1 and /ops route must be reachable from databaseParity or named
+// below with a reason. Sorted by route.
+var serverOnly = map[string]string{
+	// Storage primitives the desktop reaches through a coarser call. The GUI
+	// and the CLI never save a bare match row or ask whether a Zobrist hash is
+	// present: SavePosition and the importers do that inside one operation.
+	// A client speaking HTTP has no such operation and needs the pieces.
+	"/v1/matches.createGame":     whyStoragePrimitive,
+	"/v1/matches.createMove":     whyStoragePrimitive,
+	"/v1/matches.movesByMatch":   whyStoragePrimitive,
+	"/v1/matches.save":           whyStoragePrimitive,
+	"/v1/positions.exists":       whyStoragePrimitive,
+	"/v1/stats.matchBadges":      whyStoragePrimitive,
+	"/v1/stats.tournamentBadges": whyStoragePrimitive,
+	"/v1/tournaments.get":        whyStoragePrimitive,
+
+	// Pure functions of the domain, with no storage behind them. The GUI and
+	// the CLI import the package and call them in Go; only an HTTP client
+	// needs them as routes.
+	"/v1/positions.fromXGID":   whyPureDomain,
+	"/v1/positions.legalMoves": whyPureDomain,
+	"/v1/search.parse":         whyPureDomain,
+
+	// Shapes that exist because the transport is HTTP.
+	"/v1/exports.json":                    whyTransport,
+	"/v1/imports.json":                    whyTransport,
+	"/v1/gammonnet.analyzeMissing.cancel": whyTransport,
+	"/v1/search.query":                    whyTransport,
+
+	// Backend-specific, and the wrapper is SQLite-only.
+	"/ops/tenant.purge": whyPostgresOnly,
+}
 
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
 	"AddComment":                       {Server: "/v1/comments.add", Why: whyGUIEdit},
 	"AddMatchToTournament":             {Server: "/v1/tournaments.addMatch", Why: whyGUIEdit},
+	"BuryAnkiCard":                     {CLI: "anki card", Server: "/v1/anki.buryCard"},
 	"AddPositionToCollection":          {Server: "/v1/collections.addPosition", Why: whyGUIEdit},
 	"AddPositionsToCollection":         {Server: "/v1/collections.addPositions", Why: whyGUIEdit},
 	"AnalyzeImportDatabase":            {Why: whyTwoPhase},
@@ -112,6 +158,7 @@ var databaseParity = map[string]parityEntry{
 	"GetAnkiDeckStats":                 {CLI: "anki stats", Server: "/v1/anki.deckStats"},
 	"GetAnkiForecast":                  {CLI: "anki forecast", Server: "/v1/anki.forecast"},
 	"GetAnkiDeckRetention":             {CLI: "anki retention", Server: "/v1/anki.retention"},
+	"GetAnkiReviewLog":                 {CLI: "anki log", Server: "/v1/anki.reviewLog"},
 	"GetCollectionByID":                {CLI: "collection show", Server: "/v1/collections.get"},
 	"GetCollectionPositions":           {CLI: "collection show", Server: "/v1/collections.positions"},
 	"GetCommentsByPosition":            {Server: "/v1/comments.byPosition", Why: "the CLI prints a position's comment with `search --format json`; per-entry history is a GUI panel"},
@@ -207,6 +254,9 @@ var databaseParity = map[string]parityEntry{
 	"UpdatePosition":                   {Server: "/v1/positions.update", Why: whyGUIEdit},
 	"UpdateTournament":                 {Server: "/v1/tournaments.update", Why: whyGUIEdit},
 	"UpdateTournamentComment":          {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
+	"RemoveAnkiCard":                   {CLI: "anki card", Server: "/v1/anki.removeCard"},
+	"RepairAnalyses":                   {CLI: "repair", Server: "/v1/analyses.repair"},
+	"SetAnkiCardSuspended":             {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                           {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 }
 
@@ -283,6 +333,35 @@ func TestDatabaseParity(t *testing.T) {
 	for name := range databaseParity {
 		if !seen[name] {
 			t.Errorf("databaseParity names Database.%s, which no longer exists", name)
+		}
+	}
+
+	// The other direction (G.14, #242): every route the daemon serves is
+	// either reachable from a Database method above, or named in serverOnly
+	// with a reason. Without this, a capability could live on the daemon
+	// alone for months without anyone deciding it should.
+	covered := map[string]bool{}
+	for _, e := range databaseParity {
+		if e.Server != "" {
+			covered[e.Server] = true
+		}
+	}
+	for path := range paths {
+		if covered[path] {
+			continue
+		}
+		if why, ok := serverOnly[path]; !ok {
+			t.Errorf("route %s is served by the daemon but reachable from no Database method: add it to databaseParity, or to serverOnly with the reason it is the daemon's alone", path)
+		} else if why == "" {
+			t.Errorf("route %s is in serverOnly with no reason", path)
+		}
+	}
+	for path := range serverOnly {
+		if !paths[path] {
+			t.Errorf("serverOnly names %s, which the daemon no longer serves", path)
+		}
+		if covered[path] {
+			t.Errorf("serverOnly names %s, which databaseParity already covers", path)
 		}
 	}
 	for cmd := range subcommands {

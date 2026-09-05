@@ -47,6 +47,8 @@ func (cli *CLI) ankiHandlers() map[string]func([]string) error {
 		"forecast":  cli.runAnkiForecast,
 		"sync":      cli.runAnkiSync,
 		"retention": cli.runAnkiRetention,
+		"card":      cli.runAnkiCard,
+		"log":       cli.runAnkiLog,
 	}
 }
 
@@ -400,5 +402,120 @@ func (cli *CLI) runAnkiRetention(args []string) error {
 		return w.Flush()
 	default:
 		return fmt.Errorf("unknown format: %s (use text or json)", *format)
+	}
+}
+
+// runAnkiCard is the `anki card` sub-command: the three gestures on a single
+// card — suspend, bury, remove — which the daemon had served since it existed
+// while the CLI and the GUI had no way to reach them (G.14, #242).
+//
+// One sub-command with an action rather than three sibling sub-commands: they
+// share their argument (a card id), their confirmation and their output, and a
+// caller thinks "do something to this card", not "run the bury program".
+func (cli *CLI) runAnkiCard(args []string) error {
+	fs, dbPath := ankiFlagSet("card", "Suspend, bury or remove one card.",
+		"blunderdb anki card --db database.db --id 12 --action suspend",
+		"blunderdb anki card --db database.db --id 12 --action unsuspend",
+		"blunderdb anki card --db database.db --id 12 --action bury",
+		"blunderdb anki card --db database.db --id 12 --action remove")
+	cardID := fs.Int64("id", 0, "Card ID (required)")
+	action := fs.String("action", "", "suspend, unsuspend, bury or remove (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *cardID == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+
+	var err error
+	switch strings.ToLower(*action) {
+	case "suspend":
+		err = cli.db.SetAnkiCardSuspended(*cardID, true)
+	case "unsuspend":
+		err = cli.db.SetAnkiCardSuspended(*cardID, false)
+	case "bury":
+		err = cli.db.BuryAnkiCard(*cardID)
+	case "remove":
+		err = cli.db.RemoveAnkiCard(*cardID)
+	case "":
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --action")
+	default:
+		return fmt.Errorf("unknown action: %s (use suspend, unsuspend, bury or remove)", *action)
+	}
+	if err != nil {
+		return fmt.Errorf("failed to %s card %d: %w", strings.ToLower(*action), *cardID, err)
+	}
+
+	switch strings.ToLower(*format) {
+	case "json":
+		return printJSON(struct {
+			CardID int64  `json:"cardId"`
+			Action string `json:"action"`
+			OK     bool   `json:"ok"`
+		}{*cardID, strings.ToLower(*action), true})
+	case "text":
+		fmt.Printf("Card %d: %sd\n", *cardID, strings.ToLower(*action))
+		return nil
+	default:
+		return fmt.Errorf("unknown format: %s (use text or json)", *format)
+	}
+}
+
+// runAnkiLog is the `anki log` sub-command: the recorded review events, most
+// recent first. The log is what the scheduler was told, as opposed to what it
+// currently plans — the only place a grade entered by mistake is visible at
+// all, ADR-0026 keeping the schedule itself out of reach.
+func (cli *CLI) runAnkiLog(args []string) error {
+	fs, dbPath := ankiFlagSet("log", "Recorded review events, most recent first.",
+		"blunderdb anki log --db database.db",
+		"blunderdb anki log --db database.db --deck 2 --limit 50",
+		"blunderdb anki log --db database.db --format json")
+	deckID := fs.Int64("deck", 0, "Deck ID (0 = every deck)")
+	limit := fs.Int("limit", 20, "Maximum number of events")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	entries, err := cli.db.GetAnkiReviewLog(*deckID, *limit)
+	if err != nil {
+		return fmt.Errorf("failed to read the review log: %w", err)
+	}
+
+	switch strings.ToLower(*format) {
+	case "json":
+		return printJSON(entries)
+	case "text":
+		if len(entries) == 0 {
+			fmt.Println("No review recorded.")
+			return nil
+		}
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "REVIEWED AT\tDECK\tCARD\tPOSITION\tGRADE\tINTERVAL")
+		for _, e := range entries {
+			fmt.Fprintf(w, "%s\t%d\t%d\t%d\t%s\t%dd\n",
+				e.ReviewedAt, e.DeckID, e.CardID, e.PositionID, ankiGradeLabel(e.Rating), e.ScheduledDays)
+		}
+		return w.Flush()
+	default:
+		return fmt.Errorf("unknown format: %s (use text or json)", *format)
+	}
+}
+
+// ankiGradeLabel names an FSRS rating the way the review panel does.
+func ankiGradeLabel(rating int) string {
+	switch rating {
+	case 1:
+		return "Again"
+	case 2:
+		return "Hard"
+	case 3:
+		return "Good"
+	case 4:
+		return "Easy"
+	default:
+		return fmt.Sprintf("?%d", rating)
 	}
 }

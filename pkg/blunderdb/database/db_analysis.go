@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"sort"
 	"time"
 
@@ -275,4 +276,26 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 		return err
 	}
 	return nil
+}
+
+// RepairAnalyses recomputes the scalar columns of every analysis from its
+// stored JSON and returns how many rows actually changed.
+//
+// The columns are a projection of `data`, which stays intact, so a bug in the
+// projection is repairable without re-importing anything — see the contract's
+// own doc comment (storage/analyses.go) for the case that has already needed
+// it. It is deliberate and explicit, never automatic: rewriting every user's
+// analysis columns on the mere act of opening a database is not something a
+// tool should do behind their back.
+//
+// Reachable over HTTP since the daemon existed, and from nowhere else until
+// the reverse parity check went looking (G.14, #242).
+func (d *Database) RepairAnalyses() (int, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Analyses().RepairDenormalisedColumns(context.Background(), "")
 }

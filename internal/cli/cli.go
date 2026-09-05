@@ -116,6 +116,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"epc":         cli.runEpc,
 		"search":      cli.runSearch,
 		"vacuum":      cli.runVacuum,
+		"repair":      cli.runRepair,
 		"analyze":     cli.runAnalyze,
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
@@ -171,6 +172,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
+	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")
 	fmt.Println("  help      Show this help message")
