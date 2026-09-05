@@ -1635,6 +1635,7 @@ export namespace gui {
 	
 	export class BearoffCandidate {
 	    domain: string;
+	    kind: string;
 	    points: number;
 	    checkers: number;
 	    size: number;
@@ -1654,6 +1655,7 @@ export namespace gui {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.domain = source["domain"];
+	        this.kind = source["kind"];
 	        this.points = source["points"];
 	        this.checkers = source["checkers"];
 	        this.size = source["size"];
@@ -2106,6 +2108,8 @@ export namespace race {
 	export class Side {
 	    all_in_home: boolean;
 	    checker_count: number;
+	    farthest: number;
+	    points?: number;
 	    // Go type: engine
 	    epc?: any;
 	
@@ -2117,6 +2121,8 @@ export namespace race {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.all_in_home = source["all_in_home"];
 	        this.checker_count = source["checker_count"];
+	        this.farthest = source["farthest"];
+	        this.points = source["points"];
 	        this.epc = this.convertValues(source["epc"], null);
 	    }
 	

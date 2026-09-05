@@ -55,7 +55,9 @@ jobs:
   # four, the slowest quarter measured 1164 s and 1262 s on consecutive green
   # runs and then timed out on a slower runner — a quarter that fits only when
   # the runner is fast is a shard that fails on schedule, not a shard that
-  # passes. engine/gammonnet runs without the
+  # passes. `internal/cli` is split the same way and for the same reason: at
+  # two, cli-a hit the 1200 s timeout once the Anki sub-commands grew (#242),
+  # with the six database shards then running 417-942 s around it. Four. engine/gammonnet runs without the
   # race detector and with `-covermode=set`: atomic counters cost it five
   # times its run time.
   test:
@@ -91,9 +93,13 @@ jobs:
               go test -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic \
                 $(go list . ./internal/... ./cmd/... | grep -v '/internal/cli$') 2>&1 | tee test-output.txt
           - shard: cli-a
-            run: scripts/go-test-shard.sh ./internal/cli/ 0 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./internal/cli/ 0 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           - shard: cli-b
-            run: scripts/go-test-shard.sh ./internal/cli/ 1 2 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+            run: scripts/go-test-shard.sh ./internal/cli/ 1 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: cli-c
+            run: scripts/go-test-shard.sh ./internal/cli/ 2 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
+          - shard: cli-d
+            run: scripts/go-test-shard.sh ./internal/cli/ 3 4 -timeout 1200s -race -count=1 -coverprofile=coverage.out -covermode=atomic 2>&1 | tee test-output.txt
           # -coverpkg=./pkg/blunderdb/... (E.2, #218): this shard is what
           # exercises storage/sqlite, and storage/sqlite calls into
           # storage/sqlshared — without -coverpkg only the package under test

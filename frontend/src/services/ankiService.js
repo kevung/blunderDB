@@ -407,19 +407,37 @@ async function setAsideAndAdvance(card, deck, cram) {
     return await advance(next);
 }
 
-/** Suspend the current card: it keeps its schedule and never comes up. */
+/**
+ * Suspend the current card: it keeps its schedule and never comes up.
+ *
+ * @param {any} card
+ * @param {any} deck
+ * @param {{cram?: boolean}} [opts]
+ */
 export async function suspendCard(card, deck, { cram = false } = {}) {
     await SetAnkiCardSuspended(card.card.id, true);
     return await setAsideAndAdvance(card, deck, cram);
 }
 
-/** Bury the current card until the start of the next day. */
+/**
+ * Bury the current card until the start of the next day.
+ *
+ * @param {any} card
+ * @param {any} deck
+ * @param {{cram?: boolean}} [opts]
+ */
 export async function buryCard(card, deck, { cram = false } = {}) {
     await BuryAnkiCard(card.card.id);
     return await setAsideAndAdvance(card, deck, cram);
 }
 
-/** Remove the current card from its deck. The position itself is untouched. */
+/**
+ * Remove the current card from its deck. The position itself is untouched.
+ *
+ * @param {any} card
+ * @param {any} deck
+ * @param {{cram?: boolean}} [opts]
+ */
 export async function removeCard(card, deck, { cram = false } = {}) {
     await RemoveAnkiCard(card.card.id);
     return await setAsideAndAdvance(card, deck, cram);
