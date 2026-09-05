@@ -1533,6 +1533,93 @@ Examples:
   blunderdb anki sync --db database.db --deck 2
 ```
 
+### `blunderdb bearoff delete`
+
+```
+Usage: blunderdb bearoff delete --ts <domain> [options]
+
+Remove a generated table, along with any paused run and any debris
+of an interrupted one. A default domain is regenerated on the next
+launch of the application; a wider one is not.
+
+Options:
+  -data-dir string
+    	Where to look (default: the application's data directory)
+  -ts string
+    	Domain to delete, as 6x9; 'os' for the one-sided table (required)
+
+Examples:
+  blunderdb bearoff delete --ts 6x11
+```
+
+### `blunderdb bearoff generate`
+
+```
+Usage: blunderdb bearoff generate --ts <domain> [options]
+
+Compute a bearoff table. The result is checked against gnubg's
+fingerprint for its domain before it is put in place, so a table
+this writes is the table makebearoff writes.
+
+Ctrl-C PAUSES: the state is written beside the table and the next
+run on the same domain continues from it rather than starting
+over. `bearoff delete` throws a paused run away.
+
+Options:
+  -cores int
+    	Cores to use (default: every core but one)
+  -data-dir string
+    	Where to write it (default: the application's data directory)
+  -quiet
+    	No progress line
+  -ts string
+    	Domain to generate, as 6x9; 'os' for the one-sided table (required)
+
+Examples:
+  blunderdb bearoff generate --ts 6x9
+  blunderdb bearoff generate --ts 6x11 --cores 4 --data-dir /srv/bearoff
+```
+
+### `blunderdb bearoff list`
+
+```
+Usage: blunderdb bearoff list [options]
+
+List every domain that can be generated: what it weighs, what it
+needs in memory, roughly how long it takes here, and whether this
+machine already has it.
+
+Options:
+  -cores int
+    	Cores the estimate assumes (default: every core but one)
+  -data-dir string
+    	Where to look (default: the application's data directory)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb bearoff list
+  blunderdb bearoff list --format json --cores 8
+```
+
+### `blunderdb bearoff verify`
+
+```
+Usage: blunderdb bearoff verify <file.bd> [options]
+
+Check a bearoff file against the SHA-256 gnubg produces for its
+domain. Three answers: verified (the same bytes as the reference),
+unverified (well formed, but no fingerprint is recorded for that
+domain), corrupt (the file contradicts its own header).
+
+Options:
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb bearoff verify ~/.local/share/blunderDB/gnubg_ts6x6.bd
+```
+
 ### `blunderdb collection create`
 
 ```

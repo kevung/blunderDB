@@ -21,7 +21,7 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|collection|anki|verify|vacuum|delete|healthcheck|completion|help|version|info|edit|search|epc|analyze` →
+- `create|import|export|identity|open|list|match|collection|anki|bearoff|verify|vacuum|repair|delete|healthcheck|completion|help|version|info|edit|search|epc|analyze` →
   **CLI**. The names live in one place — `handlers()` in `internal/cli/cli.go`
   (`cli.CommandNames()` is the exported, sorted view `cmd/cli-doc-gen` walks);
   `main.go` asks `cli.IsCommand`. Never re-introduce a second list there.
@@ -197,13 +197,21 @@ Backend packages, thinnest description that lets you find things:
 - `pkg/blunderdb/domain/` — dependency-free domain types and constants
   (`Position`, `Match`, FSRS cards, `DatabaseVersion`).
 - `pkg/blunderdb/engine/` — what is computed ABOUT a position: Zobrist hashing
-  (the identity positions dedup on), bitboards, EPC (embeds `gnubg_os6.bd`), the
+  (the identity positions dedup on), bitboards, EPC (reads a generated
+  `gnubg_os6.bd`, ADR-0027 — nothing is embedded any more), the
   match equity table (`met.go` — Kazaross-XG2 + Zadeh, `GnuBGGetME` the single
   entry point), and the two storage codecs (compact board, zstd analysis blob,
   and every derived scalar column). Read its package doc (`doc.go`) for the
-  file-by-file map. Two subpackages, the two evaluators:
-  `engine/race/` — bearoff race analysis: two-sided `.bd` reader (embeds
-  `gnubg_ts0.bd`), win-probability estimation, money cube verdicts (ADR-0009);
+  file-by-file map. Three subpackages — the two evaluators, and the generator
+  that feeds them:
+  `engine/race/` — bearoff race analysis: two-sided `.bd` reader (resolving a
+  generated table, an external one, or none), win-probability estimation,
+  money cube verdicts (ADR-0009);
+  `engine/bearoffgen/` — the tables themselves, generated rather than shipped
+  or downloaded (ADR-0027): a port of gnubg's `makebearoff`, byte-identical to
+  it and checked against a recorded SHA-256 per domain. The two-sided sweep is
+  parallel over each diagonal and resumable through a `.ckpt`; `bearofftest/`
+  hands tests a real table without paying for one;
   `engine/gammonnet/` — the neural evaluator, ~5 000 lines and the largest thing
   in the tree: a Go port of gammonNet's encoding, network (AVX2/pure-Go kernel),
   expectiminimax search and Janowski cube model (ADR-0011, ADR-0022, ADR-0023,

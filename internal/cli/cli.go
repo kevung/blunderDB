@@ -120,6 +120,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"analyze":     cli.runAnalyze,
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
+		"bearoff":     cli.runBearoff,
 		"healthcheck": cli.runHealthcheck,
 		"completion":  cli.runCompletion,
 		"help":        func([]string) error { cli.printUsage(); return nil },
@@ -167,6 +168,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
 	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
+	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")

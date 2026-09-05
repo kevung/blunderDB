@@ -43,15 +43,17 @@ const (
 var skip = map[string]bool{"help": true, "version": true}
 
 // composite maps a top-level command to the accessor for its own
-// sub-command names, for the two commands whose flags live one level down
-// (`collection <sub>`, `anki <sub>`) rather than on the top-level command
-// itself.
+// sub-command names, for the commands whose flags live one level down
+// (`collection <sub>`, `anki <sub>`, `bearoff <sub>`) rather than on the
+// top-level command itself.
 func composite(name string) []string {
 	switch name {
 	case "collection":
 		return cli.NewCLI().CollectionSubcommands()
 	case "anki":
 		return cli.NewCLI().AnkiSubcommands()
+	case "bearoff":
+		return cli.NewCLI().BearoffSubcommands()
 	default:
 		return nil
 	}
