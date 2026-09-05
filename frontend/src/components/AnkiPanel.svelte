@@ -26,8 +26,9 @@
     import * as anki from '../services/ankiService.js';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
-    import { UpdateAnkiDeck } from '../../wailsjs/go/database/Database.js';
+    import { UpdateAnkiDeck, GetAnkiReviewLog } from '../../wailsjs/go/database/Database.js';
     import PanelTable from './panels/PanelTable.svelte';
+    import ContextMenu from './ContextMenu.svelte';
     import AnalysisView from './AnalysisView.svelte';
 
     // Read-only mirrors of stores — declared as $derived so Svelte tracks
@@ -143,6 +144,52 @@
         { key: 'due', label: $t('anki.colDue'), narrow: true, align: 'center' },
         { key: 'actions', label: $t('anki.colActions'), actions: true }
     ]);
+
+    // ── The review log (G.14, #242) ─────────────────────────────────────────
+    //
+    // What the scheduler was actually TOLD, as opposed to what it currently
+    // plans. It is the only place a grade entered by mistake can be seen at
+    // all — ADR-0026 keeps the schedule itself out of reach, deliberately, and
+    // that rule is what makes the log worth showing: you cannot correct the
+    // past here either, but you can at least know what it was.
+    //
+    // Reachable over HTTP since the daemon existed and from nowhere else.
+    const REVIEW_LOG_LIMIT = 200;
+    /** @type {any[]} */
+    let reviewLog = $state([]);
+
+    const reviewLogColumns = $derived([
+        { key: 'reviewedAt', label: $t('anki.colReviewedAt') },
+        { key: 'positionId', label: $t('anki.colPosition'), narrow: true, align: 'center' },
+        { key: 'rating', label: $t('anki.colRating'), narrow: true, align: 'center' },
+        { key: 'state', label: $t('anki.colState'), narrow: true, align: 'center' },
+        { key: 'scheduledDays', label: $t('anki.colInterval'), narrow: true, align: 'center' }
+    ]);
+
+    const RATING_KEYS = ['', 'anki.again', 'anki.hard', 'anki.good', 'anki.easy'];
+
+    let reviewLogRows = $derived(
+        reviewLog.map((/** @type {any} */ e) => ({
+            id: e.id,
+            reviewedAt: (e.reviewedAt || '').replace('T', ' ').slice(0, 19),
+            positionId: e.positionId,
+            rating: RATING_KEYS[e.rating] ? $t(RATING_KEYS[e.rating]) : String(e.rating),
+            state: anki.stateLabel(e.state),
+            // The interval this review granted, in days. Zero is a card that
+            // comes back in the same session, not a missing value.
+            scheduledDays: `${e.scheduledDays} ${$t('anki.days')}`
+        }))
+    );
+
+    async function openReviewLog() {
+        if (!selectedDeck) return;
+        try {
+            reviewLog = (await GetAnkiReviewLog(selectedDeck.id, REVIEW_LOG_LIMIT)) || [];
+            ankiViewModeStore.set('log');
+        } catch (e) {
+            fail(e);
+        }
+    }
 
     // Review state
     let reviewSessionCount = $state(0);
@@ -294,6 +341,61 @@
         }
     }
 
+    // ── The three gestures that set a card aside (G.14, #242) ───────────────
+    //
+    // A right-click on the card under review: suspend it, bury it until
+    // tomorrow, remove it from the deck. They live in a context menu rather
+    // than beside the four grading buttons on purpose — the grading strip
+    // answers one question ("how did that go?") and these three answer
+    // another ("this card should not be here"), and a fifth button next to
+    // Again/Hard/Good/Easy would be pressed by mistake at speed.
+    /** @type {{x: number, y: number, items: {label: string, onClick: () => void}[]} | null} */
+    let cardMenu = $state(null);
+
+    /** @param {MouseEvent} event */
+    function openCardMenu(event) {
+        if (!reviewCard) return;
+        event.preventDefault();
+        cardMenu = {
+            x: event.clientX,
+            y: event.clientY,
+            items: [
+                { label: $t('anki.suspendCard'), onClick: () => setAside(anki.suspendCard, 'anki.cardSuspended') },
+                { label: $t('anki.buryCard'), onClick: () => setAside(anki.buryCard, 'anki.cardBuried') },
+                { label: $t('anki.removeCard'), onClick: () => confirmRemoveCard() }
+            ]
+        };
+    }
+
+    // Removing is the one that cannot be undone from here — a suspended or
+    // buried card comes back, a removed one has to be put in the deck again.
+    async function confirmRemoveCard() {
+        if (!(await confirmAction($t('anki.removeCardConfirm'), { confirmLabel: $t('common.delete') }))) return;
+        await setAside(anki.removeCard, 'anki.cardRemoved');
+    }
+
+    /**
+     * @param {(card: any, deck: any, opts: any) => Promise<any>} action
+     * @param {string} messageKey
+     */
+    async function setAside(action, messageKey) {
+        if (!reviewCard || !selectedDeck) return;
+        try {
+            const next = await action(reviewCard, selectedDeck, { cram: cramMode });
+            statusBarTextStore.set(tMsg(messageKey));
+            // The card left without being graded, so the session count does
+            // not move: it counts answers, and this was not one.
+            if (!next) {
+                ankiViewModeStore.set('list');
+                ankiPausedSessionStore.set(null);
+                await anki.loadDecks();
+                if (selectedDeck) await anki.refreshDeckStats(selectedDeck.id);
+            }
+        } catch (e) {
+            fail(e);
+        }
+    }
+
     function openSettings() {
         if (!selectedDeck) return;
         settingsRetention = selectedDeck.requestRetention;
@@ -384,7 +486,8 @@
 <div class="anki-panel">
     {#if viewMode === 'review' && reviewCard}
         <!-- Review Mode -->
-        <div class="view-header">
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="view-header" oncontextmenu={openCardMenu} title={$t('anki.cardMenuHint')}>
             <button class="btn-back" onclick={backToList} title={$t('anki.backToDeckList') + ' (Esc)'}>{@render icon(ICON.back)}</button>
             <span class="view-title">{selectedDeck?.name}</span>
             <span class="review-count">#{reviewSessionCount + 1}</span>
@@ -491,7 +594,31 @@
                 <button class="btn-primary wide" onclick={saveSettings}>{$t('common.save')}</button>
                 <button class="btn-outline wide" onclick={backToList}>{$t('common.cancel')}</button>
             </div>
+            <div class="settings-row">
+                <button class="btn-outline wide" onclick={openReviewLog}>{$t('anki.openReviewLog')}</button>
+            </div>
+            <div class="settings-note">{$t('anki.reviewLogHint')}</div>
         </div>
+    {:else if viewMode === 'log' && selectedDeck}
+        <!-- Review log: a reading of what was answered, never a control. -->
+        <div class="view-header">
+            <button class="btn-back" onclick={() => ankiViewModeStore.set('settings')} title={$t('common.back')}>{@render icon(ICON.back)}</button>
+            <span class="view-title">{$t('anki.reviewLogTitle', { name: selectedDeck.name })}</span>
+        </div>
+        {#if reviewLog.length === 0}
+            <div class="settings-note">{$t('anki.reviewLogEmpty')}</div>
+        {:else}
+            <PanelTable rows={reviewLogRows} columns={reviewLogColumns}>
+                {#snippet cells(/** @type {any} */ entry)}
+                    <td>{entry.reviewedAt}</td>
+                    <td class="num">{entry.positionId}</td>
+                    <td class="num">{entry.rating}</td>
+                    <td class="num">{entry.state}</td>
+                    <td class="num">{entry.scheduledDays}</td>
+                {/snippet}
+            </PanelTable>
+            <div class="settings-note">{$t('anki.reviewLogCount', { n: reviewLog.length, limit: REVIEW_LOG_LIMIT })}</div>
+        {/if}
     {:else}
         <!-- Deck List Mode -->
         <div class="deck-toolbar">
@@ -600,6 +727,10 @@
                 </div>
             </div>
         {/if}
+    {/if}
+
+    {#if cardMenu}
+        <ContextMenu x={cardMenu.x} y={cardMenu.y} items={cardMenu.items} onClose={() => (cardMenu = null)} />
     {/if}
 </div>
 

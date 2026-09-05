@@ -26,7 +26,7 @@
         StartGammonNetStaleBatch,
         OpenLogsFolder
     } from '../../wailsjs/go/gui/App.js';
-    import { Vacuum, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
+    import { Vacuum, RepairAnalyses, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTSPath, SaveBearoffTSPath, GetBearoffRate, SaveBearoffRate, GetBearoffCores, SaveBearoffCores } from '../../wailsjs/go/main/Config.js';
     import { bearoffProgressStore, bearoffErrorStore, remainingSeconds } from '../stores/bearoffStore.js';
     import {
@@ -66,6 +66,7 @@
     // through the status bar rather than inline, since the modal is usually closed
     // by the time a big VACUUM finishes.
     let vacuumBusy = $state(false);
+    let repairBusy = $state(false);
 
     // Three concerns, and the third is not a preference at all: language, scale and colours
     // are settings one adjusts, whereas the identity is an object one manages, with its own
@@ -395,6 +396,30 @@
         }
     }
 
+    // Recomputes the scalar columns of every analysis from its stored JSON.
+    // Same Database.RepairAnalyses the CLI's `blunderdb repair` and the
+    // daemon's analyses.repair go through (CLI/GUI parity, G.14 #242): it was
+    // reachable over HTTP since the daemon existed and from nowhere else.
+    //
+    // Confirmed like the vacuum: it rewrites a column of every analysis in the
+    // database, which is not something to start by brushing a button.
+    async function repairAnalyses() {
+        if (!(await confirmAction(get(t)('config.repairConfirm'), { confirmLabel: get(t)('config.repairConfirmButton') }))) return;
+        repairBusy = true;
+        try {
+            const changed = await RepairAnalyses();
+            if (changed > 0) {
+                statusBarTextStore.set(tMsg('config.repairDone', { n: changed }));
+            } else {
+                statusBarTextStore.set(tMsg('config.repairNothing'));
+            }
+        } catch (error) {
+            statusBarTextStore.set(tMsg('config.repairError', { error: String(error) }));
+        } finally {
+            repairBusy = false;
+        }
+    }
+
     // Opens the folder holding blunderDB's GUI log file
     // ($XDG_STATE_HOME/blunderDB, see internal/applog) in the platform's
     // file manager — logging.go writes only to stderr otherwise, invisible
@@ -597,6 +622,12 @@
             <div class="tab-actions">
                 <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
                     {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
+                </button>
+            </div>
+            <p class="setting-note">{$t('config.repairIntro')}</p>
+            <div class="tab-actions">
+                <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
+                    {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
                 </button>
             </div>
             <p class="setting-note">{$t('config.logsIntro')}</p>

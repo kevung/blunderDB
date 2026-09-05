@@ -23,6 +23,9 @@ import {
     GetNextAnkiCard,
     GetRandomAnkiCard,
     ReviewAnkiCard,
+    SetAnkiCardSuspended,
+    BuryAnkiCard,
+    RemoveAnkiCard,
     ResetAnkiDeck,
     GetAllCollections,
     LoadPositionIDsByFilters
@@ -380,6 +383,46 @@ export async function startSession(deck, { cram = false } = {}) {
 export async function reviewCard(card, rating) {
     const next = await ReviewAnkiCard(card.card.id, rating);
     return await advance(next);
+}
+
+/**
+ * The three gestures that take a card OUT of the session without grading it
+ * (G.14, #242): suspend it, bury it until tomorrow, remove it from the deck.
+ *
+ * They were reachable over HTTP since the daemon existed and from nowhere
+ * else. Each one ends the card's turn — the scheduler is never told anything
+ * about it, which is the whole point: a card set aside must not also be
+ * recorded as answered.
+ *
+ * Cramming draws at random and schedules nothing, so it advances the same way
+ * it does after its own "next": with another random card, never the one just
+ * seen.
+ *
+ * @param {object} card the card under review
+ * @param {object} deck the deck being reviewed
+ * @param {boolean} cram whether this is a cram session
+ */
+async function setAsideAndAdvance(card, deck, cram) {
+    const next = cram ? await GetRandomAnkiCard(deck.id, card.position.id) : await GetNextAnkiCard(deck.id);
+    return await advance(next);
+}
+
+/** Suspend the current card: it keeps its schedule and never comes up. */
+export async function suspendCard(card, deck, { cram = false } = {}) {
+    await SetAnkiCardSuspended(card.card.id, true);
+    return await setAsideAndAdvance(card, deck, cram);
+}
+
+/** Bury the current card until the start of the next day. */
+export async function buryCard(card, deck, { cram = false } = {}) {
+    await BuryAnkiCard(card.card.id);
+    return await setAsideAndAdvance(card, deck, cram);
+}
+
+/** Remove the current card from its deck. The position itself is untouched. */
+export async function removeCard(card, deck, { cram = false } = {}) {
+    await RemoveAnkiCard(card.card.id);
+    return await setAsideAndAdvance(card, deck, cram);
 }
 
 /** Draw the next random card of a cram session, never the one just shown. */

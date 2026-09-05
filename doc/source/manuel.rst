@@ -285,6 +285,14 @@ L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided externe, par
 exemple une base produite par gnubg lui-même : la table au domaine le plus
 large l'emporte.
 
+L'onglet *Général* porte enfin **Réparer les analyses** : les colonnes
+d'analyse que la recherche et les statistiques interrogent sont une projection
+des analyses stockées, lesquelles restent intactes. Un défaut de projection se
+répare donc sans rien réimporter. C'est explicite et jamais automatique —
+réécrire les colonnes d'analyse de quelqu'un au seul motif qu'il ouvre sa base
+n'est pas une chose qu'un outil doit faire dans son dos. Le même
+``blunderdb repair`` est disponible en ligne de commande.
+
 L'onglet **gammonNet** règle l'évaluateur embarqué (voir `ADR-0011 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md>`__). Deux
 profondeurs de recherche y sont réglables, nommées et conservées
 séparément — abaisser l'une ne modifie jamais l'autre :
@@ -1472,6 +1480,33 @@ réviser intensément un paquet thématique sans perturber son ordonnancement. U
 pastille *Cram* remplace l'état de la carte et un bouton *Suivant* (touches *1*
 à *4*) fait défiler les positions. *Esc* revient à la liste sans enregistrer de
 session interrompue.
+
+**Écarter une carte, sans la noter.** Pendant une révision, un clic droit sur
+l'en-tête de la carte ouvre trois gestes qui la sortent de la séance sans rien
+dire au planificateur :
+
+* **Suspendre** — la carte garde son échéancier et ne remonte plus jamais tant
+  qu'elle est suspendue. C'est la manière de mettre de côté une carte fausse,
+  ou pas encore utile, sans perdre l'historique qui y est attaché.
+
+* **Enterrer** — la carte disparaît jusqu'au lendemain. Contrairement à la
+  suspension, cela ne dit rien de sa valeur : c'est pour celle que l'on vient
+  de voir ailleurs, ou que l'on préfère ne pas croiser deux fois dans la soirée.
+
+* **Retirer** — la carte quitte le paquet, après confirmation. La position,
+  elle, reste dans la base : un paquet est une liste d'étude sur la
+  bibliothèque, jamais une copie de celle-ci.
+
+Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est pas
+une carte répondue, et elle ne compte pas dans le décompte de la séance.
+
+**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton *Journal
+des révisions* montre ce que le planificateur a été **dit** — date, position,
+note, état, intervalle accordé — par opposition à ce qu'il prévoit. C'est le
+seul endroit où une note entrée par erreur se voit. Elle ne s'y corrige pas :
+l'échéancier reste hors de portée, et cette règle est précisément ce qui rend
+le journal utile — on ne peut pas réécrire le passé, mais on peut savoir ce
+qu'il a été.
 
 **Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
 avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
