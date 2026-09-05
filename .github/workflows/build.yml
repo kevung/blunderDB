@@ -1163,13 +1163,11 @@ jobs:
   # `build` and travel in the artifact), and the release glob is the one the
   # `build` step used, so the release carries the same assets and checksums.
   #
-  # The release notes open with an "Installation" block (which of the thirty
-  # assets to pick, per system, and how to verify it), written here so that it
-  # is never stale: the ADR count is counted in the checkout, not typed. The
-  # block sits between `<!-- installation -->` markers; the notes the
-  # maintainer writes afterwards (release-blunderdb skill, `gh release edit`)
-  # go below it and keep it. If the release already exists with notes, they
-  # are kept too — only the block is replaced.
+  # The release NOTES are not written here — see the `release-notes` job at
+  # the end of this file. Three other jobs (flatpak, package-manifests, docs)
+  # attach their own assets with the same action and no body of their own, and
+  # whichever finishes last leaves the notes empty. That is exactly what
+  # happened to 0.36.0: the block was composed, posted, and then wiped.
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -1275,46 +1273,9 @@ jobs:
           rm -f "$tmpkey"
         shell: bash
 
-      - name: Installation block of the release notes
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          adr=$(find docs/adr -maxdepth 1 -name '[0-9]*.md' | wc -l)
-          {
-            echo '<!-- installation -->'
-            echo '## Installation'
-            echo
-            echo '| System | Take | Then |'
-            echo '|---|---|---|'
-            echo "| Debian, Ubuntu, Mint | \`blunderdb_${VERSION}_amd64.deb\` (arm64: \`blunderdb_${VERSION}_arm64.deb\`) | \`sudo apt install ./blunderdb_${VERSION}_amd64.deb\` |"
-            echo "| Fedora, openSUSE | \`blunderdb-${VERSION}.x86_64.rpm\` (arm64: \`blunderdb-${VERSION}.aarch64.rpm\`) | \`sudo dnf install ./blunderdb-${VERSION}.x86_64.rpm\` |"
-            echo "| Arch Linux | AUR \`blunderdb-bin\` (x86_64 and aarch64) | \`yay -S blunderdb-bin\` |"
-            echo "| Any Linux | \`blunderDB-${VERSION}.flatpak\`, or the \`webkit2gtk-4.1\` tarball — \`blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}.tar.gz\` on arm64 (Raspberry Pi 4/5, Apple Silicon under Linux, arm64 servers), the plain one on Ubuntu 22.04-era systems | \`flatpak install ./blunderDB-${VERSION}.flatpak\` |"
-            echo "| macOS | \`blunderDB-macos-${VERSION}.zip\` (universal, unsigned: right-click → *Open* the first time) | drag \`blunderDB.app\` to *Applications* |"
-            echo "| Windows | \`blunderDB-windows-${VERSION}.exe\` (unsigned: *More info* → *Run anyway*) | run it, nothing to install |"
-            echo "| Server | \`ghcr.io/kevung/blunderdb-serve:${VERSION}\` (amd64, arm64) | \`docker pull ghcr.io/kevung/blunderdb-serve:${VERSION}\` |"
-            echo
-            echo "Every asset has a \`.sha256\` next to it (\`sha256sum -c <asset>.sha256\`) and a consolidated \`SHA256SUMS\`; every asset also carries a build-provenance attestation (\`gh attestation verify <asset> --repo ${GITHUB_REPOSITORY}\`). Full guide, nine languages: https://kevung.github.io/blunderDB/en/telecharge_install.html — winget and Homebrew manifests are attached, not yet submitted. ${adr} architecture decisions are indexed in [docs/adr](https://github.com/kevung/blunderDB/blob/${VERSION}/docs/adr/README.md)."
-            echo '<!-- /installation -->'
-          } > installation.md
-          # Keep whatever notes the release already carries, minus a previous
-          # block (a re-run of this job, or notes written before it ran).
-          existing=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null || true)
-          {
-            cat installation.md
-            if [ -n "$existing" ]; then
-              echo
-              printf '%s\n' "$existing" | sed '/<!-- installation -->/,/<!-- \/installation -->/d'
-            fi
-          } > release-notes.md
-          cat release-notes.md
-        shell: bash
-
       - name: Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
-          body_path: release-notes.md
           files: |
             */bin/*
             SHA256SUMS
@@ -1658,6 +1619,73 @@ jobs:
           name: docs-site
           path: ./doc/build
           retention-days: 1
+
+  # The release notes, written LAST — after every job that attaches an asset.
+  #
+  # `softprops/action-gh-release` updates the release it attaches to, and the
+  # three jobs above that carry no body of their own (flatpak,
+  # package-manifests, docs) blank it on their way past. Composing the notes
+  # inside `release`, as until 0.36.0, therefore depended on `release` being
+  # the last of the four to finish — which it is not, and 0.36.0 shipped with
+  # empty notes because of it.
+  #
+  # The notes open with an "Installation" block (which of the forty assets to
+  # pick, per system, and how to verify it), composed here so it is never
+  # stale: the ADR count is counted in the checkout, not typed. The block sits
+  # between `<!-- installation -->` markers; the notes the maintainer writes
+  # afterwards (release-blunderdb skill, `gh release edit`) go below it and
+  # keep it. Notes already on the release are kept — only the block is
+  # replaced. `always()`: a red test job must not cost a shipped release its
+  # notes, and the assets are attached by then either way.
+  release-notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [release, flatpak, package-manifests, docs]
+    if: always() && startsWith(github.ref, 'refs/tags/') && needs.release.result == 'success'
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Compose and post the notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          adr=$(find docs/adr -maxdepth 1 -name '[0-9]*.md' | wc -l)
+          {
+            echo '<!-- installation -->'
+            echo '## Installation'
+            echo
+            echo '| System | Take | Then |'
+            echo '|---|---|---|'
+            echo "| Debian, Ubuntu, Mint | \`blunderdb_${VERSION}_amd64.deb\` (arm64: \`blunderdb_${VERSION}_arm64.deb\`) | \`sudo apt install ./blunderdb_${VERSION}_amd64.deb\` |"
+            echo "| Fedora, openSUSE | \`blunderdb-${VERSION}.x86_64.rpm\` (arm64: \`blunderdb-${VERSION}.aarch64.rpm\`) | \`sudo dnf install ./blunderdb-${VERSION}.x86_64.rpm\` |"
+            echo "| Arch Linux | AUR \`blunderdb-bin\` (x86_64 and aarch64) | \`yay -S blunderdb-bin\` |"
+            echo "| Any Linux | \`blunderDB-${VERSION}.flatpak\`, or the \`webkit2gtk-4.1\` tarball — \`blunderDB-linux-arm64-webkit2gtk-4.1-${VERSION}.tar.gz\` on arm64 (Raspberry Pi 4/5, Apple Silicon under Linux, arm64 servers), the plain one on Ubuntu 22.04-era systems | \`flatpak install ./blunderDB-${VERSION}.flatpak\` |"
+            echo "| macOS | \`blunderDB-macos-${VERSION}.zip\` (universal, unsigned: right-click → *Open* the first time) | drag \`blunderDB.app\` to *Applications* |"
+            echo "| Windows | \`blunderDB-windows-${VERSION}.exe\` (unsigned: *More info* → *Run anyway*) | run it, nothing to install |"
+            echo "| Server | \`ghcr.io/kevung/blunderdb-serve:${VERSION}\` (amd64, arm64) | \`docker pull ghcr.io/kevung/blunderdb-serve:${VERSION}\` |"
+            echo
+            echo "Every asset has a \`.sha256\` next to it (\`sha256sum -c <asset>.sha256\`) and a consolidated \`SHA256SUMS\`; every asset also carries a build-provenance attestation (\`gh attestation verify <asset> --repo ${GITHUB_REPOSITORY}\`). Full guide, nine languages: https://kevung.github.io/blunderDB/en/telecharge_install.html — winget and Homebrew manifests are attached, not yet submitted. ${adr} architecture decisions are indexed in [docs/adr](https://github.com/kevung/blunderDB/blob/${VERSION}/docs/adr/README.md)."
+            echo '<!-- /installation -->'
+          } > installation.md
+          # Keep whatever notes the release already carries, minus a previous
+          # block (a re-run of this job, or notes written before it ran).
+          existing=$(gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null || true)
+          {
+            cat installation.md
+            if [ -n "$existing" ]; then
+              echo
+              printf '%s\n' "$existing" | sed '/<!-- installation -->/,/<!-- \/installation -->/d'
+            fi
+          } > release-notes.md
+          cat release-notes.md
+          gh release edit "$VERSION" --repo "$GITHUB_REPOSITORY" --notes-file release-notes.md
+        shell: bash
 
   # Only publish on push (main / tags); pull_request runs still build the docs
   # above to catch breakage, but must not push to gh-pages — doing so both
