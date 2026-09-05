@@ -15,6 +15,14 @@ type Options struct {
 	// Addr is the listen address, e.g. ":8080".
 	Addr string
 
+	// OpsAddr, when non-empty, moves the /ops/ family (maintenance.vacuum,
+	// tenant.purge) onto a listener of its own, e.g. "127.0.0.1:8081", and
+	// takes it off Addr entirely. Empty (the default) keeps /ops/ on the main
+	// listener, where the proxy in front is expected to refuse the prefix —
+	// see opsRoutes for why these two calls are not tenant-shaped, and
+	// ADR-0005 for why the daemon cannot make that decision itself.
+	OpsAddr string
+
 	// Storage is the backend the handlers operate on. Required.
 	Storage storage.Storage
 

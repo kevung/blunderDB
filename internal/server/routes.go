@@ -47,8 +47,8 @@ func kindOf(h http.HandlerFunc) handlerKind {
 // streamingCustomPaths names the hand-written (kindCustom) handlers that
 // stream a response or can otherwise run long — file uploads/downloads and
 // the gammonNet sweeps — as opposed to the ones that are a small, quick JSON
-// call in and out (imports.cancel, gammonnet.*.cancel, tenant.purge,
-// maintenance.vacuum, matches.exportMat) despite not being built by
+// call in and out (imports.cancel, gammonnet.*.cancel, ops/tenant.purge,
+// ops/maintenance.vacuum, matches.exportMat) despite not being built by
 // rpc/rpcVoid. Kept exhaustive on purpose, like routes_smoke_test.go's
 // customContentTypes: a new streaming custom handler is invisible to
 // kindOf's reflection trick and must be added here explicitly.
@@ -69,9 +69,11 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/search.query": true,
 }
 
-// routes returns the full routing table. Ops endpoints (health, readiness,
-// metrics) are always present; /metrics is gated on EnableMetrics. The domain
-// surface (POST /v1/<family>.<method>) is contributed by domainRoutes.
+// routes returns the full routing table served on the main listener. Health,
+// readiness and metrics are always present (/metrics gated on EnableMetrics);
+// the domain surface (POST /v1/<family>.<method>) is contributed by
+// domainRoutes. The /ops/ family joins it only when no separate ops listener
+// is configured — see opsRoutes and OpsAddr.
 func (s *Server) routes() []route {
 	rs := []route{
 		{http.MethodGet, "/healthz", s.health.Live},
@@ -81,7 +83,45 @@ func (s *Server) routes() []route {
 		rs = append(rs, route{http.MethodGet, "/metrics", s.health.Expose})
 	}
 	rs = append(rs, s.domainRoutes()...)
+	if s.opts.OpsAddr == "" {
+		rs = append(rs, s.opsRoutes()...)
+	}
 	return rs
+}
+
+// opsRoutes returns the operator surface: the calls whose effect does not stop
+// at the caller's own tenant.
+//
+// The daemon authenticates nobody (ADR-0005) — it trusts X-Tenant-ID and runs
+// behind a proxy. Under that rule, a route reachable by any tenant is a route
+// every tenant may call, and two of them were never tenant-shaped:
+//
+//   - maintenance.vacuum rewrites the whole SQLite file, all tenants' data
+//     included, and holds a write lock for the duration;
+//   - tenant.purge destroys a tenant's data, and the tenant it destroys is the
+//     one named in the header the caller controls.
+//
+// Under /ops/ they are trivially excluded by a proxy (one prefix), and with
+// --ops-addr they are not even served on the public listener. What did NOT
+// move: gammonnet.sweepStale, which the fiche listed as "the whole file" but
+// which is scoped — gammonnetPositionsWithStaleAnalysis drains the caller's
+// scope, nothing else. It is expensive, not cross-tenant; the rate limiter and
+// the in-flight gauges are what bound it.
+func (s *Server) opsRoutes() []route {
+	var rs []route
+	rs = append(rs, s.maintenanceRoutes()...)
+	rs = append(rs, s.tenantRoutes()...)
+	return rs
+}
+
+// opsPaths is the set of patterns opsRoutes serves, for the tests and for
+// callers that need to tell the two surfaces apart.
+func (s *Server) opsPaths() map[string]bool {
+	out := make(map[string]bool)
+	for _, rt := range s.opsRoutes() {
+		out[rt.pattern] = true
+	}
+	return out
 }
 
 // domainRoutes returns the /v1 domain handlers, one group per storage family.
@@ -100,8 +140,6 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.metadataRoutes()...)
 	rs = append(rs, s.statsRoutes()...)
 	rs = append(rs, s.ingestRoutes()...)
-	rs = append(rs, s.tenantRoutes()...)
-	rs = append(rs, s.maintenanceRoutes()...)
 	rs = append(rs, s.gammonnetRoutes()...)
 	return rs
 }
@@ -135,6 +173,14 @@ func (s *Server) Paths() []string {
 		if strings.HasPrefix(rt.pattern, "/v1/") {
 			out = append(out, rt.pattern)
 		}
+	}
+	// The ops family is listed too. `call` is an in-process dispatcher, not a
+	// network surface: separating vacuum and purge from the tenant routes is
+	// about what a proxy exposes, and dropping them from `call --list` would
+	// take two capabilities away from the CLI for a reason that has nothing to
+	// do with it (CLAUDE.md's CLI/GUI/server parity).
+	for _, rt := range s.opsRoutes() {
+		out = append(out, rt.pattern)
 	}
 	sort.Strings(out)
 	return out

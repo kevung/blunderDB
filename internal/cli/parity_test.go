@@ -207,7 +207,7 @@ var databaseParity = map[string]parityEntry{
 	"UpdatePosition":                   {Server: "/v1/positions.update", Why: whyGUIEdit},
 	"UpdateTournament":                 {Server: "/v1/tournaments.update", Why: whyGUIEdit},
 	"UpdateTournamentComment":          {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
-	"Vacuum":                           {CLI: "vacuum", Server: "/v1/maintenance.vacuum"},
+	"Vacuum":                           {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 }
 
 // serverPaths returns the daemon's /v1 route set, built from the same

@@ -92,7 +92,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.position                     custom
      POST /v1/imports.xg                           custom
    maintenance
-     POST /v1/maintenance.vacuum                   custom
+     POST /ops/maintenance.vacuum                  custom
    matches
      POST /v1/matches.createGame                   JSON
      POST /v1/matches.createMove                   JSON
@@ -153,7 +153,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.tournamentBadges               JSON
    tenant
-     POST /v1/tenant.purge                         custom
+     POST /ops/tenant.purge                        custom
    tournaments
      POST /v1/tournaments.addMatch                 JSON
      POST /v1/tournaments.create                   JSON  (Idempotency-Key)

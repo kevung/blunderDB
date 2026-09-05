@@ -100,7 +100,7 @@ func assertMasked(t *testing.T, what string, body errorBody, raw string, log str
 
 func TestInternalErrorMasked_MaintenanceVacuum(t *testing.T) {
 	srv, log := newLoggedServer(t, func(s storage.Storage) storage.Storage { return failingOps{s} })
-	rec := serve(t, srv, context.Background(), testTenant, "/v1/maintenance.vacuum", nil)
+	rec := serve(t, srv, context.Background(), testTenant, "/ops/maintenance.vacuum", nil)
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("status = %d, want 500 (%s)", rec.Code, rec.Body)
 	}
@@ -116,7 +116,7 @@ func TestInternalErrorMasked_MaintenanceVacuum(t *testing.T) {
 
 func TestInternalErrorMasked_TenantPurge(t *testing.T) {
 	srv, log := newLoggedServer(t, func(s storage.Storage) storage.Storage { return failingOps{s} })
-	rec := serve(t, srv, context.Background(), testTenant, "/v1/tenant.purge", nil)
+	rec := serve(t, srv, context.Background(), testTenant, "/ops/tenant.purge", nil)
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("status = %d, want 500 (%s)", rec.Code, rec.Body)
 	}

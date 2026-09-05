@@ -28,7 +28,7 @@ type VacuumResult struct {
 // The mechanics (WAL checkpoint, free-space guard, VACUUM outside a
 // transaction, trailing ANALYZE, second checkpoint) live on the SQLite
 // backend, sqlite.Storage.Vacuum, so the GUI button, the CLI's `vacuum` and
-// the daemon's /v1/maintenance.vacuum run one implementation. This wrapper
+// the daemon's /ops/maintenance.vacuum run one implementation. This wrapper
 // only takes the desktop lock: VACUUM rewrites the whole file and must not
 // overlap a concurrent reader of this Database.
 func (d *Database) Vacuum() (VacuumResult, error) {

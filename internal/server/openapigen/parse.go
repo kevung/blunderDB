@@ -89,9 +89,10 @@ type Model struct {
 	Types  map[string]typeInfo
 }
 
-// familyOf splits "/v1/positions.save" into ("positions", "save").
+// familyOf splits "/v1/positions.save" into ("positions", "save"), and
+// "/ops/tenant.purge" into ("tenant", "purge").
 func familyOf(pattern string) (family, op string) {
-	p := strings.TrimPrefix(pattern, "/v1/")
+	p := strings.TrimPrefix(strings.TrimPrefix(pattern, "/v1/"), "/ops/")
 	if i := strings.Index(p, "."); i >= 0 {
 		return p[:i], p[i+1:]
 	}

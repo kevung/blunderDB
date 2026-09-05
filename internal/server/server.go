@@ -25,9 +25,12 @@ import (
 
 // Server is the HTTP daemon. Construct it with New and run it with Run.
 type Server struct {
-	opts       Options
-	health     *handlers.Health
-	http       *http.Server
+	opts   Options
+	health *handlers.Health
+	http   *http.Server
+	// opsHTTP is the second listener the /ops/ family gets when OpsAddr is
+	// set; nil otherwise, and then /ops/ lives on http like any other route.
+	opsHTTP    *http.Server
 	knownPaths map[string]bool
 	// uploadPaths is the exact set of routes limitBody exempts from
 	// MaxBodyBytes — the multipart import uploads, which cap themselves at
@@ -98,6 +101,25 @@ func New(opts Options) (*Server, error) {
 		// comment for why; withDeadlines is the per-request replacement.
 		IdleTimeout: opts.IdleTimeout,
 	}
+
+	// The ops listener, when asked for. It runs the same middleware chain as
+	// the main one — a purge still needs its tenant scope, its rate limit and
+	// its request id — over a mux that serves nothing but /ops/.
+	if opts.OpsAddr != "" {
+		opsMux := http.NewServeMux()
+		for _, rt := range s.opsRoutes() {
+			opsMux.HandleFunc(rt.method+" "+rt.pattern, rt.handler)
+			s.knownPaths[rt.pattern] = true
+			s.allowedMethod[rt.pattern] = rt.method
+		}
+		opsMux.HandleFunc("/", s.notFound)
+		s.opsHTTP = &http.Server{
+			Addr:              opts.OpsAddr,
+			Handler:           s.chain(s.withDeadlines(s.methodNotAllowed(opsMux))),
+			ReadHeaderTimeout: opts.ReadHeaderTimeout,
+			IdleTimeout:       opts.IdleTimeout,
+		}
+	}
 	return s, nil
 }
 
@@ -158,16 +180,25 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 	return h
 }
 
-// publicPaths is the set of routes reachable without a tenant: everything in
-// the routing table outside the /v1 domain surface, i.e. the ops endpoints.
-// Derived rather than listed so a new ops route is public the day it lands,
-// and a new domain route can never be.
+// publicPaths is the set of routes reachable without a tenant: the probes and
+// /metrics. Derived rather than listed so a new probe is public the day it
+// lands, and a new domain route can never be.
+//
+// /ops/ is NOT public, and the exclusion is explicit. This used to read
+// "everything outside /v1", which was the same set as long as the only
+// non-/v1 routes were the probes — moving vacuum and purge under /ops/ (G.5,
+// #233) silently made the two most dangerous calls in the daemon the only
+// ones needing no tenant at all. A purge names the tenant it destroys in the
+// header it is given; it needs that header more than any other route, not
+// less. routes_smoke_test.go's TestRoutesSmoke_TenantRequired is what caught
+// it, and still covers both prefixes.
 func (s *Server) publicPaths() map[string]bool {
 	public := make(map[string]bool)
 	for _, rt := range s.routes() {
-		if !strings.HasPrefix(rt.pattern, "/v1/") {
-			public[rt.pattern] = true
+		if strings.HasPrefix(rt.pattern, "/v1/") || strings.HasPrefix(rt.pattern, "/ops/") {
+			continue
 		}
+		public[rt.pattern] = true
 	}
 	return public
 }
@@ -305,6 +336,24 @@ func (s *Server) Run(ctx context.Context) error {
 		// getting its own goroutine and file descriptor unconditionally
 		// (#234).
 		ln = netutil.LimitListener(ln, s.opts.MaxConnections)
+	}
+
+	if s.opsHTTP != nil {
+		opsLn, err := net.Listen("tcp", s.opsHTTP.Addr)
+		if err != nil {
+			return fmt.Errorf("server: listen ops %s: %w", s.opsHTTP.Addr, err)
+		}
+		go func() {
+			s.opts.Logger.Warn("ops endpoints listening on a separate address — never expose this one through the public proxy", "addr", opsLn.Addr().String())
+			if err := s.opsHTTP.Serve(opsLn); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				s.opts.Logger.Error("ops server error", "err", err)
+			}
+		}()
+		defer func() {
+			shutCtx, cancel := context.WithTimeout(context.Background(), s.opts.ShutdownTimeout)
+			defer cancel()
+			_ = s.opsHTTP.Shutdown(shutCtx)
+		}()
 	}
 
 	if s.rl != nil {

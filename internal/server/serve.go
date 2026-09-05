@@ -58,6 +58,7 @@ type serveConfig struct {
 	dsn            string
 	dbPath         string
 	addr           string
+	opsAddr        string
 	logLevel       string
 	enableMetrics  bool
 	corsOrigin     string
@@ -103,6 +104,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableRLS   = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
 		tsPath      = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
 		identityDir = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		opsAddr     = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
 		pprofAddr   = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
 	if err := fs.Parse(args); err != nil {
@@ -117,6 +119,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		dsn:            *dsn,
 		dbPath:         *dbPath,
 		addr:           *addr,
+		opsAddr:        *opsAddr,
 		logLevel:       *logLevel,
 		enableMetrics:  *enableMetrics,
 		corsOrigin:     *corsOrigin,
@@ -186,6 +189,7 @@ func RunServe(args []string) error {
 
 	srv, err := New(Options{
 		Addr:            cfg.addr,
+		OpsAddr:         cfg.opsAddr,
 		Storage:         st,
 		Logger:          logger,
 		Metrics:         metrics.New(),

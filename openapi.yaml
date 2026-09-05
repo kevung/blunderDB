@@ -27,6 +27,32 @@ info:
 servers:
   - url: /v1
 paths:
+  /ops/maintenance.vacuum:
+    post:
+      operationId: maintenance.vacuum
+      tags: [maintenance]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /ops/tenant.purge:
+    post:
+      operationId: tenant.purge
+      tags: [tenant]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/analyses.delete:
     post:
       operationId: analyses.delete
@@ -1195,19 +1221,6 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
-  /v1/maintenance.vacuum:
-    post:
-      operationId: maintenance.vacuum
-      tags: [maintenance]
-      x-kind: custom
-      responses:
-        "200":
-          description: OK
-          description: >-
-            Custom, hand-written handler; response shape not derived from this
-            generator's source analysis (a file upload/download, or a route
-            registered from a runtime table) — see internal/server for the actual
-            implementation.
   /v1/matches.createGame:
     post:
       operationId: matches.createGame
@@ -2126,19 +2139,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
-  /v1/tenant.purge:
-    post:
-      operationId: tenant.purge
-      tags: [tenant]
-      x-kind: custom
-      responses:
-        "200":
-          description: OK
-          description: >-
-            Custom, hand-written handler; response shape not derived from this
-            generator's source analysis (a file upload/download, or a route
-            registered from a runtime table) — see internal/server for the actual
-            implementation.
   /v1/tournaments.addMatch:
     post:
       operationId: tournaments.addMatch
