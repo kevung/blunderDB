@@ -240,7 +240,10 @@ func startPprofServer(ctx context.Context, logger *slog.Logger, addr string) (st
 			logger.Error("pprof server error", "err", err)
 		}
 	}()
-	go func() {
+	// The detached context below is on purpose: this goroutine runs precisely
+	// because ctx is already done, and Shutdown given a cancelled context
+	// returns at once without draining anything.
+	go func() { //nolint:gosec // G118: the request-scoped context is the one that just fired; shutting down needs a live deadline of its own
 		<-ctx.Done()
 		shutCtx, cancel := context.WithTimeout(context.Background(), defaultShutdownTimeout)
 		defer cancel()
