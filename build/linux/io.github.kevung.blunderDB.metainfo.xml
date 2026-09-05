@@ -86,6 +86,18 @@
   </branding>
 
   <releases>
+    <release version="0.36.0" date="2026-09-05">
+      <description>
+        <ul>
+          <li>7.3 MB smaller: the bearoff tables are computed on first launch instead of being embedded or downloaded, byte-identical to gnubg's own</li>
+          <li>Native Linux arm64 builds: tarball, <code>.deb</code>, <code>.rpm</code> and AUR package</li>
+          <li>One search grammar everywhere: <code>blunderdb search --query</code> speaks what the in-app command line speaks</li>
+          <li>Tournaments fill themselves at import, from the event each match file names</li>
+          <li>CLI: <code>--format json</code> on nine commands, shell completion, <code>repair</code>, <code>anki card</code> and <code>anki log</code></li>
+          <li>In-app help generated from the manual, plus guided tours of the Eval, Anki and Stats panels</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.35.0" date="2026-09-02">
       <description>
         <ul>

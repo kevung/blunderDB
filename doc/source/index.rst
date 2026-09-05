@@ -61,15 +61,19 @@ La présente documentation est structurée en quatorze sections :
 Historique des versions
 =======================
 
-Dernière version — 0.35.0 (2026-09-02)
+Dernière version — 0.36.0 (2026-09-05)
 ---------------------------------------
 
-- La ligne de commande gagne deux familles : ``blunderdb collection`` (lister, afficher, créer, renommer, supprimer, exporter une collection) et ``blunderdb anki`` (paquets, statistiques, prévision des révisions, resynchronisation d'un paquet).
-- Le mode serveur est publié en **image Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité d'émetteur du serveur (``--identity-dir``).
-- L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon.
-- Chaque release livre désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en plus des paquets Debian, RPM et AUR.
-- Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de police japonaise inutile.
-- Corrections notables : une base importée par « Importer une base » gardait des positions invisibles aux filtres et dédoublées au second import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de fusion des joueurs restait grisé, l'export du serveur était vide, et sous Windows la suppression de la base bearoff téléchargée et ``create --force`` échouaient.
+- Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus embarquées ni téléchargées, mais calculées à la première ouverture, en arrière-plan et en silence — identiques octet pour octet à celles de gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule dans l'onglet *Bearoff* au lieu d'un téléchargement de 1,2 Go.
+- **Les tournois se remplissent à l'import** : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé.
+- **Une seule grammaire de recherche**, désormais lisible depuis la ligne de commande (``blunderdb search --query``) autant que depuis l'application.
+- La ligne de commande gagne ``--format json`` sur neuf commandes, la **complétion pour bash, zsh et fish**, la commande ``repair`` et les sous-commandes ``anki card`` et ``anki log``.
+- L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, Stats), et les pages Raccourcis et Ligne de commande deviennent des tableaux, sans encarts.
+- Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et paquet AUR.
+- Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, distingue l'équité *money* de l'équité *match*, et se parcourt au clavier.
+- Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous ``/ops/``.
+- **Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, si bien qu'une même position d'argent n'entre plus deux fois par des portes différentes.
+- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
 
 Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 
@@ -79,6 +83,21 @@ Historique complet
 Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une
 correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une
 puce et non la traduction de toute la version.
+
+0.36.0 (2026-09-05)
+~~~~~~~~~~~~~~~~~~~
+
+- Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus embarquées ni téléchargées, mais calculées à la première ouverture, en arrière-plan et en silence — identiques octet pour octet à celles de gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule dans l'onglet *Bearoff* au lieu d'un téléchargement de 1,2 Go.
+- **Les tournois se remplissent à l'import** : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé.
+- **Une seule grammaire de recherche**, désormais lisible depuis la ligne de commande (``blunderdb search --query``) autant que depuis l'application.
+- La ligne de commande gagne ``--format json`` sur neuf commandes, la **complétion pour bash, zsh et fish**, la commande ``repair`` et les sous-commandes ``anki card`` et ``anki log``.
+- L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, Stats), et les pages Raccourcis et Ligne de commande deviennent des tableaux, sans encarts.
+- Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et paquet AUR.
+- Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, distingue l'équité *money* de l'équité *match*, et se parcourt au clavier.
+- Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous ``/ops/``.
+- **Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, si bien qu'une même position d'argent n'entre plus deux fois par des portes différentes.
+- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
+- Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 
 0.35.0 (2026-09-02)
 ~~~~~~~~~~~~~~~~~~~

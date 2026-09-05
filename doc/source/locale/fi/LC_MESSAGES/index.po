@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 02:18+0200\n"
+"POT-Creation-Date: 2026-09-05 05:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -165,10 +165,148 @@ msgid "Historique des versions"
 msgstr "Versiohistoria"
 
 #: ../../source/index.rst:65
-msgid "Dernière version — 0.35.0 (2026-09-02)"
-msgstr "Uusin versio — 0.35.0 (2026-09-02)"
+msgid "Dernière version — 0.36.0 (2026-09-05)"
+msgstr ""
+"Uusin versio — 0.36.0 (5.9.2026)"
 
-#: ../../source/index.rst:67 ../../source/index.rst:86
+#: ../../source/index.rst:67 ../../source/index.rst:90
+msgid ""
+"Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus "
+"embarquées ni téléchargées, mais calculées à la première ouverture, en "
+"arrière-plan et en silence — identiques octet pour octet à celles de "
+"gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule "
+"dans l'onglet *Bearoff* au lieu d'un téléchargement de 1,2 Go."
+msgstr ""
+"Ohjelmatiedosto on **7,3 Mt pienempi**: ulosmenotaulukoita ei enää upoteta "
+"eikä ladata, vaan ne lasketaan ensimmäisellä käynnistyksellä taustalla ja "
+"hiljaa — tavu tavulta samat kuin gnubg:n, SHA-256-tiiviste tarkistettuna. "
+"Laajennettu TS-06-11-taulukko lasketaan *Bearoff*-välilehdellä 1,2 Gt:n "
+"latauksen sijaan."
+
+#: ../../source/index.rst:68 ../../source/index.rst:91
+msgid ""
+"**Les tournois se remplissent à l'import** : un match entre dans le "
+"tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est"
+" jamais déplacé."
+msgstr ""
+"**Turnaukset täyttyvät itsestään tuonnissa**: ottelu sijoitetaan "
+"turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo "
+"sijoitettua ottelua ei koskaan siirretä."
+
+#: ../../source/index.rst:69 ../../source/index.rst:92
+msgid ""
+"**Une seule grammaire de recherche**, désormais lisible depuis la ligne "
+"de commande (``blunderdb search --query``) autant que depuis "
+"l'application."
+msgstr ""
+"**Yksi ainoa hakukielioppi**, nyt luettavissa komentoriviltä (``blunderdb "
+"search --query``) yhtä lailla kuin sovelluksesta."
+
+#: ../../source/index.rst:70 ../../source/index.rst:93
+msgid ""
+"La ligne de commande gagne ``--format json`` sur neuf commandes, la "
+"**complétion pour bash, zsh et fish**, la commande ``repair`` et les "
+"sous-commandes ``anki card`` et ``anki log``."
+msgstr ""
+"Komentorivi saa ``--format json``-valitsimen yhdeksään komentoon, "
+"**täydennyksen bashille, zsh:lle ja fishille**, ``repair``-komennon sekä "
+"``anki card``- ja ``anki log``-alikomennot."
+
+#: ../../source/index.rst:71 ../../source/index.rst:94
+msgid ""
+"L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus "
+"prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, "
+"Stats), et les pages Raccourcis et Ligne de commande deviennent des "
+"tableaux, sans encarts."
+msgstr ""
+"**Sovelluksen ohje tuotetaan käsikirjasta**: se ei voi enää jäädä siitä "
+"jälkeen. Kolme opastettua kierrosta lisää (Eval, Anki, Stats), ja "
+"Pikanäppäimet- ja Komentorivi-sivut muuttuvat taulukoiksi ilman laatikoita."
+
+#: ../../source/index.rst:72 ../../source/index.rst:95
+msgid ""
+"Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et "
+"paquet AUR."
+msgstr ""
+"**Linux arm64 -ohjelmatiedosto**, toimitettuna tar-pakettina sekä ``.deb``-, "
+"``.rpm``- ja AUR-pakettina."
+
+#: ../../source/index.rst:73 ../../source/index.rst:96
+msgid ""
+"Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, "
+"distingue l'équité *money* de l'équité *match*, et se parcourt au "
+"clavier."
+msgstr ""
+"**Eval**-paneeli löytää taas laudan, johon se jätettiin, erottaa "
+"*money*-equityn *match*-equitystä ja on selattavissa näppäimistöltä."
+
+#: ../../source/index.rst:74 ../../source/index.rst:97
+#, no-python-format
+msgid ""
+"Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et "
+"son annexe, 135 routes), identifiant de corrélation par requête, "
+"métriques de travail en vol, compression des flux NDJSON (13,5 % de la "
+"taille), et les deux appels qui dépassent le tenant — vidange et purge — "
+"passent sous ``/ops/``."
+msgstr ""
+"Palvelinpuolella: **koodista tuotettu API-sopimus** (``openapi.yaml`` ja sen "
+"liite, 135 reittiä), korrelaatiotunniste jokaiselle pyynnölle, mittarit "
+"käynnissä olevasta työstä, NDJSON-virtojen pakkaus (13,5 % koosta), ja kaksi "
+"tenantin ylittävää kutsua — vacuum ja purge — siirtyvät "
+"``/ops/``-etuliitteen alle."
+
+#: ../../source/index.rst:75 ../../source/index.rst:98
+msgid ""
+"**Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, "
+"si bien qu'une même position d'argent n'entre plus deux fois par des "
+"portes différentes."
+msgstr ""
+"**Skeema 2.18.0**: Jacoby ja beaver poistuvat aseman identiteetistä, joten "
+"sama rahapeliasema ei enää tule sisään kahdesti eri ovista."
+
+#: ../../source/index.rst:76 ../../source/index.rst:99
+msgid ""
+"Corrections notables : le volet de détail du panneau Matchs n'occupe plus"
+" la moitié de l'écran quand rien n'est sélectionné, la première partie "
+"d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent "
+"de vue depuis n'importe quel panneau, et huit raccourcis « "
+"afficher/cacher » cachent enfin."
+msgstr ""
+"Merkittäviä korjauksia: Ottelut-paneelin yksityiskohtaruutu ei enää vie "
+"puolta ruudusta, kun mitään ei ole valittuna, pelipöytäkirjan ensimmäinen "
+"peli taittuu kuten muutkin, SHIFT-J ja SHIFT-K vaihtavat näkymää mistä "
+"tahansa paneelista, ja kahdeksan ”näytä/piilota”-pikanäppäintä vihdoin "
+"piilottaa."
+
+#: ../../source/index.rst:78 ../../source/index.rst:100
+#: ../../source/index.rst:111
+msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
+msgstr "Katso :ref:`cli`, :ref:`headless` ja :ref:`manuel`."
+
+#: ../../source/index.rst:81
+msgid "Historique complet"
+msgstr "Koko historia"
+
+#: ../../source/index.rst:83
+msgid ""
+"Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une"
+" correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une "
+"puce et non la traduction de toute la version."
+msgstr ""
+"Jokainen alla oleva versio luettelee muutoksensa kohta kohdalta, jotta "
+"myöhempi korjaus (kirjoitusvirhe, myöhäinen lisäys) mitätöi vain yhden "
+"kohdan käännöksen, ei koko version käännöstä."
+
+#: ../../source/index.rst:88
+msgid "0.36.0 (2026-09-05)"
+msgstr ""
+"0.36.0 (5.9.2026)"
+
+#: ../../source/index.rst:103
+msgid "0.35.0 (2026-09-02)"
+msgstr "0.35.0 (2026-09-02)"
+
+#: ../../source/index.rst:105
 msgid ""
 "La ligne de commande gagne deux familles : ``blunderdb collection`` "
 "(lister, afficher, créer, renommer, supprimer, exporter une collection) "
@@ -180,7 +318,7 @@ msgstr ""
 "``blunderdb anki`` (pakat, tilastot, kertausennuste, pakan "
 "uudelleensynkronointi)."
 
-#: ../../source/index.rst:68 ../../source/index.rst:87
+#: ../../source/index.rst:106
 msgid ""
 "Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
 "/blunderdb-serve``, amd64 et arm64), gagne la route "
@@ -192,7 +330,7 @@ msgstr ""
 "**vesileimaa vientinsä** palvelimen liikkeeseenlaskijan identiteetillä "
 "(``--identity-dir``)."
 
-#: ../../source/index.rst:69 ../../source/index.rst:88
+#: ../../source/index.rst:107
 msgid ""
 "L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
 "les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
@@ -200,7 +338,7 @@ msgstr ""
 "gammonNet-evaluaattori **hinnoittelee lehtensä kuutiolla**: ottelun "
 "tuloksessa haun tuomiot lähestyvät eXtreme Gammonin antamia."
 
-#: ../../source/index.rst:70 ../../source/index.rst:89
+#: ../../source/index.rst:108
 msgid ""
 "Chaque release livre désormais les **manifestes winget et Homebrew** et "
 "un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
@@ -208,7 +346,7 @@ msgstr ""
 "Jokainen julkaisu toimittaa nyt **winget- ja Homebrew-manifestit** ja "
 "Flatpak-paketin, Debian-, RPM- ja AUR-pakettien lisäksi."
 
-#: ../../source/index.rst:71 ../../source/index.rst:90
+#: ../../source/index.rst:109
 msgid ""
 "Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
 "positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
@@ -222,7 +360,7 @@ msgstr ""
 "piirtää uudelleen vain sen, mikä muuttuu, ja binääri menettää 5,5 Mt "
 "tarpeetonta japanilaista fonttia."
 
-#: ../../source/index.rst:72 ../../source/index.rst:91
+#: ../../source/index.rst:110
 msgid ""
 "Corrections notables : une base importée par « Importer une base » "
 "gardait des positions invisibles aux filtres et dédoublées au second "
@@ -238,33 +376,11 @@ msgstr ""
 "Windowsissa ladatun bearoff-tietokannan poistaminen sekä ``create "
 "--force`` epäonnistuivat."
 
-#: ../../source/index.rst:74 ../../source/index.rst:92
-msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
-msgstr "Katso :ref:`cli`, :ref:`headless` ja :ref:`manuel`."
-
-#: ../../source/index.rst:77
-msgid "Historique complet"
-msgstr "Koko historia"
-
-#: ../../source/index.rst:79
-msgid ""
-"Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une"
-" correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une "
-"puce et non la traduction de toute la version."
-msgstr ""
-"Jokainen alla oleva versio luettelee muutoksensa kohta kohdalta, jotta "
-"myöhempi korjaus (kirjoitusvirhe, myöhäinen lisäys) mitätöi vain yhden "
-"kohdan käännöksen, ei koko version käännöstä."
-
-#: ../../source/index.rst:84
-msgid "0.35.0 (2026-09-02)"
-msgstr "0.35.0 (2026-09-02)"
-
-#: ../../source/index.rst:95
+#: ../../source/index.rst:114
 msgid "0.34.0 (2026-09-02)"
 msgstr "0.34.0 (2026-09-02)"
 
-#: ../../source/index.rst:97
+#: ../../source/index.rst:116
 msgid ""
 "Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
 "blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
@@ -278,7 +394,7 @@ msgstr ""
 "karsinnalla, kuutiopäätös Janowskin mukaan ja blunderDB:n ottelun "
 "ekviteettitaulukon mukaan, sekä haku, joka kunnioittaa ottelun tulosta."
 
-#: ../../source/index.rst:98
+#: ../../source/index.rst:117
 msgid ""
 "Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
 " la position (chances de gain, gammon et backgammon des deux camps, "
@@ -293,7 +409,7 @@ msgstr ""
 "**normalisoituja**, ja tuomio ”liian hyvä tuplattavaksi” on jälleen "
 "näkyvissä."
 
-#: ../../source/index.rst:99
+#: ../../source/index.rst:118
 msgid ""
 "L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
 " repos, annulable par tout nouveau geste, l'étiquette de profondeur "
@@ -303,7 +419,7 @@ msgstr ""
 "sitten 2-ply levossa, peruutettavissa millä tahansa uudella eleellä, "
 "syvyysmerkinnän ilmoittaessa aina sen, joka tuotti luvun."
 
-#: ../../source/index.rst:100
+#: ../../source/index.rst:119
 msgid ""
 "Le plateau entier, les dés et le score s'y éditent, au clic comme au "
 "clavier, et une position de la bibliothèque entre dans le panneau et en "
@@ -312,7 +428,7 @@ msgstr ""
 "Koko lauta, nopat ja tulos ovat siellä muokattavissa, hiirellä tai "
 "näppäimistöllä, ja kirjaston asema siirtyy paneeliin ja pois siitä."
 
-#: ../../source/index.rst:101
+#: ../../source/index.rst:120
 msgid ""
 "Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
 " fournit le verdict de videau au score que le panneau ne donnait pas."
@@ -321,7 +437,7 @@ msgstr ""
 "**arvioitu** tila tarjoaa kuutiotuomion ottelun tuloksessa, jota paneeli "
 "ei aiemmin antanut."
 
-#: ../../source/index.rst:102
+#: ../../source/index.rst:121
 msgid ""
 "Un onglet **gammonNet** de la configuration sépare la profondeur "
 "d'affichage de la profondeur d'analyse."
@@ -329,7 +445,7 @@ msgstr ""
 "Asetusten **gammonNet**-välilehti erottaa näyttösyvyyden "
 "analyysisyvyydestä."
 
-#: ../../source/index.rst:103
+#: ../../source/index.rst:122
 msgid ""
 "Après un import, un **lot d'analyse** borné, visible, annulable et "
 "reprenable comble les positions sans aucune analyse, sans jamais écraser "
@@ -343,7 +459,7 @@ msgstr ""
 "täydentäminen** käynnistetään käyttöliittymästä, uudella ``blunderdb "
 "analyze``-komennolla tai palvelintilassa."
 
-#: ../../source/index.rst:104
+#: ../../source/index.rst:123
 msgid ""
 "Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
 "héritait de l'analyse du doubleur sans être retournée, la notation des "
@@ -356,15 +472,15 @@ msgstr ""
 "baarista tulon merkintä noudattaa nyt gnuBG:tä ja XG:tä, gnuBG-analyysin "
 "syvyys luetaan oikein, ja sivupaneelin koko muistetaan."
 
-#: ../../source/index.rst:105
+#: ../../source/index.rst:124
 msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
 msgstr "Katso :ref:`panneau_epc`, :ref:`manuel` ja :ref:`cli`."
 
-#: ../../source/index.rst:108
+#: ../../source/index.rst:127
 msgid "0.33.0 (2026-08-26)"
 msgstr "0.33.0 (2026-08-26)"
 
-#: ../../source/index.rst:110
+#: ../../source/index.rst:129
 msgid ""
 "Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
 "précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
@@ -388,7 +504,7 @@ msgstr ""
 "myös komentoriviltä (``blunderdb list --type players``, tekstinä, JSON- "
 "tai CSV-muodossa) ja palvelintilassa."
 
-#: ../../source/index.rst:111
+#: ../../source/index.rst:130
 msgid ""
 "La **chance** de chaque lancer est désormais conservée en base et "
 "affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
@@ -405,7 +521,7 @@ msgstr ""
 "lähdetiedostot on tuotava uudelleen sen saamiseksi; muodot, jotka eivät "
 "sitä kuljeta (BGF, Jellyfish ``.mat``), eivät sitä koskaan tarjoa."
 
-#: ../../source/index.rst:112
+#: ../../source/index.rst:131
 msgid ""
 "L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
 "décisions de videau, et non plus seulement combien elles coûtent : une "
@@ -423,7 +539,7 @@ msgstr ""
 "löysästi. Kussakin ruudussa on lukumäärä, työkaluvihjeessä menetetty "
 "equity, ja napsautus lataa vastaavat asemat."
 
-#: ../../source/index.rst:113
+#: ../../source/index.rst:132
 msgid ""
 "Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
 " les suppressions : bouton dans les paramètres et sous-commande "
@@ -433,7 +549,7 @@ msgstr ""
 "jättämän tilan: painike asetuksissa ja alikomento ``blunderdb vacuum``. "
 "Se ei käynnisty koskaan itsestään."
 
-#: ../../source/index.rst:114
+#: ../../source/index.rst:133
 msgid ""
 "Ergonomie : les actions destructives demandent confirmation, une "
 "recherche en cours est signalée, une commande inconnue reçoit un message "
@@ -446,7 +562,7 @@ msgstr ""
 "sijaan, ja välilehtiä, telakoituja paneeleja ja pieniä valintaikkunoita "
 "voi käyttää täysin näppäimistöllä. Haku on lisäksi tuntuvasti nopeampi."
 
-#: ../../source/index.rst:115
+#: ../../source/index.rst:134
 msgid ""
 "Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
 "étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
@@ -462,15 +578,15 @@ msgstr ""
 "viennit kirjoittivat vanhentuneen skeeman; ja ``blunderdb vacuum`` avasi "
 "graafisen käyttöliittymän tietokannan tiivistämisen sijaan."
 
-#: ../../source/index.rst:116
+#: ../../source/index.rst:135
 msgid "Voir :ref:`stats` et :ref:`cli`."
 msgstr "Katso :ref:`stats` ja :ref:`cli`."
 
-#: ../../source/index.rst:119
+#: ../../source/index.rst:138
 msgid "0.32.0 (2026-08-09)"
 msgstr "0.32.0 (2026-08-09)"
 
-#: ../../source/index.rst:121
+#: ../../source/index.rst:140
 msgid ""
 "Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
 "course complète."
@@ -478,7 +594,7 @@ msgstr ""
 "EPC-paneelista tulee **Bearoff**-paneeli, ja se saa täyden "
 "juoksuanalyysin."
 
-#: ../../source/index.rst:122
+#: ../../source/index.rst:141
 msgid ""
 "Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
 "count, du wastage et du nombre moyen de lancers de chaque joueur, "
@@ -494,7 +610,7 @@ msgstr ""
 "tuplaus/hylkäys, kunkin päätöksen erolla parhaaseen) sekä **parhaan "
 "kuutiopäätöksen**."
 
-#: ../../source/index.rst:123
+#: ../../source/index.rst:142
 msgid ""
 "Deux régimes clairement distingués : *exact* (lecture dans une base two-"
 "sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
@@ -506,7 +622,7 @@ msgstr ""
 "enintään 6 tammaa pelaajaa kohti) ja *arvioitu* (kalibroitu konvoluutio, "
 "virhemarginaali näytetään — kuutiotuomiota ei koskaan arvioida)."
 
-#: ../../source/index.rst:124
+#: ../../source/index.rst:143
 msgid ""
 "La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
 "Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
@@ -520,7 +636,7 @@ msgstr ""
 "jatkamisella; myös mikä tahansa gnubg:n kaksipuolinen ``.bd``-tiedosto "
 "voidaan osoittaa."
 
-#: ../../source/index.rst:125
+#: ../../source/index.rst:144
 msgid ""
 "**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
 "modification et se révèlent zone par zone, d'un clic."
@@ -529,7 +645,7 @@ msgstr ""
 "muutoksen yhteydessä ja paljastetaan alue kerrallaan yhdellä "
 "napsautuksella."
 
-#: ../../source/index.rst:126
+#: ../../source/index.rst:145
 msgid ""
 "Édition entièrement au plateau : pions des deux jans, joueur au trait "
 "(clic sur le rectangle sortie/score) et position du videau (clic sur le "
@@ -539,7 +655,7 @@ msgstr ""
 "pelaaja (napsauta bearoff/tulos-suorakulmiota) ja kuution sijainti "
 "(napsauta kuutiota)."
 
-#: ../../source/index.rst:127
+#: ../../source/index.rst:146
 msgid ""
 "Le clic sur le plateau est désormais exact à toute échelle d'interface "
 "(un clic sur le point 1 pouvait atterrir sur le point 2)."
@@ -547,7 +663,7 @@ msgstr ""
 "Laudalle napsauttaminen on nyt tarkkaa millä tahansa käyttöliittymän "
 "skaalauksella (napsautus pisteeseen 1 saattoi osua pisteeseen 2)."
 
-#: ../../source/index.rst:128
+#: ../../source/index.rst:147
 msgid ""
 "Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
 "``--bearoff-ts`` du mode serveur."
@@ -555,7 +671,7 @@ msgstr ""
 "Uusi ``blunderdb epc``-komento komentorivillä ja ``--bearoff-"
 "ts``-valitsin palvelintilassa."
 
-#: ../../source/index.rst:129
+#: ../../source/index.rst:148
 msgid ""
 "Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
 "Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
@@ -564,15 +680,15 @@ msgstr ""
 "Uusi käsikirjan osio, ”Bearoff-paneelin menetelmät ja oletukset”, esittää"
 " tyhjentävästi jokaisen näytetyn arvon taustalla olevat oletukset."
 
-#: ../../source/index.rst:130
+#: ../../source/index.rst:149
 msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
 msgstr "Katso :ref:`panneau_epc` ja :ref:`epc_methodologie`."
 
-#: ../../source/index.rst:133
+#: ../../source/index.rst:152
 msgid "0.31.0 (2026-08-04)"
 msgstr "0.31.0 (2026-08-04)"
 
-#: ../../source/index.rst:135
+#: ../../source/index.rst:154
 msgid ""
 "Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
 "deux facultatifs et choisis au moment de l'export."
@@ -580,7 +696,7 @@ msgstr ""
 "Tietokannan jakaminen kolmansille osapuolille: kaksi riippumatonta "
 "mekanismia, molemmat valinnaisia ja valittavissa viennin yhteydessä."
 
-#: ../../source/index.rst:136
+#: ../../source/index.rst:155
 msgid ""
 "Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
 "il vient, signé par une identité d'émetteur créée toute seule au premier "
@@ -596,7 +712,7 @@ msgstr ""
 "kirjoittamatta koskaan tiedostoon) eikä tallenna mitään vastaanottajan "
 "puolelle — ei lokia, ei seurantaa."
 
-#: ../../source/index.rst:137
+#: ../../source/index.rst:156
 msgid ""
 "La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
 "(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
@@ -608,7 +724,7 @@ msgstr ""
 "otsikko pysyy selväkielisenä; identiteetti viedään ja tuodaan yhtenä "
 "tiedostona asetuksista."
 
-#: ../../source/index.rst:138
+#: ../../source/index.rst:157
 msgid ""
 "Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
 " qui part réellement (les positions affichées), part couverte de chaque "
@@ -621,7 +737,7 @@ msgstr ""
 "punaisella merkittynä, kun se on osittainen, turnaukset vietävissä vain "
 "otteluidensa kanssa — ja vienti kolme kertaa nopeampi."
 
-#: ../../source/index.rst:139
+#: ../../source/index.rst:158
 msgid ""
 "Fenêtre de configuration réorganisée en trois onglets (Interface, "
 "Couleurs du plateau, Identité d'émetteur), de taille et de position "
@@ -631,15 +747,15 @@ msgstr ""
 "Laudan värit, Liikkeeseenlaskijan identiteetti), vakaalla koolla ja "
 "sijainnilla."
 
-#: ../../source/index.rst:140
+#: ../../source/index.rst:159
 msgid "Panneau Métadonnées redisposé en une seule grille."
 msgstr "Metatiedot-paneeli järjestetty uudelleen yhdeksi ruudukoksi."
 
-#: ../../source/index.rst:141
+#: ../../source/index.rst:160
 msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
 msgstr "Loki-paneeli, joka vastaanotti vain komentojen kaiun, poistetaan."
 
-#: ../../source/index.rst:142
+#: ../../source/index.rst:161
 msgid ""
 "Corrections notables : un mot de passe erroné n'ouvre plus une base "
 "protégée, les champs des fenêtres modales ne perdent plus le focus au "
@@ -653,15 +769,15 @@ msgstr ""
 "pelissä, ja väliaikaiset tiedostot (``-wal``, ``-shm``, lukko) siivotaan "
 "suljettaessa."
 
-#: ../../source/index.rst:143
+#: ../../source/index.rst:162
 msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr "Katso :ref:`diffusion_controlee` ja :ref:`manuel`."
 
-#: ../../source/index.rst:146
+#: ../../source/index.rst:165
 msgid "0.30.0 (2026-07-26)"
 msgstr "0.30.0 (2026-07-26)"
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:167
 msgid ""
 "Recherche par commentaire : le filtre « Texte de recherche » devient le "
 "filtre « Commentaire » et propose trois modes exclusifs — *contient le "
@@ -677,7 +793,7 @@ msgstr ""
 "``xco``) — löytääkseen yhdellä eleellä kommentoidut asemat, tai "
 "päinvastoin ne, jotka on vielä kommentoitava."
 
-#: ../../source/index.rst:149
+#: ../../source/index.rst:168
 msgid ""
 "Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
 "lors de l'analyse d'un match XG sont désormais lues à l'import et "
@@ -691,7 +807,7 @@ msgstr ""
 "muuhun kriteeriin; merkitty kuutiopäätös antaa kaksi merkittyä asemaa, "
 "tuplauksen ja oton/hylkäyksen."
 
-#: ../../source/index.rst:150
+#: ../../source/index.rst:169
 msgid ""
 "Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
 "``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
@@ -701,7 +817,7 @@ msgstr ""
 "tuodaan uudelleen, jotta sen merkinnät liittyvät tietokantaan, koskematta"
 " olemassa oleviin kommentteihin tai analyyseihin."
 
-#: ../../source/index.rst:151
+#: ../../source/index.rst:170
 msgid ""
 "Corrections notables : le PR affiché sur le badge d'un tournoi se "
 "rapporte au joueur de référence et non plus au cumul des deux joueurs, "
@@ -717,15 +833,15 @@ msgstr ""
 "päivämäärä, pelatun siirron virhe) yhdistämisestä johtuva haun "
 "jumiutuminen on korjattu."
 
-#: ../../source/index.rst:152
+#: ../../source/index.rst:171
 msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
 msgstr "Katso :ref:`cmd_mode` ja :ref:`manuel`."
 
-#: ../../source/index.rst:155
+#: ../../source/index.rst:174
 msgid "0.29.0 (2026-07-18)"
 msgstr "0.29.0 (2026-07-18)"
 
-#: ../../source/index.rst:157
+#: ../../source/index.rst:176
 msgid ""
 "Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
 " (panneau Matchs) comme en ligne de commande, avec la route serveur "
@@ -736,7 +852,7 @@ msgstr ""
 "(Ottelut-paneeli) sekä komentoriviltä, vastaavalla palvelinreitillä — "
 "kätevä ottelun uudelleenpelaamiseen toisessa backgammon-ohjelmassa."
 
-#: ../../source/index.rst:158
+#: ../../source/index.rst:177
 msgid ""
 "Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
 "plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
@@ -746,7 +862,7 @@ msgstr ""
 "sallitaan), joka sulkee pois asemat, joiden heitto vastaa annettua "
 "heittoa."
 
-#: ../../source/index.rst:159
+#: ../../source/index.rst:178
 msgid ""
 "Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
 "une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
@@ -760,7 +876,7 @@ msgstr ""
 "”[vain luku]” -maininta otsikkopalkissa) korruption riskeeraamisen "
 "sijaan."
 
-#: ../../source/index.rst:160
+#: ../../source/index.rst:179
 msgid ""
 "Provenance des positions : hors mode match, la barre d'informations au-"
 "dessus du plateau indique le match — et son tournoi — d'où provient la "
@@ -771,7 +887,7 @@ msgstr ""
 "tietopalkki näyttää ottelun — ja sen turnauksen — josta tutkittava asema "
 "on peräisin, ”+N”-merkillä, kun se esiintyy useassa ottelussa."
 
-#: ../../source/index.rst:161
+#: ../../source/index.rst:180
 msgid ""
 "Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
 "police, le presse-papier ou la dernière base ouverte ne sont pas "
@@ -781,7 +897,7 @@ msgstr ""
 "toiminta, kun fontti, leikepöytä tai viimeksi avattu tietokanta eivät ole"
 " käytettävissä."
 
-#: ../../source/index.rst:162
+#: ../../source/index.rst:181
 msgid ""
 "Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
 "barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
@@ -791,7 +907,7 @@ msgstr ""
 " tai komento ``e``) avaa uudelleen analyysipaneelin näkyvillä olevaan "
 "asemaan."
 
-#: ../../source/index.rst:163
+#: ../../source/index.rst:182
 msgid ""
 "Corrections notables : suppression d'un blocage à l'export de grosses "
 "bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
@@ -805,15 +921,15 @@ msgstr ""
 "turnauksen kahdennuksen poisto tietopalkista, sekä useita "
 "näyttömuutoksia."
 
-#: ../../source/index.rst:164
+#: ../../source/index.rst:183
 msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
 msgstr "Katso :ref:`cmd_mode`, :ref:`panneau_matchs` ja :ref:`manuel`."
 
-#: ../../source/index.rst:167
+#: ../../source/index.rst:186
 msgid "0.28.0 (2026-07-15)"
 msgstr "0.28.0 (2026-07-15)"
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:188
 msgid ""
 "Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
 " champs de saisie d'identifiants par une fenêtre de sélection (listes à "
@@ -831,7 +947,7 @@ msgstr ""
 "otteluille; ``cli list --type tournaments`` sulkee vastaavan "
 "pariteettiaukon."
 
-#: ../../source/index.rst:170
+#: ../../source/index.rst:189
 msgid ""
 "Nouveau filtre « Importée individuellement » (case à cocher du groupe "
 "Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
@@ -843,7 +959,7 @@ msgstr ""
 "``--individual``-valitsimella) löytääkseen aseman, joka on tallennettu "
 "tai tuotu yksinään sen sijaan, että se hukkuisi ottelun tuontiin."
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:190
 msgid ""
 "Correction d'une perte de données : la suppression d'un match ne supprime"
 " plus les positions individuellement importées, mises en collection ou "
@@ -853,7 +969,7 @@ msgstr ""
 "tuotuja, kokoelmaan sijoitettuja tai Anki-pakkaan sisällytettyjä asemia, "
 "jotka ottelu myös sisälsi."
 
-#: ../../source/index.rst:172
+#: ../../source/index.rst:191
 msgid ""
 "Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
 "Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
@@ -877,7 +993,7 @@ msgstr ""
 "``stats.matchBadges`` (PR/MWC-indikaattorit rajattuna ottelulistaan) "
 "-metodit."
 
-#: ../../source/index.rst:173
+#: ../../source/index.rst:192
 msgid ""
 "Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
 "bit d'exécution perdu lors du téléchargement du binaire brut."
@@ -885,7 +1001,7 @@ msgstr ""
 "Natiivi Linux-jakelu: ``.deb``/``.rpm``-paketit, jotka säilyttävät "
 "suoritusbitin, joka katosi raakabinäärin latauksessa."
 
-#: ../../source/index.rst:174
+#: ../../source/index.rst:193
 msgid ""
 "Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
 "positions importées sont immédiatement visibles ; après l'import d'une "
@@ -904,15 +1020,15 @@ msgstr ""
 "eXtreme Gammon -analyysin liittäminen macOS:stä, joka jäi aiemmin "
 "tyhjäksi (järjestelmän leikepöytä hajotti aksentit)."
 
-#: ../../source/index.rst:175
+#: ../../source/index.rst:194
 msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
 msgstr "Katso :ref:`headless`, :ref:`cmd_mode` ja :ref:`telecharge_install`."
 
-#: ../../source/index.rst:178
+#: ../../source/index.rst:197
 msgid "0.27.0 (2026-06-13)"
 msgstr "0.27.0 (2026-06-13)"
 
-#: ../../source/index.rst:180
+#: ../../source/index.rst:199
 msgid ""
 "Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
 "accessible par le bouton *Cram* à côté de *Study*, qui présente des "
@@ -926,7 +1042,7 @@ msgstr ""
 "lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen "
 "järjestystä häiritsemättä."
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:200
 msgid ""
 "Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
 "directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
@@ -943,7 +1059,7 @@ msgstr ""
 "kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin "
 "suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen."
 
-#: ../../source/index.rst:182
+#: ../../source/index.rst:201
 msgid ""
 "Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
 "(tous les coups d'un match en un seul appel) et ``positions.epc`` "
@@ -953,15 +1069,15 @@ msgstr ""
 "kaikki siirrot yhdellä kutsulla) ja ``positions.epc`` (molempien "
 "pelaajien Effective Pip Count)."
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:202
 msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
 msgstr "Katso :ref:`panneau_anki` ja :ref:`cmd_mode`."
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:205
 msgid "0.26.0 (2026-06-09)"
 msgstr "0.26.0 (2026-06-09)"
 
-#: ../../source/index.rst:188
+#: ../../source/index.rst:207
 msgid ""
 "Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
 " curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
@@ -973,7 +1089,7 @@ msgstr ""
 "sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden "
 "näyttöjen paremmaksi hyödyntämiseksi."
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:208
 msgid ""
 "Ajout d'une barre d'informations au-dessus du plateau rappelant les "
 "joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
@@ -981,7 +1097,7 @@ msgstr ""
 "Lisätty laudan yläpuolelle tietopalkki, joka muistuttaa pelaajista ja "
 "ottelun kontekstista (tapahtuma, paikka, kierros, päivämäärä, pituus)."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:209
 msgid ""
 "À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
 "la revue débute sur la première position."
@@ -989,7 +1105,7 @@ msgstr ""
 "Tietokantaa avattaessa Ottelut-paneeli näytetään nyt heti, ja tarkastelu "
 "alkaa ensimmäisestä asemasta."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:210
 msgid ""
 "Les raccourcis clavier sont désormais indépendants de la disposition du "
 "clavier (AZERTY, QWERTY, QWERTZ…)."
@@ -997,13 +1113,13 @@ msgstr ""
 "Näppäinoikotiet ovat nyt riippumattomia näppäimistöasettelusta (AZERTY, "
 "QWERTY, QWERTZ…)."
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:211
 msgid ""
 "Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
 "videau)."
 msgstr "Korjattu XGID:n dekoodaus (Jacoby/Beaver-liput ja kuution arvo)."
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:212
 msgid ""
 "Ajout des onglets de vues multiples : plusieurs espaces de travail "
 "indépendants (liste de positions, position courante, recherche) avec les "
@@ -1016,15 +1132,15 @@ msgstr ""
 "näkymä), *CTRL-W* (sulje), *CTRL-PageUp*/*CTRL-PageDown* (vaihda näkymää)"
 " ja uudelleennimeäminen kaksoisnapsauttamalla välilehteä."
 
-#: ../../source/index.rst:194
+#: ../../source/index.rst:213
 msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
 msgstr "Katso :ref:`configuration` ja :ref:`onglets_vues`."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:216
 msgid "0.25.0 (2026-06-07)"
 msgstr "0.25.0 (2026-06-07)"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:218
 msgid ""
 "Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
@@ -1036,16 +1152,16 @@ msgstr ""
 "asemaksi ja ``positions.fromXGP`` lukee yksittäisen aseman "
 "``.xgp``-tiedoston."
 
-#: ../../source/index.rst:200 ../../source/index.rst:206
-#: ../../source/index.rst:225
+#: ../../source/index.rst:219 ../../source/index.rst:225
+#: ../../source/index.rst:244
 msgid "Voir :ref:`headless`."
 msgstr "Katso :ref:`headless`."
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:222
 msgid "0.24.0 (2026-06-06)"
 msgstr "0.24.0 (2026-06-06)"
 
-#: ../../source/index.rst:205
+#: ../../source/index.rst:224
 msgid ""
 "Ajout d'une image conteneur (Docker) pour le mode headless : un point "
 "d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
@@ -1057,11 +1173,11 @@ msgstr ""
 "binaarin ilman graafista käyttöliittymää, jotta blunderDB-moottori "
 "voidaan ottaa käyttöön palveluna käänteisvälityspalvelimen takana."
 
-#: ../../source/index.rst:209
+#: ../../source/index.rst:228
 msgid "0.23.0 (2026-06-05)"
 msgstr "0.23.0 (2026-06-05)"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:230
 msgid ""
 "Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
 " tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
@@ -1073,7 +1189,7 @@ msgstr ""
 "``tour``-komennolla, sekä esimerkkitietokanta, joka voidaan ladata "
 "``demo``-komennolla työkalun tutustumiseksi tuomatta omia pelejä."
 
-#: ../../source/index.rst:212
+#: ../../source/index.rst:231
 msgid ""
 "Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
 "dés, videau) depuis la fenêtre de configuration."
@@ -1081,11 +1197,11 @@ msgstr ""
 "Laudan värien mukauttaminen (tausta, reunus, nuolet, tammat, nopat, "
 "kuutio) asetusikkunasta."
 
-#: ../../source/index.rst:213
+#: ../../source/index.rst:232
 msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
 msgstr "Komentorivin automaattinen täydentäminen (*TAB*-näppäin)."
 
-#: ../../source/index.rst:214
+#: ../../source/index.rst:233
 msgid ""
 "Panneau de recherche : contrôle explicite du type de décision (Pions / "
 "Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
@@ -1097,23 +1213,23 @@ msgstr ""
 "synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä "
 "otto/hylkäys-päätöksille."
 
-#: ../../source/index.rst:215
+#: ../../source/index.rst:234
 msgid "Recherche d'une position par son identifiant (filtre ``id``)."
 msgstr "Aseman haku sen tunnisteen perusteella (suodatin ``id``)."
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:235
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Korjattu kuutiovirheen kohdistuminen pelaajalle 1."
 
-#: ../../source/index.rst:217
+#: ../../source/index.rst:236
 msgid "Voir :ref:`visites_guidees`."
 msgstr "Katso :ref:`visites_guidees`."
 
-#: ../../source/index.rst:220
+#: ../../source/index.rst:239
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/index.rst:222
+#: ../../source/index.rst:241
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -1131,7 +1247,7 @@ msgstr ""
 "siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen ``call``-välittäjä, "
 "joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin."
 
-#: ../../source/index.rst:223
+#: ../../source/index.rst:242
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -1141,7 +1257,7 @@ msgstr ""
 "BGBlitz-teksti, natiivi ``.db``-kirjasto) muotojen välisten duplikaattien"
 " rikastamisella."
 
-#: ../../source/index.rst:224
+#: ../../source/index.rst:243
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -1149,11 +1265,11 @@ msgstr ""
 "Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa "
 "ei ole avattu, eikä Kommentit-paneeli enää jää silmukkaan avattaessa."
 
-#: ../../source/index.rst:228
+#: ../../source/index.rst:247
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/index.rst:230
+#: ../../source/index.rst:249
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -1165,7 +1281,7 @@ msgstr ""
 " ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, "
 "kreikaksi tai venäjäksi."
 
-#: ../../source/index.rst:231
+#: ../../source/index.rst:250
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -1173,19 +1289,19 @@ msgstr ""
 "Lisätty asetusikkuna, käytettävissä työkalupalkin "
 "hammasrataspainikkeesta, jonka avulla voi valita kielen."
 
-#: ../../source/index.rst:232
+#: ../../source/index.rst:251
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "Kielivalinta säilyy istunnosta toiseen."
 
-#: ../../source/index.rst:233
+#: ../../source/index.rst:252
 msgid "Voir :ref:`configuration`."
 msgstr "Katso :ref:`configuration`."
 
-#: ../../source/index.rst:236
+#: ../../source/index.rst:255
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/index.rst:238
+#: ../../source/index.rst:257
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -1197,7 +1313,7 @@ msgstr ""
 "-merkinnällä (kaksoisnapsautus) ja rajoittamattomalla tammojen määrällä "
 "per piste (komento ``x``)."
 
-#: ../../source/index.rst:239
+#: ../../source/index.rst:258
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -1205,7 +1321,7 @@ msgstr ""
 "Lisätty ”vain ensimmäinen noppa” -vaihtoehto heittosuodattimeen "
 "(D1-muunnelma, CLI-valitsin ``--dice``)."
 
-#: ../../source/index.rst:240
+#: ../../source/index.rst:259
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -1213,7 +1329,7 @@ msgstr ""
 "Kommentit-paneeli: syöttökentän automaattinen fokus avattaessa, ja "
 "muokkaa/poista-painikkeet aina näkyvissä."
 
-#: ../../source/index.rst:241
+#: ../../source/index.rst:260
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
@@ -1221,11 +1337,11 @@ msgstr ""
 "Korjattu ”Search Text” -suodatin, joka ei löytänyt kaikkia kommenttien "
 "tunnisteita."
 
-#: ../../source/index.rst:244
+#: ../../source/index.rst:263
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/index.rst:246
+#: ../../source/index.rst:265
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
 "Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
@@ -1242,7 +1358,7 @@ msgstr ""
 "hajontakaaviolla, Errors-välilehti tuplaustoimintojen erittelyllä ja "
 "virheiden suuruuksien histogrammilla."
 
-#: ../../source/index.rst:247
+#: ../../source/index.rst:266
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -1250,15 +1366,15 @@ msgstr ""
 "Interaktiivinen porautuminen positioihin / otteluihin / turnauksiin "
 "kaikista indikaattoreista."
 
-#: ../../source/index.rst:248
+#: ../../source/index.rst:267
 msgid "Toggle PR / MWC instantané."
 msgstr "Välitön PR / MWC -vaihto."
 
-#: ../../source/index.rst:249
+#: ../../source/index.rst:268
 msgid "Commande CLI list --type stats."
 msgstr "CLI-komento list --type stats."
 
-#: ../../source/index.rst:250
+#: ../../source/index.rst:269
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -1266,23 +1382,23 @@ msgstr ""
 "PR / Snowie ER / MWC -indikaattoreiden yhtenäistäminen eXtremeGammonin ja"
 " gnuBG:n kanssa (0.16 ekviteettikynnys läheisille kuutioille)."
 
-#: ../../source/index.rst:251
+#: ../../source/index.rst:270
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Korjattu cube_error-laskenta Double/Pass-päätöksille."
 
-#: ../../source/index.rst:252
+#: ../../source/index.rst:271
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Tilastomallin dokumentaatio (:ref:`stats_parity`)."
 
-#: ../../source/index.rst:253
+#: ../../source/index.rst:272
 msgid "Voir :ref:`stats`."
 msgstr "Katso :ref:`stats`."
 
-#: ../../source/index.rst:256
+#: ../../source/index.rst:275
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/index.rst:258
+#: ../../source/index.rst:277
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -1292,27 +1408,27 @@ msgstr ""
 "erikoistuneeseen tiedostoon, 7 palvelumoduulin erottaminen App.svelte:stä"
 " (4888→469 riviä), modaali-/paneelivarastojen yhdistäminen."
 
-#: ../../source/index.rst:259
+#: ../../source/index.rst:278
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Täydellinen siirtyminen Svelte 5 -runeihin."
 
-#: ../../source/index.rst:260
+#: ../../source/index.rst:279
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
 msgstr "9 taulukkomodaalin korvaaminen yleisellä DataTableModal-komponentilla."
 
-#: ../../source/index.rst:261
+#: ../../source/index.rst:280
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Lisätty ESLint + Prettier + vitest (125 frontend-testiä) CI:llä."
 
-#: ../../source/index.rst:262
+#: ../../source/index.rst:281
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr ""
 "WCAG 2.1 AA -yhdenmukaisuus (näkyvä fokus, ARIA-roolit, "
 "näppäimistönavigointi)."
 
-#: ../../source/index.rst:263
+#: ../../source/index.rst:282
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
@@ -1320,23 +1436,23 @@ msgstr ""
 "Database-mutexin vaihtaminen RWMutexiksi paremman lukurinnakkaisuuden "
 "saavuttamiseksi."
 
-#: ../../source/index.rst:264
+#: ../../source/index.rst:283
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Täydellinen CLI-dokumentaatio (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/index.rst:265
+#: ../../source/index.rst:284
 msgid "Réécriture du README."
 msgstr "README uudelleenkirjoitettu."
 
-#: ../../source/index.rst:266
+#: ../../source/index.rst:285
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Korjattu kaikki ESLint (46→0)- ja Vite (6→0) -varoitukset."
 
-#: ../../source/index.rst:269
+#: ../../source/index.rst:288
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/index.rst:271
+#: ../../source/index.rst:290
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -1346,33 +1462,33 @@ msgstr ""
 "Tallennuksen optimointi: analyysidatan zlib-pakkaus (~80 % pienennys), "
 "kompakti positioiden koodaus (~90 % koon pienennys)."
 
-#: ../../source/index.rst:272
+#: ../../source/index.rst:291
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi."
 
-#: ../../source/index.rst:273
+#: ../../source/index.rst:292
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Korjattu haku kuutiovirheen mukaan."
 
-#: ../../source/index.rst:274
+#: ../../source/index.rst:293
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Korjattu EDIT-tila tuloksettoman haun jälkeen."
 
-#: ../../source/index.rst:275
+#: ../../source/index.rst:294
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Hakupaneelin tilan palauttaminen välilehteä vaihdettaessa."
 
-#: ../../source/index.rst:276
+#: ../../source/index.rst:295
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "62 debug-lauseen poistaminen kriittisiltä poluilta."
 
-#: ../../source/index.rst:279
+#: ../../source/index.rst:298
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/index.rst:281
+#: ../../source/index.rst:300
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
@@ -1382,13 +1498,13 @@ msgstr ""
 "denormalisoidut suodatussarakkeet, bittilautakuvioiden esisuodatus, WAL-"
 "journalointi."
 
-#: ../../source/index.rst:282
+#: ../../source/index.rst:301
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
 msgstr "Erätuonti >=3x nopeampi, suodatettu haku <=100 ms yli 10 000 positiolla."
 
-#: ../../source/index.rst:283
+#: ../../source/index.rst:302
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -1398,11 +1514,11 @@ msgstr ""
 "versioilla; vanhat DB:t migratoidaan automaattisesti paikallaan (ota "
 "ensin varmuuskopio)."
 
-#: ../../source/index.rst:286
+#: ../../source/index.rst:305
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/index.rst:288
+#: ../../source/index.rst:307
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -1410,23 +1526,23 @@ msgstr ""
 "Position vienti PNG-kuvana leikepöydälle (pelkkä lauta painikkeella "
 "Ctrl+X, tai lauta analyysin kanssa painikkeella Ctrl+X Ctrl+X)."
 
-#: ../../source/index.rst:291
+#: ../../source/index.rst:310
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/index.rst:293
+#: ../../source/index.rst:312
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr "Oma Anki-paneeli kertausvälioppimiseen (FSRS-algoritmi)."
 
-#: ../../source/index.rst:294
+#: ../../source/index.rst:313
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Kommenttien tuonti XG-tiedostoista."
 
-#: ../../source/index.rst:297
+#: ../../source/index.rst:316
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/index.rst:299
+#: ../../source/index.rst:318
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -1434,23 +1550,23 @@ msgstr ""
 "Käyttöliittymän yksinkertaistaminen: otteluiden ja kokoelmien selaus "
 "tapahtuu nyt suoraan paneeleiden kautta."
 
-#: ../../source/index.rst:300
+#: ../../source/index.rst:319
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Tilariviin integroitu komentorivi."
 
-#: ../../source/index.rst:301
+#: ../../source/index.rst:320
 msgid "Panneau Console renommé en panneau Log."
 msgstr "Console-paneeli nimetty uudelleen Log-paneeliksi."
 
-#: ../../source/index.rst:302
+#: ../../source/index.rst:321
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Oma Bearoff-paneeli alapaneelissa."
 
-#: ../../source/index.rst:303
+#: ../../source/index.rst:322
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Position kopiointi/liittäminen hakupaneelissa."
 
-#: ../../source/index.rst:304
+#: ../../source/index.rst:323
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -1458,45 +1574,45 @@ msgstr ""
 "Vedä-ja-pudota kokoelmien, kokoelmien sisäisten positioiden sekä "
 "turnausten sisäisten otteluiden uudelleenjärjestämiseen."
 
-#: ../../source/index.rst:305
+#: ../../source/index.rst:324
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Turnaussarake ottelupaneelissa suoralla muokkauksella."
 
-#: ../../source/index.rst:306
+#: ../../source/index.rst:325
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Analyysipaneelin automaattinen näyttö haun jälkeen."
 
-#: ../../source/index.rst:309
+#: ../../source/index.rst:328
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/index.rst:311
+#: ../../source/index.rst:330
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "eXtreme Gammon -positiotiedostojen (XGP) tuonti analyysin kanssa."
 
-#: ../../source/index.rst:314
+#: ../../source/index.rst:333
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/index.rst:316
+#: ../../source/index.rst:335
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Hakusuodatin nykyisissä positioissa."
 
-#: ../../source/index.rst:317
+#: ../../source/index.rst:336
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Lisätty ottelu- ja turnaussuodattimet."
 
-#: ../../source/index.rst:318
+#: ../../source/index.rst:337
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
 msgstr "Laudan automaattinen tyhjennys hakupaneelia avattaessa."
 
-#: ../../source/index.rst:321
+#: ../../source/index.rst:340
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/index.rst:323
+#: ../../source/index.rst:342
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -1504,7 +1620,7 @@ msgstr ""
 "Otteluiden tuonti eXtreme Gammonista (XG/XGP), GNUbg:stä (SGF), "
 "Jellyfishistä (MAT/TXT) ja BGBlitzistä (BGF/TXT)."
 
-#: ../../source/index.rst:324
+#: ../../source/index.rst:343
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -1512,7 +1628,7 @@ msgstr ""
 "Otteluiden selaaminen: tuodun ottelun siirtojen läpikäynti, pelatun "
 "siirron korostuksella."
 
-#: ../../source/index.rst:325
+#: ../../source/index.rst:344
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -1520,11 +1636,11 @@ msgstr ""
 "Ottelupaneeli: luettelo, lajittelu, suora muokkaus, pelaajien vaihto, "
 "turnauksen määritys."
 
-#: ../../source/index.rst:326
+#: ../../source/index.rst:345
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Rekursiivinen kansiotuonti ja vedä-ja-pudota-tuonti."
 
-#: ../../source/index.rst:327
+#: ../../source/index.rst:346
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
 "GNUbg intégrée."
@@ -1532,33 +1648,33 @@ msgstr ""
 "EPC-laskuri (Effective Pip Count) sisäänrakennetulla GNUbg:n bearoff-"
 "tietokannalla."
 
-#: ../../source/index.rst:328
+#: ../../source/index.rst:347
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Kokoelmat: positioiden mukautettu ryhmittely."
 
-#: ../../source/index.rst:329
+#: ../../source/index.rst:348
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Turnaukset: otteluiden ryhmittely tapahtuman mukaan."
 
-#: ../../source/index.rst:330
+#: ../../source/index.rst:349
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
 msgstr "Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio)."
 
-#: ../../source/index.rst:331
+#: ../../source/index.rst:350
 msgid "Migration automatique du schéma de base de données."
 msgstr "Tietokantaskeeman automaattinen migraatio."
 
-#: ../../source/index.rst:332
+#: ../../source/index.rst:351
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Useiden moottoreiden näyttö analyysissä."
 
-#: ../../source/index.rst:333
+#: ../../source/index.rst:352
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Pelaajan 1 virheiden/blundereiden suodatin hauissa."
 
-#: ../../source/index.rst:334
+#: ../../source/index.rst:353
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -1566,166 +1682,166 @@ msgstr ""
 "Tietokannan vienti tarkalla valinnalla (ottelut, kokoelmat, turnaukset, "
 "pelatut siirrot)."
 
-#: ../../source/index.rst:335
+#: ../../source/index.rst:354
 msgid "Bouton de navigation dans les matchs."
 msgstr "Otteluiden selauspainike."
 
-#: ../../source/index.rst:336
+#: ../../source/index.rst:355
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Pip-laskuri otteluiden selauksessa."
 
-#: ../../source/index.rst:337
+#: ../../source/index.rst:356
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Täydellinen komentorivikäyttöliittymä (CLI)."
 
-#: ../../source/index.rst:338
+#: ../../source/index.rst:357
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Viimeisimmän tietokannan automaattinen uudelleenavaus."
 
-#: ../../source/index.rst:339
+#: ../../source/index.rst:358
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Parannettu työkalupalkki ja kuvakkeet."
 
-#: ../../source/index.rst:342
+#: ../../source/index.rst:361
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/index.rst:344
+#: ../../source/index.rst:363
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Suodatinkirjaston virhekorjaus."
 
-#: ../../source/index.rst:345
+#: ../../source/index.rst:364
 msgid "Import/export de base de données."
 msgstr "Tietokannan tuonti/vienti."
 
-#: ../../source/index.rst:346
+#: ../../source/index.rst:365
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Nuolien näyttäminen valituille siirroille."
 
-#: ../../source/index.rst:347
+#: ../../source/index.rst:366
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Pikanäppäimet tuontiin/vientiin."
 
-#: ../../source/index.rst:350
+#: ../../source/index.rst:369
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/index.rst:352
+#: ../../source/index.rst:371
 msgid "Possibilité de cacher le compte de course."
 msgstr "Mahdollisuus piilottaa pip-laskuri."
 
-#: ../../source/index.rst:353
+#: ../../source/index.rst:372
 msgid "Chargement d'une position aléatoire."
 msgstr "Satunnaisen position lataaminen."
 
-#: ../../source/index.rst:356
+#: ../../source/index.rst:375
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/index.rst:358
+#: ../../source/index.rst:377
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Japanin- ja saksankielisten XG-vientien tuki."
 
-#: ../../source/index.rst:361
+#: ../../source/index.rst:380
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/index.rst:363
+#: ../../source/index.rst:382
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Lisätty suodatinkirjasto."
 
-#: ../../source/index.rst:364
+#: ../../source/index.rst:383
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Tietokannan version näyttäminen metatiedoissa."
 
-#: ../../source/index.rst:367
+#: ../../source/index.rst:386
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/index.rst:369
+#: ../../source/index.rst:388
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr ""
 "Lisätty uusia suodattimia (peilikuva, ei kosketusta, jan blot, outfield "
 "blot)."
 
-#: ../../source/index.rst:372
+#: ../../source/index.rst:391
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/index.rst:374 ../../source/index.rst:382
-#: ../../source/index.rst:389
+#: ../../source/index.rst:393 ../../source/index.rst:401
+#: ../../source/index.rst:408
 msgid "Résolutions de bugs divers."
 msgstr "Erinäisiä virhekorjauksia."
 
-#: ../../source/index.rst:375
+#: ../../source/index.rst:394
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Lisätty kuvake blunderDB:lle."
 
-#: ../../source/index.rst:376
+#: ../../source/index.rst:395
 msgid "Corrections de filtres."
 msgstr "Suodattimien korjauksia."
 
-#: ../../source/index.rst:377
+#: ../../source/index.rst:396
 msgid "Ajout du support de MacOS."
 msgstr "Lisätty macOS-tuki."
 
-#: ../../source/index.rst:380
+#: ../../source/index.rst:399
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/index.rst:383
+#: ../../source/index.rst:402
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Tallentaa ikkunan koon automaattisesti."
 
-#: ../../source/index.rst:384
+#: ../../source/index.rst:403
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Tuo mahdolliset kommentit XG:stä."
 
-#: ../../source/index.rst:387
+#: ../../source/index.rst:406
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/index.rst:390
+#: ../../source/index.rst:409
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Lisätty ottelu-/TP/GV-taulukot."
 
-#: ../../source/index.rst:391
+#: ../../source/index.rst:410
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Lisätty hakusuodattimet (siirrot, tuplauspäätös, päivämäärä)."
 
-#: ../../source/index.rst:392
+#: ../../source/index.rst:411
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Lisätty positioiden metatiedot."
 
-#: ../../source/index.rst:393
+#: ../../source/index.rst:412
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Tuonti-/vientitoiminto blunderDB-instanssien välillä."
 
-#: ../../source/index.rst:394
+#: ../../source/index.rst:413
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Lisätty tietokantojen metatietotoiminto."
 
-#: ../../source/index.rst:395
+#: ../../source/index.rst:414
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Versionumeroiden käyttöönotto (tietokanta ja sovellus)."
 
-#: ../../source/index.rst:398
+#: ../../source/index.rst:417
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/index.rst:400
+#: ../../source/index.rst:419
 msgid "Création version bêta."
 msgstr "Beta-versio."
 
-#: ../../source/index.rst:403
+#: ../../source/index.rst:422
 msgid "Sommaire"
 msgstr "Sisällysluettelo"
 
-#: ../../source/index.rst:428
+#: ../../source/index.rst:448
 msgid "Contacts"
 msgstr "Yhteystiedot"
 
-#: ../../source/index.rst:430
+#: ../../source/index.rst:450
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -1733,7 +1849,7 @@ msgstr ""
 "Tekijä: Kévin Unger <blunderdb@proton.me>. Minut tavoittaa myös Heroes-"
 "palvelusta käyttäjänimellä postmanpat."
 
-#: ../../source/index.rst:433
+#: ../../source/index.rst:453
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -1748,41 +1864,41 @@ msgstr ""
 "koodaukseen ja virheenkorjaukseen... Älä siis epäröi ottaa yhteyttä ja "
 "jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta."
 
-#: ../../source/index.rst:440
+#: ../../source/index.rst:460
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Tässä useita tapoja keskustella:"
 
-#: ../../source/index.rst:442
+#: ../../source/index.rst:462
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:444
+#: ../../source/index.rst:464
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "lähetä minulle sähköpostia osoitteeseen blunderdb@proton.me,"
 
-#: ../../source/index.rst:446
+#: ../../source/index.rst:466
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "keskustele kanssani, jos tapaamme turnauksessa,"
 
-#: ../../source/index.rst:448
+#: ../../source/index.rst:468
 msgid "sur Github,"
 msgstr "GitHubissa,"
 
-#: ../../source/index.rst:450
+#: ../../source/index.rst:470
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "avaa tiketti: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:452
+#: ../../source/index.rst:472
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "virhekorjauksia tai parannusehdotuksia varten luo pull request."
 
-#: ../../source/index.rst:456
+#: ../../source/index.rst:476
 msgid "Faire un don"
 msgstr "Lahjoita"
 
-#: ../../source/index.rst:458
+#: ../../source/index.rst:478
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -1790,19 +1906,19 @@ msgstr ""
 "Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa "
 "kehitystä, voit"
 
-#: ../../source/index.rst:460
+#: ../../source/index.rst:480
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "tarjota minulle juoman, jos meillä on ilo tavata!"
 
-#: ../../source/index.rst:462
+#: ../../source/index.rst:482
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "tehdä pienen lahjoituksen PayPalilla osoitteeseen blunderdb@proton.me"
 
-#: ../../source/index.rst:465
+#: ../../source/index.rst:485
 msgid "Remerciements"
 msgstr "Kiitokset"
 
-#: ../../source/index.rst:467
+#: ../../source/index.rst:487
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -1811,7 +1927,7 @@ msgstr ""
 "tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia "
 "ystäviä:"
 
-#: ../../source/index.rst:470
+#: ../../source/index.rst:490
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -1823,7 +1939,7 @@ msgstr ""
 "joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata "
 "paremmin huolimatta."
 
-#: ../../source/index.rst:475
+#: ../../source/index.rst:495
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -1833,11 +1949,11 @@ msgstr ""
 " seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai "
 "backgammon-tartunnan."
 
-#: ../../source/index.rst:480
+#: ../../source/index.rst:500
 msgid "Crédits"
 msgstr "Kiitokset kolmansille osapuolille"
 
-#: ../../source/index.rst:482
+#: ../../source/index.rst:502
 msgid ""
 "blunderDB embarque du code, des données et des polices d'autres "
 "personnes. L'inventaire complet, avec le texte des licences, est le "
@@ -1853,7 +1969,7 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md>`__ "
 "juuressa. Olennaisin:"
 
-#: ../../source/index.rst:489
+#: ../../source/index.rst:509
 msgid ""
 "le réseau de neurones ``strehl-prob5-512-512-256-128`` est l'œuvre "
 "d'*Alexander Strehl* (`alexstrehl/backgammon-ai-engine "
@@ -1869,11 +1985,11 @@ msgstr ""
 "<https://github.com/kevung/gammonNet>`__-projektin omaa kokoonpanoa "
 "(MIT);"
 
-#: ../../source/index.rst:496
+#: ../../source/index.rst:516
 msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
 msgstr "Kazaross-XG2-otteluekvivalenssitaulukko on *Neil Kazarossin* työtä;"
 
-#: ../../source/index.rst:498
+#: ../../source/index.rst:518
 msgid ""
 "les tables de take points et de valeurs de gammon sont tirées de *The "
 "Theory of Backgammon* de *Dirk Schiemann* ;"
@@ -1881,7 +1997,7 @@ msgstr ""
 "take point- ja gammon-arvotaulukot on otettu *Dirk Schiemannin* kirjasta "
 "*The Theory of Backgammon*;"
 
-#: ../../source/index.rst:501
+#: ../../source/index.rst:521
 msgid ""
 "les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
 "bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
@@ -1897,7 +2013,7 @@ msgstr ""
 "ohjelmisto, ja nämä taulukot ovat sen tuottamaa dataa, joka mainitaan "
 "sellaisena;"
 
-#: ../../source/index.rst:507
+#: ../../source/index.rst:527
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -1909,7 +2025,7 @@ msgstr ""
 "<https://github.com/kevung/gnubgparser>`__ ja `bgfparser "
 "<https://github.com/kevung/bgfparser>`__ (MIT);"
 
-#: ../../source/index.rst:512
+#: ../../source/index.rst:532
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -1921,7 +2037,7 @@ msgstr ""
 "<https://wails.io>`__ ja `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__ (MIT);"
 
-#: ../../source/index.rst:517
+#: ../../source/index.rst:537
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -1931,7 +2047,7 @@ msgstr ""
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ ja "
 "`driver.js <https://driverjs.com>`__ (MIT);"
 
-#: ../../source/index.rst:521
+#: ../../source/index.rst:541
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
