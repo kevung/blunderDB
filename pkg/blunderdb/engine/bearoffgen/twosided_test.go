@@ -154,3 +154,77 @@ func TestTwoSided_ProgressReachesTheTotal(t *testing.T) {
 		t.Error("progress was never called")
 	}
 }
+
+// Parallelism decides who computes an entry, never what it is worth: one
+// diagonal reads only diagonals below it, so splitting one across cores has to
+// give the same table. This is the claim ComputeTwoSided's doc comment makes,
+// and the reason the identity test can run on every core.
+func TestTwoSided_ParallelIsByteIdenticalToSerial(t *testing.T) {
+	t.Parallel()
+	var serial, parallel bytes.Buffer
+	st := NewTwoSidedState(6, 5)
+	if err := ComputeTwoSided(context.Background(), st, 1, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteTwoSided(&serial, st); err != nil {
+		t.Fatal(err)
+	}
+	pst := NewTwoSidedState(6, 5)
+	if err := ComputeTwoSided(context.Background(), pst, 8, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteTwoSided(&parallel, pst); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(serial.Bytes(), parallel.Bytes()) {
+		t.Fatalf("8 workers produced a different table (%d vs %d bytes)", serial.Len(), parallel.Len())
+	}
+}
+
+// A run stopped part-way and picked up again must end on the table an
+// uninterrupted run produces — that is what makes the Pause button honest
+// rather than a restart wearing a nicer label.
+func TestTwoSided_ResumingFromAPauseGivesTheSameTable(t *testing.T) {
+	t.Parallel()
+	whole := NewTwoSidedState(6, 5)
+	if err := ComputeTwoSided(context.Background(), whole, 4, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	// Stop as soon as a quarter of the pairs are in, as a pause would.
+	n := NumPositions(6, 5)
+	ctx, cancel := context.WithCancel(context.Background())
+	part := NewTwoSidedState(6, 5)
+	err := ComputeTwoSided(ctx, part, 4, func(done, total int64) {
+		if done*4 >= total {
+			cancel()
+		}
+	})
+	if err == nil {
+		t.Fatal("the cancelled run returned no error")
+	}
+	cancel()
+	if part.Diagonal == 0 || part.Diagonal >= 2*n-1 {
+		t.Fatalf("paused at diagonal %d, expected somewhere inside 0 … %d", part.Diagonal, 2*n-2)
+	}
+	if part.Done() {
+		t.Fatal("a paused state reports itself finished")
+	}
+
+	if err := ComputeTwoSided(context.Background(), part, 4, nil); err != nil {
+		t.Fatal(err)
+	}
+	if !part.Done() {
+		t.Fatal("the resumed state does not report itself finished")
+	}
+	var a, b bytes.Buffer
+	if err := WriteTwoSided(&a, whole); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteTwoSided(&b, part); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(a.Bytes(), b.Bytes()) {
+		t.Fatal("the resumed run produced a different table")
+	}
+}

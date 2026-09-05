@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"runtime"
+	"sync"
 )
 
 // The two-sided sweep, a port of makebearoff.c's generate_ts / BearOff2 /
@@ -50,19 +52,72 @@ func cubeEquity(nd, dt, dp int32) int32 {
 	return nd // no double
 }
 
-// TwoSided generates the two-sided table for `points` points and `checkers`
-// chequers and writes it to w. progress, when non-nil, is called with the
-// number of pairs done and the total.
+// TwoSidedState is a run's whole state: the table so far, and the diagonal it
+// has reached. It is what a pause writes down and a resume picks up — the
+// sweep needs nothing else, since every diagonal reads only earlier ones.
+type TwoSidedState struct {
+	Points, Checkers int
+	// Diagonal is the next diagonal to compute, in 0 … 2n-2. A finished run
+	// has Diagonal == 2n-1.
+	Diagonal int
+	// Body[(us*n+them)*4+k] is equity k of the pair (us, them).
+	Body []int16
+}
+
+// NewTwoSidedState allocates the state of a run that has not started.
 //
 // Memory: the whole table is held as one []int16 of nPos²×4 entries — 6.8 MB
 // for TS-06-06, 1.2 GB for TS-06-11. That is the file's own body layout, so
 // writing it is a copy.
+func NewTwoSidedState(points, checkers int) *TwoSidedState {
+	n := NumPositions(points, checkers)
+	return &TwoSidedState{
+		Points:   points,
+		Checkers: checkers,
+		Body:     make([]int16, int64(n)*int64(n)*planeCount),
+	}
+}
+
+// Done reports whether the sweep has covered every diagonal.
+func (st *TwoSidedState) Done() bool {
+	n := NumPositions(st.Points, st.Checkers)
+	return st.Diagonal >= 2*n-1
+}
+
+// TwoSided generates the two-sided table for `points` points and `checkers`
+// chequers and writes it to w, on every core the machine has. progress, when
+// non-nil, is called with the number of pairs done and the total.
 func TwoSided(ctx context.Context, w io.Writer, points, checkers int, progress func(done, total int64)) error {
+	st := NewTwoSidedState(points, checkers)
+	if err := ComputeTwoSided(ctx, st, runtime.NumCPU(), progress); err != nil {
+		return err
+	}
+	return WriteTwoSided(w, st)
+}
+
+// ComputeTwoSided runs the sweep from wherever `st` left off, across `workers`
+// goroutines (0 or 1 = serial, anything else capped at NumCPU).
+//
+// Parallelism here decides WHO computes an entry, never what it is worth: a
+// pair (us, them) reads only pairs whose us+them is strictly smaller — its
+// successors move chequers forward, so their index is always lower — which is
+// to say only diagonals already finished. Entries on one diagonal cannot see
+// each other, so splitting a diagonal across cores is byte-for-byte the same
+// table. TestTwoSided_6x6_IdenticalToGnubg is what holds that claim.
+func ComputeTwoSided(ctx context.Context, st *TwoSidedState, workers int, progress func(done, total int64)) error {
+	points, checkers := st.Points, st.Checkers
 	n := NumPositions(points, checkers)
 	total := int64(n) * int64(n)
-
-	// body[(us*n+them)*4+k] is equity k of the pair (us, them).
-	body := make([]int16, total*planeCount)
+	body := st.Body
+	if int64(len(body)) != total*planeCount {
+		return fmt.Errorf("bearoffgen: state holds %d entries, want %d", len(body), total*planeCount)
+	}
+	if workers <= 0 {
+		workers = 1
+	}
+	if max := runtime.NumCPU(); workers > max {
+		workers = max
+	}
 
 	boards := make([][]int, n)
 	for i := range boards {
@@ -74,25 +129,25 @@ func TwoSided(ctx context.Context, w io.Writer, points, checkers int, progress f
 	// r indexes the 21 distinct rolls. Precomputed once: the sweep asks for
 	// them nPos² times, and they do not depend on the opponent at all.
 	reach := make([][][]int, n)
-	g := newGen(points, checkers)
-	for i := 0; i < n; i++ {
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		reach[i] = make([][]int, 0, 21)
-		for d1 := 1; d1 <= 6; d1++ {
-			for d2 := 1; d2 <= d1; d2++ {
-				// g owns its result slice, so copy what we keep.
-				reach[i] = append(reach[i], append([]int(nil), g.successors(boards[i], d1, d2)...))
+	if err := parallelFor(ctx, workers, n, func(lo, hi int) {
+		g := newGen(points, checkers) // one generator per worker: it owns buffers
+		for i := lo; i < hi; i++ {
+			reach[i] = make([][]int, 0, 21)
+			for d1 := 1; d1 <= 6; d1++ {
+				for d2 := 1; d2 <= d1; d2++ {
+					// g owns its result slice, so copy what we keep.
+					reach[i] = append(reach[i], append([]int(nil), g.successors(boards[i], d1, d2)...))
+				}
 			}
 		}
+	}); err != nil {
+		return err
 	}
 
 	// The sweep, along diagonals of constant us+them: a pair (us, them) reads
 	// row `them` at columns j < us, so every value it needs is already there.
 	// makebearoff.c walks the same order in two loops, above and below the
 	// diagonal.
-	var done int64
 	sweep := func(us, them int) {
 		off := (us*n + them) * planeCount
 		if us == 0 {
@@ -165,38 +220,94 @@ func TwoSided(ctx context.Context, w io.Writer, points, checkers int, progress f
 		}
 	}
 
-	for i := 0; i < n; i++ {
-		if err := ctx.Err(); err != nil {
+	// Diagonal d holds the pairs with us+them == d, and reads only diagonals
+	// below it. So a diagonal is a barrier and its entries are independent:
+	// resume means starting at st.Diagonal, and parallelism means splitting
+	// one diagonal, never spanning two.
+	for d := st.Diagonal; d < 2*n-1; d++ {
+		lo, hi := 0, d // them runs over [lo, hi]
+		if d >= n {
+			lo = d - n + 1
+		}
+		if hi > n-1 {
+			hi = n - 1
+		}
+		if err := parallelFor(ctx, workers, hi-lo+1, func(a, b int) {
+			for k := a; k < b; k++ {
+				them := lo + k
+				sweep(d-them, them)
+			}
+		}); err != nil {
+			// Cancelled mid-diagonal: the diagonal is incomplete, so the
+			// resume point stays where it was. Redoing one diagonal is the
+			// price of not writing a half-computed one down as finished.
 			return err
 		}
-		for j := 0; j <= i; j++ {
-			sweep(i-j, j)
-			done++
-		}
+		st.Diagonal = d + 1
 		if progress != nil {
-			progress(done, total)
+			progress(pairsThroughDiagonal(n, d+1), total)
 		}
 	}
-	for i := 0; i < n; i++ {
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		for j := i + 1; j < n; j++ {
-			sweep(i+n-j, j)
-			done++
-		}
-		if progress != nil {
-			progress(done, total)
-		}
-	}
+	return nil
+}
 
-	if _, err := w.Write(headerTwoSided(points, checkers)); err != nil {
+// pairsThroughDiagonal counts the pairs on diagonals 0 … d-1, which is what
+// "done" means to a caller watching a resumable run.
+func pairsThroughDiagonal(n, d int) int64 {
+	var done int64
+	for i := 0; i < d; i++ {
+		lo, hi := 0, i
+		if i >= n {
+			lo = i - n + 1
+		}
+		if hi > n-1 {
+			hi = n - 1
+		}
+		done += int64(hi - lo + 1)
+	}
+	return done
+}
+
+// parallelFor splits [0, count) into `workers` contiguous chunks and runs fn
+// on each. Serial when workers is 1, which is what the small domains and the
+// tests want: no goroutine, no barrier, same result.
+func parallelFor(ctx context.Context, workers, count int, fn func(lo, hi int)) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if count <= 0 {
+		return nil
+	}
+	if workers <= 1 || count < workers {
+		fn(0, count)
+		return ctx.Err()
+	}
+	var wg sync.WaitGroup
+	chunk := (count + workers - 1) / workers
+	for lo := 0; lo < count; lo += chunk {
+		hi := lo + chunk
+		if hi > count {
+			hi = count
+		}
+		wg.Add(1)
+		go func(lo, hi int) {
+			defer wg.Done()
+			fn(lo, hi)
+		}(lo, hi)
+	}
+	wg.Wait()
+	return ctx.Err()
+}
+
+// WriteTwoSided writes a finished state out in the order makebearoff.c writes
+// it: the 40-byte header, then the body pair by pair, us-major.
+func WriteTwoSided(w io.Writer, st *TwoSidedState) error {
+	if _, err := w.Write(headerTwoSided(st.Points, st.Checkers)); err != nil {
 		return fmt.Errorf("bearoffgen: write header: %w", err)
 	}
-	// The body, in the order makebearoff.c writes it: pair by pair, us-major.
 	buf := make([]byte, 0, 1<<16)
-	for idx := 0; idx < len(body); idx++ {
-		u := uint16(int32(body[idx]) + 0x8000)
+	for idx := 0; idx < len(st.Body); idx++ {
+		u := uint16(int32(st.Body[idx]) + 0x8000)
 		buf = append(buf, byte(u&0xFF), byte(u>>8))
 		if len(buf) >= 1<<16-2 {
 			if _, err := w.Write(buf); err != nil {
