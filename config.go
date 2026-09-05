@@ -196,8 +196,17 @@ type Config struct {
 	// by its own keyboard shortcut; hiding only removes the tab button.
 	HiddenTabs []string `json:"hidden_tabs,omitempty"`
 	// BearoffTSPath is an optional user-supplied two-sided bearoff database
-	// (.bd) widening the embedded TS-06-06 (ADR-0009). Empty = none.
+	// (.bd) widening the generated TS-06-06 (ADR-0009). Empty = none.
 	BearoffTSPath string `json:"bearoff_ts_path,omitempty"`
+	// BearoffRate is what one core of THIS machine measured on a finished
+	// two-sided run: seconds per n³ (bearoffgen's cost model). It is what
+	// turns "about 20 minutes" from a claim about the developer's laptop into
+	// one about the user's. 0 until a run wide enough to be representative
+	// has finished here.
+	BearoffRate float64 `json:"bearoff_rate,omitempty"`
+	// BearoffCores is the core count the user last chose for a generation.
+	// 0 = the default, every core but one.
+	BearoffCores int `json:"bearoff_cores,omitempty"`
 	// EpcChallenge persists the EPC panel's training mode ("défi"): results
 	// are masked after each edit until the user clicks a zone to reveal it.
 	EpcChallenge bool `json:"epc_challenge,omitempty"`
@@ -441,6 +450,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.TabOrder = config.TabOrder
 	c.HiddenTabs = config.HiddenTabs
 	c.BearoffTSPath = config.BearoffTSPath
+	c.BearoffRate = config.BearoffRate
+	c.BearoffCores = config.BearoffCores
 	c.EpcChallenge = config.EpcChallenge
 	c.GammonNetDisplayPly = config.GammonNetDisplayPly
 	c.GammonNetAnalysisPly = config.GammonNetAnalysisPly
@@ -655,6 +666,30 @@ func (c *Config) GetBearoffTSPath() string {
 func (c *Config) SaveBearoffTSPath(path string) error {
 	c.BearoffTSPath = path
 	race.SetExternalPath(path)
+	return c.SaveConfig(c)
+}
+
+// GetBearoffRate returns the sweep rate measured on this machine, 0 when no
+// representative run has finished here yet.
+func (c *Config) GetBearoffRate() float64 {
+	return c.BearoffRate
+}
+
+// SaveBearoffRate persists the sweep rate measured on this machine.
+func (c *Config) SaveBearoffRate(rate float64) error {
+	c.BearoffRate = rate
+	return c.SaveConfig(c)
+}
+
+// GetBearoffCores returns the core count the user last generated with, 0 for
+// the default.
+func (c *Config) GetBearoffCores() int {
+	return c.BearoffCores
+}
+
+// SaveBearoffCores persists the core count for the next generation.
+func (c *Config) SaveBearoffCores(cores int) error {
+	c.BearoffCores = cores
 	return c.SaveConfig(c)
 }
 

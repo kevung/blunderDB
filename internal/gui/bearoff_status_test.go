@@ -3,6 +3,7 @@ package gui
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -154,4 +155,142 @@ func TestEnsureBearoffTables_MakesWhatIsMissing(t *testing.T) {
 
 func sleepMillis(n int) {
 	time.Sleep(time.Duration(n) * time.Millisecond)
+}
+
+// The plan is what the Bearoff tab renders. It must name every domain the user
+// may ask for, price each one, and say which the machine cannot hold — an
+// absent row answers nothing.
+func TestBearoffPlan_PricesEveryDomainAndGreysWhatDoesNotFit(t *testing.T) {
+	dir := isolate(t)
+	for _, d := range bearoffgen.DefaultDomains() {
+		src, err := os.ReadFile(bearofftest.Path(t, d))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, d.FileName()), src, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	plan := (&App{}).BearoffPlan(0, 4)
+	if plan.Cores != 4 {
+		t.Errorf("Cores = %d, want the 4 asked for", plan.Cores)
+	}
+	if plan.DefaultCores < 1 {
+		t.Errorf("DefaultCores = %d, want at least one", plan.DefaultCores)
+	}
+	if plan.RateMeasured {
+		t.Error("no rate was given, so none is measured")
+	}
+	if len(plan.Candidates) != len(bearoffgen.Candidates()) {
+		t.Fatalf("%d candidates, want %d", len(plan.Candidates), len(bearoffgen.Candidates()))
+	}
+
+	var lastSize int64
+	var lastSeconds float64
+	for _, c := range plan.Candidates {
+		if c.Size <= lastSize {
+			t.Errorf("%s: size %d does not exceed the previous domain's", c.Domain, c.Size)
+		}
+		if c.Seconds <= lastSeconds {
+			t.Errorf("%s: estimate %g s does not exceed the previous domain's", c.Domain, c.Seconds)
+		}
+		if !c.Fits && c.Reason == "" {
+			t.Errorf("%s does not fit but says nothing about why", c.Domain)
+		}
+		lastSize, lastSeconds = c.Size, c.Seconds
+	}
+
+	// TS-06-06 is on disk here, and it is the one the fixture verifies.
+	found := false
+	for _, c := range plan.Candidates {
+		if c.Checkers == 6 {
+			found = true
+			if !c.Present || c.Verdict != "verified" {
+				t.Errorf("TS-06-06: Present=%v Verdict=%q, want a verified table", c.Present, c.Verdict)
+			}
+		}
+	}
+	if !found {
+		t.Error("TS-06-06 is not among the candidates")
+	}
+
+	// The widest domain is 22 GB of table: no machine this test runs on has
+	// that available, so it must be greyed rather than offered.
+	last := plan.Candidates[len(plan.Candidates)-1]
+	if plan.RAMAvailable > 0 && last.Fits {
+		t.Errorf("%s (%d bytes of RAM) is offered on a machine with %d available", last.Domain, last.RAMNeeded, plan.RAMAvailable)
+	}
+
+	// The files block lists the two tables, and nothing else in the directory.
+	if len(plan.Files) != 2 {
+		t.Errorf("Files lists %d entries, want the two tables: %+v", len(plan.Files), plan.Files)
+	}
+	for _, f := range plan.Files {
+		if f.Size <= 0 || f.Verdict != "verified" {
+			t.Errorf("file %s: size %d verdict %q", f.Name, f.Size, f.Verdict)
+		}
+	}
+}
+
+// A paused run shows up as an interrupted domain with its percentage, so the
+// tab can offer Reprendre / Supprimer at launch.
+func TestBearoffPlan_ReportsAPausedRun(t *testing.T) {
+	dir := isolate(t)
+	d := bearoffgen.Domain{Kind: bearoffgen.TwoSidedKind, Points: 6, Checkers: 7}
+	st := bearoffgen.NewTwoSidedState(d.Points, d.Checkers)
+	st.Diagonal = bearoffgen.NumPositions(d.Points, d.Checkers) // about a quarter of the pairs
+	if err := bearoffgen.WriteCheckpoint(dir, st); err != nil {
+		t.Fatal(err)
+	}
+
+	plan := (&App{}).BearoffPlan(0, 2)
+	var seen bool
+	for _, c := range plan.Candidates {
+		if c.Checkers != 7 {
+			continue
+		}
+		seen = true
+		if !c.Interrupted {
+			t.Error("the paused domain does not report itself interrupted")
+		}
+		if c.Percent <= 0 || c.Percent >= 100 {
+			t.Errorf("Percent = %g, want a partial run", c.Percent)
+		}
+	}
+	if !seen {
+		t.Fatal("TS-06-07 is not among the candidates")
+	}
+	// And a checkpoint is not a table: it must not appear in the file list.
+	for _, f := range plan.Files {
+		if strings.HasSuffix(f.Name, ".ckpt") {
+			t.Errorf("the checkpoint %s is listed as a table", f.Name)
+		}
+	}
+
+	if err := (&App{}).DiscardBearoffCheckpoint(d.Points, d.Checkers); err != nil {
+		t.Fatal(err)
+	}
+	for _, c := range (&App{}).BearoffPlan(0, 2).Candidates {
+		if c.Checkers == 7 && c.Interrupted {
+			t.Error("the discarded checkpoint is still reported")
+		}
+	}
+}
+
+// A measured rate is what makes the estimate about this machine. A slower rate
+// must predict a longer run.
+func TestBearoffPlan_TheMeasuredRateMovesTheEstimate(t *testing.T) {
+	isolate(t)
+	fast := (&App{}).BearoffPlan(3e-10, 4)
+	slow := (&App{}).BearoffPlan(6e-10, 4)
+	if !fast.RateMeasured || !slow.RateMeasured {
+		t.Fatal("a rate was given and is not reported as measured")
+	}
+	for i := range fast.Candidates {
+		if slow.Candidates[i].Seconds <= fast.Candidates[i].Seconds {
+			t.Fatalf("%s: the slower machine is not slower (%g vs %g s)",
+				fast.Candidates[i].Domain, slow.Candidates[i].Seconds, fast.Candidates[i].Seconds)
+		}
+	}
 }
