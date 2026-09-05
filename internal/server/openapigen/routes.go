@@ -101,7 +101,7 @@ func routeFromLit(lit *ast.CompositeLit, types map[string]typeInfo) (Route, bool
 	if err != nil {
 		return Route{}, false, err
 	}
-	if !strings.HasPrefix(pattern, "/v1/") {
+	if !isAPIPattern(pattern) {
 		return Route{}, false, nil
 	}
 
@@ -323,7 +323,7 @@ func extractLoopRoutes(f *ast.File, loopPatterns map[string][]string) []Route {
 			return true
 		}
 		for _, p := range patterns {
-			if !strings.HasPrefix(p, "/v1/") {
+			if !isAPIPattern(p) {
 				continue
 			}
 			family, op := familyOf(p)
@@ -332,4 +332,12 @@ func extractLoopRoutes(f *ast.File, loopPatterns map[string][]string) []Route {
 		return true
 	})
 	return routes
+}
+
+// isAPIPattern reports whether a registered pattern belongs to the documented
+// surface: the /v1 tenant routes and the /ops/ operator family (G.5, #233).
+// The probes (/healthz, /readyz, /metrics) are not — they answer plain text or
+// the Prometheus exposition format, neither of which the contract describes.
+func isAPIPattern(pattern string) bool {
+	return strings.HasPrefix(pattern, "/v1/") || strings.HasPrefix(pattern, "/ops/")
 }

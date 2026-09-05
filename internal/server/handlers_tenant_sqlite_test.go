@@ -29,7 +29,7 @@ func TestTenantPurgeSQLiteNotSupported(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	purgeResp := post(t, ts, "/v1/tenant.purge", nil)
+	purgeResp := post(t, ts, "/ops/tenant.purge", nil)
 	defer purgeResp.Body.Close()
 	if purgeResp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400", purgeResp.StatusCode)

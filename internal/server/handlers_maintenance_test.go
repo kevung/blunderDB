@@ -15,7 +15,7 @@ import (
 func TestMaintenanceVacuumPostgresNotSupported(t *testing.T) {
 	ts := newPostgresTestServer(t)
 
-	resp := post(t, ts, "/v1/maintenance.vacuum", nil)
+	resp := post(t, ts, "/ops/maintenance.vacuum", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Fatalf("status = %d, want 400", resp.StatusCode)

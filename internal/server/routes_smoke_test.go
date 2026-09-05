@@ -52,8 +52,8 @@ var customContentTypes = map[string][]string{
 	"/v1/exports.json":                    {ndjsonContentType},
 	"/v1/exports.sqlite":                  {"application/octet-stream"},
 	"/v1/matches.exportMat":               {"text/plain"},
-	"/v1/tenant.purge":                    {"application/json"},
-	"/v1/maintenance.vacuum":              {"application/json"},
+	"/ops/tenant.purge":                   {"application/json"},
+	"/ops/maintenance.vacuum":             {"application/json"},
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
@@ -130,14 +130,16 @@ func mediaType(ct string) string {
 }
 
 // TestRoutesSmoke_TableIsComplete pins the two things the smoke test relies
-// on: Paths() enumerates every /v1 route in the table (nothing hides behind a
-// non-/v1 prefix), and every hand-written handler declares its answer shape.
+// on: Paths() enumerates every callable route in the table (the /v1 tenant
+// surface plus the /ops/ family, and nothing hiding behind a third prefix),
+// and every hand-written handler declares its answer shape.
 func TestRoutesSmoke_TableIsComplete(t *testing.T) {
 	srv, _ := smokeServer(t)
 	byPath := map[string]route{}
-	for _, rt := range srv.domainRoutes() {
-		if !strings.HasPrefix(rt.pattern, "/v1/") {
-			t.Errorf("domain route %q is not under /v1/ — Paths() would not list it", rt.pattern)
+	callable := append(append([]route{}, srv.domainRoutes()...), srv.opsRoutes()...)
+	for _, rt := range callable {
+		if !strings.HasPrefix(rt.pattern, "/v1/") && !strings.HasPrefix(rt.pattern, "/ops/") {
+			t.Errorf("callable route %q is under neither /v1/ nor /ops/ — Paths() would not list it", rt.pattern)
 		}
 		if rt.method != http.MethodPost {
 			t.Errorf("domain route %q uses %s; the /v1 surface is POST-only", rt.pattern, rt.method)

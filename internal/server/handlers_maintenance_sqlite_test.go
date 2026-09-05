@@ -25,7 +25,7 @@ func TestMaintenanceVacuumSQLite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp := post(t, ts, "/v1/maintenance.vacuum", nil)
+	resp := post(t, ts, "/ops/maintenance.vacuum", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("status = %d, want 200", resp.StatusCode)

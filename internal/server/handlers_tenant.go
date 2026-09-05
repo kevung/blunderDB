@@ -17,7 +17,7 @@ type tenantPurger interface {
 // tenant.purge, an ops-facing capability for decommissioning a tenant.
 func (s *Server) tenantRoutes() []route {
 	return []route{
-		{http.MethodPost, "/v1/tenant.purge", func(w http.ResponseWriter, r *http.Request) {
+		{http.MethodPost, "/ops/tenant.purge", func(w http.ResponseWriter, r *http.Request) {
 			purger, ok := s.opts.Storage.(tenantPurger)
 			if !ok {
 				writeErrorCode(w, CodeInvalid, "tenant purge not supported on this backend (postgres only)")

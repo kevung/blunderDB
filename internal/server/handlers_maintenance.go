@@ -21,7 +21,7 @@ type vacuumer interface {
 // `vacuum`. The three run one implementation on the backend.
 func (s *Server) maintenanceRoutes() []route {
 	return []route{
-		{http.MethodPost, "/v1/maintenance.vacuum", func(w http.ResponseWriter, r *http.Request) {
+		{http.MethodPost, "/ops/maintenance.vacuum", func(w http.ResponseWriter, r *http.Request) {
 			v, ok := s.opts.Storage.(vacuumer)
 			if !ok {
 				writeErrorCode(w, CodeInvalid, "vacuum not supported on this backend (sqlite only)")

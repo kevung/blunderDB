@@ -57,7 +57,7 @@ func GenerateOpenAPI(model *Model) string {
 func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps *Components) {
 	fmt.Fprintf(b, "  %s:\n", yamlPlainOrQuoted(r.Pattern))
 	fmt.Fprintf(b, "    %s:\n", strings.ToLower(r.Method))
-	fmt.Fprintf(b, "      operationId: %s\n", yamlPlainOrQuoted(strings.TrimPrefix(r.Pattern, "/v1/")))
+	fmt.Fprintf(b, "      operationId: %s\n", yamlPlainOrQuoted(strings.TrimPrefix(strings.TrimPrefix(r.Pattern, "/v1/"), "/ops/")))
 	fmt.Fprintf(b, "      tags: [%s]\n", r.Family)
 	fmt.Fprintf(b, "      x-kind: %s\n", r.Kind)
 	if r.IdempotencyKeySupported {

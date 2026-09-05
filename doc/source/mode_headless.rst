@@ -122,6 +122,12 @@ depuis plusieurs clients.
      - répertoire de l'identité de signature du démon (créée au premier
        usage) ; nécessaire pour qu'``exports.sqlite`` puisse apposer un
        filigrane — voir plus bas
+   * - ``--ops-addr <hôte:port>``
+     - –
+     - sert la famille ``/ops/`` (``maintenance.vacuum``, ``tenant.purge``)
+       sur une adresse **séparée** de ``--addr``, et l'en retire ; vide (le
+       défaut) les laisse sur l'écouteur principal, où c'est au proxy de
+       refuser le préfixe — voir :ref:`headless_ops_routes`
    * - ``--pprof-addr <hôte:port>``
      - –
      - expose ``net/http/pprof`` sur une adresse **séparée** de ``--addr``
@@ -134,7 +140,7 @@ La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
-``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_PPROF_ADDR``) :
+``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
 La table de seaux du limiteur de débit porte elle-même un plafond dur
@@ -184,11 +190,42 @@ La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exempl
 ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent les
 positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
 filtres, sessions, historique (recherche et commandes), recherche,
-métadonnées, statistiques, import et export, ainsi que le cycle de vie des
-tenants (``tenant.purge``, réservé au backend PostgreSQL) et la maintenance
-(``maintenance.vacuum``, réservé au backend SQLite). Les endpoints de
-listing renvoient un flux NDJSON (un objet JSON par ligne). Le serveur
-s'arrête proprement sur ``SIGINT`` / ``SIGTERM``.
+métadonnées, statistiques, import et export. Les endpoints de listing
+renvoient un flux NDJSON (un objet JSON par ligne). Le serveur s'arrête
+proprement sur ``SIGINT`` / ``SIGTERM``.
+
+.. _headless_ops_routes:
+
+Les routes d'exploitation
+-------------------------
+
+Deux appels ne s'arrêtent pas au tenant qui les passe, et vivent donc sous un
+préfixe à part, ``POST /ops/<famille>.<méthode>`` :
+
+* ``/ops/maintenance.vacuum`` (backend SQLite) réécrit **tout** le fichier,
+  données de tous les tenants comprises, et tient un verrou d'écriture pendant
+  l'opération ;
+* ``/ops/tenant.purge`` (backend PostgreSQL) détruit les données d'un tenant,
+  et le tenant détruit est celui que nomme l'en-tête que l'appelant contrôle.
+
+Le démon n'authentifie personne (voir plus bas) : une route joignable par un
+tenant est une route que **tout** tenant peut appeler. Le préfixe existe pour
+que le proxy puisse refuser les deux d'une seule règle. **Ne jamais exposer
+``/ops/`` par le proxy public.**
+
+L'option ``--ops-addr <hôte:port>`` va plus loin : les deux routes quittent
+alors l'adresse ``--addr`` et ne sont plus servies que sur ce second
+écouteur, à lier sur une interface d'administration. Sans cette option, elles
+restent sur l'écouteur principal et c'est au proxy de les bloquer.
+
+Ces routes exigent l'en-tête ``X-Tenant-ID`` comme toutes les autres — une
+purge nomme le tenant qu'elle détruit, elle en a besoin plus que quiconque.
+Seules les sondes (``/healthz``, ``/readyz``) et ``/metrics`` s'en passent.
+
+Ce qui n'est **pas** passé sous ``/ops/`` : ``/v1/gammonnet.sweepStale``. Le
+rattrapage est coûteux mais il est cadré au tenant appelant ; ce sont la
+limite de débit et les jauges de travail en vol qui le bornent, pas une
+frontière de confiance.
 
 Le contrat complet — chaque méthode, sa requête et sa réponse — est généré
 depuis le code source et versionné : ``openapi.yaml`` à la racine du dépôt

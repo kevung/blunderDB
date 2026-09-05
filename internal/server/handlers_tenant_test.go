@@ -97,7 +97,7 @@ func postTenant(t *testing.T, ts *httptest.Server, tenant, path string, body any
 }
 
 // TestTenantPurgeEndpoint seeds a position for tenant "1", purges it through
-// POST /v1/tenant.purge, and confirms both the HTTP response ({"ok":true})
+// POST /ops/tenant.purge, and confirms both the HTTP response ({"ok":true})
 // and that the position is actually gone (a subsequent positions.load 404s).
 func TestTenantPurgeEndpoint(t *testing.T) {
 	ts := newPostgresTestServer(t)
@@ -116,7 +116,7 @@ func TestTenantPurgeEndpoint(t *testing.T) {
 		t.Fatal("seed save returned id 0")
 	}
 
-	purgeResp := postTenant(t, ts, "1", "/v1/tenant.purge", nil)
+	purgeResp := postTenant(t, ts, "1", "/ops/tenant.purge", nil)
 	defer purgeResp.Body.Close()
 	if purgeResp.StatusCode != http.StatusOK {
 		t.Fatalf("purge status = %d, want 200", purgeResp.StatusCode)

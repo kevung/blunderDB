@@ -15,7 +15,7 @@ import (
 // explicit, user-triggered action only — never run automatically at open,
 // since its cost is unpredictable on a large database. The desktop wrapper
 // (database.Database.Vacuum), the CLI's `vacuum` and the daemon's
-// /v1/maintenance.vacuum all come through here.
+// /ops/maintenance.vacuum all come through here.
 //
 // Steps, in order:
 //
