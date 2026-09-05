@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>18. Παράρτημα: Σχήμα της βάσης δεδομένων &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" href="stats_parity.html" />
+    <link rel="prev" title="17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" href="annexe_mac_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Χάρτης πορείας</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Στάδιο 3 — Επέκταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Στάδιο 4 — Βαθιά εγχειρήματα</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Τι <strong>δεν</strong> προβλέπεται</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Σύμβαση API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">18. Παράρτημα: Σχήμα της βάσης δεδομένων</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">18.1. Εκδόσεις και μεταβάσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">18.2. Κύριοι πίνακες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">18.3. Αρχές σχεδιασμού</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">18. </span>Παράρτημα: Σχήμα της βάσης δεδομένων</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-schema-de-la-base-de-donnees">
+<span id="annexe-db-migration"></span><h1><span class="section-number">18. </span>Παράρτημα: Σχήμα της βάσης δεδομένων<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<p>Μια βάση δεδομένων blunderDB είναι ένα απλό αρχείο SQLite (επέκταση <em>.db</em>). Έτσι, ελλείψει του blunderDB, μπορεί να ανοιχτεί και να επιθεωρηθεί με οποιονδήποτε επεξεργαστή ή περιηγητή αρχείων SQLite.</p>
+<section id="versionnage-et-migrations">
+<h2><span class="section-number">18.1. </span>Εκδόσεις και μεταβάσεις<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
+<p>Το σχήμα της βάσης δεδομένων είναι <strong>εκδοσιολογημένο</strong>. Η τρέχουσα έκδοση του σχήματος είναι <strong>2.18.0</strong>· είναι ανεξάρτητη από την έκδοση της εφαρμογής και αυξάνεται μόνο όταν αλλάζει η εσωτερική δομή. Η έκδοση του σχήματος μιας ανοικτής βάσης εμφανίζεται στον πίνακα <strong>Μεταδεδομένα</strong> (εντολή <code class="docutils literal notranslate"><span class="pre">meta</span></code>).</p>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Δημιουργείτε πάντα αντίγραφο ασφαλείας του αρχείου <em>.db</em> σας πριν ανοίξετε μια βάση που δημιουργήθηκε με προγενέστερη έκδοση του blunderDB.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Από την έκδοση 0.10.0, <strong>όλες οι μεταβάσεις σχήματος εκτελούνται αυτόματα</strong> κατά το άνοιγμα μιας βάσης δεδομένων. Δεν απαιτείται καμία εντολή χειροκίνητης μετάβασης. Η μετάβαση πραγματοποιείται επιτόπου: μια βάση που έχει μεταβεί σε πρόσφατο σχήμα δεν μπορεί πλέον να ανοιχτεί από παλαιότερες εκδόσεις του blunderDB, εξ ου και η σημασία του προηγούμενου αντιγράφου ασφαλείας.</p>
+</div>
+</section>
+<section id="principales-tables">
+<h2><span class="section-number">18.2. </span>Κύριοι πίνακες<a class="headerlink" href="#principales-tables" title="Link to this heading"></a></h2>
+<p>Το τρέχον σχήμα διαρθρώνεται γύρω από τους ακόλουθους πίνακες:</p>
+<ul class="simple">
+<li><p><strong>Θέσεις και αναλύσεις</strong>: <code class="docutils literal notranslate"><span class="pre">position</span></code> (οι θέσεις, χωρίς διπλότυπα), <code class="docutils literal notranslate"><span class="pre">analysis</span></code> (τα σχετικά δεδομένα ανάλυσης) και <code class="docutils literal notranslate"><span class="pre">comment</span></code> (τα σχόλια).</p></li>
+<li><p><strong>Αγώνες</strong>: οι <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">game</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code> και <code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> αποθηκεύουν τους εισαγόμενους αγώνες, τις παρτίδες τους, τις κινήσεις τους και την ανάλυση κάθε κίνησης.</p></li>
+<li><p><strong>Συλλογές</strong>: οι <code class="docutils literal notranslate"><span class="pre">collection</span></code> και <code class="docutils literal notranslate"><span class="pre">collection_position</span></code> (πίνακας σύνδεσης) ομαδοποιούν θέσεις που επιλέγονται χειροκίνητα.</p></li>
+<li><p><strong>Τουρνουά</strong>: ο <code class="docutils literal notranslate"><span class="pre">tournament</span></code> ομαδοποιεί αγώνες σε τουρνουά.</p></li>
+<li><p><strong>Επανάληψη με διαστήματα (Anki)</strong>: οι <code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>, <code class="docutils literal notranslate"><span class="pre">anki_card</span></code> και <code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> διαχειρίζονται τα πακέτα, τις κάρτες και το αρχείο καταγραφής επαναλήψεων (αλγόριθμος FSRS).</p></li>
+<li><p><strong>Ιστορικό και διάφορα</strong>: οι <code class="docutils literal notranslate"><span class="pre">command_history</span></code> και <code class="docutils literal notranslate"><span class="pre">search_history</span></code> διατηρούν το ιστορικό των εντολών και των αναζητήσεων, ο <code class="docutils literal notranslate"><span class="pre">filter_library</span></code> τη βιβλιοθήκη φίλτρων, και ο <code class="docutils literal notranslate"><span class="pre">metadata</span></code> τα μεταδεδομένα της βάσης (μεταξύ των οποίων και η έκδοση του σχήματος).</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2><span class="section-number">18.3. </span>Αρχές σχεδιασμού<a class="headerlink" href="#principes-de-conception" title="Link to this heading"></a></h2>
+<p>Από το σχήμα 2.0.0, αρκετές επιλογές σχεδιασμού επιταχύνουν την αναζήτηση και μειώνουν το μέγεθος του αρχείου:</p>
+<ul class="simple">
+<li><p><strong>Απαλοιφή διπλότυπων θέσεων</strong>: κάθε θέση φέρει έναν κατακερματισμό Zobrist και ένα μοναδικό ευρετήριο, έτσι ώστε μια ίδια θέση που συναντάται σε πολλαπλές εισαγωγές να αποθηκεύεται μόνο μία φορά.</p></li>
+<li><p><strong>Αποκανονικοποιημένες στήλες φιλτραρίσματος</strong>: κριτήρια που αναζητούνται συχνά (τύπος απόφασης, ζάρια, διαφορά κούρσας, πούλια εκτός, καθυστερημένα πούλια, σφάλμα κίνησης ή κύβου, πιθανότητες νίκης…) προϋπολογίζονται σε ειδικές στήλες για γρήγορο φιλτράρισμα.</p></li>
+<li><p><strong>Προφιλτράρισμα με bitboards</strong>: στήλες κατοχής και μασκών σημείων επιτρέπουν ένα πολύ γρήγορο ακέραιο προφιλτράρισμα κατά τις αναζητήσεις μοτίβων δομής.</p></li>
+<li><p><strong>Συμπαγής αποθήκευση</strong>: οι θέσεις κωδικοποιούνται με συμπαγή τρόπο και τα δεδομένα ανάλυσης συμπιέζονται (zstd με κοινό λεξικό· οι παλαιότερες βάσεις δεδομένων, συμπιεσμένες με zlib, παραμένουν αναγνώσιμες και επανασυμπιέζονται σταδιακά κατά τη διάρκεια ενός <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>), γεγονός που μειώνει σημαντικά το μέγεθος του αρχείου.</p></li>
+<li><p><strong>Καταγραφή WAL</strong>: η λειτουργία WAL και προσαρμοσμένα PRAGMA βελτιώνουν τις επιδόσεις ανάγνωσης και εγγραφής.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

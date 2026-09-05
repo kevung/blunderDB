@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Οδηγός χρήσης &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="3. Εγχειρίδιο" href="manuel.html" />
+    <link rel="prev" title="1. Λήψη και εγκατάσταση" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Οδηγός χρήσης</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tutoriels-de-bout-en-bout">2.1. Πλήρη εκπαιδευτικά μαθήματα</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mon-premier-import">2.1.1. Η πρώτη μου εισαγωγή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etudier-un-match">2.1.2. Μελέτη ενός ματς</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-anki">2.1.3. Μια συνεδρία Anki</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployer-le-mode-serveur-derriere-un-proxy">2.1.4. Ανάπτυξη της λειτουργίας διακομιστή πίσω από έναν proxy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-progresser-avec-blunderdb">2.2. Πώς να βελτιωθείτε με το blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-de-demonstration-3-minutes">2.3. Σενάριο επίδειξης (3 λεπτά)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">2.4. Δημιουργία νέας βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">2.5. Άνοιγμα υπάρχουσας βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">2.6. Εισαγωγή και συγχώνευση βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">2.7. Επεξεργασία θέσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">2.8. Προσθήκη θέσης στη βάση δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">2.9. Προσθήκη ετικέτας σε μια θέση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">2.10. Διαγραφή θέσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">2.11. Εισαγωγή θέσης από το XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">2.12. Εισαγωγή αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">2.13. Εισαγωγή φακέλου αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">2.14. Μεταφορά και απόθεση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">2.15. Πλοήγηση σε έναν αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">2.16. Διαχείριση του πλαισίου αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">2.17. Διαχείριση συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">2.18. Διαχείριση τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">2.19. Εμφάνιση στατιστικών επιδόσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluer-une-position-panneau-eval">2.20. Αξιολόγηση μιας θέσης (πίνακας Eval)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">2.21. Εμφάνιση της ανάλυσης μιας θέσης που εισήχθη από το XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">2.22. Εξαγωγή θέσης στο XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">2.23. Προβολή των διαφόρων θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">2.24. Αναζήτηση θέσεων με βάση κριτήρια</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">2.25. Για να προχωρήσετε παραπέρα</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Χάρτης πορείας</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Στάδιο 3 — Επέκταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Στάδιο 4 — Βαθιά εγχειρήματα</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Τι <strong>δεν</strong> προβλέπεται</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Σύμβαση API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Οδηγός χρήσης</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1><span class="section-number">2. </span>Οδηγός χρήσης<a class="headerlink" href="#guide-utilisateur" title="Link to this heading"></a></h1>
+<p>Αυτός ο οδηγός είναι μια πρακτική εισαγωγή στο blunderDB για γρήγορη εξοικείωση. Τέσσερα πλήρη εκπαιδευτικά μαθήματα καλύπτουν τις πιο συνηθισμένες χρήσεις· το υπόλοιπο του οδηγού παραμένει κατάλογος αναφοράς, κίνηση προς κίνηση, για συμβουλή όποτε χρειάζεται.</p>
+<section id="tutoriels-de-bout-en-bout">
+<h2><span class="section-number">2.1. </span>Πλήρη εκπαιδευτικά μαθήματα<a class="headerlink" href="#tutoriels-de-bout-en-bout" title="Link to this heading"></a></h2>
+<section id="mon-premier-import">
+<span id="tuto-premier-import"></span><h3><span class="section-number">2.1.1. </span>Η πρώτη μου εισαγωγή<a class="headerlink" href="#mon-premier-import" title="Link to this heading"></a></h3>
+<p>Αυτό το μάθημα ξεκινά από ένα αρχείο ματς eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>) και καταλήγει στη λίστα των θέσεων όπου χάσατε τα περισσότερα.</p>
+<ol class="arabic">
+<li><p><strong>Δημιουργήστε μια βάση.</strong> Κουμπί «Νέα βάση δεδομένων» στη γραμμή εργαλείων (ή <em>CTRL-N</em>), επιλέξτε μια τοποθεσία και ένα όνομα· η επέκταση <code class="docutils literal notranslate"><span class="pre">.db</span></code> προστίθεται αυτόματα.</p></li>
+<li><p><strong>Εισαγάγετε το ματς.</strong> Σύρετε και αποθέστε το αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code> στο παράθυρο του blunderDB (ή <em>CTRL-I</em>, και μετά επιλέξτε το). Το blunderDB εντοπίζει τη μορφή, εισάγει τις θέσεις και την ανάλυση που υπάρχει ήδη στο αρχείο XG (κινήσεις, αποφάσεις κύβου, σημάνσεις), και εμφανίζει τον πίνακα ματς μόλις η εισαγωγή πετύχει.</p></li>
+<li><p><strong>Επανεξετάστε το ματς.</strong> Διπλό κλικ στη γραμμή του ματς (ή επιλογή του και πάτημα <em>ENTER</em>) ανοίγει την ανασκόπηση στην τελευταία θέση που επισκεφθήκατε. Τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em>/<em>ΔΕΞΙΑ</em> (ή <em>j</em>/<em>k</em>) διατρέχουν τις κινήσεις· <em>PageUp</em>/<em>PageDown</em> αλλάζουν παρτίδα.</p></li>
+<li><p><strong>Διαβάστε την ανάλυση.</strong> Το <em>CTRL-L</em> εμφανίζει τον πίνακα Ανάλυσης: τις καλύτερες κινήσεις, την ισοτιμία τους και το σφάλμα της κίνησης που παίχτηκε (τονισμένη στον πίνακα). Σε μια απόφαση κύβου, το ίδιο πλήκτρο εμφανίζει τον πίνακα ισοτιμιών κύβου και την κρίση.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_analysis.png"><img alt="Πίνακας Ανάλυσης κατά την ανασκόπηση ενός ματς" src="_images/panel_analysis.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Ανάλυσης κατά την ανασκόπηση ενός ματς: η κίνηση που παίχτηκε τονίζεται στον πίνακα υποψήφιων κινήσεων.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Βρείτε τα μεγαλύτερα σφάλματα.</strong> Από οπουδήποτε, η εντολή <code class="docutils literal notranslate"><span class="pre">bl</span></code> (ή <code class="docutils literal notranslate"><span class="pre">blunders</span></code>, <em>ΔΙΑΣΤΗΜΑ</em> για να ανοίξετε τη γραμμή εντολών) φορτώνει απευθείας στον πίνακα ανάλυσης τις θέσεις όπου το σφάλμα ήταν πιο δαπανηρό — δεν χρειάζεται να κατασκευάσετε αναζήτηση με το χέρι για ένα πρώτο πέρασμα σε μια εισαγωγή. Δείτε <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a> για να εξειδικεύσετε αυτή την επιλογή ανά παίκτη ή ανά εύρος ημερομηνιών μόλις εισαχθούν πολλά ματς.</p></li>
+</ol>
+</section>
+<section id="etudier-un-match">
+<span id="tuto-etudier-match"></span><h3><span class="section-number">2.1.2. </span>Μελέτη ενός ματς<a class="headerlink" href="#etudier-un-match" title="Link to this heading"></a></h3>
+<p>Μόλις εισαχθούν πολλά ματς, αυτό το μάθημα αναλύει τη μελέτη ενός συγκεκριμένου ματς — πέρα από την απλή διαδρομή του προηγούμενου μαθήματος.</p>
+<ol class="arabic">
+<li><p><strong>Ανοίξτε τον πίνακα ματς</strong> (<em>CTRL-Tab</em>). Παραθέτει όλα τα εισαγμένα ματς, ταξινομήσιμα κατά στήλη (παίκτης, ημερομηνία, μήκος, τουρνουά, PR).</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_matches.png"><img alt="Πίνακας ματς" src="_images/panel_matches.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας ματς: ταξινομήσιμη λίστα, PR και κόστος MWC ανά ματς.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Ανοίξτε την ανασκόπηση</strong> με διπλό κλικ στη γραμμή, ή επιλέγοντάς την και πατώντας <em>ENTER</em>. Η μπάρα πληροφοριών πάνω από το ταμπλό υπενθυμίζει τους δύο παίκτες, το τουρνουά και το σκορ.</p></li>
+<li><p><strong>Εναλλαγή κίνησης πουλιών / απόφασης κύβου</strong> με το πλήκτρο <em>d</em> στην ίδια θέση όταν και οι δύο αναλύσεις είναι διαθέσιμες (η μία από τις δύο μπορεί να λείπει ανάλογα με το τι περιείχε το εισαγμένο αρχείο).</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_cube.png"><img alt="Πίνακας Ανάλυσης σε μια απόφαση κύβου" src="_images/panel_cube.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Μια απόφαση κύβου στον πίνακα Ανάλυσης: ισοτιμίες χρημάτων, σφάλμα κάθε επιλογής, καλύτερη απόφαση.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Σχολιάστε</strong> αυτό που παρατηρείτε: το <em>CTRL-P</em> ανοίγει τον πίνακα Σχολίων στη θέση που εμφανίζεται — χρήσιμο για να σημειώσετε <em>γιατί</em> μια κίνηση είναι λάθος, όχι μόνο <em>ότι</em> είναι.</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="_images/panel_comments.png"><img alt="Πίνακας Σχολίων σε μια θέση" src="_images/panel_comments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Σχολίων: ένα νήμα ανταλλαγών προσαρτημένο στη θέση που εμφανίζεται.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Σημάνετε</strong> μια θέση για να την ξαναπαίξετε αργότερα: <em>ΔΙΑΣΤΗΜΑ</em> για να ανοίξετε τη γραμμή εντολών, <code class="docutils literal notranslate"><span class="pre">#</span></code> ακολουθούμενο από μια λέξη-κλειδί (για παράδειγμα <code class="docutils literal notranslate"><span class="pre">#blitz</span></code>), <em>ENTER</em>. Δείτε <a class="reference internal" href="#guide-edit-position"><span class="std std-ref">Επεξεργασία θέσης</span></a> για να επεξεργαστείτε απευθείας τη θέση αν η κίνηση που παίχτηκε δεν είναι αυτή που θέλετε να μελετήσετε.</p></li>
+<li><p><strong>Εξέλθετε από τη λειτουργία ματς</strong> με την εντολή <code class="docutils literal notranslate"><span class="pre">m</span></code>: η βιβλιοθήκη επανέρχεται στην προηγούμενη κατάστασή της, η τελευταία θέση που επισκεφθήκατε στο ματς απομνημονεύεται για την επόμενη επίσκεψη.</p></li>
+</ol>
+</section>
+<section id="une-session-anki">
+<span id="tuto-anki"></span><h3><span class="section-number">2.1.3. </span>Μια συνεδρία Anki<a class="headerlink" href="#une-session-anki" title="Link to this heading"></a></h3>
+<p>Ο πίνακας Anki μετατρέπει μια συλλογή ή μια αναζήτηση σε τράπουλα καρτών προς επανάληψη σύμφωνα με τον αλγόριθμο FSRS (κατανεμημένη επανάληψη).</p>
+<ol class="arabic">
+<li><p><strong>Συνθέστε την τράπουλα.</strong> Δύο πιθανά σημεία εκκίνησης: μια χειροεπιλεγμένη <a class="reference internal" href="#guide-collections"><span class="std std-ref">συλλογή</span></a> θέσεων, ή μια αναζήτηση (<em>CTRL-F</em>) — για παράδειγμα όλες οι αποφάσεις κύβου που έχουν σημανθεί ως σφάλματα. Η εντολή <code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">30</span></code> (30 χειρότερα σφάλματα) προσφέρει ένα καλό σημείο εκκίνησης για μια πρώτη τράπουλα.</p></li>
+<li><p><strong>Δημιουργήστε την τράπουλα.</strong> Ανοίξτε τον πίνακα Anki (<em>CTRL-K</em>), κουμπί «New Deck», ονομάστε την τράπουλα· συγχρονίζεται με την επιλεγμένη αναζήτηση ή συλλογή.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/panel_anki.png"><img alt="Πίνακας Anki, λίστα τραπουλών" src="_images/panel_anki.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Anki: μία τράπουλα ανά γραμμή, συνολικές κάρτες, νέες και οφειλόμενες σήμερα.</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Επαναλάβετε</strong> (<em>Study</em>): κάθε κάρτα εμφανίζει μια θέση, διατυπώνετε την απάντησή σας νοερά, αποκαλύπτετε τη λύση (το ταμπλό, την ανάλυση και τυχόν σχόλιο), και στη συνέχεια βαθμολογείτε την εκτίμησή σας από 1 (αστοχία) έως 4 (εύκολο). Το FSRS χρονοπρογραμματίζει ανάλογα την επόμενη εμφάνιση. Τίποτα δεν σας υποχρεώνει να αποκαλύψετε την απάντηση για να συνεχίσετε αν είστε σίγουροι για τον εαυτό σας.</p></li>
+<li><p><strong>Ζεσταθείτε χωρίς να διαταράξετε το πρόγραμμα</strong> (<em>Cram</em>): παρουσιάζει τυχαίες θέσεις από την τράπουλα χωρίς να αγγίζει το πρόγραμμα FSRS — χρήσιμο πριν από τουρνουά, ή για εντατική επανάληψη χωρίς να μετατοπίζονται οι προθεσμίες των άλλων καρτών.</p></li>
+</ol>
+<p>Δείτε <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Πίνακας Anki</span></a> για τη λεπτομέρεια των παραμέτρων (περιορισμός της συνεδρίας, στόχος ποσοστού διατήρησης, επαναφορά μιας τράπουλας).</p>
+</section>
+<section id="deployer-le-mode-serveur-derriere-un-proxy">
+<span id="tuto-serveur-proxy"></span><h3><span class="section-number">2.1.4. </span>Ανάπτυξη της λειτουργίας διακομιστή πίσω από έναν proxy<a class="headerlink" href="#deployer-le-mode-serveur-derriere-un-proxy" title="Link to this heading"></a></h3>
+<p>Η λειτουργία διακομιστή (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code>) εκθέτει τον κινητήρα του blunderDB μέσω HTTP + JSON. <strong>Δεν πιστοποιεί κανέναν</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): εμπιστεύεται την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ακριβώς όπως τη λαμβάνει, και επομένως πρέπει πάντα να βρίσκεται πίσω από έναν αντίστροφο διαμεσολαβητή που, αυτός, πιστοποιεί και ορίζει την κεφαλίδα αυτή. Αυτό το μάθημα αναπτύσσει τη δημοσιευμένη εικόνα πίσω από έναν ελάχιστο nginx, με πιστοποίηση HTTP Basic ενός μόνο ενοίκου — το απλούστερο σημείο εκκίνησης, προς προσαρμογή (SSO, πιστοποιητικά πελάτη, αντιστοίχιση πολλαπλών ενοίκων ανά χρήστη) ανάλογα με το πλαίσιό σας.</p>
+<ol class="arabic">
+<li><p><strong>Εκκινήστε τον δαίμονα</strong>, περιορισμένο στο <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (ποτέ εκτεθειμένο απευθείας):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.35.0
+</pre></div>
+</div>
+</li>
+<li><p><strong>Δημιουργήστε ένα αρχείο κωδικών</strong> για την πιστοποίηση Basic:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>htpasswd<span class="w"> </span>-c<span class="w"> </span>/etc/nginx/blunderdb.htpasswd<span class="w"> </span>alice
+</pre></div>
+</div>
+</li>
+<li><p><strong>Ρυθμίστε το nginx</strong> ώστε να πιστοποιεί και έπειτα να αναμεταδίδει, ορίζοντας το ίδιο το <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> — ποτέ αυτό που στέλνει ο πελάτης:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">"1"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Ελέγξτε</strong> με την υποεντολή υγείας, που δεν περνά μέσα από τον proxy:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>blunderdb<span class="w"> </span>healthcheck
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Δείτε <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a> για την πλήρη επιφάνεια (διαδρομές, backend PostgreSQL πολλαπλών ενοίκων με Row-Level Security, μετάβαση από SQLite) και τη δημοσιευμένη εικόνα Docker.</p>
+</section>
+</section>
+<section id="comment-progresser-avec-blunderdb">
+<h2><span class="section-number">2.2. </span>Πώς να βελτιωθείτε με το blunderDB<a class="headerlink" href="#comment-progresser-avec-blunderdb" title="Link to this heading"></a></h2>
+<p>Πέρα από τα παραπάνω μαθήματα, μια απλή εβδομαδιαία ρουτίνα αντλεί το μέγιστο από το blunderDB για να βελτιωθείτε:</p>
+<ol class="arabic simple">
+<li><p><strong>Εισαγάγετε</strong> τα ματς της εβδομάδας (σύρετε και αποθέστε, ή αναδρομική εισαγωγή φακέλου αν υπάρχουν πολλά αρχεία) όσο το δυνατόν συντομότερα αφού τα παίξατε — η μνήμη του πλαισίου εξασθενεί γρήγορα.</p></li>
+<li><p><strong>Φιλτράρετε τις πιο δαπανηρές αποφάσεις</strong>: εντολή <code class="docutils literal notranslate"><span class="pre">bl</span></code> (χειρότερα σφάλματα), ή τον πίνακα Stats φιλτραρισμένο στην περίοδο και τον τύπο απόφασης (πούλια / κύβος) που βαρύνει περισσότερο στο PR.</p></li>
+<li><p><strong>Σχολιάστε</strong> κάθε θέση που επανεξετάστηκε: τι δεν προσέξατε, τη δομή που ευθύνεται. Ένα γραπτό σχόλιο επιβάλλει μια εξήγηση — μια θέση που απλώς επανεξετάστηκε χωρίς λέξη ξεχνιέται εξίσου γρήγορα όπως δεν προσέχθηκε.</p></li>
+<li><p><strong>Συνθέστε μια τράπουλα Anki</strong> από αυτές τις σχολιασμένες θέσεις: η κατανεμημένη επανάληψη επαναφέρει τα ίδια μοτίβα μέχρι να γίνουν αντανακλαστικά.</p></li>
+<li><p><strong>Παρακολουθήστε το PR ανά τουρνουά</strong> στην καρτέλα Progression του πίνακα Stats (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>): μια καμπύλη που κατεβαίνει τουρνουά μετά τουρνουά είναι το μόνο σήμα που δεν λέει ποτέ ψέματα.</p></li>
+</ol>
+<p>Αυτή η ρουτίνα αξίζει μόνο αν επαναλαμβάνεται — δέκα λεπτά την εβδομάδα, σταθερά, αξίζουν περισσότερο από μια περιστασιακή ανασκόπηση που εγκαταλείπεται.</p>
+</section>
+<section id="scenario-de-demonstration-3-minutes">
+<h2><span class="section-number">2.3. </span>Σενάριο επίδειξης (3 λεπτά)<a class="headerlink" href="#scenario-de-demonstration-3-minutes" title="Link to this heading"></a></h2>
+<p>Για την παρουσίαση του blunderDB χωρίς προσωπική βάση δεδομένων, η εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> φορτώνει μια βάση δεδομένων παραδείγματος (φανταστικές θέσεις και ματς). Το ακόλουθο σενάριο διαρκεί τρία λεπτά:</p>
+<ol class="arabic simple">
+<li><p><em>0:00</em> — Η <code class="docutils literal notranslate"><span class="pre">demo</span></code> στη γραμμή εντολών (ή το αντίστοιχο κουμπί της γραμμής εργαλείων) φορτώνει τη βάση δεδομένων παραδείγματος. Εμφανίζεται ο πίνακας ματς.</p></li>
+<li><p><em>0:30</em> — Ανοίξτε ένα ματς (διπλό κλικ), διατρέξτε λίγες κινήσεις με τα βέλη, δείξτε τον πίνακα Ανάλυσης (<em>CTRL-L</em>) σε μια κίνηση που παίχτηκε με ορατό σφάλμα.</p></li>
+<li><p><em>1:30</em> — Εντολή <code class="docutils literal notranslate"><span class="pre">bl</span></code>: η προβολή μεταβαίνει απευθείας στα χειρότερα σφάλματα της βάσης δεδομένων, σε όλες τις θέσεις.</p></li>
+<li><p><em>2:15</em> — Πίνακας Anki (<em>CTRL-K</em>): δημιουργήστε μια τράπουλα από αυτές τις θέσεις, εκκινήστε μια κάρτα σε <em>Study</em> για να δείξετε τον κύκλο ερώτηση/απάντηση/βαθμολόγηση.</p></li>
+<li><p><em>2:45</em> — Επιστροφή στον πίνακα Stats (<em>CTRL-D</em>), καρτέλα Dashboard, για να δείξετε πού φαίνεται αυτή η δουλειά με τον καιρό.</p></li>
+</ol>
+</section>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2><span class="section-number">2.4. </span>Δημιουργία νέας βάσης δεδομένων<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Για να δημιουργήσετε μια νέα βάση δεδομένων, κάντε κλικ στη γραμμή εργαλείων στο κουμπί «Νέα βάση δεδομένων». Επιλέξτε διαδρομή αποθήκευσης και όνομα και κάντε κλικ στο «Save».</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η επέκταση αρχείου για τις βάσεις δεδομένων blunderDB είναι <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Συντόμευση πληκτρολογίου: <em>CTRL-N</em>. Εντολή: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2><span class="section-number">2.5. </span>Άνοιγμα υπάρχουσας βάσης δεδομένων<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Link to this heading"></a></h2>
+<p>Για να φορτώσετε μια υπάρχουσα βάση δεδομένων, κάντε κλικ στη γραμμή εργαλείων στο κουμπί «Άνοιγμα βάσης δεδομένων». Μεταβείτε στη διαδρομή όπου βρίσκεται η βάση, επιλέξτε το αρχείο <em>.db</em> και κάντε κλικ στο «Open».</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Συντόμευση πληκτρολογίου: <em>CTRL-O</em>. Εντολή: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="importer-et-fusionner-une-base-de-donnees">
+<h2><span class="section-number">2.6. </span>Εισαγωγή και συγχώνευση βάσης δεδομένων<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Για να εισαγάγετε και να συγχωνεύσετε μια άλλη βάση blunderDB στη βάση που είναι ανοικτή, κάντε κλικ στη γραμμή εργαλείων στο κουμπί «Εισαγωγή βάσης δεδομένων». Επιλέξτε το αρχείο <em>.db</em> προς εισαγωγή και κάντε κλικ στο «Open».</p>
+<p>Το blunderDB θα συγχωνεύσει έξυπνα τις δύο βάσεις δεδομένων:</p>
+<ul class="simple">
+<li><p>Οι θέσεις που δεν υπάρχουν στην τρέχουσα βάση δεδομένων θα προστεθούν μαζί με τις αναλύσεις και τα σχόλιά τους.</p></li>
+<li><p>Οι θέσεις που υπάρχουν ήδη θα ενημερωθούν: οι αναλύσεις θα συμπληρωθούν αν λείπουν, και τα σχόλια θα συγχωνευθούν (προσθήκη νέων σχολίων χωρίς αναπαραγωγή των υπαρχόντων).</p></li>
+<li><p>Ένα μήνυμα θα συνοψίσει τον αριθμό των θέσεων που προστέθηκαν, συγχωνεύθηκαν και αγνοήθηκαν.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η εισαγωγή απαιτεί και οι δύο βάσεις δεδομένων να έχουν συμβατές εκδόσεις σχήματος. Είναι δυνατή η εισαγωγή μιας βάσης δεδομένων με χαμηλότερη ή ίση έκδοση σε μια βάση δεδομένων με υψηλότερη έκδοση.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Η λειτουργία εισαγωγής τροποποιεί αμέσως τη βάση δεδομένων που είναι ανοιχτή αυτή τη στιγμή. Συνιστάται να δημιουργήσετε ένα αντίγραφο ασφαλείας πριν από την εισαγωγή μιας άλλης βάσης δεδομένων.</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2><span class="section-number">2.7. </span>Επεξεργασία θέσης<a class="headerlink" href="#editer-une-position" title="Link to this heading"></a></h2>
+<p>Για να επεξεργαστείτε μια θέση, πατήστε το πλήκτρο <em>TAB</em> για να ανοίξετε το πλαίσιο αναζήτησης και τον επεξεργαστή θέσης. Επεξεργαστείτε τη θέση με το ποντίκι:</p>
+<ul class="simple">
+<li><p>κάντε κλικ στα σημεία για να προσθέσετε πούλια. Το αριστερό κλικ αποδίδει τα πούλια στον παίκτη 1. Το δεξί κλικ αποδίδει τα πούλια στον παίκτη 2. Για να εισαγάγετε ένα φράγμα, κάντε κλικ στο σημείο εκκίνησης, κρατήστε πατημένο το κουμπί και αφήστε το στο σημείο άφιξης. Κάντε κλικ στην μπάρα για να τοποθετήσετε πούλια στην μπάρα.</p></li>
+<li><p>για να καθαρίσετε τη θέση, κάντε διπλό κλικ σε μια κενή περιοχή έξω από το ταμπλό ή πατήστε το πλήκτρο <em>BACKSPACE</em>.</p></li>
+<li><p>για να στείλετε τον κύβο στον παίκτη 1, κάντε αριστερό κλικ στον κύβο. Για να στείλετε τον κύβο στον παίκτη 2, κάντε δεξί κλικ στον κύβο.</p></li>
+<li><p>για να υποδείξετε τον παίκτη που έχει τη σειρά, κάντε κλικ στην προβλεπόμενη περιοχή των ζαριών.</p></li>
+<li><p>για να επεξεργαστείτε τα ζάρια, κάντε αριστερό κλικ για να αυξήσετε την τιμή ενός ζαριού, δεξί κλικ για να μειώσετε την τιμή ενός ζαριού. Αν οι όψεις των ζαριών είναι κενές, σημαίνει ότι η θέση είναι μια απόφαση κύβου.</p></li>
+<li><p>για να επεξεργαστείτε το σκορ των παικτών, κάντε αριστερό κλικ για να αυξήσετε το σκορ, δεξί κλικ για να μειώσετε το σκορ.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Η εισαγωγή της θέσης με το ποντίκι για τα πούλια γίνεται με τον ίδιο τρόπο όπως στο XG.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2><span class="section-number">2.8. </span>Προσθήκη θέσης στη βάση δεδομένων<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Μετά την επεξεργασία της θέσης, το πλαίσιο αναζήτησης είναι ανοιχτό.</p>
+<p>Για να αποθηκεύσετε τη θέση που λάβατε προηγουμένως, πατήστε <em>CTRL-S</em> ή κάντε κλικ στο κουμπί «Save Position» στη γραμμή εργαλείων.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανοίξτε τη γραμμή εντολών και εκτελέστε: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2><span class="section-number">2.9. </span>Προσθήκη ετικέτας σε μια θέση<a class="headerlink" href="#etiqueter-une-position" title="Link to this heading"></a></h2>
+<p>Για να προσθέσετε μια ετικέτα <em>toto</em> στην τρέχουσα θέση, ανοίξτε τη γραμμή εντολών πατώντας <em>SPACE</em>, πληκτρολογήστε <code class="docutils literal notranslate"><span class="pre">#toto</span></code> και επιβεβαιώστε την εντολή πατώντας <em>ENTER</em>.</p>
+</section>
+<section id="supprimer-une-position">
+<h2><span class="section-number">2.10. </span>Διαγραφή θέσης<a class="headerlink" href="#supprimer-une-position" title="Link to this heading"></a></h2>
+<p>Για να διαγράψετε την τρέχουσα θέση από τη βάση δεδομένων, πατήστε <em>Del</em> ή κάντε κλικ στο κουμπί «Delete Position» στη γραμμή εργαλείων.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Στη γραμμή εντολών, εκτελέστε <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Η διαγραφή της θέσης είναι οριστική και δεν απαιτεί καμία επιβεβαίωση από τον χρήστη.</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2><span class="section-number">2.11. </span>Εισαγωγή θέσης από το XG<a class="headerlink" href="#import-une-position-depuis-xg" title="Link to this heading"></a></h2>
+<p>Για να εισαγάγετε μια θέση απευθείας από το XG,</p>
+<ol class="arabic simple">
+<li><p>εμφανίστε στο XG τη θέση προς εισαγωγή και πατήστε <em>CTRL-C</em>,</p></li>
+<li><p>ανοίξτε το blunderDB και πατήστε <em>CTRL-V</em>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η αυτόματη επικόλληση εντοπίζει τη μορφή της πηγής (XG, GNUbg, BGBlitz).</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2><span class="section-number">2.12. </span>Εισαγωγή αγώνα<a class="headerlink" href="#importer-un-match" title="Link to this heading"></a></h2>
+<p>Το blunderDB μπορεί να εισαγάγει αγώνες από διάφορες πηγές.</p>
+<p><strong>Υποστηριζόμενες μορφές:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): αρχεία <em>.xg</em> και <em>.xgp</em> (θέσεις)</p></li>
+<li><p>GNUbg: αρχεία <em>.sgf</em></p></li>
+<li><p>Jellyfish: αρχεία <em>.mat</em> και <em>.txt</em></p></li>
+<li><p>BGBlitz: αρχεία <em>.bgf</em> και <em>.txt</em></p></li>
+</ul>
+<p><strong>Για να εισαγάγετε ένα ή περισσότερα αρχεία αγώνων:</strong></p>
+<ol class="arabic simple">
+<li><p>Πατήστε <em>CTRL-I</em> ή κάντε κλικ στο κουμπί «Import» στη γραμμή εργαλείων.</p></li>
+<li><p>Επιλέξτε ένα ή περισσότερα αρχεία προς εισαγωγή.</p></li>
+<li><p>Το blunderDB εντοπίζει αυτόματα τη μορφή και εισάγει τον αγώνα.</p></li>
+<li><p>Ένα παράθυρο προόδου εμφανίζει τον αριθμό των αρχείων που εισήχθησαν, απέτυχαν και παραλείφθηκαν (διπλότυπα).</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Εντολή: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB εντοπίζει αυτόματα τα διπλότυπα και αποτρέπει την εισαγωγή ενός αγώνα που υπάρχει ήδη στη βάση δεδομένων.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2><span class="section-number">2.13. </span>Εισαγωγή φακέλου αγώνων<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Link to this heading"></a></h2>
+<p>Για να εισαγάγετε αναδρομικά όλα τα αρχεία αγώνων που περιέχονται σε έναν φάκελο και τους υποφακέλους του:</p>
+<ol class="arabic simple">
+<li><p>Πατήστε <em>CTRL-SHIFT-F</em> ή κάντε κλικ στο αντίστοιχο κουμπί στη γραμμή εργαλείων.</p></li>
+<li><p>Επιλέξτε τον φάκελο που περιέχει τα αρχεία αγώνων.</p></li>
+<li><p>Το blunderDB συλλέγει και εισάγει αυτόματα όλα τα αναγνωρισμένα αρχεία (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="glisser-deposer">
+<h2><span class="section-number">2.14. </span>Μεταφορά και απόθεση<a class="headerlink" href="#glisser-deposer" title="Link to this heading"></a></h2>
+<p>Το blunderDB υποστηρίζει τη μεταφορά και απόθεση. Μπορείτε να μεταφέρετε και να αποθέσετε στο παράθυρο του blunderDB:</p>
+<ul class="simple">
+<li><p>αρχεία αγώνων ή θέσεων (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>) για να τα εισαγάγετε,</p></li>
+<li><p>αρχεία βάσης δεδομένων (<em>.db</em>) για να τα ανοίξετε ή να τα συγχωνεύσετε με την τρέχουσα βάση δεδομένων,</p></li>
+<li><p>φακέλους για να εισαγάγετε αναδρομικά όλα τα αρχεία που περιέχουν.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2><span class="section-number">2.15. </span>Πλοήγηση σε έναν αγώνα<a class="headerlink" href="#naviguer-dans-un-match" title="Link to this heading"></a></h2>
+<p>Για να πλοηγηθείτε σε έναν εισαγόμενο αγώνα:</p>
+<ol class="arabic simple">
+<li><p>Ανοίξτε το πλαίσιο των αγώνων με <em>CTRL-Tab</em>.</p></li>
+<li><p>Κάντε διπλό κλικ σε έναν αγώνα ή πατήστε <em>ENTER</em>.</p></li>
+<li><p>Χρησιμοποιήστε τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> / <em>ΔΕΞΙΑ</em> για να περιηγηθείτε στις κινήσεις.</p></li>
+<li><p>Χρησιμοποιήστε <em>PageUp</em> / <em>PageDown</em> για να εναλλαχθείτε μεταξύ των παρτίδων.</p></li>
+<li><p>Πατήστε <em>CTRL-L</em> για να εμφανίσετε την ανάλυση.</p></li>
+<li><p>Πατήστε <em>d</em> για εναλλαγή μεταξύ της ανάλυσης κινήσεων πουλιών και της ανάλυσης κύβου.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Συντόμευση: <em>CTRL-Tab</em> για να ανοίξετε το πλαίσιο των αγώνων. Εντολή: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB απομνημονεύει την τελευταία θέση που επισκεφθήκατε σε κάθε αγώνα. Όταν επιστρέφετε σε έναν αγώνα, η τελευταία θέση που επισκεφθήκατε αποκαθίσταται αυτόματα.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2><span class="section-number">2.16. </span>Διαχείριση του πλαισίου αγώνων<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Link to this heading"></a></h2>
+<p>Το πλαίσιο των αγώνων (<em>CTRL-Tab</em>) σας επιτρέπει να:</p>
+<ul class="simple">
+<li><p>παραθέσετε όλους τους εισαγόμενους αγώνες (ταξινομημένους από τον πιο πρόσφατο στον παλαιότερο),</p></li>
+<li><p>ταξινομήσετε τους αγώνες κατά στήλη (παίκτης 1, παίκτης 2, ημερομηνία, διάρκεια αγώνα, τουρνουά),</p></li>
+<li><p>επεξεργαστείτε τα ονόματα των παικτών ή την ημερομηνία κάνοντας διπλό κλικ στα πεδία,</p></li>
+<li><p>εναλλάξετε τους παίκτες 1 και 2 χρησιμοποιώντας το κουμπί εναλλαγής,</p></li>
+<li><p>αναθέσετε έναν αγώνα σε ένα τουρνουά,</p></li>
+<li><p>διαγράψετε έναν αγώνα χρησιμοποιώντας το πλήκτρο <em>Del</em>.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<span id="guide-collections"></span><h2><span class="section-number">2.17. </span>Διαχείριση συλλογών<a class="headerlink" href="#gerer-les-collections" title="Link to this heading"></a></h2>
+<p>Οι συλλογές σας επιτρέπουν να οργανώνετε θέσεις σε προσαρμοσμένες ομάδες. Για να αποκτήσετε πρόσβαση στο πλαίσιο των συλλογών, πατήστε <em>CTRL-B</em>.</p>
+<p><strong>Δημιουργία συλλογής:</strong></p>
+<ol class="arabic simple">
+<li><p>Ανοίξτε το πλαίσιο των συλλογών (<em>CTRL-B</em>).</p></li>
+<li><p>Εισαγάγετε το όνομα της νέας συλλογής και κάντε κλικ στο «Add».</p></li>
+</ol>
+<p><strong>Προσθήκη θέσεων σε μια συλλογή:</strong></p>
+<ol class="arabic simple">
+<li><p>Επιλέξτε τις επιθυμητές θέσεις.</p></li>
+<li><p>Προσθέστε τες στη συλλογή από το πλαίσιο των συλλογών.</p></li>
+</ol>
+<p><strong>Περιήγηση σε μια συλλογή:</strong></p>
+<ul class="simple">
+<li><p>Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της. Η σειρά των συλλογών και των θέσεων μπορεί να αλλάξει με μεταφορά και απόθεση.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Εντολή: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2><span class="section-number">2.18. </span>Διαχείριση τουρνουά<a class="headerlink" href="#gerer-les-tournois" title="Link to this heading"></a></h2>
+<p>Τα τουρνουά σας επιτρέπουν να οργανώνετε τους εισαγόμενους αγώνες ανά εκδήλωση. Για να αποκτήσετε πρόσβαση στο πλαίσιο των τουρνουά, πατήστε <em>CTRL-Y</em>.</p>
+<p><strong>Δημιουργία τουρνουά:</strong></p>
+<ol class="arabic simple">
+<li><p>Ανοίξτε το πλαίσιο των τουρνουά (<em>CTRL-Y</em>).</p></li>
+<li><p>Κάντε κλικ στο «Add» και εισαγάγετε το όνομα του τουρνουά.</p></li>
+</ol>
+<p><strong>Ανάθεση αγώνα σε ένα τουρνουά:</strong></p>
+<ul class="simple">
+<li><p>Από το πλαίσιο των αγώνων (<em>CTRL-Tab</em>), χρησιμοποιήστε το αναπτυσσόμενο μενού της στήλης τουρνουά για να αναθέσετε έναν αγώνα.</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2><span class="section-number">2.19. </span>Εμφάνιση στατιστικών επιδόσεων<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Link to this heading"></a></h2>
+<p>Το πλαίσιο Stats σας επιτρέπει να προβάλλετε τους δείκτες επιδόσεών σας (PR και κόστος MWC) από τις εισαγόμενες θέσεις.</p>
+<ol class="arabic simple">
+<li><p>Πατήστε <em>CTRL-D</em> ή κάντε κλικ στην καρτέλα Stats στο κάτω πλαίσιο.</p></li>
+<li><p>Χρησιμοποιήστε τη γραμμή φίλτρου για να περιορίσετε την ανάλυση ανά παίκτη, τουρνουά, εύρος ημερομηνιών, τύπο απόφασης ή διάρκεια αγώνα.</p></li>
+<li><p>Κάντε κλικ σε έναν δείκτη για να μεταβείτε απευθείας στις αντίστοιχες θέσεις.</p></li>
+</ol>
+</section>
+<section id="evaluer-une-position-panneau-eval">
+<h2><span class="section-number">2.20. </span>Αξιολόγηση μιας θέσης (πίνακας Eval)<a class="headerlink" href="#evaluer-une-position-panneau-eval" title="Link to this heading"></a></h2>
+<p>Ο πίνακας Eval αξιολογεί οποιαδήποτε θέση — όχι μόνο έναν αγώνα δρόμου. Σε μια καθαρή θέση bearoff, υπολογίζει το EPC (Effective Pip Count) και τα άλλα στατιστικά bearoff· σε οποιαδήποτε άλλη θέση, ο ενσωματωμένος αξιολογητής gammonNet παρέχει τις υποψήφιες κινήσεις ή την απόφαση κύβου, χωρίς σύνδεση, χωρίς XG ή GNUbg.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_eval.png"><img alt="Πίνακας Eval σε μια απόφαση κίνησης πουλιών" src="_images/panel_eval.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Eval: πιθανότητες νίκης/γκάμον/μπάγκαμον, ισοτιμία και σφάλμα κάθε υποψήφιας κίνησης, υπολογισμένα από το gammonNet.</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p>Πατήστε <em>CTRL-E</em>, κάντε κλικ στην καρτέλα Eval στον κάτω πίνακα, ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">epc</span></code>: ο πίνακας ανοίγει με άδειο ταμπλό, έτοιμο για επεξεργασία.</p></li>
+<li><p>Για να αξιολογήσετε τη θέση που ήδη εμφανίζεται (μια θέση από τη βιβλιοθήκη, ή αυτή ενός ματς υπό ανασκόπηση) αντί για άδειο ταμπλό, δεξί κλικ στο ταμπλό και έπειτα «Evaluate this position» — η εμφανιζόμενη θέση αποστέλλεται ως έχει στον πίνακα Eval.</p></li>
+<li><p>Ολόκληρο το ταμπλό επεξεργάζεται με κλικ ή πληκτρολόγιο: πούλια, ζάρια, σκορ, θέση του κύβου, παίκτης στη σειρά. Η επεξεργασία μόνο των πουλιών του jan (τελευταία 6 σημεία) και στις δύο πλευρές τοποθετεί τη θέση σε καθεστώς bearoff.</p></li>
+<li><p>Τα αποτελέσματα εμφανίζονται σε πραγματικό χρόνο: σε καθαρό bearoff, EPC, μέσος αριθμός ζαριών, τυπική απόκλιση, pip count και wastage, η πιθανότητα νίκης του παίκτη στη σειρά και, στον ακριβή τομέα, η κρίση κύβου χρημάτων· σε οποιαδήποτε άλλη θέση με ριγμένα ζάρια, οι υποψήφιες κινήσεις ταξινομημένες κατά ισοτιμία· χωρίς ζάρια, η απόφαση κύβου. Δείτε την ενότητα «Μεθοδολογία και υποθέσεις του πίνακα Eval» του εγχειριδίου.</p></li>
+<li><p>Για να εξασκηθείτε στην εκτίμηση αυτών των τιμών, επιλέξτε το πλαίσιο <em>Πρόκληση</em>: τα αποτελέσματα αποκρύπτονται σε κάθε τροποποίηση και αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας λειτουργεί και για τους δύο παίκτες ταυτόχρονα.</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2><span class="section-number">2.21. </span>Εμφάνιση της ανάλυσης μιας θέσης που εισήχθη από το XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Link to this heading"></a></h2>
+<p>Αν μια θέση που αναλύθηκε από το XG, το GNUbg ή το BGBlitz έχει εισαχθεί στο blunderDB, η ανάλυση μπορεί να εμφανιστεί πατώντας <em>CTRL-L</em>.</p>
+<p>Αν η θέση αντιστοιχεί σε μια απόφαση κίνησης πουλιών, οι πέντε καλύτερες κινήσεις εμφανίζονται σε ξεχωριστές γραμμές. Για κάθε γραμμή, οι πληροφορίες που παρέχονται είναι με αυτή τη σειρά: η σχετική κίνηση πουλιού, η κανονικοποιημένη ισοδυναμία (equity), το σφάλμα ισοδυναμίας της κίνησης, οι πιθανότητες νίκης, gammon και backgammon του παίκτη, οι πιθανότητες νίκης, gammon και backgammon του αντιπάλου, και το επίπεδο ανάλυσης.</p>
+<p>Αν η θέση αντιστοιχεί σε μια απόφαση κύβου, εμφανίζεται το κόστος κάθε απόφασης καθώς και οι πιθανότητες νίκης της θέσης.</p>
+<p>Όταν υπάρχουν πολλαπλές μηχανές ανάλυσης για την ίδια θέση (για παράδειγμα XG και GNUbg), μια επιπλέον στήλη υποδεικνύει τη μηχανή προέλευσης κάθε ανάλυσης.</p>
+<p>Κατά την πλοήγηση σε έναν αγώνα, η κίνηση που πραγματικά παίχτηκε επισημαίνεται στη λίστα των κινήσεων. Αν η θέση συναντήθηκε σε πολλούς αγώνες, υποδεικνύονται όλες οι κινήσεις που παίχτηκαν.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Κάνοντας κλικ σε μια κίνηση στο πλαίσιο ανάλυσης, εμφανίζονται τα αντίστοιχα βέλη στο ταμπλό.</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2><span class="section-number">2.22. </span>Εξαγωγή θέσης στο XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Link to this heading"></a></h2>
+<p>Για να εξαγάγετε μια θέση από το blunderDB στο XG,</p>
+<ol class="arabic simple">
+<li><p>εμφανίστε στο blunderDB τη θέση προς εξαγωγή και πατήστε <em>CTRL-C</em>,</p></li>
+<li><p>ανοίξτε το XG και πατήστε <em>CTRL-V</em>.</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2><span class="section-number">2.23. </span>Προβολή των διαφόρων θέσεων<a class="headerlink" href="#visualiser-les-differentes-positions" title="Link to this heading"></a></h2>
+<p>Για να προβάλετε τις διάφορες θέσεις της τρέχουσας βιβλιοθήκης, χρησιμοποιήστε τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>. Το πλήκτρο <em>HOME</em> σας επιτρέπει να μεταβείτε στην πρώτη θέση, και το πλήκτρο <em>END</em> σας επιτρέπει να μεταβείτε στην τελευταία θέση.</p>
+<p>Για να εμφανίσετε το bearoff στα αριστερά, πατήστε <em>CTRL-ΑΡΙΣΤΕΡΑ</em>. Για να εμφανίσετε το bearoff στα δεξιά, πατήστε <em>CTRL-ΔΕΞΙΑ</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2><span class="section-number">2.24. </span>Αναζήτηση θέσεων με βάση κριτήρια<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Link to this heading"></a></h2>
+<p>Για να αναζητήσετε τύπους θέσεων,</p>
+<ul class="simple">
+<li><p>πατήστε <em>TAB</em> για να ανοίξετε το πλαίσιο αναζήτησης,</p></li>
+<li><p>επεξεργαστείτε τη δομή της θέσης προς αναζήτηση. Το blunderDB θα φιλτράρει τις θέσεις που έχουν <em>τουλάχιστον</em> τη δομή πουλιών που εισαγάγατε. Σε περίπτωση αμφιβολίας, για να μεγιστοποιήσετε τα αποτελέσματα, καθαρίστε τη θέση πατώντας το πλήκτρο <em>BACKSPACE</em>. Επεξεργαστείτε αν χρειάζεται τη θέση του κύβου και το σκορ.</p></li>
+</ul>
+<p>Το πλαίσιο αναζήτησης προσφέρει δύο δομές πουλιών, επιλέξιμες μέσω των καρτελών <em>At least</em> και <em>Except</em> που βρίσκονται στο επάνω μέρος του πλαισίου:</p>
+<ul class="simple">
+<li><p><em>At least</em> (προεπιλογή): το blunderDB φιλτράρει τις θέσεις που έχουν <em>τουλάχιστον</em> τη δομή πουλιών που εισαγάγατε ;</p></li>
+<li><p><em>Except</em>: το blunderDB αποκλείει τις θέσεις που περιέχουν ένα από τα πούλια που εισαγάγατε. Το ταμπλό περιβάλλεται από κόκκινο περίγραμμα κατά την επεξεργασία αυτής της δομής. Μια θέση απορρίπτεται αν περιέχει <em>τουλάχιστον ένα</em> από τα σχεδιασμένα στοιχεία (για παράδειγμα, σχεδιάζοντας ένα πούλι στα σημεία 1, 3 και 5 διατηρούνται μόνο οι θέσεις που δεν έχουν κανένα πούλι σε αυτά τα σημεία). Ο αριθμός των πουλιών ανά σημείο δεν είναι περιορισμένος: ορίζοντας 3 πούλια σε ένα σημείο αποκλείονται οι θέσεις που έχουν 3 ή περισσότερα πούλια εκεί (χρήσιμο για την αναζήτηση μιας πύλης χωρίς εφεδρικό πούλι). Δύο γρήγορα κλικ σε ένα σημείο το επισημαίνουν ως απαιτούμενο να είναι κενό (κόκκινο γραμμοσκιασμένο κελί, κανένα πούλι ανεξαρτήτως χρώματος) ; ένα απλό κλικ σε αυτό το σημείο το ξεμπλοκάρει.</p></li>
+</ul>
+<p>Όταν ένα σημείο ανήκει και στις δύο δομές, το κριτήριο <em>Except</em> υπερισχύει αν έρχεται σε αντίθεση με το κριτήριο <em>At least</em>.</p>
+<p>Μέθοδος 1 (απλή):</p>
+<ul class="simple">
+<li><p>Ανοίξτε το παράθυρο αναζήτησης (<em>CTRL-F</em>)</p></li>
+<li><p>Προσθέστε και ρυθμίστε τα φίλτρα αναζήτησης</p></li>
+<li><p>Επιβεβαιώστε κάνοντας κλικ στο «Search».</p></li>
+</ul>
+<p>Μέθοδος 2 (προχωρημένη):</p>
+<ul class="simple">
+<li><p>ανοίξτε τη γραμμή εντολών πατώντας <em>SPACE</em>,</p></li>
+<li><p>πληκτρολογήστε <em>s</em>, προσθέστε τυχόν πρόσθετα φίλτρα (για παράδειγμα <em>cube</em> ή <em>score</em> για να ληφθεί υπόψη ο κύβος και το σκορ αντίστοιχα. Δείτε <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Τομέας 4.4</span></a> για μια εξαντλητική λίστα των διαθέσιμων φίλτρων).</p></li>
+<li><p>επιβεβαιώστε το ερώτημα πατώντας <em>ENTER</em>.</p></li>
+</ul>
+<p>Οι θέσεις που εμφανίζονται είναι αυτές της βάσης δεδομένων που πληρούν τα κριτήρια αναζήτησης που εισήγαγε ο χρήστης.</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2><span class="section-number">2.25. </span>Για να προχωρήσετε παραπέρα<a class="headerlink" href="#pour-aller-plus-loin" title="Link to this heading"></a></h2>
+<p>Ο οδηγός αυτός καλύπτει τις πιο συνηθισμένες χρήσεις. Το blunderDB προσφέρει αρκετές επιπλέον λειτουργίες, που περιγράφονται αναλυτικά στο εγχειρίδιο:</p>
+<ul class="simple">
+<li><p><strong>Επαναληπτική μελέτη (Anki)</strong> — ο πίνακας Anki (<em>CTRL-K</em>) μετατρέπει μια συλλογή ή μια αναζήτηση σε πακέτο καρτών προς επανάληψη με τον αλγόριθμο FSRS, με ελεύθερη λειτουργία εξάσκησης (<em>cram</em>) που δεν διαταράσσει το χρονοδιάγραμμα. Βλ. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Πίνακας Anki</span></a>.</p></li>
+<li><p><strong>Πολλαπλές προβολές</strong> — μια γραμμή καρτελών κάτω από τη γραμμή εργαλείων κρατά ανοικτούς παράλληλα πολλούς ανεξάρτητους χώρους εργασίας (για παράδειγμα μια αναζήτηση και την πλοήγηση σε έναν αγώνα), τον καθένα με τη δική του λίστα θέσεων και το δικό του πλαίσιο. Βλ. <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Καρτέλες προβολών</span></a>.</p></li>
+<li><p><strong>Διανομή με υδατογράφημα</strong> — μια εξαγωγή μπορεί να υπογραφεί με την ταυτότητα εκδότη σας (απαραχάρακτο υδατογράφημα που δηλώνει την προέλευση του αρχείου) και να προστατευθεί με κωδικό για τη μεταφορά της. Βλ. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>.</p></li>
+<li><p><strong>Ξεναγήσεις και βάση επίδειξης</strong> — η εντολή <code class="docutils literal notranslate"><span class="pre">tour</span></code> (συνώνυμο <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>) ανοίγει έναν κατάλογο ξεναγήσεων στη διεπαφή, και η εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> φορτώνει μια βάση παραδείγματος για να γνωρίσετε το εργαλείο χωρίς προσωπική βάση. Βλ. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Ξεναγήσεις και βάση δείγματος</span></a>.</p></li>
+<li><p><strong>Φόρτωση των χειρότερων λαθών</strong> — η εντολή <code class="docutils literal notranslate"><span class="pre">bl</span></code> (ή <code class="docutils literal notranslate"><span class="pre">blunders</span></code>) φορτώνει απευθείας τα χειρότερα λάθη (ισοδυναμία ή MWC) στην προβολή ανάλυσης, σύμφωνα με το τρέχον φίλτρο του πίνακα Στατιστικών, χωρίς χειροκίνητη αναζήτηση. Βλ. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Πίνακας Stats</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Λήψη και εγκατάσταση" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel.html" class="btn btn-neutral float-right" title="3. Εγχειρίδιο" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14. Contrato de la API &mdash; documentación de blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e3f67aac"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="15. Anexo: Uso avanzado de los filtros" href="annexe_filtres.html" />
+    <link rel="prev" title="13. Modo headless (servidor)" href="mode_headless.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guía del usuario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Hoja de ruta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Etapa 3 — Ampliar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Etapa 4 — Grandes proyectos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Lo que <strong>no</strong> está previsto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Modo headless (servidor)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. Contrato de la API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idempotence">14.1. Idempotencia</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">14. </span>Contrato de la API</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contrat-d-api">
+<span id="api-reference"></span><h1><span class="section-number">14. </span>Contrato de la API<a class="headerlink" href="#contrat-d-api" title="Link to this heading"></a></h1>
+<p>Este anexo se genera a partir del código fuente (<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>; véase <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> en la raíz del repositorio para el contrato completo, esquemas incluidos): no editarlo directamente, la siguiente generación sobrescribiría cualquier cambio. Cada familia agrupa los métodos <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;familia&gt;.&lt;método&gt;</span></code> que expone el demonio (véase <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Modo headless (servidor)</span></a>), con su forma de respuesta (JSON, o NDJSON para una lista en flujo) y, cuando exista, una mención de la cabecera opcional <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>analyses
+  POST /v1/analyses.delete                      JSON
+  POST /v1/analyses.load                        JSON
+  POST /v1/analyses.repair                      JSON
+  POST /v1/analyses.save                        JSON
+anki
+  POST /v1/anki.buryCard                        JSON
+  POST /v1/anki.createDeck                      JSON
+  POST /v1/anki.deckPositions                   NDJSON
+  POST /v1/anki.deckStats                       JSON
+  POST /v1/anki.deleteDeck                      JSON
+  POST /v1/anki.forecast                        JSON
+  POST /v1/anki.listDecks                       NDJSON
+  POST /v1/anki.nextCard                        JSON
+  POST /v1/anki.removeCard                      JSON
+  POST /v1/anki.resetDeck                       JSON
+  POST /v1/anki.retention                       JSON
+  POST /v1/anki.reviewCard                      JSON  (Idempotency-Key)
+  POST /v1/anki.reviewLog                       NDJSON
+  POST /v1/anki.suspendCard                     JSON
+  POST /v1/anki.sync                            JSON
+  POST /v1/anki.syncWithPositions               JSON
+  POST /v1/anki.updateDeck                      JSON
+  POST /v1/anki.updateDeckParams                JSON
+collections
+  POST /v1/collections.addPosition              JSON
+  POST /v1/collections.addPositions             JSON
+  POST /v1/collections.collectionsOf            NDJSON
+  POST /v1/collections.copyPosition             JSON
+  POST /v1/collections.create                   JSON  (Idempotency-Key)
+  POST /v1/collections.delete                   JSON
+  POST /v1/collections.get                      JSON
+  POST /v1/collections.list                     NDJSON
+  POST /v1/collections.movePosition             JSON
+  POST /v1/collections.positionIndexMap         JSON
+  POST /v1/collections.positions                NDJSON
+  POST /v1/collections.removePosition           JSON
+  POST /v1/collections.removePositions          JSON
+  POST /v1/collections.reorder                  JSON
+  POST /v1/collections.reorderPositions         JSON
+  POST /v1/collections.update                   JSON
+comments
+  POST /v1/comments.add                         JSON
+  POST /v1/comments.byPosition                  NDJSON
+  POST /v1/comments.delete                      JSON
+  POST /v1/comments.deleteForPosition           JSON
+  POST /v1/comments.listAll                     NDJSON
+  POST /v1/comments.search                      NDJSON
+  POST /v1/comments.text                        JSON
+  POST /v1/comments.update                      JSON
+exports
+  POST /v1/exports.json                         custom
+  POST /v1/exports.sqlite                       custom
+filters
+  POST /v1/filters.delete                       JSON
+  POST /v1/filters.list                         NDJSON
+  POST /v1/filters.loadEditPosition             JSON
+  POST /v1/filters.loadExcludePosition          JSON
+  POST /v1/filters.save                         JSON
+  POST /v1/filters.saveEditPosition             JSON
+  POST /v1/filters.saveExcludePosition          JSON
+  POST /v1/filters.update                       JSON
+gammonnet
+  POST /v1/gammonnet.analyzeMissing             custom
+  POST /v1/gammonnet.analyzeMissing.cancel      custom
+  POST /v1/gammonnet.sweepStale                 custom
+history
+  POST /v1/history.clear                        JSON
+  POST /v1/history.load                         JSON
+  POST /v1/history.save                         JSON
+imports
+  POST /v1/imports.bgf                          custom
+  POST /v1/imports.cancel                       custom
+  POST /v1/imports.db                           custom
+  POST /v1/imports.gnubg                        custom
+  POST /v1/imports.json                         custom
+  POST /v1/imports.position                     custom
+  POST /v1/imports.xg                           custom
+maintenance
+  POST /ops/maintenance.vacuum                  custom
+matches
+  POST /v1/matches.createGame                   JSON
+  POST /v1/matches.createMove                   JSON
+  POST /v1/matches.delete                       JSON
+  POST /v1/matches.exportMat                    custom
+  POST /v1/matches.findByHash                   JSON
+  POST /v1/matches.games                        NDJSON
+  POST /v1/matches.get                          JSON
+  POST /v1/matches.lastVisited                  JSON
+  POST /v1/matches.list                         NDJSON
+  POST /v1/matches.mergePlayers                 JSON
+  POST /v1/matches.movePositions                NDJSON
+  POST /v1/matches.moves                        NDJSON
+  POST /v1/matches.movesByMatch                 NDJSON
+  POST /v1/matches.save                         JSON
+  POST /v1/matches.setLastVisitedPosition       JSON
+  POST /v1/matches.swapPlayers                  JSON
+  POST /v1/matches.update                       JSON
+  POST /v1/matches.updateComment                JSON
+metadata
+  POST /v1/metadata.counts                      JSON
+  POST /v1/metadata.version                     JSON
+positions
+  POST /v1/positions.delete                     JSON
+  POST /v1/positions.epc                        JSON
+  POST /v1/positions.exists                     JSON
+  POST /v1/positions.fromXGID                   JSON
+  POST /v1/positions.fromXGP                    JSON
+  POST /v1/positions.legalMoves                 JSON
+  POST /v1/positions.list                       NDJSON
+  POST /v1/positions.listIds                    JSON
+  POST /v1/positions.load                       JSON
+  POST /v1/positions.loadByIds                  JSON
+  POST /v1/positions.parseText                  JSON
+  POST /v1/positions.save                       JSON
+  POST /v1/positions.update                     JSON
+search
+  POST /v1/search.find                          NDJSON
+  POST /v1/search.parse                         JSON
+  POST /v1/search.query                         custom
+searchHistory
+  POST /v1/searchHistory.deleteEntry            JSON
+  POST /v1/searchHistory.list                   NDJSON
+  POST /v1/searchHistory.save                   JSON
+session
+  POST /v1/session.clear                        JSON
+  POST /v1/session.load                         JSON
+  POST /v1/session.save                         JSON
+stats
+  POST /v1/stats.compute                        JSON
+  POST /v1/stats.dateRange                      JSON
+  POST /v1/stats.matchBadges                    JSON
+  POST /v1/stats.matchDetail                    JSON
+  POST /v1/stats.playerNames                    JSON
+  POST /v1/stats.playerTable                    JSON
+  POST /v1/stats.positionIdsByMatch             JSON
+  POST /v1/stats.positionIdsBySelection         JSON
+  POST /v1/stats.positionIdsByTournament        JSON
+  POST /v1/stats.tournamentBadges               JSON
+tenant
+  POST /ops/tenant.purge                        custom
+tournaments
+  POST /v1/tournaments.addMatch                 JSON
+  POST /v1/tournaments.create                   JSON  (Idempotency-Key)
+  POST /v1/tournaments.delete                   JSON
+  POST /v1/tournaments.get                      JSON
+  POST /v1/tournaments.list                     NDJSON
+  POST /v1/tournaments.matches                  NDJSON
+  POST /v1/tournaments.removeMatch              JSON
+  POST /v1/tournaments.reorderMatches           JSON
+  POST /v1/tournaments.setMatchByName           JSON
+  POST /v1/tournaments.tournamentOf             JSON
+  POST /v1/tournaments.update                   JSON
+  POST /v1/tournaments.updateComment            JSON
+</pre></div>
+</div>
+<section id="idempotence">
+<h2><span class="section-number">14.1. </span>Idempotencia<a class="headerlink" href="#idempotence" title="Link to this heading"></a></h2>
+<p>La mayoría de los métodos no necesitan ningún mecanismo especial: las lecturas no tienen efectos secundarios, y <code class="docutils literal notranslate"><span class="pre">positions.save</span></code> (como el resto de <code class="docutils literal notranslate"><span class="pre">positions.*</span></code>) es naturalmente idempotente gracias al hash de contenido Zobrist — guardar la misma posición dos veces devuelve la misma fila, nunca un duplicado. 3 métodos carecen de esa propiedad (dos llamadas son dos efectos distintos) y aceptan una cabecera opcional <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code>: una llamada reintentada con la misma clave devuelve el resultado del primer intento en lugar de repetir su efecto — véase la marca «(Idempotency-Key)» en la tabla anterior. Ningún otro método necesita o acepta esa cabecera.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="mode_headless.html" class="btn btn-neutral float-left" title="13. Modo headless (servidor)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="15. Anexo: Uso avanzado de los filtros" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Idiomas</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

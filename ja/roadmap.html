@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. ロードマップ &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="13. ヘッドレスモード（サーバー）" href="mode_headless.html" />
+    <link rel="prev" title="8. よくある質問（FAQ）" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. 用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. よくある質問（FAQ）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. ロードマップ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-3-etendre">10. 第 3 段階 — 拡張</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#import-et-flux">10.1. インポートと作業の流れ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#categoriser-sans-imposer-de-classification">10.2. 分類を押しつけずに分類する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyse-et-evaluation">10.3. 解析と評価</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pedagogie">10.4. 学習</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#partager-une-analyse">10.5. 解析を共有する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-et-bibliotheque">10.6. 検索とライブラリ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-et-plateforme">10.7. インターフェースとプラットフォーム</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-4-chantiers-de-fond">11. 第 4 段階 — 基盤となる作業</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#ce-qui-n-est-pas-prevu">12. 予定に<strong>ない</strong>こと</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. APIコントラクト</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>ロードマップ</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="feuille-de-route">
+<span id="roadmap"></span><h1><span class="section-number">9. </span>ロードマップ<a class="headerlink" href="#feuille-de-route" title="Link to this heading"></a></h1>
+<p>このページは blunderDB について検討中の発展の方向性を挙げたものであり、時期や順序を約束するものでは<strong>ありません</strong>。blunderDB は一人の開発者が余暇に開発しています。ある方向性が急速に進むことも、何か月も止まることも、より良い案に取って代わられて放棄されることもあります。</p>
+<p>詳細な進捗は GitHub で管理しています。</p>
+<ul class="simple">
+<li><p>未解決のチケットは、マイルストーン <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/4">第 3 段階 — 拡張</a> (このページに続くもの) と <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/5">第 4 段階 — 基盤</a> (より重い作業) に段階別にまとめられています。</p></li>
+<li><p>アイデアの提案や議論は <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions — Ideas カテゴリ</a> へどうぞ。</p></li>
+<li><p>公開された各バージョンは <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">Discussions — Announcements カテゴリ</a> で告知されます。</p></li>
+</ul>
+</section>
+<section id="etape-3-etendre">
+<h1><span class="section-number">10. </span>第 3 段階 — 拡張<a class="headerlink" href="#etape-3-etendre" title="Link to this heading"></a></h1>
+<section id="import-et-flux">
+<h2><span class="section-number">10.1. </span>インポートと作業の流れ<a class="headerlink" href="#import-et-flux" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>インポート完了パネル: インポートした試合数、マークした局面、解析のない局面、最悪の 5 つのミス (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/257">#257</a>)。</p></li>
+<li><p>フォルダー (たとえば eXtreme Gammon のもの) を監視し、新しいファイルを自動的にインポートする (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/258">#258</a>)。</p></li>
+<li><p>インポート後、その一括分のブランダー、マークした局面、際どい判断だけを表示する学習キューをたどる (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/259">#259</a>)。</p></li>
+<li><p>bgammon.org でプレイした試合をインポートし、アプリケーションに貼り付けられた OGID 局面識別子を認識する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/262">#262</a>)。</p></li>
+<li><p>各コメントの出所 (ユーザー、eXtreme Gammon、GNUbg など) を記録し、無作為に選ばれた 1 つではなくすべてを表示する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/263">#263</a>)。</p></li>
+</ul>
+</section>
+<section id="categoriser-sans-imposer-de-classification">
+<h2><span class="section-number">10.2. </span>分類を押しつけずに分類する<a class="headerlink" href="#categoriser-sans-imposer-de-classification" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>各局面をゲームの局面 (序盤、中盤、競走、ベアオフ) に応じて自動的にラベル付けし、絞り込みや統計から見つけられるようにする (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/264">#264</a>)。</p></li>
+<li><p>補完付きの推奨タグ語彙 (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>、<code class="docutils literal notranslate"><span class="pre">#backgame</span></code>、<code class="docutils literal notranslate"><span class="pre">#containment</span></code> など) と、頻度順に一覧するパネル (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/265">#265</a>)。</p></li>
+<li><p>局面別、タグ別、アウェイスコア別に PR とエラー率を行列の形で分解する 5 つ目の統計タブ (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/266">#266</a>)。</p></li>
+</ul>
+</section>
+<section id="analyse-et-evaluation">
+<h2><span class="section-number">10.3. </span>解析と評価<a class="headerlink" href="#analyse-et-evaluation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>現在の局面について、5 点、7 点、9 点マッチのあらゆるスコアでのダブルの判定を 1 つの表にまとめる (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/267">#267</a>)。</p></li>
+<li><p>解析が付いていない試合について、指された手を内蔵評価器の推奨と比べて PR を算出する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/268">#268</a>)。</p></li>
+<li><p>同じ局面について、データベースにすでにある複数のエンジンの見解を並べて比較する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/269">#269</a>)。</p></li>
+<li><p>内蔵評価器が厳密な参照表に対してどれだけ正確かを公表し、eXtreme Gammon のインポートに対して継続的に測定する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/270">#270</a>)。</p></li>
+<li><p>適用中のルール (最大キューブ、ジャコビー、ビーバー) を判定の横に表示し、データベースごとにマッチエクイティ表を選べるようにする (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/271">#271</a>)。</p></li>
+<li><p>3-ply の測定 (所要時間、精度の向上) を公表し、割に合うなら設定として公開する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/272">#272</a>)。</p></li>
+</ul>
+</section>
+<section id="pedagogie">
+<h2><span class="section-number">10.4. </span>学習<a class="headerlink" href="#pedagogie" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>時間を計る最初の訓練モジュール: ピップ数、EPC、テイクポイント (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/273">#273</a>)。</p></li>
+<li><p>上達の目標 (「3 か月で PR を 5 未満に」) を立て、曲線上でその差を追う (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/274">#274</a>)。</p></li>
+<li><p>学習の統計 (Anki) を実戦の統計に結び付ける。復習した分類は本当に良くなっているか (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/275">#275</a>)。</p></li>
+<li><p>連鎖するキューブカード: ダブル、次にテイクを、2 段構えの 1 枚ではなく別々の 2 問として扱う (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/276">#276</a>)。</p></li>
+<li><p>学習コース: 注釈付きの局面を順に並べたもので、透かし入りデータベースとして配布でき、コーチのために考えられたもの (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/277">#277</a>)。</p></li>
+</ul>
+</section>
+<section id="partager-une-analyse">
+<h2><span class="section-number">10.5. </span>解析を共有する<a class="headerlink" href="#partager-une-analyse" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>画面に見えるとおりの、SVG または PNG に書き出せる単一の盤面描画 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/278">#278</a>)。</p></li>
+<li><p>セッション、試合、トーナメントの自己完結した HTML レポート。ブラウザーで PDF に印刷できる (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/279">#279</a>)。</p></li>
+<li><p>CSV または Parquet への書き出しと、保守された Jupyter ノートブックの例 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/280">#280</a>)。</p></li>
+<li><p>検証可能な身元とともに他のプレイヤーが共有する透かし入りデータベースの、このサイト上での目録 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/281">#281</a>)。</p></li>
+</ul>
+</section>
+<section id="recherche-et-bibliotheque">
+<h2><span class="section-number">10.6. </span>検索とライブラリ<a class="headerlink" href="#recherche-et-bibliotheque" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>開くたびに評価し直されるコレクション (固定されない、名前付きの絞り込み) と、プレイヤータブでの 2 人の並列比較 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/282">#282</a>)。</p></li>
+<li><p>トークンではなく日常の言葉で検索を書く (「スコア時のキューブのブランダー」)。決定的で、オフラインで動作する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/283">#283</a>)。</p></li>
+</ul>
+</section>
+<section id="interface-et-plateforme">
+<h2><span class="section-number">10.7. </span>インターフェースとプラットフォーム<a class="headerlink" href="#interface-et-plateforme" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>最近開いたデータベースがないときに、ガイドツアー、サンプルデータベース、自分の試合のインポート、データベースを開く、を提示するホーム画面 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/284">#284</a>)。</p></li>
+<li><p>削除した局面のためのごみ箱と、もっとも多い削除操作に対する「元に戻す」 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/285">#285</a>)。</p></li>
+<li><p>名前の付いたテーマ — 明るい、暗い、高コントラスト、印刷向け (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/286">#286</a>)。</p></li>
+<li><p>日々の使い勝手を高める小さな改良の数々: 閲覧できる操作履歴、コマンドパレット、より読みやすい検索バッジ (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/287">#287</a>)。</p></li>
+<li><p>複数の端末でデータベースを同期するために何が有効で何が有効でないかを明言することと、2 つのデータベースを統合するボタン (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/288">#288</a>)。</p></li>
+<li><p>サーバーモードの API のための最小限のクライアントとバージョン方針 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/289">#289</a>)。</p></li>
+<li><p>今日はサーバー側にしかない機能をアプリケーションに引き上げる: カードの保留、復習履歴、FSRS の最適化 (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/290">#290</a>)。</p></li>
+</ul>
+</section>
+</section>
+<section id="etape-4-chantiers-de-fond">
+<h1><span class="section-number">11. </span>第 4 段階 — 基盤となる作業<a class="headerlink" href="#etape-4-chantiers-de-fond" title="Link to this heading"></a></h1>
+<p>これらの方向性はソフトウェアの一部の性質を変えるものです。着手の前にそれぞれ明示的な決定を必要とします。</p>
+<ul class="simple">
+<li><p>局面の戦型 (競走、ホールディング、バックゲーム、ブリッツなど) を自動的に分類し、繰り返し現れるミスの主題 (受け身すぎる、タイミング、ギャモンの過小評価など) に名前を与え、繰り返されるブランダーを累積コストでまとめる — 製品名が約束するもの (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/291">#291</a>)。</p></li>
+<li><p>ごく近い 2 手を分けるための切り詰めたロールアウト。信頼区間を表示する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/292">#292</a>)。</p></li>
+<li><p>「これに似た局面」: 画面の局面にもっとも近いものを見つける (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/293">#293</a>)。</p></li>
+<li><p>暗記ではなく試すクイズモード。実戦の PR と比較できる訓練用 PR を伴う (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/294">#294</a>)。</p></li>
+<li><p>タブレットと携帯のための、サーバーモード上の閲覧専用ウェブインターフェース (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/295">#295</a>)。</p></li>
+<li><p>サーバー上のクラブ / コーチモード: ライブラリを読み取り専用で共有し、生徒の試合を受け取る (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/296">#296</a>)。</p></li>
+<li><p>はるかに高速な蒸留された評価ネットワークと、アプリケーションを閉じても残る評価キャッシュ (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/297">#297</a>)。</p></li>
+<li><p>言語モデルに頼らずに、ブランダーを一文で説明する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/298">#298</a>)。</p></li>
+<li><p>厳密にローカルで、既定では決して有効にならない任意のアシスタント。Ollama を利用する (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/299">#299</a>)。</p></li>
+</ul>
+</section>
+<section id="ce-qui-n-est-pas-prevu">
+<h1><span class="section-number">12. </span>予定に<strong>ない</strong>こと<a class="headerlink" href="#ce-qui-n-est-pas-prevu" title="Link to this heading"></a></h1>
+<p>内蔵評価器と対戦することは製品の性質を変えてしまいます (ルール、入力、対局履歴を備えた完全なゲームエンジンになる)。blunderDB の予定には入っていません (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/300">#300</a>)。</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="8. よくある質問（FAQ）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mode_headless.html" class="btn btn-neutral float-right" title="13. ヘッドレスモード（サーバー）" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

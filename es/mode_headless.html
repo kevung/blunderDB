@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>13. Modo headless (servidor) &mdash; documentación de blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e3f67aac"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="14. Contrato de la API" href="api_reference.html" />
+    <link rel="prev" title="9. Hoja de ruta" href="roadmap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guía del usuario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Hoja de ruta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Etapa 3 — Ampliar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Etapa 4 — Grandes proyectos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Lo que <strong>no</strong> está previsto</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. Modo headless (servidor)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">13.1. Visión general</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">13.2. El demonio <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">13.2.1. Puntos de acceso</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bases-de-bearoff">13.2.2. Las bases de bearoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-routes-d-exploitation">13.2.3. Las rutas de explotación</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlation-et-metriques-metier">13.2.4. Correlación y métricas de negocio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression-des-flux">13.2.5. Compresión de los flujos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#un-seul-tenant-sur-sqlite">13.2.6. Un solo tenant en SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-et-restauration">13.2.7. Copia de seguridad y restauración</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">13.2.8. Despliegue con Docker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#image-publiee">13.2.8.1. Imagen publicada</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-derriere-un-proxy-authentifiant">13.2.9. Despliegue detrás de un proxy autenticador</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">13.3. Backend PostgreSQL y multiusuario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">13.4. Migrar una base SQLite a PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">13.5. El despachador genérico <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Contrato de la API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">13. </span>Modo headless (servidor)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">13. </span>Modo headless (servidor)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta sección describe un <strong>modo avanzado y opcional</strong> de blunderDB, destinado a los despliegues en servidor, al uso multiusuario y a la automatización. <strong>El uso normal y recomendado de blunderDB sigue siendo la aplicación de escritorio</strong> descrita en los capítulos anteriores. Si utiliza blunderDB en solitario, en su propio ordenador, no necesita este modo: puede ignorar este capítulo sin perder ninguna de las funcionalidades de análisis.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">13.1. </span>Visión general<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>El mismo binario <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> puede, además de la aplicación de escritorio y de los comandos en línea (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>), funcionar en <strong>modo headless</strong>: sin interfaz gráfica, controlado por completo desde la línea de comandos o a través de la red. Este modo agrupa tres usos:</p>
+<ul class="simple">
+<li><p><strong>el demonio</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — expone el motor de blunderDB como un servicio HTTP + JSON, para ejecutar una base compartida en un servidor y acceder a ella entre varios usuarios;</p></li>
+<li><p>el despachador genérico <code class="docutils literal notranslate"><span class="pre">call</span></code> — invoca cualquier operación de almacenamiento directamente, en local, para el scripting y las pruebas;</p></li>
+<li><p>el comando <code class="docutils literal notranslate"><span class="pre">migrate</span></code> — transfiere una base SQLite de un solo usuario a un backend PostgreSQL multiusuario.</p></li>
+</ul>
+<p>Estos tres usos se apoyan en una <strong>capa de almacenamiento</strong> común capaz de comunicarse con dos backends: <strong>SQLite</strong> (el formato de archivo <code class="docutils literal notranslate"><span class="pre">.db</span></code> habitual de la aplicación de escritorio) y <strong>PostgreSQL</strong> (para los despliegues en servidor multiusuario).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">13.2. </span>El demonio <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> lanza el motor como un servicio HTTP que responde en JSON. Permite alojar una base de posiciones en una máquina y acceder a ella desde varios clientes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Advertencia</p>
+<p><strong>El demonio no realiza ninguna autenticación.</strong> Confía en la cabecera de petición <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> y <strong>debe</strong> ejecutarse detrás de un reverse-proxy (nginx, Caddy…) encargado de la autenticación. <strong>Nunca lo exponga directamente en la Internet pública.</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> es el <strong>entero</strong> del tenant (<code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">42</span></code>…): corresponde al reverse-proxy hacer corresponder la cuenta autenticada con ese entero. Un nombre (<code class="docutils literal notranslate"><span class="pre">alice</span></code>) se rechaza con <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, nunca se convierte.</p>
+</div>
+<p><strong>Opciones:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Opción</p></th>
+<th class="head"><p>Por defecto</p></th>
+<th class="head"><p>Significado</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>archivo SQLite (atajo de <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>backend de almacenamiento: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> o <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>cadena de conexión del backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;hôte:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>dirección de escucha</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;niveau&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>nivel de registro: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>expone <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (formato Prometheus)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origine&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>activa CORS para este origen, una lista de orígenes separados por comas, o <code class="docutils literal notranslate"><span class="pre">*</span></code> (desactivado por defecto); la respuesta solo refleja el origen de la solicitud si figura en la lista, con <code class="docutils literal notranslate"><span class="pre">Vary:</span> <span class="pre">Origin</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>límite de peticiones por segundo y por tenant (0 = desactivado); activado por defecto con un valor generoso en lugar de opcional, para que un fichero compose que solo piensa en la base de datos no herede un demonio sin ningún límite</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>tamaño del cubo de tokens para los picos de peticiones</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: activa la Row-Level Security por tenant (defensa en profundidad, opcional)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;fichier&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>base de bearoff de dos lados (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) opcional que amplía la tabla TS-06-06 para el análisis de carrera del punto de acceso EPC; el demonio nunca descarga una base — véase <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">Las bases de bearoff</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--identity-dir</span> <span class="pre">&lt;répertoire&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>directorio de la identidad de firma del demonio (creada en el primer uso); necesario para que <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> pueda colocar una filigrana — véase más abajo</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;host:puerto&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>sirve la familia <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> (<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>, <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>) en una dirección <strong>separada</strong> de <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, y la retira de esta; vacío (el valor por defecto) las deja en el escuchador principal, donde rechazar el prefijo es tarea del proxy — véase <a class="reference internal" href="#headless-ops-routes"><span class="std std-ref">Las rutas de explotación</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;host:puerto&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>expone <code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code> en una dirección <strong>separada</strong> de <code class="docutils literal notranslate"><span class="pre">--addr</span></code> (desactivado por defecto); solo para depuración — estos puntos de acceso no tienen noción de tenant y entregan un perfil de memoria o CPU del proceso entero, nunca deben exponerse públicamente ni en la misma dirección que <code class="docutils literal notranslate"><span class="pre">/v1</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>La mayoría de las opciones también pueden indicarse mediante una variable de entorno (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_METRICS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_CORS_ALLOW_ORIGIN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_RPS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_BURST</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_IDENTITY_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_OPS_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_PPROF_ADDR</span></code>): una opción explícita sigue teniendo prioridad sobre la variable correspondiente.</p>
+<p>La propia tabla de cubos del limitador de tasa lleva un límite estricto (10 000 tenants distintos): más allá de él, cada nuevo tenant expulsa el cubo menos recientemente utilizado en lugar de dejar que la tabla crezca sin límite — útil si un cliente envía muchos valores <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> distintos, voluntariamente o no, entre dos purgas periódicas de los cubos inactivos.</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> rechaza ahora cualquier argumento posicional inesperado (más allá del único <code class="docutils literal notranslate"><span class="pre">serve</span></code> inicial que deja pasar un <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> ya reducido al binario desnudo): sin esta comprobación, un flag colocado después de tal argumento se ignoraba silenciosamente — <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">image</span> <span class="pre">serve</span> <span class="pre">--addr</span> <span class="pre">:9090</span></code>, reflejo natural puesto que el <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> de la imagen ya vale <code class="docutils literal notranslate"><span class="pre">serve</span></code>, arrancaba en <code class="docutils literal notranslate"><span class="pre">:8080</span></code> sin decir nada.</p>
+<section id="points-d-acces">
+<h3><span class="section-number">13.2.1. </span>Puntos de acceso<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>El servicio expone puntos de acceso de explotación, siempre presentes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — vivacidad (el proceso está en ejecución);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — disponibilidad (el almacenamiento responde y su esquema está en la versión esperada);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — métricas Prometheus (si <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> está activo).</p></li>
+</ul>
+<p>Vivacidad y disponibilidad responden a dos preguntas distintas. <code class="docutils literal notranslate"><span class="pre">/healthz</span></code> responde siempre 200 en cuanto el proceso sirve peticiones, sin consultar nunca el almacenamiento: un orquestador reinicia el contenedor cuya vivacidad falla, y una base momentáneamente inaccesible no debe reiniciar en bucle un demonio sano. <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> responde 503 (con <code class="docutils literal notranslate"><span class="pre">status</span></code> a <code class="docutils literal notranslate"><span class="pre">down</span></code> o <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code>) mientras la base no responda o su esquema no sea el del binario: el tráfico simplemente se desvía hasta que vuelva.</p>
+<p>El subcomando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (presente también en el binario <code class="docutils literal notranslate"><span class="pre">serve</span></code> de la imagen de contenedor) realiza una petición <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> al demonio local y devuelve <code class="docutils literal notranslate"><span class="pre">0</span></code> si está disponible, <code class="docutils literal notranslate"><span class="pre">1</span></code> si no; la dirección es la de <code class="docutils literal notranslate"><span class="pre">--addr</span></code> o de <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, por defecto <code class="docutils literal notranslate"><span class="pre">:8080</span></code>. Es el <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> de la imagen Docker, y sirve igualmente en un script o en una unidad systemd:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"démon disponible"</span>
+</pre></div>
+</div>
+<p>La superficie de negocio sigue el esquema <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;familia&gt;.&lt;método&gt;</span></code> (por ejemplo <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Las familias cubren posiciones, análisis, partidas, comentarios, colecciones, torneos, tarjetas Anki, filtros, sesiones, historial (de búsqueda y de comandos), búsqueda, metadatos, estadísticas, importación y exportación. Los puntos de listado devuelven un flujo NDJSON (un objeto JSON por línea). El servidor se detiene limpiamente con <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+<section id="les-bases-de-bearoff">
+<span id="headless-bearoff"></span><h3><span class="section-number">13.2.2. </span>Las bases de bearoff<a class="headerlink" href="#les-bases-de-bearoff" title="Link to this heading"></a></h3>
+<p>El demonio calcula sus dos tablas predeterminadas al arrancar, en segundo plano (TS-06-06 para el veredicto de cubo, OS-06 para el EPC): unos seis segundos de un núcleo, una vez, en la carpeta de datos. No se descarga nada ni hay nada incrustado en el binario (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md">ADR-0027</a>). Si esa carpeta es de solo lectura, las tablas se mantienen en memoria durante la vida del proceso: el servicio arranca, simplemente paga el cálculo en cada reinicio.</p>
+<p>Un dominio más amplio no se calcula al arrancar — TS-06-11 pesa 1,2 GB y tarda minutos, y eso no es algo que un servicio decida solo. Corresponde al operador fabricarlo, con la CLI, en el volumen que el demonio leerá:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># dans le volume monté, une fois</span>
+blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+<span class="c1"># puis le démon le trouve tout seul, ou on le désigne explicitement</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--bearoff-ts<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">list</span> <span class="pre">--data-dir</span> <span class="pre">/srv/bearoff</span></code> dice qué contiene el volumen y qué costaría cada dominio; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">verify</span></code> sale con error ante una tabla corrupta, lo que lo convierte en una sonda de arranque utilizable tal cual. Véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a> para el detalle.</p>
+</section>
+<section id="les-routes-d-exploitation">
+<span id="headless-ops-routes"></span><h3><span class="section-number">13.2.3. </span>Las rutas de explotación<a class="headerlink" href="#les-routes-d-exploitation" title="Link to this heading"></a></h3>
+<p>Dos llamadas no se detienen en el tenant que las hace, y viven por tanto bajo un prefijo propio, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/&lt;familia&gt;.&lt;método&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> (backend SQLite) reescribe <strong>todo</strong> el archivo, incluidos los datos de todos los tenants, y mantiene un bloqueo de escritura mientras dura;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/tenant.purge</span></code> (backend PostgreSQL) destruye los datos de un tenant, y el tenant destruido es el que nombra la cabecera que controla quien llama.</p></li>
+</ul>
+<p>El demonio no autentica a nadie (véase más abajo): una ruta accesible para un tenant es una ruta que <strong>cualquier</strong> tenant puede llamar. El prefijo existe para que el proxy pueda rechazar ambas con una sola regla. <strong>Nunca exponga ``/ops/`` a través del proxy público.</strong></p>
+<p>La opción <code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;host:puerto&gt;</span></code> va más allá: las dos rutas abandonan entonces la dirección <code class="docutils literal notranslate"><span class="pre">--addr</span></code> y solo se sirven en ese segundo escuchador, que conviene enlazar a una interfaz de administración. Sin la opción permanecen en el escuchador principal y bloquearlas es cosa del proxy.</p>
+<p>Estas rutas exigen la cabecera <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> como todas las demás — una purga nombra al tenant que destruye, y la necesita más que ninguna otra. Solo las sondas (<code class="docutils literal notranslate"><span class="pre">/healthz</span></code>, <code class="docutils literal notranslate"><span class="pre">/readyz</span></code>) y <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> prescinden de ella.</p>
+<p>Lo que <strong>no</strong> pasó a <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>: <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.sweepStale</span></code>. La recuperación es costosa pero está acotada al tenant que llama; lo que la limita es el límite de tasa y los indicadores de trabajo en curso, no una frontera de confianza.</p>
+<p>El contrato completo — cada método, su petición y su respuesta — se genera a partir del código fuente y se versiona: <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> en la raíz del repositorio (formato OpenAPI, esquemas incluidos) y su anexo legible, <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">Contrato de la API</span></a> (una tabla por familia). Ambos se regeneran con <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>, y una prueba dedicada falla si alguno de los dos se queda atrás respecto a las rutas realmente registradas.</p>
+<p>Cada solicitud <code class="docutils literal notranslate"><span class="pre">/v1</span></code> acepta un cuerpo JSON (<code class="docutils literal notranslate"><span class="pre">Content-Type:</span> <span class="pre">application/json</span></code>, o ningún encabezado — un cuerpo de otro tipo se rechaza con <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> en lugar de fallar con un mensaje de análisis JSON confuso); un método conocido invocado con el verbo HTTP equivocado responde <code class="docutils literal notranslate"><span class="pre">405</span></code>, con el encabezado <code class="docutils literal notranslate"><span class="pre">Allow</span></code> nombrando el único verbo aceptado. Los métodos de listado que aceptan un <code class="docutils literal notranslate"><span class="pre">limit</span></code> rechazan más de 1000 filas por página (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>) en lugar de aceptar un valor sin límite.</p>
+<p>Todas las familias de listado aceptan <code class="docutils literal notranslate"><span class="pre">limit</span></code> y <code class="docutils literal notranslate"><span class="pre">offset</span></code>: <code class="docutils literal notranslate"><span class="pre">positions.list</span></code>, <code class="docutils literal notranslate"><span class="pre">positions.listIds</span></code>, <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>, <code class="docutils literal notranslate"><span class="pre">search.find</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>, y desde la 0.37.0 <code class="docutils literal notranslate"><span class="pre">comments.listAll</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments.list</span></code> y <code class="docutils literal notranslate"><span class="pre">collections.positions</span></code>. Ambos valen cero por defecto, lo que significa lo que siempre ha significado: todo. <strong>No hay tope implícito</strong> — un flujo no se mantiene en memoria, así que una lista sin límite cuesta tiempo y ancho de banda pero nunca el equilibrio del demonio, mientras que un límite predeterminado silencioso haría que un cliente leyera una lista truncada creyéndola completa. Lo que aportan estos dos parámetros es la posibilidad de paginar, a quien lo quiera.</p>
+<p>Cada conexión TCP tiene un límite de lectura/escritura por solicitud — un margen generoso para las llamadas ordinarias, mucho mayor para las rutas que transmiten (listas NDJSON, importaciones/exportaciones, el barrido de recuperación de gammonNet) — y el número de ellas abiertas a la vez está limitado: superado ese número, una conexión adicional espera a que se libere una de las existentes en lugar de que cada conexión reciba incondicionalmente su propio hilo de ejecución. Un cierre ordenado (<code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/<code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>) cancela primero toda importación y todo barrido de recuperación de gammonNet en curso — cada uno responde con un evento final <code class="docutils literal notranslate"><span class="pre">{&quot;event&quot;:&quot;cancelled&quot;}</span></code> en lugar de que su conexión se corte sin explicación — antes de cerrar el servidor dentro del plazo de gracia habitual. El archivo temporal de una importación subida conserva de la extensión original solo las que el daemon reconoce (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, <code class="docutils literal notranslate"><span class="pre">.sgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), y todas las importaciones simultáneas — de todos los tenants — comparten una cuota global de bytes volcados a disco: superada, una nueva importación se rechaza (<code class="docutils literal notranslate"><span class="pre">too</span> <span class="pre">many</span> <span class="pre">requests</span></code>) en lugar de dejar crecer sin límite la ocupación de <code class="docutils literal notranslate"><span class="pre">$TMPDIR</span></code>.</p>
+<p>La familia <code class="docutils literal notranslate"><span class="pre">search</span></code> ofrece tres puertas a la misma búsqueda. <code class="docutils literal notranslate"><span class="pre">search.find</span></code> toma el objeto de filtros completo, campo por campo. <code class="docutils literal notranslate"><span class="pre">search.query</span></code> toma una consulta escrita en el lenguaje de la barra de comandos de la aplicación (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">cube</span> <span class="pre">p&gt;30</span> <span class="pre">E&gt;50</span></code>, descrito en <a class="reference internal" href="cmd_mode.html"><span class="doc">Lista de comandos</span></a>) y transmite las mismas posiciones; es la única forma de alcanzar, por la red, los filtros que no tienen campo evidente — patrón de movimiento, texto de comentario, jugador, fecha, dados excluidos, zonas y blots. <code class="docutils literal notranslate"><span class="pre">search.parse</span></code> no busca nada: responde qué significa una consulta — los filtros que denota, su forma canónica (dos consultas equivalentes la comparten, lo que hace comparable una búsqueda guardada) y sus diagnósticos.</p>
+<p>Una consulta que lleva un componente que nada reconoce se rechaza (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, nombrando el componente) en vez de ejecutarse reduciendo la búsqueda en silencio. Un componente comprendido pero sin efecto aquí — <code class="docutils literal notranslate"><span class="pre">x</span></code>, que activa la estructura de exclusión, que es un tablero y no texto — viaja en la cabecera <code class="docutils literal notranslate"><span class="pre">X-BlunderDB-Query-Diagnostics</span></code>, de modo que el cuerpo siga siendo NDJSON de posiciones para todos los clientes existentes.</p>
+<p>Dos métodos de la familia <code class="docutils literal notranslate"><span class="pre">positions</span></code> decodifican una posición sin guardarla: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> reconstruye una posición a partir de una cadena XGID, y <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> a partir de un archivo de posición única <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> exporta todo el tenant actual — posiciones, colecciones, partidas, torneos, análisis, comentarios, jugadas realizadas, biblioteca de filtros y paquetes Anki — en un archivo SQLite que el puesto de trabajo puede abrir tal cual; todavía no existe una exportación parcial en el lado del servidor (esa selección es un gesto del escritorio o de la CLI). El cuerpo JSON de la petición es opcional y solo acepta <code class="docutils literal notranslate"><span class="pre">watermarkOrigin</span></code> / <code class="docutils literal notranslate"><span class="pre">watermarkNote</span></code>, para colocar una filigrana firmada con la identidad propia del demonio (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>) — sin estos campos, la exportación no lleva ninguna filigrana; pedirlos sin una identidad configurada falla con el código <code class="docutils literal notranslate"><span class="pre">invalid</span></code>.</p>
+<p>La familia <code class="docutils literal notranslate"><span class="pre">anki</span></code> gana seis métodos que amplían el planificador de repetición espaciada (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (registro de cada revisión — calificación y resultado FSRS — para las estadísticas de retención y un historial fiel), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (proyección del número de tarjetas que vencen en los próximos días, incluidas las atrasadas), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (retirar una tarjeta de la cola de revisión temporal o definitivamente) y <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> (la tasa de acierto medida sobre las revisiones de un mazo, leída frente al objetivo que fijó su propietario).</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> sustituye a <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, que ajustaba el objetivo hacia la tasa observada y podía escribirlo. El objetivo de retención es una <strong>elección</strong> sobre el compromiso entre carga y calidad, la tasa medida es su <strong>resultado</strong>, y acoplar uno al otro es exactamente el mecanismo que los autores de FSRS descartan. El método ahora solo mide, sin escribir jamás.</p>
+</div>
+<p>La familia <code class="docutils literal notranslate"><span class="pre">stats</span></code> ofrece <code class="docutils literal notranslate"><span class="pre">stats.playerTable</span></code>, que devuelve una fila de estadísticas por jugador (partidas, victorias/derrotas, decisiones contadas, PR global / fichas / cubo, Snowie Error Rate, errores, blunders y suerte) sobre las partidas que retiene el filtro transmitido. Como en la interfaz gráfica, esta tabla solo honra del filtro el periodo, los torneos y la longitud de las partidas: la selección de un jugador y el tipo de decisión se ignoran, ya que la tabla abarca a todos los jugadores y desglosa fichas y cubo en columnas distintas. El campo <code class="docutils literal notranslate"><span class="pre">luck_known</span></code> indica si la suerte se midió para ese jugador; <code class="docutils literal notranslate"><span class="pre">luck_rate_mp</span></code> no debe leerse cuando vale <code class="docutils literal notranslate"><span class="pre">false</span></code>, pues una suerte desconocida no es una suerte nula.</p>
+<p>El filtro que se pasa a los métodos <code class="docutils literal notranslate"><span class="pre">stats</span></code> acepta, junto a <code class="docutils literal notranslate"><span class="pre">PlayerName</span></code>, un campo <code class="docutils literal notranslate"><span class="pre">PlayerAliases</span></code>: las demás grafías con las que ha firmado la misma persona. Como el nombre de un jugador se teclea a mano en cada archivo, una misma persona aparece a menudo bajo varias grafías, y un filtro que solo retiene una calcula sobre una parte de las partidas sin que nada parezca anómalo. El campo es puramente aditivo: se retienen las decisiones de cualquiera de los nombres. Fusionar los nombres en la base (<code class="docutils literal notranslate"><span class="pre">MergePlayers</span></code>) es la otra respuesta, reservada a las bases que no se han recibido de otra persona — reescribe las partidas de todos.</p>
+<p>Dos métodos completan la paridad con la interfaz gráfica: <code class="docutils literal notranslate"><span class="pre">stats.tournamentBadges</span></code> devuelve, para cada torneo de la base, el indicador mostrado en su ficha (PR del jugador de referencia), y <code class="docutils literal notranslate"><span class="pre">matches.findByHash</span></code> indica si una partida ya está presente, a partir de las dos huellas de detección de duplicados — lo suficiente para evitar una importación redundante antes de emprenderla.</p>
+<p><code class="docutils literal notranslate"><span class="pre">analyses.repair</span></code> recalcula las columnas desnormalizadas de un análisis (entre ellas <code class="docutils literal notranslate"><span class="pre">cube_error</span></code>) a partir de su análisis completo, y devuelve el número de filas <strong>realmente</strong> corregidas. Esas columnas no son más que una proyección: un error de proyección se repara, pues, sin reimportar los archivos de origen. La operación es explícita y nunca se dispara sola — ni al abrir una base ni por una migración, ya que el esquema no está en causa. Un análisis ilegible se deja tal cual en lugar de ponerse a cero. El caso conocido: los no-dobles etiquetados «Double No» por gnuBG, mal leídos antes de la versión 0.33.0 y que llevaban el error de un doble que nunca tuvo lugar.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing</span></code> dispara la puesta al día gammonNet del tenant actual: escribir un análisis para cada posición que no tiene ninguno (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Es una operación de <strong>biblioteca</strong> — lee y escribe posiciones y análisis almacenados — nunca un evaluador desnudo: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> opera sobre una biblioteca, <code class="docutils literal notranslate"><span class="pre">gammonnet</span> <span class="pre">serve</span></code> evalúa una posición. La respuesta es un flujo NDJSON (<code class="docutils literal notranslate"><span class="pre">started</span></code>, <code class="docutils literal notranslate"><span class="pre">progress</span></code>, luego <code class="docutils literal notranslate"><span class="pre">done</span></code> o <code class="docutils literal notranslate"><span class="pre">error</span></code>/<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>), con el mismo modelo que los puntos de acceso de importación; <code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing.cancel</span></code> (con el <code class="docutils literal notranslate"><span class="pre">job_id</span></code> recibido en el evento <code class="docutils literal notranslate"><span class="pre">started</span></code>) cancela una puesta al día en curso y sirve indistintamente para una puesta al día o una reanálisis (más abajo). Es la misma operación que el disparo automático tras la importación y el gesto explícito de la interfaz gráfica, y que el subcomando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>) — tres formas, una sola lógica.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.sweepStale</span></code> es la contrapartida de <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code> para la reanálisis en lugar de la puesta al día: cada posición cuyo análisis proviene enteramente de gammonNet pero está obsoleto — una versión del motor más antigua que la que se ejecuta, o una profundidad distinta de <code class="docutils literal notranslate"><span class="pre">ply</span></code> — se reevalúa a la profundidad solicitada. El predicado de obsolescencia se comparte con el mismo lote de la interfaz gráfica y de <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--stale</span></code> (ninguna lógica duplicada entre los tres modos); una posición que lleva un análisis de XG, GNUbg o BGBlitz nunca es tocada, sea cual sea su contenido de gammonNet — la protección de <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> sigue siendo incondicional. Misma forma NDJSON que <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>, y el evento final de cada una de las dos rutas lleva ahora el desglose <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>/<code class="docutils literal notranslate"><span class="pre">refused</span></code>/<code class="docutils literal notranslate"><span class="pre">failed</span></code>: una posición que gammonNet se niega a evaluar (una puntuación de partida fuera del alcance de su tabla, una decisión de doblaje que el modelo rechaza) cuenta como <code class="docutils literal notranslate"><span class="pre">refused</span></code>, no <code class="docutils literal notranslate"><span class="pre">failed</span></code> — nunca se reintenta en vano en el siguiente pase, a diferencia de una posición que realmente falló.</p>
+</section>
+<section id="correlation-et-metriques-metier">
+<h3><span class="section-number">13.2.4. </span>Correlación y métricas de negocio<a class="headerlink" href="#correlation-et-metriques-metier" title="Link to this heading"></a></h3>
+<p>Cada petición recibe un identificador de correlación: el que el cliente (o un proxy inverso) envía en la cabecera <code class="docutils literal notranslate"><span class="pre">X-Request-Id</span></code>, o bien uno generado — en ambos casos devuelto en la misma cabecera de la respuesta y añadido a la línea de registro que cierra la petición (campo <code class="docutils literal notranslate"><span class="pre">request_id</span></code>). Un <code class="docutils literal notranslate"><span class="pre">traceparent</span></code> (<a class="reference external" href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a>) presente se retransmite tal cual en esa misma línea de registro: el demonio ni lo analiza ni lo valida, y no incorpora ninguna biblioteca de trazas; es un puente para correlacionar estos registros con una cadena de trazas que se ejecute aguas arriba, nada más.</p>
+<p>Más allá del volumen de peticiones y su latencia, <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> publica indicadores sobre el trabajo en curso, invisible de otro modo para una importación o un lote gammonNet bloqueados (una sola petición muy larga, no muchas peticiones):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_imports_inflight</span></code> — importaciones en curso, en todos los tenants;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_import_spool_bytes</span></code> — bytes reservados actualmente sobre la cuota de spool de importación (véase <code class="docutils literal notranslate"><span class="pre">--rate-limit-*</span></code> más arriba para el equivalente en peticiones por segundo);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_gammonnet_sweep_inflight</span></code> — barridos de recuperación de gammonNet en curso, en todos los tenants;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_database_size_bytes</span></code> — tamaño del archivo SQLite principal, o <code class="docutils literal notranslate"><span class="pre">pg_database_size</span></code> en PostgreSQL (la base entera, no por tenant, igual que los indicadores del grupo de conexiones más abajo); ausente mientras no se haya publicado ninguna medición.</p></li>
+</ul>
+<p>Se puede obtener un perfil de memoria o CPU del proceso arrancando con <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;host:puerto&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>): desactivado por defecto y deliberadamente en una dirección distinta de <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, ya que estos puntos de acceso no tienen noción de tenant.</p>
+</section>
+<section id="compression-des-flux">
+<span id="headless-docker"></span><h3><span class="section-number">13.2.5. </span>Compresión de los flujos<a class="headerlink" href="#compression-des-flux" title="Link to this heading"></a></h3>
+<p>Las listas NDJSON repiten los mismos nombres de campo en cada línea. El demonio las comprime cuando el cliente lo acepta: envíe <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip</span></code> y la respuesta vuelve con <code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code>. Medido en una lista de partidas: <strong>13,5 %</strong> del tamaño original con mil líneas, 14,6 % con cien.</p>
+<p>La compresión no cambia nada al carácter incremental del flujo: cada registro se envía al cliente como antes, solo que comprimido por el camino. Se aplica únicamente a las respuestas NDJSON, JSON y texto: una exportación de base o un contenedor <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> ya está comprimido, y volver a comprimirlo solo lo agrandaría. <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip;q=0</span></code> la rechaza explícitamente.</p>
+</section>
+<section id="un-seul-tenant-sur-sqlite">
+<h3><span class="section-number">13.2.6. </span>Un solo tenant en SQLite<a class="headerlink" href="#un-seul-tenant-sur-sqlite" title="Link to this heading"></a></h3>
+<p>El backend SQLite <strong>no</strong> tiene columna de tenant: todos los datos están en las mismas tablas, sin tabique. En ese backend el demonio rechaza por tanto cualquier <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> distinto de <code class="docutils literal notranslate"><span class="pre">1</span></code> — aceptar los demás equivaldría a servir a cada uno las filas de todos tras una cabecera que afirma lo contrario. Un despliegue que realmente tenga varios tenants necesita el backend PostgreSQL.</p>
+</section>
+<section id="sauvegarde-et-restauration">
+<span id="headless-sauvegarde"></span><h3><span class="section-number">13.2.7. </span>Copia de seguridad y restauración<a class="headerlink" href="#sauvegarde-et-restauration" title="Link to this heading"></a></h3>
+<p>Tres gestos, según lo que se quiera recuperar.</p>
+<p><strong>Todo, bajo PostgreSQL</strong> — <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> es la herramienta, y blunderDB no tiene nada que añadir:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pg_dump<span class="w"> </span>--format<span class="o">=</span>custom<span class="w"> </span>--file<span class="o">=</span>blunderdb.dump<span class="w"> </span><span class="s2">"postgres://…"</span>
+pg_restore<span class="w"> </span>--dbname<span class="o">=</span><span class="s2">"postgres://…"</span><span class="w"> </span>blunderdb.dump
+</pre></div>
+</div>
+<p><strong>Un tenant solo</strong> — <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> escribe la base de un tenant en un archivo <code class="docutils literal notranslate"><span class="pre">.db</span></code> corriente, el que abre la aplicación de escritorio:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8080/v1/exports.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 42"</span><span class="w"> </span>-o<span class="w"> </span>tenant-42.db
+</pre></div>
+</div>
+<p><strong>Devolver ese archivo a su sitio</strong> — <code class="docutils literal notranslate"><span class="pre">migrate</span></code> lo copia bajo el tenant indicado:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>tenant-42.db<span class="w"> </span>--to<span class="w"> </span><span class="s2">"postgres://…"</span><span class="w"> </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> se niega a escribir en un tenant que ya contiene algo, y dice qué («128 posiciones, 3 partidas»); <code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">skip</span></code> sigue adelante y deja que la deduplicación Zobrist fusione las posiciones.</p>
+<p>Lo que <code class="docutils literal notranslate"><span class="pre">migrate</span></code> <strong>no</strong> copia, y anuncia al final con la cuenta exacta: los mazos Anki y sus cartas, la biblioteca de filtros, los historiales de búsqueda y de comandos, y el estado de sesión. Son datos de uso de la aplicación de escritorio; las posiciones a las que remiten sí se han movido.</p>
+</section>
+<section id="deploiement-avec-docker">
+<h3><span class="section-number">13.2.8. </span>Despliegue con Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>El repositorio proporciona un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> que construye una imagen de contenedor mínima del demonio: solo se compila el binario <code class="docutils literal notranslate"><span class="pre">serve</span></code> (Go puro, sin interfaz gráfica y sin CGO, por lo que está enlazado estáticamente), que luego se coloca en una imagen <em>distroless</em>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Construire l'image (depuis la racine du dépôt)</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># Lancer le démon (le backend par défaut de l'image est postgres)</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@hôte:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>La imagen escucha en el puerto 8080 y se configura mediante variables de entorno (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>). Declara un <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> que lanza cada 30 segundos <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (una petición a <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> — la imagen <em>distroless</em> no tiene ni <code class="docutils literal notranslate"><span class="pre">curl</span></code> ni shell): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code> muestra el estado <code class="docutils literal notranslate"><span class="pre">healthy</span></code> o <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code> del contenedor, y Compose o un orquestador pueden esperar a que el demonio esté disponible antes de arrancar lo que depende de él.</p>
+<section id="image-publiee">
+<span id="headless-docker-image"></span><h4><span class="section-number">13.2.8.1. </span>Imagen publicada<a class="headerlink" href="#image-publiee" title="Link to this heading"></a></h4>
+<p>No es necesario construir la imagen uno mismo: cada versión publicada de blunderDB sube la suya al registro de GitHub (GHCR), con el nombre <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>. Hay dos etiquetas disponibles: el número de versión (por ejemplo <code class="docutils literal notranslate"><span class="pre">0.34.0</span></code>), fijado para siempre, y <code class="docutils literal notranslate"><span class="pre">latest</span></code>, que sigue la última versión publicada. La imagen se ofrece para <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> y <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>; Docker elige la arquitectura del host.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Récupérer l'image d'une version donnée (recommandé en production)</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+
+<span class="c1"># Lancer le démon avec un backend PostgreSQL</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@hôte:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+
+<span class="c1"># Ou avec une base SQLite persistée dans un volume</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+</pre></div>
+</div>
+<p>La imagen lleva las etiquetas OCI habituales (<code class="docutils literal notranslate"><span class="pre">org.opencontainers.image.source</span></code>, <code class="docutils literal notranslate"><span class="pre">.version</span></code>, <code class="docutils literal notranslate"><span class="pre">.revision</span></code>, <code class="docutils literal notranslate"><span class="pre">.licenses</span></code>): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> indica de qué commit y de qué versión proviene. Se construye mediante la integración continua a partir del <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> del repositorio, exactamente como arriba; construirla localmente o descargar la imagen publicada da el mismo binario.</p>
+<div class="admonition warning">
+<p class="admonition-title">Advertencia</p>
+<p>Al igual que el propio demonio, el contenedor no realiza <strong>ninguna autenticación</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): confía en la cabecera <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> tal como la recibe. Debe colocarse detrás de un reverse-proxy encargado de la autenticación, que fije él mismo esa cabecera, y no exponerse nunca directamente en la Internet pública. Los ejemplos anteriores publican el puerto solo en <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> por esta razón.</p>
+</div>
+</section>
+</section>
+<section id="deploiement-derriere-un-proxy-authentifiant">
+<span id="headless-proxy-deployment"></span><h3><span class="section-number">13.2.9. </span>Despliegue detrás de un proxy autenticador<a class="headerlink" href="#deploiement-derriere-un-proxy-authentifiant" title="Link to this heading"></a></h3>
+<p>El <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a> convierte al reverse-proxy en <strong>toda</strong> la frontera de seguridad del demonio: solo él autentica al que llama, solo él tiene derecho a fijar la cabecera <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, y debe <strong>eliminar</strong> sistemáticamente cualquier valor enviado por el cliente antes de inyectar el tenant autenticado — de lo contrario, cualquiera puede hacerse pasar por cualquier tenant simplemente nombrándolo. El repositorio ofrece un ejemplo completo en <code class="docutils literal notranslate"><span class="pre">deploy/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/docker-compose.yml</span></code> — Caddy (autenticación HTTP Basic de demostración) delante de <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> y PostgreSQL (Row-Level Security activada); solo Caddy publica un puerto, <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> y PostgreSQL viven en una red Docker interna (<code class="docutils literal notranslate"><span class="pre">internal:</span> <span class="pre">true</span></code>) sin ruta ni hacia el host ni hacia Internet;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/Caddyfile</span></code> — la configuración de Caddy: autentica, asocia la cuenta autenticada con el entero del tenant (<code class="docutils literal notranslate"><span class="pre">map</span></code>), y luego lo inyecta en <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> tras haber borrado explícitamente cualquier valor recibido del cliente (guardia <code class="docutils literal notranslate"><span class="pre">header_up</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> seguida de la inyección);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/nginx-tenant-proxy.conf</span></code> — el mismo esquema como fragmento de nginx (<code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> y luego <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">$tenant_id</span></code>), para quien ya tenga un nginx en marcha;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/README.md</span></code> — el modelo de amenaza en tres frases y lo que nunca debe hacerse (exponer el demonio desnudo).</p></li>
+</ul>
+<p>La autenticación HTTP Basic del <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> es una demostración, no una recomendación de producción: se sustituye por <code class="docutils literal notranslate"><span class="pre">forward_auth</span></code> hacia un proveedor de identidad real (OIDC, SSO corporativo…), que autentica y luego transmite la identidad en el mismo punto del fichero.</p>
+<p><strong>Escenario completo, de cero a un demonio que responde:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>deploy
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">    </span><span class="c1"># puis y définir POSTGRES_PASSWORD</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># Sans authentification : rejeté avant même d'atteindre le démon.</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+<span class="c1"># HTTP/1.1 401 Unauthorized</span>
+
+<span class="c1"># Authentifié en tant qu'« alice », qui est mappée au tenant 1 : le démon</span>
+<span class="c1"># répond, quel que soit l'en-tête que le client tente d'envoyer lui-même.</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 999"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+<span class="c1"># {"positions":0,"analyses":0,"matches":0,...} dans les deux cas — le journal</span>
+<span class="c1"># du démon (docker compose logs blunderdb-serve) montre tenant=1 pour les</span>
+<span class="c1"># deux requêtes : la valeur 999 envoyée par le client n'a jamais survécu à</span>
+<span class="c1"># la garde du Caddyfile.</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>Este escenario se reprodujo tal cual: <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> y PostgreSQL arrancan, Caddy autentica y enruta, y el registro del demonio confirma que solo el entero inyectado por el proxy — nunca el del cliente — llega a la capa de aplicación.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">13.3. </span>Backend PostgreSQL y multiusuario<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>Para un despliegue compartido, blunderDB puede almacenar los datos en <strong>PostgreSQL</strong> en lugar de en un archivo SQLite. El backend se selecciona mediante <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> y la cadena de conexión <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. El esquema se crea y se migra automáticamente al arrancar.</p>
+<p>Los datos están <strong>compartimentados por tenant</strong> (inquilino): cada petición lleva el identificador de su tenant (cabecera <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, un entero decimal positivo como <code class="docutils literal notranslate"><span class="pre">1</span></code> o <code class="docutils literal notranslate"><span class="pre">42</span></code>), lo que permite a varios usuarios compartir la misma instancia sin ver los datos de los demás. Un identificador que no sea tal entero — un nombre como <code class="docutils literal notranslate"><span class="pre">alice</span></code> o <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">007</span></code> — se rechaza con <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>: es el reverse-proxy quien asocia una cuenta a su entero, el demonio nunca adivina. La opción <code class="docutils literal notranslate"><span class="pre">--rls</span></code> activa además la <strong>Row-Level Security</strong> de PostgreSQL: se instalan políticas de aislamiento por tenant y <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> se fija por conexión. Es una defensa en profundidad opcional, desactivada por defecto.</p>
+<p>Cuando se da de baja un tenant, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> elimina definitivamente todos sus datos (posiciones, partidas, colecciones, historial, etc.) del tenant actual (el indicado por <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>así como su estado de sesión</strong> (última búsqueda, última posición, pestañas abiertas — las filas de la tabla <code class="docutils literal notranslate"><span class="pre">session_state</span></code> que llevan ese tenant): la operación se ejecuta en una única transacción, es idempotente (no produce error al purgar un tenant ya vacío ni al repetir la llamada) y no afecta a ningún otro tenant ni a la fila global de versión de esquema. Solo está disponible con el backend PostgreSQL — devuelve un error <code class="docutils literal notranslate"><span class="pre">invalid</span></code> en un backend SQLite, que no tiene noción de tenant.</p>
+<p>Simétricamente, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/maintenance.vacuum</span></code> compacta el archivo SQLite del daemon — el equivalente del botón «Compactar la base» de la interfaz gráfica y del comando <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (véase <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>), con la misma comprobación de espacio en disco — y devuelve los tamaños antes y después (<code class="docutils literal notranslate"><span class="pre">sizeBefore</span></code>, <code class="docutils literal notranslate"><span class="pre">sizeAfter</span></code>, en bytes). Solo está disponible con el backend SQLite; en PostgreSQL, que no tiene archivo que compactar, devuelve un error <code class="docutils literal notranslate"><span class="pre">invalid</span></code>.</p>
+<p>El pool de conexiones de PostgreSQL se ajusta mediante variables de entorno: <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONNS</span></code> (50 por defecto), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MIN_CONNS</span></code> (5), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME</span></code> (<code class="docutils literal notranslate"><span class="pre">1h</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD</span></code> (<code class="docutils literal notranslate"><span class="pre">30s</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_CONNECT_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">5s</span></code> — superado ese tiempo, una base de datos inalcanzable falla rápido en lugar de bloquearse en el tiempo de espera TCP del sistema operativo) y <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME</span></code> (<code class="docutils literal notranslate"><span class="pre">30m</span></code> — una conexión abierta para un pico de tráfico no permanece indefinidamente en el pool una vez pasado el pico). Cada valor es una duración en formato Go (<code class="docutils literal notranslate"><span class="pre">5s</span></code>, <code class="docutils literal notranslate"><span class="pre">30m</span></code>, <code class="docutils literal notranslate"><span class="pre">1h</span></code>); ausente o inválida, se aplica su valor por defecto. Cuando <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> está activo, el estado del pool se expone continuamente en <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: <code class="docutils literal notranslate"><span class="pre">blunderdb_pg_pool_acquired</span></code> (conexiones actualmente en uso), <code class="docutils literal notranslate"><span class="pre">_idle</span></code> (disponibles), <code class="docutils literal notranslate"><span class="pre">_max</span></code> (el límite configurado) y <code class="docutils literal notranslate"><span class="pre">_wait_count</span></code> (el número acumulado de llamadas <code class="docutils literal notranslate"><span class="pre">Acquire</span></code> que tuvieron que esperar una conexión libre).</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">13.4. </span>Migrar una base SQLite a PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> copia una base SQLite monousuario a un backend PostgreSQL, bajo un tenant elegido — el entero que el reverse-proxy enviará en <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> para ese usuario — es el camino para « subir » una biblioteca de escritorio a un despliegue en servidor.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">"postgres://user:pass@host:5432/db?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>La migración copia las <strong>posiciones, sus análisis y comentarios, las partidas (juegos + jugadas), los torneos (con sus vínculos de partida) y las colecciones (con su composición)</strong>, reasignando las claves primarias y foráneas, todo ello en una <strong>única transacción</strong> del lado de destino: la operación es atómica (un fallo deja el destino intacto, basta con relanzarla). El progreso y el balance final se emiten en NDJSON por la salida estándar. Si la base de origen es lo bastante antigua como para necesitar su propia actualización de esquema in situ, esta se ejecuta primero y emite sus propios eventos <code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> (fase/hecho/total) antes de que empiece la copia línea a línea.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Opción</p></th>
+<th class="head"><p>Por defecto</p></th>
+<th class="head"><p>Significado</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>base SQLite de origen (<code class="docutils literal notranslate"><span class="pre">sqlite:///chemin</span></code> o una simple ruta)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>DSN PostgreSQL de destino (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>tenant de destino, un entero decimal positivo (obligatorio salvo en <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>; un nombre como <code class="docutils literal notranslate"><span class="pre">mon-tenant</span></code> se rechaza)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>cuenta lo que se copiaría sin escribir nada</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;politique&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> se interrumpe si el tenant ya tiene datos; <code class="docutils literal notranslate"><span class="pre">skip</span></code> fusiona (deduplicación de las posiciones por hash Zobrist)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>No se migran (todavía) los estados de la aplicación: mazos/tarjetas Anki, biblioteca de filtros, historial de búsqueda y de comandos, y metadatos de sesión. La prioridad es la migración de la biblioteca de posiciones y del historial de partidas.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">13.5. </span>El despachador genérico <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>Como complemento de los subcomandos históricos (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interfaz de línea de comandos (CLI)</span></a>), <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> expone <strong>todas</strong> las operaciones de almacenamiento directamente, en local. Pasa por los mismos gestores que el demonio <code class="docutils literal notranslate"><span class="pre">serve</span></code>: el comportamiento es, por tanto, idéntico al de <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code>. Resulta útil para el scripting y las pruebas de integración.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"limit":10}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":1}'</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"position":{...}}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":42}'</span>
+</pre></div>
+</div>
+<p><strong>Opciones:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Opción</p></th>
+<th class="head"><p>Por defecto</p></th>
+<th class="head"><p>Significado</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>archivo SQLite (atajo de <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> o <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>cadena de conexión del backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>tenant, un entero decimal positivo (enviado como <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>; un nombre como <code class="docutils literal notranslate"><span class="pre">alice</span></code> se rechaza)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>cuerpo de la petición en formato JSON</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lee el cuerpo de la petición desde un archivo</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>muestra todos los métodos <code class="docutils literal notranslate"><span class="pre">&lt;famille&gt;.&lt;méthode&gt;</span></code> y sale</p></td>
+</tr>
+</tbody>
+</table>
+<p>La respuesta JSON (o el flujo NDJSON para los endpoints <code class="docutils literal notranslate"><span class="pre">*.list</span></code>) se escribe en la salida estándar. En caso de error, el proceso termina con un código distinto de cero y la envoltura <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> se imprime en la salida estándar para seguir siendo analizable (por ejemplo con <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="roadmap.html" class="btn btn-neutral float-left" title="9. Hoja de ruta" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="14. Contrato de la API" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Idiomas</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

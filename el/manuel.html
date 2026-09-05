@@ -1,0 +1,927 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="4. Λίστα εντολών" href="cmd_mode.html" />
+    <link rel="prev" title="2. Οδηγός χρήσης" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Οδηγός χρήσης</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Εγχειρίδιο</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">3.1. Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">3.2. Κύριες αλληλεπιδράσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">3.3. Περιγραφή της διεπαφής</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">3.4. Καρτέλες προβολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">3.5. Ρυθμίσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">3.6. Ξεναγήσεις και βάση δείγματος</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">3.7. Πλοήγηση στις θέσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">3.8. Επεξεργασία θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">3.9. Η γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">3.10. Πίνακας Ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">3.11. Πίνακας Σχολίων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">3.12. Πίνακας Αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">3.13. Πίνακας Συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">3.14. Πίνακας Αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">3.15. Πίνακας Τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">3.16. Πίνακας Stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">3.16.1. Εισαγωγή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">3.16.2. Άνοιγμα του πίνακα</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">3.16.3. Γραμμή φίλτρου</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">3.16.3.1. Οπτική γωνία παίκτη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">3.16.3.2. Διαθέσιμα φίλτρα</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">3.16.4. Εναλλαγή PR / MWC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">3.16.5. Καρτέλα Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">3.16.5.1. Κάρτες επιπέδου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">3.16.5.2. Κυλιόμενο PR στις τελευταίες N αποφάσεις</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">3.16.5.3. Κορυφαία σφάλματα (Top blunders)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">3.16.6. Καρτέλα Progression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">3.16.6.1. Γραμμικό γράφημα ανά τουρνουά</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">3.16.6.2. Διάγραμμα διασποράς ανά αγώνα</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">3.16.7. Καρτέλα Erreurs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">3.16.7.1. Κατανομή ανά ενέργεια κύβου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#direction-des-erreurs-de-videau">3.16.7.2. Κατεύθυνση των λαθών κύβου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">3.16.7.3. Σύγκριση Checker / Cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">3.16.7.4. Ιστόγραμμα των μεγεθών σφάλματος</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-joueurs">3.16.8. Καρτέλα Παίκτες</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">3.16.9. Κανόνας συνάθροισης</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">3.16.10. MWC: περιορισμοί</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-eval">3.17. Πίνακας Eval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">3.17.1. Μεταφορά μιας θέσης στον πίνακα Eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">3.17.2. Μεθοδολογία και υποθέσεις του πίνακα Eval</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">3.18. Πίνακας Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">3.19. Πίνακας Μεταδεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">3.20. Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">3.20.1. Σήμανση μιας βάσης με την προέλευσή της</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">3.20.2. Ταυτότητα εκδότη</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">3.20.3. Προστασία μιας βάσης με κωδικό πρόσβασης</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">3.20.4. Ανάγνωση της προέλευσης ενός αρχείου</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Χάρτης πορείας</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Στάδιο 3 — Επέκταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Στάδιο 4 — Βαθιά εγχειρήματα</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Τι <strong>δεν</strong> προβλέπεται</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Σύμβαση API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Εγχειρίδιο</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1><span class="section-number">3. </span>Εγχειρίδιο<a class="headerlink" href="#manuel" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">3.1. </span>Εισαγωγή<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων με θέσεις τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει έναν ενιαίο χώρο για τη συγκέντρωση των θέσεων που έχει συναντήσει ένας παίκτης (στο διαδίκτυο, σε τουρνουά) και τη δυνατότητα να τις μελετήσει ξανά φιλτράροντάς τις σύμφωνα με διάφορα φίλτρα που μπορούν να συνδυαστούν αυθαίρετα. Το blunderDB μπορεί επίσης να χρησιμοποιηθεί για τη δημιουργία καταλόγων θέσεων αναφοράς.</p>
+<p>Οι θέσεις αποθηκεύονται σε μια βάση δεδομένων που αναπαρίσταται από ένα αρχείο <em>.db</em>.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">3.2. </span>Κύριες αλληλεπιδράσεις<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>Οι κύριες δυνατές αλληλεπιδράσεις με το blunderDB είναι:</p>
+<ul class="simple">
+<li><p>προσθήκη μιας νέας θέσης,</p></li>
+<li><p>τροποποίηση μιας υπάρχουσας θέσης,</p></li>
+<li><p>αντιγραφή της εικόνας του ταμπλό στο πρόχειρο (PNG) μέσω <strong>CTRL-X</strong>, ή μαζί με την πλήρη ανάλυση μέσω <strong>CTRL-X CTRL-X</strong>,</p></li>
+<li><p>διαγραφή μιας υπάρχουσας θέσης,</p></li>
+<li><p>αναζήτηση μίας ή περισσότερων θέσεων,</p></li>
+<li><p>εισαγωγή αγώνων από διάφορες πηγές (XG, GNUbg, BGBlitz, Jellyfish), συμπεριλαμβανομένων των σχολίων από τα αρχεία XG,</p></li>
+<li><p>πλοήγηση στις κινήσεις ενός εισηγμένου αγώνα,</p></li>
+<li><p>οργάνωση των θέσεων σε συλλογές,</p></li>
+<li><p>οργάνωση των αγώνων σε τουρνουά.</p></li>
+</ul>
+<p>Ο χρήστης μπορεί να επισημάνει ελεύθερα τις θέσεις με ετικέτες (tags) και να τις σχολιάσει μέσω σχολίων.</p>
+</section>
+<section id="description-de-l-interface">
+<h2><span class="section-number">3.3. </span>Περιγραφή της διεπαφής<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>Η διεπαφή του blunderDB αποτελείται, από πάνω προς τα κάτω, από:</p>
+<ul class="simple">
+<li><p>[επάνω] τη γραμμή εργαλείων, η οποία συγκεντρώνει το σύνολο των κύριων λειτουργιών που μπορούν να εκτελεστούν στη βάση δεδομένων,</p></li>
+<li><p>[στη μέση] την κύρια περιοχή προβολής, η οποία επιτρέπει την εμφάνιση ή την επεξεργασία θέσεων τάβλι,</p></li>
+<li><p>[κάτω] τη γραμμή κατάστασης, η οποία παρουσιάζει διάφορες πληροφορίες σχετικά με τη βάση δεδομένων ή την τρέχουσα θέση και ενσωματώνει τη γραμμή εντολών.</p></li>
+</ul>
+<p>Μπορούν να εμφανιστούν πίνακες για:</p>
+<ul class="simple">
+<li><p>εμφάνιση των δεδομένων ανάλυσης που σχετίζονται με την τρέχουσα θέση, προερχόμενων από το eXtreme Gammon (XG), το GNUbg ή το BGBlitz,</p></li>
+<li><p>εμφάνιση, προσθήκη ή τροποποίηση σχολίων,</p></li>
+<li><p>αναζήτηση και φιλτράρισμα θέσεων με βάση συνδυάσιμα κριτήρια,</p></li>
+<li><p>εμφάνιση και διαχείριση των συλλογών θέσεων (πίνακας συλλογών),</p></li>
+<li><p>εμφάνιση της λίστας των εισηγμένων αγώνων και πλοήγηση στις κινήσεις ενός αγώνα (πίνακας αγώνων),</p></li>
+<li><p>εμφάνιση και διαχείριση των τουρνουά (πίνακας τουρνουά),</p></li>
+<li><p>εμφάνιση των στατιστικών απόδοσης (πίνακας Stats),</p></li>
+<li><p>υπολογισμός του EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff) (πίνακας Eval),</p></li>
+<li><p>μελέτη των θέσεων με διαστήματα επανάληψης (πίνακας Anki),</p></li>
+<li><p>την προβολή των μεταδεδομένων της βάσης δεδομένων (πίνακας Μεταδεδομένα).</p></li>
+</ul>
+<p>Μπορούν να εμφανιστούν παράθυρα διαλόγου για:</p>
+<ul class="simple">
+<li><p>εμφάνιση της βοήθειας του blunderDB,</p></li>
+<li><p>εμφάνιση του καταλόγου των ξεναγήσεων (βλ. <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Ξεναγήσεις και βάση δείγματος</span></a>),</p></li>
+<li><p>ρύθμιση της εξαγωγής της βάσης δεδομένων,</p></li>
+<li><p>ρύθμιση του blunderDB, και ιδίως της γλώσσας της διεπαφής (βλ. <a class="reference internal" href="#configuration"><span class="std std-ref">Ρυθμίσεις</span></a>).</p></li>
+</ul>
+<p>Η κύρια περιοχή προβολής παρέχει στον χρήστη:</p>
+<ul class="simple">
+<li><p>ένα ταμπλό για την εμφάνιση ή την επεξεργασία μιας θέσης τάβλι,</p></li>
+<li><p>το επίπεδο και τον κάτοχο του ζαριού (cube),</p></li>
+<li><p>το pip count κάθε παίκτη,</p></li>
+<li><p>το σκορ κάθε παίκτη,</p></li>
+<li><p>τα ζάρια προς παίξιμο. Αν δεν εμφανίζεται καμία τιμή στα ζάρια, η θέση των ζαριών υποδεικνύει ποιος παίκτης έχει τη σειρά και ότι η θέση είναι μια απόφαση κύβου. Όταν η απόφαση κύβου είναι απάντηση σε διπλασιασμό (αποδοχή/πάσο), ο προσφερόμενος κύβος εμφανίζεται στο κέντρο του ταμπλό, στην προσφερόμενη τιμή.</p></li>
+</ul>
+<p id="board-menu-contextuel">Ένα δεξί κλικ στο ταμπλό ανοίγει ένα μενού περιβάλλοντος που προσφέρει: αξιολόγηση της θέσης που εμφανίζεται στον πίνακα Eval, αξιολόγηση του κατοπτρικού της, αντιγραφή της εικόνας του ταμπλό με την ανάλυσή της στο πρόχειρο (το αντίστοιχο του <em>CTRL-X CTRL-X</em>, λιγότερο εύκολο να ανακαλυφθεί), άνοιγμα νέας προβολής για αυτή τη θέση, και — αν η θέση προέρχεται ήδη από τη βάση δεδομένων — προσθήκη της σε τράπουλα Anki (επανάληψη με διαστήματα). Αυτό το μενού δεν εμφανίζεται στον πίνακα Eval ούτε στον πίνακα αναζήτησης, όπου το δεξί κουμπί χρησιμοποιείται ήδη για την τοποθέτηση πουλιών του άλλου χρώματος. Δείτε <a class="reference internal" href="#eval-amener-position"><span class="std std-ref">Μεταφορά μιας θέσης στον πίνακα Eval</span></a> για τη μεταφορά μιας θέσης στον πίνακα Eval.</p>
+<p>Η γραμμή κατάστασης είναι δομημένη από αριστερά προς τα δεξιά με τις ακόλουθες πληροφορίες:</p>
+<ul class="simple">
+<li><p>τη γραμμή εντολών, προσβάσιμη πατώντας το πλήκτρο <em>SPACE</em>,</p></li>
+<li><p>ένα ενημερωτικό μήνυμα σχετικό με μια λειτουργία που εκτελέστηκε από τον χρήστη,</p></li>
+<li><p>τον δείκτη της τρέχουσας θέσης, ακολουθούμενο από τον αριθμό των θέσεων στην τρέχουσα βιβλιοθήκη (ή τις πληροφορίες κίνησης/παρτίδας κατά την πλοήγηση σε έναν αγώνα).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Στην περίπτωση θέσεων που προκύπτουν από μια αναζήτηση του χρήστη, ο αριθμός των θέσεων που υποδεικνύεται στη γραμμή κατάστασης αντιστοιχεί στον αριθμό των φιλτραρισμένων θέσεων.</p>
+</div>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2><span class="section-number">3.4. </span>Καρτέλες προβολών<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Κάτω από τη γραμμή εργαλείων, μια γραμμή καρτελών επιτρέπει την εργασία με πολλές <strong>προβολές</strong> παράλληλα. Κάθε προβολή είναι ένας ανεξάρτητος χώρος εργασίας που διατηρεί τη δική του λίστα θέσεων, τον δείκτη της τρέχουσας θέσης, την εμφανιζόμενη θέση, την ανάλυση και την επιλεγμένη κίνηση, τον ενεργό πίνακα, το τρέχον σχόλιο καθώς και το πλαίσιο περιήγησης σε έναν αγώνα. Έτσι είναι δυνατόν, για παράδειγμα, να κρατήσετε μια αναζήτηση ανοιχτή σε μια προβολή ενώ περιηγείστε σε έναν αγώνα σε μια άλλη.</p>
+<ul class="simple">
+<li><p><strong>Δημιουργία προβολής</strong>: κάντε κλικ στο κουμπί <em>+</em> της γραμμής καρτελών ή πατήστε <em>CTRL-T</em>. Η νέα προβολή ξεκινά ως αντίγραφο της τρέχουσας προβολής.</p></li>
+<li><p><strong>Κλείσιμο προβολής</strong>: κάντε κλικ στο σταυρό της καρτέλας ή πατήστε <em>CTRL-W</em>. Η τελευταία προβολή δεν μπορεί να κλείσει.</p></li>
+<li><p><strong>Αλλαγή προβολής</strong>: κάντε κλικ σε μια καρτέλα, πατήστε <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (ή <em>SHIFT-J</em> / <em>SHIFT-K</em>) για να μεταβείτε στην προηγούμενη / επόμενη προβολή, ή <em>CTRL-1</em> έως <em>CTRL-9</em> για να φτάσετε απευθείας στην ν-οστή προβολή.</p></li>
+<li><p><strong>Μετονομασία προβολής</strong>: κάντε διπλό κλικ στην καρτέλα, εισαγάγετε το νέο όνομα και επιβεβαιώστε με <em>ENTER</em>.</p></li>
+</ul>
+<p>Οι προβολές αποθηκεύονται μαζί με την κατάσταση συνεδρίας της βάσης δεδομένων και επαναφέρονται κατά το επόμενο άνοιγμά της.</p>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2><span class="section-number">3.5. </span>Ρυθμίσεις<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>Το κουμπί ρυθμίσεων (εικονίδιο γραναζιού) στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB. Είναι οργανωμένο σε πέντε καρτέλες:</p>
+<ul class="simple">
+<li><p><strong>Διεπαφή</strong> — γλώσσα, κλίμακα εμφάνισης, θέση του πίνακα·</p></li>
+<li><p><strong>Χρώματα ταμπλό</strong> — τα χρώματα του ταμπλό·</p></li>
+<li><p><strong>Bearoff</strong> — η εκτεταμένη αμφίπλευρη βάση εξόδου που χρησιμοποιεί ο πίνακας Bearoff·</p></li>
+<li><p><strong>gammonNet</strong> — οι ρυθμίσεις του ενσωματωμένου αξιολογητή, που περιγράφονται παρακάτω·</p></li>
+<li><p><strong>Ταυτότητα εκδότη</strong> — το κλειδί που υπογράφει τις σημάνσεις προέλευσής σας, το οποίο περιγράφεται στην ενότητα <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>.</p></li>
+</ul>
+<p>Η καρτέλα <em>Διεπαφή</em> επιτρέπει την επιλογή γλώσσας ανάμεσα σε αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά και ρωσικά. Ολόκληρη η διεπαφή (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή γλώσσας αποθηκεύεται και διατηρείται από τη μία συνεδρία στην άλλη.</p>
+<p>Η ίδια καρτέλα προσφέρει επίσης το κουμπί <strong>Συμπύκνωση βάσης</strong>, που ανακτά τον χώρο στον δίσκο τον οποίο άφησαν οι διαγραφές (αγώνες, τουρνουά, εκκαθαρίσεις): η βάση δεδομένων δεν μικραίνει ποτέ μόνη της όταν διαγράφονται δεδομένα, η συμπύκνωση αυτή πρέπει να ζητηθεί ρητά. Η λειτουργία μπορεί να πάρει χρόνο σε μεγάλη βάση και απαιτεί προσωρινά περίπου το διπλάσιο του μεγέθους της σε ελεύθερο χώρο (το blunderDB αρνείται να ξεκινήσει αντί να διακινδυνεύσει μια διακοπείσα συμπύκνωση)· ζητείται λοιπόν επιβεβαίωση πριν την εκκίνηση. Το αποτέλεσμα — ο χώρος που κερδήθηκε, σε megabyte — εμφανίζεται έπειτα στη γραμμή κατάστασης. Η ίδια λειτουργία είναι διαθέσιμη από τη γραμμή εντολών με το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (βλ. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>).</p>
+<p>Το κουμπί <strong>Άνοιγμα του φακέλου καταγραφών</strong> ακριβώς από κάτω ανοίγει τον φάκελο που περιέχει το αρχείο καταγραφής της εφαρμογής — χρήσιμο για να επισυνάψετε λεπτομέρειες σε μια αναφορά προβλήματος, ιδίως όταν το blunderDB έχει εκκινηθεί από συντόμευση ή διπλό κλικ, χωρίς συνδεδεμένο τερματικό που να εμφανίζει οτιδήποτε.</p>
+<p>Το πλαίσιο <strong>Έλεγχος ενημερώσεων κατά την εκκίνηση</strong>, απενεργοποιημένο από προεπιλογή, ρωτά μία φορά σε κάθε εκκίνηση τη σελίδα εκδόσεων του αποθετηρίου GitHub και εμφανίζει στη γραμμή κατάστασης ένα μήνυμα αν υπάρχει νεότερη έκδοση — ποτέ ένα παράθυρο που εμποδίζει τη χρήση. Ο έλεγχος αυτός παραμένει αυτόματα απενεργοποιημένος σε εγκατάσταση που έγινε μέσω διαχειριστή πακέτων (Flatpak, Homebrew, πακέτο διανομής…): τότε αυτό το κανάλι διαχειρίζεται τις ενημερώσεις, όχι το ίδιο το blunderDB.</p>
+<p>Η καρτέλα <em>Χρώματα ταμπλό</em> επιτρέπει την προσαρμογή των χρωμάτων του ταμπλό. Κάθε στοιχείο διαθέτει τον δικό του επιλογέα χρώματος: το φόντο, το περίγραμμα, οι ανοιχτόχρωμες και σκουρόχρωμες γλώσσες, τα πούλια του παίκτη 1 και του παίκτη 2, τα ζάρια, οι βούλες των ζαριών και ο κύβος. Το κουμπί <em>Επαναφορά</em> επαναφέρει όλα τα προεπιλεγμένα χρώματα. Όπως και η γλώσσα, τα επιλεγμένα χρώματα διατηρούνται από τη μία συνεδρία στην άλλη.</p>
+<p>Η καρτέλα <em>Bearoff</em> διαχειρίζεται τους πίνακες μαζέματος του πίνακα Eval (βλ. <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Πίνακας Eval</span></a>). Δεν είναι <strong>ούτε ενσωματωμένοι στο εκτελέσιμο ούτε μεταφορτωμένοι</strong>: το blunderDB τους υπολογίζει στο μηχάνημα που τους χρησιμοποιεί, και το αποτέλεσμα είναι πανομοιότυπο byte προς byte με ό,τι παράγει το gnubg — το αποτύπωμα SHA-256 ελέγχεται πριν γίνει δεκτός ένας πίνακας.</p>
+<p>Οι δύο συνηθισμένοι πίνακες (TS-06-06 για την απόφαση ντάμπλου, OS-06 για το EPC) υπολογίζονται στην πρώτη εκκίνηση, στο παρασκήνιο και χωρίς ερώτηση: περίπου έξι δευτερόλεπτα σε έναν πυρήνα, κατά τη διάρκεια των οποίων η εφαρμογή χρησιμοποιείται κανονικά. Ο πίνακας Eval το αναφέρει μόνο αν τοποθετηθεί εκεί θέση που χρειάζεται πίνακα που δεν είναι ακόμη έτοιμος.</p>
+<p>Η καρτέλα δείχνει τον ενεργό τομέα και την προέλευσή του, την κατάσταση του μονόπλευρου πίνακα που διαβάζει το EPC, τον φάκελο όπου ζουν όλα αυτά, και τον κατάλογο των υπαρχόντων πινάκων με το μέγεθος και την ετυμηγορία τους. Κάθε γραμμή διαγράφεται ξεχωριστά, μετά από επιβεβαίωση.</p>
+<p><strong>Επαληθευμένος ή μη επαληθευμένος.</strong> Ένας <em>επαληθευμένος</em> πίνακας έχει ακριβώς τα byte που παράγει το gnubg για τον τομέα του: το αποτύπωμά του SHA-256 υπάρχει στο blunderDB και βρέθηκε ξανά. Ένας <em>μη επαληθευμένος</em> πίνακας είναι καλοσχηματισμένος αλλά ο τομέας του δεν έχει καταγεγραμμένο αποτύπωμα — δεν του καταλογίζεται τίποτα, απλώς κανείς δεν τον συνέκρινε με την αναφορά. Ένας <em>κατεστραμμένος</em> πίνακας αντιφάσκει με τον εαυτό του και δεν διαβάζεται ποτέ· ξαναϋπολογίζεται.</p>
+<p><strong>Υπολογισμός ευρύτερου πίνακα.</strong> Ο τομέας επιλέγεται από μια λίστα δύο οικογενειών, μαζί με τον αριθμό πυρήνων που θα του αφιερωθούν (εξ ορισμού όλοι εκτός από έναν, ώστε το μηχάνημα να παραμένει χρησιμοποιήσιμο):</p>
+<ul class="simple">
+<li><p><strong>ακριβής κύβος (αμφίπλευρος)</strong>, από TS-06-06 έως TS-06-15: διευρύνει τον τομέα όπου η πιθανότητα νίκης και η ετυμηγορία κύβου διαβάζονται αντί να εκτιμώνται·</p></li>
+<li><p><strong>EPC εκτός του σπιτιού (μονόπλευρος)</strong>, από OS-06 έως OS-10: διευρύνει την απόσταση στην οποία μπορεί να βρίσκεται ένα πούλι χωρίς να σωπάσει το μπλοκ EPC. Αυτή η σάρωση διαβάζει μόνο θέσεις μικρότερες από αυτήν που υπολογίζει, άρα είναι σειριακή εκ κατασκευής και ο αριθμός πυρήνων δεν της χρησιμεύει — ο επιλογέας το λέει γκριζάροντας.</p></li>
+</ul>
+<p>Πριν ξεκινήσει οτιδήποτε, η καρτέλα δηλώνει τρία μεγέθη για τον επιλεγμένο τομέα: το μέγεθος στον δίσκο, τη μνήμη που απαιτείται κατά τον υπολογισμό, και τον χρόνο που θα έπρεπε να πάρει <em>σε αυτό το μηχάνημα</em>. Το τελευταίο ξεκινά ως εκτίμηση και γίνεται μέτρηση: κάθε αρκετά ευρύς υπολογισμός καταγράφει τη δική του ταχύτητα και τη διατηρεί. Ένας τομέας που δεν επιτρέπει η διαθέσιμη μνήμη προσφέρεται σε γκρίζο, με την αιτία — «θα χρειάζονταν 24 GB, απομένουν 12» είναι απάντηση, μια απούσα γραμμή δεν θα ήταν.</p>
+<p>Ως τάξη μεγέθους, σε μηχάνημα δεκαέξι νημάτων: ο TS-06-09 ζυγίζει 191 MB και θέλει καμιά δεκαριά δευτερόλεπτα, ο TS-06-11 ζυγίζει 1,2 GB και μερικά λεπτά, ο TS-06-13 ξεπερνά ό,τι μπορούν να κρατήσουν στη μνήμη τα περισσότερα μηχανήματα. Από τη μονόπλευρη πλευρά, σε έναν πυρήνα: ο OS-07 ζυγίζει 4,9 MB και θέλει 17 δ, ο OS-08 15 MB και 1 λ 20, ο OS-10 117 MB και μισή ώρα.</p>
+<p><strong>Παύση και συνέχιση.</strong> Κατά τον υπολογισμό, η πρόοδος δείχνει τον <em>μετρημένο</em> υπολειπόμενο χρόνο και δύο ξεχωριστά κουμπιά: <em>Παύση</em> και <em>Ακύρωση</em>. Η παύση γράφει την κατάσταση του υπολογισμού δίπλα στον πίνακα· η επανεκκίνησή του συνεχίζει από εκεί που σταμάτησε αντί να ξεκινήσει από την αρχή. Η ακύρωση δεν κρατά τίποτα. Το κλείσιμο του παραθύρου ρυθμίσεων δεν διακόπτει τίποτα — ο υπολογισμός συνεχίζεται στο παρασκήνιο.</p>
+<p>Ένας υπολογισμός σε παύση βρίσκεται ξανά στην επόμενη εκκίνηση, ονομασμένος και με ποσοστό («ο TS-06-09 διακόπηκε στο 43 %»), με <em>Συνέχιση</em> και <em>Διαγραφή</em>. Τίποτα δεν ξεκινά μόνο του: ο χρήστης ζήτησε τη διακοπή.</p>
+<p>Η καρτέλα επιτρέπει τέλος να δείξετε ένα εξωτερικό αμφίπλευρο αρχείο <code class="docutils literal notranslate"><span class="pre">.bd</span></code>, για παράδειγμα μια βάση που παρήγαγε το ίδιο το gnubg: κερδίζει ο πίνακας με τον ευρύτερο τομέα.</p>
+<p>Η καρτέλα <strong>gammonNet</strong> ρυθμίζει τον ενσωματωμένο αξιολογητή (βλ. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a>). Δύο βάθη αναζήτησης ρυθμίζονται εκεί, ονομασμένα και αποθηκευμένα ξεχωριστά — η μείωση του ενός δεν τροποποιεί ποτέ το άλλο:</p>
+<ul class="simple">
+<li><p><strong>Βάθος εμφάνισης</strong> — η διαδραστική άνεση κατά την επεξεργασία του ταμπλό· δεν γράφεται ποτέ στη βάση.</p></li>
+<li><p><strong>Βάθος ανάλυσης</strong> — αυτό που η δέσμη ανάλυσης μετά την εισαγωγή γράφει στην Ανάλυση μιας θέσης.</p></li>
+</ul>
+<p>Και τα δύο έχουν προεπιλογή <strong>2-ply</strong>, την κανονική διαμόρφωση. Η καρτέλα προσφέρει επίσης το <strong>κλάδεμα</strong> (προεπιλογή <code class="docutils literal notranslate"><span class="pre">k=12</span></code>) και τον <strong>αριθμό των εμφανιζόμενων υποψήφιων κινήσεων</strong> (προεπιλογή 10), καθώς και ένα πλαίσιο επιλογής <strong>αυτόματη ανάλυση μετά την εισαγωγή</strong> το οποίο, μόλις ενεργοποιηθεί, ελέγχει μετά από κάθε εισαγωγή αν απομένουν θέσεις <strong>χωρίς καμία ανάλυση</strong> (ούτε gammonNet, ούτε XG, ούτε GNUbg, ούτε BGBlitz — ο κανόνας είναι «μια αξιολόγηση συμπληρώνει μόνο ένα κενό», ποτέ αντικατάσταση) και, αν χρειάζεται, ξεκινά στο παρασκήνιο μια ανάλυση gammonNet στο ρυθμισμένο βάθος ανάλυσης. Ένα κουμπί <strong>Ανάλυση τώρα</strong> επανεκκινεί χειροκίνητα την ίδια συμπλήρωση, χρήσιμο για μια βιβλιοθήκη που δημιουργήθηκε πριν από αυτή τη λειτουργία.</p>
+<p>Ένα δεύτερο κουμπί, <strong>Επανάλυση παρωχημένων θέσεων</strong>, καλύπτει την αντίστροφη περίπτωση: μια θέση που έχει ήδη αναλυθεί από το gammonNet, αλλά της οποίας η αποθηκευμένη ανάλυση γράφτηκε από παλαιότερη έκδοση του μηχανισμού σε σχέση με αυτή που εκτελείται τώρα, ή σε διαφορετικό βάθος από το ρυθμισμένο βάθος ανάλυσης παραπάνω, επισημαίνεται εκεί ως παρωχημένη και επαναξιολογείται. Μια θέση που φέρει επιπλέον ανάλυση XG, GNUbg ή BGBlitz δεν επηρεάζεται ποτέ από αυτό το κουμπί, ανεξαρτήτως του περιεχομένου gammonNet της — η προστασία του <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> παραμένει άνευ όρων. Ο αριθμός που εμφανίζεται δίπλα σε κάθε κουμπί (θέσεις χωρίς ανάλυση, παρωχημένες θέσεις) είναι καθαρά ενημερωτικός· η δέσμη επανυπολογίζει τη δική της λίστα κατά την εκκίνηση.</p>
+<p>Και οι δύο δέσμες είναι <strong>οριοθετημένες, ορατές και ακυρώσιμες, ποτέ ένας σιωπηλός δαίμονας</strong>: η πρόοδός τους (<code class="docutils literal notranslate"><span class="pre">αναλυμένες</span> <span class="pre">θέσεις</span> <span class="pre">/</span> <span class="pre">σύνολο</span></code>) και ένα κουμπί ακύρωσης εμφανίζονται στη γραμμή κατάστασης καθ” όλη τη διάρκειά τους, και εξαφανίζονται μόλις ολοκληρωθούν, δίνοντας τη θέση τους σε ένα μήνυμα που συνοψίζει το αποτέλεσμα — πόσες θέσεις <strong>αναλύθηκαν</strong>, πόσες <strong>απορρίφθηκαν</strong> (μια θέση που το gammonNet αρνείται να αξιολογήσει, όπως ένα σκορ αγώνα εκτός του εύρους του πίνακά του, κάτι που δεν είναι ποτέ βλάβη) και πόσες <strong>απέτυχαν</strong> (επαναλαμβάνονται, αμετάβλητες, στην επόμενη εκτέλεση). Το κλείσιμο της εφαρμογής κατά τη διάρκεια της μιας ή της άλλης δεν χάνει τίποτα: κάθε αναλυμένη θέση γράφεται σταδιακά, και η επόμενη εκτέλεση συνεχίζει ακριβώς από εκεί που είχε σταματήσει η ανάλυση, χωρίς κανένα ημερολόγιο να τηρείται.</p>
+<p>Το παράθυρο διαμόρφωσης παρέχει επίσης ρυθμίσεις εμφάνισης της διεπαφής. Ένα ρυθμιστικό <strong>κλίμακας διεπαφής</strong> σας επιτρέπει να μεγεθύνετε ή να σμικρύνετε όλα τα στοιχεία της διεπαφής, κάτι που είναι χρήσιμο σε οθόνες υψηλής πυκνότητας ή για τη βελτίωση της αναγνωσιμότητας. Ένα μενού <strong>θέσης των πλαισίων</strong> καθορίζει πού εμφανίζονται τα πλαίσια (αναζήτηση, ματς, ανάλυση) σε σχέση με το ταμπλό: <em>κάτω</em>, <em>στο πλάι</em> ή <em>αυτόματα</em> (το πλάι επιλέγεται τότε σε πλατιές οθόνες για την καλύτερη αξιοποίηση του διαθέσιμου χώρου). Όπως και οι άλλες ρυθμίσεις, αυτές οι επιλογές διατηρούνται από τη μία συνεδρία στην άλλη.</p>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2><span class="section-number">3.6. </span>Ξεναγήσεις και βάση δείγματος<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>Για να διευκολυνθεί η εξοικείωση, το blunderDB προσφέρει <strong>ξεναγήσεις</strong> του περιβάλλοντος. Ο κατάλογος των ξεναγήσεων ανοίγει από τη γραμμή εργαλείων ή με την εντολή <code class="docutils literal notranslate"><span class="pre">tour</span></code> (ψευδώνυμο <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>). Είναι διαθέσιμες επτά ξεναγήσεις: μια γενική ξενάγηση του περιβάλλοντος, και ξεναγήσεις αφιερωμένες στην αναζήτηση θέσεων, στην ανασκόπηση αγώνων, στην ανασκόπηση τουρνουά, στον πίνακα Eval, στην επανάληψη Anki και στα στατιστικά. Κάθε ξενάγηση επισημαίνει τα σχετικά στοιχεία του περιβάλλοντος, βήμα προς βήμα, ανοίγει τον πίνακα για τον οποίο μιλά, και μπορεί να επαναληφθεί ανά πάσα στιγμή. Κατά την πρώτη εκκίνηση, η γενική ξενάγηση προτείνεται αυτόματα.</p>
+<p>Η εντολή <code class="docutils literal notranslate"><span class="pre">demo</span></code> φορτώνει μια <strong>βάση δείγματος</strong> που επιτρέπει την εξερεύνηση των λειτουργιών του εργαλείου χωρίς εισαγωγή δικών σας παρτίδων: τρεις αγώνες (δύο από τους οποίους ομαδοποιημένοι σε ένα τουρνουά) αναλυμένους από τα eXtreme Gammon, BGBlitz και gammonNet, τρεις θεματικές συλλογές, σχόλια με ετικέτες (<code class="docutils literal notranslate"><span class="pre">#blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">#cube</span></code>) και μια τράπουλα Anki με το ημερολόγιο επαναλήψεών της. Οι παίκτες, το τουρνουά και ο τόπος είναι φανταστικοί. Οι καθοδηγούμενες περιηγήσεις βασίζονται σε αυτή τη βάση όταν καμία βάση δεν είναι ανοιχτή.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2><span class="section-number">3.7. </span>Πλοήγηση στις θέσεις<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>Εξ ορισμού, το blunderDB επιτρέπει:</p>
+<ul class="simple">
+<li><p>την κύλιση μεταξύ των διαφόρων θέσεων της τρέχουσας βιβλιοθήκης,</p></li>
+<li><p>την εμφάνιση των πληροφοριών ανάλυσης που σχετίζονται με μια θέση,</p></li>
+<li><p>την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης.</p></li>
+</ul>
+<p>Το κουμπί <strong>Μετάβαση σε θέση</strong> της γραμμής εργαλείων ανοίγει ένα παράθυρο όπου πληκτρολογείτε απευθείας τον δείκτη μιας θέσης για να μεταβείτε εκεί, χωρίς κύλιση. Είναι το γραφικό αντίστοιχο της εντολής <code class="docutils literal notranslate"><span class="pre">[number]</span></code> της γραμμής εντολών (βλ. <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Θέσεις και πλοήγηση</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2><span class="section-number">3.8. </span>Επεξεργασία θέσεων<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p>Το πάτημα του πλήκτρου <em>TAB</em> ανοίγει τον πίνακα αναζήτησης και επιτρέπει την επεξεργασία μιας θέσης στο ταμπλό για την προσθήκή της στη βάση δεδομένων ή τον ορισμό μιας δομής θέσης προς αναζήτηση. Η κατανομή των πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με τη βοήθεια του ποντικιού (βλ. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Επεξεργασία θέσης</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2><span class="section-number">3.9. </span>Η γραμμή εντολών<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Η γραμμή εντολών, ενσωματωμένη στη γραμμή κατάστασης, επιτρέπει την εκτέλεση του συνόλου των λειτουργιών του blunderDB που είναι διαθέσιμες στη γραφική διεπαφή: γενικές λειτουργίες στη βάση δεδομένων, πλοήγηση θέσεων, εμφάνιση της ανάλυσης ή/και των σχολίων, αναζήτηση θέσεων με βάση φίλτρα… Μετά την πρώτη εξοικείωση με τη διεπαφή, συνιστάται η σταδιακή χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων.</p>
+<p>Για να ανοίξετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>SPACE</em>. Για να υποβάλετε ένα ερώτημα και να κλείσετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>ENTER</em>.</p>
+<p>Το blunderDB εκτελεί τα ερωτήματα που αποστέλλονται από τον χρήστη υπό την προϋπόθεση ότι είναι έγκυρα και τροποποιεί αμέσως την κατάσταση της βάσης δεδομένων εφόσον χρειάζεται. Δεν απαιτούνται ρητές ενέργειες αποθήκευσης από την πλευρά του χρήστη.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Τομέας 4</span></a> για τη λίστα των διαθέσιμων εντολών στη γραμμή εντολών.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id3"></span><h2><span class="section-number">3.10. </span>Πίνακας Ανάλυσης<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Ανάλυσης</strong> (<em>CTRL-L</em>) εμφανίζει τα δεδομένα ανάλυσης της τρέχουσας θέσης, εισηγμένα από το eXtreme Gammon (XG), το GNUbg ή το BGBlitz. Παρουσιάζει τις καλύτερες εναλλακτικές (κινήσεις πουλιών ή αποφάσεις κύβου) μαζί με τις τιμές equity τους και τα αντίστοιχα σφάλματα. Το πλήκτρο <em>d</em> εναλλάσσεται μεταξύ της ανάλυσης κινήσεων πουλιών και της ανάλυσης κύβου. Κατά την πλοήγηση σε έναν αγώνα, η κίνηση που παίχτηκε πραγματικά επισημαίνεται στη λίστα των εναλλακτικών. Πατήστε <em>CTRL-L</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">list</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<p>Οι κινήσεις γράφονται όπως διαβάζονται στο ταμπλό, εδώ όπως και στον πίνακα Eval: το λιγότερο προχωρημένο πούλι κινείται πρώτο, και <strong>ένα πούλι που χρησιμοποιεί διαδοχικά περισσότερα ζάρια γράφεται μία μόνο φορά</strong> — ένα 64 που παίζεται με το ίδιο πούλι διαβάζεται <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, και <code class="docutils literal notranslate"><span class="pre">24/14*</span></code> αν χτυπά κατά την άφιξη. Η λεπτομέρεια της διαδρομής επανεμφανίζεται μόνο όταν λέει κάτι παραπάνω: ένα χτύπημα <em>καθ” οδόν</em> διατηρεί το ενδιάμεσο σημείο του, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, αλλιώς το χτύπημα στο 18 θα εξαφανιζόταν από τη σημειογραφία.</p>
+<p>Η ισοδυναμία μιας εισαγόμενης ανάλυσης ακολουθεί τον ίδιο κανόνα με τον πίνακα Eval: η στήλη δηλώνει το δικό της πλαίσιο αναφοράς, «Equity (money)» ή «Equity (match)» ανάλογα με το σκορ της αναλυόμενης θέσης, ποτέ ένα απλό «Equity» χωρίς ένδειξη κλίμακας. Οι κανόνες <strong>Jacoby</strong> και <strong>Beaver</strong> που ισχύουν σε μια θέση money game εμφανίζονται επίσης, ως ετικέτες κάτω από τον πίνακα απόφασης κύβου.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id4"></span><h2><span class="section-number">3.11. </span>Πίνακας Σχολίων<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Σχολίων</strong> (<em>CTRL-P</em>) εμφανίζει, προσθέτει και τροποποιεί τα σχόλια που σχετίζονται με την τρέχουσα θέση. Τα σχόλια που εισάγονται από τα αρχεία XG συσχετίζονται αυτόματα με τις αντίστοιχες θέσεις. Πατήστε <em>CTRL-P</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">comment</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-recherche">
+<span id="id5"></span><h2><span class="section-number">3.12. </span>Πίνακας Αναζήτησης<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Αναζήτησης</strong> (<em>CTRL-F</em> ή <em>TAB</em>) επιτρέπει το φιλτράρισμα των θέσεων σύμφωνα με κριτήρια που συνδυάζονται ελεύθερα: δομή πουλιών, τύπος απόφασης κύβου, μέγεθος σφάλματος, ημερομηνίες, ετικέτες κ.λπ. Το πλήκτρο <em>TAB</em> ανοίγει ταυτόχρονα τον πίνακα αναζήτησης και τον επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς αναζήτηση πάνω στο ταμπλό.</p>
+<figure class="align-default" id="id11">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Πίνακας Αναζήτησης" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Αναζήτησης: αριθμητικά φίλτρα, δομή πουλιών στο ταμπλό, καρτέλες <em>At least</em> / <em>Except</em>.</span><a class="headerlink" href="#id11" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> ακολουθούμενη από φίλτρα (π.χ.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου <em>Search in current results</em> για την ίδια λειτουργία.</p>
+<p>Το πάνελ προσφέρει έναν ρητό έλεγχο του <strong>τύπου απόφασης</strong> που αναζητείται: <em>Αδιάφορο</em> (κανένα φίλτρο), <em>Πιόνια</em> (αποφάσεις κίνησης) ή <em>Κύβος</em> (αποφάσεις κύβου). Όταν είναι επιλεγμένο το <em>Κύβος</em>, μια δεύτερη λίστα προσδιορίζει τον υποτύπο: <em>Όλα</em>, <em>Διπλασιασμός / Όχι</em> (ο παίκτης που έχει τη σειρά πρέπει να αποφασίσει αν θα διπλασιάσει) ή <em>Αποδοχή / Πάσο</em> (απάντηση σε διπλασιασμό του αντιπάλου). Ο έλεγχος είναι συγχρονισμένος με το ταμπλό: η αλλαγή των ζαριών ή του κύβου στο ταμπλό ενημερώνει τον τύπο απόφασης, και αντίστροφα. Στη λειτουργία <em>Αποδοχή / Πάσο</em>, ο κύβος εμφανίζεται στο κέντρο του ταμπλό στην προσφερόμενη τιμή· η τιμή αυτή παραμένει επεξεργάσιμη.</p>
+<p>Το φίλτρο <strong>Επισημασμένη</strong> διατηρεί τις θέσεις που επισημάνατε στο λογισμικό προέλευσης του αγώνα. Μόνο το eXtreme Gammon παράγει αυτή την πληροφορία, καταγεγραμμένη κίνηση προς κίνηση στο αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code>· το blunderDB τη διαβάζει κατά την εισαγωγή και τη διατηρεί. Μια επισημασμένη απόφαση κύβου δίνει δύο επισημασμένες θέσεις, τον διπλασιασμό και την αποδοχή/πάσο, καθώς το blunderDB χωρίζει στα δύο ό,τι το αρχείο προέλευσης καταγράφει ως μία απόφαση.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η επισήμανση δεν είναι αναδρομική: οι αγώνες που βρίσκονται ήδη στη βάση δεν φέρουν αυτή την πληροφορία, καθώς υπάρχει μόνο στα αρχεία προέλευσης. Αρκεί να εισαγάγετε ξανά το σχετικό αρχείο <code class="docutils literal notranslate"><span class="pre">.xg</span></code> — η εισαγωγή εντοπίζει το διπλότυπο και δεν προσθέτει τίποτε άλλο πέρα από τις επισημάνσεις, χωρίς να θίγει τα υπάρχοντα σχόλια ή τις αναλύσεις. Η επισήμανση δεν μπορεί ούτε να τεθεί ούτε να αφαιρεθεί από το blunderDB: για έναν προσωρινό κατάλογο εργασίας, χρησιμοποιήστε καλύτερα μια συλλογή.</p>
+</div>
+<p>Το φίλτρο <strong>Σχόλιο</strong> ερευνά τα σχόλια που συνδέονται με τις θέσεις σε τρεις αποκλειστικές λειτουργίες. <em>περιέχει κείμενο</em> αναζητά μία ή περισσότερες λέξεις στο κείμενο των σχολίων (πεδίο εισαγωγής, λέξεις χωρισμένες με <code class="docutils literal notranslate"><span class="pre">;</span></code>, τουλάχιστον μία πρέπει να ταιριάζει)· <em>έχει σχόλιο</em> διατηρεί κάθε θέση που φέρει σχόλιο, ανεξάρτητα από το περιεχόμενό του· <em>χωρίς σχόλιο</em> διατηρεί αντιθέτως τις μη σχολιασμένες θέσεις — χρήσιμο, σε συνδυασμό με φίλτρο σφάλματος ή ημερομηνίας, για να καταρτίσετε τον κατάλογο όσων απομένουν προς σχολιασμό.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα σχόλια που εισάγονται από αρχείο αγώνα (XG, GNUbg) μετρούν ως σχόλια: το blunderDB δεν διατηρεί την προέλευσή τους και επομένως δεν μπορεί να διακρίνει μια σημείωση που πληκτρολογήσατε από μια σημείωση που προέρχεται από το αρχείο προέλευσης. Εξάλλου, τα σχόλια που συνδέονται με έναν <em>αγώνα</em> ή ένα <em>τουρνουά</em> δεν αφορούν αυτό το φίλτρο: σχολιάζουν τον αγώνα ή το τουρνουά, όχι τις θέσεις του.</p>
+</div>
+<p>Το φίλτρο <strong>Αγώνες &amp; Τουρνουά</strong> στηρίζεται σε έναν κοινό επιλογέα (παράθυρο διαλόγου) αντί για την πληκτρολόγηση αριθμητικών αναγνωριστικών: δύο λίστες με πλαίσια ελέγχου, μία για τους αγώνες και μία για τα τουρνουά, καθεμία φιλτραρίσιμη με κείμενο (παίκτης, ημερομηνία, διοργάνωση για τους αγώνες· όνομα, ημερομηνία, τοποθεσία για τα τουρνουά), με κουμπιά <em>Όλα</em> / <em>Κανένα</em> που ενεργούν μόνο στο τρέχον φιλτραρισμένο υποσύνολο. Η επιλογή ενός τουρνουά επιλέγει αυτόματα (και γκριζάρει) τους αγώνες-μέλη του στη λίστα αγώνων, καθιστώντας εμφανές ότι ένα τουρνουά ισοδυναμεί με το σύνολο των αγώνων του.</p>
+<p>Ο πίνακας αναζήτησης διαθέτει τρεις καρτέλες στο αριστερό του άκρο: <em>Recherche</em> (τα φίλτρα), <em>Historique</em> και <em>Enregistrés</em>. Η καρτέλα <strong>Historique</strong> παραθέτει τις προηγούμενες αναζητήσεις με την ημερομηνία και την εντολή τους: ένα κλικ επιλέγει μια αναζήτηση και εμφανίζει τη σχετική θέση στο ταμπλό, ένα διπλό κλικ την εκτελεί ξανά. Κάθε καταχώριση μπορεί να αποθηκευτεί στη βιβλιοθήκη φίλτρων (εικονίδιο σελιδοδείκτη, δίνοντας ένα όνομα στο φίλτρο) ή να διαγραφεί. Η καρτέλα <strong>Enregistrés</strong> περιέχει τη <strong>βιβλιοθήκη φίλτρων</strong>: κάντε διπλό κλικ σε ένα αποθηκευμένο φίλτρο για να εκτελέσετε ξανά την αντίστοιχη αναζήτηση (βλ. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Παράρτημα: Προχωρημένη χρήση των φίλτρων</span></a>). Η εντολή <code class="docutils literal notranslate"><span class="pre">history</span></code> (ψευδώνυμο <code class="docutils literal notranslate"><span class="pre">hi</span></code>) ανοίγει τον πίνακα αναζήτησης.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Τομέας 4</span></a> για τη λίστα των διαθέσιμων φίλτρων.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id6"></span><h2><span class="section-number">3.13. </span>Πίνακας Συλλογών<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id12">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Πίνακας Συλλογών" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Συλλογών: όνομα, αριθμός θέσεων, περιγραφή, τελευταία τροποποίηση.</span><a class="headerlink" href="#id12" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Ο πίνακας <strong>Συλλογές</strong> (<em>CTRL-B</em>) διαχειρίζεται συλλογές θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Θέσεις μπορούν να προστεθούν ή να αφαιρεθούν (πλήκτρο <em>Delete</em>, ζητείται επιβεβαίωση). Διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>. Η σειρά των συλλογών και των θέσεων μέσα σε μια συλλογή αλλάζει με μεταφορά και απόθεση. Πατήστε <em>CTRL-B</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">collection</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-matchs">
+<span id="id7"></span><h2><span class="section-number">3.14. </span>Πίνακας Αγώνων<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Αγώνων</strong> (<em>CTRL-Tab</em>) παραθέτει τους εισηγμένους αγώνες. Κάντε διπλό κλικ σε έναν αγώνα (ή πατήστε <em>ENTER</em>) για να πλοηγηθείτε στις κινήσεις του. Η εντολή <code class="docutils literal notranslate"><span class="pre">m</span></code> συνεχίζει την πλοήγηση στον τελευταίο αγώνα που επισκεφτήκατε.</p>
+<p>Ο χρήστης μπορεί:</p>
+<ul class="simple">
+<li><p>να περιηγηθεί στις κινήσεις ενός αγώνα χρησιμοποιώντας τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>,</p></li>
+<li><p>να μεταβεί από τη μία παρτίδα στην άλλη με τη βοήθεια των πλήκτρων <em>PageUp</em> και <em>PageDown</em>,</p></li>
+<li><p>να εμφανίσει την ανάλυση των κινήσεων (πουλιά και κύβος) πατώντας <em>CTRL-L</em>,</p></li>
+<li><p>να εναλλάσσεται μεταξύ της ανάλυσης κινήσεων πουλιών και κύβου με το πλήκτρο <em>d</em>,</p></li>
+<li><p>να δει την κίνηση που παίχτηκε πραγματικά επισημασμένη στην ανάλυση.</p></li>
+</ul>
+<p>Η τελευταία θέση που επισκεφτήκατε σε κάθε αγώνα αποθηκεύεται και επαναφέρεται αυτόματα. Πατήστε <em>CTRL-Tab</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">match</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<p>Κάθε αγώνας μπορεί να εξαχθεί σε μεταγραφή Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> μέσω του κουμπιού ⬇ της λίστας αγώνων ή του κουμπιού <em>.mat</em> της καρτέλας του αγώνα.</p>
+<p>Το κουμπί <strong>Συγχώνευση παικτών</strong> της γραμμής εργαλείων του πίνακα ανοίγει ένα παράθυρο που παραθέτει όλα τα ονόματα παικτών της βάσης με τον αριθμό των αγώνων τους: επιλέξτε τις παραλλαγές ορθογραφίας του ίδιου παίκτη, επιλέξτε το κανονικό όνομα που θα διατηρηθεί και έπειτα συγχωνεύστε. Χρήσιμο για την ενοποίηση των στατιστικών ανά παίκτη όταν ο ίδιος παίκτης εμφανίζεται με πολλά ονόματα.</p>
+<p>Όταν ένας αγώνας είναι ανοιχτός, μια <strong>γραμμή πληροφοριών</strong> εμφανίζεται πάνω από το ταμπλό: υπενθυμίζει τους παίκτες που συμμετέχουν (<em>παίκτης 1</em> εναντίον <em>παίκτης 2</em>) καθώς και το πλαίσιο του αγώνα (διοργάνωση, τόπος, γύρος, ημερομηνία και μήκος του αγώνα, όταν αυτές οι πληροφορίες είναι διαθέσιμες). Αυτή η γραμμή εμφανίζεται και εκτός της λειτουργίας αγώνα: όταν μια μελετώμενη θέση (που προκύπτει από μια αναζήτηση, μια συλλογή ή μια άμεση πρόσβαση) προέρχεται από έναν ή περισσότερους αγώνες, υποδεικνύει την <strong>προέλευσή</strong> της — τον πρώτο σχετικό αγώνα και, ενδεχομένως, ένα σήμα «+N» που παραθέτει τους υπόλοιπους κατά το πέρασμα του δείκτη. Μια θέση που εισήχθη μεμονωμένα, την οποία δεν αναφέρει κανένας αγώνας, δεν εμφανίζει τίποτα.</p>
+<p>Κατά το άνοιγμα μιας βάσης που περιέχει ματς, το πλαίσιο <strong>Ματς</strong> εμφανίζεται αμέσως και η ανασκόπηση ξεκινά απευθείας από την πρώτη θέση, ώστε να μπορείτε να ξεκινήσετε αμέσως την πλοήγηση.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Μια βάση δεδομένων μπορεί να ανοιχτεί για εγγραφή μόνο από ένα παράθυρο τη φορά. Αν ανοίξετε μια βάση ήδη ανοιχτή σε άλλο παράθυρο του blunderDB, ανοίγει <strong>μόνο για ανάγνωση</strong>: η περιήγηση, η αναζήτηση και η ανάλυση παραμένουν δυνατές, αλλά κάθε τροποποίηση είναι απενεργοποιημένη και η γραμμή τίτλου εμφανίζει «[μόνο για ανάγνωση]».</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id8"></span><h2><span class="section-number">3.15. </span>Πίνακας Τουρνουά<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id13">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Πίνακας Τουρνουά" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ο πίνακας Τουρνουά: ένα τουρνουά ανά γραμμή, αριθμός ματς, PR του παίκτη αναφοράς.</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Ο πίνακας <strong>Τουρνουά</strong> (<em>CTRL-Y</em>) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε <em>CTRL-Y</em> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<p>Τα τουρνουά γεμίζουν από μόνα τους κατά την εισαγωγή. Τα αρχεία XG, GnuBG και BGF ονομάζουν τη διοργάνωσή τους· όταν εισάγεται ένας νέος αγώνας, το blunderDB τον κατατάσσει στο τουρνουά με αυτό το όνομα και το δημιουργεί αν δεν υπάρχει ακόμη. Η ημερομηνία και ο τόπος του τουρνουά μένουν κενά — εδώ συμπληρώνονται. Ένας αγώνας που υπάρχει ήδη στη βάση δεν ανακατατάσσεται ποτέ: η εκ νέου εισαγωγή του αρχείου του δεν αναιρεί την ταξινόμηση που έγινε με το χέρι.</p>
+<p>Η στήλη <strong>PR</strong> κάθε τουρνουά εμφανίζει το PR του <strong>παίκτη αναφοράς</strong> — δηλαδή του παίκτη που συμμετέχει στους περισσότερους αγώνες του τουρνουά (σε περίπτωση ισοπαλίας, εκείνου που πήρε τις περισσότερες αποφάσεις). Το PR δεν αναμειγνύει επομένως το δικό σας παιχνίδι με εκείνο των αντιπάλων σας: για τα δικά σας τουρνουά, αντικατοπτρίζει μόνο τη δική σας απόδοση. Το όνομα του παίκτη αναφοράς εμφανίζεται σε πλαίσιο υπόδειξης όταν περνάτε πάνω από την τιμή.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2><span class="section-number">3.16. </span>Πίνακας Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="id9">
+<h3><span class="section-number">3.16.1. </span>Εισαγωγή<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>Ο πίνακας <strong>Stats</strong> επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες <strong>PR</strong> (Performance Rate) και <strong>MWC cost</strong> (Match Winning Chance cost) για το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο.</p>
+<p>Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:</p>
+<ul class="simple">
+<li><p><strong>τον προσδιορισμό του επιπέδου σας</strong> σε σχέση με τα κατώφλια αναφοράς (world-class, expert, advanced…) χάρη στο συνολικό PR·</p></li>
+<li><p><strong>την παρακολούθηση της προόδου σας</strong> τουρνουά προς τουρνουά ή αγώνα προς αγώνα χάρη στα γραφήματα της καρτέλας Progression·</p></li>
+<li><p><strong>τον εντοπισμό των αδυναμιών σας</strong>: η καρτέλα Erreurs εμφανίζει την κατανομή μεταξύ κινήσεων πουλιών και αποφάσεων κύβου, καθώς και την κατανομή των μεγεθών σφάλματος·</p></li>
+<li><p><strong>σύγκριση των παικτών της βάσης</strong> μεταξύ τους, μία γραμμή ανά παίκτη, μέσω της καρτέλας Παίκτες — χρήσιμο για την παρακολούθηση μιας ολόκληρης διοργάνωσης·</p></li>
+<li><p><strong>την άμεση πρόσβαση στις σχετικές θέσεις</strong> κάνοντας κλικ σε οποιονδήποτε δείκτη (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3><span class="section-number">3.16.2. </span>Άνοιγμα του πίνακα<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>Για να ανοίξετε τον πίνακα Stats:</p>
+<ul class="simple">
+<li><p>Πατήστε <em>CTRL-D</em>.</p></li>
+<li><p>Πληκτρολογήστε την εντολή <code class="docutils literal notranslate"><span class="pre">:stats</span></code> ή <code class="docutils literal notranslate"><span class="pre">:st</span></code> στη γραμμή εντολών.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας ανανεώνεται αυτόματα σε κάθε τροποποίηση του φίλτρου. Δεν επανυπολογίζει τα στατιστικά κατά την απλή εναλλαγή PR ↔ MWC: και οι δύο μετρικές υπολογίζονται ταυτόχρονα από το backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3><span class="section-number">3.16.3. </span>Γραμμή φίλτρου<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>Η γραμμή φίλτρου, στο επάνω μέρος του πίνακα, επιτρέπει τον περιορισμό του υπολογισμού σε ένα υποσύνολο θέσεων.</p>
+<section id="perspective-joueur">
+<h4><span class="section-number">3.16.3.1. </span>Οπτική γωνία παίκτη<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p>Η αναπτυσσόμενη λίστα <strong>Παίκτης</strong> επιτρέπει το φιλτράρισμα των στατιστικών σύμφωνα με τον αναλυόμενο παίκτη. Το blunderDB επιλέγει αυτόματα τον παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση δεδομένων — τροποποιήσιμο ανά πάσα στιγμή.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Η αλλαγή παίκτη δεν προκαλεί απώλεια δεδομένων· αρκεί να επιλέξετε ξανά τον προηγούμενο παίκτη από τη λίστα.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4><span class="section-number">3.16.3.2. </span>Διαθέσιμα φίλτρα<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Τουρνουά</strong> — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να επιλεγούν πολλά τουρνουά ταυτόχρονα.</p></li>
+<li><p><strong>Ημερομηνίες</strong> — χρονικό εύρος (<em>Από</em> … <em>Έως</em>). Αν συμπληρωθεί μόνο η ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις.</p></li>
+<li><p><strong>Τύπος απόφασης</strong> — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου.</p></li>
+<li><p><strong>Διάρκεια αγώνα</strong> — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, 9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη.</p></li>
+</ul>
+<p>Ένα κουμπί <strong>Reset</strong> μηδενίζει όλα τα φίλτρα (εκτός από τον αυτόματα εντοπισμένο παίκτη).</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα φίλτρα αποθηκεύονται στις ρυθμίσεις του blunderDB (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) και επαναφέρονται κατά το επόμενο άνοιγμα.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3><span class="section-number">3.16.4. </span>Εναλλαγή PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>Το κουμπί <strong>PR / MWC</strong> στο επάνω μέρος του πίνακα εναλλάσσει την εμφανιζόμενη μετρική σε όλες τις καρτέλες.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Μετρά την ποιότητα παιχνιδιού <em>money-game</em>: άθροισμα των σφαλμάτων σε χιλιοστά του πόντου, διαιρεμένο με τον αριθμό των αποφάσεων. Ανεξάρτητο από το σκορ του αγώνα.</p>
+<p>Κατά προσέγγιση κατώφλια αναφοράς:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επίπεδο</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Προχωρημένος</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Μέσος</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Αρχάριος</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Σωρευτική πιθανότητα νίκης αγώνα που χάνεται εξαιτίας των σφαλμάτων, σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων. Υπολογίζεται με βάση τη MET Kazaross-XG2 που είναι ενσωματωμένη στο blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Το MWC cost <strong>δεν εφαρμόζεται</strong> στις θέσεις <em>money-game</em> (χωρίς διακύβευμα αγώνα). Αυτές οι θέσεις εξαιρούνται από τον υπολογισμό MWC. Οι τιμές MWC εξαρτώνται από τη MET που χρησιμοποιείται· δεν είναι άμεσα συγκρίσιμες μεταξύ λογισμικών που χρησιμοποιούν διαφορετικές METs.</p>
+</div>
+</div></blockquote>
+<p>Η εναλλαγή PR ↔ MWC είναι ακαριαία: δεν πραγματοποιείται κανένας επανυπολογισμός στο backend.</p>
+</section>
+<section id="onglet-dashboard">
+<h3><span class="section-number">3.16.5. </span>Καρτέλα Dashboard<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Dashboard</strong> παρέχει μια συνοπτική εικόνα των βασικών δεικτών.</p>
+<figure class="align-default" id="id14">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Καρτέλα Dashboard του πίνακα Stats" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Dashboard: συνολικό PR, PR πουλιών, PR κύβου.</span><a class="headerlink" href="#id14" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4><span class="section-number">3.16.5.1. </span>Κάρτες επιπέδου<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:</p>
+<ul class="simple">
+<li><p><strong>All</strong> — όλες τις αποφάσεις (πουλιά + κύβος)·</p></li>
+<li><p><strong>Checker</strong> — μόνο τις κινήσεις πουλιών·</p></li>
+<li><p><strong>Cube</strong> — μόνο τις αποφάσεις κύβου.</p></li>
+</ul>
+<p>Κάνοντας κλικ σε μια κάρτα φορτώνονται στον πίνακα ανάλυσης οι θέσεις του αντίστοιχου υποσυνόλου (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο συνολικός αριθμός των αποφάσεων εμφανίζεται στο κάτω μέρος κάθε κάρτας κατά την αιώρηση του δείκτη.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4><span class="section-number">3.16.5.2. </span>Κυλιόμενο PR στις τελευταίες N αποφάσεις<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>Μια γραμμή τιμών PR (ή MWC) που υπολογίζονται στις τελευταίες <em>N</em> αποφάσεις (N = 5, 10, 50, 100, 250, 500, 1000) επιτρέπει τη μέτρηση της πρόσφατης τάσης. Οι αχνές τιμές αντιστοιχούν σε N μεγαλύτερο από τον αριθμό των διαθέσιμων αποφάσεων.</p>
+<p>Κάνοντας κλικ σε μια τιμή φορτώνονται οι τελευταίες <em>N</em> αντίστοιχες θέσεις.</p>
+</section>
+<section id="top-blunders">
+<h4><span class="section-number">3.16.5.3. </span>Κορυφαία σφάλματα (Top blunders)<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>Η λίστα των 10 χειρότερων σφαλμάτων (ή MWC cost), ταξινομημένων κατά φθίνον μέγεθος. Κάνοντας κλικ σε μια γραμμή φορτώνεται η σχετική θέση στον πίνακα ανάλυσης.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3><span class="section-number">3.16.6. </span>Καρτέλα Progression<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Progression</strong> παρουσιάζει την εξέλιξη του επιπέδου στο χρόνο.</p>
+<section id="courbe-par-tournoi">
+<h4><span class="section-number">3.16.6.1. </span>Γραμμικό γράφημα ανά τουρνουά<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>Ένα γραμμικό γράφημα εμφανίζει το PR (ή το MWC) για κάθε τουρνουά (άξονας X: σειρά των τουρνουά, άξονας Y: τιμή της μετρικής). Έγχρωμες ζώνες αποτυπώνουν τα κατώφλια επιπέδου.</p>
+<p>Κάνοντας κλικ σε ένα σημείο του γραφήματος ανοίγει ένα μενού περιβάλλοντος με δύο επιλογές:</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — ανοίγει το τουρνουά στον πίνακα Τουρνουά.</p></li>
+<li><p><strong>Open positions</strong> — φορτώνει όλες τις θέσεις του τουρνουά στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4><span class="section-number">3.16.6.2. </span>Διάγραμμα διασποράς ανά αγώνα<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>Ένα διάγραμμα διασποράς αναπαριστά κάθε αγώνα (άξονας X: ημερομηνία, άξονας Y: PR ή MWC). Το μέγεθος του σημείου είναι ανάλογο του αριθμού των αποφάσεων στον αγώνα.</p>
+<p>Κάνοντας κλικ σε ένα σημείο ανοίγει ένα μενού περιβάλλοντος:</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — ανοίγει τον αγώνα στον πίνακα αγώνων.</p></li>
+<li><p><strong>Open positions</strong> — φορτώνει όλες τις θέσεις του αγώνα στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3><span class="section-number">3.16.7. </span>Καρτέλα Erreurs<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Erreurs</strong> αναλύει τις πηγές των σφαλμάτων.</p>
+<figure class="align-default" id="id15">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Καρτέλα Errors του πίνακα Stats" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Errors: κατανομή του PR ανά ενέργεια κύβου.</span><a class="headerlink" href="#id15" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="repartition-par-action-de-videau">
+<h4><span class="section-number">3.16.7.1. </span>Κατανομή ανά ενέργεια κύβου<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>Ένα ραβδόγραμμα εμφανίζει το PR (ή το MWC) για κάθε τύπο απόφασης κύβου: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Κάθε ράβδος υποδεικνύει επίσης τον αριθμό των αποφάσεων και το ποσοστό σφαλμάτων σε επεξηγηματική ετικέτα.</p>
+<p>Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις που αντιστοιχούν σε αυτή την ενέργεια κύβου, <strong>μόνο εκείνες με σφάλμα</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4><span class="section-number">3.16.7.2. </span>Κατεύθυνση των λαθών κύβου<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Link to this heading"></a></h4>
+<p>Η παραπάνω κατανομή δείχνει <em>πόσο</em> κοστίζουν οι αποφάσεις κύβου· ο πίνακας αυτός δείχνει προς <em>ποια κατεύθυνση</em> σφάλλουν.</p>
+<p>Μια θέση κύβου φέρει δύο αποφάσεις που λαμβάνονται από δύο διαφορετικούς παίκτες, οι οποίες παρουσιάζονται εδώ σε δύο γραμμές:</p>
+<ul class="simple">
+<li><p><strong>Προσφορά</strong> — ο παίκτης που κατέχει τον κύβο διπλασιάζει ή όχι. Τα λάθη του είναι τα <strong>χαμένα διπλασιάσματα</strong> (έπρεπε να διπλασιάσει) και τα <strong>πρόωρα διπλασιάσματα</strong> (δεν έπρεπε).</p></li>
+<li><p><strong>Απάντηση</strong> — ο παίκτης στον οποίο προσφέρεται ο κύβος δέχεται ή πασάρει. Τα λάθη του είναι τα <strong>λανθασμένα πάσα</strong> (μια σωστή αποδοχή πασαρίστηκε) και οι <strong>λανθασμένες αποδοχές</strong> (ένα σωστό πάσο έγινε αποδεκτό).</p></li>
+</ul>
+<p>Οι δύο γραμμές παραμένουν χωριστές σκόπιμα: ένας παίκτης μπορεί κάλλιστα να διπλασιάζει αργά <em>και</em> να δέχεται χαλαρά, και ένας ενιαίος δείκτης θα το αποκαλούσε «ισορροπημένο» χάνοντας και τα δύο μισά της πληροφορίας.</p>
+<p>Κάθε κελί εμφανίζει το πλήθος των αποφάσεων· το tooltip δίνει τη συσσωρευμένη χαμένη ισοδυναμία. Το κλικ σε ένα κελί φορτώνει τις αντίστοιχες θέσεις. Ένα κελί με μηδέν δεν είναι κλικαρίσιμο.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας αυτός μετρά αποφάσεις, δεν κρίνει. Από ποια απόκλιση και έπειτα μια τάση αξίζει να ονομαστεί εξαρτάται από το μέγεθος του δείγματος και από ένα σημείο αναφοράς, που δεν είναι δεδομένα της μηχανής.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4><span class="section-number">3.16.7.3. </span>Σύγκριση Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>Ένα συγκριτικό διάγραμμα τοποθετεί δίπλα-δίπλα το PR των κινήσεων πουλιών και των αποφάσεων κύβου. Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του υποσυνόλου με σφάλμα.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4><span class="section-number">3.16.7.4. </span>Ιστόγραμμα των μεγεθών σφάλματος<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>Ένα ιστόγραμμα κατανέμει τα σφάλματα σύμφωνα με το μέγεθός τους σε χιλιοστά του πόντου (διαστήματα: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του διαστήματος.</p>
+</section>
+</section>
+<section id="onglet-joueurs">
+<h3><span class="section-number">3.16.8. </span>Καρτέλα Παίκτες<a class="headerlink" href="#onglet-joueurs" title="Link to this heading"></a></h3>
+<p>Οι τρεις προηγούμενες καρτέλες περιγράφουν <strong>έναν</strong> παίκτη· η καρτέλα <strong>Παίκτες</strong> τους συγκρίνει όλους. Εμφανίζει μία γραμμή ανά παίκτη της βάσης, κάτι που ανταποκρίνεται στην ανάγκη ενός διοργανωτή που παρακολουθεί ολόκληρη τη διοργάνωση αντί για έναν συγκεκριμένο παίκτη.</p>
+<figure class="align-default" id="id16">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Καρτέλα Players του πίνακα Stats" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Η καρτέλα Players: μία γραμμή ανά παίκτη, ταξινομήσιμη κατά οποιαδήποτε στήλη.</span><a class="headerlink" href="#id16" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Στήλες, με τη σειρά:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Στήλη</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Παίκτης</p></td>
+<td><p>Το όνομα <strong>όπως εμφανίζεται στους αγώνες</strong>. Ένας παίκτης καταχωρισμένος με δύο γραφές εμφανίζεται επομένως σε δύο γραμμές· χρησιμοποιήστε τη συγχώνευση παικτών για να τις ενώσετε.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αγώνες</p></td>
+<td><p>Πλήθος αγώνων που παίχτηκαν στην επιλεγμένη περίοδο.</p></td>
+</tr>
+<tr class="row-even"><td><p>Ν–Η</p></td>
+<td><p>Νίκες και ήττες. Ένας ημιτελής αγώνας (κολοβωμένο αρχείο, εγκατάλειψη) δεν μετρά ούτε ως νίκη ούτε ως ήττα: το Ν + Η μπορεί επομένως να είναι μικρότερο από το πλήθος των αγώνων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αποφάσεις</p></td>
+<td><p>Πλήθος μετρημένων αποφάσεων — ο παρονομαστής του PR. Είναι η στήλη που λέει τι αξίζουν οι διπλανοί δείκτες: ένα PR υπολογισμένο σε δώδεκα αποφάσεις δεν σημαίνει τίποτα.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Συνολικό Performance Rate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PR πουλιών, PR κύβου</p></td>
+<td><p>Το PR αναλυμένο ανά τύπο απόφασης.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (βλ. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Σοβαρά λάθη</p></td>
+<td><p>Πλήθος σοβαρών λαθών (τουλάχιστον 0,100 EMG).</p></td>
+</tr>
+<tr class="row-even"><td><p>Τύχη</p></td>
+<td><p>Μέση τύχη ανά ζαριά, σε χιλιοστά του πόντου, με πρόσημο: θετική αν τα ζάρια ήταν ευνοϊκά.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Χρήση:</p>
+<ul class="simple">
+<li><p><strong>Ταξινόμηση</strong> — κάντε κλικ σε μια κεφαλίδα στήλης. Ο πίνακας ανοίγει ταξινομημένος κατά αύξον PR, με τον καλύτερο παίκτη πρώτο. Οι παίκτες για τους οποίους δεν μετρήθηκε τίποτα παραμένουν στο κάτω μέρος όποια και αν είναι η φορά της ταξινόμησης: ένα μηδέν ελλείψει δεδομένων δεν είναι τέλεια απόδοση.</p></li>
+<li><p><strong>Άνοιγμα λεπτομερειών παίκτη</strong> — κάντε κλικ σε μια γραμμή. Ο παίκτης επιλέγεται στη γραμμή φίλτρων και η προβολή μεταβαίνει στην καρτέλα Dashboard.</p></li>
+<li><p><strong>Περιορισμός της περιόδου</strong> — τα φίλτρα ημερομηνιών, τουρνουά και μήκους αγώνα ισχύουν κανονικά, πράγμα που επιτρέπει τον περιορισμό του πίνακα στις ημερομηνίες μιας διοργάνωσης.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Σε αυτή την καρτέλα, η λίστα <strong>Παίκτης</strong> και η επιλογή του <strong>τύπου απόφασης</strong> είναι απενεργοποιημένες: ο πίνακας δείχνει όλους τους παίκτες και ήδη διαχωρίζει τις αποφάσεις πουλιών και κύβου σε ξεχωριστές στήλες.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Μια παύλα («—») σημαίνει τιμή που <strong>δεν μετρήθηκε ποτέ</strong>, να μη συγχέεται με το μηδέν. Αυτό ισχύει ιδίως για τη στήλη Τύχη σε κάθε αγώνα που εισήχθη πριν από την έκδοση 2.15.0 του σχήματος: η τύχη δεν διατηρούνταν τότε, και τίποτα δεν επιτρέπει την εκ των υστέρων ανασύστασή της — πρέπει να εισαχθούν ξανά τα αρχεία προέλευσης. Οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) δεν θα τη δώσουν ποτέ.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3><span class="section-number">3.16.9. </span>Κανόνας συνάθροισης<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Το PR ενός τουρνουά (ή οποιουδήποτε υποσυνόλου) υπολογίζεται με τον κανόνα <strong>άθροισμα/άθροισμα</strong> — ποτέ ως μέσος όρος των επιμέρους PR των αγώνων.</p>
+<p>Τύπος:</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>Παράδειγμα:</strong> ένας παίκτης παίζει δύο αγώνες σε ένα τουρνουά —</p>
+<ul class="simple">
+<li><p>Αγώνας A: 10 αποφάσεις, συνολικό σφάλμα 50 mp → PR = 5,0</p></li>
+<li><p>Αγώνας B: 90 αποφάσεις, συνολικό σφάλμα 270 mp → PR = 3,0</p></li>
+</ul>
+<p>Αφελής μέσος όρος των PR: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(λανθασμένο)</em></p>
+<p>Κανόνας άθροισμα/άθροισμα: (50 + 270) / (10 + 90) = 320 / 100 = <strong>3,2</strong> <em>(σωστό)</em></p>
+<p>Ο κανόνας άθροισμα/άθροισμα είναι ο μόνος που χειρίζεται σωστά τη διακύμανση του μήκους των αγώνων (ένας αγώνας 21 πόντων ζυγίζει περισσότερο από έναν αγώνα 1 πόντου).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3><span class="section-number">3.16.10. </span>MWC: περιορισμοί<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Το MWC cost υπολογίζεται με βάση τη <strong>MET Kazaross-XG2</strong>, τον de facto πίνακα αναφοράς στο αγωνιστικό τάβλι. Τα αποτελέσματα δεν είναι άμεσα συγκρίσιμα με λογισμικά που χρησιμοποιούν άλλες METs.</p></li>
+<li><p>Οι θέσεις <em>money-game</em> (χωρίς σκορ αγώνα) <strong>εξαιρούνται</strong> από τον υπολογισμό MWC. Αν η βάση δεδομένων σας περιέχει πολλές θέσεις money-game, το MWC cost μπορεί να υποεκτιμηθεί ή να μην είναι διαθέσιμο.</p></li>
+<li><p>Το MWC cost είναι σωρευτικό σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων — όχι δείκτης ανά απόφαση. Μετρά τη συνολική επίδραση των σφαλμάτων σας στις πιθανότητες νίκης σας.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2><span class="section-number">3.17. </span>Πίνακας Eval<a class="headerlink" href="#panneau-eval" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Eval</strong> (<em>CTRL-E</em>) αξιολογεί ζωντανά οποιαδήποτε θέση βρίσκεται στο ταμπλό· σε θέση μαζέματος εξειδικεύεται και υπολογίζει επιπλέον το EPC (Effective Pip Count). Ανοίγει με <em>CTRL-E</em>, με κλικ στην καρτέλα Eval του κάτω πίνακα ή με την εντολή <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Ο πίνακας δείχνει πάντα τη <strong>μοναδική απόφαση</strong> που ζητά η θέση που είναι τοποθετημένη στο ταμπλό — ποτέ δύο ταυτόχρονα — και τα γεγονότα που τη συνοδεύουν. Κάθε μέγεθος διαβάζεται στον άξονα που του ταιριάζει και όχι σε έναν μοναδικό επιβεβλημένο άξονα: η πιθανότητα νίκης, gammon, backgammon και η cubeless ισοδυναμία κάθε παίκτη, υπολογισμένες <em>πριν από τη ζαριά</em>, διαβάζονται <strong>ανά παίκτη</strong> (κάτω, πάνω, έπειτα Δ), στα αριστερά της απόφασης κύβου, όταν δεν είναι τοποθετημένο κανένα ζάρι. Τα γεγονότα και η απόφαση μένουν δίπλα-δίπλα: η απόφαση κύβου δεν περνά ποτέ κάτω από τους αριθμούς που τη δικαιολογούν, όποια κι αν είναι η γλώσσα της διεπαφής και η θέση στο ταμπλό. Μόλις τοποθετηθούν ζάρια, οι ίδιες αυτές τιμές <em>πριν από τη ζαριά</em> αλλάζουν άξονα: διαβάζονται <strong>στη βολή</strong>, στην κορυφή της λίστας των υποψήφιων κινήσεων, ως μια πλάγια γραμμή <em>πριν από τη ζαριά</em> — όχι μία ακόμη υποψήφια κίνηση, αλλά ένα σημείο αναφοράς με το οποίο διαβάζεται κάθε κίνηση. Η διαφορά ανάμεσα σε αυτή τη γραμμή και μια κίνηση περιέχει την τύχη της ζαριάς, ποτέ την αξία της κίνησης, και επομένως δεν φέρει καμία στήλη σφάλματος. Σε μια θέση καθαρού bearoff, ένας δεύτερος πίνακας, πάντα <strong>ανά παίκτη</strong> και πάντα παρών, με ή χωρίς τοποθετημένα ζάρια, φέρει το EPC, το pip count, το wastage, τον μέσο αριθμό ζαριών και την τυπική απόκλιση· αυτές οι πέντε στήλες δεν μετακινούνται ποτέ. Οι δύο πίνακες είναι στοιβαγμένοι και μοιράζονται το ίδιο πλέγμα στηλών: ίδια άκρα, ίδια σημάδια στηλών, μία μόνο στήλη κουκκίδων — διαβάζονται σαν ένα μόνο αντικείμενο με δύο ορόφους. Το σήμα καθεστώτος, η απόδοση στη μηχανή (εκεί φαίνεται και το βάθος της τελευταίας αξιολόγησης) και το πλαίσιο επιλογής <em>Πρόκληση</em> σχηματίζουν μια ξεχωριστή λωρίδα, στοιχισμένη δεξιά πάνω από τους πίνακες.</p>
+<p>Μόνο η λίστα των υποψήφιων κινήσεων κυλά — η γραμμή <em>πριν από τη ζαριά</em>, και αυτή, μένει καρφιτσωμένη πάνω από αυτήν· το υπόλοιπο του πίνακα (γεγονότα, σήμα, απόφαση κύβου) παραμένει πάντα ορατό, χωρίς ιδιαίτερη ρύθμιση του μεγέθους του πίνακα.</p>
+<p>Ο πίνακας γεγονότων και η απόφαση υπολογίζονται από το gammonNet, ενσωματωμένο, χωρίς XG ούτε gnubg. Ο υπολογισμός ακολουθεί τη θέση χωρίς ποτέ να παγώνει τη διεπαφή: ένα βάθος 0-ply εμφανίζεται αμέσως σε κάθε χειρισμό, και έπειτα, μετά από μισό δευτερόλεπτο ακινησίας, μια βαθύτερη αξιολόγηση (2 ply από προεπιλογή, ρυθμιζόμενη στην καρτέλα <em>gammonNet</em> των ρυθμίσεων) την αντικαθιστά στο παρασκήνιο — κάθε νέος χειρισμός ακυρώνει αυτόν τον υπολογισμό παρασκηνίου. Το βάθος που εμφανίζεται στη λωρίδα των σημάτων, ή μέσα στο σήμα καθεστώτος σε μια θέση κούρσας, είναι πάντα εκείνο που πράγματι παρήγαγε τον εμφανιζόμενο αριθμό, ποτέ εκείνο που ζητήθηκε· δεν επαναλαμβάνεται σε κάθε γραμμή, αφού μια ζωντανή αξιολόγηση μοιράζεται το ίδιο βάθος για όλες τις κινήσεις. Η ισοδυναμία των υποψήφιων κινήσεων και της απόφασης κύβου ακολουθεί το σκορ της θέσης: σε money game εκφράζεται σε πόντους, σε σκορ αγώνα σε <strong>κανονικοποιημένη ισοδυναμία</strong> — την ίδια κλίμακα με το XG και το GNU Backgammon, όπου το να κερδίσεις την αξία του τρέχοντος κύβου αξίζει +1 και το να τη χάσεις −1 — ποτέ αναμεμειγμένες στον ίδιο πίνακα. Η επικεφαλίδα της στήλης το δηλώνει ρητά αντί να αφήνει την κλίμακα σε εικασία: «Equity (money)» σε money game, «Equity (match)» σε σκορ αγώνα. Λαμβάνει υπόψη τον <strong>ζωντανό κύβο</strong>: η αναζήτηση αποτιμά κάθε τελική θέση με το μοντέλο κύβου (Janowski, μετρημένη αποδοτικότητα) στην κατάσταση κύβου της θέσης, όπως κάνουν το XG και το GNU Backgammon στην αξιολόγηση <em>cubeful</em>. Αυτό είναι που καθιστά ορατά στο σκορ τα φαινόμενα gammon-go και gammon-save — στο 4-away/2-away, ο παίκτης που υστερεί παίζει 8/2 6/2 σε ένα άνοιγμα 6-4 επειδή ο πρόωρος διπλασιασμός του θα δώσει στο gammon την αξία του αγώνα, κάτι που μια αξιολόγηση χωρίς κύβο δεν μπορεί να δει. Η γραμμή <em>πριν από τη ζαριά</em>, από την άλλη, παραμένει μια ισοδυναμία <strong>cubeless</strong>: είναι ένα δεδομένο της θέσης, όχι μια απόφαση. Αυτός ο πίνακας δεν τροποποιεί ποτέ τη βάση: είναι ένας υπολογισμός, όχι μια καταγεγραμμένη ανάλυση. Κάνοντας κλικ σε μια υποψήφια κίνηση την εμφανίζετε στο ταμπλό με τη μορφή βελών, ακριβώς όπως στον πίνακα Ανάλυσης. Το διακριτικό κουμπί <strong>?</strong>, στη λωρίδα των σημάτων, οδηγεί στο αποθετήριο της μηχανής <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>· η πλήρης απόδοση (δίκτυο Strehl, διαμόρφωση gammonNet) βρίσκεται στις Ευχαριστίες της βοήθειας.</p>
+<p>Ο χρήστης επεξεργάζεται τη θέση των πουλιών σε ολόκληρο το ταμπλό, ακριβώς όπως στη λειτουργία επεξεργασίας: το αριστερό κλικ τοποθετεί ένα πούλι του κάτω παίκτη, το δεξί κλικ ένα πούλι του πάνω παίκτη. Ο δεύτερος πίνακας, εκείνος της κούρσας, εμφανίζεται μόνο όταν η προκύπτουσα θέση είναι καθαρό bearoff (όλα τα πούλια και των δύο παικτών στο τεταρτημόριό τους)· σε κάθε άλλη θέση, μόνο ο πίνακας των τεσσάρων κοινών στηλών (νίκη, gammon, backgammon, cubeless) αποκρίνεται, και η απόφαση αφορά τα πούλια ή έναν γενικό κύβο ανάλογα με το αν είναι τοποθετημένα ζάρια.</p>
+<p>Σε κάθε πίνακα γεγονότων, μία γραμμή ανά παίκτη — που αναγνωρίζεται από τη χρωματιστή κουκκίδα του, με τον μαύρο παίκτη πάντα κάτω. Ο πρώτος φέρει, όσο δεν είναι τοποθετημένο κανένα ζάρι, τη νίκη, το gammon, το backgammon (πιθανότητες, χωρίς το σύμβολο %) και την cubeless ισοδυναμία του παίκτη· ο δεύτερος, σε μια θέση bearoff και με ή χωρίς τοποθετημένα ζάρια, το EPC, το pip count, το wastage (διαφορά μεταξύ του EPC και του pip count), τον μέσο αριθμό ζαριών και την τυπική απόκλιση. Όταν και οι δύο παίκτες έχουν τιμές προς σύγκριση, μια γραμμή <strong>Δ</strong> δίνει τις <em>προσημασμένες</em> διαφορές (κάτω − πάνω: αρνητικές όταν προηγείται ο μαύρος παίκτης). Εκτός θέσης κούρσας, η τοποθέτηση ζαριών εξαφανίζει επομένως τους ίδιους τους πίνακες γεγονότων: οι τέσσερις στήλες που έφεραν μόλις άλλαξαν άξονα, στη βολή, στην κορυφή της λίστας των κινήσεων.</p>
+<p>Η απόφαση κύβου έχει πάντα την ίδια μορφή, όποια κι αν είναι η προέλευση των αριθμών — ακριβής πίνακας, αξιολογημένο καθεστώς ή συνηθισμένη αξιολόγηση gammonNet: <strong>μία γραμμή ανά επιλογή</strong>, με τη σειρά <em>όχι διπλασιασμός</em>, <em>διπλασιασμός/αποδοχή</em>, <em>διπλασιασμός/πάσο</em>, με την ισοδυναμία της στο πλαίσιο αναφοράς της θέσης και την απόκλισή της από την καλύτερη επιλογή. Η σειρά δεν αλλάζει ποτέ, σε αντίθεση με τη λίστα των κινήσεων: οι τρεις επιλογές έχουν όνομα, άρα διαβάζεται το όνομα, όχι η κατάταξη. Η καλύτερη αναγνωρίζεται από την ανάδειξή της και από το κενό κελί απόκλισής της. Όταν ο κύβος έχει ήδη γυριστεί, οι επιλογές διαβάζονται <em>όχι αναδιπλασιασμός</em>, <em>αναδιπλασιασμός/αποδοχή</em>, <em>αναδιπλασιασμός/πάσο</em>.</p>
+<p>Μια τελευταία γραμμή δίνει την <strong>ετυμηγορία</strong>. Παίρνει τέσσερις τιμές: <em>όχι διπλασιασμός</em>, <em>διπλασιασμός, αποδοχή</em>, <em>διπλασιασμός, πάσο</em> και <em>πολύ καλό για διπλασιασμό</em>, η τελευταία όταν το να παιχτεί η θέση αποδίδει περισσότερα από το να εισπραχθεί ο πόντος: ο διπλασιασμός θα ήταν τότε σφάλμα για τον αντίθετο λόγο από εκείνον του απλού <em>όχι διπλασιασμός</em>. Είναι επίσης το μόνο σημείο όπου ο πίνακας λέει ότι <strong>δεν</strong> υπάρχει ετυμηγορία, αντί να αφήνει να εννοηθεί ότι ένας υπολογισμός βρίσκεται σε εξέλιξη:</p>
+<ul class="simple">
+<li><p><em>καμία απόφαση</em> — το καθεστώς δεν τη δικαιούται· η ετυμηγορία κύβου δεν εκτιμάται ποτέ (βλ. το σήμα <em>εκτιμώμενο</em>)·</p></li>
+<li><p><em>μη αξιολογήσιμη σε αυτό το σκορ</em> — η μηχανή απορρίπτει τη θέση, τυπικά ένα σκορ εκτός του ορίζοντα του πίνακα ισοδυναμίας αγώνα·</p></li>
+<li><p><em>κύβος του αντιπάλου</em> και <em>νεκρός κύβος (Crawford)</em> — ο κύβος δεν μπορεί να γυριστεί. Οι ισοδυναμίες παραμένουν ορατές, ενδεικτικά, αλλά καμία επιλογή δεν φέρει απόκλιση: ένα σφάλμα είναι αυτό που κοστίζει μια επιλογή, και εδώ δεν υπάρχει επιλογή.</p></li>
+</ul>
+<p>Σε money game, οι κανόνες <strong>Jacoby</strong> και <strong>Beaver</strong> που ισχύουν στη θέση εμφανίζονται κάτω από τον πίνακα κύβου, ως μικρές ετικέτες δίπλα στην ετυμηγορία που τροποποιούν: η ετυμηγορία «κανένα double» μιας θέσης υπό τον κανόνα Jacoby δεν είναι ο ίδιος υπολογισμός όπως χωρίς αυτόν, και τίποτα άλλο στην οθόνη δεν το δήλωνε.</p>
+<p>Το σήμα καθεστώτος, το βάθος αξιολόγησης, ο σύνδεσμος προς τη μηχανή και το πλαίσιο επιλογής <em>Πρόκληση</em> σχηματίζουν μια ξεχωριστή λωρίδα, στοιχισμένη δεξιά πάνω από τους πίνακες.</p>
+<p>Ο <strong>παίκτης στη βολή</strong> και η <strong>θέση του κύβου</strong> επεξεργάζονται απευθείας στο ταμπλό, όπως στη λειτουργία επεξεργασίας: κάνοντας κλικ στο ορθογώνιο bearoff/σκορ ενός παίκτη του δίνετε τη βολή· κάνοντας κλικ στον κύβο αυτός εναλλάσσεται κεντραρισμένος → στην κατοχή του κάτω παίκτη → στην κατοχή του πάνω παίκτη (δεξί κλικ με αντίστροφη σειρά). Η τιμή του κύβου παραμένει καρφιτσωμένη — σε money game οι ισοδυναμίες εκφράζονται σε μονάδες του τρέχοντος κύβου, μόνο ο κάτοχός του μετρά. Η ανάλυση επανυπολογίζεται αμέσως. Στο εκτιμώμενο καθεστώς, το ίδιο το σήμα μπορεί να πατηθεί και ανοίγει απευθείας την καρτέλα <em>Bearoff</em> των ρυθμίσεων· η επεξήγησή του (tooltip) εξηγεί γιατί (ετυμηγορία κύβου μη εκτιμήσιμη, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) και πώς να επεκτείνετε το ακριβές πεδίο.</p>
+<p>Το <strong>σκορ</strong> επεξεργάζεται και αυτό απευθείας στο ταμπλό, όπως στη λειτουργία επεξεργασίας: το αριστερό κλικ στο ορθογώνιο σκορ ενός παίκτη μειώνει τον αριθμό των πόντων που του απομένουν, το δεξί κλικ τον αυξάνει. Η έξοδος από το σκορ <em>money</em> (-1, -1) με επεξεργασία μιας μόνο πλευράς ευθυγραμμίζει αυτόματα την άλλη πλευρά στην ίδια τιμή αντί να αφήνει ένα ασυνεπές σκορ. Σε μια θέση bearoff στο <em>ακριβές</em> καθεστώς, το πέρασμα από σκορ money σε σκορ αγώνα αφήνει την πιθανότητα νίκης ως έχει (μια ανάγνωση από τη βάση, έγκυρη όποιο κι αν είναι το πλαίσιο αναφοράς) αλλά μεταβάλλει την εμφανιζόμενη ισοδυναμία και ετυμηγορία κύβου σε εκείνες του <em>αξιολογημένου</em> καθεστώτος — ο ακριβής πίνακας, όντας money εκ κατασκευής, δεν μπορεί να απαντήσει στην ερώτηση που τίθεται στο σκορ. Το σήμα γίνεται τότε σύνθετο («ακριβές (νίκη) · αξιολογημένο (κύβος)») για να το δηλώσει ρητά.</p>
+<p>Τα <strong>ζάρια</strong>, τέλος, επεξεργάζονται με τον ίδιο τρόπο, και αυτά είναι που καθορίζουν το ερώτημα που τίθεται: τοποθετημένα ζάρια δίνουν μια απόφαση πουλιών (τη λίστα των υποψήφιων κινήσεων), χωρίς ζάρια μια απόφαση κύβου. Αριστερό κλικ σε ένα ζάρι αυξάνει την τιμή του (το 6 γυρίζει στο 1), δεξί κλικ τη μειώνει (το 1 γυρίζει στο 6)· κλικ σε ένα ζάρι σε ταμπλό που δεν έχει ζάρια τοποθετεί δύο μονομιάς — ένα μόνο ζάρι δεν θα ήταν ούτε απόφαση πουλιών ούτε απόφαση κύβου. Κλικ στο ορθογώνιο ενός παίκτη αφαιρεί τα ζάρια για να τεθεί ερώτημα κύβου, και το επόμενο κλικ σε ένα ζάρι τα επαναφέρει όπως ήταν.</p>
+<p>Το <em>BACKSPACE</em>, ή ένα διπλό κλικ έξω από το ταμπλό, καθαρίζει τη θέση: άδειο ταμπλό, σκορ money (-1, -1), χωρίς τοποθετημένα ζάρια — τιμές ειδικές για τον πίνακα Eval, διαφορετικές από εκείνες που χρησιμοποιούνται στη λειτουργία επεξεργασίας (7 παντού, ζάρια 3-1), ώστε να παραμένουν συνεπείς με ό,τι εμφανίζει ο πίνακας από προεπιλογή.</p>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3><span class="section-number">3.17.1. </span>Μεταφορά μιας θέσης στον πίνακα Eval<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Link to this heading"></a></h3>
+<p>Ο πίνακας ανοίγει από προεπιλογή σε μια θέση bearoff, αλλά η μελέτη ξεκινά συνήθως από μια θέση που έχετε ήδη στα χέρια σας. Δύο χειρισμοί τη φέρνουν εκεί:</p>
+<ul class="simple">
+<li><p><strong>Δεξί κλικ στο ταμπλό</strong>, σε έναν πίνακα ανάλυσης ή κατά την πλοήγηση σε έναν αγώνα, και έπειτα <em>Αξιολόγηση αυτής της θέσης</em>: ο πίνακας Eval ανοίγει απευθείας σε αυτή τη θέση, όπως ακριβώς εμφανίζεται. Το μενού περιβάλλοντος δεν εμφανίζεται στον πίνακα Eval ούτε στον πίνακα Αναζήτησης, όπου το δεξί κουμπί χρησιμεύει ήδη για την τοποθέτηση των πουλιών του άλλου χρώματος.</p></li>
+<li><p><strong>CTRL-C και έπειτα CTRL-V</strong>: αντιγράψτε τη θέση από τον πίνακα ανάλυσης, και έπειτα επικολλήστε τη μία φορά στον πίνακα Eval. Η επικόλληση δέχεται επίσης ένα XGID από αλλού (eXtreme Gammon, GNU Backgammon, άλλη εμφάνιση του blunderDB): αρκεί να βρίσκεται στο πρόχειρο.</p></li>
+</ul>
+<p>Το ταμπλό του πίνακα Eval είναι ένα προσχέδιο: η θέση φτάνει εκεί χωρίς το αναγνωριστικό της στη βάση, έτσι ώστε καμία τροποποίηση που γίνεται εδώ να μην μπορεί να ξαναγράψει την εγγραφή από την οποία προέρχεται. Όλες οι συνήθεις επεξεργασίες του ταμπλό παραμένουν διαθέσιμες εκεί (πούλια, κύβος, ζάρια, σκορ), και η αξιολόγηση ακολουθεί κάθε τροποποίηση.</p>
+<p>Προς την αντίθετη κατεύθυνση, το <em>CTRL-C</em> αντιγράφει το ταμπλό του πίνακα Eval στο πρόχειρο, με ένα XGID επανυπολογισμένο από τα τοποθετημένα πούλια — άρα άμεσα επικολλήσιμο στο eXtreme Gammon ή σε άλλη εμφάνιση του blunderDB. Μόνο η θέση ταξιδεύει: η αξιολόγηση που εμφανίζει ο πίνακας δεν είναι εγγραφή της βάσης και δεν συνοδεύει την αντιγραφή.</p>
+<p>Φεύγοντας από τον πίνακα Eval, η θέση που εξεταζόταν προηγουμένως αποκαθίσταται: το προσχέδιο δεν αποθηκεύεται ποτέ από μόνο του.</p>
+<p>Όταν η θέση είναι καθαρό bearoff (όλα τα πούλια και των δύο παικτών στο τεταρτημόριό τους) και δεν είναι τοποθετημένο κανένα ζάρι, η απόφαση κύβου εμφανίζει, για τον παίκτη στη βολή:</p>
+<ul class="simple">
+<li><p>στο <em>ακριβές</em> καθεστώς: τις ισοδυναμίες money (cubeless, χωρίς διπλασιασμό, διπλασιασμός/αποδοχή, διπλασιασμός/πάσο) και την <strong>ετυμηγορία κύβου money</strong> (όχι διπλασιασμός, διπλασιασμός/αποδοχή, διπλασιασμός/πάσο ή πολύ καλό για διπλασιασμό) — εκτός σκορ αγώνα, βλ. παραπάνω για την περίπτωση του σκορ,</p></li>
+<li><p>στο <em>αξιολογημένο</em> καθεστώς: τις ίδιες ισοδυναμίες και την ίδια ετυμηγορία τεσσάρων τιμών, αλλά <strong>παιγμένες από το gammonNet</strong> (αναζήτηση + μοντέλο κύβου Janowski) αντί να διαβάζονται από έναν πίνακα — διαθέσιμες <strong>ακόμη και στο σκορ αγώνα</strong>, κάτι που το εκτιμώμενο καθεστώς δεν μπόρεσε ποτέ να προσφέρει·</p></li>
+<li><p>στο <em>εκτιμώμενο</em> καθεστώς: η ετυμηγορία κύβου τότε σκόπιμα δεν εμφανίζεται — μόνο η πιθανότητα νίκης, στον πίνακα γεγονότων, συνοδευόμενη από το περιθώριο σφάλματός της, παραμένει διαθέσιμη.</p></li>
+</ul>
+<p>Μόλις τοποθετηθούν ζάρια σε μια θέση κούρσας, αυτή η απόφαση κύβου <em>πριν από τη ζαριά</em> εξαφανίζεται — το ταμπλό ζητά τότε μια απόφαση πουλιών, όχι κύβου — αλλά η πιθανότητα νίκης παραμένει ένα γεγονός της θέσης, όχι μια απόφαση: μεταβαίνει στη γραμμή <em>πριν από τη ζαριά</em> στην κορυφή της λίστας των κινήσεων, δίπλα στο EPC, το οποίο παραμένει εμφανές ακριβώς στα αριστερά.</p>
+<p>Ένα σήμα υποδεικνύει το καθεστώς: <strong>ακριβές</strong> (τιμή που διαβάστηκε από μια two-sided βάση δεδομένων), <strong>αξιολογημένο · &lt;βάθος&gt;</strong> (παιγμένο από το gammonNet — το εμφανιζόμενο βάθος είναι εκείνο που πράγματι παρήγαγε τον εμφανιζόμενο αριθμό), <strong>εκτιμώμενο ± περιθώριο</strong>, ή, στο σκορ αγώνα εντός του ακριβούς πεδίου, <strong>ακριβές (νίκη) · αξιολογημένο (κύβος)</strong> — βλ. παραπάνω. Το ακριβές καθεστώς υπερισχύει οπουδήποτε είναι διαθέσιμο· διαφορετικά το αξιολογημένο καθεστώς εμφανίζεται μόλις ολοκληρώσει τον υπολογισμό του, αντικαθιστώντας επιτόπου το εκτιμώμενο καθεστώς που εμφανιζόταν κατά την αναμονή. Βλ. <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Μεθοδολογία και υποθέσεις του πίνακα Eval</span></a> για τον ακριβή ορισμό των τριών καθεστώτων και των υποθέσεών τους.</p>
+<p><strong>Διεύρυνση του ακριβούς πεδίου.</strong> Ο πίνακας που υπολογίζεται στην πρώτη εκκίνηση καλύπτει 6 πούλια ανά παίκτη. Δύο τρόποι να πάτε παραπέρα, στην καρτέλα <em>Bearoff</em> των ρυθμίσεων:</p>
+<ul class="simple">
+<li><p>να υπολογίσετε έναν ευρύτερο αμφίπλευρο πίνακα — έως TS-06-15 αν το μηχάνημα έχει τη μνήμη. Η καρτέλα δηλώνει το μέγεθος, τη μνήμη και τον χρόνο σε αυτό το μηχάνημα πριν αρχίσει, και ο υπολογισμός κάνει παύση και συνεχίζει. Ένας ακυρωμένος υπολογισμός αφήνει ένα αρχείο <code class="docutils literal notranslate"><span class="pre">.part</span></code> που δεν διαβάζεται ποτέ ως πίνακας·</p></li>
+<li><p>ορισμός οποιουδήποτε αρχείου <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided του gnubg. Η βάση με το ευρύτερο πεδίο υπερισχύει αυτόματα.</p></li>
+</ul>
+<p><strong>Το ταμπλό του πίνακα είναι πρόχειρο, και το θυμάται.</strong> Αν φύγετε από τον πίνακα Eval και επιστρέψετε, βρίσκετε τη θέση στην οποία τον αφήσατε, όχι το προεπιλεγμένο ταμπλό μαζέματος: αυτό εμφανίζεται μόνο την πρώτη φορά που ανοίγει ο πίνακας σε μια συνεδρία. Η αποστολή μιας θέσης από τη βάση στον πίνακα υπερισχύει αυτής της μνήμης, και το <em>BACKSPACE</em> επαναφέρει το προεπιλεγμένο ταμπλό ανά πάσα στιγμή. Τίποτα δεν γράφεται στη βάση στο μεταξύ — το πρόχειρο δεν έχει ταυτότητα θέσης και η αξιολόγησή του υπολογίζεται εκ νέου κατά την άφιξη αντί να μεταφέρεται.</p>
+<p><strong>Λειτουργία πρόκλησης.</strong> Το πλαίσιο επιλογής <em>Πρόκληση</em>, στη λωρίδα των σημάτων, ενεργοποιεί μια λειτουργία εξάσκησης: σε κάθε τροποποίηση της θέσης, οι τιμές τριών ζωνών αποκρύπτονται (αντικαθίστανται από «···»)· ένα κλικ σε μια ζώνη αποκαλύπτει μόνο αυτή τη ζώνη. Χωρίς ζάρια, πρόκειται για τη γραμμή του κάτω παίκτη, τη γραμμή του πάνω παίκτη και την απόφαση κύβου — η γραμμή Δ εμφανίζεται μόνο αφού αποκαλυφθούν και οι δύο γραμμές παικτών. Το μπλοκ απόφασης διατηρεί τότε τις τρεις γραμμές του: είναι οι τιμές του, η ετυμηγορία του και η ανάδειξη της καλύτερης επιλογής που εξαφανίζονται, αλλιώς η άσκηση θα λυνόταν αναζητώντας την έντονη γραμμή. Με τοποθετημένα ζάρια σε μια θέση κούρσας, η γραμμή EPC κάθε παίκτη αποκρύπτεται όπως πριν, αλλά η τρίτη ζώνη καλύπτει τότε τη γραμμή <em>πριν από τη ζαριά</em> και τη λίστα των κινήσεων <strong>μαζί</strong>: καθώς η λίστα είναι ταξινομημένη από την καλύτερη κίνηση προς τη χειρότερη, η μερική αποκάλυψή της θα έδινε ήδη την απάντηση. Με τοποθετημένα ζάρια εκτός θέσης κούρσας, αυτή η ίδια μοναδική ζώνη καλύπτει από μόνη της ό,τι εμφανίζει ο πίνακας. Μπορείτε έτσι να εξασκηθείτε στην εκτίμηση του EPC κάθε πλευράς, και έπειτα να αποφανθείτε για τον κύβο ή για την κίνηση που πρέπει να παιχτεί, πριν επαληθεύσετε. Η ρύθμιση απομνημονεύεται.</p>
+<p>Για να κλείσετε τον πίνακα Eval, πατήστε <em>CTRL-E</em> ή μεταβείτε σε άλλη καρτέλα.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3><span class="section-number">3.17.2. </span>Μεθοδολογία και υποθέσεις του πίνακα Eval<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Link to this heading"></a></h3>
+<p>Κάθε τιμή που εμφανίζεται στον πίνακα βασίζεται σε συγκεκριμένες υποθέσεις, που διατυπώνονται εδώ εξαντλητικά.</p>
+<p><strong>Τομέας.</strong> Η <em>ζώνη κούρσας</em> — πιθανότητα νίκης και ετυμηγορία κύβου — αφορά μόνο το καθαρό bearoff: όλα τα εναπομείναντα πούλια των δύο παικτών στο σπίτι τους. Η θέση αποτιμάται <em>πριν από τη ζαριά</em>· τα τυχόν τοποθετημένα ζάρια αγνοούνται.</p>
+<p>Τα <strong>μπλοκ EPC</strong>, αντίθετα, πάνε πιο μακριά από την 0.37.0: μια πλευρά παίρνει το EPC της μόλις το πιο μακρινό της πούλι χωρέσει στον φορτωμένο μονόπλευρο πίνακα. Με τον προεπιλεγμένο πίνακα (έξι σημεία) αυτός είναι ο παλιός κανόνας του σπιτιού· με πίνακα οκτώ σημείων, υπολογισμένον από την καρτέλα <em>Bearoff</em>, μια πλευρά με πούλι στο 8 αντιμετωπίζεται όπως κάθε άλλη. Τίποτα δεν παρεκτείνεται: ένα πούλι ένα σημείο πιο μακριά απλώς δεν έχει EPC, ακριβώς όπως ένα πούλι στο 7 δεν είχε πριν. Όταν ο πίνακας που απάντησε δεν είναι αυτός των έξι σημείων, το όνομά του εμφανίζεται στη γωνία του μπλοκ κούρσας («OS-08») — χωρίς αυτό θα διάβαζε κανείς «έξι» εξ ορισμού και θα πίστευε την πλευρά εντελώς μέσα.</p>
+<p><strong>Μπλοκ EPC (πάντα ακριβή).</strong> Το EPC, ο μέσος αριθμός ζαριών και η τυπική απόκλιση προέρχονται από την ακριβή κατανομή του αριθμού ζαριών για να βγουν όλα τα πούλια, διαβασμένη από τη μονόπλευρη βάση του GNUbg (6 έως 10 σημεία, 15 πούλια, υπολογισμένη στο μηχάνημα). EPC = μέσες ζαριές × 49/6 (49/6 ≈ 8,167 είναι ο ακριβής μέσος όρος pip ανά ζαριά, με τις διπλές να μετρούν τέσσερις φορές)· wastage = EPC − pip count. Η μόνη εξιδανίκευση είναι το <em>μονόπλευρο βέλτιστο παιχνίδι</em>: κάθε παίκτης ελαχιστοποιεί τις δικές του ζαριές αγνοώντας τον αντίπαλο — αυτός είναι ο καθιερωμένος ορισμός του EPC.</p>
+<p><strong>Πιθανότητα νίκης, ακριβές καθεστώς.</strong> Απευθείας ανάγνωση από την ευρύτερη διαθέσιμη βάση two-sided (ενσωματωμένη TS-06-06, εξωτερικό αρχείο, ή κατεβασμένη TS-06-11). Οι βάσεις αυτές προκύπτουν από πλήρη ανάδρομη ανάλυση υπό βέλτιστο two-sided παιχνίδι και των δύο πλευρών: καμία πρόσθετη υπόθεση, σφάλμα περιορισμένο στην κβάντιση (&lt; 0,002 %).</p>
+<p><strong>Πιθανότητα νίκης, εκτιμώμενο καθεστώς.</strong> Εκτός του πεδίου της βάσης: η πιθανότητα προκύπτει με συνέλιξη των δύο one-sided κατανομών (ο παίκτης στη βολή κερδίζει αν ο αριθμός των ζαριών του είναι μικρότερος ή ίσος με του αντιπάλου), και στη συνέχεια με εφαρμογή μιας παγιωμένης πολυωνυμικής διόρθωσης, βαθμονομημένης εκτός σύνδεσης έναντι της βάσης TS-06-11. Τρεις υποθέσεις:</p>
+<ul class="simple">
+<li><p><strong>ανεξαρτησία</strong> των δύο διαδικασιών εξόδου — δομική στην κούρσα, χωρίς επαφή δεν υπάρχει καμία αλληλεπίδραση·</p></li>
+<li><p><strong>βέλτιστο one-sided παιχνίδι και των δύο πλευρών</strong> — αυτή είναι <em>η προσέγγιση</em>: στην πραγματικότητα ο παίκτης που ακολουθεί αποκλίνει για να παίξει τη διακύμανση και ο προπορευόμενος για ασφάλεια. Το μετρημένο αποτέλεσμα είναι μια αντισυμμετρική μεροληψία (η συνέλιξη υπερβάλλει το προβάδισμα του προπορευόμενου) την οποία η διόρθωση απορροφά στατιστικά·</p></li>
+<li><p>η <strong>διόρθωση</strong> βαθμονομήθηκε και επικυρώθηκε στο πεδίο του oracle (έως 11 πούλια ανά παίκτη). Μετρημένο υπολειπόμενο σφάλμα: τυπική απόκλιση 0,05 %, 99ο εκατοστημόριο 0,17 %, μέγιστο παρατηρημένο 0,9 % (σε μονάδες πιθανότητας νίκης). <strong>Πέρα από τα 11 πούλια ανά παίκτη, το όριο αυτό προεκτείνεται</strong> — η τάση είναι μονότονη αλλά κανένα oracle δεν την πιστοποιεί.</p></li>
+</ul>
+<p><strong>Ισοδυναμίες και ετυμηγορία κύβου (μόνο στο ακριβές καθεστώς).</strong> Οι εμφανιζόμενες ισοδυναμίες είναι εκείνες του <strong>money game, χωρίς Jacoby</strong>, στο πλαίσιο αναφοράς της βιβλιογραφίας του bearoff. Στο πεδίο ≤ 11 πούλια ανά παίκτη, τα gammon είναι αδύνατα (κάθε πλευρά έχει ήδη βγάλει τουλάχιστον 4 πούλια): αυτό δεν είναι προσέγγιση. Η ετυμηγορία (όχι διπλασιασμός / διπλασιασμός, αποδοχή / διπλασιασμός, πάσο) ανακατασκευάζεται ακριβώς από τις αποθηκευμένες ισοδυναμίες, σύμφωνα με τον κανόνα του GNUbg, επικυρωμένο ένα προς ένα έναντι της ανάλυσής του.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Οι cubeful ισοδυναμίες προϋποθέτουν <strong>βέλτιστο παιχνίδι κύβου και των δύο πλευρών μέχρι το τέλος</strong>: τα μελλοντικά recube αποτιμώνται πλήρως (πλήρης ανάδρομη ανάλυση). Στις πολύ ασταθείς κούρσες του τέλους της παρτίδας, ο καταρράκτης των recube καταναλώνει σχεδόν όλο το πλεονέκτημα της πλευράς στη βολή — οι ισοδυναμίες «χωρίς διπλασιασμό» και «διπλασιασμός/αποδοχή» μπορεί τότε να είναι κοντά στο μηδέν εκεί όπου μια μηχανή όπως το XG, της οποίας το μοντέλο κύβου δεν αποτιμά αυτόν τον καταρράκτη, εμφανίζει τιμές κοντά στο dead cube (για παράδειγμα 2 πούλια στο σημείο 3 έναντι 2 πουλιών στο σημείο 2: 62 % νίκη, ακριβές D/T +0,006 έναντι +0,475 στο XG). Η εμφανιζόμενη <strong>απόφαση</strong>, ωστόσο, συμπίπτει με εκείνη των μηχανών.</p>
+</div>
+<p><strong>Πιθανότητα νίκης και ετυμηγορία, αξιολογημένο καθεστώς.</strong> Εκτός του ακριβούς πεδίου, η πιθανότητα νίκης προέρχεται από την ακατέργαστη έξοδο του gammonNet (αναζήτηση 0 ή 2 ply ανάλογα με τον χειρισμό, ποτέ από ανάγνωση πίνακα), και η ετυμηγορία από ένα «Decide» Janowski εφαρμοσμένο σε αυτή την έξοδο — η αναζήτηση <em>παίζει</em> την τροχιά αντί να συνοψίζει ένα στιγμιότυπό της, που είναι ακριβώς αυτό που το εκτιμώμενο καθεστώς δεν μπορούσε να κάνει (βλ. παρακάτω) και επιτρέπει, μόνο αυτό από τα τρία καθεστώτα μαζί με το ακριβές, μια ετυμηγορία <strong>στο σκορ αγώνα</strong>.</p>
+<p>Αυτό το καθεστώς μετρήθηκε, δεν υποτέθηκε απλώς, έναντι του ενσωματωμένου two-sided πίνακα (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 δειγματοληπτικές αποφάσεις money, κανονικές παράμετροι 2 ply k=12): συμφωνία ετυμηγορίας money <strong>93,4 %</strong> (3735/4000), αναλυμένη κατά απόσταση από το σημείο αποδοχής του gammonNet — 61,1 % σε λιγότερο από 1 % από το σημείο αποδοχής (η ζώνη που είναι πιο ευαίσθητη σε ένα κορώνα-γράμματα), 88,3 % μεταξύ 1 και 5 %, 91,5 % μεταξύ 5 και 10 %, 94,0 % μεταξύ 10 και 20 %, 94,4 % πέρα από αυτό. Απόκλιση πιθανότητας νίκης: μέση 0,85 %, διάμεσος 0,44 %, 95ο εκατοστημόριο 3,21 %, μέγιστο 8,30 %. Απόκλιση cubeful ισοδυναμίας: μέση 0,039, διάμεσος 0,018, 95ο εκατοστημόριο 0,151, μέγιστο 0,406. Η μορφή είναι η αναμενόμενη: το μεγαλύτερο μέρος της διαφωνίας συγκεντρώνεται ακριβώς στο σημείο αποδοχής, όπου δύο νομίμως διαφορετικές μέθοδοι αποκλίνουν περισσότερο σε μια οριακή απόφαση — όχι ένα διάχυτο σφάλμα που θα κόστιζε ισοδυναμία παντού.</p>
+<p><strong>Γιατί δεν υπάρχει εκτιμώμενη ετυμηγορία;</strong> Όσα ακολουθούν αφορούν ειδικά τη μέθοδο της <em>συνέλιξης</em> (εκτιμώμενο καθεστώς), όχι το αξιολογημένο καθεστώς παραπάνω: η cubeful ισοδυναμία είναι ένα πρόβλημα <em>τροχιάς</em> (πότε να διπλασιάσει κανείς), το οποίο καμία στατιστική σύνοψη της θέσης δεν συλλαμβάνει — το καλύτερο στατικό μοντέλο που μετρήθηκε αφήνει ένα υπολειπόμενο σφάλμα (τυπική απόκλιση 0,016 ισοδυναμίας, μέγιστο 0,20) που αρκεί για να αντιστρέψει όλες τις οριακές αποφάσεις. Ομοίως, η μετατροπή της ετυμηγορίας στο σκορ του αγώνα μέσω πίνακα ισοδυναμιών αγώνα μετρήθηκε ανεπαρκής (12 % διαφωνίες με την ανάλυση 2-ply του GNUbg, με πραγματικά blunder). Καθώς μια λανθασμένη ετυμηγορία που εμφανίζεται με βεβαιότητα είναι χειρότερη από καμία ετυμηγορία, η συνέλιξη δεν είχε ποτέ το δικαίωμα να εμφανίζει ετυμηγορία — είναι μια αναζήτηση που παίζει την τροχιά, όχι μια στατιστική σύνοψη, που καλύπτει αυτό το κενό.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Οι βάσεις bearoff είναι αμετάβλητοι μαθηματικοί πίνακες. Το blunderDB τους υπολογίζει το ίδιο, πανομοιότυπα με το εργαλείο <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> του GNUbg — byte προς byte — στην καρτέλα <em>Bearoff</em> των ρυθμίσεων ή με <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="panneau-anki">
+<span id="id10"></span><h2><span class="section-number">3.18. </span>Πίνακας Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Anki</strong> (<em>CTRL-K</em>) επιτρέπει τη μελέτη θέσεων με διαστήματα επανάληψης χρησιμοποιώντας τον αλγόριθμο FSRS. Ο χρήστης μπορεί να δημιουργήσει πακέτα (decks) από συλλογές ή από αποτελέσματα αναζήτησης.</p>
+<p><strong>Δημιουργία πακέτων:</strong> Κάντε κλικ στο <em>New Deck</em> για να δημιουργήσετε ένα πακέτο από μια συλλογή ή από τα τρέχοντα αποτελέσματα αναζήτησης. Τα πακέτα που βασίζονται σε αναζήτηση συγχρονίζονται αυτόματα κατά την ενεργοποίηση της καρτέλας Anki.</p>
+<p><strong>Επανάληψη:</strong> Επιλέξτε ένα πακέτο και έπειτα κάντε κλικ στο <em>Study</em> (ή κάντε διπλό κλικ σε ένα πακέτο) για να ξεκινήσετε την επανάληψη των καρτών που οφείλονται. Κάθε κάρτα εμφανίζει την αντίστοιχη θέση στο ταμπλό. Αξιολογήστε την ανάκλησή σας με τα πλήκτρα <em>1</em> (Ξανά), <em>2</em> (Δύσκολο), <em>3</em> (Καλό), ή <em>4</em> (Εύκολο). Πατήστε <em>Esc</em> για να σταματήσετε και να επιστρέψετε στη λίστα των πακέτων.</p>
+<p><strong>Εμφάνιση της απάντησης:</strong> Η κάρτα θέτει ένα ερώτημα — ποια κίνηση να παιχτεί, ή ποια ενέργεια κύβου. Σκεφτείτε, και έπειτα πατήστε <em>ΔΙΑΣΤΗΜΑ</em> (ή κάντε κλικ στην κρυμμένη περιοχή) για να αποκαλύψετε την απάντηση: την καταγεγραμμένη ανάλυση της θέσης, όπως την παρουσιάζει η καρτέλα Ανάλυση. Εμφανίζεται κάτω από τα κουμπιά αξιολόγησης, τα οποία μένουν στη θέση τους και προσιτά. Κλικ σε μια κίνηση της λίστας την εμφανίζει στο ταμπλό.</p>
+<p>Τίποτα δεν σας υποχρεώνει να αποκαλύψετε την απάντηση για να αξιολογήσετε: αν είστε σίγουροι, τα πλήκτρα <em>1</em> έως <em>4</em> παραμένουν ενεργά. Η απάντηση κρύβεται ξανά στην επόμενη κάρτα, όχι όμως αν απλώς αλλάξετε καρτέλα — πηγαίνετε να συμβουλευτείτε τον πίνακα Eval ή το σχόλιο της θέσης, θα σας περιμένει όταν επιστρέψετε.</p>
+<p>Μια θέση χωρίς καταγεγραμμένη ανάλυση το δηλώνει απευθείας, χωρίς κρυμμένη περιοχή.</p>
+<p><strong>Περιορισμός της συνεδρίας.</strong> Από προεπιλογή, μια συνεδρία επανάληψης εξαντλεί όλες τις κάρτες που είναι σε αναμονή. Μπορείτε να την περιορίσετε σε έναν αριθμό καρτών, ανά πακέτο, στις Ρυθμίσεις: επιλέξτε <em>Περιορισμός συνεδρίας</em> και δηλώστε πόσες κάρτες πρέπει να σερβίρει μια συνεδρία. Όταν το όριο συμπληρωθεί, η συνεδρία σταματά και το ανακοινώνει — το μήνυμα ξεχωρίζει το «όριο συμπληρώθηκε, τόσες κάρτες ακόμη σε αναμονή» από μια πραγματικά άδεια ουρά. Για να συνεχίσετε παρ” όλα αυτά, υπάρχει η ελεύθερη εξάσκηση: παρουσιάζει άλλες θέσεις χωρίς να αλλάζει τίποτα στο πρόγραμμα.</p>
+<p>Ένα όριο <strong>0</strong> δεν σερβίρει καμία κάρτα: είναι μια κατάσταση από μόνη της, χρήσιμη για να παγώσετε ένα πακέτο όσο προετοιμάζεστε για ένα τουρνουά, και δεν είναι το ίδιο με το «χωρίς όριο». Το κουμπί <em>Study</em> είναι τότε ανενεργό.</p>
+<p>Το όριο αφορά τη <strong>συνεδρία</strong>, όχι την ημέρα. Ένα πακέτο του blunderDB χτίζεται πάνω σε μια συλλογή ή σε μια αναζήτηση: είναι ένα πεπερασμένο σύνολο, που εισάγεται σε λίγες συνεδρίες και του οποίου ο ημερήσιος όγκος περιορίζεται ήδη από το μέγεθός του. Ένα ημερήσιο πλαφόν δεν θα ενεργοποιούνταν ποτέ, ή αλλιώς θα δημιουργούσε καθυστέρηση σε ένα πακέτο που χωρούσε σε μία συνεδρία.</p>
+<p><strong>Ελεύθερη εξάσκηση (cram):</strong> Το κουμπί <em>Cram</em>, δίπλα στο <em>Study</em>, ξεκινά μια συνεδρία ελεύθερης εξάσκησης: σας παρουσιάζονται τυχαίες θέσεις από την τράπουλα χωρίς να λαμβάνεται υπόψη το πρόγραμμα FSRS. Αυτή η λειτουργία <strong>δεν τροποποιεί ποτέ το πρόγραμμα επαναλαμβανόμενης μελέτης</strong> — ιδανική για προθέρμανση πριν από ένα τουρνουά ή για εντατική επανάληψη μιας θεματικής τράπουλας χωρίς να διαταράσσεται η σειρά της. Μια ένδειξη <em>Cram</em> αντικαθιστά την κατάσταση της κάρτας και ένα κουμπί <em>Επόμενο</em> (πλήκτρα <em>1</em> έως <em>4</em>) μετακινείται στις θέσεις. Το <em>Esc</em> επιστρέφει στη λίστα χωρίς να αποθηκεύει διακοπείσα συνεδρία.</p>
+<p><strong>Διακοπή/Συνέχιση:</strong> Μπορείτε να διακόψετε μια συνεδρία επανάληψης ανά πάσα στιγμή με το <em>Esc</em>. Το κουμπί αλλάζει σε <em>Resume</em> και εμφανίζει την πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που σταματήσατε.</p>
+<p><strong>Διαχείριση πακέτων:</strong> Χρησιμοποιήστε τα κουμπιά ενεργειών για μετονομασία, συγχρονισμό, επαναφορά ή διαγραφή πακέτων (ζητείται επιβεβαίωση για τις δύο τελευταίες ενέργειες). Οι παράμετροι FSRS (στόχος διατήρησης, μέγιστο διάστημα, τυχαιότητα) ρυθμίζονται ανά πακέτο στις Ρυθμίσεις (εικονίδιο γραναζιού).</p>
+<p><strong>Διατήρηση: ο στόχος και η μέτρηση.</strong> Ο <em>στόχος διατήρησης</em> είναι η δική σας επιλογή στον συμβιβασμό ανάμεσα στον φόρτο εργασίας και στην ποιότητα της ανάκλησης: όσο πιο υψηλός είναι, τόσο πιο σύντομα γίνονται τα διαστήματα και τόσο περισσότερο επαναλαμβάνετε. Απέναντι, οι Ρυθμίσεις εμφανίζουν τη <strong>μετρημένη διατήρηση</strong> πάνω στις δικές σας επαναλήψεις — μια πληροφορία, ποτέ ένα χειριστήριο: το blunderDB δεν αλλάζει τον στόχο σας για να κυνηγήσει το ποσοστό επιτυχίας σας. Κάτω από είκοσι περίπου επαναλήψεις, η μέτρηση δεν εμφανίζεται: θα διαβαζόταν ως γεγονός ενώ είναι μόνο θόρυβος.</p>
+<p>Η αλλαγή της διατήρησης <strong>δεν είναι αναδρομική</strong>: κάθε κάρτα υιοθετεί τον νέο ρυθμό στην επόμενη επανάληψή της, και οι ήδη ορισμένες προθεσμίες δεν μετακινούνται. Το αποτέλεσμα είναι επομένως σταδιακό, και αόρατο την ίδια ημέρα.</p>
+<p>Το <em>μέγιστο διάστημα</em> περιορίζει την απόσταση. Ένα πακέτο που δημιουργήθηκε πρόσφατα ξεκινά από έναν χρόνο: μια θέση που ο αλγόριθμος θα ανέβαλλε για αρκετά χρόνια έχει εγκαταλείψει το πακέτο χωρίς να το αποφασίσετε εσείς, και το δικό σας παιχνίδι αλλάζει γρηγορότερα από αυτό. Τα παλαιότερα πακέτα διατηρούν την τιμή που είχαν.</p>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2><span class="section-number">3.19. </span>Πίνακας Μεταδεδομένων<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Μεταδεδομένων</strong> εμφανίζει τις γενικές πληροφορίες της τρέχουσας βάσης δεδομένων: όνομα, περιγραφή, αριθμό θέσεων, αριθμό αγώνων και παρτίδων, έκδοση του σχήματος. Προσβάσιμος μέσω της εντολής <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Εμφανίζει επίσης, <strong>όταν υπάρχει</strong>, την προέλευση της βάσης — βλ. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>. Μια συνηθισμένη βάση δεν εμφανίζει αυτή την ενότητα.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2><span class="section-number">3.20. </span>Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>Ένας δάσκαλος που διανέμει μια βάση θέσεων διαθέτει δύο μηχανισμούς, ανεξάρτητους μεταξύ τους, και οι δύο προαιρετικοί και επιλεγόμενοι <strong>κατά την εξαγωγή</strong>: να σημάνει το αρχείο με την προέλευσή του και να το προστατεύσει με κωδικό πρόσβασης.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Κανένας από τους δύο δεν παρακολουθεί την τύχη του αρχείου. Το blunderDB <strong>δεν καταγράφει τίποτε από την πλευρά εκείνου που λαμβάνει τη βάση</strong>: το άνοιγμα μιας σημασμένης βάσης είναι ακριβώς σαν το άνοιγμα οποιασδήποτε άλλης, και πουθενά δεν καταγράφεται ποιος την άνοιξε, πότε, ούτε από πού προέρχεται το περιεχόμενό της.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3><span class="section-number">3.20.1. </span>Σήμανση μιας βάσης με την προέλευσή της<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>Το παράθυρο εξαγωγής χωράει σε μία μόνο οθόνη: η φόρμα και, πάνω της, μια ένδειξη προόδου κατά τη διάρκεια της εγγραφής. Κλείνει από μόνο του όταν ολοκληρωθεί και το αποτέλεσμα εμφανίζεται στη γραμμή κατάστασης.</p>
+<p>Τρία σημεία αξίζουν προσοχής:</p>
+<ul class="simple">
+<li><p><strong>Η εξαγωγή αφορά τις θέσεις που εμφανίζονται αυτή τη στιγμή</strong>, όχι ολόκληρη τη βάση. Μετά από μια αναζήτηση εξάγονται μόνο τα αποτελέσματα — το παράθυρο το υπενθυμίζει στην κορυφή.</p></li>
+<li><p><strong>Μια συλλογή της οποίας οι θέσεις δεν περιλαμβάνονται όλες στην επιλογή φτάνει περικομμένη.</strong> Η λίστα δείχνει επομένως, για κάθε συλλογή, το καλυπτόμενο μέρος («12/40») και το επισημαίνει με κόκκινο όταν είναι μερικό.</p></li>
+<li><p><strong>Τα τουρνουά μπορούν να εξαχθούν μόνο μαζί με τους αγώνες</strong>: χωρίς αυτούς δεν υπάρχει ο σύνδεσμος τουρνουά–αγώνα και το τουρνουά θα έφτανε κενό. Το πλαίσιο παραμένει απενεργοποιημένο όσο δεν έχει επιλεγεί το «συμπερίληψη των αγώνων».</p></li>
+</ul>
+<p>Τα πεδία <em>Χρήστης</em>, <em>Περιγραφή</em> και <em>Ημερομηνία</em> περιγράφουν το <strong>αρχείο που παράγεται</strong>· συμπληρώνονται εκ των προτέρων από τη βάση προέλευσης. Το πλαίσιο <em>Τα αποθηκευμένα φίλτρα μου</em> είναι ξεχωριστό από τα υπόλοιπα: δεν εξάγει περιεχόμενο αλλά τις δικές σας αποθηκευμένες αναζητήσεις, οι οποίες δεν χρησιμεύουν στη βάση κάποιου άλλου.</p>
+<p>Η επιλογή <strong>Σήμανση αυτού του αρχείου με την προέλευσή του</strong> εμφανίζει δύο πεδία:</p>
+<ul class="simple">
+<li><p><strong>Προέλευση</strong> — τι είναι αυτό το αρχείο και από πού προέρχεται, με δικά σας λόγια: «Μάθημα του Jean Dupont — 12 Μαρτίου 2026». Το πεδίο αυτό είναι <strong>υποχρεωτικό</strong>: όσο παραμένει κενό, το κουμπί εξαγωγής μένει ανενεργό.</p></li>
+<li><p><strong>Σημείωση</strong>, προαιρετική — όροι χρήσης, διεύθυνση επικοινωνίας, ένα αίτημα να μην αναδιανεμηθεί.</p></li>
+</ul>
+<p>Η σήμανση υπογράφεται με την ταυτότητα εκδότη σας. Είναι επομένως <strong>αναλλοίωτη και μη πλαστογραφήσιμη</strong>: κανείς δεν μπορεί να την τροποποιήσει ούτε να κατασκευάσει μία στο όνομά σας. Δεν είναι όμως <strong>ανεξίτηλη</strong> — το αρχείο που διανέμεται είναι μια συνηθισμένη βάση SQLite και το blunderDB είναι ελεύθερο λογισμικό. Δεν εμποδίζει τίποτε: λέει από πού προέρχεται το αρχείο.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3><span class="section-number">3.20.2. </span>Ταυτότητα εκδότη<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Οι σημάνσεις υπογράφονται με την <strong>ταυτότητα εκδότη</strong> σας, η οποία δημιουργείται από μόνη της την πρώτη φορά που σημαίνετε ένα αρχείο· δεν χρειάζεται καμία ρύθμιση. Ανήκει σε ένα πρόσωπο και όχι σε μια βάση: όλα σας τα αρχεία φέρουν το ίδιο δημόσιο αποτύπωμα, της μορφής <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Μπορείτε να γνωστοποιήσετε αυτό το αποτύπωμα στους παραλήπτες σας ώστε να επαληθεύουν ότι ένα αρχείο προέρχεται πράγματι από εσάς. Η ταυτότητα μεταφέρεται από τον έναν υπολογιστή στον άλλο με ένα μόνο αρχείο (επέκταση <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), ενδεχομένως προστατευμένο με συνθηματική φράση. <strong>Το αρχείο αυτό επιτρέπει την υπογραφή στο όνομά σας: μην το μοιράζεστε.</strong></p>
+<p>Στις ρυθμίσεις (εικονίδιο γραναζιού της γραμμής εργαλείων), η καρτέλα <em>Ταυτότητα εκδότη</em> εμφανίζει το όνομα και το αποτύπωμά σας και προσφέρει <em>Αποθήκευση ταυτότητας…</em>, <em>Φόρτωση ταυτότητας…</em> και <em>Αναδημιουργία…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p><strong>Η αναδημιουργία δεν ανακαλεί τίποτε.</strong> Μια σήμανση ενσωματώνει το δημόσιο κλειδί που την υπέγραψε: επαληθεύεται επομένως για πάντα, από μόνη της. Αν το αρχείο ταυτότητάς σας διέρρευσε, όποιος το κατέχει θα μπορεί να συνεχίσει να υπογράφει με το παλιό σας αποτύπωμα, και οι σημάνσεις αυτές θα παραμένουν έγκυρες.</p>
+<p>Αυτό που σας προστατεύει μετά από μια διαρροή δεν είναι λογισμικό: είναι να δημοσιοποιήσετε το νέο σας αποτύπωμα και να αποκηρύξετε το παλιό απέναντι στους παραλήπτες σας.</p>
+<p>Η αναδημιουργία αντικαθιστά το τρέχον κλειδί· το blunderDB προτείνει να το αποθηκεύσετε πριν το αντικαταστήσει.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3><span class="section-number">3.20.3. </span>Προστασία μιας βάσης με κωδικό πρόσβασης<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>Ο κωδικός πληκτρολογείται κρυμμένος, εδώ όπως και κατά το άνοιγμα ενός προστατευμένου αρχείου· το εικονίδιο σε σχήμα ματιού τον εμφανίζει <strong>όσο το κρατάτε πατημένο</strong> και τον κρύβει ξανά μόλις το αφήσετε.</p>
+<p>Η επιλογή <strong>Προστασία αυτού του αρχείου με κωδικό πρόσβασης</strong> παράγει αρχείο με επέκταση <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — ακόμη και αν είχατε επιλέξει όνομα σε <code class="docutils literal notranslate"><span class="pre">.db</span></code> στο παράθυρο αποθήκευσης, καθώς αυτό ανοίγει πριν ζητηθεί ο κωδικός. Για να το ανοίξετε, χρησιμοποιήστε το συνηθισμένο άνοιγμα βάσης: το παράθυρο επιλογής δέχεται τόσο <code class="docutils literal notranslate"><span class="pre">.db</span></code> όσο και <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. Το blunderDB ζητά τότε τον κωδικό και εγκαθιστά δίπλα μια συνηθισμένη βάση· στη συνέχεια δεν ζητείται τίποτε άλλο.</p>
+<p>Το παράθυρο προτείνει τη <strong>διαγραφή του προστατευμένου αρχείου μετά το άνοιγμα</strong>: διαφορετικά διατηρείτε το ίδιο περιεχόμενο με δύο ονόματα. Το πλαίσιο δεν είναι επιλεγμένο εξ ορισμού — το προστατευμένο αρχείο παραμένει δικό σας αν σκοπεύετε να το διαβιβάσετε — και η διαγραφή γίνεται μόνο μετά από επιτυχές άνοιγμα.</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p>Ο κωδικός προστατεύει τη <strong>μεταφορά</strong> του αρχείου, όχι τη βάση. Εμποδίζει έναν τρίτο να ανοίξει ένα αρχείο ξεχασμένο σε έναν φάκελο λήψεων ή ένα συνημμένο που προωθήθηκε κατά λάθος. Δεν προστατεύει από εκείνον στον οποίο δώσατε τον κωδικό.</p>
+</div>
+<p>Ο κωδικός επαληθεύεται σε <strong>κάθε</strong> άνοιγμα, ακόμη και όταν το αρχείο έχει ήδη ανοιχτεί προηγουμένως σε αυτόν τον υπολογιστή.</p>
+<p>Τεχνικά, η βάση κρυπτογραφείται με <strong>AES-256 σε λειτουργία GCM</strong>, με κλειδί που παράγεται από τον κωδικό μέσω <strong>Argon2id</strong> (64 MiB μνήμης, 3 περάσματα, 4 νήματα) και τυχαίο αλάτι ξεχωριστό για κάθε αρχείο. Η λειτουργία GCM πιστοποιεί το σύνολο: ένας λανθασμένος κωδικός εντοπίζεται ως τέτοιος, όπως και κάθε αλλοίωση του κρυπτογραφημένου αρχείου — ποτέ δεν καταλήγει κανείς σιωπηλά με κατεστραμμένη βάση.</p>
+<p>Η κεφαλίδα του προστατευμένου αρχείου παραμένει <strong>μη κρυπτογραφημένη</strong>: η προέλευσή του παραμένει αναγνώσιμη χωρίς τον κωδικό.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3><span class="section-number">3.20.4. </span>Ανάγνωση της προέλευσης ενός αρχείου<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>Στην εφαρμογή, ανοίξτε το αρχείο και εμφανίστε τον πίνακα <strong>Μεταδεδομένα</strong> (εντολή <code class="docutils literal notranslate"><span class="pre">meta</span></code>). Στην κορυφή του πίνακα εμφανίζεται μια ενότητα <strong>Προέλευση</strong>, μόνο για ανάγνωση, που δείχνει τι καταχωρήθηκε, από ποιον, πότε, και την κατάσταση της υπογραφής:</p>
+<ul class="simple">
+<li><p>«✓ η υπογραφή επαληθεύτηκε — σημάνθηκε από εσάς»: το αρχείο φέρει τη δική σας σήμανση, ανέπαφη·</p></li>
+<li><p>«✓ η υπογραφή επαληθεύτηκε»: η σήμανση είναι ανέπαφη και προέρχεται από άλλο κλειδί — συγκρίνετε το αποτύπωμά της με εκείνο που σας γνωστοποίησε ο δημιουργός·</p></li>
+<li><p>«⚠ μη έγκυρη υπογραφή»: το έγγραφο τροποποιήθηκε ή πλαστογραφήθηκε.</p></li>
+</ul>
+<p>Η ενότητα αυτή δεν εμφανίζεται σε μια συνηθισμένη βάση.</p>
+<p>Από τη γραμμή εντολών, το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">αρχείο.db</span></code> εμφανίζει την προέλευση και την κατάσταση της υπογραφής, <strong>χωρίς ποτέ να γράφει στο αρχείο</strong>. Η εντολή λειτουργεί και σε προστατευμένο αρχείο, χωρίς τον κωδικό. Βλ. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> για τις επιλογές <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> και <code class="docutils literal notranslate"><span class="pre">--password</span></code> της <code class="docutils literal notranslate"><span class="pre">export</span></code>, καθώς και για τις <code class="docutils literal notranslate"><span class="pre">identity</span></code> και <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="2. Οδηγός χρήσης" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="4. Λίστα εντολών" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

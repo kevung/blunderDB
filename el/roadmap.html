@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Χάρτης πορείας &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)" href="mode_headless.html" />
+    <link rel="prev" title="8. Συχνές ερωτήσεις (FAQ)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Χάρτης πορείας</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-3-etendre">10. Στάδιο 3 — Επέκταση</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#import-et-flux">10.1. Εισαγωγή και ροή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#categoriser-sans-imposer-de-classification">10.2. Κατηγοριοποίηση χωρίς επιβολή ταξινομίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyse-et-evaluation">10.3. Ανάλυση και αξιολόγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pedagogie">10.4. Εκπαίδευση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#partager-une-analyse">10.5. Κοινή χρήση μιας ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-et-bibliotheque">10.6. Αναζήτηση και βιβλιοθήκη</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-et-plateforme">10.7. Διεπαφή και πλατφόρμα</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-4-chantiers-de-fond">11. Στάδιο 4 — Βαθιά εγχειρήματα</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#ce-qui-n-est-pas-prevu">12. Τι <strong>δεν</strong> προβλέπεται</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Σύμβαση API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Χάρτης πορείας</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="feuille-de-route">
+<span id="roadmap"></span><h1><span class="section-number">9. </span>Χάρτης πορείας<a class="headerlink" href="#feuille-de-route" title="Link to this heading"></a></h1>
+<p>Αυτή η σελίδα καταγράφει τις ιδέες που εξετάζονται για το blunderDB — <strong>δεν</strong> αποτελεί δέσμευση για ημερομηνίες ή σειρά. Το blunderDB αναπτύσσεται από ένα μόνο άτομο, στον ελεύθερο χρόνο του: μια ιδέα μπορεί να προχωρήσει γρήγορα, να περιμένει μήνες, ή να εγκαταλειφθεί αν μια καλύτερη ιδέα την αντικαταστήσει.</p>
+<p>Η ακριβής παρακολούθηση γίνεται στο GitHub:</p>
+<ul class="simple">
+<li><p>τα ανοιχτά tickets ομαδοποιούνται ανά στάδιο στα milestones <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/4">Étape 3 — Étendre</a> (αυτό που ακολουθεί σε αυτή τη σελίδα) και <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/5">Étape 4 — Fond</a> (τα βαρύτερα εγχειρήματα)·</p></li>
+<li><p>για να προτείνετε ή να συζητήσετε μια ιδέα: <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions – κατηγορία Ideas</a>·</p></li>
+<li><p>κάθε δημοσιευμένη έκδοση ανακοινώνεται στο <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">Discussions – κατηγορία Announcements</a>.</p></li>
+</ul>
+</section>
+<section id="etape-3-etendre">
+<h1><span class="section-number">10. </span>Στάδιο 3 — Επέκταση<a class="headerlink" href="#etape-3-etendre" title="Link to this heading"></a></h1>
+<section id="import-et-flux">
+<h2><span class="section-number">10.1. </span>Εισαγωγή και ροή<a class="headerlink" href="#import-et-flux" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ένα πάνελ στο τέλος της εισαγωγής: αριθμός εισαγόμενων αγώνων, σημειωμένες θέσεις, θέσεις χωρίς ανάλυση, τα πέντε χειρότερα λάθη (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/257">#257</a>).</p></li>
+<li><p>Παρακολούθηση ενός φακέλου (π.χ. του eXtreme Gammon) και αυτόματη εισαγωγή κάθε νέου αρχείου (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/258">#258</a>).</p></li>
+<li><p>Μετά από μια εισαγωγή, διάσχιση μιας ουράς μελέτης που δείχνει μόνο τα blunders, τις σημειωμένες θέσεις και τις οριακές αποφάσεις της παρτίδας (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/259">#259</a>).</p></li>
+<li><p>Εισαγωγή αγώνων που παίχτηκαν στο bgammon.org και αναγνώριση ενός αναγνωριστικού θέσης OGID που επικολλήθηκε στην εφαρμογή (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/262">#262</a>).</p></li>
+<li><p>Καταγραφή της προέλευσης κάθε σχολίου (χρήστης, eXtreme Gammon, GNUbg…) και εμφάνιση όλων, αντί για ένα επιλεγμένο τυχαία (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/263">#263</a>).</p></li>
+</ul>
+</section>
+<section id="categoriser-sans-imposer-de-classification">
+<h2><span class="section-number">10.2. </span>Κατηγοριοποίηση χωρίς επιβολή ταξινομίας<a class="headerlink" href="#categoriser-sans-imposer-de-classification" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Αυτόματη επισήμανση κάθε θέσης με τη φάση της παρτίδας (άνοιγμα, μέσο παιχνίδι, κούρσα, bearoff), ώστε να φιλτράρεται και να βρίσκεται στα στατιστικά (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/264">#264</a>).</p></li>
+<li><p>Ένα προτεινόμενο λεξιλόγιο ετικετών (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>…) με αυτόματη συμπλήρωση και ένα πάνελ που τις παραθέτει κατά συχνότητα (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/265">#265</a>).</p></li>
+<li><p>Μια πέμπτη καρτέλα στατιστικών που αναλύει το PR και το ποσοστό σφάλματος ανά φάση, ανά ετικέτα και ανά σκορ away, σε μορφή πίνακα (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/266">#266</a>).</p></li>
+</ul>
+</section>
+<section id="analyse-et-evaluation">
+<h2><span class="section-number">10.3. </span>Ανάλυση και αξιολόγηση<a class="headerlink" href="#analyse-et-evaluation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Για την τρέχουσα θέση, η ετυμηγορία του κύβου σε κάθε σκορ αγώνα 5, 7 ή 9 πόντων, σε ένα ενιαίο πλέγμα (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/267">#267</a>).</p></li>
+<li><p>Ένα PR υπολογισμένο σε αγώνες χωρίς εισαγόμενη ανάλυση, συγκρίνοντας την κίνηση που παίχτηκε με τη σύσταση του ενσωματωμένου αξιολογητή (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/268">#268</a>).</p></li>
+<li><p>Σύγκριση δίπλα-δίπλα, στην ίδια θέση, όσα λένε οι διάφορες μηχανές που υπάρχουν ήδη στη βάση (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/269">#269</a>).</p></li>
+<li><p>Δημοσίευση του πόσο καλός είναι πραγματικά ο ενσωματωμένος αξιολογητής έναντι ενός ακριβούς πίνακα αναφοράς, και συνεχής μέτρησή του έναντι των εισαγωγών από eXtreme Gammon (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/270">#270</a>).</p></li>
+<li><p>Εμφάνιση των ισχυόντων κανόνων (όριο κύβου, Jacoby, beaver) δίπλα στην ετυμηγορία, και δυνατότητα επιλογής του πίνακα ισοδυναμιών αγώνα ανά βάση (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/271">#271</a>).</p></li>
+<li><p>Δημοσίευση μιας μέτρησης του 3-ply (χρόνος, κέρδος ακρίβειας) και προσφορά του ως ρύθμιση αν το ισοζύγιο το δικαιολογεί (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/272">#272</a>).</p></li>
+</ul>
+</section>
+<section id="pedagogie">
+<h2><span class="section-number">10.4. </span>Εκπαίδευση<a class="headerlink" href="#pedagogie" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Μια πρώτη χρονομετρημένη ενότητα εξάσκησης: μέτρηση pip, EPC, σημείο take (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/273">#273</a>).</p></li>
+<li><p>Καθορισμός στόχου προόδου («PR κάτω από 5 σε τρεις μήνες») και παρακολούθηση της απόκλισης στην καμπύλη (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/274">#274</a>).</p></li>
+<li><p>Σύνδεση των στατιστικών μελέτης (Anki) με τα στατιστικά πραγματικού παιχνιδιού: βελτιώνεται πράγματι μια κατηγορία που έχει επαναληφθεί (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/275">#275</a>);</p></li>
+<li><p>Αλυσιδωτές κάρτες κύβου: πρώτα διπλασιασμός, μετά αποδοχή, ως δύο ξεχωριστές ερωτήσεις αντί για μία κάρτα δύο βημάτων (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/276">#276</a>).</p></li>
+<li><p>Εκπαιδευτικές διαδρομές: μια διατεταγμένη ακολουθία σχολιασμένων θέσεων, διανεμήσιμη ως βάση με υδατογράφημα, σχεδιασμένη για έναν προπονητή (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/277">#277</a>).</p></li>
+</ul>
+</section>
+<section id="partager-une-analyse">
+<h2><span class="section-number">10.5. </span>Κοινή χρήση μιας ανάλυσης<a class="headerlink" href="#partager-une-analyse" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Μία ενιαία απεικόνιση του ταμπλό, εξαγώγιμη σε SVG ή PNG, πιστή σε ό,τι δείχνει η οθόνη (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/278">#278</a>).</p></li>
+<li><p>Μια αυτόνομη αναφορά HTML μιας συνεδρίας, ενός αγώνα ή ενός τουρνουά, εκτυπώσιμη σε PDF από τον browser (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/279">#279</a>).</p></li>
+<li><p>Εξαγωγή σε CSV ή Parquet, με ένα ενημερωμένο δείγμα σημειωματάριου Jupyter (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/280">#280</a>).</p></li>
+<li><p>Ένα ευρετήριο, σε αυτόν τον ιστότοπο, βάσεων με υδατογράφημα που μοιράζονται άλλοι παίκτες με επαληθεύσιμη ταυτότητα (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/281">#281</a>).</p></li>
+</ul>
+</section>
+<section id="recherche-et-bibliotheque">
+<h2><span class="section-number">10.6. </span>Αναζήτηση και βιβλιοθήκη<a class="headerlink" href="#recherche-et-bibliotheque" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Συλλογές που επαναξιολογούνται κατά το άνοιγμα (ένα επώνυμο φίλτρο, ποτέ παγωμένο), και σύγκριση δύο παικτών δίπλα-δίπλα στην καρτέλα Παίκτες (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/282">#282</a>).</p></li>
+<li><p>Σύνταξη μιας αναζήτησης σε καθημερινή γλώσσα («τα λάθη κύβου μου στο σκορ») αντί για tokens, ντετερμινιστικά και εκτός σύνδεσης (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/283">#283</a>).</p></li>
+</ul>
+</section>
+<section id="interface-et-plateforme">
+<h2><span class="section-number">10.7. </span>Διεπαφή και πλατφόρμα<a class="headerlink" href="#interface-et-plateforme" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Μια οθόνη υποδοχής που προτείνει, όταν καμία πρόσφατη βάση δεν είναι ανοιχτή: καθοδηγούμενη περιήγηση, δείγμα βάσης, εισαγωγή των αγώνων μου, άνοιγμα βάσης (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/284">#284</a>).</p></li>
+<li><p>Ένας κάδος ανακύκλωσης για διαγραμμένες θέσεις και ένα «αναίρεση» για τις πιο συχνές διαγραφές (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/285">#285</a>).</p></li>
+<li><p>Επώνυμα θέματα — ανοιχτό, σκούρο, υψηλή αντίθεση, εκτυπώσιμο (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/286">#286</a>).</p></li>
+<li><p>Μια σειρά μικρών καθημερινών ανέσεων: αναζητήσιμο ημερολόγιο δραστηριότητας, παλέτα εντολών, πιο ευανάγνωστα σήματα αναζήτησης (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/287">#287</a>).</p></li>
+<li><p>Σαφής αναφορά για το τι λειτουργεί στον συγχρονισμό μιας βάσης μεταξύ πολλών υπολογιστών (και τι όχι), και ένα κουμπί για συγχώνευση δύο βάσεων (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/288">#288</a>).</p></li>
+<li><p>Ένας ελάχιστος client και μια πολιτική εκδόσεων για το API της λειτουργίας διακομιστή (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/289">#289</a>).</p></li>
+<li><p>Μεταφορά στην εφαρμογή δυνατοτήτων που σήμερα υπάρχουν μόνο στον διακομιστή: αναστολή μιας κάρτας, ημερολόγιο επανάληψης, βελτιστοποίηση FSRS (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/290">#290</a>).</p></li>
+</ul>
+</section>
+</section>
+<section id="etape-4-chantiers-de-fond">
+<h1><span class="section-number">11. </span>Στάδιο 4 — Βαθιά εγχειρήματα<a class="headerlink" href="#etape-4-chantiers-de-fond" title="Link to this heading"></a></h1>
+<p>Αυτές οι ιδέες αλλάζουν τη φύση ενός μέρους του λογισμικού· καθεμία περιμένει μια ρητή απόφαση πριν ξεκινήσει.</p>
+<ul class="simple">
+<li><p>Αυτόματη ταξινόμηση του τύπου παιχνιδιού μιας θέσης (κούρσα, holding, backgame, blitz…), ονομασία επαναλαμβανόμενων θεμάτων σφάλματος (πολύ παθητικό, timing, υποτιμημένο gammon…) και ομαδοποίηση επαναλαμβανόμενων blunders κατά συσσωρευμένο κόστος — η υπόσχεση που κάνει το όνομα του προϊόντος (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/291">#291</a>).</p></li>
+<li><p>Περικομμένα rollouts για την επίλυση δύο πολύ κοντινών κινήσεων, με εμφανιζόμενο διάστημα εμπιστοσύνης (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/292">#292</a>).</p></li>
+<li><p>«Θέσεις σαν αυτή»: εύρεση των θέσεων που μοιάζουν περισσότερο με αυτή στην οθόνη (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/293">#293</a>).</p></li>
+<li><p>Μια λειτουργία κουίζ που δοκιμάζει αντί να απομνημονεύει, με ένα εκπαιδευτικό PR συγκρίσιμο με το πραγματικό PR (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/294">#294</a>).</p></li>
+<li><p>Μια web διεπαφή μόνο για ανάγνωση πάνω στη λειτουργία διακομιστή, για tablet και κινητό (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/295">#295</a>).</p></li>
+<li><p>Μια λειτουργία club ή coach στον διακομιστή: κοινή χρήση βιβλιοθήκης μόνο για ανάγνωση, λήψη αγώνων μαθητών (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/296">#296</a>).</p></li>
+<li><p>Ένα αποσταγμένο, πολύ ταχύτερο δίκτυο αξιολόγησης, και μια cache αξιολόγησης που επιβιώνει στο κλείσιμο της εφαρμογής (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/297">#297</a>).</p></li>
+<li><p>Επεξήγηση ενός blunder σε μία πρόταση, χωρίς προσφυγή σε γλωσσικό μοντέλο (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/298">#298</a>).</p></li>
+<li><p>Ένας προαιρετικός βοηθός, αυστηρά τοπικός και ποτέ ενεργοποιημένος από προεπιλογή, μέσω Ollama (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/299">#299</a>).</p></li>
+</ul>
+</section>
+<section id="ce-qui-n-est-pas-prevu">
+<h1><span class="section-number">12. </span>Τι <strong>δεν</strong> προβλέπεται<a class="headerlink" href="#ce-qui-n-est-pas-prevu" title="Link to this heading"></a></h1>
+<p>Το να παίζεις εναντίον του ενσωματωμένου αξιολογητή θα άλλαζε τη φύση του προϊόντος (μια πλήρης μηχανή παιχνιδιού: κανόνες, εισαγωγή κινήσεων, ιστορικό παρτίδας)· δεν βρίσκεται στην ατζέντα του blunderDB (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/300">#300</a>).</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="8. Συχνές ερωτήσεις (FAQ)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mode_headless.html" class="btn btn-neutral float-right" title="13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,888 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; Documentation blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d0e80ae2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="1. Téléchargement et installation" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Feuille de route</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Étape 3 — Étendre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Étape 4 — Chantiers de fond</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Ce qui n’est <strong>pas</strong> prévu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Contrat d’API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Lien vers cette rubrique"></a></h1>
+<p>blunderDB est un logiciel pour constituer des bases de données de positions de
+backgammon. Sa force principale est d’offrir un lieu unique où agréger
+les positions qu’un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir
+réétudier ces positions en les filtrant selon différents filtres combinables
+arbitrairement. blunderDB peut également être utilisé pour constituer des
+catalogues de positions de référence.</p>
+<p>Nouveau venu ? Le <strong>guide utilisateur</strong> propose quatre tutoriels de bout en
+bout (premier import, étude d’un match, session Anki, mode serveur) et une
+page « comment progresser » — la lecture la plus rentable avant de se lancer.</p>
+<p>La présente documentation est structurée en quatorze sections :</p>
+<ul class="simple">
+<li><p><strong>téléchargement et installation</strong> explique comment se procurer et lancer
+blunderDB ;</p></li>
+<li><p>le <strong>guide utilisateur</strong> est une introduction pratique et des tutoriels de
+bout en bout pour utiliser rapidement blunderDB ;</p></li>
+<li><p>le <strong>manuel</strong> décrit exhaustivement le fonctionnement de blunderDB, panneau
+par panneau ;</p></li>
+<li><p>le <strong>mode commande</strong> documente la ligne de commande intégrée à
+l’application (filtres de recherche, actions) ;</p></li>
+<li><p>la liste des <strong>raccourcis</strong> clavier permet une utilisation efficace au
+clavier ;</p></li>
+<li><p>l”<strong>interface en ligne de commande (CLI)</strong> décrit les commandes du binaire
+disponibles hors interface graphique, pour l’import en masse,
+l’automatisation et le scripting ;</p></li>
+<li><p>le <strong>glossaire</strong> définit en une page les termes du domaine (position,
+référentiel, régime, verdict…) employés dans le reste de la
+documentation ;</p></li>
+<li><p>la <strong>FAQ</strong> répond aux interrogations les plus fréquentes ;</p></li>
+<li><p>la <strong>feuille de route</strong> recense les pistes d’évolution envisagées, sans
+engagement de date ;</p></li>
+<li><p>le <strong>mode serveur (headless)</strong> documente le démon <code class="docutils literal notranslate"><span class="pre">serve</span></code>, ses routes
+HTTP et ses deux backends (SQLite, PostgreSQL) ;</p></li>
+<li><p>l”<strong>annexe des filtres de recherche</strong> détaille chaque critère du panneau
+de recherche et son jeton en ligne de commande ;</p></li>
+<li><p>les <strong>annexes de sécurité</strong> (Windows, macOS) expliquent les avertissements
+du système d’exploitation à l’installation d’un binaire non signé ;</p></li>
+<li><p>l”<strong>annexe du schéma de base de données</strong> décrit le format <code class="docutils literal notranslate"><span class="pre">.db</span></code> ;</p></li>
+<li><p>la page de <strong>parité des statistiques</strong> énonce les règles de comptage du
+PR, du Snowie Error Rate et du coût MWC face à eXtreme Gammon et GNUbg.</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>Historique des versions<a class="headerlink" href="#historique-des-versions" title="Lien vers cette rubrique"></a></h1>
+<section id="derniere-version-0-36-0-2026-09-05">
+<h2>Dernière version — 0.36.0 (2026-09-05)<a class="headerlink" href="#derniere-version-0-36-0-2026-09-05" title="Lien vers cette rubrique"></a></h2>
+<ul class="simple">
+<li><p>Le binaire <strong>maigrit de 7,3 Mo</strong> : les tables de sortie ne sont plus embarquées ni téléchargées, mais calculées à la première ouverture, en arrière-plan et en silence — identiques octet pour octet à celles de gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule dans l’onglet <em>Bearoff</em> au lieu d’un téléchargement de 1,2 Go.</p></li>
+<li><p><strong>Les tournois se remplissent à l’import</strong> : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n’est jamais déplacé.</p></li>
+<li><p><strong>Une seule grammaire de recherche</strong>, désormais lisible depuis la ligne de commande (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) autant que depuis l’application.</p></li>
+<li><p>La ligne de commande gagne <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> sur neuf commandes, la <strong>complétion pour bash, zsh et fish</strong>, la commande <code class="docutils literal notranslate"><span class="pre">repair</span></code> et les sous-commandes <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code> et <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>.</p></li>
+<li><p>L”<strong>aide intégrée est engendrée depuis le manuel</strong> : elle ne peut plus prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, Stats), et les pages Raccourcis et Ligne de commande deviennent des tableaux, sans encarts.</p></li>
+<li><p>Un <strong>binaire Linux arm64</strong>, livré en archive, <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> et paquet AUR.</p></li>
+<li><p>Le panneau <strong>Eval</strong> retrouve le plateau sur lequel on l’a quitté, distingue l’équité <em>money</em> de l’équité <em>match</em>, et se parcourt au clavier.</p></li>
+<li><p>Côté serveur : <strong>contrat d’API engendré du code</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>.</p></li>
+<li><p><strong>Schéma 2.18.0</strong> : Jacoby et beaver quittent l’identité de la position, si bien qu’une même position d’argent n’entre plus deux fois par des portes différentes.</p></li>
+<li><p>Corrections notables : le volet de détail du panneau Matchs n’occupe plus la moitié de l’écran quand rien n’est sélectionné, la première partie d’un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n’importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.</p></li>
+</ul>
+<p>Voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p>
+</section>
+<section id="historique-complet">
+<h2>Historique complet<a class="headerlink" href="#historique-complet" title="Lien vers cette rubrique"></a></h2>
+<p>Chaque version ci-dessous liste ses évolutions puce par puce, pour qu’une
+correction ultérieure (une coquille, un ajout tardif) n’invalide qu’une
+puce et non la traduction de toute la version.</p>
+<section id="id1">
+<h3>0.36.0 (2026-09-05)<a class="headerlink" href="#id1" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Le binaire <strong>maigrit de 7,3 Mo</strong> : les tables de sortie ne sont plus embarquées ni téléchargées, mais calculées à la première ouverture, en arrière-plan et en silence — identiques octet pour octet à celles de gnubg, empreinte SHA-256 vérifiée. La table étendue TS-06-11 se calcule dans l’onglet <em>Bearoff</em> au lieu d’un téléchargement de 1,2 Go.</p></li>
+<li><p><strong>Les tournois se remplissent à l’import</strong> : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n’est jamais déplacé.</p></li>
+<li><p><strong>Une seule grammaire de recherche</strong>, désormais lisible depuis la ligne de commande (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) autant que depuis l’application.</p></li>
+<li><p>La ligne de commande gagne <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> sur neuf commandes, la <strong>complétion pour bash, zsh et fish</strong>, la commande <code class="docutils literal notranslate"><span class="pre">repair</span></code> et les sous-commandes <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code> et <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>.</p></li>
+<li><p>L”<strong>aide intégrée est engendrée depuis le manuel</strong> : elle ne peut plus prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, Stats), et les pages Raccourcis et Ligne de commande deviennent des tableaux, sans encarts.</p></li>
+<li><p>Un <strong>binaire Linux arm64</strong>, livré en archive, <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> et paquet AUR.</p></li>
+<li><p>Le panneau <strong>Eval</strong> retrouve le plateau sur lequel on l’a quitté, distingue l’équité <em>money</em> de l’équité <em>match</em>, et se parcourt au clavier.</p></li>
+<li><p>Côté serveur : <strong>contrat d’API engendré du code</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>.</p></li>
+<li><p><strong>Schéma 2.18.0</strong> : Jacoby et beaver quittent l’identité de la position, si bien qu’une même position d’argent n’entre plus deux fois par des portes différentes.</p></li>
+<li><p>Corrections notables : le volet de détail du panneau Matchs n’occupe plus la moitié de l’écran quand rien n’est sélectionné, la première partie d’un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n’importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.</p></li>
+<li><p>Voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>0.35.0 (2026-09-02)<a class="headerlink" href="#id2" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>La ligne de commande gagne deux familles : <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span></code> (lister, afficher, créer, renommer, supprimer, exporter une collection) et <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span></code> (paquets, statistiques, prévision des révisions, resynchronisation d’un paquet).</p></li>
+<li><p>Le mode serveur est publié en <strong>image Docker</strong> (<code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>, amd64 et arm64), gagne la route <code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code> et <strong>filigrane ses exports</strong> avec l’identité d’émetteur du serveur (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>).</p></li>
+<li><p>L’évaluateur gammonNet <strong>value ses feuilles avec le videau</strong> : au score, les verdicts de la recherche se rapprochent de ceux d’eXtreme Gammon.</p></li>
+<li><p>Chaque release livre désormais les <strong>manifestes winget et Homebrew</strong> et un bundle Flatpak, en plus des paquets Debian, RPM et AUR.</p></li>
+<li><p>Dans l’interface, la bibliothèque est <strong>paginée</strong> (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de police japonaise inutile.</p></li>
+<li><p>Corrections notables : une base importée par « Importer une base » gardait des positions invisibles aux filtres et dédoublées au second import (réparé à l’ouverture), le bouton Fusionner de la fenêtre de fusion des joueurs restait grisé, l’export du serveur était vide, et sous Windows la suppression de la base bearoff téléchargée et <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--force</span></code> échouaient.</p></li>
+<li><p>Voir <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>0.34.0 (2026-09-02)<a class="headerlink" href="#id3" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Un <strong>évaluateur embarqué</strong> : gammonNet, porté en Go et compilé dans blunderDB, évalue n’importe quelle position hors ligne, sans XG ni gnuBG — réseau de neurones, recherche 0 à 2-ply avec élagage, décision de videau selon Janowski et la table d’équité de match de blunderDB, et une recherche qui honore le score du match.</p></li>
+<li><p>Le panneau Bearoff devient le panneau <strong>Eval</strong> : il présente les faits de la position (chances de gain, gammon et backgammon des deux camps, équité) puis la seule décision que le plateau demande, sur une grille stable et sans défilement ; les équités de match sont <strong>normalisées</strong> et le verdict « trop bon pour doubler » redevient visible.</p></li>
+<li><p>L’évaluation est <strong>progressive</strong> : 0-ply immédiat au geste, puis 2-ply au repos, annulable par tout nouveau geste, l’étiquette de profondeur disant toujours celle qui a produit le chiffre.</p></li>
+<li><p>Le plateau entier, les dés et le score s’y éditent, au clic comme au clavier, et une position de la bibliothèque entre dans le panneau et en ressort.</p></li>
+<li><p>Sur une course au-delà de la base bi-face, un troisième régime <strong>évalué</strong> fournit le verdict de videau au score que le panneau ne donnait pas.</p></li>
+<li><p>Un onglet <strong>gammonNet</strong> de la configuration sépare la profondeur d’affichage de la profondeur d’analyse.</p></li>
+<li><p>Après un import, un <strong>lot d’analyse</strong> borné, visible, annulable et reprenable comble les positions sans aucune analyse, sans jamais écraser une analyse importée ; le <strong>rattrapage d’une bibliothèque</strong> existante se lance depuis l’interface, par la nouvelle commande <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> ou en mode serveur.</p></li>
+<li><p>Corrections notables : la réponse à un videau importée d’eXtreme Gammon héritait de l’analyse du doubleur sans être retournée, la notation des coups des Blancs et des entrées de barre suit gnuBG et XG, la profondeur d’une analyse gnuBG est lue correctement, et la taille du panneau latéral est mémorisée.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Panneau Eval</span></a>, <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a> et <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>0.33.0 (2026-08-26)<a class="headerlink" href="#id4" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Le panneau Stats gagne un onglet <strong>Joueurs</strong> : les trois onglets précédents décrivent un joueur, celui-ci les compare tous, une ligne par joueur de la base — matchs, victoires/défaites, décisions comptées, PR global / pions / videau, Snowie Error Rate, blunders et chance. Le tableau se trie par n’importe quelle colonne, se restreint aux dates d’une compétition par les filtres habituels, et un clic sur une ligne bascule sur le détail du joueur. Un tiret y signale une valeur jamais mesurée, jamais un zéro. Le tableau est également disponible en ligne de commande (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>, en texte, JSON ou CSV) et en mode serveur.</p></li>
+<li><p>La <strong>chance</strong> de chaque lancer est désormais conservée en base et affichée : chance moyenne par lancer, en millièmes de point, signée. Elle est lue à l’import depuis les fichiers eXtreme Gammon comme depuis gnuBG. Elle n’est pas rétroactive — les matchs importés auparavant portent un tiret, et il faut réimporter les fichiers source pour la récupérer ; les formats qui ne la transportent pas (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) n’en fourniront jamais.</p></li>
+<li><p>L’onglet <strong>Erreurs</strong> indique désormais dans quel <em>sens</em> se trompent les décisions de videau, et non plus seulement combien elles coûtent : une ligne <em>Offrir</em> (doubles manqués, doubles prématurés) et une ligne <em>Répondre</em> (passes à tort, prises à tort), les deux séparées à dessein puisqu’un même joueur peut doubler tard et prendre large. Chaque case porte son nombre, l’infobulle l’équité perdue, et le clic charge les positions correspondantes.</p></li>
+<li><p>Nouvelle commande <strong>Compacter la base</strong>, qui récupère l’espace laissé par les suppressions : bouton dans les paramètres et sous-commande <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code>. Elle ne se déclenche jamais toute seule.</p></li>
+<li><p>Ergonomie : les actions destructives demandent confirmation, une recherche en cours est signalée, une commande inconnue reçoit un message au lieu du silence, et les onglets, panneaux dockés et petites fenêtres se pilotent entièrement au clavier. La recherche est par ailleurs sensiblement plus rapide.</p></li>
+<li><p>Corrections notables : les non-doubles étiquetés « Double No » par gnuBG étaient comptés comme des doubles, ce qui faussait le PR videau (une base déjà constituée se répare sans réimport, en mode serveur) ; le filtre joueur rétrécissait à tort le dénominateur du Snowie Error Rate ; les exports écrivaient un schéma périmé ; et <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> ouvrait l’interface graphique au lieu de compacter la base.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panneau Stats</span></a> et <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Interface en ligne de commande (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>0.32.0 (2026-08-09)<a class="headerlink" href="#id5" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Le panneau EPC devient le panneau <strong>Bearoff</strong> et gagne l’analyse de course complète.</p></li>
+<li><p>Sur une position de bearoff pur, il affiche — en plus de l’EPC, du pip count, du wastage et du nombre moyen de lancers de chaque joueur, désormais présentés en tableau avec une ligne Δ signée — les probabilités de gain des deux joueurs et les équités money (cubeless, sans double, double/prend, double/passe, avec l’écart de chaque décision à la meilleure) ainsi que la <strong>meilleure décision de videau</strong>.</p></li>
+<li><p>Deux régimes clairement distingués : <em>exact</em> (lecture dans une base two-sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu’à 6 pions par joueur) et <em>estimé</em> (convolution calibrée, marge d’erreur affichée — le verdict de videau n’est jamais estimé).</p></li>
+<li><p>La base étendue TS-06-11 (verdict exact jusqu’à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel onglet <em>Bearoff</em> de la configuration, avec vérification d’intégrité et reprise des téléchargements interrompus ; un fichier <code class="docutils literal notranslate"><span class="pre">.bd</span></code> two-sided quelconque de gnubg peut aussi être désigné.</p></li>
+<li><p><strong>Mode défi</strong> pour l’entraînement : les résultats se masquent à chaque modification et se révèlent zone par zone, d’un clic.</p></li>
+<li><p>Édition entièrement au plateau : pions des deux jans, joueur au trait (clic sur le rectangle sortie/score) et position du videau (clic sur le videau).</p></li>
+<li><p>Le clic sur le plateau est désormais exact à toute échelle d’interface (un clic sur le point 1 pouvait atterrir sur le point 2).</p></li>
+<li><p>Nouvelle commande <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code> en ligne de commande et option <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> du mode serveur.</p></li>
+<li><p>Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur affichée.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Panneau Eval</span></a> et <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Méthodologie et hypothèses du panneau Eval</span></a>.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>0.31.0 (2026-08-04)<a class="headerlink" href="#id6" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Diffusion d’une base à des tiers : deux mécanismes indépendants, tous deux facultatifs et choisis au moment de l’export.</p></li>
+<li><p>Le <strong>filigrane d’origine</strong> inscrit dans le fichier ce qu’il est et d’où il vient, signé par une identité d’émetteur créée toute seule au premier usage ; la marque est infalsifiable, se lit en tête du panneau Métadonnées (ou par <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, sans jamais écrire dans le fichier) et ne consigne rien du côté de celui qui reçoit la base — aucun journal, aucun suivi.</p></li>
+<li><p>La <strong>protection par mot de passe</strong> produit un fichier <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> chiffré (AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont l’en-tête reste lisible en clair ; l’identité s’exporte et s’importe en un seul fichier depuis les préférences.</p></li>
+<li><p>Fenêtre d’export refondue : un seul écran au lieu de quatre, rappel de ce qui part réellement (les positions affichées), part couverte de chaque collection signalée en rouge lorsqu’elle est partielle, tournois exportables seulement avec leurs matchs — et un export trois fois plus rapide.</p></li>
+<li><p>Fenêtre de configuration réorganisée en trois onglets (Interface, Couleurs du plateau, Identité d’émetteur), de taille et de position stables.</p></li>
+<li><p>Panneau Métadonnées redisposé en une seule grille.</p></li>
+<li><p>Le panneau Journal, qui ne recevait que l’écho des commandes, est retiré.</p></li>
+<li><p>Corrections notables : un mot de passe erroné n’ouvre plus une base protégée, les champs des fenêtres modales ne perdent plus le focus au clic, le calcul des indicateurs PR/MWC ne plante plus sur une partie d’argent, et les fichiers temporaires (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, verrou) sont nettoyés à la fermeture.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>0.30.0 (2026-07-26)<a class="headerlink" href="#id7" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Recherche par commentaire : le filtre « Texte de recherche » devient le filtre « Commentaire » et propose trois modes exclusifs — <em>contient le texte</em> (comportement précédent, jeton <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;mot1;mot2&quot;&quot;</span></code>), <em>a un commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">co</span></code>) et <em>sans commentaire</em> (jeton <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — pour retrouver d’un geste les positions annotées, ou au contraire celles qu’il reste à commenter.</p></li>
+<li><p>Positions marquées dans eXtreme Gammon : les marques (<em>flags</em>) posées lors de l’analyse d’un match XG sont désormais lues à l’import et retrouvables par le filtre « Marquée » (jeton <code class="docutils literal notranslate"><span class="pre">fl</span></code>), combinable avec tous les autres critères ; une décision de videau marquée donne deux positions marquées, le double et la prise/passe.</p></li>
+<li><p>Le marquage n’étant pas rétroactif, il suffit de réimporter le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> concerné pour que ses marques rejoignent la base, sans toucher aux commentaires ni aux analyses existants.</p></li>
+<li><p>Corrections notables : le PR affiché sur le badge d’un tournoi se rapporte au joueur de référence et non plus au cumul des deux joueurs, les paquets Anki fondés sur une recherche respectent de nouveau les filtres de cette recherche au lieu de reprendre toute la base, et un blocage de la recherche combinant certains filtres (texte, date, erreur du coup joué) est corrigé.</p></li>
+<li><p>Voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>0.29.0 (2026-07-18)<a class="headerlink" href="#id8" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Export d’un match au format Jellyfish/gnubg (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) depuis l’interface (panneau Matchs) comme en ligne de commande, avec la route serveur correspondante — pratique pour rejouer un match dans un autre logiciel de backgammon.</p></li>
+<li><p>Recherche : nouveau discriminateur « dés exclus » (jeton <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, plusieurs autorisés) qui écarte les positions dont le lancer correspond à un jet donné.</p></li>
+<li><p>Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans une autre fenêtre de blunderDB s’ouvre désormais en lecture seule (navigation, recherche et analyse possibles, modifications désactivées, mention « [lecture seule] » dans la barre de titre) au lieu de risquer une corruption.</p></li>
+<li><p>Provenance des positions : hors mode match, la barre d’informations au-dessus du plateau indique le match — et son tournoi — d’où provient la position étudiée, avec un badge « +N » lorsqu’elle apparaît dans plusieurs matchs.</p></li>
+<li><p>Robustesse accrue face à l’environnement : repli automatique lorsqu’une police, le presse-papier ou la dernière base ouverte ne sont pas disponibles.</p></li>
+<li><p>Un rechargement explicite de la bibliothèque (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, bouton de la barre d’outils ou commande <code class="docutils literal notranslate"><span class="pre">e</span></code>) rouvre le panneau d’analyse de la position affichée.</p></li>
+<li><p>Corrections notables : suppression d’un blocage à l’export de grosses bases, bouton « Aucun » de l’export qui n’exportait pas réellement aucun match, filtre par commentaire multi-mots, dédoublonnage de l’événement et du tournoi dans la barre d’informations, et divers ajustements d’affichage.</p></li>
+<li><p>Voir <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Panneau Matchs</span></a> et <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Manuel</span></a>.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>0.28.0 (2026-07-15)<a class="headerlink" href="#id9" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Panneau de recherche : filtre unifié « Matchs &amp; Tournois » remplaçant les champs de saisie d’identifiants par une fenêtre de sélection (listes à cocher filtrables par texte, boutons <em>Tout</em>/<em>Aucun</em>, cocher un tournoi coche ses matchs membres) — plus rapide sur les grosses bases, l’onglet Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que pour les matchs affichés ; <code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> comble l’écart de parité correspondant.</p></li>
+<li><p>Nouveau filtre « Importée individuellement » (case à cocher du groupe Autre, ou jeton <code class="docutils literal notranslate"><span class="pre">i</span></code> en ligne de commande, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code> ; disponible aussi en CLI via <code class="docutils literal notranslate"><span class="pre">--individual</span></code>) pour retrouver une position enregistrée ou importée seule plutôt que noyée dans un import de match.</p></li>
+<li><p>Correction d’une perte de données : la suppression d’un match ne supprime plus les positions individuellement importées, mises en collection ou intégrées à un paquet Anki que ce match contenait aussi.</p></li>
+<li><p>Mode serveur (headless) : six nouvelles méthodes pour le planificateur Anki à répétition espacée — journal des révisions (<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>), prévision des cartes dues (<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>), suspension / mise en veille / suppression de carte (<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>) et ajustement automatique du taux de rétention visé d’un paquet vers son taux de réussite observé (<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>) ; nouvelle méthode <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code> pour supprimer définitivement les données d’un tenant sur un déploiement PostgreSQL multi-utilisateurs ; nouvelles méthodes <code class="docutils literal notranslate"><span class="pre">matches.list</span></code> (filtrage/tri/pagination) et <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code> (indicateurs PR/MWC bornés à une liste de matchs).</p></li>
+<li><p>Distribution Linux native : paquets <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, qui conservent le bit d’exécution perdu lors du téléchargement du binaire brut.</p></li>
+<li><p>Import : après l’import d’un match, l’onglet Matchs s’affiche et les positions importées sont immédiatement visibles ; après l’import d’une position isolée (fichier XGP, position BGBlitz, fichier de position texte, position collée ou lot de positions), l’onglet Analyse s’ouvre directement sur la position importée, au lieu de l’onglet Matchs ; correction du collage d’une analyse eXtreme Gammon en français ou en allemand depuis macOS, qui restait vide (accents décomposés par le presse-papier du système).</p></li>
+<li><p>Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>, <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a> et <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Téléchargement et installation</span></a>.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>0.27.0 (2026-06-13)<a class="headerlink" href="#id10" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Panneau Anki : ajout d’un mode « entraînement libre » (<em>cram</em>), accessible par le bouton <em>Cram</em> à côté de <em>Study</em>, qui présente des positions aléatoires du paquet sans modifier le planning de révision espacée — idéal pour s’échauffer avant un tournoi ou réviser intensément un paquet sans en perturber l’ordonnancement.</p></li>
+<li><p>Recherche : nouvelle commande <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (alias <code class="docutils literal notranslate"><span class="pre">bl</span></code>) qui charge directement les pires erreurs (équité/MWC) dans la vue d’analyse, avec un nombre optionnel pour en choisir la quantité (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>) ; nouveau filtre par joueur <code class="docutils literal notranslate"><span class="pre">pl'nom'</span></code> qui retrouve toutes les positions issues d’un match impliquant un joueur donné, sur l’un ou l’autre camp ; et des info-bulles, au survol de chaque filtre du panneau de recherche, indiquant le jeton de commande correspondant.</p></li>
+<li><p>Mode serveur (headless) : nouvelles méthodes <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (tous les coups d’un match en un seul appel) et <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (Effective Pip Count des deux joueurs).</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Panneau Anki</span></a> et <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Liste des commandes</span></a>.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>0.26.0 (2026-06-09)<a class="headerlink" href="#id11" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Réglages d’affichage de l’interface dans la fenêtre de configuration : un curseur d’échelle pour agrandir ou réduire l’ensemble de l’interface, et un choix de position des panneaux (en bas, sur le côté ou automatique) afin de mieux exploiter les écrans larges.</p></li>
+<li><p>Ajout d’une barre d’informations au-dessus du plateau rappelant les joueurs et le contexte du match (événement, lieu, ronde, date, longueur).</p></li>
+<li><p>À l’ouverture d’une base, le panneau des matchs est affiché d’emblée et la revue débute sur la première position.</p></li>
+<li><p>Les raccourcis clavier sont désormais indépendants de la disposition du clavier (AZERTY, QWERTY, QWERTZ…).</p></li>
+<li><p>Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du videau).</p></li>
+<li><p>Ajout des onglets de vues multiples : plusieurs espaces de travail indépendants (liste de positions, position courante, recherche) avec les raccourcis <em>CTRL-T</em> (nouvelle vue), <em>CTRL-W</em> (fermer), <em>CTRL-PageUp</em>/<em>CTRL-PageDown</em> (changer de vue) et renommage par double-clic sur l’onglet.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a> et <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Onglets de vues</span></a>.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>0.25.0 (2026-06-07)<a class="headerlink" href="#id12" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une position sans l’enregistrer — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> décode une chaîne XGID en position, et <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> lit un fichier de position unique <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p></li>
+<li><p>Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id13">
+<h3>0.24.0 (2026-06-06)<a class="headerlink" href="#id13" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout d’une image conteneur (Docker) pour le mode headless : un point d’entrée dédié <code class="docutils literal notranslate"><span class="pre">serve</span></code> et un <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> produisant un binaire statique sans interface graphique, afin de déployer le moteur de blunderDB comme service derrière un reverse-proxy.</p></li>
+<li><p>Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>0.23.0 (2026-06-05)<a class="headerlink" href="#id14" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout de visites guidées de l’interface (tour général, recherche, matchs, tournois), rejouables depuis la barre d’outils ou la commande <code class="docutils literal notranslate"><span class="pre">tour</span></code>, et d’une base d’exemple chargeable par la commande <code class="docutils literal notranslate"><span class="pre">demo</span></code> pour découvrir l’outil sans importer ses propres parties.</p></li>
+<li><p>Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, dés, videau) depuis la fenêtre de configuration.</p></li>
+<li><p>Autocomplétion de la ligne de commande (touche <em>TAB</em>).</p></li>
+<li><p>Panneau de recherche : contrôle explicite du type de décision (Pions / Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour les décisions de cube, synchronisé avec le plateau ; le videau proposé est affiché au centre du plateau pour les décisions de prise/passe.</p></li>
+<li><p>Recherche d’une position par son identifiant (filtre <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p></li>
+<li><p>Correction de l’attribution de l’erreur de videau au joueur 1.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visites guidées et base d’exemple</span></a>.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>0.22.0 (2026-06-02)<a class="headerlink" href="#id15" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout d’un mode headless (serveur), avancé et facultatif, qui complète l’application de bureau : un démon <code class="docutils literal notranslate"><span class="pre">serve</span></code> exposant le moteur en HTTP + JSON, un backend PostgreSQL multi-utilisateur avec cloisonnement par tenant (et Row-Level Security en option), une commande <code class="docutils literal notranslate"><span class="pre">migrate</span></code> pour transférer une base SQLite vers PostgreSQL, et un dispatcher générique <code class="docutils literal notranslate"><span class="pre">call</span></code> donnant accès en ligne de commande à toutes les opérations de stockage.</p></li>
+<li><p>Import de positions uniques depuis de nouveaux formats (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz texte, bibliothèque native <code class="docutils literal notranslate"><span class="pre">.db</span></code>) avec enrichissement des doublons entre formats.</p></li>
+<li><p>Corrections : les panneaux ne provoquent plus d’erreur lorsqu’aucune base n’est ouverte et le panneau Commentaires ne boucle plus à l’ouverture.</p></li>
+<li><p>Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>0.21.0 (2026-06-01)<a class="headerlink" href="#id16" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Internationalisation de l’interface : l’intégralité de blunderDB (barre d’outils, panneaux, messages, aide) peut désormais être affichée au choix en anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou russe.</p></li>
+<li><p>Ajout d’une fenêtre de configuration, accessible par un bouton en forme de rouage dans la barre d’outils, permettant de sélectionner la langue.</p></li>
+<li><p>Le choix de la langue est conservé d’une session à l’autre.</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Configuration</span></a>.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>0.20.0 (2026-05-31)<a class="headerlink" href="#id17" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout de la structure d’exclusion <em>Except</em> au panneau de recherche : exclut les positions contenant l’un des pions dessinés, avec marqueur « doit être vide » (double-clic) et nombre de pions par point non limité (commande x).</p></li>
+<li><p>Ajout de l’option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI –dice).</p></li>
+<li><p>Panneau Commentaires : focus automatique du champ de saisie à l’ouverture et boutons éditer / supprimer toujours visibles.</p></li>
+<li><p>Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires.</p></li>
+</ul>
+</section>
+<section id="id18">
+<h3>0.19.0 (2026-05-07)<a class="headerlink" href="#id18" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes.</p></li>
+<li><p>Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs.</p></li>
+<li><p>Toggle PR / MWC instantané.</p></li>
+<li><p>Commande CLI list –type stats.</p></li>
+<li><p>Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches).</p></li>
+<li><p>Correction du calcul de cube_error pour les décisions Double/Pass.</p></li>
+<li><p>Documentation du modèle de statistiques (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</span></a>).</p></li>
+<li><p>Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panneau Stats</span></a>.</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>0.18.0 (2026-04-20)<a class="headerlink" href="#id19" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux.</p></li>
+<li><p>Migration complète vers Svelte 5 runes.</p></li>
+<li><p>Remplacement de 9 modales de tableau par un composant générique DataTableModal.</p></li>
+<li><p>Ajout d’ESLint + Prettier + vitest (125 tests frontend) avec CI.</p></li>
+<li><p>Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier).</p></li>
+<li><p>Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture.</p></li>
+<li><p>Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN).</p></li>
+<li><p>Réécriture du README.</p></li>
+<li><p>Correction de tous les avertissements ESLint (46→0) et Vite (6→0).</p></li>
+</ul>
+</section>
+<section id="id20">
+<h3>0.17.0 (2026-04-20)<a class="headerlink" href="#id20" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Optimisation du stockage : compression zlib des données d’analyse (~80% de réduction), encodage compact des positions (~90% de réduction de la taille).</p></li>
+<li><p>Ajout de 5 index manquants pour améliorer les performances de recherche.</p></li>
+<li><p>Correction de la recherche par erreur de cube.</p></li>
+<li><p>Correction du mode EDIT après une recherche sans résultats.</p></li>
+<li><p>Restauration de l’état du panneau de recherche lors du changement d’onglets.</p></li>
+<li><p>Suppression de 62 instructions de débogage des chemins critiques.</p></li>
+</ul>
+</section>
+<section id="id21">
+<h3>0.16.0 (2026-04-18)<a class="headerlink" href="#id21" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL.</p></li>
+<li><p>Import par lot &gt;=3x plus rapide, recherche filtrée &lt;=100 ms sur 10k+ positions.</p></li>
+<li><p>NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d’abord).</p></li>
+</ul>
+</section>
+<section id="id22">
+<h3>0.15.0 (2026-03-31)<a class="headerlink" href="#id22" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Export de la position en image PNG dans le presse-papier (board seul via Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X).</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>0.14.0 (2026-03-30)<a class="headerlink" href="#id23" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Panneau Anki dédié pour l’étude par répétition espacée (algorithme FSRS).</p></li>
+<li><p>Import des commentaires depuis les fichiers XG.</p></li>
+</ul>
+</section>
+<section id="id24">
+<h3>0.13.0 (2026-03-28)<a class="headerlink" href="#id24" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Simplification de l’interface : la navigation dans les matchs et les collections se fait directement via les panneaux.</p></li>
+<li><p>Ligne de commande intégrée dans la barre d’état.</p></li>
+<li><p>Panneau Console renommé en panneau Log.</p></li>
+<li><p>Panneau Bearoff dédié dans le panneau inférieur.</p></li>
+<li><p>Copier/coller de position dans le panneau de recherche.</p></li>
+<li><p>Glisser-déposer pour réordonner les collections, les positions dans les collections, et les matchs dans les tournois.</p></li>
+<li><p>Colonne tournoi dans le panneau des matchs avec édition inline.</p></li>
+<li><p>Affichage automatique du panneau d’analyse après une recherche.</p></li>
+</ul>
+</section>
+<section id="id25">
+<h3>0.12.0 (2026-03-19)<a class="headerlink" href="#id25" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Import de fichiers de position eXtreme Gammon (XGP) avec analyse.</p></li>
+</ul>
+</section>
+<section id="id26">
+<h3>0.11.0 (2026-03-06)<a class="headerlink" href="#id26" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Filtre de recherche dans les positions courantes.</p></li>
+<li><p>Ajout de filtres par match et par tournoi.</p></li>
+<li><p>Effacement automatique du plateau lors de l’ouverture du panneau de recherche.</p></li>
+</ul>
+</section>
+<section id="id27">
+<h3>0.10.0 (2026-02-25)<a class="headerlink" href="#id27" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).</p></li>
+<li><p>Navigation dans les matchs : parcours des coups d’un match importé, avec mise en évidence du coup joué.</p></li>
+<li><p>Panneau des matchs : liste, tri, édition inline, permutation des joueurs, assignation de tournoi.</p></li>
+<li><p>Import par dossier récursif et import par glisser-déposer.</p></li>
+<li><p>Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.</p></li>
+<li><p>Collections : regroupement personnalisé de positions.</p></li>
+<li><p>Tournois : regroupement de matchs par événement.</p></li>
+<li><p>Sauvegarde et restauration de l’état de session (dernière recherche, position courante).</p></li>
+<li><p>Migration automatique du schéma de base de données.</p></li>
+<li><p>Affichage multi-moteurs dans l’analyse.</p></li>
+<li><p>Filtre d’erreurs/blunders du joueur 1 dans les recherches.</p></li>
+<li><p>Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).</p></li>
+<li><p>Bouton de navigation dans les matchs.</p></li>
+<li><p>Compte de course (pipcount) dans la navigation des matchs.</p></li>
+<li><p>Interface en ligne de commande (CLI) complète.</p></li>
+<li><p>Réouverture automatique de la dernière base de données.</p></li>
+<li><p>Amélioration de la barre d’outils et des icônes.</p></li>
+</ul>
+</section>
+<section id="id28">
+<h3>0.9.0 (2025-11-02)<a class="headerlink" href="#id28" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Correction de bug de la bibliothèque de filtres.</p></li>
+<li><p>Import/export de base de données.</p></li>
+<li><p>Affichage de flèches pour les coups sélectionnés.</p></li>
+<li><p>Raccourcis clavier pour l’import/export.</p></li>
+</ul>
+</section>
+<section id="id29">
+<h3>0.8.0 (2025-05-03)<a class="headerlink" href="#id29" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Possibilité de cacher le compte de course.</p></li>
+<li><p>Chargement d’une position aléatoire.</p></li>
+</ul>
+</section>
+<section id="id30">
+<h3>0.7.0 (2025-02-16)<a class="headerlink" href="#id30" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Prise en charge du japonais et de l’allemand dans les exports de XG.</p></li>
+</ul>
+</section>
+<section id="id31">
+<h3>0.6.0 (2025-02-13)<a class="headerlink" href="#id31" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout de la bibliothèque de filtres.</p></li>
+<li><p>Affichage de la version de la base de données dans les métadonnées.</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>0.5.0 (2025-02-04)<a class="headerlink" href="#id32" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot).</p></li>
+</ul>
+</section>
+<section id="id33">
+<h3>0.4.0 (2025-02-03)<a class="headerlink" href="#id33" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Résolutions de bugs divers.</p></li>
+<li><p>Ajout d’une icône pour blunderDB.</p></li>
+<li><p>Corrections de filtres.</p></li>
+<li><p>Ajout du support de MacOS.</p></li>
+</ul>
+</section>
+<section id="id34">
+<h3>0.3.0 (2025-01-27)<a class="headerlink" href="#id34" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Résolutions de bugs divers.</p></li>
+<li><p>Sauvegarde automatiquement le dimensionnement de la fenêtre.</p></li>
+<li><p>Importe les éventuels commentaires depuis XG.</p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>0.2.0 (2025-01-06)<a class="headerlink" href="#id35" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Résolutions de bugs divers.</p></li>
+<li><p>Ajout de tables de matchs/TP/GV.</p></li>
+<li><p>Ajout de filtres de recherche (coups, décision de videau, date).</p></li>
+<li><p>Ajout de métadonnées sur les positions.</p></li>
+<li><p>Fonction d’import/export entre instances de blunderDB.</p></li>
+<li><p>Ajout de fonction de métadonnées sur les bases de données.</p></li>
+<li><p>Introduction des numéros de versions (base de données et application).</p></li>
+</ul>
+</section>
+<section id="id36">
+<h3>0.1.0 (2024-12-31)<a class="headerlink" href="#id36" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p>Création version bêta.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="sommaire">
+<h1>Sommaire<a class="headerlink" href="#sommaire" title="Lien vers cette rubrique"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#quel-fichier-choisir">1.1. Quel fichier choisir ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#verifier-un-telechargement">1.2. Vérifier un téléchargement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#installation-sous-linux">1.3. Installation sous Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#image-docker-mode-serveur">1.4. Image Docker (mode serveur)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#gestionnaires-de-paquets-windows-et-mac-a-venir">1.5. Gestionnaires de paquets Windows et Mac (à venir)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#avertissements-windows-et-mac">1.6. Avertissements Windows et Mac</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#tutoriels-de-bout-en-bout">2.1. Tutoriels de bout en bout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#comment-progresser-avec-blunderdb">2.2. Comment progresser avec blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#scenario-de-demonstration-3-minutes">2.3. Scénario de démonstration (3 minutes)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">2.4. Créer une nouvelle base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">2.5. Ouvrir une base de donnée existante</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">2.6. Importer et fusionner une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">2.7. Editer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">2.8. Ajouter une position à la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">2.9. Etiqueter une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">2.10. Supprimer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">2.11. Import une position depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">2.12. Importer un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">2.13. Importer un dossier de matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">2.14. Glisser-déposer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">2.15. Naviguer dans un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">2.16. Gérer le panneau des matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">2.17. Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">2.18. Gérer les tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">2.19. Afficher les statistiques de performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#evaluer-une-position-panneau-eval">2.20. Évaluer une position (panneau Eval)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">2.21. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">2.22. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">2.23. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">2.24. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#pour-aller-plus-loin">2.25. Pour aller plus loin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manuel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">3.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">3.2. Interactions principales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">3.3. Description de l’interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#onglets-de-vues">3.4. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">3.5. Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">3.6. Visites guidées et base d’exemple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">3.7. Navigation dans les positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">3.8. Édition de positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">3.9. La ligne de commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">3.10. Panneau Analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">3.11. Panneau Commentaires</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">3.12. Panneau Recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">3.13. Panneau Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">3.14. Panneau Matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">3.15. Panneau Tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">3.16. Panneau Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-eval">3.17. Panneau Eval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">3.18. Panneau Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">3.19. Panneau Métadonnées</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">3.20. Diffuser une base : origine et mot de passe</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Opérations globales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Positions et navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Édition et recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Filtres de recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Commandes diverses</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. Base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Affichage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Outils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#onglets-de-vues">5.7. Onglets de vues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.8. Ligne de commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#historique-de-recherche">5.9. Historique de recherche</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#bibliotheque-de-filtres">5.10. Bibliothèque de filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.11. Panneau d’analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-eval">5.12. Panneau Eval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.13. Panneau des matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.14. Panneau Anki (répétition espacée)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-tournois">5.15. Panneau des tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-collections">5.16. Panneau des collections</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interface en ligne de commande (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. Syntaxe générale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. Commandes disponibles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — Créer une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — Importer des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — Exporter des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#identity-identite-d-emetteur">6.7. identity — Identité d’émetteur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#open-ouvrir-un-fichier-protege">6.8. open — Ouvrir un fichier protégé</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.9. search — Rechercher des positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.10. list — Lister le contenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.11. match — Afficher un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#collection-gerer-les-collections">6.12. collection — Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#anki-paquets-de-repetition-espacee">6.13. anki — Paquets de répétition espacée</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#epc-calculatrice-epc">6.14. epc — Calculatrice EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#bearoff-bases-de-sortie">6.15. bearoff — Bases de sortie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#analyze-rattrapage-gammonnet">6.16. analyze — Rattrapage gammonNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.17. info — Métadonnées de la base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.18. edit — Modifier les métadonnées</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.19. verify — Vérifier l’intégrité</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#vacuum-compacter-la-base-de-donnees">6.20. vacuum — Compacter la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#repair-recalculer-les-colonnes-d-analyse">6.21. repair — Recalculer les colonnes d’analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.22. delete — Supprimer des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#healthcheck-sonder-un-demon">6.23. healthcheck — Sonder un démon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#completion-completion-shell">6.24. completion — Complétion shell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.25. Exemples de flux de travail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.26. Codes de retour</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Foire aux questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-l-utilite-de-blunderdb">8.1. Quelle est l’utilité de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">8.2. Qu’est-ce qui a motivé la création de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">8.3. Comment sauvegarder la base de données courante?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">8.4. Dois-je créer différentes bases de données pour différentes catégories de positions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">8.5. Comment fusionner plusieurs bases de données?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">8.6. Quels formats de fichiers de match sont supportés?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">8.7. Ai-je besoin d’eXtreme Gammon pour utiliser blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">8.8. Qu’est-ce qu’une collection?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">8.9. Qu’est-ce que l’EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#que-vaut-l-evaluateur-integre-gammonnet">8.10. Que vaut l’évaluateur intégré (gammonNet) ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">8.11. Quelle est la différence entre le PR et le Snowie Error Rate?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">8.12. blunderDB dispose-t-il d’une interface en ligne de commande?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-propose-t-il-un-mode-serveur">8.13. blunderDB propose-t-il un mode serveur?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">8.14. Puis-je modifier, copier, partager blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#ou-sont-stockees-mes-donnees">8.15. Où sont stockées mes données?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-partager-une-base-avec-un-autre-joueur">8.16. Puis-je partager une base avec un autre joueur?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">8.17. Quel format de données utilise blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-ont-ete-les-principes-de-conception-de-blunderdb">8.18. Quels ont été les principes de conception de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-l-architecture-logicielle-de-blunderdb">8.19. Quelle est l’architecture logicielle de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">8.20. Sur quelles plateformes blunderDB fonctionne-t-il?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">8.21. D’où vient l’icône de blunderDB?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Feuille de route</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Étape 3 — Étendre</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#import-et-flux">10.1. Import et flux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#categoriser-sans-imposer-de-classification">10.2. Catégoriser sans imposer de classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#analyse-et-evaluation">10.3. Analyse et évaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#pedagogie">10.4. Pédagogie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#partager-une-analyse">10.5. Partager une analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#recherche-et-bibliotheque">10.6. Recherche et bibliothèque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#interface-et-plateforme">10.7. Interface et plateforme</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Étape 4 — Chantiers de fond</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Ce qui n’est <strong>pas</strong> prévu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Mode headless (serveur)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#vue-d-ensemble">13.1. Vue d’ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-demon-serve">13.2. Le démon <code class="docutils literal notranslate"><span class="pre">serve</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#backend-postgresql-et-multi-utilisateurs">13.3. Backend PostgreSQL et multi-utilisateurs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#migrer-une-base-sqlite-vers-postgresql">13.4. Migrer une base SQLite vers PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-dispatcher-generique-call">13.5. Le dispatcher générique <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Contrat d’API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#idempotence">14.1. Idempotence</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annexe: Utilisation avancée des filtres</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">15.1. Recherche de positions en ligne de commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">15.2. Recherche dans les résultats courants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">15.3. Bibliothèque de filtres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">15.4. Exemples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">16.1. Avertissement Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">16.2. Blocage Windows Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#verifier-l-integrite-du-telechargement-sha256">16.3. Vérifier l’intégrité du téléchargement (SHA256)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Annexe Mac : Blocage éventuel de blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">17.1. Installation de blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">17.2. Autorisation de l’exécution de blunderDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annexe: Schéma de la base de données</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#versionnage-et-migrations">18.1. Versionnage et migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principales-tables">18.2. Principales tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principes-de-conception">18.3. Principes de conception</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">19.1. Définitions formelles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">19.2. Décisions comptées au dénominateur du PR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">19.3. Correspondance blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">19.4. Valider vos propres chiffres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">19.5. Référence gnuBG</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="contacts">
+<span id="id37"></span><h1>Contacts<a class="headerlink" href="#contacts" title="Lien vers cette rubrique"></a></h1>
+<p>Auteur: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;.
+Vous pouvez aussi me trouver sur Heroes sous le pseudo postmanpat.</p>
+<p>J’ai développé blunderDB initialement pour mon usage personnel afin de
+pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable
+d’avoir un retour surtout quand on a dépensé un paquet d’heures de
+conception, codage, débuggage… Aussi n’hésitez pas à m’écrire pour
+faire part de votre retour d’expérience. Tous les retours (constructifs)
+sont bienvenus.</p>
+<p>Voici plusieurs manières de discuter:</p>
+<ul class="simple">
+<li><p>rejoindre le serveur Discord de blunderDB: <a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p>m’écrire un mail à <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>,</p></li>
+<li><p>discuter avec moi, si on se retrouve dans un tournoi,</p></li>
+<li><p>sur Github,</p>
+<ul>
+<li><p>ouvrir un ticket: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>pour des corrections de bugs ou des propositions d’amélioration,
+créer une pull request.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>Faire un don<a class="headerlink" href="#faire-un-don" title="Lien vers cette rubrique"></a></h1>
+<p>Si vous appréciez blunderDB et que vous voulez soutenir les développements passés et futurs, vous pouvez</p>
+<ul class="simple">
+<li><p>me payer un verre si on a le plaisir de se rencontrer!</p></li>
+<li><p>faire un petit don par PayPal à l’adresse <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>Remerciements<a class="headerlink" href="#remerciements" title="Lien vers cette rubrique"></a></h1>
+<p>Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre
+fille Perrine. Je tiens à remercier tout particulièrement quelques amis:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em>, de m’avoir initié au backgammon avec joie et
+bienveillance; de montrer la Voie dans la compréhension de ce
+merveilleux jeu; de continuer à m’encourager malgré mes piètres
+tentatives de mieux jouer.</p></li>
+<li><p><em>Nicolas Harmand</em>, joyeux camarade depuis maintenant plus d’une dizaine
+d’années dans de chouettes aventures, et un fantastique partenaire de jeu
+depuis qu’il a choppé le virus du backgammon.</p></li>
+</ul>
+</section>
+<section id="credits">
+<h1>Crédits<a class="headerlink" href="#credits" title="Lien vers cette rubrique"></a></h1>
+<p>blunderDB embarque du code, des données et des polices d’autres personnes.
+L’inventaire complet, avec le texte des licences, est le fichier
+<code class="docutils literal notranslate"><span class="pre">THIRD_PARTY.md</span></code> livré avec chaque paquet (<code class="docutils literal notranslate"><span class="pre">/usr/share/doc/blunderdb/</span></code>)
+et présent à la racine du <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md">dépôt</a>.
+L’essentiel :</p>
+<ul class="simple">
+<li><p>le réseau de neurones <code class="docutils literal notranslate"><span class="pre">strehl-prob5-512-512-256-128</span></code> est l’œuvre
+d”<em>Alexander Strehl</em> (<a class="reference external" href="https://github.com/alexstrehl/backgammon-ai-engine">alexstrehl/backgammon-ai-engine</a>, licence MIT) ; la
+recherche, le modèle de videau et la table d’équité de match qui l’entourent
+forment la configuration propre de <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a> (MIT) ;</p></li>
+<li><p>la table d’équité de match Kazaross-XG2 est l’œuvre de <em>Neil Kazaross</em> ;</p></li>
+<li><p>les tables de take points et de valeurs de gammon sont tirées de <em>The Theory
+of Backgammon</em> de <em>Dirk Schiemann</em> ;</p></li>
+<li><p>les bases de bearoff unilatérale (6 points, 15 pions, pour l’EPC) et
+bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été
+générées avec <a class="reference external" href="https://www.gnu.org/software/gnubg/">GNU Backgammon</a> ;
+GNUbg est un logiciel libre sous licence GPL, et ces tables sont des données
+qu’il a produites, créditées comme telles ;</p></li>
+<li><p>les fichiers de match sont lus par <a class="reference external" href="https://github.com/kevung/xgparser">xgparser</a>, <a class="reference external" href="https://github.com/kevung/gnubgparser">gnubgparser</a> et <a class="reference external" href="https://github.com/kevung/bgfparser">bgfparser</a> (MIT) ;</p></li>
+<li><p>côté Go : <a class="reference external" href="https://gitlab.com/cznic/sqlite">modernc.org/sqlite</a>
+(BSD-3-Clause), <a class="reference external" href="https://github.com/jackc/pgx">pgx</a>, <a class="reference external" href="https://wails.io">Wails</a> et <a class="reference external" href="https://github.com/open-spaced-repetition/go-fsrs">go-fsrs</a> (MIT) ;</p></li>
+<li><p>côté interface : <a class="reference external" href="https://svelte.dev">Svelte</a>, <a class="reference external" href="https://two.js.org">two.js</a>, <a class="reference external" href="https://www.chartjs.org">Chart.js</a> et
+<a class="reference external" href="https://driverjs.com">driver.js</a> (MIT) ;</p></li>
+<li><p>les polices <a class="reference external" href="https://github.com/googlefonts/nunito">Nunito</a> et <a class="reference external" href="https://fonts.google.com/noto/specimen/Noto+Sans+JP">Noto Sans
+JP</a> (SIL Open Font
+License 1.1).</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Téléchargement et installation" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

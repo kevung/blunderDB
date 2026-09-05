@@ -1,0 +1,926 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Manual &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5864e6e0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. List of commands" href="cmd_mode.html" />
+    <link rel="prev" title="2. User Guide" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. User Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">3.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">3.2. Main Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">3.3. Description of the interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">3.4. View Tabs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">3.5. Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">3.6. Guided tours and sample database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">3.7. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">3.8. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">3.9. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">3.10. Analysis Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">3.11. Comments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">3.12. Search Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">3.13. Collections Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">3.14. Matches Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">3.15. Tournaments Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">3.16. Stats Panel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">3.16.1. Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">3.16.2. Opening the panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">3.16.3. Filter bar</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">3.16.3.1. Player perspective</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">3.16.3.2. Available filters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">3.16.4. PR / MWC toggle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">3.16.5. Dashboard tab</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">3.16.5.1. Level cards</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">3.16.5.2. Rolling PR over last N decisions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">3.16.5.3. Top blunders</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">3.16.6. Progression tab</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">3.16.6.1. Tournament line chart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">3.16.6.2. Match scatter plot</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">3.16.7. Errors tab</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">3.16.7.1. Breakdown by cube action</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#direction-des-erreurs-de-videau">3.16.7.2. Direction of cube errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">3.16.7.3. Checker / Cube comparison</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">3.16.7.4. Error magnitude histogram</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-joueurs">3.16.8. Players tab</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">3.16.9. Aggregation rule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">3.16.10. MWC: limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-eval">3.17. Eval Panel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">3.17.1. Bringing a position into the Eval panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">3.17.2. Methodology and assumptions of the Eval panel</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">3.18. Anki Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">3.19. Metadata Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">3.20. Handing out a database: origin and password</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">3.20.1. Marking a database with its origin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">3.20.2. Issuer identity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">3.20.3. Protecting a database with a password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">3.20.4. Reading a file’s origin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Roadmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Stage 3 — Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Stage 4 — Foundational undertakings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. What is <strong>not</strong> planned</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Manual</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1><span class="section-number">3. </span>Manual<a class="headerlink" href="#manuel" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">3.1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>blunderDB is software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
+<p>Positions are stored in a database represented by a <em>.db</em> file.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">3.2. </span>Main Interactions<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>The main interactions possible with blunderDB are:</p>
+<ul class="simple">
+<li><p>add a new position,</p></li>
+<li><p>modify an existing position,</p></li>
+<li><p>copy the board image to the clipboard (PNG) via <strong>CTRL-X</strong>, or with the full analysis via <strong>CTRL-X CTRL-X</strong>,</p></li>
+<li><p>delete an existing position,</p></li>
+<li><p>search for one or more positions,</p></li>
+<li><p>import matches from various sources (XG, GNUbg, BGBlitz, Jellyfish), including comments from XG files,</p></li>
+<li><p>navigate through the moves of an imported match,</p></li>
+<li><p>organize positions into collections,</p></li>
+<li><p>organize matches into tournaments.</p></li>
+</ul>
+<p>The user can freely tag positions and annotate them with comments.</p>
+</section>
+<section id="description-de-l-interface">
+<h2><span class="section-number">3.3. </span>Description of the interface<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>The interface of blunderDB is composed, from top to bottom, of:</p>
+<ul class="simple">
+<li><p>[top] the toolbar, which gathers all the main operations that can be performed on the database,</p></li>
+<li><p>[in the middle] the main display area, which allows for displaying or editing backgammon positions,</p></li>
+<li><p>[at the bottom] the status bar, which provides various information about the database or the current position, and integrates the command line.</p></li>
+</ul>
+<p>Panels can be displayed to:</p>
+<ul class="simple">
+<li><p>display the analysis data associated with the current position from eXtreme Gammon (XG), GNUbg, or BGBlitz,</p></li>
+<li><p>display, add, or modify comments,</p></li>
+<li><p>search and filter positions using combinable criteria,</p></li>
+<li><p>display and manage position collections (collections panel),</p></li>
+<li><p>display the list of imported matches and navigate through the moves of a match (match panel),</p></li>
+<li><p>display and manage tournaments (tournaments panel),</p></li>
+<li><p>display performance statistics (Stats panel),</p></li>
+<li><p>compute the EPC (Effective Pip Count) of a bearoff position (Eval panel),</p></li>
+<li><p>study positions with spaced repetition (Anki panel),</p></li>
+<li><p>display the database metadata (metadata panel).</p></li>
+</ul>
+<p>Modal windows can be displayed to:</p>
+<ul class="simple">
+<li><p>display the blunderDB help,</p></li>
+<li><p>display the catalogue of guided tours (see <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Guided tours and sample database</span></a>),</p></li>
+<li><p>configure database export settings,</p></li>
+<li><p>configure blunderDB, in particular the interface language (see <a class="reference internal" href="#configuration"><span class="std std-ref">Configuration</span></a>).</p></li>
+</ul>
+<p>The main display area provides the user with:</p>
+<ul class="simple">
+<li><p>a board to display or edit a backgammon position,</p></li>
+<li><p>the level and owner of the cube,</p></li>
+<li><p>the pip count of each player,</p></li>
+<li><p>the score of each player,</p></li>
+<li><p>the dice to play. If no values are shown on the dice, the position of the dice indicates which player is on roll and that the position is a cube decision. When the cube decision is a response to a double (take/pass), the offered cube is shown in the centre of the board, at the offered value.</p></li>
+</ul>
+<p id="board-menu-contextuel">A right-click on the board opens a context menu offering: evaluate the position shown in the Eval panel, evaluate its mirror, copy the board image with its analysis to the clipboard (the equivalent of <em>CTRL-X CTRL-X</em>, harder to discover), open a new view on this position, and — if the position already comes from the database — add it to an Anki deck (spaced repetition). This menu does not appear in the Eval panel or in the Search panel, where the right button is already used to place the other colour’s checkers. See <a class="reference internal" href="#eval-amener-position"><span class="std std-ref">Bringing a position into the Eval panel</span></a> for bringing a position into the Eval panel.</p>
+<p>The status bar is structured from left to right with the following information:</p>
+<ul class="simple">
+<li><p>the command line, accessible by pressing the <em>SPACE</em> key,</p></li>
+<li><p>an informational message related to an operation performed by the user,</p></li>
+<li><p>the index of the current position, followed by the number of positions in the current library (or move/game info when navigating a match).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
+</div>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2><span class="section-number">3.4. </span>View Tabs<a class="headerlink" href="#onglets-de-vues" title="Link to this heading"></a></h2>
+<p>Below the toolbar, a tab bar lets you work with several <strong>views</strong> in parallel. Each view is an independent workspace that keeps its own position list, the index of the current position, the displayed position, the analysis and the selected move, the active panel, the comment being edited, as well as the navigation context within a match. This makes it possible, for example, to keep a search open in one view while browsing a match in another.</p>
+<ul class="simple">
+<li><p><strong>Create a view</strong>: click the <em>+</em> button of the tab bar or press <em>CTRL-T</em>. The new view starts as a copy of the current view.</p></li>
+<li><p><strong>Close a view</strong>: click the cross on the tab or press <em>CTRL-W</em>. The last view cannot be closed.</p></li>
+<li><p><strong>Switch view</strong>: click a tab, press <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (or <em>SHIFT-J</em> / <em>SHIFT-K</em>) to move to the previous / next view, or <em>CTRL-1</em> to <em>CTRL-9</em> to jump directly to the n-th view.</p></li>
+<li><p><strong>Rename a view</strong>: double-click the tab, type the new name and confirm with <em>ENTER</em>.</p></li>
+</ul>
+<p>Views are saved with the database session state and restored when it is reopened.</p>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2><span class="section-number">3.5. </span>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB’s settings window. It is organised in five tabs:</p>
+<ul class="simple">
+<li><p><strong>Interface</strong> — language, display scale, panel position;</p></li>
+<li><p><strong>Colours</strong> — the board’s colours;</p></li>
+<li><p><strong>Bearoff</strong> — the extended two-sided bearoff database used by the Bearoff panel;</p></li>
+<li><p><strong>gammonNet</strong> — the settings of the embedded evaluator, described below;</p></li>
+<li><p><strong>Issuer identity</strong> — the key that signs your watermarks, described in <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>.</p></li>
+</ul>
+<p>The <em>Interface</em> tab lets you choose the language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept across sessions.</p>
+<p>The same tab also offers a <strong>Compact database</strong> button, which reclaims the disk space left behind by deletions (matches, tournaments, purges): the database never shrinks by itself when data is deleted, that compaction has to be requested explicitly. The operation can take a while on a large database and temporarily needs about twice its size in free disk space (blunderDB refuses to start rather than risk an interrupted compaction); a confirmation is therefore asked before it runs. The result — the space gained, in megabytes — is then shown in the status bar. The same operation is available on the command line through <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>).</p>
+<p>The <strong>Open the log folder</strong> button just below it opens the folder holding the application log — useful for attaching details to a bug report, especially when blunderDB was started from a shortcut or a double-click, with no terminal attached to show anything.</p>
+<p>The <strong>Check for updates at startup</strong> checkbox, off by default, queries the GitHub repository’s releases page once per launch and shows a message in the status bar when a newer version is available — never a window that gets in the way. This check stays automatically disabled on an installation that came through a package manager (Flatpak, Homebrew, a distribution package…): that channel is the one handling updates then, not blunderDB itself.</p>
+<p>The <em>Board colours</em> tab lets you customise the board’s colours. Each element has its own colour picker: the background, the border, the light and dark points, player 1’s and player 2’s checkers, the dice, the dice pips and the cube. The <em>Reset</em> button restores all the default colours. Like the language, the chosen colours are kept across sessions.</p>
+<p>The <em>Bearoff</em> tab manages the Eval panel’s bearoff tables (see <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Eval Panel</span></a>). They are <strong>neither embedded in the executable nor downloaded</strong>: blunderDB computes them on the machine that uses them, and the result is identical byte for byte to what gnubg produces — the SHA-256 fingerprint is checked before a table is accepted.</p>
+<p>The two ordinary tables (TS-06-06 for the cube verdict, OS-06 for the EPC) are computed on first launch, in the background and without asking: about six seconds on one core, during which the application is used normally. The Eval panel mentions it only if a position is placed there that needs a table which is not ready yet.</p>
+<p>The tab shows the active domain and its origin, the state of the one-sided table the EPC reads, the folder where all this lives, and the list of the tables present with their size and their verdict. Each row can be deleted individually, after confirmation.</p>
+<p><strong>Verified or unverified.</strong> A <em>verified</em> table has exactly the bytes gnubg produces for its domain: its SHA-256 fingerprint is recorded in blunderDB and was found again. An <em>unverified</em> table is well formed but its domain has no recorded fingerprint — nothing is held against it, simply nobody has compared it to the reference. A <em>corrupt</em> table contradicts itself and is never read; it is recomputed.</p>
+<p><strong>Computing a wider table.</strong> The domain is picked from a list of two families, together with the number of cores to give it (by default all but one, so the machine stays usable):</p>
+<ul class="simple">
+<li><p><strong>exact cube (two-sided)</strong>, from TS-06-06 to TS-06-15: widens the domain where the winning probability and the cube verdict are read rather than estimated;</p></li>
+<li><p><strong>EPC beyond the home board (one-sided)</strong>, from OS-06 to OS-10: widens how far from home a chequer may stand without the EPC block going silent. This sweep reads only positions smaller than the one it is computing, so it is sequential by construction and the core count buys it nothing — the picker says so by greying out.</p></li>
+</ul>
+<p>Before anything starts, the tab states three figures for the chosen domain: the size on disk, the memory needed during the computation, and the time it should take <em>on this machine</em>. The last one starts as an estimate and becomes a measurement: every run wide enough records its own speed and keeps it. A domain the available memory cannot hold is offered greyed out, with the reason — “it would need 24 GB, 12 are left” is an answer, an absent row would not be.</p>
+<p>As an order of magnitude, on a sixteen-thread machine: TS-06-09 weighs 191 MB and takes about ten seconds, TS-06-11 weighs 1.2 GB and a few minutes, TS-06-13 exceeds what most machines can hold in memory. On the one-sided side, on one core: OS-07 weighs 4.9 MB and takes 17 s, OS-08 15 MB and 1 min 20, OS-10 117 MB and half an hour.</p>
+<p><strong>Pause and resume.</strong> During the computation, the progress shows the <em>measured</em> remaining time and two distinct buttons: <em>Pause</em> and <em>Cancel</em>. Pausing writes the state of the computation beside the table; running it again continues where it stopped instead of starting over. Cancelling keeps nothing. Closing the configuration window interrupts nothing — the computation carries on in the background.</p>
+<p>A paused computation is found again at the next launch, named and quantified (“TS-06-09 interrupted at 43%”), with <em>Resume</em> and <em>Delete</em>. Nothing restarts on its own: the user is the one who asked it to stop.</p>
+<p>The tab finally allows pointing to an external two-sided <code class="docutils literal notranslate"><span class="pre">.bd</span></code> file, for example a database produced by gnubg itself: the table with the widest domain wins.</p>
+<p>The <strong>gammonNet</strong> tab configures the embedded evaluator (see <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a>). Two search depths can be set there, named and kept separately — lowering one never changes the other:</p>
+<ul class="simple">
+<li><p><strong>Display depth</strong> — the interactive comfort while editing the board; never written to the database.</p></li>
+<li><p><strong>Analysis depth</strong> — what the post-import analysis batch writes into a position’s Analysis.</p></li>
+</ul>
+<p>Both default to <strong>2-ply</strong>, the canonical configuration. The tab also offers <strong>pruning</strong> (<code class="docutils literal notranslate"><span class="pre">k=12</span></code> by default) and the <strong>number of candidate moves shown</strong> (10 by default), as well as an <strong>auto-analyze after import</strong> box which, once ticked, checks after every import whether positions <strong>with no analysis at all</strong> remain (neither gammonNet, nor XG, nor GNUbg, nor BGBlitz — the rule is “an evaluation only fills a hole”, never a replacement) and, if so, starts a gammonNet analysis in the background at the configured analysis depth. An <strong>Analyze now</strong> button re-runs the same catch-up manually, useful for a library built before this feature existed.</p>
+<p>A second button, <strong>Re-analyze stale positions</strong>, covers the opposite case: a position already analyzed by gammonNet, but whose stored analysis was written by an engine version older than the one currently running, or at a depth different from the analysis depth configured above, is flagged there as stale and re-evaluated. A position that also carries an XG, GNUbg or BGBlitz analysis is never touched by this button, whatever its gammonNet content — <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>’s protection remains unconditional. The count shown next to each button (positions with no analysis, stale positions) is purely informational; the batch recomputes its own list when it starts.</p>
+<p>Both batches are <strong>bounded, visible and cancellable, never a silent daemon</strong>: their progress (<code class="docutils literal notranslate"><span class="pre">positions</span> <span class="pre">analysed</span> <span class="pre">/</span> <span class="pre">total</span></code>) and a cancel button appear in the status bar for their whole duration, and disappear once finished in favor of a message summarizing the result — how many positions were <strong>analyzed</strong>, how many were <strong>refused</strong> (a position gammonNet declines to evaluate, such as a match score beyond its MET’s range, which is never a failure) and how many <strong>failed</strong> (retried, unchanged, on the next run). Closing the application during either loses nothing: each analyzed position is written as it goes, and the next run resumes exactly where the analysis stopped, with no journal to keep.</p>
+<p>The configuration window also provides interface display settings. An <strong>interface scale</strong> slider lets you enlarge or shrink all interface elements, which is useful on high-density screens or to improve readability. A <strong>panel position</strong> menu sets where the panels (search, matches, analysis) appear relative to the board: <em>bottom</em>, <em>side</em> or <em>automatic</em> (the side is then chosen on wide screens to make better use of the available space). Like the other settings, these choices are kept from one session to the next.</p>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2><span class="section-number">3.6. </span>Guided tours and sample database<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Link to this heading"></a></h2>
+<p>To make getting started easier, blunderDB offers <strong>guided tours</strong> of the interface. The tour catalogue opens from the toolbar or with the <code class="docutils literal notranslate"><span class="pre">tour</span></code> command (alias <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>). Seven tours are available: a general tour of the interface, and tours dedicated to searching positions, reviewing matches, reviewing tournaments, the Eval panel, Anki review and statistics. Each tour highlights the relevant interface elements, step by step, opens the panel it talks about along the way, and can be replayed at any time. On first launch, the general tour is offered automatically.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">demo</span></code> command loads a <strong>sample database</strong> that lets you explore the tool’s features without importing your own games: three matches (two of them grouped in a tournament) analysed by eXtreme Gammon, BGBlitz and gammonNet, three thematic collections, tagged comments (<code class="docutils literal notranslate"><span class="pre">#blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">#cube</span></code>) and an Anki deck with its review log. The players, the tournament and the venue are fictional. The guided tours rely on this database when no database is open.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2><span class="section-number">3.7. </span>Browsing positions<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>By default, blunderDB allows you to:</p>
+<ul class="simple">
+<li><p>scrolling through the different positions in the current library,</p></li>
+<li><p>displaying the analysis information associated with a position.</p></li>
+<li><p>displaying, adding, and modifying comments on a position.</p></li>
+</ul>
+<p>The toolbar’s <strong>Go to position</strong> button opens a window where a position’s index can be typed in directly to jump to it, without scrolling. It is the graphical equivalent of the <code class="docutils literal notranslate"><span class="pre">[number]</span></code> command line command (see <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Positions and navigation</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2><span class="section-number">3.8. </span>Editing positions<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p>Pressing the <em>TAB</em> key opens the search panel and allows editing a position on the board to add it to the database or to define a position structure to search for. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse (see <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2><span class="section-number">3.9. </span>The command line<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>The command line, integrated into the status bar, allows you to perform all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions based on filters… After getting familiar with the interface, it is recommended to gradually use the command line for a powerful and smooth use of blunderDB, especially for position search functionalities.</p>
+<p>To open the command line, press the <em>SPACE</em> key. To submit a query and close the command line, press the <em>ENTER</em> key.</p>
+<p>blunderDB executes the queries sent by the user as long as they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required from the user.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available commands in the command line.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id3"></span><h2><span class="section-number">3.10. </span>Analysis Panel<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p>The <strong>Analysis</strong> panel (<em>CTRL-L</em>) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The <em>d</em> key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press <em>CTRL-L</em> or run the <code class="docutils literal notranslate"><span class="pre">list</span></code> command to show or hide the panel.</p>
+<p>Moves are written as they read on the board, here as in the Eval panel: the least advanced checker moves first, and <strong>a checker that chains several dice is written only once</strong> — a 64 played with the same checker reads <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, and <code class="docutils literal notranslate"><span class="pre">24/14*</span></code> if it hits on arrival. The detail of the chain only reappears when it says something more: a hit <em>on the way</em> keeps its intermediate point, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, without which the hit on the 18 would vanish from the notation.</p>
+<p>An imported analysis’ equity follows the same rule as the Eval panel: the column states its own referential, “Equity (money)” or “Equity (match)” depending on the score of the analysed position, never a plain “Equity” silent on the scale. The <strong>Jacoby</strong> and <strong>Beaver</strong> rules active on a money-game position are also shown, in badges under the cube decision table.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id4"></span><h2><span class="section-number">3.11. </span>Comments Panel<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) displays, adds, and edits comments associated with the current position. Comments imported from XG files are automatically associated with the corresponding positions. Press <em>CTRL-P</em> or run the <code class="docutils literal notranslate"><span class="pre">comment</span></code> command to show or hide the panel.</p>
+</section>
+<section id="panneau-recherche">
+<span id="id5"></span><h2><span class="section-number">3.12. </span>Search Panel<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p>The <strong>Search</strong> panel (<em>CTRL-F</em> or <em>TAB</em>) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The <em>TAB</em> key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.</p>
+<figure class="align-default" id="id11">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Search Panel" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Search panel: numeric filters, checker structure on the board, <em>At least</em> / <em>Except</em> tabs.</span><a class="headerlink" href="#id11" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>To refine a search among the currently filtered positions, use the <code class="docutils literal notranslate"><span class="pre">ss</span></code> command followed by filters (e.g.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). The search panel also offers a <em>Search in current results</em> checkbox for the same functionality.</p>
+<p>The panel offers an explicit control over the <strong>decision type</strong> searched for: <em>Indifferent</em> (no filter), <em>Checker</em> (checker decisions) or <em>Cube</em> (cube decisions). When <em>Cube</em> is selected, a second list specifies the sub-type: <em>All</em>, <em>Double / No double</em> (the player on roll has to decide whether to double) or <em>Take / Pass</em> (response to an opponent’s double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In <em>Take / Pass</em> mode, the cube is shown in the centre of the board at the offered value; that value remains editable.</p>
+<p>The <strong>Flagged</strong> filter keeps the positions you flagged in the software the match came from. Only eXtreme Gammon produces this information, recorded move by move in the <code class="docutils literal notranslate"><span class="pre">.xg</span></code> file; blunderDB reads it on import and keeps it. A flagged cube decision yields two flagged positions, the double and the take/pass, blunderDB splitting in two what the source file records as a single decision.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Flagging is not retroactive: matches already in the database do not carry this information, since it exists only in the source files. Simply import the relevant <code class="docutils literal notranslate"><span class="pre">.xg</span></code> file again — the import detects the duplicate and adds nothing but the flags, leaving existing comments and analyses untouched. A flag can neither be set nor removed from within blunderDB: for a temporary working list, use a collection instead.</p>
+</div>
+<p>The <strong>Comment</strong> filter queries the comments attached to positions in three exclusive modes. <em>contains text</em> searches for one or more words in the comment text (input field, words separated by <code class="docutils literal notranslate"><span class="pre">;</span></code>, at least one must match); <em>has a comment</em> keeps any position carrying a comment, whatever its content; <em>no comment</em> keeps, on the contrary, the positions that are not annotated — useful, combined with an error or date filter, to draw up the list of what remains to be commented.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Comments imported from a match file (XG, GNUbg) count as comments: blunderDB does not record their origin and therefore cannot tell a note you typed from one taken over from the source file. Moreover, comments attached to a <em>match</em> or a <em>tournament</em> are not concerned: they annotate the match or the tournament, not its positions.</p>
+</div>
+<p>The <strong>Matches &amp; Tournaments</strong> filter is backed by a shared picker (a modal window) instead of typed numeric IDs: two checkbox lists, one for matches and one for tournaments, each text-filterable (player, date, event for matches; name, date, location for tournaments), with <em>All</em> / <em>None</em> buttons that act only on the currently filtered subset. Checking a tournament automatically checks (and greys out) its member matches in the match list, making visible the fact that a tournament is equivalent to the set of its matches.</p>
+<p>The search panel has three tabs along its left edge: <em>Search</em> (the filters), <em>History</em> and <em>Saved</em>. The <strong>History</strong> tab lists past searches with their date and command: a click selects a search and displays the associated position on the board, a double-click re-runs it. Each entry can be saved to the filter library (bookmark icon, by giving the filter a name) or deleted. The <strong>Saved</strong> tab contains the <strong>filter library</strong>: double-click a saved filter to re-run the corresponding search (see <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Annex: Advanced Filter Usage</span></a>). The <code class="docutils literal notranslate"><span class="pre">history</span></code> command (alias <code class="docutils literal notranslate"><span class="pre">hi</span></code>) opens the search panel.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available filters.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id6"></span><h2><span class="section-number">3.13. </span>Collections Panel<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id12">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Collections Panel" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Collections panel: name, number of positions, description, last modified.</span><a class="headerlink" href="#id12" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code class="docutils literal notranslate"><span class="pre">collection</span></code> command to show or hide the panel.</p>
+</section>
+<section id="panneau-matchs">
+<span id="id7"></span><h2><span class="section-number">3.14. </span>Matches Panel<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<p>The <strong>Matches</strong> panel (<em>CTRL-Tab</em>) lists imported matches. Double-click a match (or press <em>ENTER</em>) to navigate through its moves. The <code class="docutils literal notranslate"><span class="pre">m</span></code> command resumes navigation in the last visited match.</p>
+<p>The user can:</p>
+<ul class="simple">
+<li><p>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</p></li>
+<li><p>switch between games using the <em>PageUp</em> and <em>PageDown</em> keys,</p></li>
+<li><p>display the move analysis (checker and cube) by pressing <em>CTRL-L</em>,</p></li>
+<li><p>toggle between checker move and cube analysis with the <em>d</em> key,</p></li>
+<li><p>see the actually played move highlighted in the analysis.</p></li>
+</ul>
+<p>The last visited position in each match is saved and restored automatically. Press <em>CTRL-Tab</em> or run the <code class="docutils literal notranslate"><span class="pre">match</span></code> command to show or hide the panel.</p>
+<p>Each match can be exported as a Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> transcript via the ⬇ button in the match list or the <em>.mat</em> button of the match sheet.</p>
+<p>The <strong>Merge players</strong> button in the panel toolbar opens a window listing all the player names in the database with their number of matches: select the spelling variants of the same player, choose the canonical name to keep, then merge. Useful to unify per-player statistics when the same player appears under several names.</p>
+<p>When a match is open, an <strong>information bar</strong> appears above the board: it recalls the players involved (<em>player 1</em> versus <em>player 2</em>) as well as the match context (event, location, round, date and match length, when this information is available). This bar is also shown outside match mode: when a studied position (from a search, a collection or a direct access) comes from one or several matches, it indicates its <strong>provenance</strong> — the first match concerned and, where applicable, a “+N” badge listing the others on hover. A position imported on its own, which no match references, shows nothing.</p>
+<p>When opening a database that contains matches, the <strong>Matches</strong> panel is shown right away and the review starts directly on the first position, so you can begin navigating immediately.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A database can be opened for writing by only one window at a time. If you open a database already open in another blunderDB window, it opens <strong>read-only</strong>: navigation, search and analysis remain possible, but any modification is disabled and the title bar shows “[read-only]”.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id8"></span><h2><span class="section-number">3.15. </span>Tournaments Panel<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<figure class="align-default" id="id13">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Tournaments Panel" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Tournaments panel: one tournament per row, number of matches, reference player’s PR.</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The <strong>Tournaments</strong> panel (<em>CTRL-Y</em>) groups matches into tournaments for organised tracking and per-event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press <em>CTRL-Y</em> to show or hide the panel.</p>
+<p>Tournaments fill themselves at import time. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it under the tournament of that name, creating it if it does not exist yet. The tournament’s date and location are left empty — this panel is where they are filled in. A match already in the database is never refiled: re-importing its file does not undo what was arranged by hand.</p>
+<p>The <strong>PR</strong> column of each tournament shows the PR of the <strong>reference player</strong> — that is, the player appearing in the greatest number of the tournament’s matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents’: for your own tournaments, it reflects your performance alone. The reference player’s name appears in a tooltip when hovering over the value.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2><span class="section-number">3.16. </span>Stats Panel<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="id9">
+<h3><span class="section-number">3.16.1. </span>Introduction<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>The <strong>Stats</strong> panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays <strong>PR</strong> (Performance Rate) and <strong>MWC cost</strong> (Match Winning Chance cost) for all positions or a filtered subset.</p>
+<p>The Stats panel is especially useful for:</p>
+<ul class="simple">
+<li><p><strong>gauging your level</strong> against reference thresholds (world-class, expert, advanced…) using the global PR;</p></li>
+<li><p><strong>tracking your progress</strong> tournament by tournament or match by match using the Progression tab charts;</p></li>
+<li><p><strong>identifying your weak spots</strong>: the Errors tab shows the breakdown between checker plays and cube decisions, and the distribution of error magnitudes;</p></li>
+<li><p><strong>compare the players in the database</strong> with one another, one row per player, through the Players tab — useful for following an entire competition;</p></li>
+<li><p><strong>navigating directly to the relevant positions</strong> by clicking any indicator (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3><span class="section-number">3.16.2. </span>Opening the panel<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>To open the Stats panel:</p>
+<ul class="simple">
+<li><p>Press <em>CTRL-D</em>.</p></li>
+<li><p>Type the command <code class="docutils literal notranslate"><span class="pre">:stats</span></code> or <code class="docutils literal notranslate"><span class="pre">:st</span></code> in the command line.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The panel refreshes automatically whenever the filter is changed. It does not recalculate statistics on a simple PR ↔ MWC toggle: both metrics are computed simultaneously by the backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3><span class="section-number">3.16.3. </span>Filter bar<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>The filter bar at the top of the panel restricts the computation to a subset of positions.</p>
+<section id="perspective-joueur">
+<h4><span class="section-number">3.16.3.1. </span>Player perspective<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p>The <strong>Player</strong> drop-down filters statistics to the analysed player. blunderDB automatically selects the player whose name appears most often in the database — changeable at any time.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Changing the player does not cause any data loss; simply re-select the previous player in the list.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4><span class="section-number">3.16.3.2. </span>Available filters<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Tournament(s)</strong> — restrict to one or more tournaments. Multiple tournaments can be selected simultaneously.</p></li>
+<li><p><strong>Dates</strong> — time range (<em>From</em> … <em>To</em>). If only the start date is set, more recent positions are included.</p></li>
+<li><p><strong>Decision type</strong> — All / Checker plays / Cube decisions.</p></li>
+<li><p><strong>Match length</strong> — restrict to specific match lengths (1, 3, 5, 7, 9, 11, 13, 15, 21 points). Multiple lengths can be combined.</p></li>
+</ul>
+<p>A <strong>Reset</strong> button clears all filters (except the auto-detected player).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Filters are saved in the blunderDB configuration (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) and restored on the next launch.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3><span class="section-number">3.16.4. </span>PR / MWC toggle<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>The <strong>PR / MWC</strong> button at the top of the panel toggles the metric displayed across all tabs.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Measures <em>money-game</em> play quality: sum of errors in milli-points, divided by the number of decisions. Independent of match score.</p>
+<p>Approximate reference thresholds:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Level</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Advanced</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intermediate</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Beginner</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Cumulative match winning probability lost due to errors, over the full filtered dataset. Computed using the Kazaross-XG2 MET embedded in blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>MWC cost <strong>does not apply</strong> to <em>money-game</em> positions (with no match stake). Those positions are excluded from the MWC computation. MWC values depend on the MET used; they are not directly comparable across software using different METs.</p>
+</div>
+</div></blockquote>
+<p>The PR ↔ MWC toggle is instant: no backend recalculation is performed.</p>
+</section>
+<section id="onglet-dashboard">
+<h3><span class="section-number">3.16.5. </span>Dashboard tab<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<p>The <strong>Dashboard</strong> tab gives a summary view of key indicators.</p>
+<figure class="align-default" id="id14">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Dashboard tab of the Stats panel" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Dashboard tab: global PR, checker PR, cube PR.</span><a class="headerlink" href="#id14" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4><span class="section-number">3.16.5.1. </span>Level cards<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Three cards display the PR (or MWC) for:</p>
+<ul class="simple">
+<li><p><strong>All</strong> — all decisions (checker + cube);</p></li>
+<li><p><strong>Checker</strong> — checker plays only;</p></li>
+<li><p><strong>Cube</strong> — cube decisions only.</p></li>
+</ul>
+<p>Clicking a card loads the positions in the corresponding subset into the analysis panel (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The total number of decisions is shown at the bottom of each card on hover.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4><span class="section-number">3.16.5.2. </span>Rolling PR over last N decisions<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>A row of PR (or MWC) values computed over the last <em>N</em> decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.</p>
+<p>Clicking a value loads the corresponding last <em>N</em> positions.</p>
+</section>
+<section id="top-blunders">
+<h4><span class="section-number">3.16.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>The list of the 10 worst errors (or MWC cost), sorted by descending magnitude. Clicking a row loads the relevant position in the analysis panel.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3><span class="section-number">3.16.6. </span>Progression tab<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p>The <strong>Progression</strong> tab shows how your level evolves over time.</p>
+<section id="courbe-par-tournoi">
+<h4><span class="section-number">3.16.6.1. </span>Tournament line chart<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>A line chart displays the PR (or MWC) for each tournament (X axis: tournament order, Y axis: metric value). Colour bands materialise the level thresholds.</p>
+<p>Clicking a point on the chart opens a context menu with two options:</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — opens the tournament in the Tournaments panel.</p></li>
+<li><p><strong>Open positions</strong> — loads all positions from the tournament into the analysis panel.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4><span class="section-number">3.16.6.2. </span>Match scatter plot<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>A scatter plot represents each match (X axis: date, Y axis: PR or MWC). Point size is proportional to the number of decisions in the match.</p>
+<p>Clicking a point opens a context menu:</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — opens the match in the Matches panel.</p></li>
+<li><p><strong>Open positions</strong> — loads all positions from the match into the analysis panel.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3><span class="section-number">3.16.7. </span>Errors tab<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p>The <strong>Errors</strong> tab breaks down error sources.</p>
+<figure class="align-default" id="id15">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Errors tab of the Stats panel" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Errors tab: PR breakdown by cube action.</span><a class="headerlink" href="#id15" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="repartition-par-action-de-videau">
+<h4><span class="section-number">3.16.7.1. </span>Breakdown by cube action<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
+<p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4><span class="section-number">3.16.7.2. </span>Direction of cube errors<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Link to this heading"></a></h4>
+<p>The breakdown above says <em>how much</em> cube decisions cost; this table says in <em>which direction</em> they go wrong.</p>
+<p>A cube position carries two decisions taken by two different players, presented here as two rows:</p>
+<ul class="simple">
+<li><p><strong>Offer</strong> — the player holding the cube doubles or does not. Their errors are the <strong>missed doubles</strong> (a double was called for) and the <strong>premature doubles</strong> (it was not).</p></li>
+<li><p><strong>Answer</strong> — the player being offered the cube takes or passes. Their errors are the <strong>wrong passes</strong> (a correct take was passed) and the <strong>wrong takes</strong> (a correct pass was taken).</p></li>
+</ul>
+<p>The two rows are deliberately kept apart: a player can perfectly well double late <em>and</em> take loosely, and a single figure would call that “balanced” while losing both halves of the information.</p>
+<p>Each cell shows the number of decisions; the tooltip gives the cumulated equity lost. Clicking a cell loads the matching positions. A cell at zero is not clickable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This table counts decisions, it passes no judgement. At what gap a tendency deserves to be named depends on the sample size and on a point of reference, neither of which the engine holds.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4><span class="section-number">3.16.7.3. </span>Checker / Cube comparison<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>A comparison chart places checker plays and cube decisions side by side. Clicking a bar loads the positions in the subset with an error.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4><span class="section-number">3.16.7.4. </span>Error magnitude histogram<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>A histogram distributes errors by magnitude in milli-points (buckets: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the positions in the bucket.</p>
+</section>
+</section>
+<section id="onglet-joueurs">
+<h3><span class="section-number">3.16.8. </span>Players tab<a class="headerlink" href="#onglet-joueurs" title="Link to this heading"></a></h3>
+<p>The three previous tabs describe <strong>one</strong> player; the <strong>Players</strong> tab compares them all. It shows one row per player in the database, which answers the need of an organiser following a whole competition rather than one particular player.</p>
+<figure class="align-default" id="id16">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Players tab of the Stats panel" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">The Players tab: one row per player, sortable by any column.</span><a class="headerlink" href="#id16" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Columns, in order:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Player</p></td>
+<td><p>The name <strong>as it appears in the matches</strong>. A player recorded under two spellings therefore shows up on two rows; use the player merge to bring them together.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Matches</p></td>
+<td><p>Number of matches played within the retained period.</p></td>
+</tr>
+<tr class="row-even"><td><p>W–L</p></td>
+<td><p>Wins and losses. An unfinished match (truncated log, resignation) counts as neither: W + L can therefore be lower than the number of matches.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Decisions</p></td>
+<td><p>Number of counted decisions — the PR’s denominator. This is the column that says what the neighbouring rates are worth: a PR computed over twelve decisions means nothing.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Overall Performance Rate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Checker PR, Cube PR</p></td>
+<td><p>The PR split by decision type.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (see <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Annex: Statistics model — XG / gnuBG / blunderDB alignment</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Blunders</p></td>
+<td><p>Number of serious errors (at least 0.100 EMG).</p></td>
+</tr>
+<tr class="row-even"><td><p>Luck</p></td>
+<td><p>Average luck per roll, in thousandths of a point, signed: positive if the dice were favourable.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Use:</p>
+<ul class="simple">
+<li><p><strong>Sort</strong> — click a column header. The table opens sorted by ascending PR, best player first. Players for whom nothing was measured stay at the bottom whichever way the sort goes: a zero for lack of data is not a perfect performance.</p></li>
+<li><p><strong>Open a player’s detail</strong> — click a row. The player is selected in the filter bar and the display switches to the Dashboard tab.</p></li>
+<li><p><strong>Narrow the period</strong> — the date, tournament and match-length filters apply as usual, which makes it possible to bound the table to the dates of a competition.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A dash (”—”) marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored back then, and nothing allows it to be reconstructed afterwards — the source files must be re-imported. Formats that do not carry it (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) never will.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3><span class="section-number">3.16.9. </span>Aggregation rule<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The PR of a tournament (or any subset) is computed using the <strong>sum/sum</strong> rule — never as an average of individual match PRs.</p>
+<p>Formula:</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournament} = \frac{\sum_{i} \text{error}_i}{\text{total number of decisions}}\]</div>
+<p><strong>Example:</strong> a player plays two matches in a tournament —</p>
+<ul class="simple">
+<li><p>Match A: 10 decisions, total error 50 mp → PR = 5.0</p></li>
+<li><p>Match B: 90 decisions, total error 270 mp → PR = 3.0</p></li>
+</ul>
+<p>Naive average of PRs: (5.0 + 3.0) / 2 = <strong>4.0</strong> <em>(incorrect)</em></p>
+<p>Sum/sum rule: (50 + 270) / (10 + 90) = 320 / 100 = <strong>3.2</strong> <em>(correct)</em></p>
+<p>The sum/sum rule is the only one that handles varying match lengths correctly (a 21-point match carries more weight than a 1-point match).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3><span class="section-number">3.16.10. </span>MWC: limitations<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The MWC cost is computed using the <strong>Kazaross-XG2 MET</strong>, the de facto reference table in competitive backgammon. Results are not directly comparable with software using other METs.</p></li>
+<li><p><em>Money-game</em> positions (with no match score) are <strong>excluded</strong> from the MWC computation. If your database contains many money-game positions, the MWC cost may be underestimated or unavailable.</p></li>
+<li><p>The MWC cost is cumulative over the full filtered dataset — not a per-decision indicator. It measures the total impact of your errors on your winning chances.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2><span class="section-number">3.17. </span>Eval Panel<a class="headerlink" href="#panneau-eval" title="Link to this heading"></a></h2>
+<p>The <strong>Eval</strong> panel (<em>CTRL-E</em>) evaluates live whatever position sits on the board; on a bearoff position it specialises and additionally computes the EPC (Effective Pip Count). It is opened by pressing <em>CTRL-E</em>, by clicking the Eval tab in the lower panel, or by running the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command.</p>
+<p>The panel always shows the <strong>single decision</strong> the position on the board calls for — never two at once — and the facts that go with it. Each quantity is read in the axis that suits it rather than in a single imposed axis: the winning, gammon and backgammon probabilities and the cubeless equity of each player, computed <em>before the roll</em>, are read <strong>per player</strong> (bottom, top, then Δ), to the left of the cube decision, when no dice are showing. Facts and decision stay side by side: the cube decision never drops below the figures that justify it, whatever the interface language and the position on the board. As soon as dice are showing, these same <em>before the roll</em> values change axis: they are read <strong>on roll</strong>, at the head of the candidate-move list, as an italic <em>before the roll</em> row — not one more candidate move, a reference against which to read each move. The gap between that row and a move contains the luck of the roll, never the merit of the move, and so it carries no error column. On a pure bearoff position, a second table, still <strong>per player</strong> and always present, dice showing or not, carries the EPC, the pip count, the wastage, the average number of rolls and the standard deviation; these five columns never migrate. The two tables are stacked and share the same column grid: same edges, same column guides, a single column of dots — they read as one two-storey object. The regime badge, the engine attribution (the depth of the last evaluation appears there too) and the <em>Challenge</em> box form a separate strip, right-aligned above the tables.</p>
+<p>Only the candidate-move list scrolls — the <em>before the roll</em> row, too, stays pinned above it; the rest of the panel (facts, badge, cube decision) always remains visible, with no particular adjustment of the panel size.</p>
+<p>The facts table and the decision are computed by gammonNet, embedded, without XG or gnubg. The computation follows the position without ever freezing the interface: a 0-ply depth is displayed immediately on every gesture, then, after half a second of stillness, a deeper evaluation (2 plies by default, adjustable in the <em>gammonNet</em> tab of the settings) replaces it in the background — any new gesture cancels that background computation. The depth shown in the badge strip, or inside the regime badge on a race position, is always the one that actually produced the figure shown, never the one requested; it is not repeated on every row, since a live evaluation shares the same depth for all moves. The equity of the candidate moves and of the cube decision follows the score of the position: in money game it is expressed in points, at a match score in <strong>normalised equity</strong> — the same scale as XG and GNU Backgammon, where winning the value of the current cube is worth +1 and losing it −1 — never mixed in the same table. The column header states it explicitly rather than leaving the scale to guess: “Equity (money)” in money game, “Equity (match)” at a match score. It accounts for the <strong>live cube</strong>: the search values every terminal position through the cube model (Janowski, measured efficiency) in the position’s cube state, the way XG and GNU Backgammon do in <em>cubeful</em> evaluation. This is what makes the gammon-go and gammon-save effects visible at the score — at 4-away/2-away, the player behind plays 8/2 6/2 on an opening 6-4 because an early double will give the gammon the value of the match, something a cubeless evaluation cannot see. The <em>before the roll</em> row, by contrast, stays a <strong>cubeless</strong> equity: it is a fact about the position, not a decision. This panel never modifies the database: it is a computation, not a stored analysis. Clicking a candidate move shows it on the board as arrows, exactly as in the Analysis panel. The discreet <strong>?</strong> button, in the badge strip, leads to the <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a> engine repository; the full attribution (Strehl network, gammonNet configuration) appears in the Acknowledgments of the help.</p>
+<p>The user edits the checker position over the whole board, exactly as in edit mode: left click places a checker of the bottom player, right click a checker of the top player. The second table, the race one, only appears when the resulting position is a pure bearoff (all checkers of both players in their home board); on any other position, only the table of the four common columns (win, gammon, backgammon, cubeless) responds, and the decision bears on the checkers or on a generic cube depending on whether dice are showing.</p>
+<p>In each facts table, one row per player — identified by its coloured dot, the black player always at the bottom. The first carries, as long as no dice are showing, the player’s win, gammon and backgammon (probabilities, without the % sign) and cubeless equity; the second, on a bearoff position and dice showing or not, the EPC, the pip count, the wastage (difference between the EPC and the pip count), the average number of rolls and the standard deviation. When both players have values to compare, a <strong>Δ</strong> row gives the <em>signed</em> differences (bottom − top: negative when the black player is ahead). Outside a race position, showing dice therefore makes the facts tables themselves disappear: the four columns they carried have just changed axis, on roll, at the head of the move list.</p>
+<p>The cube decision always has the same shape, whatever the origin of the figures — exact table, evaluated regime or ordinary gammonNet evaluation: <strong>one row per option</strong>, in the order <em>no double</em>, <em>double/take</em>, <em>double/pass</em>, with its equity in the position’s frame of reference and its gap to the best option. The order never changes, unlike the move list: the three options have names, so it is the name one reads, not the rank. The best one is recognised by its highlighting and by its gap cell left empty. When the cube has already been turned, the options read <em>no redouble</em>, <em>redouble/take</em>, <em>redouble/pass</em>.</p>
+<p>A last row gives the <strong>verdict</strong>. It takes four values: <em>no double</em>, <em>double, take</em>, <em>double, pass</em> and <em>too good to double</em>, the last when playing the position on is worth more than cashing the point: doubling would then be a mistake for the opposite reason to that of a plain <em>no double</em>. It is also the only place where the panel says there is <strong>no</strong> verdict, rather than suggesting a computation in progress:</p>
+<ul class="simple">
+<li><p><em>no decision</em> — the regime is not entitled to one; the cube verdict is never estimated (see the <em>estimated</em> badge);</p></li>
+<li><p><em>not evaluable at this score</em> — the engine refuses the position, typically a score beyond the horizon of the match equity table;</p></li>
+<li><p><em>opponent owns the cube</em> and <em>cube dead (Crawford)</em> — the cube cannot be turned. The equities remain displayed, for information, but no option carries a gap: an error is what a choice costs, and there is no choice.</p></li>
+</ul>
+<p>In money game, the <strong>Jacoby</strong> and <strong>Beaver</strong> rules active on the position appear under the cube table, in small badges next to the verdict they change: the <em>no double</em> verdict of a position under the Jacoby rule is not the same computation as without it, and nothing else on screen said so.</p>
+<p>The regime badge, the evaluation depth, the link to the engine and the <em>Challenge</em> box form a separate strip, right-aligned above the tables.</p>
+<p>The <strong>player on roll</strong> and the <strong>cube position</strong> are edited directly on the board, as in edit mode: clicking a player’s bearoff/score rectangle gives that player the roll; clicking the cube cycles centred → owned bottom → owned top (right click cycles the other way). The cube value stays pinned — in money game the equities are expressed in units of the current cube, only its owner matters. The analysis is recomputed immediately. In the estimated regime, the badge itself is clickable and opens the <em>Bearoff</em> tab of the settings directly; its tooltip explains why (cube verdict not estimable, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) and how to widen the exact domain.</p>
+<p>The <strong>score</strong> is also edited directly on the board, as in edit mode: left click on a player’s score rectangle decrements their number of points to go, right click increments it. Leaving the <em>money</em> score (-1, -1) by editing one side alone automatically aligns the other side on the same value rather than leaving an inconsistent score. On a bearoff position in the <em>exact</em> regime, moving from a money score to a match score leaves the winning probability as it is (a database lookup, valid whatever the frame of reference) but switches the displayed equity and cube verdict to those of the <em>evaluated</em> regime — the exact table being money by construction, it cannot answer the question asked at the score. The badge then becomes composite (“exact (win) · evaluated (cube)”) to say so explicitly.</p>
+<p>The <strong>dice</strong>, finally, are edited the same way, and they are what decides the question being asked: dice on the board make a checker decision (the list of candidate moves), no dice a cube decision. Left-clicking a die raises its value (6 wraps to 1), right-clicking lowers it (1 wraps to 6); clicking a die on a board that has none puts down two at once — a single die would be neither a checker decision nor a cube decision. Clicking a player’s rectangle removes the dice to ask a cube question, and the next click on a die puts them back as they were.</p>
+<p><em>BACKSPACE</em>, or a double-click outside the board, clears the position: empty board, money score (-1, -1), no dice showing — values specific to the Eval panel, different from those used in edit mode (7 everywhere, dice 3-1), to stay consistent with what the panel shows by default.</p>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3><span class="section-number">3.17.1. </span>Bringing a position into the Eval panel<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Link to this heading"></a></h3>
+<p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Two gestures bring it there:</p>
+<ul class="simple">
+<li><p><strong>Right click on the board</strong>, in an analysis panel or while navigating a match, then <em>Evaluate this position</em>: the Eval panel opens directly on that position, as displayed. The context menu does not appear in the Eval panel or in the Search panel, where the right button already serves to place checkers of the other colour.</p></li>
+<li><p><strong>CTRL-C then CTRL-V</strong>: copy the position from the analysis panel, then paste it once in the Eval panel. Pasting also accepts an XGID from elsewhere (eXtreme Gammon, GNU Backgammon, another instance of blunderDB): it only has to be in the clipboard.</p></li>
+</ul>
+<p>The Eval panel’s board is a draft: the position arrives there without its database identifier, so that no change made here can rewrite the record it came from. All the usual board edits remain available there (checkers, cube, dice, score), and the evaluation follows every change.</p>
+<p>In the other direction, <em>CTRL-C</em> copies the Eval panel’s board to the clipboard, with an XGID recomputed from the checkers on the board — hence pasteable directly into eXtreme Gammon or into another instance of blunderDB. Only the position travels: the evaluation shown by the panel is not a database record and does not accompany the copy.</p>
+<p>On leaving the Eval panel, the position previously viewed is restored: the draft is never saved on its own.</p>
+<p>When the position is a pure bearoff (all checkers of both players in their home board) and no dice are showing, the cube decision shows, for the player on roll:</p>
+<ul class="simple">
+<li><p>in the <em>exact</em> regime: the money equities (cubeless, no double, double/take, double/pass) and the <strong>money cube verdict</strong> (no double, double/take, double/pass or too good to double) — outside a match score, see above for the case of the score,</p></li>
+<li><p>in the <em>evaluated</em> regime: the same equities and the same four-valued verdict, but <strong>played out by gammonNet</strong> (search + Janowski cube model) rather than read from a table — available <strong>even at a match score</strong>, which the estimated regime could never offer;</p></li>
+<li><p>in the <em>estimated</em> regime: the cube verdict is then deliberately not shown — only the winning probability, in the facts table, along with its error margin, remains available.</p></li>
+</ul>
+<p>As soon as dice are showing on a race position, this <em>before the roll</em> cube decision disappears — the board then calls for a checker decision, not a cube one — but the winning probability, for its part, remains a fact of the position, not a decision: it joins the <em>before the roll</em> row at the head of the move list, next to the EPC which, for its part, stays displayed just to the left.</p>
+<p>A badge indicates the regime: <strong>exact</strong> (value read from a two-sided database), <strong>evaluated · &lt;depth&gt;</strong> (played out by gammonNet — the depth shown is the one that actually produced the figure shown), <strong>estimated ± margin</strong>, or, at a match score within the exact domain, <strong>exact (win) · evaluated (cube)</strong> — see above. The exact regime wins wherever it is available; otherwise the evaluated regime is displayed as soon as it has finished computing, replacing in place the estimated regime shown while waiting. See <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Methodology and assumptions of the Eval panel</span></a> for the precise definition of the three regimes and their assumptions.</p>
+<p><strong>Widening the exact domain.</strong> The table computed on first launch covers 6 chequers a side. Two ways to go further, in the configuration’s <em>Bearoff</em> tab:</p>
+<ul class="simple">
+<li><p>compute a wider two-sided table — up to TS-06-15 if the machine has the memory for it. The tab states the size, the memory and the time on this machine before starting, and the computation pauses and resumes. A cancelled computation leaves a <code class="docutils literal notranslate"><span class="pre">.part</span></code> file which is never read as a table;</p></li>
+<li><p>point to any two-sided gnubg <code class="docutils literal notranslate"><span class="pre">.bd</span></code> file. The database with the widest domain automatically wins.</p></li>
+</ul>
+<p><strong>The panel’s board is a scratch board, and it is remembered.</strong> Leaving the Eval panel and coming back finds the position it was left on, not the default bearoff board: that one is only served the first time the panel is opened in a session. Sending a position from the database to the panel wins over that memory, and <em>BACKSPACE</em> hands back the default board at any time. Nothing is written to the database along the way — the scratch board has no position identity, and its evaluation is recomputed on arrival rather than carried over.</p>
+<p><strong>Challenge mode.</strong> The <em>Challenge</em> box, in the badge strip, enables a training mode: on every change to the position, the values of three zones are masked (replaced by “···”); clicking a zone reveals that zone only. Without dice, these are the bottom player’s row, the top player’s row and the cube decision — the Δ row only appears once both player rows are revealed. The decision block then keeps its three rows: it is its values, its verdict and the highlighting of the best option that disappear, failing which the exercise would be solved by looking for the bold row. With dice showing on a race position, each player’s EPC row is masked as before, but the third zone then covers the <em>before the roll</em> row and the move list <strong>together</strong>: the list being sorted from best move to worst, revealing it partially would already give the answer away. With dice showing outside a race position, that same single zone alone covers everything the panel displays. One can thus practise estimating each side’s EPC, then deciding on the cube or on the move to play, before checking. The setting is remembered.</p>
+<p>To close the Eval panel, press <em>CTRL-E</em> or switch to another tab.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3><span class="section-number">3.17.2. </span>Methodology and assumptions of the Eval panel<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Link to this heading"></a></h3>
+<p>Every value displayed by the panel rests on precise assumptions, stated here exhaustively.</p>
+<p><strong>Domain.</strong> The <em>race zone</em> — winning probability and cube verdict — covers pure bearoffs only: every remaining chequer of both players in their home board. The position is evaluated <em>before the roll</em>; any dice set on it are ignored.</p>
+<p>The <strong>EPC blocks</strong>, on the other hand, go further since 0.37.0: a side gets its EPC as soon as its farthest chequer fits in the loaded one-sided table. With the default table (six points) that is the old home-board rule; with an eight-point table, computed from the <em>Bearoff</em> tab, a side with a chequer on the 8-point is treated like any other. Nothing is extrapolated: a chequer one point too far simply has no EPC, exactly as a chequer on the 7-point had none before. When the table that answered is not the six-point one, its name appears in the corner of the race block (“OS-08”) — without it one would read “six” by default and believe the side entirely home.</p>
+<p><strong>EPC blocks (always exact).</strong> The EPC, the average number of rolls and the standard deviation come from the exact distribution of the number of rolls needed to bear every chequer off, read from GNUbg’s one-sided database (6 to 10 points, 15 chequers, computed on the machine). EPC = average rolls × 49/6 (49/6 ≈ 8.167 is the exact average of pips per roll, doubles counted four times); wastage = EPC − pip count. The only idealisation is <em>one-sided optimal play</em>: each player minimises their own rolls, ignoring the opponent — that is the standard definition of the EPC.</p>
+<p><strong>Winning probability, exact regime.</strong> Direct lookup in the widest available two-sided database (built-in TS-06-06, external file, or downloaded TS-06-11). These databases result from a complete retrograde analysis under optimal two-sided play by both sides: no additional assumption, error limited to quantisation (&lt; 0.002%).</p>
+<p><strong>Winning probability, estimated regime.</strong> Outside the database’s domain: the probability is obtained by convolving the two one-sided distributions (the player on roll wins if their number of rolls is less than or equal to the opponent’s), then applying a frozen polynomial correction, calibrated offline against the TS-06-11 database. Three assumptions:</p>
+<ul class="simple">
+<li><p><strong>independence</strong> of the two bearoff processes — structural in a race, with no contact there is no interaction whatsoever;</p></li>
+<li><p><strong>optimal one-sided play by both sides</strong> — this is <em>the approximation</em>: in reality the trailing player deviates to play for variance and the leader for safety. The measured effect is an antisymmetric bias (the convolution overstates the leader’s advantage) which the correction absorbs statistically;</p></li>
+<li><p>the <strong>correction</strong> was calibrated and validated on the oracle’s domain (up to 11 checkers per player). Measured residual error: standard deviation 0.05%, 99th percentile 0.17%, observed maximum 0.9% (in winning-probability points). <strong>Beyond 11 checkers per player, this bound is extrapolated</strong> — the trend is monotonic but no oracle certifies it.</p></li>
+</ul>
+<p><strong>Equities and cube verdict (exact regime only).</strong> The displayed equities are those of the <strong>money game, without Jacoby</strong>, the reference framework of the bearoff literature. Within the ≤ 11 checkers per player domain, gammons are impossible (each side has already borne off at least 4 checkers): this is not an approximation. The verdict (no double / double, take / double, pass) is reconstructed exactly from the stored equities, following GNUbg’s rule, validated verdict for verdict against its analysis.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The cubeful equities assume <strong>optimal cube play by both sides all the way to the end</strong>: future recubes are fully valued (complete retrograde analysis). In the very volatile races at the end of the game, the cascade of recubes eats up almost all of the advantage of the side on roll — the “no double” and “double/take” equities can then be close to zero where an engine such as XG, whose cube model does not value this cascade, shows values close to the dead cube (for instance 2 checkers on the 3 point against 2 checkers on the 2 point: 62% winning chances, exact D/T +0.006 versus +0.475 for XG). The displayed <strong>decision</strong>, however, coincides with the engines’.</p>
+</div>
+<p><strong>Winning probability and verdict, evaluated regime.</strong> Outside the exact domain, the winning probability comes from gammonNet’s raw output (0- or 2-ply search depending on the gesture, never read from a table), and the verdict from a Janowski “Decide” applied to that output — the search <em>plays out</em> the trajectory instead of summarising a snapshot of it, which is precisely what the estimated regime could not do (see below) and allows, alone among the three regimes together with the exact one, a verdict <strong>at the match score</strong>.</p>
+<p>This regime was measured, not merely assumed, against the built-in two-sided table (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 sampled money decisions, canonical parameters 2-ply k=12): money verdict agreement <strong>93.4%</strong> (3735/4000), broken down by distance to gammonNet’s take point — 61.1% within 1% of the take point (the zone most sensitive to a coin toss), 88.3% between 1 and 5%, 91.5% between 5 and 10%, 94.0% between 10 and 20%, 94.4% beyond. Winning-probability gap: mean 0.85%, median 0.44%, 95th percentile 3.21%, maximum 8.30%. Cubeful-equity gap: mean 0.039, median 0.018, 95th percentile 0.151, maximum 0.406. The shape is the expected one: most of the disagreement concentrates exactly at the take point, where two legitimately different methods diverge most on a close decision — not a diffuse error that would cost equity everywhere.</p>
+<p><strong>Why is there no estimated verdict?</strong> What follows targets specifically the <em>convolution</em> method (estimated regime), not the evaluated regime above: cubeful equity is a <em>trajectory</em> problem (when to double) that no statistical summary of the position captures — the best static model measured leaves a residual error (standard deviation 0.016 of equity, maximum 0.20) large enough to flip every close decision. Likewise, converting the verdict to the match score through a match-equity table was measured to be insufficient (12% of disagreements with GNUbg’s 2-ply analysis, including genuine blunders). Since a wrong verdict displayed with confidence is worse than no verdict, the convolution was never allowed to display a verdict — it is a search that plays out the trajectory, not a statistical summary, that fills this hole.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The bearoff databases are immutable mathematical tables. blunderDB computes them itself, identically to GNUbg’s <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> tool — byte for byte — in the <em>Bearoff</em> tab of the configuration or with <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="panneau-anki">
+<span id="id10"></span><h2><span class="section-number">3.18. </span>Anki Panel<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p>The <strong>Anki</strong> panel (<em>CTRL-K</em>) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.</p>
+<p><strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or the current search results. Search-based decks sync automatically when the Anki tab is opened.</p>
+<p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
+<p><strong>Showing the answer:</strong> The card asks a question — which move to play, or which cube action. Think, then press <em>SPACE</em> (or click the masked area) to reveal the answer: the recorded analysis of the position, as the Analysis tab presents it. It appears below the rating buttons, which stay in place and within reach. Clicking a move in the list shows it on the board.</p>
+<p>Nothing forces you to reveal the answer in order to rate: if you are sure of yourself, the <em>1</em> to <em>4</em> keys stay active. The answer is masked again on the next card, but not if you simply switch tabs — go and consult the Eval panel or the position’s comment, it will be waiting for you when you return.</p>
+<p>A position without a recorded analysis says so directly, with no masked area.</p>
+<p><strong>Limiting the session.</strong> By default a review session runs through every card that is due. You can cap it at a number of cards, per deck, in the Settings: tick <em>Limit session</em> and give how many cards a session should serve. When the limit is reached the session stops and says so — the message tells “limit reached, so many cards still due” apart from a queue that is genuinely empty. To carry on anyway, free drill is there: it serves other positions without changing anything in the schedule.</p>
+<p>A limit of <strong>0</strong> serves no card at all: it is a state in its own right, useful to freeze a deck while preparing for a tournament, and it is not the same thing as “no limit”. The <em>Study</em> button is then disabled.</p>
+<p>The limit applies to the <strong>session</strong>, not to the day. A blunderDB deck is built on a collection or on a search: it is a finite corpus, introduced over a few sessions, whose daily volume is already bounded by its size. A daily cap would never bite, or else would build a backlog on a deck that fitted in a single session.</p>
+<p><strong>Free drill (cram):</strong> The <em>Cram</em> button, next to <em>Study</em>, starts a free-drill session: random positions from the deck are shown to you regardless of the FSRS schedule. This mode <strong>never alters the spaced-repetition plan</strong> — ideal for warming up before a tournament or intensively reviewing a themed deck without disturbing its ordering. A <em>Cram</em> badge replaces the card state and a <em>Next</em> button (keys <em>1</em> to <em>4</em>) cycles through the positions. <em>Esc</em> returns to the list without saving an interrupted session.</p>
+<p><strong>Pause/Resume:</strong> You can interrupt a review session at any time with <em>Esc</em>. The button changes to <em>Resume</em> and shows your progress. Click it to pick up where you left off.</p>
+<p><strong>Deck management:</strong> Use the action buttons to rename, synchronise, reset or delete decks (a confirmation is asked for the last two). The FSRS parameters (target retention, maximum interval, fuzz) can be set per deck in the Settings (gear icon).</p>
+<p><strong>Retention: the target and the measurement.</strong> The <em>target retention</em> is your own choice on the trade-off between workload and quality of recall: the higher it is, the shorter the intervals and the more you review. Alongside it, the Settings show the <strong>measured retention</strong> over your own reviews — information, never a control loop: blunderDB does not change your target to chase your success rate. Below some twenty reviews the measurement is not shown: it would read as a fact when it is only noise.</p>
+<p>Changing the retention <strong>is not retroactive</strong>: each card takes up the new pace at its next review, and the due dates already set do not move. The effect is therefore gradual, and invisible on the day itself.</p>
+<p>The <em>maximum interval</em> bounds the spacing. A recently created deck starts at one year: a position the algorithm would push back by several years has left the deck without you deciding so, and your own game changes faster than that. Older decks keep the value they had.</p>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2><span class="section-number">3.19. </span>Metadata Panel<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p>The <strong>Metadata</strong> panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the <code class="docutils literal notranslate"><span class="pre">meta</span></code> command.</p>
+<p>It also shows the database’s origin <strong>when there is one</strong> — see <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>. An ordinary database does not show that section.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2><span class="section-number">3.20. </span>Handing out a database: origin and password<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Link to this heading"></a></h2>
+<p>A teacher handing out a database of positions has two mechanisms, independent of each other, both optional and both chosen <strong>at export time</strong>: marking the file with its origin, and protecting it with a password.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Neither tracks what becomes of the file. blunderDB <strong>records nothing on the recipient’s side</strong>: opening a marked database is exactly like opening any other, and nothing anywhere logs who opened it, when, or where its contents came from.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3><span class="section-number">3.20.1. </span>Marking a database with its origin<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Link to this heading"></a></h3>
+<p>The export dialog fits on a single screen: the form, then a progress overlay laid over it while the file is written. It closes by itself when finished, and the result appears in the status bar.</p>
+<p>Three points deserve attention:</p>
+<ul class="simple">
+<li><p><strong>The export covers the positions currently displayed</strong>, not the whole database. After a search, only the results go out — the dialog says so at the top.</p></li>
+<li><p><strong>A collection whose positions are not all in the selection arrives truncated.</strong> The list therefore shows, for each collection, how much of it is covered (“12/40”), in red when it is partial.</p></li>
+<li><p><strong>Tournaments can only be exported together with matches</strong>: without them the tournament–match link does not exist and the tournament would arrive empty. The box stays disabled until “include matches” is ticked.</p></li>
+</ul>
+<p>The <em>User</em>, <em>Description</em> and <em>Date</em> fields describe the <strong>file being produced</strong>; they are pre-filled from the source database. The <em>My saved filters</em> box is kept apart from the others: it exports not content but your own saved searches, which are of no use in someone else’s database.</p>
+<p>Ticking <strong>Mark this file with its origin</strong> reveals two fields:</p>
+<ul class="simple">
+<li><p><strong>Origin</strong> — what this file is and where it comes from, in your own words: “Jean Dupont’s lesson — 12 March 2026”. This field is <strong>required</strong>: while it is empty the export button stays disabled.</p></li>
+<li><p><strong>Note</strong>, optional — terms of use, a contact address, a request not to pass the file on.</p></li>
+</ul>
+<p>The mark is signed with your issuer identity. It is therefore <strong>tamper-evident and unforgeable</strong>: nobody can alter it, nor fabricate one in your name. It is however <strong>not unremovable</strong> — the distributed file is an ordinary SQLite database, and blunderDB is free software. It prevents nothing: it says where the file came from.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3><span class="section-number">3.20.2. </span>Issuer identity<a class="headerlink" href="#identite-d-emetteur" title="Link to this heading"></a></h3>
+<p>Marks are signed with your <strong>issuer identity</strong>, created by itself the first time you mark a file; there is nothing to set up. It belongs to a person rather than to a database: every file you mark carries the same public fingerprint, of the form <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>You can give that fingerprint to your recipients so they can check that a file really comes from you. The identity moves from one machine to another as a single file (extension <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), optionally protected by a passphrase. <strong>That file lets anyone holding it sign in your name: do not share it.</strong></p>
+<p>In the preferences (the gear icon in the toolbar), the <em>Issuer identity</em> tab shows your name and fingerprint, and offers <em>Save identity…</em>, <em>Load identity…</em> and <em>Regenerate…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Regenerating revokes nothing.</strong> A watermark embeds the public key that signed it, so it verifies for ever, on its own. If your identity file has leaked, whoever holds it can keep signing under your old fingerprint, and those marks stay valid.</p>
+<p>What protects you after a leak is not software: it is publishing your new fingerprint and disowning the old one to your recipients.</p>
+<p>Regenerating overwrites the current key; blunderDB offers to save it before replacing it.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3><span class="section-number">3.20.3. </span>Protecting a database with a password<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Link to this heading"></a></h3>
+<p>The password is typed masked, here as when opening a protected file; the eye icon reveals it <strong>while it is held down</strong>, and masks it again as soon as it is released.</p>
+<p>Ticking <strong>Protect this file with a password</strong> produces a file with the <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> extension — even if you chose a <code class="docutils literal notranslate"><span class="pre">.db</span></code> name in the save dialog, which opens before the password is asked for. To open it, use the usual open-database action: the file chooser accepts both <code class="docutils literal notranslate"><span class="pre">.db</span></code> and <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB then asks for the password and installs an ordinary database beside it; nothing is asked afterwards.</p>
+<p>The dialog offers to <strong>delete the protected file once opened</strong>: without that you keep the same content under two names. The box is not ticked by default — the protected file is yours to keep if you mean to pass it on — and the deletion only happens after a successful open.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The password protects the file <strong>in transit</strong>, not the database. It stops a stranger opening a file left in a downloads folder or an attachment forwarded by mistake. It does not protect you from whoever you gave the password to.</p>
+</div>
+<p>The password is checked on <strong>every</strong> open, including when the file has already been opened on this machine before.</p>
+<p>Technically, the database is encrypted with <strong>AES-256 in GCM mode</strong>, with the key derived from the password by <strong>Argon2id</strong> (64 MiB of memory, 3 passes, 4 lanes) and a random salt unique to each file. GCM authenticates the whole payload: a wrong password is detected as such, and so is any tampering with the encrypted file — you never silently end up with a corrupt database.</p>
+<p>The protected file’s header stays <strong>in the clear</strong>: its origin remains readable without the password.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3><span class="section-number">3.20.4. </span>Reading a file’s origin<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Link to this heading"></a></h3>
+<p>In the application, open the file and show the <strong>Metadata</strong> panel (the <code class="docutils literal notranslate"><span class="pre">meta</span></code> command). An <strong>Origin</strong> section appears at the top of the panel, read-only, stating what was written, by whom, when, and how the signature checks out:</p>
+<ul class="simple">
+<li><p>“✓ signature verified — marked by you”: the file carries your mark, intact;</p></li>
+<li><p>“✓ signature verified”: the mark is intact and comes from another key — compare its fingerprint with the one the producer gave you;</p></li>
+<li><p>“⚠ invalid signature”: the document has been altered or forged.</p></li>
+</ul>
+<p>This section does not appear on an ordinary database.</p>
+<p>From the command line, <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">file.db</span></code> shows the origin and the state of the signature, <strong>without ever writing to the file</strong>. It works on a protected file too, without the password. See <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> for <code class="docutils literal notranslate"><span class="pre">export</span></code>’s <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> and <code class="docutils literal notranslate"><span class="pre">--password</span></code> options, and for <code class="docutils literal notranslate"><span class="pre">identity</span></code> and <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="2. User Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="4. List of commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

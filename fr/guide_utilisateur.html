@@ -1,0 +1,849 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Guide utilisateur &mdash; Documentation blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d0e80ae2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="3. Manuel" href="manuel.html" />
+    <link rel="prev" title="1. Téléchargement et installation" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Guide utilisateur</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tutoriels-de-bout-en-bout">2.1. Tutoriels de bout en bout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mon-premier-import">2.1.1. Mon premier import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etudier-un-match">2.1.2. Étudier un match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-anki">2.1.3. Une session Anki</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployer-le-mode-serveur-derriere-un-proxy">2.1.4. Déployer le mode serveur derrière un proxy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-progresser-avec-blunderdb">2.2. Comment progresser avec blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-de-demonstration-3-minutes">2.3. Scénario de démonstration (3 minutes)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">2.4. Créer une nouvelle base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">2.5. Ouvrir une base de donnée existante</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">2.6. Importer et fusionner une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">2.7. Editer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">2.8. Ajouter une position à la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">2.9. Etiqueter une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">2.10. Supprimer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">2.11. Import une position depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">2.12. Importer un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">2.13. Importer un dossier de matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">2.14. Glisser-déposer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">2.15. Naviguer dans un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">2.16. Gérer le panneau des matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">2.17. Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">2.18. Gérer les tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">2.19. Afficher les statistiques de performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluer-une-position-panneau-eval">2.20. Évaluer une position (panneau Eval)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">2.21. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">2.22. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">2.23. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">2.24. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">2.25. Pour aller plus loin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Feuille de route</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Étape 3 — Étendre</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Étape 4 — Chantiers de fond</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Ce qui n’est <strong>pas</strong> prévu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Contrat d’API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Guide utilisateur</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1><span class="section-number">2. </span>Guide utilisateur<a class="headerlink" href="#guide-utilisateur" title="Lien vers cette rubrique"></a></h1>
+<p>Ce guide est une introduction pratique à blunderDB pour une prise en main
+rapide. Quatre tutoriels de bout en bout couvrent les usages les plus
+courants ; la suite du guide reste un catalogue de référence, geste par
+geste, à consulter au besoin.</p>
+<section id="tutoriels-de-bout-en-bout">
+<h2><span class="section-number">2.1. </span>Tutoriels de bout en bout<a class="headerlink" href="#tutoriels-de-bout-en-bout" title="Lien vers cette rubrique"></a></h2>
+<section id="mon-premier-import">
+<span id="tuto-premier-import"></span><h3><span class="section-number">2.1.1. </span>Mon premier import<a class="headerlink" href="#mon-premier-import" title="Lien vers cette rubrique"></a></h3>
+<p>Ce tutoriel part d’un fichier de match eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>) et arrive à
+la liste des positions où vous avez le plus perdu.</p>
+<ol class="arabic">
+<li><p><strong>Créer une base.</strong> Bouton « Nouvelle base de données » de la barre
+d’outils (ou <em>CTRL-N</em>), choisir un emplacement et un nom ; l’extension
+<code class="docutils literal notranslate"><span class="pre">.db</span></code> est ajoutée automatiquement.</p></li>
+<li><p><strong>Importer le match.</strong> Glisser-déposer le fichier <code class="docutils literal notranslate"><span class="pre">.xg</span></code> sur la fenêtre
+de blunderDB (ou <em>CTRL-I</em>, puis le sélectionner). blunderDB détecte le
+format, importe les positions, l’analyse déjà présente dans le fichier
+XG (coups, décisions de videau, marques) et affiche le panneau des
+matchs sur l’import réussi.</p></li>
+<li><p><strong>Revoir le match.</strong> Double-cliquer sur la ligne du match (ou la
+sélectionner et appuyer sur <em>ENTREE</em>) ouvre la revue sur la dernière
+position visitée. Les touches <em>GAUCHE</em>/<em>DROITE</em> (ou <em>j</em>/<em>k</em>) parcourent
+les coups ; <em>PageUp</em>/<em>PageDown</em> changent de partie.</p></li>
+<li><p><strong>Lire l’analyse.</strong> <em>CTRL-L</em> affiche le panneau Analyse : les meilleurs
+coups, leur équité et l’erreur du coup joué (surligné dans la table).
+Sur une décision de videau, la même touche affiche la table des
+équités de videau et le verdict.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_analysis.png"><img alt="Panneau Analyse pendant la revue d'un match" src="_images/panel_analysis.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Le panneau Analyse pendant la revue d’un match : le coup joué est
+surligné dans la table des coups candidats.</span><a class="headerlink" href="#id2" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Trouver les plus grosses erreurs.</strong> Depuis n’importe où, la commande
+<code class="docutils literal notranslate"><span class="pre">bl</span></code> (ou <code class="docutils literal notranslate"><span class="pre">blunders</span></code>, <em>ESPACE</em> pour ouvrir la ligne de commande)
+charge directement les positions où l’erreur a été la plus coûteuse dans
+le panneau d’analyse — inutile de construire une recherche à la main
+pour un premier passage sur un import. Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panneau Stats</span></a> pour affiner ce
+choix par joueur ou par plage de dates une fois plusieurs matchs
+importés.</p></li>
+</ol>
+</section>
+<section id="etudier-un-match">
+<span id="tuto-etudier-match"></span><h3><span class="section-number">2.1.2. </span>Étudier un match<a class="headerlink" href="#etudier-un-match" title="Lien vers cette rubrique"></a></h3>
+<p>Une fois plusieurs matchs importés, ce tutoriel détaille l’étude d’un match
+en particulier — au-delà du simple parcours du tutoriel précédent.</p>
+<ol class="arabic">
+<li><p><strong>Ouvrir le panneau des matchs</strong> (<em>CTRL-Tab</em>). Il liste tous les matchs
+importés, triables par colonne (joueur, date, longueur, tournoi, PR).</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_matches.png"><img alt="Panneau des matchs" src="_images/panel_matches.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Le panneau des matchs : liste triable, PR et coût MWC par match.</span><a class="headerlink" href="#id3" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Ouvrir la revue</strong> en double-cliquant sur la ligne, ou en la
+sélectionnant puis <em>ENTREE</em>. La barre d’informations au-dessus du
+plateau rappelle les deux joueurs, le tournoi et le score.</p></li>
+<li><p><strong>Basculer coups de pions / décision de videau</strong> avec la touche <em>d</em> sur
+une même position quand les deux analyses sont disponibles (l’une des
+deux peut être absente selon ce que le fichier importé contenait).</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_cube.png"><img alt="Panneau Analyse sur une décision de videau" src="_images/panel_cube.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Une décision de videau dans le panneau Analyse : équités money,
+erreur de chaque option, meilleure décision.</span><a class="headerlink" href="#id4" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Annoter</strong> ce que vous observez : <em>CTRL-P</em> ouvre le panneau
+Commentaires sur la position affichée — utile pour noter <em>pourquoi</em> un
+coup est un blunder, pas seulement <em>qu’il l’est</em>.</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="_images/panel_comments.png"><img alt="Panneau Commentaires sur une position" src="_images/panel_comments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Le panneau Commentaires : un fil d’échanges attaché à la position
+affichée.</span><a class="headerlink" href="#id5" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Étiqueter</strong> une position à rejouer plus tard : <em>ESPACE</em> pour ouvrir la
+ligne de commande, <code class="docutils literal notranslate"><span class="pre">#</span></code> suivi d’un mot-clé (par exemple <code class="docutils literal notranslate"><span class="pre">#blitz</span></code>),
+<em>ENTREE</em>. Voir <a class="reference internal" href="#guide-edit-position"><span class="std std-ref">Editer une position</span></a> pour éditer directement la
+position si le coup joué n’est pas celui que vous voulez étudier.</p></li>
+<li><p><strong>Sortir du mode match</strong> avec la commande <code class="docutils literal notranslate"><span class="pre">m</span></code> : la bibliothèque
+retrouve son état précédent, la dernière position visitée du match est
+mémorisée pour la prochaine visite.</p></li>
+</ol>
+</section>
+<section id="une-session-anki">
+<span id="tuto-anki"></span><h3><span class="section-number">2.1.3. </span>Une session Anki<a class="headerlink" href="#une-session-anki" title="Lien vers cette rubrique"></a></h3>
+<p>Le panneau Anki transforme une collection ou une recherche en paquet de
+cartes à réviser selon l’algorithme FSRS (répétition espacée).</p>
+<ol class="arabic">
+<li><p><strong>Constituer le paquet.</strong> Deux points de départ possibles : une
+<a class="reference internal" href="#guide-collections"><span class="std std-ref">collection</span></a> de positions choisies à la main,
+ou une recherche (<em>CTRL-F</em>) — par exemple toutes les décisions de videau
+marquées comme des erreurs. La commande <code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">30</span></code> (30 pires erreurs)
+fournit un point de départ tout indiqué pour un premier paquet.</p></li>
+<li><p><strong>Créer le paquet.</strong> Ouvrir le panneau Anki (<em>CTRL-K</em>), bouton « New
+Deck », nommer le paquet ; il se synchronise sur la recherche ou la
+collection choisie.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/panel_anki.png"><img alt="Panneau Anki, liste des paquets" src="_images/panel_anki.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et
+dues aujourd’hui.</span><a class="headerlink" href="#id6" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Réviser</strong> (<em>Study</em>) : chaque carte montre une position, vous formulez
+votre réponse mentalement, dévoilez la solution (le plateau, l’analyse
+et le commentaire éventuel), puis notez votre estimation de 1 (raté) à 4
+(facile). FSRS espace la prochaine présentation en conséquence. Rien
+n’oblige à dévoiler la réponse pour continuer si vous êtes sûr de vous.</p></li>
+<li><p><strong>S’échauffer sans perturber l’échéancier</strong> (<em>Cram</em>) : présente des
+positions aléatoires du paquet sans toucher au planning FSRS — pratique
+avant un tournoi, ou pour réviser intensément sans décaler les
+échéances des autres cartes.</p></li>
+</ol>
+<p>Voir <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Panneau Anki</span></a> pour le détail des paramètres (limiter la séance,
+taux de rétention visé, réinitialisation d’un paquet).</p>
+</section>
+<section id="deployer-le-mode-serveur-derriere-un-proxy">
+<span id="tuto-serveur-proxy"></span><h3><span class="section-number">2.1.4. </span>Déployer le mode serveur derrière un proxy<a class="headerlink" href="#deployer-le-mode-serveur-derriere-un-proxy" title="Lien vers cette rubrique"></a></h3>
+<p>Le mode serveur (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code>) expose le moteur de blunderDB en HTTP
++ JSON. Il <strong>n’authentifie personne</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>) : il fait confiance à
+l’en-tête <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> tel qu’il le reçoit, et doit donc toujours être
+placé derrière un reverse-proxy qui, lui, authentifie et fixe cet en-tête.
+Ce tutoriel déploie l’image publiée derrière un nginx minimal, en
+authentification HTTP Basic à un seul tenant — le point de départ le plus
+simple, à adapter (SSO, certificats clients, mapping multi-tenant par
+utilisateur) selon votre contexte.</p>
+<ol class="arabic">
+<li><p><strong>Lancer le démon</strong>, replié sur <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (jamais exposé
+directement) :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.35.0
+</pre></div>
+</div>
+</li>
+<li><p><strong>Créer un fichier de mot de passe</strong> pour l’authentification Basic :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>htpasswd<span class="w"> </span>-c<span class="w"> </span>/etc/nginx/blunderdb.htpasswd<span class="w"> </span>alice
+</pre></div>
+</div>
+</li>
+<li><p><strong>Configurer nginx</strong> pour authentifier puis relayer, en fixant
+<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> lui-même — jamais celui envoyé par le client :</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">"1"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Vérifier</strong> avec la sous-commande de santé, qui ne passe pas par le
+proxy :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>blunderdb<span class="w"> </span>healthcheck
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a> pour la surface complète (routes, backend PostgreSQL
+multi-tenant avec Row-Level Security, migration depuis SQLite) et l’image
+Docker publiée.</p>
+</section>
+</section>
+<section id="comment-progresser-avec-blunderdb">
+<h2><span class="section-number">2.2. </span>Comment progresser avec blunderDB<a class="headerlink" href="#comment-progresser-avec-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<p>Au-delà des tutoriels ci-dessus, une routine hebdomadaire simple tire le
+plus de blunderDB pour progresser :</p>
+<ol class="arabic simple">
+<li><p><strong>Importer</strong> ses matchs de la semaine (glisser-déposer, ou import de
+dossier récursif si plusieurs fichiers) dès que possible après les avoir
+joués — la mémoire du contexte s’estompe vite.</p></li>
+<li><p><strong>Filtrer les décisions coûteuses</strong> : commande <code class="docutils literal notranslate"><span class="pre">bl</span></code> (pires erreurs), ou
+panneau Stats filtré sur la période et le type de décision (pions /
+videau) qui pèse le plus dans le PR.</p></li>
+<li><p><strong>Commenter</strong> chaque position revue : ce qui a été manqué, la structure
+en cause. Un commentaire écrit force une explication — une position
+simplement revue sans un mot s’oublie aussi vite qu’elle a été manquée.</p></li>
+<li><p><strong>Constituer un paquet Anki</strong> à partir de ces positions commentées : la
+répétition espacée fait revenir les mêmes motifs jusqu’à ce qu’ils
+deviennent des réflexes.</p></li>
+<li><p><strong>Suivre le PR par tournoi</strong> dans l’onglet Progression du panneau Stats
+(<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panneau Stats</span></a>) : une courbe qui baisse tournoi après tournoi est le seul
+signal qui ne ment pas.</p></li>
+</ol>
+<p>Cette routine ne vaut que si elle est répétée — dix minutes par semaine,
+tenues, valent mieux qu’une remise à plat ponctuelle et abandonnée.</p>
+</section>
+<section id="scenario-de-demonstration-3-minutes">
+<h2><span class="section-number">2.3. </span>Scénario de démonstration (3 minutes)<a class="headerlink" href="#scenario-de-demonstration-3-minutes" title="Lien vers cette rubrique"></a></h2>
+<p>Pour présenter blunderDB sans base personnelle, la commande <code class="docutils literal notranslate"><span class="pre">demo</span></code>
+charge une base d’exemple (positions et matchs fictifs). Le scénario
+suivant se déroule en trois minutes :</p>
+<ol class="arabic simple">
+<li><p><em>0:00</em> — <code class="docutils literal notranslate"><span class="pre">demo</span></code> en ligne de commande (ou le bouton correspondant de la
+barre d’outils) charge la base d’exemple. Le panneau des matchs
+s’affiche.</p></li>
+<li><p><em>0:30</em> — Ouvrir un match (double-clic), parcourir quelques coups aux
+flèches, montrer le panneau Analyse (<em>CTRL-L</em>) sur un coup joué avec une
+erreur visible.</p></li>
+<li><p><em>1:30</em> — Commande <code class="docutils literal notranslate"><span class="pre">bl</span></code> : la vue bascule directement sur les pires
+erreurs de la base, toutes positions confondues.</p></li>
+<li><p><em>2:15</em> — Panneau Anki (<em>CTRL-K</em>) : créer un paquet à partir de ces
+positions, lancer une carte en <em>Study</em> pour montrer le cycle
+question/réponse/notation.</p></li>
+<li><p><em>2:45</em> — Retour au panneau Stats (<em>CTRL-D</em>), onglet Dashboard, pour
+montrer où ce travail se lit dans la durée.</p></li>
+</ol>
+</section>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2><span class="section-number">2.4. </span>Créer une nouvelle base de données<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Pour créer une nouvelle base de données, cliquer dans la barre d’outils sur le
+bouton « Nouvelle base de données ». Choisir un chemin où enregistrer la base de
+données, ainsi qu’un nom et cliquer sur « Save ».</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>L’extension des bases de données blunderDB est <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourcis clavier: <em>CTRL-N</em>. Commande: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2><span class="section-number">2.5. </span>Ouvrir une base de donnée existante<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Lien vers cette rubrique"></a></h2>
+<p>Pour charger une base de données existante, cliquer dans la barre d’outils sur
+le bouton « Ouvrir une base de données ». Choisir le chemin où se trouve la base
+de données, choisir le fichier <em>.db</em> et cliquer sur « Open ».</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourcis clavier: <em>CTRL-O</em>. Commande: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="importer-et-fusionner-une-base-de-donnees">
+<h2><span class="section-number">2.6. </span>Importer et fusionner une base de données<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
+« Importer une base de données ». Choisir le fichier <em>.db</em> à importer et
+cliquer sur « Open ».</p>
+<p>blunderDB va fusionner intelligemment les deux bases de données:</p>
+<ul class="simple">
+<li><p>Les positions qui n’existent pas dans la base de données actuelle seront
+ajoutées avec leurs analyses et commentaires.</p></li>
+<li><p>Les positions qui existent déjà seront mises à jour: les analyses seront
+complétées si manquantes, et les commentaires seront fusionnés (ajout des
+nouveaux commentaires sans dupliquer les existants).</p></li>
+<li><p>Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>L’import nécessite que les deux bases de données aient des versions de schéma
+compatibles. Il est possible d’importer une base de données d’une version
+inférieure ou égale dans une base de données de version supérieure.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Prudence</p>
+<p>L’opération d’import modifie immédiatement la base de données actuellement
+ouverte. Il est recommandé de faire une copie de sauvegarde avant d’importer
+une autre base de données.</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2><span class="section-number">2.7. </span>Editer une position<a class="headerlink" href="#editer-une-position" title="Lien vers cette rubrique"></a></h2>
+<p>Pour éditer une position, appuyer sur la touche <em>TAB</em> pour ouvrir le
+panneau de recherche et l’éditeur de position.
+Editer la position à la souris:</p>
+<ul class="simple">
+<li><p>cliquer sur les points pour ajouter des pions. Le clic gauche attribue les
+pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour insérer
+une prime, cliquer sur le point de départ, maintenir le bouton appuyé,
+relacher sur le point d’arrivée. Cliquer sur la barre pour mettre des
+pions à la barre.</p></li>
+<li><p>pour effacer la position, double-clic sur une zone vide en dehors du board ou
+appuyer sur la touche <em>RETOUR ARRIERE</em>.</p></li>
+<li><p>pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour envoyer
+le cube vers le joueur 2, click droit sur le cube.</p></li>
+<li><p>pour indiquer le joueur qui a le trait, cliquer à l’emplacement prévu des dés.</p></li>
+<li><p>pour éditer les dés, clic gauche pour augmenter la valeur d’un dé, clic droit
+pour augmenter la valeur d’un dé. Si la face des dés est vide, cela signifie
+que la position est une décision de cube.</p></li>
+<li><p>pour éditer le score des joueurs, clic gauche pour augmenter le score, clic
+droit pour réduire le score.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>La saisie de la position avec la souris pour les pions se fait de la
+même manière que dans XG.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2><span class="section-number">2.8. </span>Ajouter une position à la base de données<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Après l’édition de la position, le panneau de recherche est ouvert.</p>
+<p>Pour enregistrer la position obtenue précédemment, faire <em>CTRL-S</em> ou appuyer
+dans la barre d’outils sur le bouton « Save Position ».</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Ouvrir la ligne de commande et exécuter: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2><span class="section-number">2.9. </span>Etiqueter une position<a class="headerlink" href="#etiqueter-une-position" title="Lien vers cette rubrique"></a></h2>
+<p>Pour ajouter un tag <em>toto</em> à la position courante, ouvrir la ligne de commande en appuyant sur <em>ESPACE</em>,
+taper <code class="docutils literal notranslate"><span class="pre">#toto</span></code> et valider la commande en appuyant sur <em>ENTREE</em>.</p>
+</section>
+<section id="supprimer-une-position">
+<h2><span class="section-number">2.10. </span>Supprimer une position<a class="headerlink" href="#supprimer-une-position" title="Lien vers cette rubrique"></a></h2>
+<p>Pour supprimer la position courante de la base de données, faire <em>Del</em> ou
+clicker dans la barre d’outils sur le bouton « Delete Position »</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>En ligne de commande, exécuter <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Prudence</p>
+<p>La suppression de la position est définitive et ne nécessite
+aucune confirmation de la part de l’utilisateur.</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2><span class="section-number">2.11. </span>Import une position depuis XG<a class="headerlink" href="#import-une-position-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Pour importer une position directement depuis XG,</p>
+<ol class="arabic simple">
+<li><p>afficher dans XG la position à importer et appuyer <em>CTRL-C</em>,</p></li>
+<li><p>afficher blunderDB et appuyer <em>CTRL-V</em>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz).</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2><span class="section-number">2.12. </span>Importer un match<a class="headerlink" href="#importer-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB peut importer des matchs depuis différentes sources.</p>
+<p><strong>Formats supportés:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): fichiers <em>.xg</em> et <em>.xgp</em> (positions)</p></li>
+<li><p>GNUbg: fichiers <em>.sgf</em></p></li>
+<li><p>Jellyfish: fichiers <em>.mat</em> et <em>.txt</em></p></li>
+<li><p>BGBlitz: fichiers <em>.bgf</em> et <em>.txt</em></p></li>
+</ul>
+<p><strong>Pour importer un ou plusieurs fichiers de match:</strong></p>
+<ol class="arabic simple">
+<li><p>Appuyer sur <em>CTRL-I</em> ou cliquer sur le bouton « Import » dans la barre d’outils.</p></li>
+<li><p>Sélectionner un ou plusieurs fichiers à importer.</p></li>
+<li><p>blunderDB détecte automatiquement le format et importe le match.</p></li>
+<li><p>Une fenêtre de progression affiche le nombre de fichiers importés, échoués
+et ignorés (doublons).</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Commande: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB détecte automatiquement les doublons et empêche l’import d’un
+match déjà présent dans la base de données.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2><span class="section-number">2.13. </span>Importer un dossier de matchs<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Lien vers cette rubrique"></a></h2>
+<p>Pour importer récursivement tous les fichiers de matchs contenus dans un
+dossier et ses sous-dossiers:</p>
+<ol class="arabic simple">
+<li><p>Appuyer sur <em>CTRL-SHIFT-F</em> ou cliquer sur le bouton correspondant dans la
+barre d’outils.</p></li>
+<li><p>Sélectionner le dossier contenant les fichiers de matchs.</p></li>
+<li><p>blunderDB collecte et importe automatiquement tous les fichiers reconnus
+(<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="glisser-deposer">
+<h2><span class="section-number">2.14. </span>Glisser-déposer<a class="headerlink" href="#glisser-deposer" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer
+sur la fenêtre de blunderDB:</p>
+<ul class="simple">
+<li><p>des fichiers de match ou de position (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>)
+pour les importer,</p></li>
+<li><p>des fichiers de base de données (<em>.db</em>) pour les ouvrir ou les fusionner
+avec la base de données courante,</p></li>
+<li><p>des dossiers pour importer récursivement tous les fichiers qu’ils contiennent.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2><span class="section-number">2.15. </span>Naviguer dans un match<a class="headerlink" href="#naviguer-dans-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>Pour naviguer dans un match importé:</p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des matchs avec <em>CTRL-Tab</em>.</p></li>
+<li><p>Double-cliquer sur un match ou appuyer sur <em>ENTREE</em>.</p></li>
+<li><p>Utiliser les touches <em>GAUCHE</em> / <em>DROITE</em> pour parcourir les coups.</p></li>
+<li><p>Utiliser <em>PageUp</em> / <em>PageDown</em> pour passer d’une partie à l’autre.</p></li>
+<li><p>Appuyer sur <em>CTRL-L</em> pour afficher l’analyse.</p></li>
+<li><p>Appuyer sur <em>d</em> pour basculer entre l’analyse des coups de pions et du cube.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourci: <em>CTRL-Tab</em> pour ouvrir le panneau des matchs.
+Commande: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB mémorise la dernière position visitée dans chaque match. En
+revenant sur un match, la dernière position consultée est automatiquement
+restaurée.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2><span class="section-number">2.16. </span>Gérer le panneau des matchs<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau des matchs (<em>CTRL-Tab</em>) permet de:</p>
+<ul class="simple">
+<li><p>lister l’ensemble des matchs importés (triés du plus récent au plus ancien),</p></li>
+<li><p>trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match,
+tournoi),</p></li>
+<li><p>modifier les noms des joueurs ou la date en double-cliquant sur les champs,</p></li>
+<li><p>permuter les joueurs 1 et 2 à l’aide du bouton de permutation,</p></li>
+<li><p>assigner un match à un tournoi,</p></li>
+<li><p>supprimer un match à l’aide de la touche <em>Del</em>.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<span id="guide-collections"></span><h2><span class="section-number">2.17. </span>Gérer les collections<a class="headerlink" href="#gerer-les-collections" title="Lien vers cette rubrique"></a></h2>
+<p>Les collections permettent d’organiser des positions en groupes personnalisés.
+Pour accéder au panneau des collections, appuyer sur <em>CTRL-B</em>.</p>
+<p><strong>Créer une collection:</strong></p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des collections (<em>CTRL-B</em>).</p></li>
+<li><p>Saisir le nom de la nouvelle collection et cliquer sur « Add ».</p></li>
+</ol>
+<p><strong>Ajouter des positions à une collection:</strong></p>
+<ol class="arabic simple">
+<li><p>Sélectionner les positions souhaitées.</p></li>
+<li><p>Les ajouter à la collection depuis le panneau des collections.</p></li>
+</ol>
+<p><strong>Parcourir une collection:</strong></p>
+<ul class="simple">
+<li><p>Double-cliquer sur une collection pour parcourir ses positions.
+L’ordre des collections et des positions peut être modifié par
+glisser-déposer.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Commande: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2><span class="section-number">2.18. </span>Gérer les tournois<a class="headerlink" href="#gerer-les-tournois" title="Lien vers cette rubrique"></a></h2>
+<p>Les tournois permettent d’organiser les matchs importés par événement.
+Pour accéder au panneau des tournois, appuyer sur <em>CTRL-Y</em>.</p>
+<p><strong>Créer un tournoi:</strong></p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des tournois (<em>CTRL-Y</em>).</p></li>
+<li><p>Cliquer sur « Add » et saisir le nom du tournoi.</p></li>
+</ol>
+<p><strong>Assigner un match à un tournoi:</strong></p>
+<ul class="simple">
+<li><p>Depuis le panneau des matchs (<em>CTRL-Tab</em>), utiliser le menu déroulant
+de la colonne tournoi pour assigner un match.</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2><span class="section-number">2.19. </span>Afficher les statistiques de performance<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coût MWC)
+à partir des positions importées.</p>
+<ol class="arabic simple">
+<li><p>Appuyer <em>CTRL-D</em> ou cliquer sur l’onglet Stats dans le panneau inférieur.</p></li>
+<li><p>Utiliser la barre de filtre pour restreindre l’analyse par joueur,
+tournoi, plage de dates, type de décision ou longueur de match.</p></li>
+<li><p>Cliquer sur un indicateur pour accéder directement aux positions correspondantes.</p></li>
+</ol>
+</section>
+<section id="evaluer-une-position-panneau-eval">
+<h2><span class="section-number">2.20. </span>Évaluer une position (panneau Eval)<a class="headerlink" href="#evaluer-une-position-panneau-eval" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau Eval évalue n’importe quelle position — pas seulement une course.
+Sur une position de bearoff pur, il calcule l’EPC (Effective Pip Count) et
+les autres statistiques de bearoff ; sur toute autre position, l’évaluateur
+embarqué gammonNet fournit les coups candidats ou la décision de videau,
+hors ligne, sans XG ni GNUbg.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_eval.png"><img alt="Panneau Eval sur une décision de coups de pions" src="_images/panel_eval.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de
+chaque coup candidat, calculées par gammonNet.</span><a class="headerlink" href="#id7" title="Lien vers cette image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p>Appuyer <em>CTRL-E</em>, cliquer sur l’onglet Eval dans le panneau inférieur,
+ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> : le panneau s’ouvre sur un plateau
+vierge, prêt à éditer.</p></li>
+<li><p>Pour évaluer la position déjà affichée (une position de la bibliothèque,
+ou celle d’un match en cours de revue) plutôt qu’un plateau vierge,
+clic droit sur le plateau puis « Evaluate this position » — la position
+affichée est envoyée telle quelle dans le panneau Eval.</p></li>
+<li><p>Le plateau entier s’édite au clic ou au clavier : pions, dés, score,
+position du videau, joueur au trait. Éditer uniquement les pions du jan
+(6 derniers points) des deux côtés place la position en régime bearoff.</p></li>
+<li><p>Les résultats s’affichent en temps réel : en bearoff pur, EPC, nombre
+moyen de lancers, écart type, pip count et wastage, la probabilité de
+gain du joueur au trait et, dans le domaine exact, le verdict de videau
+money ; sur toute autre position avec des dés posés, les coups candidats
+classés par équité ; sans dés, la décision de videau. Voir la section
+« Méthodologie et hypothèses du panneau Eval » du manuel.</p></li>
+<li><p>Pour s’entraîner à estimer ces valeurs, cocher la case <em>Défi</em> : les
+résultats sont masqués à chaque modification et se révèlent zone par
+zone, d’un clic.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le panneau fonctionne pour les deux joueurs simultanément.</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2><span class="section-number">2.21. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans
+blunderDB, l’analyse peut être affichée en appuyant <em>CTRL-L</em>.</p>
+<p>Si la position correspond à une décision de pions, les cinq meilleurs coups
+sont affichés sur des lignes distinctes. Pour chaque ligne, les informations
+fournies sont dans cet ordre, le coup de pion associé, l’équité normalisée,
+l’erreur en équité du coup, les chances de gain, gammon et backgammon du
+joueur, les chances de gain, gammon et backgammon de l’adversaire, le niveau
+d’analyse.</p>
+<p>Si la position correspond à une décision de cube, le coût de chaque décision
+est affiché ainsi que les chances de gain de la position.</p>
+<p>Lorsque plusieurs moteurs d’analyse sont présents pour la même position
+(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur
+d’origine de chaque analyse.</p>
+<p>Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste
+des coups. Si la position a été rencontrée dans plusieurs
+matchs, tous les coups joués sont indiqués.</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>En cliquant sur un coup dans le panneau d’analyse, les flèches
+correspondantes sont affichées sur le board.</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2><span class="section-number">2.22. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Pour exporter une position de blunderDB vers XG,</p>
+<ol class="arabic simple">
+<li><p>afficher dans blunderDB la position à exporter et appuyter <em>CTRL-C</em>,</p></li>
+<li><p>afficher XG et appuyer <em>CTRL-V</em>.</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2><span class="section-number">2.23. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
+<p>Pour visualiser les différentes positions de la bibliothèque courante, utiliser
+les touches <em>GAUCHE</em> et <em>DROITE</em>. La touche <em>HOME</em> permet d’aller à la première
+position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
+<p>Pour afficher le bearoff à gauche, appuyer <em>CTRL-GAUCHE</em>. Pour afficher le
+bearoff à droite, appuyer <em>CTRL-DROITE</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2><span class="section-number">2.24. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
+<p>Pour rechercher des types de positions,</p>
+<ul class="simple">
+<li><p>appuyer sur <em>TAB</em> pour ouvrir le panneau de recherche,</p></li>
+<li><p>éditer la structure de position à rechercher. blunderDB va filtrer les
+positions ayant <em>a minima</em> la structure de pions saisie. Dans le
+doute, afin d’obtenir le maximum de résultats, effacer la position
+en appuyant sur la touche <em>RETOUR ARRIERE</em>. Editer si besoin la
+position du cube et le score.</p></li>
+</ul>
+<p>Le panneau de recherche propose deux structures de pions, sélectionnables par
+les onglets <em>At least</em> et <em>Except</em> situés en haut du panneau :</p>
+<ul class="simple">
+<li><p><em>At least</em> (par défaut) : blunderDB filtre les positions ayant <em>a minima</em> la
+structure de pions saisie ;</p></li>
+<li><p><em>Except</em> : blunderDB exclut les positions contenant l’un des pions saisis. Le
+plateau est bordé de rouge lors de l’édition de cette structure. Une position
+est rejetée si elle contient <em>au moins un</em> des éléments dessinés (par exemple,
+dessiner un pion sur les points 1, 3 et 5 ne conserve que les positions n’ayant
+aucun pion sur ces points). Le nombre de pions par point n’est pas limité :
+indiquer 3 pions sur un point exclut les positions ayant 3 pions ou plus à cet
+endroit (utile pour rechercher une porte sans spare). Deux clics rapides sur un
+point le marquent comme devant être vide (cellule rouge hachurée, aucun pion
+quelle que soit la couleur) ; un simple clic sur ce point le débloque.</p></li>
+</ul>
+<p>Lorsqu’un point appartient aux deux structures, le critère <em>Except</em> l’emporte
+s’il contredit le critère <em>At least</em>.</p>
+<p>Méthode 1 (simple):</p>
+<ul class="simple">
+<li><p>Ouvrir la fenêtre de recherche (<em>CTRL-F</em>)</p></li>
+<li><p>Ajouter et paramétrer les filtres de recherche</p></li>
+<li><p>Valider en cliquant sur « Search ».</p></li>
+</ul>
+<p>Méthode 2 (avancée):</p>
+<ul class="simple">
+<li><p>ouvrir la ligne de commande en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>écrire <em>s</em>, ajouter d’éventuels filtres supplémentaires (par exemple
+<em>cube</em> ou <em>score</em> pour prendre respectivement en compte le cube et le
+score. Voir <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a> pour une liste exhaustive des
+filtres disponibles).</p></li>
+<li><p>valider la requête en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Les positions affichées sont celles de la base de données ayant vérifié
+les critères de recherche entrés par l’utilisateur.</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2><span class="section-number">2.25. </span>Pour aller plus loin<a class="headerlink" href="#pour-aller-plus-loin" title="Lien vers cette rubrique"></a></h2>
+<p>Ce guide couvre les usages les plus courants. blunderDB propose plusieurs
+fonctionnalités supplémentaires, détaillées dans le manuel :</p>
+<ul class="simple">
+<li><p><strong>Répétition espacée (Anki)</strong> — le panneau Anki (<em>CTRL-K</em>) transforme une
+collection ou une recherche en paquet de cartes à réviser selon
+l’algorithme FSRS, avec un mode d’entraînement libre (<em>cram</em>) qui ne
+perturbe pas l’échéancier. Voir <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Panneau Anki</span></a>.</p></li>
+<li><p><strong>Vues multiples</strong> — une barre d’onglets sous la barre d’outils permet de
+garder plusieurs espaces de travail indépendants ouverts en parallèle (par
+exemple une recherche et la navigation dans un match), chacun avec sa
+propre liste de positions et son propre contexte. Voir <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Onglets de vues</span></a>.</p></li>
+<li><p><strong>Diffusion filigranée</strong> — un export peut être signé avec votre identité
+d’émetteur (filigrane infalsifiable indiquant l’origine du fichier) et
+protégé par mot de passe pour son transport. Voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>.</p></li>
+<li><p><strong>Visites guidées et base de démonstration</strong> — la commande <code class="docutils literal notranslate"><span class="pre">tour</span></code>
+(alias <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>) ouvre un catalogue de visites guidées de l’interface,
+et la commande <code class="docutils literal notranslate"><span class="pre">demo</span></code> charge une base d’exemple pour découvrir l’outil
+sans base de données personnelle. Voir <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Visites guidées et base d’exemple</span></a>.</p></li>
+<li><p><strong>Charger les pires erreurs</strong> — la commande <code class="docutils literal notranslate"><span class="pre">bl</span></code> (ou <code class="docutils literal notranslate"><span class="pre">blunders</span></code>)
+charge directement les pires erreurs (équité ou MWC) dans la vue
+d’analyse, selon le filtre courant du panneau Stats, sans passer par une
+recherche manuelle. Voir <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Panneau Stats</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Téléchargement et installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="manuel.html" class="btn btn-neutral float-right" title="3. Manuel" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

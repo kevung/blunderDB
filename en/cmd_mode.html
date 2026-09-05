@@ -1,0 +1,633 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. List of commands &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5864e6e0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5. Keyboard shortcuts" href="raccourcis.html" />
+    <link rel="prev" title="3. Manual" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. List of commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Global operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Positions and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Editing and search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Search Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Various commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Roadmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Stage 3 — Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Stage 4 — Foundational undertakings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. What is <strong>not</strong> planned</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>List of commands</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>List of commands<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<p>The command line, located in the status bar, opens by pressing the <em>SPACE</em> key. As you type a command, a list of suggestions appears automatically: the <em>TAB</em> key (or <em>SHIFT-TAB</em>) cycles through the suggestions and completes the command, while <em>ESC</em> closes the list (a second <em>ESC</em> closes the command line). The <em>UP</em> and <em>DOWN</em> keys remain reserved for the command history.</p>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Global operations<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>Create a new database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>Open an existing database.</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>Import and merge another database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>Export the current selection to a new database.</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>Close blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Open blunderDB help.</p></td>
+</tr>
+<tr class="row-even"><td><p>tutorial, tour</p></td>
+<td><p>Opens the catalogue of guided interface tours.</p></td>
+</tr>
+<tr class="row-odd"><td><p>demo</p></td>
+<td><p>Loads a sample database (matches, tournament, collections, comments, Anki deck, analyses) to explore the tool.</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Display database metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Opens the Eval panel (Effective Pip Count, winning probability and cube verdict in bearoff).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Open the Kazaross-XG2 match equity table.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>Open the takepoint table with a 2-cube.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>Open the takepoint table with a 2-cube for long race positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>Open the takepoint table with a 2-cube for last roll positions.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>Open the takepoint table with a 4-cube.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>Open the takepoint table with a 4-cube for long race positions.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>Open the takepoint table with a 4-cube for last roll positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>Open the gammon value table with a 1-cube.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>Open the gammon value table with a 2-cube.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>Open the gammon value table with a 4-cube.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-positions"></span><h2><span class="section-number">4.2. </span>Positions and navigation<a class="headerlink" href="#positions-et-navigation" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>Deletes the current position (confirmation required).</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Go to the specified index position.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Show the analysis of the current position.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Show/write comments.</p></td>
+</tr>
+<tr class="row-odd"><td><p>history, hi</p></td>
+<td><p>Open the search panel (the search history is in its <em>History</em> tab).</p></td>
+</tr>
+<tr class="row-even"><td><p>stats, st</p></td>
+<td><p>Show/hide the statistics panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Show/hide the match panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Show/hide the collections panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Tag the current position.</p></td>
+</tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Load all positions from the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>blunders, bl [n]</p></td>
+<td><p>Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter. An optional number chooses how many to load (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); 10 by default.Load the worst mistakes (equity/MWC) into the analysis view, according to the current statistics filter.</p></td>
+</tr>
+<tr class="row-even"><td><p>m</p></td>
+<td><p>Navigate to the last visited match.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edition"></span><h2><span class="section-number">4.3. </span>Editing and search<a class="headerlink" href="#edition-et-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Save the current position.</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Update the current position.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Search for positions with filters.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>Search among the currently filtered positions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Search Filters<a class="headerlink" href="#filtres-de-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center" id="cmd-filter-pos">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Query</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>The position checks the cube configuration.</p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>The position checks the score.</p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>The position checks the dice or the cube decision.</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>The position matches the dice roll (both dice, any order).</p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>The position matches the dice roll on the first die only (the first die’s value appears on either die of the position).</p></td>
+</tr>
+<tr class="row-odd"><td><p>xD65</p></td>
+<td><p>The position was <strong>not</strong> played with the 6-5 roll (any order). The value is given in the token; repeatable to exclude several rolls (<code class="docutils literal notranslate"><span class="pre">xD65</span> <span class="pre">xD54</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p>nc</p></td>
+<td><p>The position has no contact.</p></td>
+</tr>
+<tr class="row-odd"><td><p>M</p></td>
+<td><p>The position or the mirror one meets the filters.</p></td>
+</tr>
+<tr class="row-even"><td><p>i</p></td>
+<td><p>The position was imported on its own, not brought in by a match import.</p></td>
+</tr>
+<tr class="row-odd"><td><p>fl</p></td>
+<td><p>The position was flagged in the source software, when importing an eXtreme Gammon match.</p></td>
+</tr>
+<tr class="row-even"><td><p>x</p></td>
+<td><p>The position contains none of the checkers of the exclusion structure (the “Except” tab of the search panel).</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&gt;x</p></td>
+<td><p>The player has at least x pips behind in the race.</p></td>
+</tr>
+<tr class="row-even"><td><p>p&lt;x</p></td>
+<td><p>The player has at most x pips behind in the race.</p></td>
+</tr>
+<tr class="row-odd"><td><p>px,y</p></td>
+<td><p>The player has between x and y pips behind in the race.</p></td>
+</tr>
+<tr class="row-even"><td><p>P&gt;x</p></td>
+<td><p>The player has a race of at least x pips.</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&lt;x</p></td>
+<td><p>The player has a race of at most x pips.</p></td>
+</tr>
+<tr class="row-even"><td><p>Px,y</p></td>
+<td><p>The player has a race between x and y pips.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&gt;x</p></td>
+<td><p>The equity (in millipoints) of the position is greater than x.</p></td>
+</tr>
+<tr class="row-even"><td><p>e&lt;x</p></td>
+<td><p>The equity (in millipoints) of the position is less than x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ex,y</p></td>
+<td><p>The equity (in millipoints) of the position is between x and y.</p></td>
+</tr>
+<tr class="row-even"><td><p>E&gt;x</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is greater than x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E&lt;x</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is less than x.</p></td>
+</tr>
+<tr class="row-even"><td><p>Ex,y</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is between x and y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w&gt;x</p></td>
+<td><p>The player has winning chances greater than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>w&lt;x</p></td>
+<td><p>The player has winning chances less than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>wx,y</p></td>
+<td><p>The player has winning chances between x% and y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>g&gt;x</p></td>
+<td><p>The player has gammon chances greater than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&lt;x</p></td>
+<td><p>The player has gammon chances less than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>gx,y</p></td>
+<td><p>The player has gammon chances between x% and y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&gt;x</p></td>
+<td><p>The player has backgammon chances greater than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>b&lt;x</p></td>
+<td><p>The player has backgammon chances less than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bx,y</p></td>
+<td><p>The player has backgammon chances between x% and y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>W&gt;x</p></td>
+<td><p>The opponent has winning chances greater than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&lt;x</p></td>
+<td><p>The opponent has winning chances less than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>Wx,y</p></td>
+<td><p>The opponent has winning chances between x% and y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&gt;x</p></td>
+<td><p>The opponent has gammon chances greater than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>G&lt;x</p></td>
+<td><p>The opponent has gammon chances less than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gx,y</p></td>
+<td><p>The opponent has gammon chances between x% and y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>B&gt;x</p></td>
+<td><p>The opponent has backgammon chances greater than x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&lt;x</p></td>
+<td><p>The opponent has backgammon chances less than x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>Bx,y</p></td>
+<td><p>The opponent has backgammon chances between x% and y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&gt;x</p></td>
+<td><p>The player has at least x checkers off.</p></td>
+</tr>
+<tr class="row-even"><td><p>o&lt;x</p></td>
+<td><p>The player has at most x checkers off.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ox,y</p></td>
+<td><p>The player has between x and y checkers off.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&gt;x</p></td>
+<td><p>The opponent has at least x checkers off.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&lt;x</p></td>
+<td><p>The opponent has at most x checkers off.</p></td>
+</tr>
+<tr class="row-even"><td><p>Ox,y</p></td>
+<td><p>The opponent has between x and y checkers off.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&gt;x</p></td>
+<td><p>The player has at least x backcheckers.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&lt;x</p></td>
+<td><p>The player has at most x backcheckers.</p></td>
+</tr>
+<tr class="row-odd"><td><p>kx,y</p></td>
+<td><p>The player has between x and y backcheckers.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&gt;x</p></td>
+<td><p>The opponent has at least x backcheckers.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&lt;x</p></td>
+<td><p>The opponent has at most x backcheckers.</p></td>
+</tr>
+<tr class="row-even"><td><p>Kx,y</p></td>
+<td><p>The opponent has between x and y backcheckers.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&gt;x</p></td>
+<td><p>The player has at least x checkers in the zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&lt;x</p></td>
+<td><p>The player has at most x checkers in the zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>zx,y</p></td>
+<td><p>The player has between x and y checkers in the zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&gt;x</p></td>
+<td><p>The opponent has at least x checkers in the zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&lt;x</p></td>
+<td><p>The opponent has at most x checkers in the zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>Zx,y</p></td>
+<td><p>The opponent has between x and y checkers in the zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&gt;x</p></td>
+<td><p>The player has at least x blots in the outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&lt;x</p></td>
+<td><p>The player has at most x blots in the outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>box,y</p></td>
+<td><p>The player has between x and y blots in the outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&gt;x</p></td>
+<td><p>The opponent has at least x blots in the outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&lt;x</p></td>
+<td><p>The opponent has at most x blots in the outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>BOx,y</p></td>
+<td><p>The opponent has between x and y blots in the outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&gt;x</p></td>
+<td><p>The player has at least x blots in the jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&lt;x</p></td>
+<td><p>The player has at most x blots in the jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bjx,y</p></td>
+<td><p>The player has between x and y blots in the jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&gt;x</p></td>
+<td><p>The opponent has at least x blots in the jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&lt;x</p></td>
+<td><p>The opponent has at most x blots in the jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJx,y</p></td>
+<td><p>The opponent has between x and y blots in the jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>t’word1;word2;…’</p></td>
+<td><p>The position comments contain at least one of the words.</p></td>
+</tr>
+<tr class="row-even"><td><p>co</p></td>
+<td><p>The position carries a comment, whatever its content.</p></td>
+</tr>
+<tr class="row-odd"><td><p>xco</p></td>
+<td><p>The position carries no comment.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’pattern1,pattern2,…'</p></td>
+<td><p>The best checker moves containing at least one of the patterns.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>The best cube decisions for No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-even"><td><p>T&gt;x</p></td>
+<td><p>Date of position addition after x (YYYY/MM/DD).</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&lt;x</p></td>
+<td><p>Date of position addition before x (YYYY/MM/DD).</p></td>
+</tr>
+<tr class="row-even"><td><p>Tx,y</p></td>
+<td><p>Date of position addition between x and y (YYYY/MM/DD).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max</p></td>
+<td><p>Search in match with ID x (e.g. ma3).</p></td>
+</tr>
+<tr class="row-even"><td><p>max,y</p></td>
+<td><p>Search in matches with IDs from x to y (e.g. ma2,5).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx</p></td>
+<td><p>Search in tournament with ID x (e.g. tn1).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx,y</p></td>
+<td><p>Search in tournaments with IDs from x to y (e.g. tn1,3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>idx</p></td>
+<td><p>Search for the position with identifier x (e.g. id12).</p></td>
+</tr>
+<tr class="row-even"><td><p>idx,y</p></td>
+<td><p>Search for the positions with identifiers x to y (e.g. id5,10).</p></td>
+</tr>
+<tr class="row-odd"><td><p>pl’name’</p></td>
+<td><p>Search positions from a match involving the named player, at either seat (e.g. pl’Alice’). Case-insensitive.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Various commands<a class="headerlink" href="#commandes-diverses" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Clear the command history.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="3. Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Keyboard shortcuts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

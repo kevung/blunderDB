@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1. Download and Installation &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5864e6e0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. User Guide" href="guide_utilisateur.html" />
+    <link rel="prev" title="blunderDB" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Download and Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quel-fichier-choisir">1.1. Which file should I pick?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-un-telechargement">1.2. Verifying a download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-sous-linux">1.3. Installing on Linux</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paquets-natifs-deb-rpm">1.3.1. Native packages (.deb / .rpm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arch-linux-aur">1.3.2. Arch Linux (AUR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flatpak">1.3.3. Flatpak</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-tar-gz">1.3.4. .tar.gz archive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#binaire-brut-methode-avancee">1.3.5. Raw binary (advanced method)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image-docker-mode-serveur">1.4. Docker image (server mode)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gestionnaires-de-paquets-windows-et-mac-a-venir">1.5. Windows and Mac package managers (coming soon)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avertissements-windows-et-mac">1.6. Windows and Mac warnings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Roadmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Stage 3 — Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Stage 4 — Foundational undertakings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. What is <strong>not</strong> planned</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">1. </span>Download and Installation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="telechargement-et-installation">
+<span id="telecharge-install"></span><h1><span class="section-number">1. </span>Download and Installation<a class="headerlink" href="#telechargement-et-installation" title="Link to this heading"></a></h1>
+<p>blunderDB is a single executable that requires no installation.</p>
+<p>The latest version of blunderDB is available under the MIT license:</p>
+<ul class="simple">
+<li><p>for Windows: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.36.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.36.0.exe</a></p></li>
+<li><p>for Linux: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0</a></p></li>
+<li><p>for Mac: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.36.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.36.0.zip</a></p></li>
+</ul>
+<p>For an offline consultation, you can also download this documentation in PDF format: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.36.0-en.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.36.0-en.pdf</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB uses Webview2 for rendering the graphical interface. It is likely that Webview2 is already present natively on your operating system. If not, the first execution of blunderDB will offer to download and install it. No user action is required.</p>
+</div>
+<section id="quel-fichier-choisir">
+<h2><span class="section-number">1.1. </span>Which file should I pick?<a class="headerlink" href="#quel-fichier-choisir" title="Link to this heading"></a></h2>
+<p>Every version published on the <a class="reference external" href="https://github.com/kevung/blunderDB/releases">releases page</a> comes with some thirty files. The table below says which one to take for your system; replace <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> with the version number.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 34.0%" />
+<col style="width: 42.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>System</p></th>
+<th class="head"><p>File</p></th>
+<th class="head"><p>Installation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Debian, Ubuntu, Linux Mint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb_x.y.z_amd64.deb</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">./blunderdb_x.y.z_amd64.deb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fedora, openSUSE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.x86_64.rpm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">dnf</span> <span class="pre">install</span> <span class="pre">./blunderdb-x.y.z.x86_64.rpm</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Arch Linux, Manjaro</p></td>
+<td><p>AUR package <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">yay</span> <span class="pre">-S</span> <span class="pre">blunderdb-bin</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Any Linux distribution, with Flatpak</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-x.y.z.flatpak</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">flatpak</span> <span class="pre">install</span> <span class="pre">./blunderDB-x.y.z.flatpak</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Other Linux distribution</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xzf</span></code> then <code class="docutils literal notranslate"><span class="pre">./blunderDB</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Linux on 64-bit ARM</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb_x.y.z_arm64.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.aarch64.rpm</span></code> or <code class="docutils literal notranslate"><span class="pre">blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz</span></code></p></td>
+<td><p>As above, with the <code class="docutils literal notranslate"><span class="pre">arm64</span></code>/<code class="docutils literal notranslate"><span class="pre">aarch64</span></code> file</p></td>
+</tr>
+<tr class="row-even"><td><p>macOS (Intel and Apple Silicon)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-macos-x.y.z.zip</span></code></p></td>
+<td><p>Unzip, then drag <code class="docutils literal notranslate"><span class="pre">blunderDB.app</span></code> to <em>Applications</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>Windows</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-windows-x.y.z.exe</span></code></p></td>
+<td><p>Run it directly, nothing to install</p></td>
+</tr>
+<tr class="row-even"><td><p>Server (<code class="docutils literal notranslate"><span class="pre">serve</span></code> mode, Docker)</p></td>
+<td><p>image <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span> <span class="pre">ghcr.io/kevung/blunderdb-serve:x.y.z</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">amd64</span></code> and <code class="docutils literal notranslate"><span class="pre">x86_64</span></code> files are for an Intel or AMD processor — nearly every desktop computer. The <code class="docutils literal notranslate"><span class="pre">arm64</span></code> and <code class="docutils literal notranslate"><span class="pre">aarch64</span></code> files are for a 64-bit ARM processor: Raspberry Pi 4 and 5, Apple Silicon Macs running Linux, ARM servers. When in doubt, <code class="docutils literal notranslate"><span class="pre">uname</span> <span class="pre">-m</span></code> answers: <code class="docutils literal notranslate"><span class="pre">x86_64</span></code> or <code class="docutils literal notranslate"><span class="pre">aarch64</span></code>. The AUR package <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> covers both and picks on its own.</p>
+<p>The other files on the page are the raw Linux binaries (see below), the winget and Homebrew manifests (see <a class="reference internal" href="#install-winget-homebrew"><span class="std std-ref">Windows and Mac package managers (coming soon)</span></a>), the documentation as PDF in nine languages, and the <code class="docutils literal notranslate"><span class="pre">.sha256</span></code> checksums.</p>
+</section>
+<section id="verifier-un-telechargement">
+<h2><span class="section-number">1.2. </span>Verifying a download<a class="headerlink" href="#verifier-un-telechargement" title="Link to this heading"></a></h2>
+<p>Every published file comes with its SHA-256 checksum, in a file of the same name followed by <code class="docutils literal notranslate"><span class="pre">.sha256</span></code>. Download both into the same folder and check that the file you received is the one that was published:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderdb_x.y.z_amd64.deb.sha256<span class="w">        </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-x.y.z.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows-x</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">z</span><span class="p">.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>   <span class="c"># Windows</span>
+</pre></div>
+</div>
+<p>On Linux and macOS the command prints <code class="docutils literal notranslate"><span class="pre">OK</span></code>; on Windows, compare the value shown with the content of the <code class="docutils literal notranslate"><span class="pre">.sha256</span></code> file. This check is the guarantee available in the absence of code signing (see <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Section 16</span></a> and <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Section 17</span></a>).</p>
+<p>Every published file is also accompanied by a build-provenance attestation (SLSA, via Sigstore), proving it was genuinely produced by the repository’s official GitHub build run, with no key to manage:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh<span class="w"> </span>attestation<span class="w"> </span>verify<span class="w"> </span>blunderdb_x.y.z_amd64.deb<span class="w"> </span>--repo<span class="w"> </span>kevung/blunderDB
+</pre></div>
+</div>
+</section>
+<section id="installation-sous-linux">
+<h2><span class="section-number">1.3. </span>Installing on Linux<a class="headerlink" href="#installation-sous-linux" title="Link to this heading"></a></h2>
+<p>Several formats are available for Linux. The packages and archives below <strong>make blunderDB executable automatically</strong>: unlike the raw binary downloaded through a browser, they avoid having to run <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span></code> after every download or update. They also add an entry to the applications menu.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.deb</span></code> and <code class="docutils literal notranslate"><span class="pre">.rpm</span></code> packages associate the <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> extension (a database exported with a password, see <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Handing out a database: origin and password</span></a>) with blunderDB: double-clicking a <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> file received from someone opens it directly. The <code class="docutils literal notranslate"><span class="pre">.db</span></code> extension of an ordinary database is deliberately <strong>not</strong> associated — it is too generic and shared with other software — but such a file still opens normally from blunderDB’s <em>Open</em> menu.</p>
+</div>
+<section id="paquets-natifs-deb-rpm">
+<h3><span class="section-number">1.3.1. </span>Native packages (.deb / .rpm)<a class="headerlink" href="#paquets-natifs-deb-rpm" title="Link to this heading"></a></h3>
+<p>Recommended method on Debian, Ubuntu and Linux Mint (<code class="docutils literal notranslate"><span class="pre">.deb</span></code>) as well as Fedora and openSUSE (<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). The package manager automatically installs the appropriate webkit2gtk dependency. Replace <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> with the downloaded version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./blunderdb_x.y.z_amd64.deb<span class="w">     </span><span class="c1"># Debian / Ubuntu / Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./blunderdb-x.y.z.x86_64.rpm<span class="w">    </span><span class="c1"># Fedora / openSUSE</span>
+</pre></div>
+</div>
+</section>
+<section id="arch-linux-aur">
+<h3><span class="section-number">1.3.2. </span>Arch Linux (AUR)<a class="headerlink" href="#arch-linux-aur" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> package is available on the AUR and updated automatically by AUR helpers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yay<span class="w"> </span>-S<span class="w"> </span>blunderdb-bin<span class="w">      </span><span class="c1"># ou : paru -S blunderdb-bin</span>
+</pre></div>
+</div>
+</section>
+<section id="flatpak">
+<h3><span class="section-number">1.3.3. </span>Flatpak<a class="headerlink" href="#flatpak" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">blunderDB-x.y.z.flatpak</span></code> bundle works on any distribution where Flatpak is installed. It relies on the GNOME 47 runtime, which Flatpak downloads from Flathub if it is missing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flatpak<span class="w"> </span>install<span class="w"> </span>./blunderDB-x.y.z.flatpak
+flatpak<span class="w"> </span>run<span class="w"> </span>io.github.kevung.blunderDB
+</pre></div>
+</div>
+<p>blunderDB is not published on Flathub yet: the bundle is installed from the downloaded file, and updated by installing the one of the next version. The application has access to the home folder to open and save databases. The command line (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>) is reached with <code class="docutils literal notranslate"><span class="pre">flatpak</span> <span class="pre">run</span> <span class="pre">io.github.kevung.blunderDB</span> <span class="pre">&lt;command&gt;</span></code>.</p>
+</section>
+<section id="archive-tar-gz">
+<h3><span class="section-number">1.3.4. </span>.tar.gz archive<a class="headerlink" href="#archive-tar-gz" title="Link to this heading"></a></h3>
+<p>For other distributions. Extracting an archive preserves the executable bit, so no <code class="docutils literal notranslate"><span class="pre">chmod</span></code> is needed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar<span class="w"> </span>xzf<span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+<span class="nb">cd</span><span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z
+./blunderDB
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The executable in the archive is named <code class="docutils literal notranslate"><span class="pre">blunderDB</span></code>, with capitals. The <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, AUR and Flatpak packages also install the lowercase link <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>, the name the command-line documentation (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>) uses; the archive carries the same link next to the executable. To have it on your <code class="docutils literal notranslate"><span class="pre">PATH</span></code>: <code class="docutils literal notranslate"><span class="pre">ln</span> <span class="pre">-s</span> <span class="pre">&quot;$PWD/blunderDB&quot;</span> <span class="pre">~/.local/bin/blunderdb</span></code>.</p>
+</div>
+</section>
+<section id="binaire-brut-methode-avancee">
+<h3><span class="section-number">1.3.5. </span>Raw binary (advanced method)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
+<p>The raw binary <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0</a> remains available. Since a browser strips the executable bit on download, you must restore it before the first run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Two Linux variants are published depending on the webkit2gtk library version. If you get the error <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, your distribution uses webkit2gtk-4.1: use the <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> package, the AUR package, or download the dedicated build <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.36.0</a>. Native packages select the correct dependency automatically.</p>
+</div>
+</section>
+</section>
+<section id="image-docker-mode-serveur">
+<h2><span class="section-number">1.4. </span>Docker image (server mode)<a class="headerlink" href="#image-docker-mode-serveur" title="Link to this heading"></a></h2>
+<p>The server mode (<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless mode (server)</span></a>) does not need the desktop application: every version publishes the <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code> image on the GitHub registry, for <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> and <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>, under the version tag and under <code class="docutils literal notranslate"><span class="pre">latest</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:x.y.z
+</pre></div>
+</div>
+<p>Starting it, configuring it and the warning about the authenticating proxy are described in <a class="reference internal" href="mode_headless.html#headless-docker-image"><span class="std std-ref">Published image</span></a>.</p>
+</section>
+<section id="gestionnaires-de-paquets-windows-et-mac-a-venir">
+<span id="install-winget-homebrew"></span><h2><span class="section-number">1.5. </span>Windows and Mac package managers (coming soon)<a class="headerlink" href="#gestionnaires-de-paquets-windows-et-mac-a-venir" title="Link to this heading"></a></h2>
+<p>On Linux, blunderDB already installs through the package manager (AUR, <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). The equivalent for Windows (<a class="reference external" href="https://learn.microsoft.com/windows/package-manager/">winget</a>) and for Mac (<a class="reference external" href="https://brew.sh/">Homebrew</a>) is in preparation: <strong>the manifests are provided with every release</strong> (<code class="docutils literal notranslate"><span class="pre">blunderDB-winget-manifests-x.y.z.zip</span></code> and <code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.rb</span></code> on the releases page), but they are not yet submitted to the public repositories. Until that happens, the commands below do not work; they describe the planned installation:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">winget</span> <span class="n">install</span> <span class="n">KevinUnger</span><span class="p">.</span><span class="n">blunderDB</span>        <span class="c"># Windows, une fois publié</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>tap<span class="w"> </span>kevung/tap<span class="w">                        </span><span class="c1"># Mac, une fois le tap créé</span>
+brew<span class="w"> </span>install<span class="w"> </span>--cask<span class="w"> </span>blunderdb
+</pre></div>
+</div>
+<p>Neither the winget package nor the cask changes the nature of the executable: it remains unsigned, and the warnings described below apply unchanged. On Mac, <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">--cask</span> <span class="pre">--no-quarantine</span> <span class="pre">blunderdb</span></code> avoids the Gatekeeper block on first launch.</p>
+</section>
+<section id="avertissements-windows-et-mac">
+<h2><span class="section-number">1.6. </span>Windows and Mac warnings<a class="headerlink" href="#avertissements-windows-et-mac" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>On Windows, it is possible that it may hesitate to run blunderDB. See: <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-numref">Section 16</span></a> for an explanation of why and how to bypass any potential blocks.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>On Mac, it is possible that it may have reservations about running blunderDB. See <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-numref">Section 17</span></a> to understand why and bypass any potential blocks.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="2. User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

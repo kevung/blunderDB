@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Sanasto &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="8. Usein kysytyt kysymykset (UKK)" href="faq.html" />
+    <link rel="prev" title="6. Komentoriviliittymä (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Etenemissuunnitelma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Vaihe 3 — Laajentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Vaihe 4 — Perustavat hankkeet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Mitä <strong>ei</strong> ole suunnitteilla</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API-sopimus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Sanasto</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="glossaire">
+<span id="id1"></span><h1><span class="section-number">7. </span>Sanasto<a class="headerlink" href="#glossaire" title="Link to this heading"></a></h1>
+<p>Alla olevat termit toistuvat läpi muun dokumentaation — käsikirja, käyttöopas, UKK, CLI. Tämä sivu kokoaa ne yhteen paikkaan sen sijaan, että ne määriteltäisiin uudelleen jokaisessa osiossa.</p>
+<dl class="simple">
+<dt>Asema</dt><dd><p>Backgammonin päätöspiste: lauta, kuutio, nopat, tulos ja ottelun merkinnät. Kahdesti tuotu asema lasketaan vain kerran — sen automaattisesti laskettu identiteetti tunnistaa sen, ei koskaan tiedosto, josta se on peräisin.</p>
+</dd>
+<dt>Yksittäin tuotu asema</dt><dd><p>Asema, joka on tuotu tietokantaan yksinään — kirjoitettu laudalta tai luettu asematiedostosta — eikä ottelun mukana. Tämä ominaisuus on pysyvä: näin tuotu asema pysyy sellaisena, vaikka sen sisältävä ottelu tuotaisiin myöhemmin.</p>
+</dd>
+<dt>Merkitty asema</dt><dd><p>Asema, jonka käyttäjä on merkinnyt tutkimisen arvoiseksi <em>ohjelmistossa, josta ottelu on peräisin</em> — nykyään vain eXtreme Gammon tallentaa tämän merkinnän siirroittain. Merkitty kuutiopäätös merkitsee molemmat siitä syntyvät asemat: tuplauksen ja oton/hylkäyksen.</p>
+</dd>
+<dt>Analyysi</dt><dd><p>Se, minkä moottori (eXtreme Gammon, GNUbg, BGBlitz tai sisäänrakennettu gammonNet-evaluaattori) päätteli asemasta, tallennettuna ja myöhemmin luettuna. Asemalla on yksi analyysi moottoria kohti; analyysin tuonti ei koskaan korvaa toisen moottorin analyysiä eikä jo olemassa olevaa analyysiä (katso <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Eval-paneeli</span></a>).</p>
+</dd>
+<dt>Arviointi</dt><dd><p>Tulos laskennasta, jonka sisäänrakennettu evaluaattori suorittaa laudalla juuri nyt olevalle asemalle, tallennettuna tai ei. Arviointi pätee vain niin kauan kuin asema ei muutu; jos se tallennetaan, siitä tulee Analyysi.</p>
+</dd>
+<dt>Viitejärjestelmä</dt><dd><p>Asteikko, jossa asemaa koskeva luku ilmaistaan. <em>Money</em> vastaa kysymykseen ”kuinka monta pistettä tämä on arvoinen”, gammonin ollessa aina kahden pisteen arvoinen. <em>Match</em> vastaa kysymykseen ”kuinka paljon tämä on ottelusta arvoinen”, normalisoidulla asteikolla, jossa gammon on sen arvoinen kuin tulos sen tekee — lähes kaiken arvoinen 2-away/4-away-tilanteessa, ei mitään johtajalle 1-away-tilanteessa. Viitejärjestelmä on aseman ominaisuus, ei koskaan näyttöasetus: away-tulos määrää sen.</p>
+</dd>
+<dt>Normalisoitu ekviteetti</dt><dd><p>Ottelun ekviteetti, ilmaistuna asteikolla <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">×</span> <span class="pre">MWC</span> <span class="pre">−</span> <span class="pre">1</span></code>, jossa ±1 tarkoittaa nykyisen kuution voittoa tai häviötä. Se on asteikko, jonka blunderDB näyttää ja tallentaa ottelun tuloksessa, ei koskaan raakoja voittotodennäköisyyksiä.</p>
+</dd>
+<dt>Away-tulos</dt><dd><p>Kuinka monta pistettä pelaaja vielä tarvitsee voittaakseen ottelun, kyseisen pelaajan omalta kannalta. Kaksi arvoa ovat merkkiarvoja eivätkä laskureita: <code class="docutils literal notranslate"><span class="pre">-1</span></code> tarkoittaa, ettei ottelua ole — viitejärjestelmä on <em>money</em> — ja <code class="docutils literal notranslate"><span class="pre">0</span></code>/<code class="docutils literal notranslate"><span class="pre">1</span></code> erottavat Crawfordin jälkeisen pelin (<code class="docutils literal notranslate"><span class="pre">0</span></code>) itse Crawford-pelistä (<code class="docutils literal notranslate"><span class="pre">1</span></code>), samalla etäisyydellä voitosta.</p>
+</dd>
+<dt>Tila</dt><dd><p>Millaisen vastauksen paneeli antaa juoksusta, aina näytöllä ilmoitettuna sen sijaan, että lukijan pitäisi arvata:</p>
+<ul class="simple">
+<li><p><em>tarkka</em> — luettu kaksipuolisesta bearoff-tietokannasta, ei koskaan arvioitu;</p></li>
+<li><p><em>arvioitu</em> — sisäänrakennetun evaluaattorin laskema, joka pelaa kulun loppuun;</p></li>
+<li><p><em>arvioitu (estimoitu)</em> — kalibroitu yhteenveto kulusta, pätevä voittotodennäköisyydelle, ei koskaan kuutiotuomiolle.</p></li>
+</ul>
+</dd>
+<dt>Bearoff-tietokanta</dt><dd><p>Taulukko juoksuvastauksia, kaksipuolinen (kuutiotuomio) tai yksipuolinen (EPC). blunderDB luo osan siitä itse ensimmäisellä käynnistyksellä (enintään 6 tammaa per pelaaja); laajemmat alueet luodaan <em>Bearoff</em>-välilehdeltä tai CLI:stä. Luodun tietokannan sanotaan olevan <em>vahvistettu</em>, kun sen sormenjälki täsmää tarkalleen GNUbg:n tuottamaan.</p>
+</dd>
+<dt>EPC (Effective Pip Count)</dt><dd><p>Klassinen, yksipuolinen arvio heittojen määrästä, joka tarvitaan pelaajan kaikkien tammojen ulos ajamiseen — korjattu hukan (<em>wastage</em>) osalta pelkkään pip countiin verrattuna.</p>
+</dd>
+<dt>Aseman tosiseikka</dt><dd><p>Suure, joka kuuluu itse laudalle, riippumatta mistään pelaajan valinnasta: pip count, EPC, voitto-/gammon-/backgammon-mahdollisuudet, cubeless-ekviteetti. Tosi ennen heittoa.</p>
+</dd>
+<dt>Rivi ennen heittoa</dt><dd><p>Voitto-/gammon-/backgammon-mahdollisuuksien ja cubeless-ekviteetin vektori, näytettynä ehdokassiirtojen listan yläpuolella heti kun nopat on heitetty. Tämän rivin ja siirron välinen ero mittaa heiton onnea, ei koskaan pelatun siirron ansiota.</p>
+</dd>
+<dt>Päätös</dt><dd><p>Vastaus kysymykseen, jonka lauta esittää: ehdokassiirtojen järjestys, kun nopat on heitetty, tai muuten kolme kuutiovaihtoehtoa ja niiden tuomio. Asema ei koskaan esitä molempia kysymyksiä yhtä aikaa.</p>
+</dd>
+<dt>Tuomio</dt><dd><p>Mikä kuutiopäätöksen vaihtoehdoista on oikea: <em>ei tuplausta</em>, <em>tuplaus/otto</em>, <em>tuplaus/hylkäys</em> tai <em>liian hyvä (tuplattavaksi)</em>. Kahta erikoistapausta ei jätetä koskaan tyhjäksi: <em>ei päätöstä</em> (tila ei ole oikeutettu sellaiseen) ja <em>hylätty</em> (moottori kieltäytyi asemasta, tyypillisesti tulos sen taulukon ulottumattomissa).</p>
+</dd>
+<dt>Liian hyvä</dt><dd><p>Tuomio, joka sanoo, että asema on niin edullinen, että tuplaus saisi vastustajan hylkäämään, kun taas jatkaminen ilman tuplausta tuottaa enemmän — kuutio, joka kannattaa pitää.</p>
+</dd>
+<dt>Onni</dt><dd><p>Nopanheiton osuus siirron ekviteettiin, luettuna lähdetiedostosta tuonnin yhteydessä (eXtreme Gammon, GNUbg) eikä koskaan blunderDB:n uudelleenlaskemana. Muodot, jotka eivät kuljeta sitä (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), eivät koskaan tarjoa sitä, eikä tuonti ole takautuva.</p>
+</dd>
+<dt>Blunderi</dt><dd><p>Siirto tai kuutiopäätös, jonka virhe (ekviteettiero parhaaseen valintaan) ylittää kynnysarvon; komento <code class="docutils literal notranslate"><span class="pre">bl</span></code> (tai <code class="docutils literal notranslate"><span class="pre">blunders</span></code>) lataa suoraan haun pahimmat virheet.</p>
+</dd>
+<dt>PR (Performance Rate)</dt><dd><p>Pelaajan virheiden keskimääräinen kustannus, tuhannesosina ekviteettipisteestä laskettua päätöstä kohti, tammansiirto ja kuutio yhdessä. Katso <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a> tarkoista laskentasäännöistä (yhdenmukaisuus eXtreme Gammonin ja GNUbg:n kanssa).</p>
+</dd>
+<dt>Snowie Error Rate</dt><dd><p>Sama osoittaja kuin PR:ssä (virheiden summa), mutta jaettuna pelattujen siirtojen määrällä laskettujen päätösten määrän sijaan — vakaampi työkalusta toiseen. Katso <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>.</p>
+</dd>
+<dt>MWC-kustannus</dt><dd><p>Kuutiovirhe ilmaistuna Match Winning Chancen prosenttiyksikköinä, ei ekviteettinä — luonnollinen suure saman pelaajan vertailuun eri ottelutuloksissa.</p>
+</dd>
+<dt>Kokoelma</dt><dd><p>Nimetty, järjestetty joukko asemia, jotka käyttäjä kokoaa käsin, raahaus mukaan lukien. Kokoelmaan kuuluminen on nimenomainen ele, toisin kuin yksittäin tuodulla asemalla (katso <a class="reference internal" href="manuel.html#panneau-collections"><span class="std std-ref">Kokoelmapaneeli</span></a>).</p>
+</dd>
+<dt>Anki-pakka</dt><dd><p>Joukko asemia, jotka on muutettu kertauskorteiksi, joita kerrataan hajautetulla toistolla (FSRS-algoritmi). Katso <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki-paneeli</span></a>.</p>
+</dd>
+<dt>Kertauskortti</dt><dd><p>Asema Anki-pakasta, esitettynä kysymyksenä: lauta on kysymys, tallennettu analyysi on vastaus, piilotettuna kunnes ele paljastaa sen.</p>
+</dd>
+<dt>Kommentti</dt><dd><p>Vapaa teksti, joka on liitetty asemaan, kirjoittipa sen käyttäjä tai poimittiinko se sellaisenaan tuodusta tiedostosta — molemmat ovat erottamattomia. <code class="docutils literal notranslate"><span class="pre">#avainsana</span></code> kommentin sisällä on tunniste, haettavissa kuten mikä tahansa muu teksti.</p>
+</dd>
+<dt>Pelaaja</dt><dd><p>Nimi täsmälleen sellaisena kuin se esiintyy tuodussa ottelussa. blunderDB ei arvaa nimen takana olevaa henkilöä: sama ihminen, joka allekirjoittaa kahdella kirjoitusasulla, on kaksi eri pelaajaa, kunnes tehdään nimenomainen yhdistäminen (”Yhdistä pelaajat”).</p>
+</dd>
+<dt>Vesileima</dt><dd><p>Allekirjoitettu ilmoitus, jonka tietokannan viejä liittää siitä, mikä se on ja mistä se on peräisin. Väärentämätön mutta ei poistamaton, se ei koskaan tallenna mitään vastaanottajan puolelle. Katso <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>.</p>
+</dd>
+<dt>Liikkeeseenlaskijan identiteetti</dt><dd><p>Avain, joka allekirjoittaa yhden henkilön vesileimat — luotuna itsestään ensimmäisessä lisätyssä vesileimassa, ja siirrettävissä koneesta toiseen yhtenä tiedostona.</p>
+</dd>
+<dt>Suojattu tiedosto (.dbx)</dt><dd><p>Tietokanta, joka on viety ja salasanalla salattu, avattu kerran ja sen jälkeen tavallinen. Se suojaa tiedostoa kuljetuksen aikana, ei sen sisältöä: kuka tahansa salasanan saanut voi avata sen.</p>
+</dd>
+<dt>Tenant</dt><dd><p>Palvelintilassa positioiden, otteluiden ja kokoelmien joukon omistaja. Mitään, mitä yksi vuokralainen (tenant) tallentaa, ei koskaan näy toiselle. Työpöydällä niitä on vain yksi, implisiittinen: henkilö, jonka tiedosto se on. Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="6. Komentoriviliittymä (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="8. Usein kysytyt kysymykset (UKK)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

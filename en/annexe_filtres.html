@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15. Annex: Advanced Filter Usage &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5864e6e0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="16. Windows Annex: False Detection of blunderDB as Malware" href="annexe_windows_securite.html" />
+    <link rel="prev" title="14. API contract" href="api_reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Roadmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Stage 3 — Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Stage 4 — Foundational undertakings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. What is <strong>not</strong> planned</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless mode (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API contract</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">15. Annex: Advanced Filter Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">15.1. Command-line search for positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">15.2. Search in Current Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">15.3. Filter Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">15.4. Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">15. </span>Annex: Advanced Filter Usage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-utilisation-avancee-des-filtres">
+<span id="annexe-filtres"></span><h1><span class="section-number">15. </span>Annex: Advanced Filter Usage<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section is for advanced users of blunderDB who wish to fully leverage the position search features.</p>
+</div>
+<p>Filters are at the heart of position analysis in blunderDB. Their use allows for searching specific positions with great precision. In this section, the use of filters through the command line is detailed. The command line can be accessed by pressing the <code class="docutils literal notranslate"><span class="pre">SPACE</span></code> key. It allows users to quickly combine filters and use the filter library with ease.</p>
+<section id="recherche-de-positions-en-ligne-de-commande">
+<h2><span class="section-number">15.1. </span>Command-line search for positions<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>To perform a search using filters,</p>
+<ol class="arabic simple">
+<li><p>Press the <code class="docutils literal notranslate"><span class="pre">TAB</span></code> key to open the search panel.</p></li>
+<li><p>Edit the current position.</p></li>
+<li><p>Open the command line using the <code class="docutils literal notranslate"><span class="pre">SPACE</span></code> key.</p></li>
+<li><p>Use the command <code class="docutils literal notranslate"><span class="pre">s</span></code> followed, optionally, by filters.</p></li>
+<li><p>Start the search with the <code class="docutils literal notranslate"><span class="pre">ENTER</span></code> key.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Don’t forget to clear the current position before starting a search (<code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code> key), if it isn’t the one you want, to avoid excessively filtering checker structures.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The list of available filters in the command line is provided in <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a>.</p>
+</div>
+</section>
+<section id="recherche-dans-les-resultats-courants">
+<h2><span class="section-number">15.2. </span>Search in Current Results<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Link to this heading"></a></h2>
+<p>It is possible to refine a search by searching among the currently filtered positions. This allows you to progressively narrow down the results.</p>
+<p>In the command line, use the <code class="docutils literal notranslate"><span class="pre">ss</span></code> command followed by filters (e.g.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). The <code class="docutils literal notranslate"><span class="pre">ss</span></code> command works after a prior search.</p>
+<p>The search window (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) also offers a “Search within current results” checkbox for the same purpose.</p>
+</section>
+<section id="bibliotheque-de-filtres">
+<h2><span class="section-number">15.3. </span>Filter Library<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
+<p>The filter library allows the user to save search commands to facilitate their thematic studies.</p>
+<p>To add a filter to the library,</p>
+<ol class="arabic simple">
+<li><p>Start the search you want to keep (<code class="docutils literal notranslate"><span class="pre">s</span></code> command followed by filters).</p></li>
+<li><p>Open the search panel (<code class="docutils literal notranslate"><span class="pre">TAB</span></code> or <code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) and select the <em>History</em> tab.</p></li>
+<li><p>Click the bookmark icon of the search to save.</p></li>
+<li><p>Give the filter a name and confirm.</p></li>
+</ol>
+<p>To use a filter saved in the library,</p>
+<ol class="arabic simple">
+<li><p>Open the search panel (<code class="docutils literal notranslate"><span class="pre">TAB</span></code> or <code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) and select the <em>Saved</em> tab.</p></li>
+<li><p>Search for the desired filter.</p></li>
+<li><p>Double-click on the filter to start the search.</p></li>
+</ol>
+</section>
+<section id="exemples">
+<h2><span class="section-number">15.4. </span>Examples<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
+<p>Here are some examples of using filters in the command line:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Position type</p></th>
+<th class="head"><p>Checker structure</p></th>
+<th class="head"><p>Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pure race</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Short race</p></td>
+<td></td>
+<td><p>s nc P&lt;70</p></td>
+</tr>
+<tr class="row-even"><td><p>Hitting on the ace point</p></td>
+<td></td>
+<td><p>s m&quot;6/1*&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Backgame 1-4</p></td>
+<td><p>points 24, 21 made</p></td>
+<td><p>s p&gt;35</p></td>
+</tr>
+<tr class="row-even"><td><p>Take/Pass decision at -2 -4</p></td>
+<td><p>empty dice on upper player’s side, score -2/-4</p></td>
+<td><p>s s d</p></td>
+</tr>
+<tr class="row-odd"><td><p>Too good to double</p></td>
+<td><p>empty dice on lower player’s side</p></td>
+<td><p>s d e&gt;1000</p></td>
+</tr>
+<tr class="row-even"><td><p>Blitz with at least 20% gammon</p></td>
+<td><p>made points in home board, men on the bar</p></td>
+<td><p>s g&gt;20</p></td>
+</tr>
+<tr class="row-odd"><td><p>Player 1 errors greater than 40 millipoints</p></td>
+<td></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Position from the Aachen2024 tournament</p></td>
+<td></td>
+<td><p>s t&quot;Aachen2024&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>One back checker to bring home</p></td>
+<td></td>
+<td><p>s k1,1</p></td>
+</tr>
+<tr class="row-even"><td><p>Escaping from the 20 point</p></td>
+<td><p>point 20</p></td>
+<td><p>s m&quot;20/&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Prime versus prime</p></td>
+<td><p>indicate the primes</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Ace-point bear-off</p></td>
+<td><p>opponent’s ace point made</p></td>
+<td><p>s P&lt;60</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double with at least 20 pip lead</p></td>
+<td><p>empty dice on lower player’s side</p></td>
+<td><p>s d p&lt;-20</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions from match 5</p></td>
+<td></td>
+<td><p>s ma5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions from matches 2 to 4</p></td>
+<td></td>
+<td><p>s ma2,4</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions from matches 23 and 43</p></td>
+<td></td>
+<td><p>s ma23 ma43</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions from tournament 1</p></td>
+<td></td>
+<td><p>s tn1</p></td>
+</tr>
+<tr class="row-even"><td><p>Errors in tournament 2</p></td>
+<td></td>
+<td><p>s tn2 E&gt;40</p></td>
+</tr>
+</tbody>
+</table>
+<p>Examples of searching within current results:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 42.9%" />
+<col style="width: 57.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>After <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">nc</span></code>, search for short races</p></td>
+<td><p>ss P&lt;70</p></td>
+</tr>
+<tr class="row-odd"><td><p>After <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">g&gt;20</span></code>, keep only errors</p></td>
+<td><p>ss E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>After <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">tn1</span></code>, search for cube decisions</p></td>
+<td><p>ss d</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_reference.html" class="btn btn-neutral float-left" title="14. API contract" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="16. Windows Annex: False Detection of blunderDB as Malware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

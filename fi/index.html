@@ -1,0 +1,836 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="1. Lataaminen ja asentaminen" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Etenemissuunnitelma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Vaihe 3 — Laajentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Vaihe 4 — Perustavat hankkeet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Mitä <strong>ei</strong> ole suunnitteilla</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API-sopimus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Link to this heading"></a></h1>
+<p>blunderDB on ohjelmisto backgammon-asemien tietokantojen rakentamiseen. Sen tärkein vahvuus on tarjota yksi paikka, johon pelaaja voi koota kohtaamansa asemat (verkossa, turnauksissa) ja tutkia niitä uudelleen suodattamalla ne vapaasti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luetteloiden kokoamiseen.</p>
+<p>Uusi käyttäjä? <strong>Käyttöopas</strong> tarjoaa neljä alusta loppuun -opastusta (ensimmäinen tuonti, ottelun tutkiminen, Anki-istunto, palvelintila) ja sivun ”miten kehittyä” — kannattavin luku ennen aloittamista.</p>
+<p>Tämä dokumentaatio on jaettu neljääntoista osioon:</p>
+<ul class="simple">
+<li><p><strong>lataus ja asennus</strong> selittää, miten blunderDB hankitaan ja käynnistetään;</p></li>
+<li><p><strong>käyttöopas</strong> on käytännön johdanto ja alusta loppuun -opastuksia blunderDB:n nopeaan käyttöönottoon;</p></li>
+<li><p><strong>käsikirja</strong> kuvaa blunderDB:n toiminnan tyhjentävästi, paneeli kerrallaan;</p></li>
+<li><p><strong>komentotila</strong> dokumentoi sovellukseen sisäänrakennetun komentorivin (hakusuotimet, toiminnot);</p></li>
+<li><p><strong>pikanäppäinten</strong> luettelo mahdollistaa tehokkaan käytön näppäimistöltä;</p></li>
+<li><p><strong>komentorivikäyttöliittymä (CLI)</strong> kuvaa binäärin komennot, jotka ovat käytettävissä graafisen käyttöliittymän ulkopuolella joukkotuontiin, automaatioon ja skriptaukseen;</p></li>
+<li><p><strong>sanasto</strong> määrittelee yhdellä sivulla alan termit (asema, viitejärjestelmä, tila, tuomio…), joita käytetään muualla dokumentaatiossa;</p></li>
+<li><p><strong>UKK</strong> vastaa yleisimpiin kysymyksiin;</p></li>
+<li><p><strong>etenemissuunnitelma</strong> listaa harkittavana olevat ideat, ilman lupausta aikatauluista;</p></li>
+<li><p><strong>palvelintila (headless)</strong> dokumentoi <code class="docutils literal notranslate"><span class="pre">serve</span></code>-taustaprosessin, sen HTTP-reitit ja sen kaksi taustajärjestelmää (SQLite, PostgreSQL);</p></li>
+<li><p><strong>hakusuotimien liite</strong> erittelee hakupaneelin jokaisen kriteerin ja sen komentorivitunnisteen;</p></li>
+<li><p><strong>turvallisuusliitteet</strong> (Windows, macOS) selittävät käyttöjärjestelmän varoitukset allekirjoittamattoman binäärin asennuksessa;</p></li>
+<li><p><strong>tietokantaskeeman liite</strong> kuvaa <code class="docutils literal notranslate"><span class="pre">.db</span></code>-muodon;</p></li>
+<li><p><strong>tilastojen yhdenmukaisuuden</strong> sivu esittää PR:n, Snowie Error Raten ja MWC-kustannuksen laskentasäännöt suhteessa eXtreme Gammoniin ja GNUbg:hen.</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>Versiohistoria<a class="headerlink" href="#historique-des-versions" title="Link to this heading"></a></h1>
+<section id="derniere-version-0-36-0-2026-09-05">
+<h2>Uusin versio — 0.36.0 (5.9.2026)<a class="headerlink" href="#derniere-version-0-36-0-2026-09-05" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ohjelmatiedosto on <strong>7,3 Mt pienempi</strong>: ulosmenotaulukoita ei enää upoteta eikä ladata, vaan ne lasketaan ensimmäisellä käynnistyksellä taustalla ja hiljaa — tavu tavulta samat kuin gnubg:n, SHA-256-tiiviste tarkistettuna. Laajennettu TS-06-11-taulukko lasketaan <em>Bearoff</em>-välilehdellä 1,2 Gt:n latauksen sijaan.</p></li>
+<li><p><strong>Turnaukset täyttyvät itsestään tuonnissa</strong>: ottelu sijoitetaan turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo sijoitettua ottelua ei koskaan siirretä.</p></li>
+<li><p><strong>Yksi ainoa hakukielioppi</strong>, nyt luettavissa komentoriviltä (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) yhtä lailla kuin sovelluksesta.</p></li>
+<li><p>Komentorivi saa <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>-valitsimen yhdeksään komentoon, <strong>täydennyksen bashille, zsh:lle ja fishille</strong>, <code class="docutils literal notranslate"><span class="pre">repair</span></code>-komennon sekä <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code>- ja <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>-alikomennot.</p></li>
+<li><p><strong>Sovelluksen ohje tuotetaan käsikirjasta</strong>: se ei voi enää jäädä siitä jälkeen. Kolme opastettua kierrosta lisää (Eval, Anki, Stats), ja Pikanäppäimet- ja Komentorivi-sivut muuttuvat taulukoiksi ilman laatikoita.</p></li>
+<li><p><strong>Linux arm64 -ohjelmatiedosto</strong>, toimitettuna tar-pakettina sekä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>-, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>- ja AUR-pakettina.</p></li>
+<li><p><strong>Eval</strong>-paneeli löytää taas laudan, johon se jätettiin, erottaa <em>money</em>-equityn <em>match</em>-equitystä ja on selattavissa näppäimistöltä.</p></li>
+<li><p>Palvelinpuolella: <strong>koodista tuotettu API-sopimus</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> ja sen liite, 135 reittiä), korrelaatiotunniste jokaiselle pyynnölle, mittarit käynnissä olevasta työstä, NDJSON-virtojen pakkaus (13,5 % koosta), ja kaksi tenantin ylittävää kutsua — vacuum ja purge — siirtyvät <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>-etuliitteen alle.</p></li>
+<li><p><strong>Skeema 2.18.0</strong>: Jacoby ja beaver poistuvat aseman identiteetistä, joten sama rahapeliasema ei enää tule sisään kahdesti eri ovista.</p></li>
+<li><p>Merkittäviä korjauksia: Ottelut-paneelin yksityiskohtaruutu ei enää vie puolta ruudusta, kun mitään ei ole valittuna, pelipöytäkirjan ensimmäinen peli taittuu kuten muutkin, SHIFT-J ja SHIFT-K vaihtavat näkymää mistä tahansa paneelista, ja kahdeksan ”näytä/piilota”-pikanäppäintä vihdoin piilottaa.</p></li>
+</ul>
+<p>Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p>
+</section>
+<section id="historique-complet">
+<h2>Koko historia<a class="headerlink" href="#historique-complet" title="Link to this heading"></a></h2>
+<p>Jokainen alla oleva versio luettelee muutoksensa kohta kohdalta, jotta myöhempi korjaus (kirjoitusvirhe, myöhäinen lisäys) mitätöi vain yhden kohdan käännöksen, ei koko version käännöstä.</p>
+<section id="id1">
+<h3>0.36.0 (5.9.2026)<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Ohjelmatiedosto on <strong>7,3 Mt pienempi</strong>: ulosmenotaulukoita ei enää upoteta eikä ladata, vaan ne lasketaan ensimmäisellä käynnistyksellä taustalla ja hiljaa — tavu tavulta samat kuin gnubg:n, SHA-256-tiiviste tarkistettuna. Laajennettu TS-06-11-taulukko lasketaan <em>Bearoff</em>-välilehdellä 1,2 Gt:n latauksen sijaan.</p></li>
+<li><p><strong>Turnaukset täyttyvät itsestään tuonnissa</strong>: ottelu sijoitetaan turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo sijoitettua ottelua ei koskaan siirretä.</p></li>
+<li><p><strong>Yksi ainoa hakukielioppi</strong>, nyt luettavissa komentoriviltä (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span> <span class="pre">--query</span></code>) yhtä lailla kuin sovelluksesta.</p></li>
+<li><p>Komentorivi saa <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>-valitsimen yhdeksään komentoon, <strong>täydennyksen bashille, zsh:lle ja fishille</strong>, <code class="docutils literal notranslate"><span class="pre">repair</span></code>-komennon sekä <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">card</span></code>- ja <code class="docutils literal notranslate"><span class="pre">anki</span> <span class="pre">log</span></code>-alikomennot.</p></li>
+<li><p><strong>Sovelluksen ohje tuotetaan käsikirjasta</strong>: se ei voi enää jäädä siitä jälkeen. Kolme opastettua kierrosta lisää (Eval, Anki, Stats), ja Pikanäppäimet- ja Komentorivi-sivut muuttuvat taulukoiksi ilman laatikoita.</p></li>
+<li><p><strong>Linux arm64 -ohjelmatiedosto</strong>, toimitettuna tar-pakettina sekä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>-, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>- ja AUR-pakettina.</p></li>
+<li><p><strong>Eval</strong>-paneeli löytää taas laudan, johon se jätettiin, erottaa <em>money</em>-equityn <em>match</em>-equitystä ja on selattavissa näppäimistöltä.</p></li>
+<li><p>Palvelinpuolella: <strong>koodista tuotettu API-sopimus</strong> (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> ja sen liite, 135 reittiä), korrelaatiotunniste jokaiselle pyynnölle, mittarit käynnissä olevasta työstä, NDJSON-virtojen pakkaus (13,5 % koosta), ja kaksi tenantin ylittävää kutsua — vacuum ja purge — siirtyvät <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>-etuliitteen alle.</p></li>
+<li><p><strong>Skeema 2.18.0</strong>: Jacoby ja beaver poistuvat aseman identiteetistä, joten sama rahapeliasema ei enää tule sisään kahdesti eri ovista.</p></li>
+<li><p>Merkittäviä korjauksia: Ottelut-paneelin yksityiskohtaruutu ei enää vie puolta ruudusta, kun mitään ei ole valittuna, pelipöytäkirjan ensimmäinen peli taittuu kuten muutkin, SHIFT-J ja SHIFT-K vaihtavat näkymää mistä tahansa paneelista, ja kahdeksan ”näytä/piilota”-pikanäppäintä vihdoin piilottaa.</p></li>
+<li><p>Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>0.35.0 (2026-09-02)<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Komentorivi saa kaksi uutta perhettä: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">collection</span></code> (kokoelman listaus, näyttö, luonti, uudelleennimeäminen, poisto, vienti) ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">anki</span></code> (pakat, tilastot, kertausennuste, pakan uudelleensynkronointi).</p></li>
+<li><p>Palvelintila julkaistaan <strong>Docker-imagena</strong> (<code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>, amd64 ja arm64), saa <code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>-reitin ja <strong>vesileimaa vientinsä</strong> palvelimen liikkeeseenlaskijan identiteetillä (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>).</p></li>
+<li><p>gammonNet-evaluaattori <strong>hinnoittelee lehtensä kuutiolla</strong>: ottelun tuloksessa haun tuomiot lähestyvät eXtreme Gammonin antamia.</p></li>
+<li><p>Jokainen julkaisu toimittaa nyt <strong>winget- ja Homebrew-manifestit</strong> ja Flatpak-paketin, Debian-, RPM- ja AUR-pakettien lisäksi.</p></li>
+<li><p>Käyttöliittymässä kirjasto on nyt <strong>sivutettu</strong> (50 000 position tietokanta ei enää lataa kaikkea muistiin joka päivityksellä), modaalit ikkunat jakavat yhteisen perustan (fokus, Escape, saavutettavuus), lauta piirtää uudelleen vain sen, mikä muuttuu, ja binääri menettää 5,5 Mt tarpeetonta japanilaista fonttia.</p></li>
+<li><p>Merkittävät korjaukset: ”Tuo tietokanta” -toiminnolla tuotu tietokanta piti positioita suodattimille näkymättöminä ja kahdennettuina toisessa tuonnissa (korjattu avattaessa), pelaajien yhdistämisikkunan Yhdistä-painike pysyi harmaana, palvelimen vienti oli tyhjä, ja Windowsissa ladatun bearoff-tietokannan poistaminen sekä <code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--force</span></code> epäonnistuivat.</p></li>
+<li><p>Katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>, <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>0.34.0 (2026-09-02)<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Sisäänrakennettu evaluaattori</strong>: gammonNet, siirretty Go-kielelle ja käännetty blunderDB:hen, arvioi minkä tahansa aseman ilman verkkoyhteyttä, ilman XG:tä tai gnuBG:tä — neuroverkko, 0–2-ply-haku karsinnalla, kuutiopäätös Janowskin mukaan ja blunderDB:n ottelun ekviteettitaulukon mukaan, sekä haku, joka kunnioittaa ottelun tulosta.</p></li>
+<li><p>Bearoff-paneelista tulee <strong>Eval</strong>-paneeli: se esittää aseman tosiseikat (molempien puolten voitto-, gammon- ja backgammon-mahdollisuudet, ekviteetti) ja sitten sen yhden päätöksen, jota lauta kysyy, vakaassa ruudukossa ilman vierittämistä; ottelun ekviteetit ovat <strong>normalisoituja</strong>, ja tuomio ”liian hyvä tuplattavaksi” on jälleen näkyvissä.</p></li>
+<li><p>Arviointi on <strong>asteittainen</strong>: 0-ply välittömästi eleen yhteydessä, sitten 2-ply levossa, peruutettavissa millä tahansa uudella eleellä, syvyysmerkinnän ilmoittaessa aina sen, joka tuotti luvun.</p></li>
+<li><p>Koko lauta, nopat ja tulos ovat siellä muokattavissa, hiirellä tai näppäimistöllä, ja kirjaston asema siirtyy paneeliin ja pois siitä.</p></li>
+<li><p>Kaksipuolisen tietokannan ulkopuolella olevassa juoksussa kolmas, <strong>arvioitu</strong> tila tarjoaa kuutiotuomion ottelun tuloksessa, jota paneeli ei aiemmin antanut.</p></li>
+<li><p>Asetusten <strong>gammonNet</strong>-välilehti erottaa näyttösyvyyden analyysisyvyydestä.</p></li>
+<li><p>Tuonnin jälkeen rajattu, näkyvä, peruutettavissa oleva ja jatkettavissa oleva <strong>analyysierä</strong> täyttää asemat, joilla ei ole yhtään analyysiä, korvaamatta koskaan tuotua analyysiä; olemassa olevan <strong>kirjaston täydentäminen</strong> käynnistetään käyttöliittymästä, uudella <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code>-komennolla tai palvelintilassa.</p></li>
+<li><p>Merkittävät korjaukset: eXtreme Gammonista tuotu kuutiovastaus peri aiemmin tuplaajan analyysin kääntämättä sitä, Valkoisten siirtojen ja baarista tulon merkintä noudattaa nyt gnuBG:tä ja XG:tä, gnuBG-analyysin syvyys luetaan oikein, ja sivupaneelin koko muistetaan.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Eval-paneeli</span></a>, <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a> ja <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>0.33.0 (2026-08-26)<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tilastopaneeliin tulee <strong>Pelaajat</strong>-välilehti: kolme aiempaa välilehteä kuvaavat yhtä pelaajaa, tämä vertaa heitä kaikkia — yksi rivi kutakin tietokannan pelaajaa kohden: ottelut, voitot/tappiot, lasketut päätökset, PR yhteensä / nappulat / tuplauskuutio, Snowie Error Rate, karkeat virheet ja tuuri. Taulukon voi järjestää mistä tahansa sarakkeesta, rajata tavallisilla suodattimilla yhden kilpailun päiviin, ja rivin napsautus siirtyy kyseisen pelaajan tietoihin. Viiva tarkoittaa arvoa, jota ei ole koskaan mitattu — ei koskaan nollaa. Taulukko on saatavilla myös komentoriviltä (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">players</span></code>, tekstinä, JSON- tai CSV-muodossa) ja palvelintilassa.</p></li>
+<li><p>Jokaisen heiton <strong>tuuri</strong> tallennetaan nyt tietokantaan ja näytetään: keskimääräinen tuuri heittoa kohden, pisteen tuhannesosina, etumerkillä. Se luetaan tuonnissa sekä eXtreme Gammon- että gnuBG-tiedostoista. Se ei ole takautuva — aiemmin tuodut ottelut näyttävät viivan, ja lähdetiedostot on tuotava uudelleen sen saamiseksi; muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), eivät sitä koskaan tarjoa.</p></li>
+<li><p><strong>Virheet</strong>-välilehti kertoo nyt, mihin <em>suuntaan</em> tuplauspäätökset menevät pieleen, ei vain paljonko ne maksavat: rivi <em>Tarjoaminen</em> (jääneet tuplaukset, ennenaikaiset tuplaukset) ja rivi <em>Vastaaminen</em> (virheelliset luovutukset, virheelliset vastaanotot), tarkoituksella erillään, sillä sama pelaaja voi tuplata myöhään ja ottaa vastaan löysästi. Kussakin ruudussa on lukumäärä, työkaluvihjeessä menetetty equity, ja napsautus lataa vastaavat asemat.</p></li>
+<li><p>Uusi <strong>Tiivistä tietokanta</strong> -toiminto, joka ottaa takaisin poistojen jättämän tilan: painike asetuksissa ja alikomento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code>. Se ei käynnisty koskaan itsestään.</p></li>
+<li><p>Käytettävyys: tuhoavat toiminnot pyytävät vahvistuksen, käynnissä olevasta hausta ilmoitetaan, tuntematon komento saa viestin hiljaisuuden sijaan, ja välilehtiä, telakoituja paneeleja ja pieniä valintaikkunoita voi käyttää täysin näppäimistöllä. Haku on lisäksi tuntuvasti nopeampi.</p></li>
+<li><p>Merkittävät korjaukset: gnuBG:n ”Double No” -merkinnällä varustetut ei-tuplaukset laskettiin tuplauksiksi, mikä vääristi kuution PR:ää (jo kertynyt tietokanta korjataan palvelintilassa ilman uudelleentuontia); pelaajasuodatin kavensi virheellisesti Snowie Error Raten nimittäjää; viennit kirjoittivat vanhentuneen skeeman; ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> avasi graafisen käyttöliittymän tietokannan tiivistämisen sijaan.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a> ja <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>0.32.0 (2026-08-09)<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>EPC-paneelista tulee <strong>Bearoff</strong>-paneeli, ja se saa täyden juoksuanalyysin.</p></li>
+<li><p>Puhtaassa bearoff-asemassa se näyttää — EPC:n, pip countin, hukan ja kummankin pelaajan keskimääräisten heittojen lisäksi, nyt taulukkona etumerkillisellä Δ-rivillä — molempien pelaajien voittotodennäköisyydet ja money-ekviteetit (cubeless, ei tuplausta, tuplaus/otto, tuplaus/hylkäys, kunkin päätöksen erolla parhaaseen) sekä <strong>parhaan kuutiopäätöksen</strong>.</p></li>
+<li><p>Kaksi selvästi erotettua tilaa: <em>tarkka</em> (luku kaksipuolisesta tietokannasta; GNUbg:n TS-06-06-tietokanta sisäänrakennettuna, kattaen enintään 6 tammaa pelaajaa kohti) ja <em>arvioitu</em> (kalibroitu konvoluutio, virhemarginaali näytetään — kuutiotuomiota ei koskaan arvioida).</p></li>
+<li><p>Laajennettu TS-06-11-tietokanta (tarkka tuomio enintään 11 tamman osalta pelaajaa kohti, 1,2 Gt) ladataan asetusten uudelta <em>Bearoff</em>-välilehdeltä, eheystarkistuksella ja keskeytyneen latauksen jatkamisella; myös mikä tahansa gnubg:n kaksipuolinen <code class="docutils literal notranslate"><span class="pre">.bd</span></code>-tiedosto voidaan osoittaa.</p></li>
+<li><p><strong>Haastetila</strong> harjoittelua varten: tulokset piilotetaan jokaisen muutoksen yhteydessä ja paljastetaan alue kerrallaan yhdellä napsautuksella.</p></li>
+<li><p>Muokkaus kokonaan laudalla: molempien pelaajien tammat, vuorossa oleva pelaaja (napsauta bearoff/tulos-suorakulmiota) ja kuution sijainti (napsauta kuutiota).</p></li>
+<li><p>Laudalle napsauttaminen on nyt tarkkaa millä tahansa käyttöliittymän skaalauksella (napsautus pisteeseen 1 saattoi osua pisteeseen 2).</p></li>
+<li><p>Uusi <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">epc</span></code>-komento komentorivillä ja <code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code>-valitsin palvelintilassa.</p></li>
+<li><p>Uusi käsikirjan osio, ”Bearoff-paneelin menetelmät ja oletukset”, esittää tyhjentävästi jokaisen näytetyn arvon taustalla olevat oletukset.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Eval-paneeli</span></a> ja <a class="reference internal" href="manuel.html#epc-methodologie"><span class="std std-ref">Eval-paneelin metodologia ja oletukset</span></a>.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>0.31.0 (2026-08-04)<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tietokannan jakaminen kolmansille osapuolille: kaksi riippumatonta mekanismia, molemmat valinnaisia ja valittavissa viennin yhteydessä.</p></li>
+<li><p><strong>Alkuperän vesileima</strong> merkitsee tiedostoon, mikä se on ja mistä se on peräisin, allekirjoitettuna ensimmäisessä käytössä itsestään luodulla liikkeeseenlaskijan identiteetillä; merkintä on väärentämätön, näkyy Metatiedot-paneelin yläreunassa (tai komennolla <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, kirjoittamatta koskaan tiedostoon) eikä tallenna mitään vastaanottajan puolelle — ei lokia, ei seurantaa.</p></li>
+<li><p><strong>Salasanasuojaus</strong> tuottaa salatun <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedoston (AES-256-GCM, Argon2id:llä johdettu avain), tarkistettuna joka avauskerralla, jonka otsikko pysyy selväkielisenä; identiteetti viedään ja tuodaan yhtenä tiedostona asetuksista.</p></li>
+<li><p>Vienti-ikkuna uudistettu: yksi näyttö neljän sijaan, muistutus siitä, mitä todella lähtee (näytetyt asemat), kunkin kokoelman katettu osuus punaisella merkittynä, kun se on osittainen, turnaukset vietävissä vain otteluidensa kanssa — ja vienti kolme kertaa nopeampi.</p></li>
+<li><p>Asetusikkuna järjestetty uudelleen kolmeen välilehteen (Käyttöliittymä, Laudan värit, Liikkeeseenlaskijan identiteetti), vakaalla koolla ja sijainnilla.</p></li>
+<li><p>Metatiedot-paneeli järjestetty uudelleen yhdeksi ruudukoksi.</p></li>
+<li><p>Loki-paneeli, joka vastaanotti vain komentojen kaiun, poistetaan.</p></li>
+<li><p>Merkittävät korjaukset: väärä salasana ei enää avaa suojattua tietokantaa, modaali-ikkunoiden kentät eivät enää menetä fokusta napsautettaessa, PR/MWC-indikaattoreiden laskenta ei enää kaadu money-pelissä, ja väliaikaiset tiedostot (<code class="docutils literal notranslate"><span class="pre">-wal</span></code>, <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, lukko) siivotaan suljettaessa.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>0.30.0 (2026-07-26)<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Haku kommentin mukaan: ”Hakuteksti”-suodattimesta tulee ”Kommentti”-suodatin, joka tarjoaa kolme toisensa poissulkevaa tilaa — <em>sisältää tekstin</em> (aiempi käytös, tunnus <code class="docutils literal notranslate"><span class="pre">t&quot;&quot;sana1;sana2&quot;&quot;</span></code>), <em>sisältää kommentin</em> (tunnus <code class="docutils literal notranslate"><span class="pre">co</span></code>) ja <em>ilman kommenttia</em> (tunnus <code class="docutils literal notranslate"><span class="pre">xco</span></code>) — löytääkseen yhdellä eleellä kommentoidut asemat, tai päinvastoin ne, jotka on vielä kommentoitava.</p></li>
+<li><p>eXtreme Gammonissa merkityt asemat: XG-ottelun analysoinnin aikana asetetut merkinnät (<em>flags</em>) luetaan nyt tuonnin yhteydessä ja löydetään ”Merkitty”-suodattimella (tunnus <code class="docutils literal notranslate"><span class="pre">fl</span></code>), yhdistettävissä mihin tahansa muuhun kriteeriin; merkitty kuutiopäätös antaa kaksi merkittyä asemaa, tuplauksen ja oton/hylkäyksen.</p></li>
+<li><p>Koska merkintä ei ole takautuva, riittää, että kyseinen <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedosto tuodaan uudelleen, jotta sen merkinnät liittyvät tietokantaan, koskematta olemassa oleviin kommentteihin tai analyyseihin.</p></li>
+<li><p>Merkittävät korjaukset: turnauksen merkissä näkyvä PR viittaa nyt vertailupelaajaan eikä molempien pelaajien summaan, hakuun perustuvat Anki-pakat kunnioittavat jälleen kyseisen haun suodattimia sen sijaan, että ottaisivat koko tietokannan, ja tiettyjen suodattimien (teksti, päivämäärä, pelatun siirron virhe) yhdistämisestä johtuva haun jumiutuminen on korjattu.</p></li>
+<li><p>Katso <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>0.29.0 (2026-07-18)<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Ottelun vienti Jellyfish/gnubg-muodossa (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) käyttöliittymästä (Ottelut-paneeli) sekä komentoriviltä, vastaavalla palvelinreitillä — kätevä ottelun uudelleenpelaamiseen toisessa backgammon-ohjelmassa.</p></li>
+<li><p>Haku: uusi ”poissuljetut nopat” -erottelija (tunnus <code class="docutils literal notranslate"><span class="pre">xD65</span></code>, useita sallitaan), joka sulkee pois asemat, joiden heitto vastaa annettua heittoa.</p></li>
+<li><p>Turvallinen samanaikainen avaus: toisessa blunderDB-ikkunassa jo kirjoitusta varten avattu tietokanta avataan nyt vain luku -tilassa (selaus, haku ja analyysi edelleen mahdollisia, muutokset pois käytöstä, ”[vain luku]” -maininta otsikkopalkissa) korruption riskeeraamisen sijaan.</p></li>
+<li><p>Asemien alkuperä: ottelutilan ulkopuolella laudan yläpuolella oleva tietopalkki näyttää ottelun — ja sen turnauksen — josta tutkittava asema on peräisin, ”+N”-merkillä, kun se esiintyy useassa ottelussa.</p></li>
+<li><p>Lisääntynyt kestävyys ympäristöä vastaan: automaattinen vaihtoehtoinen toiminta, kun fontti, leikepöytä tai viimeksi avattu tietokanta eivät ole käytettävissä.</p></li>
+<li><p>Kirjaston nimenomainen uudelleenlataus (<code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code>, työkalupalkin painike tai komento <code class="docutils literal notranslate"><span class="pre">e</span></code>) avaa uudelleen analyysipaneelin näkyvillä olevaan asemaan.</p></li>
+<li><p>Merkittävät korjaukset: poistettu suurten tietokantojen viennin jumiutuminen, viennin ”Ei mitään” -painike, joka ei todellisuudessa vienyt oikeasti mitään, monisanainen kommenttisuodatus, tapahtuman ja turnauksen kahdennuksen poisto tietopalkista, sekä useita näyttömuutoksia.</p></li>
+<li><p>Katso <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a>, <a class="reference internal" href="manuel.html#panneau-matchs"><span class="std std-ref">Ottelupaneeli</span></a> ja <a class="reference internal" href="manuel.html#manuel"><span class="std std-ref">Käyttöopas</span></a>.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3>0.28.0 (2026-07-15)<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Hakupaneeli: yhtenäistetty ”Ottelut &amp; Turnaukset” -suodatin, joka korvaa tunnistekentät valintaikkunalla (tekstillä suodatettavat valintalistat, <em>Kaikki</em>/<em>Ei mitään</em> -painikkeet, turnauksen valinta valitsee sen jäsenottelut) — nopeampi suurilla tietokannoilla, Ottelut-välilehti ja Turnaukset-näkymä laskevat nyt PR/MWC-indikaattorit vain näytetyille otteluille; <code class="docutils literal notranslate"><span class="pre">cli</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tournaments</span></code> sulkee vastaavan pariteettiaukon.</p></li>
+<li><p>Uusi ”Yksittäin tuotu” -suodatin (valintaruutu Muut-ryhmässä, tai tunnus <code class="docutils literal notranslate"><span class="pre">i</span></code> komentorivillä, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">i</span></code>; saatavilla myös CLI:ssä <code class="docutils literal notranslate"><span class="pre">--individual</span></code>-valitsimella) löytääkseen aseman, joka on tallennettu tai tuotu yksinään sen sijaan, että se hukkuisi ottelun tuontiin.</p></li>
+<li><p>Korjattu tietojen menetys: ottelun poistaminen ei enää poista yksittäin tuotuja, kokoelmaan sijoitettuja tai Anki-pakkaan sisällytettyjä asemia, jotka ottelu myös sisälsi.</p></li>
+<li><p>Palvelintila (headless): kuusi uutta metodia hajautetun toiston Anki-ajastimelle — kertauslokia (<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>), erääntyvien korttien ennustetta (<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>), kortin keskeyttämistä/hautaamista/poistoa (<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>) ja pakan tavoiteretention automaattista säätöä havaittua onnistumisastetta kohti (<code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>); uusi <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>-metodi vuokralaisen tietojen pysyvään poistamiseen monikäyttäjäisessä PostgreSQL-käyttöönotossa; uudet <code class="docutils literal notranslate"><span class="pre">matches.list</span></code> (suodatus/lajittelu/sivutus) ja <code class="docutils literal notranslate"><span class="pre">stats.matchBadges</span></code> (PR/MWC-indikaattorit rajattuna ottelulistaan) -metodit.</p></li>
+<li><p>Natiivi Linux-jakelu: <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-paketit, jotka säilyttävät suoritusbitin, joka katosi raakabinäärin latauksessa.</p></li>
+<li><p>Tuonti: ottelun tuonnin jälkeen Ottelut-välilehti näkyy nyt, ja tuodut asemat ovat välittömästi näkyvissä; yksittäisen aseman (XGP-tiedosto, BGBlitz-asema, tekstimuotoinen asematiedosto, liitetty asema tai asemaerä) tuonnin jälkeen Analyysi-välilehti avautuu nyt suoraan tuotuun asemaan, Ottelut-välilehden sijaan; korjattu ranskan- tai saksankielisen eXtreme Gammon -analyysin liittäminen macOS:stä, joka jäi aiemmin tyhjäksi (järjestelmän leikepöytä hajotti aksentit).</p></li>
+<li><p>Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>, <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a> ja <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Lataaminen ja asentaminen</span></a>.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>0.27.0 (2026-06-13)<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Anki-paneeli: uusi vapaan harjoittelun (<em>cram</em>) tila, käytettävissä <em>Cram</em>-painikkeesta <em>Study</em>-painikkeen vierestä, joka näyttää satunnaisia asemia pakasta muuttamatta kertausaikataulua — ihanteellinen lämmittelyyn ennen turnausta tai pakan tehokkaaseen kertaamiseen sen järjestystä häiritsemättä.</p></li>
+<li><p>Haku: uusi komento <code class="docutils literal notranslate"><span class="pre">blunders</span></code> (alias <code class="docutils literal notranslate"><span class="pre">bl</span></code>), joka lataa pahimmat virheet (equity/MWC) suoraan analyysinäkymään, valinnaisella luvulla määrän valitsemiseksi (<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">50</span></code>); uusi pelaajasuodatin <code class="docutils literal notranslate"><span class="pre">pl'nimi'</span></code>, joka löytää kaikki asemat ottelusta, johon tietty pelaaja osallistui kummalla tahansa puolella; ja työkaluvihjeet, jotka hakupaneelin kutakin suodatinta osoitettaessa näyttävät vastaavan komentotunnuksen.</p></li>
+<li><p>Palvelintila (headless): uudet metodit <code class="docutils literal notranslate"><span class="pre">matches.movesByMatch</span></code> (ottelun kaikki siirrot yhdellä kutsulla) ja <code class="docutils literal notranslate"><span class="pre">positions.epc</span></code> (molempien pelaajien Effective Pip Count).</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki-paneeli</span></a> ja <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">Komentoluettelo</span></a>.</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>0.26.0 (2026-06-09)<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Käyttöliittymän näyttöasetukset asetusikkunassa: skaalausliukusäädin koko käyttöliittymän suurentamiseen tai pienentämiseen, ja paneelien sijainnin valinta (alhaalla, sivulla tai automaattinen) leveiden näyttöjen paremmaksi hyödyntämiseksi.</p></li>
+<li><p>Lisätty laudan yläpuolelle tietopalkki, joka muistuttaa pelaajista ja ottelun kontekstista (tapahtuma, paikka, kierros, päivämäärä, pituus).</p></li>
+<li><p>Tietokantaa avattaessa Ottelut-paneeli näytetään nyt heti, ja tarkastelu alkaa ensimmäisestä asemasta.</p></li>
+<li><p>Näppäinoikotiet ovat nyt riippumattomia näppäimistöasettelusta (AZERTY, QWERTY, QWERTZ…).</p></li>
+<li><p>Korjattu XGID:n dekoodaus (Jacoby/Beaver-liput ja kuution arvo).</p></li>
+<li><p>Lisätty monivälilehtiset näkymät: useita riippumattomia työtiloja (positioluettelo, nykyinen positio, haku) pikanäppäimillä <em>CTRL-T</em> (uusi näkymä), <em>CTRL-W</em> (sulje), <em>CTRL-PageUp</em>/<em>CTRL-PageDown</em> (vaihda näkymää) ja uudelleennimeäminen kaksoisnapsauttamalla välilehteä.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Asetukset</span></a> ja <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Näkymävälilehdet</span></a>.</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>0.25.0 (2026-06-07)<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Palvelintila (headless): kaksi uutta metodia aseman rakentamiseen tallentamatta sitä — <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> purkaa XGID-merkkijonon asemaksi ja <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> lukee yksittäisen aseman <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>-tiedoston.</p></li>
+<li><p>Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id13">
+<h3>0.24.0 (2026-06-06)<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty konttikuva (Docker) headless-tilaa varten: erillinen <code class="docutils literal notranslate"><span class="pre">serve</span></code>-aloituspiste ja <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, joka tuottaa staattisen binaarin ilman graafista käyttöliittymää, jotta blunderDB-moottori voidaan ottaa käyttöön palveluna käänteisvälityspalvelimen takana.</p></li>
+<li><p>Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>0.23.0 (2026-06-05)<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty käyttöliittymän opastetut kierrokset (yleinen kierros, haku, ottelut, turnaukset), toistettavissa työkalupalkista tai <code class="docutils literal notranslate"><span class="pre">tour</span></code>-komennolla, sekä esimerkkitietokanta, joka voidaan ladata <code class="docutils literal notranslate"><span class="pre">demo</span></code>-komennolla työkalun tutustumiseksi tuomatta omia pelejä.</p></li>
+<li><p>Laudan värien mukauttaminen (tausta, reunus, nuolet, tammat, nopat, kuutio) asetusikkunasta.</p></li>
+<li><p>Komentorivin automaattinen täydentäminen (<em>TAB</em>-näppäin).</p></li>
+<li><p>Hakupaneeli: päätöstyypin (Tammat / Kuutio) nimenomainen hallinta, kuutiopäätöksille alatyypillä Tuplaus / Ei tuplausta tai Otto / Hylkäys, synkronoituna laudan kanssa; tarjottu kuutio näytetään laudan keskellä otto/hylkäys-päätöksille.</p></li>
+<li><p>Aseman haku sen tunnisteen perusteella (suodatin <code class="docutils literal notranslate"><span class="pre">id</span></code>).</p></li>
+<li><p>Korjattu kuutiovirheen kohdistuminen pelaajalle 1.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Opastetut kierrokset ja esimerkkitietokanta</span></a>.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>0.22.0 (2026-06-02)<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty headless-tila (palvelin), edistynyt ja valinnainen, joka täydentää työpöytäsovellusta: <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni, joka tarjoaa moottorin HTTP + JSON -rajapinnan kautta, monikäyttäjäinen PostgreSQL-taustajärjestelmä, jossa tiedot on eristetty vuokralaisittain (sekä valinnainen Row-Level Security), <code class="docutils literal notranslate"><span class="pre">migrate</span></code>-komento SQLite-tietokannan siirtämiseen PostgreSQL:ään, sekä yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä, joka antaa komentoriviltä pääsyn kaikkiin tallennustoimintoihin.</p></li>
+<li><p>Yksittäisten asemien tuonti uusista muodoista (eXtreme Gammon <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, BGBlitz-teksti, natiivi <code class="docutils literal notranslate"><span class="pre">.db</span></code>-kirjasto) muotojen välisten duplikaattien rikastamisella.</p></li>
+<li><p>Korjaukset: paneelit eivät enää aiheuta virhettä, kun yhtään tietokantaa ei ole avattu, eikä Kommentit-paneeli enää jää silmukkaan avattaessa.</p></li>
+<li><p>Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>.</p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>0.21.0 (2026-06-01)<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi, ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, kreikaksi tai venäjäksi.</p></li>
+<li><p>Lisätty asetusikkuna, käytettävissä työkalupalkin hammasrataspainikkeesta, jonka avulla voi valita kielen.</p></li>
+<li><p>Kielivalinta säilyy istunnosta toiseen.</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Asetukset</span></a>.</p></li>
+</ul>
+</section>
+<section id="id17">
+<h3>0.20.0 (2026-05-31)<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty poissulkeva <em>Except</em>-rakenne hakupaneeliin: sulkee pois asemat, jotka sisältävät jonkin piirretyistä tammoista, ”pitää olla tyhjä” -merkinnällä (kaksoisnapsautus) ja rajoittamattomalla tammojen määrällä per piste (komento <code class="docutils literal notranslate"><span class="pre">x</span></code>).</p></li>
+<li><p>Lisätty ”vain ensimmäinen noppa” -vaihtoehto heittosuodattimeen (D1-muunnelma, CLI-valitsin <code class="docutils literal notranslate"><span class="pre">--dice</span></code>).</p></li>
+<li><p>Kommentit-paneeli: syöttökentän automaattinen fokus avattaessa, ja muokkaa/poista-painikkeet aina näkyvissä.</p></li>
+<li><p>Korjattu ”Search Text” -suodatin, joka ei löytänyt kaikkia kommenttien tunnisteita.</p></li>
+</ul>
+</section>
+<section id="id18">
+<h3>0.19.0 (2026-05-07)<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty Stats-paneeli: PR (Performance Rate)-, Snowie Error Rate- ja MWC cost (Match Winning Chance cost) -indikaattorit, suodatinpalkki (pelaaja, turnaus, päivämäärät, päätöstyyppi, ottelun pituus), Dashboard-välilehti tasokorteilla / liukuvalla PR:llä / pahimmilla blundereilla, Progression-välilehti turnauskohtaisella käyrällä ja ottelukohtaisella hajontakaaviolla, Errors-välilehti tuplaustoimintojen erittelyllä ja virheiden suuruuksien histogrammilla.</p></li>
+<li><p>Interaktiivinen porautuminen positioihin / otteluihin / turnauksiin kaikista indikaattoreista.</p></li>
+<li><p>Välitön PR / MWC -vaihto.</p></li>
+<li><p>CLI-komento list –type stats.</p></li>
+<li><p>PR / Snowie ER / MWC -indikaattoreiden yhtenäistäminen eXtremeGammonin ja gnuBG:n kanssa (0.16 ekviteettikynnys läheisille kuutioille).</p></li>
+<li><p>Korjattu cube_error-laskenta Double/Pass-päätöksille.</p></li>
+<li><p>Tilastomallin dokumentaatio (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</span></a>).</p></li>
+<li><p>Katso <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a>.</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>0.18.0 (2026-04-20)<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Suuri koodin refaktorointi: db.go:n (10 000 riviä) jakaminen 19 erikoistuneeseen tiedostoon, 7 palvelumoduulin erottaminen App.svelte:stä (4888→469 riviä), modaali-/paneelivarastojen yhdistäminen.</p></li>
+<li><p>Täydellinen siirtyminen Svelte 5 -runeihin.</p></li>
+<li><p>9 taulukkomodaalin korvaaminen yleisellä DataTableModal-komponentilla.</p></li>
+<li><p>Lisätty ESLint + Prettier + vitest (125 frontend-testiä) CI:llä.</p></li>
+<li><p>WCAG 2.1 AA -yhdenmukaisuus (näkyvä fokus, ARIA-roolit, näppäimistönavigointi).</p></li>
+<li><p>Database-mutexin vaihtaminen RWMutexiksi paremman lukurinnakkaisuuden saavuttamiseksi.</p></li>
+<li><p>Täydellinen CLI-dokumentaatio (CLI_USAGE.md + Sphinx FR/EN).</p></li>
+<li><p>README uudelleenkirjoitettu.</p></li>
+<li><p>Korjattu kaikki ESLint (46→0)- ja Vite (6→0) -varoitukset.</p></li>
+</ul>
+</section>
+<section id="id20">
+<h3>0.17.0 (2026-04-20)<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tallennuksen optimointi: analyysidatan zlib-pakkaus (~80 % pienennys), kompakti positioiden koodaus (~90 % koon pienennys).</p></li>
+<li><p>Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi.</p></li>
+<li><p>Korjattu haku kuutiovirheen mukaan.</p></li>
+<li><p>Korjattu EDIT-tila tuloksettoman haun jälkeen.</p></li>
+<li><p>Hakupaneelin tilan palauttaminen välilehteä vaihdettaessa.</p></li>
+<li><p>62 debug-lauseen poistaminen kriittisiltä poluilta.</p></li>
+</ul>
+</section>
+<section id="id21">
+<h3>0.16.0 (2026-04-18)<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Tietokantaskeema v2.0.0: positioiden deduplikointi Zobrist-hashilla, denormalisoidut suodatussarakkeet, bittilautakuvioiden esisuodatus, WAL-journalointi.</p></li>
+<li><p>Erätuonti &gt;=3x nopeampi, suodatettu haku &lt;=100 ms yli 10 000 positiolla.</p></li>
+<li><p>HUOM: v0.16.0:lla luotuja DB-tiedostoja ei voi avata vanhemmilla versioilla; vanhat DB:t migratoidaan automaattisesti paikallaan (ota ensin varmuuskopio).</p></li>
+</ul>
+</section>
+<section id="id22">
+<h3>0.15.0 (2026-03-31)<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Position vienti PNG-kuvana leikepöydälle (pelkkä lauta painikkeella Ctrl+X, tai lauta analyysin kanssa painikkeella Ctrl+X Ctrl+X).</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>0.14.0 (2026-03-30)<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Oma Anki-paneeli kertausvälioppimiseen (FSRS-algoritmi).</p></li>
+<li><p>Kommenttien tuonti XG-tiedostoista.</p></li>
+</ul>
+</section>
+<section id="id24">
+<h3>0.13.0 (2026-03-28)<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Käyttöliittymän yksinkertaistaminen: otteluiden ja kokoelmien selaus tapahtuu nyt suoraan paneeleiden kautta.</p></li>
+<li><p>Tilariviin integroitu komentorivi.</p></li>
+<li><p>Console-paneeli nimetty uudelleen Log-paneeliksi.</p></li>
+<li><p>Oma Bearoff-paneeli alapaneelissa.</p></li>
+<li><p>Position kopiointi/liittäminen hakupaneelissa.</p></li>
+<li><p>Vedä-ja-pudota kokoelmien, kokoelmien sisäisten positioiden sekä turnausten sisäisten otteluiden uudelleenjärjestämiseen.</p></li>
+<li><p>Turnaussarake ottelupaneelissa suoralla muokkauksella.</p></li>
+<li><p>Analyysipaneelin automaattinen näyttö haun jälkeen.</p></li>
+</ul>
+</section>
+<section id="id25">
+<h3>0.12.0 (2026-03-19)<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>eXtreme Gammon -positiotiedostojen (XGP) tuonti analyysin kanssa.</p></li>
+</ul>
+</section>
+<section id="id26">
+<h3>0.11.0 (2026-03-06)<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Hakusuodatin nykyisissä positioissa.</p></li>
+<li><p>Lisätty ottelu- ja turnaussuodattimet.</p></li>
+<li><p>Laudan automaattinen tyhjennys hakupaneelia avattaessa.</p></li>
+</ul>
+</section>
+<section id="id27">
+<h3>0.10.0 (2026-02-25)<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Otteluiden tuonti eXtreme Gammonista (XG/XGP), GNUbg:stä (SGF), Jellyfishistä (MAT/TXT) ja BGBlitzistä (BGF/TXT).</p></li>
+<li><p>Otteluiden selaaminen: tuodun ottelun siirtojen läpikäynti, pelatun siirron korostuksella.</p></li>
+<li><p>Ottelupaneeli: luettelo, lajittelu, suora muokkaus, pelaajien vaihto, turnauksen määritys.</p></li>
+<li><p>Rekursiivinen kansiotuonti ja vedä-ja-pudota-tuonti.</p></li>
+<li><p>EPC-laskuri (Effective Pip Count) sisäänrakennetulla GNUbg:n bearoff-tietokannalla.</p></li>
+<li><p>Kokoelmat: positioiden mukautettu ryhmittely.</p></li>
+<li><p>Turnaukset: otteluiden ryhmittely tapahtuman mukaan.</p></li>
+<li><p>Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio).</p></li>
+<li><p>Tietokantaskeeman automaattinen migraatio.</p></li>
+<li><p>Useiden moottoreiden näyttö analyysissä.</p></li>
+<li><p>Pelaajan 1 virheiden/blundereiden suodatin hauissa.</p></li>
+<li><p>Tietokannan vienti tarkalla valinnalla (ottelut, kokoelmat, turnaukset, pelatut siirrot).</p></li>
+<li><p>Otteluiden selauspainike.</p></li>
+<li><p>Pip-laskuri otteluiden selauksessa.</p></li>
+<li><p>Täydellinen komentorivikäyttöliittymä (CLI).</p></li>
+<li><p>Viimeisimmän tietokannan automaattinen uudelleenavaus.</p></li>
+<li><p>Parannettu työkalupalkki ja kuvakkeet.</p></li>
+</ul>
+</section>
+<section id="id28">
+<h3>0.9.0 (2025-11-02)<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Suodatinkirjaston virhekorjaus.</p></li>
+<li><p>Tietokannan tuonti/vienti.</p></li>
+<li><p>Nuolien näyttäminen valituille siirroille.</p></li>
+<li><p>Pikanäppäimet tuontiin/vientiin.</p></li>
+</ul>
+</section>
+<section id="id29">
+<h3>0.8.0 (2025-05-03)<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Mahdollisuus piilottaa pip-laskuri.</p></li>
+<li><p>Satunnaisen position lataaminen.</p></li>
+</ul>
+</section>
+<section id="id30">
+<h3>0.7.0 (2025-02-16)<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Japanin- ja saksankielisten XG-vientien tuki.</p></li>
+</ul>
+</section>
+<section id="id31">
+<h3>0.6.0 (2025-02-13)<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty suodatinkirjasto.</p></li>
+<li><p>Tietokannan version näyttäminen metatiedoissa.</p></li>
+</ul>
+</section>
+<section id="id32">
+<h3>0.5.0 (2025-02-04)<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Lisätty uusia suodattimia (peilikuva, ei kosketusta, jan blot, outfield blot).</p></li>
+</ul>
+</section>
+<section id="id33">
+<h3>0.4.0 (2025-02-03)<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Erinäisiä virhekorjauksia.</p></li>
+<li><p>Lisätty kuvake blunderDB:lle.</p></li>
+<li><p>Suodattimien korjauksia.</p></li>
+<li><p>Lisätty macOS-tuki.</p></li>
+</ul>
+</section>
+<section id="id34">
+<h3>0.3.0 (2025-01-27)<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Erinäisiä virhekorjauksia.</p></li>
+<li><p>Tallentaa ikkunan koon automaattisesti.</p></li>
+<li><p>Tuo mahdolliset kommentit XG:stä.</p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>0.2.0 (2025-01-06)<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Erinäisiä virhekorjauksia.</p></li>
+<li><p>Lisätty ottelu-/TP/GV-taulukot.</p></li>
+<li><p>Lisätty hakusuodattimet (siirrot, tuplauspäätös, päivämäärä).</p></li>
+<li><p>Lisätty positioiden metatiedot.</p></li>
+<li><p>Tuonti-/vientitoiminto blunderDB-instanssien välillä.</p></li>
+<li><p>Lisätty tietokantojen metatietotoiminto.</p></li>
+<li><p>Versionumeroiden käyttöönotto (tietokanta ja sovellus).</p></li>
+</ul>
+</section>
+<section id="id36">
+<h3>0.1.0 (2024-12-31)<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Beta-versio.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="sommaire">
+<h1>Sisällysluettelo<a class="headerlink" href="#sommaire" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#quel-fichier-choisir">1.1. Minkä tiedoston valitsen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#verifier-un-telechargement">1.2. Latauksen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#installation-sous-linux">1.3. Asentaminen Linuxiin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#image-docker-mode-serveur">1.4. Docker-levykuva (palvelintila)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#gestionnaires-de-paquets-windows-et-mac-a-venir">1.5. Windowsin ja Macin paketinhallinnat (tulossa)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="telecharge_install.html#avertissements-windows-et-mac">1.6. Windows- ja Mac-varoitukset</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#tutoriels-de-bout-en-bout">2.1. Alusta loppuun -opastukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#comment-progresser-avec-blunderdb">2.2. Miten kehittyä blunderDB:n avulla</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#scenario-de-demonstration-3-minutes">2.3. Esittelyskenaario (3 minuuttia)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">2.4. Luo uusi tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">2.5. Avaa olemassa oleva tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">2.6. Tuo ja yhdistä tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">2.7. Muokkaa asemaa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">2.8. Lisää asema tietokantaan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">2.9. Merkitse asema tunnisteella</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">2.10. Poista asema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">2.11. Tuo asema XG:stä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">2.12. Tuo ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">2.13. Tuo ottelukansio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">2.14. Vedä ja pudota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">2.15. Selaa ottelua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">2.16. Hallitse ottelupaneelia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">2.17. Hallitse kokoelmia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">2.18. Hallitse turnauksia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">2.19. Näytä suoritustilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#evaluer-une-position-panneau-eval">2.20. Aseman arviointi (Eval-paneeli)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">2.21. Näytä XG:stä tuodun aseman analyysi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">2.22. Vie asema XG:hen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">2.23. Tarkastele eri asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">2.24. Hae asemia kriteerien perusteella</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#pour-aller-plus-loin">2.25. Pidemmälle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">3.1. Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">3.2. Päätoiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">3.3. Käyttöliittymän kuvaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#onglets-de-vues">3.4. Näkymävälilehdet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">3.5. Asetukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#visites-guidees-et-base-d-exemple">3.6. Opastetut kierrokset ja esimerkkitietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">3.7. Asemien selaaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">3.8. Asemien muokkaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">3.9. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">3.10. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">3.11. Kommenttipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">3.12. Hakupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">3.13. Kokoelmapaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">3.14. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">3.15. Turnauspaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">3.16. Stats-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-eval">3.17. Eval-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">3.18. Anki-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">3.19. Metatietopaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#diffuser-une-base-origine-et-mot-de-passe">3.20. Tietokannan jakaminen: alkuperä ja salasana</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Yleiset toiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Asemat ja navigointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Muokkaus ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Hakusuodattimet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Sekalaisia komentoja</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. Tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Asema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Navigointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Näyttö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Toiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Työkalut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#onglets-de-vues">5.7. Näkymävälilehdet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.8. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#historique-de-recherche">5.9. Hakuhistoria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#bibliotheque-de-filtres">5.10. Suodatinkirjasto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.11. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-eval">5.12. Eval-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.13. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.14. Anki-paneeli (välitoistoharjoittelu)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-tournois">5.15. Turnauspaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-collections">5.16. Kokoelmapaneeli</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. Yleinen syntaksi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. Käytettävissä olevat komennot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — Luo tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — Tuo tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — Vie tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#identity-identite-d-emetteur">6.7. identity — Liikkeeseenlaskijan identiteetti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#open-ouvrir-un-fichier-protege">6.8. open — Suojatun tiedoston avaaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.9. search — Hae asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.10. list — Luettele sisältö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.11. match — Näytä ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#collection-gerer-les-collections">6.12. collection — Kokoelmien hallinta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#anki-paquets-de-repetition-espacee">6.13. anki — Välitoistopakat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#epc-calculatrice-epc">6.14. epc — EPC-laskin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#bearoff-bases-de-sortie">6.15. bearoff — Bearoff-tietokannat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#analyze-rattrapage-gammonnet">6.16. analyze — gammonNet-täydennysanalyysi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.17. info — Tietokannan metatiedot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.18. edit — Muokkaa metatietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.19. verify — Tarkista eheys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#vacuum-compacter-la-base-de-donnees">6.20. vacuum — Tietokannan tiivistäminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#repair-recalculer-les-colonnes-d-analyse">6.21. repair — Laske analyysisarakkeet uudelleen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.22. delete — Poista tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#healthcheck-sonder-un-demon">6.23. healthcheck — Taustaprosessin tarkistus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#completion-completion-shell">6.24. completion — Shell-täydennys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.25. Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.26. Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Usein kysytyt kysymykset (UKK)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-l-utilite-de-blunderdb">8.1. Mihin blunderDB:tä käytetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">8.2. Mikä motivoi blunderDB:n luomiseen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">8.3. Miten nykyisen tietokannan tila tallennetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">8.4. Pitäisikö minun luoda eri tietokantoja eri asemaluokille?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">8.5. Miten useita tietokantoja yhdistetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">8.6. Mitä ottelutiedostomuotoja tuetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">8.7. Tarvitsenko eXtreme Gammonia käyttääkseni blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">8.8. Mikä on kokoelma?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">8.9. Mikä on EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#que-vaut-l-evaluateur-integre-gammonnet">8.10. Mitä sisäänrakennettu arviointimoottori (gammonNet) on arvoinen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">8.11. Mikä on ero PR:n ja Snowie Error Raten välillä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">8.12. Onko blunderDB:ssä komentorivikäyttöliittymä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-propose-t-il-un-mode-serveur">8.13. Tarjoaako blunderDB palvelintilan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">8.14. Voinko muokata, kopioida ja jakaa blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#ou-sont-stockees-mes-donnees">8.15. Missä tietoni säilytetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-partager-une-base-avec-un-autre-joueur">8.16. Voinko jakaa tietokannan toisen pelaajan kanssa?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">8.17. Mitä tietomuotoa blunderDB käyttää?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-ont-ete-les-principes-de-conception-de-blunderdb">8.18. Mitkä olivat blunderDB:n suunnitteluperiaatteet?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelle-est-l-architecture-logicielle-de-blunderdb">8.19. Mikä on blunderDB:n ohjelmistoarkkitehtuuri?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">8.20. Millä alustoilla blunderDB toimii?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">8.21. Mistä blunderDB:n kuvake on peräisin?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Etenemissuunnitelma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Vaihe 3 — Laajentaminen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#import-et-flux">10.1. Tuonti ja työnkulku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#categoriser-sans-imposer-de-classification">10.2. Luokittelu ilman pakotettua taksonomiaa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#analyse-et-evaluation">10.3. Analyysi ja arviointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#pedagogie">10.4. Opetus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#partager-une-analyse">10.5. Analyysin jakaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#recherche-et-bibliotheque">10.6. Haku ja kirjasto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="roadmap.html#interface-et-plateforme">10.7. Käyttöliittymä ja alusta</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Vaihe 4 — Perustavat hankkeet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Mitä <strong>ei</strong> ole suunnitteilla</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Headless-tila (palvelin)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#vue-d-ensemble">13.1. Yleiskatsaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-demon-serve">13.2. <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#backend-postgresql-et-multi-utilisateurs">13.3. PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#migrer-une-base-sqlite-vers-postgresql">13.4. SQLite-tietokannan siirtäminen PostgreSQL:ään</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mode_headless.html#le-dispatcher-generique-call">13.5. Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API-sopimus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference.html#idempotence">14.1. Idempotenssi</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Liite: Suodattimien edistynyt käyttö</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">15.1. Asemien haku komentorivillä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">15.2. Haku nykyisistä tuloksista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">15.3. Suodatinkirjasto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">15.4. Esimerkkejä</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">16.1. Windows SmartScreen -varoitus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">16.2. Windows Defenderin esto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#verifier-l-integrite-du-telechargement-sha256">16.3. Latauksen eheyden tarkistus (SHA256)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac-liite: blunderDB:n mahdollinen esto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">17.1. blunderDB:n asennus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">17.2. Luvan antaminen blunderDB:n suorittamiseen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Liite: Tietokannan skeema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#versionnage-et-migrations">18.1. Versiointi ja migraatiot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principales-tables">18.2. Päätaulut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#principes-de-conception">18.3. Suunnitteluperiaatteet</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">19.1. Muodolliset määritelmät</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">19.2. PR:n nimittäjässä lasketut päätökset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">19.3. Vastaavuus blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">19.4. Omien lukujen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">19.5. gnuBG-viite</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="contacts">
+<span id="id37"></span><h1>Yhteystiedot<a class="headerlink" href="#contacts" title="Link to this heading"></a></h1>
+<p>Tekijä: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Minut tavoittaa myös Heroes-palvelusta käyttäjänimellä postmanpat.</p>
+<p>Kehitin blunderDB:n alun perin omaan käyttööni voidakseni havaita toistuvia kaavoja virheissäni. On kuitenkin hyvin palkitsevaa saada palautetta, etenkin kun on käyttänyt paljon tunteja suunnitteluun, koodaukseen ja virheenkorjaukseen… Älä siis epäröi ottaa yhteyttä ja jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta.</p>
+<p>Tässä useita tapoja keskustella:</p>
+<ul class="simple">
+<li><p>liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En</p></li>
+<li><p>lähetä minulle sähköpostia osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>,</p></li>
+<li><p>keskustele kanssani, jos tapaamme turnauksessa,</p></li>
+<li><p>GitHubissa,</p>
+<ul>
+<li><p>avaa tiketti: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>virhekorjauksia tai parannusehdotuksia varten luo pull request.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>Lahjoita<a class="headerlink" href="#faire-un-don" title="Link to this heading"></a></h1>
+<p>Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa kehitystä, voit</p>
+<ul class="simple">
+<li><p>tarjota minulle juoman, jos meillä on ilo tavata!</p></li>
+<li><p>tehdä pienen lahjoituksen PayPalilla osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>Kiitokset<a class="headerlink" href="#remerciements" title="Link to this heading"></a></h1>
+<p>Omistan tämän pienen ohjelman kumppanilleni Anne-Clairelle ja rakkaalle tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia ystäviä:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em>, joka johdatti minut backgammonin pariin ilolla ja ystävällisyydellä; joka näyttää tien tämän upean pelin ymmärtämiseen; ja joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata paremmin huolimatta.</p></li>
+<li><p><em>Nicolas Harmand</em>, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai backgammon-tartunnan.</p></li>
+</ul>
+</section>
+<section id="credits">
+<h1>Kiitokset kolmansille osapuolille<a class="headerlink" href="#credits" title="Link to this heading"></a></h1>
+<p>blunderDB sisältää muiden ihmisten koodia, dataa ja fontteja. Täydellinen luettelo lisenssiteksteineen on tiedosto <code class="docutils literal notranslate"><span class="pre">THIRD_PARTY.md</span></code>, joka toimitetaan jokaisen paketin mukana (<code class="docutils literal notranslate"><span class="pre">/usr/share/doc/blunderdb/</span></code>) ja on <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md">tietovaraston</a> juuressa. Olennaisin:</p>
+<ul class="simple">
+<li><p>neuroverkko <code class="docutils literal notranslate"><span class="pre">strehl-prob5-512-512-256-128</span></code> on <em>Alexander Strehlin</em> työtä (<a class="reference external" href="https://github.com/alexstrehl/backgammon-ai-engine">alexstrehl/backgammon-ai-engine</a>, MIT-lisenssi); haku, tuplausmalli ja otteluekvivalenssitaulukko sen ympärillä ovat <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>-projektin omaa kokoonpanoa (MIT);</p></li>
+<li><p>Kazaross-XG2-otteluekvivalenssitaulukko on <em>Neil Kazarossin</em> työtä;</p></li>
+<li><p>take point- ja gammon-arvotaulukot on otettu <em>Dirk Schiemannin</em> kirjasta <em>The Theory of Backgammon</em>;</p></li>
+<li><p>yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta on luotu ohjelmalla <a class="reference external" href="https://www.gnu.org/software/gnubg/">GNU Backgammon</a>; GNUbg on GPL-lisensoitu vapaa ohjelmisto, ja nämä taulukot ovat sen tuottamaa dataa, joka mainitaan sellaisena;</p></li>
+<li><p>ottelutiedostot luetaan kirjastoilla <a class="reference external" href="https://github.com/kevung/xgparser">xgparser</a>, <a class="reference external" href="https://github.com/kevung/gnubgparser">gnubgparser</a> ja <a class="reference external" href="https://github.com/kevung/bgfparser">bgfparser</a> (MIT);</p></li>
+<li><p>Go-puolella: <a class="reference external" href="https://gitlab.com/cznic/sqlite">modernc.org/sqlite</a> (BSD-3-Clause), <a class="reference external" href="https://github.com/jackc/pgx">pgx</a>, <a class="reference external" href="https://wails.io">Wails</a> ja <a class="reference external" href="https://github.com/open-spaced-repetition/go-fsrs">go-fsrs</a> (MIT);</p></li>
+<li><p>käyttöliittymän puolella: <a class="reference external" href="https://svelte.dev">Svelte</a>, <a class="reference external" href="https://two.js.org">two.js</a>, <a class="reference external" href="https://www.chartjs.org">Chart.js</a> ja <a class="reference external" href="https://driverjs.com">driver.js</a> (MIT);</p></li>
+<li><p>fontit <a class="reference external" href="https://github.com/googlefonts/nunito">Nunito</a> ja <a class="reference external" href="https://fonts.google.com/noto/specimen/Noto+Sans+JP">Noto Sans JP</a> (SIL Open Font License 1.1).</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Lataaminen ja asentaminen" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

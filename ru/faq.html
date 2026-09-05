@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Часто задаваемые вопросы &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="9. Дорожная карта" href="roadmap.html" />
+    <link rel="prev" title="7. Глоссарий" href="glossaire.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Глоссарий</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Часто задаваемые вопросы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-utilite-de-blunderdb">8.1. Для чего нужен blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">8.2. Что побудило создать blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">8.3. Как сохранить текущую базу данных?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">8.4. Нужно ли создавать разные базы данных для разных категорий позиций?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">8.5. Как объединить несколько баз данных?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">8.6. Какие форматы файлов матчей поддерживаются?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">8.7. Нужен ли мне eXtreme Gammon для использования blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">8.8. Что такое коллекция?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">8.9. Что такое EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#que-vaut-l-evaluateur-integre-gammonnet">8.10. Чего стоит встроенный оценщик (gammonNet)?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">8.11. В чём разница между PR и Snowie Error Rate?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">8.12. Есть ли у blunderDB интерфейс командной строки?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-propose-t-il-un-mode-serveur">8.13. Предлагает ли blunderDB серверный режим?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">8.14. Можно ли изменять, копировать, распространять blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ou-sont-stockees-mes-donnees">8.15. Где хранятся мои данные?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-partager-une-base-avec-un-autre-joueur">8.16. Могу ли я поделиться базой данных с другим игроком?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">8.17. Какой формат данных использует blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb">8.18. Каковы были принципы проектирования blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelle-est-l-architecture-logicielle-de-blunderdb">8.19. Какова программная архитектура blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">8.20. На каких платформах работает blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">8.21. Откуда взята иконка blunderDB?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Дорожная карта</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Этап 3 — Расширение</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Этап 4 — Фундаментальные проекты</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Что <strong>не</strong> планируется</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Контракт API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Часто задаваемые вопросы</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foire-aux-questions">
+<span id="faq"></span><h1><span class="section-number">8. </span>Часто задаваемые вопросы<a class="headerlink" href="#foire-aux-questions" title="Ссылка на этот заголовок"></a></h1>
+<section id="quelle-est-l-utilite-de-blunderdb">
+<h2><span class="section-number">8.1. </span>Для чего нужен blunderDB?<a class="headerlink" href="#quelle-est-l-utilite-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB позволяет создать персонализированную базу данных позиций. Его сила в том, что он не предполагает никакой классификации <em>a priori</em>. Таким образом, пользователь свободен запрашивать позиции с большой гибкостью, комбинируя по своему усмотрению различные критерии (гонка, структура, куб, счёт, отставшие шашки, шашки в зоне, шансы на выигрыш/гаммон/бэкгаммон, …).</p>
+<p>Ещё одно удобное применение blunderDB — это составление каталогов эталонных позиций. Благодаря возможности помечать позиции пользователь может структурированно собрать все свои эталонные позиции в одном файле. Я хочу, чтобы blunderDB упрощал обмен позициями между игроками.</p>
+</section>
+<section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
+<h2><span class="section-number">8.2. </span>Что побудило создать blunderDB?<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Раньше я хранил интересные позиции или ошибки (blunders) в разных папках. Однако мне было трудно находить позиции по критериям, изначально не предусмотренным моим выбором тематических категорий. Например, если позиции были отсортированы по типу игры (гонка, holding game, блиц, backgame, …), как найти все позиции при определённом счёте? или при определённом уровне куба? Наконец, некоторые старые позиции имели тенденцию забываться. Я хотел инструмент, который объединяет все мои позиции и не предполагает <em>a priori</em> тематических категорий, а затем позволяет задавать вопросы базе данных. При таком гибком подходе новые фильтры можно добавлять, не нарушая организацию позиций. Такое программное обеспечение довольно распространено в шахматах, например ChessBase.</p>
+</section>
+<section id="comment-sauvegarder-la-base-de-donnees-courante">
+<h2><span class="section-number">8.3. </span>Как сохранить текущую базу данных?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Ссылка на этот заголовок"></a></h2>
+<p>База данных изменяется немедленно после выполнения запросов. Явного сохранения не требуется.</p>
+</section>
+<section id="dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">
+<h2><span class="section-number">8.4. </span>Нужно ли создавать разные базы данных для разных категорий позиций?<a class="headerlink" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>За исключением хорошо обоснованных причин, важно не распределять позиции по отдельным базам данных, рискуя не суметь связать их в будущих поисках. Философия blunderDB состоит в том, чтобы не предполагать категории позиций <em>a priori</em> и позволять пользователю запрашивать их гибко. Когда позиции встречались в особых условиях или по конкретным причинам, может быть разумно хранить их в отдельных базах данных. Можно, например, создать отдельные базы данных позиций для:</p>
+<ul class="simple">
+<li><p>эталонных позиций,</p></li>
+<li><p>бландеров на реальных турнирах,</p></li>
+<li><p>бландеров в онлайн-игре.</p></li>
+</ul>
+</section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2><span class="section-number">8.5. </span>Как объединить несколько баз данных?<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Если у вас несколько баз данных blunderDB, которые вы хотите объединить, используйте функцию «Import Database»:</p>
+<ol class="arabic simple">
+<li><p>Откройте основную базу данных (ту, в которую будут импортированы позиции)</p></li>
+<li><p>Нажмите кнопку «Import Database» на панели инструментов</p></li>
+<li><p>Выберите базу данных для импорта</p></li>
+<li><p>blunderDB автоматически объединит позиции</p></li>
+</ol>
+<p>В ходе слияния blunderDB избегает дублирования и разумно объединяет анализы и комментарии. Одинаковые позиции не будут дублированы, но их анализы и комментарии будут объединены.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Рекомендуется сделать резервную копию основной базы данных перед импортом другой базы данных.</p>
+</div>
+</section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2><span class="section-number">8.6. </span>Какие форматы файлов матчей поддерживаются?<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB поддерживает следующие форматы матчей:</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>: файлы <em>.xg</em> с полным анализом ходов, решениями по кубу, сыгранными ходами и поддержкой нескольких движков. Файлы <em>.xgp</em> для импорта отдельных позиций с анализом.</p></li>
+<li><p><strong>GNUbg</strong>: файлы <em>.sgf</em> (Smart Game Format) с анализом.</p></li>
+<li><p><strong>Jellyfish</strong>: файлы <em>.mat</em> и <em>.txt</em>.</p></li>
+<li><p><strong>BGBlitz</strong>: файлы <em>.bgf</em> и текстовые позиции.</p></li>
+</ul>
+<p>Импорт можно выполнять по одному файлу, множественным выбором, рекурсивно из папки, вставкой из буфера обмена или перетаскиванием.</p>
+<p>blunderDB автоматически обнаруживает дубликаты и предотвращает импорт матча, уже присутствующего в базе данных.</p>
+</section>
+<section id="ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb">
+<h2><span class="section-number">8.7. </span>Нужен ли мне eXtreme Gammon для использования blunderDB?<a class="headerlink" href="#ai-je-besoin-d-extreme-gammon-pour-utiliser-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Нет. blunderDB также читает файлы GNUbg, BGBlitz и Jellyfish, а его встроенный оценщик (gammonNet) анализирует любую позицию без зависимости от стороннего программного обеспечения — см. «Чего стоит встроенный оценщик?» ниже. Однако импорт из XG даёт наиболее полный анализ (ходы, решения по кубу, отметки, удача броска): это формат, наиболее полно используемый статистикой.</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2><span class="section-number">8.8. </span>Что такое коллекция?<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Ссылка на этот заголовок"></a></h2>
+<p>Коллекция — это пользовательская группировка позиций. В отличие от динамического поиска по фильтрам, коллекция представляет собой фиксированный набор позиций, выбранных пользователем вручную. Коллекции позволяют, например, группировать эталонные позиции по конкретной теме.</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2><span class="section-number">8.9. </span>Что такое EPC?<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Ссылка на этот заголовок"></a></h2>
+<p>EPC (Effective Pip Count) — более точная мера, чем простой пипкаунт, для оценки позиций снятия шашек. Панель Eval в blunderDB использует базу данных снятия шашек с 6 пунктов GNUbg и в реальном времени вычисляет EPC, среднее число бросков, стандартное отклонение, пипкаунт и wastage.</p>
+<p>На позициях чистого bearoff панель также отображает вероятность выигрыша игрока на ходу и, когда позиция покрыта two-sided базой (встроенная база — до 6 шашек у каждого игрока, загружаемая — до 11), точный money-вердикт по кубу. Вне этой области вероятность оценивается с указанием погрешности, а вердикт намеренно не отображается. Подробности допущений см. в разделе «Методология и допущения панели Eval» руководства.</p>
+</section>
+<section id="que-vaut-l-evaluateur-integre-gammonnet">
+<h2><span class="section-number">8.10. </span>Чего стоит встроенный оценщик (gammonNet)?<a class="headerlink" href="#que-vaut-l-evaluateur-integre-gammonnet" title="Ссылка на этот заголовок"></a></h2>
+<p>gammonNet — это нейронная сеть, обученная третьей стороной (см. Благодарности), портированная на Go и скомпилированная в blunderDB: никакого внешнего ПО, никакого сетевого подключения. Она играет роль XG или GNUbg для неимпортированных позиций — поиск на глубину 0 или 2 бросков вперёд, решение по кубу по Яновскому и таблице эквити матча blunderDB, с учётом счёта. Это не единственный и не обязательно лучший движок на рынке: это тот, который работает офлайн, без учётной записи и подписки, для позиции, на которую вы смотрите. При этом ничто не мешает также импортировать анализы XG или GNUbg, когда они существуют — оба источника сосуществуют, и колонка указывает происхождение каждого анализа. См. раздел «Панель Eval» и «Методология и допущения панели Eval» в руководстве.</p>
+</section>
+<section id="quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate">
+<h2><span class="section-number">8.11. </span>В чём разница между PR и Snowie Error Rate?<a class="headerlink" href="#quelle-est-la-difference-entre-le-pr-et-le-snowie-error-rate" title="Ссылка на этот заголовок"></a></h2>
+<p>PR (Performance Rating) — это среднее значение ошибок эквити (нормализованное, в тысячных долях очка) по всем засчитанным решениям; чем оно ниже, тем лучше игра. Snowie Error Rate относит то же среднее к числу <em>ходов</em>, а не <em>решений</em> — поэтому более длинный матч механически не ухудшает SER. blunderDB показывает оба показателя на панели Stats, согласованных с соглашениями eXtreme Gammon и GNUbg (см. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a> для подробностей правил подсчёта).</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2><span class="section-number">8.12. </span>Есть ли у blunderDB интерфейс командной строки?<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<p>Да, blunderDB имеет интерфейс командной строки (CLI), позволяющий выполнять без графического интерфейса такие операции, как создание баз данных, импорт матчей, экспорт, поиск позиций, отображение статистики и т.д. Смотрите документацию CLI для получения подробной информации.</p>
+</section>
+<section id="blunderdb-propose-t-il-un-mode-serveur">
+<h2><span class="section-number">8.13. </span>Предлагает ли blunderDB серверный режим?<a class="headerlink" href="#blunderdb-propose-t-il-un-mode-serveur" title="Ссылка на этот заголовок"></a></h2>
+<p>Да, опциональный «headless»-режим: тот же самый бинарный файл, запущенный с <code class="docutils literal notranslate"><span class="pre">serve</span></code>, предоставляет движок blunderDB по HTTP + JSON за аутентифицирующим обратным прокси (сам blunderDB не выполняет никакой аутентификации). Он может работать на SQLite или на многопользовательском (multi-tenant) PostgreSQL и служит, например, для просмотра или импорта матчей из браузера, интеграции blunderDB в другой инструмент или совместного использования базы данных несколькими игроками. Обычным способом использования остаётся настольное приложение; см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a> для подробностей (включая готовый образ Docker) и руководство «Развёртывание серверного режима за прокси» в руководстве пользователя.</p>
+</section>
+<section id="puis-je-modifier-copier-partager-blunderdb">
+<h2><span class="section-number">8.14. </span>Можно ли изменять, копировать, распространять blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Да, конечно (и это даже приветствуется!). blunderDB распространяется по лицензии MIT.</p>
+</section>
+<section id="ou-sont-stockees-mes-donnees">
+<h2><span class="section-number">8.15. </span>Где хранятся мои данные?<a class="headerlink" href="#ou-sont-stockees-mes-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>На вашем диске, в файле <code class="docutils literal notranslate"><span class="pre">.db</span></code>, который вы выбрали при создании базы данных: никакой учётной записи, никакого сервера, никакой синхронизации по умолчанию. Настольное приложение открывает этот файл напрямую; только опциональный серверный режим (см. выше) запускает blunderDB удалённо, и в этом случае именно вы размещаете этот сервер.</p>
+</section>
+<section id="puis-je-partager-une-base-avec-un-autre-joueur">
+<h2><span class="section-number">8.16. </span>Могу ли я поделиться базой данных с другим игроком?<a class="headerlink" href="#puis-je-partager-une-base-avec-un-autre-joueur" title="Ссылка на этот заголовок"></a></h2>
+<p>Да: база данных blunderDB — это обычный файл, достаточно скопировать его или отправить. Для распространения базы данных третьей стороне два опциональных механизма, выбираемых при экспорте, превращают это в <em>контролируемое</em> распространение, а не простое копирование: <strong>водяной знак происхождения</strong> подписывает файл вашей идентичностью издателя (неподделываемый, читаемый на панели Метаданные или через <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, никогда ничего не фиксируя на стороне получателя), а <strong>защита паролем</strong> создаёт зашифрованный файл <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. См. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a> в руководстве.</p>
+</section>
+<section id="quel-format-de-donnees-utilise-blunderdb">
+<h2><span class="section-number">8.17. </span>Какой формат данных использует blunderDB?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>База данных — это простой файл SQLite. В отсутствие blunderDB его можно открыть любым редактором файлов SQLite.</p>
+</section>
+<section id="quels-ont-ete-les-principes-de-conception-de-blunderdb">
+<h2><span class="section-number">8.18. </span>Каковы были принципы проектирования blunderDB?<a class="headerlink" href="#quels-ont-ete-les-principes-de-conception-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Я хотел, чтобы интерфейс оставался доступным, но прежде всего продумывал его для продвинутой и интенсивной работы, когда позиции и запросы идут одна за другой. Командная строка, открываемая нажатием клавиши <em>ПРОБЕЛ</em>, и сочетания клавиш служат такой работе, но не являются обязательными.</p>
+<p>Кроме того, я хотел, чтобы blunderDB был лёгким, автономным, не требующим установки и доступным для разных платформ, отсюда мой выбор языка Go и библиотеки Svelte. Для сериализации базы данных формат файлов должен быть кроссплатформенным и подходящим для хранения базы данных. Формат файлов SQLite оказался как нельзя кстати.</p>
+<p>Мне также было важно, чтобы база оставалась обычным файлом, который можно скопировать, сохранить или отправить другому игроку.</p>
+<p>Наконец, blunderDB больше не ограничивается настольным приложением: тот же исполняемый файл предоставляет интерфейс командной строки и необязательный серверный режим, который может опираться на PostgreSQL для многопользовательских развёртываний. Тем не менее обычным способом использования остаётся настольное приложение. См. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a> и <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p>
+</section>
+<section id="quelle-est-l-architecture-logicielle-de-blunderdb">
+<h2><span class="section-number">8.19. </span>Какова программная архитектура blunderDB?<a class="headerlink" href="#quelle-est-l-architecture-logicielle-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Бэкенд написан на <a class="reference external" href="https://go.dev/">Go</a>. Он отвечает за все операции с базой данных SQLite, в которой хранятся позиции.</p></li>
+<li><p>Фронтенд написан на <a class="reference external" href="https://svelte.dev/">Svelte</a>. Он отвечает за отображение графического интерфейса и доски для нард.</p></li>
+<li><p>Приложение упаковано с помощью <a class="reference external" href="https://wails.io/">Wails</a>, что позволяет создавать нативные настольные приложения для Windows, Linux и macOS.</p></li>
+<li><p>База данных управляется <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
+<li><p>Необязательный серверный режим может опираться на <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a> вместо SQLite для многопользовательских развёртываний.</p></li>
+<li><p>Встроенный оценщик (<a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>, MIT) — это нейронная сеть, портированная на Go и скомпилированная в blunderDB: она оценивает любую позицию офлайн, без XG или GNUbg. См. «Чего стоит встроенный оценщик?» ниже.</p></li>
+</ul>
+<p>Для получения дополнительной информации см. <a class="reference external" href="https://github.com/kevung/blunderDB">репозиторий blunderDB на GitHub</a>.</p>
+</section>
+<section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
+<h2><span class="section-number">8.20. </span>На каких платформах работает blunderDB?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB работает на Windows, Linux и Mac.</p>
+</section>
+<section id="d-ou-vient-l-icone-de-blunderdb">
+<h2><span class="section-number">8.21. </span>Откуда взята иконка blunderDB?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Иконка blunderDB — это смайлик «goggling» из серии <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="glossaire.html" class="btn btn-neutral float-left" title="7. Глоссарий" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="roadmap.html" class="btn btn-neutral float-right" title="9. Дорожная карта" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

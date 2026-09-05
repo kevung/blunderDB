@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>13. Headless mode (server) &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5864e6e0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="14. API contract" href="api_reference.html" />
+    <link rel="prev" title="9. Roadmap" href="roadmap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Roadmap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Stage 3 — Extend</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Stage 4 — Foundational undertakings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. What is <strong>not</strong> planned</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. Headless mode (server)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">13.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">13.2. The <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">13.2.1. Endpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bases-de-bearoff">13.2.2. The bearoff databases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-routes-d-exploitation">13.2.3. The operator routes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlation-et-metriques-metier">13.2.4. Correlation and business metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression-des-flux">13.2.5. Stream compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#un-seul-tenant-sur-sqlite">13.2.6. A single tenant on SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-et-restauration">13.2.7. Backup and restore</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">13.2.8. Deployment with Docker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#image-publiee">13.2.8.1. Published image</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-derriere-un-proxy-authentifiant">13.2.9. Deployment behind an authenticating proxy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">13.3. PostgreSQL backend and multi-user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">13.4. Migrating a SQLite database to PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">13.5. The generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. API contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Annex: Statistics model — XG / gnuBG / blunderDB alignment</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">13. </span>Headless mode (server)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1><span class="section-number">13. </span>Headless mode (server)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This section describes an <strong>advanced, optional mode</strong> of blunderDB, intended for server deployments, multi-user setups and automation. <strong>The normal and recommended use of blunderDB remains the desktop application</strong> described in the previous chapters. If you use blunderDB on your own, on your computer, you do not need this mode: you can skip this chapter without losing any of the analysis features.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2><span class="section-number">13.1. </span>Overview<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>In addition to the desktop application and the command-line commands (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>), the same <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> binary can run in <strong>headless mode</strong>: without a graphical interface, driven entirely from the command line or over the network. This mode covers three use cases:</p>
+<ul class="simple">
+<li><p><strong>the</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> <strong>daemon</strong> — exposes the blunderDB engine as an HTTP + JSON service, to run a shared database on a server and access it from several clients;</p></li>
+<li><p>the generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher — calls any storage operation directly, locally, for scripting and testing;</p></li>
+<li><p>the <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command — transfers a single-user SQLite database to a multi-user PostgreSQL backend.</p></li>
+</ul>
+<p>These three use cases rely on a shared <strong>storage layer</strong> that can talk to two backends: <strong>SQLite</strong> (the usual <code class="docutils literal notranslate"><span class="pre">.db</span></code> file format of the desktop application) and <strong>PostgreSQL</strong> (for multi-user server deployments).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><span class="section-number">13.2. </span>The <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon<a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> runs the engine as an HTTP service that responds in JSON. It lets you host a position database on one machine and access it from several clients.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Servir une base SQLite locale sur le port 8080</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--addr<span class="w"> </span>:8080
+
+<span class="c1"># Servir un backend PostgreSQL</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span>:8080
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>The daemon performs no authentication.</strong> It trusts the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> request header and <strong>must</strong> run behind a reverse proxy (nginx, Caddy…) responsible for authentication. <strong>Never expose it directly to the public Internet.</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> is the tenant’s <strong>integer</strong> (<code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">42</span></code>…): it is the reverse-proxy’s job to map the authenticated account to that integer. A name (<code class="docutils literal notranslate"><span class="pre">alice</span></code>) is refused with <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, never converted.</p>
+</div>
+<p><strong>Options:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite file (shorthand for <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;path&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>storage backend: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>backend connection string</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;host:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>listen address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;level&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>log level: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>exposes <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (Prometheus format)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>enable CORS for this origin, a comma-separated list of origins, or <code class="docutils literal notranslate"><span class="pre">*</span></code> (off by default); the response only echoes back the request’s origin when it appears in the list, with <code class="docutils literal notranslate"><span class="pre">Vary:</span> <span class="pre">Origin</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>requests per second per tenant limit (0 = disabled); enabled by default at a generous value rather than opt-in, so a compose file that only thinks about the database does not end up inheriting a daemon with no limit at all</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>token-bucket size for request bursts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: enables per-tenant Row-Level Security (defence in depth, opt-in)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;file&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>optional two-sided bearoff database (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) widening the TS-06-06 table for the race analysis of the EPC endpoint; the daemon never downloads a database — see <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">The bearoff databases</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--identity-dir</span> <span class="pre">&lt;directory&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>directory for the daemon’s signing identity (created on first use); needed for <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> to apply a watermark — see below</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;host:port&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>serves the <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> family (<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>, <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>) on an address <strong>separate</strong> from <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, and takes it off that one; empty (the default) leaves them on the main listener, where refusing the prefix is the proxy’s job — see <a class="reference internal" href="#headless-ops-routes"><span class="std std-ref">The operator routes</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;host:port&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>exposes <code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code> on an address <strong>separate</strong> from <code class="docutils literal notranslate"><span class="pre">--addr</span></code> (off by default); debugging only — these endpoints have no notion of tenant and hand out a memory or CPU profile of the whole process, never to be exposed publicly nor on the same address as <code class="docutils literal notranslate"><span class="pre">/v1</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Most options can also be given through an environment variable (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_METRICS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_CORS_ALLOW_ORIGIN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_RPS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_BURST</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_IDENTITY_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_OPS_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_PPROF_ADDR</span></code>): an explicit flag still wins over the matching variable.</p>
+<p>The rate limiter’s own bucket table carries a hard cap (10,000 distinct tenants): beyond it, each new tenant evicts the least-recently-used bucket rather than letting the table grow without bound — useful if a client sends many distinct <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> values, whether by accident or not, between two periodic sweeps of idle buckets.</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> now rejects any unexpected positional argument (beyond the single leading <code class="docutils literal notranslate"><span class="pre">serve</span></code> that an <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> already reduced to the bare binary lets through): without this check, a flag placed after such an argument was silently ignored — <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">image</span> <span class="pre">serve</span> <span class="pre">--addr</span> <span class="pre">:9090</span></code>, a natural reflex since the image’s <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> is already <code class="docutils literal notranslate"><span class="pre">serve</span></code>, used to start on <code class="docutils literal notranslate"><span class="pre">:8080</span></code> without a word.</p>
+<section id="points-d-acces">
+<h3><span class="section-number">13.2.1. </span>Endpoints<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>The service exposes operational endpoints, always present:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — liveness (the process is running);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — readiness (storage responds and its schema is at the expected version);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus metrics (if <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> is enabled).</p></li>
+</ul>
+<p>Liveness and readiness answer two different questions. <code class="docutils literal notranslate"><span class="pre">/healthz</span></code> always answers 200 as soon as the process serves requests, without ever querying the storage: an orchestrator restarts a container whose liveness fails, and a briefly unreachable database must not restart a healthy daemon in a loop. <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> answers 503 (with <code class="docutils literal notranslate"><span class="pre">status</span></code> set to <code class="docutils literal notranslate"><span class="pre">down</span></code> or <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code>) as long as the database does not answer or its schema is not the binary’s: traffic is simply routed away until it comes back.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> subcommand (also present in the <code class="docutils literal notranslate"><span class="pre">serve</span></code> binary of the container image) performs a <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> request on the local daemon and returns <code class="docutils literal notranslate"><span class="pre">0</span></code> when it is ready, <code class="docutils literal notranslate"><span class="pre">1</span></code> otherwise; the address is that of <code class="docutils literal notranslate"><span class="pre">--addr</span></code> or <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">:8080</span></code> by default. It is the Docker image’s <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code>, and it works just as well from a script or a systemd unit:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"démon disponible"</span>
+</pre></div>
+</div>
+<p>The business surface follows the <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;family&gt;.&lt;method&gt;</span></code> shape (for example <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). The families cover positions, analyses, matches, comments, collections, tournaments, Anki cards, filters, sessions, history (search and commands), search, metadata, statistics, import and export. Listing endpoints return an NDJSON stream (one JSON object per line). The server shuts down cleanly on <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+</section>
+<section id="les-bases-de-bearoff">
+<span id="headless-bearoff"></span><h3><span class="section-number">13.2.2. </span>The bearoff databases<a class="headerlink" href="#les-bases-de-bearoff" title="Link to this heading"></a></h3>
+<p>The daemon computes its two default tables at start-up, in the background (TS-06-06 for the cube verdict, OS-06 for the EPC): about six seconds of one core, once, in the data directory. Nothing is downloaded and nothing is embedded in the binary (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md">ADR-0027</a>). If that directory is read-only, the tables are held in memory for the life of the process: the service starts, it simply pays for the computation at every restart.</p>
+<p>A wider domain is not computed at start-up — TS-06-11 weighs 1.2 GB and takes minutes, which is not something a service decides on its own. It is up to the operator to make it, with the CLI, in the volume the daemon will read:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># dans le volume monté, une fois</span>
+blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+<span class="c1"># puis le démon le trouve tout seul, ou on le désigne explicitement</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--bearoff-ts<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">list</span> <span class="pre">--data-dir</span> <span class="pre">/srv/bearoff</span></code> says what the volume holds and what each domain would cost; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">verify</span></code> exits with an error on a corrupt table, which makes it a start-up probe usable as is. See <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a> for the details.</p>
+</section>
+<section id="les-routes-d-exploitation">
+<span id="headless-ops-routes"></span><h3><span class="section-number">13.2.3. </span>The operator routes<a class="headerlink" href="#les-routes-d-exploitation" title="Link to this heading"></a></h3>
+<p>Two calls do not stop at the tenant making them, and therefore live under a prefix of their own, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/&lt;family&gt;.&lt;method&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> (SQLite backend) rewrites the <strong>whole</strong> file, every tenant’s data included, and holds a write lock for the duration;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/tenant.purge</span></code> (PostgreSQL backend) destroys a tenant’s data, and the tenant it destroys is the one named in the header the caller controls.</p></li>
+</ul>
+<p>The daemon authenticates nobody (see below): a route reachable by one tenant is a route <strong>every</strong> tenant may call. The prefix exists so the proxy can refuse both with a single rule. <strong>Never expose ``/ops/`` through the public proxy.</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;host:port&gt;</span></code> option goes further: the two routes then leave the <code class="docutils literal notranslate"><span class="pre">--addr</span></code> address and are served only on that second listener, to be bound on an administration interface. Without the option they stay on the main listener, and blocking them is the proxy’s business.</p>
+<p>These routes require the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> header like every other one — a purge names the tenant it destroys, and needs that header more than anything else. Only the probes (<code class="docutils literal notranslate"><span class="pre">/healthz</span></code>, <code class="docutils literal notranslate"><span class="pre">/readyz</span></code>) and <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> go without.</p>
+<p>What did <strong>not</strong> move under <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>: <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.sweepStale</span></code>. The catch-up is expensive but it is scoped to the calling tenant; what bounds it is the rate limit and the in-flight gauges, not a trust boundary.</p>
+<p>The complete contract — every method, its request and its response — is generated from the source and versioned: <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> at the repository root (OpenAPI format, schemas included) and its readable annex, <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">API contract</span></a> (one table per family). Both are regenerated by <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>, and a dedicated test fails if either falls behind the routes actually registered.</p>
+<p>Every <code class="docutils literal notranslate"><span class="pre">/v1</span></code> request accepts a JSON body (<code class="docutils literal notranslate"><span class="pre">Content-Type:</span> <span class="pre">application/json</span></code>, or no header at all — a body of another type is refused with <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> rather than failing on a confusing JSON parse error); a known method called with the wrong HTTP verb answers <code class="docutils literal notranslate"><span class="pre">405</span></code>, the <code class="docutils literal notranslate"><span class="pre">Allow</span></code> header naming the one verb it accepts. Listing methods that take a <code class="docutils literal notranslate"><span class="pre">limit</span></code> refuse anything past 1000 rows per page (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>) rather than honouring an unbounded value.</p>
+<p>Every listing family accepts <code class="docutils literal notranslate"><span class="pre">limit</span></code> and <code class="docutils literal notranslate"><span class="pre">offset</span></code>: <code class="docutils literal notranslate"><span class="pre">positions.list</span></code>, <code class="docutils literal notranslate"><span class="pre">positions.listIds</span></code>, <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>, <code class="docutils literal notranslate"><span class="pre">search.find</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>, and since 0.37.0 <code class="docutils literal notranslate"><span class="pre">comments.listAll</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments.list</span></code> and <code class="docutils literal notranslate"><span class="pre">collections.positions</span></code>. Both default to zero, which means what it has always meant: everything. <strong>There is no implicit cap</strong> — a stream is not held in memory, so an unbounded list costs time and bandwidth but never the daemon’s footing, whereas a silent default limit would have a client read a truncated list believing it complete. What the two parameters buy is the ability to page, for whoever wants to.</p>
+<p>Every TCP connection is bounded in read/write time per request — a generous budget for ordinary calls, a far larger one for streaming routes (NDJSON lists, imports/exports, the gammonNet catch-up sweep) — and the number of them open at once is capped: past that many, a further connection waits for one of the existing ones to free up rather than every connection unconditionally getting its own thread of execution. A graceful shutdown (<code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/<code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>) first cancels every in-flight import and gammonNet catch-up — each answers with a trailing <code class="docutils literal notranslate"><span class="pre">{&quot;event&quot;:&quot;cancelled&quot;}</span></code> event instead of having its connection cut with no explanation — before closing the server within the usual grace period. An uploaded import’s temporary file keeps only the extensions the daemon recognises from the original one (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, <code class="docutils literal notranslate"><span class="pre">.sgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), and every import in flight — across every tenant — shares one global quota of bytes spooled to disk: past it, a new import is refused (<code class="docutils literal notranslate"><span class="pre">too</span> <span class="pre">many</span> <span class="pre">requests</span></code>) rather than letting <code class="docutils literal notranslate"><span class="pre">$TMPDIR</span></code> usage grow without bound.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">search</span></code> family offers three doors onto the same search. <code class="docutils literal notranslate"><span class="pre">search.find</span></code> takes the complete filter object, field by field. <code class="docutils literal notranslate"><span class="pre">search.query</span></code> takes a query written in the language of the application’s command bar (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">cube</span> <span class="pre">p&gt;30</span> <span class="pre">E&gt;50</span></code>, described in <a class="reference internal" href="cmd_mode.html"><span class="doc">List of commands</span></a>) and streams the same positions; it is the only way to reach, over the network, the filters that have no obvious field — move pattern, comment text, player, date, excluded dice, zones and blots. <code class="docutils literal notranslate"><span class="pre">search.parse</span></code> searches nothing: it answers what a query means — the filters it denotes, its canonical form (two equivalent queries share it, which makes a saved search comparable) and its diagnostics.</p>
+<p>A query carrying a token nothing recognises is refused (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, naming the token) rather than run while narrowing the search in silence. A token that is understood but has no effect here — <code class="docutils literal notranslate"><span class="pre">x</span></code>, which switches on the exclusion structure, itself a board rather than text — travels in the <code class="docutils literal notranslate"><span class="pre">X-BlunderDB-Query-Diagnostics</span></code> header, so that the body stays NDJSON positions for every existing client.</p>
+<p>Two methods in the <code class="docutils literal notranslate"><span class="pre">positions</span></code> family decode a position without storing it: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rebuilds a position from an XGID string, and <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> from a single-position <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> exports the entire current tenant — positions, collections, matches, tournaments, analyses, comments, played moves, filter library and Anki decks — into an SQLite file that can be opened as-is on the desktop; there is no partial server-side export yet (that selection is a desktop or CLI action). The request’s JSON body is optional and only accepts <code class="docutils literal notranslate"><span class="pre">watermarkOrigin</span></code> / <code class="docutils literal notranslate"><span class="pre">watermarkNote</span></code>, to apply a watermark signed with the daemon’s own identity (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>) — without these fields, the export carries no watermark; requesting them without a configured identity fails with the <code class="docutils literal notranslate"><span class="pre">invalid</span></code> code.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">anki</span></code> family gains six methods that extend the spaced-repetition scheduler (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (a log of every review — rating and FSRS outcome — powering retention statistics and a faithful history), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (a projection of the number of cards due over the coming days, including overdue cards), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (remove a card from the review queue temporarily or permanently) and <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> (the pass rate measured over a deck’s reviews, read against the target its owner set).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> replaces <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, which nudged the target toward the observed rate and could write it. The retention target is a <strong>choice</strong> about the load/quality trade-off, the measured rate is its <strong>outcome</strong>, and coupling one to the other is exactly the mechanism FSRS’s authors reject. The method now only measures, and never writes.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">stats</span></code> family provides <code class="docutils literal notranslate"><span class="pre">stats.playerTable</span></code>, which returns one row of statistics per player (matches, wins/losses, counted decisions, overall / checker / cube PR, Snowie Error Rate, errors, blunders and luck) over the matches the given filter retains. As in the graphical interface, this table honours only the filter’s date range, tournaments and match lengths: the player selection and the decision type are ignored, since the table covers every player and already splits checker and cube into separate columns. The <code class="docutils literal notranslate"><span class="pre">luck_known</span></code> field says whether luck was measured for that player; <code class="docutils literal notranslate"><span class="pre">luck_rate_mp</span></code> must not be read when it is <code class="docutils literal notranslate"><span class="pre">false</span></code>, unknown luck not being zero luck.</p>
+<p>The filter passed to the <code class="docutils literal notranslate"><span class="pre">stats</span></code> methods accepts, alongside <code class="docutils literal notranslate"><span class="pre">PlayerName</span></code>, a <code class="docutils literal notranslate"><span class="pre">PlayerAliases</span></code> field: the other spellings the same person signed under. Since a player’s name is typed by hand into every file, one person routinely appears under several spellings, and a filter that keeps only one computes on part of the matches without anything looking wrong. The field is purely additive: the decisions of any of the names are kept. Merging the names in place (<code class="docutils literal notranslate"><span class="pre">MergePlayers</span></code>) is the other answer, to be reserved for databases you did not receive from someone else — it rewrites everybody’s matches.</p>
+<p>Two methods complete parity with the graphical interface: <code class="docutils literal notranslate"><span class="pre">stats.tournamentBadges</span></code> returns, for every tournament in the database, the figure shown on its card (the reference player’s PR), and <code class="docutils literal notranslate"><span class="pre">matches.findByHash</span></code> says whether a given match is already present, from the two duplicate-detection fingerprints — enough to avoid a redundant import before starting it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">analyses.repair</span></code> recomputes an analysis’s denormalised columns (<code class="docutils literal notranslate"><span class="pre">cube_error</span></code> among them) from its full analysis, and returns how many rows were <strong>actually</strong> corrected. Those columns are only a projection: a faulty projection therefore repairs without re-importing the source files. The operation is explicit and never triggered on its own — neither when a database is opened nor by a migration, the schema not being at fault. An unreadable analysis is left as it is rather than reset to zero. The known case: the non-doubles labelled “Double No” by gnuBG, misread before version 0.33.0, which carried the error of a double that never took place.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing</span></code> triggers the gammonNet catch-up of the current tenant: write an analysis for every position that has none (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). It is a <strong>library</strong> operation — it reads and writes stored positions and analyses — never a bare evaluator: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> operates on a library, <code class="docutils literal notranslate"><span class="pre">gammonnet</span> <span class="pre">serve</span></code> evaluates a position. The response is an NDJSON stream (<code class="docutils literal notranslate"><span class="pre">started</span></code>, <code class="docutils literal notranslate"><span class="pre">progress</span></code>, then <code class="docutils literal notranslate"><span class="pre">done</span></code> or <code class="docutils literal notranslate"><span class="pre">error</span></code>/<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>), on the same model as the import endpoints; <code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing.cancel</span></code> (with the <code class="docutils literal notranslate"><span class="pre">job_id</span></code> received in the <code class="docutils literal notranslate"><span class="pre">started</span></code> event) cancels a running catch-up and serves either sweep indifferently — a catch-up or a re-analysis (below). It is the same operation as the automatic run after an import and the explicit gesture of the graphical interface, and as the <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> subcommand (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>) — three forms, one logic.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.sweepStale</span></code> is <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>’s counterpart for re-analysis rather than gap-filling: every position whose analysis is entirely gammonNet’s own but stale — an engine version older than the one currently running, or a depth different from <code class="docutils literal notranslate"><span class="pre">ply</span></code> — is re-evaluated at the requested depth. The staleness predicate is shared with the same batch in the graphical interface and in <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--stale</span></code> (no duplicated logic across the three modes); a position carrying an XG, GNUbg or BGBlitz analysis is never touched, whatever its gammonNet content — <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>’s protection remains unconditional. Same NDJSON shape as <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>, and the final event of each of the two routes now carries the <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>/<code class="docutils literal notranslate"><span class="pre">refused</span></code>/<code class="docutils literal notranslate"><span class="pre">failed</span></code> breakdown: a position gammonNet declines to evaluate (a match score beyond its table’s range, a cube decision the model refuses) counts as <code class="docutils literal notranslate"><span class="pre">refused</span></code>, not <code class="docutils literal notranslate"><span class="pre">failed</span></code> — it is never retried in vain on the next pass, unlike a position that genuinely failed.</p>
+</section>
+<section id="correlation-et-metriques-metier">
+<h3><span class="section-number">13.2.4. </span>Correlation and business metrics<a class="headerlink" href="#correlation-et-metriques-metier" title="Link to this heading"></a></h3>
+<p>Every request gets a correlation identifier: the one the client (or a reverse proxy) sends in the <code class="docutils literal notranslate"><span class="pre">X-Request-Id</span></code> header, otherwise a generated one — either way returned on the same header of the response and added to the request’s closing log line (field <code class="docutils literal notranslate"><span class="pre">request_id</span></code>). A <code class="docutils literal notranslate"><span class="pre">traceparent</span></code> (<a class="reference external" href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a>), when present, is relayed as-is into that same log line — the daemon neither parses nor validates it, and embeds no tracing library: it is a bridge for correlating these logs with a tracing pipeline running upstream, nothing more.</p>
+<p>Beyond request volume and latency, <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> publishes gauges on the work in flight, otherwise invisible for a stuck import or gammonNet batch (one very long request, not many requests):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_imports_inflight</span></code> — imports under way, across all tenants;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_import_spool_bytes</span></code> — bytes currently reserved against the import spool quota (see <code class="docutils literal notranslate"><span class="pre">--rate-limit-*</span></code> above for the requests-per-second counterpart);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_gammonnet_sweep_inflight</span></code> — gammonNet catch-up sweeps under way, across all tenants;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_database_size_bytes</span></code> — size of the main SQLite file, or <code class="docutils literal notranslate"><span class="pre">pg_database_size</span></code> under PostgreSQL (the whole database, not per tenant, like the connection-pool gauges below); absent until a first measurement has been published.</p></li>
+</ul>
+<p>A memory or CPU profile of the process is available by starting with <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;host:port&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>): off by default, and deliberately on an address separate from <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, since these endpoints have no notion of tenant.</p>
+</section>
+<section id="compression-des-flux">
+<span id="headless-docker"></span><h3><span class="section-number">13.2.5. </span>Stream compression<a class="headerlink" href="#compression-des-flux" title="Link to this heading"></a></h3>
+<p>NDJSON listings repeat the same field names on every line. The daemon compresses them when the client accepts it: send <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip</span></code> and the response comes back as <code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code>. Measured on a match listing: <strong>13.5%</strong> of the original size over a thousand lines, 14.6% over a hundred.</p>
+<p>Compression changes nothing about the stream being incremental — each record is pushed to the client as before, only compressed on the way. It applies to NDJSON, JSON and text responses only: a database export or a <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> container is already compressed, and re-gzipping it would only make it bigger. <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip;q=0</span></code> refuses it explicitly.</p>
+</section>
+<section id="un-seul-tenant-sur-sqlite">
+<h3><span class="section-number">13.2.6. </span>A single tenant on SQLite<a class="headerlink" href="#un-seul-tenant-sur-sqlite" title="Link to this heading"></a></h3>
+<p>The SQLite backend has <strong>no</strong> tenant column: all the data sits in the same tables, with no partition. On that backend the daemon therefore refuses any <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> other than <code class="docutils literal notranslate"><span class="pre">1</span></code> — accepting the others would mean serving everyone everybody’s rows behind a header claiming otherwise. A deployment that genuinely has several tenants needs the PostgreSQL backend.</p>
+</section>
+<section id="sauvegarde-et-restauration">
+<span id="headless-sauvegarde"></span><h3><span class="section-number">13.2.7. </span>Backup and restore<a class="headerlink" href="#sauvegarde-et-restauration" title="Link to this heading"></a></h3>
+<p>Three gestures, depending on what is to be recovered.</p>
+<p><strong>Everything, under PostgreSQL</strong> — <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> is the tool, and blunderDB has nothing to add:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pg_dump<span class="w"> </span>--format<span class="o">=</span>custom<span class="w"> </span>--file<span class="o">=</span>blunderdb.dump<span class="w"> </span><span class="s2">"postgres://…"</span>
+pg_restore<span class="w"> </span>--dbname<span class="o">=</span><span class="s2">"postgres://…"</span><span class="w"> </span>blunderdb.dump
+</pre></div>
+</div>
+<p><strong>One tenant alone</strong> — <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> writes a tenant’s database into an ordinary <code class="docutils literal notranslate"><span class="pre">.db</span></code> file, the one the desktop application opens:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8080/v1/exports.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 42"</span><span class="w"> </span>-o<span class="w"> </span>tenant-42.db
+</pre></div>
+</div>
+<p><strong>Putting that file back</strong> — <code class="docutils literal notranslate"><span class="pre">migrate</span></code> copies it under the tenant you name:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>tenant-42.db<span class="w"> </span>--to<span class="w"> </span><span class="s2">"postgres://…"</span><span class="w"> </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> refuses to write into a tenant that already holds something, and says what (“128 positions, 3 matches”); <code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">skip</span></code> goes ahead anyway and lets Zobrist de-duplication merge the positions.</p>
+<p>What <code class="docutils literal notranslate"><span class="pre">migrate</span></code> does <strong>not</strong> copy, and announces at the end with the exact count: the Anki decks and their cards, the filter library, the search and command histories, and the session state. These are the desktop application’s usage data; the positions they refer to have indeed been moved.</p>
+</section>
+<section id="deploiement-avec-docker">
+<h3><span class="section-number">13.2.8. </span>Deployment with Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>The repository provides a <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> that builds a minimal container image of the daemon: only the <code class="docutils literal notranslate"><span class="pre">serve</span></code> binary is compiled (pure Go, with no graphical interface and no CGO, therefore statically linked), then placed into a <em>distroless</em> image.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Construire l'image (depuis la racine du dépôt)</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># Lancer le démon (le backend par défaut de l'image est postgres)</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">8080</span>:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@hôte:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>The image listens on port 8080 and is configured through environment variables (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>). It declares a <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> that runs <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> every 30 seconds (a request on <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> — the <em>distroless</em> image has neither <code class="docutils literal notranslate"><span class="pre">curl</span></code> nor a shell): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code> shows the container as <code class="docutils literal notranslate"><span class="pre">healthy</span></code> or <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code>, and Compose or an orchestrator can wait for the daemon to be ready before starting what depends on it.</p>
+<section id="image-publiee">
+<span id="headless-docker-image"></span><h4><span class="section-number">13.2.8.1. </span>Published image<a class="headerlink" href="#image-publiee" title="Link to this heading"></a></h4>
+<p>There is no need to build the image yourself: every published blunderDB release pushes its own to the GitHub registry (GHCR), under the name <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>. Two tags are available: the version number (for example <code class="docutils literal notranslate"><span class="pre">0.34.0</span></code>), frozen forever, and <code class="docutils literal notranslate"><span class="pre">latest</span></code>, which follows the most recently published version. The image is provided for <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> and <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>; Docker picks the host architecture.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Récupérer l'image d'une version donnée (recommandé en production)</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+
+<span class="c1"># Lancer le démon avec un backend PostgreSQL</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@hôte:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+
+<span class="c1"># Ou avec une base SQLite persistée dans un volume</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:0.34.0
+</pre></div>
+</div>
+<p>The image carries the usual OCI labels (<code class="docutils literal notranslate"><span class="pre">org.opencontainers.image.source</span></code>, <code class="docutils literal notranslate"><span class="pre">.version</span></code>, <code class="docutils literal notranslate"><span class="pre">.revision</span></code>, <code class="docutils literal notranslate"><span class="pre">.licenses</span></code>): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> tells which commit and which version it comes from. It is built by continuous integration from the repo’s <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>, exactly as above; building locally or pulling the published image gives the same binary.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Like the daemon itself, the container performs <strong>no authentication</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): it trusts the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> header exactly as it receives it. It must be placed behind a reverse proxy responsible for authentication, which sets that header itself, and must never be exposed directly to the public Internet. The examples above publish the port on <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> only for this reason.</p>
+</div>
+</section>
+</section>
+<section id="deploiement-derriere-un-proxy-authentifiant">
+<span id="headless-proxy-deployment"></span><h3><span class="section-number">13.2.9. </span>Deployment behind an authenticating proxy<a class="headerlink" href="#deploiement-derriere-un-proxy-authentifiant" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a> makes the reverse proxy <strong>the whole</strong> of the daemon’s security boundary: it alone authenticates the caller, it alone is allowed to set the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> header, and it must <strong>strip</strong> any value sent by the client before injecting the authenticated tenant — otherwise anyone can impersonate any tenant simply by naming it. The repository ships a complete example under <code class="docutils literal notranslate"><span class="pre">deploy/</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/docker-compose.yml</span></code> — Caddy (demonstration HTTP Basic authentication) in front of <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> and PostgreSQL (Row-Level Security enabled); only Caddy publishes a port, <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> and PostgreSQL live on an internal Docker network (<code class="docutils literal notranslate"><span class="pre">internal:</span> <span class="pre">true</span></code>) with no route to either the host or the Internet;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/Caddyfile</span></code> — Caddy’s configuration: authenticates, maps the authenticated account to the tenant’s integer (<code class="docutils literal notranslate"><span class="pre">map</span></code>), then injects it into <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> after explicitly clearing any value received from the client (a guard, <code class="docutils literal notranslate"><span class="pre">header_up</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code>, followed by the injection);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/nginx-tenant-proxy.conf</span></code> — the same scheme as an nginx snippet (<code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> then <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">$tenant_id</span></code>), for anyone with an nginx already in place;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deploy/README.md</span></code> — the threat model in three sentences and what must never be done (exposing the bare daemon).</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code>’s HTTP Basic authentication is a demonstration, not a production recommendation: replace it with <code class="docutils literal notranslate"><span class="pre">forward_auth</span></code> to a real identity provider (OIDC, enterprise SSO…), which authenticates and then hands off the identity at the same spot in the file.</p>
+<p><strong>Full scenario, from nothing to a daemon that answers:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>deploy
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">    </span><span class="c1"># puis y définir POSTGRES_PASSWORD</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># Sans authentification : rejeté avant même d'atteindre le démon.</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+<span class="c1"># HTTP/1.1 401 Unauthorized</span>
+
+<span class="c1"># Authentifié en tant qu'« alice », qui est mappée au tenant 1 : le démon</span>
+<span class="c1"># répond, quel que soit l'en-tête que le client tente d'envoyer lui-même.</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 999"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+<span class="c1"># {"positions":0,"analyses":0,"matches":0,...} dans les deux cas — le journal</span>
+<span class="c1"># du démon (docker compose logs blunderdb-serve) montre tenant=1 pour les</span>
+<span class="c1"># deux requêtes : la valeur 999 envoyée par le client n'a jamais survécu à</span>
+<span class="c1"># la garde du Caddyfile.</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>This scenario was replayed exactly as written: <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> and PostgreSQL start, Caddy authenticates and routes, and the daemon’s log confirms that only the integer injected by the proxy — never the client’s — reaches the application layer.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2><span class="section-number">13.3. </span>PostgreSQL backend and multi-user<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>For a shared deployment, blunderDB can store data in <strong>PostgreSQL</strong> rather than in a SQLite file. The backend is selected with <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> and the <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> connection string. The schema is created and migrated automatically at startup.</p>
+<p>Data is <strong>partitioned per tenant</strong>: each request carries its tenant’s identifier (the <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> header, a positive decimal integer such as <code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">42</span></code>), which lets several users share the same instance without seeing each other’s data. An identifier that is not such an integer — a name like <code class="docutils literal notranslate"><span class="pre">alice</span></code> or <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">007</span></code> — is refused with <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>: the reverse-proxy maps an account to its integer, the daemon never guesses. The <code class="docutils literal notranslate"><span class="pre">--rls</span></code> option additionally enables PostgreSQL’s <strong>Row-Level Security</strong>: per-tenant isolation policies are installed and <code class="docutils literal notranslate"><span class="pre">app.tenant_id</span></code> is set per connection. This is an optional defence in depth, disabled by default.</p>
+<p>When a tenant is decommissioned, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/tenant.purge</span></code> permanently deletes all its data (positions, matches, collections, history, etc.) for the current tenant (the one carried by <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>as well as its session state</strong> (last search, last position, open tabs — the rows of the <code class="docutils literal notranslate"><span class="pre">session_state</span></code> table carrying that tenant): the operation runs in a single transaction, is idempotent (no error purging an already-empty tenant or repeating the call), and does not affect any other tenant or the global schema-version row. It is only available with the PostgreSQL backend — it returns an <code class="docutils literal notranslate"><span class="pre">invalid</span></code> error on a SQLite backend, which has no notion of tenant.</p>
+<p>Symmetrically, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/maintenance.vacuum</span></code> compacts the daemon’s SQLite file — the counterpart of the “Compact database” button in the GUI and of the <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> command (see <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>), with the same disk-space guard — and returns the sizes before and after (<code class="docutils literal notranslate"><span class="pre">sizeBefore</span></code>, <code class="docutils literal notranslate"><span class="pre">sizeAfter</span></code>, in bytes). It is only available with the SQLite backend; on PostgreSQL, which has no file to compact, it returns an <code class="docutils literal notranslate"><span class="pre">invalid</span></code> error.</p>
+<p>The PostgreSQL connection pool is tuned via environment variable: <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONNS</span></code> (50 by default), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MIN_CONNS</span></code> (5), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME</span></code> (<code class="docutils literal notranslate"><span class="pre">1h</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD</span></code> (<code class="docutils literal notranslate"><span class="pre">30s</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_CONNECT_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">5s</span></code> — past it, an unreachable database fails fast instead of hanging on the operating system’s TCP timeout) and <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME</span></code> (<code class="docutils literal notranslate"><span class="pre">30m</span></code> — a connection opened for a burst of traffic does not sit in the pool forever once the burst is over). Each value is a Go-formatted duration (<code class="docutils literal notranslate"><span class="pre">5s</span></code>, <code class="docutils literal notranslate"><span class="pre">30m</span></code>, <code class="docutils literal notranslate"><span class="pre">1h</span></code>); absent or malformed, it falls back to its default. When <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> is on, the pool’s state is continuously exposed on <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: <code class="docutils literal notranslate"><span class="pre">blunderdb_pg_pool_acquired</span></code> (connections currently in use), <code class="docutils literal notranslate"><span class="pre">_idle</span></code> (available ones), <code class="docutils literal notranslate"><span class="pre">_max</span></code> (the configured ceiling) and <code class="docutils literal notranslate"><span class="pre">_wait_count</span></code> (the cumulative count of <code class="docutils literal notranslate"><span class="pre">Acquire</span></code> calls that had to wait for a free connection).</p>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2><span class="section-number">13.4. </span>Migrating a SQLite database to PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> copies a single-user SQLite database to a PostgreSQL backend, under a chosen tenant — the integer the reverse-proxy will send in <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> for that user — this is the path to “upload” a desktop library to a server deployment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">"postgres://user:pass@host:5432/db?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+
+<span class="c1"># Prévisualiser sans rien écrire</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///chemin/vers/base.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>The migration copies the <strong>positions, their analyses and comments, the matches (games + moves), the tournaments (with their match links) and the collections (with their composition)</strong>, reassigning primary and foreign keys, all within a <strong>single transaction</strong> on the destination side: the operation is atomic (a failure leaves the destination intact, just run it again). Progress and the final summary are emitted as NDJSON on standard output. If the source database is old enough to need its own in-place schema upgrade, that runs first and emits its own <code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> events (phase/done/total) before the row-by-row copy begins.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>source SQLite database (<code class="docutils literal notranslate"><span class="pre">sqlite:///path</span></code> or a plain path)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>destination PostgreSQL DSN (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>destination tenant, a positive decimal integer (required except in <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>; a name such as <code class="docutils literal notranslate"><span class="pre">mon-tenant</span></code> is refused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>counts what would be copied without writing anything</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;policy&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> aborts if the tenant already has data; <code class="docutils literal notranslate"><span class="pre">skip</span></code> merges (deduplication of positions by Zobrist hash)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Application state is not (yet) migrated: Anki decks/cards, the filter library, search and command history, and session metadata. The priority is migrating the position library and the match history.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2><span class="section-number">13.5. </span>The generic <code class="docutils literal notranslate"><span class="pre">call</span></code> dispatcher<a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>In addition to the historical subcommands (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Command Line Interface (CLI)</span></a>), <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> exposes <strong>all</strong> storage operations directly, locally. It goes through the same handlers as the <code class="docutils literal notranslate"><span class="pre">serve</span></code> daemon: the behaviour is therefore identical to <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;family&gt;.&lt;method&gt;</span></code>. This is useful for scripting and integration testing.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister toutes les méthodes disponibles</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># Lectures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>ma_base.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"limit":10}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":1}'</span>
+
+<span class="c1"># Écritures</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"position":{...}}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>ma_base.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":42}'</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite file (shorthand for <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;path&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> or <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>backend connection string</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>tenant, a positive decimal integer (sent as <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>; a name such as <code class="docutils literal notranslate"><span class="pre">alice</span></code> is refused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;string&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>request body in JSON format</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>reads the request body from a file</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lists all <code class="docutils literal notranslate"><span class="pre">&lt;family&gt;.&lt;method&gt;</span></code> methods and exits</p></td>
+</tr>
+</tbody>
+</table>
+<p>The JSON response (or the NDJSON stream for <code class="docutils literal notranslate"><span class="pre">*.list</span></code> endpoints) is written to standard output. On error, the process exits with a non-zero code and the <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> envelope is printed to standard output so it stays parseable (for example with <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="roadmap.html" class="btn btn-neutral float-left" title="9. Roadmap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="14. API contract" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

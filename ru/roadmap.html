@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Дорожная карта &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="13. Безголовый режим (сервер)" href="mode_headless.html" />
+    <link rel="prev" title="8. Часто задаваемые вопросы" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">7. Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Дорожная карта</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-3-etendre">10. Этап 3 — Расширение</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#import-et-flux">10.1. Импорт и рабочий процесс</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#categoriser-sans-imposer-de-classification">10.2. Категоризация без навязывания классификации</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyse-et-evaluation">10.3. Анализ и оценка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pedagogie">10.4. Обучение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#partager-une-analyse">10.5. Обмен анализом</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-et-bibliotheque">10.6. Поиск и библиотека</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interface-et-plateforme">10.7. Интерфейс и платформа</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#etape-4-chantiers-de-fond">11. Этап 4 — Фундаментальные проекты</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#ce-qui-n-est-pas-prevu">12. Что <strong>не</strong> планируется</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Контракт API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Дорожная карта</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="feuille-de-route">
+<span id="roadmap"></span><h1><span class="section-number">9. </span>Дорожная карта<a class="headerlink" href="#feuille-de-route" title="Ссылка на этот заголовок"></a></h1>
+<p>На этой странице перечислены идеи, рассматриваемые для blunderDB — это <strong>не</strong> обязательство по срокам или порядку. blunderDB разрабатывается одним человеком в свободное время: идея может быстро продвинуться, ждать месяцами или быть отброшена, если её заменит идея получше.</p>
+<p>Точное отслеживание ведётся на GitHub:</p>
+<ul class="simple">
+<li><p>открытые тикеты сгруппированы по этапам в вехах <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/4">Étape 3 — Étendre</a> (то, что описано на этой странице) и <a class="reference external" href="https://github.com/kevung/blunderDB/milestone/5">Étape 4 — Fond</a> (более тяжёлые проекты);</p></li>
+<li><p>чтобы предложить или обсудить идею — раздел <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions – категория Ideas</a>;</p></li>
+<li><p>каждая опубликованная версия анонсируется в <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">Discussions – категория Announcements</a>.</p></li>
+</ul>
+</section>
+<section id="etape-3-etendre">
+<h1><span class="section-number">10. </span>Этап 3 — Расширение<a class="headerlink" href="#etape-3-etendre" title="Ссылка на этот заголовок"></a></h1>
+<section id="import-et-flux">
+<h2><span class="section-number">10.1. </span>Импорт и рабочий процесс<a class="headerlink" href="#import-et-flux" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Панель по завершении импорта: число импортированных матчей, отмеченные позиции, позиции без анализа, пять худших ошибок (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/257">#257</a>).</p></li>
+<li><p>Наблюдение за папкой (например, папкой eXtreme Gammon) и автоматический импорт каждого нового файла (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/258">#258</a>).</p></li>
+<li><p>После импорта — прохождение очереди изучения, показывающей только блендеры, отмеченные позиции и спорные решения партии (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/259">#259</a>).</p></li>
+<li><p>Импорт матчей, сыгранных на bgammon.org, и распознавание идентификатора позиции OGID, вставленного в приложение (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/262">#262</a>).</p></li>
+<li><p>Отслеживание происхождения каждого комментария (пользователь, eXtreme Gammon, GNUbg…) и отображение всех, а не одного, выбранного случайно (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/263">#263</a>).</p></li>
+</ul>
+</section>
+<section id="categoriser-sans-imposer-de-classification">
+<h2><span class="section-number">10.2. </span>Категоризация без навязывания классификации<a class="headerlink" href="#categoriser-sans-imposer-de-classification" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Автоматическая маркировка каждой позиции по фазе партии (дебют, миттельшпиль, гонка, беароф) для фильтрации и поиска в статистике (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/264">#264</a>).</p></li>
+<li><p>Словарь предлагаемых тегов (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>…) с автодополнением и панель, перечисляющая их по частоте (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/265">#265</a>).</p></li>
+<li><p>Пятая вкладка статистики, разбивающая PR и частоту ошибок по фазе, тегу и счёту away, в виде матрицы (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/266">#266</a>).</p></li>
+</ul>
+</section>
+<section id="analyse-et-evaluation">
+<h2><span class="section-number">10.3. </span>Анализ и оценка<a class="headerlink" href="#analyse-et-evaluation" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Для текущей позиции — вердикт по кубу при любом счёте матча до 5, 7 или 9 очков, в единой сетке (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/267">#267</a>).</p></li>
+<li><p>PR, вычисляемый по матчам без импортированного анализа, путём сравнения сыгранного хода с рекомендацией встроенного оценщика (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/268">#268</a>).</p></li>
+<li><p>Сравнение бок о бок, на одной и той же позиции, того, что говорят разные движки, уже присутствующие в базе (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/269">#269</a>).</p></li>
+<li><p>Публикация реальной силы встроенного оценщика по сравнению с точной эталонной таблицей и её непрерывное измерение против импортов eXtreme Gammon (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/270">#270</a>).</p></li>
+<li><p>Отображение действующих правил (лимит куба, Джакоби, бивер) рядом с вердиктом и возможность выбора таблицы матчевых эквити для каждой базы (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/271">#271</a>).</p></li>
+<li><p>Публикация измерения 3-ply (время, прирост точности) и предложение его в качестве настройки, если компромисс это оправдывает (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/272">#272</a>).</p></li>
+</ul>
+</section>
+<section id="pedagogie">
+<h2><span class="section-number">10.4. </span>Обучение<a class="headerlink" href="#pedagogie" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Первый хронометрируемый тренировочный модуль: подсчёт пипсов, EPC, точка тейка (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/273">#273</a>).</p></li>
+<li><p>Постановка цели прогресса («PR ниже 5 за три месяца») и отслеживание отклонения на кривой (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/274">#274</a>).</p></li>
+<li><p>Связь статистики обучения (Anki) со статистикой реальной игры: действительно ли повторённая категория улучшается (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/275">#275</a>)?</p></li>
+<li><p>Связанные карточки куба: сначала удвоение, затем принятие, как два отдельных вопроса вместо одной двухэтапной карточки (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/276">#276</a>).</p></li>
+<li><p>Обучающие маршруты: упорядоченная последовательность прокомментированных позиций, распространяемая как база с водяным знаком, предназначенная для тренера (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/277">#277</a>).</p></li>
+</ul>
+</section>
+<section id="partager-une-analyse">
+<h2><span class="section-number">10.5. </span>Обмен анализом<a class="headerlink" href="#partager-une-analyse" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Единое отображение доски, экспортируемое в SVG или PNG, точно соответствующее тому, что показывает экран (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/278">#278</a>).</p></li>
+<li><p>Автономный HTML-отчёт по сессии, матчу или турниру, распечатываемый в PDF из браузера (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/279">#279</a>).</p></li>
+<li><p>Экспорт в CSV или Parquet с примером блокнота Jupyter, поддерживаемым в актуальном состоянии (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/280">#280</a>).</p></li>
+<li><p>Указатель на этом сайте баз с водяными знаками, которыми другие игроки делятся с проверяемой личностью (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/281">#281</a>).</p></li>
+</ul>
+</section>
+<section id="recherche-et-bibliotheque">
+<h2><span class="section-number">10.6. </span>Поиск и библиотека<a class="headerlink" href="#recherche-et-bibliotheque" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Коллекции, которые переоцениваются при открытии (именованный фильтр, никогда не замороженный), и сравнение двух игроков бок о бок на вкладке Игроки (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/282">#282</a>).</p></li>
+<li><p>Запись поискового запроса на обычном языке («мои ошибки по кубу при этом счёте») вместо токенов, детерминированно и офлайн (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/283">#283</a>).</p></li>
+</ul>
+</section>
+<section id="interface-et-plateforme">
+<h2><span class="section-number">10.7. </span>Интерфейс и платформа<a class="headerlink" href="#interface-et-plateforme" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p>Экран приветствия, предлагающий, когда не открыта ни одна недавняя база: обучающий тур, пример базы, импорт моих матчей, открытие базы (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/284">#284</a>).</p></li>
+<li><p>Корзина для удалённых позиций и «отмена» для самых частых удалений (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/285">#285</a>).</p></li>
+<li><p>Именованные темы — светлая, тёмная, высококонтрастная, для печати (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/286">#286</a>).</p></li>
+<li><p>Ряд мелких повседневных удобств: доступный для просмотра журнал активности, палитра команд, более читаемые значки поиска (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/287">#287</a>).</p></li>
+<li><p>Чёткое разъяснение того, что работает для синхронизации базы между несколькими компьютерами (и что нет), и кнопка для объединения двух баз (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/288">#288</a>).</p></li>
+<li><p>Минимальный клиент и политика версионирования для API серверного режима (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/289">#289</a>).</p></li>
+<li><p>Перенос в приложение возможностей, которые сегодня существуют только на стороне сервера: приостановка карточки, журнал повторений, оптимизация FSRS (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/290">#290</a>).</p></li>
+</ul>
+</section>
+</section>
+<section id="etape-4-chantiers-de-fond">
+<h1><span class="section-number">11. </span>Этап 4 — Фундаментальные проекты<a class="headerlink" href="#etape-4-chantiers-de-fond" title="Ссылка на этот заголовок"></a></h1>
+<p>Эти идеи меняют природу части программного обеспечения; каждая ждёт явного решения перед началом работы.</p>
+<ul class="simple">
+<li><p>Автоматическая классификация типа игры позиции (гонка, holding, backgame, blitz…), именование повторяющихся тем ошибок (слишком пассивно, тайминг, недооценённый гаммон…) и группировка повторяющихся ошибок по накопленной стоимости — обещание, которое даёт название продукта (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/291">#291</a>).</p></li>
+<li><p>Усечённые роллауты для разрешения спора между двумя очень близкими ходами с отображаемым доверительным интервалом (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/292">#292</a>).</p></li>
+<li><p>«Позиции, похожие на эту»: поиск позиций, наиболее близких к той, что на экране (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/293">#293</a>).</p></li>
+<li><p>Режим викторины, который проверяет, а не заучивает, с тренировочным PR, сопоставимым с реальным PR (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/294">#294</a>).</p></li>
+<li><p>Веб-интерфейс только для чтения поверх серверного режима, для планшета и мобильного (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/295">#295</a>).</p></li>
+<li><p>Режим клуба или тренера на сервере: предоставление библиотеки только для чтения, получение матчей учеников (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/296">#296</a>).</p></li>
+<li><p>Дистиллированная, гораздо более быстрая оценочная сеть и кэш оценок, переживающий закрытие приложения (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/297">#297</a>).</p></li>
+<li><p>Объяснение ошибки одной фразой, без обращения к языковой модели (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/298">#298</a>).</p></li>
+<li><p>Необязательный ассистент, строго локальный и никогда не включённый по умолчанию, через Ollama (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/299">#299</a>).</p></li>
+</ul>
+</section>
+<section id="ce-qui-n-est-pas-prevu">
+<h1><span class="section-number">12. </span>Что <strong>не</strong> планируется<a class="headerlink" href="#ce-qui-n-est-pas-prevu" title="Ссылка на этот заголовок"></a></h1>
+<p>Игра против встроенного оценщика изменила бы природу продукта (полноценный игровой движок: правила, ввод ходов, история партии); это не входит в планы blunderDB (<a class="reference external" href="https://github.com/kevung/blunderDB/issues/300">#300</a>).</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="faq.html" class="btn btn-neutral float-left" title="8. Часто задаваемые вопросы" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="mode_headless.html" class="btn btn-neutral float-right" title="13. Безголовый режим (сервер)" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

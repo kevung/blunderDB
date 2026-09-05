@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Γλωσσάρι &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=8d711293" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="8. Συχνές ερωτήσεις (FAQ)" href="faq.html" />
+    <link rel="prev" title="6. Διεπαφή γραμμής εντολών (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">3. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html">9. Χάρτης πορείας</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-3-etendre">10. Στάδιο 3 — Επέκταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#etape-4-chantiers-de-fond">11. Στάδιο 4 — Βαθιά εγχειρήματα</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roadmap.html#ce-qui-n-est-pas-prevu">12. Τι <strong>δεν</strong> προβλέπεται</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">13. Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">14. Σύμβαση API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">15. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">16. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">17. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">18. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">19. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Γλωσσάρι</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="glossaire">
+<span id="id1"></span><h1><span class="section-number">7. </span>Γλωσσάρι<a class="headerlink" href="#glossaire" title="Link to this heading"></a></h1>
+<p>Οι παρακάτω όροι επανέρχονται σε όλη την υπόλοιπη τεκμηρίωση — εγχειρίδιο, οδηγό χρήστη, συχνές ερωτήσεις, CLI. Αυτή η σελίδα τούς συγκεντρώνει σε ένα μόνο σημείο αντί να τους ορίζει εκ νέου σε κάθε ενότητα.</p>
+<dl class="simple">
+<dt>Θέση</dt><dd><p>Ένα σημείο απόφασης στο τάβλι: ταμπλό, κύβος, ζάρια, σκορ και σημάνσεις αγώνα. Μια θέση που εισάγεται δύο φορές μετράει μία μόνο φορά — η αυτόματα υπολογισμένη ταυτότητά της την αναγνωρίζει, ποτέ το αρχείο από το οποίο προέρχεται.</p>
+</dd>
+<dt>Ξεχωριστά εισαγόμενη θέση</dt><dd><p>Μια θέση που μπήκε μόνη της στη βάση — γραμμένη από το ταμπλό ή διαβασμένη από αρχείο θέσης — αντί να προέλθει από έναν αγώνα. Αυτή η ιδιότητα είναι διαρκής: μια θέση που εισήχθη έτσι παραμένει έτσι ακόμη κι αν εισαχθεί αργότερα ένας αγώνας που την περιέχει.</p>
+</dd>
+<dt>Σημειωμένη θέση</dt><dd><p>Μια θέση που ο χρήστης σημείωσε ως άξια μελέτης <em>στο λογισμικό από το οποίο προέρχεται ο αγώνας</em> — σήμερα μόνο το eXtreme Gammon καταγράφει αυτή τη σήμανση, κίνηση προς κίνηση. Μια σημειωμένη απόφαση κύβου σημειώνει και τις δύο θέσεις που προκύπτουν από αυτήν: τον διπλασιασμό και το πάρε/πέρασε.</p>
+</dd>
+<dt>Ανάλυση</dt><dd><p>Ό,τι συμπέρανε ένας μηχανισμός (eXtreme Gammon, GNUbg, BGBlitz ή ο ενσωματωμένος αξιολογητής gammonNet) για μια θέση, αποθηκευμένο και αναγνωσμένο αργότερα. Μια θέση φέρει μία ανάλυση ανά μηχανισμό· η εισαγωγή μιας ανάλυσης δεν αντικαθιστά ποτέ εκείνη ενός άλλου μηχανισμού, ούτε μια ήδη υπάρχουσα ανάλυση (βλ. <a class="reference internal" href="manuel.html#panneau-epc"><span class="std std-ref">Πίνακας Eval</span></a>).</p>
+</dd>
+<dt>Αξιολόγηση</dt><dd><p>Το αποτέλεσμα ενός υπολογισμού που εκτελεί ο ενσωματωμένος αξιολογητής στη θέση που βρίσκεται αυτή τη στιγμή στο ταμπλό, αποθηκευμένο ή όχι. Μια αξιολόγηση ισχύει μόνο όσο η θέση δεν αλλάζει· αν αποθηκευτεί, γίνεται Ανάλυση.</p>
+</dd>
+<dt>Σύστημα αναφοράς</dt><dd><p>Η κλίμακα στην οποία εκφράζεται ένας αριθμός σχετικά με μια θέση. Το <em>money</em> απαντά στο «πόσους πόντους αξίζει αυτό», με ένα γκάμον να αξίζει πάντα δύο πόντους. Το <em>match</em> απαντά στο «πόσο αξίζει αυτό ως προς τον αγώνα», σε μια κανονικοποιημένη κλίμακα όπου ένα γκάμον αξίζει ό,τι κάνει το σκορ — σχεδόν τα πάντα στο 2-away/4-away, τίποτα για έναν πρωτοπόρο στο 1-away. Το σύστημα αναφοράς είναι ιδιότητα της θέσης, ποτέ προτίμηση εμφάνισης: το σκορ away το καθορίζει.</p>
+</dd>
+<dt>Κανονικοποιημένη ισοδυναμία</dt><dd><p>Η ισοδυναμία αγώνα, εκφρασμένη στην κλίμακα <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">×</span> <span class="pre">MWC</span> <span class="pre">−</span> <span class="pre">1</span></code>, όπου το ±1 αντιπροσωπεύει τον τρέχοντα κύβο κερδισμένο ή χαμένο. Είναι η κλίμακα που το blunderDB εμφανίζει και αποθηκεύει σε ένα σκορ αγώνα, ποτέ οι ακατέργαστες πιθανότητες νίκης.</p>
+</dd>
+<dt>Σκορ away</dt><dd><p>Πόσους πόντους χρειάζεται ακόμη ένας παίκτης για να κερδίσει τον αγώνα, από τη δική του πλευρά. Δύο τιμές είναι φρουροί (sentinels) και όχι μετρήσεις: το <code class="docutils literal notranslate"><span class="pre">-1</span></code> σημαίνει ότι δεν υπάρχει αγώνας — το σύστημα αναφοράς είναι <em>money</em> — και τα <code class="docutils literal notranslate"><span class="pre">0</span></code>/<code class="docutils literal notranslate"><span class="pre">1</span></code> διακρίνουν το παιχνίδι μετά το Crawford (<code class="docutils literal notranslate"><span class="pre">0</span></code>) από το ίδιο το παιχνίδι Crawford (<code class="docutils literal notranslate"><span class="pre">1</span></code>), για την ίδια απόσταση από τη νίκη.</p>
+</dd>
+<dt>Καθεστώς</dt><dd><p>Τι είδους απάντηση δίνει ο πίνακας για μια κούρσα, δηλωμένη πάντα στην οθόνη αντί να αφήνεται στον αναγνώστη να μαντέψει:</p>
+<ul class="simple">
+<li><p><em>ακριβές</em> — διαβασμένο από μια αμφίπλευρη βάση bearoff, ποτέ εκτιμημένο·</p></li>
+<li><p><em>αξιολογημένο</em> — υπολογισμένο από τον ενσωματωμένο αξιολογητή, που παίζει την πορεία μέχρι το τέλος·</p></li>
+<li><p><em>εκτιμημένο</em> — μια βαθμονομημένη σύνοψη μιας πορείας, έγκυρη για μια πιθανότητα νίκης, ποτέ για μια ετυμηγορία κύβου.</p></li>
+</ul>
+</dd>
+<dt>Βάση bearoff</dt><dd><p>Ένας πίνακας απαντήσεων κούρσας, αμφίπλευρος (η ετυμηγορία κύβου) ή μονόπλευρος (το EPC). Το blunderDB δημιουργεί μέρος του μόνο του κατά την πρώτη εκκίνηση (έως 6 πούλια ανά παίκτη)· ευρύτερα πεδία δημιουργούνται από την καρτέλα <em>Bearoff</em> ή τη CLI. Μια δημιουργημένη βάση λέγεται <em>επαληθευμένη</em> όταν το αποτύπωμά της ταιριάζει ακριβώς με αυτό που παράγει το GNUbg.</p>
+</dd>
+<dt>EPC (Effective Pip Count)</dt><dd><p>Μια κλασική, μονόπλευρη εκτίμηση του αριθμού των ζαριών που απαιτούνται για να βγουν όλα τα πούλια ενός παίκτη — διορθωμένη για τη σπατάλη (<em>wastage</em>) σε σχέση με το απλό pip count.</p>
+</dd>
+<dt>Δεδομένο θέσης</dt><dd><p>Ένα μέγεθος που ανήκει στο ίδιο το ταμπλό, ανεξάρτητο από οποιαδήποτε επιλογή θα μπορούσε να κάνει ένας παίκτης: pip count, EPC, πιθανότητες νίκης/γκάμον/μπάκγκαμον, cubeless equity. Αληθές πριν από τη ζαριά.</p>
+</dd>
+<dt>Γραμμή πριν τη ζαριά</dt><dd><p>Το διάνυσμα των πιθανοτήτων νίκης/γκάμον/μπάκγκαμον και της cubeless equity, εμφανισμένο πάνω από τη λίστα υποψήφιων κινήσεων μόλις ριχτούν τα ζάρια. Το κενό ανάμεσα σε αυτή τη γραμμή και μια κίνηση μετρά την τύχη της ζαριάς, ποτέ την αξία της κίνησης που παίχτηκε.</p>
+</dd>
+<dt>Απόφαση</dt><dd><p>Η απάντηση στην ερώτηση που θέτει το ταμπλό: η κατάταξη των υποψήφιων κινήσεων όταν ρίχνονται ζάρια, ή διαφορετικά οι τρεις επιλογές κύβου και η ετυμηγορία τους. Μια θέση δεν θέτει ποτέ και τις δύο ερωτήσεις ταυτόχρονα.</p>
+</dd>
+<dt>Ετυμηγορία</dt><dd><p>Ποια από τις επιλογές μιας απόφασης κύβου είναι η σωστή: <em>κανένα διπλασιασμό</em>, <em>διπλασιασμός/πάρε</em>, <em>διπλασιασμός/πέρασε</em> ή <em>πολύ καλό (για διπλασιασμό)</em>. Δύο ειδικές περιπτώσεις δεν αφήνονται ποτέ κενές: <em>καμία απόφαση</em> (το καθεστώς δεν δικαιούται μία) και <em>απορρίφθηκε</em> (ο μηχανισμός αρνήθηκε τη θέση, συνήθως σκορ εκτός εμβέλειας του πίνακά του).</p>
+</dd>
+<dt>Πολύ καλό</dt><dd><p>Η ετυμηγορία που λέει ότι η θέση είναι τόσο ευνοϊκή ώστε ο διπλασιασμός θα οδηγούσε τον αντίπαλο να περάσει, ενώ η συνέχιση χωρίς διπλασιασμό αποδίδει περισσότερα — ένας κύβος που καλύτερα να κρατηθεί.</p>
+</dd>
+<dt>Τύχη</dt><dd><p>Η συνεισφορά της ζαριάς στην equity μιας κίνησης, διαβασμένη από το αρχείο πηγής κατά την εισαγωγή (eXtreme Gammon, GNUbg) και ποτέ επανυπολογισμένη από το blunderDB. Οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) δεν την παρέχουν ποτέ, και η εισαγωγή δεν είναι αναδρομική.</p>
+</dd>
+<dt>Blunder (χοντρό λάθος)</dt><dd><p>Μια κίνηση ή απόφαση κύβου της οποίας το σφάλμα (το κενό equity με την καλύτερη επιλογή) υπερβαίνει ένα κατώφλι· η εντολή <code class="docutils literal notranslate"><span class="pre">bl</span></code> (ή <code class="docutils literal notranslate"><span class="pre">blunders</span></code>) φορτώνει απευθείας τα χειρότερα σφάλματα μιας αναζήτησης.</p>
+</dd>
+<dt>PR (Performance Rate)</dt><dd><p>Το μέσο κόστος σφαλμάτων ενός παίκτη, σε χιλιοστά μονάδας equity ανά μετρημένη απόφαση, κινήσεις πούλιων και κύβος μαζί. Βλ. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a> για τους ακριβείς κανόνες μέτρησης (ισοτιμία με eXtreme Gammon και GNUbg).</p>
+</dd>
+<dt>Snowie Error Rate</dt><dd><p>Ο ίδιος αριθμητής με το PR (το άθροισμα των σφαλμάτων), αλλά διαιρεμένος με τον αριθμό των κινήσεων που παίχτηκαν αντί για τον αριθμό των μετρημένων αποφάσεων — πιο σταθερός από εργαλείο σε εργαλείο. Βλ. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</span></a>.</p>
+</dd>
+<dt>Κόστος MWC</dt><dd><p>Ένα σφάλμα κύβου εκφρασμένο σε ποσοστιαίες μονάδες Match Winning Chance, αντί σε equity — το φυσικό μέγεθος για τη σύγκριση του ίδιου παίκτη σε διαφορετικά σκορ αγώνα.</p>
+</dd>
+<dt>Συλλογή</dt><dd><p>Ένα ονομασμένο, διατεταγμένο σύνολο θέσεων που ο χρήστης συγκεντρώνει με το χέρι, drag-and-drop συμπεριλαμβανομένου. Η συμμετοχή σε συλλογή είναι ρητή χειρονομία, σε αντίθεση με μια ξεχωριστά εισαγόμενη θέση (βλ. <a class="reference internal" href="manuel.html#panneau-collections"><span class="std std-ref">Πίνακας Συλλογών</span></a>).</p>
+</dd>
+<dt>Τράπουλα Anki</dt><dd><p>Ένα σύνολο θέσεων μετατραμμένων σε κάρτες που επαναλαμβάνονται με κατανεμημένη επανάληψη (αλγόριθμος FSRS). Βλ. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Πίνακας Anki</span></a>.</p>
+</dd>
+<dt>Κάρτα επανάληψης</dt><dd><p>Μια θέση από μια τράπουλα Anki, παρουσιασμένη ως ερώτηση: το ταμπλό είναι η ερώτηση, η αποθηκευμένη ανάλυση είναι η απάντηση, κρυμμένη μέχρι τη χειρονομία που την αποκαλύπτει.</p>
+</dd>
+<dt>Σχόλιο</dt><dd><p>Ελεύθερο κείμενο συνδεδεμένο με μια θέση, είτε πληκτρολογήθηκε από τον χρήστη είτε προήλθε αυτούσιο από ένα εισαγόμενο αρχείο — τα δύο είναι μη διακρίσιμα. Ένα <code class="docutils literal notranslate"><span class="pre">#λέξη-κλειδί</span></code> μέσα σε ένα σχόλιο είναι μια ετικέτα, αναζητήσιμη όπως κάθε άλλο κείμενο.</p>
+</dd>
+<dt>Παίκτης</dt><dd><p>Ένα όνομα ακριβώς όπως εμφανίζεται σε έναν εισαγόμενο αγώνα. Το blunderDB δεν μαντεύει το πρόσωπο πίσω από το όνομα: το ίδιο άτομο που υπογράφει με δύο ορθογραφίες είναι δύο ξεχωριστοί παίκτες, μέχρι μια ρητή συγχώνευση («Συγχώνευση παικτών»).</p>
+</dd>
+<dt>Υδατογράφημα</dt><dd><p>Η υπογεγραμμένη δήλωση, τοποθετημένη από όποιον εξάγει μια βάση, για το τι είναι και από πού προέρχεται. Μη παραποιήσιμη αλλά όχι ανεξάλειπτη, δεν καταγράφει ποτέ τίποτα στην πλευρά του παραλήπτη. Βλ. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Διανομή μιας βάσης: προέλευση και κωδικός πρόσβασης</span></a>.</p>
+</dd>
+<dt>Ταυτότητα εκδότη</dt><dd><p>Το κλειδί που υπογράφει τα υδατογραφήματα ενός ατόμου — δημιουργημένο μόνο του με το πρώτο υδατογράφημα που τοποθετείται, και μεταφέρσιμο από ένα μηχάνημα σε άλλο ως ένα ενιαίο αρχείο.</p>
+</dd>
+<dt>Προστατευμένο αρχείο (.dbx)</dt><dd><p>Μια βάση εξαγμένη και κρυπτογραφημένη με κωδικό, ανοιγμένη μία φορά και έπειτα συνηθισμένη. Προστατεύει το αρχείο κατά τη μεταφορά, όχι το περιεχόμενό του: όποιος λάβει τον κωδικό μπορεί να το ανοίξει.</p>
+</dd>
+<dt>Tenant</dt><dd><p>Σε λειτουργία διακομιστή, ο κάτοχος ενός συνόλου θέσεων, αγώνων και συλλογών. Τίποτα από όσα αποθηκεύει ένας tenant δεν είναι ποτέ ορατό σε έναν άλλο. Στην επιφάνεια εργασίας υπάρχει μόνο ένας, σιωπηρός: το πρόσωπο του οποίου είναι το αρχείο. Βλ. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</span></a>.</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="6. Διεπαφή γραμμής εντολών (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="8. Συχνές ερωτήσεις (FAQ)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+        </dl>
+        <table class="lang-switcher">
+            
+            <tr>
+            <td><a href="../fr/index.html" title="Français">fr</a></td>
+            
+            
+            
+            <td><a href="../en/index.html" title="English">en</a></td>
+            
+            
+            
+            <td><a href="../de/index.html" title="Deutsch">de</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../el/index.html" title="Ελληνικά">el</a></td>
+            
+            
+            
+            <td><a href="../es/index.html" title="Español">es</a></td>
+            
+            
+            
+            <td><a href="../fi/index.html" title="Suomi">fi</a></td>
+            </tr>
+            
+            <tr>
+            <td><a href="../it/index.html" title="Italiano">it</a></td>
+            
+            
+            
+            <td><a href="../ja/index.html" title="日本語">ja</a></td>
+            
+            
+            
+            <td><a href="../ru/index.html" title="Русский">ru</a></td>
+            </tr>
+            
+        </table>
+        
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
