@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-04 17:07+0200\n"
+"POT-Creation-Date: 2026-09-05 03:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -294,11 +294,28 @@ msgstr ""
 "αποφεύγουν την εκτέλεση της εντολής ``chmod +x`` σε κάθε λήψη ή "
 "ενημέρωση. Δημιουργούν επίσης μια καταχώριση στο μενού εφαρμογών."
 
-#: ../../source/telecharge_install.rst:120
+#: ../../source/telecharge_install.rst:119
+msgid ""
+"Les paquets ``.deb`` et ``.rpm`` associent l'extension ``.dbx`` (une base"
+" exportée avec mot de passe, voir :ref:`diffusion_controlee`) à blunderDB"
+" : double-cliquer sur un fichier ``.dbx`` reçu d'un tiers l'ouvre "
+"directement. L'extension ``.db`` d'une base ordinaire n'est "
+"volontairement **pas** associée — elle est trop générique et partagée par"
+" d'autres logiciels — mais reste ouvrable normalement depuis le menu "
+"*Ouvrir* de blunderDB."
+msgstr ""
+"Τα πακέτα ``.deb`` και ``.rpm`` συσχετίζουν την επέκταση ``.dbx`` (μια βάση "
+"εξαγόμενη με κωδικό, βλ. :ref:`diffusion_controlee`) με το blunderDB: το "
+"διπλό κλικ σε ένα αρχείο ``.dbx`` που λάβατε από κάποιον το ανοίγει "
+"απευθείας. Η επέκταση ``.db`` μιας συνηθισμένης βάσης **δεν** συσχετίζεται "
+"σκόπιμα — είναι υπερβολικά γενική και κοινή με άλλα προγράμματα — αλλά "
+"παραμένει κανονικά ανοίξιμη από το μενού *Άνοιγμα* του blunderDB."
+
+#: ../../source/telecharge_install.rst:128
 msgid "Paquets natifs (.deb / .rpm)"
 msgstr "Εγγενή πακέτα (.deb / .rpm)"
 
-#: ../../source/telecharge_install.rst:122
+#: ../../source/telecharge_install.rst:130
 msgid ""
 "Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que"
 " sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
@@ -310,11 +327,11 @@ msgstr ""
 "αυτόματα την κατάλληλη εξάρτηση webkit2gtk. Αντικαταστήστε το ``x.y.z`` "
 "με την έκδοση που λάβατε:"
 
-#: ../../source/telecharge_install.rst:133
+#: ../../source/telecharge_install.rst:141
 msgid "Arch Linux (AUR)"
 msgstr "Arch Linux (AUR)"
 
-#: ../../source/telecharge_install.rst:135
+#: ../../source/telecharge_install.rst:143
 msgid ""
 "Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
 "automatiquement par les assistants AUR :"
@@ -322,11 +339,11 @@ msgstr ""
 "Το πακέτο ``blunderdb-bin`` είναι διαθέσιμο στο AUR και ενημερώνεται "
 "αυτόματα από τους βοηθούς AUR:"
 
-#: ../../source/telecharge_install.rst:143
+#: ../../source/telecharge_install.rst:151
 msgid "Flatpak"
 msgstr "Flatpak"
 
-#: ../../source/telecharge_install.rst:145
+#: ../../source/telecharge_install.rst:153
 msgid ""
 "Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution "
 "où Flatpak est installé. Il repose sur l'environnement GNOME 47, que "
@@ -336,7 +353,7 @@ msgstr ""
 "είναι εγκατεστημένο το Flatpak. Βασίζεται στο περιβάλλον GNOME 47, το "
 "οποίο το Flatpak κατεβάζει από το Flathub αν λείπει:"
 
-#: ../../source/telecharge_install.rst:154
+#: ../../source/telecharge_install.rst:162
 msgid ""
 "blunderDB n'est pas encore publié sur Flathub : le bundle s'installe "
 "depuis le fichier téléchargé, et se met à jour en installant celui de la "
@@ -350,11 +367,11 @@ msgstr ""
 " για να ανοίγει και να αποθηκεύει βάσεις. Η γραμμή εντολών (:ref:`cli`) "
 "είναι διαθέσιμη μέσω ``flatpak run io.github.kevung.blunderDB <εντολή>``."
 
-#: ../../source/telecharge_install.rst:161
+#: ../../source/telecharge_install.rst:169
 msgid "Archive .tar.gz"
 msgstr "Αρχείο .tar.gz"
 
-#: ../../source/telecharge_install.rst:163
+#: ../../source/telecharge_install.rst:171
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -362,7 +379,7 @@ msgstr ""
 "Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, "
 "οπότε δεν χρειάζεται ``chmod``:"
 
-#: ../../source/telecharge_install.rst:172
+#: ../../source/telecharge_install.rst:180
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -378,11 +395,11 @@ msgstr ""
 "δίπλα στο εκτελέσιμο. Για να τον έχετε στο ``PATH`` σας: ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:180
+#: ../../source/telecharge_install.rst:188
 msgid "Binaire brut (méthode avancée)"
 msgstr "Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)"
 
-#: ../../source/telecharge_install.rst:182
+#: ../../source/telecharge_install.rst:190
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -392,7 +409,7 @@ msgstr ""
 "ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να"
 " το αποκαταστήσετε πριν από την πρώτη εκτέλεση:"
 
-#: ../../source/telecharge_install.rst:190
+#: ../../source/telecharge_install.rst:198
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -408,11 +425,11 @@ msgstr ""
 " ειδική έκδοση |latest_linux_webkit2gtk41_exe|. Τα εγγενή πακέτα "
 "επιλέγουν αυτόματα τη σωστή εξάρτηση."
 
-#: ../../source/telecharge_install.rst:199
+#: ../../source/telecharge_install.rst:207
 msgid "Image Docker (mode serveur)"
 msgstr "Εικόνα Docker (λειτουργία διακομιστή)"
 
-#: ../../source/telecharge_install.rst:201
+#: ../../source/telecharge_install.rst:209
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -425,7 +442,7 @@ msgstr ""
 "``linux/arm64``, με την ετικέτα της έκδοσης και με την ετικέτα "
 "``latest``:"
 
-#: ../../source/telecharge_install.rst:210
+#: ../../source/telecharge_install.rst:218
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -433,11 +450,11 @@ msgstr ""
 "Η εκκίνηση, η ρύθμιση και η προειδοποίηση για τον διαμεσολαβητή "
 "ταυτοποίησης περιγράφονται στο :ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:216
+#: ../../source/telecharge_install.rst:224
 msgid "Gestionnaires de paquets Windows et Mac (à venir)"
 msgstr "Διαχειριστές πακέτων για Windows και Mac (προσεχώς)"
 
-#: ../../source/telecharge_install.rst:218
+#: ../../source/telecharge_install.rst:226
 msgid ""
 "Sous Linux, blunderDB s'installe déjà par le gestionnaire de paquets "
 "(AUR, ``.deb``, ``.rpm``). L'équivalent pour Windows (`winget "
@@ -459,7 +476,7 @@ msgstr ""
 "αυτό δεν ισχύει, οι παρακάτω εντολές δεν λειτουργούν· περιγράφουν την "
 "προβλεπόμενη εγκατάσταση:"
 
-#: ../../source/telecharge_install.rst:236
+#: ../../source/telecharge_install.rst:244
 msgid ""
 "Ni le paquet winget ni le cask ne changent la nature de l'exécutable : il"
 " reste non signé, et les avertissements décrits ci-dessous s'appliquent "
@@ -472,11 +489,11 @@ msgstr ""
 "quarantine blunderdb`` αποφεύγει τον αποκλεισμό του Gatekeeper κατά την "
 "πρώτη εκκίνηση."
 
-#: ../../source/telecharge_install.rst:242
+#: ../../source/telecharge_install.rst:250
 msgid "Avertissements Windows et Mac"
 msgstr "Προειδοποιήσεις για Windows και Mac"
 
-#: ../../source/telecharge_install.rst:244
+#: ../../source/telecharge_install.rst:252
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
@@ -486,7 +503,7 @@ msgstr ""
 "blunderDB. Δείτε :numref:`annexe_windows_malware` για να κατανοήσετε "
 "γιατί και πώς να παρακάμψετε τυχόν εμπόδια."
 
-#: ../../source/telecharge_install.rst:248
+#: ../../source/telecharge_install.rst:256
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"

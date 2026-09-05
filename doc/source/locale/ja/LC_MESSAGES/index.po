@@ -1657,9 +1657,9 @@ msgid ""
 "<https://github.com/kevung/gnubgparser>`__ et `bgfparser "
 "<https://github.com/kevung/bgfparser>`__ (MIT) ;"
 msgstr ""
-"マッチファイルは `xgparser <https://github.com/kevung/xgparser>`__、`gnubgparser "
-"<https://github.com/kevung/gnubgparser>`__、`bgfparser "
-"<https://github.com/kevung/bgfparser>`__（MIT）で読み込まれます。"
+"マッチファイルは\\ `xgparser <https://github.com/kevung/xgparser>`__\\ 、\\ "
+"`gnubgparser <https://github.com/kevung/gnubgparser>`__\\ 、\\ `bgfparser "
+"<https://github.com/kevung/bgfparser>`__\\ （MIT）で読み込まれます。"
 
 #: ../../source/index.rst:512
 msgid ""

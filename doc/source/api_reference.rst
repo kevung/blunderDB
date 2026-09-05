@@ -131,6 +131,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.update                     JSON
    search
      POST /v1/search.find                          NDJSON
+     POST /v1/search.parse                         JSON
+     POST /v1/search.query                         custom
    searchHistory
      POST /v1/searchHistory.deleteEntry            JSON
      POST /v1/searchHistory.list                   NDJSON

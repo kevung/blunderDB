@@ -1814,6 +1814,36 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/search.parse:
+    post:
+      operationId: search.parse
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchQueryReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchParseResp"
+  /v1/search.query:
+    post:
+      operationId: search.query
+      tags: [search]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/searchHistory.deleteEntry:
     post:
       operationId: searchHistory.deleteEntry
@@ -2851,6 +2881,12 @@ components:
       properties:
         filters:
           $ref: "#/components/schemas/domain_SearchFilters"
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     searchHistoryDeleteReq:
       type: object
       properties:
@@ -2866,6 +2902,38 @@ components:
           type: string
         excludePosition:
           type: string
+    searchParseResp:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        diags:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/searchQueryDiag"
+        canonical:
+          type: string
+    searchQueryDiag:
+      type: object
+      properties:
+        kind:
+          type: string
+        token:
+          type: string
+        message:
+          type: string
+    searchQueryReq:
+      type: object
+      properties:
+        query:
+          type: string
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     sessionSaveReq:
       type: object
       properties:
