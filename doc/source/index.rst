@@ -505,8 +505,8 @@ L'essentiel :
   qu'il a produites, créditées comme telles ;
 
 * les fichiers de match sont lus par `xgparser
-  <https://github.com/kevung/xgparser>`__ et `gnubgparser
-  <https://github.com/kevung/gnubgparser>`__ (LGPL-2.1) et par `bgfparser
+  <https://github.com/kevung/xgparser>`__, `gnubgparser
+  <https://github.com/kevung/gnubgparser>`__ et `bgfparser
   <https://github.com/kevung/bgfparser>`__ (MIT) ;
 
 * côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__

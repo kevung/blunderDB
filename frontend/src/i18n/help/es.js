@@ -105,32 +105,38 @@ export default {
     actuales" para la misma funcionalidad.
 </p>
 
-<h3>Calculadora EPC</h3>
+<h3>Panel Eval</h3>
 <p>
-    La calculadora EPC (Effective Pip Count) calcula el pip count efectivo de las posiciones de bear off. Utiliza la base de datos de bear off de un solo lado de 6 puntos de GNUbg para obtener valores
-    de EPC exactos.
+    El panel <strong>Eval</strong> evalúa cualquier posición que esté en el tablero: probabilidades de victoria, gammon y backgammon, equity, jugadas candidatas ordenadas y la única decisión que la
+    posición exige — jugar una tirada o doblar. El cálculo lo hace gammonNet, integrado: no hacen falta ni eXtreme Gammon ni GNU Backgammon.
 </p>
 <p>
-    Para abrir el panel Eval, pulsa <strong>Ctrl+E</strong>, haz clic en la pestaña Eval del panel inferior o escribe <strong>epc</strong> en la línea de comandos. El tablero se inicializa con una
-    configuración estándar de bear off (15 fichas).
+    Para abrirlo, pulse <strong>Ctrl+E</strong>, haga clic en la pestaña Eval del panel inferior o escriba <strong>epc</strong> en la línea de comandos. El tablero se abre con una configuración de
+    bearoff estándar (15 fichas), salvo que se le haya enviado una posición de la base. Las fichas se añaden y se quitan libremente con el ratón; la evaluación sigue cada cambio.
 </p>
-<p>Puedes añadir o quitar libremente fichas en los puntos del cuadro interior con el ratón. Los valores de EPC se muestran en tiempo real en el panel Eval dedicado, indicando para cada jugador:</p>
+<p>
+    En una posición de bearoff el panel <strong>se especializa</strong>: una segunda tabla, por jugador, muestra el EPC (Effective Pip Count) calculado a partir de la base de bearoff unilateral de 6
+    puntos de GNUbg —
+</p>
 <ul>
     <li><strong>EPC</strong>: el número medio de pips necesarios para sacar todas las fichas,</li>
     <li><strong>Pip Count</strong>: el pip count bruto,</li>
     <li><strong>Wastage</strong>: la diferencia entre el EPC y el pip count,</li>
-    <li><strong>Avg Rolls</strong>: número medio de tiradas para sacar todas las fichas,</li>
-    <li><strong>Std Dev</strong>: desviación estándar del número de tiradas.</li>
+    <li><strong>Avg Rolls</strong>: el número medio de tiradas para sacar todas las fichas,</li>
+    <li><strong>Std Dev</strong>: la desviación típica de ese número de tiradas.</li>
 </ul>
-<p>Cuando ambos jugadores tienen fichas en su cuadro interior, una sección de comparación muestra las diferencias de EPC y de pip count.</p>
-<p>Para cerrar el panel Eval, pulsa <strong>Ctrl+E</strong> de nuevo o cambia a otra pestaña.</p>
+<p>Cuando ambos jugadores tienen fichas en su casa, una sección de comparación muestra las diferencias de EPC y de pip count.</p>
 <p>
-    En una posición de bearoff pura, una tabla de carrera muestra además las probabilidades de victoria de ambos jugadores y, cuando la posición está cubierta por una base two-sided (integrada hasta 6
-    fichas por jugador, base ampliada descargable hasta 11 desde la pestaña Bearoff de la configuración), las equidades money exactas — con, bajo cada decisión no óptima, la diferencia de equidad
-    respecto a la mejor — y la mejor decisión de cubo. Fuera de ese dominio la probabilidad se estima (insignia «estimado» con su margen de error) y no se muestra ninguna decisión. El jugador al tiro
-    se edita pulsando el rectángulo bearoff/marcador de un jugador, y la posición del cubo pulsando el cubo del tablero.
+    En una carrera pura, otra tabla muestra las probabilidades de victoria de ambos jugadores y, cuando la posición está cubierta por una base two-sided (la integrada hasta 6 fichas por jugador, la
+    ampliada descargable hasta 11 desde la pestaña Bearoff de la configuración), los equities money exactos y la mejor decisión de cubo. Fuera de ese dominio la probabilidad de victoria se estima
+    (distintivo «estimado» con su margen de error) y no se muestra ninguna decisión. El jugador en turno se cambia haciendo clic en el rectángulo de salida/marcador de un jugador, y la posición del
+    cubo haciendo clic en el cubo del tablero.
 </p>
-<p>La casilla <strong>Desafío</strong> oculta los resultados tras cada edición; pulse una zona para revelarla — ideal para entrenarse a estimar el EPC y la decisión de cubo antes de comprobar.</p>
+<p>
+    La casilla <strong>Desafío</strong> oculta los resultados cada vez que se modifica la posición; haga clic en una zona para revelarla — ideal para practicar un equity, un EPC o una decisión de cubo
+    antes de comprobar.
+</p>
+<p>Para cerrar el panel Eval, pulse <strong>Ctrl+E</strong> de nuevo o cambie de pestaña.</p>
 
 <h3>Navegación por matches</h3>
 <p>
@@ -1393,7 +1399,7 @@ export default {
         Las bases de datos de bear off de un solo lado (6 puntos, 15 fichas, para el EPC) y de dos lados (6 puntos, 6 fichas, para los veredictos de cubo en carreras) se generaron con
         <strong>GNU Backgammon</strong> (GNUbg). GNUbg es software libre bajo la GPL; estas tablas son datos producidos por él, acreditados como tales.
     </li>
-    <li>Los archivos de match se leen con <em>xgparser</em> y <em>gnubgparser</em> (LGPL-2.1) y con <em>bgfparser</em> (MIT).</li>
+    <li>Los archivos de match se leen con <em>xgparser</em>, <em>gnubgparser</em> y <em>bgfparser</em> (MIT).</li>
     <li>Del lado de Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> y <em>go-fsrs</em> (MIT).</li>
     <li>Del lado de la interfaz: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> y <em>driver.js</em> (MIT).</li>
     <li>Las fuentes <em>Nunito</em> y <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

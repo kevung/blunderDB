@@ -103,32 +103,34 @@ export default {
     varten.
 </p>
 
-<h3>EPC-laskin</h3>
-<p>EPC-laskin (Effective Pip Count) laskee bearoff-asemien efektiivisen pip-luvun. Se käyttää GNUbg:n yksipuolista 6-pisteen bearoff-tietokantaa tarkkoihin EPC-arvoihin.</p>
+<h3>Eval-paneeli</h3>
 <p>
-    Avaa Eval-paneeli painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Eval-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta alustetaan vakiomuotoisella
-    bearoff-asetelmalla (15 nappulaa).
+    <strong>Eval</strong>-paneeli arvioi minkä tahansa laudalla olevan aseman: voitto-, gammon- ja backgammon-todennäköisyydet, equityn, järjestetyt siirtoehdokkaat ja sen yhden ratkaisun, jota asema
+    vaatii — siirron pelaamisen tai tuplaamisen. Laskennan tekee sisäänrakennettu gammonNet: eXtreme Gammonia tai GNU Backgammonia ei tarvita.
 </p>
-<p>Voit vapaasti lisätä tai poistaa nappuloita kotialueen pisteille hiirellä. EPC-arvot näytetään reaaliajassa erillisessä Eval-paneelissa, ja niistä näkyy kummankin pelaajan osalta:</p>
+<p>
+    Avaa se painamalla <strong>Ctrl+E</strong>, napsauttamalla alapaneelin Eval-välilehteä tai kirjoittamalla <strong>epc</strong> komentoriville. Lauta avautuu tavalliseen ulosmenoasetelmaan (15
+    nappulaa), ellei sinne ole lähetetty asemaa tietokannasta. Nappuloita lisätään ja poistetaan vapaasti hiirellä; arvio seuraa jokaista muutosta.
+</p>
+<p>Ulosmenoasemassa paneeli <strong>erikoistuu</strong>: toinen taulukko, pelaajittain, näyttää EPC:n (Effective Pip Count) laskettuna GNUbg:n yksipuolisesta 6 pisteen ulosmenotietokannasta —</p>
 <ul>
-    <li><strong>EPC</strong>: keskimääräinen pip-määrä, joka tarvitaan kaikkien nappuloiden poistamiseen,</li>
-    <li><strong>Pip-luku</strong>: raaka pip-luku,</li>
+    <li><strong>EPC</strong>: keskimääräinen pip-määrä kaikkien nappuloiden ulosmenoon,</li>
+    <li><strong>Pip Count</strong>: raaka pip-luku,</li>
     <li><strong>Wastage</strong>: EPC:n ja pip-luvun erotus,</li>
-    <li><strong>Heittojen ka.</strong>: keskimääräinen heittojen määrä nappuloiden poistamiseen,</li>
-    <li><strong>Keskihajonta</strong>: heittojen määrän keskihajonta.</li>
+    <li><strong>Avg Rolls</strong>: keskimääräinen heittojen määrä kaikkien nappuloiden ulosmenoon,</li>
+    <li><strong>Std Dev</strong>: tuon heittomäärän keskihajonta.</li>
 </ul>
-<p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
-<p>Sulje Eval-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiselle välilehdelle.</p>
+<p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC- ja pip-erot.</p>
 <p>
-    Puhtaassa kotiutusasemassa kilpajuoksutaulukko näyttää lisäksi molempien pelaajien voittotodennäköisyydet ja, kun asema on two-sided-tietokannan kattama (sisäänrakennettu 6 nappulaan asti pelaajaa
-    kohden, laajennettu tietokanta ladattavissa 11 nappulaan asti asetusten Bearoff-välilehdeltä), tarkat money-ekviteetit — kunkin ei-optimaalisen päätöksen alla ero parhaaseen — sekä parhaan
-    kuutiopäätöksen. Tämän alueen ulkopuolella voittotodennäköisyys arvioidaan («arvioitu»-merkki virhemarginaaleineen) eikä päätöstä näytetä. Vuorossa olevaa pelaajaa vaihdetaan napsauttamalla
-    pelaajan kotiutus-/pistesuorakulmiota, kuution sijaintia napsauttamalla kuutiota.
+    Puhtaassa juoksussa lisätaulukko näyttää molempien pelaajien voittotodennäköisyydet ja, kun asema kuuluu kaksipuolisen tietokannan piiriin (sisäänrakennettu 6 nappulaan asti pelaajaa kohden,
+    ladattava laajennettu 11:een asti asetusten Bearoff-välilehdeltä), tarkat money-equityt ja parhaan tuplausratkaisun. Tämän alueen ulkopuolella voittotodennäköisyys on arvio (merkintä ”arvioitu”
+    virhemarginaaleineen) eikä ratkaisua näytetä. Vuorossa oleva pelaaja vaihdetaan napsauttamalla pelaajan ulostulo-/pisteruutua ja tuplauskuution asema napsauttamalla laudan kuutiota.
 </p>
 <p>
-    <strong>Haaste</strong>-valinta piilottaa tulokset jokaisen muokkauksen jälkeen; paljasta vyöhyke napsauttamalla — erinomainen tapa harjoitella EPC:n ja kuutiopäätöksen arviointia ennen
-    tarkistusta.
+    <strong>Haaste</strong>-valintaruutu piilottaa tulokset jokaisen aseman muutoksen yhteydessä; napsauta aluetta paljastaaksesi sen — mainio tapa harjoitella equityn, EPC:n tai tuplausratkaisun
+    arviointia ennen tarkistusta.
 </p>
+<p>Sulje Eval-paneeli painamalla <strong>Ctrl+E</strong> uudelleen tai vaihtamalla toiseen välilehteen.</p>
 
 <h3>Ottelunavigointi</h3>
 <p>
@@ -1390,7 +1392,7 @@ export default {
         Yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta on luotu
         <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on GPL-lisensoitu vapaa ohjelmisto; nämä taulukot ovat sen tuottamaa dataa ja ne mainitaan sellaisina.
     </li>
-    <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em> ja <em>gnubgparser</em> (LGPL-2.1) sekä <em>bgfparser</em> (MIT).</li>
+    <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em>, <em>gnubgparser</em> ja <em>bgfparser</em> (MIT).</li>
     <li>Go-puolella: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> ja <em>go-fsrs</em> (MIT).</li>
     <li>Käyttöliittymän puolella: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> ja <em>driver.js</em> (MIT).</li>
     <li>Fontit <em>Nunito</em> ja <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

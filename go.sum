@@ -72,10 +72,10 @@ github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1 h1:njuLRcjAuMKr7
 github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1/go.mod h1:alcuEEnZsY1WQsagKhZDsoPCRoOijYqhZvPwLG0kzVs=
 github.com/kevung/bgfparser v1.2.0 h1:SzKAOsYw9W1UTqEvI9Zi1hffgVysySTJAKIc6aPJRaE=
 github.com/kevung/bgfparser v1.2.0/go.mod h1:MrNvTuq7aDXV51Z1ej3Mcyi4gjo+4oOc7dgyHZV5jG8=
-github.com/kevung/gnubgparser v1.5.0 h1:AEiD8Oq5fCyKt91AOIR1/m55407tdF/wT2DKNzCbjXM=
-github.com/kevung/gnubgparser v1.5.0/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
-github.com/kevung/xgparser v1.3.0 h1:nzvcOrpGvRJRgart2hkT9ChsYdu8YkmQgZ90C8MtikI=
-github.com/kevung/xgparser v1.3.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
+github.com/kevung/gnubgparser v1.6.0 h1:Q3z4uJ2OAEQDbMJpn2rpyi8sbiWmog7Z6cpIR0iq8vY=
+github.com/kevung/gnubgparser v1.6.0/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
+github.com/kevung/xgparser v1.4.0 h1:5nUa8VxgS0PxmyoPiL3GYR3tSyVYNNqqLJ5exRw/IYc=
+github.com/kevung/xgparser v1.4.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
 github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
 github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=

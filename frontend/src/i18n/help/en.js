@@ -100,29 +100,33 @@ export default {
     currently displayed, allowing progressive narrowing of results. The search panel (<strong>Ctrl+F</strong>) also offers a "Search in current results" checkbox for the same functionality.
 </p>
 
-<h3>EPC Calculator</h3>
-<p>The EPC (Effective Pip Count) calculator computes the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database for exact EPC values.</p>
+<h3>Eval Panel</h3>
 <p>
-    To open the Eval panel, press <strong>Ctrl+E</strong>, click the Eval tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard bearoff
-    configuration (15 checkers).
+    The <strong>Eval</strong> panel evaluates whatever position sits on the board: winning, gammon and backgammon probabilities, equity, ranked candidate moves, and the one decision the position calls
+    for — play a move, or double. The computation is done by gammonNet, built in: neither eXtreme Gammon nor GNU Backgammon is required.
 </p>
-<p>You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated Eval panel, showing for each player:</p>
+<p>
+    To open it, press <strong>Ctrl+E</strong>, click the Eval tab in the bottom panel, or type <strong>epc</strong> in the command line. The board opens on a standard bearoff configuration (15
+    checkers), unless a position from the database was sent to it. Checkers are freely added and removed with the mouse; the evaluation follows every change.
+</p>
+<p>On a bearoff position the panel <strong>specialises</strong>: a second table, per player, carries the EPC (Effective Pip Count) computed from GNUbg's one-sided 6-point bearoff database —</p>
 <ul>
     <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
     <li><strong>Pip Count</strong>: the raw pip count,</li>
     <li><strong>Wastage</strong>: the difference between EPC and pip count,</li>
-    <li><strong>Avg Rolls</strong>: average number of rolls to bear off,</li>
-    <li><strong>Std Dev</strong>: standard deviation of the number of rolls.</li>
+    <li><strong>Avg Rolls</strong>: the average number of rolls to bear off all checkers,</li>
+    <li><strong>Std Dev</strong>: the standard deviation of that number of rolls.</li>
 </ul>
 <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
-<p>To close the Eval panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 <p>
-    On a pure bearoff position, a race table additionally shows both players' winning chances and, when the position is covered by a two-sided database (built-in up to 6 checkers per player, extended
-    database downloadable up to 11 from the Bearoff tab of the settings), the exact money equities — with, under each non-optimal decision, the equity gap to the best one — and the best cube decision.
-    Outside that domain the winning chance is estimated ("estimated" badge with its error margin) and no decision is shown. Edit the player on roll by clicking a player's bearoff/score rectangle, and
-    the cube position by clicking the cube on the board.
+    On a pure race, a further table shows both players' winning probabilities and, when the position is covered by a two-sided database (the built-in one up to 6 checkers per player, the downloadable
+    extended one up to 11 through the Bearoff tab of the configuration), the exact money equities and the best cube decision. Outside that domain the winning probability is estimated (an "estimated"
+    badge with its error margin) and no decision is shown. The player on roll is edited by clicking a player's off/score rectangle, the cube position by clicking the cube on the board.
 </p>
-<p>The <strong>Challenge</strong> checkbox masks the results after every edit; click a zone to reveal it — ideal for training yourself to estimate the EPC and the cube decision before checking.</p>
+<p>
+    The <strong>Challenge</strong> checkbox hides the results on every change to the position; click an area to reveal it — ideal for practising an equity, an EPC or a cube decision before checking.
+</p>
+<p>To close the Eval panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
 <h3>Match Navigation</h3>
 <p>
@@ -1382,7 +1386,7 @@ export default {
         The one-sided (6 points, 15 checkers, for EPC) and two-sided (6 points, 6 checkers, for cube verdicts in races) bearoff databases were generated with <strong>GNU Backgammon</strong> (GNUbg).
         GNUbg is free software under the GPL; these tables are data it produced, credited as such.
     </li>
-    <li>Match files are read by <em>xgparser</em> and <em>gnubgparser</em> (LGPL-2.1) and by <em>bgfparser</em> (MIT).</li>
+    <li>Match files are read by <em>xgparser</em>, <em>gnubgparser</em> and <em>bgfparser</em> (MIT).</li>
     <li>On the Go side: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> and <em>go-fsrs</em> (MIT).</li>
     <li>On the interface side: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> and <em>driver.js</em> (MIT).</li>
     <li>The <em>Nunito</em> and <em>Noto Sans JP</em> fonts (SIL Open Font License 1.1).</li>
