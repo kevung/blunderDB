@@ -298,7 +298,7 @@ func (s *collectionStore) Positions(ctx context.Context, scope string, collectio
 			`SELECT `+collectionPositionCols+` FROM position p
 			 INNER JOIN collection_position cp ON p.id = cp.position_id
 			 WHERE cp.collection_id = ?
-			 ORDER BY cp.sort_order ASC`+opts.SQL("LIMIT -1"), collectionID)
+			 ORDER BY cp.sort_order ASC, cp.position_id ASC`+opts.SQL("LIMIT -1"), collectionID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list collection positions: %w", err))
 			return

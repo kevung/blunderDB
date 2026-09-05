@@ -72,7 +72,7 @@ func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.L
 	return func(yield func(*domain.Tournament, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT `+tournamentSelectCols+` FROM tournament t
-			 ORDER BY t.date DESC, t.created_at DESC`+opts.SQL("LIMIT -1"))
+			 ORDER BY t.date DESC, t.created_at DESC, t.id DESC`+opts.SQL("LIMIT -1"))
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list tournaments: %w", err))
 			return

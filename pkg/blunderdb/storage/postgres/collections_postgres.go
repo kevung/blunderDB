@@ -321,7 +321,7 @@ func (s *collectionStore) Positions(ctx context.Context, scope string, collectio
 			`SELECT `+collectionPositionCols+` FROM position p
 			 INNER JOIN collection_position cp ON p.id = cp.position_id
 			 WHERE cp.collection_id = $1 AND cp.tenant_id = $2
-			 ORDER BY cp.sort_order ASC`+opts.SQL(""),
+			 ORDER BY cp.sort_order ASC, cp.position_id ASC`+opts.SQL(""),
 			collectionID, tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list collection positions: %w", err))

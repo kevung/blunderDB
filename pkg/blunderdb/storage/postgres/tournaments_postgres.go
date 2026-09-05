@@ -84,7 +84,7 @@ func (s *tournamentStore) List(ctx context.Context, scope string, opts storage.L
 		rows, err := s.db.Query(ctx,
 			`SELECT `+tournamentSelectExpr+` FROM tournament t
 			 WHERE t.tenant_id = $1
-			 ORDER BY t.date DESC, t.created_at DESC`, tenantID(scope))
+			 ORDER BY t.date DESC, t.created_at DESC, t.id DESC`+opts.SQL(""), tenantID(scope))
 		if err != nil {
 			yield(nil, fmt.Errorf("postgres: list tournaments: %w", err))
 			return
