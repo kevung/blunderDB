@@ -1,6 +1,8 @@
 <script>
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore } from '../stores/uiStore';
+    import { watchImportNoticeStore } from '../stores/watchStore.js';
+    import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
@@ -221,6 +223,29 @@
              not just an actual status message. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
     {/if}
+    <!-- Le dossier surveillé (#258) annonce ses imports ici, jamais par une
+         fenêtre : l'utilisateur étudiait une position quand ses matchs sont
+         arrivés. Le bandeau ouvre le compte rendu si on le lui demande, et
+         disparaît dès qu'on l'écarte. -->
+    {#if $watchImportNoticeStore}
+        <span class="watch-import-chip">
+            {$t('status.watchImportNotice', {
+                succeeded: $watchImportNoticeStore.succeeded,
+                skipped: $watchImportNoticeStore.skipped,
+                failed: $watchImportNoticeStore.failed
+            })}
+            <button
+                type="button"
+                class="watch-import-action"
+                onclick={() => {
+                    fileImportModeStore.set('completed');
+                    showFileImportModalStore.set(true);
+                    watchImportNoticeStore.set(null);
+                }}>{$t('status.watchImportReport')}</button
+            >
+            <button type="button" class="watch-import-action" onclick={() => watchImportNoticeStore.set(null)}>{$t('common.close')}</button>
+        </span>
+    {/if}
     {#if gammonNetBatch}
         <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
             {$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}
@@ -239,6 +264,18 @@
 </div>
 
 <style>
+    .watch-import-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4em;
+        margin-left: 0.8em;
+        white-space: nowrap;
+    }
+
+    .watch-import-action {
+        cursor: pointer;
+    }
+
     .status-bar {
         display: flex;
         align-items: center;

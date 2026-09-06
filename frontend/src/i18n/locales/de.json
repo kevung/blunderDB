@@ -137,7 +137,20 @@
         "repairConfirmButton": "Reparieren",
         "repairDone": "{n} Analyse(n) repariert.",
         "repairNothing": "Keine Analyse musste repariert werden.",
-        "repairError": "Reparaturfehler: {error}"
+        "repairError": "Reparaturfehler: {error}",
+        "watchTitle": "Überwachter Ordner",
+        "watchIntro": "blunderDB kann während des Betriebs einen Ordner beobachten und jede Matchdatei importieren, die darin erscheint. Nichts wird geraten: solange kein Ordner benannt ist, gibt es keine Überwachung.",
+        "watchNoFolder": "kein Ordner benannt",
+        "watchChoose": "Ordner wählen…",
+        "watchSuggestLabel": "Auf diesem Rechner nach einem Matchordner suchen",
+        "watchSuggest": "Vorschlagen",
+        "watchNoSuggestion": "Auf diesem Rechner wurde kein bekannter Matchordner gefunden; benennen Sie ihn selbst.",
+        "watchEnabled": "Diesen Ordner überwachen",
+        "watchInterval": "Intervall (Sekunden)",
+        "watchIntervalNote": "0 behält den Standard von zehn Sekunden; die Untergrenze sind zwei. Eine Datei wird erst importiert, wenn ihre Größe sich nicht mehr ändert, damit nie ein halb geschriebenes Match gelesen wird.",
+        "watchOnlyNewNote": "Nur Dateien, die ERSCHEINEN, werden importiert: was der Ordner bereits enthält, wird ignoriert. Dafür gibt es den Ordnerimport.",
+        "watchRunning": "Überwachung läuft: {folder}",
+        "watchStopped": "Keine Überwachung aktiv."
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Fehler beim Hinzufügen der Position zum Stapel: {err}",
         "updateAvailable": "Eine neue Version von blunderDB ist verfügbar: {version}",
         "errorStartingAnalysis": "Analyse konnte nicht gestartet werden: {error}",
-        "positionDeletedUndo": "Stellung gelöscht — im Papierkorb wiederherstellbar (Befehl „trash“)."
+        "positionDeletedUndo": "Stellung gelöscht — im Papierkorb wiederherstellbar (Befehl „trash“).",
+        "watchImportDone": "Überwachter Ordner: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "watchImportNotice": "Überwachter Ordner: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
+        "watchImportReport": "Bericht"
     },
     "stats": {
         "title": "Stats",

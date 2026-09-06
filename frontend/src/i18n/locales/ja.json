@@ -137,7 +137,20 @@
         "repairConfirmButton": "修復",
         "repairDone": "{n} 件の分析を修復しました。",
         "repairNothing": "修復の必要な分析はありませんでした。",
-        "repairError": "修復エラー：{error}"
+        "repairError": "修復エラー：{error}",
+        "watchTitle": "監視フォルダ",
+        "watchIntro": "blunderDB は動作中にフォルダを見張り、そこに現れたマッチファイルを取り込めます。推測はしません。フォルダを指定するまで監視は行われません。",
+        "watchNoFolder": "フォルダが指定されていません",
+        "watchChoose": "フォルダを選ぶ…",
+        "watchSuggestLabel": "このマシンでマッチのフォルダを探す",
+        "watchSuggest": "候補を出す",
+        "watchNoSuggestion": "このマシンでは既知のマッチフォルダが見つかりませんでした。ご自身で指定してください。",
+        "watchEnabled": "このフォルダを監視する",
+        "watchInterval": "間隔（秒）",
+        "watchIntervalNote": "0 は既定の 10 秒のままです。下限は 2 秒です。ファイルはサイズが安定してから取り込まれるため、書きかけのマッチを読むことはありません。",
+        "watchOnlyNewNote": "取り込まれるのは新しく現れたファイルだけです。フォルダにすでにあるものは無視されます。それを取り込むにはフォルダの取り込みを使ってください。",
+        "watchRunning": "監視中：{folder}",
+        "watchStopped": "監視は行われていません。"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "局面をデッキに追加できませんでした: {err}",
         "updateAvailable": "blunderDBの新しいバージョンがあります: {version}",
         "errorStartingAnalysis": "解析を開始できませんでした：{error}",
-        "positionDeletedUndo": "局面を削除しました——ごみ箱から復元できます（「trash」コマンド）。"
+        "positionDeletedUndo": "局面を削除しました——ごみ箱から復元できます（「trash」コマンド）。",
+        "watchImportDone": "監視フォルダ：{succeeded} 件取り込み、{skipped} 件スキップ、{failed} 件失敗",
+        "watchImportNotice": "監視フォルダ：{succeeded} 件取り込み、{skipped} 件スキップ、{failed} 件失敗",
+        "watchImportReport": "レポート"
     },
     "stats": {
         "title": "統計",

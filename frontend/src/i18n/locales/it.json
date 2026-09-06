@@ -137,7 +137,20 @@
         "repairConfirmButton": "Ripara",
         "repairDone": "{n} analisi riparata/e.",
         "repairNothing": "Nessuna analisi aveva bisogno di riparazione.",
-        "repairError": "Errore di riparazione: {error}"
+        "repairError": "Errore di riparazione: {error}",
+        "watchTitle": "Cartella sorvegliata",
+        "watchIntro": "blunderDB può guardare una cartella mentre gira e importare ogni file di incontro che vi compare. Nulla è indovinato: finché nessuna cartella è indicata, non c'è sorveglianza.",
+        "watchNoFolder": "nessuna cartella indicata",
+        "watchChoose": "Scegliere una cartella…",
+        "watchSuggestLabel": "Cercare una cartella di incontri su questa macchina",
+        "watchSuggest": "Proporre",
+        "watchNoSuggestion": "Nessuna cartella di incontri nota è stata trovata su questa macchina; indicatela voi stessi.",
+        "watchEnabled": "Sorvegliare questa cartella",
+        "watchInterval": "Intervallo (secondi)",
+        "watchIntervalNote": "0 mantiene il valore predefinito, dieci secondi; il minimo è due. Un file è importato solo quando la sua dimensione si è stabilizzata, per non leggere mai un incontro scritto a metà.",
+        "watchOnlyNewNote": "Sono importati solo i file che COMPAIONO: ciò che la cartella contiene già è ignorato. Per quello c'è l'importazione di cartella.",
+        "watchRunning": "Sorveglianza in corso: {folder}",
+        "watchStopped": "Nessuna sorveglianza in corso."
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Errore durante l'aggiunta della posizione al mazzo: {err}",
         "updateAvailable": "È disponibile una nuova versione di blunderDB: {version}",
         "errorStartingAnalysis": "Impossibile avviare l'analisi: {error}",
-        "positionDeletedUndo": "Posizione eliminata — recuperabile dal cestino (comando «trash»)."
+        "positionDeletedUndo": "Posizione eliminata — recuperabile dal cestino (comando «trash»).",
+        "watchImportDone": "Cartella sorvegliata: {succeeded} importate, {skipped} ignorate, {failed} fallite",
+        "watchImportNotice": "Cartella sorvegliata: {succeeded} importate, {skipped} ignorate, {failed} fallite",
+        "watchImportReport": "Resoconto"
     },
     "stats": {
         "title": "Stats",

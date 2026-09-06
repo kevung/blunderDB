@@ -719,6 +719,28 @@ export async function importMultipleFiles(files) {
     }
 }
 
+/**
+ * Importe les fichiers qu'un dossier surveillé a vus arriver (#258, fiche
+ * I.2) — le même import, sans fenêtre modale.
+ *
+ * L'utilisateur était en train d'étudier une position quand ses matchs sont
+ * arrivés : lui reprendre l'écran serait le pire moment. Rien d'autre ne
+ * change — mêmes doublons détectés, même lot d'import, même compte rendu,
+ * même analyse automatique — et la barre de statut porte la notification.
+ *
+ * @param {string[]} files
+ * @returns {Promise<{succeeded: number, skipped: number, failed: number} | null>}
+ */
+export async function importWatchedFiles(files) {
+    try {
+        await importMultipleFilesCore(files, { quiet: true });
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+    const r = get(fileImportResultsStore);
+    return { succeeded: r.succeeded, skipped: r.skipped, failed: r.failed };
+}
+
 // beginImportBatch opens the batch the end-of-import report will be about
 // (#257), returning 0 when one cannot be opened. Never fatal: the report is a
 // convenience, and losing it must not cost the user the import.
@@ -748,7 +770,7 @@ async function finishImportBatch(batchID) {
     }
 }
 
-async function importMultipleFilesCore(files) {
+async function importMultipleFilesCore(files, { quiet = false } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);
@@ -756,7 +778,7 @@ async function importMultipleFilesCore(files) {
     fileImportResultsStore.set({ succeeded: 0, failed: 0, skipped: 0, errors: [] });
     fileImportReportStore.set(null);
     fileImportModeStore.set('importing');
-    showFileImportModalStore.set(true);
+    if (!quiet) showFileImportModalStore.set(true);
 
     // One batch for the whole selection: what the user asked for in one
     // gesture is one import, whether it was a folder or five dropped files.
@@ -811,10 +833,18 @@ async function importMultipleFilesCore(files) {
     await reloadPositions();
 
     const results = get(fileImportResultsStore);
-    setStatusBarMessage(tMsg('status.importDone', { succeeded: results.succeeded, skipped: results.skipped, failed: results.failed }));
+    setStatusBarMessage(
+        tMsg(quiet ? 'status.watchImportDone' : 'status.importDone', {
+            succeeded: results.succeeded,
+            skipped: results.skipped,
+            failed: results.failed
+        })
+    );
 
     // A batch of positions only (no match): land on the last one with its analysis.
-    if (!hadMatches && lastPositionID) {
+    // Never on a watched import: moving the board out from under someone who
+    // did not ask for anything is exactly what "non blocking" rules out.
+    if (!quiet && !hadMatches && lastPositionID) {
         await showImportedPosition(lastPositionID);
         return { type: 'position', id: lastPositionID };
     }

@@ -66,6 +66,10 @@ export function ExportIssuerIdentity(arg1) {
   return window['go']['gui']['App']['ExportIssuerIdentity'](arg1);
 }
 
+export function FolderWatchStatus() {
+  return window['go']['gui']['App']['FolderWatchStatus']();
+}
+
 export function GenerateBearoffTable(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['GenerateBearoffTable'](arg1, arg2, arg3, arg4);
 }
@@ -158,6 +162,10 @@ export function StartEvaluationAtRest(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['StartEvaluationAtRest'](arg1, arg2, arg3, arg4);
 }
 
+export function StartFolderWatch(arg1, arg2) {
+  return window['go']['gui']['App']['StartFolderWatch'](arg1, arg2);
+}
+
 export function StartGammonNetBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetBatch'](arg1, arg2, arg3);
 }
@@ -168,4 +176,12 @@ export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
 
 export function StartupFilePath() {
   return window['go']['gui']['App']['StartupFilePath']();
+}
+
+export function StopFolderWatch() {
+  return window['go']['gui']['App']['StopFolderWatch']();
+}
+
+export function SuggestWatchFolder() {
+  return window['go']['gui']['App']['SuggestWatchFolder']();
 }

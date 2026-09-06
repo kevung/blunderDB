@@ -44,6 +44,8 @@ export function GetTourSeen():Promise<boolean>;
 
 export function GetUIScale():Promise<number>;
 
+export function GetWatchFolder():Promise<boolean>;
+
 export function LoadConfig():Promise<main.Config>;
 
 export function SaveBearoffCores(arg1:number):Promise<void>;
@@ -89,5 +91,7 @@ export function SaveTabOrder(arg1:Array<string>):Promise<void>;
 export function SaveTourSeen(arg1:boolean):Promise<void>;
 
 export function SaveUIScale(arg1:number):Promise<void>;
+
+export function SaveWatchFolder(arg1:boolean,arg2:string,arg3:number):Promise<void>;
 
 export function SaveWindowDimensions(arg1:number,arg2:number):Promise<void>;

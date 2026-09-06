@@ -12,6 +12,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // runImport handles the import command
@@ -25,6 +26,10 @@ func (cli *CLI) runImport(args []string) error {
 	inputDir := importCmd.String("dir", "", "Path to directory for batch import (for batch)")
 	recursive := importCmd.Bool("recursive", true, "Recursively scan subdirectories for batch import")
 	format := importCmd.String("format", "text", "Output format: text or json")
+	watchFolder := importCmd.Bool("watch", false,
+		"With --type batch: keep running and import each match file as it appears in --dir (Ctrl-C to stop)")
+	watchEvery := importCmd.Duration("watch-every", 0,
+		"How often --watch looks at the folder (default 10s, floor 2s)")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
@@ -56,6 +61,10 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Batch import, machine-readable, failing the run if any file errored")
 		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error")
+		fmt.Println()
+		fmt.Println("  # Import the folder as it stands, then keep importing what appears in it")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ~/XG/Matches")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ~/XG/Matches --watch")
 	}
 
 	if err := importCmd.Parse(args); err != nil {
@@ -113,6 +122,9 @@ func (cli *CLI) runImport(args []string) error {
 		// Verify directory exists
 		if info, err := os.Stat(*inputDir); os.IsNotExist(err) || !info.IsDir() {
 			return fmt.Errorf("directory does not exist or is not a directory: %s", *inputDir)
+		}
+		if *watchFolder {
+			return cli.importWatch(*inputDir, formatLower, *watchEvery, *failOnError)
 		}
 		return cli.importBatch(*inputDir, *recursive, formatLower, *failOnError)
 	default:
@@ -365,16 +377,6 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
 
-	// Supported match file extensions
-	supportedExts := map[string]bool{
-		".xg":  true,
-		".xgp": true,
-		".sgf": true,
-		".mat": true,
-		".txt": true,
-		".bgf": true,
-	}
-
 	// Find all supported match files
 	var matchFiles []string
 
@@ -392,7 +394,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		}
 
 		// Check for supported extensions
-		if supportedExts[strings.ToLower(filepath.Ext(path))] {
+		if ingest.IsImportable(path) {
 			matchFiles = append(matchFiles, path)
 		}
 
@@ -405,7 +407,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	}
 
 	if len(matchFiles) == 0 {
-		return fmt.Errorf("no match files found in directory %s (.xg, .xgp, .sgf, .mat, .txt, .bgf)", dirPath)
+		return fmt.Errorf("no match files found in directory %s (%s)", dirPath, strings.Join(ingest.ImportableExtensions(), ", "))
 	}
 
 	text := format != "json"

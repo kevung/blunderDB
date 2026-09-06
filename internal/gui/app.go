@@ -30,6 +30,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/applog"
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // demoDBGz is a small, self-contained sample database embedded gzip-compressed
@@ -76,6 +77,10 @@ type App struct {
 	// association double-click (#241) — set by run.go right after
 	// construction, never by the frontend. Empty on an ordinary launch.
 	startupFilePath string
+
+	// folderWatch is the watched folder's loop (#258). Off unless the user
+	// turned it on and named a directory; see watch.go.
+	folderWatch folderWatch
 }
 
 // NewApp creates a new App application struct.
@@ -285,16 +290,6 @@ func (a *App) OpenPositionFolderDialog() (string, error) {
 	})
 }
 
-// supportedImportExtensions lists file extensions supported for position/match import.
-var supportedImportExtensions = map[string]bool{
-	".txt": true,
-	".xg":  true,
-	".xgp": true,
-	".sgf": true,
-	".mat": true,
-	".bgf": true,
-}
-
 // IsDirectory returns true if the given path is a directory.
 func (a *App) IsDirectory(path string) bool {
 	info, err := os.Stat(path)
@@ -328,8 +323,7 @@ func (a *App) CollectImportableFiles(dirPath string) ([]string, error) {
 		if info.IsDir() {
 			return nil
 		}
-		ext := strings.ToLower(filepath.Ext(path))
-		if supportedImportExtensions[ext] {
+		if ingest.IsImportable(path) {
 			files = append(files, path)
 		}
 		return nil

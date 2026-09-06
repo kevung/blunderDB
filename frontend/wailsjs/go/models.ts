@@ -2241,6 +2241,22 @@ export namespace gui {
 	        this.htmlUrl = source["htmlUrl"];
 	    }
 	}
+	export class WatchStatus {
+	    running: boolean;
+	    folder: string;
+	    intervalSeconds: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new WatchStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.folder = source["folder"];
+	        this.intervalSeconds = source["intervalSeconds"];
+	    }
+	}
 
 }
 
@@ -2323,6 +2339,9 @@ export namespace main {
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
 	    check_for_updates?: boolean;
+	    watch_folder?: boolean;
+	    watch_folder_path?: string;
+	    watch_folder_interval_seconds?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -2354,6 +2373,9 @@ export namespace main {
 	        this.gammonnet_candidates = source["gammonnet_candidates"];
 	        this.gammonnet_auto_analyze = source["gammonnet_auto_analyze"];
 	        this.check_for_updates = source["check_for_updates"];
+	        this.watch_folder = source["watch_folder"];
+	        this.watch_folder_path = source["watch_folder_path"];
+	        this.watch_folder_interval_seconds = source["watch_folder_interval_seconds"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
