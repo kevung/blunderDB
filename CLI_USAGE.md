@@ -2324,6 +2324,8 @@ Options:
     	Only positions you marked for study in the source tool (eXtreme Gammon flags)
   -format string
     	Output format: table, json, xgid (default "table")
+  -game-type blunderdb repair
+    	Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see blunderdb repair)
   -has-analysis
     	Only positions with analysis
   -has-comment

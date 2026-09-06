@@ -110,6 +110,7 @@ var (
 	// expects — the same shape as the id lists above.
 	phaseRe  = regexp.MustCompile(`^ph:[a-z]+$`)
 	originRe = regexp.MustCompile(`^co:[a-z]+$`)
+	typeRe   = regexp.MustCompile(`^gt:[a-z-]+$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
 	// claim it and it needs no place in the precedence above (#265). The
 	// pattern is domain.tagPattern anchored — one '#', then anything that is
@@ -224,6 +225,7 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// way `pl"…"` once was.
 	f.GamePhaseFilter = joinValues(all(func(s string) bool { return phaseRe.MatchString(s) }), 3)
 	f.CommentOriginFilter = joinValues(all(func(s string) bool { return originRe.MatchString(s) }), 3)
+	f.GameTypeFilter = joinValues(all(func(s string) bool { return typeRe.MatchString(s) }), 3)
 	// Tags keep their '#' (prefix length 0): it is what makes a tag legible
 	// as a tag everywhere it is shown, and what the stored filter carries.
 	// Several tags are several tokens, and they narrow together — see
@@ -401,6 +403,7 @@ func Format(f domain.SearchFilters) string {
 	addList(&parts, "id", f.PositionIDsFilter)
 	addList(&parts, "ph:", f.GamePhaseFilter)
 	addList(&parts, "co:", f.CommentOriginFilter)
+	addList(&parts, "gt:", f.GameTypeFilter)
 	addList(&parts, "", f.TagFilter)
 
 	return strings.Join(parts, " ")
@@ -438,6 +441,7 @@ var FieldTokens = map[string]string{
 	"CommentFilter":                 "co",
 	"CommentOriginFilter":           "co:",
 	"GamePhaseFilter":               "ph:",
+	"GameTypeFilter":                "gt:",
 	"TagFilter":                     "#",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",

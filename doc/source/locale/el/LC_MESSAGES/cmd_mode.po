@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:09+0200\n"
+"POT-Creation-Date: 2026-09-06 11:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -631,6 +631,30 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "gt:holding"
+msgstr "gt:holding"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position relève d'un plan de jeu donné, du point de vue du joueur au "
+"trait : ``race``, ``bearin`` (rentrée sous contact), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Répétable (``gt:holding "
+"gt:mutualholding``). Étiquette dérivée comme la phase : calculée à partir"
+" du plateau, jamais modifiable, recalculée par ``blunderdb repair``."
+msgstr ""
+"Η θέση εμπίπτει σε ένα δεδομένο σχέδιο παιχνιδιού, από την οπτική του "
+"παίκτη που παίζει: ``race``, ``bearin`` (μάζεμα υπό επαφή), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Επαναλήψιμο (``gt:holding "
+"gt:mutualholding``). Παράγωγη ετικέτα όπως η φάση: υπολογίζεται από το "
+"ταμπλό, ποτέ επεξεργάσιμη, επανυπολογίζεται από το ``blunderdb repair``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--game-type``"
+msgstr "``--game-type``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "#prime"
@@ -1404,7 +1428,7 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. ``pl'Alice'``). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:221
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

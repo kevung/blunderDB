@@ -93,7 +93,7 @@ func (s *Server) positionRoutes() []route {
 		// de lignes ont RÉELLEMENT changé — « quelque chose avait bougé » se
 		// distingue de « ça a tourné ».
 		{http.MethodPost, "/v1/positions.reclassifyPhases", rpc(func(ctx context.Context, scope string, _ struct{}) (reclassifyResp, error) {
-			n, err := ps().ReclassifyPhases(ctx, scope)
+			n, err := ps().ReclassifyDerived(ctx, scope)
 			return reclassifyResp{Reclassified: n}, err
 		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {

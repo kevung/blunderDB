@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:09+0200\n"
+"POT-Creation-Date: 2026-09-06 11:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -624,6 +624,30 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "gt:holding"
+msgstr "gt:holding"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position relève d'un plan de jeu donné, du point de vue du joueur au "
+"trait : ``race``, ``bearin`` (rentrée sous contact), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Répétable (``gt:holding "
+"gt:mutualholding``). Étiquette dérivée comme la phase : calculée à partir"
+" du plateau, jamais modifiable, recalculée par ``blunderdb repair``."
+msgstr ""
+"Asema kuuluu tiettyyn pelisuunnitelmaan, vuorossa olevan pelaajan "
+"näkökulmasta: ``race``, ``bearin`` (kotiutus kontaktissa), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Toistettavissa (``gt:holding"
+" gt:mutualholding``). Johdettu merkintä kuten vaihe: laskettu laudasta, "
+"ei koskaan muokattavissa, ``blunderdb repair`` laskee sen uudelleen."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--game-type``"
+msgstr "``--game-type``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "#prime"
@@ -1390,7 +1414,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. ``pl'Alice'``). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:221
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

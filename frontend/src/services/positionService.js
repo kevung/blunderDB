@@ -373,6 +373,7 @@ export async function loadPositionsByFilters({
     positionIDsFilter = '',
     playerFilter = '',
     gamePhaseFilter = '',
+    gameTypeFilter = '',
     commentOriginFilter = '',
     tagFilter = ''
 } = {}) {
@@ -469,6 +470,7 @@ export async function loadPositionsByFilters({
             diceRollMode,
             exceptDiceFilter,
             gamePhaseFilter,
+            gameTypeFilter,
             commentOriginFilter,
             tagFilter,
             movePatternFilter,

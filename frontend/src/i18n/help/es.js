@@ -1034,6 +1034,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>La posición corresponde a un plan de juego dado, desde el punto de vista del jugador que mueve: <code>race</code>, <code>bearin</code> (entrada bajo contacto), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Repetible (<code>gt:holding gt:mutualholding</code>). Etiqueta derivada como la fase: calculada a partir del tablero, nunca editable, recalculada por <code>blunderdb repair</code>.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>La posición lleva esta <strong>etiqueta</strong> en uno de sus comentarios. Una etiqueta es una <code>#palabra</code> escrita en la prosa; nada la declara. La comparación es delimitada, así que <code>#prime</code> no encuentra <code>#priming</code> — esa es toda la diferencia con el filtro de texto, que busca una subcadena. Repetible, y las etiquetas se <strong>acumulan</strong> (<code>#prime #backgame</code> pide ambas): una posición lleva varias etiquetas, así que nombrar dos quiere decir «las dos».</td>
 <td>—</td>

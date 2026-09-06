@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:09+0200\n"
+"POT-Creation-Date: 2026-09-06 11:33+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -622,6 +622,30 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "gt:holding"
+msgstr "gt:holding"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position relève d'un plan de jeu donné, du point de vue du joueur au "
+"trait : ``race``, ``bearin`` (rentrée sous contact), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Répétable (``gt:holding "
+"gt:mutualholding``). Étiquette dérivée comme la phase : calculée à partir"
+" du plateau, jamais modifiable, recalculée par ``blunderdb repair``."
+msgstr ""
+"The position falls under a given plan of play, from the point of view of "
+"the player on roll: ``race``, ``bearin`` (bearing in under contact), "
+"``crunch``, ``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Repeatable (``gt:holding "
+"gt:mutualholding``). A derived label like the phase: computed from the "
+"board, never editable, recomputed by ``blunderdb repair``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--game-type``"
+msgstr "``--game-type``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "#prime"
@@ -1392,7 +1416,7 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. ``pl'Alice'``). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:221
 msgid "Commandes diverses"
 msgstr "Various commands"
 

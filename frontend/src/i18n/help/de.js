@@ -1038,6 +1038,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>Die Stellung fällt unter einen bestimmten Spielplan, aus Sicht des Spielers am Zug: <code>race</code>, <code>bearin</code> (Einbringen unter Kontakt), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Wiederholbar (<code>gt:holding gt:mutualholding</code>). Ein abgeleitetes Etikett wie die Phase: aus dem Brett berechnet, nie editierbar, von <code>blunderdb repair</code> neu berechnet.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>Die Stellung trägt dieses <strong>Tag</strong> in einem ihrer Kommentare. Ein Tag ist ein <code>#Wort</code> in der Prosa; nichts deklariert es. Der Vergleich ist abgegrenzt, also findet <code>#prime</code> nicht <code>#priming</code> — genau darin liegt der Unterschied zum Textfilter, der eine Teilzeichenkette sucht. Wiederholbar, und Tags <strong>addieren sich</strong> (<code>#prime #backgame</code> verlangt beide): eine Stellung trägt mehrere Tags, zwei zu nennen heißt also „beide“.</td>
 <td>—</td>

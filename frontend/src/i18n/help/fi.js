@@ -1028,6 +1028,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>Asema kuuluu tiettyyn pelisuunnitelmaan, vuorossa olevan pelaajan näkökulmasta: <code>race</code>, <code>bearin</code> (kotiutus kontaktissa), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Toistettavissa (<code>gt:holding gt:mutualholding</code>). Johdettu merkintä kuten vaihe: laskettu laudasta, ei koskaan muokattavissa, <code>blunderdb repair</code> laskee sen uudelleen.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>Asema kantaa tätä <strong>tunnistetta</strong> jossakin kommentissaan. Tunniste on proosaan kirjoitettu <code>#sana</code>; mikään ei ilmoita sitä. Vertailu on rajattu, joten <code>#prime</code> ei löydä sanaa <code>#priming</code> — juuri siinä on ero tekstisuodattimeen, joka etsii osamerkkijonoa. Toistettavissa, ja tunnisteet <strong>kasautuvat</strong> (<code>#prime #backgame</code> pyytää molempia): asema kantaa useita tunnisteita, joten kahden nimeäminen tarkoittaa ”molempia”.</td>
 <td>—</td>

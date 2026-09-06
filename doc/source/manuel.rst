@@ -709,6 +709,46 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
+Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
+elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
+poser : « montre-moi mes erreurs en holding game ». Jeton ``gt:``, répétable
+(``gt:holding gt:mutualholding``), du point de vue du **joueur au trait** — le
+plan dans lequel se prenait la décision.
+
+Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus
+spécifique au plus général :
+
+* ``race`` — les pions les plus arriérés des deux camps se sont croisés :
+  aucun contact n'est plus possible. Frontière de GNU Backgammon.
+* ``bearin`` — le joueur au trait rentre ses pions alors que l'adversaire tient
+  encore une ancre dans son jan.
+* ``crunch`` — le joueur au trait a au plus six pions hors de ses points 1 et
+  2. Règle de GNU Backgammon, seuil de son auteur.
+* ``backgame`` — deux ancres ou plus dans le jan adverse.
+* ``acepoint`` — une seule ancre, sur le point 1 adverse, avec au moins vingt
+  pions de retard.
+* ``blitz`` — trois points du jan faits ou plus, et l'adversaire à la barre ou
+  avec un blot à frapper dans ce jan.
+* ``primevprime`` — les deux camps tiennent une amorce d'au moins quatre
+  points, et chacun a un pion enfermé derrière celle de l'autre.
+* ``mutualholding`` — les deux camps tiennent une ancre haute.
+* ``holding`` — le joueur au trait tient une ancre haute, l'adversaire non.
+* ``contact`` — contact, et aucun des plans ci-dessus. L'ouverture atterrit ici.
+
+Trois de ces règles sont celles de GNU Backgammon et sont sourcées ; les
+autres sont des **conventions de blunderDB**. La littérature du backgammon
+décrit les plans de jeu sans en chiffrer les frontières, et aucune mesure
+d'accord entre classificateurs n'est publiée pour ce problème. Les seuils non
+sourcés — trois points du jan pour un blitz, quatre points pour une amorce,
+vingt pions de retard pour un ace-point game — sont donc énoncés ici plutôt
+que cachés dans le code, et ils sont versionnés : les changer et relancer
+``blunderdb repair`` ré-étiquette toute la base.
+
+.. note:: Une seule étiquette est conservée par position, celle du joueur au
+   trait. Une étiquette dérivée n'est jamais modifiable, jamais exportée comme
+   une vérité, et une base dont les plans n'ont jamais été calculés ne renvoie
+   rien pour ``gt:`` — comme pour ``ph:``.
+
 Le filtre **Marquée** retient les positions que vous avez marquées (*flag*) dans
 le logiciel d'origine du match. Seul eXtreme Gammon produit cette information,
 enregistrée coup par coup dans le fichier ``.xg`` ; blunderDB la lit à l'import

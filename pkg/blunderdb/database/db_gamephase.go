@@ -24,7 +24,7 @@ func (d *Database) RepairGamePhases() (int, error) {
 	if d.db == nil {
 		return 0, fmt.Errorf("no database is currently open")
 	}
-	return d.store.Positions().ReclassifyPhases(context.Background(), "")
+	return d.store.Positions().ReclassifyDerived(context.Background(), "")
 }
 
 // recomputeGamePhases is the migration's entry point: same work, without
@@ -39,5 +39,5 @@ func (d *Database) recomputeGamePhases(ctx context.Context) (int, error) {
 	if store == nil {
 		store = sqlite.New(d.db)
 	}
-	return store.Positions().ReclassifyPhases(ctx, "")
+	return store.Positions().ReclassifyDerived(ctx, "")
 }

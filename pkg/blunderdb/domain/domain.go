@@ -379,6 +379,18 @@ type SearchFilters struct {
 	// nothing, rather than something wrong.
 	GamePhaseFilter string `json:"gamePhaseFilter"`
 
+	// GameTypeFilter keeps only positions whose derived plan of play is one of
+	// the named types: a ";"-separated list of domain.GameType tokens, e.g.
+	// "holding" or "holding;mutualholding" (the gt:holding token, issue #291).
+	// Empty applies no type filter.
+	//
+	// This is the filter the whole classifier exists for — "montre-moi mes
+	// erreurs en holding game" is one token, not a bundle of saved ranges. It
+	// reads the stored, DERIVED game_type column, which is what makes it
+	// indexable; on a database whose types have never been computed every row
+	// is "unknown", so it returns nothing until `blunderdb repair` has run.
+	GameTypeFilter string `json:"gameTypeFilter"`
+
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`
 	DecisionTypeFilter            bool   `json:"decisionTypeFilter"`
@@ -827,6 +839,126 @@ const (
 	// in its own home board.
 	PhaseBearoff
 )
+
+// GameType is the PLAN OF PLAY a position stands in — a second derived label,
+// beside GamePhase, computed by engine.ClassifyGameType, stored in an indexed
+// column, recomputed by `blunderdb repair`, and never editable.
+//
+// It answers the question blunderDB could not answer and every one of its
+// users asks: "show me my errors in a holding game". A bundle of saved filters
+// does not answer it; a classifier does (issue #291, fiche J.1a).
+//
+// It is NOT gnubg's position class. gnubg has three classes and they exist to
+// route a position to the network trained on it — blitz, holding, backgame and
+// prime-vs-prime all fall into its single CONTACT class
+// (docs/recherche/P5-classification-type-de-jeu.md, §A). The two boundaries
+// this type shares with gnubg (race, crunched) are marked as such below; the
+// rest is a stated convention, and P5's own recommendation is that every
+// unsourced threshold be a named parameter rather than a literal.
+//
+// ONE label is stored, and it is the label of the PLAYER ON ROLL. P5 suggests
+// keeping one per side. The stored column answers "what plan was I in when I
+// made this decision", and the decision belongs to the player on roll — two
+// columns would double the search surface to answer a question nobody asked.
+//
+// The zero value is TypeUnknown, which is what a row written before 2.20.0
+// carries until a repair pass reaches it.
+type GameType int
+
+const (
+	// TypeUnknown — not classified yet (a row from before 2.20.0).
+	TypeUnknown GameType = iota
+	// TypeOver — one side has borne every checker off. gnubg's CLASS_OVER.
+	TypeOver
+	// TypeRace — no contact is possible any more. gnubg's CLASS_RACE boundary.
+	TypeRace
+	// TypeBearIn — the mover is bearing in while the opponent still holds an
+	// anchor in the mover's home board.
+	TypeBearIn
+	// TypeCrunch — the mover has at most engine.CrunchActiveCheckersMax
+	// checkers outside its own points 1 and 2. gnubg's CLASS_CRASHED rule,
+	// sourced verbatim from its author.
+	TypeCrunch
+	// TypeBackgame — the mover holds two or more anchors in the opponent's
+	// home board.
+	TypeBackgame
+	// TypeAcePoint — the mover holds the opponent's ace point, and only that,
+	// while behind in the race.
+	TypeAcePoint
+	// TypeBlitz — the mover is attacking: several home points made, and the
+	// opponent on the bar or with a blot to hit there.
+	TypeBlitz
+	// TypePrimeVsPrime — both sides hold a prime of at least
+	// engine.PrimeLengthMin points with a checker of the other side behind it.
+	TypePrimeVsPrime
+	// TypeMutualHolding — both sides hold a high anchor.
+	TypeMutualHolding
+	// TypeHolding — the mover holds one high anchor, waiting for a shot.
+	TypeHolding
+	// TypeContact — contact, and none of the plans above fits. The early game
+	// lands here, and so does anything the rules cannot name; calling it a
+	// plan it is not would be worse than calling it contact.
+	TypeContact
+)
+
+// GameTypeNames maps each type to the stable token used in the search grammar,
+// in the CLI and on the wire. The GUI translates these; the tokens themselves
+// never change, since a saved filter holds them verbatim.
+var GameTypeNames = map[GameType]string{
+	TypeUnknown:       "unknown",
+	TypeOver:          "over",
+	TypeRace:          "race",
+	TypeBearIn:        "bearin",
+	TypeCrunch:        "crunch",
+	TypeBackgame:      "backgame",
+	TypeAcePoint:      "acepoint",
+	TypeBlitz:         "blitz",
+	TypePrimeVsPrime:  "primevprime",
+	TypeMutualHolding: "mutualholding",
+	TypeHolding:       "holding",
+	TypeContact:       "contact",
+}
+
+// String returns the stable token of a game type.
+func (g GameType) String() string {
+	if name, ok := GameTypeNames[g]; ok {
+		return name
+	}
+	return "unknown"
+}
+
+// ParseGameType reads a game type from its stable token. French spellings are
+// accepted too, so a French-speaking user typing what the interface shows is
+// understood — the same courtesy ParseGamePhase extends.
+func ParseGameType(s string) (GameType, bool) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "over", "terminee", "terminée":
+		return TypeOver, true
+	case "race", "course":
+		return TypeRace, true
+	case "bearin", "bear-in", "rentree", "rentrée":
+		return TypeBearIn, true
+	case "crunch", "crashed", "effondrement":
+		return TypeCrunch, true
+	case "backgame", "back-game", "arriere", "arrière":
+		return TypeBackgame, true
+	case "acepoint", "ace-point", "as":
+		return TypeAcePoint, true
+	case "blitz", "attaque":
+		return TypeBlitz, true
+	case "primevprime", "prime-vs-prime", "amorces":
+		return TypePrimeVsPrime, true
+	case "mutualholding", "mutual", "holding-mutuel":
+		return TypeMutualHolding, true
+	case "holding", "tenue":
+		return TypeHolding, true
+	case "contact":
+		return TypeContact, true
+	case "unknown", "inconnu":
+		return TypeUnknown, true
+	}
+	return TypeUnknown, false
+}
 
 // GamePhaseNames maps each phase to the stable token used in the search
 // grammar, in the CLI and on the wire. The GUI translates these; the tokens
