@@ -1,17 +1,20 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-06** (sixième session — vague 5 : lots I et J,
-la vague de schéma 2.20.0, et le registre amont C.13). Ce fichier est le point
+Dernière mise à jour : **2026-09-06** (sixième session — vague 5 : lots I et J
+achevés, la vague de schéma 2.20.0, le registre amont C.13 et la page web). Ce fichier est le point
 de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et ce
 qui reste. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
 dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
 ## Où en est-on
 
-**129 des 145 issues du plan sont fermées** (relevé du 2026-09-06, seizième
-issue ouverte comprise hors plan). Restent seize issues ouvertes, dont sept
-sont des **moitiés livrées** et cinq demandent un **arbitrage produit** ou une
-ressource que le code n'apporte pas.
+**131 des 145 issues du plan sont fermées** (relevé du 2026-09-06). Restent
+quatorze issues ouvertes : **six moitiés livrées** dont la seconde part est
+décrite dans l'issue, **cinq arbitrages** que le code ne tranche pas, deux
+chantiers de fond et une vidéo.
+
+Les treize fiches que la vague 5 s'était données sont toutes traitées. Aucune
+n'a été abandonnée ; six restent ouvertes sur une moitié nommée.
 
 ### La vague 5 (2026-09-06) — ce qui a été livré
 
@@ -29,27 +32,36 @@ ressource que le code n'apporte pas.
 | J.7 — cache persistant | #297 | **mesuré et écarté** : plafond 3,8 % | le réseau distillé — amont |
 | J.8 — expliquer un blunder | #298 | six règles, une phrase, le silence par défaut | — (fermée) |
 | C.13 — amont gammonNet | #200 | le registre des sept points | rien de ce côté-ci |
+| I.20 — cartes de videau chaînées | #276 | lien dérivé, paires complétées, révision enchaînée | — (fermée) |
+| I.31 — confort quotidien | #287 | journal, compteur cliquable, badge Anki, pastilles d'historique | palette, frise, filtres épinglés, planche-contact |
+| J.5 — page web | #295 | consulter / chercher / réviser, périmètre ADR-0039 | — (fermée) |
 
 Schéma **2.20.0** : `position.max_cube` (#271), `position.game_type` (#291),
 `collection.filter_query` (#282). `ReclassifyPhases` devient
 `ReclassifyDerived` et recalcule les deux étiquettes en une passe.
 
+**ADR-0039** : le front web est en consultation, son périmètre est verrouillé,
+et il est éteint par défaut. Au passage, `style.css` s'est scindé — les jetons
+(ADR-0031, ADR-0008) vivent dans `tokens.css`, partagé par les deux fronts.
+
 ### Ce qui reste, et de quel genre
 
 **Des moitiés, avec leur raison écrite** : #260 (bgammon.org attend de vrais
-fichiers), #271 (MET configurable), #282 (deux joueurs côte à côte), #291
-(J.1c), #294 (le geste sur le damier — le juge accepte déjà un plateau, il
-manque l'interaction), #297 (réseau distillé, amont), #200 (registre livré,
-rien à coder).
+fichiers exportés), #271 (MET configurable par base), #282 (deux joueurs côte
+à côte dans Stats), #287 (palette Ctrl+K — et `Ctrl+K` est déjà pris par le
+panneau Anki, frise du transcript, filtres épinglés, planche-contact), #291
+(J.1c, les erreurs récurrentes), #294 (jouer le coup sur le damier — le juge
+accepte déjà un plateau, il manque l'interaction).
 
-**Des chantiers entiers non commencés** : #276 (cartes de videau chaînées),
-#287 (huit conforts quotidiens), #295 (front web sur `serve`), #277 (parcours
-pédagogiques — nouveau concept, ADR à écrire).
+**Un chantier entier non commencé** : #277 (parcours pédagogiques — nouveau
+concept dans CONTEXT.md, donc ADR avant code).
 
 **Ce qui ne se ferme pas par du code** : #296 (mode club/coach — nouvelle
-notion, à griller avant tout code), #299 (Ollama), #292 (rollouts tronqués —
-Configuration amont), #151 (NEON arm64 — pas de machine), #102 (vidéo de
-démo).
+notion, à griller avant tout code), #299 (Ollama — `ask` couvre désormais une
+part du besoin à 0 Mo, ce qui change l'équation), #292 (rollouts tronqués —
+Configuration amont), #297 (réseau distillé — amont ; le cache persistant est
+mesuré et écarté), #151 (NEON arm64 — pas de machine), #102 (vidéo de démo),
+#200 (registre livré, rien à coder ici).
 
 Les quatorze recherches externes P5-P18 sont versées sous
 [`docs/recherche/`](../../docs/recherche/README.md) ; quatre ont corrigé une fiche
