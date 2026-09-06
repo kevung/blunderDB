@@ -6,12 +6,17 @@
   This used to be a one-line `meta refresh` straight into `en/` — visitors
   never saw a product page, only the Sphinx table of contents in whatever
   language the redirect happened to name (H.10, #252). This page is the
-  actual home page; its only piece of language negotiation is the
-  Documentation button below, whose target is computed from
-  `navigator.language` against the nine languages the docs ship in, falling
-  back to English — see the inline script. The __VERSION__ placeholder is
-  substituted by the CI step with the release tag (or the short commit SHA
-  on non-tag builds, same convention as doc/build.py's PDF naming); the
+  actual home page. It is written in English only, on purpose: it is not a
+  tenth translation source (the docs already cost eight catalogues per
+  page), so it carries only what does not translate — the screenshot, the
+  download buttons, the links — plus a three-sentence pitch. Its language
+  negotiation is the Documentation button below, whose target is computed
+  from `navigator.language` against the nine languages the docs ship in,
+  falling back to English (see the inline script), plus the explicit list
+  of the nine languages at the foot of the page, in their own names, for the
+  reader whose browser lies about what they read. The __VERSION__
+  placeholder is substituted by the CI step with the latest version tag,
+  whatever ref is being built (a `docs/**` merge redeploys the site); the
   per-OS buttons reuse the exact asset names the `build` job produces
   (blunderDB-windows-<ver>.exe, blunderDB-macos-<ver>.zip,
   blunderdb_<ver>_amd64.deb) through GitHub's `/releases/latest/download/`
@@ -111,6 +116,9 @@
   }
   .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
   .links a:hover { text-decoration: underline; }
+  .langs { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: 1rem; line-height: 1.9; }
+  .langs a { color: var(--accent); text-decoration: none; white-space: nowrap; }
+  .langs a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -119,9 +127,9 @@
     <img class="logo" src="en/_static/logo.png" alt="">
     <h1>blunderDB</h1>
     <div class="pitch">
-      <p>A backgammon blunder analysis tool: import your matches from eXtreme Gammon, GnuBG and BGBlitz, store every position once, and search them by structure and by mistake.</p>
-      <p>A built-in evaluator (gammonNet) judges any position offline — no internet connection, no external engine to install.</p>
-      <p>Free and open source (MIT), one binary, five modes: desktop app, command line, headless server.</p>
+      <p>A backgammon blunder analysis tool: import your matches from eXtreme Gammon, GnuBG, BGBlitz and Jellyfish, store every position once, and search them by structure and by mistake.</p>
+      <p>A built-in evaluator (gammonNet) judges any position offline, and says so when it cannot — no internet connection, no external engine to install.</p>
+      <p>Free and open source (MIT), one binary, three ways to run it: desktop app, command line, headless server.</p>
     </div>
   </div>
 
@@ -140,6 +148,17 @@
     <a href="https://github.com/kevung/blunderDB/releases">Releases</a>
     <a href="https://github.com/kevung/blunderDB">GitHub</a>
   </div>
+  <p class="langs">Documentation in nine languages:
+    <a href="fr/" lang="fr" hreflang="fr">Français</a> ·
+    <a href="en/" lang="en" hreflang="en">English</a> ·
+    <a href="de/" lang="de" hreflang="de">Deutsch</a> ·
+    <a href="el/" lang="el" hreflang="el">Ελληνικά</a> ·
+    <a href="es/" lang="es" hreflang="es">Español</a> ·
+    <a href="fi/" lang="fi" hreflang="fi">Suomi</a> ·
+    <a href="it/" lang="it" hreflang="it">Italiano</a> ·
+    <a href="ja/" lang="ja" hreflang="ja">日本語</a> ·
+    <a href="ru/" lang="ru" hreflang="ru">Русский</a>
+  </p>
 </main>
 <script>
 (function () {

@@ -698,4 +698,3 @@ msgid ""
 "collection ouverte exactement comme décrit dans "
 ":ref:`raccourcis_navigation`."
 msgstr ""
-

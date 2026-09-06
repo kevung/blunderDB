@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 04:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -52,16 +52,16 @@ msgid "Ouvrir une base de données existante."
 msgstr "Abrir una base de datos existente."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
-msgstr "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
+msgstr "CTRL-MAYÚS-I"
 
 #: ../../source/raccourcis.rst:1
 msgid "Fusionner une base de données dans celle-ci."
 msgstr "Fusionar una base de datos en esta."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
-msgstr "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
+msgstr "CTRL-MAYÚS-S"
 
 #: ../../source/raccourcis.rst:1
 msgid "Exporter la base de données."
@@ -100,8 +100,8 @@ msgstr ""
 " mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
-msgstr "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
+msgstr "CTRL-MAYÚS-F"
 
 #: ../../source/raccourcis.rst:1
 msgid "Importer récursivement un dossier de fichiers de matchs/positions."
@@ -686,3 +686,60 @@ msgid ""
 msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
+
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "Panel de ayuda"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "IZQUIERDA, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "Pestaña anterior."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "DERECHA, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "Pestaña siguiente."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "Desplazar hacia arriba."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "Desplazar hacia abajo."
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "Página siguiente."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "AvPág"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "Principio del contenido."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "RePág"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "Final del contenido."
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, CTRL-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "Cerrar la ayuda."
+

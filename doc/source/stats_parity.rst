@@ -4,7 +4,7 @@ Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB
 =====================================================================
 
 Cette page décrit comment blunderDB calcule les indicateurs qu'il affiche —
-**PR** (Performance Rate), **Snowie Error Rate**, **perte MWC**, **chance** et
+**PR** (*Performance Rating*), **Snowie Error Rate**, **perte MWC**, **chance** et
 **victoires/défaites** — et comment ils s'alignent sur eXtreme Gammon (XG) et
 gnuBG (référence ouverte).
 
@@ -16,12 +16,12 @@ gnuBG (référence ouverte).
 Définitions formelles
 ---------------------
 
-PR (Performance Rate)
-~~~~~~~~~~~~~~~~~~~~~
+PR (Performance Rating)
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure l'erreur
-moyenne en millièmes de point de jetons (millipoints, mpt) par décision
-comptée.
+Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure le coût
+moyen des erreurs par décision comptée, sur l'échelle d'eXtreme Gammon et de
+gnuBG : l'erreur moyenne d'équité, multipliée par 500.
 
 .. math::
 
@@ -31,8 +31,13 @@ comptée.
   toutes les décisions du périmètre.
 - Le dénominateur :math:`N_\text{compté}` est le nombre de **décisions comptées**
   (voir ci-dessous).
-- Le facteur 500 convertit l'equity en millipoints (1 point = 1000 mpt, mais
-  l'échelle est ×500 par convention XG/gnuBG — cf. ``gnubg/formatgs.c:399–409``).
+- Le facteur 500 est la convention d'XG et de gnuBG (cf.
+  ``gnubg/formatgs.c:399–409``). Ce n'est pas une conversion en millipoints :
+  une erreur moyenne de 0,010 d'équité — soit 10 millipoints (mpt) — donne un
+  PR de 5,0. Les erreurs d'une position, elles, se lisent bien en millipoints,
+  c'est-à-dire en millièmes d'équité : le seuil de blunder ci-dessous, les
+  filtres de recherche ``e>`` et ``E>``, l'histogramme des magnitudes du
+  panneau Stats.
 
 Snowie Error Rate
 ~~~~~~~~~~~~~~~~~
@@ -98,8 +103,8 @@ signifie un lancer favorable. Référence : ``gnubg/analysis.c:199–269``
 
 .. important::
 
-   **blunderDB ne calcule jamais la chance** : il ne dispose pas d'un moteur
-   d'évaluation. Il reprend telle quelle la valeur écrite par l'outil qui a
+   **blunderDB ne recalcule jamais la chance** : l'évaluateur intégré ne sert
+   pas à cela. Il reprend telle quelle la valeur écrite par l'outil qui a
    analysé le match — ``ErrLuck`` pour eXtreme Gammon, la propriété ``LU`` pour
    gnuBG — après vérification que les deux partagent la même convention (même
    unité, positif = chanceux).
@@ -143,7 +148,7 @@ Erreurs et blunders
 
 Une décision est comptée comme **erreur** dès que l'erreur d'équité associée est
 strictement positive, et comme **blunder** lorsqu'elle atteint **0,100 EMG**
-(100 millipoints). La comparaison est *inclusive* : une erreur d'exactement
+(100 mpt). La comparaison est *inclusive* : une erreur d'exactement
 0,100 est un blunder, dans tous les écrans (répartition par action de videau,
 détail de match, tableau des joueurs).
 
@@ -200,13 +205,21 @@ Résumé du filtre
 Correspondance blunderDB ↔ XG ↔ gnuBG
 ---------------------------------------
 
-Les métriques sont alignées dans les limites suivantes (mesurées sur 3 matchs de référence) :
+Les métriques sont alignées dans les limites ci-dessous. Ce sont des **bornes
+vérifiées par la suite de tests**, et non des écarts moyens : le test compare
+match par match les chiffres de blunderDB à ceux enregistrés pour les matchs de
+référence du dépôt, et échoue dès qu'un seul écart dépasse la borne. Les
+références XG portent sur deux matchs — l'un complet (317 décisions comptées,
+156 et 161 par joueur), l'autre réduit à son seul PR, avec une borne portée à
+0,15 à cause d'un coup non apparié ; les références gnuBG portent sur deux
+autres matchs. La version d'eXtreme Gammon qui a produit ces chiffres n'est pas
+enregistrée.
 
 Comparaison XG ↔ blunderDB (même moteur d'analyse)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------+------------------+
-| Métrique            | Écart typique    |
+| Métrique            | Écart maximal    |
 +=====================+==================+
 | Décisions totales   | ≤ 5              |
 +---------------------+------------------+
@@ -222,8 +235,8 @@ Comparaison XG ↔ blunderDB (même moteur d'analyse)
 Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------+-----------------------------------------------+
-| Métrique            | Écart typique  | Cause principale             |
++---------------------+----------------+------------------------------+
+| Métrique            | Écart maximal  | Cause principale             |
 +=====================+================+==============================+
 | PR (checker)        | ≤ 0.20         | equity cross-engine          |
 +---------------------+----------------+------------------------------+

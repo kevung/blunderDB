@@ -22,4 +22,3 @@ msgstr ""
 #: ../../source/_templates/versions.html:5
 msgid "Languages"
 msgstr "Lingue"
-

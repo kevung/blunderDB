@@ -14,6 +14,8 @@ Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout en
 bout (premier import, étude d'un match, session Anki, mode serveur) et une
 page « comment progresser » — la lecture la plus rentable avant de se lancer.
 
+Ce qui a changé d'une version à l'autre est dans l':ref:`historique`.
+
 .. toctree::
    :maxdepth: 1
    :caption: Prise en main

@@ -2021,4 +2021,3 @@ msgid ""
 "mot de passe. Voir ``CLI_USAGE.md`` pour les options ``--watermark`` et "
 "``--password`` de ``export``, ainsi que pour ``identity`` et ``open``."
 msgstr ""
-

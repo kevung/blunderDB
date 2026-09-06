@@ -86,11 +86,12 @@ L'essentiel :
 * les tables de take points et de valeurs de gammon sont tirées de *The Theory
   of Backgammon* de *Dirk Schiemann* ;
 
-* les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et
-  bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été
-  générées avec `GNU Backgammon <https://www.gnu.org/software/gnubg/>`__ ;
-  GNUbg est un logiciel libre sous licence GPL, et ces tables sont des données
-  qu'il a produites, créditées comme telles ;
+* les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et
+  bilatérale (6 points, 6 pions, pour les verdicts de videau en course) sont
+  calculées par blunderDB lui-même, par un portage de l'outil ``makebearoff``
+  de `GNU Backgammon <https://www.gnu.org/software/gnubg/>`__ ; le résultat
+  est identique octet pour octet à celui de gnubg, dont l'empreinte SHA-256
+  sert de référence. GNUbg est un logiciel libre sous licence GPL ;
 
 * les fichiers de match sont lus par `xgparser
   <https://github.com/kevung/xgparser>`__, `gnubgparser

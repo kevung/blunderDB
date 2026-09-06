@@ -49,7 +49,7 @@ export default {
     <li>study positions with spaced repetition (Anki panel),</li>
     <li>manage tournaments (Tournament panel),</li>
     <li>display performance statistics (Stats panel),</li>
-    <li>compute EPC values for bearoff positions (Eval panel),</li>
+    <li>evaluate any position with the built-in engine, and compute the EPC of a bearoff position (Eval panel),</li>
     <li>browse saved search filters (Filter Library panel),</li>
     <li>browse search history (Search History panel).</li>
 </ul>
@@ -119,9 +119,9 @@ export default {
 </ul>
 <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
 <p>
-    On a pure race, a further table shows both players' winning probabilities and, when the position is covered by a two-sided database (the built-in one up to 6 checkers per player, the downloadable
-    extended one up to 11 through the Bearoff tab of the configuration), the exact money equities and the best cube decision. Outside that domain the winning probability is estimated (an "estimated"
-    badge with its error margin) and no decision is shown. The player on roll is edited by clicking a player's off/score rectangle, the cube position by clicking the cube on the board.
+    On a pure race, a further table shows both players' winning probabilities and, when the position is covered by a two-sided database (a 6-checker-per-player table computed on first launch, an
+    extended 11-checker table computed from the Bearoff tab of the configuration), the exact money equities and the best cube decision. Outside that domain the winning probability is estimated (an
+    "estimated" badge with its error margin) and no decision is shown. The player on roll is edited by clicking a player's off/score rectangle, the cube position by clicking the cube on the board.
 </p>
 <p>
     The <strong>Challenge</strong> checkbox hides the results on every change to the position; click an area to reveal it — ideal for practising an equity, an EPC or a cube decision before checking.
@@ -177,7 +177,10 @@ export default {
 </p>
 
 <h3>Tournaments</h3>
-<p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
+<p>
+    Tournaments allow grouping matches by event. On import, a match enters the tournament its file names, created if needed; a match already sorted is never moved. Open the Tournament panel with
+    <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -716,6 +719,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Help Panel</h3>
+<table>
+<thead>
+<tr>
+<th>Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LEFT, h</td>
+<td>Previous tab.</td>
+</tr>
+<tr>
+<td>RIGHT, l</td>
+<td>Next tab.</td>
+</tr>
+<tr>
+<td>UP, k</td>
+<td>Scroll up.</td>
+</tr>
+<tr>
+<td>DOWN, j</td>
+<td>Scroll down.</td>
+</tr>
+<tr>
+<td>SPACE</td>
+<td>Next page.</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Top of the content.</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Bottom of the content.</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>Close the help.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>The command line, located in the status bar, opens by pressing the <em>SPACE</em> key. As you type a command, a list of suggestions appears automatically: the <em>TAB</em> key (or <em>SHIFT-TAB</em>) cycles through the suggestions and completes the command, while <em>ESC</em> closes the list (a second <em>ESC</em> closes the command line). The <em>UP</em> and <em>DOWN</em> keys remain reserved for the command history.</p>
@@ -766,7 +812,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Opens the Eval panel (Effective Pip Count, winning probability and cube verdict in bearoff).</td>
+<td>Opens the Eval panel (Effective Pip Count, winning probability and cube verdict in bearoff). <code>epc</code> is this panel's former name, kept for compatibility.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -901,365 +947,462 @@ export default {
 </tbody>
 </table>
 <h3>Search Filters</h3>
+<p>This table is the reference for the search grammar: the command line, the filter library and the <code>--query</code> flag of <code>blunderdb search</code> all read the same tokens. The <em>CLI Equivalent</em> column gives, when one exists, the <code>search</code> flag that does the same thing (see Command Line Interface (CLI)); a dash marks a filter that only the grammar expresses.</p>
+<p>Five tokens do not carry their value: they read it from the search board. <code>cube</code> and <code>score</code> take up the cube and the score set there, <code>d</code> the decision type, <code>D</code> and <code>D1</code> the dice, <code>x</code> the structure drawn in the <em>Except</em> tab. A roll is therefore never written into the token: <code>D65</code> does not exist, only the exclusion form carries its digits (<code>xD65</code>). On the command line, where there is no board, these tokens compare against an empty board; it is the flags of the third column that must be used there instead.</p>
+<p>Errors and equities are counted in <strong>thousandths of equity</strong> — the <em>millipoints</em> of the table below: <code>E&gt;100</code> keeps the moves that cost at least a tenth of a point, one point being worth 1000 millipoints.</p>
+<p>Two full searches:</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — more than 30 pips behind, between 40% and 60% winning chances, no comment.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — in a race, a move that cost at least 50 millipoints, and a comment coming from eXtreme Gammon.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Query</th>
 <th>Action</th>
+<th>CLI Equivalent</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>The position checks the cube configuration.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>The position checks the score.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>The position checks the dice or the cube decision.</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>The position matches the dice roll (both dice, any order).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>The position matches the dice roll on the first die only (the first die's value appears on either die of the position).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>The position was <strong>not</strong> played with the 6-5 roll (any order). The value is given in the token; repeatable to exclude several rolls (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>The position has no contact.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>The position is in a given phase of the game: <code>opening</code>, <code>middlegame</code>, <code>race</code> or <code>bearoff</code>. Repeatable (<code>ph:race ph:bearoff</code>). The label is derived from the board and never editable; <code>blunderdb repair</code> recomputes it.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>The position or the mirror one meets the filters.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>The position was imported on its own, not brought in by a match import.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>The position was flagged in the source software, when importing an eXtreme Gammon match.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
 <td>The position contains none of the checkers of the exclusion structure (the "Except" tab of the search panel).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>The player has at least x pips behind in the race.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>The player has at most x pips behind in the race.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>The player has between x and y pips behind in the race.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>The player has a race of at least x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>The player has a race of at most x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>The player has a race between x and y pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>The equity (in millipoints) of the position is greater than x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>The equity (in millipoints) of the position is less than x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>The equity (in millipoints) of the position is between x and y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>The error of the move played by player 1 (in millipoints) is greater than x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>The error of the move played by player 1 (in millipoints) is less than x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>The error of the move played by player 1 (in millipoints) is between x and y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>The player has winning chances greater than x%.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>The player has winning chances less than x%.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>The player has winning chances between x% and y%.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>The player has gammon chances greater than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>The player has gammon chances less than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>The player has gammon chances between x% and y%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>The player has backgammon chances greater than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>The player has backgammon chances less than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>The player has backgammon chances between x% and y%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>The opponent has winning chances greater than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>The opponent has winning chances less than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>The opponent has winning chances between x% and y%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>The opponent has gammon chances greater than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>The opponent has gammon chances less than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>The opponent has gammon chances between x% and y%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>The opponent has backgammon chances greater than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>The opponent has backgammon chances less than x%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>The opponent has backgammon chances between x% and y%.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>The player has at least x checkers off.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>The player has at most x checkers off.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>The player has between x and y checkers off.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>The opponent has at least x checkers off.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>The opponent has at most x checkers off.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>The opponent has between x and y checkers off.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>The player has at least x backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>The player has at most x backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>The player has between x and y backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>The opponent has at least x backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>The opponent has at most x backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>The opponent has between x and y backcheckers.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>The player has at least x checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>The player has at most x checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>The player has between x and y checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>The opponent has at least x checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>The opponent has at most x checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>The opponent has between x and y checkers in the zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>The player has at least x blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>The player has at most x blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>The player has between x and y blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>The opponent has at least x blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>The opponent has at most x blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>The opponent has between x and y blots in the outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>The player has at least x blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>The player has at most x blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>The player has between x and y blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>The opponent has at least x blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>The opponent has at most x blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>The opponent has between x and y blots in the jan.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>t'word1;word2;...'</td>
+<td><code>t'word1;word2;...'</code></td>
 <td>The position comments contain at least one of the words.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>The position carries a comment, whatever its content.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>The position carries no comment.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>The position carries a comment of a given origin: <code>user</code> (written by you), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (brought in by a match import) or <code>unknown</code>. Repeatable (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
-<td>m'pattern1,pattern2,...'</td>
+<td><code>m'pattern1,pattern2,...'</code></td>
 <td>The best checker moves containing at least one of the patterns.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>The best cube decisions for No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Date of position addition after x (YYYY/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Date of position addition before x (YYYY/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Date of position addition between x and y (YYYY/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Search in match with ID x (e.g. ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Search in matches with IDs from x to y (e.g. ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Search in tournament with ID x (e.g. tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Search in tournaments with IDs from x to y (e.g. tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Search for the position with identifier x (e.g. id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Search for the positions with identifiers x to y (e.g. id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
-<td>pl'name'</td>
-<td>Search positions from a match involving the named player, at either seat (e.g. pl'Alice'). Case-insensitive.</td>
+<td><code>pl'name'</code></td>
+<td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case-insensitive.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1283,6 +1426,10 @@ export default {
 <h3>Version</h3>
 <p>Application version: {appVersion}</p>
 <p>Database version: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/en/" target="_blank" rel="noopener noreferrer">Online documentation</a> ·
+    <a href="https://kevung.github.io/blunderDB/en/historique.html" target="_blank" rel="noopener noreferrer">Version history</a>
+</p>
 
 <h3>Author</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

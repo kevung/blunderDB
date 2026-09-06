@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -48,88 +48,26 @@ msgstr ""
 "``VÄLILYÖNTI``-näppäintä. Sen avulla suodattimia voidaan tottumuksen "
 "myötä yhdistellä erittäin nopeasti ja käyttää suodatinkirjastoa."
 
-#: ../../source/annexe_filtres.rst:19
-msgid "Recherche de positions en ligne de commande"
-msgstr "Asemien haku komentorivillä"
-
-#: ../../source/annexe_filtres.rst:21
-msgid "Pour faire une recherche à l'aide de filtres,"
-msgstr "Hakeaksesi suodattimien avulla,"
-
-#: ../../source/annexe_filtres.rst:23
-msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "Avaa hakupaneeli painamalla ``TAB``-näppäintä."
-
-#: ../../source/annexe_filtres.rst:24
-msgid "Editer la position courante."
-msgstr "Muokkaa nykyistä asemaa."
+#: ../../source/annexe_filtres.rst:18
+msgid ""
+"La grammaire de recherche — la commande ``s``, ses jetons, la recherche "
+"dans les résultats courants avec ``ss`` — est décrite une seule fois, "
+"dans la section :ref:`cmd_filter` de la liste des commandes ; le panneau "
+"de recherche lui-même est décrit dans le :ref:`manuel "
+"<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
+"filtres et des exemples."
+msgstr ""
+"Hakukielioppi — komento ``s``, sen tunnukset ja haku nykyisistä "
+"tuloksista komennolla ``ss`` — kuvataan vain kerran, komentoluettelon "
+"osassa :ref:`cmd_filter`; itse hakupaneeli kuvataan "
+":ref:`käyttöoppaassa <panneau_recherche>`. Tähän liitteeseen jää vain "
+"suodatinkirjasto ja esimerkkejä."
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "Avaa komentorivi ``VÄLILYÖNTI``-näppäimellä."
-
-#: ../../source/annexe_filtres.rst:26
-msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "Käytä komentoa ``s``, jonka perään voi liittää suodattimia."
-
-#: ../../source/annexe_filtres.rst:27
-msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "Käynnistä haku ``ENTER``-näppäimellä."
-
-#: ../../source/annexe_filtres.rst:30
-msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
-msgstr ""
-"Älä unohda tyhjentää nykyistä asemaa ennen haun aloittamista "
-"(``ASKELPALAUTIN``-näppäin), jos se ei ole haluamasi asema, jotta vältät "
-"nappularakenteiden tarpeettoman suodattamisen."
-
-#: ../../source/annexe_filtres.rst:35
-msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" section :ref:`cmd_filter` de la liste des commandes."
-msgstr ""
-"Komentorivillä käytettävissä olevien suodattimien luettelo on annettu "
-"komentoluettelon kohdassa :ref:`cmd_filter`."
-
-#: ../../source/annexe_filtres.rst:39
-msgid "Recherche dans les résultats courants"
-msgstr "Haku nykyisistä tuloksista"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"Il est possible d'affiner une recherche en cherchant parmi les positions "
-"actuellement filtrées. Cela permet de restreindre progressivement les "
-"résultats."
-msgstr ""
-"Hakua voidaan tarkentaa hakemalla tällä hetkellä suodatettujen asemien "
-"joukosta. Näin tuloksia voidaan rajata vähitellen."
-
-#: ../../source/annexe_filtres.rst:44
-msgid ""
-"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
-msgstr ""
-"Käytä komentorivillä komentoa ``ss``, jonka perään liitetään suodattimia "
-"(esim. ``ss nc``, ``ss E>40``). Komento ``ss`` toimii aiemman haun "
-"jälkeen."
-
-#: ../../source/annexe_filtres.rst:47
-msgid ""
-"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
-msgstr ""
-"Hakuikkuna (``CTRL-F``) tarjoaa samaan tarkoitukseen myös valintaruudun "
-"”Hae nykyisistä tuloksista”."
-
-#: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
 msgstr "Suodatinkirjasto"
 
-#: ../../source/annexe_filtres.rst:53
+#: ../../source/annexe_filtres.rst:27
 msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
@@ -137,15 +75,15 @@ msgstr ""
 "Suodatinkirjaston avulla käyttäjä voi tallentaa hakukomentoja "
 "helpottaakseen teemakohtaisia tutkimuksiaan."
 
-#: ../../source/annexe_filtres.rst:56
+#: ../../source/annexe_filtres.rst:30
 msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "Lisätäksesi suodattimen kirjastoon,"
 
-#: ../../source/annexe_filtres.rst:58
+#: ../../source/annexe_filtres.rst:32
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
 msgstr "Käynnistä säilytettävä haku (komento ``s``, jonka perässä suodattimet)."
 
-#: ../../source/annexe_filtres.rst:59
+#: ../../source/annexe_filtres.rst:33
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Historique*."
@@ -153,19 +91,19 @@ msgstr ""
 "Avaa hakupaneeli (``TAB`` tai ``CTRL-F``) ja valitse "
 "*Historique*-välilehti."
 
-#: ../../source/annexe_filtres.rst:61
+#: ../../source/annexe_filtres.rst:35
 msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr "Napsauta tallennettavan haun kirjanmerkkikuvaketta."
 
-#: ../../source/annexe_filtres.rst:62
+#: ../../source/annexe_filtres.rst:36
 msgid "Donner un nom au filtre et valider."
 msgstr "Anna suodattimelle nimi ja vahvista."
 
-#: ../../source/annexe_filtres.rst:64
+#: ../../source/annexe_filtres.rst:38
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "Käyttääksesi kirjastoon tallennettua suodatinta,"
 
-#: ../../source/annexe_filtres.rst:66
+#: ../../source/annexe_filtres.rst:40
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Enregistrés*."
@@ -173,19 +111,19 @@ msgstr ""
 "Avaa hakupaneeli (``TAB`` tai ``CTRL-F``) ja valitse "
 "*Enregistrés*-välilehti."
 
-#: ../../source/annexe_filtres.rst:68
+#: ../../source/annexe_filtres.rst:42
 msgid "Rechercher le filtre souhaité."
 msgstr "Etsi haluamasi suodatin."
 
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:43
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Käynnistä haku kaksoisnapsauttamalla suodatinta."
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:46
 msgid "Exemples"
 msgstr "Esimerkkejä"
 
-#: ../../source/annexe_filtres.rst:74
+#: ../../source/annexe_filtres.rst:48
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Tässä muutamia esimerkkejä suodattimien käytöstä komentorivillä:"
 
@@ -283,8 +221,8 @@ msgid "s E>40"
 msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Asema turnauksesta Aachen2024"
+msgid "Positions dont un commentaire contient Aachen2024"
+msgstr "Asemat, joiden kommentti sisältää sanan Aachen2024"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""
@@ -382,7 +320,7 @@ msgstr "Virheet turnauksessa 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:101
+#: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Esimerkkejä hausta nykyisistä tuloksista:"
 

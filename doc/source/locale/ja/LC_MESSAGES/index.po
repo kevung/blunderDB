@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: ../../source/index.rst:17
+#: ../../source/index.rst:19
 msgid "Prise en main"
 msgstr "はじめに"
 
-#: ../../source/index.rst:24
+#: ../../source/index.rst:26
 msgid "Référence"
 msgstr "リファレンス"
 
-#: ../../source/index.rst:37
+#: ../../source/index.rst:39
 msgid "Annexes"
 msgstr "付録"
 
@@ -57,3 +57,6 @@ msgstr ""
 "はじめての方へ：\\ **ユーザーガイド**\\ では、四つのエンドツーエンドのチュートリアル（最初のインポート、マッチの研究、Anki "
 "セッション、サーバーモード）と「上達するには」のページを用意しています — 始める前に読む価値が最も高い内容です。"
 
+#: ../../source/index.rst:17
+msgid "Ce qui a changé d'une version à l'autre est dans l':ref:`historique`."
+msgstr "バージョン間で何が変わったかは :ref:`historique` にあります。"

@@ -50,7 +50,7 @@ export default {
     <li>estudiar posiciones con repetición espaciada (panel Anki),</li>
     <li>gestionar torneos (panel Torneo),</li>
     <li>mostrar estadísticas de rendimiento (panel Stats),</li>
-    <li>calcular valores de EPC para posiciones de bear off (panel Eval),</li>
+    <li>evaluar cualquier posición con el motor integrado, y calcular el EPC de una posición de bear off (panel Eval),</li>
     <li>consultar filtros de búsqueda guardados (panel Biblioteca de filtros),</li>
     <li>consultar el historial de búsquedas (panel Historial de búsquedas).</li>
 </ul>
@@ -127,10 +127,10 @@ export default {
 </ul>
 <p>Cuando ambos jugadores tienen fichas en su casa, una sección de comparación muestra las diferencias de EPC y de pip count.</p>
 <p>
-    En una carrera pura, otra tabla muestra las probabilidades de victoria de ambos jugadores y, cuando la posición está cubierta por una base two-sided (la integrada hasta 6 fichas por jugador, la
-    ampliada descargable hasta 11 desde la pestaña Bearoff de la configuración), los equities money exactos y la mejor decisión de cubo. Fuera de ese dominio la probabilidad de victoria se estima
-    (distintivo «estimado» con su margen de error) y no se muestra ninguna decisión. El jugador en turno se cambia haciendo clic en el rectángulo de salida/marcador de un jugador, y la posición del
-    cubo haciendo clic en el cubo del tablero.
+    En una carrera pura, otra tabla muestra las probabilidades de victoria de ambos jugadores y, cuando la posición está cubierta por una base two-sided (tabla de 6 fichas por jugador calculada en el
+    primer arranque, tabla ampliada a 11 fichas calculada desde la pestaña Bearoff de la configuración), los equities money exactos y la mejor decisión de cubo. Fuera de ese dominio la probabilidad de
+    victoria se estima (distintivo «estimado» con su margen de error) y no se muestra ninguna decisión. El jugador en turno se cambia haciendo clic en el rectángulo de salida/marcador de un jugador, y
+    la posición del cubo haciendo clic en el cubo del tablero.
 </p>
 <p>
     La casilla <strong>Desafío</strong> oculta los resultados cada vez que se modifica la posición; haga clic en una zona para revelarla — ideal para practicar un equity, un EPC o una decisión de cubo
@@ -190,7 +190,10 @@ export default {
 </p>
 
 <h3>Torneos</h3>
-<p>Los torneos permiten agrupar matches por evento. Abre el panel Torneo con <strong>Ctrl+Y</strong> para gestionar torneos y asignarles matches.</p>
+<p>
+    Los torneos permiten agrupar matches por evento. Al importar, un match entra en el torneo que nombra su archivo, creado si es necesario; un match ya clasificado nunca se desplaza. Abre el panel
+    Torneo con <strong>Ctrl+Y</strong> para gestionar torneos y asignarles matches.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -235,11 +238,11 @@ export default {
 <td>Abrir una base de datos existente.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-MAYÚS-I</td>
 <td>Fusionar una base de datos en esta.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-MAYÚS-S</td>
 <td>Exportar la base de datos.</td>
 </tr>
 <tr>
@@ -266,7 +269,7 @@ export default {
 <td>Importar una o varias posiciones/partidas desde un archivo (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-MAYÚS-F</td>
 <td>Importar recursivamente una carpeta de archivos de partidas/posiciones.</td>
 </tr>
 <tr>
@@ -729,6 +732,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panel de ayuda</h3>
+<table>
+<thead>
+<tr>
+<th>Atajo</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IZQUIERDA, h</td>
+<td>Pestaña anterior.</td>
+</tr>
+<tr>
+<td>DERECHA, l</td>
+<td>Pestaña siguiente.</td>
+</tr>
+<tr>
+<td>ARRIBA, k</td>
+<td>Desplazar hacia arriba.</td>
+</tr>
+<tr>
+<td>ABAJO, j</td>
+<td>Desplazar hacia abajo.</td>
+</tr>
+<tr>
+<td>ESPACIO</td>
+<td>Página siguiente.</td>
+</tr>
+<tr>
+<td>AvPág</td>
+<td>Principio del contenido.</td>
+</tr>
+<tr>
+<td>RePág</td>
+<td>Final del contenido.</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>Cerrar la ayuda.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>La línea de comandos, situada en la barra de estado, se abre pulsando la tecla <em>ESPACIO</em>. Al escribir un comando, aparece automáticamente una lista de sugerencias: la tecla <em>TAB</em> (o <em>MAYÚS-TAB</em>) recorre las propuestas y completa el comando, mientras que <em>ESC</em> cierra la lista (un segundo <em>ESC</em> cierra la línea de comandos). Las teclas <em>ARRIBA</em> y <em>ABAJO</em> siguen reservadas al historial de comandos.</p>
@@ -779,7 +825,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Abre el panel Eval (Effective Pip Count, probabilidad de victoria y veredicto de cubo en bearoff).</td>
+<td>Abre el panel Eval (Effective Pip Count, probabilidad de victoria y veredicto de cubo en bearoff). <code>epc</code> es el antiguo nombre de este panel, conservado.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -914,365 +960,462 @@ export default {
 </tbody>
 </table>
 <h3>Filtros de búsqueda</h3>
+<p>Esta tabla es la referencia de la gramática de búsqueda: la línea de comandos, la biblioteca de filtros y la opción <code>--query</code> de <code>blunderdb search</code> leen todos los mismos tokens. La columna <em>Equivalente CLI</em> da, cuando existe, la opción de <code>search</code> que hace lo mismo (ver Interfaz de línea de comandos (CLI)); un guion señala un filtro que solo la gramática expresa.</p>
+<p>Cinco tokens no llevan su valor: lo leen en el tablero de búsqueda. <code>cube</code> y <code>score</code> retoman el cubo y el score puestos en él, <code>d</code> el tipo de decisión, <code>D</code> y <code>D1</code> los dados, <code>x</code> la estructura dibujada en la pestaña <em>Excepto</em>. Una tirada nunca se escribe entonces en el token: <code>D65</code> no existe, solo la forma de exclusión lleva sus cifras (<code>xD65</code>). En la línea de comandos, donde no hay tablero, estos tokens se comparan con un tablero vacío; son las opciones de la tercera columna las que hay que emplear ahí.</p>
+<p>Los errores y las equidades se cuentan en <strong>milésimas de equidad</strong> — los <em>milipuntos</em> de la tabla siguiente: <code>E&gt;100</code> conserva las jugadas que costaron al menos una décima de punto, valiendo un punto 1000 milésimas.</p>
+<p>Dos búsquedas completas:</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — más de 30 pips de retraso, entre 40 % y 60 % de probabilidad de victoria, sin comentario.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — en carrera, una jugada que costó al menos 50 milésimas, y un comentario venido de eXtreme Gammon.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Consulta</th>
 <th>Acción</th>
+<th>Equivalente CLI</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>La posición cumple la configuración del cubo.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>La posición cumple el marcador.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>La posición cumple el tipo de decisión (ficha o cubo).</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>La posición cumple la tirada de dados (ambos dados, sin importar el orden).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>La posición cumple la tirada de dados únicamente en el primer dado (el valor del primer dado aparece en cualquiera de los dos dados de la posición).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>La posición <strong>no</strong> se jugó con la tirada 6-5 (sin importar el orden). El valor se indica en el token; repetible para excluir varias tiradas (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>La posición es sin contacto.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>La posición se encuentra en una fase de juego dada: <code>opening</code> (apertura), <code>middlegame</code> (medio juego), <code>race</code> (carrera) o <code>bearoff</code> (retirada de fichas). Repetible (<code>ph:race ph:bearoff</code>). La etiqueta se deriva del tablero y nunca es editable; <code>blunderdb repair</code> la vuelve a calcular.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>La posición o su réplica especular cumple los filtros.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>La posición se importó por separado, y no la trajo la importación de una partida.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>La posición fue marcada en el programa de origen, al importar una partida de eXtreme Gammon.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
-<td>La posición no contiene ninguna ficha de la estructura de exclusión (pestaña « Except » del panel de búsqueda).</td>
+<td>La posición no contiene ninguna ficha de la estructura de exclusión (pestaña <em>Excepto</em> del panel de búsqueda).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>El jugador tiene al menos x pips de desventaja en la carrera.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>El jugador tiene como máximo x pips de desventaja en la carrera.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>El jugador tiene entre x e y pips de desventaja en la carrera.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>El jugador tiene una carrera de al menos x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>El jugador tiene una carrera de como máximo x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>El jugador tiene una carrera entre x e y pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>La equidad (en milipuntos) de la posición es mayor que x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>La equidad (en milipuntos) de la posición es menor que x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>La equidad (en milipuntos) de la posición está comprendida entre x e y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>El error de la jugada realizada por el jugador 1 (en milipuntos) es mayor que x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>El error de la jugada realizada por el jugador 1 (en milipuntos) es menor que x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>El error de la jugada realizada por el jugador 1 (en milipuntos) está comprendido entre x e y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>El jugador tiene probabilidades de victoria superiores al x %.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>El jugador tiene probabilidades de victoria inferiores al x %.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>El jugador tiene probabilidades de victoria entre el x % y el y %.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>El jugador tiene probabilidades de gammon superiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>El jugador tiene probabilidades de gammon inferiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>El jugador tiene probabilidades de gammon entre el x % y el y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>El jugador tiene probabilidades de backgammon superiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>El jugador tiene probabilidades de backgammon inferiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>El jugador tiene probabilidades de backgammon entre el x % y el y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>El adversario tiene probabilidades de victoria superiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>El adversario tiene probabilidades de victoria inferiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>El adversario tiene probabilidades de victoria entre el x % y el y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>El adversario tiene probabilidades de gammon superiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>El adversario tiene probabilidades de gammon inferiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>El adversario tiene probabilidades de gammon entre el x % y el y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>El adversario tiene probabilidades de backgammon superiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>El adversario tiene probabilidades de backgammon inferiores al x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>El adversario tiene probabilidades de backgammon entre el x % y el y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>El jugador tiene al menos x fichas retiradas.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>El jugador tiene como máximo x fichas retiradas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>El jugador tiene entre x e y fichas retiradas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>El adversario tiene al menos x fichas retiradas.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>El adversario tiene como máximo x fichas retiradas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>El adversario tiene entre x e y fichas retiradas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>El jugador tiene al menos x fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>El jugador tiene como máximo x fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>El jugador tiene entre x e y fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>El adversario tiene al menos x fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>El adversario tiene como máximo x fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>El adversario tiene entre x e y fichas rezagadas.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>El jugador tiene al menos x fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>El jugador tiene como máximo x fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>El jugador tiene entre x e y fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>El adversario tiene al menos x fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>El adversario tiene como máximo x fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>El adversario tiene entre x e y fichas en la zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>El jugador tiene al menos x blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>El jugador tiene como máximo x blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>El jugador tiene entre x e y blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>El adversario tiene al menos x blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>El adversario tiene como máximo x blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>El adversario tiene entre x e y blots en el outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>El jugador tiene al menos x blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>El jugador tiene como máximo x blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>El jugador tiene entre x e y blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>El adversario tiene al menos x blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>El adversario tiene como máximo x blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>El adversario tiene entre x e y blots en el jan.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>t'palabra1;palabra2;...'</td>
+<td><code>t'palabra1;palabra2;...'</code></td>
 <td>Los comentarios de la posición contienen al menos una de las palabras.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>La posición tiene un comentario, sea cual sea su contenido.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>La posición no tiene ningún comentario.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>La posición lleva un comentario de un origen dado: <code>user</code> (escrito por usted), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (traído por la importación de una partida) o <code>unknown</code>. Repetible (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
-<td>m'patrón1,patrón2,...'</td>
+<td><code>m'patrón1,patrón2,...'</code></td>
 <td>Las mejores jugadas de fichas que contienen al menos uno de los patrones.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>Las mejores decisiones de cubo de No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Fecha de adición de la posición posterior a x (AAAA/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Fecha de adición de la posición anterior a x (AAAA/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Fecha de adición de la posición entre x e y (AAAA/MM/DD).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Buscar en el match con identificador x (p. ej.: ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Buscar en los matches con identificadores de x a y (p. ej.: ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Buscar en el torneo con identificador x (p. ej.: tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Buscar en los torneos con identificadores de x a y (p. ej.: tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Buscar la posición con identificador x (p. ej. id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Buscar las posiciones con identificadores de x a y (p. ej. id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
-<td>pl'nombre'</td>
-<td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (p. ej. pl'Alice'). No distingue mayúsculas y minúsculas.</td>
+<td><code>pl'nombre'</code></td>
+<td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (ej: <code>pl'Alice'</code>). No distingue mayúsculas y minúsculas.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1296,6 +1439,10 @@ export default {
 <h3>Versión</h3>
 <p>Versión de la aplicación: {appVersion}</p>
 <p>Versión de la base de datos: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/es/" target="_blank" rel="noopener noreferrer">Documentación en línea</a> ·
+    <a href="https://kevung.github.io/blunderDB/es/historique.html" target="_blank" rel="noopener noreferrer">Historial de versiones</a>
+</p>
 
 <h3>Autor</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

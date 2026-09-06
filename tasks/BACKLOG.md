@@ -155,6 +155,20 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Historique — items faits
 
+- **2026-09-06 — suites de la critique de la documentation** (branche
+  `chore/critique-reste`, `tasks/critique-doc-2026-09/`) : l'image
+  `blunderdb-serve` pose `XDG_DATA_HOME=/data` et déclare le volume (elle ne
+  calculait jamais ses tables de bearoff) ; la fusion des analyses classe les
+  profondeurs par `domain.AnalysisDepthRank` au lieu de comparer les chaînes
+  (« 2-ply » l'emportait sur « 10-ply ») ; `search --error-min` ignore les
+  positions sans analyse ; un lot d'import fait de doublons seuls sort en 0 ;
+  les bandes de niveau du PR sont traduites dans les neuf locales
+  (`stats.grade.*`) et le manuel les nomme en français ; quatre locales
+  disaient « dé » pour le videau de la carte *PR Cube* ; les captures
+  `panel_*.png` et `screenshot.png` sont régénérées par `make screenshots`
+  (les navigateurs Playwright sont installés sur ce poste, port 5174).
+  Reste, faute de Windows : les captures SmartScreen en anglais.
+
 - **Job `test-os`** : `continue-on-error: true` retiré, le job est bloquant. Fiche E.1 (#217), fusionnée le 2026-09-03.
 
 - **2026-09-02 — `use_cube` à la recherche** (ADR-0016, point 4) : fait le

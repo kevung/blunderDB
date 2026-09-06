@@ -4,7 +4,7 @@
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from '../ContextMenu.svelte';
-    import { GRADE_BANDS, gradeForPR, makeGradeBandPlugin } from './gradeBands.js';
+    import { GRADE_BANDS, bandForPR, makeGradeBandPlugin } from './gradeBands.js';
     import { PRIMARY, PRIMARY_ALPHA } from './charts/palette.js';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
@@ -148,7 +148,7 @@
                     <span class="single-label">{tourn.Name || $t('stats.tournament')}</span>
                     <span class="single-meta">{fmtDate(tourn.Date)} · {tourn.NumDecisions} {$t('stats.decisions')}</span>
                     {#if metric === 'pr'}
-                        <span class="single-grade">{gradeForPR(tourn.PR)}</span>
+                        <span class="single-grade">{$t(`stats.grade.${bandForPR(tourn.PR).key}`)}</span>
                     {/if}
                     <div class="single-actions">
                         <button onclick={() => openTournamentInPanel(tourn.ID)}>{$t('stats.openTournament')}</button>
@@ -176,9 +176,9 @@
 
     <!-- ── Grade legend ──────────────────────────────────────────────────────── -->
     <section class="grade-legend">
-        {#each GRADE_BANDS as band (band.label)}
+        {#each GRADE_BANDS as band (band.key)}
             <span class="grade-pill" style="background:{band.color.replace('0.09', '0.25').replace('0.10', '0.25')}">
-                {band.label}
+                {$t(`stats.grade.${band.key}`)}
                 {#if band.max === Infinity}≥{band.min}{:else}{band.min}–{band.max}{/if}
             </span>
         {/each}

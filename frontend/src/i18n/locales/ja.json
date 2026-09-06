@@ -1115,6 +1115,14 @@
         "cardLabelAll": "PR 全体",
         "cardLabelChecker": "PR チェッカー",
         "cardLabelCube": "PR キューブ",
+        "grade": {
+            "worldClass": "ワールドクラス",
+            "expert": "エキスパート",
+            "advanced": "上級者",
+            "intermediate": "中級者",
+            "casual": "カジュアル",
+            "beginner": "初心者"
+        },
         "tournaments": "トーナメント",
         "matches": "対局",
         "decisions": "決定",

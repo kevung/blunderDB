@@ -6,19 +6,28 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"POT-Creation-Date: 2026-09-06 02:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: ja <LL@li.org>\n"
 "Language: ja\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: ../../source/_templates/versions.html:5
+#: ../../source/_templates/layout.html:20
 msgid "Languages"
 msgstr "言語"
+
+# The strings below come from Sphinx itself and from the sphinx_rtd_theme
+# templates, not from the French sources: sphinx_rtd_theme ships no Japanese
+# catalogue and Sphinx's own ja catalogue leaves "Tip" and the permalink
+# titles untranslated, so the reader saw "Tip", "Next", "Previous" and
+# "Search docs" in English on all 18 pages. The project's locale directory is
+# consulted BEFORE Sphinx's and the theme's, so these entries win.
+#~ msgid "Tip"
+#~ msgstr "ヒント"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 04:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -53,11 +53,11 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:22
 msgid ""
-"**Créer une base.** Bouton \"Nouvelle base de données\" de la barre "
+"**Créer une base.** Bouton *Nouvelle base de données* de la barre "
 "d'outils (ou *CTRL-N*), choisir un emplacement et un nom ; l'extension "
 "``.db`` est ajoutée automatiquement."
 msgstr ""
-"**Creare un database.** Pulsante «Nuovo database» nella barra degli "
+"**Creare un database.** Pulsante *Nuovo database* nella barra degli "
 "strumenti (o *CTRL-N*), scegliere una posizione e un nome; l'estensione "
 "``.db`` viene aggiunta automaticamente."
 
@@ -77,17 +77,33 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:32
 msgid ""
+"blunderDB reprend l'analyse déjà présente dans le fichier, il n'en refait"
+" pas une : un match jamais analysé dans XG n'a donc aucune erreur à "
+"montrer. Si la case *Analyser automatiquement après import* est cochée "
+"(fenêtre de configuration, onglet *gammonNet*), un lot d'analyse borné et"
+" annulable comble en tâche de fond les positions dépourvues d'analyse. "
+"Voir :ref:`configuration`."
+msgstr ""
+"blunderDB riprende l'analisi già presente nel file, non ne rifà una: una"
+" partita mai analizzata in XG non ha quindi alcun errore da mostrare. Se"
+" la casella *Analizza automaticamente dopo l'importazione* è selezionata"
+" (finestra di configurazione, scheda *gammonNet*), un lotto di analisi "
+"limitato e annullabile colma in sottofondo le posizioni prive di "
+"analisi. Vedi :ref:`configuration`."
+
+#: ../../source/guide_utilisateur.rst:39
+msgid ""
 "**Revoir le match.** Double-cliquer sur la ligne du match (ou la "
 "sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière "
-"position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent "
+"position visitée. Les touches *GAUCHE*/*DROITE* (ou *k*/*j*) parcourent "
 "les coups ; *PageUp*/*PageDown* changent de partie."
 msgstr ""
 "**Rivedere la partita.** Un doppio clic sulla riga della partita (o "
 "selezionarla e premere *INVIO*) apre la revisione sull'ultima posizione "
-"visitata. I tasti *SINISTRA*/*DESTRA* (o *j*/*k*) scorrono le mosse; "
+"visitata. I tasti *SINISTRA*/*DESTRA* (o *k*/*j*) scorrono le mosse; "
 "*PagSu*/*PagGiù* cambiano partita."
 
-#: ../../source/guide_utilisateur.rst:37
+#: ../../source/guide_utilisateur.rst:44
 msgid ""
 "**Lire l'analyse.** *CTRL-L* affiche le panneau Analyse : les meilleurs "
 "coups, leur équité et l'erreur du coup joué (surligné dans la table). Sur"
@@ -99,11 +115,11 @@ msgstr ""
 "nella tabella). Su una decisione di cubo, lo stesso tasto mostra la "
 "tabella delle equità di cubo e il verdetto."
 
-#: ../../source/guide_utilisateur.rst:42
+#: ../../source/guide_utilisateur.rst:49
 msgid "Panneau Analyse pendant la revue d'un match"
 msgstr "Pannello Analisi durante la revisione di una partita"
 
-#: ../../source/guide_utilisateur.rst:46
+#: ../../source/guide_utilisateur.rst:53
 msgid ""
 "Le panneau Analyse pendant la revue d'un match : le coup joué est "
 "surligné dans la table des coups candidats."
@@ -111,28 +127,31 @@ msgstr ""
 "Il pannello Analisi durante la revisione di una partita: la mossa giocata"
 " è evidenziata nella tabella delle mosse candidate."
 
-#: ../../source/guide_utilisateur.rst:49
+#: ../../source/guide_utilisateur.rst:56
 msgid ""
-"**Trouver les plus grosses erreurs.** Depuis n'importe où, la commande "
-"``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de commande) "
-"charge directement les positions où l'erreur a été la plus coûteuse dans "
-"le panneau d'analyse — inutile de construire une recherche à la main pour"
-" un premier passage sur un import. Voir :ref:`stats` pour affiner ce "
-"choix par joueur ou par plage de dates une fois plusieurs matchs "
-"importés."
+"**Trouver les plus grosses erreurs.** Ouvrir le panneau Stats (*CTRL-D*),"
+" onglet *Dashboard* : la liste *Top blunders* donne les dix erreurs les "
+"plus coûteuses, et cliquer sur une ligne charge la position concernée "
+"dans le panneau d'analyse. Pour les habitués, la même chose au clavier : "
+"la commande ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de "
+"commande) charge directement ces positions, sans construire de recherche "
+"à la main. Voir :ref:`stats` pour affiner ce choix par joueur ou par "
+"plage de dates une fois plusieurs matchs importés."
 msgstr ""
-"**Trovare gli errori più grandi.** Da qualsiasi punto, il comando ``bl`` "
-"(o ``blunders``, *SPAZIO* per aprire la riga di comando) carica "
-"direttamente nel pannello di analisi le posizioni dove l'errore è stato "
-"più costoso — inutile costruire una ricerca a mano per un primo passaggio"
-" su un import. Vedi :ref:`stats` per affinare questa scelta per giocatore"
-" o per intervallo di date una volta importate più partite."
+"**Trovare gli errori più grandi.** Aprire il pannello Stats (*CTRL-D*), "
+"scheda *Dashboard*: l'elenco *Top errori* dà i dieci errori più costosi,"
+" e fare clic su una riga carica la posizione corrispondente nel pannello"
+" di analisi. Per gli abituati, la stessa cosa da tastiera: il comando "
+"``bl`` (o ``blunders``, *SPAZIO* per aprire la riga di comando) carica "
+"direttamente queste posizioni, senza costruire una ricerca a mano. Vedi "
+":ref:`stats` per affinare questa scelta per giocatore o per intervallo "
+"di date una volta importate più partite."
 
-#: ../../source/guide_utilisateur.rst:60
+#: ../../source/guide_utilisateur.rst:68
 msgid "Étudier un match"
 msgstr "Studiare una partita"
 
-#: ../../source/guide_utilisateur.rst:62
+#: ../../source/guide_utilisateur.rst:70
 msgid ""
 "Une fois plusieurs matchs importés, ce tutoriel détaille l'étude d'un "
 "match en particulier — au-delà du simple parcours du tutoriel précédent."
@@ -141,24 +160,25 @@ msgstr ""
 "una partita in particolare — oltre al semplice percorso del tutorial "
 "precedente."
 
-#: ../../source/guide_utilisateur.rst:65
+#: ../../source/guide_utilisateur.rst:73
 msgid ""
 "**Ouvrir le panneau des matchs** (*CTRL-Tab*). Il liste tous les matchs "
-"importés, triables par colonne (joueur, date, longueur, tournoi, PR)."
+"importés, triables par colonne (joueur, date, longueur, tournoi, PR). Le "
+"PR et le coût MWC sont définis dans le :ref:`glossaire`."
 msgstr ""
 "**Aprire il pannello delle partite** (*CTRL-Tab*). Elenca tutte le "
 "partite importate, ordinabili per colonna (giocatore, data, lunghezza, "
-"torneo, PR)."
+"torneo, PR). Il PR e il costo MWC sono definiti nel :ref:`glossaire`."
 
-#: ../../source/guide_utilisateur.rst:68
+#: ../../source/guide_utilisateur.rst:77
 msgid "Panneau des matchs"
 msgstr "Pannello delle partite"
 
-#: ../../source/guide_utilisateur.rst:72
+#: ../../source/guide_utilisateur.rst:81
 msgid "Le panneau des matchs : liste triable, PR et coût MWC par match."
 msgstr "Il pannello delle partite: elenco ordinabile, PR e costo MWC per partita."
 
-#: ../../source/guide_utilisateur.rst:74
+#: ../../source/guide_utilisateur.rst:83
 msgid ""
 "**Ouvrir la revue** en double-cliquant sur la ligne, ou en la "
 "sélectionnant puis *ENTREE*. La barre d'informations au-dessus du plateau"
@@ -168,7 +188,7 @@ msgstr ""
 "selezionandola e premendo *INVIO*. La barra informativa sopra il "
 "tabellone ricorda entrambi i giocatori, il torneo e il punteggio."
 
-#: ../../source/guide_utilisateur.rst:78
+#: ../../source/guide_utilisateur.rst:87
 msgid ""
 "**Basculer coups de pions / décision de videau** avec la touche *d* sur "
 "une même position quand les deux analyses sont disponibles (l'une des "
@@ -178,11 +198,11 @@ msgstr ""
 "stessa posizione quando entrambe le analisi sono disponibili (una delle "
 "due può mancare a seconda di ciò che conteneva il file importato)."
 
-#: ../../source/guide_utilisateur.rst:82
+#: ../../source/guide_utilisateur.rst:91
 msgid "Panneau Analyse sur une décision de videau"
 msgstr "Pannello Analisi su una decisione di cubo"
 
-#: ../../source/guide_utilisateur.rst:86
+#: ../../source/guide_utilisateur.rst:95
 msgid ""
 "Une décision de videau dans le panneau Analyse : équités money, erreur de"
 " chaque option, meilleure décision."
@@ -190,7 +210,7 @@ msgstr ""
 "Una decisione di cubo nel pannello Analisi: equità di denaro, errore di "
 "ogni opzione, decisione migliore."
 
-#: ../../source/guide_utilisateur.rst:89
+#: ../../source/guide_utilisateur.rst:98
 msgid ""
 "**Annoter** ce que vous observez : *CTRL-P* ouvre le panneau Commentaires"
 " sur la position affichée — utile pour noter *pourquoi* un coup est un "
@@ -200,17 +220,17 @@ msgstr ""
 "posizione mostrata — utile per annotare *perché* una mossa è un blunder, "
 "non solo *che* lo è."
 
-#: ../../source/guide_utilisateur.rst:93
+#: ../../source/guide_utilisateur.rst:102
 msgid "Panneau Commentaires sur une position"
 msgstr "Pannello Commenti su una posizione"
 
-#: ../../source/guide_utilisateur.rst:97
+#: ../../source/guide_utilisateur.rst:106
 msgid ""
 "Le panneau Commentaires : un fil d'échanges attaché à la position "
 "affichée."
 msgstr "Il pannello Commenti: un filo di scambi allegato alla posizione mostrata."
 
-#: ../../source/guide_utilisateur.rst:100
+#: ../../source/guide_utilisateur.rst:109
 msgid ""
 "**Étiqueter** une position à rejouer plus tard : *ESPACE* pour ouvrir la "
 "ligne de commande, ``#`` suivi d'un mot-clé (par exemple ``#blitz``), "
@@ -223,7 +243,7 @@ msgstr ""
 "direttamente la posizione se la mossa giocata non è quella che volete "
 "studiare."
 
-#: ../../source/guide_utilisateur.rst:105
+#: ../../source/guide_utilisateur.rst:114
 msgid ""
 "**Sortir du mode match** avec la commande ``m`` : la bibliothèque "
 "retrouve son état précédent, la dernière position visitée du match est "
@@ -233,11 +253,11 @@ msgstr ""
 "ritrova il suo stato precedente, l'ultima posizione visitata della "
 "partita viene memorizzata per la prossima visita."
 
-#: ../../source/guide_utilisateur.rst:112
+#: ../../source/guide_utilisateur.rst:121
 msgid "Une session Anki"
 msgstr "Una sessione Anki"
 
-#: ../../source/guide_utilisateur.rst:114
+#: ../../source/guide_utilisateur.rst:123
 msgid ""
 "Le panneau Anki transforme une collection ou une recherche en paquet de "
 "cartes à réviser selon l'algorithme FSRS (répétition espacée)."
@@ -245,7 +265,7 @@ msgstr ""
 "Il pannello Anki trasforma una collezione o una ricerca in un mazzo di "
 "carte da rivedere secondo l'algoritmo FSRS (ripetizione dilazionata)."
 
-#: ../../source/guide_utilisateur.rst:117
+#: ../../source/guide_utilisateur.rst:126
 msgid ""
 "**Constituer le paquet.** Deux points de départ possibles : une "
 ":ref:`collection <guide_collections>` de positions choisies à la main, ou"
@@ -259,54 +279,55 @@ msgstr ""
 "come errori. Il comando ``bl 30`` (30 peggiori errori) fornisce un punto "
 "di partenza indicato per un primo mazzo."
 
-#: ../../source/guide_utilisateur.rst:123
+#: ../../source/guide_utilisateur.rst:132
 msgid ""
-"**Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton \"New "
-"Deck\", nommer le paquet ; il se synchronise sur la recherche ou la "
+"**Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton *Nouveau "
+"paquet*, nommer le paquet ; il se synchronise sur la recherche ou la "
 "collection choisie."
 msgstr ""
-"**Creare il mazzo.** Aprire il pannello Anki (*CTRL-K*), pulsante «New "
-"Deck», nominare il mazzo; si sincronizza con la ricerca o la collezione "
-"scelta."
+"**Creare il mazzo.** Aprire il pannello Anki (*CTRL-K*), pulsante *Nuovo"
+" mazzo*, nominare il mazzo; si sincronizza con la ricerca o la "
+"collezione scelta."
 
-#: ../../source/guide_utilisateur.rst:127
+#: ../../source/guide_utilisateur.rst:136
 msgid "Panneau Anki, liste des paquets"
 msgstr "Pannello Anki, elenco dei mazzi"
 
-#: ../../source/guide_utilisateur.rst:131
+#: ../../source/guide_utilisateur.rst:140
 msgid ""
 "Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et dues "
 "aujourd'hui."
 msgstr "Il pannello Anki: un mazzo per riga, carte totali, nuove e dovute oggi."
 
-#: ../../source/guide_utilisateur.rst:134
+#: ../../source/guide_utilisateur.rst:143
 msgid ""
-"**Réviser** (*Study*) : chaque carte montre une position, vous formulez "
-"votre réponse mentalement, dévoilez la solution (le plateau, l'analyse et"
-" le commentaire éventuel), puis notez votre estimation de 1 (raté) à 4 "
-"(facile). FSRS espace la prochaine présentation en conséquence. Rien "
-"n'oblige à dévoiler la réponse pour continuer si vous êtes sûr de vous."
+"**Réviser** (bouton *Étudier*) : chaque carte montre une position, vous "
+"formulez votre réponse mentalement, dévoilez la solution (le plateau, "
+"l'analyse et le commentaire éventuel), puis notez votre estimation de 1 "
+"(raté) à 4 (facile). FSRS espace la prochaine présentation en "
+"conséquence. Rien n'oblige à dévoiler la réponse pour continuer si vous "
+"êtes sûr de vous."
 msgstr ""
-"**Rivedere** (*Study*): ogni carta mostra una posizione, formulate "
-"mentalmente la vostra risposta, rivelate la soluzione (il tabellone, "
-"l'analisi e l'eventuale commento), poi valutate la vostra stima da 1 "
-"(mancata) a 4 (facile). FSRS distanzia di conseguenza la prossima "
-"presentazione. Nulla obbliga a rivelare la risposta per continuare se "
-"siete sicuri di voi."
+"**Rivedere** (pulsante *Studia*): ogni carta mostra una posizione, "
+"formulate mentalmente la vostra risposta, rivelate la soluzione (il "
+"tabellone, l'analisi e l'eventuale commento), poi valutate la vostra "
+"stima da 1 (mancata) a 4 (facile). FSRS distanzia di conseguenza la "
+"prossima presentazione. Nulla obbliga a rivelare la risposta per "
+"continuare se siete sicuri di voi."
 
-#: ../../source/guide_utilisateur.rst:140
+#: ../../source/guide_utilisateur.rst:149
 msgid ""
-"**S'échauffer sans perturber l'échéancier** (*Cram*) : présente des "
-"positions aléatoires du paquet sans toucher au planning FSRS — pratique "
-"avant un tournoi, ou pour réviser intensément sans décaler les échéances "
-"des autres cartes."
+"**S'échauffer sans perturber l'échéancier** (bouton *Entraînement*) : "
+"présente des positions aléatoires du paquet sans toucher au planning FSRS"
+" — pratique avant un tournoi, ou pour réviser intensément sans décaler "
+"les échéances des autres cartes."
 msgstr ""
-"**Riscaldarsi senza disturbare il calendario** (*Cram*): presenta "
-"posizioni casuali del mazzo senza toccare la pianificazione FSRS — "
-"pratico prima di un torneo, o per rivedere intensamente senza spostare le"
-" scadenze delle altre carte."
+"**Riscaldarsi senza disturbare il calendario** (pulsante *Allenamento*):"
+" presenta posizioni casuali del mazzo senza toccare la pianificazione "
+"FSRS — pratico prima di un torneo, o per rivedere intensamente senza "
+"spostare le scadenze delle altre carte."
 
-#: ../../source/guide_utilisateur.rst:145
+#: ../../source/guide_utilisateur.rst:154
 msgid ""
 "Voir :ref:`panneau_anki` pour le détail des paramètres (limiter la "
 "séance, taux de rétention visé, réinitialisation d'un paquet)."
@@ -314,11 +335,11 @@ msgstr ""
 "Vedi :ref:`panneau_anki` per il dettaglio dei parametri (limitare la "
 "sessione, tasso di ritenzione mirato, azzeramento di un mazzo)."
 
-#: ../../source/guide_utilisateur.rst:151
+#: ../../source/guide_utilisateur.rst:160
 msgid "Déployer le mode serveur derrière un proxy"
 msgstr "Distribuire la modalità server dietro un proxy"
 
-#: ../../source/guide_utilisateur.rst:153
+#: ../../source/guide_utilisateur.rst:162
 msgid ""
 "Le mode serveur (``blunderdb serve``) expose le moteur de blunderDB en "
 "HTTP + JSON. Il **n'authentifie personne** (`ADR-0005 "
@@ -327,9 +348,9 @@ msgid ""
 "``X-Tenant-ID`` tel qu'il le reçoit, et doit donc toujours être placé "
 "derrière un reverse-proxy qui, lui, authentifie et fixe cet en-tête. Ce "
 "tutoriel déploie l'image publiée derrière un nginx minimal, en "
-"authentification HTTP Basic à un seul tenant — le point de départ le plus"
-" simple, à adapter (SSO, certificats clients, mapping multi-tenant par "
-"utilisateur) selon votre contexte."
+"authentification HTTP Basic à un seul tenant, puis montre comment donner "
+"son tenant à chaque membre. C'est le point de départ le plus simple, à "
+"adapter (SSO, certificats clients) selon votre contexte."
 msgstr ""
 "La modalità server (``blunderdb serve``) espone il motore di blunderDB in"
 " HTTP + JSON. **Non autentica nessuno** (`ADR-0005 "
@@ -338,11 +359,12 @@ msgstr ""
 "-Tenant-ID`` esattamente come la riceve, e deve quindi sempre essere "
 "collocata dietro un reverse proxy che, lui, autentichi e fissi tale "
 "intestazione. Questo tutorial distribuisce l'immagine pubblicata dietro "
-"un nginx minimale, con autenticazione HTTP Basic a un solo tenant — il "
-"punto di partenza più semplice, da adattare (SSO, certificati client, "
-"mappatura multi-tenant per utente) secondo il vostro contesto."
+"un nginx minimale, con autenticazione HTTP Basic a un solo tenant, poi "
+"mostra come assegnare il proprio tenant a ciascun membro. È il punto di "
+"partenza più semplice, da adattare (SSO, certificati client) secondo il "
+"vostro contesto."
 
-#: ../../source/guide_utilisateur.rst:162
+#: ../../source/guide_utilisateur.rst:171
 msgid ""
 "**Lancer le démon**, replié sur ``127.0.0.1`` (jamais exposé directement)"
 " :"
@@ -350,25 +372,77 @@ msgstr ""
 "**Avviare il demone**, ripiegato su ``127.0.0.1`` (mai esposto "
 "direttamente):"
 
-#: ../../source/guide_utilisateur.rst:171
+#: ../../source/guide_utilisateur.rst:180
 msgid "**Créer un fichier de mot de passe** pour l'authentification Basic :"
 msgstr "**Creare un file di password** per l'autenticazione Basic:"
 
-#: ../../source/guide_utilisateur.rst:177
+#: ../../source/guide_utilisateur.rst:186
 msgid ""
 "**Configurer nginx** pour authentifier puis relayer, en fixant ``X"
-"-Tenant-ID`` lui-même — jamais celui envoyé par le client :"
+"-Tenant-ID`` lui-même — jamais celui envoyé par le client. Un certificat "
+"TLS est un prérequis de ce tutoriel et non son objet : obtenez-le au "
+"préalable (Let's Encrypt avec ``certbot``, ou l'autorité de certification"
+" de votre organisation), puis désignez ses deux fichiers ici. Le port 80 "
+"ne sert qu'à rediriger vers HTTPS."
 msgstr ""
-"**Configurare nginx** per autenticare e poi inoltrare, fissando ``X"
-"-Tenant-ID`` esso stesso — mai quello inviato dal client:"
+"**Configurare nginx** per autenticare e poi trasmettere, fissando esso "
+"stesso ``X-Tenant-ID`` — mai quello inviato dal client. Un certificato "
+"TLS è un prerequisito di questo tutorial e non il suo oggetto: procuratevelo"
+" in anticipo (Let's Encrypt con ``certbot``, o l'autorità di "
+"certificazione della vostra organizzazione), poi indicate qui i suoi due "
+"file. La porta 80 serve solo a reindirizzare verso HTTPS."
 
-#: ../../source/guide_utilisateur.rst:195
+#: ../../source/guide_utilisateur.rst:218
+msgid ""
+"Les deux ``proxy_set_header`` se lisent dans cet ordre : effacer d'abord "
+"la valeur reçue du client, injecter ensuite celle du proxy."
+msgstr ""
+"I due ``proxy_set_header`` si leggono in quest'ordine: cancellare prima "
+"il valore ricevuto dal client, iniettare poi quello del proxy."
+
+#: ../../source/guide_utilisateur.rst:221
 msgid ""
 "**Vérifier** avec la sous-commande de santé, qui ne passe pas par le "
 "proxy :"
 msgstr "**Verificare** con il sottocomando di salute, che non passa dal proxy:"
 
-#: ../../source/guide_utilisateur.rst:202
+#: ../../source/guide_utilisateur.rst:228
+msgid ""
+"**Plusieurs membres, un tenant chacun.** Le démon n'accepte dans ``X"
+"-Tenant-ID`` qu'un entier positif : c'est au proxy d'associer le compte "
+"authentifié à cet entier. Un bloc ``map`` placé dans le contexte ``http``"
+" tient cette correspondance, et retombe sur la chaîne vide pour un compte"
+" qui n'y figure pas — jamais sur ``1`` :"
+msgstr ""
+"**Più membri, un tenant ciascuno.** Il demone accetta in ``X-Tenant-ID`` "
+"solo un intero positivo: spetta al proxy associare l'account autenticato"
+" a questo intero. Un blocco ``map`` posto nel contesto ``http`` tiene "
+"questa corrispondenza, e ricade sulla stringa vuota per un account che "
+"non vi figura — mai su ``1``:"
+
+#: ../../source/guide_utilisateur.rst:242
+msgid ""
+"Le ``location`` refuse alors explicitement un compte non mappé, plutôt "
+"que de le laisser atteindre le démon :"
+msgstr ""
+"Il ``location`` rifiuta allora esplicitamente un account non mappato, "
+"piuttosto che lasciarlo raggiungere il demone:"
+
+#: ../../source/guide_utilisateur.rst:258
+msgid ""
+"Un tenant par membre suppose le backend PostgreSQL : sur SQLite, comme au"
+" point 1 de ce tutoriel, le démon ne répond que pour ``X-Tenant-ID: 1`` "
+"et rejette toute autre valeur. Le dépôt fournit ce schéma complet dans "
+"``deploy/nginx-tenant-proxy.conf``, et son équivalent Caddy dans "
+"``deploy/Caddyfile``."
+msgstr ""
+"Un tenant per membro presuppone il backend PostgreSQL: su SQLite, come "
+"al punto 1 di questo tutorial, il demone risponde solo per ``X-Tenant-"
+"ID: 1`` e rifiuta qualsiasi altro valore. Il repository fornisce questo "
+"schema completo in ``deploy/nginx-tenant-proxy.conf``, e il suo "
+"equivalente Caddy in ``deploy/Caddyfile``."
+
+#: ../../source/guide_utilisateur.rst:264
 msgid ""
 "Voir :ref:`headless` pour la surface complète (routes, backend PostgreSQL"
 " multi-tenant avec Row-Level Security, migration depuis SQLite) et "
@@ -378,11 +452,11 @@ msgstr ""
 "PostgreSQL multi-tenant con Row-Level Security, migrazione da SQLite) e "
 "l'immagine Docker pubblicata."
 
-#: ../../source/guide_utilisateur.rst:207
+#: ../../source/guide_utilisateur.rst:269
 msgid "Comment progresser avec blunderDB"
 msgstr "Come migliorare con blunderDB"
 
-#: ../../source/guide_utilisateur.rst:209
+#: ../../source/guide_utilisateur.rst:271
 msgid ""
 "Au-delà des tutoriels ci-dessus, une routine hebdomadaire simple tire le "
 "plus de blunderDB pour progresser :"
@@ -390,7 +464,7 @@ msgstr ""
 "Al di là dei tutorial precedenti, una semplice routine settimanale trae "
 "il massimo da blunderDB per migliorare:"
 
-#: ../../source/guide_utilisateur.rst:212
+#: ../../source/guide_utilisateur.rst:274
 msgid ""
 "**Importer** ses matchs de la semaine (glisser-déposer, ou import de "
 "dossier récursif si plusieurs fichiers) dès que possible après les avoir "
@@ -400,7 +474,7 @@ msgstr ""
 "ricorsivo di cartella se più file) il prima possibile dopo averle giocate"
 " — la memoria del contesto svanisce in fretta."
 
-#: ../../source/guide_utilisateur.rst:216
+#: ../../source/guide_utilisateur.rst:278
 msgid ""
 "**Filtrer les décisions coûteuses** : commande ``bl`` (pires erreurs), ou"
 " panneau Stats filtré sur la période et le type de décision (pions / "
@@ -410,7 +484,7 @@ msgstr ""
 "oppure il pannello Stats filtrato sul periodo e sul tipo di decisione "
 "(pedine / cubo) che pesa di più nel PR."
 
-#: ../../source/guide_utilisateur.rst:220
+#: ../../source/guide_utilisateur.rst:282
 msgid ""
 "**Commenter** chaque position revue : ce qui a été manqué, la structure "
 "en cause. Un commentaire écrit force une explication — une position "
@@ -421,7 +495,7 @@ msgstr ""
 "posizione semplicemente rivista senza una parola si dimentica tanto in "
 "fretta quanto è stata mancata."
 
-#: ../../source/guide_utilisateur.rst:224
+#: ../../source/guide_utilisateur.rst:286
 msgid ""
 "**Constituer un paquet Anki** à partir de ces positions commentées : la "
 "répétition espacée fait revenir les mêmes motifs jusqu'à ce qu'ils "
@@ -431,7 +505,7 @@ msgstr ""
 " ripetizione dilazionata fa tornare gli stessi motivi finché non "
 "diventano riflessi."
 
-#: ../../source/guide_utilisateur.rst:228
+#: ../../source/guide_utilisateur.rst:290
 msgid ""
 "**Suivre le PR par tournoi** dans l'onglet Progression du panneau Stats "
 "(:ref:`stats`) : une courbe qui baisse tournoi après tournoi est le seul "
@@ -441,7 +515,7 @@ msgstr ""
 " (:ref:`stats`): una curva che scende torneo dopo torneo è l'unico "
 "segnale che non mente mai."
 
-#: ../../source/guide_utilisateur.rst:232
+#: ../../source/guide_utilisateur.rst:294
 msgid ""
 "Cette routine ne vaut que si elle est répétée — dix minutes par semaine, "
 "tenues, valent mieux qu'une remise à plat ponctuelle et abandonnée."
@@ -449,11 +523,11 @@ msgstr ""
 "Questa routine vale solo se viene ripetuta — dieci minuti a settimana, "
 "mantenuti, valgono più di una rimessa a punto puntuale e poi abbandonata."
 
-#: ../../source/guide_utilisateur.rst:236
+#: ../../source/guide_utilisateur.rst:298
 msgid "Scénario de démonstration (3 minutes)"
 msgstr "Scenario dimostrativo (3 minuti)"
 
-#: ../../source/guide_utilisateur.rst:238
+#: ../../source/guide_utilisateur.rst:300
 msgid ""
 "Pour présenter blunderDB sans base personnelle, la commande ``demo`` "
 "charge une base d'exemple (positions et matchs fictifs). Le scénario "
@@ -463,7 +537,7 @@ msgstr ""
 " carica un database di esempio (posizioni e partite fittizie). Lo "
 "scenario seguente si svolge in tre minuti:"
 
-#: ../../source/guide_utilisateur.rst:242
+#: ../../source/guide_utilisateur.rst:304
 msgid ""
 "*0:00* — ``demo`` en ligne de commande (ou le bouton correspondant de la "
 "barre d'outils) charge la base d'exemple. Le panneau des matchs "
@@ -473,7 +547,7 @@ msgstr ""
 "barra degli strumenti) carica il database di esempio. Viene mostrato il "
 "pannello delle partite."
 
-#: ../../source/guide_utilisateur.rst:246
+#: ../../source/guide_utilisateur.rst:308
 msgid ""
 "*0:30* — Ouvrir un match (double-clic), parcourir quelques coups aux "
 "flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une "
@@ -483,7 +557,7 @@ msgstr ""
 "frecce, mostrare il pannello Analisi (*CTRL-L*) su una mossa giocata con "
 "un errore visibile."
 
-#: ../../source/guide_utilisateur.rst:250
+#: ../../source/guide_utilisateur.rst:312
 msgid ""
 "*1:30* — Commande ``bl`` : la vue bascule directement sur les pires "
 "erreurs de la base, toutes positions confondues."
@@ -491,7 +565,7 @@ msgstr ""
 "*1:30* — Comando ``bl``: la vista passa direttamente ai peggiori errori "
 "del database, su tutte le posizioni."
 
-#: ../../source/guide_utilisateur.rst:253
+#: ../../source/guide_utilisateur.rst:315
 msgid ""
 "*2:15* — Panneau Anki (*CTRL-K*) : créer un paquet à partir de ces "
 "positions, lancer une carte en *Study* pour montrer le cycle "
@@ -501,7 +575,7 @@ msgstr ""
 "posizioni, avviare una carta in *Study* per mostrare il ciclo "
 "domanda/risposta/valutazione."
 
-#: ../../source/guide_utilisateur.rst:257
+#: ../../source/guide_utilisateur.rst:319
 msgid ""
 "*2:45* — Retour au panneau Stats (*CTRL-D*), onglet Dashboard, pour "
 "montrer où ce travail se lit dans la durée."
@@ -509,52 +583,55 @@ msgstr ""
 "*2:45* — Ritorno al pannello Stats (*CTRL-D*), scheda Dashboard, per "
 "mostrare dove si legge questo lavoro nel tempo."
 
-#: ../../source/guide_utilisateur.rst:261
+#: ../../source/guide_utilisateur.rst:323
 msgid "Créer une nouvelle base de données"
 msgstr "Creare un nuovo database"
 
-#: ../../source/guide_utilisateur.rst:263
+#: ../../source/guide_utilisateur.rst:325
 msgid ""
 "Pour créer une nouvelle base de données, cliquer dans la barre d'outils "
-"sur le bouton \"Nouvelle base de données\". Choisir un chemin où "
-"enregistrer la base de données, ainsi qu'un nom et cliquer sur \"Save\"."
+"sur le bouton *Nouvelle base de données*. Choisir un chemin où "
+"enregistrer la base de données, ainsi qu'un nom, et valider "
+"l'enregistrement dans la fenêtre du système."
 msgstr ""
 "Per creare un nuovo database, fare clic nella barra degli strumenti sul "
-"pulsante «Nuovo database». Scegliere un percorso in cui salvare il "
-"database e un nome, quindi fare clic su «Save»."
+"pulsante *Nuovo database*. Scegliere un percorso in cui salvare il "
+"database e un nome, e confermare il salvataggio nella finestra del "
+"sistema."
 
-#: ../../source/guide_utilisateur.rst:268
+#: ../../source/guide_utilisateur.rst:331
 msgid "L'extension des bases de données blunderDB est *.db*."
 msgstr "L'estensione dei database blunderDB è *.db*."
 
-#: ../../source/guide_utilisateur.rst:271
+#: ../../source/guide_utilisateur.rst:334
 msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
 msgstr "Scorciatoie da tastiera: *CTRL-N*. Comando: ``n``"
 
-#: ../../source/guide_utilisateur.rst:275
+#: ../../source/guide_utilisateur.rst:338
 msgid "Ouvrir une base de donnée existante"
 msgstr "Aprire un database esistente"
 
-#: ../../source/guide_utilisateur.rst:277
+#: ../../source/guide_utilisateur.rst:340
 msgid ""
 "Pour charger une base de données existante, cliquer dans la barre "
-"d'outils sur le bouton \"Ouvrir une base de données\". Choisir le chemin "
-"où se trouve la base de données, choisir le fichier *.db* et cliquer sur "
-"\"Open\"."
+"d'outils sur le bouton *Ouvrir une base de données*. Choisir le chemin où"
+" se trouve la base de données, choisir le fichier *.db* et valider "
+"l'ouverture dans la fenêtre du système."
 msgstr ""
 "Per caricare un database esistente, fare clic nella barra degli strumenti"
-" sul pulsante «Apri un database». Portarsi nel percorso in cui si trova "
-"il database, scegliere il file *.db* e fare clic su «Open»."
+" sul pulsante *Apri database*. Portarsi nel percorso in cui si trova il "
+"database, scegliere il file *.db* e confermare l'apertura nella finestra"
+" del sistema."
 
-#: ../../source/guide_utilisateur.rst:282
+#: ../../source/guide_utilisateur.rst:346
 msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
 msgstr "Scorciatoie da tastiera: *CTRL-O*. Comando: ``o``"
 
-#: ../../source/guide_utilisateur.rst:285
+#: ../../source/guide_utilisateur.rst:349
 msgid "Fusionner une base de données"
 msgstr "Unire un database"
 
-#: ../../source/guide_utilisateur.rst:287
+#: ../../source/guide_utilisateur.rst:351
 msgid ""
 "Pour fusionner une autre base blunderDB dans celle actuellement ouverte, "
 "cliquer dans la barre d'outils sur le bouton **Fusionner une base de "
@@ -564,7 +641,7 @@ msgstr ""
 "nella barra degli strumenti sul pulsante **Unisci un database**. Scegli "
 "il file *.db* e conferma."
 
-#: ../../source/guide_utilisateur.rst:291
+#: ../../source/guide_utilisateur.rst:355
 msgid ""
 "C'est aussi la réponse de blunderDB à la question « comment synchroniser "
 "ma base entre deux machines ? » : une base est **un seul fichier**, deux "
@@ -583,11 +660,11 @@ msgstr ""
 "file sanno e non sanno fare — e per il caso in cui più macchine debbano "
 "lavorare insieme, che è quello della modalità ``serve``."
 
-#: ../../source/guide_utilisateur.rst:299
+#: ../../source/guide_utilisateur.rst:363
 msgid "blunderDB va fusionner intelligemment les deux bases de données:"
 msgstr "blunderDB unirà in modo intelligente i due database:"
 
-#: ../../source/guide_utilisateur.rst:301
+#: ../../source/guide_utilisateur.rst:365
 msgid ""
 "Les positions qui n'existent pas dans la base de données actuelle seront "
 "ajoutées avec leurs analyses et commentaires."
@@ -595,7 +672,7 @@ msgstr ""
 "Le posizioni che non esistono nel database attuale verranno aggiunte con "
 "le loro analisi e i loro commenti."
 
-#: ../../source/guide_utilisateur.rst:304
+#: ../../source/guide_utilisateur.rst:368
 msgid ""
 "Les positions qui existent déjà seront mises à jour: les analyses seront "
 "complétées si manquantes, et les commentaires seront fusionnés (ajout des"
@@ -605,7 +682,7 @@ msgstr ""
 "completate se mancanti e i commenti verranno uniti (aggiungendo i nuovi "
 "commenti senza duplicare quelli esistenti)."
 
-#: ../../source/guide_utilisateur.rst:308
+#: ../../source/guide_utilisateur.rst:372
 msgid ""
 "Un message résumera le nombre de positions ajoutées, fusionnées et "
 "ignorées."
@@ -613,7 +690,7 @@ msgstr ""
 "Un messaggio riepilogherà il numero di posizioni aggiunte, unite e "
 "ignorate."
 
-#: ../../source/guide_utilisateur.rst:310
+#: ../../source/guide_utilisateur.rst:374
 msgid ""
 "Une fusion **ajoute**, elle ne réconcilie pas : rien n'est supprimé de la"
 " base courante parce que la base importée ne le contient pas."
@@ -621,7 +698,7 @@ msgstr ""
 "Un'unione **aggiunge**, non riconcilia: nulla viene rimosso dalla base "
 "corrente perché la base importata non lo contiene."
 
-#: ../../source/guide_utilisateur.rst:314
+#: ../../source/guide_utilisateur.rst:378
 msgid ""
 "L'import nécessite que les deux bases de données aient des versions de "
 "schéma compatibles. Il est possible d'importer une base de données d'une "
@@ -632,7 +709,7 @@ msgstr ""
 "schema compatibili. È possibile importare un database con una versione "
 "inferiore o uguale in un database con una versione superiore."
 
-#: ../../source/guide_utilisateur.rst:319
+#: ../../source/guide_utilisateur.rst:383
 msgid ""
 "L'opération d'import modifie immédiatement la base de données "
 "actuellement ouverte. Il est recommandé de faire une copie de sauvegarde "
@@ -642,11 +719,11 @@ msgstr ""
 "attualmente aperto. Si consiglia di eseguire una copia di backup prima di"
 " importare un altro database."
 
-#: ../../source/guide_utilisateur.rst:326
+#: ../../source/guide_utilisateur.rst:390
 msgid "Editer une position"
 msgstr "Modificare una posizione"
 
-#: ../../source/guide_utilisateur.rst:328
+#: ../../source/guide_utilisateur.rst:392
 msgid ""
 "Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le "
 "panneau de recherche et l'éditeur de position. Editer la position à la "
@@ -656,7 +733,7 @@ msgstr ""
 "pannello di ricerca e l'editor di posizione. Modificare la posizione con "
 "il mouse:"
 
-#: ../../source/guide_utilisateur.rst:332
+#: ../../source/guide_utilisateur.rst:396
 msgid ""
 "cliquer sur les points pour ajouter des pions. Le clic gauche attribue "
 "les pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour"
@@ -670,7 +747,7 @@ msgstr ""
 " pulsante e rilasciare sul punto di arrivo. Fare clic sulla barra per "
 "mettere le pedine sulla barra."
 
-#: ../../source/guide_utilisateur.rst:338
+#: ../../source/guide_utilisateur.rst:402
 msgid ""
 "pour effacer la position, double-clic sur une zone vide en dehors du "
 "board ou appuyer sur la touche *RETOUR ARRIERE*."
@@ -678,7 +755,7 @@ msgstr ""
 "per cancellare la posizione, fare doppio clic su un'area vuota "
 "all'esterno del board oppure premere il tasto *BACKSPACE*."
 
-#: ../../source/guide_utilisateur.rst:341
+#: ../../source/guide_utilisateur.rst:405
 msgid ""
 "pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour "
 "envoyer le cube vers le joueur 2, click droit sur le cube."
@@ -686,7 +763,7 @@ msgstr ""
 "per inviare il cubo al giocatore 1, fare clic sinistro sul cubo. Per "
 "inviare il cubo al giocatore 2, fare clic destro sul cubo."
 
-#: ../../source/guide_utilisateur.rst:344
+#: ../../source/guide_utilisateur.rst:408
 msgid ""
 "pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
 " dés."
@@ -694,7 +771,7 @@ msgstr ""
 "per indicare il giocatore che deve muovere, fare clic sull'area dei dadi "
 "prevista."
 
-#: ../../source/guide_utilisateur.rst:346
+#: ../../source/guide_utilisateur.rst:410
 msgid ""
 "pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
 "droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
@@ -704,7 +781,7 @@ msgstr ""
 "clic destro per diminuire il valore di un dado. Se le facce dei dadi sono"
 " vuote, significa che la posizione è una decisione di cubo."
 
-#: ../../source/guide_utilisateur.rst:350
+#: ../../source/guide_utilisateur.rst:414
 msgid ""
 "pour éditer le score des joueurs, clic gauche pour augmenter le score, "
 "clic droit pour réduire le score."
@@ -712,7 +789,7 @@ msgstr ""
 "per modificare il punteggio dei giocatori, clic sinistro per aumentare il"
 " punteggio, clic destro per ridurre il punteggio."
 
-#: ../../source/guide_utilisateur.rst:353
+#: ../../source/guide_utilisateur.rst:417
 msgid ""
 "La saisie de la position avec la souris pour les pions se fait de la même"
 " manière que dans XG."
@@ -720,31 +797,31 @@ msgstr ""
 "L'inserimento della posizione con il mouse per le pedine avviene nello "
 "stesso modo che in XG."
 
-#: ../../source/guide_utilisateur.rst:357
+#: ../../source/guide_utilisateur.rst:421
 msgid "Ajouter une position à la base de données"
 msgstr "Aggiungere una posizione al database"
 
-#: ../../source/guide_utilisateur.rst:359
+#: ../../source/guide_utilisateur.rst:423
 msgid "Après l'édition de la position, le panneau de recherche est ouvert."
 msgstr "Dopo la modifica della posizione, il pannello di ricerca è aperto."
 
-#: ../../source/guide_utilisateur.rst:361
+#: ../../source/guide_utilisateur.rst:425
 msgid ""
 "Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou "
-"appuyer dans la barre d'outils sur le bouton \"Save Position\"."
+"appuyer dans la barre d'outils sur le bouton *Enregistrer la position*."
 msgstr ""
 "Per salvare la posizione ottenuta in precedenza, premere *CTRL-S* oppure "
-"fare clic sul pulsante \"Save Position\" nella barra degli strumenti."
+"fare clic sul pulsante *Salva posizione* nella barra degli strumenti."
 
-#: ../../source/guide_utilisateur.rst:364
+#: ../../source/guide_utilisateur.rst:428
 msgid "Ouvrir la ligne de commande et exécuter: ``w``"
 msgstr "Aprire la riga di comando ed eseguire: ``w``"
 
-#: ../../source/guide_utilisateur.rst:367
+#: ../../source/guide_utilisateur.rst:431
 msgid "Etiqueter une position"
 msgstr "Etichettare una posizione"
 
-#: ../../source/guide_utilisateur.rst:369
+#: ../../source/guide_utilisateur.rst:433
 msgid ""
 "Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
 "commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande"
@@ -754,47 +831,47 @@ msgstr ""
 "comando premendo *SPAZIO*, digitare ``#toto`` e confermare il comando "
 "premendo *INVIO*."
 
-#: ../../source/guide_utilisateur.rst:373
+#: ../../source/guide_utilisateur.rst:437
 msgid "Supprimer une position"
 msgstr "Eliminare una posizione"
 
-#: ../../source/guide_utilisateur.rst:375
+#: ../../source/guide_utilisateur.rst:439
 msgid ""
 "Pour supprimer la position courante de la base de données, faire *Del* ou"
-" clicker dans la barre d'outils sur le bouton \"Delete Position\""
+" cliquer dans la barre d'outils sur le bouton *Supprimer la position*."
 msgstr ""
 "Per eliminare la posizione corrente dal database, premere *Del* oppure "
-"fare clic sul pulsante \"Delete Position\" nella barra degli strumenti."
+"fare clic sul pulsante *Elimina posizione* nella barra degli strumenti."
 
-#: ../../source/guide_utilisateur.rst:378
+#: ../../source/guide_utilisateur.rst:442
 msgid "En ligne de commande, exécuter ``d``."
 msgstr "Nella riga di comando, eseguire ``d``."
 
-#: ../../source/guide_utilisateur.rst:380
+#: ../../source/guide_utilisateur.rst:444
 msgid ""
-"La suppression de la position est définitive et ne nécessite aucune "
-"confirmation de la part de l'utilisateur."
+"La suppression de la position est définitive ; une confirmation est "
+"demandée avant."
 msgstr ""
-"L'eliminazione della posizione è definitiva e non richiede alcuna "
-"conferma da parte dell'utente."
+"L'eliminazione della posizione è definitiva; viene richiesta una conferma"
+" prima di procedere."
 
-#: ../../source/guide_utilisateur.rst:384
+#: ../../source/guide_utilisateur.rst:448
 msgid "Import une position depuis XG"
 msgstr "Importare una posizione da XG"
 
-#: ../../source/guide_utilisateur.rst:386
+#: ../../source/guide_utilisateur.rst:450
 msgid "Pour importer une position directement depuis XG,"
 msgstr "Per importare una posizione direttamente da XG,"
 
-#: ../../source/guide_utilisateur.rst:388
+#: ../../source/guide_utilisateur.rst:452
 msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
 msgstr "visualizzare in XG la posizione da importare e premere *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:390
+#: ../../source/guide_utilisateur.rst:454
 msgid "afficher blunderDB et appuyer *CTRL-V*."
 msgstr "aprire blunderDB e premere *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:393
+#: ../../source/guide_utilisateur.rst:457
 msgid ""
 "Le collage automatique détecte le format de la source (XG, GNUbg, "
 "BGBlitz)."
@@ -802,55 +879,55 @@ msgstr ""
 "L'incolla automatico rileva il formato della sorgente (XG, GNUbg, "
 "BGBlitz)."
 
-#: ../../source/guide_utilisateur.rst:396
+#: ../../source/guide_utilisateur.rst:460
 msgid "Importer un match"
 msgstr "Importare un match"
 
-#: ../../source/guide_utilisateur.rst:398
+#: ../../source/guide_utilisateur.rst:462
 msgid "blunderDB peut importer des matchs depuis différentes sources."
 msgstr "blunderDB può importare match da diverse sorgenti."
 
-#: ../../source/guide_utilisateur.rst:400
+#: ../../source/guide_utilisateur.rst:464
 msgid "**Formats supportés:**"
 msgstr "**Formati supportati:**"
 
-#: ../../source/guide_utilisateur.rst:402
+#: ../../source/guide_utilisateur.rst:466
 msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
 msgstr "eXtreme Gammon (XG): file *.xg* e *.xgp* (posizioni)"
 
-#: ../../source/guide_utilisateur.rst:403
+#: ../../source/guide_utilisateur.rst:467
 msgid "GNUbg: fichiers *.sgf*"
 msgstr "GNUbg: file *.sgf*"
 
-#: ../../source/guide_utilisateur.rst:404
+#: ../../source/guide_utilisateur.rst:468
 msgid "Jellyfish: fichiers *.mat* et *.txt*"
 msgstr "Jellyfish: file *.mat* e *.txt*"
 
-#: ../../source/guide_utilisateur.rst:405
+#: ../../source/guide_utilisateur.rst:469
 msgid "BGBlitz: fichiers *.bgf* et *.txt*"
 msgstr "BGBlitz: file *.bgf* e *.txt*"
 
-#: ../../source/guide_utilisateur.rst:407
+#: ../../source/guide_utilisateur.rst:471
 msgid "**Pour importer un ou plusieurs fichiers de match:**"
 msgstr "**Per importare uno o più file di match:**"
 
-#: ../../source/guide_utilisateur.rst:409
+#: ../../source/guide_utilisateur.rst:473
 msgid ""
-"Appuyer sur *CTRL-I* ou cliquer sur le bouton \"Import\" dans la barre "
-"d'outils."
+"Appuyer sur *CTRL-I* ou cliquer sur le bouton *Importer une position ou "
+"un match* dans la barre d'outils."
 msgstr ""
-"Premere *CTRL-I* oppure fare clic sul pulsante \"Import\" nella barra "
-"degli strumenti."
+"Premere *CTRL-I* oppure fare clic sul pulsante *Importa posizione o "
+"match* nella barra degli strumenti."
 
-#: ../../source/guide_utilisateur.rst:411
+#: ../../source/guide_utilisateur.rst:476
 msgid "Sélectionner un ou plusieurs fichiers à importer."
 msgstr "Selezionare uno o più file da importare."
 
-#: ../../source/guide_utilisateur.rst:413
+#: ../../source/guide_utilisateur.rst:478
 msgid "blunderDB détecte automatiquement le format et importe le match."
 msgstr "blunderDB rileva automaticamente il formato e importa il match."
 
-#: ../../source/guide_utilisateur.rst:415
+#: ../../source/guide_utilisateur.rst:480
 msgid ""
 "Une fenêtre de progression affiche le nombre de fichiers importés, "
 "échoués et ignorés (doublons), puis un **compte rendu d'import**."
@@ -858,11 +935,11 @@ msgstr ""
 "Una finestra di avanzamento mostra quanti file sono stati importati, "
 "falliti e ignorati (duplicati), poi un **resoconto d'importazione**."
 
-#: ../../source/guide_utilisateur.rst:419
+#: ../../source/guide_utilisateur.rst:484
 msgid "Commande: ``i``"
 msgstr "Comando: ``i``"
 
-#: ../../source/guide_utilisateur.rst:422
+#: ../../source/guide_utilisateur.rst:487
 msgid ""
 "blunderDB détecte automatiquement les doublons et empêche l'import d'un "
 "match déjà présent dans la base de données."
@@ -870,11 +947,11 @@ msgstr ""
 "blunderDB rileva automaticamente i duplicati e impedisce l'importazione "
 "di un match già presente nel database."
 
-#: ../../source/guide_utilisateur.rst:426
+#: ../../source/guide_utilisateur.rst:491
 msgid "Importer un dossier de matchs"
 msgstr "Importare una cartella di match"
 
-#: ../../source/guide_utilisateur.rst:428
+#: ../../source/guide_utilisateur.rst:493
 msgid ""
 "Pour importer récursivement tous les fichiers de matchs contenus dans un "
 "dossier et ses sous-dossiers:"
@@ -882,19 +959,19 @@ msgstr ""
 "Per importare ricorsivamente tutti i file di match contenuti in una "
 "cartella e nelle sue sottocartelle:"
 
-#: ../../source/guide_utilisateur.rst:431
+#: ../../source/guide_utilisateur.rst:496
 msgid ""
-"Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la"
-" barre d'outils."
+"Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la "
+"barre d'outils."
 msgstr ""
-"Premere *CTRL-SHIFT-F* oppure fare clic sul pulsante corrispondente nella"
-" barra degli strumenti."
+"Premere *CTRL-MAIUSC-F* oppure fare clic sul pulsante corrispondente "
+"nella barra degli strumenti."
 
-#: ../../source/guide_utilisateur.rst:434
+#: ../../source/guide_utilisateur.rst:499
 msgid "Sélectionner le dossier contenant les fichiers de matchs."
 msgstr "Selezionare la cartella contenente i file di match."
 
-#: ../../source/guide_utilisateur.rst:436
+#: ../../source/guide_utilisateur.rst:501
 msgid ""
 "blunderDB collecte et importe automatiquement tous les fichiers reconnus "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
@@ -902,11 +979,11 @@ msgstr ""
 "blunderDB raccoglie e importa automaticamente tutti i file riconosciuti "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
-#: ../../source/guide_utilisateur.rst:442
+#: ../../source/guide_utilisateur.rst:507
 msgid "Le compte rendu d'import"
 msgstr "Il resoconto d'importazione"
 
-#: ../../source/guide_utilisateur.rst:444
+#: ../../source/guide_utilisateur.rst:509
 msgid ""
 "Un import se termine sur un compte rendu de **ce qu'il vient "
 "d'apporter**, et non sur un simple décompte de fichiers lus :"
@@ -914,7 +991,7 @@ msgstr ""
 "Un'importazione termina con un resoconto di **ciò che ha appena "
 "portato**, e non con un semplice conteggio dei file letti:"
 
-#: ../../source/guide_utilisateur.rst:447
+#: ../../source/guide_utilisateur.rst:512
 msgid ""
 "les positions nouvelles, et parmi elles celles que le logiciel d'origine "
 "avait marquées pour étude ;"
@@ -922,7 +999,7 @@ msgstr ""
 "le posizioni nuove e, tra queste, quelle che il programma di origine "
 "aveva segnato per lo studio;"
 
-#: ../../source/guide_utilisateur.rst:449
+#: ../../source/guide_utilisateur.rst:514
 msgid ""
 "le **PR de cet import** — le même indicateur que les statistiques, "
 "calculé sur ce seul lot. Il porte sur vos décisions lorsque la base "
@@ -935,7 +1012,7 @@ msgstr ""
 "d'identità), entrambi i giocatori altrimenti, e il resoconto dice quale "
 "dei due;"
 
-#: ../../source/guide_utilisateur.rst:453
+#: ../../source/guide_utilisateur.rst:518
 msgid ""
 "les positions qu'aucun moteur n'a évaluées, avec un bouton pour lancer "
 "l'analyse ;"
@@ -943,7 +1020,7 @@ msgstr ""
 "le posizioni che nessun motore ha valutato, con un pulsante per avviare "
 "l'analisi;"
 
-#: ../../source/guide_utilisateur.rst:455
+#: ../../source/guide_utilisateur.rst:520
 msgid ""
 "les **cinq décisions les plus coûteuses**, cliquables : un clic ouvre la "
 "position."
@@ -951,7 +1028,7 @@ msgstr ""
 "le **cinque decisioni più costose**, cliccabili: un clic apre la "
 "posizione."
 
-#: ../../source/guide_utilisateur.rst:458
+#: ../../source/guide_utilisateur.rst:523
 msgid ""
 "Un PR nul sur zéro décision n'est pas une partie parfaite mais l'absence "
 "d'analyse : le compte rendu l'écrit ainsi."
@@ -959,7 +1036,7 @@ msgstr ""
 "Un PR nullo su zero decisioni non è una partita perfetta ma l'assenza di "
 "analisi: il resoconto lo scrive così."
 
-#: ../../source/guide_utilisateur.rst:461
+#: ../../source/guide_utilisateur.rst:526
 msgid ""
 "Chaque import est enregistré comme un **lot**. La ligne de commande les "
 "retrouve après coup :"
@@ -967,7 +1044,7 @@ msgstr ""
 "Ogni importazione è registrata come un **lotto**. La riga di comando li "
 "ritrova in seguito:"
 
-#: ../../source/guide_utilisateur.rst:469
+#: ../../source/guide_utilisateur.rst:534
 msgid ""
 "La moitié mesurée du compte rendu — positions sans analyse, PR, pires "
 "décisions — est recalculée à chaque consultation. Un lot dont les "
@@ -979,11 +1056,11 @@ msgstr ""
 "sono state analizzate nel frattempo restituisce quindi le cifre di oggi, "
 "non quelle del giorno dell'importazione."
 
-#: ../../source/guide_utilisateur.rst:475
+#: ../../source/guide_utilisateur.rst:540
 msgid "Glisser-déposer"
 msgstr "Trascina e rilascia"
 
-#: ../../source/guide_utilisateur.rst:477
+#: ../../source/guide_utilisateur.rst:542
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
@@ -991,7 +1068,7 @@ msgstr ""
 "blunderDB supporta il trascina e rilascia. È possibile trascinare e "
 "rilasciare sulla finestra di blunderDB:"
 
-#: ../../source/guide_utilisateur.rst:480
+#: ../../source/guide_utilisateur.rst:545
 msgid ""
 "des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
 "*.txt*, *.bgf*) pour les importer,"
@@ -999,47 +1076,47 @@ msgstr ""
 "file di match o di posizione (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
 "*.bgf*) per importarli,"
 
-#: ../../source/guide_utilisateur.rst:483
+#: ../../source/guide_utilisateur.rst:548
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
 msgstr "file di database (*.db*) per aprirli o unirli con il database corrente,"
 
-#: ../../source/guide_utilisateur.rst:486
+#: ../../source/guide_utilisateur.rst:551
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
 msgstr "cartelle per importare ricorsivamente tutti i file che contengono."
 
-#: ../../source/guide_utilisateur.rst:489
+#: ../../source/guide_utilisateur.rst:554
 msgid "Naviguer dans un match"
 msgstr "Navigare in un match"
 
-#: ../../source/guide_utilisateur.rst:491
+#: ../../source/guide_utilisateur.rst:556
 msgid "Pour naviguer dans un match importé:"
 msgstr "Per navigare in un match importato:"
 
-#: ../../source/guide_utilisateur.rst:493
+#: ../../source/guide_utilisateur.rst:558
 msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
 msgstr "Aprire il pannello dei match con *CTRL-Tab*."
 
-#: ../../source/guide_utilisateur.rst:495
+#: ../../source/guide_utilisateur.rst:560
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
 msgstr "Fare doppio clic su un match oppure premere *INVIO*."
 
-#: ../../source/guide_utilisateur.rst:497
+#: ../../source/guide_utilisateur.rst:562
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr "Usare i tasti *SINISTRA* / *DESTRA* per scorrere le mosse."
 
-#: ../../source/guide_utilisateur.rst:499
+#: ../../source/guide_utilisateur.rst:564
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr "Usare *PageUp* / *PageDown* per passare da una partita all'altra."
 
-#: ../../source/guide_utilisateur.rst:501
+#: ../../source/guide_utilisateur.rst:566
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "Premere *CTRL-L* per visualizzare l'analisi."
 
-#: ../../source/guide_utilisateur.rst:503
+#: ../../source/guide_utilisateur.rst:568
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
@@ -1047,11 +1124,11 @@ msgstr ""
 "Premere *d* per passare dall'analisi delle mosse di pedine a quella del "
 "cubo."
 
-#: ../../source/guide_utilisateur.rst:506
+#: ../../source/guide_utilisateur.rst:571
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
 msgstr "Scorciatoia: *CTRL-Tab* per aprire il pannello dei match. Comando: ``m``"
 
-#: ../../source/guide_utilisateur.rst:510
+#: ../../source/guide_utilisateur.rst:575
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
@@ -1061,15 +1138,15 @@ msgstr ""
 "su un match, l'ultima posizione consultata viene ripristinata "
 "automaticamente."
 
-#: ../../source/guide_utilisateur.rst:515
+#: ../../source/guide_utilisateur.rst:580
 msgid "Gérer le panneau des matchs"
 msgstr "Gestire il pannello dei match"
 
-#: ../../source/guide_utilisateur.rst:517
+#: ../../source/guide_utilisateur.rst:582
 msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
 msgstr "Il pannello dei match (*CTRL-Tab*) consente di:"
 
-#: ../../source/guide_utilisateur.rst:519
+#: ../../source/guide_utilisateur.rst:584
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
@@ -1077,7 +1154,7 @@ msgstr ""
 "elencare tutti i match importati (ordinati dal più recente al più "
 "vecchio),"
 
-#: ../../source/guide_utilisateur.rst:521
+#: ../../source/guide_utilisateur.rst:586
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
@@ -1085,29 +1162,29 @@ msgstr ""
 "ordinare i match per colonna (giocatore 1, giocatore 2, data, lunghezza "
 "del match, torneo),"
 
-#: ../../source/guide_utilisateur.rst:524
+#: ../../source/guide_utilisateur.rst:589
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
 msgstr "modificare i nomi dei giocatori o la data facendo doppio clic sui campi,"
 
-#: ../../source/guide_utilisateur.rst:526
+#: ../../source/guide_utilisateur.rst:591
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "scambiare il giocatore 1 e il giocatore 2 usando il pulsante di scambio,"
 
-#: ../../source/guide_utilisateur.rst:528
+#: ../../source/guide_utilisateur.rst:593
 msgid "assigner un match à un tournoi,"
 msgstr "assegnare un match a un torneo,"
 
-#: ../../source/guide_utilisateur.rst:530
+#: ../../source/guide_utilisateur.rst:595
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "eliminare un match usando il tasto *Del*."
 
-#: ../../source/guide_utilisateur.rst:535
+#: ../../source/guide_utilisateur.rst:600
 msgid "Gérer les collections"
 msgstr "Gestire le collezioni"
 
-#: ../../source/guide_utilisateur.rst:537
+#: ../../source/guide_utilisateur.rst:602
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
@@ -1117,35 +1194,39 @@ msgstr ""
 "personalizzati. Per accedere al pannello delle collezioni, premere "
 "*CTRL-B*."
 
-#: ../../source/guide_utilisateur.rst:540
+#: ../../source/guide_utilisateur.rst:605
 msgid "**Créer une collection:**"
 msgstr "**Creare una collezione:**"
 
-#: ../../source/guide_utilisateur.rst:542
+#: ../../source/guide_utilisateur.rst:607
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "Aprire il pannello delle collezioni (*CTRL-B*)."
 
-#: ../../source/guide_utilisateur.rst:544
-msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
-msgstr "Inserire il nome della nuova collezione e fare clic su \"Add\"."
+#: ../../source/guide_utilisateur.rst:609
+msgid ""
+"Saisir le nom de la nouvelle collection dans le champ *Nouvelle "
+"collection…* en bas du panneau, puis valider avec *ENTREE*."
+msgstr ""
+"Digitare il nome della nuova collezione nel campo *Nuova collezione…* in"
+" fondo al pannello, quindi confermare con *INVIO*."
 
-#: ../../source/guide_utilisateur.rst:546
+#: ../../source/guide_utilisateur.rst:612
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**Aggiungere posizioni a una collezione:**"
 
-#: ../../source/guide_utilisateur.rst:548
+#: ../../source/guide_utilisateur.rst:614
 msgid "Sélectionner les positions souhaitées."
 msgstr "Selezionare le posizioni desiderate."
 
-#: ../../source/guide_utilisateur.rst:550
+#: ../../source/guide_utilisateur.rst:616
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "Aggiungerle alla collezione dal pannello delle collezioni."
 
-#: ../../source/guide_utilisateur.rst:552
+#: ../../source/guide_utilisateur.rst:618
 msgid "**Parcourir une collection:**"
 msgstr "**Sfogliare una collezione:**"
 
-#: ../../source/guide_utilisateur.rst:554
+#: ../../source/guide_utilisateur.rst:620
 msgid ""
 "Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
 "des collections et des positions peut être modifié par glisser-déposer."
@@ -1154,15 +1235,15 @@ msgstr ""
 "L'ordine delle collezioni e delle posizioni può essere modificato tramite"
 " trascina e rilascia."
 
-#: ../../source/guide_utilisateur.rst:559
+#: ../../source/guide_utilisateur.rst:625
 msgid "Commande: ``coll``"
 msgstr "Comando: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:562
+#: ../../source/guide_utilisateur.rst:628
 msgid "Gérer les tournois"
 msgstr "Gestire i tornei"
 
-#: ../../source/guide_utilisateur.rst:564
+#: ../../source/guide_utilisateur.rst:630
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
@@ -1170,23 +1251,27 @@ msgstr ""
 "I tornei consentono di organizzare i match importati per evento. Per "
 "accedere al pannello dei tornei, premere *CTRL-Y*."
 
-#: ../../source/guide_utilisateur.rst:567
+#: ../../source/guide_utilisateur.rst:633
 msgid "**Créer un tournoi:**"
 msgstr "**Creare un torneo:**"
 
-#: ../../source/guide_utilisateur.rst:569
+#: ../../source/guide_utilisateur.rst:635
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "Aprire il pannello dei tornei (*CTRL-Y*)."
 
-#: ../../source/guide_utilisateur.rst:571
-msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
-msgstr "Fare clic su \"Add\" e inserire il nome del torneo."
+#: ../../source/guide_utilisateur.rst:637
+msgid ""
+"Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider "
+"avec *ENTREE*."
+msgstr ""
+"Digitare il nome del torneo nel campo *Nuovo torneo…*, quindi confermare"
+" con *INVIO*."
 
-#: ../../source/guide_utilisateur.rst:573
+#: ../../source/guide_utilisateur.rst:640
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**Assegnare un match a un torneo:**"
 
-#: ../../source/guide_utilisateur.rst:575
+#: ../../source/guide_utilisateur.rst:642
 msgid ""
 "Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
 "la colonne tournoi pour assigner un match."
@@ -1194,11 +1279,11 @@ msgstr ""
 "Dal pannello dei match (*CTRL-Tab*), usare il menu a discesa della "
 "colonna torneo per assegnare un match."
 
-#: ../../source/guide_utilisateur.rst:579
+#: ../../source/guide_utilisateur.rst:646
 msgid "Afficher les statistiques de performance"
 msgstr "Visualizzare le statistiche di performance"
 
-#: ../../source/guide_utilisateur.rst:581
+#: ../../source/guide_utilisateur.rst:648
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
@@ -1206,13 +1291,13 @@ msgstr ""
 "Il pannello Stats consente di visualizzare i propri indicatori di "
 "performance (PR e costo MWC) a partire dalle posizioni importate."
 
-#: ../../source/guide_utilisateur.rst:584
+#: ../../source/guide_utilisateur.rst:651
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr ""
 "Premere *CTRL-D* oppure fare clic sulla scheda Stats nel pannello "
 "inferiore."
 
-#: ../../source/guide_utilisateur.rst:586
+#: ../../source/guide_utilisateur.rst:653
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
@@ -1220,7 +1305,7 @@ msgstr ""
 "Usare la barra dei filtri per limitare l'analisi per giocatore, torneo, "
 "intervallo di date, tipo di decisione o lunghezza del match."
 
-#: ../../source/guide_utilisateur.rst:589
+#: ../../source/guide_utilisateur.rst:656
 msgid ""
 "Cliquer sur un indicateur pour accéder directement aux positions "
 "correspondantes."
@@ -1228,29 +1313,29 @@ msgstr ""
 "Fare clic su un indicatore per accedere direttamente alle posizioni "
 "corrispondenti."
 
-#: ../../source/guide_utilisateur.rst:592
+#: ../../source/guide_utilisateur.rst:659
 msgid "Évaluer une position (panneau Eval)"
 msgstr "Valutare una posizione (pannello Eval)"
 
-#: ../../source/guide_utilisateur.rst:594
+#: ../../source/guide_utilisateur.rst:661
 msgid ""
 "Le panneau Eval évalue n'importe quelle position — pas seulement une "
 "course. Sur une position de bearoff pur, il calcule l'EPC (Effective Pip "
-"Count) et les autres statistiques de bearoff ; sur toute autre position, "
-"l'évaluateur embarqué gammonNet fournit les coups candidats ou la "
-"décision de videau, hors ligne, sans XG ni GNUbg."
+"Count, voir le :ref:`glossaire`) et les autres statistiques de bearoff ; "
+"sur toute autre position, l'évaluateur embarqué gammonNet fournit les "
+"coups candidats ou la décision de videau, hors ligne, sans XG ni GNUbg."
 msgstr ""
 "Il pannello Eval valuta qualsiasi posizione — non solo una corsa. Su una "
-"posizione di bearoff puro, calcola l'EPC (Effective Pip Count) e le altre"
-" statistiche di bearoff; su qualsiasi altra posizione, il valutatore "
-"integrato gammonNet fornisce le mosse candidate o la decisione di cubo, "
-"offline, senza XG né GNUbg."
+"posizione di bearoff puro, calcola l'EPC (Effective Pip Count, vedi il "
+":ref:`glossaire`) e le altre statistiche di bearoff; su qualsiasi altra "
+"posizione, il valutatore integrato gammonNet fornisce le mosse candidate"
+" o la decisione di cubo, offline, senza XG né GNUbg."
 
-#: ../../source/guide_utilisateur.rst:600
+#: ../../source/guide_utilisateur.rst:668
 msgid "Panneau Eval sur une décision de coups de pions"
 msgstr "Pannello Eval su una decisione di mossa di pedine"
 
-#: ../../source/guide_utilisateur.rst:604
+#: ../../source/guide_utilisateur.rst:672
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
@@ -1258,7 +1343,7 @@ msgstr ""
 "Il pannello Eval: probabilità di vittoria/gammon/backgammon, equità ed "
 "errore di ogni mossa candidata, calcolate da gammonNet."
 
-#: ../../source/guide_utilisateur.rst:607
+#: ../../source/guide_utilisateur.rst:675
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur, ou"
 " exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau vierge,"
@@ -1268,19 +1353,19 @@ msgstr ""
 "oppure eseguire il comando ``epc``: il pannello si apre su un tabellone "
 "vuoto, pronto per la modifica."
 
-#: ../../source/guide_utilisateur.rst:611
+#: ../../source/guide_utilisateur.rst:679
 msgid ""
 "Pour évaluer la position déjà affichée (une position de la bibliothèque, "
 "ou celle d'un match en cours de revue) plutôt qu'un plateau vierge, clic "
-"droit sur le plateau puis \"Evaluate this position\" — la position "
-"affichée est envoyée telle quelle dans le panneau Eval."
+"droit sur le plateau puis *Évaluer cette position* — la position affichée"
+" est envoyée telle quelle dans le panneau Eval."
 msgstr ""
 "Per valutare la posizione già mostrata (una posizione della libreria, o "
 "quella di una partita in corso di revisione) piuttosto che un tabellone "
-"vuoto, clic destro sul tabellone poi «Evaluate this position» — la "
+"vuoto, clic destro sul tabellone poi *Valuta questa posizione* — la "
 "posizione mostrata viene inviata così com'è al pannello Eval."
 
-#: ../../source/guide_utilisateur.rst:616
+#: ../../source/guide_utilisateur.rst:684
 msgid ""
 "Le plateau entier s'édite au clic ou au clavier : pions, dés, score, "
 "position du videau, joueur au trait. Éditer uniquement les pions du jan "
@@ -1291,7 +1376,7 @@ msgstr ""
 "le pedine del jan (ultimi 6 punti) su entrambi i lati pone la posizione "
 "in regime di bearoff."
 
-#: ../../source/guide_utilisateur.rst:620
+#: ../../source/guide_utilisateur.rst:688
 msgid ""
 "Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre "
 "moyen de lancers, écart type, pip count et wastage, la probabilité de "
@@ -1307,7 +1392,7 @@ msgstr ""
 "candidate classificate per equità; senza dadi, la decisione di cubo. Vedi"
 " la sezione «Metodologia e ipotesi del pannello Eval» del manuale."
 
-#: ../../source/guide_utilisateur.rst:627
+#: ../../source/guide_utilisateur.rst:695
 msgid ""
 "Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
 "résultats sont masqués à chaque modification et se révèlent zone par "
@@ -1317,15 +1402,15 @@ msgstr ""
 "risultati vengono nascosti a ogni modifica e si rivelano zona per zona, "
 "con un clic."
 
-#: ../../source/guide_utilisateur.rst:632
+#: ../../source/guide_utilisateur.rst:700
 msgid "Le panneau fonctionne pour les deux joueurs simultanément."
 msgstr "Il pannello funziona per entrambi i giocatori simultaneamente."
 
-#: ../../source/guide_utilisateur.rst:635
+#: ../../source/guide_utilisateur.rst:703
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Visualizzare l'analisi di una posizione importata da XG"
 
-#: ../../source/guide_utilisateur.rst:637
+#: ../../source/guide_utilisateur.rst:705
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -1333,7 +1418,7 @@ msgstr ""
 "Se una posizione analizzata da XG, GNUbg o BGBlitz è stata importata in "
 "blunderDB, l'analisi può essere visualizzata premendo *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:640
+#: ../../source/guide_utilisateur.rst:708
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -1349,7 +1434,7 @@ msgstr ""
 " vittoria, gammon e backgammon del giocatore, le probabilità di vittoria,"
 " gammon e backgammon dell'avversario, il livello di analisi."
 
-#: ../../source/guide_utilisateur.rst:647
+#: ../../source/guide_utilisateur.rst:715
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -1358,7 +1443,7 @@ msgstr ""
 "il costo di ogni decisione, oltre alle probabilità di vittoria della "
 "posizione."
 
-#: ../../source/guide_utilisateur.rst:650
+#: ../../source/guide_utilisateur.rst:718
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -1368,7 +1453,7 @@ msgstr ""
 "esempio XG e GNUbg), una colonna aggiuntiva indica il motore di origine "
 "di ogni analisi."
 
-#: ../../source/guide_utilisateur.rst:654
+#: ../../source/guide_utilisateur.rst:722
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
@@ -1378,7 +1463,7 @@ msgstr ""
 " evidenziata nell'elenco delle mosse. Se la posizione è stata incontrata "
 "in più match, vengono indicate tutte le mosse giocate."
 
-#: ../../source/guide_utilisateur.rst:659
+#: ../../source/guide_utilisateur.rst:727
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -1386,27 +1471,27 @@ msgstr ""
 "Facendo clic su una mossa nel pannello di analisi, le frecce "
 "corrispondenti vengono visualizzate sul board."
 
-#: ../../source/guide_utilisateur.rst:663
+#: ../../source/guide_utilisateur.rst:731
 msgid "Exporter une position vers XG"
 msgstr "Esportare una posizione verso XG"
 
-#: ../../source/guide_utilisateur.rst:665
+#: ../../source/guide_utilisateur.rst:733
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "Per esportare una posizione da blunderDB verso XG,"
 
-#: ../../source/guide_utilisateur.rst:667
+#: ../../source/guide_utilisateur.rst:735
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "visualizzare in blunderDB la posizione da esportare e premere *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:669
+#: ../../source/guide_utilisateur.rst:737
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "aprire XG e premere *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:672
+#: ../../source/guide_utilisateur.rst:740
 msgid "Visualiser les différentes positions"
 msgstr "Visualizzare le diverse posizioni"
 
-#: ../../source/guide_utilisateur.rst:674
+#: ../../source/guide_utilisateur.rst:742
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -1417,7 +1502,7 @@ msgstr ""
 "tasti *SINISTRA* e *DESTRA*. Il tasto *HOME* consente di andare alla "
 "prima posizione. Il tasto *FINE* consente di andare all'ultima posizione."
 
-#: ../../source/guide_utilisateur.rst:678
+#: ../../source/guide_utilisateur.rst:746
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -1425,19 +1510,19 @@ msgstr ""
 "Per visualizzare il bearoff a sinistra, premere *CTRL-SINISTRA*. Per "
 "visualizzare il bearoff a destra, premere *CTRL-DESTRA*."
 
-#: ../../source/guide_utilisateur.rst:682
+#: ../../source/guide_utilisateur.rst:750
 msgid "Rechercher des positions selon des critères"
 msgstr "Cercare posizioni in base a criteri"
 
-#: ../../source/guide_utilisateur.rst:684
+#: ../../source/guide_utilisateur.rst:752
 msgid "Pour rechercher des types de positions,"
 msgstr "Per cercare tipi di posizioni,"
 
-#: ../../source/guide_utilisateur.rst:686
+#: ../../source/guide_utilisateur.rst:754
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "premere *TAB* per aprire il pannello di ricerca,"
 
-#: ../../source/guide_utilisateur.rst:688
+#: ../../source/guide_utilisateur.rst:756
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -1451,38 +1536,38 @@ msgstr ""
 "posizione premendo il tasto *BACKSPACE*. Modificare se necessario la "
 "posizione del cubo e il punteggio."
 
-#: ../../source/guide_utilisateur.rst:694
+#: ../../source/guide_utilisateur.rst:762
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
-" par les onglets *At least* et *Except* situés en haut du panneau :"
+" par les onglets *Au moins* et *Sauf* situés en haut du panneau :"
 msgstr ""
 "Il pannello di ricerca propone due strutture di pedine, selezionabili "
-"tramite le schede *At least* e *Except* situate nella parte superiore del"
-" pannello:"
+"tramite le schede *Almeno* e *Tranne* situate nella parte superiore del "
+"pannello:"
 
-#: ../../source/guide_utilisateur.rst:697
+#: ../../source/guide_utilisateur.rst:765
 msgid ""
-"*At least* (par défaut) : blunderDB filtre les positions ayant *a minima*"
+"*Au moins* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
 msgstr ""
-"*At least* (predefinito): blunderDB filtra le posizioni che hanno *come "
+"*Almeno* (predefinito): blunderDB filtra le posizioni che hanno *come "
 "minimo* la struttura di pedine inserita;"
 
-#: ../../source/guide_utilisateur.rst:700
+#: ../../source/guide_utilisateur.rst:768
 msgid ""
-"*Except* : blunderDB exclut les positions contenant l'un des pions "
-"saisis. Le plateau est bordé de rouge lors de l'édition de cette "
-"structure. Une position est rejetée si elle contient *au moins un* des "
-"éléments dessinés (par exemple, dessiner un pion sur les points 1, 3 et 5"
-" ne conserve que les positions n'ayant aucun pion sur ces points). Le "
-"nombre de pions par point n'est pas limité : indiquer 3 pions sur un "
-"point exclut les positions ayant 3 pions ou plus à cet endroit (utile "
-"pour rechercher une porte sans spare). Deux clics rapides sur un point le"
-" marquent comme devant être vide (cellule rouge hachurée, aucun pion "
-"quelle que soit la couleur) ; un simple clic sur ce point le débloque."
+"*Sauf* : blunderDB exclut les positions contenant l'un des pions saisis. "
+"Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
+"position est rejetée si elle contient *au moins un* des éléments dessinés"
+" (par exemple, dessiner un pion sur les points 1, 3 et 5 ne conserve que "
+"les positions n'ayant aucun pion sur ces points). Le nombre de pions par "
+"point n'est pas limité : indiquer 3 pions sur un point exclut les "
+"positions ayant 3 pions ou plus à cet endroit (utile pour rechercher une "
+"porte sans spare). Deux clics rapides sur un point le marquent comme "
+"devant être vide (cellule rouge hachurée, aucun pion quelle que soit la "
+"couleur) ; un simple clic sur ce point le débloque."
 msgstr ""
-"*Except*: blunderDB esclude le posizioni che contengono una delle pedine "
-"inserite. Il board è bordato di rosso durante la modifica di questa "
+"*Tranne*: blunderDB esclude le posizioni che contengono una delle pedine "
+"inserite. Il tabellone è bordato di rosso durante la modifica di questa "
 "struttura. Una posizione viene rifiutata se contiene *almeno uno* degli "
 "elementi disegnati (ad esempio, disegnare una pedina sui punti 1, 3 e 5 "
 "conserva solo le posizioni che non hanno alcuna pedina su questi punti). "
@@ -1492,39 +1577,39 @@ msgstr ""
 "contrassegnano come dover essere vuoto (cella rossa tratteggiata, nessuna"
 " pedina di qualsiasi colore); un singolo clic su quel punto lo sblocca."
 
-#: ../../source/guide_utilisateur.rst:710
+#: ../../source/guide_utilisateur.rst:778
 msgid ""
-"Lorsqu'un point appartient aux deux structures, le critère *Except* "
-"l'emporte s'il contredit le critère *At least*."
+"Lorsqu'un point appartient aux deux structures, le critère *Sauf* "
+"l'emporte s'il contredit le critère *Au moins*."
 msgstr ""
-"Quando un punto appartiene a entrambe le strutture, il criterio *Except* "
-"prevale se contraddice il criterio *At least*."
+"Quando un punto appartiene a entrambe le strutture, il criterio *Tranne* "
+"prevale se contraddice il criterio *Almeno*."
 
-#: ../../source/guide_utilisateur.rst:713
+#: ../../source/guide_utilisateur.rst:781
 msgid "Méthode 1 (simple):"
 msgstr "Metodo 1 (semplice):"
 
-#: ../../source/guide_utilisateur.rst:715
+#: ../../source/guide_utilisateur.rst:783
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Aprire la finestra di ricerca (*CTRL-F*)"
 
-#: ../../source/guide_utilisateur.rst:717
+#: ../../source/guide_utilisateur.rst:785
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Aggiungere e configurare i filtri di ricerca"
 
-#: ../../source/guide_utilisateur.rst:719
-msgid "Valider en cliquant sur \"Search\"."
-msgstr "Confermare facendo clic su \"Search\"."
+#: ../../source/guide_utilisateur.rst:787
+msgid "Valider en cliquant sur *Rechercher*."
+msgstr "Confermare facendo clic su *Cerca*."
 
-#: ../../source/guide_utilisateur.rst:721
+#: ../../source/guide_utilisateur.rst:789
 msgid "Méthode 2 (avancée):"
 msgstr "Metodo 2 (avanzato):"
 
-#: ../../source/guide_utilisateur.rst:724
+#: ../../source/guide_utilisateur.rst:792
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "aprire la riga di comando premendo *SPAZIO*,"
 
-#: ../../source/guide_utilisateur.rst:726
+#: ../../source/guide_utilisateur.rst:794
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -1536,11 +1621,11 @@ msgstr ""
 "punteggio. Vedere :ref:`cmd_filter` per un elenco esaustivo dei filtri "
 "disponibili)."
 
-#: ../../source/guide_utilisateur.rst:731
+#: ../../source/guide_utilisateur.rst:799
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "confermare la richiesta premendo *INVIO*."
 
-#: ../../source/guide_utilisateur.rst:733
+#: ../../source/guide_utilisateur.rst:801
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -1548,11 +1633,11 @@ msgstr ""
 "Le posizioni visualizzate sono quelle del database che hanno soddisfatto "
 "i criteri di ricerca inseriti dall'utente."
 
-#: ../../source/guide_utilisateur.rst:737
+#: ../../source/guide_utilisateur.rst:805
 msgid "Pour aller plus loin"
 msgstr "Per approfondire"
 
-#: ../../source/guide_utilisateur.rst:739
+#: ../../source/guide_utilisateur.rst:807
 msgid ""
 "Ce guide couvre les usages les plus courants. blunderDB propose plusieurs"
 " fonctionnalités supplémentaires, détaillées dans le manuel :"
@@ -1560,7 +1645,7 @@ msgstr ""
 "Questa guida copre gli usi più comuni. blunderDB offre diverse "
 "funzionalità aggiuntive, descritte nel manuale:"
 
-#: ../../source/guide_utilisateur.rst:742
+#: ../../source/guide_utilisateur.rst:810
 msgid ""
 "**Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une"
 " collection ou une recherche en paquet de cartes à réviser selon "
@@ -1572,7 +1657,7 @@ msgstr ""
 "secondo l'algoritmo FSRS, con una modalità di esercizio libero (*cram*) "
 "che non perturba la pianificazione. Vedere :ref:`panneau_anki`."
 
-#: ../../source/guide_utilisateur.rst:747
+#: ../../source/guide_utilisateur.rst:815
 msgid ""
 "**Vues multiples** — une barre d'onglets sous la barre d'outils permet de"
 " garder plusieurs espaces de travail indépendants ouverts en parallèle "
@@ -1586,7 +1671,7 @@ msgstr ""
 "proprio elenco di posizioni e il proprio contesto. Vedere "
 ":ref:`onglets_vues`."
 
-#: ../../source/guide_utilisateur.rst:752
+#: ../../source/guide_utilisateur.rst:820
 msgid ""
 "**Diffusion filigranée** — un export peut être signé avec votre identité "
 "d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et "
@@ -1598,7 +1683,7 @@ msgstr ""
 "l'origine del file) e protetta da password per il trasporto. Vedere "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/guide_utilisateur.rst:756
+#: ../../source/guide_utilisateur.rst:824
 msgid ""
 "**Visites guidées et base de démonstration** — la commande ``tour`` "
 "(alias ``tutorial``) ouvre un catalogue de visites guidées de "
@@ -1611,7 +1696,7 @@ msgstr ""
 "comando ``demo`` carica un database di esempio per scoprire lo strumento "
 "senza un database personale. Vedere :ref:`visites_guidees`."
 
-#: ../../source/guide_utilisateur.rst:761
+#: ../../source/guide_utilisateur.rst:829
 msgid ""
 "**Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs (équité ou MWC) dans la vue "
@@ -1622,3 +1707,4 @@ msgstr ""
 "carica direttamente gli errori peggiori (equity o MWC) nella vista di "
 "analisi, secondo il filtro corrente del pannello Statistiche, senza "
 "passare da una ricerca manuale. Vedere :ref:`stats`."
+

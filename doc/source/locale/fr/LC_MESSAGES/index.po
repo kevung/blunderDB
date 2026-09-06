@@ -1053,4 +1053,3 @@ msgid ""
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
 " depuis qu'il a choppé le virus du backgammon."
 msgstr ""
-

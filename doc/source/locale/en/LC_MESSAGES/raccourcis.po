@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 04:17+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -51,7 +51,7 @@ msgid "Ouvrir une base de données existante."
 msgstr "Open an existing database."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
 msgstr "CTRL-SHIFT-I"
 
 #: ../../source/raccourcis.rst:1
@@ -59,7 +59,7 @@ msgid "Fusionner une base de données dans celle-ci."
 msgstr "Merge a database into this one."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
 msgstr "CTRL-SHIFT-S"
 
 #: ../../source/raccourcis.rst:1
@@ -99,7 +99,7 @@ msgstr ""
 "bgf)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
 msgstr "CTRL-SHIFT-F"
 
 #: ../../source/raccourcis.rst:1
@@ -677,3 +677,60 @@ msgid ""
 msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
+
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "Help Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LEFT, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "Previous tab."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RIGHT, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "Next tab."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "Scroll up."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "Scroll down."
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "Next page."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "PageUp"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "Top of the content."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "PageDown"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "Bottom of the content."
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, CTRL-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "Close the help."
+

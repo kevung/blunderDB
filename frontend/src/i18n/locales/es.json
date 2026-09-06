@@ -1115,6 +1115,14 @@
         "cardLabelAll": "PR Global",
         "cardLabelChecker": "PR Ficha",
         "cardLabelCube": "PR Cubo",
+        "grade": {
+            "worldClass": "Clase mundial",
+            "expert": "Experto",
+            "advanced": "Avanzado",
+            "intermediate": "Intermedio",
+            "casual": "Ocasional",
+            "beginner": "Principiante"
+        },
         "tournaments": "torneos",
         "matches": "partidas",
         "decisions": "decisiones",

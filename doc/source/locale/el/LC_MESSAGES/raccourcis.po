@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 04:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -52,7 +52,7 @@ msgid "Ouvrir une base de données existante."
 msgstr "Άνοιγμα υπάρχουσας βάσης δεδομένων."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
 msgstr "CTRL-SHIFT-I"
 
 #: ../../source/raccourcis.rst:1
@@ -60,7 +60,7 @@ msgid "Fusionner une base de données dans celle-ci."
 msgstr "Συγχώνευση μιας βάσης δεδομένων σε αυτήν."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
 msgstr "CTRL-SHIFT-S"
 
 #: ../../source/raccourcis.rst:1
@@ -100,7 +100,7 @@ msgstr ""
 " txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
 msgstr "CTRL-SHIFT-F"
 
 #: ../../source/raccourcis.rst:1
@@ -685,3 +685,60 @@ msgid ""
 msgstr ""
 "Επιστροφή στη λίστα των συλλογών, αλλιώς αποεπιλογή της συλλογής, αλλιώς "
 "κλείσιμο του πίνακα (σταδιακά)."
+
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "Πίνακας βοήθειας"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "ΑΡΙΣΤΕΡΑ, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "Προηγούμενη καρτέλα."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "ΔΕΞΙΑ, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "Επόμενη καρτέλα."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "Κύλιση προς τα πάνω."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "Κύλιση προς τα κάτω."
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "Επόμενη σελίδα."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "PageUp"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "Αρχή του περιεχομένου."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "PageDown"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "Τέλος του περιεχομένου."
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, CTRL-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "Κλείσιμο της βοήθειας."
+

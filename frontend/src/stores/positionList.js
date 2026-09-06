@@ -19,10 +19,14 @@
  */
 import { writable } from 'svelte/store';
 
+/** @typedef {{ id?: number | null, [key: string]: any }} Position */
+/** @typedef {(number | null)[]} IdList */
+
 export const DEFAULT_WINDOW_SIZE = 50;
 export const DEFAULT_CACHE_SIZE = 512;
 export const DEFAULT_BATCH_SIZE = 500;
 
+/** @param {IdList} ids */
 function snapshot(ids) {
     return Object.freeze({ ids, length: ids.length });
 }
@@ -31,7 +35,7 @@ const noop = () => {};
 
 /**
  * @param {object} [options]
- * @param {(ids: number[]) => Promise<object[]>} [options.loader] fetches
+ * @param {(ids: number[]) => Promise<Position[]>} [options.loader] fetches
  *   positions by id, in any order; missing ids are simply absent.
  * @param {number} [options.windowSize] half-width of the window loaded
  *   around a missed index, and the reach of the prefetch.
@@ -42,11 +46,11 @@ const noop = () => {};
 export function createPositionList({ loader = async () => [], windowSize = DEFAULT_WINDOW_SIZE, cacheSize = DEFAULT_CACHE_SIZE, batchSize = DEFAULT_BATCH_SIZE } = {}) {
     const { subscribe, set: publish } = writable(snapshot([]));
 
-    /** @type {number[]} */
+    /** @type {IdList} */
     let ids = [];
     /** @type {Map<number, number> | null} id → first index, built on demand */
     let indexById = null;
-    /** @type {Map<number, object>} id → position, insertion order = LRU order */
+    /** @type {Map<number, Position>} id → position, insertion order = LRU order */
     const cache = new Map();
     /** @type {Map<number, Promise<void>>} id → the fetch that will bring it */
     const pending = new Map();
@@ -57,6 +61,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
 
     // ── Cache ────────────────────────────────────────────────────────────
 
+    /** @param {Position} position */
     function remember(position) {
         const id = position?.id;
         if (id == null) return;
@@ -64,10 +69,13 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         cache.delete(id);
         cache.set(id, position);
         while (cache.size > cacheSize) {
-            cache.delete(cache.keys().next().value);
+            const oldest = cache.keys().next();
+            if (oldest.done) break;
+            cache.delete(oldest.value);
         }
     }
 
+    /** @param {number} id */
     function hit(id) {
         const position = cache.get(id);
         if (position !== undefined) {
@@ -77,20 +85,27 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         return position;
     }
 
-    const covered = (id) => cache.has(id) || pending.has(id) || absent.has(id);
+    /** @param {number | null | undefined} id */
+    const covered = (id) => id != null && (cache.has(id) || pending.has(id) || absent.has(id));
 
     // ── List ─────────────────────────────────────────────────────────────
 
+    /** @param {IdList} next */
     function replaceIds(next) {
         ids = next;
         indexById = null;
         publish(snapshot(ids));
     }
 
+    /** @param {number} i */
     function inBounds(i) {
         return Number.isInteger(i) && i >= 0 && i < ids.length;
     }
 
+    /**
+     * @param {number} from
+     * @param {number} to
+     */
     function range(from, to) {
         const out = [];
         for (let i = Math.max(0, from); i <= Math.min(ids.length - 1, to); i++) out.push(i);
@@ -102,8 +117,10 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
     /**
      * One loader call for the ids of `indices` that are neither cached nor
      * already on their way. Returns null when nothing is missing.
+     * @param {number[]} indices
      */
     function fetchMissing(indices) {
+        /** @type {Set<number>} */
         const missing = new Set();
         for (const i of indices) {
             const id = ids[i];
@@ -127,6 +144,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         return request;
     }
 
+    /** @param {number} i */
     function prefetchAround(i) {
         const reach = Math.max(1, Math.floor(windowSize / 2));
         if (i + reach < ids.length && !covered(ids[i + reach])) {
@@ -141,10 +159,12 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
      * The position at index `i`, loading the window around it on a miss.
      * Resolves to null when `i` is out of bounds or the position no longer
      * exists. Browsing sequentially costs one loader call per half-window.
+     * @param {number} i
      */
     async function getPosition(i) {
         if (!inBounds(i)) return null;
         const id = ids[i];
+        if (id == null) return null;
         if (!cache.has(id)) {
             // Already on its way (a neighbour's window): wait for that fetch
             // rather than open another; a real miss loads the whole window.
@@ -160,10 +180,14 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
      * skipped. Bulk reads go through the loader in batches and do not touch
      * the cache: an export of 50 000 positions must not evict the window
      * being browsed.
+     * @param {number} from
+     * @param {number} to
      */
     async function getPositions(from, to) {
         const indices = range(from, to - 1);
+        /** @type {Map<number, Position>} */
         const byId = new Map();
+        /** @type {number[]} */
         const missing = [];
         for (const i of indices) {
             const id = ids[i];
@@ -177,9 +201,11 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
             const rows = await loadFn(missing.slice(start, start + batchSize));
             for (const row of rows || []) if (row?.id != null) byId.set(row.id, row);
         }
+        /** @type {Position[]} */
         const out = [];
         for (const i of indices) {
-            const position = byId.get(ids[i]);
+            const id = ids[i];
+            const position = id == null ? undefined : byId.get(id);
             if (position !== undefined) out.push(position);
         }
         return out;
@@ -193,6 +219,8 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
         /**
          * Replace the list by ids. `reset` drops the cache too: use it when
          * stored positions may have changed (a reload after an edit).
+         * @param {IdList} next
+         * @param {{ reset?: boolean }} [options]
          */
         setIds(next, { reset = false } = {}) {
             if (reset) {
@@ -207,6 +235,7 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
          * first `cacheSize` of them). Search results, collections and decks
          * still arrive whole from the backend; this keeps their first window
          * free of a round trip.
+         * @param {Position[]} positions
          */
         set(positions) {
             const list = Array.isArray(positions) ? positions : [];
@@ -217,25 +246,37 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
             replaceIds(list.map((p) => (p && p.id != null ? p.id : null)));
         },
 
-        /** The id at index `i`, or undefined out of bounds. */
+        /**
+         * The id at index `i`, or undefined out of bounds.
+         * @param {number} i
+         */
         idAt(i) {
             return inBounds(i) ? ids[i] : undefined;
         },
 
-        /** The first index holding `id`, or -1. */
+        /**
+         * The first index holding `id`, or -1.
+         * @param {number} id
+         */
         indexOf(id) {
             if (!indexById) {
-                indexById = new Map();
+                /** @type {Map<number, number>} */
+                const built = new Map();
                 ids.forEach((v, i) => {
-                    if (v != null && !indexById.has(v)) indexById.set(v, i);
+                    if (v != null && !built.has(v)) built.set(v, i);
                 });
+                indexById = built;
             }
             return indexById.get(id) ?? -1;
         },
 
-        /** Synchronous cache lookup; undefined when not loaded. */
+        /**
+         * Synchronous cache lookup; undefined when not loaded.
+         * @param {number} i
+         */
         peek(i) {
-            return inBounds(i) ? cache.get(ids[i]) : undefined;
+            const id = inBounds(i) ? ids[i] : null;
+            return id == null ? undefined : cache.get(id);
         },
 
         getPosition,
@@ -246,12 +287,18 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
             return getPositions(0, ids.length);
         },
 
-        /** Put a freshly saved or edited position in the cache. */
+        /**
+         * Put a freshly saved or edited position in the cache.
+         * @param {Position} position
+         */
         upsert(position) {
             remember(position);
         },
 
-        /** Forget one cached position (or all of them). */
+        /**
+         * Forget one cached position (or all of them).
+         * @param {number} [id]
+         */
         invalidate(id) {
             if (id === undefined) {
                 cache.clear();
@@ -262,7 +309,10 @@ export function createPositionList({ loader = async () => [], windowSize = DEFAU
             }
         },
 
-        /** Swap the loader (tests). */
+        /**
+         * Swap the loader (tests).
+         * @param {(ids: number[]) => Promise<Position[]>} fn
+         */
         setLoader(fn) {
             loadFn = fn;
         },

@@ -81,10 +81,12 @@ var wantIndexes = []string{
 	"idx_position_back_checkers_1", "idx_position_back_checkers_2",
 	"idx_position_cube_response",
 	"idx_position_decision_dice", "idx_position_decision_pip",
-	"idx_position_dice", "idx_position_flagged", "idx_position_individual",
+	"idx_position_dice", "idx_position_flagged", "idx_position_game_phase",
+	"idx_position_individual",
 	"idx_position_no_contact", "idx_position_off",
 	"idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
+	"idx_trash_deleted_at", "idx_trash_kind",
 }
 
 // TestMigratePostgres opens a fresh database, runs Migrate, and confirms the

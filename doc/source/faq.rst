@@ -72,9 +72,9 @@ utilisez le bouton **Fusionner une base de données** (*CTRL-MAJ-I*) :
 #. Sélectionnez la base à fusionner
 #. blunderDB fusionne les positions
 
-Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
-les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
-mais leurs analyses et commentaires seront combinés.
+Lors de la fusion, blunderDB évite les doublons : une position déjà présente
+n'est pas dupliquée, et les analyses des différents moteurs cohabitent au lieu
+de s'écraser (voir :ref:`import_regles`).
 
 .. note::
    Il est recommandé de faire une copie de sauvegarde de votre base de données
@@ -161,6 +161,50 @@ ci-dessous. Un import XG apporte cependant l'analyse la plus complète
 plus richement exploité par les statistiques.
 
 
+J'utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?
+-----------------------------------------------------------
+
+blunderDB ne rejoue pas vos matchs, il les rassemble. Trois différences
+concrètes :
+
+* **agréger** dans un seul fichier des matchs venus d'XG, de GNUbg, de BGBlitz
+  et de Jellyfish, dédoublonnés position par position ;
+
+* **chercher** par structure de pions et par erreur : « les prises à ce score
+  où j'ai perdu plus de 50 millipoints » s'écrit en une ligne de commande
+  (voir :ref:`cmd_mode`) ;
+
+* **réviser** les positions retenues par répétition espacée, en paquets Anki
+  (voir :ref:`panneau_anki`).
+
+Vos analyses XG restent celles d'XG : blunderDB les importe telles quelles et
+ne les recalcule jamais (voir :ref:`import_regles`).
+
+
+Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?
+----------------------------------------------------------------------
+
+Non, dans les deux sens. D'une analyse XG, l'import conserve l'étiquette de
+niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les erreurs et les
+probabilités ; il n'ouvre pas les données de rollout du fichier ``.xg`` et n'en
+retient donc ni le nombre d'essais ni l'écart type. Une analyse XG collée en
+texte garde en revanche littéralement son étiquette, « Rollout » comprise.
+L'évaluateur embarqué, lui, ne fait pas de rollout : il répond par une
+recherche à 0 ou 2 lancers d'avance.
+
+
+Qu'a-t-on mesuré de l'évaluateur intégré, et que n'a-t-on pas mesuré ?
+------------------------------------------------------------------------
+
+Une mesure est publiée, sur le régime *évalué* du panneau Eval : 4000 décisions
+money de course, comparées à la table de bearoff exacte — 93,4 % d'accord de
+verdict (3735/4000), mais 61,1 % seulement à moins de 1 % du point de prise
+contre 94,4 % au-delà de 20 % ; écart de probabilité de gain moyen 0,85 %,
+maximum 8,30 %. Ce qui n'est pas mesuré : le verdict de videau **au score de
+match** et les **positions de contact**, pour lesquels aucun chiffre n'est
+publié. Le détail des hypothèses est dans :ref:`epc_methodologie`.
+
+
 Qu'est-ce qu'une collection?
 -----------------------------
 
@@ -176,13 +220,15 @@ Qu'est-ce que l'EPC?
 
 L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip count
 pour évaluer les positions de bearoff. Le panneau Eval de blunderDB utilise
-la base de données de bearoff à 6 points de GNUbg et calcule en temps réel
+une table de bearoff à 6 points identique à celle de GNUbg, calculée sur la
+machine au premier lancement, et calcule en temps réel
 l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le wastage.
 
 Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
 gain du joueur au trait et, lorsque la position est couverte par une base
-two-sided (base intégrée jusqu'à 6 pions par joueur, base téléchargeable
-jusqu'à 11), le verdict de videau money exact. Hors de ce domaine, la
+two-sided (table TS-06-06 calculée au premier lancement, ou table étendue
+TS-06-11 calculée depuis l'onglet *Bearoff* de la configuration), le verdict
+de videau money exact. Hors de ce domaine, la
 probabilité est estimée avec sa marge d'erreur et le verdict n'est
 volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
 panneau Eval » du manuel pour le détail des hypothèses.
@@ -220,9 +266,9 @@ coût des désaccords, ventilation par phase de partie — **sans rien écrire**
 Quelle est la différence entre le PR et le Snowie Error Rate?
 ----------------------------------------------------------------
 
-Le PR (Performance Rating) est la moyenne des erreurs d'équité (normalisée,
-en millièmes de point) sur l'ensemble des décisions comptées ; plus il est
-bas, mieux on joue. Le Snowie Error Rate rapporte cette même moyenne au
+Le PR (*Performance Rating*) est l'erreur moyenne d'équité par décision
+comptée, multipliée par 500 comme le font eXtreme Gammon et GNUbg ; plus il
+est bas, mieux on joue. Le Snowie Error Rate rapporte cette même moyenne au
 nombre de *coups* plutôt qu'au nombre de *décisions* — un match plus long
 n'aggrave donc pas mécaniquement le SER. blunderDB affiche les deux dans le
 panneau Stats, alignés sur les conventions d'eXtreme Gammon et de GNUbg (voir
@@ -246,9 +292,9 @@ Oui, un mode « headless » facultatif : le même binaire, lancé avec
 ``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un
 reverse-proxy authentifiant (blunderDB lui-même ne fait aucune
 authentification). Il peut s'appuyer sur SQLite ou sur PostgreSQL en
-multi-tenant, et sert par exemple à consulter ou importer des matchs depuis
-un navigateur, à intégrer blunderDB à un autre outil, ou à mutualiser une
-base entre plusieurs joueurs. L'usage normal reste l'application de bureau ;
+multi-tenant, et sert à piloter blunderDB depuis vos propres scripts ou une
+application maison, en HTTP + JSON — il n'y a pas d'interface web —, ou à
+mutualiser une base entre plusieurs joueurs. L'usage normal reste l'application de bureau ;
 voir :ref:`headless` pour le détail (y compris l'image Docker prête à
 l'emploi) et le tutoriel « Déployer le mode serveur derrière un proxy » du
 guide utilisateur.

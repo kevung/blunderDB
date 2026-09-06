@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -49,88 +49,26 @@ msgstr ""
 "premendo il tasto ``SPAZIO``. Con un po' di pratica consente di combinare"
 " molto rapidamente i filtri e di utilizzare la libreria dei filtri."
 
-#: ../../source/annexe_filtres.rst:19
-msgid "Recherche de positions en ligne de commande"
-msgstr "Ricerca di posizioni da riga di comando"
-
-#: ../../source/annexe_filtres.rst:21
-msgid "Pour faire une recherche à l'aide de filtres,"
-msgstr "Per effettuare una ricerca tramite filtri,"
-
-#: ../../source/annexe_filtres.rst:23
-msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "Premere il tasto ``TAB`` per aprire il pannello di ricerca."
-
-#: ../../source/annexe_filtres.rst:24
-msgid "Editer la position courante."
-msgstr "Modificare la posizione corrente."
+#: ../../source/annexe_filtres.rst:18
+msgid ""
+"La grammaire de recherche — la commande ``s``, ses jetons, la recherche "
+"dans les résultats courants avec ``ss`` — est décrite une seule fois, "
+"dans la section :ref:`cmd_filter` de la liste des commandes ; le panneau "
+"de recherche lui-même est décrit dans le :ref:`manuel "
+"<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
+"filtres et des exemples."
+msgstr ""
+"La grammatica di ricerca — il comando ``s``, i suoi token, la ricerca "
+"nei risultati correnti con ``ss`` — è descritta una sola volta, nella "
+"sezione :ref:`cmd_filter` dell'elenco dei comandi; il pannello di "
+"ricerca in sé è descritto nel :ref:`manuale <panneau_recherche>`. "
+"Questa appendice conserva solo la libreria dei filtri e gli esempi."
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "Aprire la riga di comando con il tasto ``SPAZIO``."
-
-#: ../../source/annexe_filtres.rst:26
-msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "Utilizzare il comando ``s`` seguito eventualmente da filtri."
-
-#: ../../source/annexe_filtres.rst:27
-msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "Avviare la ricerca con il tasto ``INVIO``."
-
-#: ../../source/annexe_filtres.rst:30
-msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
-msgstr ""
-"Non dimenticare di cancellare la posizione corrente prima di avviare una "
-"ricerca (tasto ``BACKSPACE``), se questa non è quella desiderata, per "
-"evitare di filtrare in modo eccessivo le strutture di pedine."
-
-#: ../../source/annexe_filtres.rst:35
-msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" section :ref:`cmd_filter` de la liste des commandes."
-msgstr ""
-"L'elenco dei filtri disponibili da riga di comando è fornito nella sezione "
-":ref:`cmd_filter` dell'elenco dei comandi."
-
-#: ../../source/annexe_filtres.rst:39
-msgid "Recherche dans les résultats courants"
-msgstr "Ricerca nei risultati correnti"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"Il est possible d'affiner une recherche en cherchant parmi les positions "
-"actuellement filtrées. Cela permet de restreindre progressivement les "
-"résultats."
-msgstr ""
-"È possibile affinare una ricerca cercando tra le posizioni attualmente "
-"filtrate. Ciò consente di restringere progressivamente i risultati."
-
-#: ../../source/annexe_filtres.rst:44
-msgid ""
-"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
-msgstr ""
-"Da riga di comando, utilizzare il comando ``ss`` seguito da filtri (es.: "
-"``ss nc``, ``ss E>40``). Il comando ``ss`` funziona dopo una ricerca "
-"preliminare."
-
-#: ../../source/annexe_filtres.rst:47
-msgid ""
-"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
-msgstr ""
-"La finestra di ricerca (``CTRL-F``) offre anche una casella «Cerca nei "
-"risultati correnti» per la stessa funzione."
-
-#: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
 msgstr "Libreria dei filtri"
 
-#: ../../source/annexe_filtres.rst:53
+#: ../../source/annexe_filtres.rst:27
 msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
@@ -138,15 +76,15 @@ msgstr ""
 "La libreria dei filtri consente all'utente di salvare i comandi di "
 "ricerca per facilitare i suoi studi tematici."
 
-#: ../../source/annexe_filtres.rst:56
+#: ../../source/annexe_filtres.rst:30
 msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "Per aggiungere un filtro alla libreria,"
 
-#: ../../source/annexe_filtres.rst:58
+#: ../../source/annexe_filtres.rst:32
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
 msgstr "Avviare la ricerca da conservare (comando ``s`` seguito da filtri)."
 
-#: ../../source/annexe_filtres.rst:59
+#: ../../source/annexe_filtres.rst:33
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Historique*."
@@ -154,19 +92,19 @@ msgstr ""
 "Aprire il pannello di ricerca (``TAB`` o ``CTRL-F``) e selezionare la "
 "scheda *Cronologia*."
 
-#: ../../source/annexe_filtres.rst:61
+#: ../../source/annexe_filtres.rst:35
 msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr "Fare clic sull'icona segnalibro della ricerca da salvare."
 
-#: ../../source/annexe_filtres.rst:62
+#: ../../source/annexe_filtres.rst:36
 msgid "Donner un nom au filtre et valider."
 msgstr "Assegnare un nome al filtro e confermare."
 
-#: ../../source/annexe_filtres.rst:64
+#: ../../source/annexe_filtres.rst:38
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "Per utilizzare un filtro salvato nella libreria,"
 
-#: ../../source/annexe_filtres.rst:66
+#: ../../source/annexe_filtres.rst:40
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Enregistrés*."
@@ -174,19 +112,19 @@ msgstr ""
 "Aprire il pannello di ricerca (``TAB`` o ``CTRL-F``) e selezionare la "
 "scheda *Salvati*."
 
-#: ../../source/annexe_filtres.rst:68
+#: ../../source/annexe_filtres.rst:42
 msgid "Rechercher le filtre souhaité."
 msgstr "Cercare il filtro desiderato."
 
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:43
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Fare doppio clic sul filtro per avviare la ricerca."
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:46
 msgid "Exemples"
 msgstr "Esempi"
 
-#: ../../source/annexe_filtres.rst:74
+#: ../../source/annexe_filtres.rst:48
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ecco alcuni esempi di utilizzo dei filtri da riga di comando:"
 
@@ -284,8 +222,8 @@ msgid "s E>40"
 msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Posizione del torneo Aachen2024"
+msgid "Positions dont un commentaire contient Aachen2024"
+msgstr "Posizioni il cui commento contiene Aachen2024"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""
@@ -383,7 +321,7 @@ msgstr "Errori nel torneo 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:101
+#: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Esempi di ricerca nei risultati correnti:"
 

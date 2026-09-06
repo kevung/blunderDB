@@ -548,4 +548,3 @@ msgid ""
 "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
 "0.16)."
 msgstr ""
-

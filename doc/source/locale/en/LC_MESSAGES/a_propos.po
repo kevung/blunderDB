@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -92,8 +92,8 @@ msgstr ""
 "Open tickets are grouped by `milestone "
 "<https://github.com/kevung/blunderDB/milestones>`__ on GitHub. Ideas are "
 "discussed in the `Discussions — Ideas category "
-"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, and "
-"every published release is announced in the `Announcements category "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, "
+"and every published release is announced in the `Announcements category "
 "<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
 
 #: ../../source/a_propos.rst:44
@@ -198,20 +198,22 @@ msgstr ""
 
 #: ../../source/a_propos.rst:89
 msgid ""
-"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
-"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
-" été générées avec `GNU Backgammon "
-"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
-"sous licence GPL, et ces tables sont des données qu'il a produites, "
-"créditées comme telles ;"
+"les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
+"sont calculées par blunderDB lui-même, par un portage de l'outil "
+"``makebearoff`` de `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; le résultat est identique "
+"octet pour octet à celui de gnubg, dont l'empreinte SHA-256 sert de "
+"référence. GNUbg est un logiciel libre sous licence GPL ;"
 msgstr ""
 "the one-sided (6 points, 15 checkers, for EPC) and two-sided (6 points, 6"
-" checkers, for cube verdicts in races) bearoff databases were generated "
-"with `GNU Backgammon <https://www.gnu.org/software/gnubg/>`__; GNUbg is "
-"free software under the GPL, and these tables are data it produced, "
-"credited as such;"
+" checkers, for cube verdicts in races) bearoff tables are computed by "
+"blunderDB itself, through a port of `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__'s ``makebearoff`` tool; the "
+"result is byte-identical to gnubg's, whose SHA-256 fingerprint serves as "
+"the reference. GNUbg is free software under the GPL licence;"
 
-#: ../../source/a_propos.rst:95
+#: ../../source/a_propos.rst:96
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -223,7 +225,7 @@ msgstr ""
 "<https://github.com/kevung/gnubgparser>`__ and `bgfparser "
 "<https://github.com/kevung/bgfparser>`__ (MIT);"
 
-#: ../../source/a_propos.rst:100
+#: ../../source/a_propos.rst:101
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -235,7 +237,7 @@ msgstr ""
 "<https://wails.io>`__ and `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__ (MIT);"
 
-#: ../../source/a_propos.rst:105
+#: ../../source/a_propos.rst:106
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -245,7 +247,7 @@ msgstr ""
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ and "
 "`driver.js <https://driverjs.com>`__ (MIT);"
 
-#: ../../source/a_propos.rst:109
+#: ../../source/a_propos.rst:110
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
@@ -254,4 +256,3 @@ msgstr ""
 "the `Nunito <https://github.com/googlefonts/nunito>`__ and `Noto Sans JP "
 "<https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ fonts (SIL Open "
 "Font License 1.1)."
-

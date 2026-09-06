@@ -178,6 +178,22 @@ phrases (« à venir », « en préparation », « pas encore publié », « pr�
 once (H.11, 2026-09) and removed four days later: a page titled "roadmap"
 invites the future back in at every release.
 
+**The guide shows a task, the manual describes a screen.** Eight panels were
+described twice, once in each register, and the two drifted (a "Delete
+Position" with and without a confirmation, k/j swapped). A screen description
+that appears in `guide_utilisateur.rst` becomes a `:ref:` to the manual's
+panel section; a task walk-through does not belong in `manuel.rst`. Apply it
+to any page you touch — it is not a refactor to schedule, it is the rule for
+the next edit.
+
+**A page is proposed with its price.** One French line costs about twenty
+lines of catalogue across the eight translations (measured 2026-09-06: 6 942
+lines of `.rst`, 138 272 of `.po`), half of them in four languages nobody here
+proofreads. A new page, or a section that is really a page, is put forward
+with its msgid count × 8 in the discussion that proposes it, and is not the
+first answer to a persona's "what is missing" — a sentence on an existing
+page, or a `:ref:` to where it is already said, usually is.
+
 **The in-app help is generated from these same sources.** `raccourcis.rst` and
 `cmd_mode.rst` are the only statement of the keyboard shortcuts and of the command
 line; `frontend/src/i18n/help/*.js` is a build artefact rendered from them and their

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:32+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -25,19 +25,77 @@ msgstr "Cronologia delle versioni"
 
 #: ../../source/historique.rst:6
 msgid ""
-"Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une"
-" correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une "
-"puce et non la traduction de toute la version."
+"Les versions sont classées de la plus récente à la plus ancienne, une "
+"puce par changement, et chaque version se termine par les renvois vers "
+"les pages qui décrivent en détail ce qu'elle a apporté. Une puce qu'une "
+"version ultérieure a défaite porte la mention de celle qui l'a remplacée "
+": elle raconte l'histoire du logiciel, elle ne décrit pas la version "
+"installée."
 msgstr ""
-"Ogni versione qui sotto elenca le sue evoluzioni punto per punto, in modo"
-" che una correzione successiva (un refuso, un'aggiunta tardiva) invalidi "
-"solo un punto, non la traduzione dell'intera versione."
+"Le versioni sono elencate dalla più recente alla più antica, un punto "
+"elenco per cambiamento, e ogni versione termina con i rimandi alle pagine"
+" che descrivono in dettaglio ciò che ha apportato. Un punto elenco che "
+"una versione successiva ha disfatto porta la menzione di quella che l'ha "
+"sostituito: racconta la storia del software, non descrive la versione "
+"installata."
 
-#: ../../source/historique.rst:11
+#: ../../source/historique.rst:13
+msgid "Après une mise à jour"
+msgstr "Dopo un aggiornamento"
+
+#: ../../source/historique.rst:15
+msgid ""
+"La migration du schéma de la base est **automatique** à l'ouverture, et "
+"**sans retour** : une base migrée n'est plus lisible par une version "
+"antérieure de blunderDB, d'où la sauvegarde préalable "
+"(:ref:`annexe_db_migration`). Le reste ne se fait pas tout seul, parce "
+"qu'aucune de ces données n'est rétroactive :"
+msgstr ""
+"La migrazione dello schema del database è **automatica** all'apertura, e "
+"**senza ritorno**: un database migrato non è più leggibile da una "
+"versione precedente di blunderDB, da cui il backup preventivo "
+"(:ref:`annexe_db_migration`). Il resto non avviene da solo, perché "
+"nessuno di questi dati è retroattivo:"
+
+#: ../../source/historique.rst:20
+msgid ""
+"**Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les "
+"matchs importés avant portent un tiret dans la colonne *Chance*, et un "
+"tiret n'est pas un zéro. Les formats qui ne transportent pas la chance "
+"(BGF, Jellyfish ``.mat``) n'en fourniront jamais."
+msgstr ""
+"**Reimportare i file sorgente per ottenere la fortuna** (0.33.0). I match"
+" importati prima portano un trattino nella colonna *Fortuna*, e un "
+"trattino non è uno zero. I formati che non trasportano la fortuna (BGF, "
+"Jellyfish ``.mat``) non ne forniranno mai."
+
+#: ../../source/historique.rst:24
+msgid ""
+"**Réimporter les fichiers XG pour obtenir les marques** (0.30.0). Les "
+"marques posées dans eXtreme Gammon rejoignent la base au réimport, sans "
+"toucher aux commentaires ni aux analyses existants."
+msgstr ""
+"**Reimportare i file XG per ottenere i contrassegni** (0.30.0). I "
+"contrassegni posti in eXtreme Gammon si uniscono al database al reimport,"
+" senza toccare i commenti o le analisi esistenti."
+
+#: ../../source/historique.rst:27
+msgid ""
+"**Lancer le rattrapage d'analyse gammonNet** (0.34.0), depuis "
+"l'interface, par ``blunderdb analyze`` ou en mode serveur : il comble les"
+" positions qui n'ont aucune analyse, sans jamais écraser une analyse "
+"importée."
+msgstr ""
+"**Lanciare il recupero di analisi gammonNet** (0.34.0), dall'interfaccia,"
+" tramite ``blunderdb analyze`` o in modalità server: colma le posizioni "
+"che non hanno alcuna analisi, senza mai sovrascrivere un'analisi "
+"importata."
+
+#: ../../source/historique.rst:32
 msgid "0.36.0 (2026-09-05)"
 msgstr "0.36.0 (05/09/2026)"
 
-#: ../../source/historique.rst:13
+#: ../../source/historique.rst:34
 msgid ""
 "Le binaire **maigrit de 7,3 Mo** : les tables de sortie ne sont plus "
 "embarquées ni téléchargées, mais calculées à la première ouverture, en "
@@ -51,7 +109,7 @@ msgstr ""
 " SHA-256 verificata. La tabella estesa TS-06-11 si calcola nella scheda "
 "*Bearoff* invece di scaricare 1,2 GB."
 
-#: ../../source/historique.rst:14
+#: ../../source/historique.rst:35
 msgid ""
 "**Les tournois se remplissent à l'import** : un match entre dans le "
 "tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est"
@@ -61,7 +119,7 @@ msgstr ""
 "classificato nel torneo che il suo file nomina, creato se necessario; un "
 "match già classificato non viene mai spostato."
 
-#: ../../source/historique.rst:15
+#: ../../source/historique.rst:36
 msgid ""
 "**Une seule grammaire de recherche**, désormais lisible depuis la ligne "
 "de commande (``blunderdb search --query``) autant que depuis "
@@ -70,7 +128,7 @@ msgstr ""
 "**Una sola grammatica di ricerca**, ora leggibile dalla riga di comando "
 "(``blunderdb search --query``) tanto quanto dall'applicazione."
 
-#: ../../source/historique.rst:16
+#: ../../source/historique.rst:37
 msgid ""
 "La ligne de commande gagne ``--format json`` sur neuf commandes, la "
 "**complétion pour bash, zsh et fish**, la commande ``repair`` et les "
@@ -80,18 +138,23 @@ msgstr ""
 "**completamento per bash, zsh e fish**, il comando ``repair`` e i "
 "sottocomandi ``anki card`` e ``anki log``."
 
-#: ../../source/historique.rst:17
+#: ../../source/historique.rst:38
 msgid ""
-"L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus "
-"prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, "
-"Stats), et les pages Raccourcis et Ligne de commande deviennent des "
-"tableaux, sans encarts."
+"Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont "
+"engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent "
+"plus prendre de retard sur elles, et deviennent des tableaux, sans "
+"encarts. L'onglet **Manuel** de l'aide reste un résumé, distinct du "
+"manuel complet en ligne. Trois visites guidées de plus (Eval, Anki, "
+"Stats)."
 msgstr ""
-"L'**aiuto integrato è generato dal manuale**: non può più restare "
-"indietro. Tre visite guidate in più (Eval, Anki, Stats), e le pagine "
-"Scorciatoie e Riga di comando diventano tabelle, senza riquadri."
+"Le schede **Scorciatoie** e **Comandi** della guida integrata sono "
+"generate a partire dalle pagine del manuale che le descrivono: non "
+"possono più prendere ritardo su di esse, e diventano tabelle, senza "
+"riquadri. La scheda **Manuale** della guida resta un riassunto, distinto "
+"dal manuale completo online. Tre visite guidate in più (Eval, Anki, "
+"Stats)."
 
-#: ../../source/historique.rst:18
+#: ../../source/historique.rst:39
 msgid ""
 "Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et "
 "paquet AUR."
@@ -99,7 +162,7 @@ msgstr ""
 "Un **binario Linux arm64**, distribuito come archivio, ``.deb``, ``.rpm``"
 " e pacchetto AUR."
 
-#: ../../source/historique.rst:19
+#: ../../source/historique.rst:40
 msgid ""
 "Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, "
 "distingue l'équité *money* de l'équité *match*, et se parcourt au "
@@ -108,7 +171,7 @@ msgstr ""
 "Il pannello **Eval** ritrova il tavoliere su cui lo si è lasciato, "
 "distingue l'equity *money* da quella *match* e si percorre da tastiera."
 
-#: ../../source/historique.rst:20
+#: ../../source/historique.rst:41
 #, no-python-format
 msgid ""
 "Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et "
@@ -123,38 +186,41 @@ msgstr ""
 " (13,5 % della dimensione), e le due chiamate che vanno oltre il tenant —"
 " vacuum e purge — passano sotto ``/ops/``."
 
-#: ../../source/historique.rst:21
+#: ../../source/historique.rst:42
 msgid ""
 "**Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, "
 "si bien qu'une même position d'argent n'entre plus deux fois par des "
-"portes différentes."
+"portes différentes. La migration est automatique à l'ouverture et sans "
+"retour possible (:ref:`annexe_db_migration`)."
 msgstr ""
 "**Schema 2.18.0**: Jacoby e beaver lasciano l'identità della posizione, "
-"così la stessa posizione money non entra più due volte da porte diverse."
+"così la stessa posizione money non entra più due volte da porte diverse. "
+"La migrazione è automatica all'apertura e senza possibilità di ritorno "
+"(:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:22
+#: ../../source/historique.rst:43
 msgid ""
 "Corrections notables : le volet de détail du panneau Matchs n'occupe plus"
 " la moitié de l'écran quand rien n'est sélectionné, la première partie "
-"d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent "
-"de vue depuis n'importe quel panneau, et huit raccourcis « "
-"afficher/cacher » cachent enfin."
+"d'un transcript se replie comme les autres, MAJ-J et MAJ-K changent de "
+"vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher »"
+" cachent enfin."
 msgstr ""
 "Correzioni notevoli: il riquadro di dettaglio del pannello Match non "
 "occupa più metà schermo quando non c'è nulla di selezionato, la prima "
-"partita di una trascrizione si richiude come le altre, SHIFT-J e SHIFT-K "
-"cambiano vista da qualsiasi pannello, e otto scorciatoie « "
+"partita di una trascrizione si richiude come le altre, MAIUSC-J e "
+"MAIUSC-K cambiano vista da qualsiasi pannello, e otto scorciatoie « "
 "mostra/nascondi » finalmente nascondono."
 
-#: ../../source/historique.rst:23 ../../source/historique.rst:34
+#: ../../source/historique.rst:44 ../../source/historique.rst:55
 msgid "Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`."
 msgstr "Vedere :ref:`cli`, :ref:`headless` e :ref:`manuel`."
 
-#: ../../source/historique.rst:26
+#: ../../source/historique.rst:47
 msgid "0.35.0 (2026-09-02)"
 msgstr "0.35.0 (2026-09-02)"
 
-#: ../../source/historique.rst:28
+#: ../../source/historique.rst:49
 msgid ""
 "La ligne de commande gagne deux familles : ``blunderdb collection`` "
 "(lister, afficher, créer, renommer, supprimer, exporter une collection) "
@@ -166,7 +232,7 @@ msgstr ""
 "``blunderdb anki`` (mazzi, statistiche, previsione dei ripassi, "
 "risincronizzazione di un mazzo)."
 
-#: ../../source/historique.rst:29
+#: ../../source/historique.rst:50
 msgid ""
 "Le mode serveur est publié en **image Docker** (``ghcr.io/kevung"
 "/blunderdb-serve``, amd64 et arm64), gagne la route "
@@ -178,7 +244,7 @@ msgstr ""
 "``maintenance.vacuum`` e **appone una filigrana alle sue esportazioni** "
 "con l'identità di emittente del server (``--identity-dir``)."
 
-#: ../../source/historique.rst:30
+#: ../../source/historique.rst:51
 msgid ""
 "L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, "
 "les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon."
@@ -187,7 +253,7 @@ msgstr ""
 "punteggio di match, i verdetti della ricerca si avvicinano a quelli di "
 "eXtreme Gammon."
 
-#: ../../source/historique.rst:31
+#: ../../source/historique.rst:52
 msgid ""
 "Chaque release livre désormais les **manifestes winget et Homebrew** et "
 "un bundle Flatpak, en plus des paquets Debian, RPM et AUR."
@@ -195,21 +261,22 @@ msgstr ""
 "Ogni release distribuisce ora i **manifesti winget e Homebrew** e un "
 "bundle Flatpak, oltre ai pacchetti Debian, RPM e AUR."
 
-#: ../../source/historique.rst:32
+#: ../../source/historique.rst:53
 msgid ""
 "Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 "
 "positions ne charge plus tout en mémoire à chaque rafraîchissement), les "
 "fenêtres modales partagent un même socle (focus, Échap, accessibilité), "
-"le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de "
-"police japonaise inutile."
+"le plateau ne redessine que ce qui change, et la police japonaise "
+"embarquée est réduite à son sous-ensemble utile (5,5 Mo de moins)."
 msgstr ""
 "Nell'interfaccia, la libreria è ora **paginata** (un database di 50.000 "
 "posizioni non carica più tutto in memoria a ogni aggiornamento), le "
 "finestre modali condividono una base comune (focus, Escape, "
-"accessibilità), il tavoliere ridisegna solo ciò che cambia, e il binario "
-"perde 5,5 MB di font giapponese inutile."
+"accessibilità), il tavoliere ridisegna solo ciò che cambia, e il font "
+"giapponese incorporato è ridotto al suo sottoinsieme utile (5,5 MB in "
+"meno)."
 
-#: ../../source/historique.rst:33
+#: ../../source/historique.rst:54
 msgid ""
 "Corrections notables : une base importée par « Importer une base » "
 "gardait des positions invisibles aux filtres et dédoublées au second "
@@ -225,11 +292,11 @@ msgstr ""
 "vuota, e su Windows la rimozione del database bearoff scaricato e "
 "``create --force`` fallivano."
 
-#: ../../source/historique.rst:37
+#: ../../source/historique.rst:58
 msgid "0.34.0 (2026-09-02)"
 msgstr "0.34.0 (2026-09-02)"
 
-#: ../../source/historique.rst:39
+#: ../../source/historique.rst:60
 msgid ""
 "Un **évaluateur embarqué** : gammonNet, porté en Go et compilé dans "
 "blunderDB, évalue n'importe quelle position hors ligne, sans XG ni gnuBG "
@@ -243,7 +310,7 @@ msgstr ""
 "Janowski e la tabella di equità di match di blunderDB, e una ricerca che "
 "rispetta il punteggio del match."
 
-#: ../../source/historique.rst:40
+#: ../../source/historique.rst:61
 msgid ""
 "Le panneau Bearoff devient le panneau **Eval** : il présente les faits de"
 " la position (chances de gain, gammon et backgammon des deux camps, "
@@ -258,7 +325,7 @@ msgstr ""
 "**normalizzate** e il verdetto «troppo buono per raddoppiare» torna a "
 "essere visibile."
 
-#: ../../source/historique.rst:41
+#: ../../source/historique.rst:62
 msgid ""
 "L'évaluation est **progressive** : 0-ply immédiat au geste, puis 2-ply au"
 " repos, annulable par tout nouveau geste, l'étiquette de profondeur "
@@ -268,7 +335,7 @@ msgstr ""
 "riposo, annullabile da qualsiasi nuovo gesto, con l'etichetta di "
 "profondità che indica sempre quella che ha prodotto il numero."
 
-#: ../../source/historique.rst:42
+#: ../../source/historique.rst:63
 msgid ""
 "Le plateau entier, les dés et le score s'y éditent, au clic comme au "
 "clavier, et une position de la bibliothèque entre dans le panneau et en "
@@ -278,7 +345,7 @@ msgstr ""
 "come con la tastiera, e una posizione della libreria entra ed esce dal "
 "pannello."
 
-#: ../../source/historique.rst:43
+#: ../../source/historique.rst:64
 msgid ""
 "Sur une course au-delà de la base bi-face, un troisième régime **évalué**"
 " fournit le verdict de videau au score que le panneau ne donnait pas."
@@ -286,7 +353,7 @@ msgstr ""
 "Su una corsa oltre il database two-sided, un terzo regime **valutato** "
 "fornisce il verdetto di cubo al punteggio che il pannello non dava."
 
-#: ../../source/historique.rst:44
+#: ../../source/historique.rst:65
 msgid ""
 "Un onglet **gammonNet** de la configuration sépare la profondeur "
 "d'affichage de la profondeur d'analyse."
@@ -294,7 +361,7 @@ msgstr ""
 "Una scheda **gammonNet** della configurazione separa la profondità di "
 "visualizzazione dalla profondità di analisi."
 
-#: ../../source/historique.rst:45
+#: ../../source/historique.rst:66
 msgid ""
 "Après un import, un **lot d'analyse** borné, visible, annulable et "
 "reprenable comble les positions sans aucune analyse, sans jamais écraser "
@@ -308,7 +375,7 @@ msgstr ""
 "libreria esistente** si avvia dall'interfaccia, dal nuovo comando "
 "``blunderdb analyze`` o in modalità server."
 
-#: ../../source/historique.rst:46
+#: ../../source/historique.rst:67
 msgid ""
 "Corrections notables : la réponse à un videau importée d'eXtreme Gammon "
 "héritait de l'analyse du doubleur sans être retournée, la notation des "
@@ -322,15 +389,15 @@ msgstr ""
 "XG, la profondità di un'analisi gnuBG viene letta correttamente, e la "
 "dimensione del pannello laterale viene memorizzata."
 
-#: ../../source/historique.rst:47
+#: ../../source/historique.rst:68
 msgid "Voir :ref:`panneau_epc`, :ref:`manuel` et :ref:`cli`."
 msgstr "Vedere :ref:`panneau_epc`, :ref:`manuel` e :ref:`cli`."
 
-#: ../../source/historique.rst:50
+#: ../../source/historique.rst:71
 msgid "0.33.0 (2026-08-26)"
 msgstr "0.33.0 (2026-08-26)"
 
-#: ../../source/historique.rst:52
+#: ../../source/historique.rst:73
 msgid ""
 "Le panneau Stats gagne un onglet **Joueurs** : les trois onglets "
 "précédents décrivent un joueur, celui-ci les compare tous, une ligne par "
@@ -354,7 +421,7 @@ msgstr ""
 " (``blunderdb list --type players``, in testo, JSON o CSV) e in modalità "
 "server."
 
-#: ../../source/historique.rst:53
+#: ../../source/historique.rst:74
 msgid ""
 "La **chance** de chaque lancer est désormais conservée en base et "
 "affichée : chance moyenne par lancer, en millièmes de point, signée. Elle"
@@ -372,7 +439,7 @@ msgstr ""
 "formati che non la trasportano (BGF, Jellyfish ``.mat``) non la "
 "forniranno mai."
 
-#: ../../source/historique.rst:54
+#: ../../source/historique.rst:75
 msgid ""
 "L'onglet **Erreurs** indique désormais dans quel *sens* se trompent les "
 "décisions de videau, et non plus seulement combien elles coûtent : une "
@@ -390,7 +457,7 @@ msgstr ""
 "conteggio, il tooltip l'equity perduta, e il clic carica le posizioni "
 "corrispondenti."
 
-#: ../../source/historique.rst:55
+#: ../../source/historique.rst:76
 msgid ""
 "Nouvelle commande **Compacter la base**, qui récupère l'espace laissé par"
 " les suppressions : bouton dans les paramètres et sous-commande "
@@ -400,7 +467,7 @@ msgstr ""
 "dalle eliminazioni: un pulsante nelle impostazioni e il sottocomando "
 "``blunderdb vacuum``. Non parte mai da solo."
 
-#: ../../source/historique.rst:56
+#: ../../source/historique.rst:77
 msgid ""
 "Ergonomie : les actions destructives demandent confirmation, une "
 "recherche en cours est signalée, une commande inconnue reçoit un message "
@@ -413,7 +480,7 @@ msgstr ""
 "silenzio, e schede, pannelli agganciati e piccole finestre si governano "
 "interamente da tastiera. La ricerca è inoltre sensibilmente più rapida."
 
-#: ../../source/historique.rst:57
+#: ../../source/historique.rst:78
 msgid ""
 "Corrections notables : les non-doubles étiquetés « Double No » par gnuBG "
 "étaient comptés comme des doubles, ce qui faussait le PR videau (une base"
@@ -429,23 +496,23 @@ msgstr ""
 " esportazioni scrivevano uno schema obsoleto; e ``blunderdb vacuum`` "
 "apriva l'interfaccia grafica anziché compattare il database."
 
-#: ../../source/historique.rst:58
+#: ../../source/historique.rst:79
 msgid "Voir :ref:`stats` et :ref:`cli`."
 msgstr "Vedere :ref:`stats` e :ref:`cli`."
 
-#: ../../source/historique.rst:61
+#: ../../source/historique.rst:82
 msgid "0.32.0 (2026-08-09)"
 msgstr "0.32.0 (2026-08-09)"
 
-#: ../../source/historique.rst:63
+#: ../../source/historique.rst:84
 msgid ""
 "Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de "
-"course complète."
+"course complète. *(Renommé panneau Eval en 0.34.0.)*"
 msgstr ""
 "Il pannello EPC diventa il pannello **Bearoff** e guadagna l'analisi di "
-"corsa completa."
+"corsa completa. *(Rinominato pannello Eval nella 0.34.0.)*"
 
-#: ../../source/historique.rst:64
+#: ../../source/historique.rst:85
 msgid ""
 "Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip "
 "count, du wastage et du nombre moyen de lancers de chaque joueur, "
@@ -461,7 +528,7 @@ msgstr ""
 "raddoppio, raddoppio/prendi, raddoppio/passa, con lo scarto di ciascuna "
 "decisione dalla migliore) nonché la **migliore decisione di cubo**."
 
-#: ../../source/historique.rst:65
+#: ../../source/historique.rst:86
 msgid ""
 "Deux régimes clairement distingués : *exact* (lecture dans une base two-"
 "sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par "
@@ -473,20 +540,23 @@ msgstr ""
 "per giocatore) e *stimato* (convoluzione calibrata, margine di errore "
 "mostrato — il verdetto di cubo non viene mai stimato)."
 
-#: ../../source/historique.rst:66
+#: ../../source/historique.rst:87
 msgid ""
 "La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 "
 "Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, "
 "avec vérification d'intégrité et reprise des téléchargements interrompus "
 "; un fichier ``.bd`` two-sided quelconque de gnubg peut aussi être "
-"désigné."
+"désigné. *(Remplacé en 0.36.0 : la table se calcule sur la machine, plus "
+"aucun téléchargement.)*"
 msgstr ""
 "Il database esteso TS-06-11 (verdetto esatto fino a 11 pedine per "
 "giocatore, 1,2 GB) si scarica dalla nuova scheda *Bearoff* della "
 "configurazione, con verifica dell'integrità e download ripristinabili; "
-"può anche essere designato un qualsiasi file ``.bd`` two-sided di gnubg."
+"può anche essere designato un qualsiasi file ``.bd`` two-sided di gnubg. "
+"*(Sostituito nella 0.36.0: la tabella si calcola sulla macchina, più "
+"nessun download.)*"
 
-#: ../../source/historique.rst:67
+#: ../../source/historique.rst:88
 msgid ""
 "**Mode défi** pour l'entraînement : les résultats se masquent à chaque "
 "modification et se révèlent zone par zone, d'un clic."
@@ -494,7 +564,7 @@ msgstr ""
 "**Modalità sfida** per l'allenamento: i risultati si nascondono a ogni "
 "modifica e si rivelano zona per zona, con un clic."
 
-#: ../../source/historique.rst:68
+#: ../../source/historique.rst:89
 msgid ""
 "Édition entièrement au plateau : pions des deux jans, joueur au trait "
 "(clic sur le rectangle sortie/score) et position du videau (clic sur le "
@@ -504,7 +574,7 @@ msgstr ""
 "al tiro (clic sul rettangolo bearoff/punteggio) e posizione del cubo "
 "(clic sul cubo)."
 
-#: ../../source/historique.rst:69
+#: ../../source/historique.rst:90
 msgid ""
 "Le clic sur le plateau est désormais exact à toute échelle d'interface "
 "(un clic sur le point 1 pouvait atterrir sur le point 2)."
@@ -512,7 +582,7 @@ msgstr ""
 "Il clic sul tavoliere è ora preciso a qualsiasi scala dell'interfaccia "
 "(un clic sul punto 1 poteva finire sul punto 2)."
 
-#: ../../source/historique.rst:70
+#: ../../source/historique.rst:91
 msgid ""
 "Nouvelle commande ``blunderdb epc`` en ligne de commande et option "
 "``--bearoff-ts`` du mode serveur."
@@ -520,25 +590,25 @@ msgstr ""
 "Nuovo comando ``blunderdb epc`` a riga di comando e opzione ``--bearoff-"
 "ts`` della modalità server."
 
-#: ../../source/historique.rst:71
+#: ../../source/historique.rst:92
 msgid ""
 "Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau "
 "Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur "
-"affichée."
+"affichée. *(Section renommée avec le panneau en 0.34.0.)*"
 msgstr ""
 "Una nuova sezione del manuale, «Metodologia e ipotesi del pannello "
 "Bearoff», enuncia esaustivamente le ipotesi dietro ogni valore "
-"visualizzato."
+"visualizzato. *(Sezione rinominata con il pannello nella 0.34.0.)*"
 
-#: ../../source/historique.rst:72
+#: ../../source/historique.rst:93
 msgid "Voir :ref:`panneau_epc` et :ref:`epc_methodologie`."
 msgstr "Vedere :ref:`panneau_epc` e :ref:`epc_methodologie`."
 
-#: ../../source/historique.rst:75
+#: ../../source/historique.rst:96
 msgid "0.31.0 (2026-08-04)"
 msgstr "0.31.0 (2026-08-04)"
 
-#: ../../source/historique.rst:77
+#: ../../source/historique.rst:98
 msgid ""
 "Diffusion d'une base à des tiers : deux mécanismes indépendants, tous "
 "deux facultatifs et choisis au moment de l'export."
@@ -546,7 +616,7 @@ msgstr ""
 "Diffusione di un database a terzi: due meccanismi indipendenti, entrambi "
 "facoltativi e scelti al momento dell'esportazione."
 
-#: ../../source/historique.rst:78
+#: ../../source/historique.rst:99
 msgid ""
 "Le **filigrane d'origine** inscrit dans le fichier ce qu'il est et d'où "
 "il vient, signé par une identité d'émetteur créée toute seule au premier "
@@ -562,7 +632,7 @@ msgstr ""
 "non registra nulla dal lato del destinatario — nessun registro, nessun "
 "tracciamento."
 
-#: ../../source/historique.rst:79
+#: ../../source/historique.rst:100
 msgid ""
 "La **protection par mot de passe** produit un fichier ``.dbx`` chiffré "
 "(AES-256-GCM, clé dérivée par Argon2id), vérifié à chaque ouverture, dont"
@@ -574,7 +644,7 @@ msgstr ""
 "la cui intestazione resta leggibile in chiaro; l'identità si esporta e si"
 " importa come un unico file dalle preferenze."
 
-#: ../../source/historique.rst:80
+#: ../../source/historique.rst:101
 msgid ""
 "Fenêtre d'export refondue : un seul écran au lieu de quatre, rappel de ce"
 " qui part réellement (les positions affichées), part couverte de chaque "
@@ -588,7 +658,7 @@ msgstr ""
 "parziale, tornei esportabili solo con i loro match — ed un'esportazione "
 "tre volte più veloce."
 
-#: ../../source/historique.rst:81
+#: ../../source/historique.rst:102
 msgid ""
 "Fenêtre de configuration réorganisée en trois onglets (Interface, "
 "Couleurs du plateau, Identité d'émetteur), de taille et de position "
@@ -598,15 +668,15 @@ msgstr ""
 "Colori del tavoliere, Identità di emittente), con dimensione e posizione "
 "stabili."
 
-#: ../../source/historique.rst:82
+#: ../../source/historique.rst:103
 msgid "Panneau Métadonnées redisposé en une seule grille."
 msgstr "Il pannello Metadati è stato riorganizzato in un'unica griglia."
 
-#: ../../source/historique.rst:83
+#: ../../source/historique.rst:104
 msgid "Le panneau Journal, qui ne recevait que l'écho des commandes, est retiré."
 msgstr "Il pannello Log, che riceveva solo l'eco dei comandi, viene rimosso."
 
-#: ../../source/historique.rst:84
+#: ../../source/historique.rst:105
 msgid ""
 "Corrections notables : un mot de passe erroné n'ouvre plus une base "
 "protégée, les champs des fenêtres modales ne perdent plus le focus au "
@@ -620,15 +690,15 @@ msgstr ""
 "soldi, e i file temporanei (``-wal``, ``-shm``, lock) vengono ripuliti "
 "alla chiusura."
 
-#: ../../source/historique.rst:85
+#: ../../source/historique.rst:106
 msgid "Voir :ref:`diffusion_controlee` et :ref:`manuel`."
 msgstr "Vedere :ref:`diffusion_controlee` e :ref:`manuel`."
 
-#: ../../source/historique.rst:88
+#: ../../source/historique.rst:109
 msgid "0.30.0 (2026-07-26)"
 msgstr "0.30.0 (2026-07-26)"
 
-#: ../../source/historique.rst:90
+#: ../../source/historique.rst:111
 msgid ""
 "Recherche par commentaire : le filtre « Texte de recherche » devient le "
 "filtre « Commentaire » et propose trois modes exclusifs — *contient le "
@@ -644,7 +714,7 @@ msgstr ""
 "ritrovare con un gesto le posizioni annotate, o al contrario quelle che "
 "restano da commentare."
 
-#: ../../source/historique.rst:91
+#: ../../source/historique.rst:112
 msgid ""
 "Positions marquées dans eXtreme Gammon : les marques (*flags*) posées "
 "lors de l'analyse d'un match XG sont désormais lues à l'import et "
@@ -659,7 +729,7 @@ msgstr ""
 "contrassegnata dà due posizioni contrassegnate, il raddoppio e il "
 "prendi/passa."
 
-#: ../../source/historique.rst:92
+#: ../../source/historique.rst:113
 msgid ""
 "Le marquage n'étant pas rétroactif, il suffit de réimporter le fichier "
 "``.xg`` concerné pour que ses marques rejoignent la base, sans toucher "
@@ -669,7 +739,7 @@ msgstr ""
 "``.xg`` interessato affinché i suoi contrassegni si uniscano al database,"
 " senza toccare i commenti o le analisi esistenti."
 
-#: ../../source/historique.rst:93
+#: ../../source/historique.rst:114
 msgid ""
 "Corrections notables : le PR affiché sur le badge d'un tournoi se "
 "rapporte au joueur de référence et non plus au cumul des deux joueurs, "
@@ -685,15 +755,15 @@ msgstr ""
 "corretto un blocco della ricerca combinando alcuni filtri (testo, data, "
 "errore della mossa giocata)."
 
-#: ../../source/historique.rst:94
+#: ../../source/historique.rst:115
 msgid "Voir :ref:`cmd_mode` et :ref:`manuel`."
 msgstr "Vedere :ref:`cmd_mode` e :ref:`manuel`."
 
-#: ../../source/historique.rst:97
+#: ../../source/historique.rst:118
 msgid "0.29.0 (2026-07-18)"
 msgstr "0.29.0 (2026-07-18)"
 
-#: ../../source/historique.rst:99
+#: ../../source/historique.rst:120
 msgid ""
 "Export d'un match au format Jellyfish/gnubg (``.mat``) depuis l'interface"
 " (panneau Matchs) comme en ligne de commande, avec la route serveur "
@@ -705,7 +775,7 @@ msgstr ""
 " rotta server corrispondente — utile per rigiocare un match in un altro "
 "software di backgammon."
 
-#: ../../source/historique.rst:100
+#: ../../source/historique.rst:121
 msgid ""
 "Recherche : nouveau discriminateur « dés exclus » (jeton ``xD65``, "
 "plusieurs autorisés) qui écarte les positions dont le lancer correspond à"
@@ -714,7 +784,7 @@ msgstr ""
 "Ricerca: un nuovo discriminatore «dadi esclusi» (token ``xD65``, più "
 "ammessi) che scarta le posizioni il cui tiro corrisponde a un tiro dato."
 
-#: ../../source/historique.rst:101
+#: ../../source/historique.rst:122
 msgid ""
 "Ouverture concurrente sécurisée : une base déjà ouverte en écriture dans "
 "une autre fenêtre de blunderDB s'ouvre désormais en lecture seule "
@@ -728,7 +798,7 @@ msgstr ""
 "«[sola lettura]» nella barra del titolo) invece di rischiare una "
 "corruzione."
 
-#: ../../source/historique.rst:102
+#: ../../source/historique.rst:123
 msgid ""
 "Provenance des positions : hors mode match, la barre d'informations au-"
 "dessus du plateau indique le match — et son tournoi — d'où provient la "
@@ -740,7 +810,7 @@ msgstr ""
 " proviene la posizione studiata, con un badge «+N» quando appare in più "
 "match."
 
-#: ../../source/historique.rst:103
+#: ../../source/historique.rst:124
 msgid ""
 "Robustesse accrue face à l'environnement : repli automatique lorsqu'une "
 "police, le presse-papier ou la dernière base ouverte ne sont pas "
@@ -749,7 +819,7 @@ msgstr ""
 "Maggiore robustezza rispetto all'ambiente: ripiego automatico quando un "
 "font, gli appunti o l'ultimo database aperto non sono disponibili."
 
-#: ../../source/historique.rst:104
+#: ../../source/historique.rst:125
 msgid ""
 "Un rechargement explicite de la bibliothèque (``CTRL-R``, bouton de la "
 "barre d'outils ou commande ``e``) rouvre le panneau d'analyse de la "
@@ -759,7 +829,7 @@ msgstr ""
 "barra degli strumenti o comando ``e``) riapre il pannello di analisi "
 "sulla posizione visualizzata."
 
-#: ../../source/historique.rst:105
+#: ../../source/historique.rst:126
 msgid ""
 "Corrections notables : suppression d'un blocage à l'export de grosses "
 "bases, bouton « Aucun » de l'export qui n'exportait pas réellement aucun "
@@ -773,15 +843,15 @@ msgstr ""
 "deduplicazione dell'evento e del torneo nella barra informativa, e vari "
 "aggiustamenti di visualizzazione."
 
-#: ../../source/historique.rst:106
+#: ../../source/historique.rst:127
 msgid "Voir :ref:`cmd_mode`, :ref:`panneau_matchs` et :ref:`manuel`."
 msgstr "Vedere :ref:`cmd_mode`, :ref:`panneau_matchs` e :ref:`manuel`."
 
-#: ../../source/historique.rst:109
+#: ../../source/historique.rst:130
 msgid "0.28.0 (2026-07-15)"
 msgstr "0.28.0 (2026-07-15)"
 
-#: ../../source/historique.rst:111
+#: ../../source/historique.rst:132
 msgid ""
 "Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les"
 " champs de saisie d'identifiants par une fenêtre de sélection (listes à "
@@ -799,7 +869,7 @@ msgstr ""
 "ricalcolano gli indicatori PR/MWC solo per i match visualizzati; ``cli "
 "list --type tournaments`` colma il corrispondente divario di parità."
 
-#: ../../source/historique.rst:112
+#: ../../source/historique.rst:133
 msgid ""
 "Nouveau filtre « Importée individuellement » (case à cocher du groupe "
 "Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en"
@@ -811,7 +881,7 @@ msgstr ""
 "CLI tramite ``--individual``) per ritrovare una posizione salvata o "
 "importata da sola anziché persa in un'importazione di match."
 
-#: ../../source/historique.rst:113
+#: ../../source/historique.rst:134
 msgid ""
 "Correction d'une perte de données : la suppression d'un match ne supprime"
 " plus les positions individuellement importées, mises en collection ou "
@@ -821,18 +891,20 @@ msgstr ""
 "le posizioni importate singolarmente, inserite in una collezione o "
 "incluse in un mazzo Anki che il match conteneva anche."
 
-#: ../../source/historique.rst:114
+#: ../../source/historique.rst:135
 msgid ""
 "Mode serveur (headless) : six nouvelles méthodes pour le planificateur "
 "Anki à répétition espacée — journal des révisions (``anki.reviewLog``), "
 "prévision des cartes dues (``anki.forecast``), suspension / mise en "
 "veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, "
 "``anki.removeCard``) et ajustement automatique du taux de rétention visé "
-"d'un paquet vers son taux de réussite observé (``anki.optimizeParams``) ;"
-" nouvelle méthode ``tenant.purge`` pour supprimer définitivement les "
-"données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; "
-"nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et "
-"``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs)."
+"d'un paquet vers son taux de réussite observé (``anki.optimizeParams``, "
+"remplacé en 0.36.0 par ``anki.retention``, qui mesure le taux observé "
+"sans jamais écrire la cible) ; nouvelle méthode ``tenant.purge`` pour "
+"supprimer définitivement les données d'un tenant sur un déploiement "
+"PostgreSQL multi-utilisateurs ; nouvelles méthodes ``matches.list`` "
+"(filtrage/tri/pagination) et ``stats.matchBadges`` (indicateurs PR/MWC "
+"bornés à une liste de matchs)."
 msgstr ""
 "Modalità server (headless): sei nuovi metodi per lo scheduler Anki a "
 "ripetizione dilazionata — registro dei ripassi (``anki.reviewLog``), "
@@ -840,13 +912,14 @@ msgstr ""
 "sospensione/accantonamento/rimozione di una carta (``anki.suspendCard``, "
 "``anki.buryCard``, ``anki.removeCard``) e regolazione automatica della "
 "ritenzione target di un mazzo verso il suo tasso di successo osservato "
-"(``anki.optimizeParams``); un nuovo metodo ``tenant.purge`` per eliminare"
-" definitivamente i dati di un tenant su un'implementazione PostgreSQL "
-"multiutente; nuovi metodi ``matches.list`` "
-"(filtraggio/ordinamento/paginazione) e ``stats.matchBadges`` (indicatori "
-"PR/MWC limitati a un elenco di match)."
+"(``anki.optimizeParams``, sostituito nella 0.36.0 da ``anki.retention``, "
+"che misura il tasso osservato senza mai scrivere l'obiettivo); un nuovo "
+"metodo ``tenant.purge`` per eliminare definitivamente i dati di un tenant"
+" su un'implementazione PostgreSQL multiutente; nuovi metodi "
+"``matches.list`` (filtraggio/ordinamento/paginazione) e "
+"``stats.matchBadges`` (indicatori PR/MWC limitati a un elenco di match)."
 
-#: ../../source/historique.rst:115
+#: ../../source/historique.rst:136
 msgid ""
 "Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le "
 "bit d'exécution perdu lors du téléchargement du binaire brut."
@@ -854,7 +927,7 @@ msgstr ""
 "Distribuzione Linux nativa: pacchetti ``.deb``/``.rpm``, che conservano "
 "il bit di esecuzione perso al momento del download del binario grezzo."
 
-#: ../../source/historique.rst:116
+#: ../../source/historique.rst:137
 msgid ""
 "Import : après l'import d'un match, l'onglet Matchs s'affiche et les "
 "positions importées sont immédiatement visibles ; après l'import d'une "
@@ -874,15 +947,15 @@ msgstr ""
 "Gammon in francese o tedesco da macOS, che restava vuota (accenti "
 "scomposti dagli appunti di sistema)."
 
-#: ../../source/historique.rst:117
+#: ../../source/historique.rst:138
 msgid "Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`."
 msgstr "Vedere :ref:`headless`, :ref:`cmd_mode` e :ref:`telecharge_install`."
 
-#: ../../source/historique.rst:120
+#: ../../source/historique.rst:141
 msgid "0.27.0 (2026-06-13)"
 msgstr "0.27.0 (2026-06-13)"
 
-#: ../../source/historique.rst:122
+#: ../../source/historique.rst:143
 msgid ""
 "Panneau Anki : ajout d'un mode « entraînement libre » (*cram*), "
 "accessible par le bouton *Cram* à côté de *Study*, qui présente des "
@@ -896,7 +969,7 @@ msgstr ""
 "dilazionata — ideale per scaldarsi prima di un torneo o ripassare "
 "intensamente un mazzo senza alterarne l'ordine."
 
-#: ../../source/historique.rst:123
+#: ../../source/historique.rst:144
 msgid ""
 "Recherche : nouvelle commande ``blunders`` (alias ``bl``) qui charge "
 "directement les pires erreurs (équité/MWC) dans la vue d'analyse, avec un"
@@ -914,7 +987,7 @@ msgstr ""
 "suggerimenti che, passando il mouse su ciascun filtro del pannello di "
 "ricerca, mostrano il token di comando corrispondente."
 
-#: ../../source/historique.rst:124
+#: ../../source/historique.rst:145
 msgid ""
 "Mode serveur (headless) : nouvelles méthodes ``matches.movesByMatch`` "
 "(tous les coups d'un match en un seul appel) et ``positions.epc`` "
@@ -924,15 +997,15 @@ msgstr ""
 "le mosse di un match in un'unica chiamata) e ``positions.epc`` (Effective"
 " Pip Count di entrambi i giocatori)."
 
-#: ../../source/historique.rst:125
+#: ../../source/historique.rst:146
 msgid "Voir :ref:`panneau_anki` et :ref:`cmd_mode`."
 msgstr "Vedere :ref:`panneau_anki` e :ref:`cmd_mode`."
 
-#: ../../source/historique.rst:128
+#: ../../source/historique.rst:149
 msgid "0.26.0 (2026-06-09)"
 msgstr "0.26.0 (2026-06-09)"
 
-#: ../../source/historique.rst:130
+#: ../../source/historique.rst:151
 msgid ""
 "Réglages d'affichage de l'interface dans la fenêtre de configuration : un"
 " curseur d'échelle pour agrandir ou réduire l'ensemble de l'interface, et"
@@ -944,7 +1017,7 @@ msgstr ""
 "l'intera interfaccia, e una scelta della posizione dei pannelli (in "
 "basso, di lato o automatica) per sfruttare meglio gli schermi larghi."
 
-#: ../../source/historique.rst:131
+#: ../../source/historique.rst:152
 msgid ""
 "Ajout d'une barre d'informations au-dessus du plateau rappelant les "
 "joueurs et le contexte du match (événement, lieu, ronde, date, longueur)."
@@ -952,7 +1025,7 @@ msgstr ""
 "Aggiunta una barra informativa sopra il tavoliere che ricorda i giocatori"
 " e il contesto del match (evento, luogo, turno, data, lunghezza)."
 
-#: ../../source/historique.rst:132
+#: ../../source/historique.rst:153
 msgid ""
 "À l'ouverture d'une base, le panneau des matchs est affiché d'emblée et "
 "la revue débute sur la première position."
@@ -960,7 +1033,7 @@ msgstr ""
 "All'apertura di un database, il pannello dei match viene ora mostrato "
 "subito e la revisione inizia dalla prima posizione."
 
-#: ../../source/historique.rst:133
+#: ../../source/historique.rst:154
 msgid ""
 "Les raccourcis clavier sont désormais indépendants de la disposition du "
 "clavier (AZERTY, QWERTY, QWERTZ…)."
@@ -968,7 +1041,7 @@ msgstr ""
 "Le scorciatoie da tastiera sono ora indipendenti dalla disposizione della"
 " tastiera (AZERTY, QWERTY, QWERTZ…)."
 
-#: ../../source/historique.rst:134
+#: ../../source/historique.rst:155
 msgid ""
 "Correction du décodage XGID (indicateurs Jacoby/Beaver et valeur du "
 "videau)."
@@ -976,7 +1049,7 @@ msgstr ""
 "Corretta la decodifica dell'XGID (indicatori Jacoby/Beaver e valore del "
 "cubo)."
 
-#: ../../source/historique.rst:135
+#: ../../source/historique.rst:156
 msgid ""
 "Ajout des onglets de vues multiples : plusieurs espaces de travail "
 "indépendants (liste de positions, position courante, recherche) avec les "
@@ -989,15 +1062,15 @@ msgstr ""
 "*CTRL-T* (nuova vista), *CTRL-W* (chiudi), *CTRL-PageUp*/*CTRL-PageDown* "
 "(cambia vista) e rinomina con doppio clic sulla scheda."
 
-#: ../../source/historique.rst:136
+#: ../../source/historique.rst:157
 msgid "Voir :ref:`configuration` et :ref:`onglets_vues`."
 msgstr "Vedere :ref:`configuration` e :ref:`onglets_vues`."
 
-#: ../../source/historique.rst:139
+#: ../../source/historique.rst:160
 msgid "0.25.0 (2026-06-07)"
 msgstr "0.25.0 (2026-06-07)"
 
-#: ../../source/historique.rst:141
+#: ../../source/historique.rst:162
 msgid ""
 "Mode serveur (headless) : deux nouvelles méthodes pour reconstruire une "
 "position sans l'enregistrer — ``positions.fromXGID`` décode une chaîne "
@@ -1009,16 +1082,16 @@ msgstr ""
 "XGID in una posizione e ``positions.fromXGP`` legge un file di posizione "
 "singola ``.xgp``."
 
-#: ../../source/historique.rst:142 ../../source/historique.rst:148
-#: ../../source/historique.rst:167
+#: ../../source/historique.rst:163 ../../source/historique.rst:169
+#: ../../source/historique.rst:188
 msgid "Voir :ref:`headless`."
 msgstr "Vedi :ref:`headless`."
 
-#: ../../source/historique.rst:145
+#: ../../source/historique.rst:166
 msgid "0.24.0 (2026-06-06)"
 msgstr "0.24.0 (2026-06-06)"
 
-#: ../../source/historique.rst:147
+#: ../../source/historique.rst:168
 msgid ""
 "Ajout d'une image conteneur (Docker) pour le mode headless : un point "
 "d'entrée dédié ``serve`` et un ``Dockerfile.serve`` produisant un binaire"
@@ -1030,11 +1103,11 @@ msgstr ""
 "produce un binario statico senza interfaccia grafica, per distribuire il "
 "motore di blunderDB come servizio dietro un reverse proxy."
 
-#: ../../source/historique.rst:151
+#: ../../source/historique.rst:172
 msgid "0.23.0 (2026-06-05)"
 msgstr "0.23.0 (2026-06-05)"
 
-#: ../../source/historique.rst:153
+#: ../../source/historique.rst:174
 msgid ""
 "Ajout de visites guidées de l'interface (tour général, recherche, matchs,"
 " tournois), rejouables depuis la barre d'outils ou la commande ``tour``, "
@@ -1046,7 +1119,7 @@ msgstr ""
 "e un database di esempio caricabile con il comando ``demo`` per scoprire "
 "lo strumento senza importare le proprie partite."
 
-#: ../../source/historique.rst:154
+#: ../../source/historique.rst:175
 msgid ""
 "Personnalisation des couleurs du plateau (fond, bordure, flèches, pions, "
 "dés, videau) depuis la fenêtre de configuration."
@@ -1054,11 +1127,11 @@ msgstr ""
 "Personalizzazione dei colori del tavoliere (sfondo, bordo, frecce, "
 "pedine, dadi, cubo) dalla finestra di configurazione."
 
-#: ../../source/historique.rst:155
+#: ../../source/historique.rst:176
 msgid "Autocomplétion de la ligne de commande (touche *TAB*)."
 msgstr "Completamento automatico della riga di comando (tasto *TAB*)."
 
-#: ../../source/historique.rst:156
+#: ../../source/historique.rst:177
 msgid ""
 "Panneau de recherche : contrôle explicite du type de décision (Pions / "
 "Videau), avec un sous-type Double / Pas de double ou Prise / Passe pour "
@@ -1070,23 +1143,23 @@ msgstr ""
 " le decisioni di cubo, sincronizzato con il tavoliere; il cubo offerto "
 "viene mostrato al centro del tavoliere per le decisioni di prendi/passa."
 
-#: ../../source/historique.rst:157
+#: ../../source/historique.rst:178
 msgid "Recherche d'une position par son identifiant (filtre ``id``)."
 msgstr "Ricerca di una posizione tramite il suo identificatore (filtro ``id``)."
 
-#: ../../source/historique.rst:158
+#: ../../source/historique.rst:179
 msgid "Correction de l'attribution de l'erreur de videau au joueur 1."
 msgstr "Corretta l'attribuzione dell'errore di cubo al giocatore 1."
 
-#: ../../source/historique.rst:159
+#: ../../source/historique.rst:180
 msgid "Voir :ref:`visites_guidees`."
 msgstr "Vedi :ref:`visites_guidees`."
 
-#: ../../source/historique.rst:162
+#: ../../source/historique.rst:183
 msgid "0.22.0 (2026-06-02)"
 msgstr "0.22.0 (2026-06-02)"
 
-#: ../../source/historique.rst:164
+#: ../../source/historique.rst:185
 msgid ""
 "Ajout d'un mode headless (serveur), avancé et facultatif, qui complète "
 "l'application de bureau : un démon ``serve`` exposant le moteur en HTTP +"
@@ -1104,7 +1177,7 @@ msgstr ""
 "generico ``call`` che dà accesso a riga di comando a tutte le operazioni "
 "di archiviazione."
 
-#: ../../source/historique.rst:165
+#: ../../source/historique.rst:186
 msgid ""
 "Import de positions uniques depuis de nouveaux formats (eXtreme Gammon "
 "``.xgp``, BGBlitz texte, bibliothèque native ``.db``) avec enrichissement"
@@ -1114,7 +1187,7 @@ msgstr ""
 "``.xgp``, testo BGBlitz, libreria nativa ``.db``) con arricchimento dei "
 "duplicati tra formati."
 
-#: ../../source/historique.rst:166
+#: ../../source/historique.rst:187
 msgid ""
 "Corrections : les panneaux ne provoquent plus d'erreur lorsqu'aucune base"
 " n'est ouverte et le panneau Commentaires ne boucle plus à l'ouverture."
@@ -1122,11 +1195,11 @@ msgstr ""
 "Correzioni: i pannelli non causano più errori quando nessun database è "
 "aperto e il pannello Commenti non entra più in loop all'apertura."
 
-#: ../../source/historique.rst:170
+#: ../../source/historique.rst:191
 msgid "0.21.0 (2026-06-01)"
 msgstr "0.21.0 (2026-06-01)"
 
-#: ../../source/historique.rst:172
+#: ../../source/historique.rst:193
 msgid ""
 "Internationalisation de l'interface : l'intégralité de blunderDB (barre "
 "d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
@@ -1138,7 +1211,7 @@ msgstr ""
 "scelta in inglese, francese, tedesco, italiano, spagnolo, finlandese, "
 "giapponese, greco o russo."
 
-#: ../../source/historique.rst:173
+#: ../../source/historique.rst:194
 msgid ""
 "Ajout d'une fenêtre de configuration, accessible par un bouton en forme "
 "de rouage dans la barre d'outils, permettant de sélectionner la langue."
@@ -1147,19 +1220,19 @@ msgstr ""
 "a forma di ingranaggio nella barra degli strumenti, che permette di "
 "selezionare la lingua."
 
-#: ../../source/historique.rst:174
+#: ../../source/historique.rst:195
 msgid "Le choix de la langue est conservé d'une session à l'autre."
 msgstr "La scelta della lingua viene conservata da una sessione all'altra."
 
-#: ../../source/historique.rst:175
+#: ../../source/historique.rst:196
 msgid "Voir :ref:`configuration`."
 msgstr "Vedi :ref:`configuration`."
 
-#: ../../source/historique.rst:178
+#: ../../source/historique.rst:199
 msgid "0.20.0 (2026-05-31)"
 msgstr "0.20.0 (2026-05-31)"
 
-#: ../../source/historique.rst:180
+#: ../../source/historique.rst:201
 msgid ""
 "Ajout de la structure d'exclusion *Except* au panneau de recherche : "
 "exclut les positions contenant l'un des pions dessinés, avec marqueur « "
@@ -1171,7 +1244,7 @@ msgstr ""
 " «deve essere vuoto» (doppio clic) e un numero illimitato di pedine per "
 "punto (comando ``x``)."
 
-#: ../../source/historique.rst:181
+#: ../../source/historique.rst:202
 msgid ""
 "Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
 "(variante D1, option CLI --dice)."
@@ -1179,7 +1252,7 @@ msgstr ""
 "Aggiunta l'opzione «solo primo dado» al filtro del tiro (variante D1, "
 "opzione CLI ``--dice``)."
 
-#: ../../source/historique.rst:182
+#: ../../source/historique.rst:203
 msgid ""
 "Panneau Commentaires : focus automatique du champ de saisie à l'ouverture"
 " et boutons éditer / supprimer toujours visibles."
@@ -1187,7 +1260,7 @@ msgstr ""
 "Pannello Commenti: focus automatico del campo di inserimento "
 "all'apertura, e pulsanti modifica/elimina sempre visibili."
 
-#: ../../source/historique.rst:183
+#: ../../source/historique.rst:204
 msgid ""
 "Correction du filtre « Search Text » qui ne trouvait pas tous les tags de"
 " commentaires."
@@ -1195,27 +1268,28 @@ msgstr ""
 "Corretto il filtro «Search Text», che non trovava tutti i tag dei "
 "commenti."
 
-#: ../../source/historique.rst:186
+#: ../../source/historique.rst:207
 msgid "0.19.0 (2026-05-07)"
 msgstr "0.19.0 (2026-05-07)"
 
-#: ../../source/historique.rst:188
+#: ../../source/historique.rst:209
 msgid ""
-"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
-"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
-"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
-"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
-"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
-"répartition par action de videau et histogramme des magnitudes."
+"Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie "
+"Error Rate et MWC cost (Match Winning Chance cost), barre de filtre "
+"(joueur, tournoi, dates, type de décision, longueur de match), onglet "
+"Dashboard avec cartes de niveau / PR glissant / top blunders, onglet "
+"Progression avec courbe par tournoi et scatter plot par match, onglet "
+"Erreurs avec répartition par action de videau et histogramme des "
+"magnitudes."
 msgstr ""
-"Aggiunta del pannello Stats: indicatori PR (Performance Rate), Snowie "
+"Aggiunta del pannello Stats: indicatori PR (Performance Rating), Snowie "
 "Error Rate e MWC cost (Match Winning Chance cost), barra di filtro "
 "(giocatore, torneo, date, tipo di decisione, lunghezza del match), scheda"
 " Dashboard con schede di livello / PR mobile / top blunder, scheda "
 "Progressione con curva per torneo e scatter plot per match, scheda Errori"
 " con ripartizione per azione di cubo e istogramma delle magnitudini."
 
-#: ../../source/historique.rst:189
+#: ../../source/historique.rst:210
 msgid ""
 "Drill-down interactif vers les positions / matchs / tournois depuis tous "
 "les indicateurs."
@@ -1223,15 +1297,15 @@ msgstr ""
 "Drill-down interattivo verso le posizioni / match / tornei da tutti gli "
 "indicatori."
 
-#: ../../source/historique.rst:190
+#: ../../source/historique.rst:211
 msgid "Toggle PR / MWC instantané."
 msgstr "Toggle PR / MWC istantaneo."
 
-#: ../../source/historique.rst:191
+#: ../../source/historique.rst:212
 msgid "Commande CLI list --type stats."
 msgstr "Comando CLI list --type stats."
 
-#: ../../source/historique.rst:192
+#: ../../source/historique.rst:213
 msgid ""
 "Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
 "gnuBG (seuil 0.16 d'équité pour les cubes proches)."
@@ -1239,23 +1313,23 @@ msgstr ""
 "Allineamento degli indicatori PR / Snowie ER / MWC con eXtremeGammon e "
 "gnuBG (soglia di equità 0.16 per i cubi marginali)."
 
-#: ../../source/historique.rst:193
+#: ../../source/historique.rst:214
 msgid "Correction du calcul de cube_error pour les décisions Double/Pass."
 msgstr "Corretto il calcolo di cube_error per le decisioni Double/Pass."
 
-#: ../../source/historique.rst:194
+#: ../../source/historique.rst:215
 msgid "Documentation du modèle de statistiques (:ref:`stats_parity`)."
 msgstr "Documentazione del modello statistico (:ref:`stats_parity`)."
 
-#: ../../source/historique.rst:195
+#: ../../source/historique.rst:216
 msgid "Voir :ref:`stats`."
 msgstr "Vedi :ref:`stats`."
 
-#: ../../source/historique.rst:198
+#: ../../source/historique.rst:219
 msgid "0.18.0 (2026-04-20)"
 msgstr "0.18.0 (2026-04-20)"
 
-#: ../../source/historique.rst:200
+#: ../../source/historique.rst:221
 msgid ""
 "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
 "fichiers spécialisés, extraction de 7 modules de service depuis "
@@ -1265,11 +1339,11 @@ msgstr ""
 "file specializzati, estrazione di 7 moduli di servizio da App.svelte "
 "(4888→469 righe), consolidamento degli store modali/pannello."
 
-#: ../../source/historique.rst:201
+#: ../../source/historique.rst:222
 msgid "Migration complète vers Svelte 5 runes."
 msgstr "Migrazione completa alle rune di Svelte 5."
 
-#: ../../source/historique.rst:202
+#: ../../source/historique.rst:223
 msgid ""
 "Remplacement de 9 modales de tableau par un composant générique "
 "DataTableModal."
@@ -1277,17 +1351,17 @@ msgstr ""
 "Sostituzione di 9 modali di tabella con un componente generico "
 "DataTableModal."
 
-#: ../../source/historique.rst:203
+#: ../../source/historique.rst:224
 msgid "Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI."
 msgstr "Aggiunti ESLint + Prettier + vitest (125 test frontend) con CI."
 
-#: ../../source/historique.rst:204
+#: ../../source/historique.rst:225
 msgid "Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier)."
 msgstr ""
 "Conformità WCAG 2.1 AA (focus visibile, ruoli ARIA, navigazione da "
 "tastiera)."
 
-#: ../../source/historique.rst:205
+#: ../../source/historique.rst:226
 msgid ""
 "Passage du mutex Database en RWMutex pour un meilleur parallélisme en "
 "lecture."
@@ -1295,23 +1369,23 @@ msgstr ""
 "Passaggio del mutex Database a RWMutex per un miglior parallelismo in "
 "lettura."
 
-#: ../../source/historique.rst:206
+#: ../../source/historique.rst:227
 msgid "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN)."
 msgstr "Documentazione CLI completa (CLI_USAGE.md + Sphinx FR/EN)."
 
-#: ../../source/historique.rst:207
+#: ../../source/historique.rst:228
 msgid "Réécriture du README."
 msgstr "Riscrittura del README."
 
-#: ../../source/historique.rst:208
+#: ../../source/historique.rst:229
 msgid "Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
 msgstr "Corretti tutti gli avvertimenti ESLint (46→0) e Vite (6→0)."
 
-#: ../../source/historique.rst:211
+#: ../../source/historique.rst:232
 msgid "0.17.0 (2026-04-20)"
 msgstr "0.17.0 (2026-04-20)"
 
-#: ../../source/historique.rst:213
+#: ../../source/historique.rst:234
 #, no-python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
@@ -1322,43 +1396,43 @@ msgstr ""
 " di riduzione), codifica compatta delle posizioni (~90% di riduzione "
 "delle dimensioni)."
 
-#: ../../source/historique.rst:214
+#: ../../source/historique.rst:235
 msgid "Ajout de 5 index manquants pour améliorer les performances de recherche."
 msgstr "Aggiunti 5 indici mancanti per migliorare le prestazioni di ricerca."
 
-#: ../../source/historique.rst:215
+#: ../../source/historique.rst:236
 msgid "Correction de la recherche par erreur de cube."
 msgstr "Corretta la ricerca per errore di cubo."
 
-#: ../../source/historique.rst:216
+#: ../../source/historique.rst:237
 msgid "Correction du mode EDIT après une recherche sans résultats."
 msgstr "Corretta la modalità EDIT dopo una ricerca senza risultati."
 
-#: ../../source/historique.rst:217
+#: ../../source/historique.rst:238
 msgid ""
 "Restauration de l'état du panneau de recherche lors du changement "
 "d'onglets."
 msgstr "Ripristino dello stato del pannello di ricerca al cambio di scheda."
 
-#: ../../source/historique.rst:218
+#: ../../source/historique.rst:239
 msgid "Suppression de 62 instructions de débogage des chemins critiques."
 msgstr "Rimozione di 62 istruzioni di debug dai percorsi critici."
 
-#: ../../source/historique.rst:221
+#: ../../source/historique.rst:242
 msgid "0.16.0 (2026-04-18)"
 msgstr "0.16.0 (2026-04-18)"
 
-#: ../../source/historique.rst:223
+#: ../../source/historique.rst:244
 msgid ""
 "Schéma de base de données v2.0.0 : déduplication des positions via hash "
 "Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
-"bitboard, journalisation WAL."
+"bitboard, journalisation WAL (:ref:`annexe_db_migration`)."
 msgstr ""
 "Schema del database v2.0.0: deduplicazione delle posizioni tramite hash "
 "Zobrist, colonne di filtraggio denormalizzate, prefiltro di motivi "
-"bitboard, journaling WAL."
+"bitboard, journaling WAL (:ref:`annexe_db_migration`)."
 
-#: ../../source/historique.rst:224
+#: ../../source/historique.rst:245
 msgid ""
 "Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ "
 "positions."
@@ -1366,7 +1440,7 @@ msgstr ""
 "Importazione in batch >=3 volte più veloce, ricerca filtrata <=100 ms su "
 "oltre 10k posizioni."
 
-#: ../../source/historique.rst:225
+#: ../../source/historique.rst:246
 msgid ""
 "NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts "
 "par les versions plus anciennes ; les anciennes DB sont migrées "
@@ -1376,11 +1450,11 @@ msgstr ""
 "versioni più vecchie; i vecchi DB vengono migrati automaticamente sul "
 "posto (eseguire prima un backup)."
 
-#: ../../source/historique.rst:228
+#: ../../source/historique.rst:249
 msgid "0.15.0 (2026-03-31)"
 msgstr "0.15.0 (2026-03-31)"
 
-#: ../../source/historique.rst:230
+#: ../../source/historique.rst:251
 msgid ""
 "Export de la position en image PNG dans le presse-papier (board seul via "
 "Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
@@ -1389,25 +1463,25 @@ msgstr ""
 "tavoliere tramite Ctrl+X, oppure tavoliere con analisi tramite Ctrl+X "
 "Ctrl+X)."
 
-#: ../../source/historique.rst:233
+#: ../../source/historique.rst:254
 msgid "0.14.0 (2026-03-30)"
 msgstr "0.14.0 (2026-03-30)"
 
-#: ../../source/historique.rst:235
+#: ../../source/historique.rst:256
 msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
 msgstr ""
 "Pannello Anki dedicato per lo studio a ripetizione dilazionata (algoritmo"
 " FSRS)."
 
-#: ../../source/historique.rst:236
+#: ../../source/historique.rst:257
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Importazione dei commenti dai file XG."
 
-#: ../../source/historique.rst:239
+#: ../../source/historique.rst:260
 msgid "0.13.0 (2026-03-28)"
 msgstr "0.13.0 (2026-03-28)"
 
-#: ../../source/historique.rst:241
+#: ../../source/historique.rst:262
 msgid ""
 "Simplification de l'interface : la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -1415,23 +1489,25 @@ msgstr ""
 "Semplificazione dell'interfaccia: la navigazione nei match e nelle "
 "collezioni avviene direttamente tramite i pannelli."
 
-#: ../../source/historique.rst:242
+#: ../../source/historique.rst:263
 msgid "Ligne de commande intégrée dans la barre d'état."
 msgstr "Riga di comando integrata nella barra di stato."
 
-#: ../../source/historique.rst:243
-msgid "Panneau Console renommé en panneau Log."
-msgstr "Pannello Console rinominato in pannello Log."
+#: ../../source/historique.rst:264
+msgid "Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*"
+msgstr ""
+"Pannello Console rinominato in pannello Log. *(Pannello rimosso nella "
+"0.31.0.)*"
 
-#: ../../source/historique.rst:244
+#: ../../source/historique.rst:265
 msgid "Panneau Bearoff dédié dans le panneau inférieur."
 msgstr "Pannello Bearoff dedicato nel pannello inferiore."
 
-#: ../../source/historique.rst:245
+#: ../../source/historique.rst:266
 msgid "Copier/coller de position dans le panneau de recherche."
 msgstr "Copia/incolla di posizione nel pannello di ricerca."
 
-#: ../../source/historique.rst:246
+#: ../../source/historique.rst:267
 msgid ""
 "Glisser-déposer pour réordonner les collections, les positions dans les "
 "collections, et les matchs dans les tournois."
@@ -1439,35 +1515,35 @@ msgstr ""
 "Trascinamento per riordinare le collezioni, le posizioni all'interno "
 "delle collezioni e i match all'interno dei tornei."
 
-#: ../../source/historique.rst:247
+#: ../../source/historique.rst:268
 msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
 msgstr "Colonna torneo nel pannello dei match con modifica inline."
 
-#: ../../source/historique.rst:248
+#: ../../source/historique.rst:269
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Visualizzazione automatica del pannello di analisi dopo una ricerca."
 
-#: ../../source/historique.rst:251
+#: ../../source/historique.rst:272
 msgid "0.12.0 (2026-03-19)"
 msgstr "0.12.0 (2026-03-19)"
 
-#: ../../source/historique.rst:253
+#: ../../source/historique.rst:274
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Importazione di file di posizione eXtreme Gammon (XGP) con analisi."
 
-#: ../../source/historique.rst:256
+#: ../../source/historique.rst:277
 msgid "0.11.0 (2026-03-06)"
 msgstr "0.11.0 (2026-03-06)"
 
-#: ../../source/historique.rst:258
+#: ../../source/historique.rst:279
 msgid "Filtre de recherche dans les positions courantes."
 msgstr "Filtro di ricerca all'interno delle posizioni correnti."
 
-#: ../../source/historique.rst:259
+#: ../../source/historique.rst:280
 msgid "Ajout de filtres par match et par tournoi."
 msgstr "Aggiunta di filtri per match e per torneo."
 
-#: ../../source/historique.rst:260
+#: ../../source/historique.rst:281
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
@@ -1475,11 +1551,11 @@ msgstr ""
 "Cancellazione automatica del tavoliere all'apertura del pannello di "
 "ricerca."
 
-#: ../../source/historique.rst:263
+#: ../../source/historique.rst:284
 msgid "0.10.0 (2026-02-25)"
 msgstr "0.10.0 (2026-02-25)"
 
-#: ../../source/historique.rst:265
+#: ../../source/historique.rst:286
 msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
@@ -1487,7 +1563,7 @@ msgstr ""
 "Importazione di match da eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) e BGBlitz (BGF/TXT)."
 
-#: ../../source/historique.rst:266
+#: ../../source/historique.rst:287
 msgid ""
 "Navigation dans les matchs : parcours des coups d'un match importé, avec "
 "mise en évidence du coup joué."
@@ -1495,7 +1571,7 @@ msgstr ""
 "Navigazione nei match: scorrimento delle mosse di un match importato, con"
 " evidenziazione della mossa giocata."
 
-#: ../../source/historique.rst:267
+#: ../../source/historique.rst:288
 msgid ""
 "Panneau des matchs : liste, tri, édition inline, permutation des joueurs,"
 " assignation de tournoi."
@@ -1503,27 +1579,29 @@ msgstr ""
 "Pannello dei match: elenco, ordinamento, modifica inline, scambio dei "
 "giocatori, assegnazione del torneo."
 
-#: ../../source/historique.rst:268
+#: ../../source/historique.rst:289
 msgid "Import par dossier récursif et import par glisser-déposer."
 msgstr "Importazione per cartella ricorsiva e importazione tramite trascinamento."
 
-#: ../../source/historique.rst:269
+#: ../../source/historique.rst:290
 msgid ""
 "Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
-"GNUbg intégrée."
+"GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la "
+"machine, plus aucune n'est embarquée.)*"
 msgstr ""
 "Calcolatore EPC (Effective Pip Count) con database di bearoff GNUbg "
-"integrato."
+"integrato. *(Sostituito nella 0.36.0: la tabella è calcolata sulla "
+"macchina, nessuna più integrata.)*"
 
-#: ../../source/historique.rst:270
+#: ../../source/historique.rst:291
 msgid "Collections : regroupement personnalisé de positions."
 msgstr "Collezioni: raggruppamento personalizzato di posizioni."
 
-#: ../../source/historique.rst:271
+#: ../../source/historique.rst:292
 msgid "Tournois : regroupement de matchs par événement."
 msgstr "Tornei: raggruppamento di match per evento."
 
-#: ../../source/historique.rst:272
+#: ../../source/historique.rst:293
 msgid ""
 "Sauvegarde et restauration de l'état de session (dernière recherche, "
 "position courante)."
@@ -1531,19 +1609,19 @@ msgstr ""
 "Salvataggio e ripristino dello stato della sessione (ultima ricerca, "
 "posizione corrente)."
 
-#: ../../source/historique.rst:273
+#: ../../source/historique.rst:294
 msgid "Migration automatique du schéma de base de données."
 msgstr "Migrazione automatica dello schema del database."
 
-#: ../../source/historique.rst:274
+#: ../../source/historique.rst:295
 msgid "Affichage multi-moteurs dans l'analyse."
 msgstr "Visualizzazione multi-motore nell'analisi."
 
-#: ../../source/historique.rst:275
+#: ../../source/historique.rst:296
 msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
 msgstr "Filtro per errori/blunder del giocatore 1 nelle ricerche."
 
-#: ../../source/historique.rst:276
+#: ../../source/historique.rst:297
 msgid ""
 "Export de la base de données avec sélection granulaire (matchs, "
 "collections, tournois, coups joués)."
@@ -1551,154 +1629,154 @@ msgstr ""
 "Esportazione del database con selezione granulare (match, collezioni, "
 "tornei, mosse giocate)."
 
-#: ../../source/historique.rst:277
+#: ../../source/historique.rst:298
 msgid "Bouton de navigation dans les matchs."
 msgstr "Pulsante di navigazione nei match."
 
-#: ../../source/historique.rst:278
+#: ../../source/historique.rst:299
 msgid "Compte de course (pipcount) dans la navigation des matchs."
 msgstr "Conteggio dei pip nella navigazione dei match."
 
-#: ../../source/historique.rst:279
+#: ../../source/historique.rst:300
 msgid "Interface en ligne de commande (CLI) complète."
 msgstr "Interfaccia a riga di comando (CLI) completa."
 
-#: ../../source/historique.rst:280
+#: ../../source/historique.rst:301
 msgid "Réouverture automatique de la dernière base de données."
 msgstr "Riapertura automatica dell'ultimo database."
 
-#: ../../source/historique.rst:281
+#: ../../source/historique.rst:302
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Miglioramento della barra degli strumenti e delle icone."
 
-#: ../../source/historique.rst:284
+#: ../../source/historique.rst:305
 msgid "0.9.0 (2025-11-02)"
 msgstr "0.9.0 (2025-11-02)"
 
-#: ../../source/historique.rst:286
+#: ../../source/historique.rst:307
 msgid "Correction de bug de la bibliothèque de filtres."
 msgstr "Correzione di bug della libreria di filtri."
 
-#: ../../source/historique.rst:287
+#: ../../source/historique.rst:308
 msgid "Import/export de base de données."
 msgstr "Importazione/esportazione di database."
 
-#: ../../source/historique.rst:288
+#: ../../source/historique.rst:309
 msgid "Affichage de flèches pour les coups sélectionnés."
 msgstr "Visualizzazione di frecce per le mosse selezionate."
 
-#: ../../source/historique.rst:289
+#: ../../source/historique.rst:310
 msgid "Raccourcis clavier pour l'import/export."
 msgstr "Scorciatoie da tastiera per l'importazione/esportazione."
 
-#: ../../source/historique.rst:292
+#: ../../source/historique.rst:313
 msgid "0.8.0 (2025-05-03)"
 msgstr "0.8.0 (2025-05-03)"
 
-#: ../../source/historique.rst:294
+#: ../../source/historique.rst:315
 msgid "Possibilité de cacher le compte de course."
 msgstr "Possibilità di nascondere il conteggio dei pip."
 
-#: ../../source/historique.rst:295
+#: ../../source/historique.rst:316
 msgid "Chargement d'une position aléatoire."
 msgstr "Caricamento di una posizione casuale."
 
-#: ../../source/historique.rst:298
+#: ../../source/historique.rst:319
 msgid "0.7.0 (2025-02-16)"
 msgstr "0.7.0 (2025-02-16)"
 
-#: ../../source/historique.rst:300
+#: ../../source/historique.rst:321
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Supporto del giapponese e del tedesco nelle esportazioni di XG."
 
-#: ../../source/historique.rst:303
+#: ../../source/historique.rst:324
 msgid "0.6.0 (2025-02-13)"
 msgstr "0.6.0 (2025-02-13)"
 
-#: ../../source/historique.rst:305
+#: ../../source/historique.rst:326
 msgid "Ajout de la bibliothèque de filtres."
 msgstr "Aggiunta della libreria di filtri."
 
-#: ../../source/historique.rst:306
+#: ../../source/historique.rst:327
 msgid "Affichage de la version de la base de données dans les métadonnées."
 msgstr "Visualizzazione della versione del database nei metadati."
 
-#: ../../source/historique.rst:309
+#: ../../source/historique.rst:330
 msgid "0.5.0 (2025-02-04)"
 msgstr "0.5.0 (2025-02-04)"
 
-#: ../../source/historique.rst:311
+#: ../../source/historique.rst:332
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr ""
 "Aggiunta di nuovi filtri (specchio, non contatto, jan blot, outfield "
 "blot)."
 
-#: ../../source/historique.rst:314
+#: ../../source/historique.rst:335
 msgid "0.4.0 (2025-02-03)"
 msgstr "0.4.0 (2025-02-03)"
 
-#: ../../source/historique.rst:316 ../../source/historique.rst:324
-#: ../../source/historique.rst:331
+#: ../../source/historique.rst:337 ../../source/historique.rst:345
+#: ../../source/historique.rst:352
 msgid "Résolutions de bugs divers."
 msgstr "Correzioni di vari bug."
 
-#: ../../source/historique.rst:317
+#: ../../source/historique.rst:338
 msgid "Ajout d'une icône pour blunderDB."
 msgstr "Aggiunta di un'icona per blunderDB."
 
-#: ../../source/historique.rst:318
+#: ../../source/historique.rst:339
 msgid "Corrections de filtres."
 msgstr "Correzioni dei filtri."
 
-#: ../../source/historique.rst:319
+#: ../../source/historique.rst:340
 msgid "Ajout du support de MacOS."
 msgstr "Aggiunta del supporto a macOS."
 
-#: ../../source/historique.rst:322
+#: ../../source/historique.rst:343
 msgid "0.3.0 (2025-01-27)"
 msgstr "0.3.0 (2025-01-27)"
 
-#: ../../source/historique.rst:325
+#: ../../source/historique.rst:346
 msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
 msgstr "Salva automaticamente le dimensioni della finestra."
 
-#: ../../source/historique.rst:326
+#: ../../source/historique.rst:347
 msgid "Importe les éventuels commentaires depuis XG."
 msgstr "Importa gli eventuali commenti da XG."
 
-#: ../../source/historique.rst:329
+#: ../../source/historique.rst:350
 msgid "0.2.0 (2025-01-06)"
 msgstr "0.2.0 (2025-01-06)"
 
-#: ../../source/historique.rst:332
+#: ../../source/historique.rst:353
 msgid "Ajout de tables de matchs/TP/GV."
 msgstr "Aggiunta di tabelle match/TP/GV."
 
-#: ../../source/historique.rst:333
+#: ../../source/historique.rst:354
 msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
 msgstr "Aggiunta di filtri di ricerca (mosse, decisione di cubo, data)."
 
-#: ../../source/historique.rst:334
+#: ../../source/historique.rst:355
 msgid "Ajout de métadonnées sur les positions."
 msgstr "Aggiunta di metadati sulle posizioni."
 
-#: ../../source/historique.rst:335
+#: ../../source/historique.rst:356
 msgid "Fonction d'import/export entre instances de blunderDB."
 msgstr "Funzione di importazione/esportazione tra istanze di blunderDB."
 
-#: ../../source/historique.rst:336
+#: ../../source/historique.rst:357
 msgid "Ajout de fonction de métadonnées sur les bases de données."
 msgstr "Aggiunta di funzione di metadati sui database."
 
-#: ../../source/historique.rst:337
+#: ../../source/historique.rst:358
 msgid "Introduction des numéros de versions (base de données et application)."
 msgstr "Introduzione dei numeri di versione (database e applicazione)."
 
-#: ../../source/historique.rst:340
+#: ../../source/historique.rst:361
 msgid "0.1.0 (2024-12-31)"
 msgstr "0.1.0 (2024-12-31)"
 
-#: ../../source/historique.rst:342
+#: ../../source/historique.rst:363
 msgid "Création version bêta."
 msgstr "Creazione versione beta."
 

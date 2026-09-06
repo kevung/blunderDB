@@ -100,4 +100,3 @@ msgid ""
 msgstr ""
 "Sinun tarvitsee tehdä tämä toimenpide vain kerran. Tämän jälkeen voit avata "
 "blunderDB:n ilman näiden vaiheiden läpikäymistä."
-
