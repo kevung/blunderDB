@@ -301,3 +301,22 @@ export async function overrideDbMethodThen(page, methodName, returnValue, afterC
 export async function getWailsCalls(page, methodName) {
     return page.evaluate((method) => (window.__wailsCalls || []).filter((c) => !method || c.method === method), methodName ?? null);
 }
+
+/**
+ * Écarte l'écran d'accueil s'il est là.
+ *
+ * L'accueil (#284) couvre l'application tant qu'aucune base n'est ouverte, et
+ * intercepte donc les clics sur les onglets. Une spec qui travaille sur le
+ * plateau brouillon — Eval, EPC — est exactement le cas pour lequel le bouton
+ * « écarter » existe : elle fait ici le geste que l'utilisateur ferait, plutôt
+ * que d'ouvrir une base dont elle n'a pas besoin.
+ *
+ * Sans effet quand une base est montée (openLibraryMock) : l'accueil n'est
+ * alors pas rendu.
+ *
+ * @param {import('@playwright/test').Page} page
+ */
+export async function dismissHomeScreen(page) {
+    const dismiss = page.locator('[data-testid="home-dismiss"]');
+    if (await dismiss.count()) await dismiss.click();
+}

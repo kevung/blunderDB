@@ -9,7 +9,7 @@
 import { test, expect } from '@playwright/test';
 import { TOURS } from '../../src/tours.js';
 import en from '../../src/i18n/locales/en.json' with { type: 'json' };
-import { installWailsMock } from './helpers/wailsMock.js';
+import { dismissHomeScreen, installWailsMock } from './helpers/wailsMock.js';
 
 const SHOT = 'test-results/tour';
 
@@ -21,6 +21,7 @@ test.beforeEach(async ({ page }) => {
     await installWailsMock(page);
     await page.goto('/');
     await waitForApp(page);
+    await dismissHomeScreen(page);
     // Dismiss the first-run catalog if it auto-opened, so each test starts clean.
     await page.keyboard.press('Escape');
     await expect(page.locator('.tour-list')).toHaveCount(0);

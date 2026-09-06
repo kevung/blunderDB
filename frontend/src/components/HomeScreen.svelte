@@ -85,7 +85,7 @@
         </button>
     {/if}
 
-    <button type="button" class="dismiss" onclick={() => onDismiss?.()}>{$t('home.dismiss')}</button>
+    <button type="button" class="dismiss" data-testid="home-dismiss" onclick={() => onDismiss?.()}>{$t('home.dismiss')}</button>
 </div>
 
 <style>

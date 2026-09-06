@@ -12,7 +12,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock } from './helpers/wailsMock.js';
+import { dismissHomeScreen, installWailsMock } from './helpers/wailsMock.js';
 import { epcResultA } from './helpers/fixtures.js';
 
 // A cube decision as the live evaluation delivers it (no dice on the board, so
@@ -87,6 +87,9 @@ async function openEval(page, { epc, evalResult }) {
 
     await page.goto('/');
     await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+    // Le panneau Eval se lit sans base ouverte ; l'accueil, lui, couvre les
+    // onglets jusqu'à ce qu'on l'écarte — le geste que fait l'utilisateur.
+    await dismissHomeScreen(page);
     await page.click('[data-testid="tab-epc"]');
     await expect(page.locator('[data-testid="tab-epc"]')).toHaveClass(/active/);
     await expect(page.locator('.epc-panel .cube-table')).toBeVisible({ timeout: 4000 });
