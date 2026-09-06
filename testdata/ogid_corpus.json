@@ -1,0 +1,97 @@
+{
+ "_comment": "OGID contract corpus (issue #260, fiche I.4). Every case pairs an OGID with the XGID of the SAME physical position, and pkg/blunderdb/domain/ogid_contract_test.go asserts that DecodeOGID and DecodeXGID agree on the board, the cube, the dice, the player on roll and the score. Pinning the new decoder against the old one rather than against a hand-written expectation is what makes the corpus a contract instead of a transcription of somebody's reading. PROVENANCE: the positions are real — dumped from testdata/test.xg and testdata/test.mat through `blunderdb list --type positions --format csv` — and the OGID strings were produced by the REFERENCE IMPLEMENTATION (AnkiGammon 1.8.1, ankigammon/utils/ogid.py, MIT), not by this repository. The rapport P9 required real samples before a reader was written; this is them.",
+ "cases": [
+  {
+   "xgid": "-b----E-C---eE---c-e----B-:0:0:1:51:0:0:0:7:0",
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:51:B::0:0:7:"
+  },
+  {
+   "xgid": "-aa---E-C---dE---d-e----B-:0:0:1:00:0:0:0:7:0",
+   "ogid": "12cccchhhhjjjjj:66666888dddddoo:N0N::B::0:0:7:"
+  },
+  {
+   "xgid": "-----bEBC---dC---b-cAbb-A-:0:0:1:00:0:0:0:7:0",
+   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N::B::0:0:7:"
+  },
+  {
+   "xgid": "-----bEBC---dC---b-cAbb-A-:0:0:1:62:0:0:0:7:0",
+   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N:62:B::0:0:7:"
+  },
+  {
+   "xgid": "--ABBaBBC--B--a----bbbeb-A:0:0:1:00:0:0:0:7:0",
+   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N::B::0:0:7:"
+  },
+  {
+   "xgid": "--ABBaBBC--B--a----bbbeb-A:0:0:1:64:0:0:0:7:0",
+   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N:64:B::0:0:7:"
+  },
+  {
+   "xgid": "--BBBBC-B--A-------bbbccA-:1:0:1:00:0:0:0:7:0",
+   "ogid": "jjkkllmmmnnn:2233445566688bo:N1N::B::0:0:7:"
+  },
+  {
+   "xgid": "-b---CE-B--acB---bacbAaA-A:1:0:1:00:0:1:0:7:0",
+   "ogid": "11bccchhijjjkkm:5556666688ddlnp:N1N::B::1:0:7:"
+  },
+  {
+   "xgid": "a-aAaBCAB---bCA--b-ec---B-:1:-1:1:63:1:0:0:7:0",
+   "ogid": "024cchhjjjjjkkk:355666788dddeoo:W1N:63:B::0:1:7:"
+  },
+  {
+   "xgid": "--bB-BBBBa--bBA--b-ec---B-:1:-1:1:53:1:0:0:7:0",
+   "ogid": "229cchhjjjjjkkk:3355667788ddeoo:W1N:53:B::0:1:7:"
+  },
+  {
+   "xgid": "-DBBBC-------------b-cccbB:1:1:1:00:0:1:0:7:0",
+   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N::B::1:0:7:"
+  },
+  {
+   "xgid": "-DBBBC-------------b-cccbB:1:1:1:65:0:1:0:7:0",
+   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N:65:B::1:0:7:"
+  },
+  {
+   "xgid": "-DCCB------a---a----cbbbd-:1:-1:1:53:1:0:0:7:0",
+   "ogid": "bfkkkllmmnnoooo:111122233344:W1N:53:B::0:1:7:"
+  },
+  {
+   "xgid": "-DBBBC----A---A------abcd-:1:1:1:00:0:1:0:7:0",
+   "ogid": "lmmnnnoooo:1111223344555ae:B1N::B::1:0:7:"
+  },
+  {
+   "xgid": "-DED----------A----bbd-bA-:1:1:1:00:1:0:0:5:0",
+   "ogid": "jjkkllllnn:1111222223333eo:B1N::B::0:1:5:"
+  },
+  {
+   "xgid": "-aBbBCB--B--a---A-A-b-fabB:1:-1:1:43:0:1:0:5:0",
+   "ogid": "133ckkmmmmmmnoo:22445556699gipp:W1N:43:B::1:0:5:"
+  },
+  {
+   "xgid": "-A---A---------------ba---:1:-1:1:54:0:1:0:4:0",
+   "ogid": "llm:15:W1N:54:B::1:0:4:"
+  },
+  {
+   "xgid": "--aDBBB---B-ba--abbbb-bC--:1:1:1:00:0:1:0:7:0",
+   "ogid": "2ccdghhiijjkkmm:3333445566aannn:B1N::B::1:0:7:"
+  },
+  {
+   "xgid": "--BEBBB----a--b--cbbBbba--:0:0:1:54:0:0:0:7:0",
+   "ogid": "beehhhiijjllmmn:2233333445566kk:N0N:54:B::0:0:7:"
+  },
+  {
+   "xgid": "--D-DbB-a-B-bB-----bbb-bbA:1:-1:1:21:0:1:0:3:0",
+   "ogid": "558ccjjkkllnnoo:2222444466aaddp:W1N:21:B::1:0:3:"
+  },
+  {
+   "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:5:2:0:7:10",
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N::B::2:5:7:"
+  },
+  {
+   "xgid": "-b----E-C---eE---c-e----B-:0:0:-1:43:1:6:0:9:10",
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:43:W::6:1:9:"
+  },
+  {
+   "xgid": "-b----E-C---eE---c-e----B-:1:1:1:00:3:0:0:5:10",
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:B1N::B::0:3:5:"
+  }
+ ]
+}

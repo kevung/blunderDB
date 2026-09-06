@@ -5,9 +5,10 @@
 // over Wails, and the server/CLI reuse it too, so the two implementations can no
 // longer drift (see testdata/parse_corpus.json and the dual contract tests).
 //
-// It handles: a bare XGID line; the XG human-readable export with either a
-// doubling-cube or a checker-move analysis block (French / English / Japanese /
-// German); blunderDB's own internal export format; and a trailing comment.
+// It handles: a bare XGID line; an OGID line (OpenGammon, #260); the XG
+// human-readable export with either a doubling-cube or a checker-move analysis
+// block (French / English / Japanese / German); blunderDB's own internal export
+// format; and a trailing comment.
 //
 // The logic is a port of the JS parser. Go's regexp uses Perl-style
 // leftmost-first submatching, so the greedy/lazy/fixed-width captures behave
@@ -88,6 +89,18 @@ func ParsePosition(text string) (Result, error) {
 		}
 	}
 	if xgid == "" {
+		// OGID is read here, in the shared parser, rather than through an entry
+		// point of its own: everything that already accepts a pasted position —
+		// the clipboard, `blunderdb import <file>`, /v1/positions.parseText —
+		// then accepts one without a second code path to keep in step (#260).
+		//
+		// An OGID carries a position and nothing else, so the analysis comes
+		// back empty, exactly as a bare XGID line produces. Its Analysis.XGID
+		// stays empty too: an XGID needs an absolute score and a match length,
+		// and neither a Position nor an OGID retains them.
+		if pos, ok := parseOGIDLine(lines); ok {
+			return Result{Position: pos, Analysis: &domain.PositionAnalysis{}}, nil
+		}
 		return Result{}, errNoXGID
 	}
 
@@ -122,6 +135,28 @@ func ParsePosition(text string) (Result, error) {
 	comment := extractComment(content, analysis.AnalysisType == "DoublingCube")
 
 	return Result{Position: pos, Analysis: analysis, Comment: comment}, nil
+}
+
+// parseOGIDLine finds and decodes the first OGID of the text. It is tolerant
+// about where the identifier sits — a forum post or a chat message wraps it in
+// prose — but not about what it accepts: domain.LooksLikeOGID gates the attempt
+// and domain.DecodeOGID refuses anything malformed, so a line that merely
+// contains colons is not mistaken for a position.
+func parseOGIDLine(lines []string) (domain.Position, bool) {
+	for _, l := range lines {
+		candidate := strings.TrimSpace(l)
+		if after, ok := strings.CutPrefix(candidate, "OGID="); ok {
+			candidate = strings.TrimSpace(after)
+		} else if !domain.LooksLikeOGID(candidate) {
+			continue
+		}
+		pos, err := domain.DecodeOGID(candidate)
+		if err != nil {
+			continue
+		}
+		return pos, true
+	}
+	return domain.Position{}, false
 }
 
 // looksLikeAnalysis reports whether the text carries what every XG analysis

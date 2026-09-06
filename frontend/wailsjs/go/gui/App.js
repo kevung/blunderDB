@@ -86,6 +86,10 @@ export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
 }
 
+export function LooksLikeOGID(arg1) {
+  return window['go']['gui']['App']['LooksLikeOGID'](arg1);
+}
+
 export function OpenBearoffFileDialog() {
   return window['go']['gui']['App']['OpenBearoffFileDialog']();
 }

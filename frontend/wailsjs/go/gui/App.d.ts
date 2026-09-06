@@ -46,6 +46,8 @@ export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.Iss
 
 export function IsDirectory(arg1:string):Promise<boolean>;
 
+export function LooksLikeOGID(arg1:string):Promise<boolean>;
+
 export function OpenBearoffFileDialog():Promise<string>;
 
 export function OpenDatabaseDialog():Promise<string>;

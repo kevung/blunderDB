@@ -1725,6 +1725,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/existsResp"
+  /v1/positions.fromOGID:
+    post:
+      operationId: positions.fromOGID
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ogidReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_Position"
+                nullable: true
   /v1/positions.fromXGID:
     post:
       operationId: positions.fromXGID
@@ -3113,6 +3131,11 @@ components:
         move:
           $ref: "#/components/schemas/domain_Move"
           nullable: true
+    ogidReq:
+      type: object
+      properties:
+        ogid:
+          type: string
     okResp:
       type: object
       properties:

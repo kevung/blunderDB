@@ -8,7 +8,8 @@ import {
     ReadFileContent,
     ShowAlert,
     ShowQuestionDialog,
-    IsDirectory
+    IsDirectory,
+    LooksLikeOGID
 } from '../../wailsjs/go/gui/App.js';
 import {
     SaveIndividualPosition,
@@ -930,6 +931,9 @@ async function pastePositionCore() {
             setStatusBarMessage(tMsg('status.errorPastingBgblitzPos', { error }));
         }
     } else {
+        // An OGID needs no branch here: parser.ParsePosition reads it like it
+        // reads an XGID, so a pasted OpenGammon identifier lands in the
+        // database through exactly this call (#260).
         const { positionData, parsedAnalysis } = await parsePositionText(result);
         const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.pastedPositionSaved'));
         if (posID) await showImportedPosition(posID);
@@ -948,6 +952,17 @@ async function pastePositionToBoard() {
                 return;
             } catch (e) {
                 logger.log('Clipboard text has XGID but parse failed, trying internal clipboard:', e);
+            }
+        }
+
+        if (clipboardText && !clipboardText.includes('XGID=') && (await LooksLikeOGID(clipboardText))) {
+            try {
+                const { positionData } = await parsePositionOnly(clipboardText);
+                applyPositionToBoard(positionData);
+                setStatusBarMessage(tMsg('status.positionPastedClipboard'));
+                return;
+            } catch (e) {
+                logger.log('Clipboard text looks like an OGID but decoding failed:', e);
             }
         }
 
@@ -1159,9 +1174,13 @@ export async function analyzeRemainingAfterImport() {
  * exactement le même chemin — même analyse du texte, même déduplication, même
  * ouverture de la position importée.
  *
- * OGID n'est pas encore reconnu : sa grammaire doit être relevée sur des
- * échantillons réels avant qu'on écrive ce lecteur (#260). Un identifiant qui
- * n'est pas un XGID est donc refusé en le disant, plutôt que deviné.
+ * OGID est reconnu depuis que sa grammaire a été relevée sur des positions
+ * réelles (#260), et par le même lecteur : parser.ParsePosition lit un OGID
+ * comme il lit un XGID. Il ne reste ici qu'un aiguillage — savoir si le texte
+ * EST un identifiant, un OGID n'ayant pas de préfixe obligatoire. Un OGID ne
+ * porte qu'une position, jamais d'évaluation : la fiche d'analyse arrive vide,
+ * comme pour un XGID nu. Ce qui n'est ni l'un ni l'autre est refusé en le
+ * disant, plutôt que deviné.
  *
  * @param {string} text
  */
@@ -1175,7 +1194,7 @@ export async function importIdentifier(text) {
         setStatusBarMessage(tMsg('status.importIdentifierEmpty'));
         return null;
     }
-    if (!trimmed.includes('XGID=')) {
+    if (!trimmed.includes('XGID=') && !(await LooksLikeOGID(trimmed))) {
         setStatusBarMessage(tMsg('status.importIdentifierUnknown'));
         return null;
     }

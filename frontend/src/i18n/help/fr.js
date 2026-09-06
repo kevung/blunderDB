@@ -891,7 +891,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf). Avec un argument — <code>import XGID=…</code> — lit l'identifiant plutôt que d'ouvrir un sélecteur de fichiers, pour le cas où il arrive d'un message, d'un forum ou d'un script.</td>
+<td>Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf). Avec un argument — <code>import XGID=…</code> ou <code>import OGID=…</code> — lit l'identifiant plutôt que d'ouvrir un sélecteur de fichiers, pour le cas où il arrive d'un message, d'un forum ou d'un script.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

@@ -1585,15 +1585,21 @@ le plus souvent d'une position déjà en main. Deux gestes l'y amènent :
 
 * **CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse,
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
-  XGID venu d'ailleurs (eXtreme Gammon, GNU Backgammon, une autre instance de
-  blunderDB) : il suffit qu'il soit dans le presse-papier.
+  identifiant venu d'ailleurs — un XGID (eXtreme Gammon, GNU Backgammon, une
+  autre instance de blunderDB) ou un OGID (OpenGammon) : il suffit qu'il soit
+  dans le presse-papier.
 
-* **La commande** ``import XGID=…`` pour le cas où l'identifiant n'est pas
-  dans le presse-papier mais dans un message, sur un forum lu dans un
-  terminal, ou produit par un script. C'est le même verbe qu'``import`` tout
-  court : sans argument il ouvre un sélecteur de fichiers, avec un argument il
-  lit l'identifiant. Le chemin est ensuite identique à celui du collage — même
-  lecture, même déduplication, même ouverture de la position importée.
+* **La commande** ``import XGID=…`` (ou ``import OGID=…``) pour le cas où
+  l'identifiant n'est pas dans le presse-papier mais dans un message, sur un
+  forum lu dans un terminal, ou produit par un script. C'est le même verbe
+  qu'``import`` tout court : sans argument il ouvre un sélecteur de fichiers,
+  avec un argument il lit l'identifiant. Le chemin est ensuite identique à
+  celui du collage — même lecture, même déduplication, même ouverture de la
+  position importée.
+
+Un OGID ne porte qu'une position : ni évaluation, ni commentaire. La position
+arrive donc sans analyse, exactement comme un XGID nu, et l'évaluateur intégré
+peut la combler ensuite.
 
 Le plateau du panneau Eval est un brouillon : la position y arrive sans son
 identifiant de base, de sorte qu'aucune modification faite ici ne peut
