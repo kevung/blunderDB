@@ -23,6 +23,7 @@
      *  travail sans faire d'une fenêtre un fichier. */
     const LINES = 200;
 
+    /** @type {string[]} */
     let lines = $state([]);
     let error = $state('');
 

@@ -72,7 +72,10 @@ export function stopStudyQueue({ finished = false } = {}) {
     setStatusBarMessage(finished ? tMsg('studyQueue.finished', { n: total }) : tMsg('studyQueue.stopped'));
 }
 
-/** Ouvre l'onglet où se prend la décision, sans quitter la file. */
+/**
+ * Ouvre l'onglet où se prend la décision, sans quitter la file.
+ * @param {string} tab
+ */
 export function actOnCurrent(tab) {
     activeTabStore.set(tab);
 }

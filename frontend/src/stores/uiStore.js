@@ -1,5 +1,12 @@
 import { writable, derived } from 'svelte/store';
 
+/**
+ * Le texte de la barre d'état : soit une chaîne déjà traduite, soit un
+ * descripteur rendu par `tMsg()`, que la barre retraduit à chaque
+ * changement de langue. Les deux formes circulent depuis toujours ;
+ * seul le type manquait.
+ * @type {import('svelte/store').Writable<string | import('../i18n').StatusMessage>}
+ */
 export const statusBarTextStore = writable('');
 export const statusBarModeStore = writable('NORMAL');
 

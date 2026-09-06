@@ -87,7 +87,12 @@ export async function buildReportHTML() {
     return document_(stats, sections.join('\n'));
 }
 
-/** @param {number} rank */
+/**
+ * @param {number} rank
+ * @param {any} blunder une entrée de `stats.TopBlunders`
+ * @param {any} position la position correspondante, ou undefined
+ * @param {string} bestMove
+ */
 function blunderSection(rank, blunder, position, bestMove) {
     const diagram = position ? renderPositionSVG(position) : '';
     const kind = blunder.DecisionType === 1 ? get(t)('report.cube') : get(t)('report.checker');
@@ -101,6 +106,10 @@ function blunderSection(rank, blunder, position, bestMove) {
 </section>`;
 }
 
+/**
+ * @param {any} stats
+ * @param {string} body
+ */
 function document_(stats, body) {
     const tr = get(t);
     const totals = stats?.Totals ?? {};
@@ -145,6 +154,7 @@ ${body || `<p>${escapeHTML(tr('report.noBlunder'))}</p>`}
 `;
 }
 
+/** @param {unknown} value */
 function fmt(value) {
     return typeof value === 'number' && value > 0 ? value.toFixed(2) : '—';
 }
@@ -158,8 +168,9 @@ function documentLanguage() {
  * les fragments venant des données le sont, un par un. Les noms de joueurs, les
  * coups et les dates viennent d'un fichier importé — donc de l'extérieur.
  */
+/** @param {unknown} s */
 function escapeHTML(s) {
-    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+    return String(s).replace(/[&<>"']/g, (c) => /** @type {Record<string, string>} */ ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
 function reportFilename() {

@@ -15,6 +15,7 @@ import { writable, derived } from 'svelte/store';
 /** @typedef {{positionId: number, matchId: number, reason: string, label: string, errorMp: number, isCube: boolean}} StudyQueueEntry */
 
 /** @type {import('svelte/store').Writable<StudyQueueEntry[]>} */
+/** @type {import('svelte/store').Writable<import('../../wailsjs/go/models').domain.StudyQueueEntry[]>} */
 export const studyQueueStore = writable([]);
 
 /** Position courante dans la file, 0-indexée. */

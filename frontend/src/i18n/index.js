@@ -104,6 +104,15 @@ export function translate(key, params) {
 // the reactive `$t` store, so the message re-translates live when the language
 // changes — unlike a string produced by translate(), which is frozen at call time.
 // Plain strings (player names, technical tokens) may still be stored as-is.
+/**
+ * @typedef {{i18nKey: string, i18nParams: Record<string, any>|null}} StatusMessage
+ */
+
+/**
+ * @param {string} key
+ * @param {Record<string, any>} [params]
+ * @returns {StatusMessage}
+ */
 export function tMsg(key, params) {
     return { i18nKey: key, i18nParams: params ?? null };
 }

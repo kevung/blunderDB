@@ -15,6 +15,7 @@ import { logger } from '../utils/logger.js';
 // un import surveillé est par construction le même import qu'un import manuel.
 
 let subscribed = false;
+/** @type {string[]} */
 let pending = [];
 
 /**
@@ -30,7 +31,7 @@ let pending = [];
 export async function initFolderWatch() {
     if (!subscribed) {
         subscribed = true;
-        EventsOn('folder-watch:files', (files) => {
+        EventsOn('folder-watch:files', (/** @type {string[]} */ files) => {
             void onWatchedFiles(files);
         });
         databaseLoadedStore.subscribe((loaded) => {
@@ -40,6 +41,7 @@ export async function initFolderWatch() {
     await applyConfiguredWatch();
 }
 
+/** @type {boolean|null} */
 let lastLoaded = null;
 
 /** @param {boolean} loaded */
@@ -71,12 +73,13 @@ async function applyConfiguredWatch() {
     }
 }
 
+let importing = false;
+
 /**
  * Importe les fichiers annoncés par la surveillance, en file : deux salves
  * rapprochées ne doivent pas lancer deux imports concurrents sur la même base.
  * @param {string[]} files
  */
-let importing = false;
 async function onWatchedFiles(files) {
     if (!Array.isArray(files) || files.length === 0) return;
     pending = pending.concat(files);
