@@ -10,10 +10,12 @@
 package applog
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/adrg/xdg"
@@ -127,4 +129,66 @@ func (w *rotatingWriter) Close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	return w.f.Close()
+}
+
+// TailLines returns the last n lines of the current log file, oldest first.
+//
+// Reading the tail rather than the whole file is what makes this usable from
+// the interface: the log rotates at 5 MiB, and a panel that had to hold five
+// megabytes to show forty lines would be a panel nobody opens.
+//
+// A missing file is not an error — a fresh install has logged nothing — and
+// neither is a truncated read: the point of the panel is to show what there
+// is, not to prove the file is well formed.
+func TailLines(n int) ([]string, error) {
+	return tailFile(Path(), n)
+}
+
+// tailFile is TailLines over an explicit path, so the behaviour can be tested
+// without moving the process's XDG directories.
+func tailFile(path string, n int) ([]string, error) {
+	if n <= 0 {
+		n = 200
+	}
+	f, err := os.Open(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("applog: %w", err)
+	}
+	defer f.Close()
+
+	info, err := f.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("applog: %w", err)
+	}
+	// Read at most the last tailWindowBytes: enough for n lines of slog output
+	// by a wide margin, and bounded whatever the file grew to.
+	const tailWindowBytes = 512 << 10
+	size := info.Size()
+	offset := int64(0)
+	if size > tailWindowBytes {
+		offset = size - tailWindowBytes
+	}
+	if _, err := f.Seek(offset, io.SeekStart); err != nil {
+		return nil, fmt.Errorf("applog: %w", err)
+	}
+	data, err := io.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("applog: %w", err)
+	}
+	lines := strings.Split(strings.TrimRight(string(data), "\n"), "\n")
+	// The first line of a windowed read is almost certainly cut in half;
+	// dropping it is better than showing a fragment as if it were a record.
+	if offset > 0 && len(lines) > 1 {
+		lines = lines[1:]
+	}
+	if len(lines) > n {
+		lines = lines[len(lines)-n:]
+	}
+	if len(lines) == 1 && lines[0] == "" {
+		return nil, nil
+	}
+	return lines, nil
 }

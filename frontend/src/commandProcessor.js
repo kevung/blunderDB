@@ -111,6 +111,8 @@ export function processCommand(command) {
         openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tags') {
         openModal(MODAL.TAGS);
+    } else if (command === 'log') {
+        openModal(MODAL.LOG);
     } else if (command.startsWith('ask ')) {
         // `ask <phrase>` : la phrase est traduite en jetons VISIBLES, écrits
         // dans la barre de commande, que l'utilisateur relit et lance (#283).

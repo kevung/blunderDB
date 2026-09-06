@@ -394,6 +394,22 @@ func (a *App) OpenLogsFolder() error {
 	return nil
 }
 
+// ReadLogTail returns the last lines of blunderDB's log file, oldest first
+// (#287, fiche I.31).
+//
+// The interface catches errors in some seventy-five places and, until this
+// existed, each of them ended in a status-bar line that vanished. The log had
+// the detail all along; what was missing was a way to read it without leaving
+// the application. A missing file returns nothing, not an error: a fresh
+// install has logged nothing, and saying so as a failure would be a lie.
+func (a *App) ReadLogTail(lines int) ([]string, error) {
+	out, err := applog.TailLines(lines)
+	if err != nil {
+		return nil, newGUIError(CodeInternal, err.Error())
+	}
+	return out, nil
+}
+
 // openFolder opens dir in the platform's file manager: xdg-open on Linux,
 // `open` on macOS, `explorer` on Windows — each invoked with dir as its own
 // exec.Command argument, never string-interpolated into a shell command

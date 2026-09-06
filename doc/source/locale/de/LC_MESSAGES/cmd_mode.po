@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:43+0200\n"
+"POT-Creation-Date: 2026-09-06 18:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -174,6 +174,20 @@ msgstr ""
 "der Zahl der Stellungen, anklickbar zum Starten der Suche."
 
 #: ../../source/cmd_mode.rst:1
+msgid "log"
+msgstr "log"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le journal d'activité : les deux cents dernières lignes du fichier "
+"de journal, avec de quoi les copier pour les joindre à un rapport, ou "
+"ouvrir le dossier qui les contient."
+msgstr ""
+"Öffnet das Aktivitätsprotokoll: die letzten zweihundert Zeilen der "
+"Protokolldatei, mit dem Nötigen, um sie für einen Bericht zu kopieren "
+"oder den Ordner zu öffnen, der sie enthält."
+
+#: ../../source/cmd_mode.rst:1
 msgid "ask"
 msgstr "ask"
 
@@ -297,7 +311,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 4."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:53
 msgid "Positions et navigation"
 msgstr "Positionen und Navigation"
 
@@ -439,7 +453,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -475,11 +489,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Sucht unter den aktuell gefilterten Positionen."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -495,7 +509,7 @@ msgstr ""
 ":ref:`cli`); ein Gedankenstrich zeigt einen Filter an, den nur die "
 "Grammatik ausdrückt."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -515,7 +529,7 @@ msgstr ""
 "vergleichen diese Token mit einem leeren Brett; dort sind die Optionen "
 "der dritten Spalte zu verwenden."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -526,11 +540,11 @@ msgstr ""
 "ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln "
 "entspricht."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid "Deux recherches complètes :"
 msgstr "Zwei vollständige Suchen:"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -539,7 +553,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — mehr als 30 Pips Rückstand, zwischen 40 % und 60 "
 "% Gewinnchance, kein Kommentar."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1484,7 +1498,7 @@ msgstr ""
 "der beiden Seiten beteiligt war (z. B. ``pl'Alice'``). "
 "Groß-/Kleinschreibung wird ignoriert."
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:225
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

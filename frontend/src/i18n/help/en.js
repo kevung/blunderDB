@@ -827,6 +827,10 @@ export default {
 <td>Opens the tag vocabulary: the tags used in this database, with the number of positions, clickable to run the search.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Opens the activity log: the last two hundred lines of the log file, with what it takes to copy them into a report, or to open the folder holding them.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Translates a plain phrase — French or English — into search tokens: <code>ask my cube blunders at a score</code>. The tokens are written into the command bar, not run: read them, then Enter. Whatever was not understood is said, never guessed.</td>
 </tr>

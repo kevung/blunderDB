@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:43+0200\n"
+"POT-Creation-Date: 2026-09-06 18:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -174,6 +174,20 @@ msgstr ""
 "τη βάση, με το πλήθος των θέσεων, με δυνατότητα κλικ για την αναζήτηση."
 
 #: ../../source/cmd_mode.rst:1
+msgid "log"
+msgstr "log"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le journal d'activité : les deux cents dernières lignes du fichier "
+"de journal, avec de quoi les copier pour les joindre à un rapport, ou "
+"ouvrir le dossier qui les contient."
+msgstr ""
+"Ανοίγει το αρχείο δραστηριότητας: τις τελευταίες διακόσιες γραμμές του "
+"αρχείου καταγραφής, με τα μέσα να τις αντιγράψετε για μια αναφορά ή να "
+"ανοίξετε τον φάκελο που τις περιέχει."
+
+#: ../../source/cmd_mode.rst:1
 msgid "ask"
 msgstr "ask"
 
@@ -296,7 +310,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Ανοίγει τον πίνακα τιμών gammon με κύβο στο 4."
 
-#: ../../source/cmd_mode.rst:52
+#: ../../source/cmd_mode.rst:53
 msgid "Positions et navigation"
 msgstr "Θέσεις και πλοήγηση"
 
@@ -438,7 +452,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -474,11 +488,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Αναζήτηση μεταξύ των θέσεων που είναι ήδη φιλτραρισμένες."
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:96
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -494,7 +508,7 @@ msgstr ""
 "(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
 "γραμματική."
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:103
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -514,7 +528,7 @@ msgstr ""
 "εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
 " ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -525,11 +539,11 @@ msgstr ""
 "κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
 "χιλιοστά."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid "Deux recherches complètes :"
 msgstr "Δύο πλήρεις αναζητήσεις:"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -538,7 +552,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
 "% πιθανότητες νίκης, κανένα σχόλιο."
 
-#: ../../source/cmd_mode.rst:119
+#: ../../source/cmd_mode.rst:120
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1476,7 +1490,7 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. ``pl'Alice'``). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:225
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

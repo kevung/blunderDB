@@ -10,7 +10,7 @@
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchExcludePositionStore, searchStructureModeStore, searchOfferedCubeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore, MAX_SEARCH_HISTORY } from '../stores/searchHistoryStore';
-    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint } from '../services/searchFilterService.js';
+    import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, describeCommandTokens } from '../services/searchFilterService.js';
     import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
@@ -906,7 +906,14 @@
                                 {#each searchHistory as search (search.timestamp)}
                                     <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                         <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
-                                        <td class="command-cell">{search.command}</td>
+                                        <!-- Chaque jeton devient une pastille lisible (#287) ;
+                                             la commande exacte reste en infobulle, parce que
+                                             c'est elle qu'on relance. -->
+                                        <td class="command-cell" title={search.command}>
+                                            {#each describeCommandTokens(search.command) as part (part.token)}
+                                                <span class="token-chip" title={part.token}>{part.label}</span>
+                                            {/each}
+                                        </td>
                                         <td class="actions-cell">
                                             <button
                                                 class="action-btn"
@@ -1353,6 +1360,20 @@
         width: 140px;
         white-space: nowrap;
     }
+    /* Les pastilles de l'historique (fiche I.31) : discrètes, sur la surface
+       alternée de la palette, et jamais colorées — elles nomment un filtre,
+       elles n'alertent pas. */
+    .token-chip {
+        display: inline-block;
+        margin: 0 0.2em 0.15em 0;
+        padding: 0 0.35em;
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+        background: var(--color-surface-alt);
+        font-size: var(--font-size-small);
+        white-space: nowrap;
+    }
+
     .command-cell {
         font-family: var(--font-family-mono);
     }

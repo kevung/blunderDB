@@ -868,7 +868,13 @@
         "typeCommand": "Type command...",
         "createdModified": "Created: {created} | Modified: {modified}",
         "noDatabaseOpened": "No database opened",
-        "noPositionData": "no position data"
+        "noPositionData": "no position data",
+        "countPositions": "{n} positions",
+        "countBlunders": "{n} blunders",
+        "countMatches": "{n} matches",
+        "countPositionsTitle": "Show every position",
+        "countBlundersTitle": "Search for errors of at least 100 millipoints",
+        "countMatchesTitle": "Open the match list"
     },
     "viewTabs": {
         "closeView": "Close view",
@@ -1027,7 +1033,8 @@
         "metadata": "Metadata",
         "hideTab": "Hide this tab",
         "showTab": "Show: {tab}",
-        "hiddenTabs": "Hidden tabs"
+        "hiddenTabs": "Hidden tabs",
+        "ankiDue": "{n} cards to review"
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Nothing understood in: {words}",
         "understood": "Understood: {matched}. Read the line, then Enter.",
         "partly": "Understood: {matched}. Not understood: {words}. Read the line, then Enter."
+    },
+    "log": {
+        "title": "Activity log",
+        "copy": "Copy the report",
+        "openFolder": "Open the folder",
+        "empty": "The log is empty.",
+        "copied": "{n} lines copied to the clipboard.",
+        "copyFailed": "The log could not be copied."
     }
 }

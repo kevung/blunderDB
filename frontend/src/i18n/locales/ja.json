@@ -868,7 +868,13 @@
         "typeCommand": "コマンドを入力...",
         "createdModified": "作成: {created} | 更新: {modified}",
         "noDatabaseOpened": "データベースが開かれていません",
-        "noPositionData": "局面データなし"
+        "noPositionData": "局面データなし",
+        "countPositions": "局面 {n}",
+        "countBlunders": "ブランダー {n}",
+        "countMatches": "マッチ {n}",
+        "countPositionsTitle": "すべての局面を表示",
+        "countBlundersTitle": "100 ミリポイント以上の誤りを検索",
+        "countMatchesTitle": "マッチ一覧を開く"
     },
     "viewTabs": {
         "closeView": "ビューを閉じる",
@@ -1027,7 +1033,8 @@
         "metadata": "メタデータ",
         "hideTab": "このタブを非表示にする",
         "showTab": "表示: {tab}",
-        "hiddenTabs": "非表示のタブ"
+        "hiddenTabs": "非表示のタブ",
+        "ankiDue": "復習待ち {n} 枚"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "次の語は理解できませんでした：{words}",
         "understood": "理解：{matched}。行を確認してから Enter。",
         "partly": "理解：{matched}。未理解：{words}。行を確認してから Enter。"
+    },
+    "log": {
+        "title": "動作ログ",
+        "copy": "レポートをコピー",
+        "openFolder": "フォルダを開く",
+        "empty": "ログは空です。",
+        "copied": "{n} 行をクリップボードにコピーしました。",
+        "copyFailed": "ログをコピーできませんでした。"
     }
 }

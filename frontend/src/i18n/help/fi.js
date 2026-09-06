@@ -834,6 +834,10 @@ export default {
 <td>Avaa tunnistesanaston: tässä tietokannassa käytetyt tunnisteet asemamäärineen, napsautettavina haun käynnistämiseksi.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Avaa toimintalokin: lokitiedoston kaksisataa viimeistä riviä, sekä keinot kopioida ne raporttiin tai avata ne sisältävä kansio.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Kääntää sanallisen lauseen — ranskaksi tai englanniksi — hakutunnuksiksi: <code>ask my cube blunders at a score</code>. Tunnukset kirjoitetaan komentoriville, niitä ei suoriteta: lue ne ja paina sitten Enter. Se mitä ei ymmärretty, sanotaan, ei koskaan arvata.</td>
 </tr>

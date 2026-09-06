@@ -868,7 +868,13 @@
         "typeCommand": "Введите команду...",
         "createdModified": "Создана: {created} | Изменена: {modified}",
         "noDatabaseOpened": "База данных не открыта",
-        "noPositionData": "нет данных о позиции"
+        "noPositionData": "нет данных о позиции",
+        "countPositions": "позиций: {n}",
+        "countBlunders": "бландеров: {n}",
+        "countMatches": "матчей: {n}",
+        "countPositionsTitle": "Показать все позиции",
+        "countBlundersTitle": "Найти ошибки от 100 миллипунктов",
+        "countMatchesTitle": "Открыть список матчей"
     },
     "viewTabs": {
         "closeView": "Закрыть вид",
@@ -1027,7 +1033,8 @@
         "metadata": "Метаданные",
         "hideTab": "Скрыть эту вкладку",
         "showTab": "Показать: {tab}",
-        "hiddenTabs": "Скрытые вкладки"
+        "hiddenTabs": "Скрытые вкладки",
+        "ankiDue": "карточек к повторению: {n}"
     },
     "status": {
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Ничего не понято в: {words}",
         "understood": "Понято: {matched}. Проверьте строку, затем Enter.",
         "partly": "Понято: {matched}. Не понято: {words}. Проверьте строку, затем Enter."
+    },
+    "log": {
+        "title": "Журнал работы",
+        "copy": "Скопировать отчёт",
+        "openFolder": "Открыть папку",
+        "empty": "Журнал пуст.",
+        "copied": "Скопировано строк: {n}.",
+        "copyFailed": "Журнал не удалось скопировать."
     }
 }

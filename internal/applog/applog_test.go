@@ -107,3 +107,39 @@ func TestOpen_CreatesDirAndFile(t *testing.T) {
 		t.Errorf("log file not created at %s: %v", Path(), err)
 	}
 }
+
+// TestTailLines pins what the log panel depends on (#287): the LAST lines,
+// oldest first, and a missing file that answers "nothing" rather than an
+// error — a fresh install has logged nothing, and reporting that as a failure
+// would send a user looking for a problem that is not there.
+func TestTailLines(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, fileName)
+
+	if lines, err := tailFile(path, 10); err != nil || lines != nil {
+		t.Fatalf("no file yet: got %v, %v; want nil, nil", lines, err)
+	}
+
+	if err := os.WriteFile(path, []byte("line 1\nline 2\nline 3\nline 4\nline 5\n"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	lines, err := tailFile(path, 3)
+	if err != nil {
+		t.Fatalf("TailLines: %v", err)
+	}
+	if len(lines) != 3 {
+		t.Fatalf("got %d lines, want 3: %v", len(lines), lines)
+	}
+	if lines[0] != "line 3" || lines[2] != "line 5" {
+		t.Errorf("the LAST lines, oldest first: got %v", lines)
+	}
+
+	all, err := tailFile(path, 100)
+	if err != nil {
+		t.Fatalf("TailLines(100): %v", err)
+	}
+	if len(all) != 5 {
+		t.Errorf("asking for more lines than exist returns what exists: got %d", len(all))
+	}
+}

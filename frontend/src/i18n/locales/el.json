@@ -868,7 +868,13 @@
         "typeCommand": "Πληκτρολογήστε εντολή...",
         "createdModified": "Δημιουργία: {created} | Τροποποίηση: {modified}",
         "noDatabaseOpened": "Δεν έχει ανοιχτεί βάση δεδομένων",
-        "noPositionData": "χωρίς δεδομένα θέσης"
+        "noPositionData": "χωρίς δεδομένα θέσης",
+        "countPositions": "{n} θέσεις",
+        "countBlunders": "{n} blunders",
+        "countMatches": "{n} αγώνες",
+        "countPositionsTitle": "Εμφάνιση όλων των θέσεων",
+        "countBlundersTitle": "Αναζήτηση σφαλμάτων τουλάχιστον 100 χιλιοστών",
+        "countMatchesTitle": "Άνοιγμα λίστας αγώνων"
     },
     "viewTabs": {
         "closeView": "Κλείσιμο προβολής",
@@ -1027,7 +1033,8 @@
         "metadata": "Μεταδεδομένα",
         "hideTab": "Απόκρυψη αυτής της καρτέλας",
         "showTab": "Εμφάνιση: {tab}",
-        "hiddenTabs": "Κρυφές καρτέλες"
+        "hiddenTabs": "Κρυφές καρτέλες",
+        "ankiDue": "{n} κάρτες προς επανάληψη"
     },
     "status": {
         "boardAnalysisCopied": "Η εικόνα ταμπλό + ανάλυσης αντιγράφηκε στο πρόχειρο",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Τίποτα κατανοητό στο: {words}",
         "understood": "Κατανοήθηκε: {matched}. Διαβάστε τη γραμμή, μετά Enter.",
         "partly": "Κατανοήθηκε: {matched}. Δεν κατανοήθηκε: {words}. Διαβάστε τη γραμμή, μετά Enter."
+    },
+    "log": {
+        "title": "Αρχείο δραστηριότητας",
+        "copy": "Αντιγραφή αναφοράς",
+        "openFolder": "Άνοιγμα φακέλου",
+        "empty": "Το αρχείο είναι κενό.",
+        "copied": "{n} γραμμές αντιγράφηκαν στο πρόχειρο.",
+        "copyFailed": "Το αρχείο δεν μπόρεσε να αντιγραφεί."
     }
 }

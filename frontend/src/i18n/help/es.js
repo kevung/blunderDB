@@ -840,6 +840,10 @@ export default {
 <td>Abre el vocabulario de etiquetas: las etiquetas usadas en esta base, con el número de posiciones, pulsables para lanzar la búsqueda.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Abre el registro de actividad: las últimas doscientas líneas del archivo de registro, con lo necesario para copiarlas en un informe o abrir la carpeta que las contiene.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Traduce una frase en palabras — francés o inglés — a tokens de búsqueda: <code>ask my cube blunders at a score</code>. Los tokens se escriben en la barra de comandos, no se ejecutan: se releen y luego Intro. Lo que no se ha entendido se dice, nunca se adivina.</td>
 </tr>

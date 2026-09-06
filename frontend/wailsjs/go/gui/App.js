@@ -86,6 +86,10 @@ export function IsDirectory(arg1) {
   return window['go']['gui']['App']['IsDirectory'](arg1);
 }
 
+export function ReadLogTail(arg1) {
+  return window['go']['gui']['App']['ReadLogTail'](arg1);
+}
+
 export function LooksLikeOGID(arg1) {
   return window['go']['gui']['App']['LooksLikeOGID'](arg1);
 }

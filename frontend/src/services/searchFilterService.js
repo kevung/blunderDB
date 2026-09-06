@@ -602,3 +602,48 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         restrictToPositionIDs: ''
     };
 }
+
+/**
+ * Décrit une commande de recherche enregistrée, jeton par jeton (#287, fiche
+ * I.31).
+ *
+ * L'historique de recherche affichait `s E>100 gt:holding ph:race` — exact, et
+ * illisible pour qui n'a pas les jetons en tête. Chaque jeton devient ici une
+ * pastille avec son libellé, ce qui rend l'historique relisable sans le rendre
+ * approximatif : la commande d'origine reste la commande d'origine, et un
+ * jeton que rien ne reconnaît est rendu TEL QUEL plutôt que traduit au plus
+ * proche.
+ *
+ * @param {string} command la commande, avec ou sans son `s ` de tête
+ * @returns {{token: string, label: string}[]}
+ */
+export function describeCommandTokens(command) {
+    const text = String(command || '').trim();
+    const body = text.startsWith('s ') ? text.slice(2) : text === 's' ? '' : text;
+    if (!body) return [];
+    // La découpe respecte les guillemets : `t"blitz raté"` est un jeton.
+    const tokens = body.match(/[^\s"]*"[^"]*"|\S+/g) || [];
+    return tokens.map((token) => ({ token, label: describeToken(token) }));
+}
+
+/** Le libellé lisible d'un jeton, ou le jeton lui-même s'il n'est pas reconnu. */
+function describeToken(token) {
+    for (const [label, entry] of Object.entries(FILTER_TOKENS)) {
+        if (matchesToken(token, entry.token, entry.type)) return label;
+    }
+    // Les vocabulaires fermés portent leur valeur dans le jeton, ce qui les
+    // rend déjà lisibles : `ph:race` se lit sans dictionnaire.
+    if (/^(ph|gt|co):/.test(token) || token.startsWith('#')) return token;
+    return token;
+}
+
+function matchesToken(token, base, type) {
+    if (type === 'flag') return token === base;
+    if (type === 'dice') return token === base || token === base + '1';
+    if (type === 'text' || type === 'comment') return token.startsWith(base + '"');
+    // range et date : le jeton commence par sa lettre, suivie d'un opérateur
+    // ou d'un chiffre. La comparaison est stricte sur la lettre pour ne pas
+    // confondre `p` (pipcount) et `pl"…"` (joueur), la collision que le
+    // parseur a déjà appris à éviter.
+    return token.length > base.length && token.startsWith(base) && /[<>0-9]/.test(token[base.length]);
+}

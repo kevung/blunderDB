@@ -11,7 +11,9 @@
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
-    import { activeTabStore } from '../stores/uiStore';
+    import { activeTabStore, dbMutationCounterStore } from '../stores/uiStore';
+    import { databasePathStore } from '../stores/databaseStore';
+    import { ankiDueStore, refreshAnkiDue } from '../stores/ankiDueStore.js';
     import { t } from '../i18n';
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
@@ -54,6 +56,14 @@
     // as CollectionPanel/MergePlayersModal already do for the same pattern.
     const hiddenIds = new SvelteSet();
     let visibleTabs = $derived(tabs.filter((tab) => !hiddenIds.has(tab.id)));
+
+    // Le compte des cartes dues, rafraîchi à l'ouverture d'une base et après
+    // chaque mutation — les mêmes moments que le compteur de bibliothèque.
+    $effect(() => {
+        void $databasePathStore;
+        void $dbMutationCounterStore;
+        refreshAnkiDue();
+    });
 
     // Reorders DEFAULT_TABS according to a persisted id list, appending any
     // tab the persisted list predates (a new tab shipped since) at the end so
@@ -338,6 +348,13 @@
                     {/if}
                 </svg>
                 <span class="tab-label">{$t(tab.labelKey)}</span>
+                <!-- Le badge de cartes dues (#287) : ce chiffre est la RAISON
+                     d'ouvrir l'onglet Anki, il n'a donc rien à faire derrière
+                     lui. Zéro n'affiche rien — un badge qui dit « 0 » est du
+                     bruit. -->
+                {#if tab.id === 'anki' && $ankiDueStore > 0}
+                    <span class="tab-badge" aria-label={$t('tabbedPanel.ankiDue', { n: $ankiDueStore })}>{$ankiDueStore}</span>
+                {/if}
             </button>
         {/each}
         {#if hiddenIds.size > 0}
@@ -382,6 +399,19 @@
 </div>
 
 <style>
+    /* Le badge : petit, discret, sur l'accent unique de la palette
+       (ADR-0031). Il compte, il n'alerte pas. */
+    .tab-badge {
+        margin-left: 0.25em;
+        padding: 0 0.35em;
+        border-radius: 999px;
+        background: var(--color-primary);
+        color: var(--color-surface);
+        font-size: var(--font-size-small);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.4;
+    }
+
     .tabbed-panel {
         display: flex;
         flex-direction: column;

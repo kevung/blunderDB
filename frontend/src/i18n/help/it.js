@@ -839,6 +839,10 @@ export default {
 <td>Apre il vocabolario di tag: i tag usati in questo database, con il numero di posizioni, cliccabili per lanciare la ricerca.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Apre il registro attività: le ultime duecento righe del file di log, con il necessario per copiarle in un rapporto o aprire la cartella che le contiene.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Traduce una frase a parole — francese o inglese — in token di ricerca: <code>ask my cube blunders at a score</code>. I token vengono scritti nella barra dei comandi, non eseguiti: si rileggono, poi Invio. Ciò che non è stato compreso viene detto, mai indovinato.</td>
 </tr>

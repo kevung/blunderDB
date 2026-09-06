@@ -868,7 +868,13 @@
         "typeCommand": "Befehl eingeben...",
         "createdModified": "Erstellt: {created} | Geändert: {modified}",
         "noDatabaseOpened": "Keine Datenbank geöffnet",
-        "noPositionData": "keine Positionsdaten"
+        "noPositionData": "keine Positionsdaten",
+        "countPositions": "{n} Stellungen",
+        "countBlunders": "{n} Blunder",
+        "countMatches": "{n} Matches",
+        "countPositionsTitle": "Alle Stellungen anzeigen",
+        "countBlundersTitle": "Fehler ab 100 Millipunkten suchen",
+        "countMatchesTitle": "Matchliste öffnen"
     },
     "viewTabs": {
         "closeView": "Ansicht schließen",
@@ -1027,7 +1033,8 @@
         "metadata": "Metadaten",
         "hideTab": "Diesen Tab ausblenden",
         "showTab": "Anzeigen: {tab}",
-        "hiddenTabs": "Ausgeblendete Tabs"
+        "hiddenTabs": "Ausgeblendete Tabs",
+        "ankiDue": "{n} Karten zu wiederholen"
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Nichts verstanden in: {words}",
         "understood": "Verstanden: {matched}. Zeile prüfen, dann Enter.",
         "partly": "Verstanden: {matched}. Nicht verstanden: {words}. Zeile prüfen, dann Enter."
+    },
+    "log": {
+        "title": "Aktivitätsprotokoll",
+        "copy": "Bericht kopieren",
+        "openFolder": "Ordner öffnen",
+        "empty": "Das Protokoll ist leer.",
+        "copied": "{n} Zeilen in die Zwischenablage kopiert.",
+        "copyFailed": "Das Protokoll konnte nicht kopiert werden."
     }
 }

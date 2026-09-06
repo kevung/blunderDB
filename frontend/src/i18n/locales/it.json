@@ -868,7 +868,13 @@
         "typeCommand": "Digita un comando...",
         "createdModified": "Creato: {created} | Modificato: {modified}",
         "noDatabaseOpened": "Nessun database aperto",
-        "noPositionData": "nessun dato di posizione"
+        "noPositionData": "nessun dato di posizione",
+        "countPositions": "{n} posizioni",
+        "countBlunders": "{n} blunder",
+        "countMatches": "{n} incontri",
+        "countPositionsTitle": "Mostra tutte le posizioni",
+        "countBlundersTitle": "Cerca gli errori di almeno 100 millipunti",
+        "countMatchesTitle": "Apri l'elenco degli incontri"
     },
     "viewTabs": {
         "closeView": "Chiudi vista",
@@ -1027,7 +1033,8 @@
         "metadata": "Metadati",
         "hideTab": "Nascondi questa scheda",
         "showTab": "Mostra: {tab}",
-        "hiddenTabs": "Schede nascoste"
+        "hiddenTabs": "Schede nascoste",
+        "ankiDue": "{n} carte da ripassare"
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Nulla di compreso in: {words}",
         "understood": "Compreso: {matched}. Rilegga la riga, poi Invio.",
         "partly": "Compreso: {matched}. Non compreso: {words}. Rilegga la riga, poi Invio."
+    },
+    "log": {
+        "title": "Registro attività",
+        "copy": "Copia il rapporto",
+        "openFolder": "Apri la cartella",
+        "empty": "Il registro è vuoto.",
+        "copied": "{n} righe copiate negli appunti.",
+        "copyFailed": "Non è stato possibile copiare il registro."
     }
 }

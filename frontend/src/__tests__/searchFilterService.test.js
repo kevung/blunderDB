@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, buildSearchFilterPayload } from '../services/searchFilterService.js';
+import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, buildSearchFilterPayload, describeCommandTokens } from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -578,5 +578,35 @@ describe('buildSearchFilterPayload', () => {
             expect(value, `${key} must not be undefined`).toBeDefined();
         }
         expect(payload.excludeFilter).toBeTypeOf('object');
+    });
+});
+
+describe("l'historique de recherche, relisible (#287)", () => {
+    // Une commande enregistrée s'affichait telle quelle : exacte, et illisible
+    // pour qui n'a pas les jetons en tête. Chaque jeton devient une pastille
+    // nommée — sans que la commande cesse d'être la commande.
+    test('nomme les jetons connus', () => {
+        const parts = describeCommandTokens('s nc M E>100');
+        expect(parts.map((p) => p.label)).toEqual(['No Contact', 'Mirror Position', 'Move Error (millipoints, Player 1)']);
+    });
+
+    // Un jeton que rien ne reconnaît est rendu TEL QUEL. Le traduire au plus
+    // proche ferait dire à l'historique autre chose que ce qui a été cherché.
+    test('rend tel quel ce qu’il ne reconnaît pas', () => {
+        const parts = describeCommandTokens('s zzz gt:holding ph:race #prime');
+        expect(parts.map((p) => p.label)).toEqual(['zzz', 'gt:holding', 'ph:race', '#prime']);
+    });
+
+    // `p` (pipcount) et `pl"…"` (joueur) commencent par la même lettre : la
+    // collision que le parseur a déjà appris à éviter ne doit pas revenir ici.
+    test('ne confond pas p et pl"…"', () => {
+        const parts = describeCommandTokens('s p>30 pl"Unger"');
+        expect(parts[0].label).not.toBe('Player');
+        expect(parts[1].label).toBe('Player');
+    });
+
+    test('une commande vide ne produit aucune pastille', () => {
+        expect(describeCommandTokens('')).toEqual([]);
+        expect(describeCommandTokens('s')).toEqual([]);
     });
 });

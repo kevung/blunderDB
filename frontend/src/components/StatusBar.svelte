@@ -1,6 +1,9 @@
 <script>
     import { onDestroy, tick } from 'svelte';
-    import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore } from '../stores/uiStore';
+    import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
+    import { libraryCountsStore, refreshLibraryCounts } from '../stores/libraryCountsStore.js';
+    import { databasePathStore } from '../stores/databaseStore';
+    import { loadAllPositions } from '../services/positionService.js';
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
@@ -77,6 +80,36 @@
     // ({ i18nKey, i18nParams }). Resolving through $t here makes the displayed
     // message re-translate live whenever the language changes.
     let statusMessage = $derived(resolveStatusMessage($statusBarTextStore, $t));
+
+    // Le compteur de bibliothèque (#287). Rafraîchi à l'ouverture d'une base et
+    // après chaque mutation, jamais en boucle : trois COUNT ne coûtent rien une
+    // fois et coûteraient tout à chaque frappe.
+    $effect(() => {
+        void $databasePathStore;
+        void $dbMutationCounterStore;
+        refreshLibraryCounts();
+    });
+
+    /**
+     * Chaque nombre du compteur ouvre ce qu'il compte. « Blunders » passe par
+     * la ligne de commande plutôt que par un chemin à part : le jeton `E>100`
+     * est le même seuil que celui du compteur, et l'utilisateur le voit.
+     * @param {'positions'|'blunders'|'matches'} what
+     */
+    async function showLibrary(what) {
+        if (what === 'matches') {
+            activeTabStore.set('matches');
+            return;
+        }
+        if (what === 'blunders') {
+            commandTextStore.set('s E>100');
+            showCommandInputStore.set(true);
+            await tick();
+            inputEl?.focus();
+            return;
+        }
+        await loadAllPositions();
+    }
 
     $effect(() => {
         if ($showCommandInputStore) {
@@ -261,6 +294,24 @@
     {:else}
         <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
     {/if}
+    <!-- Le compteur de bibliothèque (#287) : ce que la base contient, et
+         chaque nombre ouvre ce qu'il compte. Un chiffre qu'on ne peut pas
+         suivre est une décoration. -->
+    {#if $libraryCountsStore}
+        <span class="library-counts">
+            <button type="button" class="count-link" onclick={() => showLibrary('positions')} title={$t('statusBar.countPositionsTitle')}>
+                {$t('statusBar.countPositions', { n: $libraryCountsStore.positions })}
+            </button>
+            <span class="count-sep">·</span>
+            <button type="button" class="count-link" onclick={() => showLibrary('blunders')} title={$t('statusBar.countBlundersTitle')}>
+                {$t('statusBar.countBlunders', { n: $libraryCountsStore.blunders })}
+            </button>
+            <span class="count-sep">·</span>
+            <button type="button" class="count-link" onclick={() => showLibrary('matches')} title={$t('statusBar.countMatchesTitle')}>
+                {$t('statusBar.countMatches', { n: $libraryCountsStore.matches })}
+            </button>
+        </span>
+    {/if}
 </div>
 
 <style>
@@ -274,6 +325,35 @@
 
     .watch-import-action {
         cursor: pointer;
+    }
+
+    .library-counts {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25em;
+        margin-left: 0.8em;
+        white-space: nowrap;
+        color: var(--color-text-muted);
+    }
+
+    /* Pas de `font: inherit` ici : style.css le pose déjà sur les contrôles
+       de formulaire (ADR-0008), et le répéter est ce que la garde de type
+       interdit. */
+    .count-link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+        text-decoration: underline dotted;
+    }
+
+    .count-link:hover {
+        color: var(--color-primary);
+    }
+
+    .count-sep {
+        opacity: 0.6;
     }
 
     .status-bar {

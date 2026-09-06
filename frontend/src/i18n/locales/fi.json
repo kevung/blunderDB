@@ -868,7 +868,13 @@
         "typeCommand": "Kirjoita komento...",
         "createdModified": "Luotu: {created} | Muokattu: {modified}",
         "noDatabaseOpened": "Tietokantaa ei ole avattu",
-        "noPositionData": "ei asematietoja"
+        "noPositionData": "ei asematietoja",
+        "countPositions": "{n} asemaa",
+        "countBlunders": "{n} blunderia",
+        "countMatches": "{n} ottelua",
+        "countPositionsTitle": "Näytä kaikki asemat",
+        "countBlundersTitle": "Hae vähintään 100 millipisteen virheet",
+        "countMatchesTitle": "Avaa otteluluettelo"
     },
     "viewTabs": {
         "closeView": "Sulje näkymä",
@@ -1027,7 +1033,8 @@
         "metadata": "Metatiedot",
         "hideTab": "Piilota tämä välilehti",
         "showTab": "Näytä: {tab}",
-        "hiddenTabs": "Piilotetut välilehdet"
+        "hiddenTabs": "Piilotetut välilehdet",
+        "ankiDue": "{n} korttia kerrattavana"
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Mitään ei ymmärretty: {words}",
         "understood": "Ymmärretty: {matched}. Lue rivi ja paina Enter.",
         "partly": "Ymmärretty: {matched}. Ei ymmärretty: {words}. Lue rivi ja paina Enter."
+    },
+    "log": {
+        "title": "Toimintaloki",
+        "copy": "Kopioi raportti",
+        "openFolder": "Avaa kansio",
+        "empty": "Loki on tyhjä.",
+        "copied": "{n} riviä kopioitu leikepöydälle.",
+        "copyFailed": "Lokia ei voitu kopioida."
     }
 }

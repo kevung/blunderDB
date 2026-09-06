@@ -138,11 +138,35 @@ suivantes:
 
 * l'index de la position courante, suivi du nombre de positions dans la
   bibliothèque courante (ou les informations de coup/partie lors de la
-  navigation dans un match).
+  navigation dans un match),
+
+* le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 matchs »
+  — où chaque nombre **ouvre ce qu'il compte** : les positions, la recherche
+  ``E>100`` préparée dans la ligne de commande, ou la liste des matchs. Un
+  chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders
+  est celui des statistiques, cent millipoints : deux seuils feraient dire
+  deux choses au même mot.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
    positions filtrées.
+
+L'onglet **Anki** porte un **badge** quand des cartes sont à réviser, tous
+paquets confondus. Ce chiffre est la raison d'ouvrir l'onglet ; il n'a donc
+rien à faire derrière lui. Zéro n'affiche rien : un badge qui dit « 0 » est du
+bruit.
+
+La commande ``log`` ouvre le **journal d'activité** : les deux cents dernières
+lignes du fichier de journal, un bouton pour les copier — de quoi joindre un
+rapport à un signalement — et un autre pour ouvrir le dossier qui les
+contient. Le journal n'est ni filtré ni reformaté : un journal qu'on embellit
+est un journal qu'on ne peut plus citer.
+
+Dans l'**historique de recherche** du panneau Recherche, chaque jeton d'une
+commande enregistrée s'affiche en pastille nommée — *Sans contact*, *Erreur de
+coup* — plutôt qu'en jeton nu. La commande exacte reste en infobulle, car
+c'est elle qu'on relance ; et un jeton que blunderDB ne reconnaît pas
+s'affiche **tel quel** plutôt que traduit au plus proche.
 
 .. _onglets_vues:
 

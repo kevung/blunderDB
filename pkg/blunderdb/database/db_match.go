@@ -514,6 +514,24 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 		stats["move_count"] = moveCount
 	}
 
+	// Count blunders (#287): positions whose stored error reaches the same
+	// threshold the statistics use — 100 millipoints, ≈ 0.1 of normalised
+	// equity. A second threshold here would make the status bar and the Stats
+	// tab disagree about the same word.
+	//
+	// The count is of POSITIONS, not of decisions counted toward PR: the
+	// status bar answers "how much is there to look at", and a decision
+	// excluded from the PR denominator is still a position worth opening.
+	var blunderCount int64
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM position p
+		INNER JOIN analysis a ON a.position_id = p.id
+		WHERE (CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END) >= 100`).Scan(&blunderCount)
+	if err != nil {
+		stats["blunder_count"] = int64(0)
+	} else {
+		stats["blunder_count"] = blunderCount
+	}
+
 	return stats, nil
 }
 

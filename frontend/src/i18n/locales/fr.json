@@ -868,7 +868,13 @@
         "typeCommand": "Saisir une commande...",
         "createdModified": "Créée : {created} | Modifiée : {modified}",
         "noDatabaseOpened": "Aucune base de données ouverte",
-        "noPositionData": "aucune donnée de position"
+        "noPositionData": "aucune donnée de position",
+        "countPositions": "{n} positions",
+        "countBlunders": "{n} blunders",
+        "countMatches": "{n} matchs",
+        "countPositionsTitle": "Voir toutes les positions",
+        "countBlundersTitle": "Chercher les erreurs d'au moins 100 millipoints",
+        "countMatchesTitle": "Ouvrir la liste des matchs"
     },
     "viewTabs": {
         "closeView": "Fermer la vue",
@@ -1027,7 +1033,8 @@
         "metadata": "Métadonnées",
         "hideTab": "Masquer cet onglet",
         "showTab": "Afficher : {tab}",
-        "hiddenTabs": "Onglets masqués"
+        "hiddenTabs": "Onglets masqués",
+        "ankiDue": "{n} cartes à réviser"
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Rien de compris dans : {words}",
         "understood": "Compris : {matched}. Relisez la ligne, puis Entrée.",
         "partly": "Compris : {matched}. Non compris : {words}. Relisez la ligne, puis Entrée."
+    },
+    "log": {
+        "title": "Journal d'activité",
+        "copy": "Copier le rapport",
+        "openFolder": "Ouvrir le dossier",
+        "empty": "Le journal est vide.",
+        "copied": "{n} lignes copiées dans le presse-papier.",
+        "copyFailed": "Le journal n'a pas pu être copié."
     }
 }

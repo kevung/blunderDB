@@ -868,7 +868,13 @@
         "typeCommand": "Escribe un comando...",
         "createdModified": "Creada: {created} | Modificada: {modified}",
         "noDatabaseOpened": "Ninguna base de datos abierta",
-        "noPositionData": "sin datos de posición"
+        "noPositionData": "sin datos de posición",
+        "countPositions": "{n} posiciones",
+        "countBlunders": "{n} blunders",
+        "countMatches": "{n} partidos",
+        "countPositionsTitle": "Ver todas las posiciones",
+        "countBlundersTitle": "Buscar errores de al menos 100 milipuntos",
+        "countMatchesTitle": "Abrir la lista de partidos"
     },
     "viewTabs": {
         "closeView": "Cerrar vista",
@@ -1027,7 +1033,8 @@
         "metadata": "Metadatos",
         "hideTab": "Ocultar esta pestaña",
         "showTab": "Mostrar: {tab}",
-        "hiddenTabs": "Pestañas ocultas"
+        "hiddenTabs": "Pestañas ocultas",
+        "ankiDue": "{n} tarjetas por repasar"
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",
@@ -1399,5 +1406,13 @@
         "understoodNothing": "Nada entendido en: {words}",
         "understood": "Entendido: {matched}. Revise la línea y pulse Intro.",
         "partly": "Entendido: {matched}. No entendido: {words}. Revise la línea y pulse Intro."
+    },
+    "log": {
+        "title": "Registro de actividad",
+        "copy": "Copiar el informe",
+        "openFolder": "Abrir la carpeta",
+        "empty": "El registro está vacío.",
+        "copied": "{n} líneas copiadas al portapapeles.",
+        "copyFailed": "No se ha podido copiar el registro."
     }
 }

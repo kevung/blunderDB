@@ -37,7 +37,8 @@ export const MODAL = {
     COMMAND: 'command',
     CONFIG: 'config',
     TOUR: 'tour',
-    TRASH: 'trash'
+    TRASH: 'trash',
+    LOG: 'log'
 };
 
 // ── Panel identifiers (can be open simultaneously) ──

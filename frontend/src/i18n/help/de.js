@@ -844,6 +844,10 @@ export default {
 <td>Öffnet das Tag-Vokabular: die in dieser Datenbank verwendeten Tags mit der Zahl der Stellungen, anklickbar zum Starten der Suche.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Öffnet das Aktivitätsprotokoll: die letzten zweihundert Zeilen der Protokolldatei, mit dem Nötigen, um sie für einen Bericht zu kopieren oder den Ordner zu öffnen, der sie enthält.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Übersetzt einen Satz in Worten — Französisch oder Englisch — in Suchtoken: <code>ask my cube blunders at a score</code>. Die Token werden in die Befehlszeile geschrieben, nicht ausgeführt: durchlesen, dann Enter. Was nicht verstanden wurde, wird gesagt, nie erraten.</td>
 </tr>

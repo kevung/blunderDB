@@ -843,6 +843,10 @@ export default {
 <td>Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche.</td>
 </tr>
 <tr>
+<td>log</td>
+<td>Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient.</td>
+</tr>
+<tr>
 <td>ask</td>
 <td>Traduit une phrase en toutes lettres — français ou anglais — en jetons de recherche : <code>ask mes blunders de videau au score</code>. Les jetons sont écrits dans la barre de commande, pas lancés : on les relit, puis Entrée. Ce qui n'a pas été compris est dit, jamais deviné.</td>
 </tr>

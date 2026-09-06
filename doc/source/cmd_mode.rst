@@ -33,6 +33,7 @@ Opérations globales
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
+   "log", "Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient."
    "ask", "Traduit une phrase en toutes lettres — français ou anglais — en jetons de recherche : ``ask mes blunders de videau au score``. Les jetons sont écrits dans la barre de commande, pas lancés : on les relit, puis Entrée. Ce qui n'a pas été compris est dit, jamais deviné."
    "like", "Remplace la liste parcourue par les positions les plus proches de la position courante — ou de celle dont l'indice est donné (``like 42``). La proximité est une distance de transport en pions-pas : ce n'est pas un filtre, elle classe toute la base plutôt que de la restreindre, et ne se combine donc pas avec les jetons de recherche."
    "train", "Lance une session de micro-entraînement. Prend un argument : ``train pips`` (compte de pions), ``train epc``, ``train tp`` (point de prise au score), ``train quiz`` (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ."
