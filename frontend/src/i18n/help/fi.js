@@ -496,7 +496,10 @@ export default {
 <li><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</li>
 <li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Dashboard-välilehdelle.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
+<li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
 </ul>
+<p>Lohkossa <strong>vain suhdeluvut saavat tuomion</strong>, ja parempi kahdesta lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. <strong>Onni</strong> ei ole ansio: onnekkaampi pelaaja ei ole parempi. <strong>Ottelut, tulos ja päätökset</strong> kertovat mitä suhdeluvut ovat arvoltaan, mutta niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. <strong>Blundereiden määrää</strong> ei verrata raakana — kaksitoista tuhannesta päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin <em>Blunderit / 100 päät.</em>, joka on vertailukelpoinen, ja jättää määrän viereen taustaksi.</p>
+<p>Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise mitään.</p>
 <div class="admonition note">
 <p>Tällä välilehdellä <strong>Pelaaja</strong>-luettelo ja <strong>päätöstyypin</strong> valinta ovat poissa käytöstä: taulukko näyttää kaikki pelaajat ja erittelee nappula- ja kuutiopäätökset jo omiin sarakkeisiinsa.</p>
 </div>

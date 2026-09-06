@@ -1441,6 +1441,23 @@ Utilisation :
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
+* **Comparer deux joueurs** — cochez la case de la première colonne sur deux
+  lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à
+  face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne
+  sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.
+
+Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des deux
+est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire
+pourquoi. La **chance** n'est pas une qualité : un joueur plus chanceux n'est
+pas meilleur. Les **matchs, le bilan et les décisions** situent ce que les taux
+valent, mais les mettre en compétition ferait gagner celui qui a simplement
+joué davantage. Le **nombre de blunders** ne se compare pas brut — douze sur
+mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une
+ligne *Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté
+comme contexte.
+
+Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. Un
+taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
 
 .. note::
    Dans cet onglet, la liste **Joueur** et le choix du **type de décision** sont

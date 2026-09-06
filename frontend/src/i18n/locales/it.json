@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Ancore reciproche",
         "gameType_holding": "Ancora",
         "gameType_contact": "Contatto",
-        "gameType_over": "Terminata"
+        "gameType_over": "Terminata",
+        "compareColumn": "Confr.",
+        "compareToggle": "Confronta {name}",
+        "compareTitle": "{a} e {b}, affiancati",
+        "compareClear": "Cancella",
+        "compareBlunderRate": "Blunder / 100 dec."
     },
     "trash": {
         "title": "Cestino",

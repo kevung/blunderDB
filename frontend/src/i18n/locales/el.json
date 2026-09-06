@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Αμοιβαία άγκυρα",
         "gameType_holding": "Άγκυρα",
         "gameType_contact": "Επαφή",
-        "gameType_over": "Τέλος"
+        "gameType_over": "Τέλος",
+        "compareColumn": "Σύγκρ.",
+        "compareToggle": "Σύγκριση {name}",
+        "compareTitle": "{a} και {b}, δίπλα δίπλα",
+        "compareClear": "Καθαρισμός",
+        "compareBlunderRate": "Blunder / 100 αποφ."
     },
     "trash": {
         "title": "Κάδος",

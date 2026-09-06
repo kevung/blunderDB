@@ -496,7 +496,10 @@ export default {
 <li><strong>Ordinare</strong> — fare clic su un'intestazione di colonna. La tabella si apre ordinata per PR crescente, con il miglior giocatore in testa. I giocatori di cui nulla è stato misurato restano in fondo qualunque sia il verso dell'ordinamento: uno zero per mancanza di dati non è una prestazione perfetta.</li>
 <li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Dashboard.</li>
 <li><strong>Restringere il periodo</strong> — i filtri di date, tornei e lunghezza dei match si applicano normalmente, il che consente di delimitare la tabella alle date di una competizione.</li>
+<li><strong>Confrontare due giocatori</strong> — spuntate la casella della prima colonna su due righe. Sopra la tabella compare un blocco che mette i loro indicatori a confronto; spuntare un terzo giocatore sostituisce il più vecchio dei due. La casella non seleziona la riga: spuntare confronta, cliccare apre il dettaglio.</li>
 </ul>
+<p>In quel blocco <strong>solo i tassi ricevono un verdetto</strong>, e il migliore dei due è in grassetto. Tre indicatori non ne ricevono mai, e vale la pena dire perché. La <strong>fortuna</strong> non è una qualità: un giocatore più fortunato non è migliore. <strong>Partite, bilancio e decisioni</strong> dicono quanto valgono i tassi, ma metterli in competizione farebbe vincere chi ha semplicemente giocato di più. Il <strong>numero di blunder</strong> non si confronta grezzo — dodici su mille decisioni valgono più di dieci su cento —, perciò il blocco aggiunge una riga <em>Blunder / 100 dec.</em> che invece si confronta, e lascia il conteggio accanto come contesto.</p>
+<p>Un pari non è una vittoria: non è messo in grassetto da nessuna parte. Un tasso senza nulla dietro si mostra come «—» e non decide nulla.</p>
 <div class="admonition note">
 <p>In questa scheda l'elenco <strong>Giocatore</strong> e la scelta del <strong>tipo di decisione</strong> sono disattivati: la tabella mostra tutti i giocatori e ripartisce già le decisioni di pedine e di cubo in colonne distinte.</p>
 </div>
