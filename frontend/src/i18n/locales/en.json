@@ -1235,7 +1235,16 @@
         "noData": "No data for this filter.",
         "noTags": "No tag in the comments of the selected positions.",
         "tagsDoNotSum": "A position may carry several tags: these rows do not sum to the total.",
-        "thinCells": "Cells with fewer than {n} decisions are greyed: too few to read."
+        "thinCells": "Cells with fewer than {n} decisions are greyed: too few to read.",
+        "goalTitle": "Goal:",
+        "goalStated": "PR < {target} within {weeks} weeks ({band}).",
+        "goalSet": "Set a goal…",
+        "goalTarget": "Target PR",
+        "goalWeeks": "Weeks",
+        "goalPropose": "Suggest",
+        "goalReached": "Reached: your PR is {pr}.",
+        "goalTrend": "Current PR {pr}; at the pace of the last matches the trend leads to {projected}, for a target of {target}. A trend is not a prediction.",
+        "goalNoTrend": "Current PR {pr}. Too few matches to show a trend: three at least."
     },
     "trash": {
         "title": "Trash",

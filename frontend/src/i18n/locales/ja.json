@@ -1235,7 +1235,16 @@
         "noData": "この絞り込みに該当するデータがありません。",
         "noTags": "選ばれた局面のコメントにタグがありません。",
         "tagsDoNotSum": "一つの局面が複数のタグを持つことがあります：これらの行は合計に一致しません。",
-        "thinCells": "判断が {n} 件未満のセルは灰色で示します：読むには少なすぎます。"
+        "thinCells": "判断が {n} 件未満のセルは灰色で示します：読むには少なすぎます。",
+        "goalTitle": "目標：",
+        "goalStated": "{weeks} 週間で PR < {target}（{band}）。",
+        "goalSet": "目標を決める…",
+        "goalTarget": "目標 PR",
+        "goalWeeks": "週数",
+        "goalPropose": "候補",
+        "goalReached": "達成しました。現在の PR は {pr} です。",
+        "goalTrend": "現在の PR は {pr}。直近のマッチの調子では {projected} に向かっています（目標は {target}）。傾向は予測ではありません。",
+        "goalNoTrend": "現在の PR は {pr}。傾向を出すにはマッチが足りません（最低 3 件）。"
     },
     "trash": {
         "title": "ごみ箱",

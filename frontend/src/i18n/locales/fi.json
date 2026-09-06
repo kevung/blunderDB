@@ -1235,7 +1235,16 @@
         "noData": "Ei tietoja tälle suodattimelle.",
         "noTags": "Ei merkintöjä valittujen asemien kommenteissa.",
         "tagsDoNotSum": "Asemalla voi olla useita merkintöjä: nämä rivit eivät summaudu kokonaismäärään.",
-        "thinCells": "Alle {n} päätöksen solut on harmaannettu: liian vähän luettavaksi."
+        "thinCells": "Alle {n} päätöksen solut on harmaannettu: liian vähän luettavaksi.",
+        "goalTitle": "Tavoite:",
+        "goalStated": "PR < {target} {weeks} viikossa ({band}).",
+        "goalSet": "Aseta tavoite…",
+        "goalTarget": "Tavoite-PR",
+        "goalWeeks": "Viikkoa",
+        "goalPropose": "Ehdota",
+        "goalReached": "Saavutettu: PR-lukusi on {pr}.",
+        "goalTrend": "Nykyinen PR {pr}; viime otteluiden tahdilla suuntaus vie lukemaan {projected}, tavoitteen ollessa {target}. Suuntaus ei ole ennuste.",
+        "goalNoTrend": "Nykyinen PR {pr}. Liian vähän otteluita suuntaukseen: vähintään kolme."
     },
     "trash": {
         "title": "Roskakori",

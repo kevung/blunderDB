@@ -1235,7 +1235,16 @@
         "noData": "Nessun dato per questo filtro.",
         "noTags": "Nessuna etichetta nei commenti delle posizioni selezionate.",
         "tagsDoNotSum": "Una posizione può portare più etichette: queste righe non sommano al totale.",
-        "thinCells": "Le celle con meno di {n} decisioni sono in grigio: troppo poche per essere lette."
+        "thinCells": "Le celle con meno di {n} decisioni sono in grigio: troppo poche per essere lette.",
+        "goalTitle": "Obiettivo:",
+        "goalStated": "PR < {target} entro {weeks} settimane ({band}).",
+        "goalSet": "Fissarsi un obiettivo…",
+        "goalTarget": "PR mirato",
+        "goalWeeks": "Settimane",
+        "goalPropose": "Proporre",
+        "goalReached": "Raggiunto: il vostro PR è {pr}.",
+        "goalTrend": "PR attuale {pr}; al ritmo degli ultimi incontri la tendenza porta a {projected}, per un obiettivo di {target}. Una tendenza non è una previsione.",
+        "goalNoTrend": "PR attuale {pr}. Troppo pochi incontri per una tendenza: tre come minimo."
     },
     "trash": {
         "title": "Cestino",
