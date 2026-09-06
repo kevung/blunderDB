@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -97,8 +97,8 @@ msgstr ""
 "Τα ανοικτά αιτήματα ομαδοποιούνται ανά `ορόσημο "
 "<https://github.com/kevung/blunderDB/milestones>`__ στο GitHub. Οι ιδέες "
 "συζητούνται στις `Discussions — κατηγορία Ideas "
-"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, και "
-"κάθε δημοσιευμένη έκδοση ανακοινώνεται στην `κατηγορία Announcements "
+"<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__, "
+"και κάθε δημοσιευμένη έκδοση ανακοινώνεται στην `κατηγορία Announcements "
 "<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__."
 
 #: ../../source/a_propos.rst:44
@@ -205,21 +205,23 @@ msgstr ""
 
 #: ../../source/a_propos.rst:89
 msgid ""
-"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
-"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
-" été générées avec `GNU Backgammon "
-"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
-"sous licence GPL, et ces tables sont des données qu'il a produites, "
-"créditées comme telles ;"
+"les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
+"sont calculées par blunderDB lui-même, par un portage de l'outil "
+"``makebearoff`` de `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; le résultat est identique "
+"octet pour octet à celui de gnubg, dont l'empreinte SHA-256 sert de "
+"référence. GNUbg est un logiciel libre sous licence GPL ;"
 msgstr ""
-"η μονόπλευρη (6 σημεία, 15 πούλια, για το EPC) και η αμφίπλευρη (6 "
-"σημεία, 6 πούλια, για τις αποφάσεις βιδωτού στις κούρσες) βάση δεδομένων "
-"bearoff δημιουργήθηκαν με το `GNU Backgammon "
-"<https://www.gnu.org/software/gnubg/>`__· το GNUbg είναι ελεύθερο "
-"λογισμικό υπό την GPL, και οι πίνακες αυτοί είναι δεδομένα που παρήγαγε, "
-"πιστωμένα ως τέτοια·"
+"οι πίνακες bearoff, μονόπλευρος (6 σημεία, 15 πούλια, για το EPC) και "
+"αμφίπλευρος (6 σημεία, 6 πούλια, για τις ετυμηγορίες κύβου στις κούρσες), "
+"υπολογίζονται από το ίδιο το blunderDB, μέσω μιας μεταφοράς του εργαλείου "
+"``makebearoff`` του `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__· το αποτέλεσμα είναι πανομοιότυπο "
+"byte προς byte με αυτό του gnubg, του οποίου το αποτύπωμα SHA-256 "
+"χρησιμεύει ως αναφορά. Το GNUbg είναι ελεύθερο λογισμικό υπό άδεια GPL·"
 
-#: ../../source/a_propos.rst:95
+#: ../../source/a_propos.rst:96
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -231,7 +233,7 @@ msgstr ""
 "<https://github.com/kevung/gnubgparser>`__ και `bgfparser "
 "<https://github.com/kevung/bgfparser>`__ (MIT)·"
 
-#: ../../source/a_propos.rst:100
+#: ../../source/a_propos.rst:101
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -243,7 +245,7 @@ msgstr ""
 "<https://github.com/jackc/pgx>`__, `Wails <https://wails.io>`__ και `go-"
 "fsrs <https://github.com/open-spaced-repetition/go-fsrs>`__ (MIT)·"
 
-#: ../../source/a_propos.rst:105
+#: ../../source/a_propos.rst:106
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -253,7 +255,7 @@ msgstr ""
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ και "
 "`driver.js <https://driverjs.com>`__ (MIT)·"
 
-#: ../../source/a_propos.rst:109
+#: ../../source/a_propos.rst:110
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "

@@ -31,7 +31,7 @@ la liste des positions où vous avez le plus perdu.
 
 #. **Revoir le match.** Double-cliquer sur la ligne du match (ou la
    sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière
-   position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent
+   position visitée. Les touches *GAUCHE*/*DROITE* (ou *k*/*j*) parcourent
    les coups ; *PageUp*/*PageDown* changent de partie.
 
 #. **Lire l'analyse.** *CTRL-L* affiche le panneau Analyse : les meilleurs
@@ -367,8 +367,8 @@ clicker dans la barre d'outils sur le bouton "Delete Position"
 
 .. tip:: En ligne de commande, exécuter ``d``.
 
-.. caution:: La suppression de la position est définitive et ne nécessite
-   aucune confirmation de la part de l'utilisateur.
+.. caution:: La suppression de la position est définitive ; une confirmation
+   est demandée avant.
 
 Import une position depuis XG
 -----------------------------
@@ -418,7 +418,7 @@ Importer un dossier de matchs
 Pour importer récursivement tous les fichiers de matchs contenus dans un
 dossier et ses sous-dossiers:
 
-#. Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la
+#. Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la
    barre d'outils.
 
 #. Sélectionner le dossier contenant les fichiers de matchs.

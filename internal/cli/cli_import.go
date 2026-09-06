@@ -327,9 +327,10 @@ type importBatchResult struct {
 // importBatch imports all .xg files from a directory. Like importPosition, it
 // fails the run when nothing at all was imported (every file either errored
 // or was a duplicate), and additionally fails when failOnError is set and any
-// file errored despite others succeeding (#176). A duplicate is not a
-// failure by itself: re-running a batch import over a directory that was
-// already imported, with no new files added, stays a success.
+// file errored despite others succeeding (#176). A duplicate is not counted
+// as a failure, but a batch made only of duplicates imported nothing and
+// therefore exits non-zero — re-running over an already-imported directory
+// with no new file is an error, the message carrying the duplicate count.
 func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool) error {
 	if format != "json" {
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)

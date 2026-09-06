@@ -19,7 +19,7 @@ puce et non la traduction de toute la version.
 - Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, distingue l'équité *money* de l'équité *match*, et se parcourt au clavier.
 - Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous ``/ops/``.
 - **Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, si bien qu'une même position d'argent n'entre plus deux fois par des portes différentes.
-- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
+- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, MAJ-J et MAJ-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
 - Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 
 0.35.0 (2026-09-02)

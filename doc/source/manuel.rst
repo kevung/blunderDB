@@ -174,8 +174,7 @@ blunderDB. Elle est organisée en cinq onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau ;
 * **Couleurs** — les couleurs du plateau ;
-* **Bearoff** — la base de sortie two-sided étendue utilisée par le panneau
-  Bearoff ;
+* **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
@@ -753,9 +752,10 @@ tous les onglets.
 
 **PR (Performance Rate)**
 
-  Mesure la qualité de jeu *money-game* : somme des erreurs en millièmes de
-  point de backgammon, divisée par le nombre de décisions. Indépendant du
-  score de match.
+  Somme des erreurs, en millièmes de point d'équité normalisée, divisée par
+  le nombre de décisions comptées. La règle de comptage exacte — quelles
+  décisions entrent au dénominateur, comment le score est converti — est
+  celle de :ref:`stats_parity`.
 
   Seuils de référence approximatifs :
 
@@ -1317,7 +1317,7 @@ traite que le bearoff pur : tous les pions restants des deux joueurs dans leur
 jan intérieur. La position est évaluée *avant le lancer* ; les dés
 éventuellement posés sont ignorés.
 
-Les **blocs EPC**, eux, vont plus loin depuis la 0.37.0 : un camp obtient son
+Les **blocs EPC**, eux, vont plus loin : un camp obtient son
 EPC dès que son pion le plus éloigné tient dans la table une face chargée. Avec
 la table par défaut (six points) c'est l'ancienne règle du jan ; avec une table
 à huit points, calculée depuis l'onglet *Bearoff*, un camp dont un pion est sur
@@ -1337,8 +1337,8 @@ optimal* : chaque joueur minimise ses propres lancers en ignorant
 l'adversaire — c'est la définition standard de l'EPC.
 
 **Probabilité de gain, régime exact.** Lecture directe dans la base two-sided
-disponible la plus large (intégrée TS-06-06, fichier externe, ou TS-06-11
-téléchargée). Ces bases résultent d'une analyse rétrograde complète sous jeu
+disponible la plus large (TS-06-06 calculée au premier lancement, fichier
+externe, ou TS-06-11 calculée depuis l'onglet *Bearoff*). Ces bases résultent d'une analyse rétrograde complète sous jeu
 two-sided optimal des deux camps : aucune hypothèse supplémentaire, erreur
 limitée à la quantification (< 0,002 %).
 

@@ -49,7 +49,7 @@ export default {
     <li>tutkivat asemia välitoistolla (Anki-paneeli),</li>
     <li>hallitsevat turnauksia (Turnaus-paneeli),</li>
     <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
-    <li>laskevat EPC-arvoja bearoff-asemille (Eval-paneeli),</li>
+    <li>arvioivat minkä tahansa aseman sisäänrakennetulla moottorilla ja laskevat bearoff-aseman EPC:n (Eval-paneeli),</li>
     <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
     <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
 </ul>
@@ -122,9 +122,10 @@ export default {
 </ul>
 <p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC- ja pip-erot.</p>
 <p>
-    Puhtaassa juoksussa lisätaulukko näyttää molempien pelaajien voittotodennäköisyydet ja, kun asema kuuluu kaksipuolisen tietokannan piiriin (sisäänrakennettu 6 nappulaan asti pelaajaa kohden,
-    ladattava laajennettu 11:een asti asetusten Bearoff-välilehdeltä), tarkat money-equityt ja parhaan tuplausratkaisun. Tämän alueen ulkopuolella voittotodennäköisyys on arvio (merkintä ”arvioitu”
-    virhemarginaaleineen) eikä ratkaisua näytetä. Vuorossa oleva pelaaja vaihdetaan napsauttamalla pelaajan ulostulo-/pisteruutua ja tuplauskuution asema napsauttamalla laudan kuutiota.
+    Puhtaassa juoksussa lisätaulukko näyttää molempien pelaajien voittotodennäköisyydet ja, kun asema kuuluu kaksipuolisen tietokannan piiriin (6 nappulan taulukko pelaajaa kohden lasketaan
+    ensimmäisellä käynnistyksellä, 11 nappulan laajennettu taulukko lasketaan asetusten Bearoff-välilehdeltä), tarkat money-equityt ja parhaan tuplausratkaisun. Tämän alueen ulkopuolella
+    voittotodennäköisyys on arvio (merkintä ”arvioitu” virhemarginaaleineen) eikä ratkaisua näytetä. Vuorossa oleva pelaaja vaihdetaan napsauttamalla pelaajan ulostulo-/pisteruutua ja tuplauskuution
+    asema napsauttamalla laudan kuutiota.
 </p>
 <p>
     <strong>Haaste</strong>-valintaruutu piilottaa tulokset jokaisen aseman muutoksen yhteydessä; napsauta aluetta paljastaaksesi sen — mainio tapa harjoitella equityn, EPC:n tai tuplausratkaisun
@@ -183,7 +184,10 @@ export default {
 </p>
 
 <h3>Turnaukset</h3>
-<p>Turnaukset mahdollistavat ottelujen ryhmittelyn tapahtuman mukaan. Avaa Turnaus-paneeli painamalla <strong>Ctrl+Y</strong> hallitaksesi turnauksia ja liittääksesi otteluita niihin.</p>
+<p>
+    Turnaukset mahdollistavat ottelujen ryhmittelyn tapahtuman mukaan. Tuonnissa ottelu sijoitetaan turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo sijoitettua ottelua ei
+    koskaan siirretä. Avaa Turnaus-paneeli painamalla <strong>Ctrl+Y</strong> hallitaksesi turnauksia ja liittääksesi otteluita niihin.
+</p>
 
 <h3>Tilastot</h3>
 <p>
@@ -1204,7 +1208,7 @@ export default {
 <td>Vastustajalla on x–y blotia kotialueella.</td>
 </tr>
 <tr>
-<td>t'sana1;sana2;...'</td>
+<td><code>t'sana1;sana2;...'</code></td>
 <td>Aseman kommentit sisältävät vähintään yhden sanoista.</td>
 </tr>
 <tr>
@@ -1220,11 +1224,11 @@ export default {
 <td>Asemaan liittyy tietystä lähteestä peräisin oleva kommentti: <code>user</code> (sinun kirjoittamasi), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (ottelun tuonnin mukana tullut) tai <code>unknown</code>. Toistettavissa (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
-<td>m'kuvio1,kuvio2,...'</td>
+<td><code>m'kuvio1,kuvio2,...'</code></td>
 <td>Parhaat nappulasiirrot, jotka sisältävät vähintään yhden kuvioista.</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>Parhaat kuutiopäätökset No Double/Take, Double Take, Double Pass.</td>
 </tr>
 <tr>
@@ -1264,8 +1268,8 @@ export default {
 <td>Hae asemia, joiden tunnukset ovat välillä x–y (esim. id5,10).</td>
 </tr>
 <tr>
-<td>pl'nimi'</td>
-<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä.</td>
+<td><code>pl'nimi'</code></td>
+<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä.</td>
 </tr>
 </tbody>
 </table>
@@ -1289,6 +1293,10 @@ export default {
 <h3>Versio</h3>
 <p>Sovelluksen versio: {appVersion}</p>
 <p>Tietokannan versio: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/fi/" target="_blank" rel="noopener noreferrer">Verkkodokumentaatio</a> ·
+    <a href="https://kevung.github.io/blunderDB/fi/historique.html" target="_blank" rel="noopener noreferrer">Versiohistoria</a>
+</p>
 
 <h3>Tekijä</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

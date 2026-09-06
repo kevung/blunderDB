@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -89,8 +89,8 @@ msgstr ""
 "`Discussions の Ideas カテゴリ "
 "<https://github.com/kevung/blunderDB/discussions/categories/ideas>`__\\ "
 "で議論され、公開された各バージョンは `Announcements カテゴリ "
-"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__\\ "
-"で告知されます。"
+"<https://github.com/kevung/blunderDB/discussions/categories/announcements>`__\\"
+" で告知されます。"
 
 #: ../../source/a_propos.rst:44
 msgid "Faire un don"
@@ -187,18 +187,20 @@ msgstr ""
 
 #: ../../source/a_propos.rst:89
 msgid ""
-"les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
-"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont"
-" été générées avec `GNU Backgammon "
-"<https://www.gnu.org/software/gnubg/>`__ ; GNUbg est un logiciel libre "
-"sous licence GPL, et ces tables sont des données qu'il a produites, "
-"créditées comme telles ;"
+"les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
+"bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
+"sont calculées par blunderDB lui-même, par un portage de l'outil "
+"``makebearoff`` de `GNU Backgammon "
+"<https://www.gnu.org/software/gnubg/>`__ ; le résultat est identique "
+"octet pour octet à celui de gnubg, dont l'empreinte SHA-256 sert de "
+"référence. GNUbg est un logiciel libre sous licence GPL ;"
 msgstr ""
-"片側ベアオフデータベース（6 ポイント、15 駒、EPC 用）と両側ベアオフデータベース（6 ポイント、6 駒、レースでのキューブ判定用）は\\ "
-"`GNU Backgammon <https://www.gnu.org/software/gnubg/>`__\\ で生成されました。GNUbg"
-" は GPL の下で提供されるフリーソフトウェアであり、これらの表はそれが生成したデータとしてクレジットされています。"
+"片側ベアオフテーブル（6 ポイント、15 駒、EPC 用）と両側ベアオフテーブル（6 ポイント、6 駒、レースでのキューブ判定用）は、\\ `GNU "
+"Backgammon <https://www.gnu.org/software/gnubg/>`__\\ の\\ ``makebearoff``\\ "
+"ツールを移植して blunderDB 自身が計算します。結果は gnubg が生成するものとバイト単位で同一であり、その SHA-256 "
+"の指紋が基準となります。GNUbg は GPL ライセンスのフリーソフトウェアです。"
 
-#: ../../source/a_propos.rst:95
+#: ../../source/a_propos.rst:96
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
@@ -209,7 +211,7 @@ msgstr ""
 "`gnubgparser <https://github.com/kevung/gnubgparser>`__\\ 、\\ `bgfparser "
 "<https://github.com/kevung/bgfparser>`__\\ （MIT）で読み込まれます。"
 
-#: ../../source/a_propos.rst:100
+#: ../../source/a_propos.rst:101
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -221,7 +223,7 @@ msgstr ""
 "<https://wails.io>`__、\\ `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__\\ （MIT）。"
 
-#: ../../source/a_propos.rst:105
+#: ../../source/a_propos.rst:106
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -231,7 +233,7 @@ msgstr ""
 "<https://two.js.org>`__、\\ `Chart.js <https://www.chartjs.org>`__、\\ "
 "`driver.js <https://driverjs.com>`__\\ （MIT）。"
 
-#: ../../source/a_propos.rst:109
+#: ../../source/a_propos.rst:110
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "

@@ -47,12 +47,12 @@ depuis plusieurs clients.
 .. code-block:: bash
 
    # Servir une base SQLite locale sur le port 8080
-   blunderdb serve --db ma_base.db --addr :8080
+   blunderdb serve --db ma_base.db --addr 127.0.0.1:8080
 
    # Servir un backend PostgreSQL
    blunderdb serve --backend postgres \
        --dsn "postgres://user:pass@host:5432/blunderdb?sslmode=disable" \
-       --addr :8080
+       --addr 127.0.0.1:8080
 
 .. warning::
 
@@ -240,8 +240,18 @@ préfixe à part, ``POST /ops/<famille>.<méthode>`` :
 
 Le démon n'authentifie personne (voir plus bas) : une route joignable par un
 tenant est une route que **tout** tenant peut appeler. Le préfixe existe pour
-que le proxy puisse refuser les deux d'une seule règle. **Ne jamais exposer
-``/ops/`` par le proxy public.**
+que le proxy puisse refuser les deux d'une seule règle. **Ne jamais exposer**
+``/ops/`` **par le proxy public.** Sous nginx, la règle tient en une ligne du
+bloc ``server`` ; sous Caddy, en deux lignes du site :
+
+.. code-block:: nginx
+
+   location /ops/ { return 403; }
+
+.. code-block:: text
+
+   @ops path /ops/*
+   respond @ops 403
 
 L'option ``--ops-addr <hôte:port>`` va plus loin : les deux routes quittent
 alors l'adresse ``--addr`` et ne sont plus servies que sur ce second
@@ -274,7 +284,7 @@ liste qui acceptent un ``limit`` refusent au-delà de 1000 lignes par page
 
 Les familles listantes acceptent toutes ``limit`` et ``offset`` :
 ``positions.list``, ``positions.listIds``, ``matches.list``, ``search.find``,
-``anki.reviewLog``, et depuis la 0.37.0 ``comments.listAll``,
+``anki.reviewLog``, ``comments.listAll``,
 ``tournaments.list`` et ``collections.positions``. Les deux valent zéro par
 défaut, ce qui veut dire ce que cela a toujours voulu dire : tout. **Il n'y a
 pas de plafond implicite** — un flux n'est pas retenu en mémoire, donc une
@@ -537,7 +547,7 @@ image *distroless*.
    docker build -f Dockerfile.serve -t blunderdb-serve .
 
    # Lancer le démon (le backend par défaut de l'image est postgres)
-   docker run --rm -p 8080:8080 \
+   docker run --rm -p 127.0.0.1:8080:8080 \
        -e BLUNDERDB_DSN="postgres://user:pass@hôte:5432/blunderdb?sslmode=disable" \
        blunderdb-serve
 
@@ -590,7 +600,9 @@ construire localement ou tirer l'image publiée donne le même binaire.
    ``X-Tenant-ID`` tel qu'il le reçoit. Il doit être placé derrière un
    reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-même,
    et ne jamais être exposé directement sur l'Internet public. Les exemples
-   ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison.
+   ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison,
+   et ``--addr`` se lie de même à ``127.0.0.1`` : le proxy est sur la même
+   machine.
 
 .. _headless_proxy_deployment:
 
@@ -675,7 +687,7 @@ Security** de PostgreSQL : des politiques d'isolation par tenant sont
 installées et ``app.tenant_id`` est fixé par connexion. C'est une défense en
 profondeur facultative, désactivée par défaut.
 
-Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime
+Quand un tenant est décommissionné, ``POST /ops/tenant.purge`` supprime
 définitivement toutes ses données (positions, matchs, collections, historique,
 etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``), **ainsi que son
 état de session** (dernière recherche, dernière position, onglets ouverts —
@@ -686,7 +698,7 @@ ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
 PostgreSQL — elle renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a
 pas de notion de tenant.
 
-Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier SQLite du
+Symétriquement, ``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du
 daemon — le pendant du bouton « Compacter la base » de l'interface graphique
 et de la commande ``blunderdb vacuum`` (voir :ref:`cli`), avec la même garde
 d'espace disque — et renvoie les tailles avant et après (``sizeBefore``,

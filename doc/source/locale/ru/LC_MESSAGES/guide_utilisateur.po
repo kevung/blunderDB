@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -80,12 +80,12 @@ msgstr ""
 msgid ""
 "**Revoir le match.** Double-cliquer sur la ligne du match (ou la "
 "sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière "
-"position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent "
+"position visitée. Les touches *GAUCHE*/*DROITE* (ou *k*/*j*) parcourent "
 "les coups ; *PageUp*/*PageDown* changent de partie."
 msgstr ""
 "**Просмотрите матч.** Двойной щелчок по строке матча (или выбор строки и "
 "нажатие *ENTER*) открывает просмотр на последней посещённой позиции. "
-"Клавиши *ВЛЕВО*/*ВПРАВО* (или *j*/*k*) перелистывают ходы; "
+"Клавиши *ВЛЕВО*/*ВПРАВО* (или *k*/*j*) перелистывают ходы; "
 "*PageUp*/*PageDown* переключают партии."
 
 #: ../../source/guide_utilisateur.rst:37
@@ -745,11 +745,9 @@ msgstr "В командной строке выполните ``d``."
 
 #: ../../source/guide_utilisateur.rst:370
 msgid ""
-"La suppression de la position est définitive et ne nécessite aucune "
-"confirmation de la part de l'utilisateur."
-msgstr ""
-"Удаление позиции необратимо и не требует подтверждения со стороны "
-"пользователя."
+"La suppression de la position est définitive ; une confirmation est "
+"demandée avant."
+msgstr "Удаление позиции необратимо; перед ним запрашивается подтверждение."
 
 #: ../../source/guide_utilisateur.rst:374
 msgid "Import une position depuis XG"
@@ -851,9 +849,10 @@ msgstr "Чтобы рекурсивно импортировать все фай
 
 #: ../../source/guide_utilisateur.rst:421
 msgid ""
-"Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la"
-" barre d'outils."
-msgstr "Нажмите *CTRL-SHIFT-F* или соответствующую кнопку в панели инструментов."
+"Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la "
+"barre d'outils."
+msgstr ""
+"Нажмите *CTRL-SHIFT-F* или соответствующую кнопку в панели инструментов."
 
 #: ../../source/guide_utilisateur.rst:424
 msgid "Sélectionner le dossier contenant les fichiers de matchs."
@@ -1409,8 +1408,8 @@ msgid ""
 "score. Voir :ref:`cmd_filter` pour une liste exhaustive des filtres "
 "disponibles)."
 msgstr ""
-"введите *s*, добавьте дополнительные фильтры при необходимости (например, "
-"*cube* или *score* для учёта куба и счёта соответственно. Смотрите "
+"введите *s*, добавьте дополнительные фильтры при необходимости (например,"
+" *cube* или *score* для учёта куба и счёта соответственно. Смотрите "
 ":ref:`cmd_filter` для полного списка доступных фильтров)."
 
 #: ../../source/guide_utilisateur.rst:686

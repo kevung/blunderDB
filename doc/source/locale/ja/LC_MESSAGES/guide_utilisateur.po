@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -72,12 +72,12 @@ msgstr ""
 msgid ""
 "**Revoir le match.** Double-cliquer sur la ligne du match (ou la "
 "sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière "
-"position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent "
+"position visitée. Les touches *GAUCHE*/*DROITE* (ou *k*/*j*) parcourent "
 "les coups ; *PageUp*/*PageDown* changent de partie."
 msgstr ""
 "\\ **マッチを見直す。**\\ マッチの行をダブルクリックする（または選択して *ENTER* "
 "を押す）と、最後に閲覧したポジションでレビューが開きます。*LEFT*/*RIGHT* キー（または "
-"*j*/*k*）で手を送り、*PageUp*/*PageDown* でゲームを切り替えます。"
+"*k*/*j*）で手を送り、*PageUp*/*PageDown* でゲームを切り替えます。"
 
 #: ../../source/guide_utilisateur.rst:37
 msgid ""
@@ -646,9 +646,9 @@ msgstr "コマンドラインで ``d`` を実行します。"
 
 #: ../../source/guide_utilisateur.rst:370
 msgid ""
-"La suppression de la position est définitive et ne nécessite aucune "
-"confirmation de la part de l'utilisateur."
-msgstr "ポジションの削除は恒久的であり、ユーザーの確認は必要ありません。"
+"La suppression de la position est définitive ; une confirmation est "
+"demandée avant."
+msgstr "ポジションの削除は恒久的であり、事前に確認が求められます。"
 
 #: ../../source/guide_utilisateur.rst:374
 msgid "Import une position depuis XG"
@@ -746,8 +746,8 @@ msgstr "フォルダとそのサブフォルダに含まれるすべてのマッ
 
 #: ../../source/guide_utilisateur.rst:421
 msgid ""
-"Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la"
-" barre d'outils."
+"Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la "
+"barre d'outils."
 msgstr "*CTRL-SHIFT-F* を押すか、ツールバーの対応するボタンをクリックします。"
 
 #: ../../source/guide_utilisateur.rst:424
@@ -1238,8 +1238,8 @@ msgid ""
 "score. Voir :ref:`cmd_filter` pour une liste exhaustive des filtres "
 "disponibles)."
 msgstr ""
-"*s* と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには *cube* または *score*\\ "
-"。利用可能なフィルターの一覧は :ref:`cmd_filter` を参照してください）。"
+"*s* と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには *cube* または "
+"*score*\\ 。利用可能なフィルターの一覧は :ref:`cmd_filter` を参照してください）。"
 
 #: ../../source/guide_utilisateur.rst:686
 msgid "valider la requête en appuyant sur *ENTREE*."

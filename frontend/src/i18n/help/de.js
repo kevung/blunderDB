@@ -50,7 +50,7 @@ export default {
     <li>Positionen mit verteilter Wiederholung zu studieren (Anki-Panel),</li>
     <li>Turniere zu verwalten (Tournament-Panel),</li>
     <li>Leistungsstatistiken anzuzeigen (Stats-Panel),</li>
-    <li>EPC-Werte für Auswürfelpositionen zu berechnen (Eval-Panel),</li>
+    <li>eine beliebige Stellung mit dem eingebauten Auswerter zu bewerten und den EPC einer Ausspielstellung zu berechnen (Eval-Panel),</li>
     <li>gespeicherte Suchfilter durchzusehen (Filter Library-Panel),</li>
     <li>den Suchverlauf durchzusehen (Search History-Panel).</li>
 </ul>
@@ -128,10 +128,10 @@ export default {
 </ul>
 <p>Haben beide Spieler Steine im Heimfeld, zeigt ein Vergleichsabschnitt die Differenzen bei EPC und Pip-Count.</p>
 <p>
-    In einem reinen Wettlauf zeigt eine weitere Tabelle die Gewinnwahrscheinlichkeiten beider Spieler und, sofern die Stellung von einer zweiseitigen Datenbank abgedeckt ist (die eingebaute bis 6
-    Steine je Spieler, die herunterladbare erweiterte bis 11 über den Reiter Bearoff der Konfiguration), die exakten Money-Equities und die beste Verdopplungsentscheidung. Außerhalb dieses Bereichs
-    wird die Gewinnwahrscheinlichkeit geschätzt (Badge „geschätzt“ mit Fehlerspanne) und keine Entscheidung angezeigt. Der Spieler am Zug wird durch Klick auf das Aus-/Punktefeld eines Spielers
-    geändert, die Verdopplungsstellung durch Klick auf den Doppler auf dem Brett.
+    In einem reinen Wettlauf zeigt eine weitere Tabelle die Gewinnwahrscheinlichkeiten beider Spieler und, sofern die Stellung von einer zweiseitigen Datenbank abgedeckt ist (Tabelle bis 6 Steine je
+    Spieler, beim ersten Start berechnet, erweiterte Tabelle bis 11 Steine, über den Reiter Bearoff der Konfiguration berechnet), die exakten Money-Equities und die beste Verdopplungsentscheidung.
+    Außerhalb dieses Bereichs wird die Gewinnwahrscheinlichkeit geschätzt (Badge „geschätzt“ mit Fehlerspanne) und keine Entscheidung angezeigt. Der Spieler am Zug wird durch Klick auf das
+    Aus-/Punktefeld eines Spielers geändert, die Verdopplungsstellung durch Klick auf den Doppler auf dem Brett.
 </p>
 <p>
     Das Kontrollkästchen <strong>Challenge</strong> verbirgt die Ergebnisse bei jeder Änderung der Stellung; ein Klick auf einen Bereich deckt ihn auf — ideal, um eine Equity, einen EPC oder eine
@@ -167,7 +167,7 @@ export default {
 </p>
 <p>
     <strong>Wiederholen:</strong> Ein Deck auswählen und auf <em>Study</em> klicken (oder auf ein Deck doppelklicken), um mit dem Wiederholen fälliger Karten zu beginnen. Jede Karte zeigt die
-    entsprechende Position auf dem Brett. Bewerten Sie Ihr Erinnerungsvermögen mit den Tasten <strong>1</strong> (Again), <strong>2</strong> (Hard), <strong>3</strong> (Good) oder
+    entsprechende Position auf dem Brett. Bewerten Sie Ihr Erinnerungsvermögen mit den Tasten <strong>1</strong> (Again), <strong>2</strong> (Hard), <strong>3</strong> (Gut) oder
     <strong>4</strong> (Easy). <strong>Esc</strong> drücken, um zu stoppen und zur Deck-Liste zurückzukehren.
 </p>
 <p>
@@ -193,7 +193,10 @@ export default {
 </p>
 
 <h3>Turniere</h3>
-<p>Turniere ermöglichen das Gruppieren von Matches nach Veranstaltung. Das Tournament-Panel mit <strong>Ctrl+Y</strong> öffnen, um Turniere zu verwalten und ihnen Matches zuzuordnen.</p>
+<p>
+    Turniere ermöglichen das Gruppieren von Matches nach Veranstaltung. Beim Import kommt ein Match in das Turnier, das seine Datei nennt, bei Bedarf neu angelegt; ein bereits eingeordnetes Match wird
+    nie verschoben. Das Tournament-Panel mit <strong>Ctrl+Y</strong> öffnen, um Turniere zu verwalten und ihnen Matches zuzuordnen.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -1215,7 +1218,7 @@ export default {
 <td>Der Gegner hat zwischen x und y Blots im Heimfeld.</td>
 </tr>
 <tr>
-<td>t'wort1;wort2;...'</td>
+<td><code>t'wort1;wort2;...'</code></td>
 <td>Die Kommentare der Position enthalten mindestens eines der Wörter.</td>
 </tr>
 <tr>
@@ -1231,11 +1234,11 @@ export default {
 <td>Die Stellung trägt einen Kommentar einer bestimmten Herkunft: <code>user</code> (von Ihnen geschrieben), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (durch einen Partie-Import mitgebracht) oder <code>unknown</code>. Wiederholbar (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
-<td>m'muster1,muster2,...'</td>
+<td><code>m'muster1,muster2,...'</code></td>
 <td>Die besten Steinzüge, die mindestens eines der Muster enthalten.</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>Die besten Doppler-Entscheidungen für No Double/Take, Double Take, Double Pass.</td>
 </tr>
 <tr>
@@ -1275,8 +1278,8 @@ export default {
 <td>Die Positionen mit den Kennungen x bis y suchen (z. B. id5,10).</td>
 </tr>
 <tr>
-<td>pl'Name'</td>
-<td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. pl'Alice'). Groß-/Kleinschreibung wird ignoriert.</td>
+<td><code>pl'Name'</code></td>
+<td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert.</td>
 </tr>
 </tbody>
 </table>
@@ -1300,6 +1303,10 @@ export default {
 <h3>Version</h3>
 <p>Application version: {appVersion}</p>
 <p>Database version: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/de/" target="_blank" rel="noopener noreferrer">Online-Dokumentation</a> ·
+    <a href="https://kevung.github.io/blunderDB/de/historique.html" target="_blank" rel="noopener noreferrer">Versionshistorie</a>
+</p>
 
 <h3>Autor</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

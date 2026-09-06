@@ -50,7 +50,7 @@ export default {
     <li>間隔反復でポジションを学習する（Anki パネル）、</li>
     <li>トーナメントを管理する（トーナメントパネル）、</li>
     <li>パフォーマンス統計を表示する（統計パネル）、</li>
-    <li>ベアオフポジションの EPC 値を計算する（評価パネル）、</li>
+    <li>内蔵エンジンで任意のポジションを評価し、ベアオフポジションの EPC を計算する（Eval パネル）、</li>
     <li>保存した検索フィルターを閲覧する（フィルターライブラリパネル）、</li>
     <li>検索履歴を閲覧する（検索履歴パネル）。</li>
 </ul>
@@ -119,8 +119,8 @@ export default {
 </ul>
 <p>両プレイヤーが自陣にチェッカーを持つときは、比較セクションが EPC とピップカウントの差を表示します。</p>
 <p>
-    純粋なレースでは、さらに別のテーブルが両プレイヤーの勝率を示し、ポジションが両側データベースの範囲内にあるとき（内蔵はプレイヤーあたり 6 チェッカーまで、設定の Bearoff
-    タブからダウンロードできる拡張版は 11 まで）、正確な money equity
+    純粋なレースでは、さらに別のテーブルが両プレイヤーの勝率を示し、ポジションが両側データベースの範囲内にあるとき（初回起動時に計算されるプレイヤーあたり 6 チェッカーのテーブル、設定の Bearoff
+    タブから計算する 11 チェッカーの拡張テーブル）、正確な money equity
     と最善のキューブ判断も示します。その範囲外では勝率は推定値となり（誤差幅つきの「推定」バッジ）、判断は表示されません。手番のプレイヤーはプレイヤーのオフ／スコアの矩形をクリックして、キューブの位置は盤上のキューブをクリックして変更します。
 </p>
 <p>
@@ -152,7 +152,7 @@ export default {
 <p><strong>デッキの作成:</strong> <em>New Deck</em> をクリックして、コレクションまたは現在の検索結果からデッキを作成します。検索ベースのデッキは Anki タブがアクティブになると自動的に同期されます。</p>
 <p>
     <strong>復習:</strong> デッキを選択して <em>Study</em> をクリック（またはデッキをダブルクリック）すると、期限が来たカードの復習が始まります。各カードは対応するポジションを ボードに表示します。キー
-    <strong>1</strong>（Again）、<strong>2</strong>（Hard）、<strong>3</strong>（Good）、<strong>4</strong>（Easy）で記憶度を評価します。<strong>Esc</strong> を押すと中断して デッキ一覧に戻ります。
+    <strong>1</strong>（Again）、<strong>2</strong>（Hard）、<strong>3</strong>（普通）、<strong>4</strong>（Easy）で記憶度を評価します。<strong>Esc</strong> を押すと中断して デッキ一覧に戻ります。
 </p>
 <p>
     <strong>セッションの制限：</strong> デッキ設定で、1 回のセッションの枚数を制限できます。上限に達するとその旨を伝えてセッションが終わり、自由練習は予定に影響を与えずに続けられます。<em>0</em> は 1
@@ -174,7 +174,12 @@ export default {
 <p><strong>デッキの管理:</strong> 操作ボタンでデッキの名前変更、同期、リセット、削除ができます。FSRS パラメーター（目標保持率、最大間隔、ファズ）はデッキごとに 設定（歯車アイコン）で構成できます。</p>
 
 <h3>トーナメント</h3>
-<p>トーナメントを使うとマッチをイベントごとにグループ化できます。<strong>Ctrl+Y</strong> でトーナメントパネルを開き、トーナメントを管理してマッチを割り当てます。</p>
+<p>
+    トーナメントを使うとマッチをイベントごとにグループ化できます。インポート時には、マッチはそのファイルが示すトーナメントに入り、必要であれば作成されます。すでに割り当て済みのマッチが移動されることはありません。<strong
+        >Ctrl+Y</strong
+    >
+    でトーナメントパネルを開き、トーナメントを管理してマッチを割り当てます。
+</p>
 
 <h3>統計</h3>
 <p>
@@ -1193,7 +1198,7 @@ export default {
 <td>相手が内盤に x から y 個のブロットを持っています。</td>
 </tr>
 <tr>
-<td>t'mot1;mot2;...'</td>
+<td><code>t'語1;語2;...'</code></td>
 <td>局面のコメントに単語のうち少なくとも 1 つが含まれます。</td>
 </tr>
 <tr>
@@ -1209,12 +1214,12 @@ export default {
 <td>局面が特定の出所のコメントを持つ：<code>user</code>（自分で書いたもの）、<code>xg</code>、<code>gnubg</code>、<code>bgf</code>（マッチのインポートで持ち込まれたもの）、<code>unknown</code>。繰り返し指定できる（<code>co:xg co:gnubg</code>）。</td>
 </tr>
 <tr>
-<td>m'motif1,motif2,...'</td>
+<td><code>m'パターン1,パターン2,...'</code></td>
 <td>最善のチェッカープレイがパターンのうち少なくとも 1 つを含みます。</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
-<td>最善のキューブ判断が No Double/Take、Double Take、Double Pass です。</td>
+<td><code>m'ND,DT,DP,...'</code></td>
+<td>最善のキューブ判断が No Double/Take、Double Take、Double Pass のいずれかです。</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
@@ -1253,8 +1258,8 @@ export default {
 <td>識別子 x から y までのポジションを検索します（例: id5,10）。</td>
 </tr>
 <tr>
-<td>pl'名前'</td>
-<td>指定したプレイヤーが（どちらの席でも）参加した対局の局面を検索します（例：pl'Alice'）。大文字・小文字は区別しません。</td>
+<td><code>pl'名前'</code></td>
+<td>指定したプレイヤーが（どちらの席でも）参加した対局の局面を検索します（例：<code>pl'Alice'</code>）。大文字・小文字は区別しません。</td>
 </tr>
 </tbody>
 </table>
@@ -1278,6 +1283,10 @@ export default {
 <h3>バージョン</h3>
 <p>アプリケーションバージョン: {appVersion}</p>
 <p>データベースバージョン: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/ja/" target="_blank" rel="noopener noreferrer">オンラインドキュメント</a> ·
+    <a href="https://kevung.github.io/blunderDB/ja/historique.html" target="_blank" rel="noopener noreferrer">バージョン履歴</a>
+</p>
 
 <h3>作者</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
