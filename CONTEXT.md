@@ -114,6 +114,17 @@ The distinction is the reason two panels exist: one reads records, the other com
 render similar tables and share the components that draw them, but they are not two views of
 one thing.
 
+**Played action**:
+What somebody actually did in a Position — the checker move, or the cube action. It is a
+fact of a *Move*, not of the Position, and it is written at import whether or not any
+analysis came with the file. It matters because the error a Performance Rating is a sum of
+is the error of the action that was *played*: an Analysis states it when the file it came
+from stated it, and when the Analysis is one blunderDB computed itself — a position does not
+remember what anybody did with it — the Move table supplies it instead
+(`engine.PlayedActionsFor`, #268). A Position met twice therefore carries the gap of its
+first recorded occurrence only.
+_Avoid_: user move, chosen move (a candidate is not a played action until a Move records it)
+
 **Network**:
 The weights, and only the weights — `strehl-prob5-512-512-256-128`. A network changes name
 only when its weights change: neither the search wrapped around it, nor a quantisation, nor a

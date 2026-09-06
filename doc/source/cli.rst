@@ -1050,6 +1050,19 @@ trois logiques distinctes (voir :ref:`headless`).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
   ``json`` (un seul document récapitulatif, imprimé à la fin).
 
+**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un
+match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
+passer par XG. blunderDB en connaissait les positions et les coups joués, mais
+rien ne disait ce qu'ils valaient ; une fois le lot passé, le coup
+effectivement joué est comparé au classement de gammonNet et l'écart alimente
+le PR et tous les autres indicateurs. Le coup joué vient de la table des coups
+du match, écrite à l'import, que le fichier ait porté une analyse ou non — il
+n'est jamais deviné.
+
+Une base analysée avec une version antérieure à celle-ci n'a pas besoin d'être
+réévaluée : :ref:`repair <cli_repair>` recalcule les colonnes à partir de ce
+qui est déjà en base et rend leur PR à ces matchs.
+
 **Le parallélisme** (``--jobs``). Les positions d'un lot sont indépendantes —
 aucune recherche n'informe la suivante — donc elles sont réparties sur
 ``--jobs`` fils d'exécution, chacun avec son propre évaluateur. Les analyses
@@ -1453,6 +1466,8 @@ message explicite plutôt que de risquer un compactage interrompu.
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
 
+.. _cli_repair:
+
 repair — Recalculer les colonnes d'analyse
 ------------------------------------------
 
@@ -1471,10 +1486,14 @@ touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites.
   (``{"repaired"}``, le nombre de lignes réellement changées).
 
 Utile après une correction de la façon dont une analyse importée est lue. Le
-cas s'est déjà produit : l'importeur XG écrit un « pas de double » de deux
-façons, et la seconde était comprise comme un vrai double — la colonne portait
-alors l'erreur d'un double qui n'avait jamais eu lieu. Corriger la lecture ne
-changeait rien aux lignes déjà écrites ; cette commande les refait.
+cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de double » de
+deux façons, et la seconde était comprise comme un vrai double — la colonne
+portait alors l'erreur d'un double qui n'avait jamais eu lieu. Et une analyse
+que blunderDB avait calculée lui-même ne savait pas quel coup avait été joué,
+si bien qu'un match importé sans analyse gardait une erreur nulle partout et
+un PR de 0,00 ; la colonne se recalcule maintenant à partir des coups du
+match. Corriger la lecture ne change rien aux lignes déjà écrites ; cette
+commande les refait.
 
 Rien ne la déclenche automatiquement, et c'est voulu : réécrire les colonnes
 d'analyse de tout le monde à la simple ouverture d'une base n'est pas quelque

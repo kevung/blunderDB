@@ -62,8 +62,19 @@ ON CONFLICT (position_id) DO UPDATE SET
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
 	tenant := tenantID(scope)
 	a.PositionID = int(positionID)
-	playedMove := firstOf(a.PlayedMoves)
-	playedCubeAction := firstOf(a.PlayedCubeActions)
+	// The played actions come from the analysis when it states them, and from
+	// the match when it does not — see engine.PlayedActionsFor (#268). The
+	// lookup is skipped entirely when the blob already answers, so an import
+	// carrying its own analysis pays nothing for it.
+	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
+	if playedMove == "" || playedCubeAction == "" {
+		mvMove, mvCube, err := s.playedActionsFromMatch(ctx, tenant, positionID)
+		if err != nil {
+			return err
+		}
+		playedMove, playedCubeAction = engine.PlayedActionsFor(
+			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
+	}
 
 	engine.RoundAnalysisForStorage(a)
 	data, err := engine.EncodeAnalysisForStorage(a)
@@ -129,11 +140,37 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 	return nil
 }
 
-func firstOf(s []string) string {
-	if len(s) > 0 {
-		return s[0]
+// playedActionsFromMatch reads the earliest recorded checker move and cube
+// action for a position from the `move` table — the actions an analysis
+// computed here cannot know (#268). Earliest by move id, so the answer is
+// stable across runs when a deduplicated position was played more than once.
+// Scoped by tenant like every other read here: RLS is a backstop, not the
+// only fence.
+func (s *analysisStore) playedActionsFromMatch(ctx context.Context, tenant int64, positionID int64) (checkerMove, cubeAction string, err error) {
+	var mv, ca *string
+	err = s.db.QueryRow(ctx, playedActionsSQL, positionID, tenant).Scan(&mv, &ca)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", "", nil
 	}
-	return ""
+	if err != nil {
+		return "", "", fmt.Errorf("postgres: read played actions for position %d: %w", positionID, err)
+	}
+	return deref(mv), deref(ca), nil
+}
+
+// playedActionsSQL is one row of two scalar subqueries rather than a join: a
+// position may have several move rows, and each column wants the earliest
+// NON-EMPTY one of its own — a cube action and a checker move are recorded on
+// different rows.
+const playedActionsSQL = `SELECT
+	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
+	(SELECT mv.cube_action  FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)`
+
+func deref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 // LoadMany — see storage.AnalysisStore. One query, decoded in parallel
@@ -183,6 +220,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		bestCube             string
 		cubeErr, bestMoveErr int64
 		forced, closeCub     bool
+		// The match's own record of what was played, joined in here rather
+		// than looked up row by row: a repair walks every analysis in the
+		// tenant (#268).
+		mvMove, mvCube *string
 	}
 	repaired := 0
 	var lastID int64
@@ -190,9 +231,11 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		var page []row
 		if err := func() error {
 			rows, err := s.db.Query(ctx,
-				`SELECT id, data, COALESCE(best_cube_action,''), COALESCE(cube_error,0),
-				        COALESCE(best_move_equity_error,0), is_forced, is_close_cube
-				 FROM analysis WHERE tenant_id = $1 AND id > $2 ORDER BY id LIMIT $3`,
+				`SELECT a.id, a.data, COALESCE(a.best_cube_action,''), COALESCE(a.cube_error,0),
+				        COALESCE(a.best_move_equity_error,0), a.is_forced, a.is_close_cube,
+				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
+				        (SELECT mv.cube_action  FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)
+				 FROM analysis a WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
 				tid, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("postgres: repair: read analyses: %w", err)
@@ -200,7 +243,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
+				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -219,7 +262,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			if err != nil {
 				continue // blob illisible : on laisse en place plutôt que de l'écraser
 			}
-			c := engine.PopulateAnalysisColumns(&a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+			playedMove, playedCubeAction := engine.PlayedActionsFor(
+				a.PlayedMoves, a.PlayedCubeActions,
+				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction)
 			if c.BestCubeAction == r.bestCube && c.CubeError == r.cubeErr &&
 				c.BestMoveEquityError == r.bestMoveErr &&
 				(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {

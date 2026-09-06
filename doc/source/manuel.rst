@@ -340,6 +340,26 @@ Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
+**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un match
+joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
+passer par XG : blunderDB en connaissait les positions et les coups joués,
+mais aucune analyse ne disait ce qu'ils valaient. Une fois le lot passé, le
+coup effectivement joué est comparé au classement de gammonNet et l'écart
+alimente le PR, le taux d'erreur, les pires décisions et tous les autres
+indicateurs, exactement comme un match analysé par XG. La comparaison ne
+s'invente rien : le coup joué vient de la table des coups du match, écrite à
+l'import, que le fichier ait porté une analyse ou non.
+
+Une base analysée avec une version antérieure à celle-ci n'a pas besoin d'être
+réévaluée : ``blunderdb repair`` recalcule les colonnes à partir des analyses
+et des coups déjà en base et rend leur PR à ces matchs (voir
+:ref:`repair <cli_repair>`).
+
+Une réserve honnête : une position est identifiée par sa structure, donc une
+position rencontrée deux fois — bien jouée une fois, mal l'autre — ne porte
+qu'un seul écart, celui de sa première occurrence enregistrée. Ce n'est pas
+propre à ce calcul : une bibliothèque XG a exactement la même forme.
+
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de
 réduire l'ensemble des éléments, ce qui est utile sur les écrans à haute

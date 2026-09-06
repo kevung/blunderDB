@@ -607,3 +607,53 @@ func NormalizeMove(move string) string {
 	sort.Strings(parts)
 	return strings.Join(parts, " ")
 }
+
+// PlayedActionsFor decides which checker move and which cube action a
+// position's derived columns are computed against (issue #268, fiche I.12).
+//
+// # Why this needs a rule at all
+//
+// best_move_equity_error is the error of the move that WAS PLAYED, and it is
+// what the Performance Rating is a sum of. The analysis blob carries the
+// played actions when they came with the analysis — an XG or GnuBG file
+// states both at once — but an analysis blunderDB computed itself carries
+// none: gammonNet is handed a position, and a position does not remember what
+// anybody did with it. Before this rule, a match imported without an analysis
+// and then swept by `analyze` produced a full set of ranked candidates, an
+// error of zero on every decision, and therefore a Performance Rating of
+// exactly 0.00 — a number that looks like world class and means "nobody ever
+// said which move was played".
+//
+// The `move` table is the other half, written at import whether or not any
+// analysis came with the file. So: prefer what the analysis states, and fall
+// back to what the match recorded.
+//
+// # The ambiguity this inherits and does not fix
+//
+// Positions are deduplicated by Zobrist hash, so one position may have been
+// played several times — well once and badly once. The derived columns are
+// one row per position, so one of those occurrences supplies the number and
+// the Performance Rating counts it for every occurrence. That is not new
+// here: firstOf(a.PlayedMoves) has always picked the first of several, and an
+// XG library has exactly the same shape. What is new is only that the
+// fallback must pick as deterministically as the primary does — hence
+// "earliest recorded move" rather than "whatever the query returned first".
+func PlayedActionsFor(analysisMoves, analysisCubeActions, matchMoves, matchCubeActions []string) (playedMove, playedCubeAction string) {
+	first := func(ss []string) string {
+		for _, s := range ss {
+			if s != "" {
+				return s
+			}
+		}
+		return ""
+	}
+	playedMove = first(analysisMoves)
+	if playedMove == "" {
+		playedMove = first(matchMoves)
+	}
+	playedCubeAction = first(analysisCubeActions)
+	if playedCubeAction == "" {
+		playedCubeAction = first(matchCubeActions)
+	}
+	return playedMove, playedCubeAction
+}
