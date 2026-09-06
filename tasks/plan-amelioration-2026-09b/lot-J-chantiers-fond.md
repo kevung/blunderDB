@@ -119,8 +119,18 @@ est la moitié.
 
 ## J.9 — Assistant optionnel via Ollama (#299)
 
-Option 1 de #38 : strictement opt-in, jamais embarqué, non déterministe, après
-I.27 (la grammaire d'intentions couvre 80 % du besoin à 0 Mo).
+Option 1 de #38 : strictement opt-in, jamais embarqué, non déterministe.
+**Reprend le besoin de I.27**, écartée : la grammaire déterministe a été écrite
+puis retirée (voir lot I), une liste fermée de synonymes ne couvrant pas la
+phrase qu'un joueur écrit vraiment.
+
+Trois conditions, héritées de ce que I.27 avait de juste : le modèle n'est
+**jamais embarqué** (le chantier taille du binaire a refusé UPX pour quelques
+Mo) et n'est **jamais actif par défaut** ; il ne rend que des **jetons**, que
+`Parse` valide — un jeton inconnu est refusé, donc « produire des jetons
+valides » est garanti par la grammaire, pas par le modèle, ce qui rend un
+modèle affiné inutile ; les jetons sont **préparés dans la barre, jamais
+lancés**, pour qu'une traduction fausse se voie avant des résultats faux.
 
 ## J.10 — Jouer contre gammonNet — écarté (#300)
 

@@ -1407,13 +1407,6 @@
         "none": "Ei läheisiä asemia tässä tietokannassa.",
         "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä."
     },
-    "intent": {
-        "empty": "Kuvaile sanoin, mitä etsit.",
-        "failed": "Lausetta ei voitu kääntää.",
-        "understoodNothing": "Mitään ei ymmärretty: {words}",
-        "understood": "Ymmärretty: {matched}. Lue rivi ja paina Enter.",
-        "partly": "Ymmärretty: {matched}. Ei ymmärretty: {words}. Lue rivi ja paina Enter."
-    },
     "log": {
         "title": "Toimintaloki",
         "copy": "Kopioi raportti",

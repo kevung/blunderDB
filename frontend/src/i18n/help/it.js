@@ -205,8 +205,6 @@ export default {
 </div>
 <p>Il comando <code>like</code> risponde a una domanda diversa da quella dei token: sostituisce la lista percorsa con le posizioni più <strong>vicine</strong> a quella corrente, dalla più vicina alla più lontana. La vicinanza è una distanza di trasporto, espressa in pip di pedina — la quantità di movimento di pedine che separa le due posizioni — e il punto di vista è sempre quello del giocatore di turno. Non è un filtro: la somiglianza <strong>ordina</strong> l'intera biblioteca invece di restringerla, e quindi non si combina con i token.</p>
 <p>Il token <code>n</code> conta gli <strong>incontri</strong>: <code>n&gt;3</code> tiene le posizioni a cui arrivano più di tre mosse, in tutti gli incontri. È un'altra domanda rispetto a «cosa ho sbagliato» — una posizione incontrata venti volte e giocata bene diciannove resta quella da sapere a memoria. Si contano le mosse, non gli incontri: la stessa posizione due volte in un incontro conta due, perché erano due decisioni.</p>
-<p>Una frase a parole può sostituire i token, con il comando <code>ask</code>: <code>ask my cube blunders at a score</code>. La frase è <strong>tradotta in token</strong>, scritti nella barra dei comandi — si rileggono, poi si lancia. Nulla è indovinato e nulla lascia la macchina: il vocabolario è fisso, la stessa frase dà sempre la stessa interrogazione, e ciò che non è stato compreso viene <strong>detto</strong> anziché passato sotto silenzio. Una traduzione sbagliata si vede così prima di restituire risultati sbagliati, e i token si imparano leggendoli.</p>
-<p>Due intenzioni non sono token e si pongono sulla tavola di ricerca anziché nella riga: «cubo» o «pedine» (il tipo di decisione) e «al punteggio» o «money». <code>ask</code> le pone lì.</p>
 <p>Il <strong>piano di gioco</strong> è una seconda etichetta derivata, accanto alla fase, e risponde alla domanda che un pacchetto di filtri salvati non sa porre: «mostrami i miei errori in holding game». Token <code>gt:</code>, ripetibile (<code>gt:holding gt:mutualholding</code>), dal punto di vista del <strong>giocatore di turno</strong> — il piano in cui la decisione veniva presa.</p>
 <p>I dieci piani riconosciuti, nell'ordine in cui le regole li esauriscono, dal più specifico al più generale:</p>
 <ul>
@@ -1338,10 +1336,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Apre il registro attività: le ultime duecento righe del file di log, con il necessario per copiarle in un rapporto o aprire la cartella che le contiene.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Traduce una frase a parole — francese o inglese — in token di ricerca: <code>ask my cube blunders at a score</code>. I token vengono scritti nella barra dei comandi, non eseguiti: si rileggono, poi Invio. Ciò che non è stato compreso viene detto, mai indovinato.</td>
 </tr>
 <tr>
 <td>like</td>

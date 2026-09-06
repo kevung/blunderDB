@@ -205,8 +205,6 @@ export default {
 </div>
 <p>The <code>like</code> command answers a different question from the tokens: it replaces the browsed list by the positions <strong>closest</strong> to the current one, nearest first. Closeness is a transport distance, expressed in checker-pips — the amount of checker movement separating the two positions — and the point of view is always the player on roll's. It is not a filter: similarity <strong>ranks</strong> the whole library instead of narrowing it, and therefore does not combine with the tokens.</p>
 <p>The <code>n</code> token counts <strong>encounters</strong>: <code>n&gt;3</code> keeps the positions more than three moves reach, across every match. That is a different question from “what did I get wrong” — a position met twenty times and played correctly nineteen is still the one to know cold. The count is of moves, not matches: the same position twice in one match counts twice, because those were two decisions.</p>
-<p>A plain phrase can replace the tokens, with the <code>ask</code> command: <code>ask my cube blunders at a score</code>. The phrase is <strong>translated into tokens</strong>, written into the command bar — read them, then run. Nothing is guessed and nothing leaves the machine: the vocabulary is fixed, the same phrase always gives the same query, and whatever was not understood is <strong>said</strong> rather than passed over. A wrong translation is therefore seen before it returns wrong results, and the tokens are learnt by reading them.</p>
-<p>Two intentions are not tokens and are set on the search board rather than in the line: “cube” or “checker” (the kind of decision) and “at a score” or “money”. <code>ask</code> sets them there.</p>
 <p>The <strong>plan of play</strong> is a second derived label, beside the phase, and it answers the question a bundle of saved filters cannot ask: “show me my errors in a holding game”. Token <code>gt:</code>, repeatable (<code>gt:holding gt:mutualholding</code>), from the point of view of the <strong>player on roll</strong> — the plan the decision was being made in.</p>
 <p>The ten recognised plans, in the order the rules exhaust them, from the most specific to the most general:</p>
 <ul>
@@ -1338,10 +1336,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Opens the activity log: the last two hundred lines of the log file, with what it takes to copy them into a report, or to open the folder holding them.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Translates a plain phrase — French or English — into search tokens: <code>ask my cube blunders at a score</code>. The tokens are written into the command bar, not run: read them, then Enter. Whatever was not understood is said, never guessed.</td>
 </tr>
 <tr>
 <td>like</td>
