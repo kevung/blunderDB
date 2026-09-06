@@ -23,7 +23,7 @@ ARG BUILDPLATFORM=${BUILDPLATFORM:-linux/amd64}
 # Pinned to the patch, not the 1.25 line (B.19, #187): a floating tag makes
 # the image built from a given commit depend on the day it was built, and the
 # compiler here must be the one go.mod names (GO_VERSION in the workflows).
-FROM --platform=$BUILDPLATFORM golang:1.25.13-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.27.1-alpine AS build
 WORKDIR /src
 
 # Cache module downloads.
