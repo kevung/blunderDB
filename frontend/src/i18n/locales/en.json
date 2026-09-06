@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "The engines agree:",
         "disagree": "The engines disagree:"
+    },
+    "report": {
+        "title": "blunderDB report",
+        "generated": "Produced on {date}",
+        "positions": "Positions",
+        "matches": "Matches",
+        "decisions": "Counted decisions",
+        "prGlobal": "Global PR",
+        "prChecker": "Checker PR",
+        "prCube": "Cube PR",
+        "worst": "The ten most expensive decisions",
+        "noBlunder": "No faulty decision in this scope.",
+        "checker": "Checker play",
+        "cube": "Cube decision",
+        "bestMove": "Best move:",
+        "footer": "Self-contained document produced by blunderDB. Print it to PDF from your browser.",
+        "building": "Building the report…",
+        "saved": "Report saved: {path}",
+        "failed": "The report could not be produced: {err}",
+        "action": "HTML report…"
     }
 }

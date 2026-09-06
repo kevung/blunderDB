@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "I motori concordano:",
         "disagree": "I motori divergono:"
+    },
+    "report": {
+        "title": "Rapporto blunderDB",
+        "generated": "Redatto il {date}",
+        "positions": "Posizioni",
+        "matches": "Incontri",
+        "decisions": "Decisioni contate",
+        "prGlobal": "PR globale",
+        "prChecker": "PR pedine",
+        "prCube": "PR cubo",
+        "worst": "Le dieci decisioni più costose",
+        "noBlunder": "Nessuna decisione errata in questo perimetro.",
+        "checker": "Mossa di pedine",
+        "cube": "Decisione di cubo",
+        "bestMove": "Mossa migliore:",
+        "footer": "Documento autonomo redatto da blunderDB. Stampatelo in PDF dal vostro browser.",
+        "building": "Redazione del rapporto…",
+        "saved": "Rapporto salvato: {path}",
+        "failed": "Il rapporto non ha potuto essere redatto: {err}",
+        "action": "Rapporto HTML…"
     }
 }

@@ -14,6 +14,7 @@
     import { activeTabStore } from '../../stores/uiStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { t } from '../../i18n/index.js';
+    import { exportHTMLReport } from '../../services/reportService.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
     import StatsDashboardTab from './StatsDashboardTab.svelte';
     import StatsProgressionTab from './StatsProgressionTab.svelte';
@@ -59,6 +60,9 @@
             <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>{$t('stats.metricMWC')}</button
             >
         </div>
+        <!-- Le rapport (#279) porte le filtre courant, donc il vit là où le
+             filtre se règle. -->
+        <button class="report-btn" onclick={() => exportHTMLReport()}>{$t('report.action')}</button>
         <button class="close-btn" onclick={handleClose} aria-label={$t('stats.closePanel')}>✕</button>
     </header>
 
@@ -156,6 +160,10 @@
     }
 
     /* ── Close button ── */
+    .report-btn {
+        cursor: pointer;
+    }
+
     .close-btn {
         background: none;
         border: none;

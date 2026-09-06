@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "Die Engines sind sich einig:",
         "disagree": "Die Engines widersprechen sich:"
+    },
+    "report": {
+        "title": "blunderDB-Bericht",
+        "generated": "Erstellt am {date}",
+        "positions": "Stellungen",
+        "matches": "Matches",
+        "decisions": "Gezählte Entscheidungen",
+        "prGlobal": "PR gesamt",
+        "prChecker": "PR Steine",
+        "prCube": "PR Würfel",
+        "worst": "Die zehn teuersten Entscheidungen",
+        "noBlunder": "Keine fehlerhafte Entscheidung in diesem Bereich.",
+        "checker": "Steinzug",
+        "cube": "Würfelentscheidung",
+        "bestMove": "Bester Zug:",
+        "footer": "Eigenständiges Dokument von blunderDB. Drucken Sie es aus Ihrem Browser als PDF.",
+        "building": "Bericht wird erstellt…",
+        "saved": "Bericht gespeichert: {path}",
+        "failed": "Der Bericht konnte nicht erstellt werden: {err}",
+        "action": "HTML-Bericht…"
     }
 }

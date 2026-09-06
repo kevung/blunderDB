@@ -22,24 +22,33 @@ import (
 // picked a path, so there is nothing to fall back to and nothing to guess. A
 // failure is an error with the path in it.
 
-// SaveBoardImageDialog asks where to save a board image and returns the chosen
-// path, or "" when the user cancelled. format is "svg" or "png"; the extension
-// is appended when the user did not type one, because a file named without one
-// opens in nothing.
+// SaveBoardImageDialog asks where to save a document blunderDB produces from
+// the board and returns the chosen path, or "" when the user cancelled. format
+// is "svg", "png" or "html"; the extension is appended when the user did not
+// type one, because a file named without one opens in nothing.
+//
+// HTML is here rather than in a dialog of its own because it is the same
+// question — where do I put this? — asked about the same subject: a document
+// made of the board. The report (#279) is a single self-contained file, so it
+// travels exactly like an image does.
 func (a *App) SaveBoardImageDialog(format, defaultName string) (string, error) {
 	format = strings.ToLower(strings.TrimSpace(format))
 	var filter runtime.FileFilter
+	title := "Save the board image"
 	switch format {
 	case "svg":
 		filter = runtime.FileFilter{DisplayName: "SVG image (*.svg)", Pattern: "*.svg"}
 	case "png":
 		filter = runtime.FileFilter{DisplayName: "PNG image (*.png)", Pattern: "*.png"}
+	case "html":
+		filter = runtime.FileFilter{DisplayName: "HTML document (*.html)", Pattern: "*.html"}
+		title = "Save the report"
 	default:
-		return "", fmt.Errorf("unsupported image format %q (svg or png)", format)
+		return "", fmt.Errorf("unsupported format %q (svg, png or html)", format)
 	}
 
 	path, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		Title:                "Save the board image",
+		Title:                title,
 		DefaultFilename:      defaultName,
 		Filters:              []runtime.FileFilter{filter},
 		CanCreateDirectories: true,
@@ -53,8 +62,9 @@ func (a *App) SaveBoardImageDialog(format, defaultName string) (string, error) {
 	return path, nil
 }
 
-// SaveBoardSVG writes an SVG document to path. The content arrives as text
-// because that is what it is: a serialised document, not an encoded blob.
+// SaveBoardSVG writes a text document — an SVG board, or the HTML report
+// (#279) — to path. The content arrives as text because that is what it is: a
+// serialised document, not an encoded blob.
 func (a *App) SaveBoardSVG(path, svg string) error {
 	if path == "" {
 		return fmt.Errorf("no path given")

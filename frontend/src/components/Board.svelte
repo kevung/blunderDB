@@ -6,6 +6,7 @@
     import { isResponseCubeAction } from '../utils/cubeAction.js';
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
+    import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
     import { attachBoardInteractions } from '../utils/boardInteractions.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
@@ -36,35 +37,10 @@
         aspectFactor: 0.72
     };
 
-    let boardCfg = {
-        widthFactor: 0.75, // Increase widthFactor to make the board take up more space
-        orientation: 'right',
-        fill: '#f0f0f0', // Light grey background
-        stroke: '#333333', // Dark grey border
-        linewidth: 3,
-        triangle: {
-            fill1: '#d9d9d9', // Light grey
-            fill2: '#a6a6a6', // Slightly darker grey for balanced contrast
-            stroke: '#333333',
-            linewidth: 1.3 // Changed linewidth to 1
-        },
-        label: {
-            size: 20,
-            distanceToBoard: 0.3
-        },
-        checker: {
-            sizeFactor: 0.97,
-            colors: ['#333333', '#ffffff'], // Dark grey and white checkers
-            linewidth: 2.5 // Added linewidth property and set to 2
-        },
-        dice: {
-            fill: '#ffffff', // White dice face
-            dot: '#000000' // Dice pips
-        },
-        cube: {
-            fill: '#ffffff' // White doubling cube face
-        }
-    };
+    // La configuration de dessin vit dans utils/boardConfig.js depuis que les
+    // diagrammes du rapport (#279) en ont besoin eux aussi : deux littéraux de
+    // palette, ce sont deux palettes qui divergent.
+    let boardCfg = defaultBoardConfig();
 
     let two;
     let canvas;
@@ -170,16 +146,7 @@
     // place and trigger a redraw whenever the colours change (and once the
     // two.js canvas exists).
     $effect(() => {
-        const colors = $boardColorsStore;
-        boardCfg.fill = colors.background;
-        boardCfg.stroke = colors.border;
-        boardCfg.triangle.fill1 = colors.point1;
-        boardCfg.triangle.fill2 = colors.point2;
-        boardCfg.triangle.stroke = colors.border;
-        boardCfg.checker.colors = [colors.checker1, colors.checker2];
-        boardCfg.dice.fill = colors.dice;
-        boardCfg.dice.dot = colors.diceDot;
-        boardCfg.cube.fill = colors.cube;
+        applyPalette(boardCfg, $boardColorsStore);
         invalidateStaticLayer(); // triangles, bar and frame carry the palette
         if (two && canvas) scheduleRedraw();
     });

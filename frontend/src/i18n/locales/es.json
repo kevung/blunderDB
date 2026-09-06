@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "Los motores coinciden:",
         "disagree": "Los motores discrepan:"
+    },
+    "report": {
+        "title": "Informe blunderDB",
+        "generated": "Elaborado el {date}",
+        "positions": "Posiciones",
+        "matches": "Partidos",
+        "decisions": "Decisiones contadas",
+        "prGlobal": "PR global",
+        "prChecker": "PR fichas",
+        "prCube": "PR cubo",
+        "worst": "Las diez decisiones más costosas",
+        "noBlunder": "Ninguna decisión errónea en este ámbito.",
+        "checker": "Jugada de fichas",
+        "cube": "Decisión de cubo",
+        "bestMove": "Mejor jugada:",
+        "footer": "Documento autónomo elaborado por blunderDB. Imprímalo en PDF desde su navegador.",
+        "building": "Elaborando el informe…",
+        "saved": "Informe guardado: {path}",
+        "failed": "No se ha podido elaborar el informe: {err}",
+        "action": "Informe HTML…"
     }
 }
