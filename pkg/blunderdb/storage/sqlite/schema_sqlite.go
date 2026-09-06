@@ -291,6 +291,49 @@ var schemaStatements = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_deleted_at ON trash(deleted_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_kind ON trash(kind, deleted_at)`,
+	// The Training journal (2.21.0, issue #320): two tables, not a JSON key of
+	// `metadata`, because the per-number detail is the whole point — « tp4
+	// dernier lancer : 6 fautes sur 9 » — and a blob that grows by one entry
+	// per revealed number is a register a table settles (ADR-0040 rule 6). No
+	// cap: the fifty-session bound the old key carried existed to keep a
+	// metadata VALUE small.
+	`CREATE TABLE IF NOT EXISTS training_session (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		-- scores | pips | bearoff | evaluation | decision
+		exercise TEXT NOT NULL,
+		-- pool | board | library (ADR-0041 rule 2); empty when the exercise
+		-- has only one source.
+		seed_source TEXT NOT NULL DEFAULT '',
+		created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		numbers_asked INTEGER NOT NULL DEFAULT 0,
+		faults INTEGER NOT NULL DEFAULT 0,
+		-- How many of the numbers carried a signed deviation, and the mean of
+		-- their absolute values. The count is not redundant with the mean: a
+		-- declared exercise produces none at all, and a question that ran out
+		-- of time produces none either — averaging its missing answer as a
+		-- zero error would flatter the mean.
+		deviations INTEGER NOT NULL DEFAULT 0,
+		mean_deviation REAL NOT NULL DEFAULT 0,
+		median_ms INTEGER NOT NULL DEFAULT 0,
+		-- The session PR, for the Decision exercise only; 0 elsewhere, where
+		-- no equity error exists to rate.
+		pr REAL NOT NULL DEFAULT 0
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_training_session_exercise ON training_session(exercise, id)`,
+	`CREATE TABLE IF NOT EXISTS training_item (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		session_id INTEGER NOT NULL,
+		-- The kind of number, never the face it was asked from: the same cell
+		-- of the same table seen from either side is one weakness, not two
+		-- (ADR-0040 rule 4). "tp4.last", "gv2", "pips.bottom", …
+		number_type TEXT NOT NULL,
+		wrong INTEGER NOT NULL DEFAULT 0,
+		has_deviation INTEGER NOT NULL DEFAULT 0,
+		deviation REAL NOT NULL DEFAULT 0,
+		FOREIGN KEY(session_id) REFERENCES training_session(id) ON DELETE CASCADE
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_training_item_session ON training_item(session_id)`,
+	`CREATE INDEX IF NOT EXISTS idx_training_item_type ON training_item(number_type)`,
 	`CREATE TABLE IF NOT EXISTS tournament (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,

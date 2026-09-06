@@ -889,3 +889,23 @@ func (d *Database) migrate_2_18_0_to_2_19_0(context.Context) error {
 func (d *Database) migrate_2_19_0_to_2_20_0(context.Context) error {
 	return nil
 }
+
+// migrate_2_20_0_to_2_21_0 is the 2.21.0 wave.
+//
+//   - training_session / training_item — the Training journal (issue #320,
+//     ADR-0040 rule 6): what the user asked themselves, kept in the library so
+//     it travels with the file.
+//
+// Nothing to execute here either: both tables are declared in
+// schemaStatements, and EnsureSchema creates what an existing database is
+// missing right after the chain. The step exists so the chain stays unbroken
+// from 1.0.0 to DatabaseVersion (TestMigrationSteps_ContinuousChain).
+//
+// No backfill, and none is conceivable: the journal records sessions that were
+// run, and a database opened for the first time under 2.21.0 has run none. The
+// fifty-session JSON key the training BAR used to write in `metadata` is not
+// imported either — it held a per-session summary with no per-number detail,
+// which is the one thing the journal exists for, and no view ever read it.
+func (d *Database) migrate_2_20_0_to_2_21_0(context.Context) error {
+	return nil
+}

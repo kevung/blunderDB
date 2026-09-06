@@ -14,6 +14,7 @@ import (
 	_ "modernc.org/sqlite"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -2618,5 +2619,66 @@ func TestMigrate_2_19_0_to_2_20_0_MaxCube(t *testing.T) {
 	}
 	if maxCube != 0 {
 		t.Errorf("migration must not invent a cube ceiling: got max_cube=%d, want 0", maxCube)
+	}
+}
+
+// TestMigrate_2_20_0_to_2_21_0_TrainingJournal pins the 2.21.0 wave: the two
+// journal tables exist after the migration, and they are EMPTY. The second
+// half is the statement — the fifty-session JSON key the training bar used to
+// write in `metadata` is deliberately not imported, because it held a
+// per-session summary with no per-number detail, which is the one thing the
+// journal exists for (ADR-0040 rule 6).
+func TestMigrate_2_20_0_to_2_21_0_TrainingJournal(t *testing.T) {
+	t.Parallel()
+	tmpDir := tempDir(t)
+	dbPath := filepath.Join(tmpDir, "test_v2200.db")
+	createOldDatabase(t, dbPath, "2.20.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.20.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+
+	for _, table := range []string{"training_session", "training_item"} {
+		var n int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + table).Scan(&n); err != nil {
+			t.Fatalf("%s should exist after migration: %v", table, err)
+		}
+		if n != 0 {
+			t.Errorf("%s holds %d row(s) after migration, want 0: nothing is backfilled", table, n)
+		}
+	}
+
+	// And the journal works through the wrapper the GUI binds, on the file
+	// that was just migrated — a table that exists but refuses a write would
+	// pass the check above and fail the user.
+	id, err := d.SaveTrainingSession(storage.TrainingSession{
+		Exercise:     "scores",
+		SeedSource:   "pool",
+		NumbersAsked: 1,
+		Items:        []storage.TrainingItem{{NumberType: "gv1", Wrong: true}},
+	})
+	if err != nil {
+		t.Fatalf("SaveTrainingSession on the migrated database: %v", err)
+	}
+	if id == 0 {
+		t.Error("SaveTrainingSession returned id 0")
+	}
+	stats, err := d.LoadTrainingNumberStats("scores")
+	if err != nil {
+		t.Fatalf("LoadTrainingNumberStats: %v", err)
+	}
+	if len(stats) != 1 || stats[0].NumberType != "gv1" || stats[0].Faults != 1 {
+		t.Errorf("LoadTrainingNumberStats = %+v, want one gv1 with 1 fault", stats)
 	}
 }
