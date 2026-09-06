@@ -1250,7 +1250,21 @@
         "goalPropose": "Proporre",
         "goalReached": "Raggiunto: il vostro PR è {pr}.",
         "goalTrend": "PR attuale {pr}; al ritmo degli ultimi incontri la tendenza porta a {projected}, per un obiettivo di {target}. Una tendenza non è una previsione.",
-        "goalNoTrend": "PR attuale {pr}. Troppo pochi incontri per una tendenza: tre come minimo."
+        "goalNoTrend": "PR attuale {pr}. Troppo pochi incontri per una tendenza: tre come minimo.",
+        "byGameType": "Per piano di gioco",
+        "gameType": "Piano di gioco",
+        "noGameTypes": "Nessun piano di gioco calcolato. Il comando blunderdb repair li calcola.",
+        "gameType_race": "Corsa",
+        "gameType_bearin": "Rientro sotto contatto",
+        "gameType_crunch": "Crollo",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Blocco contro blocco",
+        "gameType_mutualholding": "Ancore reciproche",
+        "gameType_holding": "Ancora",
+        "gameType_contact": "Contatto",
+        "gameType_over": "Terminata"
     },
     "trash": {
         "title": "Cestino",

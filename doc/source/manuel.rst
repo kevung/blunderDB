@@ -1313,7 +1313,7 @@ Onglet Ventilations
 ~~~~~~~~~~~~~~~~~~~
 
 L'onglet **Ventilations** découpe les mêmes décisions que les chiffres globaux
-selon trois axes. Aucun d'eux ne redéfinit ce qui compte comme une décision :
+selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme une décision :
 ce serait un second PR sous le même nom.
 
 * **Par phase de partie** — ouverture, milieu de partie, course, sortie des
@@ -1321,6 +1321,12 @@ ce serait un second PR sous le même nom.
   L'étiquette est calculée depuis le plateau (voir :ref:`panneau_recherche`) ;
   une base dont les phases n'ont jamais été calculées range tout sous *Non
   classée*, et ``blunderdb repair`` la remplit.
+
+* **Par plan de jeu** — course, blitz, tenue, backgame, amorce contre
+  amorce… C'est la ventilation pour laquelle le classificateur existe : « où
+  est-ce que je perds le plus ? », plan par plan. Même étiquette dérivée que
+  la phase, mêmes réserves, et ``blunderdb repair`` la remplit de la même
+  façon.
 
 * **Par étiquette** — les ``#mot`` écrits dans les commentaires. Une position
   peut en porter plusieurs : **ces lignes ne s'additionnent pas au total**, et
@@ -1336,6 +1342,28 @@ ce serait un second PR sous le même nom.
    cet indicateur sur une position. L'effet pratique est faible — une partie
    Crawford n'a aucune décision de videau — mais l'omission est réelle et vaut
    mieux d'être écrite que laissée à deviner.
+
+Étude et jeu réel
+~~~~~~~~~~~~~~~~~
+
+La commande ``blunderdb list --type study --days 30`` met côte à côte, plan de
+jeu par plan de jeu, trois nombres : combien de **positions distinctes** ont
+été révisées sur la période, quel était le PR **avant** elle, quel est le PR
+**depuis**.
+
+Trois nombres, et pas un quatrième. Il n'y a **ni colonne de gain ni flèche**,
+parce que rien ici ne contrôle quoi que ce soit : le joueur a pu rencontrer
+des adversaires plus forts, changer de format, ou simplement jouer plus de
+courses ce mois-ci. Le rapprochement est celui du lecteur ; une colonne qui
+annoncerait un effet affirmerait une causalité que ces données ne portent pas.
+Les nombres, eux, sont exacts.
+
+Les révisions sont comptées en **positions distinctes** : une carte revue
+quatre fois dans le mois est une position étudiée, et compter les répétitions
+ferait passer un mois de bachotage pour un mois de couverture. Les décisions
+du PR, elles, sont toutes comptées — chacune a été prise une fois. Un PR
+appuyé sur moins de dix décisions s'affiche ``—``, avec son effectif visible à
+côté.
 
 Onglet Joueurs
 ~~~~~~~~~~~~~~

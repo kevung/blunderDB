@@ -680,3 +680,34 @@ func (s *AnkiStore) Retention(ctx context.Context, scope string, deckID int64) (
 	}
 	return res, nil
 }
+
+// ReviewsByGameType counts the POSITIONS reviewed since `since`, grouped by
+// the position's derived plan of play (#275).
+//
+// Positions and not reviews: a card revised four times in a month is one
+// position studied, and counting the repetitions would make a month of
+// cramming look like a month of coverage. That distinction is the whole
+// reason this is a query rather than a sum of the review log.
+func (s *AnkiStore) ReviewsByGameType(ctx context.Context, scope string, since string) (map[string]int, error) {
+	tenant, targs := s.DB.TenantFilter("rl", scope)
+	rows, err := s.DB.Query(ctx,
+		`SELECT COALESCE(p.game_type, 0), COUNT(DISTINCT rl.position_id)
+		 FROM anki_review_log rl
+		 INNER JOIN position p ON p.id = rl.position_id
+		 WHERE `+tenant+` AND rl.reviewed_at >= ?
+		 GROUP BY p.game_type`,
+		append(targs, since)...)
+	if err != nil {
+		return nil, errf(s.DB, "count reviews by game type", err)
+	}
+	defer rows.Close()
+	out := make(map[string]int)
+	for rows.Next() {
+		var gameType, n int
+		if err := rows.Scan(&gameType, &n); err != nil {
+			return nil, errf(s.DB, "count reviews by game type", err)
+		}
+		out[domain.GameType(gameType).String()] = n
+	}
+	return out, rows.Err()
+}

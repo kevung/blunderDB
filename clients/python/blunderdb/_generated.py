@@ -94,6 +94,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.reviewLog — NDJSON stream."
         return self._stream("/v1/anki.reviewLog", payload)
 
+    def anki_reviews_by_game_type(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.reviewsByGameType — JSON."
+        return self._call("/v1/anki.reviewsByGameType", payload)
+
     def anki_suspend_card(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.suspendCard — JSON."
         return self._call("/v1/anki.suspendCard", payload)

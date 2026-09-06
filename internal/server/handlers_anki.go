@@ -77,6 +77,11 @@ type suspendCardReq struct {
 	Suspended bool  `json:"suspended"`
 }
 
+// reviewsByGameTypeReq asks how much was studied since an ISO date (#275).
+type reviewsByGameTypeReq struct {
+	Since string `json:"since"`
+}
+
 func (s *Server) ankiRoutes() []route {
 	as := func() storage.AnkiStore { return s.opts.Storage.Anki() }
 	return []route{
@@ -125,6 +130,13 @@ func (s *Server) ankiRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/anki.reviewLog", rpcStream(func(ctx context.Context, scope string, req reviewLogReq) iterReviewLog {
 			return as().ReviewLog(ctx, scope, req.DeckID, req.Limit)
+		})},
+		// Combien de POSITIONS ont été révisées depuis une date, par plan de
+		// jeu (#275). Des positions et non des révisions : une carte revue
+		// quatre fois est une position étudiée, et compter les répétitions
+		// ferait passer un mois de bachotage pour un mois de couverture.
+		{http.MethodPost, "/v1/anki.reviewsByGameType", rpc(func(ctx context.Context, scope string, req reviewsByGameTypeReq) (map[string]int, error) {
+			return as().ReviewsByGameType(ctx, scope, req.Since)
 		})},
 		{http.MethodPost, "/v1/anki.forecast", rpc(func(ctx context.Context, scope string, req forecastReq) ([]domain.AnkiForecastDay, error) {
 			return as().Forecast(ctx, scope, req.DeckID, req.Days)

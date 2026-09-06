@@ -53,6 +53,14 @@ type AnkiStore interface {
 	// the tenant. The returned slice has one entry per day, including zeros.
 	Forecast(ctx context.Context, scope string, deckID int64, days int) ([]domain.AnkiForecastDay, error)
 
+	// ReviewsByGameType counts the POSITIONS reviewed since `since` (an ISO
+	// date), grouped by the position's derived plan of play (#275, #291).
+	//
+	// Positions, not reviews: a card revised four times in a month is one
+	// position studied, and counting the repetitions would make a month of
+	// cramming look like a month of coverage.
+	ReviewsByGameType(ctx context.Context, scope string, since string) (map[string]int, error)
+
 	// NextCard returns the next card due for review in a deck, or ErrNotFound.
 	NextCard(ctx context.Context, scope string, deckID int64) (*domain.AnkiReviewCard, error)
 

@@ -359,6 +359,26 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_AnkiReviewLog"
                 nullable: true
+  /v1/anki.reviewsByGameType:
+    post:
+      operationId: anki.reviewsByGameType
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reviewsByGameTypeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
   /v1/anki.suspendCard:
     post:
       operationId: anki.suspendCard
@@ -3387,6 +3407,11 @@ components:
         limit:
           type: integer
           format: int32
+    reviewsByGameTypeReq:
+      type: object
+      properties:
+        since:
+          type: string
     searchFindReq:
       type: object
       properties:

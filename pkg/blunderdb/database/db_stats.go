@@ -122,6 +122,18 @@ type StatsResult struct {
 	PerPhase []PhaseStats     `json:"PerPhase"`
 	PerTag   []TagStats       `json:"PerTag"`
 	PerScore []ScoreCellStats `json:"PerScore"`
+	// PerGameType is the fourth breakdown (#291): the same decisions, sliced
+	// by the position's derived plan of play.
+	PerGameType []GameTypeStats `json:"PerGameType"`
+}
+
+// GameTypeStats is one row of the per-game-type breakdown. GameType carries
+// the stable token of domain.GameType ("holding", "blitz", …).
+type GameTypeStats struct {
+	GameType     string  `json:"GameType"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
 }
 
 // PhaseStats is one row of the per-phase breakdown. Phase carries the stable

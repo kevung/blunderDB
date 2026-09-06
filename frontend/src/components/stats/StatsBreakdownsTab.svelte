@@ -1,5 +1,6 @@
 <script>
-    // Les trois ventilations de #266 (fiche I.10) : les mêmes décisions que
+    // Les ventilations de #266 (fiche I.10), plus celle par plan de jeu
+    // (#291) : les mêmes décisions que
     // les chiffres globaux, découpées par phase de partie, par étiquette et
     // par score. Aucune d'elles ne redéfinit ce qui compte comme une décision
     // — ce serait un second PR sous le même nom.
@@ -11,6 +12,10 @@
     let phases = $derived(result?.PerPhase ?? []);
     let tags = $derived(result?.PerTag ?? []);
     let cells = $derived(result?.PerScore ?? []);
+    // Le plan de jeu (#291). Les lignes « inconnu » sont écartées : sur une
+    // base dont les plans n'ont jamais été calculés elles seraient TOUTE la
+    // table, et elles ne diraient rien qu'un `blunderdb repair` ne règle.
+    let gameTypes = $derived((result?.PerGameType ?? []).filter((g) => g.GameType !== 'unknown'));
 
     function phaseLabel(phase) {
         switch (phase) {
@@ -25,6 +30,12 @@
             default:
                 return $t('stats.phaseUnknown');
         }
+    }
+
+    function gameTypeLabel(gameType) {
+        const key = `stats.gameType_${gameType}`;
+        const label = $t(key);
+        return label === key ? gameType : label;
     }
 
     function scoreLabel(cell) {
@@ -55,6 +66,34 @@
                             <td class="num">{p.NumDecisions}</td>
                             <td class="num">{p.BlunderCount}</td>
                             <td class="num">{p.PR.toFixed(2)}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
+    </section>
+
+    <section>
+        <h3>{$t('stats.byGameType')}</h3>
+        {#if gameTypes.length === 0}
+            <p class="empty">{$t('stats.noGameTypes')}</p>
+        {:else}
+            <table>
+                <thead>
+                    <tr>
+                        <th>{$t('stats.gameType')}</th>
+                        <th class="num">{$t('stats.decisions')}</th>
+                        <th class="num">{$t('stats.blunders')}</th>
+                        <th class="num">PR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each gameTypes as g (g.GameType)}
+                        <tr>
+                            <td>{gameTypeLabel(g.GameType)}</td>
+                            <td class="num">{g.NumDecisions}</td>
+                            <td class="num">{g.BlunderCount}</td>
+                            <td class="num">{g.PR.toFixed(2)}</td>
                         </tr>
                     {/each}
                 </tbody>

@@ -1250,7 +1250,21 @@
         "goalPropose": "候補",
         "goalReached": "達成しました。現在の PR は {pr} です。",
         "goalTrend": "現在の PR は {pr}。直近のマッチの調子では {projected} に向かっています（目標は {target}）。傾向は予測ではありません。",
-        "goalNoTrend": "現在の PR は {pr}。傾向を出すにはマッチが足りません（最低 3 件）。"
+        "goalNoTrend": "現在の PR は {pr}。傾向を出すにはマッチが足りません（最低 3 件）。",
+        "byGameType": "戦型別",
+        "gameType": "戦型",
+        "noGameTypes": "戦型が計算されていません。blunderdb repair コマンドが計算します。",
+        "gameType_race": "レース",
+        "gameType_bearin": "接触下のベアイン",
+        "gameType_crunch": "クランチ",
+        "gameType_backgame": "バックゲーム",
+        "gameType_acepoint": "エースポイント",
+        "gameType_blitz": "ブリッツ",
+        "gameType_primevprime": "プライム対プライム",
+        "gameType_mutualholding": "相互ホールディング",
+        "gameType_holding": "ホールディング",
+        "gameType_contact": "接触",
+        "gameType_over": "終局"
     },
     "trash": {
         "title": "ごみ箱",
