@@ -724,6 +724,15 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
+La commande ``like`` répond à une autre question que les jetons : elle
+remplace la liste parcourue par les positions les plus **proches** de la
+position courante, de la plus proche à la plus lointaine. La proximité est une
+distance de transport, exprimée en pions-pas — la quantité de mouvement de
+pions qui sépare les deux positions — et le point de vue est toujours celui du
+joueur au trait. Ce n'est pas un filtre : la similarité **classe** toute la
+bibliothèque au lieu de la restreindre, et ne se combine donc pas avec les
+jetons.
+
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
 auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une
 autre question que « qu'ai-je raté » — une position rencontrée vingt fois et
