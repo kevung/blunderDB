@@ -36,6 +36,7 @@ export namespace database {
 	    createdAt: string;
 	    updatedAt: string;
 	    positionCount: number;
+	    filterQuery: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Collection(source);
@@ -50,6 +51,7 @@ export namespace database {
 	        this.createdAt = source["createdAt"];
 	        this.updatedAt = source["updatedAt"];
 	        this.positionCount = source["positionCount"];
+	        this.filterQuery = source["filterQuery"];
 	    }
 	}
 	export class ConstraintViolation {
@@ -191,6 +193,24 @@ export namespace database {
 	        this.MinMP = source["MinMP"];
 	        this.MaxMP = source["MaxMP"];
 	        this.Count = source["Count"];
+	    }
+	}
+	export class GameTypeStats {
+	    GameType: string;
+	    PR: number;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new GameTypeStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.PR = source["PR"];
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
 	    }
 	}
 	export class GammonNetBatchSummary {
@@ -645,6 +665,7 @@ export namespace database {
 	    PerPhase: PhaseStats[];
 	    PerTag: TagStats[];
 	    PerScore: ScoreCellStats[];
+	    PerGameType: GameTypeStats[];
 	
 	    static createFrom(source: any = {}) {
 	        return new StatsResult(source);
@@ -672,6 +693,7 @@ export namespace database {
 	        this.PerPhase = this.convertValues(source["PerPhase"], PhaseStats);
 	        this.PerTag = this.convertValues(source["PerTag"], TagStats);
 	        this.PerScore = this.convertValues(source["PerScore"], ScoreCellStats);
+	        this.PerGameType = this.convertValues(source["PerGameType"], GameTypeStats);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -693,6 +715,28 @@ export namespace database {
 		}
 	}
 	
+	export class StudyImpactRow {
+	    gameType: string;
+	    reviewed: number;
+	    prBefore: number;
+	    decisionsBefore: number;
+	    prAfter: number;
+	    decisionsAfter: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyImpactRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.gameType = source["gameType"];
+	        this.reviewed = source["reviewed"];
+	        this.prBefore = source["prBefore"];
+	        this.decisionsBefore = source["decisionsBefore"];
+	        this.prAfter = source["prAfter"];
+	        this.decisionsAfter = source["decisionsAfter"];
+	    }
+	}
 	
 	
 	export class VacuumResult {
@@ -910,6 +954,7 @@ export namespace domain {
 	    decision_type: number;
 	    has_jacoby: number;
 	    has_beaver: number;
+	    max_cube: number;
 	    individually_imported: boolean;
 	    flagged: boolean;
 	
@@ -928,6 +973,7 @@ export namespace domain {
 	        this.decision_type = source["decision_type"];
 	        this.has_jacoby = source["has_jacoby"];
 	        this.has_beaver = source["has_beaver"];
+	        this.max_cube = source["max_cube"];
 	        this.individually_imported = source["individually_imported"];
 	        this.flagged = source["flagged"];
 	    }
@@ -1701,6 +1747,8 @@ export namespace domain {
 	    commentOriginFilter: string;
 	    tagFilter: string;
 	    gamePhaseFilter: string;
+	    gameTypeFilter: string;
+	    encounterFilter: string;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
@@ -1754,6 +1802,8 @@ export namespace domain {
 	        this.commentOriginFilter = source["commentOriginFilter"];
 	        this.tagFilter = source["tagFilter"];
 	        this.gamePhaseFilter = source["gamePhaseFilter"];
+	        this.gameTypeFilter = source["gameTypeFilter"];
+	        this.encounterFilter = source["encounterFilter"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];
@@ -1886,6 +1936,57 @@ export namespace domain {
 	        this.label = source["label"];
 	        this.deletedAt = source["deletedAt"];
 	        this.payload = source["payload"];
+	    }
+	}
+
+}
+
+export namespace engine {
+	
+	export class Explanation {
+	    theme: string;
+	    costMp: number;
+	    blots?: number;
+	    bestBlots?: number;
+	    gammonPct?: number;
+	    points?: number;
+	    bestPoints?: number;
+	    best: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Explanation(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.theme = source["theme"];
+	        this.costMp = source["costMp"];
+	        this.blots = source["blots"];
+	        this.bestBlots = source["bestBlots"];
+	        this.gammonPct = source["gammonPct"];
+	        this.points = source["points"];
+	        this.bestPoints = source["bestPoints"];
+	        this.best = source["best"];
+	    }
+	}
+	export class QuizVerdict {
+	    legal: boolean;
+	    matched: boolean;
+	    notation: string;
+	    best: string;
+	    errorMp: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new QuizVerdict(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.legal = source["legal"];
+	        this.matched = source["matched"];
+	        this.notation = source["notation"];
+	        this.best = source["best"];
+	        this.errorMp = source["errorMp"];
 	    }
 	}
 
@@ -2436,6 +2537,23 @@ export namespace main {
 		    return a;
 		}
 	}
+	
+	export class WatchFolderSettings {
+	    on: boolean;
+	    path: string;
+	    intervalSeconds: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new WatchFolderSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.on = source["on"];
+	        this.path = source["path"];
+	        this.intervalSeconds = source["intervalSeconds"];
+	    }
+	}
 
 }
 
@@ -2632,6 +2750,61 @@ export namespace race {
 
 }
 
+export namespace searchquery {
+	
+	export class BoardHint {
+	    decision?: string;
+	    score?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new BoardHint(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.decision = source["decision"];
+	        this.score = source["score"];
+	    }
+	}
+	export class Intent {
+	    tokens: string[];
+	    board: BoardHint;
+	    matched: string[];
+	    ignored: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Intent(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tokens = source["tokens"];
+	        this.board = this.convertValues(source["board"], BoardHint);
+	        this.matched = source["matched"];
+	        this.ignored = source["ignored"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace sqlite {
 	
 	export class SchemaDrift {
@@ -2683,109 +2856,24 @@ export namespace storage {
 	        this.distance = source["distance"];
 	    }
 	
-	    convertValues(a: any, classs: any, asMap: boolean = false): any {
-	        if (!a) {
-	            return a;
-	        }
-	        if (a.slice && a.map) {
-	            return (a as any[]).map(elem => this.convertValues(elem, classs));
-	        } else if ("object" === typeof a) {
-	            if (asMap) {
-	                for (const key of Object.keys(a)) {
-	                    a[key] = new classs(a[key]);
-	                }
-	                return a;
-	            }
-	            return new classs(a);
-	        }
-	        return a;
-	    }
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }
 
-export namespace engine {
-	export class Explanation {
-	    theme: string;
-	    costMp: number;
-	    blots?: number;
-	    bestBlots?: number;
-	    gammonPct?: number;
-	    points?: number;
-	    bestPoints?: number;
-	    best: string;
-
-	    static createFrom(source: any = {}) {
-	        return new Explanation(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.theme = source["theme"];
-	        this.costMp = source["costMp"];
-	        this.blots = source["blots"];
-	        this.bestBlots = source["bestBlots"];
-	        this.gammonPct = source["gammonPct"];
-	        this.points = source["points"];
-	        this.bestPoints = source["bestPoints"];
-	        this.best = source["best"];
-	    }
-	}
-	export class QuizVerdict {
-	    legal: boolean;
-	    matched: boolean;
-	    notation: string;
-	    best: string;
-	    errorMp: number;
-
-	    static createFrom(source: any = {}) {
-	        return new QuizVerdict(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.legal = source["legal"];
-	        this.matched = source["matched"];
-	        this.notation = source["notation"];
-	        this.best = source["best"];
-	        this.errorMp = source["errorMp"];
-	    }
-	}
-
-}
-
-export namespace searchquery {
-	export class BoardHint {
-	    decision?: string;
-	    score?: string;
-
-	    static createFrom(source: any = {}) {
-	        return new BoardHint(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.decision = source["decision"];
-	        this.score = source["score"];
-	    }
-	}
-	export class Intent {
-	    tokens: string[];
-	    board: BoardHint;
-	    matched: string[];
-	    ignored: string[];
-
-	    static createFrom(source: any = {}) {
-	        return new Intent(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.tokens = source["tokens"];
-	        this.board = source["board"] ? new BoardHint(source["board"]) : new BoardHint();
-	        this.matched = source["matched"];
-	        this.ignored = source["ignored"];
-	    }
-	}
-
-}

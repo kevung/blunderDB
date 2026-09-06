@@ -498,10 +498,10 @@
 
     async function refreshWatch() {
         try {
-            const [on, folder, seconds] = await GetWatchFolder();
+            const { on, path: folder, intervalSeconds } = await GetWatchFolder();
             watchOn = on;
             watchFolder = folder;
-            watchInterval = seconds;
+            watchInterval = intervalSeconds;
         } catch (error) {
             logger.error('Error loading the watched-folder setting:', error);
         }

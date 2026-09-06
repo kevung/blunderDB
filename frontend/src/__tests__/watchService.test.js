@@ -27,7 +27,7 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     FolderWatchStatus: (...a) => FolderWatchStatus(...a)
 }));
 
-let watchSetting = [false, '', 0];
+let watchSetting = { on: false, path: '', intervalSeconds: 0 };
 const SaveWatchFolder = vi.fn(() => Promise.resolve(undefined));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetWatchFolder: () => Promise.resolve(watchSetting),
@@ -63,7 +63,7 @@ beforeEach(() => {
     importedBatches = [];
     importResolve = null;
     holdNext = false;
-    watchSetting = [false, '', 0];
+    watchSetting = { on: false, path: '', intervalSeconds: 0 };
     databasePathStore.set('/some/base.db');
     watchImportNoticeStore.set(null);
     vi.clearAllMocks();
@@ -77,7 +77,7 @@ describe('le dossier surveillé', () => {
     });
 
     test('démarre la surveillance que la configuration décrit', async () => {
-        watchSetting = [true, '/matches', 30];
+        watchSetting = { on: true, path: '/matches', intervalSeconds: 30 };
         await initFolderWatch();
         expect(StartFolderWatch).toHaveBeenCalledWith('/matches', 30);
         expect(get(watchStatusStore).running).toBe(true);

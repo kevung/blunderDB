@@ -46,7 +46,7 @@ export function GetTourSeen():Promise<boolean>;
 
 export function GetUIScale():Promise<number>;
 
-export function GetWatchFolder():Promise<boolean>;
+export function GetWatchFolder():Promise<main.WatchFolderSettings>;
 
 export function LoadConfig():Promise<main.Config>;
 

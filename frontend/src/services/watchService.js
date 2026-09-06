@@ -60,7 +60,7 @@ async function applyConfiguredWatch() {
         return;
     }
     try {
-        const [on, folder, intervalSeconds] = await GetWatchFolder();
+        const { on, path: folder, intervalSeconds } = await GetWatchFolder();
         if (on && folder) {
             await startWatch(folder, intervalSeconds);
         } else {
