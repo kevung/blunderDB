@@ -1725,6 +1725,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/existsResp"
+  /v1/positions.explain:
+    post:
+      operationId: positions.explain
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/explainReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/engine_Explanation"
   /v1/positions.fromOGID:
     post:
       operationId: positions.fromOGID
@@ -2927,6 +2944,9 @@ components:
           type: string
         editPosition:
           type: string
+    engine_Explanation:
+      type: object
+      description: "Opaque: see the Go type engine.Explanation (defined outside internal/server, not expanded here)."
     engine_QuizVerdict:
       type: object
       description: "Opaque: see the Go type engine.QuizVerdict (defined outside internal/server, not expanded here)."
@@ -2951,6 +2971,14 @@ components:
           format: int64
         found:
           type: boolean
+    explainReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        played:
+          type: string
     filterNameReq:
       type: object
       properties:

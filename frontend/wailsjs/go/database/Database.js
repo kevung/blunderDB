@@ -422,6 +422,10 @@ export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
 }
 
+export function ExplainDecision(arg1, arg2) {
+  return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
+}
+
 export function GradeQuizChecker(arg1, arg2) {
   return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
 }

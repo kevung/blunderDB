@@ -9,6 +9,7 @@
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { trainingMaskStore } from '../stores/trainingStore.js';
+    import ExplanationLine from './ExplanationLine.svelte';
 
     // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
     const HIDDEN = '···';
@@ -385,6 +386,8 @@
                 {beaver}
                 {maxCube}
             />
+            <!-- Une ligne, et seulement quand une règle est confiante (#298). -->
+            <ExplanationLine analysis={analysisData} />
         {/if}
     </div>
 </section>

@@ -54,6 +54,7 @@ const (
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
+	whyExplain          = "the explanation is a THEME plus its measured deltas, rendered into a sentence by the client in its own language; the CLI prints an analysis, not a coaching line, and would have to carry its own nine-language templates to say anything here (#298)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
@@ -189,6 +190,7 @@ var databaseParity = map[string]parityEntry{
 	"GetRandomAnkiCard":                 {Why: whyCram},
 	"GetStatsDateRange":                 {Server: "/v1/stats.dateRange", Why: "bounds of the GUI's date picker; the CLI takes --from/--to as given"},
 	"GetTournamentMatches":              {CLI: "list --type tournaments", Server: "/v1/tournaments.matches"},
+	"ExplainDecision":                   {Server: "/v1/positions.explain", Why: whyExplain},
 	"GradeQuizChecker":                  {Server: "/v1/quiz.gradeChecker", Why: whyQuiz},
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
 	"GradeQuizCube":                     {Server: "/v1/quiz.gradeCube", Why: whyQuiz},

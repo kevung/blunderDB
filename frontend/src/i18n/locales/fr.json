@@ -1357,5 +1357,15 @@
         "best": "meilleur : {move}",
         "gradeFailed": "La réponse n'a pas pu être jugée.",
         "finishedQuiz": "Quiz terminé : {correct}/{n}, PR de session {pr}."
+    },
+    "explain": {
+        "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",
+        "point": "Vous perdez {cost} mMWC : {best} fait un point de votre jan que le coup joué ne fait pas.",
+        "gammon": "Vous perdez {cost} mMWC : le coup joué abandonne {gammon} points de chances de gammon, que {best} conserve.",
+        "passive": "Vous perdez {cost} mMWC : le coup joué est plus sûr, mais {best} gagne plus souvent — la sécurité coûte ici plus qu'elle ne rapporte.",
+        "doubletoolate": "Vous perdez {cost} mMWC : c'était un double, et vous ne l'avez pas offert ({best}).",
+        "doubletooearly": "Vous perdez {cost} mMWC : le double est prématuré, {best}.",
+        "taketooloose": "Vous perdez {cost} mMWC : la prise est trop large, {best}.",
+        "passtootight": "Vous perdez {cost} mMWC : le passe est trop serré, {best}."
     }
 }

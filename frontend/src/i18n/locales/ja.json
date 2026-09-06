@@ -1357,5 +1357,15 @@
         "best": "最善：{move}",
         "gradeFailed": "回答を採点できませんでした。",
         "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。"
+    },
+    "explain": {
+        "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",
+        "point": "{cost} mMWC の損：{best} は自陣にポイントを作りますが、着手は作りません。",
+        "gammon": "{cost} mMWC の損：着手はギャモン率を {gammon} ポイント手放しますが、{best} は保ちます。",
+        "passive": "{cost} mMWC の損：着手は安全ですが、{best} のほうが勝率が高くなります。ここでは安全が得より高くつきます。",
+        "doubletoolate": "{cost} mMWC の損：ダブルすべき局面で、出していません（{best}）。",
+        "doubletooearly": "{cost} mMWC の損：ダブルが早すぎます。{best}。",
+        "taketooloose": "{cost} mMWC の損：テイクが甘すぎます。{best}。",
+        "passtootight": "{cost} mMWC の損：パスが固すぎます。{best}。"
     }
 }

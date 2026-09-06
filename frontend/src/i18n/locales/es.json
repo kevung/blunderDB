@@ -1357,5 +1357,15 @@
         "best": "mejor: {move}",
         "gradeFailed": "No se ha podido evaluar la respuesta.",
         "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}."
+    },
+    "explain": {
+        "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",
+        "point": "Pierde {cost} mMWC: {best} hace un punto de su casa que la jugada realizada no hace.",
+        "gammon": "Pierde {cost} mMWC: la jugada realizada abandona {gammon} puntos de posibilidades de gammon que {best} conserva.",
+        "passive": "Pierde {cost} mMWC: la jugada realizada es más segura, pero {best} gana más a menudo — aquí la seguridad cuesta más de lo que aporta.",
+        "doubletoolate": "Pierde {cost} mMWC: era un doble, y no lo ofreció ({best}).",
+        "doubletooearly": "Pierde {cost} mMWC: el doble es prematuro, {best}.",
+        "taketooloose": "Pierde {cost} mMWC: la aceptación es demasiado amplia, {best}.",
+        "passtootight": "Pierde {cost} mMWC: el paso es demasiado estricto, {best}."
     }
 }
