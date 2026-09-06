@@ -1382,7 +1382,9 @@
         "cost": "Costs {mp} mMWC",
         "best": "best: {move}",
         "gradeFailed": "The answer could not be graded.",
-        "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}."
+        "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}.",
+        "undoHop": "Undo step",
+        "resetPlay": "Start over"
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

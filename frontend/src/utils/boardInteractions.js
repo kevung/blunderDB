@@ -17,6 +17,7 @@
 import { get } from 'svelte/store';
 import { boardMetrics, boardMouseToDrawing, checkerPointAndCountAt } from './boardGeometry.js';
 import { EXCLUDE_EMPTY, sideLayout } from './boardScene.js';
+import { OFF, playHop, selectSource } from '../services/quizPlay.js';
 
 // A second click on the same Except point within this delay blocks it.
 // Detected by hand because native 'dblclick' is unreliable here: each click
@@ -33,6 +34,27 @@ function isEditable(mode) {
 /** A real roll: both dice on a face. Anything else is "no dice" (a cube decision). */
 function hasRoll(dice) {
     return dice[0] >= 1 && dice[0] <= 6 && dice[1] >= 1 && dice[1] <= 6;
+}
+
+/**
+ * Le clic tombe-t-il sur le plateau de sortie du joueur `player` ?
+ *
+ * C'est la destination d'un pion sorti, et la seule qui ne soit pas un point :
+ * la boîte est celle du « (n OFF) » que drawBearoff dessine, élargie de moitié
+ * pour qu'on n'ait pas à viser le texte au pixel.
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {any} geom
+ * @param {any} cfg
+ * @param {number} playerOnRoll
+ * @param {number} player
+ */
+export function hitTestBearoffTray(x, y, geom, cfg, playerOnRoll, player) {
+    const side = sideLayout(geom, cfg, playerOnRoll);
+    const cs = geom.checkerSize;
+    const trayY = player === 0 ? side.bearoff1Y : side.bearoff2Y;
+    return Math.abs(x - side.bearoffX) <= 1.5 * cs && Math.abs(y - trayY) <= 0.75 * cs;
 }
 
 /**
@@ -266,11 +288,57 @@ export function attachBoardInteractions(canvas, deps) {
         });
     }
 
+    /**
+     * Le point (ou le plateau de sortie) visé par un clic, pendant une
+     * question de quiz. Rend null hors du damier.
+     * @param {number} x
+     * @param {number} y
+     */
+    function quizTargetAt(x, y) {
+        // Le plateau de sortie visé est TOUJOURS celui du bas : la position
+        // affichée a toujours le joueur au trait en player 0, miroir compris.
+        if (hitTestBearoffTray(x, y, metrics(), cfg, get(stores.position).player_on_roll, 0)) return OFF;
+        const { checkerPoint } = checkerAt(x, y);
+        if (checkerPoint < 0 || checkerPoint > 25) return null;
+        return deps.quizDisplayMirrored?.() ? 25 - checkerPoint : checkerPoint;
+    }
+
+    /**
+     * Joue le clic sur le coup en cours, s'il y en a un. Rend `true` quand le
+     * quiz a pris la main — l'édition ne doit alors pas voir ce clic.
+     *
+     * Un clic qu'aucun coup légal n'autorise ne fait RIEN : ni pion déplacé,
+     * ni message. Le plateau n'a pas à expliquer pourquoi un pion ne peut pas
+     * aller là ; il le montre en n'offrant que ce qui est jouable.
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
+    function quizClick(event, x, y) {
+        const state = stores.quizPlay ? get(stores.quizPlay) : null;
+        if (!state) return false;
+        if (event.button !== 0) return true;
+        const target = quizTargetAt(x, y);
+        if (target === null) return true;
+        stores.quizPlay.update((/** @type {import('../services/quizPlay.js').PlayState} */ s) => {
+            if (s.selected === null) return selectSource(s, target);
+            const played = playHop(s, s.selected, target);
+            // Le clic qui ne joue rien re-choisit une source : on change d'avis
+            // sur le pion à bouger sans avoir à déselectionner d'abord.
+            return played === s ? selectSource(s, target) : played;
+        });
+        return true;
+    }
+
     function onMouseDown(event) {
         event.preventDefault(); // no text or element selection
         // Blur any focused text field when clicking the board
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
+        }
+        {
+            const { x, y } = toDrawing(event);
+            if (quizClick(event, x, y)) return;
         }
         if (!editable()) return;
         const { x, y } = toDrawing(event);
@@ -330,8 +398,15 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     function onDoubleClick(event) {
-        if (!editable()) return;
         const { x, y } = toDrawing(event);
+        if (stores.quizPlay && get(stores.quizPlay)) {
+            // Même geste qu'ailleurs — double-clic hors damier = remise à
+            // zéro — mais ce qui est remis est le coup, pas la position : la
+            // question, elle, ne change pas parce qu'on s'est trompé de pion.
+            if (isOutsideBoard(x, y, metrics())) deps.resetQuizPlay?.();
+            return;
+        }
+        if (!editable()) return;
         if (isOutsideBoard(x, y, metrics())) deps.reset();
     }
 

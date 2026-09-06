@@ -641,9 +641,11 @@ export default {
 <h4>Quiz: der Trainings-PR</h4>
 <p><code>train quiz</code> stellt eine vierte Art von Frage. Das Anki-Panel lässt auswendig lernen; das Quiz <strong>prüft</strong>. Fünf bereits ausgewertete Stellungen werden aus der durchblätterten Liste gezogen, und es ist zu entscheiden:</p>
 <ul>
-<li>bei einer Zugentscheidung den Zug auf der Tastatur in Notation eingeben (<code>13/7 8/7</code>);</li>
+<li>bei einer Zugentscheidung <strong>den Zug auf dem Brett spielen</strong> — den Ausgangspunkt anklicken, dann das Ziel, einmal je Würfel; oder den Zug über die Tastatur in Notation eingeben (<code>13/7 8/7</code>);</li>
 <li>bei einer Verdopplungsentscheidung <em>Kein Doppel</em>, <em>Doppel, Annahme</em> oder <em>Doppel, Aufgabe</em> anklicken.</li>
 </ul>
+<p>Das Brett bietet nur an, was spielbar ist: Ein Klick, den kein legaler Zug erlaubt, bewegt nichts. <em>Schritt zurück</em> nimmt einen Würfel zurück, <em>Neu beginnen</em> stellt die Stellung so wieder her, wie die Frage sie stellt — ein Doppelklick außerhalb des Bretts tut dasselbe. Die Frage selbst ändert sich nicht: Würfel, Dopplerwürfel und Spielstand bleiben die der Stellung.</p>
+<p>Wurde ein Zug auf dem Brett gespielt, bewertet <em>Prüfen</em> diesen; die Tastatureingabe bleibt verfügbar, solange kein Stein bewegt wurde. Beide Wege durchlaufen dieselbe Bewertung.</p>
 <p>Das Analyse-Panel bleibt verdeckt, solange die Frage keine Antwort hat: Es trägt die Antwort, und eine Frage, deren Antwort daneben steht, ist keine Frage.</p>
 <p>Die Korrektur hält drei Ausgänge auseinander, und sie zu vermengen wäre gelogen. Ein <strong>unerlaubter Zug</strong> ist kein schlecht gewählter Zug — er ist ein Regelfehler. Ein <strong>erlaubter Zug, den die Engine nie bewertet hat</strong>, ist überhaupt kein Fehler: Er hat schlicht keinen Preis und kostet die Sitzung nichts. Ein bewerteter Zug kostet, was die Analyse sagt, in Millipunkten.</p>
 <p>Am Ende zeigt die Sitzung einen <strong>Quiz-PR</strong>, berechnet mit der Formel, die die Statistiken auf das reale Spiel anwenden — 500 × mittlerer Fehler in normalisierter Equity. Das macht die beiden Zahlen vergleichbar: Ein Quiz-PR von 6 und ein Match-PR von 6 messen dasselbe auf derselben Skala.</p>

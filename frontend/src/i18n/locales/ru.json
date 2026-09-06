@@ -1382,7 +1382,9 @@
         "cost": "Стоит {mp} mMWC",
         "best": "лучший: {move}",
         "gradeFailed": "Ответ не удалось оценить.",
-        "finishedQuiz": "Викторина окончена: {correct}/{n}, PR сессии {pr}."
+        "finishedQuiz": "Викторина окончена: {correct}/{n}, PR сессии {pr}.",
+        "undoHop": "Отменить шаг",
+        "resetPlay": "Заново"
     },
     "explain": {
         "blots": "Вы теряете {cost} mMWC: сыгранный ход оставляет {blots} блотов там, где {best} оставляет только {bestBlots}.",

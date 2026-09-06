@@ -641,9 +641,11 @@ export default {
 <h4>Cuestionario: el PR de entrenamiento</h4>
 <p><code>train quiz</code> plantea un cuarto tipo de pregunta. El panel Anki hace memorizar; el cuestionario <strong>pone a prueba</strong>. Se extraen cinco posiciones ya analizadas de la lista recorrida, y hay que decidir:</p>
 <ul>
-<li>en una decisión de fichas, escribir la jugada con el teclado, en notación (<code>13/7 8/7</code>);</li>
+<li>en una decisión de fichas, <strong>juegue el movimiento en el tablero</strong> — haga clic en el punto de origen y luego en el destino, una vez por dado; o escriba el movimiento con el teclado, en notación (<code>13/7 8/7</code>);</li>
 <li>en una decisión de cubo, pulsar <em>Sin doblar</em>, <em>Doblar, aceptar</em> o <em>Doblar, pasar</em>.</li>
 </ul>
+<p>El tablero solo ofrece lo que se puede jugar: un clic que ningún movimiento legal permite no mueve nada. <em>Deshacer paso</em> retrocede un dado, <em>Empezar de nuevo</em> restaura la posición tal como la plantea la pregunta — un doble clic fuera del tablero hace lo mismo. La pregunta no cambia: los dados, el cubo y el marcador siguen siendo los de la posición.</p>
+<p>Cuando se ha jugado un movimiento en el tablero, <em>Comprobar</em> juzga ese; la escritura con el teclado sigue disponible mientras no se haya movido ninguna ficha. Ambos caminos pasan por la misma corrección.</p>
 <p>El panel Análisis queda tapado mientras la pregunta no tenga respuesta: lleva la respuesta, y una pregunta cuya respuesta se muestra al lado no es una pregunta.</p>
 <p>La corrección distingue tres desenlaces, y confundirlos mentiría. Una <strong>jugada ilegal</strong> no es una jugada mal elegida: es un error de reglas. Una <strong>jugada legal que el motor no clasificó</strong> no es un error en absoluto: simplemente no tiene precio, y no le cuesta nada a la sesión. Una jugada clasificada cuesta lo que el análisis dice que cuesta, en milipuntos.</p>
 <p>Al final, la sesión muestra un <strong>PR de cuestionario</strong> calculado con la fórmula que las estadísticas aplican al juego real: 500 × error medio en equidad normalizada. Eso hace comparables ambos números: un PR de cuestionario de 6 y un PR de partido de 6 miden lo mismo en la misma escala.</p>

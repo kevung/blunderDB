@@ -641,9 +641,11 @@ export default {
 <h4>Quiz: il PR di allenamento</h4>
 <p><code>train quiz</code> pone un quarto tipo di domanda. Il pannello Anki fa memorizzare; il quiz <strong>mette alla prova</strong>. Cinque posizioni già analizzate vengono estratte dalla lista percorsa, e occorre decidere:</p>
 <ul>
-<li>su una decisione di pedine, scrivere la mossa da tastiera, in notazione (<code>13/7 8/7</code>);</li>
+<li>su una decisione di pedine, <strong>gioca la mossa sulla tavola</strong> — clicca il punto di partenza, poi la destinazione, una volta per dado; oppure scrivi la mossa da tastiera, in notazione (<code>13/7 8/7</code>);</li>
 <li>su una decisione di cubo, cliccare <em>Nessun raddoppio</em>, <em>Raddoppio, presa</em> o <em>Raddoppio, passo</em>.</li>
 </ul>
+<p>La tavola offre solo ciò che è giocabile: un clic che nessuna mossa legale consente non sposta nulla. <em>Annulla passo</em> torna indietro di un dado, <em>Ricomincia</em> rimette la posizione come la domanda la pone — un doppio clic fuori dalla tavola fa lo stesso. La domanda non cambia: i dadi, il cubo e il punteggio restano quelli della posizione.</p>
+<p>Quando una mossa è stata giocata sulla tavola, <em>Verifica</em> giudica quella; la scrittura da tastiera resta disponibile finché nessuna pedina è stata mossa. Entrambe le strade passano per la stessa correzione.</p>
 <p>Il pannello Analisi resta mascherato finché la domanda non ha una risposta: porta la risposta, e una domanda la cui risposta è mostrata accanto non è una domanda.</p>
 <p>La correzione distingue tre esiti, e confonderli mentirebbe. Una <strong>mossa illegale</strong> non è una mossa mal scelta: è un errore di regole. Una <strong>mossa legale che il motore non ha classificato</strong> non è affatto un errore: semplicemente non ha prezzo, e non costa nulla alla sessione. Una mossa classificata costa quello che l'analisi dice, in millipunti.</p>
 <p>Alla fine, la sessione mostra un <strong>PR di quiz</strong> calcolato con la formula che le statistiche applicano al gioco reale — 500 × errore medio in equità normalizzata. È ciò che rende i due numeri confrontabili: un PR di quiz di 6 e un PR di incontro di 6 misurano la stessa cosa sulla stessa scala.</p>

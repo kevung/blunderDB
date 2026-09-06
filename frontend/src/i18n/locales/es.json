@@ -1382,7 +1382,9 @@
         "cost": "Cuesta {mp} mMWC",
         "best": "mejor: {move}",
         "gradeFailed": "No se ha podido evaluar la respuesta.",
-        "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}."
+        "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}.",
+        "undoHop": "Deshacer paso",
+        "resetPlay": "Empezar de nuevo"
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

@@ -641,9 +641,11 @@ export default {
 <h4>Quiz : le PR d'entraînement</h4>
 <p><code>train quiz</code> pose un quatrième exercice, d'une autre nature. Le panneau Anki fait mémoriser ; le quiz <strong>teste</strong>. Cinq positions déjà analysées sont tirées de la liste parcourue, et il faut décider :</p>
 <ul>
-<li>sur une décision de pions, écrire le coup au clavier, en notation (<code>13/7 8/7</code>) ;</li>
+<li>sur une décision de pions, <strong>jouer le coup sur le damier</strong> — cliquer le point de départ, puis la destination, autant de fois qu'il y a de dés ; ou écrire le coup au clavier, en notation (<code>13/7 8/7</code>) ;</li>
 <li>sur une décision de videau, cliquer <em>Pas de double</em>, <em>Double, prend</em> ou <em>Double, passe</em>.</li>
 </ul>
+<p>Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal n'autorise ne déplace rien. <em>Annuler le pas</em> revient d'un dé, <em>Recommencer</em> remet la position telle que la question la pose — un double-clic hors du damier fait la même chose. La question, elle, ne change pas : les dés, le videau et le score restent ceux de la position.</p>
+<p>Quand un coup est joué sur le damier, <em>Vérifier</em> le juge lui ; la saisie au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux chemins passent par la même correction.</p>
 <p>Le panneau Analyse est masqué tant que la question n'a pas reçu de réponse : il porte la réponse, et une question dont la réponse est affichée à côté n'est pas une question.</p>
 <p>La correction distingue trois issues, et les confondre mentirait. Un <strong>coup illégal</strong> n'est pas un coup mal choisi — c'est une faute de règle. Un <strong>coup légal que le moteur n'a pas classé</strong> n'est pas une faute du tout : il n'a simplement pas de prix, et il ne coûte donc rien à la session. Un coup classé coûte ce que l'analyse dit qu'il coûte, en millipoints.</p>
 <p>À la fin, la session affiche un <strong>PR de quiz</strong> calculé par la formule que les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité normalisée. C'est ce qui rend les deux nombres comparables : un PR de quiz de 6 et un PR de match de 6 mesurent la même chose sur la même échelle.</p>

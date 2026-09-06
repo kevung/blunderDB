@@ -10,7 +10,10 @@
     // Le point de prise est l'exception qui confirme la règle : sa question
     // est un score, pas un damier, et elle s'écrit dans la barre.
     import { trainingActiveStore, trainingCurrentStore, trainingIndexStore, trainingQuestionsStore, trainingVerdictStore } from '../stores/trainingStore.js';
-    import { answerCurrent, answerQuiz, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
+    import { answerCurrent, answerQuiz, answerQuizBoard, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
+    import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
+    import { resetPlay, undoLast } from '../services/quizPlay.js';
+    import { positionStore } from '../stores/positionStore.js';
     import { TOLERANCE } from '../services/trainingService.js';
     import { t } from '../i18n';
 
@@ -42,9 +45,18 @@
     let isQuiz = $derived(question?.drill === 'quiz');
     let isCubeQuestion = $derived(isQuiz && question?.prompt === 'cube');
 
+    // Le coup joué sur le plateau l'emporte sur la saisie : quand les deux
+    // existent, c'est le plateau qu'on vient de manipuler, et c'est lui qu'on
+    // croit avoir répondu. Les deux passent par le même juge de toute façon.
+    let playedOnBoard = $derived($quizPlayCompleteStore);
+
     function submit() {
         if (verdict) {
             nextQuestion();
+            return;
+        }
+        if (playedOnBoard) {
+            answerQuizBoard();
             return;
         }
         if (isQuiz) {
@@ -143,6 +155,10 @@
                     placeholder={isQuiz ? $t('training.movePlaceholder') : $t('training.answer')}
                     onkeydown={onKeydown}
                 />
+            {/if}
+            {#if $quizPlayStore && !verdict && $quizPlayStore.steps.length > 0}
+                <button type="button" onclick={() => quizPlayStore.update((s) => (s ? undoLast(s, $positionStore) : s))}>{$t('training.undoHop')}</button>
+                <button type="button" onclick={() => quizPlayStore.update((s) => (s ? resetPlay(s, $positionStore) : s))}>{$t('training.resetPlay')}</button>
             {/if}
             {#if !isCubeQuestion || verdict}
                 <button type="button" onclick={submit}>
