@@ -1,9 +1,12 @@
 import { get } from 'svelte/store';
-import { LoadPosition, LoadAnalysis, ComputeEPCFromPosition, GradeQuizCheckerMove, GradeQuizCube } from '../../wailsjs/go/database/Database.js';
+import { LoadPosition, LoadAnalysis, ComputeEPCFromPosition, GradeQuizChecker, GradeQuizCheckerMove, GradeQuizCube } from '../../wailsjs/go/database/Database.js';
+import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { trainingDrillStore, trainingQuestionsStore, trainingIndexStore, trainingAnswersStore, trainingActiveStore, trainingVerdictStore, trainingCurrentStore } from '../stores/trainingStore.js';
 import { grade, summarize, saveSession, pipTruth, takePointTruth, quizPR } from './trainingService.js';
 import { showImportedPosition } from './importService.js';
+import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { completedPlay, newPlay } from './quizPlay.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -173,6 +176,48 @@ async function showCurrentQuestion() {
     if (question?.positionId != null) {
         await showImportedPosition(question.positionId);
     }
+    await armBoardAnswer(question);
+}
+
+/**
+ * Prépare le plateau à recevoir le coup, pour une question de pions.
+ *
+ * Les coups légaux sont demandés au moteur MAINTENANT, pas au premier clic :
+ * la question est déjà posée, le joueur réfléchit, et c'est le moment où
+ * l'attente ne se voit pas. Un échec n'interrompt rien — la barre garde sa
+ * saisie au clavier, qui juge exactement la même chose.
+ */
+async function armBoardAnswer(question) {
+    if (!question || question.drill !== 'quiz' || question.prompt === 'cube' || question.positionId == null) {
+        quizPlayStore.set(null);
+        return;
+    }
+    try {
+        const position = await LoadPosition(question.positionId);
+        const plays = await LegalMoves(position);
+        quizPlayStore.set(plays?.length ? newPlay(position, plays) : null);
+    } catch (error) {
+        logger.error('could not load the legal moves for the quiz board:', error);
+        quizPlayStore.set(null);
+    }
+}
+
+/**
+ * Juge le coup construit SUR LE PLATEAU.
+ *
+ * Ce qui part au juge est la position résultante que le MOTEUR a rendue avec
+ * ce coup, pas le plateau reconstruit pas à pas par l'interface pour montrer
+ * le coup en cours : une erreur d'affichage ne doit pas pouvoir devenir une
+ * mauvaise note. Et c'est `GradeQuizChecker`, la variante qui prend un
+ * plateau, donc la même reconnaissance et la même note que la notation tapée.
+ */
+export async function answerQuizBoard() {
+    const question = get(trainingCurrentStore);
+    const state = get(quizPlayStore);
+    if (!question || !state) return null;
+    const play = completedPlay(state);
+    if (!play) return null;
+    return gradeQuizWith(() => GradeQuizChecker(question.positionId, play.result.board));
 }
 
 /**
@@ -193,9 +238,20 @@ async function showCurrentQuestion() {
 export async function answerQuiz(answer) {
     const question = get(trainingCurrentStore);
     if (!question) return null;
+    return gradeQuizWith(() => (question.prompt === 'cube' ? GradeQuizCube(question.positionId, answer) : GradeQuizCheckerMove(question.positionId, answer)));
+}
+
+/**
+ * Le tronc commun des trois façons de répondre — la notation tapée, l'action
+ * de videau cliquée, le coup joué sur le plateau. Elles diffèrent par l'appel
+ * au juge et par rien d'autre : même chronomètre, même écriture dans les
+ * réponses, même verdict affiché. Trois copies auraient fini par diverger sur
+ * ce qui compte dans le PR de session.
+ */
+async function gradeQuizWith(judge) {
     let verdict;
     try {
-        verdict = question.prompt === 'cube' ? await GradeQuizCube(question.positionId, answer) : await GradeQuizCheckerMove(question.positionId, answer);
+        verdict = await judge();
     } catch (error) {
         logger.error('could not grade the quiz answer:', error);
         setStatusBarMessage(tMsg('training.gradeFailed'));
@@ -284,4 +340,5 @@ export function stopTraining() {
     trainingIndexStore.set(0);
     trainingAnswersStore.set([]);
     trainingVerdictStore.set(null);
+    quizPlayStore.set(null);
 }
