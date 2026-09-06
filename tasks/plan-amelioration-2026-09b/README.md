@@ -120,7 +120,7 @@ A (semaine 1) ──► 0.35.1
    B.3 + B.5 + B.17 ──► une vague de schéma 2.18.0 (triple synchro + G.7 continuité PG)
    [A.2 est partie seule en 2.17.0, avant la vague]
    E.1 test-os bloquant ──► C.2 filet arm64/-race ──► (#151 NEON, plus tard)
-   D.3 parseur JS unique ──► B.18 grammaire Go ──► I.27 intentions
+   D.3 parseur JS unique ──► B.18 grammaire Go   [I.27 écartée, cf. ETAT.md]
    C.1 + C.2 ──► C.5 (vérif amont) ──► C.7 forme close (amont puis port)
    G.1 compose proxy ──► H.4 tutoriel serve
 

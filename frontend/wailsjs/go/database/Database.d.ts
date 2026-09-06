@@ -9,7 +9,6 @@ import {race} from '../models';
 import {engine} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
-import {searchquery} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
@@ -348,8 +347,6 @@ export function SyncAnkiDeck(arg1:number):Promise<void>;
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function Tags():Promise<Array<domain.TagCount>>;
-
-export function TranslateIntent(arg1:string):Promise<searchquery.Intent>;
 
 export function TrashCollection(arg1:number):Promise<number>;
 
