@@ -251,6 +251,11 @@ var schemaStatements = []string{
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
 		description TEXT,
+		-- A LIVING collection (2.20.0, issue #282): a search query, in the
+		-- grammar the command bar speaks, re-evaluated every time the
+		-- collection is opened. Empty is the ordinary case — a hand-made list
+		-- whose membership lives in collection_position.
+		filter_query TEXT NOT NULL DEFAULT '',
 		sort_order INTEGER DEFAULT 0,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

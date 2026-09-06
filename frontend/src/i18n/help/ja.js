@@ -1037,6 +1037,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>その局面がデータベース中で x 回より多く現れた——全マッチを通じて、そこへ至る着手の数です。書式は <code>n&gt;3</code>、<code>n&lt;2</code>、<code>n3,10</code>、<code>n4</code>（ちょうど四回）。</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>局面またはその鏡像がフィルタを満たします。</td>
 <td>—</td>

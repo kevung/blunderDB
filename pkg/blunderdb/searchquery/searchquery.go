@@ -111,6 +111,8 @@ var (
 	phaseRe  = regexp.MustCompile(`^ph:[a-z]+$`)
 	originRe = regexp.MustCompile(`^co:[a-z]+$`)
 	typeRe   = regexp.MustCompile(`^gt:[a-z-]+$`)
+	// n>3, n<10, n3,5 or a bare n4 ("exactly four").
+	encounterRe = regexp.MustCompile(`^n(?:[<>]\d+|\d+(?:,\d+)?)$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
 	// claim it and it needs no place in the precedence above (#265). The
 	// pattern is domain.tagPattern anchored — one '#', then anything that is
@@ -259,6 +261,11 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	f.Player1CheckerInZoneFilter = exact(first(prefix("z")))
 	f.Player2CheckerInZoneFilter = exact(first(prefix("Z")))
 	f.Player1AbsolutePipCountFilter = first(prefix("P"))
+	// `n` is matched by SHAPE, not by prefix: `nc` (no contact) starts with the
+	// same letter, and so does any word a user mistypes. A prefix rule would
+	// have claimed `nonsense` and turned a typo into a silent filter — the
+	// collision `ph:`/`p` already taught this parser that lesson once.
+	f.EncounterFilter = exact(first(func(s string) bool { return encounterRe.MatchString(s) }))
 	f.EquityFilter = first(prefix("e"))
 	f.DateFilter = first(prefix("T"))
 	f.Player1OutfieldBlotFilter = first(prefix("bo"))
@@ -396,6 +403,7 @@ func Format(f domain.SearchFilters) string {
 
 	add(f.SearchText)
 	add(f.MovePatternFilter)
+	add(f.EncounterFilter)
 	add(f.PlayerFilter)
 
 	addList(&parts, "ma", f.MatchIDsFilter)
@@ -442,6 +450,7 @@ var FieldTokens = map[string]string{
 	"CommentOriginFilter":           "co:",
 	"GamePhaseFilter":               "ph:",
 	"GameTypeFilter":                "gt:",
+	"EncounterFilter":               "n",
 	"TagFilter":                     "#",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",

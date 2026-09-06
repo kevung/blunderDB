@@ -582,7 +582,12 @@
         "created": "Raccolta \"{name}\" creata",
         "errorCreating": "Errore durante la creazione della raccolta",
         "isEmpty": "La raccolta \"{name}\" è vuota",
-        "confirmRemove": "Rimuovere {count} posizione/i dalla collezione?"
+        "confirmRemove": "Rimuovere {count} posizione/i dalla collezione?",
+        "livingOn": "Rendi viva questa raccolta: conterrà il risultato dell'ultima ricerca, rivalutato a ogni apertura.",
+        "livingOff": "Raccolta viva ({query}). Clicca per restituirle la lista fatta a mano.",
+        "livingNeedsSearch": "Lancia prima una ricerca: è quella che la raccolta conserverà.",
+        "livingSet": "Raccolta viva: {query}",
+        "livingCleared": "Raccolta restituita alla sua lista fatta a mano."
     },
     "tournament": {
         "addMatchPlaceholder": "Aggiungi match…",

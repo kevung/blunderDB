@@ -391,6 +391,17 @@ type SearchFilters struct {
 	// is "unknown", so it returns nothing until `blunderdb repair` has run.
 	GameTypeFilter string `json:"gameTypeFilter"`
 
+	// EncounterFilter keeps only positions met a given number of times: a
+	// range expression on the number of MOVES that reached this position,
+	// across every match in the library (the n>3 token, issue #282).
+	//
+	// It answers "what do I keep running into", which is a different question
+	// from "what did I get wrong": a position met twenty times and played
+	// correctly nineteen is still the position worth knowing cold. The count
+	// is the move rows, not the matches — the same position twice in one match
+	// is two encounters, because it was two decisions.
+	EncounterFilter string `json:"encounterFilter"`
+
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`
 	DecisionTypeFilter            bool   `json:"decisionTypeFilter"`

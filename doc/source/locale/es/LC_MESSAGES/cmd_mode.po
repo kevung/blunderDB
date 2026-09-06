@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -712,6 +712,20 @@ msgstr ""
 "subcadena. Repetible, y las etiquetas se **acumulan** (``#prime "
 "#backgame`` pide ambas): una posición lleva varias etiquetas, así que "
 "nombrar dos quiere decir «las dos»."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"La posición se encontró más de x veces en la base — el número de jugadas "
+"que llegan a ella, en todos los partidos. Formas ``n>3``, ``n<2``, "
+"``n3,10`` y ``n4`` (exactamente cuatro)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1468,7 +1482,7 @@ msgstr ""
 " en cualquier lado (ej: ``pl'Alice'``). No distingue mayúsculas y "
 "minúsculas."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

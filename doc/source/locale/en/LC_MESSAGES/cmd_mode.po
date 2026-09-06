@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -701,6 +701,20 @@ msgstr ""
 "difference from the text filter, which looks for a substring. Repeatable,"
 " and tags **add up** (``#prime #backgame`` asks for both): a position "
 "carries several tags, so naming two means “both”."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"The position was met more than x times in the database — the number of "
+"moves that reach it, across every match. Forms ``n>3``, ``n<2``, "
+"``n3,10`` and ``n4`` (exactly four)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1450,7 +1464,7 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. ``pl'Alice'``). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Various commands"
 

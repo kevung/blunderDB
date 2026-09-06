@@ -582,7 +582,12 @@
         "created": "Collection « {name} » créée",
         "errorCreating": "Erreur lors de la création de la collection",
         "isEmpty": "La collection « {name} » est vide",
-        "confirmRemove": "Retirer {count} position(s) de la collection ?"
+        "confirmRemove": "Retirer {count} position(s) de la collection ?",
+        "livingOn": "Rendre cette collection vivante : elle contiendra le résultat de la dernière recherche, réévalué à chaque ouverture.",
+        "livingOff": "Collection vivante ({query}). Cliquer pour la rendre à sa liste faite à la main.",
+        "livingNeedsSearch": "Lancez d'abord une recherche : c'est elle que la collection gardera.",
+        "livingSet": "Collection vivante : {query}",
+        "livingCleared": "Collection rendue à sa liste faite à la main."
     },
     "tournament": {
         "addMatchPlaceholder": "Ajouter un match…",

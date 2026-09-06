@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -704,6 +704,20 @@ msgstr ""
 "отличие от текстового фильтра, который ищет подстроку. Повторяемо, и теги"
 " **складываются** (``#prime #backgame`` запрашивает оба): позиция несёт "
 "несколько тегов, поэтому назвать два значит «оба»."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"Позиция встречалась в базе более x раз — число ходов, приводящих к ней, "
+"по всем матчам. Формы ``n>3``, ``n<2``, ``n3,10`` и ``n4`` (ровно "
+"четыре)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1451,7 +1465,7 @@ msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
 "(напр. ``pl'Alice'``). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

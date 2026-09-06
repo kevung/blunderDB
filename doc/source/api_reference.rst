@@ -53,6 +53,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/collections.removePositions          JSON
      POST /v1/collections.reorder                  JSON
      POST /v1/collections.reorderPositions         JSON
+     POST /v1/collections.setFilter                JSON
      POST /v1/collections.update                   JSON
    comments
      POST /v1/comments.add                         JSON

@@ -1056,6 +1056,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>Die Stellung kam in der Datenbank mehr als x-mal vor — die Zahl der Züge, die zu ihr führen, über alle Matches hinweg. Formen <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> und <code>n4</code> (genau vier).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Die Position oder ihr Spiegelbild erfüllt die Filter.</td>
 <td>—</td>

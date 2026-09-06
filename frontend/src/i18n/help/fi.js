@@ -1046,6 +1046,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>Asema kohdattiin tietokannassa yli x kertaa — niiden siirtojen määrä, jotka johtavat siihen, kaikissa otteluissa. Muodot <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> ja <code>n4</code> (täsmälleen neljä).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Asema tai sen peilikuva vastaa suodattimia.</td>
 <td>—</td>

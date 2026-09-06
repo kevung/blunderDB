@@ -582,7 +582,12 @@
         "created": "Sammlung „{name}“ erstellt",
         "errorCreating": "Fehler beim Erstellen der Sammlung",
         "isEmpty": "Sammlung „{name}“ ist leer",
-        "confirmRemove": "{count} Position(en) aus der Sammlung entfernen?"
+        "confirmRemove": "{count} Position(en) aus der Sammlung entfernen?",
+        "livingOn": "Diese Sammlung lebendig machen: Sie enthält das Ergebnis der letzten Suche, bei jedem Öffnen neu ausgewertet.",
+        "livingOff": "Lebendige Sammlung ({query}). Klicken, um ihre handgemachte Liste zurückzugeben.",
+        "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
+        "livingSet": "Lebendige Sammlung: {query}",
+        "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück."
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",

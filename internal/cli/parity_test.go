@@ -260,6 +260,7 @@ var databaseParity = map[string]parityEntry{
 	"UpdateCollection":                  {CLI: "collection rename", Server: "/v1/collections.update"},
 	"UpdateCommentEntry":                {Server: "/v1/comments.update", Why: whyGUIEdit},
 	"UpdateFilter":                      {Server: "/v1/filters.update", Why: whyGUIState},
+	"SetCollectionFilter":               {CLI: "collection filter", Server: "/v1/collections.setFilter"},
 	"SimilarPositions":                  {CLI: "search --like", Server: "/v1/positions.similar"},
 	"TranslateIntent":                   {CLI: "search --intent", Server: "/v1/search.intent"},
 	"UpdateMatch":                       {Server: "/v1/matches.update", Why: whyGUIEdit},
