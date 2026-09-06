@@ -152,7 +152,7 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 	err := s.db.QueryRow(ctx, positionInsertSQL,
 		tenant, int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby != 0, cols.HasBeaver != 0, cols.MaxCube,
+		cols.HasJacoby != 0, cols.HasBeaver != 0,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase), int(cols.GameType),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
