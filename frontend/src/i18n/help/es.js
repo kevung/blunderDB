@@ -841,7 +841,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Inicia una sesión de microentrenamiento. Toma un argumento: <code>train pips</code> (recuento de pips), <code>train epc</code>, <code>train tp</code> (punto de aceptación al marcador). Cinco preguntas, cronometradas, corregidas al instante.</td>
+<td>Inicia una sesión de microentrenamiento. Toma un argumento: <code>train pips</code> (recuento de pips), <code>train epc</code>, <code>train tp</code> (punto de aceptación al marcador), <code>train quiz</code> (la jugada o la acción de cubo, calificadas contra el análisis guardado). Cinco preguntas, cronometradas, corregidas al instante.</td>
 </tr>
 <tr>
 <td>tp2</td>

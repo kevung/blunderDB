@@ -1345,6 +1345,17 @@
         "truth": "expected {value}",
         "noQuestions": "No question can be asked on this database for this drill.",
         "finished": "Training done: {correct}/{n}, median time {seconds} s.",
-        "usage": "Usage: train <drill> ({drills})."
+        "usage": "Usage: train <drill> ({drills}).",
+        "drillQuiz": "Quiz",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "No double",
+        "doubleTake": "Double, take",
+        "doublePass": "Double, pass",
+        "illegal": "Illegal move",
+        "unranked": "Legal move, not evaluated",
+        "cost": "Costs {mp} mMWC",
+        "best": "best: {move}",
+        "gradeFailed": "The answer could not be graded.",
+        "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}."
     }
 }

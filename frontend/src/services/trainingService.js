@@ -18,8 +18,10 @@ import { logger } from '../utils/logger.js';
 // c'est aussi ce qui permettra à J.4 (#294) de s'y brancher plutôt que de
 // réécrire une seconde notion de « note d'entraînement ».
 
-/** Les trois exercices. L'ordre est celui du sélecteur. */
-export const DRILLS = Object.freeze(['pips', 'epc', 'takepoint']);
+/** Les exercices. Les trois premiers sont des calculs (#273) ; `quiz` est le
+ *  module complet (#294), où le coup se joue sur le plateau et l'erreur se
+ *  mesure contre l'analyse enregistrée. */
+export const DRILLS = Object.freeze(['pips', 'epc', 'takepoint', 'quiz']);
 
 // La tolérance de chaque exercice, et pourquoi elle vaut ce qu'elle vaut.
 //
@@ -136,4 +138,22 @@ export async function saveSession(session) {
     meta[KEY_SESSIONS] = JSON.stringify(history.slice(0, MAX_SESSIONS));
     await SaveMetadata(meta);
     return entry;
+}
+
+/**
+ * Le PR d'une session de quiz, sur la MÊME échelle que celui que les
+ * statistiques calculent pour le jeu réel : 500 × erreur moyenne en équité
+ * normalisée. C'est ce qui rend les deux nombres comparables, et c'était le
+ * point de la fiche — sans quoi le module aurait inventé une échelle de plus.
+ *
+ * Cette fonction double engine.QuizPR côté Go, et le double est assumé : le
+ * NOMBRE affiché après une session est calculé ici sur des verdicts déjà
+ * rendus, sans aller-retour, tandis que le Go sert les clients du démon. La
+ * formule, elle, est celle de storage.pr et n'a pas d'autre variante.
+ *
+ * @param {number} sumErrorMp @param {number} decisions
+ */
+export function quizPR(sumErrorMp, decisions) {
+    if (!decisions) return 0;
+    return (500 * sumErrorMp) / 1000 / decisions;
 }

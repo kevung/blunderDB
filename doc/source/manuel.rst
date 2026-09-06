@@ -1983,6 +1983,33 @@ Seul ce résumé est conservé, dans les métadonnées de la base : la session n
 garde pas la trace question par question, et rien n'est écrit tant qu'elle
 n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
 
+Quiz : le PR d'entraînement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``train quiz`` pose un quatrième exercice, d'une autre nature. Le panneau Anki
+fait mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées
+de la liste parcourue, et il faut décider :
+
+* sur une décision de pions, écrire le coup au clavier, en notation
+  (``13/7 8/7``) ;
+* sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou
+  *Double, passe*.
+
+Le panneau Analyse est masqué tant que la question n'a pas reçu de réponse :
+il porte la réponse, et une question dont la réponse est affichée à côté n'est
+pas une question.
+
+La correction distingue trois issues, et les confondre mentirait. Un **coup
+illégal** n'est pas un coup mal choisi — c'est une faute de règle. Un **coup
+légal que le moteur n'a pas classé** n'est pas une faute du tout : il n'a
+simplement pas de prix, et il ne coûte donc rien à la session. Un coup classé
+coûte ce que l'analyse dit qu'il coûte, en millipoints.
+
+À la fin, la session affiche un **PR de quiz** calculé par la formule que les
+statistiques appliquent au jeu réel — 500 × erreur moyenne en équité
+normalisée. C'est ce qui rend les deux nombres comparables : un PR de quiz de
+6 et un PR de match de 6 mesurent la même chose sur la même échelle.
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

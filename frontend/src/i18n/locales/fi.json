@@ -1345,6 +1345,17 @@
         "truth": "odotettu {value}",
         "noQuestions": "Tähän harjoitukseen ei voi muodostaa kysymystä tästä tietokannasta.",
         "finished": "Harjoitus valmis: {correct}/{n}, mediaaniaika {seconds} s.",
-        "usage": "Käyttö: train <harjoitus> ({drills})."
+        "usage": "Käyttö: train <harjoitus> ({drills}).",
+        "drillQuiz": "Tietovisa",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "Ei tuplausta",
+        "doubleTake": "Tuplaus, hyväksy",
+        "doublePass": "Tuplaus, luovuta",
+        "illegal": "Sääntöjenvastainen siirto",
+        "unranked": "Laillinen siirto, ei arvioitu",
+        "cost": "Maksaa {mp} mMWC",
+        "best": "paras: {move}",
+        "gradeFailed": "Vastausta ei voitu arvioida.",
+        "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}."
     }
 }

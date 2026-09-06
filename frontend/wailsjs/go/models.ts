@@ -2672,3 +2672,26 @@ export namespace storage {
 
 }
 
+export namespace engine {
+	export class QuizVerdict {
+	    legal: boolean;
+	    matched: boolean;
+	    notation: string;
+	    best: string;
+	    errorMp: number;
+
+	    static createFrom(source: any = {}) {
+	        return new QuizVerdict(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.legal = source["legal"];
+	        this.matched = source["matched"];
+	        this.notation = source["notation"];
+	        this.best = source["best"];
+	        this.errorMp = source["errorMp"];
+	    }
+	}
+
+}

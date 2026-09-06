@@ -1345,6 +1345,17 @@
         "truth": "esperado {value}",
         "noQuestions": "No se puede formular ninguna pregunta en esta base para este ejercicio.",
         "finished": "Entrenamiento terminado: {correct}/{n}, tiempo mediano {seconds} s.",
-        "usage": "Uso: train <ejercicio> ({drills})."
+        "usage": "Uso: train <ejercicio> ({drills}).",
+        "drillQuiz": "Cuestionario",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "Sin doblar",
+        "doubleTake": "Doblar, aceptar",
+        "doublePass": "Doblar, pasar",
+        "illegal": "Jugada ilegal",
+        "unranked": "Jugada legal, sin evaluar",
+        "cost": "Cuesta {mp} mMWC",
+        "best": "mejor: {move}",
+        "gradeFailed": "No se ha podido evaluar la respuesta.",
+        "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}."
     }
 }

@@ -1942,6 +1942,57 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/quiz.gradeChecker:
+    post:
+      operationId: quiz.gradeChecker
+      tags: [quiz]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/quizCheckerReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/engine_QuizVerdict"
+  /v1/quiz.gradeCheckerMove:
+    post:
+      operationId: quiz.gradeCheckerMove
+      tags: [quiz]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/quizCheckerMoveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/engine_QuizVerdict"
+  /v1/quiz.gradeCube:
+    post:
+      operationId: quiz.gradeCube
+      tags: [quiz]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/quizCubeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/engine_QuizVerdict"
   /v1/search.find:
     post:
       operationId: search.find
@@ -2824,6 +2875,9 @@ components:
     domain_AnkiReviewLog:
       type: object
       description: "Opaque: see the Go type domain.AnkiReviewLog (defined outside internal/server, not expanded here)."
+    domain_Board:
+      type: object
+      description: "Opaque: see the Go type domain.Board (defined outside internal/server, not expanded here)."
     domain_CommentEntry:
       type: object
       description: "Opaque: see the Go type domain.CommentEntry (defined outside internal/server, not expanded here)."
@@ -2873,6 +2927,9 @@ components:
           type: string
         editPosition:
           type: string
+    engine_QuizVerdict:
+      type: object
+      description: "Opaque: see the Go type engine.QuizVerdict (defined outside internal/server, not expanded here)."
     excludePositionSaveReq:
       type: object
       properties:
@@ -3167,6 +3224,30 @@ components:
         purged:
           type: integer
           format: int32
+    quizCheckerMoveReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        move:
+          type: string
+    quizCheckerReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        played:
+          $ref: "#/components/schemas/domain_Board"
+    quizCubeReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        action:
+          type: string
     race_Result:
       type: object
       description: "Opaque: see the Go type race.Result (defined outside internal/server, not expanded here)."

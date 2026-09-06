@@ -1345,6 +1345,17 @@
         "truth": "正解は {value}",
         "noQuestions": "このデータベースではこの練習の問題を作れません。",
         "finished": "トレーニング終了：{correct}/{n}、中央値 {seconds} 秒。",
-        "usage": "使い方：train <練習>（{drills}）。"
+        "usage": "使い方：train <練習>（{drills}）。",
+        "drillQuiz": "クイズ",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "ノーダブル",
+        "doubleTake": "ダブル、テイク",
+        "doublePass": "ダブル、パス",
+        "illegal": "不正な手",
+        "unranked": "合法手ですが未評価",
+        "cost": "{mp} mMWC の損",
+        "best": "最善：{move}",
+        "gradeFailed": "回答を採点できませんでした。",
+        "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。"
     }
 }

@@ -828,7 +828,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score). Five questions, timed, corrected on the spot.</td>
+<td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score), <code>train quiz</code> (the move or the cube action, graded against the stored analysis). Five questions, timed, corrected on the spot.</td>
 </tr>
 <tr>
 <td>tp2</td>

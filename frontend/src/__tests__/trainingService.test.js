@@ -93,3 +93,20 @@ describe('les vérités attendues', () => {
         expect(pipTruth(position)).not.toBe(white);
     });
 });
+
+describe('le PR de session (#294)', () => {
+    // Le point du module : le nombre affiché après une session doit être sur la
+    // MÊME échelle que le PR que les statistiques calculent pour le jeu réel,
+    // sans quoi les comparer — ce que l'utilisateur fera — ne compare rien.
+    // 500 × erreur moyenne en équité normalisée, la formule de storage.pr.
+    test('vaut 500 × erreur moyenne, comme celui du jeu réel', async () => {
+        const { quizPR } = await import('../services/trainingService.js');
+        expect(quizPR(80, 1)).toBeCloseTo(40, 9);
+        expect(quizPR(160, 4)).toBeCloseTo(20, 9);
+    });
+
+    test('sans décision, vaut 0 — à lire avec le compte, pas comme un sans-faute', async () => {
+        const { quizPR } = await import('../services/trainingService.js');
+        expect(quizPR(0, 0)).toBe(0);
+    });
+});

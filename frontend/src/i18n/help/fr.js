@@ -844,7 +844,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
+<td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score), <code>train quiz</code> (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
 </tr>
 <tr>
 <td>tp2</td>
