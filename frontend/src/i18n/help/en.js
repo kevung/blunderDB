@@ -131,7 +131,7 @@ export default {
 <p><strong>A match imported without an analysis now gets a Performance Rating.</strong> That is the case of a match played online, or of a Jellyfish <code>.mat</code> file, that nobody ran through XG: blunderDB knew its positions and the moves played, but no analysis said what they were worth. Once the batch has run, the move actually played is compared with gammonNet's ranking and the gap feeds the PR, the error rate, the worst decisions and every other indicator, exactly as for a match analysed by XG. The comparison invents nothing: the played move comes from the match's own move table, written at import whether or not the file carried an analysis.</p>
 <p>A database analysed with a version older than this one does not need to be re-evaluated: <code>blunderdb repair</code> recomputes the columns from the analyses and the moves already stored and gives those matches their PR back (see repair).</p>
 <p>One honest caveat: a position is identified by its structure, so a position met twice — played well once and badly the other time — carries only one gap, that of its first recorded occurrence. This is not specific to this computation: an XG library has exactly the same shape.</p>
-<h3>Watched folder</h3>
+<h4>Watched folder</h4>
 <p>The <strong>Watched folder</strong> tab asks blunderDB to look at a folder while it runs and import each match file that <strong>appears</strong> in it. Play a session in eXtreme Gammon, come back to blunderDB, and find the matches already there.</p>
 <p>Nothing is guessed. Until a folder is named there is no watch: blunderDB does not start reading a directory because it supposed where your matches live. The <strong>Suggest</strong> button looks at the usual places on this machine and offers one only if it really exists; otherwise it says so, and naming the folder is up to you.</p>
 <p>Three things are worth knowing before ticking the box:</p>
@@ -182,7 +182,7 @@ export default {
 <p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several: all of them are shown, most recent first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
 <p>Every comment that came out of a file carries a <strong>provenance badge</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, or <em>imported</em> when the provenance was never recorded). Comments you wrote carry none: that is the ordinary case, and marking every line would be noise. Editing an imported comment makes it yours: after the edit, the sentence is yours.</p>
 <p>That distinction shows elsewhere: deleting a match no longer destroys a position <strong>you</strong> had written on. A note lifted from the source file does still go with the match that brought it in.</p>
-<h3>Tags</h3>
+<h4>Tags</h4>
 <p>A <strong>tag</strong> is a <code>#word</code> written in a comment. Nothing declares it, no table holds it, and that is deliberate: the vocabulary is your own prose, and requiring a declaration before you could tag would turn a habit into paperwork.</p>
 <p>What was missing was the other half: <strong>seeing</strong> the vocabulary you have built, and clicking a tag rather than remembering how you spelt it. The <code>tags</code> command, or the <code>#</code> button beside the input box, opens the vocabulary window: this database's tags, each with the <strong>number of positions</strong> carrying it, clickable to run the corresponding search. Below the list are the recommended tags this database does not use yet — a vocabulary taken from the backgammon literature (<code>#blitz</code>, <code>#prime</code>, <code>#holding</code>, <code>#backgame</code>, <code>#containment</code>, <code>#crunch</code>, <code>#ace-point</code>, <code>#timing</code>…), suggested and never imposed: a tag absent from that list is worth exactly as much as one on it.</p>
 <p>While typing, a <code>#</code> offers the tags <strong>this database</strong> already uses, then the recommended ones. That is what keeps you from writing <code>#back-game</code> one day and <code>#backgame</code> the next, which nothing else would catch.</p>
@@ -278,7 +278,7 @@ export default {
 <p>Tournaments fill themselves at import time. XG, GnuBG and BGF files name their event; when a new match is imported, blunderDB files it under the tournament of that name, creating it if it does not exist yet. The tournament's date and location are left empty — this panel is where they are filled in. A match already in the database is never refiled: re-importing its file does not undo what was arranged by hand.</p>
 <p>The <strong>PR</strong> column of each tournament shows the PR of the <strong>reference player</strong> — that is, the player appearing in the greatest number of the tournament's matches (in case of a tie, the one who made the most decisions). The PR therefore does not mix your play with your opponents': for your own tournaments, it reflects your performance alone. The reference player's name appears in a tooltip when hovering over the value.</p>
 <h3>Stats Panel</h3>
-<h3>Introduction</h3>
+<h4>Introduction</h4>
 <p>The <strong>Stats</strong> panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays <strong>PR</strong> (Performance Rating) and <strong>MWC cost</strong> (Match Winning Chance cost) for all positions or a filtered subset.</p>
 <p>The Stats panel is especially useful for:</p>
 <ul>
@@ -288,7 +288,7 @@ export default {
 <li><strong>compare the players in the database</strong> with one another, one row per player, through the Players tab — useful for following an entire competition;</li>
 <li><strong>navigating directly to the relevant positions</strong> by clicking any indicator (drill-down).</li>
 </ul>
-<h3>Opening the panel</h3>
+<h4>Opening the panel</h4>
 <p>To open the Stats panel:</p>
 <ul>
 <li>Press <em>CTRL-D</em>.</li>
@@ -297,14 +297,14 @@ export default {
 <div class="admonition note">
 <p>The panel refreshes automatically whenever the filter is changed. It does not recalculate statistics on a simple PR ↔ MWC toggle: both metrics are computed simultaneously by the backend.</p>
 </div>
-<h3>Filter bar</h3>
+<h4>Filter bar</h4>
 <p>The filter bar at the top of the panel restricts the computation to a subset of positions.</p>
-<h3>Player perspective</h3>
+<h5>Player perspective</h5>
 <p>The <strong>Player</strong> drop-down filters statistics to the analysed player. blunderDB automatically selects the player whose name appears most often in the database — changeable at any time.</p>
 <div class="admonition tip">
 <p>Changing the player does not cause any data loss; simply re-select the previous player in the list.</p>
 </div>
-<h3>Available filters</h3>
+<h5>Available filters</h5>
 <ul>
 <li><strong>Tournament(s)</strong> — restrict to one or more tournaments. Multiple tournaments can be selected simultaneously.</li>
 <li><strong>Dates</strong> — time range (<em>From</em> … <em>To</em>). If only the start date is set, more recent positions are included.</li>
@@ -315,7 +315,7 @@ export default {
 <div class="admonition note">
 <p>Filters are saved in the blunderDB configuration (<code>config.yaml</code>) and restored on the next launch.</p>
 </div>
-<h3>PR / MWC toggle</h3>
+<h4>PR / MWC toggle</h4>
 <p>The <strong>PR / MWC</strong> button at the top of the panel toggles the metric displayed across all tabs.</p>
 <p><strong>PR (Performance Rating)</strong></p>
 <blockquote>
@@ -364,13 +364,13 @@ export default {
 </div>
 </blockquote>
 <p>The PR ↔ MWC toggle is instant: no backend recalculation is performed.</p>
-<h3>The HTML report</h3>
+<h4>The HTML report</h4>
 <p>The <strong>HTML report</strong> button in the panel's header produces a <strong>self-contained</strong> document: a single file, with no external image, no remote stylesheet, no script. The diagrams are inline SVG, drawn by the same renderer as the board on screen, with your palette. It opens in any browser, travels by e-mail, and <strong>prints to PDF from the browser itself</strong> — which avoids embedding a PDF generator to produce what everybody already has.</p>
 <p>It carries the current scope's figures (positions, matches, counted decisions, global, checker and cube PR), then the <strong>ten most expensive decisions</strong>, each with its diagram, its cost, the match it comes from and the best move when an analysis gives one.</p>
 <p>The report carries the Stats panel's <strong>current filter</strong>. A report that does not state its scope is a report whose figures mean nothing: set the filter — a tournament, a date range, a player — before producing it.</p>
-<h3>Dashboard tab</h3>
+<h4>Dashboard tab</h4>
 <p>The <strong>Dashboard</strong> tab gives a summary view of key indicators.</p>
-<h3>Level cards</h3>
+<h5>Level cards</h5>
 <p>Three cards display the PR (or MWC) for:</p>
 <ul>
 <li><strong>PR Global</strong> — all decisions (checker + cube);</li>
@@ -381,37 +381,37 @@ export default {
 <div class="admonition note">
 <p>The total number of decisions is shown at the bottom of each card on hover.</p>
 </div>
-<h3>Rolling PR over last N decisions</h3>
+<h5>Rolling PR over last N decisions</h5>
 <p>A row of PR (or MWC) values computed over the last <em>N</em> decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.</p>
 <p>Clicking a value loads the corresponding last <em>N</em> positions.</p>
-<h3>Top blunders</h3>
+<h5>Top blunders</h5>
 <p>The list of the 10 worst errors (or MWC cost), sorted by descending magnitude. Clicking a row loads the relevant position in the analysis panel.</p>
-<h3>Progression tab</h3>
+<h4>Progression tab</h4>
 <p>The <strong>Progression</strong> tab shows how your level evolves over time.</p>
 <p>At the top of the tab, a <strong>goal</strong>: “PR &lt; 5 within twelve weeks”. A target, a deadline, and a trend that says where you are heading — nothing more. A goal that started grading, congratulating or reminding would be a different feature, not this one.</p>
 <p>The <strong>Suggest</strong> button proposes a target from your current level: the lower bound of the band you are in, that is, the entry into the next one. Proposing “a bit better” would be anchored to nothing; proposing a band says something — going from intermediate to advanced can be seen and told.</p>
 <p>The <strong>trend</strong> is a least-squares fit over your matches' PR, projected to the deadline. It refuses to speak below three matches: drawing a line between two points would be a claim that cannot be held. And the sentence says so every time — <em>a trend is not a prediction</em>.</p>
 <p>The goal is stored in the <strong>database's metadata</strong>, not in the configuration: it is about that library, so it follows the file rather than the machine. No schema change: <code>metadata</code> is already a key/value table, readable by <code>blunderdb info</code> as by the daemon.</p>
-<h3>Tournament line chart</h3>
+<h5>Tournament line chart</h5>
 <p>A line chart displays the PR (or MWC) for each tournament (X axis: tournament order, Y axis: metric value). Colour bands materialise the level thresholds.</p>
 <p>Clicking a point on the chart opens a context menu with two options:</p>
 <ul>
 <li><strong>Open tournament</strong> — opens the tournament in the Tournaments panel.</li>
 <li><strong>Open positions</strong> — loads all positions from the tournament into the analysis panel.</li>
 </ul>
-<h3>Match scatter plot</h3>
+<h5>Match scatter plot</h5>
 <p>A scatter plot represents each match (X axis: date, Y axis: PR or MWC). Point size is proportional to the number of decisions in the match.</p>
 <p>Clicking a point opens a context menu:</p>
 <ul>
 <li><strong>Open match</strong> — opens the match in the Matches panel.</li>
 <li><strong>Open positions</strong> — loads all positions from the match into the analysis panel.</li>
 </ul>
-<h3>Errors tab</h3>
+<h4>Errors tab</h4>
 <p>The <strong>Errors</strong> tab breaks down error sources.</p>
-<h3>Breakdown by cube action</h3>
+<h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>
-<h3>Direction of cube errors</h3>
+<h5>Direction of cube errors</h5>
 <p>The breakdown above says <em>how much</em> cube decisions cost; this table says in <em>which direction</em> they go wrong.</p>
 <p>A cube position carries two decisions taken by two different players, presented here as two rows:</p>
 <ul>
@@ -423,11 +423,11 @@ export default {
 <div class="admonition note">
 <p>This table counts decisions, it passes no judgement. At what gap a tendency deserves to be named depends on the sample size and on a point of reference, neither of which the engine holds.</p>
 </div>
-<h3>Checker / Cube comparison</h3>
+<h5>Checker / Cube comparison</h5>
 <p>A comparison chart places checker plays and cube decisions side by side. Clicking a bar loads the positions in the subset with an error.</p>
-<h3>Error magnitude histogram</h3>
+<h5>Error magnitude histogram</h5>
 <p>A histogram distributes errors by magnitude in millipoints (mpt, buckets: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the positions in the bucket.</p>
-<h3>Breakdowns tab</h3>
+<h4>Breakdowns tab</h4>
 <p>The <strong>Breakdowns</strong> tab slices the same decisions the global figures count along four axes. None of them redefines what counts as a decision: that would be a second PR wearing the same name.</p>
 <ul>
 <li><strong>By game phase</strong> — opening, middlegame, race, bearoff. This is what answers “my PR in the race versus my PR in contact”. The label is computed from the board (see Search Panel); a database whose phases were never computed files everything under <em>Unclassified</em>, and <code>blunderdb repair</code> fills it in.</li>
@@ -438,11 +438,11 @@ export default {
 <div class="admonition note">
 <p>The Crawford game is not distinguished: blunderDB does not record that flag on a position. The practical effect is small — a Crawford game has no cube decision at all — but the omission is real and is better written down than left to be guessed.</p>
 </div>
-<h3>Study and real play</h3>
+<h4>Study and real play</h4>
 <p>The command <code>blunderdb list --type study --days 30</code> puts three numbers side by side, plan of play by plan of play: how many <strong>distinct positions</strong> were revised over the period, what the PR was <strong>before</strong> it, what the PR is <strong>since</strong>.</p>
 <p>Three numbers, and no fourth. There is <strong>no gain column and no arrow</strong>, because nothing here controls for anything: the player may have met stronger opponents, changed format, or simply played more races this month. The rapprochement is the reader's; a column announcing an effect would claim a causality these data do not carry. The numbers themselves are exact.</p>
 <p>Reviews are counted as <strong>distinct positions</strong>: a card revised four times in the month is one position studied, and counting the repetitions would make a month of cramming look like a month of coverage. The PR's decisions, on the other hand, are all counted — each was taken once. A PR resting on fewer than ten decisions shows <code>—</code>, with its sample visible beside it.</p>
-<h3>Players tab</h3>
+<h4>Players tab</h4>
 <p>The four previous tabs describe <strong>one</strong> player; the <strong>Players</strong> tab compares them all. It shows one row per player in the database, which answers the need of an organiser following a whole competition rather than one player.</p>
 <p>Columns, in order:</p>
 <table>
@@ -503,7 +503,7 @@ export default {
 <div class="admonition important">
 <p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored back then, and nothing allows it to be reconstructed afterwards — the source files must be re-imported. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>
-<h3>Aggregation rule</h3>
+<h4>Aggregation rule</h4>
 <div class="admonition important">
 <p>The PR of a tournament (or any subset) is computed using the <strong>sum/sum</strong> rule — never as an average of individual match PRs.</p>
 <p>Formula:</p>
@@ -517,7 +517,7 @@ export default {
 <p>Sum/sum rule: 500 × 0.640 / (10 + 90) = <strong>3.2</strong> <em>(correct)</em></p>
 <p>The sum/sum rule is the only one that handles varying match lengths correctly (a 21-point match carries more weight than a 1-point match).</p>
 </div>
-<h3>MWC: limitations</h3>
+<h4>MWC: limitations</h4>
 <ul>
 <li>MWC cost is computed from the <strong>Kazaross-XG2 MET</strong>, the de facto reference table in competitive backgammon. Results are not directly comparable with software using other METs. It is the same table, read through the same entry point, that the embedded evaluator uses for its cube decisions at a match score: the statistics and the engine cannot diverge on this. It gives its own values up to 25 points to go on each side; beyond that, it is extended by a Zadeh table computed the same way as GNUbg's, up to 64.</li>
 <li><em>Money-game</em> positions (with no match score) are <strong>excluded</strong> from the MWC computation. If your database contains many money-game positions, the MWC cost may be underestimated or unavailable.</li>
@@ -544,13 +544,13 @@ export default {
 <p>The <strong>score</strong> is also edited directly on the board, as in edit mode: left click on a player's score rectangle decrements their number of points to go, right click increments it. Leaving the <em>money</em> score (-1, -1) by editing one side alone automatically aligns the other side on the same value rather than leaving an inconsistent score. On a bearoff position in the <em>exact</em> regime, moving from a money score to a match score leaves the winning probability as it is (a database lookup, valid whatever the frame of reference) but switches the displayed equity and cube verdict to those of the <em>evaluated</em> regime — the exact table being money by construction, it cannot answer the question asked at the score. The badge then becomes composite (“exact (win) · evaluated (cube)”) to say so explicitly.</p>
 <p>The <strong>dice</strong>, finally, are edited the same way, and they are what decides the question being asked: dice on the board make a checker decision (the list of candidate moves), no dice a cube decision. Left-clicking a die raises its value (6 wraps to 1), right-clicking lowers it (1 wraps to 6); clicking a die on a board that has none puts down two at once — a single die would be neither a checker decision nor a cube decision. Clicking a player's rectangle removes the dice to ask a cube question, and the next click on a die puts them back as they were.</p>
 <p><em>BACKSPACE</em>, or a double-click outside the board, clears the position: empty board, money score (-1, -1), no dice showing — values specific to the Eval panel, different from those used in edit mode (7 everywhere, dice 3-1), to stay consistent with what the panel shows by default.</p>
-<h3>Cube matrix</h3>
+<h4>Cube matrix</h4>
 <p>A cube decision is not a property of the board. The same checkers, the same pip count, are a double at 2-away/4-away and a no-double at 4-away/2-away; a player who has learnt the money answer has learnt one cell of a grid. The Eval panel shows the cell the position carries; the <strong>cube matrix</strong> shows the whole grid.</p>
 <p>The <code>cm</code> command opens it on the position on screen. Each cell gives the verdict at one score: the row is the number of points the player on roll still needs, the column the number the opponent still needs. The four verdicts read <em>ND</em> (no double), <em>DT</em> (double, take), <em>DP</em> (double, pass) and <em>TG</em> (too good); a cell the engine refuses carries a question mark and says why on hover, which also gives the cell's three equities. Three match lengths are offered: 5, 7 and 9 points.</p>
 <p>The position's own score is replaced by each cell's; its <strong>cube</strong> is kept. The grid answers “at what score would I turn <em>this</em> cube”, not what a centred position would do. It is post-Crawford throughout: during the Crawford game the cube is not in play, and a column of “you may not double” would say nothing about the position.</p>
 <p>Every cell is its own search. The engine is match-aware — it does not play the same game at 2-away as at 7-away — so a single search read through different match equities would be wrong exactly where the score matters. The grid arrives at 0-ply first, then recomputes at the configured display depth once the window is at rest: the same escalation as the rest of the panel, for a 9-point grid costing about a second and a half.</p>
 <p>The same grid is computed outside the interface, with the command line's cubematrix command.</p>
-<h3>Bringing a position into the Eval panel</h3>
+<h4>Bringing a position into the Eval panel</h4>
 <p>The panel opens by default on a bearoff position, but a study most often starts from a position already at hand. Two gestures bring it there:</p>
 <ul>
 <li><strong>Right click on the board</strong>, in an analysis panel or while navigating a match, then <em>Evaluate this position</em>: the Eval panel opens directly on that position, as displayed. The context menu does not appear in the Eval panel or in the Search panel, where the right button already serves to place checkers of the other colour.</li>
@@ -577,7 +577,7 @@ export default {
 <p><strong>The panel's board is a scratch board, and it is remembered.</strong> Leaving the Eval panel and coming back finds the position it was left on, not the default bearoff board: that one is only served the first time the panel is opened in a session. Sending a position from the database to the panel wins over that memory, and <em>BACKSPACE</em> hands back the default board at any time. Nothing is written to the database along the way — the scratch board has no position identity, and its evaluation is recomputed on arrival rather than carried over.</p>
 <p><strong>Challenge mode.</strong> The <em>Challenge</em> box, in the badge strip, enables a training mode: on every change to the position, the values of three zones are masked (replaced by “···”); clicking a zone reveals that zone only. Without dice, these are the bottom player's row, the top player's row and the cube decision — the Δ row only appears once both player rows are revealed. The decision block then keeps its three rows: it is its values, its verdict and the highlighting of the best option that disappear, failing which the exercise would be solved by looking for the bold row. With dice showing on a race position, each player's EPC row is masked as before, but the third zone then covers the <em>before the roll</em> row and the move list <strong>together</strong>: the list being sorted from best move to worst, revealing it partially would already give the answer away. With dice showing outside a race position, that same single zone alone covers everything the panel displays. One can thus practise estimating each side's EPC, then deciding on the cube or on the move to play, before checking. The setting is remembered.</p>
 <p>To close the Eval panel, press <em>CTRL-E</em> or switch to another tab.</p>
-<h3>Methodology and assumptions of the Eval panel</h3>
+<h4>Methodology and assumptions of the Eval panel</h4>
 <p>Every value displayed by the panel rests on precise assumptions, stated here exhaustively.</p>
 <p><strong>Domain.</strong> The <em>race zone</em> — winning probability and cube verdict — covers pure bearoffs only: every remaining chequer of both players in their home board. The position is evaluated <em>before the roll</em>; any dice set on it are ignored.</p>
 <p>The <strong>EPC blocks</strong>, on the other hand, go further: a side gets its EPC as soon as its farthest chequer fits in the loaded one-sided table. With the default table (six points) that is the old home-board rule; with an eight-point table, computed from the <em>Bearoff</em> tab, a side with a chequer on the 8-point is treated like any other. Nothing is extrapolated: a chequer one point too far simply has no EPC, exactly as a chequer on the 7-point had none before. When the table that answered is not the six-point one, its name appears in the corner of the race block ("OS-08") — without it one would read "six" by default and believe the side entirely home.</p>
@@ -638,7 +638,7 @@ export default {
 <p>The question IS the position shown: the board is the application's own, and the bar above it carries only the question, the input and the correction. The answer is typed and validated at the keyboard (<em>Enter</em> checks, then moves on; <em>Esc</em> leaves the session).</p>
 <p>The tolerance depends on the drill, and it is stated rather than guessed: the pip count has <strong>none</strong> — an addition right to within one pip is a wrong addition — the EPC accepts half a pip, the take point two percentage points. At the end, the session shows the number of right answers and the <strong>median</strong> time per question.</p>
 <p>Only that summary is kept, in the database metadata: the session keeps no question-by-question trace, and nothing is written until it is finished. Leaving halfway therefore records nothing.</p>
-<h3>Quiz: the training PR</h3>
+<h4>Quiz: the training PR</h4>
 <p><code>train quiz</code> asks a fourth kind of question. The Anki panel makes you memorise; the quiz <strong>tests</strong>. Five already-analysed positions are drawn from the browsed list, and a decision has to be made:</p>
 <ul>
 <li>on a checker decision, type the move at the keyboard, in notation (<code>13/7 8/7</code>);</li>
@@ -655,7 +655,7 @@ export default {
 <div class="admonition note">
 <p>Neither tracks what becomes of the file. blunderDB <strong>records nothing on the recipient's side</strong>: opening a marked database is exactly like opening any other, and nothing anywhere logs who opened it, when, or where its contents came from.</p>
 </div>
-<h3>Marking a database with its origin</h3>
+<h4>Marking a database with its origin</h4>
 <p>The export dialog fits on a single screen: the form, then a progress overlay laid over it while the file is written. It closes by itself when finished, and the result appears in the status bar.</p>
 <p>Three points deserve attention:</p>
 <ul>
@@ -670,7 +670,7 @@ export default {
 <li><strong>Note</strong>, optional — terms of use, a contact address, a request not to pass the file on.</li>
 </ul>
 <p>The mark is signed with your issuer identity. It is therefore <strong>tamper-evident and unforgeable</strong>: nobody can alter it, nor fabricate one in your name. It is however <strong>not unremovable</strong> — the distributed file is an ordinary SQLite database, and blunderDB is free software. It prevents nothing: it says where the file came from.</p>
-<h3>Issuer identity</h3>
+<h4>Issuer identity</h4>
 <p>Marks are signed with your <strong>issuer identity</strong>, created by itself the first time you mark a file; there is nothing to set up. It belongs to a person rather than to a database: every file you mark carries the same public fingerprint, of the form <code>A3F1-9C24-7B05-E1D8</code>.</p>
 <p>You can give that fingerprint to your recipients so they can check that a file really comes from you. The identity moves from one machine to another as a single file (extension <code>.bdbid</code>), optionally protected by a passphrase. <strong>That file lets anyone holding it sign in your name: do not share it.</strong></p>
 <p>In the preferences (the gear icon in the toolbar), the <em>Issuer identity</em> tab shows your name and fingerprint, and offers <em>Save identity…</em>, <em>Load identity…</em> and <em>Regenerate…</em>.</p>
@@ -679,7 +679,7 @@ export default {
 <p>What protects you after a leak is not software: it is publishing your new fingerprint and disowning the old one to your recipients.</p>
 <p>Regenerating overwrites the current key; blunderDB offers to save it before replacing it.</p>
 </div>
-<h3>Protecting a database with a password</h3>
+<h4>Protecting a database with a password</h4>
 <p>The password is typed masked, here as when opening a protected file; the eye icon reveals it <strong>while it is held down</strong>, and masks it again as soon as it is released.</p>
 <p>Ticking <strong>Protect this file with a password</strong> produces a file with the <code>.dbx</code> extension — even if you chose a <code>.db</code> name in the save dialog, which opens before the password is asked for. To open it, use the usual open-database action: the file chooser accepts both <code>.db</code> and <code>.dbx</code>. blunderDB then asks for the password and installs an ordinary database beside it; nothing is asked afterwards.</p>
 <p>The dialog offers to <strong>delete the protected file once opened</strong>: without that you keep the same content under two names. The box is not ticked by default — the protected file is yours to keep if you mean to pass it on — and the deletion only happens after a successful open.</p>
@@ -689,7 +689,7 @@ export default {
 <p>The password is checked on <strong>every</strong> open, including when the file has already been opened on this machine before.</p>
 <p>Technically, the database is encrypted with <strong>AES-256 in GCM mode</strong>, with the key derived from the password by <strong>Argon2id</strong> (64 MiB of memory, 3 passes, 4 lanes) and a random salt unique to each file. GCM authenticates the whole payload: a wrong password is detected as such, and so is any tampering with the encrypted file — you never silently end up with a corrupt database.</p>
 <p>The protected file's header stays <strong>in the clear</strong>: its origin remains readable without the password.</p>
-<h3>Reading a file's origin</h3>
+<h4>Reading a file's origin</h4>
 <p>In the application, open the file and show the <strong>Metadata</strong> panel (the <code>meta</code> command). An <strong>Origin</strong> section appears at the top of the panel, read-only, stating what was written, by whom, when, and how the signature checks out:</p>
 <ul>
 <li>“✓ signature verified — marked by you”: the file carries your mark, intact;</li>
@@ -698,7 +698,7 @@ export default {
 </ul>
 <p>This section does not appear on an ordinary database.</p>
 <p>From the command line, <code>blunderdb info --db file.db</code> shows the origin and the state of the signature, <strong>without ever writing to the file</strong>. It works on a protected file too, without the password. See <code>CLI_USAGE.md</code> for <code>export</code>'s <code>--watermark</code> and <code>--password</code> options, and for <code>identity</code> and <code>open</code>.</p>
-<h3>Publishing a database for others</h3>
+<h4>Publishing a database for others</h4>
 <p>A marked database is distributed like any other file — email, a personal site, a USB stick. blunderDB <strong>provides no service</strong>: no repository, no hosted catalogue, no account. That follows directly from its design: nothing is ever recorded on the side of whoever receives a file, so there would be nothing to report to a service even if one existed.</p>
 <p>What makes a published database usable by someone else comes down to four fields, all of them already there:</p>
 <ul>

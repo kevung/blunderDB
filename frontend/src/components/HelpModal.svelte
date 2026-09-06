@@ -193,9 +193,25 @@
     .tab-content :global(p),
     .tab-content :global(ul),
     .tab-content :global(h2),
-    .tab-content :global(h3) {
+    .tab-content :global(h3),
+    .tab-content :global(h4),
+    .tab-content :global(h5) {
         margin: 0 20px 20px 20px; /* Add bottom margin for spacing */
         text-align: justify;
+    }
+
+    /* The manual nests three deep. Hierarchy comes from weight and colour,
+       not from a ladder of absolute sizes (ADR-0008): h3 keeps the tab's
+       title size, and the two below it step down in emphasis only. */
+    .tab-content :global(h4),
+    .tab-content :global(h5) {
+        font-size: var(--font-size-base);
+        margin-top: var(--space-4);
+    }
+
+    .tab-content :global(h5) {
+        font-weight: 500;
+        color: var(--color-text-muted);
     }
 
     .tab-content :global(table) {

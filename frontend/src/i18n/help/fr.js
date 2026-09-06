@@ -131,7 +131,7 @@ export default {
 <p><strong>Un match importé sans analyse obtient ainsi un PR.</strong> C'est le cas d'un match joué en ligne, ou d'un fichier Jellyfish <code>.mat</code>, que personne n'a fait passer par XG : blunderDB en connaissait les positions et les coups joués, mais aucune analyse ne disait ce qu'ils valaient. Une fois le lot passé, le coup effectivement joué est comparé au classement de gammonNet et l'écart alimente le PR, le taux d'erreur, les pires décisions et tous les autres indicateurs, exactement comme un match analysé par XG. La comparaison ne s'invente rien : le coup joué vient de la table des coups du match, écrite à l'import, que le fichier ait porté une analyse ou non.</p>
 <p>Une base analysée avec une version antérieure à celle-ci n'a pas besoin d'être réévaluée : <code>blunderdb repair</code> recalcule les colonnes à partir des analyses et des coups déjà en base et rend leur PR à ces matchs (voir repair).</p>
 <p>Une réserve honnête : une position est identifiée par sa structure, donc une position rencontrée deux fois — bien jouée une fois, mal l'autre — ne porte qu'un seul écart, celui de sa première occurrence enregistrée. Ce n'est pas propre à ce calcul : une bibliothèque XG a exactement la même forme.</p>
-<h3>Dossier surveillé</h3>
+<h4>Dossier surveillé</h4>
 <p>L'onglet <strong>Dossier surveillé</strong> demande à blunderDB de regarder un dossier pendant qu'il tourne et d'importer chaque fichier de match qui y <strong>apparaît</strong>. Jouer une session dans eXtreme Gammon, revenir à blunderDB, et trouver les matchs déjà là.</p>
 <p>Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a supposé où vivent vos matchs. Le bouton <strong>Proposer</strong> cherche les emplacements habituels sur cette machine et n'en propose un que s'il existe réellement ; sinon il le dit, et c'est à vous de désigner le dossier.</p>
 <p>Trois points méritent d'être connus avant d'activer la case :</p>
@@ -182,7 +182,7 @@ export default {
 <p>Le panneau <strong>Commentaires</strong> (<em>CTRL-P</em>) affiche, ajoute et modifie les commentaires associés à la position courante. Une position peut en porter plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les commentaires importés depuis les fichiers XG sont automatiquement associés aux positions correspondantes. Appuyer sur <em>CTRL-P</em> ou exécuter la commande <code>comment</code> pour afficher ou masquer le panneau.</p>
 <p>Chaque commentaire venu d'un fichier porte une <strong>étiquette de provenance</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, ou <em>importé</em> lorsque la provenance n'a pas été enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le cas courant, et le signaler à chaque ligne serait du bruit. Modifier un commentaire importé vous l'attribue : après la modification, la phrase est la vôtre.</p>
 <p>Cette distinction a une conséquence visible ailleurs : supprimer un match n'efface plus une position sur laquelle <strong>vous</strong> aviez écrit. Une note reprise du fichier source, elle, disparaît avec le match qui l'a apportée.</p>
-<h3>Les tags</h3>
+<h4>Les tags</h4>
 <p>Un <strong>tag</strong> est un <code>#mot</code> écrit dans un commentaire. Rien ne le déclare, aucune table ne le porte, et c'est voulu : le vocabulaire est votre prose, et exiger une déclaration avant de pouvoir taguer transformerait une habitude en paperasse.</p>
 <p>Ce qui manquait, c'était l'autre moitié : <strong>voir</strong> le vocabulaire qu'on s'est construit, et cliquer un tag plutôt que se rappeler comment on l'écrivait. La commande <code>tags</code>, ou le bouton <code>#</code> de la zone de saisie, ouvre la fenêtre du vocabulaire : les tags de cette base, chacun avec le <strong>nombre de positions</strong> qui le portent, cliquables pour lancer la recherche correspondante. Sous la liste figurent les tags recommandés que la base n'utilise pas encore — un vocabulaire tiré de la littérature du backgammon (<code>#blitz</code>, <code>#prime</code>, <code>#holding</code>, <code>#backgame</code>, <code>#containment</code>, <code>#crunch</code>, <code>#ace-point</code>, <code>#timing</code>…), suggéré et jamais imposé : un tag absent de cette liste vaut exactement autant qu'un tag qui y figure.</p>
 <p>Pendant la frappe, taper <code>#</code> propose les tags que <strong>cette base</strong> utilise déjà, puis les recommandés. C'est ce qui évite d'écrire <code>#back-game</code> un jour et <code>#backgame</code> le lendemain, ce que rien d'autre ne rattraperait.</p>
@@ -278,7 +278,7 @@ export default {
 <p>Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match déjà présent dans la base n'est jamais reclassé : réimporter son fichier ne défait pas le rangement fait à la main.</p>
 <p>La colonne <strong>PR</strong> de chaque tournoi affiche le PR du <strong>joueur de référence</strong> — c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il reflète votre performance seule. Le nom du joueur de référence apparaît en infobulle au survol de la valeur.</p>
 <h3>Panneau Stats</h3>
-<h3>Introduction</h3>
+<h4>Introduction</h4>
 <p>Le panneau <strong>Stats</strong> permet d'analyser son niveau de jeu et de suivre sa progression dans le temps à partir des positions importées dans la base de données. Il calcule et affiche les indicateurs <strong>PR</strong> (<em>Performance Rating</em>) et <strong>MWC cost</strong> (Match Winning Chance cost) pour l'ensemble des positions ou un sous-ensemble filtré.</p>
 <p>Le panneau Stats est particulièrement utile pour :</p>
 <ul>
@@ -288,7 +288,7 @@ export default {
 <li><strong>comparer les joueurs de la base</strong> entre eux, une ligne par joueur, grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;</li>
 <li><strong>accéder directement aux positions concernées</strong> en cliquant sur n'importe quel indicateur (drill-down).</li>
 </ul>
-<h3>Ouverture du panneau</h3>
+<h4>Ouverture du panneau</h4>
 <p>Pour ouvrir le panneau Stats :</p>
 <ul>
 <li>Appuyer sur <em>CTRL-D</em>.</li>
@@ -297,14 +297,14 @@ export default {
 <div class="admonition note">
 <p>Le panneau se rafraîchit automatiquement à chaque modification du filtre. Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ MWC : les deux métriques sont calculées simultanément par le backend.</p>
 </div>
-<h3>Barre de filtre</h3>
+<h4>Barre de filtre</h4>
 <p>La barre de filtre, en haut du panneau, permet de restreindre le calcul à un sous-ensemble de positions.</p>
-<h3>Perspective joueur</h3>
+<h5>Perspective joueur</h5>
 <p>La liste déroulante <strong>Joueur</strong> permet de filtrer les statistiques selon le joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom apparaît le plus souvent dans la base de données — modifiable à tout moment.</p>
 <div class="admonition tip">
 <p>Changer de joueur ne provoque pas de perte de données ; il suffit de re-sélectionner le joueur précédent dans la liste.</p>
 </div>
-<h3>Filtres disponibles</h3>
+<h5>Filtres disponibles</h5>
 <ul>
 <li><strong>Tournoi(s)</strong> — restriction à un ou plusieurs tournois. Plusieurs tournois peuvent être sélectionnés simultanément.</li>
 <li><strong>Dates</strong> — plage temporelle (<em>De</em> … <em>À</em>). Si seule la date de début est renseignée, les positions plus récentes sont incluses.</li>
@@ -315,7 +315,7 @@ export default {
 <div class="admonition note">
 <p>Les filtres sont persistés dans la configuration de blunderDB (<code>config.yaml</code>) et sont restaurés à la prochaine ouverture.</p>
 </div>
-<h3>Toggle PR / MWC</h3>
+<h4>Toggle PR / MWC</h4>
 <p>Le bouton <strong>PR / MWC</strong> en haut du panneau bascule la métrique affichée dans tous les onglets.</p>
 <p><strong>PR (Performance Rating)</strong></p>
 <blockquote>
@@ -364,13 +364,13 @@ export default {
 </div>
 </blockquote>
 <p>Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est effectué.</p>
-<h3>Le rapport HTML</h3>
+<h4>Le rapport HTML</h4>
 <p>Le bouton <strong>Rapport HTML</strong> de l'en-tête du panneau produit un document <strong>autonome</strong> : un seul fichier, sans image externe, sans feuille de style distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés par le même rendu que le plateau à l'écran, avec votre palette. Il s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et <strong>s'imprime en PDF par le navigateur lui-même</strong> — ce qui évite d'embarquer un générateur de PDF pour produire ce que tout le monde a déjà.</p>
 <p>Il contient les indicateurs du périmètre courant (positions, matchs, décisions comptées, PR global, pions et videau), puis les <strong>dix décisions les plus coûteuses</strong>, chacune avec son diagramme, son coût, le match d'où elle vient et le meilleur coup lorsqu'une analyse le donne.</p>
 <p>Le rapport porte le <strong>filtre courant</strong> du panneau Stats. Un rapport qui ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien dire : réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le produire.</p>
-<h3>Onglet Dashboard</h3>
+<h4>Onglet Dashboard</h4>
 <p>L'onglet <strong>Dashboard</strong> donne une vue synthétique des indicateurs clés.</p>
-<h3>Cartes de niveau</h3>
+<h5>Cartes de niveau</h5>
 <p>Trois cartes affichent le PR (ou MWC) pour :</p>
 <ul>
 <li><strong>PR Global</strong> — toutes les décisions (coups + videau) ;</li>
@@ -381,37 +381,37 @@ export default {
 <div class="admonition note">
 <p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
 </div>
-<h3>PR glissant sur N dernières décisions</h3>
+<h5>PR glissant sur N dernières décisions</h5>
 <p>Une ligne de valeurs PR (ou MWC) calculées sur les <em>N</em> dernières décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente. Les valeurs grisées correspondent à un N supérieur au nombre de décisions disponibles.</p>
 <p>Cliquer sur une valeur charge les <em>N</em> dernières positions correspondantes.</p>
-<h3>Top blunders</h3>
+<h5>Top blunders</h5>
 <p>La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante. Cliquer sur une ligne charge la position concernée dans le panneau d'analyse.</p>
-<h3>Onglet Progression</h3>
+<h4>Onglet Progression</h4>
 <p>L'onglet <strong>Progression</strong> présente l'évolution du niveau dans le temps.</p>
 <p>En tête de l'onglet, un <strong>objectif</strong> : « PR &lt; 5 d'ici douze semaines ». Une cible, une échéance, et une tendance qui dit où l'on va — rien de plus. Un objectif qui se mettrait à noter, à féliciter ou à rappeler serait une autre fonctionnalité, et pas celle-ci.</p>
 <p>Le bouton <strong>Proposer</strong> suggère une cible à partir du niveau actuel : la borne basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande suivante. Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un palier en dit un — passer d'intermédiaire à avancé se voit et se raconte.</p>
 <p>La <strong>tendance</strong> est un ajustement par les moindres carrés sur le PR de vos matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois matchs : tracer une droite entre deux points serait une affirmation qu'on ne peut pas tenir. Et la phrase le dit à chaque fois — <em>une tendance n'est pas une prédiction</em>.</p>
 <p>L'objectif est enregistré dans les <strong>métadonnées de la base</strong>, pas dans la configuration : il porte sur cette bibliothèque-là, et suit donc le fichier plutôt que la machine. Aucun changement de schéma : <code>metadata</code> est déjà une table de clés et de valeurs, lisible par <code>blunderdb info</code> comme par le démon.</p>
-<h3>Courbe par tournoi</h3>
+<h5>Courbe par tournoi</h5>
 <p>Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X : ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur matérialisent les seuils de niveau.</p>
 <p>Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :</p>
 <ul>
 <li><strong>Ouvrir le tournoi</strong> — ouvre le tournoi dans le panneau Tournois.</li>
 <li><strong>Ouvrir les positions</strong> — charge toutes les positions du tournoi dans le panneau d'analyse.</li>
 </ul>
-<h3>Scatter plot par match</h3>
+<h5>Scatter plot par match</h5>
 <p>Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC). La taille du point est proportionnelle au nombre de décisions dans le match.</p>
 <p>Cliquer sur un point ouvre un menu contextuel :</p>
 <ul>
 <li><strong>Ouvrir le match</strong> — ouvre le match dans le panneau des matchs.</li>
 <li><strong>Ouvrir les positions</strong> — charge toutes les positions du match dans le panneau d'analyse.</li>
 </ul>
-<h3>Onglet Erreurs</h3>
+<h4>Onglet Erreurs</h4>
 <p>L'onglet <strong>Erreurs</strong> décompose les sources d'erreurs.</p>
-<h3>Répartition par action de videau</h3>
+<h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>
 <p>Cliquer sur une barre charge les positions correspondant à cette action de videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>
-<h3>Direction des erreurs de videau</h3>
+<h5>Direction des erreurs de videau</h5>
 <p>La répartition ci-dessus indique <em>combien</em> coûtent les décisions de videau ; ce tableau indique dans <em>quel sens</em> elles se trompent.</p>
 <p>Une position de videau porte deux décisions prises par deux joueurs différents, présentées ici en deux lignes :</p>
 <ul>
@@ -423,11 +423,11 @@ export default {
 <div class="admonition note">
 <p>Ce tableau compte des décisions, il ne porte pas de jugement. À partir de quel écart une tendance mérite d'être nommée dépend de l'effectif et d'un point de référence, qui ne sont pas des données du moteur.</p>
 </div>
-<h3>Répartition Checker / Cube</h3>
+<h5>Répartition Checker / Cube</h5>
 <p>Un diagramme comparatif place côte à côte le PR des coups joués et des décisions de videau. Cliquer sur une barre charge les positions du sous-ensemble avec erreur.</p>
-<h3>Histogramme des magnitudes d'erreur</h3>
+<h5>Histogramme des magnitudes d'erreur</h5>
 <p>Un histogramme distribue les erreurs selon leur magnitude en millipoints (mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une barre charge les positions de la tranche.</p>
-<h3>Onglet Ventilations</h3>
+<h4>Onglet Ventilations</h4>
 <p>L'onglet <strong>Ventilations</strong> découpe les mêmes décisions que les chiffres globaux selon quatre axes. Aucun d'eux ne redéfinit ce qui compte comme une décision : ce serait un second PR sous le même nom.</p>
 <ul>
 <li><strong>Par phase de partie</strong> — ouverture, milieu de partie, course, sortie des pions. C'est ce qui répond à « mon PR en course contre mon PR en contact ». L'étiquette est calculée depuis le plateau (voir Panneau Recherche) ; une base dont les phases n'ont jamais été calculées range tout sous <em>Non classée</em>, et <code>blunderdb repair</code> la remplit.</li>
@@ -438,11 +438,11 @@ export default {
 <div class="admonition note">
 <p>La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet indicateur sur une position. L'effet pratique est faible — une partie Crawford n'a aucune décision de videau — mais l'omission est réelle et vaut mieux d'être écrite que laissée à deviner.</p>
 </div>
-<h3>Étude et jeu réel</h3>
+<h4>Étude et jeu réel</h4>
 <p>La commande <code>blunderdb list --type study --days 30</code> met côte à côte, plan de jeu par plan de jeu, trois nombres : combien de <strong>positions distinctes</strong> ont été révisées sur la période, quel était le PR <strong>avant</strong> elle, quel est le PR <strong>depuis</strong>.</p>
 <p>Trois nombres, et pas un quatrième. Il n'y a <strong>ni colonne de gain ni flèche</strong>, parce que rien ici ne contrôle quoi que ce soit : le joueur a pu rencontrer des adversaires plus forts, changer de format, ou simplement jouer plus de courses ce mois-ci. Le rapprochement est celui du lecteur ; une colonne qui annoncerait un effet affirmerait une causalité que ces données ne portent pas. Les nombres, eux, sont exacts.</p>
 <p>Les révisions sont comptées en <strong>positions distinctes</strong> : une carte revue quatre fois dans le mois est une position étudiée, et compter les répétitions ferait passer un mois de bachotage pour un mois de couverture. Les décisions du PR, elles, sont toutes comptées — chacune a été prise une fois. Un PR appuyé sur moins de dix décisions s'affiche <code>—</code>, avec son effectif visible à côté.</p>
-<h3>Onglet Joueurs</h3>
+<h4>Onglet Joueurs</h4>
 <p>Les quatre onglets précédents décrivent <strong>un</strong> joueur ; l'onglet <strong>Joueurs</strong> les compare tous. Il affiche une ligne par joueur de la base, ce qui répond au besoin d'un organisateur suivant une compétition entière plutôt qu'un joueur en particulier.</p>
 <p>Colonnes, dans l'ordre :</p>
 <table>
@@ -503,7 +503,7 @@ export default {
 <div class="admonition important">
 <p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup — il faut réimporter les fichiers source. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
 </div>
-<h3>Règle d'agrégation</h3>
+<h4>Règle d'agrégation</h4>
 <div class="admonition important">
 <p>Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la règle <strong>somme/somme</strong> — jamais comme moyenne des PR individuels des matchs.</p>
 <p>Formule :</p>
@@ -517,7 +517,7 @@ export default {
 <p>Règle somme/somme : 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(correct)</em></p>
 <p>La règle somme/somme est la seule qui résiste à la variation de longueur des matchs (un match en 21 points pèse plus qu'un match en 1 point).</p>
 </div>
-<h3>MWC : limitations</h3>
+<h4>MWC : limitations</h4>
 <ul>
 <li>Le MWC cost est calculé à partir de la <strong>MET Kazaross-XG2</strong>, table de référence de facto dans le backgammon compétitif. Les résultats ne sont pas directement comparables avec des logiciels utilisant d'autres METs. C'est la même table, lue par le même point d'entrée, que celle dont l'évaluateur embarqué se sert pour ses décisions de videau au score : les statistiques et le moteur ne peuvent pas diverger là-dessus. Elle donne ses valeurs propres jusqu'à 25 points à faire de chaque côté ; au-delà, elle est prolongée par une table de Zadeh calculée comme celle de GNUbg, jusqu'à 64.</li>
 <li>Les positions <em>money-game</em> (sans score de match) sont <strong>exclues</strong> du calcul MWC. Si votre base de données contient beaucoup de positions money-game, le MWC cost peut être sous-estimé ou indisponible.</li>
@@ -544,13 +544,13 @@ export default {
 <p>Le <strong>score</strong> s'édite lui aussi directement sur le plateau, comme en mode édition : clic gauche sur le rectangle score d'un joueur décrémente son nombre de points à faire, clic droit l'incrémente. Sortir du score <em>money</em> (-1, -1) en éditant un seul camp aligne automatiquement l'autre camp sur la même valeur plutôt que de laisser un score incohérent. Sur une position de bearoff en régime <em>exact</em>, passer d'un score money à un score de match laisse la probabilité de gain telle quelle (une lecture en base, valable quel que soit le référentiel) mais bascule l'équité et le verdict de videau affichés vers ceux du régime <em>évalué</em> — la table exacte étant money par construction, elle ne sait pas répondre à la question posée au score. Le badge devient alors composite (« exact (gain) · évalué (videau) ») pour le dire explicitement.</p>
 <p>Les <strong>dés</strong> s'éditent enfin de la même façon, et ce sont eux qui décident de la question posée : des dés posés font une décision de pions (la liste des coups candidats), pas de dés une décision de videau. Clic gauche sur un dé fait monter sa valeur (6 revient à 1), clic droit la fait descendre (1 revient à 6) ; cliquer un dé sur un plateau qui n'en a pas en pose deux d'un coup — un seul dé ne serait ni une décision de pions ni une décision de videau. Cliquer le rectangle d'un joueur retire les dés pour poser une question de videau, et le clic suivant sur un dé les remet tels qu'ils étaient.</p>
 <p><em>RETOUR ARRIERE</em>, ou un double-clic en dehors du plateau, efface la position : plateau vide, score money (-1, -1), pas de dés posés — des valeurs propres au panneau Eval, différentes de celles utilisées en mode édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau affiche par défaut.</p>
-<h3>Matrice du videau</h3>
+<h4>Matrice du videau</h4>
 <p>Une décision de videau n'est pas une propriété du damier. Les mêmes pions, le même compte de pips, se doublent à 2-away/4-away et ne se doublent pas à 4-away/2-away ; un joueur qui a appris la réponse money n'a appris qu'une case d'une grille. Le panneau Eval montre la case que la position porte ; la <strong>matrice du videau</strong> montre la grille entière.</p>
 <p>La commande <code>cm</code> l'ouvre sur la position affichée. Chaque case donne le verdict à un score : la ligne est le nombre de points qu'il reste à faire au joueur au trait, la colonne celui qu'il reste à faire à son adversaire. Les quatre verdicts s'écrivent <em>PD</em> (pas de double), <em>DP</em> (double, prend), <em>DR</em> (double, refuse) et <em>TB</em> (trop bon) ; une case que le moteur refuse porte un point d'interrogation et dit pourquoi au survol, qui donne aussi les trois équités de la case. Trois longueurs de match sont proposées : 5, 7 et 9 points.</p>
 <p>Le score de la position est remplacé par celui de chaque case ; son <strong>videau</strong>, lui, est conservé. La grille répond à « à quel score retournerais-je <em>ce</em> videau », pas à ce que ferait une position centrée. Elle est post-Crawford d'un bout à l'autre : pendant la partie Crawford le videau n'est pas en jeu, et une colonne de « vous ne pouvez pas doubler » ne dirait rien de la position.</p>
 <p>Chaque case est une recherche à part entière. Le moteur tient compte du score — il ne joue pas la même partie à 2-away qu'à 7-away —, donc une seule recherche relue à travers des équités de match différentes serait fausse exactement là où le score compte. La grille arrive d'abord en 0-ply, puis se recalcule à la profondeur d'affichage configurée une fois la fenêtre au repos : la même escalade que le reste du panneau, pour une grille de 9 points qui coûte environ une seconde et demie.</p>
 <p>La même grille se calcule hors de l'interface, avec la commande cubematrix de la ligne de commande.</p>
-<h3>Amener une position dans le panneau Eval</h3>
+<h4>Amener une position dans le panneau Eval</h4>
 <p>Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part le plus souvent d'une position déjà en main. Deux gestes l'y amènent :</p>
 <ul>
 <li><strong>Clic droit sur le plateau</strong>, dans un panneau d'analyse ou pendant la navigation d'un match, puis <em>Évaluer cette position</em> : le panneau Eval s'ouvre directement sur cette position, telle qu'elle est affichée. Le menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau Recherche, où le bouton droit sert déjà à poser les pions de l'autre couleur.</li>
@@ -577,7 +577,7 @@ export default {
 <p><strong>Le plateau du panneau est un brouillon, et il est retenu.</strong> Quitter le panneau Eval puis y revenir retrouve la position sur laquelle on l'a laissé, et non le plateau de sortie par défaut : ce dernier n'est servi qu'à la première ouverture de la session. Envoyer une position de la base vers le panneau l'emporte sur ce souvenir, et <em>RETOUR ARRIERE</em> rend le plateau par défaut à tout moment. Rien n'est enregistré dans la base au passage — le brouillon n'a pas d'identité de position, et son évaluation est recalculée à l'arrivée plutôt que transportée.</p>
 <p><strong>Mode défi.</strong> La case <em>Défi</em>, dans la bande de badges, active un mode entraînement : à chaque modification de la position, les valeurs de trois zones sont masquées (remplacées par « ··· ») ; un clic sur une zone révèle cette zone seulement. Sans dés, ce sont la ligne du joueur du bas, la ligne du joueur du haut et la décision de videau — la ligne Δ n'apparaît qu'une fois les deux lignes joueurs révélées. Le bloc de décision garde alors ses trois lignes : ce sont ses valeurs, son verdict et la mise en valeur de la meilleure option qui disparaissent, faute de quoi l'exercice se résoudrait en cherchant la ligne en gras. Dés posés sur une position de course, la ligne EPC de chaque joueur se masque comme avant, mais la troisième zone couvre alors la ligne <em>avant le jet</em> et la liste des coups <strong>ensemble</strong> : la liste étant classée du meilleur coup au pire, la révéler partiellement en donnerait déjà la réponse. Dés posés hors position de course, cette même zone unique couvre à elle seule tout ce que le panneau affiche. On peut ainsi s'entraîner à estimer l'EPC de chaque camp, puis à se prononcer sur le videau ou sur le coup à jouer, avant de vérifier. Le réglage est mémorisé.</p>
 <p>Pour fermer le panneau Eval, appuyer sur <em>CTRL-E</em> ou basculer sur un autre onglet.</p>
-<h3>Méthodologie et hypothèses du panneau Eval</h3>
+<h4>Méthodologie et hypothèses du panneau Eval</h4>
 <p>Chaque valeur affichée par le panneau repose sur des hypothèses précises, énoncées ici exhaustivement.</p>
 <p><strong>Domaine.</strong> La <em>zone course</em> — probabilité de gain et verdict de videau — ne traite que le bearoff pur : tous les pions restants des deux joueurs dans leur jan intérieur. La position est évaluée <em>avant le lancer</em> ; les dés éventuellement posés sont ignorés.</p>
 <p>Les <strong>blocs EPC</strong>, eux, vont plus loin : un camp obtient son EPC dès que son pion le plus éloigné tient dans la table une face chargée. Avec la table par défaut (six points) c'est l'ancienne règle du jan ; avec une table à huit points, calculée depuis l'onglet <em>Bearoff</em>, un camp dont un pion est sur la 8 est traité comme les autres. Rien n'est extrapolé : un pion un point trop loin n'a simplement pas d'EPC, exactement comme un pion sur la 7 n'en avait pas avant. Quand la table qui a répondu n'est pas celle à six points, son nom apparaît dans le coin du bloc course (« OS-08 ») — sans lui, on lirait « six » par défaut et on croirait le camp entièrement rentré.</p>
@@ -638,7 +638,7 @@ export default {
 <p>La question EST la position affichée : le plateau est celui de l'application, et la barre au-dessus ne porte que la question, la saisie et la correction. La réponse se tape et se valide au clavier (<em>Entrée</em> vérifie, puis passe à la suivante ; <em>Échap</em> quitte la session).</p>
 <p>La tolérance dépend de l'exercice, et elle est dite plutôt que devinée : le comptage de pions n'en a <strong>aucune</strong> — une addition juste à un pion près est une addition fausse — l'EPC accepte un demi-pion, le point de prise deux points de pourcentage. À la fin, la session affiche le nombre de bonnes réponses et le temps <strong>médian</strong> par question.</p>
 <p>Seul ce résumé est conservé, dans les métadonnées de la base : la session ne garde pas la trace question par question, et rien n'est écrit tant qu'elle n'est pas terminée. Quitter en cours de route n'enregistre donc rien.</p>
-<h3>Quiz : le PR d'entraînement</h3>
+<h4>Quiz : le PR d'entraînement</h4>
 <p><code>train quiz</code> pose un quatrième exercice, d'une autre nature. Le panneau Anki fait mémoriser ; le quiz <strong>teste</strong>. Cinq positions déjà analysées sont tirées de la liste parcourue, et il faut décider :</p>
 <ul>
 <li>sur une décision de pions, écrire le coup au clavier, en notation (<code>13/7 8/7</code>) ;</li>
@@ -655,7 +655,7 @@ export default {
 <div class="admonition note">
 <p>Aucun des deux ne suit ce que devient le fichier. blunderDB <strong>n'enregistre rien du côté de celui qui reçoit la base</strong> : ouvrir une base marquée est exactement comme ouvrir n'importe quelle autre, et rien nulle part ne consigne qui l'a ouverte, quand, ni d'où vient son contenu.</p>
 </div>
-<h3>Marquer une base de son origine</h3>
+<h4>Marquer une base de son origine</h4>
 <p>La fenêtre d'export tient en un seul écran : le formulaire, puis une progression qui se superpose à lui le temps de l'écriture. Elle se ferme d'elle-même une fois terminée, et le résultat s'affiche dans la barre d'état.</p>
 <p>Trois points méritent l'attention :</p>
 <ul>
@@ -670,7 +670,7 @@ export default {
 <li><strong>Note</strong>, facultative — conditions d'utilisation, adresse de contact, une demande de ne pas rediffuser.</li>
 </ul>
 <p>La marque est signée avec votre identité d'émetteur. Elle est donc <strong>inaltérable et infalsifiable</strong> : nul ne peut la modifier, ni en fabriquer une à votre nom. Elle n'est en revanche <strong>pas ineffaçable</strong> — le fichier distribué est une base SQLite ordinaire, et blunderDB est un logiciel libre. Elle n'empêche rien : elle dit d'où vient le fichier.</p>
-<h3>Identité d'émetteur</h3>
+<h4>Identité d'émetteur</h4>
 <p>Les marques sont signées avec votre <strong>identité d'émetteur</strong>, créée toute seule la première fois que vous marquez un fichier ; il n'y a rien à configurer. Elle appartient à une personne et non à une base : tous vos fichiers portent la même empreinte publique, de la forme <code>A3F1-9C24-7B05-E1D8</code>.</p>
 <p>Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un poste à l'autre en un seul fichier (extension <code>.bdbid</code>), éventuellement protégé par une phrase secrète. <strong>Ce fichier permet de signer en votre nom : ne le partagez pas.</strong></p>
 <p>Dans les préférences (icône engrenage de la barre d'outils), l'onglet <em>Identité d'émetteur</em> affiche votre nom et votre empreinte, et propose <em>Enregistrer l'identité…</em>, <em>Charger une identité…</em> et <em>Régénérer…</em>.</p>
@@ -679,7 +679,7 @@ export default {
 <p>Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier votre nouvelle empreinte et de désavouer l'ancienne auprès de vos destinataires.</p>
 <p>La régénération écrase la clé actuelle ; blunderDB propose de l'enregistrer avant de la remplacer.</p>
 </div>
-<h3>Protéger une base par un mot de passe</h3>
+<h4>Protéger une base par un mot de passe</h4>
 <p>Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier protégé ; l'icône en forme d'œil l'affiche <strong>tant qu'on la maintient enfoncée</strong>, et le masque de nouveau dès qu'on relâche.</p>
 <p>Cocher <strong>Protéger ce fichier par un mot de passe</strong> produit un fichier d'extension <code>.dbx</code> — y compris si vous aviez choisi un nom en <code>.db</code> dans la fenêtre d'enregistrement, celle-ci s'ouvrant avant que le mot de passe ne soit demandé. Pour l'ouvrir, utilisez l'ouverture de base habituelle : la fenêtre de sélection accepte aussi bien les <code>.db</code> que les <code>.dbx</code>. blunderDB demande alors le mot de passe et installe une base ordinaire à côté ; ensuite plus rien n'est demandé.</p>
 <p>La fenêtre propose de <strong>supprimer le fichier protégé une fois ouvert</strong> : sans cela vous conservez le même contenu sous deux noms. La case n'est pas cochée par défaut — le fichier protégé reste le vôtre si vous comptez le transmettre — et la suppression n'a lieu qu'après une ouverture réussie.</p>
@@ -689,7 +689,7 @@ export default {
 <p>Le mot de passe est vérifié à <strong>chaque</strong> ouverture, y compris lorsque le fichier a déjà été ouvert auparavant sur ce poste.</p>
 <p>Techniquement, la base est chiffrée par <strong>AES-256 en mode GCM</strong>, avec une clé dérivée du mot de passe par <strong>Argon2id</strong> (64 Mio de mémoire, 3 passes, 4 fils), et un sel tiré au hasard propre à chaque fichier. Le mode GCM authentifie l'ensemble : un mot de passe erroné est détecté comme tel, et toute altération du fichier chiffré l'est également — on n'obtient jamais une base corrompue en silence.</p>
 <p>L'en-tête du fichier protégé reste <strong>en clair</strong> : son origine demeure lisible sans le mot de passe.</p>
-<h3>Lire l'origine d'un fichier</h3>
+<h4>Lire l'origine d'un fichier</h4>
 <p>Dans l'application, ouvrez le fichier et affichez le panneau <strong>Métadonnées</strong> (commande <code>meta</code>). Une section <strong>Origine</strong> apparaît en tête du panneau, en lecture seule, indiquant ce qui a été inscrit, par qui, quand, et l'état de la signature :</p>
 <ul>
 <li>« ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque, intacte ;</li>
@@ -698,7 +698,7 @@ export default {
 </ul>
 <p>Cette section n'apparaît pas sur une base ordinaire.</p>
 <p>En ligne de commande, <code>blunderdb info --db fichier.db</code> affiche l'origine et l'état de la signature, <strong>sans jamais écrire dans le fichier</strong>. La commande fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir <code>CLI_USAGE.md</code> pour les options <code>--watermark</code> et <code>--password</code> de <code>export</code>, ainsi que pour <code>identity</code> et <code>open</code>.</p>
-<h3>Publier une base pour d'autres</h3>
+<h4>Publier une base pour d'autres</h4>
 <p>Une base marquée se distribue comme n'importe quel fichier — courriel, site personnel, clé USB. blunderDB <strong>ne fournit aucun service</strong> : ni dépôt, ni catalogue hébergé, ni compte. C'est une conséquence directe de sa conception : rien n'est jamais enregistré du côté de celui qui reçoit un fichier, et il n'y aurait donc rien à faire remonter à un service, même s'il en existait un.</p>
 <p>Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à quatre champs, tous déjà là :</p>
 <ul>

@@ -131,7 +131,7 @@ export default {
 <p><strong>Ein ohne Analyse importiertes Match erhält damit ein Performance Rating.</strong> Das betrifft ein online gespieltes Match oder eine Jellyfish-<code>.mat</code>-Datei, die niemand durch XG geschickt hat: blunderDB kannte die Stellungen und die gespielten Züge, aber keine Analyse sagte, was sie wert waren. Nach dem Lauf wird der tatsächlich gespielte Zug mit gammonNets Rangfolge verglichen, und die Differenz fließt in das PR, die Fehlerquote, die schlimmsten Entscheidungen und alle übrigen Kennzahlen ein, genau wie bei einem von XG analysierten Match. Der Vergleich erfindet nichts: der gespielte Zug stammt aus der Zugtabelle des Matches, beim Import geschrieben, ob die Datei nun eine Analyse trug oder nicht.</p>
 <p>Eine mit einer älteren Version analysierte Datenbank muss nicht neu bewertet werden: <code>blunderdb repair</code> berechnet die Spalten aus den bereits gespeicherten Analysen und Zügen neu und gibt diesen Matches ihr PR zurück (siehe repair).</p>
 <p>Ein ehrlicher Vorbehalt: eine Stellung wird durch ihre Struktur identifiziert, also trägt eine zweimal angetroffene Stellung — einmal gut, einmal schlecht gespielt — nur eine Differenz, die ihres ersten aufgezeichneten Vorkommens. Das ist nicht dieser Berechnung eigen: eine XG-Bibliothek hat genau dieselbe Form.</p>
-<h3>Überwachter Ordner</h3>
+<h4>Überwachter Ordner</h4>
 <p>Der Reiter <strong>Überwachter Ordner</strong> weist blunderDB an, während des Betriebs einen Ordner zu beobachten und jede Matchdatei zu importieren, die darin <strong>erscheint</strong>. Eine Sitzung in eXtreme Gammon spielen, zu blunderDB zurückkehren, und die Matches sind schon da.</p>
 <p>Nichts wird geraten. Solange kein Ordner benannt ist, gibt es keine Überwachung: blunderDB beginnt nicht, ein Verzeichnis zu lesen, weil es vermutet hat, wo Ihre Matches liegen. Die Schaltfläche <strong>Vorschlagen</strong> sieht an den üblichen Stellen dieses Rechners nach und schlägt eine nur vor, wenn sie wirklich existiert; sonst sagt sie es, und den Ordner zu benennen ist Ihre Sache.</p>
 <p>Drei Dinge sollte man wissen, bevor man das Kästchen aktiviert:</p>
@@ -182,7 +182,7 @@ export default {
 <p>Das Panel <strong>Kommentare</strong> (<em>STRG-P</em>) zeigt, ergänzt und bearbeitet die Kommentare zur aktuellen Stellung. Eine Stellung kann mehrere tragen: alle werden angezeigt, die neuesten zuerst. Aus XG-Dateien importierte Kommentare werden den passenden Stellungen automatisch zugeordnet. <em>STRG-P</em> drücken oder den Befehl <code>comment</code> ausführen, um das Panel ein- oder auszublenden.</p>
 <p>Jeder Kommentar aus einer Datei trägt eine <strong>Herkunftsmarkierung</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oder <em>importiert</em>, wenn die Herkunft nie festgehalten wurde). Von Ihnen geschriebene Kommentare tragen keine: das ist der Normalfall, und jede Zeile zu kennzeichnen wäre nur Lärm. Einen importierten Kommentar zu bearbeiten macht ihn zu Ihrem: nach der Änderung ist der Satz Ihrer.</p>
 <p>Diese Unterscheidung wirkt sich anderswo aus: das Löschen einer Partie zerstört keine Stellung mehr, auf die <strong>Sie</strong> etwas geschrieben hatten. Eine aus der Quelldatei übernommene Notiz verschwindet dagegen weiterhin mit der Partie, die sie mitgebracht hat.</p>
-<h3>Tags</h3>
+<h4>Tags</h4>
 <p>Ein <strong>Tag</strong> ist ein <code>#Wort</code> in einem Kommentar. Nichts deklariert es, keine Tabelle hält es, und das ist Absicht: das Vokabular ist Ihre eigene Prosa, und eine Deklaration zu verlangen, bevor man taggen darf, machte aus einer Gewohnheit Papierkram.</p>
 <p>Was fehlte, war die andere Hälfte: das Vokabular, das man sich aufgebaut hat, zu <strong>sehen</strong> und ein Tag anzuklicken, statt sich zu erinnern, wie man es geschrieben hat. Der Befehl <code>tags</code> oder die Schaltfläche <code>#</code> neben dem Eingabefeld öffnet das Vokabularfenster: die Tags dieser Datenbank, jedes mit der <strong>Zahl der Stellungen</strong>, die es tragen, anklickbar, um die entsprechende Suche zu starten. Unter der Liste stehen die empfohlenen Tags, die diese Datenbank noch nicht verwendet — ein Vokabular aus der Backgammon-Literatur (<code>#blitz</code>, <code>#prime</code>, <code>#holding</code>, <code>#backgame</code>, <code>#containment</code>, <code>#crunch</code>, <code>#ace-point</code>, <code>#timing</code>…), vorgeschlagen und nie vorgeschrieben: ein Tag, das nicht auf dieser Liste steht, ist genau so viel wert wie eines, das darauf steht.</p>
 <p>Beim Tippen bietet ein <code>#</code> die Tags an, die <strong>diese Datenbank</strong> bereits verwendet, dann die empfohlenen. Das verhindert, dass man an einem Tag <code>#back-game</code> und am nächsten <code>#backgame</code> schreibt — was sonst nichts auffangen würde.</p>
@@ -278,7 +278,7 @@ export default {
 <p>Turniere füllen sich beim Import von selbst. XG-, GnuBG- und BGF-Dateien nennen ihr Event; wird ein neues Match importiert, ordnet blunderDB es dem Turnier dieses Namens zu und legt dieses an, falls es noch nicht existiert. Datum und Ort des Turniers bleiben leer — hier werden sie eingetragen. Ein Match, das bereits in der Datenbank ist, wird nie umsortiert: seine Datei erneut zu importieren macht eine von Hand vorgenommene Einordnung nicht rückgängig.</p>
 <p>Die Spalte <strong>PR</strong> jedes Turniers zeigt den PR des <strong>Referenzspielers</strong> — also des Spielers, der in den meisten Partien des Turniers vorkommt (bei Gleichstand derjenige mit den meisten Entscheidungen). Der PR vermischt Ihr Spiel also nicht mit dem Ihrer Gegner: Bei Ihren eigenen Turnieren spiegelt er allein Ihre Leistung wider. Der Name des Referenzspielers erscheint als Tooltip, wenn Sie den Wert überfahren.</p>
 <h3>Stats-Panel</h3>
-<h3>Einführung</h3>
+<h4>Einführung</h4>
 <p>Das Panel <strong>Stats</strong> ermöglicht es, das eigene Spielniveau zu analysieren und den Fortschritt im Zeitverlauf anhand der in die Datenbank importierten Stellungen zu verfolgen. Es berechnet und zeigt die Kennzahlen <strong>PR</strong> (Performance Rating) und <strong>MWC cost</strong> (Match Winning Chance cost) für alle Stellungen oder eine gefilterte Teilmenge an.</p>
 <p>Das Stats-Panel ist besonders nützlich, um:</p>
 <ul>
@@ -288,7 +288,7 @@ export default {
 <li><strong>die Spieler der Datenbank untereinander vergleichen</strong>, eine Zeile je Spieler, über den Reiter Spieler — nützlich, um ein ganzes Turnier zu verfolgen;</li>
 <li><strong>direkt zu den betreffenden Stellungen zu gelangen</strong>, indem man auf eine beliebige Kennzahl klickt (Drill-down).</li>
 </ul>
-<h3>Öffnen des Panels</h3>
+<h4>Öffnen des Panels</h4>
 <p>Um das Stats-Panel zu öffnen:</p>
 <ul>
 <li>Drücken Sie <em>CTRL-D</em>.</li>
@@ -297,14 +297,14 @@ export default {
 <div class="admonition note">
 <p>Das Panel wird bei jeder Änderung des Filters automatisch aktualisiert. Bei einem einfachen Umschalten PR ↔ MWC werden die Statistiken nicht neu berechnet: Beide Kennzahlen werden vom Backend gleichzeitig berechnet.</p>
 </div>
-<h3>Filterleiste</h3>
+<h4>Filterleiste</h4>
 <p>Die Filterleiste am oberen Rand des Panels ermöglicht es, die Berechnung auf eine Teilmenge von Stellungen einzuschränken.</p>
-<h3>Spielerperspektive</h3>
+<h5>Spielerperspektive</h5>
 <p>Die Dropdown-Liste <strong>Spieler</strong> ermöglicht es, die Statistiken nach dem analysierten Spieler zu filtern. blunderDB wählt automatisch den Spieler aus, dessen Name am häufigsten in der Datenbank vorkommt — jederzeit änderbar.</p>
 <div class="admonition tip">
 <p>Ein Spielerwechsel führt nicht zu Datenverlust; es genügt, den vorherigen Spieler in der Liste erneut auszuwählen.</p>
 </div>
-<h3>Verfügbare Filter</h3>
+<h5>Verfügbare Filter</h5>
 <ul>
 <li><strong>Turnier(e)</strong> — Beschränkung auf ein oder mehrere Turniere. Es können mehrere Turniere gleichzeitig ausgewählt werden.</li>
 <li><strong>Datum</strong> — Zeitspanne (<em>Von</em> … <em>Bis</em>). Wenn nur das Startdatum angegeben ist, werden die neueren Stellungen einbezogen.</li>
@@ -315,7 +315,7 @@ export default {
 <div class="admonition note">
 <p>Die Filter werden in der Konfiguration von blunderDB (<code>config.yaml</code>) gespeichert und beim nächsten Start wiederhergestellt.</p>
 </div>
-<h3>Umschalter PR / MWC</h3>
+<h4>Umschalter PR / MWC</h4>
 <p>Die Schaltfläche <strong>PR / MWC</strong> am oberen Rand des Panels schaltet die in allen Tabs angezeigte Kennzahl um.</p>
 <p><strong>PR (Performance Rating)</strong></p>
 <blockquote>
@@ -364,13 +364,13 @@ export default {
 </div>
 </blockquote>
 <p>Das Umschalten PR ↔ MWC erfolgt sofort: Es wird keine Neuberechnung im Backend durchgeführt.</p>
-<h3>Der HTML-Bericht</h3>
+<h4>Der HTML-Bericht</h4>
 <p>Die Schaltfläche <strong>HTML-Bericht</strong> in der Kopfzeile des Panels erzeugt ein <strong>eigenständiges</strong> Dokument: eine einzige Datei, ohne externes Bild, ohne entferntes Stylesheet, ohne Skript. Die Diagramme sind eingebettetes SVG, gezeichnet vom selben Renderer wie das Brett auf dem Bildschirm, mit Ihrer Palette. Es öffnet sich in jedem Browser, reist per E-Mail und <strong>wird vom Browser selbst als PDF gedruckt</strong> — was es erspart, einen PDF-Generator mitzuliefern für etwas, das ohnehin jeder hat.</p>
 <p>Er enthält die Kennzahlen des aktuellen Bereichs (Stellungen, Matches, gezählte Entscheidungen, PR gesamt, Steine und Würfel), dann die <strong>zehn teuersten Entscheidungen</strong>, jede mit ihrem Diagramm, ihren Kosten, dem Match, aus dem sie stammt, und dem besten Zug, sofern eine Analyse ihn nennt.</p>
 <p>Der Bericht trägt den <strong>aktuellen Filter</strong> des Statistik-Panels. Ein Bericht, der seinen Bereich nicht nennt, ist ein Bericht, dessen Zahlen nichts bedeuten: setzen Sie den Filter — ein Turnier, ein Zeitraum, ein Spieler — bevor Sie ihn erzeugen.</p>
-<h3>Tab Dashboard</h3>
+<h4>Tab Dashboard</h4>
 <p>Der Tab <strong>Dashboard</strong> gibt eine zusammenfassende Übersicht über die Schlüsselkennzahlen.</p>
-<h3>Niveau-Karten</h3>
+<h5>Niveau-Karten</h5>
 <p>Drei Karten zeigen den PR (oder MWC) für:</p>
 <ul>
 <li><strong>PR gesamt</strong> — alle Entscheidungen (Steine + Doppler);</li>
@@ -381,37 +381,37 @@ export default {
 <div class="admonition note">
 <p>Die Gesamtzahl der Entscheidungen wird beim Überfahren am unteren Rand jeder Karte angezeigt.</p>
 </div>
-<h3>Gleitender PR über die letzten N Entscheidungen</h3>
+<h5>Gleitender PR über die letzten N Entscheidungen</h5>
 <p>Eine Zeile mit PR- (oder MWC-)Werten, die über die letzten <em>N</em> Entscheidungen berechnet werden (N = 5, 10, 50, 100, 250, 500, 1000), ermöglicht es, den jüngsten Trend zu messen. Die ausgegrauten Werte entsprechen einem N, das größer als die Anzahl der verfügbaren Entscheidungen ist.</p>
 <p>Ein Klick auf einen Wert lädt die entsprechenden letzten <em>N</em> Stellungen.</p>
-<h3>Top-Blunder</h3>
+<h5>Top-Blunder</h5>
 <p>Die Liste der 10 schlimmsten Fehler (oder MWC cost), sortiert nach absteigender Größe. Ein Klick auf eine Zeile lädt die betreffende Stellung in das Analyse-Panel.</p>
-<h3>Tab Progression</h3>
+<h4>Tab Progression</h4>
 <p>Der Tab <strong>Progression</strong> zeigt die Entwicklung des Niveaus im Zeitverlauf.</p>
 <p>Am Kopf des Reiters ein <strong>Ziel</strong>: „PR &lt; 5 binnen zwölf Wochen“. Ein Ziel, eine Frist und ein Trend, der sagt, wohin es geht — mehr nicht. Ein Ziel, das anfinge zu benoten, zu beglückwünschen oder zu erinnern, wäre eine andere Funktion, nicht diese.</p>
 <p>Die Schaltfläche <strong>Vorschlagen</strong> schlägt ein Ziel aus dem aktuellen Niveau vor: die Untergrenze des Bandes, in dem Sie sind, also den Eintritt ins nächste. „Ein bisschen besser“ vorzuschlagen wäre an nichts verankert; ein Band vorzuschlagen sagt etwas — von fortgeschritten zu Experte zu wechseln sieht man und erzählt man.</p>
 <p>Der <strong>Trend</strong> ist eine Ausgleichsgerade über das PR Ihrer Matches, auf die Frist hochgerechnet. Er weigert sich, unter drei Matches etwas zu sagen: eine Gerade zwischen zwei Punkten wäre eine Behauptung, die man nicht halten kann. Und der Satz sagt es jedes Mal — <em>ein Trend ist keine Vorhersage</em>.</p>
 <p>Das Ziel wird in den <strong>Metadaten der Datenbank</strong> gespeichert, nicht in der Konfiguration: es betrifft diese Bibliothek und folgt daher der Datei statt der Maschine. Keine Schemaänderung: <code>metadata</code> ist bereits eine Schlüssel/Wert-Tabelle, lesbar von <code>blunderdb info</code> wie vom Daemon.</p>
-<h3>Liniendiagramm pro Turnier</h3>
+<h5>Liniendiagramm pro Turnier</h5>
 <p>Ein Liniendiagramm zeigt den PR (oder MWC) für jedes Turnier (X-Achse: Reihenfolge der Turniere, Y-Achse: Wert der Kennzahl). Farbige Bänder verdeutlichen die Niveauschwellen.</p>
 <p>Ein Klick auf einen Punkt im Diagramm öffnet ein Kontextmenü mit zwei Optionen:</p>
 <ul>
 <li><strong>Turnier öffnen</strong> — öffnet das Turnier im Turnier-Panel.</li>
 <li><strong>Positionen öffnen</strong> — lädt alle Stellungen des Turniers in das Analyse-Panel.</li>
 </ul>
-<h3>Streudiagramm pro Match</h3>
+<h5>Streudiagramm pro Match</h5>
 <p>Ein Streudiagramm stellt jedes Match dar (X-Achse: Datum, Y-Achse: PR oder MWC). Die Größe des Punkts ist proportional zur Anzahl der Entscheidungen im Match.</p>
 <p>Ein Klick auf einen Punkt öffnet ein Kontextmenü:</p>
 <ul>
 <li><strong>Match öffnen</strong> — öffnet das Match im Matches-Panel.</li>
 <li><strong>Positionen öffnen</strong> — lädt alle Stellungen des Matches in das Analyse-Panel.</li>
 </ul>
-<h3>Tab Fehler</h3>
+<h4>Tab Fehler</h4>
 <p>Der Tab <strong>Fehler</strong> schlüsselt die Fehlerquellen auf.</p>
-<h3>Aufteilung nach Doppler-Aktion</h3>
+<h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>
 <p>Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden Stellungen, <strong>nur die mit einem Fehler</strong> (Drill-down).</p>
-<h3>Richtung der Doppler-Fehler</h3>
+<h5>Richtung der Doppler-Fehler</h5>
 <p>Die Aufteilung oben sagt, <em>wie viel</em> Doppler-Entscheidungen kosten; diese Tabelle sagt, in <em>welche Richtung</em> sie falsch liegen.</p>
 <p>Eine Doppler-Stellung trägt zwei Entscheidungen, die von zwei verschiedenen Spielern getroffen werden und hier in zwei Zeilen dargestellt sind:</p>
 <ul>
@@ -423,11 +423,11 @@ export default {
 <div class="admonition note">
 <p>Diese Tabelle zählt Entscheidungen, sie fällt kein Urteil. Ab welchem Abstand eine Tendenz einen Namen verdient, hängt von der Stichprobengröße und von einem Bezugspunkt ab — beides sind keine Daten der Engine.</p>
 </div>
-<h3>Aufteilung Checker / Cube</h3>
+<h5>Aufteilung Checker / Cube</h5>
 <p>Ein Vergleichsdiagramm stellt den PR der Steinzüge und der Doppler-Entscheidungen nebeneinander dar. Ein Klick auf einen Balken lädt die Stellungen der Teilmenge mit Fehler.</p>
-<h3>Histogramm der Fehlergrößen</h3>
+<h5>Histogramm der Fehlergrößen</h5>
 <p>Ein Histogramm verteilt die Fehler nach ihrer Größe in Millipunkten (mpt, Klassen: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Ein Klick auf einen Balken lädt die Stellungen der Klasse.</p>
-<h3>Registerkarte Aufschlüsselungen</h3>
+<h4>Registerkarte Aufschlüsselungen</h4>
 <p>Der Reiter <strong>Aufschlüsselungen</strong> teilt dieselben Entscheidungen, die die Gesamtzahlen zählen, entlang vier Achsen. Keine davon definiert neu, was als Entscheidung zählt: Das wäre ein zweiter PR unter demselben Namen.</p>
 <ul>
 <li><strong>Nach Spielphase</strong> — Eröffnung, Mittelspiel, Wettlauf, Auswürfeln. Das beantwortet „mein PR im Wettlauf gegenüber meinem PR im Kontakt“. Die Kennzeichnung wird aus dem Brett berechnet (siehe Such-Panel); eine Datenbank, deren Phasen nie berechnet wurden, ordnet alles unter <em>Nicht klassifiziert</em> ein, und <code>blunderdb repair</code> füllt sie.</li>
@@ -438,11 +438,11 @@ export default {
 <div class="admonition note">
 <p>Die Crawford-Partie wird nicht unterschieden: blunderDB hält dieses Merkmal an einer Stellung nicht fest. Die praktische Wirkung ist gering — eine Crawford-Partie hat überhaupt keine Dopplerentscheidung — aber die Auslassung ist real und wird besser aufgeschrieben als dem Raten überlassen.</p>
 </div>
-<h3>Lernen und reales Spiel</h3>
+<h4>Lernen und reales Spiel</h4>
 <p>Der Befehl <code>blunderdb list --type study --days 30</code> stellt drei Zahlen nebeneinander, Spielplan für Spielplan: wie viele <strong>verschiedene Stellungen</strong> im Zeitraum wiederholt wurden, wie der PR <strong>davor</strong> war, wie der PR <strong>seither</strong> ist.</p>
 <p>Drei Zahlen, und keine vierte. Es gibt <strong>keine Gewinnspalte und keinen Pfeil</strong>, denn nichts hier kontrolliert irgendetwas: Der Spieler kann stärkere Gegner getroffen, das Format gewechselt oder schlicht mehr Rennen gespielt haben. Die Zusammenschau ist Sache des Lesers; eine Spalte, die einen Effekt verkündet, würde eine Kausalität behaupten, die diese Daten nicht tragen. Die Zahlen selbst sind exakt.</p>
 <p>Wiederholungen werden als <strong>verschiedene Stellungen</strong> gezählt: Eine viermal im Monat wiederholte Karte ist eine gelernte Stellung, und die Wiederholungen mitzuzählen ließe einen Monat Pauken wie einen Monat Abdeckung aussehen. Die Entscheidungen des PR dagegen zählen alle — jede wurde einmal getroffen. Ein PR auf weniger als zehn Entscheidungen zeigt <code>—</code>, mit sichtbarer Stichprobe daneben.</p>
-<h3>Reiter Spieler</h3>
+<h4>Reiter Spieler</h4>
 <p>Die vier vorigen Registerkarten beschreiben <strong>einen</strong> Spieler; die Registerkarte <strong>Spieler</strong> vergleicht sie alle. Sie zeigt eine Zeile je Spieler der Datenbank, was dem Bedarf eines Organisators entspricht, der ein ganzes Turnier verfolgt statt eines Spielers.</p>
 <p>Spalten, der Reihe nach:</p>
 <table>
@@ -503,7 +503,7 @@ export default {
 <div class="admonition important">
 <p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren — die Quelldateien müssen neu importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
 </div>
-<h3>Aggregationsregel</h3>
+<h4>Aggregationsregel</h4>
 <div class="admonition important">
 <p>Der PR eines Turniers (oder einer beliebigen Teilmenge) wird nach der <strong>Summe/Summe</strong>-Regel berechnet — niemals als Durchschnitt der einzelnen Match-PRs.</p>
 <p>Formel:</p>
@@ -517,7 +517,7 @@ export default {
 <p>Summe/Summe-Regel: 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(korrekt)</em></p>
 <p>Die Summe/Summe-Regel ist die einzige, die mit unterschiedlichen Matchlängen korrekt umgeht (ein Match über 21 Punkte wiegt mehr als ein Match über 1 Punkt).</p>
 </div>
-<h3>MWC: Einschränkungen</h3>
+<h4>MWC: Einschränkungen</h4>
 <ul>
 <li>Der MWC cost wird aus der <strong>MET Kazaross-XG2</strong> berechnet, der De-facto-Referenztabelle im kompetitiven Backgammon. Die Ergebnisse sind nicht direkt mit Software vergleichbar, die andere METs verwendet. Es ist dieselbe Tabelle, gelesen über denselben Einstiegspunkt, die der eingebaute Evaluator für seine Dopplerentscheidungen beim Spielstand verwendet: Statistiken und Engine können hier nicht auseinanderlaufen. Sie liefert ihre eigenen Werte bis zu 25 zu spielenden Punkten auf jeder Seite; darüber hinaus wird sie durch eine wie bei GNUbg berechnete Zadeh-Tabelle bis 64 fortgesetzt.</li>
 <li><em>Money-Game</em>-Stellungen (ohne Matchstand) werden von der MWC-Berechnung <strong>ausgeschlossen</strong>. Wenn Ihre Datenbank viele Money-Game-Stellungen enthält, kann der MWC cost unterschätzt oder nicht verfügbar sein.</li>
@@ -544,13 +544,13 @@ export default {
 <p>Auch der <strong>Spielstand</strong> wird direkt auf dem Brett bearbeitet, wie im Bearbeitungsmodus: Linksklick auf das Score-Rechteck eines Spielers verringert die Zahl seiner noch benötigten Punkte, Rechtsklick erhöht sie. Verlässt man den <em>Money</em>-Spielstand (-1, -1) durch Bearbeiten nur einer Seite, wird die andere Seite automatisch auf denselben Wert gesetzt, statt einen inkonsistenten Spielstand stehen zu lassen. Bei einer Bearoff-Stellung im Regime <em>exakt</em> lässt der Wechsel von einem Money-Spielstand zu einem Matchstand die Gewinnwahrscheinlichkeit unverändert (ein Wert aus der Datenbank, gültig in jedem Bezugssystem), schaltet aber die angezeigte Equity und das Würfel-Urteil auf die des Regimes <em>bewertet</em> um — die exakte Tabelle ist konstruktionsbedingt Money und kann die beim Matchstand gestellte Frage nicht beantworten. Das Badge wird dann zusammengesetzt („exakt (Gewinn) · bewertet (Würfel)“), um dies ausdrücklich zu sagen.</p>
 <p>Die <strong>Würfel</strong> schließlich werden auf dieselbe Weise bearbeitet, und sie entscheiden, welche Frage gestellt wird: gelegte Würfel ergeben eine Steinentscheidung (die Liste der Kandidatenzüge), keine Würfel eine Doppler-Entscheidung. Ein Linksklick auf einen Würfel erhöht seinen Wert (6 springt auf 1), ein Rechtsklick verringert ihn (1 springt auf 6); ein Klick auf einen Würfel auf einem Brett ohne Würfel legt zwei auf einmal — ein einzelner Würfel wäre weder eine Steinentscheidung noch eine Doppler-Entscheidung. Ein Klick auf das Rechteck eines Spielers entfernt die Würfel, um eine Doppler-Frage zu stellen, und der nächste Klick auf einen Würfel legt sie wieder so hin, wie sie waren.</p>
 <p><em>RÜCKTASTE</em> oder ein Doppelklick außerhalb des Bretts löscht die Stellung: leeres Brett, Money-Spielstand (-1, -1), keine gelegten Würfel — panel-eigene Werte des Eval-Panels, die sich von denen des Bearbeitungsmodus unterscheiden (7 überall, Würfel 3-1), um mit dem übereinzustimmen, was das Panel standardmäßig anzeigt.</p>
-<h3>Dopplerwürfel-Matrix</h3>
+<h4>Dopplerwürfel-Matrix</h4>
 <p>Eine Dopplerwürfel-Entscheidung ist keine Eigenschaft des Bretts. Dieselben Steine, derselbe Pipstand, sind bei 2-away/4-away ein Doppel und bei 4-away/2-away keines; wer die Money-Antwort gelernt hat, hat eine Zelle eines Rasters gelernt. Das Eval-Panel zeigt die Zelle, die die Stellung trägt; die <strong>Dopplerwürfel-Matrix</strong> zeigt das ganze Raster.</p>
 <p>Der Befehl <code>cm</code> öffnet sie für die angezeigte Stellung. Jede Zelle gibt das Urteil bei einem Punktestand: die Zeile ist die Zahl der Punkte, die dem Spieler am Zug noch fehlen, die Spalte die des Gegners. Die vier Urteile lauten <em>KD</em> (kein Doppel), <em>DA</em> (Doppel, Annahme), <em>DP</em> (Doppel, Pass) und <em>ZG</em> (zu gut); eine von der Engine abgelehnte Zelle trägt ein Fragezeichen und nennt beim Überfahren den Grund sowie die drei Equities der Zelle. Drei Matchlängen stehen zur Wahl: 5, 7 und 9 Punkte.</p>
 <p>Der eigene Punktestand der Stellung wird durch den jeder Zelle ersetzt; ihr <strong>Dopplerwürfel</strong> bleibt erhalten. Das Raster beantwortet, bei welchem Punktestand man <em>diesen</em> Würfel drehen würde, nicht was eine zentrierte Stellung täte. Es gilt durchgehend nach Crawford: im Crawford-Spiel ist der Würfel nicht im Spiel, und eine Spalte „Sie dürfen nicht doppeln“ würde nichts über die Stellung sagen.</p>
 <p>Jede Zelle ist eine eigene Suche. Die Engine berücksichtigt den Punktestand — bei 2-away spielt sie nicht dieselbe Partie wie bei 7-away —, also wäre eine einzige, durch verschiedene Match-Equities gelesene Suche genau dort falsch, wo der Punktestand zählt. Das Raster erscheint zuerst mit 0-Ply und wird dann in der eingestellten Anzeigetiefe neu berechnet, sobald das Fenster ruht: dieselbe Eskalation wie im Rest des Panels, für ein 9-Punkte-Raster von etwa anderthalb Sekunden.</p>
 <p>Dasselbe Raster wird außerhalb der Oberfläche mit dem Befehl cubematrix der Kommandozeile berechnet.</p>
-<h3>Eine Stellung in das Eval-Panel bringen</h3>
+<h4>Eine Stellung in das Eval-Panel bringen</h4>
 <p>Das Panel öffnet sich standardmäßig mit einer Bearoff-Stellung, doch die Untersuchung geht meist von einer bereits vorliegenden Stellung aus. Zwei Gesten bringen sie dorthin:</p>
 <ul>
 <li><strong>Rechtsklick auf das Brett</strong>, in einem Analyse-Panel oder während der Navigation in einem Match, dann <em>Diese Position auswerten</em>: Das Eval-Panel öffnet sich direkt mit dieser Stellung, so wie sie angezeigt wird. Das Kontextmenü erscheint weder im Eval-Panel noch im Suchpanel, wo die rechte Maustaste bereits zum Setzen der Steine der anderen Farbe dient.</li>
@@ -577,7 +577,7 @@ export default {
 <p><strong>Das Brett des Panels ist ein Entwurf, und es wird gemerkt.</strong> Wer das Eval-Panel verlässt und zurückkehrt, findet die Stellung wieder, auf der er es verlassen hat, nicht das voreingestellte Ausspielbrett: dieses wird nur beim ersten Öffnen in einer Sitzung gezeigt. Eine aus der Datenbank ins Panel geschickte Stellung sticht diese Erinnerung, und <em>RÜCKTASTE</em> stellt jederzeit das Standardbrett wieder her. Dabei wird nichts in die Datenbank geschrieben — der Entwurf hat keine Stellungsidentität, und seine Bewertung wird bei der Ankunft neu berechnet statt mitgeführt.</p>
 <p><strong>Challenge-Modus.</strong> Das Kontrollkästchen <em>Challenge</em> im Badge-Band aktiviert einen Trainingsmodus: Bei jeder Änderung der Stellung werden die Werte dreier Zonen verdeckt (ersetzt durch „···“); ein Klick auf eine Zone deckt nur diese Zone auf. Ohne Würfel sind das die Zeile des unteren Spielers, die Zeile des oberen Spielers und die Doppler-Entscheidung — die Δ-Zeile erscheint erst, wenn beide Spielerzeilen aufgedeckt sind. Der Entscheidungsblock behält dabei seine drei Zeilen: Es sind seine Werte, sein Urteil und die Hervorhebung der besten Option, die verschwinden, da sich die Übung sonst durch die Suche nach der fetten Zeile lösen ließe. Sind auf einer Rennstellung Würfel gelegt, wird die EPC-Zeile jedes Spielers wie zuvor verdeckt, doch die dritte Zone umfasst dann die Zeile <em>vor dem Wurf</em> und die Zugliste <strong>zusammen</strong>: Da die Liste vom besten zum schlechtesten Zug sortiert ist, würde ihr teilweises Aufdecken bereits die Antwort verraten. Sind Würfel außerhalb einer Rennstellung gelegt, umfasst diese eine Zone allein alles, was das Panel anzeigt. So kann man üben, den EPC jeder Seite zu schätzen und sich dann zum Doppler oder zum zu spielenden Zug zu äußern, bevor man nachprüft. Die Einstellung wird gespeichert.</p>
 <p>Um das Eval-Panel zu schließen, drücken Sie <em>CTRL-E</em> oder wechseln Sie zu einem anderen Tab.</p>
-<h3>Methodik und Annahmen des Eval-Panels</h3>
+<h4>Methodik und Annahmen des Eval-Panels</h4>
 <p>Jeder vom Panel angezeigte Wert beruht auf präzisen Annahmen, die hier erschöpfend dargelegt werden.</p>
 <p><strong>Bereich.</strong> Die <em>Rennzone</em> — Gewinnwahrscheinlichkeit und Doppler-Urteil — behandelt nur reine Auswürfelstellungen: alle verbleibenden Steine beider Spieler im eigenen Heimfeld. Die Stellung wird <em>vor dem Wurf</em> bewertet; gesetzte Würfel werden ignoriert.</p>
 <p>Die <strong>EPC-Blöcke</strong> gehen ihrerseits weiter: eine Seite bekommt ihren EPC, sobald ihr entferntester Stein in die geladene einseitige Tabelle passt. Mit der Standardtabelle (sechs Punkte) ist das die alte Heimfeld-Regel; mit einer Tabelle mit acht Punkten, im Reiter <em>Bearoff</em> berechnet, wird eine Seite mit einem Stein auf dem 8-Punkt behandelt wie jede andere. Nichts wird extrapoliert: ein Stein einen Punkt zu weit hat schlicht keinen EPC, genau wie ein Stein auf dem 7-Punkt zuvor keinen hatte. Ist die antwortende Tabelle nicht die mit sechs Punkten, erscheint ihr Name in der Ecke des Rennblocks („OS-08“) — ohne ihn läse man standardmäßig „sechs“ und hielte die Seite für ganz zu Hause.</p>
@@ -638,7 +638,7 @@ export default {
 <p>Die Frage IST die gezeigte Stellung: Das Brett ist das der Anwendung, und die Leiste darüber trägt nur die Frage, die Eingabe und die Korrektur. Die Antwort wird auf der Tastatur eingegeben und bestätigt (<em>Enter</em> prüft und geht dann weiter; <em>Esc</em> verlässt die Sitzung).</p>
 <p>Die Toleranz hängt von der Übung ab und wird genannt statt erraten: Die Pip-Zählung hat <strong>keine</strong> — eine auf einen Pip genaue Addition ist eine falsche Addition — der EPC erlaubt einen halben Pip, der Annahmepunkt zwei Prozentpunkte. Am Ende zeigt die Sitzung die Zahl der richtigen Antworten und die <strong>mittlere</strong> Zeit je Frage.</p>
 <p>Nur diese Zusammenfassung wird gespeichert, in den Metadaten der Datenbank: Die Sitzung hält keine Spur Frage für Frage fest, und nichts wird geschrieben, solange sie nicht beendet ist. Ein Abbruch auf halbem Weg speichert also nichts.</p>
-<h3>Quiz: der Trainings-PR</h3>
+<h4>Quiz: der Trainings-PR</h4>
 <p><code>train quiz</code> stellt eine vierte Art von Frage. Das Anki-Panel lässt auswendig lernen; das Quiz <strong>prüft</strong>. Fünf bereits ausgewertete Stellungen werden aus der durchblätterten Liste gezogen, und es ist zu entscheiden:</p>
 <ul>
 <li>bei einer Zugentscheidung den Zug auf der Tastatur in Notation eingeben (<code>13/7 8/7</code>);</li>
@@ -655,7 +655,7 @@ export default {
 <div class="admonition note">
 <p>Keiner von beiden verfolgt, was aus der Datei wird. blunderDB <strong>zeichnet auf der Empfängerseite nichts auf</strong>: Eine gekennzeichnete Datenbank zu öffnen ist genau wie jede andere zu öffnen, und nirgends wird festgehalten, wer sie wann geöffnet hat oder woher ihr Inhalt stammt.</p>
 </div>
-<h3>Eine Datenbank mit ihrer Herkunft kennzeichnen</h3>
+<h4>Eine Datenbank mit ihrer Herkunft kennzeichnen</h4>
 <p>Das Exportfenster kommt mit einer einzigen Ansicht aus: dem Formular und einer Fortschrittsanzeige, die sich während des Schreibens darüberlegt. Es schließt sich nach Abschluss von selbst, und das Ergebnis erscheint in der Statusleiste.</p>
 <p>Drei Punkte verdienen Beachtung:</p>
 <ul>
@@ -670,7 +670,7 @@ export default {
 <li><strong>Hinweis</strong>, optional — Nutzungsbedingungen, eine Kontaktadresse, die Bitte, die Datei nicht weiterzugeben.</li>
 </ul>
 <p>Die Kennzeichnung wird mit Ihrer Ausstelleridentität signiert. Sie ist damit <strong>unverfälschbar und nicht nachahmbar</strong>: Niemand kann sie verändern oder eine in Ihrem Namen erzeugen. Sie ist dagegen <strong>nicht unlöschbar</strong> — die verteilte Datei ist eine gewöhnliche SQLite-Datenbank, und blunderDB ist freie Software. Sie verhindert nichts: Sie sagt, woher die Datei kommt.</p>
-<h3>Ausstelleridentität</h3>
+<h4>Ausstelleridentität</h4>
 <p>Die Kennzeichnungen werden mit Ihrer <strong>Ausstelleridentität</strong> signiert, die beim ersten Kennzeichnen einer Datei von selbst angelegt wird; es ist nichts einzurichten. Sie gehört zu einer Person und nicht zu einer Datenbank: Alle Ihre Dateien tragen denselben öffentlichen Fingerabdruck der Form <code>A3F1-9C24-7B05-E1D8</code>.</p>
 <p>Sie können diesen Fingerabdruck Ihren Empfängern mitteilen, damit sie prüfen können, dass eine Datei tatsächlich von Ihnen stammt. Die Identität lässt sich als einzelne Datei (Endung <code>.bdbid</code>) von einem Rechner auf den anderen mitnehmen, auf Wunsch durch eine Passphrase geschützt. <strong>Mit dieser Datei kann in Ihrem Namen signiert werden: Geben Sie sie nicht weiter.</strong></p>
 <p>In den Einstellungen (Zahnradsymbol in der Werkzeugleiste) zeigt die Registerkarte <em>Ausstelleridentität</em> Ihren Namen und Ihren Fingerabdruck an und bietet <em>Identität speichern…</em>, <em>Identität laden…</em> und <em>Neu erzeugen…</em> an.</p>
@@ -679,7 +679,7 @@ export default {
 <p>Was Sie nach einem solchen Verlust schützt, ist keine Software: Es ist, Ihren neuen Fingerabdruck zu veröffentlichen und den alten gegenüber Ihren Empfängern für ungültig zu erklären.</p>
 <p>Das Neuerzeugen überschreibt den aktuellen Schlüssel; blunderDB bietet an, ihn vor dem Ersetzen zu speichern.</p>
 </div>
-<h3>Eine Datenbank mit einem Passwort schützen</h3>
+<h4>Eine Datenbank mit einem Passwort schützen</h4>
 <p>Das Passwort wird verdeckt eingegeben, hier wie beim Öffnen einer geschützten Datei; das Augensymbol zeigt es an, <strong>solange es gedrückt gehalten wird</strong>, und verdeckt es wieder, sobald man loslässt.</p>
 <p>Ein Häkchen bei <strong>Diese Datei mit einem Passwort schützen</strong> erzeugt eine Datei mit der Endung <code>.dbx</code> — auch dann, wenn Sie im Speichern-Dialog einen Namen auf <code>.db</code> gewählt hatten, denn dieser Dialog öffnet sich, bevor nach dem Passwort gefragt wird. Zum Öffnen verwenden Sie das gewohnte Öffnen einer Datenbank: Der Auswahldialog akzeptiert sowohl <code>.db</code> als auch <code>.dbx</code>. blunderDB fragt dann nach dem Passwort und legt daneben eine gewöhnliche Datenbank an; danach wird nichts mehr abgefragt.</p>
 <p>Das Fenster bietet an, <strong>die geschützte Datei nach dem Öffnen zu löschen</strong>: Andernfalls behalten Sie denselben Inhalt unter zwei Namen. Das Kästchen ist standardmäßig nicht angehakt — die geschützte Datei bleibt Ihnen erhalten, wenn Sie sie weitergeben wollen — und gelöscht wird erst nach einem erfolgreichen Öffnen.</p>
@@ -689,7 +689,7 @@ export default {
 <p>Das Passwort wird bei <strong>jedem</strong> Öffnen geprüft, auch wenn die Datei auf diesem Rechner schon einmal geöffnet wurde.</p>
 <p>Technisch wird die Datenbank mit <strong>AES-256 im GCM-Modus</strong> verschlüsselt, mit einem Schlüssel, der per <strong>Argon2id</strong> (64 MiB Speicher, 3 Durchläufe, 4 Threads) aus dem Passwort abgeleitet wird, und einem zufälligen, für jede Datei eigenen Salt. Der GCM-Modus authentifiziert das Ganze: Ein falsches Passwort wird als solches erkannt, ebenso jede Veränderung der verschlüsselten Datei — man erhält nie stillschweigend eine beschädigte Datenbank.</p>
 <p>Der Kopf der geschützten Datei bleibt <strong>unverschlüsselt</strong>: Ihre Herkunft ist auch ohne Passwort lesbar.</p>
-<h3>Die Herkunft einer Datei lesen</h3>
+<h4>Die Herkunft einer Datei lesen</h4>
 <p>Öffnen Sie in der Anwendung die Datei und blenden Sie das Panel <strong>Metadaten</strong> ein (Befehl <code>meta</code>). Am Kopf des Panels erscheint schreibgeschützt ein Abschnitt <strong>Herkunft</strong>, der angibt, was eingetragen wurde, von wem, wann, und wie es um die Signatur steht:</p>
 <ul>
 <li>„✓ Signatur geprüft — von Ihnen gekennzeichnet“: Die Datei trägt Ihre Kennzeichnung, unversehrt;</li>
@@ -698,7 +698,7 @@ export default {
 </ul>
 <p>Bei einer gewöhnlichen Datenbank erscheint dieser Abschnitt nicht.</p>
 <p>Auf der Kommandozeile zeigt <code>blunderdb info --db datei.db</code> die Herkunft und den Zustand der Signatur an, <strong>ohne jemals in die Datei zu schreiben</strong>. Der Befehl funktioniert auch bei einer geschützten Datei, ohne das Passwort. Siehe <code>CLI_USAGE.md</code> für die Optionen <code>--watermark</code> und <code>--password</code> von <code>export</code> sowie für <code>identity</code> und <code>open</code>.</p>
-<h3>Eine Datenbank für andere veröffentlichen</h3>
+<h4>Eine Datenbank für andere veröffentlichen</h4>
 <p>Eine markierte Datenbank wird wie jede andere Datei verteilt — E-Mail, eigene Website, USB-Stick. blunderDB <strong>bietet keinen Dienst</strong>: kein Repository, keinen gehosteten Katalog, kein Konto. Das folgt unmittelbar aus seiner Bauart: auf der Seite dessen, der eine Datei erhält, wird nie etwas aufgezeichnet, es gäbe also nichts an einen Dienst zu melden, selbst wenn es einen gäbe.</p>
 <p>Was eine veröffentlichte Datenbank für andere brauchbar macht, hängt an vier Feldern, die alle schon da sind:</p>
 <ul>

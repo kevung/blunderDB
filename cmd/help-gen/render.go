@@ -144,7 +144,13 @@ func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) 
 			if err != nil {
 				return "", err
 			}
-			write("<h3>%s</h3>\n", escapeHTML(title))
+			// The manual nests three deep (a panel, its tabs, their parts);
+			// rendering every one as <h3> flattened "Onglet Joueurs" onto
+			// "Panneau Stats" and lost which belonged to which. h3 for the
+			// top level, then h4, h5, floored there — deeper than that the
+			// document would need a rewrite, not a smaller heading.
+			level := min(v.level+1, 5)
+			write("<h%d>%s</h%d>\n", level, escapeHTML(title), level)
 		case paragraph:
 			html, err := g.trInline(v.text, tr)
 			if err != nil {

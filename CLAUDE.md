@@ -194,12 +194,22 @@ with its msgid count × 8 in the discussion that proposes it, and is not the
 first answer to a persona's "what is missing" — a sentence on an existing
 page, or a `:ref:` to where it is already said, usually is.
 
-**The in-app help is generated from these same sources.** `raccourcis.rst` and
-`cmd_mode.rst` are the only statement of the keyboard shortcuts and of the command
-line; `frontend/src/i18n/help/*.js` is a build artefact rendered from them and their
-eight catalogues (ADR-0034). After changing either file — or a prose fragment under
-`frontend/src/i18n/help/prose/` — run `make help`; `go test ./cmd/help-gen` fails
-while a bundle is stale, and the bundles are never edited by hand.
+**The in-app help is generated from these same sources.** `manuel.rst`,
+`raccourcis.rst` and `cmd_mode.rst` are the only statement of the manual, the
+keyboard shortcuts and the command line; `frontend/src/i18n/help/*.js` is a build
+artefact rendered from them and their eight catalogues (ADR-0034). After changing
+any of the three — or the About fragment under `frontend/src/i18n/help/prose/` —
+run `make help`; `go test ./cmd/help-gen` fails while a bundle is stale, and the
+bundles are never edited by hand.
+
+**A command is written down where a user looks for it, not only where it works.**
+`scripts/doc-inventory.sh` compares `handlers()` and the `<cmd>Handlers()` tables
+against `blunderdb help`, the hand-written sections of `CLI_USAGE.md` and the
+sub-command lists of `cli.rst`; the `release-blunderdb` skill blocks on it. It
+covers only what no test holds — `internal/cli/cli_doc_sync_test.go`, the three
+frontend `*.sync.test.js` and `go test ./cmd/help-gen` hold the rest, and its
+header names them so nobody adds a second copy. Fix a gap it reports by writing
+the missing text, never by widening the script.
 
 **Document size rule.** Plans, task sheets, and design notes stay ≤500 lines each.
 Split long documents into a README index + per-topic files.

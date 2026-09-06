@@ -131,7 +131,7 @@ export default {
 <p><strong>Ilman analyysiä tuotu ottelu saa näin PR-luvun.</strong> Näin on verkossa pelatun ottelun tai Jellyfish-<code>.mat</code>-tiedoston laita, kun kukaan ei ole ajanut sitä XG:n läpi: blunderDB tunsi asemat ja pelatut siirrot, mutta mikään analyysi ei kertonut mitä ne olivat arvoltaan. Erän ajon jälkeen todella pelattua siirtoa verrataan gammonNetin järjestykseen, ja ero syöttää PR:n, virheprosentin, pahimmat päätökset ja kaikki muut mittarit, aivan kuten XG:n analysoimassa ottelussa. Vertailu ei keksi mitään: pelattu siirto tulee ottelun omasta siirtotaulusta, joka kirjoitetaan tuonnissa riippumatta siitä kantoiko tiedosto analyysin.</p>
 <p>Tätä vanhemmalla versiolla analysoitua tietokantaa ei tarvitse arvioida uudelleen: <code>blunderdb repair</code> laskee sarakkeet uudelleen jo tallennetuista analyyseistä ja siirroista ja palauttaa noille otteluille niiden PR:n (katso repair).</p>
 <p>Rehellinen varaus: asema tunnistetaan rakenteestaan, joten kahdesti kohdattu asema — kerran hyvin, kerran huonosti pelattu — kantaa vain yhden eron, ensimmäisen kirjatun esiintymänsä eron. Tämä ei ole tälle laskennalle ominaista: XG-kirjastolla on täsmälleen sama muoto.</p>
-<h3>Valvottu kansio</h3>
+<h4>Valvottu kansio</h4>
 <p><strong>Valvottu kansio</strong> -välilehti pyytää blunderDB:tä katsomaan kansiota käydessään ja tuomaan jokaisen ottelutiedoston, joka siihen <strong>ilmestyy</strong>. Pelaat istunnon eXtreme Gammonissa, palaat blunderDB:hen, ja ottelut ovat jo siellä.</p>
 <p>Mitään ei arvata. Ennen kuin kansio on nimetty, valvontaa ei ole: blunderDB ei ryhdy lukemaan hakemistoa siksi, että se arveli mistä ottelusi löytyvät. <strong>Ehdota</strong>-painike katsoo tämän koneen tavanomaisia paikkoja ja tarjoaa jonkin vain jos se todella on olemassa; muuten se sanoo niin, ja kansion nimeäminen jää sinulle.</p>
 <p>Kolme asiaa kannattaa tietää ennen ruudun rastittamista:</p>
@@ -182,7 +182,7 @@ export default {
 <p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen asemaan liitettyjä kommentteja. Asemalla voi olla useita: kaikki näytetään, uusimmasta vanhimpaan. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin asemiin. Paina <em>CTRL-P</em> tai suorita komento <code>comment</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <p>Jokainen tiedostosta tullut kommentti kantaa <strong>alkuperämerkintää</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, tai <em>tuotu</em>, kun alkuperää ei koskaan tallennettu). Itse kirjoittamasi kommentit eivät kanna sellaista: se on tavallinen tapaus, ja jokaisen rivin merkitseminen olisi vain kohinaa. Tuodun kommentin muokkaaminen tekee siitä sinun: muokkauksen jälkeen lause on sinun.</p>
 <p>Ero näkyy muuallakin: ottelun poistaminen ei enää tuhoa asemaa, johon <strong>sinä</strong> olit kirjoittanut. Lähdetiedostosta poimittu muistiinpano sen sijaan katoaa yhä sen ottelun mukana, joka sen toi.</p>
-<h3>Tunnisteet</h3>
+<h4>Tunnisteet</h4>
 <p><strong>Tunniste</strong> on kommenttiin kirjoitettu <code>#sana</code>. Mikään ei ilmoita sitä, mikään taulu ei säilytä sitä, ja se on tarkoituksellista: sanasto on sinun omaa proosaasi, ja ilmoituksen vaatiminen ennen tunnisteen käyttöä muuttaisi tavan paperityöksi.</p>
 <p>Puuttui toinen puoli: <strong>nähdä</strong> se sanasto, jonka on itselleen rakentanut, ja napsauttaa tunnistetta sen sijaan että muistelisi miten sen kirjoitti. Komento <code>tags</code> tai kirjoituskentän vieressä oleva <code>#</code>-painike avaa sanastoikkunan: tämän tietokannan tunnisteet, kukin sitä kantavien <strong>asemien määrän</strong> kanssa, napsautettavina vastaavan haun käynnistämiseksi. Listan alla ovat suositellut tunnisteet, joita tämä tietokanta ei vielä käytä — backgammon-kirjallisuudesta poimittu sanasto (<code>#blitz</code>, <code>#prime</code>, <code>#holding</code>, <code>#backgame</code>, <code>#containment</code>, <code>#crunch</code>, <code>#ace-point</code>, <code>#timing</code>…), ehdotettu eikä koskaan pakotettu: listalta puuttuva tunniste on täsmälleen yhtä arvokas kuin listalla oleva.</p>
 <p>Kirjoittaessa <code>#</code> ehdottaa niitä tunnisteita, joita <strong>tämä tietokanta</strong> jo käyttää, ja sitten suositeltuja. Juuri se estää kirjoittamasta <code>#back-game</code> yhtenä päivänä ja <code>#backgame</code> seuraavana — mitä mikään muu ei huomaisi.</p>
@@ -278,7 +278,7 @@ export default {
 <p>Turnaukset täyttyvät itsestään tuonnin yhteydessä. XG-, GnuBG- ja BGF-tiedostot nimeävät tapahtumansa; kun uusi ottelu tuodaan, blunderDB sijoittaa sen tämännimiseen turnaukseen ja luo turnauksen, jos sitä ei vielä ole. Turnauksen päivämäärä ja paikka jäävät tyhjiksi — ne täytetään täällä. Tietokannassa jo olevaa ottelua ei koskaan siirretä: sen tiedoston tuominen uudelleen ei kumoa käsin tehtyä järjestelyä.</p>
 <p>Kunkin turnauksen <strong>PR</strong>-sarake näyttää <strong>viitepelaajan</strong> PR-arvon — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
 <h3>Stats-paneeli</h3>
-<h3>Johdanto</h3>
+<h4>Johdanto</h4>
 <p><strong>Stats-paneeli</strong> mahdollistaa oman pelitason analysoinnin ja kehityksen seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se laskee ja näyttää tunnusluvut <strong>PR</strong> (<em>Performance Rating</em>) ja <strong>MWC cost</strong> (Match Winning Chance cost) kaikille asemille tai suodatetulle osajoukolle.</p>
 <p>Stats-paneeli on erityisen hyödyllinen seuraaviin tarkoituksiin:</p>
 <ul>
@@ -288,7 +288,7 @@ export default {
 <li><strong>vertailla tietokannan pelaajia</strong> keskenään, yksi rivi pelaajaa kohden, Pelaajat-välilehdellä — kätevä kokonaisen kilpailun seuraamiseen;</li>
 <li><strong>siirtyminen suoraan asiaankuuluviin asemiin</strong> napsauttamalla mitä tahansa tunnuslukua (drill-down).</li>
 </ul>
-<h3>Paneelin avaaminen</h3>
+<h4>Paneelin avaaminen</h4>
 <p>Avaa Stats-paneeli näin:</p>
 <ul>
 <li>Paina <em>CTRL-D</em>.</li>
@@ -297,14 +297,14 @@ export default {
 <div class="admonition note">
 <p>Paneeli päivittyy automaattisesti aina, kun suodatinta muutetaan. Se ei laske tilastoja uudelleen pelkän PR ↔ MWC -vaihdon yhteydessä: backend laskee molemmat mittarit samanaikaisesti.</p>
 </div>
-<h3>Suodatinpalkki</h3>
+<h4>Suodatinpalkki</h4>
 <p>Paneelin yläosassa oleva suodatinpalkki mahdollistaa laskennan rajaamisen asemien osajoukkoon.</p>
-<h3>Pelaajanäkökulma</h3>
+<h5>Pelaajanäkökulma</h5>
 <p>Pudotusvalikko <strong>Pelaaja</strong> suodattaa tilastot analysoitavan pelaajan mukaan. blunderDB valitsee automaattisesti pelaajan, jonka nimi esiintyy tietokannassa useimmin — vaihdettavissa milloin tahansa.</p>
 <div class="admonition tip">
 <p>Pelaajan vaihtaminen ei aiheuta tietojen menetystä; valitse vain aiempi pelaaja uudelleen luettelosta.</p>
 </div>
-<h3>Saatavilla olevat suodattimet</h3>
+<h5>Saatavilla olevat suodattimet</h5>
 <ul>
 <li><strong>Turnaukset</strong> — rajaus yhteen tai useampaan turnaukseen. Useita turnauksia voi valita samanaikaisesti.</li>
 <li><strong>Päivämäärät</strong> — aikaväli (<em>Alkaen</em> … <em>Asti</em>). Jos vain alkupäivä on asetettu, uudemmat asemat sisällytetään.</li>
@@ -315,7 +315,7 @@ export default {
 <div class="admonition note">
 <p>Suodattimet tallennetaan blunderDB:n asetuksiin (<code>config.yaml</code>) ja palautetaan seuraavalla käynnistyskerralla.</p>
 </div>
-<h3>PR / MWC -vaihto</h3>
+<h4>PR / MWC -vaihto</h4>
 <p>Paneelin yläosassa oleva <strong>PR / MWC</strong> -painike vaihtaa kaikissa välilehdissä näytettävän mittarin.</p>
 <p><strong>PR (Performance Rating)</strong></p>
 <blockquote>
@@ -364,13 +364,13 @@ export default {
 </div>
 </blockquote>
 <p>PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa.</p>
-<h3>HTML-raportti</h3>
+<h4>HTML-raportti</h4>
 <p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>
 <p>Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut päätökset, kokonais-, siirto- ja kuutio-PR), sitten <strong>kymmenen kalleinta päätöstä</strong>, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, ja parhaan siirron kun analyysi sen antaa.</p>
 <p>Raportti kantaa Tilastot-paneelin <strong>nykyistä suodatinta</strong>. Raportti joka ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen.</p>
-<h3>Dashboard-välilehti</h3>
+<h4>Dashboard-välilehti</h4>
 <p><strong>Dashboard</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
-<h3>Tasokortit</h3>
+<h5>Tasokortit</h5>
 <p>Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:</p>
 <ul>
 <li><strong>PR Yhteensä</strong> — kaikki päätökset (nappulasiirrot + kuutio);</li>
@@ -381,37 +381,37 @@ export default {
 <div class="admonition note">
 <p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
 </div>
-<h3>Liukuva PR viimeisten N päätöksen perusteella</h3>
+<h5>Liukuva PR viimeisten N päätöksen perusteella</h5>
 <p>Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten <em>N</em> päätöksen perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä.</p>
 <p>Arvon napsauttaminen lataa vastaavat viimeiset <em>N</em> asemaa.</p>
-<h3>Top blunders</h3>
+<h5>Top blunders</h5>
 <p>Luettelo 10 pahimmasta virheestä (tai MWC cost), lajiteltuna suuruuden mukaan laskevasti. Rivin napsauttaminen lataa kyseisen aseman analyysipaneeliin.</p>
-<h3>Progression-välilehti</h3>
+<h4>Progression-välilehti</h4>
 <p><strong>Progression</strong>-välilehti esittää tason kehityksen ajan myötä.</p>
 <p>Välilehden yläreunassa <strong>tavoite</strong>: ”PR &lt; 5 kahdessatoista viikossa”. Tavoite, määräaika ja suuntaus joka kertoo mihin ollaan menossa — ei muuta. Tavoite joka alkaisi arvostella, onnitella tai muistuttaa olisi eri toiminto, ei tämä.</p>
 <p><strong>Ehdota</strong>-painike ehdottaa tavoitetta nykytasosta: sen vyöhykkeen alarajaa jossa olet, eli seuraavaan siirtymistä. ”Vähän parempaa” ehdottaminen ei ankkuroituisi mihinkään; portaan ehdottaminen sanoo jotain — keskitasolta edistyneeksi siirtyminen näkyy ja kerrotaan.</p>
 <p><strong>Suuntaus</strong> on pienimmän neliösumman sovitus otteluidesi PR-lukuihin, projisoituna määräaikaan. Se kieltäytyy lausumasta alle kolmen ottelun: suoran vetäminen kahden pisteen välille olisi väite jota ei voi pitää. Ja lause sanoo sen joka kerta — <em>suuntaus ei ole ennuste</em>.</p>
 <p>Tavoite tallennetaan <strong>tietokannan metatietoihin</strong>, ei asetuksiin: se koskee sitä kirjastoa, joten se seuraa tiedostoa eikä konetta. Ei skeemamuutosta: <code>metadata</code> on jo avain/arvo-taulu, jonka lukevat sekä <code>blunderdb info</code> että demoni.</p>
-<h3>Turnauskohtainen viivakaavio</h3>
+<h5>Turnauskohtainen viivakaavio</h5>
 <p>Viivakaavio näyttää PR:n (tai MWC:n) jokaiselle turnaukselle (X-akseli: turnausten järjestys, Y-akseli: mittarin arvo). Värivyöhykkeet havainnollistavat tasorajat.</p>
 <p>Kaavion pisteen napsauttaminen avaa pikavalikon, jossa on kaksi vaihtoehtoa:</p>
 <ul>
 <li><strong>Avaa turnaus</strong> — avaa turnauksen Turnaukset-paneelissa.</li>
 <li><strong>Avaa asemat</strong> — lataa turnauksen kaikki asemat analyysipaneeliin.</li>
 </ul>
-<h3>Ottelukohtainen hajontakaavio</h3>
+<h5>Ottelukohtainen hajontakaavio</h5>
 <p>Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään.</p>
 <p>Pisteen napsauttaminen avaa pikavalikon:</p>
 <ul>
 <li><strong>Avaa ottelu</strong> — avaa ottelun Ottelut-paneelissa.</li>
 <li><strong>Avaa asemat</strong> — lataa ottelun kaikki asemat analyysipaneeliin.</li>
 </ul>
-<h3>Erreurs-välilehti</h3>
+<h4>Erreurs-välilehti</h4>
 <p><strong>Erreurs</strong>-välilehti erittelee virheiden lähteet.</p>
-<h3>Jakauma kuutiotoimen mukaan</h3>
+<h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
-<h3>Kuutiovirheiden suunta</h3>
+<h5>Kuutiovirheiden suunta</h5>
 <p>Yllä oleva jakauma kertoo, <em>paljonko</em> kuutiopäätökset maksavat; tämä taulukko kertoo, <em>mihin suuntaan</em> ne menevät pieleen.</p>
 <p>Kuutioasemaan liittyy kaksi eri pelaajan tekemää päätöstä, jotka esitetään tässä kahtena rivinä:</p>
 <ul>
@@ -423,11 +423,11 @@ export default {
 <div class="admonition note">
 <p>Tämä taulukko laskee päätöksiä, se ei tuomitse. Se, mistä erosta alkaen taipumus ansaitsee nimen, riippuu otoskoosta ja vertailukohdasta, eivätkä ne ole moottorin tietoja.</p>
 </div>
-<h3>Checker / Cube -vertailu</h3>
+<h5>Checker / Cube -vertailu</h5>
 <p>Vertailukaavio asettaa rinnakkain pelinappulasiirtojen ja kuutiopäätösten PR:n. Pylvään napsauttaminen lataa osajoukon asemat, joissa on virhe.</p>
-<h3>Virheiden suuruusjakauman histogrammi</h3>
+<h5>Virheiden suuruusjakauman histogrammi</h5>
 <p>Histogrammi jakaa virheet niiden suuruuden mukaan millipisteinä (mpt, luokat: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Pylvään napsauttaminen lataa luokan asemat.</p>
-<h3>Erittelyt-välilehti</h3>
+<h4>Erittelyt-välilehti</h4>
 <p><strong>Erittelyt</strong>-välilehti jakaa samat päätökset, jotka kokonaisluvut laskevat, neljälle akselille. Yksikään niistä ei määrittele uudelleen, mikä on päätös: se olisi toinen PR samalla nimellä.</p>
 <ul>
 <li><strong>Pelin vaiheen mukaan</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto. Tämä vastaa kysymykseen ”PR:ni kilpajuoksussa verrattuna PR:ääni kontaktissa”. Merkintä lasketaan laudasta (katso Hakupaneeli); tietokanta, jonka vaiheita ei ole koskaan laskettu, sijoittaa kaiken kohtaan <em>Luokittelematon</em>, ja <code>blunderdb repair</code> täyttää sen.</li>
@@ -438,11 +438,11 @@ export default {
 <div class="admonition note">
 <p>Crawford-peliä ei eroteta: blunderDB ei tallenna tuota tietoa asemaan. Käytännön vaikutus on pieni — Crawford-pelissä ei ole lainkaan tuplauspäätöstä — mutta puute on todellinen, ja se on parempi kirjoittaa kuin jättää arvattavaksi.</p>
 </div>
-<h3>Harjoittelu ja oikea peli</h3>
+<h4>Harjoittelu ja oikea peli</h4>
 <p>Komento <code>blunderdb list --type study --days 30</code> asettaa kolme lukua rinnakkain, pelisuunnitelma kerrallaan: kuinka monta <strong>eri asemaa</strong> jaksolla kerrattiin, mikä PR oli <strong>ennen</strong> sitä, mikä PR on <strong>sen jälkeen</strong>.</p>
 <p>Kolme lukua, eikä neljättä. <strong>Ei hyötysaraketta eikä nuolta</strong>, koska mikään tässä ei vakioi mitään: pelaaja on voinut kohdata vahvempia vastustajia, vaihtaa formaattia tai yksinkertaisesti pelata enemmän kilpajuoksuja tänä kuussa. Yhteys on lukijan tekemä; efektiä julistava sarake väittäisi syy-yhteyttä, jota nämä tiedot eivät kanna. Luvut sen sijaan ovat tarkkoja.</p>
 <p>Kertaukset lasketaan <strong>eri asemina</strong>: neljä kertaa kuussa kerrattu kortti on yksi opiskeltu asema, ja toistojen laskeminen saisi kuukauden pänttäämisen näyttämään kuukauden kattavuudelta. PR:n päätökset sen sijaan lasketaan kaikki — jokainen tehtiin kerran. Alle kymmeneen päätökseen nojaava PR näkyy merkkinä <code>—</code>, otoskoko näkyvissä vieressä.</p>
-<h3>Pelaajat-välilehti</h3>
+<h4>Pelaajat-välilehti</h4>
 <p>Neljä edellistä välilehteä kuvaavat <strong>yhtä</strong> pelaajaa; <strong>Pelaajat</strong>-välilehti vertaa kaikkia. Se näyttää yhden rivin kutakin tietokannan pelaajaa kohti, mikä vastaa koko kilpailua seuraavan järjestäjän tarpeeseen yksittäisen pelaajan sijaan.</p>
 <p>Sarakkeet järjestyksessä:</p>
 <table>
@@ -503,7 +503,7 @@ export default {
 <div class="admonition important">
 <p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen — lähdetiedostot on tuotava uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code>.mat</code>), eivät sitä koskaan tarjoa.</p>
 </div>
-<h3>Yhdistämissääntö</h3>
+<h4>Yhdistämissääntö</h4>
 <div class="admonition important">
 <p>Turnauksen (tai minkä tahansa osajoukon) PR lasketaan <strong>summa/summa</strong>-säännöllä — ei koskaan yksittäisten otteluiden PR:ien keskiarvona.</p>
 <p>Kaava:</p>
@@ -517,7 +517,7 @@ export default {
 <p>Summa/summa-sääntö: 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(oikein)</em></p>
 <p>Summa/summa-sääntö on ainoa, joka käsittelee oikein otteluiden vaihtelevat pituudet (21 pisteen ottelu painaa enemmän kuin 1 pisteen ottelu).</p>
 </div>
-<h3>MWC: rajoitukset</h3>
+<h4>MWC: rajoitukset</h4>
 <ul>
 <li>MWC cost lasketaan <strong>Kazaross-XG2-MET</strong>:stä, joka on kilpailullisen backgammonin de facto -viitetaulukko. Tulokset eivät ole suoraan verrattavissa ohjelmistoihin, jotka käyttävät muita METejä. Se on sama taulukko, luettuna saman sisääntulokohdan kautta, jota sisäänrakennettu evaluaattori käyttää pistetilanteen mukaisiin kuutiopäätöksiinsä: tilastot ja moottori eivät voi poiketa toisistaan tässä. Se antaa omat arvonsa 25 tehtävään pisteeseen asti kummallakin puolella; sen ylitse sitä jatketaan Zadehin taulukolla, joka lasketaan kuten GNUbg:ssä, 64 pisteeseen asti.</li>
 <li><em>Money-game</em> -asemat (joissa ei ole ottelun pistetilannetta) <strong>jätetään pois</strong> MWC-laskennasta. Jos tietokantasi sisältää paljon money-game-asemia, MWC cost voi olla aliarvioitu tai ei käytettävissä.</li>
@@ -544,13 +544,13 @@ export default {
 <p>Myös <strong>pistetilannetta</strong> muokataan suoraan laudalla kuten muokkaustilassa: vasen napsautus pelaajan pistetilannesuorakulmioon vähentää hänen tarvitsemiensa pisteiden määrää, oikea napsautus lisää sitä. Kun <em>money</em>-pistetilanteesta (-1, -1) poistutaan muokkaamalla vain toista puolta, toinen puoli tasataan automaattisesti samaan arvoon epäjohdonmukaisen pistetilanteen sijaan. Bearoff-asemassa <em>tarkassa</em> tilassa siirtyminen money-pistetilanteesta ottelun pistetilanteeseen jättää voittotodennäköisyyden ennalleen (tietokannasta luettu arvo, joka pätee viitekehyksestä riippumatta), mutta vaihtaa näytetyn ekviteetin ja kuutiopäätöksen <em>evaluoidun</em> tilan arvoihin — tarkka taulukko on rakenteeltaan money-taulukko, eikä se osaa vastata pistetilanteessa esitettyyn kysymykseen. Merkistä tulee tällöin yhdistelmä (« tarkka (voitto) · evaluoitu (kuutio) »), jotta tämä sanotaan suoraan.</p>
 <p>Myös <strong>nopat</strong> muokataan samalla tavalla, ja juuri ne ratkaisevat, mikä kysymys esitetään: asetetut nopat tekevät nappulapäätöksen (ehdokassiirtojen listan), noppien puuttuminen kuutiopäätöksen. Vasen napsautus nopalla kasvattaa sen arvoa (6 palaa 1:een), oikea napsautus pienentää sitä (1 palaa 6:een); nopan napsauttaminen laudalla, jolla ei ole noppia, asettaa kaksi kerralla — yksi noppa ei olisi nappulapäätös eikä kuutiopäätös. Pelaajan suorakulmion napsauttaminen poistaa nopat kuutiokysymyksen esittämiseksi, ja seuraava napsautus nopalla palauttaa ne ennalleen.</p>
 <p><em>ASKELPALAUTIN</em> tai kaksoisnapsautus laudan ulkopuolella tyhjentää aseman: tyhjä lauta, money-pistetilanne (-1, -1), ei asetettuja noppia — Eval-paneelin omat arvot, jotka eroavat muokkaustilan arvoista (7 molemmilla, nopat 3-1), jotta ne pysyvät johdonmukaisina paneelin oletusnäytön kanssa.</p>
-<h3>Tuplauskuution matriisi</h3>
+<h4>Tuplauskuution matriisi</h4>
 <p>Kuutiopäätös ei ole laudan ominaisuus. Samat nappulat ja sama pip-luku tuplataan tilanteessa 2-away/4-away eikä tuplata tilanteessa 4-away/2-away; se joka on oppinut money-vastauksen on oppinut yhden ruudun ruudukosta. Eval-paneeli näyttää sen ruudun, jonka asema kantaa; <strong>tuplauskuution matriisi</strong> näyttää koko ruudukon.</p>
 <p>Komento <code>cm</code> avaa sen näytöllä olevalle asemalle. Kukin ruutu antaa tuomion yhdessä pistetilanteessa: rivi on vuorossa olevan pelaajan vielä tarvitsemien pisteiden määrä, sarake vastustajan. Neljä tuomiota kirjoitetaan <em>ET</em> (ei tuplausta), <em>TO</em> (tuplaus, otto), <em>TP</em> (tuplaus, pass) ja <em>LH</em> (liian hyvä); moottorin hylkäämässä ruudussa on kysymysmerkki, ja osoitin kertoo syyn sekä ruudun kolme ekviteettiä. Tarjolla on kolme ottelupituutta: 5, 7 ja 9 pistettä.</p>
 <p>Aseman pistetilanne korvataan kunkin ruudun tilanteella; sen <strong>kuutio</strong> säilyy. Ruudukko vastaa kysymykseen, missä pistetilanteessa kääntäisin <em>tämän</em> kuution, ei siihen mitä keskitetty asema tekisi. Se on kauttaaltaan Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä, eikä sarake ”et saa tuplata” kertoisi asemasta mitään.</p>
 <p>Jokainen ruutu on oma hakunsa. Moottori ottaa pistetilanteen huomioon — se ei pelaa samaa peliä tilanteessa 2-away kuin 7-away — joten yksi ainoa haku luettuna eri otteluekviteettien läpi olisi väärässä juuri siellä, missä pistetilanne merkitsee. Ruudukko saapuu ensin 0-plyllä ja laskeutuu uudelleen määritetyllä näyttösyvyydellä, kun ikkuna on levossa: sama porrastus kuin muualla paneelissa, ja 9 pisteen ruudukko maksaa noin puolitoista sekuntia.</p>
 <p>Sama ruudukko lasketaan käyttöliittymän ulkopuolella komentorivin komennolla cubematrix.</p>
-<h3>Aseman tuominen Eval-paneeliin</h3>
+<h4>Aseman tuominen Eval-paneeliin</h4>
 <p>Paneeli avautuu oletuksena bearoff-asemaan, mutta tutkiminen alkaa useimmiten jo käsillä olevasta asemasta. Kaksi elettä tuo sen paneeliin:</p>
 <ul>
 <li><strong>Oikea napsautus laudalla</strong> analyysipaneelissa tai ottelua selattaessa ja sitten <em>Evaluoi tämä asema</em>: Eval-paneeli avautuu suoraan tähän asemaan sellaisena kuin se näytetään. Pikavalikko ei ilmesty Eval-paneelissa eikä Hakupaneelissa, joissa oikea painike on jo varattu toisen värin nappuloiden asettamiseen.</li>
@@ -577,7 +577,7 @@ export default {
 <p><strong>Paneelin lauta on luonnos, ja se muistetaan.</strong> Eval-paneelista poistuminen ja sinne palaaminen löytää aseman, johon se jätettiin, ei oletusarvoista ulosmenolautaa: se tarjotaan vain, kun paneeli avataan istunnossa ensimmäisen kerran. Tietokannasta paneeliin lähetetty asema voittaa tämän muistin, ja <em>ASKELPALAUTIN</em> palauttaa oletuslaudan milloin tahansa. Matkan varrella ei kirjoiteta mitään tietokantaan — luonnoksella ei ole aseman identiteettiä, ja sen arvio lasketaan perillä uudelleen sen sijaan että se kuljetettaisiin mukana.</p>
 <p><strong>Haastetila.</strong> Merkkikaistan <em>Haaste</em>-valintaruutu ottaa käyttöön harjoittelutilan: jokaisen aseman muutoksen jälkeen kolmen alueen arvot piilotetaan (korvataan merkinnällä « ··· »); alueen napsautus paljastaa vain kyseisen alueen. Ilman noppia alueet ovat alapelaajan rivi, yläpelaajan rivi ja kuutiopäätös — Δ-rivi ilmestyy vasta, kun molemmat pelaajarivit on paljastettu. Päätöslohko säilyttää tällöin kolme riviään: sen arvot, päätös ja parhaan vaihtoehdon korostus katoavat, muuten harjoitus ratkeaisi etsimällä lihavoitu rivi. Kun kilpajuoksuasemaan on asetettu noppia, kummankin pelaajan EPC-rivi piilotetaan kuten ennenkin, mutta kolmas alue kattaa tällöin <em>ennen heittoa</em> -rivin ja siirtoluettelon <strong>yhdessä</strong>: koska luettelo on järjestetty parhaasta siirrosta huonoimpaan, sen osittainen paljastaminen antaisi jo vastauksen. Kun noppia on asetettu muuhun kuin kilpajuoksuasemaan, tämä sama yksi alue kattaa yksinään kaiken, mitä paneeli näyttää. Näin voi harjoitella kummankin puolen EPC:n arviointia ja sitten kuutio- tai siirtopäätöksen tekemistä ennen tarkistusta. Asetus muistetaan.</p>
 <p>Sulje Eval-paneeli painamalla <em>CTRL-E</em> tai vaihtamalla toiseen välilehteen.</p>
-<h3>Eval-paneelin metodologia ja oletukset</h3>
+<h4>Eval-paneelin metodologia ja oletukset</h4>
 <p>Jokainen paneelin näyttämä arvo perustuu täsmällisiin oletuksiin, jotka esitetään tässä tyhjentävästi.</p>
 <p><strong>Alue.</strong> <em>Kilpa-alue</em> — voittotodennäköisyys ja kuution tuomio — kattaa vain puhtaat bearoffit: molempien pelaajien kaikki jäljellä olevat nappulat omalla kotialueellaan. Asema arvioidaan <em>ennen heittoa</em>; asetetut nopat jätetään huomiotta.</p>
 <p><strong>EPC-lohkot</strong> sen sijaan yltävät pidemmälle: puoli saa EPC:nsä heti kun sen kaukaisin nappula mahtuu ladattuun yksipuoliseen taulukkoon. Oletustaulukolla (kuusi pistettä) tämä on vanha kotialuesääntö; kahdeksan pisteen taulukolla, joka lasketaan <em>Bearoff</em>-välilehdeltä, puolta jonka nappula on 8-pisteellä kohdellaan kuten muitakin. Mitään ei ekstrapoloida: yhden pisteen liian kaukana oleva nappula ei yksinkertaisesti saa EPC:tä, aivan kuten 7-pisteen nappula ei saanut sitä ennen. Kun vastannut taulukko ei ole kuuden pisteen taulukko, sen nimi näkyy kilpalohkon kulmassa (”OS-08”) — ilman sitä luettaisiin oletuksena ”kuusi” ja uskottaisiin puolen olevan kokonaan kotona.</p>
@@ -638,7 +638,7 @@ export default {
 <p>Kysymys ON näytetty asema: lauta on sovelluksen oma, ja sen yläpuolinen palkki kantaa vain kysymyksen, syötteen ja korjauksen. Vastaus kirjoitetaan ja vahvistetaan näppäimistöllä (<em>Enter</em> tarkistaa ja siirtyy eteenpäin, <em>Esc</em> poistuu istunnosta).</p>
 <p>Toleranssi riippuu harjoituksesta, ja se sanotaan eikä arvata: pip-laskennassa sitä <strong>ei ole</strong> — yhden pipin päähän oikea yhteenlasku on väärä yhteenlasku — EPC sallii puoli pipiä, hyväksymispiste kaksi prosenttiyksikköä. Lopuksi istunto näyttää oikeiden vastausten määrän ja <strong>mediaaniajan</strong> kysymystä kohti.</p>
 <p>Vain tämä yhteenveto säilytetään, tietokannan metatiedoissa: istunto ei säilytä jälkeä kysymys kysymykseltä, eikä mitään kirjoiteta ennen kuin se on päättynyt. Kesken poistuminen ei siis tallenna mitään.</p>
-<h3>Tietovisa: harjoittelun PR</h3>
+<h4>Tietovisa: harjoittelun PR</h4>
 <p><code>train quiz</code> esittää neljännen lajin kysymyksiä. Anki-paneeli panee ulkoa opettelemaan; tietovisa <strong>testaa</strong>. Selatusta listasta arvotaan viisi jo analysoitua asemaa, ja päätös on tehtävä:</p>
 <ul>
 <li>siirtopäätöksessä kirjoita siirto näppäimistöllä notaatiossa (<code>13/7 8/7</code>);</li>
@@ -655,7 +655,7 @@ export default {
 <div class="admonition note">
 <p>Kumpikaan ei seuraa, mitä tiedostolle tapahtuu. blunderDB <strong>ei tallenna mitään tietokannan vastaanottajan puolella</strong>: merkityn tietokannan avaaminen on täsmälleen samanlaista kuin minkä tahansa muun avaaminen, eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on peräisin.</p>
 </div>
-<h3>Tietokannan merkitseminen alkuperällään</h3>
+<h4>Tietokannan merkitseminen alkuperällään</h4>
 <p>Vienti-ikkuna mahtuu yhdelle näytölle: lomake ja sen päälle kirjoituksen ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään valmistuttuaan, ja tulos näkyy tilapalkissa.</p>
 <p>Kolme seikkaa ansaitsee huomiota:</p>
 <ul>
@@ -670,7 +670,7 @@ export default {
 <li><strong>Huomautus</strong>, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla jakamatta eteenpäin.</li>
 </ul>
 <p>Merkintä allekirjoitetaan merkitsijän identiteetilläsi. Se on siten <strong>muuttumaton ja väärentämätön</strong>: kukaan ei voi muuttaa sitä eikä valmistaa sellaista sinun nimissäsi. Se ei sen sijaan ole <strong>poistamaton</strong> — jaettu tiedosto on tavallinen SQLite-tietokanta ja blunderDB on vapaa ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on peräisin.</p>
-<h3>Merkitsijän identiteetti</h3>
+<h4>Merkitsijän identiteetti</h4>
 <p>Merkinnät allekirjoitetaan <strong>merkitsijän identiteetilläsi</strong>, joka syntyy itsestään ensimmäisellä kerralla, kun merkitset tiedoston; mitään ei tarvitse määrittää. Se kuuluu henkilölle eikä tietokannalle: kaikissa tiedostoissasi on sama julkinen sormenjälki muotoa <code>A3F1-9C24-7B05-E1D8</code>.</p>
 <p>Voit kertoa tämän sormenjäljen vastaanottajillesi, jotta he voivat varmistaa tiedoston tulevan todella sinulta. Identiteetti siirtyy koneelta toiselle yhtenä tiedostona (pääte <code>.bdbid</code>), haluttaessa salalauseella suojattuna. <strong>Tällä tiedostolla voi allekirjoittaa sinun nimissäsi: älä jaa sitä.</strong></p>
 <p>Asetuksissa (työkalurivin rataskuvake) <em>Merkitsijän identiteetti</em> -välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot <em>Tallenna identiteetti…</em>, <em>Lataa identiteetti…</em> ja <em>Luo uusi…</em>.</p>
@@ -679,7 +679,7 @@ export default {
 <p>Vuodon jälkeen sinua ei suojaa ohjelmisto: suoja on siinä, että julkaiset uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan pätemättömäksi.</p>
 <p>Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta tallentaa se ennen korvaamista.</p>
 </div>
-<h3>Tietokannan suojaaminen salasanalla</h3>
+<h4>Tietokannan suojaaminen salasanalla</h4>
 <p>Salasana kirjoitetaan peitettynä, sekä tässä että suojattua tiedostoa avattaessa; silmäkuvake näyttää sen <strong>niin kauan kuin sitä pidetään painettuna</strong> ja peittää sen taas heti, kun ote irrotetaan.</p>
 <p>Valinta <strong>Suojaa tämä tiedosto salasanalla</strong> tuottaa tiedoston, jonka pääte on <code>.dbx</code> — myös silloin, kun olit valinnut tallennusikkunassa <code>.db</code>-päätteisen nimen, sillä tuo ikkuna avautuu ennen salasanan kysymistä. Avaamiseen käytetään tavallista tietokannan avausta: valintaikkuna hyväksyy sekä <code>.db</code>- että <code>.dbx</code>-tiedostot. blunderDB kysyy tällöin salasanan ja asentaa viereen tavallisen tietokannan; sen jälkeen mitään ei enää kysytä.</p>
 <p>Ikkuna tarjoaa mahdollisuutta <strong>poistaa suojattu tiedosto avaamisen jälkeen</strong>: muuten sama sisältö jää talteen kahdella nimellä. Ruutu ei ole oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen.</p>
@@ -689,7 +689,7 @@ export default {
 <p>Salasana tarkistetaan <strong>joka</strong> avauskerralla, myös silloin kun tiedosto on jo aiemmin avattu tällä koneella.</p>
 <p>Teknisesti tietokanta salataan <strong>AES-256:lla GCM-tilassa</strong>, ja avain johdetaan salasanasta <strong>Argon2id</strong>-funktiolla (64 MiB muistia, 3 kierrosta, 4 säiettä) käyttäen satunnaista, tiedostokohtaista suolaa. GCM-tila todentaa kokonaisuuden: väärä salasana havaitaan sellaiseksi, samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta tietokantaa ei koskaan saada hiljaisesti.</p>
 <p>Suojatun tiedoston otsake pysyy <strong>salaamattomana</strong>: sen alkuperä on luettavissa ilman salasanaa.</p>
-<h3>Tiedoston alkuperän lukeminen</h3>
+<h4>Tiedoston alkuperän lukeminen</h4>
 <p>Avaa sovelluksessa tiedosto ja näytä <strong>Metatiedot</strong>-paneeli (komento <code>meta</code>). Paneelin yläosaan ilmestyy vain luettava <strong>Alkuperä</strong>-osio, joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa allekirjoitus on:</p>
 <ul>
 <li>”✓ allekirjoitus varmennettu — sinun merkitsemäsi”: tiedostossa on oma merkintäsi ehjänä;</li>
@@ -698,7 +698,7 @@ export default {
 </ul>
 <p>Tavallisessa tietokannassa tätä osiota ei näy.</p>
 <p>Komentoriviltä <code>blunderdb info --db tiedosto.db</code> näyttää alkuperän ja allekirjoituksen tilan <strong>kirjoittamatta koskaan tiedostoon</strong>. Komento toimii myös suojatulle tiedostolle ilman salasanaa. Ks. <code>CLI_USAGE.md</code> komennon <code>export</code> valitsimista <code>--watermark</code> ja <code>--password</code> sekä komennoista <code>identity</code> ja <code>open</code>.</p>
-<h3>Tietokannan julkaiseminen muille</h3>
+<h4>Tietokannan julkaiseminen muille</h4>
 <p>Merkitty tietokanta jaetaan kuin mikä tahansa tiedosto — sähköpostilla, omalla sivustolla, USB-tikulla. blunderDB <strong>ei tarjoa mitään palvelua</strong>: ei varastoa, ei isännöityä luetteloa, ei tiliä. Se seuraa suoraan sen rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään, joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi.</p>
 <p>Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy neljään kenttään, jotka ovat kaikki jo olemassa:</p>
 <ul>
