@@ -545,6 +545,21 @@ un match, le coup effectivement joué est mis en évidence dans la liste des
 alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
+Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
+coûté et pourquoi : « Vous perdez 120 mMWC : le coup joué laisse trois blots
+là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
+mesurables — l'exposition, un point du jan fait ou manqué, les chances de
+gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les
+deux sens d'une erreur de videau (doubler trop tard ou trop tôt, prendre trop
+large ou passer trop serré).
+
+La règle qui compte est celle du **silence** : la phrase n'apparaît que si une
+règle s'applique de façon confiante, et sur une erreur qui dépasse le seuil à
+partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du
+temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une
+explication fausse coûte plus cher que pas d'explication : elle apprend
+quelque chose d'inexact.
+
 Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
 du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et
 sa réponse — le verdict de videau, ou son propre meilleur coup. Elle dit

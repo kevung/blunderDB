@@ -27,6 +27,11 @@ type quizCheckerMoveReq struct {
 	Move       string `json:"move"`
 }
 
+type explainReq struct {
+	PositionID int64  `json:"positionId"`
+	Played     string `json:"played"`
+}
+
 type quizCubeReq struct {
 	PositionID int64  `json:"positionId"`
 	Action     string `json:"action"`
@@ -62,6 +67,23 @@ func (s *Server) quizRoutes() []route {
 				return engine.QuizVerdict{}, err
 			}
 			return engine.GradeCheckerAnswerNotation(pos, analysisOf(ctx, scope, req.PositionID), req.Move), nil
+		})},
+		// Expliquer un blunder (#298). La route rend un THÈME et ses écarts
+		// mesurés, jamais une phrase : la phrase se rédige dans la langue du
+		// client, à partir d'un gabarit.
+		{http.MethodPost, "/v1/positions.explain", rpc(func(ctx context.Context, scope string, req explainReq) (engine.Explanation, error) {
+			pos, err := ps().Load(ctx, scope, req.PositionID)
+			if err != nil {
+				return engine.Explanation{}, err
+			}
+			ana := analysisOf(ctx, scope, req.PositionID)
+			if ana == nil {
+				return engine.Explanation{}, nil
+			}
+			if ana.DoublingCubeAnalysis != nil {
+				return engine.ExplainCube(ana, req.Played), nil
+			}
+			return engine.ExplainChecker(pos, ana, req.Played), nil
 		})},
 		{http.MethodPost, "/v1/quiz.gradeCube", rpc(func(ctx context.Context, scope string, req quizCubeReq) (engine.QuizVerdict, error) {
 			if _, err := ps().Load(ctx, scope, req.PositionID); err != nil {

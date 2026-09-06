@@ -1357,5 +1357,15 @@
         "best": "best: {move}",
         "gradeFailed": "The answer could not be graded.",
         "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}."
+    },
+    "explain": {
+        "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",
+        "point": "You lose {cost} mMWC: {best} makes a point in your home board that the move played does not.",
+        "gammon": "You lose {cost} mMWC: the move played gives up {gammon} points of gammon chances that {best} keeps.",
+        "passive": "You lose {cost} mMWC: the move played is safer, but {best} wins more often — safety costs more than it earns here.",
+        "doubletoolate": "You lose {cost} mMWC: this was a double, and you did not offer it ({best}).",
+        "doubletooearly": "You lose {cost} mMWC: the double is premature, {best}.",
+        "taketooloose": "You lose {cost} mMWC: the take is too loose, {best}.",
+        "passtootight": "You lose {cost} mMWC: the pass is too tight, {best}."
     }
 }

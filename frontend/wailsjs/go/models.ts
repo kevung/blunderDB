@@ -2673,6 +2673,32 @@ export namespace storage {
 }
 
 export namespace engine {
+	export class Explanation {
+	    theme: string;
+	    costMp: number;
+	    blots?: number;
+	    bestBlots?: number;
+	    gammonPct?: number;
+	    points?: number;
+	    bestPoints?: number;
+	    best: string;
+
+	    static createFrom(source: any = {}) {
+	        return new Explanation(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.theme = source["theme"];
+	        this.costMp = source["costMp"];
+	        this.blots = source["blots"];
+	        this.bestBlots = source["bestBlots"];
+	        this.gammonPct = source["gammonPct"];
+	        this.points = source["points"];
+	        this.bestPoints = source["bestPoints"];
+	        this.best = source["best"];
+	    }
+	}
 	export class QuizVerdict {
 	    legal: boolean;
 	    matched: boolean;

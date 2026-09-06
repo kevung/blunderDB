@@ -1357,5 +1357,15 @@
         "best": "migliore: {move}",
         "gradeFailed": "Non è stato possibile valutare la risposta.",
         "finishedQuiz": "Quiz terminato: {correct}/{n}, PR di sessione {pr}."
+    },
+    "explain": {
+        "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",
+        "point": "Perdi {cost} mMWC: {best} fa un punto della tua casa che la mossa giocata non fa.",
+        "gammon": "Perdi {cost} mMWC: la mossa giocata rinuncia a {gammon} punti di probabilità di gammon che {best} conserva.",
+        "passive": "Perdi {cost} mMWC: la mossa giocata è più sicura, ma {best} vince più spesso — qui la sicurezza costa più di quanto renda.",
+        "doubletoolate": "Perdi {cost} mMWC: era un raddoppio, e non l'hai offerto ({best}).",
+        "doubletooearly": "Perdi {cost} mMWC: il raddoppio è prematuro, {best}.",
+        "taketooloose": "Perdi {cost} mMWC: la presa è troppo larga, {best}.",
+        "passtootight": "Perdi {cost} mMWC: il passo è troppo stretto, {best}."
     }
 }

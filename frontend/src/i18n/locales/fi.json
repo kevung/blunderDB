@@ -1357,5 +1357,15 @@
         "best": "paras: {move}",
         "gradeFailed": "Vastausta ei voitu arvioida.",
         "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}."
+    },
+    "explain": {
+        "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",
+        "point": "Menetät {cost} mMWC: {best} tekee kotialueellesi pisteen, jota pelattu siirto ei tee.",
+        "gammon": "Menetät {cost} mMWC: pelattu siirto luopuu {gammon} pisteestä gammon-mahdollisuuksia, jotka {best} säilyttää.",
+        "passive": "Menetät {cost} mMWC: pelattu siirto on turvallisempi, mutta {best} voittaa useammin — turvallisuus maksaa tässä enemmän kuin tuottaa.",
+        "doubletoolate": "Menetät {cost} mMWC: tämä oli tuplaus, etkä tarjonnut sitä ({best}).",
+        "doubletooearly": "Menetät {cost} mMWC: tuplaus on ennenaikainen, {best}.",
+        "taketooloose": "Menetät {cost} mMWC: hyväksyntä on liian löysä, {best}.",
+        "passtootight": "Menetät {cost} mMWC: luovutus on liian tiukka, {best}."
     }
 }

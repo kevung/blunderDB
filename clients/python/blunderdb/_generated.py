@@ -418,6 +418,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.exists — JSON."
         return self._call("/v1/positions.exists", payload)
 
+    def positions_explain(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.explain — JSON."
+        return self._call("/v1/positions.explain", payload)
+
     def positions_from_ogid(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromOGID — JSON."
         return self._call("/v1/positions.fromOGID", payload)
