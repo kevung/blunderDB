@@ -152,7 +152,7 @@
         "firstPosition": "Primera posición",
         "goToPosition": "Ir a la posición",
         "help": "Ayuda",
-        "importDatabase": "Importar base de datos",
+        "importDatabase": "Fusionar una base de datos",
         "importFolder": "Importar carpeta",
         "importPosition": "Importar posición o partida",
         "importPositionTip": "Importar archivos de posición o partida",
@@ -169,7 +169,8 @@
         "settings": "Ajustes",
         "togglePipcount": "Alternar conteo de pips",
         "updatePosition": "Actualizar posición",
-        "tour": "Visitas guiadas"
+        "tour": "Visitas guiadas",
+        "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan (Ctrl+Mayús+I)"
     },
     "tour": {
         "next": "Siguiente",

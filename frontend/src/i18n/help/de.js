@@ -240,7 +240,7 @@ export default {
 </tr>
 <tr>
 <td>STRG-UMSCHALT-I</td>
-<td>Eine Datenbank importieren.</td>
+<td>Eine Datenbank in diese zusammenführen.</td>
 </tr>
 <tr>
 <td>STRG-UMSCHALT-S</td>

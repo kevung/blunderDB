@@ -236,7 +236,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Importar una base de datos.</td>
+<td>Fusionar una base de datos en esta.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

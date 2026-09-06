@@ -152,7 +152,7 @@
         "firstPosition": "Erste Position",
         "goToPosition": "Zu Position gehen",
         "help": "Hilfe",
-        "importDatabase": "Datenbank importieren",
+        "importDatabase": "Datenbank zusammenführen",
         "importFolder": "Ordner importieren",
         "importPosition": "Position oder Match importieren",
         "importPositionTip": "Positions- oder Match-Dateien importieren",
@@ -169,7 +169,8 @@
         "settings": "Einstellungen",
         "togglePipcount": "Pipcount ein-/ausblenden",
         "updatePosition": "Position aktualisieren",
-        "tour": "Geführte Touren"
+        "tour": "Geführte Touren",
+        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint (Strg+Umschalt+I)"
     },
     "tour": {
         "next": "Weiter",

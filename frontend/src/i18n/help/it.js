@@ -235,7 +235,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Importa un database.</td>
+<td>Unire un database a questo.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

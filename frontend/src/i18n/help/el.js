@@ -238,7 +238,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Εισαγωγή βάσης δεδομένων.</td>
+<td>Συγχώνευση μιας βάσης δεδομένων σε αυτήν.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

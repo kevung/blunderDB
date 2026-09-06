@@ -281,13 +281,20 @@ de données, choisir le fichier *.db* et cliquer sur "Open".
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
 
-Importer et fusionner une base de données
------------------------------------------
+Fusionner une base de données
+-----------------------------
 
-Pour importer et fusionner une autre base de données blunderDB dans la base de
-données actuellement ouverte, cliquer dans la barre d'outils sur le bouton
-"Importer une base de données". Choisir le fichier *.db* à importer et
-cliquer sur "Open".
+Pour fusionner une autre base blunderDB dans celle actuellement ouverte, cliquer
+dans la barre d'outils sur le bouton **Fusionner une base de données**. Choisir
+le fichier *.db* et confirmer.
+
+C'est aussi la réponse de blunderDB à la question « comment synchroniser ma base
+entre deux machines ? » : une base est **un seul fichier**, deux bases qui ont
+divergé se fusionnent plutôt qu'elles ne se réconcilient, et la déduplication
+par empreinte Zobrist fait le travail. Voir la FAQ, « Puis-je synchroniser ma
+base entre plusieurs machines ? », pour ce que les services de synchronisation
+de fichiers savent et ne savent pas faire — et pour le cas où plusieurs postes
+doivent travailler en même temps, qui est celui du mode ``serve``.
 
 blunderDB va fusionner intelligemment les deux bases de données:
 
@@ -299,6 +306,9 @@ blunderDB va fusionner intelligemment les deux bases de données:
   nouveaux commentaires sans dupliquer les existants).
 
 * Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
+
+Une fusion **ajoute**, elle ne réconcilie pas : rien n'est supprimé de la base
+courante parce que la base importée ne le contient pas.
 
 .. note::
    L'import nécessite que les deux bases de données aient des versions de schéma

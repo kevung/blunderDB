@@ -218,7 +218,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>データベースをインポートする。</td>
+<td>データベースをこれに統合する。</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

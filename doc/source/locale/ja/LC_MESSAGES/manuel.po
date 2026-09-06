@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -3339,3 +3339,79 @@ msgstr ""
 "**ファイルに書き込むことは決してありません**\\ 。保護されたファイルにもパスワードなしで使えます。\\ ``export``\\ の\\ "
 "``--watermark``\\ と\\ ``--password``\\ 、および\\ ``identity``\\ と\\ "
 "``open``\\ については\\ ``CLI_USAGE.md``\\ を参照してください。"
+
+#: ../../source/manuel.rst:1731
+msgid "Publier une base pour d'autres"
+msgstr "データベースを他者に公開する"
+
+#: ../../source/manuel.rst:1733
+msgid ""
+"Une base marquée se distribue comme n'importe quel fichier — courriel, "
+"site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
+"dépôt, ni catalogue hébergé, ni compte. C'est une conséquence directe de "
+"sa conception : rien n'est jamais enregistré du côté de celui qui reçoit "
+"un fichier, et il n'y aurait donc rien à faire remonter à un service, "
+"même s'il en existait un."
+msgstr ""
+"印の付いたデータベースは他のどんなファイルとも同じように配布される——電子メール、個人サイト、USB メモリ。blunderDB は\\ "
+"**いかなるサービスも提供しない**\\ ：リポジトリも、ホストされたカタログも、アカウントもない。これは設計から直接導かれる\\ "
+"：ファイルを受け取った側では何も記録されないのだから、たとえサービスがあったとしても報告するものが何もない。"
+
+#: ../../source/manuel.rst:1739
+msgid ""
+"Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
+"quatre champs, tous déjà là :"
+msgstr "公開されたデータベースを他人が使えるものにするのは、すでに存在する四つの欄に尽きる\\ ："
+
+#: ../../source/manuel.rst:1742
+msgid ""
+"**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
+"cité."
+msgstr "**ユーザー**\\ ——誰が構築したか。名前として挙げてほしい表記で書く。"
+
+#: ../../source/manuel.rst:1743
+msgid ""
+"**Description** — ce que la base contient, en une phrase qui tienne dans "
+"une liste : « 240 décisions de videau au score, commentées, niveau "
+"intermédiaire »."
+msgstr "**説明**\\ ——データベースの中身を、一覧に収まる一文で\\ ：「スコアでのキューブ判断 240 件、コメント付き、中級」。"
+
+#: ../../source/manuel.rst:1745
+msgid ""
+"**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
+"produit. C'est ce que le destinataire lit en premier dans le panneau "
+"*Métadonnées*."
+msgstr ""
+"**出所**\\ （透かしの）——このファイルが何であり、誰のために作られたか。受け取った側が\\ *メタデータ*\\ "
+"パネルで最初に読むものである。"
+
+#: ../../source/manuel.rst:1748
+msgid ""
+"**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
+"c'est en la comparant que le destinataire vérifie que le fichier vient de"
+" vous et non de quelqu'un qui a repris votre nom."
+msgstr ""
+"**発行者の指紋**\\ ——ファイルの中ではなく、ファイルの傍らに公開する\\ "
+"：受け取った側はそれを照合して、そのファイルがあなたから来たものであり、あなたの名を騙る誰かからのものではないことを確かめる。"
+
+#: ../../source/manuel.rst:1752
+msgid ""
+"Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
+"simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
+"section *Origine*."
+msgstr ""
+"透かしなしで公開されたデータベースも完全に使える。ただ匿名であるというだけで、\\ *メタデータ*\\ パネルには\\ *出所*\\ "
+"の節が現れない。"
+
+#: ../../source/manuel.rst:1756
+msgid ""
+"Pour faire connaître une base, la catégorie *Show and tell* des "
+"`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
+" sert d'annuaire : c'est une liste tenue par ceux qui publient, pas un "
+"service rendu par blunderDB. Y annoncer une base demande le lien, les "
+"quatre champs ci-dessus et l'empreinte."
+msgstr ""
+"データベースを知ってもらうには、`リポジトリのディスカッション "
+"<https://github.com/kevung/blunderDB/discussions>`_ の *Show and tell* "
+"カテゴリが目録の役を果たす\\ ：公開する人たち自身が保つ一覧であって、blunderDB "
+"が提供するサービスではない。そこで告知するには、リンクと上の四つの欄と指紋が要る。"

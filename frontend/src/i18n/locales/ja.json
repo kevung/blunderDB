@@ -152,7 +152,7 @@
         "firstPosition": "最初のポジション",
         "goToPosition": "ポジションへ移動",
         "help": "ヘルプ",
-        "importDatabase": "データベースをインポート",
+        "importDatabase": "データベースを統合",
         "importFolder": "フォルダをインポート",
         "importPosition": "ポジションまたはマッチをインポート",
         "importPositionTip": "ポジションまたはマッチファイルをインポート",
@@ -169,7 +169,8 @@
         "settings": "設定",
         "togglePipcount": "pip カウント表示切替",
         "updatePosition": "ポジションを更新",
-        "tour": "ガイドツアー"
+        "tour": "ガイドツアー",
+        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される（Ctrl+Shift+I）"
     },
     "tour": {
         "next": "次へ",

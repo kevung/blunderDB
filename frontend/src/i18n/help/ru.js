@@ -230,7 +230,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Импортировать базу данных.</td>
+<td>Объединить базу данных с этой.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

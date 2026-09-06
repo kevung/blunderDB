@@ -152,7 +152,7 @@
         "firstPosition": "Ensimmäinen asema",
         "goToPosition": "Siirry asemaan",
         "help": "Ohje",
-        "importDatabase": "Tuo tietokanta",
+        "importDatabase": "Yhdistä tietokanta",
         "importFolder": "Tuo kansio",
         "importPosition": "Tuo asema tai ottelu",
         "importPositionTip": "Tuo asema- tai ottelutiedostoja",
@@ -169,7 +169,8 @@
         "settings": "Asetukset",
         "togglePipcount": "Näytä/piilota pip-laskuri",
         "updatePosition": "Päivitä asema",
-        "tour": "Opastetut kierrokset"
+        "tour": "Opastetut kierrokset",
+        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään (Ctrl+Vaihto+I)"
     },
     "tour": {
         "next": "Seuraava",

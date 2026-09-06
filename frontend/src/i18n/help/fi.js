@@ -229,7 +229,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Tuo tietokanta.</td>
+<td>Yhdistä tietokanta tähän.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

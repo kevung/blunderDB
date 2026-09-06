@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 03:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -56,8 +56,8 @@ msgid "CTRL-SHIFT-I"
 msgstr "STRG-UMSCHALT-I"
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une base de données."
-msgstr "Eine Datenbank importieren."
+msgid "Fusionner une base de données dans celle-ci."
+msgstr "Eine Datenbank in diese zusammenführen."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-S"
@@ -685,4 +685,3 @@ msgid ""
 msgstr ""
 "Zur Liste der Sammlungen zurückkehren, sonst die Sammlungsauswahl "
 "aufheben, sonst das Fenster schließen (schrittweise)."
-

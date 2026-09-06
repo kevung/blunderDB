@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 03:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -56,8 +56,8 @@ msgid "CTRL-SHIFT-I"
 msgstr "CTRL-SHIFT-I"
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une base de données."
-msgstr "データベースをインポートする。"
+msgid "Fusionner une base de données dans celle-ci."
+msgstr "データベースをこれに統合する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-S"
@@ -668,4 +668,3 @@ msgid ""
 "Revenir à la liste des collections, sinon désélectionner la collection, "
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
-

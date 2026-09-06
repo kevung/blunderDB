@@ -65,12 +65,12 @@ Comment fusionner plusieurs bases de données?
 ---------------------------------------------
 
 Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
-utilisez la fonctionnalité "Import Database" :
+utilisez le bouton **Fusionner une base de données** (*CTRL-MAJ-I*) :
 
-#. Ouvrez la base de données principale (celle qui recevra les positions importées)
-#. Cliquez sur le bouton "Import Database" dans la barre d'outils
-#. Sélectionnez la base de données à importer
-#. blunderDB fusionnera automatiquement les positions
+#. Ouvrez la base principale (celle qui recevra les positions)
+#. Cliquez sur **Fusionner une base de données** dans la barre d'outils
+#. Sélectionnez la base à fusionner
+#. blunderDB fusionne les positions
 
 Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
 les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
@@ -101,6 +101,53 @@ récursif, par collage depuis le presse-papier, ou par glisser-déposer.
 
 blunderDB détecte automatiquement les doublons et empêche l'import d'un match
 déjà présent dans la base de données.
+
+
+Mes matchs joués en ligne sont-ils importables ?
+-------------------------------------------------
+
+Oui, par un détour : **Backgammon Studio (Heroes)**, **Backgammon Galaxy** et
+**GammonSpace** produisent tous les trois des fichiers que eXtreme Gammon sait
+lire — Studio livre même un paquet d'intégration qui se dépose dans le dossier
+XG. Ces matchs arrivent donc dans blunderDB par le chemin ``.xg`` existant,
+sans qu'un lecteur dédié soit nécessaire.
+
+.. note::
+   Ce que ce détour transporte exactement — analyses, chance du lancer, marques,
+   commentaires — **n'a pas été mesuré** : il y faudrait un match exporté depuis
+   chacune des trois plateformes. Si vous en avez un et que quelque chose se
+   perd à l'import, ouvrez une issue avec le fichier : c'est la mesure qui
+   décidera s'il faut un lecteur propre à ces plateformes, pas une supposition.
+
+Les formats texte plus anciens que GNU Backgammon sait déjà lire — ``.sgg``
+(GridGammon), ``.tmg``, ``.gam``, le ``.txt`` de Snowie — sont dans le même cas :
+passer par GNU Backgammon les rend importables aujourd'hui.
+
+
+Puis-je synchroniser ma base entre plusieurs machines ?
+--------------------------------------------------------
+
+Une base blunderDB est **un seul fichier**. Cela rend la sauvegarde et la copie
+triviales, et cela décide de la réponse :
+
+* **Dropbox, Syncthing, iCloud, OneDrive** : cela fonctionne, à une condition —
+  ne pas ouvrir la base **des deux côtés en même temps**. Ces outils
+  synchronisent des fichiers, pas des écritures concurrentes : deux instances
+  qui écrivent en parallèle produisent un conflit que le service résout en
+  gardant une version et en renommant l'autre. blunderDB pose un verrou
+  d'écriture sur le fichier ouvert, ce qui protège une même machine, mais aucun
+  verrou ne traverse un service de synchronisation.
+
+* **Plusieurs postes en même temps** : c'est ce à quoi le mode ``serve`` répond
+  (voir :doc:`mode_headless`). Un démon détient la base, les postes s'y
+  connectent, et il n'y a plus qu'un seul écrivain.
+
+* **Deux bases qui ont divergé** : elles se **fusionnent** plutôt qu'elles ne se
+  synchronisent — voir « Comment fusionner plusieurs bases de données ? »
+  ci-dessus. La déduplication par empreinte Zobrist fait le travail : les
+  positions communes ne sont pas dupliquées et leurs analyses et commentaires
+  sont combinés. C'est une fusion, pas une réconciliation : rien n'est supprimé
+  d'un côté parce que l'autre l'a supprimé.
 
 
 Ai-je besoin d'eXtreme Gammon pour utiliser blunderDB?

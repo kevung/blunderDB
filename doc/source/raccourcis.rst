@@ -15,7 +15,7 @@ Base de données
 
    "CTRL-N", "Créer une nouvelle base de données."
    "CTRL-O", "Ouvrir une base de données existante."
-   "CTRL-SHIFT-I", "Importer une base de données."
+   "CTRL-SHIFT-I", "Fusionner une base de données dans celle-ci."
    "CTRL-SHIFT-S", "Exporter la base de données."
    "CTRL-Q", "Fermer blunderDB."
    "CTRL-M", "Modifier les métadonnées de la base de données."

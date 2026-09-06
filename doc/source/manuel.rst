@@ -1725,3 +1725,37 @@ fonctionne aussi sur un fichier protégé, sans le mot de passe. Voir
 ``CLI_USAGE.md`` pour les options ``--watermark`` et ``--password`` de
 ``export``, ainsi que pour ``identity`` et ``open``.
 
+.. _partager_une_base:
+
+Publier une base pour d'autres
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Une base marquée se distribue comme n'importe quel fichier — courriel, site
+personnel, clé USB. blunderDB **ne fournit aucun service** : ni dépôt, ni
+catalogue hébergé, ni compte. C'est une conséquence directe de sa conception :
+rien n'est jamais enregistré du côté de celui qui reçoit un fichier, et il n'y
+aurait donc rien à faire remonter à un service, même s'il en existait un.
+
+Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à quatre
+champs, tous déjà là :
+
+* **Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir cité.
+* **Description** — ce que la base contient, en une phrase qui tienne dans une
+  liste : « 240 décisions de videau au score, commentées, niveau intermédiaire ».
+* **Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été
+  produit. C'est ce que le destinataire lit en premier dans le panneau
+  *Métadonnées*.
+* **Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : c'est
+  en la comparant que le destinataire vérifie que le fichier vient de vous et
+  non de quelqu'un qui a repris votre nom.
+
+Une base publiée sans filigrane reste parfaitement utilisable ; elle est
+simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune section
+*Origine*.
+
+Pour faire connaître une base, la catégorie *Show and tell* des `discussions du
+dépôt <https://github.com/kevung/blunderDB/discussions>`_ sert d'annuaire :
+c'est une liste tenue par ceux qui publient, pas un service rendu par
+blunderDB. Y annoncer une base demande le lien, les quatre champs ci-dessus et
+l'empreinte.
+

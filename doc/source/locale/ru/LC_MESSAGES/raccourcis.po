@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 03:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -57,8 +57,8 @@ msgid "CTRL-SHIFT-I"
 msgstr "CTRL-SHIFT-I"
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une base de données."
-msgstr "Импортировать базу данных."
+msgid "Fusionner une base de données dans celle-ci."
+msgstr "Объединить базу данных с этой."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-S"
@@ -677,4 +677,3 @@ msgid ""
 msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
-

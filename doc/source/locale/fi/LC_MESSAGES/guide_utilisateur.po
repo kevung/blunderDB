@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -544,25 +544,44 @@ msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
 msgstr "Pikanäppäimet: *CTRL-O*. Komento: ``o``"
 
 #: ../../source/guide_utilisateur.rst:285
-msgid "Importer et fusionner une base de données"
-msgstr "Tuo ja yhdistä tietokanta"
+msgid "Fusionner une base de données"
+msgstr "Tietokannan yhdistäminen"
 
 #: ../../source/guide_utilisateur.rst:287
 msgid ""
-"Pour importer et fusionner une autre base de données blunderDB dans la "
-"base de données actuellement ouverte, cliquer dans la barre d'outils sur "
-"le bouton \"Importer une base de données\". Choisir le fichier *.db* à "
-"importer et cliquer sur \"Open\"."
+"Pour fusionner une autre base blunderDB dans celle actuellement ouverte, "
+"cliquer dans la barre d'outils sur le bouton **Fusionner une base de "
+"données**. Choisir le fichier *.db* et confirmer."
 msgstr ""
-"Tuodaksesi ja yhdistääksesi toisen blunderDB-tietokannan parhaillaan "
-"avoinna olevaan napsauta työkalurivin painiketta ”Tuo tietokanta”. "
-"Valitse tuotava *.db*-tiedosto ja napsauta ”Open”."
+"Yhdistääksesi toisen blunderDB-tietokannan nyt avoinna olevaan, napsauta "
+"työkalupalkin **Yhdistä tietokanta** -painiketta. Valitse *.db*-tiedosto "
+"ja vahvista."
 
-#: ../../source/guide_utilisateur.rst:292
+#: ../../source/guide_utilisateur.rst:291
+msgid ""
+"C'est aussi la réponse de blunderDB à la question « comment synchroniser "
+"ma base entre deux machines ? » : une base est **un seul fichier**, deux "
+"bases qui ont divergé se fusionnent plutôt qu'elles ne se réconcilient, "
+"et la déduplication par empreinte Zobrist fait le travail. Voir la FAQ, «"
+" Puis-je synchroniser ma base entre plusieurs machines ? », pour ce que "
+"les services de synchronisation de fichiers savent et ne savent pas faire"
+" — et pour le cas où plusieurs postes doivent travailler en même temps, "
+"qui est celui du mode ``serve``."
+msgstr ""
+"Tämä on myös blunderDB:n vastaus kysymykseen «kuinka synkronoin "
+"tietokantani kahden koneen välillä?»: tietokanta on **yksi ainoa "
+"tiedosto**, kaksi eriytynyttä tietokantaa yhdistetään eikä sovitella, ja "
+"deduplikointi Zobrist-tiivisteellä tekee työn. Katso FAQ, «Voinko "
+"synkronoida tietokantani useiden koneiden välillä?», siitä mihin "
+"tiedostosynkronointipalvelut pystyvät ja mihin eivät — ja tapauksesta, "
+"jossa usean koneen on työskenneltävä yhtä aikaa, joka kuuluu "
+"``serve``-tilalle."
+
+#: ../../source/guide_utilisateur.rst:299
 msgid "blunderDB va fusionner intelligemment les deux bases de données:"
 msgstr "blunderDB yhdistää kaksi tietokantaa älykkäästi:"
 
-#: ../../source/guide_utilisateur.rst:294
+#: ../../source/guide_utilisateur.rst:301
 msgid ""
 "Les positions qui n'existent pas dans la base de données actuelle seront "
 "ajoutées avec leurs analyses et commentaires."
@@ -570,7 +589,7 @@ msgstr ""
 "Asemat, joita ei ole nykyisessä tietokannassa, lisätään analyyseineen ja "
 "kommentteineen."
 
-#: ../../source/guide_utilisateur.rst:297
+#: ../../source/guide_utilisateur.rst:304
 msgid ""
 "Les positions qui existent déjà seront mises à jour: les analyses seront "
 "complétées si manquantes, et les commentaires seront fusionnés (ajout des"
@@ -580,13 +599,21 @@ msgstr ""
 "ja kommentit yhdistetään (uudet kommentit lisätään ilman olemassa olevien"
 " kahdentamista)."
 
-#: ../../source/guide_utilisateur.rst:301
+#: ../../source/guide_utilisateur.rst:308
 msgid ""
 "Un message résumera le nombre de positions ajoutées, fusionnées et "
 "ignorées."
 msgstr "Viesti tiivistää lisättyjen, yhdistettyjen ja ohitettujen asemien määrän."
 
-#: ../../source/guide_utilisateur.rst:304
+#: ../../source/guide_utilisateur.rst:310
+msgid ""
+"Une fusion **ajoute**, elle ne réconcilie pas : rien n'est supprimé de la"
+" base courante parce que la base importée ne le contient pas."
+msgstr ""
+"Yhdistäminen **lisää**, se ei sovita: mitään ei poisteta nykyisestä "
+"tietokannasta siksi, ettei tuotu tietokanta sitä sisällä."
+
+#: ../../source/guide_utilisateur.rst:314
 msgid ""
 "L'import nécessite que les deux bases de données aient des versions de "
 "schéma compatibles. Il est possible d'importer une base de données d'une "
@@ -597,7 +624,7 @@ msgstr ""
 "skeemaversiot. On mahdollista tuoda alemman tai saman version tietokanta "
 "korkeamman version tietokantaan."
 
-#: ../../source/guide_utilisateur.rst:309
+#: ../../source/guide_utilisateur.rst:319
 msgid ""
 "L'opération d'import modifie immédiatement la base de données "
 "actuellement ouverte. Il est recommandé de faire une copie de sauvegarde "
@@ -607,11 +634,11 @@ msgstr ""
 "tietokantaa. On suositeltavaa tehdä varmuuskopio ennen toisen tietokannan"
 " tuomista."
 
-#: ../../source/guide_utilisateur.rst:316
+#: ../../source/guide_utilisateur.rst:326
 msgid "Editer une position"
 msgstr "Muokkaa asemaa"
 
-#: ../../source/guide_utilisateur.rst:318
+#: ../../source/guide_utilisateur.rst:328
 msgid ""
 "Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le "
 "panneau de recherche et l'éditeur de position. Editer la position à la "
@@ -620,7 +647,7 @@ msgstr ""
 "Muokataksesi asemaa paina *TAB*-näppäintä avataksesi hakupaneelin ja "
 "aseman muokkaimen. Muokkaa asemaa hiirellä:"
 
-#: ../../source/guide_utilisateur.rst:322
+#: ../../source/guide_utilisateur.rst:332
 msgid ""
 "cliquer sur les points pour ajouter des pions. Le clic gauche attribue "
 "les pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour"
@@ -633,7 +660,7 @@ msgstr ""
 "Lisätäksesi muurin napsauta lähtöpistettä, pidä painike pohjassa ja "
 "vapauta päätepisteessä. Napsauta baaria asettaaksesi nappuloita baariin."
 
-#: ../../source/guide_utilisateur.rst:328
+#: ../../source/guide_utilisateur.rst:338
 msgid ""
 "pour effacer la position, double-clic sur une zone vide en dehors du "
 "board ou appuyer sur la touche *RETOUR ARRIERE*."
@@ -641,7 +668,7 @@ msgstr ""
 "tyhjentääksesi aseman kaksoisnapsauta tyhjää aluetta laudan ulkopuolella "
 "tai paina *ASKELPALAUTIN*-näppäintä."
 
-#: ../../source/guide_utilisateur.rst:331
+#: ../../source/guide_utilisateur.rst:341
 msgid ""
 "pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour "
 "envoyer le cube vers le joueur 2, click droit sur le cube."
@@ -650,13 +677,13 @@ msgstr ""
 "painikkeella. Lähettääksesi tuplauskuution pelaajalle 2 napsauta kuutiota"
 " oikealla painikkeella."
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:344
 msgid ""
 "pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
 " dés."
 msgstr "osoittaaksesi pelaajan, jonka vuoro on, napsauta nopille varattua aluetta."
 
-#: ../../source/guide_utilisateur.rst:336
+#: ../../source/guide_utilisateur.rst:346
 msgid ""
 "pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
 "droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
@@ -666,7 +693,7 @@ msgstr ""
 " arvoa ja oikealla painikkeella pienentääksesi nopan arvoa. Jos noppien "
 "pinnat ovat tyhjät, asema on tuplauskuutiopäätös."
 
-#: ../../source/guide_utilisateur.rst:340
+#: ../../source/guide_utilisateur.rst:350
 msgid ""
 "pour éditer le score des joueurs, clic gauche pour augmenter le score, "
 "clic droit pour réduire le score."
@@ -674,7 +701,7 @@ msgstr ""
 "muokataksesi pelaajien pistetilannetta napsauta vasemmalla painikkeella "
 "kasvattaaksesi pisteitä ja oikealla painikkeella vähentääksesi pisteitä."
 
-#: ../../source/guide_utilisateur.rst:343
+#: ../../source/guide_utilisateur.rst:353
 msgid ""
 "La saisie de la position avec la souris pour les pions se fait de la même"
 " manière que dans XG."
@@ -682,15 +709,15 @@ msgstr ""
 "Aseman syöttäminen hiirellä nappuloiden osalta tapahtuu samalla tavalla "
 "kuin XG:ssä."
 
-#: ../../source/guide_utilisateur.rst:347
+#: ../../source/guide_utilisateur.rst:357
 msgid "Ajouter une position à la base de données"
 msgstr "Lisää asema tietokantaan"
 
-#: ../../source/guide_utilisateur.rst:349
+#: ../../source/guide_utilisateur.rst:359
 msgid "Après l'édition de la position, le panneau de recherche est ouvert."
 msgstr "Aseman muokkaamisen jälkeen hakupaneeli on auki."
 
-#: ../../source/guide_utilisateur.rst:351
+#: ../../source/guide_utilisateur.rst:361
 msgid ""
 "Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou "
 "appuyer dans la barre d'outils sur le bouton \"Save Position\"."
@@ -698,15 +725,15 @@ msgstr ""
 "Tallentaaksesi aiemmin saadun aseman paina *CTRL-S* tai napsauta "
 "työkalupalkin \"Save Position\" -painiketta."
 
-#: ../../source/guide_utilisateur.rst:354
+#: ../../source/guide_utilisateur.rst:364
 msgid "Ouvrir la ligne de commande et exécuter: ``w``"
 msgstr "Avaa komentorivi ja suorita: ``w``"
 
-#: ../../source/guide_utilisateur.rst:357
+#: ../../source/guide_utilisateur.rst:367
 msgid "Etiqueter une position"
 msgstr "Merkitse asema tunnisteella"
 
-#: ../../source/guide_utilisateur.rst:359
+#: ../../source/guide_utilisateur.rst:369
 msgid ""
 "Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
 "commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande"
@@ -716,11 +743,11 @@ msgstr ""
 "painamalla *VÄLILYÖNTI*, kirjoita ``#toto`` ja vahvista komento "
 "painamalla *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:363
+#: ../../source/guide_utilisateur.rst:373
 msgid "Supprimer une position"
 msgstr "Poista asema"
 
-#: ../../source/guide_utilisateur.rst:365
+#: ../../source/guide_utilisateur.rst:375
 msgid ""
 "Pour supprimer la position courante de la base de données, faire *Del* ou"
 " clicker dans la barre d'outils sur le bouton \"Delete Position\""
@@ -728,85 +755,85 @@ msgstr ""
 "Poistaaksesi nykyisen aseman tietokannasta paina *Del* tai napsauta "
 "työkalupalkin \"Delete Position\" -painiketta."
 
-#: ../../source/guide_utilisateur.rst:368
+#: ../../source/guide_utilisateur.rst:378
 msgid "En ligne de commande, exécuter ``d``."
 msgstr "Suorita komentorivillä ``d``."
 
-#: ../../source/guide_utilisateur.rst:370
+#: ../../source/guide_utilisateur.rst:380
 msgid ""
 "La suppression de la position est définitive et ne nécessite aucune "
 "confirmation de la part de l'utilisateur."
 msgstr "Aseman poistaminen on lopullista eikä vaadi käyttäjältä vahvistusta."
 
-#: ../../source/guide_utilisateur.rst:374
+#: ../../source/guide_utilisateur.rst:384
 msgid "Import une position depuis XG"
 msgstr "Tuo asema XG:stä"
 
-#: ../../source/guide_utilisateur.rst:376
+#: ../../source/guide_utilisateur.rst:386
 msgid "Pour importer une position directement depuis XG,"
 msgstr "Tuodaksesi aseman suoraan XG:stä,"
 
-#: ../../source/guide_utilisateur.rst:378
+#: ../../source/guide_utilisateur.rst:388
 msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
 msgstr "näytä tuotava asema XG:ssä ja paina *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:380
+#: ../../source/guide_utilisateur.rst:390
 msgid "afficher blunderDB et appuyer *CTRL-V*."
 msgstr "avaa blunderDB ja paina *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:383
+#: ../../source/guide_utilisateur.rst:393
 msgid ""
 "Le collage automatique détecte le format de la source (XG, GNUbg, "
 "BGBlitz)."
 msgstr "Automaattinen liittäminen tunnistaa lähteen muodon (XG, GNUbg, BGBlitz)."
 
-#: ../../source/guide_utilisateur.rst:386
+#: ../../source/guide_utilisateur.rst:396
 msgid "Importer un match"
 msgstr "Tuo ottelu"
 
-#: ../../source/guide_utilisateur.rst:388
+#: ../../source/guide_utilisateur.rst:398
 msgid "blunderDB peut importer des matchs depuis différentes sources."
 msgstr "blunderDB voi tuoda otteluita useista eri lähteistä."
 
-#: ../../source/guide_utilisateur.rst:390
+#: ../../source/guide_utilisateur.rst:400
 msgid "**Formats supportés:**"
 msgstr "**Tuetut muodot:**"
 
-#: ../../source/guide_utilisateur.rst:392
+#: ../../source/guide_utilisateur.rst:402
 msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
 msgstr "eXtreme Gammon (XG): *.xg*- ja *.xgp*-tiedostot (asemat)"
 
-#: ../../source/guide_utilisateur.rst:393
+#: ../../source/guide_utilisateur.rst:403
 msgid "GNUbg: fichiers *.sgf*"
 msgstr "GNUbg: *.sgf*-tiedostot"
 
-#: ../../source/guide_utilisateur.rst:394
+#: ../../source/guide_utilisateur.rst:404
 msgid "Jellyfish: fichiers *.mat* et *.txt*"
 msgstr "Jellyfish: *.mat*- ja *.txt*-tiedostot"
 
-#: ../../source/guide_utilisateur.rst:395
+#: ../../source/guide_utilisateur.rst:405
 msgid "BGBlitz: fichiers *.bgf* et *.txt*"
 msgstr "BGBlitz: *.bgf*- ja *.txt*-tiedostot"
 
-#: ../../source/guide_utilisateur.rst:397
+#: ../../source/guide_utilisateur.rst:407
 msgid "**Pour importer un ou plusieurs fichiers de match:**"
 msgstr "**Yhden tai useamman ottelutiedoston tuominen:**"
 
-#: ../../source/guide_utilisateur.rst:399
+#: ../../source/guide_utilisateur.rst:409
 msgid ""
 "Appuyer sur *CTRL-I* ou cliquer sur le bouton \"Import\" dans la barre "
 "d'outils."
 msgstr "Paina *CTRL-I* tai napsauta työkalupalkin \"Import\" -painiketta."
 
-#: ../../source/guide_utilisateur.rst:401
+#: ../../source/guide_utilisateur.rst:411
 msgid "Sélectionner un ou plusieurs fichiers à importer."
 msgstr "Valitse yksi tai useampi tuotava tiedosto."
 
-#: ../../source/guide_utilisateur.rst:403
+#: ../../source/guide_utilisateur.rst:413
 msgid "blunderDB détecte automatiquement le format et importe le match."
 msgstr "blunderDB tunnistaa muodon automaattisesti ja tuo ottelun."
 
-#: ../../source/guide_utilisateur.rst:405
+#: ../../source/guide_utilisateur.rst:415
 msgid ""
 "Une fenêtre de progression affiche le nombre de fichiers importés, "
 "échoués et ignorés (doublons), puis un **compte rendu d'import**."
@@ -814,11 +841,11 @@ msgstr ""
 "Edistymisikkuna näyttää, kuinka monta tiedostoa tuotiin, epäonnistui ja "
 "ohitettiin (kaksoiskappaleet), sitten **tuontiraportin**."
 
-#: ../../source/guide_utilisateur.rst:409
+#: ../../source/guide_utilisateur.rst:419
 msgid "Commande: ``i``"
 msgstr "Komento: ``i``"
 
-#: ../../source/guide_utilisateur.rst:412
+#: ../../source/guide_utilisateur.rst:422
 msgid ""
 "blunderDB détecte automatiquement les doublons et empêche l'import d'un "
 "match déjà présent dans la base de données."
@@ -826,11 +853,11 @@ msgstr ""
 "blunderDB tunnistaa kaksoiskappaleet automaattisesti ja estää jo "
 "tietokannassa olevan ottelun tuomisen."
 
-#: ../../source/guide_utilisateur.rst:416
+#: ../../source/guide_utilisateur.rst:426
 msgid "Importer un dossier de matchs"
 msgstr "Tuo ottelukansio"
 
-#: ../../source/guide_utilisateur.rst:418
+#: ../../source/guide_utilisateur.rst:428
 msgid ""
 "Pour importer récursivement tous les fichiers de matchs contenus dans un "
 "dossier et ses sous-dossiers:"
@@ -838,17 +865,17 @@ msgstr ""
 "Tuodaksesi rekursiivisesti kaikki kansion ja sen alikansioiden sisältämät"
 " ottelutiedostot:"
 
-#: ../../source/guide_utilisateur.rst:421
+#: ../../source/guide_utilisateur.rst:431
 msgid ""
 "Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la"
 " barre d'outils."
 msgstr "Paina *CTRL-SHIFT-F* tai napsauta vastaavaa painiketta työkalupalkissa."
 
-#: ../../source/guide_utilisateur.rst:424
+#: ../../source/guide_utilisateur.rst:434
 msgid "Sélectionner le dossier contenant les fichiers de matchs."
 msgstr "Valitse kansio, joka sisältää ottelutiedostot."
 
-#: ../../source/guide_utilisateur.rst:426
+#: ../../source/guide_utilisateur.rst:436
 msgid ""
 "blunderDB collecte et importe automatiquement tous les fichiers reconnus "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
@@ -856,11 +883,11 @@ msgstr ""
 "blunderDB kerää ja tuo automaattisesti kaikki tunnistetut tiedostot "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
-#: ../../source/guide_utilisateur.rst:432
+#: ../../source/guide_utilisateur.rst:442
 msgid "Le compte rendu d'import"
 msgstr "Tuontiraportti"
 
-#: ../../source/guide_utilisateur.rst:434
+#: ../../source/guide_utilisateur.rst:444
 msgid ""
 "Un import se termine sur un compte rendu de **ce qu'il vient "
 "d'apporter**, et non sur un simple décompte de fichiers lus :"
@@ -868,7 +895,7 @@ msgstr ""
 "Tuonti päättyy raporttiin siitä, **mitä se juuri toi**, eikä pelkkään "
 "luettujen tiedostojen määrään:"
 
-#: ../../source/guide_utilisateur.rst:437
+#: ../../source/guide_utilisateur.rst:447
 msgid ""
 "les positions nouvelles, et parmi elles celles que le logiciel d'origine "
 "avait marquées pour étude ;"
@@ -876,7 +903,7 @@ msgstr ""
 "uudet asemat, ja niiden joukossa ne, jotka lähdeohjelma oli merkinnyt "
 "tutkittaviksi;"
 
-#: ../../source/guide_utilisateur.rst:439
+#: ../../source/guide_utilisateur.rst:449
 msgid ""
 "le **PR de cet import** — le même indicateur que les statistiques, "
 "calculé sur ce seul lot. Il porte sur vos décisions lorsque la base "
@@ -888,7 +915,7 @@ msgstr ""
 "tuntee nimesi (identiteetti-ikkunan *Käyttäjä*-kenttä), muutoin molempia "
 "pelaajia, ja raportti kertoo kumpaa;"
 
-#: ../../source/guide_utilisateur.rst:443
+#: ../../source/guide_utilisateur.rst:453
 msgid ""
 "les positions qu'aucun moteur n'a évaluées, avec un bouton pour lancer "
 "l'analyse ;"
@@ -896,13 +923,13 @@ msgstr ""
 "asemat, joita mikään moottori ei ole arvioinut, ja painike analyysin "
 "käynnistämiseen;"
 
-#: ../../source/guide_utilisateur.rst:445
+#: ../../source/guide_utilisateur.rst:455
 msgid ""
 "les **cinq décisions les plus coûteuses**, cliquables : un clic ouvre la "
 "position."
 msgstr "**viisi kalleinta päätöstä**, klikattavina: yksi klikkaus avaa aseman."
 
-#: ../../source/guide_utilisateur.rst:448
+#: ../../source/guide_utilisateur.rst:458
 msgid ""
 "Un PR nul sur zéro décision n'est pas une partie parfaite mais l'absence "
 "d'analyse : le compte rendu l'écrit ainsi."
@@ -910,13 +937,13 @@ msgstr ""
 "Nollan PR nollasta päätöksestä ei ole täydellinen peli vaan analyysin "
 "puuttuminen: raportti kirjoittaa sen niin."
 
-#: ../../source/guide_utilisateur.rst:451
+#: ../../source/guide_utilisateur.rst:461
 msgid ""
 "Chaque import est enregistré comme un **lot**. La ligne de commande les "
 "retrouve après coup :"
 msgstr "Jokainen tuonti tallennetaan **eränä**. Komentorivi löytää ne jälkikäteen:"
 
-#: ../../source/guide_utilisateur.rst:459
+#: ../../source/guide_utilisateur.rst:469
 msgid ""
 "La moitié mesurée du compte rendu — positions sans analyse, PR, pires "
 "décisions — est recalculée à chaque consultation. Un lot dont les "
@@ -928,11 +955,11 @@ msgstr ""
 "asemat on sittemmin analysoitu, palauttaa siis tämän päivän luvut, ei "
 "tuontipäivän lukuja."
 
-#: ../../source/guide_utilisateur.rst:465
+#: ../../source/guide_utilisateur.rst:475
 msgid "Glisser-déposer"
 msgstr "Vedä ja pudota"
 
-#: ../../source/guide_utilisateur.rst:467
+#: ../../source/guide_utilisateur.rst:477
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
@@ -940,7 +967,7 @@ msgstr ""
 "blunderDB tukee vedä ja pudota -toimintoa. Voit vetää ja pudottaa "
 "blunderDB:n ikkunaan:"
 
-#: ../../source/guide_utilisateur.rst:470
+#: ../../source/guide_utilisateur.rst:480
 msgid ""
 "des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
 "*.txt*, *.bgf*) pour les importer,"
@@ -948,7 +975,7 @@ msgstr ""
 "ottelu- tai asematiedostoja (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
 "*.bgf*) tuodaksesi ne,"
 
-#: ../../source/guide_utilisateur.rst:473
+#: ../../source/guide_utilisateur.rst:483
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
@@ -956,41 +983,41 @@ msgstr ""
 "tietokantatiedostoja (*.db*) avataksesi ne tai yhdistääksesi ne nykyiseen"
 " tietokantaan,"
 
-#: ../../source/guide_utilisateur.rst:476
+#: ../../source/guide_utilisateur.rst:486
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
 msgstr "kansioita tuodaksesi rekursiivisesti kaikki niiden sisältämät tiedostot."
 
-#: ../../source/guide_utilisateur.rst:479
+#: ../../source/guide_utilisateur.rst:489
 msgid "Naviguer dans un match"
 msgstr "Selaa ottelua"
 
-#: ../../source/guide_utilisateur.rst:481
+#: ../../source/guide_utilisateur.rst:491
 msgid "Pour naviguer dans un match importé:"
 msgstr "Selataksesi tuotua ottelua:"
 
-#: ../../source/guide_utilisateur.rst:483
+#: ../../source/guide_utilisateur.rst:493
 msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
 msgstr "Avaa ottelupaneeli näppäimellä *CTRL-Tab*."
 
-#: ../../source/guide_utilisateur.rst:485
+#: ../../source/guide_utilisateur.rst:495
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
 msgstr "Kaksoisnapsauta ottelua tai paina *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:487
+#: ../../source/guide_utilisateur.rst:497
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr "Käytä *VASEN* / *OIKEA* -näppäimiä selataksesi siirtoja."
 
-#: ../../source/guide_utilisateur.rst:489
+#: ../../source/guide_utilisateur.rst:499
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr "Käytä *PageUp* / *PageDown* siirtyäksesi pelistä toiseen."
 
-#: ../../source/guide_utilisateur.rst:491
+#: ../../source/guide_utilisateur.rst:501
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "Paina *CTRL-L* näyttääksesi analyysin."
 
-#: ../../source/guide_utilisateur.rst:493
+#: ../../source/guide_utilisateur.rst:503
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
@@ -998,11 +1025,11 @@ msgstr ""
 "Paina *d* vaihtaaksesi nappulasiirtojen analyysin ja "
 "tuplauskuutioanalyysin välillä."
 
-#: ../../source/guide_utilisateur.rst:496
+#: ../../source/guide_utilisateur.rst:506
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
 msgstr "Pikanäppäin: *CTRL-Tab* avaa ottelupaneelin. Komento: ``m``"
 
-#: ../../source/guide_utilisateur.rst:500
+#: ../../source/guide_utilisateur.rst:510
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
@@ -1011,21 +1038,21 @@ msgstr ""
 "blunderDB muistaa kunkin ottelun viimeksi katsotun aseman. Kun palaat "
 "otteluun, viimeksi katsottu asema palautetaan automaattisesti."
 
-#: ../../source/guide_utilisateur.rst:505
+#: ../../source/guide_utilisateur.rst:515
 msgid "Gérer le panneau des matchs"
 msgstr "Hallitse ottelupaneelia"
 
-#: ../../source/guide_utilisateur.rst:507
+#: ../../source/guide_utilisateur.rst:517
 msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
 msgstr "Ottelupaneelin (*CTRL-Tab*) avulla voit:"
 
-#: ../../source/guide_utilisateur.rst:509
+#: ../../source/guide_utilisateur.rst:519
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
 msgstr "luetella kaikki tuodut ottelut (lajiteltuna uusimmasta vanhimpaan),"
 
-#: ../../source/guide_utilisateur.rst:511
+#: ../../source/guide_utilisateur.rst:521
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
@@ -1033,29 +1060,29 @@ msgstr ""
 "lajitella ottelut sarakkeiden mukaan (pelaaja 1, pelaaja 2, päivämäärä, "
 "ottelun pituus, turnaus),"
 
-#: ../../source/guide_utilisateur.rst:514
+#: ../../source/guide_utilisateur.rst:524
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
 msgstr "muokata pelaajien nimiä tai päivämäärää kaksoisnapsauttamalla kenttiä,"
 
-#: ../../source/guide_utilisateur.rst:516
+#: ../../source/guide_utilisateur.rst:526
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "vaihtaa pelaajat 1 ja 2 vaihtopainikkeella,"
 
-#: ../../source/guide_utilisateur.rst:518
+#: ../../source/guide_utilisateur.rst:528
 msgid "assigner un match à un tournoi,"
 msgstr "liittää ottelu turnaukseen,"
 
-#: ../../source/guide_utilisateur.rst:520
+#: ../../source/guide_utilisateur.rst:530
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "poistaa ottelu *Del*-näppäimellä."
 
-#: ../../source/guide_utilisateur.rst:525
+#: ../../source/guide_utilisateur.rst:535
 msgid "Gérer les collections"
 msgstr "Hallitse kokoelmia"
 
-#: ../../source/guide_utilisateur.rst:527
+#: ../../source/guide_utilisateur.rst:537
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
@@ -1064,35 +1091,35 @@ msgstr ""
 "Kokoelmien avulla voit järjestää asemia mukautettuihin ryhmiin. "
 "Avataksesi kokoelmapaneelin paina *CTRL-B*."
 
-#: ../../source/guide_utilisateur.rst:530
+#: ../../source/guide_utilisateur.rst:540
 msgid "**Créer une collection:**"
 msgstr "**Kokoelman luominen:**"
 
-#: ../../source/guide_utilisateur.rst:532
+#: ../../source/guide_utilisateur.rst:542
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "Avaa kokoelmapaneeli (*CTRL-B*)."
 
-#: ../../source/guide_utilisateur.rst:534
+#: ../../source/guide_utilisateur.rst:544
 msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
 msgstr "Syötä uuden kokoelman nimi ja napsauta \"Add\"."
 
-#: ../../source/guide_utilisateur.rst:536
+#: ../../source/guide_utilisateur.rst:546
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**Asemien lisääminen kokoelmaan:**"
 
-#: ../../source/guide_utilisateur.rst:538
+#: ../../source/guide_utilisateur.rst:548
 msgid "Sélectionner les positions souhaitées."
 msgstr "Valitse halutut asemat."
 
-#: ../../source/guide_utilisateur.rst:540
+#: ../../source/guide_utilisateur.rst:550
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "Lisää ne kokoelmaan kokoelmapaneelista."
 
-#: ../../source/guide_utilisateur.rst:542
+#: ../../source/guide_utilisateur.rst:552
 msgid "**Parcourir une collection:**"
 msgstr "**Kokoelman selaaminen:**"
 
-#: ../../source/guide_utilisateur.rst:544
+#: ../../source/guide_utilisateur.rst:554
 msgid ""
 "Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
 "des collections et des positions peut être modifié par glisser-déposer."
@@ -1100,15 +1127,15 @@ msgstr ""
 "Kaksoisnapsauta kokoelmaa selataksesi sen asemia. Kokoelmien ja asemien "
 "järjestystä voi muuttaa vetämällä ja pudottamalla."
 
-#: ../../source/guide_utilisateur.rst:549
+#: ../../source/guide_utilisateur.rst:559
 msgid "Commande: ``coll``"
 msgstr "Komento: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:552
+#: ../../source/guide_utilisateur.rst:562
 msgid "Gérer les tournois"
 msgstr "Hallitse turnauksia"
 
-#: ../../source/guide_utilisateur.rst:554
+#: ../../source/guide_utilisateur.rst:564
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
@@ -1116,23 +1143,23 @@ msgstr ""
 "Turnausten avulla voit järjestää tuodut ottelut tapahtumittain. "
 "Avataksesi turnauspaneelin paina *CTRL-Y*."
 
-#: ../../source/guide_utilisateur.rst:557
+#: ../../source/guide_utilisateur.rst:567
 msgid "**Créer un tournoi:**"
 msgstr "**Turnauksen luominen:**"
 
-#: ../../source/guide_utilisateur.rst:559
+#: ../../source/guide_utilisateur.rst:569
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "Avaa turnauspaneeli (*CTRL-Y*)."
 
-#: ../../source/guide_utilisateur.rst:561
+#: ../../source/guide_utilisateur.rst:571
 msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
 msgstr "Napsauta \"Add\" ja syötä turnauksen nimi."
 
-#: ../../source/guide_utilisateur.rst:563
+#: ../../source/guide_utilisateur.rst:573
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**Ottelun liittäminen turnaukseen:**"
 
-#: ../../source/guide_utilisateur.rst:565
+#: ../../source/guide_utilisateur.rst:575
 msgid ""
 "Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
 "la colonne tournoi pour assigner un match."
@@ -1140,11 +1167,11 @@ msgstr ""
 "Käytä ottelupaneelissa (*CTRL-Tab*) turnaussarakkeen pudotusvalikkoa "
 "liittääksesi ottelun."
 
-#: ../../source/guide_utilisateur.rst:569
+#: ../../source/guide_utilisateur.rst:579
 msgid "Afficher les statistiques de performance"
 msgstr "Näytä suoritustilastot"
 
-#: ../../source/guide_utilisateur.rst:571
+#: ../../source/guide_utilisateur.rst:581
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
@@ -1152,11 +1179,11 @@ msgstr ""
 "Stats-paneelin avulla voit tarkastella suoritusmittareitasi (PR ja MWC-"
 "kustannus) tuotujen asemien perusteella."
 
-#: ../../source/guide_utilisateur.rst:574
+#: ../../source/guide_utilisateur.rst:584
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr "Paina *CTRL-D* tai napsauta alapaneelin Stats-välilehteä."
 
-#: ../../source/guide_utilisateur.rst:576
+#: ../../source/guide_utilisateur.rst:586
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
@@ -1164,17 +1191,17 @@ msgstr ""
 "Käytä suodatinpalkkia rajataksesi analyysin pelaajan, turnauksen, "
 "päivämääräalueen, päätöstyypin tai ottelun pituuden mukaan."
 
-#: ../../source/guide_utilisateur.rst:579
+#: ../../source/guide_utilisateur.rst:589
 msgid ""
 "Cliquer sur un indicateur pour accéder directement aux positions "
 "correspondantes."
 msgstr "Napsauta mittaria siirtyäksesi suoraan vastaaviin asemiin."
 
-#: ../../source/guide_utilisateur.rst:582
+#: ../../source/guide_utilisateur.rst:592
 msgid "Évaluer une position (panneau Eval)"
 msgstr "Aseman arviointi (Eval-paneeli)"
 
-#: ../../source/guide_utilisateur.rst:584
+#: ../../source/guide_utilisateur.rst:594
 msgid ""
 "Le panneau Eval évalue n'importe quelle position — pas seulement une "
 "course. Sur une position de bearoff pur, il calcule l'EPC (Effective Pip "
@@ -1188,11 +1215,11 @@ msgstr ""
 "arviointimoottori tarjoaa ehdokassiirrot tai kuutiopäätöksen, ilman "
 "verkkoyhteyttä, ilman XG:tä tai GNUbg:tä."
 
-#: ../../source/guide_utilisateur.rst:590
+#: ../../source/guide_utilisateur.rst:600
 msgid "Panneau Eval sur une décision de coups de pions"
 msgstr "Eval-paneeli pelinappulasiirron päätöksessä"
 
-#: ../../source/guide_utilisateur.rst:594
+#: ../../source/guide_utilisateur.rst:604
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
@@ -1200,7 +1227,7 @@ msgstr ""
 "Eval-paneeli: voitto-/gammon-/backgammon-mahdollisuudet, tasapaino ja "
 "kunkin ehdokassiirron virhe, gammonNetin laskemana."
 
-#: ../../source/guide_utilisateur.rst:597
+#: ../../source/guide_utilisateur.rst:607
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur, ou"
 " exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau vierge,"
@@ -1210,7 +1237,7 @@ msgstr ""
 "komento ``epc``: paneeli avautuu tyhjälle laudalle, valmiina "
 "muokattavaksi."
 
-#: ../../source/guide_utilisateur.rst:601
+#: ../../source/guide_utilisateur.rst:611
 msgid ""
 "Pour évaluer la position déjà affichée (une position de la bibliothèque, "
 "ou celle d'un match en cours de revue) plutôt qu'un plateau vierge, clic "
@@ -1222,7 +1249,7 @@ msgstr ""
 "oikeaa painiketta ja valitse ”Evaluate this position” — näytetty asema "
 "lähetetään sellaisenaan Eval-paneeliin."
 
-#: ../../source/guide_utilisateur.rst:606
+#: ../../source/guide_utilisateur.rst:616
 msgid ""
 "Le plateau entier s'édite au clic ou au clavier : pions, dés, score, "
 "position du videau, joueur au trait. Éditer uniquement les pions du jan "
@@ -1233,7 +1260,7 @@ msgstr ""
 "vain jan-alueen pelinappuloita (viimeiset 6 pistettä) molemmilla "
 "puolilla, asema siirtyy bearoff-tilaan."
 
-#: ../../source/guide_utilisateur.rst:610
+#: ../../source/guide_utilisateur.rst:620
 msgid ""
 "Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre "
 "moyen de lancers, écart type, pip count et wastage, la probabilité de "
@@ -1249,7 +1276,7 @@ msgstr ""
 "tasapainon mukaan järjestetyt ehdokassiirrot; ilman noppia, kuutiopäätös."
 " Katso käsikirjan osio ”Eval-paneelin menetelmät ja oletukset”."
 
-#: ../../source/guide_utilisateur.rst:617
+#: ../../source/guide_utilisateur.rst:627
 msgid ""
 "Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
 "résultats sont masqués à chaque modification et se révèlent zone par "
@@ -1259,15 +1286,15 @@ msgstr ""
 "*Haaste*-valintaruudun: tulokset piilotetaan jokaisen muutoksen "
 "yhteydessä ja ne paljastuvat vyöhyke kerrallaan napsautuksella."
 
-#: ../../source/guide_utilisateur.rst:622
+#: ../../source/guide_utilisateur.rst:632
 msgid "Le panneau fonctionne pour les deux joueurs simultanément."
 msgstr "Paneeli toimii molemmille pelaajille samanaikaisesti."
 
-#: ../../source/guide_utilisateur.rst:625
+#: ../../source/guide_utilisateur.rst:635
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Näytä XG:stä tuodun aseman analyysi"
 
-#: ../../source/guide_utilisateur.rst:627
+#: ../../source/guide_utilisateur.rst:637
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -1275,7 +1302,7 @@ msgstr ""
 "Jos XG:n, GNUbg:n tai BGBlitzin analysoima asema on tuotu blunderDB:hen, "
 "analyysi voidaan näyttää painamalla *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:630
+#: ../../source/guide_utilisateur.rst:640
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -1291,7 +1318,7 @@ msgstr ""
 "mahdollisuudet sekä vastustajan voitto-, gammon- ja backgammon-"
 "mahdollisuudet, ja analyysin taso."
 
-#: ../../source/guide_utilisateur.rst:637
+#: ../../source/guide_utilisateur.rst:647
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -1299,7 +1326,7 @@ msgstr ""
 "Jos asema vastaa tuplauskuutiopäätöstä, kunkin päätöksen kustannus "
 "näytetään yhdessä aseman voittomahdollisuuksien kanssa."
 
-#: ../../source/guide_utilisateur.rst:640
+#: ../../source/guide_utilisateur.rst:650
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -1308,7 +1335,7 @@ msgstr ""
 "Kun samalle asemalle on useita analyysimoottoreita (esimerkiksi XG ja "
 "GNUbg), lisäsarake osoittaa kunkin analyysin lähdemoottorin."
 
-#: ../../source/guide_utilisateur.rst:644
+#: ../../source/guide_utilisateur.rst:654
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
@@ -1318,7 +1345,7 @@ msgstr ""
 " Jos asema esiintyi useissa otteluissa, kaikki pelatut siirrot "
 "osoitetaan."
 
-#: ../../source/guide_utilisateur.rst:649
+#: ../../source/guide_utilisateur.rst:659
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -1326,27 +1353,27 @@ msgstr ""
 "Napsauttamalla siirtoa analyysipaneelissa vastaavat nuolet näytetään "
 "laudalla."
 
-#: ../../source/guide_utilisateur.rst:653
+#: ../../source/guide_utilisateur.rst:663
 msgid "Exporter une position vers XG"
 msgstr "Vie asema XG:hen"
 
-#: ../../source/guide_utilisateur.rst:655
+#: ../../source/guide_utilisateur.rst:665
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "Viedäksesi aseman blunderDB:stä XG:hen,"
 
-#: ../../source/guide_utilisateur.rst:657
+#: ../../source/guide_utilisateur.rst:667
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "näytä vietävä asema blunderDB:ssä ja paina *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:659
+#: ../../source/guide_utilisateur.rst:669
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "avaa XG ja paina *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:662
+#: ../../source/guide_utilisateur.rst:672
 msgid "Visualiser les différentes positions"
 msgstr "Tarkastele eri asemia"
 
-#: ../../source/guide_utilisateur.rst:664
+#: ../../source/guide_utilisateur.rst:674
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -1357,7 +1384,7 @@ msgstr ""
 "*OIKEA*-näppäimiä. *HOME*-näppäimellä pääset ensimmäiseen asemaan ja "
 "*END*-näppäimellä viimeiseen asemaan."
 
-#: ../../source/guide_utilisateur.rst:668
+#: ../../source/guide_utilisateur.rst:678
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -1365,19 +1392,19 @@ msgstr ""
 "Näyttääksesi bearoffin vasemmalla paina *CTRL-VASEN*. Näyttääksesi "
 "bearoffin oikealla paina *CTRL-OIKEA*."
 
-#: ../../source/guide_utilisateur.rst:672
+#: ../../source/guide_utilisateur.rst:682
 msgid "Rechercher des positions selon des critères"
 msgstr "Hae asemia kriteerien perusteella"
 
-#: ../../source/guide_utilisateur.rst:674
+#: ../../source/guide_utilisateur.rst:684
 msgid "Pour rechercher des types de positions,"
 msgstr "Hakeaksesi asematyyppejä,"
 
-#: ../../source/guide_utilisateur.rst:676
+#: ../../source/guide_utilisateur.rst:686
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "paina *TAB* avataksesi hakupaneelin,"
 
-#: ../../source/guide_utilisateur.rst:678
+#: ../../source/guide_utilisateur.rst:688
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -1391,7 +1418,7 @@ msgstr ""
 "*ASKELPALAUTIN*-näppäintä. Muokkaa tarvittaessa tuplauskuution asemaa ja "
 "pistetilannetta."
 
-#: ../../source/guide_utilisateur.rst:684
+#: ../../source/guide_utilisateur.rst:694
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
 " par les onglets *At least* et *Except* situés en haut du panneau :"
@@ -1399,7 +1426,7 @@ msgstr ""
 "Hakupaneeli tarjoaa kaksi nappularakennetta, jotka valitaan paneelin "
 "yläosassa olevilla *At least*- ja *Except*-välilehdillä:"
 
-#: ../../source/guide_utilisateur.rst:687
+#: ../../source/guide_utilisateur.rst:697
 msgid ""
 "*At least* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
@@ -1407,7 +1434,7 @@ msgstr ""
 "*At least* (oletus): blunderDB suodattaa asemat, joilla on *vähintään* "
 "syötetty nappularakenne;"
 
-#: ../../source/guide_utilisateur.rst:690
+#: ../../source/guide_utilisateur.rst:700
 msgid ""
 "*Except* : blunderDB exclut les positions contenant l'un des pions "
 "saisis. Le plateau est bordé de rouge lors de l'édition de cette "
@@ -1433,7 +1460,7 @@ msgstr ""
 "solu, ei nappulaa väristä riippumatta); yksi napsautus kyseiseen "
 "pisteeseen vapauttaa sen."
 
-#: ../../source/guide_utilisateur.rst:700
+#: ../../source/guide_utilisateur.rst:710
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Except* "
 "l'emporte s'il contredit le critère *At least*."
@@ -1441,31 +1468,31 @@ msgstr ""
 "Kun piste kuuluu molempiin rakenteisiin, *Except*-kriteeri voittaa, jos "
 "se on ristiriidassa *At least* -kriteerin kanssa."
 
-#: ../../source/guide_utilisateur.rst:703
+#: ../../source/guide_utilisateur.rst:713
 msgid "Méthode 1 (simple):"
 msgstr "Menetelmä 1 (yksinkertainen):"
 
-#: ../../source/guide_utilisateur.rst:705
+#: ../../source/guide_utilisateur.rst:715
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Avaa hakuikkuna (*CTRL-F*)"
 
-#: ../../source/guide_utilisateur.rst:707
+#: ../../source/guide_utilisateur.rst:717
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Lisää ja määritä hakusuodattimet"
 
-#: ../../source/guide_utilisateur.rst:709
+#: ../../source/guide_utilisateur.rst:719
 msgid "Valider en cliquant sur \"Search\"."
 msgstr "Vahvista napsauttamalla \"Search\"."
 
-#: ../../source/guide_utilisateur.rst:711
+#: ../../source/guide_utilisateur.rst:721
 msgid "Méthode 2 (avancée):"
 msgstr "Menetelmä 2 (edistynyt):"
 
-#: ../../source/guide_utilisateur.rst:714
+#: ../../source/guide_utilisateur.rst:724
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "avaa komentorivi painamalla *VÄLILYÖNTI*,"
 
-#: ../../source/guide_utilisateur.rst:716
+#: ../../source/guide_utilisateur.rst:726
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -1477,11 +1504,11 @@ msgstr ""
 ":ref:`cmd_filter` saadaksesi kattavan luettelon käytettävissä olevista "
 "suodattimista)."
 
-#: ../../source/guide_utilisateur.rst:721
+#: ../../source/guide_utilisateur.rst:731
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "vahvista pyyntö painamalla *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:723
+#: ../../source/guide_utilisateur.rst:733
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -1489,11 +1516,11 @@ msgstr ""
 "Näytetyt asemat ovat ne tietokannan asemat, jotka täyttävät käyttäjän "
 "syöttämät hakukriteerit."
 
-#: ../../source/guide_utilisateur.rst:727
+#: ../../source/guide_utilisateur.rst:737
 msgid "Pour aller plus loin"
 msgstr "Pidemmälle"
 
-#: ../../source/guide_utilisateur.rst:729
+#: ../../source/guide_utilisateur.rst:739
 msgid ""
 "Ce guide couvre les usages les plus courants. blunderDB propose plusieurs"
 " fonctionnalités supplémentaires, détaillées dans le manuel :"
@@ -1501,7 +1528,7 @@ msgstr ""
 "Tämä opas kattaa yleisimmät käyttötavat. blunderDB tarjoaa useita "
 "lisäominaisuuksia, jotka on kuvattu käsikirjassa:"
 
-#: ../../source/guide_utilisateur.rst:732
+#: ../../source/guide_utilisateur.rst:742
 msgid ""
 "**Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une"
 " collection ou une recherche en paquet de cartes à réviser selon "
@@ -1513,7 +1540,7 @@ msgstr ""
 "vapaa harjoitustila (*cram*), joka ei sotke aikataulua. Katso "
 ":ref:`panneau_anki`."
 
-#: ../../source/guide_utilisateur.rst:737
+#: ../../source/guide_utilisateur.rst:747
 msgid ""
 "**Vues multiples** — une barre d'onglets sous la barre d'outils permet de"
 " garder plusieurs espaces de travail indépendants ouverts en parallèle "
@@ -1526,7 +1553,7 @@ msgstr ""
 "selaamisen), kunkin omalla asemalistallaan ja omassa asiayhteydessään. "
 "Katso :ref:`onglets_vues`."
 
-#: ../../source/guide_utilisateur.rst:742
+#: ../../source/guide_utilisateur.rst:752
 msgid ""
 "**Diffusion filigranée** — un export peut être signé avec votre identité "
 "d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et "
@@ -1538,7 +1565,7 @@ msgstr ""
 "alkuperän) ja suojata salasanalla kuljetusta varten. Katso "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/guide_utilisateur.rst:746
+#: ../../source/guide_utilisateur.rst:756
 msgid ""
 "**Visites guidées et base de démonstration** — la commande ``tour`` "
 "(alias ``tutorial``) ouvre un catalogue de visites guidées de "
@@ -1551,7 +1578,7 @@ msgstr ""
 "ja komento ``demo`` lataa esimerkkitietokannan, jotta työkaluun voi "
 "tutustua ilman omaa tietokantaa. Katso :ref:`visites_guidees`."
 
-#: ../../source/guide_utilisateur.rst:751
+#: ../../source/guide_utilisateur.rst:761
 msgid ""
 "**Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs (équité ou MWC) dans la vue "

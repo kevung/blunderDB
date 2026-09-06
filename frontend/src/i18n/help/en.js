@@ -223,7 +223,7 @@ export default {
 </tr>
 <tr>
 <td>CTRL-SHIFT-I</td>
-<td>Import a database.</td>
+<td>Merge a database into this one.</td>
 </tr>
 <tr>
 <td>CTRL-SHIFT-S</td>

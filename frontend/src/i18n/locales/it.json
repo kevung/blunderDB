@@ -152,7 +152,7 @@
         "firstPosition": "Prima posizione",
         "goToPosition": "Vai alla posizione",
         "help": "Aiuto",
-        "importDatabase": "Importa database",
+        "importDatabase": "Unisci un database",
         "importFolder": "Importa cartella",
         "importPosition": "Importa posizione o match",
         "importPositionTip": "Importa file di posizione o match",
@@ -169,7 +169,8 @@
         "settings": "Impostazioni",
         "togglePipcount": "Attiva/disattiva conteggio pip",
         "updatePosition": "Aggiorna posizione",
-        "tour": "Tour guidati"
+        "tour": "Tour guidati",
+        "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati (Ctrl+Maiusc+I)"
     },
     "tour": {
         "next": "Avanti",

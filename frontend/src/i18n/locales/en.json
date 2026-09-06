@@ -152,7 +152,7 @@
         "firstPosition": "First Position",
         "goToPosition": "Go To Position",
         "help": "Help",
-        "importDatabase": "Import Database",
+        "importDatabase": "Merge a database",
         "importFolder": "Import Folder",
         "importPosition": "Import Position or Match",
         "importPositionTip": "Import Position or Match Files",
@@ -169,7 +169,8 @@
         "settings": "Settings",
         "togglePipcount": "Toggle Pipcount",
         "updatePosition": "Update Position",
-        "tour": "Guided tours"
+        "tour": "Guided tours",
+        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined (Ctrl+Shift+I)"
     },
     "tour": {
         "next": "Next",
