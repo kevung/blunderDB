@@ -54,11 +54,11 @@ html_show_sphinx = False
 html_show_sourcelink = False
 html_favicon = '_static/favicon.ico'
 html_logo = '_static/logo.png'
-# The language switcher (see _templates/versions.html) renders one link per
-# entry. Each entry is [code, name, url]: the short code (e.g. "fr") is the
-# visible label so the switcher stays compact and never overlaps the nav, the
-# native name (e.g. "Français") is the hover tooltip, and url is a sibling
-# directory produced by doc/build.py.
+# The language switcher (see _templates/layout.html) renders one link per
+# entry, under the sidebar's search box. Each entry is [code, name, url]: the
+# native name (e.g. "Français") is the visible label — a reader who does not
+# read Latin script must still recognise their own language — and url is a
+# sibling directory produced by doc/build.py.
 html_context = {
         'languages': [[code, name, "../" + code] for code, name in LANGUAGES]
         }
