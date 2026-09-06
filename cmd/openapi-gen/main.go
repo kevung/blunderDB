@@ -1,6 +1,8 @@
 // Command openapi-gen (re)generates blunderDB's OpenAPI contract
-// (openapi.yaml, repo root) and its Sphinx annex
-// (doc/source/api_reference.rst) from internal/server's route table — see
+// (openapi.yaml, repo root), its Sphinx annex
+// (doc/source/api_reference.rst) and the generated half of the Python client
+// (clients/python/blunderdb/_generated.py, #289) from internal/server's route
+// table — see
 // internal/server/openapigen's package doc comment for why this parses Go
 // source rather than reflecting on a running server.
 //
@@ -15,6 +17,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/kevung/blunderdb/internal/server/openapigen"
 )
@@ -31,6 +34,7 @@ func run(args []string) error {
 	serverDir := fs.String("server-dir", "internal/server", "directory holding the handlers_*.go source to parse (repo-root-relative or absolute)")
 	openapiPath := fs.String("openapi", "openapi.yaml", "output path for the OpenAPI document")
 	rstPath := fs.String("rst", "doc/source/api_reference.rst", "output path for the Sphinx annex")
+	pythonPath := fs.String("python", "clients/python/blunderdb/_generated.py", "output path for the generated Python client surface")
 	check := fs.Bool("check", false, "don't write; exit 1 if either file would change (CI/test use)")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -42,6 +46,7 @@ func run(args []string) error {
 	}
 	openapiDoc := openapigen.GenerateOpenAPI(model)
 	rstDoc := openapigen.GenerateAPIReferenceRST(model)
+	pythonDoc := openapigen.GeneratePythonClient(model)
 
 	if *check {
 		staleOpenAPI, err := isStale(*openapiPath, openapiDoc)
@@ -52,8 +57,12 @@ func run(args []string) error {
 		if err != nil {
 			return err
 		}
-		if staleOpenAPI || staleRST {
-			return fmt.Errorf("stale: run `go run ./cmd/openapi-gen` and commit the result (openapi=%v rst=%v)", staleOpenAPI, staleRST)
+		stalePython, err := isStale(*pythonPath, pythonDoc)
+		if err != nil {
+			return err
+		}
+		if staleOpenAPI || staleRST || stalePython {
+			return fmt.Errorf("stale: run `go run ./cmd/openapi-gen` and commit the result (openapi=%v rst=%v python=%v)", staleOpenAPI, staleRST, stalePython)
 		}
 		return nil
 	}
@@ -64,7 +73,13 @@ func run(args []string) error {
 	if err := os.WriteFile(*rstPath, []byte(rstDoc), 0o644); err != nil {
 		return fmt.Errorf("openapi-gen: write %s: %w", *rstPath, err)
 	}
-	fmt.Printf("wrote %s (%d routes) and %s\n", *openapiPath, len(model.Routes), *rstPath)
+	if err := os.MkdirAll(filepath.Dir(*pythonPath), 0o755); err != nil {
+		return fmt.Errorf("openapi-gen: create %s: %w", filepath.Dir(*pythonPath), err)
+	}
+	if err := os.WriteFile(*pythonPath, []byte(pythonDoc), 0o644); err != nil {
+		return fmt.Errorf("openapi-gen: write %s: %w", *pythonPath, err)
+	}
+	fmt.Printf("wrote %s (%d routes), %s and %s\n", *openapiPath, len(model.Routes), *rstPath, *pythonPath)
 	return nil
 }
 
