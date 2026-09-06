@@ -309,6 +309,16 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		KMin, KMax, KHasMin, KHasMax := searchfilter.ParseIntFilterExpr(f.Player2BackCheckerFilter, "K")
 		searchfilter.AppendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
+		// How many times the position was MET (#282): the move rows that reach
+		// it. A correlated subquery rather than a denormalised column — the
+		// count changes on every import, and a column would be one more thing
+		// to keep true; idx_move_position answers it from the index.
+		if f.EncounterFilter != "" {
+			nMin, nMax, nHasMin, nHasMax := searchfilter.ParseIntFilterExpr(f.EncounterFilter, "n")
+			searchfilter.AppendIntRangeSQL("(SELECT COUNT(*) FROM move mv WHERE mv.position_id = p.id)",
+				nMin, nMax, nHasMin, nHasMax, &where, &args)
+		}
+
 		// Win/gammon rate: pushed as `p.id IN (SELECT position_id FROM analysis
 		// WHERE …)` rather than a plain `AND a.player1_win_rate/gammon_rate …`
 		// clause on the outer LEFT JOIN. With the LEFT JOIN form the planner's

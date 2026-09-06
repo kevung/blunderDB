@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -665,6 +665,19 @@ msgstr ""
 "で、何も宣言しません。比較は区切りを見るので、``#prime`` は ``#priming`` "
 "を拾いません。部分文字列を探すテキストフィルタとの違いはそこにあります。繰り返し指定でき、タグは\\ **重なります**\\ （``#prime "
 "#backgame`` は両方を求めます）。局面は複数のタグを持つので、二つ挙げれば「両方」の意味です。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"その局面がデータベース中で x 回より多く現れた——全マッチを通じて、そこへ至る着手の数です。書式は "
+"``n>3``、``n<2``、``n3,10``、``n4``（ちょうど四回）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1405,7 +1418,7 @@ msgstr ""
 "指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：\\ ``pl'Alice'``\\ "
 "）。大文字・小文字は区別しません。"
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

@@ -713,6 +713,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.setFilter:
+    post:
+      operationId: collections.setFilter
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionFilterReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/collections.update:
     post:
       operationId: collections.update
@@ -2773,6 +2790,14 @@ components:
         name:
           type: string
         description:
+          type: string
+    collectionFilterReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        query:
           type: string
     collectionPositionsReq:
       type: object

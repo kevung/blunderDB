@@ -582,7 +582,12 @@
         "created": "Collection \"{name}\" created",
         "errorCreating": "Error creating collection",
         "isEmpty": "Collection \"{name}\" is empty",
-        "confirmRemove": "Remove {count} position(s) from the collection?"
+        "confirmRemove": "Remove {count} position(s) from the collection?",
+        "livingOn": "Make this collection living: it will hold the result of the last search, re-evaluated every time it is opened.",
+        "livingOff": "Living collection ({query}). Click to give it back its hand-made list.",
+        "livingNeedsSearch": "Run a search first: it is what the collection will keep.",
+        "livingSet": "Living collection: {query}",
+        "livingCleared": "Collection given back its hand-made list."
     },
     "tournament": {
         "addMatchPlaceholder": "Add match…",

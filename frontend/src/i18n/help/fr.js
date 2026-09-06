@@ -1055,6 +1055,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>La position a été rencontrée plus de x fois dans la base — le nombre de coups qui y aboutissent, tous matchs confondus. Formes <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> et <code>n4</code> (exactement quatre).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La position ou celle miroir vérifie les filtres.</td>
 <td>—</td>

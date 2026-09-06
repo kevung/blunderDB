@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -25,6 +27,9 @@ type Collection struct {
 	CreatedAt     string `json:"createdAt"`
 	UpdatedAt     string `json:"updatedAt"`
 	PositionCount int    `json:"positionCount"`
+	// FilterQuery makes the collection LIVING (#282). See
+	// storage.Collection.FilterQuery.
+	FilterQuery string `json:"filterQuery"`
 }
 
 // CollectionPosition represents a position in a collection with its order
@@ -180,8 +185,66 @@ func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
 	return cs.PositionIndexMap(context.Background(), "")
 }
 
-// GetCollectionPositions returns all positions in a collection
+// collectionFilterQuery reads a collection's living query, or "" when it is a
+// hand-made list.
+func (d *Database) collectionFilterQuery(collectionID int64) (string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return "", err
+	}
+	col, err := cs.Get(context.Background(), "", collectionID)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(col.FilterQuery), nil
+}
+
+// SetCollectionFilter makes a collection LIVING: its membership becomes the
+// result of `query`, re-evaluated at every open (#282). An empty query turns
+// it back into a hand-made list, and the rows it kept before are still there —
+// nothing is destroyed by making a collection living, so the gesture is
+// reversible.
+func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return err
+	}
+	return cs.SetFilterQuery(context.Background(), "", collectionID, query)
+}
+
+// GetCollectionPositions returns all positions in a collection.
+//
+// A LIVING collection (#282) is resolved here rather than in the storage
+// layer, and that is the whole design: the query is run through the SAME
+// search the command bar runs, so a living collection can never mean something
+// a typed query would not. Putting the resolution behind the collection store
+// would have meant a second search, or a store that knows about queries.
 func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
+	query, err := d.collectionFilterQuery(collectionID)
+	if err != nil {
+		return nil, err
+	}
+	if query != "" {
+		filters, diags := searchquery.Parse(query)
+		// A living collection whose query has become unreadable — a token
+		// removed by a later version — returns the error rather than the whole
+		// library. Silently widening is the one failure a saved filter must
+		// not have.
+		for _, diag := range diags {
+			if diag.Kind == searchquery.DiagUnknown {
+				return nil, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
+			}
+		}
+		positions, _, err := d.LoadPositionsByFiltersCore(filters, storage.ListOpts{})
+		return positions, err
+	}
+
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 

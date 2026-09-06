@@ -174,6 +174,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.reorderPositions — JSON."
         return self._call("/v1/collections.reorderPositions", payload)
 
+    def collections_set_filter(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.setFilter — JSON."
+        return self._call("/v1/collections.setFilter", payload)
+
     def collections_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.update — JSON."
         return self._call("/v1/collections.update", payload)

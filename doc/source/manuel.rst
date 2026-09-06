@@ -724,6 +724,13 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
+Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
+auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une
+autre question que « qu'ai-je raté » — une position rencontrée vingt fois et
+bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
+sur les coups, pas sur les matchs : la même position deux fois dans un match
+compte pour deux, parce que c'étaient deux décisions.
+
 Une phrase en toutes lettres peut remplacer les jetons, avec la commande
 ``ask`` : ``ask mes blunders de videau au score``. La phrase est **traduite en
 jetons**, écrits dans la barre de commande — on les relit, puis on lance. Rien
@@ -884,6 +891,18 @@ ne remplace pas ce qui est déjà là.
   pas les données dans un fichier ``.xg`` et qu'il ne sait pas produire.
 
 .. _panneau_matchs:
+
+Une collection peut être **vivante** : sa composition n'est plus une liste
+faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
+qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
+dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton
+la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
+qu'elle contenait sont toujours là quand on revient en arrière.
+
+Une collection vivante dont la requête porte un jeton que cette version ne
+connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
+la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
+s'élargir en silence.
 
 Panneau Matchs
 --------------

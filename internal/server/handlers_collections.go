@@ -55,6 +55,13 @@ type collectionPositionsReq struct {
 
 func (r collectionPositionsReq) pageLimit() int { return r.Limit }
 
+// collectionFilterReq makes a collection living, or (with an empty query)
+// turns it back into a hand-made list (#282).
+type collectionFilterReq struct {
+	ID    int64  `json:"id"`
+	Query string `json:"query"`
+}
+
 func (s *Server) collectionRoutes() []route {
 	cs := func() storage.CollectionStore { return s.opts.Storage.Collections() }
 	return []route{
@@ -75,6 +82,13 @@ func (s *Server) collectionRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/collections.update", rpcVoid(func(ctx context.Context, scope string, req collectionUpdateReq) error {
 			return cs().Update(ctx, scope, req.ID, req.Name, req.Description)
+		})},
+		// Une collection VIVANTE (#282) : sa composition est le résultat d'une
+		// requête, réévaluée à chaque ouverture. La route ne pose que la
+		// requête ; c'est le client qui la relance, avec la même recherche
+		// que la ligne de commande.
+		{http.MethodPost, "/v1/collections.setFilter", rpcVoid(func(ctx context.Context, scope string, req collectionFilterReq) error {
+			return cs().SetFilterQuery(ctx, scope, req.ID, req.Query)
 		})},
 		{http.MethodPost, "/v1/collections.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return cs().Delete(ctx, scope, req.ID)

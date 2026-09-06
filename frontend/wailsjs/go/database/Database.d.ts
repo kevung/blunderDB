@@ -223,6 +223,8 @@ export function LoadAllPositions():Promise<Array<domain.Position>>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
 
+export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
+
 export function TranslateIntent(arg1:string):Promise<searchquery.Intent>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;

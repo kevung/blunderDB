@@ -19,15 +19,30 @@ var _ storage.CollectionStore = (*collectionStore)(nil)
 // supplies the position count.
 const collectionSelectCols = `c.id, c.name, COALESCE(c.description,''), COALESCE(c.sort_order,0),
 	COALESCE(c.created_at,''), COALESCE(c.updated_at,''),
-	(SELECT COUNT(*) FROM collection_position cp WHERE cp.collection_id = c.id)`
+	(SELECT COUNT(*) FROM collection_position cp WHERE cp.collection_id = c.id),
+	COALESCE(c.filter_query,'')`
 
 func scanCollection(sc interface{ Scan(...any) error }) (storage.Collection, error) {
 	var c storage.Collection
 	if err := sc.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder,
-		&c.CreatedAt, &c.UpdatedAt, &c.PositionCount); err != nil {
+		&c.CreatedAt, &c.UpdatedAt, &c.PositionCount, &c.FilterQuery); err != nil {
 		return storage.Collection{}, err
 	}
 	return c, nil
+}
+
+// SetFilterQuery makes a collection living, or turns it back into a hand-made
+// list. See storage.CollectionStore.
+func (s *collectionStore) SetFilterQuery(ctx context.Context, scope string, id int64, query string) error {
+	res, err := s.db.ExecContext(ctx,
+		`UPDATE collection SET filter_query = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`, query, id)
+	if err != nil {
+		return fmt.Errorf("sqlite: set collection %d filter: %w", id, err)
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return fmt.Errorf("sqlite: set collection %d filter: %w", id, storage.ErrNotFound)
+	}
+	return nil
 }
 
 // Create stores a new collection at the end of the sort order and returns its

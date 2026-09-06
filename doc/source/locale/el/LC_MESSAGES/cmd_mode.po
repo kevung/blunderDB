@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -711,6 +711,20 @@ msgstr ""
 "υποσυμβολοσειρά. Επαναλαμβανόμενο, και οι ετικέτες **αθροίζονται** "
 "(``#prime #backgame`` ζητά και τις δύο): μια θέση φέρει πολλές ετικέτες, "
 "οπότε το να ονομάσεις δύο σημαίνει «και τις δύο»."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"Η θέση συναντήθηκε περισσότερες από x φορές στη βάση — ο αριθμός των "
+"κινήσεων που καταλήγουν σε αυτήν, σε όλους τους αγώνες. Μορφές ``n>3``, "
+"``n<2``, ``n3,10`` και ``n4`` (ακριβώς τέσσερις)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1462,7 +1476,7 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. ``pl'Alice'``). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

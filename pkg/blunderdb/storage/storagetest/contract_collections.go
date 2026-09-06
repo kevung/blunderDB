@@ -537,3 +537,61 @@ func equalIDs(a, b []int64) bool {
 	}
 	return true
 }
+
+// testCollectionFilterQuery pins what makes a collection LIVING (#282): the
+// query is carried, it round-trips, and clearing it is reversible — the
+// membership rows a collection had before are still there, because making a
+// collection living must not destroy what it held.
+func testCollectionFilterQuery(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	cs := s.Collections()
+
+	id, err := cs.Create(ctx, "", "Blunders de videau", "")
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	pos := statsDecisionPos(t, 0)
+	posID, err := s.Positions().Save(ctx, "", &pos)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if err := cs.AddPosition(ctx, "", id, posID); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+
+	got, err := cs.Get(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if got.FilterQuery != "" {
+		t.Errorf("a fresh collection is not living: got %q", got.FilterQuery)
+	}
+
+	const query = "E>80 gt:holding"
+	if err := cs.SetFilterQuery(ctx, "", id, query); err != nil {
+		t.Fatalf("SetFilterQuery: %v", err)
+	}
+	got, err = cs.Get(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if got.FilterQuery != query {
+		t.Errorf("filter query: got %q, want %q", got.FilterQuery, query)
+	}
+
+	// Clearing it gives back a hand-made list — with its rows intact.
+	if err := cs.SetFilterQuery(ctx, "", id, ""); err != nil {
+		t.Fatalf("SetFilterQuery(clear): %v", err)
+	}
+	got, err = cs.Get(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if got.FilterQuery != "" || got.PositionCount != 1 {
+		t.Errorf("clearing must be reversible and keep the rows: query=%q count=%d", got.FilterQuery, got.PositionCount)
+	}
+
+	if err := cs.SetFilterQuery(ctx, "", 99999, query); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("an unknown collection must be ErrNotFound: got %v", err)
+	}
+}

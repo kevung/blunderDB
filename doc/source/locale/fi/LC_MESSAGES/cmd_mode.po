@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -702,6 +702,20 @@ msgstr ""
 "ero tekstisuodattimeen, joka etsii osamerkkijonoa. Toistettavissa, ja "
 "tunnisteet **kasautuvat** (``#prime #backgame`` pyytää molempia): asema "
 "kantaa useita tunnisteita, joten kahden nimeäminen tarkoittaa ”molempia”."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"Asema kohdattiin tietokannassa yli x kertaa — niiden siirtojen määrä, "
+"jotka johtavat siihen, kaikissa otteluissa. Muodot ``n>3``, ``n<2``, "
+"``n3,10`` ja ``n4`` (täsmälleen neljä)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1447,7 +1461,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. ``pl'Alice'``). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

@@ -21,18 +21,34 @@ var _ storage.CollectionStore = (*collectionStore)(nil)
 // supplies the position count.
 const collectionSelectExpr = `c.id, c.name, COALESCE(c.description,''), COALESCE(c.sort_order,0),
 	c.created_at, c.updated_at,
-	(SELECT COUNT(*) FROM collection_position cp WHERE cp.collection_id = c.id)`
+	(SELECT COUNT(*) FROM collection_position cp WHERE cp.collection_id = c.id),
+	COALESCE(c.filter_query,'')`
 
 func scanCollection(sc scanner) (storage.Collection, error) {
 	var c storage.Collection
 	var createdAt, updatedAt time.Time
 	if err := sc.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder,
-		&createdAt, &updatedAt, &c.PositionCount); err != nil {
+		&createdAt, &updatedAt, &c.PositionCount, &c.FilterQuery); err != nil {
 		return storage.Collection{}, err
 	}
 	c.CreatedAt = tsTime(createdAt)
 	c.UpdatedAt = tsTime(updatedAt)
 	return c, nil
+}
+
+// SetFilterQuery makes a collection living, or turns it back into a hand-made
+// list. See storage.CollectionStore.
+func (s *collectionStore) SetFilterQuery(ctx context.Context, scope string, id int64, query string) error {
+	tag, err := s.db.Exec(ctx,
+		`UPDATE collection SET filter_query = $1, updated_at = now() WHERE id = $2 AND tenant_id = $3`,
+		query, id, tenantID(scope))
+	if err != nil {
+		return fmt.Errorf("postgres: set collection %d filter: %w", id, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("postgres: set collection %d filter: %w", id, storage.ErrNotFound)
+	}
+	return nil
 }
 
 // Create stores a new collection at the end of the sort order and returns its

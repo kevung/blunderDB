@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -712,6 +712,20 @@ msgstr ""
 "Ripetibile, e i tag si **sommano** (``#prime #backgame`` chiede "
 "entrambi): una posizione porta più tag, quindi nominarne due vuol dire "
 "«entrambi»."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"La posizione è stata incontrata più di x volte nella base — il numero di "
+"mosse che vi arrivano, in tutti gli incontri. Forme ``n>3``, ``n<2``, "
+"``n3,10`` e ``n4`` (esattamente quattro)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1466,7 +1480,7 @@ msgstr ""
 "indicato, su entrambi i lati (es. ``pl'Alice'``). Non distingue maiuscole"
 " e minuscole."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 

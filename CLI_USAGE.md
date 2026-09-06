@@ -1703,6 +1703,27 @@ Examples:
   blunderdb collection export --db database.db --id 3 --out cours.db --watermark "Cours du 12 mars"
 ```
 
+### `blunderdb collection filter`
+
+```
+Usage: blunderdb collection filter [options]
+
+Make a collection living: its content becomes the result of a search query, re-evaluated every time it is opened. An empty query turns it back into a hand-made list, keeping the positions it already held.
+
+Options:
+  -clear
+    	Turn the collection back into a hand-made list
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Collection ID (required)
+  -query string
+    	The search query, in the application's own grammar; empty clears it
+
+Examples:
+  blunderdb collection filter --db database.db --id 3 --query "E>80 gt:holding"
+```
+
 ### `blunderdb collection list`
 
 ```

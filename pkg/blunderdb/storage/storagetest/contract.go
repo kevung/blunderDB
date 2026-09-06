@@ -112,6 +112,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"ImportBatch/ReportIsAboutOneImport", testImportBatchReportIgnoresOtherBatches},
 		{"ImportBatch/StudyQueue", testImportStudyQueue},
 		{"Positions/SimilarIsExactAndOrdered", testSimilarIsExactAndOrdered},
+		{"Collection/FilterQueryRoundTrips", testCollectionFilterQuery},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

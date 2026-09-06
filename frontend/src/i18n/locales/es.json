@@ -582,7 +582,12 @@
         "created": "Colección \"{name}\" creada",
         "errorCreating": "Error al crear la colección",
         "isEmpty": "La colección \"{name}\" está vacía",
-        "confirmRemove": "¿Quitar {count} posición(es) de la colección?"
+        "confirmRemove": "¿Quitar {count} posición(es) de la colección?",
+        "livingOn": "Hacer viva esta colección: contendrá el resultado de la última búsqueda, reevaluado en cada apertura.",
+        "livingOff": "Colección viva ({query}). Pulse para devolverle su lista hecha a mano.",
+        "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
+        "livingSet": "Colección viva: {query}",
+        "livingCleared": "Colección devuelta a su lista hecha a mano."
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",

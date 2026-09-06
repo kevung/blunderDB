@@ -1052,6 +1052,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>La posición se encontró más de x veces en la base — el número de jugadas que llegan a ella, en todos los partidos. Formas <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> y <code>n4</code> (exactamente cuatro).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La posición o su réplica especular cumple los filtros.</td>
 <td>—</td>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 12:21+0200\n"
+"POT-Creation-Date: 2026-09-06 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -714,6 +714,20 @@ msgstr ""
 "Wiederholbar, und Tags **addieren sich** (``#prime #backgame`` verlangt "
 "beide): eine Stellung trägt mehrere Tags, zwei zu nennen heißt also "
 "„beide“."
+
+#: ../../source/cmd_mode.rst:1
+msgid "n>x"
+msgstr "n>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position a été rencontrée plus de x fois dans la base — le nombre de "
+"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
+"``n3,10`` et ``n4`` (exactement quatre)."
+msgstr ""
+"Die Stellung kam in der Datenbank mehr als x-mal vor — die Zahl der Züge,"
+" die zu ihr führen, über alle Matches hinweg. Formen ``n>3``, ``n<2``, "
+"``n3,10`` und ``n4`` (genau vier)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1470,7 +1484,7 @@ msgstr ""
 "der beiden Seiten beteiligt war (z. B. ``pl'Alice'``). "
 "Groß-/Kleinschreibung wird ignoriert."
 
-#: ../../source/cmd_mode.rst:223
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

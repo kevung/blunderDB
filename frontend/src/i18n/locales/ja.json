@@ -582,7 +582,12 @@
         "created": "コレクション「{name}」を作成しました",
         "errorCreating": "コレクションの作成エラー",
         "isEmpty": "コレクション「{name}」は空です",
-        "confirmRemove": "{count}件のポジションをコレクションから削除しますか?"
+        "confirmRemove": "{count}件のポジションをコレクションから削除しますか?",
+        "livingOn": "このコレクションを「生きた」ものにします。直近の検索結果を内容とし、開くたびに再評価します。",
+        "livingOff": "生きたコレクション（{query}）。クリックすると手作りのリストに戻します。",
+        "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
+        "livingSet": "生きたコレクション：{query}",
+        "livingCleared": "コレクションを手作りのリストに戻しました。"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",

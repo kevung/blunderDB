@@ -1051,6 +1051,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>La posizione è stata incontrata più di x volte nella base — il numero di mosse che vi arrivano, in tutti gli incontri. Forme <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> e <code>n4</code> (esattamente quattro).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La posizione o quella speculare verifica i filtri.</td>
 <td>—</td>

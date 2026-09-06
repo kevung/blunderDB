@@ -11,6 +11,8 @@
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { positionStore } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
+    import { lastSearchStore } from '../stores/searchHistoryStore';
+    import { get } from 'svelte/store';
     import {
         CreateCollection,
         GetAllCollections,
@@ -18,6 +20,7 @@
         AddPositionToCollection,
         RemovePositionFromCollection,
         GetCollectionPositions,
+        SetCollectionFilter,
         ReorderCollectionPositions,
         ReorderCollections,
         UpdateCollection,
@@ -73,6 +76,31 @@
         }
     });
     let inlineNewName = $state('');
+
+    // Collection vivante (#282). Le titre dit ce que le clic fera, parce que
+    // le glyphe seul ne le dirait pas : rendre vivante, ou rendre la
+    // collection à sa liste faite à la main — laquelle est toujours là, rien
+    // n'ayant été détruit en la rendant vivante.
+    let livingTitle = $derived(activeCollection?.filterQuery ? $t('collection.livingOff', { query: activeCollection.filterQuery }) : $t('collection.livingOn'));
+
+    async function toggleLiving() {
+        if (!activeCollection) return;
+        const query = activeCollection.filterQuery ? '' : (get(lastSearchStore)?.command || '').trim();
+        if (!activeCollection.filterQuery && !query) {
+            statusBarTextStore.set(tMsg('collection.livingNeedsSearch'));
+            return;
+        }
+        try {
+            await SetCollectionFilter(activeCollection.id, query);
+            activeCollectionStore.set({ ...activeCollection, filterQuery: query });
+            await loadCollections();
+            const positions = await GetCollectionPositions(activeCollection.id);
+            collectionPositionsStore.set(positions || []);
+            statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
+        } catch (error) {
+            logger.error('Error setting the collection filter:', error);
+        }
+    }
 
     // Multi-select for positions: indices into collectionPositions. A SvelteSet
     // mutated in place — the template tracks this one instance, so there is
@@ -657,6 +685,14 @@
                             title={positionCollectionIds.includes(activeCollection.id) ? $t('collection.removePositionTooltip') : $t('collection.addPositionTooltip')}
                         />
                     {/if}
+                    <!-- Collection vivante (#282) : sa composition est le
+                         résultat d'une requête, réévaluée à chaque ouverture.
+                         Le bouton prend la DERNIÈRE recherche lancée — c'est
+                         le geste (« ça, garde-le ») et cela évite d'inventer
+                         un second endroit où écrire une requête. -->
+                    <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
+                        {activeCollection.filterQuery ? '◈' : '◇'}
+                    </button>
                 {/snippet}
                 {#snippet subheader()}
                     {#if collectionEdit.isEditing(activeCollection.id)}

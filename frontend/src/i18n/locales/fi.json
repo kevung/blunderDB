@@ -582,7 +582,12 @@
         "created": "Kokoelma \"{name}\" luotu",
         "errorCreating": "Virhe kokoelman luomisessa",
         "isEmpty": "Kokoelma \"{name}\" on tyhjä",
-        "confirmRemove": "Poistetaanko {count} positio(ta) kokoelmasta?"
+        "confirmRemove": "Poistetaanko {count} positio(ta) kokoelmasta?",
+        "livingOn": "Tee tästä kokoelmasta elävä: se sisältää viimeisimmän haun tuloksen, joka lasketaan uudelleen joka avauksella.",
+        "livingOff": "Elävä kokoelma ({query}). Napsauta palauttaaksesi käsin tehdyn listan.",
+        "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
+        "livingSet": "Elävä kokoelma: {query}",
+        "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi."
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",

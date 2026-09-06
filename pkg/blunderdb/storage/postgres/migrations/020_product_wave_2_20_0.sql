@@ -23,3 +23,11 @@ ALTER TABLE position ADD COLUMN IF NOT EXISTS max_cube INTEGER NOT NULL DEFAULT 
 
 ALTER TABLE position ADD COLUMN IF NOT EXISTS game_type INTEGER NOT NULL DEFAULT 0;
 CREATE INDEX IF NOT EXISTS idx_position_game_type ON position (tenant_id, game_type);
+
+--   * collection.filter_query — a LIVING collection (issue #282): a search
+--     query in the grammar the command bar speaks, re-evaluated every time the
+--     collection is opened. Empty is the ordinary case, a hand-made list whose
+--     membership lives in collection_position — so no backfill is needed and
+--     no existing collection changes behaviour.
+
+ALTER TABLE collection ADD COLUMN IF NOT EXISTS filter_query TEXT NOT NULL DEFAULT '';

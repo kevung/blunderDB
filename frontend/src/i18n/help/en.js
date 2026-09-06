@@ -1039,6 +1039,11 @@ export default {
 <td>—</td>
 </tr>
 <tr>
+<td>n&gt;x</td>
+<td>The position was met more than x times in the database — the number of moves that reach it, across every match. Forms <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> and <code>n4</code> (exactly four).</td>
+<td>—</td>
+</tr>
+<tr>
 <td>M</td>
 <td>The position or the mirror one meets the filters.</td>
 <td>—</td>

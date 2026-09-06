@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 )
 
 // runCollection handles the collection command. Collections are the GUI's
@@ -46,6 +48,7 @@ func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 		"list":   cli.runCollectionList,
 		"show":   cli.runCollectionShow,
 		"create": cli.runCollectionCreate,
+		"filter": cli.runCollectionFilter,
 		"rename": cli.runCollectionRename,
 		"delete": cli.runCollectionDelete,
 		"export": cli.runCollectionExport,
@@ -298,6 +301,54 @@ func (cli *CLI) runCollectionCreate(args []string) error {
 		return fmt.Errorf("failed to create collection: %w", err)
 	}
 	fmt.Printf("Successfully created collection %q (ID: %d)\n", strings.TrimSpace(*name), id)
+	return nil
+}
+
+// runCollectionFilter makes a collection LIVING, or turns it back into a
+// hand-made list (#282).
+func (cli *CLI) runCollectionFilter(args []string) error {
+	fs, dbPath := collectionFlagSet("filter", "Make a collection living: its content becomes the result of a search query, re-evaluated every time it is opened. An empty query turns it back into a hand-made list, keeping the positions it already held.",
+		"blunderdb collection filter --db database.db --id 3 --query \"E>80 gt:holding\"")
+	id := fs.Int64("id", 0, "Collection ID (required)")
+	query := fs.String("query", "", "The search query, in the application's own grammar; empty clears it")
+	clear := fs.Bool("clear", false, "Turn the collection back into a hand-made list")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *id == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+	q := strings.TrimSpace(*query)
+	if *clear {
+		q = ""
+	} else if q == "" {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --query (or --clear)")
+	}
+	// A query nothing claims would make the collection everything in the
+	// library, silently. Refusing here is the same rule `search --query` follows.
+	if q != "" {
+		if _, diags := searchquery.Parse(q); len(diags) > 0 {
+			var unknown []string
+			for _, d := range diags {
+				if d.Kind == searchquery.DiagUnknown {
+					unknown = append(unknown, d.Token)
+				}
+			}
+			if len(unknown) > 0 {
+				return fmt.Errorf("the query carries tokens nothing claims (%s): a collection that means everything is worse than a refusal", strings.Join(unknown, ", "))
+			}
+		}
+	}
+	if err := cli.db.SetCollectionFilter(*id, q); err != nil {
+		return fmt.Errorf("failed to set the collection filter: %w", err)
+	}
+	if q == "" {
+		fmt.Printf("Collection %d is a hand-made list again.\n", *id)
+	} else {
+		fmt.Printf("Collection %d is now living: %s\n", *id, q)
+	}
 	return nil
 }
 
