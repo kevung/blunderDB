@@ -217,6 +217,23 @@ Steps:
    release while a real promise remains.** Never add a roadmap page back
    (one was tried in H.11 and removed four days later).
 
+   The mirror image of a promise is a sentence that dates itself against an
+   earlier release: « passe **désormais** par une corbeille » describes a
+   change, not the software, and reads as stale the day the reader has never
+   known anything else. `historique.rst` is the one page where it belongs —
+   comparing versions is its whole job — so it is excluded:
+
+   ```bash
+   # \b before « à » is what keeps « déjà présent » out of the results.
+   grep -nE "désormais|dorénavant|\bà présent" \
+       $(ls doc/source/*.rst | grep -v historique.rst)
+   ```
+
+   Rewrite each hit in the present (« passe par une corbeille »), and mind
+   that the eight translations carry their own word for it — *now*, *jetzt*,
+   *πλέον*, *ahora*, *nyt*, *ora*, *ようになった*, *теперь* — which must go
+   with the French one, or the page still announces in eight languages.
+
 5. Regenerate **all** translation catalogs so new/changed French strings get
    fresh `msgid` entries, then translate them. Use the repo script and nothing
    else — it keeps the gettext output path relative and repairs the

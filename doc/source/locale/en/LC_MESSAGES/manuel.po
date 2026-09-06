@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-06 22:56+0200\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1528,15 +1528,15 @@ msgstr "The trash"
 
 #: ../../source/manuel.rst:683
 msgid ""
-"Supprimer une position, une collection ou un commentaire passe désormais "
-"par une **corbeille** : la suppression a bien lieu, mais une copie de ce "
-"qui disparaît est gardée trente jours. La commande ``trash`` ouvre la "
-"fenêtre qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
+"Supprimer une position, une collection ou un commentaire passe par une "
+"**corbeille** : la suppression a bien lieu, mais une copie de ce qui "
+"disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre"
+" qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
 msgstr ""
-"Deleting a position, a collection or a comment now goes through a "
-"**trash**: the delete does happen, but a copy of what disappears is kept "
-"for thirty days. The ``trash`` command opens the window that lists them, "
-"each with *Restore* and *Delete*."
+"Deleting a position, a collection or a comment goes through a **trash**: "
+"the delete does happen, but a copy of what disappears is kept for thirty "
+"days. The ``trash`` command opens the window that lists them, each with "
+"*Restore* and *Delete*."
 
 #: ../../source/manuel.rst:688
 msgid ""
@@ -2089,7 +2089,7 @@ msgstr ""
 "from the source file, or stays unknown — and a rollout, whose data it "
 "neither opens from a ``.xg`` file nor knows how to produce."
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -2106,7 +2106,7 @@ msgstr ""
 "list. Nothing is destroyed by making it living: the positions it held are"
 " still there when you go back."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "

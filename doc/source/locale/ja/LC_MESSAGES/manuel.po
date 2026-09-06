@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-06 22:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1321,12 +1321,12 @@ msgstr "ごみ箱"
 
 #: ../../source/manuel.rst:683
 msgid ""
-"Supprimer une position, une collection ou un commentaire passe désormais "
-"par une **corbeille** : la suppression a bien lieu, mais une copie de ce "
-"qui disparaît est gardée trente jours. La commande ``trash`` ouvre la "
-"fenêtre qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
+"Supprimer une position, une collection ou un commentaire passe par une "
+"**corbeille** : la suppression a bien lieu, mais une copie de ce qui "
+"disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre"
+" qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
 msgstr ""
-"局面、コレクション、コメントの削除は\\ **ごみ箱**\\ を経由するようになった\\ "
+"局面、コレクション、コメントの削除は\\ **ごみ箱**\\ を経由する\\ "
 "：削除は実際に起こるが、消えるもののコピーが三十日間保たれる。``trash`` コマンドがそれらを一覧する窓を開き、各項目に\\ *復元*\\ "
 "と\\ *削除*\\ が付く。"
 
@@ -1799,7 +1799,7 @@ msgstr ""
 "：再計算された運——運はソースファイルから読み取られるか、未知のままです——と、ロールアウト。ロールアウトのデータは ``.xg`` "
 "ファイルの中では開かれず、blunderDB はそれを生成することもできません。"
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -1813,7 +1813,7 @@ msgstr ""
 "の結果になり、開くたびに再評価されます。コレクション見出しの ◇ ボタンが直近の検索でそれを生きたものにし、◈ "
 "はすでにそうであることを示します。同じボタンでリストに戻せます。生きたものにしても何も壊れません。含まれていた局面は戻ったときにそのまま残っています。"
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "

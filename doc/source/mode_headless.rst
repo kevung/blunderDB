@@ -518,7 +518,7 @@ propriétaire a fixée).
    vers le taux observé et pouvait l'écrire. La cible de rétention est un
    **choix** sur le compromis charge/qualité, le taux mesuré en est le
    **résultat**, et asservir l'un à l'autre est le mécanisme que les auteurs de
-   FSRS écartent. La méthode mesure désormais, sans jamais écrire.
+   FSRS écartent. La méthode mesure, sans jamais écrire.
 
 La famille ``stats`` fournit ``stats.playerTable``, qui renvoie une ligne de
 statistiques par joueur (matchs, victoires/défaites, décisions comptées, PR
@@ -585,7 +585,7 @@ trois modes) ; une position portant une analyse XG, GNUbg ou BGBlitz n'est
 jamais touchée, quel que soit son contenu gammonNet — la protection
 d'`ADR-0013 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md>`__
 reste inconditionnelle. Même forme NDJSON qu'``analyzeMissing``, et
-l'évènement final de chacune des deux routes porte désormais la répartition
+l'évènement final de chacune des deux routes porte la répartition
 ``evaluated``/``refused``/``failed`` : une position que gammonNet refuse
 d'évaluer (un score de match hors de la portée de sa table, une décision de
 videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle

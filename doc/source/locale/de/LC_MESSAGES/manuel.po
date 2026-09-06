@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-06 22:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1595,14 +1595,14 @@ msgstr "Der Papierkorb"
 
 #: ../../source/manuel.rst:683
 msgid ""
-"Supprimer une position, une collection ou un commentaire passe désormais "
-"par une **corbeille** : la suppression a bien lieu, mais une copie de ce "
-"qui disparaît est gardée trente jours. La commande ``trash`` ouvre la "
-"fenêtre qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
+"Supprimer une position, une collection ou un commentaire passe par une "
+"**corbeille** : la suppression a bien lieu, mais une copie de ce qui "
+"disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre"
+" qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
 msgstr ""
-"Eine Stellung, eine Sammlung oder einen Kommentar zu löschen geht jetzt "
-"über einen **Papierkorb**: der Löschvorgang findet statt, aber eine Kopie"
-" dessen, was verschwindet, wird dreißig Tage aufbewahrt. Der Befehl "
+"Eine Stellung, eine Sammlung oder einen Kommentar zu löschen geht über "
+"einen **Papierkorb**: der Löschvorgang findet statt, aber eine Kopie "
+"dessen, was verschwindet, wird dreißig Tage aufbewahrt. Der Befehl "
 "``trash`` öffnet das Fenster, das sie auflistet, jede mit "
 "*Wiederherstellen* und *Löschen*."
 
@@ -2175,7 +2175,7 @@ msgstr ""
 "dessen Daten es in einer ``.xg``-Datei nicht öffnet und das es nicht "
 "erzeugen kann."
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -2192,7 +2192,7 @@ msgstr ""
 "dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: "
 "Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "

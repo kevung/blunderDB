@@ -680,8 +680,8 @@ tags`` (voir :ref:`cli`).
 La corbeille
 ------------
 
-Supprimer une position, une collection ou un commentaire passe désormais par
-une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
+Supprimer une position, une collection ou un commentaire passe par une
+**corbeille** : la suppression a bien lieu, mais une copie de ce qui
 disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
 les liste, avec pour chacune *Restaurer* et *Supprimer*.
 
