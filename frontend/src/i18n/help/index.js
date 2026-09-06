@@ -3,8 +3,9 @@ import { writable, derived } from 'svelte/store';
 
 import en from './en.js';
 
-// Every non-English help bundle (manual/shortcuts/commands/about HTML, ~628 kB
-// combined) is fetched on demand instead of bundled statically (#207): the
+// Every non-English help bundle (manual/shortcuts/commands/about HTML, ~1.5 MB
+// combined since the manual tab became a rendering of manuel.rst) is fetched on
+// demand instead of bundled statically (#207): the
 // interface only ever needs the language actually on screen. English stays a
 // static import — it is the per-tab fallback below. Loading is triggered by
 // HelpModal when it opens (or the language changes while it's open), not by

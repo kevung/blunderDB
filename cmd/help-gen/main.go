@@ -1,14 +1,18 @@
 // Command help-gen builds the in-app help bundles (frontend/src/i18n/help/*.js)
 // from the documentation that already states the same facts.
 //
-// The two reference tabs — keyboard shortcuts and the command line — are
-// rendered from doc/source/raccourcis.rst and doc/source/cmd_mode.rst, in the
-// nine documentation languages, through the gettext catalogues under
-// doc/source/locale. The two prose tabs — the manual digest and the About tab —
-// are hand-written HTML under frontend/src/i18n/help/prose/<lang>.html and are
+// Three tabs — the manual, the keyboard shortcuts and the command line — are
+// rendered from doc/source/manuel.rst, doc/source/raccourcis.rst and
+// doc/source/cmd_mode.rst, in the nine documentation languages, through the
+// gettext catalogues under doc/source/locale. Only the About tab is
+// hand-written HTML, under frontend/src/i18n/help/prose/<lang>.html, and is
 // copied through verbatim; see the ADR "the in-app help is generated from the
-// documentation" for why they are not (yet, for the manual; ever, for About)
-// derived from the .rst.
+// documentation" for why it alone is not derived from the .rst.
+//
+// The manual tab was a hand-written digest until it had drifted eight sections
+// behind manuel.rst — the trash, the tags, the micro-drills, the cube matrix
+// among them — in nine languages at once, with nothing to catch it. Generating
+// it is what makes that drift impossible rather than merely noticed.
 //
 // Usage:
 //
@@ -36,6 +40,7 @@ var languages = []string{"de", "el", "en", "es", "fi", "fr", "it", "ja", "ru"}
 
 // tabs maps each generated help tab to the .rst document it is rendered from.
 var tabs = []struct{ tab, doc string }{
+	{"manual", "manuel"},
 	{"shortcuts", "raccourcis"},
 	{"commands", "cmd_mode"},
 }
@@ -197,10 +202,11 @@ func (g *generator) bundle(lang string) (string, error) {
 const header = `// GENERATED FILE — do not edit by hand, and do not translate it here.
 //
 // Produced by ` + "`go run ./cmd/help-gen`" + ` (make help) from:
+//   - doc/source/manuel.rst      → the "manual" tab
 //   - doc/source/raccourcis.rst  → the "shortcuts" tab
 //   - doc/source/cmd_mode.rst    → the "commands" tab
 //   - doc/source/locale/<lang>/LC_MESSAGES/*.po for the eight translations
-//   - frontend/src/i18n/help/prose/<lang>.html → the "manual" and "about" tabs
+//   - frontend/src/i18n/help/prose/<lang>.html → the "about" tab
 //
 // Fix the documentation (and its .po catalogues), or the prose fragment, then
 // run ` + "`make help`" + `. TestHelpBundlesAreCurrent fails if this file is stale.

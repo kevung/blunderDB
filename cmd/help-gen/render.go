@@ -57,8 +57,13 @@ var (
 	// emphasis rather than literal asterisks. The private-use boundary rune
 	// (an escaped space, see above) counts on both sides.
 	emRe = regexp.MustCompile(`(^|[\s\-:/'"<(\[{\x{00AB}\x{FF08}\x{2018}\x{201C}\x{E000}])\*([^*\s][^*]*)\*($|[\s\-.,;:!?\\/'")\]}>\x{00BB}\x{FF09}\x{3001}\x{3002}\x{2019}\x{201D}\x{E000}])`)
-	// :ref:`text <label>` and :ref:`label`.
-	refLabelRe = regexp.MustCompile(":ref:`([^`<]+)<([^`>]+)>`")
+	// :ref:`text <label>` and :ref:`label`. inline() escapes before it
+	// substitutes, so by the time these run the angle brackets of the
+	// explicit-title form are already `&lt;`/`&gt;` — matching the raw `<`
+	// here silently sent `text &lt;label&gt;` to refBareRe as if it were a
+	// label, and every explicit-title reference in manuel.rst failed to
+	// resolve.
+	refLabelRe = regexp.MustCompile(":ref:`([^`]+?)&lt;([^`]+?)&gt;`")
 	refBareRe  = regexp.MustCompile(":ref:`([^`]+)`")
 	roleRe     = regexp.MustCompile(":[a-z]+:`([^`]+)`")
 	// A backslash escapes the next character in reStructuredText.
@@ -120,10 +125,15 @@ func (g *generator) inline(text string, tr translator) (string, error) {
 
 // renderTab renders one parsed document as the inner HTML of a help tab.
 func (g *generator) renderTab(doc *document, tr translator) (string, error) {
+	return g.renderBlocks(doc.blocks, tr)
+}
+
+// renderBlocks renders a run of blocks; a nested body re-enters it.
+func (g *generator) renderBlocks(blocks []block, tr translator) (string, error) {
 	var b strings.Builder
 	write := func(format string, args ...any) { fmt.Fprintf(&b, format, args...) }
 
-	for _, blk := range doc.blocks {
+	for _, blk := range blocks {
 		switch v := blk.(type) {
 		case section:
 			// Level 1 is the document title; the tab header already names it.
@@ -142,15 +152,11 @@ func (g *generator) renderTab(doc *document, tr translator) (string, error) {
 			}
 			write("<p>%s</p>\n", html)
 		case admonition:
-			write("<div class=\"admonition %s\">\n", v.kind)
-			for _, p := range v.paras {
-				html, err := g.trInline(p, tr)
-				if err != nil {
-					return "", err
-				}
-				write("<p>%s</p>\n", html)
+			inner, err := g.renderBlocks(v.blocks, tr)
+			if err != nil {
+				return "", err
 			}
-			write("</div>\n")
+			write("<div class=\"admonition %s\">\n%s</div>\n", v.kind, inner)
 		case bulletList:
 			write("<ul>\n")
 			for _, it := range v.items {
@@ -183,6 +189,23 @@ func (g *generator) renderTab(doc *document, tr translator) (string, error) {
 				write("</tr>\n")
 			}
 			write("</tbody>\n</table>\n")
+		case literal:
+			text, err := tr.tr(v.text)
+			if err != nil {
+				return "", err
+			}
+			// LaTeX is made of braces, and `{i}` reads exactly like the
+			// `{appVersion}` placeholder the About tab interpolates. Encode
+			// them: the rendering is identical, and help.safety.test.js can
+			// keep refusing every brace outside that one tab.
+			braces := strings.NewReplacer("{", "&#123;", "}", "&#125;")
+			write("<pre class=\"%s\">%s</pre>\n", v.class, braces.Replace(escapeHTML(text)))
+		case blockquote:
+			inner, err := g.renderBlocks(v.blocks, tr)
+			if err != nil {
+				return "", err
+			}
+			write("<blockquote>\n%s</blockquote>\n", inner)
 		}
 	}
 	return b.String(), nil

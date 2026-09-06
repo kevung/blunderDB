@@ -923,8 +923,6 @@ ne remplace pas ce qui est déjà là.
   dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre
   pas les données dans un fichier ``.xg`` et qu'il ne sait pas produire.
 
-.. _panneau_matchs:
-
 Une collection peut être **vivante** : sa composition n'est plus une liste
 faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
 qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
@@ -936,6 +934,8 @@ Une collection vivante dont la requête porte un jeton que cette version ne
 connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
+
+.. _panneau_matchs:
 
 Panneau Matchs
 --------------
