@@ -1367,5 +1367,11 @@
         "doubletooearly": "Vous perdez {cost} mMWC : le double est prématuré, {best}.",
         "taketooloose": "Vous perdez {cost} mMWC : la prise est trop large, {best}.",
         "passtootight": "Vous perdez {cost} mMWC : le passe est trop serré, {best}."
+    },
+    "similar": {
+        "noPosition": "Aucune position courante dont chercher les voisines.",
+        "failed": "La recherche de positions proches a échoué.",
+        "none": "Aucune position proche dans cette base.",
+        "found": "{n} positions proches, de {nearest} à {farthest} pions-pas."
     }
 }

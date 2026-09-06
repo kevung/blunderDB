@@ -1367,5 +1367,11 @@
         "doubletooearly": "You lose {cost} mMWC: the double is premature, {best}.",
         "taketooloose": "You lose {cost} mMWC: the take is too loose, {best}.",
         "passtootight": "You lose {cost} mMWC: the pass is too tight, {best}."
+    },
+    "similar": {
+        "noPosition": "No current position to find neighbours of.",
+        "failed": "The search for close positions failed.",
+        "none": "No close position in this database.",
+        "found": "{n} close positions, from {nearest} to {farthest} checker-pips."
     }
 }

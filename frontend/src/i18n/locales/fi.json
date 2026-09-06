@@ -1367,5 +1367,11 @@
         "doubletooearly": "Menetät {cost} mMWC: tuplaus on ennenaikainen, {best}.",
         "taketooloose": "Menetät {cost} mMWC: hyväksyntä on liian löysä, {best}.",
         "passtootight": "Menetät {cost} mMWC: luovutus on liian tiukka, {best}."
+    },
+    "similar": {
+        "noPosition": "Ei nykyistä asemaa, jolle etsiä naapureita.",
+        "failed": "Läheisten asemien haku epäonnistui.",
+        "none": "Ei läheisiä asemia tässä tietokannassa.",
+        "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä."
     }
 }

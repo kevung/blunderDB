@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:33+0200\n"
+"POT-Creation-Date: 2026-09-06 12:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -174,6 +174,24 @@ msgstr ""
 "el número de posiciones, pulsables para lanzar la búsqueda."
 
 #: ../../source/cmd_mode.rst:1
+msgid "like"
+msgstr "like"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Remplace la liste parcourue par les positions les plus proches de la "
+"position courante — ou de celle dont l'indice est donné (``like 42``). La"
+" proximité est une distance de transport en pions-pas : ce n'est pas un "
+"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
+"combine donc pas avec les jetons de recherche."
+msgstr ""
+"Sustituye la lista recorrida por las posiciones más cercanas a la actual "
+"— o a aquella cuyo índice se indica (``like 42``). La cercanía es una "
+"distancia de transporte en pips de ficha: no es un filtro, ordena toda la"
+" base en vez de restringirla, y por tanto no se combina con los tokens de"
+" búsqueda."
+
+#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -263,7 +281,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Abre la tabla de valores de gammon con el cubo a 4."
 
-#: ../../source/cmd_mode.rst:50
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Posiciones y navegación"
 
@@ -404,7 +422,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:75
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -440,11 +458,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Buscar entre las posiciones actualmente filtradas."
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -459,7 +477,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -479,7 +497,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:109
+#: ../../source/cmd_mode.rst:110
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -489,11 +507,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -502,7 +520,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1434,7 +1452,7 @@ msgstr ""
 " en cualquier lado (ej: ``pl'Alice'``). No distingue mayúsculas y "
 "minúsculas."
 
-#: ../../source/cmd_mode.rst:221
+#: ../../source/cmd_mode.rst:222
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

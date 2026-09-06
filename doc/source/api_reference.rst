@@ -137,6 +137,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.parseText                  JSON
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.save                       JSON
+     POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
    quiz
      POST /v1/quiz.gradeChecker                    JSON

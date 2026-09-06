@@ -844,6 +844,10 @@ export default {
 <td>Öffnet das Tag-Vokabular: die in dieser Datenbank verwendeten Tags mit der Zahl der Stellungen, anklickbar zum Starten der Suche.</td>
 </tr>
 <tr>
+<td>like</td>
+<td>Ersetzt die durchblätterte Liste durch die Stellungen, die der aktuellen am nächsten stehen — oder der, deren Index angegeben ist (<code>like 42</code>). Die Nähe ist eine Transportdistanz in Stein-Pips: Sie ist kein Filter, sie ordnet die ganze Datenbank, statt sie einzuschränken, und lässt sich daher nicht mit den Suchtoken kombinieren.</td>
+</tr>
+<tr>
 <td>train</td>
 <td>Startet eine Micro-Training-Sitzung. Nimmt ein Argument: <code>train pips</code> (Pip-Zählung), <code>train epc</code>, <code>train tp</code> (Annahmepunkt beim Matchstand), <code>train quiz</code> (der Zug oder die Verdopplungsentscheidung, bewertet gegen die gespeicherte Analyse). Fünf Fragen, auf Zeit, sofort korrigiert.</td>
 </tr>

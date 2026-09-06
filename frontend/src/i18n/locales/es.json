@@ -1367,5 +1367,11 @@
         "doubletooearly": "Pierde {cost} mMWC: el doble es prematuro, {best}.",
         "taketooloose": "Pierde {cost} mMWC: la aceptación es demasiado amplia, {best}.",
         "passtootight": "Pierde {cost} mMWC: el paso es demasiado estricto, {best}."
+    },
+    "similar": {
+        "noPosition": "No hay posición actual de la que buscar vecinas.",
+        "failed": "La búsqueda de posiciones cercanas ha fallado.",
+        "none": "Ninguna posición cercana en esta base.",
+        "found": "{n} posiciones cercanas, de {nearest} a {farthest} pips de ficha."
     }
 }

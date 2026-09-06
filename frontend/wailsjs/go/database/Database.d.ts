@@ -222,6 +222,8 @@ export function LoadAllPositions():Promise<Array<domain.Position>>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
 
+export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
 export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
 
 export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;

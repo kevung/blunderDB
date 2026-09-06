@@ -1942,6 +1942,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/positions.similar:
+    post:
+      operationId: positions.similar
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/similarReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_SimilarPosition"
   /v1/positions.update:
     post:
       operationId: positions.update
@@ -3397,6 +3416,15 @@ components:
           format: int64
         tournamentName:
           type: string
+    similarReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
     statsComputeReq:
       type: object
       properties:
@@ -3439,6 +3467,9 @@ components:
     storage_SessionState:
       type: object
       description: "Opaque: see the Go type storage.SessionState (defined outside internal/server, not expanded here)."
+    storage_SimilarPosition:
+      type: object
+      description: "Opaque: see the Go type storage.SimilarPosition (defined outside internal/server, not expanded here)."
     storage_StatsDateRange:
       type: object
       description: "Opaque: see the Go type storage.StatsDateRange (defined outside internal/server, not expanded here)."
