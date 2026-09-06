@@ -21,6 +21,7 @@ var purgeOrder = []string{
 	"comment", "analysis", "move", "anki_card", "game",
 	"collection", "anki_deck", "match", "tournament", "position",
 	"filter_library", "command_history", "search_history", "session_state",
+	"library_settings",
 }
 
 // PurgeTenant permanently deletes every row belonging to scope across all
@@ -34,7 +35,8 @@ var purgeOrder = []string{
 // already-converted tenant_id — consistent with every other Store method in
 // this repo. PurgeTenant derives the numeric tenant_id internally. The
 // global metadata table is never touched: since schema 2.17.0 it holds no
-// per-tenant row (the session moved to session_state, #156).
+// per-tenant row (the session moved to session_state, #156, and the library
+// settings never lived there — ADR-0043).
 //
 // PostgreSQL-only, like ApplyRLS/DropRLS (rls_postgres.go) — there is no
 // SQLite equivalent (single-user desktop databases have no tenant to purge).

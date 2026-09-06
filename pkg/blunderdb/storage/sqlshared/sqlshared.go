@@ -91,6 +91,15 @@ type Dialect interface {
 	ScopeColumn() string
 	ScopeArg(scope string) any
 
+	// LibrarySettingsTable names the table holding the library's own
+	// settings (ADR-0043) and says whether it is confined by ScopeColumn.
+	// The two backends genuinely differ here rather than incidentally: the
+	// SQLite file keeps them in its metadata table, which it already has and
+	// which is the library; PostgreSQL's metadata is database infrastructure
+	// shared by every tenant and read-only since #156, so the settings get a
+	// tenant-scoped table of their own.
+	LibrarySettingsTable() (table string, scoped bool)
+
 	// TenantFilter renders the predicate that confines a domain table
 	// (position, match, comment, …) to the scope's tenant, qualified by alias
 	// when one is given. The SQLite schema has no tenant column on those

@@ -62,6 +62,7 @@ type Stores interface {
 	Metadata() MetadataStore
 	ImportBatches() ImportBatchStore
 	Trash() TrashStore
+	LibrarySettings() LibrarySettingsStore
 }
 
 // Storage is the root persistence interface implemented by every backend.

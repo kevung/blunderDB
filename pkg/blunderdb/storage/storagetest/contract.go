@@ -114,6 +114,9 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Positions/SimilarIsExactAndOrdered", testSimilarIsExactAndOrdered},
 		{"Anki/CubePairsAreChained", testAnkiCubePairsAreChained},
 		{"Collection/FilterQueryRoundTrips", testCollectionFilterQuery},
+		{"LibrarySettings/DefaultsWhenNeverSet", testLibrarySettingsDefaults},
+		{"LibrarySettings/RoundTrip", testLibrarySettingsRoundTrip},
+		{"LibrarySettings/RejectsInvertedNesting", testLibrarySettingsRejectsInverted},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

@@ -143,3 +143,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   with the `tenant_isolation` policy on the two new tenant-scoped tables.
   `origin` defaults to `'unknown'`, never `'user'` — see the file's header.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.19.0.
+- `021_library_settings.sql` — `library_settings`, the tenant-scoped key/value
+  table holding the library's error and blunder thresholds (ADR-0043). No
+  `DatabaseVersion` bump: nothing changes on the SQLite side, where the same
+  two rows live in the file's own `metadata` table. Creates no row — a tenant
+  that set no threshold reads the defaults, which are the constants every
+  consumer used before.
