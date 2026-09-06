@@ -831,6 +831,10 @@ export default {
 <td>Apre la tabella di match equity Kazaross-XG2.</td>
 </tr>
 <tr>
+<td>cm</td>
+<td>Apre la matrice del cubo: il verdetto della posizione corrente a tutti i punteggi di un incontro da 5, 7 o 9 punti.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Apre la tabella dei takepoint con cubo a 2.</td>
 </tr>

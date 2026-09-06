@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : douze issues fermées
+### La session du 2026-09-06 : treize issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,6 +105,16 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #267 | I.11 | La matrice du videau : le verdict de la position à tous les scores d'un match de 5, 7 ou 9. Commande `cm`, commande CLI `cubematrix`, route `/v1/gammonnet.cubeMatrix`. |
+
+Deux écarts assumés sur I.11, écrits ici pour n'avoir pas à les redécouvrir :
+la grille est une **fenêtre** et non un onglet du panneau Eval — le panneau est
+sans défilement par construction (ADR-0018, ADR-0021) et 9×9 n'y tient pas à
+côté du plateau, tandis que la table d'équité de match, exactement la même forme,
+est déjà une fenêtre ; et la grille est **post-Crawford d'un bout à l'autre**,
+parce qu'une colonne « vous ne pouvez pas doubler » ne dirait rien de la
+position. Le balayage 2-ply coûte 1,56 s en 9 points, pas les 5,7 s estimés :
+une case de videau ne génère pas de coups.
 
 Fermée aussi : **#300** (J.10, « jouer contre gammonNet »), par **ADR-0037** —
 la fiche demandait « une ligne dans une ADR pour ne pas rouvrir la question »,

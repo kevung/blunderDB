@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Tableau de données"
     },
+    "cubeMatrix": {
+        "title": "Matrice du videau",
+        "computing": "calcul en cours…",
+        "depth": "{ply}-ply",
+        "points": "{n} pts",
+        "axes": "lignes : points restants au joueur au trait ; colonnes : points restants à l'adversaire",
+        "glyphNoDouble": "PD",
+        "glyphDoubleTake": "DP",
+        "glyphDoublePass": "DR",
+        "glyphTooGood": "TB",
+        "legendNoDouble": "pas de double",
+        "legendDoubleTake": "double, prise",
+        "legendDoublePass": "double, refus",
+        "legendTooGood": "trop bon",
+        "legendRefused": "non évaluable",
+        "note": "Le score de la position est remplacé par celui de chaque case ; son videau, lui, est conservé. La grille est post-Crawford : pendant la partie Crawford le videau n'est pas en jeu."
+    },
     "met": {
         "title": "Table d'équité de match"
     },

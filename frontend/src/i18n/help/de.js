@@ -836,6 +836,10 @@ export default {
 <td>Öffnet die Match-Equity-Tabelle Kazaross-XG2.</td>
 </tr>
 <tr>
+<td>cm</td>
+<td>Öffnet die Dopplerwürfel-Matrix: das Urteil der aktuellen Stellung bei jedem Punktestand eines Matches über 5, 7 oder 9 Punkte.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Öffnet die Takepoint-Tabelle bei Dopplerstand 2.</td>
 </tr>

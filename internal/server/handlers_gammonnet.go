@@ -51,6 +51,7 @@ func (s *Server) gammonnetRoutes() []route {
 		{http.MethodPost, "/v1/gammonnet.analyzeMissing.cancel", s.handleGammonNetAnalyzeCancel},
 		{http.MethodPost, "/v1/gammonnet.sweepStale", s.handleGammonNetSweepStale},
 		{http.MethodPost, "/v1/gammonnet.compare", s.handleGammonNetCompare},
+		{http.MethodPost, "/v1/gammonnet.cubeMatrix", s.handleGammonNetCubeMatrix},
 	}
 }
 

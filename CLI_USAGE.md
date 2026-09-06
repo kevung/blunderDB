@@ -1813,6 +1813,37 @@ Examples:
   blunderdb create --db mydb.db --force
 ```
 
+### `blunderdb cubematrix`
+
+```
+Usage: blunderdb cubematrix [options] <XGID>
+
+Show the cube verdict at every score of a match: for each away × away
+cell, whether this position is a double and whether it is a take.
+The position's own score is ignored — the grid replaces it — but its
+cube is kept, so the answer is about this cube, not a centred one.
+
+Every cell is its own search: the engine is match-aware, so a single
+search read through different match equities would be wrong exactly
+where the score matters. The grid is post-Crawford throughout.
+
+Options:
+  -format string
+    	Output format: text, json (default "text")
+  -jobs int
+    	Parallel searches (0 = one per core)
+  -match-length int
+    	Match length the grid spans (1-25) (default 7)
+  -ply int
+    	Search depth for every cell (0 or 2) (default 2)
+  -prune-k int
+    	Candidate moves kept by the prune network (default 12)
+
+Examples:
+  blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+  blunderdb cubematrix --match-length 5 --format json '<XGID>'
+```
+
 ### `blunderdb delete`
 
 ```

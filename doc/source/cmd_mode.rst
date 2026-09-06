@@ -31,6 +31,7 @@ Opérations globales
    "meta", "Affiche les métadonnées de la base de données."
    "epc", "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, conservé."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
+   "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
    "tp2_last", "Ouvre la table des takepoints avec videau à 2 mort."

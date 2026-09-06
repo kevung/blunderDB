@@ -860,6 +860,54 @@ recherche elle-même.
    #
    # 37 card(s) due over 14 day(s)
 
+.. _cli_cubematrix:
+
+cubematrix — Matrice du videau
+-------------------------------
+
+Donne le verdict de videau d'une position à **tous les scores** d'un match :
+pour chaque case *away × away*, si la position se double et si elle se prend.
+Calcul pur : aucune base de données n'est ouverte, la position arrive par son
+XGID.
+
+.. code-block:: bash
+
+   ./blunderdb cubematrix [options] '<XGID>'
+
+**Options:**
+
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--match-length`` — Longueur du match que la grille couvre, de 1 à 25
+  (défaut : 7).
+* ``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2``
+  (défaut : 2).
+* ``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage
+  (défaut : 12).
+* ``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La
+  grille est identique quelle que soit la valeur ; seul le temps change.
+
+Le score propre à la position est ignoré — la grille le remplace — mais son
+**videau** est conservé : la question posée est « à quel score retournerais-je
+*ce* videau ». La grille est post-Crawford d'un bout à l'autre.
+
+Chaque case est une recherche à part entière, parce que le moteur tient compte
+du score : une seule recherche relue à travers des équités de match
+différentes serait fausse exactement là où le score compte.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Grille d'un match en 5 points
+   ./blunderdb cubematrix --match-length 5 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+
+   # Les équités de chaque case, pour un script
+   ./blunderdb cubematrix --format json '<XGID>'
+
+Sortie ``text`` : une grille dont les lignes sont les points restant à faire
+au joueur au trait, les colonnes ceux de l'adversaire, puis la légende des
+sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de chaque case refusée.
+
 epc — Calculatrice EPC
 ------------------------
 

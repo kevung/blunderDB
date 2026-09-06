@@ -608,6 +608,11 @@ describe('processCommand', () => {
         expect(get(activeModal)).toBe(MODAL.MET);
     });
 
+    test('cm opens the cube matrix modal', () => {
+        processCommand('cm');
+        expect(get(activeModal)).toBe(MODAL.CUBE_MATRIX);
+    });
+
     test('tp2_last opens TAKE_POINT_2_LAST modal', () => {
         processCommand('tp2_last');
         expect(get(activeModal)).toBe(MODAL.TAKE_POINT_2_LAST);
