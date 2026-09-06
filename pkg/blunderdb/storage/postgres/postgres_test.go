@@ -57,9 +57,10 @@ func startPostgres(t *testing.T) string {
 var wantTables = []string{
 	"analysis", "anki_card", "anki_deck", "anki_review_log",
 	"collection", "collection_position",
-	"command_history", "comment", "filter_library", "game", "match",
-	"metadata", "move", "move_analysis", "position", "schema_migrations",
-	"search_history", "session_state", "tournament",
+	"command_history", "comment", "filter_library", "game", "import_batch",
+	"match", "metadata", "move", "move_analysis", "position",
+	"schema_migrations", "search_history", "session_state", "tournament",
+	"trash",
 }
 
 // wantIndexes is the full set of named idx_* indexes, sorted.
@@ -90,7 +91,7 @@ var wantIndexes = []string{
 }
 
 // TestMigratePostgres opens a fresh database, runs Migrate, and confirms the
-// schema landed: all 18 tables, every named index, the database_version row,
+// schema landed: all 20 tables, every named index, the database_version row,
 // and a tenant_id column on every domain table.
 func TestMigratePostgres(t *testing.T) {
 	ctx := context.Background()
