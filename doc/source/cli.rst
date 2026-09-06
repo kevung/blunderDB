@@ -641,7 +641,10 @@ Affiche le contenu de la base de données.
 
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
-* ``positions`` — Liste des positions (limité à 10 par défaut).
+* ``positions`` — Liste des positions (limité à 10 par défaut). Avec
+  ``--format csv``, devient un **export tabulaire** : une ligne par position,
+  avec son XGID, sa phase, son score, son videau, ses pips et les colonnes
+  d'analyse dérivées.
 * ``imports`` — Liste des imports enregistrés, du plus récent au plus ancien :
   identifiant, date, format, source, matchs importés / ignorés / enrichis,
   fichiers illisibles et positions nouvelles. Avec ``--batch <id>``, affiche le
@@ -656,11 +659,60 @@ Affiche le contenu de la base de données.
   matchs, victoires/défaites, décisions comptées, PR global / pions / videau,
   Snowie ER, erreurs, blunders et chance. C'est le pendant en ligne de commande
   de l'onglet Joueurs du panneau Stats.
+* ``moves`` — **Export tabulaire** des coups enregistrés, un par ligne, avec le
+  match auquel ils appartiennent recopié sur chaque ligne : identifiants,
+  date, joueurs, longueur, numéro et type de coup, position, dés, coup joué,
+  action de videau, chance. ``--format csv`` obligatoire.
+* ``analyses`` — **Export tabulaire** des analyses stockées, une par ligne :
+  moteur, profondeur, meilleur coup et son équité, erreur du coup joué,
+  meilleure action de videau et son erreur, les six taux de gain.
+  ``--format csv`` obligatoire.
 * ``tags`` — Vocabulaire de tags de la base : chaque ``#mot`` écrit dans un
   commentaire, avec le nombre de **positions** qui le portent, du plus utilisé
   au moins utilisé. Sur une base sans aucun tag, affiche le vocabulaire
   recommandé plutôt qu'une liste vide (voir :ref:`tags`). Accepte
   ``--format json`` et ``--format csv``.
+
+.. _export_tabulaire:
+
+Exports tabulaires
+^^^^^^^^^^^^^^^^^^
+
+Trois types — ``positions``, ``moves`` et ``analyses`` — s'exportent en CSV
+pour un notebook, un tableur ou un script :
+
+.. code-block:: bash
+
+   ./blunderdb list --db base.db --type positions --format csv > positions.csv
+   ./blunderdb list --db base.db --type moves     --format csv > moves.csv
+   ./blunderdb list --db base.db --type analyses  --format csv > analyses.csv
+
+``--limit`` ne s'applique **que si vous le passez**. Sa valeur par défaut (10)
+existe pour qu'un ``list`` affiché dans un terminal ne fasse pas défiler la
+base entière ; un export, lui, part dans un fichier que lit un programme, et le
+tronquer silencieusement à dix lignes serait un piège qu'on ne remarque qu'une
+fois les chiffres faux.
+
+**Les colonnes sont un contrat.** Un notebook ou un script écrit contre ces
+noms doit continuer de fonctionner : les colonnes s'ajoutent à la fin, ne sont
+jamais renommées ni réordonnées. Toutes les équités sont en **millipoints
+entiers**, parce que c'est ainsi qu'elles sont stockées et parce qu'un flottant
+dans un CSV invite une locale à le reformater.
+
+**Parquet n'est pas proposé**, et c'est mesuré plutôt que dogmatique : une
+bibliothèque colonnaire pèse plusieurs mégaoctets dans un binaire dont la
+taille est un souci suivi, alors que tout ce à quoi cet export sert lit du CSV
+en une ligne (``pd.read_csv``, ``polars.read_csv``, ``read.csv``, un tableur).
+Parquet se justifie à des dizaines de millions de lignes ; une bibliothèque de
+backgammon de dix ans en compte cent mille. Si un jour la différence se mesure
+sur une vraie base, c'est cette mesure qui rouvrira la question.
+
+Un **notebook Jupyter d'exemple** accompagne ces exports
+(``notebooks/blunderdb-analyse.ipynb`` dans le dépôt) : PR dans le temps,
+distribution des magnitudes d'erreur, dix pires décisions avec leur XGID. Il
+n'utilise rien d'autre que ces trois fichiers CSV, et il est **exécuté toutes
+les nuits en intégration continue** — un notebook qu'on ne lance pas est un
+notebook qui a cessé de fonctionner sans que personne le sache.
 
 **Options** (type ``stats`` uniquement) :
 
