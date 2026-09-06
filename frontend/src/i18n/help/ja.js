@@ -1019,6 +1019,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>手番の側から見て、局面がどの戦型に属するか：<code>race</code>、<code>bearin</code>（接触下でのベアイン）、<code>crunch</code>、<code>backgame</code>、<code>acepoint</code>、<code>blitz</code>、<code>primevprime</code>、<code>mutualholding</code>、<code>holding</code>、<code>contact</code>。繰り返し可（<code>gt:holding gt:mutualholding</code>）。フェーズと同じ派生ラベルで、盤面から計算され、編集はできず、<code>blunderdb repair</code> が再計算します。</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>その局面が、コメントのいずれかにこの<strong>タグ</strong>を持っています。タグとは文章に書いた <code>#語</code> で、何も宣言しません。比較は区切りを見るので、<code>#prime</code> は <code>#priming</code> を拾いません。部分文字列を探すテキストフィルタとの違いはそこにあります。繰り返し指定でき、タグは<strong>重なります</strong>（<code>#prime #backgame</code> は両方を求めます）。局面は複数のタグを持つので、二つ挙げれば「両方」の意味です。</td>
 <td>—</td>

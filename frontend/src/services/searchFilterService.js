@@ -203,6 +203,14 @@ export function parseSearchTokens(filtersOrCommand, command) {
         .filter((f) => typeof f === 'string' && /^ph:[a-z]+$/.test(f))
         .map((f) => f.slice(3))
         .join(';');
+    // Derived plan of play: `gt:holding`, repeatable, joined the same way
+    // (GameTypeFilter, #291). This is the token the classifier exists for —
+    // « mes erreurs en holding game » est UN jeton, pas un paquet de plages
+    // sauvegardées.
+    const gameTypeFilter = filters
+        .filter((f) => typeof f === 'string' && /^gt:[a-z-]+$/.test(f))
+        .map((f) => f.slice(3))
+        .join(';');
     // Comment provenance: `co:user`, repeatable, joined the same way
     // (CommentOriginFilter, #263). Distinct from the bare `co` above, which
     // asks about presence only — an exact match, so the two never collide.
@@ -326,6 +334,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         commentFilter,
         commentOriginFilter,
         gamePhaseFilter,
+        gameTypeFilter,
         tagFilter,
         player1OutfieldBlotFilter,
         player2OutfieldBlotFilter,
@@ -387,6 +396,7 @@ export function parseFilterTokens(tokens) {
         xdFilter: p.exceptDiceFilter,
         posIdsFilter: p.positionIDsFilter,
         phFilter: p.gamePhaseFilter,
+        gtFilter: p.gameTypeFilter,
         coOriginFilter: p.commentOriginFilter,
         tagFilter: p.tagFilter,
         dtFilter: p.decisionTypeFilter,
@@ -457,6 +467,7 @@ export function parseSearchCommand(command) {
         xd: p.exceptDiceFilter,
         posIds: p.positionIDsFilter,
         ph: p.gamePhaseFilter,
+        gt: p.gameTypeFilter,
         coOrigin: p.commentOriginFilter,
         tags: p.tagFilter,
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
@@ -563,6 +574,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         commentFilter: pf.commentFilter || '',
         commentOriginFilter: pf.commentOriginFilter || '',
         gamePhaseFilter: pf.gamePhaseFilter || '',
+        gameTypeFilter: pf.gameTypeFilter || '',
         tagFilter: pf.tagFilter || '',
         player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
         equityFilter: pf.equityFilter || '',

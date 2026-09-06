@@ -922,4 +922,19 @@ func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilte
 			*args = append(*args, codes...)
 		}
 	}
+
+	// Derived plan of play (issue #291), read the same way and for the same
+	// reason: one indexed column, never reclassified at query time.
+	if types := domain.SplitFilterList(f.GameTypeFilter); len(types) > 0 {
+		var codes []any
+		for _, name := range types {
+			if gt, ok := domain.ParseGameType(name); ok {
+				codes = append(codes, int(gt))
+			}
+		}
+		if len(codes) > 0 {
+			where.WriteString(" AND p.game_type IN (" + Placeholders(len(codes)) + ")")
+			*args = append(*args, codes...)
+		}
+	}
 }

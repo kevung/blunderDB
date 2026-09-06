@@ -45,7 +45,7 @@ type PositionStore interface {
 	// reason to fail — or lose the rest of — the batch.
 	LoadByIDs(ctx context.Context, scope string, ids []int64) ([]domain.Position, error)
 
-	// ReclassifyPhases recomputes the derived phase of every position whose
+	// ReclassifyDerived recomputes the derived phase of every position whose
 	// stored value disagrees with engine.ClassifyGamePhase, and returns how
 	// many rows changed (issue #264, ADR-0035).
 	//
@@ -54,5 +54,5 @@ type PositionStore interface {
 	// with the new rule. `blunderdb repair` runs it, so does the 2.19.0
 	// migration, and so does /v1/positions.reclassifyPhases. Running it on a
 	// database that is already up to date rewrites nothing.
-	ReclassifyPhases(ctx context.Context, scope string) (int, error)
+	ReclassifyDerived(ctx context.Context, scope string) (int, error)
 }

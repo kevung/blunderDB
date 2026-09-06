@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:09+0200\n"
+"POT-Creation-Date: 2026-09-06 11:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -632,6 +632,30 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "gt:holding"
+msgstr "gt:holding"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position relève d'un plan de jeu donné, du point de vue du joueur au "
+"trait : ``race``, ``bearin`` (rentrée sous contact), ``crunch``, "
+"``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Répétable (``gt:holding "
+"gt:mutualholding``). Étiquette dérivée comme la phase : calculée à partir"
+" du plateau, jamais modifiable, recalculée par ``blunderdb repair``."
+msgstr ""
+"La posición corresponde a un plan de juego dado, desde el punto de vista "
+"del jugador que mueve: ``race``, ``bearin`` (entrada bajo contacto), "
+"``crunch``, ``backgame``, ``acepoint``, ``blitz``, ``primevprime``, "
+"``mutualholding``, ``holding``, ``contact``. Repetible (``gt:holding "
+"gt:mutualholding``). Etiqueta derivada como la fase: calculada a partir "
+"del tablero, nunca editable, recalculada por ``blunderdb repair``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--game-type``"
+msgstr "``--game-type``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "#prime"
@@ -1410,7 +1434,7 @@ msgstr ""
 " en cualquier lado (ej: ``pl'Alice'``). No distingue mayúsculas y "
 "minúsculas."
 
-#: ../../source/cmd_mode.rst:220
+#: ../../source/cmd_mode.rst:221
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

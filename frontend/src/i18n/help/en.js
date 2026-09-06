@@ -1021,6 +1021,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>The position falls under a given plan of play, from the point of view of the player on roll: <code>race</code>, <code>bearin</code> (bearing in under contact), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Repeatable (<code>gt:holding gt:mutualholding</code>). A derived label like the phase: computed from the board, never editable, recomputed by <code>blunderdb repair</code>.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>The position carries this <strong>tag</strong> in one of its comments. A tag is a <code>#word</code> written in the prose; nothing declares it. The comparison is delimited, so <code>#prime</code> does not find <code>#priming</code> — that is the whole difference from the text filter, which looks for a substring. Repeatable, and tags <strong>add up</strong> (<code>#prime #backgame</code> asks for both): a position carries several tags, so naming two means “both”.</td>
 <td>—</td>

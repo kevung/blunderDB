@@ -22,7 +22,11 @@ type PositionColumns struct {
 	// GamePhase is the derived phase label (ADR-0035, issue #264). It is
 	// computed here so every writer of a position — import, edit, repair —
 	// stores the same value, and recomputed rather than carried.
-	GamePhase  domain.GamePhase
+	GamePhase domain.GamePhase
+	// GameType is the derived plan-of-play label (issue #291). Computed here
+	// for the same reason as GamePhase, and it reads the SIDE ON ROLL as well
+	// as the board — it names the plan of the player to move.
+	GameType   domain.GameType
 	Occupancy1 uint32
 	Occupancy2 uint32
 	PointMask1 uint32
@@ -70,6 +74,7 @@ func PopulatePositionColumns(p *domain.Position) PositionColumns {
 
 	c.NoContact = norm.MatchesNoContact()
 	c.GamePhase = ClassifyGamePhase(&norm)
+	c.GameType = ClassifyGameType(&norm)
 
 	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = OccupancyMasks(&norm.Board)
 

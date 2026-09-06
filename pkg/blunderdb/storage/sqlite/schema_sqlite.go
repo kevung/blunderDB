@@ -74,6 +74,11 @@ var schemaStatements = []string{
 		-- 2 middlegame, 3 race, 4 bearoff. Written by every path that writes
 		-- a position, recomputed by the repair pass, never edited.
 		game_phase        INTEGER NOT NULL DEFAULT 0,
+		-- Derived plan of play (2.20.0, issue #291): 0 unknown, then the
+		-- domain.GameType constants. Like game_phase it is written by every
+		-- path that writes a position, recomputed by the repair pass, and
+		-- never edited. Unlike it, it names the plan of the SIDE ON ROLL.
+		game_type         INTEGER NOT NULL DEFAULT 0,
 		occupancy_1       INTEGER,
 		occupancy_2       INTEGER,
 		point_mask_1      INTEGER,
@@ -408,6 +413,7 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position(pip_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_no_contact     ON position(no_contact) WHERE no_contact = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_game_phase     ON position(game_phase)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_game_type      ON position(game_type)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon1    ON analysis(player1_backgammon_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win2           ON analysis(player2_win_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,

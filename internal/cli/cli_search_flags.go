@@ -50,6 +50,7 @@ type searchFlags struct {
 	hasComment        *bool
 	noComment         *bool
 	phase             *string
+	gameType          *string
 	commentOrigin     *string
 	query             *string
 	queryHelp         *bool
@@ -92,6 +93,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		hasComment:        fs.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)"),
 		noComment:         fs.Bool("no-comment", false, "Only positions carrying no comment"),
 		phase:             fs.String("phase", "", "Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see `blunderdb repair`)"),
+		gameType:          fs.String("game-type", "", "Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see `blunderdb repair`)"),
 		commentOrigin:     fs.String("comment-origin", "", "Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown"),
 		query:             fs.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags"),
 		queryHelp:         fs.Bool("query-help", false, "List the tokens --query understands, and exit"),
@@ -308,6 +310,13 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 	if err != nil {
 		return SearchFilters{}, err
 	}
+	typeFilter, err := normaliseClosedList(*f.gameType, "--game-type", func(v string) bool {
+		_, ok := domain.ParseGameType(v)
+		return ok
+	})
+	if err != nil {
+		return SearchFilters{}, err
+	}
 	originFilter, err := normaliseClosedList(*f.commentOrigin, "--comment-origin", func(v string) bool {
 		return string(domain.ParseCommentOrigin(v)) == strings.ToLower(strings.TrimSpace(v))
 	})
@@ -318,6 +327,7 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 	return SearchFilters{
 		Filter:                  filter,
 		GamePhaseFilter:         phaseFilter,
+		GameTypeFilter:          typeFilter,
 		CommentOriginFilter:     originFilter,
 		IncludeCube:             includeCube,
 		IncludeScore:            includeScore,

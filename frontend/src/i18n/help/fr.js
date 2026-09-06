@@ -1037,6 +1037,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>La position relève d'un plan de jeu donné, du point de vue du joueur au trait : <code>race</code>, <code>bearin</code> (rentrée sous contact), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Répétable (<code>gt:holding gt:mutualholding</code>). Étiquette dérivée comme la phase : calculée à partir du plateau, jamais modifiable, recalculée par <code>blunderdb repair</code>.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>La position porte ce <strong>tag</strong> dans l'un de ses commentaires. Un tag est un <code>#mot</code> écrit dans la prose ; rien ne le déclare. La comparaison est délimitée, donc <code>#prime</code> ne trouve pas <code>#priming</code> — c'est toute la différence avec le filtre de texte, qui cherche une sous-chaîne. Répétable, et les tags se <strong>cumulent</strong> (<code>#prime #backgame</code> demande les deux) : une position porte plusieurs tags, donc en nommer deux veut dire « les deux ».</td>
 <td>—</td>

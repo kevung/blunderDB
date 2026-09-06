@@ -1028,6 +1028,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>Позиция относится к определённому плану игры, с точки зрения игрока на ходу: <code>race</code>, <code>bearin</code> (сбор под контактом), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Повторяемо (<code>gt:holding gt:mutualholding</code>). Производная метка, как и фаза: вычисляется по доске, не редактируется, пересчитывается командой <code>blunderdb repair</code>.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>Позиция несёт этот <strong>тег</strong> в одном из своих комментариев. Тег — это <code>#слово</code>, написанное в прозе; ничто его не объявляет. Сравнение разграничено, поэтому <code>#prime</code> не находит <code>#priming</code> — в этом всё отличие от текстового фильтра, который ищет подстроку. Повторяемо, и теги <strong>складываются</strong> (<code>#prime #backgame</code> запрашивает оба): позиция несёт несколько тегов, поэтому назвать два значит «оба».</td>
 <td>—</td>

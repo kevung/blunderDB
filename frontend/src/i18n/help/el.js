@@ -1037,6 +1037,11 @@ export default {
 <td><code>--phase</code></td>
 </tr>
 <tr>
+<td>gt:holding</td>
+<td>Η θέση εμπίπτει σε ένα δεδομένο σχέδιο παιχνιδιού, από την οπτική του παίκτη που παίζει: <code>race</code>, <code>bearin</code> (μάζεμα υπό επαφή), <code>crunch</code>, <code>backgame</code>, <code>acepoint</code>, <code>blitz</code>, <code>primevprime</code>, <code>mutualholding</code>, <code>holding</code>, <code>contact</code>. Επαναλήψιμο (<code>gt:holding gt:mutualholding</code>). Παράγωγη ετικέτα όπως η φάση: υπολογίζεται από το ταμπλό, ποτέ επεξεργάσιμη, επανυπολογίζεται από το <code>blunderdb repair</code>.</td>
+<td><code>--game-type</code></td>
+</tr>
+<tr>
 <td>#prime</td>
 <td>Η θέση φέρει αυτή την <strong>ετικέτα</strong> σε ένα από τα σχόλιά της. Μια ετικέτα είναι μια <code>#λέξη</code> γραμμένη στην πρόζα· τίποτα δεν τη δηλώνει. Η σύγκριση είναι οριοθετημένη, οπότε το <code>#prime</code> δεν βρίσκει το <code>#priming</code> — εκεί ακριβώς διαφέρει από το φίλτρο κειμένου, που ψάχνει υποσυμβολοσειρά. Επαναλαμβανόμενο, και οι ετικέτες <strong>αθροίζονται</strong> (<code>#prime #backgame</code> ζητά και τις δύο): μια θέση φέρει πολλές ετικέτες, οπότε το να ονομάσεις δύο σημαίνει «και τις δύο».</td>
 <td>—</td>

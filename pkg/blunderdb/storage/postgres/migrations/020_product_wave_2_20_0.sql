@@ -14,3 +14,12 @@
 -- conclusion ADR-0028 reached for has_jacoby and has_beaver.
 
 ALTER TABLE position ADD COLUMN IF NOT EXISTS max_cube INTEGER NOT NULL DEFAULT 0;
+
+--   * position.game_type — the derived plan of play (issue #291). Like
+--     game_phase before it, it is 0 ("unknown") on every existing row until a
+--     repair pass reclassifies them: the label is DERIVED, so backfilling it
+--     in SQL would mean writing the classifier twice, once in Go and once in
+--     a dialect. positions.reclassify is the one place it is computed.
+
+ALTER TABLE position ADD COLUMN IF NOT EXISTS game_type INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX IF NOT EXISTS idx_position_game_type ON position (tenant_id, game_type);
