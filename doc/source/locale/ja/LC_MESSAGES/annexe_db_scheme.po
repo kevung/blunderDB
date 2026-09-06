@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:4
 msgid "Annexe: Schéma de la base de données"
-msgstr "付録: データベーススキーマ"
+msgstr "付録：データベーススキーマ"
 
 #: ../../source/annexe_db_scheme.rst:6
 msgid ""
@@ -44,7 +44,7 @@ msgid ""
 " schéma d'une base ouverte est visible dans le panneau **Métadonnées** "
 "(commande ``meta``)."
 msgstr ""
-"データベーススキーマは\\ **バージョン管理**\\ されています。現在のスキーマバージョンは\\ **2.19.0**\\ "
+"データベーススキーマは\\ **バージョン管理**\\ されています。現在のスキーマバージョンは **2.19.0** "
 "です。これはアプリケーションのバージョンとは独立しており、内部構造が変化したときにのみ更新されます。開いているデータベースのスキーマバージョンは\\ "
 "**メタデータ**\\ パネル（``meta`` コマンド）で確認できます。"
 
@@ -81,7 +81,7 @@ msgid ""
 "``analysis`` (les données d'analyse associées) et ``comment`` (les "
 "commentaires)."
 msgstr ""
-"**ポジションと分析** ：\\ ``position``\\ （重複排除されたポジション）、\\ ``analysis``\\ "
+"**ポジションと分析**：\\ ``position``\\ （重複排除されたポジション）、\\ ``analysis``\\ "
 "（関連する分析データ）、\\ ``comment``\\ （コメント）。"
 
 #: ../../source/annexe_db_scheme.rst:40
@@ -89,7 +89,7 @@ msgid ""
 "**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent les"
 " matchs importés, leurs parties, leurs coups et l'analyse de chaque coup."
 msgstr ""
-"**マッチ** ：\\ ``match``\\ 、\\ ``game``\\ 、\\ ``move``\\ 、\\ ``move_analysis`` "
+"**マッチ**：\\ ``match``\\ 、\\ ``game``\\ 、\\ ``move``\\ 、\\ ``move_analysis`` "
 "は、インポートされたマッチ、そのゲーム、その手、および各手の分析を格納します。"
 
 #: ../../source/annexe_db_scheme.rst:43
@@ -97,12 +97,12 @@ msgid ""
 "**Collections** : ``collection`` et ``collection_position`` (table de "
 "liaison) regroupent des positions choisies manuellement."
 msgstr ""
-"**コレクション** ：\\ ``collection`` と ``collection_position``\\ "
+"**コレクション**：\\ ``collection`` と ``collection_position``\\ "
 "（連結テーブル）は、手動で選択されたポジションをまとめます。"
 
 #: ../../source/annexe_db_scheme.rst:46
 msgid "**Tournois** : ``tournament`` regroupe des matchs en tournois."
-msgstr "**トーナメント** ：\\ ``tournament`` はマッチをトーナメントにまとめます。"
+msgstr "**トーナメント**：\\ ``tournament`` はマッチをトーナメントにまとめます。"
 
 #: ../../source/annexe_db_scheme.rst:48
 msgid ""
@@ -110,7 +110,7 @@ msgid ""
 "``anki_review_log`` gèrent les paquets, les cartes et le journal des "
 "révisions (algorithme FSRS)."
 msgstr ""
-"**間隔反復（Anki）** ：\\ ``anki_deck``\\ 、\\ ``anki_card``\\ 、\\ "
+"**間隔反復（Anki）**：\\ ``anki_deck``\\ 、\\ ``anki_card``\\ 、\\ "
 "``anki_review_log`` は、デッキ、カード、および復習の記録（FSRS アルゴリズム）を管理します。"
 
 #: ../../source/annexe_db_scheme.rst:52
@@ -120,7 +120,7 @@ msgid ""
 "la bibliothèque de filtres, et ``metadata`` les métadonnées de la base (dont"
 " la version du schéma)."
 msgstr ""
-"**履歴とその他** ：\\ ``command_history`` と ``search_history`` はコマンドと検索の履歴を保持し、\\ "
+"**履歴とその他**：\\ ``command_history`` と ``search_history`` はコマンドと検索の履歴を保持し、\\ "
 "``filter_library`` はフィルターライブラリを、\\ ``metadata`` "
 "はデータベースのメタデータ（スキーマのバージョンを含む）を保持します。"
 
@@ -140,7 +140,7 @@ msgid ""
 "et un index unique, de sorte qu'une même position rencontrée dans plusieurs "
 "imports n'est stockée qu'une seule fois."
 msgstr ""
-"**ポジションの重複排除** ：各ポジションは Zobrist "
+"**ポジションの重複排除**：各ポジションは Zobrist "
 "ハッシュと一意のインデックスを持つため、複数のインポートで同じポジションが現れても一度しか保存されません。"
 
 #: ../../source/annexe_db_scheme.rst:67
@@ -150,8 +150,8 @@ msgid ""
 " erreur de coup ou de videau, chances de gain…) sont précalculés en colonnes"
 " dédiées pour un filtrage rapide."
 msgstr ""
-"**非正規化されたフィルタリング列** "
-"：よく検索される条件（判断タイプ、出目、ピップカウント差、ベアオフしたチェッカー、バックチェッカー、手やキューブのエラー、勝率など）は、高速なフィルタリングのために専用の列にあらかじめ計算されています。"
+"**非正規化されたフィルタリング列**"
+"：よく検索される条件（決定タイプ、出目、ピップカウント差、ベアオフしたチェッカー、バックチェッカー、手やキューブのエラー、勝率など）は、高速なフィルタリングのために専用の列にあらかじめ計算されています。"
 
 #: ../../source/annexe_db_scheme.rst:72
 msgid ""
@@ -159,7 +159,7 @@ msgid ""
 "points permettent un préfiltre entier très rapide lors des recherches de "
 "motifs de structure."
 msgstr ""
-"**ビットボードによる事前フィルタリング** "
+"**ビットボードによる事前フィルタリング**"
 "：占有列とポイントマスク列により、構造パターンの検索時に非常に高速な整数ベースの事前フィルタリングが可能になります。"
 
 #: ../../source/annexe_db_scheme.rst:76
@@ -170,12 +170,12 @@ msgid ""
 "recompressées progressivement lors d'un ``vacuum``), ce qui réduit fortement"
 " la taille du fichier."
 msgstr ""
-"**コンパクトなストレージ** ：ポジションはコンパクトにエンコードされ、分析データは共有辞書付きの zstd で圧縮されます（zlib "
-"で圧縮された古いデータベースも引き続き読み込め、\\ ``vacuum``\\ "
+"**コンパクトなストレージ**：ポジションはコンパクトにエンコードされ、分析データは共有辞書付きの zstd で圧縮されます（zlib "
+"で圧縮された古いデータベースも引き続き読み込め、\\ ``vacuum`` "
 "の実行時に段階的に再圧縮されます）。これによりファイルサイズが大幅に削減されます。"
 
 #: ../../source/annexe_db_scheme.rst:82
 msgid ""
 "**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les "
 "performances en lecture et en écriture."
-msgstr "**WAL ジャーナリング** ：WAL モードと調整された PRAGMA により、読み書きのパフォーマンスが向上します。"
+msgstr "**WAL ジャーナリング**：WAL モードと調整された PRAGMA により、読み書きのパフォーマンスが向上します。"

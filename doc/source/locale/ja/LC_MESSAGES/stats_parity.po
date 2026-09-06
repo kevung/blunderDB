@@ -124,7 +124,7 @@ msgid ""
 "Snowie ER est exactement le Snowie ER non filtré."
 msgstr ""
 "**「プレイヤー」フィルタは分子にしか効きません。**\\ "
-"プレイヤーを選ぶと、合計されるエラーはその人自身の判断に限られますが、分母はフィルタが残した対戦における\\ **両者**\\ "
+"プレイヤーを選ぶと、合計されるエラーはその人自身の決定に限られますが、分母はフィルタが残した対戦における\\ **両者**\\ "
 "のチェッカープレイ数のままです。これが Snowie ER と PR "
 "の違いであり、次の性質の理由でもあります。2人の対戦だけを収めたデータベースでは、2人の Snowie ER の和は、フィルタなしの Snowie"
 " ER にちょうど一致します。"
@@ -195,7 +195,7 @@ msgid ""
 "``gnubg/analysis.c:199–269`` (``LuckNormal`` / ``LuckFirst``, évaluation "
 "cubeful à 0 ply)."
 msgstr ""
-"この和は、その1ロールの36通りの出目にわたります（ゲーム最初の手だけはゾロ目になりえないため30通り）。値が正なら有利な出目だったことを意味します。参照：``gnubg/analysis.c:199–269``（``LuckNormal``"
+"この和は、その1ロールの36通りの出目にわたります（ゲーム最初の手だけはゾロ目になりえないため30通り）。値が正なら有利な出目だったことを意味します。参照：``gnubg/analysis.c:199–269``\\ （``LuckNormal``"
 " / ``LuckFirst``、0 ply のキューブフル評価）。"
 
 #: ../../source/stats_parity.rst:101
@@ -207,8 +207,8 @@ msgid ""
 "convention (même unité, positif = chanceux)."
 msgstr ""
 "**blunderDB は運を決して計算し直しません**\\ "
-"：内蔵の評価器はそのためのものではありません。対戦を分析したツールが書き込んだ値をそのまま用います——eXtreme Gammon なら\\ "
-"``ErrLuck``\\ 、gnuBG なら\\ ``LU``\\ "
+"：内蔵の評価器はそのためのものではありません。対戦を分析したツールが書き込んだ値をそのまま用います——eXtreme Gammon なら "
+"``ErrLuck``\\ 、gnuBG なら ``LU`` "
 "プロパティです。両者が同じ規約（同じ単位、正なら幸運）を用いていることは確認済みです。"
 
 #: ../../source/stats_parity.rst:107
@@ -282,7 +282,7 @@ msgid ""
 "de points ; à égalité, ni victoire ni défaite. C'est la convention du "
 "résultat de session de gnuBG (+1 / 0 / −1, ``gnubg/relational.c``)."
 msgstr ""
-"**マネーゲーム**\\ （目標点なし）— 勝者は得点の多い側です。同点なら勝ちでも負けでもありません。これは gnuBG "
+"**マネーゲーム**\\ （目標点なし） — 勝者は得点の多い側です。同点なら勝ちでも負けでもありません。これは gnuBG "
 "のセッション結果の規約（+1 / 0 / −1、``gnubg/relational.c``）に従っています。"
 
 #: ../../source/stats_parity.rst:138
@@ -306,9 +306,9 @@ msgid ""
 " une erreur d'exactement 0,100 est un blunder, dans tous les écrans "
 "(répartition par action de videau, détail de match, tableau des joueurs)."
 msgstr ""
-"ある判断は、対応するエクイティ誤差が厳密に正であればただちに\\ **エラー**\\ として数え、\\ **0.100 EMG**\\ （100 "
+"ある決定は、対応するエクイティエラーが厳密に正であればただちに\\ **エラー**\\ として数え、\\ **0.100 EMG**\\ （100 "
 "ミリポイント）に達したときに\\ **ブランダー**\\ として数えます。比較は\\ *その値を含みます*\\ 。ちょうど 0.100 "
-"の誤差はブランダーであり、これはすべての画面（キューブアクション別の内訳、マッチの詳細、プレイヤー表）で同じです。"
+"のエラーはブランダーであり、これはすべての画面（キューブの決定別の内訳、マッチの詳細、プレイヤー表）で同じです。"
 
 #: ../../source/stats_parity.rst:150
 msgid ""
@@ -352,11 +352,11 @@ msgstr "強制手は定義上エラーがゼロです：プレイヤーに選択
 
 #: ../../source/stats_parity.rst:171
 msgid "Décisions de cube — décisions comptées"
-msgstr "キューブ決定 — カウントされる決定"
+msgstr "キューブの決定 — カウントされる決定"
 
 #: ../../source/stats_parity.rst:173
 msgid "Seules les **décisions de cube proches** sont comptées :"
-msgstr "**接戦のキューブ決定** のみがカウントされます："
+msgstr "**接戦のキューブの決定** のみがカウントされます："
 
 #: ../../source/stats_parity.rst:175
 msgid ""
@@ -364,7 +364,7 @@ msgid ""
 "d'équité ``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
 "``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``)."
 msgstr ""
-"キューブ決定が **接戦** であるのは、ダブリングポイントの周囲のエクイティウィンドウ ``[-0.16, +0.16]`` "
+"キューブの決定が **接戦** であるのは、ダブリングポイントの周囲のエクイティウィンドウ ``[-0.16, +0.16]`` "
 "内にある場合です（\\ ``gnubg/eval.c:5088–5100`` の述語 ``isCloseCubedecision``\\ ）。"
 
 #: ../../source/stats_parity.rst:178
@@ -567,7 +567,7 @@ msgid ""
 "pas les analyses complètes pour tous les cubes."
 msgstr ""
 "**インポート形式** — gnuBG の SGF "
-"ファイルは、ファイルにすべてのキューブ決定の完全な解析が含まれていないため、キューブ指標でより大きな差が生じます（上記の表を参照）。"
+"ファイルは、ファイルにすべてのキューブの決定の完全な解析が含まれていないため、キューブ指標でより大きな差が生じます（上記の表を参照）。"
 
 #: ../../source/stats_parity.rst:260
 msgid ""
@@ -590,7 +590,7 @@ msgstr "数式は、以下のソースファイル（gnuBG リポジトリ）で
 
 #: ../../source/stats_parity.rst:270
 msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
-msgstr "``gnubg/formatgs.c:399–409`` — PR（\"Error rate per decision\"）。"
+msgstr "``gnubg/formatgs.c:399–409`` — PR（「Error rate per decision」）。"
 
 #: ../../source/stats_parity.rst:271
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."

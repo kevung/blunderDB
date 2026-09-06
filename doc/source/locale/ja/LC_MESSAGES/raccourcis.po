@@ -73,7 +73,7 @@ msgstr "CTRL-Q"
 
 #: ../../source/raccourcis.rst:1
 msgid "Fermer blunderDB."
-msgstr "blunderDBを閉じる。"
+msgstr "blunderDB を閉じる。"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-M"
@@ -161,7 +161,7 @@ msgstr "Del"
 
 #: ../../source/raccourcis.rst:1
 msgid "Supprimer la position courante (confirmation demandée)."
-msgstr "現在の局面を削除する（確認を求められます）。"
+msgstr "現在のポジションを削除する（確認を求められます）。"
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -321,7 +321,7 @@ msgstr "CTRL-K"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau Anki (répétition espacée)."
-msgstr "Ankiパネル（間隔反復）を表示/非表示にする。"
+msgstr "Anki パネル（間隔反復）を表示/非表示にする。"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-F"
@@ -421,7 +421,7 @@ msgstr "CTRL-1 … CTRL-9"
 
 #: ../../source/raccourcis.rst:1
 msgid "Aller directement à la n-ième vue."
-msgstr "n番目のビューに直接移動する。"
+msgstr "n 番目のビューに直接移動する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic sur l'onglet"
@@ -563,7 +563,7 @@ msgstr "選択を解除する/パネルを閉じる。"
 
 #: ../../source/raccourcis.rst:220
 msgid "Panneau Anki (répétition espacée)"
-msgstr "Ankiパネル（間隔反復）"
+msgstr "Anki パネル（間隔反復）"
 
 #: ../../source/raccourcis.rst:1
 msgid "ESPACE, Clic"
@@ -651,7 +651,7 @@ msgstr "コレクションパネル"
 
 #: ../../source/raccourcis.rst:1
 msgid "Ajouter/retirer la position courante de la collection survolée."
-msgstr "ポインタが乗っているコレクションに現在の局面を追加、または取り除く。"
+msgstr "ポインタが乗っているコレクションに現在のポジションを追加、または取り除く。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir la collection."
@@ -661,7 +661,7 @@ msgstr "コレクションを開く。"
 msgid ""
 "Retirer la position courante (ou les positions cochées) de la collection "
 "ouverte."
-msgstr "開いているコレクションから、現在の局面（またはチェックした局面）を取り除く。"
+msgstr "開いているコレクションから、現在のポジション（またはチェックしたポジション）を取り除く。"
 
 #: ../../source/raccourcis.rst:1
 msgid ""

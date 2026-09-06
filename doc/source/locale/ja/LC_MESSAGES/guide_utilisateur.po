@@ -66,7 +66,7 @@ msgid ""
 msgstr ""
 "\\ **マッチをインポートする。**\\ ``.xg`` ファイルを blunderDB のウィンドウにドラッグ＆ドロップします（または "
 "*CTRL-I* を押してから選択します）。blunderDB は形式を検出し、ポジションと XG "
-"ファイルにすでに含まれている分析（手、キューブの決断、フラグ）をインポートし、インポートが成功すると Matches パネルを表示します。"
+"ファイルにすでに含まれている分析（手、キューブの決定、フラグ）をインポートし、インポートが成功すると Matches パネルを表示します。"
 
 #: ../../source/guide_utilisateur.rst:32
 msgid ""
@@ -87,7 +87,7 @@ msgid ""
 "videau et le verdict."
 msgstr ""
 "\\ **分析を読む。**\\ *CTRL-L* で Analysis "
-"パネルが表示されます：最善手、そのエクイティ、実際に指された手の誤差（テーブル内で強調表示）。キューブの決断では、同じキーでキューブエクイティテーブルと結論が表示されます。"
+"パネルが表示されます：最善手、そのエクイティ、実際に指された手のエラー（テーブル内で強調表示）。キューブの決定では、同じキーでキューブエクイティテーブルと判定が表示されます。"
 
 #: ../../source/guide_utilisateur.rst:42
 msgid "Panneau Analyse pendant la revue d'un match"
@@ -109,8 +109,8 @@ msgid ""
 "choix par joueur ou par plage de dates une fois plusieurs matchs "
 "importés."
 msgstr ""
-"\\ **最大の誤りを見つける。**\\ どこからでも、``bl``（または ``blunders``、*SPACE* "
-"でコマンドラインを開く）コマンドを実行すると、最も高くついた誤りのあるポジションを直接分析パネルに読み込めます — "
+"\\ **最大のエラーを見つける。**\\ どこからでも、``bl``\\ （または ``blunders``、*SPACE* "
+"でコマンドラインを開く）コマンドを実行すると、最も高くついたエラーのあるポジションを直接分析パネルに読み込めます — "
 "インポート後の最初の一通りの確認のために手作業で検索を組み立てる必要はありません。複数のマッチをインポートした後にプレイヤーや日付範囲でこの選択を絞り込むには"
 " :ref:`stats` を参照してください。"
 
@@ -155,18 +155,18 @@ msgid ""
 "une même position quand les deux analyses sont disponibles (l'une des "
 "deux peut être absente selon ce que le fichier importé contenait)."
 msgstr ""
-"両方の分析が利用可能な場合、同じポジションで *d* キーを使って\\ **チェッカーの手とキューブの決断を切り替えられます**\\ "
+"両方の分析が利用可能な場合、同じポジションで *d* キーを使って\\ **チェッカーの手とキューブの決定を切り替えられます**\\ "
 "（インポートされたファイルの内容によっては、どちらか一方が欠けていることもあります）。"
 
 #: ../../source/guide_utilisateur.rst:82
 msgid "Panneau Analyse sur une décision de videau"
-msgstr "キューブの決断における Analysis パネル"
+msgstr "キューブの決定における Analysis パネル"
 
 #: ../../source/guide_utilisateur.rst:86
 msgid ""
 "Une décision de videau dans le panneau Analyse : équités money, erreur de"
 " chaque option, meilleure décision."
-msgstr "Analysis パネルにおけるキューブの決断：マネーエクイティ、各選択肢の誤差、最善の決断。"
+msgstr "Analysis パネルにおけるキューブの決定：マネーエクイティ、各選択肢のエラー、最善の決定。"
 
 #: ../../source/guide_utilisateur.rst:89
 msgid ""
@@ -227,8 +227,8 @@ msgid ""
 msgstr ""
 "\\ **デッキを構成する。**\\ 出発点は二通りあります。手で選んだポジションの :ref:`コレクション "
 "<guide_collections>`、または検索（*CTRL-F*）です — "
-"例えば、誤りとしてフラグが付けられたすべてのキューブの決断など。``bl 30``\\ （30 "
-"個の最悪の誤り）コマンドは、最初のデッキの出発点として適しています。"
+"例えば、エラーとしてフラグが付けられたすべてのキューブの決定など。``bl 30``\\ （30 "
+"個の最悪のエラー）コマンドは、最初のデッキの出発点として適しています。"
 
 #: ../../source/guide_utilisateur.rst:123
 msgid ""
@@ -324,7 +324,7 @@ msgid ""
 "**Vérifier** avec la sous-commande de santé, qui ne passe pas par le "
 "proxy :"
 msgstr ""
-"クライアントから送られてきた値ではなく、常に自分自身で ``X-Tenant-ID`` を設定した上で認証してから中継するように\\ "
+"クライアントから送られてきた値ではなく、常に自分自身で ``X-Tenant-ID`` を設定した上で認証してから中継するように "
 "**nginx を設定します**\\ 。"
 
 #: ../../source/guide_utilisateur.rst:202
@@ -353,7 +353,7 @@ msgid ""
 "joués — la mémoire du contexte s'estompe vite."
 msgstr ""
 "プレイした後はできるだけ早く、その週のマッチを\\ **インポートします**\\ "
-"（ドラッグ＆ドロップ、または複数ファイルがある場合は再帰的なフォルダインポート）— コンテキストの記憶はすぐに薄れてしまいます。"
+"（ドラッグ＆ドロップ、または複数ファイルがある場合は再帰的なフォルダインポート） — コンテキストの記憶はすぐに薄れてしまいます。"
 
 #: ../../source/guide_utilisateur.rst:216
 msgid ""
@@ -361,8 +361,8 @@ msgid ""
 " panneau Stats filtré sur la période et le type de décision (pions / "
 "videau) qui pèse le plus dans le PR."
 msgstr ""
-"``bl`` コマンド（最悪の誤り）や、期間と決断の種類（チェッカー／キューブ）で絞り込んだ Stats パネルを使って、PR に最も影響する\\"
-" **最もコストの高い決断を絞り込みます**\\ 。"
+"``bl`` コマンド（最悪のエラー）や、期間と決定の種類（チェッカー／キューブ）で絞り込んだ Stats パネルを使って、PR に最も影響する\\"
+" **最もコストの高い決定を絞り込みます**\\ 。"
 
 #: ../../source/guide_utilisateur.rst:220
 msgid ""
@@ -380,7 +380,7 @@ msgid ""
 "répétition espacée fait revenir les mêmes motifs jusqu'à ce qu'ils "
 "deviennent des réflexes."
 msgstr ""
-"コメント付きのこれらのポジションから\\ **Anki デッキを構成します**\\ "
+"コメント付きのこれらのポジションから **Anki デッキを構成します**\\ "
 "：間隔反復は、それらが反射になるまで同じパターンを繰り返し呼び戻します。"
 
 #: ../../source/guide_utilisateur.rst:228
@@ -426,14 +426,14 @@ msgid ""
 "flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une "
 "erreur visible."
 msgstr ""
-"*0:30* — マッチを開き（ダブルクリック）、矢印キーでいくつかの手を送り、目に見える誤りのある指された手について Analysis "
+"*0:30* — マッチを開き（ダブルクリック）、矢印キーでいくつかの手を送り、目に見えるエラーのある指された手について Analysis "
 "パネル（*CTRL-L*）を表示します。"
 
 #: ../../source/guide_utilisateur.rst:250
 msgid ""
 "*1:30* — Commande ``bl`` : la vue bascule directement sur les pires "
 "erreurs de la base, toutes positions confondues."
-msgstr "*1:30* — ``bl`` コマンド：ビューはすべてのポジションを対象に、データベース中の最悪の誤りへと直接切り替わります。"
+msgstr "*1:30* — ``bl`` コマンド：ビューはすべてのポジションを対象に、データベース中の最悪のエラーへと直接切り替わります。"
 
 #: ../../source/guide_utilisateur.rst:253
 msgid ""
@@ -467,7 +467,7 @@ msgstr "blunderDB のデータベースファイルの拡張子は *.db* です�
 
 #: ../../source/guide_utilisateur.rst:271
 msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
-msgstr "キーボードショートカット: *CTRL-N*\\ 。コマンド: ``n``"
+msgstr "キーボードショートカット：*CTRL-N*\\ 。コマンド：``n``"
 
 #: ../../source/guide_utilisateur.rst:275
 msgid "Ouvrir une base de donnée existante"
@@ -485,7 +485,7 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:282
 msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
-msgstr "キーボードショートカット: *CTRL-O*\\ 。コマンド: ``o``"
+msgstr "キーボードショートカット：*CTRL-O*\\ 。コマンド：``o``"
 
 #: ../../source/guide_utilisateur.rst:285
 msgid "Importer et fusionner une base de données"
@@ -583,7 +583,7 @@ msgid ""
 "pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
 "droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
 " signifie que la position est une décision de cube."
-msgstr "ダイスを編集するには、左クリックでダイスの値を増やし、右クリックでダイスの値を減らします。ダイスの面が空の場合、そのポジションはキューブ決定であることを意味します。"
+msgstr "ダイスを編集するには、左クリックでダイスの値を増やし、右クリックでダイスの値を減らします。ダイスの面が空の場合、そのポジションはキューブの決定であることを意味します。"
 
 #: ../../source/guide_utilisateur.rst:340
 msgid ""
@@ -726,7 +726,7 @@ msgstr "進行状況ウィンドウに、インポート済み、失敗、およ
 
 #: ../../source/guide_utilisateur.rst:409
 msgid "Commande: ``i``"
-msgstr "コマンド: ``i``"
+msgstr "コマンド：``i``"
 
 #: ../../source/guide_utilisateur.rst:412
 msgid ""
@@ -828,7 +828,7 @@ msgstr "*d* を押してチェッカームーブ分析とキューブ分析を�
 
 #: ../../source/guide_utilisateur.rst:461
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
-msgstr "ショートカット: *CTRL-Tab* でマッチパネルを開きます。コマンド: ``m``"
+msgstr "ショートカット：*CTRL-Tab* でマッチパネルを開きます。コマンド：``m``"
 
 #: ../../source/guide_utilisateur.rst:465
 msgid ""
@@ -922,7 +922,7 @@ msgstr "コレクションをダブルクリックしてポジションを閲覧
 
 #: ../../source/guide_utilisateur.rst:514
 msgid "Commande: ``coll``"
-msgstr "コマンド: ``coll``"
+msgstr "コマンド：``coll``"
 
 #: ../../source/guide_utilisateur.rst:517
 msgid "Gérer les tournois"
@@ -964,11 +964,11 @@ msgstr "パフォーマンス統計を表示する"
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
-msgstr "Statsパネルでは、インポートしたポジションからパフォーマンス指標（PRおよびMWCコスト）を確認できます。"
+msgstr "Stats パネルでは、インポートしたポジションからパフォーマンス指標（PR および MWC コスト）を確認できます。"
 
 #: ../../source/guide_utilisateur.rst:539
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
-msgstr "*CTRL-D* を押すか、下部パネルのStatsタブをクリックします。"
+msgstr "*CTRL-D* を押すか、下部パネルの Stats タブをクリックします。"
 
 #: ../../source/guide_utilisateur.rst:541
 msgid ""
@@ -996,17 +996,17 @@ msgid ""
 msgstr ""
 "Eval パネルは、レースだけでなくどんなポジションでも評価します。純粋なベアオフのポジションでは、EPC（Effective Pip "
 "Count）や他のベアオフ統計を計算します。それ以外のポジションでは、内蔵の gammonNet 評価エンジンが、XG も GNUbg "
-"も使わずオフラインで、候補手やキューブの決断を提供します。"
+"も使わずオフラインで、候補手やキューブの決定を提供します。"
 
 #: ../../source/guide_utilisateur.rst:555
 msgid "Panneau Eval sur une décision de coups de pions"
-msgstr "チェッカーの手の決断における Eval パネル"
+msgstr "チェッカーの手の決定における Eval パネル"
 
 #: ../../source/guide_utilisateur.rst:559
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
-msgstr "Eval パネル：勝利／ギャモン／バックギャモンの確率、エクイティ、そして gammonNet によって計算された各候補手の誤差。"
+msgstr "Eval パネル：勝利／ギャモン／バックギャモンの確率、エクイティ、そして gammonNet によって計算された各候補手のエラー。"
 
 #: ../../source/guide_utilisateur.rst:562
 msgid ""
@@ -1045,7 +1045,7 @@ msgid ""
 "classés par équité ; sans dés, la décision de videau. Voir la section « "
 "Méthodologie et hypothèses du panneau Eval » du manuel."
 msgstr ""
-"結果はリアルタイムで表示されます：純粋なベアオフでは、EPC、平均ロール数、標準偏差、ピップカウント、無駄（wastage）、手番のプレイヤーの勝率、そして厳密な領域ではマネーキューブの結論。それ以外のダイスが置かれたポジションでは、エクイティ順に並んだ候補手。ダイスがない場合は、キューブの決断。詳しくはマニュアルの「Eval"
+"結果はリアルタイムで表示されます：純粋なベアオフでは、EPC、平均ロール数、標準偏差、ピップカウント、無駄（wastage）、手番のプレイヤーの勝率、そして厳密な領域ではマネーゲームのキューブの判定。それ以外のダイスが置かれたポジションでは、エクイティ順に並んだ候補手。ダイスがない場合は、キューブの決定。詳しくはマニュアルの「Eval"
 " パネルの方法論と前提」の節を参照してください。"
 
 #: ../../source/guide_utilisateur.rst:582
@@ -1063,14 +1063,14 @@ msgstr "このパネルは両方のプレイヤーに対して同時に機能し
 
 #: ../../source/guide_utilisateur.rst:590
 msgid "Afficher l'analyse d'une position importée depuis XG"
-msgstr "XGからインポートしたポジションの分析を表示する"
+msgstr "XG からインポートしたポジションの分析を表示する"
 
 #: ../../source/guide_utilisateur.rst:592
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
 msgstr ""
-"XG、GNUbg、またはBGBlitzによって分析されたポジションがblunderDBにインポートされている場合、\\ *CTRL-L* "
+"XG、GNUbg、または BGBlitz によって分析されたポジションが blunderDB にインポートされている場合、\\ *CTRL-L* "
 "を押すことで分析を表示できます。"
 
 #: ../../source/guide_utilisateur.rst:595
@@ -1087,14 +1087,14 @@ msgstr "ポジションがチェッカー決定に対応する場合、上位5�
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
-msgstr "ポジションがキューブ決定に対応する場合、各決定のコストとポジションの勝率が表示されます。"
+msgstr "ポジションがキューブの決定に対応する場合、各決定のコストとポジションの勝率が表示されます。"
 
 #: ../../source/guide_utilisateur.rst:605
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
 "d'origine de chaque analyse."
-msgstr "同じポジションに複数の分析エンジンが存在する場合（例：XGとGNUbg）、追加の列に各分析の元のエンジンが表示されます。"
+msgstr "同じポジションに複数の分析エンジンが存在する場合（例：XG と GNUbg）、追加の列に各分析の元のエンジンが表示されます。"
 
 #: ../../source/guide_utilisateur.rst:609
 msgid ""
@@ -1111,19 +1111,19 @@ msgstr "分析パネルでムーブをクリックすると、ボード上に対
 
 #: ../../source/guide_utilisateur.rst:618
 msgid "Exporter une position vers XG"
-msgstr "XGにポジションをエクスポートする"
+msgstr "XG にポジションをエクスポートする"
 
 #: ../../source/guide_utilisateur.rst:620
 msgid "Pour exporter une position de blunderDB vers XG,"
-msgstr "blunderDBからXGにポジションをエクスポートするには、"
+msgstr "blunderDB から XG にポジションをエクスポートするには、"
 
 #: ../../source/guide_utilisateur.rst:622
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
-msgstr "blunderDBでエクスポートするポジションを表示し、\\ *CTRL-C* を押します。"
+msgstr "blunderDB でエクスポートするポジションを表示し、\\ *CTRL-C* を押します。"
 
 #: ../../source/guide_utilisateur.rst:624
 msgid "afficher XG et appuyer *CTRL-V*."
-msgstr "XGを開き、\\ *CTRL-V* を押します。"
+msgstr "XG を開き、\\ *CTRL-V* を押します。"
 
 #: ../../source/guide_utilisateur.rst:627
 msgid "Visualiser les différentes positions"
@@ -1181,7 +1181,7 @@ msgid ""
 " la structure de pions saisie ;"
 msgstr ""
 "*At least*\\ （デフォルト）：blunderDB は入力されたチェッカー構造を\\ *少なくとも*\\ "
-"持つポジションをフィルタリングします；"
+"持つポジションをフィルタリングします。"
 
 #: ../../source/guide_utilisateur.rst:655
 msgid ""
@@ -1199,7 +1199,7 @@ msgstr ""
 "*Except*\\ ：blunderDB "
 "は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画された要素を\\ "
 "*少なくとも1つ*\\ "
-"含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）；そのポイントをシングルクリックするとロックが解除されます。"
+"含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）。そのポイントをシングルクリックするとロックが解除されます。"
 
 #: ../../source/guide_utilisateur.rst:665
 msgid ""
@@ -1281,7 +1281,7 @@ msgid ""
 ":ref:`onglets_vues`."
 msgstr ""
 "**複数のビュー**\\ — "
-"ツールバーの下にあるタブバーで、独立した作業空間を並行して開いておけます（たとえば検索と、あるマッチの読み進め）。それぞれが自分の局面リストと文脈を持ちます。:ref:`onglets_vues`"
+"ツールバーの下にあるタブバーで、独立した作業空間を並行して開いておけます（たとえば検索と、あるマッチの読み進め）。それぞれが自分のポジションリストと文脈を持ちます。:ref:`onglets_vues`"
 " を参照してください。"
 
 #: ../../source/guide_utilisateur.rst:707
@@ -1315,7 +1315,7 @@ msgid ""
 "d'analyse, selon le filtre courant du panneau Stats, sans passer par une "
 "recherche manuelle. Voir :ref:`stats`."
 msgstr ""
-"**最悪のミスを読み込む**\\ — ``bl`` コマンド（または "
-"``blunders``）は、統計パネルの現在のフィルタに従って、最悪のミス（エクイティまたは "
+"**最悪のエラーを読み込む**\\ — ``bl`` コマンド（または "
+"``blunders``）は、統計パネルの現在のフィルタに従って、最悪のエラー（エクイティまたは "
 "MWC）を分析ビューに直接読み込みます。手作業の検索は不要です。:ref:`stats` を参照してください。"
 
