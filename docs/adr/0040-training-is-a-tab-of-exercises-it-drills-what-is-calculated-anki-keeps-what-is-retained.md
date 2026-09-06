@@ -137,6 +137,12 @@ component, two hosts, two calendars.
    about the positions one *played*; this is about the questions one *asked oneself*,
    and a Stats tab that stays empty for whoever does not train would occupy a permanent
    place for nothing. No chart in v1: a trend in figures is enough.
+   For **Decision**, a `training_item` also carries the id of the position asked, and the
+   exercise's summary offers « revoir les ratées » (review the failed ones): the browsed
+   list becomes the positions failed in the last session, or in the last *n* sessions,
+   so they can be reread, commented, collected or sent to an Anki deck with the gestures
+   that already take the displayed list. A test whose faults cannot be reviewed teaches
+   nothing (added 2026-09-07, from the interview that produced 0043).
 
 7. **Défi stays, untouched, outside any exercise.** It is the Eval panel's own way of
    hiding what it shows, for a position the user has in front of them, with no clock and

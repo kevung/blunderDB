@@ -136,6 +136,20 @@ together (a Position carries many tags, so naming two means "both"), unlike the 
 provenance filters, where a Position has one value and naming two can only mean "either".
 _Avoid_: label, category (both suggest a closed, declared set — a tag is neither)
 
+**Neighbouring Position** (of a target):
+A stored Position that poses *the same problem* as the target with a nearby checker
+structure — never merely the same drawing. "Nearby" is a transport distance in checker-pips,
+seen from the side on roll, and it is measured only inside the target's *equivalence class*:
+the same kind of decision (checker or cube); for a cube decision, the same regime (money or
+match); and, when the target belongs to a Match, a different Match — the plies before and
+after a decision are its closest structures and never its neighbours. Dice, score and cube
+value are outside both the distance and the class: the ordinary search filters narrow on them.
+The target may be a drawn board as well as a stored Position. Neighbours are *ranked*, not
+filtered, and a ranking with nothing under the asked distance is empty, not padded.
+_Avoid_: similar position (suggests the drawing alone), duplicate (a duplicate is the same
+Position, identified by its hash — distance zero within another Match is a neighbour, not a
+duplicate)
+
 **Network**:
 The weights, and only the weights — `strehl-prob5-512-512-256-128`. A network changes name
 only when its weights change: neither the search wrapped around it, nor a quantisation, nor a
@@ -302,10 +316,6 @@ FSRS's authors reject.
 The stored Analysis of the card's Position — never a live evaluation. A card whose Position
 carries no Analysis has no Answer, which is a state the panel names rather than hides: an
 absent answer is not a hidden one.
-
-**Tag**:
-A `#word` inside a Position's Comment. There is no tag table — tags are a convention
-inside comment text, searchable only as substrings.
 
 **Comment**:
 Free text attached to a Position. The model allows several per Position (match import adds
