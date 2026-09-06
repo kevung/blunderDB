@@ -1,19 +1,55 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-06** (cinquième session — vague 4, lot I : la
-vague de schéma 2.19.0 et les trois premières fiches produit). Ce
-fichier est le point de reprise : il dit ce qui est fusionné, ce qui attend dans une
-branche, et ce qui reste. Le plan lui-même est dans [README.md](README.md) ; les
-fiches sont dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
+Dernière mise à jour : **2026-09-06** (sixième session — vague 5 : lots I et J,
+la vague de schéma 2.20.0, et le registre amont C.13). Ce fichier est le point
+de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et ce
+qui reste. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
+dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
 
 ## Où en est-on
 
-**98 des 145 issues du plan sont fermées.** Les étapes 0, 1 et 2 sont livrées,
-le lot G compris — cinq de ses fiches fermées, trois livrées à moitié et
-documentées comme telles ci-dessous. Hors plan, le générateur de bearoff
-(ADR-0027) est exécuté pour moitié : les deux générateurs et la sortie des
-tables du binaire sont faits (#305, #306, #307), l'interface et la CLI ne le
-sont pas. Restent aussi les trois issues de moteur/amont et la vidéo de démo.
+**129 des 145 issues du plan sont fermées** (relevé du 2026-09-06, seizième
+issue ouverte comprise hors plan). Restent seize issues ouvertes, dont sept
+sont des **moitiés livrées** et cinq demandent un **arbitrage produit** ou une
+ressource que le code n'apporte pas.
+
+### La vague 5 (2026-09-06) — ce qui a été livré
+
+| Fiche | Issue | Livré | Reste |
+|---|---|---|---|
+| I.4 — codec OGID | #260 | lecteur OGID branché sur `parser.ParsePosition`, corpus de 23 positions réelles | l'import bgammon.org, faute de fichiers exportés réels |
+| I.15 — drapeaux de règles | #271 | plafond de videau lu, stocké (2.20.0), affiché | la MET configurable par base — arbitrage |
+| I.17 — micro-entraînements | #273 | `train pips`, `train epc`, `train tp` | — (fermée) |
+| I.19 — étude vs jeu réel | #275 | `list --type study`, ventilation par plan de jeu | — (fermée) |
+| I.26 — collections vivantes | #282 | collection vivante, jeton `n>` | les deux joueurs côte à côte dans Stats |
+| I.27 — grammaire d'intentions | #283 | `ask`, `search --intent`, route | — (fermée) |
+| J.1 — classification | #291 | plan de jeu (`gt:`), thèmes d'erreur (via #298) | J.1c, les erreurs récurrentes |
+| J.3 — similarité | #293 | `like`, `search --like`, route, contrat | — (fermée) |
+| J.4 — quiz | #294 | notation, videau, PR de quiz sur l'échelle du jeu réel | jouer le coup **sur le damier** |
+| J.7 — cache persistant | #297 | **mesuré et écarté** : plafond 3,8 % | le réseau distillé — amont |
+| J.8 — expliquer un blunder | #298 | six règles, une phrase, le silence par défaut | — (fermée) |
+| C.13 — amont gammonNet | #200 | le registre des sept points | rien de ce côté-ci |
+
+Schéma **2.20.0** : `position.max_cube` (#271), `position.game_type` (#291),
+`collection.filter_query` (#282). `ReclassifyPhases` devient
+`ReclassifyDerived` et recalcule les deux étiquettes en une passe.
+
+### Ce qui reste, et de quel genre
+
+**Des moitiés, avec leur raison écrite** : #260 (bgammon.org attend de vrais
+fichiers), #271 (MET configurable), #282 (deux joueurs côte à côte), #291
+(J.1c), #294 (le geste sur le damier — le juge accepte déjà un plateau, il
+manque l'interaction), #297 (réseau distillé, amont), #200 (registre livré,
+rien à coder).
+
+**Des chantiers entiers non commencés** : #276 (cartes de videau chaînées),
+#287 (huit conforts quotidiens), #295 (front web sur `serve`), #277 (parcours
+pédagogiques — nouveau concept, ADR à écrire).
+
+**Ce qui ne se ferme pas par du code** : #296 (mode club/coach — nouvelle
+notion, à griller avant tout code), #299 (Ollama), #292 (rollouts tronqués —
+Configuration amont), #151 (NEON arm64 — pas de machine), #102 (vidéo de
+démo).
 
 Les quatorze recherches externes P5-P18 sont versées sous
 [`docs/recherche/`](../../docs/recherche/README.md) ; quatre ont corrigé une fiche
