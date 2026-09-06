@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "Moottorit ovat samaa mieltä:",
         "disagree": "Moottorit ovat eri mieltä:"
+    },
+    "report": {
+        "title": "blunderDB-raportti",
+        "generated": "Laadittu {date}",
+        "positions": "Asemat",
+        "matches": "Ottelut",
+        "decisions": "Lasketut päätökset",
+        "prGlobal": "Kokonais-PR",
+        "prChecker": "Siirtojen PR",
+        "prCube": "Kuution PR",
+        "worst": "Kymmenen kalleinta päätöstä",
+        "noBlunder": "Ei virheellisiä päätöksiä tällä alueella.",
+        "checker": "Nappulasiirto",
+        "cube": "Kuutiopäätös",
+        "bestMove": "Paras siirto:",
+        "footer": "blunderDB:n laatima itsenäinen asiakirja. Tulosta se PDF:ksi selaimestasi.",
+        "building": "Raporttia laaditaan…",
+        "saved": "Raportti tallennettu: {path}",
+        "failed": "Raporttia ei voitu laatia: {err}",
+        "action": "HTML-raportti…"
     }
 }

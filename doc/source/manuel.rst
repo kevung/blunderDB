@@ -1023,6 +1023,29 @@ tous les onglets.
 Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est
 effectué.
 
+.. _rapport_html:
+
+Le rapport HTML
+~~~~~~~~~~~~~~~
+
+Le bouton **Rapport HTML** de l'en-tête du panneau produit un document
+**autonome** : un seul fichier, sans image externe, sans feuille de style
+distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés par le
+même rendu que le plateau à l'écran, avec votre palette. Il s'ouvre dans
+n'importe quel navigateur, s'envoie par courriel, et **s'imprime en PDF par le
+navigateur lui-même** — ce qui évite d'embarquer un générateur de PDF pour
+produire ce que tout le monde a déjà.
+
+Il contient les indicateurs du périmètre courant (positions, matchs, décisions
+comptées, PR global, pions et videau), puis les **dix décisions les plus
+coûteuses**, chacune avec son diagramme, son coût, le match d'où elle vient et
+le meilleur coup lorsqu'une analyse le donne.
+
+Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui ne dit
+pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
+réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le
+produire.
+
 Onglet Dashboard
 ~~~~~~~~~~~~~~~~
 

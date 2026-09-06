@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "Les moteurs sont d'accord :",
         "disagree": "Les moteurs divergent :"
+    },
+    "report": {
+        "title": "Rapport blunderDB",
+        "generated": "Établi le {date}",
+        "positions": "Positions",
+        "matches": "Matchs",
+        "decisions": "Décisions comptées",
+        "prGlobal": "PR global",
+        "prChecker": "PR pions",
+        "prCube": "PR videau",
+        "worst": "Les dix décisions les plus coûteuses",
+        "noBlunder": "Aucune décision fautive dans ce périmètre.",
+        "checker": "Coup de pions",
+        "cube": "Décision de videau",
+        "bestMove": "Meilleur coup :",
+        "footer": "Document autonome établi par blunderDB. Imprimez-le en PDF depuis votre navigateur.",
+        "building": "Établissement du rapport…",
+        "saved": "Rapport enregistré : {path}",
+        "failed": "Le rapport n'a pas pu être établi : {err}",
+        "action": "Rapport HTML…"
     }
 }

@@ -1290,5 +1290,25 @@
     "engines": {
         "agree": "エンジンは一致しています：",
         "disagree": "エンジンの判断が分かれています："
+    },
+    "report": {
+        "title": "blunderDB レポート",
+        "generated": "作成日時：{date}",
+        "positions": "局面",
+        "matches": "マッチ",
+        "decisions": "計上した判断",
+        "prGlobal": "総合 PR",
+        "prChecker": "チェッカー PR",
+        "prCube": "キューブ PR",
+        "worst": "最も損失の大きい 10 の判断",
+        "noBlunder": "この範囲に誤った判断はありません。",
+        "checker": "チェッカープレイ",
+        "cube": "キューブ判断",
+        "bestMove": "最善手：",
+        "footer": "blunderDB が作成した自己完結の文書です。ブラウザから PDF に印刷できます。",
+        "building": "レポートを作成しています…",
+        "saved": "レポートを保存しました：{path}",
+        "failed": "レポートを作成できませんでした：{err}",
+        "action": "HTML レポート…"
     }
 }
