@@ -8,6 +8,7 @@ import {domain} from '../models';
 import {race} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
+import {engine} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
@@ -218,6 +219,12 @@ export function ListPositionIDs():Promise<Array<number>>;
 export function ListTrash(arg1:string,arg2:number,arg3:number):Promise<Array<domain.TrashEntry>>;
 
 export function LoadAllPositions():Promise<Array<domain.Position>>;
+
+export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
+
+export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
+
+export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
 
 export function LoadAnalysis(arg1:number):Promise<domain.PositionAnalysis>;
 

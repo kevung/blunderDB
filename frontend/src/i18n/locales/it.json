@@ -1345,6 +1345,17 @@
         "truth": "atteso {value}",
         "noQuestions": "Nessuna domanda può essere posta su questa base per questo esercizio.",
         "finished": "Allenamento terminato: {correct}/{n}, tempo mediano {seconds} s.",
-        "usage": "Uso: train <esercizio> ({drills})."
+        "usage": "Uso: train <esercizio> ({drills}).",
+        "drillQuiz": "Quiz",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "Nessun raddoppio",
+        "doubleTake": "Raddoppio, presa",
+        "doublePass": "Raddoppio, passo",
+        "illegal": "Mossa illegale",
+        "unranked": "Mossa legale, non valutata",
+        "cost": "Costa {mp} mMWC",
+        "best": "migliore: {move}",
+        "gradeFailed": "Non è stato possibile valutare la risposta.",
+        "finishedQuiz": "Quiz terminato: {correct}/{n}, PR di sessione {pr}."
     }
 }

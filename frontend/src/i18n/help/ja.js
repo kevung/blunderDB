@@ -826,7 +826,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>マイクロトレーニングのセッションを始めます。引数を一つ取ります：<code>train pips</code>（ピップカウント）、<code>train epc</code>、<code>train tp</code>（マッチスコアでのテイクポイント）。五問、時間を計り、その場で採点します。</td>
+<td>マイクロトレーニングのセッションを始めます。引数を一つ取ります：<code>train pips</code>（ピップカウント）、<code>train epc</code>、<code>train tp</code>（マッチスコアでのテイクポイント）、<code>train quiz</code>（着手またはキューブ判断を、保存済みの分析に照らして採点）。五問、時間を計り、その場で採点します。</td>
 </tr>
 <tr>
 <td>tp2</td>

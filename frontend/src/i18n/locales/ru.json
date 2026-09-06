@@ -1345,6 +1345,17 @@
         "truth": "ожидалось {value}",
         "noQuestions": "Для этого упражнения в этой базе нельзя составить вопрос.",
         "finished": "Тренировка окончена: {correct}/{n}, медианное время {seconds} с.",
-        "usage": "Использование: train <упражнение> ({drills})."
+        "usage": "Использование: train <упражнение> ({drills}).",
+        "drillQuiz": "Викторина",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "Без дубля",
+        "doubleTake": "Дубль, взять",
+        "doublePass": "Дубль, пас",
+        "illegal": "Недопустимый ход",
+        "unranked": "Допустимый ход, не оценён",
+        "cost": "Стоит {mp} mMWC",
+        "best": "лучший: {move}",
+        "gradeFailed": "Ответ не удалось оценить.",
+        "finishedQuiz": "Викторина окончена: {correct}/{n}, PR сессии {pr}."
     }
 }

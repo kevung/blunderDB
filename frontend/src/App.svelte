@@ -281,7 +281,7 @@
     // le point de prise, comme les tables du même nom. Un exercice inconnu — ou
     // aucun — le dit et rappelle les trois, plutôt que d'en choisir un.
     async function startTrainingCommand(drill) {
-        const alias = { pips: 'pips', pip: 'pips', epc: 'epc', tp: 'takepoint', takepoint: 'takepoint' };
+        const alias = { pips: 'pips', pip: 'pips', epc: 'epc', tp: 'takepoint', takepoint: 'takepoint', quiz: 'quiz' };
         const chosen = alias[String(drill || '').toLowerCase()];
         if (!chosen) {
             setStatusBarMessage(tMsg('training.usage', { drills: DRILLS.join(', ') }));

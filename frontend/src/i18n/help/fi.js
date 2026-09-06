@@ -835,7 +835,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Aloittaa mikroharjoitusistunnon. Ottaa argumentin: <code>train pips</code> (pip-laskenta), <code>train epc</code>, <code>train tp</code> (hyväksymispiste ottelutilanteessa). Viisi kysymystä, ajastettuna, heti korjattuna.</td>
+<td>Aloittaa mikroharjoitusistunnon. Ottaa argumentin: <code>train pips</code> (pip-laskenta), <code>train epc</code>, <code>train tp</code> (hyväksymispiste ottelutilanteessa), <code>train quiz</code> (siirto tai kuutiopäätös, arvosteltuna tallennettua analyysiä vasten). Viisi kysymystä, ajastettuna, heti korjattuna.</td>
 </tr>
 <tr>
 <td>tp2</td>

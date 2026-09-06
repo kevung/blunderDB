@@ -8,6 +8,10 @@
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
+    import { trainingMaskStore } from '../stores/trainingStore.js';
+
+    // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
+    const HIDDEN = '···';
     import AnalysisView from './AnalysisView.svelte';
     import EngineComparison from './EngineComparison.svelte';
     let { onClose } = $props();
@@ -353,30 +357,51 @@
              Eval : l'ADR-0017 y réserve UNE décision, celle du moteur
              embarqué. Elle ne s'affiche que lorsqu'il y a effectivement
              plusieurs moteurs à comparer. -->
-        <EngineComparison analysis={analysisData} kind={viewKind} />
-        <AnalysisView
-            analysis={analysisData}
-            kind={viewKind}
-            {turnability}
-            {cubeValue}
-            {onRoll}
-            moves={sortedMoves}
-            {sortColumn}
-            {sortDirection}
-            selectedMove={$selectedMoveStore}
-            {isPlayedMove}
-            {isPlayedCubeAction}
-            onSort={handleSort}
-            onRowClick={handleMoveRowClick}
-            {isMoney}
-            {jacoby}
-            {beaver}
-            {maxCube}
-        />
+        {#if $trainingMaskStore}
+            <!-- Une question de quiz est ouverte (#294). Le panneau porte la
+                 réponse : l'afficher pendant qu'on la demande ferait un
+                 exercice qui se résout en regardant à côté. Le remplaçant est
+                 celui de l'ADR-0018 règle 6, déjà utilisé par le panneau
+                 Eval en mode Défi. -->
+            <div class="quiz-masked">{HIDDEN}</div>
+        {:else}
+            <EngineComparison analysis={analysisData} kind={viewKind} />
+            <AnalysisView
+                analysis={analysisData}
+                kind={viewKind}
+                {turnability}
+                {cubeValue}
+                {onRoll}
+                moves={sortedMoves}
+                {sortColumn}
+                {sortDirection}
+                selectedMove={$selectedMoveStore}
+                {isPlayedMove}
+                {isPlayedCubeAction}
+                onSort={handleSort}
+                onRowClick={handleMoveRowClick}
+                {isMoney}
+                {jacoby}
+                {beaver}
+                {maxCube}
+            />
+        {/if}
     </div>
 </section>
 
 <style>
+    /* Le remplaçant masqué : même idiome que le panneau Eval en mode Défi
+       (ADR-0018 règle 6) — une plage inerte de la taille du bloc, pas un
+       message. */
+    .quiz-masked {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 6em;
+        color: var(--color-text-muted);
+        letter-spacing: 0.4em;
+    }
+
     .analysis-panel {
         width: 100%;
         height: 100%;

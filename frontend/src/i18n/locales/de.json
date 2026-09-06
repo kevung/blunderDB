@@ -1345,6 +1345,17 @@
         "truth": "erwartet {value}",
         "noQuestions": "Für diese Übung lässt sich in dieser Datenbank keine Frage stellen.",
         "finished": "Training beendet: {correct}/{n}, mittlere Zeit {seconds} s.",
-        "usage": "Verwendung: train <Übung> ({drills})."
+        "usage": "Verwendung: train <Übung> ({drills}).",
+        "drillQuiz": "Quiz",
+        "movePlaceholder": "13/7 8/7",
+        "noDouble": "Kein Doppel",
+        "doubleTake": "Doppel, Annahme",
+        "doublePass": "Doppel, Aufgabe",
+        "illegal": "Unerlaubter Zug",
+        "unranked": "Erlaubter Zug, nicht bewertet",
+        "cost": "Kostet {mp} mMWC",
+        "best": "bester: {move}",
+        "gradeFailed": "Die Antwort konnte nicht bewertet werden.",
+        "finishedQuiz": "Quiz beendet: {correct}/{n}, Sitzungs-PR {pr}."
     }
 }

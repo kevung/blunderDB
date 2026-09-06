@@ -466,6 +466,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.update — JSON."
         return self._call("/v1/positions.update", payload)
 
+    def quiz_grade_checker(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/quiz.gradeChecker — JSON."
+        return self._call("/v1/quiz.gradeChecker", payload)
+
+    def quiz_grade_checker_move(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/quiz.gradeCheckerMove — JSON."
+        return self._call("/v1/quiz.gradeCheckerMove", payload)
+
+    def quiz_grade_cube(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/quiz.gradeCube — JSON."
+        return self._call("/v1/quiz.gradeCube", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)

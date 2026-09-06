@@ -845,7 +845,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Startet eine Micro-Training-Sitzung. Nimmt ein Argument: <code>train pips</code> (Pip-Zählung), <code>train epc</code>, <code>train tp</code> (Annahmepunkt beim Matchstand). Fünf Fragen, auf Zeit, sofort korrigiert.</td>
+<td>Startet eine Micro-Training-Sitzung. Nimmt ein Argument: <code>train pips</code> (Pip-Zählung), <code>train epc</code>, <code>train tp</code> (Annahmepunkt beim Matchstand), <code>train quiz</code> (der Zug oder die Verdopplungsentscheidung, bewertet gegen die gespeicherte Analyse). Fünf Fragen, auf Zeit, sofort korrigiert.</td>
 </tr>
 <tr>
 <td>tp2</td>

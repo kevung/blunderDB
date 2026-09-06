@@ -422,6 +422,18 @@ export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
 }
 
+export function GradeQuizChecker(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
+}
+
+export function GradeQuizCheckerMove(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizCheckerMove'](arg1, arg2);
+}
+
+export function GradeQuizCube(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizCube'](arg1, arg2);
+}
+
 export function LoadAnalysis(arg1) {
   return window['go']['database']['Database']['LoadAnalysis'](arg1);
 }

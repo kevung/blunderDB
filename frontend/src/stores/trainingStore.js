@@ -40,3 +40,13 @@ export const trainingCurrentStore = derived([trainingQuestionsStore, trainingInd
     if (!$active || $index < 0 || $index >= $questions.length) return null;
     return $questions[$index];
 });
+
+/** L'analyse doit-elle être masquée ? Vrai pendant qu'une question de quiz
+ *  attend sa réponse : le panneau Analyse PORTE la réponse, et une question
+ *  dont la réponse est affichée à côté n'est pas une question. Les exercices
+ *  de calcul (#273) ne masquent rien — ils portent sur le damier, pas sur
+ *  l'évaluation. */
+export const trainingMaskStore = derived(
+    [trainingActiveStore, trainingCurrentStore, trainingVerdictStore],
+    ([$active, $question, $verdict]) => $active && !!$question && $question.drill === 'quiz' && !$verdict
+);

@@ -840,7 +840,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Avvia una sessione di micro-allenamento. Prende un argomento: <code>train pips</code> (conteggio dei pip), <code>train epc</code>, <code>train tp</code> (punto di presa al punteggio). Cinque domande, cronometrate, corrette sul momento.</td>
+<td>Avvia una sessione di micro-allenamento. Prende un argomento: <code>train pips</code> (conteggio dei pip), <code>train epc</code>, <code>train tp</code> (punto di presa al punteggio), <code>train quiz</code> (la mossa o l'azione di cubo, valutate contro l'analisi registrata). Cinque domande, cronometrate, corrette sul momento.</td>
 </tr>
 <tr>
 <td>tp2</td>
