@@ -1,0 +1,705 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Käyttöopas &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Käyttöopas" href="manuel.html" />
+    <link rel="prev" title="Lataaminen ja asentaminen" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/guide_utilisateur.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/guide_utilisateur.html" lang="en" hreflang="en">English</a>
+  <a href="../de/guide_utilisateur.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/guide_utilisateur.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/guide_utilisateur.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/guide_utilisateur.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/guide_utilisateur.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/guide_utilisateur.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-ecran-d-accueil">Aloitusnäyttö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutoriels-de-bout-en-bout">Alusta loppuun -opastukset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mon-premier-import">Ensimmäinen tuontini</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etudier-un-match">Ottelun tutkiminen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-anki">Anki-istunto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployer-le-mode-serveur-derriere-un-proxy">Palvelintilan käyttöönotto proxyn takana</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-progresser-avec-blunderdb">Miten kehittyä blunderDB:n avulla</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-de-demonstration-3-minutes">Esittelyskenaario (3 minuuttia)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">Luo uusi tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">Avaa olemassa oleva tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fusionner-une-base-de-donnees">Tietokannan yhdistäminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">Muokkaa asemaa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">Lisää asema tietokantaan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">Merkitse asema tunnisteella</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">Poista asema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">Tuo asema XG:stä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">Tuo ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">Tuo ottelukansio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-compte-rendu-d-import">Tuontiraportti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-file-d-etude">Opiskelujono</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">Vedä ja pudota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">Selaa ottelua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">Hallitse ottelupaneelia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">Hallitse kokoelmia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">Hallitse turnauksia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">Näytä suoritustilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluer-une-position-panneau-eval">Aseman arviointi (Eval-paneeli)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">Näytä XG:stä tuodun aseman analyysi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">Vie asema XG:hen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">Tarkastele eri asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">Hae asemia kriteerien perusteella</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">Pidemmälle</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Käyttöopas</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1>Käyttöopas<a class="headerlink" href="#guide-utilisateur" title="Link to this heading"></a></h1>
+<p>Tämä opas on käytännön johdanto blunderDB:hen nopeaa käyttöönottoa varten. Neljä alusta loppuun -opastusta kattaa yleisimmät käyttötavat; oppaan loppuosa pysyy viiteluettelona, ele kerrallaan, tarvittaessa katsottavaksi.</p>
+<section id="l-ecran-d-accueil">
+<span id="ecran-accueil"></span><h2>Aloitusnäyttö<a class="headerlink" href="#l-ecran-d-accueil" title="Link to this heading"></a></h2>
+<p>Niin kauan kuin tietokantaa ei ole avattu, blunderDB tarjoaa neljä polkua tyhjän laudan sijaan:</p>
+<ul class="simple">
+<li><p><strong>Tuo otteluni</strong> — pääpolku. Se ketjuuntuu itsestään: uusi tietokanta, tiedostojesi valinta (XG, GNU Backgammon, Jellyfish, BGBlitz), sitten <a class="reference internal" href="#compte-rendu-import"><span class="std std-ref">tuontiraportti</span></a> — ”tässä on PR-lukusi ja pahimmat päätöksesi” — ja halutessasi <a class="reference internal" href="#file-etude"><span class="std std-ref">opiskelujono</span></a>. Se on työkalun lupaus lunastettuna kahdessa minuutissa eikä selitettynä.</p></li>
+<li><p><strong>Avaa esimerkkitietokanta</strong> — kolme ottelua, kokoelmia, kommentteja ja Anki-pakka: tarpeeksi kokeillaksesi kaikkea tuomatta mitään.</p></li>
+<li><p><strong>Opastettu kierros</strong> — kierros käyttöliittymässä, paneeli kerrallaan.</p></li>
+<li><p><strong>Avaa tietokanta</strong> — <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedosto joka sinulla jo on.</p></li>
+</ul>
+<p>Viimeksi avattu tietokanta tarjotaan erikseen, ja <strong>vain jos sen tiedosto on yhä olemassa</strong>: painike joka epäonnistuu napsautettaessa on pahempi kuin ei painiketta lainkaan.</p>
+<p>Näyttö häviää heti kun tietokanta avataan. Huomaamaton linkki siirtää sen syrjään istunnon ajaksi, sillä Eval-paneeli toimii ilman tietokantaa: voi haluta asetella aseman ja arvioida sen avaamatta mitään.</p>
+</section>
+<section id="tutoriels-de-bout-en-bout">
+<h2>Alusta loppuun -opastukset<a class="headerlink" href="#tutoriels-de-bout-en-bout" title="Link to this heading"></a></h2>
+<section id="mon-premier-import">
+<span id="tuto-premier-import"></span><h3>Ensimmäinen tuontini<a class="headerlink" href="#mon-premier-import" title="Link to this heading"></a></h3>
+<p>Tämä opastus lähtee eXtreme Gammon -ottelutiedostosta (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>) ja päätyy luetteloon asemista, joissa hävisit eniten.</p>
+<ol class="arabic">
+<li><p><strong>Luo tietokanta.</strong> Työkalurivin painike <em>Uusi tietokanta</em> (tai <em>CTRL-N</em>), valitse sijainti ja nimi; <code class="docutils literal notranslate"><span class="pre">.db</span></code>-pääte lisätään automaattisesti.</p></li>
+<li><p><strong>Tuo ottelu.</strong> Vedä ja pudota <code class="docutils literal notranslate"><span class="pre">.xg</span></code>-tiedosto blunderDB-ikkunaan (tai <em>CTRL-I</em>, valitse sitten tiedosto). blunderDB tunnistaa muodon, tuo asemat ja XG-tiedostossa jo olevan analyysin (siirrot, kuutiopäätökset, merkinnät), ja näyttää ottelupaneelin tuonnin onnistuttua.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB ottaa käyttöön tiedostossa jo olevan analyysin, se ei tee sitä uudelleen: ottelulla, jota ei ole koskaan analysoitu XG:ssä, ei siis ole yhtään virhettä näytettävänä. Jos ruutu <em>Analysoi automaattisesti tuonnin jälkeen</em> on valittuna (asetusikkuna, välilehti <em>gammonNet</em>), rajattu ja peruutettavissa oleva analyysierä täydentää taustalla ne asemat, joilta analyysi puuttuu. Ks. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Asetukset</span></a>.</p>
+</div>
+</li>
+<li><p><strong>Tarkastele ottelua.</strong> Kaksoisnapsautus ottelurivillä (tai valitse ja paina <em>ENTER</em>) avaa tarkastelun viimeksi katsotusta asemasta. Näppäimet <em>VASEN</em>/<em>OIKEA</em> (tai <em>k</em>/<em>j</em>) selaavat siirtoja; <em>PageUp</em>/<em>PageDown</em> vaihtavat peliä.</p></li>
+<li><p><strong>Lue analyysi.</strong> <em>CTRL-L</em> näyttää Analyysi-paneelin: parhaat siirrot, niiden tasapaino ja pelatun siirron virhe (korostettuna taulukossa). Kuutiopäätöksessä sama näppäin näyttää kuution tasapainotaulukon ja tuomion.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_analysis.png"><img alt="Analyysi-paneeli ottelun tarkastelun aikana" src="_images/panel_analysis.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Analyysi-paneeli ottelun tarkastelun aikana: pelattu siirto on korostettu ehdokassiirtojen taulukossa.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Löydä suurimmat virheet.</strong> Avaa Stats-paneeli (<em>CTRL-D</em>), <em>Dashboard</em>-välilehti: luettelo <em>Top blunders</em> antaa kymmenen kalleinta virhettä, ja rivin napsauttaminen lataa kyseisen aseman analyysipaneeliin. Tottuneille sama näppäimistöltä: komento <code class="docutils literal notranslate"><span class="pre">bl</span></code> (tai <code class="docutils literal notranslate"><span class="pre">blunders</span></code>, <em>VÄLILYÖNTI</em> avaa komentorivin) lataa nämä asemat suoraan, ilman että hakua tarvitsee rakentaa käsin. Katso <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a> tämän valinnan tarkentamiseksi pelaajan tai päivämääräalueen mukaan, kun useita otteluita on tuotu.</p></li>
+</ol>
+</section>
+<section id="etudier-un-match">
+<span id="tuto-etudier-match"></span><h3>Ottelun tutkiminen<a class="headerlink" href="#etudier-un-match" title="Link to this heading"></a></h3>
+<p>Kun useita otteluita on tuotu, tämä opastus käsittelee yksittäisen ottelun tutkimista — edellisen opastuksen yksinkertaista läpikäyntiä pidemmälle.</p>
+<ol class="arabic">
+<li><p><strong>Avaa ottelupaneeli</strong> (<em>CTRL-Tab</em>). Se listaa kaikki tuodut ottelut, lajiteltavissa sarakkeen mukaan (pelaaja, päivämäärä, pituus, turnaus, PR). PR ja MWC-kustannus on määritelty sanastossa, ks. <a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">Sanasto</span></a>.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_matches.png"><img alt="Ottelupaneeli" src="_images/panel_matches.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Ottelupaneeli: lajiteltava luettelo, PR ja MWC-kustannus per ottelu.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Avaa tarkastelu</strong> kaksoisnapsauttamalla riviä, tai valitsemalla se ja painamalla <em>ENTER</em>. Laudan yläpuolella oleva tietopalkki muistuttaa molemmista pelaajista, turnauksesta ja tuloksesta.</p></li>
+<li><p><strong>Vaihda pelinappulasiirron / kuutiopäätöksen välillä</strong> näppäimellä <em>d</em> samassa asemassa, kun molemmat analyysit ovat saatavilla (toinen niistä voi puuttua sen mukaan, mitä tuotu tiedosto sisälsi).</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_cube.png"><img alt="Analyysi-paneeli kuutiopäätöksessä" src="_images/panel_cube.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Kuutiopäätös Analyysi-paneelissa: rahatasapainot, kunkin vaihtoehdon virhe, paras päätös.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Kommentoi</strong> havaintojasi: <em>CTRL-P</em> avaa Kommentit-paneelin näytetylle asemalle — hyödyllinen kirjaamaan <em>miksi</em> siirto on virhe, ei vain <em>että</em> se on sellainen.</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="_images/panel_comments.png"><img alt="Kommentit-paneeli asemasta" src="_images/panel_comments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Kommentit-paneeli: näytettyyn asemaan liitetty viestiketju.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Merkitse</strong> asema myöhempää uudelleenpeluuta varten: <em>VÄLILYÖNTI</em> avaa komentorivin, <code class="docutils literal notranslate"><span class="pre">#</span></code> ja perään avainsana (esimerkiksi <code class="docutils literal notranslate"><span class="pre">#blitz</span></code>), <em>ENTER</em>. Katso <a class="reference internal" href="#guide-edit-position"><span class="std std-ref">Muokkaa asemaa</span></a> muokataksesi asemaa suoraan, jos pelattu siirto ei ole se, jota haluat tutkia.</p></li>
+<li><p><strong>Poistu ottelutilasta</strong> komennolla <code class="docutils literal notranslate"><span class="pre">m</span></code>: kirjasto palaa edelliseen tilaansa, ottelun viimeksi katsottu asema muistetaan seuraavaa käyntiä varten.</p></li>
+</ol>
+</section>
+<section id="une-session-anki">
+<span id="tuto-anki"></span><h3>Anki-istunto<a class="headerlink" href="#une-session-anki" title="Link to this heading"></a></h3>
+<p>Anki-paneeli muuttaa kokoelman tai haun korttipakaksi, jota kerrataan FSRS-algoritmin (vaiheistettu kertaus) mukaan.</p>
+<ol class="arabic">
+<li><p><strong>Kokoa pakka.</strong> Kaksi mahdollista lähtökohtaa: käsin valittu asemien <a class="reference internal" href="#guide-collections"><span class="std std-ref">kokoelma</span></a>, tai haku (<em>CTRL-F</em>) — esimerkiksi kaikki virheiksi merkityt kuutiopäätökset. Komento <code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">30</span></code> (30 pahinta virhettä) on hyvä lähtökohta ensimmäiselle pakalle.</p></li>
+<li><p><strong>Luo pakka.</strong> Avaa Anki-paneeli (<em>CTRL-K</em>), painike <em>Uusi pakka</em>, nimeä pakka; se synkronoituu valitun haun tai kokoelman kanssa.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/panel_anki.png"><img alt="Anki-paneeli, pakkaluettelo" src="_images/panel_anki.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Anki-paneeli: yksi pakka per rivi, kortit yhteensä, uudet ja tänään erääntyvät.</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Kertaa</strong> (painike <em>Opiskele</em>): jokainen kortti näyttää aseman, muodostat vastauksesi mielessäsi, paljastat ratkaisun (laudan, analyysin ja mahdollisen kommentin), ja annat sitten arviollesi arvosanan väliltä 1 (meni ohi) – 4 (helppo). FSRS ajoittaa seuraavan näytön sen mukaisesti. Mikään ei pakota paljastamaan vastausta jatkaaksesi, jos olet varma itsestäsi.</p></li>
+<li><p><strong>Lämmittele häiritsemättä aikataulua</strong> (painike <em>Harjoittele</em>): näyttää satunnaisia asemia pakasta koskematta FSRS-aikatauluun — kätevä ennen turnausta, tai intensiiviseen kertaukseen ilman muiden korttien eräpäivien siirtämistä.</p></li>
+</ol>
+<p>Katso <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki-paneeli</span></a> parametrien yksityiskohdista (istunnon rajoittaminen, tavoiteltu säilytysaste, pakan nollaus).</p>
+</section>
+<section id="deployer-le-mode-serveur-derriere-un-proxy">
+<span id="tuto-serveur-proxy"></span><h3>Palvelintilan käyttöönotto proxyn takana<a class="headerlink" href="#deployer-le-mode-serveur-derriere-un-proxy" title="Link to this heading"></a></h3>
+<p>Palvelintila (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code>) tuo blunderDB:n moottorin saataville HTTP + JSON -muodossa. Se <strong>ei todenna ketään</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): se luottaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsikkoon juuri sellaisena kuin se sen vastaanottaa, ja sen on siksi aina oltava sellaisen reverse-proxyn takana, joka itse todentaa ja asettaa tämän otsikon. Tämä opastus ottaa käyttöön julkaistun imagen minimaalisen nginxin takana, yhden tenantin HTTP Basic -todennuksella, ja näyttää sitten, miten kullekin jäsenelle annetaan oma tenant. Se on yksinkertaisin lähtökohta, sovitettavaksi (SSO, asiakassertifikaatit) kontekstisi mukaan.</p>
+<ol class="arabic">
+<li><p><strong>Käynnistä taustaprosessi</strong>, sidottuna osoitteeseen <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (ei koskaan suoraan altistettuna):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+</li>
+<li><p><strong>Luo salasanatiedosto</strong> Basic-todennusta varten:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>htpasswd<span class="w"> </span>-c<span class="w"> </span>/etc/nginx/blunderdb.htpasswd<span class="w"> </span>alice
+</pre></div>
+</div>
+</li>
+<li><p><strong>Määritä nginx</strong> todentamaan ja välittämään pyynnöt sekä asettamaan <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> itse — ei koskaan asiakkaan lähettämää arvoa. TLS-varmenne on tämän opastuksen edellytys eikä sen aihe: hanki se etukäteen (Let’s Encrypt ja <code class="docutils literal notranslate"><span class="pre">certbot</span></code>, tai organisaatiosi varmentaja) ja osoita sen kaksi tiedostoa tässä. Portti 80 palvelee vain uudelleenohjausta HTTPS:ään.</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/fullchain.pem</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/privkey.pem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">"1"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Kaksi <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span></code>-riviä luetaan tässä järjestyksessä: ensin pyyhitään asiakkaalta saatu arvo, sitten lisätään proxyn oma.</p>
+</li>
+<li><p><strong>Tarkista</strong> terveydentilan alikomennolla, joka ei kulje proxyn kautta:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>blunderdb<span class="w"> </span>healthcheck
+</pre></div>
+</div>
+</li>
+<li><p><strong>Useita jäseniä, kullekin oma tenant.</strong> Taustaprosessi hyväksyy <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsikkoon vain positiivisen kokonaisluvun: proxyn tehtävä on liittää todennettu tili tähän lukuun. <code class="docutils literal notranslate"><span class="pre">http</span></code>-kontekstiin sijoitettu <code class="docutils literal notranslate"><span class="pre">map</span></code>-lohko pitää tätä vastaavuutta yllä ja palautuu tyhjään merkkijonoon tilille, jota siinä ei ole — ei koskaan arvoon <code class="docutils literal notranslate"><span class="pre">1</span></code>:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">map</span><span class="w"> </span><span class="nv">$remote_user</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">alice</span><span class="w">   </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">bob</span><span class="w">     </span><span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">location</span></code> hylkää tällöin nimenomaisesti tilin, jota ei ole kartoitettu, sen sijaan että päästäisi sen taustaprosessille asti:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">if</span><span class="w"> </span><span class="s">(</span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">"")</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Yksi tenant jäsentä kohti edellyttää PostgreSQL-taustajärjestelmää: SQLitellä, kuten tämän opastuksen kohdassa 1, taustaprosessi vastaa vain arvolle <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID:</span> <span class="pre">1</span></code> ja hylkää kaikki muut arvot. Arkisto tarjoaa tämän täydellisen kokoonpanon tiedostossa <code class="docutils literal notranslate"><span class="pre">deploy/nginx-tenant-proxy.conf</span></code> ja sen Caddy-vastineen tiedostossa <code class="docutils literal notranslate"><span class="pre">deploy/Caddyfile</span></code>.</p>
+</li>
+</ol>
+<p>Katso <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a> koko toiminnallisuudesta (reitit, monivuokralainen PostgreSQL-taustajärjestelmä Row-Level Securitylla, siirtyminen SQLitesta) ja julkaistusta Docker-imagesta.</p>
+</section>
+</section>
+<section id="comment-progresser-avec-blunderdb">
+<h2>Miten kehittyä blunderDB:n avulla<a class="headerlink" href="#comment-progresser-avec-blunderdb" title="Link to this heading"></a></h2>
+<p>Yllä olevien opastusten lisäksi yksinkertainen viikoittainen rutiini saa eniten irti blunderDB:stä kehittymiseen:</p>
+<ol class="arabic simple">
+<li><p><strong>Tuo</strong> viikon ottelut (vedä ja pudota, tai rekursiivinen kansiontuonti useille tiedostoille) mahdollisimman pian pelaamisen jälkeen — kontekstin muisti haihtuu nopeasti.</p></li>
+<li><p><strong>Suodata kalleimmat päätökset</strong>: komento <code class="docutils literal notranslate"><span class="pre">bl</span></code> (pahimmat virheet), tai Stats-paneeli suodatettuna ajanjaksolle ja päätöstyypille (pelinappula / kuutio), joka painaa eniten PR:ssä.</p></li>
+<li><p><strong>Kommentoi</strong> jokainen tarkasteltu asema: mikä jäi huomaamatta, mikä rakenne oli syynä. Kirjoitettu kommentti pakottaa selityksen — pelkästään ilman sanaakaan tarkasteltu asema unohtuu yhtä nopeasti kuin se jäi huomaamatta.</p></li>
+<li><p><strong>Kokoa Anki-pakka</strong> näistä kommentoiduista asemista: vaiheistettu kertaus tuo samat kuviot takaisin, kunnes niistä tulee refleksejä.</p></li>
+<li><p><strong>Seuraa PR:ää turnauksittain</strong> Stats-paneelin Progression-välilehdellä (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a>): käyrä, joka laskee turnaus turnaukselta, on ainoa signaali, joka ei koskaan valehtele.</p></li>
+</ol>
+<p>Tämä rutiini kannattaa vain, jos sitä toistetaan — kymmenen minuuttia viikossa, johdonmukaisesti, on enemmän arvoista kuin kertaluonteinen läpikäynti, joka sitten hylätään.</p>
+</section>
+<section id="scenario-de-demonstration-3-minutes">
+<h2>Esittelyskenaario (3 minuuttia)<a class="headerlink" href="#scenario-de-demonstration-3-minutes" title="Link to this heading"></a></h2>
+<p>blunderDB:n esittelyyn ilman omaa tietokantaa komento <code class="docutils literal notranslate"><span class="pre">demo</span></code> lataa esimerkkitietokannan (kuvitteelliset asemat ja ottelut). Seuraava skenaario etenee kolmessa minuutissa:</p>
+<ol class="arabic simple">
+<li><p><em>0:00</em> — <code class="docutils literal notranslate"><span class="pre">demo</span></code> komentorivillä (tai vastaava työkalurivin painike) lataa esimerkkitietokannan. Ottelupaneeli näytetään.</p></li>
+<li><p><em>0:30</em> — Avaa ottelu (kaksoisnapsautus), selaa muutamaa siirtoa nuolinäppäimillä, näytä Analyysi-paneeli (<em>CTRL-L</em>) pelatussa siirrossa, jossa on näkyvä virhe.</p></li>
+<li><p><em>1:30</em> — Komento <code class="docutils literal notranslate"><span class="pre">bl</span></code>: näkymä vaihtuu suoraan tietokannan pahimpiin virheisiin, kaikkien asemien osalta.</p></li>
+<li><p><em>2:15</em> — Anki-paneeli (<em>CTRL-K</em>): luo pakka näistä asemista, käynnistä kortti <em>Study</em>-tilassa näyttääksesi kysymys/vastaus/arviointi-syklin.</p></li>
+<li><p><em>2:45</em> — Takaisin Stats-paneeliin (<em>CTRL-D</em>), Dashboard-välilehti, näyttääksesi missä tämä työ näkyy ajan mittaan.</p></li>
+</ol>
+</section>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2>Luo uusi tietokanta<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Luodaksesi uuden tietokannan napsauta työkalurivin painiketta <em>Uusi tietokanta</em>. Valitse polku, johon tietokanta tallennetaan, sekä nimi, ja vahvista tallennus järjestelmän ikkunassa.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB-tietokantojen tiedostopääte on <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Pikanäppäimet: <em>CTRL-N</em>. Komento: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2>Avaa olemassa oleva tietokanta<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Link to this heading"></a></h2>
+<p>Ladataksesi olemassa olevan tietokannan napsauta työkalurivin painiketta <em>Avaa tietokanta</em>. Siirry kansioon, jossa tietokanta sijaitsee, valitse <em>.db</em>-tiedosto ja vahvista avaus järjestelmän ikkunassa.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Pikanäppäimet: <em>CTRL-O</em>. Komento: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="fusionner-une-base-de-donnees">
+<h2>Tietokannan yhdistäminen<a class="headerlink" href="#fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Yhdistääksesi toisen blunderDB-tietokannan nyt avoinna olevaan, napsauta työkalupalkin <strong>Yhdistä tietokanta</strong> -painiketta. Valitse <em>.db</em>-tiedosto ja vahvista.</p>
+<p>Tämä on myös blunderDB:n vastaus kysymykseen «kuinka synkronoin tietokantani kahden koneen välillä?»: tietokanta on <strong>yksi ainoa tiedosto</strong>, kaksi eriytynyttä tietokantaa yhdistetään eikä sovitella, ja deduplikointi Zobrist-tiivisteellä tekee työn. Katso FAQ, «Voinko synkronoida tietokantani useiden koneiden välillä?», siitä mihin tiedostosynkronointipalvelut pystyvät ja mihin eivät — ja tapauksesta, jossa usean koneen on työskenneltävä yhtä aikaa, joka kuuluu <code class="docutils literal notranslate"><span class="pre">serve</span></code>-tilalle.</p>
+<p>blunderDB yhdistää kaksi tietokantaa älykkäästi:</p>
+<ul class="simple">
+<li><p>Asemat, joita ei ole nykyisessä tietokannassa, lisätään analyyseineen ja kommentteineen.</p></li>
+<li><p>Jo olemassa olevat asemat päivitetään: puuttuvat analyysit täydennetään, ja kommentit yhdistetään (uudet kommentit lisätään ilman olemassa olevien kahdentamista).</p></li>
+<li><p>Viesti tiivistää lisättyjen, yhdistettyjen ja ohitettujen asemien määrän.</p></li>
+</ul>
+<p>Yhdistäminen <strong>lisää</strong>, se ei sovita: mitään ei poisteta nykyisestä tietokannasta siksi, ettei tuotu tietokanta sitä sisällä.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tuonti edellyttää, että molemmilla tietokannoilla on yhteensopivat skeemaversiot. On mahdollista tuoda alemman tai saman version tietokanta korkeamman version tietokantaan.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Varoitus</p>
+<p>Tuontioperaatio muuttaa välittömästi tällä hetkellä avoinna olevaa tietokantaa. On suositeltavaa tehdä varmuuskopio ennen toisen tietokannan tuomista.</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2>Muokkaa asemaa<a class="headerlink" href="#editer-une-position" title="Link to this heading"></a></h2>
+<p>Muokataksesi asemaa paina <em>TAB</em>-näppäintä avataksesi hakupaneelin ja aseman muokkaimen. Muokkaa asemaa hiirellä:</p>
+<ul class="simple">
+<li><p>napsauta pisteitä lisätäksesi nappuloita. Vasen napsautus liittää nappulat pelaajalle 1. Oikea napsautus liittää nappulat pelaajalle 2. Lisätäksesi muurin napsauta lähtöpistettä, pidä painike pohjassa ja vapauta päätepisteessä. Napsauta baaria asettaaksesi nappuloita baariin.</p></li>
+<li><p>tyhjentääksesi aseman kaksoisnapsauta tyhjää aluetta laudan ulkopuolella tai paina <em>ASKELPALAUTIN</em>-näppäintä.</p></li>
+<li><p>lähettääksesi tuplauskuution pelaajalle 1 napsauta kuutiota vasemmalla painikkeella. Lähettääksesi tuplauskuution pelaajalle 2 napsauta kuutiota oikealla painikkeella.</p></li>
+<li><p>osoittaaksesi pelaajan, jonka vuoro on, napsauta nopille varattua aluetta.</p></li>
+<li><p>muokataksesi noppia napsauta vasemmalla painikkeella kasvattaaksesi nopan arvoa ja oikealla painikkeella pienentääksesi nopan arvoa. Jos noppien pinnat ovat tyhjät, asema on tuplauskuutiopäätös.</p></li>
+<li><p>muokataksesi pelaajien pistetilannetta napsauta vasemmalla painikkeella kasvattaaksesi pisteitä ja oikealla painikkeella vähentääksesi pisteitä.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Aseman syöttäminen hiirellä nappuloiden osalta tapahtuu samalla tavalla kuin XG:ssä.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2>Lisää asema tietokantaan<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Aseman muokkaamisen jälkeen hakupaneeli on auki.</p>
+<p>Tallentaaksesi aiemmin saadun aseman paina <em>CTRL-S</em> tai napsauta työkalupalkin painiketta <em>Tallenna asema</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Avaa komentorivi ja suorita: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2>Merkitse asema tunnisteella<a class="headerlink" href="#etiqueter-une-position" title="Link to this heading"></a></h2>
+<p>Lisätäksesi tunnisteen <em>toto</em> nykyiseen asemaan avaa komentorivi painamalla <em>VÄLILYÖNTI</em>, kirjoita <code class="docutils literal notranslate"><span class="pre">#toto</span></code> ja vahvista komento painamalla <em>ENTER</em>.</p>
+</section>
+<section id="supprimer-une-position">
+<h2>Poista asema<a class="headerlink" href="#supprimer-une-position" title="Link to this heading"></a></h2>
+<p>Poistaaksesi nykyisen aseman tietokannasta paina <em>Del</em> tai napsauta työkalupalkin painiketta <em>Poista asema</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Suorita komentorivillä <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Varoitus</p>
+<p>Vahvistusta kysytään ennen. Poisto todella tapahtuu, mutta asemasta säilytetään kopio kolmenkymmenen päivän ajan: katso <a class="reference internal" href="manuel.html#corbeille"><span class="std std-ref">Roskakori</span></a>.</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2>Tuo asema XG:stä<a class="headerlink" href="#import-une-position-depuis-xg" title="Link to this heading"></a></h2>
+<p>Tuodaksesi aseman suoraan XG:stä,</p>
+<ol class="arabic simple">
+<li><p>näytä tuotava asema XG:ssä ja paina <em>CTRL-C</em>,</p></li>
+<li><p>avaa blunderDB ja paina <em>CTRL-V</em>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Automaattinen liittäminen tunnistaa lähteen muodon (XG, GNUbg, BGBlitz) sekä OpenGammonin OGID-tunnisteen.</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2>Tuo ottelu<a class="headerlink" href="#importer-un-match" title="Link to this heading"></a></h2>
+<p>blunderDB voi tuoda otteluita useista eri lähteistä.</p>
+<p><strong>Tuetut muodot:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): <em>.xg</em>- ja <em>.xgp</em>-tiedostot (asemat)</p></li>
+<li><p>GNUbg: <em>.sgf</em>-tiedostot</p></li>
+<li><p>Jellyfish: <em>.mat</em>- ja <em>.txt</em>-tiedostot</p></li>
+<li><p>BGBlitz: <em>.bgf</em>- ja <em>.txt</em>-tiedostot</p></li>
+</ul>
+<p><strong>Yhden tai useamman ottelutiedoston tuominen:</strong></p>
+<ol class="arabic simple">
+<li><p>Paina <em>CTRL-I</em> tai napsauta työkalupalkin painiketta <em>Tuo asema tai ottelu</em>.</p></li>
+<li><p>Valitse yksi tai useampi tuotava tiedosto.</p></li>
+<li><p>blunderDB tunnistaa muodon automaattisesti ja tuo ottelun.</p></li>
+<li><p>Edistymisikkuna näyttää, kuinka monta tiedostoa tuotiin, epäonnistui ja ohitettiin (kaksoiskappaleet), sitten <strong>tuontiraportin</strong>.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Komento: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB tunnistaa kaksoiskappaleet automaattisesti ja estää jo tietokannassa olevan ottelun tuomisen.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2>Tuo ottelukansio<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Link to this heading"></a></h2>
+<p>Tuodaksesi rekursiivisesti kaikki kansion ja sen alikansioiden sisältämät ottelutiedostot:</p>
+<ol class="arabic simple">
+<li><p>Paina <em>CTRL-SHIFT-F</em> tai napsauta vastaavaa painiketta työkalupalkissa.</p></li>
+<li><p>Valitse kansio, joka sisältää ottelutiedostot.</p></li>
+<li><p>blunderDB kerää ja tuo automaattisesti kaikki tunnistetut tiedostot (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="le-compte-rendu-d-import">
+<span id="compte-rendu-import"></span><h2>Tuontiraportti<a class="headerlink" href="#le-compte-rendu-d-import" title="Link to this heading"></a></h2>
+<p>Tuonti päättyy raporttiin siitä, <strong>mitä se juuri toi</strong>, eikä pelkkään luettujen tiedostojen määrään:</p>
+<ul class="simple">
+<li><p>uudet asemat, ja niiden joukossa ne, jotka lähdeohjelma oli merkinnyt tutkittaviksi;</p></li>
+<li><p><strong>tämän tuonnin PR</strong> — sama tunnusluku kuin tilastoissa, laskettuna pelkästään tästä erästä. Se koskee sinun päätöksiäsi, kun tietokanta tuntee nimesi (identiteetti-ikkunan <em>Käyttäjä</em>-kenttä), muutoin molempia pelaajia, ja raportti kertoo kumpaa;</p></li>
+<li><p>asemat, joita mikään moottori ei ole arvioinut, ja painike analyysin käynnistämiseen;</p></li>
+<li><p><strong>viisi kalleinta päätöstä</strong>, klikattavina: yksi klikkaus avaa aseman.</p></li>
+</ul>
+<p>Nollan PR nollasta päätöksestä ei ole täydellinen peli vaan analyysin puuttuminen: raportti kirjoittaa sen niin.</p>
+<p>Jokainen tuonti tallennetaan <strong>eränä</strong>. Komentorivi löytää ne jälkikäteen:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+<span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>Raportin mitattu puolisko — asemat ilman analyysiä, PR, huonoimmat päätökset — lasketaan uudelleen joka kerta kun se luetaan. Erä, jonka asemat on sittemmin analysoitu, palauttaa siis tämän päivän luvut, ei tuontipäivän lukuja.</p>
+</section>
+<section id="la-file-d-etude">
+<span id="file-etude"></span><h2>Opiskelujono<a class="headerlink" href="#la-file-d-etude" title="Link to this heading"></a></h2>
+<p>Raportti vastaa kysymykseen ”mitä juuri tapahtui?”. <strong>Käy läpi</strong> -painike vastaa seuraavaan: ”mitä katson nyt?”. Se avaa <strong>järjestetyn jonon</strong> tämän erän asemista, jotka ansaitsevat toisen katseen, ja tuo ne laudalle yksi kerrallaan:</p>
+<ol class="arabic simple">
+<li><p>päätökset, jotka <strong>maksoivat jotain</strong>, kallein ensin — se, minkä vuoksi tultiin;</p></li>
+<li><p><strong>lähdeohjelmassa merkityt</strong> asemat: olit jo muualla sanonut, että tämä oli kiinnostava;</p></li>
+<li><p><strong>tiukat kuutiopäätökset</strong>: mitään ei menetetty, mutta oikea vastaus ei ollut ilmeinen.</p></li>
+</ol>
+<p>Asema esiintyy vain kerran, sen ensimmäisen syyn alla joka sen vaatii: merkitty virhe on yhä virhe, ja sen tarjoaminen kahdesti saisi jonon valehtelemaan omasta pituudestaan. Läpikäynti on rajattu viiteenkymmeneen asemaan — jono, jota kukaan ei saa loppuun, on jono, jota kukaan ei aloita.</p>
+<p>Läpikäynnin aikana laudan yläpuolelle ilmestyy palkki: eteneminen (”3 / 25”), miksi tämä asema on tässä, ottelu josta se tulee, ja toiminnot. Kolme niistä avaa yksinkertaisesti sen paneelin, jossa toiminto jo asuu — <strong>Kommentoi</strong>, <strong>Kokoelma</strong>, <strong>Anki-kortti</strong> — koska nuo toiminnot ovat olemassa omine sääntöineen, ja niiden tekeminen uudelleen palkkiin olisi tehnyt niistä puolikkaita kopioita. <strong>Ohita</strong> etenee, <strong>Edellinen</strong> korjaa napsautuksen, <strong>Poistu</strong> lopettaa. Muu sovellus toimii edelleen: juuri se sallii toimia jonosta poistumatta.</p>
+<p><strong>Mitään ei tallenneta, eikä mikään kirjaa että asema on nähty.</strong> Se mitä sillä teet — kommentti, kokoelma, kortti — <em>on</em> se kirjaus, eikä muuta ole säilytettävää. Saman jonon ajaminen myöhemmin uudelleen on siis täysin oikeutettua, ja se on sama jono.</p>
+<p>Sama lista saadaan komentoriviltä:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+</section>
+<section id="glisser-deposer">
+<h2>Vedä ja pudota<a class="headerlink" href="#glisser-deposer" title="Link to this heading"></a></h2>
+<p>blunderDB tukee vedä ja pudota -toimintoa. Voit vetää ja pudottaa blunderDB:n ikkunaan:</p>
+<ul class="simple">
+<li><p>ottelu- tai asematiedostoja (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>) tuodaksesi ne,</p></li>
+<li><p>tietokantatiedostoja (<em>.db</em>) avataksesi ne tai yhdistääksesi ne nykyiseen tietokantaan,</p></li>
+<li><p>kansioita tuodaksesi rekursiivisesti kaikki niiden sisältämät tiedostot.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2>Selaa ottelua<a class="headerlink" href="#naviguer-dans-un-match" title="Link to this heading"></a></h2>
+<p>Selataksesi tuotua ottelua:</p>
+<ol class="arabic simple">
+<li><p>Avaa ottelupaneeli näppäimellä <em>CTRL-Tab</em>.</p></li>
+<li><p>Kaksoisnapsauta ottelua tai paina <em>ENTER</em>.</p></li>
+<li><p>Käytä <em>VASEN</em> / <em>OIKEA</em> -näppäimiä selataksesi siirtoja.</p></li>
+<li><p>Käytä <em>PageUp</em> / <em>PageDown</em> siirtyäksesi pelistä toiseen.</p></li>
+<li><p>Paina <em>CTRL-L</em> näyttääksesi analyysin.</p></li>
+<li><p>Paina <em>d</em> vaihtaaksesi nappulasiirtojen analyysin ja tuplauskuutioanalyysin välillä.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Pikanäppäin: <em>CTRL-Tab</em> avaa ottelupaneelin. Komento: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB muistaa kunkin ottelun viimeksi katsotun aseman. Kun palaat otteluun, viimeksi katsottu asema palautetaan automaattisesti.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2>Hallitse ottelupaneelia<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Link to this heading"></a></h2>
+<p>Ottelupaneelin (<em>CTRL-Tab</em>) avulla voit:</p>
+<ul class="simple">
+<li><p>luetella kaikki tuodut ottelut (lajiteltuna uusimmasta vanhimpaan),</p></li>
+<li><p>lajitella ottelut sarakkeiden mukaan (pelaaja 1, pelaaja 2, päivämäärä, ottelun pituus, turnaus),</p></li>
+<li><p>muokata pelaajien nimiä tai päivämäärää kaksoisnapsauttamalla kenttiä,</p></li>
+<li><p>vaihtaa pelaajat 1 ja 2 vaihtopainikkeella,</p></li>
+<li><p>liittää ottelu turnaukseen,</p></li>
+<li><p>poistaa ottelu <em>Del</em>-näppäimellä.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<span id="guide-collections"></span><h2>Hallitse kokoelmia<a class="headerlink" href="#gerer-les-collections" title="Link to this heading"></a></h2>
+<p>Kokoelmien avulla voit järjestää asemia mukautettuihin ryhmiin. Avataksesi kokoelmapaneelin paina <em>CTRL-B</em>.</p>
+<p><strong>Kokoelman luominen:</strong></p>
+<ol class="arabic simple">
+<li><p>Avaa kokoelmapaneeli (<em>CTRL-B</em>).</p></li>
+<li><p>Kirjoita uuden kokoelman nimi paneelin alaosassa olevaan kenttään <em>Uusi kokoelma…</em> ja vahvista painamalla <em>ENTER</em>.</p></li>
+</ol>
+<p><strong>Asemien lisääminen kokoelmaan:</strong></p>
+<ol class="arabic simple">
+<li><p>Valitse halutut asemat.</p></li>
+<li><p>Lisää ne kokoelmaan kokoelmapaneelista.</p></li>
+</ol>
+<p><strong>Kokoelman selaaminen:</strong></p>
+<ul class="simple">
+<li><p>Kaksoisnapsauta kokoelmaa selataksesi sen asemia. Kokoelmien ja asemien järjestystä voi muuttaa vetämällä ja pudottamalla.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Komento: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2>Hallitse turnauksia<a class="headerlink" href="#gerer-les-tournois" title="Link to this heading"></a></h2>
+<p>Turnausten avulla voit järjestää tuodut ottelut tapahtumittain. Avataksesi turnauspaneelin paina <em>CTRL-Y</em>.</p>
+<p><strong>Turnauksen luominen:</strong></p>
+<ol class="arabic simple">
+<li><p>Avaa turnauspaneeli (<em>CTRL-Y</em>).</p></li>
+<li><p>Kirjoita turnauksen nimi kenttään <em>Uusi turnaus…</em> ja vahvista painamalla <em>ENTER</em>.</p></li>
+</ol>
+<p><strong>Ottelun liittäminen turnaukseen:</strong></p>
+<ul class="simple">
+<li><p>Käytä ottelupaneelissa (<em>CTRL-Tab</em>) turnaussarakkeen pudotusvalikkoa liittääksesi ottelun.</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2>Näytä suoritustilastot<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Link to this heading"></a></h2>
+<p>Stats-paneelin avulla voit tarkastella suoritusmittareitasi (PR ja MWC-kustannus) tuotujen asemien perusteella.</p>
+<ol class="arabic simple">
+<li><p>Paina <em>CTRL-D</em> tai napsauta alapaneelin Stats-välilehteä.</p></li>
+<li><p>Käytä suodatinpalkkia rajataksesi analyysin pelaajan, turnauksen, päivämääräalueen, päätöstyypin tai ottelun pituuden mukaan.</p></li>
+<li><p>Napsauta mittaria siirtyäksesi suoraan vastaaviin asemiin.</p></li>
+</ol>
+</section>
+<section id="evaluer-une-position-panneau-eval">
+<h2>Aseman arviointi (Eval-paneeli)<a class="headerlink" href="#evaluer-une-position-panneau-eval" title="Link to this heading"></a></h2>
+<p>Eval-paneeli arvioi minkä tahansa aseman — ei vain juoksua. Puhtaassa bearoff-asemassa se laskee EPC:n (Effective Pip Count, ks. <a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">Sanasto</span></a>) ja muut bearoff-tilastot; missä tahansa muussa asemassa sisäänrakennettu gammonNet-arviointimoottori tarjoaa ehdokassiirrot tai kuutiopäätöksen, ilman verkkoyhteyttä, ilman XG:tä tai GNUbg:tä.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_eval.png"><img alt="Eval-paneeli pelinappulasiirron päätöksessä" src="_images/panel_eval.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Eval-paneeli: voitto-/gammon-/backgammon-mahdollisuudet, tasapaino ja kunkin ehdokassiirron virhe, gammonNetin laskemana.</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p>Paina <em>CTRL-E</em>, napsauta Eval-välilehteä alapaneelissa, tai suorita komento <code class="docutils literal notranslate"><span class="pre">epc</span></code>: paneeli avautuu tyhjälle laudalle, valmiina muokattavaksi.</p></li>
+<li><p>Arvioidaksesi jo näytetyn aseman (kirjaston asema, tai tarkasteltavana olevan ottelun asema) tyhjän laudan sijaan napsauta laudalla hiiren oikeaa painiketta ja valitse <em>Arvioi tämä asema</em> — näytetty asema lähetetään sellaisenaan Eval-paneeliin.</p></li>
+<li><p>Koko lautaa voi muokata napsauttamalla tai näppäimistöllä: pelinappulat, nopat, tulos, kuution sijainti, vuorossa oleva pelaaja. Jos muokataan vain jan-alueen pelinappuloita (viimeiset 6 pistettä) molemmilla puolilla, asema siirtyy bearoff-tilaan.</p></li>
+<li><p>Tulokset näytetään reaaliajassa: puhtaassa bearoffissa EPC, keskimääräinen heittojen määrä, keskihajonta, pip count ja wastage, vuorossa olevan pelaajan voittotodennäköisyys ja, tarkassa alueessa, rahapelin kuutiotuomio; missä tahansa muussa asemassa nopat heitettynä, tasapainon mukaan järjestetyt ehdokassiirrot; ilman noppia, kuutiopäätös. Katso käsikirjan osio ”Eval-paneelin menetelmät ja oletukset”.</p></li>
+<li><p>Näiden arvojen arvioimista voi harjoitella valitsemalla <em>Haaste</em>-valintaruudun: tulokset piilotetaan jokaisen muutoksen yhteydessä ja ne paljastuvat vyöhyke kerrallaan napsautuksella.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Paneeli toimii molemmille pelaajille samanaikaisesti.</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2>Näytä XG:stä tuodun aseman analyysi<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Link to this heading"></a></h2>
+<p>Jos XG:n, GNUbg:n tai BGBlitzin analysoima asema on tuotu blunderDB:hen, analyysi voidaan näyttää painamalla <em>CTRL-L</em>.</p>
+<p>Jos asema vastaa nappulapäätöstä, viisi parasta siirtoa näytetään erillisillä riveillä. Kullakin rivillä tiedot annetaan tässä järjestyksessä: siihen liittyvä nappulasiirto, normalisoitu ekviteetti, siirron ekviteettivirhe, pelaajan voitto-, gammon- ja backgammon-mahdollisuudet sekä vastustajan voitto-, gammon- ja backgammon-mahdollisuudet, ja analyysin taso.</p>
+<p>Jos asema vastaa tuplauskuutiopäätöstä, kunkin päätöksen kustannus näytetään yhdessä aseman voittomahdollisuuksien kanssa.</p>
+<p>Kun samalle asemalle on useita analyysimoottoreita (esimerkiksi XG ja GNUbg), lisäsarake osoittaa kunkin analyysin lähdemoottorin.</p>
+<p>Ottelua selattaessa todella pelattu siirto korostetaan siirtoluettelossa. Jos asema esiintyi useissa otteluissa, kaikki pelatut siirrot osoitetaan.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Napsauttamalla siirtoa analyysipaneelissa vastaavat nuolet näytetään laudalla.</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2>Vie asema XG:hen<a class="headerlink" href="#exporter-une-position-vers-xg" title="Link to this heading"></a></h2>
+<p>Viedäksesi aseman blunderDB:stä XG:hen,</p>
+<ol class="arabic simple">
+<li><p>näytä vietävä asema blunderDB:ssä ja paina <em>CTRL-C</em>,</p></li>
+<li><p>avaa XG ja paina <em>CTRL-V</em>.</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2>Tarkastele eri asemia<a class="headerlink" href="#visualiser-les-differentes-positions" title="Link to this heading"></a></h2>
+<p>Tarkastellaksesi nykyisen kirjaston eri asemia käytä <em>VASEN</em>- ja <em>OIKEA</em>-näppäimiä. <em>HOME</em>-näppäimellä pääset ensimmäiseen asemaan ja <em>END</em>-näppäimellä viimeiseen asemaan.</p>
+<p>Näyttääksesi bearoffin vasemmalla paina <em>CTRL-VASEN</em>. Näyttääksesi bearoffin oikealla paina <em>CTRL-OIKEA</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2>Hae asemia kriteerien perusteella<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Link to this heading"></a></h2>
+<p>Hakeaksesi asematyyppejä,</p>
+<ul class="simple">
+<li><p>paina <em>TAB</em> avataksesi hakupaneelin,</p></li>
+<li><p>muokkaa haettavan aseman rakennetta. blunderDB suodattaa asemat, joilla on <em>vähintään</em> syötetty nappularakenne. Epävarmoissa tapauksissa saadaksesi mahdollisimman paljon tuloksia tyhjennä asema painamalla <em>ASKELPALAUTIN</em>-näppäintä. Muokkaa tarvittaessa tuplauskuution asemaa ja pistetilannetta.</p></li>
+</ul>
+<p>Hakupaneeli tarjoaa kaksi nappularakennetta, jotka valitaan paneelin yläosassa olevilla <em>Vähintään</em>- ja <em>Paitsi</em>-välilehdillä:</p>
+<ul class="simple">
+<li><p><em>Vähintään</em> (oletus): blunderDB suodattaa asemat, joilla on <em>vähintään</em> syötetty nappularakenne;</p></li>
+<li><p><em>Paitsi</em>: blunderDB sulkee pois asemat, jotka sisältävät jonkin syötetyistä nappuloista. Lauta on reunustettu punaisella tätä rakennetta muokattaessa. Asema hylätään, jos se sisältää <em>vähintään yhden</em> piirretyistä elementeistä (esimerkiksi nappulan piirtäminen pisteille 1, 3 ja 5 säilyttää vain asemat, joilla ei ole yhtään nappulaa näillä pisteillä). Nappuloiden määrää pistettä kohden ei ole rajoitettu: 3 nappulan asettaminen pisteelle sulkee pois asemat, joilla on 3 tai useampia nappuloita siinä kohdassa (hyödyllistä haettaessa muodostettua pistettä ilman ylimääräistä nappulaa). Kaksi nopeaa napsautusta pisteeseen merkitsevät sen pakollisesti tyhjäksi (punainen viivoitettu solu, ei nappulaa väristä riippumatta); yksi napsautus kyseiseen pisteeseen vapauttaa sen.</p></li>
+</ul>
+<p>Kun piste kuuluu molempiin rakenteisiin, <em>Paitsi</em>-kriteeri voittaa, jos se on ristiriidassa <em>Vähintään</em>-kriteerin kanssa.</p>
+<p>Menetelmä 1 (yksinkertainen):</p>
+<ul class="simple">
+<li><p>Avaa hakuikkuna (<em>CTRL-F</em>)</p></li>
+<li><p>Lisää ja määritä hakusuodattimet</p></li>
+<li><p>Vahvista napsauttamalla <em>Hae</em>.</p></li>
+</ul>
+<p>Menetelmä 2 (edistynyt):</p>
+<ul class="simple">
+<li><p>avaa komentorivi painamalla <em>VÄLILYÖNTI</em>,</p></li>
+<li><p>kirjoita <em>s</em> ja lisää mahdollisia lisäsuodattimia (esimerkiksi <em>cube</em> tai <em>score</em> huomioidaksesi tuplauskuution ja pistetilanteen. Katso <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Hakusuodattimet</span></a> saadaksesi kattavan luettelon käytettävissä olevista suodattimista).</p></li>
+<li><p>vahvista pyyntö painamalla <em>ENTER</em>.</p></li>
+</ul>
+<p>Näytetyt asemat ovat ne tietokannan asemat, jotka täyttävät käyttäjän syöttämät hakukriteerit.</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2>Pidemmälle<a class="headerlink" href="#pour-aller-plus-loin" title="Link to this heading"></a></h2>
+<p>Tämä opas kattaa yleisimmät käyttötavat. blunderDB tarjoaa useita lisäominaisuuksia, jotka on kuvattu käsikirjassa:</p>
+<ul class="simple">
+<li><p><strong>Kertausväli (Anki)</strong> — Anki-paneeli (<em>CTRL-K</em>) muuttaa kokoelman tai haun korttipakaksi, jota kerrataan FSRS-algoritmin mukaan, ja mukana on vapaa harjoitustila (<em>cram</em>), joka ei sotke aikataulua. Katso <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki-paneeli</span></a>.</p></li>
+<li><p><strong>Useita näkymiä</strong> — työkalurivin alla oleva välilehtipalkki pitää useita itsenäisiä työtiloja auki rinnakkain (esimerkiksi haun ja ottelun selaamisen), kunkin omalla asemalistallaan ja omassa asiayhteydessään. Katso <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Näkymävälilehdet</span></a>.</p></li>
+<li><p><strong>Vesileimattu jakelu</strong> — viennin voi allekirjoittaa liikkeeseenlaskijan identiteetilläsi (väärentämätön vesileima, joka kertoo tiedoston alkuperän) ja suojata salasanalla kuljetusta varten. Katso <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>.</p></li>
+<li><p><strong>Opastetut kierrokset ja esittelytietokanta</strong> — komento <code class="docutils literal notranslate"><span class="pre">tour</span></code> (alias <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>) avaa luettelon käyttöliittymän opastetuista kierroksista, ja komento <code class="docutils literal notranslate"><span class="pre">demo</span></code> lataa esimerkkitietokannan, jotta työkaluun voi tutustua ilman omaa tietokantaa. Katso <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Opastetut kierrokset ja esimerkkitietokanta</span></a>.</p></li>
+<li><p><strong>Lataa pahimmat virheet</strong> — komento <code class="docutils literal notranslate"><span class="pre">bl</span></code> (tai <code class="docutils literal notranslate"><span class="pre">blunders</span></code>) lataa pahimmat virheet (equity tai MWC) suoraan analyysinäkymään tilastopaneelin nykyisen suodattimen mukaan, ilman käsin tehtyä hakua. Katso <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats-paneeli</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="Lataaminen ja asentaminen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="manuel.html" class="btn btn-neutral float-right" title="Käyttöopas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

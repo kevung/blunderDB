@@ -1,0 +1,337 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API コントラクト &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="付録：フィルターの高度な使い方" href="annexe_filtres.html" />
+    <link rel="prev" title="ヘッドレスモード（サーバー）" href="mode_headless.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/api_reference.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/api_reference.html" lang="en" hreflang="en">English</a>
+  <a href="../de/api_reference.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/api_reference.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/api_reference.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/api_reference.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/api_reference.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/api_reference.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API コントラクト</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#idempotence">冪等性</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API コントラクト</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contrat-d-api">
+<span id="api-reference"></span><h1>API コントラクト<a class="headerlink" href="#contrat-d-api" title="この見出しへのリンク"></a></h1>
+<p>この付録はソースコードから生成されます(<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>。完全な契約とスキーマについてはリポジトリのルートにある <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> を参照してください)。直接編集しないでください。次回の生成で変更が上書きされます。各ファミリーは、デーモンが公開する <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;ファミリー&gt;.&lt;メソッド&gt;</span></code>メソッドをまとめたもので(<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> 参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code> ヘッダーへの言及を含みます。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>analyses
+  POST /v1/analyses.delete                      JSON
+  POST /v1/analyses.load                        JSON
+  POST /v1/analyses.repair                      JSON
+  POST /v1/analyses.save                        JSON
+anki
+  POST /v1/anki.buryCard                        JSON
+  POST /v1/anki.createDeck                      JSON
+  POST /v1/anki.deckPositions                   NDJSON
+  POST /v1/anki.deckStats                       JSON
+  POST /v1/anki.deleteDeck                      JSON
+  POST /v1/anki.forecast                        JSON
+  POST /v1/anki.linkedCard                      JSON
+  POST /v1/anki.listDecks                       NDJSON
+  POST /v1/anki.nextCard                        JSON
+  POST /v1/anki.removeCard                      JSON
+  POST /v1/anki.resetDeck                       JSON
+  POST /v1/anki.retention                       JSON
+  POST /v1/anki.reviewCard                      JSON  (Idempotency-Key)
+  POST /v1/anki.reviewLog                       NDJSON
+  POST /v1/anki.reviewsByGameType               JSON
+  POST /v1/anki.suspendCard                     JSON
+  POST /v1/anki.sync                            JSON
+  POST /v1/anki.syncWithPositions               JSON
+  POST /v1/anki.updateDeck                      JSON
+  POST /v1/anki.updateDeckParams                JSON
+collections
+  POST /v1/collections.addPosition              JSON
+  POST /v1/collections.addPositions             JSON
+  POST /v1/collections.collectionsOf            NDJSON
+  POST /v1/collections.copyPosition             JSON
+  POST /v1/collections.create                   JSON  (Idempotency-Key)
+  POST /v1/collections.delete                   JSON
+  POST /v1/collections.get                      JSON
+  POST /v1/collections.list                     NDJSON
+  POST /v1/collections.movePosition             JSON
+  POST /v1/collections.positionIndexMap         JSON
+  POST /v1/collections.positions                NDJSON
+  POST /v1/collections.removePosition           JSON
+  POST /v1/collections.removePositions          JSON
+  POST /v1/collections.reorder                  JSON
+  POST /v1/collections.reorderPositions         JSON
+  POST /v1/collections.setFilter                JSON
+  POST /v1/collections.update                   JSON
+comments
+  POST /v1/comments.add                         JSON
+  POST /v1/comments.byPosition                  NDJSON
+  POST /v1/comments.delete                      JSON
+  POST /v1/comments.deleteForPosition           JSON
+  POST /v1/comments.listAll                     NDJSON
+  POST /v1/comments.search                      NDJSON
+  POST /v1/comments.tags                        JSON
+  POST /v1/comments.text                        JSON
+  POST /v1/comments.update                      JSON
+exports
+  POST /v1/exports.json                         custom
+  POST /v1/exports.sqlite                       custom
+filters
+  POST /v1/filters.delete                       JSON
+  POST /v1/filters.list                         NDJSON
+  POST /v1/filters.loadEditPosition             JSON
+  POST /v1/filters.loadExcludePosition          JSON
+  POST /v1/filters.save                         JSON
+  POST /v1/filters.saveEditPosition             JSON
+  POST /v1/filters.saveExcludePosition          JSON
+  POST /v1/filters.update                       JSON
+gammonnet
+  POST /v1/gammonnet.analyzeMissing             custom
+  POST /v1/gammonnet.analyzeMissing.cancel      custom
+  POST /v1/gammonnet.compare                    custom
+  POST /v1/gammonnet.cubeMatrix                 custom
+  POST /v1/gammonnet.sweepStale                 custom
+history
+  POST /v1/history.clear                        JSON
+  POST /v1/history.load                         JSON
+  POST /v1/history.save                         JSON
+imports
+  POST /v1/imports.bgf                          custom
+  POST /v1/imports.cancel                       custom
+  POST /v1/imports.db                           custom
+  POST /v1/imports.gnubg                        custom
+  POST /v1/imports.json                         custom
+  POST /v1/imports.list                         JSON
+  POST /v1/imports.position                     custom
+  POST /v1/imports.report                       JSON
+  POST /v1/imports.studyQueue                   JSON
+  POST /v1/imports.xg                           custom
+maintenance
+  POST /ops/maintenance.vacuum                  custom
+matches
+  POST /v1/matches.createGame                   JSON
+  POST /v1/matches.createMove                   JSON
+  POST /v1/matches.delete                       JSON
+  POST /v1/matches.exportMat                    custom
+  POST /v1/matches.findByHash                   JSON
+  POST /v1/matches.games                        NDJSON
+  POST /v1/matches.get                          JSON
+  POST /v1/matches.lastVisited                  JSON
+  POST /v1/matches.list                         NDJSON
+  POST /v1/matches.mergePlayers                 JSON
+  POST /v1/matches.movePositions                NDJSON
+  POST /v1/matches.moves                        NDJSON
+  POST /v1/matches.movesByMatch                 NDJSON
+  POST /v1/matches.save                         JSON
+  POST /v1/matches.setLastVisitedPosition       JSON
+  POST /v1/matches.swapPlayers                  JSON
+  POST /v1/matches.update                       JSON
+  POST /v1/matches.updateComment                JSON
+metadata
+  POST /v1/metadata.counts                      JSON
+  POST /v1/metadata.version                     JSON
+positions
+  POST /v1/positions.delete                     JSON
+  POST /v1/positions.epc                        JSON
+  POST /v1/positions.exists                     JSON
+  POST /v1/positions.explain                    JSON
+  POST /v1/positions.fromOGID                   JSON
+  POST /v1/positions.fromXGID                   JSON
+  POST /v1/positions.fromXGP                    JSON
+  POST /v1/positions.legalMoves                 JSON
+  POST /v1/positions.list                       NDJSON
+  POST /v1/positions.listIds                    JSON
+  POST /v1/positions.load                       JSON
+  POST /v1/positions.loadByIds                  JSON
+  POST /v1/positions.parseText                  JSON
+  POST /v1/positions.reclassifyPhases           JSON
+  POST /v1/positions.save                       JSON
+  POST /v1/positions.similar                    JSON
+  POST /v1/positions.update                     JSON
+quiz
+  POST /v1/quiz.gradeChecker                    JSON
+  POST /v1/quiz.gradeCheckerMove                JSON
+  POST /v1/quiz.gradeCube                       JSON
+search
+  POST /v1/search.find                          NDJSON
+  POST /v1/search.intent                        JSON
+  POST /v1/search.parse                         JSON
+  POST /v1/search.query                         custom
+searchHistory
+  POST /v1/searchHistory.deleteEntry            JSON
+  POST /v1/searchHistory.list                   NDJSON
+  POST /v1/searchHistory.save                   JSON
+session
+  POST /v1/session.clear                        JSON
+  POST /v1/session.load                         JSON
+  POST /v1/session.save                         JSON
+stats
+  POST /v1/stats.compute                        JSON
+  POST /v1/stats.dateRange                      JSON
+  POST /v1/stats.matchBadges                    JSON
+  POST /v1/stats.matchDetail                    JSON
+  POST /v1/stats.playerNames                    JSON
+  POST /v1/stats.playerTable                    JSON
+  POST /v1/stats.positionIdsByMatch             JSON
+  POST /v1/stats.positionIdsBySelection         JSON
+  POST /v1/stats.positionIdsByTournament        JSON
+  POST /v1/stats.tournamentBadges               JSON
+tenant
+  POST /ops/tenant.purge                        custom
+tournaments
+  POST /v1/tournaments.addMatch                 JSON
+  POST /v1/tournaments.create                   JSON  (Idempotency-Key)
+  POST /v1/tournaments.delete                   JSON
+  POST /v1/tournaments.get                      JSON
+  POST /v1/tournaments.list                     NDJSON
+  POST /v1/tournaments.matches                  NDJSON
+  POST /v1/tournaments.removeMatch              JSON
+  POST /v1/tournaments.reorderMatches           JSON
+  POST /v1/tournaments.setMatchByName           JSON
+  POST /v1/tournaments.tournamentOf             JSON
+  POST /v1/tournaments.update                   JSON
+  POST /v1/tournaments.updateComment            JSON
+trash
+  POST /v1/trash.count                          JSON
+  POST /v1/trash.deleteCollection               JSON
+  POST /v1/trash.deleteComment                  JSON
+  POST /v1/trash.deletePosition                 JSON
+  POST /v1/trash.discard                        JSON
+  POST /v1/trash.empty                          JSON
+  POST /v1/trash.list                           JSON
+  POST /v1/trash.restore                        JSON
+</pre></div>
+</div>
+<section id="idempotence">
+<h2>冪等性<a class="headerlink" href="#idempotence" title="この見出しへのリンク"></a></h2>
+<p>ほとんどのメソッドには特別な仕組みは一切必要ありません。読み取りには副作用がなく、<code class="docutils literal notranslate"><span class="pre">positions.save</span></code>(他の <code class="docutils literal notranslate"><span class="pre">positions.*</span></code>と同様)は Zobrist コンテンツハッシュのおかげで本質的に冪等です — 同じポジションを2回保存しても同じ行が返され、重複が生じることはありません。この性質を持たないメソッドが3つあり(2回の呼び出しは2つの異なる効果になります)、任意の <code class="docutils literal notranslate"><span class="pre">Idempotency-Key</span></code> ヘッダーを受け付けます。同じキーで再試行された呼び出しは、その効果を繰り返す代わりに最初の試行の結果を返します — 上記の表の「(Idempotency-Key)」の印を参照してください。他のどのメソッドもこのヘッダーを必要とせず、受け付けません。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="mode_headless.html" class="btn btn-neutral float-left" title="ヘッドレスモード（サーバー）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="付録：フィルターの高度な使い方" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1808 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interface en ligne de commande (CLI) &mdash; Documentation blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d0e80ae2"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="Glossaire" href="glossaire.html" />
+    <link rel="prev" title="Raccourcis clavier" href="raccourcis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Languages">
+  <span class="current" lang="fr" aria-current="true">Français</span>
+  <a href="../en/cli.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/cli.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Prise en main</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guide utilisateur</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Référence</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Raccourcis clavier</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Interface en ligne de commande (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntaxe-generale">Syntaxe générale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-disponibles">Commandes disponibles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-creer-une-base-de-donnees">create — Créer une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-importer-des-donnees">import — Importer des données</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#surveiller-un-dossier">Surveiller un dossier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-match">Import d’un match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-de-positions">Import de positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-par-lot">Import par lot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#export-exporter-des-donnees">export — Exporter des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#identity-identite-d-emetteur">identity — Identité d’émetteur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">open — Ouvrir un fichier protégé</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-rechercher-des-positions">search — Rechercher des positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-lister-le-contenu">list — Lister le contenu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exports-tabulaires">Exports tabulaires</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#match-afficher-un-match">match — Afficher un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collection-gerer-les-collections">collection — Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — Paquets de répétition espacée</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Matrice du videau</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#epc-calculatrice-epc">epc — Calculatrice EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Bases de sortie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — Rattrapage gammonNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trash-la-corbeille">trash — La corbeille</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">info — Métadonnées de la base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">edit — Modifier les métadonnées</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">verify — Vérifier l’intégrité</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vacuum-compacter-la-base-de-donnees">vacuum — Compacter la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repair-recalculer-les-colonnes-d-analyse">repair — Recalculer les colonnes d’analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">delete — Supprimer des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#healthcheck-sonder-un-demon">healthcheck — Sonder un démon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#completion-completion-shell">completion — Complétion shell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-afficher-la-version">version — Afficher la version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">Exemples de flux de travail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">Import d’un répertoire de tournoi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">Sauvegarde régulière</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">Analyse des erreurs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">Codes de retour</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossaire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Mode headless (serveur)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrat d’API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Annexe Windows : que faire si Windows bloque le lancement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historique des versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">À propos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Interface en ligne de commande (CLI)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface-en-ligne-de-commande-cli">
+<span id="cli"></span><h1>Interface en ligne de commande (CLI)<a class="headerlink" href="#interface-en-ligne-de-commande-cli" title="Lien vers cette rubrique"></a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB embarque une interface en ligne de commande (CLI) complète dans le
+même exécutable que l’interface graphique. La CLI est particulièrement utile
+pour:</p>
+<ul class="simple">
+<li><p><strong>l’import en masse</strong> de matchs: importer un répertoire entier de fichiers
+de matchs (XG, SGF, MAT, BGF…) en une seule commande,</p></li>
+<li><p><strong>l’automatisation</strong>: intégrer blunderDB dans des scripts shell pour des
+sauvegardes régulières, des exports planifiés ou des chaînes de traitement,</p></li>
+<li><p><strong>l’utilisation sur serveur</strong>: manipuler des bases de données sur des machines
+sans environnement graphique,</p></li>
+<li><p><strong>l’inspection rapide</strong>: vérifier le contenu ou l’intégrité d’une base de
+données sans lancer l’interface graphique.</p></li>
+</ul>
+<p>La CLI partage exactement le même format de base de données que l’interface
+graphique : les deux écrivent le même fichier, il n’y a rien à synchroniser.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Si l’application est ouverte pendant qu’un script écrit.</strong> Le fichier
+est en mode WAL : une lecture ne bloque jamais une écriture, et les deux
+programmes travaillent sur la même base sans se gêner. Deux écritures, en
+revanche, se succèdent — la seconde attend le verrou d’écriture (dix
+secondes par instruction, plus quelques nouvelles tentatives) et n’échoue
+que si l’attente est épuisée, sur un message nommant SQLite :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: failed to import match: sqlite: save match: database is locked (5) (SQLITE_BUSY)
+</pre></div>
+</div>
+<p>L’interface graphique ne surveille pas le fichier : elle continue
+d’afficher ce qu’elle avait chargé jusqu’à ce que <code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code> recharge les
+positions. Rien n’est perdu, mais l’écran est en retard sur la base.</p>
+</div>
+</section>
+<section id="syntaxe-generale">
+<h2>Syntaxe générale<a class="headerlink" href="#syntaxe-generale" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode est détecté automatiquement: si le premier argument est une commande
+CLI, blunderDB se lance en mode headless, sinon il lance l’interface graphique.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># GUI</span>
+./blunderdb
+
+<span class="c1"># CLI</span>
+./blunderdb<span class="w"> </span>&lt;command&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Les exemples de cette page écrivent <code class="docutils literal notranslate"><span class="pre">./blunderdb</span></code> : le binaire tel qu’il est
+téléchargé, appelé depuis le dossier où il se trouve. Installé par un paquet,
+ou lié depuis un dossier du <code class="docutils literal notranslate"><span class="pre">PATH</span></code> (voir <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Téléchargement et installation</span></a>), il
+s’appelle simplement <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>.</p>
+<p>Les options booléennes annoncées « défaut: oui » se désactivent par la forme
+<code class="docutils literal notranslate"><span class="pre">--option=false</span></code> — <code class="docutils literal notranslate"><span class="pre">--recursive=false</span></code>, <code class="docutils literal notranslate"><span class="pre">--analysis=false</span></code>. La forme
+séparée par une espace n’existe pas : <code class="docutils literal notranslate"><span class="pre">--recursive</span> <span class="pre">false</span></code> laisse l’option à
+sa valeur par défaut et traite <code class="docutils literal notranslate"><span class="pre">false</span></code> comme un argument de trop.</p>
+</section>
+<section id="commandes-disponibles">
+<h2>Commandes disponibles<a class="headerlink" href="#commandes-disponibles" title="Lien vers cette rubrique"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Commande</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>create</p></td>
+<td><p>Crée une nouvelle base de données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
+<td><p>Importe des données (match, position, lot).</p></td>
+</tr>
+<tr class="row-even"><td><p>export</p></td>
+<td><p>Exporte des données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>identity</p></td>
+<td><p>Affiche ou déplace l’identité d’émetteur (clé de signature des filigranes).</p></td>
+</tr>
+<tr class="row-even"><td><p>open</p></td>
+<td><p>Transforme un fichier protégé par mot de passe (.dbx) en base ordinaire.</p></td>
+</tr>
+<tr class="row-odd"><td><p>search</p></td>
+<td><p>Recherche des positions avec filtres.</p></td>
+</tr>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>Affiche le contenu de la base.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match</p></td>
+<td><p>Affiche les positions et analyses d’un match.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection</p></td>
+<td><p>Gère les collections (liste, contenu, création, renommage, suppression, export).</p></td>
+</tr>
+<tr class="row-odd"><td><p>anki</p></td>
+<td><p>Paquets de répétition espacée (liste, statistiques, prévision, synchronisation).</p></td>
+</tr>
+<tr class="row-even"><td><p>epc</p></td>
+<td><p>Calcule l’Effective Pip Count et le verdict de videau d’une position de sortie (XGID).</p></td>
+</tr>
+<tr class="row-odd"><td><p>bearoff</p></td>
+<td><p>Fabrique, liste, vérifie et supprime les bases de sortie.</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>Écrit une analyse gammonNet pour chaque position qui n’en a aucune.</p></td>
+</tr>
+<tr class="row-odd"><td><p>info</p></td>
+<td><p>Affiche les métadonnées de la base.</p></td>
+</tr>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>Modifie les métadonnées de la base.</p></td>
+</tr>
+<tr class="row-odd"><td><p>verify</p></td>
+<td><p>Vérifie l’intégrité de la base.</p></td>
+</tr>
+<tr class="row-even"><td><p>vacuum</p></td>
+<td><p>Compacte le fichier de base de données, récupère l’espace libéré.</p></td>
+</tr>
+<tr class="row-odd"><td><p>repair</p></td>
+<td><p>Recalcule les colonnes scalaires tirées de chaque analyse.</p></td>
+</tr>
+<tr class="row-even"><td><p>delete</p></td>
+<td><p>Supprime des données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>healthcheck</p></td>
+<td><p>Interroge un démon <code class="docutils literal notranslate"><span class="pre">serve</span></code> en marche : code 0 s’il est disponible.</p></td>
+</tr>
+<tr class="row-even"><td><p>completion</p></td>
+<td><p>Affiche un script de complétion shell (bash, zsh, fish).</p></td>
+</tr>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>Affiche l’aide.</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>Affiche la version.</p></td>
+</tr>
+<tr class="row-odd"><td><p>serve, migrate, call</p></td>
+<td><p>Mode serveur et migration vers PostgreSQL : voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Chaque commande accepte l’option <code class="docutils literal notranslate"><span class="pre">--help</span></code> pour afficher son aide détaillée.</p>
+</section>
+<section id="create-creer-une-base-de-donnees">
+<h2>create — Créer une base de données<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Crée un nouveau fichier de base de données avec des métadonnées optionnelles.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;text&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Chemin du fichier de base de données à créer (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Nom du propriétaire de la base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Description de la base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Écraser le fichier s’il existe déjà.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (chemin,
+version, utilisateur, description, date de création).</p></li>
+</ul>
+<p>L’extension <code class="docutils literal notranslate"><span class="pre">.db</span></code> est ajoutée automatiquement si elle est absente. Les
+répertoires parents sont créés si nécessaire.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2>import — Importer des données<a class="headerlink" href="#import-importer-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Importe des fichiers de matchs ou de positions dans la base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Chemin de la base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’import: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> ou <code class="docutils literal notranslate"><span class="pre">batch</span></code> (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier à importer (pour <code class="docutils literal notranslate"><span class="pre">match</span></code> et <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire à importer (pour <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Scanner récursivement les sous-répertoires (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> — Avec <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code> : ne s’arrête pas, et importe chaque
+fichier de match <strong>à mesure qu’il apparaît</strong> dans <code class="docutils literal notranslate"><span class="pre">--dir</span></code> (Ctrl-C pour
+arrêter).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch-every</span></code> — Intervalle entre deux regards de <code class="docutils literal notranslate"><span class="pre">--watch</span></code> (défaut:
+10s, plancher 2s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> — Échoue si au moins un élément (<code class="docutils literal notranslate"><span class="pre">position</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">batch</span></code>) n’a pas pu être importé, même quand d’autres ont réussi.</p></li>
+</ul>
+<p>Le code de retour obéit à quatre règles :</p>
+<ul class="simple">
+<li><p><strong>rien n’a été reconnu</strong> — chaque fichier a échoué — : erreur, que
+<code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> soit passé ou non ;</p></li>
+<li><p><strong>que des doublons</strong> — chaque fichier était déjà en base — : succès. Un
+répertoire relancé sans nouveau fichier, la nuit ordinaire d’un script,
+sort en 0 avec <code class="docutils literal notranslate"><span class="pre">duplicates</span></code> seul non nul ;</p></li>
+<li><p><strong>échec partiel</strong> (certains éléments importés, d’autres refusés) : erreur
+seulement si <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> est passé ;</p></li>
+<li><p>au moins un élément nouveau importé, sans <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> : succès,
+les fichiers refusés étant listés dans le tableau.</p></li>
+</ul>
+<section id="surveiller-un-dossier">
+<h3>Surveiller un dossier<a class="headerlink" href="#surveiller-un-dossier" title="Lien vers cette rubrique"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> transforme l’import de répertoire en surveillance : la commande ne
+rend pas la main et importe chaque fichier de match qui <strong>apparaît</strong> dans le
+dossier. C’est la forme sans interface du <a class="reference internal" href="manuel.html#dossier-surveille"><span class="std std-ref">dossier surveillé</span></a> de l’application.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importer ce que le dossier contient déjà, puis surveiller ce qui arrive</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches<span class="w"> </span>--watch
+</pre></div>
+</div>
+<p>Seuls les fichiers qui apparaissent sont importés : ce que le dossier contient
+au démarrage est enregistré comme connu et laissé tranquille — pointer une
+surveillance sur quatre ans de matchs ne doit pas les importer tous. Les deux
+commandes ci-dessus se composent donc exactement comme on l’espère.</p>
+<p>Un fichier n’est importé qu’une fois sa <strong>taille stable</strong>, c’est-à-dire vu
+deux fois inchangé : un match qu’un autre programme est en train d’écrire
+grossit d’un regard à l’autre, et l’importer à moitié écrit donnerait une
+erreur syntaxique sur laquelle personne ne peut agir. Le dossier n’est pas
+parcouru récursivement. Un partage réseau devenu illisible n’arrête pas la
+surveillance, et son contenu ne passe pas pour nouveau à son retour.</p>
+<p>Ctrl-C arrête entre deux fichiers, jamais au milieu de l’un : le fichier en
+cours finit son import et son compte rendu s’affiche avant que la commande ne
+rende la main.</p>
+</section>
+<section id="import-d-un-match">
+<h3>Import d’un match<a class="headerlink" href="#import-d-un-match" title="Lien vers cette rubrique"></a></h3>
+<p>Formats supportés: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>),
+Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>) et BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+
+<span class="c1"># Successfully imported match (ID: 1)</span>
+<span class="c1">#</span>
+<span class="c1"># Match Details:</span>
+<span class="c1">#   Players: Kévin Unger vs Maxence Job</span>
+<span class="c1">#   Event: HSBT Paris 2023</span>
+<span class="c1">#   Match Length: 7</span>
+<span class="c1">#   Games: 7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> livre les mêmes champs en un seul document :</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"match"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kévin Unger"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maxence Job"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HSBT Paris 2023"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris, Fédération Française de Bridge"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_length"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"games"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3>Import de positions<a class="headerlink" href="#import-de-positions" title="Lien vers cette rubrique"></a></h3>
+<p>Importe des positions depuis un fichier texte, <strong>une position JSON par
+ligne</strong>. C’est exactement ce qu’écrit <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">positions</span></code> : les deux
+commandes se répondent, un export se réimporte tel quel, sans rien retoucher.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Successfully imported 4 positions</span>
+</pre></div>
+</div>
+<p>Une ligne, telle qu”<code class="docutils literal notranslate"><span class="pre">export</span></code> la produit — le damier en occupe l’essentiel,
+vingt-six points suivis des sorties :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+</pre></div>
+</div>
+<p>L’analyse et les commentaires ne voyagent pas par ce format : il porte la
+position, rien d’autre. Pour déplacer une bibliothèque entière, c’est
+<code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code> qu’il faut.</p>
+</section>
+<section id="import-par-lot">
+<h3>Import par lot<a class="headerlink" href="#import-par-lot" title="Lien vers cette rubrique"></a></h3>
+<p>Importe tous les fichiers de matchs d’un répertoire en une seule opération.
+C’est la méthode la plus efficace pour importer un grand nombre de matchs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--fail-on-error
+</pre></div>
+</div>
+<p>Un tableau récapitulatif indique pour chaque fichier si l’import a réussi
+(✓), échoué (✗) ou s’il s’agit d’un doublon (⊘). Un doublon n’est pas
+compté comme un échec, et un lot qui n’en contient que des doublons est un
+succès (voir les règles ci-dessus).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Batch importing from: ./matchs/ (recursive: true)
+
+Found 3 match file(s) to import
+
+[1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+[2/3] Importing: test.mat... DUPLICATE
+[3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+====================================================================
+IMPORT SUMMARY
+====================================================================
+Status  File           ID  Player 1     Player 2     Games  Positions  Error
+------  ----           --  --------     --------     -----  ---------  -----
+✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+⊘       test.mat                                     0      0
+✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+--------------------------------------------------------------------
+Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> en donne la même chose, exploitable par un script : un
+objet par fichier dans <code class="docutils literal notranslate"><span class="pre">files</span></code>, puis les totaux. Une nuit tranquille laisse
+<code class="docutils literal notranslate"><span class="pre">duplicates</span></code> seul non nul et <code class="docutils literal notranslate"><span class="pre">failed</span></code> à zéro, et le code de retour à 0 ;
+seul un lot où rien n’a été reconnu sort en erreur.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"files"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02_NDT_FR.txt"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"failed to parse file: …"</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.xg"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">"positions"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"duplicates"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"positions_imported"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2>export — Exporter des données<a class="headerlink" href="#export-exporter-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Exporte le contenu de la base vers des fichiers.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;output&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base source (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">mat</span></code> (export d’un ou plusieurs matchs en transcription Jellyfish
+<code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire, sauf pour <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>
+utilisé avec <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire de sortie pour l’export <code class="docutils literal notranslate"><span class="pre">.mat</span></code> par lot (plusieurs
+matchs, un fichier par match ; sans <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code>, tous les matchs sont
+exportés).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Inclure les analyses (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Inclure les commentaires (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Inclure la bibliothèque de filtres (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Inclure les coups joués (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Inclure les matchs (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Inclure les collections (défaut: non).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — IDs de collections à exporter (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — IDs de matchs à exporter (séparés par des virgules, vide = tous).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — IDs de tournois à exporter (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Enveloppe le résultat dans un conteneur chiffré (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Écrit une déclaration d’origine <strong>signée</strong> dans le fichier
+exporté (voir <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Diffuser une base : origine et mot de passe</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Texte libre associé au filigrane (conditions
+d’usage, contact) ; utilisé avec <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (document
+résumant l’export: chemin, taille en octets, nombres).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># .mat : un match, puis plusieurs (ou tous) dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># .dbx : filigrané et protégé par mot de passe</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont — 12 mars 2026"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">"Merci de ne pas rediffuser."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
+</pre></div>
+</div>
+<p>Un filigrane est signé avec l’identité d’émetteur locale (voir la commande
+<code class="docutils literal notranslate"><span class="pre">identity</span></code> ci-dessous) : il est infalsifiable, mais pas inamovible — le
+fichier reste une base SQLite ordinaire. Il ne protège rien, il indique
+seulement d’où vient le fichier. Un mot de passe protège le <em>transport</em> du
+fichier (la copie égarée, la pièce jointe envoyée par erreur), pas la base
+elle-même : quiconque a reçu le mot de passe peut l’ouvrir. blunderDB
+n’enregistre jamais rien côté destinataire (aucun registre, aucun journal) —
+voir <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md">ADR-0007</a>.</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2>identity — Identité d’émetteur<a class="headerlink" href="#identity-identite-d-emetteur" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche ou déplace votre <strong>identité d’émetteur</strong> : la clé Ed25519 qui signe
+chaque filigrane. Elle est créée d’elle-même au premier filigrane apposé ; il
+n’y a rien à configurer. Elle appartient à une personne, pas à une base de
+données : tout ce que vous marquez porte une seule empreinte publique.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jean Dupont"</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Change le nom affiché de l’identité.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Exporte l’identité vers un fichier <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Importe une identité depuis un fichier <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Phrase de passe optionnelle protégeant le fichier
+exporté/importé (l’identité locale, elle, est volontairement non protégée).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (nom,
+empreinte, chemin de stockage).</p></li>
+</ul>
+<p>Le fichier exporté permet à quiconque le détient de signer en votre nom — ne
+le partagez pas. Renommer ne change qu’un libellé : les fichiers déjà marqués
+conservent le nom sous lequel ils ont été scellés, et continuent de se
+vérifier.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2>open — Ouvrir un fichier protégé<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Lien vers cette rubrique"></a></h2>
+<p>Transforme un fichier protégé par mot de passe (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>) en base ordinaire.
+Le mot de passe est demandé une seule fois ; ensuite, c’est un fichier normal.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Fichier <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> à ouvrir (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Mot de passe du conteneur (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Chemin de sortie pour la base ordinaire (défaut: même nom,
+extension <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Ce que le mot de passe protège : le <em>transport</em> du fichier — la copie égarée
+dans un dossier de téléchargements, la pièce jointe envoyée par erreur. Pas la
+base : quiconque a reçu le mot de passe peut l’ouvrir. L’en-tête du conteneur
+est en clair, si bien que <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> lit l’origine d’un fichier
+protégé sans son mot de passe.</p>
+</section>
+<section id="search-rechercher-des-positions">
+<h2>search — Rechercher des positions<a class="headerlink" href="#search-rechercher-des-positions" title="Lien vers cette rubrique"></a></h2>
+<p>Recherche des positions dans la base selon des critères combinables.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options principales:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> ou <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">table</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Nombre maximum de résultats (0 = illimité).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--offset</span></code> — Ignorer les n premiers résultats avant de commencer à
+compter ; avec <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, c’est la pagination.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Exporter les résultats vers une nouvelle base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> — Affiche la liste des jetons que <code class="docutils literal notranslate"><span class="pre">--query</span></code> comprend, et
+s’arrête là. Aucune base n’est ouverte : <code class="docutils literal notranslate"><span class="pre">--db</span></code> est inutile.</p></li>
+</ul>
+<p><strong>Filtres disponibles:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — Lancer de dés. <code class="docutils literal notranslate"><span class="pre">5,3</span></code> cherche les positions où les deux dés
+correspondent (peu importe l’ordre). <code class="docutils literal notranslate"><span class="pre">5</span></code> cherche les positions où un 5
+apparaît sur l’un des deux dés (la valeur du deuxième dé est ignorée).
+Implique <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code> si aucune valeur de <code class="docutils literal notranslate"><span class="pre">--decision</span></code> n’est
+donnée.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Intervalle de différence de pip count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Intervalle de taux de victoire (%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Valeur du videau.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — Scores des joueurs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Longueur du match.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — Seuil sur ce que <strong>coûte une erreur dans la position</strong> :
+l’écart entre le meilleur coup et le deuxième, ou la plus grande des trois
+erreurs de videau. En <strong>points d’équité</strong> — <code class="docutils literal notranslate"><span class="pre">--error-min</span> <span class="pre">0.1</span></code> retient les
+positions où se tromper coûte au moins un dixième de point. Il ne dit rien
+de ce qui y a été joué.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — Seuil sur l’erreur du coup
+<strong>effectivement joué</strong> par le joueur 1. En <strong>millièmes d’équité</strong>
+(millipoints) : <code class="docutils literal notranslate"><span class="pre">--move-error-min</span> <span class="pre">50</span></code>, soit un vingtième de point. C’est
+le jeton <code class="docutils literal notranslate"><span class="pre">E</span></code> de la grammaire de recherche, écrit tel quel.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — Uniquement les positions avec analyse.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Pions sortis minimum (joueur 1/2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Filtrer par IDs de matchs (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Filtrer par IDs de tournois (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Filtrer par IDs de positions : intervalle <code class="docutils literal notranslate"><span class="pre">2,7</span></code>
+(positions 2 à 7) ou liste explicite séparée par des points-virgules
+<code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Uniquement les positions importées seules, c’est-à-dire
+celles que vous avez ajoutées vous-même et non celles qu’un import de match
+a apportées.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — Uniquement les positions marquées (<em>flag</em>) pour étude dans
+le logiciel d’origine (marques eXtreme Gammon). Non rétroactif : les
+matchs déjà importés doivent l’être à nouveau pour livrer leurs marques.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — Uniquement les positions portant un commentaire.
+L’origine n’est pas distinguée : une note tapée à la main et un commentaire
+apporté par l’import d’un match comptent tous les deux. Les commentaires de
+match ou de tournoi ne sont pas consultés.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — Uniquement les positions sans commentaire. Mutuellement
+exclusif avec <code class="docutils literal notranslate"><span class="pre">--has-comment</span></code>.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Avertissement</p>
+<p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> et <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> ne mesurent pas la même chose et
+<strong>ne prennent pas la même unité</strong> : le facteur est mille. Le premier se
+donne en points d’équité (<code class="docutils literal notranslate"><span class="pre">0.1</span></code>), les deux autres en millièmes
+(<code class="docutils literal notranslate"><span class="pre">100</span></code>) — un point vaut 1000 millièmes. C’est <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> qui
+répond à « où ai-je fauté » ; <code class="docutils literal notranslate"><span class="pre">--error-min</span></code> répond à « quelles positions
+étaient délicates ».</p>
+</div>
+<p><strong>Ce que search imprime:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">table</span></code> (le défaut) donne une ligne par position : l’identifiant,
+le score, la valeur du videau, le type de décision, le lancer, la meilleure
+décision et son équité. Les deux dernières colonnes restent vides pour une
+position sans analyse.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 5 position(s)
+
+ID  Score  Cube  Type  Dice  Best Move  Equity
+--  -----  ----  ----  ----  ---------  ------
+2   7-7    0     cube        No Double  -0.005
+4   7-7    0     cube        No Double  -0.027
+6   7-7    0     cube        No Double  -0.161
+8   7-7    0     cube        No Double  0.256
+10  7-7    0     cube        No Double  -0.234
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> donne un tableau des mêmes positions. Les champs sont
+<code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">decision_type</span></code> (<code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>) et
+<code class="docutils literal notranslate"><span class="pre">dice</span></code>, toujours présents ; <code class="docutils literal notranslate"><span class="pre">best_move</span></code>, <code class="docutils literal notranslate"><span class="pre">equity</span></code> et <code class="docutils literal notranslate"><span class="pre">xgid</span></code>
+n’apparaissent que si la position porte une analyse qui les renseigne. La
+ligne <code class="docutils literal notranslate"><span class="pre">Found</span> <span class="pre">n</span> <span class="pre">position(s)</span></code> reste imprimée avant le tableau : un script qui
+n’attend que du JSON doit sauter la première ligne, ou passer par
+<code class="docutils literal notranslate"><span class="pre">--export</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5266</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">4</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"cube"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"decision_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checker"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dice"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"best_move"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10/3"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"equity"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.565</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">xgid</span></code> imprime un XGID par ligne, et <strong>rien d’autre</strong>. Il
+n’imprime que les positions dont l’analyse enregistrée porte un XGID : une
+position collée dans l’application depuis un export texte, ou un fichier BGF
+qui en transporte un. Les positions apportées par l’import d’un match XG,
+GNUbg ou Jellyfish n’en portent pas, et la sortie est alors vide. La
+sous-commande <code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">show</span></code>, elle, régénère le XGID depuis le damier.</p>
+<p><strong>Le langage de requête:</strong></p>
+<p>Les drapeaux ci-dessus couvrent une partie des filtres seulement. <code class="docutils literal notranslate"><span class="pre">--query</span></code>
+donne accès au langage de requête de l’application — celui de la barre de
+commande — et donc à tous les filtres qui ne se dessinent pas sur le plateau :
+motif de coup, texte de commentaire, joueur, date, équité, dés exclus, zones
+et blots.</p>
+<p>La grammaire n’est écrite qu’à un seul endroit, <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Filtres de recherche</span></a>. Sa table
+donne chaque jeton, sa forme, et le drapeau de <code class="docutils literal notranslate"><span class="pre">search</span></code> qui lui correspond
+quand il en existe un. Cette page ne la répète pas.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s p&gt;30 E&gt;50'</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s m"13/11" t"blunder" pl"Alice" T&gt;2026/01/01'</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> en rappelle la liste sans ouvrir de base :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ./blunderdb search --query-help
+blunderdb search --query — the interface's query language
+
+A query is the same text the application's command bar takes:
+  s cube p&gt;30 E&gt;50        cube decisions, 30+ pips behind, 50+ millipoints of error
+  s m"13/11" T&gt;2026/01/01 played 13/11, imported this year
+
+Flags (no value):
+  cube score   match the cube / the score of the position on the board
+  d            match the decision type (checker or cube)
+  …
+
+Ranges — each takes x&gt;n, x&lt;n or xa,b (lower-case: you; upper-case: the opponent):
+  p P          pip count difference / absolute pip count
+  …
+  E            error of the played move, in millipoints
+  T            creation date, T&gt;2026/01/01
+
+Values:
+  t"tag"       comment text (";" separates alternatives)
+  …
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query</span></code> remplace les drapeaux de filtre au lieu de s’y ajouter : les
+combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui disent
+<em>où</em> chercher et <em>comment</em> afficher — <code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code>,
+<code class="docutils literal notranslate"><span class="pre">--offset</span></code>, <code class="docutils literal notranslate"><span class="pre">--export</span></code> — restent valides.</p>
+<p>Un jeton que rien ne reconnaît fait échouer la commande plutôt que de réduire
+la recherche en silence. Deux limites tiennent à l’absence de plateau en ligne
+de commande : le motif de damier ne se tape pas, et les cinq jetons qui lisent
+le plateau — <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code>/<code class="docutils literal notranslate"><span class="pre">D1</span></code> et <code class="docutils literal notranslate"><span class="pre">x</span></code> — se comparent
+ici à un plateau vide. Une recherche qui a besoin de l’un d’eux s’écrit
+<strong>entièrement</strong> en drapeaux, puisque <code class="docutils literal notranslate"><span class="pre">--query</span></code> ne se combine pas avec eux —
+par exemple, les décisions de videau en retard de 30 pips et fautives d’au
+moins 50 millièmes :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--pip-min<span class="w"> </span><span class="m">30</span><span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">50</span>
+</pre></div>
+</div>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
+
+<span class="c1"># Pagination</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--offset<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2>list — Lister le contenu<a class="headerlink" href="#list-lister-le-contenu" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche le contenu de la base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Types:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Liste des matchs importés.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Liste des tournois.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Liste des positions (limité à 10 par défaut). Avec
+<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>, devient un <strong>export tabulaire</strong> : une ligne par position,
+avec son XGID, sa phase, son score, son videau, ses pips et les colonnes
+d’analyse dérivées.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> — Liste des imports enregistrés, du plus récent au plus ancien :
+identifiant, date, format, source, matchs importés / ignorés / enrichis,
+fichiers illisibles et positions nouvelles. Avec <code class="docutils literal notranslate"><span class="pre">--batch</span> <span class="pre">&lt;id&gt;</span></code>, affiche le
+<strong>compte rendu complet</strong> d’un import : positions marquées, positions sans
+analyse, PR sur ce lot et cinq pires décisions (voir
+<a class="reference internal" href="guide_utilisateur.html#compte-rendu-import"><span class="std std-ref">Le compte rendu d’import</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Rapport de statistiques de performance : PR / Snowie ER / MWC
+(global, pions, videau), PR glissant sur les N dernières décisions, top
+blunders, répartition par action de videau et histogramme des magnitudes
+d’erreur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">players</span></code> — Tableau comparatif, <strong>une ligne par joueur</strong> de la base :
+matchs, victoires/défaites, décisions comptées, PR global / pions / videau,
+Snowie ER, erreurs, blunders et chance. C’est le pendant en ligne de commande
+de l’onglet Joueurs du panneau Stats.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">moves</span></code> — <strong>Export tabulaire</strong> des coups enregistrés, un par ligne, avec le
+match auquel ils appartiennent recopié sur chaque ligne : identifiants,
+date, joueurs, longueur, numéro et type de coup, position, dés, coup joué,
+action de videau, chance. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> obligatoire.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyses</span></code> — <strong>Export tabulaire</strong> des analyses stockées, une par ligne :
+moteur, profondeur, meilleur coup et son équité, erreur du coup joué,
+meilleure action de videau et son erreur, les six taux de gain.
+<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> obligatoire.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> — Vocabulaire de tags de la base : chaque <code class="docutils literal notranslate"><span class="pre">#mot</span></code> écrit dans un
+commentaire, avec le nombre de <strong>positions</strong> qui le portent, du plus utilisé
+au moins utilisé. Sur une base sans aucun tag, affiche le vocabulaire
+recommandé plutôt qu’une liste vide (voir <a class="reference internal" href="manuel.html#tags"><span class="std std-ref">Les tags</span></a>). Accepte
+<code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> et <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+</ul>
+<section id="exports-tabulaires">
+<span id="export-tabulaire"></span><h3>Exports tabulaires<a class="headerlink" href="#exports-tabulaires" title="Lien vers cette rubrique"></a></h3>
+<p>Trois types — <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">moves</span></code> et <code class="docutils literal notranslate"><span class="pre">analyses</span></code> — s’exportent en CSV
+pour un notebook, un tableur ou un script :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>positions.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>moves<span class="w">     </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>moves.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>analyses<span class="w">  </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>analyses.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> ne s’applique <strong>que si vous le passez</strong>. Sa valeur par défaut (10)
+existe pour qu’un <code class="docutils literal notranslate"><span class="pre">list</span></code> affiché dans un terminal ne fasse pas défiler la
+base entière ; un export, lui, part dans un fichier que lit un programme, et le
+tronquer silencieusement à dix lignes serait un piège qu’on ne remarque qu’une
+fois les chiffres faux.</p>
+<p><strong>Les colonnes sont un contrat.</strong> Un notebook ou un script écrit contre ces
+noms doit continuer de fonctionner : les colonnes s’ajoutent à la fin, ne sont
+jamais renommées ni réordonnées. Toutes les équités sont en <strong>millipoints
+entiers</strong>, parce que c’est ainsi qu’elles sont stockées et parce qu’un flottant
+dans un CSV invite une locale à le reformater.</p>
+<p><strong>Parquet n’est pas proposé</strong>, et c’est mesuré plutôt que dogmatique : une
+bibliothèque colonnaire pèse plusieurs mégaoctets dans un binaire dont la
+taille est un souci suivi, alors que tout ce à quoi cet export sert lit du CSV
+en une ligne (<code class="docutils literal notranslate"><span class="pre">pd.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">polars.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">read.csv</span></code>, un tableur).
+Parquet se justifie à des dizaines de millions de lignes ; une bibliothèque de
+backgammon de dix ans en compte cent mille. Si un jour la différence se mesure
+sur une vraie base, c’est cette mesure qui rouvrira la question.</p>
+<p>Un <strong>notebook Jupyter d’exemple</strong> accompagne ces exports
+(<code class="docutils literal notranslate"><span class="pre">notebooks/blunderdb-analyse.ipynb</span></code> dans le dépôt) : PR dans le temps,
+distribution des magnitudes d’erreur, dix pires décisions avec leur XGID. Il
+n’utilise rien d’autre que ces trois fichiers CSV, et il est <strong>exécuté toutes
+les nuits en intégration continue</strong> — un notebook qu’on ne lance pas est un
+notebook qui a cessé de fonctionner sans que personne le sache.</p>
+<p><strong>Options</strong> (type <code class="docutils literal notranslate"><span class="pre">stats</span></code> uniquement) :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Métrique affichée: <code class="docutils literal notranslate"><span class="pre">pr</span></code> ou <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Restreindre au joueur indiqué.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois (séparés
+par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Date de début (AAAA-MM-JJ).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Date de fin (AAAA-MM-JJ).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>
+(défaut: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Nombre de pires erreurs listées (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Options</strong> (type <code class="docutils literal notranslate"><span class="pre">imports</span></code> uniquement) :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch</span></code> — Identifiant d’un lot : affiche son compte rendu complet au lieu
+de la liste.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — Avec <code class="docutils literal notranslate"><span class="pre">--batch</span></code> : la <strong>file d’étude</strong> du lot plutôt que son
+compte rendu — les positions qui méritent un second regard, dans l’ordre où
+les parcourir (voir <a class="reference internal" href="guide_utilisateur.html#file-etude"><span class="std std-ref">La file d’étude</span></a>). Les décisions qui ont coûté quelque
+chose d’abord, puis les positions marquées dans le logiciel d’origine, puis
+les décisions de videau serrées ; une position n’y figure qu’une fois.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p>La moitié mesurée du compte rendu est recalculée à chaque appel : un lot dont
+les positions ont été analysées depuis rend les chiffres d’aujourd’hui, non ceux
+du jour de l’import.</p>
+<p><strong>Options</strong> (type <code class="docutils literal notranslate"><span class="pre">players</span></code> uniquement) :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> / <code class="docutils literal notranslate"><span class="pre">--to</span></code> — Bornes de dates (AAAA-MM-JJ), par exemple les jours
+d’une compétition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Restreindre à un ou plusieurs IDs de tournois.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> ou <code class="docutils literal notranslate"><span class="pre">csv</span></code>
+(défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> et <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> ne s’appliquent <strong>pas</strong> à ce type : le
+tableau porte sur tous les joueurs et ventile déjà pions et videau en colonnes
+distinctes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Un tiret « — » (champ vide en CSV) signale une valeur <strong>jamais mesurée</strong>, à
+ne pas confondre avec zéro. C’est le cas de la chance pour tout match importé
+avant la version 2.15.0 du schéma, ainsi que pour les formats qui ne la
+transportent pas (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) : réimportez les fichiers source
+pour l’obtenir. La colonne <code class="docutils literal notranslate"><span class="pre">luck_rolls</span></code> indique sur combien de lancers
+porte la moyenne.</p>
+</div>
+<p>Chaque type imprime un bloc par élément, précédé du total trouvé. La ligne
+finale rappelle que la liste est tronquée par <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, dont la valeur par
+défaut vaut 10 pour les positions :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 3859 position(s):
+
+ID: 1
+  Score: 7-7
+  Player on roll: 0
+  Decision: Checker play
+
+ID: 2
+  Score: 7-7
+  Player on roll: 0
+  Decision: Cube action
+
+…
+
+(Showing 10 of 3859 positions, use --limit to see more)
+</pre></div>
+</div>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les imports enregistrés, puis le compte rendu de l'un d'eux</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># Un tableau par joueur, borné aux dates d'une compétition</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-03-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-03-08
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="match-afficher-un-match">
+<h2>match — Afficher un match<a class="headerlink" href="#match-afficher-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche les positions et analyses d’un match importé.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;file&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID du match à afficher (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">summary</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — Fichier de sortie (défaut: sortie standard).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+</section>
+<section id="collection-gerer-les-collections">
+<h2>collection — Gérer les collections<a class="headerlink" href="#collection-gerer-les-collections" title="Lien vers cette rubrique"></a></h2>
+<p>Gère les collections, ces ensembles de positions choisies à la main dans le
+panneau Collections de l’interface graphique. Chaque sous-commande prend
+<code class="docutils literal notranslate"><span class="pre">--db</span></code> ; <code class="docutils literal notranslate"><span class="pre">list</span></code> et <code class="docutils literal notranslate"><span class="pre">show</span></code> acceptent <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (défaut), <code class="docutils literal notranslate"><span class="pre">json</span></code>
+ou <code class="docutils literal notranslate"><span class="pre">csv</span></code>, comme <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sous-commandes:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Liste des collections : id, nom, nombre de positions, description.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Positions d’une collection : id, index (le numéro
+1-based affiché dans la barre d’état de l’interface graphique), score, type
+de décision et XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Crée une collection vide.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--query</span> <span class="pre">&lt;requête&gt;</span></code> — Rend une collection <strong>vivante</strong> :
+son contenu devient le résultat d’une recherche, réévalué chaque fois
+qu’elle est ouverte. La requête s’écrit dans la grammaire de recherche de
+l’application (voir <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Filtres de recherche</span></a>). <code class="docutils literal notranslate"><span class="pre">--clear</span></code> la rend à sa liste faite
+à la main, en gardant les positions qu’elle contenait.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rename</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--name</span> <span class="pre">&lt;nom&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;texte&gt;]</span></code> — Renomme une
+collection (la description est conservée si elle n’est pas donnée).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--confirm]</span></code> — Supprime une collection ; ses positions
+restent dans la base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;fichier.db&gt;</span> <span class="pre">[--analysis=false]</span>
+<span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;texte&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;texte&gt;]</span></code> —
+Exporte une ou plusieurs collections vers un nouveau fichier de base, par
+le même appel que la fenêtre d’export de l’interface graphique (voir la
+commande <code class="docutils literal notranslate"><span class="pre">export</span></code> pour le filigrane).</p></li>
+</ul>
+<p>Le XGID affiché par <code class="docutils literal notranslate"><span class="pre">show</span></code> est celui enregistré avec l’analyse de la
+position quand il existe (imports BGF et XGP) ; sinon il est généré depuis le
+damier exactement comme le fait <em>Copier la position</em> dans l’interface
+graphique — la longueur du match est alors le plus grand des deux scores
+restants, une position enregistrée ne retenant pas la vraie.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Found 2 collection(s):</span>
+<span class="c1">#</span>
+<span class="c1"># ID  Name              Positions  Description</span>
+<span class="c1"># --  ----              ---------  -----------</span>
+<span class="c1"># 1   Ouvertures blitz  0          À revoir</span>
+<span class="c1"># 2   Videaux ratés     0</span>
+</pre></div>
+</div>
+<p>Une base sans collection répond <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">collections</span> <span class="pre">found</span> <span class="pre">in</span> <span class="pre">database</span></code> et sort
+tout de même avec le code 0.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures blitz"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>rename<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--confirm
+
+<span class="c1"># Exporter deux collections, marquées de leur origine</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>,4<span class="w"> </span>--out<span class="w"> </span>ouvertures.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont - 12 mars 2026"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — Paquets de répétition espacée<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="Lien vers cette rubrique"></a></h2>
+<p>Consulte et entretient les paquets de répétition espacée (FSRS) du panneau
+Anki de l’interface graphique. La révision d’une carte demande le damier et
+reste dans l’interface graphique ; la CLI liste, mesure et resynchronise.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sous-commandes:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Liste des paquets : source, nombre de
+cartes, cartes dues, cartes nouvelles.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Statistiques de révision d’un
+paquet : total, nouvelles, en apprentissage, à revoir, dues maintenant, et
+ses paramètres FSRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Cartes
+arrivant à échéance par jour civil (UTC) sur les <code class="docutils literal notranslate"><span class="pre">n</span></code> prochains jours
+(défaut 30, maximum 365) ; le jour 0 absorbe toutes les cartes en retard ;
+<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code> (défaut) couvre tous les paquets.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — Ajoute une carte pour chaque position de la source du
+paquet qui n’en a pas encore ; les cartes existantes gardent leur
+planification.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Rétention mesurée d’un
+paquet, comparée à la cible que son propriétaire a choisie.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code>
+— Agit sur une carte. <em>Suspendre</em> la met de côté sans perdre son historique
+(elle ne ressort plus en séance) ; <em>enterrer</em> la masque jusqu’au lendemain,
+sans rien dire de sa valeur ; <em>retirer</em> la supprime du paquet — la position,
+elle, reste dans la base, un paquet n’étant qu’une liste d’étude posée
+dessus.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Journal des
+révisions, la plus récente d’abord (<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>, le défaut, couvre tous les
+paquets ; <code class="docutils literal notranslate"><span class="pre">--limit</span></code> vaut 20 par défaut). Le journal est ce que le
+planificateur a réellement reçu, par opposition à ce qu’il prévoit
+aujourd’hui : c’est le seul endroit où une note entrée par erreur se voit.</p></li>
+</ul>
+<p>Un paquet fondé sur une collection relit sa collection. Un paquet fondé sur
+une recherche conserve la recherche telle que l’interface graphique l’a
+enregistrée (commande, damier et identifiants des positions trouvées à ce
+moment-là) : la grammaire de recherche vit dans l’interface graphique, la CLI
+resynchronise donc depuis les identifiants enregistrés et le signale sur la
+sortie d’erreur — ouvrez le paquet dans l’interface graphique pour rejouer la
+recherche elle-même.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Matrice du videau<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Lien vers cette rubrique"></a></h2>
+<p>Donne le verdict de videau d’une position à <strong>tous les scores</strong> d’un match :
+pour chaque case <em>away × away</em>, si la position se double et si elle se prend.
+Calcul pur : aucune base de données n’est ouverte, la position arrive par son
+XGID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie : <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut : <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Longueur du match que la grille couvre, de 1 à 25
+(défaut : 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Profondeur de recherche de chaque case, <code class="docutils literal notranslate"><span class="pre">0</span></code> ou <code class="docutils literal notranslate"><span class="pre">2</span></code>
+(défaut : 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Nombre de coups candidats retenus par le réseau d’élagage
+(défaut : 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Recherches menées en parallèle (défaut : une par cœur). La
+grille est identique quelle que soit la valeur ; seul le temps change.</p></li>
+</ul>
+<p>Le score propre à la position est ignoré — la grille le remplace — mais son
+<strong>videau</strong> est conservé : la question posée est « à quel score retournerais-je
+<em>ce</em> videau ». La grille est post-Crawford d’un bout à l’autre.</p>
+<p>Chaque case est une recherche à part entière, parce que le moteur tient compte
+du score : une seule recherche relue à travers des équités de match
+différentes serait fausse exactement là où le score compte.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Sortie <code class="docutils literal notranslate"><span class="pre">text</span></code> : une grille dont les lignes sont les points restant à faire
+au joueur au trait, les colonnes ceux de l’adversaire, puis la légende des
+sigles <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> et la raison de chaque case refusée.</p>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — Calculatrice EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Lien vers cette rubrique"></a></h2>
+<p>Calcule l’Effective Pip Count, la probabilité de gain et le verdict de videau
+money d’une position de sortie donnée par XGID. Calcul pur : aucun fichier de
+base de données n’est impliqué.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Base bearoff two-sided optionnelle (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) élargissant
+la base intégrée TS-06-06 (également lue depuis la variable d’environnement
+<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). La base valide la plus large l’emporte ; un fichier
+invalide est ignoré avec un avertissement.</p></li>
+</ul>
+<p><strong>Régimes.</strong> Dans le domaine couvert par la base two-sided, la probabilité de
+gain et l’analyse money du videau (cubeless, ND, D/T, D/P, verdict) sont
+<strong>exactes</strong>. En dehors, la probabilité de gain est <strong>estimée</strong> (convolution
+des distributions de lancers one-sided plus une correction calibrée) et
+affichée avec sa marge d’erreur mesurée ; le verdict de videau n’est
+volontairement jamais estimé (voir <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Bases de sortie<a class="headerlink" href="#bearoff-bases-de-sortie" title="Lien vers cette rubrique"></a></h2>
+<p>Fabrique et gère les bases de bearoff. Rien n’est téléchargé et rien n’est
+embarqué : une table est calculée ici et vérifiée contre l’empreinte que gnubg
+produit pour son domaine. Aucune sous-commande ne parle à une base de données —
+une table de bearoff est de l’arithmétique sur le jeu, pas sur les positions de
+quelqu’un — donc aucune ne prend <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Le domaine s’écrit comme sous <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> : <code class="docutils literal notranslate"><span class="pre">6x9</span></code> pour la table
+two-sided à neuf pions par joueur, <code class="docutils literal notranslate"><span class="pre">os8</span></code> pour la table une face à huit
+points (<code class="docutils literal notranslate"><span class="pre">os</span></code> seul vaut <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Les deux familles ne répondent pas à la même question. Une table <strong>deux
+faces</strong> élargit le domaine où la probabilité de gain et le verdict de videau
+sont exacts ; une table <strong>une face</strong> élargit la distance à laquelle un pion
+peut se trouver sans que l’EPC se taise (jusqu’à dix points).</p>
+<p><strong>generate.</strong> Annonce la taille, la mémoire et le temps estimé avant de
+commencer, puis affiche le pourcentage et le temps restant mesuré.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Domaine deux faces à calculer, par exemple <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Domaine une face à calculer, en nombre de points : 6 à 12. Un et
+un seul des deux est requis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Cœurs à utiliser (défaut : tous sauf un).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Où écrire (défaut : le dossier de données de l’application).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Pas de ligne de progression.</p></li>
+</ul>
+<p><strong>CTRL-C met en pause.</strong> Le signal est capté : l’état est écrit à côté de la
+table et la même commande relancée reprend là où elle s’était arrêtée, au lieu
+de tout recalculer. Une demi-heure d’arithmétique mérite d’être écrite.
+<code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> jette une reprise en attente. Seul le balayage deux faces
+se met en pause ; le balayage une face est séquentiel et <code class="docutils literal notranslate"><span class="pre">--cores</span></code> ne lui
+sert à rien.</p>
+<p><strong>list.</strong> Chiffre chaque domaine — taille, mémoire, temps sur cette machine —
+et dit lesquels sont déjà présents, avec leur verdict, et lesquels ont un
+calcul en pause. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> pour un script, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> pour changer
+l’hypothèse de l’estimation.</p>
+<p><strong>verify.</strong> Répond <code class="docutils literal notranslate"><span class="pre">verified</span></code> (les mêmes octets que la référence),
+<code class="docutils literal notranslate"><span class="pre">unverified</span></code> (bien formée, mais aucune empreinte n’est enregistrée pour ce
+domaine) ou <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (le fichier se contredit). Sort en erreur sur le
+dernier cas : cette commande est faite pour être mise dans un script.</p>
+<p><strong>delete.</strong> Retire la table, la reprise en attente et les débris d’un calcul
+mort. Un domaine par défaut est recalculé au prochain lancement de
+l’application ; un domaine plus large ne l’est pas.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — Rattrapage gammonNet<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Lien vers cette rubrique"></a></h2>
+<p>Écrit une analyse gammonNet pour chaque position qui n’en a aucune — le
+rattrapage d’une bibliothèque constituée avant que cette fonctionnalité
+existe (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>,
+<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>).
+C’est la même opération que le déclenchement
+automatique après import et le bouton « Analyser maintenant » de l’interface
+graphique, et que le point d’accès <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> du démon
+<code class="docutils literal notranslate"><span class="pre">serve</span></code> pour un tenant — trois formes différentes de la même opération, pas
+trois logiques distinctes (voir <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Mode headless (serveur)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Profondeur de recherche (défaut: 2, le paramètre canonique).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Largeur d’élagage (défaut: 12, le paramètre canonique).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Nombre de coups candidats conservés par décision de
+déplacement (défaut: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Nombre de positions analysées en parallèle (défaut: le nombre
+de cœurs de la machine).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>N’écrit rien</strong> : compare gammonNet aux analyses importées
+au lieu de combler des trous (voir plus bas).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Avec <code class="docutils literal notranslate"><span class="pre">--compare</span></code>, s’arrête après ce nombre de positions
+(0 = toutes).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut, avec la progression) ou
+<code class="docutils literal notranslate"><span class="pre">json</span></code> (un seul document récapitulatif, imprimé à la fin).</p></li>
+</ul>
+<p><strong>Un match importé sans analyse obtient ainsi un PR.</strong> C’est le cas d’un
+match joué en ligne, ou d’un fichier Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, que personne n’a fait
+passer par XG. blunderDB en connaissait les positions et les coups joués, mais
+rien ne disait ce qu’ils valaient ; une fois le lot passé, le coup
+effectivement joué est comparé au classement de gammonNet et l’écart alimente
+le PR et tous les autres indicateurs. Le coup joué vient de la table des coups
+du match, écrite à l’import, que le fichier ait porté une analyse ou non — il
+n’est jamais deviné.</p>
+<p>Une base analysée avec une version antérieure à celle-ci n’a pas besoin d’être
+réévaluée : <a class="reference internal" href="#cli-repair"><span class="std std-ref">repair</span></a> recalcule les colonnes à partir de ce
+qui est déjà en base et rend leur PR à ces matchs.</p>
+<p><strong>Le parallélisme</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Les positions d’un lot sont indépendantes —
+aucune recherche n’informe la suivante — donc elles sont réparties sur
+<code class="docutils literal notranslate"><span class="pre">--jobs</span></code> fils d’exécution, chacun avec son propre évaluateur. Les analyses
+écrites sont <strong>identiques quelle que soit la valeur de</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> ; seul le
+temps de calcul change. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> laisse la machine libre pour autre
+chose. L’annulation n’est pas affectée : Ctrl-C arrête le lot avant toute
+nouvelle position, et tout ce qui était déjà calculé est écrit.</p>
+<p><strong>La règle du trou</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Une position portant déjà une analyse —
+XG, GNUbg, BGBlitz, ou un précédent passage de gammonNet — n’est jamais
+touchée, quel que soit le moteur manquant. Seule une position <strong>sans aucune</strong>
+analyse est écrite. La commande peut donc être relancée à tout moment sans
+risque, et interrompue proprement : Ctrl-C annule sans rien perdre de ce qui
+est déjà écrit, et la prochaine exécution reprend exactement là où la
+précédente s’est arrêtée — aucun journal n’est nécessaire, puisque « les
+positions sans analyse » est recalculé à chaque lancement.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><strong>``–compare`` : que vaut gammonNet sur *votre* bibliothèque ?</strong></p>
+<p>La précision du moteur est mesurée ailleurs contre des corpus de référence et
+contre la table de bearoff exacte. Aucune de ces mesures ne répond à la
+question qu’un utilisateur se pose vraiment, qui porte sur <strong>ses</strong> positions :
+sur les matchs importés d’XG, où le moteur embarqué est-il en désaccord avec
+l’analyse venue du fichier, et que coûterait ce désaccord ?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> répond, et <strong>n’écrit rien</strong>. Ce n’est pas une précaution mais
+l’intérêt de la commande : l’ADR-0013 protège inconditionnellement une analyse
+importée, et la comparaison peut donc se lancer sur une bibliothèque qu’on ne
+veut surtout pas voir réécrite.</p>
+<p>Le compte rendu donne :</p>
+<ul class="simple">
+<li><p>le <strong>taux d’accord</strong> sur la meilleure réponse, séparé entre coups de pions
+et décisions de videau — les deux n’ont rien à voir et un taux unique
+cacherait lequel des deux décroche ;</p></li>
+<li><p>le <strong>coût du désaccord</strong>, tarifé sur l’échelle de l’analyse importée : ce
+que le coup préféré par gammonNet vaut <em>selon le moteur importé</em>, moins ce
+que vaut son propre meilleur coup. Ce sens est le seul que les deux moteurs
+puissent chiffrer ensemble ; tarifer un désaccord deux fois inviterait à
+lire le plus petit des deux nombres ;</p></li>
+<li><p>la ventilation <strong>par phase de partie</strong>, qui est ce qui dit <em>où</em> les
+désaccords se concentrent ;</p></li>
+<li><p>les dix désaccords les plus coûteux, position par position.</p></li>
+</ul>
+<p>Deux moteurs écrivent le même coup différemment — XG note « 13/7 » là où
+gammonNet écrit « 13/8 8/7 », les frappes sont marquées d’un côté et pas de
+l’autre, la répétition est parfois condensée en « (2) ». Ces différences sont
+du dialecte et non du désaccord : la comparaison ramène les deux notations à
+une forme canonique avant de les comparer. Sans cela, un corpus de test
+affichait 78,8 % d’accord au lieu de 93,2 % — quinze points de faux
+désaccords.</p>
+<p>Un coup que le moteur importé n’a <strong>pas listé</strong> ne peut pas être tarifé sur
+son échelle : il compte comme un désaccord de coût nul plutôt que d’un coût
+inventé.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="trash-la-corbeille">
+<h2>trash — La corbeille<a class="headerlink" href="#trash-la-corbeille" title="Lien vers cette rubrique"></a></h2>
+<p>Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une
+suppression : un instantané JSON de ce qui disparaît est écrit avant, et rien
+d’autre dans la base ne sait que cette table existe — aucun filtre de
+recherche, aucune statistique, aucune règle de rétention.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>trash<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Sous-commandes:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Ce qu’il y a dans la corbeille, du plus récemment supprimé au plus
+ancien.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restore</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Remet l’entrée N et la retire de la corbeille.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Supprime l’entrée N tout de suite, sans la restaurer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">[--older-than</span> <span class="pre">J]</span></code> — Vide la corbeille, ou seulement ce qui a plus de
+J jours.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--kind</span> <span class="pre">K</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Supprime un objet <strong>par la corbeille</strong>, pour que
+le geste soit annulable. <code class="docutils literal notranslate"><span class="pre">K</span></code> vaut <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code> ou
+<code class="docutils literal notranslate"><span class="pre">comment</span></code>.</p></li>
+</ul>
+<p><strong>Options communes:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (obligatoire), <code class="docutils literal notranslate"><span class="pre">--kind</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code>
+(défaut 50), <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">delete</span></code> supprime toujours <strong>sans</strong> filet : un script qui
+supprime une position s’attend à ce qu’elle disparaisse, et laisser un
+instantané en silence ferait grossir un fichier que personne n’a demandé à
+voir grossir. C’est <code class="docutils literal notranslate"><span class="pre">trash</span> <span class="pre">delete</span></code> qui garde l’annulation.</p>
+</div>
+<p>Une restauration de position repasse par la déduplication Zobrist : elle ne
+crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
+d’origine n’existe plus. Une position restaurée est la même position, sous un
+nouveau numéro.</p>
+<p>Ce qui a plus de trente jours est supprimé par <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> — jamais à
+l’ouverture d’une base.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer une position en gardant l'annulation</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--kind<span class="w"> </span>position<span class="w"> </span>--id<span class="w"> </span><span class="m">412</span>
+
+<span class="c1"># Voir la corbeille, puis remettre une entrée</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>restore<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># Ne garder que ce qui a moins de trente jours</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>empty<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--older-than<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+<section id="info-metadonnees-de-la-base">
+<h2>info — Métadonnées de la base<a class="headerlink" href="#info-metadonnees-de-la-base" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche les métadonnées et les statistiques d’une base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Database Information</span>
+<span class="c1"># ==================================================</span>
+<span class="c1"># Path: /home/jean/bg/base.db</span>
+<span class="c1">#</span>
+<span class="c1"># Metadata:</span>
+<span class="c1">#   Version: 2.20.0</span>
+<span class="c1">#   User: Jean</span>
+<span class="c1">#   Description: Matchs de tournoi 2025</span>
+<span class="c1">#   Date of Creation: 2026-09-06 02:43:51</span>
+<span class="c1">#</span>
+<span class="c1"># Statistics:</span>
+<span class="c1">#   Positions: 3859</span>
+<span class="c1">#   Analyses: 3855</span>
+<span class="c1">#   Matches: 11</span>
+<span class="c1">#   Games: 61</span>
+<span class="c1">#   Moves: 3766</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> ajoute l’origine du fichier — <code class="docutils literal notranslate"><span class="pre">issuance</span></code> porte le
+filigrane s’il y en a un, et l’identité d’émetteur de cette machine :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"issuance"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"watermarked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerFingerprint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1186-57FA-060C-9378"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unger"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"database_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.20.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dateOfCreation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-09-06 02:43:51"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jean"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/home/jean/bg/base.db"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="edit-modifier-les-metadonnees">
+<h2>edit — Modifier les métadonnées<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Lien vers cette rubrique"></a></h2>
+<p>Modifie le nom d’utilisateur ou la description d’une base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Nouveau nom d’utilisateur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Nouvelle description.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-user</span></code> — Effacer le nom d’utilisateur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-description</span></code> — Effacer la description.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">{&quot;changes&quot;:</span> <span class="pre">[...]}</span></code>).</p></li>
+</ul>
+<p>Au moins une option de modification est requise.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Marie"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Ma collection"</span>
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--clear-description
+</pre></div>
+</div>
+</section>
+<section id="verify-verifier-l-integrite">
+<h2>verify — Vérifier l’intégrité<a class="headerlink" href="#verify-verifier-l-integrite" title="Lien vers cette rubrique"></a></h2>
+<p>Vérifie l’intégrité de la base de données et, optionnellement, compare un match
+avec son fichier source.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--match<span class="w"> </span>&lt;id&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--mat<span class="w"> </span>&lt;file.mat&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — ID du match à vérifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Fichier MAT à comparer (utilisé avec <code class="docutils literal notranslate"><span class="pre">--match</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>
+(statistiques, orphelins, écart de schéma, et la vérification du match le
+cas échéant).</p></li>
+</ul>
+<p>Sans l’option <code class="docutils literal notranslate"><span class="pre">--match</span></code>, la commande affiche les statistiques générales de la
+base. Avec <code class="docutils literal notranslate"><span class="pre">--match</span></code>, elle vérifie les données du match et peut les comparer
+avec le fichier source original.</p>
+<p>Chaque exécution contrôle aussi l’intégrité référentielle : elle compte les
+lignes orphelines — parties sans match, coups sans partie, analyses de coup
+sans coup, analyses sans position, entrées du journal de révision sans paquet
+ou sans position — et affiche une ligne <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> avec le total s’il y en a. Une base saine répond <code class="docutils literal notranslate"><span class="pre">Orphaned</span> <span class="pre">rows:</span> <span class="pre">none</span></code>. Des orphelins
+peuvent subsister dans une base écrite par une version qui n’appliquait pas les
+clés étrangères sur toutes les connexions, ou avant que le journal de révision
+ait les siennes ; ils ne sont rattachés à aucun match ni à aucun paquet et
+n’occupent que de la place. La commande se termine tout de même avec le code
+de sortie 0.</p>
+<p>Chaque exécution compare aussi le schéma à la DDL de référence et liste les
+tables, colonnes et index qui manquent à la base. L’ouverture d’une base ajoute
+ce qui manque quand elle le peut et ne fait que journaliser ce qu’elle ne peut
+pas ajouter (typiquement un index <code class="docutils literal notranslate"><span class="pre">UNIQUE</span></code> que des lignes en double
+l’empêchent de reconstruire) : c’est ici que cet écart devient visible, et une
+requête qui nomme l’un de ces éléments échoue tant que la cause n’est pas
+corrigée. Une base saine répond <code class="docutils literal notranslate"><span class="pre">Schema:</span> <span class="pre">matches</span> <span class="pre">the</span> <span class="pre">reference</span> <span class="pre">DDL</span></code>. Comme
+les orphelins, un écart de schéma est un constat, pas un échec : le code de
+sortie reste 0.</p>
+<p>Chaque exécution contrôle enfin les règles que la DDL courante énonce mais que
+SQLite ne sait pas ajouter à une table déjà créée : les contraintes <code class="docutils literal notranslate"><span class="pre">CHECK</span></code>
+de plage (dés entre 0 et 6, videau et pips positifs, sorties entre 0 et 15,
+note de révision entre 1 et 4), le hash Zobrist qu’une ligne ne devrait jamais
+omettre et l’unicité d’une analyse par position. Une base créée depuis la
+version 2.18.0 du schéma les applique ; une base plus ancienne peut encore
+porter des lignes qu’une base neuve refuserait, et ce sont elles qui sont
+comptées ici, règle par règle. Une base saine répond <code class="docutils literal notranslate"><span class="pre">Constraints:</span> <span class="pre">every</span> <span class="pre">row</span>
+<span class="pre">satisfies</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">DDL</span></code>. C’est un constat de plus : rien n’est réparé et le
+code de sortie reste 0.</p>
+<p>Chaque exécution recalcule enfin les deux compteurs dénormalisés,
+<code class="docutils literal notranslate"><span class="pre">match.game_count</span></code> et <code class="docutils literal notranslate"><span class="pre">game.move_count</span></code>, à partir des lignes qu’ils
+prétendent compter, et indique combien sont en désaccord et de combien au pire.
+Tous deux sont écrits une seule fois, à l’import, d’après ce que contenait le
+<strong>fichier source</strong>, et ce sont eux que la liste des matchs et la vue d’une
+partie affichent : un petit écart est le plus souvent un import qui a sauté ce
+qu’il ne savait pas convertir. Rien n’est réécrit — remplacer le compteur par
+ce qui a été stocké effacerait justement l’écart qu’il y a lieu de regarder.
+Une base saine répond <code class="docutils literal notranslate"><span class="pre">Counters:</span> <span class="pre">game_count</span> <span class="pre">and</span> <span class="pre">move_count</span> <span class="pre">agree</span> <span class="pre">with</span> <span class="pre">the</span>
+<span class="pre">rows</span></code>.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span><span class="w"> </span>--mat<span class="w"> </span>original.mat
+</pre></div>
+</div>
+<p><strong>En faire une garde.</strong> Le code de sortie vaut 0 quoi que la commande
+trouve : c’est <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> qui porte le verdict, et un script doit
+lire les compteurs lui-même.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphans"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"games_without_match"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"moves_without_game"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_analyses_without_move"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"analyses_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_deck"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphan_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"schema_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"missing_tables"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_columns"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_indexes"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"schema_drift_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"constraint_violations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.zobrist_hash NOT NULL"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.dice_1 BETWEEN 0 AND 6"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"constraint_violation_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"counter_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"matches_with_wrong_game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"games_with_wrong_move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_game_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_move_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"counter_drift_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Trois champs valent une alarme : <code class="docutils literal notranslate"><span class="pre">orphan_total</span></code>, <code class="docutils literal notranslate"><span class="pre">schema_drift_count</span></code> et
+<code class="docutils literal notranslate"><span class="pre">constraint_violation_total</span></code>. Non nuls, ils décrivent une base à réparer.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.orphan_total == 0 and .schema_drift_count == 0 and .constraint_violation_total == 0'</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">counter_drift_total</span></code> n’en fait pas partie, et l’exemple ci-dessus le
+montre : la base qui l’a produit venait d’être importée et affiche déjà 53
+parties dont le compteur de coups diffère de ce que les lignes contiennent.
+Ces compteurs viennent du fichier source, pas de la base ; un écart raconte
+l’import, il ne signale pas une corruption. Regardez-le, ne vous en servez
+pas comme d’un seuil.</p>
+</section>
+<section id="vacuum-compacter-la-base-de-donnees">
+<h2>vacuum — Compacter la base de données<a class="headerlink" href="#vacuum-compacter-la-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Récupère l’espace disque laissé par des suppressions (matchs, tournois,
+purges): SQLite ne réduit jamais le fichier tout seul lorsqu’on supprime des
+données, il faut le lui demander explicitement. C’est la seule façon de
+déclencher un compactage — il ne se produit jamais automatiquement à
+l’ouverture d’une base, car son coût est imprévisible sur une grosse base.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">{&quot;size_before&quot;,</span> <span class="pre">&quot;size_after&quot;,</span> <span class="pre">&quot;reclaimed&quot;}</span></code>, en octets).</p></li>
+</ul>
+<p>La commande commence par un <code class="docutils literal notranslate"><span class="pre">wal_checkpoint(TRUNCATE)</span></code> pour que la taille
+affichée avant compactage soit honnête, vérifie qu’il reste sur le disque
+environ deux fois la taille actuelle du fichier (SQLite reconstruit
+entièrement la base avant de basculer dessus), effectue le <code class="docutils literal notranslate"><span class="pre">VACUUM</span></code> puis un
+<code class="docutils literal notranslate"><span class="pre">ANALYZE</span></code> pour rafraîchir les statistiques utilisées par le planificateur de
+requêtes. Si l’espace disque manque, la commande refuse de démarrer avec un
+message explicite plutôt que de risquer un compactage interrompu.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Compacting database...</span>
+<span class="c1">#   Before: 128.4 MiB</span>
+<span class="c1">#   After:  41.2 MiB</span>
+<span class="c1">#   Reclaimed: 87.2 MiB</span>
+</pre></div>
+</div>
+</section>
+<section id="repair-recalculer-les-colonnes-d-analyse">
+<span id="cli-repair"></span><h2>repair — Recalculer les colonnes d’analyse<a class="headerlink" href="#repair-recalculer-les-colonnes-d-analyse" title="Lien vers cette rubrique"></a></h2>
+<p>Recalcule les colonnes scalaires de chaque analyse à partir de l’analyse
+elle-même, dont elles ne sont qu’une projection. Les analyses ne sont pas
+touchées : ce sont les valeurs qu’on en avait tirées qui sont refaites.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">{&quot;repaired&quot;}</span></code>, le nombre de lignes réellement changées).</p></li>
+</ul>
+<p>Utile après une correction de la façon dont une analyse importée est lue. Le
+cas s’est déjà produit deux fois. L’importeur XG écrit un « pas de double » de
+deux façons, et la seconde était comprise comme un vrai double — la colonne
+portait alors l’erreur d’un double qui n’avait jamais eu lieu. Et une analyse
+que blunderDB avait calculée lui-même ne savait pas quel coup avait été joué,
+si bien qu’un match importé sans analyse gardait une erreur nulle partout et
+un PR de 0,00 ; la colonne se recalcule maintenant à partir des coups du
+match. Corriger la lecture ne change rien aux lignes déjà écrites ; cette
+commande les refait.</p>
+<p>Rien ne la déclenche automatiquement, et c’est voulu : réécrire les colonnes
+d’analyse de tout le monde à la simple ouverture d’une base n’est pas quelque
+chose qu’un outil doit faire dans le dos de son utilisateur.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># 42 analyses repaired.</span>
+</pre></div>
+</div>
+</section>
+<section id="delete-supprimer-des-donnees">
+<h2>delete — Supprimer des données<a class="headerlink" href="#delete-supprimer-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Supprime un match et toutes les données associées (parties, coups, analyses).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type de suppression: <code class="docutils literal notranslate"><span class="pre">match</span></code> (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID de l’élément à supprimer (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--confirm</span></code> — Supprimer sans demander de confirmation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> (défaut) ou <code class="docutils literal notranslate"><span class="pre">json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">{&quot;match_id&quot;:</span> <span class="pre">N,</span> <span class="pre">&quot;deleted&quot;:</span> <span class="pre">true}</span></code>).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Confirmation interactive, puis sans confirmation (scripts)</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--confirm
+</pre></div>
+</div>
+</section>
+<section id="healthcheck-sonder-un-demon">
+<h2>healthcheck — Sonder un démon<a class="headerlink" href="#healthcheck-sonder-un-demon" title="Lien vers cette rubrique"></a></h2>
+<p>Demande à un démon <code class="docutils literal notranslate"><span class="pre">serve</span></code> en marche (voir <a class="reference internal" href="mode_headless.html"><span class="doc">Mode headless (serveur)</span></a>) s’il est
+disponible : une requête <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code>, code de retour <code class="docutils literal notranslate"><span class="pre">0</span></code> si le démon
+répond 200 (stockage joignable, schéma à la version attendue), <code class="docutils literal notranslate"><span class="pre">1</span></code> sinon —
+stockage injoignable, schéma périmé, ou rien n’écoute à l’adresse. Aucun
+fichier de base n’est ouvert.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span><span class="o">[</span>--addr<span class="w"> </span>host:port<span class="o">]</span><span class="w"> </span><span class="o">[</span>--timeout<span class="w"> </span>2s<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--addr</span></code> — Adresse d’écoute du démon (par défaut <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>,
+sinon <code class="docutils literal notranslate"><span class="pre">:8080</span></code>). Une adresse sans hôte (<code class="docutils literal notranslate"><span class="pre">:8080</span></code>) ou avec un hôte
+générique (<code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">[::]</span></code>) est sondée sur l’interface de bouclage.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--timeout</span></code> — Délai au-delà duquel la sonde abandonne (<code class="docutils literal notranslate"><span class="pre">2s</span></code> par défaut).</p></li>
+</ul>
+<p>C’est la commande que lance le <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> de l’image conteneur (une image
+<em>distroless</em>, sans <code class="docutils literal notranslate"><span class="pre">curl</span></code>) ; le binaire <code class="docutils literal notranslate"><span class="pre">serve</span></code> construit depuis
+<code class="docutils literal notranslate"><span class="pre">cmd/serve</span></code> la comprend aussi. Elle vaut tout autant dans un script ou une
+unité systemd.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="p">&amp;</span>
+./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"démon disponible"</span>
+
+<span class="c1"># ready</span>
+</pre></div>
+</div>
+<p>En cas d’échec la raison est affichée, ce que <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> reproduit
+pour un conteneur <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code> :</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
+</pre></div>
+</div>
+</section>
+<section id="completion-completion-shell">
+<h2>completion — Complétion shell<a class="headerlink" href="#completion-completion-shell" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche sur la sortie standard un script de complétion pour les noms de
+sous-commandes. La liste des commandes intégrée à chaque script est générée
+depuis la même table que <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">help</span></code> et l’aiguillage de <code class="docutils literal notranslate"><span class="pre">main.go</span></code>
+(<code class="docutils literal notranslate"><span class="pre">handlers()</span></code>) : une nouvelle sous-commande est donc proposée par la
+complétion dès qu’elle est câblée, sans rien à tenir à jour à la main.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>completion<span class="w"> </span>&lt;bash<span class="p">|</span>zsh<span class="p">|</span>fish&gt;
+</pre></div>
+</div>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># bash</span>
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/bash_completion.d/blunderdb<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+
+<span class="c1"># zsh : un répertoire déjà sur $fpath</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">fpath</span><span class="p">[1]</span><span class="si">}</span><span class="s2">/_blunderdb"</span>
+
+<span class="c1"># fish</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>fish<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">source</span>
+</pre></div>
+</div>
+<p>Les paquets installent cela automatiquement : le <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> (nfpm) et
+le paquet AUR génèrent les trois scripts depuis le binaire empaqueté au
+moment de la construction, et le cask Homebrew exécute
+<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">completion</span> <span class="pre">&lt;shell&gt;</span></code> une fois à l’installation via
+<code class="docutils literal notranslate"><span class="pre">generate_completions_from_executable</span></code>. Rien n’est committé dans le dépôt :
+la complétion ne peut donc jamais dériver de la table des sous-commandes.</p>
+</section>
+<section id="version-afficher-la-version">
+<h2>version — Afficher la version<a class="headerlink" href="#version-afficher-la-version" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche la version de blunderDB et celle du schéma de base de données que ce
+binaire écrit ; c’est la première chose à joindre à un rapport de bug.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>version
+<span class="c1"># blunderDB version 0.36.0 (database schema 2.20.0)</span>
+</pre></div>
+</div>
+</section>
+<section id="exemples-de-flux-de-travail">
+<h2>Exemples de flux de travail<a class="headerlink" href="#exemples-de-flux-de-travail" title="Lien vers cette rubrique"></a></h2>
+<section id="import-d-un-repertoire-de-tournoi">
+<h3>Import d’un répertoire de tournoi<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Open de Paris 2025"</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs_open_paris/
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>stats
+</pre></div>
+</div>
+</section>
+<section id="sauvegarde-reguliere">
+<h3>Sauvegarde régulière<a class="headerlink" href="#sauvegarde-reguliere" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</pre></div>
+</div>
+</section>
+<section id="analyse-des-erreurs">
+<h3>Analyse des erreurs<a class="headerlink" href="#analyse-des-erreurs" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les positions délicates, puis celles de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--export<span class="w"> </span>cube_errors.db
+
+<span class="c1"># Les coups réellement fautifs : au moins 100 millièmes d'équité perdus</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">100</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codes-de-retour">
+<h2>Codes de retour<a class="headerlink" href="#codes-de-retour" title="Lien vers cette rubrique"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Succès.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Erreur.</p></li>
+</ul>
+<p>Cela permet d’utiliser la CLI dans des scripts avec gestion d’erreurs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"OK"</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"KO"</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="raccourcis.html" class="btn btn-neutral float-left" title="Raccourcis clavier" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="glossaire.html" class="btn btn-neutral float-right" title="Glossaire" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

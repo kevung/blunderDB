@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB について &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="バージョン履歴" href="historique.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/a_propos.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/a_propos.html" lang="en" hreflang="en">English</a>
+  <a href="../de/a_propos.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/a_propos.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/a_propos.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/a_propos.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/a_propos.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/a_propos.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">blunderDB について</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contacts">連絡先</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faire-un-don">寄付する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remerciements">謝辞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#credits">クレジット</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB について</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="a-propos">
+<span id="id1"></span><h1>blunderDB について<a class="headerlink" href="#a-propos" title="この見出しへのリンク"></a></h1>
+<section id="contacts">
+<span id="id2"></span><h2>連絡先<a class="headerlink" href="#contacts" title="この見出しへのリンク"></a></h2>
+<p>作者：Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;。Heroes ではハンドルネーム postmanpat でも見つけられます。</p>
+<p>私は当初、自分のエラーのパターンを見つけられるよう、個人的な利用のために blunderDB を開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。</p>
+<p>やり取りの方法はいくつかあります。</p>
+<ul class="simple">
+<li><p>blunderDB の Discord サーバーに参加する：<a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p><a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a> 宛にメールを送る。</p></li>
+<li><p>トーナメントで会うことがあれば直接話す。</p></li>
+<li><p>Github で。</p>
+<ul>
+<li><p>チケットを作成する：<a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>バグ修正や改善の提案には、プルリクエストを作成してください。</p></li>
+</ul>
+</li>
+</ul>
+<p>未解決のチケットは GitHub 上で <a class="reference external" href="https://github.com/kevung/blunderDB/milestones">マイルストーン</a>ごとにまとめられています。アイデアは <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions の Ideas カテゴリ</a>で議論され、公開された各バージョンは <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">Announcements カテゴリ</a>で告知されます。</p>
+</section>
+<section id="faire-un-don">
+<h2>寄付する<a class="headerlink" href="#faire-un-don" title="この見出しへのリンク"></a></h2>
+<p>blunderDB を気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます</p>
+<ul class="simple">
+<li><p>お会いする機会があれば、一杯おごってください！</p></li>
+<li><p>PayPal で <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a> 宛にささやかな寄付をする</p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h2>謝辞<a class="headerlink" href="#remerciements" title="この見出しへのリンク"></a></h2>
+<p>このささやかなソフトウェアを、パートナーの Anne-Claire と愛する娘の Perrine に捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em> には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。</p></li>
+<li><p><em>Nicolas Harmand</em> には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。</p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>クレジット<a class="headerlink" href="#credits" title="この見出しへのリンク"></a></h2>
+<p>blunderDB には他の人々が作成したコード、データ、フォントが含まれています。ライセンス本文を含む完全な一覧は、各パッケージに同梱される <code class="docutils literal notranslate"><span class="pre">THIRD_PARTY.md</span></code> ファイル（<code class="docutils literal notranslate"><span class="pre">/usr/share/doc/blunderdb/</span></code>）であり、<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md">リポジトリ</a>のルートにもあります。主なもの：</p>
+<ul class="simple">
+<li><p>ニューラルネットワーク <code class="docutils literal notranslate"><span class="pre">strehl-prob5-512-512-256-128</span></code> は <em>Alexander Strehl</em> の著作物です（<a class="reference external" href="https://github.com/alexstrehl/backgammon-ai-engine">alexstrehl/backgammon-ai-engine</a>、MIT ライセンス）。それを取り巻く探索、キューブモデル、マッチエクイティテーブルは <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a> 独自の構成です（MIT）。</p></li>
+<li><p>Kazaross-XG2 マッチエクイティテーブルは <em>Neil Kazaross</em> の著作物です。</p></li>
+<li><p>テイクポイントとギャモン値の表は <em>Dirk Schiemann</em> の著書 <em>The Theory of Backgammon</em> から引用しています。</p></li>
+<li><p>片側ベアオフテーブル（6 ポイント、15 駒、EPC 用）と両側ベアオフテーブル（6 ポイント、6 駒、レースでのキューブの判定用）は、<a class="reference external" href="https://www.gnu.org/software/gnubg/">GNU Backgammon</a> の <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> ツールを移植して blunderDB 自身が計算します。結果は gnubg が生成するものとバイト単位で同一であり、その SHA-256 の指紋が基準となります。GNUbg は GPL ライセンスのフリーソフトウェアです。</p></li>
+<li><p>マッチファイルは <a class="reference external" href="https://github.com/kevung/xgparser">xgparser</a>、<a class="reference external" href="https://github.com/kevung/gnubgparser">gnubgparser</a>、<a class="reference external" href="https://github.com/kevung/bgfparser">bgfparser</a>（MIT）で読み込まれます。</p></li>
+<li><p>Go 側：<a class="reference external" href="https://gitlab.com/cznic/sqlite">modernc.org/sqlite</a>（BSD-3-Clause）、<a class="reference external" href="https://github.com/jackc/pgx">pgx</a>、<a class="reference external" href="https://wails.io">Wails</a>、<a class="reference external" href="https://github.com/open-spaced-repetition/go-fsrs">go-fsrs</a>（MIT）。</p></li>
+<li><p>インターフェース側：<a class="reference external" href="https://svelte.dev">Svelte</a>、<a class="reference external" href="https://two.js.org">two.js</a>、<a class="reference external" href="https://www.chartjs.org">Chart.js</a>、<a class="reference external" href="https://driverjs.com">driver.js</a>（MIT）。</p></li>
+<li><p>フォント <a class="reference external" href="https://github.com/googlefonts/nunito">Nunito</a> と <a class="reference external" href="https://fonts.google.com/noto/specimen/Noto+Sans+JP">Noto Sans JP</a>（SIL Open Font License 1.1）。</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="historique.html" class="btn btn-neutral float-left" title="バージョン履歴" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

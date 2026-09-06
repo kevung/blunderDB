@@ -1,0 +1,743 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>コマンド一覧 &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="キーボードショートカット" href="raccourcis.html" />
+    <link rel="prev" title="マニュアル" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/cmd_mode.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cmd_mode.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cmd_mode.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cmd_mode.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cmd_mode.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cmd_mode.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cmd_mode.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/cmd_mode.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">コマンド一覧</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">全体操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">局面とナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">編集と検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">検索フィルタ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">その他のコマンド</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">コマンド一覧</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1>コマンド一覧<a class="headerlink" href="#liste-des-commandes" title="この見出しへのリンク"></a></h1>
+<p>コマンドラインはステータスバーにあり、 <em>スペース</em> キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 <em>TAB</em> キー（または <em>Shift-TAB</em> ）は候補を順に巡回してコマンドを補完し、 <em>ESC</em> はリストを閉じます（2回目の <em>ESC</em> でコマンドラインが閉じます）。 <em>上</em> キーと <em>下</em> キーは引き続きコマンド履歴用に予約されています。</p>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2>全体操作<a class="headerlink" href="#operations-globales" title="この見出しへのリンク"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>コマンド</p></th>
+<th class="head"><p>動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>新しいデータベースを作成します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>既存のデータベースを開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>別のデータベースをインポートして統合します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>現在の選択を新しいデータベースにエクスポートします。</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>blunderDB を終了します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>blunderDB のヘルプを開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>tutorial, tour</p></td>
+<td><p>インターフェースのガイドツアーのカタログを開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>demo</p></td>
+<td><p>ツールを試すためのサンプルデータベース（マッチ、トーナメント、コレクション、コメント、Anki デッキ、解析）を読み込みます。</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>データベースのメタデータを表示します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブの判定）を開きます。<code class="docutils literal notranslate"><span class="pre">epc</span></code> はこのパネルの旧名で、そのまま残されています。</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Kazaross-XG2 のマッチエクイティ表を開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>cm</p></td>
+<td><p>キューブ判断のマトリクスを開きます。5・7・9 点マッチのあらゆるスコアにおける現在の局面の判断を示します。</p></td>
+</tr>
+<tr class="row-even"><td><p>tags</p></td>
+<td><p>タグの語彙を開きます。このデータベースで使われているタグと局面数が並び、クリックすると検索が走ります。</p></td>
+</tr>
+<tr class="row-odd"><td><p>log</p></td>
+<td><p>動作ログを開きます。ログファイルの末尾二百行を表示し、レポートに添えるためのコピーや、ログの入ったフォルダを開く操作ができます。</p></td>
+</tr>
+<tr class="row-even"><td><p>ask</p></td>
+<td><p>言葉で書いた文（フランス語または英語）を検索トークンに翻訳します：<code class="docutils literal notranslate"><span class="pre">ask</span> <span class="pre">my</span> <span class="pre">cube</span> <span class="pre">blunders</span> <span class="pre">at</span> <span class="pre">a</span> <span class="pre">score</span></code>。トークンはコマンドバーに書き込まれるだけで実行はされません。読み返してから Enter を押します。理解できなかった部分は明示され、推測されることはありません。</p></td>
+</tr>
+<tr class="row-odd"><td><p>like</p></td>
+<td><p>閲覧中のリストを、現在の局面に最も近い局面で置き換えます。番号を与えればその局面が基準になります（<code class="docutils literal notranslate"><span class="pre">like</span> <span class="pre">42</span></code>）。近さはチェッカーピップで測る輸送距離です。これはフィルタではなく、データベース全体を並べ替えるものであり、絞り込みではありません。したがって検索トークンとは組み合わせられません。</p></td>
+</tr>
+<tr class="row-even"><td><p>train</p></td>
+<td><p>マイクロトレーニングのセッションを始めます。引数を一つ取ります：<code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips``（ピップカウント）、``train</span> <span class="pre">epc</span></code>、<a href="#id1"><span class="problematic" id="id2">``</span></a>train tp``（マッチスコアでのテイクポイント）、<a href="#id3"><span class="problematic" id="id4">``</span></a>train quiz``（着手またはキューブ判断を、保存済みの分析に照らして採点）。五問、時間を計り、その場で採点します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>キューブ値 2 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>ロングレース用のキューブ値 2 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>デッドキューブ値 2 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>キューブ値 4 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>ロングレース用のキューブ値 4 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>デッドキューブ値 4 のテイクポイント表を開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>キューブ値 1 のギャモン値表を開きます。</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>キューブ値 2 のギャモン値表を開きます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>キューブ値 4 のギャモン値表を開きます。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-positions"></span><h2>局面とナビゲーション<a class="headerlink" href="#positions-et-navigation" title="この見出しへのリンク"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>コマンド</p></th>
+<th class="head"><p>動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>ファイル（xg, xgp, sgf, mat, txt, bgf）から局面やマッチを取り込みます。引数を付けると——<code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> または <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>——ファイル選択を開かずに識別子を読みます。識別子がメッセージやフォーラム、スクリプトから来る場合のためです。</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>現在の局面を削除する（確認あり）。削除はごみ箱を経由し、三十日間は取り消せる。</p></td>
+</tr>
+<tr class="row-even"><td><p>trash</p></td>
+<td><p>ごみ箱を開く：削除されたものと、それを復元する手段。</p></td>
+</tr>
+<tr class="row-odd"><td><p>[number]</p></td>
+<td><p>指定したインデックスの局面に移動します。</p></td>
+</tr>
+<tr class="row-even"><td><p>list, l</p></td>
+<td><p>現在の局面の解析を表示します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>comment, co</p></td>
+<td><p>コメントを表示／記入します。</p></td>
+</tr>
+<tr class="row-even"><td><p>history, hi</p></td>
+<td><p>検索パネルを開きます（検索履歴はその<em>履歴</em>タブにあります）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>stats, st</p></td>
+<td><p>統計パネルを表示／非表示にします。</p></td>
+</tr>
+<tr class="row-even"><td><p>match, ma</p></td>
+<td><p>マッチパネルを表示／非表示にします。</p></td>
+</tr>
+<tr class="row-odd"><td><p>collection, coll</p></td>
+<td><p>コレクションパネルを表示／非表示にします。</p></td>
+</tr>
+<tr class="row-even"><td><p>#tag1 tag2 ...</p></td>
+<td><p>現在の局面にタグを付けます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>e</p></td>
+<td><p>データベースのすべての局面を読み込みます。</p></td>
+</tr>
+<tr class="row-even"><td><p>blunders, bl [n]</p></td>
+<td><p>現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>最後に閲覧したマッチ内を移動します。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edition"></span><h2>編集と検索<a class="headerlink" href="#edition-et-recherche" title="この見出しへのリンク"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>コマンド</p></th>
+<th class="head"><p>動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>現在の局面を保存します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>現在の局面を更新します。</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>フィルタを使って局面を検索します。</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>現在フィルタされている局面の中から検索します。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2>検索フィルタ<a class="headerlink" href="#filtres-de-recherche" title="この見出しへのリンク"></a></h2>
+<p>この表が検索文法の基準です。コマンドライン、フィルターライブラリ、そして <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">search</span></code> の <code class="docutils literal notranslate"><span class="pre">--query</span></code> フラグは、いずれも同じトークンを読みます。<em>CLI 相当</em> の列は、同じことをする <code class="docutils literal notranslate"><span class="pre">search</span></code> のフラグが存在する場合にそれを示します（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。</p>
+<p>5つのトークンは値を自分では持ちません。値は検索用の盤面から読み取ります。<code class="docutils literal notranslate"><span class="pre">cube</span></code> と <code class="docutils literal notranslate"><span class="pre">score</span></code> はそこに置かれたキューブとスコアを、<code class="docutils literal notranslate"><span class="pre">d</span></code> は決定の種類を、<code class="docutils literal notranslate"><span class="pre">D</span></code> と <code class="docutils literal notranslate"><span class="pre">D1</span></code> はダイスを、<code class="docutils literal notranslate"><span class="pre">x</span></code> は <em>除く</em> タブに描かれた構造を受け取ります。したがって出目をトークンに書くことは決してありません。<code class="docutils literal notranslate"><span class="pre">D65</span></code> は存在せず、数字を持つのは除外の形（<code class="docutils literal notranslate"><span class="pre">xD65</span></code>）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。</p>
+<p>エラーとエクイティは<strong>エクイティの千分の1</strong>単位で数えます——下の表でいう <em>ミリポイント</em> です。<code class="docutils literal notranslate"><span class="pre">E&gt;100</span></code> は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。</p>
+<p>完全な検索の例を二つ：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">p&gt;30</span> <span class="pre">w40,60</span> <span class="pre">xco</span></code> — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ph:race</span> <span class="pre">E&gt;50</span> <span class="pre">co:xg</span></code> — レースで、少なくとも 50 ミリポイントを失った手であり、eXtreme Gammon から来たコメントがあるもの。</p></li>
+</ul>
+<table class="docutils align-center" id="cmd-filter-pos">
+<colgroup>
+<col style="width: 18.2%" />
+<col style="width: 59.1%" />
+<col style="width: 22.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>クエリ</p></th>
+<th class="head"><p>動作</p></th>
+<th class="head"><p>CLI 相当</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>局面がキューブの配置を満たします。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>局面がスコアを満たします。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> <code class="docutils literal notranslate"><span class="pre">--score2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>局面が決定の種類（チェッカーまたはキューブ）を満たします。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>局面がダイスの目を満たします（順序を問わず両方のダイス）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--dice</span> <span class="pre">6,5</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>局面が 1 つ目のダイスのみについてダイスの目を満たします（1 つ目のダイスの値が局面の 2 つのダイスのいずれかに現れる）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--dice</span> <span class="pre">6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>xD65</p></td>
+<td><p>局面が 6-5 の出目で<strong>プレイされていない</strong>状態です（順序は問いません）。値はトークン内に指定します。複数の出目を除外するために繰り返し使用できます（<code class="docutils literal notranslate"><span class="pre">xD65</span> <span class="pre">xD54</span></code>）。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>nc</p></td>
+<td><p>局面が接触のない状態です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>ph:race</p></td>
+<td><p>局面が特定のゲーム段階にある：<code class="docutils literal notranslate"><span class="pre">opening</span></code>（序盤）、<code class="docutils literal notranslate"><span class="pre">middlegame</span></code>（中盤）、<code class="docutils literal notranslate"><span class="pre">race</span></code>（レース）、<code class="docutils literal notranslate"><span class="pre">bearoff</span></code>（ベアオフ）。繰り返し指定できる（<code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>）。このラベルは盤面から導出され、編集はできない。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> が再計算する。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--phase</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>gt:holding</p></td>
+<td><p>手番の側から見て、局面がどの戦型に属するか：<code class="docutils literal notranslate"><span class="pre">race</span></code>、<code class="docutils literal notranslate"><span class="pre">bearin``（接触下でのベアイン）、``crunch</span></code>、<code class="docutils literal notranslate"><span class="pre">backgame</span></code>、<code class="docutils literal notranslate"><span class="pre">acepoint</span></code>、<code class="docutils literal notranslate"><span class="pre">blitz</span></code>、<code class="docutils literal notranslate"><span class="pre">primevprime</span></code>、<code class="docutils literal notranslate"><span class="pre">mutualholding</span></code>、<code class="docutils literal notranslate"><span class="pre">holding</span></code>、<code class="docutils literal notranslate"><span class="pre">contact</span></code>。繰り返し可（<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>）。フェーズと同じ派生ラベルで、盤面から計算され、編集はできず、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> が再計算します。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--game-type</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>#prime</p></td>
+<td><p>その局面が、コメントのいずれかにこの<strong>タグ</strong>を持っています。タグとは文章に書いた <code class="docutils literal notranslate"><span class="pre">#語</span></code> で、何も宣言しません。比較は区切りを見るので、<code class="docutils literal notranslate"><span class="pre">#prime</span></code> は <code class="docutils literal notranslate"><span class="pre">#priming</span></code> を拾いません。部分文字列を探すテキストフィルタとの違いはそこにあります。繰り返し指定でき、タグは<strong>重なります</strong>（<code class="docutils literal notranslate"><span class="pre">#prime</span> <span class="pre">#backgame</span></code> は両方を求めます）。局面は複数のタグを持つので、二つ挙げれば「両方」の意味です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>n&gt;x</p></td>
+<td><p>その局面がデータベース中で x 回より多く現れた——全マッチを通じて、そこへ至る着手の数です。書式は <code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code>、<code class="docutils literal notranslate"><span class="pre">n&lt;2</span></code>、<code class="docutils literal notranslate"><span class="pre">n3,10</span></code>、<a href="#id1"><span class="problematic" id="id2">``</span></a>n4``（ちょうど四回）。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>M</p></td>
+<td><p>局面またはその鏡像がフィルタを満たします。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>i</p></td>
+<td><p>この局面は単独でインポートされたもので、マッチのインポートで入ったものではありません。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>fl</p></td>
+<td><p>eXtreme Gammon のマッチをインポートした際、元のソフトウェアでフラグが付けられた局面。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>x</p></td>
+<td><p>ポジションが除外構造（検索パネルの「Except」タブ）の駒を 1 つも含みません。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&gt;x</p></td>
+<td><p>プレイヤーがレースで少なくとも x ピップ遅れています。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>p&lt;x</p></td>
+<td><p>プレイヤーがレースで最大 x ピップ遅れています。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--pip-max</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>px,y</p></td>
+<td><p>プレイヤーがレースで x から y ピップ遅れています。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>P&gt;x</p></td>
+<td><p>プレイヤーのレースが少なくとも x ピップです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&lt;x</p></td>
+<td><p>プレイヤーのレースが最大 x ピップです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Px,y</p></td>
+<td><p>プレイヤーのレースが x から y ピップです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&gt;x</p></td>
+<td><p>局面のエクイティ（ミリポイント単位）が x より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>e&lt;x</p></td>
+<td><p>局面のエクイティ（ミリポイント単位）が x より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>ex,y</p></td>
+<td><p>局面のエクイティ（ミリポイント単位）が x から y の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>E&gt;x</p></td>
+<td><p>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より大きいです。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>E&lt;x</p></td>
+<td><p>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より小さいです。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Ex,y</p></td>
+<td><p>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x から y の範囲です。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>w&gt;x</p></td>
+<td><p>プレイヤーの勝率が x % より大きいです。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>w&lt;x</p></td>
+<td><p>プレイヤーの勝率が x % より小さいです。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>wx,y</p></td>
+<td><p>プレイヤーの勝率が x % から y % の範囲です。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>g&gt;x</p></td>
+<td><p>プレイヤーのギャモン率が x % より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&lt;x</p></td>
+<td><p>プレイヤーのギャモン率が x % より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>gx,y</p></td>
+<td><p>プレイヤーのギャモン率が x % から y % の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&gt;x</p></td>
+<td><p>プレイヤーのバックギャモン率が x % より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>b&lt;x</p></td>
+<td><p>プレイヤーのバックギャモン率が x % より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>bx,y</p></td>
+<td><p>プレイヤーのバックギャモン率が x % から y % の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>W&gt;x</p></td>
+<td><p>相手の勝率が x % より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&lt;x</p></td>
+<td><p>相手の勝率が x % より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Wx,y</p></td>
+<td><p>相手の勝率が x % から y % の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&gt;x</p></td>
+<td><p>相手のギャモン率が x % より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>G&lt;x</p></td>
+<td><p>相手のギャモン率が x % より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gx,y</p></td>
+<td><p>相手のギャモン率が x % から y % の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>B&gt;x</p></td>
+<td><p>相手のバックギャモン率が x % より大きいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&lt;x</p></td>
+<td><p>相手のバックギャモン率が x % より小さいです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Bx,y</p></td>
+<td><p>相手のバックギャモン率が x % から y % の範囲です。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&gt;x</p></td>
+<td><p>プレイヤーが少なくとも x 個の駒を上がっています。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>o&lt;x</p></td>
+<td><p>プレイヤーが最大 x 個の駒を上がっています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>ox,y</p></td>
+<td><p>プレイヤーが x から y 個の駒を上がっています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>O&gt;x</p></td>
+<td><p>相手が少なくとも x 個の駒を上がっています。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--off2-min</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>O&lt;x</p></td>
+<td><p>相手が最大 x 個の駒を上がっています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Ox,y</p></td>
+<td><p>相手が x から y 個の駒を上がっています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&gt;x</p></td>
+<td><p>プレイヤーが少なくとも x 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>k&lt;x</p></td>
+<td><p>プレイヤーが最大 x 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>kx,y</p></td>
+<td><p>プレイヤーが x から y 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>K&gt;x</p></td>
+<td><p>相手が少なくとも x 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&lt;x</p></td>
+<td><p>相手が最大 x 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Kx,y</p></td>
+<td><p>相手が x から y 個の後方の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&gt;x</p></td>
+<td><p>プレイヤーがゾーン内に少なくとも x 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>z&lt;x</p></td>
+<td><p>プレイヤーがゾーン内に最大 x 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>zx,y</p></td>
+<td><p>プレイヤーがゾーン内に x から y 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&gt;x</p></td>
+<td><p>相手がゾーン内に少なくとも x 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&lt;x</p></td>
+<td><p>相手がゾーン内に最大 x 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>Zx,y</p></td>
+<td><p>相手がゾーン内に x から y 個の駒を持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&gt;x</p></td>
+<td><p>プレイヤーがアウトフィールドに少なくとも x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&lt;x</p></td>
+<td><p>プレイヤーがアウトフィールドに最大 x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>box,y</p></td>
+<td><p>プレイヤーがアウトフィールドに x から y 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&gt;x</p></td>
+<td><p>相手がアウトフィールドに少なくとも x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&lt;x</p></td>
+<td><p>相手がアウトフィールドに最大 x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>BOx,y</p></td>
+<td><p>相手がアウトフィールドに x から y 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&gt;x</p></td>
+<td><p>プレイヤーが内盤に少なくとも x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&lt;x</p></td>
+<td><p>プレイヤーが内盤に最大 x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>bjx,y</p></td>
+<td><p>プレイヤーが内盤に x から y 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&gt;x</p></td>
+<td><p>相手が内盤に少なくとも x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&lt;x</p></td>
+<td><p>相手が内盤に最大 x 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>BJx,y</p></td>
+<td><p>相手が内盤に x から y 個のブロットを持っています。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">t'語1;語2;...'</span></code></p></td>
+<td><p>局面のコメントに単語のうち少なくとも 1 つが含まれます。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>co</p></td>
+<td><p>内容を問わず、局面にコメントが付いている。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>xco</p></td>
+<td><p>局面にコメントが付いていない。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>co:user</p></td>
+<td><p>局面が特定の出所のコメントを持つ：<code class="docutils literal notranslate"><span class="pre">user</span></code>（自分で書いたもの）、<code class="docutils literal notranslate"><span class="pre">xg</span></code>、<code class="docutils literal notranslate"><span class="pre">gnubg</span></code>、<code class="docutils literal notranslate"><span class="pre">bgf</span></code>（マッチのインポートで持ち込まれたもの）、<code class="docutils literal notranslate"><span class="pre">unknown</span></code>。繰り返し指定できる（<code class="docutils literal notranslate"><span class="pre">co:xg</span> <span class="pre">co:gnubg</span></code>）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--comment-origin</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">m'パターン1,パターン2,...'</span></code></p></td>
+<td><p>最善のチェッカープレイがパターンのうち少なくとも 1 つを含みます。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">m'ND,DT,DP,...'</span></code></p></td>
+<td><p>最善のキューブの決定が No Double/Take、Double Take、Double Pass のいずれかです。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
+<td><p>局面の追加日が x より後（YYYY/MM/DD）。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>T&lt;x</p></td>
+<td><p>局面の追加日が x より前（YYYY/MM/DD）。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx,y</p></td>
+<td><p>局面の追加日が x から y の範囲（YYYY/MM/DD）。</p></td>
+<td><p>—</p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>識別子 x のマッチ内を検索します（例: ma3）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>識別子 x から y のマッチ内を検索します（例: ma2,5）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>識別子 x のトーナメント内を検索します（例: tn1）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>識別子 x から y のトーナメント内を検索します（例: tn1,3）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>idx</p></td>
+<td><p>識別子 x のポジションを検索します（例: id12）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>idx,y</p></td>
+<td><p>識別子 x から y までのポジションを検索します（例: id5,10）。</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pl'名前'</span></code></p></td>
+<td><p>指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：<code class="docutils literal notranslate"><span class="pre">pl'Alice'</span></code>）。大文字・小文字は区別しません。</p></td>
+<td><p>—</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2>その他のコマンド<a class="headerlink" href="#commandes-diverses" title="この見出しへのリンク"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>コマンド</p></th>
+<th class="head"><p>動作</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>コマンド履歴を消去します。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="マニュアル" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="キーボードショートカット" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

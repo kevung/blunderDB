@@ -1,0 +1,705 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ユーザーガイド &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="マニュアル" href="manuel.html" />
+    <link rel="prev" title="ダウンロードとインストール" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/guide_utilisateur.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/guide_utilisateur.html" lang="en" hreflang="en">English</a>
+  <a href="../de/guide_utilisateur.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/guide_utilisateur.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/guide_utilisateur.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/guide_utilisateur.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/guide_utilisateur.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/guide_utilisateur.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ユーザーガイド</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-ecran-d-accueil">ホーム画面</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutoriels-de-bout-en-bout">エンドツーエンドのチュートリアル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mon-premier-import">最初のインポート</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etudier-un-match">マッチを研究する</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-anki">Anki セッション</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployer-le-mode-serveur-derriere-un-proxy">サーバーモードをプロキシの背後に展開する</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-progresser-avec-blunderdb">blunderDB で上達するには</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-de-demonstration-3-minutes">デモシナリオ（3 分間）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">新しいデータベースを作成する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">既存のデータベースを開く</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fusionner-une-base-de-donnees">データベースの統合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">ポジションを編集する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">ポジションをデータベースに追加する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">ポジションにタグを付ける</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">ポジションを削除する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">XG からポジションをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">マッチをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">マッチのフォルダをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-compte-rendu-d-import">インポート報告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-file-d-etude">学習キュー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">ドラッグ＆ドロップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">マッチ内を移動する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">マッチパネルを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">コレクションを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">トーナメントを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">パフォーマンス統計を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluer-une-position-panneau-eval">ポジションを評価する（Eval パネル）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">XGからインポートしたポジションの分析を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">XGにポジションをエクスポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">様々なポジションを表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">条件に基づいてポジションを検索する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">さらに先へ</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">ヘッドレスモード（サーバー）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ユーザーガイド</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1>ユーザーガイド<a class="headerlink" href="#guide-utilisateur" title="この見出しへのリンク"></a></h1>
+<p>このガイドは、blunderDB を素早く使い始めるための実践的な導入です。四つのエンドツーエンドのチュートリアルが最も一般的な使い方をカバーします。ガイドの残りの部分は、必要に応じて参照する、操作ごとのリファレンスカタログのままです。</p>
+<section id="l-ecran-d-accueil">
+<span id="ecran-accueil"></span><h2>ホーム画面<a class="headerlink" href="#l-ecran-d-accueil" title="この見出しへのリンク"></a></h2>
+<p>データベースを開いていないあいだ、blunderDB は空の盤ではなく四つの道を示します。</p>
+<ul class="simple">
+<li><p><strong>自分のマッチを取り込む</strong>——中心となる道です。ひとりでに連なります。新しいデータベース、ファイルの選択（XG、GNU Backgammon、Jellyfish、BGBlitz）、そして <a class="reference internal" href="#compte-rendu-import"><span class="std std-ref">取り込みの報告</span></a>——「これがあなたの PR と最悪の判断です」——さらに望むなら <a class="reference internal" href="#file-etude"><span class="std std-ref">学習キュー</span></a>。道具の約束を、説明するのではなく二分で果たします。</p></li>
+<li><p><strong>サンプルのデータベースを開く</strong>——3 つのマッチ、コレクション、コメント、Anki デッキ。何も持ち込まずに一通り試せます。</p></li>
+<li><p><strong>ガイドツアー</strong>——画面をパネルごとに一巡します。</p></li>
+<li><p><strong>データベースを開く</strong>——すでにお持ちの <code class="docutils literal notranslate"><span class="pre">.db</span></code> ファイル。</p></li>
+</ul>
+<p>最後に開いたデータベースは別に提示されますが、<strong>そのファイルがまだ存在する場合だけ</strong>です。押すと失敗するボタンは、ボタンがないより悪いからです。</p>
+<p>データベースを開くと画面は消えます。控えめなリンクでそのセッションのあいだ脇へどけられます。Eval パネルはデータベースなしで動くので、何も開かずに局面を並べて評価したいことがあるからです。</p>
+</section>
+<section id="tutoriels-de-bout-en-bout">
+<h2>エンドツーエンドのチュートリアル<a class="headerlink" href="#tutoriels-de-bout-en-bout" title="この見出しへのリンク"></a></h2>
+<section id="mon-premier-import">
+<span id="tuto-premier-import"></span><h3>最初のインポート<a class="headerlink" href="#mon-premier-import" title="この見出しへのリンク"></a></h3>
+<p>このチュートリアルは、eXtreme Gammon のマッチファイル（<code class="docutils literal notranslate"><span class="pre">.xg</span></code>）から始まり、最も負けの多いポジションの一覧にたどり着きます。</p>
+<ol class="arabic">
+<li><p><strong>データベースを作成する。</strong>ツールバーの <em>新規データベース</em> ボタン（または <em>CTRL-N</em>）で、保存場所と名前を選びます。<code class="docutils literal notranslate"><span class="pre">.db</span></code> 拡張子は自動的に付加されます。</p></li>
+<li><p><strong>マッチをインポートする。</strong><code class="docutils literal notranslate"><span class="pre">.xg</span></code> ファイルを blunderDB のウィンドウにドラッグ＆ドロップします（または <em>CTRL-I</em> を押してから選択します）。blunderDB は形式を検出し、ポジションと XG ファイルにすでに含まれている分析（手、キューブの決断、フラグ）をインポートし、インポートが成功すると Matches パネルを表示します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB はファイルにすでにある分析をそのまま取り込むだけで、分析をやり直すことはありません。したがって XG で一度も分析されなかったマッチには、見せられるエラーがありません。設定ウィンドウの <em>gammonNet</em> タブで <em>インポート後に自動解析する</em> にチェックが入っていると、上限つきで中断できる分析のバッチが、分析のないポジションをバックグラウンドで埋めます。<a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">設定</span></a>を参照してください。</p>
+</div>
+</li>
+<li><p><strong>マッチを見直す。</strong>マッチの行をダブルクリックする（または選択して <em>ENTER</em> を押す）と、最後に閲覧したポジションでレビューが開きます。<em>LEFT</em>/<em>RIGHT</em> キー（または <em>k</em>/<em>j</em>）で手を送り、<em>PageUp</em>/<em>PageDown</em> でゲームを切り替えます。</p></li>
+<li><p><strong>分析を読む。</strong><em>CTRL-L</em> で Analysis パネルが表示されます：最善手、そのエクイティ、実際に指された手の誤差（テーブル内で強調表示）。キューブの決断では、同じキーでキューブエクイティテーブルと結論が表示されます。</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_analysis.png"><img alt="マッチのレビュー中の Analysis パネル" src="_images/panel_analysis.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">マッチのレビュー中の Analysis パネル：指された手が候補手テーブル内で強調表示されています。</span><a class="headerlink" href="#id2" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>最大のエラーを見つける。</strong>統計パネルを開き（<em>CTRL-D</em>）、<em>ダッシュボード</em> タブへ。<em>トップブランダー</em> の一覧が最も高くついた10件のエラーを示し、行をクリックすると該当のポジションが分析パネルに読み込まれます。使い慣れた人には、キーボードでも同じことができます。<code class="docutils literal notranslate"><span class="pre">bl</span></code> コマンド（または <code class="docutils literal notranslate"><span class="pre">blunders</span></code>。<em>SPACE</em> でコマンドラインを開きます）は、手作業で検索を組み立てることなく、これらのポジションを直接読み込みます。複数のマッチをインポートしたあとに、この選択をプレイヤーや日付の範囲で絞り込むには <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照してください。</p></li>
+</ol>
+</section>
+<section id="etudier-un-match">
+<span id="tuto-etudier-match"></span><h3>マッチを研究する<a class="headerlink" href="#etudier-un-match" title="この見出しへのリンク"></a></h3>
+<p>複数のマッチをインポートした後、このチュートリアルでは、前のチュートリアルの単純な流れを超えて、特定の一つのマッチを研究する方法を詳しく説明します。</p>
+<ol class="arabic">
+<li><p><strong>Matches パネルを開く</strong>（<em>CTRL-Tab</em>）。インポートされたすべてのマッチが一覧表示され、列（プレイヤー、日付、長さ、トーナメント、PR）で並べ替えられます。PR と MWC コストは <a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">用語集</span></a> で定義されています。</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_matches.png"><img alt="Matches パネル" src="_images/panel_matches.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Matches パネル：並べ替え可能な一覧、マッチごとの PR と MWC コスト。</span><a class="headerlink" href="#id3" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p>行をダブルクリックするか、選択して <em>ENTER</em> を押すと<strong>レビューが開きます</strong>。盤の上の情報バーには両プレイヤー、トーナメント、スコアが表示されます。</p></li>
+<li><p>両方の分析が利用可能な場合、同じポジションで <em>d</em> キーを使って<strong>チェッカーの手とキューブの決断を切り替えられます</strong>（インポートされたファイルの内容によっては、どちらか一方が欠けていることもあります）。</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_cube.png"><img alt="キューブの決断における Analysis パネル" src="_images/panel_cube.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Analysis パネルにおけるキューブの決断：マネーエクイティ、各選択肢の誤差、最善の決断。</span><a class="headerlink" href="#id4" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>観察したことをコメントする。</strong><em>CTRL-P</em> を押すと、表示されているポジションについて Comments パネルが開きます — ある手が <em>なぜ</em> ブランダーなのかを書き留めるのに役立ちます。単に <em>ブランダーである</em> ことだけではなく。</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="_images/panel_comments.png"><img alt="ポジションに対する Comments パネル" src="_images/panel_comments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Comments パネル：表示されているポジションに添付されたやり取りのスレッド。</span><a class="headerlink" href="#id5" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p>後で指し直すためにポジションに<strong>タグを付ける</strong>には、<em>SPACE</em> でコマンドラインを開き、<code class="docutils literal notranslate"><span class="pre">#</span></code> に続けてキーワード（例えば <code class="docutils literal notranslate"><span class="pre">#blitz</span></code>）を入力し、<em>ENTER</em> を押します。指された手が研究したい手でない場合は <a class="reference internal" href="#guide-edit-position"><span class="std std-ref">ポジションを編集する</span></a> を参照して直接ポジションを編集してください。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">m</span></code> コマンドで<strong>マッチモードを終了する</strong>と、ライブラリは以前の状態に戻り、そのマッチで最後に閲覧したポジションは次回の訪問のために記憶されます。</p></li>
+</ol>
+</section>
+<section id="une-session-anki">
+<span id="tuto-anki"></span><h3>Anki セッション<a class="headerlink" href="#une-session-anki" title="この見出しへのリンク"></a></h3>
+<p>Anki パネルは、コレクションや検索を FSRS（間隔反復）アルゴリズムに従って復習するカードのデッキに変換します。</p>
+<ol class="arabic">
+<li><p><strong>デッキを構成する。</strong>出発点は二通りあります。手で選んだポジションの <a class="reference internal" href="#guide-collections"><span class="std std-ref">コレクション</span></a>、または検索（<em>CTRL-F</em>）です — 例えば、誤りとしてフラグが付けられたすべてのキューブの決断など。<code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">30</span></code>（30 個の最悪の誤り）コマンドは、最初のデッキの出発点として適しています。</p></li>
+<li><p><strong>デッキを作成する。</strong>Anki パネルを開き（<em>CTRL-K</em>）、<em>新規デッキ</em> ボタンでデッキに名前を付けます。デッキは選んだ検索またはコレクションと同期します。</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/panel_anki.png"><img alt="Anki パネル、デッキ一覧" src="_images/panel_anki.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Anki パネル：デッキごとに一行、カード総数、新規カードと本日期限のカード。</span><a class="headerlink" href="#id6" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>復習する</strong>（<em>学習</em> ボタン）：各カードはポジションを示します。頭の中で答えを組み立て、解答（盤面、分析、あればコメント）を表示し、その後 1（失敗）から 4（簡単）までで自己評価します。FSRS はそれに応じて次回の出題を間隔付けます。自信があれば、答えを見なくても先に進めます。</p></li>
+<li><p><strong>スケジュールを乱さずにウォームアップする</strong>（<em>練習</em> ボタン）：FSRS のスケジュールに触れずに、デッキからランダムなポジションを提示します — トーナメント前や、他のカードの期限をずらさずに集中的に復習したいときに便利です。</p></li>
+</ol>
+<p>パラメータの詳細（セッションの制限、目標定着率、デッキのリセット）については <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki パネル</span></a> を参照してください。</p>
+</section>
+<section id="deployer-le-mode-serveur-derriere-un-proxy">
+<span id="tuto-serveur-proxy"></span><h3>サーバーモードをプロキシの背後に展開する<a class="headerlink" href="#deployer-le-mode-serveur-derriere-un-proxy" title="この見出しへのリンク"></a></h3>
+<p>サーバーモード（<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code>）は、blunderDB のエンジンを HTTP + JSON として公開します。<strong>誰も認証しません</strong>（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>）。受け取った <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ヘッダーをそのまま信頼するため、常に、自ら認証を行いこのヘッダーを設定するリバースプロキシの背後に置く必要があります。このチュートリアルでは、公開されているイメージを、シングルテナントの HTTP Basic 認証を使う最小限の nginx の背後に展開し、続いてメンバーごとにテナントを与える方法を示します。これは最もシンプルな出発点であり、あなたの状況に応じて（SSO、クライアント証明書）調整してください。</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> に限定して（決して直接公開せずに）<strong>デーモンを起動します</strong>。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Basic 認証のための<strong>パスワードファイルを作成します</strong>。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>htpasswd<span class="w"> </span>-c<span class="w"> </span>/etc/nginx/blunderdb.htpasswd<span class="w"> </span>alice
+</pre></div>
+</div>
+</li>
+<li><p><strong>nginx を設定する</strong>。認証したうえで中継し、<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> は nginx 自身が設定します — クライアントが送ってきたものは決して使いません。TLS 証明書はこのチュートリアルの前提であって主題ではありません。あらかじめ取得しておき（<code class="docutils literal notranslate"><span class="pre">certbot</span></code> を使う Let's Encrypt、または所属組織の認証局）、その2つのファイルをここで指定します。ポート 80 は HTTPS へリダイレクトするためだけに使います。</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/fullchain.pem</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/privkey.pem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">"1"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>2つの <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span></code> はこの順に読みます。まずクライアントから受け取った値を消し、次にプロキシ自身の値を入れます。</p>
+</li>
+<li><p>クライアントから送られてきた値ではなく、常に自分自身で <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> を設定した上で認証してから中継するように<strong>nginx を設定します</strong>。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>blunderdb<span class="w"> </span>healthcheck
+</pre></div>
+</div>
+</li>
+<li><p><strong>複数のメンバー、1人につき1テナント。</strong>デーモンが <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> に受け付けるのは正の整数だけです。認証済みのアカウントをその整数に結び付けるのはプロキシの役目です。<code class="docutils literal notranslate"><span class="pre">http</span></code> コンテキストに置いた <code class="docutils literal notranslate"><span class="pre">map</span></code> ブロックがこの対応を保持し、そこに載っていないアカウントには空文字列を返します — 決して <code class="docutils literal notranslate"><span class="pre">1</span></code> ではありません：</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">map</span><span class="w"> </span><span class="nv">$remote_user</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">alice</span><span class="w">   </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">bob</span><span class="w">     </span><span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>こうすると <code class="docutils literal notranslate"><span class="pre">location</span></code> は、対応のないアカウントをデーモンまで通すのではなく、明示的に拒否します：</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">if</span><span class="w"> </span><span class="s">(</span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">"")</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>メンバーごとに1テナントとするには PostgreSQL バックエンドが前提です。このチュートリアルの手順1のように SQLite の場合、デーモンは <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID:</span> <span class="pre">1</span></code> にしか応答せず、それ以外の値はすべて拒否します。この構成一式はリポジトリの <code class="docutils literal notranslate"><span class="pre">deploy/nginx-tenant-proxy.conf</span></code> に、Caddy 版は <code class="docutils literal notranslate"><span class="pre">deploy/Caddyfile</span></code> にあります。</p>
+</li>
+</ol>
+<p>完全な機能範囲（ルート、Row-Level Security を備えたマルチテナント PostgreSQL バックエンド、SQLite からの移行）と公開された Docker イメージについては <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">ヘッドレスモード（サーバー）</span></a> を参照してください。</p>
+</section>
+</section>
+<section id="comment-progresser-avec-blunderdb">
+<h2>blunderDB で上達するには<a class="headerlink" href="#comment-progresser-avec-blunderdb" title="この見出しへのリンク"></a></h2>
+<p>上記のチュートリアルに加えて、シンプルな週次ルーティンが、上達のために blunderDB から最大限のものを引き出します。</p>
+<ol class="arabic simple">
+<li><p>プレイした後はできるだけ早く、その週のマッチを<strong>インポートします</strong>（ドラッグ＆ドロップ、または複数ファイルがある場合は再帰的なフォルダインポート）— コンテキストの記憶はすぐに薄れてしまいます。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bl</span></code> コマンド（最悪の誤り）や、期間と決断の種類（チェッカー／キューブ）で絞り込んだ Stats パネルを使って、PR に最も影響する<strong>最もコストの高い決断を絞り込みます</strong>。</p></li>
+<li><p>見直したすべてのポジションに<strong>コメントを付けます</strong>：何を見落としたか、原因となったストラクチャーは何か。書かれたコメントは説明を強制します — 一言もなく見直されただけのポジションは、見落とされたのと同じくらい早く忘れられてしまいます。</p></li>
+<li><p>コメント付きのこれらのポジションから<strong>Anki デッキを構成します</strong>：間隔反復は、それらが反射になるまで同じパターンを繰り返し呼び戻します。</p></li>
+<li><p>Stats パネルの Progression タブ（<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a>）で<strong>トーナメントごとの PR を追跡します</strong>：トーナメントを重ねるごとに下がっていく曲線こそが、決して嘘をつかない唯一のシグナルです。</p></li>
+</ol>
+<p>このルーティンは続けてこそ価値があります — 週に十分間、継続すること は、一度きりの見直しをして途中で諦めるよりも価値があります。</p>
+</section>
+<section id="scenario-de-demonstration-3-minutes">
+<h2>デモシナリオ（3 分間）<a class="headerlink" href="#scenario-de-demonstration-3-minutes" title="この見出しへのリンク"></a></h2>
+<p>個人のデータベースなしで blunderDB を紹介するために、<code class="docutils literal notranslate"><span class="pre">demo</span></code> コマンドはサンプルデータベース（架空のポジションとマッチ）を読み込みます。以下のシナリオは 3 分間で展開します。</p>
+<ol class="arabic simple">
+<li><p><em>0:00</em> — コマンドラインの <code class="docutils literal notranslate"><span class="pre">demo</span></code>（またはツールバーの対応するボタン）がサンプルデータベースを読み込みます。Matches パネルが表示されます。</p></li>
+<li><p><em>0:30</em> — マッチを開き（ダブルクリック）、矢印キーでいくつかの手を送り、目に見える誤りのある指された手について Analysis パネル（<em>CTRL-L</em>）を表示します。</p></li>
+<li><p><em>1:30</em> — <code class="docutils literal notranslate"><span class="pre">bl</span></code> コマンド：ビューはすべてのポジションを対象に、データベース中の最悪の誤りへと直接切り替わります。</p></li>
+<li><p><em>2:15</em> — Anki パネル（<em>CTRL-K</em>）：これらのポジションからデッキを作成し、<em>Study</em> で一枚のカードを実行して、質問・回答・評価のサイクルを示します。</p></li>
+<li><p><em>2:45</em> — Stats パネル（<em>CTRL-D</em>）の Dashboard タブに戻り、この取り組みが時間とともにどこに表れるかを示します。</p></li>
+</ol>
+</section>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2>新しいデータベースを作成する<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="この見出しへのリンク"></a></h2>
+<p>新しいデータベースを作成するには、ツールバーの <em>新規データベース</em> ボタンをクリックします。データベースを保存するパスと名前を選び、システムのウィンドウで保存を確定します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB のデータベースファイルの拡張子は <em>.db</em> です。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>キーボードショートカット: <em>CTRL-N</em>。コマンド: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2>既存のデータベースを開く<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="この見出しへのリンク"></a></h2>
+<p>既存のデータベースを読み込むには、ツールバーの <em>データベースを開く</em> ボタンをクリックします。データベースのある場所を開き、<em>.db</em> ファイルを選んで、システムのウィンドウで開くことを確定します。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>キーボードショートカット: <em>CTRL-O</em>。コマンド: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="fusionner-une-base-de-donnees">
+<h2>データベースの統合<a class="headerlink" href="#fusionner-une-base-de-donnees" title="この見出しへのリンク"></a></h2>
+<p>別の blunderDB データベースを現在開いているものに統合するには、ツールバーの<strong>データベースを統合</strong>ボタンをクリックする。<em>.db</em> ファイルを選んで確定する。</p>
+<p>これは「二台のマシン間でデータベースをどう同期するか」という問いへの blunderDB の答えでもある：データベースは<strong>一つのファイル</strong>であり、分岐した二つは調停ではなく統合され、Zobrist 指紋による重複排除が仕事をする。ファイル同期サービスにできることとできないこと、そして複数のマシンが同時に作業しなければならない場合（<code class="docutils literal notranslate"><span class="pre">serve</span></code> モードの領分）については、FAQ の「データベースを複数のマシン間で同期できますか」を参照。</p>
+<p>blunderDB は 2 つのデータベースをインテリジェントに統合します：</p>
+<ul class="simple">
+<li><p>現在のデータベースに存在しないポジションは、分析とコメントとともに追加されます。</p></li>
+<li><p>すでに存在するポジションは更新されます：分析が不足している場合は補完され、コメントは統合されます（既存のコメントを重複させずに新しいコメントが追加されます）。</p></li>
+<li><p>追加、統合、および無視されたポジションの数を示すメッセージが表示されます。</p></li>
+</ul>
+<p>統合は<strong>加える</strong>のであって調停しない：インポートされたデータベースに含まれないからといって、現在のデータベースから何かが取り除かれることはない。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>インポートには、両方のデータベースのスキーマバージョンが互換性を持つことが必要です。低いバージョンまたは同等のバージョンのデータベースを、より高いバージョンのデータベースにインポートすることができます。</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>インポート操作は現在開いているデータベースを直ちに変更します。別のデータベースをインポートする前にバックアップコピーを作成することをお勧めします。</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2>ポジションを編集する<a class="headerlink" href="#editer-une-position" title="この見出しへのリンク"></a></h2>
+<p>ポジションを編集するには、<em>TAB</em> キーを押して検索パネルとポジションエディターを開きます。マウスでポジションを編集します：</p>
+<ul class="simple">
+<li><p>ポイントをクリックしてチェッカーを追加します。左クリックはチェッカーをプレイヤー1に割り当てます。右クリックはチェッカーをプレイヤー2に割り当てます。プライムを挿入するには、開始ポイントをクリックし、ボタンを押したままにして終点で離します。バーをクリックしてチェッカーをバーに置きます。</p></li>
+<li><p>ポジションをクリアするには、ボード外の空きエリアをダブルクリックするか、<em>バックスペース</em> キーを押します。</p></li>
+<li><p>キューブをプレイヤー1に送るには、キューブを左クリックします。キューブをプレイヤー2に送るには、キューブを右クリックします。</p></li>
+<li><p>手番のプレイヤーを指定するには、ダイスの指定エリアをクリックします。</p></li>
+<li><p>ダイスを編集するには、左クリックでダイスの値を増やし、右クリックでダイスの値を減らします。ダイスの面が空の場合、そのポジションはキューブ決定であることを意味します。</p></li>
+<li><p>プレイヤーのスコアを編集するには、左クリックでスコアを増やし、右クリックでスコアを減らします。</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>チェッカーのポジションをマウスで入力する方法は、XG と同じです。</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2>ポジションをデータベースに追加する<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="この見出しへのリンク"></a></h2>
+<p>ポジションの編集後、検索パネルが開きます。</p>
+<p>先ほど得たポジションを保存するには、<em>CTRL-S</em> を押すか、ツールバーの <em>ポジションを保存</em> ボタンをクリックします。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>コマンドラインを開き、<code class="docutils literal notranslate"><span class="pre">w</span></code> を実行します。</p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2>ポジションにタグを付ける<a class="headerlink" href="#etiqueter-une-position" title="この見出しへのリンク"></a></h2>
+<p>現在のポジションにタグ <em>toto</em> を追加するには、<em>スペース</em> キーを押してコマンドラインを開き、<code class="docutils literal notranslate"><span class="pre">#toto</span></code> と入力し、<em>ENTER</em> キーを押してコマンドを確定します。</p>
+</section>
+<section id="supprimer-une-position">
+<h2>ポジションを削除する<a class="headerlink" href="#supprimer-une-position" title="この見出しへのリンク"></a></h2>
+<p>現在のポジションをデータベースから削除するには、<em>Del</em> キーを押すか、ツールバーの <em>ポジションを削除</em> ボタンをクリックします。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>コマンドラインで <code class="docutils literal notranslate"><span class="pre">d</span></code> を実行します。</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>事前に確認が求められます。削除は実際に行われますが、局面の複製が三十日間保管されます。<a class="reference internal" href="manuel.html#corbeille"><span class="std std-ref">ごみ箱</span></a>を参照してください。</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2>XG からポジションをインポートする<a class="headerlink" href="#import-une-position-depuis-xg" title="この見出しへのリンク"></a></h2>
+<p>XG からポジションを直接インポートするには、</p>
+<ol class="arabic simple">
+<li><p>XG でインポートするポジションを表示し、<em>CTRL-C</em> を押します。</p></li>
+<li><p>blunderDB を開き、<em>CTRL-V</em> を押します。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>自動貼り付けはソースのフォーマット（XG、GNUbg、BGBlitz）と、OpenGammon の OGID 識別子を自動検出します。</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2>マッチをインポートする<a class="headerlink" href="#importer-un-match" title="この見出しへのリンク"></a></h2>
+<p>blunderDB はさまざまなソースからマッチをインポートできます。</p>
+<p><strong>対応フォーマット：</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): <em>.xg</em> および <em>.xgp</em> ファイル（ポジション）</p></li>
+<li><p>GNUbg: <em>.sgf</em> ファイル</p></li>
+<li><p>Jellyfish: <em>.mat</em> および <em>.txt</em> ファイル</p></li>
+<li><p>BGBlitz: <em>.bgf</em> および <em>.txt</em> ファイル</p></li>
+</ul>
+<p><strong>1つ以上のマッチファイルをインポートするには：</strong></p>
+<ol class="arabic simple">
+<li><p><em>CTRL-I</em> を押すか、ツールバーの <em>ポジションまたはマッチをインポート</em> ボタンをクリックします。</p></li>
+<li><p>インポートするファイルを1つ以上選択します。</p></li>
+<li><p>blunderDB はフォーマットを自動検出してマッチをインポートします。</p></li>
+<li><p>進捗ウィンドウがインポートされた／失敗した／飛ばされた（重複）ファイル数を示し、続いて<strong>インポート報告</strong>を示す。</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>コマンド: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB は重複を自動検出し、すでにデータベースに存在するマッチのインポートを防止します。</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2>マッチのフォルダをインポートする<a class="headerlink" href="#importer-un-dossier-de-matchs" title="この見出しへのリンク"></a></h2>
+<p>フォルダとそのサブフォルダに含まれるすべてのマッチファイルを再帰的にインポートするには：</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-SHIFT-F</em> を押すか、ツールバーの対応するボタンをクリックします。</p></li>
+<li><p>マッチファイルが含まれているフォルダを選択します。</p></li>
+<li><p>blunderDB は認識されたすべてのファイル（<em>.xg</em>、<em>.xgp</em>、<em>.sgf</em>、<em>.mat</em>、<em>.txt</em>、<em>.bgf</em>）を自動的に収集してインポートします。</p></li>
+</ol>
+</section>
+<section id="le-compte-rendu-d-import">
+<span id="compte-rendu-import"></span><h2>インポート報告<a class="headerlink" href="#le-compte-rendu-d-import" title="この見出しへのリンク"></a></h2>
+<p>インポートは、読んだファイル数の集計ではなく<strong>今まさに何をもたらしたか</strong>の報告で終わる：</p>
+<ul class="simple">
+<li><p>新しい局面、およびそのうち元のソフトが学習用にマークしていたもの；</p></li>
+<li><p><strong>このインポートの PR</strong>——統計と同じ指標を、このロットだけで計算したもの。データベースがあなたの名前を知っていれば（身元ウィンドウの<em>ユーザー</em>欄）あなたの判断が対象、そうでなければ両プレイヤーが対象であり、報告はどちらかを明示する；</p></li>
+<li><p>どのエンジンも評価していない局面と、解析を開始するボタン；</p></li>
+<li><p><strong>最も損の大きい五つの判断</strong>。クリックでその局面が開く。</p></li>
+</ul>
+<p>判断ゼロでの PR ゼロは完璧な対局ではなく解析の不在である：報告はそのように書く。</p>
+<p>インポートはそれぞれ<strong>ロット</strong>として記録される。コマンドラインは後から見つけられる：</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+<span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>報告の測定部分——解析のない局面、PR、最悪の判断——は読むたびに再計算される。以後に局面が解析されたロットは、したがってインポート当日の数字ではなく今日の数字を返す。</p>
+</section>
+<section id="la-file-d-etude">
+<span id="file-etude"></span><h2>学習キュー<a class="headerlink" href="#la-file-d-etude" title="この見出しへのリンク"></a></h2>
+<p>報告は「いま何が起きたか」に答えます。<strong>順に見る</strong>ボタンは、その次の問い「では何を見るか」に答えます。この取り込みのうち見直す価値のある局面を<strong>順序づけたキュー</strong>にして開き、盤上にひとつずつ運びます。</p>
+<ol class="arabic simple">
+<li><p><strong>損失を生んだ</strong>判断。高くついたものから順に。ここに来た理由そのものです。</p></li>
+<li><p><strong>元のソフトで印を付けた</strong>局面。ほかの場所ですでに「これは面白い」と言ってあったものです。</p></li>
+<li><p><strong>際どいキューブ判断</strong>。失ったものはありませんが、正解は自明ではありませんでした。</p></li>
+</ol>
+<p>ひとつの局面は、それを最初に主張した理由のもとで一度だけ現れます。印の付いたブランダーはやはりブランダーであり、二度出せばキューが自らの長さについて嘘をつくことになります。巡回は五十局面までです。終わらないキューは、始まらないキューです。</p>
+<p>巡回中は盤の上に帯が出ます。進み具合（「3 / 25」）、この局面がここにある理由、出どころのマッチ、そして操作です。そのうち三つは、その操作がすでに住んでいるパネルを開くだけです——<strong>コメント</strong>、<strong>コレクション</strong>、<strong>Anki カード</strong>。これらの操作はそれぞれの規則とともに既にあり、帯の中で作り直せば半端な複製になってしまうからです。<strong>スキップ</strong>で先へ進み、<strong>前へ</strong>でクリックを取り消し、<strong>やめる</strong>で止めます。アプリケーションの他の部分は動き続けます。だからこそ、キューを離れずに手を打てるのです。</p>
+<p><strong>何も保存されず、その局面を見たという記録も残りません。</strong>そこであなたがしたこと——コメント、コレクション、カード——が記録そのものであり、ほかに残すものはありません。したがって、あとで同じキューをもう一度たどるのはまったく正当で、内容も同じです。</p>
+<p>同じ一覧はコマンドラインでも得られます。</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+</section>
+<section id="glisser-deposer">
+<h2>ドラッグ＆ドロップ<a class="headerlink" href="#glisser-deposer" title="この見出しへのリンク"></a></h2>
+<p>blunderDB はドラッグ＆ドロップをサポートしています。blunderDB のウィンドウにドラッグ＆ドロップできるもの：</p>
+<ul class="simple">
+<li><p>マッチまたはポジションファイル（<em>.xg</em>、<em>.xgp</em>、<em>.sgf</em>、<em>.mat</em>、<em>.txt</em>、<em>.bgf</em>）をインポートする場合、</p></li>
+<li><p>データベースファイル（<em>.db</em>）を開くか、現在のデータベースと統合する場合、</p></li>
+<li><p>フォルダ内のすべてのファイルを再帰的にインポートする場合。</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2>マッチ内を移動する<a class="headerlink" href="#naviguer-dans-un-match" title="この見出しへのリンク"></a></h2>
+<p>インポートしたマッチ内を移動するには：</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-Tab</em> でマッチパネルを開きます。</p></li>
+<li><p>マッチをダブルクリックするか、<em>ENTER</em> キーを押します。</p></li>
+<li><p><em>左矢印</em> / <em>右矢印</em> キーを使用してムーブを移動します。</p></li>
+<li><p><em>PageUp</em> / <em>PageDown</em> を使用してゲーム間を移動します。</p></li>
+<li><p><em>CTRL-L</em> を押して分析を表示します。</p></li>
+<li><p><em>d</em> を押してチェッカームーブ分析とキューブ分析を切り替えます。</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>ショートカット: <em>CTRL-Tab</em> でマッチパネルを開きます。コマンド: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB は各マッチで最後に訪問したポジションを記憶します。マッチに戻ると、最後に参照したポジションが自動的に復元されます。</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2>マッチパネルを管理する<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="この見出しへのリンク"></a></h2>
+<p>マッチパネル（<em>CTRL-Tab</em>）では以下のことができます：</p>
+<ul class="simple">
+<li><p>インポートしたすべてのマッチを一覧表示します（新しい順に並べ替え）。</p></li>
+<li><p>マッチを列でソートします（プレイヤー1、プレイヤー2、日付、マッチの長さ、トーナメント）。</p></li>
+<li><p>フィールドをダブルクリックしてプレイヤー名や日付を編集します。</p></li>
+<li><p>入れ替えボタンを使用してプレイヤー1とプレイヤー2を入れ替えます。</p></li>
+<li><p>マッチをトーナメントに割り当てます。</p></li>
+<li><p><em>Del</em> キーを使用してマッチを削除します。</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<span id="guide-collections"></span><h2>コレクションを管理する<a class="headerlink" href="#gerer-les-collections" title="この見出しへのリンク"></a></h2>
+<p>コレクションはポジションをカスタムグループに整理する機能です。コレクションパネルにアクセスするには、<em>CTRL-B</em> を押します。</p>
+<p><strong>コレクションを作成する：</strong></p>
+<ol class="arabic simple">
+<li><p>コレクションパネルを開きます（<em>CTRL-B</em>）。</p></li>
+<li><p>パネル下部の <em>新規コレクション…</em> 欄に新しいコレクションの名前を入力し、<em>ENTER</em> で確定します。</p></li>
+</ol>
+<p><strong>コレクションにポジションを追加する：</strong></p>
+<ol class="arabic simple">
+<li><p>目的のポジションを選択します。</p></li>
+<li><p>コレクションパネルからコレクションに追加します。</p></li>
+</ol>
+<p><strong>コレクションを閲覧する：</strong></p>
+<ul class="simple">
+<li><p>コレクションをダブルクリックしてポジションを閲覧します。コレクションとポジションの順序はドラッグ＆ドロップで変更できます。</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>コマンド: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2>トーナメントを管理する<a class="headerlink" href="#gerer-les-tournois" title="この見出しへのリンク"></a></h2>
+<p>トーナメントはインポートしたマッチをイベント別に整理する機能です。トーナメントパネルにアクセスするには、<em>CTRL-Y</em> を押します。</p>
+<p><strong>トーナメントを作成する：</strong></p>
+<ol class="arabic simple">
+<li><p>トーナメントパネルを開きます（<em>CTRL-Y</em>）。</p></li>
+<li><p><em>新規トーナメント…</em> 欄にトーナメントの名前を入力し、<em>ENTER</em> で確定します。</p></li>
+</ol>
+<p><strong>マッチをトーナメントに割り当てる：</strong></p>
+<ul class="simple">
+<li><p>マッチパネル（<em>CTRL-Tab</em>）から、トーナメント列のドロップダウンメニューを使用してマッチを割り当てます。</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2>パフォーマンス統計を表示する<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="この見出しへのリンク"></a></h2>
+<p>Statsパネルでは、インポートしたポジションからパフォーマンス指標（PRおよびMWCコスト）を確認できます。</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-D</em> を押すか、下部パネルのStatsタブをクリックします。</p></li>
+<li><p>フィルターバーを使用して、プレイヤー、トーナメント、日付範囲、決定タイプ、またはマッチの長さで分析を絞り込みます。</p></li>
+<li><p>指標をクリックすると、対応するポジションに直接ジャンプします。</p></li>
+</ol>
+</section>
+<section id="evaluer-une-position-panneau-eval">
+<h2>ポジションを評価する（Eval パネル）<a class="headerlink" href="#evaluer-une-position-panneau-eval" title="この見出しへのリンク"></a></h2>
+<p>Eval パネルは、レースだけでなくどんなポジションでも評価します。純粋なベアオフのポジションでは、EPC（Effective Pip Count。<a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">用語集</span></a>を参照）や他のベアオフ統計を計算します。それ以外のポジションでは、内蔵の gammonNet 評価エンジンが、XG も GNUbg も使わずオフラインで、候補手やキューブの決定を提供します。</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_eval.png"><img alt="チェッカーの手の決断における Eval パネル" src="_images/panel_eval.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Eval パネル：勝利／ギャモン／バックギャモンの確率、エクイティ、そして gammonNet によって計算された各候補手の誤差。</span><a class="headerlink" href="#id7" title="この画像へのリンク"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p><em>CTRL-E</em> を押すか、下部パネルの Eval タブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行すると、パネルは編集可能な空の盤面で開きます。</p></li>
+<li><p>空の盤面ではなく、すでに表示されているポジション（ライブラリのポジション、またはレビュー中のマッチのポジション）を評価するには、盤面を右クリックして <em>この局面を評価</em> を選びます — 表示されているポジションがそのまま Eval パネルに送られます。</p></li>
+<li><p>盤面全体は、クリックまたはキーボードで編集できます：チェッカー、ダイス、スコア、キューブの位置、手番のプレイヤー。両サイドのジャン（最後の 6 ポイント）のチェッカーだけを編集すると、ポジションはベアオフ体制になります。</p></li>
+<li><p>結果はリアルタイムで表示されます：純粋なベアオフでは、EPC、平均ロール数、標準偏差、ピップカウント、無駄（wastage）、手番のプレイヤーの勝率、そして厳密な領域ではマネーキューブの結論。それ以外のダイスが置かれたポジションでは、エクイティ順に並んだ候補手。ダイスがない場合は、キューブの決断。詳しくはマニュアルの「Eval パネルの方法論と前提」の節を参照してください。</p></li>
+<li><p>これらの値を推定する練習をするには、<em>チャレンジ</em>チェックボックスをオンにします。結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>このパネルは両方のプレイヤーに対して同時に機能します。</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2>XGからインポートしたポジションの分析を表示する<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="この見出しへのリンク"></a></h2>
+<p>XG、GNUbg、またはBGBlitzによって分析されたポジションがblunderDBにインポートされている場合、<em>CTRL-L</em> を押すことで分析を表示できます。</p>
+<p>ポジションがチェッカー決定に対応する場合、上位5つのムーブが別々の行に表示されます。各行には、この順序で情報が提供されます：関連するチェッカームーブ、正規化されたエクイティ、ムーブのエクイティエラー、プレイヤーの勝率・ギャモン・バックギャモン、相手の勝率・ギャモン・バックギャモン、および分析レベル。</p>
+<p>ポジションがキューブ決定に対応する場合、各決定のコストとポジションの勝率が表示されます。</p>
+<p>同じポジションに複数の分析エンジンが存在する場合（例：XGとGNUbg）、追加の列に各分析の元のエンジンが表示されます。</p>
+<p>マッチ内を移動する際、実際にプレイされたムーブがムーブリストでハイライト表示されます。ポジションが複数のマッチで登場した場合、プレイされたすべてのムーブが表示されます。</p>
+<div class="admonition tip">
+<p class="admonition-title">ヒント</p>
+<p>分析パネルでムーブをクリックすると、ボード上に対応する矢印が表示されます。</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2>XGにポジションをエクスポートする<a class="headerlink" href="#exporter-une-position-vers-xg" title="この見出しへのリンク"></a></h2>
+<p>blunderDBからXGにポジションをエクスポートするには、</p>
+<ol class="arabic simple">
+<li><p>blunderDBでエクスポートするポジションを表示し、<em>CTRL-C</em> を押します。</p></li>
+<li><p>XGを開き、<em>CTRL-V</em> を押します。</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2>様々なポジションを表示する<a class="headerlink" href="#visualiser-les-differentes-positions" title="この見出しへのリンク"></a></h2>
+<p>現在のライブラリのさまざまなポジションを表示するには、<em>左矢印</em> キーと <em>右矢印</em> キーを使用します。<em>HOME</em> キーで最初のポジション、<em>END</em> キーで最後のポジションに移動できます。</p>
+<p>左のベアオフを表示するには <em>CTRL-LEFT</em> を押します。右のベアオフを表示するには <em>CTRL-RIGHT</em> を押します。</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2>条件に基づいてポジションを検索する<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="この見出しへのリンク"></a></h2>
+<p>ポジションの種類を検索するには、</p>
+<ul class="simple">
+<li><p><em>TAB</em> を押して検索パネルを開きます。</p></li>
+<li><p>検索するポジション構造を編集します。blunderDB は入力されたチェッカー構造を<em>少なくとも</em>持つポジションをフィルタリングします。不明な場合は最大限の結果を得るため、<em>バックスペース</em> キーを押してポジションをクリアしてください。必要に応じてキューブのポジションとスコアを編集します。</p></li>
+</ul>
+<p>検索パネルでは2つのチェッカー構造が提供されており、パネル上部の <em>最低限</em> タブと <em>除く</em> タブで選択できます：</p>
+<ul class="simple">
+<li><p><em>最低限</em>（デフォルト）：blunderDB は入力されたチェッカー構造を<em>少なくとも</em>持つポジションをフィルタリングします。</p></li>
+<li><p><em>除く</em>：blunderDB は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画された要素を<em>少なくとも1つ</em>含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）。そのポイントをシングルクリックするとロックが解除されます。</p></li>
+</ul>
+<p>ポイントが両方の構造に属する場合、<em>除く</em> の基準が <em>最低限</em> の基準と矛盾するときは前者が優先されます。</p>
+<p>方法1（シンプル）：</p>
+<ul class="simple">
+<li><p>検索ウィンドウを開きます（<em>CTRL-F</em>）。</p></li>
+<li><p>検索フィルターを追加して設定します。</p></li>
+<li><p><em>検索</em> をクリックして確定します。</p></li>
+</ul>
+<p>方法2（上級）：</p>
+<ul class="simple">
+<li><p><em>スペース</em> キーを押してコマンドラインを開きます。</p></li>
+<li><p><em>s</em> と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには <em>cube</em> または <em>score</em>。利用可能なフィルターの一覧は <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">検索フィルタ</span></a> を参照してください）。</p></li>
+<li><p><em>ENTER</em> キーを押してクエリを確定します。</p></li>
+</ul>
+<p>表示されるポジションは、ユーザーが入力した検索条件を満たすデータベース内のポジションです。</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2>さらに先へ<a class="headerlink" href="#pour-aller-plus-loin" title="この見出しへのリンク"></a></h2>
+<p>本ガイドは最もよくある使い方を扱います。blunderDB には、マニュアルで詳しく説明されている追加機能がいくつかあります。</p>
+<ul class="simple">
+<li><p><strong>間隔反復（Anki）</strong>— Anki パネル（<em>CTRL-K</em>）は、コレクションや検索結果を FSRS アルゴリズムで復習するカードデッキに変えます。スケジュールを乱さない自由練習モード（<em>cram</em>）もあります。<a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Anki パネル</span></a> を参照してください。</p></li>
+<li><p><strong>複数のビュー</strong>— ツールバーの下にあるタブバーで、独立した作業空間を並行して開いておけます（たとえば検索と、あるマッチの読み進め）。それぞれが自分の局面リストと文脈を持ちます。<a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">ビュータブ</span></a> を参照してください。</p></li>
+<li><p><strong>電子透かし付きの配布</strong>— エクスポートには発行者アイデンティティで署名でき（ファイルの出所を示す偽造不能な透かし）、受け渡しのためにパスワードで保護することもできます。<a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">データベースの配布：出所とパスワード</span></a> を参照してください。</p></li>
+<li><p><strong>ガイドツアーとデモ用データベース</strong>— <code class="docutils literal notranslate"><span class="pre">tour</span></code> コマンド（別名 <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>）はインターフェースのガイドツアー一覧を開き、<code class="docutils literal notranslate"><span class="pre">demo</span></code> コマンドはサンプルのデータベースを読み込みます。自分のデータベースがなくてもツールを試せます。<a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">ガイドツアーとサンプルデータベース</span></a> を参照してください。</p></li>
+<li><p><strong>最悪のミスを読み込む</strong>— <code class="docutils literal notranslate"><span class="pre">bl</span></code> コマンド（または <code class="docutils literal notranslate"><span class="pre">blunders</span></code>）は、統計パネルの現在のフィルタに従って、最悪のミス（エクイティまたは MWC）を分析ビューに直接読み込みます。手作業の検索は不要です。<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Stats パネル</span></a> を参照してください。</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="ダウンロードとインストール" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="manuel.html" class="btn btn-neutral float-right" title="マニュアル" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

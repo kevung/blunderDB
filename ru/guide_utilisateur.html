@@ -1,0 +1,705 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Руководство пользователя &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Руководство" href="manuel.html" />
+    <link rel="prev" title="Загрузка и установка" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/guide_utilisateur.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/guide_utilisateur.html" lang="en" hreflang="en">English</a>
+  <a href="../de/guide_utilisateur.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/guide_utilisateur.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/guide_utilisateur.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/guide_utilisateur.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/guide_utilisateur.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/guide_utilisateur.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Руководство пользователя</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#l-ecran-d-accueil">Начальный экран</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutoriels-de-bout-en-bout">Сквозные руководства</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mon-premier-import">Мой первый импорт</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etudier-un-match">Изучение матча</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#une-session-anki">Сессия Anki</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deployer-le-mode-serveur-derriere-un-proxy">Развёртывание серверного режима за прокси</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-progresser-avec-blunderdb">Как прогрессировать с blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scenario-de-demonstration-3-minutes">Демонстрационный сценарий (3 минуты)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">Создание новой базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">Открытие существующей базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fusionner-une-base-de-donnees">Объединение базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">Редактирование позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">Добавление позиции в базу данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">Добавление тега к позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">Удаление позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">Импорт позиции из XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">Импорт матча</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">Импорт папки с матчами</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-compte-rendu-d-import">Отчёт об импорте</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-file-d-etude">Очередь разбора</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">Перетаскивание</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">Навигация по матчу</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">Управление панелью матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">Управление коллекциями</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">Управление турнирами</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">Просмотр статистики производительности</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluer-une-position-panneau-eval">Оценка позиции (панель Eval)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">Просмотр анализа позиции, импортированной из XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">Экспорт позиции в XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">Просмотр различных позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">Поиск позиций по критериям</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pour-aller-plus-loin">Что дальше</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Руководство пользователя</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1>Руководство пользователя<a class="headerlink" href="#guide-utilisateur" title="Ссылка на этот заголовок"></a></h1>
+<p>Это руководство — практическое введение в blunderDB для быстрого освоения. Четыре сквозных руководства охватывают наиболее распространённые случаи использования; остальная часть руководства остаётся справочным каталогом, шаг за шагом, к которому можно обращаться по мере необходимости.</p>
+<section id="l-ecran-d-accueil">
+<span id="ecran-accueil"></span><h2>Начальный экран<a class="headerlink" href="#l-ecran-d-accueil" title="Ссылка на этот заголовок"></a></h2>
+<p>Пока не открыта ни одна база, blunderDB предлагает четыре пути вместо пустой доски:</p>
+<ul class="simple">
+<li><p><strong>Импортировать мои матчи</strong> — главный путь. Он выстраивается сам: новая база, выбор ваших файлов (XG, GNU Backgammon, Jellyfish, BGBlitz), затем <a class="reference internal" href="#compte-rendu-import"><span class="std std-ref">отчёт об импорте</span></a> — «вот ваш PR и ваши худшие решения» — и, если захотите, <a class="reference internal" href="#file-etude"><span class="std std-ref">очередь разбора</span></a>. Это обещание инструмента, выполненное за две минуты, а не объяснённое.</p></li>
+<li><p><strong>Открыть базу-пример</strong> — три матча, коллекции, комментарии и колода Anki: достаточно, чтобы всё попробовать, ничего не принося.</p></li>
+<li><p><strong>Экскурсия</strong> — обход интерфейса, панель за панелью.</p></li>
+<li><p><strong>Открыть базу</strong> — файл <code class="docutils literal notranslate"><span class="pre">.db</span></code>, который у вас уже есть.</p></li>
+</ul>
+<p>Последняя открытая база предлагается отдельно и <strong>только если её файл ещё существует</strong>: кнопка, которая ломается при нажатии, хуже, чем её отсутствие.</p>
+<p>Экран исчезает, как только открыта база. Неприметная ссылка убирает его на сессию, потому что панель Eval работает без базы: можно захотеть выставить позицию и оценить её, ничего не открывая.</p>
+</section>
+<section id="tutoriels-de-bout-en-bout">
+<h2>Сквозные руководства<a class="headerlink" href="#tutoriels-de-bout-en-bout" title="Ссылка на этот заголовок"></a></h2>
+<section id="mon-premier-import">
+<span id="tuto-premier-import"></span><h3>Мой первый импорт<a class="headerlink" href="#mon-premier-import" title="Ссылка на этот заголовок"></a></h3>
+<p>Это руководство начинается с файла матча eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>) и заканчивается списком позиций, где вы проиграли больше всего.</p>
+<ol class="arabic">
+<li><p><strong>Создайте базу данных.</strong> Кнопка <em>Новая база данных</em> на панели инструментов (или <em>CTRL-N</em>), выберите расположение и имя; расширение <code class="docutils literal notranslate"><span class="pre">.db</span></code> добавляется автоматически.</p></li>
+<li><p><strong>Импортируйте матч.</strong> Перетащите файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code> в окно blunderDB (или <em>CTRL-I</em>, затем выберите его). blunderDB определяет формат, импортирует позиции и уже присутствующий в файле XG анализ (ходы, решения по кубу, отметки), и показывает панель матчей после успешного импорта.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB берёт анализ, уже имеющийся в файле, и не делает его заново: матч, ни разу не проанализированный в XG, поэтому не покажет ни одной ошибки. Если отмечен флажок <em>Автоматически анализировать после импорта</em> (окно настроек, вкладка <em>gammonNet</em>), ограниченный и отменяемый пакет анализа в фоновом режиме заполняет позиции, оставшиеся без анализа. См. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Конфигурация</span></a>.</p>
+</div>
+</li>
+<li><p><strong>Просмотрите матч.</strong> Двойной щелчок по строке матча (или выбор строки и нажатие <em>ENTER</em>) открывает просмотр на последней посещённой позиции. Клавиши <em>ВЛЕВО</em>/<em>ВПРАВО</em> (или <em>k</em>/<em>j</em>) перелистывают ходы; <em>PageUp</em>/<em>PageDown</em> переключают партии.</p></li>
+<li><p><strong>Прочитайте анализ.</strong> <em>CTRL-L</em> показывает панель Анализа: лучшие ходы, их эквити и ошибку сыгранного хода (выделена в таблице). При решении по кубу та же клавиша показывает таблицу эквити куба и вердикт.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/panel_analysis.png"><img alt="Панель Анализа во время просмотра матча" src="_images/panel_analysis.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Анализа во время просмотра матча: сыгранный ход выделен в таблице кандидатов-ходов.</span><a class="headerlink" href="#id2" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Найдите самые крупные ошибки.</strong> Откройте панель Stats (<em>CTRL-D</em>), вкладка <em>Dashboard</em>: список <em>Топ ошибок</em> даёт десять самых дорогих ошибок, а щелчок по строке загружает соответствующую позицию в панель анализа. Для привыкших — то же самое с клавиатуры: команда <code class="docutils literal notranslate"><span class="pre">bl</span></code> (или <code class="docutils literal notranslate"><span class="pre">blunders</span></code>, <em>ПРОБЕЛ</em> открывает командную строку) загружает эти позиции напрямую, без составления запроса вручную. См. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>, чтобы уточнить этот выбор по игроку или диапазону дат после импорта нескольких матчей.</p></li>
+</ol>
+</section>
+<section id="etudier-un-match">
+<span id="tuto-etudier-match"></span><h3>Изучение матча<a class="headerlink" href="#etudier-un-match" title="Ссылка на этот заголовок"></a></h3>
+<p>После импорта нескольких матчей это руководство подробно описывает изучение конкретного матча — за рамками простого прохода предыдущего руководства.</p>
+<ol class="arabic">
+<li><p><strong>Откройте панель матчей</strong> (<em>CTRL-Tab</em>). Она перечисляет все импортированные матчи, сортируемые по столбцу (игрок, дата, длина, турнир, PR). PR и стоимость MWC определены в <a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">Глоссарий</span></a>.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/panel_matches.png"><img alt="Панель матчей" src="_images/panel_matches.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель матчей: сортируемый список, PR и стоимость MWC по каждому матчу.</span><a class="headerlink" href="#id3" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Откройте просмотр</strong>, дважды щёлкнув по строке, или выбрав её и нажав <em>ENTER</em>. Информационная панель над доской напоминает обоих игроков, турнир и счёт.</p></li>
+<li><p><strong>Переключайтесь между ходом шашками и решением по кубу</strong> клавишей <em>d</em> на одной и той же позиции, когда доступны оба анализа (один из них может отсутствовать в зависимости от содержимого импортированного файла).</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/panel_cube.png"><img alt="Панель Анализа при решении по кубу" src="_images/panel_cube.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Решение по кубу на панели Анализа: денежные эквити, ошибка каждого варианта, лучшее решение.</span><a class="headerlink" href="#id4" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Комментируйте</strong> то, что вы наблюдаете: <em>CTRL-P</em> открывает панель Комментариев для показанной позиции — полезно для записи <em>почему</em> ход является ошибкой, а не только <em>что</em> он ею является.</p>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="_images/panel_comments.png"><img alt="Панель Комментариев к позиции" src="_images/panel_comments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Комментариев: цепочка обменов, прикреплённая к показанной позиции.</span><a class="headerlink" href="#id5" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Пометьте</strong> позицию, чтобы переиграть её позже: <em>ПРОБЕЛ</em>, чтобы открыть командную строку, <code class="docutils literal notranslate"><span class="pre">#</span></code> с последующим ключевым словом (например <code class="docutils literal notranslate"><span class="pre">#blitz</span></code>), <em>ENTER</em>. См. <a class="reference internal" href="#guide-edit-position"><span class="std std-ref">Редактирование позиции</span></a>, чтобы напрямую отредактировать позицию, если сыгранный ход — не тот, который вы хотите изучить.</p></li>
+<li><p><strong>Выйдите из режима матча</strong> командой <code class="docutils literal notranslate"><span class="pre">m</span></code>: библиотека возвращается в прежнее состояние, последняя посещённая позиция матча запоминается для следующего визита.</p></li>
+</ol>
+</section>
+<section id="une-session-anki">
+<span id="tuto-anki"></span><h3>Сессия Anki<a class="headerlink" href="#une-session-anki" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель Anki превращает коллекцию или поиск в колоду карточек для повторения по алгоритму FSRS (интервальное повторение).</p>
+<ol class="arabic">
+<li><p><strong>Соберите колоду.</strong> Две возможные отправные точки: вручную выбранная <a class="reference internal" href="#guide-collections"><span class="std std-ref">коллекция</span></a> позиций, или поиск (<em>CTRL-F</em>) — например, все решения по кубу, отмеченные как ошибки. Команда <code class="docutils literal notranslate"><span class="pre">bl</span> <span class="pre">30</span></code> (30 худших ошибок) даёт хорошую отправную точку для первой колоды.</p></li>
+<li><p><strong>Создайте колоду.</strong> Откройте панель Anki (<em>CTRL-K</em>), кнопка <em>Новая колода</em>, назовите колоду; она синхронизируется с выбранным поиском или коллекцией.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/panel_anki.png"><img alt="Панель Anki, список колод" src="_images/panel_anki.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Anki: одна колода на строку, всего карточек, новых и просроченных сегодня.</span><a class="headerlink" href="#id6" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+</li>
+<li><p><strong>Повторяйте</strong> (кнопка <em>Учить</em>): каждая карточка показывает позицию, вы мысленно формулируете ответ, раскрываете решение (доску, анализ и возможный комментарий), затем оцениваете свою оценку от 1 (не угадал) до 4 (легко). FSRS соответственно распределяет следующий показ во времени. Ничто не заставляет раскрывать ответ, чтобы продолжить, если вы уверены в себе.</p></li>
+<li><p><strong>Разогрейтесь, не нарушая расписание</strong> (кнопка <em>Тренировка</em>): показывает случайные позиции из колоды, не затрагивая расписание FSRS — удобно перед турниром или для интенсивного повторения без сдвига сроков других карточек.</p></li>
+</ol>
+<p>См. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Панель Anki</span></a> для подробностей о параметрах (ограничение сессии, целевой уровень удержания, сброс колоды).</p>
+</section>
+<section id="deployer-le-mode-serveur-derriere-un-proxy">
+<span id="tuto-serveur-proxy"></span><h3>Развёртывание серверного режима за прокси<a class="headerlink" href="#deployer-le-mode-serveur-derriere-un-proxy" title="Ссылка на этот заголовок"></a></h3>
+<p>Серверный режим (<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code>) предоставляет движок blunderDB по HTTP + JSON. Он <strong>никого не аутентифицирует</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): он доверяет заголовку <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> именно в том виде, в каком его получает, и поэтому всегда должен находиться за обратным прокси, который сам аутентифицирует и устанавливает этот заголовок. Это руководство разворачивает опубликованный образ за минимальным nginx, с HTTP Basic-аутентификацией на один тенант, а затем показывает, как выдать каждому участнику его тенант. Это простейшая отправная точка, которую нужно адаптировать (SSO, клиентские сертификаты) под ваш контекст.</p>
+<ol class="arabic">
+<li><p><strong>Запустите демон</strong>, привязанный к <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (никогда не открытый напрямую):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+</li>
+<li><p><strong>Создайте файл паролей</strong> для Basic-аутентификации:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>htpasswd<span class="w"> </span>-c<span class="w"> </span>/etc/nginx/blunderdb.htpasswd<span class="w"> </span>alice
+</pre></div>
+</div>
+</li>
+<li><p><strong>Настройте nginx</strong>, чтобы он аутентифицировал, а затем передавал запросы дальше, устанавливая <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> сам — никогда не тот, что прислал клиент. Сертификат TLS — предпосылка этого руководства, а не его предмет: получите его заранее (Let’s Encrypt с помощью <code class="docutils literal notranslate"><span class="pre">certbot</span></code> или удостоверяющий центр вашей организации), затем укажите здесь два его файла. Порт 80 служит только для перенаправления на HTTPS.</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">blunderdb.exemple.org</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/fullchain.pem</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/letsencrypt/live/blunderdb.exemple.org/privkey.pem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">"1"</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Обе директивы <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span></code> читаются именно в этом порядке: сначала стереть значение, полученное от клиента, затем подставить значение прокси.</p>
+</li>
+<li><p><strong>Проверьте</strong> с помощью подкоманды проверки состояния, которая не проходит через прокси:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;container&gt;<span class="w"> </span>blunderdb<span class="w"> </span>healthcheck
+</pre></div>
+</div>
+</li>
+<li><p><strong>Несколько участников, по тенанту каждому.</strong> Демон принимает в <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> только положительное целое: сопоставить аутентифицированную учётную запись с этим целым — дело прокси. Блок <code class="docutils literal notranslate"><span class="pre">map</span></code>, помещённый в контекст <code class="docutils literal notranslate"><span class="pre">http</span></code>, хранит это соответствие и для учётной записи, которой в нём нет, возвращает пустую строку — никогда <code class="docutils literal notranslate"><span class="pre">1</span></code>:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">map</span><span class="w"> </span><span class="nv">$remote_user</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">alice</span><span class="w">   </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">bob</span><span class="w">     </span><span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Тогда <code class="docutils literal notranslate"><span class="pre">location</span></code> явно отказывает несопоставленной учётной записи, вместо того чтобы дать ей добраться до демона:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/v1/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">auth_basic</span><span class="w">           </span><span class="s">"blunderDB"</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/blunderdb.htpasswd</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">if</span><span class="w"> </span><span class="s">(</span><span class="nv">$tenant_id</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">"")</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w">   </span><span class="s">X-Tenant-ID</span><span class="w"> </span><span class="nv">$tenant_id</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w">         </span><span class="s">http://127.0.0.1:8080</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Один тенант на участника предполагает бэкенд PostgreSQL: на SQLite, как в пункте 1 этого руководства, демон отвечает только на <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID:</span> <span class="pre">1</span></code> и отклоняет любое другое значение. Репозиторий даёт эту полную схему в <code class="docutils literal notranslate"><span class="pre">deploy/nginx-tenant-proxy.conf</span></code>, а её эквивалент для Caddy — в <code class="docutils literal notranslate"><span class="pre">deploy/Caddyfile</span></code>.</p>
+</li>
+</ol>
+<p>См. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a> для полного описания возможностей (маршруты, многопользовательский бэкенд PostgreSQL с Row-Level Security, миграция из SQLite) и опубликованного образа Docker.</p>
+</section>
+</section>
+<section id="comment-progresser-avec-blunderdb">
+<h2>Как прогрессировать с blunderDB<a class="headerlink" href="#comment-progresser-avec-blunderdb" title="Ссылка на этот заголовок"></a></h2>
+<p>Помимо приведённых выше руководств, простой еженедельный распорядок позволяет извлечь максимум из blunderDB для прогресса:</p>
+<ol class="arabic simple">
+<li><p><strong>Импортируйте</strong> матчи за неделю (перетаскивание или рекурсивный импорт папки при нескольких файлах) как можно скорее после того, как вы их сыграли — память о контексте быстро стирается.</p></li>
+<li><p><strong>Отфильтруйте самые дорогие решения</strong>: команда <code class="docutils literal notranslate"><span class="pre">bl</span></code> (худшие ошибки) или панель Stats, отфильтрованная по периоду и типу решения (шашки / куб), который сильнее всего влияет на PR.</p></li>
+<li><p><strong>Комментируйте</strong> каждую просмотренную позицию: что было упущено, какая структура виновата. Письменный комментарий требует объяснения — позиция, просто просмотренная без единого слова, забывается так же быстро, как была упущена.</p></li>
+<li><p><strong>Соберите колоду Anki</strong> из этих прокомментированных позиций: интервальное повторение возвращает те же мотивы, пока они не станут рефлексами.</p></li>
+<li><p><strong>Следите за PR по турнирам</strong> на вкладке Progression панели Stats (<a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>): кривая, снижающаяся от турнира к турниру, — единственный сигнал, который никогда не лжёт.</p></li>
+</ol>
+<p>Этот распорядок оправдан только в том случае, если его придерживаются — десять минут в неделю, постоянно, стоят больше, чем разовый разбор, который затем бросают.</p>
+</section>
+<section id="scenario-de-demonstration-3-minutes">
+<h2>Демонстрационный сценарий (3 минуты)<a class="headerlink" href="#scenario-de-demonstration-3-minutes" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы представить blunderDB без личной базы данных, команда <code class="docutils literal notranslate"><span class="pre">demo</span></code> загружает демонстрационную базу данных (вымышленные позиции и матчи). Следующий сценарий укладывается в три минуты:</p>
+<ol class="arabic simple">
+<li><p><em>0:00</em> — Команда <code class="docutils literal notranslate"><span class="pre">demo</span></code> в командной строке (или соответствующая кнопка на панели инструментов) загружает демонстрационную базу данных. Отображается панель матчей.</p></li>
+<li><p><em>0:30</em> — Откройте матч (двойной щелчок), пролистайте несколько ходов стрелками, покажите панель Анализа (<em>CTRL-L</em>) на сыгранном ходу с видимой ошибкой.</p></li>
+<li><p><em>1:30</em> — Команда <code class="docutils literal notranslate"><span class="pre">bl</span></code>: вид переключается прямо на худшие ошибки в базе данных, по всем позициям.</p></li>
+<li><p><em>2:15</em> — Панель Anki (<em>CTRL-K</em>): создайте колоду из этих позиций, запустите одну карточку в режиме <em>Study</em>, чтобы показать цикл вопрос/ответ/оценка.</p></li>
+<li><p><em>2:45</em> — Вернитесь на панель Stats (<em>CTRL-D</em>), вкладка Dashboard, чтобы показать, как эта работа отражается со временем.</p></li>
+</ol>
+</section>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2>Создание новой базы данных<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы создать новую базу данных, нажмите на панели инструментов кнопку <em>Новая база данных</em>. Выберите путь для сохранения базы и имя, затем подтвердите сохранение в системном окне.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Расширение файлов баз данных blunderDB — <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Сочетания клавиш: <em>CTRL-N</em>. Команда: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2>Открытие существующей базы данных<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы загрузить существующую базу данных, нажмите на панели инструментов кнопку <em>Открыть базу данных</em>. Перейдите в папку, где находится база, выберите файл <em>.db</em> и подтвердите открытие в системном окне.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Сочетания клавиш: <em>CTRL-O</em>. Команда: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="fusionner-une-base-de-donnees">
+<h2>Объединение базы данных<a class="headerlink" href="#fusionner-une-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы объединить другую базу blunderDB с текущей открытой, нажмите на панели инструментов кнопку <strong>Объединить базу данных</strong>. Выберите файл <em>.db</em> и подтвердите.</p>
+<p>Это и есть ответ blunderDB на вопрос «как синхронизировать базу между двумя машинами?»: база — это <strong>один файл</strong>, две разошедшиеся базы объединяются, а не согласуются, и дедупликация по отпечатку Зобриста делает работу. См. FAQ, «Можно ли синхронизировать базу между несколькими машинами?», о том, что службы синхронизации файлов умеют и чего не умеют — и о случае, когда несколько машин должны работать одновременно, который принадлежит режиму <code class="docutils literal notranslate"><span class="pre">serve</span></code>.</p>
+<p>blunderDB выполнит интеллектуальное слияние двух баз данных:</p>
+<ul class="simple">
+<li><p>Позиции, которых нет в текущей базе данных, будут добавлены вместе с их анализами и комментариями.</p></li>
+<li><p>Существующие позиции будут обновлены: анализы будут дополнены при их отсутствии, а комментарии объединены (новые комментарии добавляются без дублирования существующих).</p></li>
+<li><p>Сообщение покажет количество добавленных, объединённых и пропущенных позиций.</p></li>
+</ul>
+<p>Объединение <strong>добавляет</strong>, оно не согласует: ничто не удаляется из текущей базы потому, что импортируемая этого не содержит.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Для импорта требуется совместимость версий схемы обеих баз данных. Допускается импорт базы данных более ранней или равной версии в базу данных более поздней версии.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Осторожно</p>
+<p>Операция импорта немедленно изменяет текущую открытую базу данных. Перед импортом другой базы данных рекомендуется создать резервную копию.</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2>Редактирование позиции<a class="headerlink" href="#editer-une-position" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы отредактировать позицию, нажмите <em>TAB</em> для открытия панели поиска и редактора позиций. Редактируйте позицию с помощью мыши:</p>
+<ul class="simple">
+<li><p>нажимайте на пункты для добавления шашек. Левая кнопка мыши назначает шашки игроку 1. Правая кнопка мыши назначает шашки игроку 2. Чтобы расставить прайм, нажмите на начальный пункт, удерживайте кнопку и отпустите на конечном пункте. Нажмите на бар для постановки шашек на бар.</p></li>
+<li><p>чтобы очистить позицию, дважды щёлкните на пустой области за пределами доски или нажмите клавишу <em>BACKSPACE</em>.</p></li>
+<li><p>чтобы передать куб игроку 1, нажмите левую кнопку мыши на кубе. Чтобы передать куб игроку 2, нажмите правую кнопку мыши на кубе.</p></li>
+<li><p>чтобы указать игрока, чья очередь хода, нажмите в область, предназначенную для кубиков.</p></li>
+<li><p>чтобы изменить значение кубиков, нажмите левую кнопку мыши для увеличения значения кубика, правую — для уменьшения. Если грани кубиков пусты, это означает, что позиция является решением куба.</p></li>
+<li><p>чтобы изменить счёт игроков, нажмите левую кнопку мыши для увеличения счёта, правую — для уменьшения.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Ввод позиции мышью для шашек выполняется так же, как в XG.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2>Добавление позиции в базу данных<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>После редактирования позиции открывается панель поиска.</p>
+<p>Чтобы сохранить полученную позицию, нажмите <em>CTRL-S</em> или кнопку <em>Сохранить позицию</em> на панели инструментов.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Откройте командную строку и выполните: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2>Добавление тега к позиции<a class="headerlink" href="#etiqueter-une-position" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы добавить тег <em>toto</em> к текущей позиции, откройте командную строку нажатием <em>ПРОБЕЛ</em>, введите <code class="docutils literal notranslate"><span class="pre">#toto</span></code> и подтвердите команду клавишей <em>ENTER</em>.</p>
+</section>
+<section id="supprimer-une-position">
+<h2>Удаление позиции<a class="headerlink" href="#supprimer-une-position" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы удалить текущую позицию из базы данных, нажмите <em>Del</em> или кнопку <em>Удалить позицию</em> на панели инструментов.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>В командной строке выполните <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Осторожно</p>
+<p>Перед этим запрашивается подтверждение. Удаление действительно происходит, но копия позиции хранится тридцать дней: см. <a class="reference internal" href="manuel.html#corbeille"><span class="std std-ref">Корзина</span></a>.</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2>Импорт позиции из XG<a class="headerlink" href="#import-une-position-depuis-xg" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы импортировать позицию непосредственно из XG,</p>
+<ol class="arabic simple">
+<li><p>откройте в XG позицию для импорта и нажмите <em>CTRL-C</em>,</p></li>
+<li><p>переключитесь на blunderDB и нажмите <em>CTRL-V</em>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Автовставка определяет формат источника (XG, GNUbg, BGBlitz), а также идентификатор OGID из OpenGammon.</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2>Импорт матча<a class="headerlink" href="#importer-un-match" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB может импортировать матчи из различных источников.</p>
+<p><strong>Поддерживаемые форматы:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): файлы <em>.xg</em> и <em>.xgp</em> (позиции)</p></li>
+<li><p>GNUbg: файлы <em>.sgf</em></p></li>
+<li><p>Jellyfish: файлы <em>.mat</em> и <em>.txt</em></p></li>
+<li><p>BGBlitz: файлы <em>.bgf</em> и <em>.txt</em></p></li>
+</ul>
+<p><strong>Импорт одного или нескольких файлов матча:</strong></p>
+<ol class="arabic simple">
+<li><p>Нажмите <em>CTRL-I</em> или кнопку <em>Импорт позиции или матча</em> на панели инструментов.</p></li>
+<li><p>Выберите один или несколько файлов для импорта.</p></li>
+<li><p>blunderDB автоматически определяет формат и импортирует матч.</p></li>
+<li><p>Окно хода работы показывает, сколько файлов импортировано, не удалось и пропущено (дубликаты), а затем <strong>отчёт об импорте</strong>.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Команда: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB автоматически определяет дубликаты и предотвращает повторный импорт матча, уже присутствующего в базе данных.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2>Импорт папки с матчами<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы рекурсивно импортировать все файлы матчей из папки и её подпапок:</p>
+<ol class="arabic simple">
+<li><p>Нажмите <em>CTRL-SHIFT-F</em> или соответствующую кнопку в панели инструментов.</p></li>
+<li><p>Выберите папку, содержащую файлы матчей.</p></li>
+<li><p>blunderDB автоматически собирает и импортирует все распознанные файлы (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="le-compte-rendu-d-import">
+<span id="compte-rendu-import"></span><h2>Отчёт об импорте<a class="headerlink" href="#le-compte-rendu-d-import" title="Ссылка на этот заголовок"></a></h2>
+<p>Импорт заканчивается отчётом о <strong>том, что он только что принёс</strong>, а не простым подсчётом прочитанных файлов:</p>
+<ul class="simple">
+<li><p>новые позиции, и среди них те, которые исходная программа отметила для изучения;</p></li>
+<li><p><strong>PR этого импорта</strong> — тот же показатель, что и в статистике, вычисленный только по этой партии. Он относится к вашим решениям, когда база знает ваше имя (поле <em>Пользователь</em> в окне идентичности), к обоим игрокам в противном случае, и отчёт говорит, к чему именно;</p></li>
+<li><p>позиции, которые не оценил ни один движок, с кнопкой запуска анализа;</p></li>
+<li><p><strong>пять самых дорогих решений</strong>, кликабельных: один щелчок открывает позицию.</p></li>
+</ul>
+<p>Нулевой PR при нуле решений — это не безупречная партия, а отсутствие анализа: отчёт так и пишет.</p>
+<p>Каждый импорт записывается как <strong>партия</strong>. Командная строка находит их позже:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+<span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>Измеряемая половина отчёта — позиции без анализа, PR, худшие решения — пересчитывается при каждом чтении. Партия, позиции которой с тех пор были проанализированы, возвращает поэтому сегодняшние цифры, а не цифры дня импорта.</p>
+</section>
+<section id="la-file-d-etude">
+<span id="file-etude"></span><h2>Очередь разбора<a class="headerlink" href="#la-file-d-etude" title="Ссылка на этот заголовок"></a></h2>
+<p>Отчёт отвечает на вопрос «что только что произошло?». Кнопка <strong>Пройти</strong> отвечает на следующий: «что я смотрю теперь?». Она открывает <strong>упорядоченную очередь</strong> позиций этого пакета, заслуживающих второго взгляда, и выводит их на доску по одной:</p>
+<ol class="arabic simple">
+<li><p>решения, которые <strong>чего-то стоили</strong>, самое дорогое первым — то, ради чего вы пришли;</p></li>
+<li><p>позиции, <strong>отмеченные в исходной программе</strong>: вы уже сказали, в другом месте, что эта интересна;</p></li>
+<li><p><strong>спорные решения о кубе</strong>: ничего не потеряно, но правильный ответ был неочевиден.</p></li>
+</ol>
+<p>Позиция появляется лишь один раз — под первой причиной, которая её заявляет: отмеченный бландер остаётся бландером, и предложить его дважды значило бы заставить очередь лгать о собственной длине. Проход ограничен пятьюдесятью позициями: очередь, которую никто не заканчивает, — это очередь, которую никто не начинает.</p>
+<p>Во время прохода над доской появляется полоса: прогресс («3 / 25»), причина этой позиции, матч, из которого она взята, и действия. Три из них просто открывают панель, где действие уже живёт, — <strong>Комментарий</strong>, <strong>Коллекция</strong>, <strong>Карточка Anki</strong>, — потому что эти действия существуют со своими правилами, и переделывать их в полосе значило бы сделать их полукопиями. <strong>Пропустить</strong> идёт дальше, <strong>Назад</strong> исправляет щелчок, <strong>Выйти</strong> останавливает. Остальная часть приложения продолжает работать: именно это позволяет действовать, не покидая очередь.</p>
+<p><strong>Ничего не сохраняется, и ничто не отмечает, что позиция была просмотрена.</strong> То, что вы с ней делаете — комментарий, коллекция, карточка, — <em>и есть</em> запись, и больше хранить нечего. Поэтому запустить ту же очередь позже совершенно законно, и она будет той же.</p>
+<p>Тот же список доступен в командной строке:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span><span class="w"> </span>--queue
+</pre></div>
+</div>
+</section>
+<section id="glisser-deposer">
+<h2>Перетаскивание<a class="headerlink" href="#glisser-deposer" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB поддерживает перетаскивание. На окно blunderDB можно перетащить:</p>
+<ul class="simple">
+<li><p>файлы матчей или позиций (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>) для их импорта,</p></li>
+<li><p>файлы баз данных (<em>.db</em>) для их открытия или слияния с текущей базой данных,</p></li>
+<li><p>папки для рекурсивного импорта всех содержащихся в них файлов.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2>Навигация по матчу<a class="headerlink" href="#naviguer-dans-un-match" title="Ссылка на этот заголовок"></a></h2>
+<p>Для навигации по импортированному матчу:</p>
+<ol class="arabic simple">
+<li><p>Откройте панель матчей с помощью <em>CTRL-Tab</em>.</p></li>
+<li><p>Дважды щёлкните на матче или нажмите <em>ENTER</em>.</p></li>
+<li><p>Используйте клавиши <em>LEFT</em> / <em>RIGHT</em> для перехода между ходами.</p></li>
+<li><p>Используйте <em>PageUp</em> / <em>PageDown</em> для перехода между партиями.</p></li>
+<li><p>Нажмите <em>CTRL-L</em> для отображения анализа.</p></li>
+<li><p>Нажмите <em>d</em> для переключения между анализом ходов шашками и анализом куба.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Сочетание клавиш: <em>CTRL-Tab</em> для открытия панели матчей. Команда: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB запоминает последнюю просмотренную позицию в каждом матче. При возврате к матчу последняя посещённая позиция восстанавливается автоматически.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2>Управление панелью матчей<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель матчей (<em>CTRL-Tab</em>) позволяет:</p>
+<ul class="simple">
+<li><p>просматривать список всех импортированных матчей (отсортированных от новейших к старейшим),</p></li>
+<li><p>сортировать матчи по столбцам (игрок 1, игрок 2, дата, длина матча, турнир),</p></li>
+<li><p>редактировать имена игроков или дату двойным щелчком по полям,</p></li>
+<li><p>менять местами игрока 1 и игрока 2 с помощью кнопки перестановки,</p></li>
+<li><p>назначать матч турниру,</p></li>
+<li><p>удалять матч с помощью клавиши <em>Del</em>.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<span id="guide-collections"></span><h2>Управление коллекциями<a class="headerlink" href="#gerer-les-collections" title="Ссылка на этот заголовок"></a></h2>
+<p>Коллекции позволяют организовывать позиции в пользовательские группы. Для доступа к панели коллекций нажмите <em>CTRL-B</em>.</p>
+<p><strong>Создание коллекции:</strong></p>
+<ol class="arabic simple">
+<li><p>Откройте панель коллекций (<em>CTRL-B</em>).</p></li>
+<li><p>Введите имя новой коллекции в поле <em>Новая коллекция…</em> внизу панели, затем подтвердите нажатием <em>ENTER</em>.</p></li>
+</ol>
+<p><strong>Добавление позиций в коллекцию:</strong></p>
+<ol class="arabic simple">
+<li><p>Выберите нужные позиции.</p></li>
+<li><p>Добавьте их в коллекцию из панели коллекций.</p></li>
+</ol>
+<p><strong>Просмотр коллекции:</strong></p>
+<ul class="simple">
+<li><p>Дважды щёлкните на коллекции для просмотра её позиций. Порядок коллекций и позиций можно изменить перетаскиванием.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Команда: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2>Управление турнирами<a class="headerlink" href="#gerer-les-tournois" title="Ссылка на этот заголовок"></a></h2>
+<p>Турниры позволяют организовывать импортированные матчи по событиям. Для доступа к панели турниров нажмите <em>CTRL-Y</em>.</p>
+<p><strong>Создание турнира:</strong></p>
+<ol class="arabic simple">
+<li><p>Откройте панель турниров (<em>CTRL-Y</em>).</p></li>
+<li><p>Введите название турнира в поле <em>Новый турнир…</em>, затем подтвердите нажатием <em>ENTER</em>.</p></li>
+</ol>
+<p><strong>Назначение матча турниру:</strong></p>
+<ul class="simple">
+<li><p>В панели матчей (<em>CTRL-Tab</em>) используйте выпадающее меню в столбце турнира для назначения матча.</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2>Просмотр статистики производительности<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель Stats позволяет просматривать показатели производительности (PR и стоимость MWC) на основе импортированных позиций.</p>
+<ol class="arabic simple">
+<li><p>Нажмите <em>CTRL-D</em> или перейдите на вкладку Stats в нижней панели.</p></li>
+<li><p>Используйте панель фильтров для ограничения анализа по игроку, турниру, диапазону дат, типу решения или длине матча.</p></li>
+<li><p>Нажмите на показатель для перехода непосредственно к соответствующим позициям.</p></li>
+</ol>
+</section>
+<section id="evaluer-une-position-panneau-eval">
+<h2>Оценка позиции (панель Eval)<a class="headerlink" href="#evaluer-une-position-panneau-eval" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель Eval оценивает любую позицию — не только гонку. На позиции чистого выброса она вычисляет EPC (Effective Pip Count, см. <a class="reference internal" href="glossaire.html#glossaire"><span class="std std-ref">Глоссарий</span></a>) и другие статистики выброса; на любой другой позиции встроенный оценщик gammonNet выдаёт ходы-кандидаты или решение по кубу, офлайн, без XG и GNUbg.</p>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="_images/panel_eval.png"><img alt="Панель Eval при решении о ходе шашками" src="_images/panel_eval.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Eval: шансы на выигрыш/гаммон/бэкгаммон, эквити и ошибка каждого кандидатского хода, рассчитанные gammonNet.</span><a class="headerlink" href="#id7" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p>Нажмите <em>CTRL-E</em>, щёлкните вкладку Eval на нижней панели, или выполните команду <code class="docutils literal notranslate"><span class="pre">epc</span></code>: панель открывается с пустой доской, готовой к редактированию.</p></li>
+<li><p>Чтобы оценить уже показанную позицию (позицию из библиотеки или позицию из просматриваемого матча) вместо пустой доски, щёлкните правой кнопкой мыши по доске, затем <em>Оценить эту позицию</em> — показанная позиция отправляется как есть на панель Eval.</p></li>
+<li><p>Вся доска редактируется щелчком или с клавиатуры: шашки, кости, счёт, положение куба, игрок, чей ход. Редактирование только шашек в доме (последние 6 пунктов) с обеих сторон переводит позицию в режим беароффа.</p></li>
+<li><p>Результаты отображаются в реальном времени: в чистом беароффе — EPC, среднее число бросков, стандартное отклонение, pip count и wastage, вероятность выигрыша игрока, чей ход, и, в точной области, денежный вердикт по кубу; на любой другой позиции с выставленными костями — кандидатские ходы, отсортированные по эквити; без костей — решение по кубу. См. раздел «Методология и допущения панели Eval» руководства.</p></li>
+<li><p>Чтобы тренироваться в оценке этих величин, установите флажок <em>Défi</em> (режим «Вызов»): результаты скрываются при каждом изменении и открываются зона за зоной, щелчком.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Панель работает для обоих игроков одновременно.</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2>Просмотр анализа позиции, импортированной из XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Ссылка на этот заголовок"></a></h2>
+<p>Если позиция, проанализированная XG, GNUbg или BGBlitz, была импортирована в blunderDB, анализ можно отобразить, нажав <em>CTRL-L</em>.</p>
+<p>Если позиция соответствует решению о ходе шашками, пять лучших ходов отображаются в отдельных строках. Для каждой строки информация приведена в следующем порядке: ход шашками, нормализованное эквити, ошибка эквити хода, шансы на выигрыш, гэммон и бэкгэммон игрока, шансы на выигрыш, гэммон и бэкгэммон противника, уровень анализа.</p>
+<p>Если позиция соответствует решению куба, отображается стоимость каждого решения, а также шансы на выигрыш в данной позиции.</p>
+<p>Когда для одной позиции присутствует несколько движков анализа (например, XG и GNUbg), дополнительный столбец указывает исходный движок для каждого анализа.</p>
+<p>При навигации по матчу фактически сыгранный ход выделяется в списке ходов. Если позиция встречалась в нескольких матчах, указываются все сыгранные ходы.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>При нажатии на ход в панели анализа на доске отображаются соответствующие стрелки.</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2>Экспорт позиции в XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы экспортировать позицию из blunderDB в XG,</p>
+<ol class="arabic simple">
+<li><p>откройте в blunderDB позицию для экспорта и нажмите <em>CTRL-C</em>,</p></li>
+<li><p>переключитесь на XG и нажмите <em>CTRL-V</em>.</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2>Просмотр различных позиций<a class="headerlink" href="#visualiser-les-differentes-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>Для просмотра различных позиций текущей библиотеки используйте клавиши <em>LEFT</em> и <em>RIGHT</em>. Клавиша <em>HOME</em> переходит к первой позиции. Клавиша <em>END</em> переходит к последней позиции.</p>
+<p>Чтобы отобразить снятие шашек слева, нажмите <em>CTRL-LEFT</em>. Чтобы отобразить снятие шашек справа, нажмите <em>CTRL-RIGHT</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2>Поиск позиций по критериям<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Ссылка на этот заголовок"></a></h2>
+<p>Для поиска типов позиций:</p>
+<ul class="simple">
+<li><p>нажмите <em>TAB</em> для открытия панели поиска,</p></li>
+<li><p>отредактируйте структуру позиции для поиска. blunderDB отфильтрует позиции, содержащие <em>как минимум</em> введённую структуру шашек. При неуверенности, для получения максимального количества результатов, очистите позицию клавишей <em>BACKSPACE</em>. При необходимости отредактируйте позицию куба и счёт.</p></li>
+</ul>
+<p>Панель поиска предлагает две структуры шашек, выбираемые с помощью вкладок <em>Не менее</em> и <em>Кроме</em> в верхней части панели:</p>
+<ul class="simple">
+<li><p><em>Не менее</em> (по умолчанию): blunderDB фильтрует позиции, содержащие <em>как минимум</em> введённую структуру шашек;</p></li>
+<li><p><em>Кроме</em>: blunderDB исключает позиции, содержащие одну из введённых шашек. Доска обводится красным при редактировании этой структуры. Позиция отклоняется, если она содержит <em>хотя бы один</em> из нарисованных элементов (например, нарисовав шашку на пунктах 1, 3 и 5, вы сохраните только позиции без шашек на этих пунктах). Количество шашек на пункте не ограничено: указание 3 шашек на пункте исключает позиции с 3 и более шашками в этом месте (полезно для поиска закрытого пункта без запасной шашки). Два быстрых щелчка по пункту помечают его как обязательно пустой (красная штрихованная клетка, без шашек любого цвета); одиночный щелчок по этому пункту снимает отметку.</p></li>
+</ul>
+<p>Если пункт входит в обе структуры, критерий <em>Кроме</em> имеет приоритет, когда он противоречит критерию <em>Не менее</em>.</p>
+<p>Метод 1 (простой):</p>
+<ul class="simple">
+<li><p>Откройте окно поиска (<em>CTRL-F</em>).</p></li>
+<li><p>Добавьте и настройте фильтры поиска.</p></li>
+<li><p>Подтвердите нажатием кнопки <em>Поиск</em>.</p></li>
+</ul>
+<p>Метод 2 (расширенный):</p>
+<ul class="simple">
+<li><p>откройте командную строку нажатием <em>ПРОБЕЛ</em>,</p></li>
+<li><p>введите <em>s</em>, добавьте дополнительные фильтры при необходимости (например, <em>cube</em> или <em>score</em> для учёта куба и счёта соответственно. Смотрите <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a> для полного списка доступных фильтров).</p></li>
+<li><p>подтвердите запрос нажатием <em>ENTER</em>.</p></li>
+</ul>
+<p>Отображаемые позиции — это позиции из базы данных, соответствующие критериям поиска, введённым пользователем.</p>
+</section>
+<section id="pour-aller-plus-loin">
+<h2>Что дальше<a class="headerlink" href="#pour-aller-plus-loin" title="Ссылка на этот заголовок"></a></h2>
+<p>Это руководство охватывает наиболее частые сценарии. В blunderDB есть ещё несколько возможностей, подробно описанных в руководстве:</p>
+<ul class="simple">
+<li><p><strong>Интервальное повторение (Anki)</strong> — панель Anki (<em>CTRL-K</em>) превращает коллекцию или поиск в колоду карточек для повторения по алгоритму FSRS, а свободный режим тренировки (<em>cram</em>) не сбивает расписание. См. <a class="reference internal" href="manuel.html#panneau-anki"><span class="std std-ref">Панель Anki</span></a>.</p></li>
+<li><p><strong>Несколько видов</strong> — панель вкладок под панелью инструментов позволяет держать открытыми параллельно несколько независимых рабочих пространств (например, поиск и просмотр матча), у каждого свой список позиций и свой контекст. См. <a class="reference internal" href="manuel.html#onglets-vues"><span class="std std-ref">Вкладки представлений</span></a>.</p></li>
+<li><p><strong>Распространение с водяным знаком</strong> — экспорт можно подписать вашей идентичностью издателя (неподделываемый водяной знак, указывающий происхождение файла) и защитить паролем на время передачи. См. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>.</p></li>
+<li><p><strong>Экскурсии и демонстрационная база</strong> — команда <code class="docutils literal notranslate"><span class="pre">tour</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>) открывает каталог экскурсий по интерфейсу, а команда <code class="docutils literal notranslate"><span class="pre">demo</span></code> загружает пример базы, чтобы познакомиться с инструментом без собственной базы. См. <a class="reference internal" href="manuel.html#visites-guidees"><span class="std std-ref">Обучающие туры и образец базы данных</span></a>.</p></li>
+<li><p><strong>Загрузить худшие ошибки</strong> — команда <code class="docutils literal notranslate"><span class="pre">bl</span></code> (или <code class="docutils literal notranslate"><span class="pre">blunders</span></code>) загружает худшие ошибки (эквити или MWC) прямо в вид анализа, согласно текущему фильтру панели статистики, без ручного поиска. См. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="Загрузка и установка" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="manuel.html" class="btn btn-neutral float-right" title="Руководство" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

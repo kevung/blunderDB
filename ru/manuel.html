@@ -1,0 +1,1102 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Руководство &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Список команд" href="cmd_mode.html" />
+    <link rel="prev" title="Руководство пользователя" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/manuel.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/manuel.html" lang="en" hreflang="en">English</a>
+  <a href="../de/manuel.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/manuel.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/manuel.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/manuel.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/manuel.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/manuel.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Руководство</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">Основные взаимодействия</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">Описание интерфейса</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglets-de-vues">Вкладки представлений</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Конфигурация</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dossier-surveille">Отслеживаемая папка</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visites-guidees-et-base-d-exemple">Обучающие туры и образец базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">Навигация по позициям</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">Редактирование позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">Панель комментариев</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#les-tags">Теги</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#la-corbeille">Корзина</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">Панель поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">Панель коллекций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">Импорт: что записывается, а что — никогда</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">Панель турниров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">Панель Stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Введение</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">Открытие панели</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">Панель фильтров</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">Перспектива игрока</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">Доступные фильтры</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">Переключение PR / MWC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#le-rapport-html">Отчёт в HTML</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">Вкладка Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">Карточки уровня</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">Скользящий PR за последние N решений</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">Топ грубых ошибок</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">Вкладка Progression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">График по турнирам</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">Диаграмма рассеяния по матчам</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">Вкладка Erreurs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">Разбивка по действиям куба</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#direction-des-erreurs-de-videau">Направление ошибок с кубом</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">Сравнение Checker / Cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">Гистограмма величин ошибок</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-ventilations">Вкладка Разбивки</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#etude-et-jeu-reel">Учёба и реальная игра</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-joueurs">Вкладка «Игроки»</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">Правило агрегации</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">MWC: ограничения</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-eval">Панель Eval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#matrice-du-videau">Матрица куба</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#amener-une-position-dans-le-panneau-eval">Перенос позиции в панель Eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methodologie-et-hypotheses-du-panneau-eval">Методология и допущения панели Eval</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">Панель Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#micro-entrainements">Микротренировки</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#quiz-le-pr-d-entrainement">Викторина: тренировочный PR</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">Панель метаданных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diffuser-une-base-origine-et-mot-de-passe">Распространение базы: происхождение и пароль</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#marquer-une-base-de-son-origine">Пометить базу её происхождением</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#identite-d-emetteur">Идентичность автора</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proteger-une-base-par-un-mot-de-passe">Защита базы паролем</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lire-l-origine-d-un-fichier">Как прочитать происхождение файла</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publier-une-base-pour-d-autres">Публикация базы для других</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Руководство</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1>Руководство<a class="headerlink" href="#manuel" title="Ссылка на этот заголовок"></a></h1>
+<section id="introduction">
+<h2>Введение<a class="headerlink" href="#introduction" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB — программа для создания баз данных позиций нардов. Её главное преимущество — единое место для накопления позиций, с которыми игрок сталкивался (онлайн, на турнирах), и возможность их повторного изучения с фильтрацией по произвольно комбинируемым критериям. blunderDB также можно использовать для создания каталогов эталонных позиций.</p>
+<p>Позиции хранятся в базе данных, представленной файлом <em>.db</em>. Настольное приложение открывает этот файл напрямую, а не сетевой адрес: серверный режим (<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>) — это другой режим того же двоичного файла, и переход от одного к другому делается экспортом или миграцией базы, а не указанием приложению URL.</p>
+</section>
+<section id="interactions-principales">
+<h2>Основные взаимодействия<a class="headerlink" href="#interactions-principales" title="Ссылка на этот заголовок"></a></h2>
+<p>Основные взаимодействия с blunderDB:</p>
+<ul class="simple">
+<li><p>добавить новую позицию,</p></li>
+<li><p>изменить существующую позицию,</p></li>
+<li><p>скопировать изображение доски в буфер обмена (PNG) с помощью <strong>CTRL-X</strong> или с полным анализом через <strong>CTRL-X CTRL-X</strong>,</p></li>
+<li><p>удалить существующую позицию,</p></li>
+<li><p>искать одну или несколько позиций,</p></li>
+<li><p>импортировать матчи из различных источников (XG, GNUbg, BGBlitz, Jellyfish), включая комментарии из файлов XG,</p></li>
+<li><p>навигировать по ходам импортированного матча,</p></li>
+<li><p>организовывать позиции в коллекции,</p></li>
+<li><p>организовывать матчи в турниры.</p></li>
+</ul>
+<p>Пользователь может свободно присваивать позициям метки и аннотировать их комментариями.</p>
+</section>
+<section id="description-de-l-interface">
+<h2>Описание интерфейса<a class="headerlink" href="#description-de-l-interface" title="Ссылка на этот заголовок"></a></h2>
+<p>Интерфейс blunderDB состоит сверху вниз из:</p>
+<ul class="simple">
+<li><p>[вверху] панель инструментов, объединяющая все основные операции с базой данных,</p></li>
+<li><p>[по центру] основная область отображения, позволяющая отображать или редактировать позиции нардов,</p></li>
+<li><p>[внизу] строка состояния, отображающая различную информацию о базе данных или текущей позиции и содержащая командную строку.</p></li>
+</ul>
+<p>Панели могут быть отображены для:</p>
+<ul class="simple">
+<li><p>отображения данных анализа текущей позиции из eXtreme Gammon (XG), GNUbg или BGBlitz,</p></li>
+<li><p>отображения, добавления или изменения комментариев,</p></li>
+<li><p>поиска и фильтрации позиций по комбинируемым критериям,</p></li>
+<li><p>отображения и управления коллекциями позиций (панель коллекций),</p></li>
+<li><p>отображения списка импортированных матчей и навигации по ходам матча (панель матчей),</p></li>
+<li><p>отображения и управления турнирами (панель турниров),</p></li>
+<li><p>отображения статистики производительности (панель Stats),</p></li>
+<li><p>вычисления EPC (Effective Pip Count) позиции снятия шашек (панель Eval),</p></li>
+<li><p>изучения позиций методом интервального повторения (панель Anki),</p></li>
+<li><p>просматривать метаданные базы данных (панель «Метаданные»).</p></li>
+</ul>
+<p>Модальные окна могут отображаться для:</p>
+<ul class="simple">
+<li><p>отображения справки blunderDB,</p></li>
+<li><p>открыть каталог обучающих туров (см. <a class="reference internal" href="#visites-guidees"><span class="std std-ref">Обучающие туры и образец базы данных</span></a>),</p></li>
+<li><p>настройки экспорта базы данных,</p></li>
+<li><p>настройки blunderDB, в том числе языка интерфейса (см. <a class="reference internal" href="#configuration"><span class="std std-ref">Конфигурация</span></a>).</p></li>
+</ul>
+<p>Основная область отображения предоставляет пользователю:</p>
+<ul class="simple">
+<li><p>доску для отображения или редактирования позиции нардов,</p></li>
+<li><p>уровень и владельца куба,</p></li>
+<li><p>пипкаунт каждого игрока,</p></li>
+<li><p>счёт каждого игрока,</p></li>
+<li><p>кости для розыгрыша. Если на костях не показаны значения, положение костей указывает, чей ход, и что позиция является решением по кубу. Когда решение по кубу — это ответ на удвоение (тейк/пас), предложенный куб отображается в центре доски, на предложенном значении.</p></li>
+</ul>
+<p id="board-menu-contextuel">Щелчок правой кнопкой по доске открывает контекстное меню: оценить показанную позицию в панели Eval, оценить её зеркало, скопировать изображение доски с анализом в буфер обмена (эквивалент <em>CTRL-X CTRL-X</em>, менее заметный), <strong>сохранить изображение в файл</strong> в SVG или PNG, открыть новый вид на эту позицию и — если позиция уже из базы — добавить её в колоду Anki (интервальное повторение).</p>
+<p>Буфер обмена — повседневный жест; сохранение — другая нужда: иллюстрация к статье, к сообщению на форуме, к уроку. <strong>SVG</strong> предлагается потому, что доска им и является: это форма, которая переживает увеличение, та, что попадает в документ без размытия. PNG производится из неё, как и копия в буфер: одна отрисовка, три назначения — значит, ни одно не может разойтись с другими. Это меню не появляется ни в панели Eval, ни в панели поиска, где правая кнопка уже расставляет шашки другого цвета. См. <a class="reference internal" href="#eval-amener-position"><span class="std std-ref">Перенос позиции в панель Eval</span></a> о том, как перенести позицию в панель Eval.</p>
+<p>Строка состояния структурирована слева направо следующей информацией:</p>
+<ul class="simple">
+<li><p>командная строка, доступная при нажатии клавиши <em>ПРОБЕЛ</em>,</p></li>
+<li><p>информационное сообщение, связанное с выполненной пользователем операцией,</p></li>
+<li><p>индекс текущей позиции, а за ним число позиций в текущей библиотеке (или сведения о ходе и партии при просмотре матча),</p></li>
+<li><p><strong>счётчик библиотеки</strong> — «позиций 412 · бландеров 38 · матчей 5» — где каждое число <strong>открывает то, что оно считает</strong>: позиции, подготовленный в командной строке поиск <code class="docutils literal notranslate"><span class="pre">E&gt;100</span></code> или список матчей. Число, за которым нельзя пойти, — украшение. Порог бландера тот же, что в статистике, сто миллипунктов: два порога заставили бы одно слово значить два разных.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В случае позиций, полученных в результате поиска пользователем, количество позиций в строке состояния соответствует числу отфильтрованных позиций.</p>
+</div>
+<p>Вкладка <strong>Anki</strong> несёт <strong>бейдж</strong>, когда есть карточки к повторению, по всем колодам. Это число — причина открыть вкладку; ему нечего делать за ней. Ноль не показывается: бейдж с «0» — шум.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">log</span></code> открывает <strong>журнал работы</strong>: последние двести строк файла журнала, кнопку для их копирования — ровно то, что нужно, чтобы приложить отчёт к сообщению, — и другую, чтобы открыть содержащую их папку. Журнал не фильтруется и не переформатируется: приглаженный журнал уже нельзя процитировать.</p>
+<p>В <strong>истории поиска</strong> панели поиска каждый токен сохранённой команды показан именованной плашкой — <em>Без контакта</em>, <em>Ошибка хода</em> — а не голым токеном. Точная команда остаётся в подсказке, ведь запускается именно она; а токен, которого blunderDB не знает, показывается <strong>как есть</strong>, а не переведённым к ближайшему.</p>
+</section>
+<section id="onglets-de-vues">
+<span id="onglets-vues"></span><h2>Вкладки представлений<a class="headerlink" href="#onglets-de-vues" title="Ссылка на этот заголовок"></a></h2>
+<p>Под панелью инструментов панель вкладок позволяет работать с несколькими <strong>представлениями</strong> параллельно. Каждое представление — это независимое рабочее пространство, которое сохраняет собственный список позиций, индекс текущей позиции, отображаемую позицию, анализ и выбранный ход, активную панель, текущий комментарий, а также контекст навигации по матчу. Так, например, можно держать открытым поиск в одном представлении, просматривая матч в другом.</p>
+<ul class="simple">
+<li><p><strong>Создать представление</strong>: нажать кнопку <em>+</em> на панели вкладок или клавиши <em>CTRL-T</em>. Новое представление создаётся как копия текущего.</p></li>
+<li><p><strong>Закрыть представление</strong>: нажать крестик на вкладке или клавиши <em>CTRL-W</em>. Последнее представление закрыть нельзя.</p></li>
+<li><p><strong>Переключить представление</strong>: нажать на вкладку, нажать <em>CTRL-PageUp</em> / <em>CTRL-PageDown</em> (или <em>SHIFT-J</em> / <em>SHIFT-K</em>) для перехода к предыдущему / следующему представлению, либо <em>CTRL-1</em>–<em>CTRL-9</em> для прямого перехода к n-му представлению.</p></li>
+<li><p><strong>Переименовать представление</strong>: дважды щёлкнуть по вкладке, ввести новое имя и подтвердить клавишей <em>ENTER</em>.</p></li>
+</ul>
+<p>Представления сохраняются вместе с состоянием сессии базы данных и восстанавливаются при её повторном открытии.</p>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2>Конфигурация<a class="headerlink" href="#configuration" title="Ссылка на этот заголовок"></a></h2>
+<p>Кнопка настроек (значок шестерёнки) на панели инструментов, слева от кнопки справки, открывает окно настроек blunderDB. Оно разделено на шесть вкладок:</p>
+<ul class="simple">
+<li><p><strong>Интерфейс</strong> — язык, масштаб отображения, положение панели;</p></li>
+<li><p><strong>Цвета доски</strong> — цвета игровой доски;</p></li>
+<li><p><strong>Bearoff</strong> — таблицы bearoff, используемые панелью Eval;</p></li>
+<li><p><strong>gammonNet</strong> — настройки встроенного движка оценки, описанные ниже;</p></li>
+<li><p><strong>Отслеживаемая папка</strong> — автоматический импорт матчей, попадающих в папку, описан ниже;</p></li>
+<li><p><strong>Идентичность автора</strong> — ключ, которым подписываются ваши отметки происхождения; описан в разделе <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>.</p></li>
+</ul>
+<p>Вкладка <em>Интерфейс</em> начинается с <strong>темы</strong>: <em>как в системе</em>, <em>светлая</em>, <em>тёмная</em>, <em>высокий контраст</em> или <em>для печати</em>. Тема задаёт цвета интерфейса и <strong>предлагает палитру доски</strong> — тёмный интерфейс вокруг светлой доски это не тёмная тема, а её половина, ведь доска занимает бо́льшую часть окна.</p>
+<p>Последнее слово за вами, и механизм это гарантирует, а не обещает: вкладка <em>Цвета</em> по-прежнему настраивает доску напрямую, и цвет, выбранный после темы, — ваш. При запуске применяются только токены интерфейса, никогда не палитра доски: та, что вы настроили, уже загружена, и переписывать её при каждом запуске значило бы стирать вашу работу сессию за сессией. См. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md">ADR-0038</a>.</p>
+<p><em>Как в системе</em> — значение по умолчанию: оно подчиняется светлой/тёмной настройке рабочего стола, в том числе при её смене посреди сессии. Инструмент не навязывает свой светлый или тёмный вид рабочему столу, который уже решил.</p>
+<p>Вкладка <em>Интерфейс</em> также позволяет выбрать язык: английский, французский, немецкий, итальянский, испанский, финский, японский, греческий или русский. Весь интерфейс (панель инструментов, панели, сообщения, справка) переводится на выбранный язык. Выбор языка сохраняется и переносится из сессии в сессию.</p>
+<p>На той же вкладке есть кнопка <strong>Сжать базу</strong>, возвращающая место на диске, оставшееся после удалений (матчей, турниров, чисток): база никогда не уменьшается сама при удалении данных, сжатие нужно запросить явно. На большой базе операция может занять время и временно требует примерно вдвое больше свободного места, чем размер файла (blunderDB откажется стартовать, вместо того чтобы рисковать прерванным сжатием); поэтому перед запуском спрашивается подтверждение. Результат — сколько места выиграно, в мегабайтах — затем показывается в строке состояния. Та же операция доступна в командной строке через <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>).</p>
+<p>Кнопка <strong>Открыть папку журналов</strong> прямо под ней открывает папку с журналом приложения — это удобно, чтобы приложить подробности к сообщению о проблеме, особенно когда blunderDB запущен из ярлыка или двойным щелчком, без подключённого терминала, который что-либо показал бы.</p>
+<p>Флажок <strong>Проверять обновления при запуске</strong>, по умолчанию выключенный, при каждом запуске один раз обращается к странице релизов репозитория GitHub и показывает в строке состояния сообщение, если доступна более новая версия — но никогда не окно, мешающее работе. При установке через менеджер пакетов (Flatpak, Homebrew, пакет дистрибутива…) эта проверка автоматически остаётся выключенной: обновлениями тогда занимается этот канал, а не сам blunderDB.</p>
+<p>Вкладка <em>Цвета доски</em> позволяет настроить цвета доски. У каждого элемента свой выбор цвета: фон, рамка, светлые и тёмные пункты, шашки игрока 1 и игрока 2, кубики, точки на кубиках и куб удвоения. Кнопка <em>Сбросить</em> возвращает все цвета по умолчанию. Как и язык, выбранные цвета сохраняются между сеансами.</p>
+<p>Вкладка <em>Bearoff</em> управляет таблицами выбрасывания панели Eval (см. <a class="reference internal" href="#panneau-epc"><span class="std std-ref">Панель Eval</span></a>). Они <strong>не встроены в исполняемый файл и не загружаются</strong>: blunderDB вычисляет их на машине, которая ими пользуется, и результат побайтово совпадает с тем, что выдаёт gnubg — отпечаток SHA-256 проверяется до того, как таблица принимается.</p>
+<p>Две обычные таблицы (TS-06-06 для решения по кубу, OS-06 для EPC) вычисляются при первом запуске, в фоне и ни о чём не спрашивая: около шести секунд на одном ядре, в течение которых приложением пользуются как обычно. Панель Eval упоминает об этом, только если в неё поставлена позиция, которой нужна ещё не готовая таблица.</p>
+<p>Вкладка показывает активную область и её происхождение, состояние односторонней таблицы, которую читает EPC, папку, где всё это живёт, и список имеющихся таблиц с их размером и вердиктом. Каждая строка удаляется отдельно, после подтверждения.</p>
+<p><strong>Проверена или не проверена.</strong> <em>Проверенная</em> таблица имеет ровно те байты, которые gnubg производит для её области: её отпечаток SHA-256 записан в blunderDB и был найден снова. Отпечатки, записанные для односторонних таблиц (от OS-06 до OS-10), — это отпечатки, которые производит инструмент <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> из GNUbg 1.08. <em>Непроверенная</em> таблица корректна, но для её области отпечаток не записан — к ней нет претензий, просто никто не сравнивал её с эталоном. <em>Повреждённая</em> таблица противоречит сама себе и никогда не читается; она пересчитывается.</p>
+<p><strong>Вычислить более широкую таблицу.</strong> Область выбирается из списка двух семейств вместе с числом ядер (по умолчанию все, кроме одного, чтобы машина оставалась пригодной для работы):</p>
+<ul class="simple">
+<li><p><strong>точный куб (двусторонняя)</strong>, от TS-06-06 до TS-06-15: расширяет область, где вероятность выигрыша и вердикт куба читаются, а не оцениваются;</p></li>
+<li><p><strong>EPC вне дома (односторонняя)</strong>, от OS-06 до OS-10: расширяет расстояние, на котором может стоять шашка без того, чтобы блок EPC умолк. Этот проход читает только позиции меньше вычисляемой, поэтому он последователен по построению и число ядер ему ничего не даёт — выбор говорит это, становясь серым.</p></li>
+</ul>
+<p>Прежде чем что-либо начнётся, вкладка называет для выбранной области три числа: размер на диске, память, нужную во время вычисления, и время, которое оно должно занять <em>на этой машине</em>. Последнее начинается как оценка и становится измерением: каждый достаточно широкий проход фиксирует собственную скорость и сохраняет её. Область, которую доступная память не позволяет, предлагается серой, с указанием причины — «нужно 24 ГБ, осталось 12» есть ответ, отсутствующая строка ответом не была бы.</p>
+<p>Для порядка величины, на машине с шестнадцатью потоками: TS-06-09 весит 191 МБ и требует десятка секунд, TS-06-11 весит 1,2 ГБ и нескольких минут, TS-06-13 превышает то, что большинство машин может удержать в памяти. Со стороны односторонних, на одном ядре: OS-07 весит 4,9 МБ и требует 17 с, OS-08 — 15 МБ и 1 мин 20, OS-10 — 117 МБ и полчаса.</p>
+<p><strong>Пауза и продолжение.</strong> Во время вычисления прогресс показывает <em>измеренное</em> оставшееся время и две отдельные кнопки: <em>Пауза</em> и <em>Отмена</em>. Пауза записывает состояние вычисления рядом с таблицей; повторный запуск продолжает с места остановки, а не начинает заново. Отмена не сохраняет ничего. Закрытие окна настроек ничего не прерывает — вычисление продолжается в фоне.</p>
+<p>Приостановленное вычисление находится при следующем запуске, названным и с числом («TS-06-09 прервана на 43 %»), с кнопками <em>Продолжить</em> и <em>Удалить</em>. Ничто не перезапускается само: остановки просил пользователь.</p>
+<p>Наконец, вкладка позволяет указать внешний двусторонний файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code>, например базу, произведённую самим gnubg: побеждает таблица с самой широкой областью.</p>
+<p>Вкладка <em>Общие</em> несёт наконец <strong>Восстановить анализы</strong>: столбцы анализа, которые опрашивают поиск и статистика, — проекция сохранённых анализов, остающихся нетронутыми. Ошибка проекции, стало быть, исправима без повторного импорта. Это явно и никогда автоматически — переписывать чьи-то столбцы анализа лишь потому, что он открыл свою базу, инструмент не должен делать за его спиной. Та же <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> доступна в командной строке.</p>
+<p>Вкладка <strong>gammonNet</strong> настраивает встроенный движок оценки (см. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md">ADR-0011</a>). В ней задаются две глубины поиска, названные и хранимые раздельно — понижение одной никогда не меняет другую:</p>
+<ul class="simple">
+<li><p><strong>Глубина отображения</strong> — комфорт интерактивной работы при редактировании доски; никогда не записывается в базу.</p></li>
+<li><p><strong>Глубина анализа</strong> — то, что пакетный анализ после импорта записывает в анализ позиции.</p></li>
+</ul>
+<p>Обе по умолчанию равны <strong>2-ply</strong> — канонической конфигурации. Вкладка также предлагает <strong>отсечение</strong> (по умолчанию <code class="docutils literal notranslate"><span class="pre">k=12</span></code>) и <strong>число отображаемых кандидатных ходов</strong> (по умолчанию 10), а также флажок <strong>автоматически анализировать после импорта</strong>, который, будучи включён, после каждого импорта проверяет, остались ли позиции <strong>без какого-либо анализа</strong> (ни gammonNet, ни XG, ни GNUbg, ни BGBlitz — правило гласит: «оценка лишь заполняет пробел», но никогда ничего не заменяет), и при необходимости запускает в фоне анализ gammonNet на настроенной глубине анализа. Кнопка <strong>Анализировать сейчас</strong> вручную перезапускает тот же догоняющий анализ — полезно для базы, созданной до появления этой функции.</p>
+<p>Вторая кнопка, <strong>Повторно проанализировать устаревшие позиции</strong>, покрывает обратный случай: позиция, уже проанализированная gammonNet, но чей сохранённый анализ был записан более старой версией движка, чем работающая сейчас, или на глубине, отличной от настроенной выше глубины анализа, помечается там как устаревшая и переоценивается. Позиция, которая дополнительно несёт анализ XG, GNUbg или BGBlitz, никогда не затрагивается этой кнопкой, независимо от её содержимого gammonNet — защита <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> остаётся безусловной. Число, отображаемое рядом с каждой кнопкой (позиции без анализа, устаревшие позиции), носит чисто информативный характер; партия пересчитывает свой собственный список при запуске.</p>
+<p>Обе партии <strong>ограничены, видимы и отменяемы — никакого молчаливого демона</strong>: их ход (<code class="docutils literal notranslate"><span class="pre">проанализировано</span> <span class="pre">позиций</span> <span class="pre">/</span> <span class="pre">всего</span></code>) и кнопка отмены отображаются в строке состояния всё время их выполнения и исчезают по завершении, уступая место сообщению, подводящему итог результата — сколько позиций было <strong>проанализировано</strong>, сколько было <strong>отклонено</strong> (позиция, которую gammonNet отказывается оценивать, например, счёт матча за пределами диапазона его таблицы, что никогда не является сбоем) и сколько <strong>не удалось</strong> (повторяются без изменений при следующем запуске). Закрытие приложения во время того или другого ничего не теряет: каждая проанализированная позиция записывается по мере готовности, а следующий запуск возобновляет анализ ровно с того места, где он остановился, без какого-либо журнала.</p>
+<p><strong>Матч, импортированный без анализа, теперь получает PR.</strong> Это случай матча, сыгранного онлайн, или файла Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, который никто не пропускал через XG: blunderDB знал его позиции и сыгранные ходы, но никакой анализ не говорил, чего они стоят. После прогона фактически сыгранный ход сравнивается с ранжированием gammonNet, и разница питает PR, долю ошибок, худшие решения и все прочие показатели — ровно так же, как у матча, разобранного в XG. Сравнение ничего не выдумывает: сыгранный ход берётся из таблицы ходов самого матча, записанной при импорте, независимо от того, нёс ли файл анализ.</p>
+<p>Базу, проанализированную более ранней версией, не нужно переоценивать: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> пересчитывает столбцы по уже сохранённым анализам и ходам и возвращает этим матчам их PR (см. <a class="reference internal" href="cli.html#cli-repair"><span class="std std-ref">repair</span></a>).</p>
+<p>Честная оговорка: позиция определяется своей структурой, поэтому позиция, встреченная дважды — раз сыгранная хорошо, раз плохо — несёт только одну разницу, разницу первого записанного вхождения. Это не особенность данного расчёта: библиотека XG устроена ровно так же.</p>
+<section id="dossier-surveille">
+<span id="id3"></span><h3>Отслеживаемая папка<a class="headerlink" href="#dossier-surveille" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Отслеживаемая папка</strong> просит blunderDB во время работы следить за папкой и импортировать каждый файл матча, который в ней <strong>появляется</strong>. Сыграть сессию в eXtreme Gammon, вернуться в blunderDB — и матчи уже там.</p>
+<p>Ничего не угадывается. Пока папка не указана, слежения нет: blunderDB не начинает читать каталог оттого, что предположил, где живут ваши матчи. Кнопка <strong>Предложить</strong> смотрит обычные места на этой машине и предлагает путь только если он действительно существует; иначе она об этом говорит, и указать папку — ваше дело.</p>
+<p>Три вещи стоит знать, прежде чем поставить галочку:</p>
+<ul class="simple">
+<li><p><strong>Импортируются только появляющиеся файлы.</strong> То, что папка уже содержит в момент запуска слежения, записывается как известное и не трогается: направив слежение на четыре года матчей, не следует импортировать их все. Чтобы импортировать то, что уже есть, используйте импорт папки, который для этого и существует, — и эти два прекрасно складываются: сначала импорт, потом слежение.</p></li>
+<li><p><strong>Файл импортируется лишь тогда, когда его размер устоялся.</strong> Матч, который пишет другая программа, растёт от взгляда к взгляду; импорт недописанного дал бы ошибку разбора, с которой никто ничего не сделает. Поэтому blunderDB ждёт, пока увидит один и тот же файл дважды неизменным.</p></li>
+<li><p><strong>Импорт проходит тихо.</strong> Вы разбирали позицию, когда пришли ваши матчи: отобрать у вас экран было бы худшим моментом. Импорт идёт без окна, а в строке состояния появляется полоса со счётом импортированных, пропущенных (дубликаты) и неудавшихся матчей и кнопкой, открывающей полный отчёт, если он вам нужен. Всё остальное совпадает с ручным импортом: те же обнаруженные дубликаты, тот же пакет импорта, тот же автоматический анализ, если он включён.</p></li>
+</ul>
+<p>Интервал по умолчанию — десять секунд; нижний предел — две. Папка не обходится рекурсивно: отслеживаемая папка — это место, куда инструмент кладёт свои матчи, а не дерево для обхода. Отмонтированный сетевой ресурс не останавливает слежение и не выдаёт своё содержимое за новое при возвращении.</p>
+<p>То же слежение доступно в командной строке: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">import</span> <span class="pre">--type</span> <span class="pre">batch</span> <span class="pre">--dir</span> <span class="pre">&lt;папка&gt;</span> <span class="pre">--watch</span></code> (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>) — это форма, которой могут пользоваться сервер, планировщик или скрипт.</p>
+<p>Окно конфигурации также содержит настройки отображения интерфейса. Ползунок <strong>масштаба интерфейса</strong> позволяет увеличить или уменьшить все элементы интерфейса, что полезно на экранах высокой плотности или для улучшения читаемости. Меню <strong>расположения панелей</strong> определяет, где панели (поиск, матчи, анализ) располагаются относительно доски: <em>снизу</em>, <em>сбоку</em> или <em>автоматически</em> (тогда на широких экранах выбирается боковое расположение, чтобы лучше использовать доступное пространство). Как и другие настройки, эти выборы сохраняются от сеанса к сеансу.</p>
+</section>
+</section>
+<section id="visites-guidees-et-base-d-exemple">
+<span id="visites-guidees"></span><h2>Обучающие туры и образец базы данных<a class="headerlink" href="#visites-guidees-et-base-d-exemple" title="Ссылка на этот заголовок"></a></h2>
+<p>Чтобы облегчить освоение, blunderDB предлагает <strong>обучающие туры</strong> по интерфейсу. Каталог туров открывается с панели инструментов или командой <code class="docutils literal notranslate"><span class="pre">tour</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">tutorial</span></code>). Доступны семь туров: общий тур по интерфейсу, а также туры, посвящённые поиску позиций, разбору матчей, разбору турниров, панели Eval, повторению Anki и статистике. Каждый тур пошагово выделяет соответствующие элементы интерфейса, попутно открывает панель, о которой рассказывает, и может быть повторён в любой момент. При первом запуске общий тур предлагается автоматически.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">demo</span></code> загружает <strong>образец базы данных</strong>, позволяющий познакомиться с возможностями инструмента, не импортируя собственные партии: три матча (два из них объединены в турнир), проанализированные eXtreme Gammon, BGBlitz и gammonNet, три тематические коллекции, комментарии с тегами (<code class="docutils literal notranslate"><span class="pre">#blunder</span></code>, <code class="docutils literal notranslate"><span class="pre">#cube</span></code>) и колоду Anki с журналом повторений. Игроки, турнир и место вымышлены. Экскурсии по интерфейсу опираются на эту базу, когда ни одна база не открыта.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="navigation-positions"></span><h2>Навигация по позициям<a class="headerlink" href="#navigation-dans-les-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>По умолчанию blunderDB позволяет:</p>
+<ul class="simple">
+<li><p>прокручивать различные позиции текущей библиотеки — которая никогда не загружается целиком: blunderDB хранит только список идентификаторов и подгружает позиции окнами по пятьдесят вокруг отображаемой, так что база в несколько десятков тысяч позиций открывается так же быстро, как маленькая,</p></li>
+<li><p>отображать информацию анализа, связанную с позицией,</p></li>
+<li><p>отображать, добавлять и изменять комментарии к позиции.</p></li>
+</ul>
+<p>Кнопка <strong>Перейти к позиции</strong> на панели инструментов открывает окно, где можно прямо ввести номер позиции и перейти к ней, не прокручивая. Это графический аналог команды <code class="docutils literal notranslate"><span class="pre">[number]</span></code> в командной строке (см. <a class="reference internal" href="cmd_mode.html#cmd-positions"><span class="std std-ref">Позиции и навигация</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="edition-positions"></span><h2>Редактирование позиций<a class="headerlink" href="#edition-de-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>Нажатие клавиши <em>TAB</em> открывает панель поиска и позволяет редактировать позицию на доске для добавления в базу данных или для задания структуры позиции для поиска. Распределение шашек, куб, счёт и право хода можно изменять с помощью мыши (см. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Редактирование позиции</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="ligne-commande"></span><h2>Командная строка<a class="headerlink" href="#la-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<p>Командная строка, встроенная в строку состояния, позволяет выполнять все функции blunderDB, доступные в графическом интерфейсе: общие операции с базой данных, навигация по позициям, отображение анализа и/или комментариев, поиск позиций по фильтрам… После первоначального освоения интерфейса рекомендуется постепенно использовать командную строку для мощной и плавной работы с blunderDB, особенно для функций поиска позиций.</p>
+<p>Для открытия командной строки нажмите клавишу <em>ПРОБЕЛ</em>. Для отправки запроса и закрытия командной строки нажмите клавишу <em>ENTER</em>.</p>
+<p>blunderDB выполняет запросы пользователя при условии их корректности и немедленно изменяет состояние базы данных при необходимости. Явное сохранение пользователем не требуется.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">список команд</span></a> для списка команд, доступных в командной строке.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id4"></span><h2>Панель анализа<a class="headerlink" href="#panneau-analyse" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Анализ</strong> (<em>CTRL-L</em>) отображает данные анализа текущей позиции, импортированные из eXtreme Gammon (XG), GNUbg или BGBlitz. Отображаются лучшие альтернативы (ходы шашками или решения куба) с их значениями эквити и соответствующими ошибками. Клавиша <em>d</em> переключает между анализом ходов шашками и анализом куба. При навигации по матчу фактически сыгранный ход выделяется в списке альтернатив. Нажмите <em>CTRL-L</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">list</span></code> для отображения или скрытия панели.</p>
+<p>Под таблицами иногда появляется <strong>фраза</strong>, говорящая, чего стоило сыгранное решение и почему: «Вы теряете 120 mMWC: сыгранный ход оставляет три блота там, где 13/7 8/7 оставляет только один.» Она порождается шестью измеримыми правилами — открытость, сделанный или упущенный пункт дома, отданные шансы на гаммон, безопасность, которая стоит дороже, чем даёт, и два направления ошибки по кубу (дубль слишком поздно или слишком рано, слишком свободное взятие или слишком тесный пас).</p>
+<p>Главное правило — <strong>молчание</strong>: фраза появляется, только когда правило применимо уверенно, и при ошибке выше порога, начиная с которого движки согласны, что это ошибка. В остальное время фразы нет — ни пустой рамки, ни «мы не знаем». Неверное объяснение стоит дороже, чем его отсутствие: оно учит неточному.</p>
+<p>Когда позицию оценили <strong>несколько движков</strong>, полоса в верхней части панели ставит их рядом: по строке на движок, с его глубиной и его ответом — вердиктом по кубу или его собственным лучшим ходом. Сначала она говорит, согласны ли они, и оправдывает её именно расхождение: «XG говорит удвоение, приём; gammonNet говорит без удвоения» читается с одного взгляда там, где раньше приходилось сличать две таблицы по диагонали.</p>
+<p>Лучший ход движка — это лучший ход <strong>этого движка</strong>: список кандидатов отсортирован по эквити вперемешку по всем движкам, поэтому его первый элемент ни для кого в отдельности не лучший.</p>
+<p>Полоса появляется, только если движков действительно несколько, и существует лишь в этой панели: панель Eval показывает <strong>одно</strong> решение — встроенного движка (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md">ADR-0017</a>), и сравнению там не место.</p>
+<p>Ходы записываются так, как они читаются на доске, здесь так же, как в панели Eval: наименее продвинутая шашка ходит первой, и <strong>шашка, использующая подряд несколько костей, записывается только один раз</strong> — 64, сыгранное одной и той же шашкой, читается <code class="docutils literal notranslate"><span class="pre">24/14</span></code>, а <code class="docutils literal notranslate"><span class="pre">24/14*</span></code>, если она бьёт по прибытии. Подробности цепочки появляются вновь лишь тогда, когда они говорят что-то ещё: удар <em>по пути</em> сохраняет свой промежуточный пункт, <code class="docutils literal notranslate"><span class="pre">24/18*</span> <span class="pre">18/14</span></code>, иначе удар на 18 исчез бы из записи.</p>
+<p>Эквити импортированного анализа подчиняется тому же правилу, что и панель Eval: столбец указывает свой референциал — «Equity (money)» или «Equity (match)» — в зависимости от счёта анализируемой позиции, а не просто «Equity» без указания шкалы. Правила <strong>Jacoby</strong> и <strong>Beaver</strong>, действующие на позиции money game, также отображаются в виде значков под таблицей решения по кубу.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id5"></span><h2>Панель комментариев<a class="headerlink" href="#panneau-commentaires" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Комментарии</strong> (<em>CTRL-P</em>) показывает, добавляет и редактирует комментарии, связанные с текущей позицией. Позиция может нести несколько: показываются все, от самого нового к самому старому. Комментарии, импортированные из файлов XG, автоматически связываются с соответствующими позициями. Нажмите <em>CTRL-P</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">comment</span></code>, чтобы показать или скрыть панель.</p>
+<p>Каждый комментарий, пришедший из файла, несёт <strong>метку происхождения</strong> (<code class="docutils literal notranslate"><span class="pre">XG</span></code>, <code class="docutils literal notranslate"><span class="pre">GNU</span> <span class="pre">BG</span></code>, <code class="docutils literal notranslate"><span class="pre">BGF</span></code> или <em>импортировано</em>, когда происхождение не было записано). Комментарии, написанные вами, метки не несут: это обычный случай, и помечать каждую строку было бы шумом. Правка импортированного комментария делает его вашим: после правки фраза — ваша.</p>
+<p>Это различие видно и в другом месте: удаление матча больше не уничтожает позицию, на которой писали <strong>вы</strong>. Заметка, взятая из исходного файла, по-прежнему исчезает вместе с матчем, который её принёс.</p>
+<section id="les-tags">
+<span id="tags"></span><h3>Теги<a class="headerlink" href="#les-tags" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Тег</strong> — это <code class="docutils literal notranslate"><span class="pre">#слово</span></code>, написанное в комментарии. Ничто его не объявляет, никакая таблица его не хранит, и это сделано намеренно: словарь — это ваша собственная проза, а требование объявить тег перед использованием превратило бы привычку в бумажную работу.</p>
+<p>Не хватало другой половины: <strong>видеть</strong> словарь, который ты себе построил, и щёлкнуть по тегу вместо того, чтобы вспоминать, как ты его писал. Команда <code class="docutils literal notranslate"><span class="pre">tags</span></code> или кнопка <code class="docutils literal notranslate"><span class="pre">#</span></code> рядом с полем ввода открывает окно словаря: теги этой базы, каждый с числом <strong>позиций</strong>, которые его несут, — по щелчку запускается соответствующий поиск. Под списком идут рекомендуемые теги, которых база ещё не использует, — словарь, взятый из литературы по нардам (<code class="docutils literal notranslate"><span class="pre">#blitz</span></code>, <code class="docutils literal notranslate"><span class="pre">#prime</span></code>, <code class="docutils literal notranslate"><span class="pre">#holding</span></code>, <code class="docutils literal notranslate"><span class="pre">#backgame</span></code>, <code class="docutils literal notranslate"><span class="pre">#containment</span></code>, <code class="docutils literal notranslate"><span class="pre">#crunch</span></code>, <code class="docutils literal notranslate"><span class="pre">#ace-point</span></code>, <code class="docutils literal notranslate"><span class="pre">#timing</span></code>…), предложенный и никогда не навязанный: тег, отсутствующий в этом списке, стоит ровно столько же, сколько тег из него.</p>
+<p>При наборе <code class="docutils literal notranslate"><span class="pre">#</span></code> предлагает теги, которые <strong>эта база</strong> уже использует, а затем рекомендуемые. Именно это не даёт написать <code class="docutils literal notranslate"><span class="pre">#back-game</span></code> в один день и <code class="docutils literal notranslate"><span class="pre">#backgame</span></code> в другой — больше ничто этого не поймает.</p>
+<p>Поиск по тегу пишется как <code class="docutils literal notranslate"><span class="pre">#prime</span></code> в командной строке. Он <strong>разграничен</strong>: <code class="docutils literal notranslate"><span class="pre">#prime</span></code> не находит <code class="docutils literal notranslate"><span class="pre">#priming</span></code>, тогда как обычный текстовый поиск, ищущий подстроку, их не различает. Несколько тегов <strong>складываются</strong> — <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">#prime</span> <span class="pre">#backgame</span></code> запрашивает позиции, несущие оба, — потому что позиция несёт несколько тегов: назвать два может значить только «оба». Это обратно фильтру фазы или происхождения, где у позиции лишь одно значение и назвать два значения может значить только «то или другое».</p>
+<p>Тот же список доступен вне интерфейса командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">tags</span></code> (см. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Интерфейс командной строки (CLI)</span></a>).</p>
+</section>
+</section>
+<section id="la-corbeille">
+<span id="corbeille"></span><h2>Корзина<a class="headerlink" href="#la-corbeille" title="Ссылка на этот заголовок"></a></h2>
+<p>Удаление позиции, коллекции или комментария теперь проходит через <strong>корзину</strong>: удаление действительно происходит, но копия исчезающего хранится тридцать дней. Команда <code class="docutils literal notranslate"><span class="pre">trash</span></code> открывает окно со списком, где у каждой записи есть <em>Восстановить</em> и <em>Удалить</em>.</p>
+<p>Восстановленная позиция возвращается <strong>со своим анализом и комментариями</strong> — вернуть её голой было бы восстановлением лишь по названию. Она не возвращается под старым номером: исходной строки больше нет, и blunderDB сохраняет её заново по отпечатку, что гарантирует отсутствие дубликата, но даёт новый идентификатор. Коллекция возвращается со своим списком; позиции, которые она содержала, никогда не удалялись — коллекция есть вид на них.</p>
+<p>Всё старше тридцати дней удаляет команда <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>, а не открытие базы: не делать <code class="docutils literal notranslate"><span class="pre">vacuum</span></code> — значит хранить всё.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Корзина не путешествует. Экспорт её не несёт, и удаление матча ничего в неё не кладёт: чистка осиротевших позиций, следующая за удалением матча, — автоматическая уборка, а не жест пользователя; см. правило хранения в <a class="reference internal" href="#panneau-matchs"><span class="std std-ref">Панель матчей</span></a>.</p>
+</div>
+</section>
+<section id="panneau-recherche">
+<span id="id6"></span><h2>Панель поиска<a class="headerlink" href="#panneau-recherche" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
+<figure class="align-default" id="id13">
+<a class="reference internal image-reference" href="_images/panel_search.png"><img alt="Панель поиска" src="_images/panel_search.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Поиска: числовые фильтры, структура шашек на доске, вкладки <em>Не менее</em> / <em>Кроме</em>.</span><a class="headerlink" href="#id13" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Поиск в текущих результатах</em> для той же функциональности.</p>
+<p>Панель предлагает явное управление искомым <strong>типом решения</strong>: <em>Безразлично</em> (без фильтра), <em>Шашки</em> (решения по ходу) или <em>Куб</em> (решения по кубу). Когда выбран <em>Куб</em>, второй список уточняет подтип: <em>Все</em>, <em>Дабл / Без дабла</em> (игрок на ходу должен решить, удваивать ли) или <em>Тейк / Пас</em> (ответ на удвоение соперника). Управление синхронизировано с доской: изменение костей или куба на доске обновляет тип решения, и наоборот. В режиме <em>Тейк / Пас</em> куб отображается в центре доски на предложенном значении; это значение остаётся редактируемым.</p>
+<p><strong>Фаза игры</strong> — дебют, миттельшпиль, гонка, снятие шашек — это метка, которую blunderDB вычисляет по одной только доске. Она никогда не редактируется и доступна для поиска через маркер командной строки <code class="docutils literal notranslate"><span class="pre">ph:</span></code> (<code class="docutils literal notranslate"><span class="pre">ph:race</span></code>, повторяемый: <code class="docutils literal notranslate"><span class="pre">ph:race</span> <span class="pre">ph:bearoff</span></code>). Три из четырёх её границ — те, что GNU Backgammon использует для выбора своих сетей; четвёртая, где заканчивается дебют, — соглашение blunderDB: позиция всё ещё в дебюте, пока ни одна из сторон не сдвинула более четырёх шашек с исходных пунктов, ни одна не снята и ни одна не стоит на баре.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Метку пересчитывает команда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>. В базе, открытой впервые этой версией, расчёт делается один раз, при открытии. База, фазы которой никогда не вычислялись, не возвращает ничего для <code class="docutils literal notranslate"><span class="pre">ph:</span></code> — ничего, а не ложный ответ.</p>
+</div>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">like</span></code> отвечает на другой вопрос, чем токены: она заменяет просматриваемый список позициями, <strong>ближайшими</strong> к текущей, от самой близкой к самой далёкой. Близость — это транспортное расстояние в шашко-пипсах, то есть объём движения шашек, разделяющий две позиции, и точка зрения всегда игрока на ходу. Это не фильтр: сходство <strong>упорядочивает</strong> всю библиотеку, а не сужает её, и потому не сочетается с токенами.</p>
+<p>Токен <code class="docutils literal notranslate"><span class="pre">n</span></code> считает <strong>встречи</strong>: <code class="docutils literal notranslate"><span class="pre">n&gt;3</span></code> оставляет позиции, к которым ведут более трёх ходов, по всем матчам. Это другой вопрос, чем «где я ошибся» — позиция, встреченная двадцать раз и сыгранная верно девятнадцать, всё равно та, которую надо знать назубок. Считаются ходы, а не матчи: одна и та же позиция дважды в матче считается дважды, потому что это были два решения.</p>
+<p>Фраза словами может заменить токены — команда <code class="docutils literal notranslate"><span class="pre">ask</span></code>: <code class="docutils literal notranslate"><span class="pre">ask</span> <span class="pre">my</span> <span class="pre">cube</span> <span class="pre">blunders</span> <span class="pre">at</span> <span class="pre">a</span> <span class="pre">score</span></code>. Фраза <strong>переводится в токены</strong>, записанные в командную строку: их читают, затем запускают. Ничего не угадывается и ничего не покидает машину: словарь фиксирован, одна и та же фраза всегда даёт один и тот же запрос, а то, что не понято, <strong>называется</strong>, а не обходится молчанием. Неверный перевод виден до того, как вернёт неверные результаты, а токены выучиваются при чтении.</p>
+<p>Два намерения не являются токенами и задаются на доске поиска, а не в строке: «куб» или «ход» (род решения) и «при счёте» или «money». <code class="docutils literal notranslate"><span class="pre">ask</span></code> задаёт их там.</p>
+<p><strong>План игры</strong> — вторая производная метка, рядом с фазой, и она отвечает на вопрос, который набор сохранённых фильтров задать не может: «покажи мои ошибки в холдинг-гейме». Токен <code class="docutils literal notranslate"><span class="pre">gt:</span></code>, повторяемый (<code class="docutils literal notranslate"><span class="pre">gt:holding</span> <span class="pre">gt:mutualholding</span></code>), с точки зрения <strong>игрока на ходу</strong> — того плана, в котором принималось решение.</p>
+<p>Десять распознаваемых планов, в порядке, в каком правила их разбирают, от самого частного к самому общему:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">race</span></code> — самые задние шашки обеих сторон разошлись: контакт больше невозможен. Граница GNU Backgammon.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bearin</span></code> — игрок на ходу заводит шашки домой, пока соперник ещё держит якорь в его доме.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">crunch</span></code> — у игрока на ходу не более шести шашек вне его пунктов 1 и 2. Правило GNU Backgammon, порог его автора.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">backgame</span></code> — два и более якоря в доме соперника.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acepoint</span></code> — единственный якорь, на первом пункте соперника, при отставании не менее двадцати пипсов.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blitz</span></code> — сделано три и более пункта дома, и соперник на баре или с блотом под удар в этом доме.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">primevprime</span></code> — обе стороны держат прайм не менее чем из четырёх пунктов, и у каждой есть шашка, запертая за праймом другой.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutualholding</span></code> — обе стороны держат высокий якорь.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">holding</span></code> — игрок на ходу держит высокий якорь, соперник — нет.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contact</span></code> — контакт, и ни один из планов выше. Дебют попадает сюда.</p></li>
+</ul>
+<p>Три из этих правил — собственные правила GNU Backgammon, и у них есть источник; остальные — <strong>соглашения blunderDB</strong>. Литература по нардам описывает планы игры, не назначая чисел их границам, и для этой задачи не опубликовано ни одного измерения согласия между классификаторами. Поэтому пороги без источника — три пункта дома для блица, четыре пункта для прайма, двадцать пипсов отставания для ace-point game — записаны здесь, а не спрятаны в коде, и они версионированы: измените их, запустите <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code>, и вся база будет размечена заново.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>На позицию сохраняется одна метка — метка игрока на ходу. Производная метка никогда не редактируется, никогда не экспортируется как истина, и база, планы которой ни разу не вычислялись, ничего не возвращает по <code class="docutils literal notranslate"><span class="pre">gt:</span></code> — так же, как по <code class="docutils literal notranslate"><span class="pre">ph:</span></code>.</p>
+</div>
+<p>Фильтр <strong>Отмеченная</strong> оставляет позиции, которые вы отметили в исходной программе матча. Эту информацию создаёт только eXtreme Gammon, записывая её ход за ходом в файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code>; blunderDB читает её при импорте и сохраняет. Отмеченное решение по кубу даёт две отмеченные позиции — дабл и тейк/пас, поскольку blunderDB разделяет надвое то, что исходный файл записывает как одно решение.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Отметка не действует задним числом: матчи, уже находящиеся в базе, не содержат этой информации, поскольку она существует только в исходных файлах. Достаточно повторно импортировать соответствующий файл <code class="docutils literal notranslate"><span class="pre">.xg</span></code> — импорт обнаружит дубликат и не добавит ничего, кроме отметок, не затрагивая существующие комментарии и анализы. Отметку нельзя ни поставить, ни снять из blunderDB: для временного рабочего списка используйте лучше коллекцию.</p>
+</div>
+<p>Фильтр <strong>Комментарий</strong> обращается к комментариям, привязанным к позициям, в трёх взаимоисключающих режимах. <em>содержит текст</em> ищет одно или несколько слов в тексте комментариев (поле ввода, слова разделяются знаком <code class="docutils literal notranslate"><span class="pre">;</span></code>, достаточно совпадения одного); <em>есть комментарий</em> оставляет любую позицию с комментарием, независимо от его содержания; <em>без комментария</em> оставляет, напротив, позиции без аннотаций — удобно в сочетании с фильтром по ошибке или дате, чтобы составить список того, что осталось прокомментировать.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Комментарии, импортированные из файла матча (XG, GNUbg), считаются комментариями. Чтобы оставить только свои, добавьте маркер <code class="docutils literal notranslate"><span class="pre">co:user</span></code> в командной строке (<code class="docutils literal notranslate"><span class="pre">co:xg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:gnubg</span></code>, <code class="docutils literal notranslate"><span class="pre">co:bgf</span></code> и <code class="docutils literal notranslate"><span class="pre">co:unknown</span></code> называют остальные источники). Впрочем, комментарии, привязанные к <em>матчу</em> или <em>турниру</em>, здесь ни при чём: они комментируют матч или турнир, а не его позиции.</p>
+</div>
+<p>Фильтр <strong>Матчи и турниры</strong> опирается на общий селектор (модальное окно), а не на ввод числовых идентификаторов: два списка с флажками — один для матчей и один для турниров, каждый из которых можно фильтровать по тексту (игрок, дата, событие — для матчей; название, дата, место — для турниров), с кнопками <em>Все</em> / <em>Ничего</em>, действующими только на текущее отфильтрованное подмножество. Установка флажка турнира автоматически отмечает (и делает неактивными) его матчи-участники в списке матчей, наглядно показывая, что турнир эквивалентен множеству своих матчей.</p>
+<p>Панель поиска содержит три вкладки на левом крае: <em>Recherche</em> (фильтры), <em>Historique</em> и <em>Enregistrés</em>. Вкладка <strong>Historique</strong> перечисляет прошлые поиски с их датой и командой: щелчок выбирает поиск и показывает связанную позицию на доске, двойной щелчок выполняет его повторно. Каждую запись можно сохранить в библиотеку фильтров (значок закладки, задав имя фильтру) или удалить. Вкладка <strong>Enregistrés</strong> содержит <strong>библиотеку фильтров</strong>: дважды щёлкните по сохранённому фильтру, чтобы заново выполнить соответствующий поиск (см. <a class="reference internal" href="annexe_filtres.html#annexe-filtres"><span class="std std-ref">Приложение: Расширенное использование фильтров</span></a>). Команда <code class="docutils literal notranslate"><span class="pre">history</span></code> (псевдоним <code class="docutils literal notranslate"><span class="pre">hi</span></code>) открывает панель поиска.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">список команд</span></a> для списка доступных фильтров.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="id7"></span><h2>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
+<figure class="align-default" id="id14">
+<a class="reference internal image-reference" href="_images/panel_collections.png"><img alt="Панель коллекций" src="_images/panel_collections.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Коллекций: название, число позиций, описание, дата последнего изменения.</span><a class="headerlink" href="#id14" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>Панель <strong>Коллекции</strong> (<em>CTRL-B</em>) позволяет управлять коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно в них добавлять и убирать (клавиша <em>Del</em>, спрашивается подтверждение). Двойной клик по коллекции даёт пройти её позиции клавишами <em>ВЛЕВО</em> и <em>ВПРАВО</em>. Порядок коллекций и позиций внутри коллекции меняется перетаскиванием. Нажмите <em>CTRL-B</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">collection</span></code>, чтобы показать или скрыть панель.</p>
+</section>
+<section id="import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais">
+<span id="import-regles"></span><h2>Импорт: что записывается, а что — никогда<a class="headerlink" href="#import-ce-qui-est-ecrit-ce-qui-ne-l-est-jamais" title="Ссылка на этот заголовок"></a></h2>
+<p>Импорт матча, позиции или другой базы добавляет то, чего не хватает; он не заменяет того, что уже есть.</p>
+<ul class="simple">
+<li><p><strong>Позиция никогда не дублируется.</strong> Её узнаёт её идентичность — шашки, куб, кости, счёт, — а не файл, из которого она пришла: одна и та же позиция, встреченная в двух матчах, остаётся одной строкой.</p></li>
+<li><p><strong>По одному анализу на движок.</strong> eXtreme Gammon, GNUbg, BGBlitz и встроенный оценщик уживаются на одной и той же позиции, и панель Анализа указывает происхождение каждого из них. Импорт одного не стирает другой.</p></li>
+<li><p><strong>Импортированный анализ никогда не пересчитывается.</strong> blunderDB укладывает его как есть, с его меткой уровня («3-ply», «XG Roller++», «Book»), его эквити, ошибками, вероятностями и удачей броска. Правило таково: «оценка лишь заполняет пробел» — автоматический анализ после импорта посещает только позиции, не имеющие <strong>никакого</strong> анализа, а <em>Повторно проанализировать устаревшие позиции</em> оставляет нетронутой любую позицию с импортированным анализом (см. <a class="reference internal" href="#configuration"><span class="std std-ref">Конфигурация</span></a>).</p></li>
+<li><p><strong>Повторный импорт того же файла ничего не переписывает.</strong> Матч распознаётся как уже присутствующий; добавляются только метки, поставленные в исходной программе, без изменения комментариев и анализов.</p></li>
+<li><p><strong>Чего blunderDB не записывает никогда</strong>: пересчитанную удачу — она читается из исходного файла либо остаётся неизвестной — и роллаут, данные которого он не открывает в файле <code class="docutils literal notranslate"><span class="pre">.xg</span></code> и который не умеет производить.</p></li>
+</ul>
+<p>Подборка может быть <strong>живой</strong>: её содержимое — уже не собранный вручную список, а результат <strong>поиска</strong>, пересчитываемый при каждом открытии. Кнопка ◇ в заголовке подборки делает её живой по последнему выполненному поиску; ◈ говорит, что она уже такова, и та же кнопка возвращает ей список. Ничего не разрушается: позиции, которые она содержала, останутся на месте при возврате.</p>
+<p>Живая подборка, чей запрос несёт токен, которого эта версия уже не знает, <strong>отказывается открываться</strong> и говорит об этом, вместо того чтобы вернуть всю базу. Это единственная поломка, которой не должно быть у сохранённого фильтра: молча расшириться.</p>
+</section>
+<section id="panneau-matchs">
+<span id="id8"></span><h2>Панель матчей<a class="headerlink" href="#panneau-matchs" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Матчи</strong> (<em>CTRL-Tab</em>) содержит список импортированных матчей. Дважды щёлкните на матче (или нажмите <em>ENTER</em>) для навигации по его ходам. Команда <code class="docutils literal notranslate"><span class="pre">m</span></code> возобновляет навигацию по последнему посещённому матчу.</p>
+<p>Пользователь может:</p>
+<ul class="simple">
+<li><p>просматривать ходы матча с помощью клавиш <em>ВЛЕВО</em> и <em>ВПРАВО</em>,</p></li>
+<li><p>переключаться между партиями с помощью клавиш <em>PageUp</em> и <em>PageDown</em>,</p></li>
+<li><p>отображать анализ ходов (шашки и куб) нажатием <em>CTRL-L</em>,</p></li>
+<li><p>переключаться между анализом ходов шашками и куба клавишей <em>d</em>,</p></li>
+<li><p>видеть фактически сыгранный ход, выделенный в анализе.</p></li>
+</ul>
+<p>Последняя посещённая позиция в каждом матче запоминается и восстанавливается автоматически. Нажмите <em>CTRL-Tab</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">match</span></code> для отображения или скрытия панели.</p>
+<p>Кнопка <strong>⊕</strong> в строке дополняет этот матч из файла. За ней нет ничего нового: повторный импорт того же матча в другом формате уже дополняет его на месте — каноническая свёртка узнаёт, что это тот же матч, и анализы и комментарии второго файла дополняют первый. Кнопка добавляет лишь то, что её находят: никто не догадывается, что импорт — это ещё и дополнение. Следующий отчёт говорит, что именно произошло: «дополнено: 1», а не «импортировано: 1».</p>
+<p>Каждый матч можно экспортировать в транскрипцию Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code> с помощью кнопки ⬇ в списке матчей или кнопки <em>.mat</em> в карточке матча.</p>
+<p>Кнопка <strong>Объединить игроков</strong> на панели инструментов этой панели открывает окно со списком всех имён игроков в базе и числом их матчей: выберите варианты написания одного и того же игрока, укажите каноническое имя для сохранения, затем объедините. Полезно для унификации статистики по игроку, когда один игрок фигурирует под несколькими именами.</p>
+<p>Когда матч открыт, над доской появляется <strong>информационная панель</strong>: она напоминает об играющих сторонах (<em>игрок 1</em> против <em>игрок 2</em>), а также о контексте матча (событие, место, раунд, дата и длина матча, если эти сведения доступны). Эта панель отображается и вне режима матча: когда изучаемая позиция (полученная из поиска, коллекции или прямого доступа) происходит из одного или нескольких матчей, она указывает её <strong>происхождение</strong> — первый соответствующий матч и, при необходимости, бейдж «+N», перечисляющий остальные при наведении. Позиция, импортированная отдельно и не связанная ни с одним матчем, ничего не показывает.</p>
+<p>При открытии базы данных, содержащей матчи, панель <strong>Матчи</strong> отображается сразу же, а разбор начинается прямо с первой позиции, чтобы можно было немедленно приступить к навигации.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Базу данных можно открыть на запись только в одном окне одновременно. Если вы открываете базу, уже открытую в другом окне blunderDB, она открывается в режиме <strong>только для чтения</strong>: навигация, поиск и анализ остаются возможными, но любые изменения отключены, а в строке заголовка отображается «[только чтение]».</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id9"></span><h2>Панель турниров<a class="headerlink" href="#panneau-tournois" title="Ссылка на этот заголовок"></a></h2>
+<figure class="align-default" id="id15">
+<a class="reference internal image-reference" href="_images/panel_tournaments.png"><img alt="Панель турниров" src="_images/panel_tournaments.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Панель Турниров: один турнир на строку, число матчей, PR эталонного игрока.</span><a class="headerlink" href="#id15" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>Панель <strong>Турниры</strong> (<em>CTRL-Y</em>) группирует матчи в турниры для организованного отслеживания и статистического анализа по событиям. Турниры можно создавать, переименовывать и удалять; матчи можно назначать им. Статистика панели Stats может фильтроваться по турниру. Нажмите <em>CTRL-Y</em> для отображения или скрытия панели.</p>
+<p>Турниры заполняются сами при импорте. Файлы XG, GnuBG и BGF называют своё событие; при импорте нового матча blunderDB относит его к турниру с этим именем и создаёт турнир, если его ещё нет. Дата и место турнира остаются пустыми — здесь они и заполняются. Матч, уже находящийся в базе, никогда не переносится: повторный импорт его файла не отменяет расстановку, сделанную вручную.</p>
+<p>Столбец <strong>PR</strong> каждого турнира показывает PR <strong>основного игрока</strong> — то есть игрока, участвующего в наибольшем числе матчей турнира (при равенстве — того, кто принял больше решений). Таким образом, PR не смешивает вашу игру с игрой соперников: для ваших собственных турниров он отражает только вашу результативность. Имя основного игрока показывается во всплывающей подсказке при наведении на значение.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2>Панель Stats<a class="headerlink" href="#panneau-stats" title="Ссылка на этот заголовок"></a></h2>
+<section id="id10">
+<h3>Введение<a class="headerlink" href="#id10" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель <strong>Stats</strong> позволяет анализировать уровень игры и отслеживать прогресс во времени на основе позиций, импортированных в базу данных. Вычисляет и отображает <strong>PR</strong> (<em>Performance Rating</em>) и <strong>MWC cost</strong> (Match Winning Chance cost) для всех позиций или отфильтрованного подмножества.</p>
+<p>Панель Stats особенно полезна для:</p>
+<ul class="simple">
+<li><p><strong>определения своего уровня</strong> относительно полос уровня (<em>Мировой класс</em>, <em>Эксперт</em>, <em>Продвинутый</em>…) с помощью общего PR;</p></li>
+<li><p><strong>отслеживания прогресса</strong> от турнира к турниру или от матча к матчу с помощью графиков вкладки Progression;</p></li>
+<li><p><strong>выявления слабых мест</strong>: вкладка Erreurs отображает соотношение ходов шашками и решений куба, а также распределение величин ошибок;</p></li>
+<li><p><strong>сравнивать игроков базы</strong> между собой, по строке на игрока, во вкладке «Игроки» — удобно, когда следишь за целым турниром;</p></li>
+<li><p><strong>прямого перехода к соответствующим позициям</strong> щелчком по любому показателю (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3>Открытие панели<a class="headerlink" href="#ouverture-du-panneau" title="Ссылка на этот заголовок"></a></h3>
+<p>Для открытия панели Stats:</p>
+<ul class="simple">
+<li><p>Нажмите <em>CTRL-D</em>.</p></li>
+<li><p>Введите команду <code class="docutils literal notranslate"><span class="pre">stats</span></code> или <code class="docutils literal notranslate"><span class="pre">st</span></code> в командной строке.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Панель автоматически обновляется при каждом изменении фильтра. При простом переключении PR ↔ MWC статистика не пересчитывается: обе метрики вычисляются одновременно на стороне сервера.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3>Панель фильтров<a class="headerlink" href="#barre-de-filtre" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель фильтров в верхней части панели позволяет ограничить вычисление подмножеством позиций.</p>
+<section id="perspective-joueur">
+<h4>Перспектива игрока<a class="headerlink" href="#perspective-joueur" title="Ссылка на этот заголовок"></a></h4>
+<p>Выпадающий список <strong>Игрок</strong> фильтрует статистику для анализируемого игрока. blunderDB автоматически выбирает игрока, имя которого наиболее часто встречается в базе данных — можно изменить в любой момент.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смена игрока не приводит к потере данных; достаточно повторно выбрать предыдущего игрока в списке.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4>Доступные фильтры<a class="headerlink" href="#filtres-disponibles" title="Ссылка на этот заголовок"></a></h4>
+<ul class="simple">
+<li><p><strong>Турнир(ы)</strong> — ограничение одним или несколькими турнирами. Можно одновременно выбрать несколько турниров.</p></li>
+<li><p><strong>Даты</strong> — временной диапазон (<em>От</em> … <em>До</em>). Если указана только начальная дата, включаются более поздние позиции.</p></li>
+<li><p><strong>Тип решения</strong> — Все / Ходы шашками / Решения куба.</p></li>
+<li><p><strong>Длина матча</strong> — ограничение конкретными длинами матча (1, 3, 5, 7, 9, 11, 13, 15, 21 очко). Можно комбинировать несколько длин.</p></li>
+</ul>
+<p>Кнопка <strong>Reset</strong> сбрасывает все фильтры (кроме автоматически определённого игрока).</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Фильтры сохраняются в конфигурации blunderDB (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) и восстанавливаются при следующем запуске.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3>Переключение PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Ссылка на этот заголовок"></a></h3>
+<p>Кнопка <strong>PR / MWC</strong> в верхней части панели переключает отображаемую метрику во всех вкладках.</p>
+<p><strong>PR (Performance Rating)</strong></p>
+<blockquote>
+<div><p>Средняя ошибка эквити на одно засчитанное решение, умноженная на 500, как это делают eXtreme Gammon и GNUbg: PR, равный 5,0, соответствует потере 0,010 эквити на решение, то есть 10 миллипунктам (mpt). Точное правило подсчёта — какие решения попадают в знаменатель, как преобразуется счёт — это правило <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>.</p>
+<p>Полосы уровня, которые панель рисует за кривой прогресса, — это <strong>ориентир, принятый в самом blunderDB</strong>: ни одна публикация не устанавливает эти пороги авторитетно. Верхняя граница каждой полосы не включается: PR, равный 4, — это <em>Продвинутый</em>, а не <em>Эксперт</em>.</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Уровень</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Мировой класс</p></td>
+<td><p>&lt; 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>2 – 4</p></td>
+</tr>
+<tr class="row-even"><td><p>Продвинутый</p></td>
+<td><p>4 – 6</p></td>
+</tr>
+<tr class="row-odd"><td><p>Средний</p></td>
+<td><p>6 – 9</p></td>
+</tr>
+<tr class="row-even"><td><p>Любитель</p></td>
+<td><p>9 – 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>Начинающий</p></td>
+<td><p>≥ 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Накопленная вероятность победы в матче, утраченная из-за ошибок, по всему отфильтрованному набору данных. Вычисляется с использованием MET Kazaross-XG2, встроенной в blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Осторожно</p>
+<p>MWC cost <strong>не применяется</strong> к позициям <em>money-game</em> (без ставки матча). Эти позиции исключаются из вычисления MWC. Значения MWC зависят от используемой MET; они не сопоставимы напрямую между программами, использующими разные MET.</p>
+</div>
+</div></blockquote>
+<p>Переключение PR ↔ MWC мгновенное: перерасчёт на стороне сервера не выполняется.</p>
+</section>
+<section id="le-rapport-html">
+<span id="rapport-html"></span><h3>Отчёт в HTML<a class="headerlink" href="#le-rapport-html" title="Ссылка на этот заголовок"></a></h3>
+<p>Кнопка <strong>Отчёт HTML</strong> в заголовке панели создаёт <strong>самодостаточный</strong> документ: один файл, без внешних изображений, без удалённых стилей, без скриптов. Диаграммы — встроенный SVG, нарисованный тем же движком, что и доска на экране, с вашей палитрой. Он открывается в любом браузере, уходит по почте и <strong>печатается в PDF самим браузером</strong> — что избавляет от встраивания генератора PDF ради того, что и так есть у всех.</p>
+<p>В нём — показатели текущего объёма (позиции, матчи, учтённые решения, общий PR, PR ходов и куба), затем <strong>десять самых дорогих решений</strong>, каждое со своей диаграммой, стоимостью, матчем, откуда оно взято, и лучшим ходом, если анализ его даёт.</p>
+<p>Отчёт несёт <strong>текущий фильтр</strong> панели статистики. Отчёт, не называющий свой объём, — это отчёт, цифры которого ничего не значат: настройте фильтр — турнир, диапазон дат, игрока — прежде чем его создавать.</p>
+</section>
+<section id="onglet-dashboard">
+<h3>Вкладка Dashboard<a class="headerlink" href="#onglet-dashboard" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Dashboard</strong> даёт сводный обзор ключевых показателей.</p>
+<figure class="align-default" id="id16">
+<a class="reference internal image-reference" href="_images/panel_stats_dashboard.png"><img alt="Вкладка Dashboard панели Stats" src="_images/panel_stats_dashboard.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Вкладка Dashboard: общий PR, PR по шашкам, PR по кубу.</span><a class="headerlink" href="#id16" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<section id="cartes-de-niveau">
+<h4>Карточки уровня<a class="headerlink" href="#cartes-de-niveau" title="Ссылка на этот заголовок"></a></h4>
+<p>Три карточки отображают PR (или MWC) для:</p>
+<ul class="simple">
+<li><p><strong>PR Общий</strong> — все решения (ходы + куб);</p></li>
+<li><p><strong>PR Шашка</strong> — только сыгранные ходы;</p></li>
+<li><p><strong>PR Куб</strong> — только решения по кубу.</p></li>
+</ul>
+<p>Щелчок по карточке загружает в панель анализа позиции соответствующего подмножества (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Общее количество решений отображается внизу каждой карточки при наведении.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4>Скользящий PR за последние N решений<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Ссылка на этот заголовок"></a></h4>
+<p>Строка значений PR (или MWC), вычисленных по последним <em>N</em> решениям (N = 5, 10, 50, 100, 250, 500, 1000), позволяет оценить последнюю тенденцию. Серые значения соответствуют N, превышающему количество доступных решений.</p>
+<p>Щелчок по значению загружает соответствующие последние <em>N</em> позиций.</p>
+</section>
+<section id="top-blunders">
+<h4>Топ грубых ошибок<a class="headerlink" href="#top-blunders" title="Ссылка на этот заголовок"></a></h4>
+<p>Список 10 худших ошибок (или MWC cost), отсортированных по убыванию величины. Щелчок по строке загружает соответствующую позицию в панель анализа.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3>Вкладка Progression<a class="headerlink" href="#onglet-progression" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Progression</strong> показывает динамику уровня игры во времени.</p>
+<p>В начале вкладки — <strong>цель</strong>: «PR &lt; 5 за двенадцать недель». Цель, срок и тенденция, говорящая, куда вы идёте, — и ничего больше. Цель, которая начала бы оценивать, поздравлять или напоминать, была бы другой функцией, не этой.</p>
+<p>Кнопка <strong>Предложить</strong> подсказывает цель исходя из текущего уровня: нижнюю границу вашей полосы, то есть вход в следующую. Предлагать «чуть лучше» было бы ни к чему не привязано; предложить ступень — уже что-то: переход из среднего в продвинутый виден и о нём можно рассказать.</p>
+<p><strong>Тенденция</strong> — это подгонка методом наименьших квадратов по PR ваших матчей, спроецированная на срок. Она отказывается высказываться менее чем по трём матчам: провести прямую между двумя точками значило бы утверждать то, что не удержишь. И фраза говорит это каждый раз — <em>тенденция не есть предсказание</em>.</p>
+<p>Цель хранится в <strong>метаданных базы</strong>, а не в конфигурации: она относится к этой библиотеке и потому следует за файлом, а не за машиной. Схема не меняется: <code class="docutils literal notranslate"><span class="pre">metadata</span></code> уже таблица ключей и значений, читаемая и <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code>, и демоном.</p>
+<section id="courbe-par-tournoi">
+<h4>График по турнирам<a class="headerlink" href="#courbe-par-tournoi" title="Ссылка на этот заголовок"></a></h4>
+<p>Линейный график отображает PR (или MWC) для каждого турнира (ось X: порядок турниров, ось Y: значение метрики). Цветные полосы обозначают пороги уровня.</p>
+<p>Щелчок по точке графика открывает контекстное меню с двумя вариантами:</p>
+<ul class="simple">
+<li><p><strong>Открыть турнир</strong> — открывает турнир в панели Tournois.</p></li>
+<li><p><strong>Открыть позиции</strong> — загружает все позиции турнира в панель анализа.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4>Диаграмма рассеяния по матчам<a class="headerlink" href="#scatter-plot-par-match" title="Ссылка на этот заголовок"></a></h4>
+<p>Диаграмма рассеяния представляет каждый матч (ось X: дата, ось Y: PR или MWC). Размер точки пропорционален количеству решений в матче.</p>
+<p>Щелчок по точке открывает контекстное меню:</p>
+<ul class="simple">
+<li><p><strong>Открыть партию</strong> — открывает матч в панели матчей.</p></li>
+<li><p><strong>Открыть позиции</strong> — загружает все позиции матча в панель анализа.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3>Вкладка Erreurs<a class="headerlink" href="#onglet-erreurs" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Erreurs</strong> разбивает источники ошибок.</p>
+<figure class="align-default" id="id17">
+<a class="reference internal image-reference" href="_images/panel_stats_errors.png"><img alt="Вкладка Errors панели Stats" src="_images/panel_stats_errors.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Вкладка Errors: распределение PR по действиям с кубом.</span><a class="headerlink" href="#id17" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<section id="repartition-par-action-de-videau">
+<h4>Разбивка по действиям куба<a class="headerlink" href="#repartition-par-action-de-videau" title="Ссылка на этот заголовок"></a></h4>
+<p>Столбчатая диаграмма отображает PR (или MWC) для каждого типа решения куба: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Каждый столбец также показывает количество решений и долю грубых ошибок в подсказке.</p>
+<p>Щелчок по столбцу загружает позиции, соответствующие этому действию куба, <strong>только те, в которых была ошибка</strong> (drill-down).</p>
+</section>
+<section id="direction-des-erreurs-de-videau">
+<h4>Направление ошибок с кубом<a class="headerlink" href="#direction-des-erreurs-de-videau" title="Ссылка на этот заголовок"></a></h4>
+<p>Разбивка выше говорит, <em>сколько</em> стоят решения по кубу; эта таблица говорит, в <em>какую сторону</em> они ошибаются.</p>
+<p>Позиция с кубом несёт два решения, принимаемые двумя разными игроками; здесь они показаны двумя строками:</p>
+<ul class="simple">
+<li><p><strong>Предложить</strong> — игрок, владеющий кубом, даблит или нет. Его ошибки — <strong>упущенные даблы</strong> (надо было даблить) и <strong>преждевременные даблы</strong> (не надо было).</p></li>
+<li><p><strong>Ответить</strong> — игрок, которому предлагают куб, берёт или пасует. Его ошибки — <strong>ошибочные пассы</strong> (правильный тейк был спасован) и <strong>ошибочные тейки</strong> (правильный пасс был взят).</p></li>
+</ul>
+<p>Две строки намеренно разделены: игрок вполне может доблить поздно <em>и</em> брать широко, а единый показатель назвал бы это «сбалансированным», потеряв обе половины сведений.</p>
+<p>В каждой ячейке — число решений; всплывающая подсказка даёт суммарно потерянную эквити. Щелчок по ячейке загружает соответствующие позиции. Ячейка с нулём не кликабельна.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Эта таблица считает решения, а не выносит суждения. С какого расхождения тенденцию стоит называть тенденцией, зависит от объёма выборки и от точки отсчёта, а это не данные движка.</p>
+</div>
+</section>
+<section id="repartition-checker-cube">
+<h4>Сравнение Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Ссылка на этот заголовок"></a></h4>
+<p>Сравнительная диаграмма размещает рядом PR ходов шашками и решений куба. Щелчок по столбцу загружает позиции подмножества с ошибкой.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4>Гистограмма величин ошибок<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Ссылка на этот заголовок"></a></h4>
+<p>Гистограмма распределяет ошибки по их величине в миллипунктах (mpt, диапазоны: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Щелчок по столбцу загружает позиции данного диапазона.</p>
+</section>
+</section>
+<section id="onglet-ventilations">
+<h3>Вкладка Разбивки<a class="headerlink" href="#onglet-ventilations" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Разбивки</strong> делит те же решения, что считают общие цифры, по четырём осям. Ни одна из них не переопределяет, что считается решением: это был бы второй PR под тем же именем.</p>
+<ul class="simple">
+<li><p><strong>По фазе игры</strong> — дебют, миттельшпиль, гонка, снятие шашек. Именно это отвечает на «мой PR в гонке против моего PR в контакте». Метка вычисляется по доске (см. <a class="reference internal" href="#panneau-recherche"><span class="std std-ref">Панель поиска</span></a>); база, фазы которой никогда не вычислялись, относит всё к <em>Не классифицировано</em>, и <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> её заполняет.</p></li>
+<li><p><strong>По плану игры</strong> — гонка, блиц, якорь, бэкгейм, прайм против прайма… Это та разбивка, ради которой классификатор и существует: «где я теряю больше всего?», план за планом. Та же производная метка, что и фаза, те же оговорки, и <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">repair</span></code> заполняет её так же.</p></li>
+<li><p><strong>По метке</strong> — <code class="docutils literal notranslate"><span class="pre">#слово</span></code>, написанные в комментариях. Позиция может нести несколько: <strong>эти строки не складываются в итог</strong>, и панель говорит об этом под таблицей. Метка характеризует, она не разбивает на части.</p></li>
+<li><p><strong>По счёту</strong> — недостающие очки обеих сторон, прочитанные со стороны ходящего, то есть со стороны того, кто решает. Строка <em>Money</em> — игра на деньги. Ячейка менее чем с десятью решениями показана <strong>серым, с видимым количеством</strong>, а не скрыта: слишком мало, чтобы читать, но пропуск остаётся проверяемым.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Партия Кроуфорда не выделяется: blunderDB не записывает этот признак у позиции. Практический эффект невелик — в партии Кроуфорда вообще нет решений по кубу, — но пропуск реален, и его лучше записать, чем оставить на догадку.</p>
+</div>
+</section>
+<section id="etude-et-jeu-reel">
+<h3>Учёба и реальная игра<a class="headerlink" href="#etude-et-jeu-reel" title="Ссылка на этот заголовок"></a></h3>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">list</span> <span class="pre">--type</span> <span class="pre">study</span> <span class="pre">--days</span> <span class="pre">30</span></code> ставит рядом три числа, план за планом: сколько <strong>различных позиций</strong> было повторено за период, каким был PR <strong>до</strong> него, каков PR <strong>с тех пор</strong>.</p>
+<p>Три числа, и никакого четвёртого. <strong>Нет ни колонки выигрыша, ни стрелки</strong>, потому что здесь ничто ни на что не контролируется: игрок мог встретить более сильных соперников, сменить формат или просто сыграть больше гонок в этом месяце. Сопоставление — дело читателя; колонка, объявляющая эффект, утверждала бы причинность, которой эти данные не несут. Сами же числа точны.</p>
+<p>Повторения считаются в <strong>различных позициях</strong>: карточка, повторённая четыре раза за месяц, — это одна изученная позиция, а счёт повторений превратил бы месяц зубрёжки в месяц охвата. Решения же PR считаются все — каждое было принято один раз. PR, опирающийся менее чем на десять решений, показывается как <code class="docutils literal notranslate"><span class="pre">—</span></code>, с видимой рядом выборкой.</p>
+</section>
+<section id="onglet-joueurs">
+<h3>Вкладка «Игроки»<a class="headerlink" href="#onglet-joueurs" title="Ссылка на этот заголовок"></a></h3>
+<p>Четыре предыдущие вкладки описывают <strong>одного</strong> игрока; вкладка <strong>Игроки</strong> сравнивает всех. Она показывает по строке на каждого игрока базы, что отвечает потребности организатора, следящего за целым турниром, а не за одним игроком.</p>
+<figure class="align-default" id="id18">
+<a class="reference internal image-reference" href="_images/panel_stats_players.png"><img alt="Вкладка Players панели Stats" src="_images/panel_stats_players.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Вкладка Players: одна строка на игрока, сортируемая по любому столбцу.</span><a class="headerlink" href="#id18" title="Ссылка на это изображение"></a></p>
+</figcaption>
+</figure>
+<p>Столбцы по порядку:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 78.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Столбец</p></th>
+<th class="head"><p>Значение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Игрок</p></td>
+<td><p>Имя <strong>в том виде, в каком оно записано в матчах</strong>. Игрок, записанный в двух написаниях, поэтому занимает две строки; чтобы их свести, воспользуйтесь слиянием игроков.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Матчи</p></td>
+<td><p>Число матчей, сыгранных в выбранный период.</p></td>
+</tr>
+<tr class="row-even"><td><p>П–Пр</p></td>
+<td><p>Победы и поражения. Незавершённый матч (обрезанный журнал, отказ от игры) не идёт ни в те, ни в другие: П + Пр может быть меньше числа матчей.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Решения</p></td>
+<td><p>Число учтённых решений — знаменатель PR. Именно этот столбец говорит, чего стоят соседние показатели: PR, посчитанный по двенадцати решениям, не значит ничего.</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>Общий Performance Rating.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PR шашек, PR куба</p></td>
+<td><p>PR в разбивке по типу решения.</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie</p></td>
+<td><p>Snowie Error Rate (см. <a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Бландеры</p></td>
+<td><p>Число грубых ошибок (не менее 0,100 EMG).</p></td>
+</tr>
+<tr class="row-even"><td><p>Удача</p></td>
+<td><p>Средняя удача за бросок, в миллипунктах (mpt), со знаком: положительная, если кости благоволили.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Использование:</p>
+<ul class="simple">
+<li><p><strong>Сортировка</strong> — щёлкните заголовок столбца. Таблица открывается отсортированной по возрастанию PR, лучший игрок сверху. Игроки, у которых ничего не измерено, остаются внизу при любом направлении сортировки: ноль по причине отсутствия данных — не безупречная игра.</p></li>
+<li><p><strong>Открыть подробности игрока</strong> — щёлкните строку. Игрок выбирается в панели фильтров, а отображение переключается на вкладку Dashboard.</p></li>
+<li><p><strong>Ограничить период</strong> — фильтры дат, турниров и длины матча работают как обычно, что позволяет ограничить таблицу днями соревнования.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>На этой вкладке список <strong>Игрок</strong> и выбор <strong>типа решения</strong> отключены: таблица показывает всех игроков и уже разносит решения по шашкам и по кубу в отдельные столбцы.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Важно</p>
+<p>Прочерк («—») означает величину, которая <strong>никогда не измерялась</strong>, и её не следует путать с нулём. Так, в частности, обстоит дело со столбцом «Удача» для любого матча, импортированного до версии схемы 2.15.0: тогда удача не сохранялась, и восстановить её задним числом нечем — нужно импортировать исходные файлы заново. Форматы, которые её не переносят (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>), не дадут её никогда.</p>
+</div>
+</section>
+<section id="regle-d-agregation">
+<h3>Правило агрегации<a class="headerlink" href="#regle-d-agregation" title="Ссылка на этот заголовок"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Важно</p>
+<p>PR турнира (или любого подмножества) вычисляется по правилу <strong>сумма/сумма</strong> — никогда как среднее PR отдельных матчей.</p>
+<p>Формула:</p>
+<div class="math notranslate nohighlight">
+\[PR_{\text{турнир}} = 500 \times \frac{\sum_{i} \text{ошибка}_i}{\text{общее количество решений}}\]</div>
+<p><strong>Пример:</strong> игрок проводит два матча в турнире —</p>
+<ul class="simple">
+<li><p>Матч A: 10 решений, потеряно 0,100 эквити → PR = 5,0</p></li>
+<li><p>Матч B: 90 решений, потеряно 0,540 эквити → PR = 3,0</p></li>
+</ul>
+<p>Наивное среднее PR: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(неверно)</em></p>
+<p>Правило сумма/сумма: 500 × 0,640 / (10 + 90) = <strong>3,2</strong> <em>(верно)</em></p>
+<p>Правило сумма/сумма — единственное, которое корректно учитывает различную длину матчей (матч до 21 очка весит больше, чем матч до 1 очка).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3>MWC: ограничения<a class="headerlink" href="#mwc-limitations" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p>MWC cost вычисляется по <strong>MET Kazaross-XG2</strong>, де-факто эталонной таблице в соревновательных нардах. Результаты не сравнимы напрямую с программами, использующими другие MET. Это та же таблица, читаемая через ту же точку входа, которой встроенный оценщик пользуется для своих решений по кубу при матчевом счёте: статистика и движок не могут здесь разойтись. Она даёт собственные значения до 25 очков, которые осталось набрать каждой стороне; дальше она продолжается таблицей Zadeh, вычисляемой так же, как у GNUbg, вплоть до 64.</p></li>
+<li><p>Позиции <em>money-game</em> (без счёта матча) <strong>исключаются</strong> из вычисления MWC. Если ваша база данных содержит много позиций money-game, MWC cost может быть занижен или недоступен.</p></li>
+<li><p>MWC cost является накопительным по всему отфильтрованному набору данных — не показателем на решение. Он измеряет суммарное влияние ваших ошибок на шансы победы.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-eval">
+<span id="panneau-epc"></span><h2>Панель Eval<a class="headerlink" href="#panneau-eval" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Eval</strong> (<em>CTRL-E</em>) оценивает в реальном времени любую позицию на доске; на позиции выбрасывания она специализируется и дополнительно вычисляет EPC (Effective Pip Count). Она открывается нажатием <em>CTRL-E</em>, щелчком по вкладке Eval нижней панели или командой <code class="docutils literal notranslate"><span class="pre">epc</span></code>. Эта команда сохраняет своё первоначальное имя: панель называлась <em>EPC</em>, затем <em>Bearoff</em>, прежде чем стать <em>Eval</em>, — так что именно здесь следует искать то, что прежние версии называли панелью Bearoff, ведь это имя теперь обозначает лишь вкладку настройки таблиц выбрасывания.</p>
+<p>Панель всегда показывает <strong>единственное решение</strong>, которого требует выставленная на доске позиция — никогда два сразу, — и сопутствующие факты. Каждая величина читается в подходящей ей оси, а не в единой навязанной: вероятность выигрыша, гаммона, бэкгаммона и cubeless-эквити каждого игрока, вычисленные <em>до броска</em>, читаются <strong>по игрокам</strong> (нижний, верхний, затем Δ), слева от решения по кубу, пока кости не выставлены. Факты и решение остаются рядом: решение по кубу никогда не уходит под цифры, которые его обосновывают, каковы бы ни были язык интерфейса и позиция на доске. Как только кости выставлены, те же значения <em>до броска</em> меняют ось: они читаются <strong>для игрока на ходу</strong>, во главе списка кандидатных ходов, в виде строки курсивом <em>до броска</em> — не ещё один кандидатный ход, а ориентир, относительно которого читается каждый ход. Разница между этой строкой и ходом содержит удачу броска, а не заслугу хода, и потому не несёт столбца ошибки. На позиции чистого bearoff вторая таблица, всегда <strong>по игрокам</strong> и всегда присутствующая, с выставленными костями или без, содержит EPC, пипкаунт, wastage, среднее число бросков и стандартное отклонение; эти пять столбцов никогда не мигрируют. Обе таблицы расположены одна над другой и разделяют общую сетку столбцов: те же границы, те же ориентиры столбцов, единственный столбец цветных точек — они читаются как один объект в два этажа. Значок режима, указание движка (там же показана глубина последней оценки) и флажок <em>Вызов</em> образуют отдельную полосу, выровненную по правому краю над таблицами.</p>
+<p>Прокручивается только список кандидатных ходов — строка <em>до броска</em> тоже остаётся закреплённой над ним; остальная часть панели (факты, значок, решение по кубу) всегда видна, без особой настройки размера панели.</p>
+<p>Таблица фактов и решение вычисляются gammonNet, встроенным в приложение, без XG и gnubg. Расчёт следует за позицией, никогда не замораживая интерфейс: глубина 0-ply отображается сразу при каждом действии, затем, после полсекунды неподвижности, более глубокая оценка (2 ply по умолчанию, настраивается на вкладке <em>gammonNet</em> конфигурации) заменяет её в фоне — любое новое действие отменяет этот фоновый расчёт. Глубина, показанная в полосе значков или внутри значка режима на гоночной позиции, всегда та, что действительно дала показанное число, а не запрошенная; она не повторяется в каждой строке, поскольку живая оценка использует одну и ту же глубину для всех ходов. Эквити кандидатных ходов и решения по кубу следует счёту позиции: в money game она выражается в пунктах, при счёте матча — в <strong>нормализованной эквити</strong>, той же шкале, что у XG и GNU Backgammon, где выигрыш текущей стоимости куба равен +1, а проигрыш −1, — и они никогда не смешиваются в одной таблице. Заголовок столбца прямо называет её, вместо того чтобы оставлять шкалу угадывать: «Equity (money)» в money game, «Equity (match)» при счёте матча. Она учитывает <strong>живой куб</strong>: поиск оценивает каждую конечную позицию через модель куба (Яновский, измеренная эффективность) в состоянии куба данной позиции — так же, как это делают XG и GNU Backgammon в <em>cubeful</em>-оценке. Именно это делает видимыми при счёте эффекты gammon-go и gammon-save — при 4-away/2-away отстающий игрок играет 8/2 6/2 на открывающем 6-4, потому что его ранний дабл придаст гаммону цену матча — то, чего оценка без куба увидеть не может. Строка <em>до броска</em>, напротив, остаётся <strong>cubeless</strong>-эквити: это факт о позиции, а не решение. Эта панель никогда не изменяет базу: это расчёт, а не сохранённый анализ. Щелчок по кандидатному ходу показывает его на доске стрелками, точно как в панели анализа. Неброская кнопка <strong>?</strong> в полосе значков ведёт в репозиторий движка <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>; полное указание авторства (сеть Strehl, конфигурация gammonNet) приведено в разделе «Благодарности» справки.</p>
+<p>Пользователь редактирует расположение шашек на всей доске, точно как в режиме редактирования: левый щелчок ставит шашку нижнего игрока, правый — шашку верхнего. Вторая таблица, таблица гонки, появляется только тогда, когда полученная позиция — чистый bearoff (все шашки обоих игроков в своих домах); на любой другой позиции отвечает только таблица с четырьмя общими столбцами (выигрыш, гаммон, бэкгаммон, cubeless), а решение касается шашек или обобщённого куба в зависимости от того, выставлены ли кости.</p>
+<p>В каждой таблице фактов — по строке на игрока, обозначенной его цветной точкой, чёрный игрок всегда снизу. Первая содержит, пока кости не выставлены, выигрыш, гаммон, бэкгаммон (вероятности, без знака %) и cubeless-эквити игрока; вторая, на позиции bearoff и независимо от того, выставлены ли кости, — EPC, пипкаунт, wastage (разницу между EPC и пипкаунтом), среднее число бросков и стандартное отклонение. Когда у обоих игроков есть значения для сравнения, строка <strong>Δ</strong> показывает <em>знаковые</em> разности (нижний − верхний: отрицательные, когда чёрный игрок впереди). Вне гоночной позиции выставление костей, таким образом, убирает сами таблицы фактов: четыре столбца, которые они несли, только что сменили ось — на игрока на ходу, во главе списка ходов.</p>
+<p>Решение по кубу всегда имеет одну и ту же форму, откуда бы ни взялись цифры — из точной таблицы, рассчитанного режима или обычной оценки gammonNet: <strong>по строке на вариант</strong>, в порядке <em>без дабла</em>, <em>дабл/тейк</em>, <em>дабл/пас</em>, с его эквити в системе отсчёта позиции и отрывом от лучшего варианта. Порядок никогда не меняется, в отличие от списка ходов: у трёх вариантов есть имена, поэтому читают имя, а не ранг. Лучший узнаётся по выделению и по пустой ячейке отрыва. Если куб уже был передан, варианты читаются как <em>без редабла</em>, <em>редабл/тейк</em>, <em>редабл/пас</em>.</p>
+<p>Последняя строка даёт <strong>вердикт</strong>. Он принимает четыре значения: <em>без дабла</em>, <em>дабл, тейк</em>, <em>дабл, пас</em> и <em>слишком хорошо для дабла</em>; последнее — когда разыгрывать позицию выгоднее, чем забрать очко: дабл тогда был бы ошибкой по причине, обратной простому <em>без дабла</em>. Это также единственное место, где панель говорит, что вердикта <strong>нет</strong>, вместо того чтобы создавать впечатление идущего расчёта:</p>
+<ul class="simple">
+<li><p><em>нет решения</em> — режим не имеет на него права; вердикт по кубу никогда не оценивается приближённо (см. значок <em>оценка</em>);</p></li>
+<li><p><em>не оценивается при этом счёте</em> — движок отказывается от позиции, как правило, из-за счёта за горизонтом таблицы матчевых эквити, то есть когда одной из сторон осталось набрать больше 64 очков;</p></li>
+<li><p><em>куб у соперника</em> и <em>куб не в игре (Кроуфорд)</em> — куб нельзя передать. Эквити по-прежнему отображаются, для справки, но ни у одного варианта нет отрыва: ошибка — это цена выбора, а выбора здесь нет.</p></li>
+</ul>
+<p>В money game правила <strong>Jacoby</strong> и <strong>Beaver</strong>, действующие на позиции, отображаются под таблицей куба в виде небольших значков рядом с вердиктом, который они меняют: вердикт «без даблинга» для позиции по правилу Jacoby — это не тот же расчёт, что без него, и ничто другое на экране об этом не говорило.</p>
+<p>Третий бейдж, <strong>Макс. куб</strong>, появляется, когда исходный идентификатор ограничивает куб — как при счёте матча, так и в money game. Он не описывает расчёт, показанный выше: встроенный оценщик не моделирует потолок, поэтому вердикт относится к свободному кубу. Именно поэтому бейдж и нужен: ограниченный куб — единственная видимая причина, по которой blunderDB и eXtreme Gammon могут вынести два разных вердикта об одной и той же позиции.</p>
+<p>Значок режима, глубина оценки, ссылка на движок и флажок <em>Вызов</em> образуют отдельную полосу, выровненную по правому краю над таблицами.</p>
+<p><strong>Игрок на ходу</strong> и <strong>позиция куба</strong> редактируются прямо на доске, как в режиме редактирования: щелчок по прямоугольнику снятия/счёта игрока передаёт ему ход; щелчок по кубу переключает по кругу: в центре → у нижнего → у верхнего (правая кнопка мыши — в обратном порядке). Значение куба остаётся закреплённым — в money game эквити выражаются в единицах текущего куба, важен только его владелец. Анализ пересчитывается немедленно. В режиме оценки сам значок кликабелен и открывает непосредственно вкладку <em>Bearoff</em> конфигурации; его подсказка объясняет почему (вердикт по кубу не поддаётся оценке, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>) и как расширить точную область.</p>
+<p><strong>Счёт</strong> тоже редактируется прямо на доске, как в режиме редактирования: левый щелчок по прямоугольнику счёта игрока уменьшает число очков, которые ему осталось набрать, правый — увеличивает. Выход из <em>money</em>-счёта (-1, -1) редактированием только одной стороны автоматически выравнивает другую сторону на то же значение, вместо того чтобы оставить несогласованный счёт. На позиции bearoff в <em>точном</em> режиме переход от money-счёта к счёту матча оставляет вероятность выигрыша как есть (чтение из базы, верное в любой системе отсчёта), но переключает показанные эквити и вердикт по кубу на значения <em>рассчитанного</em> режима — точная таблица по построению money и не умеет отвечать на вопрос, заданный при счёте матча. Значок тогда становится составным («точно (победа) · рассчитано (куб)»), чтобы сказать об этом явно.</p>
+<p>Наконец, <strong>кости</strong> редактируются тем же способом, и именно они определяют, какой вопрос задаётся: выставленные кости дают решение о ходе шашками (список кандидатных ходов), отсутствие костей — решение куба. Левый клик по кости увеличивает её значение (6 переходит в 1), правый клик уменьшает его (1 переходит в 6); клик по кости на доске, где костей нет, выставляет сразу две — одна кость не была бы ни решением о ходе шашками, ни решением куба. Клик по прямоугольнику игрока убирает кости, чтобы задать вопрос куба, а следующий клик по кости возвращает их такими, какими они были.</p>
+<p><em>BACKSPACE</em> или двойной щелчок вне доски стирает позицию: пустая доска, money-счёт (-1, -1), кости не выставлены — значения, свойственные панели Eval и отличные от используемых в режиме редактирования (7 у обоих, кости 3-1), чтобы оставаться согласованными с тем, что панель показывает по умолчанию.</p>
+<section id="matrice-du-videau">
+<span id="eval-matrice-videau"></span><h3>Матрица куба<a class="headerlink" href="#matrice-du-videau" title="Ссылка на этот заголовок"></a></h3>
+<p>Решение о кубе — не свойство доски. Те же шашки и тот же счёт пипсов удваиваются при 2-away/4-away и не удваиваются при 4-away/2-away; тот, кто выучил ответ для money, выучил одну клетку сетки. Панель Eval показывает клетку, которую несёт позиция; <strong>матрица куба</strong> показывает всю сетку.</p>
+<p>Команда <code class="docutils literal notranslate"><span class="pre">cm</span></code> открывает её для показанной позиции. Каждая клетка даёт вердикт при одном счёте: строка — сколько очков ещё нужно игроку на ходу, столбец — сколько нужно сопернику. Четыре вердикта записываются как <em>БУ</em> (без удвоения), <em>УП</em> (удвоение, приём), <em>УО</em> (удвоение, отказ) и <em>СХ</em> (слишком хорошо); клетка, от которой движок отказался, помечена вопросительным знаком и при наведении объясняет причину, а также показывает три эквити клетки. Предлагаются три длины матча: 5, 7 и 9 очков.</p>
+<p>Счёт самой позиции заменяется счётом каждой клетки; её <strong>куб</strong> сохраняется. Сетка отвечает на вопрос, при каком счёте стоит повернуть <em>этот</em> куб, а не на то, как играла бы позиция с центральным кубом. Она всюду построена для положения после Кроуфорда: в игре Кроуфорда куб не используется, и столбец «удваивать нельзя» ничего не сказал бы о позиции.</p>
+<p>Каждая клетка — отдельный поиск. Движок учитывает счёт — при 2-away он играет не ту же партию, что при 7-away — поэтому единственный поиск, прочитанный через разные матчевые эквити, был бы неверен именно там, где счёт важен. Сетка сначала появляется на 0-ply, а затем пересчитывается на настроенной глубине отображения, когда окно приходит в покой: то же нарастание, что и в остальной части панели; сетка на 9 очков стоит около полутора секунд.</p>
+<p>Ту же сетку можно вычислить вне интерфейса командой <a class="reference internal" href="cli.html#cli-cubematrix"><span class="std std-ref">cubematrix</span></a> командной строки.</p>
+</section>
+<section id="amener-une-position-dans-le-panneau-eval">
+<span id="eval-amener-position"></span><h3>Перенос позиции в панель Eval<a class="headerlink" href="#amener-une-position-dans-le-panneau-eval" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель по умолчанию открывается на позиции bearoff, но изучение чаще всего начинается с уже имеющейся позиции. Перенести её туда можно двумя способами:</p>
+<ul class="simple">
+<li><p><strong>Правый щелчок по доске</strong> в панели анализа или при навигации по матчу, затем <em>Оценить эту позицию</em>: панель Eval открывается прямо на этой позиции, в том виде, в каком она показана. Контекстное меню не появляется в панели Eval и в панели поиска, где правая кнопка уже служит для выставления шашек другого цвета.</p></li>
+<li><p><strong>CTRL-C, затем CTRL-V</strong>: скопировать позицию из панели анализа, затем вставить её один раз в панели Eval. Вставка принимает и идентификатор из другого источника — XGID (eXtreme Gammon, GNU Backgammon, другой экземпляр blunderDB) или OGID (OpenGammon): достаточно, чтобы он был в буфере обмена.</p></li>
+<li><p><strong>Команда</strong> <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">XGID=…</span></code> (или <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">OGID=…</span></code>) — для случая, когда идентификатор не в буфере обмена, а в сообщении, на форуме, читаемом в терминале, или получен от скрипта. Это тот же глагол, что и просто <code class="docutils literal notranslate"><span class="pre">import</span></code>: без аргумента он открывает выбор файла, с аргументом — читает идентификатор. Дальше путь тот же, что и при вставке: то же чтение, та же дедупликация, то же открытие импортированной позиции.</p></li>
+</ul>
+<p>OGID несёт только позицию: ни оценки, ни комментария. Поэтому позиция приходит без анализа, ровно как голый XGID, а встроенный оценщик может заполнить этот пробел позже.</p>
+<p>Доска панели Eval — черновик: позиция попадает туда без своего идентификатора в базе, так что никакое сделанное здесь изменение не может перезаписать запись, из которой она взята. Все обычные правки доски остаются доступны (шашки, куб, кости, счёт), и оценка следует за каждым изменением.</p>
+<p>В обратную сторону <em>CTRL-C</em> копирует доску панели Eval в буфер обмена с XGID, пересчитанным по выставленным шашкам, — то есть её можно вставить прямо в eXtreme Gammon или в другой экземпляр blunderDB. Путешествует только позиция: оценка, показанная панелью, не является записью базы и не сопровождает копию.</p>
+<p>При выходе из панели Eval восстанавливается ранее просматривавшаяся позиция: черновик никогда не сохраняется сам по себе.</p>
+<p>Когда позиция является чистым bearoff (все шашки обоих игроков в своём доме) и кости не выставлены, решение по кубу отображает для игрока на ходу:</p>
+<ul class="simple">
+<li><p>в <em>точном</em> режиме: money-эквити (cubeless, без дабла, дабл/тейк, дабл/пас) и <strong>money-вердикт по кубу</strong> (без дабла, дабл/тейк, дабл/пас или слишком хорошо для дабла) — вне счёта матча; случай счёта матча см. выше,</p></li>
+<li><p>в <em>рассчитанном</em> режиме: те же эквити и тот же вердикт с четырьмя значениями, но <strong>разыгранные gammonNet</strong> (поиск + модель куба Яновского), а не прочитанные из таблицы — доступные <strong>даже при счёте матча</strong>, чего режим оценки никогда не мог предложить;</p></li>
+<li><p>в режиме <em>оценки</em>: вердикт по кубу тогда намеренно не отображается — доступна лишь вероятность выигрыша в таблице фактов, с её погрешностью.</p></li>
+</ul>
+<p>Как только на гоночной позиции выставлены кости, это решение по кубу <em>до броска</em> исчезает — доска требует тогда решения о шашках, а не о кубе, — но вероятность выигрыша остаётся фактом о позиции, а не решением: она переходит в строку <em>до броска</em> во главе списка ходов, рядом с EPC, который по-прежнему показан чуть левее.</p>
+<p>Значок указывает режим: <strong>точно</strong> (значение прочитано из two-sided базы), <strong>рассчитано · &lt;глубина&gt;</strong> (разыграно gammonNet — показанная глубина та, что действительно дала показанное число), <strong>оценка ± погрешность</strong>, либо, при счёте матча в точной области, <strong>точно (победа) · рассчитано (куб)</strong> — см. выше. Точный режим имеет приоритет везде, где доступен; иначе рассчитанный режим появляется, как только закончит вычисление, заменяя на месте режим оценки, показанный во время ожидания. Точное определение трёх режимов и их допущений см. в <a class="reference internal" href="#epc-methodologie"><span class="std std-ref">Методология и допущения панели Eval</span></a>.</p>
+<p><strong>Расширение точной области.</strong> Таблица, вычисленная при первом запуске, охватывает 6 шашек с каждой стороны. Два способа пойти дальше, во вкладке <em>Bearoff</em> настроек:</p>
+<ul class="simple">
+<li><p>вычислить более широкую двустороннюю таблицу — вплоть до TS-06-15, если у машины хватает памяти. Вкладка называет размер, память и время на этой машине до начала, а вычисление ставится на паузу и продолжается. Отменённое вычисление оставляет файл <code class="docutils literal notranslate"><span class="pre">.part</span></code>, который никогда не читается как таблица;</p></li>
+<li><p>указать любой two-sided файл <code class="docutils literal notranslate"><span class="pre">.bd</span></code> из gnubg. База с самой широкой областью автоматически имеет приоритет.</p></li>
+</ul>
+<p><strong>Доска панели — черновик, и она запоминается.</strong> Если выйти из панели Eval и вернуться, вы найдёте позицию, на которой её оставили, а не доску выбрасывания по умолчанию: та выдаётся только при первом открытии панели за сеанс. Отправка позиции из базы в панель имеет приоритет над этой памятью, а <em>BACKSPACE</em> в любой момент возвращает доску по умолчанию. По пути в базу ничего не записывается — у черновика нет идентичности позиции, а его оценка пересчитывается по прибытии, а не переносится.</p>
+<p><strong>Режим вызова.</strong> Флажок <em>Вызов</em> в полосе значков включает режим тренировки: при каждом изменении позиции значения трёх зон скрываются (заменяются на « ··· »); щелчок по зоне открывает только эту зону. Без костей это строка нижнего игрока, строка верхнего игрока и решение по кубу — строка Δ появляется лишь после открытия обеих строк игроков. Блок решения сохраняет при этом свои три строки: исчезают его значения, вердикт и выделение лучшего варианта, иначе упражнение решалось бы поиском жирной строки. При выставленных костях на гоночной позиции строка EPC каждого игрока скрывается как прежде, но третья зона тогда охватывает строку <em>до броска</em> и список ходов <strong>вместе</strong>: поскольку список упорядочен от лучшего хода к худшему, частичное его открытие уже выдало бы ответ. При выставленных костях вне гоночной позиции та же единственная зона охватывает всё, что показывает панель. Так можно тренироваться оценивать EPC каждой стороны, затем принимать решение по кубу или по ходу, прежде чем проверить. Настройка запоминается.</p>
+<p>Для закрытия панели Eval нажмите <em>CTRL-E</em> или переключитесь на другую вкладку.</p>
+</section>
+<section id="methodologie-et-hypotheses-du-panneau-eval">
+<span id="epc-methodologie"></span><h3>Методология и допущения панели Eval<a class="headerlink" href="#methodologie-et-hypotheses-du-panneau-eval" title="Ссылка на этот заголовок"></a></h3>
+<p>Каждое значение, отображаемое панелью, опирается на точные допущения, исчерпывающе изложенные здесь.</p>
+<p><strong>Область.</strong> <em>Зона гонки</em> — вероятность выигрыша и вердикт куба — охватывает только чистый бирофф: все оставшиеся шашки обоих игроков в своём доме. Позиция оценивается <em>до броска</em>; выставленные кости игнорируются.</p>
+<p><strong>Блоки EPC</strong>, напротив, идут дальше: сторона получает свой EPC, как только её самая дальняя шашка помещается в загруженную одностороннюю таблицу. С таблицей по умолчанию (шесть пунктов) это старое правило дома; с таблицей на восемь пунктов, вычисленной во вкладке <em>Bearoff</em>, сторона с шашкой на 8 рассматривается как любая другая. Ничего не экстраполируется: шашка на пункт дальше просто не имеет EPC, ровно как шашка на 7 не имела его раньше. Когда ответившая таблица не та, что на шесть пунктов, её имя появляется в углу блока гонки («OS-08») — без него читалось бы «шесть» по умолчанию и сторона казалась бы полностью дома.</p>
+<p><strong>Блоки EPC (всегда точные).</strong> EPC, среднее число бросков и стандартное отклонение берутся из точного распределения числа бросков для вывода всех шашек, прочитанного из односторонней базы GNUbg (от 6 до 10 пунктов, 15 шашек, вычислена на машине). EPC = средние броски × 49/6 (49/6 ≈ 8,167 — точное среднее пипов на бросок, дубли считаются четырежды); wastage = EPC − pip count. Единственная идеализация — <em>односторонняя оптимальная игра</em>: каждый игрок минимизирует свои броски, игнорируя соперника; это стандартное определение EPC.</p>
+<p><strong>Вероятность выигрыша, точный режим.</strong> Прямое чтение из самой широкой доступной two-sided базы (TS-06-06, вычисляемая при первом запуске, внешний файл или TS-06-11, вычисляемая во вкладке <em>Bearoff</em>). Эти базы получены полным ретроградным анализом при оптимальной two-sided игре обеих сторон: никаких дополнительных допущений, ошибка ограничена квантованием (&lt; 0,002 %).</p>
+<p><strong>Вероятность выигрыша, режим оценки.</strong> Вне области базы вероятность получается свёрткой двух one-sided распределений (игрок на ходу выигрывает, если его число бросков меньше или равно числу бросков соперника) с последующей фиксированной полиномиальной поправкой, откалиброванной офлайн по базе TS-06-11. Три допущения:</p>
+<ul class="simple">
+<li><p><strong>независимость</strong> двух процессов снятия — структурная в гонке: без контакта нет никакого взаимодействия;</p></li>
+<li><p><strong>оптимальная one-sided игра обеих сторон</strong> — это и есть <em>приближение</em>: в действительности отстающий игрок отклоняется ради дисперсии, а лидер — ради безопасности. Измеренный эффект — антисимметричное смещение (свёртка преувеличивает преимущество лидера), которое поправка статистически поглощает;</p></li>
+<li><p><strong>поправка</strong> откалибрована и проверена на области оракула (до 11 шашек у каждого игрока). Измеренная остаточная ошибка: стандартное отклонение 0,05 %, 99-й процентиль 0,17 %, наблюдаемый максимум 0,9 % (в пунктах вероятности выигрыша). <strong>Свыше 11 шашек у игрока эта граница экстраполируется</strong> — тенденция монотонна, но никакой оракул её не подтверждает.</p></li>
+</ul>
+<p><strong>Эквити и вердикт по кубу (только точный режим).</strong> Отображаемые эквити — это эквити <strong>money game без правила Джекоби</strong>, в системе отсчёта литературы по bearoff. В области ≤ 11 шашек у каждого игрока гаммоны невозможны (каждая сторона уже сняла не менее 4 шашек): это не приближение. Вердикт (без дабла / дабл, тейк / дабл, пас) точно восстанавливается из сохранённых эквити по правилу GNUbg, проверенному один в один против его анализа.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Cubeful-эквити предполагают <strong>оптимальную игру кубом обеих сторон до самого конца</strong>: будущие редаблы полностью учитываются (полный ретроградный анализ). В очень волатильных гонках конца партии каскад редаблов съедает почти всё преимущество стороны на ходу — эквити «без дабла» и «дабл/тейк» тогда могут быть близки к нулю там, где движок вроде XG, чья модель куба не учитывает эту каскаду, показывает значения, близкие к dead cube (например, 2 шашки на пункте 3 против 2 шашек на пункте 2: 62 % выигрыша, точное D/T +0,006 против +0,475 у XG). Отображаемое <strong>решение</strong> при этом совпадает с решением движков.</p>
+</div>
+<p><strong>Вероятность выигрыша и вердикт, рассчитанный режим.</strong> Вне точной области вероятность выигрыша берётся из сырого вывода gammonNet (поиск на 0 или 2 ply в зависимости от действия, никогда не читается из таблицы), а вердикт — из «Decide» Яновского, применённого к этому выводу: поиск <em>разыгрывает</em> траекторию вместо того, чтобы резюмировать её мгновенный снимок, — именно то, чего режим оценки не мог сделать (см. ниже), — и позволяет, единственный из трёх режимов наряду с точным, дать вердикт <strong>при счёте матча</strong>.</p>
+<p>Этот режим был измерен, а не только предположен, против встроенной two-sided таблицы (<code class="docutils literal notranslate"><span class="pre">TestEvalMeasure</span></code>, 4000 выборочных money-решений, канонические параметры 2 ply k=12): совпадение money-вердикта <strong>93,4 %</strong> (3735/4000), в разбивке по расстоянию до точки тейка gammonNet — 61,1 % ближе 1 % от точки тейка (зона, наиболее чувствительная к «орлу или решке»), 88,3 % между 1 и 5 %, 91,5 % между 5 и 10 %, 94,0 % между 10 и 20 %, 94,4 % дальше. Расхождение вероятности выигрыша: среднее 0,85 %, медиана 0,44 %, 95-й процентиль 3,21 %, максимум 8,30 %. Расхождение cubeful-эквити: среднее 0,039, медиана 0,018, 95-й процентиль 0,151, максимум 0,406. Форма ожидаемая: основная часть разногласий сосредоточена ровно в точке тейка, где два законно различных метода сильнее всего расходятся на близком решении, — а не размытая ошибка, которая стоила бы эквити повсюду.</p>
+<p>Это измерение относится к <strong>money</strong>-решениям в гонке. Вердикт при матчевом счёте — который умеет выдавать только этот режим — и контактные позиции опубликованных измерений не имеют: сказанное выше на эти случаи не переносится.</p>
+<p><strong>Почему не глубже двух плаев?</strong> Потому что измерение говорит, что это ничего не даёт. Решение по шашкам стоит на той же машине 99 мс при 2 плаях и 8,4 с при 3 — <strong>в восемьдесят пять раз больше</strong>. На сорока настоящих решениях, переигранных на обеих глубинах, более глубокий поиск передумал <strong>дважды</strong>, и оба раза выигрыш, который он приписывал самому себе, составлял не более 0,0005 нормализованной эквити: на два порядка ниже 0,020 — порога, с которого eXtreme Gammon вообще говорит об ошибке. На решение, во всех случаях вместе, выигрыш равен 0,0000.</p>
+<p>Настройка поэтому не предлагается. Это не значит, что 3 плая ничего не стоят вообще, — лишь что на <em>этой</em> сети, с каноническим фильтром, они не окупают ожидания того, кто сидит перед панелью. Измерение воспроизводимо (<code class="docutils literal notranslate"><span class="pre">TestThreePlyMeasure</span></code>), и вывод будет пересмотрен, если сеть изменится.</p>
+<p><strong>Почему не существует оценочного вердикта?</strong> Сказанное ниже относится именно к методу <em>свёртки</em> (режим оценки), а не к рассчитанному режиму выше: cubeful-эквити — задача о <em>траектории</em> (когда даблить), которую не улавливает никакая статистическая сводка позиции: лучшая из измеренных статических моделей оставляет остаточную ошибку (стандартное отклонение 0,016 эквити, максимум 0,20), достаточную, чтобы перевернуть все близкие решения. Аналогично, пересчёт вердикта на счёт матча через таблицу матчевых эквити оказался недостаточным (12 % расхождений с 2-ply анализом GNUbg, включая настоящие бландеры). Поскольку уверенно показанный неверный вердикт хуже отсутствия вердикта, свёртка никогда не имела права показывать вердикт — этот пробел заполняет поиск, разыгрывающий траекторию, а не статистическая сводка.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Базы бироффа — неизменные математические таблицы. blunderDB вычисляет их сам, байт в байт так же, как инструмент <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> из GNUbg, — во вкладке <em>Bearoff</em> настроек или командой <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">generate</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="panneau-anki">
+<span id="id11"></span><h2>Панель Anki<a class="headerlink" href="#panneau-anki" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Anki</strong> (<em>CTRL-K</em>) позволяет изучать позиции методом интервального повторения с использованием алгоритма FSRS. Пользователи могут создавать колоды из коллекций или результатов поиска.</p>
+<p><strong>Создание колод:</strong> Нажмите <em>New Deck</em> для создания колоды из коллекции или текущих результатов поиска. Колоды на основе поиска синхронизируются автоматически при открытии вкладки Anki.</p>
+<p><strong>Повторение:</strong> Выберите колоду и нажмите <em>Study</em> (или дважды щёлкните на колоде) для начала повторения карточек с наступившим сроком. Каждая карточка показывает соответствующую позицию на доске. Оцените своё запоминание клавишами <em>1</em> (Снова), <em>2</em> (Сложно), <em>3</em> (Хорошо) или <em>4</em> (Легко). Нажмите <em>Esc</em> для остановки и возврата к списку колод.</p>
+<p><strong>Решения по кубу дают две карточки, сцепленные.</strong> Решение по кубу — это два вопроса: «дублировать?», затем «брать?» — и blunderDB всегда хранил их как две позиции. Колода, выбравшая только одну половину, получает вторую: решение <strong>дополняется</strong>, а не раздувается. И когда обе подошли по сроку, вторая идёт <strong>сразу</strong> за первой.</p>
+<p>Каждая сохраняет свою оценку и своё расписание: это не два этапа одной карточки, а две карточки. Сцепление не приближает ни один срок — оно упорядочивает уже подошедшие карточки, и только. Рождаясь вместе, они впервые подходят по сроку вместе, и именно там оно и полезно.</p>
+<p><strong>Показать ответ:</strong> Карточка задаёт вопрос — какой ход сыграть или какое действие с кубом выполнить. Подумайте, затем нажмите <em>SPACE</em> (или щёлкните по скрытой области), чтобы открыть ответ: записанный анализ позиции в том виде, в каком его представляет вкладка Анализ. Он появляется под кнопками оценки, которые остаются на своём месте и под рукой. Клик по ходу в списке показывает его на доске.</p>
+<p>Ничто не обязывает вас открывать ответ, чтобы оценить: если вы уверены в себе, клавиши <em>1</em>–<em>4</em> остаются активными. Ответ снова скрывается на следующей карточке, но не при простом переключении вкладки — сходите в панель Eval или к комментарию позиции, он будет ждать вас по возвращении.</p>
+<p>Позиция без записанного анализа сообщает об этом напрямую, без скрытой области.</p>
+<p><strong>Ограничение сессии.</strong> По умолчанию сессия повторения проходит все карточки, срок которых наступил. В Настройках её можно ограничить числом карточек для каждой колоды: отметьте <em>Ограничить сессию</em> и укажите, сколько карточек должна выдать одна сессия. При достижении предела сессия останавливается и сообщает об этом — сообщение отличает «предел достигнут, столько-то карточек ещё ждут» от действительно опустевшей очереди. Чтобы всё же продолжить, есть свободная тренировка: она показывает другие позиции, ничего не меняя в расписании.</p>
+<p>Предел <strong>0</strong> не выдаёт ни одной карточки: это самостоятельное состояние, удобное, чтобы заморозить колоду на время подготовки к турниру, и это не то же самое, что «без предела». Кнопка <em>Study</em> при этом неактивна.</p>
+<p>Предел относится к <strong>сессии</strong>, а не ко дню. Колода blunderDB строится на коллекции или на поиске: это конечный набор, вводимый за несколько сессий, и его дневной объём уже ограничен его размером. Дневной потолок либо никогда не сработал бы, либо создал бы отставание на колоде, которая укладывалась в одну сессию.</p>
+<p><strong>Свободная тренировка (cram):</strong> Кнопка <em>Cram</em> рядом с <em>Study</em> запускает сессию свободной тренировки: вам показываются случайные позиции из колоды без учёта расписания FSRS. Этот режим <strong>никогда не изменяет план интервального повторения</strong> — идеально для разминки перед турниром или интенсивного повторения тематической колоды, не нарушая её порядок. Значок <em>Cram</em> заменяет состояние карточки, а кнопка <em>Далее</em> (клавиши <em>1</em>–<em>4</em>) перелистывает позиции. <em>Esc</em> возвращает к списку, не сохраняя прерванную сессию.</p>
+<p><strong>Отложить карточку, не оценивая её.</strong> Во время повторения правый щелчок по заголовку карточки открывает три жеста, которые убирают её из сеанса, ничего не сообщая планировщику:</p>
+<ul class="simple">
+<li><p><strong>Приостановить</strong> — карточка сохраняет своё расписание и больше не появляется, пока приостановлена. Так откладывают неверную или ещё бесполезную карточку, не теряя связанной с ней истории.</p></li>
+<li><p><strong>Отложить до завтра</strong> — карточка исчезает до следующего дня. В отличие от приостановки, это ничего не говорит о её ценности: это для той, что только что встретилась в другом месте, или которую не хочется видеть дважды за вечер.</p></li>
+<li><p><strong>Убрать</strong> — карточка покидает колоду после подтверждения. Сама позиция остаётся в базе: колода — это список для изучения поверх библиотеки, а не её копия.</p></li>
+</ul>
+<p>Ни один из трёх жестов не записывает оценку: отложенная карточка не есть отвеченная карточка и не входит в счёт сеанса.</p>
+<p><strong>Журнал повторений.</strong> В настройках колоды кнопка <em>Журнал повторений</em> показывает, что планировщику <strong>сказали</strong> — дата, позиция, оценка, состояние, выданный интервал — в отличие от того, что он планирует. Это единственное место, где видна оценка, поставленная по ошибке. Исправить её там нельзя: расписание остаётся вне досягаемости, и именно это правило делает журнал полезным — прошлое не переписать, но его можно знать.</p>
+<p><strong>Пауза/Продолжение:</strong> Вы можете прервать сеанс повторения в любой момент с помощью <em>Esc</em>. Кнопка меняется на <em>Resume</em> и показывает ваш прогресс. Нажмите её, чтобы продолжить с того места, где остановились.</p>
+<p><strong>Управление колодами:</strong> Кнопки действий позволяют переименовать, синхронизировать, сбросить или удалить колоды (для двух последних спрашивается подтверждение). Параметры FSRS (целевое удержание, максимальный интервал, разброс) настраиваются для каждой колоды в Настройках (значок шестерёнки).</p>
+<p><strong>Удержание: цель и измерение.</strong> <em>Целевое удержание</em> — это ваш выбор в компромиссе между объёмом работы и качеством припоминания: чем оно выше, тем короче интервалы и тем больше вы повторяете. Рядом Настройки показывают <strong>измеренное удержание</strong> по вашим собственным повторениям — это сведение, а не управление: blunderDB не меняет вашу цель, гоняясь за вашим процентом успеха. Меньше чем при двух десятках повторений измерение не показывается: оно читалось бы как факт, будучи всего лишь шумом.</p>
+<p>Изменение удержания <strong>не действует задним числом</strong>: каждая карточка перенимает новый ритм на следующем повторении, а уже назначенные сроки не сдвигаются. Поэтому эффект постепенный и в тот же день незаметен.</p>
+<p><em>Максимальный интервал</em> ограничивает разрежение. Недавно созданная колода начинает с одного года: позиция, которую алгоритм отодвинул бы на несколько лет, покинула колоду без вашего решения, а ваша собственная игра меняется быстрее этого. Более старые колоды сохраняют то значение, которое у них было.</p>
+</section>
+<section id="micro-entrainements">
+<span id="id12"></span><h2>Микротренировки<a class="headerlink" href="#micro-entrainements" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель Anki заставляет повторять <strong>суждение</strong>; микротренировки тренируют три <strong>вычисления</strong>, которые делаются за доской, под часами, и которые не строит никакое интервальное повторение. Команда <code class="docutils literal notranslate"><span class="pre">train</span></code> запускает сессию из пяти вопросов:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">pips</span></code> — сосчитать пипсы игрока на ходу по показанной позиции.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">epc</span></code> — оценить EPC того же игрока на гоночной позиции, которую движок умеет оценивать.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">tp</span></code> — вспомнить точку взятия длинной гонки при случайно выпавшем счёте, ту, что в таблице <code class="docutils literal notranslate"><span class="pre">tp2_live</span></code>.</p></li>
+</ul>
+<p>Вопрос — ЭТО показанная позиция: доска та же, что и в приложении, а панель над ней несёт только вопрос, поле ввода и проверку. Ответ набирается и подтверждается с клавиатуры (<em>Enter</em> проверяет и переходит дальше, <em>Esc</em> выходит из сессии).</p>
+<p>Допуск зависит от упражнения и назван, а не угадывается: у подсчёта пипсов его <strong>нет</strong> — сложение, верное с точностью до одного пипса, есть неверное сложение — EPC допускает полпипса, точка взятия два процентных пункта. В конце сессия показывает число верных ответов и <strong>медианное</strong> время на вопрос.</p>
+<p>Сохраняется только эта сводка, в метаданных базы: сессия не хранит след по каждому вопросу, и ничего не пишется, пока она не завершена. Выход на полпути поэтому ничего не записывает.</p>
+<section id="quiz-le-pr-d-entrainement">
+<h3>Викторина: тренировочный PR<a class="headerlink" href="#quiz-le-pr-d-entrainement" title="Ссылка на этот заголовок"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">train</span> <span class="pre">quiz</span></code> задаёт четвёртый, иной по природе вопрос. Панель Anki заставляет запоминать; викторина <strong>проверяет</strong>. Из просматриваемого списка берутся пять уже проанализированных позиций, и нужно принять решение:</p>
+<ul class="simple">
+<li><p>при решении о ходе — набрать ход с клавиатуры, в нотации (<code class="docutils literal notranslate"><span class="pre">13/7</span> <span class="pre">8/7</span></code>);</p></li>
+<li><p>при решении по кубу — нажать <em>Без дубля</em>, <em>Дубль, взять</em> или <em>Дубль, пас</em>.</p></li>
+</ul>
+<p>Панель анализа закрыта, пока на вопрос нет ответа: она несёт ответ, а вопрос, ответ на который показан рядом, — не вопрос.</p>
+<p>Проверка различает три исхода, и смешать их значило бы солгать. <strong>Недопустимый ход</strong> — не плохо выбранный ход, а нарушение правил. <strong>Допустимый ход, который движок не оценил</strong>, вовсе не ошибка: у него просто нет цены, и сессии он ничего не стоит. Оценённый ход стоит столько, сколько говорит анализ, в миллипунктах.</p>
+<p>В конце сессия показывает <strong>PR викторины</strong>, вычисленный по той же формуле, что статистика применяет к реальной игре, — 500 × средняя ошибка в нормализованной эквити. Именно это делает два числа сравнимыми: PR викторины 6 и PR матча 6 измеряют одно и то же по одной шкале.</p>
+</section>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2>Панель метаданных<a class="headerlink" href="#panneau-metadonnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Метаданные</strong> отображает общую информацию о текущей базе данных: имя, описание, количество позиций, матчей и партий, версия схемы. Доступна через команду <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+<p>Она также показывает, <strong>если она есть</strong>, происхождение базы — см. <a class="reference internal" href="#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>. У обычной базы этот раздел не отображается.</p>
+</section>
+<section id="diffuser-une-base-origine-et-mot-de-passe">
+<span id="diffusion-controlee"></span><h2>Распространение базы: происхождение и пароль<a class="headerlink" href="#diffuser-une-base-origine-et-mot-de-passe" title="Ссылка на этот заголовок"></a></h2>
+<p>У преподавателя, раздающего базу позиций, есть два независимых друг от друга механизма, оба необязательные и выбираемые <strong>в момент экспорта</strong>: пометить файл его происхождением и защитить его паролем.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Ни один из них не отслеживает дальнейшую судьбу файла. blunderDB <strong>ничего не записывает на стороне получателя базы</strong>: открыть помеченную базу — то же самое, что открыть любую другую, и нигде не фиксируется, кто её открыл, когда и откуда взялось её содержимое.</p>
+</div>
+<section id="marquer-une-base-de-son-origine">
+<h3>Пометить базу её происхождением<a class="headerlink" href="#marquer-une-base-de-son-origine" title="Ссылка на этот заголовок"></a></h3>
+<p>Окно экспорта умещается в один экран: форма, а поверх неё — индикатор выполнения на время записи. По завершении окно закрывается само, а результат появляется в строке состояния.</p>
+<p>Три момента заслуживают внимания:</p>
+<ul class="simple">
+<li><p><strong>Экспортируются позиции, отображаемые в данный момент</strong>, а не вся база. После поиска выгружаются только результаты — окно напоминает об этом сверху.</p></li>
+<li><p><strong>Коллекция, чьи позиции вошли в выборку не полностью, придёт усечённой.</strong> Поэтому в списке для каждой коллекции указана охваченная доля («12/40»), выделенная красным, когда она неполная.</p></li>
+<li><p><strong>Турниры можно экспортировать только вместе с матчами</strong>: без них связи «турнир — матч» не существует и турнир пришёл бы пустым. Флажок остаётся недоступным, пока не отмечено «включить матчи».</p></li>
+</ul>
+<p>Поля <em>Пользователь</em>, <em>Описание</em> и <em>Дата</em> описывают <strong>создаваемый файл</strong>; они заранее заполняются из исходной базы. Флажок <em>Мои сохранённые фильтры</em> стоит особняком: он экспортирует не содержимое, а ваши собственные сохранённые запросы, бесполезные в чужой базе.</p>
+<p>При установке флажка <strong>Пометить этот файл его происхождением</strong> появляются два поля:</p>
+<ul class="simple">
+<li><p><strong>Происхождение</strong> — что это за файл и откуда он, вашими словами: «Занятие Жана Дюпона — 12 марта 2026». Это поле <strong>обязательно</strong>: пока оно пусто, кнопка экспорта неактивна.</p></li>
+<li><p><strong>Примечание</strong>, необязательное — условия использования, контактный адрес, просьба не распространять дальше.</p></li>
+</ul>
+<p>Отметка подписана вашей идентичностью автора. Поэтому она <strong>неизменяема и неподделываема</strong>: никто не может её изменить или изготовить от вашего имени. Зато она <strong>не является неудаляемой</strong> — распространяемый файл представляет собой обычную базу SQLite, а blunderDB — свободная программа. Она ничему не препятствует: она говорит, откуда файл.</p>
+</section>
+<section id="identite-d-emetteur">
+<h3>Идентичность автора<a class="headerlink" href="#identite-d-emetteur" title="Ссылка на этот заголовок"></a></h3>
+<p>Отметки подписываются вашей <strong>идентичностью автора</strong>, которая создаётся сама при первой пометке файла; настраивать ничего не нужно. Она принадлежит человеку, а не базе: все ваши файлы несут один и тот же публичный отпечаток вида <code class="docutils literal notranslate"><span class="pre">A3F1-9C24-7B05-E1D8</span></code>.</p>
+<p>Вы можете сообщить этот отпечаток получателям, чтобы они убедились, что файл действительно от вас. Идентичность переносится с одного компьютера на другой одним файлом (расширение <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>), при желании защищённым парольной фразой. <strong>Этот файл позволяет подписывать от вашего имени: не передавайте его.</strong></p>
+<p>В настройках (значок шестерёнки на панели инструментов) вкладка <em>Идентичность автора</em> показывает ваше имя и отпечаток и предлагает <em>Сохранить идентичность…</em>, <em>Загрузить идентичность…</em> и <em>Создать заново…</em>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p><strong>Создание заново ничего не отзывает.</strong> Отметка несёт в себе публичный ключ, которым она подписана, поэтому проверяется сама по себе и всегда. Если ваш файл идентичности утёк, тот, у кого он есть, сможет и дальше подписывать под вашим прежним отпечатком, и такие отметки останутся действительными.</p>
+<p>После утечки вас защищает не программа: нужно опубликовать новый отпечаток и объявить прежний недействительным перед вашими получателями.</p>
+<p>Создание заново перезаписывает текущий ключ; blunderDB предлагает сохранить его перед заменой.</p>
+</div>
+</section>
+<section id="proteger-une-base-par-un-mot-de-passe">
+<h3>Защита базы паролем<a class="headerlink" href="#proteger-une-base-par-un-mot-de-passe" title="Ссылка на этот заголовок"></a></h3>
+<p>Пароль вводится скрытым — и здесь, и при открытии защищённого файла; значок в виде глаза показывает его, <strong>пока его удерживают нажатым</strong>, и снова скрывает, как только его отпускают.</p>
+<p>Флажок <strong>Защитить этот файл паролем</strong> даёт файл с расширением <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> — даже если в окне сохранения вы выбрали имя с <code class="docutils literal notranslate"><span class="pre">.db</span></code>, поскольку это окно открывается до запроса пароля. Чтобы открыть его, используйте обычное открытие базы: окно выбора принимает как <code class="docutils literal notranslate"><span class="pre">.db</span></code>, так и <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>. blunderDB запрашивает пароль и создаёт рядом обычную базу; дальше ничего не спрашивается.</p>
+<p>Окно предлагает <strong>удалить защищённый файл после открытия</strong>: иначе одно и то же содержимое останется у вас под двумя именами. По умолчанию флажок снят — защищённый файл остаётся у вас, если вы собираетесь его передать, — а удаление происходит только после успешного открытия.</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Пароль защищает файл <strong>при передаче</strong>, а не саму базу. Он мешает постороннему открыть файл, забытый в папке загрузок, или вложение, пересланное по ошибке. Он не защищает от того, кому вы сообщили пароль.</p>
+</div>
+<p>Пароль проверяется при <strong>каждом</strong> открытии, в том числе если файл уже открывали на этом компьютере ранее.</p>
+<p>Технически база шифруется алгоритмом <strong>AES-256 в режиме GCM</strong>, ключ выводится из пароля функцией <strong>Argon2id</strong> (64 МиБ памяти, 3 прохода, 4 потока), соль случайна и своя для каждого файла. Режим GCM аутентифицирует всё целиком: неверный пароль распознаётся как таковой, равно как и любое изменение зашифрованного файла — молча испорченной базы не получится никогда.</p>
+<p>Заголовок защищённого файла остаётся <strong>открытым</strong>: его происхождение читается и без пароля.</p>
+</section>
+<section id="lire-l-origine-d-un-fichier">
+<h3>Как прочитать происхождение файла<a class="headerlink" href="#lire-l-origine-d-un-fichier" title="Ссылка на этот заголовок"></a></h3>
+<p>В приложении откройте файл и покажите панель <strong>Метаданные</strong> (команда <code class="docutils literal notranslate"><span class="pre">meta</span></code>). В верхней части панели появится раздел <strong>Происхождение</strong>, доступный только для чтения; он сообщает, что было записано, кем, когда и в каком состоянии подпись:</p>
+<ul class="simple">
+<li><p>«✓ подпись проверена — помечено вами»: файл несёт вашу отметку, нетронутую;</p></li>
+<li><p>«✓ подпись проверена»: отметка нетронута и сделана другим ключом — сравните её отпечаток с тем, который сообщил вам автор;</p></li>
+<li><p>«⚠ подпись недействительна»: документ был изменён или подделан.</p></li>
+</ul>
+<p>У обычной базы этот раздел не появляется.</p>
+<p>В командной строке <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span> <span class="pre">--db</span> <span class="pre">файл.db</span></code> показывает происхождение и состояние подписи, <strong>никогда не записывая в файл</strong>. Команда работает и с защищённым файлом, без пароля. См. <code class="docutils literal notranslate"><span class="pre">CLI_USAGE.md</span></code> про параметры <code class="docutils literal notranslate"><span class="pre">--watermark</span></code> и <code class="docutils literal notranslate"><span class="pre">--password</span></code> команды <code class="docutils literal notranslate"><span class="pre">export</span></code>, а также про <code class="docutils literal notranslate"><span class="pre">identity</span></code> и <code class="docutils literal notranslate"><span class="pre">open</span></code>.</p>
+</section>
+<section id="publier-une-base-pour-d-autres">
+<span id="partager-une-base"></span><h3>Публикация базы для других<a class="headerlink" href="#publier-une-base-pour-d-autres" title="Ссылка на этот заголовок"></a></h3>
+<p>Помеченная база распространяется как любой файл — по почте, с личного сайта, на флешке. blunderDB <strong>не предоставляет никакой службы</strong>: ни хранилища, ни размещённого каталога, ни учётной записи. Это прямое следствие его устройства: на стороне того, кто получает файл, никогда ничего не записывается, и сообщать службе было бы нечего, даже если бы она существовала.</p>
+<p>То, что делает опубликованную базу пригодной для другого, сводится к четырём полям, и все они уже есть:</p>
+<ul class="simple">
+<li><p><strong>Пользователь</strong> — кто её собрал, под тем именем, которое вы хотите видеть указанным.</p></li>
+<li><p><strong>Описание</strong> — что база содержит, одной фразой, помещающейся в список: «240 решений по кубу при счёте, с комментариями, средний уровень».</p></li>
+<li><p><strong>Происхождение</strong> (водяного знака) — что это за файл и для кого он был сделан. Это первое, что получатель читает в панели <em>Метаданные</em>.</p></li>
+<li><p><strong>Отпечаток издателя</strong> — публикуйте его рядом с файлом, а не внутри: сравнивая его, получатель убеждается, что файл пришёл от вас, а не от того, кто взял ваше имя.</p></li>
+</ul>
+<p>База, опубликованная без водяного знака, остаётся вполне пригодной; она просто анонимна, и панель <em>Метаданные</em> не показывает тогда раздела <em>Происхождение</em>.</p>
+<p>Чтобы о базе узнали, категория <em>Show and tell</em> <a class="reference external" href="https://github.com/kevung/blunderDB/discussions">обсуждений репозитория</a> служит указателем: это список, который ведут сами публикующие, а не служба, оказываемая blunderDB. Чтобы объявить там базу, нужны ссылка, четыре поля выше и отпечаток.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="Руководство пользователя" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="Список команд" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

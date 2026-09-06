@@ -1,0 +1,865 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Headless-tila (palvelin) &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="API-sopimus" href="api_reference.html" />
+    <link rel="prev" title="Usein kysytyt kysymykset (UKK)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/mode_headless.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/mode_headless.html" lang="en" hreflang="en">English</a>
+  <a href="../de/mode_headless.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/mode_headless.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/mode_headless.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/mode_headless.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/mode_headless.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/mode_headless.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Headless-tila (palvelin)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Yleiskatsaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve"><code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">Päätepisteet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-page-web-de-consultation">Verkkosivu</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ce-que-v1-promet">Mitä <code class="docutils literal notranslate"><span class="pre">/v1</span></code> lupaa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#un-client-python">Python-asiakas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#embarquer-le-moteur-dans-un-programme-go">Moottorin upottaminen Go-ohjelmaan</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bases-de-bearoff">Bearoff-tietokannat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-routes-d-exploitation">Ylläpitoreitit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlation-et-metriques-metier">Korrelaatio ja liiketoimintamittarit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression-des-flux">Virtojen pakkaus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#un-seul-tenant-sur-sqlite">Vain yksi tenant SQLitessä</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-et-restauration">Varmuuskopiointi ja palautus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#le-poste-de-travail-et-le-serveur">Työasema ja palvelin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">Käyttöönotto Dockerilla</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#image-publiee">Julkaistu kuva</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-derriere-un-proxy-authentifiant">Käyttöönotto todentavan proxyn takana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mettre-a-jour-un-deploiement">Käyttöönoton päivittäminen</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#row-level-security">Row-Level Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouvrir-et-fermer-un-tenant">Tenantin avaaminen ja sulkeminen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compactage-et-pool-de-connexions">Tiivistys ja yhteyspooli</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">SQLite-tietokannan siirtäminen PostgreSQL:ään</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Headless-tila (palvelin)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1>Headless-tila (palvelin)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tässä osiossa kuvataan blunderDB:n <strong>edistynyt ja valinnainen tila</strong>, joka on tarkoitettu palvelinkäyttöön, monikäyttäjäympäristöihin ja automaatioon. <strong>blunderDB:n tavanomainen ja suositeltu käyttötapa on edelleen työpöytäsovellus</strong>, joka kuvataan edellisissä luvuissa. Jos käytät blunderDB:tä yksin omalla tietokoneellasi, et tarvitse tätä tilaa: voit ohittaa tämän luvun menettämättä mitään analyysiominaisuuksista.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Yleiskatsaus<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Sama <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>-binääri voi työpöytäsovelluksen ja komentorivikomentojen (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) lisäksi toimia <strong>headless-tilassa</strong>: ilman graafista käyttöliittymää, ohjattuna kokonaan komentoriviltä tai verkon kautta. Tämä tila kattaa kolme käyttötapaa:</p>
+<ul class="simple">
+<li><p><strong>demoni</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — tarjoaa blunderDB:n moottorin HTTP + JSON -palveluna, jotta jaettua tietokantaa voidaan pyörittää palvelimella ja käyttää usean käyttäjän kesken;</p></li>
+<li><p>yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä — kutsuu mitä tahansa tallennustoimintoa suoraan paikallisesti, skriptausta ja testausta varten;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">migrate</span></code>-komento — siirtää yhden käyttäjän SQLite-tietokannan monikäyttäjäiseen PostgreSQL-taustajärjestelmään.</p></li>
+</ul>
+<p>Nämä kolme käyttötapaa nojaavat yhteiseen <strong>tallennuskerrokseen</strong>, joka osaa puhua kahdelle taustajärjestelmälle: <strong>SQLite</strong> (työpöytäsovelluksen tavanomainen <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedostomuoto) ja <strong>PostgreSQL</strong> (monikäyttäjäisiin palvelinkäyttöönottoihin).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2><code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni<a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> käynnistää moottorin HTTP-palveluna, joka vastaa JSON-muodossa. Sen avulla voi isännöidä asematietokantaa yhdellä koneella ja käyttää sitä useasta asiakkaasta.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># sqlite</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+
+<span class="c1"># postgres</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p><code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> sopii vain luotettuun yksityisverkkoon — tietokanta viereisessä kontissa, verkossa, josta ei ole reittiä isäntäkoneeseen eikä internetiin. Etätietokannalle <code class="docutils literal notranslate"><span class="pre">sslmode=require</span></code> salaa yhteyden ja <code class="docutils literal notranslate"><span class="pre">verify-full</span></code> tarkistaa lisäksi palvelimen varmenteen ja sen isäntänimen. Tämän sivun muissa yhteysmerkkijonoissa on <code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> samasta syystä: ne kaikki kuvaavat yksityisverkkoa.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p><strong>Demoni ei suorita minkäänlaista todennusta.</strong> Se luottaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-pyyntöotsakkeeseen ja <strong>on</strong> ajettava todennuksesta huolehtivan käänteisvälityspalvelimen (nginx, Caddy…) takana. <strong>Älä koskaan altista sitä suoraan julkiseen internetiin.</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> on tenantin <strong>kokonaisluku</strong> (<code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">42</span></code>…): käänteisvälityspalvelimen tehtävä on yhdistää todennettu tili tähän kokonaislukuun. Nimi (<code class="docutils literal notranslate"><span class="pre">alice</span></code>) hylätään vastauksella <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, sitä ei koskaan muunneta.</p>
+</div>
+<p><strong>Valinnat:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite-tiedosto (oikotie komennolle <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;polku&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;tyyppi&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>tallennustaustajärjestelmä: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> tai <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>taustajärjestelmän yhteysmerkkijono</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>kuunteluosoite</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;taso&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>lokitustaso: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>tarjoaa <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (Prometheus-muoto)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--web</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>tarjoilee selauskäyttöisen verkkosivun osoitteessa <code class="docutils literal notranslate"><span class="pre">/app/</span></code>; <strong>oletuksena pois päältä</strong>, ks. alempaa</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;alkuperä&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ottaa CORSin käyttöön tälle alkuperälle, pilkuin erotellulle alkuperäluettelolle tai arvolle <code class="docutils literal notranslate"><span class="pre">*</span></code> (oletuksena pois käytöstä); vastaus heijastaa pyynnön alkuperän vain, jos se on luettelossa, ja sisältää otsakkeen <code class="docutils literal notranslate"><span class="pre">Vary:</span> <span class="pre">Origin</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>pyyntöraja sekunnissa tenanttia kohti (0 = pois käytöstä); käytössä oletuksena anteliaalla arvolla valinnaisen sijaan, jotta pelkkään tietokantaan keskittyvä compose-tiedosto ei perisi täysin rajoittamatonta demonia</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>token-ämpärin koko pyyntöpiikkejä varten</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: ottaa käyttöön tenant-kohtaisen Row-Level Securityn (syvyyspuolustus, valinnainen)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;tiedosto&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>valinnainen kaksipuolinen bearoff-tietokanta (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), joka laajentaa TS-06-06-taulukkoa EPC-päätepisteen kilpa-analyysia varten; taustapalvelu ei koskaan lataa tietokantaa — katso <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">Bearoff-tietokannat</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--identity-dir</span> <span class="pre">&lt;hakemisto&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>demonin liikkeeseenlaskijaidentiteetin hakemisto (luodaan ensimmäisellä käyttökerralla); tarvitaan, jotta <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> voi kirjoittaa vesileiman — katso alempana</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>tarjoaa <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>-perheen (<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>, <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>) osoitteessa, joka on <strong>erillinen</strong> <code class="docutils literal notranslate"><span class="pre">--addr</span></code>-osoitteesta, ja poistaa sen siltä; tyhjä (oletus) jättää ne pääkuuntelijaan, jossa etuliitteen torjuminen on välityspalvelimen tehtävä — ks. <a class="reference internal" href="#headless-ops-routes"><span class="std std-ref">Ylläpitoreitit</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>julkaisee <code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>-rajapinnan osoitteessa, joka on <strong>erillinen</strong> <code class="docutils literal notranslate"><span class="pre">--addr</span></code>-osoitteesta (oletuksena pois päältä); vain virheenjäljitykseen — nämä päätepisteet eivät tunne tenantteja ja antavat koko prosessin muisti- tai suoritinprofiilin, eikä niitä saa koskaan julkaista julkisesti eikä samassa osoitteessa kuin <code class="docutils literal notranslate"><span class="pre">/v1</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Useimmat valitsimet voi antaa myös ympäristömuuttujalla (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_METRICS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_CORS_ALLOW_ORIGIN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_RPS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_BURST</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_IDENTITY_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_OPS_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_PPROF_ADDR</span></code>): nimenomainen valitsin voittaa aina vastaavan muuttujan.</p>
+<p>Demonilla <strong>ei</strong> ole datakansion valitsinta: se kirjoittaa bearoff-taulukkonsa hakemistoon <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>, tai sen puuttuessa <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code>. Niitä siirretään siis muuttujalla <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code> — katso <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">Bearoff-tietokannat</span></a>.</p>
+<p>Nopeusrajoittimen ämpäritaulukolla on itsellään kova yläraja (10 000 erillistä tenanttia): sen ylittyessä jokainen uusi tenant häätää vähiten äskettäin käytetyn ämpärin sen sijaan, että taulukko kasvaisi rajattomasti — hyödyllistä, jos asiakas lähettää monia erillisiä <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-arvoja, tahallisesti tai ei, kahden määräaikaisen käyttämättömien ämpäreiden siivouksen välillä.</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> hylkää nyt jokaisen odottamattoman positionaalisen argumentin (lukuun ottamatta ainoaa alkuun jäävää <code class="docutils literal notranslate"><span class="pre">serve</span></code>-sanaa, jonka jo pelkkään binaariin supistettu <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> päästää läpi): ilman tätä tarkistusta tällaisen argumentin jälkeen sijoitettu lippu jätettiin hiljaisesti huomiotta — <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">image</span> <span class="pre">serve</span> <span class="pre">--addr</span> <span class="pre">:9090</span></code>, luonnollinen refleksi, koska imagen <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> on jo <code class="docutils literal notranslate"><span class="pre">serve</span></code>, käynnistyi porttiin <code class="docutils literal notranslate"><span class="pre">:8080</span></code> sanaakaan sanomatta.</p>
+<section id="points-d-acces">
+<h3>Päätepisteet<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>Palvelu tarjoaa hallinnolliset päätepisteet, jotka ovat aina läsnä:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — elossaolo (prosessi on käynnissä);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — valmius (tallennus vastaa ja sen skeema on odotetussa versiossa);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus-metriikat (jos <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> on käytössä);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/app/</span></code> — selauskäyttöinen verkkosivu (jos <code class="docutils literal notranslate"><span class="pre">--web</span></code> on käytössä).</p></li>
+</ul>
+</section>
+<section id="la-page-web-de-consultation">
+<span id="page-web"></span><h3>Verkkosivu<a class="headerlink" href="#la-page-web-de-consultation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span> <span class="pre">--web</span></code> tarjoilee sivun osoitteessa <code class="docutils literal notranslate"><span class="pre">/app/</span></code>: kirjaston, jota voi selata tabletilta tai puhelimelta ilman asennuksia.</p>
+<p>Se osaa <strong>kolme asiaa</strong>, ja tuo lista on päätös, ei vaihe:</p>
+<ul class="simple">
+<li><p><strong>selata</strong> asemaa, sen analyysiä ja lautaa;</p></li>
+<li><p><strong>hakea</strong> samalla tunnuskieliopilla kuin sovelluksen komentorivi;</p></li>
+<li><p><strong>kerrata</strong> Anki-pakkaa — vastaus paljastetaan ja arvosana annetaan.</p></li>
+</ul>
+<p>Se ei osaa muokata asemaa, tuoda, poistaa eikä hallita kokoelmia, otteluita, turnauksia tai asetuksia, eikä opi. Täältä puuttuva toiminto ei ole aukko: se on rajaus.</p>
+<p><strong>Se on oletuksena pois päältä, ja tuo oletus on päätös.</strong> Palvelin ei tunnista ketään: se luottaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsakkeeseen ja sen on ajettava tunnistavan välityspalvelimen takana. Selaimella tavoitettavan käyttöliittymän toimittaminen valmiiksi päällä kutsuisi juuri sen käyttöönoton, jonka tuo sääntö kieltää.</p>
+<p>Sivu <strong>ei lähetä tenanttia</strong>: välityspalvelin asettaa otsakkeen, kuten kaikille muillekin asiakkaille. Paikallisessa kehityksessä, ja vain siellä, <code class="docutils literal notranslate"><span class="pre">/app/?tenant=1</span></code> nimeää sellaisen — mikä ei muuta mitään sellaisen palvelimen turvallisuudessa, joka jo hyväksyy tuon otsakkeen keneltä tahansa.</p>
+<p>Sivun tiedostot tarjoillaan <strong>ilman tenanttia</strong>, tarkoituksella: selaimen on voitava ladata sivu ennen kuin välityspalvelin osoittaa sille mitään, eikä sivu sisällä dataa.</p>
+<p>Elossaolo ja valmius vastaavat kahteen eri kysymykseen. <code class="docutils literal notranslate"><span class="pre">/healthz</span></code> vastaa aina 200 heti kun prosessi palvelee pyyntöjä, kysymättä koskaan tallennukselta: orkestroija käynnistää uudelleen kontin, jonka elossaolotarkistus epäonnistuu, eikä hetkellisesti tavoittamaton tietokanta saa käynnistää tervettä taustaprosessia uudelleen silmukassa. <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> vastaa 503 (<code class="docutils literal notranslate"><span class="pre">status</span></code>-arvolla <code class="docutils literal notranslate"><span class="pre">down</span></code> tai <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code>) niin kauan kuin tietokanta ei vastaa tai sen skeema ei ole binäärin skeema: liikenne vain ohjataan muualle, kunnes se palaa.</p>
+<p>Alikomento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (mukana myös konttikuvan <code class="docutils literal notranslate"><span class="pre">serve</span></code>-binäärissä) tekee <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code>-pyynnön paikalliselle taustaprosessille ja palauttaa <code class="docutils literal notranslate"><span class="pre">0</span></code>, jos se on valmis, muuten <code class="docutils literal notranslate"><span class="pre">1</span></code>; osoite on <code class="docutils literal notranslate"><span class="pre">--addr</span></code>-valitsimen tai <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>-muuttujan osoite, oletuksena <code class="docutils literal notranslate"><span class="pre">:8080</span></code>. Se on Docker-kuvan <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> ja sopii yhtä hyvin skriptiin tai systemd-yksikköön:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ready
+</pre></div>
+</div>
+<p>Liiketoimintapinta noudattaa muotoa <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> (esimerkiksi <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Perheet kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, Anki-kortit, suodattimet, istunnot, historian (haku ja komennot), haun, metatiedot, tilastot sekä tuonnin ja viennin. Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä kohden). Palvelin sammuu siististi signaalilla <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<section id="ce-que-v1-promet">
+<span id="headless-versionnage"></span><h4>Mitä <code class="docutils literal notranslate"><span class="pre">/v1</span></code> lupaa<a class="headerlink" href="#ce-que-v1-promet" title="Link to this heading"></a></h4>
+<p>Asiakasohjelman, joka on kirjoitettu <code class="docutils literal notranslate"><span class="pre">/v1</span></code>:tä vasten, on jatkettava toimintaansa. Sääntö mahtuu kolmelle riville, ja se on kirjoitettuna hyödyllisempi kuin arvattuna:</p>
+<ul class="simple">
+<li><p><strong>Se mikä on olemassa ei muuta merkitystään.</strong> <code class="docutils literal notranslate"><span class="pre">/v1</span></code>-reittiä ei nimetä uudelleen, ei poisteta eikä anneta uutta merkitystä. Pyyntö- tai vastauskenttää ei nimetä uudelleen, ei poisteta eikä muuteta tyypiltään.</p></li>
+<li><p><strong>Se mikä lisätään, lisätään.</strong> Uusi reitti, <strong>valinnainen</strong> pyyntökenttä, uusi kenttä vastauksessa: asiakas joka ne ohittaa jatkaa toimintaansa — se on tässä valittu ”yhteensopivan” määritelmä. Asiakkaan on siis ohitettava tuntemattomat kentät eikä hylättävä niitä.</p></li>
+<li><p><strong>Loput on ``/v2``.</strong> Aiemmin vapaaehtoisen kentän tekeminen pakolliseksi, yksikön vaihtaminen, virhekoodin merkityksen muuttaminen: nämä ovat rikkoutumisia, ja ne asuvat toisen etuliitteen alla, <code class="docutils literal notranslate"><span class="pre">/v1</span></code>:n rinnalla, niin kauan kuin asiakkaat siirtyvät.</p></li>
+</ul>
+<p>Kaksi tarkennusta joilla on merkitystä. <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>-reitit <strong>eivät</strong> kuulu piiriin: ne palvelevat käyttöönoton ylläpitoa, muuttuvat sen mukana, eivätkä ole API kolmansien ohjelmille. Ja <strong>sopimus itse tuotetaan</strong> demonin reittitaulusta (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code>, <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">API-sopimus</span></a>): se ei voi kuvata muuta kuin sitä mitä palvelin tarjoaa.</p>
+</section>
+<section id="un-client-python">
+<span id="headless-client-python"></span><h4>Python-asiakas<a class="headerlink" href="#un-client-python" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">clients/python/</span></code> sisältää minimaalisen asiakkaan ilman riippuvuuksia vakiokirjaston ulkopuolelle — demoni puhuu POSTia ja JSONia, jotka <code class="docutils literal notranslate"><span class="pre">urllib</span></code> ja <code class="docutils literal notranslate"><span class="pre">json</span></code> kattavat kokonaan:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blunderdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s2">"http://127.0.0.1:8080"</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">metadata_counts</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">positions_list</span><span class="p">({</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">10</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Se on <strong>kahtena puoliskona, ja se on tarkoituksellista</strong>. <code class="docutils literal notranslate"><span class="pre">_generated.py</span></code> kantaa yhden metodin reittiä kohden, tuotettuna demonin reittitaulusta komennolla <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>: käsin kirjoitettu pinta ajautuisi erilleen sinä päivänä kun reitti lisätään, eikä kukaan huomaisi ennen kuin käyttäjä huomaa. <code class="docutils literal notranslate"><span class="pre">client.py</span></code> kantaa siirtokerroksen — istunnon, tenant-otsakkeen, virhekuoren, NDJSON:n luvun — ja on kirjoitettu käsin. Se mikä muuttuu API:n mukana tuotetaan; se mikä muuttuu harkinnan mukana ei.</p>
+<p>Metodien nimet ovat <code class="docutils literal notranslate"><span class="pre">perhe_operaatio</span></code> snake_case-muodossa: <code class="docutils literal notranslate"><span class="pre">/v1/positions.loadByIds</span></code> on <code class="docutils literal notranslate"><span class="pre">positions_load_by_ids()</span></code>. Perhe säilytetään, koska useat perheet jakavat operaation nimen (<code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>), ja pelkkä <code class="docutils literal notranslate"><span class="pre">list()</span></code> törmäisi.</p>
+<p>Epäonnistuminen nostaa <code class="docutils literal notranslate"><span class="pre">APIError</span></code>-poikkeuksen, joka kantaa demonin kuoren sellaisenaan: <code class="docutils literal notranslate"><span class="pre">code</span></code> (mihin ohjelma haarautuu), <code class="docutils literal notranslate"><span class="pre">message</span></code> (mitä ihminen lukee), HTTP-status ja yksityiskohdat.</p>
+</section>
+<section id="embarquer-le-moteur-dans-un-programme-go">
+<span id="headless-bootstrap"></span><h4>Moottorin upottaminen Go-ohjelmaan<a class="headerlink" href="#embarquer-le-moteur-dans-un-programme-go" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">pkg/blunderdb/server.Bootstrap</span></code> avaa tallennuksen ja palauttaa joukon käsittelijöitä <strong>kutsuvassa prosessissa</strong>, kuuntelematta porttia. Se on sisäänkäynti luotetulle vanhemmalle — gammonGo:lle — joka haluaa asemakirjaston ajamatta demonia vierellä tai puhumatta HTTP:tä itselleen.</p>
+<p>Se mitä tämä olettaa sanotaan suoraan: vanhempi on <strong>luotettu</strong>. Ei ole tenanttia tarkistettavaksi, ei otsaketta vahvistettavaksi, ei nopeusrajoitinta — ne kuuluvat demonille koska se kohtaa verkon, ja ADR-0005 kertoo miksi. Moottorin upottava ohjelma valitsee oman tenanttinsa ja vastaa kutsuistaan.</p>
+</section>
+</section>
+<section id="les-bases-de-bearoff">
+<span id="headless-bearoff"></span><h3>Bearoff-tietokannat<a class="headerlink" href="#les-bases-de-bearoff" title="Link to this heading"></a></h3>
+<p>Demoni laskee kaksi oletustaulukkoaan käynnistyksessä taustalla (TS-06-06 kuutiotuomiolle, OS-06 EPC:lle): noin kuusi sekuntia yhdellä ytimellä, kerran, datakansiossaan — <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>, tai sen puuttuessa <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code>. Mitään ei ladata eikä mitään ole upotettu binääriin (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md">ADR-0027</a>). Jos kansio on vain luettavissa, taulukot pidetään muistissa prosessin eliniän ajan: palvelu käynnistyy, se vain maksaa laskennan jokaisella uudelleenkäynnistyksellä.</p>
+<p>Laajempaa aluetta ei lasketa käynnistyksessä — TS-06-11 painaa 1,2 Gt ja vie minuutteja, eikä palvelu päätä sellaisesta yksin. Ylläpitäjän tehtävä on tehdä se komentoriviltä siihen levyniteeseen, jota taustapalvelu lukee:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate</span>
+blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/data/blunderdb
+
+<span class="c1"># serve</span>
+<span class="nv">XDG_DATA_HOME</span><span class="o">=</span>/srv/data<span class="w"> </span>blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bearoff-ts<span class="w"> </span>/srv/data/blunderdb/gnubg_ts6x11.bd
+</pre></div>
+</div>
+<p>Ensimmäisessä käynnistyksessä demoni etsii taulukon itse datakansiostaan; toisessa se osoitetaan polulla, sijaitsipa se missä tahansa. <code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> on <code class="docutils literal notranslate"><span class="pre">bearoff</span></code>-alikomentojen valitsin, ei koskaan <code class="docutils literal notranslate"><span class="pre">serve</span></code>-komennon.</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">list</span> <span class="pre">--data-dir</span> <span class="pre">/srv/data/blunderdb</span></code> kertoo mitä levynide sisältää ja mitä kukin alue maksaisi; <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">verify</span></code> päättyy virheeseen vioittuneesta taulukosta, mikä tekee siitä sellaisenaan käyttökelpoisen käynnistystarkistuksen. Yksityiskohdat: <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>.</p>
+</section>
+<section id="les-routes-d-exploitation">
+<span id="headless-ops-routes"></span><h3>Ylläpitoreitit<a class="headerlink" href="#les-routes-d-exploitation" title="Link to this heading"></a></h3>
+<p>Kaksi kutsua ei pysähdy niitä tekevään tenanttiin, ja ne elävät siksi omalla etuliitteellään, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/&lt;perhe&gt;.&lt;metodi&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> (SQLite-taustajärjestelmä) kirjoittaa <strong>koko</strong> tiedoston uudelleen, kaikkien tenanttien tiedot mukaan lukien, ja pitää kirjoituslukkoa koko ajan;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/tenant.purge</span></code> (PostgreSQL-taustajärjestelmä) tuhoaa tenantin tiedot, ja tuhottava tenant on se, jonka nimeää kutsujan hallitsema otsake.</p></li>
+</ul>
+<p>Palvelin ei tunnista ketään (ks. alla): reitti, johon yksi tenant pääsee, on reitti, jota <strong>jokainen</strong> tenant voi kutsua. Etuliite on olemassa, jotta välityspalvelin voi torjua molemmat yhdellä säännöllä. <strong>Älä koskaan altista</strong> <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> <strong>-reittejä julkiselle välityspalvelimelle.</strong> nginxissä sääntö mahtuu yhdelle riville <code class="docutils literal notranslate"><span class="pre">server</span></code>-lohkossa; Caddyssä kahdelle riville sivuston määrittelyssä:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/ops/</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="k">location</span><span class="w"> </span><span class="s">/metrics</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@closed path /ops/* /metrics
+respond @closed 403
+</pre></div>
+</div>
+<p>Valitsin <code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code> menee pidemmälle: kaksi reittiä poistuvat tällöin <code class="docutils literal notranslate"><span class="pre">--addr</span></code>-osoitteesta ja niitä tarjotaan vain tuossa toisessa kuuntelijassa, joka sidotaan hallintaliitäntään. Ilman valitsinta ne pysyvät pääkuuntelijassa ja niiden estäminen on välityspalvelimen asia.</p>
+<p>Nämä reitit vaativat <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsakkeen kuten kaikki muutkin — tyhjennys nimeää tenantin, jonka se tuhoaa, ja tarvitsee otsaketta enemmän kuin mikään muu. Vain koettimet (<code class="docutils literal notranslate"><span class="pre">/healthz</span></code>, <code class="docutils literal notranslate"><span class="pre">/readyz</span></code>) ja <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> pärjäävät ilman.</p>
+<p>Siksi yllä oleva estosääntö kattaa myös polun <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: koska se ei vaadi mitään tenanttia, sen voi lukea kuka tahansa, joka tavoittaa demonin, ja se julkaisee tietokannan koon ja käynnissä olevan työn kaikkien tenanttien osalta. Sitä katsotaan demonin omalta koneelta tai polusta, jonka välityspalvelin varaa ylläpidolle. Kolmas kohta, jota ei saa koskaan julkaista, ei ole reitti vaan kuuntelija: valitsimen <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span></code> kuuntelija, joka ei tunne tenantteja lainkaan ja luovuttaa profiilin koko prosessista. Se sidotaan hallintaliitäntään, eikä välityspalvelin julkaise sitä koskaan.</p>
+<p>Mikä <strong>ei</strong> siirtynyt <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>-etuliitteen alle: <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.sweepStale</span></code>. Täydennysajo on kallis mutta rajattu kutsuvaan tenanttiin; sitä rajoittavat nopeusraja ja käynnissä olevan työn mittarit, ei luottamusraja.</p>
+<p>Koko sopimus — jokainen metodi, sen pyyntö ja vastaus — tuotetaan lähdekoodista ja versioidaan: <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> arkiston juuressa (OpenAPI-muoto, skeemat mukaan lukien) ja sen luettava liite <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">API-sopimus</span></a> (yksi taulukko perhettä kohden). Molemmat luodaan uudelleen komennolla <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>, ja oma testinsä epäonnistuu, jos jompikumpi jää jälkeen todella rekisteröidyistä reiteistä.</p>
+<p>Jokainen <code class="docutils literal notranslate"><span class="pre">/v1</span></code>-pyyntö hyväksyy JSON-rungon (<code class="docutils literal notranslate"><span class="pre">Content-Type:</span> <span class="pre">application/json</span></code>, tai ei otsaketta lainkaan — muun tyyppinen runko hylätään koodilla <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> sen sijaan, että se epäonnistuisi hämmentävään JSON-jäsennysvirheeseen); tunnettu metodi, jota kutsutaan väärällä HTTP-verbillä, vastaa <code class="docutils literal notranslate"><span class="pre">405</span></code>, ja <code class="docutils literal notranslate"><span class="pre">Allow</span></code>-otsake nimeää ainoan hyväksytyn verbin. Listausmetodit, jotka hyväksyvät <code class="docutils literal notranslate"><span class="pre">limit</span></code>-parametrin, hylkäävät yli 1000 riviä sivua kohti (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>) sen sijaan, että kunnioittaisivat rajoittamatonta arvoa.</p>
+<p>Jokainen listaava perhe hyväksyy <code class="docutils literal notranslate"><span class="pre">limit</span></code>- ja <code class="docutils literal notranslate"><span class="pre">offset</span></code>-parametrit: <code class="docutils literal notranslate"><span class="pre">positions.list</span></code>, <code class="docutils literal notranslate"><span class="pre">positions.listIds</span></code>, <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>, <code class="docutils literal notranslate"><span class="pre">search.find</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>, <code class="docutils literal notranslate"><span class="pre">comments.listAll</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments.list</span></code> ja <code class="docutils literal notranslate"><span class="pre">collections.positions</span></code>. Molemmat ovat oletuksena nolla, mikä tarkoittaa samaa kuin aina: kaikki. <strong>Implisiittistä kattoa ei ole</strong> — virtaa ei pidetä muistissa, joten rajaamaton lista maksaa aikaa ja kaistaa muttei koskaan taustapalvelun tasapainoa, kun taas hiljainen oletusraja saisi asiakkaan lukemaan katkaistun listan täydellisenä. Nämä kaksi parametria antavat mahdollisuuden sivuttaa, sille joka sitä haluaa.</p>
+<p>Jokainen TCP-yhteys on aikarajoitettu luku-/kirjoitusajan osalta per pyyntö — anteliaampi budjetti tavallisille kutsuille, paljon suurempi suoratoistoreiteille (NDJSON-listat, tuonnit/viennit, gammonNet-kiinnikuromispyyhkäisy) — ja niiden samanaikaisten avointen yhteyksien määrä on rajattu: sen ylittyessä uusi yhteys odottaa, että jokin olemassa olevista vapautuu, sen sijaan että jokainen yhteys saisi ehdoitta oman suoritussäikeensä. Hallittu sammutus (<code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/<code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>) peruu ensin jokaisen käynnissä olevan tuonnin ja gammonNet-kiinnikuromispyyhkäisyn — kukin vastaa lopuksi tapahtumalla <code class="docutils literal notranslate"><span class="pre">{&quot;event&quot;:&quot;cancelled&quot;}</span></code> sen sijaan, että sen yhteys katkaistaisiin selittämättä — ennen palvelimen sulkemista tavanomaisen armonajan kuluessa. Ladatun tuonnin väliaikainen tiedosto säilyttää alkuperäisestä tiedostopäätteestä vain ne, jotka taustaprosessi tunnistaa (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, <code class="docutils literal notranslate"><span class="pre">.sgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), ja kaikki samanaikaiset tuonnit — kaikkien tenanttien kesken — jakavat yhden yhteisen levylle puskuroitujen tavujen kiintiön: sen ylittyessä uusi tuonti hylätään (<code class="docutils literal notranslate"><span class="pre">too</span> <span class="pre">many</span> <span class="pre">requests</span></code>) sen sijaan, että <code class="docutils literal notranslate"><span class="pre">$TMPDIR</span></code>-käyttö kasvaisi rajattomasti.</p>
+<p><code class="docutils literal notranslate"><span class="pre">search</span></code>-perhe tarjoaa kolme ovea samaan hakuun. <code class="docutils literal notranslate"><span class="pre">search.find</span></code> ottaa täyden suodatinolion, kenttä kentältä. <code class="docutils literal notranslate"><span class="pre">search.query</span></code> ottaa kyselyn, joka on kirjoitettu sovelluksen komentorivin kielellä (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">cube</span> <span class="pre">p&gt;30</span> <span class="pre">E&gt;50</span></code>, kuvattu sivulla <a class="reference internal" href="cmd_mode.html"><span class="doc">Komentoluettelo</span></a>), ja suoratoistaa samat asemat; se on ainoa tapa tavoittaa verkon yli ne suodattimet, joilla ei ole ilmeistä kenttää — siirtokuvio, kommenttiteksti, pelaaja, päivämäärä, poissuljetut heitot, vyöhykkeet ja blotit. <code class="docutils literal notranslate"><span class="pre">search.parse</span></code> ei hae mitään: se vastaa, mitä kysely tarkoittaa — suodattimet joita se merkitsee, kanonisen muotonsa (kaksi samaa tarkoittavaa kyselyä jakavat sen, mikä tekee tallennetusta hausta vertailukelpoisen) ja diagnostiikkansa.</p>
+<p>Kysely, jossa on tunnistamaton osanen, hylätään (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, osanen nimettynä) sen sijaan että se suoritettaisiin kaventaen hakua hiljaisesti. Osanen, joka ymmärretään mutta jolla ei ole täällä vaikutusta — <code class="docutils literal notranslate"><span class="pre">x</span></code>, joka kytkee päälle poissulkevan rakenteen, joka on lauta eikä tekstiä — kulkee otsakkeessa <code class="docutils literal notranslate"><span class="pre">X-BlunderDB-Query-Diagnostics</span></code>, jotta runko pysyy asemien NDJSON:na kaikille nykyisille asiakkaille.</p>
+<p>Kaksi <code class="docutils literal notranslate"><span class="pre">positions</span></code>-perheen metodia purkaa aseman tallentamatta sitä: <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> rakentaa aseman XGID-merkkijonosta ja <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> yksittäisen aseman <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>-tiedostosta.</p>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> vie koko nykyisen tenantin — asemat, kokoelmat, ottelut, turnaukset, analyysit, kommentit, pelatut siirrot, suodatinkirjaston ja Anki-pakat — SQLite-tiedostoon, jonka työasema voi avata sellaisenaan; vienti kattaa aina koko tietokannan, osajoukon valinta on työpöytäsovelluksen tai CLI:n tehtävä. Pyynnön JSON-runko on valinnainen ja hyväksyy vain kentät <code class="docutils literal notranslate"><span class="pre">watermarkOrigin</span></code> / <code class="docutils literal notranslate"><span class="pre">watermarkNote</span></code>, joilla kirjoitetaan vesileima, jonka allekirjoittaa demonin oma liikkeeseenlaskijaidentiteetti (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>) — ilman näitä kenttiä vienti ei kanna vesileimaa; niiden pyytäminen ilman määritettyä identiteettiä epäonnistuu <code class="docutils literal notranslate"><span class="pre">invalid</span></code>-virheellä.</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki</span></code>-perhe saa kuusi uutta metodia, jotka laajentavat aikaväliin perustuvaa kertausajastinta (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (loki jokaisesta kertauksesta — arvosana ja FSRS-tulos — säilytystilastoja ja tarkkaa historiaa varten), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (ennuste erääntyvien korttien määrästä tulevina päivinä, myöhässä olevat kortit mukaan lukien), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (kortin poistaminen kertausjonosta väliaikaisesti tai pysyvästi) sekä <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> (pakan kertauksista mitattu onnistumisaste, luettuna suhteessa sen omistajan asettamaan tavoitteeseen).</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> korvaa metodin <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, joka siirsi tavoitetta kohti havaittua astetta ja saattoi kirjoittaa sen. Säilytystavoite on <strong>valinta</strong> kuormituksen ja laadun välisestä kompromissista, mitattu aste on sen <strong>tulos</strong>, ja toisen kytkeminen toiseen on juuri se mekanismi, jonka FSRS:n tekijät hylkäävät. Metodi nyt vain mittaa, eikä koskaan kirjoita.</p>
+</div>
+<p>Perhe <code class="docutils literal notranslate"><span class="pre">stats</span></code> tarjoaa metodin <code class="docutils literal notranslate"><span class="pre">stats.playerTable</span></code>, joka palauttaa yhden tilastorivin pelaajaa kohden (ottelut, voitot/tappiot, lasketut päätökset, PR yhteensä / nappulat / kuutio, Snowie Error Rate, virheet, karkeat virheet ja tuuri) niistä otteluista, jotka annettu suodatin säilyttää. Kuten graafisessa käyttöliittymässä, taulukko noudattaa suodattimesta vain ajanjaksoa, turnauksia ja otteluiden pituutta: pelaajavalinta ja päätöstyyppi ohitetaan, sillä taulukko koskee kaikkia pelaajia ja erittelee nappulat ja kuution jo omiin sarakkeisiinsa. Kenttä <code class="docutils literal notranslate"><span class="pre">luck_known</span></code> kertoo, mitattiinko tuuri kyseiselle pelaajalle; kenttää <code class="docutils literal notranslate"><span class="pre">luck_rate_mp</span></code> ei pidä lukea, kun se on <code class="docutils literal notranslate"><span class="pre">false</span></code> — tuntematon tuuri ei ole nollatuuri.</p>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span></code>-metodeille annettu suodatin hyväksyy <code class="docutils literal notranslate"><span class="pre">PlayerName</span></code>-kentän rinnalla kentän <code class="docutils literal notranslate"><span class="pre">PlayerAliases</span></code>: muut kirjoitusasut, joilla sama henkilö on esiintynyt. Koska pelaajan nimi kirjoitetaan käsin jokaiseen tiedostoon, sama henkilö esiintyy usein useassa asussa, ja suodatin, joka säilyttää vain yhden, laskee osasta otteluita ilman että mikään näyttää oudolta. Kenttä on puhtaasti additiivinen: minkä tahansa nimen päätökset säilytetään. Nimien yhdistäminen tietokannassa (<code class="docutils literal notranslate"><span class="pre">MergePlayers</span></code>) on toinen vastaus, ja se kannattaa varata tietokantoihin, joita ei ole saatu joltakulta toiselta — se kirjoittaa kaikkien ottelut uusiksi.</p>
+<p>Kaksi metodia täydentää yhdenvertaisuuden graafisen käyttöliittymän kanssa: <code class="docutils literal notranslate"><span class="pre">stats.tournamentBadges</span></code> palauttaa kunkin tietokannan turnauksen kortilla näkyvän luvun (viitepelaajan PR), ja <code class="docutils literal notranslate"><span class="pre">matches.findByHash</span></code> kertoo kahden kaksoiskappaleiden tunnistussormenjäljen perusteella, onko annettu ottelu jo tallessa — sen verran, että turhan tuonnin voi välttää ennen sen aloittamista.</p>
+<p><code class="docutils literal notranslate"><span class="pre">analyses.repair</span></code> laskee analyysin denormalisoidut sarakkeet (mukaan lukien <code class="docutils literal notranslate"><span class="pre">cube_error</span></code>) uudelleen sen täydestä analyysistä ja palauttaa <strong>todella</strong> korjattujen rivien määrän. Nämä sarakkeet ovat vain projektio: projektiovirhe korjautuu siis ilman lähdetiedostojen uudelleentuontia. Toiminto on nimenomainen eikä käynnisty koskaan itsestään — ei tietokantaa avattaessa eikä migraation yhteydessä, sillä skeema ei ole syyllinen. Lukukelvoton analyysi jätetään sellaisekseen sen sijaan, että se nollattaisiin. Tunnettu tapaus: gnuBG:n ”Double No” -merkinnällä varustetut ei-tuplaukset, jotka luettiin väärin ennen versiota 0.33.0 ja jotka kantoivat koskaan tapahtumattoman tuplauksen virhettä.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing</span></code> käynnistää nykyisen tenantin gammonNet-täydennysanalyysin: kirjoittaa analyysin jokaiselle asemalle, jolla ei ole yhtään (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Kyseessä on <strong>kirjasto</strong>-operaatio — se lukee ja kirjoittaa tallennettuja asemia ja analyysejä — ei koskaan paljas evaluaattori: <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> toimii kirjastolla, <code class="docutils literal notranslate"><span class="pre">gammonnet</span> <span class="pre">serve</span></code> evaluoi aseman. Vastaus on NDJSON-virta (<code class="docutils literal notranslate"><span class="pre">started</span></code>, <code class="docutils literal notranslate"><span class="pre">progress</span></code>, sitten <code class="docutils literal notranslate"><span class="pre">done</span></code> tai <code class="docutils literal notranslate"><span class="pre">error</span></code>/<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>) samaan tapaan kuin tuonnin päätepisteissä; <code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing.cancel</span></code> (<code class="docutils literal notranslate"><span class="pre">started</span></code>-tapahtumassa saadulla <code class="docutils literal notranslate"><span class="pre">job_id</span></code>:llä) peruuttaa käynnissä olevan täydennysanalyysin ja toimii yhtä lailla sekä täydennysanalyysille että uudelleenanalyysille (alla). Kyseessä on sama toiminto kuin tuonnin jälkeinen automaattinen käynnistys ja graafisen käyttöliittymän nimenomainen ele sekä alikomento <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) — kolme muotoa, yksi logiikka.</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.sweepStale</span></code> on <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>:n vastine uudelleenanalyysille täydennyksen sijaan: jokainen positio, jonka analyysi on kokonaan gammonNetin omaa mutta vanhentunut — nyt käynnissä olevaa vanhempi moottoriversio, tai <code class="docutils literal notranslate"><span class="pre">ply</span></code>:stä poikkeava syvyys — arvioidaan uudelleen pyydetyllä syvyydellä. Vanhentumiskriteeri on jaettu graafisen käyttöliittymän saman erän ja <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--stale</span></code>:n kanssa (ei kahdennettua logiikkaa kolmen tilan välillä); positiota, jolla on XG-, GNUbg- tai BGBlitz-analyysi, ei koskaan koske, riippumatta sen gammonNet-sisällöstä — <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>:n suoja pysyy ehdottomana. Sama NDJSON-muoto kuin <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>:llä, ja kummankin reitin lopputapahtuma kantaa nyt jaon <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>/<code class="docutils literal notranslate"><span class="pre">refused</span></code>/<code class="docutils literal notranslate"><span class="pre">failed</span></code>: positio, jota gammonNet kieltäytyy arvioimasta (ottelutulos sen taulukon kattavuuden ulkopuolella, mallin hylkäämä tuplauspäätös), lasketaan <code class="docutils literal notranslate"><span class="pre">refused</span></code>-arvoksi, ei <code class="docutils literal notranslate"><span class="pre">failed</span></code>-arvoksi — sitä ei koskaan yritetä turhaan uudelleen seuraavalla kierroksella, toisin kuin todella epäonnistunutta positiota.</p>
+</section>
+<section id="correlation-et-metriques-metier">
+<h3>Korrelaatio ja liiketoimintamittarit<a class="headerlink" href="#correlation-et-metriques-metier" title="Link to this heading"></a></h3>
+<p>Jokainen pyyntö saa korrelaatiotunnisteen: sen, jonka asiakas (tai käänteisvälityspalvelin) lähettää <code class="docutils literal notranslate"><span class="pre">X-Request-Id</span></code>-otsakkeessa, muutoin luodun — kummassakin tapauksessa se palautetaan vastauksen samassa otsakkeessa ja lisätään pyynnön päättävään lokiriviin (kenttä <code class="docutils literal notranslate"><span class="pre">request_id</span></code>). Mahdollinen <code class="docutils literal notranslate"><span class="pre">traceparent</span></code> (<a class="reference external" href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a>) välitetään sellaisenaan samaan lokiriviin — palvelin ei jäsennä eikä tarkista sitä eikä sisällä mitään jäljityskirjastoa: se on silta näiden lokien yhdistämiseksi ylävirrassa toimivaan jäljitysketjuun, ei muuta.</p>
+<p>Pyyntömäärän ja viiveen lisäksi <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> julkaisee mittarit käynnissä olevasta työstä, joka muutoin jäisi näkymättömäksi jumittuneessa tuonnissa tai gammonNet-erässä (yksi hyvin pitkä pyyntö, ei monta pyyntöä):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_imports_inflight</span></code> — käynnissä olevat tuonnit, kaikki tenantit yhteensä;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_import_spool_bytes</span></code> — tuontipuskurin kiintiöstä tällä hetkellä varatut tavut (ks. <code class="docutils literal notranslate"><span class="pre">--rate-limit-*</span></code> edellä pyyntöä sekunnissa koskevaa vastinetta varten);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_gammonnet_sweep_inflight</span></code> — käynnissä olevat gammonNet-täydennysajot, kaikki tenantit yhteensä;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_database_size_bytes</span></code> — pääasiallisen SQLite-tiedoston koko tai <code class="docutils literal notranslate"><span class="pre">pg_database_size</span></code> PostgreSQL:ssä (koko tietokanta, ei tenantkohtaisesti, kuten alla olevat yhteysvarannon mittarit); puuttuu, kunnes ensimmäinen mittaus on julkaistu.</p></li>
+</ul>
+<p>Prosessin muisti- tai suoritinprofiili saadaan käynnistämällä valitsimella <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;isäntä:portti&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>): oletuksena pois päältä ja tarkoituksella eri osoitteessa kuin <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, koska nämä päätepisteet eivät tunne tenantteja.</p>
+</section>
+<section id="compression-des-flux">
+<span id="headless-docker"></span><h3>Virtojen pakkaus<a class="headerlink" href="#compression-des-flux" title="Link to this heading"></a></h3>
+<p>NDJSON-listaukset toistavat samat kenttien nimet joka rivillä. Palvelin pakkaa ne, kun asiakas sen hyväksyy: lähetä <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip</span></code>, ja vastaus palaa muodossa <code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code>. Mitattu ottelulistauksella: <strong>13,5 %</strong> alkuperäisestä koosta tuhannella rivillä, 14,6 % sadalla.</p>
+<p>Pakkaus ei muuta virran vaiheittaisuutta — jokainen tietue lähtee asiakkaalle kuten ennenkin, vain pakattuna matkalla. Se koskee vain NDJSON-, JSON- ja tekstivastauksia: tietokannan vienti tai <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-säiliö on jo pakattu, ja uudelleenpakkaaminen vain kasvattaisi sitä. <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip;q=0</span></code> kieltää sen nimenomaisesti.</p>
+</section>
+<section id="un-seul-tenant-sur-sqlite">
+<h3>Vain yksi tenant SQLitessä<a class="headerlink" href="#un-seul-tenant-sur-sqlite" title="Link to this heading"></a></h3>
+<p>SQLite-taustajärjestelmässä <strong>ei</strong> ole tenant-saraketta: kaikki tiedot ovat samoissa tauluissa ilman väliseinää. Siksi palvelin torjuu tässä taustajärjestelmässä kaikki muut <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-arvot kuin <code class="docutils literal notranslate"><span class="pre">1</span></code> — muiden hyväksyminen tarkoittaisi kaikkien rivien tarjoamista jokaiselle otsakkeen takana, joka väittää toisin. Aidosti monta tenanttia tarvitseva asennus tarvitsee PostgreSQL-taustajärjestelmän.</p>
+</section>
+<section id="sauvegarde-et-restauration">
+<span id="headless-sauvegarde"></span><h3>Varmuuskopiointi ja palautus<a class="headerlink" href="#sauvegarde-et-restauration" title="Link to this heading"></a></h3>
+<p>Neljä tapaa, sen mukaan mitä halutaan palauttaa.</p>
+<p><strong>Kaikki, PostgreSQL:n alla</strong> — <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> on työkalu, eikä blunderDB:llä ole siihen lisättävää:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pg_dump<span class="w"> </span>--format<span class="o">=</span>custom<span class="w"> </span>--file<span class="o">=</span>blunderdb.dump<span class="w"> </span><span class="s2">"postgres://…"</span>
+pg_restore<span class="w"> </span>--dbname<span class="o">=</span><span class="s2">"postgres://…"</span><span class="w"> </span>blunderdb.dump
+</pre></div>
+</div>
+<p><strong>Kaikki, kontissa ajettavan SQLiten kanssa</strong> — tiedosto avataan WAL-tilassa (demoni koodaa yhteysmerkkijonoonsa <code class="docutils literal notranslate"><span class="pre">journal_mode(WAL)</span></code> kaikille poolin yhteyksille): tiedoston <code class="docutils literal notranslate"><span class="pre">blunderdb.db</span></code> rinnalla elävät <code class="docutils literal notranslate"><span class="pre">-wal</span></code> ja <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, ja tuoreimmat kirjoitukset ovat <code class="docutils literal notranslate"><span class="pre">-wal</span></code>-tiedostossa. Pelkän <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedoston kopioiminen käynnissä olevalta demonilta antaa siis epätäydellisen tiedoston, eikä mikään kerro siitä. Kaksi turvallista tapaa:</p>
+<ul class="simple">
+<li><p><strong>pysäytä demoni ja kopioi sitten koko levynide</strong> — pysäytettynä kaikki kolme tiedostoa ovat keskenään yhtenäisiä, ja varmuuskopioinnin yksikkö on levynide, ei pelkkä <code class="docutils literal notranslate"><span class="pre">.db</span></code>;</p></li>
+<li><p><strong>älä kopioi tiedostoa lainkaan</strong>: <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> (alla) kirjoittaa täydellisen <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedoston demonin ollessa käynnissä, ja se on ainoa tapa, joka ei vaadi minkäänlaista katkosta.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> kyllä kokoaa WAL:n päätiedostoon ennen sen uudelleenkirjoitusta, mutta se ei jäädytä tietokantaa: seuraava kirjoitus menee taas WAL:iin. Se on tiivistyskomento, ei varmuuskopiointimenetelmä.</p>
+<p><strong>Yksi tenant erikseen</strong> — <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> kirjoittaa tenantin tietokannan tavalliseen <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedostoon, samaan jonka työpöytäsovellus avaa:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8080/v1/exports.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 42"</span><span class="w"> </span>-o<span class="w"> </span>tenant-42.db
+</pre></div>
+</div>
+<p>Tämä komento ajetaan <strong>demonin omalla koneella</strong>: se kohdistuu paikalliseen kuuntelijaan, ohittaa välityspalvelimen ja asettaa siksi tenant-otsakkeen itse. Ulkopuolelta kysellään välityspalvelinta, ja tenant on todennetun tilin tenant — otsaketta ei anneta, sillä välityspalvelin poistaa asiakkaan otsakkeen ennen kuin lisää omansa:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-u<span class="w"> </span>alice:…<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://blunderdb.example.com/v1/exports.sqlite<span class="w"> </span>-o<span class="w"> </span>tenant-alice.db
+</pre></div>
+</div>
+<p><strong>Tiedoston palauttaminen</strong> — <code class="docutils literal notranslate"><span class="pre">migrate</span></code> kopioi sen haluttuun tenanttiin:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>tenant-42.db<span class="w"> </span>--to<span class="w"> </span><span class="s2">"postgres://…"</span><span class="w"> </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> kieltäytyy kirjoittamasta tenanttiin, jossa on jo jotain, ja kertoo mitä (”128 asemaa, 3 ottelua”); <code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">skip</span></code> jatkaa siitä huolimatta ja antaa Zobrist-kaksoiskappaleiden poiston yhdistää asemat.</p>
+<p>Mitä <code class="docutils literal notranslate"><span class="pre">migrate</span></code> <strong>ei</strong> kopioi ja mistä se ilmoittaa lopuksi tarkan luvun kanssa: Anki-pakat ja niiden kortit, suodatinkirjaston, haku- ja komentohistoriat sekä istunnon tilan. Nämä ovat työpöytäsovelluksen käyttötietoja; asemat, joihin ne viittaavat, on kyllä siirretty.</p>
+</section>
+<section id="le-poste-de-travail-et-le-serveur">
+<span id="headless-poste-serveur"></span><h3>Työasema ja palvelin<a class="headerlink" href="#le-poste-de-travail-et-le-serveur" title="Link to this heading"></a></h3>
+<p>Työpöytäsovellus avaa <code class="docutils literal notranslate"><span class="pre">.db</span></code>-<strong>tiedostoja</strong>, ei URL-osoitteita: se ei ota yhteyttä mihinkään <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoniin, eikä missään ole kenttää, johon syöttää osoite. Palvelin ja työasema vaihtavat tiedostoja kahdella symmetrisellä tavalla:</p>
+<ul class="simple">
+<li><p><strong>palvelimelta työasemalle</strong> — <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> kirjoittaa koko nykyisen tenantin <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedostoon, jonka työpöytäsovellus avaa sellaisenaan (katso <a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">Varmuuskopiointi ja palautus</span></a>);</p></li>
+<li><p><strong>työasemalta palvelimelle</strong> — <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> kopioi <code class="docutils literal notranslate"><span class="pre">.db</span></code>-tiedoston halutun tenantin alle (katso <a class="reference internal" href="#headless-migrate"><span class="std std-ref">SQLite-tietokannan siirtäminen PostgreSQL:ään</span></a>).</p></li>
+</ul>
+<p><strong>Tenanttien välistä lukemista ei ole lainkaan.</strong> Eristys on täydellinen: mikään, minkä yksi tenant tallentaa, ei näy toiselle millään reitillä, eikä yksikään kutsu ota tenanttia parametrina — jokainen pyyntö tuntee vain sen, jonka välityspalvelin on siihen asettanut. Valmentajalla, joka haluaa nähdä oppilaidensa ottelut, on siis kaksi tietä, molemmat nimenomaisia:</p>
+<ul class="simple">
+<li><p>avataan hänelle välityspalvelimeen lisätili, joka on liitetty oppilaan tenanttiin: välityspalvelimen vastaavuustaulukko, ei koskaan demoni, ratkaisee minkä tenantin istunto näkee;</p></li>
+<li><p>pyydetään häneltä vienti — <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code>-reitin tai työpöytäsovelluksen vienti-ikkunan tuottama <code class="docutils literal notranslate"><span class="pre">.db</span></code> — ja avataan se omalla koneella.</p></li>
+</ul>
+</section>
+<section id="deploiement-avec-docker">
+<h3>Käyttöönotto Dockerilla<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>Arkisto tarjoaa <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>-tiedoston, joka rakentaa demonista minimaalisen konttikuvan: vain <code class="docutils literal notranslate"><span class="pre">serve</span></code>-binääri käännetään (puhdas Go, ilman graafista käyttöliittymää ja ilman CGO:ta, siis staattisesti linkitetty) ja sijoitetaan sitten <em>distroless</em>-kuvaan.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># build</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># run</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>Rakentaminen käynnistetään repositorion juuresta, ja kuvan oletustaustajärjestelmä on <code class="docutils literal notranslate"><span class="pre">postgres</span></code>.</p>
+<p>Kuva kuuntelee porttia 8080 ja konfiguroidaan ympäristömuuttujilla (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>). Se määrittelee <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code>-tarkistuksen, joka suorittaa 30 sekunnin välein <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (pyyntö osoitteeseen <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> — <em>distroless</em>-kuvassa ei ole <code class="docutils literal notranslate"><span class="pre">curl</span></code>-ohjelmaa eikä komentotulkkia): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code> näyttää kontin tilan <code class="docutils literal notranslate"><span class="pre">healthy</span></code> tai <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code>, ja Compose tai orkestroija voivat odottaa taustaprosessin valmiutta ennen siitä riippuvien osien käynnistämistä.</p>
+<section id="image-publiee">
+<span id="headless-docker-image"></span><h4>Julkaistu kuva<a class="headerlink" href="#image-publiee" title="Link to this heading"></a></h4>
+<p>Kuvaa ei tarvitse rakentaa itse: jokainen julkaistu blunderDB-versio työntää omansa GitHubin rekisteriin (GHCR) nimellä <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>. Käytettävissä on kaksi tunnistetta: versionumero, joka pysyy ikuisesti kiinnitettynä tähän kuvaan, ja <code class="docutils literal notranslate"><span class="pre">latest</span></code>, joka seuraa viimeisintä julkaistua versiota. Koko dokumentaatio merkitsee ne muodossa <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span></code>: kohdan <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> tilalle tulee julkaistun version numero, ja juuri tämä muoto, ei koskaan <code class="docutils literal notranslate"><span class="pre">latest</span></code>, kiinnitetään tuotantokäyttöönotossa. Kuva tarjotaan arkkitehtuureille <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> ja <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>; Docker valitsee isännän arkkitehtuurin.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># postgres</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># sqlite</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/data</span></code> on kuvan valmistelema liitospiste, sen etuoikeudettoman käyttäjän oikeuksilla, ja samalla sen <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code>: siihen liitetty levynide ei palvele vain tietokantaa, vaan bearoff-taulukot lasketaan sinne kerran, hakemistoon <code class="docutils literal notranslate"><span class="pre">/data/blunderdb</span></code>, ja löydetään uudelleen seuraavissa käynnistyksissä. Ilman levynidettä ne lasketaan uudelleen jokaisella kontin käynnistyksellä — muutamassa sekunnissa — ja demoni kertoo käynnistyksessä, jos se ei pysty kirjoittamaan niitä (<em>could not prepare the bearoff tables; the exact regime will be unavailable</em>), jolloin se palvelee normaalisti, bearoff-asemissa pelkällä arvioidulla tilalla.</p>
+<p>Kuvassa on tavanomaiset OCI-tunnisteet (<code class="docutils literal notranslate"><span class="pre">org.opencontainers.image.source</span></code>, <code class="docutils literal notranslate"><span class="pre">.version</span></code>, <code class="docutils literal notranslate"><span class="pre">.revision</span></code>, <code class="docutils literal notranslate"><span class="pre">.licenses</span></code>): <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> kertoo, mistä commitista ja versiosta se on peräisin. Se rakennetaan jatkuvassa integraatiossa arkiston <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code>-tiedostosta, täsmälleen kuten yllä; paikallinen rakentaminen tai julkaistun kuvan vetäminen tuottaa saman binäärin.</p>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p>Kuten demoni itsekin, kontti ei suorita <strong>minkäänlaista todennusta</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): se luottaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsakkeeseen sellaisenaan kuin se sen vastaanottaa. Se on sijoitettava todennuksesta huolehtivan käänteisvälityspalvelimen taakse, joka asettaa tämän otsakkeen itse, eikä sitä saa koskaan altistaa suoraan julkiseen internetiin. Yllä olevat esimerkit julkaisevat portin osoitteessa <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> juuri tästä syystä, ja <code class="docutils literal notranslate"><span class="pre">--addr</span></code> sitoutuu samoin osoitteeseen <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>: välityspalvelin on samalla koneella.</p>
+</div>
+</section>
+</section>
+<section id="deploiement-derriere-un-proxy-authentifiant">
+<span id="headless-proxy-deployment"></span><h3>Käyttöönotto todentavan proxyn takana<a class="headerlink" href="#deploiement-derriere-un-proxy-authentifiant" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a> tekee käänteisvälityspalvelimesta demonin <strong>koko</strong> turvarajan: vain se todentaa kutsujan, vain sillä on oikeus asettaa <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsake, ja sen on järjestelmällisesti <strong>poistettava</strong> kaikki asiakkaan lähettämä arvo ennen todennetun tenantin lisäämistä — muuten kuka tahansa voi esiintyä minä tahansa tenanttina pelkästään nimeämällä sen. Uhkamalli mahtuu yhteen lauseeseen: demoni olettaa luotetun sisäverkon, ja kuka tahansa, joka ottaa siihen suoraan yhteyden, on sen silmissä se tenant, joka se väittää olevansa. Repositorio tarjoaa täydellisen, sellaisenaan ajettavan esimerkin hakemistossa <a class="reference external" href="https://github.com/kevung/blunderDB/tree/main/deploy">deploy/</a>. Se elää git-repositoriossa, ei konttikuvassa: on siis <strong>kloonattava repositorio</strong> tai ladattava alla toistetut kaksi tiedostoa sekä <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/.env.example">deploy/.env.example</a> samaan hakemistoon.</p>
+<p>Compose-tiedosto asettaa Caddyn — esimerkinomainen HTTP Basic -todennus — palvelujen <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> ja PostgreSQL eteen, Row-Level Security käytössä. Vain Caddy julkaisee portin: kaksi muuta palvelua elävät Docker-verkossa, joka on määritelty <code class="docutils literal notranslate"><span class="pre">internal:</span> <span class="pre">true</span></code> eikä siitä ole reittiä isäntäkoneeseen eikä internetiin, olipa myöhempi muutos lisännyt niille mitä <code class="docutils literal notranslate"><span class="pre">ports:</span></code>-määrityksiä tahansa.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">deploy/docker-compose.yml</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example deployment of `blunderdb serve` behind an authenticating reverse</span>
+<span class="c1"># proxy — the security model ADR-0005 requires and, until now, that no example</span>
+<span class="c1"># in this repository actually showed. See deploy/README.md for the threat</span>
+<span class="c1"># model and doc/source/mode_headless.rst for the full walkthrough.</span>
+<span class="c1">#</span>
+<span class="c1"># Try it from the repository root:</span>
+<span class="c1">#   POSTGRES_PASSWORD=changeme docker compose -f deploy/docker-compose.yml up -d --build</span>
+<span class="c1">#   curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'</span>
+<span class="c1">#   docker compose -f deploy/docker-compose.yml down -v</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy is the ENTIRE security boundary (ADR-0005): it is the only service</span>
+<span class="w">  </span><span class="c1"># with a published port, it authenticates every request, and it is the</span>
+<span class="w">  </span><span class="c1"># only thing allowed to set X-Tenant-ID — see Caddyfile. Any reverse proxy</span>
+<span class="w">  </span><span class="c1"># capable of stripping and re-setting a header works equally well; Caddy is</span>
+<span class="w">  </span><span class="c1"># used here for its one-file config and built-in Basic Auth with no extra</span>
+<span class="w">  </span><span class="c1"># modules. deploy/nginx-tenant-proxy.conf shows the equivalent nginx</span>
+<span class="w">  </span><span class="c1"># snippet for an existing nginx deployment.</span>
+<span class="w">  </span><span class="nt">caddy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy:2-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8080:80"</span><span class="w"> </span><span class="c1"># the ONLY port this compose project exposes to the host</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./Caddyfile:/etc/caddy/Caddyfile:ro</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-data:/data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-config:/config</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">edge</span><span class="w"> </span><span class="c1"># the published port lives here — "backend" is internal-only</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="c1"># No `ports:` here — on purpose (ADR-0005). The daemon performs no</span>
+<span class="w">  </span><span class="c1"># authentication of its own, so it must be reachable only from Caddy, over</span>
+<span class="w">  </span><span class="c1"># the "backend" network, and never published to the host.</span>
+<span class="w">  </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">..</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.serve</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_BACKEND</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_DSN</span><span class="p">:</span><span class="w"> </span><span class="s">"postgres://blunderdb:${POSTGRES_PASSWORD:?set</span><span class="nv"> </span><span class="s">POSTGRES_PASSWORD,</span><span class="nv"> </span><span class="s">see</span><span class="nv"> </span><span class="s">deploy/.env.example}@postgres:5432/blunderdb?sslmode=disable"</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_ADDR</span><span class="p">:</span><span class="w"> </span><span class="s">":8080"</span>
+<span class="w">      </span><span class="c1"># Row-Level Security: defence-in-depth *inside* the trust boundary</span>
+<span class="w">      </span><span class="c1"># Caddy draws above — it does not replace the proxy (ADR-0005).</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_RLS</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># The bearoff tables are computed on first start and kept under</span>
+<span class="w">      </span><span class="c1"># $XDG_DATA_HOME/blunderdb, which the image sets to /data: without a</span>
+<span class="w">      </span><span class="c1"># volume they are recomputed at every restart of the container.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb-data:/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:16-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD, see deploy/.env.example}</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres-data:/var/lib/postgresql/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD-SHELL"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">blunderdb</span><span class="nv"> </span><span class="s">-d</span><span class="nv"> </span><span class="s">blunderdb"</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres-data</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Bearoff tables computed by blunderdb-serve on first start (see</span>
+<span class="w">  </span><span class="c1"># XDG_DATA_HOME above): a few megabytes, worth keeping across restarts.</span>
+<span class="w">  </span><span class="nt">blunderdb-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-config</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy's own network, carrying the one published port. A container on</span>
+<span class="w">  </span><span class="c1"># "backend" alone (blunderdb-serve, postgres) is never reachable through it.</span>
+<span class="w">  </span><span class="nt">edge</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># internal: true means this network has no route to the outside world and</span>
+<span class="w">  </span><span class="c1"># accepts no published ports — blunderdb-serve and postgres can only ever</span>
+<span class="w">  </span><span class="c1"># be reached by another container attached to it (here, only Caddy),</span>
+<span class="w">  </span><span class="c1"># never from the host or the public internet, regardless of what `ports:`</span>
+<span class="w">  </span><span class="c1"># a future edit might add to either service.</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> todentaa, yhdistää todennetun tilin tenantin kokonaislukuun (<code class="docutils literal notranslate"><span class="pre">map</span></code>) ja lisää sen sitten otsakkeeseen <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> <strong>sen jälkeen</strong>, kun asiakkaalta saatu arvo on nimenomaisesti tyhjennetty: suoja <code class="docutils literal notranslate"><span class="pre">header_up</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> edeltää lisäystä, joten asiakkaan lähettämä otsake ei voi päätyä demonille, tehtiinpä tiedostoon myöhemmin mitä muutoksia tahansa.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">deploy/Caddyfile</span><a class="headerlink" href="#id2" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Demonstration reverse-proxy for `blunderdb serve` (ADR-0005).
+#
+# This is the WHOLE security boundary of the daemon: it authenticates the
+# caller (here, HTTP Basic Auth — swap for forward_auth to a real identity
+# provider, or an OIDC plugin, in production) and is the only thing allowed
+# to set X-Tenant-ID. blunderdb-serve trusts that header completely and
+# performs no authentication of its own.
+#
+# Demo credentials — CHANGE THESE before using this anywhere but a laptop:
+#   alice / demo-password
+#   bob   / demo-password
+# Generate a real hash with:
+#   docker run --rm caddy:2-alpine caddy hash-password --plaintext '&lt;password&gt;'
+{
+	# This demo terminates plain HTTP on a fixed port instead of Caddy's
+	# automatic HTTPS, which needs a real public domain name to obtain a
+	# certificate for. Point a domain at this host, replace ":80" below with
+	# that domain, and delete these two lines to get HTTPS for free.
+	auto_https off
+	admin off
+}
+
+:80 {
+	basic_auth {
+		alice $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+		bob $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+	}
+
+	# Map the authenticated login (Caddy sets {http.auth.user.id} once
+	# basic_auth succeeds) to the tenant's positive integer — the only
+	# spelling of X-Tenant-ID the daemon accepts (ADR-0005, amendment
+	# 2026-09-03). This is the identity-to-tenant mapping ADR-0005 says is
+	# the proxy's job: the daemon never sees "alice", only "1".
+	map {http.auth.user.id} {tenant_id} {
+		alice 1
+		bob 2
+		default 0
+	}
+
+	# Never reach the daemon's operator routes or its metrics through the
+	# public proxy: /ops/ (vacuum, tenant purge) acts beyond the calling
+	# tenant, /metrics needs no X-Tenant-ID and describes the whole daemon.
+	@private path /ops/* /metrics
+	respond @private 403
+
+	reverse_proxy blunderdb-serve:8080 {
+		# Guard, then inject: clear whatever the client sent BEFORE setting
+		# the authenticated value, so a client-supplied X-Tenant-ID can never
+		# reach the daemon no matter how this file is edited later — the
+		# second line is the only one that can still be in effect once both
+		# have run.
+		header_up X-Tenant-ID ""
+		header_up X-Tenant-ID {tenant_id}
+	}
+}
+</pre></div>
+</div>
+</div>
+<p>Kaksi muuta tiedostoa täydentää hakemistoa: <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/nginx-tenant-proxy.conf">deploy/nginx-tenant-proxy.conf</a> toistaa saman kaavan nginx-otteena (<code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> ja sitten <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">$tenant_id</span></code>, mukanaan lohko <code class="docutils literal notranslate"><span class="pre">map</span> <span class="pre">$remote_user</span> <span class="pre">$tenant_id</span></code>) sille, jolla on jo nginx käytössä; <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/README.md">deploy/README.md</a> esittää uhkamallin ja sen, mitä ei koskaan pidä tehdä.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code>-tiedoston HTTP Basic -todennus on esimerkki, ei tuotantosuositus: se korvataan <code class="docutils literal notranslate"><span class="pre">forward_auth</span></code>-ohjauksella todelliseen identiteetintarjoajaan (OIDC, yrityksen SSO…), joka todentaa ja välittää sitten identiteetin samaan kohtaan tiedostoa. Vastaavuustaulukon kaksi salasanaa ja kaksi tiliä on korvattava samoin.</p>
+<p><strong>Täydellinen skenaario, tyhjästä vastaavaan demoniin:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kevung/blunderDB.git
+<span class="nb">cd</span><span class="w"> </span>blunderDB/deploy
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">    </span><span class="c1"># POSTGRES_PASSWORD</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># 401</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+<span class="c1"># 200</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 999"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>blunderdb-serve
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>Ensimmäisen pyynnön hylkää Caddy jo ennen kuin se saavuttaa demonin. Kaksi seuraavaa todennetaan tilinä ”alice”, jonka vastaavuustaulukko liittää tenanttiin 1: ne palauttavat saman rungon (<code class="docutils literal notranslate"><span class="pre">{&quot;positions&quot;:0,&quot;analyses&quot;:0,&quot;matches&quot;:0,…}</span></code>) ja demonin lokissa lukee <code class="docutils literal notranslate"><span class="pre">tenant=1</span></code> niistä kummallakin — asiakkaan lähettämä arvo 999 ei selvinnyt <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code>-tiedoston suojasta. Tämä skenaario on toistettu sellaisenaan.</p>
+<p>Jos haluat vetää julkaistun kuvan sen sijaan, että rakentaisit sen, korvaa tiedostossa <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> palvelun <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> kolme <code class="docutils literal notranslate"><span class="pre">build:</span></code>-riviä yhdellä <code class="docutils literal notranslate"><span class="pre">image:</span></code>-rivillä ja aja sitten <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span> <span class="pre">up</span> <span class="pre">-d</span></code> ilman valitsinta <code class="docutils literal notranslate"><span class="pre">--build</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span>
+<span class="w">  </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+</pre></div>
+</div>
+<p>Compose-tiedosto julkaisee Caddyn portin kaikissa verkkoliitännöissä (<code class="docutils literal notranslate"><span class="pre">8080:80</span></code>): juuri sitä välityspalvelimelta odotetaan, sillä se on olemassa tavoitettavaksi. Sitä, mitä ei saa koskaan julkaista, on demoni — eikä sitä julkaistakaan, sillä sillä ei ole lainkaan <code class="docutils literal notranslate"><span class="pre">ports:</span></code>-määritystä.</p>
+</section>
+<section id="mettre-a-jour-un-deploiement">
+<span id="headless-mise-a-jour"></span><h3>Käyttöönoton päivittäminen<a class="headerlink" href="#mettre-a-jour-un-deploiement" title="Link to this heading"></a></h3>
+<p>Skeema migroidaan automaattisesti käynnistyksessä, ja tämä migraatio on <strong>yksisuuntainen</strong>: uudempaan skeemaan migroitua tietokantaa ei voi enää lukea blunderDB:n aiemmalla versiolla (katso <a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Liite: Tietokannan skeema</span></a>). Toimenpiteiden järjestyksellä on siis väliä.</p>
+<ol class="arabic simple">
+<li><p><strong>Varmuuskopioi ensin</strong>, ennen kaikkea muuta: se on ainoa paluu taaksepäin (katso <a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">Varmuuskopiointi ja palautus</span></a>).</p></li>
+<li><p><strong>Vedä halutun version tunniste</strong>, tuotannossa ei koskaan <code class="docutils literal notranslate"><span class="pre">latest</span></code>. <code class="docutils literal notranslate"><span class="pre">latest</span></code> seuraa viimeisintä julkaistua versiota: siihen kiinnitetty käyttöönotto vaihtaa versiota uudelleenkäynnistysten mukana, ilman että sitä olisi päätetty tai että vaiheen 1 varmuuskopio olisi välttämättä tuore.</p></li>
+<li><p><strong>Käynnistä demoni uudelleen</strong> uudella kuvalla. Se migroi skeeman ennen kuin palvelee ainuttakaan pyyntöä; jos migraatio epäonnistuu, se pysähtyy virheeseen sen sijaan, että palvelisi puoliksi migroitua tietokantaa.</p></li>
+<li><p><strong>Tarkista valmiussonda.</strong> <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> vastaa <code class="docutils literal notranslate"><span class="pre">200</span></code> ja <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;ready&quot;,&quot;version&quot;:&quot;…&quot;}</span></code>, kun tallennus vastaa ja sen skeema on binäärin skeema; <code class="docutils literal notranslate"><span class="pre">503</span></code> ja <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;down&quot;}</span></code>, kun tietokantaa ei tavoiteta; <code class="docutils literal notranslate"><span class="pre">503</span></code> ja <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;version_mismatch&quot;,&quot;version&quot;:&quot;…&quot;,&quot;expected&quot;:&quot;…&quot;}</span></code>, kun skeemat eroavat toisistaan — vastaus nimeää sekä tietokannan skeeman että sen, jota binääri odottaa. <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> antaa saman tuomion paluukoodina.</p></li>
+</ol>
+<p>Uudelleenkäynnistyksen jälkeen jäävä <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code> tarkoittaa paluuta taaksepäin: vanhempi binääri jo migroidun tietokannan edessä. Alaspäin migraatiota ei ole; palautettava on vaiheen 1 varmuuskopio.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2>PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>Jaettua käyttöönottoa varten blunderDB voi tallentaa tiedot <strong>PostgreSQL</strong>:ään SQLite-tiedoston sijaan. Taustajärjestelmä valitaan valinnalla <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> ja yhteysmerkkijonolla <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä.</p>
+<p>Tiedot on <strong>eristetty tenanteittain</strong> (tenant-kohtaisesti): jokainen pyyntö kantaa tenanttinsa tunnisteen (otsake <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, positiivinen desimaalikokonaisluku kuten <code class="docutils literal notranslate"><span class="pre">1</span></code> tai <code class="docutils literal notranslate"><span class="pre">42</span></code>), minkä ansiosta useat käyttäjät voivat jakaa saman instanssin näkemättä toistensa tietoja. Tunniste, joka ei ole tällainen kokonaisluku — nimi kuten <code class="docutils literal notranslate"><span class="pre">alice</span></code> tai <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">007</span></code> — hylätään vastauksella <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>: käänteisvälityspalvelin yhdistää tilin sen kokonaislukuun, demoni ei koskaan arvaa.</p>
+<section id="row-level-security">
+<h3>Row-Level Security<a class="headerlink" href="#row-level-security" title="Link to this heading"></a></h3>
+<p>Valitsin <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ottaa lisäksi käyttöön PostgreSQL:n <strong>Row-Level Securityn</strong>. Jokaisella käynnistyksellä demoni asentaa jokaiseen <code class="docutils literal notranslate"><span class="pre">tenant_id</span></code>-sarakkeen sisältävään tauluun käytännön <code class="docutils literal notranslate"><span class="pre">tenant_isolation</span></code>, joka päästää läpi vain istuntoparametrin <code class="docutils literal notranslate"><span class="pre">current_setting('app.tenant_id')</span></code> nimeämän tenantin rivit, ja pakottaa sen taulun omistajaan asti (<code class="docutils literal notranslate"><span class="pre">FORCE</span> <span class="pre">ROW</span> <span class="pre">LEVEL</span> <span class="pre">SECURITY</span></code>). Tämä parametri asetetaan yhteydelle, kun se otetaan poolista, ja nollataan, kun se palautetaan; yhteys ilman tenanttia ei näe yhtään riviä eikä lisää yhtään. Kyseessä on valinnainen syvyyspuolustus, oletuksena pois käytöstä: sovelluskoodin tenanttikohtainen suodatus on voimassa kummassakin tapauksessa.</p>
+<ul class="simple">
+<li><p><strong>Yhteysroolin on oltava tavallinen</strong>: ei pääkäyttäjä eikä <code class="docutils literal notranslate"><span class="pre">BYPASSRLS</span></code>. PostgreSQL päästää nämä kaksi kaikkien käytäntöjen läpi sanaakaan sanomatta, ja eristys palautuu pelkän sovelluskoodin varaan. Saman roolin on kuitenkin omistettava taulut, sillä juuri se suorittaa komennot <code class="docutils literal notranslate"><span class="pre">ALTER</span> <span class="pre">TABLE</span></code> ja <code class="docutils literal notranslate"><span class="pre">CREATE</span> <span class="pre">POLICY</span></code>.</p></li>
+<li><p><strong>Jo täytetyssä tietokannassa ei ole mitään migroitavaa</strong>: käytäntöjen asentaminen on idempotenttia DDL:ää, joka toistetaan jokaisella käynnistyksellä skeeman migraation jälkeen. Mitään dataa ei siirretä eikä yhtään riviä kirjoiteta uudelleen; valitsimen <code class="docutils literal notranslate"><span class="pre">--rls</span></code> käyttöönotto tai poisto on pelkkä uudelleenkäynnistys.</p></li>
+<li><p><strong>Kustannus on mitattu</strong>: yhden aseman lukemisessa 101,8 µs ilman ja 177,0 µs kanssa, eli <strong>+73,8 %</strong> — sama kontti, samat rivit, kaksi poolia, jotka eroavat vain tästä lipusta. Se maksetaan jokaisella yhteyden otolla poolista (parametrin asetus ja sen nollaus) sekä siitä predikaatista, jonka jokainen kysely ylimääräisenä läpäisee, ei koskaan datan määrästä.</p></li>
+</ul>
+</section>
+<section id="ouvrir-et-fermer-un-tenant">
+<h3>Tenantin avaaminen ja sulkeminen<a class="headerlink" href="#ouvrir-et-fermer-un-tenant" title="Link to this heading"></a></h3>
+<p>Palvelimen puolella <strong>ei ole mitään luotavaa</strong>: tenant ei ole tietue, vaan kokonaisluku, jota sen rivit kantavat. Tietokannassa ei ole tenanttien taulua eikä demoni pidä niistä mitään luetteloa — tilin avaaminen on merkinnän lisääminen välityspalvelimen vastaavuustaulukkoon, ja jäsenen ensimmäinen kirjoitus saa hänen tenanttinsa olemaan olemassa.</p>
+<p>Tyhjä tenant vastaa kuin tyhjä tietokanta, ilman virhettä: <code class="docutils literal notranslate"><span class="pre">metadata.counts</span></code> palauttaa nollia eivätkä listat palauta mitään.</p>
+<p>Kun tenant poistetaan käytöstä, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/tenant.purge</span></code> poistaa pysyvästi kaikki sen tiedot (asemat, ottelut, kokoelmat, historian jne.) nykyiseltä tenantilta (se, jonka otsake <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> määrittää), <strong>sekä sen istunnon tilan</strong> (viimeisin haku, viimeisin asema, avoimet välilehdet — <code class="docutils literal notranslate"><span class="pre">session_state</span></code>-taulun rivit, jotka kuuluvat tälle tenantille): toiminto suoritetaan yhdessä transaktiossa, on idempotentti (tyhjän tenantin tyhjentäminen tai kutsun toistaminen ei aiheuta virhettä) eikä vaikuta muihin tenantteihin. Se poistaa tämän tenantin rivit <strong>kaikista</strong> tauluista, joissa tenant esiintyy, ja jättää jäljelle vain sen, mikä ei kuulu kenellekään: <code class="docutils literal notranslate"><span class="pre">metadata</span></code>-taulun, siis myös skeeman version globaalin rivin, sekä migraatiolokin. Tyhjennetystä tenantista tulee siten täsmälleen tyhjä tenant, ja sen kokonaisluku voidaan antaa uudelleen. Se on käytettävissä vain PostgreSQL-taustajärjestelmän kanssa — SQLite-taustajärjestelmässä, jolla ei ole tenantin käsitettä, se palauttaa <code class="docutils literal notranslate"><span class="pre">invalid</span></code>-virheen.</p>
+</section>
+<section id="compactage-et-pool-de-connexions">
+<h3>Tiivistys ja yhteyspooli<a class="headerlink" href="#compactage-et-pool-de-connexions" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/maintenance.vacuum</span></code> tiivistää demonin SQLite-tiedoston — käyttöliittymän ”Tiivistä tietokanta” -painikkeen ja komennon <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (katso <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) vastine, samalla levytilan varmistuksella — ja palauttaa koot ennen ja jälkeen (<code class="docutils literal notranslate"><span class="pre">sizeBefore</span></code>, <code class="docutils literal notranslate"><span class="pre">sizeAfter</span></code>, tavuina). Se on käytettävissä vain SQLite-taustajärjestelmän kanssa; PostgreSQL:llä, jolla ei ole tiivistettävää tiedostoa, se palauttaa <code class="docutils literal notranslate"><span class="pre">invalid</span></code>-virheen.</p>
+<p>PostgreSQL-yhteyspoolia säädetään ympäristömuuttujilla: <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONNS</span></code> (oletuksena 50), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MIN_CONNS</span></code> (5), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME</span></code> (<code class="docutils literal notranslate"><span class="pre">1h</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD</span></code> (<code class="docutils literal notranslate"><span class="pre">30s</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_CONNECT_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">5s</span></code> — sen ylittyessä tavoittamaton tietokanta epäonnistuu nopeasti sen sijaan, että se jäisi jumiin käyttöjärjestelmän TCP-aikakatkaisuun) ja <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME</span></code> (<code class="docutils literal notranslate"><span class="pre">30m</span></code> — liikennepiikkiä varten avattu yhteys ei jää pooliin loputtomiin piikin päätyttyä). Jokainen arvo on Go-muotoinen kesto (<code class="docutils literal notranslate"><span class="pre">5s</span></code>, <code class="docutils literal notranslate"><span class="pre">30m</span></code>, <code class="docutils literal notranslate"><span class="pre">1h</span></code>); puuttuessaan tai ollessaan virheellinen se palautuu oletusarvoonsa. Kun <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> on käytössä, poolin tila julkaistaan jatkuvasti osoitteessa <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: <code class="docutils literal notranslate"><span class="pre">blunderdb_pg_pool_acquired</span></code> (parhaillaan käytössä olevat yhteydet), <code class="docutils literal notranslate"><span class="pre">_idle</span></code> (vapaana olevat), <code class="docutils literal notranslate"><span class="pre">_max</span></code> (asetettu yläraja) ja <code class="docutils literal notranslate"><span class="pre">_wait_count</span></code> (niiden <code class="docutils literal notranslate"><span class="pre">Acquire</span></code>-kutsujen kertynyt määrä, joiden on täytynyt odottaa vapaata yhteyttä).</p>
+</section>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2>SQLite-tietokannan siirtäminen PostgreSQL:ään<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> kopioi yhden käyttäjän SQLite-tietokannan PostgreSQL-taustajärjestelmään valitun tenantin alle — kokonaisluku, jonka käänteisvälityspalvelin lähettää <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsakkeessa tälle käyttäjälle — tämä on tapa ”ladata” työpöytäkirjasto palvelinasennukseen.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">"postgres://user:pass@host:5432/db?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+
+<span class="c1"># --dry-run</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>Migraatio kopioi <strong>asemat, niiden analyysit ja kommentit, ottelut (pelit + siirrot), turnaukset (ottelulinkkeineen) ja kokoelmat (koostumuksineen)</strong>, kohdistaen pää- ja viiteavaimet uudelleen, kaiken kohdepuolen <strong>yhdessä transaktiossa</strong>: toiminto on atominen (epäonnistuminen jättää kohteen koskemattomaksi, riittää että käynnistää uudelleen). Edistyminen ja lopullinen yhteenveto tulostetaan NDJSON-muodossa vakiotulosteeseen. Jos lähdetietokanta on niin vanha, että se tarvitsee oman paikallaan tehtävän skeemapäivityksen, se ajetaan ensin ja lähettää omat <code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code>-tapahtumansa (vaihe/tehty/yhteensä), ennen kuin rivi riviltä kopiointi alkaa.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lähde-SQLite-tietokanta (<code class="docutils literal notranslate"><span class="pre">sqlite:///&lt;polku&gt;</span></code> tai pelkkä polku)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>kohde-PostgreSQL:n DSN (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>kohdetenant, positiivinen desimaalikokonaisluku (pakollinen paitsi <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code>-tilassa; nimi kuten <code class="docutils literal notranslate"><span class="pre">mon-tenant</span></code> hylätään)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>laskee, mitä kopioitaisiin, kirjoittamatta mitään</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;käytäntö&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> keskeyttää, jos tenantilla on jo tietoja; <code class="docutils literal notranslate"><span class="pre">skip</span></code> yhdistää (asemien deduplikointi Zobrist-hashin perusteella)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Vielä migroimatta jäävät sovellustilat: Anki-pakat/-kortit, suodatinkirjasto, haku- ja komentohistoria sekä istunnon metatiedot. Etusijalla on asemakirjaston ja otteluhistorian migraatio.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2>Yleiskäyttöinen <code class="docutils literal notranslate"><span class="pre">call</span></code>-välittäjä<a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>Aiempien alikomentojen (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) lisäksi <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> tarjoaa <strong>kaikki</strong> tallennustoiminnot suoraan paikallisesti. Se kulkee samojen käsittelijöiden kautta kuin <code class="docutils literal notranslate"><span class="pre">serve</span></code>-demoni: toiminta on siis identtinen komennon <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;perhe&gt;.&lt;metodi&gt;</span></code> kanssa. Tämä on hyödyllistä skriptauksessa ja integraatiotesteissä.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># --list</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># read</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"limit":10}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":1}'</span>
+
+<span class="c1"># write</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"position":{...}}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":42}'</span>
+</pre></div>
+</div>
+<p><strong>Valinnat:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Valinta</p></th>
+<th class="head"><p>Oletus</p></th>
+<th class="head"><p>Merkitys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite-tiedosto (oikotie komennolle <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;polku&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;tyyppi&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> tai <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>taustajärjestelmän yhteysmerkkijono</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>tenant, positiivinen desimaalikokonaisluku (lähetetään <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>-otsakkeena; nimi kuten <code class="docutils literal notranslate"><span class="pre">alice</span></code> hylätään)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;merkkijono&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>pyynnön runko JSON-muodossa</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;polku&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>lukee pyynnön rungon tiedostosta</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>näyttää kaikki metodit <code class="docutils literal notranslate"><span class="pre">&lt;perhe&gt;.&lt;metodi&gt;</span></code> ja lopettaa</p></td>
+</tr>
+</tbody>
+</table>
+<p>JSON-vastaus (tai NDJSON-virta <code class="docutils literal notranslate"><span class="pre">*.list</span></code>-päätepisteille) kirjoitetaan vakiotulosteeseen. Virhetilanteessa prosessi päättyy nollasta poikkeavalla koodilla ja kuori <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> tulostetaan vakiotulosteeseen, jotta se pysyy jäsenneltävänä (esimerkiksi <code class="docutils literal notranslate"><span class="pre">jq</span></code>:lla).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="Usein kysytyt kysymykset (UKK)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="API-sopimus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,865 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ヘッドレスモード（サーバー） &mdash; blunderDB 0.36.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c17e5d4e"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="API コントラクト" href="api_reference.html" />
+    <link rel="prev" title="よくある質問（FAQ）" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="ロゴ"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="ドキュメント内を検索" aria-label="ドキュメント内を検索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="言語">
+  <a href="../fr/mode_headless.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/mode_headless.html" lang="en" hreflang="en">English</a>
+  <a href="../de/mode_headless.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/mode_headless.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/mode_headless.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/mode_headless.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/mode_headless.html" lang="it" hreflang="it">Italiano</a>
+  <span class="current" lang="ja" aria-current="true">日本語</span>
+  <a href="../ru/mode_headless.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="ナビゲーションメニュー">
+              <p class="caption" role="heading"><span class="caption-text">はじめに</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">ユーザーガイド</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">リファレンス</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">用語集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">よくある質問（FAQ）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ヘッドレスモード（サーバー）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">エンドポイント</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-page-web-de-consultation">閲覧用のウェブページ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ce-que-v1-promet"><code class="docutils literal notranslate"><span class="pre">/v1</span></code> が約束すること</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#un-client-python">Python クライアント</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#embarquer-le-moteur-dans-un-programme-go">エンジンを Go のプログラムに組み込む</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bases-de-bearoff">ベアオフのデータベース</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-routes-d-exploitation">運用向けのルート</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlation-et-metriques-metier">相関付けと業務メトリクス</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression-des-flux">ストリームの圧縮</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#un-seul-tenant-sur-sqlite">SQLite ではテナントは一つだけ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-et-restauration">バックアップと復元</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#le-poste-de-travail-et-le-serveur">ワークステーションとサーバー</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">Docker によるデプロイ</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#image-publiee">公開イメージ</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-derriere-un-proxy-authentifiant">認証プロキシの背後への配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mettre-a-jour-un-deploiement">デプロイを更新する</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">PostgreSQL バックエンドとマルチユーザー</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#row-level-security">Row-Level Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouvrir-et-fermer-un-tenant">テナントを開設し、閉鎖する</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compactage-et-pool-de-connexions">最適化と接続プール</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">SQLite データベースを PostgreSQL へ移行する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API コントラクト</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">付録：フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows 付録：Windows が起動をブロックしたときの対処</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">バージョン履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">blunderDB について</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="モバイル用ナビゲーションメニュー" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="ページナビゲーション">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ヘッドレスモード（サーバー）</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1>ヘッドレスモード（サーバー）<a class="headerlink" href="#mode-headless-serveur" title="この見出しへのリンク"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>このセクションでは、サーバーへのデプロイ、マルチユーザー、自動化を対象とした、blunderDB の<strong>高度かつ任意のモード</strong>について説明します。<strong>blunderDB の通常かつ推奨される使用方法は、前章で説明したデスクトップアプリケーション</strong>のままです。自分のコンピューター上で blunderDB を単独で使用する場合、このモードは必要ありません：分析機能を一切失うことなく、この章を読み飛ばすことができます。</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>概要<a class="headerlink" href="#vue-d-ensemble" title="この見出しへのリンク"></a></h2>
+<p>同じバイナリ <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> は、デスクトップアプリケーションやコマンドライン（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）に加えて、<strong>ヘッドレスモード</strong> で動作することができます：グラフィカルインターフェースなしで、コマンドラインまたはネットワークから完全に操作されます。このモードは3つの用途をまとめています：</p>
+<ul class="simple">
+<li><p><strong>デーモン</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — blunderDB のエンジンを HTTP + JSON サービスとして公開し、共有データベースをサーバー上で稼働させ、複数人でアクセスできるようにします。</p></li>
+<li><p>汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code> — スクリプティングやテストのために、任意のストレージ操作をローカルで直接呼び出します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> コマンド — シングルユーザーの SQLite データベースをマルチユーザーの PostgreSQL バックエンドに転送します。</p></li>
+</ul>
+<p>これら3つの用途は、2つのバックエンドと対話できる共通の<strong>ストレージレイヤー</strong>に依存しています：<strong>SQLite</strong>（デスクトップアプリケーションの通常の <code class="docutils literal notranslate"><span class="pre">.db</span></code> ファイル形式）と <strong>PostgreSQL</strong>（マルチユーザーのサーバーデプロイ向け）です。</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2>デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="この見出しへのリンク"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> は、JSON で応答する HTTP サービスとしてエンジンを起動します。これにより、ポジションのデータベースを1台のマシン上でホストし、複数のクライアントからアクセスできるようになります。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># sqlite</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+
+<span class="c1"># postgres</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> が適切なのは、信頼できるプライベートネットワークだけです——隣のコンテナにあり、ホストにもインターネットにも経路を持たないネットワーク上のデータベースなどです。リモートのデータベースには、<code class="docutils literal notranslate"><span class="pre">sslmode=require</span></code> が接続を暗号化し、<code class="docutils literal notranslate"><span class="pre">verify-full</span></code> はさらにサーバー証明書とそのホスト名を検証します。このページの他の接続文字列も同じ理由で <code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> を持っています。いずれもプライベートネットワークを前提としているからです。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p><strong>デーモンは認証を一切行いません。</strong> リクエストヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> を信頼しており、認証を担うリバースプロキシ（nginx、Caddy…）の背後で動作させる<strong>必要があります</strong>。<strong>決して公開インターネット上に直接公開しないでください。</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> はテナントの<strong>整数</strong>（<code class="docutils literal notranslate"><span class="pre">1</span></code>、<code class="docutils literal notranslate"><span class="pre">2</span></code>、<code class="docutils literal notranslate"><span class="pre">42</span></code>…）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（<code class="docutils literal notranslate"><span class="pre">alice</span></code>）は <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> で拒否され、決して変換されません。</p>
+</div>
+<p><strong>オプション：</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;パス&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite ファイル（<code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;パス&gt;</span></code> のショートカット）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>ストレージバックエンド：<code class="docutils literal notranslate"><span class="pre">sqlite</span></code> または <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;文字列&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>バックエンドの接続文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;ホスト:ポート&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>待ち受けアドレス</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;レベル&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>ログレベル：<code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/metrics</span></code> を公開する（Prometheus 形式）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--web</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>閲覧用のウェブページを <code class="docutils literal notranslate"><span class="pre">/app/</span></code> で提供します。<strong>既定では無効</strong>、下記参照</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;オリジン&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>この オリジンに対して CORS を有効にする。カンマ区切りのオリジン一覧、または <code class="docutils literal notranslate"><span class="pre">*</span></code> を指定できる（デフォルトでは無効）。応答は、そのオリジンが一覧に含まれる場合のみリクエストのオリジンを反映し、<code class="docutils literal notranslate"><span class="pre">Vary:</span> <span class="pre">Origin</span></code> を伴う</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>テナントごとの秒間リクエスト数の制限（0 = 無効）。オプトインではなくデフォルトで寛容な値に設定されており、データベースのことしか考えていない compose ファイルが、制限のないデーモンを引き継いでしまうことがない。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>リクエストのピークに対応するトークンバケットのサイズ</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL：テナントごとの Row-Level Security を有効にする（多層防御、オプション）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;ファイル&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>EPC エンドポイントのレース分析のために TS-06-06 の表を広げる、任意の両面ベアオフ・データベース（<code class="docutils literal notranslate"><span class="pre">.bd</span></code>）。デーモンがデータベースをダウンロードすることはありません — <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">ベアオフのデータベース</span></a> を参照</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--identity-dir</span> <span class="pre">&lt;ディレクトリ&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>デーモンの署名用識別情報のディレクトリ（初回使用時に作成される）。<code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> が透かしを付けるために必要——詳細は後述</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;ホスト:ポート&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/ops/</span></code>ファミリー（<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>、<code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>）を<code class="docutils literal notranslate"><span class="pre">--addr</span></code> とは<strong>別の</strong>アドレスで提供し、そちらからは外します。空（既定）ならメインのリスナーに残り、接頭辞を拒むのはプロキシの役目です。<a class="reference internal" href="#headless-ops-routes"><span class="std std-ref">運用向けのルート</span></a> を参照</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;ホスト:ポート&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code> を<code class="docutils literal notranslate"><span class="pre">--addr</span></code> とは<strong>別の</strong>アドレスで公開します（既定では無効）。デバッグ専用です。これらのエンドポイントはテナントの概念を持たず、プロセス全体のメモリまたは CPU プロファイルを渡すため、公開してはならず、<code class="docutils literal notranslate"><span class="pre">/v1</span></code> と同じアドレスに置いてもいけません</p></td>
+</tr>
+</tbody>
+</table>
+<p>ほとんどのオプションは環境変数でも指定できます（<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_METRICS</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_CORS_ALLOW_ORIGIN</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_RPS</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_BURST</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_IDENTITY_DIR</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_OPS_ADDR</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_PPROF_ADDR</span></code>）。明示的に与えたフラグは、対応する変数より常に優先されます。</p>
+<p>デーモンにはデータディレクトリのオプションが<strong>ありません</strong>。ベアオフの表は <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>、なければ <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code> に書き込まれます。したがって、それらを移動させるのは <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code> です——<a class="reference internal" href="#headless-bearoff"><span class="std std-ref">ベアオフのデータベース</span></a> を参照してください。</p>
+<p>レート制限器自身のバケットテーブルにもハードキャップ（テナント10,000件まで）があります。それを超えると、テーブルを無制限に増やす代わりに、新しいテナントごとに最も長く使われていないバケットを追い出します。これは、非アクティブなバケットの定期的な掃除の合間に、クライアントが <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> の異なる値を、意図的かどうかに関わらず大量に送ってくる場合に役立ちます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> は、予期しない位置引数をすべて拒否するようになりました（すでに素のバイナリに切り詰められた <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> が通す、先頭の <code class="docutils literal notranslate"><span class="pre">serve</span></code> 一語だけは例外です）。このチェックがなければ、そのような引数の後に置かれたフラグは黙って無視されていました。イメージの <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> がすでに <code class="docutils literal notranslate"><span class="pre">serve</span></code> であるため自然にやってしまいがちな <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">image</span> <span class="pre">serve</span> <span class="pre">--addr</span> <span class="pre">:9090</span></code> は、一言の警告もなく<code class="docutils literal notranslate"><span class="pre">:8080</span></code> で起動していました。</p>
+<section id="points-d-acces">
+<h3>エンドポイント<a class="headerlink" href="#points-d-acces" title="この見出しへのリンク"></a></h3>
+<p>サービスは、常に利用可能な運用用のエンドポイントを公開しています：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — 生存確認（プロセスが稼働中）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — 準備状態（ストレージが応答し、そのスキーマが期待されるバージョンである）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — Prometheus メトリクス（<code class="docutils literal notranslate"><span class="pre">--metrics</span></code> が有効な場合）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/app/</span></code> — 閲覧用のウェブページ（<code class="docutils literal notranslate"><span class="pre">--web</span></code> が有効な場合）。</p></li>
+</ul>
+</section>
+<section id="la-page-web-de-consultation">
+<span id="page-web"></span><h3>閲覧用のウェブページ<a class="headerlink" href="#la-page-web-de-consultation" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span> <span class="pre">--web</span></code> は <code class="docutils literal notranslate"><span class="pre">/app/</span></code> にページを提供します。タブレットや携帯から、何もインストールせずに閲覧できるライブラリです。</p>
+<p>できることは <strong>三つ</strong> で、この一覧は段階ではなく決定です：</p>
+<ul class="simple">
+<li><p>局面とその分析、その盤面を <strong>閲覧する</strong>、</p></li>
+<li><p>アプリケーションのコマンドラインと同じトークン文法で <strong>検索する</strong>、</p></li>
+<li><p>Anki のデッキを <a href="#id1"><span class="problematic" id="id2">**</span></a>復習する**（答えを開き、評価を付ける）。</p></li>
+</ul>
+<p>局面の編集、取り込み、削除、コレクション・マッチ・トーナメント・設定の管理はできませんし、できるようにもなりません。ここに無い機能は欠落ではなく、範囲そのものです。</p>
+<p><strong>既定で無効であり、その既定こそが決定です。</strong> このデーモンは誰も認証しません。<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ヘッダを信頼し、認証を行う中継の背後で動く前提です。ブラウザから届く画面を初期状態で有効にして配ることは、まさにその規則が禁じている配置を招きます。</p>
+<p>ページは <strong>テナントを送りません</strong>。他のクライアントと同じく、ヘッダを付けるのは中継です。ローカル開発のときに限り <code class="docutils literal notranslate"><span class="pre">/app/?tenant=1</span></code> で名指しできますが、すでに誰からでもそのヘッダを受け取るデーモンの安全性は何も変わりません。</p>
+<p>ページのファイルは意図的に <strong>テナントなしで</strong> 提供されます。中継が何かを割り当てる前にブラウザがページを読み込めなければならず、ページ自体はデータを含まないからです。</p>
+<p>生存確認と準備状態は別々の問いに答えます。<code class="docutils literal notranslate"><span class="pre">/healthz</span></code> はプロセスがリクエストを処理できる状態になれば常に 200 を返し、ストレージには一切問い合わせません。オーケストレーターは生存確認に失敗したコンテナを再起動するため、一時的に到達できないデータベースのせいで健全なデーモンが再起動を繰り返してはならないからです。<code class="docutils literal notranslate"><span class="pre">/readyz</span></code> はデータベースが応答しないか、そのスキーマがバイナリのものと一致しない間は 503 を返します（<code class="docutils literal notranslate"><span class="pre">status</span></code> は <code class="docutils literal notranslate"><span class="pre">down</span></code> または <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code>）。トラフィックはデータベースが戻るまで単に迂回されます。</p>
+<p>サブコマンド <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code>（コンテナイメージの <code class="docutils literal notranslate"><span class="pre">serve</span></code> バイナリにも含まれます）はローカルのデーモンに <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> リクエストを送り、準備ができていれば <code class="docutils literal notranslate"><span class="pre">0</span></code>、それ以外は <code class="docutils literal notranslate"><span class="pre">1</span></code> を返します。アドレスは<code class="docutils literal notranslate"><span class="pre">--addr</span></code> または <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code> のもので、既定は<code class="docutils literal notranslate"><span class="pre">:8080</span></code> です。これが Docker イメージの <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> であり、スクリプトや systemd ユニットからも同様に使えます：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ready
+</pre></div>
+</div>
+<p>業務面は <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;ファミリー&gt;.&lt;メソッド&gt;</span></code>という形をとります（たとえば<code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>、<code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>）。ファミリーはポジション、分析、マッチ、コメント、コレクション、トーナメント、Anki カード、フィルター、セッション、履歴（検索とコマンド）、検索、メタデータ、統計、インポートとエクスポートを扱います。一覧のエンドポイントは NDJSON ストリーム（1 行に 1 つの JSON オブジェクト）を返します。サーバーは <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/ <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code> できれいに停止します。</p>
+<section id="ce-que-v1-promet">
+<span id="headless-versionnage"></span><h4><code class="docutils literal notranslate"><span class="pre">/v1</span></code> が約束すること<a class="headerlink" href="#ce-que-v1-promet" title="この見出しへのリンク"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">/v1</span></code> に対して書いたクライアントは動き続けなければなりません。規則は三行で足り、推測されるより書かれているほうが役に立ちます。</p>
+<ul class="simple">
+<li><p><strong>すでにあるものの意味は変えません。</strong><code class="docutils literal notranslate"><span class="pre">/v1</span></code> のルートは改名も削除も意味の付け替えもしません。リクエストやレスポンスのフィールドも、改名も削除も型変更もしません。</p></li>
+<li><p><strong>加わるものは加わるだけです。</strong>新しいルート、<strong>任意の</strong>リクエストフィールド、レスポンスの新しいフィールド。これらを無視するクライアントは動き続けます。ここで採る「互換」の定義はそれです。したがってクライアントは、知らないフィールドを拒むのではなく無視しなければなりません。</p></li>
+<li><p><strong>それ以外は ``/v2`` です。</strong>任意だったフィールドを必須にする、単位を変える、エラーコードの意味を変える。これらは破壊的変更であり、クライアントが移行しきるまで <code class="docutils literal notranslate"><span class="pre">/v1</span></code> の隣で別の接頭辞のもとに置かれます。</p></li>
+</ul>
+<p>重要な補足が二つあります。<code class="docutils literal notranslate"><span class="pre">/ops/</span></code> のルートは<strong>対象外</strong>です。これらは配備の運用のためのもので、配備とともに変わり、第三者のプログラム向け API ではありません。そして<strong>契約そのものが</strong>デーモンのルート表から生成されます（<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code>、<a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">API コントラクト</span></a>）。サーバが提供するもの以外を記述することはできません。</p>
+</section>
+<section id="un-client-python">
+<span id="headless-client-python"></span><h4>Python クライアント<a class="headerlink" href="#un-client-python" title="この見出しへのリンク"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">clients/python/</span></code> には、標準ライブラリ以外に依存しない最小限のクライアントがあります。デーモンは POST と JSON を話し、<code class="docutils literal notranslate"><span class="pre">urllib</span></code> と <code class="docutils literal notranslate"><span class="pre">json</span></code> でそれは完全に足ります。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blunderdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s2">"http://127.0.0.1:8080"</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">metadata_counts</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">positions_list</span><span class="p">({</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">10</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>これは<strong>意図して二つの半分</strong>に分かれています。<code class="docutils literal notranslate"><span class="pre">_generated.py</span></code> はルートごとに 1 メソッドを持ち、<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code> がデーモンのルート表から生成します。手書きの面はルートが追加された日にずれ始め、利用者が気づくまで誰も気づきません。<code class="docutils literal notranslate"><span class="pre">client.py</span></code> は転送——セッション、テナントのヘッダ、エラーの封筒、NDJSON の読み取り——を担い、こちらは手書きです。API とともに変わるものは生成し、判断とともに変わるものは生成しません。</p>
+<p>メソッド名は snake_case の <code class="docutils literal notranslate"><span class="pre">ファミリ_操作</span></code> です。<code class="docutils literal notranslate"><span class="pre">/v1/positions.loadByIds</span></code> は <code class="docutils literal notranslate"><span class="pre">positions_load_by_ids()</span></code> になります。<code class="docutils literal notranslate"><span class="pre">list</span></code> や <code class="docutils literal notranslate"><span class="pre">delete</span></code> のように操作名を共有するファミリが複数あるため、裸の <code class="docutils literal notranslate"><span class="pre">list()</span></code> では衝突するので、ファミリを残しています。</p>
+<p>失敗は <code class="docutils literal notranslate"><span class="pre">APIError</span></code> を送出し、デーモンの封筒をそのまま運びます。<a href="#id1"><span class="problematic" id="id2">``</span></a>code``（プログラムが分岐する対象）、<a href="#id3"><span class="problematic" id="id4">``</span></a>message``（人が読むもの）、HTTP ステータス、詳細です。</p>
+</section>
+<section id="embarquer-le-moteur-dans-un-programme-go">
+<span id="headless-bootstrap"></span><h4>エンジンを Go のプログラムに組み込む<a class="headerlink" href="#embarquer-le-moteur-dans-un-programme-go" title="この見出しへのリンク"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">pkg/blunderdb/server.Bootstrap</span></code> はストレージを開き、ポートを待ち受けずに<strong>呼び出し元のプロセス内で</strong>ハンドラ一式を返します。信頼できる親——gammonGo——が、隣でデーモンを走らせたり自分自身と HTTP で話したりせずに局面ライブラリを使うための入口です。</p>
+<p>前提ははっきり述べられています。親は<strong>信頼できる</strong>ものです。確認すべきテナントも、検証すべきヘッダも、レート制限もありません。それらはネットワークに面するデーモンのものであり、理由は ADR-0005 が述べています。エンジンを組み込むプログラムは自らテナントを選び、自らの呼び出しに責任を持ちます。</p>
+</section>
+</section>
+<section id="les-bases-de-bearoff">
+<span id="headless-bearoff"></span><h3>ベアオフのデータベース<a class="headerlink" href="#les-bases-de-bearoff" title="この見出しへのリンク"></a></h3>
+<p>デーモンは起動時に既定の 2 つの表を背後で計算します（キューブの判定用の TS-06-06、EPC 用の OS-06）。1 コアで約 6 秒、一度だけ、自身のデータディレクトリ——<code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>、なければ <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code>——の中で行われます。ダウンロードも実行ファイルへの埋め込みもありません（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md">ADR-0027</a>）。そのフォルダーが読み取り専用なら、表はプロセスの生存中メモリに保持されます。サービスは起動し、再起動のたびに計算の代金を払うだけです。</p>
+<p>より広い領域は起動時には計算されません。TS-06-11 は 1.2 GB あり数分かかります。サービスが独りで決めることではありません。デーモンが読むボリュームの中で、コマンドラインを使って作るのは運用者の仕事です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate</span>
+blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/data/blunderdb
+
+<span class="c1"># serve</span>
+<span class="nv">XDG_DATA_HOME</span><span class="o">=</span>/srv/data<span class="w"> </span>blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bearoff-ts<span class="w"> </span>/srv/data/blunderdb/gnubg_ts6x11.bd
+</pre></div>
+</div>
+<p>最初の起動方法では、デーモンが自分のデータディレクトリの中で表を自力で見つけます。二つ目は、どこにあってもパスで表を指定します。<code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> は <code class="docutils literal notranslate"><span class="pre">bearoff</span></code> サブコマンドのオプションであり、<code class="docutils literal notranslate"><span class="pre">serve</span></code> のものでは決してありません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">list</span> <span class="pre">--data-dir</span> <span class="pre">/srv/data/blunderdb</span></code> はボリュームの中身と各領域にかかる費用を述べます。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">verify</span></code> は破損した表でエラー終了するので、そのまま起動時の点検に使えます。詳しくは <a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照してください。</p>
+</section>
+<section id="les-routes-d-exploitation">
+<span id="headless-ops-routes"></span><h3>運用向けのルート<a class="headerlink" href="#les-routes-d-exploitation" title="この見出しへのリンク"></a></h3>
+<p>二つの呼び出しは、それを行うテナントの範囲にとどまりません。そのため独自の接頭辞 <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/&lt;ファミリー&gt;.&lt;メソッド&gt;</span></code>の下に置かれます。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code>（SQLite バックエンド）はファイル<strong>全体</strong>を、全テナントのデータを含めて書き直し、その間ずっと書き込みロックを保持します。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/tenant.purge</span></code>（PostgreSQL バックエンド）はあるテナントのデータを破棄します。破棄されるテナントは、呼び出し側が制御するヘッダーが指定したものです。</p></li>
+</ul>
+<p>デーモンは誰も認証しません（下記参照）。あるテナントが到達できるルートは、<strong>すべての</strong>テナントが呼び出せるルートです。この接頭辞は、プロキシが一つの規則で両方を拒めるようにするために存在します。<code class="docutils literal notranslate"><span class="pre">/ops/</span></code>を<strong>公開プロキシ経由で決して公開しないでください</strong>。nginx なら規則は <code class="docutils literal notranslate"><span class="pre">server</span></code> ブロックの 1 行で済み、Caddy ならサイトの 2 行で済みます：</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/ops/</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="k">location</span><span class="w"> </span><span class="s">/metrics</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@closed path /ops/* /metrics
+respond @closed 403
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;ホスト:ポート&gt;</span></code>オプションはさらに踏み込みます。二つのルートは<code class="docutils literal notranslate"><span class="pre">--addr</span></code> のアドレスを離れ、その第二のリスナーでのみ提供されます。これは管理用インターフェースに割り当ててください。オプションを使わない場合はメインのリスナーに残り、遮断はプロキシの仕事になります。</p>
+<p>これらのルートも他と同じく <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ヘッダーを要求します。パージは破棄するテナントを指定するのですから、他のどのルートよりもこのヘッダーを必要とします。ヘッダーなしで済むのはプローブ（<code class="docutils literal notranslate"><span class="pre">/healthz</span></code>、<code class="docutils literal notranslate"><span class="pre">/readyz</span></code>）と<code class="docutils literal notranslate"><span class="pre">/metrics</span></code> だけです。</p>
+<p>だからこそ、上の拒否ルールは <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> も対象にしています。テナントを要求しないこのルートは、デーモンに到達できる者なら誰でも読むことができ、しかもデータベースのサイズと進行中の作業を、全テナントをまとめて公開します。これはデーモンのマシンから、あるいはプロキシが運用のために確保した経路から参照します。決して公開してはならない三つ目の点はルートではなくリスナーです。すなわち <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span></code> のリスナーで、これはテナントの概念をまったく持たず、プロセス全体のプロファイルを渡します。これは管理用インターフェースに束縛するものであり、プロキシから公開してはなりません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">/ops/</span></code>に移さなかったもの：<code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.sweepStale</span></code> です。追いつき処理は重いものの、呼び出したテナントの範囲に限られます。これを抑えるのはレート制限と進行中の作業のゲージであって、信頼境界ではありません。</p>
+<p>完全な契約（各メソッドと、その要求と応答）はソースから生成され、バージョン管理されています。リポジトリのルートにある <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code>（OpenAPI 形式、スキーマを含む）と、その読みやすい付録である <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">API コントラクト</span></a>（ファミリーごとの表）です。どちらも <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code> で再生成され、実際に登録されているルートに対してどちらかが古くなると専用のテストが失敗します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">/v1</span></code> へのすべてのリクエストは JSON 本文を受け付ける（<code class="docutils literal notranslate"><span class="pre">Content-Type:</span> <span class="pre">application/json</span></code>、またはヘッダーなし — それ以外の型の本文は、わかりにくい JSON 解析エラーで失敗する代わりに <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> で拒否される）。既知のメソッドを誤った HTTP 動詞で呼び出すと <code class="docutils literal notranslate"><span class="pre">405</span></code> が返り、<code class="docutils literal notranslate"><span class="pre">Allow</span></code> ヘッダーが受け付ける唯一の動詞を示す。<code class="docutils literal notranslate"><span class="pre">limit</span></code> を受け取る一覧系メソッドは、1 ページあたり 1000 行を超える値を、無制限に受け入れる代わりに <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> で拒否する。</p>
+<p>一覧を返す系統はいずれも <code class="docutils literal notranslate"><span class="pre">limit</span></code> と <code class="docutils literal notranslate"><span class="pre">offset</span></code> を受け取ります。<code class="docutils literal notranslate"><span class="pre">positions.list</span></code>、<code class="docutils literal notranslate"><span class="pre">positions.listIds</span></code>、<code class="docutils literal notranslate"><span class="pre">matches.list</span></code>、<code class="docutils literal notranslate"><span class="pre">search.find</span></code>、<code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>、<code class="docutils literal notranslate"><span class="pre">comments.listAll</span></code>、<code class="docutils literal notranslate"><span class="pre">tournaments.list</span></code>、そして <code class="docutils literal notranslate"><span class="pre">collections.positions</span></code> です。どちらも既定は 0 で、これは以前と同じ「すべて」を意味します。<strong>暗黙の上限はありません</strong>。ストリームはメモリに保持されないので、無制限の一覧は時間と帯域を使いますがデーモンの安定を損なうことはありません。一方で既定の上限をひそかに設ければ、切り詰められた一覧を完全なものとして読ませてしまいます。この 2 つの引数が与えるのは、望む者にページ送りができるという一点です。</p>
+<p>各 TCP 接続はリクエストごとに読み書きの時間が制限される — 通常の呼び出しには余裕のある予算、ストリーミング系のルート（NDJSON 一覧、インポート/エクスポート、gammonNet の追いつきスイープ）にはさらに大きな予算が与えられる — そして同時に開ける接続数には上限があり、これを超えると新たな接続は既存のいずれかが解放されるのを待つ。すべての接続が無条件に専用の実行スレッドを得るわけではない。正常なシャットダウン（<code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/<code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>）は、まず進行中のすべてのインポートと gammonNet の追いつきスイープをキャンセルする — それぞれは接続を説明なく切断される代わりに、最後に <code class="docutils literal notranslate"><span class="pre">{&quot;event&quot;:&quot;cancelled&quot;}</span></code> イベントで応答する — その後、通常の猶予期間内にサーバーを閉じる。アップロードされたインポートの一時ファイルは、元の拡張子のうちデーモンが認識するもの（<code class="docutils literal notranslate"><span class="pre">.xg</span></code>、<code class="docutils literal notranslate"><span class="pre">.xgp</span></code>、<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>、<code class="docutils literal notranslate"><span class="pre">.mat</span></code>、<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>、<code class="docutils literal notranslate"><span class="pre">.txt</span></code>、<code class="docutils literal notranslate"><span class="pre">.db</span></code>、<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>）だけを保持する。また、同時に実行中のすべてのインポート — テナントを問わず — はディスクに退避されるバイト数について共通のグローバルな上限を共有し、これを超えると新しいインポートは、<code class="docutils literal notranslate"><span class="pre">$TMPDIR</span></code> の使用量を無制限に増やす代わりに（<code class="docutils literal notranslate"><span class="pre">too</span> <span class="pre">many</span> <span class="pre">requests</span></code>）で拒否される。</p>
+<p><code class="docutils literal notranslate"><span class="pre">search</span></code> ファミリーは、同じ検索に三つの入口を用意しています。<code class="docutils literal notranslate"><span class="pre">search.find</span></code> はフィルターのオブジェクト全体をフィールド単位で受け取ります。<code class="docutils literal notranslate"><span class="pre">search.query</span></code> はアプリケーションのコマンドバーの言語で書かれたクエリ（<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">cube</span> <span class="pre">p&gt;30</span> <span class="pre">E&gt;50</span></code>。<a class="reference internal" href="cmd_mode.html"><span class="doc">コマンド一覧</span></a> を参照）を受け取り、同じポジションをストリームします。ネットワーク越しに、明確なフィールドを持たないフィルター — 手のパターン、コメント本文、プレイヤー、日付、除外するダイス、ゾーン、ブロット — に届く唯一の方法です。<code class="docutils literal notranslate"><span class="pre">search.parse</span></code> は何も検索しません。クエリが何を意味するかを答えます。すなわち、それが表すフィルター、その正規形（意味の同じ二つのクエリは同じ正規形を持ち、保存した検索を比較可能にします）、そして診断です。</p>
+<p>どの規則も認識しないトークンを含むクエリは、検索を黙って絞り込みながら実行されるのではなく、拒否されます（<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>。トークン名を明示します）。理解はされるがここでは効果を持たないトークン — <code class="docutils literal notranslate"><span class="pre">x</span></code> は除外構造を有効にしますが、その構造はテキストではなく盤面です — は <code class="docutils literal notranslate"><span class="pre">X-BlunderDB-Query-Diagnostics</span></code> ヘッダーで運ばれ、本体は既存のすべてのクライアントにとってポジションの NDJSON のままです。</p>
+<p><code class="docutils literal notranslate"><span class="pre">positions</span></code> ファミリーの2つのメソッドは、ポジションを保存せずにデコードします。<code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> は XGID 文字列からポジションを再構築し、<code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> は単一ポジションファイル <code class="docutils literal notranslate"><span class="pre">.xgp</span></code> から再構築します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> は現在のテナント全体——ポジション、コレクション、マッチ、トーナメント、分析、コメント、打たれた着手、フィルターライブラリ、Anki デッキ——を、デスクトップ機でそのまま開ける SQLite ファイルにエクスポートします。エクスポートは常にデータベース全体を対象とし、部分集合の選別はデスクトップ側または CLI 側の操作です。リクエストの JSON 本文は省略可能で、<code class="docutils literal notranslate"><span class="pre">watermarkOrigin</span></code> / <code class="docutils literal notranslate"><span class="pre">watermarkNote</span></code> のみを受け付け、デーモン自身の識別情報（<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>）で署名した透かしを付けます——これらのフィールドがなければエクスポートに透かしは付きません。識別情報が設定されていない状態でこれらを指定すると、<code class="docutils literal notranslate"><span class="pre">invalid</span></code> コードで失敗します。</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki</span></code> ファミリーには、間隔反復スケジューラ（FSRS）を拡張する6つの新しいメソッドが加わります： <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>（各復習の記録 — 評価と FSRS の結果 — 保持率の統計と正確な履歴のため）、<code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code>（今後数日間に期限が来るカード数の予測、期限超過のカードを含む）、<code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code>（カードを復習キューから一時的または完全に取り除く）、および <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code>（デッキの復習で測定された成功率を、その所有者が設定した目標と照らし合わせたもの）。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p><code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> は <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code> を置き換えるものです。後者は目標を観測された割合に近づけ、それを書き込むことができました。保持率の目標は負荷と品質のトレードオフに関する<strong>選択</strong>であり、測定された割合はその<strong>結果</strong>にすぎません。一方をもう一方に従属させることこそ、FSRS の作者たちが退けている仕組みです。このメソッドは今後、測定するだけで、決して書き込みません。</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span></code> ファミリーは <code class="docutils literal notranslate"><span class="pre">stats.playerTable</span></code> を提供します。これは、渡されたフィルタが残した対戦について、プレイヤーごとに1行の統計（対戦数、勝敗、集計された決定数、PR の全体／チェッカー／キューブ、Snowie Error Rate、エラー数、ブランダー数、運）を返します。グラフィカルインターフェースと同様に、この表がフィルタから参照するのは期間、トーナメント、マッチ長だけです。プレイヤーの選択と決定の種別は無視されます。表はすべてのプレイヤーを対象とし、チェッカーとキューブはすでに別々の列に分けているからです。<code class="docutils literal notranslate"><span class="pre">luck_known</span></code> フィールドはそのプレイヤーの運が測定されたかどうかを示します。<code class="docutils literal notranslate"><span class="pre">false</span></code> のときに <code class="docutils literal notranslate"><span class="pre">luck_rate_mp</span></code> を読んではいけません。運が不明であることは運がゼロであることではありません。</p>
+<p><code class="docutils literal notranslate"><span class="pre">stats</span></code> の各メソッドに渡すフィルタは、<code class="docutils literal notranslate"><span class="pre">PlayerName</span></code> に加えて <code class="docutils literal notranslate"><span class="pre">PlayerAliases</span></code> フィールドを受け付けます。これは同じ人物が用いた別の表記のことです。プレイヤー名は各ファイルに手で入力されるため、同一人物が複数の表記で現れるのは珍しくなく、そのうち1つだけを見るフィルタは、何も異常に見えないまま一部の対戦だけで計算してしまいます。このフィールドは純粋に加算的で、いずれかの名前に該当する決定がすべて残ります。もう一つの答えはデータベース上で名前を統合すること（<code class="docutils literal notranslate"><span class="pre">MergePlayers</span></code>）ですが、これは他人から受け取ったものではないデータベースに限るべきです。全員の対戦を書き換えてしまうからです。</p>
+<p>2つのメソッドがグラフィカルインターフェースとの対等性を完成させます。<code class="docutils literal notranslate"><span class="pre">stats.tournamentBadges</span></code> はデータベース内の各トーナメントについて、そのカードに表示される指標（基準プレイヤーの PR）を返します。<code class="docutils literal notranslate"><span class="pre">matches.findByHash</span></code> は重複検出用の2つのフィンガープリントから、その対戦がすでに存在するかどうかを示します。重複したインポートを、始める前に避けるのに十分です。</p>
+<p><code class="docutils literal notranslate"><span class="pre">analyses.repair</span></code> は、分析の非正規化列（<code class="docutils literal notranslate"><span class="pre">cube_error</span></code> を含む）を完全な分析から再計算し、<strong>実際に</strong>修正された行数を返します。これらの列は射影にすぎません。したがって射影のエラーは、元ファイルを再インポートせずに修復できます。この操作は明示的であり、決して自動では実行されません。データベースを開いたときにも、マイグレーションによっても実行されません。スキーマに原因はないからです。読み取れない分析はゼロに戻すのではなく、そのまま残します。既知の事例は、gnuBG が「Double No」と記録するノーダブルです。バージョン 0.33.0 より前は読み取りが誤っており、実際には起きなかったダブルのエラーを抱えていました。</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing</span></code> は現在のテナントの gammonNet 補完分析を起動します：分析を一つも持たないポジションごとに分析を書き込みます（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>、<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>）。これは<strong>ライブラリ</strong>の操作であり——保存されたポジションと分析を読み書きします——決して素の評価エンジンではありません：<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> はライブラリに対して動作し、<code class="docutils literal notranslate"><span class="pre">gammonnet</span> <span class="pre">serve</span></code> は一つのポジションを評価します。応答は NDJSON ストリーム（<code class="docutils literal notranslate"><span class="pre">started</span></code>、<code class="docutils literal notranslate"><span class="pre">progress</span></code>、次いで <code class="docutils literal notranslate"><span class="pre">done</span></code> または <code class="docutils literal notranslate"><span class="pre">error</span></code>/<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>）で、インポートのエンドポイントと同じモデルに従います。<code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing.cancel</span></code>（<code class="docutils literal notranslate"><span class="pre">started</span></code> イベントで受け取った <code class="docutils literal notranslate"><span class="pre">job_id</span></code> を添えて）は進行中の補完分析をキャンセルし、補完分析にも再解析（下記）にも区別なく使えます。これはインポート後の自動起動や GUI の明示的な操作、そして <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> サブコマンド（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）と同じ操作です——三つの形、一つのロジック。</p>
+<p><code class="docutils literal notranslate"><span class="pre">gammonnet.sweepStale</span></code> は、穴埋めではなく再解析のための <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code> の対になるものです：その解析が完全に gammonNet 自身のものでありながら古くなっているポジション——現在実行中のものより古いエンジンバージョン、または <code class="docutils literal notranslate"><span class="pre">ply</span></code> と異なる深度——は、要求された深度で再評価されます。この陳腐化の述語は、GUI の同じロットと <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--stale</span></code> とで共有されています（三つのモードの間でロジックが重複することはありません）。XG、GNUbg、BGBlitz のいずれかの解析を持つポジションは、その gammonNet の内容にかかわらず決して触れられません——<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> の保護は無条件のままです。<code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code> と同じ NDJSON 形式であり、二つのルートそれぞれの最終イベントは、今や <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>/<code class="docutils literal notranslate"><span class="pre">refused</span></code>/<code class="docutils literal notranslate"><span class="pre">failed</span></code> の内訳を持ちます：gammonNet が評価を拒否するポジション（そのテーブルの範囲を超えたマッチスコア、モデルが拒否するダブリングの決定など）は <code class="docutils literal notranslate"><span class="pre">refused</span></code> として数えられ、<code class="docutils literal notranslate"><span class="pre">failed</span></code> としては数えられません——本当に失敗したポジションとは異なり、次のパスで無駄に再試行されることは決してありません。</p>
+</section>
+<section id="correlation-et-metriques-metier">
+<h3>相関付けと業務メトリクス<a class="headerlink" href="#correlation-et-metriques-metier" title="この見出しへのリンク"></a></h3>
+<p>すべての要求に相関識別子が付きます。クライアント（またはリバースプロキシ）が <code class="docutils literal notranslate"><span class="pre">X-Request-Id</span></code> ヘッダーで送ったもの、なければ生成したものです。いずれの場合も応答の同じヘッダーで返され、要求を締めくくるログ行に追加されます（<code class="docutils literal notranslate"><span class="pre">request_id</span></code> フィールド）。<code class="docutils literal notranslate"><span class="pre">traceparent</span></code>（<a class="reference external" href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a>）があれば、そのまま同じログ行に転記されます。デーモンはこれを解析も検証もせず、トレーシングのライブラリも組み込みません。上流で動くトレーシング基盤とこれらのログを結び付けるための橋渡しであって、それ以上ではありません。</p>
+<p>要求の量と遅延に加えて、<code class="docutils literal notranslate"><span class="pre">/metrics</span></code> は進行中の作業についてのゲージを公開します。これは、詰まったインポートや gammonNet の一括処理では他の方法では見えません（要求が多いのではなく、非常に長い要求が一つあるだけだからです）。</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_imports_inflight</span></code>— 進行中のインポート（全テナント合計）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_import_spool_bytes</span></code>— インポートのスプール割り当てのうち現在予約されているバイト数（毎秒の要求数に相当するものは上の<code class="docutils literal notranslate"><span class="pre">--rate-limit-*</span></code>を参照）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_gammonnet_sweep_inflight</span></code>— 進行中の gammonNet の追いつき処理（全テナント合計）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_database_size_bytes</span></code>— 主 SQLite ファイルのサイズ、PostgreSQL では <code class="docutils literal notranslate"><span class="pre">pg_database_size</span></code>（下の接続プールのゲージと同じく、テナント別ではなくデータベース全体）。最初の測定が公開されるまでは現れません。</p></li>
+</ul>
+<p>プロセスのメモリまたは CPU のプロファイルは、<code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;ホスト:ポート&gt;</span></code>を付けて起動すると取得できます（<code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>）。既定では無効で、これらのエンドポイントがテナントの概念を持たないため、意図的に<code class="docutils literal notranslate"><span class="pre">--addr</span></code> とは別のアドレスに置かれます。</p>
+</section>
+<section id="compression-des-flux">
+<span id="headless-docker"></span><h3>ストリームの圧縮<a class="headerlink" href="#compression-des-flux" title="この見出しへのリンク"></a></h3>
+<p>NDJSON の一覧は、同じフィールド名を毎行くり返します。クライアントが受け入れるなら、デーモンはそれを圧縮します。<code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip</span></code> を送れば、応答は <code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code> で返ります。マッチ一覧での実測では、千行で元のサイズの <strong>13.5 %</strong>、百行で 14.6 % です。</p>
+<p>圧縮はストリームの逐次性を何ら変えません。各レコードはこれまでどおりクライアントへ送られ、途中で圧縮されるだけです。対象は NDJSON、JSON、テキストの応答のみです。データベースのエクスポートや<code class="docutils literal notranslate"><span class="pre">.dbx</span></code> コンテナはすでに圧縮されており、再度 gzip をかけても大きくなるだけです。<code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip;q=0</span></code> は明示的にこれを拒みます。</p>
+</section>
+<section id="un-seul-tenant-sur-sqlite">
+<h3>SQLite ではテナントは一つだけ<a class="headerlink" href="#un-seul-tenant-sur-sqlite" title="この見出しへのリンク"></a></h3>
+<p>SQLite バックエンドにはテナントの列が<strong>ありません</strong>。すべてのデータが同じテーブルに、仕切りなく入っています。そのためこのバックエンドでは、デーモンは <code class="docutils literal notranslate"><span class="pre">1</span></code> 以外の <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> をすべて拒みます。ほかを受け入れることは、そうでないと称するヘッダーの裏で、全員に全員の行を返すことになるからです。本当に複数のテナントを持つ配備には PostgreSQL バックエンドが必要です。</p>
+</section>
+<section id="sauvegarde-et-restauration">
+<span id="headless-sauvegarde"></span><h3>バックアップと復元<a class="headerlink" href="#sauvegarde-et-restauration" title="この見出しへのリンク"></a></h3>
+<p>何を取り戻したいかに応じて、四つのやり方があります。</p>
+<p><strong>PostgreSQL のすべて</strong>— 道具は <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> であり、blunderDB が付け加えるものはありません。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pg_dump<span class="w"> </span>--format<span class="o">=</span>custom<span class="w"> </span>--file<span class="o">=</span>blunderdb.dump<span class="w"> </span><span class="s2">"postgres://…"</span>
+pg_restore<span class="w"> </span>--dbname<span class="o">=</span><span class="s2">"postgres://…"</span><span class="w"> </span>blunderdb.dump
+</pre></div>
+</div>
+<p><strong>コンテナ内の SQLite で、すべて</strong>——ファイルは WAL モードで開かれます（デーモンはプールのすべての接続について、接続文字列に <code class="docutils literal notranslate"><span class="pre">journal_mode(WAL)</span></code> を書き込みます）。<code class="docutils literal notranslate"><span class="pre">blunderdb.db</span></code> のかたわらには <code class="docutils literal notranslate"><span class="pre">-wal</span></code> と <code class="docutils literal notranslate"><span class="pre">-shm</span></code> があり、最新の書き込みは <code class="docutils literal notranslate"><span class="pre">-wal</span></code> の中にあります。したがって、稼働中のデーモンの <code class="docutils literal notranslate"><span class="pre">.db</span></code> だけをコピーすると、何の警告もないまま不完全なファイルが得られます。安全なやり方は二つです。</p>
+<ul class="simple">
+<li><p><strong>デーモンを止めてから、ボリューム全体をコピーする</strong>——停止していれば三つのファイルは整合しており、バックアップの単位は <code class="docutils literal notranslate"><span class="pre">.db</span></code> 単体ではなくボリュームです。</p></li>
+<li><p><strong>ファイルをまったくコピーしない</strong>：<code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code>（下記）はデーモンの稼働中に完全な <code class="docutils literal notranslate"><span class="pre">.db</span></code> を書き出します。これが、いっさいの停止を求めない唯一の方法です。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> は、ファイルを書き直す前に確かに WAL を本体へ畳み込みますが、データベースを凍結はしません。続く書き込みはまた WAL に入ります。これは最適化のコマンドであって、バックアップの方法ではありません。</p>
+<p><strong>テナント一つだけ</strong>— <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> は、あるテナントのデータベースを通常の<code class="docutils literal notranslate"><span class="pre">.db</span></code> ファイル、つまりデスクトップアプリが開くものに書き出します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8080/v1/exports.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 42"</span><span class="w"> </span>-o<span class="w"> </span>tenant-42.db
+</pre></div>
+</div>
+<p>このコマンドは<strong>デーモンのマシン上で</strong>実行します。ローカルのリスナーを狙い、プロキシを迂回するので、テナントのヘッダーは自分で付けます。外部からはプロキシに問い合わせることになり、テナントは認証されたアカウントのものです。ヘッダーを与える必要はなく、プロキシは自分のものを注入する前にクライアントのヘッダーを消去します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-u<span class="w"> </span>alice:…<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://blunderdb.example.com/v1/exports.sqlite<span class="w"> </span>-o<span class="w"> </span>tenant-alice.db
+</pre></div>
+</div>
+<p><strong>そのファイルを戻す</strong>— <code class="docutils literal notranslate"><span class="pre">migrate</span></code> が指定したテナントの下に複製します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>tenant-42.db<span class="w"> </span>--to<span class="w"> </span><span class="s2">"postgres://…"</span><span class="w"> </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> は、すでに何かが入っているテナントへの書き込みを拒み、その中身を告げます（「128 ポジション、3 マッチ」）。<code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">skip</span></code> はそれを押し切り、Zobrist による重複排除にポジションを統合させます。</p>
+<p><code class="docutils literal notranslate"><span class="pre">migrate</span></code> が<strong>コピーしないもの</strong>と、終了時に正確な件数とともに告げる内容：Anki のデッキとそのカード、フィルターライブラリ、検索とコマンドの履歴、セッションの状態です。これらはデスクトップアプリの利用データです。それらが参照するポジション自体は、きちんと移動しています。</p>
+</section>
+<section id="le-poste-de-travail-et-le-serveur">
+<span id="headless-poste-serveur"></span><h3>ワークステーションとサーバー<a class="headerlink" href="#le-poste-de-travail-et-le-serveur" title="この見出しへのリンク"></a></h3>
+<p>デスクトップアプリケーションが開くのは <code class="docutils literal notranslate"><span class="pre">.db</span></code> の<strong>ファイル</strong>であって URL ではありません。<code class="docutils literal notranslate"><span class="pre">serve</span></code> デーモンには接続せず、アドレスを入力する欄もどこにもありません。サーバーとワークステーションは、対称な二つの操作でファイルをやり取りします。</p>
+<ul class="simple">
+<li><p><strong>サーバーからワークステーションへ</strong>—— <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> は現在のテナントの全体を <code class="docutils literal notranslate"><span class="pre">.db</span></code> に書き出し、デスクトップアプリケーションはそれをそのまま開きます（<a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">バックアップと復元</span></a> を参照）。</p></li>
+<li><p><strong>ワークステーションからサーバーへ</strong>—— <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> が <code class="docutils literal notranslate"><span class="pre">.db</span></code> を目的のテナントの下に複製します（<a class="reference internal" href="#headless-migrate"><span class="std std-ref">SQLite データベースを PostgreSQL へ移行する</span></a> を参照）。</p></li>
+</ul>
+<p><strong>テナントをまたぐ読み取りは存在しません</strong>。仕切りは完全です。あるテナントが保存したものは、どのルートからも他のテナントには見えず、テナントを引数に取る呼び出しもありません。各リクエストが知るのは、プロキシがそれに付けたテナントだけです。したがって、生徒のマッチを見たいコーチには、いずれも明示的な二つの道があります。</p>
+<ul class="simple">
+<li><p>生徒のテナントに紐づく追加のアカウントを、プロキシの中に開設する。セッションがどのテナントを見るかを決めるのは、デーモンではなく常にプロキシの対応表です。</p></li>
+<li><p>エクスポートを頼む——<code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> またはデスクトップアプリケーションのエクスポート画面が生成した <code class="docutils literal notranslate"><span class="pre">.db</span></code> を受け取り、自分のワークステーションで開きます。</p></li>
+</ul>
+</section>
+<section id="deploiement-avec-docker">
+<h3>Docker によるデプロイ<a class="headerlink" href="#deploiement-avec-docker" title="この見出しへのリンク"></a></h3>
+<p>リポジトリには、デーモンの最小限のコンテナイメージを構築する <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> が含まれています：<code class="docutils literal notranslate"><span class="pre">serve</span></code> バイナリのみがコンパイルされ（純粋な Go、グラフィカルインターフェースなし、CGO なしで静的リンク）、<em>distroless</em> イメージに配置されます。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># build</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># run</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>ビルドはリポジトリのルートから起動し、イメージの既定のバックエンドは <code class="docutils literal notranslate"><span class="pre">postgres</span></code> です。</p>
+<p>イメージはポート8080でリッスンし、環境変数（<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>）で設定します。イメージは 30 秒ごとに <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> を実行する <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> を宣言しています（<code class="docutils literal notranslate"><span class="pre">/readyz</span></code> へのリクエスト — <em>distroless</em> イメージには <code class="docutils literal notranslate"><span class="pre">curl</span></code> もシェルもありません）。<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code> はコンテナの状態を <code class="docutils literal notranslate"><span class="pre">healthy</span></code> または <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code> と表示し、Compose やオーケストレーターはデーモンの準備が整うのを待ってから、それに依存するものを起動できます。</p>
+<section id="image-publiee">
+<span id="headless-docker-image"></span><h4>公開イメージ<a class="headerlink" href="#image-publiee" title="この見出しへのリンク"></a></h4>
+<p>イメージを自分でビルドする必要はありません。blunderDB の公開バージョンごとに、GitHub レジストリ（GHCR）へ <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code> という名前で自身のイメージがプッシュされます。利用できるタグは二つです。そのイメージに永久に固定されるバージョン番号と、最新の公開バージョンを追う <code class="docutils literal notranslate"><span class="pre">latest</span></code> です。ドキュメント全体ではこれを <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span></code> と表記します。<code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> の位置に入るのは公開されたバージョンの番号であり、本番のデプロイが固定するのは、<code class="docutils literal notranslate"><span class="pre">latest</span></code> ではなくこの形です。イメージは <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> と <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code> 向けに提供されており、Docker がホストのアーキテクチャを選択します。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># postgres</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># sqlite</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">/data</span></code> は、イメージが非特権ユーザーの権限で用意するマウントポイントであり、その <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code> でもあります。そこにマウントするボリュームはデータベースのためだけのものではありません。ベアオフテーブルは <code class="docutils literal notranslate"><span class="pre">/data/blunderdb</span></code> に一度だけ計算され、次回以降の起動で再利用されます。ボリュームがない場合、テーブルはコンテナを起動するたびに再計算され（数秒）、書き込めないときはデーモンが起動時にそれを伝えます（<em>could not prepare the bearoff tables; the exact regime will be unavailable</em>）。その場合でもデーモンは通常どおり応答し、ベアオフのポジションでは推定方式のみを用います。</p>
+<p>イメージには通常の OCI ラベル（<code class="docutils literal notranslate"><span class="pre">org.opencontainers.image.source</span></code>、<code class="docutils literal notranslate"><span class="pre">.version</span></code>、<code class="docutils literal notranslate"><span class="pre">.revision</span></code>、<code class="docutils literal notranslate"><span class="pre">.licenses</span></code>）が付いており、<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> でどのコミットとバージョンに由来するかが分かります。イメージは、上記とまったく同じ手順で、リポジトリの <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> から継続的インテグレーションによってビルドされます。ローカルでビルドしても公開イメージを取得しても、同じバイナリが得られます。</p>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>デーモン自体と同様に、コンテナは<strong>一切の認証を行いません</strong>（<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>）：受け取った <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ヘッダーをそのまま信頼します。認証を担い、このヘッダー自体を設定するリバースプロキシの背後に配置しなければならず、公開インターネット上に直接公開してはいけません。上記の例がポートを <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> のみに公開しているのはこのためであり、<code class="docutils literal notranslate"><span class="pre">--addr</span></code> も同様に <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> にバインドします。プロキシは同じマシン上にあるからです。</p>
+</div>
+</section>
+</section>
+<section id="deploiement-derriere-un-proxy-authentifiant">
+<span id="headless-proxy-deployment"></span><h3>認証プロキシの背後への配置<a class="headerlink" href="#deploiement-derriere-un-proxy-authentifiant" title="この見出しへのリンク"></a></h3>
+<p><a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a> は、リバースプロキシをデーモンのセキュリティ境界の<strong>すべて</strong>とします。呼び出し元を認証するのはリバースプロキシだけであり、<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> ヘッダーを設定できるのもリバースプロキシだけです。そして、認証済みのテナントを注入する前に、クライアントが送ってきた値を必ず<strong>削除</strong>しなければなりません。そうしなければ、誰でも単に名前を指定するだけで任意のテナントになりすませてしまいます。脅威モデルは一文で言い表せます。デーモンは内部ネットワークが信頼できるものと想定しており、デーモンに直接つながる者は、デーモンにとって、自分が名乗るとおりのテナントです。リポジトリは <a class="reference external" href="https://github.com/kevung/blunderDB/tree/main/deploy">deploy/</a> ディレクトリに、すぐ動かせる完全な例を提供しています。これは git リポジトリにあり、コンテナイメージの中にはありません。したがって<strong>リポジトリをクローンする</strong>か、下に再掲する二つのファイルと <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/.env.example">deploy/.env.example</a> を同じディレクトリにダウンロードする必要があります。</p>
+<p>Compose ファイルは、Caddy——実演用の HTTP Basic 認証——を <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> と PostgreSQL（Row-Level Security 有効）の手前に置きます。ポートを公開するのは Caddy だけです。他の二つのサービスは <code class="docutils literal notranslate"><span class="pre">internal:</span> <span class="pre">true</span></code> と宣言された Docker ネットワーク上で稼働し、このネットワークはホストにもインターネットにも経路を持ちません。後から変更で <code class="docutils literal notranslate"><span class="pre">ports:</span></code> を加えたとしても同じです。</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">deploy/docker-compose.yml</span><a class="headerlink" href="#id1" title="このコードへのリンク"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example deployment of `blunderdb serve` behind an authenticating reverse</span>
+<span class="c1"># proxy — the security model ADR-0005 requires and, until now, that no example</span>
+<span class="c1"># in this repository actually showed. See deploy/README.md for the threat</span>
+<span class="c1"># model and doc/source/mode_headless.rst for the full walkthrough.</span>
+<span class="c1">#</span>
+<span class="c1"># Try it from the repository root:</span>
+<span class="c1">#   POSTGRES_PASSWORD=changeme docker compose -f deploy/docker-compose.yml up -d --build</span>
+<span class="c1">#   curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'</span>
+<span class="c1">#   docker compose -f deploy/docker-compose.yml down -v</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy is the ENTIRE security boundary (ADR-0005): it is the only service</span>
+<span class="w">  </span><span class="c1"># with a published port, it authenticates every request, and it is the</span>
+<span class="w">  </span><span class="c1"># only thing allowed to set X-Tenant-ID — see Caddyfile. Any reverse proxy</span>
+<span class="w">  </span><span class="c1"># capable of stripping and re-setting a header works equally well; Caddy is</span>
+<span class="w">  </span><span class="c1"># used here for its one-file config and built-in Basic Auth with no extra</span>
+<span class="w">  </span><span class="c1"># modules. deploy/nginx-tenant-proxy.conf shows the equivalent nginx</span>
+<span class="w">  </span><span class="c1"># snippet for an existing nginx deployment.</span>
+<span class="w">  </span><span class="nt">caddy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy:2-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8080:80"</span><span class="w"> </span><span class="c1"># the ONLY port this compose project exposes to the host</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./Caddyfile:/etc/caddy/Caddyfile:ro</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-data:/data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-config:/config</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">edge</span><span class="w"> </span><span class="c1"># the published port lives here — "backend" is internal-only</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="c1"># No `ports:` here — on purpose (ADR-0005). The daemon performs no</span>
+<span class="w">  </span><span class="c1"># authentication of its own, so it must be reachable only from Caddy, over</span>
+<span class="w">  </span><span class="c1"># the "backend" network, and never published to the host.</span>
+<span class="w">  </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">..</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.serve</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_BACKEND</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_DSN</span><span class="p">:</span><span class="w"> </span><span class="s">"postgres://blunderdb:${POSTGRES_PASSWORD:?set</span><span class="nv"> </span><span class="s">POSTGRES_PASSWORD,</span><span class="nv"> </span><span class="s">see</span><span class="nv"> </span><span class="s">deploy/.env.example}@postgres:5432/blunderdb?sslmode=disable"</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_ADDR</span><span class="p">:</span><span class="w"> </span><span class="s">":8080"</span>
+<span class="w">      </span><span class="c1"># Row-Level Security: defence-in-depth *inside* the trust boundary</span>
+<span class="w">      </span><span class="c1"># Caddy draws above — it does not replace the proxy (ADR-0005).</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_RLS</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># The bearoff tables are computed on first start and kept under</span>
+<span class="w">      </span><span class="c1"># $XDG_DATA_HOME/blunderdb, which the image sets to /data: without a</span>
+<span class="w">      </span><span class="c1"># volume they are recomputed at every restart of the container.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb-data:/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:16-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD, see deploy/.env.example}</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres-data:/var/lib/postgresql/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD-SHELL"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">blunderdb</span><span class="nv"> </span><span class="s">-d</span><span class="nv"> </span><span class="s">blunderdb"</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres-data</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Bearoff tables computed by blunderdb-serve on first start (see</span>
+<span class="w">  </span><span class="c1"># XDG_DATA_HOME above): a few megabytes, worth keeping across restarts.</span>
+<span class="w">  </span><span class="nt">blunderdb-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-config</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy's own network, carrying the one published port. A container on</span>
+<span class="w">  </span><span class="c1"># "backend" alone (blunderdb-serve, postgres) is never reachable through it.</span>
+<span class="w">  </span><span class="nt">edge</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># internal: true means this network has no route to the outside world and</span>
+<span class="w">  </span><span class="c1"># accepts no published ports — blunderdb-serve and postgres can only ever</span>
+<span class="w">  </span><span class="c1"># be reached by another container attached to it (here, only Caddy),</span>
+<span class="w">  </span><span class="c1"># never from the host or the public internet, regardless of what `ports:`</span>
+<span class="w">  </span><span class="c1"># a future edit might add to either service.</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> は認証を行い、認証済みのアカウントをテナントの整数に対応付け（<code class="docutils literal notranslate"><span class="pre">map</span></code>）、クライアントから受け取った値を明示的に消去した<strong>あとで</strong>それを <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> に注入します。ガードである <code class="docutils literal notranslate"><span class="pre">header_up</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> が注入に先立つため、ファイルを後からどう変更しても、クライアントが送ったヘッダーがデーモンに届くことはありません。</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">deploy/Caddyfile</span><a class="headerlink" href="#id2" title="このコードへのリンク"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Demonstration reverse-proxy for `blunderdb serve` (ADR-0005).
+#
+# This is the WHOLE security boundary of the daemon: it authenticates the
+# caller (here, HTTP Basic Auth — swap for forward_auth to a real identity
+# provider, or an OIDC plugin, in production) and is the only thing allowed
+# to set X-Tenant-ID. blunderdb-serve trusts that header completely and
+# performs no authentication of its own.
+#
+# Demo credentials — CHANGE THESE before using this anywhere but a laptop:
+#   alice / demo-password
+#   bob   / demo-password
+# Generate a real hash with:
+#   docker run --rm caddy:2-alpine caddy hash-password --plaintext '&lt;password&gt;'
+{
+	# This demo terminates plain HTTP on a fixed port instead of Caddy's
+	# automatic HTTPS, which needs a real public domain name to obtain a
+	# certificate for. Point a domain at this host, replace ":80" below with
+	# that domain, and delete these two lines to get HTTPS for free.
+	auto_https off
+	admin off
+}
+
+:80 {
+	basic_auth {
+		alice $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+		bob $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+	}
+
+	# Map the authenticated login (Caddy sets {http.auth.user.id} once
+	# basic_auth succeeds) to the tenant's positive integer — the only
+	# spelling of X-Tenant-ID the daemon accepts (ADR-0005, amendment
+	# 2026-09-03). This is the identity-to-tenant mapping ADR-0005 says is
+	# the proxy's job: the daemon never sees "alice", only "1".
+	map {http.auth.user.id} {tenant_id} {
+		alice 1
+		bob 2
+		default 0
+	}
+
+	# Never reach the daemon's operator routes or its metrics through the
+	# public proxy: /ops/ (vacuum, tenant purge) acts beyond the calling
+	# tenant, /metrics needs no X-Tenant-ID and describes the whole daemon.
+	@private path /ops/* /metrics
+	respond @private 403
+
+	reverse_proxy blunderdb-serve:8080 {
+		# Guard, then inject: clear whatever the client sent BEFORE setting
+		# the authenticated value, so a client-supplied X-Tenant-ID can never
+		# reach the daemon no matter how this file is edited later — the
+		# second line is the only one that can still be in effect once both
+		# have run.
+		header_up X-Tenant-ID ""
+		header_up X-Tenant-ID {tenant_id}
+	}
+}
+</pre></div>
+</div>
+</div>
+<p>このディレクトリはさらに二つのファイルで補われます。<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/nginx-tenant-proxy.conf">deploy/nginx-tenant-proxy.conf</a> は同じ仕組みを nginx の抜粋として書き直したもので（<code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> に続けて <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">$tenant_id</span></code>、そして <code class="docutils literal notranslate"><span class="pre">map</span> <span class="pre">$remote_user</span> <span class="pre">$tenant_id</span></code> ブロック）、すでに nginx を使っている人のためのものです。<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/README.md">deploy/README.md</a> は脅威モデルと、決してしてはならないことを述べています。</p>
+<p><code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> の HTTP Basic 認証はデモンストレーションであり、本番環境向けの推奨ではありません。実際の ID プロバイダー（OIDC、企業の SSO など）への <code class="docutils literal notranslate"><span class="pre">forward_auth</span></code> に置き換えることができ、そちらが認証を行ったうえで、ファイルの同じ箇所に ID を引き渡します。対応表にある二つのパスワードと二つのアカウントも、同様に置き換えてください。</p>
+<p><strong>ゼロから応答するデーモンまでの完全なシナリオ：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kevung/blunderDB.git
+<span class="nb">cd</span><span class="w"> </span>blunderDB/deploy
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">    </span><span class="c1"># POSTGRES_PASSWORD</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># 401</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+<span class="c1"># 200</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 999"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>blunderdb-serve
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>最初のリクエストは、デーモンに届く前に Caddy によって拒否されます。続く二つは「alice」として認証され、対応表はこれをテナント 1 に結び付けます。二つは同じ本文（<code class="docutils literal notranslate"><span class="pre">{&quot;positions&quot;:0,&quot;analyses&quot;:0,&quot;matches&quot;:0,…}</span></code>）を返し、デーモンのログはどちらについても <code class="docutils literal notranslate"><span class="pre">tenant=1</span></code> を記録します——クライアントが送った 999 という値は <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> のガードを越えられませんでした。このシナリオはそのまま再現されたものです。</p>
+<p>イメージをビルドせずに公開されたものを取得するには、<code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> の <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> サービスにある三行の <code class="docutils literal notranslate"><span class="pre">build:</span></code> を <code class="docutils literal notranslate"><span class="pre">image:</span></code> の一行に置き換え、<code class="docutils literal notranslate"><span class="pre">--build</span></code> なしで <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span> <span class="pre">up</span> <span class="pre">-d</span></code> を実行します。</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span>
+<span class="w">  </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+</pre></div>
+</div>
+<p>Compose ファイルは Caddy のポートをすべてのインターフェースに公開します（<code class="docutils literal notranslate"><span class="pre">8080:80</span></code>）。到達されるために存在するプロキシに期待されるとおりです。決して公開してはならないのはデーモンであり、実際に公開されていません——<code class="docutils literal notranslate"><span class="pre">ports:</span></code> を一つも持っていないからです。</p>
+</section>
+<section id="mettre-a-jour-un-deploiement">
+<span id="headless-mise-a-jour"></span><h3>デプロイを更新する<a class="headerlink" href="#mettre-a-jour-un-deploiement" title="この見出しへのリンク"></a></h3>
+<p>スキーマは起動時に自動的に移行され、この移行は<strong>一方通行</strong>です。新しいスキーマへ移行されたデータベースは、blunderDB の以前のバージョンではもう読めません（<a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">付録: データベーススキーマ</span></a> を参照）。したがって手順の順序が重要です。</p>
+<ol class="arabic simple">
+<li><p><strong>まずバックアップを取る</strong>。他の何よりも先に行います。これが唯一の後戻りの手段です（<a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">バックアップと復元</span></a> を参照）。</p></li>
+<li><p><strong>目的のバージョンのタグを取得する</strong>。本番では決して <code class="docutils literal notranslate"><span class="pre">latest</span></code> を使いません。<code class="docutils literal notranslate"><span class="pre">latest</span></code> は最新の公開バージョンを追うため、これを固定したデプロイは再起動のたびに、決めたわけでもなく、手順 1 のバックアップが最近のものとも限らないままバージョンが変わってしまいます。</p></li>
+<li><p><strong>新しいイメージでデーモンを再起動する</strong>。デーモンは、いかなるリクエストに応答するよりも前にスキーマを移行します。移行が失敗した場合は、中途半端に移行されたデータベースを提供するのではなく、エラーで停止します。</p></li>
+<li><p><strong>可用性プローブを確認する。</strong> <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> は、ストレージが応答し、そのスキーマがバイナリのものと一致するとき <code class="docutils literal notranslate"><span class="pre">200</span></code> と <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;ready&quot;,&quot;version&quot;:&quot;…&quot;}</span></code> を返します。データベースに到達できないときは <code class="docutils literal notranslate"><span class="pre">503</span></code> と <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;down&quot;}</span></code>。二つのスキーマが食い違うときは <code class="docutils literal notranslate"><span class="pre">503</span></code> と <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;version_mismatch&quot;,&quot;version&quot;:&quot;…&quot;,&quot;expected&quot;:&quot;…&quot;}</span></code> を返し、応答はデータベースのスキーマとバイナリが期待するスキーマの両方を名指しします。<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> は同じ判定を終了コードで返します。</p></li>
+</ol>
+<p>再起動しても <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code> が続くなら、それは後戻りです。すでに移行されたデータベースの前に、古いバイナリが立っている状態です。下方向の移行は存在しません。手順 1 のバックアップを復元するしかありません。</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2>PostgreSQL バックエンドとマルチユーザー<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="この見出しへのリンク"></a></h2>
+<p>共有デプロイの場合、blunderDB は SQLite ファイルではなく <strong>PostgreSQL</strong> にデータを保存できます。バックエンドは <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> と接続文字列 <code class="docutils literal notranslate"><span class="pre">--dsn</span></code> で選択します。スキーマは起動時に自動的に作成・マイグレーションされます。</p>
+<p>データは<strong>テナント（利用者）ごとに分離</strong>されています。各リクエストには自身のテナントの識別子（ヘッダー <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>、<code class="docutils literal notranslate"><span class="pre">1</span></code> や <code class="docutils literal notranslate"><span class="pre">42</span></code> のような正の 10 進整数）が付与され、これにより複数のユーザーが他者のデータを見ることなく同じインスタンスを共有できます。そのような整数でない識別子——<code class="docutils literal notranslate"><span class="pre">alice</span></code> や <code class="docutils literal notranslate"><span class="pre">default</span></code> のような名前、<code class="docutils literal notranslate"><span class="pre">0</span></code>、<code class="docutils literal notranslate"><span class="pre">007</span></code>——は <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> で拒否されます。アカウントをその整数に対応付けるのはリバースプロキシであり、デーモンは決して推測しません。</p>
+<section id="row-level-security">
+<h3>Row-Level Security<a class="headerlink" href="#row-level-security" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--rls</span></code> オプションは、補完的に PostgreSQL の<strong>Row-Level Security</strong>を有効にします。デーモンは起動のたびに、<code class="docutils literal notranslate"><span class="pre">tenant_id</span></code> を持つ各テーブルに <code class="docutils literal notranslate"><span class="pre">tenant_isolation</span></code> ポリシーを設置します。このポリシーは、セッションパラメーター <code class="docutils literal notranslate"><span class="pre">current_setting('app.tenant_id')</span></code> が指すテナントの行だけを通し、テーブルの所有者に対してもそれを強制します（<code class="docutils literal notranslate"><span class="pre">FORCE</span> <span class="pre">ROW</span> <span class="pre">LEVEL</span> <span class="pre">SECURITY</span></code>）。このパラメーターは接続がプールから出るときに設定され、戻るときにリセットされます。テナントのない接続はどの行も見えず、どの行も挿入できません。これは任意の多層防御であり、既定では無効です。アプリケーションコードによるテナントの絞り込みは、どちらの場合も残ります。</p>
+<ul class="simple">
+<li><p><strong>接続に使うロールは通常のものでなければなりません</strong>。スーパーユーザーでも <code class="docutils literal notranslate"><span class="pre">BYPASSRLS</span></code> でもいけません。PostgreSQL はこの二つには何も言わずすべてのポリシーを通過させてしまい、分離はアプリケーションコードだけのものに戻ります。一方で、この同じロールがテーブルを所有している必要があります。<code class="docutils literal notranslate"><span class="pre">ALTER</span> <span class="pre">TABLE</span></code> と <code class="docutils literal notranslate"><span class="pre">CREATE</span> <span class="pre">POLICY</span></code> を実行するのはこのロールだからです。</p></li>
+<li><p><strong>すでにデータの入ったデータベースでも、移行すべきものは何もありません</strong>。ポリシーの設置は冪等な DDL であり、スキーマ移行のあと起動のたびに実行し直されます。データは移動されず、行が書き直されることもありません。<code class="docutils literal notranslate"><span class="pre">--rls</span></code> を有効にするのも外すのも、再起動するだけのことです。</p></li>
+<li><p><strong>コストは測定されています</strong>。ポジションの読み取りで、なしなら 101,8 µs、ありなら 177,0 µs、すなわち<strong>+73,8 %</strong>です——同じコンテナ、同じ行、このフラグだけが異なる二つのプールでの測定です。このコストは、プールから接続を借りるたび（パラメーターの設定とリセット）と、各クエリが追加で通る述語に対して払われるもので、データ量に対して払われるものでは決してありません。</p></li>
+</ul>
+</section>
+<section id="ouvrir-et-fermer-un-tenant">
+<h3>テナントを開設し、閉鎖する<a class="headerlink" href="#ouvrir-et-fermer-un-tenant" title="この見出しへのリンク"></a></h3>
+<p>サーバー側で<strong>作成すべきものは何もありません</strong>。テナントはレコードではなく、その行が持つ整数です。データベースにテナントのテーブルはなく、デーモンもその一覧を持ちません。アカウントを開くとは、プロキシの対応表に項目を追加することであり、そのメンバーの最初の書き込みがテナントを存在させます。</p>
+<p>空のテナントは、空のデータベースと同じようにエラーなしで応答します。<code class="docutils literal notranslate"><span class="pre">metadata.counts</span></code> はゼロを返し、一覧は何も返しません。</p>
+<p>テナントが廃止される際、<code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/tenant.purge</span></code> は現在のテナント（<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> が示すテナント）のすべてのデータ（ポジション、マッチ、コレクション、履歴など）を完全に削除し、<strong>そのセッションの状態</strong>（最後の検索、最後のポジション、開いているタブ——このテナントを持つ <code class="docutils literal notranslate"><span class="pre">session_state</span></code> テーブルの行）も削除します。この操作は単一のトランザクション内で実行され、冪等であり（すでに空のテナントをパージしてもエラーにはならず、呼び出しを繰り返しても問題ありません）、他のどのテナントにも影響しません。テナントを持つ<strong>すべての</strong>テーブルからこのテナントの行を消し、誰のものでもないものだけを残します。すなわち、スキーマバージョンのグローバルな行を含む <code class="docutils literal notranslate"><span class="pre">metadata</span></code> テーブルと、移行の記録です。パージされたテナントはこうしてちょうど空のテナントに戻り、その整数は再び割り当てられます。この機能は PostgreSQL バックエンドでのみ利用可能で、テナントという概念を持たない SQLite バックエンドでは <code class="docutils literal notranslate"><span class="pre">invalid</span></code> エラーを返します。</p>
+</section>
+<section id="compactage-et-pool-de-connexions">
+<h3>最適化と接続プール<a class="headerlink" href="#compactage-et-pool-de-connexions" title="この見出しへのリンク"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/maintenance.vacuum</span></code> はデーモンの SQLite ファイルを最適化します——グラフィカルインターフェースの「データベースの最適化」ボタンおよび <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> コマンド（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a> を参照）に相当し、同じディスク容量の保護を備えています——そして最適化前後のサイズ（<code class="docutils literal notranslate"><span class="pre">sizeBefore</span></code>、<code class="docutils literal notranslate"><span class="pre">sizeAfter</span></code>、バイト単位）を返します。この機能は SQLite バックエンドでのみ利用可能です。圧縮すべきファイルを持たない PostgreSQL では、<code class="docutils literal notranslate"><span class="pre">invalid</span></code> エラーを返します。</p>
+<p>PostgreSQL の接続プールは環境変数で調整する：<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONNS</span></code>（デフォルト 50）、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MIN_CONNS</span></code>（5）、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME</span></code>（<code class="docutils literal notranslate"><span class="pre">1h</span></code>）、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD</span></code>（<code class="docutils literal notranslate"><span class="pre">30s</span></code>）、<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_CONNECT_TIMEOUT</span></code>（<code class="docutils literal notranslate"><span class="pre">5s</span></code> — これを超えると、到達不能なデータベースは OS の TCP タイムアウトで止まる代わりに素早く失敗する）、および <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME</span></code>（<code class="docutils literal notranslate"><span class="pre">30m</span></code> — トラフィックの急増のために開かれた接続は、急増が収まった後もプールに無期限にとどまらない）。各値は Go 形式の期間（<code class="docutils literal notranslate"><span class="pre">5s</span></code>、<code class="docutils literal notranslate"><span class="pre">30m</span></code>、<code class="docutils literal notranslate"><span class="pre">1h</span></code>）であり、未設定または不正な場合はデフォルトに戻る。<code class="docutils literal notranslate"><span class="pre">--metrics</span></code> が有効な場合、プールの状態は <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> で継続的に公開される：<code class="docutils literal notranslate"><span class="pre">blunderdb_pg_pool_acquired</span></code>（現在使用中の接続）、<code class="docutils literal notranslate"><span class="pre">_idle</span></code>（利用可能な接続）、<code class="docutils literal notranslate"><span class="pre">_max</span></code>（設定された上限）、<code class="docutils literal notranslate"><span class="pre">_wait_count</span></code>（空き接続を待つ必要があった <code class="docutils literal notranslate"><span class="pre">Acquire</span></code> 呼び出しの累積回数）。</p>
+</section>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2>SQLite データベースを PostgreSQL へ移行する<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="この見出しへのリンク"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> は、単一ユーザーの SQLite データベースを、選択したテナント — このユーザーのためにリバースプロキシが <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> で送る整数 — の下で PostgreSQL バックエンドにコピーします。これはデスクトップのライブラリをサーバー環境に「アップロード」する手段です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">"postgres://user:pass@host:5432/db?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+
+<span class="c1"># --dry-run</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>このマイグレーションは、<strong>ポジション、その分析とコメント、マッチ（ゲーム + 手）、トーナメント（そのマッチリンクを含む）、コレクション（その構成を含む）</strong> をコピーし、主キーと外部キーを再割り当てします。これらはすべて、宛先側の<strong>単一のトランザクション</strong>内で行われます：操作はアトミックです（失敗しても宛先はそのまま残るため、再実行するだけで済みます）。進捗と最終的な集計は、標準出力に NDJSON で出力されます。移行元のデータベースが古く、その場でのスキーマ更新を必要とする場合は、それが先に実行され、行単位のコピーが始まる前に独自の <code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> イベント（フェーズ／完了数／総数）を出力します。</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ソースの SQLite データベース（<code class="docutils literal notranslate"><span class="pre">sqlite:///&lt;chemin&gt;</span></code> または単なるパス）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>宛先の PostgreSQL DSN（<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>移行先のテナント。正の10進整数（<code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> 時を除き必須。<code class="docutils literal notranslate"><span class="pre">mon-tenant</span></code> のような名前は拒否されます）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>何も書き込まずに、コピーされる内容を数える</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;ポリシー&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> はテナントにすでにデータがある場合に中断します。<code class="docutils literal notranslate"><span class="pre">skip</span></code> はマージします（Zobrist ハッシュによるポジションの重複排除）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>アプリケーションの状態は（まだ）移行されません：Anki のデッキ/カード、フィルターライブラリ、検索およびコマンドの履歴、セッションのメタデータ。優先されるのは、ポジションライブラリとマッチ履歴の移行です。</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2>汎用ディスパッチャ <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="この見出しへのリンク"></a></h2>
+<p>従来のサブコマンド（<a class="reference internal" href="cli.html#cli"><span class="std std-ref">コマンドラインインターフェース（CLI）</span></a>）を補完するものとして、<code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> は<strong>すべての</strong>ストレージ操作をローカルで直接公開します。デーモン <code class="docutils literal notranslate"><span class="pre">serve</span></code> と同じハンドラを経由するため、動作は <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;ファミリー&gt;.&lt;メソッド&gt;</span></code> と同一です。スクリプティングや統合テストに便利です。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># --list</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># read</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"limit":10}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":1}'</span>
+
+<span class="c1"># write</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"position":{...}}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":42}'</span>
+</pre></div>
+</div>
+<p><strong>オプション：</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>オプション</p></th>
+<th class="head"><p>デフォルト</p></th>
+<th class="head"><p>意味</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;パス&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>SQLite ファイル（<code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;パス&gt;</span></code> のショートカット）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> または <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;文字列&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>バックエンドの接続文字列</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>テナント。正の10進整数（<code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> として送信。<code class="docutils literal notranslate"><span class="pre">alice</span></code> のような名前は拒否されます）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;文字列&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>JSON 形式のリクエストボディ</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;パス&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ファイルからリクエストボディを読み込む</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>すべての <code class="docutils literal notranslate"><span class="pre">&lt;ファミリー&gt;.&lt;メソッド&gt;</span></code> メソッドを表示して終了する</p></td>
+</tr>
+</tbody>
+</table>
+<p>JSON レスポンス（または <code class="docutils literal notranslate"><span class="pre">*.list</span></code> エンドポイントの場合は NDJSON ストリーム）は標準出力に書き込まれます。エラーが発生した場合、プロセスは非ゼロのコードで終了し、解析可能な状態を保つために（例えば <code class="docutils literal notranslate"><span class="pre">jq</span></code> で）、<code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> というエンベロープが標準出力に出力されます。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="フッター">
+        <a href="faq.html" class="btn btn-neutral float-left" title="よくある質問（FAQ）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 前へ</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="API コントラクト" accesskey="n" rel="next">次へ <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

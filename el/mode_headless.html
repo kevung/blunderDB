@@ -1,0 +1,865 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής) &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Σύμβαση API" href="api_reference.html" />
+    <link rel="prev" title="Συχνές ερωτήσεις (FAQ)" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/mode_headless.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/mode_headless.html" lang="en" hreflang="en">English</a>
+  <a href="../de/mode_headless.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/mode_headless.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/mode_headless.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/mode_headless.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/mode_headless.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/mode_headless.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vue-d-ensemble">Επισκόπηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-demon-serve">Ο δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#points-d-acces">Σημεία πρόσβασης</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#la-page-web-de-consultation">Η σελίδα ιστού</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ce-que-v1-promet">Τι υπόσχεται το <code class="docutils literal notranslate"><span class="pre">/v1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#un-client-python">Ένας πελάτης Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#embarquer-le-moteur-dans-un-programme-go">Ενσωμάτωση της μηχανής σε πρόγραμμα Go</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#les-bases-de-bearoff">Οι βάσεις bearoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#les-routes-d-exploitation">Οι διαδρομές λειτουργίας</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlation-et-metriques-metier">Συσχέτιση και επιχειρησιακές μετρικές</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression-des-flux">Συμπίεση των ροών</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#un-seul-tenant-sur-sqlite">Ένας μόνο tenant σε SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-et-restauration">Αντίγραφα ασφαλείας και επαναφορά</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#le-poste-de-travail-et-le-serveur">Ο σταθμός εργασίας και ο διακομιστής</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-avec-docker">Ανάπτυξη με Docker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#image-publiee">Δημοσιευμένη εικόνα</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#deploiement-derriere-un-proxy-authentifiant">Ανάπτυξη πίσω από έναν proxy πιστοποίησης ταυτότητας</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mettre-a-jour-un-deploiement">Ενημέρωση μιας ανάπτυξης</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#backend-postgresql-et-multi-utilisateurs">Backend PostgreSQL και πολλαπλοί χρήστες</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#row-level-security">Row-Level Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouvrir-et-fermer-un-tenant">Άνοιγμα και κλείσιμο ενός tenant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compactage-et-pool-de-connexions">Συμπύκνωση και pool συνδέσεων</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#migrer-une-base-sqlite-vers-postgresql">Μετανάστευση μιας βάσης SQLite προς PostgreSQL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-dispatcher-generique-call">Ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mode-headless-serveur">
+<span id="headless"></span><h1>Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)<a class="headerlink" href="#mode-headless-serveur" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Αυτή η ενότητα περιγράφει μια <strong>προηγμένη και προαιρετική λειτουργία</strong> του blunderDB, που προορίζεται για αναπτύξεις σε διακομιστή, για πολλαπλούς χρήστες και για αυτοματοποίηση. <strong>Η συνήθης και συνιστώμενη χρήση του blunderDB παραμένει η εφαρμογή γραφείου</strong> που περιγράφεται στα προηγούμενα κεφάλαια. Αν χρησιμοποιείτε το blunderDB μόνοι σας, στον υπολογιστή σας, δεν χρειάζεστε αυτή τη λειτουργία: μπορείτε να αγνοήσετε αυτό το κεφάλαιο χωρίς να χάσετε καμία από τις λειτουργίες ανάλυσης.</p>
+</div>
+<section id="vue-d-ensemble">
+<h2>Επισκόπηση<a class="headerlink" href="#vue-d-ensemble" title="Link to this heading"></a></h2>
+<p>Το ίδιο εκτελέσιμο <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code> μπορεί, εκτός από την εφαρμογή γραφείου και τις εντολές γραμμής εντολών (δείτε <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>), να λειτουργήσει σε <strong>λειτουργία χωρίς γραφικό περιβάλλον</strong>: χωρίς γραφική διεπαφή, ελεγχόμενο εξ ολοκλήρου μέσω της γραμμής εντολών ή μέσω δικτύου. Αυτή η λειτουργία συγκεντρώνει τρεις χρήσεις:</p>
+<ul class="simple">
+<li><p><strong>ο δαίμονας</strong> <code class="docutils literal notranslate"><span class="pre">serve</span></code> — εκθέτει τη μηχανή του blunderDB ως υπηρεσία HTTP + JSON, για να τρέχει μια κοινόχρηστη βάση σε διακομιστή και να την προσπελάζουν πολλοί χρήστες·</p></li>
+<li><p>ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code> — καλεί οποιαδήποτε λειτουργία αποθήκευσης απευθείας, τοπικά, για scripting και δοκιμές·</p></li>
+<li><p>η εντολή <code class="docutils literal notranslate"><span class="pre">migrate</span></code> — μεταφέρει μια βάση SQLite ενός χρήστη προς ένα backend PostgreSQL πολλαπλών χρηστών.</p></li>
+</ul>
+<p>Αυτές οι τρεις χρήσεις βασίζονται σε ένα κοινό <strong>επίπεδο αποθήκευσης</strong> που γνωρίζει να επικοινωνεί με δύο backend: το <strong>SQLite</strong> (η συνήθης μορφή αρχείου <code class="docutils literal notranslate"><span class="pre">.db</span></code> της εφαρμογής γραφείου) και το <strong>PostgreSQL</strong> (για αναπτύξεις διακομιστή πολλαπλών χρηστών).</p>
+</section>
+<section id="le-demon-serve">
+<span id="headless-serve"></span><h2>Ο δαίμονας <code class="docutils literal notranslate"><span class="pre">serve</span></code><a class="headerlink" href="#le-demon-serve" title="Link to this heading"></a></h2>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> εκκινεί τη μηχανή ως υπηρεσία HTTP που απαντά σε JSON. Επιτρέπει τη φιλοξενία μιας βάσης θέσεων σε ένα μηχάνημα και την προσπέλασή της από πολλούς πελάτες.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># sqlite</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+
+<span class="c1"># postgres</span>
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--backend<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--dsn<span class="w"> </span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> ταιριάζει μόνο σε ένα έμπιστο ιδιωτικό δίκτυο — μια βάση σε γειτονικό container, σε δίκτυο που δεν έχει διαδρομή ούτε προς τον host ούτε προς το Internet. Για μια απομακρυσμένη βάση, το <code class="docutils literal notranslate"><span class="pre">sslmode=require</span></code> κρυπτογραφεί τη σύνδεση και το <code class="docutils literal notranslate"><span class="pre">verify-full</span></code> ελέγχει επιπλέον το πιστοποιητικό του διακομιστή και το όνομα host του. Οι υπόλοιπες συμβολοσειρές σύνδεσης αυτής της σελίδας φέρουν <code class="docutils literal notranslate"><span class="pre">sslmode=disable</span></code> για τον ίδιο λόγο: περιγράφουν όλες ένα ιδιωτικό δίκτυο.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p><strong>Ο δαίμονας δεν εκτελεί καμία πιστοποίηση ταυτότητας.</strong> Εμπιστεύεται την κεφαλίδα αιτήματος <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> και <strong>πρέπει</strong> να τρέχει πίσω από έναν reverse-proxy (nginx, Caddy…) υπεύθυνο για την πιστοποίηση ταυτότητας. <strong>Μην τον εκθέτετε ποτέ απευθείας στο δημόσιο Διαδίκτυο.</strong></p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> είναι ο <strong>ακέραιος</strong> του tenant (<code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">42</span></code>…): είναι δουλειά του reverse-proxy να αντιστοιχίσει τον πιστοποιημένο λογαριασμό σε αυτόν τον ακέραιο. Ένα όνομα (<code class="docutils literal notranslate"><span class="pre">alice</span></code>) απορρίπτεται με <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, ποτέ δεν μετατρέπεται.</p>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29.7%" />
+<col style="width: 16.2%" />
+<col style="width: 54.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>αρχείο SQLite (συντόμευση για <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p>backend αποθήκευσης: <code class="docutils literal notranslate"><span class="pre">sqlite</span></code> ή <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>συμβολοσειρά σύνδεσης του backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--addr</span> <span class="pre">&lt;hôte:port&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">:8080</span></code></p></td>
+<td><p>διεύθυνση ακρόασης</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--log-level</span> <span class="pre">&lt;niveau&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">info</span></code></p></td>
+<td><p>επίπεδο καταγραφής: <code class="docutils literal notranslate"><span class="pre">debug|info|warn|error</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--metrics</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">true</span></code></p></td>
+<td><p>εκθέτει το <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> (μορφή Prometheus)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--web</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>σερβίρει τη σελίδα ιστού για ανάγνωση στο <code class="docutils literal notranslate"><span class="pre">/app/</span></code>· <strong>απενεργοποιημένη εξ ορισμού</strong>, δείτε παρακάτω</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--cors-allow-origin</span> <span class="pre">&lt;origine&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>ενεργοποιεί το CORS για αυτήν την προέλευση, μια λίστα προελεύσεων χωρισμένων με κόμμα, ή <code class="docutils literal notranslate"><span class="pre">*</span></code> (απενεργοποιημένο από προεπιλογή)· η απόκριση αντικατοπτρίζει την προέλευση του αιτήματος μόνο αν αυτή περιλαμβάνεται στη λίστα, με <code class="docutils literal notranslate"><span class="pre">Vary:</span> <span class="pre">Origin</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-rps</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>όριο αιτημάτων ανά δευτερόλεπτο και ανά tenant (0 = απενεργοποιημένο)· ενεργοποιημένο εξ ορισμού σε μια γενναιόδωρη τιμή αντί να είναι προαιρετικό, ώστε ένα αρχείο compose που σκέφτεται μόνο τη βάση δεδομένων να μην κληρονομήσει έναν δαίμονα χωρίς κανένα όριο</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--rate-limit-burst</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>μέγεθος του κάδου διακριτικών (token bucket) για τις αιχμές αιτημάτων</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--rls</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">false</span></code></p></td>
+<td><p>PostgreSQL: ενεργοποιεί το Row-Level Security ανά tenant (άμυνα σε βάθος, προαιρετική)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span> <span class="pre">&lt;fichier&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>προαιρετική αμφίπλευρη βάση bearoff (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>) που διευρύνει τον πίνακα TS-06-06 για την ανάλυση κούρσας του σημείου πρόσβασης EPC· ο δαίμονας δεν κατεβάζει ποτέ βάση — δείτε <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">Οι βάσεις bearoff</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--identity-dir</span> <span class="pre">&lt;répertoire&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>κατάλογος της ταυτότητας υπογραφής του δαίμονα (δημιουργείται από μόνη της στην πρώτη χρήση)· απαραίτητος για να μπορεί η <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> να επιθέτει σήμανση — βλ. παρακάτω</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;κόμβος:θύρα&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>εξυπηρετεί την οικογένεια <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> (<code class="docutils literal notranslate"><span class="pre">maintenance.vacuum</span></code>, <code class="docutils literal notranslate"><span class="pre">tenant.purge</span></code>) σε διεύθυνση <strong>ξεχωριστή</strong> από την <code class="docutils literal notranslate"><span class="pre">--addr</span></code> και την αφαιρεί από εκείνη· κενό (η προεπιλογή) τις αφήνει στον κύριο ακροατή, όπου η άρνηση του προθέματος είναι δουλειά του proxy — βλ. <a class="reference internal" href="#headless-ops-routes"><span class="std std-ref">Οι διαδρομές λειτουργίας</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;κόμβος:θύρα&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>εκθέτει το <code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code> σε διεύθυνση <strong>ξεχωριστή</strong> από την <code class="docutils literal notranslate"><span class="pre">--addr</span></code> (απενεργοποιημένο από προεπιλογή)· μόνο για αποσφαλμάτωση — τα σημεία αυτά δεν έχουν καμία έννοια tenant και δίνουν προφίλ μνήμης ή CPU ολόκληρης της διεργασίας· ποτέ δημόσια ούτε στην ίδια διεύθυνση με το <code class="docutils literal notranslate"><span class="pre">/v1</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Οι περισσότερες επιλογές μπορούν επίσης να δοθούν μέσω μεταβλητής περιβάλλοντος (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_LOG_LEVEL</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_METRICS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_CORS_ALLOW_ORIGIN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_RPS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RATE_LIMIT_BURST</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_IDENTITY_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_OPS_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_PPROF_ADDR</span></code>): μια ρητή σημαία υπερισχύει πάντα της αντίστοιχης μεταβλητής.</p>
+<p>Ο δαίμονας <strong>δεν</strong> διαθέτει επιλογή φακέλου δεδομένων: γράφει τους πίνακες bearoff του στο <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>, ή ελλείψει αυτού στο <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code>. Είναι λοιπόν το <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code> που τους μετακινεί — δείτε <a class="reference internal" href="#headless-bearoff"><span class="std std-ref">Οι βάσεις bearoff</span></a>.</p>
+<p>Ο ίδιος ο πίνακας κάδων του περιοριστή ρυθμού φέρει ένα σκληρό ανώτατο όριο (10.000 διακριτά tenants): πέρα από αυτό, κάθε νέο tenant εκτοπίζει τον λιγότερο πρόσφατα χρησιμοποιημένο κάδο αντί να αφήσει τον πίνακα να μεγαλώνει απεριόριστα — χρήσιμο αν ένας πελάτης στέλνει πολλές διακριτές τιμές <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, εκούσια ή μη, ανάμεσα σε δύο περιοδικούς καθαρισμούς ανενεργών κάδων.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> απορρίπτει πλέον κάθε απρόσμενο θεσιακό όρισμα (πέρα από το μοναδικό αρχικό <code class="docutils literal notranslate"><span class="pre">serve</span></code> που αφήνει να περάσει ένα <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> ήδη περιορισμένο στο γυμνό εκτελέσιμο): χωρίς αυτόν τον έλεγχο, μια σημαία τοποθετημένη μετά από τέτοιο όρισμα αγνοούνταν σιωπηλά — το <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">image</span> <span class="pre">serve</span> <span class="pre">--addr</span> <span class="pre">:9090</span></code>, φυσική αντανακλαστική κίνηση αφού το <code class="docutils literal notranslate"><span class="pre">ENTRYPOINT</span></code> της εικόνας είναι ήδη <code class="docutils literal notranslate"><span class="pre">serve</span></code>, ξεκινούσε στο <code class="docutils literal notranslate"><span class="pre">:8080</span></code> χωρίς καμία προειδοποίηση.</p>
+<section id="points-d-acces">
+<h3>Σημεία πρόσβασης<a class="headerlink" href="#points-d-acces" title="Link to this heading"></a></h3>
+<p>Η υπηρεσία εκθέτει σημεία πρόσβασης λειτουργίας, πάντα διαθέσιμα:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/healthz</span></code> — ζωτικότητα (η διεργασία τρέχει)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> — διαθεσιμότητα (η αποθήκευση απαντά και το σχήμα της είναι στην αναμενόμενη έκδοση)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/metrics</span></code> — μετρικές Prometheus (αν το <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> είναι ενεργό)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/app/</span></code> — η σελίδα ιστού για ανάγνωση (αν το <code class="docutils literal notranslate"><span class="pre">--web</span></code> είναι ενεργό).</p></li>
+</ul>
+</section>
+<section id="la-page-web-de-consultation">
+<span id="page-web"></span><h3>Η σελίδα ιστού<a class="headerlink" href="#la-page-web-de-consultation" title="Link to this heading"></a></h3>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span> <span class="pre">--web</span></code> σερβίρει μια σελίδα στο <code class="docutils literal notranslate"><span class="pre">/app/</span></code>: μια βιβλιοθήκη που συμβουλεύεσαι από tablet ή τηλέφωνο, χωρίς να εγκαταστήσεις τίποτα.</p>
+<p>Ξέρει να κάνει <strong>τρία πράγματα</strong>, και αυτή η λίστα είναι η απόφαση, όχι ένα στάδιο:</p>
+<ul class="simple">
+<li><p><strong>να συμβουλεύεται</strong> μια θέση, την ανάλυσή της και το ταμπλό της·</p></li>
+<li><p><strong>να αναζητά</strong>, με την ίδια γραμματική συμβόλων που έχει η γραμμή εντολών της εφαρμογής·</p></li>
+<li><p><strong>να επαναλαμβάνει</strong> μια τράπουλα Anki — με αποκάλυψη απάντησης και βαθμό.</p></li>
+</ul>
+<p>Δεν ξέρει να επεξεργάζεται θέση, να εισάγει, να διαγράφει, να διαχειρίζεται συλλογές, αγώνες, τουρνουά ή ρυθμίσεις, και δεν θα μάθει. Μια λειτουργία που λείπει εδώ δεν είναι κενό: είναι το εύρος.</p>
+<p><strong>Είναι απενεργοποιημένη εξ ορισμού, και αυτό το εξ ορισμού είναι η απόφαση.</strong> Ο δαίμονας δεν πιστοποιεί κανέναν: εμπιστεύεται την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> και πρέπει να τρέχει πίσω από μεσολαβητή που πιστοποιεί. Το να παραδοθεί μια διεπαφή προσβάσιμη από φυλλομετρητή, ανοιχτή εξ αρχής, θα προσκαλούσε ακριβώς την ανάπτυξη που αυτός ο κανόνας απαγορεύει.</p>
+<p>Η σελίδα <strong>δεν στέλνει tenant</strong>: ο μεσολαβητής βάζει την κεφαλίδα, όπως για κάθε άλλον πελάτη. Στην τοπική ανάπτυξη, και μόνο εκεί, το <code class="docutils literal notranslate"><span class="pre">/app/?tenant=1</span></code> ονομάζει έναν — πράγμα που δεν αλλάζει τίποτα στην ασφάλεια ενός δαίμονα που ήδη δέχεται αυτή την κεφαλίδα από οποιονδήποτε.</p>
+<p>Τα αρχεία της σελίδας σερβίρονται <strong>χωρίς tenant</strong>, εσκεμμένα: ένας φυλλομετρητής πρέπει να μπορεί να φορτώσει τη σελίδα πριν του αποδώσει ο μεσολαβητής οτιδήποτε, και μια σελίδα δεν περιέχει δεδομένα.</p>
+<p>Η ζωτικότητα και η διαθεσιμότητα απαντούν σε δύο διαφορετικές ερωτήσεις. Το <code class="docutils literal notranslate"><span class="pre">/healthz</span></code> απαντά πάντα 200 μόλις η διεργασία εξυπηρετεί αιτήματα, χωρίς ποτέ να ρωτά την αποθήκευση: ένας ενορχηστρωτής επανεκκινεί το container του οποίου η ζωτικότητα αποτυγχάνει, και μια προσωρινά μη προσβάσιμη βάση δεν πρέπει να επανεκκινεί σε βρόχο έναν υγιή δαίμονα. Το <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> απαντά 503 (με <code class="docutils literal notranslate"><span class="pre">status</span></code> ίσο με <code class="docutils literal notranslate"><span class="pre">down</span></code> ή <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code>) όσο η βάση δεν απαντά ή το σχήμα της δεν είναι αυτό του δυαδικού: η κίνηση απλώς εκτρέπεται μέχρι να επιστρέψει.</p>
+<p>Η υποεντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (παρούσα και στο δυαδικό <code class="docutils literal notranslate"><span class="pre">serve</span></code> της εικόνας container) εκτελεί ένα αίτημα <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> στον τοπικό δαίμονα και επιστρέφει <code class="docutils literal notranslate"><span class="pre">0</span></code> αν είναι διαθέσιμος, <code class="docutils literal notranslate"><span class="pre">1</span></code> αλλιώς· η διεύθυνση είναι αυτή του <code class="docutils literal notranslate"><span class="pre">--addr</span></code> ή του <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, από προεπιλογή <code class="docutils literal notranslate"><span class="pre">:8080</span></code>. Είναι το <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> της εικόνας Docker και είναι εξίσου χρήσιμη σε ένα script ή σε μια μονάδα systemd:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>ready
+</pre></div>
+</div>
+<p>Η επιχειρησιακή επιφάνεια ακολουθεί το σχήμα <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;οικογένεια&gt;.&lt;μέθοδος&gt;</span></code> (για παράδειγμα <code class="docutils literal notranslate"><span class="pre">/v1/positions.save</span></code>, <code class="docutils literal notranslate"><span class="pre">/v1/matches.get</span></code>). Οι οικογένειες καλύπτουν θέσεις, αναλύσεις, αγώνες, σχόλια, συλλογές, τουρνουά, κάρτες Anki, φίλτρα, συνεδρίες, ιστορικό (αναζήτησης και εντολών), αναζήτηση, μεταδεδομένα, στατιστικά, εισαγωγή και εξαγωγή. Τα σημεία καταλόγου επιστρέφουν ροή NDJSON (ένα αντικείμενο JSON ανά γραμμή). Ο διακομιστής τερματίζει καθαρά με <code class="docutils literal notranslate"><span class="pre">SIGINT</span></code> / <code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>.</p>
+<section id="ce-que-v1-promet">
+<span id="headless-versionnage"></span><h4>Τι υπόσχεται το <code class="docutils literal notranslate"><span class="pre">/v1</span></code><a class="headerlink" href="#ce-que-v1-promet" title="Link to this heading"></a></h4>
+<p>Ένας πελάτης γραμμένος για το <code class="docutils literal notranslate"><span class="pre">/v1</span></code> πρέπει να συνεχίσει να λειτουργεί. Ο κανόνας χωράει σε τρεις γραμμές, και είναι πιο χρήσιμος γραμμένος παρά μαντεμένος:</p>
+<ul class="simple">
+<li><p><strong>Ό,τι υπάρχει δεν αλλάζει νόημα.</strong> Μια διαδρομή του <code class="docutils literal notranslate"><span class="pre">/v1</span></code> δεν μετονομάζεται, δεν αφαιρείται, δεν επανανοηματοδοτείται. Ένα πεδίο αιτήματος ή απόκρισης δεν μετονομάζεται, δεν αφαιρείται, δεν αλλάζει τύπο.</p></li>
+<li><p><strong>Ό,τι προστίθεται, προστίθεται.</strong> Μια νέα διαδρομή, ένα <strong>προαιρετικό</strong> πεδίο αιτήματος, ένα νέο πεδίο σε μια απόκριση: ένας πελάτης που τα αγνοεί συνεχίζει να λειτουργεί — αυτός είναι ο ορισμός του «συμβατού» που υιοθετείται εδώ. Ένας πελάτης πρέπει λοιπόν να αγνοεί τα πεδία που δεν γνωρίζει αντί να τα απορρίπτει.</p></li>
+<li><p><strong>Τα υπόλοιπα είναι ``/v2``.</strong> Το να γίνει υποχρεωτικό ένα πεδίο που δεν ήταν, να αλλάξει μια μονάδα, να αλλάξει η σημασία ενός κωδικού σφάλματος: αυτά είναι ρήξεις, και ζουν κάτω από άλλο πρόθεμα, δίπλα στο <code class="docutils literal notranslate"><span class="pre">/v1</span></code>, όσο χρειάζεται για να περάσουν οι πελάτες.</p></li>
+</ul>
+<p>Δύο διευκρινίσεις που μετρούν. Οι διαδρομές <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> <strong>δεν</strong> καλύπτονται: εξυπηρετούν τη λειτουργία μιας εγκατάστασης, αλλάζουν μαζί της, και δεν είναι API για προγράμματα τρίτων. Και το <strong>ίδιο το συμβόλαιο παράγεται</strong> από τον πίνακα διαδρομών του δαίμονα (<code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code>, <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">Σύμβαση API</span></a>): δεν μπορεί να περιγράψει κάτι άλλο από αυτό που σερβίρει ο διακομιστής.</p>
+</section>
+<section id="un-client-python">
+<span id="headless-client-python"></span><h4>Ένας πελάτης Python<a class="headerlink" href="#un-client-python" title="Link to this heading"></a></h4>
+<p>Ο κατάλογος <code class="docutils literal notranslate"><span class="pre">clients/python/</span></code> περιέχει έναν ελάχιστο πελάτη, χωρίς εξάρτηση εκτός της πρότυπης βιβλιοθήκης — ο δαίμονας μιλά POST και JSON, που τα <code class="docutils literal notranslate"><span class="pre">urllib</span></code> και <code class="docutils literal notranslate"><span class="pre">json</span></code> καλύπτουν πλήρως:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">blunderdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="s2">"http://127.0.0.1:8080"</span><span class="p">,</span> <span class="n">tenant</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">metadata_counts</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">positions_list</span><span class="p">({</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">10</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Είναι σε <strong>δύο μισά, και είναι σκόπιμο</strong>. Το <code class="docutils literal notranslate"><span class="pre">_generated.py</span></code> φέρει μία μέθοδο ανά διαδρομή, παραγόμενη από τον πίνακα διαδρομών του δαίμονα με <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code>: μια χειρόγραφη επιφάνεια θα παρέκκλινε τη μέρα που προστίθεται μια διαδρομή, και κανείς δεν θα το πρόσεχε πριν το κάνει ένας χρήστης. Το <code class="docutils literal notranslate"><span class="pre">client.py</span></code> φέρει τη μεταφορά — τη συνεδρία, την κεφαλίδα tenant, τον φάκελο σφάλματος, την ανάγνωση NDJSON — και είναι γραμμένο στο χέρι. Ό,τι αλλάζει με το API παράγεται· ό,τι αλλάζει με την κρίση, όχι.</p>
+<p>Τα ονόματα μεθόδων είναι <code class="docutils literal notranslate"><span class="pre">οικογένεια_λειτουργία</span></code> σε snake_case: το <code class="docutils literal notranslate"><span class="pre">/v1/positions.loadByIds</span></code> γίνεται <code class="docutils literal notranslate"><span class="pre">positions_load_by_ids()</span></code>. Η οικογένεια διατηρείται επειδή πολλές οικογένειες μοιράζονται ένα όνομα λειτουργίας (<code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code>), και ένα σκέτο <code class="docutils literal notranslate"><span class="pre">list()</span></code> θα συγκρουόταν.</p>
+<p>Μια αποτυχία εγείρει <code class="docutils literal notranslate"><span class="pre">APIError</span></code>, που φέρει τον φάκελο του δαίμονα ως έχει: τον <code class="docutils literal notranslate"><span class="pre">code</span></code> (αυτό πάνω στο οποίο διακλαδίζεται ένα πρόγραμμα), το <code class="docutils literal notranslate"><span class="pre">message</span></code> (αυτό που διαβάζει ένας άνθρωπος), το HTTP status και τις λεπτομέρειες.</p>
+</section>
+<section id="embarquer-le-moteur-dans-un-programme-go">
+<span id="headless-bootstrap"></span><h4>Ενσωμάτωση της μηχανής σε πρόγραμμα Go<a class="headerlink" href="#embarquer-le-moteur-dans-un-programme-go" title="Link to this heading"></a></h4>
+<p>Το <code class="docutils literal notranslate"><span class="pre">pkg/blunderdb/server.Bootstrap</span></code> ανοίγει την αποθήκευση και επιστρέφει ένα σύνολο χειριστών <strong>μέσα στη διεργασία που καλεί</strong>, χωρίς να ακούει σε θύρα. Είναι η είσοδος για έναν έμπιστο γονέα — το gammonGo — που θέλει τη βιβλιοθήκη θέσεων χωρίς να τρέχει έναν δαίμονα δίπλα ούτε να μιλά HTTP στον εαυτό του.</p>
+<p>Αυτό που προϋποτίθεται λέγεται ρητά: ο γονέας είναι <strong>έμπιστος</strong>. Δεν υπάρχει tenant να ελεγχθεί, ούτε κεφαλίδα να επικυρωθεί, ούτε περιοριστής ρυθμού — αυτά ανήκουν στον δαίμονα επειδή αντικρίζει δίκτυο, και το ADR-0005 λέει γιατί. Ένα πρόγραμμα που ενσωματώνει τη μηχανή επιλέγει μόνο του το tenant του και απαντά για τις κλήσεις του.</p>
+</section>
+</section>
+<section id="les-bases-de-bearoff">
+<span id="headless-bearoff"></span><h3>Οι βάσεις bearoff<a class="headerlink" href="#les-bases-de-bearoff" title="Link to this heading"></a></h3>
+<p>Ο δαίμονας υπολογίζει τους δύο προεπιλεγμένους πίνακές του κατά την εκκίνηση, στο παρασκήνιο (TS-06-06 για την ετυμηγορία κύβου, OS-06 για το EPC): περίπου έξι δευτερόλεπτα ενός πυρήνα, μία φορά, στον φάκελο δεδομένων του — <code class="docutils literal notranslate"><span class="pre">$XDG_DATA_HOME/blunderdb</span></code>, ή ελλείψει αυτού <code class="docutils literal notranslate"><span class="pre">~/.local/share/blunderdb</span></code>. Τίποτα δεν κατεβαίνει και τίποτα δεν είναι ενσωματωμένο στο εκτελέσιμο (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md">ADR-0027</a>). Αν ο φάκελος είναι μόνο για ανάγνωση, οι πίνακες κρατιούνται στη μνήμη για τη διάρκεια ζωής της διεργασίας: η υπηρεσία ξεκινά, απλώς πληρώνει τον υπολογισμό σε κάθε επανεκκίνηση.</p>
+<p>Ένας ευρύτερος τομέας δεν υπολογίζεται στην εκκίνηση — ο TS-06-11 ζυγίζει 1,2 GB και θέλει λεπτά, δεν είναι κάτι που αποφασίζει μόνη της μια υπηρεσία. Είναι έργο του διαχειριστή να τον φτιάξει, με τη γραμμή εντολών, στον τόμο που θα διαβάσει ο δαίμονας:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate</span>
+blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/data/blunderdb
+
+<span class="c1"># serve</span>
+<span class="nv">XDG_DATA_HOME</span><span class="o">=</span>/srv/data<span class="w"> </span>blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bearoff-ts<span class="w"> </span>/srv/data/blunderdb/gnubg_ts6x11.bd
+</pre></div>
+</div>
+<p>Η πρώτη εκκίνηση αφήνει τον δαίμονα να βρει μόνος του τον πίνακα στον φάκελο δεδομένων του· η δεύτερη τον ορίζει με τη διαδρομή του, όπου κι αν βρίσκεται. Το <code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> είναι επιλογή των υποεντολών <code class="docutils literal notranslate"><span class="pre">bearoff</span></code>, ποτέ του <code class="docutils literal notranslate"><span class="pre">serve</span></code>.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">list</span> <span class="pre">--data-dir</span> <span class="pre">/srv/data/blunderdb</span></code> λέει τι περιέχει ο τόμος και τι θα κόστιζε κάθε τομέας· το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">bearoff</span> <span class="pre">verify</span></code> τερματίζει με σφάλμα σε κατεστραμμένο πίνακα, πράγμα που το κάνει έλεγχο εκκίνησης χρησιμοποιήσιμο ως έχει. Δείτε <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a> για λεπτομέρειες.</p>
+</section>
+<section id="les-routes-d-exploitation">
+<span id="headless-ops-routes"></span><h3>Οι διαδρομές λειτουργίας<a class="headerlink" href="#les-routes-d-exploitation" title="Link to this heading"></a></h3>
+<p>Δύο κλήσεις δεν σταματούν στον tenant που τις κάνει και ζουν επομένως κάτω από δικό τους πρόθεμα, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/&lt;οικογένεια&gt;.&lt;μέθοδος&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> (backend SQLite) ξαναγράφει <strong>ολόκληρο</strong> το αρχείο, μαζί με τα δεδομένα όλων των tenants, και κρατά κλείδωμα εγγραφής για όσο διαρκεί·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/ops/tenant.purge</span></code> (backend PostgreSQL) καταστρέφει τα δεδομένα ενός tenant, και ο tenant που καταστρέφεται είναι αυτός που ονομάζει η κεφαλίδα την οποία ελέγχει ο καλών.</p></li>
+</ul>
+<p>Ο δαίμονας δεν πιστοποιεί κανέναν (βλ. παρακάτω): μια διαδρομή προσβάσιμη από έναν tenant είναι διαδρομή που <strong>κάθε</strong> tenant μπορεί να καλέσει. Το πρόθεμα υπάρχει ώστε ο proxy να μπορεί να αρνηθεί και τις δύο με έναν μόνο κανόνα. <strong>Ποτέ μην εκθέτετε το</strong> <code class="docutils literal notranslate"><span class="pre">/ops/</span></code> <strong>μέσω του δημόσιου proxy.</strong> Στο nginx, ο κανόνας χωράει σε μία γραμμή του μπλοκ <code class="docutils literal notranslate"><span class="pre">server</span></code>· στο Caddy, σε δύο γραμμές του site:</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="s">/ops/</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="k">location</span><span class="w"> </span><span class="s">/metrics</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kn">return</span><span class="w"> </span><span class="mi">403</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>@closed path /ops/* /metrics
+respond @closed 403
+</pre></div>
+</div>
+<p>Η επιλογή <code class="docutils literal notranslate"><span class="pre">--ops-addr</span> <span class="pre">&lt;κόμβος:θύρα&gt;</span></code> πηγαίνει παραπέρα: οι δύο διαδρομές εγκαταλείπουν τότε τη διεύθυνση <code class="docutils literal notranslate"><span class="pre">--addr</span></code> και εξυπηρετούνται μόνο σε αυτόν τον δεύτερο ακροατή, που πρέπει να δεθεί σε διεπαφή διαχείρισης. Χωρίς την επιλογή παραμένουν στον κύριο ακροατή και ο αποκλεισμός τους είναι δουλειά του proxy.</p>
+<p>Οι διαδρομές αυτές απαιτούν την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> όπως όλες οι άλλες — μια εκκαθάριση ονομάζει τον tenant που καταστρέφει και τη χρειάζεται περισσότερο από οποιαδήποτε άλλη. Μόνο οι ανιχνευτές (<code class="docutils literal notranslate"><span class="pre">/healthz</span></code>, <code class="docutils literal notranslate"><span class="pre">/readyz</span></code>) και το <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> την παρακάμπτουν.</p>
+<p>Γι” αυτό ο παραπάνω κανόνας άρνησης καλύπτει και το <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: καθώς δεν απαιτεί κανένα tenant, είναι αναγνώσιμο από οποιονδήποτε φτάνει στον δαίμονα, και δημοσιεύει το μέγεθος της βάσης και την εργασία σε εξέλιξη, για όλους τους tenants μαζί. Συμβουλεύεται από το μηχάνημα του δαίμονα, ή μέσω μιας διαδρομής που ο proxy κρατά για τη λειτουργία. Το τρίτο σημείο που δεν πρέπει ποτέ να εκτεθεί δεν είναι διαδρομή αλλά ακροατής: αυτός του <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span></code>, που δεν έχει καμία έννοια tenant και παραδίδει ένα προφίλ ολόκληρης της διεργασίας. Δένεται σε μια διεπαφή διαχείρισης, ποτέ δεν δημοσιεύεται από τον proxy.</p>
+<p>Τι <strong>δεν</strong> πέρασε στο <code class="docutils literal notranslate"><span class="pre">/ops/</span></code>: το <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.sweepStale</span></code>. Η ανάκτηση είναι δαπανηρή αλλά περιορίζεται στον καλούντα tenant· αυτό που τη φράζει είναι το όριο ρυθμού και οι δείκτες εργασίας εν εξελίξει, όχι ένα όριο εμπιστοσύνης.</p>
+<p>Το πλήρες συμβόλαιο — κάθε μέθοδος, το αίτημά της και η απόκρισή της — παράγεται από τον πηγαίο κώδικα και τηρείται σε έκδοση: <code class="docutils literal notranslate"><span class="pre">openapi.yaml</span></code> στη ρίζα του αποθετηρίου (μορφή OpenAPI, μαζί με τα σχήματα) και το ευανάγνωστο παράρτημά του, <a class="reference internal" href="api_reference.html#api-reference"><span class="std std-ref">Σύμβαση API</span></a> (ένας πίνακας ανά οικογένεια). Και τα δύο αναπαράγονται με <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">run</span> <span class="pre">./cmd/openapi-gen</span></code> και ένα ειδικό τεστ αποτυγχάνει αν κάποιο από τα δύο μείνει πίσω από τις πραγματικά καταχωρημένες διαδρομές.</p>
+<p>Κάθε αίτημα <code class="docutils literal notranslate"><span class="pre">/v1</span></code> δέχεται σώμα JSON (<code class="docutils literal notranslate"><span class="pre">Content-Type:</span> <span class="pre">application/json</span></code>, ή καμία κεφαλίδα — ένα σώμα άλλου τύπου απορρίπτεται με <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code> αντί να αποτυγχάνει με ένα μπερδεμένο μήνυμα σφάλματος ανάλυσης JSON)· μια γνωστή μέθοδος που καλείται με λάθος ρήμα HTTP απαντά <code class="docutils literal notranslate"><span class="pre">405</span></code>, με την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">Allow</span></code> να ονομάζει το μοναδικό αποδεκτό ρήμα. Οι μέθοδοι λίστας που δέχονται <code class="docutils literal notranslate"><span class="pre">limit</span></code> απορρίπτουν τιμές πέραν των 1000 γραμμών ανά σελίδα (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>) αντί να τις τιμούν χωρίς όριο.</p>
+<p>Όλες οι οικογένειες που παράγουν λίστα δέχονται <code class="docutils literal notranslate"><span class="pre">limit</span></code> και <code class="docutils literal notranslate"><span class="pre">offset</span></code>: <code class="docutils literal notranslate"><span class="pre">positions.list</span></code>, <code class="docutils literal notranslate"><span class="pre">positions.listIds</span></code>, <code class="docutils literal notranslate"><span class="pre">matches.list</span></code>, <code class="docutils literal notranslate"><span class="pre">search.find</span></code>, <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code>, <code class="docutils literal notranslate"><span class="pre">comments.listAll</span></code>, <code class="docutils literal notranslate"><span class="pre">tournaments.list</span></code> και <code class="docutils literal notranslate"><span class="pre">collections.positions</span></code>. Και τα δύο έχουν προεπιλογή μηδέν, που σημαίνει ό,τι σήμαινε πάντα: τα πάντα. <strong>Δεν υπάρχει σιωπηρό όριο</strong> — μια ροή δεν κρατιέται στη μνήμη, οπότε μια λίστα χωρίς όριο κοστίζει χρόνο και εύρος ζώνης αλλά ποτέ την ισορροπία του δαίμονα, ενώ ένα σιωπηλό προεπιλεγμένο όριο θα έκανε έναν πελάτη να διαβάσει μια κομμένη λίστα νομίζοντάς την πλήρη. Αυτό που προσφέρουν οι δύο παράμετροι είναι η δυνατότητα σελιδοποίησης, σε όποιον τη θέλει.</p>
+<p>Κάθε σύνδεση TCP έχει όριο χρόνου ανάγνωσης/εγγραφής ανά αίτημα — ένα γενναιόδωρο περιθώριο για τις συνήθεις κλήσεις, πολύ μεγαλύτερο για τις διαδρομές ροής (λίστες NDJSON, εισαγωγές/εξαγωγές, το σάρωμα ανάκτησης gammonNet) — και ο αριθμός τους ταυτόχρονα ανοιχτών είναι πεπερασμένος: πέραν αυτού, μια επιπλέον σύνδεση περιμένει να ελευθερωθεί μία από τις υπάρχουσες αντί κάθε σύνδεση να λαμβάνει άνευ όρους το δικό της νήμα εκτέλεσης. Ένας ομαλός τερματισμός (<code class="docutils literal notranslate"><span class="pre">SIGINT</span></code>/<code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code>) ακυρώνει πρώτα κάθε εισαγωγή και κάθε σάρωμα ανάκτησης gammonNet σε εξέλιξη — καθεμία απαντά με ένα τελικό συμβάν <code class="docutils literal notranslate"><span class="pre">{&quot;event&quot;:&quot;cancelled&quot;}</span></code> αντί η σύνδεσή της να διακοπεί χωρίς εξήγηση — πριν το κλείσιμο του διακομιστή εντός του συνήθους χρόνου χάριτος. Το προσωρινό αρχείο μιας μεταφορτωμένης εισαγωγής διατηρεί από την αρχική επέκταση μόνο όσες αναγνωρίζει ο δαίμονας (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>, <code class="docutils literal notranslate"><span class="pre">.sgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.bgf</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.db</span></code>, <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), και όλες οι ταυτόχρονες εισαγωγές — σε όλους τους ενοικιαστές — μοιράζονται ένα καθολικό όριο byte που αποθηκεύονται στον δίσκο: πέραν αυτού, μία νέα εισαγωγή απορρίπτεται (<code class="docutils literal notranslate"><span class="pre">too</span> <span class="pre">many</span> <span class="pre">requests</span></code>) αντί να αφήνεται η χρήση του <code class="docutils literal notranslate"><span class="pre">$TMPDIR</span></code> να μεγαλώνει απεριόριστα.</p>
+<p>Η οικογένεια <code class="docutils literal notranslate"><span class="pre">search</span></code> προσφέρει τρεις πόρτες στην ίδια αναζήτηση. Η <code class="docutils literal notranslate"><span class="pre">search.find</span></code> δέχεται το πλήρες αντικείμενο φίλτρων, πεδίο προς πεδίο. Η <code class="docutils literal notranslate"><span class="pre">search.query</span></code> δέχεται ένα ερώτημα γραμμένο στη γλώσσα της γραμμής εντολών της εφαρμογής (<code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">cube</span> <span class="pre">p&gt;30</span> <span class="pre">E&gt;50</span></code>, που περιγράφεται στο <a class="reference internal" href="cmd_mode.html"><span class="doc">Λίστα εντολών</span></a>) και ρέει τις ίδιες θέσεις· είναι ο μόνος τρόπος να προσεγγιστούν μέσω δικτύου τα φίλτρα που δεν έχουν προφανές πεδίο — μοτίβο κίνησης, κείμενο σχολίου, παίκτης, ημερομηνία, εξαιρούμενες ζαριές, ζώνες και blots. Η <code class="docutils literal notranslate"><span class="pre">search.parse</span></code> δεν ψάχνει τίποτα: απαντά τι σημαίνει ένα ερώτημα — τα φίλτρα που δηλώνει, την κανονική του μορφή (δύο ισοδύναμα ερωτήματα τη μοιράζονται, πράγμα που καθιστά μια αποθηκευμένη αναζήτηση συγκρίσιμη) και τα διαγνωστικά του.</p>
+<p>Ένα ερώτημα που φέρει σύμβολο το οποίο δεν αναγνωρίζεται απορρίπτεται (<code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>, με αναφορά του συμβόλου) αντί να εκτελεστεί περιορίζοντας σιωπηλά την αναζήτηση. Ένα σύμβολο κατανοητό αλλά χωρίς αποτέλεσμα εδώ — το <code class="docutils literal notranslate"><span class="pre">x</span></code>, που ενεργοποιεί τη δομή αποκλεισμού, η οποία είναι πίνακας και όχι κείμενο — ταξιδεύει στην κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-BlunderDB-Query-Diagnostics</span></code>, ώστε το σώμα να παραμένει NDJSON θέσεων για όλους τους υπάρχοντες πελάτες.</p>
+<p>Δύο μέθοδοι της οικογένειας <code class="docutils literal notranslate"><span class="pre">positions</span></code> αποκωδικοποιούν μια θέση χωρίς να την αποθηκεύουν: η <code class="docutils literal notranslate"><span class="pre">positions.fromXGID</span></code> ανακατασκευάζει μια θέση από μια συμβολοσειρά XGID και η <code class="docutils literal notranslate"><span class="pre">positions.fromXGP</span></code> από ένα αρχείο μεμονωμένης θέσης <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> εξάγει ολόκληρο το τρέχον tenant — θέσεις, συλλογές, αγώνες, τουρνουά, αναλύσεις, σχόλια, κινήσεις που παίχτηκαν, βιβλιοθήκη φίλτρων και πακέτα Anki — σε ένα αρχείο SQLite που ανοίγει όπως είναι από τον σταθμό εργασίας· η εξαγωγή περιλαμβάνει πάντα ολόκληρη τη βάση, η επιλογή ενός υποσυνόλου είναι μια ενέργεια της εφαρμογής γραφείου ή της CLI. Το σώμα JSON του αιτήματος είναι προαιρετικό και δέχεται μόνο τα <code class="docutils literal notranslate"><span class="pre">watermarkOrigin</span></code> / <code class="docutils literal notranslate"><span class="pre">watermarkNote</span></code>, για να τεθεί σήμανση υπογεγραμμένη με την ταυτότητα εκδότη του ίδιου του δαίμονα (<code class="docutils literal notranslate"><span class="pre">--identity-dir</span></code>) — χωρίς αυτά τα πεδία, η εξαγωγή δεν φέρει καμία σήμανση· η αίτησή τους χωρίς ρυθμισμένη ταυτότητα αποτυγχάνει με τον κωδικό <code class="docutils literal notranslate"><span class="pre">invalid</span></code>.</p>
+<p>Η οικογένεια <code class="docutils literal notranslate"><span class="pre">anki</span></code> αποκτά έξι μεθόδους που επεκτείνουν τον προγραμματιστή διαστηματικής επανάληψης (FSRS): <code class="docutils literal notranslate"><span class="pre">anki.reviewLog</span></code> (καταγραφή κάθε επανάληψης — βαθμολογία και αποτέλεσμα FSRS — για στατιστικά διατήρησης και ένα πιστό ιστορικό), <code class="docutils literal notranslate"><span class="pre">anki.forecast</span></code> (προβολή του αριθμού καρτών που οφείλονται τις επόμενες ημέρες, συμπεριλαμβανομένων των καθυστερημένων καρτών), <code class="docutils literal notranslate"><span class="pre">anki.suspendCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.buryCard</span></code> / <code class="docutils literal notranslate"><span class="pre">anki.removeCard</span></code> (αφαίρεση μιας κάρτας από την ουρά επανάληψης προσωρινά ή οριστικά) και <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> (το ποσοστό επιτυχίας που μετριέται στις επαναλήψεις ενός deck, σε σχέση με τον στόχο που έχει ορίσει ο ιδιοκτήτης του).</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">anki.retention</span></code> αντικαθιστά το <code class="docutils literal notranslate"><span class="pre">anki.optimizeParams</span></code>, το οποίο προσάρμοζε τον στόχο προς το παρατηρούμενο ποσοστό και μπορούσε να το γράψει. Ο στόχος διατήρησης είναι μια <strong>επιλογή</strong> πάνω στον συμβιβασμό φόρτου/ποιότητας, το μετρούμενο ποσοστό είναι το <strong>αποτέλεσμά</strong> του, και η σύζευξη του ενός με το άλλο είναι ακριβώς ο μηχανισμός που απορρίπτουν οι συγγραφείς του FSRS. Η μέθοδος πλέον μόνο μετρά, χωρίς ποτέ να γράφει.</p>
+</div>
+<p>Η οικογένεια <code class="docutils literal notranslate"><span class="pre">stats</span></code> παρέχει το <code class="docutils literal notranslate"><span class="pre">stats.playerTable</span></code>, που επιστρέφει μία γραμμή στατιστικών ανά παίκτη (αγώνες, νίκες/ήττες, μετρημένες αποφάσεις, PR συνολικό / πούλια / κύβος, Snowie Error Rate, λάθη, σοβαρά λάθη και τύχη) για τους αγώνες που κρατά το φίλτρο. Όπως και στο γραφικό περιβάλλον, ο πίνακας τιμά από το φίλτρο μόνο την περίοδο, τα τουρνουά και το μήκος των αγώνων: η επιλογή παίκτη και ο τύπος απόφασης αγνοούνται, αφού ο πίνακας αφορά όλους τους παίκτες και ήδη διαχωρίζει πούλια και κύβο σε ξεχωριστές στήλες. Το πεδίο <code class="docutils literal notranslate"><span class="pre">luck_known</span></code> δηλώνει αν μετρήθηκε η τύχη για τον παίκτη· το <code class="docutils literal notranslate"><span class="pre">luck_rate_mp</span></code> δεν πρέπει να διαβάζεται όταν είναι <code class="docutils literal notranslate"><span class="pre">false</span></code>, καθώς άγνωστη τύχη δεν σημαίνει μηδενική τύχη.</p>
+<p>Το φίλτρο που περνάει στις μεθόδους <code class="docutils literal notranslate"><span class="pre">stats</span></code> δέχεται, δίπλα στο <code class="docutils literal notranslate"><span class="pre">PlayerName</span></code>, και ένα πεδίο <code class="docutils literal notranslate"><span class="pre">PlayerAliases</span></code>: τις άλλες γραφές με τις οποίες υπέγραψε το ίδιο πρόσωπο. Καθώς το όνομα κάθε παίκτη πληκτρολογείται με το χέρι σε κάθε αρχείο, το ίδιο πρόσωπο εμφανίζεται συχνά με πολλές γραφές, και ένα φίλτρο που κρατά μόνο μία υπολογίζει σε μέρος των αγώνων χωρίς τίποτα να φαίνεται ανώμαλο. Το πεδίο είναι καθαρά προσθετικό: κρατούνται οι αποφάσεις οποιουδήποτε από τα ονόματα. Η συγχώνευση των ονομάτων στη βάση (<code class="docutils literal notranslate"><span class="pre">MergePlayers</span></code>) είναι η άλλη απάντηση και προορίζεται για βάσεις που δεν λάβατε από κάποιον άλλον — ξαναγράφει τους αγώνες όλων.</p>
+<p>Δύο μέθοδοι συμπληρώνουν την ισοτιμία με το γραφικό περιβάλλον: το <code class="docutils literal notranslate"><span class="pre">stats.tournamentBadges</span></code> επιστρέφει, για κάθε τουρνουά της βάσης, τον δείκτη που εμφανίζεται στην κάρτα του (PR του παίκτη αναφοράς), και το <code class="docutils literal notranslate"><span class="pre">matches.findByHash</span></code> δηλώνει αν ένας αγώνας υπάρχει ήδη, με βάση τα δύο αποτυπώματα ανίχνευσης διπλότυπων — αρκετό για να αποφευχθεί μια περιττή εισαγωγή πριν ξεκινήσει.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">analyses.repair</span></code> επανυπολογίζει τις αποκανονικοποιημένες στήλες μιας ανάλυσης (μεταξύ αυτών το <code class="docutils literal notranslate"><span class="pre">cube_error</span></code>) από την πλήρη ανάλυσή της και επιστρέφει το πλήθος των γραμμών που <strong>πράγματι</strong> διορθώθηκαν. Οι στήλες αυτές είναι απλώς μια προβολή: ένα σφάλμα προβολής επιδιορθώνεται λοιπόν χωρίς νέα εισαγωγή των αρχείων προέλευσης. Η λειτουργία είναι ρητή και δεν ενεργοποιείται ποτέ μόνη της — ούτε στο άνοιγμα μιας βάσης ούτε από κάποια μετανάστευση, αφού δεν ευθύνεται το σχήμα. Μια μη αναγνώσιμη ανάλυση αφήνεται ως έχει αντί να μηδενιστεί. Η γνωστή περίπτωση: τα μη-διπλασιάσματα που το gnuBG χαρακτηρίζει «Double No», τα οποία διαβάζονταν εσφαλμένα πριν από την έκδοση 0.33.0 και έφεραν το σφάλμα ενός διπλασιασμού που δεν έγινε ποτέ.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing</span></code> ενεργοποιεί τη συμπλήρωση gammonNet του τρέχοντος tenant: γράφει μια ανάλυση για κάθε θέση που δεν έχει καμία (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Είναι μια λειτουργία <strong>βιβλιοθήκης</strong> — διαβάζει και γράφει αποθηκευμένες θέσεις και αναλύσεις — ποτέ ένας γυμνός αξιολογητής: το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">serve</span></code> λειτουργεί πάνω σε μια βιβλιοθήκη, το <code class="docutils literal notranslate"><span class="pre">gammonnet</span> <span class="pre">serve</span></code> αξιολογεί μια θέση. Η απάντηση είναι μια ροή NDJSON (<code class="docutils literal notranslate"><span class="pre">started</span></code>, <code class="docutils literal notranslate"><span class="pre">progress</span></code>, έπειτα <code class="docutils literal notranslate"><span class="pre">done</span></code> ή <code class="docutils literal notranslate"><span class="pre">error</span></code>/<code class="docutils literal notranslate"><span class="pre">cancelled</span></code>), στο ίδιο πρότυπο με τα σημεία πρόσβασης εισαγωγής· το <code class="docutils literal notranslate"><span class="pre">gammonnet.analyzeMissing.cancel</span></code> (με το <code class="docutils literal notranslate"><span class="pre">job_id</span></code> που ελήφθη στο συμβάν <code class="docutils literal notranslate"><span class="pre">started</span></code>) ακυρώνει μια συμπλήρωση σε εξέλιξη και εξυπηρετεί αδιακρίτως είτε μια συμπλήρωση είτε μια επανάλυση (παρακάτω). Είναι η ίδια λειτουργία με την αυτόματη ενεργοποίηση μετά την εισαγωγή και τον ρητό χειρισμό της γραφικής διεπαφής, καθώς και με την υποεντολή <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span></code> (βλ. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>) — τρεις μορφές, μία μόνο λογική.</p>
+<p>Το <code class="docutils literal notranslate"><span class="pre">gammonnet.sweepStale</span></code> είναι το αντίστοιχο του <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code> για την επανάλυση αντί της συμπλήρωσης: κάθε θέση της οποίας η ανάλυση προέρχεται εξ ολοκλήρου από το gammonNet αλλά είναι παρωχημένη — παλαιότερη έκδοση μηχανισμού από την τρέχουσα, ή βάθος διαφορετικό από το <code class="docutils literal notranslate"><span class="pre">ply</span></code> — επαναξιολογείται στο ζητούμενο βάθος. Το κριτήριο παρωχήματος είναι κοινό με την ίδια δέσμη της γραφικής διεπαφής και με το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">analyze</span> <span class="pre">--stale</span></code> (καμία διπλή λογική στους τρεις τρόπους λειτουργίας)· μια θέση που φέρει ανάλυση XG, GNUbg ή BGBlitz δεν επηρεάζεται ποτέ, ανεξαρτήτως του περιεχομένου gammonNet της — η προστασία του <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a> παραμένει άνευ όρων. Ίδια μορφή NDJSON με το <code class="docutils literal notranslate"><span class="pre">analyzeMissing</span></code>, και το τελικό συμβάν καθεμιάς από τις δύο διαδρομές φέρει πλέον την κατανομή <code class="docutils literal notranslate"><span class="pre">evaluated</span></code>/<code class="docutils literal notranslate"><span class="pre">refused</span></code>/<code class="docutils literal notranslate"><span class="pre">failed</span></code>: μια θέση που το gammonNet αρνείται να αξιολογήσει (ένα σκορ αγώνα εκτός του εύρους του πίνακά του, μια απόφαση διπλασιασμού που το μοντέλο αρνείται) μετράει ως <code class="docutils literal notranslate"><span class="pre">refused</span></code>, όχι <code class="docutils literal notranslate"><span class="pre">failed</span></code> — δεν ξαναδοκιμάζεται μάταια στην επόμενη διέλευση, σε αντίθεση με μια θέση που πράγματι απέτυχε.</p>
+</section>
+<section id="correlation-et-metriques-metier">
+<h3>Συσχέτιση και επιχειρησιακές μετρικές<a class="headerlink" href="#correlation-et-metriques-metier" title="Link to this heading"></a></h3>
+<p>Κάθε αίτημα λαμβάνει ένα αναγνωριστικό συσχέτισης: αυτό που στέλνει ο πελάτης (ή ένας reverse proxy) στην κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Request-Id</span></code>, αλλιώς ένα παραγόμενο — και στις δύο περιπτώσεις επιστρέφεται στην ίδια κεφαλίδα της απόκρισης και προστίθεται στη γραμμή καταγραφής που κλείνει το αίτημα (πεδίο <code class="docutils literal notranslate"><span class="pre">request_id</span></code>). Ένα <code class="docutils literal notranslate"><span class="pre">traceparent</span></code> (<a class="reference external" href="https://www.w3.org/TR/trace-context/">W3C Trace Context</a>), αν υπάρχει, μεταβιβάζεται αυτούσιο στην ίδια γραμμή καταγραφής — ο δαίμονας ούτε το αναλύει ούτε το επικυρώνει και δεν ενσωματώνει καμία βιβλιοθήκη ιχνηλάτησης: είναι μια γέφυρα για τη συσχέτιση αυτών των καταγραφών με έναν μηχανισμό ιχνηλάτησης που τρέχει ανάντη, τίποτε περισσότερο.</p>
+<p>Πέρα από τον όγκο των αιτημάτων και τον χρόνο απόκρισης, το <code class="docutils literal notranslate"><span class="pre">/metrics</span></code> δημοσιεύει δείκτες για την εργασία εν εξελίξει, αόρατη διαφορετικά σε μια κολλημένη εισαγωγή ή παρτίδα gammonNet (ένα μοναδικό πολύ μακρύ αίτημα, όχι πολλά αιτήματα):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_imports_inflight</span></code> — εισαγωγές σε εξέλιξη, για όλους τους tenants·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_import_spool_bytes</span></code> — bytes δεσμευμένα αυτή τη στιγμή στο όριο spool εισαγωγής (βλ. <code class="docutils literal notranslate"><span class="pre">--rate-limit-*</span></code> παραπάνω για το αντίστοιχο σε αιτήματα ανά δευτερόλεπτο)·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_gammonnet_sweep_inflight</span></code> — σαρώσεις ανάκτησης gammonNet σε εξέλιξη, για όλους τους tenants·</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blunderdb_database_size_bytes</span></code> — μέγεθος του κύριου αρχείου SQLite, ή <code class="docutils literal notranslate"><span class="pre">pg_database_size</span></code> υπό PostgreSQL (ολόκληρη η βάση, όχι ανά tenant, όπως και οι δείκτες δεξαμενής συνδέσεων παρακάτω)· απουσιάζει όσο δεν έχει δημοσιευθεί ακόμη καμία μέτρηση.</p></li>
+</ul>
+<p>Ένα προφίλ μνήμης ή CPU της διεργασίας είναι διαθέσιμο ξεκινώντας με <code class="docutils literal notranslate"><span class="pre">--pprof-addr</span> <span class="pre">&lt;κόμβος:θύρα&gt;</span></code> (<code class="docutils literal notranslate"><span class="pre">net/http/pprof</span></code>): απενεργοποιημένο από προεπιλογή και σκόπιμα σε διεύθυνση ξεχωριστή από την <code class="docutils literal notranslate"><span class="pre">--addr</span></code>, αφού τα σημεία αυτά δεν έχουν καμία έννοια tenant.</p>
+</section>
+<section id="compression-des-flux">
+<span id="headless-docker"></span><h3>Συμπίεση των ροών<a class="headerlink" href="#compression-des-flux" title="Link to this heading"></a></h3>
+<p>Οι λίστες NDJSON επαναλαμβάνουν τα ίδια ονόματα πεδίων σε κάθε γραμμή. Ο δαίμονας τις συμπιέζει όταν ο πελάτης το δέχεται: στείλτε <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip</span></code> και η απόκριση επιστρέφει ως <code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code>. Μετρημένο σε λίστα αγώνων: <strong>13,5 %</strong> του αρχικού μεγέθους στις χίλιες γραμμές, 14,6 % στις εκατό.</p>
+<p>Η συμπίεση δεν αλλάζει σε τίποτα τον σταδιακό χαρακτήρα της ροής — κάθε εγγραφή στέλνεται στον πελάτη όπως πριν, απλώς συμπιεσμένη στον δρόμο. Ισχύει μόνο για απαντήσεις NDJSON, JSON και κειμένου: μια εξαγωγή βάσης ή ένα δοχείο <code class="docutils literal notranslate"><span class="pre">.dbx</span></code> είναι ήδη συμπιεσμένο, και το εκ νέου gzip θα το μεγάλωνε μόνο. Το <code class="docutils literal notranslate"><span class="pre">Accept-Encoding:</span> <span class="pre">gzip;q=0</span></code> την αρνείται ρητά.</p>
+</section>
+<section id="un-seul-tenant-sur-sqlite">
+<h3>Ένας μόνο tenant σε SQLite<a class="headerlink" href="#un-seul-tenant-sur-sqlite" title="Link to this heading"></a></h3>
+<p>Το backend SQLite <strong>δεν</strong> έχει στήλη tenant: όλα τα δεδομένα βρίσκονται στους ίδιους πίνακες, χωρίς διαχωρισμό. Σε αυτό το backend ο δαίμονας αρνείται επομένως κάθε <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> εκτός του <code class="docutils literal notranslate"><span class="pre">1</span></code> — δεχόμενος τα υπόλοιπα θα σέρβιρε στον καθένα τις γραμμές όλων, πίσω από μια κεφαλίδα που ισχυρίζεται το αντίθετο. Μια εγκατάσταση με πραγματικά πολλούς tenants χρειάζεται το backend PostgreSQL.</p>
+</section>
+<section id="sauvegarde-et-restauration">
+<span id="headless-sauvegarde"></span><h3>Αντίγραφα ασφαλείας και επαναφορά<a class="headerlink" href="#sauvegarde-et-restauration" title="Link to this heading"></a></h3>
+<p>Τέσσερις κινήσεις, ανάλογα με το τι θέλουμε να ανακτήσουμε.</p>
+<p><strong>Τα πάντα, υπό PostgreSQL</strong> — το <code class="docutils literal notranslate"><span class="pre">pg_dump</span></code> είναι το εργαλείο, και το blunderDB δεν έχει τίποτα να προσθέσει:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pg_dump<span class="w"> </span>--format<span class="o">=</span>custom<span class="w"> </span>--file<span class="o">=</span>blunderdb.dump<span class="w"> </span><span class="s2">"postgres://…"</span>
+pg_restore<span class="w"> </span>--dbname<span class="o">=</span><span class="s2">"postgres://…"</span><span class="w"> </span>blunderdb.dump
+</pre></div>
+</div>
+<p><strong>Τα πάντα, με SQLite σε container</strong> — το αρχείο ανοίγει σε λειτουργία WAL (ο δαίμονας κωδικοποιεί το <code class="docutils literal notranslate"><span class="pre">journal_mode(WAL)</span></code> στη συμβολοσειρά σύνδεσής του, για όλες τις συνδέσεις του pool): δίπλα στο <code class="docutils literal notranslate"><span class="pre">blunderdb.db</span></code> ζουν ένα <code class="docutils literal notranslate"><span class="pre">-wal</span></code> και ένα <code class="docutils literal notranslate"><span class="pre">-shm</span></code>, και οι πιο πρόσφατες εγγραφές βρίσκονται στο <code class="docutils literal notranslate"><span class="pre">-wal</span></code>. Η αντιγραφή μόνο του <code class="docutils literal notranslate"><span class="pre">.db</span></code> ενός δαίμονα που τρέχει δίνει επομένως ένα ελλιπές αρχείο, χωρίς τίποτα να το επισημαίνει. Δύο ασφαλείς τρόποι:</p>
+<ul class="simple">
+<li><p><strong>σταματήστε τον δαίμονα, έπειτα αντιγράψτε ολόκληρο τον τόμο</strong> — στη διακοπή τα τρία αρχεία είναι συνεπή, και είναι ο τόμος, όχι το <code class="docutils literal notranslate"><span class="pre">.db</span></code> μόνο του, η μονάδα που φυλάσσεται·</p></li>
+<li><p><strong>μην αντιγράψετε καθόλου το αρχείο</strong>: το <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> (παρακάτω) γράφει ένα πλήρες <code class="docutils literal notranslate"><span class="pre">.db</span></code> ενώ ο δαίμονας τρέχει, και είναι η μόνη κίνηση που δεν απαιτεί καμία διακοπή.</p></li>
+</ul>
+<p>Το <code class="docutils literal notranslate"><span class="pre">/ops/maintenance.vacuum</span></code> όντως ενσωματώνει το WAL στο κύριο αρχείο πριν το ξαναγράψει, αλλά δεν παγώνει τη βάση: η εγγραφή που ακολουθεί ξαναρχίζει στο WAL. Είναι εντολή συμπύκνωσης, όχι μέθοδος αντιγράφου ασφαλείας.</p>
+<p><strong>Ένας tenant μόνος</strong> — το <code class="docutils literal notranslate"><span class="pre">/v1/exports.sqlite</span></code> γράφει τη βάση ενός tenant σε ένα συνηθισμένο αρχείο <code class="docutils literal notranslate"><span class="pre">.db</span></code>, αυτό που ανοίγει η εφαρμογή γραφείου:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8080/v1/exports.sqlite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 42"</span><span class="w"> </span>-o<span class="w"> </span>tenant-42.db
+</pre></div>
+</div>
+<p>Αυτή η εντολή εκτελείται <strong>στο μηχάνημα του δαίμονα</strong>: στοχεύει τον τοπικό ακροατή, παρακάμπτει τον proxy, και θέτει επομένως η ίδια την κεφαλίδα του tenant. Από έξω, ρωτάμε τον proxy, και ο tenant είναι αυτός του πιστοποιημένου λογαριασμού — η κεφαλίδα δεν δίνεται, ο proxy σβήνει εκείνη του πελάτη πριν εισαγάγει τη δική του:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-u<span class="w"> </span>alice:…<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://blunderdb.example.com/v1/exports.sqlite<span class="w"> </span>-o<span class="w"> </span>tenant-alice.db
+</pre></div>
+</div>
+<p><strong>Επαναφορά αυτού του αρχείου</strong> — το <code class="docutils literal notranslate"><span class="pre">migrate</span></code> το αντιγράφει στον tenant που ορίζετε:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>tenant-42.db<span class="w"> </span>--to<span class="w"> </span><span class="s2">"postgres://…"</span><span class="w"> </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">migrate</span></code> αρνείται να γράψει σε tenant που περιέχει ήδη κάτι, και λέει τι («128 θέσεις, 3 αγώνες»)· το <code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">skip</span></code> προχωρά παρ” όλα αυτά και αφήνει την αποδιπλοποίηση Zobrist να συγχωνεύσει τις θέσεις.</p>
+<p>Τι <strong>δεν</strong> αντιγράφει το <code class="docutils literal notranslate"><span class="pre">migrate</span></code>, και το ανακοινώνει στο τέλος με τον ακριβή αριθμό: τις τράπουλες Anki και τις κάρτες τους, τη βιβλιοθήκη φίλτρων, τα ιστορικά αναζήτησης και εντολών, και την κατάσταση συνεδρίας. Πρόκειται για δεδομένα χρήσης της εφαρμογής γραφείου· οι θέσεις στις οποίες παραπέμπουν έχουν όντως μεταφερθεί.</p>
+</section>
+<section id="le-poste-de-travail-et-le-serveur">
+<span id="headless-poste-serveur"></span><h3>Ο σταθμός εργασίας και ο διακομιστής<a class="headerlink" href="#le-poste-de-travail-et-le-serveur" title="Link to this heading"></a></h3>
+<p>Η εφαρμογή γραφείου ανοίγει <strong>αρχεία</strong> <code class="docutils literal notranslate"><span class="pre">.db</span></code>, όχι URL: δεν συνδέεται σε κανέναν δαίμονα <code class="docutils literal notranslate"><span class="pre">serve</span></code>, και δεν υπάρχει πουθενά πεδίο για να πληκτρολογήσετε μια διεύθυνση. Ο διακομιστής και ο σταθμός εργασίας ανταλλάσσουν αρχεία, με δύο συμμετρικές κινήσεις:</p>
+<ul class="simple">
+<li><p><strong>από τον διακομιστή προς τον σταθμό</strong> — το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/exports.sqlite</span></code> γράφει ολόκληρο τον τρέχοντα tenant σε ένα <code class="docutils literal notranslate"><span class="pre">.db</span></code> που η εφαρμογή γραφείου ανοίγει ως έχει (βλ. <a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">Αντίγραφα ασφαλείας και επαναφορά</span></a>)·</p></li>
+<li><p><strong>από τον σταθμό προς τον διακομιστή</strong> — το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> αντιγράφει ένα <code class="docutils literal notranslate"><span class="pre">.db</span></code> στον επιθυμητό tenant (βλ. <a class="reference internal" href="#headless-migrate"><span class="std std-ref">Μετανάστευση μιας βάσης SQLite προς PostgreSQL</span></a>).</p></li>
+</ul>
+<p>Δεν υπάρχει <strong>καμία ανάγνωση μεταξύ tenants</strong>. Ο διαχωρισμός είναι πλήρης: τίποτα από όσα αποθηκεύει ένα tenant δεν είναι ορατό σε άλλο, από καμία διαδρομή, και καμία κλήση δεν δέχεται tenant ως παράμετρο — κάθε αίτημα γνωρίζει μόνο εκείνο που του έθεσε ο proxy. Ένας προπονητής που θέλει να δει τους αγώνες των μαθητών του έχει επομένως δύο δρόμους, και οι δύο ρητοί:</p>
+<ul class="simple">
+<li><p>να του ανοίξει στον proxy έναν επιπλέον λογαριασμό, συνδεδεμένο με το tenant του μαθητή: είναι ο πίνακας αντιστοίχισης του proxy, ποτέ ο δαίμονας, που αποφασίζει ποιο tenant βλέπει μια συνεδρία·</p></li>
+<li><p>να του ζητήσει μια εξαγωγή — το <code class="docutils literal notranslate"><span class="pre">.db</span></code> που παράγει το <code class="docutils literal notranslate"><span class="pre">exports.sqlite</span></code> ή το παράθυρο εξαγωγής της εφαρμογής γραφείου — και να το ανοίξει στον δικό του σταθμό.</p></li>
+</ul>
+</section>
+<section id="deploiement-avec-docker">
+<h3>Ανάπτυξη με Docker<a class="headerlink" href="#deploiement-avec-docker" title="Link to this heading"></a></h3>
+<p>Το αποθετήριο παρέχει ένα <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> που κατασκευάζει μια ελάχιστη εικόνα κοντέινερ του δαίμονα: μεταγλωττίζεται μόνο το εκτελέσιμο <code class="docutils literal notranslate"><span class="pre">serve</span></code> (καθαρή Go, χωρίς γραφική διεπαφή και χωρίς CGO, άρα στατικά συνδεδεμένο), και στη συνέχεια τοποθετείται σε μια εικόνα <em>distroless</em>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># build</span>
+docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile.serve<span class="w"> </span>-t<span class="w"> </span>blunderdb-serve<span class="w"> </span>.
+
+<span class="c1"># run</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>blunderdb-serve
+</pre></div>
+</div>
+<p>Η κατασκευή ξεκινά από τη ρίζα του αποθετηρίου, και το προεπιλεγμένο backend της εικόνας είναι το <code class="docutils literal notranslate"><span class="pre">postgres</span></code>.</p>
+<p>Η εικόνα ακούει στη θύρα 8080 και διαμορφώνεται μέσω μεταβλητών περιβάλλοντος (<code class="docutils literal notranslate"><span class="pre">BLUNDERDB_BACKEND</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_DSN</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_RLS</span></code>). Δηλώνει ένα <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> που εκτελεί κάθε 30 δευτερόλεπτα <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> (ένα αίτημα στο <code class="docutils literal notranslate"><span class="pre">/readyz</span></code> — η εικόνα <em>distroless</em> δεν έχει ούτε <code class="docutils literal notranslate"><span class="pre">curl</span></code> ούτε κέλυφος): το <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">ps</span></code> δείχνει την κατάσταση <code class="docutils literal notranslate"><span class="pre">healthy</span></code> ή <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code> του container, και το Compose ή ένας ενορχηστρωτής μπορούν να περιμένουν να γίνει διαθέσιμος ο δαίμονας πριν ξεκινήσουν ό,τι εξαρτάται από αυτόν.</p>
+<section id="image-publiee">
+<span id="headless-docker-image"></span><h4>Δημοσιευμένη εικόνα<a class="headerlink" href="#image-publiee" title="Link to this heading"></a></h4>
+<p>Δεν χρειάζεται να κατασκευάσετε την εικόνα μόνοι σας: κάθε δημοσιευμένη έκδοση του blunderDB προωθεί τη δική της στο μητρώο του GitHub (GHCR), με το όνομα <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code>. Διατίθενται δύο ετικέτες: ο αριθμός της έκδοσης, παγιωμένος για πάντα σε αυτή την εικόνα, και <code class="docutils literal notranslate"><span class="pre">latest</span></code>, που ακολουθεί την τελευταία δημοσιευμένη έκδοση. Όλη η τεκμηρίωση τις σημειώνει <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span></code>: τη θέση του <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> παίρνει ο αριθμός μιας δημοσιευμένης έκδοσης, και αυτή η μορφή, ποτέ το <code class="docutils literal notranslate"><span class="pre">latest</span></code>, είναι εκείνη που καρφιτσώνει μια ανάπτυξη παραγωγής. Η εικόνα παρέχεται για <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> και <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>· το Docker επιλέγει την αρχιτεκτονική του υπολογιστή-υποδοχής.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull</span>
+docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># postgres</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span><span class="s2">"postgres://user:pass@host:5432/blunderdb?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+
+<span class="c1"># sqlite</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:8080:8080<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-v<span class="w"> </span>blunderdb-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_BACKEND</span><span class="o">=</span>sqlite<span class="w"> </span>-e<span class="w"> </span><span class="nv">BLUNDERDB_DSN</span><span class="o">=</span>/data/blunderdb.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>ghcr.io/kevung/blunderdb-serve:&lt;version&gt;
+</pre></div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">/data</span></code> είναι το σημείο προσάρτησης που ετοιμάζει η εικόνα, με τα δικαιώματα του μη προνομιούχου χρήστη της, και το <code class="docutils literal notranslate"><span class="pre">XDG_DATA_HOME</span></code> της: ο τόμος που προσαρτάται εκεί δεν χρησιμεύει μόνο για τη βάση, οι πίνακες bearoff υπολογίζονται εκεί μία φορά, στο <code class="docutils literal notranslate"><span class="pre">/data/blunderdb</span></code>, και ξαναβρίσκονται στις επόμενες εκκινήσεις. Χωρίς τόμο, υπολογίζονται ξανά σε κάθε εκκίνηση του container — μερικά δευτερόλεπτα — και ο δαίμονας το λέει κατά την εκκίνηση αν δεν μπορεί να τους γράψει (<em>could not prepare the bearoff tables; the exact regime will be unavailable</em>), οπότε εξυπηρετεί κανονικά, με μόνο το εκτιμώμενο καθεστώς στις θέσεις bearoff.</p>
+<p>Η εικόνα φέρει τις συνήθεις ετικέτες OCI (<code class="docutils literal notranslate"><span class="pre">org.opencontainers.image.source</span></code>, <code class="docutils literal notranslate"><span class="pre">.version</span></code>, <code class="docutils literal notranslate"><span class="pre">.revision</span></code>, <code class="docutils literal notranslate"><span class="pre">.licenses</span></code>): η <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> δείχνει από ποιο commit και ποια έκδοση προέρχεται. Κατασκευάζεται από τη συνεχή ενσωμάτωση με βάση το <code class="docutils literal notranslate"><span class="pre">Dockerfile.serve</span></code> του αποθετηρίου, ακριβώς όπως παραπάνω· η τοπική κατασκευή ή η λήψη της δημοσιευμένης εικόνας δίνουν το ίδιο εκτελέσιμο.</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p>Όπως και ο ίδιος ο δαίμονας, το κοντέινερ <strong>δεν εκτελεί καμία πιστοποίηση ταυτότητας</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a>): εμπιστεύεται την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> όπως τη λαμβάνει. Πρέπει να τοποθετείται πίσω από έναν reverse-proxy υπεύθυνο για την πιστοποίηση ταυτότητας, ο οποίος ορίζει ο ίδιος αυτήν την κεφαλίδα, και να μην εκτίθεται ποτέ απευθείας στο δημόσιο Διαδίκτυο. Τα παραδείγματα παραπάνω δημοσιεύουν τη θύρα μόνο στο <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> ακριβώς για αυτόν τον λόγο, και το <code class="docutils literal notranslate"><span class="pre">--addr</span></code> δεσμεύεται επίσης στο <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>: ο proxy βρίσκεται στο ίδιο μηχάνημα.</p>
+</div>
+</section>
+</section>
+<section id="deploiement-derriere-un-proxy-authentifiant">
+<span id="headless-proxy-deployment"></span><h3>Ανάπτυξη πίσω από έναν proxy πιστοποίησης ταυτότητας<a class="headerlink" href="#deploiement-derriere-un-proxy-authentifiant" title="Link to this heading"></a></h3>
+<p>Το <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md">ADR-0005</a> κάνει τον reverse-proxy <strong>ολόκληρο</strong> το όριο ασφαλείας του δαίμονα: μόνο αυτός πιστοποιεί τον καλούντα, μόνο αυτός έχει δικαίωμα να θέτει την κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, και πρέπει να <strong>αφαιρεί</strong> συστηματικά κάθε τιμή που στέλνει ο πελάτης πριν εισαγάγει τον πιστοποιημένο tenant — διαφορετικά οποιοσδήποτε μπορεί να υποδυθεί οποιοδήποτε tenant απλώς ονομάζοντάς το. Το μοντέλο απειλής χωράει σε μία φράση: ο δαίμονας προϋποθέτει ένα έμπιστο εσωτερικό δίκτυο, και όποιος τον προσεγγίζει απευθείας είναι, για αυτόν, ο tenant που ισχυρίζεται πως είναι. Το αποθετήριο παρέχει ένα πλήρες παράδειγμα, έτοιμο για εκτέλεση, στον κατάλογο <a class="reference external" href="https://github.com/kevung/blunderDB/tree/main/deploy">deploy/</a>. Ζει στο αποθετήριο git, όχι στην εικόνα container: πρέπει επομένως να <strong>κλωνοποιήσετε το αποθετήριο</strong>, ή να κατεβάσετε τα δύο αρχεία που παρατίθενται παρακάτω καθώς και το <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/.env.example">deploy/.env.example</a> στον ίδιο κατάλογο.</p>
+<p>Το αρχείο Compose τοποθετεί τον Caddy — πιστοποίηση HTTP Basic για επίδειξη — μπροστά από το <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> και την PostgreSQL, με ενεργοποιημένο το Row-Level Security. Μόνο ο Caddy δημοσιεύει θύρα: οι άλλες δύο υπηρεσίες ζουν σε ένα δίκτυο Docker δηλωμένο <code class="docutils literal notranslate"><span class="pre">internal:</span> <span class="pre">true</span></code>, που δεν έχει διαδρομή ούτε προς τον host ούτε προς το Internet, όποια <code class="docutils literal notranslate"><span class="pre">ports:</span></code> κι αν τους πρόσθετε μια μεταγενέστερη τροποποίηση.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">deploy/docker-compose.yml</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example deployment of `blunderdb serve` behind an authenticating reverse</span>
+<span class="c1"># proxy — the security model ADR-0005 requires and, until now, that no example</span>
+<span class="c1"># in this repository actually showed. See deploy/README.md for the threat</span>
+<span class="c1"># model and doc/source/mode_headless.rst for the full walkthrough.</span>
+<span class="c1">#</span>
+<span class="c1"># Try it from the repository root:</span>
+<span class="c1">#   POSTGRES_PASSWORD=changeme docker compose -f deploy/docker-compose.yml up -d --build</span>
+<span class="c1">#   curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'</span>
+<span class="c1">#   docker compose -f deploy/docker-compose.yml down -v</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy is the ENTIRE security boundary (ADR-0005): it is the only service</span>
+<span class="w">  </span><span class="c1"># with a published port, it authenticates every request, and it is the</span>
+<span class="w">  </span><span class="c1"># only thing allowed to set X-Tenant-ID — see Caddyfile. Any reverse proxy</span>
+<span class="w">  </span><span class="c1"># capable of stripping and re-setting a header works equally well; Caddy is</span>
+<span class="w">  </span><span class="c1"># used here for its one-file config and built-in Basic Auth with no extra</span>
+<span class="w">  </span><span class="c1"># modules. deploy/nginx-tenant-proxy.conf shows the equivalent nginx</span>
+<span class="w">  </span><span class="c1"># snippet for an existing nginx deployment.</span>
+<span class="w">  </span><span class="nt">caddy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy:2-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8080:80"</span><span class="w"> </span><span class="c1"># the ONLY port this compose project exposes to the host</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./Caddyfile:/etc/caddy/Caddyfile:ro</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-data:/data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">caddy-config:/config</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">edge</span><span class="w"> </span><span class="c1"># the published port lives here — "backend" is internal-only</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="c1"># No `ports:` here — on purpose (ADR-0005). The daemon performs no</span>
+<span class="w">  </span><span class="c1"># authentication of its own, so it must be reachable only from Caddy, over</span>
+<span class="w">  </span><span class="c1"># the "backend" network, and never published to the host.</span>
+<span class="w">  </span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">..</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile.serve</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_BACKEND</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_DSN</span><span class="p">:</span><span class="w"> </span><span class="s">"postgres://blunderdb:${POSTGRES_PASSWORD:?set</span><span class="nv"> </span><span class="s">POSTGRES_PASSWORD,</span><span class="nv"> </span><span class="s">see</span><span class="nv"> </span><span class="s">deploy/.env.example}@postgres:5432/blunderdb?sslmode=disable"</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_ADDR</span><span class="p">:</span><span class="w"> </span><span class="s">":8080"</span>
+<span class="w">      </span><span class="c1"># Row-Level Security: defence-in-depth *inside* the trust boundary</span>
+<span class="w">      </span><span class="c1"># Caddy draws above — it does not replace the proxy (ADR-0005).</span>
+<span class="w">      </span><span class="nt">BLUNDERDB_RLS</span><span class="p">:</span><span class="w"> </span><span class="s">"true"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># The bearoff tables are computed on first start and kept under</span>
+<span class="w">      </span><span class="c1"># $XDG_DATA_HOME/blunderdb, which the image sets to /data: without a</span>
+<span class="w">      </span><span class="c1"># volume they are recomputed at every restart of the container.</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb-data:/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_healthy</span>
+
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:16-alpine</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">blunderdb</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD, see deploy/.env.example}</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres-data:/var/lib/postgresql/data</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">    </span><span class="nt">healthcheck</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"CMD-SHELL"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"pg_isready</span><span class="nv"> </span><span class="s">-U</span><span class="nv"> </span><span class="s">blunderdb</span><span class="nv"> </span><span class="s">-d</span><span class="nv"> </span><span class="s">blunderdb"</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+<span class="w">      </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3s</span>
+<span class="w">      </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres-data</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Bearoff tables computed by blunderdb-serve on first start (see</span>
+<span class="w">  </span><span class="c1"># XDG_DATA_HOME above): a few megabytes, worth keeping across restarts.</span>
+<span class="w">  </span><span class="nt">blunderdb-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">caddy-config</span><span class="p">:</span>
+
+<span class="nt">networks</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Caddy's own network, carrying the one published port. A container on</span>
+<span class="w">  </span><span class="c1"># "backend" alone (blunderdb-serve, postgres) is never reachable through it.</span>
+<span class="w">  </span><span class="nt">edge</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">  </span><span class="c1"># internal: true means this network has no route to the outside world and</span>
+<span class="w">  </span><span class="c1"># accepts no published ports — blunderdb-serve and postgres can only ever</span>
+<span class="w">  </span><span class="c1"># be reached by another container attached to it (here, only Caddy),</span>
+<span class="w">  </span><span class="c1"># never from the host or the public internet, regardless of what `ports:`</span>
+<span class="w">  </span><span class="c1"># a future edit might add to either service.</span>
+<span class="w">  </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</div>
+<p>Το <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> πιστοποιεί, αντιστοιχίζει τον πιστοποιημένο λογαριασμό στον ακέραιο του tenant (<code class="docutils literal notranslate"><span class="pre">map</span></code>), και έπειτα τον εισάγει στο <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> <strong>αφού</strong> έχει σβήσει ρητά κάθε τιμή που έλαβε από τον πελάτη: ο φρουρός <code class="docutils literal notranslate"><span class="pre">header_up</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> προηγείται της εισαγωγής, ώστε μια κεφαλίδα σταλμένη από τον πελάτη να μην μπορεί να φτάσει στον δαίμονα, όποιες κι αν είναι οι μεταγενέστερες τροποποιήσεις του αρχείου.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">deploy/Caddyfile</span><a class="headerlink" href="#id2" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># Demonstration reverse-proxy for `blunderdb serve` (ADR-0005).
+#
+# This is the WHOLE security boundary of the daemon: it authenticates the
+# caller (here, HTTP Basic Auth — swap for forward_auth to a real identity
+# provider, or an OIDC plugin, in production) and is the only thing allowed
+# to set X-Tenant-ID. blunderdb-serve trusts that header completely and
+# performs no authentication of its own.
+#
+# Demo credentials — CHANGE THESE before using this anywhere but a laptop:
+#   alice / demo-password
+#   bob   / demo-password
+# Generate a real hash with:
+#   docker run --rm caddy:2-alpine caddy hash-password --plaintext '&lt;password&gt;'
+{
+	# This demo terminates plain HTTP on a fixed port instead of Caddy's
+	# automatic HTTPS, which needs a real public domain name to obtain a
+	# certificate for. Point a domain at this host, replace ":80" below with
+	# that domain, and delete these two lines to get HTTPS for free.
+	auto_https off
+	admin off
+}
+
+:80 {
+	basic_auth {
+		alice $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+		bob $2a$14$7yGnM3/IY8G/.mcBHMbDveecDQbnJnvHPcJQZcbWqn.H.mpttw9/.
+	}
+
+	# Map the authenticated login (Caddy sets {http.auth.user.id} once
+	# basic_auth succeeds) to the tenant's positive integer — the only
+	# spelling of X-Tenant-ID the daemon accepts (ADR-0005, amendment
+	# 2026-09-03). This is the identity-to-tenant mapping ADR-0005 says is
+	# the proxy's job: the daemon never sees "alice", only "1".
+	map {http.auth.user.id} {tenant_id} {
+		alice 1
+		bob 2
+		default 0
+	}
+
+	# Never reach the daemon's operator routes or its metrics through the
+	# public proxy: /ops/ (vacuum, tenant purge) acts beyond the calling
+	# tenant, /metrics needs no X-Tenant-ID and describes the whole daemon.
+	@private path /ops/* /metrics
+	respond @private 403
+
+	reverse_proxy blunderdb-serve:8080 {
+		# Guard, then inject: clear whatever the client sent BEFORE setting
+		# the authenticated value, so a client-supplied X-Tenant-ID can never
+		# reach the daemon no matter how this file is edited later — the
+		# second line is the only one that can still be in effect once both
+		# have run.
+		header_up X-Tenant-ID ""
+		header_up X-Tenant-ID {tenant_id}
+	}
+}
+</pre></div>
+</div>
+</div>
+<p>Δύο ακόμη αρχεία συμπληρώνουν τον κατάλογο: το <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/nginx-tenant-proxy.conf">deploy/nginx-tenant-proxy.conf</a> επαναλαμβάνει το ίδιο σχήμα σε απόσπασμα nginx (<code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">&quot;&quot;</span></code> και έπειτα <code class="docutils literal notranslate"><span class="pre">proxy_set_header</span> <span class="pre">X-Tenant-ID</span> <span class="pre">$tenant_id</span></code>, με το μπλοκ <code class="docutils literal notranslate"><span class="pre">map</span> <span class="pre">$remote_user</span> <span class="pre">$tenant_id</span></code>), για όποιον έχει ήδη έναν nginx σε λειτουργία· το <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/deploy/README.md">deploy/README.md</a> διατυπώνει το μοντέλο απειλής και ό,τι δεν πρέπει ποτέ να γίνει.</p>
+<p>Η πιστοποίηση HTTP Basic του <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code> είναι μια επίδειξη, όχι μια σύσταση παραγωγής: αντικαθίσταται με <code class="docutils literal notranslate"><span class="pre">forward_auth</span></code> προς έναν πραγματικό πάροχο ταυτότητας (OIDC, εταιρικό SSO…), ο οποίος πιστοποιεί και έπειτα μεταβιβάζει την ταυτότητα στο ίδιο σημείο του αρχείου. Τα δύο συνθηματικά και οι δύο λογαριασμοί του πίνακα αντιστοίχισης αντικαθίστανται ομοίως.</p>
+<p><strong>Πλήρες σενάριο, από το μηδέν έως έναν δαίμονα που απαντά:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/kevung/blunderDB.git
+<span class="nb">cd</span><span class="w"> </span>blunderDB/deploy
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">    </span><span class="c1"># POSTGRES_PASSWORD</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+
+<span class="c1"># 401</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+<span class="c1"># 200</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+curl<span class="w"> </span>-u<span class="w"> </span>alice:demo-password<span class="w"> </span>-H<span class="w"> </span><span class="s2">"X-Tenant-ID: 999"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>http://localhost:8080/v1/metadata.counts<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span>
+
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>blunderdb-serve
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>Το πρώτο αίτημα απορρίπτεται από τον Caddy, πριν καν φτάσει στον δαίμονα. Τα δύο επόμενα πιστοποιούνται ως «alice», που ο πίνακας αντιστοίχισης συνδέει με το tenant 1: επιστρέφουν το ίδιο σώμα (<code class="docutils literal notranslate"><span class="pre">{&quot;positions&quot;:0,&quot;analyses&quot;:0,&quot;matches&quot;:0,…}</span></code>) και το ημερολόγιο του δαίμονα φέρει <code class="docutils literal notranslate"><span class="pre">tenant=1</span></code> και για τα δύο — η τιμή 999 που έστειλε ο πελάτης δεν επέζησε από τον φρουρό του <code class="docutils literal notranslate"><span class="pre">Caddyfile</span></code>. Αυτό το σενάριο αναπαράχθηκε ως έχει.</p>
+<p>Για να τραβήξετε τη δημοσιευμένη εικόνα αντί να την κατασκευάσετε, αντικαταστήστε στο <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> τις τρεις γραμμές <code class="docutils literal notranslate"><span class="pre">build:</span></code> της υπηρεσίας <code class="docutils literal notranslate"><span class="pre">blunderdb-serve</span></code> με μία γραμμή <code class="docutils literal notranslate"><span class="pre">image:</span></code>, και έπειτα εκτελέστε <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span> <span class="pre">up</span> <span class="pre">-d</span></code> χωρίς <code class="docutils literal notranslate"><span class="pre">--build</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">blunderdb-serve</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/kevung/blunderdb-serve:&lt;version&gt;</span>
+<span class="w">  </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+</pre></div>
+</div>
+<p>Το αρχείο Compose δημοσιεύει τη θύρα του Caddy σε όλες τις διεπαφές (<code class="docutils literal notranslate"><span class="pre">8080:80</span></code>): αυτό περιμένει κανείς από έναν proxy, που υπάρχει ακριβώς για να τον φτάνουν. Αυτό που δεν πρέπει ποτέ να δημοσιεύεται είναι ο δαίμονας — και δεν δημοσιεύεται, δεν έχει κανένα <code class="docutils literal notranslate"><span class="pre">ports:</span></code>.</p>
+</section>
+<section id="mettre-a-jour-un-deploiement">
+<span id="headless-mise-a-jour"></span><h3>Ενημέρωση μιας ανάπτυξης<a class="headerlink" href="#mettre-a-jour-un-deploiement" title="Link to this heading"></a></h3>
+<p>Το σχήμα μεταναστεύει αυτόματα κατά την εκκίνηση, και αυτή η μετανάστευση είναι <strong>μονής κατεύθυνσης</strong>: μια βάση που μετανάστευσε σε πρόσφατο σχήμα δεν είναι πια αναγνώσιμη από παλαιότερη έκδοση του blunderDB (βλ. <a class="reference internal" href="annexe_db_scheme.html#annexe-db-migration"><span class="std std-ref">Παράρτημα: Σχήμα της βάσης δεδομένων</span></a>). Η σειρά των κινήσεων έχει επομένως σημασία.</p>
+<ol class="arabic simple">
+<li><p><strong>Πάρτε πρώτα αντίγραφο ασφαλείας</strong>, πριν από οτιδήποτε άλλο: είναι η μόνη οπισθοχώρηση (βλ. <a class="reference internal" href="#headless-sauvegarde"><span class="std std-ref">Αντίγραφα ασφαλείας και επαναφορά</span></a>).</p></li>
+<li><p><strong>Τραβήξτε την ετικέτα της έκδοσης που θέλετε</strong>, ποτέ το <code class="docutils literal notranslate"><span class="pre">latest</span></code> στην παραγωγή. Το <code class="docutils literal notranslate"><span class="pre">latest</span></code> ακολουθεί την τελευταία δημοσιευμένη έκδοση: η ανάπτυξη που το καρφιτσώνει αλλάζει έκδοση στο πέρασμα των επανεκκινήσεων, χωρίς κανείς να το έχει αποφασίσει και χωρίς το αντίγραφο ασφαλείας του βήματος 1 να είναι κατ” ανάγκη πρόσφατο.</p></li>
+<li><p><strong>Επανεκκινήστε τον δαίμονα</strong> με τη νέα εικόνα. Μεταναστεύει το σχήμα πριν εξυπηρετήσει το παραμικρό αίτημα· αν η μετανάστευση αποτύχει, σταματά με το σφάλμα αντί να εξυπηρετήσει μια βάση μεταναστευμένη κατά το ήμισυ.</p></li>
+<li><p><strong>Ελέγξτε τον ανιχνευτή διαθεσιμότητας.</strong> Το <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code> απαντά <code class="docutils literal notranslate"><span class="pre">200</span></code> και <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;ready&quot;,&quot;version&quot;:&quot;…&quot;}</span></code> όταν η αποθήκευση απαντά και το σχήμα της είναι αυτό του δυαδικού· <code class="docutils literal notranslate"><span class="pre">503</span></code> και <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;down&quot;}</span></code> όταν η βάση είναι απρόσιτη· <code class="docutils literal notranslate"><span class="pre">503</span></code> και <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:&quot;version_mismatch&quot;,&quot;version&quot;:&quot;…&quot;,&quot;expected&quot;:&quot;…&quot;}</span></code> όταν τα δύο σχήματα διαφέρουν — η απάντηση ονομάζει αυτό της βάσης και αυτό που περιμένει το δυαδικό. Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">healthcheck</span></code> δίνει την ίδια ετυμηγορία σε κωδικό επιστροφής.</p></li>
+</ol>
+<p>Ένα <code class="docutils literal notranslate"><span class="pre">version_mismatch</span></code> που επιμένει μετά την επανεκκίνηση σημαίνει οπισθοδρόμηση: ένα παλαιότερο δυαδικό μπροστά σε μια ήδη μεταναστευμένη βάση. Δεν υπάρχει καθοδική μετανάστευση· είναι το αντίγραφο ασφαλείας του βήματος 1 που πρέπει να επαναφερθεί.</p>
+</section>
+</section>
+<section id="backend-postgresql-et-multi-utilisateurs">
+<span id="headless-postgres"></span><h2>Backend PostgreSQL και πολλαπλοί χρήστες<a class="headerlink" href="#backend-postgresql-et-multi-utilisateurs" title="Link to this heading"></a></h2>
+<p>Για μια κοινόχρηστη ανάπτυξη, το blunderDB μπορεί να αποθηκεύει τα δεδομένα στο <strong>PostgreSQL</strong> αντί σε ένα αρχείο SQLite. Το backend επιλέγεται μέσω του <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">postgres</span></code> και της συμβολοσειράς σύνδεσης <code class="docutils literal notranslate"><span class="pre">--dsn</span></code>. Το σχήμα δημιουργείται και μεταναστεύεται αυτόματα κατά την εκκίνηση.</p>
+<p>Τα δεδομένα είναι <strong>διαχωρισμένα ανά tenant</strong> (μισθωτή): κάθε αίτημα φέρει το αναγνωριστικό του tenant του (κεφαλίδα <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>, ένας θετικός δεκαδικός ακέραιος όπως <code class="docutils literal notranslate"><span class="pre">1</span></code> ή <code class="docutils literal notranslate"><span class="pre">42</span></code>), κάτι που επιτρέπει σε πολλούς χρήστες να μοιράζονται την ίδια εγκατάσταση χωρίς να βλέπουν τα δεδομένα των άλλων. Ένα αναγνωριστικό που δεν είναι τέτοιος ακέραιος — ένα όνομα όπως <code class="docutils literal notranslate"><span class="pre">alice</span></code> ή <code class="docutils literal notranslate"><span class="pre">default</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">007</span></code> — απορρίπτεται με <code class="docutils literal notranslate"><span class="pre">400</span> <span class="pre">invalid</span></code>: ο reverse-proxy είναι αυτός που αντιστοιχίζει έναν λογαριασμό στον ακέραιό του, ο δαίμονας δεν μαντεύει ποτέ.</p>
+<section id="row-level-security">
+<h3>Row-Level Security<a class="headerlink" href="#row-level-security" title="Link to this heading"></a></h3>
+<p>Η επιλογή <code class="docutils literal notranslate"><span class="pre">--rls</span></code> ενεργοποιεί επιπλέον το <strong>Row-Level Security</strong> της PostgreSQL. Σε κάθε εκκίνηση, ο δαίμονας εγκαθιστά σε κάθε πίνακα που φέρει <code class="docutils literal notranslate"><span class="pre">tenant_id</span></code> μια πολιτική <code class="docutils literal notranslate"><span class="pre">tenant_isolation</span></code> που αφήνει να περάσουν μόνο οι γραμμές του tenant το οποίο ονομάζει η παράμετρος συνεδρίας <code class="docutils literal notranslate"><span class="pre">current_setting('app.tenant_id')</span></code>, και την επιβάλλει μέχρι και στον ιδιοκτήτη του πίνακα (<code class="docutils literal notranslate"><span class="pre">FORCE</span> <span class="pre">ROW</span> <span class="pre">LEVEL</span> <span class="pre">SECURITY</span></code>). Η παράμετρος αυτή τίθεται στη σύνδεση όταν βγαίνει από το pool και μηδενίζεται όταν επιστρέφει· μια σύνδεση χωρίς tenant δεν βλέπει καμία γραμμή και δεν εισάγει καμία. Πρόκειται για προαιρετική άμυνα σε βάθος, απενεργοποιημένη από προεπιλογή: το φιλτράρισμα ανά tenant του κώδικα της εφαρμογής παραμένει στη θέση του και στις δύο περιπτώσεις.</p>
+<ul class="simple">
+<li><p><strong>Ο ρόλος σύνδεσης πρέπει να είναι συνηθισμένος</strong>: ούτε υπερχρήστης, ούτε <code class="docutils literal notranslate"><span class="pre">BYPASSRLS</span></code>. Η PostgreSQL αφήνει αυτούς τους δύο να διαπερνούν όλες τις πολιτικές χωρίς λέξη, και η απομόνωση ξαναγίνεται αυτή του κώδικα της εφαρμογής και μόνο. Ο ίδιος ρόλος πρέπει αντιθέτως να κατέχει τους πίνακες, αφού αυτός εκτελεί τα <code class="docutils literal notranslate"><span class="pre">ALTER</span> <span class="pre">TABLE</span></code> και τα <code class="docutils literal notranslate"><span class="pre">CREATE</span> <span class="pre">POLICY</span></code>.</p></li>
+<li><p><strong>Σε μια ήδη γεμάτη βάση δεν υπάρχει τίποτα να μεταναστεύσει</strong>: η τοποθέτηση των πολιτικών είναι ιδεμποτικό DDL, που ξαναπαίζεται σε κάθε εκκίνηση μετά τη μετανάστευση του σχήματος. Κανένα δεδομένο δεν μετακινείται, καμία γραμμή δεν ξαναγράφεται· η ενεργοποίηση ή η αφαίρεση του <code class="docutils literal notranslate"><span class="pre">--rls</span></code> είναι απλώς μια επανεκκίνηση.</p></li>
+<li><p><strong>Το κόστος είναι μετρημένο</strong>: στην ανάγνωση μιας θέσης, 101,8 µs χωρίς, 177,0 µs με, δηλαδή <strong>+73,8 %</strong> — ίδιο container, ίδιες γραμμές, δύο pools που διαφέρουν μόνο ως προς αυτή τη σημαία. Πληρώνεται σε κάθε δανεισμό σύνδεσης από το pool (τοποθέτηση και έπειτα μηδενισμός της παραμέτρου) και στο κατηγόρημα που διασχίζει επιπλέον κάθε ερώτημα, ποτέ στον όγκο των δεδομένων.</p></li>
+</ul>
+</section>
+<section id="ouvrir-et-fermer-un-tenant">
+<h3>Άνοιγμα και κλείσιμο ενός tenant<a class="headerlink" href="#ouvrir-et-fermer-un-tenant" title="Link to this heading"></a></h3>
+<p>Δεν υπάρχει <strong>τίποτα να δημιουργηθεί</strong> από την πλευρά του διακομιστή: ένα tenant δεν είναι εγγραφή, είναι ο ακέραιος που φέρουν οι γραμμές του. Η βάση δεν έχει πίνακα tenants και ο δαίμονας δεν κρατά καμία λίστα — το άνοιγμα ενός λογαριασμού είναι η προσθήκη μιας εγγραφής στον πίνακα αντιστοίχισης του proxy, και η πρώτη εγγραφή του μέλους κάνει το tenant του να υπάρξει.</p>
+<p>Ένα κενό tenant απαντά όπως μια κενή βάση, χωρίς σφάλμα: το <code class="docutils literal notranslate"><span class="pre">metadata.counts</span></code> επιστρέφει μηδενικά και οι λίστες δεν επιστρέφουν τίποτα.</p>
+<p>Όταν ένα tenant καταργείται, το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/tenant.purge</span></code> διαγράφει οριστικά όλα τα δεδομένα του (θέσεις, αγώνες, συλλογές, ιστορικό κ.λπ.) για το τρέχον tenant (αυτό που φέρει το <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code>), <strong>καθώς και την κατάσταση συνεδρίας του</strong> (τελευταία αναζήτηση, τελευταία θέση, ανοιχτές καρτέλες — τις γραμμές του πίνακα <code class="docutils literal notranslate"><span class="pre">session_state</span></code> που φέρουν αυτό το tenant): η λειτουργία εκτελείται σε μία μοναδική συναλλαγή, είναι ιδεμποτική (κανένα σφάλμα κατά την εκκαθάριση ενός ήδη κενού tenant ή κατά την επανάληψη της κλήσης) και δεν επηρεάζει κανένα άλλο tenant. Σβήνει τις γραμμές αυτού του tenant σε <strong>όλους</strong> τους πίνακες που φέρουν ένα, και αφήνει μόνο ό,τι δεν ανήκει σε κανέναν: τον πίνακα <code class="docutils literal notranslate"><span class="pre">metadata</span></code>, με την καθολική του γραμμή έκδοσης σχήματος, και το ημερολόγιο των μεταναστεύσεων. Το εκκαθαρισμένο tenant ξαναγίνεται επομένως ακριβώς ένα κενό tenant, και ο ακέραιός του ξαναδίνεται. Είναι διαθέσιμη μόνο με το backend PostgreSQL — επιστρέφει σφάλμα <code class="docutils literal notranslate"><span class="pre">invalid</span></code> σε ένα backend SQLite, το οποίο δεν έχει έννοια tenant.</p>
+</section>
+<section id="compactage-et-pool-de-connexions">
+<h3>Συμπύκνωση και pool συνδέσεων<a class="headerlink" href="#compactage-et-pool-de-connexions" title="Link to this heading"></a></h3>
+<p>Το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/ops/maintenance.vacuum</span></code> συμπυκνώνει το αρχείο SQLite του δαίμονα — το αντίστοιχο του κουμπιού «Συμπύκνωση βάσης» της γραφικής διεπαφής και της εντολής <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> (βλ. <a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>), με τον ίδιο έλεγχο χώρου δίσκου — και επιστρέφει τα μεγέθη πριν και μετά (<code class="docutils literal notranslate"><span class="pre">sizeBefore</span></code>, <code class="docutils literal notranslate"><span class="pre">sizeAfter</span></code>, σε bytes). Είναι διαθέσιμη μόνο με το backend SQLite· στην PostgreSQL, που δεν έχει αρχείο προς συμπύκνωση, επιστρέφει σφάλμα <code class="docutils literal notranslate"><span class="pre">invalid</span></code>.</p>
+<p>Η δεξαμενή συνδέσεων PostgreSQL ρυθμίζεται μέσω μεταβλητών περιβάλλοντος: <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONNS</span></code> (50 από προεπιλογή), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MIN_CONNS</span></code> (5), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_LIFETIME</span></code> (<code class="docutils literal notranslate"><span class="pre">1h</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_HEALTH_CHECK_PERIOD</span></code> (<code class="docutils literal notranslate"><span class="pre">30s</span></code>), <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_CONNECT_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">5s</span></code> — πέραν αυτού, μια μη προσβάσιμη βάση δεδομένων αποτυγχάνει γρήγορα αντί να παραμένει σε αναμονή στο χρονικό όριο TCP του λειτουργικού συστήματος) και <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_POSTGRES_MAX_CONN_IDLE_TIME</span></code> (<code class="docutils literal notranslate"><span class="pre">30m</span></code> — μια σύνδεση που ανοίχθηκε για μια αιχμή κίνησης δεν παραμένει επ” αόριστον στη δεξαμενή μετά το πέρας της αιχμής). Κάθε τιμή είναι μια διάρκεια σε μορφή Go (<code class="docutils literal notranslate"><span class="pre">5s</span></code>, <code class="docutils literal notranslate"><span class="pre">30m</span></code>, <code class="docutils literal notranslate"><span class="pre">1h</span></code>)· αν λείπει ή είναι εσφαλμένη, χρησιμοποιείται η προεπιλογή. Όταν το <code class="docutils literal notranslate"><span class="pre">--metrics</span></code> είναι ενεργό, η κατάσταση της δεξαμενής εκτίθεται συνεχώς στο <code class="docutils literal notranslate"><span class="pre">/metrics</span></code>: <code class="docutils literal notranslate"><span class="pre">blunderdb_pg_pool_acquired</span></code> (συνδέσεις σε χρήση αυτή τη στιγμή), <code class="docutils literal notranslate"><span class="pre">_idle</span></code> (διαθέσιμες), <code class="docutils literal notranslate"><span class="pre">_max</span></code> (το ρυθμισμένο ανώτατο όριο) και <code class="docutils literal notranslate"><span class="pre">_wait_count</span></code> (ο αθροιστικός αριθμός κλήσεων <code class="docutils literal notranslate"><span class="pre">Acquire</span></code> που χρειάστηκε να περιμένουν μια ελεύθερη σύνδεση).</p>
+</section>
+</section>
+<section id="migrer-une-base-sqlite-vers-postgresql">
+<span id="headless-migrate"></span><h2>Μετανάστευση μιας βάσης SQLite προς PostgreSQL<a class="headerlink" href="#migrer-une-base-sqlite-vers-postgresql" title="Link to this heading"></a></h2>
+<p>Το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">migrate</span></code> αντιγράφει μια βάση SQLite ενός χρήστη σε ένα backend PostgreSQL, κάτω από έναν επιλεγμένο tenant — τον ακέραιο που ο reverse-proxy θα στέλνει στο <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> για αυτόν τον χρήστη — είναι ο δρόμος για να « ανεβάσετε » μια βιβλιοθήκη επιφάνειας εργασίας σε μια εγκατάσταση διακομιστή.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>blunderdb<span class="w"> </span>migrate<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--to<span class="w">   </span><span class="s2">"postgres://user:pass@host:5432/db?sslmode=disable"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span>
+
+<span class="c1"># --dry-run</span>
+blunderdb<span class="w"> </span>migrate<span class="w"> </span>--from<span class="w"> </span>sqlite:///path/to/database.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--tenant-id<span class="w"> </span><span class="m">42</span><span class="w"> </span>--dry-run
+</pre></div>
+</div>
+<p>Η μετανάστευση αντιγράφει τις <strong>θέσεις, τις αναλύσεις και τα σχόλιά τους, τους αγώνες (παρτίδες + κινήσεις), τα τουρνουά (με τους συνδέσμους αγώνων τους) και τις συλλογές (με τη σύνθεσή τους)</strong>, επανεκχωρώντας τα πρωτεύοντα και ξένα κλειδιά, όλα μέσα σε μια <strong>μοναδική συναλλαγή</strong> στην πλευρά προορισμού: η λειτουργία είναι ατομική (μια αποτυχία αφήνει τον προορισμό ανέπαφο, αρκεί να την ξεκινήσετε ξανά). Η πρόοδος και ο τελικός απολογισμός εκπέμπονται σε NDJSON στην τυπική έξοδο. Αν η βάση προέλευσης είναι αρκετά παλιά ώστε να χρειάζεται τη δική της επιτόπια αναβάθμιση σχήματος, αυτή εκτελείται πρώτη και εκπέμπει τα δικά της συμβάντα <code class="docutils literal notranslate"><span class="pre">&quot;schema-migration&quot;</span></code> (φάση/ολοκληρωμένα/σύνολο) πριν ξεκινήσει η αντιγραφή γραμμή προς γραμμή.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 31.6%" />
+<col style="width: 15.8%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--from</span> <span class="pre">&lt;uri&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>βάση SQLite πηγής (<code class="docutils literal notranslate"><span class="pre">sqlite:///&lt;chemin&gt;</span></code> ή μια απλή διαδρομή)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--to</span> <span class="pre">&lt;dsn&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>DSN PostgreSQL προορισμού (<code class="docutils literal notranslate"><span class="pre">postgres://…</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--tenant-id</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>tenant προορισμού, ένας θετικός δεκαδικός ακέραιος (υποχρεωτικό εκτός από <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> · ένα όνομα όπως <code class="docutils literal notranslate"><span class="pre">mon-tenant</span></code> απορρίπτεται)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--dry-run</span></code></p></td>
+<td><p>–</p></td>
+<td><p>μετρά τι θα αντιγραφόταν χωρίς να γράψει τίποτα</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--on-conflict</span> <span class="pre">&lt;politique&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> διακόπτει αν ο tenant έχει ήδη δεδομένα· το <code class="docutils literal notranslate"><span class="pre">skip</span></code> συγχωνεύει (αφαίρεση διπλότυπων θέσεων μέσω hash Zobrist)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Δεν μεταναστεύονται (ακόμη) οι καταστάσεις της εφαρμογής: decks/κάρτες Anki, βιβλιοθήκη φίλτρων, ιστορικό αναζήτησης και εντολών, και μεταδεδομένα συνεδρίας. Η προτεραιότητα είναι η μετανάστευση της βιβλιοθήκης θέσεων και του ιστορικού αγώνων.</p>
+</div>
+</section>
+<section id="le-dispatcher-generique-call">
+<span id="headless-call"></span><h2>Ο γενικός dispatcher <code class="docutils literal notranslate"><span class="pre">call</span></code><a class="headerlink" href="#le-dispatcher-generique-call" title="Link to this heading"></a></h2>
+<p>Συμπληρωματικά προς τις ιστορικές υποεντολές (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Διεπαφή γραμμής εντολών (CLI)</span></a>), το <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">call</span></code> εκθέτει <strong>όλες</strong> τις λειτουργίες αποθήκευσης απευθείας, τοπικά. Περνά από τους ίδιους χειριστές με τον δαίμονα <code class="docutils literal notranslate"><span class="pre">serve</span></code>: η συμπεριφορά είναι επομένως πανομοιότυπη με το <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/v1/&lt;famille&gt;.&lt;méthode&gt;</span></code>. Είναι χρήσιμο για το scripting και τις δοκιμές ολοκλήρωσης.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># --list</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>--list
+
+<span class="c1"># read</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>metadata.counts<span class="w"> </span>--db<span class="w"> </span>database.db
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.list<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"limit":10}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.get<span class="w">     </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":1}'</span>
+
+<span class="c1"># write</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>positions.save<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"position":{...}}'</span>
+blunderdb<span class="w"> </span>call<span class="w"> </span>matches.delete<span class="w">  </span>--db<span class="w"> </span>database.db<span class="w"> </span>--json<span class="w"> </span><span class="s1">'{"id":42}'</span>
+</pre></div>
+</div>
+<p><strong>Επιλογές:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.9%" />
+<col style="width: 18.4%" />
+<col style="width: 52.6%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επιλογή</p></th>
+<th class="head"><p>Προεπιλογή</p></th>
+<th class="head"><p>Σημασία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--db</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>αρχείο SQLite (συντόμευση για <code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">sqlite</span> <span class="pre">--dsn</span> <span class="pre">&lt;chemin&gt;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--backend</span> <span class="pre">&lt;type&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sqlite</span></code> ή <code class="docutils literal notranslate"><span class="pre">postgres</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--dsn</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$BLUNDERDB_DSN</span></code></p></td>
+<td><p>συμβολοσειρά σύνδεσης του backend</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--scope</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>tenant, ένας θετικός δεκαδικός ακέραιος (αποστέλλεται ως <code class="docutils literal notranslate"><span class="pre">X-Tenant-ID</span></code> · ένα όνομα όπως <code class="docutils literal notranslate"><span class="pre">alice</span></code> απορρίπτεται)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--json</span> <span class="pre">&lt;chaîne&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>σώμα του αιτήματος σε μορφή JSON</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">--json-file</span> <span class="pre">&lt;chemin&gt;</span></code></p></td>
+<td><p>–</p></td>
+<td><p>διαβάζει το σώμα του αιτήματος από ένα αρχείο</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">--list</span></code></p></td>
+<td><p>–</p></td>
+<td><p>εμφανίζει όλες τις μεθόδους <code class="docutils literal notranslate"><span class="pre">&lt;famille&gt;.&lt;méthode&gt;</span></code> και τερματίζει</p></td>
+</tr>
+</tbody>
+</table>
+<p>Η απάντηση JSON (ή η ροή NDJSON για τα σημεία πρόσβασης <code class="docutils literal notranslate"><span class="pre">*.list</span></code>) γράφεται στην τυπική έξοδο. Σε περίπτωση σφάλματος, η διεργασία τερματίζεται με μη μηδενικό κωδικό και ο φάκελος <code class="docutils literal notranslate"><span class="pre">{&quot;error&quot;:{…}}</span></code> εκτυπώνεται στην τυπική έξοδο ώστε να παραμένει αναλύσιμος (για παράδειγμα με το <code class="docutils literal notranslate"><span class="pre">jq</span></code>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="Συχνές ερωτήσεις (FAQ)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_reference.html" class="btn btn-neutral float-right" title="Σύμβαση API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tietoja &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="prev" title="Versiohistoria" href="historique.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/a_propos.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/a_propos.html" lang="en" hreflang="en">English</a>
+  <a href="../de/a_propos.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/a_propos.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/a_propos.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/a_propos.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/a_propos.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/a_propos.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tietoja</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contacts">Yhteystiedot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faire-un-don">Lahjoita</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remerciements">Kiitokset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#credits">Kiitokset kolmansille osapuolille</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tietoja</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="a-propos">
+<span id="id1"></span><h1>Tietoja<a class="headerlink" href="#a-propos" title="Link to this heading"></a></h1>
+<section id="contacts">
+<span id="id2"></span><h2>Yhteystiedot<a class="headerlink" href="#contacts" title="Link to this heading"></a></h2>
+<p>Tekijä: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Minut tavoittaa myös Heroes-palvelusta käyttäjänimellä postmanpat.</p>
+<p>Kehitin blunderDB:n alun perin omaan käyttööni voidakseni havaita toistuvia kaavoja virheissäni. On kuitenkin hyvin palkitsevaa saada palautetta, etenkin kun on käyttänyt paljon tunteja suunnitteluun, koodaukseen ja virheenkorjaukseen… Älä siis epäröi ottaa yhteyttä ja jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta.</p>
+<p>Tässä useita tapoja keskustella:</p>
+<ul class="simple">
+<li><p>liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En</p></li>
+<li><p>lähetä minulle sähköpostia osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>,</p></li>
+<li><p>keskustele kanssani, jos tapaamme turnauksessa,</p></li>
+<li><p>GitHubissa,</p>
+<ul>
+<li><p>avaa tiketti: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>virhekorjauksia tai parannusehdotuksia varten luo pull request.</p></li>
+</ul>
+</li>
+</ul>
+<p>Avoimet tiketit on ryhmitelty GitHubissa <a class="reference external" href="https://github.com/kevung/blunderDB/milestones">virstanpylväiden</a> mukaan. Ideoista keskustellaan <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions-osion Ideas-kategoriassa</a>, ja jokainen julkaistu versio ilmoitetaan <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">Announcements-kategoriassa</a>.</p>
+</section>
+<section id="faire-un-don">
+<h2>Lahjoita<a class="headerlink" href="#faire-un-don" title="Link to this heading"></a></h2>
+<p>Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa kehitystä, voit</p>
+<ul class="simple">
+<li><p>tarjota minulle juoman, jos meillä on ilo tavata!</p></li>
+<li><p>tehdä pienen lahjoituksen PayPalilla osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h2>Kiitokset<a class="headerlink" href="#remerciements" title="Link to this heading"></a></h2>
+<p>Omistan tämän pienen ohjelman kumppanilleni Anne-Clairelle ja rakkaalle tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia ystäviä:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em>, joka johdatti minut backgammonin pariin ilolla ja ystävällisyydellä; joka näyttää tien tämän upean pelin ymmärtämiseen; ja joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata paremmin huolimatta.</p></li>
+<li><p><em>Nicolas Harmand</em>, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai backgammon-tartunnan.</p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>Kiitokset kolmansille osapuolille<a class="headerlink" href="#credits" title="Link to this heading"></a></h2>
+<p>blunderDB sisältää muiden ihmisten koodia, dataa ja fontteja. Täydellinen luettelo lisenssiteksteineen on tiedosto <code class="docutils literal notranslate"><span class="pre">THIRD_PARTY.md</span></code>, joka toimitetaan jokaisen paketin mukana (<code class="docutils literal notranslate"><span class="pre">/usr/share/doc/blunderdb/</span></code>) ja on <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md">tietovaraston</a> juuressa. Olennaisin:</p>
+<ul class="simple">
+<li><p>neuroverkko <code class="docutils literal notranslate"><span class="pre">strehl-prob5-512-512-256-128</span></code> on <em>Alexander Strehlin</em> työtä (<a class="reference external" href="https://github.com/alexstrehl/backgammon-ai-engine">alexstrehl/backgammon-ai-engine</a>, MIT-lisenssi); haku, tuplausmalli ja otteluekvivalenssitaulukko sen ympärillä ovat <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a>-projektin omaa kokoonpanoa (MIT);</p></li>
+<li><p>Kazaross-XG2-otteluekvivalenssitaulukko on <em>Neil Kazarossin</em> työtä;</p></li>
+<li><p>take point- ja gammon-arvotaulukot on otettu <em>Dirk Schiemannin</em> kirjasta <em>The Theory of Backgammon</em>;</p></li>
+<li><p>yksipuolisen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolisen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiotuomioita varten) bearoff-taulukon laskee blunderDB itse portaamalla <a class="reference external" href="https://www.gnu.org/software/gnubg/">GNU Backgammonin</a> <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>-työkalun; tulos on tavu tavulta sama kuin gnubg:n, ja sen SHA-256-tiiviste toimii vertailukohtana. GNUbg on GPL-lisensoitu vapaa ohjelmisto;</p></li>
+<li><p>ottelutiedostot luetaan kirjastoilla <a class="reference external" href="https://github.com/kevung/xgparser">xgparser</a>, <a class="reference external" href="https://github.com/kevung/gnubgparser">gnubgparser</a> ja <a class="reference external" href="https://github.com/kevung/bgfparser">bgfparser</a> (MIT);</p></li>
+<li><p>Go-puolella: <a class="reference external" href="https://gitlab.com/cznic/sqlite">modernc.org/sqlite</a> (BSD-3-Clause), <a class="reference external" href="https://github.com/jackc/pgx">pgx</a>, <a class="reference external" href="https://wails.io">Wails</a> ja <a class="reference external" href="https://github.com/open-spaced-repetition/go-fsrs">go-fsrs</a> (MIT);</p></li>
+<li><p>käyttöliittymän puolella: <a class="reference external" href="https://svelte.dev">Svelte</a>, <a class="reference external" href="https://two.js.org">two.js</a>, <a class="reference external" href="https://www.chartjs.org">Chart.js</a> ja <a class="reference external" href="https://driverjs.com">driver.js</a> (MIT);</p></li>
+<li><p>fontit <a class="reference external" href="https://github.com/googlefonts/nunito">Nunito</a> ja <a class="reference external" href="https://fonts.google.com/noto/specimen/Noto+Sans+JP">Noto Sans JP</a> (SIL Open Font License 1.1).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="historique.html" class="btn btn-neutral float-left" title="Versiohistoria" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

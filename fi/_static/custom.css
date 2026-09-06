@@ -1,0 +1,39 @@
+.align-center-table td:nth-child(1),
+.align-center-table th:nth-child(1),
+.align-center-table td:nth-child(2),
+.align-center-table th:nth-child(2) {
+   text-align: center;
+}
+
+.align-center-table td:nth-child(3),
+.align-center-table th:nth-child(3) {
+   text-align: left;
+}
+
+/* Language switcher (see _templates/layout.html): under the search box, in
+   the dark sidebar header, every language in its own name, the current one
+   marked and not a link. Wraps on narrow sidebars instead of overflowing. */
+.wy-side-nav-search .lang-switcher {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 0.1em 0.7em;
+   margin-top: 0.6em;
+   font-size: 0.85em;
+   line-height: 1.6;
+}
+.wy-side-nav-search .lang-switcher a {
+   color: #fcfcfc;
+   opacity: 0.8;
+   text-decoration: none;
+}
+.wy-side-nav-search .lang-switcher a:hover {
+   opacity: 1;
+   text-decoration: underline;
+}
+.wy-side-nav-search .lang-switcher .current {
+   color: #fcfcfc;
+   font-weight: bold;
+   border-bottom: 2px solid #fcfcfc;
+}
+

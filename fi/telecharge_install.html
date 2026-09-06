@@ -1,0 +1,334 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lataaminen ja asentaminen &mdash; blunderDB 0.36.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=495190e6"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="Käyttöopas" href="guide_utilisateur.html" />
+    <link rel="prev" title="blunderDB" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Kielet">
+  <a href="../fr/telecharge_install.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/telecharge_install.html" lang="en" hreflang="en">English</a>
+  <a href="../de/telecharge_install.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/telecharge_install.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/telecharge_install.html" lang="es" hreflang="es">Español</a>
+  <span class="current" lang="fi" aria-current="true">Suomi</span>
+  <a href="../it/telecharge_install.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/telecharge_install.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/telecharge_install.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Aloitus</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Lataaminen ja asentaminen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quel-fichier-choisir">Minkä tiedoston valitsen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-un-telechargement">Latauksen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-sous-linux">Asentaminen Linuxiin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#paquets-natifs-deb-rpm">Natiivipaketit (.deb / .rpm)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#arch-linux-aur">Arch Linux (AUR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flatpak">Flatpak</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-tar-gz">.tar.gz-arkisto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#binaire-brut-methode-avancee">Raaka binääri (edistynyt menetelmä)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image-docker-mode-serveur">Docker-levykuva (palvelintila)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manifestes-winget-et-homebrew">winget- ja Homebrew-manifestit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avertissements-windows-et-mac">Windows- ja Mac-varoitukset</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Käyttöopas</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Viiteopas</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Sanasto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Headless-tila (palvelin)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API-sopimus</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Liitteet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Versiohistoria</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Tietoja</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Lataaminen ja asentaminen</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="telechargement-et-installation">
+<span id="telecharge-install"></span><h1>Lataaminen ja asentaminen<a class="headerlink" href="#telechargement-et-installation" title="Link to this heading"></a></h1>
+<p>blunderDB on yksittäinen suoritettava tiedosto, joka ei vaadi asennusta.</p>
+<p>Uusin blunderDB-versio on saatavilla MIT-lisenssillä:</p>
+<ul>
+<li><p>Windowsille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.36.0.exe">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.36.0.exe</a></p>
+<p>Ensimmäisellä käynnistyskerralla Windows näyttää SmartScreen-varoituksen (”Windows suojasi tietokoneesi”). Tämä on odotettua: suoritettavaa tiedostoa ei ole allekirjoitettu digitaalisesti. Katso <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-ref">mitä tehdä</span></a>.</p>
+</li>
+<li><p>Linuxille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0</a></p></li>
+<li><p>Macille: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.36.0.zip">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.36.0.zip</a></p>
+<p>macOS näyttää vastaavan varoituksen samasta syystä: katso <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-ref">mitä tehdä</span></a>.</p>
+</li>
+</ul>
+<p>Voit myös ladata tämän dokumentaation PDF-muodossa offline-käyttöä varten: <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.36.0-fi.pdf">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-0.36.0-fi.pdf</a></p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB käyttää Webview2:ta graafisen käyttöliittymän piirtämiseen. On todennäköistä, että Webview2 on jo valmiiksi asennettuna käyttöjärjestelmässäsi. Jos näin ei ole, blunderDB:n ensimmäinen suorituskerta tarjoaa sen lataamista ja asentamista. Käyttäjältä ei odoteta mitään toimenpiteitä.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Niin ikään ensimmäisellä käynnistyskerralla blunderDB laskee taustalla ne kaksi bearoff-taulukkoa, joita Eval-paneeli käyttää: noin kuusi sekuntia yhdellä ytimellä, mitään kysymättä, ja sovellusta voi käyttää normaalisti sillä aikaa. Katso <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">asetusten Bearoff-välilehti</span></a>.</p>
+</div>
+<section id="quel-fichier-choisir">
+<h2>Minkä tiedoston valitsen?<a class="headerlink" href="#quel-fichier-choisir" title="Link to this heading"></a></h2>
+<p>Jokaisen <a class="reference external" href="https://github.com/kevung/blunderDB/releases">julkaisusivulla</a> julkaistun version mukana on kolmisenkymmentä tiedostoa. Alla oleva taulukko kertoo, mikä niistä sopii järjestelmällesi; korvaa <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> versionumerolla.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24.0%" />
+<col style="width: 34.0%" />
+<col style="width: 42.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Järjestelmä</p></th>
+<th class="head"><p>Tiedosto</p></th>
+<th class="head"><p>Asennus</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Windows</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-windows-x.y.z.exe</span></code></p></td>
+<td><p>Suorita suoraan, ei asennusta</p></td>
+</tr>
+<tr class="row-odd"><td><p>macOS (Intel ja Apple Silicon)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-macos-x.y.z.zip</span></code></p></td>
+<td><p>Pura ja vedä <code class="docutils literal notranslate"><span class="pre">blunderDB.app</span></code> <em>Ohjelmat</em>-kansioon</p></td>
+</tr>
+<tr class="row-even"><td><p>Debian, Ubuntu, Linux Mint</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb_x.y.z_amd64.deb</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">./blunderdb_x.y.z_amd64.deb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fedora, openSUSE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.x86_64.rpm</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">dnf</span> <span class="pre">install</span> <span class="pre">./blunderdb-x.y.z.x86_64.rpm</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Arch Linux, Manjaro</p></td>
+<td><p>AUR-paketti <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">yay</span> <span class="pre">-S</span> <span class="pre">blunderdb-bin</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Mikä tahansa Linux-jakelu, Flatpakilla</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-x.y.z.flatpak</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">flatpak</span> <span class="pre">install</span> <span class="pre">./blunderDB-x.y.z.flatpak</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Muu Linux-jakelu</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tar</span> <span class="pre">xzf</span></code> ja sitten <code class="docutils literal notranslate"><span class="pre">./blunderDB</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Linux 64-bittisellä ARMilla</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">blunderdb_x.y.z_arm64.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.aarch64.rpm</span></code> tai <code class="docutils literal notranslate"><span class="pre">blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz</span></code></p></td>
+<td><p>Kuten yllä, <code class="docutils literal notranslate"><span class="pre">arm64</span></code>/<code class="docutils literal notranslate"><span class="pre">aarch64</span></code>-tiedostolla</p></td>
+</tr>
+<tr class="row-even"><td><p>Palvelin (<code class="docutils literal notranslate"><span class="pre">serve</span></code>-tila, Docker)</p></td>
+<td><p>levykuva <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span> <span class="pre">ghcr.io/kevung/blunderdb-serve:x.y.z</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Tiedostot <code class="docutils literal notranslate"><span class="pre">amd64</span></code> ja <code class="docutils literal notranslate"><span class="pre">x86_64</span></code> ovat Intel- tai AMD-suorittimelle, eli lähes kaikille pöytäkoneille. Tiedostot <code class="docutils literal notranslate"><span class="pre">arm64</span></code> ja <code class="docutils literal notranslate"><span class="pre">aarch64</span></code> ovat 64-bittiselle ARM-suorittimelle: Raspberry Pi 4 ja 5, Applen piirillä varustetut Macit Linuxilla, ARM-palvelimet. Epäselvässä tapauksessa <code class="docutils literal notranslate"><span class="pre">uname</span> <span class="pre">-m</span></code> vastaa: <code class="docutils literal notranslate"><span class="pre">x86_64</span></code> tai <code class="docutils literal notranslate"><span class="pre">aarch64</span></code>. AUR-paketti <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> kattaa molemmat ja valitsee itse.</p>
+<p>Sivun muut tiedostot ovat paketoimattomat Linux-binäärit (ks. alempana), winget- ja Homebrew-manifestit (ks. <a class="reference internal" href="#install-winget-homebrew"><span class="std std-ref">winget- ja Homebrew-manifestit</span></a>), dokumentaatio PDF-muodossa yhdeksällä kielellä sekä <code class="docutils literal notranslate"><span class="pre">.sha256</span></code>-tarkistesummat.</p>
+</section>
+<section id="verifier-un-telechargement">
+<h2>Latauksen tarkistaminen<a class="headerlink" href="#verifier-un-telechargement" title="Link to this heading"></a></h2>
+<p>Tässä kuvatut kaksi tarkistusta ovat <strong>valinnaisia</strong> ja tarkoitettu edistyneille käyttäjille: ne tehdään komentoriviltä eivätkä ne kuulu asennukseen. Tämän osion ohittaminen ei estä mitään.</p>
+<p>Jokaisen julkaistun tiedoston mukana on sen SHA-256-tarkistesumma samannimisessä tiedostossa, jonka pääte on <code class="docutils literal notranslate"><span class="pre">.sha256</span></code>. Lataa molemmat samaan kansioon ja tarkista, että saamasi tiedosto on juuri se, joka julkaistiin:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderdb_x.y.z_amd64.deb.sha256<span class="w">        </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-x.y.z.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows-x</span><span class="p">.</span><span class="n">y</span><span class="p">.</span><span class="n">z</span><span class="p">.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>   <span class="c"># Windows</span>
+</pre></div>
+</div>
+<p>Linuxissa ja macOS:ssä komento tulostaa <code class="docutils literal notranslate"><span class="pre">OK</span></code>; Windowsissa vertaa näytettyä arvoa <code class="docutils literal notranslate"><span class="pre">.sha256</span></code>-tiedoston sisältöön. Tämä tarkistus on se tae, joka on käytettävissä koodiallekirjoituksen puuttuessa (ks. <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-ref">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</span></a> ja <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-ref">Mac-liite: blunderDB:n mahdollinen esto</span></a>).</p>
+<p>Jokaisen julkaistun tiedoston mukana on myös alkuperätodistus (SLSA, Sigstoren kautta), joka osoittaa, että se on todella tuotettu repositorion virallisessa GitHub-koontiajossa, ilman avainten hallintaa:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh<span class="w"> </span>attestation<span class="w"> </span>verify<span class="w"> </span>blunderdb_x.y.z_amd64.deb<span class="w"> </span>--repo<span class="w"> </span>kevung/blunderDB
+</pre></div>
+</div>
+</section>
+<section id="installation-sous-linux">
+<h2>Asentaminen Linuxiin<a class="headerlink" href="#installation-sous-linux" title="Link to this heading"></a></h2>
+<p>Linuxille tarjotaan useita muotoja. Alla olevat paketit ja arkistot <strong>tekevät blunderDB:stä automaattisesti suoritettavan</strong>: toisin kuin selaimella ladattu raaka binääri, ne välttävät komennon <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">+x</span></code> suorittamisen jokaisen latauksen tai päivityksen yhteydessä. Ne luovat myös merkinnän sovellusvalikkoon.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p><code class="docutils literal notranslate"><span class="pre">.deb</span></code>- ja <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-paketit liittävät <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-päätteen (salasanalla viety tietokanta, ks. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Tietokannan jakaminen: alkuperä ja salasana</span></a>) blunderDB:hen: toiselta saadun <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>-tiedoston kaksoisnapsautus avaa sen suoraan. Tavallisen tietokannan <code class="docutils literal notranslate"><span class="pre">.db</span></code>-päätettä <strong>ei</strong> liitetä tarkoituksella — se on liian yleinen ja jaettu muiden ohjelmien kanssa — mutta tiedosto avautuu edelleen normaalisti blunderDB:n <em>Avaa</em>-valikosta.</p>
+</div>
+<section id="paquets-natifs-deb-rpm">
+<h3>Natiivipaketit (.deb / .rpm)<a class="headerlink" href="#paquets-natifs-deb-rpm" title="Link to this heading"></a></h3>
+<p>Suositeltu menetelmä Debianissa, Ubuntussa ja Linux Mintissä (<code class="docutils literal notranslate"><span class="pre">.deb</span></code>) sekä Fedorassa ja openSUSEssa (<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>). Paketinhallinta asentaa automaattisesti sopivan webkit2gtk-riippuvuuden. Korvaa <code class="docutils literal notranslate"><span class="pre">x.y.z</span></code> ladatulla versiolla:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>./blunderdb_x.y.z_amd64.deb<span class="w">     </span><span class="c1"># Debian / Ubuntu / Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>./blunderdb-x.y.z.x86_64.rpm<span class="w">    </span><span class="c1"># Fedora / openSUSE</span>
+</pre></div>
+</div>
+</section>
+<section id="arch-linux-aur">
+<h3>Arch Linux (AUR)<a class="headerlink" href="#arch-linux-aur" title="Link to this heading"></a></h3>
+<p>Paketti <code class="docutils literal notranslate"><span class="pre">blunderdb-bin</span></code> on saatavilla AUR:sta, ja AUR-apuohjelmat päivittävät sen automaattisesti:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>yay<span class="w"> </span>-S<span class="w"> </span>blunderdb-bin<span class="w">      </span><span class="c1"># ou : paru -S blunderdb-bin</span>
+</pre></div>
+</div>
+</section>
+<section id="flatpak">
+<h3>Flatpak<a class="headerlink" href="#flatpak" title="Link to this heading"></a></h3>
+<p>Paketti <code class="docutils literal notranslate"><span class="pre">blunderDB-x.y.z.flatpak</span></code> toimii missä tahansa jakelussa, johon Flatpak on asennettu. Se perustuu GNOME 47 -ajoympäristöön, jonka Flatpak lataa Flathubista, jos se puuttuu:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flatpak<span class="w"> </span>install<span class="w"> </span>./blunderDB-x.y.z.flatpak
+flatpak<span class="w"> </span>run<span class="w"> </span>io.github.kevung.blunderDB
+</pre></div>
+</div>
+<p>Paketti asennetaan ladatusta tiedostosta ja päivitetään asentamalla seuraavan version paketti. Sovelluksella on pääsy kotikansioon tietokantojen avaamista ja tallentamista varten. Komentorivi (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) on käytettävissä komennolla <code class="docutils literal notranslate"><span class="pre">flatpak</span> <span class="pre">run</span> <span class="pre">io.github.kevung.blunderDB</span> <span class="pre">&lt;komento&gt;</span></code>.</p>
+</section>
+<section id="archive-tar-gz">
+<h3>.tar.gz-arkisto<a class="headerlink" href="#archive-tar-gz" title="Link to this heading"></a></h3>
+<p>Muille jakeluille. Arkiston purkaminen säilyttää suoritusbitin, joten <code class="docutils literal notranslate"><span class="pre">chmod</span></code> ei ole tarpeen:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar<span class="w"> </span>xzf<span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz
+<span class="nb">cd</span><span class="w"> </span>blunderDB-linux-webkit2gtk-4.1-x.y.z
+./blunderDB
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Arkiston suoritettavan tiedoston nimi on <code class="docutils literal notranslate"><span class="pre">blunderDB</span></code>, isoilla kirjaimilla. Paketit <code class="docutils literal notranslate"><span class="pre">.deb</span></code>, <code class="docutils literal notranslate"><span class="pre">.rpm</span></code>, AUR ja Flatpak asentavat lisäksi pienikirjaimisen linkin <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>, jota komentorivin dokumentaatio (<a class="reference internal" href="cli.html#cli"><span class="std std-ref">Komentoriviliittymä (CLI)</span></a>) käyttää; arkisto sisältää saman linkin suoritettavan tiedoston vieressä. Saat sen <code class="docutils literal notranslate"><span class="pre">PATH</span></code>-polkuusi komennolla <code class="docutils literal notranslate"><span class="pre">ln</span> <span class="pre">-s</span> <span class="pre">&quot;$PWD/blunderDB&quot;</span> <span class="pre">~/.local/bin/blunderdb</span></code>.</p>
+</div>
+</section>
+<section id="binaire-brut-methode-avancee">
+<h3>Raaka binääri (edistynyt menetelmä)<a class="headerlink" href="#binaire-brut-methode-avancee" title="Link to this heading"></a></h3>
+<p>Raaka binääri <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.36.0</a> on edelleen saatavilla. Koska selain poistaa suoritusbitin latauksen yhteydessä, se on palautettava ennen ensimmäistä suoritusta:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>chmod<span class="w"> </span>+x<span class="w"> </span>./blunderDB-linux-x.y.z
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Julkaistaan kaksi Linux-versiota webkit2gtk-kirjaston version mukaan. Jos saat virheen <code class="docutils literal notranslate"><span class="pre">libwebkit2gtk-4.0.so.37:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file</span></code>, jakelusi käyttää webkit2gtk-4.1:tä: käytä <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code>-pakettia, AUR-pakettia tai lataa erillinen versio <a class="reference external" href="https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.36.0">https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.36.0</a>. Natiivipaketit valitsevat oikean riippuvuuden automaattisesti.</p>
+</div>
+</section>
+</section>
+<section id="image-docker-mode-serveur">
+<h2>Docker-levykuva (palvelintila)<a class="headerlink" href="#image-docker-mode-serveur" title="Link to this heading"></a></h2>
+<p>Palvelintila (<a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Headless-tila (palvelin)</span></a>) ei tarvitse työpöytäsovellusta: jokainen versio julkaisee levykuvan <code class="docutils literal notranslate"><span class="pre">ghcr.io/kevung/blunderdb-serve</span></code> GitHubin rekisteriin alustoille <code class="docutils literal notranslate"><span class="pre">linux/amd64</span></code> ja <code class="docutils literal notranslate"><span class="pre">linux/arm64</span></code>, sekä versiotunnisteella että tunnisteella <code class="docutils literal notranslate"><span class="pre">latest</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/kevung/blunderdb-serve:x.y.z
+</pre></div>
+</div>
+<p>Käynnistys, määritys ja varoitus todentavasta välityspalvelimesta on kuvattu kohdassa <a class="reference internal" href="mode_headless.html#headless-docker-image"><span class="std std-ref">Julkaistu kuva</span></a>.</p>
+</section>
+<section id="manifestes-winget-et-homebrew">
+<span id="install-winget-homebrew"></span><h2>winget- ja Homebrew-manifestit<a class="headerlink" href="#manifestes-winget-et-homebrew" title="Link to this heading"></a></h2>
+<p>Jokainen julkaisu tarjoaa julkaisusivulla <a class="reference external" href="https://learn.microsoft.com/windows/package-manager/">winget</a>-manifestin (<code class="docutils literal notranslate"><span class="pre">blunderDB-winget-manifests-x.y.z.zip</span></code>) ja <a class="reference external" href="https://brew.sh/">Homebrew</a>-kaavan (<code class="docutils literal notranslate"><span class="pre">blunderdb-x.y.z.rb</span></code>) niille, jotka haluavat asentaa blunderDB:n näillä paketinhallinnoilla paikallisesta tiedostosta. Kumpikaan ei ole wingetin tai Homebrew’n julkisissa arkistoissa. Kumpikaan ei muuta suoritettavan tiedoston luonnetta: se pysyy allekirjoittamattomana, ja alla kuvatut varoitukset pätevät sellaisinaan.</p>
+</section>
+<section id="avertissements-windows-et-mac">
+<h2>Windows- ja Mac-varoitukset<a class="headerlink" href="#avertissements-windows-et-mac" title="Link to this heading"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p>Windowsissa se saattaa epäröidä blunderDB:n suorittamista. Katso <a class="reference internal" href="annexe_windows_securite.html#annexe-windows-malware"><span class="std std-ref">Windows-liite: mitä tehdä, jos Windows estää käynnistyksen</span></a> ymmärtääksesi miksi ja ohittaaksesi mahdolliset estot.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Varoitus</p>
+<p>Macissa se saattaa epäröidä blunderDB:n suorittamista. Katso <a class="reference internal" href="annexe_mac_securite.html#annexe-mac-malware"><span class="std std-ref">Mac-liite: blunderDB:n mahdollinen esto</span></a> ymmärtääksesi miksi ja ohittaaksesi mahdolliset estot.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="Käyttöopas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

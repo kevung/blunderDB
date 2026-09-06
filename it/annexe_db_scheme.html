@@ -1,0 +1,187 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appendice: Schema del database &mdash; Documentazione blunderDB 0.36.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3e9a38b0"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="Appendice: modello statistico — allineamento XG / gnuBG / blunderDB" href="stats_parity.html" />
+    <link rel="prev" title="Appendice Mac: possibile blocco di blunderDB" href="annexe_mac_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Lingue">
+  <a href="../fr/annexe_db_scheme.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/annexe_db_scheme.html" lang="en" hreflang="en">English</a>
+  <a href="../de/annexe_db_scheme.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/annexe_db_scheme.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/annexe_db_scheme.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/annexe_db_scheme.html" lang="fi" hreflang="fi">Suomi</a>
+  <span class="current" lang="it" aria-current="true">Italiano</span>
+  <a href="../ja/annexe_db_scheme.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/annexe_db_scheme.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <p class="caption" role="heading"><span class="caption-text">Primi passi</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guida utente</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Riferimento</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glossario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modalità headless (server)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contratto API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Appendici</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Appendice Windows: cosa fare se Windows blocca l’avvio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Appendice: Schema del database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#versionnage-et-migrations">Versionamento e migrazioni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principales-tables">Tabelle principali</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#principes-de-conception">Principi di progettazione</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Cronologia delle versioni</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Informazioni</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Appendice: Schema del database</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-schema-de-la-base-de-donnees">
+<span id="annexe-db-migration"></span><h1>Appendice: Schema del database<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<p>Un database blunderDB è un semplice file SQLite (estensione <em>.db</em>). In assenza di blunderDB, può quindi essere aperto e ispezionato con qualsiasi editor o browser di file SQLite.</p>
+<section id="versionnage-et-migrations">
+<h2>Versionamento e migrazioni<a class="headerlink" href="#versionnage-et-migrations" title="Link to this heading"></a></h2>
+<p>Lo schema del database è <strong>versionato</strong>. La versione corrente dello schema è <strong>2.20.0</strong>; è indipendente dalla versione dell’applicazione e viene incrementata solo quando cambia la struttura interna. La versione dello schema di un database aperto è visibile nel pannello <strong>Metadati</strong> (comando <code class="docutils literal notranslate"><span class="pre">meta</span></code>).</p>
+<div class="admonition important">
+<p class="admonition-title">Importante</p>
+<p>Salvate sempre il vostro file <em>.db</em> prima di aprire un database creato con una versione precedente di blunderDB.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>A partire dalla versione 0.10.0, <strong>tutte le migrazioni dello schema vengono effettuate automaticamente</strong> all’apertura di un database. Non è necessario alcun comando di migrazione manuale. La migrazione avviene sul posto: un database migrato verso uno schema recente non può più essere aperto da versioni più vecchie di blunderDB, da cui l’importanza del salvataggio preliminare.</p>
+</div>
+</section>
+<section id="principales-tables">
+<h2>Tabelle principali<a class="headerlink" href="#principales-tables" title="Link to this heading"></a></h2>
+<p>Lo schema corrente si articola attorno alle seguenti tabelle:</p>
+<ul class="simple">
+<li><p><strong>Posizioni e analisi</strong>: <code class="docutils literal notranslate"><span class="pre">position</span></code> (le posizioni, deduplicate), <code class="docutils literal notranslate"><span class="pre">analysis</span></code> (i dati di analisi associati) e <code class="docutils literal notranslate"><span class="pre">comment</span></code> (i commenti).</p></li>
+<li><p><strong>Match</strong>: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">game</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code> e <code class="docutils literal notranslate"><span class="pre">move_analysis</span></code> memorizzano i match importati, le loro partite, le loro mosse e l’analisi di ciascuna mossa.</p></li>
+<li><p><strong>Collezioni</strong>: <code class="docutils literal notranslate"><span class="pre">collection</span></code> e <code class="docutils literal notranslate"><span class="pre">collection_position</span></code> (tabella di collegamento) raggruppano posizioni scelte manualmente.</p></li>
+<li><p><strong>Tornei</strong>: <code class="docutils literal notranslate"><span class="pre">tournament</span></code> raggruppa i match in tornei.</p></li>
+<li><p><strong>Ripetizione dilazionata (Anki)</strong>: <code class="docutils literal notranslate"><span class="pre">anki_deck</span></code>, <code class="docutils literal notranslate"><span class="pre">anki_card</span></code> e <code class="docutils literal notranslate"><span class="pre">anki_review_log</span></code> gestiscono i mazzi, le carte e il registro delle revisioni (algoritmo FSRS).</p></li>
+<li><p><strong>Cronologia e varie</strong>: <code class="docutils literal notranslate"><span class="pre">command_history</span></code> e <code class="docutils literal notranslate"><span class="pre">search_history</span></code> conservano la cronologia dei comandi e delle ricerche, <code class="docutils literal notranslate"><span class="pre">filter_library</span></code> la libreria di filtri e <code class="docutils literal notranslate"><span class="pre">metadata</span></code> i metadati del database (tra cui la versione dello schema).</p></li>
+</ul>
+</section>
+<section id="principes-de-conception">
+<h2>Principi di progettazione<a class="headerlink" href="#principes-de-conception" title="Link to this heading"></a></h2>
+<p>A partire dallo schema 2.0.0, diverse scelte di progettazione accelerano la ricerca e riducono la dimensione del file:</p>
+<ul class="simple">
+<li><p><strong>Deduplicazione delle posizioni</strong>: ogni posizione porta un hash di Zobrist e un indice univoco, in modo che una stessa posizione incontrata in più import venga memorizzata una sola volta.</p></li>
+<li><p><strong>Colonne di filtraggio denormalizzate</strong>: criteri frequentemente ricercati (tipo di decisione, dadi, differenza di corsa, pedine uscite, pedine arretrate, errore di mossa o di cubo, probabilità di vittoria…) sono precalcolati in colonne dedicate per un filtraggio rapido.</p></li>
+<li><p><strong>Prefiltro tramite bitboard</strong>: colonne di occupazione e di maschere di punti consentono un prefiltro intero molto rapido durante le ricerche di motivi di struttura.</p></li>
+<li><p><strong>Archiviazione compatta</strong>: le posizioni sono codificate in modo compatto e i dati di analisi sono compressi (zstd con dizionario condiviso; i database più vecchi, compressi con zlib, restano leggibili e vengono ricompressi progressivamente durante un <code class="docutils literal notranslate"><span class="pre">vacuum</span></code>), il che riduce fortemente la dimensione del file.</p></li>
+<li><p><strong>Journaling WAL</strong>: la modalità WAL e i PRAGMA regolati migliorano le prestazioni in lettura e in scrittura.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="Appendice Mac: possibile blocco di blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="Appendice: modello statistico — allineamento XG / gnuBG / blunderDB" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

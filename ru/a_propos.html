@@ -1,0 +1,198 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>О программе &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="История версий" href="historique.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/a_propos.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/a_propos.html" lang="en" hreflang="en">English</a>
+  <a href="../de/a_propos.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/a_propos.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/a_propos.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/a_propos.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/a_propos.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/a_propos.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">О программе</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contacts">Контакты</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faire-un-don">Сделать пожертвование</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remerciements">Благодарности</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#credits">Благодарности третьим сторонам</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">О программе</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="a-propos">
+<span id="id1"></span><h1>О программе<a class="headerlink" href="#a-propos" title="Ссылка на этот заголовок"></a></h1>
+<section id="contacts">
+<span id="id2"></span><h2>Контакты<a class="headerlink" href="#contacts" title="Ссылка на этот заголовок"></a></h2>
+<p>Автор: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Вы также можете найти меня на Heroes под ником postmanpat.</p>
+<p>Я разработал blunderDB изначально для личного использования, чтобы обнаруживать закономерности в своих ошибках. Но получать обратную связь очень приятно, особенно когда потрачено немало часов на проектирование, программирование и отладку… Поэтому не стесняйтесь писать мне, чтобы поделиться своими впечатлениями. Любые (конструктивные) отзывы приветствуются.</p>
+<p>Вот несколько способов связи:</p>
+<ul class="simple">
+<li><p>Присоединиться к серверу Discord blunderDB: <a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p>Написать мне по адресу <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>.</p></li>
+<li><p>Поговорить со мной, если мы встретимся на турнире.</p></li>
+<li><p>На GitHub.</p>
+<ul>
+<li><p>Открыть задачу: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>Для исправления ошибок или предложений по улучшению создать pull request.</p></li>
+</ul>
+</li>
+</ul>
+<p>Открытые тикеты сгруппированы по <a class="reference external" href="https://github.com/kevung/blunderDB/milestones">вехам</a> на GitHub. Идеи обсуждаются в <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/ideas">Discussions — категория Ideas</a>, а каждая опубликованная версия анонсируется в <a class="reference external" href="https://github.com/kevung/blunderDB/discussions/categories/announcements">категории Announcements</a>.</p>
+</section>
+<section id="faire-un-don">
+<h2>Сделать пожертвование<a class="headerlink" href="#faire-un-don" title="Ссылка на этот заголовок"></a></h2>
+<p>Если вам нравится blunderDB и вы хотите поддержать прошлые и будущие разработки, вы можете</p>
+<ul class="simple">
+<li><p>угостить меня напитком, если мы имеем удовольствие встретиться!</p></li>
+<li><p>сделать небольшое пожертвование через PayPal на адрес <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h2>Благодарности<a class="headerlink" href="#remerciements" title="Ссылка на этот заголовок"></a></h2>
+<p>Я посвящаю эту небольшую программу моей супруге Анн-Клер и нашей дорогой дочери Перрин. Я хотел бы особо поблагодарить нескольких друзей:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em> — за то, что познакомил меня с нардами с радостью и добротой; за то, что указывает Путь к пониманию этой замечательной игры; за то, что продолжает поддерживать меня, несмотря на мои скромные попытки играть лучше.</p></li>
+<li><p><em>Nicolas Harmand</em> — весёлый товарищ уже более десяти лет в замечательных приключениях, и фантастический партнёр по игре с тех пор, как он заразился вирусом нард.</p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>Благодарности третьим сторонам<a class="headerlink" href="#credits" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB включает код, данные и шрифты других людей. Полный перечень с текстами лицензий — файл <code class="docutils literal notranslate"><span class="pre">THIRD_PARTY.md</span></code>, поставляемый с каждым пакетом (<code class="docutils literal notranslate"><span class="pre">/usr/share/doc/blunderdb/</span></code>) и находящийся в корне <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/THIRD_PARTY.md">репозитория</a>. Основное:</p>
+<ul class="simple">
+<li><p>нейронная сеть <code class="docutils literal notranslate"><span class="pre">strehl-prob5-512-512-256-128</span></code> — работа <em>Alexander Strehl</em> (<a class="reference external" href="https://github.com/alexstrehl/backgammon-ai-engine">alexstrehl/backgammon-ai-engine</a>, лицензия MIT); поиск, модель куба и таблица match equity вокруг неё — собственная конфигурация <a class="reference external" href="https://github.com/kevung/gammonNet">gammonNet</a> (MIT);</p></li>
+<li><p>таблица match equity Kazaross-XG2 — работа <em>Neil Kazaross</em>;</p></li>
+<li><p>таблицы take point и значений gammon взяты из книги <em>Dirk Schiemann</em> <em>The Theory of Backgammon</em>;</p></li>
+<li><p>односторонняя (6 пунктов, 15 шашек, для EPC) и двусторонняя (6 пунктов, 6 шашек, для вердиктов по кубу в гонках) таблицы bearoff вычисляются самим blunderDB — портом инструмента <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code> из <a class="reference external" href="https://www.gnu.org/software/gnubg/">GNU Backgammon</a>; результат побайтово идентичен результату gnubg, отпечаток SHA-256 которого служит эталоном. GNUbg — свободная программа под лицензией GPL;</p></li>
+<li><p>файлы матчей читаются библиотеками <a class="reference external" href="https://github.com/kevung/xgparser">xgparser</a>, <a class="reference external" href="https://github.com/kevung/gnubgparser">gnubgparser</a> и <a class="reference external" href="https://github.com/kevung/bgfparser">bgfparser</a> (MIT);</p></li>
+<li><p>со стороны Go: <a class="reference external" href="https://gitlab.com/cznic/sqlite">modernc.org/sqlite</a> (BSD-3-Clause), <a class="reference external" href="https://github.com/jackc/pgx">pgx</a>, <a class="reference external" href="https://wails.io">Wails</a> и <a class="reference external" href="https://github.com/open-spaced-repetition/go-fsrs">go-fsrs</a> (MIT);</p></li>
+<li><p>со стороны интерфейса: <a class="reference external" href="https://svelte.dev">Svelte</a>, <a class="reference external" href="https://two.js.org">two.js</a>, <a class="reference external" href="https://www.chartjs.org">Chart.js</a> и <a class="reference external" href="https://driverjs.com">driver.js</a> (MIT);</p></li>
+<li><p>шрифты <a class="reference external" href="https://github.com/googlefonts/nunito">Nunito</a> и <a class="reference external" href="https://fonts.google.com/noto/specimen/Noto+Sans+JP">Noto Sans JP</a> (SIL Open Font License 1.1).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="historique.html" class="btn btn-neutral float-left" title="История версий" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

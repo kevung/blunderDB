@@ -1,0 +1,400 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB &mdash; documentación de blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e3f67aac"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="Historial de versiones" href="historique.html" />
+    <link rel="prev" title="Anexo: Esquema de la base de datos" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Idiomas">
+  <a href="../fr/stats_parity.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/stats_parity.html" lang="en" hreflang="en">English</a>
+  <a href="../de/stats_parity.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/stats_parity.html" lang="el" hreflang="el">Ελληνικά</a>
+  <span class="current" lang="es" aria-current="true">Español</span>
+  <a href="../fi/stats_parity.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/stats_parity.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/stats_parity.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/stats_parity.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Primeros pasos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Guía del usuario</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referencia</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Glosario</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Modo headless (servidor)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Contrato de la API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Anexos</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Anexo Windows: qué hacer si Windows bloquea el inicio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">Definiciones formales</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rating">PR (Performance Rating)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">Pérdida de MWC (Match Winning Chance)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chance-luck">Suerte (<em>luck</em>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#victoires-et-defaites">Victorias y derrotas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#erreurs-et-blunders">Errores y blunders</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">Decisiones contabilizadas en el denominador del PR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">Jugadas de fichas — decisiones contabilizadas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">Decisiones de cubo — decisiones contabilizadas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">Resumen del filtro</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">Correspondencia blunderDB ↔ XG ↔ gnuBG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">Comparación XG ↔ blunderDB (mismo motor de análisis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">Validar sus propias cifras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">Referencia gnuBG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Historial de versiones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Acerca de</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1>Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<p>Esta página describe cómo blunderDB calcula los indicadores que muestra — <strong>PR</strong> (<em>Performance Rating</em>), <strong>Snowie Error Rate</strong>, <strong>pérdida de MWC</strong>, <strong>suerte</strong> y <strong>victorias/derrotas</strong> — y cómo se alinean con eXtreme Gammon (XG) y gnuBG (referencia abierta).</p>
+<nav class="contents local" id="contenido">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id1">Definiciones formales</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rating" id="id2">PR (Performance Rating)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id3">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id4">Pérdida de MWC (Match Winning Chance)</a></p></li>
+<li><p><a class="reference internal" href="#chance-luck" id="id5">Suerte (<em>luck</em>)</a></p></li>
+<li><p><a class="reference internal" href="#victoires-et-defaites" id="id6">Victorias y derrotas</a></p></li>
+<li><p><a class="reference internal" href="#erreurs-et-blunders" id="id7">Errores y blunders</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id8">Decisiones contabilizadas en el denominador del PR</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id9">Jugadas de fichas — decisiones contabilizadas</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id10">Decisiones de cubo — decisiones contabilizadas</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id11">Resumen del filtro</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id12">Correspondencia blunderDB ↔ XG ↔ gnuBG</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id13">Comparación XG ↔ blunderDB (mismo motor de análisis)</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id14">Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id15">Validar sus propias cifras</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id16">Referencia gnuBG</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Definiciones formales</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<section id="pr-performance-rating">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">PR (Performance Rating)</a><a class="headerlink" href="#pr-performance-rating" title="Link to this heading"></a></h3>
+<p>El PR (también llamado «error rate per decision» en gnuBG) mide el coste medio de los errores por decisión contabilizada, en la escala de eXtreme Gammon y de gnuBG: el error medio de equidad, multiplicado por 500.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{error}_i|}{\mathrm{N_{contado}}} \times 500\]</div>
+<ul class="simple">
+<li><p>El numerador es la suma absoluta de los errores EMG (en equity cubeful) sobre todas las decisiones del ámbito.</p></li>
+<li><p>El denominador <span class="math notranslate nohighlight">\(N_\text{contado}\)</span> es el número de <strong>decisiones contabilizadas</strong> (véase más abajo).</p></li>
+<li><p>El factor 500 es la convención de XG y de gnuBG (cf. <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code>). No es una conversión a milipuntos: un error medio de 0,010 de equidad — es decir, 10 milipuntos (mpt) — da un PR de 5,0. Los errores de una posición, en cambio, se leen directamente en milipuntos, es decir en milésimas de equidad: el umbral de blunder más abajo, los filtros de búsqueda <code class="docutils literal notranslate"><span class="pre">e&gt;</span></code> y <code class="docutils literal notranslate"><span class="pre">E&gt;</span></code>, el histograma de magnitudes del panel Stats.</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<p>El Snowie ER usa el <strong>mismo numerador</strong> que el PR, pero el denominador es el número total de jugadas de ambos jugadores, jugadas forzadas incluidas (todas las decisiones, sin filtro):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{error}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>Referencia: <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>.</p>
+<p>El Snowie ER es más estable entre herramientas porque su denominador no depende del filtro de decisiones forzadas/triviales. Sirve como métrica de contraste entre XG, gnuBG y blunderDB.</p>
+<div class="admonition important">
+<p class="admonition-title">Importante</p>
+<p><strong>El filtro «Jugador» solo se aplica al numerador.</strong> Seleccionar un jugador restringe los errores sumados a sus propias decisiones, pero el denominador sigue siendo el número de jugadas de fichas de <strong>ambos</strong> jugadores, sobre las partidas que retiene el filtro. Esto es lo que distingue el Snowie ER del PR, y la razón de la propiedad siguiente: en una base que solo contiene partidas entre dos jugadores, la suma de sus dos Snowie ER es exactamente el Snowie ER sin filtrar.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>El Snowie ER de un jugador es normalmente alrededor de la mitad de su PR, porque el denominador incluye las jugadas de ambos jugadores mientras que el PR solo utiliza las decisiones de ese jugador.</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Pérdida de MWC (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<p>La pérdida de MWC expresa en puntos porcentuales de probabilidad de ganar el match el efecto acumulado de los errores de un jugador. Para cada decisión, el error EMG se convierte en MWC mediante la tabla MET (Match Equity Table) al marcador actual:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>Referencia: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p>
+</section>
+<section id="chance-luck">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Suerte (<em>luck</em>)</a><a class="headerlink" href="#chance-luck" title="Link to this heading"></a></h3>
+<p>La <strong>suerte</strong> de una tirada es la diferencia entre lo que dieron los dados y lo que dan en promedio:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{luck} = \mathrm{eq}(\text{mejor jugada con la tirada obtenida})
+              - \frac{1}{36}\sum_{d} \mathrm{eq}(\text{mejor jugada con } d)\]</div>
+<p>con la suma extendida a los 36 resultados de la tirada (30 tiradas no dobles para la jugada de apertura de la partida, que no puede ser doble). Un valor positivo significa una tirada favorable. Referencia: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:199–269</span></code> (<code class="docutils literal notranslate"><span class="pre">LuckNormal</span></code> / <code class="docutils literal notranslate"><span class="pre">LuckFirst</span></code>, evaluación cubeful a 0 ply).</p>
+<div class="admonition important">
+<p class="admonition-title">Importante</p>
+<p><strong>blunderDB nunca recalcula la suerte</strong>: el evaluador integrado no sirve para eso. Toma tal cual el valor escrito por la herramienta que analizó la partida — <code class="docutils literal notranslate"><span class="pre">ErrLuck</span></code> para eXtreme Gammon, la propiedad <code class="docutils literal notranslate"><span class="pre">LU</span></code> para gnuBG — tras comprobar que ambas comparten la misma convención (misma unidad, positivo = afortunado).</p>
+</div>
+<p>Consecuencias prácticas:</p>
+<ul class="simple">
+<li><p>Los formatos que no transportan la suerte (<strong>BGF</strong>, <strong>Jellyfish .mat</strong>) no producen ningún valor.</p></li>
+<li><p>Las partidas <strong>ya importadas</strong> tampoco la tienen: la suerte nunca se almacenó antes de la versión 2.15.0 del esquema, y nada en la base permite reconstruirla. Hay que <strong>reimportar</strong> los archivos de origen para obtenerla.</p></li>
+<li><p>Un valor ausente significa <em>desconocido</em>, nunca <em>nulo</em> — cero es una tirada realmente neutra. Las medias de suerte solo dividen, pues, por el número de tiradas cuya suerte se conoce.</p></li>
+<li><p>Una partida en la que <em>todas</em> las tiradas tuvieran una suerte exactamente nula se considera no analizada en este aspecto (eXtreme Gammon escribe 0 tanto para «neutro» como para «no calculado»): sus tiradas siguen siendo desconocidas. Del lado de gnuBG la distinción es explícita — una tirada no evaluada lleva <code class="docutils literal notranslate"><span class="pre">LU[-inf]</span></code> — y esas tiradas también siguen siendo desconocidas, en lugar de convertirse en un valor.</p></li>
+</ul>
+</section>
+<section id="victoires-et-defaites">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Victorias y derrotas</a><a class="headerlink" href="#victoires-et-defaites" title="Link to this heading"></a></h3>
+<p>blunderDB <strong>no almacena un ganador a nivel de partida</strong>: solo se almacenan los puntos de cada juego. El resultado se deriva, pues, en el momento de mostrarlo, sumando los puntos por asiento:</p>
+<ul class="simple">
+<li><p><strong>Partida a N puntos</strong> — ganador = el jugador que alcanza N. Si nadie lo alcanza, la partida queda <strong>inacabada</strong> (registro truncado, abandono) y no cuenta ni victoria ni derrota, para nadie.</p></li>
+<li><p><strong>Partida de dinero</strong> (sin objetivo) — ganador = quien se llevó más puntos; en caso de empate, ni victoria ni derrota. Es la convención del resultado de sesión de gnuBG (+1 / 0 / −1, <code class="docutils literal notranslate"><span class="pre">gnubg/relational.c</span></code>).</p></li>
+</ul>
+<p>Consecuencia que conviene conocer al leer la pestaña Jugadores: <strong>victorias + derrotas puede ser inferior al número de partidas</strong>. La diferencia son las partidas inacabadas.</p>
+</section>
+<section id="erreurs-et-blunders">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Errores y blunders</a><a class="headerlink" href="#erreurs-et-blunders" title="Link to this heading"></a></h3>
+<p>Una decisión se cuenta como <strong>error</strong> en cuanto el error de equidad asociado es estrictamente positivo, y como <strong>blunder</strong> cuando alcanza <strong>0,100 EMG</strong> (100 milipuntos). La comparación es <em>inclusiva</em>: un error de exactamente 0,100 es un blunder, en todas las pantallas (reparto por acción de cubo, detalle de partida, tabla de jugadores).</p>
+<p>Este umbral es propio de blunderDB: gnuBG clasifica las jugadas en tres niveles (<code class="docutils literal notranslate"><span class="pre">0.03</span></code> dudosa, <code class="docutils literal notranslate"><span class="pre">0.06</span></code> mala, <code class="docutils literal notranslate"><span class="pre">0.12</span></code> muy mala — <code class="docutils literal notranslate"><span class="pre">gnubg/gnubg.c:281–286</span></code>) en lugar de una categoría única.</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Decisiones contabilizadas en el denominador del PR</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<p>blunderDB sigue las mismas reglas de exclusión que XG y gnuBG.</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Jugadas de fichas — decisiones contabilizadas</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Solo se contabilizan las <strong>jugadas no forzadas</strong>:</p>
+<ul class="simple">
+<li><p>Una jugada es <strong>forzada</strong> si los dados solo ofrecen una jugada legal (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> en <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
+<li><p>Las jugadas forzadas tienen error nulo por definición: el jugador no tenía elección. Incluirlas en el denominador rebajaría artificialmente el PR.</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Decisiones de cubo — decisiones contabilizadas</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Solo se contabilizan las <strong>decisiones de cubo ajustadas</strong>:</p>
+<ul class="simple">
+<li><p>Una decisión de cubo es <strong>ajustada</strong> si se sitúa dentro de la ventana de equity <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> en torno al punto de redoble (predicado <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> en <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+<li><p>Un «No Double» trivial (equity muy negativa o muy positiva) no es una verdadera decisión estratégica; incluirlo inflaría el denominador y deprimiría el PR.</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Resumen del filtro</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tipo de decisión</p></th>
+<th class="head"><p>Incluido en <span class="math notranslate nohighlight">\(N_\text{contado}\)</span> (PR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Jugada no forzada</p></td>
+<td><p>Sí</p></td>
+</tr>
+<tr class="row-odd"><td><p>Jugada forzada</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Cubo ajustado</p></td>
+<td><p>Sí</p></td>
+</tr>
+<tr class="row-odd"><td><p>No Double trivial</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>Siempre (son respuestas a un doble)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Correspondencia blunderDB ↔ XG ↔ gnuBG</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<p>Las métricas están alineadas dentro de los límites indicados a continuación. Son <strong>límites verificados por la suite de pruebas</strong>, y no desviaciones medias: la prueba compara partido por partido las cifras de blunderDB con las registradas para los partidos de referencia del repositorio, y falla en cuanto una sola desviación supera el límite. Las referencias de XG abarcan dos partidos — uno completo (317 decisiones contabilizadas, 156 y 161 por jugador), el otro reducido a su único PR, con un límite ampliado a 0,15 a causa de un movimiento no emparejado; las referencias de gnuBG abarcan otros dos partidos. La versión de eXtreme Gammon que produjo estas cifras no está registrada.</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Comparación XG ↔ blunderDB (mismo motor de análisis)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Métrica</p></th>
+<th class="head"><p>Diferencia máxima</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Decisiones totales</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Jugadas no forzadas</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pérdida de MWC</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>Equity total (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Comparación gnuBG ↔ blunderDB (importación SGF — motores diferentes)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Métrica</p></th>
+<th class="head"><p>Diferencia máxima</p></th>
+<th class="head"><p>Causa principal</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR (checker)</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>diferencias de equity entre motores</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pérdida de MWC</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>datos de cubo ajustado incompletos en SGF</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>jugadas forzadas sin análisis (SGF)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Los archivos SGF (gnuBG) no incluyen las alternativas para las jugadas forzadas, lo que significa que blunderDB no puede detectar todas las jugadas forzadas al importar SGF. Esto crea una diferencia estructural en el Snowie ER (denominador ligeramente distinto).</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Validar sus propias cifras</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<p>Si sus valores de PR o MWC difieren de las cifras de XG, comprobar los siguientes puntos:</p>
+<ol class="arabic simple">
+<li><p><strong>Análisis completos</strong> — El PR solo puede calcularse sobre las posiciones que disponen de un análisis. Las posiciones sin análisis se cuentan como error cero pero no entran en <span class="math notranslate nohighlight">\(N_\text{contado}\)</span>.</p></li>
+<li><p><strong>Versión de XG</strong> — XG puede cambiar sus cálculos entre versiones. blunderDB se alinea con el comportamiento observado en las versiones recientes.</p></li>
+<li><p><strong>Formato de importación</strong> — Los archivos SGF de gnuBG producen diferencias mayores en el cubo (véase la tabla anterior) porque el archivo no incluye los análisis completos para todas las decisiones de cubo.</p></li>
+<li><p><strong>Migración de base de datos</strong> — Tras actualizar blunderDB, las bases de datos existentes se migran automáticamente. Hacer una copia de seguridad antes de abrir una base de datos con una nueva versión.</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Referencia gnuBG</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<p>Las fórmulas se han verificado en los siguientes archivos de código fuente (repositorio gnuBG):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR («Error rate per decision»).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code> — Snowie Error Rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — Acumulación de checker, exclusión de las jugadas forzadas (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — Conversión EMG → MWC por decisión.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — Acumulación de la pérdida de MWC (<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — Predicado <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> (umbral 0.16).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="Anexo: Esquema de la base de datos" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="historique.html" class="btn btn-neutral float-right" title="Historial de versiones" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

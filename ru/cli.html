@@ -1,0 +1,1341 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Интерфейс командной строки (CLI) &mdash; документация blunderDB 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=3662c42f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Глоссарий" href="glossaire.html" />
+    <link rel="prev" title="Горячие клавиши" href="raccourcis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Языки">
+  <a href="../fr/cli.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/cli.html" lang="en" hreflang="en">English</a>
+  <a href="../de/cli.html" lang="de" hreflang="de">Deutsch</a>
+  <a href="../el/cli.html" lang="el" hreflang="el">Ελληνικά</a>
+  <a href="../es/cli.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/cli.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/cli.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/cli.html" lang="ja" hreflang="ja">日本語</a>
+  <span class="current" lang="ru" aria-current="true">Русский</span>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Начало работы</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Руководство пользователя</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Справочник</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Горячие клавиши</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Интерфейс командной строки (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntaxe-generale">Общий синтаксис</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-disponibles">Доступные команды</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-creer-une-base-de-donnees">create — Создать базу данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-importer-des-donnees">import — Импорт данных</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#surveiller-un-dossier">Слежение за папкой</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-match">Импорт матча</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-de-positions">Импорт позиций</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-par-lot">Пакетный импорт</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#export-exporter-des-donnees">export — Экспорт данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#identity-identite-d-emetteur">identity — Идентичность издателя</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#open-ouvrir-un-fichier-protege">open — Открыть защищённый файл</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-rechercher-des-positions">search — Поиск позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-lister-le-contenu">list — Список содержимого</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exports-tabulaires">Табличные экспорты</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#match-afficher-un-match">match — Отобразить матч</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collection-gerer-les-collections">collection — Управление коллекциями</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anki-paquets-de-repetition-espacee">anki — Колоды интервального повторения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cubematrix-matrice-du-videau">cubematrix — Матрица куба</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#epc-calculatrice-epc">epc — Калькулятор EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bearoff-bases-de-sortie">bearoff — Базы бироффа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyze-rattrapage-gammonnet">analyze — Догоняющий анализ gammonNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#trash-la-corbeille">trash — Корзина</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">info — Метаданные базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">edit — Изменить метаданные</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">verify — Проверка целостности</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vacuum-compacter-la-base-de-donnees">vacuum — Сжатие базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repair-recalculer-les-colonnes-d-analyse">repair — Пересчитать столбцы анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">delete — Удалить данные</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#healthcheck-sonder-un-demon">healthcheck — Проверка демона</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#completion-completion-shell">completion — Автодополнение оболочки</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-afficher-la-version">version — Показать версию</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">Примеры рабочих процессов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">Импорт каталога турнира</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">Регулярное резервное копирование</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">Анализ ошибок</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Глоссарий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Безголовый режим (сервер)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Контракт API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Приложения</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">Приложение Windows: что делать, если Windows блокирует запуск</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">История версий</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">О программе</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Интерфейс командной строки (CLI)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface-en-ligne-de-commande-cli">
+<span id="cli"></span><h1>Интерфейс командной строки (CLI)<a class="headerlink" href="#interface-en-ligne-de-commande-cli" title="Ссылка на этот заголовок"></a></h1>
+<section id="introduction">
+<h2>Введение<a class="headerlink" href="#introduction" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB включает полноценный интерфейс командной строки (CLI) в том же исполняемом файле, что и графический интерфейс. CLI особенно полезен для:</p>
+<ul class="simple">
+<li><p><strong>массового импорта</strong> матчей: импортировать весь каталог файлов матчей (XG, SGF, MAT, BGF…) одной командой,</p></li>
+<li><p><strong>автоматизации</strong>: интегрировать blunderDB в shell-скрипты для регулярного резервного копирования, запланированного экспорта или конвейерной обработки,</p></li>
+<li><p><strong>работы на сервере</strong>: управлять базами данных на машинах без графического окружения,</p></li>
+<li><p><strong>быстрой проверки</strong>: проверить содержимое или целостность базы данных без запуска графического интерфейса.</p></li>
+</ul>
+<p>CLI использует в точности тот же формат базы данных, что и графический интерфейс: обе программы пишут один и тот же файл, синхронизировать нечего.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><strong>Если приложение открыто, пока пишет скрипт.</strong> Файл находится в режиме WAL: чтение никогда не блокирует запись, и обе программы работают с одной базой, не мешая друг другу. Две записи, напротив, следуют одна за другой — вторая ждёт блокировку записи (десять секунд на инструкцию плюс несколько повторных попыток) и завершается ошибкой, только если ожидание исчерпано, сообщением, называющим SQLite:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: failed to import match: sqlite: save match: database is locked (5) (SQLITE_BUSY)
+</pre></div>
+</div>
+<p>Графический интерфейс не следит за файлом: он продолжает показывать то, что загрузил, пока <code class="docutils literal notranslate"><span class="pre">CTRL-R</span></code> не перезагрузит позиции. Ничего не теряется, но экран отстаёт от базы.</p>
+</div>
+</section>
+<section id="syntaxe-generale">
+<h2>Общий синтаксис<a class="headerlink" href="#syntaxe-generale" title="Ссылка на этот заголовок"></a></h2>
+<p>Режим определяется автоматически: если первый аргумент является командой CLI, blunderDB запускается в безголовом режиме, иначе запускается графический интерфейс.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># GUI</span>
+./blunderdb
+
+<span class="c1"># CLI</span>
+./blunderdb<span class="w"> </span>&lt;command&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Примеры на этой странице пишут <code class="docutils literal notranslate"><span class="pre">./blunderdb</span></code>: двоичный файл в том виде, в каком он скачан, вызываемый из папки, где он лежит. Установленный пакетом или связанный из папки в <code class="docutils literal notranslate"><span class="pre">PATH</span></code> (см. <a class="reference internal" href="telecharge_install.html#telecharge-install"><span class="std std-ref">Загрузка и установка</span></a>), он вызывается просто как <code class="docutils literal notranslate"><span class="pre">blunderdb</span></code>.</p>
+<p>Булевы опции, помеченные «по умолчанию: да», отключаются формой <code class="docutils literal notranslate"><span class="pre">--option=false</span></code> — <code class="docutils literal notranslate"><span class="pre">--recursive=false</span></code>, <code class="docutils literal notranslate"><span class="pre">--analysis=false</span></code>. Формы через пробел не существует: <code class="docutils literal notranslate"><span class="pre">--recursive</span> <span class="pre">false</span></code> оставляет опцию в значении по умолчанию и трактует <code class="docutils literal notranslate"><span class="pre">false</span></code> как лишний аргумент.</p>
+</section>
+<section id="commandes-disponibles">
+<h2>Доступные команды<a class="headerlink" href="#commandes-disponibles" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Команда</p></th>
+<th class="head"><p>Описание</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>create</p></td>
+<td><p>Создать новую базу данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
+<td><p>Импортировать данные (матч, позиция, пакет).</p></td>
+</tr>
+<tr class="row-even"><td><p>export</p></td>
+<td><p>Экспортировать данные.</p></td>
+</tr>
+<tr class="row-odd"><td><p>identity</p></td>
+<td><p>Показывает или переносит идентичность издателя (ключ подписи водяных знаков).</p></td>
+</tr>
+<tr class="row-even"><td><p>open</p></td>
+<td><p>Превращает файл, защищённый паролем (.dbx), в обычную базу.</p></td>
+</tr>
+<tr class="row-odd"><td><p>search</p></td>
+<td><p>Поиск позиций с фильтрами.</p></td>
+</tr>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>Отобразить содержимое базы.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match</p></td>
+<td><p>Отобразить позиции и анализ матча.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection</p></td>
+<td><p>Управляет коллекциями (список, содержимое, создание, переименование, удаление, экспорт).</p></td>
+</tr>
+<tr class="row-odd"><td><p>anki</p></td>
+<td><p>Колоды интервального повторения (список, статистика, прогноз, синхронизация).</p></td>
+</tr>
+<tr class="row-even"><td><p>epc</p></td>
+<td><p>Вычисляет Effective Pip Count и вердикт по кубу для позиции выброса (XGID).</p></td>
+</tr>
+<tr class="row-odd"><td><p>bearoff</p></td>
+<td><p>Создаёт, перечисляет, проверяет и удаляет базы выброса.</p></td>
+</tr>
+<tr class="row-even"><td><p>analyze</p></td>
+<td><p>Записывает анализ gammonNet для каждой позиции, у которой его нет.</p></td>
+</tr>
+<tr class="row-odd"><td><p>info</p></td>
+<td><p>Отобразить метаданные базы.</p></td>
+</tr>
+<tr class="row-even"><td><p>edit</p></td>
+<td><p>Изменить метаданные базы.</p></td>
+</tr>
+<tr class="row-odd"><td><p>verify</p></td>
+<td><p>Проверить целостность базы.</p></td>
+</tr>
+<tr class="row-even"><td><p>vacuum</p></td>
+<td><p>Сжимает файл базы данных, возвращая освободившееся место.</p></td>
+</tr>
+<tr class="row-odd"><td><p>repair</p></td>
+<td><p>Пересчитывает скалярные столбцы, выведенные из каждого анализа.</p></td>
+</tr>
+<tr class="row-even"><td><p>delete</p></td>
+<td><p>Удалить данные.</p></td>
+</tr>
+<tr class="row-odd"><td><p>healthcheck</p></td>
+<td><p>Опрашивает работающий демон <code class="docutils literal notranslate"><span class="pre">serve</span></code>: код 0, если он готов.</p></td>
+</tr>
+<tr class="row-even"><td><p>completion</p></td>
+<td><p>Выводит скрипт автодополнения оболочки (bash, zsh, fish).</p></td>
+</tr>
+<tr class="row-odd"><td><p>help</p></td>
+<td><p>Показать справку.</p></td>
+</tr>
+<tr class="row-even"><td><p>version</p></td>
+<td><p>Показать версию.</p></td>
+</tr>
+<tr class="row-odd"><td><p>serve, migrate, call</p></td>
+<td><p>Серверный режим и миграция в PostgreSQL: см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Каждая команда принимает опцию <code class="docutils literal notranslate"><span class="pre">--help</span></code> для отображения подробной справки.</p>
+</section>
+<section id="create-creer-une-base-de-donnees">
+<h2>create — Создать базу данных<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Создаёт новый файл базы данных с необязательными метаданными.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;name&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;text&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Путь к файлу базы данных для создания (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Имя владельца базы данных.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Описание базы данных.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Перезаписать файл, если он уже существует.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (путь, версия, пользователь, описание, дата создания).</p></li>
+</ul>
+<p>Расширение <code class="docutils literal notranslate"><span class="pre">.db</span></code> добавляется автоматически, если оно отсутствует. Родительские каталоги создаются при необходимости.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2>import — Импорт данных<a class="headerlink" href="#import-importer-des-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Импортирует файлы матчей или позиций в базу данных.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Путь к базе данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Тип импорта: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> или <code class="docutils literal notranslate"><span class="pre">batch</span></code> (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Файл для импорта (для <code class="docutils literal notranslate"><span class="pre">match</span></code> и <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Каталог для импорта (для <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Рекурсивный просмотр подкаталогов (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> — С <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">batch</span></code>: не завершается и импортирует каждый файл матча <strong>по мере его появления</strong> в <code class="docutils literal notranslate"><span class="pre">--dir</span></code> (Ctrl-C для остановки).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watch-every</span></code> — Как часто <code class="docutils literal notranslate"><span class="pre">--watch</span></code> смотрит (по умолчанию: 10s, минимум 2s).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code> — Завершается с ошибкой, если хотя бы один элемент (<code class="docutils literal notranslate"><span class="pre">position</span></code> или <code class="docutils literal notranslate"><span class="pre">batch</span></code>) не удалось импортировать, даже если остальные были импортированы успешно.</p></li>
+</ul>
+<p>Код возврата подчиняется четырём правилам:</p>
+<ul class="simple">
+<li><p><strong>ничего не распознано</strong> — каждый файл завершился неудачей: ошибка, независимо от того, передан ли <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>;</p></li>
+<li><p><strong>одни дубликаты</strong> — каждый файл уже был в базе: успех. Каталог, перезапущенный без единого нового файла, — обычная ночь скрипта — завершается с кодом 0, и ненулевым остаётся только <code class="docutils literal notranslate"><span class="pre">duplicates</span></code>;</p></li>
+<li><p><strong>частичная неудача</strong> (одни элементы импортированы, другие отклонены): ошибка только в том случае, если передан <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>;</p></li>
+<li><p>импортирован хотя бы один новый элемент, без <code class="docutils literal notranslate"><span class="pre">--fail-on-error</span></code>: успех, а отклонённые файлы перечислены в таблице.</p></li>
+</ul>
+<section id="surveiller-un-dossier">
+<h3>Слежение за папкой<a class="headerlink" href="#surveiller-un-dossier" title="Ссылка на этот заголовок"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">--watch</span></code> превращает импорт каталога в слежение: команда не возвращает управление и импортирует каждый файл матча, который <strong>появляется</strong> в папке. Это безынтерфейсная форма <a class="reference internal" href="manuel.html#dossier-surveille"><span class="std std-ref">отслеживаемой папки</span></a> приложения.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Importer ce que le dossier contient déjà, puis surveiller ce qui arrive</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>~/XG/Matches<span class="w"> </span>--watch
+</pre></div>
+</div>
+<p>Импортируются только появляющиеся файлы: то, что папка содержит при запуске, записывается как известное и не трогается — направив слежение на четыре года матчей, не следует импортировать их все. Две команды выше поэтому складываются ровно так, как хотелось бы.</p>
+<p>Файл импортируется лишь тогда, когда его <strong>размер устоялся</strong>, то есть увиден дважды без изменений: матч, который пишет другая программа, растёт от взгляда к взгляду, и импорт недописанного дал бы синтаксическую ошибку, с которой никто ничего не сделает. Папка не обходится рекурсивно. Сетевой ресурс, ставший нечитаемым, не останавливает слежение, и его содержимое не сойдёт за новое, когда он вернётся.</p>
+<p>Ctrl-C останавливает между файлами, никогда посреди одного: текущий файл дописывает свой импорт и печатает отчёт до того, как команда вернёт управление.</p>
+</section>
+<section id="import-d-un-match">
+<h3>Импорт матча<a class="headerlink" href="#import-d-un-match" title="Ссылка на этот заголовок"></a></h3>
+<p>Поддерживаемые форматы: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>), Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>) и BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+
+<span class="c1"># Successfully imported match (ID: 1)</span>
+<span class="c1">#</span>
+<span class="c1"># Match Details:</span>
+<span class="c1">#   Players: Kévin Unger vs Maxence Job</span>
+<span class="c1">#   Event: HSBT Paris 2023</span>
+<span class="c1">#   Match Length: 7</span>
+<span class="c1">#   Games: 7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> выдаёт те же поля одним документом:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"match"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player1"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Kévin Unger"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"player2"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Maxence Job"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"event"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HSBT Paris 2023"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"location"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Paris, Fédération Française de Bridge"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"match_length"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"games"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3>Импорт позиций<a class="headerlink" href="#import-de-positions" title="Ссылка на этот заголовок"></a></h3>
+<p>Импортирует позиции из текстового файла, <strong>по одной JSON-позиции на строку</strong>. Это в точности то, что пишет <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">positions</span></code>: обе команды отвечают друг другу, экспорт реимпортируется как есть, без единой правки.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Successfully imported 4 positions</span>
+</pre></div>
+</div>
+<p>Строка в том виде, в каком её выдаёт <code class="docutils literal notranslate"><span class="pre">export</span></code>, — доска занимает в ней почти всё: двадцать шесть пунктов, за которыми идут выброшенные шашки:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+</pre></div>
+</div>
+<p>Анализ и комментарии этим форматом не передаются: он несёт позицию и ничего больше. Чтобы перенести целую библиотеку, нужен <code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--type</span> <span class="pre">database</span></code>.</p>
+</section>
+<section id="import-par-lot">
+<h3>Пакетный импорт<a class="headerlink" href="#import-par-lot" title="Ссылка на этот заголовок"></a></h3>
+<p>Импортирует все файлы матчей из каталога в одной операции. Это наиболее эффективный метод для импорта большого числа матчей.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--fail-on-error
+</pre></div>
+</div>
+<p>Итоговая таблица показывает для каждого файла, удался ли импорт (✓), завершился неудачей (✗) или это был дубликат (⊘). Дубликат не считается неудачей, а пакет, состоящий из одних лишь дубликатов, — это успех (см. правила выше).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Batch importing from: ./matchs/ (recursive: true)
+
+Found 3 match file(s) to import
+
+[1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+[2/3] Importing: test.mat... DUPLICATE
+[3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+====================================================================
+IMPORT SUMMARY
+====================================================================
+Status  File           ID  Player 1     Player 2     Games  Positions  Error
+------  ----           --  --------     --------     -----  ---------  -----
+✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+⊘       test.mat                                     0      0
+✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+--------------------------------------------------------------------
+Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> даёт то же самое в пригодном для скрипта виде: по объекту на файл в <code class="docutils literal notranslate"><span class="pre">files</span></code>, затем итоги. После спокойной ночи ненулевым остаётся только <code class="docutils literal notranslate"><span class="pre">duplicates</span></code>, <code class="docutils literal notranslate"><span class="pre">failed</span></code> равен нулю, а код возврата — 0; с ошибкой завершается лишь тот пакет, в котором ничего не было распознано.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"files"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"02_NDT_FR.txt"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"failed to parse file: …"</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"file_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test.xg"</span><span class="p">,</span><span class="w"> </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">"positions"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"duplicates"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"failed"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"positions_imported"</span><span class="p">:</span><span class="w"> </span><span class="mi">341</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2>export — Экспорт данных<a class="headerlink" href="#export-exporter-des-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Экспортирует содержимое базы в файлы.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;output&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Исходная база (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Тип экспорта: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">matches</span></code> или <code class="docutils literal notranslate"><span class="pre">mat</span></code> (экспорт одного или нескольких матчей в транскрипции Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>) (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Выходной файл (обязательно, кроме случая <code class="docutils literal notranslate"><span class="pre">--type</span> <span class="pre">mat</span></code>, используемого с <code class="docutils literal notranslate"><span class="pre">--dir</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Выходной каталог для пакетного экспорта <code class="docutils literal notranslate"><span class="pre">.mat</span></code> (несколько матчей, один файл на матч; без <code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> экспортируются все матчи).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Включить анализ (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Включить комментарии (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Включить библиотеку фильтров (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Включить сыгранные ходы (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Включить матчи (по умолчанию: да).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Включить коллекции (по умолчанию: нет).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — Идентификаторы коллекций для экспорта (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Идентификаторы матчей для экспорта (через запятую, пусто = все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Идентификаторы турниров для экспорта (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Оборачивает результат в зашифрованный контейнер (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark</span></code> — Записывает <strong>подписанное</strong> заявление о происхождении в экспортируемый файл (см. <a class="reference internal" href="manuel.html#diffusion-controlee"><span class="std std-ref">Распространение базы: происхождение и пароль</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--watermark-note</span></code> — Произвольный текст при водяном знаке (условия использования, контакт); применяется вместе с <code class="docutils literal notranslate"><span class="pre">--watermark</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (документ с итогами экспорта: путь, размер в байтах, количества).</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+
+<span class="c1"># .mat : un match, puis plusieurs (ou tous) dans un répertoire</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span><span class="w"> </span>--file<span class="w"> </span>match5.mat
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">5</span>,9,12<span class="w"> </span>--dir<span class="w"> </span>sorties/
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>mat<span class="w"> </span>--dir<span class="w"> </span>sorties/
+
+<span class="c1"># .dbx : filigrané et protégé par mot de passe</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>cours.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>cours-diffusion.dbx<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont — 12 mars 2026"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark-note<span class="w"> </span><span class="s2">"Merci de ne pas rediffuser."</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--password<span class="w"> </span>secret
+</pre></div>
+</div>
+<p>Водяной знак подписывается локальной идентичностью издателя (см. команду <code class="docutils literal notranslate"><span class="pre">identity</span></code> ниже): подделать его нельзя, но убрать можно — файл остаётся обычной базой SQLite. Он ничего не защищает, он лишь говорит, откуда файл. Пароль защищает <em>перевозку</em> файла (затерявшуюся копию, вложение, отправленное по ошибке), но не саму базу: любой, кто получил пароль, сможет её открыть. blunderDB никогда ничего не записывает на стороне получателя (ни реестра, ни журнала) — см. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-mark-origin-and-nothing-else.md">ADR-0007</a>.</p>
+</section>
+<section id="identity-identite-d-emetteur">
+<h2>identity — Идентичность издателя<a class="headerlink" href="#identity-identite-d-emetteur" title="Ссылка на этот заголовок"></a></h2>
+<p>Показывает или переносит вашу <strong>идентичность издателя</strong> — ключ Ed25519, которым подписывается каждый водяной знак. Он создаётся сам при первом нанесении знака; настраивать нечего. Он принадлежит человеку, а не базе: всё, что вы помечаете, несёт один и тот же публичный отпечаток.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>identity
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Jean Dupont"</span>
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--export<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+./blunderdb<span class="w"> </span>identity<span class="w"> </span>--import<span class="w"> </span>jean.bdbid<span class="w"> </span>--passphrase<span class="w"> </span>pw
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--name</span></code> — Меняет отображаемое имя идентичности.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Экспортирует идентичность в файл <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--import</span></code> — Импортирует идентичность из файла <code class="docutils literal notranslate"><span class="pre">.bdbid</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--passphrase</span></code> — Необязательная парольная фраза, защищающая экспортируемый/импортируемый файл (сама локальная идентичность намеренно не защищена).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (имя, отпечаток, путь хранения).</p></li>
+</ul>
+<p>Экспортированный файл позволяет любому, у кого он есть, подписывать от вашего имени — не передавайте его. Переименование меняет лишь подпись-ярлык: уже помеченные файлы сохраняют имя, под которым были запечатаны, и по-прежнему проверяются.</p>
+</section>
+<section id="open-ouvrir-un-fichier-protege">
+<h2>open — Открыть защищённый файл<a class="headerlink" href="#open-ouvrir-un-fichier-protege" title="Ссылка на этот заголовок"></a></h2>
+<p>Превращает файл, защищённый паролем (<code class="docutils literal notranslate"><span class="pre">.dbx</span></code>), в обычную базу. Пароль спрашивают один раз; дальше это обычный файл.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret
+./blunderdb<span class="w"> </span>open<span class="w"> </span>--db<span class="w"> </span>cours.dbx<span class="w"> </span>--password<span class="w"> </span>secret<span class="w"> </span>--file<span class="w"> </span>./mon-cours.db
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Файл <code class="docutils literal notranslate"><span class="pre">.dbx</span></code>, который нужно открыть (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--password</span></code> — Пароль контейнера (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Путь вывода для обычной базы (по умолчанию: то же имя, расширение <code class="docutils literal notranslate"><span class="pre">.db</span></code>).</p></li>
+</ul>
+<p>Что защищает пароль: <em>перевозку</em> файла — копию, забытую в папке загрузок, вложение, отправленное по ошибке. Не базу: любой, кто получил пароль, сможет её открыть. Заголовок контейнера открыт, поэтому <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">info</span></code> читает происхождение защищённого файла без пароля.</p>
+</section>
+<section id="search-rechercher-des-positions">
+<h2>search — Поиск позиций<a class="headerlink" href="#search-rechercher-des-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>Поиск позиций в базе данных по комбинируемым критериям.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Основные параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">table</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Максимальное количество результатов (0 = без ограничений).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--offset</span></code> — Пропустить первые n результатов, прежде чем начать отсчёт; вместе с <code class="docutils literal notranslate"><span class="pre">--limit</span></code> это постраничный вывод.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Экспортировать результаты в новую базу данных.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> — Показывает список токенов, понятных <code class="docutils literal notranslate"><span class="pre">--query</span></code>, и на этом останавливается. Никакая база не открывается: <code class="docutils literal notranslate"><span class="pre">--db</span></code> не нужен.</p></li>
+</ul>
+<p><strong>Доступные фильтры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Тип решения: <code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — Бросок кубиков. <code class="docutils literal notranslate"><span class="pre">5,3</span></code> ищет позиции, где оба кубика совпадают (в любом порядке). <code class="docutils literal notranslate"><span class="pre">5</span></code> ищет позиции, где 5 выпадает на одном из кубиков (значение второго кубика игнорируется). Подразумевает <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code>, если значение <code class="docutils literal notranslate"><span class="pre">--decision</span></code> не указано.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Диапазон разницы пипкаунта.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Диапазон процента побед (%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Значение куба.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — Счёт игроков.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Длина матча.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — Порог по тому, <strong>во сколько обходится ошибка в позиции</strong>: разрыв между лучшим ходом и вторым или наибольшая из трёх ошибок куба. В <strong>очках эквити</strong> — <code class="docutils literal notranslate"><span class="pre">--error-min</span> <span class="pre">0.1</span></code> оставляет позиции, где ошибка стоит не менее одной десятой очка. О том, что было в них сыграно, он ничего не говорит.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — Порог по ошибке хода, <strong>фактически сыгранного</strong> игроком 1. В <strong>тысячных долях эквити</strong> (миллипоинтах): <code class="docutils literal notranslate"><span class="pre">--move-error-min</span> <span class="pre">50</span></code>, то есть одна двадцатая очка. Это токен <code class="docutils literal notranslate"><span class="pre">E</span></code> грамматики поиска, записанный как есть.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — Только позиции с анализом.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Минимальное количество снятых шашек (игрок 1/2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Фильтр по идентификаторам матчей (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Фильтр по идентификаторам турниров (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--position-ids</span></code> — Фильтр по идентификаторам позиций: интервал <code class="docutils literal notranslate"><span class="pre">2,7</span></code> (позиции с 2 по 7) или явный список через точку с запятой <code class="docutils literal notranslate"><span class="pre">5;10;15</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--individual</span></code> — Только позиции, импортированные отдельно, то есть те, которые вы добавили сами, а не пришедшие с импортом матча.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--flagged</span></code> — Только позиции, помеченные (<em>flag</em>) для изучения в исходной программе (пометки eXtreme Gammon). Не действует задним числом: уже импортированные матчи нужно импортировать заново, чтобы получить их пометки.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-comment</span></code> — Только позиции с комментарием. Происхождение не различается: и заметка, набранная вручную, и комментарий, пришедший с импортом матча, считаются одинаково. Комментарии матча или турнира не просматриваются.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--no-comment</span></code> — Только позиции без комментария. Взаимоисключающе с <code class="docutils literal notranslate"><span class="pre">--has-comment</span></code>.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> и <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> измеряют не одно и то же и <strong>принимают не одну и ту же единицу</strong>: множитель равен тысяче. Первый задаётся в очках эквити (<code class="docutils literal notranslate"><span class="pre">0.1</span></code>), два других — в тысячных (<code class="docutils literal notranslate"><span class="pre">100</span></code>): одно очко стоит 1000 тысячных. На вопрос «где я ошибся» отвечает <code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code>; <code class="docutils literal notranslate"><span class="pre">--error-min</span></code> отвечает на вопрос «какие позиции были каверзными».</p>
+</div>
+<p><strong>Что печатает search:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">table</span></code> (по умолчанию) даёт по строке на позицию: идентификатор, счёт, значение куба, тип решения, бросок, лучшее решение и его эквити. Два последних столбца остаются пустыми для позиции без анализа.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 5 position(s)
+
+ID  Score  Cube  Type  Dice  Best Move  Equity
+--  -----  ----  ----  ----  ---------  ------
+2   7-7    0     cube        No Double  -0.005
+4   7-7    0     cube        No Double  -0.027
+6   7-7    0     cube        No Double  -0.161
+8   7-7    0     cube        No Double  0.256
+10  7-7    0     cube        No Double  -0.234
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> даёт массив тех же позиций. Поля <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">decision_type</span></code> (<code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code>) и <code class="docutils literal notranslate"><span class="pre">dice</span></code> присутствуют всегда; <code class="docutils literal notranslate"><span class="pre">best_move</span></code>, <code class="docutils literal notranslate"><span class="pre">equity</span></code> и <code class="docutils literal notranslate"><span class="pre">xgid</span></code> появляются, только если позиция несёт анализ, который их заполняет. Строка <code class="docutils literal notranslate"><span class="pre">Found</span> <span class="pre">n</span> <span class="pre">position(s)</span></code> по-прежнему печатается перед массивом: скрипт, ожидающий только JSON, должен пропустить первую строку или воспользоваться <code class="docutils literal notranslate"><span class="pre">--export</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5266</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"score"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">4</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"cube"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"decision_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checker"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dice"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">      </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"best_move"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10/3"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"equity"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.565</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">xgid</span></code> печатает по одному XGID на строку и <strong>ничего больше</strong>. Он печатает только те позиции, чей сохранённый анализ несёт XGID: позицию, вставленную в приложение из текстового экспорта, или файл BGF, который его переносит. Позиции, пришедшие из импорта матча XG, GNUbg или Jellyfish, его не несут, и вывод тогда пуст. Подкоманда <code class="docutils literal notranslate"><span class="pre">collection</span> <span class="pre">show</span></code>, напротив, восстанавливает XGID по доске.</p>
+<p><strong>Язык запросов:</strong></p>
+<p>Приведённые выше флаги покрывают лишь часть фильтров. <code class="docutils literal notranslate"><span class="pre">--query</span></code> даёт доступ к языку запросов приложения — тому же, что и в командной строке, — и, следовательно, ко всем фильтрам, которые не рисуются на доске: шаблон хода, текст комментария, игрок, дата, эквити, исключённые броски, зоны и блоты.</p>
+<p>Грамматика записана лишь в одном месте — <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a>. Её таблица даёт каждый токен, его форму и соответствующий ему флаг <code class="docutils literal notranslate"><span class="pre">search</span></code>, когда такой существует. Эта страница её не повторяет.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s p&gt;30 E&gt;50'</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--query<span class="w"> </span><span class="s1">'s m"13/11" t"blunder" pl"Alice" T&gt;2026/01/01'</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query-help</span></code> напоминает этот список, не открывая базы:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ ./blunderdb search --query-help
+blunderdb search --query — the interface's query language
+
+A query is the same text the application's command bar takes:
+  s cube p&gt;30 E&gt;50        cube decisions, 30+ pips behind, 50+ millipoints of error
+  s m"13/11" T&gt;2026/01/01 played 13/11, imported this year
+
+Flags (no value):
+  cube score   match the cube / the score of the position on the board
+  d            match the decision type (checker or cube)
+  …
+
+Ranges — each takes x&gt;n, x&lt;n or xa,b (lower-case: you; upper-case: the opponent):
+  p P          pip count difference / absolute pip count
+  …
+  E            error of the played move, in millipoints
+  T            creation date, T&gt;2026/01/01
+
+Values:
+  t"tag"       comment text (";" separates alternatives)
+  …
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--query</span></code> заменяет флаги фильтрации, а не дополняет их: их сочетание отклоняется с указанием конфликтующего флага. Флаги, определяющие, <em>где</em> искать и <em>как</em> показывать — <code class="docutils literal notranslate"><span class="pre">--db</span></code>, <code class="docutils literal notranslate"><span class="pre">--format</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, <code class="docutils literal notranslate"><span class="pre">--offset</span></code>, <code class="docutils literal notranslate"><span class="pre">--export</span></code> — остаются в силе.</p>
+<p>Токен, который ничем не распознан, приводит к ошибке команды, а не к молчаливому сужению поиска. Два ограничения вытекают из отсутствия доски в командной строке: рисунок шашек напечатать нельзя, а пять токенов, читающих доску — <code class="docutils literal notranslate"><span class="pre">cube</span></code>, <code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">D</span></code>/<code class="docutils literal notranslate"><span class="pre">D1</span></code> и <code class="docutils literal notranslate"><span class="pre">x</span></code>, — сравниваются здесь с пустой доской. Поиск, которому нужен один из них, записывается <strong>целиком</strong> флагами, поскольку <code class="docutils literal notranslate"><span class="pre">--query</span></code> с ними не сочетается — например, решения по кубу с отставанием в 30 пипов и ошибкой не менее 50 миллипоинтов:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--pip-min<span class="w"> </span><span class="m">30</span><span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">50</span>
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--individual
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
+
+<span class="c1"># Pagination</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span><span class="w"> </span>--offset<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2>list — Список содержимого<a class="headerlink" href="#list-lister-le-contenu" title="Ссылка на этот заголовок"></a></h2>
+<p>Отображает содержимое базы данных.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Типы:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Список импортированных матчей.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tournaments</span></code> — Список турниров.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Перечисляет позиции (по умолчанию 10). С <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code> становится <strong>табличным экспортом</strong>: по строке на позицию, с её XGID, фазой, счётом, кубом, пипсами и производными столбцами анализа.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imports</span></code> — Записанные импорты, от новых к старым: идентификатор, дата, формат, источник, матчи импортированные / пропущенные / обогащённые, нечитаемые файлы и новые позиции. С <code class="docutils literal notranslate"><span class="pre">--batch</span> <span class="pre">&lt;id&gt;</span></code> показывается <strong>полный отчёт</strong> одного импорта: отмеченные позиции, позиции без анализа, PR по этой партии и её пять худших решений (см. <a class="reference internal" href="guide_utilisateur.html#compte-rendu-import"><span class="std std-ref">Отчёт об импорте</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Отчёт со статистикой производительности: PR / Snowie ER / MWC (глобально, шашки, куб), скользящий PR за последние N решений, худшие ошибки, разбивка по действиям куба и гистограмма величин ошибок.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">players</span></code> — Сравнительная таблица, <strong>по строке на каждого игрока</strong> базы: матчи, победы/поражения, учтённые решения, PR общий / шашки / куб, Snowie ER, ошибки, бландеры и удача. Это командный аналог вкладки «Игроки» панели статистики.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">moves</span></code> — <strong>Табличный экспорт</strong> записанных ходов, по одному на строку, с матчем, которому они принадлежат, повторённым в каждой строке: идентификаторы, дата, игроки, длина, номер и тип хода, позиция, кости, сыгранный ход, действие с кубом, удача. Требуется <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyses</span></code> — <strong>Табличный экспорт</strong> сохранённых анализов, по одному на строку: движок, глубина, лучший ход и его эквити, ошибка сыгранного хода, лучшее действие с кубом и его ошибка, шесть долей выигрыша. Требуется <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> — Словарь тегов базы: каждое <code class="docutils literal notranslate"><span class="pre">#слово</span></code>, написанное в комментарии, с числом <strong>позиций</strong>, которые его несут, от самого используемого к менее используемому. В базе без единого тега показывает рекомендуемый словарь вместо пустого списка (см. <a class="reference internal" href="manuel.html#tags"><span class="std std-ref">Теги</span></a>). Принимает <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> и <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">csv</span></code>.</p></li>
+</ul>
+<section id="exports-tabulaires">
+<span id="export-tabulaire"></span><h3>Табличные экспорты<a class="headerlink" href="#exports-tabulaires" title="Ссылка на этот заголовок"></a></h3>
+<p>Три типа — <code class="docutils literal notranslate"><span class="pre">positions</span></code>, <code class="docutils literal notranslate"><span class="pre">moves</span></code> и <code class="docutils literal notranslate"><span class="pre">analyses</span></code> — экспортируются в CSV для notebook, таблицы или скрипта:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>positions.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>moves<span class="w">     </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>moves.csv
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>analyses<span class="w">  </span>--format<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>analyses.csv
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> действует <strong>только если вы его передали</strong>. Значение по умолчанию (10) существует, чтобы <code class="docutils literal notranslate"><span class="pre">list</span></code> в терминале не прокручивал всю базу; экспорт же уходит в файл, который читает программа, и молча обрезать его на десяти строках было бы ловушкой, незаметной до тех пор, пока цифры не окажутся неверными.</p>
+<p><strong>Столбцы — это контракт.</strong> Notebook или скрипт, написанный под эти имена, должен продолжать работать: столбцы добавляются в конец, никогда не переименовываются и не переставляются. Все эквити — в <strong>целых миллипунктах</strong>, потому что так они хранятся и потому что дробное число в CSV приглашает локаль его переформатировать.</p>
+<p><strong>Parquet не предлагается</strong>, и это измеренное, а не догматическое решение: колоночная библиотека весит несколько мегабайт в бинарнике, за размером которого следят, тогда как всё, ради чего существует этот экспорт, читает CSV одной строкой (<code class="docutils literal notranslate"><span class="pre">pd.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">polars.read_csv</span></code>, <code class="docutils literal notranslate"><span class="pre">read.csv</span></code>, таблица). Parquet оправдывает себя на десятках миллионов строк; десятилетняя библиотека нард насчитывает сто тысяч. Если однажды разница окажется измеримой на настоящей базе, именно это измерение и откроет вопрос заново.</p>
+<p>К этим экспортам прилагается <strong>пример notebook для Jupyter</strong> (<code class="docutils literal notranslate"><span class="pre">notebooks/blunderdb-analyse.ipynb</span></code> в репозитории): PR во времени, распределение величин ошибок, десять худших решений с их XGID. Он не использует ничего, кроме этих трёх CSV-файлов, и <strong>выполняется каждую ночь в непрерывной интеграции</strong> — notebook, который никто не запускает, это notebook, переставший работать так, что никто об этом не знает.</p>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">stats</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--metric</span></code> — Отображаемая метрика: <code class="docutils literal notranslate"><span class="pre">pr</span></code> или <code class="docutils literal notranslate"><span class="pre">mwc</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">pr</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--player</span></code> — Ограничить указанным игроком.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Ограничить одним или несколькими идентификаторами турниров (через запятую).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> — Дата начала (ГГГГ-ММ-ДД).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--to</span></code> — Дата окончания (ГГГГ-ММ-ДД).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> — Тип решения: <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">checker</span></code> или <code class="docutils literal notranslate"><span class="pre">cube</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">all</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--top-blunders</span></code> — Количество перечисляемых худших ошибок (по умолчанию: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">imports</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--batch</span></code> — Идентификатор партии: показывает её полный отчёт вместо списка.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--queue</span></code> — С <code class="docutils literal notranslate"><span class="pre">--batch</span></code>: <strong>очередь разбора</strong> пакета вместо его отчёта — позиции, заслуживающие второго взгляда, в том порядке, в каком их проходить (см. <a class="reference internal" href="guide_utilisateur.html#file-etude"><span class="std std-ref">Очередь разбора</span></a>). Сначала решения, которые чего-то стоили, затем позиции, отмеченные в исходной программе, затем спорные решения о кубе; позиция встречается лишь один раз.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p>Измеряемая половина отчёта пересчитывается при каждом вызове: партия, позиции которой с тех пор были проанализированы, возвращает сегодняшние цифры, а не цифры дня импорта.</p>
+<p><strong>Опции</strong> (только для типа <code class="docutils literal notranslate"><span class="pre">players</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--from</span></code> / <code class="docutils literal notranslate"><span class="pre">--to</span></code> — Границы дат (ГГГГ-ММ-ДД), например дни соревнования.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament</span></code> — Ограничить одним или несколькими ID турниров.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">csv</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">--player</span></code> и <code class="docutils literal notranslate"><span class="pre">--decision-type</span></code> к этому типу <strong>не</strong> применяются: таблица охватывает всех игроков и уже разносит шашки и куб по отдельным столбцам.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Прочерк «—» (в CSV — пустое поле) означает величину, которая <strong>никогда не измерялась</strong>, и её не следует путать с нулём. Так обстоит дело с удачей для любого матча, импортированного до версии схемы 2.15.0, а также для форматов, которые её не переносят (BGF, Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>): чтобы её получить, импортируйте исходные файлы заново. Столбец <code class="docutils literal notranslate"><span class="pre">luck_rolls</span></code> показывает, по скольким броскам взято среднее.</p>
+</div>
+<p>Каждый тип печатает по блоку на элемент, а перед ними — найденный итог. Последняя строка напоминает, что список усечён <code class="docutils literal notranslate"><span class="pre">--limit</span></code>, значение которого для позиций по умолчанию равно 10:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Found 3859 position(s):
+
+ID: 1
+  Score: 7-7
+  Player on roll: 0
+  Decision: Checker play
+
+ID: 2
+  Score: 7-7
+  Player on roll: 0
+  Decision: Cube action
+
+…
+
+(Showing 10 of 3859 positions, use --limit to see more)
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les imports enregistrés, puis le compte rendu de l'un d'eux</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>imports<span class="w"> </span>--batch<span class="w"> </span><span class="m">3</span>
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--metric<span class="w"> </span>mwc<span class="w"> </span>--player<span class="w"> </span><span class="s2">"Alice"</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--decision-type<span class="w"> </span>checker<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-01-01
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats<span class="w"> </span>--format<span class="w"> </span>json
+
+<span class="c1"># Un tableau par joueur, borné aux dates d'une compétition</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--from<span class="w"> </span><span class="m">2026</span>-03-01<span class="w"> </span>--to<span class="w"> </span><span class="m">2026</span>-03-08
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>players<span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="match-afficher-un-match">
+<h2>match — Отобразить матч<a class="headerlink" href="#match-afficher-un-match" title="Ссылка на этот заголовок"></a></h2>
+<p>Отображает позиции и анализ импортированного матча.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;file&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — Идентификатор матча для отображения (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">summary</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — Выходной файл (по умолчанию: стандартный вывод).</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+</section>
+<section id="collection-gerer-les-collections">
+<h2>collection — Управление коллекциями<a class="headerlink" href="#collection-gerer-les-collections" title="Ссылка на этот заголовок"></a></h2>
+<p>Управляет коллекциями — наборами позиций, выбранных вручную на панели Коллекции интерфейса. Каждая подкоманда принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>; <code class="docutils literal notranslate"><span class="pre">list</span></code> и <code class="docutils literal notranslate"><span class="pre">show</span></code> принимают <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">text</span></code> (по умолчанию), <code class="docutils literal notranslate"><span class="pre">json</span></code> или <code class="docutils literal notranslate"><span class="pre">csv</span></code>, как и <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Список коллекций: id, название, число позиций, описание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span></code> — Позиции коллекции: id, индекс (номер, начиная с 1, отображаемый в строке состояния интерфейса), счёт, тип решения и XGID.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">create</span> <span class="pre">--name</span> <span class="pre">&lt;имя&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;текст&gt;]</span></code> — Создаёт пустую коллекцию.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">filter</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--query</span> <span class="pre">&lt;запрос&gt;</span></code> — Делает коллекцию <strong>живой</strong>: её содержимое становится результатом поиска, пересчитываемым при каждом открытии. Запрос пишется на собственной грамматике поиска приложения (см. <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-ref">Фильтры поиска</span></a>). <code class="docutils literal notranslate"><span class="pre">--clear</span></code> возвращает её к списку, составленному вручную, сохраняя содержавшиеся в ней позиции.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rename</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--name</span> <span class="pre">&lt;имя&gt;</span> <span class="pre">[--description</span> <span class="pre">&lt;текст&gt;]</span></code> — Переименовывает коллекцию (описание сохраняется, если оно не задано).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--confirm]</span></code> — Удаляет коллекцию; её позиции остаются в базе.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span> <span class="pre">--id</span> <span class="pre">&lt;id[,id…]&gt;</span> <span class="pre">--out</span> <span class="pre">&lt;файл.db&gt;</span> <span class="pre">[--analysis=false]</span> <span class="pre">[--comments=false]</span> <span class="pre">[--watermark</span> <span class="pre">&lt;текст&gt;]</span> <span class="pre">[--watermark-note</span> <span class="pre">&lt;текст&gt;]</span></code> — Экспортирует одну или несколько коллекций в новый файл базы, тем же вызовом, что и окно экспорта интерфейса (о водяном знаке см. команду <code class="docutils literal notranslate"><span class="pre">export</span></code>).</p></li>
+</ul>
+<p>XGID, показываемый <code class="docutils literal notranslate"><span class="pre">show</span></code>, — это тот, что сохранён вместе с анализом позиции, если он есть (импорт BGF и XGP); иначе он генерируется из доски точно так же, как <em>Копировать позицию</em> в интерфейсе — длина матча тогда берётся как больший из двух оставшихся счётов, поскольку сохранённая позиция не хранит настоящую.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Found 2 collection(s):</span>
+<span class="c1">#</span>
+<span class="c1"># ID  Name              Positions  Description</span>
+<span class="c1"># --  ----              ---------  -----------</span>
+<span class="c1"># 1   Ouvertures blitz  0          À revoir</span>
+<span class="c1"># 2   Videaux ratés     0</span>
+</pre></div>
+</div>
+<p>База без коллекций отвечает <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">collections</span> <span class="pre">found</span> <span class="pre">in</span> <span class="pre">database</span></code> и всё равно завершается с кодом 0.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>collection<span class="w"> </span>show<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--format<span class="w"> </span>csv
+
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures blitz"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>rename<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--name<span class="w"> </span><span class="s2">"Ouvertures"</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span><span class="w"> </span>--confirm
+
+<span class="c1"># Exporter deux collections, marquées de leur origine</span>
+./blunderdb<span class="w"> </span>collection<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>,4<span class="w"> </span>--out<span class="w"> </span>ouvertures.db<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--watermark<span class="w"> </span><span class="s2">"Cours de Jean Dupont - 12 mars 2026"</span>
+</pre></div>
+</div>
+</section>
+<section id="anki-paquets-de-repetition-espacee">
+<h2>anki — Колоды интервального повторения<a class="headerlink" href="#anki-paquets-de-repetition-espacee" title="Ссылка на этот заголовок"></a></h2>
+<p>Просматривает и обслуживает колоды интервального повторения (FSRS) панели Anki интерфейса. Повторение карточки требует доски и остаётся в интерфейсе; CLI выводит список, измеряет и ресинхронизирует.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>&lt;subcommand&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">decks</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Список колод: источник, число карточек, карточки к повторению, новые карточки.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — Статистика повторения колоды: всего, новых, изучаемых, к пересмотру, к повторению сейчас, и её параметры FSRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">forecast</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--days</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json|csv]</span></code> — Карточки, наступающие по календарным дням (UTC) на <code class="docutils literal notranslate"><span class="pre">n</span></code> ближайших дней (по умолчанию 30, максимум 365); день 0 включает все просроченные карточки; <code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code> (по умолчанию) охватывает все колоды.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sync</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span></code> — Добавляет карточку для каждой позиции источника колоды, у которой её ещё нет; существующие карточки сохраняют своё расписание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">retention</span> <span class="pre">--deck</span> <span class="pre">&lt;id&gt;</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — измеренное удержание колоды в сравнении с целью, выбранной её владельцем.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">card</span> <span class="pre">--id</span> <span class="pre">&lt;id&gt;</span> <span class="pre">--action</span> <span class="pre">suspend|unsuspend|bury|remove</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — действует на одну карточку. <em>Приостановка</em> откладывает её, не теряя историю (она больше не выпадает в сеансе); <em>закапывание</em> прячет её до следующего дня, ничего не говоря о её ценности; <em>удаление</em> убирает её из колоды — сама позиция остаётся в библиотеке, ведь колода лишь список изучения поверх неё.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span> <span class="pre">[--deck</span> <span class="pre">&lt;id&gt;]</span> <span class="pre">[--limit</span> <span class="pre">&lt;n&gt;]</span> <span class="pre">[--format</span> <span class="pre">text|json]</span></code> — журнал повторений, самые свежие сначала (<code class="docutils literal notranslate"><span class="pre">--deck</span> <span class="pre">0</span></code>, по умолчанию, охватывает все колоды; <code class="docutils literal notranslate"><span class="pre">--limit</span></code> по умолчанию 20). Журнал — это то, что планировщику действительно сообщили, в отличие от того, что он планирует сегодня: единственное место, где видна оценка, введённая по ошибке.</p></li>
+</ul>
+<p>Колода, основанная на коллекции, перечитывает свою коллекцию. Колода, основанная на поиске, сохраняет поиск таким, каким его записал интерфейс (команда, доска и идентификаторы найденных на тот момент позиций): грамматика поиска живёт в интерфейсе, поэтому CLI ресинхронизирует по сохранённым идентификаторам и сообщает об этом в поток ошибок — откройте колоду в интерфейсе, чтобы заново выполнить сам поиск.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>anki<span class="w"> </span>decks<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>stats<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--format<span class="w"> </span>json
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>forecast<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--days<span class="w"> </span><span class="m">14</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>sync<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>card<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">12</span><span class="w"> </span>--action<span class="w"> </span><span class="nb">suspend</span>
+./blunderdb<span class="w"> </span>anki<span class="w"> </span>log<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--deck<span class="w"> </span><span class="m">2</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">50</span>
+
+<span class="c1"># Day         Due</span>
+<span class="c1"># ---         ---</span>
+<span class="c1"># 2026-09-02  12</span>
+<span class="c1"># 2026-09-03  4</span>
+<span class="c1"># ...</span>
+<span class="c1">#</span>
+<span class="c1"># 37 card(s) due over 14 day(s)</span>
+</pre></div>
+</div>
+</section>
+<section id="cubematrix-matrice-du-videau">
+<span id="cli-cubematrix"></span><h2>cubematrix — Матрица куба<a class="headerlink" href="#cubematrix-matrice-du-videau" title="Ссылка на этот заголовок"></a></h2>
+<p>Даёт вердикт куба для позиции при <strong>любом счёте</strong> матча: для каждой клетки <em>away × away</em> — удваивать ли и принимать ли. Чистое вычисление: никакая база данных не открывается, позиция передаётся через XGID.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Длина матча, которую покрывает сетка, от 1 до 25 (по умолчанию: 7).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Глубина поиска для каждой клетки, <code class="docutils literal notranslate"><span class="pre">0</span></code> или <code class="docutils literal notranslate"><span class="pre">2</span></code> (по умолчанию: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Число ходов-кандидатов, оставляемых сетью отсечения (по умолчанию: 12).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Число параллельных поисков (по умолчанию: по одному на ядро). Сетка одинакова при любом значении; меняется только время.</p></li>
+</ul>
+<p>Собственный счёт позиции игнорируется — сетка его заменяет — но её <strong>куб</strong> сохраняется: вопрос в том, при каком счёте стоит повернуть <em>этот</em> куб. Сетка всюду построена для положения после Кроуфорда.</p>
+<p>Каждая клетка — отдельный поиск, потому что движок учитывает счёт: единственный поиск, прочитанный через разные матчевые эквити, был бы неверен именно там, где счёт важен.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grille d'un match en 5 points</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--match-length<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'</span>
+
+<span class="c1"># Les équités de chaque case, pour un script</span>
+./blunderdb<span class="w"> </span>cubematrix<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p>Вывод <code class="docutils literal notranslate"><span class="pre">text</span></code>: сетка, строки которой — очки, которых ещё не хватает игроку на ходу, а столбцы — очки соперника, затем легенда обозначений <code class="docutils literal notranslate"><span class="pre">ND</span></code> / <code class="docutils literal notranslate"><span class="pre">DT</span></code> / <code class="docutils literal notranslate"><span class="pre">DP</span></code> / <code class="docutils literal notranslate"><span class="pre">TG</span></code> и причина для каждой отклонённой клетки.</p>
+</section>
+<section id="epc-calculatrice-epc">
+<h2>epc — Калькулятор EPC<a class="headerlink" href="#epc-calculatrice-epc" title="Ссылка на этот заголовок"></a></h2>
+<p>Вычисляет Effective Pip Count, вероятность выигрыша и вердикт по кубу для игры на деньги для позиции выброса, заданной XGID. Чистое вычисление: никакой файл базы не задействован.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="s1">'&lt;XGID&gt;'</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--bearoff-ts</span></code> — Необязательная двусторонняя база выброса (<code class="docutils literal notranslate"><span class="pre">.bd</span></code>), расширяющая встроенную TS-06-06 (читается также из переменной окружения <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_TS_PATH</span></code>). Побеждает самая широкая корректная база; неверный файл игнорируется с предупреждением.</p></li>
+</ul>
+<p><strong>Режимы.</strong> В области, покрытой двусторонней базой, вероятность выигрыша и анализ куба для игры на деньги (cubeless, ND, D/T, D/P, вердикт) <strong>точны</strong>. За её пределами вероятность выигрыша <strong>оценивается</strong> (свёртка односторонних распределений бросков плюс откалиброванная поправка) и выводится с измеренной погрешностью; вердикт по кубу намеренно никогда не оценивается (см. <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md">ADR-0009</a>).</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Régime exact : six pions ou moins de chaque côté</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span><span class="s1">'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'</span>
+
+<span class="c1"># Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur</span>
+./blunderdb<span class="w"> </span>epc<span class="w"> </span>--bearoff-ts<span class="w"> </span>~/.local/share/blunderdb/gnubg_ts6x11.bd<span class="w"> </span><span class="s1">'XGID=…'</span>
+</pre></div>
+</div>
+</section>
+<section id="bearoff-bases-de-sortie">
+<h2>bearoff — Базы бироффа<a class="headerlink" href="#bearoff-bases-de-sortie" title="Ссылка на этот заголовок"></a></h2>
+<p>Создаёт базы бироффа и управляет ими. Ничего не загружается и ничего не встроено: таблица вычисляется здесь и сверяется с отпечатком, который gnubg производит для её области. Ни одна подкоманда не обращается к базе данных — таблица бироффа есть арифметика об игре, а не о чьих-либо позициях, — поэтому ни одна не принимает <code class="docutils literal notranslate"><span class="pre">--db</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>&lt;file.bd&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>delete<span class="w"> </span>--ts<span class="w"> </span>&lt;domain&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>Область записывается как в <code class="docutils literal notranslate"><span class="pre">makebearoff</span></code>: <code class="docutils literal notranslate"><span class="pre">6x9</span></code> для двусторонней таблицы с девятью шашками у игрока, <code class="docutils literal notranslate"><span class="pre">os8</span></code> для односторонней таблицы на восемь пунктов (одно <code class="docutils literal notranslate"><span class="pre">os</span></code> означает <code class="docutils literal notranslate"><span class="pre">os6</span></code>).</p>
+<p>Два семейства отвечают на разные вопросы. <strong>Двусторонняя</strong> таблица расширяет область, где вероятность выигрыша и вердикт куба точны; <strong>односторонняя</strong> расширяет расстояние, на котором может стоять шашка без того, чтобы EPC умолк (до десяти пунктов).</p>
+<p><strong>generate.</strong> Называет размер, память и оценку времени до начала, затем показывает процент и измеренное оставшееся время.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--ts</span></code> — Вычисляемая двусторонняя область, например <code class="docutils literal notranslate"><span class="pre">6x9</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--os</span></code> — Вычисляемая односторонняя область, числом пунктов: от 6 до 12. Требуется ровно одно из двух.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cores</span></code> — Используемые ядра (по умолчанию: все, кроме одного).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--data-dir</span></code> — Куда писать (по умолчанию: каталог данных приложения).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--quiet</span></code> — Без строки прогресса.</p></li>
+</ul>
+<p><strong>CTRL-C ставит на паузу.</strong> Сигнал перехватывается: состояние записывается рядом с таблицей, и та же команда, запущенная снова, продолжает с места остановки, а не пересчитывает всё. Полчаса арифметики стоит записать. <code class="docutils literal notranslate"><span class="pre">bearoff</span> <span class="pre">delete</span></code> выбрасывает отложенное продолжение. На паузу встаёт только двусторонний проход; односторонний последователен, и <code class="docutils literal notranslate"><span class="pre">--cores</span></code> ему ничего не даёт.</p>
+<p><strong>list.</strong> Оценивает каждую область — размер, память, время на этой машине — и говорит, какие уже есть, с их вердиктом, и у каких есть приостановленный проход. <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> для сценария, <code class="docutils literal notranslate"><span class="pre">--cores</span></code> чтобы изменить допущение оценки.</p>
+<p><strong>verify.</strong> Отвечает <code class="docutils literal notranslate"><span class="pre">verified</span></code> (те же байты, что у эталона), <code class="docutils literal notranslate"><span class="pre">unverified</span></code> (корректная, но для этой области отпечаток не записан) или <code class="docutils literal notranslate"><span class="pre">corrupt</span></code> (файл противоречит сам себе). В последнем случае завершается с ошибкой: эта команда сделана для сценария.</p>
+<p><strong>delete.</strong> Удаляет таблицу, отложенное продолжение и остатки погибшего прохода. Область по умолчанию пересчитывается при следующем запуске приложения; более широкая — нет.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ce que cette machine a, et ce que chaque domaine coûterait</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>list
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x9<span class="w"> </span>--cores<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># OS-08 : l'EPC répond alors jusqu'à un pion sur la 8</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--os<span class="w"> </span><span class="m">8</span>
+
+<span class="c1"># Sur un serveur, dans le volume que lit le démon</span>
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>generate<span class="w"> </span>--ts<span class="w"> </span>6x11<span class="w"> </span>--data-dir<span class="w"> </span>/srv/bearoff
+
+./blunderdb<span class="w"> </span>bearoff<span class="w"> </span>verify<span class="w"> </span>/srv/bearoff/gnubg_ts6x11.bd
+</pre></div>
+</div>
+</section>
+<section id="analyze-rattrapage-gammonnet">
+<h2>analyze — Догоняющий анализ gammonNet<a class="headerlink" href="#analyze-rattrapage-gammonnet" title="Ссылка на этот заголовок"></a></h2>
+<p>Записывает анализ gammonNet для каждой позиции, у которой нет никакого анализа, — догоняющий анализ библиотеки, собранной до появления этой функции (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>, <a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0015-blunderdb-serve-operates-on-a-library-it-does-not-expose-an-evaluator.md">ADR-0015</a>). Это та же операция, что и автоматический запуск после импорта и кнопка «Анализировать сейчас» графического интерфейса, и что точка доступа <code class="docutils literal notranslate"><span class="pre">/v1/gammonnet.analyzeMissing</span></code> демона <code class="docutils literal notranslate"><span class="pre">serve</span></code> для одного арендатора — три разные формы одной операции, а не три разные логики (см. <a class="reference internal" href="mode_headless.html#headless"><span class="std std-ref">Безголовый режим (сервер)</span></a>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--ply</span></code> — Глубина поиска (по умолчанию: 2, канонический параметр).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--prune-k</span></code> — Ширина отсечения (по умолчанию: 12, канонический параметр).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--candidates</span></code> — Число кандидатных ходов, сохраняемых для каждого решения о ходе (по умолчанию: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--jobs</span></code> — Число позиций, анализируемых параллельно (по умолчанию: число ядер машины).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> — <strong>Ничего не пишет</strong>: сравнивает gammonNet с импортированными анализами вместо заполнения пробелов (см. ниже).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — С <code class="docutils literal notranslate"><span class="pre">--compare</span></code>: останавливается после указанного числа позиций (0 = все).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию, с индикацией хода выполнения) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (единый итоговый документ, выводимый в конце).</p></li>
+</ul>
+<p><strong>Матч, импортированный без анализа, теперь получает PR.</strong> Это случай матча, сыгранного онлайн, или файла Jellyfish <code class="docutils literal notranslate"><span class="pre">.mat</span></code>, который никто не пропускал через XG. blunderDB знал его позиции и сыгранные ходы, но ничто не говорило, чего они стоят; после прогона фактически сыгранный ход сравнивается с ранжированием gammonNet, и разница питает PR и все остальные показатели. Сыгранный ход берётся из таблицы ходов самого матча, записанной при импорте, независимо от того, нёс ли файл анализ, — он никогда не угадывается.</p>
+<p>Базу, проанализированную более ранней версией, не нужно переоценивать: <a class="reference internal" href="#cli-repair"><span class="std std-ref">repair</span></a> пересчитывает столбцы по тому, что уже хранится, и возвращает этим матчам их PR.</p>
+<p><strong>Параллелизм</strong> (<code class="docutils literal notranslate"><span class="pre">--jobs</span></code>). Позиции пакета независимы — ни один поиск не влияет на следующий — поэтому они распределяются по <code class="docutils literal notranslate"><span class="pre">--jobs</span></code> потокам, каждый со своим собственным оценщиком. Записанные анализы <strong>идентичны при любом значении</strong> <code class="docutils literal notranslate"><span class="pre">--jobs</span></code>; меняется только время вычислений. <code class="docutils literal notranslate"><span class="pre">--jobs</span> <span class="pre">1</span></code> оставляет машину свободной для других задач. Отмена не затрагивается: Ctrl-C останавливает пакет перед любой новой позицией, и всё уже вычисленное записывается.</p>
+<p><strong>Правило пробела</strong> (<a class="reference external" href="https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-fill-gaps-an-imported-analysis-is-never-overwritten.md">ADR-0013</a>). Позиция, уже имеющая анализ — XG, GNUbg, BGBlitz или предыдущий проход gammonNet, — никогда не затрагивается, какого бы движка ни недоставало. Записывается только позиция <strong>без какого-либо</strong> анализа. Поэтому команду можно без риска перезапускать в любой момент и корректно прерывать: Ctrl-C отменяет её, не теряя ничего из уже записанного, а следующий запуск возобновляет работу ровно с того места, где остановился предыдущий, — никакого журнала не нужно, ведь «позиции без анализа» пересчитываются при каждом запуске.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Analyzing 1204 position(s) with gammonNet (2-ply, k=12, 16 job(s))...</span>
+<span class="c1">#   1/1204 (0%)</span>
+<span class="c1">#   61/1204 (5%)</span>
+<span class="c1">#   ...</span>
+<span class="c1">#   1204/1204 (100%)</span>
+<span class="c1"># Done.</span>
+
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--jobs<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+<p id="analyze-compare"><strong>``–compare``: чего стоит gammonNet на *вашей* базе?</strong></p>
+<p>Точность движка измеряется в другом месте — на эталонных корпусах и на точной таблице снятия. Ни одно из этих измерений не отвечает на вопрос, который пользователь задаёт на самом деле и который касается <strong>его</strong> позиций: в матчах, импортированных из XG, где встроенный движок расходится с анализом, пришедшим вместе с файлом, и во что это расхождение обошлось бы?</p>
+<p><code class="docutils literal notranslate"><span class="pre">--compare</span></code> отвечает и <strong>ничего не пишет</strong>. Это не предосторожность, а смысл команды: ADR-0013 защищает импортированный анализ безусловно, и потому сравнение можно запустить на базе, которую совсем не хочется видеть переписанной.</p>
+<p>Отчёт даёт:</p>
+<ul class="simple">
+<li><p><strong>долю совпадений</strong> по лучшему ответу, отдельно для ходов шашками и решений по кубу — эти две вещи никак не связаны, и единая доля скрыла бы, какая из них проседает;</p></li>
+<li><p><strong>стоимость расхождения</strong>, оценённую по шкале импортированного анализа: чего стоит предпочитаемый gammonNet ход <em>по мнению импортированного движка</em>, минус то, чего стоит его собственный лучший ход. Это направление — единственное, которое оба движка могут оценить вместе; оценивать расхождение дважды значило бы приглашать читать меньшее из двух чисел;</p></li>
+<li><p>разбивку <strong>по фазе игры</strong>, которая и говорит, <em>где</em> расхождения сосредоточены;</p></li>
+<li><p>десять самых дорогих расхождений, позиция за позицией.</p></li>
+</ul>
+<p>Два движка пишут один и тот же ход по-разному — XG пишет «13/7» там, где gammonNet пишет «13/8 8/7», удары помечаются с одной стороны и не помечаются с другой, повтор иногда сворачивается в «(2)». Эти различия — диалект, а не расхождение: сравнение приводит обе записи к канонической форме, прежде чем сравнивать. Без этого тестовый корпус показывал 78,8 % совпадений вместо 93,2 % — пятнадцать пунктов ложных расхождений.</p>
+<p>Ход, который импортированный движок <strong>не</strong> перечислил, нельзя оценить по его шкале: он считается расхождением нулевой стоимости, а не стоимости выдуманной.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Comparer sur un échantillon de 500 positions</span>
+./blunderdb<span class="w"> </span>analyze<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--compare<span class="w"> </span>--limit<span class="w"> </span><span class="m">500</span>
+
+<span class="c1"># compared: 118 decision(s)  (refused 2, failed 0)</span>
+<span class="c1"># same best answer: 93.2% (110/118)</span>
+<span class="c1">#   checker play:   93.7% (59/63)</span>
+<span class="c1">#   cube decision:  92.7% (51/55)</span>
+<span class="c1"># ...</span>
+</pre></div>
+</div>
+</section>
+<section id="trash-la-corbeille">
+<h2>trash — Корзина<a class="headerlink" href="#trash-la-corbeille" title="Ссылка на этот заголовок"></a></h2>
+<p>Что было удалено и чем это вернуть. Удаление остаётся удалением: сначала записывается JSON-снимок исчезающего, и больше ничто в базе не знает, что эта таблица существует — ни фильтр поиска, ни статистика, ни правило хранения.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>trash<span class="w"> </span>&lt;sous-commande&gt;<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Подкоманды:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">list</span></code> — Что лежит в корзине, от недавно удалённого к более старому.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restore</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Возвращает запись N и убирает её из корзины.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">discard</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Удаляет запись N сразу, не восстанавливая её.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty</span> <span class="pre">[--older-than</span> <span class="pre">Д]</span></code> — Очищает корзину или только то, что старше Д дней.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delete</span> <span class="pre">--kind</span> <span class="pre">K</span> <span class="pre">--id</span> <span class="pre">N</span></code> — Удаляет объект <strong>через корзину</strong>, чтобы действие можно было отменить. <code class="docutils literal notranslate"><span class="pre">K</span></code> — это <code class="docutils literal notranslate"><span class="pre">position</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code> или <code class="docutils literal notranslate"><span class="pre">comment</span></code>.</p></li>
+</ul>
+<p><strong>Общие параметры:</strong> <code class="docutils literal notranslate"><span class="pre">--db</span></code> (обязательный), <code class="docutils literal notranslate"><span class="pre">--kind</span></code>, <code class="docutils literal notranslate"><span class="pre">--limit</span></code> (по умолчанию 50), <code class="docutils literal notranslate"><span class="pre">--format</span></code> (<code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">delete</span></code> по-прежнему удаляет <strong>без</strong> страховки: скрипт, удаляющий позицию, ожидает, что она исчезнет, а тихо оставленный снимок растил бы файл, роста которого никто не просил. Отмену сохраняет именно <code class="docutils literal notranslate"><span class="pre">trash</span> <span class="pre">delete</span></code>.</p>
+</div>
+<p>Восстановление позиции снова проходит через дедупликацию Зобриста: дубликат не создаётся никогда, но старый идентификатор не возвращается — исходной строки больше нет. Восстановленная позиция — та же позиция под новым номером.</p>
+<p>Всё старше тридцати дней удаляет <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">vacuum</span></code> — никогда не открытие базы.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer une position en gardant l'annulation</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--kind<span class="w"> </span>position<span class="w"> </span>--id<span class="w"> </span><span class="m">412</span>
+
+<span class="c1"># Voir la corbeille, puis remettre une entrée</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>restore<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># Ne garder que ce qui a moins de trente jours</span>
+./blunderdb<span class="w"> </span>trash<span class="w"> </span>empty<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--older-than<span class="w"> </span><span class="m">30</span>
+</pre></div>
+</div>
+</section>
+<section id="info-metadonnees-de-la-base">
+<h2>info — Метаданные базы данных<a class="headerlink" href="#info-metadonnees-de-la-base" title="Ссылка на этот заголовок"></a></h2>
+<p>Отображает метаданные и статистику базы данных.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> или <code class="docutils literal notranslate"><span class="pre">json</span></code> (по умолчанию: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Database Information</span>
+<span class="c1"># ==================================================</span>
+<span class="c1"># Path: /home/jean/bg/base.db</span>
+<span class="c1">#</span>
+<span class="c1"># Metadata:</span>
+<span class="c1">#   Version: 2.20.0</span>
+<span class="c1">#   User: Jean</span>
+<span class="c1">#   Description: Matchs de tournoi 2025</span>
+<span class="c1">#   Date of Creation: 2026-09-06 02:43:51</span>
+<span class="c1">#</span>
+<span class="c1"># Statistics:</span>
+<span class="c1">#   Positions: 3859</span>
+<span class="c1">#   Analyses: 3855</span>
+<span class="c1">#   Matches: 11</span>
+<span class="c1">#   Games: 61</span>
+<span class="c1">#   Moves: 3766</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code> добавляет происхождение файла: <code class="docutils literal notranslate"><span class="pre">issuance</span></code> несёт водяной знак, если он есть, и идентичность издателя этой машины:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"issuance"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"watermarked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerFingerprint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1186-57FA-060C-9378"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"issuerName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unger"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"database_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.20.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"dateOfCreation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-09-06 02:43:51"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Matchs de tournoi 2025"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jean"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/home/jean/bg/base.db"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="edit-modifier-les-metadonnees">
+<h2>edit — Изменить метаданные<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Изменяет имя пользователя или описание базы данных.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Новое имя пользователя.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Новое описание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-user</span></code> — Очистить имя пользователя.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-description</span></code> — Очистить описание.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;changes&quot;:</span> <span class="pre">[...]}</span></code>).</p></li>
+</ul>
+<p>Требуется хотя бы одна опция изменения.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Marie"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Ma collection"</span>
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--clear-description
+</pre></div>
+</div>
+</section>
+<section id="verify-verifier-l-integrite">
+<h2>verify — Проверка целостности<a class="headerlink" href="#verify-verifier-l-integrite" title="Ссылка на этот заголовок"></a></h2>
+<p>Проверяет целостность базы данных и, при необходимости, сравнивает матч с исходным файлом.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span><span class="o">[</span>--match<span class="w"> </span>&lt;id&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--mat<span class="w"> </span>&lt;file.mat&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — Идентификатор матча для проверки.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Файл MAT для сравнения (используется с <code class="docutils literal notranslate"><span class="pre">--match</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (статистика, потерянные строки, отклонение схемы и проверка матча, если она выполнялась).</p></li>
+</ul>
+<p>Без опции <code class="docutils literal notranslate"><span class="pre">--match</span></code> команда отображает общую статистику базы. С <code class="docutils literal notranslate"><span class="pre">--match</span></code> она проверяет данные матча и может сравнить их с оригинальным исходным файлом.</p>
+<p>Каждый запуск также проверяет ссылочную целостность: он считает осиротевшие строки — партии без матча, ходы без партии, анализы хода без хода, анализы без позиции, записи журнала повторений без колоды или без позиции — и выводит строку <code class="docutils literal notranslate"><span class="pre">WARNING</span></code> с итогом, если такие есть. Здоровая база отвечает <code class="docutils literal notranslate"><span class="pre">Orphaned</span> <span class="pre">rows:</span> <span class="pre">none</span></code>. Сироты могут остаться в базе, записанной версией, которая не применяла внешние ключи на каждом соединении, или до того, как журнал повторений обзавёлся своими; они не относятся ни к одному матчу и ни к одной колоде и лишь занимают место. Команда всё равно завершается с кодом 0.</p>
+<p>Каждый запуск также сравнивает схему с эталонной DDL и перечисляет таблицы, столбцы и индексы, которых не хватает базе. При открытии базы недостающее добавляется, когда это возможно, а то, что добавить нельзя (как правило, индекс <code class="docutils literal notranslate"><span class="pre">UNIQUE</span></code>, который не удаётся перестроить из-за дублирующихся строк), лишь записывается в журнал: именно здесь этот разрыв становится видимым, и запрос, обращающийся к одному из этих элементов, завершается ошибкой, пока причина не устранена. Здоровая база отвечает <code class="docutils literal notranslate"><span class="pre">Schema:</span> <span class="pre">matches</span> <span class="pre">the</span> <span class="pre">reference</span> <span class="pre">DDL</span></code>. Как и сироты, расхождение схемы — это наблюдение, а не сбой: код выхода остаётся 0.</p>
+<p>Каждый запуск наконец проверяет правила, которые заявляет текущая DDL, но которые SQLite не может добавить к уже существующей таблице: ограничения диапазона <code class="docutils literal notranslate"><span class="pre">CHECK</span></code> (кости от 0 до 6, куб и пипы неотрицательны, от 0 до 15 снятых шашек, оценка повторения от 1 до 4), хеш Zobrist, которого у строки никогда не должно недоставать, и единственность одного анализа на позицию. База, созданная начиная с версии схемы 2.18.0, применяет их; более старая может ещё содержать строки, которые новая база отвергла бы, — именно они здесь и подсчитываются, правило за правилом. Здоровая база отвечает <code class="docutils literal notranslate"><span class="pre">Constraints:</span> <span class="pre">every</span> <span class="pre">row</span> <span class="pre">satisfies</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">DDL</span></code>. Ещё одна констатация: ничего не исправляется, а код возврата остаётся 0.</p>
+<p>Каждый запуск наконец пересчитывает два денормализованных счётчика, <code class="docutils literal notranslate"><span class="pre">match.game_count</span></code> и <code class="docutils literal notranslate"><span class="pre">game.move_count</span></code>, по строкам, которые они якобы считают, и сообщает, сколько из них расходятся и насколько в худшем случае. Оба записываются один раз, при импорте, по тому, что содержал <strong>исходный файл</strong>, и именно они показываются в списке матчей и в виде партии: небольшое расхождение обычно означает импорт, пропустивший то, что не смог преобразовать. Ничего не переписывается — заменить счётчик тем, что сохранено, значило бы стереть как раз то расхождение, на которое стоит посмотреть. Здоровая база отвечает <code class="docutils literal notranslate"><span class="pre">Counters:</span> <span class="pre">game_count</span> <span class="pre">and</span> <span class="pre">move_count</span> <span class="pre">agree</span> <span class="pre">with</span> <span class="pre">the</span> <span class="pre">rows</span></code>.</p>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span><span class="w"> </span>--mat<span class="w"> </span>original.mat
+</pre></div>
+</div>
+<p><strong>Сделать из этого заслон.</strong> Код возврата равен 0, что бы команда ни нашла: вердикт несёт <code class="docutils literal notranslate"><span class="pre">--format</span> <span class="pre">json</span></code>, и скрипт должен сам прочитать счётчики.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3855</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"match_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3766</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"position_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">3859</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphans"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"games_without_match"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"moves_without_game"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"move_analyses_without_move"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"analyses_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_deck"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"reviews_without_position"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"orphan_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"schema_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"missing_tables"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_columns"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"missing_indexes"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"schema_drift_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"constraint_violations"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.zobrist_hash NOT NULL"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"position.dice_1 BETWEEN 0 AND 6"</span><span class="p">,</span><span class="w"> </span><span class="nt">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"constraint_violation_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"counter_drift"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"matches_with_wrong_game_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"games_with_wrong_move_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_game_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"worst_move_count_gap"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"counter_drift_total"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Тревоги стоят три поля: <code class="docutils literal notranslate"><span class="pre">orphan_total</span></code>, <code class="docutils literal notranslate"><span class="pre">schema_drift_count</span></code> и <code class="docutils literal notranslate"><span class="pre">constraint_violation_total</span></code>. Ненулевые, они описывают базу, которую нужно чинить.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.orphan_total == 0 and .schema_drift_count == 0 and .constraint_violation_total == 0'</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">counter_drift_total</span></code> в их число не входит, и пример выше это показывает: база, его выдавшая, была только что импортирована и уже показывает 53 партии, где счётчик ходов расходится с тем, что содержат строки. Эти счётчики приходят из исходного файла, а не из базы; расхождение рассказывает об импорте, а не сигнализирует о повреждении. Смотрите на него, но не делайте из него порога.</p>
+</section>
+<section id="vacuum-compacter-la-base-de-donnees">
+<h2>vacuum — Сжатие базы данных<a class="headerlink" href="#vacuum-compacter-la-base-de-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Возвращает место на диске, оставшееся после удалений (матчей, турниров, чисток): SQLite сам никогда не уменьшает файл при удалении данных, его нужно попросить явно. Это единственный способ запустить сжатие — при открытии базы оно не происходит автоматически никогда, поскольку на большой базе его стоимость непредсказуема.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;size_before&quot;,</span> <span class="pre">&quot;size_after&quot;,</span> <span class="pre">&quot;reclaimed&quot;}</span></code>, в байтах).</p></li>
+</ul>
+<p>Команда начинает с <code class="docutils literal notranslate"><span class="pre">wal_checkpoint(TRUNCATE)</span></code>, чтобы показанный до сжатия размер был честным, проверяет, что на диске остаётся примерно вдвое больше текущего размера файла (SQLite полностью перестраивает базу, прежде чем переключиться на неё), выполняет <code class="docutils literal notranslate"><span class="pre">VACUUM</span></code>, а затем <code class="docutils literal notranslate"><span class="pre">ANALYZE</span></code>, чтобы обновить статистику, которой пользуется планировщик запросов. Если места на диске не хватает, команда отказывается стартовать с внятным сообщением, вместо того чтобы рисковать прерванным сжатием.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>vacuum<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Compacting database...</span>
+<span class="c1">#   Before: 128.4 MiB</span>
+<span class="c1">#   After:  41.2 MiB</span>
+<span class="c1">#   Reclaimed: 87.2 MiB</span>
+</pre></div>
+</div>
+</section>
+<section id="repair-recalculer-les-colonnes-d-analyse">
+<span id="cli-repair"></span><h2>repair — Пересчитать столбцы анализа<a class="headerlink" href="#repair-recalculer-les-colonnes-d-analyse" title="Ссылка на этот заголовок"></a></h2>
+<p>Пересчитывает скалярные столбцы каждого анализа из самого анализа, проекцией которого они только и являются. Сами анализы не трогаются: переделываются значения, которые из них были выведены.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;changes&quot;:</span> <span class="pre">[...]}</span></code>).</p></li>
+</ul>
+<p>Полезна после исправления того, как читается импортированный анализ. Это уже случалось дважды. Импортёр XG пишет «без удвоения» двумя способами, и второй понимался как настоящее удвоение — столбец нёс тогда ошибку удвоения, которого никогда не было. А анализ, вычисленный самим blunderDB, не знал, какой ход был сыгран, так что матч, импортированный без анализа, сохранял всюду нулевую ошибку и PR 0,00; теперь столбец пересчитывается по ходам матча. Исправление чтения ничего не меняет в уже записанных строках; эта команда их переделывает.</p>
+<p>Ничто не запускает её автоматически, и это намеренно: переписывать столбцы анализа у всех при одном лишь открытии базы — не то, что инструмент должен делать за спиной пользователя.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>repair<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># 42 analyses repaired.</span>
+</pre></div>
+</div>
+</section>
+<section id="delete-supprimer-des-donnees">
+<h2>delete — Удалить данные<a class="headerlink" href="#delete-supprimer-des-donnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Удаляет матч и все связанные данные (партии, ходы, анализы).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;path&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — База данных (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Тип удаления: <code class="docutils literal notranslate"><span class="pre">match</span></code> (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — Идентификатор элемента для удаления (обязательно).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--confirm</span></code> — Удалить без запроса подтверждения.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Формат вывода: <code class="docutils literal notranslate"><span class="pre">text</span></code> (по умолчанию) или <code class="docutils literal notranslate"><span class="pre">json</span></code> (<code class="docutils literal notranslate"><span class="pre">{&quot;match_id&quot;:</span> <span class="pre">N,</span> <span class="pre">&quot;deleted&quot;:</span> <span class="pre">true}</span></code>).</p></li>
+</ul>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Confirmation interactive, puis sans confirmation (scripts)</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--confirm
+</pre></div>
+</div>
+</section>
+<section id="healthcheck-sonder-un-demon">
+<h2>healthcheck — Проверка демона<a class="headerlink" href="#healthcheck-sonder-un-demon" title="Ссылка на этот заголовок"></a></h2>
+<p>Спрашивает у работающего демона <code class="docutils literal notranslate"><span class="pre">serve</span></code> (см. <a class="reference internal" href="mode_headless.html"><span class="doc">Безголовый режим (сервер)</span></a>), готов ли он: один запрос <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/readyz</span></code>, код возврата <code class="docutils literal notranslate"><span class="pre">0</span></code>, если демон отвечает 200 (хранилище доступно, схема ожидаемой версии), иначе <code class="docutils literal notranslate"><span class="pre">1</span></code> — хранилище недоступно, схема устарела или по адресу никто не слушает. Файл базы данных не открывается.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span><span class="o">[</span>--addr<span class="w"> </span>host:port<span class="o">]</span><span class="w"> </span><span class="o">[</span>--timeout<span class="w"> </span>2s<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Параметры:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--addr</span></code> — Адрес, который слушает демон (по умолчанию <code class="docutils literal notranslate"><span class="pre">BLUNDERDB_ADDR</span></code>, иначе <code class="docutils literal notranslate"><span class="pre">:8080</span></code>). Адрес без хоста (<code class="docutils literal notranslate"><span class="pre">:8080</span></code>) или с обобщённым хостом (<code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>, <code class="docutils literal notranslate"><span class="pre">[::]</span></code>) проверяется через петлевой интерфейс.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--timeout</span></code> — Время, по истечении которого проверка прекращается (по умолчанию <code class="docutils literal notranslate"><span class="pre">2s</span></code>).</p></li>
+</ul>
+<p>Это команда, которую выполняет <code class="docutils literal notranslate"><span class="pre">HEALTHCHECK</span></code> образа контейнера (образ <em>distroless</em>, без <code class="docutils literal notranslate"><span class="pre">curl</span></code>); двоичный файл <code class="docutils literal notranslate"><span class="pre">serve</span></code>, собранный из <code class="docutils literal notranslate"><span class="pre">cmd/serve</span></code>, тоже её понимает. Она так же пригодна для скрипта или юнита systemd.</p>
+<p><strong>Пример:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>serve<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="p">&amp;</span>
+./blunderdb<span class="w"> </span>healthcheck<span class="w"> </span>--addr<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"démon disponible"</span>
+
+<span class="c1"># ready</span>
+</pre></div>
+</div>
+<p>При неудаче выводится причина, которую <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">inspect</span></code> показывает для контейнера в состоянии <code class="docutils literal notranslate"><span class="pre">unhealthy</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
+</pre></div>
+</div>
+</section>
+<section id="completion-completion-shell">
+<h2>completion — Автодополнение оболочки<a class="headerlink" href="#completion-completion-shell" title="Ссылка на этот заголовок"></a></h2>
+<p>Выводит на стандартный вывод скрипт автодополнения для имён подкоманд. Список команд, встроенный в каждый скрипт, формируется из той же таблицы, которую читают <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">help</span></code> и диспетчеризация в <code class="docutils literal notranslate"><span class="pre">main.go</span></code> (<code class="docutils literal notranslate"><span class="pre">handlers()</span></code>): новая подкоманда предлагается автодополнением сразу после подключения, и ничего не нужно поддерживать вручную.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>completion<span class="w"> </span>&lt;bash<span class="p">|</span>zsh<span class="p">|</span>fish&gt;
+</pre></div>
+</div>
+<p><strong>Примеры:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># bash</span>
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>bash<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/bash_completion.d/blunderdb<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+
+<span class="c1"># zsh : un répertoire déjà sur $fpath</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>zsh<span class="w"> </span>&gt;<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">fpath</span><span class="p">[1]</span><span class="si">}</span><span class="s2">/_blunderdb"</span>
+
+<span class="c1"># fish</span>
+blunderdb<span class="w"> </span>completion<span class="w"> </span>fish<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">source</span>
+</pre></div>
+</div>
+<p>Пакеты устанавливают это автоматически: <code class="docutils literal notranslate"><span class="pre">.deb</span></code>/<code class="docutils literal notranslate"><span class="pre">.rpm</span></code> (nfpm) и пакет AUR генерируют три скрипта из собранного двоичного файла во время сборки, а cask Homebrew один раз запускает <code class="docutils literal notranslate"><span class="pre">blunderdb</span> <span class="pre">completion</span> <span class="pre">&lt;shell&gt;</span></code> при установке через <code class="docutils literal notranslate"><span class="pre">generate_completions_from_executable</span></code>. Ничего не фиксируется в репозитории, поэтому автодополнение никогда не может разойтись с таблицей подкоманд.</p>
+</section>
+<section id="version-afficher-la-version">
+<h2>version — Показать версию<a class="headerlink" href="#version-afficher-la-version" title="Ссылка на этот заголовок"></a></h2>
+<p>Выводит версию blunderDB и версию схемы базы данных, которую записывает этот бинарный файл; это первое, что нужно приложить к отчёту об ошибке.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>version
+<span class="c1"># blunderDB version 0.36.0 (database schema 2.20.0)</span>
+</pre></div>
+</div>
+</section>
+<section id="exemples-de-flux-de-travail">
+<h2>Примеры рабочих процессов<a class="headerlink" href="#exemples-de-flux-de-travail" title="Ссылка на этот заголовок"></a></h2>
+<section id="import-d-un-repertoire-de-tournoi">
+<h3>Импорт каталога турнира<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Ссылка на этот заголовок"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">"Jean"</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">"Open de Paris 2025"</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs_open_paris/
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>stats
+</pre></div>
+</div>
+</section>
+<section id="sauvegarde-reguliere">
+<h3>Регулярное резервное копирование<a class="headerlink" href="#sauvegarde-reguliere" title="Ссылка на этот заголовок"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</pre></div>
+</div>
+</section>
+<section id="analyse-des-erreurs">
+<h3>Анализ ошибок<a class="headerlink" href="#analyse-des-erreurs" title="Ссылка на этот заголовок"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Les positions délicates, puis celles de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--export<span class="w"> </span>cube_errors.db
+
+<span class="c1"># Les coups réellement fautifs : au moins 100 millièmes d'équité perdus</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--move-error-min<span class="w"> </span><span class="m">100</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codes-de-retour">
+<h2>Коды возврата<a class="headerlink" href="#codes-de-retour" title="Ссылка на этот заголовок"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Успех.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Ошибка.</p></li>
+</ul>
+<p>Это позволяет использовать CLI в скриптах с обработкой ошибок:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"OK"</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"KO"</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="raccourcis.html" class="btn btn-neutral float-left" title="Горячие клавиши" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="glossaire.html" class="btn btn-neutral float-right" title="Глоссарий" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

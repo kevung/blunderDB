@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση &mdash; Τεκμηρίωση του blunderDB - 0.36.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=e430c87d" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=467de4d8"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="Παράρτημα: Προχωρημένη χρήση των φίλτρων" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<nav class="lang-switcher" aria-label="Γλώσσες">
+  <a href="../fr/annexe_windows_securite.html" lang="fr" hreflang="fr">Français</a>
+  <a href="../en/annexe_windows_securite.html" lang="en" hreflang="en">English</a>
+  <a href="../de/annexe_windows_securite.html" lang="de" hreflang="de">Deutsch</a>
+  <span class="current" lang="el" aria-current="true">Ελληνικά</span>
+  <a href="../es/annexe_windows_securite.html" lang="es" hreflang="es">Español</a>
+  <a href="../fi/annexe_windows_securite.html" lang="fi" hreflang="fi">Suomi</a>
+  <a href="../it/annexe_windows_securite.html" lang="it" hreflang="it">Italiano</a>
+  <a href="../ja/annexe_windows_securite.html" lang="ja" hreflang="ja">日本語</a>
+  <a href="../ru/annexe_windows_securite.html" lang="ru" hreflang="ru">Русский</a>
+</nav>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Πρώτα βήματα</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">Οδηγός χρήσης</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Αναφορά</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossaire.html">Γλωσσάρι</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mode_headless.html">Λειτουργία χωρίς γραφικό περιβάλλον (διακομιστής)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Σύμβαση API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Παραρτήματα</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">Προειδοποίηση Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">Μπλοκάρισμα από το Windows Defender</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifier-l-integrite-du-telechargement-sha256">Επαλήθευση της ακεραιότητας της λήψης (SHA256)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="historique.html">Ιστορικό εκδόσεων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="a_propos.html">Σχετικά</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-que-faire-si-windows-bloque-le-lancement">
+<span id="annexe-windows-malware"></span><h1>Παράρτημα Windows: τι να κάνετε αν τα Windows μπλοκάρουν την εκκίνηση<a class="headerlink" href="#annexe-windows-que-faire-si-windows-bloque-le-lancement" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα παρακάτω ισχύουν για τα λειτουργικά συστήματα Windows 10 και 11.</p>
+</div>
+<p>Τα Windows απαιτούν πλέον από τις εταιρείες έκδοσης λογισμικού ή από ανεξάρτητους προγραμματιστές να πιστοποιούν ψηφιακά τις εφαρμογές τους ή ακόμη και να τις διανέμουν μέσω του Windows Store. Συνιστάται επομένως να απευθύνεστε σε εξωτερικές εταιρείες για την απόκτηση ψηφιακού πιστοποιητικού, με κόστος αρκετών εκατοντάδων ευρώ (βλέπε για παράδειγμα <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
+<p>Καθώς προσφέρω το blunderDB δωρεάν, δεν επιθυμώ να στραφώ σε αυτές τις δαπανηρές επιλογές. Μια <strong>δωρεάν</strong> δυνατότητα που προορίζεται για λογισμικό ανοιχτού κώδικα (το <em>SignPath Foundation</em>, <a class="reference external" href="https://signpath.org/">https://signpath.org/</a>) διερευνήθηκε, αλλά η αίτηση δεν ευοδώθηκε· επομένως, τα εκτελέσιμα των Windows δεν είναι ψηφιακά υπογεγραμμένα. Κατά συνέπεια, είναι πολύ πιθανό τα Windows να σας προειδοποιήσουν για πιθανό κίνδυνο ή ακόμη και να μπλοκάρουν εντελώς την εκτέλεση του blunderDB. Οι παρακάτω ενότητες εξηγούν τις ενέργειες που πρέπει να κάνετε για να παρακάμψετε τις επιφυλάξεις των Windows, καθώς και πώς να επαληθεύσετε την ακεραιότητα του ληφθέντος εκτελέσιμου.</p>
+<section id="avertissement-windows-smartscreen">
+<h2>Προειδοποίηση Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>Μετά τη λήψη του blunderDB, κατά την εκτέλεσή του, ενδέχεται τα Windows να εμφανίσουν μια προειδοποίηση όπως:</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Αυτό το στιγμιότυπο οθόνης προέρχεται από αγγλικά Windows. Σε ελληνικά Windows, η ίδια οθόνη τιτλοφορείται <em>Τα Windows προστάτευσαν τον υπολογιστή σας</em>· ο σύνδεσμος που πρέπει να πατήσετε είναι <em>Περισσότερες πληροφορίες</em> (η ετικέτα μπορεί να διαφέρει ανάλογα με την έκδοση των Windows), και το κουμπί που εμφανίζεται στη συνέχεια είναι <em>Εκτέλεση ούτως ή άλλως</em>.</p>
+</div>
+<p><strong>Δύο κλικ αρκούν στη συντριπτική πλειονότητα των περιπτώσεων</strong> — <em>Περισσότερες πληροφορίες</em>, έπειτα <em>Εκτέλεση ούτως ή άλλως</em> — και δεν χρειάζεται τίποτε άλλο: ούτε εξαίρεση από το antivirus, ούτε ρύθμιση προς αλλαγή. Η επόμενη ενότητα αφορά μόνο τις σπάνιες περιπτώσεις όπου ο αποκλεισμός δεν προερχόταν από το SmartScreen.</p>
+<p>Αν θέλετε να επιτρέψετε ένα συγκεκριμένο εκτελέσιμο που έχει μπλοκαριστεί από το SmartScreen:</p>
+<ol class="arabic simple">
+<li><p><strong>Δοκιμάστε να εκτελέσετε το εκτελέσιμο</strong>:</p>
+<ul class="simple">
+<li><p>Όταν προσπαθείτε να εκκινήσετε το εκτελέσιμο, το SmartScreen ενδέχεται να το μπλοκάρει και να εμφανίσει μια προειδοποίηση.</p></li>
+</ul>
+</li>
+<li><p><strong>Κάντε κλικ στο «Περισσότερες πληροφορίες»</strong>:</p>
+<ul class="simple">
+<li><p>Στο παράθυρο προειδοποίησης του SmartScreen, κάντε κλικ στο <strong>Περισσότερες πληροφορίες</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Επιλέξτε «Εκτέλεση ούτως ή άλλως»</strong>:</p>
+<ul class="simple">
+<li><p>Αν εμπιστεύεστε το εκτελέσιμο, κάντε κλικ στο <strong>Εκτέλεση ούτως ή άλλως</strong> για να παρακάμψετε την προειδοποίηση του SmartScreen για αυτή τη φορά.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2>Μπλοκάρισμα από το Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Αυτή η ενότητα είναι <strong>έσχατη λύση</strong>, την ακολουθείτε μόνο αν ο αποκλεισμός δεν προερχόταν από το SmartScreen. Πράγματι, με ορισμένες ρυθμίσεις ασφαλείας συμβαίνει, παρά την παράκαμψη που περιγράφηκε παραπάνω, το Windows Defender να εμποδίζει την εκτέλεση του blunderDB με μηνύματα όπως</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>ή ακόμη:</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>ή ακόμη και να το θέσει σε καραντίνα.</p>
+<p>Το Windows Defender είναι γνωστό ότι προκαλεί ψευδώς θετικά αποτελέσματα. Αυτό το πρόβλημα αναφέρεται ρητά στις Συχνές Ερωτήσεις του επίσημου ιστότοπου της Golang ( <a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a> ) ή σε δελτία Github ορισμένων έργων που έχουν προγραμματιστεί σε Go ( <a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a> ).</p>
+<div class="admonition warning">
+<p class="admonition-title">Προειδοποίηση</p>
+<p>Η εξαίρεση ενός αρχείου από τη σάρωση του antivirus δεν είναι αθώα ενέργεια: η εξαίρεση αφορά μια διαδρομή, και κάθε αρχείο που θα τοποθετηθεί στη συνέχεια σε εκείνο το σημείο θα ξεφεύγει επίσης από τη σάρωση. Ελέγξτε πρώτα το αποτύπωμα SHA-256 του αρχείου που κατεβάσατε (επόμενη ενότητα): αυτό, και όχι η εξαίρεση, πιστοποιεί ότι εκτελείτε πράγματι το δημοσιευμένο εκτελέσιμο.</p>
+</div>
+<p>Αν παρ” όλα αυτά θέλετε να εμποδίσετε την Ασφάλεια των Windows να σαρώσει το blunderDB:</p>
+<ol class="arabic simple">
+<li><p><strong>Ανοίξτε την Ασφάλεια των Windows</strong>:</p>
+<ul class="simple">
+<li><p>Πηγαίνετε στο <strong>Έναρξη</strong> και πληκτρολογήστε <strong>Ασφάλεια των Windows</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Μεταβείτε στην «Προστασία από ιούς και απειλές»</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κλικ στο <strong>Προστασία από ιούς και απειλές</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Διαχείριση ρυθμίσεων</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κύλιση προς τα κάτω και κάντε κλικ στο <strong>Διαχείριση ρυθμίσεων</strong> στην ενότητα Ρυθμίσεις προστασίας από ιούς και απειλές.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Προσθήκη ή κατάργηση εξαιρέσεων</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κύλιση μέχρι την ενότητα <strong>Εξαιρέσεις</strong> και κάντε κλικ στο <strong>Προσθήκη ή κατάργηση εξαιρέσεων</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Προσθήκη εξαίρεσης</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κλικ στο <strong>Προσθήκη εξαίρεσης</strong> και επιλέξτε <strong>Αρχείο</strong>. Στη συνέχεια, μεταβείτε στο εκτελέσιμο που θέλετε να εξαιρέσετε και επιλέξτε το.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+<section id="verifier-l-integrite-du-telechargement-sha256">
+<h2>Επαλήθευση της ακεραιότητας της λήψης (SHA256)<a class="headerlink" href="#verifier-l-integrite-du-telechargement-sha256" title="Link to this heading"></a></h2>
+<p>Κάθε εκτελέσιμο αρχείο που δημοσιεύεται στη σελίδα <em>releases</em> συνοδεύεται από ένα αρχείο <code class="docutils literal notranslate"><span class="pre">.sha256</span></code> που περιέχει το κρυπτογραφικό του αποτύπωμα. Ο έλεγχος αυτού του αποτυπώματος επιβεβαιώνει ότι το αρχείο που κατεβάσατε είναι αυθεντικό και δεν έχει αλλοιωθεί, κάτι που αποτελεί χρήσιμη εγγύηση όταν δεν υπάρχει υπογραφή κώδικα.</p>
+<p>Στα Windows (PowerShell), στον φάκελο λήψεων:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">blunderDB-windows</span><span class="p">-&lt;</span><span class="n">version</span><span class="p">&gt;.</span><span class="n">exe</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</pre></div>
+</div>
+<p>Συγκρίνετε την εμφανιζόμενη τιμή με εκείνη του αρχείου <code class="docutils literal notranslate"><span class="pre">blunderDB-windows-&lt;version&gt;.exe.sha256</span></code>. Οι δύο πρέπει να είναι πανομοιότυπες.</p>
+<p>Σε Linux ή macOS:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sha256sum<span class="w"> </span>-c<span class="w"> </span>blunderDB-linux-&lt;version&gt;.sha256<span class="w">      </span><span class="c1"># Linux</span>
+shasum<span class="w"> </span>-a<span class="w"> </span><span class="m">256</span><span class="w"> </span>-c<span class="w"> </span>blunderDB-macos-&lt;version&gt;.zip.sha256<span class="w">   </span><span class="c1"># macOS</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="Παράρτημα: Προχωρημένη χρήση των φίλτρων" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
