@@ -938,6 +938,10 @@ export default {
 <td>The position has no contact.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>The position is in a given phase of the game: <code>opening</code>, <code>middlegame</code>, <code>race</code> or <code>bearoff</code>. Repeatable (<code>ph:race ph:bearoff</code>). The label is derived from the board and never editable; <code>blunderdb repair</code> recomputes it.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>The position or the mirror one meets the filters.</td>
 </tr>
@@ -1204,6 +1208,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>The position carries no comment.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>The position carries a comment of a given origin: <code>user</code> (written by you), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (brought in by a match import) or <code>unknown</code>. Repeatable (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'pattern1,pattern2,...'</td>

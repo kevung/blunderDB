@@ -44,6 +44,8 @@ var corpusField = map[string]string{
 	"mirrorPositionFilter":          "MirrorFilter",
 	"individuallyImportedFilter":    "IndividuallyImportedFilter",
 	"flaggedFilter":                 "FlaggedFilter",
+	"gamePhaseFilter":               "GamePhaseFilter",
+	"commentOriginFilter":           "CommentOriginFilter",
 	"diceRollFilter":                "DiceRollFilter",
 	"diceRollMode":                  "DiceRollMode",
 	"exceptDiceFilter":              "ExceptDiceFilter",

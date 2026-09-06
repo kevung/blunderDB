@@ -26,7 +26,7 @@ type binder struct {
 	db execer
 }
 
-func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db} }
+func (b binder) Positions() storage.PositionStore     { return &positionStore{b.db, b.shared()} }
 func (b binder) Analyses() storage.AnalysisStore      { return &analysisStore{b.db} }
 func (b binder) Matches() storage.MatchStore          { return &matchStore{b.db} }
 func (b binder) Comments() storage.CommentStore       { return &sqlshared.CommentStore{DB: b.shared()} }

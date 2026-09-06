@@ -10,8 +10,17 @@ import (
 // CommentStore persists the free-text comments attached to positions. A
 // position may carry several comment entries.
 type CommentStore interface {
-	// Add appends a new comment entry to a position and returns its id.
+	// Add appends a comment the USER wrote to a position and returns its id.
+	// It is AddFrom with domain.CommentOriginUser, spelled short because that
+	// is what almost every caller means.
 	Add(ctx context.Context, scope string, positionID int64, text string) (int64, error)
+
+	// AddFrom appends a comment entry carrying its provenance (issue #263).
+	// Importers call it with the origin of the file the note came out of, so a
+	// per-move remark that arrived with a match can be told apart from a note
+	// the user typed — which is what lets deleting the match spare the second
+	// and not the first.
+	AddFrom(ctx context.Context, scope string, positionID int64, text string, origin domain.CommentOrigin) (int64, error)
 
 	// Update changes the text of the comment entry with the given id.
 	Update(ctx context.Context, scope string, commentID int64, text string) error

@@ -6,8 +6,9 @@ import (
 	"strings"
 )
 
-// runRepair is `blunderdb repair`: recompute the scalar columns of every
-// analysis from the JSON they are a projection of.
+// runRepair is `blunderdb repair`: recompute what the database DERIVES from
+// what it stores — the scalar columns of every analysis, from the JSON they
+// are a projection of, and the phase of every position, from its board.
 //
 // The JSON stays intact, so a bug in the projection is repairable without
 // re-importing anything — it has been needed once already, when the XG
@@ -31,10 +32,13 @@ func (cli *CLI) runRepair(args []string) error {
 	repairCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb repair [options]")
 		fmt.Println()
-		fmt.Println("Recompute the scalar columns of every analysis from the JSON")
-		fmt.Println("they are a projection of. The analyses themselves are left")
+		fmt.Println("Recompute what the database derives from what it stores:")
+		fmt.Println("the scalar columns of every analysis, from the JSON they are")
+		fmt.Println("a projection of, and the phase of every position, from its")
+		fmt.Println("board. The analyses and the positions themselves are left")
 		fmt.Println("untouched: this repairs what was derived from them, and is")
-		fmt.Println("useful after a fix to how an imported analysis is read.")
+		fmt.Println("useful after a fix to how an imported analysis is read, or")
+		fmt.Println("after a change to how a phase is decided.")
 		fmt.Println("Nothing runs it automatically.")
 		fmt.Println()
 		fmt.Println("Options:")
@@ -67,11 +71,16 @@ func (cli *CLI) runRepair(args []string) error {
 	if err != nil {
 		return fmt.Errorf("repair failed: %w", err)
 	}
+	phases, err := cli.db.RepairGamePhases()
+	if err != nil {
+		return fmt.Errorf("repair failed: %w", err)
+	}
 
 	if formatLower == "json" {
 		return printJSON(struct {
 			Repaired int `json:"repaired"`
-		}{repaired})
+			Phases   int `json:"phases"`
+		}{repaired, phases})
 	}
 	switch repaired {
 	case 0:
@@ -80,6 +89,14 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("1 analysis repaired.")
 	default:
 		fmt.Printf("%d analyses repaired.\n", repaired)
+	}
+	switch phases {
+	case 0:
+		fmt.Println("Every position already carried the right phase.")
+	case 1:
+		fmt.Println("1 position reclassified.")
+	default:
+		fmt.Printf("%d positions reclassified.\n", phases)
 	}
 	return nil
 }

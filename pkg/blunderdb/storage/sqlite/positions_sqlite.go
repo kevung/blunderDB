@@ -10,9 +10,21 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-type positionStore struct{ db execer }
+// positionStore also holds the dialect-neutral view of the same connection
+// (shared), for the handful of operations written once in sqlshared.
+type positionStore struct {
+	db     execer
+	shared sqlshared.Execer
+}
+
+// ReclassifyPhases recomputes the derived phase of every position whose stored
+// value disagrees with the classifier (ADR-0035). See sqlshared.ReclassifyPhases.
+func (s *positionStore) ReclassifyPhases(ctx context.Context, scope string) (int, error) {
+	return sqlshared.ReclassifyPhases(ctx, s.shared, scope)
+}
 
 var _ storage.PositionStore = (*positionStore)(nil)
 
@@ -45,10 +57,10 @@ const positionInsertSQL = `INSERT INTO position (
 	cube_value, cube_owner, score_1, score_2,
 	has_jacoby, has_beaver,
 	pip_1, pip_2, pip_diff, off_1, off_2,
-	back_checkers_1, back_checkers_2, no_contact,
+	back_checkers_1, back_checkers_2, no_contact, game_phase,
 	occupancy_1, occupancy_2, point_mask_1, point_mask_2,
 	state, individually_imported, flagged
-) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?, ?,?,?,?, ?,?,?)
+) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?,?, ?,?,?,?, ?,?,?)
 ON CONFLICT(zobrist_hash) DO NOTHING`
 
 // markIndividualSQL raises the provenance flag on an already-stored position.
@@ -101,7 +113,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby, cols.HasBeaver,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact),
+		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		engine.EncodeBoardCompact(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged))
 	if err != nil {
@@ -145,7 +157,7 @@ const positionUpdateSQL = `UPDATE position SET state = ?,
 	cube_value=?, cube_owner=?, score_1=?, score_2=?,
 	has_jacoby=?, has_beaver=?,
 	pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
-	back_checkers_1=?, back_checkers_2=?, no_contact=?,
+	back_checkers_1=?, back_checkers_2=?, no_contact=?, game_phase=?,
 	occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
 	WHERE id = ?`
 
@@ -158,7 +170,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby, cols.HasBeaver,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact),
+		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		p.ID)
 	if isUniqueViolation(err) {

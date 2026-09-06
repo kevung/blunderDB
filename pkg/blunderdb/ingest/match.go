@@ -16,6 +16,11 @@ import (
 type MatchGraph struct {
 	Match domain.Match
 	Games []GameGraph
+	// CommentOrigin is the provenance stamped on every comment this graph
+	// carries (issue #263). Each format mapper sets its own; the zero value
+	// reads as "unknown", which is what a graph built by something that does
+	// not say deserves.
+	CommentOrigin domain.CommentOrigin
 }
 
 // GameGraph is one game with its ordered moves.
@@ -152,7 +157,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, mg.Analyses, mg.Comments)
+				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, mg.Analyses, mg.Comments, g.CommentOrigin)
 				if err != nil {
 					return res, err
 				}
@@ -182,7 +187,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 // already stored for the position before saving — reproducing the legacy
 // sequence of saveAnalysisInTx calls, including its round-then-recompute of
 // equity errors across successive merges onto one position.
-func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, analyses []*domain.PositionAnalysis, comments []string) (int64, error) {
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
 	posID, err := tx.Positions().Save(ctx, scope, pos)
 	if err != nil {
 		return 0, err
@@ -221,7 +226,7 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 			if c == "" || existing[c] {
 				continue
 			}
-			if _, err := tx.Comments().Add(ctx, scope, posID, c); err != nil {
+			if _, err := tx.Comments().AddFrom(ctx, scope, posID, c, origin); err != nil {
 				return posID, err
 			}
 			existing[c] = true

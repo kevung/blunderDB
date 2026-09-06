@@ -58,6 +58,7 @@ func MapGnuBGText(content string) (*MatchGraph, error) {
 // source.
 func mapGnuBGMatch(match *gnubgparser.Match, isSGF bool, filePath string) (*MatchGraph, error) {
 	graph := &MatchGraph{
+		CommentOrigin: domain.CommentOriginGnuBG,
 		Match: domain.Match{
 			Player1Name:   match.Metadata.Player1,
 			Player2Name:   match.Metadata.Player2,

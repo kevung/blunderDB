@@ -533,7 +533,9 @@
                 // explicitly or a replayed `s D xD65`/`s id5,10` silently loses
                 // the exclusion/restriction on double-click.
                 exceptDiceFilter: f.xd,
-                positionIDsFilter: f.posIds
+                positionIDsFilter: f.posIds,
+                gamePhaseFilter: f.ph,
+                commentOriginFilter: f.coOrigin
             });
         }
     }

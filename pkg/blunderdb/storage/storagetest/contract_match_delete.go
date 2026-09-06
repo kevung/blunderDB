@@ -101,7 +101,8 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	purged := inMatch(1, false)    // held by nothing but the match…
 	individual := inMatch(2, true) // …the user brought this one in themselves
 	inCollection := inMatch(3, false)
-	commented := inMatch(4, false)
+	commented := inMatch(4, false)     // …with a note that came in with the match
+	userCommented := inMatch(9, false) // …with a note the user wrote (#263)
 	inDeck := inMatch(5, false)
 	ankiCard := inMatch(7, false)
 
@@ -141,8 +142,10 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		t.Fatalf("CreateMove (second match): %v", err)
 	}
 
-	// Neither an analysis nor a comment holds a position: both can arrive with
-	// the match, so holding on them would mean never purging anything.
+	// An analysis never holds a position: it arrives with the match, and every
+	// match position has one, so holding on it would mean never purging
+	// anything. A comment holds one only when the USER wrote it (#263): an
+	// imported per-move note is the file's sentence, not theirs.
 	if err := s.Analyses().Save(ctx, "", purged, &domain.PositionAnalysis{}); err != nil {
 		t.Fatalf("Save analysis: %v", err)
 	}
@@ -154,7 +157,10 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 	if err := s.Collections().AddPosition(ctx, "", coll, inCollection); err != nil {
 		t.Fatalf("AddPosition: %v", err)
 	}
-	if _, err := s.Comments().Add(ctx, "", commented, "note that came in with the match"); err != nil {
+	if _, err := s.Comments().AddFrom(ctx, "", commented, "note that came in with the match", domain.CommentOriginXG); err != nil {
+		t.Fatalf("AddFrom comment: %v", err)
+	}
+	if _, err := s.Comments().Add(ctx, "", userCommented, "I keep missing this one"); err != nil {
 		t.Fatalf("Add comment: %v", err)
 	}
 	deck, err := s.Anki().CreateDeck(ctx, "", "deck", "", domain.AnkiSourceSearch, 0, "")
@@ -175,7 +181,8 @@ func testMatchDeleteCascadeRetention(t *testing.T, s storage.Storage) {
 		kept bool
 	}{
 		{"held by nothing (analysis only)", purged, false},
-		{"commented (the note may have come from the match)", commented, false},
+		{"commented by the importer, not the user", commented, false},
+		{"commented by the user (#263)", userCommented, true},
 		{"individually imported", individual, true},
 		{"in a collection", inCollection, true},
 		{"in an Anki deck", inDeck, true},

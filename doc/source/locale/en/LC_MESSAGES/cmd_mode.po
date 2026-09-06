@@ -5,17 +5,17 @@
 # SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 02:10+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
-"Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -24,19 +24,18 @@ msgstr "List of commands"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
-"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
+"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
-"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
+" *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
-"The command line, located in the status bar, opens by pressing the "
-"*SPACE* key. As you type a command, a list of suggestions appears "
-"automatically: the *TAB* key (or *SHIFT-TAB*) cycles through the "
-"suggestions and completes the command, while *ESC* closes the list (a "
-"second *ESC* closes the command line). The *UP* and *DOWN* keys remain "
-"reserved for the command history."
+"The command line, located in the status bar, opens by pressing the *SPACE* "
+"key. As you type a command, a list of suggestions appears automatically: the"
+" *TAB* key (or *SHIFT-TAB*) cycles through the suggestions and completes the"
+" command, while *ESC* closes the list (a second *ESC* closes the command "
+"line). The *UP* and *DOWN* keys remain reserved for the command history."
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -115,8 +114,8 @@ msgid ""
 "Charge une base d'exemple (matchs, tournoi, collections, commentaires, "
 "paquet Anki, analyses) pour découvrir l'outil."
 msgstr ""
-"Loads a sample database (matches, tournament, collections, comments, Anki"
-" deck, analyses) to explore the tool."
+"Loads a sample database (matches, tournament, collections, comments, Anki "
+"deck, analyses) to explore the tool."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -132,8 +131,8 @@ msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
-"verdict de videau en bearoff)."
+"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict "
+"de videau en bearoff)."
 msgstr ""
 "Opens the Eval panel (Effective Pip Count, winning probability and cube "
 "verdict in bearoff)."
@@ -159,7 +158,8 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgid ""
+"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
 msgstr "Open the takepoint table with a 2-cube for long race positions."
 
 #: ../../source/cmd_mode.rst:1
@@ -183,7 +183,8 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgid ""
+"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
 msgstr "Open the takepoint table with a 4-cube for long race positions."
 
 #: ../../source/cmd_mode.rst:1
@@ -228,8 +229,8 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
-" txt, bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
+"txt, bgf)."
 msgstr ""
 "Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, "
 "bgf)."
@@ -272,8 +273,8 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
-"son onglet *Historique*)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
+" onglet *Historique*)."
 msgstr "Open the search panel (the search history is in its *History* tab)."
 
 #: ../../source/cmd_mode.rst:1
@@ -326,10 +327,10 @@ msgid ""
 "filtre courant des statistiques. Un nombre optionnel choisit combien en "
 "charger (``bl 50``) ; par défaut 10."
 msgstr ""
-"Load the worst mistakes (equity/MWC) into the analysis view, according to"
-" the current statistics filter. An optional number chooses how many to "
-"load (``bl 50``); 10 by default.Load the worst mistakes (equity/MWC) into"
-" the analysis view, according to the current statistics filter."
+"Load the worst mistakes (equity/MWC) into the analysis view, according to "
+"the current statistics filter. An optional number chooses how many to load "
+"(``bl 50``); 10 by default.Load the worst mistakes (equity/MWC) into the "
+"analysis view, according to the current statistics filter."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -412,7 +413,8 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "The position matches the dice roll (both dice, any order)."
 
 #: ../../source/cmd_mode.rst:1
@@ -421,11 +423,11 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la "
-"valeur du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
+" du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
-"The position matches the dice roll on the first die only (the first die's"
-" value appears on either die of the position)."
+"The position matches the dice roll on the first die only (the first die's "
+"value appears on either die of the position)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -433,13 +435,12 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
-"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
-"plusieurs lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
+"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
+"lancers (``xD65 xD54``)."
 msgstr ""
-"The position was **not** played with the 6-5 roll (any order). The value "
-"is given in the token; repeatable to exclude several rolls (``xD65 "
-"xD54``)."
+"The position was **not** played with the 6-5 roll (any order). The value is "
+"given in the token; repeatable to exclude several rolls (``xD65 xD54``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -448,6 +449,23 @@ msgstr "nc"
 #: ../../source/cmd_mode.rst:1
 msgid "La position est sans contact."
 msgstr "The position has no contact."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ph:race"
+msgstr "ph:race"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est dans une phase de jeu donnée : ``opening`` (ouverture), "
+"``middlegame`` (milieu de partie), ``race`` (course) ou ``bearoff`` (sortie "
+"des pions). Répétable (``ph:race ph:bearoff``). L'étiquette est calculée à "
+"partir du plateau, jamais modifiable ; la commande ``blunderdb repair`` la "
+"recalcule."
+msgstr ""
+"The position is in a given phase of the game: ``opening``, ``middlegame``, "
+"``race`` or ``bearoff``. Repeatable (``ph:race ph:bearoff``). The label is "
+"derived from the board and never editable; ``blunderdb repair`` recomputes "
+"it."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -462,8 +480,10 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a été importée seule, et non apportée par l'import d'un match."
-msgstr "The position was imported on its own, not brought in by a match import."
+msgid ""
+"La position a été importée seule, et non apportée par l'import d'un match."
+msgstr ""
+"The position was imported on its own, not brought in by a match import."
 
 #: ../../source/cmd_mode.rst:1
 msgid "fl"
@@ -474,8 +494,8 @@ msgid ""
 "La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
 "l'import d'un match eXtreme Gammon."
 msgstr ""
-"The position was flagged in the source software, when importing an "
-"eXtreme Gammon match."
+"The position was flagged in the source software, when importing an eXtreme "
+"Gammon match."
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -486,8 +506,8 @@ msgid ""
 "La position ne contient aucun pion de la structure d'exclusion (onglet « "
 "Except » du panneau de recherche)."
 msgstr ""
-"The position contains none of the checkers of the exclusion structure "
-"(the \"Except\" tab of the search panel)."
+"The position contains none of the checkers of the exclusion structure (the "
+"\"Except\" tab of the search panel)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -566,18 +586,20 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr ""
-"The error of the move played by player 1 (in millipoints) is greater than"
-" x."
+"The error of the move played by player 1 (in millipoints) is greater than x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
-msgstr "The error of the move played by player 1 (in millipoints) is less than x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgstr ""
+"The error of the move played by player 1 (in millipoints) is less than x."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -585,11 +607,11 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
-" x et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
+"et y."
 msgstr ""
-"The error of the move played by player 1 (in millipoints) is between x "
-"and y."
+"The error of the move played by player 1 (in millipoints) is between x and "
+"y."
 
 #: ../../source/cmd_mode.rst:1
 msgid "w>x"
@@ -1006,6 +1028,20 @@ msgid "La position ne porte aucun commentaire."
 msgstr "The position carries no comment."
 
 #: ../../source/cmd_mode.rst:1
+msgid "co:user"
+msgstr "co:user"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire d'une provenance donnée : ``user`` (écrit "
+"par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un match) ou "
+"``unknown``. Répétable (``co:xg co:gnubg``)."
+msgstr ""
+"The position carries a comment of a given origin: ``user`` (written by you),"
+" ``xg``, ``gnubg``, ``bgf`` (brought in by a match import) or ``unknown``. "
+"Repeatable (``co:xg co:gnubg``)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "m'motif1,motif2,...\\'"
 msgstr "m'pattern1,pattern2,...\\'"
 
@@ -1101,13 +1137,13 @@ msgstr "pl'name'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
+" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. pl'Alice'). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:186
+#: ../../source/cmd_mode.rst:188
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1118,4 +1154,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Clear the command history."
-

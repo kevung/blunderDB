@@ -951,6 +951,10 @@ export default {
 <td>La posición es sin contacto.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>La posición se encuentra en una fase de juego dada: <code>opening</code> (apertura), <code>middlegame</code> (medio juego), <code>race</code> (carrera) o <code>bearoff</code> (retirada de fichas). Repetible (<code>ph:race ph:bearoff</code>). La etiqueta se deriva del tablero y nunca es editable; <code>blunderdb repair</code> la vuelve a calcular.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La posición o su réplica especular cumple los filtros.</td>
 </tr>
@@ -1217,6 +1221,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>La posición no tiene ningún comentario.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>La posición lleva un comentario de un origen dado: <code>user</code> (escrito por usted), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (traído por la importación de una partida) o <code>unknown</code>. Repetible (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'patrón1,patrón2,...'</td>

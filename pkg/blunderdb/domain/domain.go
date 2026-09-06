@@ -3,7 +3,10 @@
 // beyond the standard library so it can be imported by any other package.
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 const (
 	NumPoints = 24
@@ -39,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.18.0"
+	DatabaseVersion = "2.19.0"
 )
 
 // Anki deck source types
@@ -191,6 +194,53 @@ type CommentEntry struct {
 	Text       string `json:"text"`
 	CreatedAt  string `json:"createdAt"`
 	ModifiedAt string `json:"modifiedAt"`
+	// Origin says who wrote this comment (2.19.0, issue #263). Until then a
+	// comment carried no provenance, so a note the user had typed and a
+	// per-move remark that came in with an .xg file were the same thing —
+	// which is why deleting a match discarded both.
+	Origin CommentOrigin `json:"origin"`
+}
+
+// CommentOrigin names who wrote the text a comment row currently holds.
+// Re-importing the same match does not turn an imported note into the user's;
+// EDITING one does, because after the edit the sentence is theirs — and that
+// is what decides whether the purge spares the position (positionIsHeldSQL).
+type CommentOrigin string
+
+const (
+	// CommentOriginUser — typed in blunderDB by the user.
+	CommentOriginUser CommentOrigin = "user"
+	// CommentOriginXG — carried by an eXtreme Gammon file.
+	CommentOriginXG CommentOrigin = "xg"
+	// CommentOriginGnuBG — carried by a GNU Backgammon file.
+	CommentOriginGnuBG CommentOrigin = "gnubg"
+	// CommentOriginBGF — carried by a Backgammon Files (.bgf) file.
+	CommentOriginBGF CommentOrigin = "bgf"
+	// CommentOriginUnknown — a comment from before 2.19.0, or from a source
+	// that does not say. It is NOT treated as the user's: the purge that
+	// spares user comments (positionIsHeldSQL) leaves these behind, which is
+	// the behaviour every database had before the column existed.
+	CommentOriginUnknown CommentOrigin = "unknown"
+)
+
+// CommentOrigins lists every valid origin, in the order the interface shows
+// them.
+var CommentOrigins = []CommentOrigin{
+	CommentOriginUser, CommentOriginXG, CommentOriginGnuBG,
+	CommentOriginBGF, CommentOriginUnknown,
+}
+
+// ParseCommentOrigin reads an origin from its token, falling back to unknown
+// for anything it does not recognise — a value written by a newer version must
+// not make an older one refuse the row.
+func ParseCommentOrigin(s string) CommentOrigin {
+	o := CommentOrigin(strings.ToLower(strings.TrimSpace(s)))
+	for _, known := range CommentOrigins {
+		if o == known {
+			return o
+		}
+	}
+	return CommentOriginUnknown
 }
 
 type Point struct {
@@ -268,11 +318,32 @@ type SearchFilters struct {
 	// yields nothing rather than being rejected as contradictory.
 	//
 	// "Carries a comment" means any non-empty row in the comment table,
-	// whatever its provenance: the table records none, so a note the user typed
-	// and one an importer lifted from an XG/gnuBG file are indistinguishable.
+	// whatever its provenance — CommentOriginFilter is what narrows that.
 	// Match and tournament comments annotate the match or the tournament, not
 	// its positions, and are never consulted. See CONTEXT.md.
 	CommentFilter string `json:"commentFilter"`
+
+	// CommentOriginFilter keeps only positions carrying a comment written by
+	// one of the named origins: a ";"-separated list of domain.CommentOrigin
+	// values, e.g. "user" or "xg;gnubg" (the co:user token, issue #263).
+	// Empty applies no origin filter.
+	//
+	// It implies presence, so it never needs `co` alongside it, and it is
+	// independent of CommentFilter: `xco co:user` asks for a position with no
+	// comment that carries a user comment, and honestly returns nothing.
+	CommentOriginFilter string `json:"commentOriginFilter"`
+
+	// GamePhaseFilter keeps only positions in one of the named phases: a
+	// ";"-separated list of domain.GamePhase tokens, e.g. "race" or
+	// "race;bearoff" (the ph:race token, issue #264). Empty applies no phase
+	// filter.
+	//
+	// It reads the stored, DERIVED game_phase column (ADR-0035) rather than
+	// reclassifying each board, which is what makes it indexable. On a
+	// database whose phases have never been computed every row is "unknown",
+	// so a phase search returns nothing until `blunderdb repair` has run —
+	// nothing, rather than something wrong.
+	GamePhaseFilter string `json:"gamePhaseFilter"`
 
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`
@@ -688,4 +759,69 @@ type IdentityFilePick struct {
 	Path            string `json:"path"`
 	NeedsPassphrase bool   `json:"needsPassphrase"`
 	Cancelled       bool   `json:"cancelled"`
+}
+
+// GamePhase is the phase of the game a position stands in — a DERIVED label,
+// computed from the board by engine.ClassifyGamePhase, stored in an indexed
+// column, recomputed on import and by `blunderdb repair`, and never editable
+// by the user. See engine/gamephase.go for the rules and their sourcing.
+//
+// The zero value is PhaseUnknown, which is what a row written before 2.19.0
+// carries until a repair pass reaches it.
+type GamePhase int
+
+const (
+	// PhaseUnknown — not classified yet (a row from before 2.19.0).
+	PhaseUnknown GamePhase = iota
+	// PhaseOpening — contact, nothing borne off, nothing on the bar, and
+	// neither side has moved more than engine.OpeningDisplacementMax checkers
+	// off its starting points.
+	PhaseOpening
+	// PhaseMiddlegame — contact, past the opening.
+	PhaseMiddlegame
+	// PhaseRace — the two rearmost checkers have crossed, so no contact is
+	// possible any more, and at least one checker is still outside its home
+	// board. This is gnubg's CLASS_RACE boundary.
+	PhaseRace
+	// PhaseBearoff — no contact, and every checker still on the board stands
+	// in its own home board.
+	PhaseBearoff
+)
+
+// GamePhaseNames maps each phase to the stable token used in the search
+// grammar, in the CLI and on the wire. The GUI translates these; the tokens
+// themselves never change, since a saved filter holds them verbatim.
+var GamePhaseNames = map[GamePhase]string{
+	PhaseUnknown:    "unknown",
+	PhaseOpening:    "opening",
+	PhaseMiddlegame: "middlegame",
+	PhaseRace:       "race",
+	PhaseBearoff:    "bearoff",
+}
+
+// String returns the stable token of a phase.
+func (g GamePhase) String() string {
+	if name, ok := GamePhaseNames[g]; ok {
+		return name
+	}
+	return "unknown"
+}
+
+// ParseGamePhase reads a phase from its stable token. French spellings of the
+// two phases whose English token is not the obvious one are accepted too, so a
+// French-speaking user typing what the interface shows is understood.
+func ParseGamePhase(s string) (GamePhase, bool) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "opening", "ouverture":
+		return PhaseOpening, true
+	case "middlegame", "middle", "milieu":
+		return PhaseMiddlegame, true
+	case "race", "course":
+		return PhaseRace, true
+	case "bearoff", "jan", "sortie":
+		return PhaseBearoff, true
+	case "unknown", "inconnu":
+		return PhaseUnknown, true
+	}
+	return PhaseUnknown, false
 }

@@ -105,7 +105,12 @@ var (
 	maRe        = regexp.MustCompile(`^ma\d`)
 	tnRe        = regexp.MustCompile(`^tn\d`)
 	idRe        = regexp.MustCompile(`^id\d`)
-	moveErrRe   = regexp.MustCompile(`^E\d`)
+	// Closed vocabularies, so the token names its value rather than quoting it:
+	// `ph:race`, `co:user`. Repeatable, and joined the way the storage layer
+	// expects — the same shape as the id lists above.
+	phaseRe   = regexp.MustCompile(`^ph:[a-z]+$`)
+	originRe  = regexp.MustCompile(`^co:[a-z]+$`)
+	moveErrRe = regexp.MustCompile(`^E\d`)
 )
 
 // StripQuoted blanks out the quoted regions of a command so a whitespace split
@@ -209,9 +214,17 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	}
 	f.ExceptDiceFilter = strings.Join(excluded, ";")
 
+	// Closed vocabularies, claimed BEFORE the numeric ranges: `ph:race` starts
+	// with `p` and would otherwise be swallowed by the pip-count filter, the
+	// way `pl"…"` once was.
+	f.GamePhaseFilter = joinValues(all(func(s string) bool { return phaseRe.MatchString(s) }), 3)
+	f.CommentOriginFilter = joinValues(all(func(s string) bool { return originRe.MatchString(s) }), 3)
+
 	// Numeric ranges. Each reads `x>n`, `x<n` or `xa,b`; the six count filters
 	// below additionally accept a bare `x5`, which means exactly five.
-	f.PipCountFilter = first(func(s string) bool { return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") })
+	f.PipCountFilter = first(func(s string) bool {
+		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph")
+	})
 	f.WinRateFilter = first(prefix("w"))
 	f.GammonRateFilter = first(prefix("g"))
 	f.BackgammonRateFilter = first(func(s string) bool {
@@ -371,6 +384,8 @@ func Format(f domain.SearchFilters) string {
 	addList(&parts, "ma", f.MatchIDsFilter)
 	addList(&parts, "tn", f.TournamentIDsFilter)
 	addList(&parts, "id", f.PositionIDsFilter)
+	addList(&parts, "ph:", f.GamePhaseFilter)
+	addList(&parts, "co:", f.CommentOriginFilter)
 
 	return strings.Join(parts, " ")
 }
@@ -405,6 +420,8 @@ var FieldTokens = map[string]string{
 	"IndividuallyImportedFilter":    "i",
 	"FlaggedFilter":                 "fl",
 	"CommentFilter":                 "co",
+	"CommentOriginFilter":           "co:",
+	"GamePhaseFilter":               "ph:",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",
 	"WinRateFilter":                 "w",

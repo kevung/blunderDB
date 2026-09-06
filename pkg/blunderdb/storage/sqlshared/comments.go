@@ -22,22 +22,30 @@ var _ storage.CommentStore = (*CommentStore)(nil)
 // and reads back as "".
 func (s *CommentStore) selectCols() string {
 	return `id, position_id, COALESCE(text,''), ` +
-		s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("modified_at")
+		s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("modified_at") +
+		`, COALESCE(origin,'unknown')`
 }
 
 func scanCommentEntry(sc interface{ Scan(...any) error }) (domain.CommentEntry, error) {
 	var e domain.CommentEntry
-	if err := sc.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
+	var origin string
+	if err := sc.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt, &origin); err != nil {
 		return domain.CommentEntry{}, err
 	}
+	e.Origin = domain.ParseCommentOrigin(origin)
 	return e, nil
 }
 
-// Add appends a new comment entry to a position and returns its id.
+// Add appends a comment the user wrote and returns its id.
 func (s *CommentStore) Add(ctx context.Context, scope string, positionID int64, text string) (int64, error) {
+	return s.AddFrom(ctx, scope, positionID, text, domain.CommentOriginUser)
+}
+
+// AddFrom appends a comment entry carrying its provenance and returns its id.
+func (s *CommentStore) AddFrom(ctx context.Context, scope string, positionID int64, text string, origin domain.CommentOrigin) (int64, error) {
 	cols, args := s.DB.TenantColumns(scope)
-	cols = append(cols, "position_id", "text")
-	args = append(args, positionID, text)
+	cols = append(cols, "position_id", "text", "origin")
+	args = append(args, positionID, text, string(domain.ParseCommentOrigin(string(origin))))
 	id, err := s.DB.Insert(ctx,
 		`INSERT INTO comment (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
 	if err != nil {
@@ -63,14 +71,18 @@ func (s *CommentStore) Upsert(ctx context.Context, scope string, positionID int6
 		}
 		if oldest != nil {
 			id = *oldest
+			// The text becomes the user's, so the row's provenance does
+			// too: an imported note the user rewrites is no longer the
+			// importer's sentence, and the purge that spares user comments
+			// must spare this one.
 			_, err := tx.Exec(ctx,
-				`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
-				append([]any{text, id}, targs...)...)
+				`UPDATE comment SET text = ?, origin = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
+				append([]any{text, string(domain.CommentOriginUser), id}, targs...)...)
 			return err
 		}
 		cols, args := tx.TenantColumns(scope)
-		cols = append(cols, "position_id", "text")
-		args = append(args, positionID, text)
+		cols = append(cols, "position_id", "text", "origin")
+		args = append(args, positionID, text, string(domain.CommentOriginUser))
 		newID, err := tx.Insert(ctx,
 			`INSERT INTO comment (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
 		if err != nil {
@@ -85,12 +97,13 @@ func (s *CommentStore) Upsert(ctx context.Context, scope string, positionID int6
 	return id, nil
 }
 
-// Update changes the text of the comment entry with the given id.
+// Update changes the text of the comment entry with the given id. The entry
+// becomes the user's, whoever wrote it first: they have rewritten it.
 func (s *CommentStore) Update(ctx context.Context, scope string, commentID int64, text string) error {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	if _, err := s.DB.Exec(ctx,
-		`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
-		append([]any{text, commentID}, targs...)...); err != nil {
+		`UPDATE comment SET text = ?, origin = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ? AND `+tenant,
+		append([]any{text, string(domain.CommentOriginUser), commentID}, targs...)...); err != nil {
 		return errf(s.DB, fmt.Sprintf("update comment %d", commentID), err)
 	}
 	return nil

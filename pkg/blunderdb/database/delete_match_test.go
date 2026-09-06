@@ -21,6 +21,10 @@ func assertTableCount(t *testing.T, rawDB *sql.DB, table string, expected int) {
 // TestDeleteMatchCleansUpAllData verifies that deleting a match removes all
 // associated data: games, moves, move_analysis, and orphaned positions
 // (along with their analysis and comments).
+//
+// The two comments here are the IMPORTER's — the per-move notes an .xg file
+// carries — so they hold nothing. A comment the user wrote does hold its
+// position since #263; TestDeleteMatchSparesUserComments covers that.
 func TestDeleteMatchCleansUpAllData(t *testing.T) {
 	t.Parallel()
 	dir := t.TempDir()
@@ -81,12 +85,13 @@ func TestDeleteMatchCleansUpAllData(t *testing.T) {
 		t.Fatalf("SaveAnalysis 2 failed: %v", err)
 	}
 
-	// --- Comments for each position ---
-	if err := db.SaveComment(id1, "Comment 1"); err != nil {
-		t.Fatalf("SaveComment 1 failed: %v", err)
-	}
-	if err := db.SaveComment(id2, "Comment 2"); err != nil {
-		t.Fatalf("SaveComment 2 failed: %v", err)
+	// --- Comments for each position, as an importer writes them ---
+	for _, id := range []int64{id1, id2} {
+		if _, err := rawDB.Exec(
+			`INSERT INTO comment (position_id, text, origin) VALUES (?, ?, 'xg')`,
+			id, "note from the file"); err != nil {
+			t.Fatalf("insert imported comment: %v", err)
+		}
 	}
 
 	// --- Match → game → moves → move_analysis ---
@@ -539,5 +544,84 @@ func TestDeleteMatchKeepsAnkiCardPosition(t *testing.T) {
 	}
 	if stillThere != 0 {
 		t.Error("a position only the match held survived its deletion; the orphan purge is not running")
+	}
+}
+
+// TestDeleteMatchSparesUserComments pins the rule #263 added to
+// positionIsHeldSQL: a comment the USER wrote holds its position through the
+// deletion of the match it occurred in, and an imported one does not.
+//
+// Until 2.19.0 a comment carried no provenance, so neither held anything and a
+// note the user had typed on a match position was destroyed with the match.
+// The distinction is the whole point of the origin column: without it, sparing
+// the position would mean sparing every position of every .xg file that
+// carries per-move notes.
+func TestDeleteMatchSparesUserComments(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	db := NewDatabase()
+	if err := db.SetupDatabase(filepath.Join(dir, "spare-user-comments.db")); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	defer db.db.Close()
+
+	imported := InitializePosition()
+	imported.Dice = [2]int{6, 5}
+	importedID, err := db.SavePosition(&imported)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	mine := InitializePosition()
+	mine.Dice = [2]int{3, 1}
+	mineID, err := db.SavePosition(&mine)
+	if err != nil {
+		t.Fatalf("SavePosition (commented by the user): %v", err)
+	}
+
+	if _, err := db.db.Exec(
+		`INSERT INTO comment (position_id, text, origin) VALUES (?, 'note from the file', 'xg')`,
+		importedID); err != nil {
+		t.Fatalf("insert imported comment: %v", err)
+	}
+	// SaveComment is what the user's own note goes through.
+	if err := db.SaveComment(mineID, "I keep missing this one"); err != nil {
+		t.Fatalf("SaveComment: %v", err)
+	}
+
+	matchRes, err := db.db.Exec(`INSERT INTO match (player1_name, player2_name, match_length, match_date, import_date, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, "Alice", "Bob", 7, time.Now(), time.Now(), 1, "hash-spare-user-comments")
+	if err != nil {
+		t.Fatalf("insert match: %v", err)
+	}
+	matchID, _ := matchRes.LastInsertId()
+	gameRes, err := db.db.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`, matchID, 1, 0, 0, 1, 1, 2)
+	if err != nil {
+		t.Fatalf("insert game: %v", err)
+	}
+	gameID, _ := gameRes.LastInsertId()
+	for i, pid := range []int64{importedID, mineID} {
+		if _, err := db.db.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, gameID, i+1, "checker", pid, 0, 3, 1); err != nil {
+			t.Fatalf("insert move %d: %v", i, err)
+		}
+	}
+
+	if err := db.DeleteMatch(matchID); err != nil {
+		t.Fatalf("DeleteMatch: %v", err)
+	}
+
+	var n int
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, mineID).Scan(&n); err != nil {
+		t.Fatalf("count the position the user commented: %v", err)
+	}
+	if n != 1 {
+		t.Error("deleting the match destroyed a position the user had written a note on (#263)")
+	}
+	if err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, importedID).Scan(&n); err != nil {
+		t.Fatalf("count the position the importer commented: %v", err)
+	}
+	if n != 0 {
+		t.Error("a position held only by an imported note survived its match; every .xg position would now be kept")
 	}
 }

@@ -196,8 +196,23 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // Asking for both is contradictory rather than ambiguous; 'none' wins and
     // the search comes back empty, which is the honest answer.
     const commentFilter = filters.includes('xco') ? 'none' : filters.includes('co') ? 'has' : '';
-    // Exclude `pl"…"` (player filter) — it starts with 'p' but is not a pipcount.
-    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+    // Derived game phase: `ph:race`, repeatable (`ph:race ph:bearoff`), joined
+    // into a ";"-separated string for the backend (GamePhaseFilter, ADR-0035).
+    // A closed vocabulary, so the token names its value rather than quoting it.
+    const gamePhaseFilter = filters
+        .filter((f) => typeof f === 'string' && /^ph:[a-z]+$/.test(f))
+        .map((f) => f.slice(3))
+        .join(';');
+    // Comment provenance: `co:user`, repeatable, joined the same way
+    // (CommentOriginFilter, #263). Distinct from the bare `co` above, which
+    // asks about presence only — an exact match, so the two never collide.
+    const commentOriginFilter = filters
+        .filter((f) => typeof f === 'string' && /^co:[a-z]+$/.test(f))
+        .map((f) => f.slice(3))
+        .join(';');
+    // Exclude `pl"…"` (player filter) and `ph:…` (phase) — both start with 'p'
+    // and neither is a pipcount.
+    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
     const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
@@ -300,6 +315,8 @@ export function parseSearchTokens(filtersOrCommand, command) {
         movePatternFilter,
         searchText,
         commentFilter,
+        commentOriginFilter,
+        gamePhaseFilter,
         player1OutfieldBlotFilter,
         player2OutfieldBlotFilter,
         player1JanBlotFilter,
@@ -359,6 +376,8 @@ export function parseFilterTokens(tokens) {
         tournamentIDs: p.tournamentIDsFilter,
         xdFilter: p.exceptDiceFilter,
         posIdsFilter: p.positionIDsFilter,
+        phFilter: p.gamePhaseFilter,
+        coOriginFilter: p.commentOriginFilter,
         dtFilter: p.decisionTypeFilter,
         drFilter: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -426,6 +445,8 @@ export function parseSearchCommand(command) {
         // command carrying them silently lost them here.
         xd: p.exceptDiceFilter,
         posIds: p.positionIDsFilter,
+        ph: p.gamePhaseFilter,
+        coOrigin: p.commentOriginFilter,
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
     };
 }
@@ -528,6 +549,8 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         player2CheckerInZoneFilter: pf.player2CheckerInZoneFilter || '',
         searchText: pf.searchText || '',
         commentFilter: pf.commentFilter || '',
+        commentOriginFilter: pf.commentOriginFilter || '',
+        gamePhaseFilter: pf.gamePhaseFilter || '',
         player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
         equityFilter: pf.equityFilter || '',
         decisionTypeFilter: pf.decisionTypeFilter || false,

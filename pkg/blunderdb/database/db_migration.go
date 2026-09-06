@@ -80,6 +80,7 @@ var migrationSteps = []migrationStep{
 	{"2.15.0", "2.16.0", (*Database).migrate_2_15_0_to_2_16_0},
 	{"2.16.0", "2.17.0", (*Database).migrate_2_16_0_to_2_17_0},
 	{"2.17.0", "2.18.0", (*Database).migrate_2_17_0_to_2_18_0},
+	{"2.18.0", "2.19.0", (*Database).migrate_2_18_0_to_2_19_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -160,6 +161,22 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// No version bump: the schema is unchanged, only the values are restored.
 	if err := d.repairPositionsWithoutScalars(ctx); err != nil {
 		return fmt.Errorf("repairing positions without scalar columns: %w", err)
+	}
+
+	// Classify the phase of every position, once, on the open that crosses
+	// 2.19.0 (issue #264, ADR-0035). Here rather than in the migration step
+	// because the column is created by ensureAllTablesExist just above, and
+	// because the value is read out of the compact board encoding rather than
+	// out of another column — no SQL expression can produce it.
+	if d.pendingPhaseBackfill {
+		d.pendingPhaseBackfill = false
+		n, err := d.recomputeGamePhases(ctx)
+		if err != nil {
+			return fmt.Errorf("classifying the phase of the stored positions: %w", err)
+		}
+		if n > 0 {
+			slog.Info("classified the phase of the stored positions", "positions", n)
+		}
 	}
 
 	// The chain has ended at DatabaseVersion (or beyond it): every table the

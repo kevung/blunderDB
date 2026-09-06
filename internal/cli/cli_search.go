@@ -165,6 +165,8 @@ func printQueryHelp(w io.Writer) {
 	fmt.Fprintln(w, "  pl\"Name\"     a player, at either seat")
 	fmt.Fprintln(w, "  xD65         exclude the 6-5 roll (repeatable)")
 	fmt.Fprintln(w, "  ma1 tn2 id7  match / tournament / position ids (repeatable)")
+	fmt.Fprintln(w, "  ph:race      game phase: opening, middlegame, race, bearoff (repeatable)")
+	fmt.Fprintln(w, "  co:user      comment origin: user, xg, gnubg, bgf, unknown (repeatable)")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "The board pattern itself cannot be typed: it is drawn in the application.")
 	fmt.Fprintln(w, "For the same reason `cube`, `score` and `D` compare against the search board,")
