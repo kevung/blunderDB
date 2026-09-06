@@ -68,10 +68,23 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
 		}
 
-		// Merge doubling cube analysis - keep existing if new is nil
-		if existingAnalysis.DoublingCubeAnalysis != nil && analysis.DoublingCubeAnalysis == nil {
-			analysis.DoublingCubeAnalysis = existingAnalysis.DoublingCubeAnalysis
-		}
+		// Merge doubling cube analysis, keeping EVERY engine's (#269).
+		//
+		// This used to keep only the incoming one whenever it was non-nil,
+		// which silently dropped an imported cube analysis — and ADR-0013's
+		// own text says the opposite ("SaveAnalysis keeps one row per Position
+		// and merges engines inside it, every entry tagged with its own
+		// AnalysisEngine"). ingest/merge.go, the path an import takes, has
+		// always accumulated them; this is the same rule on the wrapper the
+		// desktop and the CLI write through, so the two cannot disagree about
+		// what a second engine costs.
+		//
+		// DoublingCubeAnalysis stays the PRIMARY one — the derived scalar
+		// columns read it, and every reader that predates AllCubeAnalyses sees
+		// it — while AllCubeAnalyses carries the whole set.
+		analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses = mergeCubeAnalyses(
+			existingAnalysis.DoublingCubeAnalysis, existingAnalysis.AllCubeAnalyses,
+			analysis.DoublingCubeAnalysis, analysis.AllCubeAnalyses)
 
 		// Merge played moves (support both old single field and new array field)
 		existingPlayedMoves := existingAnalysis.PlayedMoves
@@ -298,4 +311,56 @@ func (d *Database) RepairAnalyses() (int, error) {
 		return 0, fmt.Errorf("no database is currently open")
 	}
 	return d.store.Analyses().RepairDenormalisedColumns(context.Background(), "")
+}
+
+// mergeCubeAnalyses folds an incoming cube analysis into what a position
+// already carries, keeping one entry per ENGINE (#269).
+//
+// The primary returned is the incoming one when there is one, the existing one
+// otherwise: an engine that has just spoken about this position is the one the
+// derived columns should read, and a caller that says nothing about the cube
+// must not blank what was there.
+//
+// The set is deduplicated by engine name, incoming first for a given engine —
+// re-importing the same file with a newer XG updates XG's entry rather than
+// adding a second one — and sorted so the display order does not depend on the
+// order the imports happened in.
+func mergeCubeAnalyses(existing *DoublingCubeAnalysis, existingAll []DoublingCubeAnalysis,
+	incoming *DoublingCubeAnalysis, incomingAll []DoublingCubeAnalysis) (*DoublingCubeAnalysis, []DoublingCubeAnalysis) {
+
+	// Everything either side knows, incoming first so it wins its engine slot.
+	var candidates []DoublingCubeAnalysis
+	candidates = append(candidates, incomingAll...)
+	if incoming != nil {
+		candidates = append(candidates, *incoming)
+	}
+	candidates = append(candidates, existingAll...)
+	if existing != nil {
+		candidates = append(candidates, *existing)
+	}
+	if len(candidates) == 0 {
+		return nil, nil
+	}
+
+	seen := map[string]bool{}
+	var all []DoublingCubeAnalysis
+	for _, ca := range candidates {
+		if seen[ca.AnalysisEngine] {
+			continue
+		}
+		seen[ca.AnalysisEngine] = true
+		all = append(all, ca)
+	}
+	sortCubeAnalysesByEngine(all)
+
+	primary := incoming
+	if primary == nil {
+		primary = existing
+	}
+	// A single engine needs no set: an array of one is noise in every blob
+	// that carries it, and AllCubeAnalyses is read as "several" everywhere.
+	if len(all) < 2 {
+		return primary, nil
+	}
+	return primary, all
 }

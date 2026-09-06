@@ -1282,5 +1282,9 @@
         "openNote": "A .db file you already have.",
         "resume": "Reopen {name}",
         "dismiss": "Carry on without opening a database"
+    },
+    "engines": {
+        "agree": "The engines agree:",
+        "disagree": "The engines disagree:"
     }
 }

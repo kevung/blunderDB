@@ -1282,5 +1282,9 @@
         "openNote": "Un fichero .db que ya tiene.",
         "resume": "Retomar {name}",
         "dismiss": "Continuar sin abrir una base"
+    },
+    "engines": {
+        "agree": "Los motores coinciden:",
+        "disagree": "Los motores discrepan:"
     }
 }

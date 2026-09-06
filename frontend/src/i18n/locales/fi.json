@@ -1282,5 +1282,9 @@
         "openNote": ".db-tiedosto joka sinulla jo on.",
         "resume": "Avaa {name} uudelleen",
         "dismiss": "Jatka avaamatta tietokantaa"
+    },
+    "engines": {
+        "agree": "Moottorit ovat samaa mieltä:",
+        "disagree": "Moottorit ovat eri mieltä:"
     }
 }

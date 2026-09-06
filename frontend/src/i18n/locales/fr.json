@@ -1282,5 +1282,9 @@
         "openNote": "Un fichier .db que vous avez déjà.",
         "resume": "Reprendre {name}",
         "dismiss": "Continuer sans ouvrir de base"
+    },
+    "engines": {
+        "agree": "Les moteurs sont d'accord :",
+        "disagree": "Les moteurs divergent :"
     }
 }

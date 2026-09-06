@@ -519,6 +519,22 @@ un match, le coup effectivement joué est mis en évidence dans la liste des
 alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
+Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
+du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et
+sa réponse — le verdict de videau, ou son propre meilleur coup. Elle dit
+d'abord s'ils sont d'accord, et c'est le désaccord qui la justifie : « XG dit
+double, prend ; gammonNet dit pas de double » se lit d'un coup d'œil, là où
+il fallait comparer deux tableaux en diagonale.
+
+Le meilleur coup d'un moteur est le meilleur **de ce moteur** : la liste des
+coups candidats est triée par équité, tous moteurs confondus, et son premier
+élément n'est donc le meilleur coup d'aucun d'eux en particulier.
+
+La bande n'apparaît que s'il y a effectivement plusieurs moteurs, et elle
+n'existe que dans ce panneau : le panneau Eval présente **une** décision,
+celle du moteur embarqué (`ADR-0017 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md>`__),
+et une comparaison n'y aurait pas sa place.
+
 Les coups sont écrits comme on les lit sur le plateau, ici comme dans le
 panneau Eval : le pion le moins avancé bouge d'abord, et **un pion qui
 enchaîne plusieurs dés ne s'écrit qu'une fois** — un 64 joué avec le même
