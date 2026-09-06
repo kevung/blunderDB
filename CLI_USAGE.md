@@ -1064,7 +1064,8 @@ There is nothing else to show: no recipient, no holder, no history. blunderDB re
 
 ## Edit Command
 
-Edit database metadata (user name and description).
+Edit database metadata (user name, description) and the library's own
+thresholds.
 
 ```bash
 ./blunderDB edit --db database.db [options]
@@ -1076,6 +1077,8 @@ Edit database metadata (user name and description).
 - `--description` - Set the description
 - `--clear-user` - Clear the user name
 - `--clear-description` - Clear the description
+- `--error-threshold` - Error threshold, in millipoints: a decision costing at least this much is an error
+- `--blunder-threshold` - Blunder threshold, in millipoints: an error costing at least this much is a blunder
 - `--format` - Output format: `text` (default) or `json` (`{"changes": [...]}`)
 
 At least one edit option is required.
@@ -1096,6 +1099,9 @@ At least one edit option is required.
 
 # Clear description
 ./blunderDB edit --db database.db --clear-description
+
+# Draw the library's own lines: XG's thresholds (ADR-0043)
+./blunderDB edit --db database.db --error-threshold 20 --blunder-threshold 80
 ```
 
 **Example output:**

@@ -70,7 +70,7 @@ export default {
 <li>the command line, accessible by pressing the <em>SPACE</em> key,</li>
 <li>an informational message related to an operation performed by the user,</li>
 <li>the index of the current position, followed by the number of positions in the current library (or move/game info when navigating a match),</li>
-<li>the <strong>library counter</strong> — “412 positions · 38 blunders · 5 matches” — where every number <strong>opens what it counts</strong>: the positions, the <code>E&gt;100</code> search prepared in the command line, or the match list. A figure you cannot follow is a decoration. The blunder threshold is the statistics' own, one hundred millipoints: two thresholds would make the same word mean two things.</li>
+<li>the <strong>library counter</strong> — “412 positions · 38 blunders · 5 matches” — where every number <strong>opens what it counts</strong>: the positions, the <code>E&gt;</code> search prepared in the command line at the library's threshold, or the match list. A figure you cannot follow is a decoration. The blunder threshold is the library's own, set in the <em>Library</em> tab of the settings and shared with the statistics: two thresholds would make the same word mean two things. The counter promises exactly what the link opens, including for a position played several ways, which is worth its largest cost.</li>
 </ul>
 <div class="admonition note">
 <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
@@ -88,10 +88,11 @@ export default {
 </ul>
 <p>Views are saved with the database session state and restored when it is reopened.</p>
 <h3>Configuration</h3>
-<p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in six tabs:</p>
+<p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in seven tabs:</p>
 <ul>
 <li><strong>Interface</strong> — language, display scale, panel position;</li>
 <li><strong>Colours</strong> — the board's colours;</li>
+<li><strong>Library</strong> — what belongs to the open database: the error and blunder thresholds, compaction and repair, described below;</li>
 <li><strong>Bearoff</strong> — the bearoff tables used by the Eval panel;</li>
 <li><strong>gammonNet</strong> — the settings of the embedded evaluator, described below;</li>
 <li><strong>Watched folder</strong> — the automatic import of matches arriving in a folder, described below;</li>
@@ -101,6 +102,11 @@ export default {
 <p>You keep the last word, and the mechanism guarantees it rather than promising it: the <em>Colours</em> tab still sets the board directly, and a colour chosen after the theme is yours. At start-up only the interface tokens are applied, never the board palette — the one you set is already loaded, and rewriting it at every launch would erase your work one session at a time. See <code>ADR-0038 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md&gt;</code>__.</p>
 <p><em>Follow the system</em> is the default: it obeys the desktop's light/dark preference, including when it changes mid-session. A tool does not impose its light or its dark on a desktop that has already decided.</p>
 <p>The <em>Interface</em> tab also lets you choose the language among English, French, German, Italian, Spanish, Finnish, Japanese, Greek and Russian. The whole interface (toolbar, panels, messages, help) is translated into the selected language. The language choice is saved and kept from one session to the next.</p>
+<p>The <em>Library</em> tab gathers what belongs to the open file rather than to the machine. It is empty as long as no database is open, and it says so.</p>
+<p>It carries first the two <strong>thresholds</strong> that decide the whole application's vocabulary: a decision is an <strong>error</strong> as soon as its cost reaches the error threshold, and that error is a <strong>blunder</strong> as soon as it reaches the blunder threshold. Every blunder is an error, so the first threshold cannot exceed the second, and blunderDB refuses the inverted pair. The values are entered in equity — “0.080” — the unit of every table; the command line, for its part, speaks millipoints, so the 0.080 threshold is written <code>E&gt;80</code> in a search.</p>
+<p>These thresholds follow the file, not the computer: the same database counts the same blunders wherever it is opened, <code>blunderdb info</code> displays them, and <code>blunderdb edit --error-threshold</code> / <code>--blunder-threshold</code> sets them. They do not travel in an export: a threshold is a reading habit, not a fact of the positions.</p>
+<p>Three <strong>presets</strong> are offered in one click, each under the name of the program that drew that line: blunderDB (0.050 / 0.100), XG (0.020 / 0.080) and gnubg (0.040 / 0.080). By default, a library reads 0.050 and 0.100.</p>
+<p>What they change, on screen: the blunder count of the status bar's counter and the search its link prepares, the “Errors” and “Blunders” columns of the statistics and of the players table, and the list of positions blunderDB offers to review after an import.</p>
 <p>The same tab also offers a <strong>Compact database</strong> button, which reclaims the disk space left behind by deletions (matches, tournaments, purges): the database never shrinks by itself when data is deleted, that compaction has to be requested explicitly. The operation can take a while on a large database and temporarily needs about twice its size in free disk space (blunderDB refuses to start rather than risk an interrupted compaction); a confirmation is therefore asked before it runs. The result — the space gained, in megabytes — is then shown in the status bar. The same operation is available on the command line through <code>blunderdb vacuum</code> (see Command Line Interface (CLI)).</p>
 <p>The <strong>Open the log folder</strong> button just below it opens the folder holding the application log — useful for attaching details to a bug report, especially when blunderDB was started from a shortcut or a double-click, with no terminal attached to show anything.</p>
 <p>The <strong>Check for updates at startup</strong> checkbox, off by default, queries the GitHub repository's releases page once per launch and shows a message in the status bar when a newer version is available — never a window that gets in the way. This check stays automatically disabled on an installation that came through a package manager (Flatpak, Homebrew, a distribution package…): that channel is the one handling updates then, not blunderDB itself.</p>
@@ -119,7 +125,7 @@ export default {
 <p><strong>Pause and resume.</strong> During the computation, the progress shows the <em>measured</em> remaining time and two distinct buttons: <em>Pause</em> and <em>Cancel</em>. Pausing writes the state of the computation beside the table; running it again continues where it stopped instead of starting over. Cancelling keeps nothing. Closing the configuration window interrupts nothing — the computation carries on in the background.</p>
 <p>A paused computation is found again at the next launch, named and quantified ("TS-06-09 interrupted at 43%"), with <em>Resume</em> and <em>Delete</em>. Nothing restarts on its own: the user is the one who asked it to stop.</p>
 <p>The tab finally allows pointing to an external two-sided <code>.bd</code> file, for example a database produced by gnubg itself: the table with the widest domain wins.</p>
-<p>The <em>General</em> tab finally carries <strong>Repair the analyses</strong>: the analysis columns that search and statistics query are a projection of the stored analyses, which stay intact. A fault in the projection is therefore repairable without re-importing anything. It is explicit and never automatic — rewriting someone's analysis columns on the mere act of opening their database is not something a tool should do behind their back. The same <code>blunderdb repair</code> is available on the command line.</p>
+<p>The <em>Library</em> tab finally carries <strong>Repair the analyses</strong>: the analysis columns that search and statistics query are a projection of the stored analyses, which stay intact. A fault in the projection is therefore repairable without re-importing anything. It is explicit and never automatic — rewriting someone's analysis columns on the mere act of opening their database is not something a tool should do behind their back. The same <code>blunderdb repair</code> is available on the command line.</p>
 <p>The <strong>gammonNet</strong> tab configures the embedded evaluator (see <code>ADR-0011 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md&gt;</code>__). Two search depths can be set there, named and kept separately — lowering one never changes the other:</p>
 <ul>
 <li><strong>Display depth</strong> — the interactive comfort while editing the board; never written to the database.</li>
@@ -483,7 +489,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Number of serious errors (at least 0.100 EMG).</td>
+<td>Number of errors reaching the library's blunder threshold (0.100 EMG by default).</td>
 </tr>
 <tr>
 <td>Luck</td>

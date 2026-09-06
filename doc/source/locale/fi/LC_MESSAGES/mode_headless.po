@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 22:56+0200\n"
+"POT-Creation-Date: 2026-09-07 01:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -150,48 +150,48 @@ msgstr ""
 "kokonaislukuun. Nimi (``alice``) hylätään vastauksella ``400 invalid``, "
 "sitä ei koskaan muunneta."
 
-#: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:1156
+#: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:1167
 msgid "**Options:**"
 msgstr "**Valinnat:**"
 
-#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:1103
-#: ../../source/mode_headless.rst:1162
+#: ../../source/mode_headless.rst:84 ../../source/mode_headless.rst:1114
+#: ../../source/mode_headless.rst:1173
 msgid "Option"
 msgstr "Valinta"
 
-#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:1104
-#: ../../source/mode_headless.rst:1163
+#: ../../source/mode_headless.rst:85 ../../source/mode_headless.rst:1115
+#: ../../source/mode_headless.rst:1174
 msgid "Défaut"
 msgstr "Oletus"
 
-#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:1105
-#: ../../source/mode_headless.rst:1164
+#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:1116
+#: ../../source/mode_headless.rst:1175
 msgid "Signification"
 msgstr "Merkitys"
 
-#: ../../source/mode_headless.rst:87 ../../source/mode_headless.rst:1165
+#: ../../source/mode_headless.rst:87 ../../source/mode_headless.rst:1176
 msgid "``--db <chemin>``"
 msgstr "``--db <polku>``"
 
 #: ../../source/mode_headless.rst:88 ../../source/mode_headless.rst:110
 #: ../../source/mode_headless.rst:129 ../../source/mode_headless.rst:134
 #: ../../source/mode_headless.rst:139 ../../source/mode_headless.rst:145
-#: ../../source/mode_headless.rst:1107 ../../source/mode_headless.rst:1110
-#: ../../source/mode_headless.rst:1113 ../../source/mode_headless.rst:1117
-#: ../../source/mode_headless.rst:1166 ../../source/mode_headless.rst:1182
-#: ../../source/mode_headless.rst:1185
+#: ../../source/mode_headless.rst:1118 ../../source/mode_headless.rst:1121
+#: ../../source/mode_headless.rst:1124 ../../source/mode_headless.rst:1128
+#: ../../source/mode_headless.rst:1177 ../../source/mode_headless.rst:1193
+#: ../../source/mode_headless.rst:1196
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:89 ../../source/mode_headless.rst:1167
+#: ../../source/mode_headless.rst:89 ../../source/mode_headless.rst:1178
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "SQLite-tiedosto (oikotie komennolle ``--backend sqlite --dsn <polku>``)"
 
-#: ../../source/mode_headless.rst:90 ../../source/mode_headless.rst:1168
+#: ../../source/mode_headless.rst:90 ../../source/mode_headless.rst:1179
 msgid "``--backend <type>``"
 msgstr "``--backend <tyyppi>``"
 
-#: ../../source/mode_headless.rst:91 ../../source/mode_headless.rst:1169
+#: ../../source/mode_headless.rst:91 ../../source/mode_headless.rst:1180
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -199,15 +199,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "tallennustaustajärjestelmä: ``sqlite`` tai ``postgres``"
 
-#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:1171
+#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:1182
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <merkkijono>``"
 
-#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:1172
+#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:1183
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:1173
+#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:1184
 msgid "chaîne de connexion du backend"
 msgstr "taustajärjestelmän yhteysmerkkijono"
 
@@ -601,17 +601,18 @@ msgid ""
 "exemple ``/v1/positions.save``, ``/v1/matches.get``). Les familles "
 "couvrent les positions, analyses, matchs, commentaires, collections, "
 "tournois, cartes Anki, filtres, sessions, historique (recherche et "
-"commandes), recherche, métadonnées, statistiques, import et export. Les "
-"endpoints de listing renvoient un flux NDJSON (un objet JSON par ligne). "
-"Le serveur s'arrête proprement sur ``SIGINT`` / ``SIGTERM``."
+"commandes), recherche, métadonnées, réglages de bibliothèque, "
+"statistiques, import et export. Les endpoints de listing renvoient un "
+"flux NDJSON (un objet JSON par ligne). Le serveur s'arrête proprement sur"
+" ``SIGINT`` / ``SIGTERM``."
 msgstr ""
 "Liiketoimintapinta noudattaa muotoa ``POST /v1/<perhe>.<metodi>`` "
 "(esimerkiksi ``/v1/positions.save``, ``/v1/matches.get``). Perheet "
 "kattavat asemat, analyysit, ottelut, kommentit, kokoelmat, turnaukset, "
 "Anki-kortit, suodattimet, istunnot, historian (haku ja komennot), haun, "
-"metatiedot, tilastot sekä tuonnin ja viennin. Listauspäätepisteet "
-"palauttavat NDJSON-virran (yksi JSON-objekti riviä kohden). Palvelin "
-"sammuu siististi signaalilla ``SIGINT`` / ``SIGTERM``."
+"metatiedot, kirjaston asetukset, tilastot sekä tuonnin ja viennin. "
+"Listauspäätepisteet palauttavat NDJSON-virran (yksi JSON-objekti riviä "
+"kohden). Palvelin sammuu siististi signaalilla ``SIGINT`` / ``SIGTERM``."
 
 #: ../../source/mode_headless.rst:256
 msgid "Ce que ``/v1`` promet"
@@ -1587,11 +1588,37 @@ msgstr ""
 "komentohistoriat sekä istunnon tilan. Nämä ovat työpöytäsovelluksen "
 "käyttötietoja; asemat, joihin ne viittaavat, on kyllä siirretty."
 
-#: ../../source/mode_headless.rst:725
+#: ../../source/mode_headless.rst:722
+msgid ""
+"Les **seuils d'erreur et de blunder**, eux, sont copiés : ce ne sont pas "
+"des données d'usage mais l'habitude de lecture dont dépendent les "
+"comptes, et un tenant qui compterait autrement que le fichier dont il "
+"vient ferait de la migration un changement de sens muet."
+msgstr ""
+"**Virheen ja blunderin kynnykset** sen sijaan kopioidaan: ne eivät ole "
+"käyttödataa vaan lukutapa, josta laskut riippuvat, ja tenant, joka "
+"laskisi toisin kuin tiedosto, josta se on peräisin, tekisi migraatiosta "
+"äänettömän merkityksen muutoksen."
+
+#: ../../source/mode_headless.rst:727
+msgid ""
+"Le tenant règle les siens par ``POST /v1/librarySettings.load`` et "
+"``/v1/librarySettings.save``. Contrairement à ``metadata``, qui est une "
+"infrastructure globale exposée en lecture seule, la table des réglages "
+"porte un ``tenant_id`` et vit sous Row-Level Security : un tenant qui "
+"écrit ses seuils n'atteint que ses propres lignes."
+msgstr ""
+"Tenant säätää omansa kutsuilla ``POST /v1/librarySettings.load`` ja "
+"``/v1/librarySettings.save``. Toisin kuin ``metadata``, joka on vain "
+"luettavaksi avattu globaali infrastruktuuri, asetustaulu kantaa "
+"``tenant_id``-saraketta ja elää Row-Level Securityn alla: tenant, joka "
+"kirjoittaa kynnyksensä, yltää vain omiin riveihinsä."
+
+#: ../../source/mode_headless.rst:736
 msgid "Le poste de travail et le serveur"
 msgstr "Työasema ja palvelin"
 
-#: ../../source/mode_headless.rst:727
+#: ../../source/mode_headless.rst:738
 msgid ""
 "L'application de bureau ouvre des **fichiers** ``.db``, pas des URL : "
 "elle ne se connecte à aucun démon ``serve``, et il n'existe nulle part de"
@@ -1603,7 +1630,7 @@ msgstr ""
 "johon syöttää osoite. Palvelin ja työasema vaihtavat tiedostoja kahdella "
 "symmetrisellä tavalla:"
 
-#: ../../source/mode_headless.rst:732
+#: ../../source/mode_headless.rst:743
 msgid ""
 "**du serveur vers le poste** — ``POST /v1/exports.sqlite`` écrit tout le "
 "tenant courant dans un ``.db`` que l'application de bureau ouvre tel quel"
@@ -1613,7 +1640,7 @@ msgstr ""
 "koko nykyisen tenantin ``.db``-tiedostoon, jonka työpöytäsovellus avaa "
 "sellaisenaan (katso :ref:`headless_sauvegarde`);"
 
-#: ../../source/mode_headless.rst:735
+#: ../../source/mode_headless.rst:746
 msgid ""
 "**du poste vers le serveur** — ``blunderdb migrate`` recopie un ``.db`` "
 "sous le tenant voulu (voir :ref:`headless_migrate`)."
@@ -1621,7 +1648,7 @@ msgstr ""
 "**työasemalta palvelimelle** — ``blunderdb migrate`` kopioi "
 "``.db``-tiedoston halutun tenantin alle (katso :ref:`headless_migrate`)."
 
-#: ../../source/mode_headless.rst:738
+#: ../../source/mode_headless.rst:749
 msgid ""
 "Il n'existe **aucune lecture inter-tenant**. Le cloisonnement est total :"
 " rien de ce qu'un tenant stocke n'est visible à un autre, par aucune "
@@ -1636,7 +1663,7 @@ msgstr ""
 "haluaa nähdä oppilaidensa ottelut, on siis kaksi tietä, molemmat "
 "nimenomaisia:"
 
-#: ../../source/mode_headless.rst:744
+#: ../../source/mode_headless.rst:755
 msgid ""
 "lui ouvrir dans le proxy un compte supplémentaire, associé au tenant de "
 "l'élève : c'est la table de correspondance du proxy, jamais le démon, qui"
@@ -1646,7 +1673,7 @@ msgstr ""
 "tenanttiin: välityspalvelimen vastaavuustaulukko, ei koskaan demoni, "
 "ratkaisee minkä tenantin istunto näkee;"
 
-#: ../../source/mode_headless.rst:747
+#: ../../source/mode_headless.rst:758
 msgid ""
 "lui demander un export — le ``.db`` produit par ``exports.sqlite`` ou par"
 " la fenêtre d'export de l'application de bureau — et l'ouvrir sur son "
@@ -1656,11 +1683,11 @@ msgstr ""
 "työpöytäsovelluksen vienti-ikkunan tuottama ``.db`` — ja avataan se "
 "omalla koneella."
 
-#: ../../source/mode_headless.rst:752
+#: ../../source/mode_headless.rst:763
 msgid "Déploiement avec Docker"
 msgstr "Käyttöönotto Dockerilla"
 
-#: ../../source/mode_headless.rst:754
+#: ../../source/mode_headless.rst:765
 msgid ""
 "Le dépôt fournit un ``Dockerfile.serve`` qui construit une image "
 "conteneur minimale du démon : seul le binaire ``serve`` est compilé (Go "
@@ -1672,7 +1699,7 @@ msgstr ""
 "ilman graafista käyttöliittymää ja ilman CGO:ta, siis staattisesti "
 "linkitetty) ja sijoitetaan sitten *distroless*-kuvaan."
 
-#: ../../source/mode_headless.rst:769
+#: ../../source/mode_headless.rst:780
 msgid ""
 "La construction se lance depuis la racine du dépôt, et le backend par "
 "défaut de l'image est ``postgres``."
@@ -1680,7 +1707,7 @@ msgstr ""
 "Rakentaminen käynnistetään repositorion juuresta, ja kuvan "
 "oletustaustajärjestelmä on ``postgres``."
 
-#: ../../source/mode_headless.rst:772
+#: ../../source/mode_headless.rst:783
 msgid ""
 "L'image écoute sur le port 8080 et se configure par variables "
 "d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, "
@@ -1700,11 +1727,11 @@ msgstr ""
 "``unhealthy``, ja Compose tai orkestroija voivat odottaa taustaprosessin "
 "valmiutta ennen siitä riippuvien osien käynnistämistä."
 
-#: ../../source/mode_headless.rst:784
+#: ../../source/mode_headless.rst:795
 msgid "Image publiée"
 msgstr "Julkaistu kuva"
 
-#: ../../source/mode_headless.rst:786
+#: ../../source/mode_headless.rst:797
 msgid ""
 "Il n'est pas nécessaire de construire l'image soi-même : chaque version "
 "publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous"
@@ -1728,7 +1755,7 @@ msgstr ""
 "tarjotaan arkkitehtuureille ``linux/amd64`` ja ``linux/arm64``; Docker "
 "valitsee isännän arkkitehtuurin."
 
-#: ../../source/mode_headless.rst:812
+#: ../../source/mode_headless.rst:823
 msgid ""
 "``/data`` est le point de montage que l'image prépare, avec les droits de"
 " son utilisateur non privilégié, et son ``XDG_DATA_HOME`` : le volume "
@@ -1751,7 +1778,7 @@ msgstr ""
 "jolloin se palvelee normaalisti, bearoff-asemissa pelkällä arvioidulla "
 "tilalla."
 
-#: ../../source/mode_headless.rst:821
+#: ../../source/mode_headless.rst:832
 msgid ""
 "L'image porte les étiquettes OCI usuelles "
 "(``org.opencontainers.image.source``, ``.version``, ``.revision``, "
@@ -1767,7 +1794,7 @@ msgstr ""
 "``Dockerfile.serve``-tiedostosta, täsmälleen kuten yllä; paikallinen "
 "rakentaminen tai julkaistun kuvan vetäminen tuottaa saman binäärin."
 
-#: ../../source/mode_headless.rst:829
+#: ../../source/mode_headless.rst:840
 msgid ""
 "Comme le démon lui-même, le conteneur n'effectue **aucune "
 "authentification** (`ADR-0005 "
@@ -1790,11 +1817,11 @@ msgstr ""
 "osoitteessa ``127.0.0.1`` juuri tästä syystä, ja ``--addr`` sitoutuu "
 "samoin osoitteeseen ``127.0.0.1``: välityspalvelin on samalla koneella."
 
-#: ../../source/mode_headless.rst:841
+#: ../../source/mode_headless.rst:852
 msgid "Déploiement derrière un proxy authentifiant"
 msgstr "Käyttöönotto todentavan proxyn takana"
 
-#: ../../source/mode_headless.rst:843
+#: ../../source/mode_headless.rst:854
 msgid ""
 "L'`ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005"
 "-serve-daemon-delegates-authentication.md>`__ fait du reverse-proxy "
@@ -1831,7 +1858,7 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/deploy/.env.example>`__ "
 "samaan hakemistoon."
 
-#: ../../source/mode_headless.rst:859
+#: ../../source/mode_headless.rst:870
 msgid ""
 "Le fichier Compose met Caddy — authentification HTTP Basic de "
 "démonstration — devant ``blunderdb-serve`` et PostgreSQL, Row-Level "
@@ -1847,11 +1874,11 @@ msgstr ""
 "reittiä isäntäkoneeseen eikä internetiin, olipa myöhempi muutos lisännyt "
 "niille mitä ``ports:``-määrityksiä tahansa."
 
-#: ../../source/mode_headless.rst:865
+#: ../../source/mode_headless.rst:876
 msgid "deploy/docker-compose.yml"
 msgstr "deploy/docker-compose.yml"
 
-#: ../../source/mode_headless.rst:869
+#: ../../source/mode_headless.rst:880
 msgid ""
 "Le ``Caddyfile`` authentifie, associe le compte authentifié à l'entier du"
 " tenant (``map``), puis l'injecte dans ``X-Tenant-ID`` **après** avoir "
@@ -1867,11 +1894,11 @@ msgstr ""
 "lähettämä otsake ei voi päätyä demonille, tehtiinpä tiedostoon myöhemmin "
 "mitä muutoksia tahansa."
 
-#: ../../source/mode_headless.rst:875
+#: ../../source/mode_headless.rst:886
 msgid "deploy/Caddyfile"
 msgstr "deploy/Caddyfile"
 
-#: ../../source/mode_headless.rst:879
+#: ../../source/mode_headless.rst:890
 msgid ""
 "Deux autres fichiers complètent le répertoire : `deploy/nginx-tenant-"
 "proxy.conf <https://github.com/kevung/blunderDB/blob/main/deploy/nginx-"
@@ -1891,7 +1918,7 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/deploy/README.md>`__ "
 "esittää uhkamallin ja sen, mitä ei koskaan pidä tehdä."
 
-#: ../../source/mode_headless.rst:887
+#: ../../source/mode_headless.rst:898
 msgid ""
 "L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas"
 " une recommandation de production : elle se remplace par ``forward_auth``"
@@ -1906,11 +1933,11 @@ msgstr ""
 "sitten identiteetin samaan kohtaan tiedostoa. Vastaavuustaulukon kaksi "
 "salasanaa ja kaksi tiliä on korvattava samoin."
 
-#: ../../source/mode_headless.rst:893
+#: ../../source/mode_headless.rst:904
 msgid "**Scénario complet, de zéro à un démon qui répond :**"
 msgstr "**Täydellinen skenaario, tyhjästä vastaavaan demoniin:**"
 
-#: ../../source/mode_headless.rst:913
+#: ../../source/mode_headless.rst:924
 #, no-python-brace-format
 msgid ""
 "La première requête est rejetée par Caddy, avant même d'atteindre le "
@@ -1929,7 +1956,7 @@ msgstr ""
 "selvinnyt ``Caddyfile``-tiedoston suojasta. Tämä skenaario on toistettu "
 "sellaisenaan."
 
-#: ../../source/mode_headless.rst:920
+#: ../../source/mode_headless.rst:931
 msgid ""
 "Pour tirer l'image publiée plutôt que de la construire, remplacer dans "
 "``docker-compose.yml`` les trois lignes ``build:`` du service "
@@ -1941,7 +1968,7 @@ msgstr ""
 "kolme ``build:``-riviä yhdellä ``image:``-rivillä ja aja sitten ``docker "
 "compose up -d`` ilman valitsinta ``--build``:"
 
-#: ../../source/mode_headless.rst:931
+#: ../../source/mode_headless.rst:942
 msgid ""
 "Le fichier Compose publie le port de Caddy sur toutes les interfaces "
 "(``8080:80``) : c'est ce qu'on attend d'un proxy, qui est là pour être "
@@ -1954,11 +1981,11 @@ msgstr ""
 "— eikä sitä julkaistakaan, sillä sillä ei ole lainkaan "
 "``ports:``-määritystä."
 
-#: ../../source/mode_headless.rst:939
+#: ../../source/mode_headless.rst:950
 msgid "Mettre à jour un déploiement"
 msgstr "Käyttöönoton päivittäminen"
 
-#: ../../source/mode_headless.rst:941
+#: ../../source/mode_headless.rst:952
 msgid ""
 "Le schéma est migré automatiquement au démarrage, et cette migration est "
 "**à sens unique** : une base migrée vers un schéma récent n'est plus "
@@ -1970,7 +1997,7 @@ msgstr ""
 "lukea blunderDB:n aiemmalla versiolla (katso :ref:`annexe_db_migration`)."
 " Toimenpiteiden järjestyksellä on siis väliä."
 
-#: ../../source/mode_headless.rst:946
+#: ../../source/mode_headless.rst:957
 msgid ""
 "**Sauvegarder d'abord**, avant tout le reste : c'est la seule marche "
 "arrière (voir :ref:`headless_sauvegarde`)."
@@ -1978,7 +2005,7 @@ msgstr ""
 "**Varmuuskopioi ensin**, ennen kaikkea muuta: se on ainoa paluu "
 "taaksepäin (katso :ref:`headless_sauvegarde`)."
 
-#: ../../source/mode_headless.rst:948
+#: ../../source/mode_headless.rst:959
 msgid ""
 "**Tirer l'étiquette de la version voulue**, jamais ``latest`` en "
 "production. ``latest`` suit la dernière version publiée : le déploiement "
@@ -1991,7 +2018,7 @@ msgstr ""
 "sitä olisi päätetty tai että vaiheen 1 varmuuskopio olisi välttämättä "
 "tuore."
 
-#: ../../source/mode_headless.rst:952
+#: ../../source/mode_headless.rst:963
 msgid ""
 "**Redémarrer le démon** sur la nouvelle image. Il migre le schéma avant "
 "de servir la moindre requête ; si la migration échoue, il s'arrête sur "
@@ -2001,7 +2028,7 @@ msgstr ""
 "kuin palvelee ainuttakaan pyyntöä; jos migraatio epäonnistuu, se pysähtyy"
 " virheeseen sen sijaan, että palvelisi puoliksi migroitua tietokantaa."
 
-#: ../../source/mode_headless.rst:955
+#: ../../source/mode_headless.rst:966
 #, no-python-brace-format
 msgid ""
 "**Vérifier la sonde de disponibilité.** ``GET /readyz`` répond ``200`` et"
@@ -2022,7 +2049,7 @@ msgstr ""
 " että sen, jota binääri odottaa. ``blunderdb healthcheck`` antaa saman "
 "tuomion paluukoodina."
 
-#: ../../source/mode_headless.rst:963
+#: ../../source/mode_headless.rst:974
 msgid ""
 "Un ``version_mismatch`` qui persiste après le redémarrage, c'est le "
 "retour en arrière : un binaire plus ancien devant une base déjà migrée. "
@@ -2033,11 +2060,11 @@ msgstr ""
 "paluuta taaksepäin: vanhempi binääri jo migroidun tietokannan edessä. "
 "Alaspäin migraatiota ei ole; palautettava on vaiheen 1 varmuuskopio."
 
-#: ../../source/mode_headless.rst:970
+#: ../../source/mode_headless.rst:981
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "PostgreSQL-taustajärjestelmä ja monikäyttäjäisyys"
 
-#: ../../source/mode_headless.rst:972
+#: ../../source/mode_headless.rst:983
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -2049,7 +2076,7 @@ msgstr ""
 "valinnalla ``--backend postgres`` ja yhteysmerkkijonolla ``--dsn``. "
 "Skeema luodaan ja migroidaan automaattisesti käynnistyksen yhteydessä."
 
-#: ../../source/mode_headless.rst:977
+#: ../../source/mode_headless.rst:988
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier "
@@ -2069,11 +2096,11 @@ msgstr ""
 "``400 invalid``: käänteisvälityspalvelin yhdistää tilin sen "
 "kokonaislukuun, demoni ei koskaan arvaa."
 
-#: ../../source/mode_headless.rst:986
+#: ../../source/mode_headless.rst:997
 msgid "Row-Level Security"
 msgstr "Row-Level Security"
 
-#: ../../source/mode_headless.rst:988
+#: ../../source/mode_headless.rst:999
 msgid ""
 "L'option ``--rls`` active en complément la **Row-Level Security** de "
 "PostgreSQL. À chaque démarrage, le démon installe sur chaque table "
@@ -2098,7 +2125,7 @@ msgstr ""
 "käytöstä: sovelluskoodin tenanttikohtainen suodatus on voimassa "
 "kummassakin tapauksessa."
 
-#: ../../source/mode_headless.rst:999
+#: ../../source/mode_headless.rst:1010
 msgid ""
 "**Le rôle de connexion doit être ordinaire** : ni superutilisateur, ni "
 "``BYPASSRLS``. PostgreSQL laisse ces deux-là traverser toutes les "
@@ -2112,7 +2139,7 @@ msgstr ""
 " on kuitenkin omistettava taulut, sillä juuri se suorittaa komennot "
 "``ALTER TABLE`` ja ``CREATE POLICY``."
 
-#: ../../source/mode_headless.rst:1004
+#: ../../source/mode_headless.rst:1015
 msgid ""
 "**Sur une base déjà peuplée, il n'y a rien à migrer** : la pose des "
 "politiques est du DDL idempotent, rejoué à chaque démarrage après la "
@@ -2125,7 +2152,7 @@ msgstr ""
 " yhtään riviä kirjoiteta uudelleen; valitsimen ``--rls`` käyttöönotto tai"
 " poisto on pelkkä uudelleenkäynnistys."
 
-#: ../../source/mode_headless.rst:1008
+#: ../../source/mode_headless.rst:1019
 msgid ""
 "**Le coût est mesuré** : sur la lecture d'une position, 101,8 µs sans, "
 "177,0 µs avec, soit **+73,8 %** — même conteneur, mêmes lignes, deux "
@@ -2141,11 +2168,11 @@ msgstr ""
 "predikaatista, jonka jokainen kysely ylimääräisenä läpäisee, ei koskaan "
 "datan määrästä."
 
-#: ../../source/mode_headless.rst:1015
+#: ../../source/mode_headless.rst:1026
 msgid "Ouvrir et fermer un tenant"
 msgstr "Tenantin avaaminen ja sulkeminen"
 
-#: ../../source/mode_headless.rst:1017
+#: ../../source/mode_headless.rst:1028
 msgid ""
 "Il n'y a **rien à créer** côté serveur : un tenant n'est pas un "
 "enregistrement, c'est l'entier que portent ses lignes. La base n'a pas de"
@@ -2159,7 +2186,7 @@ msgstr ""
 "avaaminen on merkinnän lisääminen välityspalvelimen vastaavuustaulukkoon,"
 " ja jäsenen ensimmäinen kirjoitus saa hänen tenanttinsa olemaan olemassa."
 
-#: ../../source/mode_headless.rst:1023
+#: ../../source/mode_headless.rst:1034
 msgid ""
 "Un tenant vide répond comme une base vide, sans erreur : "
 "``metadata.counts`` renvoie des zéros et les listes ne renvoient rien."
@@ -2167,7 +2194,7 @@ msgstr ""
 "Tyhjä tenant vastaa kuin tyhjä tietokanta, ilman virhettä: "
 "``metadata.counts`` palauttaa nollia eivätkä listat palauta mitään."
 
-#: ../../source/mode_headless.rst:1026
+#: ../../source/mode_headless.rst:1037
 msgid ""
 "Quand un tenant est décommissionné, ``POST /ops/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
@@ -2201,11 +2228,11 @@ msgstr ""
 "taustajärjestelmän kanssa — SQLite-taustajärjestelmässä, jolla ei ole "
 "tenantin käsitettä, se palauttaa ``invalid``-virheen."
 
-#: ../../source/mode_headless.rst:1041
+#: ../../source/mode_headless.rst:1052
 msgid "Compactage et pool de connexions"
 msgstr "Tiivistys ja yhteyspooli"
 
-#: ../../source/mode_headless.rst:1043
+#: ../../source/mode_headless.rst:1054
 msgid ""
 "``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du daemon — "
 "le pendant du bouton « Compacter la base » de l'interface graphique et de"
@@ -2223,7 +2250,7 @@ msgstr ""
 "PostgreSQL:llä, jolla ei ole tiivistettävää tiedostoa, se palauttaa "
 "``invalid``-virheen."
 
-#: ../../source/mode_headless.rst:1051
+#: ../../source/mode_headless.rst:1062
 msgid ""
 "Le pool de connexions PostgreSQL se règle par variable d'environnement : "
 "``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 par défaut), "
@@ -2260,11 +2287,11 @@ msgstr ""
 " ja ``_wait_count`` (niiden ``Acquire``-kutsujen kertynyt määrä, joiden "
 "on täytynyt odottaa vapaata yhteyttä)."
 
-#: ../../source/mode_headless.rst:1070
+#: ../../source/mode_headless.rst:1081
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "SQLite-tietokannan siirtäminen PostgreSQL:ään"
 
-#: ../../source/mode_headless.rst:1072
+#: ../../source/mode_headless.rst:1083
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
@@ -2276,7 +2303,7 @@ msgstr ""
 "jonka käänteisvälityspalvelin lähettää ``X-Tenant-ID``-otsakkeessa tälle "
 "käyttäjälle — tämä on tapa ”ladata” työpöytäkirjasto palvelinasennukseen."
 
-#: ../../source/mode_headless.rst:1088
+#: ../../source/mode_headless.rst:1099
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -2301,27 +2328,27 @@ msgstr ""
 " lähettää omat ``\"schema-migration\"``-tapahtumansa "
 "(vaihe/tehty/yhteensä), ennen kuin rivi riviltä kopiointi alkaa."
 
-#: ../../source/mode_headless.rst:1106
+#: ../../source/mode_headless.rst:1117
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:1108
+#: ../../source/mode_headless.rst:1119
 msgid "base SQLite source (``sqlite:///<chemin>`` ou un simple chemin)"
 msgstr "lähde-SQLite-tietokanta (``sqlite:///<polku>`` tai pelkkä polku)"
 
-#: ../../source/mode_headless.rst:1109
+#: ../../source/mode_headless.rst:1120
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:1111
+#: ../../source/mode_headless.rst:1122
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "kohde-PostgreSQL:n DSN (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:1112
+#: ../../source/mode_headless.rst:1123
 msgid "``--tenant-id <n>``"
 msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:1114
+#: ../../source/mode_headless.rst:1125
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
@@ -2329,23 +2356,23 @@ msgstr ""
 "kohdetenant, positiivinen desimaalikokonaisluku (pakollinen paitsi "
 "``--dry-run``-tilassa; nimi kuten ``mon-tenant`` hylätään)"
 
-#: ../../source/mode_headless.rst:1116
+#: ../../source/mode_headless.rst:1127
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:1118
+#: ../../source/mode_headless.rst:1129
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "laskee, mitä kopioitaisiin, kirjoittamatta mitään"
 
-#: ../../source/mode_headless.rst:1119
+#: ../../source/mode_headless.rst:1130
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <käytäntö>``"
 
-#: ../../source/mode_headless.rst:1120
+#: ../../source/mode_headless.rst:1131
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:1121
+#: ../../source/mode_headless.rst:1132
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -2353,7 +2380,7 @@ msgstr ""
 "``\"\"`` keskeyttää, jos tenantilla on jo tietoja; ``skip`` yhdistää "
 "(asemien deduplikointi Zobrist-hashin perusteella)"
 
-#: ../../source/mode_headless.rst:1126
+#: ../../source/mode_headless.rst:1137
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -2364,11 +2391,11 @@ msgstr ""
 "suodatinkirjasto, haku- ja komentohistoria sekä istunnon metatiedot. "
 "Etusijalla on asemakirjaston ja otteluhistorian migraatio."
 
-#: ../../source/mode_headless.rst:1134
+#: ../../source/mode_headless.rst:1145
 msgid "Le dispatcher générique ``call``"
 msgstr "Yleiskäyttöinen ``call``-välittäjä"
 
-#: ../../source/mode_headless.rst:1136
+#: ../../source/mode_headless.rst:1147
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -2382,19 +2409,19 @@ msgstr ""
 " komennon ``POST /v1/<perhe>.<metodi>`` kanssa. Tämä on hyödyllistä "
 "skriptauksessa ja integraatiotesteissä."
 
-#: ../../source/mode_headless.rst:1170
+#: ../../source/mode_headless.rst:1181
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` tai ``postgres``"
 
-#: ../../source/mode_headless.rst:1174
+#: ../../source/mode_headless.rst:1185
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:1175
+#: ../../source/mode_headless.rst:1186
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:1176
+#: ../../source/mode_headless.rst:1187
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -2402,36 +2429,36 @@ msgstr ""
 "tenant, positiivinen desimaalikokonaisluku (lähetetään ``X-Tenant-"
 "ID``-otsakkeena; nimi kuten ``alice`` hylätään)"
 
-#: ../../source/mode_headless.rst:1178
+#: ../../source/mode_headless.rst:1189
 msgid "``--json <chaîne>``"
 msgstr "``--json <merkkijono>``"
 
-#: ../../source/mode_headless.rst:1179
+#: ../../source/mode_headless.rst:1190
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:1180
+#: ../../source/mode_headless.rst:1191
 msgid "corps de la requête au format JSON"
 msgstr "pyynnön runko JSON-muodossa"
 
-#: ../../source/mode_headless.rst:1181
+#: ../../source/mode_headless.rst:1192
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <polku>``"
 
-#: ../../source/mode_headless.rst:1183
+#: ../../source/mode_headless.rst:1194
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "lukee pyynnön rungon tiedostosta"
 
-#: ../../source/mode_headless.rst:1184
+#: ../../source/mode_headless.rst:1195
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:1186
+#: ../../source/mode_headless.rst:1197
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "näyttää kaikki metodit ``<perhe>.<metodi>`` ja lopettaa"
 
-#: ../../source/mode_headless.rst:1188
+#: ../../source/mode_headless.rst:1199
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "

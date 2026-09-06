@@ -87,7 +87,7 @@ Commandes disponibles
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "info", "Affiche les métadonnées de la base."
-   "edit", "Modifie les métadonnées de la base."
+   "edit", "Modifie les métadonnées et les seuils de la base."
    "verify", "Vérifie l'intégrité de la base."
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
    "repair", "Recalcule les colonnes scalaires tirées de chaque analyse."
@@ -1374,7 +1374,8 @@ filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
 edit — Modifier les métadonnées
 --------------------------------
 
-Modifie le nom d'utilisateur ou la description d'une base de données.
+Modifie le nom d'utilisateur, la description ou les seuils d'une base de
+données.
 
 .. code-block:: bash
 
@@ -1387,6 +1388,10 @@ Modifie le nom d'utilisateur ou la description d'une base de données.
 * ``--description`` — Nouvelle description.
 * ``--clear-user`` — Effacer le nom d'utilisateur.
 * ``--clear-description`` — Effacer la description.
+* ``--error-threshold`` — Seuil d'erreur, en millipoints : une décision
+  coûtant au moins cela est une erreur.
+* ``--blunder-threshold`` — Seuil de blunder, en millipoints : une erreur
+  coûtant au moins cela est un blunder.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
   (``{"changes": [...]}``).
 
@@ -1398,6 +1403,7 @@ Au moins une option de modification est requise.
 
    ./blunderdb edit --db base.db --user "Marie" --description "Ma collection"
    ./blunderdb edit --db base.db --clear-description
+   ./blunderdb edit --db base.db --error-threshold 20 --blunder-threshold 80
 
 verify — Vérifier l'intégrité
 -------------------------------

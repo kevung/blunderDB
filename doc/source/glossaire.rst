@@ -60,6 +60,14 @@ EMG
     comptent les erreurs : « une erreur de 0,100 EMG » est une erreur de
     0,100 sur cette échelle. Les deux termes nomment la même grandeur.
 
+Erreur / blunder (*error*, *blunder*)
+    Une décision dont le coût atteint le **seuil d'erreur** de la bibliothèque
+    est une *erreur* ; une erreur dont le coût atteint son **seuil de blunder**
+    est un *blunder*. Tout blunder est donc une erreur. Les deux seuils se
+    règlent dans l'onglet *Bibliothèque* de la configuration, valent 0,050 et
+    0,100 EMG par défaut, et suivent le fichier plutôt que la machine — ils ne
+    voyagent pas dans un export.
+
 Score away (*away score*)
     Le nombre de points qu'il reste à un joueur pour gagner le match, de son
     propre point de vue. Deux valeurs sont des sentinelles plutôt que des

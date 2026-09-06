@@ -142,10 +142,13 @@ suivantes:
 
 * le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 matchs »
   — où chaque nombre **ouvre ce qu'il compte** : les positions, la recherche
-  ``E>100`` préparée dans la ligne de commande, ou la liste des matchs. Un
-  chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders
-  est celui des statistiques, cent millipoints : deux seuils feraient dire
-  deux choses au même mot.
+  ``E>`` préparée dans la ligne de commande au seuil de la bibliothèque, ou la
+  liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le
+  seuil des blunders est celui de la bibliothèque, réglé dans l'onglet
+  *Bibliothèque* de la configuration et partagé avec les statistiques : deux
+  seuils feraient dire deux choses au même mot. Le compteur promet exactement
+  ce que le lien ouvre, y compris pour une position jouée de plusieurs façons,
+  qui vaut son coût le plus élevé.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
@@ -205,10 +208,12 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en six onglets :
+blunderDB. Elle est organisée en sept onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau ;
 * **Couleurs** — les couleurs du plateau ;
+* **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
+  d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Dossier surveillé** — l'import automatique des matchs qui arrivent dans un
@@ -239,6 +244,33 @@ français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
 et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est
 enregistré et conservé d'une session à l'autre.
+
+L'onglet *Bibliothèque* réunit ce qui appartient au fichier ouvert et non à la
+machine. Il est vide tant qu'aucune base n'est ouverte, et il le dit.
+
+Il porte d'abord les deux **seuils** qui décident du vocabulaire de toute
+l'application : une décision est une **erreur** dès que son coût atteint le
+seuil d'erreur, et cette erreur est un **blunder** dès qu'il atteint le seuil
+de blunder. Tout blunder est une erreur, donc le premier seuil ne peut pas
+dépasser le second, et blunderDB refuse la paire inversée. Les valeurs sont
+saisies en équité — « 0,080 » — l'unité de toutes les tables ; la ligne de
+commande, elle, parle en millipoints, si bien que le seuil 0,080 s'écrit
+``E>80`` dans une recherche.
+
+Ces seuils suivent le fichier, pas l'ordinateur : la même base compte les
+mêmes blunders partout où on l'ouvre, ``blunderdb info`` les affiche, et
+``blunderdb edit --error-threshold`` / ``--blunder-threshold`` les règle. Ils
+ne voyagent pas dans un export : un seuil est une habitude de lecture, pas un
+fait des positions.
+
+Trois **préréglages** sont proposés d'un clic, chacun sous le nom du programme
+qui a tracé cette ligne : blunderDB (0,050 / 0,100), XG (0,020 / 0,080) et
+gnubg (0,040 / 0,080). Par défaut, une bibliothèque lit 0,050 et 0,100.
+
+Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la barre
+d'état et la recherche que son lien prépare, les colonnes « Erreurs » et
+« Blunders » des statistiques et du tableau des joueurs, et la liste des
+positions que blunderDB propose de revoir après un import.
 
 Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
 l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
@@ -340,7 +372,7 @@ L'onglet permet enfin de pointer vers un fichier ``.bd`` two-sided externe, par
 exemple une base produite par gnubg lui-même : la table au domaine le plus
 large l'emporte.
 
-L'onglet *Général* porte enfin **Réparer les analyses** : les colonnes
+L'onglet *Bibliothèque* porte enfin **Réparer les analyses** : les colonnes
 d'analyse que la recherche et les statistiques interrogent sont une projection
 des analyses stockées, lesquelles restent intactes. Un défaut de projection se
 répare donc sans rien réimporter. C'est explicite et jamais automatique —
@@ -1426,7 +1458,7 @@ Colonnes, dans l'ordre :
    "PR", "Performance Rating global."
    "PR pions, PR videau", "Le PR ventilé par type de décision."
    "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
-   "Blunders", "Nombre d'erreurs graves (au moins 0,100 EMG)."
+   "Blunders", "Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut)."
    "Chance", "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables."
 
 Utilisation :
