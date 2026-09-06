@@ -276,11 +276,13 @@ A named, ordered set of Positions the user assembles by hand. Membership is a us
 gesture, unlike the individually-imported property.
 
 **Anki deck**:
-A set of Positions turned into spaced-repetition cards.
+A set of Positions — or the 36 Score cards — turned into spaced-repetition cards. A deck of
+scores is created on request and filled by the application; the user never enters a score.
 
 **Review card**:
-One Position of an Anki deck, presented as a question. The question is the Position on the
-board; the Answer is its stored Analysis. A card asks one question and receives one grade —
+One Position, or one Score card, of an Anki deck, presented as a question. For a Position the
+question is the board and the Answer its stored Analysis; for a score, the question is the
+score and the Answer its Score card. A card asks one question and receives one grade —
 there is no notion of a partly answered card.
 
 **Session limit** (of an Anki deck):
@@ -319,6 +321,87 @@ text is `''` counts as absent everywhere (search, listing, export).
 Match and Tournament each carry their own comment field. Those are annotations of the Match
 or the Tournament, not of its Positions: a commented Match does not make its 300 Positions
 commented, and no Position-level rule in this glossary reads them.
+
+### Training
+
+**Training** (interface: *Entraînement*):
+The tab where the user drills what is *calculated* under the clock — pip counts, EPCs,
+score tables, evaluations, decisions — and reads the Journal of it. Its counterpart is the
+Anki deck, which keeps what is *retained* over days; the two never schedule the same thing.
+_Avoid_: quiz (the old name of one exercise), drill, practice mode
+
+**Exercise**:
+One kind of question Training can ask, declared by four properties: its Seed source, its
+Numbers, its surface (the board, or nothing) and its Answer mode. Five exist: Pips, Bearoff,
+Scores, Evaluation, Decision. An exercise is named after what one looks at (the bear-off),
+not after the number it asks (the EPC).
+_Avoid_: drill, module, quiz type
+
+**Question**:
+One position or one score put to the user by an Exercise, carrying one or more Numbers and
+timed as a whole: one reading of the board, one time.
+
+**Number** (of a Question):
+One value the Question asks for — a pip count, an EPC, a table cell, a cube action —
+with a truth and a tolerance. Faults are counted per Number, never per Question.
+_Avoid_: item (code only), field, answer
+
+**Answer mode** (of an Exercise):
+How a Number is answered: *entered* (typed; the application grades within the tolerance
+and keeps the signed deviation), *declared* (revealed; right by default, the user ticks the
+Numbers they got wrong), or *chosen* (one of a few options, graded exactly). A property of
+the Exercise — what is estimated is entered, what is counted or recalled is declared —
+never a per-session switch.
+
+**Reveal** (interface: *Révéler*):
+The gesture that stops the clock and shows the truth of a declared Question; ticking
+faults afterwards is not timed. Unrelated to Défi, which reveals a live Evaluation zone by
+zone with no clock and no grade.
+
+**Fault**:
+A Number the user declared wrong, or an entered Number outside its tolerance. The fault
+rate of an Exercise is faults over Numbers asked.
+_Avoid_: error (reserved for the analysed blunder), miss
+
+**Out of time**:
+A Question whose per-question limit elapsed before an answer: it reveals itself, every
+Number counts as a Fault, and no deviation enters the mean.
+
+**Seed**:
+What a Question is played out from — a canonical shape from the Exercise's pool, the board
+as it stood at launch, or a Position of the library — before the engine plays a few plies
+to reach the Question. An internal term: the interface names only the three sources.
+_Avoid_: template, starting position
+
+**Seed source** (interface: *source*):
+Where the Seed comes from — *pool* (*vivier*), *board* (*plateau*), or *library* (*base*) —
+chosen at launch and remembered. A Seed outside the Exercise's domain is refused by name,
+never adapted.
+
+**Training session**:
+Everything between « Démarrer » and « Terminer » in Training; « Quitter » discards it. It
+has no fixed length and is recorded as one row of the Journal with its Numbers. Not to be
+confused with the Session rules (Jacoby, beaver) nor with the Session limit of an Anki deck.
+_Avoid_: run, round, set
+
+**Journal**:
+The record of Training sessions and their Numbers, kept in the library's own tables so it
+travels with the file; read at rest in the Training tab as a per-Exercise summary
+(*bilan*) and a per-Number detail. Anki reviews are not in it, and it is not in Stats.
+_Avoid_: history, statistics, log
+
+**Score card** (interface: *fiche de score*):
+The take points (cube 2 and 4, long race and last roll) and gammon values (cube 1, 2, 4)
+of one unordered match score, both faces side by side, showing only the cells the reference
+tables define. One component, two hosts: a declared Question of the Scores Exercise, and a
+Review card of a deck of scores. The gammon value at a centred cube is *gv1*.
+_Avoid_: take point table (that is the reference modal), score sheet
+
+**Défi** (code: *challenge*):
+The Eval panel's own mode that re-masks its zones on every edit and lets the user reveal
+them one by one — a convenience for the position in front of them, outside any Exercise,
+with no clock and no grade.
+_Avoid_: challenge mode (interface), training mode
 
 ### Players
 
