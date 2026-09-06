@@ -15,7 +15,14 @@
     import { t } from '../i18n';
 
     let input = $state('');
-    let field;
+    // `$state` et non un simple `let` : l'input vit dans une branche `{:else}`
+    // que le videau fait apparaître et disparaître d'une question à l'autre,
+    // donc `bind:this` réécrit `field` en cours de route. Sans `$state`, le
+    // compilateur ignore cette écriture, l'effet ci-dessous ne se rejoue pas
+    // et le focus part sur le nœud de la question précédente — déjà retiré du
+    // DOM. La barre se pilote au clavier : ce focus perdu est l'exercice qui
+    // s'arrête.
+    let field = $state(/** @type {HTMLInputElement | undefined} */ (undefined));
 
     let total = $derived($trainingQuestionsStore.length);
     let index = $derived($trainingIndexStore + 1);
