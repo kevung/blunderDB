@@ -844,6 +844,10 @@ export default {
 <td>Öffnet das Tag-Vokabular: die in dieser Datenbank verwendeten Tags mit der Zahl der Stellungen, anklickbar zum Starten der Suche.</td>
 </tr>
 <tr>
+<td>train</td>
+<td>Startet eine Micro-Training-Sitzung. Nimmt ein Argument: <code>train pips</code> (Pip-Zählung), <code>train epc</code>, <code>train tp</code> (Annahmepunkt beim Matchstand). Fünf Fragen, auf Zeit, sofort korrigiert.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Öffnet die Takepoint-Tabelle bei Dopplerstand 2.</td>
 </tr>

@@ -1327,5 +1327,24 @@
         "saved": "Rapport enregistré : {path}",
         "failed": "Le rapport n'a pas pu être établi : {err}",
         "action": "Rapport HTML…"
+    },
+    "training": {
+        "title": "Entraînement",
+        "progress": "Question {i}/{n}",
+        "drillPips": "Compte de pions",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Point de prise",
+        "takePointPrompt": "Score {away} (away)",
+        "answer": "Réponse",
+        "check": "Vérifier",
+        "next": "Suivante",
+        "finish": "Terminer",
+        "leave": "Quitter",
+        "right": "Juste",
+        "wrong": "Faux",
+        "truth": "attendu {value}",
+        "noQuestions": "Aucune question ne peut être posée sur cette base pour cet exercice.",
+        "finished": "Entraînement terminé : {correct}/{n}, temps médian {seconds} s.",
+        "usage": "Utilisation : train <exercice> ({drills})."
     }
 }

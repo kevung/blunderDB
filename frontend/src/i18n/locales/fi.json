@@ -1327,5 +1327,24 @@
         "saved": "Raportti tallennettu: {path}",
         "failed": "Raporttia ei voitu laatia: {err}",
         "action": "HTML-raportti…"
+    },
+    "training": {
+        "title": "Harjoittelu",
+        "progress": "Kysymys {i}/{n}",
+        "drillPips": "Pip-laskenta",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Hyväksymispiste",
+        "takePointPrompt": "Tilanne {away} (away)",
+        "answer": "Vastaus",
+        "check": "Tarkista",
+        "next": "Seuraava",
+        "finish": "Lopeta",
+        "leave": "Poistu",
+        "right": "Oikein",
+        "wrong": "Väärin",
+        "truth": "odotettu {value}",
+        "noQuestions": "Tähän harjoitukseen ei voi muodostaa kysymystä tästä tietokannasta.",
+        "finished": "Harjoitus valmis: {correct}/{n}, mediaaniaika {seconds} s.",
+        "usage": "Käyttö: train <harjoitus> ({drills})."
     }
 }

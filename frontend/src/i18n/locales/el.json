@@ -1327,5 +1327,24 @@
         "saved": "Η αναφορά αποθηκεύτηκε: {path}",
         "failed": "Η αναφορά δεν μπόρεσε να συνταχθεί: {err}",
         "action": "Αναφορά HTML…"
+    },
+    "training": {
+        "title": "Εξάσκηση",
+        "progress": "Ερώτηση {i}/{n}",
+        "drillPips": "Μέτρημα pip",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Σημείο αποδοχής",
+        "takePointPrompt": "Σκορ {away} (away)",
+        "answer": "Απάντηση",
+        "check": "Έλεγχος",
+        "next": "Επόμενη",
+        "finish": "Τέλος",
+        "leave": "Έξοδος",
+        "right": "Σωστό",
+        "wrong": "Λάθος",
+        "truth": "αναμενόμενο {value}",
+        "noQuestions": "Δεν μπορεί να τεθεί ερώτηση σε αυτή τη βάση για αυτή την άσκηση.",
+        "finished": "Η εξάσκηση τελείωσε: {correct}/{n}, διάμεσος χρόνος {seconds} δευτ.",
+        "usage": "Χρήση: train <άσκηση> ({drills})."
     }
 }

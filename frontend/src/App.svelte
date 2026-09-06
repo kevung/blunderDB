@@ -82,6 +82,9 @@
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
     import StudyQueueBar from './components/StudyQueueBar.svelte';
+    import TrainingBar from './components/TrainingBar.svelte';
+    import { startTraining } from './services/trainingSessionService.js';
+    import { DRILLS } from './services/trainingService.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
     import { initTheme } from './stores/themeStore.js';
@@ -274,6 +277,19 @@
         }
     }
 
+    // `train <exercice>` (#273). Le nom court est celui qu'on tape : `tp` pour
+    // le point de prise, comme les tables du même nom. Un exercice inconnu — ou
+    // aucun — le dit et rappelle les trois, plutôt que d'en choisir un.
+    async function startTrainingCommand(drill) {
+        const alias = { pips: 'pips', pip: 'pips', epc: 'epc', tp: 'takepoint', takepoint: 'takepoint' };
+        const chosen = alias[String(drill || '').toLowerCase()];
+        if (!chosen) {
+            setStatusBarMessage(tMsg('training.usage', { drills: DRILLS.join(', ') }));
+            return;
+        }
+        await startTraining(chosen);
+    }
+
     onMount(async () => {
         maybeCheckForUpdate();
 
@@ -286,6 +302,7 @@
             onExportDatabase: exportDatabase,
             importPosition,
             onImportIdentifier: importIdentifier,
+            onTraining: startTrainingCommand,
             onSavePosition: saveCurrentPosition,
             onUpdatePosition: updatePosition,
             onDeletePosition: deletePosition,
@@ -434,6 +451,7 @@
          reste de l'application doit rester utilisable pendant le parcours,
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <StudyQueueBar />
+    <TrainingBar />
 
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>

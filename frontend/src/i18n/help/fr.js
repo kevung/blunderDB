@@ -843,6 +843,10 @@ export default {
 <td>Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche.</td>
 </tr>
 <tr>
+<td>train</td>
+<td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Ouvre la table des takepoints avec videau à 2.</td>
 </tr>
