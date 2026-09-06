@@ -40,9 +40,10 @@ import (
 // (the same query, written twice, agreeing with itself) and would extend a
 // body of code the migration exists to have retired.
 var frozenOracleGaps = map[string]string{
-	"PerPhase": "#266, added after the migration the oracle guards",
-	"PerTag":   "#266, added after the migration the oracle guards",
-	"PerScore": "#266, added after the migration the oracle guards",
+	"PerPhase":    "#266, added after the migration the oracle guards",
+	"PerTag":      "#266, added after the migration the oracle guards",
+	"PerScore":    "#266, added after the migration the oracle guards",
+	"PerGameType": "#291, added after the migration the oracle guards",
 }
 
 func jsonEqual(t *testing.T, label string, legacy, got any) {

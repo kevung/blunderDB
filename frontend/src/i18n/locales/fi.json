@@ -1250,7 +1250,21 @@
         "goalPropose": "Ehdota",
         "goalReached": "Saavutettu: PR-lukusi on {pr}.",
         "goalTrend": "Nykyinen PR {pr}; viime otteluiden tahdilla suuntaus vie lukemaan {projected}, tavoitteen ollessa {target}. Suuntaus ei ole ennuste.",
-        "goalNoTrend": "Nykyinen PR {pr}. Liian vähän otteluita suuntaukseen: vähintään kolme."
+        "goalNoTrend": "Nykyinen PR {pr}. Liian vähän otteluita suuntaukseen: vähintään kolme.",
+        "byGameType": "Pelisuunnitelman mukaan",
+        "gameType": "Pelisuunnitelma",
+        "noGameTypes": "Pelisuunnitelmia ei ole laskettu. Komento blunderdb repair laskee ne.",
+        "gameType_race": "Kilpajuoksu",
+        "gameType_bearin": "Kotiutus kontaktissa",
+        "gameType_crunch": "Romahdus",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Muuri muuria vastaan",
+        "gameType_mutualholding": "Molemminpuolinen ankkuri",
+        "gameType_holding": "Ankkuri",
+        "gameType_contact": "Kontakti",
+        "gameType_over": "Päättynyt"
     },
     "trash": {
         "title": "Roskakori",

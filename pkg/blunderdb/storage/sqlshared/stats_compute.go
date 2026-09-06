@@ -58,6 +58,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		// predicate and error column as the passes above, so none of them can
 		// disagree with the global figures they slice.
 		s.computePerPhase,
+		s.computePerGameType,
 		s.computePerScore,
 		s.computePerTag,
 	} {

@@ -32,6 +32,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.retention                       JSON
      POST /v1/anki.reviewCard                      JSON  (Idempotency-Key)
      POST /v1/anki.reviewLog                       NDJSON
+     POST /v1/anki.reviewsByGameType               JSON
      POST /v1/anki.suspendCard                     JSON
      POST /v1/anki.sync                            JSON
      POST /v1/anki.syncWithPositions               JSON

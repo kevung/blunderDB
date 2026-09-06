@@ -1250,7 +1250,21 @@
         "goalPropose": "Πρόταση",
         "goalReached": "Επιτεύχθηκε: το PR σας είναι {pr}.",
         "goalTrend": "Τρέχον PR {pr}· με τον ρυθμό των τελευταίων αγώνων η τάση οδηγεί στο {projected}, για στόχο {target}. Μια τάση δεν είναι πρόβλεψη.",
-        "goalNoTrend": "Τρέχον PR {pr}. Πολύ λίγοι αγώνες για τάση: τουλάχιστον τρεις."
+        "goalNoTrend": "Τρέχον PR {pr}. Πολύ λίγοι αγώνες για τάση: τουλάχιστον τρεις.",
+        "byGameType": "Ανά σχέδιο παιχνιδιού",
+        "gameType": "Σχέδιο παιχνιδιού",
+        "noGameTypes": "Δεν έχει υπολογιστεί σχέδιο παιχνιδιού. Η εντολή blunderdb repair τα υπολογίζει.",
+        "gameType_race": "Κούρσα",
+        "gameType_bearin": "Μάζεμα υπό επαφή",
+        "gameType_crunch": "Κατάρρευση",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Φράγμα κατά φράγματος",
+        "gameType_mutualholding": "Αμοιβαία άγκυρα",
+        "gameType_holding": "Άγκυρα",
+        "gameType_contact": "Επαφή",
+        "gameType_over": "Τέλος"
     },
     "trash": {
         "title": "Κάδος",

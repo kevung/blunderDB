@@ -1250,7 +1250,21 @@
         "goalPropose": "Proponer",
         "goalReached": "Alcanzado: su PR es {pr}.",
         "goalTrend": "PR actual {pr}; al ritmo de los últimos partidos la tendencia lleva a {projected}, para un objetivo de {target}. Una tendencia no es una predicción.",
-        "goalNoTrend": "PR actual {pr}. Demasiados pocos partidos para una tendencia: tres como mínimo."
+        "goalNoTrend": "PR actual {pr}. Demasiados pocos partidos para una tendencia: tres como mínimo.",
+        "byGameType": "Por plan de juego",
+        "gameType": "Plan de juego",
+        "noGameTypes": "Ningún plan de juego calculado. El comando blunderdb repair los calcula.",
+        "gameType_race": "Carrera",
+        "gameType_bearin": "Entrada bajo contacto",
+        "gameType_crunch": "Colapso",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Bloqueo contra bloqueo",
+        "gameType_mutualholding": "Anclas mutuas",
+        "gameType_holding": "Ancla",
+        "gameType_contact": "Contacto",
+        "gameType_over": "Terminada"
     },
     "trash": {
         "title": "Papelera",

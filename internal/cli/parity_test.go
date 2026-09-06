@@ -55,6 +55,7 @@ const (
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
 	whyExplain          = "the explanation is a THEME plus its measured deltas, rendered into a sentence by the client in its own language; the CLI prints an analysis, not a coaching line, and would have to carry its own nine-language templates to say anything here (#298)"
+	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
@@ -78,6 +79,7 @@ var serverOnly = map[string]string{
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
 	// present: SavePosition and the importers do that inside one operation.
 	// A client speaking HTTP has no such operation and needs the pieces.
+	"/v1/anki.reviewsByGameType": "the piece the desktop composes StudyImpact from, exposed on its own so an HTTP client can compose the same figures; the desktop reaches it through Database.StudyImpact rather than by itself (#275)",
 	"/v1/matches.createGame":     whyStoragePrimitive,
 	"/v1/matches.createMove":     whyStoragePrimitive,
 	"/v1/matches.movesByMatch":   whyStoragePrimitive,
@@ -261,6 +263,7 @@ var databaseParity = map[string]parityEntry{
 	"UpdateCommentEntry":                {Server: "/v1/comments.update", Why: whyGUIEdit},
 	"UpdateFilter":                      {Server: "/v1/filters.update", Why: whyGUIState},
 	"SetCollectionFilter":               {CLI: "collection filter", Server: "/v1/collections.setFilter"},
+	"StudyImpact":                       {CLI: "list --type study", Why: whyStudyImpact},
 	"SimilarPositions":                  {CLI: "search --like", Server: "/v1/positions.similar"},
 	"TranslateIntent":                   {CLI: "search --intent", Server: "/v1/search.intent"},
 	"UpdateMatch":                       {Server: "/v1/matches.update", Why: whyGUIEdit},

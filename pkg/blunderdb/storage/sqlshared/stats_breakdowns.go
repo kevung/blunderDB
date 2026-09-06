@@ -46,6 +46,35 @@ func (s *StatsStore) computePerPhase(ctx context.Context, q statsQuery, result *
 	return rows.Err()
 }
 
+// computePerGameType splits the selection by the position's derived plan of
+// play (#291). Same shape as computePerPhase, same two expressions, one more
+// GROUP BY — a breakdown that restated what counts as a decision would be a
+// second PR wearing the same name.
+func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
+	d := s.DB
+	rows, err := s.DB.Query(ctx,
+		`SELECT COALESCE(p.game_type, 0), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
+			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
+			statsBaseJoin+q.whereSQL+` GROUP BY p.game_type`,
+		append([]any{blunderThresholdMP}, q.baseArgs...)...)
+	if err != nil {
+		return fmt.Errorf("per-game-type query: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var gameType int
+		var sumErr int64
+		var gs storage.GameTypeStats
+		if err := rows.Scan(&gameType, &sumErr, &gs.NumDecisions, &gs.BlunderCount); err != nil {
+			return fmt.Errorf("per-game-type scan: %w", err)
+		}
+		gs.GameType = domain.GameType(gameType).String()
+		gs.PR = pr(sumErr, gs.NumDecisions)
+		result.PerGameType = append(result.PerGameType, gs)
+	}
+	return rows.Err()
+}
+
 // computePerScore fills the away × away matrix.
 //
 // p.score_1 and p.score_2 are AWAY scores of the NORMALISED position, so

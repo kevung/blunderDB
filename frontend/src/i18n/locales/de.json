@@ -1250,7 +1250,21 @@
         "goalPropose": "Vorschlagen",
         "goalReached": "Erreicht: Ihr PR beträgt {pr}.",
         "goalTrend": "Aktuelles PR {pr}; im Tempo der letzten Matches führt der Trend zu {projected}, bei einem Ziel von {target}. Ein Trend ist keine Vorhersage.",
-        "goalNoTrend": "Aktuelles PR {pr}. Zu wenige Matches für einen Trend: mindestens drei."
+        "goalNoTrend": "Aktuelles PR {pr}. Zu wenige Matches für einen Trend: mindestens drei.",
+        "byGameType": "Nach Spielplan",
+        "gameType": "Spielplan",
+        "noGameTypes": "Kein Spielplan berechnet. Der Befehl blunderdb repair berechnet sie.",
+        "gameType_race": "Rennen",
+        "gameType_bearin": "Einbringen unter Kontakt",
+        "gameType_crunch": "Crunch",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-Point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Prime gegen Prime",
+        "gameType_mutualholding": "Gegenseitiges Holding",
+        "gameType_holding": "Holding",
+        "gameType_contact": "Kontakt",
+        "gameType_over": "Beendet"
     },
     "trash": {
         "title": "Papierkorb",

@@ -1250,7 +1250,21 @@
         "goalPropose": "Предложить",
         "goalReached": "Достигнуто: ваш PR — {pr}.",
         "goalTrend": "Текущий PR {pr}; в темпе последних матчей тенденция ведёт к {projected} при цели {target}. Тенденция — не предсказание.",
-        "goalNoTrend": "Текущий PR {pr}. Слишком мало матчей для тенденции: нужно хотя бы три."
+        "goalNoTrend": "Текущий PR {pr}. Слишком мало матчей для тенденции: нужно хотя бы три.",
+        "byGameType": "По плану игры",
+        "gameType": "План игры",
+        "noGameTypes": "Планы игры не вычислены. Их вычисляет команда blunderdb repair.",
+        "gameType_race": "Гонка",
+        "gameType_bearin": "Сбор под контактом",
+        "gameType_crunch": "Обвал",
+        "gameType_backgame": "Бэкгейм",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Блиц",
+        "gameType_primevprime": "Прайм против прайма",
+        "gameType_mutualholding": "Взаимные якоря",
+        "gameType_holding": "Якорь",
+        "gameType_contact": "Контакт",
+        "gameType_over": "Окончена"
     },
     "trash": {
         "title": "Корзина",

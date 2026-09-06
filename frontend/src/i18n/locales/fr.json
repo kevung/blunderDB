@@ -1250,7 +1250,21 @@
         "goalPropose": "Proposer",
         "goalReached": "Atteint : votre PR est de {pr}.",
         "goalTrend": "PR actuel {pr} ; au rythme des derniers matchs, la tendance mène vers {projected}, pour une cible à {target}. Une tendance n'est pas une prédiction.",
-        "goalNoTrend": "PR actuel {pr}. Trop peu de matchs pour dégager une tendance : trois au minimum."
+        "goalNoTrend": "PR actuel {pr}. Trop peu de matchs pour dégager une tendance : trois au minimum.",
+        "byGameType": "Par plan de jeu",
+        "gameType": "Plan de jeu",
+        "noGameTypes": "Aucun plan de jeu calculé. La commande blunderdb repair les calcule.",
+        "gameType_race": "Course",
+        "gameType_bearin": "Rentrée sous contact",
+        "gameType_crunch": "Effondrement",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Amorce contre amorce",
+        "gameType_mutualholding": "Tenue mutuelle",
+        "gameType_holding": "Tenue",
+        "gameType_contact": "Contact",
+        "gameType_over": "Terminée"
     },
     "trash": {
         "title": "Corbeille",

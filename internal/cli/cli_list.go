@@ -21,7 +21,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags, study (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -32,6 +32,7 @@ func (cli *CLI) runList(args []string) error {
 	statsTo := listCmd.String("to", "", "End date filter YYYY-MM-DD (stats only)")
 	statsDecisionType := listCmd.String("decision-type", "all", "Decision type: all, checker, or cube (stats only)")
 	statsTopBlunders := listCmd.Int("top-blunders", 10, "Number of top blunders to show (stats only)")
+	studyDays := listCmd.Int("days", 30, "Window, in days, for --type study")
 	importQueue := listCmd.Bool("queue", false,
 		"With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order")
 	statsFormat := listCmd.String("format", "text", "Output format: text, json or csv (stats, players and imports only)")
@@ -155,6 +156,8 @@ func (cli *CLI) runList(args []string) error {
 		return cli.showStats(filter, *statsMetric, *statsFormat, *statsTopBlunders)
 	case "tags":
 		return cli.listTags(strings.ToLower(*statsFormat))
+	case "study":
+		return cli.listStudy(*studyDays, strings.ToLower(*statsFormat))
 	case "players":
 		// Only the match-level filters matter here; the players table covers
 		// every player and splits checker from cube into its own columns, so

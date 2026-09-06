@@ -118,6 +118,10 @@ type StatsResult struct {
 	// PerPhase splits by the position's derived game phase (ADR-0035), which
 	// is what answers "my PR in the race versus in contact".
 	PerPhase []PhaseStats `json:"PerPhase"`
+	// PerGameType splits by the position's derived plan of play (#291). It is
+	// the breakdown the classifier exists for: "où est-ce que je perds le
+	// plus", plan par plan.
+	PerGameType []GameTypeStats `json:"PerGameType"`
 	// PerTag splits by the tags in the position's comments. A position
 	// carrying two tags appears in both rows: a tag is a label, not a
 	// partition, so the rows deliberately do not sum to the total.
@@ -133,6 +137,15 @@ type StatsResult struct {
 type PhaseStats struct {
 	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
 	Phase        string  `json:"Phase"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// GameTypeStats is one row of the per-game-type breakdown (#291).
+type GameTypeStats struct {
+	// GameType is the stable token of domain.GameType ("holding", "blitz", …).
+	GameType     string  `json:"GameType"`
 	PR           float64 `json:"PR"`
 	NumDecisions int     `json:"NumDecisions"`
 	BlunderCount int     `json:"BlunderCount"`

@@ -1250,7 +1250,21 @@
         "goalPropose": "Suggest",
         "goalReached": "Reached: your PR is {pr}.",
         "goalTrend": "Current PR {pr}; at the pace of the last matches the trend leads to {projected}, for a target of {target}. A trend is not a prediction.",
-        "goalNoTrend": "Current PR {pr}. Too few matches to show a trend: three at least."
+        "goalNoTrend": "Current PR {pr}. Too few matches to show a trend: three at least.",
+        "byGameType": "By plan of play",
+        "gameType": "Plan of play",
+        "noGameTypes": "No plan of play computed. The blunderdb repair command computes them.",
+        "gameType_race": "Race",
+        "gameType_bearin": "Bear-in under contact",
+        "gameType_crunch": "Crunch",
+        "gameType_backgame": "Backgame",
+        "gameType_acepoint": "Ace-point",
+        "gameType_blitz": "Blitz",
+        "gameType_primevprime": "Prime vs prime",
+        "gameType_mutualholding": "Mutual holding",
+        "gameType_holding": "Holding",
+        "gameType_contact": "Contact",
+        "gameType_over": "Over"
     },
     "trash": {
         "title": "Trash",

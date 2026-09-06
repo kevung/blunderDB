@@ -2178,6 +2178,8 @@ List database contents.
 Options:
   -batch int
     	Show the full report of one import batch instead of the list (imports only)
+  -days int
+    	Window, in days, for --type study (default 30)
   -db string
     	Path to the database file (required)
   -decision-type string
@@ -2201,7 +2203,7 @@ Options:
   -tournament string
     	Filter by tournament IDs, comma-separated (stats only)
   -type string
-    	List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags (required)
+    	List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags, study (required)
 
 Examples:
   # List all matches
