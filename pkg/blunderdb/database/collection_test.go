@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 func TestCreateCollection(t *testing.T) {
@@ -464,5 +466,58 @@ func TestExportCollections_MetadataAllowListAndWatermark(t *testing.T) {
 	}
 	if watermark == "" {
 		t.Error("expected a non-empty watermark document")
+	}
+}
+
+// TestExport_ThresholdsDoNotTravel pins ADR-0043's boundary: the library's own
+// error and blunder thresholds are stored as metadata rows on SQLite, and the
+// allow-list is what keeps them home. They are the owner's reading habit, not
+// a fact of the positions, and a recipient who opened the file would otherwise
+// silently inherit somebody else's idea of what a blunder is.
+func TestExport_ThresholdsDoNotTravel(t *testing.T) {
+	t.Parallel()
+	db := newTestDB(t)
+
+	if err := db.SaveLibrarySettings(storage.LibrarySettings{
+		ErrorThresholdMP: 20, BlunderThresholdMP: 80}); err != nil {
+		t.Fatalf("SaveLibrarySettings: %v", err)
+	}
+	importTestMatch(t, db)
+	ids := getPositionIDs(t, db, 1)
+	colID, _ := db.CreateCollection("Export", "")
+	if err := db.AddPositionsToCollection(colID, ids); err != nil {
+		t.Fatalf("AddPositionsToCollection: %v", err)
+	}
+
+	// The source really does hold the two rows, in its own metadata table.
+	var stored string
+	if err := db.db.QueryRow(`SELECT value FROM metadata WHERE key = ?`,
+		storage.LibrarySettingBlunderKey).Scan(&stored); err != nil || stored != "80" {
+		t.Fatalf("the source library does not hold the threshold it was given: %q (err=%v)", stored, err)
+	}
+
+	// The export is handed every metadata row, exclusion-style, which is the
+	// mistake the allow-list exists to stop (ADR-0007): the caller cannot be
+	// the one deciding what stays home.
+	exportPath := filepath.Join(t.TempDir(), "export.db")
+	metadata := map[string]string{
+		"user":                           "Jean",
+		storage.LibrarySettingErrorKey:   "20",
+		storage.LibrarySettingBlunderKey: "80",
+	}
+	if err := db.ExportCollections(exportPath, []int64{colID}, metadata, false, false, "", ""); err != nil {
+		t.Fatalf("ExportCollections: %v", err)
+	}
+
+	edb := openExportDB(t, exportPath)
+	defer edb.Close()
+	for _, key := range []string{storage.LibrarySettingErrorKey, storage.LibrarySettingBlunderKey} {
+		var n int
+		if err := edb.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, key).Scan(&n); err != nil {
+			t.Fatalf("query metadata %s: %v", key, err)
+		}
+		if n != 0 {
+			t.Errorf("%s travelled into the export: a threshold is the owner's reading habit, not a fact of the positions", key)
+		}
 	}
 }
