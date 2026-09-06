@@ -81,6 +81,7 @@
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
+    import { initFolderWatch } from './services/watchService.js';
 
     // Component state
     let mainArea;
@@ -325,6 +326,12 @@
 
         // On first launch only, show the guided-tour catalog once.
         maybeRunFirstRunTour();
+
+        // The watched folder (#258), if the user turned one on. Fire and
+        // forget: a folder that has gone away must not delay startup, and the
+        // settings pane reports what actually runs rather than what was asked
+        // for.
+        initFolderWatch();
 
         // A database file the OS handed this process on the command line — a
         // .desktop's Exec=blunderDB %f, a Windows/macOS file-association

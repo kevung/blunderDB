@@ -371,6 +371,17 @@ recipient's side writes nothing at all. This is a decision, not an omission: see
 
 ## The host environment
 
+**Watched folder**:
+A directory blunderDB LOOKS at while it runs, importing each match file that *appears* in
+it (#258). Two words carry the whole notion. *Appears*: what the folder already held when
+the watch started is recorded as known and never imported — importing the folder as it
+stands is a separate, explicit gesture. *Looks*: the folder is polled, not subscribed to,
+because the shares and synchronised directories these folders live on report no file-system
+events anyway, and a fallback that has to exist regardless is better as the only path than
+as the second one. It is a setting the user turns on and points somewhere; blunderDB never
+guesses where somebody's matches live.
+_Avoid_: auto-import, sync folder (nothing is synchronised, and nothing is written back)
+
 **Host capability**:
 A facility blunderDB consumes from the machine, OS or desktop it runs on but does **not**
 own — its presence and its shape are not guaranteed and vary from system to system.

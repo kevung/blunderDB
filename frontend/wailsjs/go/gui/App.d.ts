@@ -36,6 +36,8 @@ export function EvaluatePositionImmediate(arg1:domain.Position,arg2:number,arg3:
 
 export function ExportIssuerIdentity(arg1:string):Promise<string>;
 
+export function FolderWatchStatus():Promise<gui.WatchStatus>;
+
 export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
@@ -82,8 +84,14 @@ export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,ar
 
 export function StartEvaluationAtRest(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<void>;
 
+export function StartFolderWatch(arg1:string,arg2:number):Promise<gui.WatchStatus>;
+
 export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
 export function StartupFilePath():Promise<string>;
+
+export function StopFolderWatch():Promise<void>;
+
+export function SuggestWatchFolder():Promise<string>;

@@ -137,7 +137,20 @@
         "repairConfirmButton": "Korjaa",
         "repairDone": "{n} analyysia korjattu.",
         "repairNothing": "Mikään analyysi ei kaivannut korjausta.",
-        "repairError": "Korjausvirhe: {error}"
+        "repairError": "Korjausvirhe: {error}",
+        "watchTitle": "Valvottu kansio",
+        "watchIntro": "blunderDB voi katsoa kansiota käydessään ja tuoda jokaisen ottelutiedoston, joka siihen ilmestyy. Mitään ei arvata: ennen kuin kansio on nimetty, valvontaa ei ole.",
+        "watchNoFolder": "kansiota ei ole nimetty",
+        "watchChoose": "Valitse kansio…",
+        "watchSuggestLabel": "Etsi ottelukansiota tältä koneelta",
+        "watchSuggest": "Ehdota",
+        "watchNoSuggestion": "Tältä koneelta ei löytynyt tunnettua ottelukansiota; nimeä se itse.",
+        "watchEnabled": "Valvo tätä kansiota",
+        "watchInterval": "Väli (sekuntia)",
+        "watchIntervalNote": "0 säilyttää oletuksen, kymmenen sekuntia; alaraja on kaksi. Tiedosto tuodaan vasta kun sen koko on vakiintunut, jottei puoliksi kirjoitettua ottelua koskaan lueta.",
+        "watchOnlyNewNote": "Vain ILMESTYVÄT tiedostot tuodaan: se mitä kansiossa jo on, ohitetaan. Sitä varten on kansion tuonti.",
+        "watchRunning": "Valvotaan: {folder}",
+        "watchStopped": "Ei valvontaa käynnissä."
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}",
         "updateAvailable": "Uusi blunderDB-versio on saatavilla: {version}",
         "errorStartingAnalysis": "Analyysiä ei voitu käynnistää: {error}",
-        "positionDeletedUndo": "Asema poistettu — palautettavissa roskakorista (”trash”-komento)."
+        "positionDeletedUndo": "Asema poistettu — palautettavissa roskakorista (”trash”-komento).",
+        "watchImportDone": "Valvottu kansio: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
+        "watchImportNotice": "Valvottu kansio: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
+        "watchImportReport": "Raportti"
     },
     "stats": {
         "title": "Tilastot",

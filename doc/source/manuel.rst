@@ -173,12 +173,14 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en cinq onglets :
+blunderDB. Elle est organisée en six onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
+* **Dossier surveillé** — l'import automatique des matchs qui arrivent dans un
+  dossier, décrit ci-dessous ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
@@ -359,6 +361,54 @@ Une réserve honnête : une position est identifiée par sa structure, donc une
 position rencontrée deux fois — bien jouée une fois, mal l'autre — ne porte
 qu'un seul écart, celui de sa première occurrence enregistrée. Ce n'est pas
 propre à ce calcul : une bibliothèque XG a exactement la même forme.
+
+.. _dossier_surveille:
+
+Dossier surveillé
+~~~~~~~~~~~~~~~~~
+
+L'onglet **Dossier surveillé** demande à blunderDB de regarder un dossier
+pendant qu'il tourne et d'importer chaque fichier de match qui y **apparaît**.
+Jouer une session dans eXtreme Gammon, revenir à blunderDB, et trouver les
+matchs déjà là.
+
+Rien n'est deviné. Tant qu'aucun dossier n'est désigné, il n'y a pas de
+surveillance : blunderDB ne se met pas à lire un répertoire parce qu'il a
+supposé où vivent vos matchs. Le bouton **Proposer** cherche les emplacements
+habituels sur cette machine et n'en propose un que s'il existe réellement ;
+sinon il le dit, et c'est à vous de désigner le dossier.
+
+Trois points méritent d'être connus avant d'activer la case :
+
+* **Seuls les fichiers qui apparaissent sont importés.** Ce que le dossier
+  contient déjà au moment où la surveillance démarre est enregistré comme
+  connu et laissé tranquille : pointer une surveillance sur quatre ans de
+  matchs ne doit pas les importer tous. Pour importer ce qui est là,
+  utilisez l'import de dossier, qui existe pour cela — et les deux se
+  composent très bien, l'import d'abord, la surveillance ensuite.
+* **Un fichier n'est importé qu'une fois sa taille stable.** Un match qu'un
+  autre programme est en train d'écrire grossit d'un coup d'œil à l'autre ;
+  l'importer à moitié écrit donnerait une erreur d'analyse syntaxique sur
+  laquelle personne ne peut agir. blunderDB attend donc de voir deux fois le
+  même fichier inchangé.
+* **L'import est silencieux.** Vous étiez en train d'étudier une position
+  quand vos matchs sont arrivés : vous reprendre l'écran serait le pire
+  moment. L'import se fait sans fenêtre, et la barre d'état affiche un
+  bandeau donnant le compte des matchs importés, ignorés (doublons) et en
+  échec, avec un bouton qui ouvre le compte rendu complet si vous le
+  souhaitez. Tout le reste est identique à un import manuel : mêmes doublons
+  détectés, même lot d'import, même analyse automatique si elle est activée.
+
+L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le
+dossier n'est pas parcouru récursivement : un dossier surveillé est l'endroit
+où un outil dépose ses matchs, pas une arborescence à explorer. Un partage
+réseau démonté n'arrête pas la surveillance et ne fait pas non plus passer son
+contenu pour nouveau à son retour.
+
+La même surveillance existe en ligne de commande, avec
+``blunderdb import --type batch --dir <dossier> --watch`` (voir :ref:`cli`) :
+c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent
+utiliser.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de

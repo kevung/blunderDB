@@ -86,6 +86,10 @@ export function GetUIScale() {
   return window['go']['main']['Config']['GetUIScale']();
 }
 
+export function GetWatchFolder() {
+  return window['go']['main']['Config']['GetWatchFolder']();
+}
+
 export function LoadConfig() {
   return window['go']['main']['Config']['LoadConfig']();
 }
@@ -176,6 +180,10 @@ export function SaveTourSeen(arg1) {
 
 export function SaveUIScale(arg1) {
   return window['go']['main']['Config']['SaveUIScale'](arg1);
+}
+
+export function SaveWatchFolder(arg1, arg2, arg3) {
+  return window['go']['main']['Config']['SaveWatchFolder'](arg1, arg2, arg3);
 }
 
 export function SaveWindowDimensions(arg1, arg2) {

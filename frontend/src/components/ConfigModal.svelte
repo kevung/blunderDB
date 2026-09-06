@@ -24,7 +24,9 @@
         OpenBearoffFileDialog,
         StartGammonNetBatch,
         StartGammonNetStaleBatch,
-        OpenLogsFolder
+        OpenLogsFolder,
+        OpenPositionFolderDialog,
+        SuggestWatchFolder
     } from '../../wailsjs/go/gui/App.js';
     import { Vacuum, RepairAnalyses, CountPositionsWithoutAnalysis, CountPositionsWithStaleGammonNet } from '../../wailsjs/go/database/Database.js';
     import { GetBearoffTSPath, SaveBearoffTSPath, GetBearoffRate, SaveBearoffRate, GetBearoffCores, SaveBearoffCores } from '../../wailsjs/go/main/Config.js';
@@ -39,10 +41,13 @@
         GetGammonNetCandidates,
         SaveGammonNetCandidates,
         GetGammonNetAutoAnalyze,
+        GetWatchFolder,
         SaveGammonNetAutoAnalyze,
         GetCheckForUpdates,
         SaveCheckForUpdates
     } from '../../wailsjs/go/main/Config.js';
+    import { watchStatusStore } from '../stores/watchStore.js';
+    import { saveWatchSetting, refreshWatchStatus } from '../services/watchService.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { onDestroy } from 'svelte';
     import { logger } from '../utils/logger.js';
@@ -78,6 +83,7 @@
         { id: 'colors', labelKey: 'config.colors' },
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
+        { id: 'watch', labelKey: 'config.watchTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -479,6 +485,65 @@
 
     const GAMMONNET_PLY_OPTIONS = [0, 1, 2, 3, 4];
 
+    // Le dossier surveillé (#258, fiche I.2). Rien n'est deviné : tant que
+    // l'utilisateur n'a pas désigné un dossier, il n'y a pas de surveillance,
+    // et le bouton « proposer » ne propose un chemin que si ce chemin existe
+    // vraiment sur cette machine.
+    let watchOn = $state(false);
+    let watchFolder = $state('');
+    let watchInterval = $state(0);
+    let watchError = $state('');
+
+    async function refreshWatch() {
+        try {
+            const [on, folder, seconds] = await GetWatchFolder();
+            watchOn = on;
+            watchFolder = folder;
+            watchInterval = seconds;
+        } catch (error) {
+            logger.error('Error loading the watched-folder setting:', error);
+        }
+        await refreshWatchStatus();
+    }
+
+    async function applyWatch(on, folder, seconds) {
+        watchError = '';
+        try {
+            await saveWatchSetting(on, folder, seconds);
+            watchOn = on && !!folder;
+            watchFolder = folder;
+            watchInterval = seconds;
+        } catch (error) {
+            // Un dossier qui n'existe plus, un partage démonté : la case
+            // revient à « non » plutôt que d'afficher une surveillance qui ne
+            // tourne pas.
+            watchError = String(error).replace(/^Error:\s*/, '');
+            watchOn = false;
+        }
+    }
+
+    async function chooseWatchFolder() {
+        try {
+            const dir = await OpenPositionFolderDialog();
+            if (dir) await applyWatch(true, dir, watchInterval);
+        } catch (error) {
+            logger.error('Error choosing the watched folder:', error);
+        }
+    }
+
+    async function suggestWatchFolder() {
+        try {
+            const dir = await SuggestWatchFolder();
+            if (dir) {
+                await applyWatch(true, dir, watchInterval);
+            } else {
+                watchError = $t('config.watchNoSuggestion');
+            }
+        } catch (error) {
+            logger.error('Error suggesting a watched folder:', error);
+        }
+    }
+
     async function refreshGammonNet() {
         try {
             [gnDisplayPly, gnAnalysisPly, gnPruneK, gnCandidates, gnAutoAnalyze] = await Promise.all([
@@ -538,6 +603,7 @@
     $effect(() => {
         if (visible) {
             refreshGammonNet();
+            refreshWatch();
         }
     });
 
@@ -564,6 +630,15 @@
         if (!Number.isFinite(n) || n < 1) return;
         gnCandidates = n;
         SaveGammonNetCandidates(gnCandidates).catch((error) => logger.error('Error saving gammonNet candidate count:', error));
+    }
+
+    function onWatchToggle(event) {
+        void applyWatch(event.currentTarget.checked, watchFolder, watchInterval);
+    }
+
+    function onWatchIntervalChange(event) {
+        const seconds = parseInt(event.currentTarget.value, 10);
+        void applyWatch(watchOn, watchFolder, Number.isFinite(seconds) ? seconds : 0);
     }
 
     function onGnAutoAnalyzeChange(event) {
@@ -831,6 +906,34 @@
                 </button>
             </div>
             <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
+        {:else if activeTab === 'watch'}
+            <p class="setting-note">{$t('config.watchIntro')}</p>
+            <div class="setting-row">
+                <span class="setting-label">{watchFolder || $t('config.watchNoFolder')}</span>
+                <button class="secondary-button" onclick={chooseWatchFolder}>{$t('config.watchChoose')}</button>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">{$t('config.watchSuggestLabel')}</span>
+                <button class="secondary-button" onclick={suggestWatchFolder}>{$t('config.watchSuggest')}</button>
+            </div>
+            <div class="setting-row">
+                <label for="config-watch-on">{$t('config.watchEnabled')}</label>
+                <input id="config-watch-on" type="checkbox" checked={watchOn} disabled={!watchFolder} onchange={onWatchToggle} />
+            </div>
+            <div class="setting-row">
+                <label for="config-watch-interval">{$t('config.watchInterval')}</label>
+                <input id="config-watch-interval" type="number" class="setting-input" min="0" max="3600" value={watchInterval} onchange={onWatchIntervalChange} />
+            </div>
+            <p class="setting-note">{$t('config.watchIntervalNote')}</p>
+            <p class="setting-note">{$t('config.watchOnlyNewNote')}</p>
+            {#if watchError}
+                <p class="setting-note warn">{watchError}</p>
+            {/if}
+            <div class="setting-row">
+                <span class="setting-label">
+                    {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
+                </span>
+            </div>
         {:else if activeTab === 'identity'}
             <p class="setting-note">{$t('config.identityIntro')}</p>
             {#if identity?.present}

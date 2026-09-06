@@ -2092,6 +2092,10 @@ Options:
     	Recursively scan subdirectories for batch import (default true)
   -type string
     	Import type: match, position, batch (required)
+  -watch
+    	With --type batch: keep running and import each match file as it appears in --dir (Ctrl-C to stop)
+  -watch-every duration
+    	How often --watch looks at the folder (default 10s, floor 2s)
 
 Import Types:
   match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)
@@ -2113,6 +2117,10 @@ Examples:
 
   # Batch import, machine-readable, failing the run if any file errored
   blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error
+
+  # Import the folder as it stands, then keep importing what appears in it
+  blunderdb import --db database.db --type batch --dir ~/XG/Matches
+  blunderdb import --db database.db --type batch --dir ~/XG/Matches --watch
 ```
 
 ### `blunderdb info`

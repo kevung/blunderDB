@@ -143,6 +143,11 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 * ``--file`` — Fichier à importer (pour ``match`` et ``position``).
 * ``--dir`` — Répertoire à importer (pour ``batch``).
 * ``--recursive`` — Scanner récursivement les sous-répertoires (défaut: oui).
+* ``--watch`` — Avec ``--type batch`` : ne s'arrête pas, et importe chaque
+  fichier de match **à mesure qu'il apparaît** dans ``--dir`` (Ctrl-C pour
+  arrêter).
+* ``--watch-every`` — Intervalle entre deux regards de ``--watch`` (défaut:
+  10s, plancher 2s).
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
@@ -158,6 +163,36 @@ Le code de retour obéit à quatre règles :
   seulement si ``--fail-on-error`` est passé ;
 * au moins un élément nouveau importé, sans ``--fail-on-error`` : succès,
   les fichiers refusés étant listés dans le tableau.
+
+Surveiller un dossier
+^^^^^^^^^^^^^^^^^^^^^
+
+``--watch`` transforme l'import de répertoire en surveillance : la commande ne
+rend pas la main et importe chaque fichier de match qui **apparaît** dans le
+dossier. C'est la forme sans interface du :ref:`dossier surveillé
+<dossier_surveille>` de l'application.
+
+.. code-block:: bash
+
+   # Importer ce que le dossier contient déjà, puis surveiller ce qui arrive
+   ./blunderdb import --db base.db --type batch --dir ~/XG/Matches
+   ./blunderdb import --db base.db --type batch --dir ~/XG/Matches --watch
+
+Seuls les fichiers qui apparaissent sont importés : ce que le dossier contient
+au démarrage est enregistré comme connu et laissé tranquille — pointer une
+surveillance sur quatre ans de matchs ne doit pas les importer tous. Les deux
+commandes ci-dessus se composent donc exactement comme on l'espère.
+
+Un fichier n'est importé qu'une fois sa **taille stable**, c'est-à-dire vu
+deux fois inchangé : un match qu'un autre programme est en train d'écrire
+grossit d'un regard à l'autre, et l'importer à moitié écrit donnerait une
+erreur syntaxique sur laquelle personne ne peut agir. Le dossier n'est pas
+parcouru récursivement. Un partage réseau devenu illisible n'arrête pas la
+surveillance, et son contenu ne passe pas pour nouveau à son retour.
+
+Ctrl-C arrête entre deux fichiers, jamais au milieu de l'un : le fichier en
+cours finit son import et son compte rendu s'affiche avant que la commande ne
+rende la main.
 
 Import d'un match
 ^^^^^^^^^^^^^^^^^

@@ -137,7 +137,20 @@
         "repairConfirmButton": "Réparer",
         "repairDone": "{n} analyse(s) réparée(s).",
         "repairNothing": "Aucune analyse n'avait besoin d'être réparée.",
-        "repairError": "Erreur de réparation : {error}"
+        "repairError": "Erreur de réparation : {error}",
+        "watchTitle": "Dossier surveillé",
+        "watchIntro": "blunderDB peut regarder un dossier pendant qu'il tourne et importer chaque fichier de match qui y apparaît. Rien n'est deviné : tant qu'aucun dossier n'est désigné, il n'y a pas de surveillance.",
+        "watchNoFolder": "aucun dossier désigné",
+        "watchChoose": "Choisir un dossier…",
+        "watchSuggestLabel": "Chercher un dossier de matchs sur cette machine",
+        "watchSuggest": "Proposer",
+        "watchNoSuggestion": "Aucun dossier de matchs connu n'a été trouvé sur cette machine ; désignez-le vous-même.",
+        "watchEnabled": "Surveiller ce dossier",
+        "watchInterval": "Intervalle (secondes)",
+        "watchIntervalNote": "0 laisse la valeur par défaut, dix secondes ; le plancher est de deux secondes. Un fichier n'est importé qu'une fois sa taille stable, pour ne pas lire un match à moitié écrit.",
+        "watchOnlyNewNote": "Seuls les fichiers qui APPARAISSENT sont importés : ce que le dossier contient déjà est ignoré. Pour l'importer, utilisez l'import de dossier.",
+        "watchRunning": "Surveillance en cours : {folder}",
+        "watchStopped": "Aucune surveillance en cours."
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Erreur lors de l'ajout de la position au paquet : {err}",
         "updateAvailable": "Une nouvelle version de blunderDB est disponible : {version}",
         "errorStartingAnalysis": "Impossible de lancer l'analyse : {error}",
-        "positionDeletedUndo": "Position supprimée — récupérable dans la corbeille (commande « trash »)."
+        "positionDeletedUndo": "Position supprimée — récupérable dans la corbeille (commande « trash »).",
+        "watchImportDone": "Dossier surveillé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "watchImportNotice": "Dossier surveillé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
+        "watchImportReport": "Compte rendu"
     },
     "stats": {
         "title": "Stats",

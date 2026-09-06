@@ -137,7 +137,20 @@
         "repairConfirmButton": "Reparar",
         "repairDone": "{n} análisis reparado(s).",
         "repairNothing": "Ningún análisis necesitaba reparación.",
-        "repairError": "Error de reparación: {error}"
+        "repairError": "Error de reparación: {error}",
+        "watchTitle": "Carpeta vigilada",
+        "watchIntro": "blunderDB puede mirar una carpeta mientras se ejecuta e importar cada fichero de partido que aparezca en ella. Nada se adivina: mientras no se designe una carpeta, no hay vigilancia.",
+        "watchNoFolder": "ninguna carpeta designada",
+        "watchChoose": "Elegir una carpeta…",
+        "watchSuggestLabel": "Buscar una carpeta de partidos en esta máquina",
+        "watchSuggest": "Proponer",
+        "watchNoSuggestion": "No se ha encontrado ninguna carpeta de partidos conocida en esta máquina; desígnela usted mismo.",
+        "watchEnabled": "Vigilar esta carpeta",
+        "watchInterval": "Intervalo (segundos)",
+        "watchIntervalNote": "0 mantiene el valor por defecto, diez segundos; el mínimo es dos. Un fichero se importa solo cuando su tamaño se ha estabilizado, para no leer nunca un partido a medio escribir.",
+        "watchOnlyNewNote": "Solo se importan los ficheros que APARECEN: lo que la carpeta ya contiene se ignora. Para eso está la importación de carpeta.",
+        "watchRunning": "Vigilando: {folder}",
+        "watchStopped": "Ninguna vigilancia en curso."
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Error al añadir la posición al mazo: {err}",
         "updateAvailable": "Hay una nueva versión de blunderDB disponible: {version}",
         "errorStartingAnalysis": "No se pudo iniciar el análisis: {error}",
-        "positionDeletedUndo": "Posición eliminada — recuperable desde la papelera (comando «trash»)."
+        "positionDeletedUndo": "Posición eliminada — recuperable desde la papelera (comando «trash»).",
+        "watchImportDone": "Carpeta vigilada: {succeeded} importadas, {skipped} ignoradas, {failed} fallidas",
+        "watchImportNotice": "Carpeta vigilada: {succeeded} importadas, {skipped} ignoradas, {failed} fallidas",
+        "watchImportReport": "Informe"
     },
     "stats": {
         "title": "Stats",

@@ -230,6 +230,17 @@ type Config struct {
 	// update mechanism, and blunderDB pointing at a GitHub release the
 	// distro hasn't packaged yet would just confuse the user.
 	CheckForUpdates bool `json:"check_for_updates,omitempty"`
+	// Watched folder (#258, fiche I.2): a directory blunderDB looks at while
+	// it is running, importing each match file that APPEARS in it. Empty
+	// means no watch, and that is the default — a tool does not start
+	// reading a folder of yours because it guessed where your matches are.
+	//
+	// WatchFolderIntervalSeconds is what the user chose; 0 means the
+	// package's own default (watch.DefaultInterval). The clamping lives in
+	// watch.ClampInterval, so the floor is stated once.
+	WatchFolder                bool   `json:"watch_folder,omitempty"`
+	WatchFolderPath            string `json:"watch_folder_path,omitempty"`
+	WatchFolderIntervalSeconds int    `json:"watch_folder_interval_seconds,omitempty"`
 }
 
 // clampUIScale coerces a persisted/incoming scale into the supported range,
@@ -771,6 +782,29 @@ func (c *Config) GetGammonNetAutoAnalyze() bool {
 // SaveGammonNetAutoAnalyze persists the auto-analyze-after-import flag.
 func (c *Config) SaveGammonNetAutoAnalyze(on bool) error {
 	c.GammonNetAutoAnalyze = on
+	return c.SaveConfig(c)
+}
+
+// GetWatchFolder returns whether the watched folder is on, its path, and the
+// interval in seconds (0 = the default). Three values rather than three
+// getters: the frontend reads them together, and a half-read setting — on
+// with no path — is the shape that produces a watch nobody asked for.
+func (c *Config) GetWatchFolder() (bool, string, int) {
+	return c.WatchFolder, c.WatchFolderPath, c.WatchFolderIntervalSeconds
+}
+
+// SaveWatchFolder persists the watched folder. An empty path turns the watch
+// off whatever `on` says: "watch, but nowhere" is not a state worth storing.
+func (c *Config) SaveWatchFolder(on bool, path string, intervalSeconds int) error {
+	if path == "" {
+		on = false
+	}
+	if intervalSeconds < 0 {
+		intervalSeconds = 0
+	}
+	c.WatchFolder = on
+	c.WatchFolderPath = path
+	c.WatchFolderIntervalSeconds = intervalSeconds
 	return c.SaveConfig(c)
 }
 

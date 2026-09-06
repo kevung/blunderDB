@@ -137,7 +137,20 @@
         "repairConfirmButton": "Repair",
         "repairDone": "{n} analysis/analyses repaired.",
         "repairNothing": "No analysis needed repairing.",
-        "repairError": "Repair error: {error}"
+        "repairError": "Repair error: {error}",
+        "watchTitle": "Watched folder",
+        "watchIntro": "blunderDB can look at a folder while it runs and import each match file that appears in it. Nothing is guessed: until a folder is named, there is no watch.",
+        "watchNoFolder": "no folder named",
+        "watchChoose": "Choose a folder…",
+        "watchSuggestLabel": "Look for a match folder on this machine",
+        "watchSuggest": "Suggest",
+        "watchNoSuggestion": "No known match folder was found on this machine; name it yourself.",
+        "watchEnabled": "Watch this folder",
+        "watchInterval": "Interval (seconds)",
+        "watchIntervalNote": "0 keeps the default, ten seconds; the floor is two. A file is imported only once its size has settled, so a half-written match is never read.",
+        "watchOnlyNewNote": "Only files that APPEAR are imported: whatever the folder already holds is ignored. To import that, use the folder import.",
+        "watchRunning": "Watching: {folder}",
+        "watchStopped": "No watch running."
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -1093,7 +1106,10 @@
         "failedAddToDeck": "Failed to add the position to the deck: {err}",
         "updateAvailable": "A new blunderDB version is available: {version}",
         "errorStartingAnalysis": "Could not start the analysis: {error}",
-        "positionDeletedUndo": "Position deleted — recoverable from the trash (“trash” command)."
+        "positionDeletedUndo": "Position deleted — recoverable from the trash (“trash” command).",
+        "watchImportDone": "Watched folder: {succeeded} imported, {skipped} skipped, {failed} failed",
+        "watchImportNotice": "Watched folder: {succeeded} imported, {skipped} skipped, {failed} failed",
+        "watchImportReport": "Report"
     },
     "stats": {
         "title": "Stats",
