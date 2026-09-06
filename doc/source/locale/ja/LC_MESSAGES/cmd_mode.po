@@ -33,7 +33,7 @@ msgid ""
 "touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
 "コマンドラインはステータスバーにあり、 *スペース* キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 *TAB*"
-" キー（または *Shift-TAB* ）は候補を順に巡回してコマンドを補完し、 *ESC* はリストを閉じます（2回目の *ESC* "
+" キー（または *Shift-TAB*）は候補を順に巡回してコマンドを補完し、 *ESC* はリストを閉じます（2回目の *ESC* "
 "でコマンドラインが閉じます）。 *上* キーと *下* キーは引き続きコマンド履歴用に予約されています。"
 
 #: ../../source/cmd_mode.rst:16
@@ -130,7 +130,7 @@ msgstr "epc"
 msgid ""
 "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
 "verdict de videau en bearoff)."
-msgstr "Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブ判定）を開きます。"
+msgstr "Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブの判定）を開きます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -214,7 +214,7 @@ msgstr "キューブ値 4 のギャモン値表を開きます。"
 
 #: ../../source/cmd_mode.rst:47
 msgid "Positions et navigation"
-msgstr "局面とナビゲーション"
+msgstr "ポジションとナビゲーション"
 
 #: ../../source/cmd_mode.rst:1
 msgid "import, i"
@@ -224,7 +224,7 @@ msgstr "import, i"
 msgid ""
 "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
 " txt, bgf)."
-msgstr "ファイル（xg、xgp、sgf、mat、txt、bgf）から 1 つ以上の局面／マッチをインポートします。"
+msgstr "ファイル（xg、xgp、sgf、mat、txt、bgf）から 1 つ以上のポジション／マッチをインポートします。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -232,7 +232,7 @@ msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Supprime la position courante (confirmation demandée)."
-msgstr "現在の局面を削除します（確認を求められます）。"
+msgstr "現在のポジションを削除します（確認を求められます）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -240,7 +240,7 @@ msgstr "[number]"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Aller à la position d'indice indiqué."
-msgstr "指定したインデックスの局面に移動します。"
+msgstr "指定したインデックスのポジションに移動します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "list, l"
@@ -248,7 +248,7 @@ msgstr "list, l"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Afficher l'analyse de la position courante."
-msgstr "現在の局面の解析を表示します。"
+msgstr "現在のポジションの解析を表示します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "comment, co"
@@ -298,7 +298,7 @@ msgstr "#tag1 tag2 ..."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Etiqueter la position courante."
-msgstr "現在の局面にタグを付けます。"
+msgstr "現在のポジションにタグを付けます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "e"
@@ -306,7 +306,7 @@ msgstr "e"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Charger toutes les positions de la base de données."
-msgstr "データベースのすべての局面を読み込みます。"
+msgstr "データベースのすべてのポジションを読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "blunders, bl [n]"
@@ -317,7 +317,7 @@ msgid ""
 "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le "
 "filtre courant des statistiques. Un nombre optionnel choisit combien en "
 "charger (``bl 50``) ; par défaut 10."
-msgstr "現在の統計フィルターに従って、最悪のミス（エクイティ/MWC）を分析ビューに読み込みます。"
+msgstr "現在の統計フィルターに従って、最悪のエラー（エクイティ/MWC）を分析ビューに読み込みます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -337,7 +337,7 @@ msgstr "write, wr, w"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Enregistre la position courante."
-msgstr "現在の局面を保存します。"
+msgstr "現在のポジションを保存します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "write!, wr!, w!"
@@ -345,7 +345,7 @@ msgstr "write!, wr!, w!"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Mettre à jour la position courante."
-msgstr "現在の局面を更新します。"
+msgstr "現在のポジションを更新します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "s"
@@ -353,7 +353,7 @@ msgstr "s"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Chercher des positions avec des filtres."
-msgstr "フィルタを使って局面を検索します。"
+msgstr "フィルタを使ってポジションを検索します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ss"
@@ -361,7 +361,7 @@ msgstr "ss"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Chercher parmi les positions actuellement filtrées."
-msgstr "現在フィルタされている局面の中から検索します。"
+msgstr "現在フィルタされているポジションの中から検索します。"
 
 #: ../../source/cmd_mode.rst:87
 msgid "Filtres de recherche"
@@ -377,7 +377,7 @@ msgstr "cube, cub, cu, c"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie la configuration du cube."
-msgstr "局面がキューブの配置を満たします。"
+msgstr "ポジションがキューブの配置を満たします。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "score, sco, sc, s"
@@ -385,7 +385,7 @@ msgstr "score, sco, sc, s"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le score."
-msgstr "局面がスコアを満たします。"
+msgstr "ポジションがスコアを満たします。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "d"
@@ -393,7 +393,7 @@ msgstr "d"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le type de décision (pion ou cube)."
-msgstr "局面が決定の種類（チェッカーまたはキューブ）を満たします。"
+msgstr "ポジションが決定の種類（チェッカーまたはキューブ）を満たします。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -401,7 +401,7 @@ msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
-msgstr "局面がダイスの目を満たします（順序を問わず両方のダイス）。"
+msgstr "ポジションがダイスの目を満たします（順序を問わず両方のダイス）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -411,7 +411,7 @@ msgstr "D1"
 msgid ""
 "La position vérifie le lancer de dés sur le premier dé uniquement (la "
 "valeur du premier dé apparaît sur l'un des deux dés de la position)."
-msgstr "局面が 1 つ目のダイスのみについてダイスの目を満たします（1 つ目のダイスの値が局面の 2 つのダイスのいずれかに現れる）。"
+msgstr "ポジションが 1 つ目のダイスのみについてダイスの目を満たします（1 つ目のダイスの値がポジションの 2 つのダイスのいずれかに現れる）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -423,7 +423,7 @@ msgid ""
 "l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
 "plusieurs lancers (``xD65 xD54``)."
 msgstr ""
-"局面が 6-5 の出目で\\ **プレイされていない**\\ "
+"ポジションが 6-5 の出目で\\ **プレイされていない**\\ "
 "状態です（順序は問いません）。値はトークン内に指定します。複数の出目を除外するために繰り返し使用できます（\\ ``xD65 xD54``\\ "
 "）。"
 
@@ -433,7 +433,7 @@ msgstr "nc"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position est sans contact."
-msgstr "局面が接触のない状態です。"
+msgstr "ポジションが接触のない状態です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ph:race"
@@ -447,7 +447,7 @@ msgid ""
 "calculée à partir du plateau, jamais modifiable ; la commande ``blunderdb"
 " repair`` la recalcule."
 msgstr ""
-"局面が特定のゲーム段階にある\\ ：``opening``\\ （序盤）、``middlegame``\\ （中盤）、``race``\\ "
+"ポジションが特定のゲーム段階にある\\ ：``opening``\\ （序盤）、``middlegame``\\ （中盤）、``race``\\ "
 "（レース）、``bearoff``\\ （ベアオフ）。繰り返し指定できる\\ （``ph:race ph:bearoff``\\ "
 "）。このラベルは盤面から導出され、編集はできない。``blunderdb repair`` が再計算する。"
 
@@ -457,7 +457,7 @@ msgstr "M"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ou celle miroir vérifie les filtres."
-msgstr "局面またはその鏡像がフィルタを満たします。"
+msgstr "ポジションまたはその鏡像がフィルタを満たします。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "i"
@@ -465,7 +465,7 @@ msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position a été importée seule, et non apportée par l'import d'un match."
-msgstr "この局面は単独でインポートされたもので、マッチのインポートで入ったものではありません。"
+msgstr "このポジションは単独でインポートされたもので、マッチのインポートで入ったものではありません。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "fl"
@@ -475,7 +475,7 @@ msgstr "fl"
 msgid ""
 "La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
 "l'import d'un match eXtreme Gammon."
-msgstr "eXtreme Gammon のマッチをインポートした際、元のソフトウェアでフラグが付けられた局面。"
+msgstr "eXtreme Gammon のマッチをインポートした際、元のソフトウェアでフラグが付けられたポジション。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -485,7 +485,7 @@ msgstr "x"
 msgid ""
 "La position ne contient aucun pion de la structure d'exclusion (onglet « "
 "Except » du panneau de recherche)."
-msgstr "局面が除外構造（検索パネルの「Except」タブ）の駒を 1 つも含みません。"
+msgstr "ポジションが除外構造（検索パネルの「Except」タブ）の駒を 1 つも含みません。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -541,7 +541,7 @@ msgstr "e>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'équité (en millipoints) de la position est supérieure à x."
-msgstr "局面のエクイティ（ミリポイント単位）が x より大きいです。"
+msgstr "ポジションのエクイティ（ミリポイント単位）が x より大きいです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "e<x"
@@ -549,7 +549,7 @@ msgstr "e<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'équité (en millipoints) de la position est inférieure à x."
-msgstr "局面のエクイティ（ミリポイント単位）が x より小さいです。"
+msgstr "ポジションのエクイティ（ミリポイント単位）が x より小さいです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ex,y"
@@ -557,7 +557,7 @@ msgstr "ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'équité (en millipoints) de la position est comprise entre x et y."
-msgstr "局面のエクイティ（ミリポイント単位）が x から y の範囲です。"
+msgstr "ポジションのエクイティ（ミリポイント単位）が x から y の範囲です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "E>x"
@@ -565,7 +565,7 @@ msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
-msgstr "プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より大きいです。"
+msgstr "プレイヤー 1 が打った手のエラー（ミリポイント単位）が x より大きいです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "E<x"
@@ -573,7 +573,7 @@ msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
-msgstr "プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より小さいです。"
+msgstr "プレイヤー 1 が打った手のエラー（ミリポイント単位）が x より小さいです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -583,7 +583,7 @@ msgstr "Ex,y"
 msgid ""
 "L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
 " x et y."
-msgstr "プレイヤー 1 が打った手の誤差（ミリポイント単位）が x から y の範囲です。"
+msgstr "プレイヤー 1 が打った手のエラー（ミリポイント単位）が x から y の範囲です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "w>x"
@@ -981,7 +981,7 @@ msgstr "``t'語1;語2;...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les commentaires de la position contiennent au moins un des mots."
-msgstr "局面のコメントに単語のうち少なくとも 1 つが含まれます。"
+msgstr "ポジションのコメントに単語のうち少なくとも 1 つが含まれます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "co"
@@ -989,7 +989,7 @@ msgstr "co"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position porte un commentaire, quel qu'en soit le contenu."
-msgstr "内容を問わず、局面にコメントが付いている。"
+msgstr "内容を問わず、ポジションにコメントが付いている。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "xco"
@@ -997,7 +997,7 @@ msgstr "xco"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ne porte aucun commentaire."
-msgstr "局面にコメントが付いていない。"
+msgstr "ポジションにコメントが付いていない。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "co:user"
@@ -1009,7 +1009,7 @@ msgid ""
 "(écrit par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un "
 "match) ou ``unknown``. Répétable (``co:xg co:gnubg``)."
 msgstr ""
-"局面が特定の出所のコメントを持つ\\ ：``user``\\ （自分で書いたもの）、``xg``、``gnubg``、``bgf``\\ "
+"ポジションが特定の出所のコメントを持つ\\ ：``user``\\ （自分で書いたもの）、``xg``、``gnubg``、``bgf``\\ "
 "（マッチのインポートで持ち込まれたもの）、``unknown``。繰り返し指定できる\\ （``co:xg co:gnubg``\\ ）。"
 
 #: ../../source/cmd_mode.rst:1
@@ -1028,7 +1028,7 @@ msgstr "``m'ND,DT,DP,...'``"
 msgid ""
 "Les meilleures décisions de videau de No Double/Take, Double Take, Double"
 " Pass."
-msgstr "最善のキューブ判断が No Double/Take、Double Take、Double Pass のいずれかです。"
+msgstr "最善のキューブの決定が No Double/Take、Double Take、Double Pass のいずれかです。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "T>x"
@@ -1036,7 +1036,7 @@ msgstr "T>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
-msgstr "局面の追加日が x より後（YYYY/MM/DD）。"
+msgstr "ポジションの追加日が x より後（YYYY/MM/DD）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
@@ -1044,7 +1044,7 @@ msgstr "T<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
-msgstr "局面の追加日が x より前（YYYY/MM/DD）。"
+msgstr "ポジションの追加日が x より前（YYYY/MM/DD）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1052,7 +1052,7 @@ msgstr "Tx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
-msgstr "局面の追加日が x から y の範囲（YYYY/MM/DD）。"
+msgstr "ポジションの追加日が x から y の範囲（YYYY/MM/DD）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "max"
@@ -1060,7 +1060,7 @@ msgstr "max"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
-msgstr "識別子 x のマッチ内を検索します（例: ma3）。"
+msgstr "識別子 x のマッチ内を検索します（例：ma3）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "max,y"
@@ -1068,7 +1068,7 @@ msgstr "max,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
-msgstr "識別子 x から y のマッチ内を検索します（例: ma2,5）。"
+msgstr "識別子 x から y のマッチ内を検索します（例：ma2,5）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tnx"
@@ -1076,7 +1076,7 @@ msgstr "tnx"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
-msgstr "識別子 x のトーナメント内を検索します（例: tn1）。"
+msgstr "識別子 x のトーナメント内を検索します（例：tn1）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tnx,y"
@@ -1084,7 +1084,7 @@ msgstr "tnx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
-msgstr "識別子 x から y のトーナメント内を検索します（例: tn1,3）。"
+msgstr "識別子 x から y のトーナメント内を検索します（例：tn1,3）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1092,7 +1092,7 @@ msgstr "idx"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher la position d'identifiant x (ex: id12)."
-msgstr "識別子 x のポジションを検索します（例: id12）。"
+msgstr "識別子 x のポジションを検索します（例：id12）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx,y"
@@ -1100,7 +1100,7 @@ msgstr "idx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
-msgstr "識別子 x から y までのポジションを検索します（例: id5,10）。"
+msgstr "識別子 x から y までのポジションを検索します（例：id5,10）。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``pl'nom'``"
@@ -1111,7 +1111,7 @@ msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
 "sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 msgstr ""
-"指定したプレイヤーが（どちらの席でも）参加した対局の局面を検索します（例：\\ ``pl'Alice'``\\ ）。大文字・小文字は区別しません。"
+"指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：\\ ``pl'Alice'``\\ ）。大文字・小文字は区別しません。"
 
 #: ../../source/cmd_mode.rst:188
 msgid "Commandes diverses"

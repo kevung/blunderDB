@@ -109,11 +109,11 @@ msgstr ""
 
 #: ../../source/faq.rst:60
 msgid "les positions de référence,"
-msgstr "参照ポジション、"
+msgstr "参照ポジション。"
 
 #: ../../source/faq.rst:61
 msgid "les blunders en tournoi réel,"
-msgstr "リアルトーナメントでのブランダー、"
+msgstr "リアルトーナメントでのブランダー。"
 
 #: ../../source/faq.rst:62
 msgid "les blunders en ligne."
@@ -127,7 +127,7 @@ msgstr "複数のデータベースを統合するにはどうすればよいで
 msgid ""
 "Si vous avez plusieurs bases de données blunderDB que vous souhaitez "
 "regrouper, utilisez la fonctionnalité \"Import Database\" :"
-msgstr "複数の blunderDB データベースを統合したい場合は、\"Import Database\" 機能を使用してください："
+msgstr "複数の blunderDB データベースを統合したい場合は、「Import Database」機能を使用してください："
 
 #: ../../source/faq.rst:70
 msgid ""
@@ -137,7 +137,7 @@ msgstr "メインデータベース（インポートされたポジションを
 
 #: ../../source/faq.rst:71
 msgid "Cliquez sur le bouton \"Import Database\" dans la barre d'outils"
-msgstr "ツールバーの \"Import Database\" ボタンをクリックする"
+msgstr "ツールバーの「Import Database」ボタンをクリックする"
 
 #: ../../source/faq.rst:72
 msgid "Sélectionnez la base de données à importer"
@@ -178,7 +178,7 @@ msgid ""
 "*.xgp* pour l'import de positions individuelles avec analyse."
 msgstr ""
 "**eXtreme Gammon (XG)**\\ ：\\ *.xg* "
-"ファイル。完全な手の解析、キューブ決定、プレイした手、マルチエンジンサポートを含みます。解析付きの個別ポジションのインポートには *.xgp* "
+"ファイル。完全な手の解析、キューブの決定、プレイした手、マルチエンジンサポートを含みます。解析付きの個別ポジションのインポートには *.xgp* "
 "ファイル。"
 
 #: ../../source/faq.rst:93
@@ -222,7 +222,7 @@ msgstr ""
 "いいえ。blunderDB は GNUbg、BGBlitz、Jellyfish "
 "のファイルも読み込めますし、内蔵の評価エンジン（gammonNet）はサードパーティのソフトウェアに依存せずどんなポジションでも分析します — "
 "詳しくは下記の「内蔵の評価エンジンはどれほどのものですか？」を参照してください。ただし、XG "
-"のインポートは最も完全な分析（手、キューブの決断、フラグ、ロールの運）をもたらします。これは統計が最も豊富に活用する形式です。"
+"のインポートは最も完全な分析（手、キューブの決定、フラグ、ロールの運）をもたらします。これは統計が最も豊富に活用する形式です。"
 
 #: ../../source/faq.rst:118
 msgid "Qu'est-ce qu'une collection?"
@@ -266,8 +266,8 @@ msgid ""
 "du manuel pour le détail des hypothèses."
 msgstr ""
 "純粋なベアオフのポジションでは、パネルには手番のプレイヤーの勝率も表示され、そのポジションが two-sided データベース（初回起動時に計算される "
-"TS-06-06 テーブル、または設定の\\ *Bearoff*\\ タブから計算する拡張テーブル "
-"TS-06-11）でカバーされている場合は、正確なマネーゲームのキューブ判定も表示されます。この範囲外では、勝率は誤差の範囲付きで推定され、判定は意図的に表示されません。各仮定の詳細は、マニュアルの「Eval"
+"TS-06-06 テーブル、または設定の *Bearoff* タブから計算する拡張テーブル "
+"TS-06-11）でカバーされている場合は、正確なマネーゲームのキューブの判定も表示されます。この範囲外では、勝率は誤差の範囲付きで推定され、判定は意図的に表示されません。各仮定の詳細は、マニュアルの「Eval"
 " パネルの方法論と仮定」の節を参照してください。"
 
 #: ../../source/faq.rst:147
@@ -291,7 +291,7 @@ msgid ""
 msgstr ""
 "gammonNet は第三者によって学習されたニューラルネットワークで（謝辞を参照）、Go 言語に移植されて blunderDB "
 "にコンパイルされています。外部ソフトウェアもネットワーク接続も一切不要です。インポートされていないポジションに対して XG や GNUbg "
-"の役割を果たします — 0 手先または 2 手先までの探索、Janowski に基づくキューブの決断と blunderDB "
+"の役割を果たします — 0 手先または 2 手先までの探索、Janowski に基づくキューブの決定と blunderDB "
 "のマッチエクイティテーブルを使い、スコアを考慮します。市場で唯一の、あるいは必ずしも最良のエンジンというわけではありません。アカウントも購読も不要にオフラインで、あなたが見ているそのポジションについて動作するものです。もちろん、XG"
 " や GNUbg の分析が存在する場合にそれをインポートすることも妨げません — "
 "両方のソースは共存し、各分析の由来を示す列があります。マニュアルの「Eval パネル」と「Eval パネルの方法論と前提」の節を参照してください。"
@@ -312,8 +312,8 @@ msgid ""
 " règles de comptage)."
 msgstr ""
 "PR（Performance "
-"Rating）は、カウントされたすべての決断についてのエクイティ誤差（正規化され、ポイントの千分の一単位）の平均であり、低いほどよいプレイをしていることになります。Snowie"
-" Error Rate は、同じ平均を *決断* の数ではなく *手* の数に対して表します — したがって、マッチが長くなっても SER "
+"Rating）は、カウントされたすべての決定についてのエクイティエラー（正規化され、ポイントの千分の一単位）の平均であり、低いほどよいプレイをしていることになります。Snowie"
+" Error Rate は、同じ平均を *決定* の数ではなく *手* の数に対して表します — したがって、マッチが長くなっても SER "
 "が機械的に悪化することはありません。blunderDB は両方を Stats パネルに表示し、eXtreme Gammon と GNUbg "
 "の慣習に合わせています（計算規則の詳細については :ref:`stats_parity` を参照してください）。"
 
@@ -545,5 +545,5 @@ msgid ""
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
 msgstr ""
 "blunderDB のアイコンは `SMirC シリーズ <https://commons.wikimedia.org/wiki/SMirC>`_"
-" の \"goggling\" 絵文字です。"
+" の「goggling」絵文字です。"
 

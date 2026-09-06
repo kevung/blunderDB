@@ -214,7 +214,7 @@ msgstr "Windows（PowerShell）の場合、ダウンロードフォルダーで�
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr "表示された値を ``blunderDB-windows-<version>.exe.sha256`` ファイルの値と比較してください。両者は一致している必要があります。"
+msgstr "表示された値を ``blunderDB-windows-<バージョン>.exe.sha256`` ファイルの値と比較してください。両者は一致している必要があります。"
 
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
