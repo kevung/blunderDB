@@ -794,7 +794,9 @@
             "evaluateMirror": "Оценить зеркальное отражение этой позиции",
             "copyImageWithAnalysis": "Скопировать изображение доски с анализом",
             "newView": "Новый вид",
-            "addToAnkiDeck": "Добавить в колоду Anki: {deck}"
+            "addToAnkiDeck": "Добавить в колоду Anki: {deck}",
+            "saveImageSVG": "Сохранить изображение (SVG)…",
+            "saveImagePNG": "Сохранить изображение (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Укажите идентификатор: import XGID=…",
         "importIdentifierUnknown": "Идентификатор не распознан. Пока читается только XGID.",
         "importIdentifierSaved": "Позиция импортирована из идентификатора.",
-        "importIdentifierFailed": "Не удалось прочитать идентификатор: {error}"
+        "importIdentifierFailed": "Не удалось прочитать идентификатор: {error}",
+        "boardImageSaved": "Изображение сохранено: {path}",
+        "boardImageSaveFailed": "Не удалось сохранить изображение: {err}"
     },
     "stats": {
         "title": "Статистика",

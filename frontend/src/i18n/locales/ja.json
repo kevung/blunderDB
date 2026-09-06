@@ -794,7 +794,9 @@
             "evaluateMirror": "この局面の鏡像を評価する",
             "copyImageWithAnalysis": "盤面画像と分析をコピー",
             "newView": "新しいビュー",
-            "addToAnkiDeck": "Ankiデッキに追加: {deck}"
+            "addToAnkiDeck": "Ankiデッキに追加: {deck}",
+            "saveImageSVG": "画像を保存（SVG）…",
+            "saveImagePNG": "画像を保存（PNG）…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "識別子を指定してください：import XGID=…",
         "importIdentifierUnknown": "識別子を認識できません。いまのところ XGID のみ読み取ります。",
         "importIdentifierSaved": "識別子から局面を取り込みました。",
-        "importIdentifierFailed": "識別子を読み取れませんでした：{error}"
+        "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
+        "boardImageSaved": "画像を保存しました：{path}",
+        "boardImageSaveFailed": "画像を保存できませんでした：{err}"
     },
     "stats": {
         "title": "統計",

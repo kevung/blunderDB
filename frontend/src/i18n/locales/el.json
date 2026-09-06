@@ -794,7 +794,9 @@
             "evaluateMirror": "Αξιολόγηση του καθρέφτη αυτής της θέσης",
             "copyImageWithAnalysis": "Αντιγραφή εικόνας ταμπλό με την ανάλυση",
             "newView": "Νέα προβολή",
-            "addToAnkiDeck": "Προσθήκη στην τράπουλα Anki: {deck}"
+            "addToAnkiDeck": "Προσθήκη στην τράπουλα Anki: {deck}",
+            "saveImageSVG": "Αποθήκευση εικόνας (SVG)…",
+            "saveImagePNG": "Αποθήκευση εικόνας (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Δώστε ένα αναγνωριστικό: import XGID=…",
         "importIdentifierUnknown": "Μη αναγνωρίσιμο αναγνωριστικό. Προς το παρόν διαβάζεται μόνο το XGID.",
         "importIdentifierSaved": "Η θέση εισήχθη από το αναγνωριστικό.",
-        "importIdentifierFailed": "Το αναγνωριστικό δεν μπόρεσε να διαβαστεί: {error}"
+        "importIdentifierFailed": "Το αναγνωριστικό δεν μπόρεσε να διαβαστεί: {error}",
+        "boardImageSaved": "Η εικόνα αποθηκεύτηκε: {path}",
+        "boardImageSaveFailed": "Η εικόνα δεν μπόρεσε να αποθηκευτεί: {err}"
     },
     "stats": {
         "title": "Στατιστικά",

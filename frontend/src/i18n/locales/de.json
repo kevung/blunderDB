@@ -794,7 +794,9 @@
             "evaluateMirror": "Das Spiegelbild dieser Stellung auswerten",
             "copyImageWithAnalysis": "Brettbild mit Analyse kopieren",
             "newView": "Neue Ansicht",
-            "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}"
+            "addToAnkiDeck": "Zum Anki-Stapel hinzufügen: {deck}",
+            "saveImageSVG": "Bild speichern (SVG)…",
+            "saveImagePNG": "Bild speichern (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Geben Sie eine Kennung an: import XGID=…",
         "importIdentifierUnknown": "Kennung nicht erkannt. Vorerst wird nur XGID gelesen.",
         "importIdentifierSaved": "Stellung aus der Kennung importiert.",
-        "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}"
+        "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
+        "boardImageSaved": "Bild gespeichert: {path}",
+        "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}"
     },
     "stats": {
         "title": "Stats",

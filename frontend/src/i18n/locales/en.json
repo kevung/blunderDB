@@ -794,7 +794,9 @@
             "evaluateMirror": "Evaluate the mirror of this position",
             "copyImageWithAnalysis": "Copy the board image with the analysis",
             "newView": "New view",
-            "addToAnkiDeck": "Add to Anki deck: {deck}"
+            "addToAnkiDeck": "Add to Anki deck: {deck}",
+            "saveImageSVG": "Save the image (SVG)…",
+            "saveImagePNG": "Save the image (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Give an identifier: import XGID=…",
         "importIdentifierUnknown": "Unrecognised identifier. Only XGID is read for now.",
         "importIdentifierSaved": "Position imported from the identifier.",
-        "importIdentifierFailed": "The identifier could not be read: {error}"
+        "importIdentifierFailed": "The identifier could not be read: {error}",
+        "boardImageSaved": "Image saved: {path}",
+        "boardImageSaveFailed": "The image could not be saved: {err}"
     },
     "stats": {
         "title": "Stats",

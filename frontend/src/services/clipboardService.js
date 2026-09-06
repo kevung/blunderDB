@@ -1,6 +1,7 @@
 import { tMsg, translate } from '../i18n';
 import { get } from 'svelte/store';
-import { CopyImageToClipboard } from '../../wailsjs/go/gui/App.js';
+import { CopyImageToClipboard, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG } from '../../wailsjs/go/gui/App.js';
+import { snapshotBoardSVG, svgToCanvas, snapshotToPNGBase64, boardImageFilename, logSnapshotFailure } from './boardSnapshot.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -190,80 +191,32 @@ export async function copyBoardImage() {
         return;
     }
     try {
-        const boardEl = document.getElementById('backgammon-board');
-        if (!boardEl) {
-            setStatusBarMessage(tMsg('status.boardElementNotFound'));
-            return;
-        }
-        const svgEl = boardEl.querySelector('svg');
-        if (!svgEl) {
+        // Un seul rendu (#278) : la copie du plateau vient de snapshotBoardSVG
+        // comme l'export en fichier, plutôt que d'un bloc réécrit ici.
+        const snapshot = snapshotBoardSVG();
+        if (!snapshot) {
             setStatusBarMessage(tMsg('status.boardSvgNotFound'));
             return;
         }
-        const svgWidth = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
-        const svgHeight = parseInt(svgEl.getAttribute('height')) || svgEl.clientHeight;
-
-        const clonedSvg = /** @type {SVGSVGElement} */ (svgEl.cloneNode(true));
-        clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        clonedSvg.setAttribute('width', String(svgWidth));
-        clonedSvg.setAttribute('height', String(svgHeight));
-
-        const origElements = svgEl.querySelectorAll('*');
-        const clonedElements = clonedSvg.querySelectorAll('*');
-        const styleProps =
-            'fill stroke stroke-width stroke-linecap stroke-linejoin stroke-miterlimit opacity font-family font-size font-weight font-style text-anchor dominant-baseline visibility display'.split(
-                ' '
-            );
-        for (let i = 0; i < origElements.length; i++) {
-            const orig = origElements[i];
-            const cloned = clonedElements[i];
-            if (!cloned || !(cloned instanceof SVGElement)) continue;
-            const computed = window.getComputedStyle(orig);
-            for (const prop of styleProps) {
-                const val = computed.getPropertyValue(prop);
-                if (val) {
-                    cloned.style.setProperty(prop, val);
-                }
-            }
-        }
-
-        const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(clonedSvg);
-        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(svgBlob);
-
-        const img = new Image();
-        img.onload = async () => {
-            const scale = 2;
-            const canvas = document.createElement('canvas');
-            canvas.width = svgWidth * scale;
-            canvas.height = svgHeight * scale;
-            const ctx = canvas.getContext('2d');
-            ctx.scale(scale, scale);
-
-            ctx.fillStyle = '#f7f0e6';
-            ctx.fillRect(0, 0, svgWidth, svgHeight);
-
-            ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
-            URL.revokeObjectURL(url);
-
-            try {
-                const res = await writeCanvasToClipboard(canvas);
-                if (res.method === 'file') {
-                    setStatusBarMessage(tMsg('status.boardImageSavedToFile', { path: res.path }));
-                } else {
-                    setStatusBarMessage(tMsg('status.boardImageCopied'));
-                }
-            } catch (err) {
-                logger.error('Failed to copy image to clipboard:', err);
-                setStatusBarMessage(tMsg('status.failedCopyImage', { err }));
-            }
-        };
-        img.onerror = () => {
-            URL.revokeObjectURL(url);
+        let canvas;
+        try {
+            canvas = await svgToCanvas(snapshot);
+        } catch (err) {
+            logSnapshotFailure(err);
             setStatusBarMessage(tMsg('status.failedRenderBoard'));
-        };
-        img.src = url;
+            return;
+        }
+        try {
+            const res = await writeCanvasToClipboard(canvas);
+            if (res.method === 'file') {
+                setStatusBarMessage(tMsg('status.boardImageSavedToFile', { path: res.path }));
+            } else {
+                setStatusBarMessage(tMsg('status.boardImageCopied'));
+            }
+        } catch (err) {
+            logger.error('Failed to copy image to clipboard:', err);
+            setStatusBarMessage(tMsg('status.failedCopyImage', { err }));
+        }
     } catch (error) {
         logger.error('Error copying board image:', error);
         setStatusBarMessage(tMsg('status.errorCopyingBoardImage'));
@@ -438,4 +391,48 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, { matchMode: isMatchMode }), isMoney });
     const widths = splitWidth(width, [0.18, 0.08, 0.08, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.14]);
     paintTable(ctx, 0, y, widths, block, { leftLabels: true, zebra: true, sections: [0, 2, 5, 8] });
+}
+
+/**
+ * Enregistre l'image du plateau dans un fichier que l'utilisateur choisit
+ * (#278, fiche I.22).
+ *
+ * Le presse-papier reste le geste courant ; celui-ci est l'autre besoin —
+ * une illustration pour un article, un message de forum, une leçon. Le SVG
+ * est proposé parce que le plateau EN EST un : c'est la forme qui survit à
+ * un agrandissement, et elle ne coûte rien à offrir.
+ *
+ * L'échelle de repli de l'ADR-0004 ne s'applique pas ici : l'utilisateur a
+ * désigné un chemin, il n'y a donc rien à deviner et un échec est une erreur
+ * qui nomme le fichier.
+ *
+ * @param {'svg'|'png'} format
+ */
+export async function exportBoardImage(format) {
+    const snapshot = snapshotBoardSVG();
+    if (!snapshot) {
+        setStatusBarMessage(tMsg('status.boardSvgNotFound'));
+        return;
+    }
+    let path;
+    try {
+        path = await SaveBoardImageDialog(format, boardImageFilename(format));
+    } catch (err) {
+        logSnapshotFailure(err);
+        setStatusBarMessage(tMsg('status.boardImageSaveFailed', { err }));
+        return;
+    }
+    if (!path) return; // annulé
+
+    try {
+        if (format === 'svg') {
+            await SaveBoardSVG(path, snapshot.svg);
+        } else {
+            await SaveBoardPNG(path, await snapshotToPNGBase64(snapshot));
+        }
+        setStatusBarMessage(tMsg('status.boardImageSaved', { path }));
+    } catch (err) {
+        logSnapshotFailure(err);
+        setStatusBarMessage(tMsg('status.boardImageSaveFailed', { err }));
+    }
 }

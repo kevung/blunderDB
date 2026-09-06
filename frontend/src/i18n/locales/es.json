@@ -794,7 +794,9 @@
             "evaluateMirror": "Evaluar el espejo de esta posición",
             "copyImageWithAnalysis": "Copiar la imagen del tablero con el análisis",
             "newView": "Nueva vista",
-            "addToAnkiDeck": "Añadir al mazo de Anki: {deck}"
+            "addToAnkiDeck": "Añadir al mazo de Anki: {deck}",
+            "saveImageSVG": "Guardar la imagen (SVG)…",
+            "saveImagePNG": "Guardar la imagen (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Indique un identificador: import XGID=…",
         "importIdentifierUnknown": "Identificador no reconocido. Por ahora solo se lee XGID.",
         "importIdentifierSaved": "Posición importada desde el identificador.",
-        "importIdentifierFailed": "No se ha podido leer el identificador: {error}"
+        "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
+        "boardImageSaved": "Imagen guardada: {path}",
+        "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}"
     },
     "stats": {
         "title": "Stats",
