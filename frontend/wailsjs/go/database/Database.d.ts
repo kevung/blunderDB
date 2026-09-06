@@ -22,6 +22,8 @@ export function AnalyzeMissingWithGammonNet(arg1:context.Context,arg2:number,arg
 
 export function AnalyzeStaleGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:any,arg7:any):Promise<database.GammonNetBatchSummary>;
 
+export function BeginImportBatch(arg1:string,arg2:string):Promise<number>;
+
 export function BuryAnkiCard(arg1:number):Promise<void>;
 
 export function CancelImport():Promise<void>;
@@ -101,6 +103,8 @@ export function ExportDatabaseCtx(arg1:context.Context,arg2:domain.ExportOptions
 export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
+
+export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
 
 export function GetAllAnkiDecks():Promise<Array<domain.AnkiDeck>>;
 
@@ -184,6 +188,8 @@ export function ImportGnuBGMatch(arg1:string):Promise<number>;
 
 export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
+export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
+
 export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
@@ -191,6 +197,8 @@ export function ImportXGPPosition(arg1:string):Promise<number>;
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
+
+export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
 export function ListPositionIDs():Promise<Array<number>>;
 

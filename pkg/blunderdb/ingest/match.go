@@ -21,6 +21,11 @@ type MatchGraph struct {
 	// reads as "unknown", which is what a graph built by something that does
 	// not say deserves.
 	CommentOrigin domain.CommentOrigin
+	// ImportBatchID stamps the match with the import it came in with
+	// (issue #257), 0 for none. Copied onto Match by WriteMatch, so a caller
+	// setting it here cannot be overridden by whatever the mapper left in
+	// Match.ImportBatchID.
+	ImportBatchID int64
 }
 
 // GameGraph is one game with its ordered moves.
@@ -113,6 +118,9 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	}
 
 	if !enrich {
+		// The batch the caller opened wins over whatever a mapper left on the
+		// match: only the caller knows what the user meant as one import.
+		g.Match.ImportBatchID = g.ImportBatchID
 		id, err := tx.Matches().Save(ctx, scope, &g.Match)
 		if err != nil {
 			return res, err

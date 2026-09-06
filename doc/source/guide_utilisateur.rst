@@ -403,7 +403,7 @@ blunderDB peut importer des matchs depuis différentes sources.
 #. blunderDB détecte automatiquement le format et importe le match.
 
 #. Une fenêtre de progression affiche le nombre de fichiers importés, échoués
-   et ignorés (doublons).
+   et ignorés (doublons), puis un **compte rendu d'import**.
 
 .. tip::
    Commande: ``i``
@@ -425,6 +425,41 @@ dossier et ses sous-dossiers:
 
 #. blunderDB collecte et importe automatiquement tous les fichiers reconnus
    (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*).
+
+.. _compte_rendu_import:
+
+Le compte rendu d'import
+------------------------
+
+Un import se termine sur un compte rendu de **ce qu'il vient d'apporter**, et
+non sur un simple décompte de fichiers lus :
+
+* les positions nouvelles, et parmi elles celles que le logiciel d'origine
+  avait marquées pour étude ;
+* le **PR de cet import** — le même indicateur que les statistiques, calculé
+  sur ce seul lot. Il porte sur vos décisions lorsque la base connaît votre
+  nom (champ *Utilisateur* de la fenêtre d'identité), sur les deux joueurs
+  sinon, et le compte rendu dit lequel ;
+* les positions qu'aucun moteur n'a évaluées, avec un bouton pour lancer
+  l'analyse ;
+* les **cinq décisions les plus coûteuses**, cliquables : un clic ouvre la
+  position.
+
+Un PR nul sur zéro décision n'est pas une partie parfaite mais l'absence
+d'analyse : le compte rendu l'écrit ainsi.
+
+Chaque import est enregistré comme un **lot**. La ligne de commande les
+retrouve après coup :
+
+.. code-block:: console
+
+   $ blunderdb list --db base.db --type imports
+   $ blunderdb list --db base.db --type imports --batch 3
+
+La moitié mesurée du compte rendu — positions sans analyse, PR, pires
+décisions — est recalculée à chaque consultation. Un lot dont les positions
+ont été analysées depuis rend donc les chiffres d'aujourd'hui, non ceux du
+jour de l'import.
 
 Glisser-déposer
 ----------------

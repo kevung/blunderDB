@@ -925,7 +925,18 @@
         "willMakeChanges": "Операция импорта внесёт следующие изменения:",
         "willMerge": "Будет объединено",
         "willSkip": "Будет пропущено",
-        "dropToImport": "Перетащите файлы для импорта"
+        "dropToImport": "Перетащите файлы для импорта",
+        "reportNewPositions": "Новые позиции",
+        "reportFlagged": "Отмечены в исходной программе",
+        "reportPR": "PR за этот импорт",
+        "reportDecisions": "по {n} решениям ({who})",
+        "reportBothPlayers": "оба игрока",
+        "reportNoAnalysis": "нет анализа для оценки",
+        "reportUnanalysed": "{n} позиц. без анализа",
+        "reportAnalyzeNow": "Проанализировать",
+        "reportWorst": "Худшие решения",
+        "reportCube": "куб",
+        "reportChecker": "шашки"
     },
     "warning": {
         "title": "Предупреждение",
@@ -1063,7 +1074,8 @@
         "searching": "Поиск…",
         "positionAddedToDeck": "Позиция добавлена в колоду «{deck}»",
         "failedAddToDeck": "Не удалось добавить позицию в колоду: {err}",
-        "updateAvailable": "Доступна новая версия blunderDB: {version}"
+        "updateAvailable": "Доступна новая версия blunderDB: {version}",
+        "errorStartingAnalysis": "Не удалось запустить анализ: {error}"
     },
     "stats": {
         "title": "Статистика",

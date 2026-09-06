@@ -6,17 +6,18 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:10+0200\n"
+"POT-Creation-Date: 2026-09-06 03:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: ru <LL@li.org>\n"
 "Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -25,19 +26,19 @@ msgstr "Список команд"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
-"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
+"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
-" *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
+"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
 "Командная строка, расположенная в строке состояния, открывается нажатием "
 "клавиши *ПРОБЕЛ*. При вводе команды автоматически появляется список "
 "подсказок: клавиша *TAB* (или *SHIFT-TAB*) перебирает предложения и "
-"дополняет команду, а *ESC* закрывает список (второе нажатие *ESC* закрывает "
-"командную строку). Клавиши *ВВЕРХ* и *ВНИЗ* остаются зарезервированными для "
-"истории команд."
+"дополняет команду, а *ESC* закрывает список (второе нажатие *ESC* "
+"закрывает командную строку). Клавиши *ВВЕРХ* и *ВНИЗ* остаются "
+"зарезервированными для истории команд."
 
 #: ../../source/cmd_mode.rst:16
 msgid "Opérations globales"
@@ -116,8 +117,8 @@ msgid ""
 "Charge une base d'exemple (matchs, tournoi, collections, commentaires, "
 "paquet Anki, analyses) pour découvrir l'outil."
 msgstr ""
-"Загружает образец базы данных (матчи, турнир, коллекции, комментарии, колода"
-" Anki, анализы) для знакомства с инструментом."
+"Загружает образец базы данных (матчи, турнир, коллекции, комментарии, "
+"колода Anki, анализы) для знакомства с инструментом."
 
 #: ../../source/cmd_mode.rst:1
 msgid "meta"
@@ -133,11 +134,11 @@ msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict "
-"de videau en bearoff)."
+"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
+"verdict de videau en bearoff)."
 msgstr ""
-"Открывает панель Eval (Effective Pip Count, вероятность выигрыша и вердикт "
-"по кубу при снятии шашек)."
+"Открывает панель Eval (Effective Pip Count, вероятность выигрыша и "
+"вердикт по кубу при снятии шашек)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -160,8 +161,7 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
 msgstr "Открывает таблицу точек взятия при кубе на 2 для длинных гонок."
 
 #: ../../source/cmd_mode.rst:1
@@ -185,8 +185,7 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
 msgstr "Открывает таблицу точек взятия при кубе на 4 для длинных гонок."
 
 #: ../../source/cmd_mode.rst:1
@@ -231,11 +230,11 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
+" txt, bgf)."
 msgstr ""
-"Импортирует одну или несколько позиций/матчей из файла (xg, xgp, sgf, mat, "
-"txt, bgf)."
+"Импортирует одну или несколько позиций/матчей из файла (xg, xgp, sgf, "
+"mat, txt, bgf)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -275,10 +274,11 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
-" onglet *Historique*)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
+"son onglet *Historique*)."
 msgstr ""
-"Открыть панель поиска (история поиска находится на её вкладке *Historique*)."
+"Открыть панель поиска (история поиска находится на её вкладке "
+"*Historique*)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "stats, st"
@@ -331,9 +331,10 @@ msgid ""
 "charger (``bl 50``) ; par défaut 10."
 msgstr ""
 "Загружает худшие ошибки (equity/MWC) в представление анализа согласно "
-"текущему фильтру статистики. Необязательное число задаёт, сколько загрузить "
-"(``bl 50``); по умолчанию 10.Загружает худшие ошибки (equity/MWC) в "
-"представление анализа согласно текущему фильтру статистики."
+"текущему фильтру статистики. Необязательное число задаёт, сколько "
+"загрузить (``bl 50``); по умолчанию 10.Загружает худшие ошибки "
+"(equity/MWC) в представление анализа согласно текущему фильтру "
+"статистики."
 
 #: ../../source/cmd_mode.rst:1
 msgid "m"
@@ -416,10 +417,8 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
-msgstr ""
-"Позиция соответствует броску кубиков (оба кубика, независимо от порядка)."
+msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr "Позиция соответствует броску кубиков (оба кубика, независимо от порядка)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -427,8 +426,8 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
-" du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la "
+"valeur du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
 "Позиция соответствует броску только по первому кубику (значение первого "
 "кубика присутствует на одном из двух кубиков позиции)."
@@ -439,9 +438,9 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
-"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
-"lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
+"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
+"plusieurs lancers (``xD65 xD54``)."
 msgstr ""
 "Позиция **не** была сыграна с броском 6-5 (порядок неважен). Значение "
 "указано в жетоне; повторяемо для исключения нескольких бросков (``xD65 "
@@ -462,15 +461,15 @@ msgstr "ph:race"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "La position est dans une phase de jeu donnée : ``opening`` (ouverture), "
-"``middlegame`` (milieu de partie), ``race`` (course) ou ``bearoff`` (sortie "
-"des pions). Répétable (``ph:race ph:bearoff``). L'étiquette est calculée à "
-"partir du plateau, jamais modifiable ; la commande ``blunderdb repair`` la "
-"recalcule."
+"``middlegame`` (milieu de partie), ``race`` (course) ou ``bearoff`` "
+"(sortie des pions). Répétable (``ph:race ph:bearoff``). L'étiquette est "
+"calculée à partir du plateau, jamais modifiable ; la commande ``blunderdb"
+" repair`` la recalcule."
 msgstr ""
-"Позиция находится в заданной фазе игры: ``opening`` (дебют), ``middlegame`` "
-"(миттельшпиль), ``race`` (гонка) или ``bearoff`` (снятие шашек). Повторяемый"
-" (``ph:race ph:bearoff``). Метка выводится из доски и никогда не "
-"редактируется; команда ``blunderdb repair`` пересчитывает её."
+"Позиция находится в заданной фазе игры: ``opening`` (дебют), "
+"``middlegame`` (миттельшпиль), ``race`` (гонка) или ``bearoff`` (снятие "
+"шашек). Повторяемый (``ph:race ph:bearoff``). Метка выводится из доски и "
+"никогда не редактируется; команда ``blunderdb repair`` пересчитывает её."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -485,8 +484,7 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"La position a été importée seule, et non apportée par l'import d'un match."
+msgid "La position a été importée seule, et non apportée par l'import d'un match."
 msgstr "Позиция была импортирована отдельно, а не пришла с импортом матча."
 
 #: ../../source/cmd_mode.rst:1
@@ -498,7 +496,8 @@ msgid ""
 "La position a été marquée (*flag*) dans le logiciel d'origine, lors de "
 "l'import d'un match eXtreme Gammon."
 msgstr ""
-"Позиция была отмечена в исходной программе при импорте матча eXtreme Gammon."
+"Позиция была отмечена в исходной программе при импорте матча eXtreme "
+"Gammon."
 
 #: ../../source/cmd_mode.rst:1
 msgid "x"
@@ -509,8 +508,8 @@ msgid ""
 "La position ne contient aucun pion de la structure d'exclusion (onglet « "
 "Except » du panneau de recherche)."
 msgstr ""
-"Позиция не содержит ни одной шашки из структуры исключения (вкладка «Except»"
-" панели поиска)."
+"Позиция не содержит ни одной шашки из структуры исключения (вкладка "
+"«Except» панели поиска)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -589,8 +588,7 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr "Ошибка хода, сыгранного игроком 1 (в миллипунктах), больше x."
 
 #: ../../source/cmd_mode.rst:1
@@ -598,8 +596,7 @@ msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr "Ошибка хода, сыгранного игроком 1 (в миллипунктах), меньше x."
 
 #: ../../source/cmd_mode.rst:1
@@ -608,11 +605,11 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
-"et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
+" x et y."
 msgstr ""
-"Ошибка хода, сыгранного игроком 1 (в миллипунктах), находится в диапазоне от"
-" x до y."
+"Ошибка хода, сыгранного игроком 1 (в миллипунктах), находится в диапазоне"
+" от x до y."
 
 #: ../../source/cmd_mode.rst:1
 msgid "w>x"
@@ -1034,9 +1031,9 @@ msgstr "co:user"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position porte un commentaire d'une provenance donnée : ``user`` (écrit "
-"par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un match) ou "
-"``unknown``. Répétable (``co:xg co:gnubg``)."
+"La position porte un commentaire d'une provenance donnée : ``user`` "
+"(écrit par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un "
+"match) ou ``unknown``. Répétable (``co:xg co:gnubg``)."
 msgstr ""
 "Позиция несёт комментарий заданного происхождения: ``user`` (написанный "
 "вами), ``xg``, ``gnubg``, ``bgf`` (пришедший с импортом матча) или "
@@ -1138,11 +1135,11 @@ msgstr "pl'имя'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
-" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
+"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
-"Поиск позиций из матча с участием указанного игрока на любой стороне (напр. "
-"pl'Alice'). Без учёта регистра."
+"Поиск позиций из матча с участием указанного игрока на любой стороне "
+"(напр. pl'Alice'). Без учёта регистра."
 
 #: ../../source/cmd_mode.rst:188
 msgid "Commandes diverses"

@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // runImport handles the import command
@@ -131,6 +133,18 @@ type importMatchResult struct {
 	Location    string `json:"location,omitempty"`
 	MatchLength int32  `json:"match_length,omitempty"`
 	Games       int    `json:"games,omitempty"`
+	// Report is the end-of-import report (#257), the same object the
+	// interface's panel shows. Omitted when the batch could not be recorded.
+	Report *domain.ImportReport `json:"report,omitempty"`
+}
+
+// reportOf unwraps a batch's report, nil-safe: every caller here treats a
+// missing batch as "no report", never as an error.
+func reportOf(b *domain.ImportBatch) *domain.ImportReport {
+	if b == nil {
+		return nil
+	}
+	return &b.Report
 }
 
 // importMatch imports a match file (XG, SGF, MAT, TXT, BGF) or XGP position file
@@ -141,6 +155,8 @@ func (cli *CLI) importMatch(filePath, format string) error {
 
 	// Verify file extension and route to appropriate importer
 	ext := strings.ToLower(filepath.Ext(filePath))
+	batchID := cli.beginImportBatch(filePath, strings.TrimPrefix(ext, "."))
+	var failures domain.ImportReport
 	var matchID int64
 	var err error
 
@@ -149,12 +165,16 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		// XGP files are single-position files, not match files
 		posID, posErr := cli.db.ImportXGPPosition(filePath)
 		if posErr != nil {
+			recordFailure(&failures, filePath, posErr)
+			cli.finishImportBatch(batchID, failures)
 			return fmt.Errorf("failed to import XGP position: %w", posErr)
 		}
+		report := cli.finishImportBatch(batchID, failures)
 		if format == "json" {
-			return printJSON(importMatchResult{Type: "xgp_position", PositionID: posID})
+			return printJSON(importMatchResult{Type: "xgp_position", PositionID: posID, Report: reportOf(report)})
 		}
 		fmt.Printf("Successfully imported XGP position (ID: %d)\n", posID)
+		printImportReport(report)
 		return nil
 	case ".xg":
 		matchID, err = cli.db.ImportXGMatch(filePath)
@@ -167,7 +187,12 @@ func (cli *CLI) importMatch(filePath, format string) error {
 	}
 
 	if err != nil {
-		// Check if this is a duplicate match error
+		// A duplicate is not a failure to READ the file, so it is not recorded
+		// as one: the batch's own counter already saw it as a skip.
+		if !errors.Is(err, ErrDuplicateMatch) {
+			recordFailure(&failures, filePath, err)
+		}
+		cli.finishImportBatch(batchID, failures)
 		if errors.Is(err, ErrDuplicateMatch) {
 			return fmt.Errorf("this match has already been imported to the database")
 		}
@@ -176,9 +201,10 @@ func (cli *CLI) importMatch(filePath, format string) error {
 
 	// Fetch match details (best-effort; a lookup failure does not undo the import).
 	match, matchErr := cli.db.GetMatchByID(matchID)
+	report := cli.finishImportBatch(batchID, failures)
 
 	if format == "json" {
-		result := importMatchResult{Type: "match", MatchID: matchID}
+		result := importMatchResult{Type: "match", MatchID: matchID, Report: reportOf(report)}
 		if matchErr == nil && match != nil {
 			result.Player1 = match.Player1Name
 			result.Player2 = match.Player2Name
@@ -205,6 +231,7 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		fmt.Printf("  Games: %d\n", match.GameCount)
 	}
 
+	printImportReport(report)
 	return nil
 }
 
@@ -322,6 +349,8 @@ type importBatchResult struct {
 	Duplicates        int                 `json:"duplicates"`
 	Failed            int                 `json:"failed"`
 	PositionsImported int                 `json:"positions_imported"`
+	// Report is the end-of-import report (#257) over the whole batch.
+	Report *domain.ImportReport `json:"report,omitempty"`
 }
 
 // importBatch imports all .xg files from a directory. Like importPosition, it
@@ -383,6 +412,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		fmt.Printf("Found %d match file(s) to import\n\n", len(matchFiles))
 	}
 
+	batchID := cli.beginImportBatch(dirPath, "mixed")
+	var failures domain.ImportReport
+
 	// Import each file and collect results
 	var results []BatchImportResult
 	successCount := 0
@@ -411,6 +443,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 					fmt.Printf(" ERROR: %v\n", posErr)
 				}
 				result.Error = posErr.Error()
+				recordFailure(&failures, relPath, posErr)
 				failCount++
 			} else {
 				result.Success = true
@@ -443,6 +476,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 					fmt.Printf(" ERROR: %v\n", err)
 				}
 				result.Error = err.Error()
+				recordFailure(&failures, relPath, err)
 				failCount++
 			}
 		} else {
@@ -480,6 +514,8 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 
 	// After all imports, update query planner statistics.
 	cli.db.RefreshSearchStatistics()
+
+	report := cli.finishImportBatch(batchID, failures)
 
 	if text {
 		// Print summary table
@@ -520,6 +556,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		fmt.Println(strings.Repeat("-", 100))
 		fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
 			len(matchFiles), successCount, duplicateCount, failCount, totalPositions)
+		printImportReport(report)
 	} else {
 		if err := printJSON(importBatchResult{
 			Files:             results,
@@ -528,6 +565,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			Duplicates:        duplicateCount,
 			Failed:            failCount,
 			PositionsImported: totalPositions,
+			Report:            reportOf(report),
 		}); err != nil {
 			return err
 		}

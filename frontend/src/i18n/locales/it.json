@@ -925,7 +925,18 @@
         "willMakeChanges": "L'operazione di importazione apporterà le seguenti modifiche:",
         "willMerge": "Da unire",
         "willSkip": "Da saltare",
-        "dropToImport": "Rilascia i file per importarli"
+        "dropToImport": "Rilascia i file per importarli",
+        "reportNewPositions": "Posizioni nuove",
+        "reportFlagged": "Segnate nel programma di origine",
+        "reportPR": "PR su questa importazione",
+        "reportDecisions": "su {n} decisioni ({who})",
+        "reportBothPlayers": "entrambi i giocatori",
+        "reportNoAnalysis": "nessuna analisi da valutare",
+        "reportUnanalysed": "{n} posizione/i senza analisi",
+        "reportAnalyzeNow": "Analizza ora",
+        "reportWorst": "Decisioni peggiori",
+        "reportCube": "cubo",
+        "reportChecker": "pedine"
     },
     "warning": {
         "title": "Avviso",
@@ -1063,7 +1074,8 @@
         "searching": "Ricerca in corso…",
         "positionAddedToDeck": "Posizione aggiunta al mazzo «{deck}»",
         "failedAddToDeck": "Errore durante l'aggiunta della posizione al mazzo: {err}",
-        "updateAvailable": "È disponibile una nuova versione di blunderDB: {version}"
+        "updateAvailable": "È disponibile una nuova versione di blunderDB: {version}",
+        "errorStartingAnalysis": "Impossibile avviare l'analisi: {error}"
     },
     "stats": {
         "title": "Stats",

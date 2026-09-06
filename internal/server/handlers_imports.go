@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,6 +17,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -248,6 +250,15 @@ func (s *Server) ingestRoutes() []route {
 	}
 	return append(rs,
 		route{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
+		// Asking about a past import (#257). The report is recomputed on every
+		// call, so a client that analyses the positions an import brought in
+		// and asks again gets the new figures.
+		route{http.MethodPost, "/v1/imports.report", rpc(func(ctx context.Context, scope string, req importReportReq) (*domain.ImportBatch, error) {
+			return s.opts.Storage.ImportBatches().Report(ctx, scope, req.BatchID, req.Players)
+		})},
+		route{http.MethodPost, "/v1/imports.list", rpc(func(ctx context.Context, scope string, req listReq) ([]*domain.ImportBatch, error) {
+			return s.opts.Storage.ImportBatches().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
 		route{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 		route{http.MethodPost, "/v1/exports.sqlite", s.handleExportSQLite()},
 	)
@@ -418,7 +429,17 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			}
 		}
 
-		emit(map[string]any{"event": "started", "import_id": importID})
+		// One batch per upload (#257): the report the client can ask for
+		// afterwards is about THIS file, not about the tenant. A batch that
+		// cannot be opened is not fatal — the import is what the caller asked
+		// for, and losing its summary must not cost them the import.
+		batches := s.opts.Storage.ImportBatches()
+		batchID, batchErr := batches.Begin(ctx, scope, sourceLabel(header), string(format))
+		if batchErr != nil {
+			batchID = 0
+		}
+
+		emit(map[string]any{"event": "started", "import_id": importID, "batch_id": batchID})
 
 		prog := func(p ingest.Progress) {
 			emit(map[string]any{
@@ -429,7 +450,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			})
 		}
 
-		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath}, prog)
+		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID}, prog)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				// imports.cancel, or a graceful shutdown cancelling every
@@ -441,13 +462,33 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 			return
 		}
-		emit(map[string]any{
+
+		done := map[string]any{
 			"event":              "done",
 			"saved_positions":    sum.SavedPositions,
 			"skipped_duplicates": sum.SkippedDuplicates,
 			"matches":            sum.Matches,
 			"match_id":           sum.MatchID,
-		})
+		}
+		// The same end-of-import report the desktop panel shows, in the
+		// terminal event: a client that streams the import gets its summary
+		// without a second call (#257). Best-effort — the import has already
+		// succeeded and committed by here.
+		if batchID != 0 {
+			done["batch_id"] = batchID
+			counts := domain.ImportReport{
+				MatchesImported: sum.Matches - sum.SkippedDuplicates - sum.Enriched,
+				MatchesSkipped:  sum.SkippedDuplicates,
+				MatchesEnriched: sum.Enriched,
+				PositionsSaved:  sum.SavedPositions,
+			}
+			if err := batches.Finish(ctx, scope, batchID, counts); err == nil {
+				if rep, err := batches.Report(ctx, scope, batchID, nil); err == nil {
+					done["report"] = rep.Report
+				}
+			}
+		}
+		emit(done)
 	}
 }
 
@@ -508,4 +549,24 @@ func spoolToTemp(r io.Reader, ext string) (string, func(), error) {
 	}
 	path := f.Name()
 	return path, func() { os.Remove(path) }, nil //nolint:gosec // G703: same allowlisted ext as above
+}
+
+// sourceLabel is what an import batch shows as its source: the name of the
+// file the client uploaded. The daemon never sees the client's path, only the
+// multipart filename, and that name is attacker-controlled — it is stored and
+// displayed as data, never used to open anything (spoolToTemp already refuses
+// everything but a known extension).
+func sourceLabel(header *multipart.FileHeader) string {
+	if header == nil || header.Filename == "" {
+		return "upload"
+	}
+	return filepath.Base(header.Filename)
+}
+
+// importReportReq asks for the report of one past import. Players names the
+// decisions the PR is about — the reference player and their other spellings;
+// empty scores both seats, and the report says which.
+type importReportReq struct {
+	BatchID int64    `json:"batchId"`
+	Players []string `json:"players,omitempty"`
 }

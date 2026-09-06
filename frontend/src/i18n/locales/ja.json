@@ -925,7 +925,18 @@
         "willMakeChanges": "インポート操作により次の変更が行われます:",
         "willMerge": "統合されます",
         "willSkip": "スキップされます",
-        "dropToImport": "ファイルをドロップしてインポート"
+        "dropToImport": "ファイルをドロップしてインポート",
+        "reportNewPositions": "新しい局面",
+        "reportFlagged": "元のソフトでマーク済み",
+        "reportPR": "このインポートの PR",
+        "reportDecisions": "{n} 件の判断（{who}）",
+        "reportBothPlayers": "両プレイヤー",
+        "reportNoAnalysis": "評価する解析がない",
+        "reportUnanalysed": "解析のない局面 {n} 件",
+        "reportAnalyzeNow": "今すぐ解析",
+        "reportWorst": "最悪の判断",
+        "reportCube": "キューブ",
+        "reportChecker": "チェッカー"
     },
     "warning": {
         "title": "警告",
@@ -1063,7 +1074,8 @@
         "searching": "検索中…",
         "positionAddedToDeck": "局面をデッキ「{deck}」に追加しました",
         "failedAddToDeck": "局面をデッキに追加できませんでした: {err}",
-        "updateAvailable": "blunderDBの新しいバージョンがあります: {version}"
+        "updateAvailable": "blunderDBの新しいバージョンがあります: {version}",
+        "errorStartingAnalysis": "解析を開始できませんでした：{error}"
     },
     "stats": {
         "title": "統計",

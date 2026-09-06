@@ -925,7 +925,18 @@
         "willMakeChanges": "The import operation will make the following changes:",
         "willMerge": "Will Merge",
         "willSkip": "Will Skip",
-        "dropToImport": "Drop files to import"
+        "dropToImport": "Drop files to import",
+        "reportNewPositions": "New positions",
+        "reportFlagged": "Flagged in the source tool",
+        "reportPR": "PR over this import",
+        "reportDecisions": "over {n} decisions ({who})",
+        "reportBothPlayers": "both players",
+        "reportNoAnalysis": "no analysis to score",
+        "reportUnanalysed": "{n} position(s) with no analysis",
+        "reportAnalyzeNow": "Analyse now",
+        "reportWorst": "Worst decisions",
+        "reportCube": "cube",
+        "reportChecker": "checker"
     },
     "warning": {
         "title": "Warning",
@@ -1063,7 +1074,8 @@
         "searching": "Searching…",
         "positionAddedToDeck": "Position added to deck \"{deck}\"",
         "failedAddToDeck": "Failed to add the position to the deck: {err}",
-        "updateAvailable": "A new blunderDB version is available: {version}"
+        "updateAvailable": "A new blunderDB version is available: {version}",
+        "errorStartingAnalysis": "Could not start the analysis: {error}"
     },
     "stats": {
         "title": "Stats",

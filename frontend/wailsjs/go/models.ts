@@ -1188,6 +1188,135 @@ export namespace domain {
 	        this.cancelled = source["cancelled"];
 	    }
 	}
+	export class ImportBlunder {
+	    positionId: number;
+	    matchId: number;
+	    label: string;
+	    errorMp: number;
+	    isCube: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportBlunder(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.matchId = source["matchId"];
+	        this.label = source["label"];
+	        this.errorMp = source["errorMp"];
+	        this.isCube = source["isCube"];
+	    }
+	}
+	export class ImportFailure {
+	    source: string;
+	    reason: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFailure(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.source = source["source"];
+	        this.reason = source["reason"];
+	    }
+	}
+	export class ImportReport {
+	    matchesImported: number;
+	    matchesSkipped: number;
+	    matchesEnriched: number;
+	    filesFailed: number;
+	    failures?: ImportFailure[];
+	    positionsSaved: number;
+	    positionsFlagged: number;
+	    positionsWithoutAnalysis: number;
+	    decisions: number;
+	    pr: number;
+	    player?: string;
+	    worstDecisions?: ImportBlunder[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportReport(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.matchesImported = source["matchesImported"];
+	        this.matchesSkipped = source["matchesSkipped"];
+	        this.matchesEnriched = source["matchesEnriched"];
+	        this.filesFailed = source["filesFailed"];
+	        this.failures = this.convertValues(source["failures"], ImportFailure);
+	        this.positionsSaved = source["positionsSaved"];
+	        this.positionsFlagged = source["positionsFlagged"];
+	        this.positionsWithoutAnalysis = source["positionsWithoutAnalysis"];
+	        this.decisions = source["decisions"];
+	        this.pr = source["pr"];
+	        this.player = source["player"];
+	        this.worstDecisions = this.convertValues(source["worstDecisions"], ImportBlunder);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ImportBatch {
+	    id: number;
+	    startedAt: string;
+	    finishedAt: string;
+	    source: string;
+	    format: string;
+	    report: ImportReport;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportBatch(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.startedAt = source["startedAt"];
+	        this.finishedAt = source["finishedAt"];
+	        this.source = source["source"];
+	        this.format = source["format"];
+	        this.report = this.convertValues(source["report"], ImportReport);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	
+	
 	export class WatermarkInfo {
 	    origin: string;
 	    issuerName: string;
@@ -1291,6 +1420,7 @@ export namespace domain {
 	    mwc_loss2: number;
 	    match_hash?: string;
 	    canonical_hash?: string;
+	    import_batch_id?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -1320,6 +1450,7 @@ export namespace domain {
 	        this.mwc_loss2 = source["mwc_loss2"];
 	        this.match_hash = source["match_hash"];
 	        this.canonical_hash = source["canonical_hash"];
+	        this.import_batch_id = source["import_batch_id"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

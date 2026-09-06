@@ -673,6 +673,12 @@ type Match struct {
 	// are set at import time and used by MatchStore dedup. Empty when unknown.
 	MatchHash     string `json:"match_hash,omitempty"`
 	CanonicalHash string `json:"canonical_hash,omitempty"`
+
+	// ImportBatchID names the import this match came in with (issue #257),
+	// zero for a match stored before batches existed or written outside an
+	// import. Set by the importer, never by a user gesture; deleting the batch
+	// clears it (ON DELETE SET NULL) and leaves the match alone.
+	ImportBatchID int64 `json:"import_batch_id,omitempty"`
 }
 
 type Game struct {

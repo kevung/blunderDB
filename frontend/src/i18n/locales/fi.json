@@ -925,7 +925,18 @@
         "willMakeChanges": "Tuontitoiminto tekee seuraavat muutokset:",
         "willMerge": "Yhdistetään",
         "willSkip": "Ohitetaan",
-        "dropToImport": "Pudota tiedostot tuodaksesi ne"
+        "dropToImport": "Pudota tiedostot tuodaksesi ne",
+        "reportNewPositions": "Uudet asemat",
+        "reportFlagged": "Merkitty lähdeohjelmassa",
+        "reportPR": "PR tästä tuonnista",
+        "reportDecisions": "{n} päätöksestä ({who})",
+        "reportBothPlayers": "molemmat pelaajat",
+        "reportNoAnalysis": "ei analyysiä pisteytettäväksi",
+        "reportUnanalysed": "{n} asemaa ilman analyysiä",
+        "reportAnalyzeNow": "Analysoi nyt",
+        "reportWorst": "Huonoimmat päätökset",
+        "reportCube": "tuplauskuutio",
+        "reportChecker": "nappulat"
     },
     "warning": {
         "title": "Varoitus",
@@ -1063,7 +1074,8 @@
         "searching": "Haetaan…",
         "positionAddedToDeck": "Asema lisätty pakkaan ”{deck}”",
         "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}",
-        "updateAvailable": "Uusi blunderDB-versio on saatavilla: {version}"
+        "updateAvailable": "Uusi blunderDB-versio on saatavilla: {version}",
+        "errorStartingAnalysis": "Analyysiä ei voitu käynnistää: {error}"
     },
     "stats": {
         "title": "Tilastot",

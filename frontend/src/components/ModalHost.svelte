@@ -17,11 +17,20 @@
         fileImportTotalFilesStore,
         fileImportCurrentIndexStore,
         fileImportCurrentFileStore,
-        fileImportResultsStore
+        fileImportResultsStore,
+        fileImportReportStore
     } from '../stores/importModalStore.js';
     import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from '../stores/exportModalStore.js';
     import { closeWarningModal, warningMessageStore, protectedCopyPathStore, protectedCopyErrorStore, unlockProtectedCopy, cancelProtectedCopy } from '../services/databaseService.js';
-    import { handleImportCommit, handleImportCancel, handleImportClose, handleFileImportCancel, handleFileImportClose } from '../services/importService.js';
+    import {
+        handleImportCommit,
+        handleImportCancel,
+        handleImportClose,
+        handleFileImportCancel,
+        handleFileImportClose,
+        openImportedPosition,
+        analyzeRemainingAfterImport
+    } from '../services/importService.js';
     import { handleExportCommit, handleExportCancel } from '../services/exportService.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
     import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
@@ -77,8 +86,11 @@
     currentIndex={$fileImportCurrentIndexStore}
     currentFile={$fileImportCurrentFileStore}
     results={$fileImportResultsStore}
+    report={$fileImportReportStore}
     onCancel={handleFileImportCancel}
     onClose={handleFileImportClose}
+    onOpenPosition={openImportedPosition}
+    onAnalyzeRemaining={analyzeRemainingAfterImport}
 />
 
 <ExportDatabaseModal

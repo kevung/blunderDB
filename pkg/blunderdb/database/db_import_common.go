@@ -39,6 +39,10 @@ func openExistingSQLite(path string) (*sql.DB, error) {
 // skip), while a cross-format canonical duplicate is enriched in place and
 // returns the existing match id without error. Callers must hold d.mu.
 func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGraph) (int64, error) {
+	// Stamp the match with the batch the user's import opened, if any (#257).
+	// Set here rather than by each format's Import* method: this is the single
+	// point every one of them passes through, so no format can forget.
+	graph.ImportBatchID = d.importBatchID
 	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
 		return 0, err
@@ -50,11 +54,21 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 	}
 	if res.Skipped {
 		_ = tx.Rollback()
+		d.importBatchCounts.MatchesSkipped++
 		return 0, ErrDuplicateMatch
 	}
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
+	// Only the writing path knows which of the three things just happened, so
+	// it is what counts them (#257). A caller sees an id and no error whether
+	// the match was written or an existing one was enriched in place.
+	if res.Enriched {
+		d.importBatchCounts.MatchesEnriched++
+	} else {
+		d.importBatchCounts.MatchesImported++
+	}
+	d.importBatchCounts.PositionsSaved += res.SavedPositions
 	return res.MatchID, nil
 }
 

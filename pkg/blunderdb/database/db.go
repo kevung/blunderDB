@@ -15,6 +15,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -25,6 +26,16 @@ type Database struct {
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
+	// importBatchID is the batch every match written by the in-flight import is
+	// stamped with, 0 when no import is running (issue #257). One at a time,
+	// like importCancel above: the wrapper has always assumed a single
+	// in-flight import.
+	importBatchID int64
+	// importBatchCounts accumulates what only the writing path sees — matches
+	// written, skipped as an exact duplicate, enriched in place, positions
+	// saved. The caller that opened the batch adds what only IT sees (the
+	// files that could not be read at all) when it finishes the batch.
+	importBatchCounts domain.ImportReport
 	// pendingPhaseBackfill is raised by the 2.19.0 migration step and cleared
 	// by runMigrationChain once EnsureSchema has added position.game_phase.
 	// A migration step cannot write a column the schema pass has not created

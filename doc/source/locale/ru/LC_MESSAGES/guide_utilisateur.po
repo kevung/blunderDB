@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 03:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -822,10 +822,10 @@ msgstr "blunderDB автоматически определяет формат �
 #: ../../source/guide_utilisateur.rst:405
 msgid ""
 "Une fenêtre de progression affiche le nombre de fichiers importés, "
-"échoués et ignorés (doublons)."
+"échoués et ignorés (doublons), puis un **compte rendu d'import**."
 msgstr ""
-"Окно прогресса показывает количество импортированных, неудачных и "
-"пропущенных (дубликаты) файлов."
+"Окно хода работы показывает, сколько файлов импортировано, не удалось и "
+"пропущено (дубликаты), а затем **отчёт об импорте**."
 
 #: ../../source/guide_utilisateur.rst:409
 msgid "Commande: ``i``"
@@ -867,17 +867,91 @@ msgstr ""
 "blunderDB автоматически собирает и импортирует все распознанные файлы "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
-#: ../../source/guide_utilisateur.rst:430
+#: ../../source/guide_utilisateur.rst:432
+msgid "Le compte rendu d'import"
+msgstr "Отчёт об импорте"
+
+#: ../../source/guide_utilisateur.rst:434
+msgid ""
+"Un import se termine sur un compte rendu de **ce qu'il vient "
+"d'apporter**, et non sur un simple décompte de fichiers lus :"
+msgstr ""
+"Импорт заканчивается отчётом о **том, что он только что принёс**, а не "
+"простым подсчётом прочитанных файлов:"
+
+#: ../../source/guide_utilisateur.rst:437
+msgid ""
+"les positions nouvelles, et parmi elles celles que le logiciel d'origine "
+"avait marquées pour étude ;"
+msgstr ""
+"новые позиции, и среди них те, которые исходная программа отметила для "
+"изучения;"
+
+#: ../../source/guide_utilisateur.rst:439
+msgid ""
+"le **PR de cet import** — le même indicateur que les statistiques, "
+"calculé sur ce seul lot. Il porte sur vos décisions lorsque la base "
+"connaît votre nom (champ *Utilisateur* de la fenêtre d'identité), sur les"
+" deux joueurs sinon, et le compte rendu dit lequel ;"
+msgstr ""
+"**PR этого импорта** — тот же показатель, что и в статистике, вычисленный"
+" только по этой партии. Он относится к вашим решениям, когда база знает "
+"ваше имя (поле *Пользователь* в окне идентичности), к обоим игрокам в "
+"противном случае, и отчёт говорит, к чему именно;"
+
+#: ../../source/guide_utilisateur.rst:443
+msgid ""
+"les positions qu'aucun moteur n'a évaluées, avec un bouton pour lancer "
+"l'analyse ;"
+msgstr "позиции, которые не оценил ни один движок, с кнопкой запуска анализа;"
+
+#: ../../source/guide_utilisateur.rst:445
+msgid ""
+"les **cinq décisions les plus coûteuses**, cliquables : un clic ouvre la "
+"position."
+msgstr ""
+"**пять самых дорогих решений**, кликабельных: один щелчок открывает "
+"позицию."
+
+#: ../../source/guide_utilisateur.rst:448
+msgid ""
+"Un PR nul sur zéro décision n'est pas une partie parfaite mais l'absence "
+"d'analyse : le compte rendu l'écrit ainsi."
+msgstr ""
+"Нулевой PR при нуле решений — это не безупречная партия, а отсутствие "
+"анализа: отчёт так и пишет."
+
+#: ../../source/guide_utilisateur.rst:451
+msgid ""
+"Chaque import est enregistré comme un **lot**. La ligne de commande les "
+"retrouve après coup :"
+msgstr ""
+"Каждый импорт записывается как **партия**. Командная строка находит их "
+"позже:"
+
+#: ../../source/guide_utilisateur.rst:459
+msgid ""
+"La moitié mesurée du compte rendu — positions sans analyse, PR, pires "
+"décisions — est recalculée à chaque consultation. Un lot dont les "
+"positions ont été analysées depuis rend donc les chiffres d'aujourd'hui, "
+"non ceux du jour de l'import."
+msgstr ""
+"Измеряемая половина отчёта — позиции без анализа, PR, худшие решения — "
+"пересчитывается при каждом чтении. Партия, позиции которой с тех пор были"
+" проанализированы, возвращает поэтому сегодняшние цифры, а не цифры дня "
+"импорта."
+
+#: ../../source/guide_utilisateur.rst:465
 msgid "Glisser-déposer"
 msgstr "Перетаскивание"
 
-#: ../../source/guide_utilisateur.rst:432
+#: ../../source/guide_utilisateur.rst:467
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
 msgstr "blunderDB поддерживает перетаскивание. На окно blunderDB можно перетащить:"
 
-#: ../../source/guide_utilisateur.rst:435
+#: ../../source/guide_utilisateur.rst:470
 msgid ""
 "des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
 "*.txt*, *.bgf*) pour les importer,"
@@ -885,7 +959,7 @@ msgstr ""
 "файлы матчей или позиций (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*) "
 "для их импорта,"
 
-#: ../../source/guide_utilisateur.rst:438
+#: ../../source/guide_utilisateur.rst:473
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
@@ -893,51 +967,51 @@ msgstr ""
 "файлы баз данных (*.db*) для их открытия или слияния с текущей базой "
 "данных,"
 
-#: ../../source/guide_utilisateur.rst:441
+#: ../../source/guide_utilisateur.rst:476
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
 msgstr "папки для рекурсивного импорта всех содержащихся в них файлов."
 
-#: ../../source/guide_utilisateur.rst:444
+#: ../../source/guide_utilisateur.rst:479
 msgid "Naviguer dans un match"
 msgstr "Навигация по матчу"
 
-#: ../../source/guide_utilisateur.rst:446
+#: ../../source/guide_utilisateur.rst:481
 msgid "Pour naviguer dans un match importé:"
 msgstr "Для навигации по импортированному матчу:"
 
-#: ../../source/guide_utilisateur.rst:448
+#: ../../source/guide_utilisateur.rst:483
 msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
 msgstr "Откройте панель матчей с помощью *CTRL-Tab*."
 
-#: ../../source/guide_utilisateur.rst:450
+#: ../../source/guide_utilisateur.rst:485
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
 msgstr "Дважды щёлкните на матче или нажмите *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:452
+#: ../../source/guide_utilisateur.rst:487
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr "Используйте клавиши *LEFT* / *RIGHT* для перехода между ходами."
 
-#: ../../source/guide_utilisateur.rst:454
+#: ../../source/guide_utilisateur.rst:489
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr "Используйте *PageUp* / *PageDown* для перехода между партиями."
 
-#: ../../source/guide_utilisateur.rst:456
+#: ../../source/guide_utilisateur.rst:491
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "Нажмите *CTRL-L* для отображения анализа."
 
-#: ../../source/guide_utilisateur.rst:458
+#: ../../source/guide_utilisateur.rst:493
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
 msgstr "Нажмите *d* для переключения между анализом ходов шашками и анализом куба."
 
-#: ../../source/guide_utilisateur.rst:461
+#: ../../source/guide_utilisateur.rst:496
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
 msgstr "Сочетание клавиш: *CTRL-Tab* для открытия панели матчей. Команда: ``m``"
 
-#: ../../source/guide_utilisateur.rst:465
+#: ../../source/guide_utilisateur.rst:500
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
@@ -947,15 +1021,15 @@ msgstr ""
 "возврате к матчу последняя посещённая позиция восстанавливается "
 "автоматически."
 
-#: ../../source/guide_utilisateur.rst:470
+#: ../../source/guide_utilisateur.rst:505
 msgid "Gérer le panneau des matchs"
 msgstr "Управление панелью матчей"
 
-#: ../../source/guide_utilisateur.rst:472
+#: ../../source/guide_utilisateur.rst:507
 msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
 msgstr "Панель матчей (*CTRL-Tab*) позволяет:"
 
-#: ../../source/guide_utilisateur.rst:474
+#: ../../source/guide_utilisateur.rst:509
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
@@ -963,7 +1037,7 @@ msgstr ""
 "просматривать список всех импортированных матчей (отсортированных от "
 "новейших к старейшим),"
 
-#: ../../source/guide_utilisateur.rst:476
+#: ../../source/guide_utilisateur.rst:511
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
@@ -971,29 +1045,29 @@ msgstr ""
 "сортировать матчи по столбцам (игрок 1, игрок 2, дата, длина матча, "
 "турнир),"
 
-#: ../../source/guide_utilisateur.rst:479
+#: ../../source/guide_utilisateur.rst:514
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
 msgstr "редактировать имена игроков или дату двойным щелчком по полям,"
 
-#: ../../source/guide_utilisateur.rst:481
+#: ../../source/guide_utilisateur.rst:516
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "менять местами игрока 1 и игрока 2 с помощью кнопки перестановки,"
 
-#: ../../source/guide_utilisateur.rst:483
+#: ../../source/guide_utilisateur.rst:518
 msgid "assigner un match à un tournoi,"
 msgstr "назначать матч турниру,"
 
-#: ../../source/guide_utilisateur.rst:485
+#: ../../source/guide_utilisateur.rst:520
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "удалять матч с помощью клавиши *Del*."
 
-#: ../../source/guide_utilisateur.rst:490
+#: ../../source/guide_utilisateur.rst:525
 msgid "Gérer les collections"
 msgstr "Управление коллекциями"
 
-#: ../../source/guide_utilisateur.rst:492
+#: ../../source/guide_utilisateur.rst:527
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
@@ -1002,35 +1076,35 @@ msgstr ""
 "Коллекции позволяют организовывать позиции в пользовательские группы. Для"
 " доступа к панели коллекций нажмите *CTRL-B*."
 
-#: ../../source/guide_utilisateur.rst:495
+#: ../../source/guide_utilisateur.rst:530
 msgid "**Créer une collection:**"
 msgstr "**Создание коллекции:**"
 
-#: ../../source/guide_utilisateur.rst:497
+#: ../../source/guide_utilisateur.rst:532
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "Откройте панель коллекций (*CTRL-B*)."
 
-#: ../../source/guide_utilisateur.rst:499
+#: ../../source/guide_utilisateur.rst:534
 msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
 msgstr "Введите название новой коллекции и нажмите \"Add\"."
 
-#: ../../source/guide_utilisateur.rst:501
+#: ../../source/guide_utilisateur.rst:536
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**Добавление позиций в коллекцию:**"
 
-#: ../../source/guide_utilisateur.rst:503
+#: ../../source/guide_utilisateur.rst:538
 msgid "Sélectionner les positions souhaitées."
 msgstr "Выберите нужные позиции."
 
-#: ../../source/guide_utilisateur.rst:505
+#: ../../source/guide_utilisateur.rst:540
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "Добавьте их в коллекцию из панели коллекций."
 
-#: ../../source/guide_utilisateur.rst:507
+#: ../../source/guide_utilisateur.rst:542
 msgid "**Parcourir une collection:**"
 msgstr "**Просмотр коллекции:**"
 
-#: ../../source/guide_utilisateur.rst:509
+#: ../../source/guide_utilisateur.rst:544
 msgid ""
 "Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
 "des collections et des positions peut être modifié par glisser-déposer."
@@ -1038,15 +1112,15 @@ msgstr ""
 "Дважды щёлкните на коллекции для просмотра её позиций. Порядок коллекций "
 "и позиций можно изменить перетаскиванием."
 
-#: ../../source/guide_utilisateur.rst:514
+#: ../../source/guide_utilisateur.rst:549
 msgid "Commande: ``coll``"
 msgstr "Команда: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:517
+#: ../../source/guide_utilisateur.rst:552
 msgid "Gérer les tournois"
 msgstr "Управление турнирами"
 
-#: ../../source/guide_utilisateur.rst:519
+#: ../../source/guide_utilisateur.rst:554
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
@@ -1054,23 +1128,23 @@ msgstr ""
 "Турниры позволяют организовывать импортированные матчи по событиям. Для "
 "доступа к панели турниров нажмите *CTRL-Y*."
 
-#: ../../source/guide_utilisateur.rst:522
+#: ../../source/guide_utilisateur.rst:557
 msgid "**Créer un tournoi:**"
 msgstr "**Создание турнира:**"
 
-#: ../../source/guide_utilisateur.rst:524
+#: ../../source/guide_utilisateur.rst:559
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "Откройте панель турниров (*CTRL-Y*)."
 
-#: ../../source/guide_utilisateur.rst:526
+#: ../../source/guide_utilisateur.rst:561
 msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
 msgstr "Нажмите \"Add\" и введите название турнира."
 
-#: ../../source/guide_utilisateur.rst:528
+#: ../../source/guide_utilisateur.rst:563
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**Назначение матча турниру:**"
 
-#: ../../source/guide_utilisateur.rst:530
+#: ../../source/guide_utilisateur.rst:565
 msgid ""
 "Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
 "la colonne tournoi pour assigner un match."
@@ -1078,11 +1152,11 @@ msgstr ""
 "В панели матчей (*CTRL-Tab*) используйте выпадающее меню в столбце "
 "турнира для назначения матча."
 
-#: ../../source/guide_utilisateur.rst:534
+#: ../../source/guide_utilisateur.rst:569
 msgid "Afficher les statistiques de performance"
 msgstr "Просмотр статистики производительности"
 
-#: ../../source/guide_utilisateur.rst:536
+#: ../../source/guide_utilisateur.rst:571
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
@@ -1090,11 +1164,11 @@ msgstr ""
 "Панель Stats позволяет просматривать показатели производительности (PR и "
 "стоимость MWC) на основе импортированных позиций."
 
-#: ../../source/guide_utilisateur.rst:539
+#: ../../source/guide_utilisateur.rst:574
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr "Нажмите *CTRL-D* или перейдите на вкладку Stats в нижней панели."
 
-#: ../../source/guide_utilisateur.rst:541
+#: ../../source/guide_utilisateur.rst:576
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
@@ -1102,7 +1176,7 @@ msgstr ""
 "Используйте панель фильтров для ограничения анализа по игроку, турниру, "
 "диапазону дат, типу решения или длине матча."
 
-#: ../../source/guide_utilisateur.rst:544
+#: ../../source/guide_utilisateur.rst:579
 msgid ""
 "Cliquer sur un indicateur pour accéder directement aux positions "
 "correspondantes."
@@ -1110,11 +1184,11 @@ msgstr ""
 "Нажмите на показатель для перехода непосредственно к соответствующим "
 "позициям."
 
-#: ../../source/guide_utilisateur.rst:547
+#: ../../source/guide_utilisateur.rst:582
 msgid "Évaluer une position (panneau Eval)"
 msgstr "Оценка позиции (панель Eval)"
 
-#: ../../source/guide_utilisateur.rst:549
+#: ../../source/guide_utilisateur.rst:584
 msgid ""
 "Le panneau Eval évalue n'importe quelle position — pas seulement une "
 "course. Sur une position de bearoff pur, il calcule l'EPC (Effective Pip "
@@ -1128,11 +1202,11 @@ msgstr ""
 "gammonNet предоставляет кандидатские ходы или решение по кубу, офлайн, "
 "без XG или GNUbg."
 
-#: ../../source/guide_utilisateur.rst:555
+#: ../../source/guide_utilisateur.rst:590
 msgid "Panneau Eval sur une décision de coups de pions"
 msgstr "Панель Eval при решении о ходе шашками"
 
-#: ../../source/guide_utilisateur.rst:559
+#: ../../source/guide_utilisateur.rst:594
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
@@ -1140,7 +1214,7 @@ msgstr ""
 "Панель Eval: шансы на выигрыш/гаммон/бэкгаммон, эквити и ошибка каждого "
 "кандидатского хода, рассчитанные gammonNet."
 
-#: ../../source/guide_utilisateur.rst:562
+#: ../../source/guide_utilisateur.rst:597
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur, ou"
 " exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau vierge,"
@@ -1150,7 +1224,7 @@ msgstr ""
 "команду ``epc``: панель открывается с пустой доской, готовой к "
 "редактированию."
 
-#: ../../source/guide_utilisateur.rst:566
+#: ../../source/guide_utilisateur.rst:601
 msgid ""
 "Pour évaluer la position déjà affichée (une position de la bibliothèque, "
 "ou celle d'un match en cours de revue) plutôt qu'un plateau vierge, clic "
@@ -1162,7 +1236,7 @@ msgstr ""
 "мыши по доске, затем «Evaluate this position» — показанная позиция "
 "отправляется как есть на панель Eval."
 
-#: ../../source/guide_utilisateur.rst:571
+#: ../../source/guide_utilisateur.rst:606
 msgid ""
 "Le plateau entier s'édite au clic ou au clavier : pions, dés, score, "
 "position du videau, joueur au trait. Éditer uniquement les pions du jan "
@@ -1172,7 +1246,7 @@ msgstr ""
 "положение куба, игрок, чей ход. Редактирование только шашек в доме "
 "(последние 6 пунктов) с обеих сторон переводит позицию в режим беароффа."
 
-#: ../../source/guide_utilisateur.rst:575
+#: ../../source/guide_utilisateur.rst:610
 msgid ""
 "Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre "
 "moyen de lancers, écart type, pip count et wastage, la probabilité de "
@@ -1188,7 +1262,7 @@ msgstr ""
 "кандидатские ходы, отсортированные по эквити; без костей — решение по "
 "кубу. См. раздел «Методология и допущения панели Eval» руководства."
 
-#: ../../source/guide_utilisateur.rst:582
+#: ../../source/guide_utilisateur.rst:617
 msgid ""
 "Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
 "résultats sont masqués à chaque modification et se révèlent zone par "
@@ -1198,15 +1272,15 @@ msgstr ""
 "(режим «Вызов»): результаты скрываются при каждом изменении и открываются"
 " зона за зоной, щелчком."
 
-#: ../../source/guide_utilisateur.rst:587
+#: ../../source/guide_utilisateur.rst:622
 msgid "Le panneau fonctionne pour les deux joueurs simultanément."
 msgstr "Панель работает для обоих игроков одновременно."
 
-#: ../../source/guide_utilisateur.rst:590
+#: ../../source/guide_utilisateur.rst:625
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Просмотр анализа позиции, импортированной из XG"
 
-#: ../../source/guide_utilisateur.rst:592
+#: ../../source/guide_utilisateur.rst:627
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -1214,7 +1288,7 @@ msgstr ""
 "Если позиция, проанализированная XG, GNUbg или BGBlitz, была "
 "импортирована в blunderDB, анализ можно отобразить, нажав *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:595
+#: ../../source/guide_utilisateur.rst:630
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -1229,7 +1303,7 @@ msgstr ""
 "хода, шансы на выигрыш, гэммон и бэкгэммон игрока, шансы на выигрыш, "
 "гэммон и бэкгэммон противника, уровень анализа."
 
-#: ../../source/guide_utilisateur.rst:602
+#: ../../source/guide_utilisateur.rst:637
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -1237,7 +1311,7 @@ msgstr ""
 "Если позиция соответствует решению куба, отображается стоимость каждого "
 "решения, а также шансы на выигрыш в данной позиции."
 
-#: ../../source/guide_utilisateur.rst:605
+#: ../../source/guide_utilisateur.rst:640
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -1247,7 +1321,7 @@ msgstr ""
 " XG и GNUbg), дополнительный столбец указывает исходный движок для "
 "каждого анализа."
 
-#: ../../source/guide_utilisateur.rst:609
+#: ../../source/guide_utilisateur.rst:644
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
@@ -1257,7 +1331,7 @@ msgstr ""
 "ходов. Если позиция встречалась в нескольких матчах, указываются все "
 "сыгранные ходы."
 
-#: ../../source/guide_utilisateur.rst:614
+#: ../../source/guide_utilisateur.rst:649
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -1265,27 +1339,27 @@ msgstr ""
 "При нажатии на ход в панели анализа на доске отображаются соответствующие"
 " стрелки."
 
-#: ../../source/guide_utilisateur.rst:618
+#: ../../source/guide_utilisateur.rst:653
 msgid "Exporter une position vers XG"
 msgstr "Экспорт позиции в XG"
 
-#: ../../source/guide_utilisateur.rst:620
+#: ../../source/guide_utilisateur.rst:655
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "Чтобы экспортировать позицию из blunderDB в XG,"
 
-#: ../../source/guide_utilisateur.rst:622
+#: ../../source/guide_utilisateur.rst:657
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "откройте в blunderDB позицию для экспорта и нажмите *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:624
+#: ../../source/guide_utilisateur.rst:659
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "переключитесь на XG и нажмите *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:627
+#: ../../source/guide_utilisateur.rst:662
 msgid "Visualiser les différentes positions"
 msgstr "Просмотр различных позиций"
 
-#: ../../source/guide_utilisateur.rst:629
+#: ../../source/guide_utilisateur.rst:664
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -1296,7 +1370,7 @@ msgstr ""
 "*LEFT* и *RIGHT*. Клавиша *HOME* переходит к первой позиции. Клавиша "
 "*END* переходит к последней позиции."
 
-#: ../../source/guide_utilisateur.rst:633
+#: ../../source/guide_utilisateur.rst:668
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -1304,19 +1378,19 @@ msgstr ""
 "Чтобы отобразить снятие шашек слева, нажмите *CTRL-LEFT*. Чтобы "
 "отобразить снятие шашек справа, нажмите *CTRL-RIGHT*."
 
-#: ../../source/guide_utilisateur.rst:637
+#: ../../source/guide_utilisateur.rst:672
 msgid "Rechercher des positions selon des critères"
 msgstr "Поиск позиций по критериям"
 
-#: ../../source/guide_utilisateur.rst:639
+#: ../../source/guide_utilisateur.rst:674
 msgid "Pour rechercher des types de positions,"
 msgstr "Для поиска типов позиций:"
 
-#: ../../source/guide_utilisateur.rst:641
+#: ../../source/guide_utilisateur.rst:676
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "нажмите *TAB* для открытия панели поиска,"
 
-#: ../../source/guide_utilisateur.rst:643
+#: ../../source/guide_utilisateur.rst:678
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -1330,7 +1404,7 @@ msgstr ""
 "очистите позицию клавишей *BACKSPACE*. При необходимости отредактируйте "
 "позицию куба и счёт."
 
-#: ../../source/guide_utilisateur.rst:649
+#: ../../source/guide_utilisateur.rst:684
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
 " par les onglets *At least* et *Except* situés en haut du panneau :"
@@ -1338,7 +1412,7 @@ msgstr ""
 "Панель поиска предлагает две структуры шашек, выбираемые с помощью "
 "вкладок *At least* и *Except* в верхней части панели:"
 
-#: ../../source/guide_utilisateur.rst:652
+#: ../../source/guide_utilisateur.rst:687
 msgid ""
 "*At least* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
@@ -1346,7 +1420,7 @@ msgstr ""
 "*At least* (по умолчанию): blunderDB фильтрует позиции, содержащие *как "
 "минимум* введённую структуру шашек;"
 
-#: ../../source/guide_utilisateur.rst:655
+#: ../../source/guide_utilisateur.rst:690
 msgid ""
 "*Except* : blunderDB exclut les positions contenant l'un des pions "
 "saisis. Le plateau est bordé de rouge lors de l'édition de cette "
@@ -1370,7 +1444,7 @@ msgstr ""
 "(красная штрихованная клетка, без шашек любого цвета); одиночный щелчок "
 "на этом пункте снимает отметку."
 
-#: ../../source/guide_utilisateur.rst:665
+#: ../../source/guide_utilisateur.rst:700
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Except* "
 "l'emporte s'il contredit le critère *At least*."
@@ -1378,46 +1452,46 @@ msgstr ""
 "Если пункт входит в обе структуры, критерий *Except* имеет приоритет, "
 "если он противоречит критерию *At least*."
 
-#: ../../source/guide_utilisateur.rst:668
+#: ../../source/guide_utilisateur.rst:703
 msgid "Méthode 1 (simple):"
 msgstr "Метод 1 (простой):"
 
-#: ../../source/guide_utilisateur.rst:670
+#: ../../source/guide_utilisateur.rst:705
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Откройте окно поиска (*CTRL-F*)."
 
-#: ../../source/guide_utilisateur.rst:672
+#: ../../source/guide_utilisateur.rst:707
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Добавьте и настройте фильтры поиска."
 
-#: ../../source/guide_utilisateur.rst:674
+#: ../../source/guide_utilisateur.rst:709
 msgid "Valider en cliquant sur \"Search\"."
 msgstr "Подтвердите нажатием кнопки \"Search\"."
 
-#: ../../source/guide_utilisateur.rst:676
+#: ../../source/guide_utilisateur.rst:711
 msgid "Méthode 2 (avancée):"
 msgstr "Метод 2 (расширенный):"
 
-#: ../../source/guide_utilisateur.rst:679
+#: ../../source/guide_utilisateur.rst:714
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "откройте командную строку нажатием *ПРОБЕЛ*,"
 
-#: ../../source/guide_utilisateur.rst:681
+#: ../../source/guide_utilisateur.rst:716
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
 "score. Voir :ref:`cmd_filter` pour une liste exhaustive des filtres "
 "disponibles)."
 msgstr ""
-"введите *s*, добавьте дополнительные фильтры при необходимости (например, "
-"*cube* или *score* для учёта куба и счёта соответственно. Смотрите "
+"введите *s*, добавьте дополнительные фильтры при необходимости (например,"
+" *cube* или *score* для учёта куба и счёта соответственно. Смотрите "
 ":ref:`cmd_filter` для полного списка доступных фильтров)."
 
-#: ../../source/guide_utilisateur.rst:686
+#: ../../source/guide_utilisateur.rst:721
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "подтвердите запрос нажатием *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:688
+#: ../../source/guide_utilisateur.rst:723
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -1425,11 +1499,11 @@ msgstr ""
 "Отображаемые позиции — это позиции из базы данных, соответствующие "
 "критериям поиска, введённым пользователем."
 
-#: ../../source/guide_utilisateur.rst:692
+#: ../../source/guide_utilisateur.rst:727
 msgid "Pour aller plus loin"
 msgstr "Что дальше"
 
-#: ../../source/guide_utilisateur.rst:694
+#: ../../source/guide_utilisateur.rst:729
 msgid ""
 "Ce guide couvre les usages les plus courants. blunderDB propose plusieurs"
 " fonctionnalités supplémentaires, détaillées dans le manuel :"
@@ -1437,7 +1511,7 @@ msgstr ""
 "Это руководство охватывает наиболее частые сценарии. В blunderDB есть ещё"
 " несколько возможностей, подробно описанных в руководстве:"
 
-#: ../../source/guide_utilisateur.rst:697
+#: ../../source/guide_utilisateur.rst:732
 msgid ""
 "**Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une"
 " collection ou une recherche en paquet de cartes à réviser selon "
@@ -1449,7 +1523,7 @@ msgstr ""
 " свободный режим тренировки (*cram*) не сбивает расписание. См. "
 ":ref:`panneau_anki`."
 
-#: ../../source/guide_utilisateur.rst:702
+#: ../../source/guide_utilisateur.rst:737
 msgid ""
 "**Vues multiples** — une barre d'onglets sous la barre d'outils permet de"
 " garder plusieurs espaces de travail indépendants ouverts en parallèle "
@@ -1462,7 +1536,7 @@ msgstr ""
 "(например, поиск и просмотр матча), у каждого свой список позиций и свой "
 "контекст. См. :ref:`onglets_vues`."
 
-#: ../../source/guide_utilisateur.rst:707
+#: ../../source/guide_utilisateur.rst:742
 msgid ""
 "**Diffusion filigranée** — un export peut être signé avec votre identité "
 "d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et "
@@ -1474,7 +1548,7 @@ msgstr ""
 "происхождение файла) и защитить паролем на время передачи. См. "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/guide_utilisateur.rst:711
+#: ../../source/guide_utilisateur.rst:746
 msgid ""
 "**Visites guidées et base de démonstration** — la commande ``tour`` "
 "(alias ``tutorial``) ouvre un catalogue de visites guidées de "
@@ -1487,7 +1561,7 @@ msgstr ""
 "``demo`` загружает пример базы, чтобы познакомиться с инструментом без "
 "собственной базы. См. :ref:`visites_guidees`."
 
-#: ../../source/guide_utilisateur.rst:716
+#: ../../source/guide_utilisateur.rst:751
 msgid ""
 "**Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs (équité ou MWC) dans la vue "
@@ -1497,4 +1571,3 @@ msgstr ""
 "**Загрузить худшие ошибки** — команда ``bl`` (или ``blunders``) загружает"
 " худшие ошибки (эквити или MWC) прямо в вид анализа, согласно текущему "
 "фильтру панели статистики, без ручного поиска. См. :ref:`stats`."
-

@@ -46,6 +46,9 @@ func (b binder) History() storage.CommandHistoryStore {
 	return &sqlshared.CommandHistoryStore{DB: b.shared()}
 }
 func (b binder) Metadata() storage.MetadataStore { return &sqlshared.MetadataStore{DB: b.shared()} }
+func (b binder) ImportBatches() storage.ImportBatchStore {
+	return &sqlshared.ImportBatchStore{DB: b.shared()}
+}
 
 // withTx runs fn inside a transaction started from db. The pgx.Tx is passed to
 // fn as an execer; when db is already a transaction the pgx.Tx is a

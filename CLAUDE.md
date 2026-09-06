@@ -162,9 +162,11 @@ the gettext output path **relative** (an absolute one rewrites every `#:`
 reference and buries the real diff), and it normalises the `python-format`
 flag that `msgmerge` re-adds behind an existing `no-python-format` at every
 update — gettext honours the last flag, so the false positive comes back each
-time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po` with
-`msgcat`: Babel and msgcat disagree on line breaks, so one pass rewrites the
-whole file.
+time and makes `msgfmt` refuse the catalogue. Never re-wrap a `.po`: `msgcat`, Babel and polib each
+disagree on line breaks, so one pass through any of them rewrites the whole
+file and buries the real change. To fill the empty `msgstr` after an update,
+use `scripts/po-fill.py <translations.json>` — it edits the catalogue as text
+and touches only the entries it is asked to fill.
 
 **The documentation describes the published version, in the present tense, and
 nothing else.** No announcement, no "not yet", no "coming soon", no command that

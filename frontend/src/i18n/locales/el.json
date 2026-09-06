@@ -925,7 +925,18 @@
         "willMakeChanges": "Η λειτουργία εισαγωγής θα κάνει τις ακόλουθες αλλαγές:",
         "willMerge": "Θα συγχωνευθούν",
         "willSkip": "Θα παραλειφθούν",
-        "dropToImport": "Αφήστε τα αρχεία εδώ για εισαγωγή"
+        "dropToImport": "Αφήστε τα αρχεία εδώ για εισαγωγή",
+        "reportNewPositions": "Νέες θέσεις",
+        "reportFlagged": "Επισημασμένες στο αρχικό πρόγραμμα",
+        "reportPR": "PR για αυτή την εισαγωγή",
+        "reportDecisions": "σε {n} αποφάσεις ({who})",
+        "reportBothPlayers": "και οι δύο παίκτες",
+        "reportNoAnalysis": "καμία ανάλυση για βαθμολόγηση",
+        "reportUnanalysed": "{n} θέση/θέσεις χωρίς ανάλυση",
+        "reportAnalyzeNow": "Ανάλυση τώρα",
+        "reportWorst": "Χειρότερες αποφάσεις",
+        "reportCube": "κύβος",
+        "reportChecker": "πούλια"
     },
     "warning": {
         "title": "Προειδοποίηση",
@@ -1063,7 +1074,8 @@
         "searching": "Αναζήτηση…",
         "positionAddedToDeck": "Η θέση προστέθηκε στην τράπουλα «{deck}»",
         "failedAddToDeck": "Αποτυχία προσθήκης της θέσης στην τράπουλα: {err}",
-        "updateAvailable": "Είναι διαθέσιμη μια νέα έκδοση του blunderDB: {version}"
+        "updateAvailable": "Είναι διαθέσιμη μια νέα έκδοση του blunderDB: {version}",
+        "errorStartingAnalysis": "Δεν ήταν δυνατή η έναρξη της ανάλυσης: {error}"
     },
     "stats": {
         "title": "Στατιστικά",

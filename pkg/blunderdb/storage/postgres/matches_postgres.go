@@ -78,9 +78,19 @@ func scanMatch(sc scanner) (domain.Match, error) {
 const matchInsertSQL = `INSERT INTO match (
 	tenant_id, player1_name, player2_name, event, location, round,
 	match_length, match_date, file_path, game_count, tournament_id, comment,
-	match_hash, canonical_hash
-) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+	match_hash, canonical_hash, import_batch_id
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
 RETURNING id, import_date`
+
+// nullableID returns nil for a zero id so it is stored as SQL NULL — which is
+// what a foreign key with ON DELETE SET NULL expects, and what "this match came
+// in with no batch" means.
+func nullableID(id int64) any {
+	if id == 0 {
+		return nil
+	}
+	return id
+}
 
 // nullableString returns nil for an empty string so it is stored as SQL NULL,
 // keeping the UNIQUE(tenant_id, canonical_hash) index from rejecting a second
@@ -101,7 +111,7 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 		tenantID(scope), m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
 		m.TournamentID, m.Comment,
-		nullableString(m.MatchHash), nullableString(m.CanonicalHash)).Scan(&id, &importDate)
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID)).Scan(&id, &importDate)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: save match: %w", err)
 	}

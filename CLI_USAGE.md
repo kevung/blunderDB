@@ -2103,12 +2103,14 @@ Usage: blunderdb list [options]
 List database contents.
 
 Options:
+  -batch int
+    	Show the full report of one import batch instead of the list (imports only)
   -db string
     	Path to the database file (required)
   -decision-type string
     	Decision type: all, checker, or cube (stats only) (default "all")
   -format string
-    	Output format: text, json or csv (stats and players only) (default "text")
+    	Output format: text, json or csv (stats, players and imports only) (default "text")
   -from string
     	Start date filter YYYY-MM-DD (stats only)
   -limit int
@@ -2124,7 +2126,7 @@ Options:
   -tournament string
     	Filter by tournament IDs, comma-separated (stats only)
   -type string
-    	List type: matches, tournaments, positions, stats, players (required)
+    	List type: matches, tournaments, positions, imports, stats, players (required)
 
 Examples:
   # List all matches
@@ -2135,6 +2137,10 @@ Examples:
 
   # List first 20 positions
   blunderdb list --db database.db --type positions --limit 20
+
+  # List the recorded imports, then read one's report
+  blunderdb list --db database.db --type imports
+  blunderdb list --db database.db --type imports --batch 3
 
   # Show database statistics
   blunderdb list --db database.db --type stats
@@ -2207,10 +2213,13 @@ Example:
 ```
 Usage: blunderdb repair [options]
 
-Recompute the scalar columns of every analysis from the JSON
-they are a projection of. The analyses themselves are left
+Recompute what the database derives from what it stores:
+the scalar columns of every analysis, from the JSON they are
+a projection of, and the phase of every position, from its
+board. The analyses and the positions themselves are left
 untouched: this repairs what was derived from them, and is
-useful after a fix to how an imported analysis is read.
+useful after a fix to how an imported analysis is read, or
+after a change to how a phase is decided.
 Nothing runs it automatically.
 
 Options:
@@ -2232,6 +2241,8 @@ Usage: blunderdb search [options]
 Search for positions in the database using filters.
 
 Options:
+  -comment-origin string
+    	Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown
   -cube int
     	Filter by cube value
   -db string
@@ -2272,6 +2283,8 @@ Options:
     	Minimum checkers off for player 2
   -offset int
     	Skip this many results before the first one returned (paging, with --limit)
+  -phase blunderdb repair
+    	Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see blunderdb repair)
   -pip-max int
     	Maximum pip count difference
   -pip-min int

@@ -30,6 +30,10 @@ export function AnalyzeStaleGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) 
   return window['go']['database']['Database']['AnalyzeStaleGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
+export function BeginImportBatch(arg1, arg2) {
+  return window['go']['database']['Database']['BeginImportBatch'](arg1, arg2);
+}
+
 export function BuryAnkiCard(arg1) {
   return window['go']['database']['Database']['BuryAnkiCard'](arg1);
 }
@@ -188,6 +192,10 @@ export function ExportMatchMAT(arg1, arg2) {
 
 export function ExportTournaments(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+}
+
+export function FinishImportBatch(arg1, arg2) {
+  return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
 }
 
 export function GetAllAnkiDecks() {
@@ -354,6 +362,10 @@ export function ImportGnuBGMatchFromText(arg1) {
   return window['go']['database']['Database']['ImportGnuBGMatchFromText'](arg1);
 }
 
+export function ImportReport(arg1) {
+  return window['go']['database']['Database']['ImportReport'](arg1);
+}
+
 export function ImportXGMatch(arg1) {
   return window['go']['database']['Database']['ImportXGMatch'](arg1);
 }
@@ -368,6 +380,10 @@ export function IsProtectedCopyPath(arg1) {
 
 export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
+}
+
+export function ListImportBatches(arg1, arg2) {
+  return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
 }
 
 export function ListPositionIDs() {

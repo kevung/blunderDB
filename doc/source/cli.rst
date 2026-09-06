@@ -412,6 +412,12 @@ Affiche le contenu de la base de données.
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
 * ``positions`` — Liste des positions (limité à 10 par défaut).
+* ``imports`` — Liste des imports enregistrés, du plus récent au plus ancien :
+  identifiant, date, format, source, matchs importés / ignorés / enrichis,
+  fichiers illisibles et positions nouvelles. Avec ``--batch <id>``, affiche le
+  **compte rendu complet** d'un import : positions marquées, positions sans
+  analyse, PR sur ce lot et cinq pires décisions (voir
+  :ref:`compte_rendu_import`).
 * ``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC
   (global, pions, videau), PR glissant sur les N dernières décisions, top
   blunders, répartition par action de videau et histogramme des magnitudes
@@ -433,6 +439,16 @@ Affiche le contenu de la base de données.
   (défaut: ``all``).
 * ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+
+**Options (type ``imports`` uniquement):**
+
+* ``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au lieu
+  de la liste.
+* ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
+
+La moitié mesurée du compte rendu est recalculée à chaque appel : un lot dont
+les positions ont été analysées depuis rend les chiffres d'aujourd'hui, non ceux
+du jour de l'import.
 
 **Options (type ``players`` uniquement):**
 
@@ -457,6 +473,10 @@ distinctes.
 **Exemples:**
 
 .. code-block:: bash
+
+   # Les imports enregistrés, puis le compte rendu de l'un d'eux
+   ./blunderdb list --db base.db --type imports
+   ./blunderdb list --db base.db --type imports --batch 3
 
    # Statistiques de la base
    ./blunderdb list --db base.db --type stats

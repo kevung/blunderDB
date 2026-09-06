@@ -37,6 +37,11 @@ type Source struct {
 	Format Format
 	Reader io.Reader
 	Path   string
+	// BatchID stamps every match this import writes with the batch it came in
+	// with (issue #257), 0 for an import that opened none. Set by the caller
+	// that owns the batch — the daemon's handler, the CLI — because only it
+	// knows how many files the user meant as one import.
+	BatchID int64
 }
 
 // Progress is reported incrementally during an import.
@@ -52,6 +57,14 @@ type Summary struct {
 	SkippedDuplicates int   `json:"skippedDuplicates"`
 	Matches           int   `json:"matches"`
 	MatchID           int64 `json:"matchId,omitempty"`
+	// Enriched counts the cross-format duplicates whose analyses and comments
+	// were merged into a match already stored — neither a new match nor a
+	// skipped one, and invisible in the summary until #257 needed to say so.
+	Enriched int `json:"enriched,omitempty"`
+	// BatchID is the import batch these figures belong to, 0 when the caller
+	// opened none. /v1/imports.* fills it so a client can ask for the full
+	// end-of-import report afterwards.
+	BatchID int64 `json:"batchId,omitempty"`
 }
 
 // ExportOptions says how an export is made. Format picks the exporter; the

@@ -19,7 +19,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, stats, players (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, imports, stats, players (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -30,7 +30,10 @@ func (cli *CLI) runList(args []string) error {
 	statsTo := listCmd.String("to", "", "End date filter YYYY-MM-DD (stats only)")
 	statsDecisionType := listCmd.String("decision-type", "all", "Decision type: all, checker, or cube (stats only)")
 	statsTopBlunders := listCmd.Int("top-blunders", 10, "Number of top blunders to show (stats only)")
-	statsFormat := listCmd.String("format", "text", "Output format: text, json or csv (stats and players only)")
+	statsFormat := listCmd.String("format", "text", "Output format: text, json or csv (stats, players and imports only)")
+
+	// Imports-specific flag (only used when --type imports)
+	batchID := listCmd.Int64("batch", 0, "Show the full report of one import batch instead of the list (imports only)")
 
 	listCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb list [options]")
@@ -49,6 +52,10 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println()
 		fmt.Println("  # List first 20 positions")
 		fmt.Println("  blunderdb list --db database.db --type positions --limit 20")
+		fmt.Println()
+		fmt.Println("  # List the recorded imports, then read one's report")
+		fmt.Println("  blunderdb list --db database.db --type imports")
+		fmt.Println("  blunderdb list --db database.db --type imports --batch 3")
 		fmt.Println()
 		fmt.Println("  # Show database statistics")
 		fmt.Println("  blunderdb list --db database.db --type stats")
@@ -94,6 +101,8 @@ func (cli *CLI) runList(args []string) error {
 		return cli.listTournaments(*limit)
 	case "positions":
 		return cli.listPositions(*limit)
+	case "imports":
+		return cli.listImports(*limit, *batchID, strings.ToLower(*statsFormat))
 	case "stats":
 		// Build StatsFilter from flags
 		filter := StatsFilter{
@@ -134,7 +143,7 @@ func (cli *CLI) runList(args []string) error {
 		}
 		return cli.showPlayerTable(filter, *statsFormat)
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'stats', or 'players')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'imports', 'stats', or 'players')", *listType)
 	}
 }
 

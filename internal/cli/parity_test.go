@@ -257,9 +257,20 @@ var databaseParity = map[string]parityEntry{
 	"RemoveAnkiCard":                   {CLI: "anki card", Server: "/v1/anki.removeCard"},
 	"RepairAnalyses":                   {CLI: "repair", Server: "/v1/analyses.repair"},
 	"RepairGamePhases":                 {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
+	"BeginImportBatch":                 {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
+	"FinishImportBatch":                {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
+	"ImportReport":                     {CLI: "list", Server: "/v1/imports.report"},
+	"ListImportBatches":                {CLI: "list", Server: "/v1/imports.list"},
 	"SetAnkiCardSuspended":             {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                           {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 }
+
+// whyBatchIsTheImport: opening and closing an import batch is not a gesture of
+// its own in any mode — it is the beginning and the end of an import. The CLI
+// opens one around `import`, the daemon around each /v1/imports.* upload, and
+// neither exposes a route to open one by hand. What IS exposed everywhere is
+// reading a batch back: ImportReport / list --type imports / imports.report.
+const whyBatchIsTheImport = "opened and closed by an import, never as a gesture of its own"
 
 // serverPaths returns the daemon's /v1 route set, built from the same
 // Server the smoke test walks (Paths() is what `call --list` prints).

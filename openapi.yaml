@@ -1195,6 +1195,26 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/imports.list:
+    post:
+      operationId: imports.list
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/listReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_ImportBatch"
+                  nullable: true
   /v1/imports.position:
     post:
       operationId: imports.position
@@ -1208,6 +1228,24 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/imports.report:
+    post:
+      operationId: imports.report
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importReportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_ImportBatch"
+                nullable: true
   /v1/imports.xg:
     post:
       operationId: imports.xg
@@ -2567,6 +2605,9 @@ components:
     domain_Game:
       type: object
       description: "Opaque: see the Go type domain.Game (defined outside internal/server, not expanded here)."
+    domain_ImportBatch:
+      type: object
+      description: "Opaque: see the Go type domain.ImportBatch (defined outside internal/server, not expanded here)."
     domain_LegalPlay:
       type: object
       description: "Opaque: see the Go type domain.LegalPlay (defined outside internal/server, not expanded here)."
@@ -2705,6 +2746,17 @@ components:
           items:
             type: integer
             format: int64
+    importReportReq:
+      type: object
+      properties:
+        batchId:
+          type: integer
+          format: int64
+        players:
+          type: array
+          nullable: true
+          items:
+            type: string
     lastVisitedReq:
       type: object
       properties:

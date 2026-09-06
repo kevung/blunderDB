@@ -27,7 +27,10 @@ import {
     ImportXGPPosition,
     ParsePositionText,
     RefreshSearchStatistics,
-    CountPositionsWithoutAnalysis
+    CountPositionsWithoutAnalysis,
+    BeginImportBatch,
+    FinishImportBatch,
+    ImportReport
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
@@ -47,7 +50,8 @@ import {
     fileImportTotalFilesStore,
     fileImportCurrentIndexStore,
     fileImportCurrentFileStore,
-    fileImportResultsStore
+    fileImportResultsStore,
+    fileImportReportStore
 } from '../stores/importModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
@@ -433,11 +437,35 @@ export async function importFolder() {
 
 // Returns { type: 'position' | 'match', id } on success, null on failure.
 export async function importSingleFile(filePath) {
+    // One file the user dropped or picked is one import, and it gets the same
+    // end-of-import report a folder does (#257) — but only when it produced a
+    // MATCH. Importing a single position is a two-second gesture that lands on
+    // the board; interrupting it with a report of one line would be noise.
+    const batchID = await beginImportBatch(filePath, extensionOf(filePath));
+    let outcome = null;
     try {
-        return await importSingleFileCore(filePath);
+        outcome = await importSingleFileCore(filePath);
+        return outcome;
     } finally {
+        await finishImportBatch(batchID);
+        if (outcome && outcome.type === 'match' && get(fileImportReportStore)) {
+            fileImportTotalFilesStore.set(1);
+            fileImportCurrentIndexStore.set(1);
+            fileImportCurrentFileStore.set(filePath);
+            fileImportResultsStore.set({ succeeded: 1, failed: 0, skipped: 0, errors: [] });
+            fileImportModeStore.set('completed');
+            showFileImportModalStore.set(true);
+        }
         await maybeAutoAnalyzeAfterImport();
     }
+}
+
+// extensionOf is the import format a batch records for a single file: its
+// extension without the dot, "" when it has none.
+function extensionOf(filePath) {
+    const base = String(filePath).split('/').pop().split('\\').pop();
+    const dot = base.lastIndexOf('.');
+    return dot > 0 ? base.slice(dot + 1).toLowerCase() : '';
 }
 
 async function importSingleFileCore(filePath) {
@@ -691,14 +719,48 @@ export async function importMultipleFiles(files) {
     }
 }
 
+// beginImportBatch opens the batch the end-of-import report will be about
+// (#257), returning 0 when one cannot be opened. Never fatal: the report is a
+// convenience, and losing it must not cost the user the import.
+async function beginImportBatch(source, format) {
+    try {
+        return await BeginImportBatch(source, format);
+    } catch (error) {
+        logger.error('could not open an import batch:', error);
+        return 0;
+    }
+}
+
+// finishImportBatch closes the batch and publishes its report, or clears the
+// report when there is none to publish. Failures are swallowed for the same
+// reason as above.
+async function finishImportBatch(batchID) {
+    if (!batchID) {
+        fileImportReportStore.set(null);
+        return;
+    }
+    try {
+        await FinishImportBatch(batchID, {});
+        fileImportReportStore.set(await ImportReport(batchID));
+    } catch (error) {
+        logger.error('could not read the import report:', error);
+        fileImportReportStore.set(null);
+    }
+}
+
 async function importMultipleFilesCore(files) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);
     fileImportCurrentFileStore.set('');
     fileImportResultsStore.set({ succeeded: 0, failed: 0, skipped: 0, errors: [] });
+    fileImportReportStore.set(null);
     fileImportModeStore.set('importing');
     showFileImportModalStore.set(true);
+
+    // One batch for the whole selection: what the user asked for in one
+    // gesture is one import, whether it was a folder or five dropped files.
+    const batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
 
     let hadMatches = false;
     let lastPositionID = null;
@@ -728,6 +790,7 @@ async function importMultipleFilesCore(files) {
         }
     }
 
+    await finishImportBatch(batchID);
     fileImportModeStore.set('completed');
 
     // Mirrors the CLI batch importer (cli_import.go), which runs a plain
@@ -1027,4 +1090,31 @@ export async function parsePositionText(content) {
             comment: result.comment || ''
         }
     };
+}
+
+// openImportedPosition lands on one of the report's worst decisions and closes
+// the modal — the whole point of listing them is being able to go and look.
+export async function openImportedPosition(positionID) {
+    showFileImportModalStore.set(false);
+    fileImportModeStore.set('idle');
+    await showImportedPosition(positionID);
+}
+
+// analyzeRemainingAfterImport starts the evaluator on what the import brought
+// in without an analysis. It is the report's one action: the panel says "12
+// positions with no analysis" and this is what the user does about it.
+//
+// The batch is the whole database's unanalysed set, not the import's alone —
+// StartGammonNetBatch has no narrowing — which is honest rather than
+// surprising: a user who asks to analyse after an import wants the gaps gone.
+export async function analyzeRemainingAfterImport() {
+    showFileImportModalStore.set(false);
+    fileImportModeStore.set('idle');
+    try {
+        const [ply, pruneK] = await Promise.all([GetGammonNetAnalysisPly(), GetGammonNetPruneK()]);
+        await StartGammonNetBatch(ply, pruneK, 0);
+    } catch (error) {
+        logger.error('could not start the analysis after import:', error);
+        setStatusBarMessage(tMsg('status.errorStartingAnalysis', { error }));
+    }
 }

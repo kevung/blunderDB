@@ -668,6 +668,8 @@ func (im XGImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, err
 	}
 
+	graph.ImportBatchID = src.BatchID
+
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
 		return Summary{}, err
@@ -700,5 +702,9 @@ func (im XGImporter) Import(ctx context.Context, scope string, src Source, prog 
 		sum.SkippedDuplicates = 1
 		sum.SavedPositions = 0
 	}
+	if res.Enriched {
+		sum.Enriched = 1
+	}
+	sum.BatchID = src.BatchID
 	return sum, nil
 }

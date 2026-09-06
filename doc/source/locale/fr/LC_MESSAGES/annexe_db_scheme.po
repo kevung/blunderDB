@@ -3,21 +3,20 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-26 21:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: fr <LL@li.org>\n"
 "Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Generated-By: Babel 2.18.0\n"
+"Generated-By: Babel 2.19.0\n"
 
 #: ../../source/annexe_db_scheme.rst:4
 msgid "Annexe: Schéma de la base de données"
@@ -26,8 +25,8 @@ msgstr ""
 #: ../../source/annexe_db_scheme.rst:6
 msgid ""
 "Une base de données blunderDB est un simple fichier SQLite (extension "
-"*.db*). En l'absence de blunderDB, elle peut ainsi être ouverte et inspectée"
-" avec n'importe quel éditeur ou navigateur de fichiers SQLite."
+"*.db*). En l'absence de blunderDB, elle peut ainsi être ouverte et "
+"inspectée avec n'importe quel éditeur ou navigateur de fichiers SQLite."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:11
@@ -36,27 +35,27 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:13
 msgid ""
-"Le schéma de la base de données est **versionné**. La version courante du "
-"schéma est **2.15.0** ; elle est indépendante de la version de l'application"
-" et n'est incrémentée que lorsque la structure interne évolue. La version du"
-" schéma d'une base ouverte est visible dans le panneau **Métadonnées** "
-"(commande ``meta``)."
+"Le schéma de la base de données est **versionné**. La version courante du"
+" schéma est **2.15.0** ; elle est indépendante de la version de "
+"l'application et n'est incrémentée que lorsque la structure interne "
+"évolue. La version du schéma d'une base ouverte est visible dans le "
+"panneau **Métadonnées** (commande ``meta``)."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:20
 msgid ""
-"Sauvegardez toujours votre fichier *.db* avant d'ouvrir une base créée avec "
-"une version antérieure de blunderDB."
+"Sauvegardez toujours votre fichier *.db* avant d'ouvrir une base créée "
+"avec une version antérieure de blunderDB."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:24
 msgid ""
-"Depuis la version 0.10.0, **toutes les migrations de schéma sont effectuées "
-"automatiquement** à l'ouverture d'une base de données. Aucune commande de "
-"migration manuelle n'est nécessaire. La migration s'effectue sur place : une"
-" base migrée vers un schéma récent ne peut plus être ouverte par des "
-"versions plus anciennes de blunderDB, d'où l'importance de la sauvegarde "
-"préalable."
+"Depuis la version 0.10.0, **toutes les migrations de schéma sont "
+"effectuées automatiquement** à l'ouverture d'une base de données. Aucune "
+"commande de migration manuelle n'est nécessaire. La migration s'effectue "
+"sur place : une base migrée vers un schéma récent ne peut plus être "
+"ouverte par des versions plus anciennes de blunderDB, d'où l'importance "
+"de la sauvegarde préalable."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:32
@@ -76,8 +75,9 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:40
 msgid ""
-"**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent les"
-" matchs importés, leurs parties, leurs coups et l'analyse de chaque coup."
+"**Matchs** : ``match``, ``game``, ``move`` et ``move_analysis`` stockent "
+"les matchs importés, leurs parties, leurs coups et l'analyse de chaque "
+"coup."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:43
@@ -100,9 +100,9 @@ msgstr ""
 #: ../../source/annexe_db_scheme.rst:52
 msgid ""
 "**Historique et divers** : ``command_history`` et ``search_history`` "
-"conservent l'historique des commandes et des recherches, ``filter_library`` "
-"la bibliothèque de filtres, et ``metadata`` les métadonnées de la base (dont"
-" la version du schéma)."
+"conservent l'historique des commandes et des recherches, "
+"``filter_library`` la bibliothèque de filtres, et ``metadata`` les "
+"métadonnées de la base (dont la version du schéma)."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:58
@@ -117,17 +117,17 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:63
 msgid ""
-"**Déduplication des positions** : chaque position porte un hash de Zobrist "
-"et un index unique, de sorte qu'une même position rencontrée dans plusieurs "
-"imports n'est stockée qu'une seule fois."
+"**Déduplication des positions** : chaque position porte un hash de "
+"Zobrist et un index unique, de sorte qu'une même position rencontrée dans"
+" plusieurs imports n'est stockée qu'une seule fois."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:67
 msgid ""
-"**Colonnes de filtrage dénormalisées** : des critères fréquemment recherchés"
-" (type de décision, dés, différence de course, pions sortis, pions arriérés,"
-" erreur de coup ou de videau, chances de gain…) sont précalculés en colonnes"
-" dédiées pour un filtrage rapide."
+"**Colonnes de filtrage dénormalisées** : des critères fréquemment "
+"recherchés (type de décision, dés, différence de course, pions sortis, "
+"pions arriérés, erreur de coup ou de videau, chances de gain…) sont "
+"précalculés en colonnes dédiées pour un filtrage rapide."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:72
@@ -139,13 +139,13 @@ msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:76
 msgid ""
-"**Stockage compact** : les positions sont encodées de façon compacte et les "
-"données d'analyse sont compressées (zlib), ce qui réduit fortement la taille"
-" du fichier."
+"**Stockage compact** : les positions sont encodées de façon compacte et "
+"les données d'analyse sont compressées (zlib), ce qui réduit fortement la"
+" taille du fichier."
 msgstr ""
 
 #: ../../source/annexe_db_scheme.rst:80
 msgid ""
-"**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les "
-"performances en lecture et en écriture."
+"**Journalisation WAL** : le mode WAL et des PRAGMA ajustés améliorent les"
+" performances en lecture et en écriture."
 msgstr ""

@@ -48,6 +48,9 @@ func (b binder) History() storage.CommandHistoryStore {
 	return &sqlshared.CommandHistoryStore{DB: b.shared()}
 }
 func (b binder) Metadata() storage.MetadataStore { return &sqlshared.MetadataStore{DB: b.shared()} }
+func (b binder) ImportBatches() storage.ImportBatchStore {
+	return &sqlshared.ImportBatchStore{DB: b.shared()}
+}
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a

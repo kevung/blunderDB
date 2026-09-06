@@ -89,7 +89,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.db                           custom
      POST /v1/imports.gnubg                        custom
      POST /v1/imports.json                         custom
+     POST /v1/imports.list                         JSON
      POST /v1/imports.position                     custom
+     POST /v1/imports.report                       JSON
      POST /v1/imports.xg                           custom
    maintenance
      POST /ops/maintenance.vacuum                  custom
