@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "No hay posiciones para actualizar",
         "positionMerged": "La posición ya existe, análisis y comentario combinados",
         "positionUpdated": "Posición y análisis actualizados correctamente",
-        "positionDeleted": "Posición y análisis asociado eliminados correctamente",
         "positionPastedClipboard": "Posición pegada en el tablero desde el portapapeles",
         "positionPasted": "Posición pegada en el tablero",
         "positionCopied": "Posición, análisis y comentario copiados al portapapeles",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Posición añadida al mazo «{deck}»",
         "failedAddToDeck": "Error al añadir la posición al mazo: {err}",
         "updateAvailable": "Hay una nueva versión de blunderDB disponible: {version}",
-        "errorStartingAnalysis": "No se pudo iniciar el análisis: {error}"
+        "errorStartingAnalysis": "No se pudo iniciar el análisis: {error}",
+        "positionDeletedUndo": "Posición eliminada — recuperable desde la papelera (comando «trash»)."
     },
     "stats": {
         "title": "Stats",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Suerte desconocida: reimporte las partidas para obtenerla.",
         "playersLuckRolls": "Media sobre {n} tiradas medidas (milipuntos)",
         "filterDisabledOnPlayersTab": "Sin efecto en la pestaña Jugadores"
+    },
+    "trash": {
+        "title": "Papelera",
+        "empty": "La papelera está vacía.",
+        "retention": "Lo que tiene más de 30 días lo elimina el comando «vacuum».",
+        "restore": "Restaurar",
+        "discard": "Eliminar",
+        "emptyAction": "Vaciar la papelera",
+        "kindPosition": "Posición",
+        "kindCollection": "Colección",
+        "kindComment": "Comentario",
+        "kindAnkiCard": "Tarjeta Anki",
+        "restored": "Restaurado: {what}",
+        "restoreFailed": "No se pudo restaurar: {error}"
     }
 }

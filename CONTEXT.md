@@ -76,7 +76,10 @@ than about the database. Deleting a batch never deletes its matches.
 What was deleted, kept for thirty days so it can be put back. A *snapshot*, not a
 soft-delete flag: the delete really happens, and a JSON copy of what was deleted is
 written first, so no search filter, statistic or retention rule has to know about it
-(ADR-0036). `blunderdb vacuum` empties it; an export never carries it.
+(ADR-0036). Restoring a Position re-Saves it, so Deduplication decides where it
+lands — it never creates a duplicate, and it never gives back the old id, because
+the original row is gone. `blunderdb vacuum` empties it; an export never carries it,
+and the Orphan purge never fills it (that purge is housekeeping, not a gesture).
 _Avoid_: recycle bin, archive, soft delete
 
 **Orphan purge**:

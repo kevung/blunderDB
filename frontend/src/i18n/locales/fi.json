@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Ei päivitettäviä positioita",
         "positionMerged": "Positio on jo olemassa, analyysi ja kommentti yhdistetty",
         "positionUpdated": "Positio ja analyysi päivitetty onnistuneesti",
-        "positionDeleted": "Positio ja siihen liittyvä analyysi poistettu onnistuneesti",
         "positionPastedClipboard": "Positio liitetty laudalle leikepöydältä",
         "positionPasted": "Positio liitetty laudalle",
         "positionCopied": "Positio, analyysi ja kommentti kopioitu leikepöydälle",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Asema lisätty pakkaan ”{deck}”",
         "failedAddToDeck": "Aseman lisääminen pakkaan epäonnistui: {err}",
         "updateAvailable": "Uusi blunderDB-versio on saatavilla: {version}",
-        "errorStartingAnalysis": "Analyysiä ei voitu käynnistää: {error}"
+        "errorStartingAnalysis": "Analyysiä ei voitu käynnistää: {error}",
+        "positionDeletedUndo": "Asema poistettu — palautettavissa roskakorista (”trash”-komento)."
     },
     "stats": {
         "title": "Tilastot",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Tuuri tuntematon: tuo ottelut uudelleen.",
         "playersLuckRolls": "Keskiarvo {n} mitatusta heitosta (millipistettä)",
         "filterDisabledOnPlayersTab": "Ei vaikutusta Pelaajat-välilehdellä"
+    },
+    "trash": {
+        "title": "Roskakori",
+        "empty": "Roskakori on tyhjä.",
+        "retention": "Yli 30 päivää vanhat poistaa ”vacuum”-komento.",
+        "restore": "Palauta",
+        "discard": "Poista",
+        "emptyAction": "Tyhjennä roskakori",
+        "kindPosition": "Asema",
+        "kindCollection": "Kokoelma",
+        "kindComment": "Kommentti",
+        "kindAnkiCard": "Anki-kortti",
+        "restored": "Palautettu: {what}",
+        "restoreFailed": "Palautus ei onnistunut: {error}"
     }
 }

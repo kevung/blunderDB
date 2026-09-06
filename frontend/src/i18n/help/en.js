@@ -825,7 +825,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Deletes the current position (confirmation required).</td>
+<td>Deletes the current position (with a confirmation); the delete goes through the trash and stays undoable for thirty days.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Opens the trash: what was deleted, and what it takes to restore it.</td>
 </tr>
 <tr>
 <td>[number]</td>

@@ -47,9 +47,12 @@
     import ImportProgressModal from './ImportProgressModal.svelte';
     import FileImportProgressModal from './FileImportProgressModal.svelte';
     import ExportDatabaseModal from './ExportDatabaseModal.svelte';
+    import TrashModal from './TrashModal.svelte';
 </script>
 
 <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
+
+<TrashModal visible={$activeModal === MODAL.TRASH} onClose={() => closeModal()} />
 
 <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
 {#each Object.entries(MODAL_TABLES) as [modal, tables] (modal)}

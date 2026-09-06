@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // VacuumResult reports the file-size effect of a Vacuum call, in bytes. It
@@ -18,6 +20,13 @@ import (
 type VacuumResult struct {
 	SizeBefore int64
 	SizeAfter  int64
+	// TrashPurged is how many trash entries the run dropped for being older
+	// than domain.TrashRetentionDays (#285, ADR-0036). The trash is purged
+	// HERE and nowhere else: nothing empties it on open, so a user who does
+	// not vacuum keeps everything they deleted, and one who does gets the
+	// space back — which is what "reclaims disk space left behind by
+	// deletions" already meant.
+	TrashPurged int
 }
 
 // Vacuum reclaims disk space left behind by deletions (matches, tournaments,
@@ -38,6 +47,13 @@ func (d *Database) Vacuum() (VacuumResult, error) {
 	if d.db == nil {
 		return VacuumResult{}, fmt.Errorf("vacuum: no database open")
 	}
-	res, err := d.store.Vacuum(context.Background())
-	return VacuumResult{SizeBefore: res.SizeBefore, SizeAfter: res.SizeAfter}, err
+	ctx := context.Background()
+	// Purge before compacting, so the space the purge frees is space this
+	// VACUUM reclaims rather than space the next one will.
+	purged, err := d.store.Trash().Purge(ctx, "", domain.TrashRetentionDays)
+	if err != nil {
+		return VacuumResult{}, err
+	}
+	res, err := d.store.Vacuum(ctx)
+	return VacuumResult{SizeBefore: res.SizeBefore, SizeAfter: res.SizeAfter, TrashPurged: purged}, err
 }

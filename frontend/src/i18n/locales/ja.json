@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "更新するポジションがありません",
         "positionMerged": "ポジションはすでに存在します。分析とコメントをマージしました",
         "positionUpdated": "ポジションと分析を正常に更新しました",
-        "positionDeleted": "ポジションと関連する分析を正常に削除しました",
         "positionPastedClipboard": "クリップボードからポジションをボードに貼り付けました",
         "positionPasted": "ポジションをボードに貼り付けました",
         "positionCopied": "ポジション、分析、コメントをクリップボードにコピーしました",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "局面をデッキ「{deck}」に追加しました",
         "failedAddToDeck": "局面をデッキに追加できませんでした: {err}",
         "updateAvailable": "blunderDBの新しいバージョンがあります: {version}",
-        "errorStartingAnalysis": "解析を開始できませんでした：{error}"
+        "errorStartingAnalysis": "解析を開始できませんでした：{error}",
+        "positionDeletedUndo": "局面を削除しました——ごみ箱から復元できます（「trash」コマンド）。"
     },
     "stats": {
         "title": "統計",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "運は不明です。マッチを再インポートしてください。",
         "playersLuckRolls": "測定された {n} ロールの平均（ミリポイント）",
         "filterDisabledOnPlayersTab": "プレイヤータブでは無効です"
+    },
+    "trash": {
+        "title": "ごみ箱",
+        "empty": "ごみ箱は空です。",
+        "retention": "30 日より古いものは「vacuum」コマンドが削除します。",
+        "restore": "復元",
+        "discard": "削除",
+        "emptyAction": "ごみ箱を空にする",
+        "kindPosition": "局面",
+        "kindCollection": "コレクション",
+        "kindComment": "コメント",
+        "kindAnkiCard": "Anki カード",
+        "restored": "復元しました：{what}",
+        "restoreFailed": "復元できませんでした：{error}"
     }
 }

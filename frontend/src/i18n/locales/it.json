@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Nessuna posizione da aggiornare",
         "positionMerged": "La posizione esiste già, analisi e commento uniti",
         "positionUpdated": "Posizione e analisi aggiornate correttamente",
-        "positionDeleted": "Posizione e analisi associata eliminate correttamente",
         "positionPastedClipboard": "Posizione incollata sul board dagli appunti",
         "positionPasted": "Posizione incollata sul board",
         "positionCopied": "Posizione, analisi e commento copiati negli appunti",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Posizione aggiunta al mazzo «{deck}»",
         "failedAddToDeck": "Errore durante l'aggiunta della posizione al mazzo: {err}",
         "updateAvailable": "È disponibile una nuova versione di blunderDB: {version}",
-        "errorStartingAnalysis": "Impossibile avviare l'analisi: {error}"
+        "errorStartingAnalysis": "Impossibile avviare l'analisi: {error}",
+        "positionDeletedUndo": "Posizione eliminata — recuperabile dal cestino (comando «trash»)."
     },
     "stats": {
         "title": "Stats",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Fortuna sconosciuta: reimporta le partite per ottenerla.",
         "playersLuckRolls": "Media su {n} lanci misurati (millipunti)",
         "filterDisabledOnPlayersTab": "Nessun effetto nella scheda Giocatori"
+    },
+    "trash": {
+        "title": "Cestino",
+        "empty": "Il cestino è vuoto.",
+        "retention": "Ciò che ha più di 30 giorni viene eliminato dal comando «vacuum».",
+        "restore": "Ripristina",
+        "discard": "Elimina",
+        "emptyAction": "Svuota il cestino",
+        "kindPosition": "Posizione",
+        "kindCollection": "Collezione",
+        "kindComment": "Commento",
+        "kindAnkiCard": "Carta Anki",
+        "restored": "Ripristinato: {what}",
+        "restoreFailed": "Ripristino impossibile: {error}"
     }
 }

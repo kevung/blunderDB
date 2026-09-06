@@ -101,6 +101,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/MovesByPositions", testMovesByPositions},
 		{"Match/MoveAnalysisRoundTrip", testMoveAnalysisRoundTrip},
 		{"Match/HashesReadBack", testMatchHashesReadBack},
+		{"Trash/PutListDiscard", testTrashPutListDiscard},
+		{"Trash/PurgeByAge", testTrashPurgeByAge},
 		{"ImportBatch/Lifecycle", testImportBatchLifecycle},
 		{"ImportBatch/ReportIsMeasuredNotStored", testImportBatchReportIsMeasured},
 		{"ImportBatch/ReportIsAboutOneImport", testImportBatchReportIgnoresOtherBatches},

@@ -17,7 +17,7 @@ import { get } from 'svelte/store';
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     CreateCollection: vi.fn().mockResolvedValue(undefined),
     GetAllCollections: vi.fn().mockResolvedValue([]),
-    DeleteCollection: vi.fn().mockResolvedValue(undefined),
+    TrashCollection: vi.fn().mockResolvedValue(undefined),
     AddPositionToCollection: vi.fn().mockResolvedValue(undefined),
     RemovePositionFromCollection: vi.fn().mockResolvedValue(undefined),
     GetCollectionPositions: vi.fn().mockResolvedValue([]),
@@ -34,7 +34,7 @@ vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn().mockRes
 import {
     CreateCollection,
     GetAllCollections,
-    DeleteCollection,
+    TrashCollection,
     AddPositionToCollection,
     RemovePositionFromCollection,
     GetCollectionPositions,
@@ -152,7 +152,7 @@ describe('CollectionPanel — list view', () => {
         await fireEvent.click(deleteBtn);
         await vi.waitFor(() => expect(GetAllCollections).toHaveBeenCalledTimes(2)); // initial load + post-delete reload
 
-        expect(DeleteCollection).toHaveBeenCalledWith(1);
+        expect(TrashCollection).toHaveBeenCalledWith(1);
     });
 
     test('renaming a collection through the inline editor', async () => {

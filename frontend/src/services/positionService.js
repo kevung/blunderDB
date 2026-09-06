@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import {
     ListPositionIDs,
-    DeletePosition,
+    TrashPosition,
     DeleteAnalysis,
     UpdatePosition,
     SaveAnalysis,
@@ -564,11 +564,13 @@ export async function deletePosition() {
 
     try {
         const positionID = positionsStore.idAt(get(currentPositionIndexStore));
-        await DeletePosition(positionID);
+        // Through the trash (#285): the delete really happens, but a snapshot
+        // is written first, so `trash` can put it back for thirty days.
+        await TrashPosition(positionID);
         logger.log('Position and associated analysis deleted with ID:', positionID);
 
         await loadAllPositions();
-        setStatusBarMessage(tMsg('status.positionDeleted'));
+        setStatusBarMessage(tMsg('status.positionDeletedUndo'));
     } catch (error) {
         logger.error('Error deleting position and associated analysis:', error);
         setStatusBarMessage(tMsg('status.errorDeletingPosition'));

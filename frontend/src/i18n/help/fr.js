@@ -841,7 +841,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Supprime la position courante (confirmation demandée).</td>
+<td>Supprime la position courante (confirmation demandée) ; la suppression passe par la corbeille et reste annulable trente jours.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer.</td>
 </tr>
 <tr>
 <td>[number]</td>

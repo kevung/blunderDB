@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "No positions to update",
         "positionMerged": "Position already exists, analysis and comment merged",
         "positionUpdated": "Position and analysis updated successfully",
-        "positionDeleted": "Position and associated analysis deleted successfully",
         "positionPastedClipboard": "Position pasted to board from clipboard",
         "positionPasted": "Position pasted to board",
         "positionCopied": "Position, analysis, and comment copied to clipboard",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Position added to deck \"{deck}\"",
         "failedAddToDeck": "Failed to add the position to the deck: {err}",
         "updateAvailable": "A new blunderDB version is available: {version}",
-        "errorStartingAnalysis": "Could not start the analysis: {error}"
+        "errorStartingAnalysis": "Could not start the analysis: {error}",
+        "positionDeletedUndo": "Position deleted — recoverable from the trash (“trash” command)."
     },
     "stats": {
         "title": "Stats",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Luck unknown: re-import the matches to get it.",
         "playersLuckRolls": "Average over {n} measured rolls (millipoints)",
         "filterDisabledOnPlayersTab": "No effect on the Players tab"
+    },
+    "trash": {
+        "title": "Trash",
+        "empty": "The trash is empty.",
+        "retention": "Anything older than 30 days is dropped by the “vacuum” command.",
+        "restore": "Restore",
+        "discard": "Delete",
+        "emptyAction": "Empty the trash",
+        "kindPosition": "Position",
+        "kindCollection": "Collection",
+        "kindComment": "Comment",
+        "kindAnkiCard": "Anki card",
+        "restored": "Restored: {what}",
+        "restoreFailed": "Could not restore: {error}"
     }
 }

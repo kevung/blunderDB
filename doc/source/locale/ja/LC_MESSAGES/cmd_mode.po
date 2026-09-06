@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 04:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -231,8 +231,18 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante (confirmation demandée)."
-msgstr "現在の局面を削除します（確認を求められます）。"
+msgid ""
+"Supprime la position courante (confirmation demandée) ; la suppression "
+"passe par la corbeille et reste annulable trente jours."
+msgstr "現在の局面を削除する\\ （確認あり\\ ）。削除はごみ箱を経由し、三十日間は取り消せる。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "trash"
+msgstr "trash"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
+msgstr "ごみ箱を開く\\ ：削除されたものと、それを復元する手段。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -327,7 +337,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -363,7 +373,7 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "現在フィルタされている局面の中から検索します。"
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
@@ -1112,7 +1122,7 @@ msgid ""
 "sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr "指定したプレイヤーが（どちらの席でも）参加した対局の局面を検索します（例：pl'Alice'）。大文字・小文字は区別しません。"
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:189
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

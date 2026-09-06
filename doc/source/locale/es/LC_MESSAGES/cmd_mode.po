@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 04:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -240,8 +240,22 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante (confirmation demandée)."
-msgstr "Elimina la posición actual (se pide confirmación)."
+msgid ""
+"Supprime la position courante (confirmation demandée) ; la suppression "
+"passe par la corbeille et reste annulable trente jours."
+msgstr ""
+"Elimina la posición actual (se pide confirmación); el borrado pasa por la"
+" papelera y se puede deshacer durante treinta días."
+
+#: ../../source/cmd_mode.rst:1
+msgid "trash"
+msgstr "trash"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
+msgstr ""
+"Abre la papelera: lo que se ha eliminado, con lo necesario para "
+"restaurarlo."
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -342,7 +356,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -378,7 +392,7 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Buscar entre las posiciones actualmente filtradas."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
@@ -1152,7 +1166,7 @@ msgstr ""
 " en cualquier lado (p. ej. pl'Alice'). No distingue mayúsculas y "
 "minúsculas."
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:189
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

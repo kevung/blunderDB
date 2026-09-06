@@ -61,6 +61,7 @@ type Stores interface {
 	History() CommandHistoryStore
 	Metadata() MetadataStore
 	ImportBatches() ImportBatchStore
+	Trash() TrashStore
 }
 
 // Storage is the root persistence interface implemented by every backend.

@@ -837,7 +837,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Elimina la posizione corrente (viene chiesta conferma).</td>
+<td>Elimina la posizione corrente (con conferma); la cancellazione passa dal cestino e resta annullabile per trenta giorni.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Apre il cestino: ciò che è stato eliminato, con quanto serve a ripristinarlo.</td>
 </tr>
 <tr>
 <td>[number]</td>

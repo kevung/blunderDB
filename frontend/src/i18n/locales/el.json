@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Δεν υπάρχουν θέσεις προς ενημέρωση",
         "positionMerged": "Η θέση υπάρχει ήδη, η ανάλυση και το σχόλιο συγχωνεύτηκαν",
         "positionUpdated": "Η θέση και η ανάλυση ενημερώθηκαν με επιτυχία",
-        "positionDeleted": "Η θέση και η σχετική ανάλυση διαγράφηκαν με επιτυχία",
         "positionPastedClipboard": "Η θέση επικολλήθηκε στο ταμπλό από το πρόχειρο",
         "positionPasted": "Η θέση επικολλήθηκε στο ταμπλό",
         "positionCopied": "Η θέση, η ανάλυση και το σχόλιο αντιγράφηκαν στο πρόχειρο",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Η θέση προστέθηκε στην τράπουλα «{deck}»",
         "failedAddToDeck": "Αποτυχία προσθήκης της θέσης στην τράπουλα: {err}",
         "updateAvailable": "Είναι διαθέσιμη μια νέα έκδοση του blunderDB: {version}",
-        "errorStartingAnalysis": "Δεν ήταν δυνατή η έναρξη της ανάλυσης: {error}"
+        "errorStartingAnalysis": "Δεν ήταν δυνατή η έναρξη της ανάλυσης: {error}",
+        "positionDeletedUndo": "Η θέση διαγράφηκε — ανακτήσιμη από τον κάδο (εντολή «trash»)."
     },
     "stats": {
         "title": "Στατιστικά",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Άγνωστη τύχη: εισαγάγετε ξανά τους αγώνες.",
         "playersLuckRolls": "Μέσος όρος σε {n} μετρημένες ζαριές (χιλιοστά πόντου)",
         "filterDisabledOnPlayersTab": "Δεν ισχύει στην καρτέλα Παίκτες"
+    },
+    "trash": {
+        "title": "Κάδος",
+        "empty": "Ο κάδος είναι άδειος.",
+        "retention": "Ό,τι είναι παλαιότερο από 30 ημέρες διαγράφεται από την εντολή «vacuum».",
+        "restore": "Επαναφορά",
+        "discard": "Διαγραφή",
+        "emptyAction": "Άδειασμα του κάδου",
+        "kindPosition": "Θέση",
+        "kindCollection": "Συλλογή",
+        "kindComment": "Σχόλιο",
+        "kindAnkiCard": "Κάρτα Anki",
+        "restored": "Επαναφέρθηκε: {what}",
+        "restoreFailed": "Αδύνατη η επαναφορά: {error}"
     }
 }

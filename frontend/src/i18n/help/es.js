@@ -838,7 +838,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Elimina la posición actual (se pide confirmación).</td>
+<td>Elimina la posición actual (se pide confirmación); el borrado pasa por la papelera y se puede deshacer durante treinta días.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Abre la papelera: lo que se ha eliminado, con lo necesario para restaurarlo.</td>
 </tr>
 <tr>
 <td>[number]</td>

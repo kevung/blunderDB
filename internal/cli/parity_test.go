@@ -265,6 +265,14 @@ var databaseParity = map[string]parityEntry{
 	"ListImportBatches":                 {CLI: "list", Server: "/v1/imports.list"},
 	"SetAnkiCardSuspended":              {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                            {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
+	"TrashPosition":                     {CLI: "trash", Server: "/v1/trash.deletePosition"},
+	"TrashCollection":                   {CLI: "trash", Server: "/v1/trash.deleteCollection"},
+	"TrashCommentEntry":                 {CLI: "trash", Server: "/v1/trash.deleteComment"},
+	"RestoreFromTrash":                  {CLI: "trash", Server: "/v1/trash.restore"},
+	"DiscardFromTrash":                  {CLI: "trash", Server: "/v1/trash.discard"},
+	"EmptyTrash":                        {CLI: "trash", Server: "/v1/trash.empty"},
+	"ListTrash":                         {CLI: "trash", Server: "/v1/trash.list"},
+	"CountTrash":                        {CLI: "trash", Server: "/v1/trash.count"},
 }
 
 // whyBatchIsTheImport: opening and closing an import batch is not a gesture of

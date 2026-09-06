@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Keine Positionen zum Aktualisieren",
         "positionMerged": "Position existiert bereits, Analyse und Kommentar zusammengeführt",
         "positionUpdated": "Position und Analyse erfolgreich aktualisiert",
-        "positionDeleted": "Position und zugehörige Analyse erfolgreich gelöscht",
         "positionPastedClipboard": "Position aus der Zwischenablage auf das Brett eingefügt",
         "positionPasted": "Position auf das Brett eingefügt",
         "positionCopied": "Position, Analyse und Kommentar in die Zwischenablage kopiert",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Position zum Stapel „{deck}“ hinzugefügt",
         "failedAddToDeck": "Fehler beim Hinzufügen der Position zum Stapel: {err}",
         "updateAvailable": "Eine neue Version von blunderDB ist verfügbar: {version}",
-        "errorStartingAnalysis": "Analyse konnte nicht gestartet werden: {error}"
+        "errorStartingAnalysis": "Analyse konnte nicht gestartet werden: {error}",
+        "positionDeletedUndo": "Stellung gelöscht — im Papierkorb wiederherstellbar (Befehl „trash“)."
     },
     "stats": {
         "title": "Stats",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Glück unbekannt: Matches erneut importieren.",
         "playersLuckRolls": "Durchschnitt über {n} gemessene Würfe (Millipunkte)",
         "filterDisabledOnPlayersTab": "Ohne Wirkung im Reiter Spieler"
+    },
+    "trash": {
+        "title": "Papierkorb",
+        "empty": "Der Papierkorb ist leer.",
+        "retention": "Was älter als 30 Tage ist, entfernt der Befehl „vacuum“.",
+        "restore": "Wiederherstellen",
+        "discard": "Löschen",
+        "emptyAction": "Papierkorb leeren",
+        "kindPosition": "Stellung",
+        "kindCollection": "Sammlung",
+        "kindComment": "Kommentar",
+        "kindAnkiCard": "Anki-Karte",
+        "restored": "Wiederhergestellt: {what}",
+        "restoreFailed": "Wiederherstellung nicht möglich: {error}"
     }
 }

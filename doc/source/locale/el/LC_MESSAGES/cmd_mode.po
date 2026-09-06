@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 04:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -240,8 +240,22 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante (confirmation demandée)."
-msgstr "Διαγράφει την τρέχουσα θέση (ζητείται επιβεβαίωση)."
+msgid ""
+"Supprime la position courante (confirmation demandée) ; la suppression "
+"passe par la corbeille et reste annulable trente jours."
+msgstr ""
+"Διαγράφει την τρέχουσα θέση (ζητείται επιβεβαίωση)· η διαγραφή περνά από "
+"τον κάδο και παραμένει αναιρέσιμη για τριάντα ημέρες."
+
+#: ../../source/cmd_mode.rst:1
+msgid "trash"
+msgstr "trash"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
+msgstr ""
+"Ανοίγει τον κάδο: τι έχει διαγραφεί, μαζί με ό,τι χρειάζεται για να "
+"επαναφερθεί."
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -343,7 +357,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "Επεξεργασία και αναζήτηση"
 
@@ -379,7 +393,7 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Αναζήτηση μεταξύ των θέσεων που είναι ήδη φιλτραρισμένες."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
@@ -1145,7 +1159,7 @@ msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
 "σε οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:189
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

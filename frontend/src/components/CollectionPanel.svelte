@@ -14,7 +14,7 @@
     import {
         CreateCollection,
         GetAllCollections,
-        DeleteCollection,
+        TrashCollection,
         AddPositionToCollection,
         RemovePositionFromCollection,
         GetCollectionPositions,
@@ -260,7 +260,8 @@
     async function deleteCollection(collection, event) {
         event.stopPropagation();
         try {
-            await DeleteCollection(collection.id);
+            // Through the trash (#285): restorable from the `trash` command.
+            await TrashCollection(collection.id);
             if (selectedCollection && selectedCollection.id === collection.id) {
                 selectedCollectionStore.set(null);
                 collectionPositionsStore.set([]);

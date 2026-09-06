@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Aucune position à mettre à jour",
         "positionMerged": "La position existe déjà, analyse et commentaire fusionnés",
         "positionUpdated": "Position et analyse mises à jour avec succès",
-        "positionDeleted": "Position et analyse associée supprimées avec succès",
         "positionPastedClipboard": "Position collée sur le plateau depuis le presse-papiers",
         "positionPasted": "Position collée sur le plateau",
         "positionCopied": "Position, analyse et commentaire copiés dans le presse-papiers",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Position ajoutée au paquet « {deck} »",
         "failedAddToDeck": "Erreur lors de l'ajout de la position au paquet : {err}",
         "updateAvailable": "Une nouvelle version de blunderDB est disponible : {version}",
-        "errorStartingAnalysis": "Impossible de lancer l'analyse : {error}"
+        "errorStartingAnalysis": "Impossible de lancer l'analyse : {error}",
+        "positionDeletedUndo": "Position supprimée — récupérable dans la corbeille (commande « trash »)."
     },
     "stats": {
         "title": "Stats",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Chance inconnue : réimportez les matchs pour l'obtenir.",
         "playersLuckRolls": "Moyenne sur {n} lancers mesurés (millipoints)",
         "filterDisabledOnPlayersTab": "Sans effet sur l'onglet Joueurs"
+    },
+    "trash": {
+        "title": "Corbeille",
+        "empty": "La corbeille est vide.",
+        "retention": "Ce qui a plus de 30 jours est supprimé par la commande « vacuum ».",
+        "restore": "Restaurer",
+        "discard": "Supprimer",
+        "emptyAction": "Vider la corbeille",
+        "kindPosition": "Position",
+        "kindCollection": "Collection",
+        "kindComment": "Commentaire",
+        "kindAnkiCard": "Carte Anki",
+        "restored": "Restauré : {what}",
+        "restoreFailed": "Restauration impossible : {error}"
     }
 }

@@ -90,6 +90,10 @@ export function CommitImportDatabase(arg1) {
   return window['go']['database']['Database']['CommitImportDatabase'](arg1);
 }
 
+export function CompareWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+  return window['go']['database']['Database']['CompareWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+}
+
 export function ComputeEPCFromPosition(arg1) {
   return window['go']['database']['Database']['ComputeEPCFromPosition'](arg1);
 }
@@ -110,12 +114,20 @@ export function CountOrphans() {
   return window['go']['database']['Database']['CountOrphans']();
 }
 
+export function CountPositionsWithForeignAnalysis() {
+  return window['go']['database']['Database']['CountPositionsWithForeignAnalysis']();
+}
+
 export function CountPositionsWithStaleGammonNet(arg1) {
   return window['go']['database']['Database']['CountPositionsWithStaleGammonNet'](arg1);
 }
 
 export function CountPositionsWithoutAnalysis() {
   return window['go']['database']['Database']['CountPositionsWithoutAnalysis']();
+}
+
+export function CountTrash() {
+  return window['go']['database']['Database']['CountTrash']();
 }
 
 export function CreateAnkiDeck(arg1, arg2, arg3, arg4, arg5) {
@@ -172,6 +184,14 @@ export function DeleteSearchHistoryEntry(arg1) {
 
 export function DeleteTournament(arg1) {
   return window['go']['database']['Database']['DeleteTournament'](arg1);
+}
+
+export function DiscardFromTrash(arg1) {
+  return window['go']['database']['Database']['DiscardFromTrash'](arg1);
+}
+
+export function EmptyTrash(arg1) {
+  return window['go']['database']['Database']['EmptyTrash'](arg1);
 }
 
 export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
@@ -390,6 +410,10 @@ export function ListPositionIDs() {
   return window['go']['database']['Database']['ListPositionIDs']();
 }
 
+export function ListTrash(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListTrash'](arg1, arg2, arg3);
+}
+
 export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
 }
@@ -518,6 +542,10 @@ export function ResetAnkiDeck(arg1) {
   return window['go']['database']['Database']['ResetAnkiDeck'](arg1);
 }
 
+export function RestoreFromTrash(arg1) {
+  return window['go']['database']['Database']['RestoreFromTrash'](arg1);
+}
+
 export function ReviewAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['ReviewAnkiCard'](arg1, arg2);
 }
@@ -604,6 +632,18 @@ export function SyncAnkiDeck(arg1) {
 
 export function SyncAnkiDeckWithPositions(arg1, arg2) {
   return window['go']['database']['Database']['SyncAnkiDeckWithPositions'](arg1, arg2);
+}
+
+export function TrashCollection(arg1) {
+  return window['go']['database']['Database']['TrashCollection'](arg1);
+}
+
+export function TrashCommentEntry(arg1) {
+  return window['go']['database']['Database']['TrashCommentEntry'](arg1);
+}
+
+export function TrashPosition(arg1) {
+  return window['go']['database']['Database']['TrashPosition'](arg1);
 }
 
 export function UpdateAnkiDeck(arg1, arg2, arg3) {

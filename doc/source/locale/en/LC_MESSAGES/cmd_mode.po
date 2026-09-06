@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 04:07+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -239,8 +239,20 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante (confirmation demandée)."
-msgstr "Deletes the current position (confirmation required)."
+msgid ""
+"Supprime la position courante (confirmation demandée) ; la suppression "
+"passe par la corbeille et reste annulable trente jours."
+msgstr ""
+"Deletes the current position (with a confirmation); the delete goes "
+"through the trash and stays undoable for thirty days."
+
+#: ../../source/cmd_mode.rst:1
+msgid "trash"
+msgstr "trash"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
+msgstr "Opens the trash: what was deleted, and what it takes to restore it."
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -339,7 +351,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -375,7 +387,7 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Search among the currently filtered positions."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
@@ -1138,7 +1150,7 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. pl'Alice'). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:189
 msgid "Commandes diverses"
 msgstr "Various commands"
 

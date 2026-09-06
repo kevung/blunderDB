@@ -3,6 +3,7 @@
 import {context} from '../models';
 import {database} from '../models';
 import {sqlite} from '../models';
+import {gammonnet} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
 import {storage} from '../models';
@@ -52,6 +53,8 @@ export function CollectionCoverage(arg1:Array<number>):Promise<Record<number, nu
 
 export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
+export function CompareWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any):Promise<gammonnet.AnalysisComparison>;
+
 export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result>;
 
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
@@ -62,9 +65,13 @@ export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
 
+export function CountPositionsWithForeignAnalysis():Promise<number>;
+
 export function CountPositionsWithStaleGammonNet(arg1:number):Promise<number>;
 
 export function CountPositionsWithoutAnalysis():Promise<number>;
+
+export function CountTrash():Promise<number>;
 
 export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,arg5:string):Promise<number>;
 
@@ -93,6 +100,10 @@ export function DeleteProtectedCopyPath(arg1:string):Promise<void>;
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function DeleteTournament(arg1:number):Promise<void>;
+
+export function DiscardFromTrash(arg1:number):Promise<void>;
+
+export function EmptyTrash(arg1:number):Promise<number>;
 
 export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
@@ -202,6 +213,8 @@ export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.
 
 export function ListPositionIDs():Promise<Array<number>>;
 
+export function ListTrash(arg1:string,arg2:number,arg3:number):Promise<Array<domain.TrashEntry>>;
+
 export function LoadAllPositions():Promise<Array<domain.Position>>;
 
 export function LoadAnalysis(arg1:number):Promise<domain.PositionAnalysis>;
@@ -266,6 +279,8 @@ export function RepairGamePhases():Promise<number>;
 
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
+export function RestoreFromTrash(arg1:number):Promise<number>;
+
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
 export function SaveAnalysis(arg1:number,arg2:domain.PositionAnalysis):Promise<void>;
@@ -309,6 +324,12 @@ export function SwapMatchPlayers(arg1:number):Promise<void>;
 export function SyncAnkiDeck(arg1:number):Promise<void>;
 
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function TrashCollection(arg1:number):Promise<number>;
+
+export function TrashCommentEntry(arg1:number):Promise<number>;
+
+export function TrashPosition(arg1:number):Promise<number>;
 
 export function UpdateAnkiDeck(arg1:number,arg2:string,arg3:string):Promise<void>;
 

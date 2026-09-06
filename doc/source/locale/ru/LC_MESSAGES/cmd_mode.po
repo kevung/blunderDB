@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:02+0200\n"
+"POT-Creation-Date: 2026-09-06 04:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -241,8 +241,20 @@ msgid "delete, del, d"
 msgstr "delete, del, d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Supprime la position courante (confirmation demandée)."
-msgstr "Удаляет текущую позицию (требуется подтверждение)."
+msgid ""
+"Supprime la position courante (confirmation demandée) ; la suppression "
+"passe par la corbeille et reste annulable trente jours."
+msgstr ""
+"Удаляет текущую позицию (с подтверждением); удаление проходит через "
+"корзину и остаётся отменяемым тридцать дней."
+
+#: ../../source/cmd_mode.rst:1
+msgid "trash"
+msgstr "trash"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer."
+msgstr "Открывает корзину: что было удалено и чем это восстановить."
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"
@@ -344,7 +356,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Навигация по последнему просмотренному матчу."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:72
 msgid "Édition et recherche"
 msgstr "Редактирование и поиск"
 
@@ -380,7 +392,7 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Искать среди текущих отфильтрованных позиций."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
@@ -1141,7 +1153,7 @@ msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
 "(напр. pl'Alice'). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:189
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

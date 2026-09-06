@@ -2420,6 +2420,145 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/trash.count:
+    post:
+      operationId: trash.count
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/countResp"
+  /v1/trash.deleteCollection:
+    post:
+      operationId: trash.deleteCollection
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/trash.deleteComment:
+    post:
+      operationId: trash.deleteComment
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/trash.deletePosition:
+    post:
+      operationId: trash.deletePosition
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/trash.discard:
+    post:
+      operationId: trash.discard
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/trash.empty:
+    post:
+      operationId: trash.empty
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trashEmptyReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/purgedResp"
+  /v1/trash.list:
+    post:
+      operationId: trash.list
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trashListReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_TrashEntry"
+                  nullable: true
+  /v1/trash.restore:
+    post:
+      operationId: trash.restore
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
 components:
   schemas:
     analysisSaveReq:
@@ -2535,6 +2674,12 @@ components:
         positionId:
           type: integer
           format: int64
+    countResp:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
     deckCreateReq:
       type: object
       properties:
@@ -2645,6 +2790,9 @@ components:
     domain_Tournament:
       type: object
       description: "Opaque: see the Go type domain.Tournament (defined outside internal/server, not expanded here)."
+    domain_TrashEntry:
+      type: object
+      description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
     editPositionSaveReq:
       type: object
       properties:
@@ -2920,6 +3068,12 @@ components:
         position:
           $ref: "#/components/schemas/domain_Position"
           nullable: true
+    purgedResp:
+      type: object
+      properties:
+        purged:
+          type: integer
+          format: int32
     race_Result:
       type: object
       description: "Opaque: see the Go type race.Result (defined outside internal/server, not expanded here)."
@@ -3166,6 +3320,24 @@ components:
           type: string
         location:
           type: string
+    trashEmptyReq:
+      type: object
+      properties:
+        olderThanDays:
+          type: integer
+          format: int32
+    trashListReq:
+      type: object
+      properties:
+        kind:
+          type: string
+          nullable: true
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     versionResp:
       type: object
       properties:

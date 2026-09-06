@@ -635,6 +635,7 @@ export namespace database {
 	export class VacuumResult {
 	    SizeBefore: number;
 	    SizeAfter: number;
+	    TrashPurged: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new VacuumResult(source);
@@ -644,6 +645,7 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.SizeBefore = source["SizeBefore"];
 	        this.SizeAfter = source["SizeAfter"];
+	        this.TrashPurged = source["TrashPurged"];
 	    }
 	}
 
@@ -1765,6 +1767,130 @@ export namespace domain {
 	        this.ref_player = source["ref_player"];
 	    }
 	}
+	export class TrashEntry {
+	    id: number;
+	    kind: string;
+	    label: string;
+	    deletedAt: string;
+	    payload: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrashEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.kind = source["kind"];
+	        this.label = source["label"];
+	        this.deletedAt = source["deletedAt"];
+	        this.payload = source["payload"];
+	    }
+	}
+
+}
+
+export namespace gammonnet {
+	
+	export class ComparisonDisagreement {
+	    positionId: number;
+	    kind: string;
+	    phase: string;
+	    stored: string;
+	    gammonNet: string;
+	    engine: string;
+	    cost: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ComparisonDisagreement(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.kind = source["kind"];
+	        this.phase = source["phase"];
+	        this.stored = source["stored"];
+	        this.gammonNet = source["gammonNet"];
+	        this.engine = source["engine"];
+	        this.cost = source["cost"];
+	    }
+	}
+	export class ComparisonBucket {
+	    compared: number;
+	    sameBest: number;
+	    costMean: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ComparisonBucket(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.compared = source["compared"];
+	        this.sameBest = source["sameBest"];
+	        this.costMean = source["costMean"];
+	    }
+	}
+	export class AnalysisComparison {
+	    compared: number;
+	    refused: number;
+	    failed: number;
+	    sameBest: number;
+	    checkerCompared: number;
+	    checkerSameBest: number;
+	    cubeCompared: number;
+	    cubeSameBest: number;
+	    costMean: number;
+	    costP50: number;
+	    costP95: number;
+	    costMax: number;
+	    overThreshold: number;
+	    byPhase: Record<string, ComparisonBucket>;
+	    worst?: ComparisonDisagreement[];
+	
+	    static createFrom(source: any = {}) {
+	        return new AnalysisComparison(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.compared = source["compared"];
+	        this.refused = source["refused"];
+	        this.failed = source["failed"];
+	        this.sameBest = source["sameBest"];
+	        this.checkerCompared = source["checkerCompared"];
+	        this.checkerSameBest = source["checkerSameBest"];
+	        this.cubeCompared = source["cubeCompared"];
+	        this.cubeSameBest = source["cubeSameBest"];
+	        this.costMean = source["costMean"];
+	        this.costP50 = source["costP50"];
+	        this.costP95 = source["costP95"];
+	        this.costMax = source["costMax"];
+	        this.overThreshold = source["overThreshold"];
+	        this.byPhase = this.convertValues(source["byPhase"], ComparisonBucket, true);
+	        this.worst = this.convertValues(source["worst"], ComparisonDisagreement);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 
 }
 

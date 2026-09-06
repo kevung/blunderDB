@@ -831,7 +831,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Poistaa nykyisen aseman (vahvistus pyydetään).</td>
+<td>Poistaa nykyisen aseman (vahvistus pyydetään); poisto kulkee roskakorin kautta ja on peruttavissa kolmenkymmenen päivän ajan.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Avaa roskakorin: mitä on poistettu ja millä se palautetaan.</td>
 </tr>
 <tr>
 <td>[number]</td>

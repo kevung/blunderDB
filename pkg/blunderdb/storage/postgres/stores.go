@@ -49,6 +49,7 @@ func (b binder) Metadata() storage.MetadataStore { return &sqlshared.MetadataSto
 func (b binder) ImportBatches() storage.ImportBatchStore {
 	return &sqlshared.ImportBatchStore{DB: b.shared()}
 }
+func (b binder) Trash() storage.TrashStore { return &sqlshared.TrashStore{DB: b.shared()} }
 
 // withTx runs fn inside a transaction started from db. The pgx.Tx is passed to
 // fn as an execer; when db is already a transaction the pgx.Tx is a

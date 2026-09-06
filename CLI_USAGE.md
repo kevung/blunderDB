@@ -2369,6 +2369,39 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb trash`
+
+```
+Usage: blunderdb trash <subcommand> [options]
+
+What was deleted through the trash, and how to put it back.
+A delete is still a delete: a JSON snapshot of what disappears is
+written first, and nothing else in the database knows the trash
+exists — no search filter, no statistic, no retention rule.
+
+Subcommands:
+  list                 What is in the trash, most recently deleted first.
+  restore --id N       Put entry N back, and drop it from the trash.
+  discard --id N       Drop entry N now, without restoring it.
+  empty [--older-than D]  Drop everything, or only what is older than D days.
+  delete --kind K --id N  Delete an object THROUGH the trash, so it can be undone.
+
+Options:
+  --db string          Path to the database file (required)
+  --kind string        position, collection, comment (delete); also narrows list
+  --limit int          Maximum entries listed (default 50)
+  --format string      text (default) or json
+
+`blunderdb delete` still deletes outright: a script that deletes a
+position expects it gone. Use `trash delete` to keep the undo.
+
+Examples:
+  blunderdb trash delete --db base.db --kind position --id 412
+  blunderdb trash list --db base.db
+  blunderdb trash restore --db base.db --id 3
+  blunderdb trash empty --db base.db --older-than 30
+```
+
 ### `blunderdb vacuum`
 
 ```

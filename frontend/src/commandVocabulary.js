@@ -23,6 +23,7 @@ export const COMMANDS = [
     { name: 'quit', aliases: ['q'] },
     { name: 'help', aliases: ['he', 'h'] },
     { name: 'tutorial', aliases: ['tour'] },
+    { name: 'trash', aliases: [] },
     { name: 'demo', aliases: [] },
     { name: 'e', aliases: [] },
     { name: 's', aliases: [] },

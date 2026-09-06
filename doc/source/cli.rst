@@ -880,6 +880,60 @@ inventé.
    #   cube decision:  92.7% (51/55)
    # ...
 
+trash — La corbeille
+---------------------
+
+Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une
+suppression : un instantané JSON de ce qui disparaît est écrit avant, et rien
+d'autre dans la base ne sait que cette table existe — aucun filtre de
+recherche, aucune statistique, aucune règle de rétention.
+
+.. code-block:: bash
+
+   ./blunderdb trash <sous-commande> --db <chemin> [options]
+
+**Sous-commandes:**
+
+* ``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au plus
+  ancien.
+* ``restore --id N`` — Remet l'entrée N et la retire de la corbeille.
+* ``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer.
+* ``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a plus de
+  J jours.
+* ``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour que
+  le geste soit annulable. ``K`` vaut ``position``, ``collection`` ou
+  ``comment``.
+
+**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit``
+(défaut 50), ``--format`` (``text`` ou ``json``).
+
+.. note:: ``blunderdb delete`` supprime toujours **sans** filet : un script qui
+   supprime une position s'attend à ce qu'elle disparaisse, et laisser un
+   instantané en silence ferait grossir un fichier que personne n'a demandé à
+   voir grossir. C'est ``trash delete`` qui garde l'annulation.
+
+Une restauration de position repasse par la déduplication Zobrist : elle ne
+crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
+d'origine n'existe plus. Une position restaurée est la même position, sous un
+nouveau numéro.
+
+Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — jamais à
+l'ouverture d'une base.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   # Supprimer une position en gardant l'annulation
+   ./blunderdb trash delete --db base.db --kind position --id 412
+
+   # Voir la corbeille, puis remettre une entrée
+   ./blunderdb trash list --db base.db
+   ./blunderdb trash restore --db base.db --id 3
+
+   # Ne garder que ce qui a moins de trente jours
+   ./blunderdb trash empty --db base.db --older-than 30
+
 info — Métadonnées de la base
 ------------------------------
 

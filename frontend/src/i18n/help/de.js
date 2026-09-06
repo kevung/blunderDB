@@ -842,7 +842,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>Löscht die aktuelle Position (Bestätigung erforderlich).</td>
+<td>Löscht die aktuelle Stellung (mit Rückfrage); der Löschvorgang geht durch den Papierkorb und bleibt dreißig Tage rückgängig zu machen.</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>Öffnet den Papierkorb: was gelöscht wurde, und womit es sich wiederherstellen lässt.</td>
 </tr>
 <tr>
 <td>[number]</td>

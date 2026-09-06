@@ -171,6 +171,15 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.tournamentOf             JSON
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
+   trash
+     POST /v1/trash.count                          JSON
+     POST /v1/trash.deleteCollection               JSON
+     POST /v1/trash.deleteComment                  JSON
+     POST /v1/trash.deletePosition                 JSON
+     POST /v1/trash.discard                        JSON
+     POST /v1/trash.empty                          JSON
+     POST /v1/trash.list                           JSON
+     POST /v1/trash.restore                        JSON
 
 
 Idempotence

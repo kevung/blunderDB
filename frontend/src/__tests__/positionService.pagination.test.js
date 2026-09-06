@@ -14,7 +14,7 @@ const bindings = vi.hoisted(() => {
     return {
         ListPositionIDs: vi.fn(() => Promise.resolve([])),
         LoadPositionsByIDs: vi.fn((ids) => Promise.resolve(ids.map(pos))),
-        DeletePosition: vi.fn(() => Promise.resolve()),
+        TrashPosition: vi.fn(() => Promise.resolve()),
         DeleteAnalysis: vi.fn(),
         UpdatePosition: vi.fn(),
         SaveAnalysis: vi.fn(),
@@ -141,7 +141,7 @@ describe('deletePosition', () => {
 
         await deletePosition();
 
-        expect(bindings.DeletePosition).toHaveBeenCalledWith(20);
+        expect(bindings.TrashPosition).toHaveBeenCalledWith(20);
         expect(get(positionsStore).ids).toEqual([10, 30]);
     });
 });

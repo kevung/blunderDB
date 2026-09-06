@@ -5,7 +5,7 @@
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/database/Database.js';
+    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, TrashCommentEntry } from '../../wailsjs/go/database/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
     import { formatDateTime } from '../utils/format.js';
@@ -188,7 +188,8 @@
     async function deleteComment(comment, event) {
         event.stopPropagation();
         try {
-            await DeleteCommentEntry(comment.id);
+            // Through the trash (#285): restorable from the `trash` command.
+            await TrashCommentEntry(comment.id);
             await loadComments();
         } catch (error) {
             logger.error('Error deleting comment:', error);

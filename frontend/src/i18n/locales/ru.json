@@ -1029,7 +1029,6 @@
         "noPositionsToUpdate": "Нет позиций для обновления",
         "positionMerged": "Позиция уже существует, анализ и комментарий объединены",
         "positionUpdated": "Позиция и анализ успешно обновлены",
-        "positionDeleted": "Позиция и связанный анализ успешно удалены",
         "positionPastedClipboard": "Позиция вставлена на доску из буфера обмена",
         "positionPasted": "Позиция вставлена на доску",
         "positionCopied": "Позиция, анализ и комментарий скопированы в буфер обмена",
@@ -1076,7 +1075,8 @@
         "positionAddedToDeck": "Позиция добавлена в колоду «{deck}»",
         "failedAddToDeck": "Не удалось добавить позицию в колоду: {err}",
         "updateAvailable": "Доступна новая версия blunderDB: {version}",
-        "errorStartingAnalysis": "Не удалось запустить анализ: {error}"
+        "errorStartingAnalysis": "Не удалось запустить анализ: {error}",
+        "positionDeletedUndo": "Позиция удалена — восстановима из корзины (команда «trash»)."
     },
     "stats": {
         "title": "Статистика",
@@ -1161,5 +1161,19 @@
         "playersLuckUnknown": "Удача неизвестна: переимпортируйте матчи.",
         "playersLuckRolls": "Среднее по {n} измеренным броскам (миллипункты)",
         "filterDisabledOnPlayersTab": "Не действует на вкладке «Игроки»"
+    },
+    "trash": {
+        "title": "Корзина",
+        "empty": "Корзина пуста.",
+        "retention": "Всё старше 30 дней удаляет команда «vacuum».",
+        "restore": "Восстановить",
+        "discard": "Удалить",
+        "emptyAction": "Очистить корзину",
+        "kindPosition": "Позиция",
+        "kindCollection": "Коллекция",
+        "kindComment": "Комментарий",
+        "kindAnkiCard": "Карточка Anki",
+        "restored": "Восстановлено: {what}",
+        "restoreFailed": "Не удалось восстановить: {error}"
     }
 }

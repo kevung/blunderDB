@@ -480,6 +480,32 @@ Cette distinction a une conséquence visible ailleurs : supprimer un match
 n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
 du fichier source, elle, disparaît avec le match qui l'a apportée.
 
+.. _corbeille:
+
+La corbeille
+------------
+
+Supprimer une position, une collection ou un commentaire passe désormais par
+une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
+disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
+les liste, avec pour chacune *Restaurer* et *Supprimer*.
+
+Une position restaurée revient avec **son analyse et ses commentaires** — la
+rendre nue serait une restauration de nom seulement. Elle ne revient pas sous
+son ancien numéro : la ligne d'origine n'existe plus, et blunderDB la
+réenregistre par son empreinte, ce qui garantit qu'elle ne crée jamais de
+doublon mais lui donne un nouvel identifiant. Une collection revient avec sa
+liste ; les positions qu'elle contenait, elles, n'avaient jamais été
+supprimées — une collection est une vue sur elles.
+
+Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
+l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.
+
+.. note:: La corbeille ne voyage pas. Un export ne l'emporte pas, et supprimer
+   un match n'y met rien : la purge des positions orphelines qui suit une
+   suppression de match est un nettoyage automatique, pas un geste de
+   l'utilisateur — voir la règle de rétention dans :ref:`panneau_matchs`.
+
 .. _panneau_recherche:
 
 Panneau Recherche

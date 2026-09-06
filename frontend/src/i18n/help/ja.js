@@ -820,7 +820,11 @@ export default {
 </tr>
 <tr>
 <td>delete, del, d</td>
-<td>現在の局面を削除します（確認を求められます）。</td>
+<td>現在の局面を削除する（確認あり）。削除はごみ箱を経由し、三十日間は取り消せる。</td>
+</tr>
+<tr>
+<td>trash</td>
+<td>ごみ箱を開く：削除されたものと、それを復元する手段。</td>
 </tr>
 <tr>
 <td>[number]</td>
