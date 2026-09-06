@@ -1268,5 +1268,19 @@
         "failed": "The study queue could not be built.",
         "finished": "Study queue finished: {n} positions walked.",
         "stopped": "Study queue left."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "Your backgammon position database: import your matches, search for what you want to look at again, measure what you play.",
+        "importTitle": "Import my matches",
+        "importNote": "A fresh database, your XG, GNU Backgammon, Jellyfish or BGBlitz files, and your PR with your worst decisions in two minutes.",
+        "demoTitle": "Open the sample database",
+        "demoNote": "Three matches, collections, comments and an Anki deck: enough to try everything without bringing anything.",
+        "tourTitle": "Guided tour",
+        "tourNote": "A walk through the interface, panel by panel.",
+        "openTitle": "Open a database",
+        "openNote": "A .db file you already have.",
+        "resume": "Reopen {name}",
+        "dismiss": "Carry on without opening a database"
     }
 }

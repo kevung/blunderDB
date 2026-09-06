@@ -1268,5 +1268,19 @@
         "failed": "Opiskelujonoa ei voitu rakentaa.",
         "finished": "Opiskelujono valmis: {n} asemaa käyty läpi.",
         "stopped": "Opiskelujonosta poistuttiin."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "Backgammon-asematietokantasi: tuo ottelusi, etsi se mitä haluat katsoa uudelleen, mittaa mitä pelaat.",
+        "importTitle": "Tuo otteluni",
+        "importNote": "Uusi tietokanta, XG-, GNU Backgammon-, Jellyfish- tai BGBlitz-tiedostosi, ja PR-lukusi pahimpine päätöksinesi kahdessa minuutissa.",
+        "demoTitle": "Avaa esimerkkitietokanta",
+        "demoNote": "Kolme ottelua, kokoelmia, kommentteja ja Anki-pakka: tarpeeksi kokeillaksesi kaikkea tuomatta mitään.",
+        "tourTitle": "Opastettu kierros",
+        "tourNote": "Kierros käyttöliittymässä, paneeli kerrallaan.",
+        "openTitle": "Avaa tietokanta",
+        "openNote": ".db-tiedosto joka sinulla jo on.",
+        "resume": "Avaa {name} uudelleen",
+        "dismiss": "Jatka avaamatta tietokantaa"
     }
 }

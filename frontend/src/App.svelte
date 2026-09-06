@@ -82,6 +82,7 @@
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
     import StudyQueueBar from './components/StudyQueueBar.svelte';
+    import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
 
     // Component state
@@ -90,6 +91,10 @@
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
+    // L'écran d'accueil s'écarte pour la session : le panneau Eval fonctionne
+    // sans base, et qui l'a écarté une fois ne veut pas le revoir à chaque
+    // fermeture de base.
+    let homeDismissed = $state(false);
     let positionCount = 0;
     let saveSessionTimeout = null;
     let tabInitialized = false;
@@ -326,7 +331,10 @@
             panelWidth = get(panelWidthStore);
         });
 
-        // On first launch only, show the guided-tour catalog once.
+        // On first launch only, show the guided-tour catalog once. The home
+        // screen (#284) offers the same tour, so the modal is not the only
+        // way in — it stays for the very first launch, where an empty
+        // application deserves both.
         maybeRunFirstRunTour();
 
         // The watched folder (#258), if the user turned one on. Fire and
@@ -400,6 +408,14 @@
                 <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .txt</span>
             </div>
         </div>
+    {/if}
+
+    <!-- L'écran d'accueil (#284). Un plateau vide n'est pas une invitation :
+         il ne dit ni ce que l'outil sait faire, ni par où commencer. Il
+         s'efface dès qu'une base est ouverte, et se laisse écarter pour qui
+         veut se servir du panneau Eval sans base. -->
+    {#if !$databasePathStore && !homeDismissed}
+        <HomeScreen onDismiss={() => (homeDismissed = true)} />
     {/if}
 
     <Toolbar />

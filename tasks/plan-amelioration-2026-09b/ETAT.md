@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : dix-huit issues fermées
+### La session du 2026-09-06 : dix-neuf issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,6 +105,7 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #284 | I.28 | L'écran d'accueil. **« Importer mes matchs » enchaîne** base neuve → fichiers → compte rendu (#257) → file d'étude (#259) : la promesse tenue en deux minutes, pas expliquée. |
 | #262 | I.6 | `import XGID=…` (le même verbe qu'`import`, avec un argument) et le bouton « enrichir depuis un fichier ». **OGID écarté ici** : sa grammaire doit d'abord être relevée sur des échantillons réels (#260). |
 | #259 | I.3 | La file d'étude post-import. Trois raisons ordonnées (ce qui a coûté, ce que le logiciel d'origine avait marqué, les videaux serrés), une position une seule fois, **rien d'enregistré** : ce qu'on en fait EST la trace. |
 | #265 | I.9 | Le vocabulaire de tags. Recherche **délimitée** (`#prime` ≠ `#priming`), cumulative (plusieurs tags = « les deux ») ; fenêtre du vocabulaire avec cardinalité, autocomplétion au `#`, `list --type tags`. Zéro schéma, comme la fiche l'annonçait. |

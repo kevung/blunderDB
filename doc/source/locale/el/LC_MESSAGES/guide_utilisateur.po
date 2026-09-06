@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 06:37+0200\n"
+"POT-Creation-Date: 2026-09-06 06:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -35,15 +35,80 @@ msgstr ""
 "συνηθισμένες χρήσεις· το υπόλοιπο του οδηγού παραμένει κατάλογος "
 "αναφοράς, κίνηση προς κίνηση, για συμβουλή όποτε χρειάζεται."
 
-#: ../../source/guide_utilisateur.rst:12
+#: ../../source/guide_utilisateur.rst:14
+msgid "L'écran d'accueil"
+msgstr "Η αρχική οθόνη"
+
+#: ../../source/guide_utilisateur.rst:16
+msgid ""
+"Tant qu'aucune base n'est ouverte, blunderDB propose quatre chemins "
+"plutôt qu'un plateau vide :"
+msgstr ""
+"Όσο δεν είναι ανοιχτή καμία βάση, το blunderDB προτείνει τέσσερις δρόμους"
+" αντί για ένα άδειο ταμπλό:"
+
+#: ../../source/guide_utilisateur.rst:19
+msgid ""
+"**Importer mes matchs** — le chemin principal. Il enchaîne tout seul : "
+"une base neuve, le choix de vos fichiers (XG, GNU Backgammon, Jellyfish, "
+"BGBlitz), puis le :ref:`compte rendu d'import <compte_rendu_import>` — « "
+"voici votre PR et vos pires décisions » — et, si vous le voulez, la "
+":ref:`file d'étude <file_etude>`. C'est la promesse de l'outil tenue en "
+"deux minutes, plutôt qu'expliquée."
+msgstr ""
+"**Εισαγωγή των αγώνων μου** — ο κύριος δρόμος. Αλυσιδώνεται μόνος του: "
+"μια νέα βάση, η επιλογή των αρχείων σας (XG, GNU Backgammon, Jellyfish, "
+"BGBlitz), έπειτα η :ref:`αναφορά εισαγωγής <compte_rendu_import>` — «να "
+"το PR σας και οι χειρότερες αποφάσεις σας» — και, αν το θέλετε, η "
+":ref:`ουρά μελέτης <file_etude>`. Είναι η υπόσχεση του εργαλείου τηρημένη"
+" σε δύο λεπτά, αντί για εξηγημένη."
+
+#: ../../source/guide_utilisateur.rst:25
+msgid ""
+"**Ouvrir la base d'exemple** — trois matchs, des collections, des "
+"commentaires et un paquet Anki : de quoi tout essayer sans rien apporter."
+msgstr ""
+"**Άνοιγμα της βάσης-δείγματος** — τρεις αγώνες, συλλογές, σχόλια και μια "
+"τράπουλα Anki: αρκετά για να δοκιμάσετε τα πάντα χωρίς να φέρετε τίποτα."
+
+#: ../../source/guide_utilisateur.rst:27
+msgid "**Visite guidée** — le tour de l'interface, panneau par panneau."
+msgstr "**Ξενάγηση** — μια περιήγηση στη διεπαφή, πίνακα προς πίνακα."
+
+#: ../../source/guide_utilisateur.rst:28
+msgid "**Ouvrir une base** — un fichier ``.db`` que vous avez déjà."
+msgstr "**Άνοιγμα βάσης** — ένα αρχείο ``.db`` που έχετε ήδη."
+
+#: ../../source/guide_utilisateur.rst:30
+msgid ""
+"La dernière base ouverte est proposée à part, et **seulement si son "
+"fichier existe encore** : un bouton qui échoue au clic est pire que pas "
+"de bouton."
+msgstr ""
+"Η τελευταία βάση που ανοίχτηκε προτείνεται χωριστά, και **μόνο αν το "
+"αρχείο της υπάρχει ακόμη**: ένα κουμπί που αποτυγχάνει στο κλικ είναι "
+"χειρότερο από καθόλου κουμπί."
+
+#: ../../source/guide_utilisateur.rst:33
+msgid ""
+"L'écran s'efface dès qu'une base est ouverte. Un lien discret l'écarte "
+"pour la session, parce que le panneau Eval fonctionne sans base : on peut"
+" vouloir poser une position et l'évaluer sans rien avoir à ouvrir."
+msgstr ""
+"Η οθόνη σβήνει μόλις ανοίξει μια βάση. Ένας διακριτικός σύνδεσμος την "
+"παραμερίζει για τη συνεδρία, γιατί ο πίνακας Eval λειτουργεί χωρίς βάση: "
+"μπορεί να θέλετε να στήσετε μια θέση και να την αξιολογήσετε χωρίς να "
+"ανοίξετε τίποτα."
+
+#: ../../source/guide_utilisateur.rst:38
 msgid "Tutoriels de bout en bout"
 msgstr "Πλήρη εκπαιδευτικά μαθήματα"
 
-#: ../../source/guide_utilisateur.rst:17
+#: ../../source/guide_utilisateur.rst:43
 msgid "Mon premier import"
 msgstr "Η πρώτη μου εισαγωγή"
 
-#: ../../source/guide_utilisateur.rst:19
+#: ../../source/guide_utilisateur.rst:45
 msgid ""
 "Ce tutoriel part d'un fichier de match eXtreme Gammon (``.xg``) et arrive"
 " à la liste des positions où vous avez le plus perdu."
@@ -51,7 +116,7 @@ msgstr ""
 "Αυτό το μάθημα ξεκινά από ένα αρχείο ματς eXtreme Gammon (``.xg``) και "
 "καταλήγει στη λίστα των θέσεων όπου χάσατε τα περισσότερα."
 
-#: ../../source/guide_utilisateur.rst:22
+#: ../../source/guide_utilisateur.rst:48
 msgid ""
 "**Créer une base.** Bouton *Nouvelle base de données* de la barre "
 "d'outils (ou *CTRL-N*), choisir un emplacement et un nom ; l'extension "
@@ -61,7 +126,7 @@ msgstr ""
 "εργαλείων (ή *CTRL-N*), επιλέξτε μια τοποθεσία και ένα όνομα· η επέκταση "
 "``.db`` προστίθεται αυτόματα."
 
-#: ../../source/guide_utilisateur.rst:26
+#: ../../source/guide_utilisateur.rst:52
 msgid ""
 "**Importer le match.** Glisser-déposer le fichier ``.xg`` sur la fenêtre "
 "de blunderDB (ou *CTRL-I*, puis le sélectionner). blunderDB détecte le "
@@ -75,7 +140,7 @@ msgstr ""
 "στο αρχείο XG (κινήσεις, αποφάσεις κύβου, σημάνσεις), και εμφανίζει τον "
 "πίνακα ματς μόλις η εισαγωγή πετύχει."
 
-#: ../../source/guide_utilisateur.rst:32
+#: ../../source/guide_utilisateur.rst:58
 msgid ""
 "blunderDB reprend l'analyse déjà présente dans le fichier, il n'en refait"
 " pas une : un match jamais analysé dans XG n'a donc aucune erreur à "
@@ -92,7 +157,7 @@ msgstr ""
 "στο παρασκήνιο τις θέσεις που δεν έχουν ανάλυση. Δείτε "
 ":ref:`configuration`."
 
-#: ../../source/guide_utilisateur.rst:39
+#: ../../source/guide_utilisateur.rst:65
 msgid ""
 "**Revoir le match.** Double-cliquer sur la ligne du match (ou la "
 "sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière "
@@ -104,7 +169,7 @@ msgstr ""
 "επισκεφθήκατε. Τα πλήκτρα *ΑΡΙΣΤΕΡΑ*/*ΔΕΞΙΑ* (ή *k*/*j*) διατρέχουν τις "
 "κινήσεις· *PageUp*/*PageDown* αλλάζουν παρτίδα."
 
-#: ../../source/guide_utilisateur.rst:44
+#: ../../source/guide_utilisateur.rst:70
 msgid ""
 "**Lire l'analyse.** *CTRL-L* affiche le panneau Analyse : les meilleurs "
 "coups, leur équité et l'erreur du coup joué (surligné dans la table). Sur"
@@ -116,11 +181,11 @@ msgstr ""
 "παίχτηκε (τονισμένη στον πίνακα). Σε μια απόφαση κύβου, το ίδιο πλήκτρο "
 "εμφανίζει τον πίνακα ισοτιμιών κύβου και την κρίση."
 
-#: ../../source/guide_utilisateur.rst:49
+#: ../../source/guide_utilisateur.rst:75
 msgid "Panneau Analyse pendant la revue d'un match"
 msgstr "Πίνακας Ανάλυσης κατά την ανασκόπηση ενός ματς"
 
-#: ../../source/guide_utilisateur.rst:53
+#: ../../source/guide_utilisateur.rst:79
 msgid ""
 "Le panneau Analyse pendant la revue d'un match : le coup joué est "
 "surligné dans la table des coups candidats."
@@ -128,7 +193,7 @@ msgstr ""
 "Ο πίνακας Ανάλυσης κατά την ανασκόπηση ενός ματς: η κίνηση που παίχτηκε "
 "τονίζεται στον πίνακα υποψήφιων κινήσεων."
 
-#: ../../source/guide_utilisateur.rst:56
+#: ../../source/guide_utilisateur.rst:82
 msgid ""
 "**Trouver les plus grosses erreurs.** Ouvrir le panneau Stats (*CTRL-D*),"
 " onglet *Dashboard* : la liste *Top blunders* donne les dix erreurs les "
@@ -148,11 +213,11 @@ msgstr ""
 "αναζήτηση με το χέρι. Δείτε :ref:`stats` για να εξειδικεύσετε αυτή την "
 "επιλογή ανά παίκτη ή ανά εύρος ημερομηνιών μόλις εισαχθούν πολλά ματς."
 
-#: ../../source/guide_utilisateur.rst:68
+#: ../../source/guide_utilisateur.rst:94
 msgid "Étudier un match"
 msgstr "Μελέτη ενός ματς"
 
-#: ../../source/guide_utilisateur.rst:70
+#: ../../source/guide_utilisateur.rst:96
 msgid ""
 "Une fois plusieurs matchs importés, ce tutoriel détaille l'étude d'un "
 "match en particulier — au-delà du simple parcours du tutoriel précédent."
@@ -161,7 +226,7 @@ msgstr ""
 "συγκεκριμένου ματς — πέρα από την απλή διαδρομή του προηγούμενου "
 "μαθήματος."
 
-#: ../../source/guide_utilisateur.rst:73
+#: ../../source/guide_utilisateur.rst:99
 msgid ""
 "**Ouvrir le panneau des matchs** (*CTRL-Tab*). Il liste tous les matchs "
 "importés, triables par colonne (joueur, date, longueur, tournoi, PR). Le "
@@ -171,15 +236,15 @@ msgstr ""
 "ματς, ταξινομήσιμα κατά στήλη (παίκτης, ημερομηνία, μήκος, τουρνουά, PR)."
 " Το PR και το κόστος MWC ορίζονται στο :ref:`glossaire`."
 
-#: ../../source/guide_utilisateur.rst:77
+#: ../../source/guide_utilisateur.rst:103
 msgid "Panneau des matchs"
 msgstr "Πίνακας ματς"
 
-#: ../../source/guide_utilisateur.rst:81
+#: ../../source/guide_utilisateur.rst:107
 msgid "Le panneau des matchs : liste triable, PR et coût MWC par match."
 msgstr "Ο πίνακας ματς: ταξινομήσιμη λίστα, PR και κόστος MWC ανά ματς."
 
-#: ../../source/guide_utilisateur.rst:83
+#: ../../source/guide_utilisateur.rst:109
 msgid ""
 "**Ouvrir la revue** en double-cliquant sur la ligne, ou en la "
 "sélectionnant puis *ENTREE*. La barre d'informations au-dessus du plateau"
@@ -189,7 +254,7 @@ msgstr ""
 "και πατώντας *ENTER*. Η μπάρα πληροφοριών πάνω από το ταμπλό υπενθυμίζει "
 "τους δύο παίκτες, το τουρνουά και το σκορ."
 
-#: ../../source/guide_utilisateur.rst:87
+#: ../../source/guide_utilisateur.rst:113
 msgid ""
 "**Basculer coups de pions / décision de videau** avec la touche *d* sur "
 "une même position quand les deux analyses sont disponibles (l'une des "
@@ -199,11 +264,11 @@ msgstr ""
 " θέση όταν και οι δύο αναλύσεις είναι διαθέσιμες (η μία από τις δύο "
 "μπορεί να λείπει ανάλογα με το τι περιείχε το εισαγμένο αρχείο)."
 
-#: ../../source/guide_utilisateur.rst:91
+#: ../../source/guide_utilisateur.rst:117
 msgid "Panneau Analyse sur une décision de videau"
 msgstr "Πίνακας Ανάλυσης σε μια απόφαση κύβου"
 
-#: ../../source/guide_utilisateur.rst:95
+#: ../../source/guide_utilisateur.rst:121
 msgid ""
 "Une décision de videau dans le panneau Analyse : équités money, erreur de"
 " chaque option, meilleure décision."
@@ -211,7 +276,7 @@ msgstr ""
 "Μια απόφαση κύβου στον πίνακα Ανάλυσης: ισοτιμίες χρημάτων, σφάλμα κάθε "
 "επιλογής, καλύτερη απόφαση."
 
-#: ../../source/guide_utilisateur.rst:98
+#: ../../source/guide_utilisateur.rst:124
 msgid ""
 "**Annoter** ce que vous observez : *CTRL-P* ouvre le panneau Commentaires"
 " sur la position affichée — utile pour noter *pourquoi* un coup est un "
@@ -221,11 +286,11 @@ msgstr ""
 "Σχολίων στη θέση που εμφανίζεται — χρήσιμο για να σημειώσετε *γιατί* μια "
 "κίνηση είναι λάθος, όχι μόνο *ότι* είναι."
 
-#: ../../source/guide_utilisateur.rst:102
+#: ../../source/guide_utilisateur.rst:128
 msgid "Panneau Commentaires sur une position"
 msgstr "Πίνακας Σχολίων σε μια θέση"
 
-#: ../../source/guide_utilisateur.rst:106
+#: ../../source/guide_utilisateur.rst:132
 msgid ""
 "Le panneau Commentaires : un fil d'échanges attaché à la position "
 "affichée."
@@ -233,7 +298,7 @@ msgstr ""
 "Ο πίνακας Σχολίων: ένα νήμα ανταλλαγών προσαρτημένο στη θέση που "
 "εμφανίζεται."
 
-#: ../../source/guide_utilisateur.rst:109
+#: ../../source/guide_utilisateur.rst:135
 msgid ""
 "**Étiqueter** une position à rejouer plus tard : *ESPACE* pour ouvrir la "
 "ligne de commande, ``#`` suivi d'un mot-clé (par exemple ``#blitz``), "
@@ -246,7 +311,7 @@ msgstr ""
 "επεξεργαστείτε απευθείας τη θέση αν η κίνηση που παίχτηκε δεν είναι αυτή "
 "που θέλετε να μελετήσετε."
 
-#: ../../source/guide_utilisateur.rst:114
+#: ../../source/guide_utilisateur.rst:140
 msgid ""
 "**Sortir du mode match** avec la commande ``m`` : la bibliothèque "
 "retrouve son état précédent, la dernière position visitée du match est "
@@ -256,11 +321,11 @@ msgstr ""
 "επανέρχεται στην προηγούμενη κατάστασή της, η τελευταία θέση που "
 "επισκεφθήκατε στο ματς απομνημονεύεται για την επόμενη επίσκεψη."
 
-#: ../../source/guide_utilisateur.rst:121
+#: ../../source/guide_utilisateur.rst:147
 msgid "Une session Anki"
 msgstr "Μια συνεδρία Anki"
 
-#: ../../source/guide_utilisateur.rst:123
+#: ../../source/guide_utilisateur.rst:149
 msgid ""
 "Le panneau Anki transforme une collection ou une recherche en paquet de "
 "cartes à réviser selon l'algorithme FSRS (répétition espacée)."
@@ -268,7 +333,7 @@ msgstr ""
 "Ο πίνακας Anki μετατρέπει μια συλλογή ή μια αναζήτηση σε τράπουλα καρτών "
 "προς επανάληψη σύμφωνα με τον αλγόριθμο FSRS (κατανεμημένη επανάληψη)."
 
-#: ../../source/guide_utilisateur.rst:126
+#: ../../source/guide_utilisateur.rst:152
 msgid ""
 "**Constituer le paquet.** Deux points de départ possibles : une "
 ":ref:`collection <guide_collections>` de positions choisies à la main, ou"
@@ -282,7 +347,7 @@ msgstr ""
 "σημανθεί ως σφάλματα. Η εντολή ``bl 30`` (30 χειρότερα σφάλματα) "
 "προσφέρει ένα καλό σημείο εκκίνησης για μια πρώτη τράπουλα."
 
-#: ../../source/guide_utilisateur.rst:132
+#: ../../source/guide_utilisateur.rst:158
 msgid ""
 "**Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton *Nouveau "
 "paquet*, nommer le paquet ; il se synchronise sur la recherche ou la "
@@ -292,11 +357,11 @@ msgstr ""
 " *Νέα τράπουλα*, ονομάστε την τράπουλα· συγχρονίζεται με την επιλεγμένη "
 "αναζήτηση ή συλλογή."
 
-#: ../../source/guide_utilisateur.rst:136
+#: ../../source/guide_utilisateur.rst:162
 msgid "Panneau Anki, liste des paquets"
 msgstr "Πίνακας Anki, λίστα τραπουλών"
 
-#: ../../source/guide_utilisateur.rst:140
+#: ../../source/guide_utilisateur.rst:166
 msgid ""
 "Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et dues "
 "aujourd'hui."
@@ -304,7 +369,7 @@ msgstr ""
 "Ο πίνακας Anki: μία τράπουλα ανά γραμμή, συνολικές κάρτες, νέες και "
 "οφειλόμενες σήμερα."
 
-#: ../../source/guide_utilisateur.rst:143
+#: ../../source/guide_utilisateur.rst:169
 msgid ""
 "**Réviser** (bouton *Étudier*) : chaque carte montre une position, vous "
 "formulez votre réponse mentalement, dévoilez la solution (le plateau, "
@@ -320,7 +385,7 @@ msgstr ""
 "επόμενη εμφάνιση. Τίποτα δεν σας υποχρεώνει να αποκαλύψετε την απάντηση "
 "για να συνεχίσετε αν είστε σίγουροι για τον εαυτό σας."
 
-#: ../../source/guide_utilisateur.rst:149
+#: ../../source/guide_utilisateur.rst:175
 msgid ""
 "**S'échauffer sans perturber l'échéancier** (bouton *Entraînement*) : "
 "présente des positions aléatoires du paquet sans toucher au planning FSRS"
@@ -332,7 +397,7 @@ msgstr ""
 " FSRS — χρήσιμο πριν από τουρνουά, ή για εντατική επανάληψη χωρίς να "
 "μετατοπίζονται οι προθεσμίες των άλλων καρτών."
 
-#: ../../source/guide_utilisateur.rst:154
+#: ../../source/guide_utilisateur.rst:180
 msgid ""
 "Voir :ref:`panneau_anki` pour le détail des paramètres (limiter la "
 "séance, taux de rétention visé, réinitialisation d'un paquet)."
@@ -340,11 +405,11 @@ msgstr ""
 "Δείτε :ref:`panneau_anki` για τη λεπτομέρεια των παραμέτρων (περιορισμός "
 "της συνεδρίας, στόχος ποσοστού διατήρησης, επαναφορά μιας τράπουλας)."
 
-#: ../../source/guide_utilisateur.rst:160
+#: ../../source/guide_utilisateur.rst:186
 msgid "Déployer le mode serveur derrière un proxy"
 msgstr "Ανάπτυξη της λειτουργίας διακομιστή πίσω από έναν proxy"
 
-#: ../../source/guide_utilisateur.rst:162
+#: ../../source/guide_utilisateur.rst:188
 msgid ""
 "Le mode serveur (``blunderdb serve``) expose le moteur de blunderDB en "
 "HTTP + JSON. Il **n'authentifie personne** (`ADR-0005 "
@@ -369,7 +434,7 @@ msgstr ""
 "Είναι το απλούστερο σημείο εκκίνησης, προς προσαρμογή (SSO, πιστοποιητικά"
 " πελάτη) ανάλογα με το πλαίσιό σας."
 
-#: ../../source/guide_utilisateur.rst:171
+#: ../../source/guide_utilisateur.rst:197
 msgid ""
 "**Lancer le démon**, replié sur ``127.0.0.1`` (jamais exposé directement)"
 " :"
@@ -377,11 +442,11 @@ msgstr ""
 "**Εκκινήστε τον δαίμονα**, περιορισμένο στο ``127.0.0.1`` (ποτέ "
 "εκτεθειμένο απευθείας):"
 
-#: ../../source/guide_utilisateur.rst:180
+#: ../../source/guide_utilisateur.rst:206
 msgid "**Créer un fichier de mot de passe** pour l'authentification Basic :"
 msgstr "**Δημιουργήστε ένα αρχείο κωδικών** για την πιστοποίηση Basic:"
 
-#: ../../source/guide_utilisateur.rst:186
+#: ../../source/guide_utilisateur.rst:212
 msgid ""
 "**Configurer nginx** pour authentifier puis relayer, en fixant ``X"
 "-Tenant-ID`` lui-même — jamais celui envoyé par le client. Un certificat "
@@ -398,7 +463,7 @@ msgstr ""
 "υποδείξτε εδώ τα δύο αρχεία του. Η θύρα 80 χρησιμεύει μόνο για "
 "ανακατεύθυνση προς HTTPS."
 
-#: ../../source/guide_utilisateur.rst:218
+#: ../../source/guide_utilisateur.rst:244
 msgid ""
 "Les deux ``proxy_set_header`` se lisent dans cet ordre : effacer d'abord "
 "la valeur reçue du client, injecter ensuite celle du proxy."
@@ -407,13 +472,13 @@ msgstr ""
 "η τιμή που ελήφθη από τον πελάτη, έπειτα εισάγεται εκείνη του "
 "διαμεσολαβητή."
 
-#: ../../source/guide_utilisateur.rst:221
+#: ../../source/guide_utilisateur.rst:247
 msgid ""
 "**Vérifier** avec la sous-commande de santé, qui ne passe pas par le "
 "proxy :"
 msgstr "**Ελέγξτε** με την υποεντολή υγείας, που δεν περνά μέσα από τον proxy:"
 
-#: ../../source/guide_utilisateur.rst:228
+#: ../../source/guide_utilisateur.rst:254
 msgid ""
 "**Plusieurs membres, un tenant chacun.** Le démon n'accepte dans ``X"
 "-Tenant-ID`` qu'un entier positif : c'est au proxy d'associer le compte "
@@ -428,7 +493,7 @@ msgstr ""
 "αντιστοιχία, και επιστρέφει την κενή συμβολοσειρά για λογαριασμό που δεν "
 "περιλαμβάνεται σε αυτό — ποτέ ``1``:"
 
-#: ../../source/guide_utilisateur.rst:242
+#: ../../source/guide_utilisateur.rst:268
 msgid ""
 "Le ``location`` refuse alors explicitement un compte non mappé, plutôt "
 "que de le laisser atteindre le démon :"
@@ -436,7 +501,7 @@ msgstr ""
 "Το ``location`` απορρίπτει τότε ρητά έναν λογαριασμό χωρίς αντιστοίχιση, "
 "αντί να τον αφήσει να φτάσει στον δαίμονα:"
 
-#: ../../source/guide_utilisateur.rst:258
+#: ../../source/guide_utilisateur.rst:284
 msgid ""
 "Un tenant par membre suppose le backend PostgreSQL : sur SQLite, comme au"
 " point 1 de ce tutoriel, le démon ne répond que pour ``X-Tenant-ID: 1`` "
@@ -450,7 +515,7 @@ msgstr ""
 "πλήρες σχήμα στο ``deploy/nginx-tenant-proxy.conf``, και το αντίστοιχό "
 "του για Caddy στο ``deploy/Caddyfile``."
 
-#: ../../source/guide_utilisateur.rst:264
+#: ../../source/guide_utilisateur.rst:290
 msgid ""
 "Voir :ref:`headless` pour la surface complète (routes, backend PostgreSQL"
 " multi-tenant avec Row-Level Security, migration depuis SQLite) et "
@@ -460,11 +525,11 @@ msgstr ""
 "PostgreSQL πολλαπλών ενοίκων με Row-Level Security, μετάβαση από SQLite) "
 "και τη δημοσιευμένη εικόνα Docker."
 
-#: ../../source/guide_utilisateur.rst:269
+#: ../../source/guide_utilisateur.rst:295
 msgid "Comment progresser avec blunderDB"
 msgstr "Πώς να βελτιωθείτε με το blunderDB"
 
-#: ../../source/guide_utilisateur.rst:271
+#: ../../source/guide_utilisateur.rst:297
 msgid ""
 "Au-delà des tutoriels ci-dessus, une routine hebdomadaire simple tire le "
 "plus de blunderDB pour progresser :"
@@ -472,7 +537,7 @@ msgstr ""
 "Πέρα από τα παραπάνω μαθήματα, μια απλή εβδομαδιαία ρουτίνα αντλεί το "
 "μέγιστο από το blunderDB για να βελτιωθείτε:"
 
-#: ../../source/guide_utilisateur.rst:274
+#: ../../source/guide_utilisateur.rst:300
 msgid ""
 "**Importer** ses matchs de la semaine (glisser-déposer, ou import de "
 "dossier récursif si plusieurs fichiers) dès que possible après les avoir "
@@ -482,7 +547,7 @@ msgstr ""
 "εισαγωγή φακέλου αν υπάρχουν πολλά αρχεία) όσο το δυνατόν συντομότερα "
 "αφού τα παίξατε — η μνήμη του πλαισίου εξασθενεί γρήγορα."
 
-#: ../../source/guide_utilisateur.rst:278
+#: ../../source/guide_utilisateur.rst:304
 msgid ""
 "**Filtrer les décisions coûteuses** : commande ``bl`` (pires erreurs), ou"
 " panneau Stats filtré sur la période et le type de décision (pions / "
@@ -492,7 +557,7 @@ msgstr ""
 "σφάλματα), ή τον πίνακα Stats φιλτραρισμένο στην περίοδο και τον τύπο "
 "απόφασης (πούλια / κύβος) που βαρύνει περισσότερο στο PR."
 
-#: ../../source/guide_utilisateur.rst:282
+#: ../../source/guide_utilisateur.rst:308
 msgid ""
 "**Commenter** chaque position revue : ce qui a été manqué, la structure "
 "en cause. Un commentaire écrit force une explication — une position "
@@ -502,7 +567,7 @@ msgstr ""
 " ευθύνεται. Ένα γραπτό σχόλιο επιβάλλει μια εξήγηση — μια θέση που απλώς "
 "επανεξετάστηκε χωρίς λέξη ξεχνιέται εξίσου γρήγορα όπως δεν προσέχθηκε."
 
-#: ../../source/guide_utilisateur.rst:286
+#: ../../source/guide_utilisateur.rst:312
 msgid ""
 "**Constituer un paquet Anki** à partir de ces positions commentées : la "
 "répétition espacée fait revenir les mêmes motifs jusqu'à ce qu'ils "
@@ -512,7 +577,7 @@ msgstr ""
 "κατανεμημένη επανάληψη επαναφέρει τα ίδια μοτίβα μέχρι να γίνουν "
 "αντανακλαστικά."
 
-#: ../../source/guide_utilisateur.rst:290
+#: ../../source/guide_utilisateur.rst:316
 msgid ""
 "**Suivre le PR par tournoi** dans l'onglet Progression du panneau Stats "
 "(:ref:`stats`) : une courbe qui baisse tournoi après tournoi est le seul "
@@ -522,7 +587,7 @@ msgstr ""
 " Stats (:ref:`stats`): μια καμπύλη που κατεβαίνει τουρνουά μετά τουρνουά "
 "είναι το μόνο σήμα που δεν λέει ποτέ ψέματα."
 
-#: ../../source/guide_utilisateur.rst:294
+#: ../../source/guide_utilisateur.rst:320
 msgid ""
 "Cette routine ne vaut que si elle est répétée — dix minutes par semaine, "
 "tenues, valent mieux qu'une remise à plat ponctuelle et abandonnée."
@@ -531,11 +596,11 @@ msgstr ""
 "σταθερά, αξίζουν περισσότερο από μια περιστασιακή ανασκόπηση που "
 "εγκαταλείπεται."
 
-#: ../../source/guide_utilisateur.rst:298
+#: ../../source/guide_utilisateur.rst:324
 msgid "Scénario de démonstration (3 minutes)"
 msgstr "Σενάριο επίδειξης (3 λεπτά)"
 
-#: ../../source/guide_utilisateur.rst:300
+#: ../../source/guide_utilisateur.rst:326
 msgid ""
 "Pour présenter blunderDB sans base personnelle, la commande ``demo`` "
 "charge une base d'exemple (positions et matchs fictifs). Le scénario "
@@ -545,7 +610,7 @@ msgstr ""
 " ``demo`` φορτώνει μια βάση δεδομένων παραδείγματος (φανταστικές θέσεις "
 "και ματς). Το ακόλουθο σενάριο διαρκεί τρία λεπτά:"
 
-#: ../../source/guide_utilisateur.rst:304
+#: ../../source/guide_utilisateur.rst:330
 msgid ""
 "*0:00* — ``demo`` en ligne de commande (ou le bouton correspondant de la "
 "barre d'outils) charge la base d'exemple. Le panneau des matchs "
@@ -555,7 +620,7 @@ msgstr ""
 "γραμμής εργαλείων) φορτώνει τη βάση δεδομένων παραδείγματος. Εμφανίζεται "
 "ο πίνακας ματς."
 
-#: ../../source/guide_utilisateur.rst:308
+#: ../../source/guide_utilisateur.rst:334
 msgid ""
 "*0:30* — Ouvrir un match (double-clic), parcourir quelques coups aux "
 "flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une "
@@ -565,7 +630,7 @@ msgstr ""
 "βέλη, δείξτε τον πίνακα Ανάλυσης (*CTRL-L*) σε μια κίνηση που παίχτηκε με"
 " ορατό σφάλμα."
 
-#: ../../source/guide_utilisateur.rst:312
+#: ../../source/guide_utilisateur.rst:338
 msgid ""
 "*1:30* — Commande ``bl`` : la vue bascule directement sur les pires "
 "erreurs de la base, toutes positions confondues."
@@ -573,7 +638,7 @@ msgstr ""
 "*1:30* — Εντολή ``bl``: η προβολή μεταβαίνει απευθείας στα χειρότερα "
 "σφάλματα της βάσης δεδομένων, σε όλες τις θέσεις."
 
-#: ../../source/guide_utilisateur.rst:315
+#: ../../source/guide_utilisateur.rst:341
 msgid ""
 "*2:15* — Panneau Anki (*CTRL-K*) : créer un paquet à partir de ces "
 "positions, lancer une carte en *Study* pour montrer le cycle "
@@ -583,7 +648,7 @@ msgstr ""
 " θέσεις, εκκινήστε μια κάρτα σε *Study* για να δείξετε τον κύκλο "
 "ερώτηση/απάντηση/βαθμολόγηση."
 
-#: ../../source/guide_utilisateur.rst:319
+#: ../../source/guide_utilisateur.rst:345
 msgid ""
 "*2:45* — Retour au panneau Stats (*CTRL-D*), onglet Dashboard, pour "
 "montrer où ce travail se lit dans la durée."
@@ -591,11 +656,11 @@ msgstr ""
 "*2:45* — Επιστροφή στον πίνακα Stats (*CTRL-D*), καρτέλα Dashboard, για "
 "να δείξετε πού φαίνεται αυτή η δουλειά με τον καιρό."
 
-#: ../../source/guide_utilisateur.rst:323
+#: ../../source/guide_utilisateur.rst:349
 msgid "Créer une nouvelle base de données"
 msgstr "Δημιουργία νέας βάσης δεδομένων"
 
-#: ../../source/guide_utilisateur.rst:325
+#: ../../source/guide_utilisateur.rst:351
 msgid ""
 "Pour créer une nouvelle base de données, cliquer dans la barre d'outils "
 "sur le bouton *Nouvelle base de données*. Choisir un chemin où "
@@ -607,19 +672,19 @@ msgstr ""
 "αποθηκευτεί η βάση δεδομένων, καθώς και ένα όνομα, και επιβεβαιώστε την "
 "αποθήκευση στο παράθυρο του συστήματος."
 
-#: ../../source/guide_utilisateur.rst:331
+#: ../../source/guide_utilisateur.rst:357
 msgid "L'extension des bases de données blunderDB est *.db*."
 msgstr "Η επέκταση αρχείου για τις βάσεις δεδομένων blunderDB είναι *.db*."
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:360
 msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
 msgstr "Συντόμευση πληκτρολογίου: *CTRL-N*. Εντολή: ``n``"
 
-#: ../../source/guide_utilisateur.rst:338
+#: ../../source/guide_utilisateur.rst:364
 msgid "Ouvrir une base de donnée existante"
 msgstr "Άνοιγμα υπάρχουσας βάσης δεδομένων"
 
-#: ../../source/guide_utilisateur.rst:340
+#: ../../source/guide_utilisateur.rst:366
 msgid ""
 "Pour charger une base de données existante, cliquer dans la barre "
 "d'outils sur le bouton *Ouvrir une base de données*. Choisir le chemin où"
@@ -631,15 +696,15 @@ msgstr ""
 " βρίσκεται η βάση δεδομένων, επιλέξτε το αρχείο *.db* και επιβεβαιώστε το"
 " άνοιγμα στο παράθυρο του συστήματος."
 
-#: ../../source/guide_utilisateur.rst:346
+#: ../../source/guide_utilisateur.rst:372
 msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
 msgstr "Συντόμευση πληκτρολογίου: *CTRL-O*. Εντολή: ``o``"
 
-#: ../../source/guide_utilisateur.rst:349
+#: ../../source/guide_utilisateur.rst:375
 msgid "Fusionner une base de données"
 msgstr "Συγχώνευση βάσης δεδομένων"
 
-#: ../../source/guide_utilisateur.rst:351
+#: ../../source/guide_utilisateur.rst:377
 msgid ""
 "Pour fusionner une autre base blunderDB dans celle actuellement ouverte, "
 "cliquer dans la barre d'outils sur le bouton **Fusionner une base de "
@@ -649,7 +714,7 @@ msgstr ""
 "κάντε κλικ στη γραμμή εργαλείων στο κουμπί **Συγχώνευση βάσης "
 "δεδομένων**. Επιλέξτε το αρχείο *.db* και επιβεβαιώστε."
 
-#: ../../source/guide_utilisateur.rst:355
+#: ../../source/guide_utilisateur.rst:381
 msgid ""
 "C'est aussi la réponse de blunderDB à la question « comment synchroniser "
 "ma base entre deux machines ? » : une base est **un seul fichier**, deux "
@@ -669,11 +734,11 @@ msgstr ""
 "συγχρονισμού αρχείων — και για την περίπτωση όπου πολλά μηχανήματα πρέπει"
 " να δουλέψουν ταυτόχρονα, που ανήκει στη λειτουργία ``serve``."
 
-#: ../../source/guide_utilisateur.rst:363
+#: ../../source/guide_utilisateur.rst:389
 msgid "blunderDB va fusionner intelligemment les deux bases de données:"
 msgstr "Το blunderDB θα συγχωνεύσει έξυπνα τις δύο βάσεις δεδομένων:"
 
-#: ../../source/guide_utilisateur.rst:365
+#: ../../source/guide_utilisateur.rst:391
 msgid ""
 "Les positions qui n'existent pas dans la base de données actuelle seront "
 "ajoutées avec leurs analyses et commentaires."
@@ -681,7 +746,7 @@ msgstr ""
 "Οι θέσεις που δεν υπάρχουν στην τρέχουσα βάση δεδομένων θα προστεθούν "
 "μαζί με τις αναλύσεις και τα σχόλιά τους."
 
-#: ../../source/guide_utilisateur.rst:368
+#: ../../source/guide_utilisateur.rst:394
 msgid ""
 "Les positions qui existent déjà seront mises à jour: les analyses seront "
 "complétées si manquantes, et les commentaires seront fusionnés (ajout des"
@@ -691,7 +756,7 @@ msgstr ""
 "αν λείπουν, και τα σχόλια θα συγχωνευθούν (προσθήκη νέων σχολίων χωρίς "
 "αναπαραγωγή των υπαρχόντων)."
 
-#: ../../source/guide_utilisateur.rst:372
+#: ../../source/guide_utilisateur.rst:398
 msgid ""
 "Un message résumera le nombre de positions ajoutées, fusionnées et "
 "ignorées."
@@ -699,7 +764,7 @@ msgstr ""
 "Ένα μήνυμα θα συνοψίσει τον αριθμό των θέσεων που προστέθηκαν, "
 "συγχωνεύθηκαν και αγνοήθηκαν."
 
-#: ../../source/guide_utilisateur.rst:374
+#: ../../source/guide_utilisateur.rst:400
 msgid ""
 "Une fusion **ajoute**, elle ne réconcilie pas : rien n'est supprimé de la"
 " base courante parce que la base importée ne le contient pas."
@@ -707,7 +772,7 @@ msgstr ""
 "Μια συγχώνευση **προσθέτει**, δεν συμφιλιώνει: τίποτα δεν αφαιρείται από "
 "την τρέχουσα βάση επειδή η εισαγόμενη δεν το περιέχει."
 
-#: ../../source/guide_utilisateur.rst:378
+#: ../../source/guide_utilisateur.rst:404
 msgid ""
 "L'import nécessite que les deux bases de données aient des versions de "
 "schéma compatibles. Il est possible d'importer une base de données d'une "
@@ -718,7 +783,7 @@ msgstr ""
 " σχήματος. Είναι δυνατή η εισαγωγή μιας βάσης δεδομένων με χαμηλότερη ή "
 "ίση έκδοση σε μια βάση δεδομένων με υψηλότερη έκδοση."
 
-#: ../../source/guide_utilisateur.rst:383
+#: ../../source/guide_utilisateur.rst:409
 msgid ""
 "L'opération d'import modifie immédiatement la base de données "
 "actuellement ouverte. Il est recommandé de faire une copie de sauvegarde "
@@ -728,11 +793,11 @@ msgstr ""
 "ανοιχτή αυτή τη στιγμή. Συνιστάται να δημιουργήσετε ένα αντίγραφο "
 "ασφαλείας πριν από την εισαγωγή μιας άλλης βάσης δεδομένων."
 
-#: ../../source/guide_utilisateur.rst:390
+#: ../../source/guide_utilisateur.rst:416
 msgid "Editer une position"
 msgstr "Επεξεργασία θέσης"
 
-#: ../../source/guide_utilisateur.rst:392
+#: ../../source/guide_utilisateur.rst:418
 msgid ""
 "Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le "
 "panneau de recherche et l'éditeur de position. Editer la position à la "
@@ -742,7 +807,7 @@ msgstr ""
 "το πλαίσιο αναζήτησης και τον επεξεργαστή θέσης. Επεξεργαστείτε τη θέση "
 "με το ποντίκι:"
 
-#: ../../source/guide_utilisateur.rst:396
+#: ../../source/guide_utilisateur.rst:422
 msgid ""
 "cliquer sur les points pour ajouter des pions. Le clic gauche attribue "
 "les pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour"
@@ -756,7 +821,7 @@ msgstr ""
 "πατημένο το κουμπί και αφήστε το στο σημείο άφιξης. Κάντε κλικ στην μπάρα"
 " για να τοποθετήσετε πούλια στην μπάρα."
 
-#: ../../source/guide_utilisateur.rst:402
+#: ../../source/guide_utilisateur.rst:428
 msgid ""
 "pour effacer la position, double-clic sur une zone vide en dehors du "
 "board ou appuyer sur la touche *RETOUR ARRIERE*."
@@ -764,7 +829,7 @@ msgstr ""
 "για να καθαρίσετε τη θέση, κάντε διπλό κλικ σε μια κενή περιοχή έξω από "
 "το ταμπλό ή πατήστε το πλήκτρο *BACKSPACE*."
 
-#: ../../source/guide_utilisateur.rst:405
+#: ../../source/guide_utilisateur.rst:431
 msgid ""
 "pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour "
 "envoyer le cube vers le joueur 2, click droit sur le cube."
@@ -772,7 +837,7 @@ msgstr ""
 "για να στείλετε τον κύβο στον παίκτη 1, κάντε αριστερό κλικ στον κύβο. "
 "Για να στείλετε τον κύβο στον παίκτη 2, κάντε δεξί κλικ στον κύβο."
 
-#: ../../source/guide_utilisateur.rst:408
+#: ../../source/guide_utilisateur.rst:434
 msgid ""
 "pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
 " dés."
@@ -780,7 +845,7 @@ msgstr ""
 "για να υποδείξετε τον παίκτη που έχει τη σειρά, κάντε κλικ στην "
 "προβλεπόμενη περιοχή των ζαριών."
 
-#: ../../source/guide_utilisateur.rst:410
+#: ../../source/guide_utilisateur.rst:436
 msgid ""
 "pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
 "droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
@@ -791,7 +856,7 @@ msgstr ""
 "όψεις των ζαριών είναι κενές, σημαίνει ότι η θέση είναι μια απόφαση "
 "κύβου."
 
-#: ../../source/guide_utilisateur.rst:414
+#: ../../source/guide_utilisateur.rst:440
 msgid ""
 "pour éditer le score des joueurs, clic gauche pour augmenter le score, "
 "clic droit pour réduire le score."
@@ -799,7 +864,7 @@ msgstr ""
 "για να επεξεργαστείτε το σκορ των παικτών, κάντε αριστερό κλικ για να "
 "αυξήσετε το σκορ, δεξί κλικ για να μειώσετε το σκορ."
 
-#: ../../source/guide_utilisateur.rst:417
+#: ../../source/guide_utilisateur.rst:443
 msgid ""
 "La saisie de la position avec la souris pour les pions se fait de la même"
 " manière que dans XG."
@@ -807,15 +872,15 @@ msgstr ""
 "Η εισαγωγή της θέσης με το ποντίκι για τα πούλια γίνεται με τον ίδιο "
 "τρόπο όπως στο XG."
 
-#: ../../source/guide_utilisateur.rst:421
+#: ../../source/guide_utilisateur.rst:447
 msgid "Ajouter une position à la base de données"
 msgstr "Προσθήκη θέσης στη βάση δεδομένων"
 
-#: ../../source/guide_utilisateur.rst:423
+#: ../../source/guide_utilisateur.rst:449
 msgid "Après l'édition de la position, le panneau de recherche est ouvert."
 msgstr "Μετά την επεξεργασία της θέσης, το πλαίσιο αναζήτησης είναι ανοιχτό."
 
-#: ../../source/guide_utilisateur.rst:425
+#: ../../source/guide_utilisateur.rst:451
 msgid ""
 "Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou "
 "appuyer dans la barre d'outils sur le bouton *Enregistrer la position*."
@@ -823,15 +888,15 @@ msgstr ""
 "Για να αποθηκεύσετε τη θέση που λάβατε προηγουμένως, πατήστε *CTRL-S* ή "
 "κάντε κλικ στη γραμμή εργαλείων στο κουμπί *Αποθήκευση θέσης*."
 
-#: ../../source/guide_utilisateur.rst:428
+#: ../../source/guide_utilisateur.rst:454
 msgid "Ouvrir la ligne de commande et exécuter: ``w``"
 msgstr "Ανοίξτε τη γραμμή εντολών και εκτελέστε: ``w``"
 
-#: ../../source/guide_utilisateur.rst:431
+#: ../../source/guide_utilisateur.rst:457
 msgid "Etiqueter une position"
 msgstr "Προσθήκη ετικέτας σε μια θέση"
 
-#: ../../source/guide_utilisateur.rst:433
+#: ../../source/guide_utilisateur.rst:459
 msgid ""
 "Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
 "commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande"
@@ -841,11 +906,11 @@ msgstr ""
 "γραμμή εντολών πατώντας *SPACE*, πληκτρολογήστε ``#toto`` και "
 "επιβεβαιώστε την εντολή πατώντας *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:437
+#: ../../source/guide_utilisateur.rst:463
 msgid "Supprimer une position"
 msgstr "Διαγραφή θέσης"
 
-#: ../../source/guide_utilisateur.rst:439
+#: ../../source/guide_utilisateur.rst:465
 msgid ""
 "Pour supprimer la position courante de la base de données, faire *Del* ou"
 " cliquer dans la barre d'outils sur le bouton *Supprimer la position*."
@@ -853,71 +918,71 @@ msgstr ""
 "Για να διαγράψετε την τρέχουσα θέση από τη βάση δεδομένων, πατήστε *Del* "
 "ή κάντε κλικ στη γραμμή εργαλείων στο κουμπί *Διαγραφή θέσης*."
 
-#: ../../source/guide_utilisateur.rst:442
+#: ../../source/guide_utilisateur.rst:468
 msgid "En ligne de commande, exécuter ``d``."
 msgstr "Στη γραμμή εντολών, εκτελέστε ``d``."
 
-#: ../../source/guide_utilisateur.rst:444
+#: ../../source/guide_utilisateur.rst:470
 msgid ""
 "La suppression de la position est définitive ; une confirmation est "
 "demandée avant."
 msgstr "Η διαγραφή της θέσης είναι οριστική· ζητείται επιβεβαίωση πριν από αυτήν."
 
-#: ../../source/guide_utilisateur.rst:448
+#: ../../source/guide_utilisateur.rst:474
 msgid "Import une position depuis XG"
 msgstr "Εισαγωγή θέσης από το XG"
 
-#: ../../source/guide_utilisateur.rst:450
+#: ../../source/guide_utilisateur.rst:476
 msgid "Pour importer une position directement depuis XG,"
 msgstr "Για να εισαγάγετε μια θέση απευθείας από το XG,"
 
-#: ../../source/guide_utilisateur.rst:452
+#: ../../source/guide_utilisateur.rst:478
 msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
 msgstr "εμφανίστε στο XG τη θέση προς εισαγωγή και πατήστε *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:454
+#: ../../source/guide_utilisateur.rst:480
 msgid "afficher blunderDB et appuyer *CTRL-V*."
 msgstr "ανοίξτε το blunderDB και πατήστε *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:457
+#: ../../source/guide_utilisateur.rst:483
 msgid ""
 "Le collage automatique détecte le format de la source (XG, GNUbg, "
 "BGBlitz)."
 msgstr "Η αυτόματη επικόλληση εντοπίζει τη μορφή της πηγής (XG, GNUbg, BGBlitz)."
 
-#: ../../source/guide_utilisateur.rst:460
+#: ../../source/guide_utilisateur.rst:486
 msgid "Importer un match"
 msgstr "Εισαγωγή αγώνα"
 
-#: ../../source/guide_utilisateur.rst:462
+#: ../../source/guide_utilisateur.rst:488
 msgid "blunderDB peut importer des matchs depuis différentes sources."
 msgstr "Το blunderDB μπορεί να εισαγάγει αγώνες από διάφορες πηγές."
 
-#: ../../source/guide_utilisateur.rst:464
+#: ../../source/guide_utilisateur.rst:490
 msgid "**Formats supportés:**"
 msgstr "**Υποστηριζόμενες μορφές:**"
 
-#: ../../source/guide_utilisateur.rst:466
+#: ../../source/guide_utilisateur.rst:492
 msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
 msgstr "eXtreme Gammon (XG): αρχεία *.xg* και *.xgp* (θέσεις)"
 
-#: ../../source/guide_utilisateur.rst:467
+#: ../../source/guide_utilisateur.rst:493
 msgid "GNUbg: fichiers *.sgf*"
 msgstr "GNUbg: αρχεία *.sgf*"
 
-#: ../../source/guide_utilisateur.rst:468
+#: ../../source/guide_utilisateur.rst:494
 msgid "Jellyfish: fichiers *.mat* et *.txt*"
 msgstr "Jellyfish: αρχεία *.mat* και *.txt*"
 
-#: ../../source/guide_utilisateur.rst:469
+#: ../../source/guide_utilisateur.rst:495
 msgid "BGBlitz: fichiers *.bgf* et *.txt*"
 msgstr "BGBlitz: αρχεία *.bgf* και *.txt*"
 
-#: ../../source/guide_utilisateur.rst:471
+#: ../../source/guide_utilisateur.rst:497
 msgid "**Pour importer un ou plusieurs fichiers de match:**"
 msgstr "**Για να εισαγάγετε ένα ή περισσότερα αρχεία αγώνων:**"
 
-#: ../../source/guide_utilisateur.rst:473
+#: ../../source/guide_utilisateur.rst:499
 msgid ""
 "Appuyer sur *CTRL-I* ou cliquer sur le bouton *Importer une position ou "
 "un match* dans la barre d'outils."
@@ -925,15 +990,15 @@ msgstr ""
 "Πατήστε *CTRL-I* ή κάντε κλικ στο κουμπί *Εισαγωγή θέσης ή αγώνα* στη "
 "γραμμή εργαλείων."
 
-#: ../../source/guide_utilisateur.rst:476
+#: ../../source/guide_utilisateur.rst:502
 msgid "Sélectionner un ou plusieurs fichiers à importer."
 msgstr "Επιλέξτε ένα ή περισσότερα αρχεία προς εισαγωγή."
 
-#: ../../source/guide_utilisateur.rst:478
+#: ../../source/guide_utilisateur.rst:504
 msgid "blunderDB détecte automatiquement le format et importe le match."
 msgstr "Το blunderDB εντοπίζει αυτόματα τη μορφή και εισάγει τον αγώνα."
 
-#: ../../source/guide_utilisateur.rst:480
+#: ../../source/guide_utilisateur.rst:506
 msgid ""
 "Une fenêtre de progression affiche le nombre de fichiers importés, "
 "échoués et ignorés (doublons), puis un **compte rendu d'import**."
@@ -941,11 +1006,11 @@ msgstr ""
 "Ένα παράθυρο προόδου δείχνει πόσα αρχεία εισήχθησαν, απέτυχαν και "
 "παραλείφθηκαν (διπλότυπα), και έπειτα μια **αναφορά εισαγωγής**."
 
-#: ../../source/guide_utilisateur.rst:484
+#: ../../source/guide_utilisateur.rst:510
 msgid "Commande: ``i``"
 msgstr "Εντολή: ``i``"
 
-#: ../../source/guide_utilisateur.rst:487
+#: ../../source/guide_utilisateur.rst:513
 msgid ""
 "blunderDB détecte automatiquement les doublons et empêche l'import d'un "
 "match déjà présent dans la base de données."
@@ -953,11 +1018,11 @@ msgstr ""
 "Το blunderDB εντοπίζει αυτόματα τα διπλότυπα και αποτρέπει την εισαγωγή "
 "ενός αγώνα που υπάρχει ήδη στη βάση δεδομένων."
 
-#: ../../source/guide_utilisateur.rst:491
+#: ../../source/guide_utilisateur.rst:517
 msgid "Importer un dossier de matchs"
 msgstr "Εισαγωγή φακέλου αγώνων"
 
-#: ../../source/guide_utilisateur.rst:493
+#: ../../source/guide_utilisateur.rst:519
 msgid ""
 "Pour importer récursivement tous les fichiers de matchs contenus dans un "
 "dossier et ses sous-dossiers:"
@@ -965,7 +1030,7 @@ msgstr ""
 "Για να εισαγάγετε αναδρομικά όλα τα αρχεία αγώνων που περιέχονται σε έναν"
 " φάκελο και τους υποφακέλους του:"
 
-#: ../../source/guide_utilisateur.rst:496
+#: ../../source/guide_utilisateur.rst:522
 msgid ""
 "Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la "
 "barre d'outils."
@@ -973,11 +1038,11 @@ msgstr ""
 "Πατήστε *CTRL-SHIFT-F* ή κάντε κλικ στο αντίστοιχο κουμπί στη γραμμή "
 "εργαλείων."
 
-#: ../../source/guide_utilisateur.rst:499
+#: ../../source/guide_utilisateur.rst:525
 msgid "Sélectionner le dossier contenant les fichiers de matchs."
 msgstr "Επιλέξτε τον φάκελο που περιέχει τα αρχεία αγώνων."
 
-#: ../../source/guide_utilisateur.rst:501
+#: ../../source/guide_utilisateur.rst:527
 msgid ""
 "blunderDB collecte et importe automatiquement tous les fichiers reconnus "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
@@ -985,11 +1050,11 @@ msgstr ""
 "Το blunderDB συλλέγει και εισάγει αυτόματα όλα τα αναγνωρισμένα αρχεία "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
-#: ../../source/guide_utilisateur.rst:507
+#: ../../source/guide_utilisateur.rst:533
 msgid "Le compte rendu d'import"
 msgstr "Η αναφορά εισαγωγής"
 
-#: ../../source/guide_utilisateur.rst:509
+#: ../../source/guide_utilisateur.rst:535
 msgid ""
 "Un import se termine sur un compte rendu de **ce qu'il vient "
 "d'apporter**, et non sur un simple décompte de fichiers lus :"
@@ -997,7 +1062,7 @@ msgstr ""
 "Μια εισαγωγή τελειώνει με μια αναφορά για **αυτό που μόλις έφερε**, και "
 "όχι με μια απλή καταμέτρηση των αρχείων που διαβάστηκαν:"
 
-#: ../../source/guide_utilisateur.rst:512
+#: ../../source/guide_utilisateur.rst:538
 msgid ""
 "les positions nouvelles, et parmi elles celles que le logiciel d'origine "
 "avait marquées pour étude ;"
@@ -1005,7 +1070,7 @@ msgstr ""
 "τις νέες θέσεις, και ανάμεσά τους εκείνες που το αρχικό πρόγραμμα είχε "
 "επισημάνει για μελέτη·"
 
-#: ../../source/guide_utilisateur.rst:514
+#: ../../source/guide_utilisateur.rst:540
 msgid ""
 "le **PR de cet import** — le même indicateur que les statistiques, "
 "calculé sur ce seul lot. Il porte sur vos décisions lorsque la base "
@@ -1017,7 +1082,7 @@ msgstr ""
 " η βάση γνωρίζει το όνομά σας (πεδίο *Χρήστης* του παραθύρου ταυτότητας),"
 " και τους δύο παίκτες διαφορετικά· η αναφορά λέει ποιο από τα δύο·"
 
-#: ../../source/guide_utilisateur.rst:518
+#: ../../source/guide_utilisateur.rst:544
 msgid ""
 "les positions qu'aucun moteur n'a évaluées, avec un bouton pour lancer "
 "l'analyse ;"
@@ -1025,7 +1090,7 @@ msgstr ""
 "τις θέσεις που κανένα πρόγραμμα δεν έχει αξιολογήσει, με ένα κουμπί για "
 "την έναρξη της ανάλυσης·"
 
-#: ../../source/guide_utilisateur.rst:520
+#: ../../source/guide_utilisateur.rst:546
 msgid ""
 "les **cinq décisions les plus coûteuses**, cliquables : un clic ouvre la "
 "position."
@@ -1033,7 +1098,7 @@ msgstr ""
 "τις **πέντε πιο δαπανηρές αποφάσεις**, με δυνατότητα κλικ: ένα κλικ "
 "ανοίγει τη θέση."
 
-#: ../../source/guide_utilisateur.rst:523
+#: ../../source/guide_utilisateur.rst:549
 msgid ""
 "Un PR nul sur zéro décision n'est pas une partie parfaite mais l'absence "
 "d'analyse : le compte rendu l'écrit ainsi."
@@ -1041,7 +1106,7 @@ msgstr ""
 "Ένα μηδενικό PR σε μηδέν αποφάσεις δεν είναι τέλειο παιχνίδι αλλά απουσία"
 " ανάλυσης: η αναφορά το γράφει έτσι."
 
-#: ../../source/guide_utilisateur.rst:526
+#: ../../source/guide_utilisateur.rst:552
 msgid ""
 "Chaque import est enregistré comme un **lot**. La ligne de commande les "
 "retrouve après coup :"
@@ -1049,7 +1114,7 @@ msgstr ""
 "Κάθε εισαγωγή καταγράφεται ως **παρτίδα**. Η γραμμή εντολών τις βρίσκει "
 "εκ των υστέρων:"
 
-#: ../../source/guide_utilisateur.rst:534
+#: ../../source/guide_utilisateur.rst:560
 msgid ""
 "La moitié mesurée du compte rendu — positions sans analyse, PR, pires "
 "décisions — est recalculée à chaque consultation. Un lot dont les "
@@ -1061,11 +1126,11 @@ msgstr ""
 " θέσεις έχουν έκτοτε αναλυθεί επιστρέφει επομένως τα σημερινά νούμερα, "
 "όχι εκείνα της ημέρας της εισαγωγής."
 
-#: ../../source/guide_utilisateur.rst:542
+#: ../../source/guide_utilisateur.rst:568
 msgid "La file d'étude"
 msgstr "Η ουρά μελέτης"
 
-#: ../../source/guide_utilisateur.rst:544
+#: ../../source/guide_utilisateur.rst:570
 msgid ""
 "Le compte rendu répond à « que vient-il de se passer ? ». Le bouton "
 "**Parcourir** répond à la question qui suit : « qu'est-ce que je regarde "
@@ -1078,7 +1143,7 @@ msgstr ""
 "**ταξινομημένη ουρά** με τις θέσεις αυτής της εισαγωγής που αξίζουν "
 "δεύτερη ματιά, και τις φέρνει μία-μία στο ταμπλό:"
 
-#: ../../source/guide_utilisateur.rst:549
+#: ../../source/guide_utilisateur.rst:575
 msgid ""
 "les décisions qui ont **coûté quelque chose**, la plus chère d'abord — ce"
 " pour quoi on est venu ;"
@@ -1086,7 +1151,7 @@ msgstr ""
 "οι αποφάσεις που **κόστισαν κάτι**, η ακριβότερη πρώτη — αυτό για το "
 "οποίο ήρθατε·"
 
-#: ../../source/guide_utilisateur.rst:551
+#: ../../source/guide_utilisateur.rst:577
 msgid ""
 "les positions **marquées dans le logiciel d'origine** : vous aviez déjà "
 "dit, ailleurs, que celle-ci était intéressante ;"
@@ -1094,7 +1159,7 @@ msgstr ""
 "οι θέσεις που είναι **σημειωμένες στο αρχικό πρόγραμμα**: είχατε ήδη πει,"
 " αλλού, ότι αυτή ήταν ενδιαφέρουσα·"
 
-#: ../../source/guide_utilisateur.rst:553
+#: ../../source/guide_utilisateur.rst:579
 msgid ""
 "les **décisions de videau serrées** : rien n'a été perdu, mais la bonne "
 "réponse n'allait pas de soi."
@@ -1102,7 +1167,7 @@ msgstr ""
 "οι **οριακές αποφάσεις κύβου**: τίποτα δεν χάθηκε, αλλά η σωστή απάντηση "
 "δεν ήταν προφανής."
 
-#: ../../source/guide_utilisateur.rst:556
+#: ../../source/guide_utilisateur.rst:582
 msgid ""
 "Une position n'apparaît qu'une fois, sous la première raison qui la "
 "réclame : un blunder marqué reste un blunder, et l'offrir deux fois "
@@ -1116,7 +1181,7 @@ msgstr ""
 "περιορίζεται σε πενήντα θέσεις — μια ουρά που κανείς δεν τελειώνει είναι "
 "μια ουρά που κανείς δεν αρχίζει."
 
-#: ../../source/guide_utilisateur.rst:561
+#: ../../source/guide_utilisateur.rst:587
 msgid ""
 "Une bande apparaît au-dessus du plateau pendant le parcours : la "
 "progression (« 3 / 25 »), la raison de cette position, le match dont elle"
@@ -1138,7 +1203,7 @@ msgstr ""
 "εφαρμογή συνεχίζει να λειτουργεί: αυτό ακριβώς επιτρέπει να ενεργείς "
 "χωρίς να βγεις από την ουρά."
 
-#: ../../source/guide_utilisateur.rst:570
+#: ../../source/guide_utilisateur.rst:596
 msgid ""
 "**Rien n'est enregistré, et rien ne note qu'une position a été vue.** Ce "
 "que vous en faites — un commentaire, une collection, une carte — *est* la"
@@ -1151,15 +1216,15 @@ msgstr ""
 "ξανατρέξετε την ίδια ουρά αργότερα είναι λοιπόν απολύτως θεμιτό, και θα "
 "είναι η ίδια."
 
-#: ../../source/guide_utilisateur.rst:575
+#: ../../source/guide_utilisateur.rst:601
 msgid "La même liste s'obtient en ligne de commande :"
 msgstr "Την ίδια λίστα την παίρνει κανείς από τη γραμμή εντολών:"
 
-#: ../../source/guide_utilisateur.rst:582
+#: ../../source/guide_utilisateur.rst:608
 msgid "Glisser-déposer"
 msgstr "Μεταφορά και απόθεση"
 
-#: ../../source/guide_utilisateur.rst:584
+#: ../../source/guide_utilisateur.rst:610
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
@@ -1167,7 +1232,7 @@ msgstr ""
 "Το blunderDB υποστηρίζει τη μεταφορά και απόθεση. Μπορείτε να μεταφέρετε "
 "και να αποθέσετε στο παράθυρο του blunderDB:"
 
-#: ../../source/guide_utilisateur.rst:587
+#: ../../source/guide_utilisateur.rst:613
 msgid ""
 "des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
 "*.txt*, *.bgf*) pour les importer,"
@@ -1175,7 +1240,7 @@ msgstr ""
 "αρχεία αγώνων ή θέσεων (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*) "
 "για να τα εισαγάγετε,"
 
-#: ../../source/guide_utilisateur.rst:590
+#: ../../source/guide_utilisateur.rst:616
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
@@ -1183,45 +1248,45 @@ msgstr ""
 "αρχεία βάσης δεδομένων (*.db*) για να τα ανοίξετε ή να τα συγχωνεύσετε με"
 " την τρέχουσα βάση δεδομένων,"
 
-#: ../../source/guide_utilisateur.rst:593
+#: ../../source/guide_utilisateur.rst:619
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
 msgstr "φακέλους για να εισαγάγετε αναδρομικά όλα τα αρχεία που περιέχουν."
 
-#: ../../source/guide_utilisateur.rst:596
+#: ../../source/guide_utilisateur.rst:622
 msgid "Naviguer dans un match"
 msgstr "Πλοήγηση σε έναν αγώνα"
 
-#: ../../source/guide_utilisateur.rst:598
+#: ../../source/guide_utilisateur.rst:624
 msgid "Pour naviguer dans un match importé:"
 msgstr "Για να πλοηγηθείτε σε έναν εισαγόμενο αγώνα:"
 
-#: ../../source/guide_utilisateur.rst:600
+#: ../../source/guide_utilisateur.rst:626
 msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
 msgstr "Ανοίξτε το πλαίσιο των αγώνων με *CTRL-Tab*."
 
-#: ../../source/guide_utilisateur.rst:602
+#: ../../source/guide_utilisateur.rst:628
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
 msgstr "Κάντε διπλό κλικ σε έναν αγώνα ή πατήστε *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:604
+#: ../../source/guide_utilisateur.rst:630
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr ""
 "Χρησιμοποιήστε τα πλήκτρα *ΑΡΙΣΤΕΡΑ* / *ΔΕΞΙΑ* για να περιηγηθείτε στις "
 "κινήσεις."
 
-#: ../../source/guide_utilisateur.rst:606
+#: ../../source/guide_utilisateur.rst:632
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr ""
 "Χρησιμοποιήστε *PageUp* / *PageDown* για να εναλλαχθείτε μεταξύ των "
 "παρτίδων."
 
-#: ../../source/guide_utilisateur.rst:608
+#: ../../source/guide_utilisateur.rst:634
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "Πατήστε *CTRL-L* για να εμφανίσετε την ανάλυση."
 
-#: ../../source/guide_utilisateur.rst:610
+#: ../../source/guide_utilisateur.rst:636
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
@@ -1229,13 +1294,13 @@ msgstr ""
 "Πατήστε *d* για εναλλαγή μεταξύ της ανάλυσης κινήσεων πουλιών και της "
 "ανάλυσης κύβου."
 
-#: ../../source/guide_utilisateur.rst:613
+#: ../../source/guide_utilisateur.rst:639
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
 msgstr ""
 "Συντόμευση: *CTRL-Tab* για να ανοίξετε το πλαίσιο των αγώνων. Εντολή: "
 "``m``"
 
-#: ../../source/guide_utilisateur.rst:617
+#: ../../source/guide_utilisateur.rst:643
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
@@ -1245,15 +1310,15 @@ msgstr ""
 "αγώνα. Όταν επιστρέφετε σε έναν αγώνα, η τελευταία θέση που επισκεφθήκατε"
 " αποκαθίσταται αυτόματα."
 
-#: ../../source/guide_utilisateur.rst:622
+#: ../../source/guide_utilisateur.rst:648
 msgid "Gérer le panneau des matchs"
 msgstr "Διαχείριση του πλαισίου αγώνων"
 
-#: ../../source/guide_utilisateur.rst:624
+#: ../../source/guide_utilisateur.rst:650
 msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
 msgstr "Το πλαίσιο των αγώνων (*CTRL-Tab*) σας επιτρέπει να:"
 
-#: ../../source/guide_utilisateur.rst:626
+#: ../../source/guide_utilisateur.rst:652
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
@@ -1261,7 +1326,7 @@ msgstr ""
 "παραθέσετε όλους τους εισαγόμενους αγώνες (ταξινομημένους από τον πιο "
 "πρόσφατο στον παλαιότερο),"
 
-#: ../../source/guide_utilisateur.rst:628
+#: ../../source/guide_utilisateur.rst:654
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
@@ -1269,7 +1334,7 @@ msgstr ""
 "ταξινομήσετε τους αγώνες κατά στήλη (παίκτης 1, παίκτης 2, ημερομηνία, "
 "διάρκεια αγώνα, τουρνουά),"
 
-#: ../../source/guide_utilisateur.rst:631
+#: ../../source/guide_utilisateur.rst:657
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
@@ -1277,23 +1342,23 @@ msgstr ""
 "επεξεργαστείτε τα ονόματα των παικτών ή την ημερομηνία κάνοντας διπλό "
 "κλικ στα πεδία,"
 
-#: ../../source/guide_utilisateur.rst:633
+#: ../../source/guide_utilisateur.rst:659
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "εναλλάξετε τους παίκτες 1 και 2 χρησιμοποιώντας το κουμπί εναλλαγής,"
 
-#: ../../source/guide_utilisateur.rst:635
+#: ../../source/guide_utilisateur.rst:661
 msgid "assigner un match à un tournoi,"
 msgstr "αναθέσετε έναν αγώνα σε ένα τουρνουά,"
 
-#: ../../source/guide_utilisateur.rst:637
+#: ../../source/guide_utilisateur.rst:663
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "διαγράψετε έναν αγώνα χρησιμοποιώντας το πλήκτρο *Del*."
 
-#: ../../source/guide_utilisateur.rst:642
+#: ../../source/guide_utilisateur.rst:668
 msgid "Gérer les collections"
 msgstr "Διαχείριση συλλογών"
 
-#: ../../source/guide_utilisateur.rst:644
+#: ../../source/guide_utilisateur.rst:670
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
@@ -1302,15 +1367,15 @@ msgstr ""
 "Οι συλλογές σας επιτρέπουν να οργανώνετε θέσεις σε προσαρμοσμένες ομάδες."
 " Για να αποκτήσετε πρόσβαση στο πλαίσιο των συλλογών, πατήστε *CTRL-B*."
 
-#: ../../source/guide_utilisateur.rst:647
+#: ../../source/guide_utilisateur.rst:673
 msgid "**Créer une collection:**"
 msgstr "**Δημιουργία συλλογής:**"
 
-#: ../../source/guide_utilisateur.rst:649
+#: ../../source/guide_utilisateur.rst:675
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "Ανοίξτε το πλαίσιο των συλλογών (*CTRL-B*)."
 
-#: ../../source/guide_utilisateur.rst:651
+#: ../../source/guide_utilisateur.rst:677
 msgid ""
 "Saisir le nom de la nouvelle collection dans le champ *Nouvelle "
 "collection…* en bas du panneau, puis valider avec *ENTREE*."
@@ -1318,23 +1383,23 @@ msgstr ""
 "Πληκτρολογήστε το όνομα της νέας συλλογής στο πεδίο *Νέα συλλογή…* στο "
 "κάτω μέρος του πίνακα, και έπειτα επιβεβαιώστε με *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:654
+#: ../../source/guide_utilisateur.rst:680
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**Προσθήκη θέσεων σε μια συλλογή:**"
 
-#: ../../source/guide_utilisateur.rst:656
+#: ../../source/guide_utilisateur.rst:682
 msgid "Sélectionner les positions souhaitées."
 msgstr "Επιλέξτε τις επιθυμητές θέσεις."
 
-#: ../../source/guide_utilisateur.rst:658
+#: ../../source/guide_utilisateur.rst:684
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "Προσθέστε τες στη συλλογή από το πλαίσιο των συλλογών."
 
-#: ../../source/guide_utilisateur.rst:660
+#: ../../source/guide_utilisateur.rst:686
 msgid "**Parcourir une collection:**"
 msgstr "**Περιήγηση σε μια συλλογή:**"
 
-#: ../../source/guide_utilisateur.rst:662
+#: ../../source/guide_utilisateur.rst:688
 msgid ""
 "Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
 "des collections et des positions peut être modifié par glisser-déposer."
@@ -1343,15 +1408,15 @@ msgstr ""
 "σειρά των συλλογών και των θέσεων μπορεί να αλλάξει με μεταφορά και "
 "απόθεση."
 
-#: ../../source/guide_utilisateur.rst:667
+#: ../../source/guide_utilisateur.rst:693
 msgid "Commande: ``coll``"
 msgstr "Εντολή: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:670
+#: ../../source/guide_utilisateur.rst:696
 msgid "Gérer les tournois"
 msgstr "Διαχείριση τουρνουά"
 
-#: ../../source/guide_utilisateur.rst:672
+#: ../../source/guide_utilisateur.rst:698
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
@@ -1360,15 +1425,15 @@ msgstr ""
 "εκδήλωση. Για να αποκτήσετε πρόσβαση στο πλαίσιο των τουρνουά, πατήστε "
 "*CTRL-Y*."
 
-#: ../../source/guide_utilisateur.rst:675
+#: ../../source/guide_utilisateur.rst:701
 msgid "**Créer un tournoi:**"
 msgstr "**Δημιουργία τουρνουά:**"
 
-#: ../../source/guide_utilisateur.rst:677
+#: ../../source/guide_utilisateur.rst:703
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "Ανοίξτε το πλαίσιο των τουρνουά (*CTRL-Y*)."
 
-#: ../../source/guide_utilisateur.rst:679
+#: ../../source/guide_utilisateur.rst:705
 msgid ""
 "Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider "
 "avec *ENTREE*."
@@ -1376,11 +1441,11 @@ msgstr ""
 "Πληκτρολογήστε το όνομα του τουρνουά στο πεδίο *Νέο τουρνουά…*, και "
 "έπειτα επιβεβαιώστε με *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:682
+#: ../../source/guide_utilisateur.rst:708
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**Ανάθεση αγώνα σε ένα τουρνουά:**"
 
-#: ../../source/guide_utilisateur.rst:684
+#: ../../source/guide_utilisateur.rst:710
 msgid ""
 "Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
 "la colonne tournoi pour assigner un match."
@@ -1388,11 +1453,11 @@ msgstr ""
 "Από το πλαίσιο των αγώνων (*CTRL-Tab*), χρησιμοποιήστε το αναπτυσσόμενο "
 "μενού της στήλης τουρνουά για να αναθέσετε έναν αγώνα."
 
-#: ../../source/guide_utilisateur.rst:688
+#: ../../source/guide_utilisateur.rst:714
 msgid "Afficher les statistiques de performance"
 msgstr "Εμφάνιση στατιστικών επιδόσεων"
 
-#: ../../source/guide_utilisateur.rst:690
+#: ../../source/guide_utilisateur.rst:716
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
@@ -1400,11 +1465,11 @@ msgstr ""
 "Το πλαίσιο Stats σας επιτρέπει να προβάλλετε τους δείκτες επιδόσεών σας "
 "(PR και κόστος MWC) από τις εισαγόμενες θέσεις."
 
-#: ../../source/guide_utilisateur.rst:693
+#: ../../source/guide_utilisateur.rst:719
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr "Πατήστε *CTRL-D* ή κάντε κλικ στην καρτέλα Stats στο κάτω πλαίσιο."
 
-#: ../../source/guide_utilisateur.rst:695
+#: ../../source/guide_utilisateur.rst:721
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
@@ -1412,7 +1477,7 @@ msgstr ""
 "Χρησιμοποιήστε τη γραμμή φίλτρου για να περιορίσετε την ανάλυση ανά "
 "παίκτη, τουρνουά, εύρος ημερομηνιών, τύπο απόφασης ή διάρκεια αγώνα."
 
-#: ../../source/guide_utilisateur.rst:698
+#: ../../source/guide_utilisateur.rst:724
 msgid ""
 "Cliquer sur un indicateur pour accéder directement aux positions "
 "correspondantes."
@@ -1420,11 +1485,11 @@ msgstr ""
 "Κάντε κλικ σε έναν δείκτη για να μεταβείτε απευθείας στις αντίστοιχες "
 "θέσεις."
 
-#: ../../source/guide_utilisateur.rst:701
+#: ../../source/guide_utilisateur.rst:727
 msgid "Évaluer une position (panneau Eval)"
 msgstr "Αξιολόγηση μιας θέσης (πίνακας Eval)"
 
-#: ../../source/guide_utilisateur.rst:703
+#: ../../source/guide_utilisateur.rst:729
 msgid ""
 "Le panneau Eval évalue n'importe quelle position — pas seulement une "
 "course. Sur une position de bearoff pur, il calcule l'EPC (Effective Pip "
@@ -1438,11 +1503,11 @@ msgstr ""
 "θέση, ο ενσωματωμένος αξιολογητής gammonNet παρέχει τις υποψήφιες "
 "κινήσεις ή την απόφαση κύβου, χωρίς σύνδεση, χωρίς XG ή GNUbg."
 
-#: ../../source/guide_utilisateur.rst:710
+#: ../../source/guide_utilisateur.rst:736
 msgid "Panneau Eval sur une décision de coups de pions"
 msgstr "Πίνακας Eval σε μια απόφαση κίνησης πουλιών"
 
-#: ../../source/guide_utilisateur.rst:714
+#: ../../source/guide_utilisateur.rst:740
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
@@ -1450,7 +1515,7 @@ msgstr ""
 "Ο πίνακας Eval: πιθανότητες νίκης/γκάμον/μπάγκαμον, ισοτιμία και σφάλμα "
 "κάθε υποψήφιας κίνησης, υπολογισμένα από το gammonNet."
 
-#: ../../source/guide_utilisateur.rst:717
+#: ../../source/guide_utilisateur.rst:743
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur, ou"
 " exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau vierge,"
@@ -1460,7 +1525,7 @@ msgstr ""
 "εκτελέστε την εντολή ``epc``: ο πίνακας ανοίγει με άδειο ταμπλό, έτοιμο "
 "για επεξεργασία."
 
-#: ../../source/guide_utilisateur.rst:721
+#: ../../source/guide_utilisateur.rst:747
 msgid ""
 "Pour évaluer la position déjà affichée (une position de la bibliothèque, "
 "ou celle d'un match en cours de revue) plutôt qu'un plateau vierge, clic "
@@ -1472,7 +1537,7 @@ msgstr ""
 "κλικ στο ταμπλό και έπειτα *Αξιολόγηση αυτής της θέσης* — η εμφανιζόμενη "
 "θέση αποστέλλεται ως έχει στον πίνακα Eval."
 
-#: ../../source/guide_utilisateur.rst:726
+#: ../../source/guide_utilisateur.rst:752
 msgid ""
 "Le plateau entier s'édite au clic ou au clavier : pions, dés, score, "
 "position du videau, joueur au trait. Éditer uniquement les pions du jan "
@@ -1483,7 +1548,7 @@ msgstr ""
 "του jan (τελευταία 6 σημεία) και στις δύο πλευρές τοποθετεί τη θέση σε "
 "καθεστώς bearoff."
 
-#: ../../source/guide_utilisateur.rst:730
+#: ../../source/guide_utilisateur.rst:756
 msgid ""
 "Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre "
 "moyen de lancers, écart type, pip count et wastage, la probabilité de "
@@ -1499,7 +1564,7 @@ msgstr ""
 "κινήσεις ταξινομημένες κατά ισοτιμία· χωρίς ζάρια, η απόφαση κύβου. Δείτε"
 " την ενότητα «Μεθοδολογία και υποθέσεις του πίνακα Eval» του εγχειριδίου."
 
-#: ../../source/guide_utilisateur.rst:737
+#: ../../source/guide_utilisateur.rst:763
 msgid ""
 "Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
 "résultats sont masqués à chaque modification et se révèlent zone par "
@@ -1509,15 +1574,15 @@ msgstr ""
 "*Πρόκληση*: τα αποτελέσματα αποκρύπτονται σε κάθε τροποποίηση και "
 "αποκαλύπτονται ζώνη προς ζώνη, με ένα κλικ."
 
-#: ../../source/guide_utilisateur.rst:742
+#: ../../source/guide_utilisateur.rst:768
 msgid "Le panneau fonctionne pour les deux joueurs simultanément."
 msgstr "Ο πίνακας λειτουργεί και για τους δύο παίκτες ταυτόχρονα."
 
-#: ../../source/guide_utilisateur.rst:745
+#: ../../source/guide_utilisateur.rst:771
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Εμφάνιση της ανάλυσης μιας θέσης που εισήχθη από το XG"
 
-#: ../../source/guide_utilisateur.rst:747
+#: ../../source/guide_utilisateur.rst:773
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -1525,7 +1590,7 @@ msgstr ""
 "Αν μια θέση που αναλύθηκε από το XG, το GNUbg ή το BGBlitz έχει εισαχθεί "
 "στο blunderDB, η ανάλυση μπορεί να εμφανιστεί πατώντας *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:750
+#: ../../source/guide_utilisateur.rst:776
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -1542,7 +1607,7 @@ msgstr ""
 "πιθανότητες νίκης, gammon και backgammon του αντιπάλου, και το επίπεδο "
 "ανάλυσης."
 
-#: ../../source/guide_utilisateur.rst:757
+#: ../../source/guide_utilisateur.rst:783
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -1550,7 +1615,7 @@ msgstr ""
 "Αν η θέση αντιστοιχεί σε μια απόφαση κύβου, εμφανίζεται το κόστος κάθε "
 "απόφασης καθώς και οι πιθανότητες νίκης της θέσης."
 
-#: ../../source/guide_utilisateur.rst:760
+#: ../../source/guide_utilisateur.rst:786
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -1560,7 +1625,7 @@ msgstr ""
 "παράδειγμα XG και GNUbg), μια επιπλέον στήλη υποδεικνύει τη μηχανή "
 "προέλευσης κάθε ανάλυσης."
 
-#: ../../source/guide_utilisateur.rst:764
+#: ../../source/guide_utilisateur.rst:790
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
@@ -1570,7 +1635,7 @@ msgstr ""
 "επισημαίνεται στη λίστα των κινήσεων. Αν η θέση συναντήθηκε σε πολλούς "
 "αγώνες, υποδεικνύονται όλες οι κινήσεις που παίχτηκαν."
 
-#: ../../source/guide_utilisateur.rst:769
+#: ../../source/guide_utilisateur.rst:795
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -1578,27 +1643,27 @@ msgstr ""
 "Κάνοντας κλικ σε μια κίνηση στο πλαίσιο ανάλυσης, εμφανίζονται τα "
 "αντίστοιχα βέλη στο ταμπλό."
 
-#: ../../source/guide_utilisateur.rst:773
+#: ../../source/guide_utilisateur.rst:799
 msgid "Exporter une position vers XG"
 msgstr "Εξαγωγή θέσης στο XG"
 
-#: ../../source/guide_utilisateur.rst:775
+#: ../../source/guide_utilisateur.rst:801
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "Για να εξαγάγετε μια θέση από το blunderDB στο XG,"
 
-#: ../../source/guide_utilisateur.rst:777
+#: ../../source/guide_utilisateur.rst:803
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "εμφανίστε στο blunderDB τη θέση προς εξαγωγή και πατήστε *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:779
+#: ../../source/guide_utilisateur.rst:805
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "ανοίξτε το XG και πατήστε *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:782
+#: ../../source/guide_utilisateur.rst:808
 msgid "Visualiser les différentes positions"
 msgstr "Προβολή των διαφόρων θέσεων"
 
-#: ../../source/guide_utilisateur.rst:784
+#: ../../source/guide_utilisateur.rst:810
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -1610,7 +1675,7 @@ msgstr ""
 "επιτρέπει να μεταβείτε στην πρώτη θέση, και το πλήκτρο *END* σας "
 "επιτρέπει να μεταβείτε στην τελευταία θέση."
 
-#: ../../source/guide_utilisateur.rst:788
+#: ../../source/guide_utilisateur.rst:814
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -1618,19 +1683,19 @@ msgstr ""
 "Για να εμφανίσετε το bearoff στα αριστερά, πατήστε *CTRL-ΑΡΙΣΤΕΡΑ*. Για "
 "να εμφανίσετε το bearoff στα δεξιά, πατήστε *CTRL-ΔΕΞΙΑ*."
 
-#: ../../source/guide_utilisateur.rst:792
+#: ../../source/guide_utilisateur.rst:818
 msgid "Rechercher des positions selon des critères"
 msgstr "Αναζήτηση θέσεων με βάση κριτήρια"
 
-#: ../../source/guide_utilisateur.rst:794
+#: ../../source/guide_utilisateur.rst:820
 msgid "Pour rechercher des types de positions,"
 msgstr "Για να αναζητήσετε τύπους θέσεων,"
 
-#: ../../source/guide_utilisateur.rst:796
+#: ../../source/guide_utilisateur.rst:822
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "πατήστε *TAB* για να ανοίξετε το πλαίσιο αναζήτησης,"
 
-#: ../../source/guide_utilisateur.rst:798
+#: ../../source/guide_utilisateur.rst:824
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -1644,7 +1709,7 @@ msgstr ""
 "αποτελέσματα, καθαρίστε τη θέση πατώντας το πλήκτρο *BACKSPACE*. "
 "Επεξεργαστείτε αν χρειάζεται τη θέση του κύβου και το σκορ."
 
-#: ../../source/guide_utilisateur.rst:804
+#: ../../source/guide_utilisateur.rst:830
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
 " par les onglets *Au moins* et *Sauf* situés en haut du panneau :"
@@ -1653,7 +1718,7 @@ msgstr ""
 "καρτελών *Τουλάχιστον* και *Εκτός* που βρίσκονται στο επάνω μέρος του "
 "πλαισίου:"
 
-#: ../../source/guide_utilisateur.rst:807
+#: ../../source/guide_utilisateur.rst:833
 msgid ""
 "*Au moins* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
@@ -1661,7 +1726,7 @@ msgstr ""
 "*Τουλάχιστον* (προεπιλογή): το blunderDB φιλτράρει τις θέσεις που έχουν "
 "*τουλάχιστον* τη δομή πουλιών που εισαγάγατε·"
 
-#: ../../source/guide_utilisateur.rst:810
+#: ../../source/guide_utilisateur.rst:836
 msgid ""
 "*Sauf* : blunderDB exclut les positions contenant l'un des pions saisis. "
 "Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
@@ -1687,7 +1752,7 @@ msgstr ""
 "γραμμοσκιασμένο κελί, κανένα πούλι ανεξαρτήτως χρώματος)· ένα απλό κλικ "
 "σε αυτό το σημείο το ξεμπλοκάρει."
 
-#: ../../source/guide_utilisateur.rst:820
+#: ../../source/guide_utilisateur.rst:846
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Sauf* "
 "l'emporte s'il contredit le critère *Au moins*."
@@ -1695,31 +1760,31 @@ msgstr ""
 "Όταν ένα σημείο ανήκει και στις δύο δομές, το κριτήριο *Εκτός* υπερισχύει"
 " αν έρχεται σε αντίθεση με το κριτήριο *Τουλάχιστον*."
 
-#: ../../source/guide_utilisateur.rst:823
+#: ../../source/guide_utilisateur.rst:849
 msgid "Méthode 1 (simple):"
 msgstr "Μέθοδος 1 (απλή):"
 
-#: ../../source/guide_utilisateur.rst:825
+#: ../../source/guide_utilisateur.rst:851
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Ανοίξτε το παράθυρο αναζήτησης (*CTRL-F*)"
 
-#: ../../source/guide_utilisateur.rst:827
+#: ../../source/guide_utilisateur.rst:853
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Προσθέστε και ρυθμίστε τα φίλτρα αναζήτησης"
 
-#: ../../source/guide_utilisateur.rst:829
+#: ../../source/guide_utilisateur.rst:855
 msgid "Valider en cliquant sur *Rechercher*."
 msgstr "Επιβεβαιώστε κάνοντας κλικ στο *Αναζήτηση*."
 
-#: ../../source/guide_utilisateur.rst:831
+#: ../../source/guide_utilisateur.rst:857
 msgid "Méthode 2 (avancée):"
 msgstr "Μέθοδος 2 (προχωρημένη):"
 
-#: ../../source/guide_utilisateur.rst:834
+#: ../../source/guide_utilisateur.rst:860
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "ανοίξτε τη γραμμή εντολών πατώντας *SPACE*,"
 
-#: ../../source/guide_utilisateur.rst:836
+#: ../../source/guide_utilisateur.rst:862
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -1731,11 +1796,11 @@ msgstr ""
 "Δείτε :ref:`cmd_filter` για μια εξαντλητική λίστα των διαθέσιμων "
 "φίλτρων)."
 
-#: ../../source/guide_utilisateur.rst:841
+#: ../../source/guide_utilisateur.rst:867
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "επιβεβαιώστε το ερώτημα πατώντας *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:843
+#: ../../source/guide_utilisateur.rst:869
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -1743,11 +1808,11 @@ msgstr ""
 "Οι θέσεις που εμφανίζονται είναι αυτές της βάσης δεδομένων που πληρούν τα"
 " κριτήρια αναζήτησης που εισήγαγε ο χρήστης."
 
-#: ../../source/guide_utilisateur.rst:847
+#: ../../source/guide_utilisateur.rst:873
 msgid "Pour aller plus loin"
 msgstr "Για να προχωρήσετε παραπέρα"
 
-#: ../../source/guide_utilisateur.rst:849
+#: ../../source/guide_utilisateur.rst:875
 msgid ""
 "Ce guide couvre les usages les plus courants. blunderDB propose plusieurs"
 " fonctionnalités supplémentaires, détaillées dans le manuel :"
@@ -1756,7 +1821,7 @@ msgstr ""
 "προσφέρει αρκετές επιπλέον λειτουργίες, που περιγράφονται αναλυτικά στο "
 "εγχειρίδιο:"
 
-#: ../../source/guide_utilisateur.rst:852
+#: ../../source/guide_utilisateur.rst:878
 msgid ""
 "**Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une"
 " collection ou une recherche en paquet de cartes à réviser selon "
@@ -1768,7 +1833,7 @@ msgstr ""
 " FSRS, με ελεύθερη λειτουργία εξάσκησης (*cram*) που δεν διαταράσσει το "
 "χρονοδιάγραμμα. Βλ. :ref:`panneau_anki`."
 
-#: ../../source/guide_utilisateur.rst:857
+#: ../../source/guide_utilisateur.rst:883
 msgid ""
 "**Vues multiples** — une barre d'onglets sous la barre d'outils permet de"
 " garder plusieurs espaces de travail indépendants ouverts en parallèle "
@@ -1782,7 +1847,7 @@ msgstr ""
 "τη δική του λίστα θέσεων και το δικό του πλαίσιο. Βλ. "
 ":ref:`onglets_vues`."
 
-#: ../../source/guide_utilisateur.rst:862
+#: ../../source/guide_utilisateur.rst:888
 msgid ""
 "**Diffusion filigranée** — un export peut être signé avec votre identité "
 "d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et "
@@ -1794,7 +1859,7 @@ msgstr ""
 " του αρχείου) και να προστατευθεί με κωδικό για τη μεταφορά της. Βλ. "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/guide_utilisateur.rst:866
+#: ../../source/guide_utilisateur.rst:892
 msgid ""
 "**Visites guidées et base de démonstration** — la commande ``tour`` "
 "(alias ``tutorial``) ouvre un catalogue de visites guidées de "
@@ -1807,7 +1872,7 @@ msgstr ""
 "``demo`` φορτώνει μια βάση παραδείγματος για να γνωρίσετε το εργαλείο "
 "χωρίς προσωπική βάση. Βλ. :ref:`visites_guidees`."
 
-#: ../../source/guide_utilisateur.rst:871
+#: ../../source/guide_utilisateur.rst:897
 msgid ""
 "**Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs (équité ou MWC) dans la vue "

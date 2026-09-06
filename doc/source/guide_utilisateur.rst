@@ -8,6 +8,32 @@ rapide. Quatre tutoriels de bout en bout couvrent les usages les plus
 courants ; la suite du guide reste un catalogue de référence, geste par
 geste, à consulter au besoin.
 
+.. _ecran_accueil:
+
+L'écran d'accueil
+-----------------
+
+Tant qu'aucune base n'est ouverte, blunderDB propose quatre chemins plutôt
+qu'un plateau vide :
+
+* **Importer mes matchs** — le chemin principal. Il enchaîne tout seul : une
+  base neuve, le choix de vos fichiers (XG, GNU Backgammon, Jellyfish,
+  BGBlitz), puis le :ref:`compte rendu d'import <compte_rendu_import>` —
+  « voici votre PR et vos pires décisions » — et, si vous le voulez, la
+  :ref:`file d'étude <file_etude>`. C'est la promesse de l'outil tenue en
+  deux minutes, plutôt qu'expliquée.
+* **Ouvrir la base d'exemple** — trois matchs, des collections, des
+  commentaires et un paquet Anki : de quoi tout essayer sans rien apporter.
+* **Visite guidée** — le tour de l'interface, panneau par panneau.
+* **Ouvrir une base** — un fichier ``.db`` que vous avez déjà.
+
+La dernière base ouverte est proposée à part, et **seulement si son fichier
+existe encore** : un bouton qui échoue au clic est pire que pas de bouton.
+
+L'écran s'efface dès qu'une base est ouverte. Un lien discret l'écarte pour
+la session, parce que le panneau Eval fonctionne sans base : on peut vouloir
+poser une position et l'évaluer sans rien avoir à ouvrir.
+
 Tutoriels de bout en bout
 --------------------------
 
