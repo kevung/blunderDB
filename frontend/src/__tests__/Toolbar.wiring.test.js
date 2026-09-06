@@ -26,7 +26,8 @@ vi.mock('../services/positionService.js', () =>
         'gotoPosition',
         'togglePipcount',
         'loadRandomPosition',
-        'reloadAllPositions'
+        'reloadAllPositions',
+        'toggleTrainingPanel'
     ])
 );
 vi.mock('../services/keyboardService.js', () => stub(['toggleHelpModal']));
@@ -63,6 +64,7 @@ const EXPECTED = [
     positionService.gotoPosition,
     positionService.togglePipcount,
     positionService.loadRandomPosition,
+    positionService.toggleTrainingPanel,
     clipboardService.copyBoardImage,
     MODAL.CONFIG,
     MODAL.TOUR,

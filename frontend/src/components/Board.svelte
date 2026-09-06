@@ -12,6 +12,7 @@
     import Two from 'two.js';
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, showPipcountStore, activeTabStore } from '../stores/uiStore';
+    import { trainingPipMaskStore } from '../stores/trainingTabStore.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -33,7 +34,11 @@
     // with the active tab (see that file's {#if} — same fix as AnalysisPanel's stuck
     // selectedMoveStore).
     let showComment = $derived($activeTabStore === 'comments');
-    let showPipcount = $derived($showPipcountStore);
+    // Le pipcount se cache pendant une question de Pions : le plateau porte la
+    // réponse, et une question dont la réponse est affichée à côté n'est pas une
+    // question (#320). C'est un masque, pas un réglage — la préférence de
+    // l'utilisateur reste ce qu'elle est, et « Révéler » la rend telle quelle.
+    let showPipcount = $derived($showPipcountStore && !$trainingPipMaskStore);
 
     let canvasCfg = {
         aspectFactor: 0.72

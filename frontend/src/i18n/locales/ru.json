@@ -190,7 +190,8 @@
         "togglePipcount": "Переключить подсчёт pip",
         "updatePosition": "Обновить позицию",
         "tour": "Обучающие туры",
-        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются (Ctrl+Shift+I)"
+        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются (Ctrl+Shift+I)",
+        "training": "Тренировка"
     },
     "tour": {
         "next": "Далее",
@@ -1034,7 +1035,8 @@
         "hideTab": "Скрыть эту вкладку",
         "showTab": "Показать: {tab}",
         "hiddenTabs": "Скрытые вкладки",
-        "ankiDue": "карточек к повторению: {n}"
+        "ankiDue": "карточек к повторению: {n}",
+        "training": "Тренировка"
     },
     "status": {
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
@@ -1362,10 +1364,7 @@
     "training": {
         "title": "Тренировка",
         "progress": "Вопрос {i}/{n}",
-        "drillPips": "Подсчёт пипсов",
         "drillEpc": "EPC",
-        "drillTakePoint": "Точка взятия",
-        "takePointPrompt": "Счёт {away} (away)",
         "answer": "Ответ",
         "check": "Проверить",
         "next": "Далее",
@@ -1389,7 +1388,55 @@
         "gradeFailed": "Ответ не удалось оценить.",
         "finishedQuiz": "Викторина окончена: {correct}/{n}, PR сессии {pr}.",
         "undoHop": "Отменить шаг",
-        "resetPlay": "Заново"
+        "resetPlay": "Заново",
+        "exercise": {
+            "scores": "Счёт",
+            "pips": "Пипы"
+        },
+        "sources": {
+            "board": "Доска",
+            "library": "База"
+        },
+        "exerciseLabel": "Упражнение",
+        "source": "Источник",
+        "limit": "Лимит на вопрос",
+        "limitNone": "Нет",
+        "limitSeconds": "{n} с",
+        "start": "Начать",
+        "reveal": "Показать",
+        "nextQuestion": "Далее",
+        "finishSession": "Завершить",
+        "quit": "Выйти",
+        "outOfTime": "Время вышло",
+        "questionCount": "Вопрос {n}",
+        "elapsed": "{n} с",
+        "elapsedOfLimit": "{n} / {limit} с",
+        "faultHint": "Щёлкните число, в котором ошиблись.",
+        "faceYou": "Вы",
+        "faceOpponent": "Соперник",
+        "scoreCaption": "Счёт {a}/{b} away",
+        "summary": "Итог",
+        "noSession": "Нет сессий",
+        "sessionsCount": "{n} сессий",
+        "faultRate": "{faults}/{asked} ошибок ({rate} %)",
+        "meanDeviation": "Среднее отклонение {value}",
+        "medianTime": "Медиана {n} с",
+        "trend": "Тенденция {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Неизвестное упражнение: {exercise}.",
+        "noQuestion": "По этому источнику нельзя задать вопрос.",
+        "journalFailed": "Сессию не удалось записать в журнал.",
+        "numbers": {
+            "tp2Live": "Точка принятия 2 · длинная гонка",
+            "tp2Last": "Точка принятия 2 · последний бросок",
+            "tp4Live": "Точка принятия 4 · длинная гонка",
+            "tp4Last": "Точка принятия 4 · последний бросок",
+            "gv1": "Ценность гаммона 1",
+            "gv2": "Ценность гаммона 2",
+            "gv4": "Ценность гаммона 4",
+            "pipsBottom": "Низ (чёрные)",
+            "pipsTop": "Верх (белые)"
+        }
     },
     "explain": {
         "blots": "Вы теряете {cost} mMWC: сыгранный ход оставляет {blots} блотов там, где {best} оставляет только {bestBlots}.",

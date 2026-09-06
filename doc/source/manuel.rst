@@ -2128,33 +2128,113 @@ un an : une position que l'algorithme reporterait de plusieurs années a quitté
 le paquet sans que vous l'ayez décidé, et votre propre jeu change plus vite que
 cela. Les paquets plus anciens conservent la valeur qu'ils avaient.
 
+.. _panneau_entrainement:
+
+Panneau Entraînement
+--------------------
+
+Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau
+**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. Il
+s'ouvre par ``CTRL-J``, par le bouton de la barre d'outils placé juste après
+« Position aléatoire », ou par la commande ``train``.
+
+Au repos, le panneau montre le lanceur et le bilan des sessions passées.
+
+Le lanceur
+~~~~~~~~~~
+
+Trois choix, puis « Démarrer » :
+
+* l'**exercice** — *Scores* ou *Pions* ;
+* la **source** de la question, quand l'exercice en a plusieurs — *Plateau*
+  (la position telle qu'elle est) ou *Base* (une position de la liste
+  parcourue) ;
+* la **limite par question** — aucune, 15, 30 ou 60 secondes.
+
+``train scores`` et ``train pips`` ouvrent le panneau et démarrent
+directement ; ``train tp`` et ``train takepoint`` sont des synonymes de
+``train scores``.
+
+Les deux exercices
+~~~~~~~~~~~~~~~~~~
+
+**Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et
+affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
+sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course
+longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.
+
+Chaque colonne ne porte que les cases que les tables de référence — celles
+qu'affichent les commandes ``tp2_live``, ``tp2_last``, ``tp4_live``,
+``tp4_last``, ``gv1``, ``gv2`` et ``gv4`` — définissent pour sa face : trois
+nombres à 2a-2a,
+quatorze au plus, et une seule colonne à score égal. Une ligne qu'aucune des
+deux faces ne définit ne figure pas sur la fiche — il n'y a donc aucune case
+« sans objet » à deviner. Les deux faces sont là parce qu'une décision de
+videau au score a besoin des deux : le point de prise corrigé combine les
+valeurs de gammon des deux joueurs, et c'est le point de prise de l'adversaire
+qui dit si votre double passe.
+
+**Pions** demande le compte de pions des **deux** camps. Le pipcount du
+plateau est masqué tant que la question est ouverte ; « Révéler » l'affiche, et
+votre réglage d'affichage (``p``) reste ce qu'il était. La source *Plateau*
+pose une question sur la position affichée, et une seule ; la source *Base*
+tire une nouvelle position à chaque question et l'amène sur le plateau.
+
+Répondre
+~~~~~~~~
+
+Le geste est **déclaré** : vous calculez de tête, vous cliquez « Révéler », et
+la vérité s'affiche. Chaque nombre est alors **juste par défaut** — vous
+cliquez celui que vous avez raté pour le marquer **faute** (*Tab* puis *Espace*
+fait le même geste au clavier), et un second clic annule la marque. Rien ne se
+tape : un compte de pions ou une case de table est juste ou faux, et l'écrire
+n'apprend rien de plus que de le lire.
+
+Le chronomètre part à l'affichage de la question et s'arrête à « Révéler » ;
+cocher ses fautes n'est pas chronométré. Avec une limite, une question restée
+sans réponse à l'échéance se révèle seule et compte **hors délai** : tous ses
+nombres sont faux, et son temps n'entre pas dans la médiane — on ne mesure pas
+une réponse qui n'a pas été donnée.
+
+« Suivante » enregistre la question et en pose une autre. La session n'a pas de
+longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou
+« Quitter », qui la jette. Tous les boutons sont dans le panneau ; le plateau
+montre la question et sa réponse, il ne porte aucune commande.
+
+Le journal et le bilan
+~~~~~~~~~~~~~~~~~~~~~~
+
+Les sessions terminées sont conservées dans la base elle-même — elles suivent
+donc le fichier — et sans plafond. Au repos, le panneau affiche une ligne par
+exercice : le nombre de sessions, le taux de fautes, le temps médian et, à
+partir de dix sessions, la **tendance**, c'est-à-dire l'écart entre le taux de
+fautes des dix dernières sessions et celui de toutes — négatif, vous
+progressez.
+
+Cliquer le nom de l'exercice déplie le détail **par type de nombre** :
+« Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait
+l'intérêt du journal, et il compte par type et non par face : la même case de
+la même table, vue d'un côté ou de l'autre, est une seule faiblesse.
+
 .. _micro_entrainements:
 
-Micro-entraînements
--------------------
+Micro-entraînements : EPC et quiz
+---------------------------------
 
-Le panneau Anki fait réviser un **jugement** ; les micro-entraînements font
-travailler les trois **calculs** qui se font en partie, sous la pendule, et
-qu'aucune révision espacée ne muscle. La commande ``train`` en lance une
+Deux exercices se répondent encore au clavier, dans une bande affichée
+au-dessus du plateau. La commande ``train`` suivie de leur nom lance une
 session de cinq questions :
 
-* ``train pips`` — compter les pions du joueur au trait, sur la position
-  affichée.
-* ``train epc`` — estimer l'EPC de ce même joueur, sur une position de course
-  que le moteur sait évaluer.
-* ``train tp`` — retrouver le point de prise d'une course longue à un score
-  tiré au hasard, celui de la table ``tp2_live``.
+* ``train epc`` — estimer l'EPC du joueur au trait, sur une position de course
+  que le moteur sait évaluer ;
+* ``train quiz`` — décider, sur une position déjà analysée.
 
 La question EST la position affichée : le plateau est celui de l'application,
-et la barre au-dessus ne porte que la question, la saisie et la correction.
-La réponse se tape et se valide au clavier (*Entrée* vérifie, puis passe à la
-suivante ; *Échap* quitte la session).
-
-La tolérance dépend de l'exercice, et elle est dite plutôt que devinée : le
-comptage de pions n'en a **aucune** — une addition juste à un pion près est
-une addition fausse — l'EPC accepte un demi-pion, le point de prise deux
-points de pourcentage. À la fin, la session affiche le nombre de bonnes
-réponses et le temps **médian** par question.
+et la bande ne porte que la question, la saisie et la correction. La réponse se
+tape et se valide au clavier (*Entrée* vérifie, puis passe à la suivante ;
+*Échap* quitte la session). L'EPC accepte un demi-pion d'écart, la granularité
+à laquelle il change une décision de course. À la fin, la session affiche le
+nombre de bonnes réponses et le temps **médian** par question.
 
 Seul ce résumé est conservé, dans les métadonnées de la base : la session ne
 garde pas la trace question par question, et rien n'est écrit tant qu'elle

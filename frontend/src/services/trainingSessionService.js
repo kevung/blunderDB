@@ -3,7 +3,7 @@ import { LoadPosition, LoadAnalysis, ComputeEPCFromPosition, GradeQuizChecker, G
 import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { trainingDrillStore, trainingQuestionsStore, trainingIndexStore, trainingAnswersStore, trainingActiveStore, trainingVerdictStore, trainingCurrentStore } from '../stores/trainingStore.js';
-import { grade, summarize, saveSession, pipTruth, takePointTruth, quizPR } from './trainingService.js';
+import { grade, summarize, saveSession, quizPR } from './trainingService.js';
 import { showImportedPosition } from './importService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { completedPlay, newPlay } from './quizPlay.js';
@@ -12,6 +12,10 @@ import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
 // Les micro-entraînements (#273, fiche I.17), côté application.
+//
+// Depuis #320, la bande ne sert plus que l'EPC et le quiz : le compte de pions
+// et le point de prise sont dans l'onglet Entraînement, où ils se répondent en
+// mode déclaré (services/trainingTabService.js).
 //
 // Le service compose une session : il tire des positions de la base, calcule
 // la réponse attendue AVANT de poser la question, et amène chaque position sur
@@ -49,7 +53,7 @@ function drawIndices(length, count) {
 }
 
 /**
- * Compose les questions d'une session de comptage de pions ou d'EPC.
+ * Compose les questions d'une session d'EPC.
  * @param {string} drill
  */
 async function buildBoardQuestions(drill) {
@@ -70,10 +74,6 @@ async function buildBoardQuestions(drill) {
             continue;
         }
         if (!position) continue;
-        if (drill === 'pips') {
-            questions.push({ drill, positionId: id, truth: pipTruth(position), prompt: '' });
-            continue;
-        }
         // EPC : seule une position que le moteur accepte fait une question.
         // Une position de contact renverrait un refus, et poser une question
         // dont la réponse est « on ne sait pas » n'entraîne à rien.
@@ -125,27 +125,6 @@ async function buildQuizQuestions() {
 }
 
 /**
- * Compose les questions d'une session de point de prise. Celles-là ne
- * demandent pas de position : le score EST la question, et la table tp2 en
- * donne la réponse.
- */
-function buildTakePointQuestions() {
-    const questions = [];
-    const seen = new Set();
-    while (questions.length < SESSION_LENGTH && seen.size < 49) {
-        const away1 = 2 + Math.floor(Math.random() * 7);
-        const away2 = 2 + Math.floor(Math.random() * 7);
-        const key = `${away1}:${away2}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        const truth = takePointTruth(away1, away2);
-        if (truth == null) continue;
-        questions.push({ drill: 'takepoint', positionId: null, truth, prompt: key });
-    }
-    return questions;
-}
-
-/**
  * Démarre une session. Refuse en le disant plutôt que d'ouvrir une session
  * vide : une base sans course ne peut pas faire travailler l'EPC, et le dire
  * vaut mieux que cinq questions sans réponse.
@@ -153,8 +132,7 @@ function buildTakePointQuestions() {
  */
 export async function startTraining(drill) {
     let questions;
-    if (drill === 'takepoint') questions = buildTakePointQuestions();
-    else if (drill === 'quiz') questions = await buildQuizQuestions();
+    if (drill === 'quiz') questions = await buildQuizQuestions();
     else questions = await buildBoardQuestions(drill);
     if (questions.length === 0) {
         setStatusBarMessage(tMsg('training.noQuestions'));

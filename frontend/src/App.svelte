@@ -85,6 +85,9 @@
     import TrainingBar from './components/TrainingBar.svelte';
     import { startTraining } from './services/trainingSessionService.js';
     import { DRILLS } from './services/trainingService.js';
+    import { startTrainingSession } from './services/trainingTabService.js';
+    import { TRAINING_EXERCISES } from './services/trainingTab.js';
+    import { showTab, toggleTrainingPanel } from './services/tabToggles.js';
     import { showSimilarPositions } from './services/similarService.js';
     import { askIntent } from './services/intentService.js';
     import HomeScreen from './components/HomeScreen.svelte';
@@ -279,17 +282,36 @@
         }
     }
 
-    // `train <exercice>` (#273). Le nom court est celui qu'on tape : `tp` pour
-    // le point de prise, comme les tables du même nom. Un exercice inconnu — ou
-    // aucun — le dit et rappelle les trois, plutôt que d'en choisir un.
+    // `train` et `train <exercice>` (#273, #320).
+    //
+    // Nu, il ouvre l'onglet Entraînement. Avec un exercice de l'onglet, il
+    // l'ouvre ET démarre : on tape `train scores` pour s'entraîner, pas pour
+    // arriver devant un lanceur. Les alias sont ceux que les doigts ont
+    // appris — `tp` et `takepoint` pour la fiche de score, comme les tables du
+    // même nom ; `epc` et `quiz` restent servis par la bande, le temps que les
+    // tranches suivantes les déplacent.
+    const TAB_EXERCISE_ALIASES = { scores: 'scores', tp: 'scores', takepoint: 'scores', pips: 'pips', pip: 'pips' };
+
     async function startTrainingCommand(drill) {
-        const alias = { pips: 'pips', pip: 'pips', epc: 'epc', tp: 'takepoint', takepoint: 'takepoint', quiz: 'quiz' };
-        const chosen = alias[String(drill || '').toLowerCase()];
-        if (!chosen) {
-            setStatusBarMessage(tMsg('training.usage', { drills: DRILLS.join(', ') }));
+        const wanted = String(drill || '')
+            .trim()
+            .toLowerCase();
+        if (!wanted) {
+            toggleTrainingPanel();
             return;
         }
-        await startTraining(chosen);
+        const exercise = TAB_EXERCISE_ALIASES[wanted];
+        if (exercise) {
+            if (!showTab('training')) return;
+            await startTrainingSession({ exercise });
+            return;
+        }
+        if (DRILLS.includes(wanted)) {
+            await startTraining(wanted);
+            return;
+        }
+        const known = [...TRAINING_EXERCISES.map((e) => e.id), ...DRILLS];
+        setStatusBarMessage(tMsg('training.usage', { drills: known.join(', ') }));
     }
 
     // `like [id]` (#293). Sans argument, la position courante : c'est le geste

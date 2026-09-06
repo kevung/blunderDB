@@ -1,67 +1,40 @@
 import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js';
-import { computePipCount } from '../utils/boardGeometry.js';
-import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
-import { takePoint2LastTable } from '../stores/takePoint2LastTable';
 import { logger } from '../utils/logger.js';
 
 // Micro-entraînements (#273, fiche I.17).
 //
-// Anki fait réviser un jugement ; ceci fait travailler les trois calculs qui
-// se font en partie, sous la pendule, et qu'aucune révision espacée ne
-// muscle : compter les pions, estimer un EPC, retrouver un point de prise au
-// score. Toutes les données sont déjà embarquées — les tables tp2, la
-// géométrie du plateau, le moteur EPC — donc le module n'apporte pas de
-// donnée, seulement la question, le chronomètre et la note.
+// Anki fait réviser un jugement ; ceci fait travailler des calculs qui se font
+// en partie, sous la pendule, et qu'aucune révision espacée ne muscle.
+//
+// Depuis #320 il n'en reste que DEUX ici : l'EPC et le quiz. Le compte de
+// pions et le point de prise sont passés à l'onglet Entraînement, où ils se
+// répondent en mode déclaré — on révèle, on coche ce qu'on a raté — parce que
+// les taper n'apprenait rien de plus que de les lire. La bande garde ce qui
+// se SAISIT, le temps que les tranches suivantes l'y déplacent aussi.
 //
 // Ce fichier ne connaît ni Svelte ni le plateau : il choisit une question,
 // juge une réponse, et range une session. C'est ce qui le rend testable, et
 // c'est aussi ce qui permettra à J.4 (#294) de s'y brancher plutôt que de
 // réécrire une seconde notion de « note d'entraînement ».
 
-/** Les exercices. Les trois premiers sont des calculs (#273) ; `quiz` est le
- *  module complet (#294), où le coup se joue sur le plateau et l'erreur se
- *  mesure contre l'analyse enregistrée. */
-export const DRILLS = Object.freeze(['pips', 'epc', 'takepoint', 'quiz']);
+/** Les exercices que la bande sert encore : `epc` est un calcul (#273),
+ *  `quiz` le module complet (#294), où le coup se joue sur le plateau et
+ *  l'erreur se mesure contre l'analyse enregistrée. Les exercices déclarés
+ *  vivent dans l'onglet (services/trainingTab.js). */
+export const DRILLS = Object.freeze(['epc', 'quiz']);
 
 // La tolérance de chaque exercice, et pourquoi elle vaut ce qu'elle vaut.
 //
-//   pips      — 0. Un compte de pions est une addition : « à un pion près »
-//               n'existe pas à la table, et une tolérance apprendrait à peu
-//               près à compter.
-//   epc       — 0.5. L'EPC est une estimation ; le demi-pion est la
-//               granularité à laquelle il change une décision de course.
-//   takepoint — 2 points de pourcentage, l'écart en deçà duquel deux cases
-//               voisines de la table tp2 ne se distinguent pas non plus.
-export const TOLERANCE = Object.freeze({ pips: 0, epc: 0.5, takepoint: 2 });
+//   epc — 0.5. L'EPC est une estimation ; le demi-pion est la granularité à
+//         laquelle il change une décision de course.
+//
+// Un exercice absent de cette table ne tolère rien (`grade` lit 0 par défaut),
+// ce qui est la règle et non l'exception : seul un nombre ESTIMÉ a une
+// tolérance.
+export const TOLERANCE = Object.freeze({ epc: 0.5 });
 
 const KEY_SESSIONS = 'training_sessions';
 const MAX_SESSIONS = 50;
-
-/**
- * La réponse attendue pour une question de comptage de pions : le compte du
- * joueur au trait. Les deux comptes sont calculés par la même fonction que
- * le plateau affiche, donc l'exercice ne peut pas diverger de ce que
- * l'application montre une fois la réponse donnée.
- * @param {any} position
- */
-export function pipTruth(position) {
-    const { pipCount1, pipCount2 } = computePipCount(position);
-    return position?.player_on_roll === 0 ? pipCount1 : pipCount2;
-}
-
-/**
- * Le point de prise d'une course longue au score, lu dans la table tp2 (celle
- * que la commande ``tp2_live`` affiche). Les tables commencent à 2-away, et
- * `lastRoll` bascule sur la table du dernier lancer.
- * @param {number} awayRoller @param {number} awayOpponent @param {boolean} lastRoll
- */
-export function takePointTruth(awayRoller, awayOpponent, lastRoll = false) {
-    const table = lastRoll ? takePoint2LastTable : takePoint2LiveTable;
-    const row = awayRoller - 2;
-    const col = awayOpponent - 2;
-    if (row < 0 || col < 0 || row >= table.length || col >= table[row].length) return null;
-    return table[row][col];
-}
 
 /**
  * Juge une réponse. `error` est signé (positif = surestimation) parce que le

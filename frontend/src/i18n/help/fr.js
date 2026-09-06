@@ -631,15 +631,35 @@ export default {
 <p><strong>Rétention : la cible et la mesure.</strong> La <em>rétention cible</em> est votre choix sur le compromis entre charge de travail et qualité du rappel : plus elle est haute, plus les intervalles raccourcissent et plus vous révisez. En regard, les Paramètres affichent la <strong>rétention mesurée</strong> sur vos propres révisions — une information, jamais un pilotage : blunderDB ne modifie pas votre cible pour poursuivre votre taux de réussite. Sous une vingtaine de révisions, la mesure n'est pas affichée : elle se lirait comme un fait alors qu'elle n'est que du bruit.</p>
 <p>Changer la rétention <strong>n'est pas rétroactif</strong> : chaque carte adopte le nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne bougent pas. L'effet est donc progressif, et invisible le jour même.</p>
 <p>L'<em>intervalle maximum</em> borne l'espacement. Un paquet créé récemment démarre à un an : une position que l'algorithme reporterait de plusieurs années a quitté le paquet sans que vous l'ayez décidé, et votre propre jeu change plus vite que cela. Les paquets plus anciens conservent la valeur qu'ils avaient.</p>
-<h3>Micro-entraînements</h3>
-<p>Le panneau Anki fait réviser un <strong>jugement</strong> ; les micro-entraînements font travailler les trois <strong>calculs</strong> qui se font en partie, sous la pendule, et qu'aucune révision espacée ne muscle. La commande <code>train</code> en lance une session de cinq questions :</p>
+<h3>Panneau Entraînement</h3>
+<p>Le panneau <strong>Anki</strong> fait réviser ce qui se <strong>retient</strong> ; le panneau <strong>Entraînement</strong> fait travailler ce qui se <strong>calcule</strong>, sous la pendule. Il s'ouvre par <code>CTRL-J</code>, par le bouton de la barre d'outils placé juste après « Position aléatoire », ou par la commande <code>train</code>.</p>
+<p>Au repos, le panneau montre le lanceur et le bilan des sessions passées.</p>
+<h4>Le lanceur</h4>
+<p>Trois choix, puis « Démarrer » :</p>
 <ul>
-<li><code>train pips</code> — compter les pions du joueur au trait, sur la position affichée.</li>
-<li><code>train epc</code> — estimer l'EPC de ce même joueur, sur une position de course que le moteur sait évaluer.</li>
-<li><code>train tp</code> — retrouver le point de prise d'une course longue à un score tiré au hasard, celui de la table <code>tp2_live</code>.</li>
+<li>l'<strong>exercice</strong> — <em>Scores</em> ou <em>Pions</em> ;</li>
+<li>la <strong>source</strong> de la question, quand l'exercice en a plusieurs — <em>Plateau</em> (la position telle qu'elle est) ou <em>Base</em> (une position de la liste parcourue) ;</li>
+<li>la <strong>limite par question</strong> — aucune, 15, 30 ou 60 secondes.</li>
 </ul>
-<p>La question EST la position affichée : le plateau est celui de l'application, et la barre au-dessus ne porte que la question, la saisie et la correction. La réponse se tape et se valide au clavier (<em>Entrée</em> vérifie, puis passe à la suivante ; <em>Échap</em> quitte la session).</p>
-<p>La tolérance dépend de l'exercice, et elle est dite plutôt que devinée : le comptage de pions n'en a <strong>aucune</strong> — une addition juste à un pion près est une addition fausse — l'EPC accepte un demi-pion, le point de prise deux points de pourcentage. À la fin, la session affiche le nombre de bonnes réponses et le temps <strong>médian</strong> par question.</p>
+<p><code>train scores</code> et <code>train pips</code> ouvrent le panneau et démarrent directement ; <code>train tp</code> et <code>train takepoint</code> sont des synonymes de <code>train scores</code>.</p>
+<h4>Les deux exercices</h4>
+<p><strong>Scores</strong> tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et affiche une <strong>fiche de score</strong> : deux colonnes — <em>Vous</em> et <em>L'adversaire</em> — et sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.</p>
+<p>Chaque colonne ne porte que les cases que les tables de référence — celles qu'affichent les commandes <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> et <code>gv4</code> — définissent pour sa face : trois nombres à 2a-2a, quatorze au plus, et une seule colonne à score égal. Une ligne qu'aucune des deux faces ne définit ne figure pas sur la fiche — il n'y a donc aucune case « sans objet » à deviner. Les deux faces sont là parce qu'une décision de videau au score a besoin des deux : le point de prise corrigé combine les valeurs de gammon des deux joueurs, et c'est le point de prise de l'adversaire qui dit si votre double passe.</p>
+<p><strong>Pions</strong> demande le compte de pions des <strong>deux</strong> camps. Le pipcount du plateau est masqué tant que la question est ouverte ; « Révéler » l'affiche, et votre réglage d'affichage (<code>p</code>) reste ce qu'il était. La source <em>Plateau</em> pose une question sur la position affichée, et une seule ; la source <em>Base</em> tire une nouvelle position à chaque question et l'amène sur le plateau.</p>
+<h4>Répondre</h4>
+<p>Le geste est <strong>déclaré</strong> : vous calculez de tête, vous cliquez « Révéler », et la vérité s'affiche. Chaque nombre est alors <strong>juste par défaut</strong> — vous cliquez celui que vous avez raté pour le marquer <strong>faute</strong> (<em>Tab</em> puis <em>Espace</em> fait le même geste au clavier), et un second clic annule la marque. Rien ne se tape : un compte de pions ou une case de table est juste ou faux, et l'écrire n'apprend rien de plus que de le lire.</p>
+<p>Le chronomètre part à l'affichage de la question et s'arrête à « Révéler » ; cocher ses fautes n'est pas chronométré. Avec une limite, une question restée sans réponse à l'échéance se révèle seule et compte <strong>hors délai</strong> : tous ses nombres sont faux, et son temps n'entre pas dans la médiane — on ne mesure pas une réponse qui n'a pas été donnée.</p>
+<p>« Suivante » enregistre la question et en pose une autre. La session n'a pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au journal, ou « Quitter », qui la jette. Tous les boutons sont dans le panneau ; le plateau montre la question et sa réponse, il ne porte aucune commande.</p>
+<h4>Le journal et le bilan</h4>
+<p>Les sessions terminées sont conservées dans la base elle-même — elles suivent donc le fichier — et sans plafond. Au repos, le panneau affiche une ligne par exercice : le nombre de sessions, le taux de fautes, le temps médian et, à partir de dix sessions, la <strong>tendance</strong>, c'est-à-dire l'écart entre le taux de fautes des dix dernières sessions et celui de toutes — négatif, vous progressez.</p>
+<p>Cliquer le nom de l'exercice déplie le détail <strong>par type de nombre</strong> : « Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait l'intérêt du journal, et il compte par type et non par face : la même case de la même table, vue d'un côté ou de l'autre, est une seule faiblesse.</p>
+<h3>Micro-entraînements : EPC et quiz</h3>
+<p>Deux exercices se répondent encore au clavier, dans une bande affichée au-dessus du plateau. La commande <code>train</code> suivie de leur nom lance une session de cinq questions :</p>
+<ul>
+<li><code>train epc</code> — estimer l'EPC du joueur au trait, sur une position de course que le moteur sait évaluer ;</li>
+<li><code>train quiz</code> — décider, sur une position déjà analysée.</li>
+</ul>
+<p>La question EST la position affichée : le plateau est celui de l'application, et la bande ne porte que la question, la saisie et la correction. La réponse se tape et se valide au clavier (<em>Entrée</em> vérifie, puis passe à la suivante ; <em>Échap</em> quitte la session). L'EPC accepte un demi-pion d'écart, la granularité à laquelle il change une décision de course. À la fin, la session affiche le nombre de bonnes réponses et le temps <strong>médian</strong> par question.</p>
 <p>Seul ce résumé est conservé, dans les métadonnées de la base : la session ne garde pas la trace question par question, et rien n'est écrit tant qu'elle n'est pas terminée. Quitter en cours de route n'enregistre donc rien.</p>
 <h4>Quiz : le PR d'entraînement</h4>
 <p><code>train quiz</code> pose un quatrième exercice, d'une autre nature. Le panneau Anki fait mémoriser ; le quiz <strong>teste</strong>. Cinq positions déjà analysées sont tirées de la liste parcourue, et il faut décider :</p>
@@ -907,6 +927,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Afficher/cacher les commentaires.</td>
+</tr>
+<tr>
+<td>CTRL-J</td>
+<td>Afficher/cacher le panneau Entraînement.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1349,7 +1373,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score), <code>train quiz</code> (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
+<td>Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : <code>train scores</code> (la fiche de score d'un score tiré au sort ; <code>train tp</code> et <code>train takepoint</code> sont des synonymes), <code>train pips</code> (le compte de pions des deux camps). <code>train epc</code> et <code>train quiz</code> lancent les deux micro-entraînements de la bande.</td>
 </tr>
 <tr>
 <td>tp2</td>

@@ -190,7 +190,8 @@
         "togglePipcount": "Näytä/piilota pip-laskuri",
         "updatePosition": "Päivitä asema",
         "tour": "Opastetut kierrokset",
-        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään (Ctrl+Vaihto+I)"
+        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään (Ctrl+Vaihto+I)",
+        "training": "Harjoittelu"
     },
     "tour": {
         "next": "Seuraava",
@@ -1034,7 +1035,8 @@
         "hideTab": "Piilota tämä välilehti",
         "showTab": "Näytä: {tab}",
         "hiddenTabs": "Piilotetut välilehdet",
-        "ankiDue": "{n} korttia kerrattavana"
+        "ankiDue": "{n} korttia kerrattavana",
+        "training": "Harjoittelu"
     },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
@@ -1362,10 +1364,7 @@
     "training": {
         "title": "Harjoittelu",
         "progress": "Kysymys {i}/{n}",
-        "drillPips": "Pip-laskenta",
         "drillEpc": "EPC",
-        "drillTakePoint": "Hyväksymispiste",
-        "takePointPrompt": "Tilanne {away} (away)",
         "answer": "Vastaus",
         "check": "Tarkista",
         "next": "Seuraava",
@@ -1389,7 +1388,55 @@
         "gradeFailed": "Vastausta ei voitu arvioida.",
         "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}.",
         "undoHop": "Kumoa siirto",
-        "resetPlay": "Aloita alusta"
+        "resetPlay": "Aloita alusta",
+        "exercise": {
+            "scores": "Tilanteet",
+            "pips": "Pipit"
+        },
+        "sources": {
+            "board": "Lauta",
+            "library": "Tietokanta"
+        },
+        "exerciseLabel": "Harjoitus",
+        "source": "Lähde",
+        "limit": "Aikaraja kysymystä kohti",
+        "limitNone": "Ei rajaa",
+        "limitSeconds": "{n} s",
+        "start": "Aloita",
+        "reveal": "Paljasta",
+        "nextQuestion": "Seuraava",
+        "finishSession": "Lopeta",
+        "quit": "Poistu",
+        "outOfTime": "Aika loppui",
+        "questionCount": "Kysymys {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Napsauta lukua, jonka menit väärin.",
+        "faceYou": "Sinä",
+        "faceOpponent": "Vastustaja",
+        "scoreCaption": "Tilanne {a}/{b} away",
+        "summary": "Yhteenveto",
+        "noSession": "Ei istuntoja",
+        "sessionsCount": "{n} istuntoa",
+        "faultRate": "{faults}/{asked} virhettä ({rate} %)",
+        "meanDeviation": "Keskipoikkeama {value}",
+        "medianTime": "Mediaani {n} s",
+        "trend": "Suuntaus {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Tuntematon harjoitus: {exercise}.",
+        "noQuestion": "Tästä lähteestä ei voi muodostaa kysymystä.",
+        "journalFailed": "Istuntoa ei voitu tallentaa päiväkirjaan.",
+        "numbers": {
+            "tp2Live": "Hyväksymispiste 2 · pitkä kilpajuoksu",
+            "tp2Last": "Hyväksymispiste 2 · viimeinen heitto",
+            "tp4Live": "Hyväksymispiste 4 · pitkä kilpajuoksu",
+            "tp4Last": "Hyväksymispiste 4 · viimeinen heitto",
+            "gv1": "Gammonin arvo 1",
+            "gv2": "Gammonin arvo 2",
+            "gv4": "Gammonin arvo 4",
+            "pipsBottom": "Alhaalla (musta)",
+            "pipsTop": "Ylhäällä (valkoinen)"
+        }
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

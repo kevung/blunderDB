@@ -631,15 +631,35 @@ export default {
 <p><strong>Pysyvyys: tavoite ja mittaus.</strong> <em>Tavoitepysyvyys</em> on sinun valintasi työmäärän ja mieleenpalautuksen laadun välisessä vaihtokaupassa: mitä korkeampi se on, sitä lyhyemmiksi välit käyvät ja sitä enemmän kertaat. Sen rinnalla Asetukset näyttävät <strong>mitatun pysyvyyden</strong> omista kertauksistasi — tieto, ei koskaan ohjaus: blunderDB ei muuta tavoitettasi jahdatakseen onnistumisprosenttiasi. Alle parinkymmenen kertauksen mittausta ei näytetä: se luettaisiin tosiasiaksi, vaikka se on pelkkää kohinaa.</p>
 <p>Pysyvyyden muuttaminen <strong>ei vaikuta taannehtivasti</strong>: kukin kortti omaksuu uuden tahdin seuraavassa kertauksessaan, eivätkä jo asetetut eräpäivät siirry. Vaikutus on siis vähittäinen eikä näy samana päivänä.</p>
 <p><em>Enimmäisväli</em> rajaa välistyksen. Äskettäin luotu pakka lähtee vuodesta: asema, jonka algoritmi siirtäisi useiden vuosien päähän, on poistunut pakasta ilman että olet niin päättänyt, ja oma pelisi muuttuu sitä nopeammin. Vanhemmat pakat säilyttävät sen arvon, joka niillä oli.</p>
-<h3>Mikroharjoitukset</h3>
-<p>Anki-paneeli kertaa <strong>arviota</strong>; mikroharjoitukset harjoittavat kolmea <strong>laskutoimitusta</strong>, jotka tehdään pelipöydässä kellon käydessä ja joita mikään kertausväli ei kasvata. Komento <code>train</code> aloittaa viiden kysymyksen istunnon:</p>
+<h3>Harjoittelu-paneeli</h3>
+<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code>CTRL-J</code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code>train</code>.</p>
+<p>Levossa paneeli näyttää aloittimen ja aiempien istuntojen yhteenvedon.</p>
+<h4>Aloitin</h4>
+<p>Kolme valintaa, sitten « Démarrer »:</p>
 <ul>
-<li><code>train pips</code> — laske vuorossa olevan pelaajan pipit näytetystä asemasta.</li>
-<li><code>train epc</code> — arvioi saman pelaajan EPC kilpajuoksuasemasta, jonka moottori osaa arvioida.</li>
-<li><code>train tp</code> — palauta mieleen pitkän kilpajuoksun hyväksymispiste satunnaisesti arvotussa tilanteessa, taulukon <code>tp2_live</code> mukaan.</li>
+<li><strong>harjoitus</strong> — <em>Scores</em> (tilanteet) tai <em>Pions</em> (pipit);</li>
+<li>kysymyksen <strong>lähde</strong>, kun harjoituksella on useita — <em>Plateau</em> (asema sellaisenaan) tai <em>Base</em> (asema selatusta listasta);</li>
+<li><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</li>
 </ul>
-<p>Kysymys ON näytetty asema: lauta on sovelluksen oma, ja sen yläpuolinen palkki kantaa vain kysymyksen, syötteen ja korjauksen. Vastaus kirjoitetaan ja vahvistetaan näppäimistöllä (<em>Enter</em> tarkistaa ja siirtyy eteenpäin, <em>Esc</em> poistuu istunnosta).</p>
-<p>Toleranssi riippuu harjoituksesta, ja se sanotaan eikä arvata: pip-laskennassa sitä <strong>ei ole</strong> — yhden pipin päähän oikea yhteenlasku on väärä yhteenlasku — EPC sallii puoli pipiä, hyväksymispiste kaksi prosenttiyksikköä. Lopuksi istunto näyttää oikeiden vastausten määrän ja <strong>mediaaniajan</strong> kysymystä kohti.</p>
+<p><code>train scores</code> ja <code>train pips</code> avaavat paneelin ja aloittavat heti; <code>train tp</code> ja <code>train takepoint</code> ovat komennon <code>train scores</code> synonyymejä.</p>
+<h4>Kaksi harjoitusta</h4>
+<p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L'adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>
+<p>Kukin sarake kantaa vain ne ruudut, jotka viitetaulukot — ne, jotka komennot <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> ja <code>gv4</code> näyttävät — määrittelevät sen puolelle: kolme lukua tilanteessa 2a-2a, enintään neljätoista, ja vain yksi sarake tasatilanteessa. Rivi, jota kumpikaan puoli ei määrittele, ei esiinny kortilla — arvattavaa « n/a »-ruutua ei siis ole. Molemmat puolet ovat mukana, koska kuutiopäätös tilanteessa tarvitsee kummankin: korjattu hyväksymispiste yhdistää molempien pelaajien gammonarvot, ja juuri vastustajan hyväksymispiste kertoo, meneekö tuplauksesi läpi.</p>
+<p><strong>Pions</strong> (pipit) kysyy <strong>molempien</strong> osapuolten pip-lukua. Laudan pip-luku on piilotettu niin kauan kuin kysymys on auki; « Révéler » näyttää sen, ja oma näyttöasetuksesi (<code>p</code>) pysyy ennallaan. Lähde <em>Plateau</em> esittää yhden kysymyksen näytetystä asemasta, ja vain yhden; lähde <em>Base</em> arpoo uuden aseman joka kysymykseen ja tuo sen laudalle.</p>
+<h4>Vastaaminen</h4>
+<p>Ele on <strong>ilmoitettu</strong>: lasket päässäsi, napsautat « Révéler », ja totuus ilmestyy. Jokainen luku on tällöin <strong>oletuksena oikein</strong> — napsautat sitä, jonka menit väärin, merkitäksesi sen <strong>virheeksi</strong> (<em>Sarkain</em> ja sitten <em>Välilyönti</em> tekee saman näppäimistöltä), ja toinen napsautus poistaa merkinnän. Mitään ei kirjoiteta: pip-luku tai taulukon ruutu on oikein tai väärin, eikä sen kirjoittaminen opeta enempää kuin sen lukeminen.</p>
+<p>Kello käynnistyy kysymyksen ilmestyessä ja pysähtyy kohdassa « Révéler »; virheiden merkitseminen ei ole ajastettua. Aikarajan kanssa kysymys, joka on määräaikaan mennessä yhä vastaamatta, paljastuu itsestään ja lasketaan <strong>ajan ylittäneeksi</strong>: kaikki sen luvut ovat väärin, eikä sen aika mene mediaaniin — vastausta, jota ei annettu, ei mitata.</p>
+<p>« Suivante » tallentaa kysymyksen ja esittää uuden. Istunnolla ei ole kiinteää pituutta: se kestää kunnes « Terminer », joka kirjoittaa sen päiväkirjaan, tai « Quitter », joka hylkää sen. Kaikki painikkeet ovat paneelissa; lauta näyttää kysymyksen ja sen vastauksen, se ei kanna yhtään säädintä.</p>
+<h4>Päiväkirja ja yhteenveto</h4>
+<p>Päättyneet istunnot säilyvät itse tietokannassa — ne siis seuraavat tiedostoa — eikä niillä ole ylärajaa. Levossa paneeli näyttää yhden rivin harjoitusta kohti: istuntojen määrän, virheprosentin, mediaaniajan ja, kymmenestä istunnosta alkaen, <strong>suuntauksen</strong>, eli eron kymmenen viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin välillä — negatiivisena edistyt.</p>
+<p>Harjoituksen nimeä napsauttamalla avautuu erittely <strong>lukutyypeittäin</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Juuri tämä erittely tekee päiväkirjasta hyödyllisen, ja se laskee tyypin eikä puolen mukaan: saman taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja sama heikkous.</p>
+<h3>Mikroharjoitukset: EPC ja tietovisa</h3>
+<p>Kaksi harjoitusta vastataan yhä näppäimistöltä, laudan yläpuolella näkyvässä palkissa. Komento <code>train</code> ja harjoituksen nimi aloittaa viiden kysymyksen istunnon:</p>
+<ul>
+<li><code>train epc</code> — arvioi vuorossa olevan pelaajan EPC kilpajuoksuasemasta, jonka moottori osaa arvioida;</li>
+<li><code>train quiz</code> — päätä, jo analysoidusta asemasta.</li>
+</ul>
+<p>Kysymys ON näytetty asema: lauta on sovelluksen oma, ja palkki kantaa vain kysymyksen, syötön ja korjauksen. Vastaus kirjoitetaan ja vahvistetaan näppäimistöltä (<em>Enter</em> tarkistaa ja siirtyy sitten seuraavaan; <em>Esc</em> poistuu istunnosta). EPC hyväksyy puolen pipin poikkeaman, sen tarkkuuden, jolla se muuttaa kilpajuoksupäätöksen. Lopuksi istunto näyttää oikeiden vastausten määrän ja <strong>mediaaniajan</strong> kysymystä kohti.</p>
 <p>Vain tämä yhteenveto säilytetään, tietokannan metatiedoissa: istunto ei säilytä jälkeä kysymys kysymykseltä, eikä mitään kirjoiteta ennen kuin se on päättynyt. Kesken poistuminen ei siis tallenna mitään.</p>
 <h4>Tietovisa: harjoittelun PR</h4>
 <p><code>train quiz</code> esittää neljännen lajin kysymyksiä. Anki-paneeli panee ulkoa opettelemaan; tietovisa <strong>testaa</strong>. Selatusta listasta arvotaan viisi jo analysoitua asemaa, ja päätös on tehtävä:</p>
@@ -907,6 +927,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Näytä/piilota kommentit.</td>
+</tr>
+<tr>
+<td>CTRL-J</td>
+<td>Näytä/piilota Harjoittelu-paneeli.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1349,7 +1373,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Aloittaa mikroharjoitusistunnon. Ottaa argumentin: <code>train pips</code> (pip-laskenta), <code>train epc</code>, <code>train tp</code> (hyväksymispiste ottelutilanteessa), <code>train quiz</code> (siirto tai kuutiopäätös, arvosteltuna tallennettua analyysiä vasten). Viisi kysymystä, ajastettuna, heti korjattuna.</td>
+<td>Avaa Harjoittelu-paneelin. Argumentin kanssa se avaa ja aloittaa: <code>train scores</code> (arvotun tilanteen tilannekortti; <code>train tp</code> ja <code>train takepoint</code> ovat synonyymejä), <code>train pips</code> (molempien osapuolten pip-luku). <code>train epc</code> ja <code>train quiz</code> aloittavat palkin kaksi mikroharjoitusta.</td>
 </tr>
 <tr>
 <td>tp2</td>

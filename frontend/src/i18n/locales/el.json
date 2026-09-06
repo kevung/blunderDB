@@ -190,7 +190,8 @@
         "togglePipcount": "Εναλλαγή μέτρησης pip",
         "updatePosition": "Ενημέρωση θέσης",
         "tour": "Ξεναγήσεις",
-        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται (Ctrl+Shift+I)"
+        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται (Ctrl+Shift+I)",
+        "training": "Εξάσκηση"
     },
     "tour": {
         "next": "Επόμενο",
@@ -1034,7 +1035,8 @@
         "hideTab": "Απόκρυψη αυτής της καρτέλας",
         "showTab": "Εμφάνιση: {tab}",
         "hiddenTabs": "Κρυφές καρτέλες",
-        "ankiDue": "{n} κάρτες προς επανάληψη"
+        "ankiDue": "{n} κάρτες προς επανάληψη",
+        "training": "Εξάσκηση"
     },
     "status": {
         "boardAnalysisCopied": "Η εικόνα ταμπλό + ανάλυσης αντιγράφηκε στο πρόχειρο",
@@ -1362,10 +1364,7 @@
     "training": {
         "title": "Εξάσκηση",
         "progress": "Ερώτηση {i}/{n}",
-        "drillPips": "Μέτρημα pip",
         "drillEpc": "EPC",
-        "drillTakePoint": "Σημείο αποδοχής",
-        "takePointPrompt": "Σκορ {away} (away)",
         "answer": "Απάντηση",
         "check": "Έλεγχος",
         "next": "Επόμενη",
@@ -1389,7 +1388,55 @@
         "gradeFailed": "Η απάντηση δεν μπόρεσε να αξιολογηθεί.",
         "finishedQuiz": "Το κουίζ τελείωσε: {correct}/{n}, PR συνεδρίας {pr}.",
         "undoHop": "Αναίρεση βήματος",
-        "resetPlay": "Από την αρχή"
+        "resetPlay": "Από την αρχή",
+        "exercise": {
+            "scores": "Σκορ",
+            "pips": "Pip"
+        },
+        "sources": {
+            "board": "Ταμπλό",
+            "library": "Βάση"
+        },
+        "exerciseLabel": "Άσκηση",
+        "source": "Πηγή",
+        "limit": "Όριο ανά ερώτηση",
+        "limitNone": "Κανένα",
+        "limitSeconds": "{n} s",
+        "start": "Έναρξη",
+        "reveal": "Αποκάλυψη",
+        "nextQuestion": "Επόμενη",
+        "finishSession": "Τέλος",
+        "quit": "Έξοδος",
+        "outOfTime": "Εκτός χρόνου",
+        "questionCount": "Ερώτηση {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Κάντε κλικ στον αριθμό που λάθεψατε.",
+        "faceYou": "Εσείς",
+        "faceOpponent": "Ο αντίπαλος",
+        "scoreCaption": "Σκορ {a}/{b} away",
+        "summary": "Απολογισμός",
+        "noSession": "Καμία συνεδρία",
+        "sessionsCount": "{n} συνεδρίες",
+        "faultRate": "{faults}/{asked} λάθη ({rate} %)",
+        "meanDeviation": "Μέση απόκλιση {value}",
+        "medianTime": "Διάμεσος {n} s",
+        "trend": "Τάση {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Άγνωστη άσκηση: {exercise}.",
+        "noQuestion": "Καμία ερώτηση δεν μπορεί να τεθεί από αυτή την πηγή.",
+        "journalFailed": "Η συνεδρία δεν καταγράφηκε στο ημερολόγιο.",
+        "numbers": {
+            "tp2Live": "Σημείο αποδοχής 2 · μακρά κούρσα",
+            "tp2Last": "Σημείο αποδοχής 2 · τελευταία ζαριά",
+            "tp4Live": "Σημείο αποδοχής 4 · μακρά κούρσα",
+            "tp4Last": "Σημείο αποδοχής 4 · τελευταία ζαριά",
+            "gv1": "Αξία gammon 1",
+            "gv2": "Αξία gammon 2",
+            "gv4": "Αξία gammon 4",
+            "pipsBottom": "Κάτω (Μαύρα)",
+            "pipsTop": "Πάνω (Λευκά)"
+        }
     },
     "explain": {
         "blots": "Χάνετε {cost} mMWC: η κίνηση που παίχτηκε αφήνει {blots} blots εκεί όπου η {best} αφήνει μόνο {bestBlots}.",

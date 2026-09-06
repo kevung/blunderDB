@@ -100,6 +100,7 @@ Outils
 
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-P", "Afficher/cacher les commentaires."
+   "CTRL-J", "Afficher/cacher le panneau Entraînement."
    "CTRL-K", "Afficher/cacher le panneau Anki (répétition espacée)."
    "CTRL-F", "Afficher/cacher le panneau de recherche."
    "CTRL-Tab", "Afficher/cacher le panneau des matchs."

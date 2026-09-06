@@ -35,7 +35,18 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // Prefixes of keys built at runtime by string concatenation, so no literal scan can ever see
 // the full leaf key used. Every subkey under one of these is assumed live.
-const DYNAMIC_PREFIXES = ['search.filters.', 'search.filterGroups.', 'cube.verdicts.', 'config.bearoffVerdict_', 'stats.grade.', 'config.theme_', 'explain.', 'stats.gameType_'];
+const DYNAMIC_PREFIXES = [
+    'search.filters.',
+    'search.filterGroups.',
+    'cube.verdicts.',
+    'config.bearoffVerdict_',
+    'stats.grade.',
+    'config.theme_',
+    'explain.',
+    'stats.gameType_',
+    'training.exercise.',
+    'training.sources.'
+];
 
 function sourceFiles(dir) {
     return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {

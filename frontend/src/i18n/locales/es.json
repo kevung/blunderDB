@@ -190,7 +190,8 @@
         "togglePipcount": "Alternar conteo de pips",
         "updatePosition": "Actualizar posición",
         "tour": "Visitas guiadas",
-        "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan (Ctrl+Mayús+I)"
+        "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan (Ctrl+Mayús+I)",
+        "training": "Entrenamiento"
     },
     "tour": {
         "next": "Siguiente",
@@ -1034,7 +1035,8 @@
         "hideTab": "Ocultar esta pestaña",
         "showTab": "Mostrar: {tab}",
         "hiddenTabs": "Pestañas ocultas",
-        "ankiDue": "{n} tarjetas por repasar"
+        "ankiDue": "{n} tarjetas por repasar",
+        "training": "Entrenamiento"
     },
     "status": {
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",
@@ -1362,10 +1364,7 @@
     "training": {
         "title": "Entrenamiento",
         "progress": "Pregunta {i}/{n}",
-        "drillPips": "Recuento de pips",
         "drillEpc": "EPC",
-        "drillTakePoint": "Punto de aceptación",
-        "takePointPrompt": "Marcador {away} (away)",
         "answer": "Respuesta",
         "check": "Comprobar",
         "next": "Siguiente",
@@ -1389,7 +1388,55 @@
         "gradeFailed": "No se ha podido evaluar la respuesta.",
         "finishedQuiz": "Cuestionario terminado: {correct}/{n}, PR de sesión {pr}.",
         "undoHop": "Deshacer paso",
-        "resetPlay": "Empezar de nuevo"
+        "resetPlay": "Empezar de nuevo",
+        "exercise": {
+            "scores": "Marcadores",
+            "pips": "Pips"
+        },
+        "sources": {
+            "board": "Tablero",
+            "library": "Base"
+        },
+        "exerciseLabel": "Ejercicio",
+        "source": "Fuente",
+        "limit": "Límite por pregunta",
+        "limitNone": "Ninguno",
+        "limitSeconds": "{n} s",
+        "start": "Empezar",
+        "reveal": "Revelar",
+        "nextQuestion": "Siguiente",
+        "finishSession": "Terminar",
+        "quit": "Salir",
+        "outOfTime": "Fuera de tiempo",
+        "questionCount": "Pregunta {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Haga clic en el número que ha fallado.",
+        "faceYou": "Usted",
+        "faceOpponent": "El adversario",
+        "scoreCaption": "Marcador {a}/{b} away",
+        "summary": "Balance",
+        "noSession": "Ninguna sesión",
+        "sessionsCount": "{n} sesiones",
+        "faultRate": "{faults}/{asked} fallos ({rate} %)",
+        "meanDeviation": "Desviación media {value}",
+        "medianTime": "Mediana {n} s",
+        "trend": "Tendencia {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Ejercicio desconocido: {exercise}.",
+        "noQuestion": "No se puede plantear ninguna pregunta con esta fuente.",
+        "journalFailed": "La sesión no se ha podido registrar en el diario.",
+        "numbers": {
+            "tp2Live": "Punto de aceptación 2 · carrera larga",
+            "tp2Last": "Punto de aceptación 2 · última tirada",
+            "tp4Live": "Punto de aceptación 4 · carrera larga",
+            "tp4Last": "Punto de aceptación 4 · última tirada",
+            "gv1": "Valor del gammon 1",
+            "gv2": "Valor del gammon 2",
+            "gv4": "Valor del gammon 4",
+            "pipsBottom": "Abajo (Negro)",
+            "pipsTop": "Arriba (Blanco)"
+        }
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

@@ -14,33 +14,38 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveMetadata: vi.fn(() => Promise.resolve(undefined))
 }));
 
-import { grade, summarize, takePointTruth, pipTruth, TOLERANCE } from '../services/trainingService.js';
+import { grade, summarize, DRILLS, TOLERANCE } from '../services/trainingService.js';
 
 describe('la note', () => {
-    // Un compte de pions est une addition : « à un pion près » n'existe pas à
-    // la table, et une tolérance apprendrait à peu près à compter.
-    test('le comptage de pions ne tolère rien', () => {
-        expect(TOLERANCE.pips).toBe(0);
-        expect(grade('pips', 167, 167).correct).toBe(true);
-        expect(grade('pips', 168, 167).correct).toBe(false);
+    // Depuis #320, la bande ne sert plus que ce qui se SAISIT : le compte de
+    // pions et le point de prise sont passés à l'onglet, en mode déclaré.
+    test('la bande ne sert plus que l’EPC et le quiz', () => {
+        expect(DRILLS).toEqual(['epc', 'quiz']);
     });
 
-    test("l'EPC tolère le demi-pion, le point de prise deux points", () => {
+    test("l'EPC tolère le demi-pion", () => {
+        expect(TOLERANCE.epc).toBe(0.5);
         expect(grade('epc', 87.4, 87.0).correct).toBe(true);
         expect(grade('epc', 87.6, 87.0).correct).toBe(false);
-        expect(grade('takepoint', 24, 22).correct).toBe(true);
-        expect(grade('takepoint', 25, 22).correct).toBe(false);
+    });
+
+    // Seul un nombre ESTIMÉ a une tolérance : un exercice qui n'en déclare pas
+    // ne tolère rien, et c'est la règle, pas l'oubli.
+    test('un exercice sans tolérance déclarée ne tolère rien', () => {
+        expect(TOLERANCE.quiz).toBeUndefined();
+        expect(grade('quiz', 167, 167).correct).toBe(true);
+        expect(grade('quiz', 167.5, 167).correct).toBe(false);
     });
 
     // Le SENS de l'erreur est ce qu'on apprend : deux pions de trop n'est pas
     // la même faute que deux de moins.
     test("l'erreur est signée", () => {
-        expect(grade('pips', 170, 167).error).toBe(3);
-        expect(grade('pips', 164, 167).error).toBe(-3);
+        expect(grade('epc', 170, 167).error).toBe(3);
+        expect(grade('epc', 164, 167).error).toBe(-3);
     });
 
     test('une réponse vide est fausse, pas une exception', () => {
-        expect(grade('pips', NaN, 167)).toEqual({ correct: false, error: null });
+        expect(grade('epc', NaN, 167)).toEqual({ correct: false, error: null });
     });
 });
 
@@ -68,29 +73,6 @@ describe('le résumé de session', () => {
 
     test('une session vide ne divise pas par zéro', () => {
         expect(summarize([])).toEqual({ count: 0, correct: 0, rate: 0, meanError: 0, medianMs: 0 });
-    });
-});
-
-describe('les vérités attendues', () => {
-    // La table commence à 2-away : demander 1-away doit rendre « pas de
-    // réponse » plutôt qu'une case voisine prise au hasard.
-    test('le point de prise refuse un score hors table', () => {
-        expect(takePointTruth(1, 4)).toBeNull();
-        expect(takePointTruth(4, 1)).toBeNull();
-        expect(takePointTruth(2, 2)).toBe(32.5);
-    });
-
-    test('le compte de pions est celui du joueur au trait', () => {
-        const position = {
-            player_on_roll: 0,
-            board: {
-                points: Array.from({ length: 26 }, (_, i) => (i === 6 ? { checkers: 2, color: 0 } : { checkers: 0, color: -1 })),
-                bearoff: [0, 0]
-            }
-        };
-        const white = pipTruth(position);
-        position.player_on_roll = 1;
-        expect(pipTruth(position)).not.toBe(white);
     });
 });
 

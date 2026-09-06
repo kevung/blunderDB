@@ -7,8 +7,10 @@
     // premier. La barre ne porte donc que la question, la saisie et la
     // correction — le plateau, lui, est celui de l'application.
     //
-    // Le point de prise est l'exception qui confirme la règle : sa question
-    // est un score, pas un damier, et elle s'écrit dans la barre.
+    // Depuis #320 elle ne sert plus que l'EPC et le quiz : le compte de pions
+    // et le point de prise sont passés à l'onglet Entraînement, où le geste est
+    // déclaré et où toute la session tient dans un panneau. Les tranches
+    // suivantes y déplaceront ces deux-là aussi, et la bande disparaîtra.
     import { trainingActiveStore, trainingCurrentStore, trainingIndexStore, trainingQuestionsStore, trainingVerdictStore } from '../stores/trainingStore.js';
     import { answerCurrent, answerQuiz, answerQuizBoard, nextQuestion, stopTraining } from '../services/trainingSessionService.js';
     import { quizPlayStore, quizPlayCompleteStore } from '../stores/quizPlayStore.js';
@@ -89,12 +91,8 @@
 
     function label(drill) {
         switch (drill) {
-            case 'pips':
-                return $t('training.drillPips');
             case 'epc':
                 return $t('training.drillEpc');
-            case 'takepoint':
-                return $t('training.drillTakePoint');
             case 'quiz':
                 return $t('training.drillQuiz');
             default:
@@ -111,9 +109,6 @@
     <div class="training-bar" role="region" aria-label={$t('training.title')}>
         <span class="progress">{$t('training.progress', { i: index, n: total })}</span>
         <span class="drill">{label(question.drill)}</span>
-        {#if question.drill === 'takepoint'}
-            <span class="prompt">{$t('training.takePointPrompt', { away: question.prompt.replace(':', '/') })}</span>
-        {/if}
         {#if verdict && isQuiz}
             <!-- Trois issues à distinguer, et les confondre mentirait : un coup
                  impossible n'est pas un coup mal noté, et un coup légal que le
@@ -185,8 +180,7 @@
         font-weight: 600;
     }
 
-    .drill,
-    .prompt {
+    .drill {
         color: var(--color-text-muted);
     }
 
