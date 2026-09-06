@@ -208,6 +208,88 @@ métadonnées, statistiques, import et export. Les endpoints de listing
 renvoient un flux NDJSON (un objet JSON par ligne). Le serveur s'arrête
 proprement sur ``SIGINT`` / ``SIGTERM``.
 
+.. _headless_versionnage:
+
+Ce que ``/v1`` promet
+~~~~~~~~~~~~~~~~~~~~~
+
+Un client écrit contre ``/v1`` doit continuer de fonctionner. La règle tient en
+trois lignes, et elle est plus utile écrite que devinée :
+
+* **Ce qui existe ne change pas de sens.** Une route de ``/v1`` n'est ni
+  renommée, ni supprimée, ni resignifiée. Un champ de requête ou de réponse
+  n'est ni renommé, ni retiré, ni changé de type.
+* **Ce qui s'ajoute s'ajoute.** Une route nouvelle, un champ **optionnel** de
+  requête, un champ nouveau dans une réponse : un client qui les ignore
+  continue de marcher, c'est la définition retenue de « compatible ». Un client
+  doit donc ignorer les champs qu'il ne connaît pas plutôt que de les refuser.
+* **Le reste, c'est ``/v2``.** Rendre obligatoire un champ qui ne l'était pas,
+  changer une unité, changer le sens d'un code d'erreur : ce sont des ruptures,
+  et elles vivent sous un autre préfixe, à côté de ``/v1``, le temps que les
+  clients traversent.
+
+Deux précisions qui ont leur importance. Les routes ``/ops/`` ne sont **pas**
+couvertes : elles servent à l'exploitation d'un déploiement, changent avec lui,
+et ne sont pas une API pour des programmes tiers. Et le **contrat lui-même est
+généré** depuis la table de routes du démon (``openapi.yaml``,
+:ref:`api_reference`) : il ne peut pas décrire autre chose que ce que le
+serveur sert.
+
+.. _headless_client_python:
+
+Un client Python
+~~~~~~~~~~~~~~~~
+
+``clients/python/`` contient un client minimal, sans dépendance hors
+bibliothèque standard — le démon parle POST et JSON, ce que ``urllib`` et
+``json`` couvrent entièrement :
+
+.. code-block:: python
+
+   from blunderdb import Client
+
+   api = Client("http://127.0.0.1:8080", tenant=1)
+   print(api.metadata_counts())
+
+   for position in api.positions_list({"limit": 10}):
+       print(position["id"])
+
+Il est en **deux moitiés, et c'est voulu**. ``_generated.py`` porte une méthode
+par route, engendrée depuis la table de routes du démon par
+``go run ./cmd/openapi-gen`` : une surface écrite à la main dériverait le jour
+où une route est ajoutée, et personne ne s'en apercevrait avant qu'un
+utilisateur ne le fasse. ``client.py`` porte le transport — la session,
+l'en-tête de tenant, l'enveloppe d'erreur, la lecture du NDJSON — et il est
+écrit à la main. Ce qui change avec l'API est engendré ; ce qui change avec le
+jugement ne l'est pas.
+
+Les noms de méthode sont ``famille_opération`` en snake_case :
+``/v1/positions.saveIndividual`` devient ``positions_save_individual()``. La
+famille est conservée parce que plusieurs familles partagent un nom
+d'opération (``list``, ``delete``), et qu'un ``list()`` nu entrerait en
+collision.
+
+Un échec lève ``APIError``, qui porte l'enveloppe du démon telle quelle : le
+``code`` (ce sur quoi un programme branche), le ``message`` (ce qu'une personne
+lit), le statut HTTP et les détails.
+
+.. _headless_bootstrap:
+
+Embarquer le moteur dans un programme Go
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``pkg/blunderdb/server.Bootstrap`` ouvre le stockage et rend un jeu de
+gestionnaires **dans le processus appelant**, sans écouter sur un port. C'est
+la porte d'entrée d'un parent de confiance — gammonGo — qui veut la
+bibliothèque de positions sans faire tourner un démon à côté ni parler HTTP à
+lui-même.
+
+Ce que cela suppose est explicite : le parent est **de confiance**. Il n'y a
+pas de tenant à vérifier, pas d'en-tête à valider, pas de limiteur de débit —
+ces choses appartiennent au démon parce qu'il fait face à un réseau, et
+l'ADR-0005 dit pourquoi. Un programme qui embarque le moteur choisit lui-même
+son tenant et répond de ses appels.
+
 .. _headless_bearoff:
 
 Les bases de bearoff

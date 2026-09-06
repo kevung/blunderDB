@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : vingt-quatre issues fermées
+### La session du 2026-09-06 : vingt-cinq issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,6 +105,7 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #289 | I.33 | Client Python en **deux moitiés** : 150 méthodes engendrées depuis la table de routes (garde de péremption incluse), transport écrit à la main. Politique de versionnage `/v1` écrite, `Bootstrap` documenté. |
 | #286 | I.30 | Quatre thèmes nommés (**ADR-0038**) : clair, sombre, contraste élevé, imprimable, plus `system` par défaut. Le thème PROPOSE la palette du plateau ; le réglage de l'utilisateur survit, garanti par le mécanisme et non promis. |
 | #279 | I.23 | Le rapport HTML **autonome** : un fichier, diagrammes SVG en ligne dessinés par le rendu de #278, imprimable en PDF **par le navigateur** — donc aucun générateur de PDF embarqué. |
 | #278 | I.22 | Un seul rendu du plateau (`boardSnapshot.js`), et l'export **SVG**/PNG en fichier. Le vectoriel était absent alors que le plateau en est un ; il débloque le rapport HTML (#279). |

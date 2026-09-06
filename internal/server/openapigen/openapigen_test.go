@@ -27,8 +27,9 @@ func TestMain(m *testing.M) {
 }
 
 // TestGeneratedFilesAreUpToDate is the non-drift guard cmd/openapi-gen's
-// -check flag also runs in CI: it regenerates openapi.yaml and
-// doc/source/api_reference.rst in memory from the current handlers_*.go
+// -check flag also runs in CI: it regenerates openapi.yaml,
+// doc/source/api_reference.rst and the Python client's generated method
+// surface in memory from the current handlers_*.go
 // source and compares the result byte-for-byte against the committed
 // files. A mismatch means someone added, removed or reshaped a /v1 route
 // (or changed a Req/Resp struct's fields) without running
@@ -42,6 +43,10 @@ func TestGeneratedFilesAreUpToDate(t *testing.T) {
 
 	checkUpToDate(t, "openapi.yaml", GenerateOpenAPI(model))
 	checkUpToDate(t, "doc/source/api_reference.rst", GenerateAPIReferenceRST(model))
+	// The Python client's method surface is generated from the same model
+	// (#289): a route added without regenerating it is a client that silently
+	// cannot call the new route, which is the drift this guard exists for.
+	checkUpToDate(t, "clients/python/blunderdb/_generated.py", GeneratePythonClient(model))
 }
 
 func checkUpToDate(t *testing.T, path, want string) {
