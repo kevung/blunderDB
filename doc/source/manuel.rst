@@ -1429,6 +1429,20 @@ attendue : l'essentiel du désaccord se concentre exactement au point de
 prise, où deux méthodes légitimement différentes divergent le plus sur une
 décision serrée — pas une erreur diffuse qui coûterait de l'équité partout.
 
+**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que cela ne
+rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 s à 3 plis sur
+la même machine — **85 fois plus**. Sur quarante décisions réelles rejouées aux
+deux profondeurs, la recherche plus profonde a changé d'avis **deux fois**, et
+les deux fois le gain qu'elle s'attribuait à elle-même valait au plus 0,0005
+d'équité normalisée : deux ordres de grandeur sous 0,020, le seuil à partir
+duquel eXtreme Gammon parle d'erreur. Par décision, tous cas confondus, le gain
+est de 0,0000.
+
+Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne vaut
+rien en général, mais que sur *ce* réseau, avec le filtre canonique, il ne paie
+pas l'attente de quelqu'un devant un panneau. La mesure est reproductible
+(``TestThreePlyMeasure``) et la conclusion se rejugera si le réseau change.
+
 **Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise
 spécifiquement la méthode par *convolution* (régime estimé), pas le régime
 évalué ci-dessus : l'équité cubeful est un problème de *trajectoire* (quand

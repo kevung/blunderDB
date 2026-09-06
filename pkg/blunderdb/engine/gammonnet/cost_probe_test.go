@@ -36,6 +36,11 @@ func TestProbeDecisionCost(t *testing.T) {
 		{"2-ply, k=12, filter (0,1,3)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, 1},
 		{"2-ply, k=12, filter (0,2,8)", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 2, 8}}, 1},
 		{"2-ply, k=12, (0,1,3), NumCPU", SearchConfig{Ply: 2, PruneK: 12, Filter: [MaxPly + 1]int{0, 1, 3}}, runtime.NumCPU()},
+		// 3-ply (#272/I.16). MaxPly has been 4 since the port landed and
+		// DefaultConfig has always had a filter for it; what was missing was
+		// the number that says whether it is offerable.
+		{"3-ply, canonique", DefaultConfig(3), 1},
+		{"3-ply, canonique, NumCPU", DefaultConfig(3), runtime.NumCPU()},
 	}
 
 	fmt.Printf("noyau %s, largeur de lot %d, %d cœurs logiques\n\n",

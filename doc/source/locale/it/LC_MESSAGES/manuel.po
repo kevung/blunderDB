@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 03:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -3306,6 +3306,41 @@ msgstr ""
 " non un errore diffuso che costerebbe equità ovunque."
 
 #: ../../source/manuel.rst:1432
+msgid ""
+"**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
+"cela ne rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 "
+"s à 3 plis sur la même machine — **85 fois plus**. Sur quarante décisions"
+" réelles rejouées aux deux profondeurs, la recherche plus profonde a "
+"changé d'avis **deux fois**, et les deux fois le gain qu'elle "
+"s'attribuait à elle-même valait au plus 0,0005 d'équité normalisée : deux"
+" ordres de grandeur sous 0,020, le seuil à partir duquel eXtreme Gammon "
+"parle d'erreur. Par décision, tous cas confondus, le gain est de 0,0000."
+msgstr ""
+"**Perché non più profondo di 2 ply?** Perché la misura dice che non rende"
+" nulla. Una decisione di pedine costa 99 ms a 2 ply e 8,4 s a 3 ply sulla"
+" stessa macchina — **ottantacinque volte di più**. Su quaranta decisioni "
+"reali rigiocate a entrambe le profondità, la ricerca più profonda ha "
+"cambiato idea **due volte**, e in entrambi i casi il guadagno che si "
+"attribuiva valeva al massimo 0,0005 di equità normalizzata: due ordini di"
+" grandezza sotto 0,020, la soglia a partire dalla quale eXtreme Gammon "
+"parla di errore. Per decisione, tutti i casi insieme, il guadagno è "
+"0,0000."
+
+#: ../../source/manuel.rst:1441
+msgid ""
+"Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne"
+" vaut rien en général, mais que sur *ce* réseau, avec le filtre "
+"canonique, il ne paie pas l'attente de quelqu'un devant un panneau. La "
+"mesure est reproductible (``TestThreePlyMeasure``) et la conclusion se "
+"rejugera si le réseau change."
+msgstr ""
+"L'impostazione non è dunque proposta. Non si tratta di dire che 3 ply non"
+" valga nulla in generale, ma che su *questa* rete, con il filtro "
+"canonico, non paga l'attesa di chi sta davanti a un pannello. La misura è"
+" riproducibile (``TestThreePlyMeasure``) e la conclusione sarà rivalutata"
+" se la rete cambia."
+
+#: ../../source/manuel.rst:1446
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -3337,7 +3372,7 @@ msgstr ""
 "ricerca che gioca la traiettoria, non un riassunto statistico, a colmare "
 "questa lacuna."
 
-#: ../../source/manuel.rst:1445
+#: ../../source/manuel.rst:1459
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -3349,11 +3384,11 @@ msgstr ""
 "per byte — nella scheda *Bearoff* della configurazione o con ``blunderdb "
 "bearoff generate``."
 
-#: ../../source/manuel.rst:1453
+#: ../../source/manuel.rst:1467
 msgid "Panneau Anki"
 msgstr "Pannello Anki"
 
-#: ../../source/manuel.rst:1455
+#: ../../source/manuel.rst:1469
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
 "répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
@@ -3363,7 +3398,7 @@ msgstr ""
 " ripetizione dilazionata utilizzando l'algoritmo FSRS. L'utente può "
 "creare mazzi a partire da raccolte o risultati di ricerca."
 
-#: ../../source/manuel.rst:1459
+#: ../../source/manuel.rst:1473
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -3375,7 +3410,7 @@ msgstr ""
 "basati su una ricerca si sincronizzano automaticamente all'apertura della"
 " scheda Anki."
 
-#: ../../source/manuel.rst:1463
+#: ../../source/manuel.rst:1477
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -3391,7 +3426,7 @@ msgstr ""
 "(Difficile), *3* (Bene) o *4* (Facile). Premere *Esc* per interrompere e "
 "tornare all'elenco dei mazzi."
 
-#: ../../source/manuel.rst:1469
+#: ../../source/manuel.rst:1483
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "ou quelle action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou "
@@ -3408,7 +3443,7 @@ msgstr ""
 "portata di mano. Cliccare su una mossa dell'elenco la mostra sul "
 "tavoliere."
 
-#: ../../source/manuel.rst:1476
+#: ../../source/manuel.rst:1490
 msgid ""
 "Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr"
 " de vous, les touches *1* à *4* restent actives. La réponse se remasque à"
@@ -3422,7 +3457,7 @@ msgstr ""
 " a consultare il pannello Eval o il commento della posizione, la si "
 "ritroverà al ritorno."
 
-#: ../../source/manuel.rst:1481
+#: ../../source/manuel.rst:1495
 msgid ""
 "Une position dépourvue d'analyse enregistrée l'indique directement, sans "
 "zone masquée."
@@ -3430,7 +3465,7 @@ msgstr ""
 "Una posizione priva di analisi registrata lo indica direttamente, senza "
 "zona nascosta."
 
-#: ../../source/manuel.rst:1484
+#: ../../source/manuel.rst:1498
 msgid ""
 "**Limiter la séance.** Par défaut, une séance de révision va jusqu'au "
 "bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par "
@@ -3450,7 +3485,7 @@ msgstr ""
 "davvero esaurita. Per continuare comunque c'è l'allenamento libero: "
 "propone altre posizioni senza modificare nulla della pianificazione."
 
-#: ../../source/manuel.rst:1492
+#: ../../source/manuel.rst:1506
 msgid ""
 "Une limite de **0** ne sert aucune carte : c'est un état à part entière, "
 "utile pour geler un paquet le temps de préparer un tournoi, et ce n'est "
@@ -3461,7 +3496,7 @@ msgstr ""
 "utile per congelare un mazzo il tempo di preparare un torneo, e non è la "
 "stessa cosa di «nessun limite». Il pulsante *Study* è allora inattivo."
 
-#: ../../source/manuel.rst:1496
+#: ../../source/manuel.rst:1510
 msgid ""
 "La limite porte sur la **séance**, pas sur la journée. Un paquet "
 "blunderDB est bâti sur une collection ou une recherche : c'est un corpus "
@@ -3475,7 +3510,7 @@ msgstr ""
 "limitato dalla sua dimensione. Un tetto giornaliero non morderebbe mai, "
 "oppure creerebbe un arretrato su un mazzo che stava in una sessione."
 
-#: ../../source/manuel.rst:1502
+#: ../../source/manuel.rst:1516
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -3496,7 +3531,7 @@ msgstr ""
 "lo stato della carta e un pulsante *Avanti* (tasti *1*–*4*) scorre le "
 "posizioni. *Esc* torna all'elenco senza salvare una sessione interrotta."
 
-#: ../../source/manuel.rst:1511
+#: ../../source/manuel.rst:1525
 msgid ""
 "**Écarter une carte, sans la noter.** Pendant une révision, un clic droit"
 " sur l'en-tête de la carte ouvre trois gestes qui la sortent de la séance"
@@ -3506,7 +3541,7 @@ msgstr ""
 "clic destro sull'intestazione della carta offre tre gesti che la tolgono "
 "dalla sessione senza dire nulla allo scheduler:"
 
-#: ../../source/manuel.rst:1515
+#: ../../source/manuel.rst:1529
 msgid ""
 "**Suspendre** — la carte garde son échéancier et ne remonte plus jamais "
 "tant qu'elle est suspendue. C'est la manière de mettre de côté une carte "
@@ -3516,7 +3551,7 @@ msgstr ""
 "è sospesa. È il modo di mettere da parte una carta sbagliata, o non "
 "ancora utile, senza perdere lo storico che vi è legato."
 
-#: ../../source/manuel.rst:1519
+#: ../../source/manuel.rst:1533
 msgid ""
 "**Enterrer** — la carte disparaît jusqu'au lendemain. Contrairement à la "
 "suspension, cela ne dit rien de sa valeur : c'est pour celle que l'on "
@@ -3528,7 +3563,7 @@ msgstr ""
 "vista altrove, o che si preferisce non incrociare due volte in una "
 "serata."
 
-#: ../../source/manuel.rst:1523
+#: ../../source/manuel.rst:1537
 msgid ""
 "**Retirer** — la carte quitte le paquet, après confirmation. La position,"
 " elle, reste dans la base : un paquet est une liste d'étude sur la "
@@ -3538,7 +3573,7 @@ msgstr ""
 "resta nella base: un mazzo è una lista di studio sulla biblioteca, mai "
 "una sua copia."
 
-#: ../../source/manuel.rst:1527
+#: ../../source/manuel.rst:1541
 msgid ""
 "Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est "
 "pas une carte répondue, et elle ne compte pas dans le décompte de la "
@@ -3547,7 +3582,7 @@ msgstr ""
 "Nessuno di questi tre gesti registra un voto: una carta messa da parte "
 "non è una carta risposta, e non conta nel totale della sessione."
 
-#: ../../source/manuel.rst:1530
+#: ../../source/manuel.rst:1544
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -3565,7 +3600,7 @@ msgstr ""
 "regola rende utile il registro — il passato non si riscrive, ma si può "
 "conoscere."
 
-#: ../../source/manuel.rst:1538
+#: ../../source/manuel.rst:1552
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -3576,7 +3611,7 @@ msgstr ""
 "e mostra la tua progressione. Cliccarci sopra per riprendere da dove ci "
 "si era fermati."
 
-#: ../../source/manuel.rst:1542
+#: ../../source/manuel.rst:1556
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets (confirmation "
@@ -3590,7 +3625,7 @@ msgstr ""
 "intervallo massimo, casualità) si possono configurare per mazzo nelle "
 "Impostazioni (icona a ingranaggio)."
 
-#: ../../source/manuel.rst:1548
+#: ../../source/manuel.rst:1562
 msgid ""
 "**Rétention : la cible et la mesure.** La *rétention cible* est votre "
 "choix sur le compromis entre charge de travail et qualité du rappel : "
@@ -3610,7 +3645,7 @@ msgstr ""
 "ripassi la misura non viene mostrata: si leggerebbe come un fatto mentre "
 "è solo rumore."
 
-#: ../../source/manuel.rst:1557
+#: ../../source/manuel.rst:1571
 msgid ""
 "Changer la rétention **n'est pas rétroactif** : chaque carte adopte le "
 "nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne "
@@ -3620,7 +3655,7 @@ msgstr ""
 "ritmo al ripasso successivo, e le scadenze già fissate non si spostano. "
 "L'effetto è quindi graduale, e invisibile il giorno stesso."
 
-#: ../../source/manuel.rst:1561
+#: ../../source/manuel.rst:1575
 msgid ""
 "L'*intervalle maximum* borne l'espacement. Un paquet créé récemment "
 "démarre à un an : une position que l'algorithme reporterait de plusieurs "
@@ -3634,11 +3669,11 @@ msgstr ""
 "gioco cambia più in fretta di così. I mazzi più vecchi conservano il "
 "valore che avevano."
 
-#: ../../source/manuel.rst:1569
+#: ../../source/manuel.rst:1583
 msgid "Panneau Métadonnées"
 msgstr "Pannello Metadati"
 
-#: ../../source/manuel.rst:1571
+#: ../../source/manuel.rst:1585
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -3649,7 +3684,7 @@ msgstr ""
 " corrente: nome, descrizione, numero di posizioni, numero di match e di "
 "partite, versione dello schema. Accessibile tramite il comando ``meta``."
 
-#: ../../source/manuel.rst:1575
+#: ../../source/manuel.rst:1589
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -3659,11 +3694,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Un database ordinario non mostra questa "
 "sezione."
 
-#: ../../source/manuel.rst:1581
+#: ../../source/manuel.rst:1595
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Distribuire un database: origine e password"
 
-#: ../../source/manuel.rst:1583
+#: ../../source/manuel.rst:1597
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -3675,7 +3710,7 @@ msgstr ""
 "**al momento dell'esportazione**: contrassegnare il file con la sua "
 "origine e proteggerlo con una password."
 
-#: ../../source/manuel.rst:1590
+#: ../../source/manuel.rst:1604
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -3688,11 +3723,11 @@ msgstr ""
 "parte viene annotato chi lo ha aperto, quando, né da dove proviene il suo"
 " contenuto."
 
-#: ../../source/manuel.rst:1596
+#: ../../source/manuel.rst:1610
 msgid "Marquer une base de son origine"
 msgstr "Contrassegnare un database con la sua origine"
 
-#: ../../source/manuel.rst:1598
+#: ../../source/manuel.rst:1612
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -3703,11 +3738,11 @@ msgstr ""
 "sovrapposto ad esso durante la scrittura, un indicatore di avanzamento. "
 "Si chiude da sola al termine e il risultato appare nella barra di stato."
 
-#: ../../source/manuel.rst:1602
+#: ../../source/manuel.rst:1616
 msgid "Trois points méritent l'attention :"
 msgstr "Tre punti meritano attenzione:"
 
-#: ../../source/manuel.rst:1604
+#: ../../source/manuel.rst:1618
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -3717,7 +3752,7 @@ msgstr ""
 "l'intero database. Dopo una ricerca vengono esportati solo i risultati: "
 "la finestra lo ricorda in alto."
 
-#: ../../source/manuel.rst:1607
+#: ../../source/manuel.rst:1621
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -3727,7 +3762,7 @@ msgstr ""
 "troncata.** L'elenco mostra quindi, per ogni raccolta, la parte coperta "
 "(«12/40») e la segnala in rosso quando è parziale."
 
-#: ../../source/manuel.rst:1610
+#: ../../source/manuel.rst:1624
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -3738,7 +3773,7 @@ msgstr ""
 "vuoto. La casella resta disattivata finché non è selezionato «includi i "
 "match»."
 
-#: ../../source/manuel.rst:1614
+#: ../../source/manuel.rst:1628
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -3751,13 +3786,13 @@ msgstr ""
 "filtri salvati* è a sé stante: non esporta contenuti ma le tue ricerche "
 "salvate, inutili nel database di qualcun altro."
 
-#: ../../source/manuel.rst:1620
+#: ../../source/manuel.rst:1634
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "Selezionando **Contrassegna questo file con la sua origine** compaiono "
 "due campi:"
 
-#: ../../source/manuel.rst:1622
+#: ../../source/manuel.rst:1636
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -3768,7 +3803,7 @@ msgstr ""
 "**obbligatorio**: finché è vuoto, il pulsante di esportazione resta "
 "inattivo."
 
-#: ../../source/manuel.rst:1625
+#: ../../source/manuel.rst:1639
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -3776,7 +3811,7 @@ msgstr ""
 "**Nota**, facoltativa — condizioni d'uso, indirizzo di contatto, la "
 "richiesta di non ridistribuire."
 
-#: ../../source/manuel.rst:1628
+#: ../../source/manuel.rst:1642
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -3790,11 +3825,11 @@ msgstr ""
 "distribuito è un normale database SQLite e blunderDB è software libero. "
 "Non impedisce nulla: dice da dove viene il file."
 
-#: ../../source/manuel.rst:1635
+#: ../../source/manuel.rst:1649
 msgid "Identité d'émetteur"
 msgstr "Identità dell'emittente"
 
-#: ../../source/manuel.rst:1637
+#: ../../source/manuel.rst:1651
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -3808,7 +3843,7 @@ msgstr ""
 "file recano la stessa impronta pubblica, nella forma "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:1642
+#: ../../source/manuel.rst:1656
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -3822,7 +3857,7 @@ msgstr ""
 "protetto da una passphrase. **Questo file permette di firmare a tuo nome:"
 " non condividerlo.**"
 
-#: ../../source/manuel.rst:1648
+#: ../../source/manuel.rst:1662
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -3832,7 +3867,7 @@ msgstr ""
 "scheda *Identità dell'emittente* mostra il tuo nome e la tua impronta e "
 "propone *Salva identità…*, *Carica identità…* e *Rigenera…*."
 
-#: ../../source/manuel.rst:1654
+#: ../../source/manuel.rst:1668
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -3845,7 +3880,7 @@ msgstr ""
 "firmare con la tua vecchia impronta, e quei contrassegni resteranno "
 "validi."
 
-#: ../../source/manuel.rst:1659
+#: ../../source/manuel.rst:1673
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -3854,7 +3889,7 @@ msgstr ""
 "Ciò che ti protegge dopo una fuga non è il software: è pubblicare la tua "
 "nuova impronta e disconoscere la vecchia presso i tuoi destinatari."
 
-#: ../../source/manuel.rst:1663
+#: ../../source/manuel.rst:1677
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -3862,11 +3897,11 @@ msgstr ""
 "La rigenerazione sovrascrive la chiave attuale; blunderDB propone di "
 "salvarla prima di sostituirla."
 
-#: ../../source/manuel.rst:1667
+#: ../../source/manuel.rst:1681
 msgid "Protéger une base par un mot de passe"
 msgstr "Proteggere un database con una password"
 
-#: ../../source/manuel.rst:1669
+#: ../../source/manuel.rst:1683
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -3876,7 +3911,7 @@ msgstr ""
 "protetto; l'icona a forma di occhio la mostra **finché la si tiene "
 "premuta** e la nasconde di nuovo appena la si rilascia."
 
-#: ../../source/manuel.rst:1673
+#: ../../source/manuel.rst:1687
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -3894,7 +3929,7 @@ msgstr ""
 "blunderDB chiede allora la password e installa accanto un database "
 "ordinario; in seguito non viene più chiesto nulla."
 
-#: ../../source/manuel.rst:1681
+#: ../../source/manuel.rst:1695
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -3908,7 +3943,7 @@ msgstr ""
 "se intendi trasmetterlo — e l'eliminazione avviene solo dopo un'apertura "
 "riuscita."
 
-#: ../../source/manuel.rst:1688
+#: ../../source/manuel.rst:1702
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -3920,7 +3955,7 @@ msgstr ""
 "download o un allegato inoltrato per errore. Non protegge da colui al "
 "quale hai dato la password."
 
-#: ../../source/manuel.rst:1693
+#: ../../source/manuel.rst:1707
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -3928,7 +3963,7 @@ msgstr ""
 "La password viene verificata a **ogni** apertura, anche quando il file è "
 "già stato aperto in precedenza su quel computer."
 
-#: ../../source/manuel.rst:1696
+#: ../../source/manuel.rst:1710
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -3944,7 +3979,7 @@ msgstr ""
 "come tale, e così pure qualsiasi alterazione del file cifrato — non si "
 "ottiene mai in silenzio un database corrotto."
 
-#: ../../source/manuel.rst:1703
+#: ../../source/manuel.rst:1717
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -3952,11 +3987,11 @@ msgstr ""
 "L'intestazione del file protetto resta **in chiaro**: la sua origine "
 "rimane leggibile senza la password."
 
-#: ../../source/manuel.rst:1707
+#: ../../source/manuel.rst:1721
 msgid "Lire l'origine d'un fichier"
 msgstr "Leggere l'origine di un file"
 
-#: ../../source/manuel.rst:1709
+#: ../../source/manuel.rst:1723
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -3968,7 +4003,7 @@ msgstr ""
 "in sola lettura, che indica ciò che è stato iscritto, da chi, quando, e "
 "lo stato della firma:"
 
-#: ../../source/manuel.rst:1714
+#: ../../source/manuel.rst:1728
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -3976,7 +4011,7 @@ msgstr ""
 "«✓ firma verificata — contrassegnato da te»: il file reca il tuo "
 "contrassegno, intatto;"
 
-#: ../../source/manuel.rst:1716
+#: ../../source/manuel.rst:1730
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -3985,15 +4020,15 @@ msgstr ""
 "chiave — confronta la sua impronta con quella che l'autore ti ha "
 "comunicato;"
 
-#: ../../source/manuel.rst:1718
+#: ../../source/manuel.rst:1732
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ firma non valida»: il documento è stato modificato o contraffatto."
 
-#: ../../source/manuel.rst:1720
+#: ../../source/manuel.rst:1734
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Questa sezione non compare in un database ordinario."
 
-#: ../../source/manuel.rst:1722
+#: ../../source/manuel.rst:1736
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -4007,11 +4042,11 @@ msgstr ""
 " le opzioni ``--watermark`` e ``--password`` di ``export``, nonché per "
 "``identity`` e ``open``."
 
-#: ../../source/manuel.rst:1731
+#: ../../source/manuel.rst:1745
 msgid "Publier une base pour d'autres"
 msgstr "Pubblicare una base per altri"
 
-#: ../../source/manuel.rst:1733
+#: ../../source/manuel.rst:1747
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -4027,7 +4062,7 @@ msgstr ""
 "registrato nulla, e non ci sarebbe quindi nulla da comunicare a un "
 "servizio, anche se esistesse."
 
-#: ../../source/manuel.rst:1739
+#: ../../source/manuel.rst:1753
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -4035,13 +4070,13 @@ msgstr ""
 "Ciò che rende una base pubblicata utilizzabile da un altro si riduce a "
 "quattro campi, tutti già presenti:"
 
-#: ../../source/manuel.rst:1742
+#: ../../source/manuel.rst:1756
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Utente** — chi l'ha costituita, con il nome che vuoi veder citato."
 
-#: ../../source/manuel.rst:1743
+#: ../../source/manuel.rst:1757
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -4051,7 +4086,7 @@ msgstr ""
 "elenco: «240 decisioni di cubo al punteggio, commentate, livello "
 "intermedio»."
 
-#: ../../source/manuel.rst:1745
+#: ../../source/manuel.rst:1759
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -4061,7 +4096,7 @@ msgstr ""
 "stato prodotto. È la prima cosa che il destinatario legge nel pannello "
 "*Metadati*."
 
-#: ../../source/manuel.rst:1748
+#: ../../source/manuel.rst:1762
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -4071,7 +4106,7 @@ msgstr ""
 "confrontandola che il destinatario verifica che il file viene da te e non"
 " da qualcuno che ha ripreso il tuo nome."
 
-#: ../../source/manuel.rst:1752
+#: ../../source/manuel.rst:1766
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -4081,7 +4116,7 @@ msgstr ""
 "semplicemente anonima, e il pannello *Metadati* non mostra allora alcuna "
 "sezione *Provenienza*."
 
-#: ../../source/manuel.rst:1756
+#: ../../source/manuel.rst:1770
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
