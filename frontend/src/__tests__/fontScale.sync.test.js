@@ -44,7 +44,7 @@ function svelteFiles(dir) {
 }
 
 function declaredTokens() {
-    const css = fs.readFileSync(path.join(SRC, 'style.css'), 'utf8');
+    const css = fs.readFileSync(path.join(SRC, 'tokens.css'), 'utf8') + fs.readFileSync(path.join(SRC, 'style.css'), 'utf8');
     return new Set([...css.matchAll(/(--font-size-[\w-]+)\s*:/g)].map((m) => m[1]));
 }
 

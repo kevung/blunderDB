@@ -74,7 +74,7 @@ function readBudget() {
 
 describe('one colour palette (ADR-0031)', () => {
     test('style.css declares the palette', () => {
-        const css = fs.readFileSync(path.join(SRC, 'style.css'), 'utf8');
+        const css = fs.readFileSync(path.join(SRC, 'tokens.css'), 'utf8') + fs.readFileSync(path.join(SRC, 'style.css'), 'utf8');
         for (const token of [
             '--color-text',
             '--color-text-muted',
