@@ -6,6 +6,8 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+
+	"github.com/kevung/blunderdb/internal/server/webui"
 )
 
 // route is one entry in the server's routing table: an HTTP method, a
@@ -81,6 +83,16 @@ func (s *Server) routes() []route {
 	}
 	if s.opts.EnableMetrics {
 		rs = append(rs, route{http.MethodGet, "/metrics", s.health.Expose})
+	}
+	if s.opts.EnableWebUI {
+		// Les fichiers statiques sont servis SANS tenant, et c'est délibéré :
+		// un navigateur doit pouvoir charger la page avant que le mandataire
+		// ne lui attribue quoi que ce soit, et une page ne contient aucune
+		// donnée. Dit ici parce que publicPaths est une liste écrite en
+		// négatif — « tout ce qui n'est ni /v1/ ni /ops/ » — et qu'une liste
+		// écrite en négatif change de sens quand l'ensemble change (G.5, #233
+		// l'a appris à ce démon une fois).
+		rs = append(rs, route{http.MethodGet, webui.Prefix, webui.Handler().ServeHTTP})
 	}
 	rs = append(rs, s.domainRoutes()...)
 	if s.opts.OpsAddr == "" {

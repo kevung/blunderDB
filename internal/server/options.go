@@ -49,6 +49,13 @@ type Options struct {
 	// EnableMetrics toggles the /metrics endpoint and the metrics middleware.
 	EnableMetrics bool
 
+	// EnableWebUI serves the read-mostly web page under /app/ (#295,
+	// ADR-0039). OFF by default, and that default is the decision: the daemon
+	// authenticates nobody (ADR-0005), so a browser-reachable interface
+	// switched on out of the box would invite exactly the deployment ADR-0005
+	// forbids — a daemon exposed with no proxy in front of it.
+	EnableWebUI bool
+
 	// CORSAllowOrigin enables CORS for the given origin(s): "*", or a
 	// comma-separated list of exact origins (each one echoed back only to a
 	// request whose Origin header matches it — see middleware.CORS). Empty

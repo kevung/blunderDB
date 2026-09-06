@@ -128,3 +128,13 @@ test-frontend:
 # wails.json) must agree; scripts/release.sh --check exits non-zero if not.
 release-check:
 	scripts/release.sh --check
+
+# Le front web (#295, ADR-0039). Le résultat est VERSIONNÉ dans
+# internal/server/webui/dist et embarqué dans le binaire : un binaire bâti
+# depuis une étiquette doit contenir la page que cette étiquette décrit, et
+# `go build ./cmd/serve` sur une machine sans Node doit produire un démon qui
+# marche. À relancer quand frontend/src/web/ change — rien ne détecte un dist
+# périmé, et l'ADR-0039 le dit en toutes lettres.
+.PHONY: web
+web:
+	cd frontend && npm run build:web

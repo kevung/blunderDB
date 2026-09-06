@@ -102,6 +102,10 @@ depuis plusieurs clients.
    * - ``--metrics``
      - ``true``
      - expose ``/metrics`` (format Prometheus)
+   * - ``--web``
+     - ``false``
+     - sert la page web de consultation sous ``/app/`` ; **éteinte par
+       défaut**, voir plus bas
    * - ``--cors-allow-origin <origine>``
      - –
      - active CORS pour cette origine, une liste d'origines séparées par des
@@ -178,7 +182,45 @@ Le service expose des points d'accès d'exploitation, toujours présents :
 * ``GET /healthz`` — vivacité (le processus tourne) ;
 * ``GET /readyz`` — disponibilité (le stockage répond et son schéma est à la
   version attendue) ;
-* ``GET /metrics`` — métriques Prometheus (si ``--metrics`` est actif).
+* ``GET /metrics`` — métriques Prometheus (si ``--metrics`` est actif) ;
+* ``GET /app/`` — la page web de consultation (si ``--web`` est actif).
+
+.. _page_web:
+
+La page web de consultation
+---------------------------
+
+``blunderdb serve --web`` sert une page sous ``/app/`` : une bibliothèque
+consultable depuis une tablette ou un téléphone, sans installer quoi que ce
+soit.
+
+Elle sait faire **trois choses**, et cette liste est la décision, pas une
+étape :
+
+* **consulter** une position, son analyse et son plateau ;
+* **chercher**, avec la même grammaire de jetons que la ligne de commande de
+  l'application ;
+* **réviser** un paquet Anki — réponse dévoilée et note donnée.
+
+Elle ne sait pas éditer une position, importer, supprimer, gérer les
+collections, les matchs, les tournois ou la configuration, et elle ne le saura
+pas. Une fonctionnalité qui manque ici n'est pas un manque : c'est le
+périmètre.
+
+**Elle est éteinte par défaut, et ce défaut est la décision.** Le démon
+n'authentifie personne : il fait confiance à l'en-tête ``X-Tenant-ID`` et doit
+tourner derrière un mandataire qui authentifie. Livrer une interface
+atteignable par un navigateur, allumée d'office, inviterait exactement le
+déploiement que cette règle interdit.
+
+La page **n'envoie aucun tenant** : c'est le mandataire qui pose l'en-tête,
+comme pour n'importe quel autre client. En développement local, et là
+seulement, ``/app/?tenant=1`` permet d'en nommer un — ce qui ne change rien à
+la sécurité d'un démon qui accepte déjà cet en-tête de quiconque.
+
+Les fichiers de la page sont servis **sans tenant**, à dessein : un navigateur
+doit pouvoir charger la page avant que le mandataire ne lui attribue quoi que
+ce soit, et une page ne contient aucune donnée.
 
 Vivacité et disponibilité répondent à deux questions différentes. ``/healthz``
 répond toujours 200 dès que le processus sert des requêtes, sans jamais

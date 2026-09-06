@@ -393,6 +393,9 @@ Violating one of these is a bug even if all tests pass:
 - `frontend/wailsjs/` is **generated** (namespaced `gui`/`database`/`main`); never
   hand-edit; restart `wails dev` after changing exported bound methods. So is
   `frontend/src/i18n/help/*.js` — `make help`, see ADR-0034 and Documentation above.
+- `internal/server/webui/dist/` is the **built web front**, committed and
+  embedded in the binary (ADR-0039). Run `make web` after touching
+  `frontend/src/web/`: nothing detects a stale bundle, and the ADR says so.
 
 ## Notes & Gotchas
 

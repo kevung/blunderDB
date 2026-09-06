@@ -19,7 +19,8 @@
     "check:svelte-warnings": "node scripts/check-svelte-warnings.mjs",
     "check:e2e-flaky": "node scripts/check-e2e-flaky.mjs",
     "check": "svelte-check --tsconfig ./jsconfig.json",
-    "check:types": "node scripts/check-svelte-types.mjs"
+    "check:types": "node scripts/check-svelte-types.mjs",
+    "build:web": "vite build --config vite.web.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
