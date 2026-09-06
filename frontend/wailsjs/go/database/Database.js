@@ -502,6 +502,14 @@ export function LoadSessionState() {
   return window['go']['database']['Database']['LoadSessionState']();
 }
 
+export function LoadTrainingNumberStats(arg1) {
+  return window['go']['database']['Database']['LoadTrainingNumberStats'](arg1);
+}
+
+export function LoadTrainingSessions(arg1, arg2) {
+  return window['go']['database']['Database']['LoadTrainingSessions'](arg1, arg2);
+}
+
 export function MergePlayers(arg1, arg2) {
   return window['go']['database']['Database']['MergePlayers'](arg1, arg2);
 }
@@ -624,6 +632,10 @@ export function SaveSearchHistory(arg1, arg2, arg3) {
 
 export function SaveSessionState(arg1) {
   return window['go']['database']['Database']['SaveSessionState'](arg1);
+}
+
+export function SaveTrainingSession(arg1) {
+  return window['go']['database']['Database']['SaveTrainingSession'](arg1);
 }
 
 export function SearchComments(arg1) {
