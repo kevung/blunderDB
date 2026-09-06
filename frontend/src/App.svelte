@@ -84,6 +84,7 @@
     import StudyQueueBar from './components/StudyQueueBar.svelte';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
+    import { initTheme } from './stores/themeStore.js';
 
     // Component state
     let mainArea;
@@ -316,6 +317,11 @@
 
         // Load the persisted board palette (falls back to defaults internally).
         initBoardColors();
+
+        // Le thème nommé (#286) : les jetons seulement, pas la palette du
+        // plateau — celle de l'utilisateur vient d'être chargée, et la
+        // réécrire ici effacerait son travail à chaque lancement.
+        initTheme();
 
         // Apply the persisted interface scale (falls back to 100% internally).
         initUIScale();

@@ -47,6 +47,8 @@
         SaveCheckForUpdates
     } from '../../wailsjs/go/main/Config.js';
     import { watchStatusStore } from '../stores/watchStore.js';
+    import { themeStore, setTheme } from '../stores/themeStore.js';
+    import { THEME_NAMES } from '../utils/themes.js';
     import { saveWatchSetting, refreshWatchStatus } from '../services/watchService.js';
     import { EventsOn } from '../../wailsjs/runtime/runtime.js';
     import { onDestroy } from 'svelte';
@@ -660,6 +662,18 @@
 
     <div class="tab-body">
         {#if activeTab === 'interface'}
+            <!-- Les thèmes nommés (#286). `system` par défaut : un outil
+                 n'impose pas son clair ou son sombre à un bureau qui a déjà
+                 tranché. -->
+            <div class="setting-row">
+                <label for="config-theme">{$t('config.theme')}</label>
+                <select id="config-theme" class="setting-select" value={$themeStore} onchange={(e) => setTheme(e.currentTarget.value)}>
+                    {#each THEME_NAMES as name (name)}
+                        <option value={name}>{$t(`config.theme_${name}`)}</option>
+                    {/each}
+                </select>
+            </div>
+            <p class="setting-note">{$t('config.themeNote')}</p>
             <div class="setting-row">
                 <label for="config-language">{$t('config.language')}</label>
                 <select id="config-language" class="setting-select" value={$language} onchange={onLanguageChange}>

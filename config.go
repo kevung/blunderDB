@@ -238,6 +238,14 @@ type Config struct {
 	// WatchFolderIntervalSeconds is what the user chose; 0 means the
 	// package's own default (watch.DefaultInterval). The clamping lives in
 	// watch.ClampInterval, so the floor is stated once.
+	// Theme is the named interface theme (#286): "system" (follow the
+	// desktop), "light", "dark", "contrast" or "print". Empty means system —
+	// a tool does not impose its light or its dark on a desktop that has
+	// already decided. The theme's VALUES live in the frontend
+	// (utils/themes.js): they are design tokens, and Go has no business
+	// holding a second copy of a palette it never reads.
+	Theme string `json:"theme,omitempty"`
+
 	WatchFolder                bool   `json:"watch_folder,omitempty"`
 	WatchFolderPath            string `json:"watch_folder_path,omitempty"`
 	WatchFolderIntervalSeconds int    `json:"watch_folder_interval_seconds,omitempty"`
@@ -782,6 +790,17 @@ func (c *Config) GetGammonNetAutoAnalyze() bool {
 // SaveGammonNetAutoAnalyze persists the auto-analyze-after-import flag.
 func (c *Config) SaveGammonNetAutoAnalyze(on bool) error {
 	c.GammonNetAutoAnalyze = on
+	return c.SaveConfig(c)
+}
+
+// GetTheme returns the persisted interface theme ("" = follow the desktop).
+func (c *Config) GetTheme() string {
+	return c.Theme
+}
+
+// SaveTheme persists the chosen interface theme.
+func (c *Config) SaveTheme(name string) error {
+	c.Theme = name
 	return c.SaveConfig(c)
 }
 

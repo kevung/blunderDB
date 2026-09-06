@@ -40,6 +40,8 @@ export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
 export function GetTabOrder():Promise<Array<string>>;
 
+export function GetTheme():Promise<string>;
+
 export function GetTourSeen():Promise<boolean>;
 
 export function GetUIScale():Promise<number>;
@@ -87,6 +89,8 @@ export function SavePanelWidth(arg1:number):Promise<void>;
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
 export function SaveTabOrder(arg1:Array<string>):Promise<void>;
+
+export function SaveTheme(arg1:string):Promise<void>;
 
 export function SaveTourSeen(arg1:boolean):Promise<void>;
 

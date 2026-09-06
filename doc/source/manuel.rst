@@ -192,7 +192,25 @@ blunderDB. Elle est organisée en six onglets :
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
-L'onglet *Interface* permet de choisir la langue parmi l'anglais, le
+L'onglet *Interface* propose d'abord un **thème** : *suivre le système*,
+*clair*, *sombre*, *contraste élevé* ou *imprimable*. Le thème règle les
+couleurs de l'interface et **propose une palette de plateau** — une interface
+sombre autour d'un plateau clair n'est pas un thème sombre, c'est la moitié
+d'un, puisque le plateau occupe l'essentiel de la fenêtre.
+
+Vous gardez le dernier mot, et le mécanisme le garantit plutôt que de le
+promettre : l'onglet *Couleurs* continue de régler le plateau directement, et
+une couleur choisie après le thème est la vôtre. Au démarrage, seuls les
+jetons de l'interface sont appliqués, jamais la palette du plateau — celle que
+vous avez réglée est déjà chargée, et la réécrire à chaque lancement
+effacerait votre travail une session à la fois. Voir
+`ADR-0038 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md>`__.
+
+*Suivre le système* est le réglage par défaut : il obéit à la préférence
+clair/sombre du bureau, y compris lorsqu'elle change en cours de session. Un
+outil n'impose pas son clair ou son sombre à un bureau qui a déjà tranché.
+
+L'onglet *Interface* permet aussi de choisir la langue parmi l'anglais, le
 français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec
 et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages,
 aide) est traduit dans la langue sélectionnée. Le choix de la langue est

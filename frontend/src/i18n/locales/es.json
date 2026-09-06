@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 mantiene el valor por defecto, diez segundos; el mínimo es dos. Un fichero se importa solo cuando su tamaño se ha estabilizado, para no leer nunca un partido a medio escribir.",
         "watchOnlyNewNote": "Solo se importan los ficheros que APARECEN: lo que la carpeta ya contiene se ignora. Para eso está la importación de carpeta.",
         "watchRunning": "Vigilando: {folder}",
-        "watchStopped": "Ninguna vigilancia en curso."
+        "watchStopped": "Ninguna vigilancia en curso.",
+        "theme": "Tema",
+        "themeNote": "El tema ajusta los colores de la interfaz y propone una paleta de tablero. Usted conserva la última palabra: la pestaña Colores sigue ajustando el tablero, y su ajuste sobrevive al tema.",
+        "theme_system": "Seguir el sistema",
+        "theme_light": "Claro",
+        "theme_dark": "Oscuro",
+        "theme_contrast": "Contraste alto",
+        "theme_print": "Imprimible"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
