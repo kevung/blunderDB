@@ -15,8 +15,8 @@ Base de données
 
    "CTRL-N", "Créer une nouvelle base de données."
    "CTRL-O", "Ouvrir une base de données existante."
-   "CTRL-SHIFT-I", "Fusionner une base de données dans celle-ci."
-   "CTRL-SHIFT-S", "Exporter la base de données."
+   "CTRL-MAJ-I", "Fusionner une base de données dans celle-ci."
+   "CTRL-MAJ-S", "Exporter la base de données."
    "CTRL-Q", "Fermer blunderDB."
    "CTRL-M", "Modifier les métadonnées de la base de données."
 
@@ -31,7 +31,7 @@ Position
    :align: center
 
    "CTRL-I", "Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf)."
-   "CTRL-SHIFT-F", "Importer récursivement un dossier de fichiers de matchs/positions."
+   "CTRL-MAJ-F", "Importer récursivement un dossier de fichiers de matchs/positions."
    "CTRL-C", "Copier une position dans le presse-papier."
    "CTRL-X", "Copier l'image du board dans le presse-papier (PNG)."
    "CTRL-X CTRL-X", "Copier l'image du board avec l'analyse dans le presse-papier (PNG)."
@@ -262,3 +262,22 @@ Panneau des collections
    "Double-clic", "Ouvrir la collection."
    "Del", "Retirer la position courante (ou les positions cochées) de la collection ouverte."
    "Esc", "Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers)."
+
+.. _raccourcis_help_panel:
+
+Panneau d'aide
+--------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "GAUCHE, h", "Onglet précédent."
+   "DROITE, l", "Onglet suivant."
+   "HAUT, k", "Défiler vers le haut."
+   "BAS, j", "Défiler vers le bas."
+   "ESPACE", "Page suivante."
+   "PageUp", "Haut du contenu."
+   "PageDown", "Bas du contenu."
+   "?, CTRL-F, Esc", "Fermer l'aide."

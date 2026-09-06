@@ -814,4 +814,3 @@ msgid ""
 "d'analyse, selon le filtre courant du panneau Stats, sans passer par une "
 "recherche manuelle. Voir :ref:`stats`."
 msgstr ""
-

@@ -47,6 +47,11 @@ services:
       # Row-Level Security: defence-in-depth *inside* the trust boundary
       # Caddy draws above — it does not replace the proxy (ADR-0005).
       BLUNDERDB_RLS: "true"
+    volumes:
+      # The bearoff tables are computed on first start and kept under
+      # $XDG_DATA_HOME/blunderdb, which the image sets to /data: without a
+      # volume they are recomputed at every restart of the container.
+      - blunderdb-data:/data
     networks:
       - backend
     depends_on:
@@ -72,6 +77,9 @@ services:
 
 volumes:
   postgres-data:
+  # Bearoff tables computed by blunderdb-serve on first start (see
+  # XDG_DATA_HOME above): a few megabytes, worth keeping across restarts.
+  blunderdb-data:
   caddy-data:
   caddy-config:
 

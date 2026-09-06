@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: ../../source/index.rst:17
+#: ../../source/index.rst:19
 msgid "Prise en main"
 msgstr "Primi passi"
 
-#: ../../source/index.rst:24
+#: ../../source/index.rst:26
 msgid "Référence"
 msgstr "Riferimento"
 
-#: ../../source/index.rst:37
+#: ../../source/index.rst:39
 msgid "Annexes"
 msgstr "Appendici"
 
@@ -61,3 +61,6 @@ msgstr ""
 " import, studiare una partita, una sessione Anki, modalità server) e una "
 "pagina «come migliorare» — la lettura più redditizia prima di iniziare."
 
+#: ../../source/index.rst:17
+msgid "Ce qui a changé d'une version à l'autre est dans l':ref:`historique`."
+msgstr "Ciò che è cambiato da una versione all'altra è nella :ref:`historique`."

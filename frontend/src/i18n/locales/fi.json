@@ -1114,7 +1114,15 @@
         "noDecisionsEmpty": "Ei päätöksiä suodatetulla ajanjaksolla. Laajenna suodattimia.",
         "cardLabelAll": "PR Yhteensä",
         "cardLabelChecker": "PR Nappula",
-        "cardLabelCube": "PR Noppa",
+        "cardLabelCube": "PR Kuutio",
+        "grade": {
+            "worldClass": "Maailmanluokka",
+            "expert": "Ekspertti",
+            "advanced": "Edistynyt",
+            "intermediate": "Keskitaso",
+            "casual": "Harrastelija",
+            "beginner": "Aloittelija"
+        },
         "tournaments": "turnausta",
         "matches": "ottelua",
         "decisions": "päätöstä",

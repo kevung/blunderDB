@@ -1186,4 +1186,3 @@ msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
 msgstr ""
-

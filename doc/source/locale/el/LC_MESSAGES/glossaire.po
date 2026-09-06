@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-03 20:15+0200\n"
+"POT-Creation-Date: 2026-09-06 03:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -29,9 +29,10 @@ msgid ""
 " manuel, guide utilisateur, FAQ, CLI. Cette page les rassemble en un seul"
 " endroit plutôt que de les redéfinir à chaque section."
 msgstr ""
-"Οι παρακάτω όροι επανέρχονται σε όλη την υπόλοιπη τεκμηρίωση — εγχειρίδιο, "
-"οδηγό χρήστη, συχνές ερωτήσεις, CLI. Αυτή η σελίδα τούς συγκεντρώνει σε ένα "
-"μόνο σημείο αντί να τους ορίζει εκ νέου σε κάθε ενότητα."
+"Οι παρακάτω όροι επανέρχονται σε όλη την υπόλοιπη τεκμηρίωση — "
+"εγχειρίδιο, οδηγό χρήστη, συχνές ερωτήσεις, CLI. Αυτή η σελίδα τούς "
+"συγκεντρώνει σε ένα μόνο σημείο αντί να τους ορίζει εκ νέου σε κάθε "
+"ενότητα."
 
 #: ../../source/glossaire.rst:10
 msgid "Position"
@@ -45,13 +46,13 @@ msgid ""
 "le fichier d'où elle vient."
 msgstr ""
 "Ένα σημείο απόφασης στο τάβλι: ταμπλό, κύβος, ζάρια, σκορ και σημάνσεις "
-"αγώνα. Μια θέση που εισάγεται δύο φορές μετράει μία μόνο φορά — η αυτόματα "
-"υπολογισμένη ταυτότητά της την αναγνωρίζει, ποτέ το αρχείο από το οποίο "
-"προέρχεται."
+"αγώνα. Μια θέση που εισάγεται δύο φορές μετράει μία μόνο φορά — η "
+"αυτόματα υπολογισμένη ταυτότητά της την αναγνωρίζει, ποτέ το αρχείο από "
+"το οποίο προέρχεται."
 
 #: ../../source/glossaire.rst:16
-msgid "Position importée individuellement"
-msgstr "Ξεχωριστά εισαγόμενη θέση"
+msgid "Position importée individuellement (*individually imported position*)"
+msgstr "Ξεχωριστά εισαγόμενη θέση (*individually imported position*)"
 
 #: ../../source/glossaire.rst:17
 msgid ""
@@ -60,14 +61,14 @@ msgid ""
 "propriété est durable : une position ainsi importée le reste même si un "
 "match qui la contient est importé ensuite."
 msgstr ""
-"Μια θέση που μπήκε μόνη της στη βάση — γραμμένη από το ταμπλό ή διαβασμένη "
-"από αρχείο θέσης — αντί να προέλθει από έναν αγώνα. Αυτή η ιδιότητα είναι "
-"διαρκής: μια θέση που εισήχθη έτσι παραμένει έτσι ακόμη κι αν εισαχθεί "
-"αργότερα ένας αγώνας που την περιέχει."
+"Μια θέση που μπήκε μόνη της στη βάση — γραμμένη από το ταμπλό ή "
+"διαβασμένη από αρχείο θέσης — αντί να προέλθει από έναν αγώνα. Αυτή η "
+"ιδιότητα είναι διαρκής: μια θέση που εισήχθη έτσι παραμένει έτσι ακόμη κι"
+" αν εισαχθεί αργότερα ένας αγώνας που την περιέχει."
 
 #: ../../source/glossaire.rst:22
-msgid "Position marquée"
-msgstr "Σημειωμένη θέση"
+msgid "Position marquée (*flagged position*)"
+msgstr "Σημειωμένη θέση (*flagged position*)"
 
 #: ../../source/glossaire.rst:23
 msgid ""
@@ -76,14 +77,15 @@ msgid ""
 "enregistre cette marque, coup par coup. Une décision de videau marquée "
 "marque les deux positions qui en découlent : le double et la prise/passe."
 msgstr ""
-"Μια θέση που ο χρήστης σημείωσε ως άξια μελέτης *στο λογισμικό από το οποίο "
-"προέρχεται ο αγώνας* — σήμερα μόνο το eXtreme Gammon καταγράφει αυτή τη "
-"σήμανση, κίνηση προς κίνηση. Μια σημειωμένη απόφαση κύβου σημειώνει και τις "
-"δύο θέσεις που προκύπτουν από αυτήν: τον διπλασιασμό και το πάρε/πέρασε."
+"Μια θέση που ο χρήστης σημείωσε ως άξια μελέτης *στο λογισμικό από το "
+"οποίο προέρχεται ο αγώνας* — σήμερα μόνο το eXtreme Gammon καταγράφει "
+"αυτή τη σήμανση, κίνηση προς κίνηση. Μια σημειωμένη απόφαση κύβου "
+"σημειώνει και τις δύο θέσεις που προκύπτουν από αυτήν: τον διπλασιασμό "
+"και το πάρε/πέρασε."
 
 #: ../../source/glossaire.rst:29
-msgid "Analyse"
-msgstr "Ανάλυση"
+msgid "Analyse (*analysis*)"
+msgstr "Ανάλυση (*analysis*)"
 
 #: ../../source/glossaire.rst:30
 msgid ""
@@ -91,17 +93,17 @@ msgid ""
 " embarqué) a conclu sur une position, enregistré et relu plus tard. Une "
 "position porte une analyse par moteur ; importer une analyse n'écrase "
 "jamais celle d'un autre moteur, ni une analyse déjà présente (voir "
-":ref:`panneau_epc`)."
+":ref:`import_regles`)."
 msgstr ""
 "Ό,τι συμπέρανε ένας μηχανισμός (eXtreme Gammon, GNUbg, BGBlitz ή ο "
 "ενσωματωμένος αξιολογητής gammonNet) για μια θέση, αποθηκευμένο και "
-"αναγνωσμένο αργότερα. Μια θέση φέρει μία ανάλυση ανά μηχανισμό· η εισαγωγή "
-"μιας ανάλυσης δεν αντικαθιστά ποτέ εκείνη ενός άλλου μηχανισμού, ούτε μια "
-"ήδη υπάρχουσα ανάλυση (βλ. :ref:`panneau_epc`)."
+"αναγνωσμένο αργότερα. Μια θέση φέρει μία ανάλυση ανά μηχανισμό· η "
+"εισαγωγή μιας ανάλυσης δεν αντικαθιστά ποτέ εκείνη ενός άλλου μηχανισμού,"
+" ούτε μια ήδη υπάρχουσα ανάλυση (βλ. :ref:`import_regles`)."
 
 #: ../../source/glossaire.rst:36
-msgid "Évaluation"
-msgstr "Αξιολόγηση"
+msgid "Évaluation (*evaluation*)"
+msgstr "Αξιολόγηση (*evaluation*)"
 
 #: ../../source/glossaire.rst:37
 msgid ""
@@ -110,14 +112,14 @@ msgid ""
 "n'est valable que tant que la position ne change pas ; si elle est "
 "enregistrée, elle devient une Analyse."
 msgstr ""
-"Το αποτέλεσμα ενός υπολογισμού που εκτελεί ο ενσωματωμένος αξιολογητής στη "
-"θέση που βρίσκεται αυτή τη στιγμή στο ταμπλό, αποθηκευμένο ή όχι. Μια "
-"αξιολόγηση ισχύει μόνο όσο η θέση δεν αλλάζει· αν αποθηκευτεί, γίνεται "
+"Το αποτέλεσμα ενός υπολογισμού που εκτελεί ο ενσωματωμένος αξιολογητής "
+"στη θέση που βρίσκεται αυτή τη στιγμή στο ταμπλό, αποθηκευμένο ή όχι. Μια"
+" αξιολόγηση ισχύει μόνο όσο η θέση δεν αλλάζει· αν αποθηκευτεί, γίνεται "
 "Ανάλυση."
 
 #: ../../source/glossaire.rst:42
-msgid "Référentiel"
-msgstr "Σύστημα αναφοράς"
+msgid "Référentiel (*referential*)"
+msgstr "Σύστημα αναφοράς (*referential*)"
 
 #: ../../source/glossaire.rst:43
 msgid ""
@@ -129,17 +131,17 @@ msgid ""
 "référentiel est une propriété de la position, jamais une préférence "
 "d'affichage : c'est le score away qui le fixe."
 msgstr ""
-"Η κλίμακα στην οποία εκφράζεται ένας αριθμός σχετικά με μια θέση. Το *money*"
-" απαντά στο «πόσους πόντους αξίζει αυτό», με ένα γκάμον να αξίζει πάντα δύο "
-"πόντους. Το *match* απαντά στο «πόσο αξίζει αυτό ως προς τον αγώνα», σε μια "
-"κανονικοποιημένη κλίμακα όπου ένα γκάμον αξίζει ό,τι κάνει το σκορ — σχεδόν "
-"τα πάντα στο 2-away/4-away, τίποτα για έναν πρωτοπόρο στο 1-away. Το σύστημα"
-" αναφοράς είναι ιδιότητα της θέσης, ποτέ προτίμηση εμφάνισης: το σκορ away "
-"το καθορίζει."
+"Η κλίμακα στην οποία εκφράζεται ένας αριθμός σχετικά με μια θέση. Το "
+"*money* απαντά στο «πόσους πόντους αξίζει αυτό», με ένα γκάμον να αξίζει "
+"πάντα δύο πόντους. Το *match* απαντά στο «πόσο αξίζει αυτό ως προς τον "
+"αγώνα», σε μια κανονικοποιημένη κλίμακα όπου ένα γκάμον αξίζει ό,τι κάνει"
+" το σκορ — σχεδόν τα πάντα στο 2-away/4-away, τίποτα για έναν πρωτοπόρο "
+"στο 1-away. Το σύστημα αναφοράς είναι ιδιότητα της θέσης, ποτέ προτίμηση "
+"εμφάνισης: το σκορ away το καθορίζει."
 
 #: ../../source/glossaire.rst:51
-msgid "Équité normalisée"
-msgstr "Κανονικοποιημένη ισοδυναμία"
+msgid "Équité normalisée (*normalised equity*)"
+msgstr "Κανονικοποιημένη ισοδυναμία (*normalised equity*)"
 
 #: ../../source/glossaire.rst:52
 msgid ""
@@ -149,15 +151,31 @@ msgid ""
 "de victoire brutes."
 msgstr ""
 "Η ισοδυναμία αγώνα, εκφρασμένη στην κλίμακα ``2 × MWC − 1``, όπου το ±1 "
-"αντιπροσωπεύει τον τρέχοντα κύβο κερδισμένο ή χαμένο. Είναι η κλίμακα που το"
-" blunderDB εμφανίζει και αποθηκεύει σε ένα σκορ αγώνα, ποτέ οι ακατέργαστες "
-"πιθανότητες νίκης."
+"αντιπροσωπεύει τον τρέχοντα κύβο κερδισμένο ή χαμένο. Είναι η κλίμακα που"
+" το blunderDB εμφανίζει και αποθηκεύει σε ένα σκορ αγώνα, ποτέ οι "
+"ακατέργαστες πιθανότητες νίκης."
 
 #: ../../source/glossaire.rst:57
-msgid "Score away"
-msgstr "Σκορ away"
+msgid "EMG"
+msgstr "EMG"
 
 #: ../../source/glossaire.rst:58
+msgid ""
+"Le sigle sous lequel eXtreme Gammon et GNUbg désignent l'équité "
+"normalisée ci-dessus, et sous lequel les statistiques de blunderDB "
+"comptent les erreurs : « une erreur de 0,100 EMG » est une erreur de "
+"0,100 sur cette échelle. Les deux termes nomment la même grandeur."
+msgstr ""
+"Το ακρωνύμιο με το οποίο το eXtreme Gammon και το GNUbg ονομάζουν την "
+"παραπάνω κανονικοποιημένη ισοδυναμία, και με το οποίο τα στατιστικά του "
+"blunderDB μετρούν τα σφάλματα: «ένα σφάλμα 0,100 EMG» είναι ένα σφάλμα "
+"0,100 σε αυτή την κλίμακα. Οι δύο όροι ονομάζουν το ίδιο μέγεθος."
+
+#: ../../source/glossaire.rst:63
+msgid "Score away (*away score*)"
+msgstr "Σκορ away (*away score*)"
+
+#: ../../source/glossaire.rst:64
 msgid ""
 "Le nombre de points qu'il reste à un joueur pour gagner le match, de son "
 "propre point de vue. Deux valeurs sont des sentinelles plutôt que des "
@@ -165,37 +183,36 @@ msgid ""
 "*money* — et ``0``/``1`` distinguent la partie Crawford (``1``) de la "
 "partie qui la suit (``0``), pour la même distance à la victoire."
 msgstr ""
-"Πόσους πόντους χρειάζεται ακόμη ένας παίκτης για να κερδίσει τον αγώνα, από "
-"τη δική του πλευρά. Δύο τιμές είναι φρουροί (sentinels) και όχι μετρήσεις: "
-"το ``-1`` σημαίνει ότι δεν υπάρχει αγώνας — το σύστημα αναφοράς είναι "
-"*money* — και τα ``0``/``1`` διακρίνουν το παιχνίδι μετά το Crawford (``0``)"
-" από το ίδιο το παιχνίδι Crawford (``1``), για την ίδια απόσταση από τη "
-"νίκη."
+"Πόσους πόντους χρειάζεται ακόμη ένας παίκτης για να κερδίσει τον αγώνα, "
+"από τη δική του πλευρά. Δύο τιμές είναι φρουροί (sentinels) και όχι "
+"μετρήσεις: το ``-1`` σημαίνει ότι δεν υπάρχει αγώνας — το σύστημα "
+"αναφοράς είναι *money* — και τα ``0``/``1`` διακρίνουν το παιχνίδι μετά "
+"το Crawford (``0``) από το ίδιο το παιχνίδι Crawford (``1``), για την "
+"ίδια απόσταση από τη νίκη."
 
-#: ../../source/glossaire.rst:64
-msgid "Régime"
-msgstr "Καθεστώς"
+#: ../../source/glossaire.rst:70
+msgid "Régime (*regime*)"
+msgstr "Καθεστώς (*regime*)"
 
-#: ../../source/glossaire.rst:65
+#: ../../source/glossaire.rst:71
 msgid ""
 "Quel type de réponse le panneau donne sur une course, toujours annoncé à "
 "l'écran plutôt que laissé à deviner :"
 msgstr ""
-"Τι είδους απάντηση δίνει ο πίνακας για μια κούρσα, δηλωμένη πάντα στην οθόνη"
-" αντί να αφήνεται στον αναγνώστη να μαντέψει:"
+"Τι είδους απάντηση δίνει ο πίνακας για μια κούρσα, δηλωμένη πάντα στην "
+"οθόνη αντί να αφήνεται στον αναγνώστη να μαντέψει:"
 
-#: ../../source/glossaire.rst:68
+#: ../../source/glossaire.rst:74
 msgid "*exact* — lu dans une base de bearoff two-sided, jamais estimé ;"
-msgstr ""
-"*ακριβές* — διαβασμένο από μια αμφίπλευρη βάση bearoff, ποτέ εκτιμημένο·"
+msgstr "*ακριβές* — διαβασμένο από μια αμφίπλευρη βάση bearoff, ποτέ εκτιμημένο·"
 
-#: ../../source/glossaire.rst:69
+#: ../../source/glossaire.rst:75
 msgid "*évalué* — calculé par l'évaluateur embarqué, qui rejoue la trajectoire ;"
 msgstr ""
-"*αξιολογημένο* — υπολογισμένο από τον ενσωματωμένο αξιολογητή, που παίζει "
-"την πορεία μέχρι το τέλος·"
+"*αξιολογημένο* — υπολογισμένο από τον ενσωματωμένο αξιολογητή, που παίζει"
+" την πορεία μέχρι το τέλος·"
 
-#: ../../source/glossaire.rst:71
+#: ../../source/glossaire.rst:77
 msgid ""
 "*estimé* — un résumé calibré d'une trajectoire, valable pour une "
 "probabilité de gain, jamais pour un verdict de videau."
@@ -203,11 +220,11 @@ msgstr ""
 "*εκτιμημένο* — μια βαθμονομημένη σύνοψη μιας πορείας, έγκυρη για μια "
 "πιθανότητα νίκης, ποτέ για μια ετυμηγορία κύβου."
 
-#: ../../source/glossaire.rst:74
-msgid "Base bearoff"
-msgstr "Βάση bearoff"
+#: ../../source/glossaire.rst:80
+msgid "Base bearoff (*bearoff database*)"
+msgstr "Βάση bearoff (*bearoff database*)"
 
-#: ../../source/glossaire.rst:75
+#: ../../source/glossaire.rst:81
 msgid ""
 "Une table de réponses de course two-sided (le verdict de videau) ou one-"
 "sided (l'EPC). blunderDB en génère elle-même une partie au premier "
@@ -217,61 +234,61 @@ msgid ""
 "par GNUbg."
 msgstr ""
 "Ένας πίνακας απαντήσεων κούρσας, αμφίπλευρος (η ετυμηγορία κύβου) ή "
-"μονόπλευρος (το EPC). Το blunderDB δημιουργεί μέρος του μόνο του κατά την "
-"πρώτη εκκίνηση (έως 6 πούλια ανά παίκτη)· ευρύτερα πεδία δημιουργούνται από "
-"την καρτέλα *Bearoff* ή τη CLI. Μια δημιουργημένη βάση λέγεται "
-"*επαληθευμένη* όταν το αποτύπωμά της ταιριάζει ακριβώς με αυτό που παράγει "
-"το GNUbg."
+"μονόπλευρος (το EPC). Το blunderDB δημιουργεί μέρος του μόνο του κατά την"
+" πρώτη εκκίνηση (έως 6 πούλια ανά παίκτη)· ευρύτερα πεδία δημιουργούνται "
+"από την καρτέλα *Bearoff* ή τη CLI. Μια δημιουργημένη βάση λέγεται "
+"*επαληθευμένη* όταν το αποτύπωμά της ταιριάζει ακριβώς με αυτό που "
+"παράγει το GNUbg."
 
-#: ../../source/glossaire.rst:82
+#: ../../source/glossaire.rst:88
 msgid "EPC (Effective Pip Count)"
 msgstr "EPC (Effective Pip Count)"
 
-#: ../../source/glossaire.rst:83
+#: ../../source/glossaire.rst:89
 msgid ""
 "Une estimation classique, un-côté, du nombre de coups nécessaires pour "
 "sortir tous les pions d'un joueur — corrigée du gaspillage (*wastage*) "
 "par rapport au simple compte de pions."
 msgstr ""
-"Μια κλασική, μονόπλευρη εκτίμηση του αριθμού των ζαριών που απαιτούνται για "
-"να βγουν όλα τα πούλια ενός παίκτη — διορθωμένη για τη σπατάλη (*wastage*) "
-"σε σχέση με το απλό pip count."
+"Μια κλασική, μονόπλευρη εκτίμηση του αριθμού των ζαριών που απαιτούνται "
+"για να βγουν όλα τα πούλια ενός παίκτη — διορθωμένη για τη σπατάλη "
+"(*wastage*) σε σχέση με το απλό pip count."
 
-#: ../../source/glossaire.rst:87
-msgid "Fait de position"
-msgstr "Δεδομένο θέσης"
+#: ../../source/glossaire.rst:93
+msgid "Fait de position (*position fact*)"
+msgstr "Δεδομένο θέσης (*position fact*)"
 
-#: ../../source/glossaire.rst:88
+#: ../../source/glossaire.rst:94
 msgid ""
 "Une grandeur qui appartient au plateau lui-même, indépendante de tout "
-"choix d'un joueur : compte de pions, EPC, chances de gain/gammon/ "
-"backgammon, équité cubeless. Vrai avant le jet de dés."
+"choix d'un joueur : compte de pions, EPC, chances de "
+"gain/gammon/backgammon, équité cubeless. Vrai avant le jet de dés."
 msgstr ""
 "Ένα μέγεθος που ανήκει στο ίδιο το ταμπλό, ανεξάρτητο από οποιαδήποτε "
 "επιλογή θα μπορούσε να κάνει ένας παίκτης: pip count, EPC, πιθανότητες "
 "νίκης/γκάμον/μπάκγκαμον, cubeless equity. Αληθές πριν από τη ζαριά."
 
-#: ../../source/glossaire.rst:92
-msgid "Ligne avant le jet"
-msgstr "Γραμμή πριν τη ζαριά"
+#: ../../source/glossaire.rst:98
+msgid "Ligne avant le jet (*pre-roll baseline*)"
+msgstr "Γραμμή πριν τη ζαριά (*pre-roll baseline*)"
 
-#: ../../source/glossaire.rst:93
+#: ../../source/glossaire.rst:99
 msgid ""
 "Le vecteur des chances de gain/gammon/backgammon et de l'équité cubeless,"
 " affiché en tête de la liste des coups candidats une fois les dés jetés. "
 "L'écart entre cette ligne et un coup mesure la chance du lancer, jamais "
 "le mérite du coup joué."
 msgstr ""
-"Το διάνυσμα των πιθανοτήτων νίκης/γκάμον/μπάκγκαμον και της cubeless equity,"
-" εμφανισμένο πάνω από τη λίστα υποψήφιων κινήσεων μόλις ριχτούν τα ζάρια. Το"
-" κενό ανάμεσα σε αυτή τη γραμμή και μια κίνηση μετρά την τύχη της ζαριάς, "
-"ποτέ την αξία της κίνησης που παίχτηκε."
+"Το διάνυσμα των πιθανοτήτων νίκης/γκάμον/μπάκγκαμον και της cubeless "
+"equity, εμφανισμένο πάνω από τη λίστα υποψήφιων κινήσεων μόλις ριχτούν τα"
+" ζάρια. Το κενό ανάμεσα σε αυτή τη γραμμή και μια κίνηση μετρά την τύχη "
+"της ζαριάς, ποτέ την αξία της κίνησης που παίχτηκε."
 
-#: ../../source/glossaire.rst:98
-msgid "Décision"
-msgstr "Απόφαση"
+#: ../../source/glossaire.rst:104
+msgid "Décision (*decision*)"
+msgstr "Απόφαση (*decision*)"
 
-#: ../../source/glossaire.rst:99
+#: ../../source/glossaire.rst:105
 msgid ""
 "La réponse à la question que le plateau pose : le classement des coups "
 "candidats quand des dés sont jetés, ou les trois options de videau (pas "
@@ -279,14 +296,15 @@ msgid ""
 "position ne pose jamais les deux questions à la fois."
 msgstr ""
 "Η απάντηση στην ερώτηση που θέτει το ταμπλό: η κατάταξη των υποψήφιων "
-"κινήσεων όταν ρίχνονται ζάρια, ή διαφορετικά οι τρεις επιλογές κύβου και η "
-"ετυμηγορία τους. Μια θέση δεν θέτει ποτέ και τις δύο ερωτήσεις ταυτόχρονα."
+"κινήσεων όταν ρίχνονται ζάρια, ή διαφορετικά οι τρεις επιλογές κύβου και "
+"η ετυμηγορία τους. Μια θέση δεν θέτει ποτέ και τις δύο ερωτήσεις "
+"ταυτόχρονα."
 
-#: ../../source/glossaire.rst:104
+#: ../../source/glossaire.rst:110
 msgid "Verdict"
 msgstr "Ετυμηγορία"
 
-#: ../../source/glossaire.rst:105
+#: ../../source/glossaire.rst:111
 msgid ""
 "Laquelle des options d'une décision de videau est la bonne : *pas de "
 "double*, *double/prend*, *double/passe* ou *trop bon (pour doubler)*. "
@@ -295,89 +313,115 @@ msgid ""
 "position, typiquement un score hors de portée de sa table)."
 msgstr ""
 "Ποια από τις επιλογές μιας απόφασης κύβου είναι η σωστή: *κανένα "
-"διπλασιασμό*, *διπλασιασμός/πάρε*, *διπλασιασμός/πέρασε* ή *πολύ καλό (για "
-"διπλασιασμό)*. Δύο ειδικές περιπτώσεις δεν αφήνονται ποτέ κενές: *καμία "
-"απόφαση* (το καθεστώς δεν δικαιούται μία) και *απορρίφθηκε* (ο μηχανισμός "
-"αρνήθηκε τη θέση, συνήθως σκορ εκτός εμβέλειας του πίνακά του)."
+"διπλασιασμό*, *διπλασιασμός/πάρε*, *διπλασιασμός/πέρασε* ή *πολύ καλό "
+"(για διπλασιασμό)*. Δύο ειδικές περιπτώσεις δεν αφήνονται ποτέ κενές: "
+"*καμία απόφαση* (το καθεστώς δεν δικαιούται μία) και *απορρίφθηκε* (ο "
+"μηχανισμός αρνήθηκε τη θέση, συνήθως σκορ εκτός εμβέλειας του πίνακά "
+"του)."
 
-#: ../../source/glossaire.rst:111
-msgid "Trop bon"
-msgstr "Πολύ καλό"
+#: ../../source/glossaire.rst:117
+msgid "Trop bon (*too good*)"
+msgstr "Πολύ καλό (*too good*)"
 
-#: ../../source/glossaire.rst:112
+#: ../../source/glossaire.rst:118
 msgid ""
 "Le verdict qui dit que la position est si favorable que doubler "
 "inciterait l'adversaire à passer alors que jouer sans doubler rapporte "
 "davantage — un videau qu'il vaut mieux garder."
 msgstr ""
-"Η ετυμηγορία που λέει ότι η θέση είναι τόσο ευνοϊκή ώστε ο διπλασιασμός θα "
-"οδηγούσε τον αντίπαλο να περάσει, ενώ η συνέχιση χωρίς διπλασιασμό αποδίδει "
-"περισσότερα — ένας κύβος που καλύτερα να κρατηθεί."
+"Η ετυμηγορία που λέει ότι η θέση είναι τόσο ευνοϊκή ώστε ο διπλασιασμός "
+"θα οδηγούσε τον αντίπαλο να περάσει, ενώ η συνέχιση χωρίς διπλασιασμό "
+"αποδίδει περισσότερα — ένας κύβος που καλύτερα να κρατηθεί."
 
-#: ../../source/glossaire.rst:116
-msgid "Chance"
-msgstr "Τύχη"
+#: ../../source/glossaire.rst:122
+msgid "Chance (*luck*)"
+msgstr "Τύχη (*luck*)"
 
-#: ../../source/glossaire.rst:117
+#: ../../source/glossaire.rst:123
 msgid ""
 "L'apport du lancer de dés à l'équité d'un coup, lu depuis le fichier "
 "source à l'import (eXtreme Gammon, GNUbg) et jamais recalculé par "
 "blunderDB. Les formats qui ne la transportent pas (BGF, Jellyfish "
 "``.mat``) n'en fournissent jamais, et l'import n'est pas rétroactif."
 msgstr ""
-"Η συνεισφορά της ζαριάς στην equity μιας κίνησης, διαβασμένη από το αρχείο "
-"πηγής κατά την εισαγωγή (eXtreme Gammon, GNUbg) και ποτέ επανυπολογισμένη "
-"από το blunderDB. Οι μορφές που δεν τη μεταφέρουν (BGF, Jellyfish ``.mat``) "
-"δεν την παρέχουν ποτέ, και η εισαγωγή δεν είναι αναδρομική."
+"Η συνεισφορά της ζαριάς στην equity μιας κίνησης, διαβασμένη από το "
+"αρχείο πηγής κατά την εισαγωγή (eXtreme Gammon, GNUbg) και ποτέ "
+"επανυπολογισμένη από το blunderDB. Οι μορφές που δεν τη μεταφέρουν (BGF, "
+"Jellyfish ``.mat``) δεν την παρέχουν ποτέ, και η εισαγωγή δεν είναι "
+"αναδρομική."
 
-#: ../../source/glossaire.rst:122
+#: ../../source/glossaire.rst:128
 msgid "Blunder"
 msgstr "Blunder (χοντρό λάθος)"
 
-#: ../../source/glossaire.rst:123
+#: ../../source/glossaire.rst:129
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs d'une recherche."
 msgstr ""
 "Μια κίνηση ή απόφαση κύβου της οποίας το σφάλμα (το κενό equity με την "
-"καλύτερη επιλογή) υπερβαίνει ένα κατώφλι· η εντολή ``bl`` (ή ``blunders``) "
-"φορτώνει απευθείας τα χειρότερα σφάλματα μιας αναζήτησης."
-
-#: ../../source/glossaire.rst:127
-msgid "PR (Performance Rate)"
-msgstr "PR (Performance Rate)"
-
-#: ../../source/glossaire.rst:128
-msgid ""
-"Le coût moyen des erreurs d'un joueur, en millièmes de point d'équité par"
-" décision comptée, coups et videau confondus. Voir :ref:`stats_parity` "
-"pour les règles de comptage exactes (parité avec eXtreme Gammon et "
-"GNUbg)."
-msgstr ""
-"Το μέσο κόστος σφαλμάτων ενός παίκτη, σε χιλιοστά μονάδας equity ανά "
-"μετρημένη απόφαση, κινήσεις πούλιων και κύβος μαζί. Βλ. :ref:`stats_parity` "
-"για τους ακριβείς κανόνες μέτρησης (ισοτιμία με eXtreme Gammon και GNUbg)."
+"καλύτερη επιλογή) υπερβαίνει ένα κατώφλι· η εντολή ``bl`` (ή "
+"``blunders``) φορτώνει απευθείας τα χειρότερα σφάλματα μιας αναζήτησης."
 
 #: ../../source/glossaire.rst:133
+msgid "Millipoint (mpt)"
+msgstr "Millipoint (mpt)"
+
+#: ../../source/glossaire.rst:134
+msgid ""
+"Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
+"mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
+" le seuil de blunder, les filtres de recherche ``e>`` et ``E>``, "
+"l'histogramme des magnitudes d'erreur, la chance moyenne par lancer. Le "
+"PR ne se lit pas sur cette échelle : son facteur est 500 et non 1000, si "
+"bien qu'un PR de 5,0 vaut 10 mpt d'erreur moyenne par décision."
+msgstr ""
+"Ένα χιλιοστό του πόντου ισοδυναμίας: ένα σφάλμα 0,100 ισοδυναμίας αξίζει "
+"100 mpt. Είναι η μονάδα στην οποία διαβάζονται τα μεγέθη μιας θέσης — το "
+"κατώφλι του blunder, τα φίλτρα αναζήτησης ``e>`` και ``E>``, το "
+"ιστόγραμμα των μεγεθών σφάλματος, η μέση τύχη ανά ζαριά. Το PR δεν "
+"διαβάζεται σε αυτή την κλίμακα: ο συντελεστής του είναι 500 και όχι 1000,"
+" οπότε ένα PR 5,0 αντιστοιχεί σε 10 mpt μέσου σφάλματος ανά απόφαση."
+
+#: ../../source/glossaire.rst:142
+msgid "PR (*Performance Rating*)"
+msgstr "PR (*Performance Rating*)"
+
+#: ../../source/glossaire.rst:143
+msgid ""
+"Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
+"l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
+"le font eXtreme Gammon et GNUbg. Un PR de 5,0 vaut donc 0,010 d'équité "
+"perdue par décision. Voir :ref:`stats_parity` pour les règles de comptage"
+" exactes (parité avec eXtreme Gammon et GNUbg)."
+msgstr ""
+"Το μέσο κόστος των σφαλμάτων ενός παίκτη, κινήσεις και κύβος μαζί: το "
+"μέσο σφάλμα ισοδυναμίας ανά μετρούμενη απόφαση, πολλαπλασιασμένο επί 500 "
+"όπως κάνουν το eXtreme Gammon και το GNUbg. Ένα PR 5,0 αντιστοιχεί λοιπόν"
+" σε 0,010 χαμένης ισοδυναμίας ανά απόφαση. Βλ. :ref:`stats_parity` για "
+"τους ακριβείς κανόνες μέτρησης (ισοτιμία με eXtreme Gammon και GNUbg)."
+
+#: ../../source/glossaire.rst:149
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:134
+#: ../../source/glossaire.rst:150
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
 "stable d'un logiciel à l'autre. Voir :ref:`stats_parity`."
 msgstr ""
-"Ο ίδιος αριθμητής με το PR (το άθροισμα των σφαλμάτων), αλλά διαιρεμένος με "
-"τον αριθμό των κινήσεων που παίχτηκαν αντί για τον αριθμό των μετρημένων "
-"αποφάσεων — πιο σταθερός από εργαλείο σε εργαλείο. Βλ. :ref:`stats_parity`."
+"Ο ίδιος αριθμητής με το PR (το άθροισμα των σφαλμάτων), αλλά διαιρεμένος "
+"με τον αριθμό των κινήσεων που παίχτηκαν αντί για τον αριθμό των "
+"μετρημένων αποφάσεων — πιο σταθερός από εργαλείο σε εργαλείο. Βλ. "
+":ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:138
-msgid "Coût MWC"
-msgstr "Κόστος MWC"
+#: ../../source/glossaire.rst:154
+msgid "Coût MWC (*MWC cost*)"
+msgstr "Κόστος MWC (*MWC cost*)"
 
-#: ../../source/glossaire.rst:139
+#: ../../source/glossaire.rst:155
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -388,27 +432,27 @@ msgstr ""
 "αντί σε equity — το φυσικό μέγεθος για τη σύγκριση του ίδιου παίκτη σε "
 "διαφορετικά σκορ αγώνα."
 
-#: ../../source/glossaire.rst:144
+#: ../../source/glossaire.rst:160
 msgid "Collection"
 msgstr "Συλλογή"
 
-#: ../../source/glossaire.rst:145
+#: ../../source/glossaire.rst:161
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
 "geste explicite, contrairement à la position importée individuellement "
 "(voir :ref:`panneau_collections`)."
 msgstr ""
-"Ένα ονομασμένο, διατεταγμένο σύνολο θέσεων που ο χρήστης συγκεντρώνει με το "
-"χέρι, drag-and-drop συμπεριλαμβανομένου. Η συμμετοχή σε συλλογή είναι ρητή "
-"χειρονομία, σε αντίθεση με μια ξεχωριστά εισαγόμενη θέση (βλ. "
+"Ένα ονομασμένο, διατεταγμένο σύνολο θέσεων που ο χρήστης συγκεντρώνει με "
+"το χέρι, drag-and-drop συμπεριλαμβανομένου. Η συμμετοχή σε συλλογή είναι "
+"ρητή χειρονομία, σε αντίθεση με μια ξεχωριστά εισαγόμενη θέση (βλ. "
 ":ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:150
-msgid "Paquet Anki"
-msgstr "Τράπουλα Anki"
+#: ../../source/glossaire.rst:166
+msgid "Paquet Anki (*Anki deck*)"
+msgstr "Τράπουλα Anki (*Anki deck*)"
 
-#: ../../source/glossaire.rst:151
+#: ../../source/glossaire.rst:167
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -416,25 +460,25 @@ msgstr ""
 "Ένα σύνολο θέσεων μετατραμμένων σε κάρτες που επαναλαμβάνονται με "
 "κατανεμημένη επανάληψη (αλγόριθμος FSRS). Βλ. :ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:154
-msgid "Carte de révision"
-msgstr "Κάρτα επανάληψης"
+#: ../../source/glossaire.rst:170
+msgid "Carte de révision (*review card*)"
+msgstr "Κάρτα επανάληψης (*review card*)"
 
-#: ../../source/glossaire.rst:155
+#: ../../source/glossaire.rst:171
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
 "geste qui la révèle."
 msgstr ""
-"Μια θέση από μια τράπουλα Anki, παρουσιασμένη ως ερώτηση: το ταμπλό είναι η "
-"ερώτηση, η αποθηκευμένη ανάλυση είναι η απάντηση, κρυμμένη μέχρι τη "
+"Μια θέση από μια τράπουλα Anki, παρουσιασμένη ως ερώτηση: το ταμπλό είναι"
+" η ερώτηση, η αποθηκευμένη ανάλυση είναι η απάντηση, κρυμμένη μέχρι τη "
 "χειρονομία που την αποκαλύπτει."
 
-#: ../../source/glossaire.rst:159
-msgid "Commentaire"
-msgstr "Σχόλιο"
+#: ../../source/glossaire.rst:175
+msgid "Commentaire (*comment*)"
+msgstr "Σχόλιο (*comment*)"
 
-#: ../../source/glossaire.rst:160
+#: ../../source/glossaire.rst:176
 msgid ""
 "Un texte libre attaché à une position, qu'il ait été tapé par "
 "l'utilisateur ou repris tel quel d'un fichier importé — les deux sont "
@@ -446,57 +490,57 @@ msgstr ""
 "διακρίσιμα. Ένα ``#λέξη-κλειδί`` μέσα σε ένα σχόλιο είναι μια ετικέτα, "
 "αναζητήσιμη όπως κάθε άλλο κείμενο."
 
-#: ../../source/glossaire.rst:165
-msgid "Joueur"
-msgstr "Παίκτης"
+#: ../../source/glossaire.rst:181
+msgid "Joueur (*player*)"
+msgstr "Παίκτης (*player*)"
 
-#: ../../source/glossaire.rst:166
+#: ../../source/glossaire.rst:182
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
 "deux orthographes est deux joueurs distincts, jusqu'à une fusion "
 "explicite (« Fusionner les joueurs »)."
 msgstr ""
-"Ένα όνομα ακριβώς όπως εμφανίζεται σε έναν εισαγόμενο αγώνα. Το blunderDB "
-"δεν μαντεύει το πρόσωπο πίσω από το όνομα: το ίδιο άτομο που υπογράφει με "
-"δύο ορθογραφίες είναι δύο ξεχωριστοί παίκτες, μέχρι μια ρητή συγχώνευση "
-"(«Συγχώνευση παικτών»)."
+"Ένα όνομα ακριβώς όπως εμφανίζεται σε έναν εισαγόμενο αγώνα. Το blunderDB"
+" δεν μαντεύει το πρόσωπο πίσω από το όνομα: το ίδιο άτομο που υπογράφει "
+"με δύο ορθογραφίες είναι δύο ξεχωριστοί παίκτες, μέχρι μια ρητή "
+"συγχώνευση («Συγχώνευση παικτών»)."
 
-#: ../../source/glossaire.rst:171
-msgid "Filigrane"
-msgstr "Υδατογράφημα"
+#: ../../source/glossaire.rst:187
+msgid "Filigrane (*watermark*)"
+msgstr "Υδατογράφημα (*watermark*)"
 
-#: ../../source/glossaire.rst:172
+#: ../../source/glossaire.rst:188
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
 "consigne jamais rien du côté de qui reçoit la base. Voir "
 ":ref:`diffusion_controlee`."
 msgstr ""
-"Η υπογεγραμμένη δήλωση, τοποθετημένη από όποιον εξάγει μια βάση, για το τι "
-"είναι και από πού προέρχεται. Μη παραποιήσιμη αλλά όχι ανεξάλειπτη, δεν "
-"καταγράφει ποτέ τίποτα στην πλευρά του παραλήπτη. Βλ. "
+"Η υπογεγραμμένη δήλωση, τοποθετημένη από όποιον εξάγει μια βάση, για το "
+"τι είναι και από πού προέρχεται. Μη παραποιήσιμη αλλά όχι ανεξάλειπτη, "
+"δεν καταγράφει ποτέ τίποτα στην πλευρά του παραλήπτη. Βλ. "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:177
-msgid "Identité d'émetteur"
-msgstr "Ταυτότητα εκδότη"
+#: ../../source/glossaire.rst:193
+msgid "Identité d'émetteur (*issuer identity*)"
+msgstr "Ταυτότητα εκδότη (*issuer identity*)"
 
-#: ../../source/glossaire.rst:178
+#: ../../source/glossaire.rst:194
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
 "seul fichier."
 msgstr ""
-"Το κλειδί που υπογράφει τα υδατογραφήματα ενός ατόμου — δημιουργημένο μόνο "
-"του με το πρώτο υδατογράφημα που τοποθετείται, και μεταφέρσιμο από ένα "
-"μηχάνημα σε άλλο ως ένα ενιαίο αρχείο."
+"Το κλειδί που υπογράφει τα υδατογραφήματα ενός ατόμου — δημιουργημένο "
+"μόνο του με το πρώτο υδατογράφημα που τοποθετείται, και μεταφέρσιμο από "
+"ένα μηχάνημα σε άλλο ως ένα ενιαίο αρχείο."
 
-#: ../../source/glossaire.rst:182
+#: ../../source/glossaire.rst:198
 msgid "Fichier protégé (.dbx)"
 msgstr "Προστατευμένο αρχείο (.dbx)"
 
-#: ../../source/glossaire.rst:183
+#: ../../source/glossaire.rst:199
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -506,11 +550,11 @@ msgstr ""
 "έπειτα συνηθισμένη. Προστατεύει το αρχείο κατά τη μεταφορά, όχι το "
 "περιεχόμενό του: όποιος λάβει τον κωδικό μπορεί να το ανοίξει."
 
-#: ../../source/glossaire.rst:187
+#: ../../source/glossaire.rst:203
 msgid "Tenant"
 msgstr "Tenant"
 
-#: ../../source/glossaire.rst:188
+#: ../../source/glossaire.rst:204
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "
@@ -518,7 +562,6 @@ msgid ""
 "personne dont c'est le fichier. Voir :ref:`headless`."
 msgstr ""
 "Σε λειτουργία διακομιστή, ο κάτοχος ενός συνόλου θέσεων, αγώνων και "
-"συλλογών. Τίποτα από όσα αποθηκεύει ένας tenant δεν είναι ποτέ ορατό σε έναν"
-" άλλο. Στην επιφάνεια εργασίας υπάρχει μόνο ένας, σιωπηρός: το πρόσωπο του "
-"οποίου είναι το αρχείο. Βλ. :ref:`headless`."
-
+"συλλογών. Τίποτα από όσα αποθηκεύει ένας tenant δεν είναι ποτέ ορατό σε "
+"έναν άλλο. Στην επιφάνεια εργασίας υπάρχει μόνο ένας, σιωπηρός: το "
+"πρόσωπο του οποίου είναι το αρχείο. Βλ. :ref:`headless`."

@@ -50,7 +50,7 @@ export default {
     <li>étudier des positions par répétition espacée (panneau Anki),</li>
     <li>gérer des tournois (panneau Tournoi),</li>
     <li>afficher des statistiques de performance (panneau Stats),</li>
-    <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Eval),</li>
+    <li>évaluer n'importe quelle position avec le moteur intégré, et calculer l'EPC d'une position de sortie (panneau Eval),</li>
     <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
     <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
 </ul>
@@ -128,8 +128,8 @@ export default {
 </ul>
 <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
 <p>
-    Sur une position de course pure, un tableau supplémentaire affiche les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6
-    pions par joueur, base étendue téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes et la meilleure décision de videau. Hors de ce domaine, la
+    Sur une position de course pure, un tableau supplémentaire affiche les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (table à 6 pions par joueur
+    calculée au premier lancement, table étendue à 11 pions calculée depuis l'onglet Bearoff de la configuration), les équités money exactes et la meilleure décision de videau. Hors de ce domaine, la
     probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la
     position du videau en cliquant le videau du plateau.
 </p>
@@ -167,8 +167,8 @@ export default {
 </p>
 <p>
     <strong>Réviser :</strong> Sélectionnez un paquet et cliquez sur <em>Étudier</em> (ou double-cliquez sur un paquet) pour commencer à réviser les cartes à échéance. Chaque carte affiche la position
-    correspondante sur le plateau. Notez votre rappel avec les touches <strong>1</strong> (À revoir), <strong>2</strong> (Difficile), <strong>3</strong> (Correct) ou <strong>4</strong> (Facile).
-    Appuyez sur <strong>Échap</strong> pour arrêter et revenir à la liste des paquets.
+    correspondante sur le plateau. Notez votre rappel avec les touches <strong>1</strong> (À revoir), <strong>2</strong> (Difficile), <strong>3</strong> (Bien) ou <strong>4</strong> (Facile). Appuyez
+    sur <strong>Échap</strong> pour arrêter et revenir à la liste des paquets.
 </p>
 <p>
     <strong>Limiter la séance :</strong> Dans les Paramètres du paquet, vous pouvez borner une séance à un nombre de cartes. La séance s'arrête alors en le disant, et l'entraînement libre reste
@@ -193,7 +193,10 @@ export default {
 </p>
 
 <h3>Tournois</h3>
-<p>Les tournois permettent de regrouper les matchs par événement. Ouvrez le panneau Tournoi avec <strong>Ctrl+Y</strong> pour gérer les tournois et leur affecter des matchs.</p>
+<p>
+    Les tournois permettent de regrouper les matchs par événement. À l'import, un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé. Ouvrez
+    le panneau Tournoi avec <strong>Ctrl+Y</strong> pour gérer les tournois et leur affecter des matchs.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -238,11 +241,11 @@ export default {
 <td>Ouvrir une base de données existante.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-MAJ-I</td>
 <td>Fusionner une base de données dans celle-ci.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-MAJ-S</td>
 <td>Exporter la base de données.</td>
 </tr>
 <tr>
@@ -269,7 +272,7 @@ export default {
 <td>Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-MAJ-F</td>
 <td>Importer récursivement un dossier de fichiers de matchs/positions.</td>
 </tr>
 <tr>
@@ -732,6 +735,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Panneau d'aide</h3>
+<table>
+<thead>
+<tr>
+<th>Raccourci</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GAUCHE, h</td>
+<td>Onglet précédent.</td>
+</tr>
+<tr>
+<td>DROITE, l</td>
+<td>Onglet suivant.</td>
+</tr>
+<tr>
+<td>HAUT, k</td>
+<td>Défiler vers le haut.</td>
+</tr>
+<tr>
+<td>BAS, j</td>
+<td>Défiler vers le bas.</td>
+</tr>
+<tr>
+<td>ESPACE</td>
+<td>Page suivante.</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Haut du contenu.</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Bas du contenu.</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>Fermer l'aide.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur la touche <em>ESPACE</em>. Lors de la saisie d'une commande, une liste de suggestions apparaît automatiquement : la touche <em>TAB</em> (ou <em>MAJ-TAB</em>) parcourt les propositions et complète la commande, tandis que <em>ÉCHAP</em> referme la liste (un second <em>ÉCHAP</em> ferme la ligne de commande). Les touches <em>HAUT</em> et <em>BAS</em> restent réservées à l'historique des commandes.</p>
@@ -782,7 +828,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff).</td>
+<td>Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict de videau en bearoff). <code>epc</code> est l'ancien nom de ce panneau, conservé.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -921,365 +967,462 @@ export default {
 </tbody>
 </table>
 <h3>Filtres de recherche</h3>
+<p>Cette table est la référence de la grammaire de recherche : la ligne de commande, la bibliothèque de filtres et le drapeau <code>--query</code> de <code>blunderdb search</code> lisent tous les mêmes jetons. La colonne <em>Équivalent CLI</em> donne, quand il existe, le drapeau de <code>search</code> qui fait la même chose (voir Interface en ligne de commande (CLI)) ; un tiret signale un filtre que seule la grammaire exprime.</p>
+<p>Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de recherche. <code>cube</code> et <code>score</code> reprennent le videau et le score qui y sont posés, <code>d</code> le type de décision, <code>D</code> et <code>D1</code> les dés, <code>x</code> la structure dessinée dans l'onglet <em>Sauf</em>. Un lancer ne s'écrit donc jamais dans le jeton : <code>D65</code> n'existe pas, seule la forme d'exclusion porte ses chiffres (<code>xD65</code>). En ligne de commande, où il n'y a pas de plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux de la troisième colonne qu'il faut y employer.</p>
+<p>Les erreurs et les équités se comptent en <strong>millièmes d'équité</strong> — les <em>millipoints</em> de la table ci-dessous : <code>E&gt;100</code> retient les coups qui ont coûté au moins un dixième de point, un point valant 1000 millièmes.</p>
+<p>Deux recherches complètes :</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — plus de 30 pips de retard, entre 40 % et 60 % de chances de gain, aucun commentaire.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — en course, un coup ayant coûté au moins 50 millièmes, et un commentaire venu d'eXtreme Gammon.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Requête</th>
 <th>Action</th>
+<th>Équivalent CLI</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>La position vérifie la configuration du cube.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>La position vérifie le score.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>La position vérifie le type de décision (pion ou cube).</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>La position vérifie le lancer de dés (les deux dés, peu importe l'ordre).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>La position vérifie le lancer de dés sur le premier dé uniquement (la valeur du premier dé apparaît sur l'un des deux dés de la position).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>La position n'a <strong>pas</strong> été jouée avec le lancer 6-5 (peu importe l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs lancers (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>La position est sans contact.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>La position est dans une phase de jeu donnée : <code>opening</code> (ouverture), <code>middlegame</code> (milieu de partie), <code>race</code> (course) ou <code>bearoff</code> (sortie des pions). Répétable (<code>ph:race ph:bearoff</code>). L'étiquette est calculée à partir du plateau, jamais modifiable ; la commande <code>blunderdb repair</code> la recalcule.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>La position ou celle miroir vérifie les filtres.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>La position a été importée seule, et non apportée par l'import d'un match.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>La position a été marquée (<em>flag</em>) dans le logiciel d'origine, lors de l'import d'un match eXtreme Gammon.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
-<td>La position ne contient aucun pion de la structure d'exclusion (onglet « Except » du panneau de recherche).</td>
+<td>La position ne contient aucun pion de la structure d'exclusion (onglet <em>Sauf</em> du panneau de recherche).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>Le joueur a au moins x pips de retard à la course.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>Le joueur a au plus x pips de retard à la course.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>Le joueur a entre x et y pips de retard à la course.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>Le joueur a une course au moins de x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>Le joueur a une course au plus de x pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>Le joueur a une course entre x et y pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>L'équité (en millipoints) de la position est supérieure à x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>L'équité (en millipoints) de la position est inférieure à x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>L'équité (en millipoints) de la position est comprise entre x et y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x et y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>Le joueur a des chances de gain supérieures à x %.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>Le joueur a des chances de gain inférieures à x %.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>Le joueur a des chances de gain comprises à x % et y %.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>Le joueur a des chances de gammon supérieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>Le joueur a des chances de gammon inférieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>Le joueur a des chances de gammon comprises à x % et y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>Le joueur a des chances de backgammon supérieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>Le joueur a des chances de backgammon inférieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>Le joueur a des chances de backgammon comprises à x % et y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>L'adversaire a des chances de gain supérieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>L'adversaire a des chances de gain inférieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>L'adversaire a des chances de gain comprises à x % et y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>L'adversaire a des chances de gammon supérieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>L'adversaire a des chances de gammon inférieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>L'adversaire a des chances de gammon comprises à x % et y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>L'adversaire a des chances de backgammon supérieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>L'adversaire a des chances de backgammon inférieures à x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>L'adversaire a des chances de backgammon comprises à x % et y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>Le joueur a au moins x pions sortis.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>Le joueur a au plus x pions sortis.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>Le joueur a entre x et y pions sortis.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>L'adversaire a au moins x pions sortis.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>L'adversaire a au plus x pions sortis.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>L'adversaire a entre x et y pions sortis.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>Le joueur a au moins x pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>Le joueur a au plus x pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>Le joueur a entre x et y pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>L'adversaire a au moins x pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>L'adversaire a au plus x pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>L'adversaire a entre x et y pions arriérés.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>Le joueur a au moins x pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>Le joueur a au plus x pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>Le joueur a entre x et y pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>L'adversaire a au moins x pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>L'adversaire a au plus x pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>L'adversaire a entre x et y pions dans la zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>Le joueur a au moins x blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>Le joueur a au plus x blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>Le joueur a entre x et y blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>L'adversaire a au moins x blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>L'adversaire a au plus x blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>L'adversaire a entre x et y blots dans l'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>Le joueur a au moins x blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>Le joueur a au plus x blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>Le joueur a entre x et y blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>L'adversaire a au moins x blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>L'adversaire a au plus x blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>L'adversaire a entre x et y blots dans le jan.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>t'mot1;mot2;...'</td>
+<td><code>t'mot1;mot2;...'</code></td>
 <td>Les commentaires de la position contiennent au moins un des mots.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>La position porte un commentaire, quel qu'en soit le contenu.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>La position ne porte aucun commentaire.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>La position porte un commentaire d'une provenance donnée : <code>user</code> (écrit par vous), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (apporté par l'import d'un match) ou <code>unknown</code>. Répétable (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
-<td>m'motif1,motif2,...'</td>
+<td><code>m'motif1,motif2,...'</code></td>
 <td>Les meilleurs coups de pions contenant au moins un des motifs.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
-<td>Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass.</td>
+<td><code>m'ND,DT,DP,...'</code></td>
+<td>Les meilleures décisions de videau de No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Date d'ajout de la position après x (AAAA/MM/JJ).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Date d'ajout de la position avant x (AAAA/MM/JJ).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Date d'ajout de la position entre x et y (AAAA/MM/JJ).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Rechercher dans le match d'identifiant x (ex: ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Rechercher dans les matchs d'identifiants x à y (ex: ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Rechercher dans le tournoi d'identifiant x (ex: tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Rechercher dans les tournois d'identifiants x à y (ex: tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Rechercher la position d'identifiant x (ex: id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Rechercher les positions d'identifiants x à y (ex: id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
-<td>pl'nom'</td>
-<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée.</td>
+<td><code>pl'nom'</code></td>
+<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1303,6 +1446,10 @@ export default {
 <h3>Version</h3>
 <p>Version de l'application : {appVersion}</p>
 <p>Version de la base de données : {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/fr/" target="_blank" rel="noopener noreferrer">Documentation en ligne</a> ·
+    <a href="https://kevung.github.io/blunderDB/fr/historique.html" target="_blank" rel="noopener noreferrer">Historique des versions</a>
+</p>
 
 <h3>Auteur</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

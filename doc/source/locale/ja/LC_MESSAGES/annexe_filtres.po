@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -21,14 +21,14 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:4
 msgid "Annexe: Utilisation avancée des filtres"
-msgstr "付録: フィルターの高度な使い方"
+msgstr "付録：フィルターの高度な使い方"
 
 #: ../../source/annexe_filtres.rst:8
 msgid ""
 "Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
 "souhaitent exploiter pleinement les fonctionnalités de recherche de "
 "positions."
-msgstr "このセクションは、ポジション検索機能を最大限に活用したいblunderDBの上級ユーザーを対象としています。"
+msgstr "このセクションは、ポジション検索機能を最大限に活用したい blunderDB の上級ユーザーを対象としています。"
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
@@ -40,136 +40,83 @@ msgid ""
 "l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
 "filtres."
 msgstr ""
-"フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは\\"
-" ``SPACE``\\ "
+"フィルターは blunderDB "
+"におけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは"
+" ``SPACE`` "
 "キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
 
-#: ../../source/annexe_filtres.rst:19
-msgid "Recherche de positions en ligne de commande"
-msgstr "コマンドラインによるポジション検索"
-
-#: ../../source/annexe_filtres.rst:21
-msgid "Pour faire une recherche à l'aide de filtres,"
-msgstr "フィルターを使って検索するには、"
-
-#: ../../source/annexe_filtres.rst:23
-msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "``TAB``\\ キーを押して検索パネルを開きます。"
-
-#: ../../source/annexe_filtres.rst:24
-msgid "Editer la position courante."
-msgstr "現在のポジションを編集します。"
+#: ../../source/annexe_filtres.rst:18
+msgid ""
+"La grammaire de recherche — la commande ``s``, ses jetons, la recherche "
+"dans les résultats courants avec ``ss`` — est décrite une seule fois, "
+"dans la section :ref:`cmd_filter` de la liste des commandes ; le panneau "
+"de recherche lui-même est décrit dans le :ref:`manuel "
+"<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
+"filtres et des exemples."
+msgstr ""
+"検索の文法（\\ ``s`` コマンド、そのトークン、\\ ``ss`` による現在の検索結"
+"果内での再検索）は、コマンド一覧の\\ :ref:`cmd_filter` の節に一度だけ記述"
+"されています。検索パネル自体は\\ :ref:`マニュアル <panneau_recherche>` "
+"で説明しています。この付録には、フィルターのライブラリと例だけを残していま"
+"す。"
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "``SPACE``\\ キーでコマンドラインを開きます。"
-
-#: ../../source/annexe_filtres.rst:26
-msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "``s``\\ コマンドに続けて、必要に応じてフィルターを入力します。"
-
-#: ../../source/annexe_filtres.rst:27
-msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "``ENTER``\\ キーで検索を開始します。"
-
-#: ../../source/annexe_filtres.rst:30
-msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
-msgstr ""
-"検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（\\ ``BACKSPACE``\\ "
-"キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。"
-
-#: ../../source/annexe_filtres.rst:35
-msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" section :ref:`cmd_filter` de la liste des commandes."
-msgstr "コマンドラインで利用可能なフィルターの一覧は、コマンド一覧の :ref:`cmd_filter` の節に記載されています。"
-
-#: ../../source/annexe_filtres.rst:39
-msgid "Recherche dans les résultats courants"
-msgstr "現在の結果内での検索"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"Il est possible d'affiner une recherche en cherchant parmi les positions "
-"actuellement filtrées. Cela permet de restreindre progressivement les "
-"résultats."
-msgstr "現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。"
-
-#: ../../source/annexe_filtres.rst:44
-msgid ""
-"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
-msgstr ""
-"コマンドラインでは、\\ ``ss``\\ コマンドに続けてフィルターを入力します（例: ``ss nc``\\ 、\\ ``ss "
-"E>40``\\ ）。\\ ``ss``\\ コマンドは、事前に検索を行った後に機能します。"
-
-#: ../../source/annexe_filtres.rst:47
-msgid ""
-"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
-msgstr "検索ウィンドウ（``CTRL-F``）にも同じ機能のための「現在の結果内を検索」チェックボックスがあります。"
-
-#: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
-#: ../../source/annexe_filtres.rst:53
+#: ../../source/annexe_filtres.rst:27
 msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
 msgstr "フィルターライブラリを使うと、ユーザーは検索コマンドを保存して、テーマ別の学習を容易にできます。"
 
-#: ../../source/annexe_filtres.rst:56
+#: ../../source/annexe_filtres.rst:30
 msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "ライブラリにフィルターを追加するには、"
 
-#: ../../source/annexe_filtres.rst:58
+#: ../../source/annexe_filtres.rst:32
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
-msgstr "保存したい検索を実行します（\\ ``s``\\ コマンドに続けてフィルターを入力）。"
+msgstr "保存したい検索を実行します（\\ ``s`` コマンドに続けてフィルターを入力）。"
 
-#: ../../source/annexe_filtres.rst:59
+#: ../../source/annexe_filtres.rst:33
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Historique*."
-msgstr "検索パネル（\\ ``TAB``\\ または\\ ``CTRL-F``\\ ）を開き、\\ *履歴*\\ タブを選択します。"
+msgstr "検索パネル（\\ ``TAB`` または ``CTRL-F``\\ ）を開き、\\ *履歴*\\ タブを選択します。"
 
-#: ../../source/annexe_filtres.rst:61
+#: ../../source/annexe_filtres.rst:35
 msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr "保存したい検索のブックマークアイコンをクリックします。"
 
-#: ../../source/annexe_filtres.rst:62
+#: ../../source/annexe_filtres.rst:36
 msgid "Donner un nom au filtre et valider."
 msgstr "フィルターに名前を付けて確定します。"
 
-#: ../../source/annexe_filtres.rst:64
+#: ../../source/annexe_filtres.rst:38
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "ライブラリに保存したフィルターを使用するには、"
 
-#: ../../source/annexe_filtres.rst:66
+#: ../../source/annexe_filtres.rst:40
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Enregistrés*."
-msgstr "検索パネル（\\ ``TAB``\\ または\\ ``CTRL-F``\\ ）を開き、\\ *保存済み*\\ タブを選択します。"
+msgstr "検索パネル（\\ ``TAB`` または ``CTRL-F``\\ ）を開き、\\ *保存済み*\\ タブを選択します。"
 
-#: ../../source/annexe_filtres.rst:68
+#: ../../source/annexe_filtres.rst:42
 msgid "Rechercher le filtre souhaité."
 msgstr "目的のフィルターを検索します。"
 
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:43
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "フィルターをダブルクリックして検索を開始します。"
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:46
 msgid "Exemples"
 msgstr "例"
 
-#: ../../source/annexe_filtres.rst:74
+#: ../../source/annexe_filtres.rst:48
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
-msgstr "コマンドラインでのフィルターの使用例をいくつか紹介します:"
+msgstr "コマンドラインでのフィルターの使用例をいくつか紹介します："
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Type de position"
@@ -221,7 +168,7 @@ msgstr "s p>35"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Décision de Take/Pass à -2 -4"
-msgstr "-2 -4でのテイク/パスの判断"
+msgstr "-2 -4でのテイク/パスの決定"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "dés vides côté joueur du haut, score -2/-4"
@@ -265,8 +212,8 @@ msgid "s E>40"
 msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Aachen2024トーナメントのポジション"
+msgid "Positions dont un commentaire contient Aachen2024"
+msgstr "コメントに Aachen2024 を含むポジション"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""
@@ -364,9 +311,9 @@ msgstr "トーナメント2でのエラー"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:101
+#: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
-msgstr "現在の結果内での検索例:"
+msgstr "現在の結果内での検索例："
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Scénario"
@@ -374,7 +321,7 @@ msgstr "シナリオ"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s nc``, chercher les petites courses"
-msgstr "``s nc``\\ の後、短いレースを検索する"
+msgstr "``s nc`` の後、短いレースを検索する"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss P<70"
@@ -382,7 +329,7 @@ msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s g>20``, ne garder que les erreurs"
-msgstr "``s g>20``\\ の後、エラーのみを残す"
+msgstr "``s g>20`` の後、エラーのみを残す"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss E>40"
@@ -390,7 +337,7 @@ msgstr "ss E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s tn1``, chercher les décisions de cube"
-msgstr "``s tn1``\\ の後、キューブの判断を検索する"
+msgstr "``s tn1`` の後、キューブの決定を検索する"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"

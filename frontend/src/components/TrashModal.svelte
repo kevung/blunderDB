@@ -6,13 +6,16 @@
     import Modal from './Modal.svelte';
     import { ListTrash, RestoreFromTrash, DiscardFromTrash, EmptyTrash } from '../../wailsjs/go/database/Database.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
-    import { reloadPositions } from '../services/positionService.js';
+    import { reloadAllPositions } from '../services/positionService.js';
     import { dbMutationCounterStore } from '../stores/uiStore';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
 
     let { visible = false, onClose } = $props();
 
+    /** @typedef {import('../../wailsjs/go/models').domain.TrashEntry} TrashEntry */
+
+    /** @type {TrashEntry[]} */
     let entries = $state([]);
     let busy = $state(false);
 
@@ -31,6 +34,7 @@
         }
     }
 
+    /** @param {string} kind */
     function kindLabel(kind) {
         switch (kind) {
             case 'position':
@@ -46,13 +50,14 @@
         }
     }
 
+    /** @param {TrashEntry} entry */
     async function restore(entry) {
         busy = true;
         try {
             await RestoreFromTrash(entry.id);
             setStatusBarMessage(tMsg('trash.restored', { what: entry.label }));
             dbMutationCounterStore.update((n) => n + 1);
-            await reloadPositions();
+            await reloadAllPositions();
             await load();
         } catch (error) {
             logger.error('restore failed:', error);
@@ -62,6 +67,7 @@
         }
     }
 
+    /** @param {TrashEntry} entry */
     async function discard(entry) {
         busy = true;
         try {

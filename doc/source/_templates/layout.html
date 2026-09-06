@@ -1,0 +1,30 @@
+{#
+  Language switcher, at the top of the sidebar.
+
+  It used to live in versions.html — the theme's bottom-of-sidebar "versions"
+  box — as a 3×3 grid of lower-case codes ("fr en de"). A reader whose
+  browser is in Japanese reached the docs on the product page's negotiated
+  link but then never found the other eight languages: the box sat below the
+  whole table of contents, and the codes said nothing to someone who does
+  not read Latin script (tasks/critique-doc-2026-09, persona 5 #2). The
+  switcher now sits under the search box, spelt in each language's own name,
+  with the current language marked and not clickable. `language` is the
+  HTML builder's own context variable (the -D language=<code> of the
+  current build); `languages` comes from conf.py's html_context.
+#}
+{% extends "!layout.html" %}
+
+{% block sidebartitle %}
+{{ super() }}
+{%- if languages %}
+<nav class="lang-switcher" aria-label="{{ _('Languages') }}">
+  {%- for code, name, url in languages %}
+  {%- if code == language %}
+  <span class="current" lang="{{ code }}" aria-current="true">{{ name }}</span>
+  {%- else %}
+  <a href="{{ url }}/{{ pagename }}.html" lang="{{ code }}" hreflang="{{ code }}">{{ name }}</a>
+  {%- endif %}
+  {%- endfor %}
+</nav>
+{%- endif %}
+{% endblock %}

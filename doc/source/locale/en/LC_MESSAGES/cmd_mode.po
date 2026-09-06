@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:07+0200\n"
+"POT-Creation-Date: 2026-09-06 04:25+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -133,10 +133,12 @@ msgstr "epc"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
-"verdict de videau en bearoff)."
+"verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, "
+"conservé."
 msgstr ""
 "Opens the Eval panel (Effective Pip Count, winning probability and cube "
-"verdict in bearoff)."
+"verdict in bearoff). ``epc`` is this panel's former name, kept for "
+"compatibility."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -391,9 +393,79 @@ msgstr "Search among the currently filtered positions."
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
+#: ../../source/cmd_mode.rst:90
+msgid ""
+"Cette table est la référence de la grammaire de recherche : la ligne de "
+"commande, la bibliothèque de filtres et le drapeau ``--query`` de "
+"``blunderdb search`` lisent tous les mêmes jetons. La colonne *Équivalent"
+" CLI* donne, quand il existe, le drapeau de ``search`` qui fait la même "
+"chose (voir :ref:`cli`) ; un tiret signale un filtre que seule la "
+"grammaire exprime."
+msgstr ""
+"This table is the reference for the search grammar: the command line, the"
+" filter library and the ``--query`` flag of ``blunderdb search`` all read"
+" the same tokens. The *CLI Equivalent* column gives, when one exists, the"
+" ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
+"a filter that only the grammar expresses."
+
+#: ../../source/cmd_mode.rst:97
+msgid ""
+"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
+"sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
+"structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
+" dans le jeton : ``D65`` n'existe pas, seule la forme d'exclusion porte "
+"ses chiffres (``xD65``). En ligne de commande, où il n'y a pas de "
+"plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
+" de la troisième colonne qu'il faut y employer."
+msgstr ""
+"Five tokens do not carry their value: they read it from the search board."
+" ``cube`` and ``score`` take up the cube and the score set there, ``d`` "
+"the decision type, ``D`` and ``D1`` the dice, ``x`` the structure drawn "
+"in the *Except* tab. A roll is therefore never written into the token: "
+"``D65`` does not exist, only the exclusion form carries its digits "
+"(``xD65``). On the command line, where there is no board, these tokens "
+"compare against an empty board; it is the flags of the third column that "
+"must be used there instead."
+
+#: ../../source/cmd_mode.rst:106
+msgid ""
+"Les erreurs et les équités se comptent en **millièmes d'équité** — les "
+"*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
+"ont coûté au moins un dixième de point, un point valant 1000 millièmes."
+msgstr ""
+"Errors and equities are counted in **thousandths of equity** — the "
+"*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
+"least a tenth of a point, one point being worth 1000 millipoints."
+
+#: ../../source/cmd_mode.rst:110
+msgid "Deux recherches complètes :"
+msgstr "Two full searches:"
+
+#: ../../source/cmd_mode.rst:112
+#, no-python-format
+msgid ""
+"``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
+"chances de gain, aucun commentaire."
+msgstr ""
+"``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
+"winning chances, no comment."
+
+#: ../../source/cmd_mode.rst:114
+msgid ""
+"``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
+"millièmes, et un commentaire venu d'eXtreme Gammon."
+msgstr ""
+"``s ph:race E>50 co:xg`` — in a race, a move that cost at least 50 "
+"millipoints, and a comment coming from eXtreme Gammon."
+
 #: ../../source/cmd_mode.rst:1
 msgid "Requête"
 msgstr "Query"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Équivalent CLI"
+msgstr "CLI Equivalent"
 
 #: ../../source/cmd_mode.rst:1
 msgid "cube, cub, cu, c"
@@ -404,12 +476,20 @@ msgid "La position vérifie la configuration du cube."
 msgstr "The position checks the cube configuration."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--cube``"
+msgstr "``--cube``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "score, sco, sc, s"
 msgstr "score, sco, sc, s"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le score."
 msgstr "The position checks the score."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--score1`` ``--score2``"
+msgstr "``--score1`` ``--score2``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "d"
@@ -420,12 +500,20 @@ msgid "La position vérifie le type de décision (pion ou cube)."
 msgstr "The position checks the dice or the cube decision."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--decision``"
+msgstr "``--decision``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "The position matches the dice roll (both dice, any order)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--dice 6,5``"
+msgstr "``--dice 6,5``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -440,6 +528,10 @@ msgstr ""
 " value appears on either die of the position)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--dice 6``"
+msgstr "``--dice 6``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xD65"
 msgstr "xD65"
 
@@ -452,6 +544,10 @@ msgstr ""
 "The position was **not** played with the 6-5 roll (any order). The value "
 "is given in the token; repeatable to exclude several rolls (``xD65 "
 "xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -479,6 +575,10 @@ msgstr ""
 "``blunderdb repair`` recomputes it."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--phase``"
+msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "M"
 msgstr "M"
 
@@ -495,6 +595,10 @@ msgid "La position a été importée seule, et non apportée par l'import d'un m
 msgstr "The position was imported on its own, not brought in by a match import."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--individual``"
+msgstr "``--individual``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "fl"
 msgstr "fl"
 
@@ -507,13 +611,17 @@ msgstr ""
 "eXtreme Gammon match."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--flagged``"
+msgstr "``--flagged``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "x"
 msgstr "x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position ne contient aucun pion de la structure d'exclusion (onglet « "
-"Except » du panneau de recherche)."
+"La position ne contient aucun pion de la structure d'exclusion (onglet "
+"*Sauf* du panneau de recherche)."
 msgstr ""
 "The position contains none of the checkers of the exclusion structure "
 "(the \"Except\" tab of the search panel)."
@@ -527,6 +635,10 @@ msgid "Le joueur a au moins x pips de retard à la course."
 msgstr "The player has at least x pips behind in the race."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-min``"
+msgstr "``--pip-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "p<x"
 msgstr "p<x"
 
@@ -535,12 +647,20 @@ msgid "Le joueur a au plus x pips de retard à la course."
 msgstr "The player has at most x pips behind in the race."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-max``"
+msgstr "``--pip-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "px,y"
 msgstr "px,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a entre x et y pips de retard à la course."
 msgstr "The player has between x and y pips behind in the race."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pip-min`` ``--pip-max``"
+msgstr "``--pip-min`` ``--pip-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "P>x"
@@ -601,12 +721,20 @@ msgstr ""
 " x."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min``"
+msgstr "``--move-error-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr "The error of the move played by player 1 (in millipoints) is less than x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--move-error-max``"
+msgstr "``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -621,12 +749,20 @@ msgstr ""
 "and y."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min`` ``--move-error-max``"
+msgstr "``--move-error-min`` ``--move-error-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a des chances de gain supérieures à x %."
 msgstr "The player has winning chances greater than x%."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min``"
+msgstr "``--winrate-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "w<x"
@@ -637,6 +773,10 @@ msgid "Le joueur a des chances de gain inférieures à x %."
 msgstr "The player has winning chances less than x%."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--winrate-max``"
+msgstr "``--winrate-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "wx,y"
 msgstr "wx,y"
 
@@ -644,6 +784,10 @@ msgstr "wx,y"
 #, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "The player has winning chances between x% and y%."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min`` ``--winrate-max``"
+msgstr "``--winrate-min`` ``--winrate-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "g>x"
@@ -779,6 +923,10 @@ msgid "Le joueur a au moins x pions sortis."
 msgstr "The player has at least x checkers off."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--off1-min``"
+msgstr "``--off1-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "o<x"
 msgstr "o<x"
 
@@ -801,6 +949,10 @@ msgstr "O>x"
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a au moins x pions sortis."
 msgstr "The opponent has at least x checkers off."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--off2-min``"
+msgstr "``--off2-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "O<x"
@@ -1011,8 +1163,8 @@ msgid "L'adversaire a entre x et y blots dans le jan."
 msgstr "The opponent has between x and y blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "t'mot1;mot2;...'"
-msgstr "t'word1;word2;...'"
+msgid "``t'mot1;mot2;...'``"
+msgstr "``t'word1;word2;...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les commentaires de la position contiennent au moins un des mots."
@@ -1027,12 +1179,20 @@ msgid "La position porte un commentaire, quel qu'en soit le contenu."
 msgstr "The position carries a comment, whatever its content."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--has-comment``"
+msgstr "``--has-comment``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xco"
 msgstr "xco"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ne porte aucun commentaire."
 msgstr "The position carries no comment."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--no-comment``"
+msgstr "``--no-comment``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "co:user"
@@ -1049,21 +1209,25 @@ msgstr ""
 "``unknown``. Repeatable (``co:xg co:gnubg``)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'motif1,motif2,...\\'"
-msgstr "m'pattern1,pattern2,...\\'"
+msgid "``--comment-origin``"
+msgstr "``--comment-origin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``m'motif1,motif2,...'``"
+msgstr "``m'pattern1,pattern2,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les meilleurs coups de pions contenant au moins un des motifs."
 msgstr "The best checker moves containing at least one of the patterns."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'ND,DT,DP,...\\'"
-msgstr "m'ND,DT,DP,...\\'"
+msgid "``m'ND,DT,DP,...'``"
+msgstr "``m'ND,DT,DP,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
-"Pass."
+"Les meilleures décisions de videau de No Double/Take, Double Take, Double"
+" Pass."
 msgstr "The best cube decisions for No Double/Take, Double Take, Double Pass."
 
 #: ../../source/cmd_mode.rst:1
@@ -1099,6 +1263,10 @@ msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
 msgstr "Search in match with ID x (e.g. ma3)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--match-ids``"
+msgstr "``--match-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "max,y"
 msgstr "max,y"
 
@@ -1113,6 +1281,10 @@ msgstr "tnx"
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
 msgstr "Search in tournament with ID x (e.g. tn1)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--tournament-ids``"
+msgstr "``--tournament-ids``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tnx,y"
@@ -1131,6 +1303,10 @@ msgid "Rechercher la position d'identifiant x (ex: id12)."
 msgstr "Search for the position with identifier x (e.g. id12)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--position-ids``"
+msgstr "``--position-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "idx,y"
 msgstr "idx,y"
 
@@ -1139,18 +1315,18 @@ msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "Search for the positions with identifiers x to y (e.g. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "pl'nom'"
-msgstr "pl'name'"
+msgid "``pl'nom'``"
+msgstr "``pl'name'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 msgstr ""
 "Search positions from a match involving the named player, at either seat "
-"(e.g. pl'Alice'). Case-insensitive."
+"(e.g. ``pl'Alice'``). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:189
+#: ../../source/cmd_mode.rst:216
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1161,3 +1337,4 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Clear the command history."
+

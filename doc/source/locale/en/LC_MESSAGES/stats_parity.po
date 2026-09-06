@@ -4,17 +4,17 @@
 # SPDX-FileCopyrightText: 2026 Kévin Unger <blunderdb@proton.me>
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB\n"
+"Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 21:51+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: 2026-05-07 00:00+0200\n"
 "Last-Translator: unger <blunderdb@proton.me>\n"
-"Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/stats_parity.rst:4
@@ -23,49 +23,49 @@ msgstr "Annex: Statistics model — XG / gnuBG / blunderDB alignment"
 
 #: ../../source/stats_parity.rst:6
 msgid ""
-"Cette page décrit comment blunderDB calcule les indicateurs qu'il affiche — "
-"**PR** (Performance Rate), **Snowie Error Rate**, **perte MWC**, **chance** "
-"et **victoires/défaites** — et comment ils s'alignent sur eXtreme Gammon "
-"(XG) et gnuBG (référence ouverte)."
+"Cette page décrit comment blunderDB calcule les indicateurs qu'il affiche"
+" — **PR** (*Performance Rating*), **Snowie Error Rate**, **perte MWC**, "
+"**chance** et **victoires/défaites** — et comment ils s'alignent sur "
+"eXtreme Gammon (XG) et gnuBG (référence ouverte)."
 msgstr ""
-"This page describes how blunderDB computes the figures it displays — **PR** "
-"(Performance Rate), **Snowie Error Rate**, **MWC loss**, **luck** and "
-"**wins/losses** — and how they line up with eXtreme Gammon (XG) and gnuBG "
-"(the open reference)."
+"This page describes how blunderDB computes the figures it displays — "
+"**PR** (Performance Rating), **Snowie Error Rate**, **MWC loss**, **luck** "
+"and **wins/losses** — and how they line up with eXtreme Gammon (XG) and "
+"gnuBG (the open reference)."
 
 #: ../../source/stats_parity.rst:17
 msgid "Définitions formelles"
 msgstr "Formal definitions"
 
 #: ../../source/stats_parity.rst:20
-msgid "PR (Performance Rate)"
-msgstr "PR (Performance Rate)"
+msgid "PR (Performance Rating)"
+msgstr "PR (Performance Rating)"
 
 #: ../../source/stats_parity.rst:22
 msgid ""
-"Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure l'erreur "
-"moyenne en millièmes de point de jetons (millipoints, mpt) par décision "
-"comptée."
+"Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure le "
+"coût moyen des erreurs par décision comptée, sur l'échelle d'eXtreme "
+"Gammon et de gnuBG : l'erreur moyenne d'équité, multipliée par 500."
 msgstr ""
-"PR (also called \"error rate per decision\" in gnuBG) measures the average "
-"error in thousandths of an equity point (millipoints, mpt) per counted "
-"decision."
+"PR (also called \"error rate per decision\" in gnuBG) measures the "
+"average cost of errors per counted decision, on the eXtreme Gammon and "
+"gnuBG scale: the average equity error, multiplied by 500."
 
 #: ../../source/stats_parity.rst:26
 msgid ""
-"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{\\mathrm{N_{compté}}} "
-"\\times 500"
+"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{\\mathrm{N_{compté}}}"
+" \\times 500"
 msgstr ""
-"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{error}_i|}{\\mathrm{N_{counted}}} "
-"\\times 500"
+"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{error}_i|}{\\mathrm{N_{counted}}}"
+" \\times 500"
 
 #: ../../source/stats_parity.rst:30
 msgid ""
-"Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) sur "
-"toutes les décisions du périmètre."
+"Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) "
+"sur toutes les décisions du périmètre."
 msgstr ""
-"The numerator is the absolute sum of EMG errors (cubeful equity) over all "
-"decisions in the scope."
+"The numerator is the absolute sum of EMG errors (cubeful equity) over all"
+" decisions in the scope."
 
 #: ../../source/stats_parity.rst:32
 #, no-python-brace-format
@@ -78,28 +78,37 @@ msgstr ""
 
 #: ../../source/stats_parity.rst:34
 msgid ""
-"Le facteur 500 convertit l'equity en millipoints (1 point = 1000 mpt, mais "
-"l'échelle est ×500 par convention XG/gnuBG — cf. "
-"``gnubg/formatgs.c:399–409``)."
+"Le facteur 500 est la convention d'XG et de gnuBG (cf. "
+"``gnubg/formatgs.c:399–409``). Ce n'est pas une conversion en millipoints"
+" : une erreur moyenne de 0,010 d'équité — soit 10 millipoints (mpt) — "
+"donne un PR de 5,0. Les erreurs d'une position, elles, se lisent bien en "
+"millipoints, c'est-à-dire en millièmes d'équité : le seuil de blunder ci-"
+"dessous, les filtres de recherche ``e>`` et ``E>``, l'histogramme des "
+"magnitudes du panneau Stats."
 msgstr ""
-"The factor 500 converts equity to millipoints (1 point = 1000 mpt, but the "
-"scale is ×500 by XG/gnuBG convention — cf. ``gnubg/formatgs.c:399–409``)."
+"The factor of 500 is the XG and gnuBG convention (see "
+"``gnubg/formatgs.c:399–409``). It is not a conversion into millipoints: "
+"an average equity error of 0.010 — that is 10 millipoints (mpt) — gives a"
+" PR of 5.0. A position's own errors, by contrast, are read directly in "
+"millipoints, i.e. thousandths of equity: the blunder threshold below, the"
+" ``e>`` and ``E>`` search filters, the magnitude histogram in the Stats "
+"panel."
 
-#: ../../source/stats_parity.rst:38
+#: ../../source/stats_parity.rst:43
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/stats_parity.rst:40
+#: ../../source/stats_parity.rst:45
 msgid ""
-"Le Snowie ER utilise le **même numérateur** que le PR, mais le dénominateur "
-"est le nombre total de coups des deux joueurs, coups forcés inclus (toutes "
-"décisions, sans filtre) :"
+"Le Snowie ER utilise le **même numérateur** que le PR, mais le "
+"dénominateur est le nombre total de coups des deux joueurs, coups forcés "
+"inclus (toutes décisions, sans filtre) :"
 msgstr ""
 "Snowie ER uses the **same numerator** as PR, but the denominator is the "
-"total number of moves of both players, forced moves included (all decisions,"
-" no filter):"
+"total number of moves of both players, forced moves included (all "
+"decisions, no filter):"
 
-#: ../../source/stats_parity.rst:44
+#: ../../source/stats_parity.rst:49
 msgid ""
 "\\mathrm{SnowieER} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{N_\\text{P1} + "
 "N_\\text{P2}} \\times 500"
@@ -107,64 +116,65 @@ msgstr ""
 "\\mathrm{SnowieER} = \\frac{\\sum_i |\\mathrm{error}_i|}{N_\\text{P1} + "
 "N_\\text{P2}} \\times 500"
 
-#: ../../source/stats_parity.rst:48
+#: ../../source/stats_parity.rst:53
 msgid "Référence : ``gnubg/formatgs.c:415–424``."
 msgstr "Reference: ``gnubg/formatgs.c:415–424``."
 
-#: ../../source/stats_parity.rst:50
+#: ../../source/stats_parity.rst:55
 msgid ""
-"Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend"
-" pas du filtre des décisions forcées/triviales. Il sert de métrique de "
-"recoupement XG ↔ gnuBG ↔ blunderDB."
+"Le Snowie ER est plus stable entre les outils car son dénominateur ne "
+"dépend pas du filtre des décisions forcées/triviales. Il sert de métrique"
+" de recoupement XG ↔ gnuBG ↔ blunderDB."
 msgstr ""
 "Snowie ER is more stable across tools because its denominator does not "
 "depend on the forced/trivial decision filter. It serves as a cross-check "
 "metric between XG, gnuBG, and blunderDB."
 
-#: ../../source/stats_parity.rst:56
+#: ../../source/stats_parity.rst:61
 msgid ""
 "**Le filtre « Joueur » ne s'applique qu'au numérateur.** Sélectionner un "
 "joueur restreint les erreurs sommées à ses propres décisions, mais le "
-"dénominateur reste le nombre de coups de pions des **deux** joueurs, sur les"
-" matchs retenus par le filtre. C'est ce qui distingue le Snowie ER du PR, et"
-" c'est la raison de la propriété suivante : sur une base ne contenant que "
-"des matchs entre deux joueurs, la somme de leurs deux Snowie ER est "
-"exactement le Snowie ER non filtré."
+"dénominateur reste le nombre de coups de pions des **deux** joueurs, sur "
+"les matchs retenus par le filtre. C'est ce qui distingue le Snowie ER du "
+"PR, et c'est la raison de la propriété suivante : sur une base ne "
+"contenant que des matchs entre deux joueurs, la somme de leurs deux "
+"Snowie ER est exactement le Snowie ER non filtré."
 msgstr ""
-"**The \"Player\" filter applies to the numerator only.** Selecting a player "
-"restricts the summed errors to that player's own decisions, but the "
-"denominator stays the number of checker plays by **both** players, over the "
-"matches the filter retains. This is what sets the Snowie ER apart from the "
-"PR, and the reason for the following property: on a database holding only "
-"matches between two players, the sum of their two Snowie ERs is exactly the "
-"unfiltered Snowie ER."
+"**The \"Player\" filter applies to the numerator only.** Selecting a "
+"player restricts the summed errors to that player's own decisions, but "
+"the denominator stays the number of checker plays by **both** players, "
+"over the matches the filter retains. This is what sets the Snowie ER "
+"apart from the PR, and the reason for the following property: on a "
+"database holding only matches between two players, the sum of their two "
+"Snowie ERs is exactly the unfiltered Snowie ER."
 
-#: ../../source/stats_parity.rst:66
+#: ../../source/stats_parity.rst:71
 msgid ""
-"Le Snowie ER d'un joueur est typiquement environ la moitié de son PR, car le"
-" dénominateur inclut les coups des deux joueurs alors que le PR n'utilise "
-"que les décisions de ce joueur."
+"Le Snowie ER d'un joueur est typiquement environ la moitié de son PR, car"
+" le dénominateur inclut les coups des deux joueurs alors que le PR "
+"n'utilise que les décisions de ce joueur."
 msgstr ""
 "A player's Snowie ER is typically about half their PR, because the "
 "denominator includes moves from both players while PR only uses that "
 "player's decisions."
 
-#: ../../source/stats_parity.rst:71
+#: ../../source/stats_parity.rst:76
 msgid "Perte MWC (Match Winning Chance)"
 msgstr "MWC loss (Match Winning Chance)"
 
-#: ../../source/stats_parity.rst:73
+#: ../../source/stats_parity.rst:78
 msgid ""
-"La perte MWC exprime en points de pourcentage de probabilité de gagner le "
-"match l'effet cumulé des erreurs d'un joueur. Pour chaque décision, l'erreur"
-" EMG est convertie en MWC via la table MET (Match Equity Table) au score "
-"courant :"
+"La perte MWC exprime en points de pourcentage de probabilité de gagner le"
+" match l'effet cumulé des erreurs d'un joueur. Pour chaque décision, "
+"l'erreur EMG est convertie en MWC via la table MET (Match Equity Table) "
+"au score courant :"
 msgstr ""
 "MWC loss expresses in percentage points of match-winning probability the "
-"cumulative effect of a player's errors. For each decision, the EMG error is "
-"converted to MWC using the MET (Match Equity Table) at the current score:"
+"cumulative effect of a player's errors. For each decision, the EMG error "
+"is converted to MWC using the MET (Match Equity Table) at the current "
+"score:"
 
-#: ../../source/stats_parity.rst:77
+#: ../../source/stats_parity.rst:82
 #, no-python-brace-format
 msgid ""
 "\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
@@ -173,168 +183,172 @@ msgstr ""
 "\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
 "\\mathrm{score}_i)"
 
-#: ../../source/stats_parity.rst:81
+#: ../../source/stats_parity.rst:86
 msgid "Référence : ``gnubg/analysis.c:1449–1464``."
 msgstr "Reference: ``gnubg/analysis.c:1449–1464``."
 
-#: ../../source/stats_parity.rst:84
+#: ../../source/stats_parity.rst:89
 msgid "Chance (*luck*)"
 msgstr "Luck"
 
-#: ../../source/stats_parity.rst:86
+#: ../../source/stats_parity.rst:91
 msgid ""
-"La **chance** d'un lancer est l'écart entre ce que les dés ont donné et ce "
-"qu'ils donnent en moyenne :"
+"La **chance** d'un lancer est l'écart entre ce que les dés ont donné et "
+"ce qu'ils donnent en moyenne :"
 msgstr ""
-"The **luck** of a roll is the gap between what the dice gave and what they "
-"give on average:"
-
-#: ../../source/stats_parity.rst:89
-#, no-python-brace-format
-msgid ""
-"\\mathrm{luck} = \\mathrm{eq}(\\text{meilleur coup avec les dés obtenus})\n"
-"              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{meilleur coup avec } d)"
-msgstr ""
-"\\mathrm{luck} = \\mathrm{eq}(\\text{best play with the roll obtained})\n"
-"              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{best play with } d)"
+"The **luck** of a roll is the gap between what the dice gave and what "
+"they give on average:"
 
 #: ../../source/stats_parity.rst:94
+#, no-python-brace-format
 msgid ""
-"la somme portant sur les 36 issues du lancer (30 lancers non doubles pour le"
-" premier coup de la partie, qui ne peut pas être un double). Une valeur "
-"positive signifie un lancer favorable. Référence : "
+"\\mathrm{luck} = \\mathrm{eq}(\\text{meilleur coup avec les dés obtenus})"
+"\n"
+"              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{meilleur coup "
+"avec } d)"
+msgstr ""
+"\\mathrm{luck} = \\mathrm{eq}(\\text{best play with the roll obtained})\n"
+"              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{best play with"
+" } d)"
+
+#: ../../source/stats_parity.rst:99
+msgid ""
+"la somme portant sur les 36 issues du lancer (30 lancers non doubles pour"
+" le premier coup de la partie, qui ne peut pas être un double). Une "
+"valeur positive signifie un lancer favorable. Référence : "
 "``gnubg/analysis.c:199–269`` (``LuckNormal`` / ``LuckFirst``, évaluation "
 "cubeful à 0 ply)."
 msgstr ""
-"the sum running over the 36 outcomes of the roll (30 non-double rolls for "
-"the opening play of a game, which cannot be a double). A positive value "
+"the sum running over the 36 outcomes of the roll (30 non-double rolls for"
+" the opening play of a game, which cannot be a double). A positive value "
 "means a favourable roll. Reference: ``gnubg/analysis.c:199–269`` "
 "(``LuckNormal`` / ``LuckFirst``, cubeful evaluation at 0 ply)."
 
-#: ../../source/stats_parity.rst:101
+#: ../../source/stats_parity.rst:106
 msgid ""
-"**blunderDB ne calcule jamais la chance** : il ne dispose pas d'un moteur "
-"d'évaluation. Il reprend telle quelle la valeur écrite par l'outil qui a "
-"analysé le match — ``ErrLuck`` pour eXtreme Gammon, la propriété ``LU`` pour"
-" gnuBG — après vérification que les deux partagent la même convention (même "
-"unité, positif = chanceux)."
+"**blunderDB ne recalcule jamais la chance** : l'évaluateur intégré ne "
+"sert pas à cela. Il reprend telle quelle la valeur écrite par l'outil qui"
+" a analysé le match — ``ErrLuck`` pour eXtreme Gammon, la propriété "
+"``LU`` pour gnuBG — après vérification que les deux partagent la même "
+"convention (même unité, positif = chanceux)."
 msgstr ""
-"**blunderDB never computes luck**: it has no evaluation engine. It takes "
-"verbatim the value written by the tool that analysed the match — ``ErrLuck``"
-" for eXtreme Gammon, the ``LU`` property for gnuBG — having checked that "
-"both share the same convention (same unit, positive = lucky)."
+"**blunderDB never recomputes luck**: the built-in evaluator is not used "
+"for that. It takes verbatim the value written by the tool that analysed "
+"the match — ``ErrLuck`` for eXtreme Gammon, the ``LU`` property for gnuBG"
+" — having checked that both share the same convention (same unit, "
+"positive = lucky)."
 
-#: ../../source/stats_parity.rst:107
+#: ../../source/stats_parity.rst:112
 msgid "Conséquences pratiques :"
 msgstr "Practical consequences:"
 
-#: ../../source/stats_parity.rst:109
+#: ../../source/stats_parity.rst:114
 msgid ""
-"Les formats qui ne transportent pas la chance (**BGF**, **Jellyfish .mat**) "
-"ne produisent aucune valeur."
+"Les formats qui ne transportent pas la chance (**BGF**, **Jellyfish "
+".mat**) ne produisent aucune valeur."
 msgstr ""
 "Formats that do not carry luck (**BGF**, **Jellyfish .mat**) produce no "
 "value at all."
 
-#: ../../source/stats_parity.rst:111
+#: ../../source/stats_parity.rst:116
 msgid ""
-"Les matchs **déjà importés** n'en ont pas non plus : la chance n'a jamais "
-"été stockée avant la version 2.15.0 du schéma, et rien dans la base ne "
-"permet de la reconstituer. Il faut **réimporter** les fichiers source pour "
-"l'obtenir."
+"Les matchs **déjà importés** n'en ont pas non plus : la chance n'a jamais"
+" été stockée avant la version 2.15.0 du schéma, et rien dans la base ne "
+"permet de la reconstituer. Il faut **réimporter** les fichiers source "
+"pour l'obtenir."
 msgstr ""
-"Matches **already imported** have none either: luck was never stored before "
-"schema version 2.15.0, and nothing in the database allows it to be "
-"reconstructed. The source files must be **re-imported** to obtain it."
+"Matches **already imported** have none either: luck was never stored "
+"before schema version 2.15.0, and nothing in the database allows it to be"
+" reconstructed. The source files must be **re-imported** to obtain it."
 
-#: ../../source/stats_parity.rst:114
+#: ../../source/stats_parity.rst:119
 msgid ""
-"Une valeur absente signifie *inconnue*, jamais *nulle* — zéro est un lancer "
-"réellement neutre. Les moyennes de chance ne divisent donc que par le nombre"
-" de lancers dont la chance est connue."
+"Une valeur absente signifie *inconnue*, jamais *nulle* — zéro est un "
+"lancer réellement neutre. Les moyennes de chance ne divisent donc que par"
+" le nombre de lancers dont la chance est connue."
 msgstr ""
-"A missing value means *unknown*, never *zero* — zero is a genuinely neutral "
-"roll. Luck averages therefore divide only by the number of rolls whose luck "
-"is known."
+"A missing value means *unknown*, never *zero* — zero is a genuinely "
+"neutral roll. Luck averages therefore divide only by the number of rolls "
+"whose luck is known."
 
-#: ../../source/stats_parity.rst:117
+#: ../../source/stats_parity.rst:122
 msgid ""
-"Un match dont *tous* les lancers auraient une chance exactement nulle est "
-"considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 aussi"
-" bien pour « neutre » que pour « non calculé ») : ses lancers restent "
-"inconnus. Côté gnuBG la distinction est explicite — un lancer non évalué "
-"porte ``LU[-inf]`` — et ces lancers restent inconnus eux aussi, plutôt que "
-"d'être convertis en une valeur."
+"Un match dont *tous* les lancers auraient une chance exactement nulle est"
+" considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 "
+"aussi bien pour « neutre » que pour « non calculé ») : ses lancers "
+"restent inconnus. Côté gnuBG la distinction est explicite — un lancer non"
+" évalué porte ``LU[-inf]`` — et ces lancers restent inconnus eux aussi, "
+"plutôt que d'être convertis en une valeur."
 msgstr ""
 "A match in which *every* roll would have exactly zero luck is treated as "
-"unanalysed in that respect (eXtreme Gammon writes 0 both for \"neutral\" and"
-" for \"not computed\"): its rolls stay unknown. On the gnuBG side the "
+"unanalysed in that respect (eXtreme Gammon writes 0 both for \"neutral\" "
+"and for \"not computed\"): its rolls stay unknown. On the gnuBG side the "
 "distinction is explicit — an unevaluated roll carries ``LU[-inf]`` — and "
 "those rolls stay unknown as well, rather than being turned into a value."
 
-#: ../../source/stats_parity.rst:125
+#: ../../source/stats_parity.rst:130
 msgid "Victoires et défaites"
 msgstr "Wins and losses"
 
-#: ../../source/stats_parity.rst:127
+#: ../../source/stats_parity.rst:132
 msgid ""
 "blunderDB **ne stocke pas de vainqueur au niveau du match** : seuls les "
-"points de chaque partie le sont. Le résultat est donc dérivé à l'affichage, "
-"en cumulant les points par siège :"
+"points de chaque partie le sont. Le résultat est donc dérivé à "
+"l'affichage, en cumulant les points par siège :"
 msgstr ""
-"blunderDB **stores no winner at match level**: only the points of each game "
-"are stored. The result is therefore derived at display time, by adding up "
-"the points per seat:"
+"blunderDB **stores no winner at match level**: only the points of each "
+"game are stored. The result is therefore derived at display time, by "
+"adding up the points per seat:"
 
-#: ../../source/stats_parity.rst:131
+#: ../../source/stats_parity.rst:136
 msgid ""
-"**Match en N points** — vainqueur = le joueur qui atteint N. Si personne ne "
-"l'atteint, le match est **inachevé** (journal tronqué, abandon) et ne compte"
-" ni victoire ni défaite, pour personne."
+"**Match en N points** — vainqueur = le joueur qui atteint N. Si personne "
+"ne l'atteint, le match est **inachevé** (journal tronqué, abandon) et ne "
+"compte ni victoire ni défaite, pour personne."
 msgstr ""
-"**N-point match** — winner = the player who reaches N. If nobody does, the "
-"match is **unfinished** (truncated log, resignation) and counts neither a "
-"win nor a loss, for anybody."
+"**N-point match** — winner = the player who reaches N. If nobody does, "
+"the match is **unfinished** (truncated log, resignation) and counts "
+"neither a win nor a loss, for anybody."
 
-#: ../../source/stats_parity.rst:134
+#: ../../source/stats_parity.rst:139
 msgid ""
-"**Partie d'argent** (sans cible) — vainqueur = celui qui a pris le plus de "
-"points ; à égalité, ni victoire ni défaite. C'est la convention du résultat "
-"de session de gnuBG (+1 / 0 / −1, ``gnubg/relational.c``)."
+"**Partie d'argent** (sans cible) — vainqueur = celui qui a pris le plus "
+"de points ; à égalité, ni victoire ni défaite. C'est la convention du "
+"résultat de session de gnuBG (+1 / 0 / −1, ``gnubg/relational.c``)."
 msgstr ""
 "**Money game** (no target) — winner = whoever took the most points; on a "
-"tie, neither a win nor a loss. This is gnuBG's session-result convention (+1"
-" / 0 / −1, ``gnubg/relational.c``)."
+"tie, neither a win nor a loss. This is gnuBG's session-result convention "
+"(+1 / 0 / −1, ``gnubg/relational.c``)."
 
-#: ../../source/stats_parity.rst:138
+#: ../../source/stats_parity.rst:143
 msgid ""
-"Conséquence à connaître en lisant l'onglet Joueurs : **victoires + défaites "
-"peut être inférieur au nombre de matchs**. L'écart, ce sont les matchs "
-"inachevés."
+"Conséquence à connaître en lisant l'onglet Joueurs : **victoires + "
+"défaites peut être inférieur au nombre de matchs**. L'écart, ce sont les "
+"matchs inachevés."
 msgstr ""
-"A consequence to keep in mind when reading the Players tab: **wins + losses "
-"can be lower than the number of matches**. The gap is the unfinished "
-"matches."
+"A consequence to keep in mind when reading the Players tab: **wins + "
+"losses can be lower than the number of matches**. The gap is the "
+"unfinished matches."
 
-#: ../../source/stats_parity.rst:142
+#: ../../source/stats_parity.rst:147
 msgid "Erreurs et blunders"
 msgstr "Errors and blunders"
 
-#: ../../source/stats_parity.rst:144
+#: ../../source/stats_parity.rst:149
 msgid ""
-"Une décision est comptée comme **erreur** dès que l'erreur d'équité associée"
-" est strictement positive, et comme **blunder** lorsqu'elle atteint **0,100 "
-"EMG** (100 millipoints). La comparaison est *inclusive* : une erreur "
-"d'exactement 0,100 est un blunder, dans tous les écrans (répartition par "
-"action de videau, détail de match, tableau des joueurs)."
+"Une décision est comptée comme **erreur** dès que l'erreur d'équité "
+"associée est strictement positive, et comme **blunder** lorsqu'elle "
+"atteint **0,100 EMG** (100 mpt). La comparaison est *inclusive* : une "
+"erreur d'exactement 0,100 est un blunder, dans tous les écrans "
+"(répartition par action de videau, détail de match, tableau des joueurs)."
 msgstr ""
-"A decision counts as an **error** as soon as the associated equity error is "
-"strictly positive, and as a **blunder** when it reaches **0.100 EMG** (100 "
-"millipoints). The comparison is *inclusive*: an error of exactly 0.100 is a "
-"blunder, on every screen (breakdown by cube action, match detail, players "
-"table)."
+"A decision counts as an **error** as soon as the associated equity error "
+"is strictly positive, and as a **blunder** when it reaches **0.100 EMG** "
+"(100 millipoints). The comparison is *inclusive*: an error of exactly "
+"0.100 is a blunder, on every screen (breakdown by cube action, match "
+"detail, players table)."
 
-#: ../../source/stats_parity.rst:150
+#: ../../source/stats_parity.rst:155
 msgid ""
 "Ce seuil est propre à blunderDB : gnuBG classe les coups en trois crans "
 "(``0.03`` douteux, ``0.06`` mauvais, ``0.12`` très mauvais — "
@@ -344,232 +358,246 @@ msgstr ""
 "(``0.03`` doubtful, ``0.06`` bad, ``0.12`` very bad — "
 "``gnubg/gnubg.c:281–286``) rather than in a single category."
 
-#: ../../source/stats_parity.rst:156
+#: ../../source/stats_parity.rst:161
 msgid "Décisions comptées au dénominateur du PR"
 msgstr "Decisions counted in the PR denominator"
 
-#: ../../source/stats_parity.rst:158
+#: ../../source/stats_parity.rst:163
 msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
 msgstr "blunderDB follows the same exclusion rules as XG and gnuBG."
 
-#: ../../source/stats_parity.rst:161
+#: ../../source/stats_parity.rst:166
 msgid "Coups de pions — décisions comptées"
 msgstr "Checker plays — counted decisions"
 
-#: ../../source/stats_parity.rst:163
+#: ../../source/stats_parity.rst:168
 msgid "Seuls les **coups non-forcés** sont comptés :"
 msgstr "Only **unforced moves** are counted:"
 
-#: ../../source/stats_parity.rst:165
+#: ../../source/stats_parity.rst:170
 msgid ""
-"Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves == "
-"1`` dans ``gnubg/analysis.c:458``)."
+"Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves =="
+" 1`` dans ``gnubg/analysis.c:458``)."
 msgstr ""
-"A move is **forced** if the dice offer only one legal play (``cMoves == 1`` "
-"in ``gnubg/analysis.c:458``)."
+"A move is **forced** if the dice offer only one legal play (``cMoves == "
+"1`` in ``gnubg/analysis.c:458``)."
 
-#: ../../source/stats_parity.rst:167
+#: ../../source/stats_parity.rst:172
 msgid ""
-"Les coups forcés ont une erreur nulle par définition : le joueur n'avait pas"
-" le choix. Les inclure dans le dénominateur abaisserait artificiellement le "
-"PR."
+"Les coups forcés ont une erreur nulle par définition : le joueur n'avait "
+"pas le choix. Les inclure dans le dénominateur abaisserait "
+"artificiellement le PR."
 msgstr ""
 "Forced moves have zero error by definition: the player had no choice. "
 "Including them in the denominator would artificially lower PR."
 
-#: ../../source/stats_parity.rst:171
+#: ../../source/stats_parity.rst:176
 msgid "Décisions de cube — décisions comptées"
 msgstr "Cube decisions — counted decisions"
 
-#: ../../source/stats_parity.rst:173
+#: ../../source/stats_parity.rst:178
 msgid "Seules les **décisions de cube proches** sont comptées :"
 msgstr "Only **close cube decisions** are counted:"
 
-#: ../../source/stats_parity.rst:175
+#: ../../source/stats_parity.rst:180
 msgid ""
-"Une décision cube est **proche** si elle se situe dans la fenêtre d'équité "
-"``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
+"Une décision cube est **proche** si elle se situe dans la fenêtre "
+"d'équité ``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
 "``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``)."
 msgstr ""
-"A cube decision is **close** if it lies within the equity window ``[-0.16, "
-"+0.16]`` around the doubling point (predicate ``isCloseCubedecision`` in "
-"``gnubg/eval.c:5088–5100``)."
-
-#: ../../source/stats_parity.rst:178
-msgid ""
-"Un « No Double » trivial (équité très négative ou très positive) n'est pas "
-"une vraie décision stratégique ; l'inclure gonflerait le dénominateur et "
-"dépresserait le PR."
-msgstr ""
-"A trivial No Double (very negative or very positive equity) is not a genuine"
-" strategic decision; including it would inflate the denominator and depress "
-"PR."
+"A cube decision is **close** if it lies within the equity window "
+"``[-0.16, +0.16]`` around the doubling point (predicate "
+"``isCloseCubedecision`` in ``gnubg/eval.c:5088–5100``)."
 
 #: ../../source/stats_parity.rst:183
+msgid ""
+"Un « No Double » trivial (équité très négative ou très positive) n'est "
+"pas une vraie décision stratégique ; l'inclure gonflerait le dénominateur"
+" et dépresserait le PR."
+msgstr ""
+"A trivial No Double (very negative or very positive equity) is not a "
+"genuine strategic decision; including it would inflate the denominator "
+"and depress PR."
+
+#: ../../source/stats_parity.rst:188
 msgid "Résumé du filtre"
 msgstr "Filter summary"
 
-#: ../../source/stats_parity.rst:186
+#: ../../source/stats_parity.rst:191
 msgid "Type de décision"
 msgstr "Decision type"
 
-#: ../../source/stats_parity.rst:186
+#: ../../source/stats_parity.rst:191
 #, no-python-brace-format
 msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
 msgstr "Included in :math:`N_\\text{counted}` (PR)"
 
-#: ../../source/stats_parity.rst:188
+#: ../../source/stats_parity.rst:193
 msgid "Coup non-forcé"
 msgstr "Unforced move"
 
-#: ../../source/stats_parity.rst:188 ../../source/stats_parity.rst:192
+#: ../../source/stats_parity.rst:193 ../../source/stats_parity.rst:197
 msgid "Oui"
 msgstr "Yes"
 
-#: ../../source/stats_parity.rst:190
+#: ../../source/stats_parity.rst:195
 msgid "Coup forcé"
 msgstr "Forced move"
 
-#: ../../source/stats_parity.rst:190 ../../source/stats_parity.rst:194
+#: ../../source/stats_parity.rst:195 ../../source/stats_parity.rst:199
 msgid "Non"
 msgstr "No"
 
-#: ../../source/stats_parity.rst:192
+#: ../../source/stats_parity.rst:197
 msgid "Cube proche"
 msgstr "Close cube"
 
-#: ../../source/stats_parity.rst:194
+#: ../../source/stats_parity.rst:199
 msgid "No Double trivial"
 msgstr "Trivial No Double"
 
-#: ../../source/stats_parity.rst:196
+#: ../../source/stats_parity.rst:201
 msgid "Take / Pass"
 msgstr "Take / Pass"
 
-#: ../../source/stats_parity.rst:196
+#: ../../source/stats_parity.rst:201
 msgid "Toujours (ce sont des réponses au double)"
 msgstr "Always (these are responses to a double)"
 
-#: ../../source/stats_parity.rst:201
+#: ../../source/stats_parity.rst:206
 msgid "Correspondance blunderDB ↔ XG ↔ gnuBG"
 msgstr "blunderDB ↔ XG ↔ gnuBG correspondence"
 
-#: ../../source/stats_parity.rst:203
+#: ../../source/stats_parity.rst:208
 msgid ""
-"Les métriques sont alignées dans les limites suivantes (mesurées sur 3 "
-"matchs de référence) :"
+"Les métriques sont alignées dans les limites ci-dessous. Ce sont des "
+"**bornes vérifiées par la suite de tests**, et non des écarts moyens : le"
+" test compare match par match les chiffres de blunderDB à ceux "
+"enregistrés pour les matchs de référence du dépôt, et échoue dès qu'un "
+"seul écart dépasse la borne. Les références XG portent sur deux matchs — "
+"l'un complet (317 décisions comptées, 156 et 161 par joueur), l'autre "
+"réduit à son seul PR, avec une borne portée à 0,15 à cause d'un coup non "
+"apparié ; les références gnuBG portent sur deux autres matchs. La version"
+" d'eXtreme Gammon qui a produit ces chiffres n'est pas enregistrée."
 msgstr ""
-"Metrics are aligned within the following bounds (measured on 3 reference "
-"matches):"
+"The metrics are aligned within the limits below. These are **bounds "
+"checked by the test suite**, not average gaps: the test compares "
+"blunderDB's figures to those recorded for the repository's reference "
+"matches, match by match, and fails as soon as a single gap exceeds the "
+"bound. The XG references cover two matches — one complete (317 counted "
+"decisions, 156 and 161 per player), the other reduced to its PR alone, "
+"with a bound raised to 0.15 because of one unmatched move; the gnuBG "
+"references cover two other matches. The version of eXtreme Gammon that "
+"produced these figures is not recorded."
 
-#: ../../source/stats_parity.rst:206
+#: ../../source/stats_parity.rst:219
 msgid "Comparaison XG ↔ blunderDB (même moteur d'analyse)"
 msgstr "XG ↔ blunderDB comparison (same analysis engine)"
 
-#: ../../source/stats_parity.rst:209 ../../source/stats_parity.rst:226
+#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
 msgid "Métrique"
 msgstr "Metric"
 
-#: ../../source/stats_parity.rst:209
-msgid "Écart typique"
-msgstr "Typical gap"
+#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
+msgid "Écart maximal"
+msgstr "Maximum gap"
 
-#: ../../source/stats_parity.rst:211
+#: ../../source/stats_parity.rst:224
 msgid "Décisions totales"
 msgstr "Total decisions"
 
-#: ../../source/stats_parity.rst:211
+#: ../../source/stats_parity.rst:224
 msgid "≤ 5"
 msgstr "≤ 5"
 
-#: ../../source/stats_parity.rst:213
+#: ../../source/stats_parity.rst:226
 msgid "Coups non-forcés"
 msgstr "Unforced moves"
 
-#: ../../source/stats_parity.rst:213
+#: ../../source/stats_parity.rst:226
 msgid "≤ 7"
 msgstr "≤ 7"
 
-#: ../../source/stats_parity.rst:215
+#: ../../source/stats_parity.rst:228
 msgid "PR"
 msgstr "PR"
 
-#: ../../source/stats_parity.rst:215
+#: ../../source/stats_parity.rst:228
 msgid "≤ 0.10"
 msgstr "≤ 0.10"
 
-#: ../../source/stats_parity.rst:217 ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:230 ../../source/stats_parity.rst:243
 msgid "Perte MWC"
 msgstr "MWC loss"
 
-#: ../../source/stats_parity.rst:217
+#: ../../source/stats_parity.rst:230
 msgid "≤ 1.0 pp"
 msgstr "≤ 1.0 pp"
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:232
 msgid "Equity total (EMG)"
 msgstr "Total equity (EMG)"
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:232
 msgid "≤ 0.05"
 msgstr "≤ 0.05"
 
-#: ../../source/stats_parity.rst:223
+#: ../../source/stats_parity.rst:236
 msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
 msgstr "gnuBG ↔ blunderDB comparison (SGF import — different engines)"
 
-#: ../../source/stats_parity.rst:226
-msgid "Écart typique  | Cause principale"
-msgstr "Typical gap | Main cause"
+#: ../../source/stats_parity.rst:239
+msgid "Cause principale"
+msgstr "Main cause"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:241
 msgid "PR (checker)"
 msgstr "PR (checker)"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:241
 msgid "≤ 0.20"
 msgstr "≤ 0.20"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:241
 msgid "equity cross-engine"
 msgstr "cross-engine equity differences"
 
-#: ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:243
 msgid "≤ 3.5 pp"
 msgstr "≤ 3.5 pp"
 
-#: ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:243
 msgid "close-cube SGF incomplet"
 msgstr "incomplete close-cube data in SGF"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:245
 msgid "Snowie ER"
 msgstr "Snowie ER"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:245
 msgid "≤ 0.50"
 msgstr "≤ 0.50"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:245
 msgid "forcés sans analyse (SGF)"
 msgstr "forced moves without analysis (SGF)"
 
-#: ../../source/stats_parity.rst:237
+#: ../../source/stats_parity.rst:250
 msgid ""
 "Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
-"forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups "
-"forcés à l'import SGF. Cela crée un écart structurel sur le Snowie ER "
+"forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
+" forcés à l'import SGF. Cela crée un écart structurel sur le Snowie ER "
 "(dénominateur légèrement différent)."
 msgstr ""
-"SGF files (gnuBG) do not include alternatives for forced moves, which means "
-"blunderDB cannot detect all forced moves when importing SGF. This creates a "
-"structural gap on Snowie ER (slightly different denominator)."
+"SGF files (gnuBG) do not include alternatives for forced moves, which "
+"means blunderDB cannot detect all forced moves when importing SGF. This "
+"creates a structural gap on Snowie ER (slightly different denominator)."
 
-#: ../../source/stats_parity.rst:244
+#: ../../source/stats_parity.rst:257
 msgid "Valider vos propres chiffres"
 msgstr "Validating your own figures"
 
-#: ../../source/stats_parity.rst:246
+#: ../../source/stats_parity.rst:259
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
@@ -577,50 +605,50 @@ msgstr ""
 "If your PR or MWC values diverge from XG figures, check the following "
 "points:"
 
-#: ../../source/stats_parity.rst:249
+#: ../../source/stats_parity.rst:262
 #, no-python-brace-format
 msgid ""
-"**Analyses complètes** — Le PR ne peut être calculé que sur les positions "
-"disposant d'une analyse. Des positions sans analyse sont comptées comme "
+"**Analyses complètes** — Le PR ne peut être calculé que sur les positions"
+" disposant d'une analyse. Des positions sans analyse sont comptées comme "
 "erreur zéro mais n'entrent pas dans :math:`N_\\text{compté}`."
 msgstr ""
-"**Complete analyses** — PR can only be computed on positions that have an "
-"analysis. Positions without analysis count as zero error but are not "
+"**Complete analyses** — PR can only be computed on positions that have an"
+" analysis. Positions without analysis count as zero error but are not "
 "included in :math:`N_\\text{counted}`."
 
-#: ../../source/stats_parity.rst:253
+#: ../../source/stats_parity.rst:266
 msgid ""
 "**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
 "s'aligne sur le comportement observé des versions récentes."
 msgstr ""
-"**XG version** — XG may change its calculations between versions. blunderDB "
-"is aligned with the behaviour observed in recent versions."
+"**XG version** — XG may change its calculations between versions. "
+"blunderDB is aligned with the behaviour observed in recent versions."
 
-#: ../../source/stats_parity.rst:256
+#: ../../source/stats_parity.rst:269
 msgid ""
 "**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
-"importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut pas "
-"les analyses complètes pour tous les cubes."
+"importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut "
+"pas les analyses complètes pour tous les cubes."
 msgstr ""
-"**Import format** — gnuBG SGF files produce larger gaps on cube metrics (see"
-" table above) because the file does not include complete analyses for all "
-"cube decisions."
+"**Import format** — gnuBG SGF files produce larger gaps on cube metrics "
+"(see table above) because the file does not include complete analyses for"
+" all cube decisions."
 
-#: ../../source/stats_parity.rst:260
+#: ../../source/stats_parity.rst:273
 msgid ""
-"**Migration de base** — Après mise à jour de blunderDB, les bases existantes"
-" sont migrées automatiquement. Faire une sauvegarde avant d'ouvrir une base "
-"avec une nouvelle version."
+"**Migration de base** — Après mise à jour de blunderDB, les bases "
+"existantes sont migrées automatiquement. Faire une sauvegarde avant "
+"d'ouvrir une base avec une nouvelle version."
 msgstr ""
-"**Database migration** — After updating blunderDB, existing databases are "
-"migrated automatically. Make a backup before opening a database with a new "
-"version."
+"**Database migration** — After updating blunderDB, existing databases are"
+" migrated automatically. Make a backup before opening a database with a "
+"new version."
 
-#: ../../source/stats_parity.rst:266
+#: ../../source/stats_parity.rst:279
 msgid "Référence gnuBG"
 msgstr "gnuBG reference"
 
-#: ../../source/stats_parity.rst:268
+#: ../../source/stats_parity.rst:281
 msgid ""
 "Les formules ont été vérifiées dans les fichiers source suivants (dépôt "
 "gnuBG) :"
@@ -628,34 +656,36 @@ msgstr ""
 "Formulas have been verified against the following source files (gnuBG "
 "repository):"
 
-#: ../../source/stats_parity.rst:270
+#: ../../source/stats_parity.rst:283
 msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
 msgstr "``gnubg/formatgs.c:399–409`` — PR (\"Error rate per decision\")."
 
-#: ../../source/stats_parity.rst:271
+#: ../../source/stats_parity.rst:284
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
-#: ../../source/stats_parity.rst:272
+#: ../../source/stats_parity.rst:285
 msgid ""
-"``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés "
-"(``cMoves > 1``)."
+"``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés"
+" (``cMoves > 1``)."
 msgstr ""
 "``gnubg/analysis.c:458–462`` — Checker accumulation, exclusion of forced "
 "moves (``cMoves > 1``)."
 
-#: ../../source/stats_parity.rst:273
+#: ../../source/stats_parity.rst:286
 msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
 msgstr "``gnubg/analysis.c:1430–1474`` — Per-decision EMG → MWC conversion."
 
-#: ../../source/stats_parity.rst:274
+#: ../../source/stats_parity.rst:287
 msgid ""
-"``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC (``eq2mwc``)."
+"``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
+"(``eq2mwc``)."
 msgstr "``gnubg/analysis.c:1449–1464`` — MWC loss accumulation (``eq2mwc``)."
 
-#: ../../source/stats_parity.rst:275
+#: ../../source/stats_parity.rst:288
 msgid ""
-"``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil 0.16)."
+"``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
+"0.16)."
 msgstr ""
 "``gnubg/eval.c:5088–5100`` — ``isCloseCubedecision`` predicate (0.16 "
 "threshold)."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-12 23:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_windows_securite.rst:4
-msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
-msgstr "Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi"
+msgid "Annexe Windows : que faire si Windows bloque le lancement"
+msgstr "Windows-liite: mitä tehdä, jos Windows estää käynnistyksen"
 
 #: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
@@ -82,15 +82,41 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:33
 msgid ""
+"Cette copie d'écran provient d'un Windows en anglais. Sur un Windows en "
+"français, le même écran s'intitule *Windows a protégé votre ordinateur* ;"
+" le lien à cliquer est *Informations supplémentaires* (*Informations "
+"complémentaires* selon la version de Windows), et le bouton qui apparaît "
+"ensuite est *Exécuter quand même*."
+msgstr ""
+"Tämä kuvakaappaus on englanninkielisestä Windowsista. Suomenkielisessä "
+"Windowsissa sama näkymä on otsikoitu *Windows suojasi tietokoneesi*; "
+"napsautettava linkki on *Lisätietoja*, ja sen jälkeen ilmestyvä painike "
+"on *Suorita joka tapauksessa*."
+
+#: ../../source/annexe_windows_securite.rst:39
+msgid ""
+"**Deux clics suffisent dans la quasi-totalité des cas** — *Informations "
+"supplémentaires*, puis *Exécuter quand même* — et il n'y a rien d'autre à"
+" faire : ni exclusion antivirus, ni réglage à modifier. La section "
+"suivante ne concerne que les rares cas où le blocage ne venait pas de "
+"SmartScreen."
+msgstr ""
+"**Lähes kaikissa tapauksissa riittää kaksi napsautusta** — *Lisätietoja*,"
+" sitten *Suorita joka tapauksessa* — eikä muuta tarvitse tehdä: ei "
+"virustorjunnan poikkeusta eikä muutettavaa asetusta. Seuraava osio koskee"
+" vain niitä harvoja tapauksia, joissa esto ei tullutkaan SmartScreenistä."
+
+#: ../../source/annexe_windows_securite.rst:44
+msgid ""
 "Si vous souhaitez autoriser un exécutable spécifique bloqué par "
 "SmartScreen :"
 msgstr "Jos haluat sallia tietyn SmartScreenin estämän suoritettavan tiedoston:"
 
-#: ../../source/annexe_windows_securite.rst:35
+#: ../../source/annexe_windows_securite.rst:46
 msgid "**Essayer d’exécuter l'exécutable** :"
 msgstr "**Yritä suorittaa suoritettava tiedosto**:"
 
-#: ../../source/annexe_windows_securite.rst:37
+#: ../../source/annexe_windows_securite.rst:48
 msgid ""
 "Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer "
 "et afficher un avertissement."
@@ -98,21 +124,21 @@ msgstr ""
 "Kun yrität käynnistää suoritettavan tiedoston, SmartScreen saattaa estää "
 "sen ja näyttää varoituksen."
 
-#: ../../source/annexe_windows_securite.rst:40
+#: ../../source/annexe_windows_securite.rst:51
 msgid "**Cliquer sur \"Informations supplémentaires\"** :"
 msgstr "**Napsauta \"Lisätietoja\"**:"
 
-#: ../../source/annexe_windows_securite.rst:42
+#: ../../source/annexe_windows_securite.rst:53
 msgid ""
 "Dans la fenêtre d'avertissement de SmartScreen, cliquez sur "
 "**Informations supplémentaires**."
 msgstr "Napsauta SmartScreen-varoitusikkunassa **Lisätietoja**."
 
-#: ../../source/annexe_windows_securite.rst:45
+#: ../../source/annexe_windows_securite.rst:56
 msgid "**Sélectionner \"Exécuter quand même\"** :"
 msgstr "**Valitse \"Suorita joka tapauksessa\"**:"
 
-#: ../../source/annexe_windows_securite.rst:47
+#: ../../source/annexe_windows_securite.rst:58
 msgid ""
 "Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand "
 "même** pour contourner l'avertissement SmartScreen pour cette instance."
@@ -120,29 +146,32 @@ msgstr ""
 "Jos luotat suoritettavaan tiedostoon, napsauta **Suorita joka "
 "tapauksessa** ohittaaksesi SmartScreen-varoituksen tällä kerralla."
 
-#: ../../source/annexe_windows_securite.rst:51
+#: ../../source/annexe_windows_securite.rst:62
 msgid "Blocage Windows Defender"
 msgstr "Windows Defenderin esto"
 
-#: ../../source/annexe_windows_securite.rst:53
+#: ../../source/annexe_windows_securite.rst:64
 msgid ""
-"Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
-"déblocage de SmartScreen (voir section plus précédente), Windows Defender"
-" puisse empêcher l'exécution de blunderDB avec des messages du type"
+"Cette section est un **dernier recours**, à ne suivre que si le blocage "
+"ne venait pas de SmartScreen. Pour certains paramétrages de sécurité, il "
+"arrive en effet que malgré le déblocage décrit ci-dessus, Windows "
+"Defender empêche l'exécution de blunderDB avec des messages du type"
 msgstr ""
-"Joissakin Windowsin suojausasetuksissa voi käydä niin, että SmartScreenin"
-" ohittamisesta huolimatta (katso edellinen osio) Windows Defender estää "
-"blunderDB:n suorittamisen seuraavanlaisilla viesteillä:"
+"Tämä osio on **viimeinen keino**, jota kannattaa noudattaa vain, jos esto"
+" ei tullutkaan SmartScreenistä. Joissakin suojausasetuksissa voi "
+"nimittäin käydä niin, että edellä kuvatusta ohittamisesta huolimatta "
+"Windows Defender estää blunderDB:n suorittamisen seuraavanlaisilla "
+"viesteillä"
 
-#: ../../source/annexe_windows_securite.rst:60
+#: ../../source/annexe_windows_securite.rst:72
 msgid "ou encore"
 msgstr "tai vielä:"
 
-#: ../../source/annexe_windows_securite.rst:65
+#: ../../source/annexe_windows_securite.rst:77
 msgid "voire le placer en quarantaine."
 msgstr "tai jopa asettaa sen karanteeniin."
 
-#: ../../source/annexe_windows_securite.rst:67
+#: ../../source/annexe_windows_securite.rst:79
 msgid ""
 "Windows Defender est connu pour déclencher des faux positifs. Ce problème"
 " est explicitement mentionné dans la FAQ du site officiel de Golang ( "
@@ -156,31 +185,49 @@ msgstr ""
 "kielellä ohjelmoitujen projektien GitHub-tiketeissä ( "
 "https://github.com/golang/vscode-go/issues/3182 )."
 
-#: ../../source/annexe_windows_securite.rst:72
-msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
-msgstr "Jos haluat estää Windowsin suojausta tarkistamasta blunderDB:tä:"
+#: ../../source/annexe_windows_securite.rst:84
+msgid ""
+"Exclure un fichier de l'analyse antivirus n'est pas un geste anodin : "
+"l'exclusion porte sur un chemin, et tout fichier placé ensuite à cet "
+"endroit échappera lui aussi à l'analyse. Vérifiez d'abord l'empreinte "
+"SHA-256 du fichier téléchargé (section suivante) : c'est elle, et non "
+"l'exclusion, qui atteste que vous exécutez bien le binaire publié."
+msgstr ""
+"Tiedoston jättäminen virustorjunnan tarkistuksen ulkopuolelle ei ole "
+"vaaraton toimenpide: poikkeus koskee polkua, ja myös jokainen myöhemmin "
+"samaan paikkaan sijoitettu tiedosto jää tarkistamatta. Tarkista ensin "
+"ladatun tiedoston SHA-256-tiiviste (seuraava osio): juuri se, eikä "
+"poikkeus, todistaa, että suoritat todella julkaistun binäärin."
 
-#: ../../source/annexe_windows_securite.rst:74
+#: ../../source/annexe_windows_securite.rst:90
+msgid ""
+"Si vous souhaitez malgré tout empêcher la Sécurité Windows d’analyser "
+"blunderDB :"
+msgstr ""
+"Jos haluat tästä huolimatta estää Windowsin suojausta tarkistamasta "
+"blunderDB:tä:"
+
+#: ../../source/annexe_windows_securite.rst:93
 msgid "**Ouvrir la Sécurité Windows** :"
 msgstr "**Avaa Windowsin suojaus**:"
 
-#: ../../source/annexe_windows_securite.rst:76
+#: ../../source/annexe_windows_securite.rst:95
 msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
 msgstr "Mene **Käynnistä**-valikkoon ja kirjoita **Windowsin suojaus**."
 
-#: ../../source/annexe_windows_securite.rst:81
+#: ../../source/annexe_windows_securite.rst:100
 msgid "**Aller à \"Protection contre les virus et menaces\"** :"
 msgstr "**Siirry kohtaan \"Virus- ja uhkien suojaus\"**:"
 
-#: ../../source/annexe_windows_securite.rst:83
+#: ../../source/annexe_windows_securite.rst:102
 msgid "Cliquez sur **Protection contre les virus et menaces**."
 msgstr "Napsauta **Virus- ja uhkien suojaus**."
 
-#: ../../source/annexe_windows_securite.rst:88
+#: ../../source/annexe_windows_securite.rst:107
 msgid "**Gérer les paramètres** :"
 msgstr "**Hallinnoi asetuksia**:"
 
-#: ../../source/annexe_windows_securite.rst:90
+#: ../../source/annexe_windows_securite.rst:109
 msgid ""
 "Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
 "Paramètres de protection contre les virus et menaces."
@@ -188,11 +235,11 @@ msgstr ""
 "Vieritä alaspäin ja napsauta **Hallinnoi asetuksia** kohdassa Virus- ja "
 "uhkien suojauksen asetukset."
 
-#: ../../source/annexe_windows_securite.rst:95
+#: ../../source/annexe_windows_securite.rst:114
 msgid "**Ajouter ou supprimer des exclusions** :"
 msgstr "**Lisää tai poista poikkeuksia**:"
 
-#: ../../source/annexe_windows_securite.rst:97
+#: ../../source/annexe_windows_securite.rst:116
 msgid ""
 "Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter"
 " ou supprimer des exclusions**."
@@ -200,11 +247,11 @@ msgstr ""
 "Vieritä **Poikkeukset**-osioon ja napsauta **Lisää tai poista "
 "poikkeuksia**."
 
-#: ../../source/annexe_windows_securite.rst:102
+#: ../../source/annexe_windows_securite.rst:121
 msgid "**Ajouter une exclusion** :"
 msgstr "**Lisää poikkeus**:"
 
-#: ../../source/annexe_windows_securite.rst:104
+#: ../../source/annexe_windows_securite.rst:123
 msgid ""
 "Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. "
 "Naviguez ensuite jusqu’à l’exécutable que vous souhaitez exclure et "
@@ -213,30 +260,37 @@ msgstr ""
 "Napsauta **Lisää poikkeus** ja valitse **Tiedosto**. Siirry sitten "
 "suoritettavaan tiedostoon, jonka haluat sulkea pois, ja valitse se."
 
-#: ../../source/annexe_windows_securite.rst:118
+#: ../../source/annexe_windows_securite.rst:137
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
 msgstr "Latauksen eheyden tarkistus (SHA256)"
 
-#: ../../source/annexe_windows_securite.rst:120
+#: ../../source/annexe_windows_securite.rst:139
 msgid ""
 "Chaque binaire publié sur la page des *releases* est accompagné d'un "
 "fichier ``.sha256`` contenant son empreinte cryptographique. Vérifier "
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr "Jokaisen *releases*-sivulla julkaistun binaaritiedoston mukana on ``.sha256``-tiedosto, joka sisältää sen kryptografisen tarkisteen. Tämän tarkisteen vertaaminen varmistaa, että ladattu tiedosto on aito eikä sitä ole muutettu, mikä on hyödyllinen takuu silloin, kun koodiallekirjoitusta ei ole."
+msgstr ""
+"Jokaisen *releases*-sivulla julkaistun binaaritiedoston mukana on "
+"``.sha256``-tiedosto, joka sisältää sen kryptografisen tarkisteen. Tämän "
+"tarkisteen vertaaminen varmistaa, että ladattu tiedosto on aito eikä sitä"
+" ole muutettu, mikä on hyödyllinen takuu silloin, kun "
+"koodiallekirjoitusta ei ole."
 
-#: ../../source/annexe_windows_securite.rst:125
+#: ../../source/annexe_windows_securite.rst:144
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
 msgstr "Windowsissa (PowerShell), latauskansiossa:"
 
-#: ../../source/annexe_windows_securite.rst:131
+#: ../../source/annexe_windows_securite.rst:150
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr "Vertaa näytettyä arvoa tiedoston ``blunderDB-windows-<version>.exe.sha256`` arvoon. Niiden on oltava identtiset."
+msgstr ""
+"Vertaa näytettyä arvoa tiedoston ``blunderDB-"
+"windows-<version>.exe.sha256`` arvoon. Niiden on oltava identtiset."
 
-#: ../../source/annexe_windows_securite.rst:134
+#: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "Linuxissa tai macOS:ssä:"
 

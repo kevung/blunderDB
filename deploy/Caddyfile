@@ -37,6 +37,12 @@
 		default 0
 	}
 
+	# Never reach the daemon's operator routes or its metrics through the
+	# public proxy: /ops/ (vacuum, tenant purge) acts beyond the calling
+	# tenant, /metrics needs no X-Tenant-ID and describes the whole daemon.
+	@private path /ops/* /metrics
+	respond @private 403
+
 	reverse_proxy blunderdb-serve:8080 {
 		# Guard, then inject: clear whatever the client sent BEFORE setting
 		# the authenticated value, so a client-supplied X-Tenant-ID can never

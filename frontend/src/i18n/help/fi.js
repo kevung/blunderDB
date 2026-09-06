@@ -49,7 +49,7 @@ export default {
     <li>tutkivat asemia välitoistolla (Anki-paneeli),</li>
     <li>hallitsevat turnauksia (Turnaus-paneeli),</li>
     <li>näyttävät suoritustilastoja (Tilasto-paneeli),</li>
-    <li>laskevat EPC-arvoja bearoff-asemille (Eval-paneeli),</li>
+    <li>arvioivat minkä tahansa aseman sisäänrakennetulla moottorilla ja laskevat bearoff-aseman EPC:n (Eval-paneeli),</li>
     <li>selaavat tallennettuja hakusuodattimia (Suodatinkirjasto-paneeli),</li>
     <li>selaavat hakuhistoriaa (Hakuhistoria-paneeli).</li>
 </ul>
@@ -122,9 +122,10 @@ export default {
 </ul>
 <p>Kun molemmilla pelaajilla on nappuloita kotialueellaan, vertailuosio näyttää EPC- ja pip-erot.</p>
 <p>
-    Puhtaassa juoksussa lisätaulukko näyttää molempien pelaajien voittotodennäköisyydet ja, kun asema kuuluu kaksipuolisen tietokannan piiriin (sisäänrakennettu 6 nappulaan asti pelaajaa kohden,
-    ladattava laajennettu 11:een asti asetusten Bearoff-välilehdeltä), tarkat money-equityt ja parhaan tuplausratkaisun. Tämän alueen ulkopuolella voittotodennäköisyys on arvio (merkintä ”arvioitu”
-    virhemarginaaleineen) eikä ratkaisua näytetä. Vuorossa oleva pelaaja vaihdetaan napsauttamalla pelaajan ulostulo-/pisteruutua ja tuplauskuution asema napsauttamalla laudan kuutiota.
+    Puhtaassa juoksussa lisätaulukko näyttää molempien pelaajien voittotodennäköisyydet ja, kun asema kuuluu kaksipuolisen tietokannan piiriin (6 nappulan taulukko pelaajaa kohden lasketaan
+    ensimmäisellä käynnistyksellä, 11 nappulan laajennettu taulukko lasketaan asetusten Bearoff-välilehdeltä), tarkat money-equityt ja parhaan tuplausratkaisun. Tämän alueen ulkopuolella
+    voittotodennäköisyys on arvio (merkintä ”arvioitu” virhemarginaaleineen) eikä ratkaisua näytetä. Vuorossa oleva pelaaja vaihdetaan napsauttamalla pelaajan ulostulo-/pisteruutua ja tuplauskuution
+    asema napsauttamalla laudan kuutiota.
 </p>
 <p>
     <strong>Haaste</strong>-valintaruutu piilottaa tulokset jokaisen aseman muutoksen yhteydessä; napsauta aluetta paljastaaksesi sen — mainio tapa harjoitella equityn, EPC:n tai tuplausratkaisun
@@ -183,7 +184,10 @@ export default {
 </p>
 
 <h3>Turnaukset</h3>
-<p>Turnaukset mahdollistavat ottelujen ryhmittelyn tapahtuman mukaan. Avaa Turnaus-paneeli painamalla <strong>Ctrl+Y</strong> hallitaksesi turnauksia ja liittääksesi otteluita niihin.</p>
+<p>
+    Turnaukset mahdollistavat ottelujen ryhmittelyn tapahtuman mukaan. Tuonnissa ottelu sijoitetaan turnaukseen, jonka sen tiedosto nimeää ja joka luodaan tarvittaessa; jo sijoitettua ottelua ei
+    koskaan siirretä. Avaa Turnaus-paneeli painamalla <strong>Ctrl+Y</strong> hallitaksesi turnauksia ja liittääksesi otteluita niihin.
+</p>
 
 <h3>Tilastot</h3>
 <p>
@@ -722,6 +726,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Ohjepaneeli</h3>
+<table>
+<thead>
+<tr>
+<th>Oikotie</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VASEN, h</td>
+<td>Edellinen välilehti.</td>
+</tr>
+<tr>
+<td>OIKEA, l</td>
+<td>Seuraava välilehti.</td>
+</tr>
+<tr>
+<td>YLÖS, k</td>
+<td>Vieritä ylöspäin.</td>
+</tr>
+<tr>
+<td>ALAS, j</td>
+<td>Vieritä alaspäin.</td>
+</tr>
+<tr>
+<td>VÄLILYÖNTI</td>
+<td>Seuraava sivu.</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Sisällön alkuun.</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Sisällön loppuun.</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>Sulje ohje.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>Komentorivi, joka sijaitsee tilarivillä, avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy automaattisesti: <em>TAB</em>-näppäin (tai <em>VAIHTO-TAB</em>) selaa ehdotuksia ja täydentää komennon, kun taas <em>ESC</em> sulkee luettelon (toinen <em>ESC</em> sulkee komentorivin). <em>YLÖS</em>- ja <em>ALAS</em>-näppäimet on edelleen varattu komentohistorialle.</p>
@@ -772,7 +819,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Avaa Eval-paneelin (Effective Pip Count, voittotodennäköisyys ja kuutiopäätös bearoffissa).</td>
+<td>Avaa Eval-paneelin (Effective Pip Count, voittotodennäköisyys ja kuutiopäätös bearoffissa). <code>epc</code> on tämän paneelin vanha nimi, joka on säilytetty.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -911,365 +958,462 @@ export default {
 </tbody>
 </table>
 <h3>Hakusuodattimet</h3>
+<p>Tämä taulukko on hakukieliopin viite: komentorivi, suodatinkirjasto ja <code>blunderdb search</code> -komennon valitsin <code>--query</code> lukevat kaikki samoja tunnuksia. Sarake <em>CLI-vastine</em> antaa, silloin kun sellainen on olemassa, saman asian tekevän <code>search</code>-valitsimen (ks. Komentoriviliittymä (CLI)); viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista.</p>
+<p>Viisi tunnusta ei kanna omaa arvoaan: ne lukevat sen hakulaudalta. <code>cube</code> ja <code>score</code> ottavat sille asetetun kuution ja tuloksen, <code>d</code> päätöksen tyypin, <code>D</code> ja <code>D1</code> nopat, <code>x</code> <em>Paitsi</em>-välilehdellä piirretyn rakenteen. Heittoa ei siis koskaan kirjoiteta tunnukseen: <code>D65</code> ei ole olemassa, ja vain poissulkeva muoto kantaa numeronsa (<code>xD65</code>). Komentorivillä, jossa lautaa ei ole, nämä tunnukset vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen valitsimia.</p>
+<p>Virheet ja equityt lasketaan <strong>equityn tuhannesosina</strong> — alla olevan taulukon <em>millipisteinä</em>: <code>E&gt;100</code> poimii siirrot, jotka ovat maksaneet vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa.</p>
+<p>Kaksi täydellistä hakua:</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 %, ei yhtään kommenttia.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — juoksuvaiheessa, siirto joka on maksanut vähintään 50 tuhannesosaa, ja eXtreme Gammonista tullut kommentti.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Kysely</th>
 <th>Toiminto</th>
+<th>CLI-vastine</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>Asema vastaa kuution kokoonpanoa.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>Asema vastaa pistetilannetta.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>Asema vastaa päätöstyyppiä (nappula- tai kuutiopäätös).</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen nopan arvo esiintyy jommassakummassa aseman nopassa).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>Asemaa <strong>ei</strong> ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo ilmoitetaan tunnuksessa; toistettavissa useiden heittojen poissulkemiseksi (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>Asema on ilman kontaktia.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>Asema on tietyssä pelin vaiheessa: <code>opening</code> (avaus), <code>middlegame</code> (keskipeli), <code>race</code> (kilpajuoksu) tai <code>bearoff</code> (nappuloiden poisto). Toistettavissa (<code>ph:race ph:bearoff</code>). Merkintä johdetaan laudasta eikä sitä voi koskaan muokata; <code>blunderdb repair</code> laskee sen uudelleen.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>Asema tai sen peilikuva vastaa suodattimia.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>Asema on tuotu erikseen, eikä se tullut ottelun tuonnin mukana.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>Asema on merkitty lähdeohjelmassa eXtreme Gammon -ottelun tuonnin yhteydessä.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
 <td>Asema ei sisällä yhtäkään poissulkurakenteen nappulaa (hakupaneelin "Except"-välilehti).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>Pelaaja on kilpajuoksussa vähintään x pippiä jäljessä.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>Pelaaja on kilpajuoksussa enintään x pippiä jäljessä.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>Pelaaja on kilpajuoksussa x–y pippiä jäljessä.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>Pelaajalla on kilpajuoksu vähintään x pippiä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>Pelaajalla on kilpajuoksu enintään x pippiä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>Pelaajalla on kilpajuoksu x–y pippiä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>Aseman ekviteetti (millipisteinä) on suurempi kuin x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>Aseman ekviteetti (millipisteinä) on pienempi kuin x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>Aseman ekviteetti (millipisteinä) on välillä x–y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>Pelaajan 1 tekemän siirron virhe (millipisteinä) on suurempi kuin x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>Pelaajan 1 tekemän siirron virhe (millipisteinä) on pienempi kuin x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>Pelaajan 1 tekemän siirron virhe (millipisteinä) on välillä x–y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>Pelaajan voittomahdollisuudet ovat suuremmat kuin x %.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>Pelaajan voittomahdollisuudet ovat pienemmät kuin x %.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>Pelaajan voittomahdollisuudet ovat välillä x % – y %.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>Pelaajan gammon-mahdollisuudet ovat suuremmat kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>Pelaajan gammon-mahdollisuudet ovat pienemmät kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>Pelaajan gammon-mahdollisuudet ovat välillä x % – y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>Pelaajan backgammon-mahdollisuudet ovat suuremmat kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>Pelaajan backgammon-mahdollisuudet ovat pienemmät kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>Pelaajan backgammon-mahdollisuudet ovat välillä x % – y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>Vastustajan voittomahdollisuudet ovat suuremmat kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>Vastustajan voittomahdollisuudet ovat pienemmät kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>Vastustajan voittomahdollisuudet ovat välillä x % – y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>Vastustajan gammon-mahdollisuudet ovat suuremmat kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>Vastustajan gammon-mahdollisuudet ovat pienemmät kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>Vastustajan gammon-mahdollisuudet ovat välillä x % – y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>Vastustajan backgammon-mahdollisuudet ovat suuremmat kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>Vastustajan backgammon-mahdollisuudet ovat pienemmät kuin x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>Vastustajan backgammon-mahdollisuudet ovat välillä x % – y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>Pelaajalla on vähintään x ulos kannettua nappulaa.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>Pelaajalla on enintään x ulos kannettua nappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>Pelaajalla on x–y ulos kannettua nappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>Vastustajalla on vähintään x ulos kannettua nappulaa.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>Vastustajalla on enintään x ulos kannettua nappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>Vastustajalla on x–y ulos kannettua nappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>Pelaajalla on vähintään x takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>Pelaajalla on enintään x takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>Pelaajalla on x–y takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>Vastustajalla on vähintään x takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>Vastustajalla on enintään x takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>Vastustajalla on x–y takanappulaa.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>Pelaajalla on vähintään x nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>Pelaajalla on enintään x nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>Pelaajalla on x–y nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>Vastustajalla on vähintään x nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>Vastustajalla on enintään x nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>Vastustajalla on x–y nappulaa vyöhykkeellä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>Pelaajalla on vähintään x blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>Pelaajalla on enintään x blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>Pelaajalla on x–y blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>Vastustajalla on vähintään x blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>Vastustajalla on enintään x blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>Vastustajalla on x–y blotia ulkokentällä.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>Pelaajalla on vähintään x blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>Pelaajalla on enintään x blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>Pelaajalla on x–y blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>Vastustajalla on vähintään x blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>Vastustajalla on enintään x blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>Vastustajalla on x–y blotia kotialueella.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>t'sana1;sana2;...'</td>
+<td><code>t'sana1;sana2;...'</code></td>
 <td>Aseman kommentit sisältävät vähintään yhden sanoista.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>Asemassa on kommentti, sisällöstä riippumatta.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>Asemassa ei ole kommenttia.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>Asemaan liittyy tietystä lähteestä peräisin oleva kommentti: <code>user</code> (sinun kirjoittamasi), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (ottelun tuonnin mukana tullut) tai <code>unknown</code>. Toistettavissa (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
-<td>m'kuvio1,kuvio2,...'</td>
+<td><code>m'kuvio1,kuvio2,...'</code></td>
 <td>Parhaat nappulasiirrot, jotka sisältävät vähintään yhden kuvioista.</td>
+<td>—</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>Parhaat kuutiopäätökset No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Aseman lisäyspäivä ennen x:ää (VVVV/KK/PP).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Aseman lisäyspäivä välillä x–y (VVVV/KK/PP).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Etsi ottelusta, jonka tunnus on x (esim. ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Etsi otteluista, joiden tunnukset ovat x–y (esim. ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Etsi turnauksesta, jonka tunnus on x (esim. tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Etsi turnauksista, joiden tunnukset ovat x–y (esim. tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Hae asemaa, jonka tunnus on x (esim. id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Hae asemia, joiden tunnukset ovat välillä x–y (esim. id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
-<td>pl'nimi'</td>
-<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä.</td>
+<td><code>pl'nimi'</code></td>
+<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1293,6 +1437,10 @@ export default {
 <h3>Versio</h3>
 <p>Sovelluksen versio: {appVersion}</p>
 <p>Tietokannan versio: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/fi/" target="_blank" rel="noopener noreferrer">Verkkodokumentaatio</a> ·
+    <a href="https://kevung.github.io/blunderDB/fi/historique.html" target="_blank" rel="noopener noreferrer">Versiohistoria</a>
+</p>
 
 <h3>Tekijä</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

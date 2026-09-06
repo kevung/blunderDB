@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -40,14 +40,34 @@ msgid "pour Windows: |latest_windows_exe|"
 msgstr "για Windows: |latest_windows_exe|"
 
 #: ../../source/telecharge_install.rst:12
+msgid ""
+"Au premier lancement, Windows affiche un avertissement SmartScreen (« "
+"Windows a protégé votre ordinateur »). C'est attendu : l'exécutable n'est"
+" pas signé numériquement. Voir :ref:`ce qu'il faut faire "
+"<annexe_windows_malware>`."
+msgstr ""
+"Κατά την πρώτη εκκίνηση, τα Windows εμφανίζουν μια προειδοποίηση "
+"SmartScreen («Τα Windows προστάτευσαν τον υπολογιστή σας»). Αυτό είναι "
+"αναμενόμενο: το εκτελέσιμο δεν είναι ψηφιακά υπογεγραμμένο. Δείτε :ref:`τι "
+"πρέπει να κάνετε <annexe_windows_malware>`."
+
+#: ../../source/telecharge_install.rst:17
 msgid "pour Linux: |latest_linux_exe|"
 msgstr "για Linux: |latest_linux_exe|"
 
-#: ../../source/telecharge_install.rst:14
+#: ../../source/telecharge_install.rst:19
 msgid "pour Mac: |latest_mac_exe|"
 msgstr "για Mac: |latest_mac_exe|"
 
-#: ../../source/telecharge_install.rst:18
+#: ../../source/telecharge_install.rst:21
+msgid ""
+"macOS émet un avertissement comparable, pour la même raison : voir "
+":ref:`ce qu'il faut faire <annexe_mac_malware>`."
+msgstr ""
+"Το macOS εμφανίζει μια παρόμοια προειδοποίηση, για τον ίδιο λόγο: δείτε "
+":ref:`τι πρέπει να κάνετε <annexe_mac_malware>`."
+
+#: ../../source/telecharge_install.rst:26
 msgid ""
 "Pour une consultation hors ligne, vous pouvez également télécharger cette"
 " documentation au format PDF  : |latest_fr_pdf|"
@@ -55,7 +75,7 @@ msgstr ""
 "Για ανάγνωση εκτός σύνδεσης, μπορείτε επίσης να κατεβάσετε αυτή την "
 "τεκμηρίωση σε μορφή PDF: |latest_el_pdf|"
 
-#: ../../source/telecharge_install.rst:20
+#: ../../source/telecharge_install.rst:28
 msgid ""
 "blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
 " de fortes chances que Webview2 soit déjà présent nativement sur votre "
@@ -69,11 +89,25 @@ msgstr ""
 "εκτέλεση του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν "
 "απαιτείται καμία ενέργεια από τον χρήστη."
 
-#: ../../source/telecharge_install.rst:27
+#: ../../source/telecharge_install.rst:34
+msgid ""
+"Toujours au premier lancement, blunderDB calcule en arrière-plan les deux"
+" tables de sortie dont se sert le panneau Eval : environ six secondes sur"
+" un cœur, sans rien demander, et l'application s'utilise normalement "
+"pendant ce temps. Voir :ref:`l'onglet Bearoff de la configuration "
+"<configuration>`."
+msgstr ""
+"Πάντα κατά την πρώτη εκκίνηση, το blunderDB υπολογίζει στο παρασκήνιο τους "
+"δύο πίνακες bearoff που χρησιμοποιεί ο πίνακας Eval: περίπου έξι "
+"δευτερόλεπτα σε έναν πυρήνα, χωρίς να ζητήσει τίποτα, και η εφαρμογή "
+"χρησιμοποιείται κανονικά στο μεταξύ. Δείτε :ref:`την καρτέλα Bearoff των "
+"ρυθμίσεων <configuration>`."
+
+#: ../../source/telecharge_install.rst:41
 msgid "Quel fichier choisir ?"
 msgstr "Ποιο αρχείο να επιλέξω;"
 
-#: ../../source/telecharge_install.rst:29
+#: ../../source/telecharge_install.rst:43
 msgid ""
 "Chaque version publiée sur la `page des releases "
 "<https://github.com/kevung/blunderDB/releases>`__ est accompagnée d'une "
@@ -85,83 +119,107 @@ msgstr ""
 "τριανταριά αρχεία. Ο παρακάτω πίνακας δείχνει ποιο να πάρετε ανάλογα με "
 "το σύστημά σας· αντικαταστήστε το ``x.y.z`` με τον αριθμό της έκδοσης."
 
-#: ../../source/telecharge_install.rst:38
+#: ../../source/telecharge_install.rst:52
 msgid "Système"
 msgstr "Σύστημα"
 
-#: ../../source/telecharge_install.rst:39
+#: ../../source/telecharge_install.rst:53
 msgid "Fichier"
 msgstr "Αρχείο"
 
-#: ../../source/telecharge_install.rst:40
+#: ../../source/telecharge_install.rst:54
 msgid "Installation"
 msgstr "Εγκατάσταση"
 
-#: ../../source/telecharge_install.rst:41
+#: ../../source/telecharge_install.rst:55
+msgid "Windows"
+msgstr "Windows"
+
+#: ../../source/telecharge_install.rst:56
+msgid "``blunderDB-windows-x.y.z.exe``"
+msgstr "``blunderDB-windows-x.y.z.exe``"
+
+#: ../../source/telecharge_install.rst:57
+msgid "Exécuter directement, sans installation"
+msgstr "Εκτελέστε το απευθείας, χωρίς εγκατάσταση"
+
+#: ../../source/telecharge_install.rst:58
+msgid "macOS (Intel et Apple Silicon)"
+msgstr "macOS (Intel και Apple Silicon)"
+
+#: ../../source/telecharge_install.rst:59
+msgid "``blunderDB-macos-x.y.z.zip``"
+msgstr "``blunderDB-macos-x.y.z.zip``"
+
+#: ../../source/telecharge_install.rst:60
+msgid "Décompresser, puis glisser ``blunderDB.app`` dans *Applications*"
+msgstr "Αποσυμπιέστε και σύρετε το ``blunderDB.app`` στις *Εφαρμογές*"
+
+#: ../../source/telecharge_install.rst:61
 msgid "Debian, Ubuntu, Linux Mint"
 msgstr "Debian, Ubuntu, Linux Mint"
 
-#: ../../source/telecharge_install.rst:42
+#: ../../source/telecharge_install.rst:62
 msgid "``blunderdb_x.y.z_amd64.deb``"
 msgstr "``blunderdb_x.y.z_amd64.deb``"
 
-#: ../../source/telecharge_install.rst:43
+#: ../../source/telecharge_install.rst:63
 msgid "``sudo apt install ./blunderdb_x.y.z_amd64.deb``"
 msgstr "``sudo apt install ./blunderdb_x.y.z_amd64.deb``"
 
-#: ../../source/telecharge_install.rst:44
+#: ../../source/telecharge_install.rst:64
 msgid "Fedora, openSUSE"
 msgstr "Fedora, openSUSE"
 
-#: ../../source/telecharge_install.rst:45
+#: ../../source/telecharge_install.rst:65
 msgid "``blunderdb-x.y.z.x86_64.rpm``"
 msgstr "``blunderdb-x.y.z.x86_64.rpm``"
 
-#: ../../source/telecharge_install.rst:46
+#: ../../source/telecharge_install.rst:66
 msgid "``sudo dnf install ./blunderdb-x.y.z.x86_64.rpm``"
 msgstr "``sudo dnf install ./blunderdb-x.y.z.x86_64.rpm``"
 
-#: ../../source/telecharge_install.rst:47
+#: ../../source/telecharge_install.rst:67
 msgid "Arch Linux, Manjaro"
 msgstr "Arch Linux, Manjaro"
 
-#: ../../source/telecharge_install.rst:48
+#: ../../source/telecharge_install.rst:68
 msgid "paquet AUR ``blunderdb-bin``"
 msgstr "πακέτο AUR ``blunderdb-bin``"
 
-#: ../../source/telecharge_install.rst:49
+#: ../../source/telecharge_install.rst:69
 msgid "``yay -S blunderdb-bin``"
 msgstr "``yay -S blunderdb-bin``"
 
-#: ../../source/telecharge_install.rst:50
+#: ../../source/telecharge_install.rst:70
 msgid "Toute distribution Linux, avec Flatpak"
 msgstr "Οποιαδήποτε διανομή Linux, με Flatpak"
 
-#: ../../source/telecharge_install.rst:51
+#: ../../source/telecharge_install.rst:71
 msgid "``blunderDB-x.y.z.flatpak``"
 msgstr "``blunderDB-x.y.z.flatpak``"
 
-#: ../../source/telecharge_install.rst:52
+#: ../../source/telecharge_install.rst:72
 msgid "``flatpak install ./blunderDB-x.y.z.flatpak``"
 msgstr "``flatpak install ./blunderDB-x.y.z.flatpak``"
 
-#: ../../source/telecharge_install.rst:53
+#: ../../source/telecharge_install.rst:73
 msgid "Autre distribution Linux"
 msgstr "Άλλη διανομή Linux"
 
-#: ../../source/telecharge_install.rst:54
+#: ../../source/telecharge_install.rst:74
 msgid "``blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz``"
 msgstr "``blunderDB-linux-webkit2gtk-4.1-x.y.z.tar.gz``"
 
-#: ../../source/telecharge_install.rst:55
+#: ../../source/telecharge_install.rst:75
 msgid "``tar xzf`` puis ``./blunderDB``"
 msgstr "``tar xzf`` και μετά ``./blunderDB``"
 
-#: ../../source/telecharge_install.rst:56
+#: ../../source/telecharge_install.rst:76
 msgid "Linux sur ARM 64 bits"
 msgstr "Linux σε ARM 64 bit"
 
-#: ../../source/telecharge_install.rst:57
+#: ../../source/telecharge_install.rst:77
 msgid ""
 "``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` ou "
 "``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``"
@@ -169,47 +227,23 @@ msgstr ""
 "``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` ή "
 "``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``"
 
-#: ../../source/telecharge_install.rst:59
+#: ../../source/telecharge_install.rst:79
 msgid "Comme ci-dessus, avec le fichier ``arm64``/``aarch64``"
 msgstr "Όπως παραπάνω, με το αρχείο ``arm64``/``aarch64``"
 
-#: ../../source/telecharge_install.rst:60
-msgid "macOS (Intel et Apple Silicon)"
-msgstr "macOS (Intel και Apple Silicon)"
-
-#: ../../source/telecharge_install.rst:61
-msgid "``blunderDB-macos-x.y.z.zip``"
-msgstr "``blunderDB-macos-x.y.z.zip``"
-
-#: ../../source/telecharge_install.rst:62
-msgid "Décompresser, puis glisser ``blunderDB.app`` dans *Applications*"
-msgstr "Αποσυμπιέστε και σύρετε το ``blunderDB.app`` στις *Εφαρμογές*"
-
-#: ../../source/telecharge_install.rst:63
-msgid "Windows"
-msgstr "Windows"
-
-#: ../../source/telecharge_install.rst:64
-msgid "``blunderDB-windows-x.y.z.exe``"
-msgstr "``blunderDB-windows-x.y.z.exe``"
-
-#: ../../source/telecharge_install.rst:65
-msgid "Exécuter directement, sans installation"
-msgstr "Εκτελέστε το απευθείας, χωρίς εγκατάσταση"
-
-#: ../../source/telecharge_install.rst:66
+#: ../../source/telecharge_install.rst:80
 msgid "Serveur (mode ``serve``, Docker)"
 msgstr "Διακομιστής (λειτουργία ``serve``, Docker)"
 
-#: ../../source/telecharge_install.rst:67
+#: ../../source/telecharge_install.rst:81
 msgid "image ``ghcr.io/kevung/blunderdb-serve``"
 msgstr "εικόνα ``ghcr.io/kevung/blunderdb-serve``"
 
-#: ../../source/telecharge_install.rst:68
+#: ../../source/telecharge_install.rst:82
 msgid "``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``"
 msgstr "``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``"
 
-#: ../../source/telecharge_install.rst:70
+#: ../../source/telecharge_install.rst:84
 msgid ""
 "Les fichiers ``amd64`` et ``x86_64`` sont pour un processeur Intel ou "
 "AMD, c'est-à-dire la quasi-totalité des ordinateurs de bureau. Les "
@@ -225,7 +259,7 @@ msgstr ""
 "αμφιβολίας, το ``uname -m`` απαντά: ``x86_64`` ή ``aarch64``. Το πακέτο "
 "AUR ``blunderdb-bin`` καλύπτει και τα δύο και επιλέγει μόνο του."
 
-#: ../../source/telecharge_install.rst:77
+#: ../../source/telecharge_install.rst:91
 msgid ""
 "Les autres fichiers de la page sont les binaires Linux bruts (voir plus "
 "bas), les manifestes winget et Homebrew (voir "
@@ -237,11 +271,22 @@ msgstr ""
 ":ref:`install_winget_homebrew`), η τεκμηρίωση σε PDF σε εννέα γλώσσες και"
 " τα αποτυπώματα ``.sha256``."
 
-#: ../../source/telecharge_install.rst:82
+#: ../../source/telecharge_install.rst:96
 msgid "Vérifier un téléchargement"
 msgstr "Επαλήθευση μιας λήψης"
 
-#: ../../source/telecharge_install.rst:84
+#: ../../source/telecharge_install.rst:98
+msgid ""
+"Les deux vérifications décrites ici sont **facultatives** et destinées "
+"aux utilisateurs avancés : elles se font en ligne de commande et ne font "
+"pas partie de l'installation. Sauter cette section n'empêche rien."
+msgstr ""
+"Οι δύο έλεγχοι που περιγράφονται εδώ είναι **προαιρετικοί** και "
+"προορίζονται για προχωρημένους χρήστες: γίνονται από τη γραμμή εντολών και "
+"δεν αποτελούν μέρος της εγκατάστασης. Η παράλειψη αυτής της ενότητας δεν "
+"εμποδίζει τίποτα."
+
+#: ../../source/telecharge_install.rst:102
 msgid ""
 "Chaque fichier publié est accompagné de son empreinte SHA-256, dans un "
 "fichier du même nom suivi de ``.sha256``. Téléchargez les deux dans le "
@@ -253,7 +298,7 @@ msgstr ""
 "δύο στον ίδιο φάκελο και επαληθεύστε ότι το αρχείο που λάβατε είναι αυτό "
 "που δημοσιεύτηκε:"
 
-#: ../../source/telecharge_install.rst:97
+#: ../../source/telecharge_install.rst:115
 msgid ""
 "Sous Linux et macOS, la commande affiche ``OK`` ; sous Windows, comparez "
 "la valeur affichée avec le contenu du fichier ``.sha256``. Cette "
@@ -265,7 +310,7 @@ msgstr ""
 "έλεγχος είναι η εγγύηση που διατίθεται ελλείψει υπογραφής κώδικα (βλ. "
 ":ref:`annexe_windows_malware` και :ref:`annexe_mac_malware`)."
 
-#: ../../source/telecharge_install.rst:102
+#: ../../source/telecharge_install.rst:120
 msgid ""
 "Chaque fichier publié est également accompagné d'une attestation de "
 "provenance (SLSA, via Sigstore), qui prouve qu'il a bien été produit par "
@@ -276,11 +321,11 @@ msgstr ""
 " επίσημη εκτέλεση δόμησης (build) του αποθετηρίου στο GitHub, χωρίς να "
 "χρειάζεται διαχείριση κλειδιού:"
 
-#: ../../source/telecharge_install.rst:111
+#: ../../source/telecharge_install.rst:129
 msgid "Installation sous Linux"
 msgstr "Εγκατάσταση σε Linux"
 
-#: ../../source/telecharge_install.rst:113
+#: ../../source/telecharge_install.rst:131
 msgid ""
 "Plusieurs formats sont proposés pour Linux. Les paquets et archives ci-"
 "dessous **rendent blunderDB exécutable automatiquement** : contrairement "
@@ -294,7 +339,7 @@ msgstr ""
 "αποφεύγουν την εκτέλεση της εντολής ``chmod +x`` σε κάθε λήψη ή "
 "ενημέρωση. Δημιουργούν επίσης μια καταχώριση στο μενού εφαρμογών."
 
-#: ../../source/telecharge_install.rst:119
+#: ../../source/telecharge_install.rst:137
 msgid ""
 "Les paquets ``.deb`` et ``.rpm`` associent l'extension ``.dbx`` (une base"
 " exportée avec mot de passe, voir :ref:`diffusion_controlee`) à blunderDB"
@@ -312,11 +357,11 @@ msgstr ""
 "προγράμματα — αλλά παραμένει κανονικά ανοίξιμη από το μενού *Άνοιγμα* του"
 " blunderDB."
 
-#: ../../source/telecharge_install.rst:128
+#: ../../source/telecharge_install.rst:146
 msgid "Paquets natifs (.deb / .rpm)"
 msgstr "Εγγενή πακέτα (.deb / .rpm)"
 
-#: ../../source/telecharge_install.rst:130
+#: ../../source/telecharge_install.rst:148
 msgid ""
 "Méthode recommandée sur Debian, Ubuntu et Linux Mint (``.deb``) ainsi que"
 " sur Fedora et openSUSE (``.rpm``). Le gestionnaire de paquets installe "
@@ -328,11 +373,11 @@ msgstr ""
 "αυτόματα την κατάλληλη εξάρτηση webkit2gtk. Αντικαταστήστε το ``x.y.z`` "
 "με την έκδοση που λάβατε:"
 
-#: ../../source/telecharge_install.rst:141
+#: ../../source/telecharge_install.rst:159
 msgid "Arch Linux (AUR)"
 msgstr "Arch Linux (AUR)"
 
-#: ../../source/telecharge_install.rst:143
+#: ../../source/telecharge_install.rst:161
 msgid ""
 "Le paquet ``blunderdb-bin`` est disponible sur l'AUR et mis à jour "
 "automatiquement par les assistants AUR :"
@@ -340,11 +385,11 @@ msgstr ""
 "Το πακέτο ``blunderdb-bin`` είναι διαθέσιμο στο AUR και ενημερώνεται "
 "αυτόματα από τους βοηθούς AUR:"
 
-#: ../../source/telecharge_install.rst:151
+#: ../../source/telecharge_install.rst:169
 msgid "Flatpak"
 msgstr "Flatpak"
 
-#: ../../source/telecharge_install.rst:153
+#: ../../source/telecharge_install.rst:171
 msgid ""
 "Le bundle ``blunderDB-x.y.z.flatpak`` fonctionne sur toute distribution "
 "où Flatpak est installé. Il repose sur l'environnement GNOME 47, que "
@@ -354,7 +399,7 @@ msgstr ""
 "είναι εγκατεστημένο το Flatpak. Βασίζεται στο περιβάλλον GNOME 47, το "
 "οποίο το Flatpak κατεβάζει από το Flathub αν λείπει:"
 
-#: ../../source/telecharge_install.rst:162
+#: ../../source/telecharge_install.rst:180
 msgid ""
 "Le bundle s'installe depuis le fichier téléchargé, et se met à jour en "
 "installant celui de la version suivante. L'application a accès au dossier"
@@ -364,15 +409,15 @@ msgid ""
 msgstr ""
 "Το bundle εγκαθίσταται από το αρχείο που κατεβάσατε και ενημερώνεται "
 "εγκαθιστώντας αυτό της επόμενης έκδοσης. Η εφαρμογή έχει πρόσβαση στον "
-"προσωπικό φάκελο για να ανοίγει και να αποθηκεύει βάσεις. Η γραμμή εντολών "
-"(:ref:`cli`) είναι διαθέσιμη μέσω ``flatpak run io.github.kevung.blunderDB "
-"<εντολή>``."
+"προσωπικό φάκελο για να ανοίγει και να αποθηκεύει βάσεις. Η γραμμή "
+"εντολών (:ref:`cli`) είναι διαθέσιμη μέσω ``flatpak run "
+"io.github.kevung.blunderDB <εντολή>``."
 
-#: ../../source/telecharge_install.rst:168
+#: ../../source/telecharge_install.rst:186
 msgid "Archive .tar.gz"
 msgstr "Αρχείο .tar.gz"
 
-#: ../../source/telecharge_install.rst:170
+#: ../../source/telecharge_install.rst:188
 msgid ""
 "Pour les autres distributions. L'extraction d'une archive conserve le bit"
 " exécutable, aucun ``chmod`` n'est donc nécessaire :"
@@ -380,7 +425,7 @@ msgstr ""
 "Για άλλες διανομές. Η εξαγωγή ενός αρχείου διατηρεί το bit εκτέλεσης, "
 "οπότε δεν χρειάζεται ``chmod``:"
 
-#: ../../source/telecharge_install.rst:179
+#: ../../source/telecharge_install.rst:197
 msgid ""
 "L'exécutable de l'archive s'appelle ``blunderDB``, avec les majuscules. "
 "Les paquets ``.deb``, ``.rpm``, AUR et Flatpak installent en plus le lien"
@@ -396,11 +441,11 @@ msgstr ""
 "δίπλα στο εκτελέσιμο. Για να τον έχετε στο ``PATH`` σας: ``ln -s "
 "\"$PWD/blunderDB\" ~/.local/bin/blunderdb``."
 
-#: ../../source/telecharge_install.rst:187
+#: ../../source/telecharge_install.rst:205
 msgid "Binaire brut (méthode avancée)"
 msgstr "Ακατέργαστο εκτελέσιμο (προχωρημένη μέθοδος)"
 
-#: ../../source/telecharge_install.rst:189
+#: ../../source/telecharge_install.rst:207
 msgid ""
 "Le binaire brut |latest_linux_exe| reste disponible. Comme un navigateur "
 "retire le bit exécutable au téléchargement, il faut le rétablir avant la "
@@ -410,7 +455,7 @@ msgstr ""
 "ένα πρόγραμμα περιήγησης αφαιρεί το bit εκτέλεσης κατά τη λήψη, πρέπει να"
 " το αποκαταστήσετε πριν από την πρώτη εκτέλεση:"
 
-#: ../../source/telecharge_install.rst:197
+#: ../../source/telecharge_install.rst:215
 msgid ""
 "Deux variantes Linux sont publiées selon la version de la bibliothèque "
 "webkit2gtk. Si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
@@ -426,11 +471,11 @@ msgstr ""
 " ειδική έκδοση |latest_linux_webkit2gtk41_exe|. Τα εγγενή πακέτα "
 "επιλέγουν αυτόματα τη σωστή εξάρτηση."
 
-#: ../../source/telecharge_install.rst:206
+#: ../../source/telecharge_install.rst:224
 msgid "Image Docker (mode serveur)"
 msgstr "Εικόνα Docker (λειτουργία διακομιστή)"
 
-#: ../../source/telecharge_install.rst:208
+#: ../../source/telecharge_install.rst:226
 msgid ""
 "Le mode serveur (:ref:`headless`) n'a pas besoin de l'application de "
 "bureau : chaque version publie l'image ``ghcr.io/kevung/blunderdb-serve``"
@@ -443,7 +488,7 @@ msgstr ""
 "``linux/arm64``, με την ετικέτα της έκδοσης και με την ετικέτα "
 "``latest``:"
 
-#: ../../source/telecharge_install.rst:217
+#: ../../source/telecharge_install.rst:235
 msgid ""
 "Le lancement, la configuration et l'avertissement sur le mandataire "
 "d'authentification sont décrits dans :ref:`headless_docker_image`."
@@ -451,11 +496,11 @@ msgstr ""
 "Η εκκίνηση, η ρύθμιση και η προειδοποίηση για τον διαμεσολαβητή "
 "ταυτοποίησης περιγράφονται στο :ref:`headless_docker_image`."
 
-#: ../../source/telecharge_install.rst:223
+#: ../../source/telecharge_install.rst:241
 msgid "Manifestes winget et Homebrew"
 msgstr "Μανιφέστα winget και Homebrew"
 
-#: ../../source/telecharge_install.rst:225
+#: ../../source/telecharge_install.rst:243
 msgid ""
 "Chaque release fournit un manifeste `winget "
 "<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
@@ -468,36 +513,35 @@ msgid ""
 "s'appliquent tels quels."
 msgstr ""
 "Κάθε έκδοση παρέχει στη σελίδα των εκδόσεων ένα μανιφέστο `winget "
-"<https://learn.microsoft.com/windows/package-manager/>`__ "
-"(``blunderDB-winget-manifests-x.y.z.zip``) και μια φόρμουλα `Homebrew "
+"<https://learn.microsoft.com/windows/package-manager/>`__ (``blunderDB-"
+"winget-manifests-x.y.z.zip``) και μια φόρμουλα `Homebrew "
 "<https://brew.sh/>`__ (``blunderdb-x.y.z.rb``), για όποιον θέλει να "
 "εγκαταστήσει το blunderDB μέσω αυτών των διαχειριστών πακέτων από τοπικό "
 "αρχείο. Κανένα από τα δύο δεν περιλαμβάνεται στα δημόσια αποθετήρια του "
 "winget ή του Homebrew. Κανένα από τα δύο δεν αλλάζει τη φύση του "
-"εκτελέσιμου: παραμένει ανυπόγραφο, και οι προειδοποιήσεις που περιγράφονται "
-"παρακάτω ισχύουν ως έχουν."
+"εκτελέσιμου: παραμένει ανυπόγραφο, και οι προειδοποιήσεις που "
+"περιγράφονται παρακάτω ισχύουν ως έχουν."
 
-#: ../../source/telecharge_install.rst:235
+#: ../../source/telecharge_install.rst:253
 msgid "Avertissements Windows et Mac"
 msgstr "Προειδοποιήσεις για Windows και Mac"
 
-#: ../../source/telecharge_install.rst:237
+#: ../../source/telecharge_install.rst:255
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :ref:`annexe_windows_malware` pour comprendre "
 "pourquoi et contourner les éventuels blocages."
 msgstr ""
 "Στα Windows, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
-"blunderDB. Δείτε :ref:`annexe_windows_malware` για να κατανοήσετε γιατί και "
-"πώς να παρακάμψετε τυχόν εμπόδια."
+"blunderDB. Δείτε :ref:`annexe_windows_malware` για να κατανοήσετε γιατί "
+"και πώς να παρακάμψετε τυχόν εμπόδια."
 
-#: ../../source/telecharge_install.rst:241
+#: ../../source/telecharge_install.rst:259
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :ref:`annexe_mac_malware` pour comprendre pourquoi et "
 "contourner les éventuels blocages."
 msgstr ""
-"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του blunderDB. "
-"Δείτε :ref:`annexe_mac_malware` για να κατανοήσετε γιατί και πώς να "
-"παρακάμψετε τυχόν εμπόδια."
-
+"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
+"blunderDB. Δείτε :ref:`annexe_mac_malware` για να κατανοήσετε γιατί και "
+"πώς να παρακάμψετε τυχόν εμπόδια."

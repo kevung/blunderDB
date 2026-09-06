@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:07+0200\n"
+"POT-Creation-Date: 2026-09-06 04:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -134,10 +134,12 @@ msgstr "epc"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
-"verdict de videau en bearoff)."
+"verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, "
+"conservé."
 msgstr ""
 "Ανοίγει τον πίνακα Eval (Effective Pip Count, πιθανότητα νίκης και "
-"ετυμηγορία κύβου στο bearoff)."
+"ετυμηγορία κύβου στο bearoff). Το ``epc`` είναι το παλιό όνομα αυτού του "
+"πίνακα, που διατηρείται."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -397,9 +399,81 @@ msgstr "Αναζήτηση μεταξύ των θέσεων που είναι ή
 msgid "Filtres de recherche"
 msgstr "Φίλτρα αναζήτησης"
 
+#: ../../source/cmd_mode.rst:90
+msgid ""
+"Cette table est la référence de la grammaire de recherche : la ligne de "
+"commande, la bibliothèque de filtres et le drapeau ``--query`` de "
+"``blunderdb search`` lisent tous les mêmes jetons. La colonne *Équivalent"
+" CLI* donne, quand il existe, le drapeau de ``search`` qui fait la même "
+"chose (voir :ref:`cli`) ; un tiret signale un filtre que seule la "
+"grammaire exprime."
+msgstr ""
+"Ο πίνακας αυτός είναι η αναφορά της γραμματικής αναζήτησης: η γραμμή "
+"εντολών, η βιβλιοθήκη φίλτρων και η επιλογή ``--query`` της ``blunderdb "
+"search`` διαβάζουν όλες τα ίδια διακριτικά. Η στήλη *Ισοδύναμο CLI* "
+"δίνει, όταν υπάρχει, την επιλογή της ``search`` που κάνει το ίδιο πράγμα "
+"(δείτε :ref:`cli`)· μια παύλα σημαίνει φίλτρο που το εκφράζει μόνο η "
+"γραμματική."
+
+#: ../../source/cmd_mode.rst:97
+msgid ""
+"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
+"sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
+"structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
+" dans le jeton : ``D65`` n'existe pas, seule la forme d'exclusion porte "
+"ses chiffres (``xD65``). En ligne de commande, où il n'y a pas de "
+"plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
+" de la troisième colonne qu'il faut y employer."
+msgstr ""
+"Πέντε διακριτικά δεν φέρουν την τιμή τους: τη διαβάζουν στο ταμπλό "
+"αναζήτησης. Τα ``cube`` και ``score`` παίρνουν τον κύβο και το σκορ που "
+"έχουν τεθεί εκεί, το ``d`` τον τύπο της απόφασης, τα ``D`` και ``D1`` τα "
+"ζάρια, το ``x`` τη δομή που σχεδιάστηκε στην καρτέλα *Εκτός*. Μια ζαριά "
+"επομένως δεν γράφεται ποτέ μέσα στο διακριτικό: το ``D65`` δεν υπάρχει, "
+"μόνο η μορφή αποκλεισμού φέρει τα ψηφία της (``xD65``). Στη γραμμή "
+"εντολών, όπου δεν υπάρχει ταμπλό, τα διακριτικά αυτά συγκρίνονται με κενό"
+" ταμπλό· εκεί πρέπει να χρησιμοποιούνται οι επιλογές της τρίτης στήλης."
+
+#: ../../source/cmd_mode.rst:106
+msgid ""
+"Les erreurs et les équités se comptent en **millièmes d'équité** — les "
+"*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
+"ont coûté au moins un dixième de point, un point valant 1000 millièmes."
+msgstr ""
+"Τα σφάλματα και οι ισοδυναμίες μετρώνται σε **χιλιοστά ισοδυναμίας** — τα"
+" *millipoints* του παρακάτω πίνακα: το ``E>100`` κρατά τις κινήσεις που "
+"κόστισαν τουλάχιστον ένα δέκατο του πόντου, αφού ένας πόντος αξίζει 1000 "
+"χιλιοστά."
+
+#: ../../source/cmd_mode.rst:110
+msgid "Deux recherches complètes :"
+msgstr "Δύο πλήρεις αναζητήσεις:"
+
+#: ../../source/cmd_mode.rst:112
+#, no-python-format
+msgid ""
+"``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
+"chances de gain, aucun commentaire."
+msgstr ""
+"``s p>30 w40,60 xco`` — πάνω από 30 pips καθυστέρηση, μεταξύ 40 % και 60 "
+"% πιθανότητες νίκης, κανένα σχόλιο."
+
+#: ../../source/cmd_mode.rst:114
+msgid ""
+"``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
+"millièmes, et un commentaire venu d'eXtreme Gammon."
+msgstr ""
+"``s ph:race E>50 co:xg`` — σε κούρσα, μια κίνηση που κόστισε τουλάχιστον "
+"50 χιλιοστά, και ένα σχόλιο προερχόμενο από το eXtreme Gammon."
+
 #: ../../source/cmd_mode.rst:1
 msgid "Requête"
 msgstr "Ερώτημα"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Équivalent CLI"
+msgstr "Ισοδύναμο CLI"
 
 #: ../../source/cmd_mode.rst:1
 msgid "cube, cub, cu, c"
@@ -410,12 +484,20 @@ msgid "La position vérifie la configuration du cube."
 msgstr "Η θέση επαληθεύει τη διαμόρφωση του κύβου."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--cube``"
+msgstr "``--cube``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "score, sco, sc, s"
 msgstr "score, sco, sc, s"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le score."
 msgstr "Η θέση επαληθεύει το σκορ."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--score1`` ``--score2``"
+msgstr "``--score1`` ``--score2``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "d"
@@ -426,12 +508,20 @@ msgid "La position vérifie le type de décision (pion ou cube)."
 msgstr "Η θέση επαληθεύει τον τύπο απόφασης (πουλιού ή κύβου)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--decision``"
+msgstr "``--decision``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "Η θέση επαληθεύει τη ζαριά (και τα δύο ζάρια, ανεξαρτήτως σειράς)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--dice 6,5``"
+msgstr "``--dice 6,5``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -446,6 +536,10 @@ msgstr ""
 "ζαριού εμφανίζεται σε ένα από τα δύο ζάρια της θέσης)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--dice 6``"
+msgstr "``--dice 6``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xD65"
 msgstr "xD65"
 
@@ -458,6 +552,10 @@ msgstr ""
 "Η θέση **δεν** παίχτηκε με τη ζαριά 6-5 (ανεξαρτήτως σειράς). Η τιμή "
 "αναγράφεται στο διακριτικό· επαναλήψιμο για τον αποκλεισμό πολλών ζαριών "
 "(``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -486,6 +584,10 @@ msgstr ""
 " ``blunderdb repair`` την υπολογίζει ξανά."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--phase``"
+msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "M"
 msgstr "M"
 
@@ -502,6 +604,10 @@ msgid "La position a été importée seule, et non apportée par l'import d'un m
 msgstr "Η θέση εισήχθη μεμονωμένα και δεν προήλθε από εισαγωγή αγώνα."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--individual``"
+msgstr "``--individual``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "fl"
 msgstr "fl"
 
@@ -514,15 +620,19 @@ msgstr ""
 "αγώνα eXtreme Gammon."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--flagged``"
+msgstr "``--flagged``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "x"
 msgstr "x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position ne contient aucun pion de la structure d'exclusion (onglet « "
-"Except » du panneau de recherche)."
+"La position ne contient aucun pion de la structure d'exclusion (onglet "
+"*Sauf* du panneau de recherche)."
 msgstr ""
-"Η θέση δεν περιέχει κανένα πούλι της δομής εξαίρεσης (καρτέλα « Except » "
+"Η θέση δεν περιέχει κανένα πούλι της δομής εξαίρεσης (καρτέλα *Εκτός* "
 "του πάνελ αναζήτησης)."
 
 #: ../../source/cmd_mode.rst:1
@@ -534,6 +644,10 @@ msgid "Le joueur a au moins x pips de retard à la course."
 msgstr "Ο παίκτης είναι πίσω στην κούρσα κατά τουλάχιστον x pips."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-min``"
+msgstr "``--pip-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "p<x"
 msgstr "p<x"
 
@@ -542,12 +656,20 @@ msgid "Le joueur a au plus x pips de retard à la course."
 msgstr "Ο παίκτης είναι πίσω στην κούρσα κατά το πολύ x pips."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-max``"
+msgstr "``--pip-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "px,y"
 msgstr "px,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a entre x et y pips de retard à la course."
 msgstr "Ο παίκτης είναι πίσω στην κούρσα κατά x έως y pips."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pip-min`` ``--pip-max``"
+msgstr "``--pip-min`` ``--pip-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "P>x"
@@ -608,6 +730,10 @@ msgstr ""
 "μεγαλύτερο από x."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min``"
+msgstr "``--move-error-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
@@ -616,6 +742,10 @@ msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure �
 msgstr ""
 "Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) είναι "
 "μικρότερο από x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--move-error-max``"
+msgstr "``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -630,12 +760,20 @@ msgstr ""
 "μεταξύ x και y."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min`` ``--move-error-max``"
+msgstr "``--move-error-min`` ``--move-error-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a des chances de gain supérieures à x %."
 msgstr "Ο παίκτης έχει πιθανότητες νίκης μεγαλύτερες από x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min``"
+msgstr "``--winrate-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "w<x"
@@ -646,6 +784,10 @@ msgid "Le joueur a des chances de gain inférieures à x %."
 msgstr "Ο παίκτης έχει πιθανότητες νίκης μικρότερες από x %."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--winrate-max``"
+msgstr "``--winrate-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "wx,y"
 msgstr "wx,y"
 
@@ -653,6 +795,10 @@ msgstr "wx,y"
 #, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "Ο παίκτης έχει πιθανότητες νίκης μεταξύ x % και y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min`` ``--winrate-max``"
+msgstr "``--winrate-min`` ``--winrate-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "g>x"
@@ -788,6 +934,10 @@ msgid "Le joueur a au moins x pions sortis."
 msgstr "Ο παίκτης έχει τουλάχιστον x πούλια έξω."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--off1-min``"
+msgstr "``--off1-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "o<x"
 msgstr "o<x"
 
@@ -810,6 +960,10 @@ msgstr "O>x"
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a au moins x pions sortis."
 msgstr "Ο αντίπαλος έχει τουλάχιστον x πούλια έξω."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--off2-min``"
+msgstr "``--off2-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "O<x"
@@ -1020,8 +1174,8 @@ msgid "L'adversaire a entre x et y blots dans le jan."
 msgstr "Ο αντίπαλος έχει μεταξύ x και y blots στο jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "t'mot1;mot2;...'"
-msgstr "t'word1;word2;...'"
+msgid "``t'mot1;mot2;...'``"
+msgstr "``t'λέξη1;λέξη2;...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les commentaires de la position contiennent au moins un des mots."
@@ -1036,12 +1190,20 @@ msgid "La position porte un commentaire, quel qu'en soit le contenu."
 msgstr "Η θέση φέρει σχόλιο, ανεξάρτητα από το περιεχόμενό του."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--has-comment``"
+msgstr "``--has-comment``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xco"
 msgstr "xco"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ne porte aucun commentaire."
 msgstr "Η θέση δεν φέρει κανένα σχόλιο."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--no-comment``"
+msgstr "``--no-comment``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "co:user"
@@ -1058,21 +1220,25 @@ msgstr ""
 "``unknown``. Επαναλαμβανόμενο (``co:xg co:gnubg``)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'motif1,motif2,...\\'"
-msgstr "m'pattern1,pattern2,...\\'"
+msgid "``--comment-origin``"
+msgstr "``--comment-origin``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``m'motif1,motif2,...'``"
+msgstr "``m'μοτίβο1,μοτίβο2,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les meilleurs coups de pions contenant au moins un des motifs."
 msgstr "Οι καλύτερες κινήσεις πουλιών που περιέχουν τουλάχιστον ένα από τα μοτίβα."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'ND,DT,DP,...\\'"
-msgstr "m'ND,DT,DP,...\\'"
+msgid "``m'ND,DT,DP,...'``"
+msgstr "``m'ND,DT,DP,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
-"Pass."
+"Les meilleures décisions de videau de No Double/Take, Double Take, Double"
+" Pass."
 msgstr "Οι καλύτερες αποφάσεις κύβου No Double/Take, Double Take, Double Pass."
 
 #: ../../source/cmd_mode.rst:1
@@ -1108,6 +1274,10 @@ msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
 msgstr "Αναζήτηση στον αγώνα με αναγνωριστικό x (π.χ. ma3)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--match-ids``"
+msgstr "``--match-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "max,y"
 msgstr "max,y"
 
@@ -1122,6 +1292,10 @@ msgstr "tnx"
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
 msgstr "Αναζήτηση στο τουρνουά με αναγνωριστικό x (π.χ. tn1)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--tournament-ids``"
+msgstr "``--tournament-ids``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tnx,y"
@@ -1140,6 +1314,10 @@ msgid "Rechercher la position d'identifiant x (ex: id12)."
 msgstr "Αναζήτηση της θέσης με αναγνωριστικό x (π.χ. id12)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--position-ids``"
+msgstr "``--position-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "idx,y"
 msgstr "idx,y"
 
@@ -1148,18 +1326,18 @@ msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "Αναζήτηση των θέσεων με αναγνωριστικά από x έως y (π.χ. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "pl'nom'"
-msgstr "pl'όνομα'"
+msgid "``pl'nom'``"
+msgstr "``pl'όνομα'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 msgstr ""
 "Αναζήτηση θέσεων από αγώνα στον οποίο συμμετείχε ο αναφερόμενος παίκτης, "
-"σε οποιαδήποτε πλευρά (π.χ. pl'Alice'). Αγνοεί πεζά/κεφαλαία."
+"σε οποιαδήποτε πλευρά (π.χ. ``pl'Alice'``). Αγνοεί πεζά/κεφαλαία."
 
-#: ../../source/cmd_mode.rst:189
+#: ../../source/cmd_mode.rst:216
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -1170,3 +1348,4 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Διαγράφει το ιστορικό εντολών."
+

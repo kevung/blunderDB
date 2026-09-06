@@ -3,9 +3,30 @@
 Historique des versions
 =======================
 
-Chaque version ci-dessous liste ses évolutions puce par puce, pour qu'une
-correction ultérieure (une coquille, un ajout tardif) n'invalide qu'une
-puce et non la traduction de toute la version.
+Les versions sont classées de la plus récente à la plus ancienne, une puce par
+changement, et chaque version se termine par les renvois vers les pages qui
+décrivent en détail ce qu'elle a apporté. Une puce qu'une version ultérieure a
+défaite porte la mention de celle qui l'a remplacée : elle raconte l'histoire du
+logiciel, elle ne décrit pas la version installée.
+
+Après une mise à jour
+---------------------
+
+La migration du schéma de la base est **automatique** à l'ouverture, et **sans
+retour** : une base migrée n'est plus lisible par une version antérieure de
+blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
+ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
+
+- **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
+  importés avant portent un tiret dans la colonne *Chance*, et un tiret n'est
+  pas un zéro. Les formats qui ne transportent pas la chance (BGF, Jellyfish
+  ``.mat``) n'en fourniront jamais.
+- **Réimporter les fichiers XG pour obtenir les marques** (0.30.0). Les
+  marques posées dans eXtreme Gammon rejoignent la base au réimport, sans
+  toucher aux commentaires ni aux analyses existants.
+- **Lancer le rattrapage d'analyse gammonNet** (0.34.0), depuis l'interface, par
+  ``blunderdb analyze`` ou en mode serveur : il comble les positions qui n'ont
+  aucune analyse, sans jamais écraser une analyse importée.
 
 0.36.0 (2026-09-05)
 -------------------
@@ -14,12 +35,12 @@ puce et non la traduction de toute la version.
 - **Les tournois se remplissent à l'import** : un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé.
 - **Une seule grammaire de recherche**, désormais lisible depuis la ligne de commande (``blunderdb search --query``) autant que depuis l'application.
 - La ligne de commande gagne ``--format json`` sur neuf commandes, la **complétion pour bash, zsh et fish**, la commande ``repair`` et les sous-commandes ``anki card`` et ``anki log``.
-- L'**aide intégrée est engendrée depuis le manuel** : elle ne peut plus prendre de retard sur lui. Trois visites guidées de plus (Eval, Anki, Stats), et les pages Raccourcis et Ligne de commande deviennent des tableaux, sans encarts.
+- Les onglets **Raccourcis** et **Commandes** de l'aide intégrée sont engendrés depuis les pages du manuel qui les décrivent : ils ne peuvent plus prendre de retard sur elles, et deviennent des tableaux, sans encarts. L'onglet **Manuel** de l'aide reste un résumé, distinct du manuel complet en ligne. Trois visites guidées de plus (Eval, Anki, Stats).
 - Un **binaire Linux arm64**, livré en archive, ``.deb``, ``.rpm`` et paquet AUR.
 - Le panneau **Eval** retrouve le plateau sur lequel on l'a quitté, distingue l'équité *money* de l'équité *match*, et se parcourt au clavier.
 - Côté serveur : **contrat d'API engendré du code** (``openapi.yaml`` et son annexe, 135 routes), identifiant de corrélation par requête, métriques de travail en vol, compression des flux NDJSON (13,5 % de la taille), et les deux appels qui dépassent le tenant — vidange et purge — passent sous ``/ops/``.
-- **Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, si bien qu'une même position d'argent n'entre plus deux fois par des portes différentes.
-- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, SHIFT-J et SHIFT-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
+- **Schéma 2.18.0** : Jacoby et beaver quittent l'identité de la position, si bien qu'une même position d'argent n'entre plus deux fois par des portes différentes. La migration est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
+- Corrections notables : le volet de détail du panneau Matchs n'occupe plus la moitié de l'écran quand rien n'est sélectionné, la première partie d'un transcript se replie comme les autres, MAJ-J et MAJ-K changent de vue depuis n'importe quel panneau, et huit raccourcis « afficher/cacher » cachent enfin.
 - Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 
 0.35.0 (2026-09-02)
@@ -29,7 +50,7 @@ puce et non la traduction de toute la version.
 - Le mode serveur est publié en **image Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité d'émetteur du serveur (``--identity-dir``).
 - L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon.
 - Chaque release livre désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en plus des paquets Debian, RPM et AUR.
-- Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de police japonaise inutile.
+- Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et la police japonaise embarquée est réduite à son sous-ensemble utile (5,5 Mo de moins).
 - Corrections notables : une base importée par « Importer une base » gardait des positions invisibles aux filtres et dédoublées au second import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de fusion des joueurs restait grisé, l'export du serveur était vide, et sous Windows la suppression de la base bearoff téléchargée et ``create --force`` échouaient.
 - Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 
@@ -60,15 +81,15 @@ puce et non la traduction de toute la version.
 0.32.0 (2026-08-09)
 -------------------
 
-- Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de course complète.
+- Le panneau EPC devient le panneau **Bearoff** et gagne l'analyse de course complète. *(Renommé panneau Eval en 0.34.0.)*
 - Sur une position de bearoff pur, il affiche — en plus de l'EPC, du pip count, du wastage et du nombre moyen de lancers de chaque joueur, désormais présentés en tableau avec une ligne Δ signée — les probabilités de gain des deux joueurs et les équités money (cubeless, sans double, double/prend, double/passe, avec l'écart de chaque décision à la meilleure) ainsi que la **meilleure décision de videau**.
 - Deux régimes clairement distingués : *exact* (lecture dans une base two-sided ; base TS-06-06 de GNUbg intégrée, couvrant jusqu'à 6 pions par joueur) et *estimé* (convolution calibrée, marge d'erreur affichée — le verdict de videau n'est jamais estimé).
-- La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, avec vérification d'intégrité et reprise des téléchargements interrompus ; un fichier ``.bd`` two-sided quelconque de gnubg peut aussi être désigné.
+- La base étendue TS-06-11 (verdict exact jusqu'à 11 pions par joueur, 1,2 Go) se télécharge depuis le nouvel onglet *Bearoff* de la configuration, avec vérification d'intégrité et reprise des téléchargements interrompus ; un fichier ``.bd`` two-sided quelconque de gnubg peut aussi être désigné. *(Remplacé en 0.36.0 : la table se calcule sur la machine, plus aucun téléchargement.)*
 - **Mode défi** pour l'entraînement : les résultats se masquent à chaque modification et se révèlent zone par zone, d'un clic.
 - Édition entièrement au plateau : pions des deux jans, joueur au trait (clic sur le rectangle sortie/score) et position du videau (clic sur le videau).
 - Le clic sur le plateau est désormais exact à toute échelle d'interface (un clic sur le point 1 pouvait atterrir sur le point 2).
 - Nouvelle commande ``blunderdb epc`` en ligne de commande et option ``--bearoff-ts`` du mode serveur.
-- Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur affichée.
+- Une nouvelle section du manuel, « Méthodologie et hypothèses du panneau Bearoff », énonce exhaustivement les hypothèses derrière chaque valeur affichée. *(Section renommée avec le panneau en 0.34.0.)*
 - Voir :ref:`panneau_epc` et :ref:`epc_methodologie`.
 
 0.31.0 (2026-08-04)
@@ -111,7 +132,7 @@ puce et non la traduction de toute la version.
 - Panneau de recherche : filtre unifié « Matchs & Tournois » remplaçant les champs de saisie d'identifiants par une fenêtre de sélection (listes à cocher filtrables par texte, boutons *Tout*/*Aucun*, cocher un tournoi coche ses matchs membres) — plus rapide sur les grosses bases, l'onglet Matchs et la vue Tournois ne recalculent plus les indicateurs PR/MWC que pour les matchs affichés ; ``cli list --type tournaments`` comble l'écart de parité correspondant.
 - Nouveau filtre « Importée individuellement » (case à cocher du groupe Autre, ou jeton ``i`` en ligne de commande, ``s i`` ; disponible aussi en CLI via ``--individual``) pour retrouver une position enregistrée ou importée seule plutôt que noyée dans un import de match.
 - Correction d'une perte de données : la suppression d'un match ne supprime plus les positions individuellement importées, mises en collection ou intégrées à un paquet Anki que ce match contenait aussi.
-- Mode serveur (headless) : six nouvelles méthodes pour le planificateur Anki à répétition espacée — journal des révisions (``anki.reviewLog``), prévision des cartes dues (``anki.forecast``), suspension / mise en veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, ``anki.removeCard``) et ajustement automatique du taux de rétention visé d'un paquet vers son taux de réussite observé (``anki.optimizeParams``) ; nouvelle méthode ``tenant.purge`` pour supprimer définitivement les données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et ``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs).
+- Mode serveur (headless) : six nouvelles méthodes pour le planificateur Anki à répétition espacée — journal des révisions (``anki.reviewLog``), prévision des cartes dues (``anki.forecast``), suspension / mise en veille / suppression de carte (``anki.suspendCard``, ``anki.buryCard``, ``anki.removeCard``) et ajustement automatique du taux de rétention visé d'un paquet vers son taux de réussite observé (``anki.optimizeParams``, remplacé en 0.36.0 par ``anki.retention``, qui mesure le taux observé sans jamais écrire la cible) ; nouvelle méthode ``tenant.purge`` pour supprimer définitivement les données d'un tenant sur un déploiement PostgreSQL multi-utilisateurs ; nouvelles méthodes ``matches.list`` (filtrage/tri/pagination) et ``stats.matchBadges`` (indicateurs PR/MWC bornés à une liste de matchs).
 - Distribution Linux native : paquets ``.deb``/``.rpm``, qui conservent le bit d'exécution perdu lors du téléchargement du binaire brut.
 - Import : après l'import d'un match, l'onglet Matchs s'affiche et les positions importées sont immédiatement visibles ; après l'import d'une position isolée (fichier XGP, position BGBlitz, fichier de position texte, position collée ou lot de positions), l'onglet Analyse s'ouvre directement sur la position importée, au lieu de l'onglet Matchs ; correction du collage d'une analyse eXtreme Gammon en français ou en allemand depuis macOS, qui restait vide (accents décomposés par le presse-papier du système).
 - Voir :ref:`headless`, :ref:`cmd_mode` et :ref:`telecharge_install`.
@@ -185,7 +206,7 @@ puce et non la traduction de toute la version.
 0.19.0 (2026-05-07)
 -------------------
 
-- Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes.
+- Ajout du panneau Stats : indicateurs PR (Performance Rating), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes.
 - Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs.
 - Toggle PR / MWC instantané.
 - Commande CLI list --type stats.
@@ -220,7 +241,7 @@ puce et non la traduction de toute la version.
 0.16.0 (2026-04-18)
 -------------------
 
-- Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL.
+- Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL (:ref:`annexe_db_migration`).
 - Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ positions.
 - NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d'abord).
 
@@ -240,7 +261,7 @@ puce et non la traduction de toute la version.
 
 - Simplification de l'interface : la navigation dans les matchs et les collections se fait directement via les panneaux.
 - Ligne de commande intégrée dans la barre d'état.
-- Panneau Console renommé en panneau Log.
+- Panneau Console renommé en panneau Log. *(Panneau retiré en 0.31.0.)*
 - Panneau Bearoff dédié dans le panneau inférieur.
 - Copier/coller de position dans le panneau de recherche.
 - Glisser-déposer pour réordonner les collections, les positions dans les collections, et les matchs dans les tournois.
@@ -266,7 +287,7 @@ puce et non la traduction de toute la version.
 - Navigation dans les matchs : parcours des coups d'un match importé, avec mise en évidence du coup joué.
 - Panneau des matchs : liste, tri, édition inline, permutation des joueurs, assignation de tournoi.
 - Import par dossier récursif et import par glisser-déposer.
-- Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.
+- Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée. *(Remplacé en 0.36.0 : la table est calculée sur la machine, plus aucune n'est embarquée.)*
 - Collections : regroupement personnalisé de positions.
 - Tournois : regroupement de matchs par événement.
 - Sauvegarde et restauration de l'état de session (dernière recherche, position courante).

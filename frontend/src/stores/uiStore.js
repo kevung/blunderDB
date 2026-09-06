@@ -55,6 +55,7 @@ export const PANEL = {
 };
 
 // ── Single modal store (only one modal at a time) ──
+/** @type {import('svelte/store').Writable<string | null>} */
 export const activeModal = writable(null);
 
 // Initial tab requested for the Config modal (e.g. the EPC panel's download
@@ -62,20 +63,24 @@ export const activeModal = writable(null);
 export const configInitialTabStore = writable(null);
 
 // ── Panel set (multiple panels can be open) ──
+/** @type {import('svelte/store').Writable<Set<string>>} */
 export const openPanels = writable(new Set());
 
 // ── Modal helpers ──
+/** @param {string} name */
 export function openModal(name) {
     activeModal.set(name);
 }
 export function closeModal() {
     activeModal.set(null);
 }
+/** @param {string} name */
 export function toggleModal(name) {
     activeModal.update((current) => (current === name ? null : name));
 }
 
 // ── Panel helpers ──
+/** @param {string} name */
 export function openPanel(name) {
     openPanels.update((s) => {
         const next = new Set(s);
@@ -83,6 +88,7 @@ export function openPanel(name) {
         return next;
     });
 }
+/** @param {string} name */
 export function closePanel(name) {
     openPanels.update((s) => {
         const next = new Set(s);
@@ -90,6 +96,7 @@ export function closePanel(name) {
         return next;
     });
 }
+/** @param {string} name */
 export function togglePanel(name) {
     openPanels.update((s) => {
         const next = new Set(s);

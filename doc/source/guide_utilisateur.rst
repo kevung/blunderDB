@@ -19,7 +19,7 @@ Mon premier import
 Ce tutoriel part d'un fichier de match eXtreme Gammon (``.xg``) et arrive à
 la liste des positions où vous avez le plus perdu.
 
-#. **Créer une base.** Bouton "Nouvelle base de données" de la barre
+#. **Créer une base.** Bouton *Nouvelle base de données* de la barre
    d'outils (ou *CTRL-N*), choisir un emplacement et un nom ; l'extension
    ``.db`` est ajoutée automatiquement.
 
@@ -29,9 +29,16 @@ la liste des positions où vous avez le plus perdu.
    XG (coups, décisions de videau, marques) et affiche le panneau des
    matchs sur l'import réussi.
 
+   .. note:: blunderDB reprend l'analyse déjà présente dans le fichier, il
+      n'en refait pas une : un match jamais analysé dans XG n'a donc aucune
+      erreur à montrer. Si la case *Analyser automatiquement après import*
+      est cochée (fenêtre de configuration, onglet *gammonNet*), un lot
+      d'analyse borné et annulable comble en tâche de fond les positions
+      dépourvues d'analyse. Voir :ref:`configuration`.
+
 #. **Revoir le match.** Double-cliquer sur la ligne du match (ou la
    sélectionner et appuyer sur *ENTREE*) ouvre la revue sur la dernière
-   position visitée. Les touches *GAUCHE*/*DROITE* (ou *j*/*k*) parcourent
+   position visitée. Les touches *GAUCHE*/*DROITE* (ou *k*/*j*) parcourent
    les coups ; *PageUp*/*PageDown* changent de partie.
 
 #. **Lire l'analyse.** *CTRL-L* affiche le panneau Analyse : les meilleurs
@@ -46,13 +53,14 @@ la liste des positions où vous avez le plus perdu.
       Le panneau Analyse pendant la revue d'un match : le coup joué est
       surligné dans la table des coups candidats.
 
-#. **Trouver les plus grosses erreurs.** Depuis n'importe où, la commande
-   ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de commande)
-   charge directement les positions où l'erreur a été la plus coûteuse dans
-   le panneau d'analyse — inutile de construire une recherche à la main
-   pour un premier passage sur un import. Voir :ref:`stats` pour affiner ce
-   choix par joueur ou par plage de dates une fois plusieurs matchs
-   importés.
+#. **Trouver les plus grosses erreurs.** Ouvrir le panneau Stats (*CTRL-D*),
+   onglet *Dashboard* : la liste *Top blunders* donne les dix erreurs les
+   plus coûteuses, et cliquer sur une ligne charge la position concernée
+   dans le panneau d'analyse. Pour les habitués, la même chose au clavier :
+   la commande ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de
+   commande) charge directement ces positions, sans construire de recherche
+   à la main. Voir :ref:`stats` pour affiner ce choix par joueur ou par
+   plage de dates une fois plusieurs matchs importés.
 
 .. _tuto_etudier_match:
 
@@ -64,6 +72,7 @@ en particulier — au-delà du simple parcours du tutoriel précédent.
 
 #. **Ouvrir le panneau des matchs** (*CTRL-Tab*). Il liste tous les matchs
    importés, triables par colonne (joueur, date, longueur, tournoi, PR).
+   Le PR et le coût MWC sont définis dans le :ref:`glossaire`.
 
    .. figure:: img/panel_matches.png
       :width: 100%
@@ -120,8 +129,8 @@ cartes à réviser selon l'algorithme FSRS (répétition espacée).
    marquées comme des erreurs. La commande ``bl 30`` (30 pires erreurs)
    fournit un point de départ tout indiqué pour un premier paquet.
 
-#. **Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton "New
-   Deck", nommer le paquet ; il se synchronise sur la recherche ou la
+#. **Créer le paquet.** Ouvrir le panneau Anki (*CTRL-K*), bouton *Nouveau paquet*,
+   nommer le paquet ; il se synchronise sur la recherche ou la
    collection choisie.
 
    .. figure:: img/panel_anki.png
@@ -131,13 +140,13 @@ cartes à réviser selon l'algorithme FSRS (répétition espacée).
       Le panneau Anki : un paquet par ligne, cartes totales, nouvelles et
       dues aujourd'hui.
 
-#. **Réviser** (*Study*) : chaque carte montre une position, vous formulez
+#. **Réviser** (bouton *Étudier*) : chaque carte montre une position, vous formulez
    votre réponse mentalement, dévoilez la solution (le plateau, l'analyse
    et le commentaire éventuel), puis notez votre estimation de 1 (raté) à 4
    (facile). FSRS espace la prochaine présentation en conséquence. Rien
    n'oblige à dévoiler la réponse pour continuer si vous êtes sûr de vous.
 
-#. **S'échauffer sans perturber l'échéancier** (*Cram*) : présente des
+#. **S'échauffer sans perturber l'échéancier** (bouton *Entraînement*) : présente des
    positions aléatoires du paquet sans toucher au planning FSRS — pratique
    avant un tournoi, ou pour réviser intensément sans décaler les
    échéances des autres cartes.
@@ -155,9 +164,9 @@ Le mode serveur (``blunderdb serve``) expose le moteur de blunderDB en HTTP
 l'en-tête ``X-Tenant-ID`` tel qu'il le reçoit, et doit donc toujours être
 placé derrière un reverse-proxy qui, lui, authentifie et fixe cet en-tête.
 Ce tutoriel déploie l'image publiée derrière un nginx minimal, en
-authentification HTTP Basic à un seul tenant — le point de départ le plus
-simple, à adapter (SSO, certificats clients, mapping multi-tenant par
-utilisateur) selon votre contexte.
+authentification HTTP Basic à un seul tenant, puis montre comment donner son
+tenant à chaque membre. C'est le point de départ le plus simple, à adapter
+(SSO, certificats clients) selon votre contexte.
 
 #. **Lancer le démon**, replié sur ``127.0.0.1`` (jamais exposé
    directement) :
@@ -166,7 +175,7 @@ utilisateur) selon votre contexte.
 
       docker run --rm -p 127.0.0.1:8080:8080 -v blunderdb-data:/data \
           -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
-          ghcr.io/kevung/blunderdb-serve:0.35.0
+          ghcr.io/kevung/blunderdb-serve:<version>
 
 #. **Créer un fichier de mot de passe** pour l'authentification Basic :
 
@@ -175,22 +184,39 @@ utilisateur) selon votre contexte.
       htpasswd -c /etc/nginx/blunderdb.htpasswd alice
 
 #. **Configurer nginx** pour authentifier puis relayer, en fixant
-   ``X-Tenant-ID`` lui-même — jamais celui envoyé par le client :
+   ``X-Tenant-ID`` lui-même — jamais celui envoyé par le client. Un
+   certificat TLS est un prérequis de ce tutoriel et non son objet :
+   obtenez-le au préalable (Let's Encrypt avec ``certbot``, ou l'autorité de
+   certification de votre organisation), puis désignez ses deux fichiers
+   ici. Le port 80 ne sert qu'à rediriger vers HTTPS.
 
    .. code-block:: nginx
+
+      server {
+          listen 80;
+          server_name blunderdb.exemple.org;
+          return 301 https://$host$request_uri;
+      }
 
       server {
           listen 443 ssl;
           server_name blunderdb.exemple.org;
 
+          ssl_certificate     /etc/letsencrypt/live/blunderdb.exemple.org/fullchain.pem;
+          ssl_certificate_key /etc/letsencrypt/live/blunderdb.exemple.org/privkey.pem;
+
           location /v1/ {
               auth_basic           "blunderDB";
               auth_basic_user_file /etc/nginx/blunderdb.htpasswd;
 
-              proxy_pass         http://127.0.0.1:8080;
+              proxy_set_header   X-Tenant-ID "";
               proxy_set_header   X-Tenant-ID "1";
+              proxy_pass         http://127.0.0.1:8080;
           }
       }
+
+   Les deux ``proxy_set_header`` se lisent dans cet ordre : effacer d'abord
+   la valeur reçue du client, injecter ensuite celle du proxy.
 
 #. **Vérifier** avec la sous-commande de santé, qui ne passe pas par le
    proxy :
@@ -198,6 +224,42 @@ utilisateur) selon votre contexte.
    .. code-block:: bash
 
       docker exec <container> blunderdb healthcheck
+
+#. **Plusieurs membres, un tenant chacun.** Le démon n'accepte dans
+   ``X-Tenant-ID`` qu'un entier positif : c'est au proxy d'associer le compte
+   authentifié à cet entier. Un bloc ``map`` placé dans le contexte ``http``
+   tient cette correspondance, et retombe sur la chaîne vide pour un compte
+   qui n'y figure pas — jamais sur ``1`` :
+
+   .. code-block:: nginx
+
+      map $remote_user $tenant_id {
+          default "";
+          alice   1;
+          bob     2;
+      }
+
+   Le ``location`` refuse alors explicitement un compte non mappé, plutôt que
+   de le laisser atteindre le démon :
+
+   .. code-block:: nginx
+
+      location /v1/ {
+          auth_basic           "blunderDB";
+          auth_basic_user_file /etc/nginx/blunderdb.htpasswd;
+
+          if ($tenant_id = "") { return 403; }
+
+          proxy_set_header   X-Tenant-ID "";
+          proxy_set_header   X-Tenant-ID $tenant_id;
+          proxy_pass         http://127.0.0.1:8080;
+      }
+
+   Un tenant par membre suppose le backend PostgreSQL : sur SQLite, comme au
+   point 1 de ce tutoriel, le démon ne répond que pour ``X-Tenant-ID: 1`` et
+   rejette toute autre valeur. Le dépôt fournit ce schéma complet dans
+   ``deploy/nginx-tenant-proxy.conf``, et son équivalent Caddy dans
+   ``deploy/Caddyfile``.
 
 Voir :ref:`headless` pour la surface complète (routes, backend PostgreSQL
 multi-tenant avec Row-Level Security, migration depuis SQLite) et l'image
@@ -261,8 +323,9 @@ Créer une nouvelle base de données
 ----------------------------------
 
 Pour créer une nouvelle base de données, cliquer dans la barre d'outils sur le
-bouton "Nouvelle base de données". Choisir un chemin où enregistrer la base de
-données, ainsi qu'un nom et cliquer sur "Save".
+bouton *Nouvelle base de données*. Choisir un chemin où enregistrer la base
+de données, ainsi qu'un nom, et valider l'enregistrement dans la fenêtre du
+système.
 
 .. note::
    L'extension des bases de données blunderDB est *.db*.
@@ -275,8 +338,9 @@ Ouvrir une base de donnée existante
 -----------------------------------
 
 Pour charger une base de données existante, cliquer dans la barre d'outils sur
-le bouton "Ouvrir une base de données". Choisir le chemin où se trouve la base
-de données, choisir le fichier *.db* et cliquer sur "Open".
+le bouton *Ouvrir une base de données*. Choisir le chemin où se trouve la
+base de données, choisir le fichier *.db* et valider l'ouverture dans la
+fenêtre du système.
 
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
@@ -359,7 +423,7 @@ Ajouter une position à la base de données
 Après l'édition de la position, le panneau de recherche est ouvert.
 
 Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou appuyer
-dans la barre d'outils sur le bouton "Save Position".
+dans la barre d'outils sur le bouton *Enregistrer la position*.
 
 .. tip:: Ouvrir la ligne de commande et exécuter: ``w``
 
@@ -373,12 +437,12 @@ Supprimer une position
 ----------------------
 
 Pour supprimer la position courante de la base de données, faire *Del* ou
-clicker dans la barre d'outils sur le bouton "Delete Position"
+cliquer dans la barre d'outils sur le bouton *Supprimer la position*.
 
 .. tip:: En ligne de commande, exécuter ``d``.
 
-.. caution:: La suppression de la position est définitive et ne nécessite
-   aucune confirmation de la part de l'utilisateur.
+.. caution:: La suppression de la position est définitive ; une confirmation
+   est demandée avant.
 
 Import une position depuis XG
 -----------------------------
@@ -406,7 +470,8 @@ blunderDB peut importer des matchs depuis différentes sources.
 
 **Pour importer un ou plusieurs fichiers de match:**
 
-#. Appuyer sur *CTRL-I* ou cliquer sur le bouton "Import" dans la barre d'outils.
+#. Appuyer sur *CTRL-I* ou cliquer sur le bouton *Importer une
+   position ou un match* dans la barre d'outils.
 
 #. Sélectionner un ou plusieurs fichiers à importer.
 
@@ -428,7 +493,7 @@ Importer un dossier de matchs
 Pour importer récursivement tous les fichiers de matchs contenus dans un
 dossier et ses sous-dossiers:
 
-#. Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la
+#. Appuyer sur *CTRL-MAJ-F* ou cliquer sur le bouton correspondant dans la
    barre d'outils.
 
 #. Sélectionner le dossier contenant les fichiers de matchs.
@@ -541,7 +606,8 @@ Pour accéder au panneau des collections, appuyer sur *CTRL-B*.
 
 #. Ouvrir le panneau des collections (*CTRL-B*).
 
-#. Saisir le nom de la nouvelle collection et cliquer sur "Add".
+#. Saisir le nom de la nouvelle collection dans le champ *Nouvelle
+   collection…* en bas du panneau, puis valider avec *ENTREE*.
 
 **Ajouter des positions à une collection:**
 
@@ -568,7 +634,8 @@ Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
 
 #. Ouvrir le panneau des tournois (*CTRL-Y*).
 
-#. Cliquer sur "Add" et saisir le nom du tournoi.
+#. Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider
+   avec *ENTREE*.
 
 **Assigner un match à un tournoi:**
 
@@ -592,7 +659,8 @@ Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coû
 ------------------------------------
 
 Le panneau Eval évalue n'importe quelle position — pas seulement une course.
-Sur une position de bearoff pur, il calcule l'EPC (Effective Pip Count) et
+Sur une position de bearoff pur, il calcule l'EPC (Effective Pip Count, voir
+le :ref:`glossaire`) et
 les autres statistiques de bearoff ; sur toute autre position, l'évaluateur
 embarqué gammonNet fournit les coups candidats ou la décision de videau,
 hors ligne, sans XG ni GNUbg.
@@ -610,7 +678,7 @@ hors ligne, sans XG ni GNUbg.
 
 #. Pour évaluer la position déjà affichée (une position de la bibliothèque,
    ou celle d'un match en cours de revue) plutôt qu'un plateau vierge,
-   clic droit sur le plateau puis "Evaluate this position" — la position
+   clic droit sur le plateau puis *Évaluer cette position* — la position
    affichée est envoyée telle quelle dans le panneau Eval.
 
 #. Le plateau entier s'édite au clic ou au clavier : pions, dés, score,
@@ -692,12 +760,12 @@ Pour rechercher des types de positions,
   position du cube et le score.
 
 Le panneau de recherche propose deux structures de pions, sélectionnables par
-les onglets *At least* et *Except* situés en haut du panneau :
+les onglets *Au moins* et *Sauf* situés en haut du panneau :
 
-* *At least* (par défaut) : blunderDB filtre les positions ayant *a minima* la
+* *Au moins* (par défaut) : blunderDB filtre les positions ayant *a minima* la
   structure de pions saisie ;
 
-* *Except* : blunderDB exclut les positions contenant l'un des pions saisis. Le
+* *Sauf* : blunderDB exclut les positions contenant l'un des pions saisis. Le
   plateau est bordé de rouge lors de l'édition de cette structure. Une position
   est rejetée si elle contient *au moins un* des éléments dessinés (par exemple,
   dessiner un pion sur les points 1, 3 et 5 ne conserve que les positions n'ayant
@@ -707,8 +775,8 @@ les onglets *At least* et *Except* situés en haut du panneau :
   point le marquent comme devant être vide (cellule rouge hachurée, aucun pion
   quelle que soit la couleur) ; un simple clic sur ce point le débloque.
 
-Lorsqu'un point appartient aux deux structures, le critère *Except* l'emporte
-s'il contredit le critère *At least*.
+Lorsqu'un point appartient aux deux structures, le critère *Sauf* l'emporte
+s'il contredit le critère *Au moins*.
 
 Méthode 1 (simple):
 
@@ -716,7 +784,7 @@ Méthode 1 (simple):
 
 * Ajouter et paramétrer les filtres de recherche
 
-* Valider en cliquant sur "Search".
+* Valider en cliquant sur *Rechercher*.
 
 Méthode 2 (avancée):
 

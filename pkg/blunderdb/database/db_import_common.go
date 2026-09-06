@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/gnubgparser"
@@ -140,8 +141,9 @@ func mergeCheckerMoves(existing, incoming []CheckerMove) []CheckerMove {
 	for _, m := range incoming {
 		if existingMove, exists := moveMap[m.Move]; exists {
 			// If the incoming move has the same depth or higher quality analysis, use it
-			// Otherwise keep the existing one
-			if m.AnalysisDepth >= existingMove.AnalysisDepth {
+			// Otherwise keep the existing one. The labels are free text ("2-ply",
+			// "XG Roller++"): compare their rank, never the strings.
+			if domain.AnalysisDepthRank(m.AnalysisDepth) >= domain.AnalysisDepthRank(existingMove.AnalysisDepth) {
 				moveMap[m.Move] = m
 			}
 		} else {

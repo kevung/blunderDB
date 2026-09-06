@@ -39,10 +39,10 @@
         // left | center — the box's text alignment, inherited by title and footer.
         align = 'left',
         // Extra keys of the modal, called for every key Escape did not consume.
-        onkeydown,
-        title,
+        onkeydown = undefined,
+        title = undefined,
         children,
-        footer
+        footer = undefined
     } = $props();
 
     const titleId = $props.id();

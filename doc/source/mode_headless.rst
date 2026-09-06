@@ -46,13 +46,23 @@ depuis plusieurs clients.
 
 .. code-block:: bash
 
-   # Servir une base SQLite locale sur le port 8080
-   blunderdb serve --db ma_base.db --addr :8080
+   # sqlite
+   blunderdb serve --db database.db --addr 127.0.0.1:8080
 
-   # Servir un backend PostgreSQL
+   # postgres
    blunderdb serve --backend postgres \
        --dsn "postgres://user:pass@host:5432/blunderdb?sslmode=disable" \
-       --addr :8080
+       --addr 127.0.0.1:8080
+
+.. note::
+
+   ``sslmode=disable`` ne convient qu'à un réseau privé de confiance — une base
+   dans un conteneur voisin, sur un réseau qui n'a de route ni vers l'hôte ni
+   vers l'Internet. Pour une base distante, ``sslmode=require`` chiffre la
+   liaison et ``verify-full`` vérifie en plus le certificat du serveur et son
+   nom d'hôte. Les autres chaînes de connexion de cette page portent
+   ``sslmode=disable`` pour la même raison : elles décrivent toutes un réseau
+   privé.
 
 .. warning::
 
@@ -142,6 +152,11 @@ d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
+Le démon n'a **pas** d'option de répertoire de données : il écrit ses tables de
+bearoff dans ``$XDG_DATA_HOME/blunderdb``, ou à défaut
+``~/.local/share/blunderdb``. C'est donc ``XDG_DATA_HOME`` qui les déplace —
+voir :ref:`headless_bearoff`.
+
 La table de seaux du limiteur de débit porte elle-même un plafond dur
 (10 000 tenants distincts) : au-delà, chaque nouveau tenant évince le seau le
 moins récemment utilisé plutôt que de laisser la table croître sans limite —
@@ -183,7 +198,7 @@ une unité systemd :
 
 .. code-block:: bash
 
-   blunderdb healthcheck --addr 127.0.0.1:8080 && echo "démon disponible"
+   blunderdb healthcheck --addr 127.0.0.1:8080 && echo ready
 
 La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exemple
 ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent les
@@ -200,7 +215,9 @@ Les bases de bearoff
 
 Le démon calcule ses deux tables par défaut au démarrage, en arrière-plan
 (TS-06-06 pour le verdict de videau, OS-06 pour l'EPC) : environ six secondes
-d'un cœur, une fois, dans le dossier de données. Rien n'est téléchargé et rien
+d'un cœur, une fois, dans son répertoire de données —
+``$XDG_DATA_HOME/blunderdb``, ou à défaut ``~/.local/share/blunderdb``. Rien
+n'est téléchargé et rien
 n'est embarqué dans le binaire (`ADR-0027 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md>`__).
 Si ce dossier est en lecture seule, les tables sont tenues en mémoire pour la
 durée du processus : le service démarre, il paie simplement le calcul à chaque
@@ -212,14 +229,20 @@ prend des minutes, ce n'est pas quelque chose qu'un service décide seul. C'est
 
 .. code-block:: bash
 
-   # dans le volume monté, une fois
-   blunderdb bearoff generate --ts 6x11 --data-dir /srv/bearoff
+   # generate
+   blunderdb bearoff generate --ts 6x11 --data-dir /srv/data/blunderdb
 
-   # puis le démon le trouve tout seul, ou on le désigne explicitement
-   blunderdb serve --data-dir /srv/bearoff
-   blunderdb serve --bearoff-ts /srv/bearoff/gnubg_ts6x11.bd
+   # serve
+   XDG_DATA_HOME=/srv/data blunderdb serve --db database.db
+   blunderdb serve --db database.db \
+       --bearoff-ts /srv/data/blunderdb/gnubg_ts6x11.bd
 
-``blunderdb bearoff list --data-dir /srv/bearoff`` dit ce que le volume
+Le premier lancement laisse le démon trouver la table tout seul dans son
+répertoire de données ; le second la désigne par son chemin, où qu'elle soit.
+``--data-dir`` est une option des sous-commandes ``bearoff``, jamais de
+``serve``.
+
+``blunderdb bearoff list --data-dir /srv/data/blunderdb`` dit ce que le volume
 contient et ce que chaque domaine coûterait ; ``blunderdb bearoff verify`` sort
 en erreur sur une table corrompue, ce qui en fait une sonde de démarrage
 utilisable telle quelle. Voir :ref:`cli` pour le détail.
@@ -240,8 +263,19 @@ préfixe à part, ``POST /ops/<famille>.<méthode>`` :
 
 Le démon n'authentifie personne (voir plus bas) : une route joignable par un
 tenant est une route que **tout** tenant peut appeler. Le préfixe existe pour
-que le proxy puisse refuser les deux d'une seule règle. **Ne jamais exposer
-``/ops/`` par le proxy public.**
+que le proxy puisse refuser les deux d'une seule règle. **Ne jamais exposer**
+``/ops/`` **par le proxy public.** Sous nginx, la règle tient en une ligne du
+bloc ``server`` ; sous Caddy, en deux lignes du site :
+
+.. code-block:: nginx
+
+   location /ops/    { return 403; }
+   location /metrics { return 403; }
+
+.. code-block:: text
+
+   @closed path /ops/* /metrics
+   respond @closed 403
 
 L'option ``--ops-addr <hôte:port>`` va plus loin : les deux routes quittent
 alors l'adresse ``--addr`` et ne sont plus servies que sur ce second
@@ -251,6 +285,15 @@ restent sur l'écouteur principal et c'est au proxy de les bloquer.
 Ces routes exigent l'en-tête ``X-Tenant-ID`` comme toutes les autres — une
 purge nomme le tenant qu'elle détruit, elle en a besoin plus que quiconque.
 Seules les sondes (``/healthz``, ``/readyz``) et ``/metrics`` s'en passent.
+
+C'est pourquoi la règle de refus ci-dessus couvre aussi ``/metrics`` : n'exigeant
+aucun tenant, il est lisible par quiconque atteint le démon, et il publie la
+taille de la base et le travail en cours, tous tenants confondus. Il se consulte
+depuis la machine du démon, ou par un chemin que le proxy réserve à
+l'exploitation. Le troisième point à ne jamais exposer n'est pas une route mais
+un écouteur : celui de ``--pprof-addr``, qui n'a aucune notion de tenant et
+livre un profil du processus entier. Il se lie à une interface
+d'administration, jamais publié par le proxy.
 
 Ce qui n'est **pas** passé sous ``/ops/`` : ``/v1/gammonnet.sweepStale``. Le
 rattrapage est coûteux mais il est cadré au tenant appelant ; ce sont la
@@ -274,7 +317,7 @@ liste qui acceptent un ``limit`` refusent au-delà de 1000 lignes par page
 
 Les familles listantes acceptent toutes ``limit`` et ``offset`` :
 ``positions.list``, ``positions.listIds``, ``matches.list``, ``search.find``,
-``anki.reviewLog``, et depuis la 0.37.0 ``comments.listAll``,
+``anki.reviewLog``, ``comments.listAll``,
 ``tournaments.list`` et ``collections.positions``. Les deux valent zéro par
 défaut, ce qui veut dire ce que cela a toujours voulu dire : tout. **Il n'y a
 pas de plafond implicite** — un flux n'est pas retenu en mémoire, donc une
@@ -489,7 +532,7 @@ déploiement qui a réellement plusieurs tenants a besoin du backend PostgreSQL.
 Sauvegarde et restauration
 ---------------------------
 
-Trois gestes, selon ce qu'on veut récupérer.
+Quatre gestes, selon ce qu'on veut récupérer.
 
 **Tout, sous PostgreSQL** — ``pg_dump`` est l'outil, et blunderDB n'a rien à
 ajouter :
@@ -499,6 +542,24 @@ ajouter :
    pg_dump --format=custom --file=blunderdb.dump "postgres://…"
    pg_restore --dbname="postgres://…" blunderdb.dump
 
+**Tout, sous SQLite en conteneur** — le fichier est ouvert en mode WAL (le
+démon encode ``journal_mode(WAL)`` dans sa chaîne de connexion, pour toutes les
+connexions du pool) : à côté de ``blunderdb.db`` vivent un ``-wal`` et un
+``-shm``, et les écritures les plus récentes sont dans le ``-wal``. Copier le
+seul ``.db`` d'un démon en marche donne donc un fichier incomplet, sans que
+rien ne le signale. Deux façons sûres :
+
+* **arrêter le démon, puis copier le volume entier** — à l'arrêt les trois
+  fichiers sont cohérents, et c'est le volume, pas le ``.db`` seul, qui est
+  l'unité à sauvegarder ;
+* **ne pas copier le fichier du tout** : ``/v1/exports.sqlite`` (ci-dessous)
+  écrit un ``.db`` complet pendant que le démon tourne, et c'est le seul geste
+  qui ne demande aucune interruption.
+
+``/ops/maintenance.vacuum`` replie bien le WAL dans le fichier principal avant
+de le réécrire, mais il ne gèle pas la base : l'écriture qui suit repart dans le
+WAL. C'est une commande de compactage, pas une méthode de sauvegarde.
+
 **Un tenant seul** — ``/v1/exports.sqlite`` écrit la base d'un tenant dans un
 fichier ``.db`` ordinaire, celui que l'application de bureau ouvre :
 
@@ -506,6 +567,17 @@ fichier ``.db`` ordinaire, celui que l'application de bureau ouvre :
 
    curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
      -H "X-Tenant-ID: 42" -o tenant-42.db
+
+Cette commande s'exécute **sur la machine du démon** : elle vise l'écouteur
+local, court-circuite le proxy, et pose donc elle-même l'en-tête du tenant.
+Depuis l'extérieur, c'est le proxy qu'on interroge, et le tenant est celui du
+compte authentifié — l'en-tête n'est pas à donner, le proxy efface celui du
+client avant d'injecter le sien :
+
+.. code-block:: bash
+
+   curl -u alice:… -X POST \
+     https://blunderdb.example.com/v1/exports.sqlite -o tenant-alice.db
 
 **Remettre ce fichier en place** — ``migrate`` le recopie sous le tenant voulu :
 
@@ -523,6 +595,35 @@ les historiques de recherche et de commandes, et l'état de session. Ce sont des
 données d'usage de l'application de bureau ; les positions auxquelles elles
 renvoient, elles, ont bien été déplacées.
 
+.. _headless_poste_serveur:
+
+Le poste de travail et le serveur
+----------------------------------
+
+L'application de bureau ouvre des **fichiers** ``.db``, pas des URL : elle ne se
+connecte à aucun démon ``serve``, et il n'existe nulle part de champ où saisir
+une adresse. Le serveur et le poste de travail échangent des fichiers, en deux
+gestes symétriques :
+
+* **du serveur vers le poste** — ``POST /v1/exports.sqlite`` écrit tout le
+  tenant courant dans un ``.db`` que l'application de bureau ouvre tel quel
+  (voir :ref:`headless_sauvegarde`) ;
+* **du poste vers le serveur** — ``blunderdb migrate`` recopie un ``.db`` sous
+  le tenant voulu (voir :ref:`headless_migrate`).
+
+Il n'existe **aucune lecture inter-tenant**. Le cloisonnement est total : rien
+de ce qu'un tenant stocke n'est visible à un autre, par aucune route, et aucun
+appel ne prend un tenant en paramètre — chaque requête ne connaît que celui que
+le proxy lui a posé. Un entraîneur qui veut voir les matchs de ses élèves a donc
+deux chemins, tous deux explicites :
+
+* lui ouvrir dans le proxy un compte supplémentaire, associé au tenant de
+  l'élève : c'est la table de correspondance du proxy, jamais le démon, qui
+  décide du tenant qu'une session voit ;
+* lui demander un export — le ``.db`` produit par ``exports.sqlite`` ou par la
+  fenêtre d'export de l'application de bureau — et l'ouvrir sur son propre
+  poste.
+
 Déploiement avec Docker
 -----------------------
 
@@ -533,13 +634,16 @@ image *distroless*.
 
 .. code-block:: bash
 
-   # Construire l'image (depuis la racine du dépôt)
+   # build
    docker build -f Dockerfile.serve -t blunderdb-serve .
 
-   # Lancer le démon (le backend par défaut de l'image est postgres)
-   docker run --rm -p 8080:8080 \
-       -e BLUNDERDB_DSN="postgres://user:pass@hôte:5432/blunderdb?sslmode=disable" \
+   # run
+   docker run --rm -p 127.0.0.1:8080:8080 \
+       -e BLUNDERDB_DSN="postgres://user:pass@host:5432/blunderdb?sslmode=disable" \
        blunderdb-serve
+
+La construction se lance depuis la racine du dépôt, et le backend par défaut de
+l'image est ``postgres``.
 
 L'image écoute sur le port 8080 et se configure par variables d'environnement
 (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
@@ -558,24 +662,37 @@ Image publiée
 Il n'est pas nécessaire de construire l'image soi-même : chaque version
 publiée de blunderDB pousse la sienne sur le registre GitHub (GHCR), sous le
 nom ``ghcr.io/kevung/blunderdb-serve``. Deux étiquettes sont disponibles :
-le numéro de version (par exemple ``0.34.0``), figé à jamais, et ``latest``,
-qui suit la dernière version publiée. L'image est fournie pour ``linux/amd64``
-et ``linux/arm64`` ; Docker choisit l'architecture de l'hôte.
+le numéro de la version, figé à jamais sur cette image, et ``latest``, qui suit
+la dernière version publiée. Toute la documentation les note
+``ghcr.io/kevung/blunderdb-serve:<version>`` : c'est le numéro d'une version
+publiée qui prend la place de ``<version>``, et c'est cette forme, jamais
+``latest``, qu'un déploiement de production épingle. L'image est fournie pour
+``linux/amd64`` et ``linux/arm64`` ; Docker choisit l'architecture de l'hôte.
 
 .. code-block:: bash
 
-   # Récupérer l'image d'une version donnée (recommandé en production)
-   docker pull ghcr.io/kevung/blunderdb-serve:0.34.0
+   # pull
+   docker pull ghcr.io/kevung/blunderdb-serve:<version>
 
-   # Lancer le démon avec un backend PostgreSQL
+   # postgres
    docker run --rm -p 127.0.0.1:8080:8080 \
-       -e BLUNDERDB_DSN="postgres://user:pass@hôte:5432/blunderdb?sslmode=disable" \
-       ghcr.io/kevung/blunderdb-serve:0.34.0
+       -e BLUNDERDB_DSN="postgres://user:pass@host:5432/blunderdb?sslmode=disable" \
+       ghcr.io/kevung/blunderdb-serve:<version>
 
-   # Ou avec une base SQLite persistée dans un volume
-   docker run --rm -p 127.0.0.1:8080:8080 -v blunderdb-data:/data \
+   # sqlite
+   docker run --rm -p 127.0.0.1:8080:8080 \
+       -v blunderdb-data:/data \
        -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
-       ghcr.io/kevung/blunderdb-serve:0.34.0
+       ghcr.io/kevung/blunderdb-serve:<version>
+
+``/data`` est le point de montage que l'image prépare, avec les droits de son
+utilisateur non privilégié, et son ``XDG_DATA_HOME`` : le volume qu'on y monte
+ne sert pas qu'à la base, les tables de bearoff y sont calculées une fois,
+dans ``/data/blunderdb``, et retrouvées aux démarrages suivants. Sans volume,
+elles sont recalculées à chaque démarrage du conteneur — quelques secondes —
+et le démon le dit au démarrage s'il ne peut pas les écrire (*could not
+prepare the bearoff tables; the exact regime will be unavailable*), auquel cas
+il sert normalement, avec le seul régime estimé sur les positions de sortie.
 
 L'image porte les étiquettes OCI usuelles (``org.opencontainers.image.source``,
 ``.version``, ``.revision``, ``.licenses``) : ``docker inspect`` dit de quel
@@ -590,7 +707,9 @@ construire localement ou tirer l'image publiée donne le même binaire.
    ``X-Tenant-ID`` tel qu'il le reçoit. Il doit être placé derrière un
    reverse-proxy chargé de l'authentification, qui fixe cet en-tête lui-même,
    et ne jamais être exposé directement sur l'Internet public. Les exemples
-   ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison.
+   ci-dessus publient le port sur ``127.0.0.1`` seulement pour cette raison,
+   et ``--addr`` se lie de même à ``127.0.0.1`` : le proxy est sur la même
+   machine.
 
 .. _headless_proxy_deployment:
 
@@ -603,56 +722,123 @@ lui seul authentifie l'appelant, lui seul a le droit de poser l'en-tête
 ``X-Tenant-ID``, et il doit **retirer** systématiquement toute valeur envoyée
 par le client avant d'y injecter le tenant authentifié — sans quoi n'importe
 qui peut se faire passer pour n'importe quel tenant en le nommant lui-même.
-Le dépôt fournit un exemple complet sous ``deploy/`` :
+Le modèle de menace tient en une phrase : le démon suppose un réseau interne
+de confiance, et quiconque le joint directement est, pour lui, le tenant
+qu'il prétend être.
+Le dépôt fournit un exemple complet, prêt à lancer, dans le répertoire
+`deploy/ <https://github.com/kevung/blunderDB/tree/main/deploy>`__. Il vit dans
+le dépôt git, pas dans l'image conteneur : il faut donc **cloner le dépôt**, ou
+télécharger les deux fichiers reproduits ci-dessous ainsi que
+`deploy/.env.example <https://github.com/kevung/blunderDB/blob/main/deploy/.env.example>`__
+dans un même répertoire.
 
-* ``deploy/docker-compose.yml`` — Caddy (authentification HTTP Basic de
-  démonstration) devant ``blunderdb-serve`` et PostgreSQL (Row-Level Security
-  activée) ; seul Caddy publie un port, ``blunderdb-serve`` et PostgreSQL
-  vivent sur un réseau Docker interne (``internal: true``) qui n'a de route
-  ni vers l'hôte ni vers l'Internet ;
-* ``deploy/Caddyfile`` — la configuration de Caddy : authentifie, associe le
-  compte authentifié à l'entier du tenant (``map``), puis l'injecte dans
-  ``X-Tenant-ID`` après avoir explicitement effacé toute valeur reçue du
-  client (garde ``header_up X-Tenant-ID ""`` suivie de l'injection) ;
-* ``deploy/nginx-tenant-proxy.conf`` — le même schéma en extrait nginx
-  (``proxy_set_header X-Tenant-ID ""`` puis ``proxy_set_header X-Tenant-ID
-  $tenant_id``), pour qui a déjà un nginx en place ;
-* ``deploy/README.md`` — le modèle de menace en trois phrases et ce qu'il ne
-  faut jamais faire (exposer le démon nu).
+Le fichier Compose met Caddy — authentification HTTP Basic de démonstration —
+devant ``blunderdb-serve`` et PostgreSQL, Row-Level Security activée. Seul Caddy
+publie un port : les deux autres services vivent sur un réseau Docker déclaré
+``internal: true``, qui n'a de route ni vers l'hôte ni vers l'Internet, quels
+que soient les ``ports:`` qu'une modification ultérieure leur ajouterait.
+
+.. literalinclude:: ../../deploy/docker-compose.yml
+   :language: yaml
+   :caption: deploy/docker-compose.yml
+
+Le ``Caddyfile`` authentifie, associe le compte authentifié à l'entier du tenant
+(``map``), puis l'injecte dans ``X-Tenant-ID`` **après** avoir explicitement
+effacé toute valeur reçue du client : la garde ``header_up X-Tenant-ID ""``
+précède l'injection, de sorte qu'un en-tête envoyé par le client ne peut
+atteindre le démon quelles que soient les modifications ultérieures du fichier.
+
+.. literalinclude:: ../../deploy/Caddyfile
+   :language: text
+   :caption: deploy/Caddyfile
+
+Deux autres fichiers complètent le répertoire :
+`deploy/nginx-tenant-proxy.conf <https://github.com/kevung/blunderDB/blob/main/deploy/nginx-tenant-proxy.conf>`__
+reprend le même schéma en extrait nginx (``proxy_set_header X-Tenant-ID ""``
+puis ``proxy_set_header X-Tenant-ID $tenant_id``, avec le bloc
+``map $remote_user $tenant_id``), pour qui a déjà un nginx en place ;
+`deploy/README.md <https://github.com/kevung/blunderDB/blob/main/deploy/README.md>`__
+énonce le modèle de menace et ce qu'il ne faut jamais faire.
 
 L'authentification HTTP Basic du ``Caddyfile`` est une démonstration, pas une
 recommandation de production : elle se remplace par ``forward_auth`` vers un
 fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
-transmet l'identité au même endroit du fichier.
+transmet l'identité au même endroit du fichier. Les deux mots de passe et les
+deux comptes de la table de correspondance sont à remplacer de même.
 
 **Scénario complet, de zéro à un démon qui répond :**
 
 .. code-block:: bash
 
-   cd deploy
-   cp .env.example .env    # puis y définir POSTGRES_PASSWORD
+   git clone https://github.com/kevung/blunderDB.git
+   cd blunderDB/deploy
+   cp .env.example .env    # POSTGRES_PASSWORD
    docker compose up -d --build
 
-   # Sans authentification : rejeté avant même d'atteindre le démon.
+   # 401
    curl -i http://localhost:8080/v1/metadata.counts -d '{}'
-   # HTTP/1.1 401 Unauthorized
 
-   # Authentifié en tant qu'« alice », qui est mappée au tenant 1 : le démon
-   # répond, quel que soit l'en-tête que le client tente d'envoyer lui-même.
+   # 200
    curl -u alice:demo-password http://localhost:8080/v1/metadata.counts -d '{}'
    curl -u alice:demo-password -H "X-Tenant-ID: 999" \
         http://localhost:8080/v1/metadata.counts -d '{}'
-   # {"positions":0,"analyses":0,"matches":0,...} dans les deux cas — le journal
-   # du démon (docker compose logs blunderdb-serve) montre tenant=1 pour les
-   # deux requêtes : la valeur 999 envoyée par le client n'a jamais survécu à
-   # la garde du Caddyfile.
 
+   docker compose logs blunderdb-serve
    docker compose down -v
 
-Ce scénario a été rejoué tel quel : ``blunderdb-serve`` et PostgreSQL
-démarrent, Caddy authentifie et route, et le journal du démon confirme que
-seul l'entier injecté par le proxy — jamais celui du client — atteint la
-couche applicative.
+La première requête est rejetée par Caddy, avant même d'atteindre le démon. Les
+deux suivantes sont authentifiées comme « alice », que la table de
+correspondance associe au tenant 1 : elles renvoient le même corps
+(``{"positions":0,"analyses":0,"matches":0,…}``) et le journal du démon porte
+``tenant=1`` pour l'une comme pour l'autre — la valeur 999 envoyée par le client
+n'a pas survécu à la garde du ``Caddyfile``. Ce scénario a été rejoué tel quel.
+
+Pour tirer l'image publiée plutôt que de la construire, remplacer dans
+``docker-compose.yml`` les trois lignes ``build:`` du service
+``blunderdb-serve`` par une ligne ``image:``, puis lancer
+``docker compose up -d`` sans ``--build`` :
+
+.. code-block:: yaml
+
+   blunderdb-serve:
+     image: ghcr.io/kevung/blunderdb-serve:<version>
+     restart: unless-stopped
+
+Le fichier Compose publie le port de Caddy sur toutes les interfaces
+(``8080:80``) : c'est ce qu'on attend d'un proxy, qui est là pour être joint. Ce
+qui ne doit jamais être publié, c'est le démon — et il ne l'est pas, il n'a
+aucun ``ports:``.
+
+.. _headless_mise_a_jour:
+
+Mettre à jour un déploiement
+-----------------------------
+
+Le schéma est migré automatiquement au démarrage, et cette migration est **à
+sens unique** : une base migrée vers un schéma récent n'est plus lisible par une
+version antérieure de blunderDB (voir :ref:`annexe_db_migration`). L'ordre des
+gestes compte donc.
+
+#. **Sauvegarder d'abord**, avant tout le reste : c'est la seule marche arrière
+   (voir :ref:`headless_sauvegarde`).
+#. **Tirer l'étiquette de la version voulue**, jamais ``latest`` en production.
+   ``latest`` suit la dernière version publiée : le déploiement qui l'épingle
+   change de version au gré des redémarrages, sans qu'on l'ait décidé ni que la
+   sauvegarde de l'étape 1 soit forcément récente.
+#. **Redémarrer le démon** sur la nouvelle image. Il migre le schéma avant de
+   servir la moindre requête ; si la migration échoue, il s'arrête sur
+   l'erreur plutôt que de servir une base à moitié migrée.
+#. **Vérifier la sonde de disponibilité.** ``GET /readyz`` répond ``200`` et
+   ``{"status":"ready","version":"…"}`` quand le stockage répond et que son
+   schéma est celui du binaire ; ``503`` et ``{"status":"down"}`` quand la base
+   est injoignable ; ``503`` et
+   ``{"status":"version_mismatch","version":"…","expected":"…"}`` quand les deux
+   schémas diffèrent — la réponse nomme celui de la base et celui que le binaire
+   attend. ``blunderdb healthcheck`` rend le même verdict en code de retour.
+
+Un ``version_mismatch`` qui persiste après le redémarrage, c'est le retour en
+arrière : un binaire plus ancien devant une base déjà migrée. Il n'existe pas de
+migration descendante ; c'est la sauvegarde de l'étape 1 qu'il faut restaurer.
 
 .. _headless_postgres:
 
@@ -670,23 +856,67 @@ positif comme ``1`` ou ``42``), ce qui permet à plusieurs utilisateurs de
 partager la même instance sans voir les données des autres. Un identifiant qui
 n'est pas un tel entier — un nom comme ``alice`` ou ``default``, ``0``, ``007``
 — est refusé avec ``400 invalid`` : c'est le reverse-proxy qui associe un
-compte à son entier, le démon ne devine jamais. L'option ``--rls`` active en complément la **Row-Level
-Security** de PostgreSQL : des politiques d'isolation par tenant sont
-installées et ``app.tenant_id`` est fixé par connexion. C'est une défense en
-profondeur facultative, désactivée par défaut.
+compte à son entier, le démon ne devine jamais.
 
-Quand un tenant est décommissionné, ``POST /v1/tenant.purge`` supprime
+Row-Level Security
+------------------
+
+L'option ``--rls`` active en complément la **Row-Level Security** de
+PostgreSQL. À chaque démarrage, le démon installe sur chaque table portant un
+``tenant_id`` une politique ``tenant_isolation`` qui ne laisse passer que les
+lignes du tenant nommé par le paramètre de session
+``current_setting('app.tenant_id')``, et la force jusqu'au propriétaire de la
+table (``FORCE ROW LEVEL SECURITY``). Ce paramètre est posé sur la connexion à
+sa sortie du pool et remis à zéro à son retour ; une connexion sans tenant ne
+voit aucune ligne et n'en insère aucune. C'est une défense en profondeur
+facultative, désactivée par défaut : le filtrage par tenant du code applicatif
+reste en place dans les deux cas.
+
+* **Le rôle de connexion doit être ordinaire** : ni superutilisateur, ni
+  ``BYPASSRLS``. PostgreSQL laisse ces deux-là traverser toutes les politiques
+  sans un mot, et l'isolation redevient celle du code applicatif seul. Ce même
+  rôle doit en revanche posséder les tables, puisque c'est lui qui exécute les
+  ``ALTER TABLE`` et les ``CREATE POLICY``.
+* **Sur une base déjà peuplée, il n'y a rien à migrer** : la pose des politiques
+  est du DDL idempotent, rejoué à chaque démarrage après la migration de schéma.
+  Aucune donnée n'est déplacée, aucune ligne réécrite ; activer ou retirer
+  ``--rls`` n'est qu'un redémarrage.
+* **Le coût est mesuré** : sur la lecture d'une position, 101,8 µs sans, 177,0 µs
+  avec, soit **+73,8 %** — même conteneur, mêmes lignes, deux pools ne
+  différant que par ce drapeau. Il se paie sur chaque emprunt de connexion au
+  pool (pose puis remise à zéro du paramètre) et sur le prédicat que chaque
+  requête traverse en plus, jamais sur le volume de données.
+
+Ouvrir et fermer un tenant
+--------------------------
+
+Il n'y a **rien à créer** côté serveur : un tenant n'est pas un enregistrement,
+c'est l'entier que portent ses lignes. La base n'a pas de table des tenants et
+le démon n'en tient aucune liste — ouvrir un compte, c'est ajouter une entrée à
+la table de correspondance du proxy, et le premier écrit du membre fait exister
+son tenant.
+
+Un tenant vide répond comme une base vide, sans erreur : ``metadata.counts``
+renvoie des zéros et les listes ne renvoient rien.
+
+Quand un tenant est décommissionné, ``POST /ops/tenant.purge`` supprime
 définitivement toutes ses données (positions, matchs, collections, historique,
 etc.) sur le tenant courant (celui porté par ``X-Tenant-ID``), **ainsi que son
 état de session** (dernière recherche, dernière position, onglets ouverts —
 les lignes de la table ``session_state`` portant ce tenant) : l'opération
 s'exécute dans une seule transaction, est idempotente (aucune erreur à purger
-un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant ni la
-ligne globale de version de schéma. Elle n'est disponible qu'avec le backend
-PostgreSQL — elle renvoie une erreur ``invalid`` sur un backend SQLite, qui n'a
-pas de notion de tenant.
+un tenant déjà vide ou à répéter l'appel) et n'affecte aucun autre tenant. Elle
+efface les lignes de ce tenant dans **toutes** les tables qui en portent un et
+ne laisse que ce qui n'appartient à personne : la table ``metadata``, dont la
+ligne globale de version de schéma, et le journal des migrations. Le tenant
+purgé redevient donc exactement un tenant vide, et son entier se réattribue.
+Elle n'est disponible qu'avec le backend PostgreSQL — elle renvoie une erreur
+``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant.
 
-Symétriquement, ``POST /v1/maintenance.vacuum`` compacte le fichier SQLite du
+Compactage et pool de connexions
+--------------------------------
+
+``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du
 daemon — le pendant du bouton « Compacter la base » de l'interface graphique
 et de la commande ``blunderdb vacuum`` (voir :ref:`cli`), avec la même garde
 d'espace disque — et renvoie les tailles avant et après (``sizeBefore``,
@@ -723,12 +953,12 @@ bibliothèque de bureau vers un déploiement serveur.
 .. code-block:: bash
 
    blunderdb migrate \
-       --from sqlite:///chemin/vers/base.db \
+       --from sqlite:///path/to/database.db \
        --to   "postgres://user:pass@host:5432/db?sslmode=disable" \
        --tenant-id 42
 
-   # Prévisualiser sans rien écrire
-   blunderdb migrate --from sqlite:///chemin/vers/base.db \
+   # --dry-run
+   blunderdb migrate --from sqlite:///path/to/database.db \
        --tenant-id 42 --dry-run
 
 La migration copie les **positions, leurs analyses et commentaires, les matchs
@@ -751,7 +981,7 @@ ne commence.
      - Signification
    * - ``--from <uri>``
      - –
-     - base SQLite source (``sqlite:///chemin`` ou un simple chemin)
+     - base SQLite source (``sqlite:///<chemin>`` ou un simple chemin)
    * - ``--to <dsn>``
      - –
      - DSN PostgreSQL de destination (``postgres://…``)
@@ -787,17 +1017,17 @@ les tests d'intégration.
 
 .. code-block:: bash
 
-   # Lister toutes les méthodes disponibles
+   # --list
    blunderdb call --list
 
-   # Lectures
-   blunderdb call metadata.counts --db ma_base.db
-   blunderdb call positions.list  --db ma_base.db --json '{"limit":10}'
-   blunderdb call matches.get     --db ma_base.db --json '{"id":1}'
+   # read
+   blunderdb call metadata.counts --db database.db
+   blunderdb call positions.list  --db database.db --json '{"limit":10}'
+   blunderdb call matches.get     --db database.db --json '{"id":1}'
 
-   # Écritures
-   blunderdb call positions.save  --db ma_base.db --json '{"position":{...}}'
-   blunderdb call matches.delete  --db ma_base.db --json '{"id":42}'
+   # write
+   blunderdb call positions.save  --db database.db --json '{"position":{...}}'
+   blunderdb call matches.delete  --db database.db --json '{"id":42}'
 
 **Options:**
 

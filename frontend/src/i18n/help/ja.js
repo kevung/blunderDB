@@ -50,7 +50,7 @@ export default {
     <li>間隔反復でポジションを学習する（Anki パネル）、</li>
     <li>トーナメントを管理する（トーナメントパネル）、</li>
     <li>パフォーマンス統計を表示する（統計パネル）、</li>
-    <li>ベアオフポジションの EPC 値を計算する（評価パネル）、</li>
+    <li>内蔵エンジンで任意のポジションを評価し、ベアオフポジションの EPC を計算する（Eval パネル）、</li>
     <li>保存した検索フィルターを閲覧する（フィルターライブラリパネル）、</li>
     <li>検索履歴を閲覧する（検索履歴パネル）。</li>
 </ul>
@@ -119,8 +119,8 @@ export default {
 </ul>
 <p>両プレイヤーが自陣にチェッカーを持つときは、比較セクションが EPC とピップカウントの差を表示します。</p>
 <p>
-    純粋なレースでは、さらに別のテーブルが両プレイヤーの勝率を示し、ポジションが両側データベースの範囲内にあるとき（内蔵はプレイヤーあたり 6 チェッカーまで、設定の Bearoff
-    タブからダウンロードできる拡張版は 11 まで）、正確な money equity
+    純粋なレースでは、さらに別のテーブルが両プレイヤーの勝率を示し、ポジションが両側データベースの範囲内にあるとき（初回起動時に計算されるプレイヤーあたり 6 チェッカーのテーブル、設定の Bearoff
+    タブから計算する 11 チェッカーの拡張テーブル）、正確な money equity
     と最善のキューブ判断も示します。その範囲外では勝率は推定値となり（誤差幅つきの「推定」バッジ）、判断は表示されません。手番のプレイヤーはプレイヤーのオフ／スコアの矩形をクリックして、キューブの位置は盤上のキューブをクリックして変更します。
 </p>
 <p>
@@ -152,7 +152,8 @@ export default {
 <p><strong>デッキの作成:</strong> <em>New Deck</em> をクリックして、コレクションまたは現在の検索結果からデッキを作成します。検索ベースのデッキは Anki タブがアクティブになると自動的に同期されます。</p>
 <p>
     <strong>復習:</strong> デッキを選択して <em>Study</em> をクリック（またはデッキをダブルクリック）すると、期限が来たカードの復習が始まります。各カードは対応するポジションを ボードに表示します。キー
-    <strong>1</strong>（Again）、<strong>2</strong>（Hard）、<strong>3</strong>（Good）、<strong>4</strong>（Easy）で記憶度を評価します。<strong>Esc</strong> を押すと中断して デッキ一覧に戻ります。
+    <strong>1</strong>（もう一度）、<strong>2</strong>（難しい）、<strong>3</strong>（普通）、<strong>4</strong>（簡単）で記憶度を評価します。<strong>Esc</strong> を押すと中断して
+    デッキ一覧に戻ります。
 </p>
 <p>
     <strong>セッションの制限：</strong> デッキ設定で、1 回のセッションの枚数を制限できます。上限に達するとその旨を伝えてセッションが終わり、自由練習は予定に影響を与えずに続けられます。<em>0</em> は 1
@@ -174,7 +175,12 @@ export default {
 <p><strong>デッキの管理:</strong> 操作ボタンでデッキの名前変更、同期、リセット、削除ができます。FSRS パラメーター（目標保持率、最大間隔、ファズ）はデッキごとに 設定（歯車アイコン）で構成できます。</p>
 
 <h3>トーナメント</h3>
-<p>トーナメントを使うとマッチをイベントごとにグループ化できます。<strong>Ctrl+Y</strong> でトーナメントパネルを開き、トーナメントを管理してマッチを割り当てます。</p>
+<p>
+    トーナメントを使うとマッチをイベントごとにグループ化できます。インポート時には、マッチはそのファイルが示すトーナメントに入り、必要であれば作成されます。すでに割り当て済みのマッチが移動されることはありません。<strong
+        >Ctrl+Y</strong
+    >
+    でトーナメントパネルを開き、トーナメントを管理してマッチを割り当てます。
+</p>
 
 <h3>統計</h3>
 <p>
@@ -711,6 +717,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>ヘルプパネル</h3>
+<table>
+<thead>
+<tr>
+<th>ショートカット</th>
+<th>アクション</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LEFT, h</td>
+<td>前のタブ。</td>
+</tr>
+<tr>
+<td>RIGHT, l</td>
+<td>次のタブ。</td>
+</tr>
+<tr>
+<td>UP, k</td>
+<td>上にスクロールする。</td>
+</tr>
+<tr>
+<td>DOWN, j</td>
+<td>下にスクロールする。</td>
+</tr>
+<tr>
+<td>SPACE</td>
+<td>次のページ。</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>内容の先頭へ。</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>内容の末尾へ。</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>ヘルプを閉じる。</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>コマンドラインはステータスバーにあり、 <em>スペース</em> キーを押すと開きます。コマンドを入力すると、候補のリストが自動的に表示されます。 <em>TAB</em> キー（または <em>Shift-TAB</em> ）は候補を順に巡回してコマンドを補完し、 <em>ESC</em> はリストを閉じます（2回目の <em>ESC</em> でコマンドラインが閉じます）。 <em>上</em> キーと <em>下</em> キーは引き続きコマンド履歴用に予約されています。</p>
@@ -761,7 +810,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブ判定）を開きます。</td>
+<td>Eval パネル（Effective Pip Count、勝率、ベアオフでのキューブの判定）を開きます。<code>epc</code> はこのパネルの旧名で、そのまま残されています。</td>
 </tr>
 <tr>
 <td>met</td>
@@ -900,365 +949,462 @@ export default {
 </tbody>
 </table>
 <h3>検索フィルタ</h3>
+<p>この表が検索文法の基準です。コマンドライン、フィルターライブラリ、そして <code>blunderdb search</code> の <code>--query</code> フラグは、いずれも同じトークンを読みます。<em>CLI 相当</em> の列は、同じことをする <code>search</code> のフラグが存在する場合にそれを示します（コマンドラインインターフェース（CLI）を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。</p>
+<p>5つのトークンは値を自分では持ちません。値は検索用の盤面から読み取ります。<code>cube</code> と <code>score</code> はそこに置かれたキューブとスコアを、<code>d</code> は決定の種類を、<code>D</code> と <code>D1</code> はダイスを、<code>x</code> は <em>除く</em> タブに描かれた構造を受け取ります。したがって出目をトークンに書くことは決してありません。<code>D65</code> は存在せず、数字を持つのは除外の形（<code>xD65</code>）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。</p>
+<p>エラーとエクイティは<strong>エクイティの千分の1</strong>単位で数えます——下の表でいう <em>ミリポイント</em> です。<code>E&gt;100</code> は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。</p>
+<p>完全な検索の例を二つ：</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — レースで、少なくとも 50 ミリポイントを失った手であり、eXtreme Gammon から来たコメントがあるもの。</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>クエリ</th>
 <th>動作</th>
+<th>CLI 相当</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>局面がキューブの配置を満たします。</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>局面がスコアを満たします。</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>局面が決定の種類（チェッカーまたはキューブ）を満たします。</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>局面がダイスの目を満たします（順序を問わず両方のダイス）。</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>局面が 1 つ目のダイスのみについてダイスの目を満たします（1 つ目のダイスの値が局面の 2 つのダイスのいずれかに現れる）。</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>局面が 6-5 の出目で<strong>プレイされていない</strong>状態です（順序は問いません）。値はトークン内に指定します。複数の出目を除外するために繰り返し使用できます（<code>xD65 xD54</code>）。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>局面が接触のない状態です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>局面が特定のゲーム段階にある：<code>opening</code>（序盤）、<code>middlegame</code>（中盤）、<code>race</code>（レース）、<code>bearoff</code>（ベアオフ）。繰り返し指定できる（<code>ph:race ph:bearoff</code>）。このラベルは盤面から導出され、編集はできない。<code>blunderdb repair</code> が再計算する。</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>局面またはその鏡像がフィルタを満たします。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>この局面は単独でインポートされたもので、マッチのインポートで入ったものではありません。</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>eXtreme Gammon のマッチをインポートした際、元のソフトウェアでフラグが付けられた局面。</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
-<td>局面が除外構造（検索パネルの「Except」タブ）の駒を 1 つも含みません。</td>
+<td>ポジションが除外構造（検索パネルの「Except」タブ）の駒を 1 つも含みません。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>プレイヤーがレースで少なくとも x ピップ遅れています。</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>プレイヤーがレースで最大 x ピップ遅れています。</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>プレイヤーがレースで x から y ピップ遅れています。</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>プレイヤーのレースが少なくとも x ピップです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>プレイヤーのレースが最大 x ピップです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>プレイヤーのレースが x から y ピップです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>局面のエクイティ（ミリポイント単位）が x より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>局面のエクイティ（ミリポイント単位）が x より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>局面のエクイティ（ミリポイント単位）が x から y の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より大きいです。</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x より小さいです。</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>プレイヤー 1 が打った手の誤差（ミリポイント単位）が x から y の範囲です。</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>プレイヤーの勝率が x % より大きいです。</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>プレイヤーの勝率が x % より小さいです。</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>プレイヤーの勝率が x % から y % の範囲です。</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>プレイヤーのギャモン率が x % より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>プレイヤーのギャモン率が x % より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>プレイヤーのギャモン率が x % から y % の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>プレイヤーのバックギャモン率が x % より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>プレイヤーのバックギャモン率が x % より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>プレイヤーのバックギャモン率が x % から y % の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>相手の勝率が x % より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>相手の勝率が x % より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>相手の勝率が x % から y % の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>相手のギャモン率が x % より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>相手のギャモン率が x % より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>相手のギャモン率が x % から y % の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>相手のバックギャモン率が x % より大きいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>相手のバックギャモン率が x % より小さいです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>相手のバックギャモン率が x % から y % の範囲です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>プレイヤーが少なくとも x 個の駒を上がっています。</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>プレイヤーが最大 x 個の駒を上がっています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>プレイヤーが x から y 個の駒を上がっています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>相手が少なくとも x 個の駒を上がっています。</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>相手が最大 x 個の駒を上がっています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>相手が x から y 個の駒を上がっています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>プレイヤーが少なくとも x 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>プレイヤーが最大 x 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>プレイヤーが x から y 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>相手が少なくとも x 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>相手が最大 x 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>相手が x から y 個の後方の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>プレイヤーがゾーン内に少なくとも x 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>プレイヤーがゾーン内に最大 x 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>プレイヤーがゾーン内に x から y 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>相手がゾーン内に少なくとも x 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>相手がゾーン内に最大 x 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>相手がゾーン内に x から y 個の駒を持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>プレイヤーがアウトフィールドに少なくとも x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>プレイヤーがアウトフィールドに最大 x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>プレイヤーがアウトフィールドに x から y 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>相手がアウトフィールドに少なくとも x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>相手がアウトフィールドに最大 x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>相手がアウトフィールドに x から y 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>プレイヤーが内盤に少なくとも x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>プレイヤーが内盤に最大 x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>プレイヤーが内盤に x から y 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>相手が内盤に少なくとも x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>相手が内盤に最大 x 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>相手が内盤に x から y 個のブロットを持っています。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>t'mot1;mot2;...'</td>
+<td><code>t'語1;語2;...'</code></td>
 <td>局面のコメントに単語のうち少なくとも 1 つが含まれます。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>内容を問わず、局面にコメントが付いている。</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>局面にコメントが付いていない。</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>局面が特定の出所のコメントを持つ：<code>user</code>（自分で書いたもの）、<code>xg</code>、<code>gnubg</code>、<code>bgf</code>（マッチのインポートで持ち込まれたもの）、<code>unknown</code>。繰り返し指定できる（<code>co:xg co:gnubg</code>）。</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
-<td>m'motif1,motif2,...'</td>
+<td><code>m'パターン1,パターン2,...'</code></td>
 <td>最善のチェッカープレイがパターンのうち少なくとも 1 つを含みます。</td>
+<td>—</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
-<td>最善のキューブ判断が No Double/Take、Double Take、Double Pass です。</td>
+<td><code>m'ND,DT,DP,...'</code></td>
+<td>最善のキューブの決定が No Double/Take、Double Take、Double Pass のいずれかです。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>局面の追加日が x より後（YYYY/MM/DD）。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>局面の追加日が x より前（YYYY/MM/DD）。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>局面の追加日が x から y の範囲（YYYY/MM/DD）。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>識別子 x のマッチ内を検索します（例: ma3）。</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>識別子 x から y のマッチ内を検索します（例: ma2,5）。</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>識別子 x のトーナメント内を検索します（例: tn1）。</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>識別子 x から y のトーナメント内を検索します（例: tn1,3）。</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>識別子 x のポジションを検索します（例: id12）。</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>識別子 x から y までのポジションを検索します（例: id5,10）。</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
-<td>pl'名前'</td>
-<td>指定したプレイヤーが（どちらの席でも）参加した対局の局面を検索します（例：pl'Alice'）。大文字・小文字は区別しません。</td>
+<td><code>pl'名前'</code></td>
+<td>指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：<code>pl'Alice'</code>）。大文字・小文字は区別しません。</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
@@ -1282,6 +1428,10 @@ export default {
 <h3>バージョン</h3>
 <p>アプリケーションバージョン: {appVersion}</p>
 <p>データベースバージョン: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/ja/" target="_blank" rel="noopener noreferrer">オンラインドキュメント</a> ·
+    <a href="https://kevung.github.io/blunderDB/ja/historique.html" target="_blank" rel="noopener noreferrer">バージョン履歴</a>
+</p>
 
 <h3>作者</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

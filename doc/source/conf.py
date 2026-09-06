@@ -41,7 +41,15 @@ LANGUAGES = [
 
 language = 'fr'
 templates_path = ['_templates']
-locale_dirs = ['locale/']
+# locale/ holds the eight catalogues sphinx-intl regenerates from the French
+# sources (scripts/doc-po-update.sh). locale_theme/ holds what that
+# regeneration would destroy: translations of the THEME's own strings
+# ("Tip", "Next", "Search docs", …) for a language the theme does not ship —
+# sphinx_rtd_theme has no ja locale and Sphinx's own ja catalogue leaves
+# "Tip" untranslated. Sphinx merges the two directories for the `sphinx`
+# domain, the second as a fallback, so locale/ja/…/sphinx.po may be
+# regenerated freely. Add a language here only when the theme lacks it.
+locale_dirs = ['locale/', 'locale_theme/']
 gettext_compact = False
 exclude_patterns = []
 html_theme = "sphinx_rtd_theme"
@@ -54,11 +62,11 @@ html_show_sphinx = False
 html_show_sourcelink = False
 html_favicon = '_static/favicon.ico'
 html_logo = '_static/logo.png'
-# The language switcher (see _templates/versions.html) renders one link per
-# entry. Each entry is [code, name, url]: the short code (e.g. "fr") is the
-# visible label so the switcher stays compact and never overlaps the nav, the
-# native name (e.g. "Français") is the hover tooltip, and url is a sibling
-# directory produced by doc/build.py.
+# The language switcher (see _templates/layout.html) renders one link per
+# entry, under the sidebar's search box. Each entry is [code, name, url]: the
+# native name (e.g. "Français") is the visible label — a reader who does not
+# read Latin script must still recognise their own language — and url is a
+# sibling directory produced by doc/build.py.
 html_context = {
         'languages': [[code, name, "../" + code] for code, name in LANGUAGES]
         }

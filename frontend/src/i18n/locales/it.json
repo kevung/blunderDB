@@ -1114,7 +1114,15 @@
         "noDecisionsEmpty": "Nessuna decisione nel periodo filtrato. Amplia i filtri.",
         "cardLabelAll": "PR Globale",
         "cardLabelChecker": "PR Pedina",
-        "cardLabelCube": "PR Dado",
+        "cardLabelCube": "PR Cubo",
+        "grade": {
+            "worldClass": "Classe mondiale",
+            "expert": "Esperto",
+            "advanced": "Avanzato",
+            "intermediate": "Intermedio",
+            "casual": "Occasionale",
+            "beginner": "Principiante"
+        },
         "tournaments": "tornei",
         "matches": "partite",
         "decisions": "decisioni",

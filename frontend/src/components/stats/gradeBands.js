@@ -5,25 +5,39 @@
  * Colours are very low-alpha fills so they remain visible but non-invasive.
  */
 
+// `label` is the English name (and the test oracle); `key` is the i18n key
+// under `stats.grade.*`, which is what the panel renders — the manual
+// documents the same six bands in every language, so the interface must
+// not be the one place where they stay in English. The upper bound of a
+// band is excluded: a PR of exactly 4 is Advanced, not Expert.
 export const GRADE_BANDS = [
-    { label: 'World Class', min: 0, max: 2, color: 'rgba(46, 125, 50,  0.10)' },
-    { label: 'Expert', min: 2, max: 4, color: 'rgba(100, 160, 50, 0.09)' },
-    { label: 'Advanced', min: 4, max: 6, color: 'rgba(200, 160, 30, 0.09)' },
-    { label: 'Intermediate', min: 6, max: 9, color: 'rgba(230, 120, 20, 0.09)' },
-    { label: 'Casual', min: 9, max: 12, color: 'rgba(200,  60, 30, 0.09)' },
-    { label: 'Beginner', min: 12, max: Infinity, color: 'rgba(183,  28, 28, 0.10)' }
+    { key: 'worldClass', label: 'World Class', min: 0, max: 2, color: 'rgba(46, 125, 50,  0.10)' },
+    { key: 'expert', label: 'Expert', min: 2, max: 4, color: 'rgba(100, 160, 50, 0.09)' },
+    { key: 'advanced', label: 'Advanced', min: 4, max: 6, color: 'rgba(200, 160, 30, 0.09)' },
+    { key: 'intermediate', label: 'Intermediate', min: 6, max: 9, color: 'rgba(230, 120, 20, 0.09)' },
+    { key: 'casual', label: 'Casual', min: 9, max: 12, color: 'rgba(200,  60, 30, 0.09)' },
+    { key: 'beginner', label: 'Beginner', min: 12, max: Infinity, color: 'rgba(183,  28, 28, 0.10)' }
 ];
 
 /**
- * Return the grade label for a given PR value.
+ * Return the grade band for a given PR value.
+ * @param {number} pr
+ * @returns {(typeof GRADE_BANDS)[number]}
+ */
+export function bandForPR(pr) {
+    for (const band of GRADE_BANDS) {
+        if (pr < band.max) return band;
+    }
+    return GRADE_BANDS[GRADE_BANDS.length - 1];
+}
+
+/**
+ * Return the English grade label for a given PR value.
  * @param {number} pr
  * @returns {string}
  */
 export function gradeForPR(pr) {
-    for (const band of GRADE_BANDS) {
-        if (pr < band.max) return band.label;
-    }
-    return 'Beginner';
+    return bandForPR(pr).label;
 }
 
 /**

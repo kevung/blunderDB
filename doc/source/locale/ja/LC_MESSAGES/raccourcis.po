@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 04:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -52,7 +52,7 @@ msgid "Ouvrir une base de données existante."
 msgstr "既存のデータベースを開く。"
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
 msgstr "CTRL-SHIFT-I"
 
 #: ../../source/raccourcis.rst:1
@@ -60,7 +60,7 @@ msgid "Fusionner une base de données dans celle-ci."
 msgstr "データベースをこれに統合する。"
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
 msgstr "CTRL-SHIFT-S"
 
 #: ../../source/raccourcis.rst:1
@@ -98,7 +98,7 @@ msgid ""
 msgstr "1つまたは複数のポジション/マッチをファイル（xg、xgp、sgf、mat、txt、bgf）からインポートする。"
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
 msgstr "CTRL-SHIFT-F"
 
 #: ../../source/raccourcis.rst:1
@@ -668,3 +668,60 @@ msgid ""
 "Revenir à la liste des collections, sinon désélectionner la collection, "
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
+
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "ヘルプパネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LEFT, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "前のタブ。"
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RIGHT, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "次のタブ。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "上にスクロールする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "下にスクロールする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "次のページ。"
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "PageUp"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "内容の先頭へ。"
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "PageDown"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "内容の末尾へ。"
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, CTRL-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "ヘルプを閉じる。"
+
