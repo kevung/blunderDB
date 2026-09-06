@@ -9,6 +9,7 @@ import {race} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
 import {engine} from '../models';
+import {searchquery} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
 
@@ -221,6 +222,8 @@ export function ListTrash(arg1:string,arg2:number,arg3:number):Promise<Array<dom
 export function LoadAllPositions():Promise<Array<domain.Position>>;
 
 export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
+
+export function TranslateIntent(arg1:string):Promise<searchquery.Intent>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
 

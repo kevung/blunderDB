@@ -1373,5 +1373,12 @@
         "failed": "近い局面の検索に失敗しました。",
         "none": "このデータベースに近い局面はありません。",
         "found": "近い局面 {n} 件、{nearest} から {farthest} チェッカーピップ。"
+    },
+    "intent": {
+        "empty": "探しているものを言葉で書いてください。",
+        "failed": "この文は翻訳できませんでした。",
+        "understoodNothing": "次の語は理解できませんでした：{words}",
+        "understood": "理解：{matched}。行を確認してから Enter。",
+        "partly": "理解：{matched}。未理解：{words}。行を確認してから Enter。"
     }
 }

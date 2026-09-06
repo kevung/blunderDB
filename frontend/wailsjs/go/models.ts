@@ -2753,3 +2753,39 @@ export namespace engine {
 	}
 
 }
+
+export namespace searchquery {
+	export class BoardHint {
+	    decision?: string;
+	    score?: string;
+
+	    static createFrom(source: any = {}) {
+	        return new BoardHint(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.decision = source["decision"];
+	        this.score = source["score"];
+	    }
+	}
+	export class Intent {
+	    tokens: string[];
+	    board: BoardHint;
+	    matched: string[];
+	    ignored: string[];
+
+	    static createFrom(source: any = {}) {
+	        return new Intent(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tokens = source["tokens"];
+	        this.board = source["board"] ? new BoardHint(source["board"]) : new BoardHint();
+	        this.matched = source["matched"];
+	        this.ignored = source["ignored"];
+	    }
+	}
+
+}

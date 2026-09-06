@@ -490,6 +490,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)
 
+    def search_intent(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.intent — JSON."
+        return self._call("/v1/search.intent", payload)
+
     def search_parse(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.parse — JSON."
         return self._call("/v1/search.parse", payload)

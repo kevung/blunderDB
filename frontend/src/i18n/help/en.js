@@ -827,6 +827,10 @@ export default {
 <td>Opens the tag vocabulary: the tags used in this database, with the number of positions, clickable to run the search.</td>
 </tr>
 <tr>
+<td>ask</td>
+<td>Translates a plain phrase — French or English — into search tokens: <code>ask my cube blunders at a score</code>. The tokens are written into the command bar, not run: read them, then Enter. Whatever was not understood is said, never guessed.</td>
+</tr>
+<tr>
 <td>like</td>
 <td>Replaces the browsed list by the positions closest to the current one — or to the one whose index is given (<code>like 42</code>). Closeness is a transport distance in checker-pips: it is not a filter, it ranks the whole database rather than narrowing it, and therefore does not combine with the search tokens.</td>
 </tr>

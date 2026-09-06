@@ -839,6 +839,10 @@ export default {
 <td>Apre il vocabolario di tag: i tag usati in questo database, con il numero di posizioni, cliccabili per lanciare la ricerca.</td>
 </tr>
 <tr>
+<td>ask</td>
+<td>Traduce una frase a parole — francese o inglese — in token di ricerca: <code>ask my cube blunders at a score</code>. I token vengono scritti nella barra dei comandi, non eseguiti: si rileggono, poi Invio. Ciò che non è stato compreso viene detto, mai indovinato.</td>
+</tr>
+<tr>
 <td>like</td>
 <td>Sostituisce la lista percorsa con le posizioni più vicine a quella corrente — o a quella il cui indice è indicato (<code>like 42</code>). La vicinanza è una distanza di trasporto in pip di pedina: non è un filtro, ordina l'intera base invece di restringerla, e quindi non si combina con i token di ricerca.</td>
 </tr>

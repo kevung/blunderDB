@@ -31,6 +31,11 @@ type searchQueryReq struct {
 	Offset int    `json:"offset"`
 }
 
+// searchIntentReq carries a phrase to translate into search tokens (#283).
+type searchIntentReq struct {
+	Text string `json:"text"`
+}
+
 // searchParseResp is what /v1/search.parse answers: the filters a query
 // denotes, and what the grammar could not act on. Exposed on its own so a
 // client can show a user what their query means — and validate it — without
@@ -92,6 +97,14 @@ func (s *Server) searchRoutes() []route {
 				Diags:     wireDiags(diags),
 				Canonical: searchquery.Format(filters),
 			}, nil
+		})},
+
+		// search.intent translates a phrase into the tokens it means (#283).
+		// It answers with the TOKENS, never with rows: the whole point of the
+		// layer is that the user sees what was understood before anything is
+		// searched.
+		{http.MethodPost, "/v1/search.intent", rpc(func(_ context.Context, _ string, req searchIntentReq) (searchquery.Intent, error) {
+			return searchquery.TranslateIntent(req.Text), nil
 		})},
 
 		// search.query is search.find, addressed in the query language. It

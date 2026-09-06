@@ -1373,5 +1373,12 @@
         "failed": "La ricerca di posizioni vicine è fallita.",
         "none": "Nessuna posizione vicina in questa base.",
         "found": "{n} posizioni vicine, da {nearest} a {farthest} pip di pedina."
+    },
+    "intent": {
+        "empty": "Descriva a parole ciò che cerca.",
+        "failed": "Non è stato possibile tradurre la frase.",
+        "understoodNothing": "Nulla di compreso in: {words}",
+        "understood": "Compreso: {matched}. Rilegga la riga, poi Invio.",
+        "partly": "Compreso: {matched}. Non compreso: {words}. Rilegga la riga, poi Invio."
     }
 }

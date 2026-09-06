@@ -426,6 +426,10 @@ export function ExplainDecision(arg1, arg2) {
   return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
 }
 
+export function TranslateIntent(arg1) {
+  return window['go']['database']['Database']['TranslateIntent'](arg1);
+}
+
 export function SimilarPositions(arg1, arg2) {
   return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
 }

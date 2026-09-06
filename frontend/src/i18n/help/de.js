@@ -844,6 +844,10 @@ export default {
 <td>Öffnet das Tag-Vokabular: die in dieser Datenbank verwendeten Tags mit der Zahl der Stellungen, anklickbar zum Starten der Suche.</td>
 </tr>
 <tr>
+<td>ask</td>
+<td>Übersetzt einen Satz in Worten — Französisch oder Englisch — in Suchtoken: <code>ask my cube blunders at a score</code>. Die Token werden in die Befehlszeile geschrieben, nicht ausgeführt: durchlesen, dann Enter. Was nicht verstanden wurde, wird gesagt, nie erraten.</td>
+</tr>
+<tr>
 <td>like</td>
 <td>Ersetzt die durchblätterte Liste durch die Stellungen, die der aktuellen am nächsten stehen — oder der, deren Index angegeben ist (<code>like 42</code>). Die Nähe ist eine Transportdistanz in Stein-Pips: Sie ist kein Filter, sie ordnet die ganze Datenbank, statt sie einzuschränken, und lässt sich daher nicht mit den Suchtoken kombinieren.</td>
 </tr>

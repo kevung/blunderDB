@@ -86,6 +86,7 @@
     import { startTraining } from './services/trainingSessionService.js';
     import { DRILLS } from './services/trainingService.js';
     import { showSimilarPositions } from './services/similarService.js';
+    import { askIntent } from './services/intentService.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
     import { initTheme } from './stores/themeStore.js';
@@ -313,6 +314,7 @@
             onImportIdentifier: importIdentifier,
             onTraining: startTrainingCommand,
             onSimilar: showSimilarCommand,
+            onIntent: askIntent,
             onSavePosition: saveCurrentPosition,
             onUpdatePosition: updatePosition,
             onDeletePosition: deletePosition,

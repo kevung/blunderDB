@@ -40,6 +40,7 @@ export const COMMANDS = [
     { name: 'tags', aliases: [] },
     { name: 'train', aliases: [] },
     { name: 'like', aliases: [] },
+    { name: 'ask', aliases: [] },
     { name: 'meta', aliases: [] },
     { name: 'tp2', aliases: [] },
     { name: 'tp2_last', aliases: [] },

@@ -843,6 +843,10 @@ export default {
 <td>Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche.</td>
 </tr>
 <tr>
+<td>ask</td>
+<td>Traduit une phrase en toutes lettres — français ou anglais — en jetons de recherche : <code>ask mes blunders de videau au score</code>. Les jetons sont écrits dans la barre de commande, pas lancés : on les relit, puis Entrée. Ce qui n'a pas été compris est dit, jamais deviné.</td>
+</tr>
+<tr>
 <td>like</td>
 <td>Remplace la liste parcourue par les positions les plus proches de la position courante — ou de celle dont l'indice est donné (<code>like 42</code>). La proximité est une distance de transport en pions-pas : ce n'est pas un filtre, elle classe toute la base plutôt que de la restreindre, et ne se combine donc pas avec les jetons de recherche.</td>
 </tr>
