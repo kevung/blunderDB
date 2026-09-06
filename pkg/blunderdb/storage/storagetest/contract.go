@@ -88,6 +88,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/CubeDirections", testStatsCubeDirections},
+		{"Stats/Breakdowns", testStatsBreakdowns},
 		{"Analyses/RepairDenormalisedColumns", testRepairDenormalisedColumns},
 		{"Stats/MatchDetail", testStatsMatchDetail},
 		{"Stats/SnowieDenominatorCountsBothPlayers", testStatsSnowieDenominator},

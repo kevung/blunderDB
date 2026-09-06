@@ -18,6 +18,7 @@
     import StatsDashboardTab from './StatsDashboardTab.svelte';
     import StatsProgressionTab from './StatsProgressionTab.svelte';
     import StatsErrorsTab from './StatsErrorsTab.svelte';
+    import StatsBreakdownsTab from './StatsBreakdownsTab.svelte';
     import StatsPlayersTab from './StatsPlayersTab.svelte';
 
     /** Currently active inner tab. */
@@ -71,6 +72,9 @@
             >{$t('stats.tabProgression')}</button
         >
         <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
+        <button class="tab-btn" class:active={activeTab === 'breakdowns'} role="tab" aria-selected={activeTab === 'breakdowns'} onclick={() => (activeTab = 'breakdowns')}
+            >{$t('stats.tabBreakdowns')}</button
+        >
         <button class="tab-btn" class:active={activeTab === 'players'} role="tab" aria-selected={activeTab === 'players'} onclick={() => (activeTab = 'players')}>{$t('stats.tabPlayers')}</button>
     </div>
 
@@ -83,6 +87,8 @@
             <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
         {:else if activeTab === 'errors'}
             <StatsErrorsTab result={$statsResultStore} metric={$statsMetricStore} />
+        {:else if activeTab === 'breakdowns'}
+            <StatsBreakdownsTab result={$statsResultStore} />
         {:else if activeTab === 'players'}
             {#if $playerTableLoadingStore}
                 <p class="loading-msg">{$t('stats.loading')}</p>

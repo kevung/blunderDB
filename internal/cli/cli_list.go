@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // runList handles the list command
@@ -446,6 +448,52 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 			}
 			fmt.Fprintf(w, "  %s\t%d\t%d\t%.1f%%\t%.3f\t%s\n",
 				ca.Action, ca.NumDecisions, ca.BlunderCount, blunderPct, ca.PR, mwcStr)
+		}
+		w.Flush()
+		fmt.Println()
+	}
+
+	// 6b. The three breakdowns of #266: the same decisions, sliced.
+	if len(result.PerPhase) > 0 {
+		fmt.Println("── By Game Phase ──")
+		fmt.Fprintln(w, "  Phase\tDecisions\tBlunders\tPR")
+		fmt.Fprintln(w, "  —————\t—————————\t————————\t——")
+		for _, ph := range result.PerPhase {
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\n", ph.Phase, ph.NumDecisions, ph.BlunderCount, ph.PR)
+		}
+		w.Flush()
+		fmt.Println()
+	}
+	if len(result.PerTag) > 0 {
+		fmt.Println("── By Tag ──")
+		fmt.Fprintln(w, "  Tag\tDecisions\tBlunders\tPR")
+		fmt.Fprintln(w, "  ———\t—————————\t————————\t——")
+		for _, tag := range result.PerTag {
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\n", tag.Tag, tag.NumDecisions, tag.BlunderCount, tag.PR)
+		}
+		w.Flush()
+		// A tag labels; it does not partition. Saying so is the difference
+		// between a reader who trusts the column and one who adds it up and
+		// concludes the tool is broken.
+		fmt.Println("  (a position may carry several tags; these rows do not sum to the total)")
+		fmt.Println()
+	}
+	if len(result.PerScore) > 0 {
+		fmt.Println("── By Score (away × away, from the player on roll's side) ──")
+		fmt.Fprintln(w, "  Score\tDecisions\tBlunders\tPR")
+		fmt.Fprintln(w, "  —————\t—————————\t————————\t——")
+		for _, c := range result.PerScore {
+			label := fmt.Sprintf("%d-away/%d-away", c.MoverAway, c.OpponentAway)
+			if c.MoverAway == 0 && c.OpponentAway == 0 {
+				label = "money"
+			}
+			// A cell too small to read is still printed WITH its count: hiding
+			// it would make the omission unauditable.
+			thin := ""
+			if c.NumDecisions < storage.MinCellDecisions {
+				thin = "  (thin)"
+			}
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f%s\n", label, c.NumDecisions, c.BlunderCount, c.PR, thin)
 		}
 		w.Flush()
 		fmt.Println()

@@ -7,6 +7,19 @@ package database
 // returns byte-identical JSON to its legacy Database counterpart. The two DTO
 // sets (database.* and storage.*) share json tags, so JSON equality is a
 // field-by-field comparison that also covers slice order and float formatting.
+//
+// # What the legacy oracle is, and what it is not
+//
+// The legacy implementation is FROZEN. It exists to prove that moving the
+// statistics onto the Storage contract did not change a single number the
+// application had been showing, and it is not maintained beyond that: nothing
+// new is added to it, because adding a figure to both sides would only prove
+// that the same code was written twice.
+//
+// A figure that exists only in the storage implementation is therefore not a
+// parity failure — it is a figure that came after the migration. The
+// comparison drops those fields by name (frozenOracleGaps below) rather than
+// asserting on them, and each one says why it is there.
 
 import (
 	"context"
@@ -18,19 +31,55 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
+// frozenOracleGaps names the StatsResult fields the legacy oracle does not
+// compute, with the reason. They are dropped from BOTH sides before the
+// comparison — the point is to compare what both were built to answer.
+//
+// PerPhase/PerTag/PerScore came with #266, after the migration the oracle
+// exists to guard. Back-porting them into the legacy SQL would prove nothing
+// (the same query, written twice, agreeing with itself) and would extend a
+// body of code the migration exists to have retired.
+var frozenOracleGaps = map[string]string{
+	"PerPhase": "#266, added after the migration the oracle guards",
+	"PerTag":   "#266, added after the migration the oracle guards",
+	"PerScore": "#266, added after the migration the oracle guards",
+}
+
 func jsonEqual(t *testing.T, label string, legacy, got any) {
 	t.Helper()
-	jl, err := json.Marshal(legacy)
+	jl, err := marshalWithoutGaps(legacy)
 	if err != nil {
 		t.Fatalf("%s: marshal legacy: %v", label, err)
 	}
-	jg, err := json.Marshal(got)
+	jg, err := marshalWithoutGaps(got)
 	if err != nil {
 		t.Fatalf("%s: marshal storage: %v", label, err)
 	}
-	if string(jl) != string(jg) {
+	if jl != jg {
 		t.Errorf("%s mismatch:\n legacy = %s\n storage = %s", label, jl, jg)
 	}
+}
+
+// marshalWithoutGaps renders v as JSON with the frozenOracleGaps fields
+// removed, so the two sides are compared on what both compute.
+func marshalWithoutGaps(v any) (string, error) {
+	raw, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	var asMap map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &asMap); err != nil {
+		// Not an object (a slice of ids, a string): nothing to drop.
+		return string(raw), nil
+	}
+	for field := range frozenOracleGaps {
+		delete(asMap, field)
+	}
+	out, err := json.Marshal(asMap)
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
 }
 
 func TestStatsStorageParity(t *testing.T) {

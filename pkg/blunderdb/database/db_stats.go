@@ -114,6 +114,44 @@ type StatsResult struct {
 	CubeDirections CubeDirections `json:"CubeDirections"`
 	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
 	TopBlunders    []BlunderEntry `json:"TopBlunders"`
+
+	// The three breakdowns of #266 (fiche I.10), mirroring storage field for
+	// field (the conversion is by json tag): the SAME decisions the figures
+	// above count, sliced by the position's derived phase, by the tags in its
+	// comments, and by the away × away score.
+	PerPhase []PhaseStats     `json:"PerPhase"`
+	PerTag   []TagStats       `json:"PerTag"`
+	PerScore []ScoreCellStats `json:"PerScore"`
+}
+
+// PhaseStats is one row of the per-phase breakdown. Phase carries the stable
+// token of domain.GamePhase ("opening", "middlegame", "race", "bearoff",
+// "unknown").
+type PhaseStats struct {
+	Phase        string  `json:"Phase"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// TagStats is one row of the per-tag breakdown; Tag carries the "#". A
+// position may hold several tags, so these rows do NOT sum to the total: a tag
+// labels, it does not partition.
+type TagStats struct {
+	Tag          string  `json:"Tag"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// ScoreCellStats is one cell of the away × away matrix, read from the side of
+// the player on roll — the one taking the decision. (0,0) is money play.
+type ScoreCellStats struct {
+	MoverAway    int     `json:"MoverAway"`
+	OpponentAway int     `json:"OpponentAway"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
 }
 
 // CubeOfferCounts tallies the decision of the player holding the cube: Missed,

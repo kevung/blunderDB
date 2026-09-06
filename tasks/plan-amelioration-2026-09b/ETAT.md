@@ -84,8 +84,8 @@ chacune close par une release.
 | **1 — release** | | | ✅ **0.36.0** publiée le 2026-09-05 |
 | **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ ; #237, #239, #242 restent (voir plus bas) |
 | **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305, #306, #307 | ✅ ; #308-#311 restent |
-| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : #257, #263, #264 fermées |
-| **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | à faire |
+| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : #257, #261, #263, #264, #270, #272, #281, #285, #288 fermées |
+| **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | #127 fermée (la mesure existait déjà et était publiée) ; #151, #200 restent |
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | à faire |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 

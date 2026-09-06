@@ -2052,7 +2052,7 @@ Options:
   -dir string
     	Path to directory for batch import (for batch)
   -fail-on-error
-    	Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported) is an error
+    	Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error
   -file string
     	Path to the file to import (for match/position)
   -format string

@@ -91,3 +91,10 @@ export function makeGradeBandPlugin(bands) {
         }
     };
 }
+
+// MIN_CELL_DECISIONS mirrors storage.MinCellDecisions: the sample below which
+// a cell of the away × away matrix is not worth reading (#266). It is a
+// DISPLAY threshold — the backend returns every cell with its count, and this
+// is what greys the thin ones rather than hiding them, so the omission stays
+// auditable.
+export const MIN_CELL_DECISIONS = 10;

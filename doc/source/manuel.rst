@@ -1020,10 +1020,38 @@ Un histogramme distribue les erreurs selon leur magnitude en millipoints
 (mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
 une barre charge les positions de la tranche.
 
+Onglet Ventilations
+~~~~~~~~~~~~~~~~~~~
+
+L'onglet **Ventilations** découpe les mêmes décisions que les chiffres globaux
+selon trois axes. Aucun d'eux ne redéfinit ce qui compte comme une décision :
+ce serait un second PR sous le même nom.
+
+* **Par phase de partie** — ouverture, milieu de partie, course, sortie des
+  pions. C'est ce qui répond à « mon PR en course contre mon PR en contact ».
+  L'étiquette est calculée depuis le plateau (voir :ref:`panneau_recherche`) ;
+  une base dont les phases n'ont jamais été calculées range tout sous *Non
+  classée*, et ``blunderdb repair`` la remplit.
+
+* **Par étiquette** — les ``#mot`` écrits dans les commentaires. Une position
+  peut en porter plusieurs : **ces lignes ne s'additionnent pas au total**, et
+  le panneau le dit sous le tableau. Une étiquette qualifie, elle ne partitionne
+  pas.
+
+* **Par score** — l'écart au but des deux camps, lu du côté du joueur au trait,
+  donc du côté de celui qui décide. La ligne *Money* est la partie d'argent.
+  Une cellule de moins de dix décisions est **grisée avec son effectif visible**
+  plutôt que cachée : trop peu pour être lue, mais l'omission reste vérifiable.
+
+.. note:: La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas
+   cet indicateur sur une position. L'effet pratique est faible — une partie
+   Crawford n'a aucune décision de videau — mais l'omission est réelle et vaut
+   mieux d'être écrite que laissée à deviner.
+
 Onglet Joueurs
 ~~~~~~~~~~~~~~
 
-Les trois onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** les
+Les quatre onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** les
 compare tous. Il affiche une ligne par joueur de la base, ce qui répond au
 besoin d'un organisateur suivant une compétition entière plutôt qu'un joueur en
 particulier.

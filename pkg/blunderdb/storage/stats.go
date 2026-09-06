@@ -109,7 +109,64 @@ type StatsResult struct {
 	CubeDirections CubeDirections `json:"CubeDirections"`
 	ErrorHistogram []ErrorBucket  `json:"ErrorHistogram"`
 	TopBlunders    []BlunderEntry `json:"TopBlunders"`
+
+	// The three breakdowns of issue #266 (fiche I.10). Each is the SAME
+	// figures as the global ones, restricted to a slice of the same
+	// selection — never a second notion of what counts as a decision, which
+	// would be a second PR.
+	//
+	// PerPhase splits by the position's derived game phase (ADR-0035), which
+	// is what answers "my PR in the race versus in contact".
+	PerPhase []PhaseStats `json:"PerPhase"`
+	// PerTag splits by the tags in the position's comments. A position
+	// carrying two tags appears in both rows: a tag is a label, not a
+	// partition, so the rows deliberately do not sum to the total.
+	PerTag []TagStats `json:"PerTag"`
+	// PerScore is the away × away matrix — Crawford, post-Crawford, DMP and
+	// everything between. Cells whose sample is too small to read are still
+	// returned WITH their count, so the caller greys them out rather than
+	// being handed a figure with no idea how much is behind it.
+	PerScore []ScoreCellStats `json:"PerScore"`
 }
+
+// PhaseStats is one row of the per-phase breakdown (#266).
+type PhaseStats struct {
+	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
+	Phase        string  `json:"Phase"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// TagStats is one row of the per-tag breakdown (#266). Tag carries the "#".
+type TagStats struct {
+	Tag          string  `json:"Tag"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// ScoreCellStats is one cell of the away × away matrix (#266).
+//
+// Away is "points still needed to win": 1 is DMP-adjacent, and the cell is
+// identified by the pair (mover's away, opponent's away) from the reference
+// player's side. Crawford is a separate flag rather than a fourth dimension:
+// a Crawford game at 1-away/3-away is a different decision from a
+// post-Crawford one at the same score, and folding them would average two
+// different games.
+type ScoreCellStats struct {
+	MoverAway    int     `json:"MoverAway"`
+	OpponentAway int     `json:"OpponentAway"`
+	PR           float64 `json:"PR"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
+}
+
+// MinCellDecisions is the sample below which a matrix cell is not worth
+// reading. It is not enforced here — the cell is returned with its count, and
+// the caller greys it — because "too small to read" is a display decision and
+// hiding the count would make it unauditable.
+const MinCellDecisions = 10
 
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.

@@ -54,6 +54,12 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		s.computeTopBlunders,
 		s.computeRollingPR,
 		s.computeMWCPass,
+		// The three breakdowns of #266, last: each reuses the same counted
+		// predicate and error column as the passes above, so none of them can
+		// disagree with the global figures they slice.
+		s.computePerPhase,
+		s.computePerScore,
+		s.computePerTag,
 	} {
 		if err := pass(ctx, q, result); err != nil {
 			return nil, err
