@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Anclas mutuas",
         "gameType_holding": "Ancla",
         "gameType_contact": "Contacto",
-        "gameType_over": "Terminada"
+        "gameType_over": "Terminada",
+        "compareColumn": "Comp.",
+        "compareToggle": "Comparar {name}",
+        "compareTitle": "{a} y {b}, lado a lado",
+        "compareClear": "Borrar",
+        "compareBlunderRate": "Blunders / 100 dec."
     },
     "trash": {
         "title": "Papelera",

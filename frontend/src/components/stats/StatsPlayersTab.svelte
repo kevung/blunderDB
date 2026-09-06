@@ -2,10 +2,11 @@
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
+    import PlayerComparison from './PlayerComparison.svelte';
 
     /**
      * @type {{
-     *   rows: Array<object>|null,
+     *   rows: Array<any>|null,
      *   onSelectPlayer?: (name: string) => void
      * }}
      */
@@ -21,6 +22,7 @@
      * whose whole point is to compare the known ones.
      */
     const COLUMNS = [
+        { key: 'compare', labelKey: 'stats.compareColumn', align: 'left', plain: true },
         { key: 'name', labelKey: 'stats.playersColPlayer', align: 'left' },
         { key: 'matches', labelKey: 'stats.playersColMatches' },
         { key: 'record', labelKey: 'stats.playersColRecord' },
@@ -41,7 +43,7 @@
         COLUMNS.map((col) => ({
             key: col.key,
             label: $t(col.labelKey),
-            sortable: true,
+            sortable: !col.plain,
             align: col.align === 'left' ? 'left' : 'right',
             defaultDir: col.rate || col.key === 'name' ? 'asc' : 'desc'
         }))
@@ -107,6 +109,26 @@
         return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
     }
 
+    // Au plus deux joueurs comparés : au troisième, le plus ancien sort. Une
+    // comparaison à trois colonnes n'est plus une comparaison, c'est la table
+    // qu'on a déjà au-dessus.
+    let compared = $state(/** @type {string[]} */ ([]));
+
+    /** @param {string} name */
+    function toggleCompare(name) {
+        compared = compared.includes(name) ? compared.filter((n) => n !== name) : [...compared, name].slice(-2);
+    }
+
+    const comparedRows = $derived(compared.map((name) => (rows ?? []).find((r) => r.name === name)).filter(Boolean));
+
+    // La sélection ne survit pas à un changement de tableau : comparer deux
+    // joueurs qui ne sont plus dans le filtre montrerait des chiffres que le
+    // panneau ne calcule plus.
+    $effect(() => {
+        const names = new Set((rows ?? []).map((r) => r.name));
+        if (compared.some((n) => !names.has(n))) compared = compared.filter((n) => names.has(n));
+    });
+
     function selectPlayer(name) {
         statsFilterStore.update((f) => ({ ...f, playerName: name }));
         onSelectPlayer?.(name);
@@ -124,6 +146,9 @@
     {#if !rows || rows.length === 0}
         <p class="empty-msg">{$t('stats.playersEmpty')}</p>
     {:else}
+        {#if comparedRows.length === 2}
+            <PlayerComparison a={comparedRows[0]} b={comparedRows[1]} onClear={() => (compared = [])} />
+        {/if}
         <PanelTable
             rows={sorted}
             rowKey={(row) => row.name}
@@ -134,6 +159,19 @@
             onSelect={(row) => selectPlayer(row.name)}
         >
             {#snippet cells(row)}
+                <td class="compare">
+                    <input
+                        type="checkbox"
+                        checked={compared.includes(row.name)}
+                        aria-label={$t('stats.compareToggle', { name: row.name })}
+                        onclick={(e) => {
+                            // Cocher n'est pas ouvrir : sans cela le clic de
+                            // ligne filtrerait aussitôt sur ce joueur.
+                            e.stopPropagation();
+                            toggleCompare(row.name);
+                        }}
+                    />
+                </td>
                 <td class="name">{row.name}</td>
                 <td class="numeric">{row.matches}</td>
                 <td class="numeric">{row.wins}–{row.losses}</td>
@@ -167,6 +205,11 @@
     .players-tab :global(th),
     .players-tab :global(td) {
         white-space: nowrap;
+    }
+
+    td.compare {
+        width: 1.6rem;
+        text-align: center;
     }
 
     td.numeric {

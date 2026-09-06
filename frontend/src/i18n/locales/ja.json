@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "相互ホールディング",
         "gameType_holding": "ホールディング",
         "gameType_contact": "接触",
-        "gameType_over": "終局"
+        "gameType_over": "終局",
+        "compareColumn": "比較",
+        "compareToggle": "{name} を比較",
+        "compareTitle": "{a} と {b} を並べて",
+        "compareClear": "クリア",
+        "compareBlunderRate": "ブランダー / 100 判断"
     },
     "trash": {
         "title": "ごみ箱",

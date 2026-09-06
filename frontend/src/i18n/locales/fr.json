@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Tenue mutuelle",
         "gameType_holding": "Tenue",
         "gameType_contact": "Contact",
-        "gameType_over": "Terminée"
+        "gameType_over": "Terminée",
+        "compareColumn": "Comp.",
+        "compareToggle": "Comparer {name}",
+        "compareTitle": "{a} et {b}, côte à côte",
+        "compareClear": "Effacer",
+        "compareBlunderRate": "Blunders / 100 déc."
     },
     "trash": {
         "title": "Corbeille",

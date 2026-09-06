@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Gegenseitiges Holding",
         "gameType_holding": "Holding",
         "gameType_contact": "Kontakt",
-        "gameType_over": "Beendet"
+        "gameType_over": "Beendet",
+        "compareColumn": "Vgl.",
+        "compareToggle": "{name} vergleichen",
+        "compareTitle": "{a} und {b} nebeneinander",
+        "compareClear": "Löschen",
+        "compareBlunderRate": "Blunder / 100 Entsch."
     },
     "trash": {
         "title": "Papierkorb",

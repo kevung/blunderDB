@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Взаимные якоря",
         "gameType_holding": "Якорь",
         "gameType_contact": "Контакт",
-        "gameType_over": "Окончена"
+        "gameType_over": "Окончена",
+        "compareColumn": "Сравн.",
+        "compareToggle": "Сравнить {name}",
+        "compareTitle": "{a} и {b}, рядом",
+        "compareClear": "Очистить",
+        "compareBlunderRate": "Бландеры / 100 реш."
     },
     "trash": {
         "title": "Корзина",
