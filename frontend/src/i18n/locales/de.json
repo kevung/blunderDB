@@ -540,7 +540,8 @@
         "swappedPlayers": "Spieler getauscht",
         "tournamentCleared": "Turnier vom Match entfernt",
         "tournamentSet": "Turnier „{name}“ zugewiesen",
-        "confirmDelete": "Match zwischen {player1} und {player2} löschen?"
+        "confirmDelete": "Match zwischen {player1} und {player2} löschen?",
+        "enrichFromFile": "Aus einer Datei anreichern…"
     },
     "collection": {
         "addDescription": "Beschreibung hinzufügen…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Stellung gelöscht — im Papierkorb wiederherstellbar (Befehl „trash“).",
         "watchImportDone": "Überwachter Ordner: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
         "watchImportNotice": "Überwachter Ordner: {succeeded} importiert, {skipped} übersprungen, {failed} fehlgeschlagen",
-        "watchImportReport": "Bericht"
+        "watchImportReport": "Bericht",
+        "importIdentifierEmpty": "Geben Sie eine Kennung an: import XGID=…",
+        "importIdentifierUnknown": "Kennung nicht erkannt. Vorerst wird nur XGID gelesen.",
+        "importIdentifierSaved": "Stellung aus der Kennung importiert.",
+        "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}"
     },
     "stats": {
         "title": "Stats",

@@ -875,7 +875,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, bgf).</td>
+<td>Imports one or more positions/matches from a file (xg, xgp, sgf, mat, txt, bgf). With an argument — <code>import XGID=…</code> — reads the identifier instead of opening a file picker, for when it comes from a message, a forum or a script.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

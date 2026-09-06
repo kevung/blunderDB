@@ -540,7 +540,8 @@
         "swappedPlayers": "Οι παίκτες εναλλάχθηκαν",
         "tournamentCleared": "Το τουρνουά αφαιρέθηκε από τον αγώνα",
         "tournamentSet": "Τουρνουά «{name}» ανατέθηκε",
-        "confirmDelete": "Διαγραφή του αγώνα μεταξύ {player1} και {player2};"
+        "confirmDelete": "Διαγραφή του αγώνα μεταξύ {player1} και {player2};",
+        "enrichFromFile": "Εμπλουτισμός από αρχείο…"
     },
     "collection": {
         "addDescription": "Προσθήκη περιγραφής…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Η θέση διαγράφηκε — ανακτήσιμη από τον κάδο (εντολή «trash»).",
         "watchImportDone": "Παρακολουθούμενος φάκελος: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν",
         "watchImportNotice": "Παρακολουθούμενος φάκελος: {succeeded} εισήχθησαν, {skipped} παραλείφθηκαν, {failed} απέτυχαν",
-        "watchImportReport": "Αναφορά"
+        "watchImportReport": "Αναφορά",
+        "importIdentifierEmpty": "Δώστε ένα αναγνωριστικό: import XGID=…",
+        "importIdentifierUnknown": "Μη αναγνωρίσιμο αναγνωριστικό. Προς το παρόν διαβάζεται μόνο το XGID.",
+        "importIdentifierSaved": "Η θέση εισήχθη από το αναγνωριστικό.",
+        "importIdentifierFailed": "Το αναγνωριστικό δεν μπόρεσε να διαβαστεί: {error}"
     },
     "stats": {
         "title": "Στατιστικά",

@@ -54,6 +54,13 @@ export function processCommand(command) {
         callbacks.onImportDatabase?.();
     } else if (command === 'export_db' || command === 'edb') {
         callbacks.onExportDatabase?.();
+    } else if (command.startsWith('import ')) {
+        // `import <identifiant>` : le même verbe qu'`import` tout court, avec
+        // un argument. Sans argument on choisit un fichier ; avec, on lit
+        // l'identifiant — le cas où il arrive d'ailleurs que du
+        // presse-papier : d'un message, d'un forum, d'un script (#262).
+        // Testé AVANT la forme exacte, qui ne peut pas le capter.
+        callbacks.onImportIdentifier?.(command.slice('import '.length));
     } else if (command === 'import' || command === 'i') {
         callbacks.importPosition?.();
     } else if (command === 'write' || command === 'wr' || command === 'w') {

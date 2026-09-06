@@ -873,7 +873,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>ファイル（xg、xgp、sgf、mat、txt、bgf）から 1 つ以上の局面／マッチをインポートします。</td>
+<td>ファイル（xg, xgp, sgf, mat, txt, bgf）から局面やマッチを取り込みます。引数を付けると——<code>import XGID=…</code>——ファイル選択を開かずに識別子を読みます。識別子がメッセージやフォーラム、スクリプトから来る場合のためです。</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

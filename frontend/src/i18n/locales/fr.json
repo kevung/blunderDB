@@ -540,7 +540,8 @@
         "swappedPlayers": "Joueurs échangés",
         "tournamentCleared": "Tournoi retiré du match",
         "tournamentSet": "Tournoi « {name} » assigné",
-        "confirmDelete": "Supprimer le match entre {player1} et {player2} ?"
+        "confirmDelete": "Supprimer le match entre {player1} et {player2} ?",
+        "enrichFromFile": "Enrichir depuis un fichier…"
     },
     "collection": {
         "addDescription": "Ajouter une description…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Position supprimée — récupérable dans la corbeille (commande « trash »).",
         "watchImportDone": "Dossier surveillé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
         "watchImportNotice": "Dossier surveillé : {succeeded} importées, {skipped} ignorées, {failed} échouées",
-        "watchImportReport": "Compte rendu"
+        "watchImportReport": "Compte rendu",
+        "importIdentifierEmpty": "Donnez un identifiant : import XGID=…",
+        "importIdentifierUnknown": "Identifiant non reconnu. Seul XGID est lu pour l'instant.",
+        "importIdentifierSaved": "Position importée depuis l'identifiant.",
+        "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}"
     },
     "stats": {
         "title": "Stats",

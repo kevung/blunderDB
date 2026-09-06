@@ -540,7 +540,8 @@
         "swappedPlayers": "プレイヤーを入れ替えました",
         "tournamentCleared": "マッチからトーナメントを解除しました",
         "tournamentSet": "トーナメント「{name}」を設定しました",
-        "confirmDelete": "{player1}と{player2}のマッチを削除しますか?"
+        "confirmDelete": "{player1}と{player2}のマッチを削除しますか?",
+        "enrichFromFile": "ファイルから補完…"
     },
     "collection": {
         "addDescription": "説明を追加…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "局面を削除しました——ごみ箱から復元できます（「trash」コマンド）。",
         "watchImportDone": "監視フォルダ：{succeeded} 件取り込み、{skipped} 件スキップ、{failed} 件失敗",
         "watchImportNotice": "監視フォルダ：{succeeded} 件取り込み、{skipped} 件スキップ、{failed} 件失敗",
-        "watchImportReport": "レポート"
+        "watchImportReport": "レポート",
+        "importIdentifierEmpty": "識別子を指定してください：import XGID=…",
+        "importIdentifierUnknown": "識別子を認識できません。いまのところ XGID のみ読み取ります。",
+        "importIdentifierSaved": "識別子から局面を取り込みました。",
+        "importIdentifierFailed": "識別子を読み取れませんでした：{error}"
     },
     "stats": {
         "title": "統計",

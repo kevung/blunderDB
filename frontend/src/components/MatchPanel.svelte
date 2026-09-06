@@ -24,6 +24,7 @@
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
+    import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { t, tMsg } from '../i18n';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
@@ -745,6 +746,19 @@
                                         ((e) => swapMatchPlayers(match, e))(e);
                                     }}
                                     title={$t('match.swapPlayers')}>⇄</button
+                                >
+                                <!-- Enrichir depuis un fichier (#262). Rien de
+                                     nouveau sous ce bouton : réimporter le même
+                                     match dans un autre format l'enrichit déjà.
+                                     Ce que le bouton apporte, c'est qu'on le
+                                     trouve. -->
+                                <button
+                                    class="icon-btn"
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        enrichMatchFromFile();
+                                    }}
+                                    title={$t('match.enrichFromFile')}>⊕</button
                                 >
                                 <button
                                     class="icon-btn"

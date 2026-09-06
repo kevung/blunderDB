@@ -540,7 +540,8 @@
         "swappedPlayers": "Игроки поменялись местами",
         "tournamentCleared": "Турнир снят с матча",
         "tournamentSet": "Турнир «{name}» назначен",
-        "confirmDelete": "Удалить матч между {player1} и {player2}?"
+        "confirmDelete": "Удалить матч между {player1} и {player2}?",
+        "enrichFromFile": "Дополнить из файла…"
     },
     "collection": {
         "addDescription": "Добавить описание…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Позиция удалена — восстановима из корзины (команда «trash»).",
         "watchImportDone": "Отслеживаемая папка: {succeeded} импортировано, {skipped} пропущено, {failed} с ошибкой",
         "watchImportNotice": "Отслеживаемая папка: {succeeded} импортировано, {skipped} пропущено, {failed} с ошибкой",
-        "watchImportReport": "Отчёт"
+        "watchImportReport": "Отчёт",
+        "importIdentifierEmpty": "Укажите идентификатор: import XGID=…",
+        "importIdentifierUnknown": "Идентификатор не распознан. Пока читается только XGID.",
+        "importIdentifierSaved": "Позиция импортирована из идентификатора.",
+        "importIdentifierFailed": "Не удалось прочитать идентификатор: {error}"
     },
     "stats": {
         "title": "Статистика",
