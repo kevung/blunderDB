@@ -358,3 +358,18 @@ func TestRetiredFlagDeltaUndoesTheOldFold(t *testing.T) {
 		t.Error("the two retired keys must be distinct and non-zero")
 	}
 }
+
+// TestZobristIgnoresMaxCube states the rule ADR-0028 wrote for Jacoby and
+// beaver, now applied to the third session rule: a cube ceiling is a fact of
+// the session an identifier was written in, not of the position, and folding
+// it into the hash would split one money position across two rows depending
+// on which identifier reached the database first (#271).
+func TestZobristIgnoresMaxCube(t *testing.T) {
+	plain := initialPosition()
+	capped := initialPosition()
+	capped.MaxCube = 3
+
+	if got, want := ZobristHash(&capped), ZobristHash(&plain); got != want {
+		t.Errorf("a cube ceiling must not change the position's identity: got %d, want %d", got, want)
+	}
+}

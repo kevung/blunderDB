@@ -67,6 +67,9 @@
     let isMoney = $derived(isMoneyPosition($positionStore));
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
+    // The cube ceiling is not a money-only rule: a capped cube is stated by the
+    // identifier whatever the score, so it is read straight off the position.
+    let maxCube = $derived($positionStore?.max_cube ?? 0);
 
     // A review is never in MATCH mode, so every play recorded on this position
     // is highlighted — including the blunder that put the card in the deck.
@@ -540,6 +543,7 @@
                         {isMoney}
                         {jacoby}
                         {beaver}
+                        {maxCube}
                     />
                 {:else}
                     <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>

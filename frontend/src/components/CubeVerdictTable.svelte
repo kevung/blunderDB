@@ -41,6 +41,14 @@
     // reached without it. Undefined/false renders nothing, so a match-play
     // position (where the same XGID field means Crawford, not these rules)
     // is unaffected by a caller that simply never passes them.
+    //
+    // maxCube (#271) is the third of the same family and the one that needs
+    // saying most: it is the log2 exponent of the ceiling the SOURCE stated,
+    // and the built-in evaluator does not model a ceiling at all. So the badge
+    // reports a rule the verdict above it was computed WITHOUT — which is
+    // exactly why it is worth showing, since a capped cube is the one visible
+    // reason blunderDB and eXtreme Gammon can disagree here. 0 means the
+    // source stated none and renders nothing.
     let {
         decision,
         cubeAnalysis = null,
@@ -51,12 +59,13 @@
         masked = false,
         isMoney = undefined,
         jacoby = false,
-        beaver = false
+        beaver = false,
+        maxCube = 0
     } = $props();
 
     let block = $derived(cubeRows(decision, { t: $t, cubeValue, isPlayedCubeAction, masked, isMoney }));
     let info = $derived(cubeInfoRows(cubeAnalysis, { t: $t, engineFallback: engineVersionFallback }));
-    let rules = $derived([jacoby && $t('cube.jacoby'), beaver && $t('cube.beaver')].filter(Boolean));
+    let rules = $derived([jacoby && $t('cube.jacoby'), beaver && $t('cube.beaver'), maxCube > 0 && $t('cube.maxCube', { value: 2 ** maxCube })].filter(Boolean));
 </script>
 
 <table class="cube-table">

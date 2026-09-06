@@ -876,7 +876,7 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			        COALESCE(mv.move_type,''), COALESCE(mv.player,0), mv.position_id,
 			        p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 			        p.cube_value, p.cube_owner, p.score_1, p.score_2,
-			        p.has_jacoby, p.has_beaver,
+			        p.has_jacoby, p.has_beaver, p.max_cube,
 			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
 			 FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
@@ -895,9 +895,10 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			var moveType, state, checkerMove, cubeAction string
 			var dt, por, d1, d2, cv, co, s1, s2 *int64
 			var hj, hb *bool
+			var mc *int64
 			if err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber,
 				&moveType, &player, &positionID,
-				&state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb,
+				&state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &mc,
 				&checkerMove, &cubeAction); err != nil {
 				yield(nil, fmt.Errorf("postgres: move positions for match %d: %w", matchID, err))
 				return
@@ -906,6 +907,7 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 				derefInt(dt), derefInt(por), derefInt(d1), derefInt(d2),
 				derefInt(cv), derefInt(co), derefInt(s1), derefInt(s2),
 				boolToIntPtr(hj), boolToIntPtr(hb))
+			position.MaxCube = derefInt(mc)
 			mp := domain.MatchMovePosition{
 				Position:     position,
 				MoveID:       moveID,

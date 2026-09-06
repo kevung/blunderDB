@@ -1,5 +1,5 @@
 {
-  "_comment": "Shared XGID contract corpus, asserted by the Go decoder (pkg/blunderdb/domain/xgid_contract_test.go) and the GUI encoder (frontend/src/__tests__/xgidContract.test.js). Each case is a chain: `xgid` is decoded by Go DecodeXGID, which must yield `position` (the exact JSON the Wails bridge hands the GUI: board.points[26] with index 0 = White bar and 25 = Black bar, board.bearoff by colour, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver) and pip counts `pips` (ComputePipCounts); Go also checks that EncodeXGIDBoard(position) is the board part of `xgidCanonical`. The GUI side has no XGID parser any more (commit cd33de85: it parses via the backend), so it starts from `position` as given here and asserts generateXGID(position) === `xgidCanonical` (frontend/src/services/positionService.js) and computePipCount(position) === `pips` (frontend/src/utils/boardGeometry.js). The flat fields (cubeOwner, cubeValueExp, dice, playerOnRoll, score, hasJacoby, hasBeaver) restate `position` for readability and are cross-checked against it on both sides. Conventions: color/owner 0=X(Black), 1=O(White), -1=None; cubeValueExp is the log2 exponent (0 -> cube shows 1, 2 -> shows 4); score is the AWAY score ([-1,-1] for money games); decision_type 0=checker, 1=cube. `xgidCanonical` is NOT the input XGID but its re-encoding under the GUI's own conventions (see generateXGID's doc comment, D.11/#211): a money game's Jacoby/Beaver bitmask (field 7) is now carried through losslessly, since nothing else in blunderDB retains it once dropped. What stays a deliberate, harmless re-encoding is the match-length/score pair at a match score: Position only ever stores the AWAY score, never the absolute match length or either side's points-so-far, so the smallest match length consistent with the away scores is reconstructed (a 7pt match at 3-1 re-encodes as a 6pt match at 2-0) and the Crawford flag is inferred from an away score of 1 — both still round-trip through DecodeXGID to the exact same away scores, cube and board. The max-cube field is emitted as 0 (XGID's own \"no limit\"): blunderDB does not model a capped-cube rule at all, so 0 is the honest answer, not a lossy default. A cube offered (dice field `D`) re-encodes as dice 00. Go-side conventions the corpus relies on: turn=0 decodes as Black on roll; in match play field 7 (Crawford) carries no Jacoby/Beaver information and is ignored.",
+  "_comment": "Shared XGID contract corpus, asserted by the Go decoder (pkg/blunderdb/domain/xgid_contract_test.go) and the GUI encoder (frontend/src/__tests__/xgidContract.test.js). Each case is a chain: `xgid` is decoded by Go DecodeXGID, which must yield `position` (the exact JSON the Wails bridge hands the GUI: board.points[26] with index 0 = White bar and 25 = Black bar, board.bearoff by colour, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver) and pip counts `pips` (ComputePipCounts); Go also checks that EncodeXGIDBoard(position) is the board part of `xgidCanonical`. The GUI side has no XGID parser any more (commit cd33de85: it parses via the backend), so it starts from `position` as given here and asserts generateXGID(position) === `xgidCanonical` (frontend/src/services/positionService.js) and computePipCount(position) === `pips` (frontend/src/utils/boardGeometry.js). The flat fields (cubeOwner, cubeValueExp, dice, playerOnRoll, score, hasJacoby, hasBeaver) restate `position` for readability and are cross-checked against it on both sides. Conventions: color/owner 0=X(Black), 1=O(White), -1=None; cubeValueExp is the log2 exponent (0 -> cube shows 1, 2 -> shows 4); score is the AWAY score ([-1,-1] for money games); decision_type 0=checker, 1=cube. `xgidCanonical` is NOT the input XGID but its re-encoding under the GUI's own conventions (see generateXGID's doc comment, D.11/#211): a money game's Jacoby/Beaver bitmask (field 7) is now carried through losslessly, since nothing else in blunderDB retains it once dropped. What stays a deliberate, harmless re-encoding is the match-length/score pair at a match score: Position only ever stores the AWAY score, never the absolute match length or either side's points-so-far, so the smallest match length consistent with the away scores is reconstructed (a 7pt match at 3-1 re-encodes as a 6pt match at 2-0) and the Crawford flag is inferred from an away score of 1 — both still round-trip through DecodeXGID to the exact same away scores, cube and board. The max-cube field (field 9) is carried through as the source stated it (#271): 1..9 is a real ceiling and becomes position.max_cube, while 0 and XG's own no-limit 10 both mean \"no ceiling stated\" and re-encode as 0. The evaluator does not model a capped cube — the value is reported next to the verdict, never acted on — but dropping it on the way out would silently rewrite the ruleset of a position the user pasted in. A cube offered (dice field `D`) re-encodes as dice 00. Go-side conventions the corpus relies on: turn=0 decodes as Black on roll; in match play field 7 (Crawford) carries no Jacoby/Beaver information and is ignored.",
   "cases": [
     {
       "name": "money game, Jacoby + Beaver, cube decision (issue #13 beaver position)",
@@ -51,7 +51,8 @@
         "player_on_roll": 0,
         "decision_type": 1,
         "has_jacoby": 1,
-        "has_beaver": 1
+        "has_beaver": 1,
+        "max_cube": 0
       }
     },
     {
@@ -104,7 +105,8 @@
         "player_on_roll": 0,
         "decision_type": 0,
         "has_jacoby": 0,
-        "has_beaver": 0
+        "has_beaver": 0,
+        "max_cube": 0
       }
     },
     {
@@ -118,7 +120,7 @@
       "hasJacoby": 0,
       "hasBeaver": 0,
       "pips": [167, 167],
-      "xgidCanonical": "-b----E-C---eE---c-e----B-:2:1:-1:00:2:0:0:6:0",
+      "xgidCanonical": "-b----E-C---eE---c-e----B-:2:1:-1:00:2:0:0:6:3",
       "position": {
         "board": {
           "points": [
@@ -157,7 +159,8 @@
         "player_on_roll": 1,
         "decision_type": 1,
         "has_jacoby": 0,
-        "has_beaver": 0
+        "has_beaver": 0,
+        "max_cube": 3
       }
     },
     {
@@ -171,7 +174,7 @@
       "hasJacoby": 1,
       "hasBeaver": 0,
       "pips": [167, 167],
-      "xgidCanonical": "-b----E-C---eE---c-e----B-:0:0:1:31:0:0:1:0:0",
+      "xgidCanonical": "-b----E-C---eE---c-e----B-:0:0:1:31:0:0:1:0:3",
       "position": {
         "board": {
           "points": [
@@ -210,7 +213,8 @@
         "player_on_roll": 0,
         "decision_type": 0,
         "has_jacoby": 1,
-        "has_beaver": 0
+        "has_beaver": 0,
+        "max_cube": 3
       }
     },
     {
@@ -224,7 +228,7 @@
       "hasJacoby": 0,
       "hasBeaver": 1,
       "pips": [167, 167],
-      "xgidCanonical": "-b----E-C---eE---c-e----B-:0:0:-1:00:0:0:2:0:0",
+      "xgidCanonical": "-b----E-C---eE---c-e----B-:0:0:-1:00:0:0:2:0:3",
       "position": {
         "board": {
           "points": [
@@ -263,7 +267,8 @@
         "player_on_roll": 1,
         "decision_type": 1,
         "has_jacoby": 0,
-        "has_beaver": 1
+        "has_beaver": 1,
+        "max_cube": 3
       }
     },
     {
@@ -316,7 +321,8 @@
         "player_on_roll": 0,
         "decision_type": 1,
         "has_jacoby": 0,
-        "has_beaver": 0
+        "has_beaver": 0,
+        "max_cube": 0
       }
     },
     {
@@ -369,7 +375,8 @@
         "player_on_roll": 1,
         "decision_type": 1,
         "has_jacoby": 1,
-        "has_beaver": 1
+        "has_beaver": 1,
+        "max_cube": 0
       }
     },
     {
@@ -422,7 +429,8 @@
         "player_on_roll": 0,
         "decision_type": 0,
         "has_jacoby": 0,
-        "has_beaver": 0
+        "has_beaver": 0,
+        "max_cube": 0
       }
     }
   ]

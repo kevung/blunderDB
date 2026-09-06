@@ -29,18 +29,19 @@ func (s *positionStore) ReclassifyPhases(ctx context.Context, scope string) (int
 var _ storage.PositionStore = (*positionStore)(nil)
 
 // positionCols is the column list read back into a Position; the first twelve
-// match engine.ReconstructPosition's parameters, and individually_imported is
-// applied on top (it is provenance, not identity — see ADR-0001).
+// match engine.ReconstructPosition's parameters, and individually_imported,
+// flagged and max_cube are applied on top (provenance and session rules, not
+// identity — see ADR-0001 and ADR-0028).
 const positionCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, ` +
-	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
+	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged, max_cube`
 
 // scanPosition reconstructs a Position from a row selected with positionCols.
 func scanPosition(sc interface{ Scan(...any) error }) (domain.Position, error) {
 	var id int64
 	var state string
-	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+	var dt, por, d1, d2, cv, co, s1, s2, hj, hb, mc sql.NullInt64
 	var individual, flagged sql.NullBool
-	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged); err != nil {
+	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged, &mc); err != nil {
 		return domain.Position{}, err
 	}
 	p := engine.ReconstructPosition(id, state,
@@ -49,6 +50,7 @@ func scanPosition(sc interface{ Scan(...any) error }) (domain.Position, error) {
 		int(hj.Int64), int(hb.Int64))
 	p.IndividuallyImported = individual.Bool
 	p.Flagged = flagged.Bool
+	p.MaxCube = int(mc.Int64)
 	return p, nil
 }
 
@@ -59,8 +61,8 @@ const positionInsertSQL = `INSERT INTO position (
 	pip_1, pip_2, pip_diff, off_1, off_2,
 	back_checkers_1, back_checkers_2, no_contact, game_phase,
 	occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-	state, individually_imported, flagged
-) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?,?, ?,?,?,?, ?,?,?)
+	state, individually_imported, flagged, max_cube
+) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?,?, ?,?,?,?, ?,?,?,?)
 ON CONFLICT(zobrist_hash) DO NOTHING`
 
 // markIndividualSQL raises the provenance flag on an already-stored position.
@@ -115,7 +117,8 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged))
+		engine.EncodeBoardCompact(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged),
+		cols.MaxCube)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save position: %w", err)
 	}
@@ -155,7 +158,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 const positionUpdateSQL = `UPDATE position SET state = ?,
 	zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
 	cube_value=?, cube_owner=?, score_1=?, score_2=?,
-	has_jacoby=?, has_beaver=?,
+	has_jacoby=?, has_beaver=?, max_cube=?,
 	pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
 	back_checkers_1=?, back_checkers_2=?, no_contact=?, game_phase=?,
 	occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
@@ -168,7 +171,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 		engine.EncodeBoardCompact(p.Board),
 		int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby, cols.HasBeaver,
+		cols.HasJacoby, cols.HasBeaver, cols.MaxCube,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),

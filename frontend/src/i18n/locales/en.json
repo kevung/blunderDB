@@ -734,7 +734,8 @@
         "cubeOpponent": "Opponent owns the cube",
         "crawford": "Cube dead (Crawford)",
         "jacoby": "Jacoby",
-        "beaver": "Beaver"
+        "beaver": "Beaver",
+        "maxCube": "Max cube {value}"
     },
     "comment": {
         "editedSuffix": "(edited)",

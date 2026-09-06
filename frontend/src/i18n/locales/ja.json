@@ -734,7 +734,8 @@
         "cubeOpponent": "相手がキューブを保有",
         "crawford": "キューブ無効（クロフォード）",
         "jacoby": "ジャコビー",
-        "beaver": "ビーバー"
+        "beaver": "ビーバー",
+        "maxCube": "キューブ上限 {value}"
     },
     "comment": {
         "editedSuffix": "（編集済み）",

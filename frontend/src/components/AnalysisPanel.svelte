@@ -30,6 +30,9 @@
     let isMoney = $derived(isMoneyPosition($positionStore));
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
+    // The cube ceiling is not a money-only rule: a capped cube is stated by the
+    // identifier whatever the score, so it is read straight off the position.
+    let maxCube = $derived($positionStore?.max_cube ?? 0);
     let matchCtx = $derived($matchContextStore);
 
     let activeTab = $state('checker'); // 'checker' or 'cube'
@@ -368,6 +371,7 @@
             {isMoney}
             {jacoby}
             {beaver}
+            {maxCube}
         />
     </div>
 </section>

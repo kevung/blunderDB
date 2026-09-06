@@ -24,7 +24,7 @@
 // bit 1 = Beaver) — the same dual meaning domain.DecodeXGID documents — so
 // which one it emits is decided by the game type, never both.
 export function generateXGID(position) {
-    const { board, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver } = position;
+    const { board, cube, dice, score, player_on_roll, decision_type, has_jacoby, has_beaver, max_cube } = position;
 
     let positionPart = '';
     for (let i = 0; i < 26; i++) {
@@ -47,10 +47,13 @@ export function generateXGID(position) {
     const isCrawford = !isMoneyGame && (score[0] === 1 || score[1] === 1) ? 1 : 0;
     const field7 = isMoneyGame ? (has_jacoby ? 1 : 0) | (has_beaver ? 2 : 0) : isCrawford;
     const playerOnRoll = player_on_roll === 0 ? 1 : -1;
-    // Field 9 (max cube): blunderDB does not model a capped-cube rule at all
-    // — 0, XGID's own "no limit" convention, is the honest answer for every
-    // position this app can represent, not a lossy default.
-    const maxCube = 0;
+    // Field 9 (max cube): the ceiling the SOURCE stated, carried back out
+    // unchanged (#271). The evaluator still does not model a capped cube —
+    // this field is reported, never acted on — but dropping it on the way out
+    // would silently rewrite the ruleset of a position the user pasted in. 0
+    // is XGID's own "no ceiling stated", which is what a position that never
+    // carried one keeps.
+    const maxCube = max_cube || 0;
 
     return `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${field7}:${matchLength}:${maxCube}`;
 }

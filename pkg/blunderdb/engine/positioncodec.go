@@ -34,6 +34,7 @@ type PositionColumns struct {
 	Score2    int
 	HasJacoby int
 	HasBeaver int
+	MaxCube   int
 }
 
 // PopulatePositionColumns computes every derived column value for a Position.
@@ -78,6 +79,7 @@ func PopulatePositionColumns(p *domain.Position) PositionColumns {
 	c.Score2 = norm.Score[1]
 	c.HasJacoby = norm.HasJacoby
 	c.HasBeaver = norm.HasBeaver
+	c.MaxCube = norm.MaxCube
 
 	return c
 }

@@ -444,7 +444,7 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 		p.cube_value, p.cube_owner, p.score_1, p.score_2,
-		p.has_jacoby, p.has_beaver, p.is_cube_response,
+		p.has_jacoby, p.has_beaver, p.max_cube, p.is_cube_response,
 		p.individually_imported, p.flagged,
 		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
@@ -504,12 +504,13 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 		var posState string
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2 *int64
 		var pHJ, pHB, pICR, pII, pFlag *bool
+		var pMC *int64
 		var anaID *int64
 		var anaData []byte
 
 		if err := rows.Scan(
 			&posID, &posState,
-			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pICR,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB, &pMC, &pICR,
 			&pII, &pFlag,
 			&anaID, &anaData,
 		); err != nil {
@@ -526,6 +527,7 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 		// position read through PositionStore.Load.
 		position.IndividuallyImported = pII != nil && *pII
 		position.Flagged = pFlag != nil && *pFlag
+		position.MaxCube = derefInt(pMC)
 
 		var ana *domain.PositionAnalysis
 		if needAnalysis && anaID != nil && len(anaData) > 0 {

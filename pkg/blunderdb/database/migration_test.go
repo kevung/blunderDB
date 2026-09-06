@@ -2571,3 +2571,52 @@ func TestMigrate_2_17_0_to_2_18_0_OneAnalysisPerPosition(t *testing.T) {
 		t.Errorf("CheckConstraints on the migrated database: %d violation(s), want 0: %+v", n, violations)
 	}
 }
+
+// TestMigrate_2_19_0_to_2_20_0_MaxCube pins the 2.20.0 wave's one column and,
+// more importantly, what a missing value means. A row written before the
+// column existed comes from an identifier that stated no cube ceiling, so 0 is
+// the truth about it and the migration must not invent anything else — nor
+// rehash, since max_cube is not part of the position's identity (#271).
+func TestMigrate_2_19_0_to_2_20_0_MaxCube(t *testing.T) {
+	t.Parallel()
+	tmpDir := tempDir(t)
+	dbPath := filepath.Join(tmpDir, "test_v2190.db")
+	createOldDatabase(t, dbPath, "2.19.0")
+
+	raw, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open raw: %v", err)
+	}
+	res, err := raw.Exec(`INSERT INTO position (state) VALUES ('{}')`)
+	if err != nil {
+		t.Fatalf("insert position: %v", err)
+	}
+	posID, _ := res.LastInsertId()
+	raw.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.19.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	defer d.db.Close()
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("CheckDatabaseVersion: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("version after migration: got %s, want %s", version, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "position", "max_cube") {
+		t.Fatal("position.max_cube should exist after migration")
+	}
+
+	var maxCube int
+	if err := d.db.QueryRow(`SELECT max_cube FROM position WHERE id = ?`, posID).Scan(&maxCube); err != nil {
+		t.Fatalf("read max_cube: %v", err)
+	}
+	if maxCube != 0 {
+		t.Errorf("migration must not invent a cube ceiling: got max_cube=%d, want 0", maxCube)
+	}
+}

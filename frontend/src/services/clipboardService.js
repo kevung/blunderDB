@@ -67,6 +67,7 @@ export function copyPosition() {
                 player_on_roll: position.player_on_roll,
                 decision_type: position.decision_type,
                 has_jacoby: position.has_jacoby,
+                max_cube: position.max_cube,
                 has_beaver: position.has_beaver
             })
         )

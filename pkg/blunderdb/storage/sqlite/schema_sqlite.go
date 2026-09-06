@@ -57,6 +57,11 @@ var schemaStatements = []string{
 		match_length      INTEGER,
 		has_jacoby        INTEGER,
 		has_beaver        INTEGER,
+		-- Session cube ceiling (2.20.0, issue #271): the log2 exponent the
+		-- XGID's tenth field carries, 0 when the source stated no ceiling.
+		-- Reported next to the verdict, never folded into the Zobrist hash —
+		-- same reasoning as has_jacoby/has_beaver (ADR-0028).
+		max_cube          INTEGER NOT NULL DEFAULT 0,
 		pip_1             INTEGER,
 		pip_2             INTEGER,
 		pip_diff          INTEGER,

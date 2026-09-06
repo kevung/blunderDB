@@ -143,6 +143,14 @@ func DecodeXGID(xgid string) (Position, error) {
 		}
 	}
 
+	// --- Cube ceiling (field 9) ---
+	// XG writes the log2 exponent of the highest cube the session allows; 10
+	// (1024) is its own "no limit". Anything outside 1..9 is stored as 0, the
+	// value that means "no ceiling stated" — see Position.MaxCube.
+	if maxCube, ok := xgidInt(fields, 9); ok && maxCube >= 1 && maxCube <= 9 {
+		pos.MaxCube = maxCube
+	}
+
 	return pos, nil
 }
 
