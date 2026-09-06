@@ -480,7 +480,8 @@ Pour importer une position directement depuis XG,
 #. afficher blunderDB et appuyer *CTRL-V*.
 
 .. note::
-   Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz).
+   Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz),
+   ainsi que l'identifiant OGID d'OpenGammon.
 
 Importer un match
 -----------------

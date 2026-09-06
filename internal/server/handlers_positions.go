@@ -26,6 +26,11 @@ type xgidReq struct {
 	XGID string `json:"xgid"`
 }
 
+// ogidReq carries an OpenGammon Position ID (#260).
+type ogidReq struct {
+	OGID string `json:"ogid"`
+}
+
 // parseTextReq carries pasted clipboard / file text to parse into a position.
 type parseTextReq struct {
 	Text string `json:"text"`
@@ -102,6 +107,16 @@ func (s *Server) positionRoutes() []route {
 		// useful to the Desktop too (paste an XGID). Invalid input → 4xx.
 		{http.MethodPost, "/v1/positions.fromXGID", rpc(func(ctx context.Context, scope string, req xgidReq) (*domain.Position, error) {
 			pos, err := domain.DecodeXGID(req.XGID)
+			if err != nil {
+				return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+			}
+			return &pos, nil
+		})},
+		// Decode an OGID string into a Position (#260). Same shape and same
+		// reasons as fromXGID above: pure, no storage, and useful to any
+		// client that has an identifier rather than a file.
+		{http.MethodPost, "/v1/positions.fromOGID", rpc(func(ctx context.Context, scope string, req ogidReq) (*domain.Position, error) {
+			pos, err := domain.DecodeOGID(req.OGID)
 			if err != nil {
 				return nil, fmt.Errorf("%w: %w", storage.ErrInvalid, err)
 			}

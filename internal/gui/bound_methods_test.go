@@ -41,6 +41,7 @@ var boundAppMethods = []string{
 	"GetIssuerIdentity",
 	"ImportIssuerIdentity",
 	"IsDirectory",
+	"LooksLikeOGID",
 	"OpenBearoffFileDialog",
 	"OpenDatabaseDialog",
 	"OpenExportDatabaseDialog",

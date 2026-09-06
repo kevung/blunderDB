@@ -887,7 +887,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Importa una o più posizioni/incontri da file (xg, xgp, sgf, mat, txt, bgf). Con un argomento — <code>import XGID=…</code> — legge l'identificatore invece di aprire un selettore di file, per quando arriva da un messaggio, un forum o uno script.</td>
+<td>Importa una o più posizioni/incontri da file (xg, xgp, sgf, mat, txt, bgf). Con un argomento — <code>import XGID=…</code> o <code>import OGID=…</code> — legge l'identificatore invece di aprire un selettore di file, per quando arriva da un messaggio, un forum o uno script.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

@@ -888,7 +888,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Importa una o varias posiciones/partidos desde un fichero (xg, xgp, sgf, mat, txt, bgf). Con un argumento — <code>import XGID=…</code> — lee el identificador en vez de abrir un selector de ficheros, para cuando llega de un mensaje, un foro o un script.</td>
+<td>Importa una o varias posiciones/partidos desde un fichero (xg, xgp, sgf, mat, txt, bgf). Con un argumento — <code>import XGID=…</code> o <code>import OGID=…</code> — lee el identificador en vez de abrir un selector de ficheros, para cuando llega de un mensaje, un foro o un script.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

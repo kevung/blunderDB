@@ -54,6 +54,7 @@ const (
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
+	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
@@ -88,6 +89,7 @@ var serverOnly = map[string]string{
 	// the CLI import the package and call them in Go; only an HTTP client
 	// needs them as routes.
 	"/v1/gammonnet.cubeMatrix": whyEnginePure,
+	"/v1/positions.fromOGID":   whyIdentifierDecode,
 	"/v1/positions.fromXGID":   whyPureDomain,
 	"/v1/positions.legalMoves": whyPureDomain,
 	"/v1/search.parse":         whyPureDomain,
