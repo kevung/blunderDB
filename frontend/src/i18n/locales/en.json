@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Data table"
     },
+    "cubeMatrix": {
+        "title": "Cube matrix",
+        "computing": "computing…",
+        "depth": "{ply}-ply",
+        "points": "{n} pts",
+        "axes": "rows: points still needed by the player on roll; columns: points still needed by the opponent",
+        "glyphNoDouble": "ND",
+        "glyphDoubleTake": "DT",
+        "glyphDoublePass": "DP",
+        "glyphTooGood": "TG",
+        "legendNoDouble": "no double",
+        "legendDoubleTake": "double, take",
+        "legendDoublePass": "double, pass",
+        "legendTooGood": "too good",
+        "legendRefused": "not evaluable",
+        "note": "The position's own score is replaced by each cell's; its cube is kept. The grid is post-Crawford: during the Crawford game the cube is not in play."
+    },
     "met": {
         "title": "Match equity table"
     },

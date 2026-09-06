@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:25+0200\n"
+"POT-Creation-Date: 2026-09-06 05:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -150,6 +150,18 @@ msgid "Ouvre la table d'équité de match Kazaross-XG2."
 msgstr "Avaa Kazaross-XG2-ottelutaulukon (match equity table)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "cm"
+msgstr "cm"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la matrice du videau : le verdict de la position courante à tous "
+"les scores d'un match de 5, 7 ou 9 points."
+msgstr ""
+"Avaa kuutiomatriisin: nykyisen aseman tuomion 5-, 7- tai 9-pisteen "
+"ottelun jokaisessa pistetilanteessa."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tp2"
 msgstr "tp2"
 
@@ -221,7 +233,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "Asemat ja navigointi"
 
@@ -354,7 +366,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:73
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -390,11 +402,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:89
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:90
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -409,7 +421,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -429,7 +441,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -439,11 +451,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -452,7 +464,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1323,7 +1335,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. ``pl'Alice'``). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:216
+#: ../../source/cmd_mode.rst:217
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1334,4 +1346,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Tyhjentää komentohistorian."
-

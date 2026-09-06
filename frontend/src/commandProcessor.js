@@ -100,6 +100,8 @@ export function processCommand(command) {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {
         openModal(MODAL.MET);
+    } else if (command === 'cm') {
+        openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tp2_last') {
         openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {

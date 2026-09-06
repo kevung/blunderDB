@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:25+0200\n"
+"POT-Creation-Date: 2026-09-06 05:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -151,6 +151,18 @@ msgid "Ouvre la table d'équité de match Kazaross-XG2."
 msgstr "Открывает таблицу матчевого эквити Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
+msgid "cm"
+msgstr "cm"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la matrice du videau : le verdict de la position courante à tous "
+"les scores d'un match de 5, 7 ou 9 points."
+msgstr ""
+"Открывает матрицу куба: вердикт текущей позиции при любом счёте матча до "
+"5, 7 или 9 очков."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tp2"
 msgstr "tp2"
 
@@ -222,7 +234,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Открывает таблицу значений гэммона при кубе на 4."
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "Позиции и навигация"
 
@@ -358,7 +370,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Навигация по последнему просмотренному матчу."
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:73
 msgid "Édition et recherche"
 msgstr "Редактирование и поиск"
 
@@ -394,11 +406,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Искать среди текущих отфильтрованных позиций."
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:89
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
-#: ../../source/cmd_mode.rst:90
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -413,7 +425,7 @@ msgstr ""
 "``search``, делающий то же самое (см. :ref:`cli`); тире отмечает фильтр, "
 "который выражает только грамматика."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -432,7 +444,7 @@ msgstr ""
 "(``xD65``). В командной строке, где доски нет, эти токены сравниваются с "
 "пустой доской; там нужно применять флаги из третьего столбца."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -442,11 +454,11 @@ msgstr ""
 " из таблицы ниже: ``E>100`` оставляет ходы, стоившие не менее одной "
 "десятой очка, поскольку очко равно 1000 тысячных."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid "Deux recherches complètes :"
 msgstr "Два полных поиска:"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -455,7 +467,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — отставание более 30 пипов, шансы на выигрыш от 40"
 " % до 60 %, без комментария."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1328,7 +1340,7 @@ msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
 "(напр. ``pl'Alice'``). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:216
+#: ../../source/cmd_mode.rst:217
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
@@ -1339,4 +1351,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Очищает историю команд."
-

@@ -1328,6 +1328,44 @@ valeurs propres au panneau Eval, différentes de celles utilisées en mode
 édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau
 affiche par défaut.
 
+.. _eval_matrice_videau:
+
+Matrice du videau
+~~~~~~~~~~~~~~~~~
+
+Une décision de videau n'est pas une propriété du damier. Les mêmes pions,
+le même compte de pips, se doublent à 2-away/4-away et ne se doublent pas à
+4-away/2-away ; un joueur qui a appris la réponse money n'a appris qu'une
+case d'une grille. Le panneau Eval montre la case que la position porte ; la
+**matrice du videau** montre la grille entière.
+
+La commande ``cm`` l'ouvre sur la position affichée. Chaque case donne le
+verdict à un score : la ligne est le nombre de points qu'il reste à faire au
+joueur au trait, la colonne celui qu'il reste à faire à son adversaire. Les
+quatre verdicts s'écrivent *PD* (pas de double), *DP* (double, prend), *DR*
+(double, refuse) et *TB* (trop bon) ; une case que le moteur refuse porte un
+point d'interrogation et dit pourquoi au survol, qui donne aussi les trois
+équités de la case. Trois longueurs de match sont proposées : 5, 7 et 9
+points.
+
+Le score de la position est remplacé par celui de chaque case ; son
+**videau**, lui, est conservé. La grille répond à « à quel score
+retournerais-je *ce* videau », pas à ce que ferait une position centrée. Elle
+est post-Crawford d'un bout à l'autre : pendant la partie Crawford le videau
+n'est pas en jeu, et une colonne de « vous ne pouvez pas doubler » ne dirait
+rien de la position.
+
+Chaque case est une recherche à part entière. Le moteur tient compte du score
+— il ne joue pas la même partie à 2-away qu'à 7-away —, donc une seule
+recherche relue à travers des équités de match différentes serait fausse
+exactement là où le score compte. La grille arrive d'abord en 0-ply, puis se
+recalcule à la profondeur d'affichage configurée une fois la fenêtre au
+repos : la même escalade que le reste du panneau, pour une grille de 9 points
+qui coûte environ une seconde et demie.
+
+La même grille se calcule hors de l'interface, avec la commande
+:ref:`cubematrix <cli_cubematrix>` de la ligne de commande.
+
 .. _eval_amener_position:
 
 Amener une position dans le panneau Eval

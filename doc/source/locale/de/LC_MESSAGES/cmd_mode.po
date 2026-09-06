@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:25+0200\n"
+"POT-Creation-Date: 2026-09-06 05:06+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -150,6 +150,18 @@ msgid "Ouvre la table d'équité de match Kazaross-XG2."
 msgstr "Öffnet die Match-Equity-Tabelle Kazaross-XG2."
 
 #: ../../source/cmd_mode.rst:1
+msgid "cm"
+msgstr "cm"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la matrice du videau : le verdict de la position courante à tous "
+"les scores d'un match de 5, 7 ou 9 points."
+msgstr ""
+"Öffnet die Dopplerwürfel-Matrix: das Urteil der aktuellen Stellung bei "
+"jedem Punktestand eines Matches über 5, 7 oder 9 Punkte."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tp2"
 msgstr "tp2"
 
@@ -221,7 +233,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Öffnet die Gammon-Wert-Tabelle bei Dopplerstand 4."
 
-#: ../../source/cmd_mode.rst:47
+#: ../../source/cmd_mode.rst:48
 msgid "Positions et navigation"
 msgstr "Positionen und Navigation"
 
@@ -358,7 +370,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigiert zum zuletzt besuchten Match."
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:73
 msgid "Édition et recherche"
 msgstr "Bearbeitung und Suche"
 
@@ -394,11 +406,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Sucht unter den aktuell gefilterten Positionen."
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:89
 msgid "Filtres de recherche"
 msgstr "Suchfilter"
 
-#: ../../source/cmd_mode.rst:90
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -414,7 +426,7 @@ msgstr ""
 ":ref:`cli`); ein Gedankenstrich zeigt einen Filter an, den nur die "
 "Grammatik ausdrückt."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -428,13 +440,13 @@ msgstr ""
 "Fünf Token tragen ihren Wert nicht selbst: Sie lesen ihn vom Suchbrett "
 "ab. ``cube`` und ``score`` übernehmen den dort eingestellten Doppler und "
 "Spielstand, ``d`` den Entscheidungstyp, ``D`` und ``D1`` die Würfel, "
-"``x`` die im Reiter *Außer* gezeichnete Struktur. Ein Wurf steht also "
-"nie im Token selbst: ``D65`` gibt es nicht, nur die Ausschlussform trägt "
+"``x`` die im Reiter *Außer* gezeichnete Struktur. Ein Wurf steht also nie"
+" im Token selbst: ``D65`` gibt es nicht, nur die Ausschlussform trägt "
 "seine Ziffern (``xD65``). Auf der Kommandozeile, wo es kein Brett gibt, "
 "vergleichen diese Token mit einem leeren Brett; dort sind die Optionen "
 "der dritten Spalte zu verwenden."
 
-#: ../../source/cmd_mode.rst:106
+#: ../../source/cmd_mode.rst:107
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -445,11 +457,11 @@ msgstr ""
 "ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln "
 "entspricht."
 
-#: ../../source/cmd_mode.rst:110
+#: ../../source/cmd_mode.rst:111
 msgid "Deux recherches complètes :"
 msgstr "Zwei vollständige Suchen:"
 
-#: ../../source/cmd_mode.rst:112
+#: ../../source/cmd_mode.rst:113
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -458,7 +470,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — mehr als 30 Pips Rückstand, zwischen 40 % und 60 "
 "% Gewinnchance, kein Kommentar."
 
-#: ../../source/cmd_mode.rst:114
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1343,7 +1355,7 @@ msgstr ""
 "der beiden Seiten beteiligt war (z. B. ``pl'Alice'``). "
 "Groß-/Kleinschreibung wird ignoriert."
 
-#: ../../source/cmd_mode.rst:216
+#: ../../source/cmd_mode.rst:217
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 
@@ -1354,4 +1366,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Löscht den Befehlsverlauf."
-

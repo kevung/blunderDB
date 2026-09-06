@@ -835,6 +835,10 @@ export default {
 <td>Ouvre la table d'équité de match Kazaross-XG2.</td>
 </tr>
 <tr>
+<td>cm</td>
+<td>Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Ouvre la table des takepoints avec videau à 2.</td>
 </tr>

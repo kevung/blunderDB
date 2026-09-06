@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Taulukko"
     },
+    "cubeMatrix": {
+        "title": "Tuplauskuution matriisi",
+        "computing": "lasketaan…",
+        "depth": "{ply}-ply",
+        "points": "{n} p",
+        "axes": "rivit: pisteet, jotka vuorossa oleva pelaaja vielä tarvitsee; sarakkeet: pisteet, jotka vastustaja vielä tarvitsee",
+        "glyphNoDouble": "ET",
+        "glyphDoubleTake": "TO",
+        "glyphDoublePass": "TP",
+        "glyphTooGood": "LH",
+        "legendNoDouble": "ei tuplausta",
+        "legendDoubleTake": "tuplaus, otto",
+        "legendDoublePass": "tuplaus, pass",
+        "legendTooGood": "liian hyvä",
+        "legendRefused": "ei arvioitavissa",
+        "note": "Aseman oma pistetilanne korvataan kunkin ruudun tilanteella; sen kuutio säilyy. Ruudukko on Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä."
+    },
     "met": {
         "title": "Match equity -taulukko"
     },

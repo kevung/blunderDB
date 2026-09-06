@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Tabla de datos"
     },
+    "cubeMatrix": {
+        "title": "Matriz del cubo",
+        "computing": "calculando…",
+        "depth": "{ply}-ply",
+        "points": "{n} pts",
+        "axes": "filas: puntos que aún necesita el jugador en turno; columnas: puntos que aún necesita el adversario",
+        "glyphNoDouble": "ND",
+        "glyphDoubleTake": "DT",
+        "glyphDoublePass": "DP",
+        "glyphTooGood": "DB",
+        "legendNoDouble": "no doblar",
+        "legendDoubleTake": "doblar, tomar",
+        "legendDoublePass": "doblar, pasar",
+        "legendTooGood": "demasiado bueno",
+        "legendRefused": "no evaluable",
+        "note": "El marcador propio de la posición se sustituye por el de cada casilla; su cubo se conserva. La cuadrícula es posterior a Crawford: durante la partida Crawford el cubo no está en juego."
+    },
     "met": {
         "title": "Tabla de equity de partida"
     },

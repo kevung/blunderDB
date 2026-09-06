@@ -20,10 +20,12 @@ import (
 // Kept sorted so a diff against a future mismatch is easy to read.
 var boundAppMethods = []string{
 	"BearoffStatus",
+	"CancelCubeMatrix",
 	"CancelEvaluationAtRest",
 	"CancelGammonNetBatch",
 	"CheckForUpdate",
 	"CollectImportableFiles",
+	"ComputeCubeMatrix",
 	"CopyImageToClipboard",
 	"DeleteFile",
 	"EnsureBearoffTables",

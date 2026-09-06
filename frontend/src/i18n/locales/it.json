@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Tabella dati"
     },
+    "cubeMatrix": {
+        "title": "Matrice del cubo",
+        "computing": "calcolo in corso…",
+        "depth": "{ply}-ply",
+        "points": "{n} pt",
+        "axes": "righe: punti ancora necessari al giocatore di turno; colonne: punti ancora necessari all'avversario",
+        "glyphNoDouble": "ND",
+        "glyphDoubleTake": "DP",
+        "glyphDoublePass": "DR",
+        "glyphTooGood": "TB",
+        "legendNoDouble": "niente raddoppio",
+        "legendDoubleTake": "raddoppio, presa",
+        "legendDoublePass": "raddoppio, rifiuto",
+        "legendTooGood": "troppo buono",
+        "legendRefused": "non valutabile",
+        "note": "Il punteggio della posizione è sostituito da quello di ogni cella; il suo cubo è conservato. La griglia è post-Crawford: durante la partita Crawford il cubo non è in gioco."
+    },
     "met": {
         "title": "Tabella di equity del match"
     },

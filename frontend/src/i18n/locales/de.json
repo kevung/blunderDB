@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Datentabelle"
     },
+    "cubeMatrix": {
+        "title": "Dopplerwürfel-Matrix",
+        "computing": "wird berechnet…",
+        "depth": "{ply}-Ply",
+        "points": "{n} Pkt.",
+        "axes": "Zeilen: Punkte, die der Spieler am Zug noch braucht; Spalten: Punkte, die der Gegner noch braucht",
+        "glyphNoDouble": "KD",
+        "glyphDoubleTake": "DA",
+        "glyphDoublePass": "DP",
+        "glyphTooGood": "ZG",
+        "legendNoDouble": "kein Doppel",
+        "legendDoubleTake": "Doppel, Annahme",
+        "legendDoublePass": "Doppel, Pass",
+        "legendTooGood": "zu gut",
+        "legendRefused": "nicht bewertbar",
+        "note": "Der Punktestand der Position wird durch den jeder Zelle ersetzt; ihr Dopplerwürfel bleibt erhalten. Das Raster gilt nach Crawford: während des Crawford-Spiels ist der Würfel nicht im Spiel."
+    },
     "met": {
         "title": "MET-Tabelle"
     },

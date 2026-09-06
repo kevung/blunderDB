@@ -61,6 +61,10 @@ var customContentTypes = map[string][]string{
 	// so there is no partial state to report progress into, and its answer is
 	// one small object (#270).
 	"/v1/gammonnet.compare": {"application/json"},
+	// gammonnet.cubeMatrix likewise: a grid is a property of the position in
+	// the request, so there is nothing to gather, nothing to store and
+	// nothing to stream (#267).
+	"/v1/gammonnet.cubeMatrix": {"application/json"},
 	// search.query streams positions like search.find; it is hand-written only
 	// so an unreadable query is refused before the 200 is committed (B.18).
 	"/v1/search.query": {ndjsonContentType},

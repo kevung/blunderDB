@@ -18,6 +18,7 @@ export const currentPositionIndexStore = writable(0);
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {
     MET: 'met',
+    CUBE_MATRIX: 'cubeMatrix',
     TAKE_POINT_2_LAST: 'takePoint2Last',
     TAKE_POINT_2_LIVE: 'takePoint2Live',
     TAKE_POINT_4_LAST: 'takePoint4Last',

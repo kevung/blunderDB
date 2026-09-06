@@ -946,6 +946,23 @@
     "datatable": {
         "title": "データテーブル"
     },
+    "cubeMatrix": {
+        "title": "キューブ判断のマトリクス",
+        "computing": "計算中…",
+        "depth": "{ply}プライ",
+        "points": "{n} 点",
+        "axes": "行：手番側の残り必要点／列：相手の残り必要点",
+        "glyphNoDouble": "ND",
+        "glyphDoubleTake": "DT",
+        "glyphDoublePass": "DP",
+        "glyphTooGood": "TG",
+        "legendNoDouble": "ダブルしない",
+        "legendDoubleTake": "ダブル、テイク",
+        "legendDoublePass": "ダブル、パス",
+        "legendTooGood": "トゥーグッド",
+        "legendRefused": "評価不可",
+        "note": "ポジション自身のスコアは各セルのスコアに置き換わりますが、キューブはそのままです。グリッドはクロフォード後のものです。クロフォードゲーム中はキューブを使えません。"
+    },
     "met": {
         "title": "MET（マッチ equity テーブル）"
     },

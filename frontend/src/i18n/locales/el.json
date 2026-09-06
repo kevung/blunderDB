@@ -946,6 +946,23 @@
     "datatable": {
         "title": "Πίνακας δεδομένων"
     },
+    "cubeMatrix": {
+        "title": "Μήτρα του κύβου",
+        "computing": "υπολογισμός…",
+        "depth": "{ply}-ply",
+        "points": "{n} πόντοι",
+        "axes": "γραμμές: πόντοι που χρειάζεται ακόμη ο παίκτης στη σειρά· στήλες: πόντοι που χρειάζεται ακόμη ο αντίπαλος",
+        "glyphNoDouble": "ΧΔ",
+        "glyphDoubleTake": "ΔΑ",
+        "glyphDoublePass": "ΔΠ",
+        "glyphTooGood": "ΠΚ",
+        "legendNoDouble": "χωρίς διπλασιασμό",
+        "legendDoubleTake": "διπλασιασμός, αποδοχή",
+        "legendDoublePass": "διπλασιασμός, πάσο",
+        "legendTooGood": "πολύ καλό",
+        "legendRefused": "μη αξιολογήσιμο",
+        "note": "Το σκορ της θέσης αντικαθίσταται από εκείνο κάθε κελιού· ο κύβος της διατηρείται. Το πλέγμα είναι μετά το Crawford: στο παιχνίδι Crawford ο κύβος δεν παίζει."
+    },
     "met": {
         "title": "Πίνακας equity αγώνα"
     },

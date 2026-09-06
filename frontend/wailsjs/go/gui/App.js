@@ -14,6 +14,10 @@ export function CancelBearoffGeneration() {
   return window['go']['gui']['App']['CancelBearoffGeneration']();
 }
 
+export function CancelCubeMatrix() {
+  return window['go']['gui']['App']['CancelCubeMatrix']();
+}
+
 export function CancelEvaluationAtRest() {
   return window['go']['gui']['App']['CancelEvaluationAtRest']();
 }
@@ -28,6 +32,10 @@ export function CheckForUpdate() {
 
 export function CollectImportableFiles(arg1) {
   return window['go']['gui']['App']['CollectImportableFiles'](arg1);
+}
+
+export function ComputeCubeMatrix(arg1, arg2, arg3, arg4) {
+  return window['go']['gui']['App']['ComputeCubeMatrix'](arg1, arg2, arg3, arg4);
 }
 
 export function CopyImageToClipboard(arg1) {

@@ -41,6 +41,7 @@
     import TourCatalogModal from './TourCatalogModal.svelte';
     import GoToPositionModal from './GoToPositionModal.svelte';
     import MetModal from './MetModal.svelte';
+    import CubeMatrixModal from './CubeMatrixModal.svelte';
     import DataTableModal from './DataTableModal.svelte';
     import WarningModal from './WarningModal.svelte';
     import ProtectedCopyModal from './ProtectedCopyModal.svelte';
@@ -55,6 +56,8 @@
 <TrashModal visible={$activeModal === MODAL.TRASH} onClose={() => closeModal()} />
 
 <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
+
+<CubeMatrixModal visible={$activeModal === MODAL.CUBE_MATRIX} onClose={() => closeModal()} />
 {#each Object.entries(MODAL_TABLES) as [modal, tables] (modal)}
     <DataTableModal visible={$activeModal === modal} onClose={() => closeModal()} {tables} />
 {/each}

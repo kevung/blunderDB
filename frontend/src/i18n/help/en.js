@@ -819,6 +819,10 @@ export default {
 <td>Open the Kazaross-XG2 match equity table.</td>
 </tr>
 <tr>
+<td>cm</td>
+<td>Opens the cube matrix: the current position’s verdict at every score of a 5-, 7- or 9-point match.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Open the takepoint table with a 2-cube.</td>
 </tr>

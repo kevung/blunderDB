@@ -826,6 +826,10 @@ export default {
 <td>Avaa Kazaross-XG2-ottelutaulukon (match equity table).</td>
 </tr>
 <tr>
+<td>cm</td>
+<td>Avaa kuutiomatriisin: nykyisen aseman tuomion 5-, 7- tai 9-pisteen ottelun jokaisessa pistetilanteessa.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Avaa take-pisteiden taulukon kuution arvolla 2.</td>
 </tr>
