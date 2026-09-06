@@ -48,4 +48,20 @@ type ImportBatchStore interface {
 	// user is: an error rate mixing two players is still a fact about the
 	// import, as long as the report says so (ImportReport.Player).
 	Report(ctx context.Context, scope string, batchID int64, players []string) (*domain.ImportBatch, error)
+
+	// StudyQueue returns the batch's positions worth a second look, in the
+	// order they should be walked: the decisions that cost something, worst
+	// first; then the positions the source tool had marked for study; then the
+	// close cube decisions (issue #259).
+	//
+	// A position appears ONCE, under the first reason that claims it: a
+	// flagged blunder is a blunder, and offering it twice would make the queue
+	// lie about its own length.
+	//
+	// It is measured, never stored. Nothing records that a position was seen —
+	// what the user does with one (a comment, a collection, a card) is the
+	// record, and running the same queue again is a legitimate thing to want.
+	//
+	// players is read as it is by Report: empty scores both seats.
+	StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error)
 }

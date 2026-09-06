@@ -1243,5 +1243,25 @@
         "searchHint": "Cercare le posizioni con {tag}",
         "suggested": "Vocabolario consigliato, tratto dalla letteratura — mai imposto:",
         "suggestionsLabel": "Suggerimenti di tag"
+    },
+    "studyQueue": {
+        "title": "Coda di studio",
+        "offer": "Ciò che questa importazione merita di far rivedere",
+        "start": "Percorrere",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "è costata",
+        "reasonFlagged": "segnata nel programma d'origine",
+        "reasonClose": "decisione di cubo serrata",
+        "comment": "Commentare",
+        "collection": "Collezione",
+        "anki": "Carta Anki",
+        "previous": "Precedente",
+        "skip": "Saltare",
+        "finish": "Terminare",
+        "leave": "Uscire",
+        "empty": "Questa importazione non ha nulla che meriti un secondo sguardo.",
+        "failed": "La coda di studio non ha potuto essere costruita.",
+        "finished": "Coda di studio terminata: {n} posizioni percorse.",
+        "stopped": "Coda di studio abbandonata."
     }
 }

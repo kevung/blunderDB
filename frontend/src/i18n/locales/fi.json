@@ -1243,5 +1243,25 @@
         "searchHint": "Hae asemat, joissa on {tag}",
         "suggested": "Suositeltu sanasto, kirjallisuudesta poimittu — ei koskaan pakotettu:",
         "suggestionsLabel": "Tunniste-ehdotukset"
+    },
+    "studyQueue": {
+        "title": "Opiskelujono",
+        "offer": "Mitä tästä tuonnista kannattaa katsoa uudelleen",
+        "start": "Käy läpi",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "maksoi",
+        "reasonFlagged": "merkitty lähdeohjelmassa",
+        "reasonClose": "tiukka kuutiopäätös",
+        "comment": "Kommentoi",
+        "collection": "Kokoelma",
+        "anki": "Anki-kortti",
+        "previous": "Edellinen",
+        "skip": "Ohita",
+        "finish": "Lopeta",
+        "leave": "Poistu",
+        "empty": "Tässä tuonnissa ei ole mitään toisen katseen arvoista.",
+        "failed": "Opiskelujonoa ei voitu rakentaa.",
+        "finished": "Opiskelujono valmis: {n} asemaa käyty läpi.",
+        "stopped": "Opiskelujonosta poistuttiin."
     }
 }

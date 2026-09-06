@@ -13,7 +13,8 @@
         onClose,
         onCancel,
         onOpenPosition,
-        onAnalyzeRemaining
+        onAnalyzeRemaining,
+        onStartStudyQueue
     } = $props();
 
     let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
@@ -93,6 +94,17 @@
                     <div class="report-line">
                         <span class="report-label">{$t('import.reportUnanalysed', { n: report.positionsWithoutAnalysis })}</span>
                         <button class="report-action" onclick={() => onAnalyzeRemaining?.()}>{$t('import.reportAnalyzeNow')}</button>
+                    </div>
+                {/if}
+
+                <!-- La question qui suit le compte rendu (#259) : « qu'est-ce
+                     que je regarde maintenant ? ». Le bouton n'apparaît que
+                     s'il y a une réponse — un lot sans rien à revoir ne doit
+                     pas proposer un parcours vide. -->
+                {#if report.decisions > 0 || report.positionsFlagged > 0}
+                    <div class="report-line">
+                        <span class="report-label">{$t('studyQueue.offer')}</span>
+                        <button class="report-action" onclick={() => onStartStudyQueue?.()}>{$t('studyQueue.start')}</button>
                     </div>
                 {/if}
 

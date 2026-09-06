@@ -95,6 +95,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.list                         JSON
      POST /v1/imports.position                     custom
      POST /v1/imports.report                       JSON
+     POST /v1/imports.studyQueue                   JSON
      POST /v1/imports.xg                           custom
    maintenance
      POST /ops/maintenance.vacuum                  custom

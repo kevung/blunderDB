@@ -50,6 +50,7 @@
     import FileImportProgressModal from './FileImportProgressModal.svelte';
     import ExportDatabaseModal from './ExportDatabaseModal.svelte';
     import TrashModal from './TrashModal.svelte';
+    import { beginStudyQueueFromReport } from '../services/studyQueueService.js';
 </script>
 
 <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
@@ -100,6 +101,7 @@
     onClose={handleFileImportClose}
     onOpenPosition={openImportedPosition}
     onAnalyzeRemaining={analyzeRemainingAfterImport}
+    onStartStudyQueue={beginStudyQueueFromReport}
 />
 
 <ExportDatabaseModal

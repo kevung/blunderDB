@@ -1798,6 +1798,28 @@ export namespace domain {
 		    return a;
 		}
 	}
+	export class StudyQueueEntry {
+	    positionId: number;
+	    matchId: number;
+	    reason: string;
+	    label: string;
+	    errorMp: number;
+	    isCube: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyQueueEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.matchId = source["matchId"];
+	        this.reason = source["reason"];
+	        this.label = source["label"];
+	        this.errorMp = source["errorMp"];
+	        this.isCube = source["isCube"];
+	    }
+	}
 	export class TagCount {
 	    tag: string;
 	    count: number;

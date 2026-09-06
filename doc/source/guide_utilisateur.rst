@@ -536,6 +536,48 @@ décisions — est recalculée à chaque consultation. Un lot dont les positions
 ont été analysées depuis rend donc les chiffres d'aujourd'hui, non ceux du
 jour de l'import.
 
+.. _file_etude:
+
+La file d'étude
+---------------
+
+Le compte rendu répond à « que vient-il de se passer ? ». Le bouton
+**Parcourir** répond à la question qui suit : « qu'est-ce que je regarde
+maintenant ? ». Il ouvre une **file ordonnée** des positions de ce lot qui
+méritent un second regard, et la fait défiler une par une sur le plateau :
+
+#. les décisions qui ont **coûté quelque chose**, la plus chère d'abord — ce
+   pour quoi on est venu ;
+#. les positions **marquées dans le logiciel d'origine** : vous aviez déjà
+   dit, ailleurs, que celle-ci était intéressante ;
+#. les **décisions de videau serrées** : rien n'a été perdu, mais la bonne
+   réponse n'allait pas de soi.
+
+Une position n'apparaît qu'une fois, sous la première raison qui la réclame :
+un blunder marqué reste un blunder, et l'offrir deux fois ferait mentir la
+file sur sa propre longueur. Le parcours est borné à cinquante positions —
+une file qu'on ne finit pas est une file qu'on ne commence pas.
+
+Une bande apparaît au-dessus du plateau pendant le parcours : la progression
+(« 3 / 25 »), la raison de cette position, le match dont elle vient, et les
+gestes. Trois d'entre eux ouvrent simplement le panneau où le geste se prend
+déjà — **Commenter**, **Collection**, **Carte Anki** — parce que ces gestes
+existent avec leurs règles, et que les refaire dans la bande en aurait fait
+des demi-copies. **Passer** avance, **Précédente** corrige un clic,
+**Quitter** arrête. Le reste de l'application continue de fonctionner : c'est
+justement ce qui permet d'agir sans sortir de la file.
+
+**Rien n'est enregistré, et rien ne note qu'une position a été vue.** Ce que
+vous en faites — un commentaire, une collection, une carte — *est* la trace,
+et il n'y a rien d'autre à garder. Relancer la même file plus tard est donc
+parfaitement légitime, et elle sera la même.
+
+La même liste s'obtient en ligne de commande :
+
+.. code-block:: console
+
+   $ blunderdb list --db base.db --type imports --batch 3 --queue
+
 Glisser-déposer
 ----------------
 

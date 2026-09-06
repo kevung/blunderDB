@@ -101,6 +101,33 @@ func (d *Database) ImportReport(batchID int64) (*domain.ImportBatch, error) {
 	return d.store.ImportBatches().Report(ctx, "", batchID, players)
 }
 
+// ImportStudyQueue returns the batch's positions worth a second look, in the
+// order they should be walked (issue #259, fiche I.3): what cost something,
+// then what the source tool had marked, then the close cube decisions.
+//
+// The report answers "what just happened"; this answers the question that
+// follows it, "what do I look at now?". Nothing is stored and nothing records
+// that a position was seen — what the user does with one is the record.
+//
+// Same reference-player convention as ImportReport: the metadata's `user` when
+// there is one, both seats otherwise.
+func (d *Database) ImportStudyQueue(batchID int64, limit int) ([]domain.StudyQueueEntry, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	ctx := context.Background()
+	var players []string
+	if meta, err := d.store.Metadata().Load(ctx, ""); err == nil {
+		if user := meta["user"]; user != "" {
+			players = append(players, user)
+		}
+	}
+	return d.store.ImportBatches().StudyQueue(ctx, "", batchID, players, limit)
+}
+
 // ListImportBatches returns the recorded batches, most recent first, with the
 // counts stored at the end of each import (not the measured half — that is
 // ImportReport, one batch at a time).

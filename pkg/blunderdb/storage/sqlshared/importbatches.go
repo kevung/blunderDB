@@ -267,3 +267,108 @@ func matchLabel(player1, player2 string, length int) string {
 	}
 	return names
 }
+
+// StudyQueue — see storage.ImportBatchStore.
+//
+// Three queries rather than one UNION with a computed rank: the three reasons
+// have different predicates and different orderings, deduplication is trivial
+// in Go, and a UNION here would have to be written twice anyway because the
+// two dialects order NULLs differently. Each query is bounded by the same
+// limit, so the worst case reads three pages and not the batch.
+func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error) {
+	if limit <= 0 || limit > domain.MaxStudyQueue {
+		limit = domain.MaxStudyQueue
+	}
+
+	var out []domain.StudyQueueEntry
+	seen := map[int64]bool{}
+	add := func(entries []domain.StudyQueueEntry) {
+		for _, e := range entries {
+			if len(out) >= limit || seen[e.PositionID] {
+				continue
+			}
+			seen[e.PositionID] = true
+			out = append(out, e)
+		}
+	}
+
+	// 1. What cost something, worst first. This is what the user came for.
+	blunders, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyBlunder,
+		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{domain.StudyBlunderThresholdMP},
+		` ORDER BY `+statsErrExpr+` DESC, p.id ASC`)
+	if err != nil {
+		return nil, err
+	}
+	add(blunders)
+
+	// 2. What the SOURCE TOOL marked (ADR-0006). The user already said, in
+	// another program, that this one was interesting.
+	if len(out) < limit {
+		flagged, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyFlagged,
+			" AND "+s.DB.Bool("p.flagged", true), nil, " ORDER BY p.id ASC")
+		if err != nil {
+			return nil, err
+		}
+		add(flagged)
+	}
+
+	// 3. The close cube decisions: nothing was lost, but the right answer was
+	// not obvious, which is exactly what is worth a second look.
+	if len(out) < limit {
+		close, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyClose,
+			" AND p.decision_type = 1 AND "+s.DB.Bool("a.is_close_cube", true), nil, " ORDER BY p.id ASC")
+		if err != nil {
+			return nil, err
+		}
+		add(close)
+	}
+	return out, nil
+}
+
+// queueRows runs one of the queue's three passes. extraWhere and extraArgs are
+// what makes a pass its own; everything else — the batch, the player filter,
+// the counted-decision predicate, the label — is shared, so the three passes
+// cannot disagree about what belongs to the batch.
+func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID int64, players []string, limit int,
+	reason domain.StudyQueueReason, extraWhere string, extraArgs []any, orderBy string) ([]domain.StudyQueueEntry, error) {
+	tenant, targs := s.DB.TenantFilter("p", scope)
+	playerClause, playerArgs := batchPlayerClause(players)
+	args := append(append([]any{}, targs...), batchID)
+	args = append(args, playerArgs...)
+	args = append(args, extraArgs...)
+	limitSQL, largs := s.DB.LimitOffset(limit, 0)
+	args = append(args, largs...)
+
+	rows, err := s.DB.Query(ctx,
+		`SELECT DISTINCT p.id, m.id,
+		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
+		        COALESCE(`+statsErrExpr+`, 0), p.decision_type
+		 `+statsBaseJoin+`
+		 WHERE `+tenant+` AND m.import_batch_id = ?`+playerClause+`
+		   AND `+countedExpr(s.DB)+extraWhere+orderBy+limitSQL, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []domain.StudyQueueEntry
+	for rows.Next() {
+		var e domain.StudyQueueEntry
+		var p1, p2 string
+		var length, decisionType int
+		if err := rows.Scan(&e.PositionID, &e.MatchID, &p1, &p2, &length, &e.ErrorMP, &decisionType); err != nil {
+			return nil, err
+		}
+		e.Reason = reason
+		e.IsCube = decisionType == 1
+		e.Label = matchLabel(p1, p2, length)
+		// Only a blunder's cost means anything: a flagged position may have
+		// been played perfectly, and showing it a "0" beside a cost would read
+		// as a measurement rather than as an absence.
+		if reason != domain.StudyBlunder {
+			e.ErrorMP = 0
+		}
+		out = append(out, e)
+	}
+	return out, rows.Err()
+}

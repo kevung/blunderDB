@@ -1289,6 +1289,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/domain_ImportBatch"
                 nullable: true
+  /v1/imports.studyQueue:
+    post:
+      operationId: imports.studyQueue
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importStudyQueueReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_StudyQueueEntry"
   /v1/imports.xg:
     post:
       operationId: imports.xg
@@ -2817,6 +2836,9 @@ components:
     domain_SearchFilters:
       type: object
       description: "Opaque: see the Go type domain.SearchFilters (defined outside internal/server, not expanded here)."
+    domain_StudyQueueEntry:
+      type: object
+      description: "Opaque: see the Go type domain.StudyQueueEntry (defined outside internal/server, not expanded here)."
     domain_TagCount:
       type: object
       description: "Opaque: see the Go type domain.TagCount (defined outside internal/server, not expanded here)."
@@ -2951,6 +2973,21 @@ components:
           nullable: true
           items:
             type: string
+    importStudyQueueReq:
+      type: object
+      properties:
+        batchId:
+          type: integer
+          format: int64
+        players:
+          type: array
+          nullable: true
+          items:
+            type: string
+        limit:
+          type: integer
+          format: int32
+          nullable: true
     lastVisitedReq:
       type: object
       properties:

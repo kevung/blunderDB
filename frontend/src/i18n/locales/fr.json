@@ -1243,5 +1243,25 @@
         "searchHint": "Chercher les positions portant {tag}",
         "suggested": "Vocabulaire recommandé, tiré de la littérature — jamais imposé :",
         "suggestionsLabel": "Suggestions de tags"
+    },
+    "studyQueue": {
+        "title": "File d'étude",
+        "offer": "Ce que ce lot mérite de faire revoir",
+        "start": "Parcourir",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "a coûté",
+        "reasonFlagged": "marquée dans le logiciel d'origine",
+        "reasonClose": "décision de videau serrée",
+        "comment": "Commenter",
+        "collection": "Collection",
+        "anki": "Carte Anki",
+        "previous": "Précédente",
+        "skip": "Passer",
+        "finish": "Terminer",
+        "leave": "Quitter",
+        "empty": "Cet import n'a rien qui mérite un second regard.",
+        "failed": "La file d'étude n'a pas pu être construite.",
+        "finished": "File d'étude terminée : {n} positions parcourues.",
+        "stopped": "File d'étude quittée."
     }
 }

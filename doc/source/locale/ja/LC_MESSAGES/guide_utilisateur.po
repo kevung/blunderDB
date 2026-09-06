@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:17+0200\n"
+"POT-Creation-Date: 2026-09-06 06:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -53,8 +53,8 @@ msgid ""
 "d'outils (ou *CTRL-N*), choisir un emplacement et un nom ; l'extension "
 "``.db`` est ajoutée automatiquement."
 msgstr ""
-"\\ **データベースを作成する。**\\ ツールバーの *新規データベース* ボタン（または *CTRL-N*\\ ）で、保存場所と名前を選びます。\\ "
-"``.db`` 拡張子は自動的に付加されます。"
+"\\ **データベースを作成する。**\\ ツールバーの *新規データベース* ボタン（または *CTRL-N*\\ "
+"）で、保存場所と名前を選びます。\\ ``.db`` 拡張子は自動的に付加されます。"
 
 #: ../../source/guide_utilisateur.rst:26
 msgid ""
@@ -77,10 +77,10 @@ msgid ""
 " annulable comble en tâche de fond les positions dépourvues d'analyse. "
 "Voir :ref:`configuration`."
 msgstr ""
-"blunderDB はファイルにすでにある分析をそのまま取り込むだけで、分析をやり直すことはありません。したがって XG で一度も分析されなかったマ"
-"ッチには、見せられるエラーがありません。設定ウィンドウの *gammonNet* タブで *インポート後に自動解析する* にチェックが入っていると、"
-"上限つきで中断できる分析のバッチが、分析のないポジションをバックグラウンドで埋めます。\\ :ref:`configuration`\\ を参照してくだ"
-"さい。"
+"blunderDB はファイルにすでにある分析をそのまま取り込むだけで、分析をやり直すことはありません。したがって XG "
+"で一度も分析されなかったマッチには、見せられるエラーがありません。設定ウィンドウの *gammonNet* タブで *インポート後に自動解析する*"
+" にチェックが入っていると、上限つきで中断できる分析のバッチが、分析のないポジションをバックグラウンドで埋めます。\\ "
+":ref:`configuration`\\ を参照してください。"
 
 #: ../../source/guide_utilisateur.rst:39
 msgid ""
@@ -124,11 +124,12 @@ msgid ""
 "à la main. Voir :ref:`stats` pour affiner ce choix par joueur ou par "
 "plage de dates une fois plusieurs matchs importés."
 msgstr ""
-"\\ **最大のエラーを見つける。**\\ 統計パネルを開き（\\ *CTRL-D*\\ ）、\\ *ダッシュボード* タブへ。\\ *トップブランダー* の一"
-"覧が最も高くついた10件のエラーを示し、行をクリックすると該当のポジションが分析パネルに読み込まれます。使い慣れた人には、キーボードでも同じことがで"
-"きます。\\ ``bl`` コマンド（または ``blunders``\\ 。\\ *SPACE* でコマンドラインを開きます）は、手作業で検索を組み立て"
-"ることなく、これらのポジションを直接読み込みます。複数のマッチをインポートしたあとに、この選択をプレイヤーや日付の範囲で絞り込むには :ref:`stats` "
-"を参照してください。"
+"\\ **最大のエラーを見つける。**\\ 統計パネルを開き（\\ *CTRL-D*\\ ）、\\ *ダッシュボード* タブへ。\\ "
+"*トップブランダー* "
+"の一覧が最も高くついた10件のエラーを示し、行をクリックすると該当のポジションが分析パネルに読み込まれます。使い慣れた人には、キーボードでも同じことができます。\\"
+" ``bl`` コマンド（または ``blunders``\\ 。\\ *SPACE* "
+"でコマンドラインを開きます）は、手作業で検索を組み立てることなく、これらのポジションを直接読み込みます。複数のマッチをインポートしたあとに、この選択をプレイヤーや日付の範囲で絞り込むには"
+" :ref:`stats` を参照してください。"
 
 #: ../../source/guide_utilisateur.rst:68
 msgid "Étudier un match"
@@ -146,8 +147,9 @@ msgid ""
 "importés, triables par colonne (joueur, date, longueur, tournoi, PR). Le "
 "PR et le coût MWC sont définis dans le :ref:`glossaire`."
 msgstr ""
-"\\ **Matches パネルを開く**\\ （\\ *CTRL-Tab*\\ ）。インポートされたすべてのマッチが一覧表示され、列（プレイヤー、日付、長"
-"さ、トーナメント、PR）で並べ替えられます。PR と MWC コストは :ref:`glossaire` で定義されています。"
+"\\ **Matches パネルを開く**\\ （\\ *CTRL-Tab*\\ "
+"）。インポートされたすべてのマッチが一覧表示され、列（プレイヤー、日付、長さ、トーナメント、PR）で並べ替えられます。PR と MWC コストは "
+":ref:`glossaire` で定義されています。"
 
 #: ../../source/guide_utilisateur.rst:77
 msgid "Panneau des matchs"
@@ -253,8 +255,8 @@ msgid ""
 "paquet*, nommer le paquet ; il se synchronise sur la recherche ou la "
 "collection choisie."
 msgstr ""
-"\\ **デッキを作成する。**\\ Anki パネルを開き（\\ *CTRL-K*\\ ）、\\ *新規デッキ* ボタンでデッキに名前を付けます。デッキは選"
-"んだ検索またはコレクションと同期します。"
+"\\ **デッキを作成する。**\\ Anki パネルを開き（\\ *CTRL-K*\\ ）、\\ *新規デッキ* "
+"ボタンでデッキに名前を付けます。デッキは選んだ検索またはコレクションと同期します。"
 
 #: ../../source/guide_utilisateur.rst:136
 msgid "Panneau Anki, liste des paquets"
@@ -275,9 +277,9 @@ msgid ""
 "conséquence. Rien n'oblige à dévoiler la réponse pour continuer si vous "
 "êtes sûr de vous."
 msgstr ""
-"\\ **復習する**\\ （\\ *学習* ボタン）：各カードはポジションを示します。頭の中で答えを組み立て、解答（盤面、分析、あればコメント）を表示し"
-"、その後 1（失敗）から 4（簡単）までで自己評価します。FSRS はそれに応じて次回の出題を間隔付けます。自信があれば、答えを見なくても先に進めま"
-"す。"
+"\\ **復習する**\\ （\\ *学習* "
+"ボタン）：各カードはポジションを示します。頭の中で答えを組み立て、解答（盤面、分析、あればコメント）を表示し、その後 1（失敗）から "
+"4（簡単）までで自己評価します。FSRS はそれに応じて次回の出題を間隔付けます。自信があれば、答えを見なくても先に進めます。"
 
 #: ../../source/guide_utilisateur.rst:149
 msgid ""
@@ -286,8 +288,9 @@ msgid ""
 " — pratique avant un tournoi, ou pour réviser intensément sans décaler "
 "les échéances des autres cartes."
 msgstr ""
-"\\ **スケジュールを乱さずにウォームアップする**\\ （\\ *練習* ボタン）：FSRS のスケジュールに触れずに、デッキからランダムなポジション"
-"を提示します — トーナメント前や、他のカードの期限をずらさずに集中的に復習したいときに便利です。"
+"\\ **スケジュールを乱さずにウォームアップする**\\ （\\ *練習* ボタン）：FSRS "
+"のスケジュールに触れずに、デッキからランダムなポジションを提示します — "
+"トーナメント前や、他のカードの期限をずらさずに集中的に復習したいときに便利です。"
 
 #: ../../source/guide_utilisateur.rst:154
 msgid ""
@@ -312,12 +315,13 @@ msgid ""
 "son tenant à chaque membre. C'est le point de départ le plus simple, à "
 "adapter (SSO, certificats clients) selon votre contexte."
 msgstr ""
-"サーバーモード（\\ ``blunderdb serve``\\ ）は、blunderDB のエンジンを HTTP + JSON として公開します。\\ "
-"**誰も認証しません**\\ （\\ `ADR-0005 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-daemon-delegates-authentication.md>`__\\ "
-"）。受け取った ``X-Tenant-ID`` ヘッダーをそのまま信頼するため、常に、自ら認証を行いこのヘッダーを設定するリバースプロキシの背後に置"
-"く必要があります。このチュートリアルでは、公開されているイメージを、シングルテナントの HTTP Basic 認証を使う最小限の nginx の背後"
-"に展開し、続いてメンバーごとにテナントを与える方法を示します。これは最もシンプルな出発点であり、あなたの状況に応じて（SSO、クライアント証明書）調"
-"整してください。"
+"サーバーモード（\\ ``blunderdb serve``\\ ）は、blunderDB のエンジンを HTTP + JSON "
+"として公開します。\\ **誰も認証しません**\\ （\\ `ADR-0005 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0005-serve-"
+"daemon-delegates-authentication.md>`__\\ ）。受け取った ``X-Tenant-ID`` "
+"ヘッダーをそのまま信頼するため、常に、自ら認証を行いこのヘッダーを設定するリバースプロキシの背後に置く必要があります。このチュートリアルでは、公開されているイメージを、シングルテナントの"
+" HTTP Basic 認証を使う最小限の nginx "
+"の背後に展開し、続いてメンバーごとにテナントを与える方法を示します。これは最もシンプルな出発点であり、あなたの状況に応じて（SSO、クライアント証明書）調整してください。"
 
 #: ../../source/guide_utilisateur.rst:171
 msgid ""
@@ -338,10 +342,10 @@ msgid ""
 " de votre organisation), puis désignez ses deux fichiers ici. Le port 80 "
 "ne sert qu'à rediriger vers HTTPS."
 msgstr ""
-"\\ **nginx を設定する**\\ 。認証したうえで中継し、\\ ``X-Tenant-ID`` は nginx 自身が設定します — クライアント"
-"が送ってきたものは決して使いません。TLS 証明書はこのチュートリアルの前提であって主題ではありません。あらかじめ取得しておき（\\ ``certbot`` "
-"を使う Let's Encrypt、または所属組織の認証局）、その2つのファイルをここで指定します。ポート 80 は HTTPS へリダイレクトする"
-"ためだけに使います。"
+"\\ **nginx を設定する**\\ 。認証したうえで中継し、\\ ``X-Tenant-ID`` は nginx 自身が設定します — "
+"クライアントが送ってきたものは決して使いません。TLS 証明書はこのチュートリアルの前提であって主題ではありません。あらかじめ取得しておき（\\ "
+"``certbot`` を使う Let's Encrypt、または所属組織の認証局）、その2つのファイルをここで指定します。ポート 80 は "
+"HTTPS へリダイレクトするためだけに使います。"
 
 #: ../../source/guide_utilisateur.rst:218
 msgid ""
@@ -365,9 +369,9 @@ msgid ""
 " tient cette correspondance, et retombe sur la chaîne vide pour un compte"
 " qui n'y figure pas — jamais sur ``1`` :"
 msgstr ""
-"\\ **複数のメンバー、1人につき1テナント。**\\ デーモンが ``X-Tenant-ID`` に受け付けるのは正の整数だけです。認証済みのアカウ"
-"ントをその整数に結び付けるのはプロキシの役目です。\\ ``http`` コンテキストに置いた ``map`` ブロックがこの対応を保持し、そこに載っ"
-"ていないアカウントには空文字列を返します — 決して ``1`` ではありません："
+"\\ **複数のメンバー、1人につき1テナント。**\\ デーモンが ``X-Tenant-ID`` "
+"に受け付けるのは正の整数だけです。認証済みのアカウントをその整数に結び付けるのはプロキシの役目です。\\ ``http`` コンテキストに置いた "
+"``map`` ブロックがこの対応を保持し、そこに載っていないアカウントには空文字列を返します — 決して ``1`` ではありません："
 
 #: ../../source/guide_utilisateur.rst:242
 msgid ""
@@ -383,9 +387,9 @@ msgid ""
 "``deploy/nginx-tenant-proxy.conf``, et son équivalent Caddy dans "
 "``deploy/Caddyfile``."
 msgstr ""
-"メンバーごとに1テナントとするには PostgreSQL バックエンドが前提です。このチュートリアルの手順1のように SQLite の場合、デーモン"
-"は ``X-Tenant-ID: 1`` にしか応答せず、それ以外の値はすべて拒否します。この構成一式はリポジトリの ``deploy/nginx-tenant-proxy.conf`` "
-"に、Caddy 版は ``deploy/Caddyfile`` にあります。"
+"メンバーごとに1テナントとするには PostgreSQL バックエンドが前提です。このチュートリアルの手順1のように SQLite "
+"の場合、デーモンは ``X-Tenant-ID: 1`` にしか応答せず、それ以外の値はすべて拒否します。この構成一式はリポジトリの "
+"``deploy/nginx-tenant-proxy.conf`` に、Caddy 版は ``deploy/Caddyfile`` にあります。"
 
 #: ../../source/guide_utilisateur.rst:264
 msgid ""
@@ -521,8 +525,8 @@ msgid ""
 "enregistrer la base de données, ainsi qu'un nom, et valider "
 "l'enregistrement dans la fenêtre du système."
 msgstr ""
-"新しいデータベースを作成するには、ツールバーの *新規データベース* ボタンをクリックします。データベースを保存するパスと名前を選び、システムのウィ"
-"ンドウで保存を確定します。"
+"新しいデータベースを作成するには、ツールバーの *新規データベース* "
+"ボタンをクリックします。データベースを保存するパスと名前を選び、システムのウィンドウで保存を確定します。"
 
 #: ../../source/guide_utilisateur.rst:331
 msgid "L'extension des bases de données blunderDB est *.db*."
@@ -543,8 +547,8 @@ msgid ""
 " se trouve la base de données, choisir le fichier *.db* et valider "
 "l'ouverture dans la fenêtre du système."
 msgstr ""
-"既存のデータベースを読み込むには、ツールバーの *データベースを開く* ボタンをクリックします。データベースのある場所を開き、\\ *.db* ファイ"
-"ルを選んで、システムのウィンドウで開くことを確定します。"
+"既存のデータベースを読み込むには、ツールバーの *データベースを開く* ボタンをクリックします。データベースのある場所を開き、\\ *.db* "
+"ファイルを選んで、システムのウィンドウで開くことを確定します。"
 
 #: ../../source/guide_utilisateur.rst:346
 msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
@@ -903,17 +907,93 @@ msgid ""
 "non ceux du jour de l'import."
 msgstr "報告の測定部分——解析のない局面、PR、最悪の判断——は読むたびに再計算される。以後に局面が解析されたロットは、したがってインポート当日の数字ではなく今日の数字を返す。"
 
-#: ../../source/guide_utilisateur.rst:540
+#: ../../source/guide_utilisateur.rst:542
+msgid "La file d'étude"
+msgstr "学習キュー"
+
+#: ../../source/guide_utilisateur.rst:544
+msgid ""
+"Le compte rendu répond à « que vient-il de se passer ? ». Le bouton "
+"**Parcourir** répond à la question qui suit : « qu'est-ce que je regarde "
+"maintenant ? ». Il ouvre une **file ordonnée** des positions de ce lot "
+"qui méritent un second regard, et la fait défiler une par une sur le "
+"plateau :"
+msgstr ""
+"報告は「いま何が起きたか」に答えます。\\ **順に見る**\\ "
+"ボタンは、その次の問い「では何を見るか」に答えます。この取り込みのうち見直す価値のある局面を\\ **順序づけたキュー**\\ "
+"にして開き、盤上にひとつずつ運びます。"
+
+#: ../../source/guide_utilisateur.rst:549
+msgid ""
+"les décisions qui ont **coûté quelque chose**, la plus chère d'abord — ce"
+" pour quoi on est venu ;"
+msgstr "**損失を生んだ**\\ 判断。高くついたものから順に。ここに来た理由そのものです。"
+
+#: ../../source/guide_utilisateur.rst:551
+msgid ""
+"les positions **marquées dans le logiciel d'origine** : vous aviez déjà "
+"dit, ailleurs, que celle-ci était intéressante ;"
+msgstr "**元のソフトで印を付けた**\\ 局面。ほかの場所ですでに「これは面白い」と言ってあったものです。"
+
+#: ../../source/guide_utilisateur.rst:553
+msgid ""
+"les **décisions de videau serrées** : rien n'a été perdu, mais la bonne "
+"réponse n'allait pas de soi."
+msgstr "**際どいキューブ判断**\\ 。失ったものはありませんが、正解は自明ではありませんでした。"
+
+#: ../../source/guide_utilisateur.rst:556
+msgid ""
+"Une position n'apparaît qu'une fois, sous la première raison qui la "
+"réclame : un blunder marqué reste un blunder, et l'offrir deux fois "
+"ferait mentir la file sur sa propre longueur. Le parcours est borné à "
+"cinquante positions — une file qu'on ne finit pas est une file qu'on ne "
+"commence pas."
+msgstr "ひとつの局面は、それを最初に主張した理由のもとで一度だけ現れます。印の付いたブランダーはやはりブランダーであり、二度出せばキューが自らの長さについて嘘をつくことになります。巡回は五十局面までです。終わらないキューは、始まらないキューです。"
+
+#: ../../source/guide_utilisateur.rst:561
+msgid ""
+"Une bande apparaît au-dessus du plateau pendant le parcours : la "
+"progression (« 3 / 25 »), la raison de cette position, le match dont elle"
+" vient, et les gestes. Trois d'entre eux ouvrent simplement le panneau où"
+" le geste se prend déjà — **Commenter**, **Collection**, **Carte Anki** —"
+" parce que ces gestes existent avec leurs règles, et que les refaire dans"
+" la bande en aurait fait des demi-copies. **Passer** avance, "
+"**Précédente** corrige un clic, **Quitter** arrête. Le reste de "
+"l'application continue de fonctionner : c'est justement ce qui permet "
+"d'agir sans sortir de la file."
+msgstr ""
+"巡回中は盤の上に帯が出ます。進み具合（「3 / "
+"25」）、この局面がここにある理由、出どころのマッチ、そして操作です。そのうち三つは、その操作がすでに住んでいるパネルを開くだけです——\\ "
+"**コメント**\\ 、\\ **コレクション**\\ 、\\ **Anki カード**\\ "
+"。これらの操作はそれぞれの規則とともに既にあり、帯の中で作り直せば半端な複製になってしまうからです。\\ **スキップ**\\ で先へ進み、\\ "
+"**前へ**\\ でクリックを取り消し、\\ **やめる**\\ "
+"で止めます。アプリケーションの他の部分は動き続けます。だからこそ、キューを離れずに手を打てるのです。"
+
+#: ../../source/guide_utilisateur.rst:570
+msgid ""
+"**Rien n'est enregistré, et rien ne note qu'une position a été vue.** Ce "
+"que vous en faites — un commentaire, une collection, une carte — *est* la"
+" trace, et il n'y a rien d'autre à garder. Relancer la même file plus "
+"tard est donc parfaitement légitime, et elle sera la même."
+msgstr ""
+"**何も保存されず、その局面を見たという記録も残りません。**\\ "
+"そこであなたがしたこと——コメント、コレクション、カード——が記録そのものであり、ほかに残すものはありません。したがって、あとで同じキューをもう一度たどるのはまったく正当で、内容も同じです。"
+
+#: ../../source/guide_utilisateur.rst:575
+msgid "La même liste s'obtient en ligne de commande :"
+msgstr "同じ一覧はコマンドラインでも得られます。"
+
+#: ../../source/guide_utilisateur.rst:582
 msgid "Glisser-déposer"
 msgstr "ドラッグ＆ドロップ"
 
-#: ../../source/guide_utilisateur.rst:542
+#: ../../source/guide_utilisateur.rst:584
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
 msgstr "blunderDB はドラッグ＆ドロップをサポートしています。blunderDB のウィンドウにドラッグ＆ドロップできるもの："
 
-#: ../../source/guide_utilisateur.rst:545
+#: ../../source/guide_utilisateur.rst:587
 msgid ""
 "des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
 "*.txt*, *.bgf*) pour les importer,"
@@ -921,217 +1001,217 @@ msgstr ""
 "マッチまたはポジションファイル（\\ *.xg*\\ 、\\ *.xgp*\\ 、\\ *.sgf*\\ 、\\ *.mat*\\ 、\\ "
 "*.txt*\\ 、\\ *.bgf*\\ ）をインポートする場合、"
 
-#: ../../source/guide_utilisateur.rst:548
+#: ../../source/guide_utilisateur.rst:590
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
 msgstr "データベースファイル（\\ *.db*\\ ）を開くか、現在のデータベースと統合する場合、"
 
-#: ../../source/guide_utilisateur.rst:551
+#: ../../source/guide_utilisateur.rst:593
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
 msgstr "フォルダ内のすべてのファイルを再帰的にインポートする場合。"
 
-#: ../../source/guide_utilisateur.rst:554
+#: ../../source/guide_utilisateur.rst:596
 msgid "Naviguer dans un match"
 msgstr "マッチ内を移動する"
 
-#: ../../source/guide_utilisateur.rst:556
+#: ../../source/guide_utilisateur.rst:598
 msgid "Pour naviguer dans un match importé:"
 msgstr "インポートしたマッチ内を移動するには："
 
-#: ../../source/guide_utilisateur.rst:558
+#: ../../source/guide_utilisateur.rst:600
 msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
 msgstr "*CTRL-Tab* でマッチパネルを開きます。"
 
-#: ../../source/guide_utilisateur.rst:560
+#: ../../source/guide_utilisateur.rst:602
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
 msgstr "マッチをダブルクリックするか、\\ *ENTER* キーを押します。"
 
-#: ../../source/guide_utilisateur.rst:562
+#: ../../source/guide_utilisateur.rst:604
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr "*左矢印* / *右矢印* キーを使用してムーブを移動します。"
 
-#: ../../source/guide_utilisateur.rst:564
+#: ../../source/guide_utilisateur.rst:606
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr "*PageUp* / *PageDown* を使用してゲーム間を移動します。"
 
-#: ../../source/guide_utilisateur.rst:566
+#: ../../source/guide_utilisateur.rst:608
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "*CTRL-L* を押して分析を表示します。"
 
-#: ../../source/guide_utilisateur.rst:568
+#: ../../source/guide_utilisateur.rst:610
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
 msgstr "*d* を押してチェッカームーブ分析とキューブ分析を切り替えます。"
 
-#: ../../source/guide_utilisateur.rst:571
+#: ../../source/guide_utilisateur.rst:613
 msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
 msgstr "ショートカット: *CTRL-Tab* でマッチパネルを開きます。コマンド: ``m``"
 
-#: ../../source/guide_utilisateur.rst:575
+#: ../../source/guide_utilisateur.rst:617
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
 " restaurée."
 msgstr "blunderDB は各マッチで最後に訪問したポジションを記憶します。マッチに戻ると、最後に参照したポジションが自動的に復元されます。"
 
-#: ../../source/guide_utilisateur.rst:580
+#: ../../source/guide_utilisateur.rst:622
 msgid "Gérer le panneau des matchs"
 msgstr "マッチパネルを管理する"
 
-#: ../../source/guide_utilisateur.rst:582
+#: ../../source/guide_utilisateur.rst:624
 msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
 msgstr "マッチパネル（\\ *CTRL-Tab*\\ ）では以下のことができます："
 
-#: ../../source/guide_utilisateur.rst:584
+#: ../../source/guide_utilisateur.rst:626
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
 msgstr "インポートしたすべてのマッチを一覧表示します（新しい順に並べ替え）。"
 
-#: ../../source/guide_utilisateur.rst:586
+#: ../../source/guide_utilisateur.rst:628
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
 msgstr "マッチを列でソートします（プレイヤー1、プレイヤー2、日付、マッチの長さ、トーナメント）。"
 
-#: ../../source/guide_utilisateur.rst:589
+#: ../../source/guide_utilisateur.rst:631
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
 msgstr "フィールドをダブルクリックしてプレイヤー名や日付を編集します。"
 
-#: ../../source/guide_utilisateur.rst:591
+#: ../../source/guide_utilisateur.rst:633
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "入れ替えボタンを使用してプレイヤー1とプレイヤー2を入れ替えます。"
 
-#: ../../source/guide_utilisateur.rst:593
+#: ../../source/guide_utilisateur.rst:635
 msgid "assigner un match à un tournoi,"
 msgstr "マッチをトーナメントに割り当てます。"
 
-#: ../../source/guide_utilisateur.rst:595
+#: ../../source/guide_utilisateur.rst:637
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "*Del* キーを使用してマッチを削除します。"
 
-#: ../../source/guide_utilisateur.rst:600
+#: ../../source/guide_utilisateur.rst:642
 msgid "Gérer les collections"
 msgstr "コレクションを管理する"
 
-#: ../../source/guide_utilisateur.rst:602
+#: ../../source/guide_utilisateur.rst:644
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
 "*CTRL-B*."
 msgstr "コレクションはポジションをカスタムグループに整理する機能です。コレクションパネルにアクセスするには、\\ *CTRL-B* を押します。"
 
-#: ../../source/guide_utilisateur.rst:605
+#: ../../source/guide_utilisateur.rst:647
 msgid "**Créer une collection:**"
 msgstr "**コレクションを作成する：**"
 
-#: ../../source/guide_utilisateur.rst:607
+#: ../../source/guide_utilisateur.rst:649
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "コレクションパネルを開きます（\\ *CTRL-B*\\ ）。"
 
-#: ../../source/guide_utilisateur.rst:609
+#: ../../source/guide_utilisateur.rst:651
 msgid ""
 "Saisir le nom de la nouvelle collection dans le champ *Nouvelle "
 "collection…* en bas du panneau, puis valider avec *ENTREE*."
 msgstr "パネル下部の *新規コレクション…* 欄に新しいコレクションの名前を入力し、\\ *ENTER* で確定します。"
 
-#: ../../source/guide_utilisateur.rst:612
+#: ../../source/guide_utilisateur.rst:654
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**コレクションにポジションを追加する：**"
 
-#: ../../source/guide_utilisateur.rst:614
+#: ../../source/guide_utilisateur.rst:656
 msgid "Sélectionner les positions souhaitées."
 msgstr "目的のポジションを選択します。"
 
-#: ../../source/guide_utilisateur.rst:616
+#: ../../source/guide_utilisateur.rst:658
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "コレクションパネルからコレクションに追加します。"
 
-#: ../../source/guide_utilisateur.rst:618
+#: ../../source/guide_utilisateur.rst:660
 msgid "**Parcourir une collection:**"
 msgstr "**コレクションを閲覧する：**"
 
-#: ../../source/guide_utilisateur.rst:620
+#: ../../source/guide_utilisateur.rst:662
 msgid ""
 "Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
 "des collections et des positions peut être modifié par glisser-déposer."
 msgstr "コレクションをダブルクリックしてポジションを閲覧します。コレクションとポジションの順序はドラッグ＆ドロップで変更できます。"
 
-#: ../../source/guide_utilisateur.rst:625
+#: ../../source/guide_utilisateur.rst:667
 msgid "Commande: ``coll``"
 msgstr "コマンド: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:628
+#: ../../source/guide_utilisateur.rst:670
 msgid "Gérer les tournois"
 msgstr "トーナメントを管理する"
 
-#: ../../source/guide_utilisateur.rst:630
+#: ../../source/guide_utilisateur.rst:672
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
 msgstr "トーナメントはインポートしたマッチをイベント別に整理する機能です。トーナメントパネルにアクセスするには、\\ *CTRL-Y* を押します。"
 
-#: ../../source/guide_utilisateur.rst:633
+#: ../../source/guide_utilisateur.rst:675
 msgid "**Créer un tournoi:**"
 msgstr "**トーナメントを作成する：**"
 
-#: ../../source/guide_utilisateur.rst:635
+#: ../../source/guide_utilisateur.rst:677
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "トーナメントパネルを開きます（\\ *CTRL-Y*\\ ）。"
 
-#: ../../source/guide_utilisateur.rst:637
+#: ../../source/guide_utilisateur.rst:679
 msgid ""
 "Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider "
 "avec *ENTREE*."
 msgstr "*新規トーナメント…* 欄にトーナメントの名前を入力し、\\ *ENTER* で確定します。"
 
-#: ../../source/guide_utilisateur.rst:640
+#: ../../source/guide_utilisateur.rst:682
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**マッチをトーナメントに割り当てる：**"
 
-#: ../../source/guide_utilisateur.rst:642
+#: ../../source/guide_utilisateur.rst:684
 msgid ""
 "Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
 "la colonne tournoi pour assigner un match."
 msgstr "マッチパネル（\\ *CTRL-Tab*\\ ）から、トーナメント列のドロップダウンメニューを使用してマッチを割り当てます。"
 
-#: ../../source/guide_utilisateur.rst:646
+#: ../../source/guide_utilisateur.rst:688
 msgid "Afficher les statistiques de performance"
 msgstr "パフォーマンス統計を表示する"
 
-#: ../../source/guide_utilisateur.rst:648
+#: ../../source/guide_utilisateur.rst:690
 msgid ""
 "Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
 "et coût MWC) à partir des positions importées."
 msgstr "Statsパネルでは、インポートしたポジションからパフォーマンス指標（PRおよびMWCコスト）を確認できます。"
 
-#: ../../source/guide_utilisateur.rst:651
+#: ../../source/guide_utilisateur.rst:693
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr "*CTRL-D* を押すか、下部パネルのStatsタブをクリックします。"
 
-#: ../../source/guide_utilisateur.rst:653
+#: ../../source/guide_utilisateur.rst:695
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
 msgstr "フィルターバーを使用して、プレイヤー、トーナメント、日付範囲、決定タイプ、またはマッチの長さで分析を絞り込みます。"
 
-#: ../../source/guide_utilisateur.rst:656
+#: ../../source/guide_utilisateur.rst:698
 msgid ""
 "Cliquer sur un indicateur pour accéder directement aux positions "
 "correspondantes."
 msgstr "指標をクリックすると、対応するポジションに直接ジャンプします。"
 
-#: ../../source/guide_utilisateur.rst:659
+#: ../../source/guide_utilisateur.rst:701
 msgid "Évaluer une position (panneau Eval)"
 msgstr "ポジションを評価する（Eval パネル）"
 
-#: ../../source/guide_utilisateur.rst:661
+#: ../../source/guide_utilisateur.rst:703
 msgid ""
 "Le panneau Eval évalue n'importe quelle position — pas seulement une "
 "course. Sur une position de bearoff pur, il calcule l'EPC (Effective Pip "
@@ -1139,21 +1219,21 @@ msgid ""
 "sur toute autre position, l'évaluateur embarqué gammonNet fournit les "
 "coups candidats ou la décision de videau, hors ligne, sans XG ni GNUbg."
 msgstr ""
-"Eval パネルは、レースだけでなくどんなポジションでも評価します。純粋なベアオフのポジションでは、EPC（Effective Pip Count。"
-"\\ :ref:`glossaire`\\ を参照）や他のベアオフ統計を計算します。それ以外のポジションでは、内蔵の gammonNet 評価エンジンが"
-"、XG も GNUbg も使わずオフラインで、候補手やキューブの決定を提供します。"
+"Eval パネルは、レースだけでなくどんなポジションでも評価します。純粋なベアオフのポジションでは、EPC（Effective Pip "
+"Count。\\ :ref:`glossaire`\\ を参照）や他のベアオフ統計を計算します。それ以外のポジションでは、内蔵の "
+"gammonNet 評価エンジンが、XG も GNUbg も使わずオフラインで、候補手やキューブの決定を提供します。"
 
-#: ../../source/guide_utilisateur.rst:668
+#: ../../source/guide_utilisateur.rst:710
 msgid "Panneau Eval sur une décision de coups de pions"
 msgstr "チェッカーの手の決断における Eval パネル"
 
-#: ../../source/guide_utilisateur.rst:672
+#: ../../source/guide_utilisateur.rst:714
 msgid ""
 "Le panneau Eval : chances de gain/gammon/backgammon, équité et erreur de "
 "chaque coup candidat, calculées par gammonNet."
 msgstr "Eval パネル：勝利／ギャモン／バックギャモンの確率、エクイティ、そして gammonNet によって計算された各候補手の誤差。"
 
-#: ../../source/guide_utilisateur.rst:675
+#: ../../source/guide_utilisateur.rst:717
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet Eval dans le panneau inférieur, ou"
 " exécuter la commande ``epc`` : le panneau s'ouvre sur un plateau vierge,"
@@ -1162,7 +1242,7 @@ msgstr ""
 "*CTRL-E* を押すか、下部パネルの Eval タブをクリックするか、``epc`` "
 "コマンドを実行すると、パネルは編集可能な空の盤面で開きます。"
 
-#: ../../source/guide_utilisateur.rst:679
+#: ../../source/guide_utilisateur.rst:721
 msgid ""
 "Pour évaluer la position déjà affichée (une position de la bibliothèque, "
 "ou celle d'un match en cours de revue) plutôt qu'un plateau vierge, clic "
@@ -1172,7 +1252,7 @@ msgstr ""
 "空の盤面ではなく、すでに表示されているポジション（ライブラリのポジション、またはレビュー中のマッチのポジション）を評価するには、盤面を右クリックして"
 " *この局面を評価* を選びます — 表示されているポジションがそのまま Eval パネルに送られます。"
 
-#: ../../source/guide_utilisateur.rst:684
+#: ../../source/guide_utilisateur.rst:726
 msgid ""
 "Le plateau entier s'édite au clic ou au clavier : pions, dés, score, "
 "position du videau, joueur au trait. Éditer uniquement les pions du jan "
@@ -1181,7 +1261,7 @@ msgstr ""
 "盤面全体は、クリックまたはキーボードで編集できます：チェッカー、ダイス、スコア、キューブの位置、手番のプレイヤー。両サイドのジャン（最後の 6 "
 "ポイント）のチェッカーだけを編集すると、ポジションはベアオフ体制になります。"
 
-#: ../../source/guide_utilisateur.rst:688
+#: ../../source/guide_utilisateur.rst:730
 msgid ""
 "Les résultats s'affichent en temps réel : en bearoff pur, EPC, nombre "
 "moyen de lancers, écart type, pip count et wastage, la probabilité de "
@@ -1193,7 +1273,7 @@ msgstr ""
 "結果はリアルタイムで表示されます：純粋なベアオフでは、EPC、平均ロール数、標準偏差、ピップカウント、無駄（wastage）、手番のプレイヤーの勝率、そして厳密な領域ではマネーキューブの結論。それ以外のダイスが置かれたポジションでは、エクイティ順に並んだ候補手。ダイスがない場合は、キューブの決断。詳しくはマニュアルの「Eval"
 " パネルの方法論と前提」の節を参照してください。"
 
-#: ../../source/guide_utilisateur.rst:695
+#: ../../source/guide_utilisateur.rst:737
 msgid ""
 "Pour s'entraîner à estimer ces valeurs, cocher la case *Défi* : les "
 "résultats sont masqués à chaque modification et se révèlent zone par "
@@ -1202,15 +1282,15 @@ msgstr ""
 "これらの値を推定する練習をするには、\\ *チャレンジ*\\ "
 "チェックボックスをオンにします。結果は変更のたびに隠され、クリックすることで領域ごとに表示されます。"
 
-#: ../../source/guide_utilisateur.rst:700
+#: ../../source/guide_utilisateur.rst:742
 msgid "Le panneau fonctionne pour les deux joueurs simultanément."
 msgstr "このパネルは両方のプレイヤーに対して同時に機能します。"
 
-#: ../../source/guide_utilisateur.rst:703
+#: ../../source/guide_utilisateur.rst:745
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "XGからインポートしたポジションの分析を表示する"
 
-#: ../../source/guide_utilisateur.rst:705
+#: ../../source/guide_utilisateur.rst:747
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -1218,7 +1298,7 @@ msgstr ""
 "XG、GNUbg、またはBGBlitzによって分析されたポジションがblunderDBにインポートされている場合、\\ *CTRL-L* "
 "を押すことで分析を表示できます。"
 
-#: ../../source/guide_utilisateur.rst:708
+#: ../../source/guide_utilisateur.rst:750
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -1228,53 +1308,53 @@ msgid ""
 " de l'adversaire, le niveau d'analyse."
 msgstr "ポジションがチェッカー決定に対応する場合、上位5つのムーブが別々の行に表示されます。各行には、この順序で情報が提供されます：関連するチェッカームーブ、正規化されたエクイティ、ムーブのエクイティエラー、プレイヤーの勝率・ギャモン・バックギャモン、相手の勝率・ギャモン・バックギャモン、および分析レベル。"
 
-#: ../../source/guide_utilisateur.rst:715
+#: ../../source/guide_utilisateur.rst:757
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
 msgstr "ポジションがキューブ決定に対応する場合、各決定のコストとポジションの勝率が表示されます。"
 
-#: ../../source/guide_utilisateur.rst:718
+#: ../../source/guide_utilisateur.rst:760
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
 "d'origine de chaque analyse."
 msgstr "同じポジションに複数の分析エンジンが存在する場合（例：XGとGNUbg）、追加の列に各分析の元のエンジンが表示されます。"
 
-#: ../../source/guide_utilisateur.rst:722
+#: ../../source/guide_utilisateur.rst:764
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
 " plusieurs matchs, tous les coups joués sont indiqués."
 msgstr "マッチ内を移動する際、実際にプレイされたムーブがムーブリストでハイライト表示されます。ポジションが複数のマッチで登場した場合、プレイされたすべてのムーブが表示されます。"
 
-#: ../../source/guide_utilisateur.rst:727
+#: ../../source/guide_utilisateur.rst:769
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
 msgstr "分析パネルでムーブをクリックすると、ボード上に対応する矢印が表示されます。"
 
-#: ../../source/guide_utilisateur.rst:731
+#: ../../source/guide_utilisateur.rst:773
 msgid "Exporter une position vers XG"
 msgstr "XGにポジションをエクスポートする"
 
-#: ../../source/guide_utilisateur.rst:733
+#: ../../source/guide_utilisateur.rst:775
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "blunderDBからXGにポジションをエクスポートするには、"
 
-#: ../../source/guide_utilisateur.rst:735
+#: ../../source/guide_utilisateur.rst:777
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "blunderDBでエクスポートするポジションを表示し、\\ *CTRL-C* を押します。"
 
-#: ../../source/guide_utilisateur.rst:737
+#: ../../source/guide_utilisateur.rst:779
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "XGを開き、\\ *CTRL-V* を押します。"
 
-#: ../../source/guide_utilisateur.rst:740
+#: ../../source/guide_utilisateur.rst:782
 msgid "Visualiser les différentes positions"
 msgstr "様々なポジションを表示する"
 
-#: ../../source/guide_utilisateur.rst:742
+#: ../../source/guide_utilisateur.rst:784
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -1284,25 +1364,25 @@ msgstr ""
 "現在のライブラリのさまざまなポジションを表示するには、\\ *左矢印* キーと *右矢印* キーを使用します。\\ *HOME* "
 "キーで最初のポジション、\\ *END* キーで最後のポジションに移動できます。"
 
-#: ../../source/guide_utilisateur.rst:746
+#: ../../source/guide_utilisateur.rst:788
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
 msgstr "左のベアオフを表示するには *CTRL-LEFT* を押します。右のベアオフを表示するには *CTRL-RIGHT* を押します。"
 
-#: ../../source/guide_utilisateur.rst:750
+#: ../../source/guide_utilisateur.rst:792
 msgid "Rechercher des positions selon des critères"
 msgstr "条件に基づいてポジションを検索する"
 
-#: ../../source/guide_utilisateur.rst:752
+#: ../../source/guide_utilisateur.rst:794
 msgid "Pour rechercher des types de positions,"
 msgstr "ポジションの種類を検索するには、"
 
-#: ../../source/guide_utilisateur.rst:754
+#: ../../source/guide_utilisateur.rst:796
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "*TAB* を押して検索パネルを開きます。"
 
-#: ../../source/guide_utilisateur.rst:756
+#: ../../source/guide_utilisateur.rst:798
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -1314,19 +1394,19 @@ msgstr ""
 "持つポジションをフィルタリングします。不明な場合は最大限の結果を得るため、\\ *バックスペース* "
 "キーを押してポジションをクリアしてください。必要に応じてキューブのポジションとスコアを編集します。"
 
-#: ../../source/guide_utilisateur.rst:762
+#: ../../source/guide_utilisateur.rst:804
 msgid ""
 "Le panneau de recherche propose deux structures de pions, sélectionnables"
 " par les onglets *Au moins* et *Sauf* situés en haut du panneau :"
 msgstr "検索パネルでは2つのチェッカー構造が提供されており、パネル上部の *最低限* タブと *除く* タブで選択できます："
 
-#: ../../source/guide_utilisateur.rst:765
+#: ../../source/guide_utilisateur.rst:807
 msgid ""
 "*Au moins* (par défaut) : blunderDB filtre les positions ayant *a minima*"
 " la structure de pions saisie ;"
 msgstr "*最低限*\\ （デフォルト）：blunderDB は入力されたチェッカー構造を\\ *少なくとも*\\ 持つポジションをフィルタリングします。"
 
-#: ../../source/guide_utilisateur.rst:768
+#: ../../source/guide_utilisateur.rst:810
 msgid ""
 "*Sauf* : blunderDB exclut les positions contenant l'un des pions saisis. "
 "Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
@@ -1339,43 +1419,42 @@ msgid ""
 "devant être vide (cellule rouge hachurée, aucun pion quelle que soit la "
 "couleur) ; un simple clic sur ce point le débloque."
 msgstr ""
-"*除く*\\ ：blunderDB は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画さ"
-"れた要素を\\ *少なくとも1つ*\\ 含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのない"
-"ポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーが"
-"あるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークさ"
-"れます（赤いハッチングのセル、どの色のチェッカーも不可）。そのポイントをシングルクリックするとロックが解除されます。"
+"*除く*\\ ：blunderDB "
+"は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画された要素を\\ "
+"*少なくとも1つ*\\ "
+"含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）。そのポイントをシングルクリックするとロックが解除されます。"
 
-#: ../../source/guide_utilisateur.rst:778
+#: ../../source/guide_utilisateur.rst:820
 msgid ""
 "Lorsqu'un point appartient aux deux structures, le critère *Sauf* "
 "l'emporte s'il contredit le critère *Au moins*."
 msgstr "ポイントが両方の構造に属する場合、\\ *除く* の基準が *最低限* の基準と矛盾するときは前者が優先されます。"
 
-#: ../../source/guide_utilisateur.rst:781
+#: ../../source/guide_utilisateur.rst:823
 msgid "Méthode 1 (simple):"
 msgstr "方法1（シンプル）："
 
-#: ../../source/guide_utilisateur.rst:783
+#: ../../source/guide_utilisateur.rst:825
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "検索ウィンドウを開きます（\\ *CTRL-F*\\ ）。"
 
-#: ../../source/guide_utilisateur.rst:785
+#: ../../source/guide_utilisateur.rst:827
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "検索フィルターを追加して設定します。"
 
-#: ../../source/guide_utilisateur.rst:787
+#: ../../source/guide_utilisateur.rst:829
 msgid "Valider en cliquant sur *Rechercher*."
 msgstr "*検索* をクリックして確定します。"
 
-#: ../../source/guide_utilisateur.rst:789
+#: ../../source/guide_utilisateur.rst:831
 msgid "Méthode 2 (avancée):"
 msgstr "方法2（上級）："
 
-#: ../../source/guide_utilisateur.rst:792
+#: ../../source/guide_utilisateur.rst:834
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "*スペース* キーを押してコマンドラインを開きます。"
 
-#: ../../source/guide_utilisateur.rst:794
+#: ../../source/guide_utilisateur.rst:836
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -1385,27 +1464,27 @@ msgstr ""
 "*s* と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには *cube* または "
 "*score*\\ 。利用可能なフィルターの一覧は :ref:`cmd_filter` を参照してください）。"
 
-#: ../../source/guide_utilisateur.rst:799
+#: ../../source/guide_utilisateur.rst:841
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "*ENTER* キーを押してクエリを確定します。"
 
-#: ../../source/guide_utilisateur.rst:801
+#: ../../source/guide_utilisateur.rst:843
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
 msgstr "表示されるポジションは、ユーザーが入力した検索条件を満たすデータベース内のポジションです。"
 
-#: ../../source/guide_utilisateur.rst:805
+#: ../../source/guide_utilisateur.rst:847
 msgid "Pour aller plus loin"
 msgstr "さらに先へ"
 
-#: ../../source/guide_utilisateur.rst:807
+#: ../../source/guide_utilisateur.rst:849
 msgid ""
 "Ce guide couvre les usages les plus courants. blunderDB propose plusieurs"
 " fonctionnalités supplémentaires, détaillées dans le manuel :"
 msgstr "本ガイドは最もよくある使い方を扱います。blunderDB には、マニュアルで詳しく説明されている追加機能がいくつかあります。"
 
-#: ../../source/guide_utilisateur.rst:810
+#: ../../source/guide_utilisateur.rst:852
 msgid ""
 "**Répétition espacée (Anki)** — le panneau Anki (*CTRL-K*) transforme une"
 " collection ou une recherche en paquet de cartes à réviser selon "
@@ -1416,7 +1495,7 @@ msgstr ""
 "アルゴリズムで復習するカードデッキに変えます。スケジュールを乱さない自由練習モード（*cram*）もあります。:ref:`panneau_anki`"
 " を参照してください。"
 
-#: ../../source/guide_utilisateur.rst:815
+#: ../../source/guide_utilisateur.rst:857
 msgid ""
 "**Vues multiples** — une barre d'onglets sous la barre d'outils permet de"
 " garder plusieurs espaces de travail indépendants ouverts en parallèle "
@@ -1428,7 +1507,7 @@ msgstr ""
 "ツールバーの下にあるタブバーで、独立した作業空間を並行して開いておけます（たとえば検索と、あるマッチの読み進め）。それぞれが自分の局面リストと文脈を持ちます。:ref:`onglets_vues`"
 " を参照してください。"
 
-#: ../../source/guide_utilisateur.rst:820
+#: ../../source/guide_utilisateur.rst:862
 msgid ""
 "**Diffusion filigranée** — un export peut être signé avec votre identité "
 "d'émetteur (filigrane infalsifiable indiquant l'origine du fichier) et "
@@ -1439,7 +1518,7 @@ msgstr ""
 "エクスポートには発行者アイデンティティで署名でき（ファイルの出所を示す偽造不能な透かし）、受け渡しのためにパスワードで保護することもできます。:ref:`diffusion_controlee`"
 " を参照してください。"
 
-#: ../../source/guide_utilisateur.rst:824
+#: ../../source/guide_utilisateur.rst:866
 msgid ""
 "**Visites guidées et base de démonstration** — la commande ``tour`` "
 "(alias ``tutorial``) ouvre un catalogue de visites guidées de "
@@ -1452,7 +1531,7 @@ msgstr ""
 "コマンドはサンプルのデータベースを読み込みます。自分のデータベースがなくてもツールを試せます。:ref:`visites_guidees` "
 "を参照してください。"
 
-#: ../../source/guide_utilisateur.rst:829
+#: ../../source/guide_utilisateur.rst:871
 msgid ""
 "**Charger les pires erreurs** — la commande ``bl`` (ou ``blunders``) "
 "charge directement les pires erreurs (équité ou MWC) dans la vue "
@@ -1462,4 +1541,3 @@ msgstr ""
 "**最悪のミスを読み込む**\\ — ``bl`` コマンド（または "
 "``blunders``）は、統計パネルの現在のフィルタに従って、最悪のミス（エクイティまたは "
 "MWC）を分析ビューに直接読み込みます。手作業の検索は不要です。:ref:`stats` を参照してください。"
-

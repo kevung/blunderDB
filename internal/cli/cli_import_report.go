@@ -135,7 +135,10 @@ func recordFailure(r *domain.ImportReport, source string, err error) {
 // The list shows the counts stored at the end of each import; the single-batch
 // form measures the rest again, so a batch whose positions have since been
 // analysed reports what is true now rather than what was true then.
-func (cli *CLI) listImports(limit int, batchID int64, format string) error {
+func (cli *CLI) listImports(limit int, batchID int64, format string, queue bool) error {
+	if batchID != 0 && queue {
+		return cli.printStudyQueue(batchID, format)
+	}
 	if batchID != 0 {
 		b, err := cli.db.ImportReport(batchID)
 		if err != nil {
@@ -180,4 +183,60 @@ func (cli *CLI) listImports(limit int, batchID int64, format string) error {
 	w.Flush()
 	fmt.Println("\nUse --batch <id> for the full report of one import.")
 	return nil
+}
+
+// printStudyQueue prints the queue that follows a batch's report (#259, fiche
+// I.3): what to look at now, in the order to look at it.
+//
+// The desktop walks the same list on the board with four gestures per
+// position; here it is a list of position ids, which is what a script wants —
+// `blunderdb search --position-ids …` and `blunderdb match` both take them.
+func (cli *CLI) printStudyQueue(batchID int64, format string) error {
+	entries, err := cli.db.ImportStudyQueue(batchID, 0)
+	if err != nil {
+		return fmt.Errorf("import batch %d: %w", batchID, err)
+	}
+	if format == "json" {
+		return printJSON(entries)
+	}
+	if len(entries) == 0 {
+		fmt.Printf("Import %d brought in nothing worth a second look.\n", batchID)
+		return nil
+	}
+
+	fmt.Printf("Study queue for import %d — %d position(s), in the order to walk them:\n\n", batchID, len(entries))
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "#\tPosition\tWhy\tKind\tCost\tMatch")
+	fmt.Fprintln(w, "-\t--------\t---\t----\t----\t-----")
+	for i, e := range entries {
+		kind := "checker"
+		if e.IsCube {
+			kind = "cube"
+		}
+		cost := "—"
+		if e.ErrorMP > 0 {
+			cost = fmt.Sprintf("%.3f", float64(e.ErrorMP)/1000)
+		}
+		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\n", i+1, e.PositionID, studyReasonLabel(e.Reason), kind, cost, e.Label)
+	}
+	w.Flush()
+	fmt.Println()
+	fmt.Println("Open one with: blunderdb search --db <path> --position-ids <id>")
+	return nil
+}
+
+// studyReasonLabel spells a queue reason for a human. The tokens themselves
+// (`blunder`, `flagged`, `close`) are what --format json carries; this is the
+// text column, and it says why in words rather than in a code.
+func studyReasonLabel(r domain.StudyQueueReason) string {
+	switch r {
+	case domain.StudyBlunder:
+		return "cost equity"
+	case domain.StudyFlagged:
+		return "flagged in the source tool"
+	case domain.StudyClose:
+		return "close cube decision"
+	default:
+		return string(r)
+	}
 }

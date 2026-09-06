@@ -111,3 +111,56 @@ const MaxImportBlunders = 5
 // The count is exact; the list is a sample, because a folder of a thousand
 // unreadable files must not produce a thousand-line report.
 const MaxImportFailures = 10
+
+// The post-import study queue (issue #259, fiche I.3).
+//
+// The end-of-import report answers "what just happened". The queue answers the
+// question that follows it — "what do I look at now?" — and answers it ONCE:
+// an ordered list of the batch's positions worth a second look, walked
+// through, with a decision taken on each. It is not a saved object and nothing
+// records that a position was seen: what the user does with a position (a
+// comment, a collection, an Anki card) is the record, and nothing else needs
+// keeping. That is the same restraint ADR-0006 states about flags.
+
+// StudyQueueReason says why a position is in the queue. Three reasons, in the
+// order they are offered.
+type StudyQueueReason string
+
+const (
+	// StudyBlunder is a decision that cost something. The costliest first:
+	// this is what the user came for.
+	StudyBlunder StudyQueueReason = "blunder"
+	// StudyFlagged is a position the SOURCE TOOL marked for study (ADR-0006).
+	// The user already said this one was interesting, in another program, and
+	// blunderDB carried the mark across.
+	StudyFlagged StudyQueueReason = "flagged"
+	// StudyClose is a cube decision the engine judged close — one where the
+	// right answer was not obvious even though nothing was lost.
+	StudyClose StudyQueueReason = "close"
+)
+
+// StudyQueueEntry is one position of the queue.
+type StudyQueueEntry struct {
+	PositionID int64            `json:"positionId"`
+	MatchID    int64            `json:"matchId"`
+	Reason     StudyQueueReason `json:"reason"`
+	// Label is the match, spelt the way the report spells it.
+	Label string `json:"label"`
+	// ErrorMP is the cost in millipoints for a blunder, 0 for the other two
+	// reasons — a flagged position may have been played perfectly.
+	ErrorMP int `json:"errorMp"`
+	// IsCube tells a cube decision from a checker one.
+	IsCube bool `json:"isCube"`
+}
+
+// MaxStudyQueue bounds the queue. Fifty: a queue nobody finishes is a queue
+// nobody starts, and an import of thirty matches would otherwise offer several
+// hundred positions.
+const MaxStudyQueue = 50
+
+// StudyBlunderThresholdMP is the error, in millipoints, at or above which a
+// decision earns its place in the queue. 50 mMWC — half of what the statistics
+// call a blunder (100), because the queue is a study list and not a hall of
+// shame: the decisions worth revisiting start well below the ones worth being
+// ashamed of.
+const StudyBlunderThresholdMP = 50

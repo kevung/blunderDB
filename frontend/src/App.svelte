@@ -81,6 +81,7 @@
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
+    import StudyQueueBar from './components/StudyQueueBar.svelte';
     import { initFolderWatch } from './services/watchService.js';
 
     // Component state
@@ -405,6 +406,11 @@
     <ViewTabs />
 
     <MatchInfoBar />
+
+    <!-- La file d'étude post-import (#259) : une bande, pas une fenêtre. Le
+         reste de l'application doit rester utilisable pendant le parcours,
+         puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
+    <StudyQueueBar />
 
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>

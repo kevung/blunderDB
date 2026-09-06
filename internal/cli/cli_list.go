@@ -32,6 +32,8 @@ func (cli *CLI) runList(args []string) error {
 	statsTo := listCmd.String("to", "", "End date filter YYYY-MM-DD (stats only)")
 	statsDecisionType := listCmd.String("decision-type", "all", "Decision type: all, checker, or cube (stats only)")
 	statsTopBlunders := listCmd.Int("top-blunders", 10, "Number of top blunders to show (stats only)")
+	importQueue := listCmd.Bool("queue", false,
+		"With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order")
 	statsFormat := listCmd.String("format", "text", "Output format: text, json or csv (stats, players and imports only)")
 
 	// Imports-specific flag (only used when --type imports)
@@ -58,6 +60,9 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println("  # List the recorded imports, then read one's report")
 		fmt.Println("  blunderdb list --db database.db --type imports")
 		fmt.Println("  blunderdb list --db database.db --type imports --batch 3")
+		fmt.Println()
+		fmt.Println("  # What to look at now, in the order to look at it")
+		fmt.Println("  blunderdb list --db database.db --type imports --batch 3 --queue")
 		fmt.Println()
 		fmt.Println("  # Show database statistics")
 		fmt.Println("  blunderdb list --db database.db --type stats")
@@ -107,7 +112,7 @@ func (cli *CLI) runList(args []string) error {
 	case "positions":
 		return cli.listPositions(*limit)
 	case "imports":
-		return cli.listImports(*limit, *batchID, strings.ToLower(*statsFormat))
+		return cli.listImports(*limit, *batchID, strings.ToLower(*statsFormat), *importQueue)
 	case "stats":
 		// Build StatsFilter from flags
 		filter := StatsFilter{

@@ -2171,6 +2171,8 @@ Options:
     	Metric to display: pr or mwc (stats only) (default "pr")
   -player string
     	Filter by player name (stats only)
+  -queue
+    	With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order
   -to string
     	End date filter YYYY-MM-DD (stats only)
   -top-blunders int
@@ -2193,6 +2195,9 @@ Examples:
   # List the recorded imports, then read one's report
   blunderdb list --db database.db --type imports
   blunderdb list --db database.db --type imports --batch 3
+
+  # What to look at now, in the order to look at it
+  blunderdb list --db database.db --type imports --batch 3 --queue
 
   # Show database statistics
   blunderdb list --db database.db --type stats
