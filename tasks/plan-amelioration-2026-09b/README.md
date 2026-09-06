@@ -244,3 +244,5 @@ comme « plan courant » (`tasks/BACKLOG.md`, en-tête).
 environ **125 jours-agent** de travail largement parallélisable, dont une
 semaine pour le lot A ; le lot I en ajoute ~65, au fil de la demande ; le lot J
 se décide chantier par chantier.
+
+- [`AMONT-GAMMONNET.md`](AMONT-GAMMONNET.md) — le registre des sept points de C.13 (#200) : ce qui est mesuré, ce qui est décidé, ce qui attend l'amont.
