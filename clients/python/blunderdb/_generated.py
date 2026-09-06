@@ -66,6 +66,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.forecast — JSON."
         return self._call("/v1/anki.forecast", payload)
 
+    def anki_linked_card(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.linkedCard — JSON."
+        return self._call("/v1/anki.linkedCard", payload)
+
     def anki_list_decks(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.listDecks — NDJSON stream."
         return self._stream("/v1/anki.listDecks", payload)

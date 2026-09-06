@@ -426,6 +426,10 @@ export function ExplainDecision(arg1, arg2) {
   return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
 }
 
+export function GetLinkedAnkiCard(arg1, arg2) {
+  return window['go']['database']['Database']['GetLinkedAnkiCard'](arg1, arg2);
+}
+
 export function SetCollectionFilter(arg1, arg2) {
   return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
 }

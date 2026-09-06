@@ -178,6 +178,28 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 	return card, err
 }
 
+// GetLinkedAnkiCard returns the card holding the OTHER HALF of a cube
+// decision — "prend ?" after "double ?" — when it is in the same deck and due,
+// or nil when there is nothing to chain (#276).
+//
+// nil is the ordinary answer: a checker decision has no other half. The caller
+// asks after grading a card and falls back to GetNextAnkiCard, so a deck
+// without cube decisions never changes behaviour.
+func (d *Database) GetLinkedAnkiCard(deckID int64, cardID int64) (*AnkiReviewCard, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	card, err := d.store.Anki().LinkedCard(context.Background(), "", deckID, cardID)
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, nil
+	}
+	return card, err
+}
+
 // GetRandomAnkiCard returns a random card from the deck for a "cram" (free
 // drill) session: it ignores the FSRS schedule — both the due date and the card
 // state — so the user can practise any position on demand (e.g. a warm-up

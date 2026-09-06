@@ -181,6 +181,7 @@ var databaseParity = map[string]parityEntry{
 	"GetMatchMovePositions":             {CLI: "match", Server: "/v1/matches.movePositions"},
 	"GetMatchTournament":                {Server: "/v1/tournaments.tournamentOf", Why: "`list --type tournaments` lists tournaments with their matches; the reverse lookup is a GUI label"},
 	"GetMovesByGame":                    {Server: "/v1/matches.moves", Why: "`match` prints a match position by position; the game/move split is the GUI navigator's and the daemon's"},
+	"GetLinkedAnkiCard":                 {Server: "/v1/anki.linkedCard", Why: whyReview},
 	"GetNextAnkiCard":                   {Server: "/v1/anki.nextCard", Why: whyReview},
 	"GetPlayerTable":                    {CLI: "list --type players", Server: "/v1/stats.playerTable"},
 	"GetPositionCollections":            {Server: "/v1/collections.collectionsOf", Why: "the GUI's 'in collections…' label; `collection show` lists the other direction"},

@@ -303,3 +303,102 @@ func testAnkiDrawOrderInterleavesTies(t *testing.T, s storage.Storage) {
 		t.Fatalf("NextCard still serves the deck: %v", err)
 	}
 }
+
+// testAnkiCubePairsAreChained pins the two halves of #276.
+//
+// A cube decision is TWO questions, and blunderDB already stores them as two
+// positions. What the contract promises is that a deck built from one half
+// gets the other, and that reviewing the first offers the second — without
+// either becoming a card that takes one grade for two answers.
+func testAnkiCubePairsAreChained(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+
+	// The double and the take: two positions, one decision — two move rows of
+	// the same game at the same move number, which is exactly what pairs them.
+	double := statsDecisionPos(t, 0)
+	doubleID, err := s.Positions().Save(ctx, "", &double)
+	if err != nil {
+		t.Fatalf("Save double position: %v", err)
+	}
+	take := statsDecisionPos(t, 1)
+	takeID, err := s.Positions().Save(ctx, "", &take)
+	if err != nil {
+		t.Fatalf("Save take position: %v", err)
+	}
+	for _, mv := range []domain.Move{
+		{GameID: gameID, MoveNumber: 4, MoveType: "cube", PositionID: doubleID, Player: 1, CubeAction: "Double"},
+		{GameID: gameID, MoveNumber: 4, MoveType: "cube", PositionID: takeID, Player: -1, CubeAction: "Take"},
+	} {
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove: %v", err)
+		}
+	}
+
+	deckID, err := s.Anki().CreateDeck(ctx, "", "videau", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	// Only the DOUBLE half is asked for: the sync must complete the decision.
+	if err := s.Anki().SyncWithPositions(ctx, "", deckID, []int64{doubleID}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+
+	var inDeck []int64
+	for p, err := range s.Anki().DeckPositions(ctx, "", deckID) {
+		if err != nil {
+			t.Fatalf("DeckPositions: %v", err)
+		}
+		inDeck = append(inDeck, p.ID)
+	}
+	if len(inDeck) != 2 {
+		t.Fatalf("a cube decision is two questions: deck holds %d position(s) %v", len(inDeck), inDeck)
+	}
+
+	first, err := s.Anki().NextCard(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	linked, err := s.Anki().LinkedCard(ctx, "", deckID, first.Card.ID)
+	if err != nil {
+		t.Fatalf("LinkedCard: %v", err)
+	}
+	if linked.Card.PositionID == first.Card.PositionID {
+		t.Error("the linked card must be the OTHER half, not the same one")
+	}
+	if linked.Card.ID == first.Card.ID {
+		t.Error("the linked card must be a different card: two questions, two grades")
+	}
+
+	// A checker decision has no other half, and saying so is not an error
+	// condition the caller has to guess at. A deck of its own, so the card
+	// NextCard returns is unambiguously the one meant.
+	lonely := checkerPos()
+	lonelyID, err := s.Positions().Save(ctx, "", &lonely)
+	if err != nil {
+		t.Fatalf("Save lonely position: %v", err)
+	}
+	soloDeck, err := s.Anki().CreateDeck(ctx, "", "pions", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck(solo): %v", err)
+	}
+	if err := s.Anki().SyncWithPositions(ctx, "", soloDeck, []int64{lonelyID}); err != nil {
+		t.Fatalf("SyncWithPositions(lonely): %v", err)
+	}
+	solo, err := s.Anki().NextCard(ctx, "", soloDeck)
+	if err != nil {
+		t.Fatalf("NextCard(solo): %v", err)
+	}
+	if _, err := s.Anki().LinkedCard(ctx, "", soloDeck, solo.Card.ID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("a checker decision has no other half: got %v, want ErrNotFound", err)
+	}
+}

@@ -230,6 +230,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_AnkiForecastDay"
+  /v1/anki.linkedCard:
+    post:
+      operationId: anki.linkedCard
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/linkedCardReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_AnkiReviewCard"
+                nullable: true
   /v1/anki.listDecks:
     post:
       operationId: anki.listDecks
@@ -3187,6 +3205,15 @@ components:
         position:
           $ref: "#/components/schemas/domain_Position"
           nullable: true
+    linkedCardReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        cardId:
+          type: integer
+          format: int64
     listReq:
       type: object
       properties:

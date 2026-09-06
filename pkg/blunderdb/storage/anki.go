@@ -61,6 +61,17 @@ type AnkiStore interface {
 	// cramming look like a month of coverage.
 	ReviewsByGameType(ctx context.Context, scope string, since string) (map[string]int, error)
 
+	// LinkedCard returns the card of the same deck holding the OTHER HALF of
+	// a cube decision — "take?" after "double?" — when that half is due and
+	// available, or ErrNotFound when there is nothing to chain (#276).
+	//
+	// The pairing is derived from the match data (two move rows of the same
+	// game at the same move number), never stored: a column would be a second
+	// copy of a fact that a re-import can change. Chaining ORDERS the due set;
+	// it advances no schedule, because forcing a card out of its turn would
+	// falsify FSRS for a staging effect.
+	LinkedCard(ctx context.Context, scope string, deckID, cardID int64) (*domain.AnkiReviewCard, error)
+
 	// NextCard returns the next card due for review in a deck, or ErrNotFound.
 	NextCard(ctx context.Context, scope string, deckID int64) (*domain.AnkiReviewCard, error)
 

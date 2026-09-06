@@ -77,6 +77,12 @@ type suspendCardReq struct {
 	Suspended bool  `json:"suspended"`
 }
 
+// linkedCardReq asks for the other half of a cube decision (#276).
+type linkedCardReq struct {
+	DeckID int64 `json:"deckId"`
+	CardID int64 `json:"cardId"`
+}
+
 // reviewsByGameTypeReq asks how much was studied since an ISO date (#275).
 type reviewsByGameTypeReq struct {
 	Since string `json:"since"`
@@ -135,6 +141,13 @@ func (s *Server) ankiRoutes() []route {
 		// jeu (#275). Des positions et non des révisions : une carte revue
 		// quatre fois est une position étudiée, et compter les répétitions
 		// ferait passer un mois de bachotage pour un mois de couverture.
+		// L'autre moitié d'une décision de videau (#276), quand elle est dans
+		// le même paquet et due. Le lien est dérivé des données de match, pas
+		// stocké : une colonne serait une seconde copie d'un fait qu'un
+		// réimport peut changer.
+		{http.MethodPost, "/v1/anki.linkedCard", rpc(func(ctx context.Context, scope string, req linkedCardReq) (*domain.AnkiReviewCard, error) {
+			return as().LinkedCard(ctx, scope, req.DeckID, req.CardID)
+		})},
 		{http.MethodPost, "/v1/anki.reviewsByGameType", rpc(func(ctx context.Context, scope string, req reviewsByGameTypeReq) (map[string]int, error) {
 			return as().ReviewsByGameType(ctx, scope, req.Since)
 		})},

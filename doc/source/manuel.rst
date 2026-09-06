@@ -1978,6 +1978,18 @@ la position correspondante sur le plateau. Évaluez votre rappel avec les touche
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+**Les décisions de videau font deux cartes, enchaînées.** Une décision de
+videau est deux questions — « double ? », puis « prend ? » — et blunderDB les
+enregistre depuis toujours comme deux positions. Un paquet qui n'en
+sélectionne qu'une moitié reçoit l'autre : la décision est complétée, pas
+augmentée. Et quand les deux sont dues, la seconde vient **immédiatement**
+après la première.
+
+Chacune garde sa propre note et son propre calendrier : ce ne sont pas deux
+temps d'une même carte, ce sont deux cartes. L'enchaînement n'avance aucune
+échéance — il ordonne les cartes déjà dues, rien de plus. Les deux naissant
+ensemble, elles sont dues ensemble la première fois, et c'est là qu'il sert.
+
 **Afficher la réponse :** La carte pose une question — quel coup jouer, ou quelle
 action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou cliquez sur la zone
 masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle

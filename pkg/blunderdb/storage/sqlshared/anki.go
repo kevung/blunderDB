@@ -235,6 +235,10 @@ func (s *AnkiStore) Sync(ctx context.Context, scope string, deckID int64) error 
 // session upserts elsewhere in this package) and PostgreSQL both execute
 // identically — no INSERT OR IGNORE/dialect split needed here.
 func (s *AnkiStore) SyncWithPositions(ctx context.Context, scope string, deckID int64, positionIDs []int64) error {
+	// Une décision de videau est deux questions (#276) : si la source en
+	// sélectionne une moitié, l'autre complète la décision plutôt que
+	// d'ajouter autre chose. Voir anki_cube_pairs.go.
+	positionIDs = completeCubePairs(ctx, s.DB, scope, positionIDs)
 	err := s.DB.Transact(ctx, func(tx Execer) error {
 		now := ankiNow()
 		for _, pid := range positionIDs {

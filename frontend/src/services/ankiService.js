@@ -21,6 +21,7 @@ import {
     GetAnkiDeckRetention,
     GetAnkiDeckPositions,
     GetNextAnkiCard,
+    GetLinkedAnkiCard,
     GetRandomAnkiCard,
     ReviewAnkiCard,
     SetAnkiCardSuspended,
@@ -377,11 +378,36 @@ export async function startSession(deck, { cram = false } = {}) {
 }
 
 /**
- * Grade the current card and move to the next due one.
+ * Grade the current card and move to the next one.
+ *
+ * Une décision de videau est DEUX questions — « double ? » puis « prend ? » —
+ * et blunderDB les enregistre déjà comme deux positions. Quand la seconde est
+ * dans le même paquet et due, elle vient tout de suite après la première
+ * (#276) : c'est la seule façon d'enchaîner les deux sans en faire une carte
+ * qui prendrait une note pour deux réponses (ADR-0025).
+ *
+ * Le chaînage n'avance AUCUNE échéance. Il ordonne l'ensemble des cartes dues,
+ * rien de plus : forcer la seconde hors de son tour fausserait FSRS pour un
+ * effet de mise en scène. Les deux cartes naissant ensemble, elles sont dues
+ * ensemble la première fois — c'est là que le chaînage sert.
+ *
+ * En mode cram, rien de tout cela : le tirage est aléatoire par définition.
+ *
  * @returns {Promise<object | null>} the next card, or null when the session is over
  */
-export async function reviewCard(card, rating) {
+export async function reviewCard(card, rating, { cram = false } = {}) {
     const next = await ReviewAnkiCard(card.card.id, rating);
+    if (!cram) {
+        let linked = null;
+        try {
+            linked = await GetLinkedAnkiCard(card.card.deckId, card.card.id);
+        } catch (error) {
+            // Le chaînage est un confort, pas le contrat de la révision : une
+            // panne ici ne doit pas interrompre une session.
+            logger.error('could not look up the linked card:', error);
+        }
+        if (linked) return await advance(linked);
+    }
     return await advance(next);
 }
 

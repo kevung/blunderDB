@@ -25,6 +25,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
      POST /v1/anki.forecast                        JSON
+     POST /v1/anki.linkedCard                      JSON
      POST /v1/anki.listDecks                       NDJSON
      POST /v1/anki.nextCard                        JSON
      POST /v1/anki.removeCard                      JSON
