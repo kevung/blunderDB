@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -52,16 +52,16 @@ msgid "Ouvrir une base de données existante."
 msgstr "Apri un database esistente."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
-msgstr "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
+msgstr "CTRL-MAIUSC-I"
 
 #: ../../source/raccourcis.rst:1
 msgid "Importer une base de données."
 msgstr "Importa un database."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
-msgstr "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
+msgstr "CTRL-MAIUSC-S"
 
 #: ../../source/raccourcis.rst:1
 msgid "Exporter la base de données."
@@ -98,8 +98,8 @@ msgid ""
 msgstr "Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
-msgstr "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
+msgstr "CTRL-MAIUSC-F"
 
 #: ../../source/raccourcis.rst:1
 msgid "Importer récursivement un dossier de fichiers de matchs/positions."

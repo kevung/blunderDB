@@ -49,7 +49,7 @@ export default {
     <li>study positions with spaced repetition (Anki panel),</li>
     <li>manage tournaments (Tournament panel),</li>
     <li>display performance statistics (Stats panel),</li>
-    <li>compute EPC values for bearoff positions (Eval panel),</li>
+    <li>evaluate any position with the built-in engine, and compute the EPC of a bearoff position (Eval panel),</li>
     <li>browse saved search filters (Filter Library panel),</li>
     <li>browse search history (Search History panel).</li>
 </ul>
@@ -119,9 +119,9 @@ export default {
 </ul>
 <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
 <p>
-    On a pure race, a further table shows both players' winning probabilities and, when the position is covered by a two-sided database (the built-in one up to 6 checkers per player, the downloadable
-    extended one up to 11 through the Bearoff tab of the configuration), the exact money equities and the best cube decision. Outside that domain the winning probability is estimated (an "estimated"
-    badge with its error margin) and no decision is shown. The player on roll is edited by clicking a player's off/score rectangle, the cube position by clicking the cube on the board.
+    On a pure race, a further table shows both players' winning probabilities and, when the position is covered by a two-sided database (a 6-checker-per-player table computed on first launch, an
+    extended 11-checker table computed from the Bearoff tab of the configuration), the exact money equities and the best cube decision. Outside that domain the winning probability is estimated (an
+    "estimated" badge with its error margin) and no decision is shown. The player on roll is edited by clicking a player's off/score rectangle, the cube position by clicking the cube on the board.
 </p>
 <p>
     The <strong>Challenge</strong> checkbox hides the results on every change to the position; click an area to reveal it — ideal for practising an equity, an EPC or a cube decision before checking.
@@ -177,7 +177,10 @@ export default {
 </p>
 
 <h3>Tournaments</h3>
-<p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
+<p>
+    Tournaments allow grouping matches by event. On import, a match enters the tournament its file names, created if needed; a match already sorted is never moved. Open the Tournament panel with
+    <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -1194,7 +1197,7 @@ export default {
 <td>The opponent has between x and y blots in the jan.</td>
 </tr>
 <tr>
-<td>t'word1;word2;...'</td>
+<td><code>t'word1;word2;...'</code></td>
 <td>The position comments contain at least one of the words.</td>
 </tr>
 <tr>
@@ -1206,11 +1209,11 @@ export default {
 <td>The position carries no comment.</td>
 </tr>
 <tr>
-<td>m'pattern1,pattern2,...'</td>
+<td><code>m'pattern1,pattern2,...'</code></td>
 <td>The best checker moves containing at least one of the patterns.</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>The best cube decisions for No Double/Take, Double Take, Double Pass.</td>
 </tr>
 <tr>
@@ -1250,8 +1253,8 @@ export default {
 <td>Search for the positions with identifiers x to y (e.g. id5,10).</td>
 </tr>
 <tr>
-<td>pl'name'</td>
-<td>Search positions from a match involving the named player, at either seat (e.g. pl'Alice'). Case-insensitive.</td>
+<td><code>pl'name'</code></td>
+<td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case-insensitive.</td>
 </tr>
 </tbody>
 </table>
@@ -1275,6 +1278,10 @@ export default {
 <h3>Version</h3>
 <p>Application version: {appVersion}</p>
 <p>Database version: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/en/" target="_blank" rel="noopener noreferrer">Online documentation</a> ·
+    <a href="https://kevung.github.io/blunderDB/en/historique.html" target="_blank" rel="noopener noreferrer">Version history</a>
+</p>
 
 <h3>Author</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

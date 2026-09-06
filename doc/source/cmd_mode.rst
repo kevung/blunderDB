@@ -164,11 +164,11 @@ Filtres de recherche
    "BJ>x", "L'adversaire a au moins x blots dans le jan."
    "BJ<x", "L'adversaire a au plus x blots dans le jan."
    "BJx,y", "L'adversaire a entre x et y blots dans le jan."
-   "t'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
+   "``t'mot1;mot2;...'``", "Les commentaires de la position contiennent au moins un des mots."
    "co", "La position porte un commentaire, quel qu'en soit le contenu."
    "xco", "La position ne porte aucun commentaire."
-   "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
-   "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
+   "``m'motif1,motif2,...'``", "Les meilleurs coups de pions contenant au moins un des motifs."
+   "``m'ND,DT,DP,...'``", "Les meilleures décisions de videau de No Double/Take, Double Take, Double Pass."
    "T>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
    "T<x", "Date d'ajout de la position avant x (AAAA/MM/JJ)."
    "Tx,y", "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
@@ -178,7 +178,7 @@ Filtres de recherche
    "tnx,y", "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
    "idx", "Rechercher la position d'identifiant x (ex: id12)."
    "idx,y", "Rechercher les positions d'identifiants x à y (ex: id5,10)."
-   "pl'nom'", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+   "``pl'nom'``", "Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 
 .. _cmd_misc:
 

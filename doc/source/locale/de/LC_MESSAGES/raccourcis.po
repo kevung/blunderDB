@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -52,7 +52,7 @@ msgid "Ouvrir une base de données existante."
 msgstr "Eine bestehende Datenbank öffnen."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-I"
+msgid "CTRL-MAJ-I"
 msgstr "STRG-UMSCHALT-I"
 
 #: ../../source/raccourcis.rst:1
@@ -60,7 +60,7 @@ msgid "Importer une base de données."
 msgstr "Eine Datenbank importieren."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-S"
+msgid "CTRL-MAJ-S"
 msgstr "STRG-UMSCHALT-S"
 
 #: ../../source/raccourcis.rst:1
@@ -100,7 +100,7 @@ msgstr ""
 "xgp, sgf, mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-SHIFT-F"
+msgid "CTRL-MAJ-F"
 msgstr "STRG-UMSCHALT-F"
 
 #: ../../source/raccourcis.rst:1

@@ -50,7 +50,7 @@ export default {
     <li>étudier des positions par répétition espacée (panneau Anki),</li>
     <li>gérer des tournois (panneau Tournoi),</li>
     <li>afficher des statistiques de performance (panneau Stats),</li>
-    <li>calculer les valeurs d'EPC pour les positions de sortie (panneau Eval),</li>
+    <li>évaluer n'importe quelle position avec le moteur intégré, et calculer l'EPC d'une position de sortie (panneau Eval),</li>
     <li>consulter les filtres de recherche enregistrés (panneau Bibliothèque de filtres),</li>
     <li>consulter l'historique des recherches (panneau Historique des recherches).</li>
 </ul>
@@ -128,8 +128,8 @@ export default {
 </ul>
 <p>Lorsque les deux joueurs ont des pions dans leur jan intérieur, une section de comparaison affiche les différences d'EPC et de pip count.</p>
 <p>
-    Sur une position de course pure, un tableau supplémentaire affiche les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (base intégrée jusqu'à 6
-    pions par joueur, base étendue téléchargeable jusqu'à 11 pions via l'onglet Bearoff de la configuration), les équités money exactes et la meilleure décision de videau. Hors de ce domaine, la
+    Sur une position de course pure, un tableau supplémentaire affiche les probabilités de gain des deux joueurs et, lorsque la position est couverte par une base two-sided (table à 6 pions par joueur
+    calculée au premier lancement, table étendue à 11 pions calculée depuis l'onglet Bearoff de la configuration), les équités money exactes et la meilleure décision de videau. Hors de ce domaine, la
     probabilité de gain est estimée (badge « estimé » avec sa marge d'erreur) et aucune décision n'est affichée. Le joueur au trait s'édite en cliquant le rectangle sortie/score d'un joueur, la
     position du videau en cliquant le videau du plateau.
 </p>
@@ -167,8 +167,8 @@ export default {
 </p>
 <p>
     <strong>Réviser :</strong> Sélectionnez un paquet et cliquez sur <em>Étudier</em> (ou double-cliquez sur un paquet) pour commencer à réviser les cartes à échéance. Chaque carte affiche la position
-    correspondante sur le plateau. Notez votre rappel avec les touches <strong>1</strong> (À revoir), <strong>2</strong> (Difficile), <strong>3</strong> (Correct) ou <strong>4</strong> (Facile).
-    Appuyez sur <strong>Échap</strong> pour arrêter et revenir à la liste des paquets.
+    correspondante sur le plateau. Notez votre rappel avec les touches <strong>1</strong> (À revoir), <strong>2</strong> (Difficile), <strong>3</strong> (Bien) ou <strong>4</strong> (Facile). Appuyez
+    sur <strong>Échap</strong> pour arrêter et revenir à la liste des paquets.
 </p>
 <p>
     <strong>Limiter la séance :</strong> Dans les Paramètres du paquet, vous pouvez borner une séance à un nombre de cartes. La séance s'arrête alors en le disant, et l'entraînement libre reste
@@ -193,7 +193,10 @@ export default {
 </p>
 
 <h3>Tournois</h3>
-<p>Les tournois permettent de regrouper les matchs par événement. Ouvrez le panneau Tournoi avec <strong>Ctrl+Y</strong> pour gérer les tournois et leur affecter des matchs.</p>
+<p>
+    Les tournois permettent de regrouper les matchs par événement. À l'import, un match entre dans le tournoi que son fichier nomme, créé au besoin ; un match déjà rangé n'est jamais déplacé. Ouvrez
+    le panneau Tournoi avec <strong>Ctrl+Y</strong> pour gérer les tournois et leur affecter des matchs.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -238,11 +241,11 @@ export default {
 <td>Ouvrir une base de données existante.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-MAJ-I</td>
 <td>Importer une base de données.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-MAJ-S</td>
 <td>Exporter la base de données.</td>
 </tr>
 <tr>
@@ -269,7 +272,7 @@ export default {
 <td>Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-MAJ-F</td>
 <td>Importer récursivement un dossier de fichiers de matchs/positions.</td>
 </tr>
 <tr>
@@ -1210,7 +1213,7 @@ export default {
 <td>L'adversaire a entre x et y blots dans le jan.</td>
 </tr>
 <tr>
-<td>t'mot1;mot2;...'</td>
+<td><code>t'mot1;mot2;...'</code></td>
 <td>Les commentaires de la position contiennent au moins un des mots.</td>
 </tr>
 <tr>
@@ -1222,12 +1225,12 @@ export default {
 <td>La position ne porte aucun commentaire.</td>
 </tr>
 <tr>
-<td>m'motif1,motif2,...'</td>
+<td><code>m'motif1,motif2,...'</code></td>
 <td>Les meilleurs coups de pions contenant au moins un des motifs.</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
-<td>Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass.</td>
+<td><code>m'ND,DT,DP,...'</code></td>
+<td>Les meilleures décisions de videau de No Double/Take, Double Take, Double Pass.</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
@@ -1266,8 +1269,8 @@ export default {
 <td>Rechercher les positions d'identifiants x à y (ex: id5,10).</td>
 </tr>
 <tr>
-<td>pl'nom'</td>
-<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée.</td>
+<td><code>pl'nom'</code></td>
+<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée.</td>
 </tr>
 </tbody>
 </table>
@@ -1291,6 +1294,10 @@ export default {
 <h3>Version</h3>
 <p>Version de l'application : {appVersion}</p>
 <p>Version de la base de données : {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/fr/" target="_blank" rel="noopener noreferrer">Documentation en ligne</a> ·
+    <a href="https://kevung.github.io/blunderDB/fr/historique.html" target="_blank" rel="noopener noreferrer">Historique des versions</a>
+</p>
 
 <h3>Auteur</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

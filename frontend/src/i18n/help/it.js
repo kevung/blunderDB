@@ -50,7 +50,7 @@ export default {
     <li>studiare posizioni con la ripetizione dilazionata (pannello Anki),</li>
     <li>gestire i tornei (pannello Torneo),</li>
     <li>mostrare statistiche di rendimento (pannello Stats),</li>
-    <li>calcolare i valori di EPC per posizioni di bearoff (pannello Eval),</li>
+    <li>valutare qualsiasi posizione con il motore integrato, e calcolare l'EPC di una posizione di bearoff (pannello Eval),</li>
     <li>consultare i filtri di ricerca salvati (pannello Libreria filtri),</li>
     <li>consultare la cronologia delle ricerche (pannello Cronologia ricerche).</li>
 </ul>
@@ -128,10 +128,10 @@ export default {
 </ul>
 <p>Quando entrambi i giocatori hanno pedine nella propria casa, una sezione di confronto mostra le differenze di EPC e di pip count.</p>
 <p>
-    Su una corsa pura, un'ulteriore tabella mostra le probabilità di vittoria dei due giocatori e, quando la posizione è coperta da un database two-sided (quello integrato fino a 6 pedine per
-    giocatore, quello esteso scaricabile fino a 11 dalla scheda Bearoff della configurazione), le equity money esatte e la migliore decisione di cubo. Fuori da quel dominio la probabilità di vittoria
-    è stimata (badge «stimato» con il suo margine d'errore) e non viene mostrata alcuna decisione. Il giocatore di turno si modifica facendo clic sul rettangolo uscita/punteggio di un giocatore, la
-    posizione del cubo facendo clic sul cubo del tavoliere.
+    Su una corsa pura, un'ulteriore tabella mostra le probabilità di vittoria dei due giocatori e, quando la posizione è coperta da una tabella two-sided (tabella a 6 pedine per giocatore calcolata al
+    primo avvio, tabella estesa a 11 pedine calcolata dalla scheda Bearoff della configurazione), le equity money esatte e la migliore decisione di cubo. Fuori da quel dominio la probabilità di
+    vittoria è stimata (badge «stimato» con il suo margine d'errore) e non viene mostrata alcuna decisione. Il giocatore di turno si modifica facendo clic sul rettangolo uscita/punteggio di un
+    giocatore, la posizione del cubo facendo clic sul cubo del tavoliere.
 </p>
 <p>
     La casella <strong>Sfida</strong> nasconde i risultati a ogni modifica della posizione; fare clic su un'area per rivelarla — ideale per allenarsi a stimare un'equity, un EPC o una decisione di
@@ -189,7 +189,10 @@ export default {
 </p>
 
 <h3>Tornei</h3>
-<p>I tornei permettono di raggruppare i match per evento. Apri il pannello Torneo con <strong>Ctrl+Y</strong> per gestire i tornei e assegnare loro i match.</p>
+<p>
+    I tornei permettono di raggruppare i match per evento. All'importazione, un match viene classificato nel torneo che il suo file nomina, creato se necessario; un match già classificato non viene
+    mai spostato. Apri il pannello Torneo con <strong>Ctrl+Y</strong> per gestire i tornei e assegnare loro i match.
+</p>
 
 <h3>Stats</h3>
 <p>
@@ -234,11 +237,11 @@ export default {
 <td>Apri un database esistente.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-MAIUSC-I</td>
 <td>Importa un database.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-MAIUSC-S</td>
 <td>Esporta il database.</td>
 </tr>
 <tr>
@@ -265,7 +268,7 @@ export default {
 <td>Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-MAIUSC-F</td>
 <td>Importa ricorsivamente una cartella di file di partite/posizioni.</td>
 </tr>
 <tr>
@@ -1206,7 +1209,7 @@ export default {
 <td>L'avversario ha tra x e y blot nel jan.</td>
 </tr>
 <tr>
-<td>t'parola1;parola2;...'</td>
+<td><code>t'parola1;parola2;...'</code></td>
 <td>I commenti della posizione contengono almeno una delle parole.</td>
 </tr>
 <tr>
@@ -1218,11 +1221,11 @@ export default {
 <td>La posizione non ha alcun commento.</td>
 </tr>
 <tr>
-<td>m'schema1,schema2,...'</td>
+<td><code>m'schema1,schema2,...'</code></td>
 <td>Le migliori mosse di pedine contenenti almeno uno degli schemi.</td>
 </tr>
 <tr>
-<td>m'ND,DT,DP,...'</td>
+<td><code>m'ND,DT,DP,...'</code></td>
 <td>Le migliori decisioni di cubo di No Double/Take, Double Take, Double Pass.</td>
 </tr>
 <tr>
@@ -1262,8 +1265,8 @@ export default {
 <td>Cercare le posizioni con identificativi da x a y (es. id5,10).</td>
 </tr>
 <tr>
-<td>pl'nome'</td>
-<td>Cerca posizioni di una partita a cui ha partecipato il giocatore indicato, su entrambi i lati (es. pl'Alice'). Non distingue maiuscole e minuscole.</td>
+<td><code>pl'nome'</code></td>
+<td>Cerca posizioni di una partita a cui ha partecipato il giocatore indicato, su entrambi i lati (es. <code>pl'Alice'</code>). Non distingue maiuscole e minuscole.</td>
 </tr>
 </tbody>
 </table>
@@ -1287,6 +1290,10 @@ export default {
 <h3>Versione</h3>
 <p>Versione dell'applicazione: {appVersion}</p>
 <p>Versione del database: {dbVersion}</p>
+<p>
+    <a href="https://kevung.github.io/blunderDB/it/" target="_blank" rel="noopener noreferrer">Documentazione in linea</a> ·
+    <a href="https://kevung.github.io/blunderDB/it/historique.html" target="_blank" rel="noopener noreferrer">Cronologia delle versioni</a>
+</p>
 
 <h3>Autore</h3>
 <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>

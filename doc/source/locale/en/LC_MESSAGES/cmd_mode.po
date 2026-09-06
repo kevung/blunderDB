@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -982,8 +982,8 @@ msgid "L'adversaire a entre x et y blots dans le jan."
 msgstr "The opponent has between x and y blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "t'mot1;mot2;...'"
-msgstr "t'word1;word2;...'"
+msgid "``t'mot1;mot2;...'``"
+msgstr "``t'word1;word2;...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les commentaires de la position contiennent au moins un des mots."
@@ -1006,21 +1006,21 @@ msgid "La position ne porte aucun commentaire."
 msgstr "The position carries no comment."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'motif1,motif2,...\\'"
-msgstr "m'pattern1,pattern2,...\\'"
+msgid "``m'motif1,motif2,...'``"
+msgstr "``m'pattern1,pattern2,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les meilleurs coups de pions contenant au moins un des motifs."
 msgstr "The best checker moves containing at least one of the patterns."
 
 #: ../../source/cmd_mode.rst:1
-msgid "m'ND,DT,DP,...\\'"
-msgstr "m'ND,DT,DP,...\\'"
+msgid "``m'ND,DT,DP,...'``"
+msgstr "``m'ND,DT,DP,...'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
-"Pass."
+"Les meilleures décisions de videau de No Double/Take, Double Take, Double"
+" Pass."
 msgstr "The best cube decisions for No Double/Take, Double Take, Double Pass."
 
 #: ../../source/cmd_mode.rst:1
@@ -1096,16 +1096,16 @@ msgid "Rechercher les positions d'identifiants x à y (ex: id5,10)."
 msgstr "Search for the positions with identifiers x to y (e.g. id5,10)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "pl'nom'"
-msgstr "pl'name'"
+msgid "``pl'nom'``"
+msgstr "``pl'name'``"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 msgstr ""
 "Search positions from a match involving the named player, at either seat "
-"(e.g. pl'Alice'). Case-insensitive."
+"(e.g. ``pl'Alice'``). Case-insensitive."
 
 #: ../../source/cmd_mode.rst:186
 msgid "Commandes diverses"

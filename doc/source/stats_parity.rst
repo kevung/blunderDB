@@ -98,8 +98,8 @@ signifie un lancer favorable. Référence : ``gnubg/analysis.c:199–269``
 
 .. important::
 
-   **blunderDB ne calcule jamais la chance** : il ne dispose pas d'un moteur
-   d'évaluation. Il reprend telle quelle la valeur écrite par l'outil qui a
+   **blunderDB ne recalcule jamais la chance** : l'évaluateur intégré ne sert
+   pas à cela. Il reprend telle quelle la valeur écrite par l'outil qui a
    analysé le match — ``ErrLuck`` pour eXtreme Gammon, la propriété ``LU`` pour
    gnuBG — après vérification que les deux partagent la même convention (même
    unité, positif = chanceux).

@@ -119,11 +119,17 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
 
-N'importer aucun élément est **toujours** une erreur, que ``--fail-on-error``
-soit passé ou non: un fichier ou un répertoire dont rien n'a été importé
-n'est jamais un succès silencieux. Un échec **partiel** (certains éléments
-importés, d'autres non) n'échoue la commande que si ``--fail-on-error`` est
-passé.
+Le code de retour obéit à trois règles :
+
+* **rien de nouveau n'a été importé** — chaque fichier a échoué *ou* était
+  déjà en base — : erreur, que ``--fail-on-error`` soit passé ou non. Un
+  répertoire relancé sans nouveau fichier sort donc en erreur, avec le
+  décompte des doublons dans le message ; un script qui relance le même
+  dossier chaque nuit doit s'attendre à ce code ;
+* **échec partiel** (certains éléments importés, d'autres refusés) : erreur
+  seulement si ``--fail-on-error`` est passé ;
+* au moins un élément nouveau importé, sans ``--fail-on-error`` : succès,
+  les fichiers refusés étant listés dans le tableau.
 
 Import d'un match
 ^^^^^^^^^^^^^^^^^
@@ -162,9 +168,9 @@ C'est la méthode la plus efficace pour importer un grand nombre de matchs.
    ./blunderdb import --db base.db --type batch --dir ./matchs/ --format json --fail-on-error
 
 Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
-(✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas un
-échec en soi: relancer un import par lot sur un répertoire déjà importé,
-sans nouveau fichier, reste un succès.
+(✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas
+compté comme un échec, mais un lot qui n'en contient que des doublons n'a
+rien importé et sort en erreur (voir les trois règles ci-dessus).
 
 export — Exporter des données
 ------------------------------
@@ -353,8 +359,8 @@ date, équité, dés exclus, zones et blots.
 
 .. code-block:: bash
 
-   # Décisions de videau, 30 pips de retard, 50 millipoints d'erreur
-   ./blunderdb search --db base.db --query 's cube p>30 E>50'
+   # 30 pips de retard, 50 millipoints d'erreur au moins
+   ./blunderdb search --db base.db --query 's p>30 E>50'
 
    # Filtres qu'aucun drapeau n'expose
    ./blunderdb search --db base.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
@@ -370,8 +376,14 @@ combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui disent
 Un jeton que rien ne reconnaît fait échouer la commande plutôt que de réduire
 la recherche en silence. Deux limites tiennent à l'absence de plateau en ligne
 de commande : le motif de damier ne se tape pas, et ``cube``, ``score`` et
-``D`` se comparent au plateau de recherche, vide ici — utilisez ``--dice``,
-``--cube`` et ``--score1``/``--score2``.
+``D`` se comparent au plateau de recherche, vide ici. Une recherche qui a
+besoin de l'un d'eux s'écrit **entièrement** en drapeaux, puisque ``--query``
+ne se combine pas avec eux — par exemple, les décisions de videau en retard
+de 30 pips et fautives d'au moins 50 millipoints :
+
+.. code-block:: bash
+
+   ./blunderdb search --db base.db --decision cube --pip-min 30 --move-error-min 50
 
 **Exemples:**
 
@@ -421,7 +433,7 @@ Affiche le contenu de la base de données.
   Snowie ER, erreurs, blunders et chance. C'est le pendant en ligne de commande
   de l'onglet Joueurs du panneau Stats.
 
-**Options (type ``stats`` uniquement):**
+**Options** (type ``stats`` uniquement) :
 
 * ``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``).
 * ``--player`` — Restreindre au joueur indiqué.
@@ -434,7 +446,7 @@ Affiche le contenu de la base de données.
 * ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
 
-**Options (type ``players`` uniquement):**
+**Options** (type ``players`` uniquement) :
 
 * ``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les jours
   d'une compétition.
@@ -771,7 +783,7 @@ trois logiques distinctes (voir :ref:`headless`).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
   ``json`` (un seul document récapitulatif, imprimé à la fin).
 
-**Le parallélisme (``--jobs``).** Les positions d'un lot sont indépendantes —
+**Le parallélisme** (``--jobs``). Les positions d'un lot sont indépendantes —
 aucune recherche n'informe la suivante — donc elles sont réparties sur
 ``--jobs`` fils d'exécution, chacun avec son propre évaluateur. Les analyses
 écrites sont **identiques quelle que soit la valeur de** ``--jobs`` ; seul le

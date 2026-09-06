@@ -129,13 +129,15 @@ Qu'est-ce que l'EPC?
 
 L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip count
 pour évaluer les positions de bearoff. Le panneau Eval de blunderDB utilise
-la base de données de bearoff à 6 points de GNUbg et calcule en temps réel
+une table de bearoff à 6 points identique à celle de GNUbg, calculée sur la
+machine au premier lancement, et calcule en temps réel
 l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le wastage.
 
 Sur les positions de bearoff pur, le panneau affiche aussi la probabilité de
 gain du joueur au trait et, lorsque la position est couverte par une base
-two-sided (base intégrée jusqu'à 6 pions par joueur, base téléchargeable
-jusqu'à 11), le verdict de videau money exact. Hors de ce domaine, la
+two-sided (table TS-06-06 calculée au premier lancement, ou table étendue
+TS-06-11 calculée depuis l'onglet *Bearoff* de la configuration), le verdict
+de videau money exact. Hors de ce domaine, la
 probabilité est estimée avec sa marge d'erreur et le verdict n'est
 volontairement pas affiché. Voir la section « Méthodologie et hypothèses du
 panneau Eval » du manuel pour le détail des hypothèses.
@@ -186,9 +188,9 @@ Oui, un mode « headless » facultatif : le même binaire, lancé avec
 ``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un
 reverse-proxy authentifiant (blunderDB lui-même ne fait aucune
 authentification). Il peut s'appuyer sur SQLite ou sur PostgreSQL en
-multi-tenant, et sert par exemple à consulter ou importer des matchs depuis
-un navigateur, à intégrer blunderDB à un autre outil, ou à mutualiser une
-base entre plusieurs joueurs. L'usage normal reste l'application de bureau ;
+multi-tenant, et sert à piloter blunderDB depuis vos propres scripts ou une
+application maison, en HTTP + JSON — il n'y a pas d'interface web —, ou à
+mutualiser une base entre plusieurs joueurs. L'usage normal reste l'application de bureau ;
 voir :ref:`headless` pour le détail (y compris l'image Docker prête à
 l'emploi) et le tutoriel « Déployer le mode serveur derrière un proxy » du
 guide utilisateur.

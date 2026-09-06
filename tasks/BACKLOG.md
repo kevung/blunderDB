@@ -17,6 +17,13 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Backend
 
+- **`import --type batch` sur un dossier déjà importé sort en erreur** (que
+  des doublons ⇒ `successCount == 0` ⇒ exit 1). C'est le cas nominal d'un cron
+  nocturne, et la doc le promettait en succès jusqu'au lot 1 de
+  `tasks/critique-doc-2026-09/` (persona 3, #1). Décider : un lot fait de
+  doublons seuls est-il un succès (exit 0, doublons comptés) ? Si oui,
+  changer le code ET la page CLI ensemble.
+
 - **gammonNet — grouper la valuation du videau sur les candidats.** Le seul levier
   qui reste sur le videau, et il faut le cadrer en amont (`gn_cube.c`) avant de le
   porter. Mesuré le 2026-09-02 en écrivant puis en annulant l'optimisation

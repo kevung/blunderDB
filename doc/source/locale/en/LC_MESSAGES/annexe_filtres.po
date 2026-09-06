@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -280,8 +280,8 @@ msgid "s E>40"
 msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Position from the Aachen2024 tournament"
+msgid "Positions dont un commentaire contient Aachen2024"
+msgstr "Positions whose comment contains Aachen2024"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""

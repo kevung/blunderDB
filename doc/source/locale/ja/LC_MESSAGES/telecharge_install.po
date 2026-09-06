@@ -48,7 +48,7 @@ msgstr "Mac 版：|latest_mac_exe|"
 msgid ""
 "Pour une consultation hors ligne, vous pouvez également télécharger cette"
 " documentation au format PDF  : |latest_fr_pdf|"
-msgstr "オフラインで参照するには、このドキュメントを PDF 形式でダウンロードすることもできます：|latest_en_pdf|"
+msgstr "オフラインで参照するには、このドキュメントを PDF 形式でダウンロードすることもできます：|latest_ja_pdf|"
 
 #: ../../source/telecharge_install.rst:20
 msgid ""

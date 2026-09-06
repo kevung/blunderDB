@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 01:26+0200\n"
+"POT-Creation-Date: 2026-09-06 02:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -92,8 +92,8 @@ msgid ""
 "La liste des filtres disponibles en ligne de commande est fournie dans la"
 " section :ref:`cmd_filter` de la liste des commandes."
 msgstr ""
-"L'elenco dei filtri disponibili da riga di comando è fornito nella sezione "
-":ref:`cmd_filter` dell'elenco dei comandi."
+"L'elenco dei filtri disponibili da riga di comando è fornito nella "
+"sezione :ref:`cmd_filter` dell'elenco dei comandi."
 
 #: ../../source/annexe_filtres.rst:39
 msgid "Recherche dans les résultats courants"
@@ -284,8 +284,8 @@ msgid "s E>40"
 msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Posizione del torneo Aachen2024"
+msgid "Positions dont un commentaire contient Aachen2024"
+msgstr "Posizioni il cui commento contiene Aachen2024"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""
