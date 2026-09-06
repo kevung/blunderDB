@@ -292,3 +292,74 @@ func testStatsSnowieDenominator(t *testing.T, s storage.Storage) {
 			alice, detail.Player1.SnowieER)
 	}
 }
+
+// testStatsBreakdowns pins the three breakdowns of #266: the same figures as
+// the global ones, sliced by phase, by away × away score, and by tag.
+//
+// What it checks above all is that a slice cannot disagree with the whole:
+// every breakdown must count the same decisions the global PR counts, because
+// all of them read the same countedExpr. A breakdown that restated what counts
+// as a decision would be a second PR under the same name.
+func testStatsBreakdowns(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	// Two decisions of one match, one per player, both carrying an error.
+	_, posIDs := statsFixtureMatch(t, s, 0, "Alice", "Bob")
+	if _, err := s.Comments().Add(ctx, "", posIDs[0], "trop passif ici #timing #blitz"); err != nil {
+		t.Fatalf("Add comment: %v", err)
+	}
+
+	res, err := s.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("Compute: %v", err)
+	}
+
+	// Every breakdown sums to the same number of decisions the totals report —
+	// except the tag one, which is a label and not a partition.
+	var phaseDecisions int
+	for _, p := range res.PerPhase {
+		phaseDecisions += p.NumDecisions
+	}
+	if phaseDecisions != res.Totals.NumDecisions {
+		t.Errorf("the per-phase breakdown counts %d decisions, the totals %d",
+			phaseDecisions, res.Totals.NumDecisions)
+	}
+	var scoreDecisions int
+	for _, c := range res.PerScore {
+		scoreDecisions += c.NumDecisions
+	}
+	if scoreDecisions != res.Totals.NumDecisions {
+		t.Errorf("the per-score breakdown counts %d decisions, the totals %d",
+			scoreDecisions, res.Totals.NumDecisions)
+	}
+	// The score cell is (mover's away, opponent's away), read off the
+	// NORMALISED position — the fixture plays at 4-away/4-away.
+	if len(res.PerScore) == 0 {
+		t.Fatal("the away x away matrix is empty though decisions were counted")
+	}
+	for _, c := range res.PerScore {
+		if c.MoverAway != 4 || c.OpponentAway != 4 {
+			t.Errorf("unexpected score cell %d-away/%d-away", c.MoverAway, c.OpponentAway)
+		}
+	}
+
+	// The tags of one comment become two rows, each counting the ONE decision
+	// of the position that carries them — a tag labels, it does not partition.
+	tags := map[string]storage.TagStats{}
+	for _, tag := range res.PerTag {
+		tags[tag.Tag] = tag
+	}
+	for _, want := range []string{"#timing", "#blitz"} {
+		got, ok := tags[want]
+		if !ok {
+			t.Errorf("the per-tag breakdown does not list %s", want)
+			continue
+		}
+		if got.NumDecisions != 1 {
+			t.Errorf("%s counts %d decisions, want 1", want, got.NumDecisions)
+		}
+	}
+	if len(res.PerTag) != 2 {
+		t.Errorf("the per-tag breakdown has %d rows, want 2", len(res.PerTag))
+	}
+}

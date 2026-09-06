@@ -362,6 +362,24 @@ export namespace database {
 	        this.reviews_without_position = source["reviews_without_position"];
 	    }
 	}
+	export class PhaseStats {
+	    Phase: string;
+	    PR: number;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PhaseStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Phase = source["Phase"];
+	        this.PR = source["PR"];
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
+	    }
+	}
 	export class PlayerFrequency {
 	    Name: string;
 	    Count: number;
@@ -416,6 +434,26 @@ export namespace database {
 	        this.luck_rate_mp = source["luck_rate_mp"];
 	        this.luck_known = source["luck_known"];
 	        this.luck_rolls = source["luck_rolls"];
+	    }
+	}
+	export class ScoreCellStats {
+	    MoverAway: number;
+	    OpponentAway: number;
+	    PR: number;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScoreCellStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MoverAway = source["MoverAway"];
+	        this.OpponentAway = source["OpponentAway"];
+	        this.PR = source["PR"];
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
 	    }
 	}
 	export class SearchHistory {
@@ -528,6 +566,24 @@ export namespace database {
 	        this.MatchLength = source["MatchLength"];
 	    }
 	}
+	export class TagStats {
+	    Tag: string;
+	    PR: number;
+	    NumDecisions: number;
+	    BlunderCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TagStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Tag = source["Tag"];
+	        this.PR = source["PR"];
+	        this.NumDecisions = source["NumDecisions"];
+	        this.BlunderCount = source["BlunderCount"];
+	    }
+	}
 	export class TournamentStats {
 	    ID: number;
 	    Name: string;
@@ -586,6 +642,9 @@ export namespace database {
 	    CubeDirections: CubeDirections;
 	    ErrorHistogram: ErrorBucket[];
 	    TopBlunders: BlunderEntry[];
+	    PerPhase: PhaseStats[];
+	    PerTag: TagStats[];
+	    PerScore: ScoreCellStats[];
 	
 	    static createFrom(source: any = {}) {
 	        return new StatsResult(source);
@@ -610,6 +669,9 @@ export namespace database {
 	        this.CubeDirections = this.convertValues(source["CubeDirections"], CubeDirections);
 	        this.ErrorHistogram = this.convertValues(source["ErrorHistogram"], ErrorBucket);
 	        this.TopBlunders = this.convertValues(source["TopBlunders"], BlunderEntry);
+	        this.PerPhase = this.convertValues(source["PerPhase"], PhaseStats);
+	        this.PerTag = this.convertValues(source["PerTag"], TagStats);
+	        this.PerScore = this.convertValues(source["PerScore"], ScoreCellStats);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -630,6 +692,7 @@ export namespace database {
 		    return a;
 		}
 	}
+	
 	
 	
 	export class VacuumResult {
