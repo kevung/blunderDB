@@ -794,7 +794,9 @@
             "evaluateMirror": "Arvioi tämän aseman peilikuva",
             "copyImageWithAnalysis": "Kopioi laudan kuva analyysin kanssa",
             "newView": "Uusi näkymä",
-            "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}"
+            "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
+            "saveImageSVG": "Tallenna kuva (SVG)…",
+            "saveImagePNG": "Tallenna kuva (PNG)…"
         }
     },
     "epc": {
@@ -1114,7 +1116,9 @@
         "importIdentifierEmpty": "Anna tunniste: import XGID=…",
         "importIdentifierUnknown": "Tuntematon tunniste. Toistaiseksi luetaan vain XGID.",
         "importIdentifierSaved": "Asema tuotu tunnisteesta.",
-        "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}"
+        "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}",
+        "boardImageSaved": "Kuva tallennettu: {path}",
+        "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}"
     },
     "stats": {
         "title": "Tilastot",

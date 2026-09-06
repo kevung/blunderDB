@@ -74,6 +74,12 @@ export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
+export function SaveBoardImageDialog(arg1:string,arg2:string):Promise<string>;
+
+export function SaveBoardPNG(arg1:string,arg2:string):Promise<void>;
+
+export function SaveBoardSVG(arg1:string,arg2:string):Promise<void>;
+
 export function SaveDatabaseDialog():Promise<string>;
 
 export function SetIssuerName(arg1:string):Promise<domain.IssuerIdentityInfo>;

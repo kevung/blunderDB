@@ -142,6 +142,18 @@ export function RegenerateIssuerIdentity(arg1) {
   return window['go']['gui']['App']['RegenerateIssuerIdentity'](arg1);
 }
 
+export function SaveBoardImageDialog(arg1, arg2) {
+  return window['go']['gui']['App']['SaveBoardImageDialog'](arg1, arg2);
+}
+
+export function SaveBoardPNG(arg1, arg2) {
+  return window['go']['gui']['App']['SaveBoardPNG'](arg1, arg2);
+}
+
+export function SaveBoardSVG(arg1, arg2) {
+  return window['go']['gui']['App']['SaveBoardSVG'](arg1, arg2);
+}
+
 export function SaveDatabaseDialog() {
   return window['go']['gui']['App']['SaveDatabaseDialog']();
 }

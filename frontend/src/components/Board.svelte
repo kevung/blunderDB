@@ -14,7 +14,7 @@
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
-    import { copyBoardWithAnalysisImage } from '../services/clipboardService.js';
+    import { copyBoardWithAnalysisImage, exportBoardImage } from '../services/clipboardService.js';
     import { setStatusBarMessage } from '../services/databaseService.js';
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
@@ -381,6 +381,17 @@
             {
                 label: $t('board.menu.copyImageWithAnalysis'),
                 onClick: () => copyBoardWithAnalysisImage()
+            },
+            // Enregistrer plutôt que copier (#278) : l'illustration d'un
+            // article, d'un message de forum ou d'une leçon veut un fichier,
+            // et souvent le vectoriel — que le plateau est déjà.
+            {
+                label: $t('board.menu.saveImageSVG'),
+                onClick: () => exportBoardImage('svg')
+            },
+            {
+                label: $t('board.menu.saveImagePNG'),
+                onClick: () => exportBoardImage('png')
             },
             {
                 label: $t('board.menu.newView'),
