@@ -5,20 +5,31 @@ const BLACK = 0;
 const WHITE = 1;
 const NONE = -1;
 
-/** Un plateau vide, où l'on pose des piles par point. */
+/**
+ * Un plateau vide, où l'on pose des piles par point.
+ * @param {Record<number, [number, number]>} stacks
+ */
 function board(stacks) {
     const points = Array.from({ length: 26 }, () => ({ checkers: 0, color: NONE }));
     for (const [pt, [n, color]] of Object.entries(stacks)) {
-        points[pt] = { checkers: n, color };
+        points[Number(pt)] = { checkers: n, color };
     }
     return { points, bearoff: [0, 0] };
 }
 
+/**
+ * @param {Record<number, [number, number]>} stacks
+ * @param {number} [mover]
+ */
 function position(stacks, mover = BLACK) {
     return { board: board(stacks), player_on_roll: mover };
 }
 
-/** Un coup, tel que `App.LegalMoves` le rend. */
+/**
+ * Un coup, tel que `App.LegalMoves` le rend.
+ * @param {[number, number][]} steps
+ * @param {string} [notation]
+ */
 function play(steps, notation = 'x') {
     return { steps: steps.map(([from, to]) => ({ from, to, hit: false })), notation, result: {} };
 }

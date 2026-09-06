@@ -157,8 +157,8 @@
                 />
             {/if}
             {#if $quizPlayStore && !verdict && $quizPlayStore.steps.length > 0}
-                <button type="button" onclick={() => quizPlayStore.update((s) => undoLast(s, $positionStore))}>{$t('training.undoHop')}</button>
-                <button type="button" onclick={() => quizPlayStore.update((s) => resetPlay(s, $positionStore))}>{$t('training.resetPlay')}</button>
+                <button type="button" onclick={() => quizPlayStore.update((s) => (s ? undoLast(s, $positionStore) : s))}>{$t('training.undoHop')}</button>
+                <button type="button" onclick={() => quizPlayStore.update((s) => (s ? resetPlay(s, $positionStore) : s))}>{$t('training.resetPlay')}</button>
             {/if}
             {#if !isCubeQuestion || verdict}
                 <button type="button" onclick={submit}>

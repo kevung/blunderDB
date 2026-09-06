@@ -186,6 +186,7 @@ async function showCurrentQuestion() {
  * la question est déjà posée, le joueur réfléchit, et c'est le moment où
  * l'attente ne se voit pas. Un échec n'interrompt rien — la barre garde sa
  * saisie au clavier, qui juge exactement la même chose.
+ * @param {any} question
  */
 async function armBoardAnswer(question) {
     if (!question || question.drill !== 'quiz' || question.prompt === 'cube' || question.positionId == null) {
@@ -216,8 +217,9 @@ export async function answerQuizBoard() {
     const state = get(quizPlayStore);
     if (!question || !state) return null;
     const play = completedPlay(state);
-    if (!play) return null;
-    return gradeQuizWith(() => GradeQuizChecker(question.positionId, play.result.board));
+    const positionId = question.positionId;
+    if (!play || positionId == null) return null;
+    return gradeQuizWith(() => GradeQuizChecker(positionId, play.result.board));
 }
 
 /**
@@ -237,8 +239,9 @@ export async function answerQuizBoard() {
  */
 export async function answerQuiz(answer) {
     const question = get(trainingCurrentStore);
-    if (!question) return null;
-    return gradeQuizWith(() => (question.prompt === 'cube' ? GradeQuizCube(question.positionId, answer) : GradeQuizCheckerMove(question.positionId, answer)));
+    const positionId = question?.positionId;
+    if (!question || positionId == null) return null;
+    return gradeQuizWith(() => (question.prompt === 'cube' ? GradeQuizCube(positionId, answer) : GradeQuizCheckerMove(positionId, answer)));
 }
 
 /**
@@ -247,6 +250,7 @@ export async function answerQuiz(answer) {
  * au juge et par rien d'autre : même chronomètre, même écriture dans les
  * réponses, même verdict affiché. Trois copies auraient fini par diverger sur
  * ce qui compte dans le PR de session.
+ * @param {() => Promise<any>} judge
  */
 async function gradeQuizWith(judge) {
     let verdict;

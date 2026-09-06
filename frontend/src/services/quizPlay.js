@@ -33,24 +33,38 @@ const WHITE = 1;
 const BLACK_BAR = 25;
 const WHITE_BAR = 0;
 
-/** La barre du joueur `color`. */
+/**
+ * La barre du joueur `color`.
+ * @param {number} color
+ */
 export function barOf(color) {
     return color === BLACK ? BLACK_BAR : WHITE_BAR;
 }
 
-/** Une clé comparable pour un pas, la frappe exclue : elle est une conséquence. */
+/**
+ * Une clé comparable pour un pas, la frappe exclue : elle est une conséquence.
+ * @param {Step} step
+ */
 function stepKey(step) {
     return `${step.from}>${step.to}`;
 }
 
-/** Le multi-ensemble des pas d'un coup, en table de comptage. */
+/**
+ * Le multi-ensemble des pas d'un coup, en table de comptage.
+ * @param {Step[]} steps
+ * @returns {Map<string, number>}
+ */
 function tally(steps) {
     const counts = new Map();
     for (const s of steps) counts.set(stepKey(s), (counts.get(stepKey(s)) ?? 0) + 1);
     return counts;
 }
 
-/** `sub` est-il contenu dans `sup`, multiplicités comprises ? */
+/**
+ * `sub` est-il contenu dans `sup`, multiplicités comprises ?
+ * @param {Map<string, number>} sup
+ * @param {Map<string, number>} sub
+ */
 function contains(sup, sub) {
     for (const [k, n] of sub) {
         if ((sup.get(k) ?? 0) < n) return false;
@@ -61,21 +75,20 @@ function contains(sup, sub) {
 /**
  * L'état d'un coup en cours de saisie.
  *
+ * `plays` sont les coups légaux tels que le moteur les rend ; `board` est le
+ * plateau APRÈS les pas déjà joués ; `steps` est ce que l'utilisateur a joué,
+ * dans SON ordre à lui ; `selected` est le point d'où part le prochain pas,
+ * quand il est choisi.
+ *
  * @typedef {{from: number, to: number, hit?: boolean}} Step
- * @typedef {{steps: Step[], notation: string, result: object}} Play
- * @typedef {{
- *   plays: Play[],       les coups légaux, tels que le moteur les rend
- *   mover: number,       le joueur au trait (0 = noir, 1 = blanc)
- *   board: object,       le plateau tel qu'il est APRÈS les pas déjà joués
- *   steps: Step[],       ce que l'utilisateur a joué, dans son ordre à lui
- *   selected: number|null  le point d'où part le prochain pas, s'il est choisi
- * }} PlayState
+ * @typedef {{steps: Step[], notation: string, result: any}} Play
+ * @typedef {{plays: Play[], mover: number, board: any, steps: Step[], selected: number|null}} PlayState
  */
 
 /**
  * L'état de départ : la position telle qu'elle est posée, rien de joué.
  *
- * @param {object} position la position de la question
+ * @param {any} position la position de la question
  * @param {Play[]} plays les coups légaux rendus par `App.LegalMoves`
  * @returns {PlayState}
  */
@@ -89,7 +102,11 @@ export function newPlay(position, plays) {
     };
 }
 
-/** Les coups encore compatibles avec ce qui a été joué. */
+/**
+ * Les coups encore compatibles avec ce qui a été joué.
+ * @param {PlayState} state
+ * @returns {Play[]}
+ */
 export function alivePlays(state) {
     const played = tally(state.steps);
     return state.plays.filter((p) => contains(tally(p.steps), played));
@@ -101,12 +118,18 @@ export function alivePlays(state) {
  * Rend le coup du moteur, et non le plateau reconstruit ici — c'est SA
  * position résultante qui part au juge, donc une erreur de reconstruction ne
  * peut pas se glisser dans la réponse.
+ * @param {PlayState} state
+ * @returns {Play|null}
  */
 export function completedPlay(state) {
     return alivePlays(state).find((p) => p.steps.length === state.steps.length) ?? null;
 }
 
-/** Les points d'où un pas peut encore partir. */
+/**
+ * Les points d'où un pas peut encore partir.
+ * @param {PlayState} state
+ * @returns {Set<number>}
+ */
 export function sources(state) {
     const out = new Set();
     for (const step of remainingSteps(state)) {
@@ -118,6 +141,9 @@ export function sources(state) {
 /**
  * Les destinations qu'un pas partant de `from` peut atteindre. Vide quand
  * `from` n'a plus rien à donner.
+ * @param {PlayState} state
+ * @param {number} from
+ * @returns {Set<number>}
  */
 export function destinationsFrom(state, from) {
     const out = new Set();
@@ -128,7 +154,11 @@ export function destinationsFrom(state, from) {
     return out;
 }
 
-/** Les pas que les coups vivants offrent encore, une fois retiré ce qui est joué. */
+/**
+ * Les pas que les coups vivants offrent encore, une fois retiré ce qui est joué.
+ * @param {PlayState} state
+ * @returns {Step[]}
+ */
 function remainingSteps(state) {
     const played = tally(state.steps);
     const out = [];
@@ -146,6 +176,10 @@ function remainingSteps(state) {
     return out;
 }
 
+/**
+ * @param {PlayState} state
+ * @param {number} point
+ */
 function hasMoverChecker(state, point) {
     const p = state.board?.points?.[point];
     return !!p && p.checkers > 0 && p.color === state.mover;
@@ -155,6 +189,9 @@ function hasMoverChecker(state, point) {
  * Le clic sur un point : il choisit une source, en change, ou déselectionne.
  * Un point qui n'offre aucun pas ne devient pas une sélection — la barre
  * mise à part, où l'on est obligé d'entrer, et où le joueur clique d'abord.
+ * @param {PlayState} state
+ * @param {number} point
+ * @returns {PlayState}
  */
 export function selectSource(state, point) {
     if (state.selected === point) return { ...state, selected: null };
@@ -166,6 +203,10 @@ export function selectSource(state, point) {
  * Joue un pas de `from` vers `to`. Rend l'état inchangé si le pas n'est offert
  * par aucun coup vivant : l'interface n'a alors rien à annuler ni à expliquer,
  * le pion n'a simplement pas bougé.
+ * @param {PlayState} state
+ * @param {number} from
+ * @param {number} to
+ * @returns {PlayState}
  */
 export function playHop(state, from, to) {
     const step = remainingSteps(state).find((s) => s.from === from && s.to === to);
@@ -174,7 +215,12 @@ export function playHop(state, from, to) {
     return { ...state, board, steps: [...state.steps, { from, to }], selected: null };
 }
 
-/** Annule le dernier pas joué, en rejouant les autres depuis le début. */
+/**
+ * Annule le dernier pas joué, en rejouant les autres depuis le début.
+ * @param {PlayState} state
+ * @param {any} position
+ * @returns {PlayState}
+ */
 export function undoLast(state, position) {
     if (state.steps.length === 0) return state;
     const kept = state.steps.slice(0, -1);
@@ -183,7 +229,12 @@ export function undoLast(state, position) {
     return next;
 }
 
-/** Remet le plateau tel que la question le pose. */
+/**
+ * Remet le plateau tel que la question le pose.
+ * @param {PlayState} state
+ * @param {any} position
+ * @returns {PlayState}
+ */
 export function resetPlay(state, position) {
     return newPlay(position, state.plays);
 }
@@ -194,14 +245,20 @@ export function resetPlay(state, position) {
 // envoyée au juge, elle, est la position résultante du moteur (completedPlay),
 // jamais celle-ci.
 
+/** @param {any} board */
 function cloneBoard(board) {
     return {
-        points: (board?.points ?? []).map((p) => ({ ...p })),
+        points: (board?.points ?? []).map((/** @type {any} */ p) => ({ ...p })),
         bearoff: [...(board?.bearoff ?? [0, 0])]
     };
 }
 
-/** Le plateau après `step`, frappe comprise. N'altère pas celui qu'on lui donne. */
+/**
+ * Le plateau après `step`, frappe comprise. N'altère pas celui qu'on lui donne.
+ * @param {any} board
+ * @param {Step} step
+ * @param {number} mover
+ */
 export function applyStep(board, step, mover) {
     const next = cloneBoard(board);
     const from = next.points[step.from];

@@ -42,6 +42,13 @@ function hasRoll(dice) {
  * C'est la destination d'un pion sorti, et la seule qui ne soit pas un point :
  * la boîte est celle du « (n OFF) » que drawBearoff dessine, élargie de moitié
  * pour qu'on n'ait pas à viser le texte au pixel.
+ *
+ * @param {number} x
+ * @param {number} y
+ * @param {any} geom
+ * @param {any} cfg
+ * @param {number} playerOnRoll
+ * @param {number} player
  */
 export function hitTestBearoffTray(x, y, geom, cfg, playerOnRoll, player) {
     const side = sideLayout(geom, cfg, playerOnRoll);
@@ -284,6 +291,8 @@ export function attachBoardInteractions(canvas, deps) {
     /**
      * Le point (ou le plateau de sortie) visé par un clic, pendant une
      * question de quiz. Rend null hors du damier.
+     * @param {number} x
+     * @param {number} y
      */
     function quizTargetAt(x, y) {
         // Le plateau de sortie visé est TOUJOURS celui du bas : la position
@@ -301,6 +310,9 @@ export function attachBoardInteractions(canvas, deps) {
      * Un clic qu'aucun coup légal n'autorise ne fait RIEN : ni pion déplacé,
      * ni message. Le plateau n'a pas à expliquer pourquoi un pion ne peut pas
      * aller là ; il le montre en n'offrant que ce qui est jouable.
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
      */
     function quizClick(event, x, y) {
         const state = stores.quizPlay ? get(stores.quizPlay) : null;
@@ -308,7 +320,7 @@ export function attachBoardInteractions(canvas, deps) {
         if (event.button !== 0) return true;
         const target = quizTargetAt(x, y);
         if (target === null) return true;
-        stores.quizPlay.update((s) => {
+        stores.quizPlay.update((/** @type {import('../services/quizPlay.js').PlayState} */ s) => {
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
             // Le clic qui ne joue rien re-choisit une source : on change d'avis
