@@ -27,13 +27,30 @@ type section struct {
 
 type paragraph struct{ text string }
 
-// admonition is a .. note:: / .. warning:: / .. tip:: with its paragraphs.
+// admonition is a .. note:: / .. tip:: / .. warning:: / .. important:: /
+// .. caution:: with its body, parsed like any other: manuel.rst puts a
+// formula and a bullet list inside one.
 type admonition struct {
-	kind  string
-	paras []string
+	kind   string
+	blocks []block
+}
+
+// literal is a body reproduced verbatim — the one .. math:: in the
+// documentation. The help modal has no formula renderer, so the source is
+// shown as it is written rather than dropped along with the sentence that
+// introduces it.
+type literal struct {
+	class string
+	text  string
 }
 
 type bulletList struct{ items []string }
+
+// blockquote is a body indented under the paragraph that introduces it — the
+// shape manuel.rst uses for a term and its definition, and the only place a
+// directive appears anywhere but column zero. Its content is parsed by the
+// same reader, one level in.
+type blockquote struct{ blocks []block }
 
 type table struct {
 	header []string
@@ -44,6 +61,8 @@ func (section) isBlock()    {}
 func (paragraph) isBlock()  {}
 func (admonition) isBlock() {}
 func (bulletList) isBlock() {}
+func (blockquote) isBlock() {}
+func (literal) isBlock()    {}
 func (table) isBlock()      {}
 
 // document is one parsed .rst file. Internal link targets are collected
@@ -67,11 +86,22 @@ func parseRST(path string) (*document, error) {
 	}
 	lines := strings.Split(strings.ReplaceAll(string(raw), "\r\n", "\n"), "\n")
 
-	doc := &document{}
 	// Section underline characters in order of first appearance, so the nesting
-	// level of a title is the index of its underline character.
+	// level of a title is the index of its underline character. The slice is
+	// shared with nested calls: a level is a property of the document, not of
+	// the indentation depth the reader happens to be at.
 	var levels []string
+	blocks, err := parseBlocks(lines, path, &levels)
+	if err != nil {
+		return nil, err
+	}
+	return &document{blocks: blocks}, nil
+}
 
+// parseBlocks reads a run of lines whose own content starts at column zero;
+// collectIndented has already removed the common indent of a nested body.
+func parseBlocks(lines []string, path string, levels *[]string) ([]block, error) {
+	var blocks []block
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
 		trimmed := strings.TrimSpace(line)
@@ -86,11 +116,25 @@ func parseRST(path string) (*document, error) {
 
 		// A section title is a line whose successor is an underline of at least
 		// the same length made of a single punctuation character.
-		if i+1 < len(lines) && isUnderline(lines[i+1], len([]rune(trimmed))) {
+		if !isIndented(line) && i+1 < len(lines) && isUnderline(lines[i+1], len([]rune(trimmed))) {
 			char := string(lines[i+1][0])
-			level := indexOrAppend(&levels, char)
-			doc.blocks = append(doc.blocks, section{level: level + 1, title: trimmed})
+			level := indexOrAppend(levels, char)
+			blocks = append(blocks, section{level: level + 1, title: trimmed})
 			i++
+			continue
+		}
+
+		// An indented run opens a nested body, parsed by the same reader. It
+		// is what carries manuel.rst's definitions — and, inside them, the
+		// only csv-table and admonitions that do not start at column zero.
+		if isIndented(line) {
+			body, next := collectIndented(lines, i)
+			sub, err := parseBlocks(body, path, levels)
+			if err != nil {
+				return nil, err
+			}
+			blocks = append(blocks, blockquote{blocks: sub})
+			i = next - 1
 			continue
 		}
 
@@ -103,18 +147,20 @@ func parseRST(path string) (*document, error) {
 				if err != nil {
 					return nil, fmt.Errorf("%s:%d: %w", path, i+1, err)
 				}
-				doc.blocks = append(doc.blocks, t)
-			case "note", "warning", "tip":
-				paras := splitParagraphs(body)
+				blocks = append(blocks, t)
+			case "note", "warning", "tip", "important", "caution":
+				// `.. note:: text` continues into the indented body, so the
+				// inline part is read as that body's first line.
 				if inline != "" {
-					// `.. note:: text` continues into the indented body.
-					if len(paras) > 0 {
-						paras[0] = inline + " " + paras[0]
-					} else {
-						paras = []string{inline}
-					}
+					body = append([]string{inline}, body...)
 				}
-				doc.blocks = append(doc.blocks, admonition{kind: name, paras: paras})
+				sub, err := parseBlocks(body, path, levels)
+				if err != nil {
+					return nil, fmt.Errorf("%s:%d: %w", path, i+1, err)
+				}
+				blocks = append(blocks, admonition{kind: name, blocks: sub})
+			case "math":
+				blocks = append(blocks, literal{class: "math", text: strings.Join(trimBlank(body), "\n")})
 			default:
 				// Unknown directive (toctree, figure, …): skipped whole.
 			}
@@ -126,7 +172,7 @@ func parseRST(path string) (*document, error) {
 		// its continuation.
 		if strings.HasPrefix(trimmed, "- ") || strings.HasPrefix(trimmed, "* ") {
 			items, next := collectBullets(lines, i)
-			doc.blocks = append(doc.blocks, bulletList{items: items})
+			blocks = append(blocks, bulletList{items: items})
 			i = next - 1
 			continue
 		}
@@ -135,11 +181,33 @@ func parseRST(path string) (*document, error) {
 		// next blank line.
 		var para []string
 		for ; i < len(lines) && strings.TrimSpace(lines[i]) != ""; i++ {
+			// A paragraph never continues into a deeper indent: that is a
+			// nested body, and gettext makes it a msgid of its own.
+			if len(para) > 0 && isIndented(lines[i]) {
+				break
+			}
 			para = append(para, strings.TrimSpace(lines[i]))
 		}
-		doc.blocks = append(doc.blocks, paragraph{text: strings.Join(para, " ")})
+		i--
+		blocks = append(blocks, paragraph{text: strings.Join(para, " ")})
 	}
-	return doc, nil
+	return blocks, nil
+}
+
+// trimBlank drops leading and trailing blank lines.
+func trimBlank(lines []string) []string {
+	for len(lines) > 0 && strings.TrimSpace(lines[0]) == "" {
+		lines = lines[1:]
+	}
+	for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+	return lines
+}
+
+// isIndented reports whether a line's content starts past column zero.
+func isIndented(line string) bool {
+	return strings.TrimSpace(line) != "" && line[0] == ' '
 }
 
 func isUnderline(line string, minLen int) bool {
@@ -324,6 +392,21 @@ func scanTargets(path string) (map[string]string, error) {
 		if m := targetRe.FindStringSubmatch(lines[i]); m != nil {
 			pending = append(pending, m[1])
 			continue
+		}
+		// An overlined title (`====` / title / `====`) is the shape the
+		// standalone chapters use for their own name — mode_headless.rst
+		// among them, which manuel.rst cross-references. The overline is
+		// not a title; step over it and read the line it introduces.
+		if isUnderline(lines[i], 0) && i+2 < len(lines) {
+			next := strings.TrimSpace(lines[i+1])
+			if next != "" && isUnderline(lines[i+2], len([]rune(next))) {
+				for _, label := range pending {
+					targets[label] = next
+				}
+				pending = nil
+				i += 2
+				continue
+			}
 		}
 		if i+1 < len(lines) && isUnderline(lines[i+1], len([]rune(trimmed))) {
 			for _, label := range pending {

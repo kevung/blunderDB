@@ -847,6 +847,11 @@ ou ``csv``, comme ``list``.
   1-based affiché dans la barre d'état de l'interface graphique), score, type
   de décision et XGID.
 * ``create --name <nom> [--description <texte>]`` — Crée une collection vide.
+* ``filter --id <id> --query <requête>`` — Rend une collection **vivante** :
+  son contenu devient le résultat d'une recherche, réévalué chaque fois
+  qu'elle est ouverte. La requête s'écrit dans la grammaire de recherche de
+  l'application (voir :ref:`cmd_filter`). ``--clear`` la rend à sa liste faite
+  à la main, en gardant les positions qu'elle contenait.
 * ``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une
   collection (la description est conservée si elle n'est pas donnée).
 * ``delete --id <id> [--confirm]`` — Supprime une collection ; ses positions

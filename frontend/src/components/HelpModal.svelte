@@ -27,7 +27,7 @@
 
     let aboutHtml = $derived(($help.about || '').replace(/\{appVersion\}/g, escapeHtml(applicationVersion)).replace(/\{dbVersion\}/g, escapeHtml(databaseVersion)));
 
-    // The active language's help bundle (~70 kB) is fetched only when the
+    // The active language's help bundle (~170 kB) is fetched only when the
     // modal is actually opened, not eagerly at startup (#207). Re-runs if the
     // language changes while the modal stays open; loadHelpFor() is a no-op
     // once a bundle is cached.
@@ -188,13 +188,30 @@
        not applied to those elements. Use :global() nested under .tab-content so
        the styling targets the injected HTML without leaking to the rest of the app.
        The vocabulary below is the whole of what cmd/help-gen emits (h3, p, ul/li,
-       table, code, div.admonition) plus what the hand-written prose fragments use. */
+       table, code, div.admonition, blockquote, pre.math) plus what the
+       hand-written About fragment uses. */
     .tab-content :global(p),
     .tab-content :global(ul),
     .tab-content :global(h2),
-    .tab-content :global(h3) {
+    .tab-content :global(h3),
+    .tab-content :global(h4),
+    .tab-content :global(h5) {
         margin: 0 20px 20px 20px; /* Add bottom margin for spacing */
         text-align: justify;
+    }
+
+    /* The manual nests three deep. Hierarchy comes from weight and colour,
+       not from a ladder of absolute sizes (ADR-0008): h3 keeps the tab's
+       title size, and the two below it step down in emphasis only. */
+    .tab-content :global(h4),
+    .tab-content :global(h5) {
+        font-size: var(--font-size-base);
+        margin-top: var(--space-4);
+    }
+
+    .tab-content :global(h5) {
+        font-weight: 500;
+        color: var(--color-text-muted);
     }
 
     .tab-content :global(table) {
@@ -219,7 +236,27 @@
         background-color: #f1f1f1;
     }
 
-    /* A .. note:: / .. warning:: / .. tip:: carried over from the documentation. */
+    /* A term's indented definition, and the manual is full of them: the
+       vertical rule is what tells it apart from the paragraph above. */
+    .tab-content :global(blockquote) {
+        margin: 0 20px 20px 40px;
+        padding-left: var(--space-3);
+        border-left: 2px solid var(--color-border);
+    }
+
+    /* The one .. math:: in the documentation, shown as it is written: the
+       modal carries no formula renderer. */
+    .tab-content :global(pre.math) {
+        margin: 0 20px 20px 40px;
+        padding: var(--space-2);
+        overflow-x: auto;
+        font-family: var(--font-family-mono);
+        background-color: var(--color-surface-alt);
+        border-radius: var(--radius);
+    }
+
+    /* A .. note:: / .. tip:: / .. warning:: / .. important:: / .. caution::
+       carried over from the documentation. */
     .tab-content :global(.admonition) {
         margin: 0 20px 20px 20px;
         padding: var(--space-2) var(--space-3);
@@ -228,7 +265,9 @@
         border-radius: 0 var(--radius) var(--radius) 0;
     }
 
-    .tab-content :global(.admonition.warning) {
+    .tab-content :global(.admonition.warning),
+    .tab-content :global(.admonition.caution),
+    .tab-content :global(.admonition.important) {
         border-left-color: var(--color-danger);
     }
 

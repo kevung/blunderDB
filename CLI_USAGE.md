@@ -778,6 +778,30 @@ Day         Due
 37 card(s) due over 14 day(s)
 ```
 
+## Cubematrix Command
+
+Print the cube verdict for one position at **every score** of a 5-, 7- or
+9-point match, so a decision can be read against the score rather than at money
+play alone. The position comes in as an XGID; nothing is written to a database,
+and the command works without one.
+
+```bash
+./blunderDB cubematrix [options] <XGID>
+```
+
+**Options:**
+- `--match-length` - Match length: `5` (default), `7` or `9`
+- `--format` - Output format: `text` (default) or `json`
+
+Equities are **normalised** (gnubg's `mwc2eq`, ±1 = winning/losing the current
+cube), the one scale that leaves the engine at a match score — see ADR-0019.
+
+**Example:**
+```bash
+./blunderDB cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
+./blunderDB cubematrix --match-length 5 --format json '<XGID>'
+```
+
 ## EPC Command
 
 Compute the Effective Pip Count, the win probability and the money cube
@@ -809,6 +833,33 @@ its measured error bound; the cube verdict is deliberately never estimated
 
 # With the downloaded TS-06-11 (exact up to 11 checkers per player)
 ./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
+```
+
+## Bearoff Command
+
+Generate, list, verify and delete the bearoff databases the EPC engine and the
+race evaluator read. The tables are **generated on the machine that needs them**
+rather than shipped in the binary or downloaded (ADR-0027); a generated table is
+byte-identical to gnubg's `makebearoff` output for the same domain, and that is
+what `verify` checks.
+
+```bash
+./blunderDB bearoff <subcommand> [options]
+```
+
+**Subcommands:**
+- `list` - The tables present, with their domain, size and checksum
+- `generate` - Build a table; the two-sided sweep is resumable through a `.ckpt`
+- `verify` - Check a table against the recorded SHA-256 for its domain
+- `delete` - Remove a generated table
+
+Run `./blunderDB bearoff <subcommand> --help` for the flags of each: the
+generated flag reference below carries them verbatim.
+
+**Example:**
+```bash
+./blunderDB bearoff list
+./blunderDB bearoff verify
 ```
 
 ## Analyze Command
@@ -881,6 +932,78 @@ refusal) are retried on the next run.
 # at 3-ply
 ./blunderDB analyze --db database.db --stale --ply 3
 ```
+
+## Trash Command
+
+What was deleted through the trash, and how to put it back. A delete is still a
+delete: a JSON snapshot of what disappears is written first, and nothing else in
+the database knows the trash exists — no search filter, no statistic, no
+retention rule reads it.
+
+```bash
+./blunderDB trash <subcommand> --db database.db [options]
+```
+
+**Subcommands:**
+- `list` - What is in the trash, most recently deleted first
+- `restore --id N` - Put entry N back, and drop it from the trash
+- `discard --id N` - Drop entry N now, without restoring it
+- `empty [--older-than D]` - Drop everything, or only what is older than D days
+- `delete --kind K --id N` - Delete an object **through** the trash, so the
+  gesture can be undone; `K` is `position`, `collection` or `comment`
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--kind` - `position`, `collection` or `comment` (for `delete`; also narrows `list`)
+- `--id` - Trash entry (`restore`, `discard`) or object (`delete`) id
+- `--limit` - Rows to list (default 50)
+- `--older-than` - `empty` only: keep entries newer than this many days
+- `--format` - Output format: `text` (default) or `json`
+
+`blunderdb delete` still deletes outright: a script that deletes a position
+expects it gone, and leaving a snapshot behind in silence would grow a file
+nobody asked to grow. `trash delete` is the one that keeps the undo.
+
+Restoring a position goes back through Zobrist deduplication: it never creates a
+duplicate, but it does not return the old id either — the original row is gone.
+A restored position is the same position under a new number.
+
+Anything older than thirty days is dropped by `blunderdb vacuum` — never at open.
+
+**Example:**
+```bash
+# Delete a position, keeping the undo
+./blunderDB trash delete --db database.db --kind position --id 412
+
+# Look at the trash, then put an entry back
+./blunderDB trash list --db database.db
+./blunderDB trash restore --db database.db --id 3
+
+# Keep only what is less than thirty days old
+./blunderDB trash empty --db database.db --older-than 30
+```
+
+## Repair Command
+
+Recompute what the database derives from what it stores: the scalar columns of
+every analysis, from the JSON they are a projection of, and each position's
+`game_phase` and `game_type`, from its board. Those derived values are what the
+search filters and the statistics read, so this is what to run after a fix to
+how an imported analysis is parsed, or after a change to how a phase or a game
+type is decided. Nothing runs it automatically.
+
+```bash
+./blunderDB repair --db database.db
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--format` - Output format: `text` (default) or `json`
+
+The analyses and the positions themselves are left untouched: this repairs only
+what was derived from them, and a position with no analysis keeps its empty
+columns. Use `analyze` to compute the analyses that are missing. Running it on
+a database that is already up to date rewrites nothing and costs one scan.
 
 ## Info Command
 

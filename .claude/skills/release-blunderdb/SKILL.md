@@ -27,7 +27,10 @@ that cwd.
 1. **Doc pass** — make sure the Sphinx docs are up to date in **all 9 languages**:
    the French source plus the 8 gettext translations (en, de, el, es, fi, it, ja,
    ru). New/changed features documented in the French source and translated in
-   every catalog.
+   every catalog. It includes an **inventory gate**
+   (`scripts/doc-inventory.sh`): every command the binary answers to must be
+   named everywhere a user looks, this release's features and the older ones
+   alike.
 2. **Version history page** — add a new section mentioning **only the new
    user-facing features** (not refactors, CI fixes, internal plumbing), updated in
    the **French source and every translation**.
@@ -163,7 +166,42 @@ Steps:
    package doc of `pkg/blunderdb/storage/storage.go` (it is the architecture
    reference). Fix drift *now*, in this release's doc commit.
 
-3. **Factuality gate.** The documentation describes the published version, in
+3. **Inventory gate — is every command actually written down?** A command can
+   be dispatched, tested and described in `cli.rst` and still be invisible to
+   someone who only has the application. `trash` shipped that way; so did
+   `collection filter`, dispatched but absent from the sub-command list of the
+   page that is supposed to enumerate them. Documenting *this release's*
+   features (step 2) does not catch a command that shipped two releases ago
+   and was never written down — nothing re-reads the old ones. This does:
+
+   ```bash
+   scripts/doc-inventory.sh
+   ```
+
+   It compares `handlers()` and the `<cmd>Handlers()` tables — the code's own
+   sources of truth, never a list of its own — against `blunderdb help`
+   (`printUsage`), the hand-written sections of `CLI_USAGE.md` and the
+   sub-command lists of `cli.rst`. **Block the release while it exits
+   non-zero**, and fix by adding the missing text, never by widening the
+   script: each gap it reports is a command a user cannot discover.
+
+   The script deliberately covers only what no test already holds. Run the
+   guards that hold the rest, since a stale one fails here rather than in CI:
+
+   ```bash
+   go test ./cmd/help-gen ./internal/cli    # the in-app help and cli.rst
+   cd frontend && npx vitest run src/__tests__/commandVocabulary.sync.test.js \
+       src/__tests__/helpVocabulary.sync.test.js \
+       src/__tests__/keyboardShortcuts.sync.test.js
+   ```
+
+   A new shortcut, command or panel that these do not reach — a modal, a
+   button, a tab — is checked by eye against `manuel.rst` and
+   `raccourcis.rst`. The in-app help is a rendering of those two plus
+   `cmd_mode.rst` (ADR-0034), so writing them is what puts the feature in
+   front of the user; there is no second place to also write it.
+
+4. **Factuality gate.** The documentation describes the published version, in
    the present tense, and nothing else (CLAUDE.md, Documentation): no
    announcement, no "not yet", no command that does not work today. The
    future lives on GitHub (milestones, Discussions) and the docs point there
@@ -179,7 +217,7 @@ Steps:
    release while a real promise remains.** Never add a roadmap page back
    (one was tried in H.11 and removed four days later).
 
-4. Regenerate **all** translation catalogs so new/changed French strings get
+5. Regenerate **all** translation catalogs so new/changed French strings get
    fresh `msgid` entries, then translate them. Use the repo script and nothing
    else — it keeps the gettext output path relative and repairs the
    `python-format` flag msgmerge re-adds (CLAUDE.md, Documentation):
@@ -215,7 +253,7 @@ Steps:
    conscious call (it falls back to French for the untranslated strings), not a
    silent gap.
 
-4. Build to confirm nothing is broken — this builds **all 9 languages** (HTML +
+6. Build to confirm nothing is broken — this builds **all 9 languages** (HTML +
    PDF):
 
    ```bash
