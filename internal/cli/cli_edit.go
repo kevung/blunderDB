@@ -16,6 +16,14 @@ func (cli *CLI) runEdit(args []string) error {
 	description := editCmd.String("description", "", "Set description")
 	clearUser := editCmd.Bool("clear-user", false, "Clear user name")
 	clearDescription := editCmd.Bool("clear-description", false, "Clear description")
+	// The two thresholds are taken in millipoints, the unit `E>x` and
+	// --move-error-min already speak; the GUI is where they are entered in
+	// equity. -1 means "leave it alone" — 0 is a value the pair refuses, not
+	// an absent flag.
+	errorThreshold := editCmd.Int("error-threshold", -1,
+		"Set the error threshold, in millipoints (a decision costing this much or more is an error)")
+	blunderThreshold := editCmd.Int("blunder-threshold", -1,
+		"Set the blunder threshold, in millipoints (an error costing this much or more is a blunder)")
 	format := editCmd.String("format", "text", "Output format: text or json")
 
 	editCmd.Usage = func() {
@@ -38,6 +46,9 @@ func (cli *CLI) runEdit(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Set multiple values")
 		fmt.Println("  blunderdb edit --db database.db --user \"John\" --description \"Tournament positions\"")
+		fmt.Println()
+		fmt.Println("  # Draw the library's own lines: XG's thresholds")
+		fmt.Println("  blunderdb edit --db database.db --error-threshold 20 --blunder-threshold 80")
 	}
 
 	if err := editCmd.Parse(args); err != nil {
@@ -51,7 +62,8 @@ func (cli *CLI) runEdit(args []string) error {
 	}
 
 	// Check that at least one edit option is provided
-	if *user == "" && *description == "" && !*clearUser && !*clearDescription {
+	if *user == "" && *description == "" && !*clearUser && !*clearDescription &&
+		*errorThreshold < 0 && *blunderThreshold < 0 {
 		editCmd.Usage()
 		return fmt.Errorf("no edit options provided")
 	}
@@ -91,6 +103,30 @@ func (cli *CLI) runEdit(args []string) error {
 	err := cli.db.SaveMetadata(metadata)
 	if err != nil {
 		return fmt.Errorf("failed to save metadata: %w", err)
+	}
+
+	// The library's own settings (ADR-0043) are not metadata rows on every
+	// backend, so they go through their own accessor. Either threshold can be
+	// set alone: the other keeps the value the library already had, and the
+	// pair is validated as a pair, so raising one past the other is refused
+	// here rather than stored.
+	if *errorThreshold >= 0 || *blunderThreshold >= 0 {
+		settings, err := cli.db.GetLibrarySettings()
+		if err != nil {
+			return fmt.Errorf("failed to read library settings: %w", err)
+		}
+		if *errorThreshold >= 0 {
+			settings.ErrorThresholdMP = *errorThreshold
+		}
+		if *blunderThreshold >= 0 {
+			settings.BlunderThresholdMP = *blunderThreshold
+		}
+		if err := cli.db.SaveLibrarySettings(settings); err != nil {
+			return fmt.Errorf("failed to save library settings: %w", err)
+		}
+		changes = append(changes,
+			fmt.Sprintf("Set error threshold to: %d millipoints", settings.ErrorThresholdMP),
+			fmt.Sprintf("Set blunder threshold to: %d millipoints", settings.BlunderThresholdMP))
 	}
 
 	if !text {

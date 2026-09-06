@@ -298,6 +298,10 @@ export function GetLastVisitedMatch() {
   return window['go']['database']['Database']['GetLastVisitedMatch']();
 }
 
+export function GetLibrarySettings() {
+  return window['go']['database']['Database']['GetLibrarySettings']();
+}
+
 export function GetLinkedAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['GetLinkedAnkiCard'](arg1, arg2);
 }
@@ -608,6 +612,10 @@ export function SaveIndividualPosition(arg1) {
 
 export function SaveLastVisitedPosition(arg1, arg2) {
   return window['go']['database']['Database']['SaveLastVisitedPosition'](arg1, arg2);
+}
+
+export function SaveLibrarySettings(arg1) {
+  return window['go']['database']['Database']['SaveLibrarySettings'](arg1);
 }
 
 export function SaveMetadata(arg1) {

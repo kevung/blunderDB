@@ -32,13 +32,21 @@ type statsQuery struct {
 	filter   storage.StatsFilter
 	whereSQL string
 	baseArgs []any
+	// settings is the library's own reading of "error" and "blunder"
+	// (ADR-0043), read once at the top of Compute and carried to every pass
+	// so a single run cannot draw the line in two places.
+	settings storage.LibrarySettings
 }
 
 // Compute runs each statistics pass in turn and returns the assembled result.
 // The passes are in stats_compute.go, one per section; see the file header.
 func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StatsResult, error) {
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("stats settings: %w", err)
+	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
-	q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs}
+	q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, settings: settings}
 
 	result := &storage.StatsResult{PRRolling: make(map[int]float64)}
 
@@ -269,7 +277,7 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 			` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
 			statsBaseJoin+cubeWhere+
 			` GROUP BY a.best_cube_action`,
-		append([]any{blunderThresholdMP}, q.baseArgs...)...,
+		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...,
 	)
 	if err != nil {
 		return fmt.Errorf("cube action breakdown query: %w", err)
