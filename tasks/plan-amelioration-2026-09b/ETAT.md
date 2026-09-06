@@ -1,7 +1,7 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-06** (sixième session — vague 5 : lots I et J
-achevés, la vague de schéma 2.20.0, le registre amont C.13 et la page web). Ce fichier est le point
+Dernière mise à jour : **2026-09-06, soir** (septième session — les vagues 4 et
+5 poussées, quatre défauts réels trouvés en réparant la CI, `main` verte). Ce fichier est le point
 de reprise : il dit ce qui est fusionné, ce qui attend dans une branche, et ce
 qui reste. Le plan lui-même est dans [README.md](README.md) ; les fiches sont
 dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
@@ -130,8 +130,8 @@ chacune close par une release.
 |---|---|---|---|
 | **0 — hygiène** | Faux positif nightly, issues fantômes, ce fichier | #317, #214, #254 | ✅ |
 | **1 — release** | | | ✅ **0.36.0** publiée le 2026-09-05 |
-| **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ ; #237, #239, #242 restent (voir plus bas) |
-| **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305, #306, #307 | ✅ ; #308-#311 restent |
+| **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ **entier** ; #237, #239 et #242 fermées depuis |
+| **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305-#311 | ✅ **entier**, onglet, CLI, doc et lot 2 compris |
 | **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : 11 fermées (voir plus bas), 23 restantes |
 | **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | #127 fermée (la mesure existait déjà et était publiée) ; #151, #200 restent |
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
@@ -299,26 +299,16 @@ et refaits ; la vague coûte 5 900 lignes au lieu de 28 000.
 tant que texte** et ne touche que les entrées qu'on lui demande de remplir.
 CLAUDE.md le nomme. **Ne jamais charger un `.po` dans polib pour le sauver.**
 
-### Ce qui est livré à moitié, et pourquoi
+### Le lot G et le lot bearoff sont soldés
 
-Trois fiches sont utiles en l'état et leur reste est écrit dans leur commit ;
-l'issue est restée ouverte plutôt que fermée à tort.
+Ce fichier a longtemps décrit G.9, G.11, G.14 comme des moitiés et le lot
+bearoff comme inachevé. **Les sept issues sont fermées** (relevé du
+2026-09-06) : #237, #239, #242 pour le lot G ; #308, #309, #310, #311 pour le
+bearoff — l'onglet, la CLI, sa documentation et l'EPC au-delà du jan.
 
-- **G.9 (#237)** — la compression gzip des flux NDJSON est livrée et mesurée
-  (13,5 % de la taille sur mille lignes). Manque la pagination des familles
-  listantes : elle touche le contrat Storage et ses trois implémentations, et
-  une limite par défaut côté serveur serait une rupture d'API pour un démon
-  qui a déjà des clients.
-- **G.14 (#242)** — l'assertion inverse de parité est en place, et les cinq
-  capacités qui n'existaient que sur le démon ont leur `Database` et leur CLI.
-  Manque leur face GUI (menu contextuel d'une carte, journal dans l'onglet
-  Anki, bouton de réparation dans la configuration).
-- **G.11 (#239)** — non commencée.
-
-Du lot bearoff, restent l'onglet complet (#308), la CLI `bearoff` (#309), sa
-doc (#310) et le lot 2 (#311, l'EPC au-delà du jan). Le socle est là : les
-deux générateurs sont identiques à gnubg octet pour octet, vérifiés par
-empreinte, et le binaire a perdu 7,33 Mio (−21,2 %).
+Le socle bearoff, pour mémoire : les deux générateurs sont identiques à gnubg
+octet pour octet, vérifiés par empreinte, et le binaire a perdu 7,33 Mio
+(−21,2 %).
 
 ### Ce que la traversée a appris
 
@@ -336,30 +326,64 @@ empreinte, et le binaire a perdu 7,33 Mio (−21,2 %).
   relecture, qui a attrapé le complément à un, l'ordre des diagonales et le
   mode qui absorbe l'arrondi.
 
-### La branche qui attend
+### La branche qui n'attend plus
 
-`feat/g8-g10-g13-serveur` (worktree `../blunderDB-g8-g10-g13-serveur`) porte G.8
-(contrat d'API), G.10 (observabilité) et G.13 (GUI Go). Elle est **au milieu d'une
-fusion** : tous les conflits sont résolus et indexés, le commit de merge n'a jamais
-été conclu, et elle a 81 commits de retard sur `main`. À reprendre en ouverture de
-la vague 2, dans une passe dédiée — pas au fil d'une autre fiche.
+`feat/g8-g10-g13-serveur` portait G.8 (contrat d'API), G.10 (observabilité) et
+G.13 (GUI Go), au milieu d'une fusion jamais conclue. **Son travail est sur
+`main`, refait par une autre route** : `internal/server/openapigen/`,
+`openapi.yaml`, la corrélation des requêtes et `pprof_test.go` y sont, et
+`main` porte même un fichier que la branche n'avait pas
+(`openapigen/docs_routes_test.go`). Les trois issues sont fermées.
 
-### Ce qui ne se ferme pas par du code
+La branche est donc périmée. Sa pointe est `cbd79b7b0`, notée ici pour qui
+voudrait comparer les deux implémentations avant de la supprimer.
 
-- **Lot J** : #300 (jouer contre gammonNet) est déjà écarté ; #299 (Ollama) et #296
-  (mode club) demandent un arbitrage produit avant d'être chiffrés. Une fiche de ce
-  lot peut légitimement se fermer sur un ADR « écarté, et pourquoi ».
-- **#102** : refaire la vidéo de démo suppose un enregistrement d'écran commenté.
+## La session du 2026-09-06 au soir : rendre `main` verte
 
-## Deux pièges qui ont coûté cher
+Les vagues 4 et 5 avaient été empilées **sur une CI rouge**. Le dernier commit
+vert était `d4be5ec18` ; les quarante-quatre commits suivants n'étaient même
+pas poussés. Quatre défauts réels s'y cachaient, et aucun n'était visible
+depuis une machine de développement.
 
-1. **`git add` un fichier dès qu'il est résolu**, avant toute boucle sur
-   `--diff-filter=U`. Une boucle `git checkout --ours` a écrasé une résolution
-   manuelle non ajoutée à l'index et livré une `main` dont `TestDatabaseParity`
-   échouait. `po_graft.py` a le même piège en interne.
-2. **`go test ./... | grep … | head -N; echo $?` ment** : `$?` est celui de `head`,
-   et les lignes de journal poussent le `FAIL` hors des N premières. Écrire
-   `go test ./... > log 2>&1; echo $?` et relire le journal.
+- **`SavePosition` échouait pour tout locataire du démon.**
+  `positions_postgres.go` passait `cols.MaxCube` deux fois pour une liste de
+  colonnes qui ne le nomme qu'une : trente et un arguments pour trente
+  emplacements. Si pgx avait compté juste, le plafond de videau serait allé
+  dans `pip_1`. SQLite et `Update` étaient corrects — l'accident tenait à ce
+  seul INSERT.
+- **Le dossier surveillé (#258) n'a jamais démarré.** Wails ne lie qu'une
+  valeur de retour, ou une valeur et une erreur : `BoundMethod.Call` fait un
+  `switch` sur leur nombre et n'implémente que 1 et 2. `Config.GetWatchFolder`
+  en rendait trois, la promesse se résolvait sur `null`, l'exception partait
+  dans un `catch`, et le générateur typait l'appel d'après la première valeur
+  seule. Le test unitaire ne pouvait pas le voir : son mock rendait le tableau
+  que la production ne rend jamais. `bindings_test.go` refuse désormais toute
+  signature non liable.
+- **L'écran d'accueil (#284) cassait seize specs e2e sur dix-sept.** Il couvre
+  l'application tant qu'aucune base n'est ouverte — c'est voulu — et intercepte
+  donc les clics sur les onglets. `dismissHomeScreen()` fait le geste que fait
+  l'utilisateur, plutôt que d'ouvrir une base dont ces specs n'ont pas besoin.
+- Deux retards : l'`ORDER BY` sous `SELECT DISTINCT` de `StudyQueue` (PostgreSQL
+  refuse, SQLite accepte), et `idx_position_game_type` absent de la liste
+  attendue de `TestMigratePostgres`. Plus les bindings Wails, jamais régénérés
+  depuis la vague 4.
 
-`internal/cli/parity_test.go` est le fichier que tout le monde percute : ajouter la
-ligne en même temps que la méthode évite d'en découvrir le trou à la fusion.
+Le budget de types est passé de 3 661 à 3 522, plafond monté délibérément à
+3 522. Quatre annotations en ont ôté 84 à elles seules, parce que ce n'étaient
+pas des annotations manquantes mais **des contrats jamais écrits** :
+`statusBarTextStore` porte deux formes depuis toujours, et trois magasins
+déclarés `writable(null)` ou `writable([])` étaient typés `null` et `never[]`.
+
+`main` est verte depuis `7d2c24e7e`.
+
+**Trois leçons, à ne pas repayer :**
+
+1. **Lire un journal de CI jusqu'au bout.** La première lecture de ce run a
+   conclu « deux fichiers de spec en échec » ; c'étaient seize sur dix-sept.
+   La sortie était tronquée.
+2. **Une vague ne se pousse pas sur un rouge.** Deux vagues de fonctionnalités
+   ont été construites sur une CI qui disait déjà que le démon ne savait plus
+   enregistrer une position.
+3. **Un budget de dette cache les défauts neufs.** L'erreur qui nommait le
+   dossier surveillé mort — « Type 'boolean' must have a '[Symbol.iterator]()'
+   method » — était là, sous trois mille six cents autres.
