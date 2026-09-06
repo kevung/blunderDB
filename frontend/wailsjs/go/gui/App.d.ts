@@ -46,8 +46,6 @@ export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.Iss
 
 export function IsDirectory(arg1:string):Promise<boolean>;
 
-export function ReadLogTail(arg1:number):Promise<Array<string>>;
-
 export function LooksLikeOGID(arg1:string):Promise<boolean>;
 
 export function OpenBearoffFileDialog():Promise<string>;
@@ -75,6 +73,8 @@ export function PickIdentityFile():Promise<domain.IdentityFilePick>;
 export function PrepareDemoDatabase():Promise<string>;
 
 export function ReadFileContent(arg1:string):Promise<gui.FileDialogResponse>;
+
+export function ReadLogTail(arg1:number):Promise<Array<string>>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 

@@ -804,12 +804,29 @@ func (c *Config) SaveTheme(name string) error {
 	return c.SaveConfig(c)
 }
 
+// WatchFolderSettings is the watched folder as the frontend reads it: one
+// value rather than three, because a half-read setting — on with no path — is
+// the shape that produces a watch nobody asked for.
+//
+// A struct rather than three return values: Wails binds a method returning one
+// value, or a value and an error, and NOTHING else. A third return makes
+// BoundMethod.Call fall through its switch and resolve the promise with null,
+// with no error anywhere — which is how the watched folder shipped dead in
+// #258. GetBoardColors is the precedent; follow it for any compound reply.
+type WatchFolderSettings struct {
+	On              bool   `json:"on"`
+	Path            string `json:"path"`
+	IntervalSeconds int    `json:"intervalSeconds"` // 0 = the default
+}
+
 // GetWatchFolder returns whether the watched folder is on, its path, and the
-// interval in seconds (0 = the default). Three values rather than three
-// getters: the frontend reads them together, and a half-read setting — on
-// with no path — is the shape that produces a watch nobody asked for.
-func (c *Config) GetWatchFolder() (bool, string, int) {
-	return c.WatchFolder, c.WatchFolderPath, c.WatchFolderIntervalSeconds
+// interval in seconds.
+func (c *Config) GetWatchFolder() WatchFolderSettings {
+	return WatchFolderSettings{
+		On:              c.WatchFolder,
+		Path:            c.WatchFolderPath,
+		IntervalSeconds: c.WatchFolderIntervalSeconds,
+	}
 }
 
 // SaveWatchFolder persists the watched folder. An empty path turns the watch

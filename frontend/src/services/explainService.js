@@ -30,7 +30,9 @@ export function cubeActionToken(action) {
  * Le coup ou l'action réellement joués, tels que l'enregistrement les porte.
  * Rend '' quand le record n'en connaît aucun — une position consultée hors
  * match n'a pas toujours été jouée.
- * @param {object} analysis
+ * @param {{doublingCubeAnalysis?: object, playedCubeAction?: string,
+ *          playedCubeActions?: string[], playedMove?: string,
+ *          playedMoves?: string[]}|null} analysis
  */
 export function playedFromAnalysis(analysis) {
     if (!analysis) return '';

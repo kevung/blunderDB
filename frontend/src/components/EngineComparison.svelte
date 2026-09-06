@@ -21,8 +21,8 @@
         if (!analysis) return [];
         const list = analysis.allCubeAnalyses?.length ? analysis.allCubeAnalyses : analysis.doublingCubeAnalysis ? [analysis.doublingCubeAnalysis] : [];
         return list
-            .filter((ca) => ca && ca.analysisEngine)
-            .map((ca) => ({
+            .filter((/** @type {any} */ ca) => ca && ca.analysisEngine)
+            .map((/** @type {any} */ ca) => ({
                 engine: ca.analysisEngine,
                 depth: ca.analysisDepth || '',
                 verdict: ca.bestCubeAction || ''
@@ -54,8 +54,8 @@
     /** Les moteurs sont-ils d'accord ? Deux lignes suffisent à le dire. */
     let disagree = $derived.by(() => {
         if (rows.length < 2) return false;
-        const answers = rows.map((r) => (kind === 'cube' ? r.verdict : r.move));
-        return answers.some((a) => a !== answers[0]);
+        const answers = rows.map((/** @type {any} */ r) => (kind === 'cube' ? r.verdict : r.move));
+        return answers.some((/** @type {any} */ a) => a !== answers[0]);
     });
 </script>
 

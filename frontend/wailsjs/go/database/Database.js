@@ -194,6 +194,10 @@ export function EmptyTrash(arg1) {
   return window['go']['database']['Database']['EmptyTrash'](arg1);
 }
 
+export function ExplainDecision(arg1, arg2) {
+  return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
+}
+
 export function ExportCollections(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
@@ -294,6 +298,10 @@ export function GetLastVisitedMatch() {
   return window['go']['database']['Database']['GetLastVisitedMatch']();
 }
 
+export function GetLinkedAnkiCard(arg1, arg2) {
+  return window['go']['database']['Database']['GetLinkedAnkiCard'](arg1, arg2);
+}
+
 export function GetMatchByID(arg1) {
   return window['go']['database']['Database']['GetMatchByID'](arg1);
 }
@@ -358,6 +366,18 @@ export function GetTournamentMatches(arg1) {
   return window['go']['database']['Database']['GetTournamentMatches'](arg1);
 }
 
+export function GradeQuizChecker(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
+}
+
+export function GradeQuizCheckerMove(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizCheckerMove'](arg1, arg2);
+}
+
+export function GradeQuizCube(arg1, arg2) {
+  return window['go']['database']['Database']['GradeQuizCube'](arg1, arg2);
+}
+
 export function ImportBGFMatch(arg1) {
   return window['go']['database']['Database']['ImportBGFMatch'](arg1);
 }
@@ -420,38 +440,6 @@ export function ListTrash(arg1, arg2, arg3) {
 
 export function LoadAllPositions() {
   return window['go']['database']['Database']['LoadAllPositions']();
-}
-
-export function ExplainDecision(arg1, arg2) {
-  return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
-}
-
-export function GetLinkedAnkiCard(arg1, arg2) {
-  return window['go']['database']['Database']['GetLinkedAnkiCard'](arg1, arg2);
-}
-
-export function SetCollectionFilter(arg1, arg2) {
-  return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
-}
-
-export function TranslateIntent(arg1) {
-  return window['go']['database']['Database']['TranslateIntent'](arg1);
-}
-
-export function SimilarPositions(arg1, arg2) {
-  return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
-}
-
-export function GradeQuizChecker(arg1, arg2) {
-  return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
-}
-
-export function GradeQuizCheckerMove(arg1, arg2) {
-  return window['go']['database']['Database']['GradeQuizCheckerMove'](arg1, arg2);
-}
-
-export function GradeQuizCube(arg1, arg2) {
-  return window['go']['database']['Database']['GradeQuizCube'](arg1, arg2);
 }
 
 export function LoadAnalysis(arg1) {
@@ -646,6 +634,10 @@ export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }
 
+export function SetCollectionFilter(arg1, arg2) {
+  return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
+}
+
 export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['database']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
@@ -656,6 +648,14 @@ export function SetMigrationProgress(arg1) {
 
 export function SetupDatabase(arg1) {
   return window['go']['database']['Database']['SetupDatabase'](arg1);
+}
+
+export function SimilarPositions(arg1, arg2) {
+  return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
+}
+
+export function StudyImpact(arg1) {
+  return window['go']['database']['Database']['StudyImpact'](arg1);
 }
 
 export function SuggestMatFilename(arg1) {
@@ -676,6 +676,10 @@ export function SyncAnkiDeckWithPositions(arg1, arg2) {
 
 export function Tags() {
   return window['go']['database']['Database']['Tags']();
+}
+
+export function TranslateIntent(arg1) {
+  return window['go']['database']['Database']['TranslateIntent'](arg1);
 }
 
 export function TrashCollection(arg1) {

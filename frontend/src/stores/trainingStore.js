@@ -16,6 +16,7 @@ import { writable, derived } from 'svelte/store';
 /** @typedef {{correct: boolean, error: number|null, ms: number}} TrainingAnswer */
 
 /** L'exercice en cours ('pips' | 'epc' | 'takepoint'), ou null hors session. */
+/** @type {import('svelte/store').Writable<string|null>} */
 export const trainingDrillStore = writable(null);
 
 /** Les questions de la session. */
@@ -32,7 +33,11 @@ export const trainingAnswersStore = writable([]);
 /** La session est-elle en cours ? */
 export const trainingActiveStore = writable(false);
 
+/** @typedef {import('../../wailsjs/go/models').engine.QuizVerdict} QuizVerdict */
+/** @typedef {TrainingAnswer & {truth: number, answer: string|number, quiz?: QuizVerdict}} TrainingVerdict */
+
 /** Le verdict de la dernière réponse, affiché jusqu'à la question suivante. */
+/** @type {import('svelte/store').Writable<TrainingVerdict|null>} */
 export const trainingVerdictStore = writable(null);
 
 /** La question courante, ou null. */

@@ -6,9 +6,9 @@ import {sqlite} from '../models';
 import {gammonnet} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
+import {engine} from '../models';
 import {storage} from '../models';
 import {parser} from '../models';
-import {engine} from '../models';
 import {searchquery} from '../models';
 
 export function AddComment(arg1:number,arg2:string):Promise<void>;
@@ -107,6 +107,8 @@ export function DiscardFromTrash(arg1:number):Promise<void>;
 
 export function EmptyTrash(arg1:number):Promise<number>;
 
+export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
+
 export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
 export function ExportDatabase(arg1:domain.ExportOptions):Promise<void>;
@@ -157,6 +159,8 @@ export function GetIssuanceInfo():Promise<domain.IssuanceInfo>;
 
 export function GetLastVisitedMatch():Promise<domain.Match>;
 
+export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
+
 export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
@@ -189,6 +193,12 @@ export function GetStatsDateRange():Promise<database.StatsDateRange>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
 
+export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
+
+export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
+
+export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
+
 export function ImportBGFMatch(arg1:string):Promise<number>;
 
 export function ImportBGFPosition(arg1:string):Promise<number>;
@@ -220,22 +230,6 @@ export function ListPositionIDs():Promise<Array<number>>;
 export function ListTrash(arg1:string,arg2:number,arg3:number):Promise<Array<domain.TrashEntry>>;
 
 export function LoadAllPositions():Promise<Array<domain.Position>>;
-
-export function ExplainDecision(arg1:number,arg2:string):Promise<engine.Explanation>;
-
-export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<database.AnkiReviewCard>;
-
-export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
-
-export function TranslateIntent(arg1:string):Promise<searchquery.Intent>;
-
-export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
-
-export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
-
-export function GradeQuizCheckerMove(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
-
-export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdict>;
 
 export function LoadAnalysis(arg1:number):Promise<domain.PositionAnalysis>;
 
@@ -333,11 +327,17 @@ export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
+export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
+
+export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
+export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 
@@ -348,6 +348,8 @@ export function SyncAnkiDeck(arg1:number):Promise<void>;
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function Tags():Promise<Array<domain.TagCount>>;
+
+export function TranslateIntent(arg1:string):Promise<searchquery.Intent>;
 
 export function TrashCollection(arg1:number):Promise<number>;
 

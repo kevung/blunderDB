@@ -40,8 +40,8 @@ export function snapshotBoardSVG() {
     const svgEl = boardEl.querySelector('svg');
     if (!svgEl) return null;
 
-    const width = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
-    const height = parseInt(svgEl.getAttribute('height')) || svgEl.clientHeight;
+    const width = parseInt(svgEl.getAttribute('width') ?? '') || svgEl.clientWidth;
+    const height = parseInt(svgEl.getAttribute('height') ?? '') || svgEl.clientHeight;
 
     const clone = /** @type {SVGSVGElement} */ (svgEl.cloneNode(true));
     clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -94,6 +94,7 @@ export function svgToCanvas(snapshot, scale = 2) {
                 canvas.width = snapshot.width * scale;
                 canvas.height = snapshot.height * scale;
                 const ctx = canvas.getContext('2d');
+                if (!ctx) throw new Error('no 2d context');
                 ctx.scale(scale, scale);
                 // Le fond est déjà dans le SVG ; on le repeint ici pour le cas
                 // où le rendu du navigateur laisse passer du transparent.
@@ -127,7 +128,10 @@ export async function snapshotToPNGBase64(snapshot) {
     return canvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
 }
 
-/** Un nom de fichier lisible, daté, pour une image de plateau. */
+/**
+ * Un nom de fichier lisible, daté, pour une image de plateau.
+ * @param {string} extension
+ */
 export function boardImageFilename(extension) {
     const now = new Date();
     const stamp = [

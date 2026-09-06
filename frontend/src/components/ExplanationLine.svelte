@@ -11,7 +11,8 @@
 
     let { analysis = null } = $props();
 
-    let explanation = $state(null);
+    /** @typedef {import('../../wailsjs/go/models').engine.Explanation} Explanation */
+    let explanation = $state(/** @type {Explanation | null} */ (null));
 
     $effect(() => {
         const id = $positionStore?.id;
