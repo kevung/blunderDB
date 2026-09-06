@@ -264,7 +264,7 @@ l'en-tête de tenant, l'enveloppe d'erreur, la lecture du NDJSON — et il est
 jugement ne l'est pas.
 
 Les noms de méthode sont ``famille_opération`` en snake_case :
-``/v1/positions.saveIndividual`` devient ``positions_save_individual()``. La
+``/v1/positions.loadByIds`` devient ``positions_load_by_ids()``. La
 famille est conservée parce que plusieurs familles partagent un nom
 d'opération (``list``, ``delete``), et qu'un ``list()`` nu entrerait en
 collision.

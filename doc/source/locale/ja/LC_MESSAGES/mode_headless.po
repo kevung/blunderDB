@@ -558,13 +558,13 @@ msgstr ""
 #: ../../source/mode_headless.rst:266
 msgid ""
 "Les noms de méthode sont ``famille_opération`` en snake_case : "
-"``/v1/positions.saveIndividual`` devient ``positions_save_individual()``."
+"``/v1/positions.loadByIds`` devient ``positions_load_by_ids()``."
 " La famille est conservée parce que plusieurs familles partagent un nom "
 "d'opération (``list``, ``delete``), et qu'un ``list()`` nu entrerait en "
 "collision."
 msgstr ""
-"メソッド名は snake_case の ``ファミリ_操作`` です。``/v1/positions.saveIndividual`` は "
-"``positions_save_individual()`` になります。``list`` や ``delete`` "
+"メソッド名は snake_case の ``ファミリ_操作`` です。``/v1/positions.loadByIds`` は "
+"``positions_load_by_ids()`` になります。``list`` や ``delete`` "
 "のように操作名を共有するファミリが複数あるため、裸の ``list()`` では衝突するので、ファミリを残しています。"
 
 #: ../../source/mode_headless.rst:272
