@@ -1235,7 +1235,16 @@
         "noData": "Keine Daten für diesen Filter.",
         "noTags": "Keine Kennzeichnung in den Kommentaren der ausgewählten Stellungen.",
         "tagsDoNotSum": "Eine Stellung kann mehrere Kennzeichnungen tragen: diese Zeilen summieren sich nicht zur Gesamtzahl.",
-        "thinCells": "Zellen mit weniger als {n} Entscheidungen sind ausgegraut: zu wenige zum Lesen."
+        "thinCells": "Zellen mit weniger als {n} Entscheidungen sind ausgegraut: zu wenige zum Lesen.",
+        "goalTitle": "Ziel:",
+        "goalStated": "PR < {target} binnen {weeks} Wochen ({band}).",
+        "goalSet": "Ein Ziel setzen…",
+        "goalTarget": "Ziel-PR",
+        "goalWeeks": "Wochen",
+        "goalPropose": "Vorschlagen",
+        "goalReached": "Erreicht: Ihr PR beträgt {pr}.",
+        "goalTrend": "Aktuelles PR {pr}; im Tempo der letzten Matches führt der Trend zu {projected}, bei einem Ziel von {target}. Ein Trend ist keine Vorhersage.",
+        "goalNoTrend": "Aktuelles PR {pr}. Zu wenige Matches für einen Trend: mindestens drei."
     },
     "trash": {
         "title": "Papierkorb",

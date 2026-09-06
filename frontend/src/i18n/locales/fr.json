@@ -1235,7 +1235,16 @@
         "noData": "Aucune donnée pour ce filtre.",
         "noTags": "Aucune étiquette dans les commentaires des positions retenues.",
         "tagsDoNotSum": "Une position peut porter plusieurs étiquettes : ces lignes ne s'additionnent pas au total.",
-        "thinCells": "Les cellules de moins de {n} décisions sont grisées : trop peu pour être lues."
+        "thinCells": "Les cellules de moins de {n} décisions sont grisées : trop peu pour être lues.",
+        "goalTitle": "Objectif :",
+        "goalStated": "PR < {target} d'ici {weeks} semaines ({band}).",
+        "goalSet": "Se fixer un objectif…",
+        "goalTarget": "PR visé",
+        "goalWeeks": "Semaines",
+        "goalPropose": "Proposer",
+        "goalReached": "Atteint : votre PR est de {pr}.",
+        "goalTrend": "PR actuel {pr} ; au rythme des derniers matchs, la tendance mène vers {projected}, pour une cible à {target}. Une tendance n'est pas une prédiction.",
+        "goalNoTrend": "PR actuel {pr}. Trop peu de matchs pour dégager une tendance : trois au minimum."
     },
     "trash": {
         "title": "Corbeille",

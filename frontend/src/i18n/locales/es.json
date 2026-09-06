@@ -1235,7 +1235,16 @@
         "noData": "Ningún dato para este filtro.",
         "noTags": "Ninguna etiqueta en los comentarios de las posiciones seleccionadas.",
         "tagsDoNotSum": "Una posición puede llevar varias etiquetas: estas filas no suman el total.",
-        "thinCells": "Las celdas con menos de {n} decisiones aparecen en gris: son demasiado pocas para leerse."
+        "thinCells": "Las celdas con menos de {n} decisiones aparecen en gris: son demasiado pocas para leerse.",
+        "goalTitle": "Objetivo:",
+        "goalStated": "PR < {target} en {weeks} semanas ({band}).",
+        "goalSet": "Fijarse un objetivo…",
+        "goalTarget": "PR objetivo",
+        "goalWeeks": "Semanas",
+        "goalPropose": "Proponer",
+        "goalReached": "Alcanzado: su PR es {pr}.",
+        "goalTrend": "PR actual {pr}; al ritmo de los últimos partidos la tendencia lleva a {projected}, para un objetivo de {target}. Una tendencia no es una predicción.",
+        "goalNoTrend": "PR actual {pr}. Demasiados pocos partidos para una tendencia: tres como mínimo."
     },
     "trash": {
         "title": "Papelera",

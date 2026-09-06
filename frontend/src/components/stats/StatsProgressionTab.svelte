@@ -5,6 +5,7 @@
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from '../ContextMenu.svelte';
     import { GRADE_BANDS, bandForPR, makeGradeBandPlugin } from './gradeBands.js';
+    import { loadGoal, saveGoal, clearGoal, suggestTarget, trend, bandKeyForPR } from '../../services/goalService.js';
     import { PRIMARY, PRIMARY_ALPHA } from './charts/palette.js';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
@@ -26,6 +27,56 @@
     // ── Derived data ──────────────────────────────────────────────────────────
     let tournaments = $derived(result?.PerTournament ?? []);
     let matches = $derived(result?.PerMatch ?? []);
+
+    // ── L'objectif de progression (#274, fiche I.18) ──────────────────────────
+    //
+    // Une cible, une échéance, et une tendance qui dit où l'on va. Rien de
+    // plus : un objectif qui se mettrait à noter, à féliciter ou à rappeler
+    // serait une autre fonctionnalité.
+    /** @type {{target: number, weeks: number, setAt: string} | null} */
+    let goal = $state(null);
+    let editingGoal = $state(false);
+    let goalTarget = $state(5);
+    let goalWeeks = $state(12);
+
+    $effect(() => {
+        void loadGoal().then((g) => {
+            goal = g;
+            if (g) {
+                goalTarget = g.target;
+                goalWeeks = g.weeks;
+            }
+        });
+    });
+
+    /** La série chronologique sur laquelle la tendance se calcule. */
+    let goalSeries = $derived(matches.map((m) => m.PR).filter((v) => Number.isFinite(v) && v > 0));
+    let currentPR = $derived(goalSeries.length > 0 ? goalSeries[goalSeries.length - 1] : (result?.PRGlobal ?? 0));
+
+    // Un point de la série ≈ un match. Faute de savoir à quel rythme
+    // l'utilisateur joue, on projette sur autant de points qu'il en a joués
+    // dans les douze dernières semaines… ce qu'on ne sait pas non plus. On
+    // projette donc sur la MOITIÉ de la série, et on le dit : c'est une
+    // tendance, pas une prédiction.
+    let goalTrend = $derived(trend(goalSeries, Math.max(1, Math.round(goalSeries.length / 2))));
+
+    let goalReached = $derived(goal && currentPR > 0 && currentPR <= goal.target);
+
+    async function applyGoal() {
+        goal = await saveGoal(Number(goalTarget), Number(goalWeeks));
+        editingGoal = false;
+    }
+
+    async function removeGoal() {
+        await clearGoal();
+        goal = null;
+        editingGoal = false;
+    }
+
+    function proposeTarget() {
+        const suggested = suggestTarget(currentPR);
+        if (suggested != null) goalTarget = suggested;
+    }
 
     // ── Tournament line chart ─────────────────────────────────────────────────
     let tourLabels = $derived(tournaments.map((tour) => truncateLabel(tour.Name)));
@@ -131,6 +182,44 @@
     }
 </script>
 
+<!-- L'objectif se règle et se lit au-dessus des courbes : c'est la question
+     qu'on se pose en les regardant. -->
+<section class="goal">
+    {#if goal && !editingGoal}
+        <p class="goal-line">
+            <b>{$t('stats.goalTitle')}</b>
+            {$t('stats.goalStated', { target: goal.target.toFixed(1), weeks: goal.weeks, band: $t(`stats.grade.${bandKeyForPR(goal.target)}`) })}
+            <button class="goal-btn" onclick={() => (editingGoal = true)}>{$t('common.edit')}</button>
+            <button class="goal-btn" onclick={removeGoal}>{$t('common.delete')}</button>
+        </p>
+        {#if currentPR > 0}
+            <p class="goal-note">
+                {#if goalReached}
+                    {$t('stats.goalReached', { pr: currentPR.toFixed(2) })}
+                {:else if goalTrend}
+                    {$t('stats.goalTrend', { pr: currentPR.toFixed(2), projected: goalTrend.projected.toFixed(2), target: goal.target.toFixed(1) })}
+                {:else}
+                    {$t('stats.goalNoTrend', { pr: currentPR.toFixed(2) })}
+                {/if}
+            </p>
+        {/if}
+    {:else if editingGoal}
+        <p class="goal-line">
+            <label for="goal-target">{$t('stats.goalTarget')}</label>
+            <input id="goal-target" type="number" step="0.1" min="0" max="30" bind:value={goalTarget} class="goal-input" />
+            <label for="goal-weeks">{$t('stats.goalWeeks')}</label>
+            <input id="goal-weeks" type="number" step="1" min="1" max="104" bind:value={goalWeeks} class="goal-input" />
+            <button class="goal-btn" onclick={proposeTarget}>{$t('stats.goalPropose')}</button>
+            <button class="goal-btn" onclick={applyGoal}>{$t('common.apply')}</button>
+            <button class="goal-btn" onclick={() => (editingGoal = false)}>{$t('common.cancel')}</button>
+        </p>
+    {:else}
+        <p class="goal-line">
+            <button class="goal-btn" onclick={() => (editingGoal = true)}>{$t('stats.goalSet')}</button>
+        </p>
+    {/if}
+</section>
+
 {#if !result || (tournaments.length === 0 && matches.length === 0)}
     <!-- ── Empty state ──────────────────────────────────────────────────────── -->
     <p class="empty-state">{$t('stats.noProgressionData')}</p>
@@ -191,6 +280,32 @@
 {/if}
 
 <style>
+    .goal {
+        margin-bottom: 0.6em;
+    }
+
+    .goal-line {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.4em;
+        margin: 0;
+    }
+
+    .goal-note {
+        margin: 0.2em 0 0 0;
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+
+    .goal-btn {
+        cursor: pointer;
+    }
+
+    .goal-input {
+        width: 5em;
+    }
+
     /* ── Empty state ── */
     .empty-state {
         color: var(--color-text-muted);

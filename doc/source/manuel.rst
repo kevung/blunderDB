@@ -1111,6 +1111,27 @@ Onglet Progression
 
 L'onglet **Progression** présente l'évolution du niveau dans le temps.
 
+En tête de l'onglet, un **objectif** : « PR < 5 d'ici douze semaines ». Une
+cible, une échéance, et une tendance qui dit où l'on va — rien de plus. Un
+objectif qui se mettrait à noter, à féliciter ou à rappeler serait une autre
+fonctionnalité, et pas celle-ci.
+
+Le bouton **Proposer** suggère une cible à partir du niveau actuel : la borne
+basse de la bande où vous êtes, c'est-à-dire l'entrée dans la bande suivante.
+Proposer « un peu mieux » ne s'ancrerait à rien ; proposer un palier en dit
+un — passer d'intermédiaire à avancé se voit et se raconte.
+
+La **tendance** est un ajustement par les moindres carrés sur le PR de vos
+matchs, projeté à l'échéance. Elle refuse de se prononcer sous trois matchs :
+tracer une droite entre deux points serait une affirmation qu'on ne peut pas
+tenir. Et la phrase le dit à chaque fois — *une tendance n'est pas une
+prédiction*.
+
+L'objectif est enregistré dans les **métadonnées de la base**, pas dans la
+configuration : il porte sur cette bibliothèque-là, et suit donc le fichier
+plutôt que la machine. Aucun changement de schéma : ``metadata`` est déjà une
+table de clés et de valeurs, lisible par ``blunderdb info`` comme par le démon.
+
 Courbe par tournoi
 ^^^^^^^^^^^^^^^^^^
 
