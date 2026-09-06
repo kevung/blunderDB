@@ -63,4 +63,3 @@ msgstr ""
 #: ../../source/index.rst:17
 msgid "Ce qui a changé d'une version à l'autre est dans l':ref:`historique`."
 msgstr "What changed from one version to the next is in the :ref:`historique`."
-

@@ -203,4 +203,3 @@ msgstr ""
 #: ../../source/annexe_windows_securite.rst:134
 msgid "Sous Linux ou macOS :"
 msgstr ""
-

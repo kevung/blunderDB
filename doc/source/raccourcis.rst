@@ -262,3 +262,22 @@ Panneau des collections
    "Double-clic", "Ouvrir la collection."
    "Del", "Retirer la position courante (ou les positions cochées) de la collection ouverte."
    "Esc", "Revenir à la liste des collections, sinon désélectionner la collection, sinon fermer le panneau (par paliers)."
+
+.. _raccourcis_help_panel:
+
+Panneau d'aide
+--------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "GAUCHE, h", "Onglet précédent."
+   "DROITE, l", "Onglet suivant."
+   "HAUT, k", "Défiler vers le haut."
+   "BAS, j", "Défiler vers le bas."
+   "ESPACE", "Page suivante."
+   "PageUp", "Haut du contenu."
+   "PageDown", "Bas du contenu."
+   "?, CTRL-F, Esc", "Fermer l'aide."

@@ -242,4 +242,3 @@ msgstr ""
 "フォント `Nunito <https://github.com/googlefonts/nunito>`__ と `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__\\ （SIL "
 "Open Font License 1.1）。"
-

@@ -30,6 +30,17 @@ Windows affiche un avertissement du type
 
 .. figure:: img/smartscreen_en.png
 
+.. note:: Cette copie d'écran provient d'un Windows en anglais. Sur un Windows
+   en français, le même écran s'intitule *Windows a protégé votre ordinateur* ;
+   le lien à cliquer est *Informations supplémentaires* (*Informations
+   complémentaires* selon la version de Windows), et le bouton qui apparaît
+   ensuite est *Exécuter quand même*.
+
+**Deux clics suffisent dans la quasi-totalité des cas** — *Informations
+supplémentaires*, puis *Exécuter quand même* — et il n'y a rien d'autre à
+faire : ni exclusion antivirus, ni réglage à modifier. La section suivante ne
+concerne que les rares cas où le blocage ne venait pas de SmartScreen.
+
 Si vous souhaitez autoriser un exécutable spécifique bloqué par SmartScreen :
 
 1. **Essayer d’exécuter l'exécutable** :
@@ -50,9 +61,10 @@ Si vous souhaitez autoriser un exécutable spécifique bloqué par SmartScreen :
 Blocage Windows Defender
 ------------------------
 
-Pour certains paramétrages sécurité de Windows, il arrive que malgré le
-déblocage de SmartScreen (voir section plus précédente), Windows Defender
-puisse empêcher l'exécution de blunderDB avec des messages du type 
+Cette section est un **dernier recours**, à ne suivre que si le blocage ne
+venait pas de SmartScreen. Pour certains paramétrages de sécurité, il arrive
+en effet que malgré le déblocage décrit ci-dessus, Windows Defender empêche
+l'exécution de blunderDB avec des messages du type
 
 .. figure:: img/blunderdb_potential_virus.png
    :align: center
@@ -69,7 +81,14 @@ explicitement mentionné dans la FAQ du site officiel de Golang (
 https://go.dev/doc/faq#virus ) ou dans des tickets Github de certains projets
 programmés en Go ( https://github.com/golang/vscode-go/issues/3182 ).
 
-Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :
+.. warning:: Exclure un fichier de l'analyse antivirus n'est pas un geste
+   anodin : l'exclusion porte sur un chemin, et tout fichier placé ensuite à
+   cet endroit échappera lui aussi à l'analyse. Vérifiez d'abord l'empreinte
+   SHA-256 du fichier téléchargé (section suivante) : c'est elle, et non
+   l'exclusion, qui atteste que vous exécutez bien le binaire publié.
+
+Si vous souhaitez malgré tout empêcher la Sécurité Windows d’analyser
+blunderDB :
 
 1. **Ouvrir la Sécurité Windows** :
 

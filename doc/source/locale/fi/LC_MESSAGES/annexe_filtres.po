@@ -413,4 +413,3 @@ msgstr "Komennon ``s tn1`` jälkeen hae tuplauskuution päätöksiä"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

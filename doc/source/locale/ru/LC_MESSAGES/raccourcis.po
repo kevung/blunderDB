@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -678,3 +678,58 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "Панель справки"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LEFT, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "Предыдущая вкладка."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RIGHT, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "Следующая вкладка."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "Прокрутить вверх."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "Прокрутить вниз."
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "Следующая страница."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "PageUp"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "В начало содержимого."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "PageDown"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "В конец содержимого."
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, CTRL-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "Закрыть справку."

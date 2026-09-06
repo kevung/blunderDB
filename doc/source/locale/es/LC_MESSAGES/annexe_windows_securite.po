@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-12 23:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -83,15 +83,41 @@ msgstr ""
 
 #: ../../source/annexe_windows_securite.rst:33
 msgid ""
+"Cette copie d'écran provient d'un Windows en anglais. Sur un Windows en "
+"français, le même écran s'intitule *Windows a protégé votre ordinateur* ;"
+" le lien à cliquer est *Informations supplémentaires* (*Informations "
+"complémentaires* selon la version de Windows), et le bouton qui apparaît "
+"ensuite est *Exécuter quand même*."
+msgstr ""
+"Esta captura de pantalla procede de un Windows en inglés. En un Windows "
+"en español, la misma pantalla se titula *Windows protegió su equipo*; el"
+" enlace en el que hay que hacer clic es *Más información*, y el botón "
+"que aparece a continuación es *Ejecutar de todas formas*."
+
+#: ../../source/annexe_windows_securite.rst:39
+msgid ""
+"**Deux clics suffisent dans la quasi-totalité des cas** — *Informations "
+"supplémentaires*, puis *Exécuter quand même* — et il n'y a rien d'autre à"
+" faire : ni exclusion antivirus, ni réglage à modifier. La section "
+"suivante ne concerne que les rares cas où le blocage ne venait pas de "
+"SmartScreen."
+msgstr ""
+"**Dos clics bastan en casi todos los casos** — *Más información*, luego "
+"*Ejecutar de todas formas* — y no hay nada más que hacer: ni exclusión "
+"antivirus, ni ajuste que modificar. La sección siguiente solo concierne"
+" a los raros casos en los que el bloqueo no venía de SmartScreen."
+
+#: ../../source/annexe_windows_securite.rst:44
+msgid ""
 "Si vous souhaitez autoriser un exécutable spécifique bloqué par "
 "SmartScreen :"
 msgstr "Si desea permitir un ejecutable específico bloqueado por SmartScreen:"
 
-#: ../../source/annexe_windows_securite.rst:35
+#: ../../source/annexe_windows_securite.rst:46
 msgid "**Essayer d’exécuter l'exécutable** :"
 msgstr "**Intentar ejecutar el ejecutable**:"
 
-#: ../../source/annexe_windows_securite.rst:37
+#: ../../source/annexe_windows_securite.rst:48
 msgid ""
 "Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer "
 "et afficher un avertissement."
@@ -99,11 +125,11 @@ msgstr ""
 "Cuando intente lanzar el ejecutable, SmartScreen puede bloquearlo y "
 "mostrar una advertencia."
 
-#: ../../source/annexe_windows_securite.rst:40
+#: ../../source/annexe_windows_securite.rst:51
 msgid "**Cliquer sur \"Informations supplémentaires\"** :"
 msgstr "**Hacer clic en \"Más información\"**:"
 
-#: ../../source/annexe_windows_securite.rst:42
+#: ../../source/annexe_windows_securite.rst:53
 msgid ""
 "Dans la fenêtre d'avertissement de SmartScreen, cliquez sur "
 "**Informations supplémentaires**."
@@ -111,11 +137,11 @@ msgstr ""
 "En la ventana de advertencia de SmartScreen, haga clic en **Más "
 "información**."
 
-#: ../../source/annexe_windows_securite.rst:45
+#: ../../source/annexe_windows_securite.rst:56
 msgid "**Sélectionner \"Exécuter quand même\"** :"
 msgstr "**Seleccionar \"Ejecutar de todas formas\"**:"
 
-#: ../../source/annexe_windows_securite.rst:47
+#: ../../source/annexe_windows_securite.rst:58
 msgid ""
 "Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand "
 "même** pour contourner l'avertissement SmartScreen pour cette instance."
@@ -123,29 +149,31 @@ msgstr ""
 "Si confía en el ejecutable, haga clic en **Ejecutar de todas formas** "
 "para omitir la advertencia de SmartScreen en esta ocasión."
 
-#: ../../source/annexe_windows_securite.rst:51
+#: ../../source/annexe_windows_securite.rst:62
 msgid "Blocage Windows Defender"
 msgstr "Bloqueo de Windows Defender"
 
-#: ../../source/annexe_windows_securite.rst:53
+#: ../../source/annexe_windows_securite.rst:64
 msgid ""
-"Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
-"déblocage de SmartScreen (voir section plus précédente), Windows Defender"
-" puisse empêcher l'exécution de blunderDB avec des messages du type"
+"Cette section est un **dernier recours**, à ne suivre que si le blocage "
+"ne venait pas de SmartScreen. Pour certains paramétrages de sécurité, il "
+"arrive en effet que malgré le déblocage décrit ci-dessus, Windows "
+"Defender empêche l'exécution de blunderDB avec des messages du type"
 msgstr ""
-"Con ciertas configuraciones de seguridad de Windows, ocurre que, a pesar "
-"de haber desbloqueado SmartScreen (véase la sección anterior), Windows "
-"Defender puede impedir la ejecución de blunderDB con mensajes como:"
+"Esta sección es un **último recurso**, que solo debe seguirse si el "
+"bloqueo no venía de SmartScreen. En efecto, con ciertas configuraciones "
+"de seguridad, ocurre que, a pesar del desbloqueo descrito más arriba, "
+"Windows Defender impide la ejecución de blunderDB con mensajes como:"
 
-#: ../../source/annexe_windows_securite.rst:60
+#: ../../source/annexe_windows_securite.rst:72
 msgid "ou encore"
 msgstr "o bien:"
 
-#: ../../source/annexe_windows_securite.rst:65
+#: ../../source/annexe_windows_securite.rst:77
 msgid "voire le placer en quarantaine."
 msgstr "o incluso ponerlo en cuarentena."
 
-#: ../../source/annexe_windows_securite.rst:67
+#: ../../source/annexe_windows_securite.rst:79
 msgid ""
 "Windows Defender est connu pour déclencher des faux positifs. Ce problème"
 " est explicitement mentionné dans la FAQ du site officiel de Golang ( "
@@ -159,31 +187,50 @@ msgstr ""
 "algunos proyectos programados en Go ( https://github.com/golang/vscode-"
 "go/issues/3182 )."
 
-#: ../../source/annexe_windows_securite.rst:72
-msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
-msgstr "Si desea impedir que la Seguridad de Windows analice blunderDB:"
+#: ../../source/annexe_windows_securite.rst:84
+msgid ""
+"Exclure un fichier de l'analyse antivirus n'est pas un geste anodin : "
+"l'exclusion porte sur un chemin, et tout fichier placé ensuite à cet "
+"endroit échappera lui aussi à l'analyse. Vérifiez d'abord l'empreinte "
+"SHA-256 du fichier téléchargé (section suivante) : c'est elle, et non "
+"l'exclusion, qui atteste que vous exécutez bien le binaire publié."
+msgstr ""
+"Excluir un archivo del análisis antivirus no es un gesto trivial: la "
+"exclusión se aplica a una ruta, y cualquier archivo colocado después en "
+"ese lugar también escapará al análisis. Verifique primero la huella "
+"SHA-256 del archivo descargado (sección siguiente): es ella, y no la "
+"exclusión, la que certifica que está ejecutando realmente el binario "
+"publicado."
 
-#: ../../source/annexe_windows_securite.rst:74
+#: ../../source/annexe_windows_securite.rst:90
+msgid ""
+"Si vous souhaitez malgré tout empêcher la Sécurité Windows d’analyser "
+"blunderDB :"
+msgstr ""
+"Si aun así desea impedir que la Seguridad de Windows analice "
+"blunderDB:"
+
+#: ../../source/annexe_windows_securite.rst:93
 msgid "**Ouvrir la Sécurité Windows** :"
 msgstr "**Abrir la Seguridad de Windows**:"
 
-#: ../../source/annexe_windows_securite.rst:76
+#: ../../source/annexe_windows_securite.rst:95
 msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
 msgstr "Vaya a **Inicio** y escriba **Seguridad de Windows**."
 
-#: ../../source/annexe_windows_securite.rst:81
+#: ../../source/annexe_windows_securite.rst:100
 msgid "**Aller à \"Protection contre les virus et menaces\"** :"
 msgstr "**Ir a \"Protección contra virus y amenazas\"**:"
 
-#: ../../source/annexe_windows_securite.rst:83
+#: ../../source/annexe_windows_securite.rst:102
 msgid "Cliquez sur **Protection contre les virus et menaces**."
 msgstr "Haga clic en **Protección contra virus y amenazas**."
 
-#: ../../source/annexe_windows_securite.rst:88
+#: ../../source/annexe_windows_securite.rst:107
 msgid "**Gérer les paramètres** :"
 msgstr "**Administrar la configuración**:"
 
-#: ../../source/annexe_windows_securite.rst:90
+#: ../../source/annexe_windows_securite.rst:109
 msgid ""
 "Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
 "Paramètres de protection contre les virus et menaces."
@@ -191,11 +238,11 @@ msgstr ""
 "Desplácese hacia abajo y haga clic en **Administrar la configuración** en"
 " Configuración de protección contra virus y amenazas."
 
-#: ../../source/annexe_windows_securite.rst:95
+#: ../../source/annexe_windows_securite.rst:114
 msgid "**Ajouter ou supprimer des exclusions** :"
 msgstr "**Agregar o quitar exclusiones**:"
 
-#: ../../source/annexe_windows_securite.rst:97
+#: ../../source/annexe_windows_securite.rst:116
 msgid ""
 "Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter"
 " ou supprimer des exclusions**."
@@ -203,11 +250,11 @@ msgstr ""
 "Desplácese hasta la sección **Exclusiones** y haga clic en **Agregar o "
 "quitar exclusiones**."
 
-#: ../../source/annexe_windows_securite.rst:102
+#: ../../source/annexe_windows_securite.rst:121
 msgid "**Ajouter une exclusion** :"
 msgstr "**Agregar una exclusión**:"
 
-#: ../../source/annexe_windows_securite.rst:104
+#: ../../source/annexe_windows_securite.rst:123
 msgid ""
 "Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. "
 "Naviguez ensuite jusqu’à l’exécutable que vous souhaitez exclure et "
@@ -217,30 +264,36 @@ msgstr ""
 "continuación, navegue hasta el ejecutable que desea excluir y "
 "selecciónelo."
 
-#: ../../source/annexe_windows_securite.rst:118
+#: ../../source/annexe_windows_securite.rst:137
 msgid "Vérifier l'intégrité du téléchargement (SHA256)"
 msgstr "Verificar la integridad de la descarga (SHA256)"
 
-#: ../../source/annexe_windows_securite.rst:120
+#: ../../source/annexe_windows_securite.rst:139
 msgid ""
 "Chaque binaire publié sur la page des *releases* est accompagné d'un "
 "fichier ``.sha256`` contenant son empreinte cryptographique. Vérifier "
 "cette empreinte permet de s'assurer que le fichier téléchargé est "
 "authentique et n'a pas été altéré, ce qui constitue une garantie utile en"
 " l'absence de signature de code."
-msgstr "Cada binario publicado en la página de *releases* va acompañado de un archivo ``.sha256`` que contiene su huella criptográfica. Verificar esta huella permite asegurarse de que el archivo descargado es auténtico y no ha sido alterado, lo que constituye una garantía útil en ausencia de firma de código."
+msgstr ""
+"Cada binario publicado en la página de *releases* va acompañado de un "
+"archivo ``.sha256`` que contiene su huella criptográfica. Verificar esta "
+"huella permite asegurarse de que el archivo descargado es auténtico y no "
+"ha sido alterado, lo que constituye una garantía útil en ausencia de "
+"firma de código."
 
-#: ../../source/annexe_windows_securite.rst:125
+#: ../../source/annexe_windows_securite.rst:144
 msgid "Sous Windows (PowerShell), dans le dossier de téléchargement :"
 msgstr "En Windows (PowerShell), en la carpeta de descargas:"
 
-#: ../../source/annexe_windows_securite.rst:131
+#: ../../source/annexe_windows_securite.rst:150
 msgid ""
 "Comparez la valeur affichée avec celle du fichier ``blunderDB-"
 "windows-<version>.exe.sha256``. Les deux doivent être identiques."
-msgstr "Compare el valor mostrado con el del archivo ``blunderDB-windows-<version>.exe.sha256``. Ambos deben ser idénticos."
+msgstr ""
+"Compare el valor mostrado con el del archivo ``blunderDB-"
+"windows-<version>.exe.sha256``. Ambos deben ser idénticos."
 
-#: ../../source/annexe_windows_securite.rst:134
+#: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "En Linux o macOS:"
-

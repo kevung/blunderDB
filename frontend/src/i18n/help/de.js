@@ -736,6 +736,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Hilfe-Fenster</h3>
+<table>
+<thead>
+<tr>
+<th>Tastenkürzel</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LINKS, h</td>
+<td>Vorheriger Reiter.</td>
+</tr>
+<tr>
+<td>RECHTS, l</td>
+<td>Nächster Reiter.</td>
+</tr>
+<tr>
+<td>OBEN, k</td>
+<td>Nach oben scrollen.</td>
+</tr>
+<tr>
+<td>UNTEN, j</td>
+<td>Nach unten scrollen.</td>
+</tr>
+<tr>
+<td>LEERTASTE</td>
+<td>Nächste Seite.</td>
+</tr>
+<tr>
+<td>Bild-auf</td>
+<td>Anfang des Inhalts.</td>
+</tr>
+<tr>
+<td>Bild-ab</td>
+<td>Ende des Inhalts.</td>
+</tr>
+<tr>
+<td>?, STRG-F, Esc</td>
+<td>Hilfe schließen.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>Die Kommandozeile in der Statusleiste öffnet sich durch Drücken der <em>LEERTASTE</em>. Während der Eingabe eines Befehls erscheint automatisch eine Liste mit Vorschlägen: Die <em>TAB</em>-Taste (oder <em>UMSCHALT-TAB</em>) durchläuft die Vorschläge und vervollständigt den Befehl, während <em>ESC</em> die Liste schließt (ein zweites <em>ESC</em> schließt die Kommandozeile). Die Tasten <em>AUF</em> und <em>AB</em> bleiben dem Befehlsverlauf vorbehalten.</p>
@@ -786,7 +829,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Öffnet das Eval-Panel (Effective Pip Count, Gewinnwahrscheinlichkeit und Würfel-Urteil im Bearoff).</td>
+<td>Öffnet das Eval-Panel (Effective Pip Count, Gewinnwahrscheinlichkeit und Doppler-Urteil im Bearoff). <code>epc</code> ist der alte, weiterhin gültige Name dieses Panels.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -921,365 +964,462 @@ export default {
 </tbody>
 </table>
 <h3>Suchfilter</h3>
+<p>Diese Tabelle ist die Referenz der Suchgrammatik: die Befehlszeile, die Filterbibliothek und die Option <code>--query</code> von <code>blunderdb search</code> lesen alle dieselben Token. Die Spalte <em>CLI-Äquivalent</em> nennt, wenn es eine gibt, die Option von <code>search</code>, die dasselbe bewirkt (siehe Befehlszeilenschnittstelle (CLI)); ein Gedankenstrich zeigt einen Filter an, den nur die Grammatik ausdrückt.</p>
+<p>Fünf Token tragen ihren Wert nicht selbst: Sie lesen ihn vom Suchbrett ab. <code>cube</code> und <code>score</code> übernehmen den dort eingestellten Doppler und Spielstand, <code>d</code> den Entscheidungstyp, <code>D</code> und <code>D1</code> die Würfel, <code>x</code> die im Reiter <em>Außer</em> gezeichnete Struktur. Ein Wurf steht also nie im Token selbst: <code>D65</code> gibt es nicht, nur die Ausschlussform trägt seine Ziffern (<code>xD65</code>). Auf der Kommandozeile, wo es kein Brett gibt, vergleichen diese Token mit einem leeren Brett; dort sind die Optionen der dritten Spalte zu verwenden.</p>
+<p>Fehler und Equitys werden in <strong>Tausendstel Equity</strong> gezählt — den <em>Millipunkten</em> der Tabelle unten: <code>E&gt;100</code> behält Züge, die mindestens ein Zehntel Punkt gekostet haben, wobei ein Punkt 1000 Tausendsteln entspricht.</p>
+<p>Zwei vollständige Suchen:</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — mehr als 30 Pips Rückstand, zwischen 40 % und 60 % Gewinnchance, kein Kommentar.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — in der Rennphase, ein Zug, der mindestens 50 Tausendstel gekostet hat, und ein Kommentar aus eXtreme Gammon.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Abfrage</th>
 <th>Aktion</th>
+<th>CLI-Äquivalent</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>Die Position erfüllt die Doppler-Konfiguration.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>Die Position erfüllt den Spielstand.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>Die Position erfüllt den Entscheidungstyp (Stein oder Doppler).</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>Die Position erfüllt den Würfelwurf (beide Würfel, unabhängig von der Reihenfolge).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>Die Position erfüllt den Würfelwurf nur beim ersten Würfel (der Wert des ersten Würfels erscheint auf einem der beiden Würfel der Position).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>Die Position wurde <strong>nicht</strong> mit dem Wurf 6-5 gespielt (unabhängig von der Reihenfolge). Der Wert wird im Token angezeigt; wiederholbar, um mehrere Würfe auszuschließen (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>Die Position ist kontaktlos.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>Die Stellung befindet sich in einer bestimmten Spielphase: <code>opening</code> (Eröffnung), <code>middlegame</code> (Mittelspiel), <code>race</code> (Wettlauf) oder <code>bearoff</code> (Auswürfeln). Wiederholbar (<code>ph:race ph:bearoff</code>). Die Kennzeichnung wird aus dem Brett abgeleitet und ist nie editierbar; <code>blunderdb repair</code> berechnet sie neu.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>Die Position oder ihr Spiegelbild erfüllt die Filter.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>Die Stellung wurde einzeln importiert und nicht durch einen Match-Import eingebracht.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>Die Position wurde in der Ursprungssoftware markiert, beim Import einer eXtreme-Gammon-Partie.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
 <td>Die Position enthält keinen Stein der Ausschlussstruktur (Registerkarte „Except“ des Suchpanels).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>Der Spieler liegt im Rennen mindestens x Pips zurück.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>Der Spieler liegt im Rennen höchstens x Pips zurück.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>Der Spieler liegt im Rennen zwischen x und y Pips zurück.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>Der Spieler hat ein Rennen von mindestens x Pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>Der Spieler hat ein Rennen von höchstens x Pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>Der Spieler hat ein Rennen zwischen x und y Pips.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>Die Equity (in Millipunkten) der Position ist größer als x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>Die Equity (in Millipunkten) der Position ist kleiner als x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>Die Equity (in Millipunkten) der Position liegt zwischen x und y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist größer als x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) ist kleiner als x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>Der Fehler des von Spieler 1 gespielten Zuges (in Millipunkten) liegt zwischen x und y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>Der Spieler hat Gewinnchancen von mehr als x %.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>Der Spieler hat Gewinnchancen von weniger als x %.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>Der Spieler hat Gewinnchancen zwischen x % und y %.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>Der Spieler hat Gammon-Chancen von mehr als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>Der Spieler hat Gammon-Chancen von weniger als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>Der Spieler hat Gammon-Chancen zwischen x % und y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>Der Spieler hat Backgammon-Chancen von mehr als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>Der Spieler hat Backgammon-Chancen von weniger als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>Der Spieler hat Backgammon-Chancen zwischen x % und y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>Der Gegner hat Gewinnchancen von mehr als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>Der Gegner hat Gewinnchancen von weniger als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>Der Gegner hat Gewinnchancen zwischen x % und y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>Der Gegner hat Gammon-Chancen von mehr als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>Der Gegner hat Gammon-Chancen von weniger als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>Der Gegner hat Gammon-Chancen zwischen x % und y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>Der Gegner hat Backgammon-Chancen von mehr als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>Der Gegner hat Backgammon-Chancen von weniger als x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>Der Gegner hat Backgammon-Chancen zwischen x % und y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>Der Spieler hat mindestens x ausgewürfelte Steine.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>Der Spieler hat höchstens x ausgewürfelte Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>Der Spieler hat zwischen x und y ausgewürfelte Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>Der Gegner hat mindestens x ausgewürfelte Steine.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>Der Gegner hat höchstens x ausgewürfelte Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>Der Gegner hat zwischen x und y ausgewürfelte Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>Der Spieler hat mindestens x rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>Der Spieler hat höchstens x rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>Der Spieler hat zwischen x und y rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>Der Gegner hat mindestens x rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>Der Gegner hat höchstens x rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>Der Gegner hat zwischen x und y rückständige Steine.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>Der Spieler hat mindestens x Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>Der Spieler hat höchstens x Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>Der Spieler hat zwischen x und y Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>Der Gegner hat mindestens x Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>Der Gegner hat höchstens x Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>Der Gegner hat zwischen x und y Steine in der Zone.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>Der Spieler hat mindestens x Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>Der Spieler hat höchstens x Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>Der Spieler hat zwischen x und y Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>Der Gegner hat mindestens x Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>Der Gegner hat höchstens x Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>Der Gegner hat zwischen x und y Blots im Outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>Der Spieler hat mindestens x Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>Der Spieler hat höchstens x Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>Der Spieler hat zwischen x und y Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>Der Gegner hat mindestens x Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>Der Gegner hat höchstens x Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>Der Gegner hat zwischen x und y Blots im Heimfeld.</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>t'wort1;wort2;...'</code></td>
 <td>Die Kommentare der Position enthalten mindestens eines der Wörter.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>Die Position hat einen Kommentar, unabhängig vom Inhalt.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>Die Position hat keinen Kommentar.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>Die Stellung trägt einen Kommentar einer bestimmten Herkunft: <code>user</code> (von Ihnen geschrieben), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (durch einen Partie-Import mitgebracht) oder <code>unknown</code>. Wiederholbar (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
 <td><code>m'muster1,muster2,...'</code></td>
 <td>Die besten Steinzüge, die mindestens eines der Muster enthalten.</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>m'ND,DT,DP,...'</code></td>
 <td>Die besten Doppler-Entscheidungen für No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Datum des Hinzufügens der Position nach x (JJJJ/MM/TT).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Datum des Hinzufügens der Position vor x (JJJJ/MM/TT).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Datum des Hinzufügens der Position zwischen x und y (JJJJ/MM/TT).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Sucht im Match mit der ID x (z. B. ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Sucht in den Matches mit den IDs von x bis y (z. B. ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Sucht im Turnier mit der ID x (z. B. tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Sucht in den Turnieren mit den IDs von x bis y (z. B. tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Die Position mit der Kennung x suchen (z. B. id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Die Positionen mit den Kennungen x bis y suchen (z. B. id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td><code>pl'Name'</code></td>
 <td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

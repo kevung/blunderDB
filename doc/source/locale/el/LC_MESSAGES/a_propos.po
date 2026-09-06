@@ -264,4 +264,3 @@ msgstr ""
 "οι γραμματοσειρές `Nunito <https://github.com/googlefonts/nunito>`__ και "
 "`Noto Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ "
 "(SIL Open Font License 1.1)."
-

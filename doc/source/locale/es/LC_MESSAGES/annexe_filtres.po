@@ -418,4 +418,3 @@ msgstr "Tras ``s tn1``, buscar las decisiones de cubo"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

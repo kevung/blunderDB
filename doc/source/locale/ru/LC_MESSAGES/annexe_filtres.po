@@ -417,4 +417,3 @@ msgstr "s"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "s"
-

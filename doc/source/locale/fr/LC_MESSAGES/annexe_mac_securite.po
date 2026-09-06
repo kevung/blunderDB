@@ -86,4 +86,3 @@ msgid ""
 "Vous n'avez à réaliser cette opération qu'une seule fois. Par la suite, "
 "vous pourrez ouvrir blunderDB sans avoir à passer par ces étapes."
 msgstr ""
-

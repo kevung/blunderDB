@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:27+0200\n"
+"POT-Creation-Date: 2026-09-06 03:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -135,10 +135,12 @@ msgstr "epc"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
-"verdict de videau en bearoff)."
+"verdict de videau en bearoff). ``epc`` est l'ancien nom de ce panneau, "
+"conservé."
 msgstr ""
 "Открывает панель Eval (Effective Pip Count, вероятность выигрыша и "
-"вердикт по кубу при снятии шашек)."
+"вердикт по кубу при выбросе). ``epc`` — прежнее название этой панели, "
+"сохранённое как есть."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"
@@ -384,9 +386,78 @@ msgstr "Искать среди текущих отфильтрованных п
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
+#: ../../source/cmd_mode.rst:89
+msgid ""
+"Cette table est la référence de la grammaire de recherche : la ligne de "
+"commande, la bibliothèque de filtres et le drapeau ``--query`` de "
+"``blunderdb search`` lisent tous les mêmes jetons. La colonne *Équivalent"
+" CLI* donne, quand il existe, le drapeau de ``search`` qui fait la même "
+"chose (voir :ref:`cli`) ; un tiret signale un filtre que seule la "
+"grammaire exprime."
+msgstr ""
+"Эта таблица — эталон грамматики поиска: командная строка, библиотека "
+"фильтров и флаг ``--query`` команды ``blunderdb search`` читают одни и те"
+" же токены. Столбец *Эквивалент CLI* даёт, когда он существует, флаг "
+"``search``, делающий то же самое (см. :ref:`cli`); тире отмечает фильтр, "
+"который выражает только грамматика."
+
+#: ../../source/cmd_mode.rst:96
+msgid ""
+"Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
+"recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
+"sont posés, ``d`` le type de décision, ``D`` et ``D1`` les dés, ``x`` la "
+"structure dessinée dans l'onglet *Sauf*. Un lancer ne s'écrit donc jamais"
+" dans le jeton : ``D65`` n'existe pas, seule la forme d'exclusion porte "
+"ses chiffres (``xD65``). En ligne de commande, où il n'y a pas de "
+"plateau, ces jetons se comparent à un plateau vide ; ce sont les drapeaux"
+" de la troisième colonne qu'il faut y employer."
+msgstr ""
+"Пять токенов не несут своего значения: они читают его с доски поиска. "
+"``cube`` и ``score`` берут куб и счёт, выставленные на ней, ``d`` — тип "
+"решения, ``D`` и ``D1`` — кубики, ``x`` — структуру, нарисованную во "
+"вкладке *Кроме*. Бросок поэтому никогда не пишется в самом токене: "
+"``D65`` не существует, только форма исключения несёт свои цифры "
+"(``xD65``). В командной строке, где доски нет, эти токены сравниваются с "
+"пустой доской; там нужно применять флаги из третьего столбца."
+
+#: ../../source/cmd_mode.rst:105
+msgid ""
+"Les erreurs et les équités se comptent en **millièmes d'équité** — les "
+"*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
+"ont coûté au moins un dixième de point, un point valant 1000 millièmes."
+msgstr ""
+"Ошибки и эквити считаются в **тысячных долях эквити** — это *миллипоинты*"
+" из таблицы ниже: ``E>100`` оставляет ходы, стоившие не менее одной "
+"десятой очка, поскольку очко равно 1000 тысячных."
+
+#: ../../source/cmd_mode.rst:109
+msgid "Deux recherches complètes :"
+msgstr "Два полных поиска:"
+
+#: ../../source/cmd_mode.rst:111
+#, no-python-format
+msgid ""
+"``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
+"chances de gain, aucun commentaire."
+msgstr ""
+"``s p>30 w40,60 xco`` — отставание более 30 пипов, шансы на выигрыш от 40"
+" % до 60 %, без комментария."
+
+#: ../../source/cmd_mode.rst:113
+msgid ""
+"``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
+"millièmes, et un commentaire venu d'eXtreme Gammon."
+msgstr ""
+"``s ph:race E>50 co:xg`` — в гонке, ход, стоивший не менее 50 тысячных, и"
+" комментарий из eXtreme Gammon."
+
 #: ../../source/cmd_mode.rst:1
 msgid "Requête"
 msgstr "Запрос"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Équivalent CLI"
+msgstr "Эквивалент CLI"
 
 #: ../../source/cmd_mode.rst:1
 msgid "cube, cub, cu, c"
@@ -397,12 +468,20 @@ msgid "La position vérifie la configuration du cube."
 msgstr "Позиция соответствует конфигурации куба."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--cube``"
+msgstr "``--cube``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "score, sco, sc, s"
 msgstr "score, sco, sc, s"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le score."
 msgstr "Позиция соответствует счёту."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--score1`` ``--score2``"
+msgstr "``--score1`` ``--score2``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "d"
@@ -413,12 +492,20 @@ msgid "La position vérifie le type de décision (pion ou cube)."
 msgstr "Позиция соответствует типу решения (шашка или куб)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--decision``"
+msgstr "``--decision``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
 msgstr "Позиция соответствует броску кубиков (оба кубика, независимо от порядка)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--dice 6,5``"
+msgstr "``--dice 6,5``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -433,6 +520,10 @@ msgstr ""
 "кубика присутствует на одном из двух кубиков позиции)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--dice 6``"
+msgstr "``--dice 6``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xD65"
 msgstr "xD65"
 
@@ -445,6 +536,10 @@ msgstr ""
 "Позиция **не** была сыграна с броском 6-5 (порядок неважен). Значение "
 "указано в жетоне; повторяемо для исключения нескольких бросков (``xD65 "
 "xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -472,6 +567,10 @@ msgstr ""
 "никогда не редактируется; команда ``blunderdb repair`` пересчитывает её."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--phase``"
+msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "M"
 msgstr "M"
 
@@ -488,6 +587,10 @@ msgid "La position a été importée seule, et non apportée par l'import d'un m
 msgstr "Позиция была импортирована отдельно, а не пришла с импортом матча."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--individual``"
+msgstr "``--individual``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "fl"
 msgstr "fl"
 
@@ -500,13 +603,17 @@ msgstr ""
 "Gammon."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--flagged``"
+msgstr "``--flagged``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "x"
 msgstr "x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position ne contient aucun pion de la structure d'exclusion (onglet « "
-"Except » du panneau de recherche)."
+"La position ne contient aucun pion de la structure d'exclusion (onglet "
+"*Sauf* du panneau de recherche)."
 msgstr ""
 "Позиция не содержит ни одной шашки из структуры исключения (вкладка "
 "«Except» панели поиска)."
@@ -520,6 +627,10 @@ msgid "Le joueur a au moins x pips de retard à la course."
 msgstr "Игрок отстаёт в гонке как минимум на x пипов."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-min``"
+msgstr "``--pip-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "p<x"
 msgstr "p<x"
 
@@ -528,12 +639,20 @@ msgid "Le joueur a au plus x pips de retard à la course."
 msgstr "Игрок отстаёт в гонке не более чем на x пипов."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--pip-max``"
+msgstr "``--pip-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "px,y"
 msgstr "px,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a entre x et y pips de retard à la course."
 msgstr "Игрок отстаёт в гонке на величину от x до y пипов."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pip-min`` ``--pip-max``"
+msgstr "``--pip-min`` ``--pip-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "P>x"
@@ -592,12 +711,20 @@ msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure �
 msgstr "Ошибка хода, сыгранного игроком 1 (в миллипунктах), больше x."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min``"
+msgstr "``--move-error-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr "Ошибка хода, сыгранного игроком 1 (в миллипунктах), меньше x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--move-error-max``"
+msgstr "``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Ex,y"
@@ -612,12 +739,20 @@ msgstr ""
 " от x до y."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--move-error-min`` ``--move-error-max``"
+msgstr "``--move-error-min`` ``--move-error-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a des chances de gain supérieures à x %."
 msgstr "У игрока шансы на победу более x%."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min``"
+msgstr "``--winrate-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "w<x"
@@ -628,6 +763,10 @@ msgid "Le joueur a des chances de gain inférieures à x %."
 msgstr "У игрока шансы на победу менее x%."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--winrate-max``"
+msgstr "``--winrate-max``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "wx,y"
 msgstr "wx,y"
 
@@ -635,6 +774,10 @@ msgstr "wx,y"
 #, no-python-format
 msgid "Le joueur a des chances de gain comprises à x % et y %."
 msgstr "У игрока шансы на победу составляют от x% до y%."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--winrate-min`` ``--winrate-max``"
+msgstr "``--winrate-min`` ``--winrate-max``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "g>x"
@@ -770,6 +913,10 @@ msgid "Le joueur a au moins x pions sortis."
 msgstr "У игрока выведено как минимум x шашек."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--off1-min``"
+msgstr "``--off1-min``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "o<x"
 msgstr "o<x"
 
@@ -792,6 +939,10 @@ msgstr "O>x"
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a au moins x pions sortis."
 msgstr "У противника выведено как минимум x шашек."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--off2-min``"
+msgstr "``--off2-min``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "O<x"
@@ -1018,12 +1169,20 @@ msgid "La position porte un commentaire, quel qu'en soit le contenu."
 msgstr "Позиция содержит комментарий, независимо от его содержания."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--has-comment``"
+msgstr "``--has-comment``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "xco"
 msgstr "xco"
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ne porte aucun commentaire."
 msgstr "Позиция не содержит комментария."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--no-comment``"
+msgstr "``--no-comment``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "co:user"
@@ -1038,6 +1197,10 @@ msgstr ""
 "Позиция несёт комментарий заданного происхождения: ``user`` (написанный "
 "вами), ``xg``, ``gnubg``, ``bgf`` (пришедший с импортом матча) или "
 "``unknown``. Повторяемый (``co:xg co:gnubg``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-origin``"
+msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
@@ -1090,6 +1253,10 @@ msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
 msgstr "Поиск в матче с идентификатором x (пример: ma3)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--match-ids``"
+msgstr "``--match-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "max,y"
 msgstr "max,y"
 
@@ -1104,6 +1271,10 @@ msgstr "tnx"
 #: ../../source/cmd_mode.rst:1
 msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
 msgstr "Поиск в турнире с идентификатором x (пример: tn1)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--tournament-ids``"
+msgstr "``--tournament-ids``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "tnx,y"
@@ -1122,6 +1293,10 @@ msgid "Rechercher la position d'identifiant x (ex: id12)."
 msgstr "Найти позицию с идентификатором x (напр. id12)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--position-ids``"
+msgstr "``--position-ids``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "idx,y"
 msgstr "idx,y"
 
@@ -1138,10 +1313,10 @@ msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
 "sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
 msgstr ""
-"Поиск позиций из матча с участием указанного игрока на любой стороне (напр. "
-"``pl'Alice'``). Без учёта регистра."
+"Поиск позиций из матча с участием указанного игрока на любой стороне "
+"(напр. ``pl'Alice'``). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:188
+#: ../../source/cmd_mode.rst:215
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
@@ -1152,4 +1327,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Очищает историю команд."
-

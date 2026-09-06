@@ -966,4 +966,3 @@ msgstr ""
 #: ../../source/cli.rst:685
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
-

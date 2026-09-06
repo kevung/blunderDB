@@ -41,7 +41,15 @@ LANGUAGES = [
 
 language = 'fr'
 templates_path = ['_templates']
-locale_dirs = ['locale/']
+# locale/ holds the eight catalogues sphinx-intl regenerates from the French
+# sources (scripts/doc-po-update.sh). locale_theme/ holds what that
+# regeneration would destroy: translations of the THEME's own strings
+# ("Tip", "Next", "Search docs", …) for a language the theme does not ship —
+# sphinx_rtd_theme has no ja locale and Sphinx's own ja catalogue leaves
+# "Tip" untranslated. Sphinx merges the two directories for the `sphinx`
+# domain, the second as a fallback, so locale/ja/…/sphinx.po may be
+# regenerated freely. Add a language here only when the theme lacks it.
+locale_dirs = ['locale/', 'locale_theme/']
 gettext_compact = False
 exclude_patterns = []
 html_theme = "sphinx_rtd_theme"

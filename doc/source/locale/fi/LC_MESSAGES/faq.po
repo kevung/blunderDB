@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -145,10 +145,10 @@ msgstr "Miten useita tietokantoja yhdistetään?"
 #: ../../source/faq.rst:67
 msgid ""
 "Si vous avez plusieurs bases de données blunderDB que vous souhaitez "
-"regrouper, utilisez la fonctionnalité \"Import Database\" :"
+"regrouper, utilisez la fonctionnalité « Importer une base de données » :"
 msgstr ""
-"Jos sinulla on useita blunderDB-tietokantoja, jotka haluat yhdistää, "
-"käytä \"Import Database\" -toimintoa:"
+"Jos sinulla on useita blunderDB-tietokantoja, jotka haluat yhdistää, käytä"
+" ”Tuo tietokanta” -toimintoa:"
 
 #: ../../source/faq.rst:70
 msgid ""
@@ -157,8 +157,10 @@ msgid ""
 msgstr "Avaa päätietokanta (se, joka vastaanottaa tuodut asemat)"
 
 #: ../../source/faq.rst:71
-msgid "Cliquez sur le bouton \"Import Database\" dans la barre d'outils"
-msgstr "Napsauta työkalupalkin \"Import Database\" -painiketta"
+msgid ""
+"Cliquez sur le bouton « Importer une base de données » dans la barre "
+"d'outils"
+msgstr "Napsauta työkalupalkin ”Tuo tietokanta” -painiketta"
 
 #: ../../source/faq.rst:72
 msgid "Sélectionnez la base de données à importer"
@@ -170,14 +172,13 @@ msgstr "blunderDB yhdistää asemat automaattisesti"
 
 #: ../../source/faq.rst:75
 msgid ""
-"Lors de la fusion, blunderDB évite les doublons et fusionne "
-"intelligemment les analyses et commentaires. Les positions identiques ne "
-"seront pas dupliquées, mais leurs analyses et commentaires seront "
-"combinés."
+"Lors de la fusion, blunderDB évite les doublons : une position déjà "
+"présente n'est pas dupliquée, et les analyses des différents moteurs "
+"cohabitent au lieu de s'écraser (voir :ref:`import_regles`)."
 msgstr ""
-"Yhdistämisen aikana blunderDB välttää kaksoiskappaleet ja yhdistää "
-"analyysit ja kommentit älykkäästi. Identtisiä asemia ei kahdenneta, vaan "
-"niiden analyysit ja kommentit yhdistetään."
+"Yhdistämisen aikana blunderDB välttää kaksoiskappaleet: jo olemassa olevaa"
+" asemaa ei monisteta, ja eri moottorien analyysit elävät rinnakkain sen"
+" sijaan että korvaisivat toisensa (ks. :ref:`import_regles`)."
 
 #: ../../source/faq.rst:80
 msgid ""
@@ -257,10 +258,103 @@ msgstr ""
 "hyödyntävät rikkaimmin."
 
 #: ../../source/faq.rst:118
+msgid "J'utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?"
+msgstr "Käytän jo eXtreme Gammonia: mihin tarvitsen blunderDB:tä?"
+
+#: ../../source/faq.rst:120
+msgid ""
+"blunderDB ne rejoue pas vos matchs, il les rassemble. Trois différences "
+"concrètes :"
+msgstr ""
+"blunderDB ei pelaa ottelujasi uudelleen, se kokoaa ne yhteen. Kolme"
+" konkreettista eroa:"
+
+#: ../../source/faq.rst:123
+msgid ""
+"**agréger** dans un seul fichier des matchs venus d'XG, de GNUbg, de "
+"BGBlitz et de Jellyfish, dédoublonnés position par position ;"
+msgstr ""
+"**koota** yhteen tiedostoon otteluita XG:stä, GNUbg:stä, BGBlitzistä ja"
+" Jellyfishistä, kaksoiskappaleet karsittuina asema asemalta;"
+
+#: ../../source/faq.rst:126
+msgid ""
+"**chercher** par structure de pions et par erreur : « les prises à ce "
+"score où j'ai perdu plus de 50 millipoints » s'écrit en une ligne de "
+"commande (voir :ref:`cmd_mode`) ;"
+msgstr ""
+"**hakea** nappularakenteen ja virheen mukaan: ”tämän tuloksen otot, joissa"
+" hävisin yli 50 millipistettä” kirjoitetaan yhtenä komentorivinä (ks."
+" :ref:`cmd_mode`);"
+
+#: ../../source/faq.rst:130
+msgid ""
+"**réviser** les positions retenues par répétition espacée, en paquets "
+"Anki (voir :ref:`panneau_anki`)."
+msgstr ""
+"**kerrata** poimitut asemat välitoistolla, Anki-pakkoina (ks."
+" :ref:`panneau_anki`)."
+
+#: ../../source/faq.rst:133
+msgid ""
+"Vos analyses XG restent celles d'XG : blunderDB les importe telles "
+"quelles et ne les recalcule jamais (voir :ref:`import_regles`)."
+msgstr ""
+"XG-analyysisi pysyvät XG:n analyyseina: blunderDB tuo ne sellaisinaan eikä"
+" koskaan laske niitä uudelleen (ks. :ref:`import_regles`)."
+
+#: ../../source/faq.rst:138
+msgid "Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?"
+msgstr "Tuodaanko XG:n rollout-analyysit? Tekeekö blunderDB rollouteja?"
+
+#: ../../source/faq.rst:140
+msgid ""
+"Non, dans les deux sens. D'une analyse XG, l'import conserve l'étiquette "
+"de niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les "
+"erreurs et les probabilités ; il n'ouvre pas les données de rollout du "
+"fichier ``.xg`` et n'en retient donc ni le nombre d'essais ni l'écart "
+"type. Une analyse XG collée en texte garde en revanche littéralement son "
+"étiquette, « Rollout » comprise. L'évaluateur embarqué, lui, ne fait pas "
+"de rollout : il répond par une recherche à 0 ou 2 lancers d'avance."
+msgstr ""
+"Ei, kumpaankaan suuntaan. XG-analyysistä tuonti säilyttää tason merkinnän"
+" (”3-ply”, ”XG Roller++”, ”Book”), equityt, virheet ja todennäköisyydet;"
+" se ei avaa ``.xg``-tiedoston rollout-tietoja eikä siis ota talteen"
+" kokeiden lukumäärää eikä keskihajontaa. Tekstinä liitetty XG-analyysi sen"
+" sijaan säilyttää merkintänsä kirjaimellisesti, ”Rollout” mukaan lukien."
+" Sisäänrakennettu evaluaattori puolestaan ei tee rollouteja: se vastaa"
+" haulla, joka katsoo 0 tai 2 heittoa eteenpäin."
+
+#: ../../source/faq.rst:150
+msgid "Qu'a-t-on mesuré de l'évaluateur intégré, et que n'a-t-on pas mesuré ?"
+msgstr "Mitä sisäänrakennetusta evaluaattorista on mitattu ja mitä ei ole?"
+
+#: ../../source/faq.rst:152
+#, no-python-format
+msgid ""
+"Une mesure est publiée, sur le régime *évalué* du panneau Eval : 4000 "
+"décisions money de course, comparées à la table de bearoff exacte — 93,4 "
+"% d'accord de verdict (3735/4000), mais 61,1 % seulement à moins de 1 % "
+"du point de prise contre 94,4 % au-delà de 20 % ; écart de probabilité de"
+" gain moyen 0,85 %, maximum 8,30 %. Ce qui n'est pas mesuré : le verdict "
+"de videau **au score de match** et les **positions de contact**, pour "
+"lesquels aucun chiffre n'est publié. Le détail des hypothèses est dans "
+":ref:`epc_methodologie`."
+msgstr ""
+"Yksi mittaus on julkaistu, Eval-paneelin *arvioidusta* toimintatavasta:"
+" 4000 juoksuvaiheen money-päätöstä verrattuna tarkkaan bearoff-taulukkoon"
+" — tuomioista täsmää 93,4 % (3735/4000), mutta alle 1 %:n päässä"
+" ottopisteestä vain 61,1 %, kun yli 20 %:n päässä osuus on 94,4 %;"
+" voittotodennäköisyyden keskimääräinen poikkeama 0,85 %, suurin 8,30 %."
+" Mitä ei ole mitattu: kuutiotuomio **ottelun tuloksessa** ja"
+" **kontaktiasemat**, joista ei ole julkaistu yhtään lukua. Oletusten"
+" yksityiskohdat ovat kohdassa :ref:`epc_methodologie`."
+
+#: ../../source/faq.rst:162
 msgid "Qu'est-ce qu'une collection?"
 msgstr "Mikä on kokoelma?"
 
-#: ../../source/faq.rst:120
+#: ../../source/faq.rst:164
 msgid ""
 "Une collection est un regroupement personnalisé de positions. "
 "Contrairement à une recherche par filtres qui est dynamique, une "
@@ -273,11 +367,11 @@ msgstr ""
 "valinnut manuaalisesti. Kokoelmien avulla voi esimerkiksi ryhmitellä "
 "viiteasemia tietyn aiheen mukaan."
 
-#: ../../source/faq.rst:128
+#: ../../source/faq.rst:172
 msgid "Qu'est-ce que l'EPC?"
 msgstr "Mikä on EPC?"
 
-#: ../../source/faq.rst:130
+#: ../../source/faq.rst:174
 msgid ""
 "L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip"
 " count pour évaluer les positions de bearoff. Le panneau Eval de "
@@ -292,7 +386,7 @@ msgstr ""
 "koneella ensimmäisellä käynnistyksellä, ja laskee reaaliajassa EPC:n, "
 "heittojen keskimääräisen määrän, keskihajonnan, pip countin ja wastagen."
 
-#: ../../source/faq.rst:136
+#: ../../source/faq.rst:180
 msgid ""
 "Sur les positions de bearoff pur, le panneau affiche aussi la probabilité"
 " de gain du joueur au trait et, lorsque la position est couverte par une "
@@ -304,19 +398,19 @@ msgid ""
 "du manuel pour le détail des hypothèses."
 msgstr ""
 "Puhtaissa bearoff-asemissa paneeli näyttää myös vuorossa olevan pelaajan "
-"voittotodennäköisyyden ja, kun asema kuuluu two-sided-tietokannan piiriin "
-"(TS-06-06-taulukko lasketaan ensimmäisellä käynnistyksellä, laajennettu "
+"voittotodennäköisyyden ja, kun asema kuuluu two-sided-tietokannan piiriin"
+" (TS-06-06-taulukko lasketaan ensimmäisellä käynnistyksellä, laajennettu "
 "TS-06-11-taulukko lasketaan asetusten *Bearoff*-välilehdeltä), tarkan "
-"money-kuutiopäätöksen. Tämän alueen ulkopuolella todennäköisyys arvioidaan "
-"virhemarginaaleineen, eikä kuutiopäätöstä tarkoituksella näytetä. Katso "
-"oletusten yksityiskohdat käsikirjan osiosta « Eval-paneelin metodologia ja "
-"oletukset »."
+"money-kuutiopäätöksen. Tämän alueen ulkopuolella todennäköisyys "
+"arvioidaan virhemarginaaleineen, eikä kuutiopäätöstä tarkoituksella "
+"näytetä. Katso oletusten yksityiskohdat käsikirjan osiosta « Eval-"
+"paneelin metodologia ja oletukset »."
 
-#: ../../source/faq.rst:147
+#: ../../source/faq.rst:191
 msgid "Que vaut l'évaluateur intégré (gammonNet) ?"
 msgstr "Mitä sisäänrakennettu arviointimoottori (gammonNet) on arvoinen?"
 
-#: ../../source/faq.rst:149
+#: ../../source/faq.rst:193
 msgid ""
 "gammonNet est un réseau de neurones entraîné par un tiers (voir Crédits),"
 " porté en Go et compilé dans blunderDB : aucun logiciel externe, aucune "
@@ -344,34 +438,35 @@ msgstr ""
 " Katso käsikirjan osiot ”Eval-paneeli” ja ”Eval-paneelin menetelmät ja "
 "oletukset”."
 
-#: ../../source/faq.rst:163
+#: ../../source/faq.rst:207
 msgid "Quelle est la différence entre le PR et le Snowie Error Rate?"
 msgstr "Mikä on ero PR:n ja Snowie Error Raten välillä?"
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:209
 msgid ""
-"Le PR (Performance Rating) est la moyenne des erreurs d'équité "
-"(normalisée, en millièmes de point) sur l'ensemble des décisions comptées"
-" ; plus il est bas, mieux on joue. Le Snowie Error Rate rapporte cette "
-"même moyenne au nombre de *coups* plutôt qu'au nombre de *décisions* — un"
-" match plus long n'aggrave donc pas mécaniquement le SER. blunderDB "
+"Le PR (*Performance Rating*) est l'erreur moyenne d'équité par décision "
+"comptée, multipliée par 500 comme le font eXtreme Gammon et GNUbg ; plus "
+"il est bas, mieux on joue. Le Snowie Error Rate rapporte cette même "
+"moyenne au nombre de *coups* plutôt qu'au nombre de *décisions* — un "
+"match plus long n'aggrave donc pas mécaniquement le SER. blunderDB "
 "affiche les deux dans le panneau Stats, alignés sur les conventions "
 "d'eXtreme Gammon et de GNUbg (voir :ref:`stats_parity` pour le détail des"
 " règles de comptage)."
 msgstr ""
-"PR (Performance Rating) on tasapainovirheiden keskiarvo (normalisoituna, "
-"pisteen tuhannesosina) kaikista lasketuista päätöksistä; mitä alempi, "
-"sitä paremmin pelaa. Snowie Error Rate suhteuttaa saman keskiarvon "
-"*siirtojen* eikä *päätösten* määrään — pidempi ottelu ei siis "
-"mekaanisesti huononna SER:iä. blunderDB näyttää molemmat Stats-"
-"paneelissa, yhdenmukaistettuna eXtreme Gammonin ja GNUbg:n käytäntöjen "
-"kanssa (katso :ref:`stats_parity` laskentasääntöjen yksityiskohdista)."
+"PR (*Performance Rating*) on keskimääräinen equity-virhe laskettua"
+" päätöstä kohti kerrottuna 500:lla, kuten eXtreme Gammon ja GNUbg tekevät;"
+" mitä alempi, sitä paremmin pelaa. Snowie Error Rate suhteuttaa saman"
+" keskiarvon *siirtojen* eikä *päätösten* määrään — pidempi ottelu ei siis"
+" mekaanisesti huononna SER:iä. blunderDB näyttää molemmat"
+" Stats-paneelissa, yhdenmukaistettuna eXtreme Gammonin ja GNUbg:n"
+" käytäntöjen kanssa (katso :ref:`stats_parity` laskentasääntöjen"
+" yksityiskohdista)."
 
-#: ../../source/faq.rst:175
+#: ../../source/faq.rst:219
 msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
 msgstr "Onko blunderDB:ssä komentorivikäyttöliittymä?"
 
-#: ../../source/faq.rst:177
+#: ../../source/faq.rst:221
 msgid ""
 "Oui, blunderDB dispose d'une interface en ligne de commande (CLI) "
 "permettant d'effectuer sans interface graphique des opérations telles que"
@@ -384,11 +479,11 @@ msgstr ""
 "tietokantojen luonti, otteluiden tuonti, vienti, asemien haku, tilastojen"
 " näyttö jne. Katso lisätietoja CLI-dokumentaatiosta."
 
-#: ../../source/faq.rst:185
+#: ../../source/faq.rst:229
 msgid "blunderDB propose-t-il un mode serveur?"
 msgstr "Tarjoaako blunderDB palvelintilan?"
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:231
 msgid ""
 "Oui, un mode « headless » facultatif : le même binaire, lancé avec "
 "``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un "
@@ -404,29 +499,29 @@ msgstr ""
 "Kyllä, valinnaisen ”headless”-tilan: sama binääri, käynnistettynä "
 "``serve``-komennolla, tuo blunderDB:n moottorin saataville HTTP + JSON "
 "-muodossa todentavan reverse-proxyn takana (blunderDB itse ei tee mitään "
-"todennusta). Se voi käyttää SQLitea tai monivuokralaista PostgreSQL:ää, ja "
-"sillä ohjataan blunderDB:tä omista skripteistä tai itse tehdystä "
+"todennusta). Se voi käyttää SQLitea tai monivuokralaista PostgreSQL:ää, "
+"ja sillä ohjataan blunderDB:tä omista skripteistä tai itse tehdystä "
 "sovelluksesta HTTP + JSON -muodossa — verkkokäyttöliittymää ei ole — tai "
 "jaetaan tietokanta useiden pelaajien kesken. Normaali käyttö on edelleen "
 "työpöytäsovellus; katso :ref:`headless` yksityiskohtia varten (mukaan "
 "lukien valmis Docker-image) ja käyttöoppaan opastus ”Palvelintilan "
 "käyttöönotto proxyn takana”."
 
-#: ../../source/faq.rst:200
+#: ../../source/faq.rst:244
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "Voinko muokata, kopioida ja jakaa blunderDB:tä?"
 
-#: ../../source/faq.rst:202
+#: ../../source/faq.rst:246
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr "Kyllä, ehdottomasti. blunderDB on lisensoitu MIT-lisenssillä."
 
-#: ../../source/faq.rst:206
+#: ../../source/faq.rst:250
 msgid "Où sont stockées mes données?"
 msgstr "Missä tietoni säilytetään?"
 
-#: ../../source/faq.rst:208
+#: ../../source/faq.rst:252
 msgid ""
 "Sur votre disque, dans le fichier ``.db`` que vous avez choisi en créant "
 "la base : aucun compte, aucun serveur, aucune synchronisation par défaut."
@@ -439,11 +534,11 @@ msgstr ""
 " tämän tiedoston suoraan; vain valinnainen palvelintila (katso yllä) ajaa"
 " blunderDB:tä etänä, ja silloin sinä isännöit tuota palvelinta."
 
-#: ../../source/faq.rst:216
+#: ../../source/faq.rst:260
 msgid "Puis-je partager une base avec un autre joueur?"
 msgstr "Voinko jakaa tietokannan toisen pelaajan kanssa?"
 
-#: ../../source/faq.rst:218
+#: ../../source/faq.rst:262
 msgid ""
 "Oui : une base blunderDB est un simple fichier, il suffit de le copier ou"
 " de l'envoyer. Pour diffuser une base à un tiers, deux mécanismes "
@@ -465,11 +560,11 @@ msgstr ""
 "ja **salasanasuojaus** tuottaa salatun ``.dbx``-tiedoston. Katso "
 ":ref:`diffusion_controlee` käsikirjasta."
 
-#: ../../source/faq.rst:229
+#: ../../source/faq.rst:273
 msgid "Quel format de données utilise blunderDB?"
 msgstr "Mitä tietomuotoa blunderDB käyttää?"
 
-#: ../../source/faq.rst:231
+#: ../../source/faq.rst:275
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -477,11 +572,11 @@ msgstr ""
 "Tietokanta on yksinkertainen SQLite-tiedosto. Ilman blunderDB:tä se "
 "voidaan siis avata millä tahansa SQLite-tiedostoeditorilla."
 
-#: ../../source/faq.rst:236
+#: ../../source/faq.rst:280
 msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Mitkä olivat blunderDB:n suunnitteluperiaatteet?"
 
-#: ../../source/faq.rst:238
+#: ../../source/faq.rst:282
 msgid ""
 "Je voulais une interface accessible, mais pensée pour un usage avancé et "
 "soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
@@ -494,7 +589,7 @@ msgstr ""
 "*VÄLILYÖNTI*-näppäintä, ja pikanäppäimet palvelevat tätä käyttöä, ilman "
 "että ne ovat pakollisia."
 
-#: ../../source/faq.rst:243
+#: ../../source/faq.rst:287
 msgid ""
 "Je souhaitais par ailleurs blunderDB léger, autonome, sans installation "
 "et disponible pour différentes plateformes, d'où mon choix du langage Go "
@@ -509,7 +604,7 @@ msgstr ""
 "tiedostomuodon piti olla alustariippumaton ja sopiva tietokannan "
 "sisältämiseen. SQLite-tiedostomuoto vaikutti täydelliseltä valinnalta."
 
-#: ../../source/faq.rst:250
+#: ../../source/faq.rst:294
 msgid ""
 "Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
 "copier, sauvegarder ou envoyer à un autre joueur."
@@ -518,7 +613,7 @@ msgstr ""
 "tiedostona, jonka voi kopioida, varmuuskopioida tai lähettää toiselle "
 "pelaajalle."
 
-#: ../../source/faq.rst:253
+#: ../../source/faq.rst:297
 msgid ""
 "Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
@@ -532,11 +627,11 @@ msgstr ""
 "käyttötapa on kuitenkin edelleen työpöytäsovellus. Katso :ref:`cli` ja "
 ":ref:`headless`."
 
-#: ../../source/faq.rst:261
+#: ../../source/faq.rst:305
 msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Mikä on blunderDB:n ohjelmistoarkkitehtuuri?"
 
-#: ../../source/faq.rst:263
+#: ../../source/faq.rst:307
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données SQLite qui stocke les "
@@ -545,7 +640,7 @@ msgstr ""
 "Taustajärjestelmä on koodattu `Go <https://go.dev/>`_-kielellä. Se vastaa"
 " kaikista asemia tallentavan SQLite-tietokannan toiminnoista."
 
-#: ../../source/faq.rst:267
+#: ../../source/faq.rst:311
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -553,7 +648,7 @@ msgstr ""
 "Käyttöliittymä on koodattu `Svelte <https://svelte.dev/>`_-kielellä. Se "
 "vastaa graafisen käyttöliittymän ja backgammon-laudan piirtämisestä."
 
-#: ../../source/faq.rst:270
+#: ../../source/faq.rst:314
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -563,11 +658,11 @@ msgstr ""
 "mahdollistaa natiivien työpöytäsovellusten tuottamisen Windowsille, "
 "Linuxille ja macOS:lle."
 
-#: ../../source/faq.rst:274
+#: ../../source/faq.rst:318
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "Tietokantaa hallitsee `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:276
+#: ../../source/faq.rst:320
 msgid ""
 "Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
 "<https://www.postgresql.org/>`_ à la place de Sqlite pour les "
@@ -577,7 +672,7 @@ msgstr ""
 "<https://www.postgresql.org/>`_-tietokantaa SQLiten sijaan monen "
 "käyttäjän asennuksissa."
 
-#: ../../source/faq.rst:280
+#: ../../source/faq.rst:324
 msgid ""
 "L'évaluateur embarqué (`gammonNet "
 "<https://github.com/kevung/gammonNet>`_, MIT) est un réseau de neurones "
@@ -591,7 +686,7 @@ msgstr ""
 "ilman verkkoyhteyttä, ilman XG:tä tai GNUbg:tä. Katso ”Mitä "
 "sisäänrakennettu arviointimoottori on arvoinen?” alempana."
 
-#: ../../source/faq.rst:285
+#: ../../source/faq.rst:329
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -599,23 +694,22 @@ msgstr ""
 "Lisätietoja löytyy `blunderDB:n GitHub-arkistosta "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:288
+#: ../../source/faq.rst:332
 msgid "Sur quelles plateformes blunderDB fonctionne-t-il?"
 msgstr "Millä alustoilla blunderDB toimii?"
 
-#: ../../source/faq.rst:290
+#: ../../source/faq.rst:334
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB toimii Windowsissa, Linuxissa ja Macissa."
 
-#: ../../source/faq.rst:293
+#: ../../source/faq.rst:337
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Mistä blunderDB:n kuvake on peräisin?"
 
-#: ../../source/faq.rst:295
+#: ../../source/faq.rst:339
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
 msgstr ""
 "blunderDB:n kuvake on \"goggling\"-hymiö `SMirC-sarjasta "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
-

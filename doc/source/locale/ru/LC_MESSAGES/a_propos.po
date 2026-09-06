@@ -259,4 +259,3 @@ msgstr ""
 "шрифты `Nunito <https://github.com/googlefonts/nunito>`__ и `Noto Sans JP"
 " <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL Open Font "
 "License 1.1)."
-

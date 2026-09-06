@@ -14,7 +14,10 @@ combinables. blunderDB peut également être utilisé pour créer des catalogues
 de positions de référence.
 
 Les positions sont stockées dans une base de données représentée par un fichier
-*.db*.
+*.db*. L'application de bureau ouvre ce fichier directement, jamais une adresse
+réseau : le mode serveur (:ref:`headless`) est un autre mode du même binaire, et
+l'on passe de l'un à l'autre en exportant ou en migrant la base, pas en pointant
+l'application vers une URL.
 
 Interactions principales
 ------------------------
@@ -237,7 +240,8 @@ après confirmation.
 
 **Vérifiée ou non vérifiée.** Une table *vérifiée* a exactement les octets que
 gnubg produit pour son domaine : son empreinte SHA-256 figure dans blunderDB et
-a été retrouvée. Une table *non vérifiée* est bien formée mais son domaine n'a
+a été retrouvée. Les empreintes enregistrées pour les tables une face (OS-06 à
+OS-10) sont celles que produit l'outil ``makebearoff`` de GNUbg 1.08. Une table *non vérifiée* est bien formée mais son domaine n'a
 pas d'empreinte enregistrée — rien ne lui est reproché, simplement personne ne
 l'a comparée à la référence. Une table *corrompue* se contredit elle-même et
 n'est jamais lue ; elle est recalculée.
@@ -375,7 +379,11 @@ Navigation dans les positions
 
 Par défaut, blunderDB permet de:
 
-* faire défiler les différentes positions de la bibliothèque courante,
+* faire défiler les différentes positions de la bibliothèque courante — qui
+  n'est jamais chargée d'un bloc : blunderDB n'en tient que la liste des
+  identifiants et charge les positions par fenêtres de cinquante autour de
+  celle qui est affichée, si bien qu'une base de plusieurs dizaines de milliers
+  de positions s'ouvre aussi vite qu'une petite,
 
 * afficher les informations d'analyse associées à une position,
 
@@ -483,12 +491,12 @@ définir une structure de pions à rechercher sur le plateau.
    :alt: Panneau Recherche
 
    Le panneau Recherche : filtres numériques, structure de pions au plateau,
-   onglets *At least* / *Except*.
+   onglets *Au moins* / *Sauf*.
 
 Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). Le panneau
-de recherche propose également une case à cocher *Search in current results*
-pour la même fonctionnalité.
+de recherche propose également une case à cocher *Rechercher dans les
+résultats actuels* pour la même fonctionnalité.
 
 Le panneau propose un contrôle explicite du **type de décision** recherché :
 *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
@@ -572,6 +580,38 @@ avec les touches *GAUCHE* et *DROITE*. L'ordre des collections et des
 positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
+
+.. _import_regles:
+
+Import : ce qui est écrit, ce qui ne l'est jamais
+-------------------------------------------------
+
+Importer un match, une position ou une autre base ajoute ce qui manque ; cela
+ne remplace pas ce qui est déjà là.
+
+* **Une position n'est jamais dupliquée.** C'est son identité — pions, videau,
+  dés, score — qui la reconnaît, jamais le fichier d'où elle vient : la même
+  position rencontrée dans deux matchs reste une seule ligne.
+
+* **Une analyse par moteur.** eXtreme Gammon, GNUbg, BGBlitz et l'évaluateur
+  embarqué cohabitent sur une même position, et le panneau Analyse indique
+  l'origine de chacune. Importer l'une n'efface pas l'autre.
+
+* **Une analyse importée n'est jamais recalculée.** blunderDB la range telle
+  quelle, avec son étiquette de niveau (« 3-ply », « XG Roller++ », « Book »),
+  ses équités, ses erreurs, ses probabilités et la chance du lancer. La règle
+  est « une évaluation ne comble qu'un trou » : l'analyse automatique après
+  import ne visite que les positions sans **aucune** analyse, et
+  *Ré-analyser les positions périmées* laisse intacte toute position portant
+  une analyse importée (voir :ref:`configuration`).
+
+* **Réimporter le même fichier ne réécrit rien.** Le match est reconnu comme
+  déjà présent ; seules les marques posées dans le logiciel d'origine sont
+  ajoutées, sans toucher aux commentaires ni aux analyses.
+
+* **Ce que blunderDB n'écrit jamais** : une chance recalculée — elle est lue
+  dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre
+  pas les données dans un fichier ``.xg`` et qu'il ne sait pas produire.
 
 .. _panneau_matchs:
 
@@ -671,14 +711,14 @@ Introduction
 
 Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa
 progression dans le temps à partir des positions importées dans la base de
-données. Il calcule et affiche les indicateurs **PR** (Performance Rate) et
+données. Il calcule et affiche les indicateurs **PR** (*Performance Rating*) et
 **MWC cost** (Match Winning Chance cost) pour l'ensemble des positions ou un
 sous-ensemble filtré.
 
 Le panneau Stats est particulièrement utile pour :
 
-* **situer son niveau** par rapport aux seuils de référence (world-class,
-  expert, avancé…) grâce au PR global ;
+* **situer son niveau** par rapport aux bandes de niveau (*World Class*,
+  *Expert*, *Advanced*…) grâce au PR global ;
 
 * **suivre sa progression** tournoi après tournoi ou match après match grâce
   aux graphiques de l'onglet Progression ;
@@ -699,7 +739,7 @@ Ouverture du panneau
 Pour ouvrir le panneau Stats :
 
 * Appuyer sur *CTRL-D*.
-* Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande.
+* Saisir la commande ``stats`` ou ``st`` dans la ligne de commande.
 
 .. note::
    Le panneau se rafraîchit automatiquement à chaque modification du filtre.
@@ -750,25 +790,30 @@ Toggle PR / MWC
 Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée dans
 tous les onglets.
 
-**PR (Performance Rate)**
+**PR (Performance Rating)**
 
-  Somme des erreurs, en millièmes de point d'équité normalisée, divisée par
-  le nombre de décisions comptées. La règle de comptage exacte — quelles
-  décisions entrent au dénominateur, comment le score est converti — est
-  celle de :ref:`stats_parity`.
+  L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme
+  le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue
+  par décision, soit 10 millipoints (mpt). La règle de comptage exacte —
+  quelles décisions entrent au dénominateur, comment le score est converti —
+  est celle de :ref:`stats_parity`.
 
-  Seuils de référence approximatifs :
+  Les bandes de niveau que le panneau dessine derrière la courbe de
+  progression sont un **repère indicatif propre à blunderDB** : aucune
+  publication ne fait autorité sur ces seuils, et l'interface les affiche en
+  anglais.
 
   .. csv-table::
      :header: "Niveau", "PR"
      :widths: 20, 10
      :align: center
 
-     "World-class", "< 3"
-     "Expert", "3 – 5"
-     "Avancé", "5 – 8"
-     "Intermédiaire", "8 – 12"
-     "Débutant", "> 12"
+     "World Class", "< 2"
+     "Expert", "2 – 4"
+     "Advanced", "4 – 6"
+     "Intermediate", "6 – 9"
+     "Casual", "9 – 12"
+     "Beginner", "> 12"
 
 **MWC cost (Match Winning Chance cost)**
 
@@ -801,9 +846,9 @@ Cartes de niveau
 
 Trois cartes affichent le PR (ou MWC) pour :
 
-* **All** — toutes les décisions (coups + videau) ;
-* **Checker** — coups joués seulement ;
-* **Cube** — décisions de videau seulement.
+* **PR Global** — toutes les décisions (coups + videau) ;
+* **PR Coup** — coups joués seulement ;
+* **PR Cube** — décisions de videau seulement.
 
 Cliquer sur une carte charge dans le panneau d'analyse les positions du
 sous-ensemble correspondant (drill-down).
@@ -841,9 +886,9 @@ matérialisent les seuils de niveau.
 
 Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
 
-* **Open tournament** — ouvre le tournoi dans le panneau Tournois.
-* **Open positions** — charge toutes les positions du tournoi dans le panneau
-  d'analyse.
+* **Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois.
+* **Ouvrir les positions** — charge toutes les positions du tournoi dans le
+  panneau d'analyse.
 
 Scatter plot par match
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -853,9 +898,9 @@ La taille du point est proportionnelle au nombre de décisions dans le match.
 
 Cliquer sur un point ouvre un menu contextuel :
 
-* **Open match** — ouvre le match dans le panneau des matchs.
-* **Open positions** — charge toutes les positions du match dans le panneau
-  d'analyse.
+* **Ouvrir le match** — ouvre le match dans le panneau des matchs.
+* **Ouvrir les positions** — charge toutes les positions du match dans le
+  panneau d'analyse.
 
 Onglet Erreurs
 ~~~~~~~~~~~~~~
@@ -918,8 +963,8 @@ sous-ensemble avec erreur.
 Histogramme des magnitudes d'erreur
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Un histogramme distribue les erreurs selon leur magnitude en millièmes de
-point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
+Un histogramme distribue les erreurs selon leur magnitude en millipoints
+(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
 une barre charge les positions de la tranche.
 
 Onglet Joueurs
@@ -947,11 +992,11 @@ Colonnes, dans l'ordre :
    "Matchs", "Nombre de matchs disputés dans la période retenue."
    "V–D", "Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de matchs."
    "Décisions", "Nombre de décisions comptées — le dénominateur du PR. C'est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien."
-   "PR", "Performance Rate global."
+   "PR", "Performance Rating global."
    "PR pions, PR videau", "Le PR ventilé par type de décision."
    "Snowie", "Snowie Error Rate (voir :ref:`stats_parity`)."
    "Blunders", "Nombre d'erreurs graves (au moins 0,100 EMG)."
-   "Chance", "Chance moyenne par lancer, en millièmes de point, signée : positive si les dés ont été favorables."
+   "Chance", "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les dés ont été favorables."
 
 Utilisation :
 
@@ -991,16 +1036,16 @@ Règle d'agrégation
 
    .. math::
 
-      PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}
+      PR_{tournoi} = 500 \times \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}
 
    **Exemple :** un joueur dispute deux matchs dans un tournoi —
 
-   * Match A : 10 décisions, erreur totale 50 mp → PR = 5,0
-   * Match B : 90 décisions, erreur totale 270 mp → PR = 3,0
+   * Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0
+   * Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0
 
    Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*
 
-   Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = **3,2** *(correct)*
+   Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*
 
    La règle somme/somme est la seule qui résiste à la variation de longueur
    des matchs (un match en 21 points pèse plus qu'un match en 1 point).
@@ -1011,6 +1056,11 @@ MWC : limitations
 * Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de
   référence de facto dans le backgammon compétitif. Les résultats ne sont
   pas directement comparables avec des logiciels utilisant d'autres METs.
+  C'est la même table, lue par le même point d'entrée, que celle dont
+  l'évaluateur embarqué se sert pour ses décisions de videau au score : les
+  statistiques et le moteur ne peuvent pas diverger là-dessus. Elle donne ses
+  valeurs propres jusqu'à 25 points à faire de chaque côté ; au-delà, elle est
+  prolongée par une table de Zadeh calculée comme celle de GNUbg, jusqu'à 64.
 
 * Les positions *money-game* (sans score de match) sont **exclues** du
   calcul MWC. Si votre base de données contient beaucoup de positions
@@ -1029,7 +1079,11 @@ Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le
 plateau, quelle qu'elle soit ; sur une position de bearoff il se spécialise et
 calcule en plus l'EPC (Effective Pip Count). Il est activé en appuyant sur
 *CTRL-E*, en cliquant sur l'onglet Eval dans le panneau inférieur, ou en
-exécutant la commande ``epc``.
+exécutant la commande ``epc``. Cette commande garde son nom d'origine : le
+panneau s'est appelé *EPC*, puis *Bearoff*, avant de devenir *Eval* — c'est
+donc ici qu'il faut chercher ce qu'une version antérieure appelait le panneau
+Bearoff, le nom ne désignant plus que l'onglet de configuration des tables de
+sortie.
 
 Le panneau montre toujours la **seule décision** que la position posée sur
 le plateau appelle — jamais deux à la fois — et les faits qui vont avec.
@@ -1136,7 +1190,8 @@ n'y a **pas** de verdict, plutôt que de laisser croire à un calcul en cours :
 * *pas de décision* — le régime n'y a pas droit ; le verdict de videau n'est
   jamais estimé (voir le badge *estimé*) ;
 * *non évaluable à ce score* — le moteur refuse la position, typiquement un
-  score hors de l'horizon de la table d'équité de match ;
+  score hors de l'horizon de la table d'équité de match, c'est-à-dire un camp
+  à plus de 64 points à faire ;
 * *videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être
   retourné. Les équités restent affichées, à titre indicatif, mais aucune
   option ne porte d'écart : une erreur, c'est ce que coûte un choix, et il
@@ -1401,6 +1456,10 @@ moins de 1 % du point de prise (la zone la plus sensible à un pile ou face),
 attendue : l'essentiel du désaccord se concentre exactement au point de
 prise, où deux méthodes légitimement différentes divergent le plus sur une
 décision serrée — pas une erreur diffuse qui coûterait de l'équité partout.
+
+Cette mesure porte sur des décisions **money**, en course. Le verdict au score
+de match — que ce régime est seul à savoir rendre — et les positions de contact
+n'ont pas de mesure publiée : ce qui précède ne se transporte pas à ces cas.
 
 **Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise
 spécifiquement la méthode par *convolution* (régime estimé), pas le régime

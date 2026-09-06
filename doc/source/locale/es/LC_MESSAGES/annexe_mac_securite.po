@@ -101,4 +101,3 @@ msgid ""
 msgstr ""
 "Solo tiene que realizar esta operación una vez. Después, podrá abrir blunderDB "
 "sin necesidad de pasar por estos pasos."
-

@@ -9,9 +9,17 @@ La dernière version de blunderDB est disponible en licence MIT:
 
 * pour Windows: |latest_windows_exe|
 
+  Au premier lancement, Windows affiche un avertissement SmartScreen
+  (« Windows a protégé votre ordinateur »). C'est attendu : l'exécutable
+  n'est pas signé numériquement. Voir :ref:`ce qu'il faut faire
+  <annexe_windows_malware>`.
+
 * pour Linux: |latest_linux_exe|
 
 * pour Mac: |latest_mac_exe|
+
+  macOS émet un avertissement comparable, pour la même raison : voir
+  :ref:`ce qu'il faut faire <annexe_mac_malware>`.
 
 .. only:: html
 
@@ -22,6 +30,12 @@ La dernière version de blunderDB est disponible en licence MIT:
    système d'exploitation. Si ce n'est pas le cas, la première exécution de
    blunderDB proposera de le télécharger et de l'installer. Aucune manipulation
    de la part de l'utilisateur n'est attendue.
+
+.. note:: Toujours au premier lancement, blunderDB calcule en arrière-plan les
+   deux tables de sortie dont se sert le panneau Eval : environ six secondes
+   sur un cœur, sans rien demander, et l'application s'utilise normalement
+   pendant ce temps. Voir :ref:`l'onglet Bearoff de la configuration
+   <configuration>`.
 
 Quel fichier choisir ?
 ----------------------
@@ -38,6 +52,12 @@ votre système ; remplacez ``x.y.z`` par le numéro de la version.
    * - Système
      - Fichier
      - Installation
+   * - Windows
+     - ``blunderDB-windows-x.y.z.exe``
+     - Exécuter directement, sans installation
+   * - macOS (Intel et Apple Silicon)
+     - ``blunderDB-macos-x.y.z.zip``
+     - Décompresser, puis glisser ``blunderDB.app`` dans *Applications*
    * - Debian, Ubuntu, Linux Mint
      - ``blunderdb_x.y.z_amd64.deb``
      - ``sudo apt install ./blunderdb_x.y.z_amd64.deb``
@@ -57,12 +77,6 @@ votre système ; remplacez ``x.y.z`` par le numéro de la version.
      - ``blunderdb_x.y.z_arm64.deb``, ``blunderdb-x.y.z.aarch64.rpm`` ou
        ``blunderDB-linux-arm64-webkit2gtk-4.1-x.y.z.tar.gz``
      - Comme ci-dessus, avec le fichier ``arm64``/``aarch64``
-   * - macOS (Intel et Apple Silicon)
-     - ``blunderDB-macos-x.y.z.zip``
-     - Décompresser, puis glisser ``blunderDB.app`` dans *Applications*
-   * - Windows
-     - ``blunderDB-windows-x.y.z.exe``
-     - Exécuter directement, sans installation
    * - Serveur (mode ``serve``, Docker)
      - image ``ghcr.io/kevung/blunderdb-serve``
      - ``docker pull ghcr.io/kevung/blunderdb-serve:x.y.z``
@@ -80,6 +94,10 @@ documentation en PDF dans neuf langues, et les empreintes ``.sha256``.
 
 Vérifier un téléchargement
 --------------------------
+
+Les deux vérifications décrites ici sont **facultatives** et destinées aux
+utilisateurs avancés : elles se font en ligne de commande et ne font pas
+partie de l'installation. Sauter cette section n'empêche rien.
 
 Chaque fichier publié est accompagné de son empreinte SHA-256, dans un fichier
 du même nom suivi de ``.sha256``. Téléchargez les deux dans le même dossier et

@@ -395,4 +395,3 @@ msgstr "``s tn1`` の後、キューブの決定を検索する"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

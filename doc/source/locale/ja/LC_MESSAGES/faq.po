@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -126,8 +126,8 @@ msgstr "複数のデータベースを統合するにはどうすればよいで
 #: ../../source/faq.rst:67
 msgid ""
 "Si vous avez plusieurs bases de données blunderDB que vous souhaitez "
-"regrouper, utilisez la fonctionnalité \"Import Database\" :"
-msgstr "複数の blunderDB データベースを統合したい場合は、「Import Database」機能を使用してください："
+"regrouper, utilisez la fonctionnalité « Importer une base de données » :"
+msgstr "複数の blunderDB データベースを一つにまとめたい場合は、「データベースをインポート」機能を使います："
 
 #: ../../source/faq.rst:70
 msgid ""
@@ -136,8 +136,10 @@ msgid ""
 msgstr "メインデータベース（インポートされたポジションを受け取るもの）を開く"
 
 #: ../../source/faq.rst:71
-msgid "Cliquez sur le bouton \"Import Database\" dans la barre d'outils"
-msgstr "ツールバーの「Import Database」ボタンをクリックする"
+msgid ""
+"Cliquez sur le bouton « Importer une base de données » dans la barre "
+"d'outils"
+msgstr "ツールバーの「データベースをインポート」ボタンをクリックする"
 
 #: ../../source/faq.rst:72
 msgid "Sélectionnez la base de données à importer"
@@ -149,13 +151,12 @@ msgstr "blunderDB が自動的にポジションを統合する"
 
 #: ../../source/faq.rst:75
 msgid ""
-"Lors de la fusion, blunderDB évite les doublons et fusionne "
-"intelligemment les analyses et commentaires. Les positions identiques ne "
-"seront pas dupliquées, mais leurs analyses et commentaires seront "
-"combinés."
+"Lors de la fusion, blunderDB évite les doublons : une position déjà "
+"présente n'est pas dupliquée, et les analyses des différents moteurs "
+"cohabitent au lieu de s'écraser (voir :ref:`import_regles`)."
 msgstr ""
-"統合時、blunderDB "
-"は重複を避け、解析とコメントをインテリジェントに統合します。同一のポジションは重複しませんが、それらの解析とコメントは結合されます。"
+"統合の際、blunderDB は重複を避けます。すでにあるポジションが二重になることはなく、異なるエンジンの分析は互いを上書きせずに共存します（\\ "
+":ref:`import_regles`\\ を参照）。"
 
 #: ../../source/faq.rst:80
 msgid ""
@@ -225,10 +226,94 @@ msgstr ""
 "のインポートは最も完全な分析（手、キューブの決定、フラグ、ロールの運）をもたらします。これは統計が最も豊富に活用する形式です。"
 
 #: ../../source/faq.rst:118
+msgid "J'utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?"
+msgstr "すでに eXtreme Gammon を使っています。blunderDB は何の役に立ちますか？"
+
+#: ../../source/faq.rst:120
+msgid ""
+"blunderDB ne rejoue pas vos matchs, il les rassemble. Trois différences "
+"concrètes :"
+msgstr "blunderDB はマッチを打ち直すのではなく、集めます。具体的な違いは三つです："
+
+#: ../../source/faq.rst:123
+msgid ""
+"**agréger** dans un seul fichier des matchs venus d'XG, de GNUbg, de "
+"BGBlitz et de Jellyfish, dédoublonnés position par position ;"
+msgstr ""
+"\\ **集約する**\\ ：XG、GNUbg、BGBlitz、Jellyfish から来たマッチを、ポジション単位で重複を除きながら一つのファイルにま"
+"とめます。"
+
+#: ../../source/faq.rst:126
+msgid ""
+"**chercher** par structure de pions et par erreur : « les prises à ce "
+"score où j'ai perdu plus de 50 millipoints » s'écrit en une ligne de "
+"commande (voir :ref:`cmd_mode`) ;"
+msgstr ""
+"\\ **検索する**\\ ：チェッカーの構造とエラーで探せます。「このスコアで 50 ミリポイント以上を失ったテイク」は、コマンドライン1行で書けます"
+"（\\ :ref:`cmd_mode`\\ を参照）。"
+
+#: ../../source/faq.rst:130
+msgid ""
+"**réviser** les positions retenues par répétition espacée, en paquets "
+"Anki (voir :ref:`panneau_anki`)."
+msgstr ""
+"\\ **復習する**\\ ：選び出したポジションを、Anki のデッキで間隔反復により復習します（\\ :ref:`panneau_anki`\\ を参照"
+"）。"
+
+#: ../../source/faq.rst:133
+msgid ""
+"Vos analyses XG restent celles d'XG : blunderDB les importe telles "
+"quelles et ne les recalcule jamais (voir :ref:`import_regles`)."
+msgstr ""
+"あなたの XG の分析は XG のものであり続けます。blunderDB はそれをそのまま取り込み、再計算することは決してありません（\\ :ref:`import_regles`\\ "
+"を参照）。"
+
+#: ../../source/faq.rst:138
+msgid "Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?"
+msgstr "XG のロールアウトはインポートされますか？ blunderDB はロールアウトを行いますか？"
+
+#: ../../source/faq.rst:140
+msgid ""
+"Non, dans les deux sens. D'une analyse XG, l'import conserve l'étiquette "
+"de niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les "
+"erreurs et les probabilités ; il n'ouvre pas les données de rollout du "
+"fichier ``.xg`` et n'en retient donc ni le nombre d'essais ni l'écart "
+"type. Une analyse XG collée en texte garde en revanche littéralement son "
+"étiquette, « Rollout » comprise. L'évaluateur embarqué, lui, ne fait pas "
+"de rollout : il répond par une recherche à 0 ou 2 lancers d'avance."
+msgstr ""
+"どちらもいいえ、です。XG の分析からインポートが保持するのは、水準のラベル（「3-ply」、「XG Roller++」、「Book」）、エクイティ"
+"、エラー、確率です。\\ ``.xg`` ファイルのロールアウトのデータは開かないので、試行回数も標準偏差も取り込みません。これに対し、テキストとして"
+"貼り付けられた XG の分析は、「Rollout」を含めてラベルを文字どおりそのまま保ちます。内蔵の評価エンジンのほうはロールアウトを行いません。0 "
+"手先または 2 手先までの探索で答えます。"
+
+#: ../../source/faq.rst:150
+msgid "Qu'a-t-on mesuré de l'évaluateur intégré, et que n'a-t-on pas mesuré ?"
+msgstr "内蔵の評価エンジンについて、何が測定され、何が測定されていないのですか？"
+
+#: ../../source/faq.rst:152
+#, no-python-format
+msgid ""
+"Une mesure est publiée, sur le régime *évalué* du panneau Eval : 4000 "
+"décisions money de course, comparées à la table de bearoff exacte — 93,4 "
+"% d'accord de verdict (3735/4000), mais 61,1 % seulement à moins de 1 % "
+"du point de prise contre 94,4 % au-delà de 20 % ; écart de probabilité de"
+" gain moyen 0,85 %, maximum 8,30 %. Ce qui n'est pas mesuré : le verdict "
+"de videau **au score de match** et les **positions de contact**, pour "
+"lesquels aucun chiffre n'est publié. Le détail des hypothèses est dans "
+":ref:`epc_methodologie`."
+msgstr ""
+"測定は一つ公開されています。Eval パネルの *評価* 方式についてのもので、マネーのレースの決定 4000 件を正確なベアオフの表と比較しました"
+"——判定の一致は 93.4 %（3735/4000）ですが、テイクポイントから 1 % 未満のところでは 61.1 % にとどまり、20 % を超え"
+"るところでは 94.4 % です。勝率の差は平均 0.85 %、最大 8.30 %。測定されていないのは、\\ **マッチスコアでの**\\ キューブの"
+"判定と\\ **接触のあるポジション**\\ で、これらについては数値は公開されていません。前提の詳細は :ref:`epc_methodologie` "
+"にあります。"
+
+#: ../../source/faq.rst:162
 msgid "Qu'est-ce qu'une collection?"
 msgstr "コレクションとは何ですか？"
 
-#: ../../source/faq.rst:120
+#: ../../source/faq.rst:164
 msgid ""
 "Une collection est un regroupement personnalisé de positions. "
 "Contrairement à une recherche par filtres qui est dynamique, une "
@@ -237,11 +322,11 @@ msgid ""
 "positions de référence pour une thématique particulière."
 msgstr "コレクションはポジションのカスタムグループです。動的なフィルター検索とは異なり、コレクションはユーザーが手動で選択した固定のポジションセットです。コレクションは、例えば特定のテーマの参照ポジションをまとめるために使用できます。"
 
-#: ../../source/faq.rst:128
+#: ../../source/faq.rst:172
 msgid "Qu'est-ce que l'EPC?"
 msgstr "EPC とは何ですか？"
 
-#: ../../source/faq.rst:130
+#: ../../source/faq.rst:174
 msgid ""
 "L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip"
 " count pour évaluer les positions de bearoff. Le panneau Eval de "
@@ -250,11 +335,12 @@ msgid ""
 "réel l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le "
 "wastage."
 msgstr ""
-"EPC（Effective Pip Count）は、ベアオフポジションを評価するための単純なピップカウントよりも正確な測定値です。blunderDB の"
-" Eval パネルは、初回起動時にマシン上で計算される、GNUbg のものと同一の 6 "
+"EPC（Effective Pip "
+"Count）は、ベアオフポジションを評価するための単純なピップカウントよりも正確な測定値です。blunderDB の Eval "
+"パネルは、初回起動時にマシン上で計算される、GNUbg のものと同一の 6 "
 "ポイントベアオフテーブルを使用し、EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージをリアルタイムで計算します。"
 
-#: ../../source/faq.rst:136
+#: ../../source/faq.rst:180
 msgid ""
 "Sur les positions de bearoff pur, le panneau affiche aussi la probabilité"
 " de gain du joueur au trait et, lorsque la position est couverte par une "
@@ -265,16 +351,16 @@ msgid ""
 "affiché. Voir la section « Méthodologie et hypothèses du panneau Eval » "
 "du manuel pour le détail des hypothèses."
 msgstr ""
-"純粋なベアオフのポジションでは、パネルには手番のプレイヤーの勝率も表示され、そのポジションが two-sided データベース（初回起動時に計算される "
-"TS-06-06 テーブル、または設定の *Bearoff* タブから計算する拡張テーブル "
+"純粋なベアオフのポジションでは、パネルには手番のプレイヤーの勝率も表示され、そのポジションが two-sided "
+"データベース（初回起動時に計算される TS-06-06 テーブル、または設定の *Bearoff* タブから計算する拡張テーブル "
 "TS-06-11）でカバーされている場合は、正確なマネーゲームのキューブの判定も表示されます。この範囲外では、勝率は誤差の範囲付きで推定され、判定は意図的に表示されません。各仮定の詳細は、マニュアルの「Eval"
 " パネルの方法論と仮定」の節を参照してください。"
 
-#: ../../source/faq.rst:147
+#: ../../source/faq.rst:191
 msgid "Que vaut l'évaluateur intégré (gammonNet) ?"
 msgstr "内蔵の評価エンジン（gammonNet）はどれほどのものですか？"
 
-#: ../../source/faq.rst:149
+#: ../../source/faq.rst:193
 msgid ""
 "gammonNet est un réseau de neurones entraîné par un tiers (voir Crédits),"
 " porté en Go et compilé dans blunderDB : aucun logiciel externe, aucune "
@@ -296,32 +382,32 @@ msgstr ""
 " や GNUbg の分析が存在する場合にそれをインポートすることも妨げません — "
 "両方のソースは共存し、各分析の由来を示す列があります。マニュアルの「Eval パネル」と「Eval パネルの方法論と前提」の節を参照してください。"
 
-#: ../../source/faq.rst:163
+#: ../../source/faq.rst:207
 msgid "Quelle est la différence entre le PR et le Snowie Error Rate?"
 msgstr "PR と Snowie Error Rate の違いは何ですか？"
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:209
 msgid ""
-"Le PR (Performance Rating) est la moyenne des erreurs d'équité "
-"(normalisée, en millièmes de point) sur l'ensemble des décisions comptées"
-" ; plus il est bas, mieux on joue. Le Snowie Error Rate rapporte cette "
-"même moyenne au nombre de *coups* plutôt qu'au nombre de *décisions* — un"
-" match plus long n'aggrave donc pas mécaniquement le SER. blunderDB "
+"Le PR (*Performance Rating*) est l'erreur moyenne d'équité par décision "
+"comptée, multipliée par 500 comme le font eXtreme Gammon et GNUbg ; plus "
+"il est bas, mieux on joue. Le Snowie Error Rate rapporte cette même "
+"moyenne au nombre de *coups* plutôt qu'au nombre de *décisions* — un "
+"match plus long n'aggrave donc pas mécaniquement le SER. blunderDB "
 "affiche les deux dans le panneau Stats, alignés sur les conventions "
 "d'eXtreme Gammon et de GNUbg (voir :ref:`stats_parity` pour le détail des"
 " règles de comptage)."
 msgstr ""
-"PR（Performance "
-"Rating）は、カウントされたすべての決定についてのエクイティエラー（正規化され、ポイントの千分の一単位）の平均であり、低いほどよいプレイをしていることになります。Snowie"
-" Error Rate は、同じ平均を *決定* の数ではなく *手* の数に対して表します — したがって、マッチが長くなっても SER "
-"が機械的に悪化することはありません。blunderDB は両方を Stats パネルに表示し、eXtreme Gammon と GNUbg "
-"の慣習に合わせています（計算規則の詳細については :ref:`stats_parity` を参照してください）。"
+"PR（\\ *Performance Rating*\\ ）は、カウントされた決定あたりの平均エクイティエラーに、eXtreme Gammon や GNUbg "
+"と同じく 500 を掛けたものであり、低いほどよいプレイをしていることになります。Snowie Error Rate は、同じ平均を *決定* の数"
+"ではなく *手* の数に対して表します — したがって、マッチが長くなっても SER が機械的に悪化することはありません。blunderDB は両方"
+"を Stats パネルに表示し、eXtreme Gammon と GNUbg の慣習に合わせています（計算規則の詳細については :ref:`stats_parity` "
+"を参照してください）。"
 
-#: ../../source/faq.rst:175
+#: ../../source/faq.rst:219
 msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
 msgstr "blunderDB にはコマンドラインインターフェースがありますか？"
 
-#: ../../source/faq.rst:177
+#: ../../source/faq.rst:221
 msgid ""
 "Oui, blunderDB dispose d'une interface en ligne de commande (CLI) "
 "permettant d'effectuer sans interface graphique des opérations telles que"
@@ -333,11 +419,11 @@ msgstr ""
 "にはコマンドラインインターフェース（CLI）があり、グラフィカルインターフェースなしでデータベースの作成、マッチのインポート、エクスポート、ポジションの検索、統計の表示などの操作を実行できます。詳細については"
 " CLI ドキュメントを参照してください。"
 
-#: ../../source/faq.rst:185
+#: ../../source/faq.rst:229
 msgid "blunderDB propose-t-il un mode serveur?"
 msgstr "blunderDB はサーバーモードを提供していますか？"
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:231
 msgid ""
 "Oui, un mode « headless » facultatif : le même binaire, lancé avec "
 "``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un "
@@ -351,28 +437,28 @@ msgid ""
 "serveur derrière un proxy » du guide utilisateur."
 msgstr ""
 "はい、オプションの「headless」モードがあります。同じバイナリを ``serve`` で起動すると、blunderDB "
-"のエンジンを認証を行うリバースプロキシの背後で HTTP + JSON として公開します（blunderDB 自体は一切認証を行いません）。SQLite"
-" でも、マルチテナントの PostgreSQL でも動作させることができ、自分のスクリプトや自作アプリケーションから HTTP + JSON で "
-"blunderDB "
+"のエンジンを認証を行うリバースプロキシの背後で HTTP + JSON として公開します（blunderDB "
+"自体は一切認証を行いません）。SQLite でも、マルチテナントの PostgreSQL "
+"でも動作させることができ、自分のスクリプトや自作アプリケーションから HTTP + JSON で blunderDB "
 "を操作したり——ウェブインターフェースはありません——複数のプレイヤー間でデータベースを共有したりするのに役立ちます。通常の使い方はデスクトップアプリケーションのままです。詳細（すぐに使える"
 " Docker イメージを含む）については :ref:`headless` "
 "を、ユーザーガイドの「サーバーモードをプロキシの背後に展開する」のチュートリアルも参照してください。"
 
-#: ../../source/faq.rst:200
+#: ../../source/faq.rst:244
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "blunderDB を変更、コピー、共有できますか？"
 
-#: ../../source/faq.rst:202
+#: ../../source/faq.rst:246
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr "はい、もちろんです（むしろ推奨されています）。blunderDB は MIT ライセンスの下にあります。"
 
-#: ../../source/faq.rst:206
+#: ../../source/faq.rst:250
 msgid "Où sont stockées mes données?"
 msgstr "データはどこに保存されますか？"
 
-#: ../../source/faq.rst:208
+#: ../../source/faq.rst:252
 msgid ""
 "Sur votre disque, dans le fichier ``.db`` que vous avez choisi en créant "
 "la base : aucun compte, aucun serveur, aucune synchronisation par défaut."
@@ -384,11 +470,11 @@ msgstr ""
 "ファイルとして、あなたのディスク上に保存されます。アカウントも、サーバーも、デフォルトでの同期もありません。デスクトップアプリケーションはこのファイルを直接開きます。オプションのサーバーモード（上記参照）だけが"
 " blunderDB を遠隔で動作させ、その場合はあなた自身がそのサーバーをホストすることになります。"
 
-#: ../../source/faq.rst:216
+#: ../../source/faq.rst:260
 msgid "Puis-je partager une base avec un autre joueur?"
 msgstr "データベースを他のプレイヤーと共有できますか？"
 
-#: ../../source/faq.rst:218
+#: ../../source/faq.rst:262
 msgid ""
 "Oui : une base blunderDB est un simple fichier, il suffit de le copier ou"
 " de l'envoyer. Pour diffuser une base à un tiers, deux mécanismes "
@@ -407,21 +493,21 @@ msgstr ""
 "で読み取れ、受信側には一切何も記録されません）。また、\\ **パスワード保護**\\ は暗号化された ``.dbx`` "
 "ファイルを生成します。マニュアルの :ref:`diffusion_controlee` を参照してください。"
 
-#: ../../source/faq.rst:229
+#: ../../source/faq.rst:273
 msgid "Quel format de données utilise blunderDB?"
 msgstr "blunderDB はどのデータ形式を使用していますか？"
 
-#: ../../source/faq.rst:231
+#: ../../source/faq.rst:275
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
 msgstr "データベースは単純な SQLite ファイルです。blunderDB がない場合でも、任意の SQLite ファイルエディターで開くことができます。"
 
-#: ../../source/faq.rst:236
+#: ../../source/faq.rst:280
 msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "blunderDB の設計原則は何でしたか？"
 
-#: ../../source/faq.rst:238
+#: ../../source/faq.rst:282
 msgid ""
 "Je voulais une interface accessible, mais pensée pour un usage avancé et "
 "soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
@@ -431,7 +517,7 @@ msgstr ""
 "私はとっつきやすいインターフェースを望んでいましたが、それ以上に、ポジションや検索を次々とこなす高度で継続的な利用を想定して設計しました。\\ "
 "*スペース* キーを押すと開くコマンドラインとキーボードショートカットは、その利用を支えるものであり、必須ではありません。"
 
-#: ../../source/faq.rst:243
+#: ../../source/faq.rst:287
 msgid ""
 "Je souhaitais par ailleurs blunderDB léger, autonome, sans installation "
 "et disponible pour différentes plateformes, d'où mon choix du langage Go "
@@ -445,13 +531,13 @@ msgstr ""
 "ライブラリを選びました。データベースのシリアライズについては、ファイル形式がマルチプラットフォームであり、データベースを格納するのに適している必要がありました。SQLite"
 " のファイル形式はまさに最適だと思われました。"
 
-#: ../../source/faq.rst:250
+#: ../../source/faq.rst:294
 msgid ""
 "Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
 "copier, sauvegarder ou envoyer à un autre joueur."
 msgstr "また、データベースは単一のファイルのままであってほしいと考えていました。コピーしたり、バックアップしたり、別のプレイヤーに送ったりできるようにです。"
 
-#: ../../source/faq.rst:253
+#: ../../source/faq.rst:297
 msgid ""
 "Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
@@ -464,11 +550,11 @@ msgstr ""
 " PostgreSQL を利用できます。とはいえ、通常の使い方はデスクトップアプリケーションのままです。:ref:`cli` および "
 ":ref:`headless` を参照してください。"
 
-#: ../../source/faq.rst:261
+#: ../../source/faq.rst:305
 msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "blunderDB のソフトウェアアーキテクチャは何ですか？"
 
-#: ../../source/faq.rst:263
+#: ../../source/faq.rst:307
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données SQLite qui stocke les "
@@ -477,7 +563,7 @@ msgstr ""
 "バックエンドは `Go <https://go.dev/>`_ でコーディングされています。ポジションを保存する SQLite "
 "データベースのすべての操作を担当します。"
 
-#: ../../source/faq.rst:267
+#: ../../source/faq.rst:311
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -485,7 +571,7 @@ msgstr ""
 "フロントエンドは `Svelte <https://svelte.dev/>`_ "
 "でコーディングされています。グラフィカルインターフェースとバックギャモンボードのレンダリングを担当します。"
 
-#: ../../source/faq.rst:270
+#: ../../source/faq.rst:314
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -494,11 +580,11 @@ msgstr ""
 "アプリケーションは `Wails <https://wails.io/>`_ でパッケージ化されており、Windows、Linux、macOS "
 "向けのネイティブなデスクトップアプリケーションを生成できます。"
 
-#: ../../source/faq.rst:274
+#: ../../source/faq.rst:318
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "データベースは `SQLite <https://www.sqlite.org/>`_ で管理されています。"
 
-#: ../../source/faq.rst:276
+#: ../../source/faq.rst:320
 msgid ""
 "Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
 "<https://www.postgresql.org/>`_ à la place de Sqlite pour les "
@@ -507,7 +593,7 @@ msgstr ""
 "任意のサーバーモードでは、マルチユーザー環境向けに SQLite の代わりに `PostgreSQL "
 "<https://www.postgresql.org/>`_ を利用できます。"
 
-#: ../../source/faq.rst:280
+#: ../../source/faq.rst:324
 msgid ""
 "L'évaluateur embarqué (`gammonNet "
 "<https://github.com/kevung/gammonNet>`_, MIT) est un réseau de neurones "
@@ -519,7 +605,7 @@ msgstr ""
 "ライセンス）は、Go 言語に移植されて blunderDB にコンパイルされたニューラルネットワークです。XG も GNUbg "
 "も使わずに、どんなポジションでもオフラインで評価します。詳しくは下記の「内蔵の評価エンジンはどれほどのものですか？」を参照してください。"
 
-#: ../../source/faq.rst:285
+#: ../../source/faq.rst:329
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -527,23 +613,22 @@ msgstr ""
 "詳細については、`blunderDB GitHub リポジトリ <https://github.com/kevung/blunderDB>`_ "
 "を参照してください。"
 
-#: ../../source/faq.rst:288
+#: ../../source/faq.rst:332
 msgid "Sur quelles plateformes blunderDB fonctionne-t-il?"
 msgstr "blunderDB はどのプラットフォームで動作しますか？"
 
-#: ../../source/faq.rst:290
+#: ../../source/faq.rst:334
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB は Windows、Linux、Mac で動作します。"
 
-#: ../../source/faq.rst:293
+#: ../../source/faq.rst:337
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "blunderDB のアイコンはどこから来ていますか？"
 
-#: ../../source/faq.rst:295
+#: ../../source/faq.rst:339
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
 msgstr ""
 "blunderDB のアイコンは `SMirC シリーズ <https://commons.wikimedia.org/wiki/SMirC>`_"
 " の「goggling」絵文字です。"
-

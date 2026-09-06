@@ -23,8 +23,23 @@ pour:
   données sans lancer l'interface graphique.
 
 La CLI partage exactement le même format de base de données que l'interface
-graphique. Toute opération effectuée en CLI est immédiatement visible dans
-l'interface graphique et inversement.
+graphique : les deux écrivent le même fichier, il n'y a rien à synchroniser.
+
+.. note::
+   **Si l'application est ouverte pendant qu'un script écrit.** Le fichier
+   est en mode WAL : une lecture ne bloque jamais une écriture, et les deux
+   programmes travaillent sur la même base sans se gêner. Deux écritures, en
+   revanche, se succèdent — la seconde attend le verrou d'écriture (dix
+   secondes par instruction, plus quelques nouvelles tentatives) et n'échoue
+   que si l'attente est épuisée, sur un message nommant SQLite :
+
+   .. code-block:: text
+
+      Error: failed to import match: sqlite: save match: database is locked (5) (SQLITE_BUSY)
+
+   L'interface graphique ne surveille pas le fichier : elle continue
+   d'afficher ce qu'elle avait chargé jusqu'à ce que ``CTRL-R`` recharge les
+   positions. Rien n'est perdu, mais l'écran est en retard sur la base.
 
 Syntaxe générale
 ----------------
@@ -34,11 +49,21 @@ CLI, blunderDB se lance en mode headless, sinon il lance l'interface graphique.
 
 .. code-block:: bash
 
-   # Mode graphique (aucun argument)
+   # GUI
    ./blunderdb
 
-   # Mode CLI
-   ./blunderdb <commande> [options]
+   # CLI
+   ./blunderdb <command> [options]
+
+Les exemples de cette page écrivent ``./blunderdb`` : le binaire tel qu'il est
+téléchargé, appelé depuis le dossier où il se trouve. Installé par un paquet,
+ou lié depuis un dossier du ``PATH`` (voir :ref:`telecharge_install`), il
+s'appelle simplement ``blunderdb``.
+
+Les options booléennes annoncées « défaut: oui » se désactivent par la forme
+``--option=false`` — ``--recursive=false``, ``--analysis=false``. La forme
+séparée par une espace n'existe pas : ``--recursive false`` laisse l'option à
+sa valeur par défaut et traite ``false`` comme un argument de trop.
 
 Commandes disponibles
 ---------------------
@@ -59,16 +84,19 @@ Commandes disponibles
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID)."
+   "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
    "info", "Affiche les métadonnées de la base."
    "edit", "Modifie les métadonnées de la base."
    "verify", "Vérifie l'intégrité de la base."
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
+   "repair", "Recalcule les colonnes scalaires tirées de chaque analyse."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
    "completion", "Affiche un script de complétion shell (bash, zsh, fish)."
    "help", "Affiche l'aide."
    "version", "Affiche la version."
+   "serve, migrate, call", "Mode serveur et migration vers PostgreSQL : voir :ref:`headless`."
 
 Chaque commande accepte l'option ``--help`` pour afficher son aide détaillée.
 
@@ -79,7 +107,7 @@ Crée un nouveau fichier de base de données avec des métadonnées optionnelles
 
 .. code-block:: bash
 
-   ./blunderdb create --db <chemin> [--user <nom>] [--description <texte>] [--force]
+   ./blunderdb create --db <path> [--user <name>] [--description <text>] [--force]
 
 **Options:**
 
@@ -106,7 +134,7 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 
 .. code-block:: bash
 
-   ./blunderdb import --db <chemin> --type <type> [options]
+   ./blunderdb import --db <path> --type <type> [options]
 
 **Options:**
 
@@ -141,14 +169,52 @@ Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``).
 
    ./blunderdb import --db base.db --type match --file match.xg
 
+   # Successfully imported match (ID: 1)
+   #
+   # Match Details:
+   #   Players: Kévin Unger vs Maxence Job
+   #   Event: HSBT Paris 2023
+   #   Match Length: 7
+   #   Games: 7
+
+``--format json`` livre les mêmes champs en un seul document :
+
+.. code-block:: json
+
+   {
+     "type": "match",
+     "match_id": 1,
+     "player1": "Kévin Unger",
+     "player2": "Maxence Job",
+     "event": "HSBT Paris 2023",
+     "location": "Paris, Fédération Française de Bridge",
+     "match_length": 7,
+     "games": 7
+   }
+
 Import de positions
 ^^^^^^^^^^^^^^^^^^^
 
-Importe des positions depuis un fichier texte (une position JSON par ligne):
+Importe des positions depuis un fichier texte, **une position JSON par
+ligne**. C'est exactement ce qu'écrit ``export --type positions`` : les deux
+commandes se répondent, un export se réimporte tel quel, sans rien retoucher.
 
 .. code-block:: bash
 
    ./blunderdb import --db base.db --type position --file positions.txt
+
+   # Successfully imported 4 positions
+
+Une ligne, telle qu'``export`` la produit — le damier en occupe l'essentiel,
+vingt-six points suivis des sorties :
+
+.. code-block:: text
+
+   {"id":1,"board":{"points":[{"checkers":0,"color":0},{"checkers":1,"color":1},…],"bearoff":[0,0]},"cube":{"owner":-1,"value":0},"dice":[0,0],"score":[7,7],"player_on_roll":0,"decision_type":1,"has_jacoby":0,"has_beaver":0,"individually_imported":true,"flagged":false}
+
+L'analyse et les commentaires ne voyagent pas par ce format : il porte la
+position, rien d'autre. Pour déplacer une bibliothèque entière, c'est
+``export --type database`` qu'il faut.
 
 Import par lot
 ^^^^^^^^^^^^^^
@@ -158,19 +224,55 @@ C'est la méthode la plus efficace pour importer un grand nombre de matchs.
 
 .. code-block:: bash
 
-   # Import récursif (par défaut)
    ./blunderdb import --db base.db --type batch --dir ./matchs/
-
-   # Import non récursif
    ./blunderdb import --db base.db --type batch --dir ./matchs/ --recursive=false
-
-   # Sortie exploitable par un script, échec si un fichier a été refusé
    ./blunderdb import --db base.db --type batch --dir ./matchs/ --format json --fail-on-error
 
 Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
 (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas
 compté comme un échec, mais un lot qui n'en contient que des doublons n'a
 rien importé et sort en erreur (voir les trois règles ci-dessus).
+
+.. code-block:: text
+
+   Batch importing from: ./matchs/ (recursive: true)
+
+   Found 3 match file(s) to import
+
+   [1/3] Importing: 02_NDT_FR.txt... ERROR: failed to parse file: ingest: parse gnubg file: invalid MAT file: no match header found
+   [2/3] Importing: test.mat... DUPLICATE
+   [3/3] Importing: test.xg... OK (ID: 1, 341 positions)
+
+   ====================================================================
+   IMPORT SUMMARY
+   ====================================================================
+   Status  File           ID  Player 1     Player 2     Games  Positions  Error
+   ------  ----           --  --------     --------     -----  ---------  -----
+   ✗       02_NDT_FR.txt                                0      0          failed to parse file: ingest: ...
+   ⊘       test.mat                                     0      0
+   ✓       test.xg        1   Kévin Unger  Maxence Job  7      341
+   --------------------------------------------------------------------
+   Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
+
+``--format json`` en donne la même chose, exploitable par un script : un
+objet par fichier dans ``files``, puis les totaux. Un lot qui ne trouve que
+des doublons sort en erreur comme un lot fautif (voir les trois règles
+ci-dessus) : ce sont ces quatre compteurs qui les distinguent, une nuit
+tranquille laissant ``duplicates`` seul non nul et ``failed`` à zéro.
+
+.. code-block:: json
+
+   {
+     "files": [
+       {"file_path": "02_NDT_FR.txt", "success": false, "error": "failed to parse file: …"},
+       {"file_path": "test.xg", "success": true, "positions": 341}
+     ],
+     "total": 3,
+     "success": 1,
+     "duplicates": 1,
+     "failed": 1,
+     "positions_imported": 341
+   }
 
 export — Exporter des données
 ------------------------------
@@ -179,7 +281,7 @@ Exporte le contenu de la base vers des fichiers.
 
 .. code-block:: bash
 
-   ./blunderdb export --db <chemin> --type <type> --file <sortie> [options]
+   ./blunderdb export --db <path> --type <type> --file <output> [options]
 
 **Options:**
 
@@ -213,23 +315,16 @@ Exporte le contenu de la base vers des fichiers.
 
 .. code-block:: bash
 
-   # Export complet de la base
    ./blunderdb export --db base.db --type database --file sauvegarde.db
-
-   # Export des positions en JSON
    ./blunderdb export --db base.db --type positions --file positions.txt
-
-   # Export de matchs spécifiques
    ./blunderdb export --db base.db --type matches --file selection.db --match-ids 1,3,5
 
-   # Export d'un match en transcription .mat (Jellyfish)
+   # .mat : un match, puis plusieurs (ou tous) dans un répertoire
    ./blunderdb export --db base.db --type mat --match-ids 5 --file match5.mat
-
-   # Export de plusieurs matchs (ou de tous) en .mat dans un répertoire
    ./blunderdb export --db base.db --type mat --match-ids 5,9,12 --dir sorties/
    ./blunderdb export --db base.db --type mat --dir sorties/
 
-   # Export filigrané et protégé par mot de passe (fichier .dbx)
+   # .dbx : filigrané et protégé par mot de passe
    ./blunderdb export --db cours.db --type database --file cours-diffusion.dbx \
        --watermark "Cours de Jean Dupont — 12 mars 2026" \
        --watermark-note "Merci de ne pas rediffuser." \
@@ -254,9 +349,9 @@ données : tout ce que vous marquez porte une seule empreinte publique.
 
 .. code-block:: bash
 
-   ./blunderdb identity                                       # nom et empreinte
-   ./blunderdb identity --name "Jean Dupont"                  # renommer
-   ./blunderdb identity --export jean.bdbid --passphrase pw   # exporter vers une autre machine
+   ./blunderdb identity
+   ./blunderdb identity --name "Jean Dupont"
+   ./blunderdb identity --export jean.bdbid --passphrase pw
    ./blunderdb identity --import jean.bdbid --passphrase pw
 
 **Options:**
@@ -305,14 +400,18 @@ Recherche des positions dans la base selon des critères combinables.
 
 .. code-block:: bash
 
-   ./blunderdb search --db <chemin> [options]
+   ./blunderdb search --db <path> [options]
 
 **Options principales:**
 
 * ``--db`` — Base de données (obligatoire).
 * ``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut: ``table``).
 * ``--limit`` — Nombre maximum de résultats (0 = illimité).
+* ``--offset`` — Ignorer les n premiers résultats avant de commencer à
+  compter ; avec ``--limit``, c'est la pagination.
 * ``--export`` — Exporter les résultats vers une nouvelle base.
+* ``--query-help`` — Affiche la liste des jetons que ``--query`` comprend, et
+  s'arrête là. Aucune base n'est ouverte : ``--db`` est inutile.
 
 **Filtres disponibles:**
 
@@ -327,8 +426,15 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--cube`` — Valeur du videau.
 * ``--score1`` / ``--score2`` — Scores des joueurs.
 * ``--match-length`` — Longueur du match.
-* ``--error-min`` — Erreur d'équité minimale.
-* ``--move-error-min`` / ``--move-error-max`` — Erreur du coup joué (millipoints).
+* ``--error-min`` — Seuil sur ce que **coûte une erreur dans la position** :
+  l'écart entre le meilleur coup et le deuxième, ou la plus grande des trois
+  erreurs de videau. En **points d'équité** — ``--error-min 0.1`` retient les
+  positions où se tromper coûte au moins un dixième de point. Il ne dit rien
+  de ce qui y a été joué.
+* ``--move-error-min`` / ``--move-error-max`` — Seuil sur l'erreur du coup
+  **effectivement joué** par le joueur 1. En **millièmes d'équité**
+  (millipoints) : ``--move-error-min 50``, soit un vingtième de point. C'est
+  le jeton ``E`` de la grammaire de recherche, écrit tel quel.
 * ``--has-analysis`` — Uniquement les positions avec analyse.
 * ``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2).
 * ``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules).
@@ -349,24 +455,110 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--no-comment`` — Uniquement les positions sans commentaire. Mutuellement
   exclusif avec ``--has-comment``.
 
+.. warning::
+   ``--error-min`` et ``--move-error-min`` ne mesurent pas la même chose et
+   **ne prennent pas la même unité** : le facteur est mille. Le premier se
+   donne en points d'équité (``0.1``), les deux autres en millièmes
+   (``100``) — un point vaut 1000 millièmes. C'est ``--move-error-min`` qui
+   répond à « où ai-je fauté » ; ``--error-min`` répond à « quelles positions
+   étaient délicates ».
+
+**Ce que search imprime:**
+
+``--format table`` (le défaut) donne une ligne par position : l'identifiant,
+le score, la valeur du videau, le type de décision, le lancer, la meilleure
+décision et son équité. Les deux dernières colonnes restent vides pour une
+position sans analyse.
+
+.. code-block:: text
+
+   Found 5 position(s)
+
+   ID  Score  Cube  Type  Dice  Best Move  Equity
+   --  -----  ----  ----  ----  ---------  ------
+   2   7-7    0     cube        No Double  -0.005
+   4   7-7    0     cube        No Double  -0.027
+   6   7-7    0     cube        No Double  -0.161
+   8   7-7    0     cube        No Double  0.256
+   10  7-7    0     cube        No Double  -0.234
+
+``--format json`` donne un tableau des mêmes positions. Les champs sont
+``id``, ``score``, ``cube``, ``decision_type`` (``checker`` ou ``cube``) et
+``dice``, toujours présents ; ``best_move``, ``equity`` et ``xgid``
+n'apparaissent que si la position porte une analyse qui les renseigne. La
+ligne ``Found n position(s)`` reste imprimée avant le tableau : un script qui
+n'attend que du JSON doit sauter la première ligne, ou passer par
+``--export``.
+
+.. code-block:: json
+
+   [
+     {
+       "id": 5266,
+       "score": [
+         5,
+         4
+       ],
+       "cube": 1,
+       "decision_type": "checker",
+       "dice": [
+         4,
+         3
+       ],
+       "best_move": "10/3",
+       "equity": 0.565
+     }
+   ]
+
+``--format xgid`` imprime un XGID par ligne, et **rien d'autre**. Il
+n'imprime que les positions dont l'analyse enregistrée porte un XGID : une
+position collée dans l'application depuis un export texte, ou un fichier BGF
+qui en transporte un. Les positions apportées par l'import d'un match XG,
+GNUbg ou Jellyfish n'en portent pas, et la sortie est alors vide. La
+sous-commande ``collection show``, elle, régénère le XGID depuis le damier.
+
 **Le langage de requête:**
 
 Les drapeaux ci-dessus couvrent une partie des filtres seulement. ``--query``
 donne accès au langage de requête de l'application — celui de la barre de
-commande, décrit dans :doc:`cmd_mode` — et donc à tous les filtres qui ne se
-dessinent pas sur le plateau : motif de coup, texte de commentaire, joueur,
-date, équité, dés exclus, zones et blots.
+commande — et donc à tous les filtres qui ne se dessinent pas sur le plateau :
+motif de coup, texte de commentaire, joueur, date, équité, dés exclus, zones
+et blots.
+
+La grammaire n'est écrite qu'à un seul endroit, :ref:`cmd_filter`. Sa table
+donne chaque jeton, sa forme, et le drapeau de ``search`` qui lui correspond
+quand il en existe un. Cette page ne la répète pas.
 
 .. code-block:: bash
 
-   # 30 pips de retard, 50 millipoints d'erreur au moins
    ./blunderdb search --db base.db --query 's p>30 E>50'
-
-   # Filtres qu'aucun drapeau n'expose
    ./blunderdb search --db base.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 
-   # La liste des jetons compris
-   ./blunderdb search --query-help
+``--query-help`` en rappelle la liste sans ouvrir de base :
+
+.. code-block:: text
+
+   $ ./blunderdb search --query-help
+   blunderdb search --query — the interface's query language
+
+   A query is the same text the application's command bar takes:
+     s cube p>30 E>50        cube decisions, 30+ pips behind, 50+ millipoints of error
+     s m"13/11" T>2026/01/01 played 13/11, imported this year
+
+   Flags (no value):
+     cube score   match the cube / the score of the position on the board
+     d            match the decision type (checker or cube)
+     …
+
+   Ranges — each takes x>n, x<n or xa,b (lower-case: you; upper-case: the opponent):
+     p P          pip count difference / absolute pip count
+     …
+     E            error of the played move, in millipoints
+     T            creation date, T>2026/01/01
+
+   Values:
+     t"tag"       comment text (";" separates alternatives)
+     …
 
 ``--query`` remplace les drapeaux de filtre au lieu de s'y ajouter : les
 combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui disent
@@ -375,11 +567,12 @@ combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui disent
 
 Un jeton que rien ne reconnaît fait échouer la commande plutôt que de réduire
 la recherche en silence. Deux limites tiennent à l'absence de plateau en ligne
-de commande : le motif de damier ne se tape pas, et ``cube``, ``score`` et
-``D`` se comparent au plateau de recherche, vide ici. Une recherche qui a
-besoin de l'un d'eux s'écrit **entièrement** en drapeaux, puisque ``--query``
-ne se combine pas avec eux — par exemple, les décisions de videau en retard
-de 30 pips et fautives d'au moins 50 millipoints :
+de commande : le motif de damier ne se tape pas, et les cinq jetons qui lisent
+le plateau — ``cube``, ``score``, ``d``, ``D``/``D1`` et ``x`` — se comparent
+ici à un plateau vide. Une recherche qui a besoin de l'un d'eux s'écrit
+**entièrement** en drapeaux, puisque ``--query`` ne se combine pas avec eux —
+par exemple, les décisions de videau en retard de 30 pips et fautives d'au
+moins 50 millièmes :
 
 .. code-block:: bash
 
@@ -389,26 +582,17 @@ de 30 pips et fautives d'au moins 50 millipoints :
 
 .. code-block:: bash
 
-   # Rechercher les décisions de videau
    ./blunderdb search --db base.db --decision cube
-
-   # Retrouver les positions que vous avez ajoutées vous-même
    ./blunderdb search --db base.db --individual
-
-   # Rechercher les positions avec erreur >= 0.1
    ./blunderdb search --db base.db --error-min 0.1
-
-   # Rechercher dans un tournoi et exporter
    ./blunderdb search --db base.db --tournament-ids 1 --export cubes.db
 
-   # Rechercher les positions avec un lancer de dés 6-5 (peu importe l'ordre)
+   # 6-5 dans les deux ordres, puis un 6 sur l'un des deux dés
    ./blunderdb search --db base.db --dice 6,5
-
-   # Rechercher les positions où un 6 a été obtenu sur l'un des deux dés
    ./blunderdb search --db base.db --dice 6
 
-   # Sortie JSON limitée à 10 résultats
-   ./blunderdb search --db base.db --format json --limit 10
+   # Pagination
+   ./blunderdb search --db base.db --format json --limit 10 --offset 20
 
 list — Lister le contenu
 --------------------------
@@ -417,7 +601,7 @@ Affiche le contenu de la base de données.
 
 .. code-block:: bash
 
-   ./blunderdb list --db <chemin> --type <type> [--limit <n>]
+   ./blunderdb list --db <path> --type <type> [--limit <n>]
 
 **Types:**
 
@@ -466,32 +650,42 @@ distinctes.
    pour l'obtenir. La colonne ``luck_rolls`` indique sur combien de lancers
    porte la moyenne.
 
+Chaque type imprime un bloc par élément, précédé du total trouvé. La ligne
+finale rappelle que la liste est tronquée par ``--limit``, dont la valeur par
+défaut vaut 10 pour les positions :
+
+.. code-block:: text
+
+   Found 3859 position(s):
+
+   ID: 1
+     Score: 7-7
+     Player on roll: 0
+     Decision: Checker play
+
+   ID: 2
+     Score: 7-7
+     Player on roll: 0
+     Decision: Cube action
+
+   …
+
+   (Showing 10 of 3859 positions, use --limit to see more)
+
 **Exemples:**
 
 .. code-block:: bash
 
-   # Statistiques de la base
    ./blunderdb list --db base.db --type stats
-
-   # Statistiques en MWC pour un joueur donné
    ./blunderdb list --db base.db --type stats --metric mwc --player "Alice"
-
-   # Coups de pions uniquement, depuis une date
    ./blunderdb list --db base.db --type stats --decision-type checker --from 2026-01-01
-
-   # Sortie JSON (pour un script)
    ./blunderdb list --db base.db --type stats --format json
 
    # Un tableau par joueur, borné aux dates d'une compétition
    ./blunderdb list --db base.db --type players --from 2026-03-01 --to 2026-03-08
-
-   # Le même tableau en CSV (tableur ou script)
    ./blunderdb list --db base.db --type players --format csv
 
-   # Liste des matchs
    ./blunderdb list --db base.db --type matches
-
-   # Premières 20 positions
    ./blunderdb list --db base.db --type positions --limit 20
 
 match — Afficher un match
@@ -501,7 +695,7 @@ Affiche les positions et analyses d'un match importé.
 
 .. code-block:: bash
 
-   ./blunderdb match --db <chemin> --id <id_match> [--format <format>] [--output <fichier>]
+   ./blunderdb match --db <path> --id <id> [--format <format>] [--output <file>]
 
 **Options:**
 
@@ -514,13 +708,8 @@ Affiche les positions et analyses d'un match importé.
 
 .. code-block:: bash
 
-   # Résumé d'un match
    ./blunderdb match --db base.db --id 1 --format summary
-
-   # Détails de chaque position
    ./blunderdb match --db base.db --id 1 --format text
-
-   # Export JSON vers un fichier
    ./blunderdb match --db base.db --id 1 --output match1.json
 
 collection — Gérer les collections
@@ -533,7 +722,7 @@ ou ``csv``, comme ``list``.
 
 .. code-block:: bash
 
-   ./blunderdb collection <sous-commande> [options]
+   ./blunderdb collection <subcommand> [options]
 
 **Sous-commandes:**
 
@@ -562,13 +751,22 @@ restants, une position enregistrée ne retenant pas la vraie.
 
 .. code-block:: bash
 
-   # Toutes les collections
    ./blunderdb collection list --db base.db
 
-   # Positions de la collection 3, en CSV pour un tableur
+   # Found 2 collection(s):
+   #
+   # ID  Name              Positions  Description
+   # --  ----              ---------  -----------
+   # 1   Ouvertures blitz  0          À revoir
+   # 2   Videaux ratés     0
+
+Une base sans collection répond ``No collections found in database`` et sort
+tout de même avec le code 0.
+
+.. code-block:: bash
+
    ./blunderdb collection show --db base.db --id 3 --format csv
 
-   # Créer, renommer, supprimer
    ./blunderdb collection create --db base.db --name "Ouvertures blitz"
    ./blunderdb collection rename --db base.db --id 3 --name "Ouvertures"
    ./blunderdb collection delete --db base.db --id 3 --confirm
@@ -586,7 +784,7 @@ reste dans l'interface graphique ; la CLI liste, mesure et resynchronise.
 
 .. code-block:: bash
 
-   ./blunderdb anki <sous-commande> [options]
+   ./blunderdb anki <subcommand> [options]
 
 **Sous-commandes:**
 
@@ -673,10 +871,10 @@ volontairement jamais estimé (voir `ADR-0009 <https://github.com/kevung/blunder
 
 .. code-block:: bash
 
-   # Régime exact (les deux joueurs ont 6 pions ou moins)
+   # Régime exact : six pions ou moins de chaque côté
    ./blunderdb epc 'XGID=-BBB------------------bbb-:0:0:1:00:0:0:0:0:10'
 
-   # Avec la base TS-06-11 calculée (exact jusqu'à 11 pions par joueur)
+   # Avec la table TS-06-11 calculée : exact jusqu'à onze pions par joueur
    ./blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 
 bearoff — Bases de sortie
@@ -690,10 +888,10 @@ quelqu'un — donc aucune ne prend ``--db``.
 
 .. code-block:: bash
 
-   ./blunderdb bearoff generate --ts <domaine> [options]
+   ./blunderdb bearoff generate --ts <domain> [options]
    ./blunderdb bearoff list [options]
-   ./blunderdb bearoff verify <fichier.bd> [options]
-   ./blunderdb bearoff delete --ts <domaine> [options]
+   ./blunderdb bearoff verify <file.bd> [options]
+   ./blunderdb bearoff delete --ts <domain> [options]
 
 Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table
 two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit
@@ -742,16 +940,14 @@ l'application ; un domaine plus large ne l'est pas.
    # Ce que cette machine a, et ce que chaque domaine coûterait
    ./blunderdb bearoff list
 
-   # Calculer TS-06-09 sur quatre cœurs
    ./blunderdb bearoff generate --ts 6x9 --cores 4
 
-   # Calculer OS-08 : l'EPC répond alors jusqu'à un pion sur la 8
+   # OS-08 : l'EPC répond alors jusqu'à un pion sur la 8
    ./blunderdb bearoff generate --os 8
 
    # Sur un serveur, dans le volume que lit le démon
    ./blunderdb bearoff generate --ts 6x11 --data-dir /srv/bearoff
 
-   # Vérifier une table reçue d'ailleurs
    ./blunderdb bearoff verify /srv/bearoff/gnubg_ts6x11.bd
 
 analyze — Rattrapage gammonNet
@@ -769,7 +965,7 @@ trois logiques distinctes (voir :ref:`headless`).
 
 .. code-block:: bash
 
-   ./blunderdb analyze --db <chemin> [options]
+   ./blunderdb analyze --db <path> [options]
 
 **Options:**
 
@@ -813,7 +1009,6 @@ positions sans analyse » est recalculé à chaque lancement.
    #   1204/1204 (100%)
    # Done.
 
-   # Sur un seul cœur, pour laisser la machine à autre chose
    ./blunderdb analyze --db base.db --jobs 1
 
 info — Métadonnées de la base
@@ -823,7 +1018,7 @@ Affiche les métadonnées et les statistiques d'une base de données.
 
 .. code-block:: bash
 
-   ./blunderdb info --db <chemin> [--format <format>]
+   ./blunderdb info --db <path> [--format <format>]
 
 **Options:**
 
@@ -834,11 +1029,55 @@ Affiche les métadonnées et les statistiques d'une base de données.
 
 .. code-block:: bash
 
-   # Afficher les informations
    ./blunderdb info --db base.db
 
-   # Sortie JSON (pour un script)
+   # Database Information
+   # ==================================================
+   # Path: /home/jean/bg/base.db
+   #
+   # Metadata:
+   #   Version: 2.19.0
+   #   User: Jean
+   #   Description: Matchs de tournoi 2025
+   #   Date of Creation: 2026-09-06 02:43:51
+   #
+   # Statistics:
+   #   Positions: 3859
+   #   Analyses: 3855
+   #   Matches: 11
+   #   Games: 61
+   #   Moves: 3766
+
+``--format json`` ajoute l'origine du fichier — ``issuance`` porte le
+filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
+
+.. code-block:: bash
+
    ./blunderdb info --db base.db --format json
+
+.. code-block:: json
+
+   {
+     "issuance": {
+       "watermarked": false,
+       "issuerFingerprint": "1186-57FA-060C-9378",
+       "issuerName": "unger"
+     },
+     "metadata": {
+       "database_version": "2.19.0",
+       "dateOfCreation": "2026-09-06 02:43:51",
+       "description": "Matchs de tournoi 2025",
+       "user": "Jean"
+     },
+     "path": "/home/jean/bg/base.db",
+     "stats": {
+       "analysis_count": 3855,
+       "game_count": 61,
+       "match_count": 11,
+       "move_count": 3766,
+       "position_count": 3859
+     }
+   }
 
 edit — Modifier les métadonnées
 --------------------------------
@@ -847,7 +1086,7 @@ Modifie le nom d'utilisateur ou la description d'une base de données.
 
 .. code-block:: bash
 
-   ./blunderdb edit --db <chemin> [options]
+   ./blunderdb edit --db <path> [options]
 
 **Options:**
 
@@ -865,10 +1104,7 @@ Au moins une option de modification est requise.
 
 .. code-block:: bash
 
-   # Modifier l'utilisateur et la description
    ./blunderdb edit --db base.db --user "Marie" --description "Ma collection"
-
-   # Effacer la description
    ./blunderdb edit --db base.db --clear-description
 
 verify — Vérifier l'intégrité
@@ -879,7 +1115,7 @@ avec son fichier source.
 
 .. code-block:: bash
 
-   ./blunderdb verify --db <chemin> [--match <id>] [--mat <fichier.mat>]
+   ./blunderdb verify --db <path> [--match <id>] [--mat <file.mat>]
 
 **Options:**
 
@@ -940,14 +1176,67 @@ rows``.
 
 .. code-block:: bash
 
-   # Vérification globale
    ./blunderdb verify --db base.db
-
-   # Vérifier un match spécifique
    ./blunderdb verify --db base.db --match 1
-
-   # Comparer avec le fichier source
    ./blunderdb verify --db base.db --match 1 --mat original.mat
+
+**En faire une garde.** Le code de sortie vaut 0 quoi que la commande
+trouve : c'est ``--format json`` qui porte le verdict, et un script doit
+lire les compteurs lui-même.
+
+.. code-block:: json
+
+   {
+     "stats": {
+       "analysis_count": 3855,
+       "game_count": 61,
+       "match_count": 11,
+       "move_count": 3766,
+       "position_count": 3859
+     },
+     "orphans": {
+       "games_without_match": 0,
+       "moves_without_game": 0,
+       "move_analyses_without_move": 0,
+       "analyses_without_position": 0,
+       "reviews_without_deck": 0,
+       "reviews_without_position": 0
+     },
+     "orphan_total": 0,
+     "schema_drift": {
+       "missing_tables": null,
+       "missing_columns": null,
+       "missing_indexes": null
+     },
+     "schema_drift_count": 0,
+     "constraint_violations": [
+       {"name": "position.zobrist_hash NOT NULL", "count": 0},
+       {"name": "position.dice_1 BETWEEN 0 AND 6", "count": 0}
+     ],
+     "constraint_violation_total": 0,
+     "counter_drift": {
+       "matches_with_wrong_game_count": 0,
+       "games_with_wrong_move_count": 53,
+       "worst_game_count_gap": 0,
+       "worst_move_count_gap": 2
+     },
+     "counter_drift_total": 53
+   }
+
+Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count`` et
+``constraint_violation_total``. Non nuls, ils décrivent une base à réparer.
+
+.. code-block:: bash
+
+   ./blunderdb verify --db base.db --format json \
+     | jq -e '.orphan_total == 0 and .schema_drift_count == 0 and .constraint_violation_total == 0'
+
+``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le
+montre : la base qui l'a produit venait d'être importée et affiche déjà 53
+parties dont le compteur de coups diffère de ce que les lignes contiennent.
+Ces compteurs viennent du fichier source, pas de la base ; un écart raconte
+l'import, il ne signale pas une corruption. Regardez-le, ne vous en servez
+pas comme d'un seuil.
 
 vacuum — Compacter la base de données
 ---------------------------------------
@@ -960,7 +1249,7 @@ l'ouverture d'une base, car son coût est imprévisible sur une grosse base.
 
 .. code-block:: bash
 
-   ./blunderdb vacuum --db <chemin>
+   ./blunderdb vacuum --db <path>
 
 **Options:**
 
@@ -996,7 +1285,7 @@ touchées : ce sont les valeurs qu'on en avait tirées qui sont refaites.
 
 .. code-block:: bash
 
-   ./blunderdb repair --db <chemin>
+   ./blunderdb repair --db <path>
 
 **Options:**
 
@@ -1029,7 +1318,7 @@ Supprime un match et toutes les données associées (parties, coups, analyses).
 
 .. code-block:: bash
 
-   ./blunderdb delete --db <chemin> --type match --id <id> [--confirm]
+   ./blunderdb delete --db <path> --type match --id <id> [--confirm]
 
 **Options:**
 
@@ -1044,10 +1333,8 @@ Supprime un match et toutes les données associées (parties, coups, analyses).
 
 .. code-block:: bash
 
-   # Supprimer avec confirmation interactive
+   # Confirmation interactive, puis sans confirmation (scripts)
    ./blunderdb delete --db base.db --type match --id 1
-
-   # Supprimer sans confirmation (pour scripts)
    ./blunderdb delete --db base.db --type match --id 1 --confirm
 
 healthcheck — Sonder un démon
@@ -1061,7 +1348,7 @@ fichier de base n'est ouvert.
 
 .. code-block:: bash
 
-   ./blunderdb healthcheck [--addr hôte:port] [--timeout 2s]
+   ./blunderdb healthcheck [--addr host:port] [--timeout 2s]
 
 **Options:**
 
@@ -1108,16 +1395,14 @@ complétion dès qu'elle est câblée, sans rien à tenir à jour à la main.
 
 .. code-block:: bash
 
-   # bash : charger pour la session en cours
+   # bash
    source <(blunderdb completion bash)
-
-   # bash : installation système (Debian/Ubuntu/Arch)
    blunderdb completion bash | sudo tee /etc/bash_completion.d/blunderdb > /dev/null
 
-   # zsh : installer dans un répertoire déjà sur $fpath
+   # zsh : un répertoire déjà sur $fpath
    blunderdb completion zsh > "${fpath[1]}/_blunderdb"
 
-   # fish : charger pour la session en cours
+   # fish
    blunderdb completion fish | source
 
 Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm) et
@@ -1146,13 +1431,8 @@ Import d'un répertoire de tournoi
 
 .. code-block:: bash
 
-   # Créer une base dédiée au tournoi
    ./blunderdb create --db tournoi_paris.db --user "Jean" --description "Open de Paris 2025"
-
-   # Importer tous les matchs du répertoire
    ./blunderdb import --db tournoi_paris.db --type batch --dir ./matchs_open_paris/
-
-   # Vérifier le résultat
    ./blunderdb list --db tournoi_paris.db --type stats
 
 Sauvegarde régulière
@@ -1160,7 +1440,6 @@ Sauvegarde régulière
 
 .. code-block:: bash
 
-   # Export complet pour sauvegarde
    ./blunderdb export --db production.db --type database --file sauvegarde-$(date +%Y%m%d).db
 
 Analyse des erreurs
@@ -1168,11 +1447,12 @@ Analyse des erreurs
 
 .. code-block:: bash
 
-   # Extraire les blunders dans une base séparée
+   # Les positions délicates, puis celles de videau
    ./blunderdb search --db production.db --error-min 0.1 --export blunders.db
-
-   # Extraire les erreurs de videau
    ./blunderdb search --db production.db --decision cube --error-min 0.05 --export cube_errors.db
+
+   # Les coups réellement fautifs : au moins 100 millièmes d'équité perdus
+   ./blunderdb search --db production.db --move-error-min 100 --format json
 
 Codes de retour
 ---------------
@@ -1185,8 +1465,8 @@ Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:
 .. code-block:: bash
 
    if ./blunderdb import --db base.db --type match --file match.xg; then
-       echo "Import réussi"
+       echo "OK"
    else
-       echo "Échec de l'import"
+       echo "KO"
        exit 1
    fi

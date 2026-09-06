@@ -419,4 +419,3 @@ msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
-

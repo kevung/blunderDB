@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -686,3 +686,58 @@ msgstr ""
 "Zur Liste der Sammlungen zurückkehren, sonst die Sammlungsauswahl "
 "aufheben, sonst das Fenster schließen (schrittweise)."
 
+#: ../../source/raccourcis.rst:269
+msgid "Panneau d'aide"
+msgstr "Hilfe-Fenster"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LINKS, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet précédent."
+msgstr "Vorheriger Reiter."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RECHTS, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Onglet suivant."
+msgstr "Nächster Reiter."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le haut."
+msgstr "Nach oben scrollen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Défiler vers le bas."
+msgstr "Nach unten scrollen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Page suivante."
+msgstr "Nächste Seite."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp"
+msgstr "Bild-auf"
+
+#: ../../source/raccourcis.rst:1
+msgid "Haut du contenu."
+msgstr "Anfang des Inhalts."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown"
+msgstr "Bild-ab"
+
+#: ../../source/raccourcis.rst:1
+msgid "Bas du contenu."
+msgstr "Ende des Inhalts."
+
+#: ../../source/raccourcis.rst:1
+msgid "?, CTRL-F, Esc"
+msgstr "?, STRG-F, Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer l'aide."
+msgstr "Hilfe schließen."

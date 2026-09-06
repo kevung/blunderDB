@@ -573,4 +573,3 @@ msgid ""
 "avec un code non nul et l'enveloppe ``{\"error\":{…}}`` est imprimée sur "
 "la sortie standard pour rester analysable (par exemple avec ``jq``)."
 msgstr ""
-

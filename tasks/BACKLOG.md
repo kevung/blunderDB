@@ -17,6 +17,25 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Backend
 
+- **L'image `blunderdb-serve` ne calcule jamais ses tables de bearoff** :
+  `gcr.io/distroless/static-debian12:nonroot` ne pose ni `HOME` ni
+  `XDG_DATA_HOME`, `Dockerfile.serve` non plus ; le démon journalise « could
+  not prepare the bearoff tables; the exact regime will be unavailable » et
+  sert en régime estimé (lot 2 de `tasks/critique-doc-2026-09/`, rédacteur
+  serveur, reproduit). La page headless documente le contournement
+  (`-v blunderdb-data:/data -e XDG_DATA_HOME=/data`) et
+  `deploy/docker-compose.yml` le pose ; le vrai correctif est un
+  `ENV XDG_DATA_HOME=/data` + `VOLUME /data` dans `Dockerfile.serve`.
+- **La fusion des analyses compare les profondeurs comme des chaînes** :
+  `ingest/merge.go:46-56` (dupliqué `database/db_import_common.go:126-132`)
+  décide « la profondeur la plus élevée l'emporte » avec `AnalysisDepth` en
+  string, donc « 2-ply » ≥ « 10-ply ». À corriger par un ordre numérique
+  (ply, puis XG Roller, XG Roller++), avec un test (lot 2, rédacteur manuel).
+- **`search --error-min` laisse passer les positions sans analyse** :
+  `cli_search.go:241` ne `continue` pas quand `analysis == nil`, donc
+  `--error-min 100` renvoie les positions jamais analysées (lot 2, rédacteur
+  CLI, mesuré : 4 positions de la base de test).
+
 - **`import --type batch` sur un dossier déjà importé sort en erreur** (que
   des doublons ⇒ `successCount == 0` ⇒ exit 1). C'est le cas nominal d'un cron
   nocturne, et la doc le promettait en succès jusqu'au lot 1 de
@@ -89,6 +108,21 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   À revisiter si un déploiement nu survient réellement.
 
 ## Ouvert — Frontend
+
+- **Les libellés de niveau de PR de l'interface sont en anglais dans les
+  neuf langues** (`gradeBands.js` : World Class, Expert, …) alors que le
+  manuel les traduit ; et quatre locales traduisaient « cube » par « dé »
+  pour la carte *PR Cube* (de Würfel, el Ζάρι, fi Noppa, it Dado — corrigé
+  dans le lot 2 en Doppler / Κύβος / Kuutio / Cubo). Relire les quatre
+  locales que personne ne relit sur le vocabulaire du videau.
+
+- **Barème de PR : le code et le manuel disaient deux choses** —
+  `frontend/src/components/stats/gradeBands.js` affiche 0-2 / 2-4 / 4-6 /
+  6-9 / 9-12 / 12+ avec des libellés anglais, le manuel annonçait
+  < 3 / 3-5 / 5-8 / 8-12 / > 12. Le manuel est aligné sur le code et
+  qualifié de repère indicatif (lot 2) ; reste à décider quel barème est le
+  bon, à le sourcer, et à traduire les libellés dans `fr.json` et les huit
+  autres.
 
 - **Parseur de recherche unique** : `commandProcessor.parseFilters` et
   `searchFilterService.parseSearchCommand` divergent déjà ; converger vers

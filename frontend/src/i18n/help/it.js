@@ -731,6 +731,49 @@ export default {
 </tr>
 </tbody>
 </table>
+<h3>Pannello di aiuto</h3>
+<table>
+<thead>
+<tr>
+<th>Scorciatoia</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SINISTRA, h</td>
+<td>Scheda precedente.</td>
+</tr>
+<tr>
+<td>DESTRA, l</td>
+<td>Scheda successiva.</td>
+</tr>
+<tr>
+<td>SU, k</td>
+<td>Scorri verso l'alto.</td>
+</tr>
+<tr>
+<td>GIÙ, j</td>
+<td>Scorri verso il basso.</td>
+</tr>
+<tr>
+<td>SPAZIO</td>
+<td>Pagina successiva.</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Inizio del contenuto.</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Fine del contenuto.</td>
+</tr>
+<tr>
+<td>?, CTRL-F, Esc</td>
+<td>Chiudi la guida.</td>
+</tr>
+</tbody>
+</table>
 `,
     commands: `
 <p>La riga di comando, situata nella barra di stato, si apre premendo il tasto <em>SPAZIO</em>. Durante la digitazione di un comando, appare automaticamente un elenco di suggerimenti: il tasto <em>TAB</em> (o <em>MAIUSC-TAB</em>) scorre le proposte e completa il comando, mentre <em>ESC</em> chiude l'elenco (un secondo <em>ESC</em> chiude la riga di comando). I tasti <em>SU</em> e <em>GIÙ</em> restano riservati alla cronologia dei comandi.</p>
@@ -781,7 +824,7 @@ export default {
 </tr>
 <tr>
 <td>epc</td>
-<td>Apre il pannello Eval (Effective Pip Count, probabilità di vittoria e verdetto di cubo in bearoff).</td>
+<td>Apre il pannello Eval (Effective Pip Count, probabilità di vittoria e verdetto di cubo in bearoff). <code>epc</code> è il vecchio nome di questo pannello, conservato.</td>
 </tr>
 <tr>
 <td>met</td>
@@ -916,365 +959,462 @@ export default {
 </tbody>
 </table>
 <h3>Filtri di ricerca</h3>
+<p>Questa tabella è il riferimento della grammatica di ricerca: la riga di comando, la biblioteca di filtri e l'opzione <code>--query</code> di <code>blunderdb search</code> leggono tutte gli stessi token. La colonna <em>Equivalente CLI</em> dà, quando esiste, l'opzione di <code>search</code> che fa la stessa cosa (vedere Interfaccia a riga di comando (CLI)); un trattino segnala un filtro che solo la grammatica esprime.</p>
+<p>Cinque token non portano il proprio valore: lo leggono sul tavoliere di ricerca. <code>cube</code> e <code>score</code> riprendono il cubo e il punteggio lì impostati, <code>d</code> il tipo di decisione, <code>D</code> e <code>D1</code> i dadi, <code>x</code> la struttura disegnata nella scheda <em>Tranne</em>. Un lancio non si scrive quindi mai nel token: <code>D65</code> non esiste, solo la forma di esclusione porta le sue cifre (<code>xD65</code>). Sulla riga di comando, dove non c'è tavoliere, questi token si confrontano con un tavoliere vuoto; sono le opzioni della terza colonna che occorre impiegare al loro posto.</p>
+<p>Gli errori e le equity si contano in <strong>millesimi di equity</strong> — i <em>millipoints</em> della tabella qui sotto: <code>E&gt;100</code> mantiene le mosse che sono costate almeno un decimo di punto, un punto valendo 1000 millesimi.</p>
+<p>Due ricerche complete:</p>
+<ul>
+<li><code>s p&gt;30 w40,60 xco</code> — più di 30 pip di ritardo, tra il 40 % e il 60 % di probabilità di vittoria, nessun commento.</li>
+<li><code>s ph:race E&gt;50 co:xg</code> — in corsa, una mossa che è costata almeno 50 millesimi, e un commento proveniente da eXtreme Gammon.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Query</th>
 <th>Azione</th>
+<th>Equivalente CLI</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>cube, cub, cu, c</td>
 <td>La posizione verifica la configurazione del cubo.</td>
+<td><code>--cube</code></td>
 </tr>
 <tr>
 <td>score, sco, sc, s</td>
 <td>La posizione verifica il punteggio.</td>
+<td><code>--score1</code> <code>--score2</code></td>
 </tr>
 <tr>
 <td>d</td>
 <td>La posizione verifica il tipo di decisione (pedina o cubo).</td>
+<td><code>--decision</code></td>
 </tr>
 <tr>
 <td>D</td>
 <td>La posizione verifica il lancio dei dadi (entrambi i dadi, in qualsiasi ordine).</td>
+<td><code>--dice 6,5</code></td>
 </tr>
 <tr>
 <td>D1</td>
 <td>La posizione verifica il lancio dei dadi solo sul primo dado (il valore del primo dado compare su uno dei due dadi della posizione).</td>
+<td><code>--dice 6</code></td>
 </tr>
 <tr>
 <td>xD65</td>
 <td>La posizione <strong>non</strong> è stata giocata con il lancio 6-5 (in qualsiasi ordine). Il valore è indicato nel gettone; ripetibile per escludere più lanci (<code>xD65 xD54</code>).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>nc</td>
 <td>La posizione è senza contatto.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ph:race</td>
 <td>La posizione si trova in una data fase di gioco: <code>opening</code> (apertura), <code>middlegame</code> (mediogioco), <code>race</code> (corsa) o <code>bearoff</code> (uscita delle pedine). Ripetibile (<code>ph:race ph:bearoff</code>). L'etichetta è derivata dalla tavola e non è mai modificabile; <code>blunderdb repair</code> la ricalcola.</td>
+<td><code>--phase</code></td>
 </tr>
 <tr>
 <td>M</td>
 <td>La posizione o quella speculare verifica i filtri.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>i</td>
 <td>La posizione è stata importata singolarmente, non portata da un import di partita.</td>
+<td><code>--individual</code></td>
 </tr>
 <tr>
 <td>fl</td>
 <td>La posizione è stata contrassegnata nel software di origine, durante l'importazione di una partita eXtreme Gammon.</td>
+<td><code>--flagged</code></td>
 </tr>
 <tr>
 <td>x</td>
-<td>La posizione non contiene alcuna pedina della struttura di esclusione (scheda « Except » del pannello di ricerca).</td>
+<td>La posizione non contiene alcuna pedina della struttura di esclusione (scheda <em>Tranne</em> del pannello di ricerca).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>p&gt;x</td>
 <td>Il giocatore ha almeno x pip di svantaggio nella corsa.</td>
+<td><code>--pip-min</code></td>
 </tr>
 <tr>
 <td>p&lt;x</td>
 <td>Il giocatore ha al massimo x pip di svantaggio nella corsa.</td>
+<td><code>--pip-max</code></td>
 </tr>
 <tr>
 <td>px,y</td>
 <td>Il giocatore ha tra x e y pip di svantaggio nella corsa.</td>
+<td><code>--pip-min</code> <code>--pip-max</code></td>
 </tr>
 <tr>
 <td>P&gt;x</td>
 <td>Il giocatore ha una corsa di almeno x pip.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>P&lt;x</td>
 <td>Il giocatore ha una corsa di al massimo x pip.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Px,y</td>
 <td>Il giocatore ha una corsa tra x e y pip.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&gt;x</td>
 <td>L'equity (in millipunti) della posizione è maggiore di x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>e&lt;x</td>
 <td>L'equity (in millipunti) della posizione è minore di x.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ex,y</td>
 <td>L'equity (in millipunti) della posizione è compresa tra x e y.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>E&gt;x</td>
 <td>L'errore della mossa giocata dal giocatore 1 (in millipunti) è maggiore di x.</td>
+<td><code>--move-error-min</code></td>
 </tr>
 <tr>
 <td>E&lt;x</td>
 <td>L'errore della mossa giocata dal giocatore 1 (in millipunti) è minore di x.</td>
+<td><code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>Ex,y</td>
 <td>L'errore della mossa giocata dal giocatore 1 (in millipunti) è compreso tra x e y.</td>
+<td><code>--move-error-min</code> <code>--move-error-max</code></td>
 </tr>
 <tr>
 <td>w&gt;x</td>
 <td>Il giocatore ha probabilità di vittoria superiori a x %.</td>
+<td><code>--winrate-min</code></td>
 </tr>
 <tr>
 <td>w&lt;x</td>
 <td>Il giocatore ha probabilità di vittoria inferiori a x %.</td>
+<td><code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>wx,y</td>
 <td>Il giocatore ha probabilità di vittoria comprese tra x % e y %.</td>
+<td><code>--winrate-min</code> <code>--winrate-max</code></td>
 </tr>
 <tr>
 <td>g&gt;x</td>
 <td>Il giocatore ha probabilità di gammon superiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>g&lt;x</td>
 <td>Il giocatore ha probabilità di gammon inferiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>gx,y</td>
 <td>Il giocatore ha probabilità di gammon comprese tra x % e y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&gt;x</td>
 <td>Il giocatore ha probabilità di backgammon superiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>b&lt;x</td>
 <td>Il giocatore ha probabilità di backgammon inferiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bx,y</td>
 <td>Il giocatore ha probabilità di backgammon comprese tra x % e y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&gt;x</td>
 <td>L'avversario ha probabilità di vittoria superiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>W&lt;x</td>
 <td>L'avversario ha probabilità di vittoria inferiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Wx,y</td>
 <td>L'avversario ha probabilità di vittoria comprese tra x % e y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&gt;x</td>
 <td>L'avversario ha probabilità di gammon superiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>G&lt;x</td>
 <td>L'avversario ha probabilità di gammon inferiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Gx,y</td>
 <td>L'avversario ha probabilità di gammon comprese tra x % e y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&gt;x</td>
 <td>L'avversario ha probabilità di backgammon superiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>B&lt;x</td>
 <td>L'avversario ha probabilità di backgammon inferiori a x %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Bx,y</td>
 <td>L'avversario ha probabilità di backgammon comprese tra x % e y %.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>o&gt;x</td>
 <td>Il giocatore ha almeno x pedine fuori.</td>
+<td><code>--off1-min</code></td>
 </tr>
 <tr>
 <td>o&lt;x</td>
 <td>Il giocatore ha al massimo x pedine fuori.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>ox,y</td>
 <td>Il giocatore ha tra x e y pedine fuori.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>O&gt;x</td>
 <td>L'avversario ha almeno x pedine fuori.</td>
+<td><code>--off2-min</code></td>
 </tr>
 <tr>
 <td>O&lt;x</td>
 <td>L'avversario ha al massimo x pedine fuori.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Ox,y</td>
 <td>L'avversario ha tra x e y pedine fuori.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&gt;x</td>
 <td>Il giocatore ha almeno x pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>k&lt;x</td>
 <td>Il giocatore ha al massimo x pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>kx,y</td>
 <td>Il giocatore ha tra x e y pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&gt;x</td>
 <td>L'avversario ha almeno x pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>K&lt;x</td>
 <td>L'avversario ha al massimo x pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Kx,y</td>
 <td>L'avversario ha tra x e y pedine arretrate.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&gt;x</td>
 <td>Il giocatore ha almeno x pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>z&lt;x</td>
 <td>Il giocatore ha al massimo x pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>zx,y</td>
 <td>Il giocatore ha tra x e y pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&gt;x</td>
 <td>L'avversario ha almeno x pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Z&lt;x</td>
 <td>L'avversario ha al massimo x pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Zx,y</td>
 <td>L'avversario ha tra x e y pedine nella zona.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&gt;x</td>
 <td>Il giocatore ha almeno x blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bo&lt;x</td>
 <td>Il giocatore ha al massimo x blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>box,y</td>
 <td>Il giocatore ha tra x e y blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&gt;x</td>
 <td>L'avversario ha almeno x blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BO&lt;x</td>
 <td>L'avversario ha al massimo x blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BOx,y</td>
 <td>L'avversario ha tra x e y blot nell'outfield.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&gt;x</td>
 <td>Il giocatore ha almeno x blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bj&lt;x</td>
 <td>Il giocatore ha al massimo x blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>bjx,y</td>
 <td>Il giocatore ha tra x e y blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&gt;x</td>
 <td>L'avversario ha almeno x blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJ&lt;x</td>
 <td>L'avversario ha al massimo x blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>BJx,y</td>
 <td>L'avversario ha tra x e y blot nel jan.</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>t'parola1;parola2;...'</code></td>
 <td>I commenti della posizione contengono almeno una delle parole.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>co</td>
 <td>La posizione ha un commento, qualunque sia il suo contenuto.</td>
+<td><code>--has-comment</code></td>
 </tr>
 <tr>
 <td>xco</td>
 <td>La posizione non ha alcun commento.</td>
+<td><code>--no-comment</code></td>
 </tr>
 <tr>
 <td>co:user</td>
 <td>La posizione porta un commento di una data provenienza: <code>user</code> (scritto da te), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (portato dall'importazione di una partita) o <code>unknown</code>. Ripetibile (<code>co:xg co:gnubg</code>).</td>
+<td><code>--comment-origin</code></td>
 </tr>
 <tr>
 <td><code>m'schema1,schema2,...'</code></td>
 <td>Le migliori mosse di pedine contenenti almeno uno degli schemi.</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>m'ND,DT,DP,...'</code></td>
 <td>Le migliori decisioni di cubo di No Double/Take, Double Take, Double Pass.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&gt;x</td>
 <td>Data di aggiunta della posizione dopo x (AAAA/MM/GG).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
 <td>Data di aggiunta della posizione prima di x (AAAA/MM/GG).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Tx,y</td>
 <td>Data di aggiunta della posizione tra x e y (AAAA/MM/GG).</td>
+<td>—</td>
 </tr>
 <tr>
 <td>max</td>
 <td>Cerca nella partita con identificatore x (es: ma3).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>max,y</td>
 <td>Cerca nelle partite con identificatori da x a y (es: ma2,5).</td>
+<td><code>--match-ids</code></td>
 </tr>
 <tr>
 <td>tnx</td>
 <td>Cerca nel torneo con identificatore x (es: tn1).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>tnx,y</td>
 <td>Cerca nei tornei con identificatori da x a y (es: tn1,3).</td>
+<td><code>--tournament-ids</code></td>
 </tr>
 <tr>
 <td>idx</td>
 <td>Cercare la posizione con identificativo x (es. id12).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td>idx,y</td>
 <td>Cercare le posizioni con identificativi da x a y (es. id5,10).</td>
+<td><code>--position-ids</code></td>
 </tr>
 <tr>
 <td><code>pl'nome'</code></td>
 <td>Cerca posizioni di una partita a cui ha partecipato il giocatore indicato, su entrambi i lati (es. <code>pl'Alice'</code>). Non distingue maiuscole e minuscole.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
