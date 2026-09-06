@@ -2049,6 +2049,23 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/search.intent:
+    post:
+      operationId: search.intent
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchIntentReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/searchquery_Intent"
   /v1/search.parse:
     post:
       operationId: search.parse
@@ -3371,6 +3388,11 @@ components:
           type: string
         excludePosition:
           type: string
+    searchIntentReq:
+      type: object
+      properties:
+        text:
+          type: string
     searchParseResp:
       type: object
       properties:
@@ -3403,6 +3425,9 @@ components:
         offset:
           type: integer
           format: int32
+    searchquery_Intent:
+      type: object
+      description: "Opaque: see the Go type searchquery.Intent (defined outside internal/server, not expanded here)."
     sessionSaveReq:
       type: object
       properties:

@@ -1373,5 +1373,12 @@
         "failed": "The search for close positions failed.",
         "none": "No close position in this database.",
         "found": "{n} close positions, from {nearest} to {farthest} checker-pips."
+    },
+    "intent": {
+        "empty": "Describe what you are looking for, in words.",
+        "failed": "The phrase could not be translated.",
+        "understoodNothing": "Nothing understood in: {words}",
+        "understood": "Understood: {matched}. Read the line, then Enter.",
+        "partly": "Understood: {matched}. Not understood: {words}. Read the line, then Enter."
     }
 }

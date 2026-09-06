@@ -834,6 +834,10 @@ export default {
 <td>Avaa tunnistesanaston: tässä tietokannassa käytetyt tunnisteet asemamäärineen, napsautettavina haun käynnistämiseksi.</td>
 </tr>
 <tr>
+<td>ask</td>
+<td>Kääntää sanallisen lauseen — ranskaksi tai englanniksi — hakutunnuksiksi: <code>ask my cube blunders at a score</code>. Tunnukset kirjoitetaan komentoriville, niitä ei suoriteta: lue ne ja paina sitten Enter. Se mitä ei ymmärretty, sanotaan, ei koskaan arvata.</td>
+</tr>
+<tr>
 <td>like</td>
 <td>Korvaa selatun listan asemilla, jotka ovat lähimpänä nykyistä — tai sitä, jonka indeksi annetaan (<code>like 42</code>). Läheisyys on kuljetusetäisyys nappulapipeinä: se ei ole suodatin, se järjestää koko tietokannan sen sijaan että rajaisi sitä, eikä siksi yhdisty hakutunnuksiin.</td>
 </tr>

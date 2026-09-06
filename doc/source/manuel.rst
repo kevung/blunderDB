@@ -724,6 +724,19 @@ qu'aucun n'est sur la barre.
    une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
    ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
 
+Une phrase en toutes lettres peut remplacer les jetons, avec la commande
+``ask`` : ``ask mes blunders de videau au score``. La phrase est **traduite en
+jetons**, écrits dans la barre de commande — on les relit, puis on lance. Rien
+n'est deviné et rien ne part sur le réseau : le vocabulaire est fixe, la même
+phrase rend toujours la même requête, et ce qui n'a pas été compris est
+**dit** plutôt que passé sous silence. Une traduction fausse se voit ainsi
+avant de renvoyer des résultats faux, et les jetons s'apprennent en les
+lisant.
+
+Deux intentions ne sont pas des jetons et se posent sur le plateau de
+recherche plutôt que dans la ligne : « de videau » ou « de pions » (le type de
+décision) et « au score » ou « en argent ». ``ask`` les y pose.
+
 Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
 elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
 poser : « montre-moi mes erreurs en holding game ». Jeton ``gt:``, répétable

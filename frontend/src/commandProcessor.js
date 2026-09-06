@@ -111,6 +111,12 @@ export function processCommand(command) {
         openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tags') {
         openModal(MODAL.TAGS);
+    } else if (command.startsWith('ask ')) {
+        // `ask <phrase>` : la phrase est traduite en jetons VISIBLES, écrits
+        // dans la barre de commande, que l'utilisateur relit et lance (#283).
+        callbacks.onIntent?.(command.slice('ask '.length));
+    } else if (command === 'ask') {
+        callbacks.onIntent?.('');
     } else if (command.startsWith('like ')) {
         // `like <id>` : les positions les plus proches de celle-là (#293).
         // Testé AVANT la forme exacte, que la ligne suivante capte pour

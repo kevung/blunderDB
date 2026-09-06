@@ -1373,5 +1373,12 @@
         "failed": "La recherche de positions proches a échoué.",
         "none": "Aucune position proche dans cette base.",
         "found": "{n} positions proches, de {nearest} à {farthest} pions-pas."
+    },
+    "intent": {
+        "empty": "Décrivez ce que vous cherchez, en toutes lettres.",
+        "failed": "La phrase n'a pas pu être traduite.",
+        "understoodNothing": "Rien de compris dans : {words}",
+        "understood": "Compris : {matched}. Relisez la ligne, puis Entrée.",
+        "partly": "Compris : {matched}. Non compris : {words}. Relisez la ligne, puis Entrée."
     }
 }

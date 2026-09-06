@@ -2332,6 +2332,8 @@ Options:
     	Only positions carrying a comment (whatever its origin — yours or an imported note)
   -individual
     	Only positions imported on their own, not as part of a match
+  -intent string
+    	Translate a plain phrase (French or English) into search tokens and run them; prints what was understood and what was not
   -like int
     	Rank the whole library by how close it stands to this position id, nearest first (replaces the query rather than narrowing it)
   -limit int

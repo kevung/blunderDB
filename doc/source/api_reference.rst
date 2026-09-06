@@ -145,6 +145,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/quiz.gradeCube                       JSON
    search
      POST /v1/search.find                          NDJSON
+     POST /v1/search.intent                        JSON
      POST /v1/search.parse                         JSON
      POST /v1/search.query                         custom
    searchHistory
