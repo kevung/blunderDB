@@ -37,7 +37,8 @@
         onRowClick = () => {},
         isMoney = undefined,
         jacoby = false,
-        beaver = false
+        beaver = false,
+        maxCube = 0
     } = $props();
 
     // ADR-0017 rule 5: the facts table is shared with EPCPanel, fed here by
@@ -94,7 +95,7 @@
         {@const decision = cubeDecision({ cubeAnalysis, turnability, stored: true })}
         <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
             <PositionFactsTable bottom={facts.bottom} top={facts.top} />
-            <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysis?.analysisEngineVersion} {isMoney} {jacoby} {beaver} />
+            <CubeVerdictTable {decision} {cubeAnalysis} {cubeValue} {isPlayedCubeAction} engineVersionFallback={analysis?.analysisEngineVersion} {isMoney} {jacoby} {beaver} {maxCube} />
         </div>
     {/each}
 {/if}

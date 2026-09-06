@@ -1486,6 +1486,14 @@ qu'elles changent : le verdict *pas de double* d'une position sous la règle
 Jacoby n'est pas le même calcul que sans elle, et rien d'autre à l'écran ne
 le disait.
 
+Un troisième badge, **Videau max**, apparaît lorsque l'identifiant d'origine
+plafonne le videau — au score comme en money game. Celui-là ne décrit pas le
+calcul affiché au-dessus : l'évaluateur intégré ne modélise pas de plafond,
+et le verdict est donc celui d'un videau libre. C'est justement pourquoi le
+badge est là : un videau plafonné est la seule raison visible pour laquelle
+blunderDB et eXtreme Gammon peuvent annoncer deux verdicts différents sur la
+même position.
+
 Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
 case *Défi* forment une bande à part, alignée à droite au-dessus des
 tableaux.

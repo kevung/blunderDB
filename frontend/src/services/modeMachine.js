@@ -281,6 +281,7 @@ function defaultEPCPosition() {
         player_on_roll: 0,
         decision_type: 0,
         has_jacoby: 0,
+        max_cube: 0,
         has_beaver: 0
     };
 }

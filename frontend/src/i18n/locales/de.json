@@ -734,7 +734,8 @@
         "cubeOpponent": "Gegner besitzt den Doppler",
         "crawford": "Doppler tot (Crawford)",
         "jacoby": "Jacoby",
-        "beaver": "Beaver"
+        "beaver": "Beaver",
+        "maxCube": "Max. Verdopplung {value}"
     },
     "comment": {
         "editedSuffix": "(bearbeitet)",

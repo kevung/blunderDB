@@ -1011,6 +1011,7 @@ function applyPositionToBoard(posData) {
         pos.player_on_roll = posData.player_on_roll;
         pos.decision_type = posData.decision_type;
         if (posData.has_jacoby !== undefined) pos.has_jacoby = posData.has_jacoby;
+        if (posData.max_cube !== undefined) pos.max_cube = posData.max_cube;
         if (posData.has_beaver !== undefined) pos.has_beaver = posData.has_beaver;
         return pos;
     });

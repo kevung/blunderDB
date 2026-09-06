@@ -201,6 +201,16 @@ func disguiseMatches(d *database.Database) error {
 			f.event, f.location, f.round, f.filePath, m.ID); err != nil {
 			return fmt.Errorf("relabelling match %d: %w", m.ID, err)
 		}
+		// The import batch records the path the file was read from (#257), and
+		// that path names both the machine it was built on and the real people
+		// in the fixture's filename. Renaming the match is not enough: the
+		// batch is a second copy of the same fact, and TestDemoDatabaseNamesNobodyReal
+		// reads every text column, not the ones we remembered.
+		if _, err := database.RawConn(d).Exec(
+			`UPDATE import_batch SET source = ? WHERE id = (SELECT import_batch_id FROM match WHERE id = ?)`,
+			f.filePath, m.ID); err != nil {
+			return fmt.Errorf("relabelling the import batch of match %d: %w", m.ID, err)
+		}
 		if err := d.UpdateMatchComment(m.ID, f.comment); err != nil {
 			return err
 		}

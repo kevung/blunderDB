@@ -38,6 +38,9 @@
     let hasScore = $derived(!isMoney);
     let jacoby = $derived(isMoney && $positionStore?.has_jacoby === 1);
     let beaver = $derived(isMoney && $positionStore?.has_beaver === 1);
+    // The cube ceiling is not a money-only rule: a capped cube is stated by the
+    // identifier whatever the score, so it is read straight off the position.
+    let maxCube = $derived($positionStore?.max_cube ?? 0);
 
     let evalMoves = $state([]);
     let evalCubeAnalysis = $state(null);
@@ -542,7 +545,7 @@
                     <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div class="decision-cube" class:masked={maskedDecision} onclick={() => maskedDecision && reveal('decision')} title={maskedDecision ? $t('epc.clickToReveal') : undefined}>
-                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} />
+                        <CubeVerdictTable {decision} cubeValue={$positionStore?.cube?.value ?? 0} showInfo={false} masked={maskedDecision} {isMoney} {jacoby} {beaver} {maxCube} />
                     </div>
                 {/if}
             </div>

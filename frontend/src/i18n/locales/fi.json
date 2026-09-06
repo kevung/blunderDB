@@ -734,7 +734,8 @@
         "cubeOpponent": "Vastustaja omistaa kuution",
         "crawford": "Kuutio kuollut (Crawford)",
         "jacoby": "Jacoby",
-        "beaver": "Beaver"
+        "beaver": "Beaver",
+        "maxCube": "Kuution katto {value}"
     },
     "comment": {
         "editedSuffix": "(muokattu)",

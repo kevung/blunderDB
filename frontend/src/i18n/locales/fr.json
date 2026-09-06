@@ -734,7 +734,8 @@
         "cubeOpponent": "Videau adverse",
         "crawford": "Videau mort (Crawford)",
         "jacoby": "Jacoby",
-        "beaver": "Beaver"
+        "beaver": "Beaver",
+        "maxCube": "Videau max {value}"
     },
     "comment": {
         "editedSuffix": "(modifié)",

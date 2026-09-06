@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.19.0"
+	DatabaseVersion = "2.20.0"
 )
 
 // Anki deck source types
@@ -271,6 +271,22 @@ type Position struct {
 	// nothing else in the engine: gammonnet.Decide has no beaver parameter,
 	// deliberately, not by omission — see its own doc comment (#193/C.6).
 	HasBeaver int `json:"has_beaver"` // Add HasBeaver field
+
+	// MaxCube is the session's cube ceiling, as the log2 exponent the XGID's
+	// tenth field carries (3 → the cube may not pass 8). Zero means the source
+	// stated no ceiling — blunderDB's own encoder writes 0, and so does every
+	// identifier that predates this column.
+	//
+	// It sits beside HasJacoby and HasBeaver and shares their two properties.
+	// It is NOT part of the Zobrist hash: only an XGID ever sets it, so hashing
+	// it would split one money position across two rows depending on which
+	// identifier happened to reach the database first (ADR-0028 reached that
+	// conclusion for the other two). And the built-in evaluator does not model
+	// a cube ceiling: this field is REPORTED next to the verdict, it does not
+	// change it — which is precisely why showing it matters, since it is the
+	// one visible reason blunderDB and eXtreme Gammon can differ on a capped
+	// cube (issue #271).
+	MaxCube int `json:"max_cube"`
 
 	// IndividuallyImported records that the position entered the database on
 	// its own rather than as part of a match (ADR-0001). It is NOT part of the

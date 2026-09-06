@@ -872,3 +872,20 @@ func (d *Database) migrate_2_18_0_to_2_19_0(context.Context) error {
 	d.pendingPhaseBackfill = true
 	return nil
 }
+
+// migrate_2_19_0_to_2_20_0 is the 2.20.0 wave.
+//
+//   - position.max_cube — the session's cube ceiling, as the log2 exponent the
+//     XGID's tenth field carries (issue #271).
+//
+// Like the 2.19.0 step, this one has nothing to execute: EnsureSchema derives
+// the missing column from schemaStatements and runs right after the chain. The
+// step exists so the chain stays unbroken from 1.0.0 to DatabaseVersion, which
+// is what TestMigrationSteps_ContinuousChain requires.
+//
+// There is no backfill either, and that is a statement rather than an omission:
+// 0 means "no ceiling stated", which is the truth about every row written
+// before the column existed.
+func (d *Database) migrate_2_19_0_to_2_20_0(context.Context) error {
+	return nil
+}

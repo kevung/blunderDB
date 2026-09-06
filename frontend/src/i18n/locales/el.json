@@ -734,7 +734,8 @@
         "cubeOpponent": "Ο αντίπαλος κατέχει τον κύβο",
         "crawford": "Νεκρός κύβος (Crawford)",
         "jacoby": "Jacoby",
-        "beaver": "Beaver"
+        "beaver": "Beaver",
+        "maxCube": "Μέγιστος κύβος {value}"
     },
     "comment": {
         "editedSuffix": "(επεξεργασμένο)",

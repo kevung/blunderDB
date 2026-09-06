@@ -734,7 +734,8 @@
         "cubeOpponent": "Куб у соперника",
         "crawford": "Куб не в игре (Кроуфорд)",
         "jacoby": "Джекоби",
-        "beaver": "Бивер"
+        "beaver": "Бивер",
+        "maxCube": "Макс. куб {value}"
     },
     "comment": {
         "editedSuffix": "(изменено)",

@@ -1323,7 +1323,7 @@ Affiche les métadonnées et les statistiques d'une base de données.
    # Path: /home/jean/bg/base.db
    #
    # Metadata:
-   #   Version: 2.19.0
+   #   Version: 2.20.0
    #   User: Jean
    #   Description: Matchs de tournoi 2025
    #   Date of Creation: 2026-09-06 02:43:51
@@ -1351,7 +1351,7 @@ filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
        "issuerName": "unger"
      },
      "metadata": {
-       "database_version": "2.19.0",
+       "database_version": "2.20.0",
        "dateOfCreation": "2026-09-06 02:43:51",
        "description": "Matchs de tournoi 2025",
        "user": "Jean"
@@ -1714,7 +1714,7 @@ binaire écrit ; c'est la première chose à joindre à un rapport de bug.
 .. code-block:: bash
 
    ./blunderdb version
-   # blunderDB version 0.36.0 (database schema 2.19.0)
+   # blunderDB version 0.36.0 (database schema 2.20.0)
 
 Exemples de flux de travail
 -----------------------------

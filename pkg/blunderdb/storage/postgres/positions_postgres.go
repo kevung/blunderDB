@@ -54,10 +54,10 @@ func tenantID(scope string) int64 {
 
 // positionSelectCols is the column list read back into a Position; the first
 // twelve match engine.ReconstructPosition's parameters, and
-// individually_imported is applied on top (provenance, not identity — see
-// docs/adr/0001).
+// individually_imported, flagged and max_cube are applied on top (provenance
+// and session rules, not identity — see docs/adr/0001 and ADR-0028).
 const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, ` +
-	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged`
+	`cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver, individually_imported, flagged, max_cube`
 
 // qualifiedPositionCols is positionSelectCols with every column prefixed by a
 // table alias, so a query that joins selects the same list rather than a second
@@ -75,7 +75,8 @@ func scanPosition(sc scanner) (domain.Position, error) {
 	var dt, por, d1, d2, cv, co, s1, s2 *int64
 	var hj, hb *bool
 	var individual, flagged *bool
-	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged); err != nil {
+	var mc *int64
+	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged, &mc); err != nil {
 		return domain.Position{}, err
 	}
 	p := engine.ReconstructPosition(id, state,
@@ -84,6 +85,7 @@ func scanPosition(sc scanner) (domain.Position, error) {
 		boolToIntPtr(hj), boolToIntPtr(hb))
 	p.IndividuallyImported = individual != nil && *individual
 	p.Flagged = flagged != nil && *flagged
+	p.MaxCube = derefInt(mc)
 	return p, nil
 }
 
@@ -108,8 +110,8 @@ const positionInsertSQL = `INSERT INTO position (
 	pip_1, pip_2, pip_diff, off_1, off_2,
 	back_checkers_1, back_checkers_2, no_contact, game_phase,
 	occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-	state, individually_imported, flagged
-) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20,$21, $22,$23,$24,$25, $26,$27,$28)
+	state, individually_imported, flagged, max_cube
+) VALUES ($1,$2,$3,$4,$5,$6, $7,$8,$9,$10, $11,$12, $13,$14,$15,$16,$17, $18,$19,$20,$21, $22,$23,$24,$25, $26,$27,$28,$29)
 ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING
 RETURNING id`
 
@@ -145,11 +147,12 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 	err := s.db.QueryRow(ctx, positionInsertSQL,
 		tenant, int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby != 0, cols.HasBeaver != 0,
+		cols.HasJacoby != 0, cols.HasBeaver != 0, cols.MaxCube,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported, norm.Flagged).Scan(&id)
+		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported, norm.Flagged,
+		cols.MaxCube).Scan(&id)
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
 		// Hash already present for this tenant: keep the existing row, but let
@@ -184,11 +187,11 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 const positionUpdateSQL = `UPDATE position SET state = $1,
 	zobrist_hash=$2, decision_type=$3, player_on_roll=$4, dice_1=$5, dice_2=$6,
 	cube_value=$7, cube_owner=$8, score_1=$9, score_2=$10,
-	has_jacoby=$11, has_beaver=$12,
-	pip_1=$13, pip_2=$14, pip_diff=$15, off_1=$16, off_2=$17,
-	back_checkers_1=$18, back_checkers_2=$19, no_contact=$20, game_phase=$21,
-	occupancy_1=$22, occupancy_2=$23, point_mask_1=$24, point_mask_2=$25
-	WHERE id = $26 AND tenant_id = $27`
+	has_jacoby=$11, has_beaver=$12, max_cube=$13,
+	pip_1=$14, pip_2=$15, pip_diff=$16, off_1=$17, off_2=$18,
+	back_checkers_1=$19, back_checkers_2=$20, no_contact=$21, game_phase=$22,
+	occupancy_1=$23, occupancy_2=$24, point_mask_1=$25, point_mask_2=$26
+	WHERE id = $27 AND tenant_id = $28`
 
 // Update overwrites the stored position with the same id as p.
 func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Position) error {
@@ -197,7 +200,7 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 		engine.EncodeBoardCompact(p.Board),
 		int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby != 0, cols.HasBeaver != 0,
+		cols.HasJacoby != 0, cols.HasBeaver != 0, cols.MaxCube,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
