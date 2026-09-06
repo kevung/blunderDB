@@ -403,6 +403,65 @@ them one by one — a convenience for the position in front of them, outside any
 with no clock and no grade.
 _Avoid_: challenge mode (interface), training mode
 
+### Recording a match
+
+**Transcription**:
+The move-by-move record of a match played *elsewhere* — at a club, over a real board, from
+a video or a score sheet — while the user writes or corrects it. A **draft**, distinct
+from the Match it produces: it lives in the library as one document, survives a crash of
+the application, and stays the source of truth for as long as it is open — saving it
+materialises a Match, saving it again *replaces* that Match on the same id. Until saved,
+a Transcription is in no statistic, no search and no export of positions. It is not a
+game being played (ADR-0043: nobody decides, the rules check and never enforce), not an
+Evaluation (though it shows one at every Action), not a Collection.
+_Avoid_: recording, live match, play mode, transcript (see below)
+
+**Transcript**:
+The *rendering* of a Match or of a Transcription as two columns — player 1 left, player 2
+right, one row per turn, the cube action and the end of the game in the column of whoever
+acted — which is the layout of the `.mat` file and of every score sheet. The Match panel's
+move list and the `.mat` text are two Transcripts of one Match.
+_Avoid_: transcription (the draft), move list
+
+**Action** (of a Transcription):
+One player's act at one moment of the match: a roll and the checker play it was used for
+(or the dance it forced), a double or redouble, a take, a pass, a resignation. A double and
+its answer are two Actions, each with its own Position and Decision. An Action *owns its
+side*: proposed by the trait at entry, the side belongs to the Action once recorded, so
+inserting or deleting an Action never changes who played the ones after it. When the
+Transcription is saved, a checker or cube Action becomes a Move with its Played action and
+its Position; a resignation becomes a fact of the Game (winner, points) and no Move.
+_Avoid_: move (the stored row), turn (both players' Actions on one Transcript row),
+element, entry, ply (a search depth)
+
+**Cursor**:
+The Action a Transcription is currently about: the board shows the position it is
+played from, the panel lists its candidates, and the next recorded Action goes there — in
+place, correcting it, or before or after it on an explicit gesture. The Cursor points at
+an Action of the draft, never at a Position of the library.
+
+**Replay**:
+Recomputing every derived fact of a Transcription from one Action onwards by playing the
+Actions again in order: the board each Action leaves, the score, the Crawford game, where
+each game ends and with how many points, and the Inconsistencies. Every correction
+triggers one, and nothing else changes a derived fact. What a Replay computes is never
+typed and never stored in the saved Match; what it cannot compute — an illegal move's
+resulting board — is kept on the Action.
+_Avoid_: repropagation, recompute, validation
+
+**Inconsistency** (of an Action):
+A derived fact a Replay attaches to an Action, shown to the user and refused by nothing:
+an *illegal move* (the board it left is reachable by no legal play from the board before
+it), a *double turn* (two consecutive Actions of the same side), an *impossible cube
+action* (a double by a player who does not hold the cube, an answer with no offer), an
+Action *past the end* of the match after its length was shortened. An Inconsistency is
+kept and marked — never deleted by the software, never written into the saved Match as
+data — and the Cursor jumps to the first one after a Replay. An illegal move exported to
+a `.mat` is exported as played, with a warning that gnubg and XG will flag it and diverge
+from there.
+_Avoid_: error (the analysed blunder), fault (Training), invalid move (what gnubg
+refuses — a Transcription refuses nothing)
+
 ### Players
 
 **Player**:
