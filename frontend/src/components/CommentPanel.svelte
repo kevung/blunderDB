@@ -39,6 +39,41 @@
         }
     });
 
+    // Provenance badge (#263). A comment carries where its text came from:
+    // 'user' (typed here), 'xg'/'gnubg'/'bgf' (lifted out of an imported file)
+    // or 'unknown' (written before the column existed). The user's own notes
+    // get no badge — they are the norm, and marking every one of them would be
+    // noise; only a note somebody else wrote is worth naming.
+    function originLabel(origin) {
+        switch (origin) {
+            case 'xg':
+                return $t('comment.originXG');
+            case 'gnubg':
+                return $t('comment.originGnuBG');
+            case 'bgf':
+                return $t('comment.originBGF');
+            case 'unknown':
+                return $t('comment.originUnknown');
+            default:
+                return '';
+        }
+    }
+
+    function originTitle(origin) {
+        switch (origin) {
+            case 'xg':
+                return $t('comment.originTitleXG');
+            case 'gnubg':
+                return $t('comment.originTitleGnuBG');
+            case 'bgf':
+                return $t('comment.originTitleBGF');
+            case 'unknown':
+                return $t('comment.originTitleUnknown');
+            default:
+                return '';
+        }
+    }
+
     async function loadComments() {
         // Only update allComments here; the search $effect below owns
         // displayedComments. Reading allComments in the same synchronous effect
@@ -222,6 +257,12 @@
                                     ? formatDate(comment.modifiedAt) + ' ' + $t('comment.editedSuffix')
                                     : formatDate(comment.createdAt)}</span
                             >
+                            <!-- Provenance (#263). Only shown for a note the user did NOT
+                                 write: their own comments are the norm, and a badge on every
+                                 one of them would be noise. -->
+                            {#if originLabel(comment.origin)}
+                                <span class="msg-origin" title={originTitle(comment.origin)}>{originLabel(comment.origin)}</span>
+                            {/if}
                         </div>
                         <div class="msg-text">{comment.text}</div>
                         <div class="msg-footer">
@@ -336,12 +377,24 @@
     }
 
     .msg-header {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-1);
         margin-bottom: 2px;
     }
     .msg-date {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         font-style: italic;
+    }
+    .msg-origin {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 0 var(--space-1);
+        margin-left: var(--space-1);
+        white-space: nowrap;
     }
     .msg-footer {
         display: flex;

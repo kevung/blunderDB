@@ -494,6 +494,10 @@ export function RepairAnalyses() {
   return window['go']['database']['Database']['RepairAnalyses']();
 }
 
+export function RepairGamePhases() {
+  return window['go']['database']['Database']['RepairGamePhases']();
+}
+
 export function ResetAnkiDeck(arg1) {
   return window['go']['database']['Database']['ResetAnkiDeck'](arg1);
 }

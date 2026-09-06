@@ -722,7 +722,15 @@
         "noComments": "Noch keine Kommentare",
         "noMatches": "Keine Treffer",
         "promptPlaceholder": "Kommentar zur aktuellen Position…",
-        "searchPlaceholder": "Kommentare durchsuchen…"
+        "searchPlaceholder": "Kommentare durchsuchen…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "importiert",
+        "originTitleXG": "Notiz aus einem eXtreme-Gammon-Import",
+        "originTitleGnuBG": "Notiz aus einem GNU-Backgammon-Import",
+        "originTitleBGF": "Notiz aus einem BGF-Import",
+        "originTitleUnknown": "Notiz, deren Herkunft nie festgehalten wurde (älter als Schema 2.19.0)"
     },
     "metadata": {
         "created": "Erstellt",

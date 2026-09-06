@@ -463,10 +463,22 @@ Panneau Commentaires
 --------------------
 
 Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les
-commentaires associés à la position courante. Les commentaires importés depuis
-les fichiers XG sont automatiquement associés aux positions correspondantes.
-Appuyer sur *CTRL-P* ou exécuter la commande ``comment`` pour afficher ou
-masquer le panneau.
+commentaires associés à la position courante. Une position peut en porter
+plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les
+commentaires importés depuis les fichiers XG sont automatiquement associés aux
+positions correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande
+``comment`` pour afficher ou masquer le panneau.
+
+Chaque commentaire venu d'un fichier porte une **étiquette de provenance**
+(``XG``, ``GNU BG``, ``BGF``, ou *importé* lorsque la provenance n'a pas été
+enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le
+cas courant, et le signaler à chaque ligne serait du bruit. Modifier un
+commentaire importé vous l'attribue : après la modification, la phrase est la
+vôtre.
+
+Cette distinction a une conséquence visible ailleurs : supprimer un match
+n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
+du fichier source, elle, disparaît avec le match qui l'a apportée.
 
 .. _panneau_recherche:
 
@@ -500,6 +512,21 @@ synchronisé avec le plateau : modifier les dés ou le videau sur le plateau met
 jour le type de décision, et inversement. En mode *Prise / Passe*, le videau est
 affiché au centre du plateau à la valeur offerte ; cette valeur reste éditable.
 
+La **phase de partie** — ouverture, milieu de partie, course, sortie des pions —
+est une étiquette calculée par blunderDB à partir du plateau seul, jamais
+modifiable, et disponible en recherche par le jeton ``ph:`` de la ligne de
+commande (``ph:race``, répétable : ``ph:race ph:bearoff``). Trois de ses quatre
+frontières sont celles que GNU Backgammon emploie pour aiguiller ses réseaux ; la
+quatrième, où s'arrête l'ouverture, est une convention de blunderDB : une
+position en est encore à l'ouverture tant qu'aucun des deux camps n'a déplacé
+plus de quatre pions de leurs points de départ, qu'aucun pion n'est sorti et
+qu'aucun n'est sur la barre.
+
+.. note:: L'étiquette est recalculée par la commande ``blunderdb repair``. Sur
+   une base ouverte pour la première fois avec cette version, le calcul est fait
+   une fois, à l'ouverture. Une base dont les phases n'ont jamais été calculées
+   ne renvoie rien pour ``ph:`` — rien, plutôt qu'une réponse fausse.
+
 Le filtre **Marquée** retient les positions que vous avez marquées (*flag*) dans
 le logiciel d'origine du match. Seul eXtreme Gammon produit cette information,
 enregistrée coup par coup dans le fichier ``.xg`` ; blunderDB la lit à l'import
@@ -524,11 +551,11 @@ contraire les positions non annotées — utile, combiné à un filtre d'erreur 
 date, pour dresser la liste de ce qu'il reste à commenter.
 
 .. note:: Les commentaires importés depuis un fichier de match (XG, GNUbg)
-   comptent comme des commentaires : blunderDB ne conserve pas leur origine et ne
-   peut donc pas distinguer une note que vous avez saisie d'une note reprise du
-   fichier source. Par ailleurs, les commentaires attachés à un *match* ou à un
-   *tournoi* ne sont pas concernés : ils annotent le match ou le tournoi, non ses
-   positions.
+   comptent comme des commentaires. Pour ne retenir que les vôtres, ajoutez le
+   jeton ``co:user`` sur la ligne de commande (``co:xg``, ``co:gnubg``,
+   ``co:bgf`` et ``co:unknown`` désignent les autres provenances). Par ailleurs,
+   les commentaires attachés à un *match* ou à un *tournoi* ne sont pas
+   concernés : ils annotent le match ou le tournoi, non ses positions.
 
 Le filtre **Matchs & Tournois** s'appuie sur un sélecteur commun (fenêtre modale)
 plutôt que sur la saisie d'identifiants numériques : deux listes à cocher, une

@@ -722,7 +722,15 @@
         "noComments": "Комментариев пока нет",
         "noMatches": "Нет совпадений",
         "promptPlaceholder": "Комментарий к текущей позиции…",
-        "searchPlaceholder": "Поиск комментариев…"
+        "searchPlaceholder": "Поиск комментариев…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "импортировано",
+        "originTitleXG": "Заметка, пришедшая с импортом файла eXtreme Gammon",
+        "originTitleGnuBG": "Заметка, пришедшая с импортом файла GNU Backgammon",
+        "originTitleBGF": "Заметка, пришедшая с импортом файла BGF",
+        "originTitleUnknown": "Заметка, происхождение которой не было записано (до схемы 2.19.0)"
     },
     "metadata": {
         "created": "Создано",

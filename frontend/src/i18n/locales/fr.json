@@ -722,7 +722,15 @@
         "noComments": "Aucun commentaire pour le moment",
         "noMatches": "Aucun match",
         "promptPlaceholder": "Commenter la position actuelle…",
-        "searchPlaceholder": "Rechercher dans les commentaires…"
+        "searchPlaceholder": "Rechercher dans les commentaires…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "importé",
+        "originTitleXG": "Note apportée par l'import d'un fichier eXtreme Gammon",
+        "originTitleGnuBG": "Note apportée par l'import d'un fichier GNU Backgammon",
+        "originTitleBGF": "Note apportée par l'import d'un fichier BGF",
+        "originTitleUnknown": "Note dont la provenance n'a pas été enregistrée (antérieure au schéma 2.19.0)"
     },
     "metadata": {
         "created": "Créé",

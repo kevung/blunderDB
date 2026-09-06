@@ -722,7 +722,15 @@
         "noComments": "No comments yet",
         "noMatches": "No matches",
         "promptPlaceholder": "Comment on current position…",
-        "searchPlaceholder": "Search comments…"
+        "searchPlaceholder": "Search comments…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "imported",
+        "originTitleXG": "Note brought in by an eXtreme Gammon import",
+        "originTitleGnuBG": "Note brought in by a GNU Backgammon import",
+        "originTitleBGF": "Note brought in by a BGF import",
+        "originTitleUnknown": "Note whose origin was never recorded (older than schema 2.19.0)"
     },
     "metadata": {
         "created": "Created",

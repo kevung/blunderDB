@@ -254,6 +254,8 @@ export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise
 
 export function RepairAnalyses():Promise<number>;
 
+export function RepairGamePhases():Promise<number>;
+
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;

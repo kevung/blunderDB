@@ -1021,6 +1021,7 @@ export namespace domain {
 	    text: string;
 	    createdAt: string;
 	    modifiedAt: string;
+	    origin: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new CommentEntry(source);
@@ -1033,6 +1034,7 @@ export namespace domain {
 	        this.text = source["text"];
 	        this.createdAt = source["createdAt"];
 	        this.modifiedAt = source["modifiedAt"];
+	        this.origin = source["origin"];
 	    }
 	}
 	
@@ -1500,6 +1502,8 @@ export namespace domain {
 	    player2CheckerInZoneFilter: string;
 	    searchText: string;
 	    commentFilter: string;
+	    commentOriginFilter: string;
+	    gamePhaseFilter: string;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
@@ -1550,6 +1554,8 @@ export namespace domain {
 	        this.player2CheckerInZoneFilter = source["player2CheckerInZoneFilter"];
 	        this.searchText = source["searchText"];
 	        this.commentFilter = source["commentFilter"];
+	        this.commentOriginFilter = source["commentOriginFilter"];
+	        this.gamePhaseFilter = source["gamePhaseFilter"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];

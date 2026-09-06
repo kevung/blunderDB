@@ -722,7 +722,15 @@
         "noComments": "Δεν υπάρχουν ακόμη σχόλια",
         "noMatches": "Δεν υπάρχουν αντιστοιχίες",
         "promptPlaceholder": "Σχόλιο για την τρέχουσα θέση…",
-        "searchPlaceholder": "Αναζήτηση σχολίων…"
+        "searchPlaceholder": "Αναζήτηση σχολίων…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "εισηγμένο",
+        "originTitleXG": "Σημείωση που ήρθε με εισαγωγή αρχείου eXtreme Gammon",
+        "originTitleGnuBG": "Σημείωση που ήρθε με εισαγωγή αρχείου GNU Backgammon",
+        "originTitleBGF": "Σημείωση που ήρθε με εισαγωγή αρχείου BGF",
+        "originTitleUnknown": "Σημείωση της οποίας η προέλευση δεν καταγράφηκε ποτέ (παλαιότερη από το σχήμα 2.19.0)"
     },
     "metadata": {
         "created": "Δημιουργήθηκε",

@@ -722,7 +722,15 @@
         "noComments": "Ei vielä kommentteja",
         "noMatches": "Ei osumia",
         "promptPlaceholder": "Kommentoi nykyistä asemaa…",
-        "searchPlaceholder": "Hae kommentteja…"
+        "searchPlaceholder": "Hae kommentteja…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "tuotu",
+        "originTitleXG": "Muistiinpano, joka tuli eXtreme Gammon -tuonnin mukana",
+        "originTitleGnuBG": "Muistiinpano, joka tuli GNU Backgammon -tuonnin mukana",
+        "originTitleBGF": "Muistiinpano, joka tuli BGF-tuonnin mukana",
+        "originTitleUnknown": "Muistiinpano, jonka alkuperää ei koskaan tallennettu (vanhempi kuin skeema 2.19.0)"
     },
     "metadata": {
         "created": "Luotu",

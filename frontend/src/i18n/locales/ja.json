@@ -722,7 +722,15 @@
         "noComments": "コメントはまだありません",
         "noMatches": "一致するものがありません",
         "promptPlaceholder": "現在のポジションにコメント…",
-        "searchPlaceholder": "コメントを検索…"
+        "searchPlaceholder": "コメントを検索…",
+        "originXG": "XG",
+        "originGnuBG": "GNU BG",
+        "originBGF": "BGF",
+        "originUnknown": "インポート",
+        "originTitleXG": "eXtreme Gammon のインポートで取り込まれたメモ",
+        "originTitleGnuBG": "GNU Backgammon のインポートで取り込まれたメモ",
+        "originTitleBGF": "BGF のインポートで取り込まれたメモ",
+        "originTitleUnknown": "出所が記録されていないメモ（スキーマ 2.19.0 より前）"
     },
     "metadata": {
         "created": "作成日",
