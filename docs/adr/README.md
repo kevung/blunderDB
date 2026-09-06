@@ -47,6 +47,7 @@ it governs — `CLAUDE.md` lists the invariants that come out of them.
 | [0034](0034-the-in-app-help-is-generated-from-the-documentation.md) | The in-app help is generated from the documentation | accepted | 2026-09-03 | — | `frontend/src/i18n/help/*.js` becomes a build artefact of `raccourcis.rst`/`cmd_mode.rst` and their eight catalogues; the manual digest and the About tab stay hand-written prose. |
 | [0035](0035-the-game-phase-is-derived-never-edited-and-recomputable.md) | The game phase is derived, never edited, and recomputable | accepted | 2026-09-06 | P5 | `position.game_phase` holds opening/middlegame/race/bearoff, computed from the board alone; three boundaries are gnubg's, the fourth is one named constant; `repair` reclassifies everything, and nothing may edit a row. |
 | [0036](0036-the-trash-is-a-snapshot-table-not-a-deleted-at-column.md) | The trash is a snapshot table, not a `deleted_at` column | accepted | 2026-09-06 | — | Deleting stays a real DELETE with a JSON snapshot written first, so not one of the fifty search filters, the two statistics backends or the retention predicate has to learn about soft deletion; restore re-saves through the Zobrist dedup. |
+| [0037](0037-blunderdb-does-not-play-backgammon.md) | blunderDB does not play backgammon | accepted | 2026-09-06 | — | A play mode is the rules of backgammon end to end, not the evaluator plus a button; the useful half of the demand is the quiz mode (#294) and the Eval panel, and a playing engine belongs in gammonGo. |
 
 ## Conventions
 

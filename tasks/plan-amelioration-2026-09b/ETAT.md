@@ -84,10 +84,43 @@ chacune close par une release.
 | **1 — release** | | | ✅ **0.36.0** publiée le 2026-09-05 |
 | **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ ; #237, #239, #242 restent (voir plus bas) |
 | **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305, #306, #307 | ✅ ; #308-#311 restent |
-| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : #257, #261, #263, #264, #270, #272, #281, #285, #288 fermées |
+| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : 11 fermées (voir plus bas), 23 restantes |
 | **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | #127 fermée (la mesure existait déjà et était publiée) ; #151, #200 restent |
-| **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | à faire |
+| **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
+
+### La session du 2026-09-06 : douze issues fermées
+
+| Issue | Fiche | Ce qui a été livré |
+|---|---|---|
+| #264 | I.8 | **ADR-0035** : la phase de partie, dérivée du plateau seul, jamais modifiable, recalculée par `repair`. Jeton `ph:race`, drapeau `--phase`, route. |
+| #263 | I.7 | `comment.origin`, et la clause manquante du prédicat de rétention dans ses **trois** copies : un commentaire écrit par l'utilisateur retient sa position. Étiquette de provenance dans le panneau. |
+| #257 | I.1 | Le compte rendu de fin d'import. **La moitié mesurée l'emporte sur la moitié stockée** : PR du lot, positions marquées, positions sans analyse, cinq pires décisions, recalculés à chaque consultation. |
+| #288 | I.32 | La vérité sur la synchronisation (un fichier, un écrivain, `serve` pour le multi-poste) ; le geste s'appelle enfin « Fusionner ». |
+| #261 | I.5 | La couverture indirecte des plateformes en ligne, **avec ce qui n'a pas été mesuré écrit noir sur blanc**. |
+| #281 | I.25 | Publier une base : quatre champs qui existaient déjà, l'annuaire est une catégorie de discussions — conséquence de l'ADR-0007, pas commodité. |
+| #127 | — | **La mesure existait déjà et était publiée.** Rejouée : chiffres identiques, en 18,6 s au lieu de 196. |
+| #270 | I.14 | `analyze --compare` : ce que gammonNet vaut sur la bibliothèque de l'utilisateur, sans rien écrire. `engine.CanonicalMove` fait passer l'accord de 78,8 % à 93,2 % — quinze points de dialecte. |
+| #272 | I.16 | **Mesuré, et le réglage n'est pas offert** : 85× le coût pour 0,0000 d'équité par décision. |
+| #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
+| #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
+| #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+
+Fermée aussi : **#300** (J.10, « jouer contre gammonNet »), par **ADR-0037** —
+la fiche demandait « une ligne dans une ADR pour ne pas rouvrir la question »,
+elle a maintenant sa page.
+
+### Ce qui ne se fera pas par un agent
+
+- **#102** (vidéo de démo) demande un enregistrement d'écran commenté par un
+  humain. Rien à automatiser.
+- **#151** (noyau NEON arm64) demande une machine arm64 pour être écrit et
+  surtout pour être **vérifié** : ADR-0024 exige que tout nouveau chemin
+  arithmétique passe `kernel_identity_test.go` bit pour bit sur la cible. Écrire
+  du Plan 9 arm64 sans pouvoir l'exécuter serait livrer non mesuré exactement ce
+  que cette ADR interdit.
+- **#296** (mode club) et **#299** (Ollama) demandent un arbitrage produit que
+  le plan attribue explicitement à une session de *grilling*, pas à une fiche.
 
 ### La vague de schéma 2.19.0 (2026-09-06)
 
