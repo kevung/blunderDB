@@ -14,7 +14,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock } from './helpers/wailsMock.js';
+import { dismissHomeScreen, installWailsMock } from './helpers/wailsMock.js';
 
 // ── Helper ────────────────────────────────────────────────────────────────────
 
@@ -43,6 +43,7 @@ test.beforeEach(async ({ page }) => {
     await installWailsMock(page);
     await page.goto('/');
     await waitForApp(page);
+    await dismissHomeScreen(page);
 });
 
 // ── Vérification de base : onglet actif visuellement ─────────────────────────

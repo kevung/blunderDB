@@ -15,7 +15,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock, overrideDbMethod } from './helpers/wailsMock.js';
+import { dismissHomeScreen, installWailsMock, overrideDbMethod } from './helpers/wailsMock.js';
 import { epcResultA, epcResultB } from './helpers/fixtures.js';
 
 // ── Helper ────────────────────────────────────────────────────────────────────
@@ -51,6 +51,9 @@ test.beforeEach(async ({ page }) => {
 
     await page.goto('/');
     await waitForApp(page);
+    // Cette spec travaille sur le plateau brouillon, sans base : l'accueil
+    // couvre les onglets tant qu'on ne l'écarte pas.
+    await dismissHomeScreen(page);
 });
 
 // ── T1 : panneau EPC renseigné lors de la première visite ─────────────────────
