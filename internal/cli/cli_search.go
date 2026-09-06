@@ -13,6 +13,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -39,6 +40,11 @@ type searchParams struct {
 	offset      int
 	format      string
 	outputDB    string
+	// like is the id of a position whose NEIGHBOURS are wanted (#293). It is
+	// not a filter: similarity is a ranking over the whole library, not a
+	// predicate the SQL scan can narrow on, so it replaces the query rather
+	// than joining it.
+	like int
 }
 
 // parseSearchFlags defines and parses the `search` command's flags, and
@@ -97,6 +103,19 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		}, *f.dbPath, nil
 	}
 
+	// --like ranks, it does not narrow: combining it with filters would need a
+	// precedence rule and would quietly change what the ranking is over.
+	if *f.like > 0 {
+		if named := filterFlagsSet(searchCmd); len(named) > 1 {
+			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks the whole library, it does not narrow it", strings.Join(named, ", "))
+		}
+		return &searchParams{
+			like:   *f.like,
+			limit:  *f.limit,
+			format: strings.ToLower(*f.format),
+		}, *f.dbPath, nil
+	}
+
 	filters, err := f.toFilters()
 	if err != nil {
 		return nil, "", err
@@ -119,7 +138,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 func filterFlagsSet(fs *flag.FlagSet) []string {
 	passthrough := map[string]bool{
 		"db": true, "format": true, "limit": true, "offset": true,
-		"export": true, "query": true, "query-help": true,
+		"export": true, "query": true, "query-help": true, "like": true,
 	}
 	var named []string
 	fs.Visit(func(f *flag.Flag) {
@@ -197,6 +216,14 @@ func (cli *CLI) runSearch(args []string) error {
 	// Initialize database
 	if err := cli.initDatabase(dbPath); err != nil {
 		return err
+	}
+
+	// --like ranks the whole library by distance instead of narrowing it, so
+	// it is answered here and returns: combining it with a filter would be a
+	// second, silent semantics ("the nearest AMONG those that match"), and a
+	// ranking that quietly stopped ranking would be worse than a refusal.
+	if params.like > 0 {
+		return cli.runSearchLike(params)
 	}
 
 	// --error-min/--has-analysis are applied client-side below, on the
@@ -421,5 +448,33 @@ func (cli *CLI) renderResults(w io.Writer, positions []Position, format string) 
 		tw.Flush()
 	}
 
+	return nil
+}
+
+// runSearchLike prints the neighbours of a position, nearest first, with the
+// distance that ranked them — in checker-pips, so the number can be read and
+// not merely compared.
+func (cli *CLI) runSearchLike(params *searchParams) error {
+	limit := params.limit
+	if limit <= 0 {
+		limit = 10
+	}
+	neighbours, err := cli.db.SimilarPositions(params.like, limit)
+	if err != nil {
+		return fmt.Errorf("failed to find similar positions: %w", err)
+	}
+	if strings.ToLower(params.format) == "json" {
+		return json.NewEncoder(os.Stdout).Encode(neighbours)
+	}
+	if len(neighbours) == 0 {
+		fmt.Println("No similar position found.")
+		return nil
+	}
+	fmt.Printf("\n%d position(s) closest to %d:\n\n", len(neighbours), params.like)
+	fmt.Println("ID      Distance  XGID")
+	fmt.Println("--      --------  ----")
+	for _, n := range neighbours {
+		fmt.Printf("%-6d  %-8d  %s\n", n.Position.ID, n.Distance, engine.EncodeBoardCompact(n.Position.Board))
+	}
 	return nil
 }

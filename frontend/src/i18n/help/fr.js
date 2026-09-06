@@ -843,6 +843,10 @@ export default {
 <td>Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche.</td>
 </tr>
 <tr>
+<td>like</td>
+<td>Remplace la liste parcourue par les positions les plus proches de la position courante — ou de celle dont l'indice est donné (<code>like 42</code>). La proximité est une distance de transport en pions-pas : ce n'est pas un filtre, elle classe toute la base plutôt que de la restreindre, et ne se combine donc pas avec les jetons de recherche.</td>
+</tr>
+<tr>
 <td>train</td>
 <td>Lance une session de micro-entraînement. Prend un argument : <code>train pips</code> (compte de pions), <code>train epc</code>, <code>train tp</code> (point de prise au score), <code>train quiz</code> (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ.</td>
 </tr>

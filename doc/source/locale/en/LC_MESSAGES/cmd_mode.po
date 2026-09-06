@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:33+0200\n"
+"POT-Creation-Date: 2026-09-06 12:01+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -173,6 +173,24 @@ msgstr ""
 " of positions, clickable to run the search."
 
 #: ../../source/cmd_mode.rst:1
+msgid "like"
+msgstr "like"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Remplace la liste parcourue par les positions les plus proches de la "
+"position courante — ou de celle dont l'indice est donné (``like 42``). La"
+" proximité est une distance de transport en pions-pas : ce n'est pas un "
+"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
+"combine donc pas avec les jetons de recherche."
+msgstr ""
+"Replaces the browsed list by the positions closest to the current one — "
+"or to the one whose index is given (``like 42``). Closeness is a "
+"transport distance in checker-pips: it is not a filter, it ranks the "
+"whole database rather than narrowing it, and therefore does not combine "
+"with the search tokens."
+
+#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -261,7 +279,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Open the gammon value table with a 4-cube."
 
-#: ../../source/cmd_mode.rst:50
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Positions and navigation"
 
@@ -398,7 +416,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:75
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -434,11 +452,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Search among the currently filtered positions."
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -453,7 +471,7 @@ msgstr ""
 " ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
 "a filter that only the grammar expresses."
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -473,7 +491,7 @@ msgstr ""
 "compare against an empty board; it is the flags of the third column that "
 "must be used there instead."
 
-#: ../../source/cmd_mode.rst:109
+#: ../../source/cmd_mode.rst:110
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -483,11 +501,11 @@ msgstr ""
 "*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
 "least a tenth of a point, one point being worth 1000 millipoints."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 msgid "Deux recherches complètes :"
 msgstr "Two full searches:"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -496,7 +514,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
 "winning chances, no comment."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1416,7 +1434,7 @@ msgstr ""
 "Search positions from a match involving the named player, at either seat "
 "(e.g. ``pl'Alice'``). Case-insensitive."
 
-#: ../../source/cmd_mode.rst:221
+#: ../../source/cmd_mode.rst:222
 msgid "Commandes diverses"
 msgstr "Various commands"
 

@@ -466,6 +466,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.save — JSON."
         return self._call("/v1/positions.save", payload)
 
+    def positions_similar(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.similar — JSON."
+        return self._call("/v1/positions.similar", payload)
+
     def positions_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.update — JSON."
         return self._call("/v1/positions.update", payload)

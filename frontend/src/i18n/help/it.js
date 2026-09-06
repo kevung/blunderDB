@@ -839,6 +839,10 @@ export default {
 <td>Apre il vocabolario di tag: i tag usati in questo database, con il numero di posizioni, cliccabili per lanciare la ricerca.</td>
 </tr>
 <tr>
+<td>like</td>
+<td>Sostituisce la lista percorsa con le posizioni più vicine a quella corrente — o a quella il cui indice è indicato (<code>like 42</code>). La vicinanza è una distanza di trasporto in pip di pedina: non è un filtro, ordina l'intera base invece di restringerla, e quindi non si combina con i token di ricerca.</td>
+</tr>
+<tr>
 <td>train</td>
 <td>Avvia una sessione di micro-allenamento. Prende un argomento: <code>train pips</code> (conteggio dei pip), <code>train epc</code>, <code>train tp</code> (punto di presa al punteggio), <code>train quiz</code> (la mossa o l'azione di cubo, valutate contro l'analisi registrata). Cinque domande, cronometrate, corrette sul momento.</td>
 </tr>

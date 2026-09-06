@@ -111,6 +111,13 @@ export function processCommand(command) {
         openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tags') {
         openModal(MODAL.TAGS);
+    } else if (command.startsWith('like ')) {
+        // `like <id>` : les positions les plus proches de celle-là (#293).
+        // Testé AVANT la forme exacte, que la ligne suivante capte pour
+        // prendre la position courante.
+        callbacks.onSimilar?.(parseInt(command.slice('like '.length).trim(), 10));
+    } else if (command === 'like') {
+        callbacks.onSimilar?.(0);
     } else if (command.startsWith('train ')) {
         // `train <exercice>` : pips, epc, tp. Testé AVANT la forme exacte, que
         // la ligne suivante capte pour ouvrir le choix (#273).

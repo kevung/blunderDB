@@ -426,6 +426,10 @@ export function ExplainDecision(arg1, arg2) {
   return window['go']['database']['Database']['ExplainDecision'](arg1, arg2);
 }
 
+export function SimilarPositions(arg1, arg2) {
+  return window['go']['database']['Database']['SimilarPositions'](arg1, arg2);
+}
+
 export function GradeQuizChecker(arg1, arg2) {
   return window['go']['database']['Database']['GradeQuizChecker'](arg1, arg2);
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:33+0200\n"
+"POT-Creation-Date: 2026-09-06 12:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -175,6 +175,23 @@ msgstr ""
 "позиций; по щелчку запускается поиск."
 
 #: ../../source/cmd_mode.rst:1
+msgid "like"
+msgstr "like"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Remplace la liste parcourue par les positions les plus proches de la "
+"position courante — ou de celle dont l'indice est donné (``like 42``). La"
+" proximité est une distance de transport en pions-pas : ce n'est pas un "
+"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
+"combine donc pas avec les jetons de recherche."
+msgstr ""
+"Заменяет просматриваемый список позициями, ближайшими к текущей — или к "
+"той, чей индекс указан (``like 42``). Близость — это транспортное "
+"расстояние в шашко-пипсах: это не фильтр, оно упорядочивает всю базу, а "
+"не сужает её, и потому не сочетается с токенами поиска."
+
+#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -263,7 +280,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Открывает таблицу значений гэммона при кубе на 4."
 
-#: ../../source/cmd_mode.rst:50
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Позиции и навигация"
 
@@ -403,7 +420,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Навигация по последнему просмотренному матчу."
 
-#: ../../source/cmd_mode.rst:75
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Редактирование и поиск"
 
@@ -439,11 +456,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Искать среди текущих отфильтрованных позиций."
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Фильтры поиска"
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -458,7 +475,7 @@ msgstr ""
 "``search``, делающий то же самое (см. :ref:`cli`); тире отмечает фильтр, "
 "который выражает только грамматика."
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -477,7 +494,7 @@ msgstr ""
 "(``xD65``). В командной строке, где доски нет, эти токены сравниваются с "
 "пустой доской; там нужно применять флаги из третьего столбца."
 
-#: ../../source/cmd_mode.rst:109
+#: ../../source/cmd_mode.rst:110
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -487,11 +504,11 @@ msgstr ""
 " из таблицы ниже: ``E>100`` оставляет ходы, стоившие не менее одной "
 "десятой очка, поскольку очко равно 1000 тысячных."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 msgid "Deux recherches complètes :"
 msgstr "Два полных поиска:"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -500,7 +517,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — отставание более 30 пипов, шансы на выигрыш от 40"
 " % до 60 %, без комментария."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1418,7 +1435,7 @@ msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
 "(напр. ``pl'Alice'``). Без учёта регистра."
 
-#: ../../source/cmd_mode.rst:221
+#: ../../source/cmd_mode.rst:222
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

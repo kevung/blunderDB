@@ -55,4 +55,22 @@ type PositionStore interface {
 	// migration, and so does /v1/positions.reclassifyPhases. Running it on a
 	// database that is already up to date rewrites nothing.
 	ReclassifyDerived(ctx context.Context, scope string) (int, error)
+
+	// Similar returns the positions closest to target, nearest first and
+	// excluding target itself, by the transport distance
+	// engine.SimilarityDistance defines (issue #293).
+	//
+	// It is an EXHAUSTIVE scan, deliberately: below about a hundred thousand
+	// positions an exact scan beats any approximate index on both recall and
+	// on the amount of machinery to keep in step with every write
+	// (docs/recherche/P7-similarite-knn-go.md). The contract therefore
+	// promises exact nearest neighbours, not approximate ones.
+	Similar(ctx context.Context, scope string, target *domain.Position, limit int) ([]SimilarPosition, error)
+}
+
+// SimilarPosition is one neighbour and how far it stands, in checker-pips: the
+// amount of checker movement separating it from the position asked about.
+type SimilarPosition struct {
+	Position domain.Position `json:"position"`
+	Distance int             `json:"distance"`
 }

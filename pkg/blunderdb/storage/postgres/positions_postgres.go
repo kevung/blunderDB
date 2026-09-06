@@ -24,6 +24,11 @@ type positionStore struct {
 
 // ReclassifyDerived recomputes the derived phase of every position whose stored
 // value disagrees with the classifier (ADR-0035). See sqlshared.ReclassifyDerived.
+// Similar returns the positions closest to target. See sqlshared.Similar.
+func (s *positionStore) Similar(ctx context.Context, scope string, target *domain.Position, limit int) ([]storage.SimilarPosition, error) {
+	return sqlshared.Similar(ctx, s.shared, scope, target, limit)
+}
+
 func (s *positionStore) ReclassifyDerived(ctx context.Context, scope string) (int, error) {
 	return sqlshared.ReclassifyDerived(ctx, s.shared, scope)
 }

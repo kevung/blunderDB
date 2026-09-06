@@ -31,6 +31,12 @@ type ogidReq struct {
 	OGID string `json:"ogid"`
 }
 
+// similarReq asks for the neighbours of a stored position (#293).
+type similarReq struct {
+	PositionID int64 `json:"positionId"`
+	Limit      int   `json:"limit"`
+}
+
 // parseTextReq carries pasted clipboard / file text to parse into a position.
 type parseTextReq struct {
 	Text string `json:"text"`
@@ -190,6 +196,20 @@ func (s *Server) positionRoutes() []route {
 				return race.Result{}, errMissing("position")
 			}
 			return race.Evaluate(req.Position), nil
+		})},
+		// « Des positions comme celle-ci » (#293). Un balayage exhaustif, donc
+		// des voisins EXACTS : sous cent mille positions un index approximatif
+		// coûterait sa cohérence pour un rappel moindre (P7).
+		{http.MethodPost, "/v1/positions.similar", rpc(func(ctx context.Context, scope string, req similarReq) ([]storage.SimilarPosition, error) {
+			pos, err := ps().Load(ctx, scope, req.PositionID)
+			if err != nil {
+				return nil, err
+			}
+			limit := req.Limit
+			if limit <= 0 {
+				limit = 10
+			}
+			return ps().Similar(ctx, scope, pos, limit)
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)

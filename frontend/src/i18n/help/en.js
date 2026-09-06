@@ -827,6 +827,10 @@ export default {
 <td>Opens the tag vocabulary: the tags used in this database, with the number of positions, clickable to run the search.</td>
 </tr>
 <tr>
+<td>like</td>
+<td>Replaces the browsed list by the positions closest to the current one — or to the one whose index is given (<code>like 42</code>). Closeness is a transport distance in checker-pips: it is not a filter, it ranks the whole database rather than narrowing it, and therefore does not combine with the search tokens.</td>
+</tr>
+<tr>
 <td>train</td>
 <td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score), <code>train quiz</code> (the move or the cube action, graded against the stored analysis). Five questions, timed, corrected on the spot.</td>
 </tr>

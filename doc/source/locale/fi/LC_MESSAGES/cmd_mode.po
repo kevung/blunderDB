@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 11:33+0200\n"
+"POT-Creation-Date: 2026-09-06 12:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -174,6 +174,23 @@ msgstr ""
 "asemamäärineen, napsautettavina haun käynnistämiseksi."
 
 #: ../../source/cmd_mode.rst:1
+msgid "like"
+msgstr "like"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Remplace la liste parcourue par les positions les plus proches de la "
+"position courante — ou de celle dont l'indice est donné (``like 42``). La"
+" proximité est une distance de transport en pions-pas : ce n'est pas un "
+"filtre, elle classe toute la base plutôt que de la restreindre, et ne se "
+"combine donc pas avec les jetons de recherche."
+msgstr ""
+"Korvaa selatun listan asemilla, jotka ovat lähimpänä nykyistä — tai sitä,"
+" jonka indeksi annetaan (``like 42``). Läheisyys on kuljetusetäisyys "
+"nappulapipeinä: se ei ole suodatin, se järjestää koko tietokannan sen "
+"sijaan että rajaisi sitä, eikä siksi yhdisty hakutunnuksiin."
+
+#: ../../source/cmd_mode.rst:1
 msgid "train"
 msgstr "train"
 
@@ -263,7 +280,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."
 
-#: ../../source/cmd_mode.rst:50
+#: ../../source/cmd_mode.rst:51
 msgid "Positions et navigation"
 msgstr "Asemat ja navigointi"
 
@@ -400,7 +417,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:75
+#: ../../source/cmd_mode.rst:76
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -436,11 +453,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:93
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -455,7 +472,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -475,7 +492,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:109
+#: ../../source/cmd_mode.rst:110
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -485,11 +502,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -498,7 +515,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1414,7 +1431,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. ``pl'Alice'``). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:221
+#: ../../source/cmd_mode.rst:222
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

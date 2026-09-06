@@ -1367,5 +1367,11 @@
         "doubletooearly": "Sie verlieren {cost} mMWC: Das Doppel ist verfrüht, {best}.",
         "taketooloose": "Sie verlieren {cost} mMWC: Die Annahme ist zu locker, {best}.",
         "passtootight": "Sie verlieren {cost} mMWC: Die Aufgabe ist zu eng, {best}."
+    },
+    "similar": {
+        "noPosition": "Keine aktuelle Stellung, zu der Nachbarn gesucht werden könnten.",
+        "failed": "Die Suche nach nahen Stellungen ist fehlgeschlagen.",
+        "none": "Keine nahe Stellung in dieser Datenbank.",
+        "found": "{n} nahe Stellungen, von {nearest} bis {farthest} Stein-Pips."
     }
 }

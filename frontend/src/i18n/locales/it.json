@@ -1367,5 +1367,11 @@
         "doubletooearly": "Perdi {cost} mMWC: il raddoppio è prematuro, {best}.",
         "taketooloose": "Perdi {cost} mMWC: la presa è troppo larga, {best}.",
         "passtootight": "Perdi {cost} mMWC: il passo è troppo stretto, {best}."
+    },
+    "similar": {
+        "noPosition": "Nessuna posizione corrente di cui cercare le vicine.",
+        "failed": "La ricerca di posizioni vicine è fallita.",
+        "none": "Nessuna posizione vicina in questa base.",
+        "found": "{n} posizioni vicine, da {nearest} a {farthest} pip di pedina."
     }
 }

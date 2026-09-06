@@ -1367,5 +1367,11 @@
         "doubletooearly": "{cost} mMWC の損：ダブルが早すぎます。{best}。",
         "taketooloose": "{cost} mMWC の損：テイクが甘すぎます。{best}。",
         "passtootight": "{cost} mMWC の損：パスが固すぎます。{best}。"
+    },
+    "similar": {
+        "noPosition": "近い局面を探す対象の局面がありません。",
+        "failed": "近い局面の検索に失敗しました。",
+        "none": "このデータベースに近い局面はありません。",
+        "found": "近い局面 {n} 件、{nearest} から {farthest} チェッカーピップ。"
     }
 }
