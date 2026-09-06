@@ -1243,5 +1243,25 @@
         "searchHint": "Buscar las posiciones con {tag}",
         "suggested": "Vocabulario recomendado, tomado de la literatura — nunca impuesto:",
         "suggestionsLabel": "Sugerencias de etiquetas"
+    },
+    "studyQueue": {
+        "title": "Cola de estudio",
+        "offer": "Lo que esta importación merece revisar",
+        "start": "Recorrer",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "costó",
+        "reasonFlagged": "marcada en el programa de origen",
+        "reasonClose": "decisión de cubo ajustada",
+        "comment": "Comentar",
+        "collection": "Colección",
+        "anki": "Tarjeta Anki",
+        "previous": "Anterior",
+        "skip": "Saltar",
+        "finish": "Terminar",
+        "leave": "Salir",
+        "empty": "Esta importación no tiene nada que merezca una segunda mirada.",
+        "failed": "No se ha podido construir la cola de estudio.",
+        "finished": "Cola de estudio terminada: {n} posiciones recorridas.",
+        "stopped": "Cola de estudio abandonada."
     }
 }

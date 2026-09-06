@@ -276,6 +276,7 @@ var databaseParity = map[string]parityEntry{
 	"EmptyTrash":                        {CLI: "trash", Server: "/v1/trash.empty"},
 	"ListTrash":                         {CLI: "trash", Server: "/v1/trash.list"},
 	"CountTrash":                        {CLI: "trash", Server: "/v1/trash.count"},
+	"ImportStudyQueue":                  {CLI: "list", Server: "/v1/imports.studyQueue"},
 	"Tags":                              {CLI: "list", Server: "/v1/comments.tags"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }

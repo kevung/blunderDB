@@ -1243,5 +1243,25 @@
         "searchHint": "{tag} を持つ局面を検索",
         "suggested": "推奨語彙。文献から取ったもので、強制ではありません：",
         "suggestionsLabel": "タグの候補"
+    },
+    "studyQueue": {
+        "title": "学習キュー",
+        "offer": "この取り込みで見直す価値のあるもの",
+        "start": "順に見る",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "損失",
+        "reasonFlagged": "元のソフトで印が付いていた",
+        "reasonClose": "際どいキューブ判断",
+        "comment": "コメント",
+        "collection": "コレクション",
+        "anki": "Anki カード",
+        "previous": "前へ",
+        "skip": "スキップ",
+        "finish": "終了",
+        "leave": "やめる",
+        "empty": "この取り込みには、見直す価値のあるものがありません。",
+        "failed": "学習キューを作成できませんでした。",
+        "finished": "学習キューを終えました：{n} 局面。",
+        "stopped": "学習キューをやめました。"
     }
 }

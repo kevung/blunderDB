@@ -110,6 +110,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"ImportBatch/Lifecycle", testImportBatchLifecycle},
 		{"ImportBatch/ReportIsMeasuredNotStored", testImportBatchReportIsMeasured},
 		{"ImportBatch/ReportIsAboutOneImport", testImportBatchReportIgnoresOtherBatches},
+		{"ImportBatch/StudyQueue", testImportStudyQueue},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

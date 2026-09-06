@@ -256,6 +256,12 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/imports.report", rpc(func(ctx context.Context, scope string, req importReportReq) (*domain.ImportBatch, error) {
 			return s.opts.Storage.ImportBatches().Report(ctx, scope, req.BatchID, req.Players)
 		})},
+		// The queue that follows the report (#259): what to look at now, in
+		// the order to look at it. Measured on every call and never stored —
+		// running the same queue again is a legitimate thing to want.
+		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
+			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
+		})},
 		route{http.MethodPost, "/v1/imports.list", rpc(func(ctx context.Context, scope string, req listReq) ([]*domain.ImportBatch, error) {
 			return s.opts.Storage.ImportBatches().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
@@ -569,4 +575,13 @@ func sourceLabel(header *multipart.FileHeader) string {
 type importReportReq struct {
 	BatchID int64    `json:"batchId"`
 	Players []string `json:"players,omitempty"`
+}
+
+// importStudyQueueReq asks for the queue that follows a report (#259). Limit
+// 0 means the queue's own bound (domain.MaxStudyQueue) — a queue nobody
+// finishes is a queue nobody starts.
+type importStudyQueueReq struct {
+	BatchID int64    `json:"batchId"`
+	Players []string `json:"players,omitempty"`
+	Limit   int      `json:"limit,omitempty"`
 }

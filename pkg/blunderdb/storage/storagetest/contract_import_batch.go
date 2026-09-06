@@ -221,3 +221,101 @@ func testImportBatchReportIgnoresOtherBatches(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// testImportStudyQueue pins the queue that follows the report (#259): the
+// order it offers, the fact that a position appears once, and the narrowing to
+// one batch.
+//
+// The order is the whole feature. A queue that offered the close cube
+// decisions before the blunders would be a list of positions, not a study
+// list — and the reason attached to each entry is what lets the interface say
+// WHY it is showing this board rather than another.
+func testImportStudyQueue(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	batches := s.ImportBatches()
+
+	id, err := batches.Begin(ctx, "", "corpus.xg", "xg")
+	if err != nil {
+		t.Fatalf("Begin: %v", err)
+	}
+	matchID, _ := statsFixtureMatchInBatch(t, s, 0, "Alice", "Bob", id)
+	if err := batches.Finish(ctx, "", id, domain.ImportReport{MatchesImported: 1}); err != nil {
+		t.Fatalf("Finish: %v", err)
+	}
+
+	// A second import must not leak into the first one's queue.
+	other, err := batches.Begin(ctx, "", "other.xg", "xg")
+	if err != nil {
+		t.Fatalf("Begin (other): %v", err)
+	}
+	statsFixtureMatchInBatch(t, s, 10, "Carol", "Dave", other)
+	if err := batches.Finish(ctx, "", other, domain.ImportReport{MatchesImported: 1}); err != nil {
+		t.Fatalf("Finish (other): %v", err)
+	}
+
+	queue, err := batches.StudyQueue(ctx, "", id, nil, 0)
+	if err != nil {
+		if errors.Is(err, storage.ErrInternal) {
+			t.Skip("ImportBatches not implemented on this backend")
+		}
+		t.Fatalf("StudyQueue: %v", err)
+	}
+	if len(queue) == 0 {
+		t.Fatal("the queue is empty though the batch carries decisions that cost equity")
+	}
+
+	seen := map[int64]bool{}
+	lastRank := -1
+	rank := map[domain.StudyQueueReason]int{
+		domain.StudyBlunder: 0, domain.StudyFlagged: 1, domain.StudyClose: 2,
+	}
+	for _, e := range queue {
+		if seen[e.PositionID] {
+			t.Fatalf("position %d appears twice: a flagged blunder is one entry, not two", e.PositionID)
+		}
+		seen[e.PositionID] = true
+		if e.MatchID != matchID {
+			t.Fatalf("the queue of batch %d carries a position of another import (match %d)", id, e.MatchID)
+		}
+		r, ok := rank[e.Reason]
+		if !ok {
+			t.Fatalf("unknown reason %q", e.Reason)
+		}
+		if r < lastRank {
+			t.Fatalf("the queue is out of order: %q after a later group", e.Reason)
+		}
+		lastRank = r
+		if e.Label == "" {
+			t.Errorf("entry %d carries no match label", e.PositionID)
+		}
+		// Only a blunder's cost means anything: showing a 0 beside a flagged
+		// position would read as a measurement rather than as an absence.
+		if e.Reason != domain.StudyBlunder && e.ErrorMP != 0 {
+			t.Errorf("a %q entry carries a cost of %d", e.Reason, e.ErrorMP)
+		}
+	}
+
+	// Blunders come first and are ordered by what they cost.
+	var lastCost = 1 << 30
+	for _, e := range queue {
+		if e.Reason != domain.StudyBlunder {
+			break
+		}
+		if e.ErrorMP > lastCost {
+			t.Fatalf("blunders are not ordered by cost: %d after %d", e.ErrorMP, lastCost)
+		}
+		lastCost = e.ErrorMP
+	}
+
+	// The limit is honoured, and a limit of one still gives the worst.
+	short, err := batches.StudyQueue(ctx, "", id, nil, 1)
+	if err != nil {
+		t.Fatalf("StudyQueue (limit 1): %v", err)
+	}
+	if len(short) != 1 {
+		t.Fatalf("limit 1 gave %d entries", len(short))
+	}
+	if short[0].PositionID != queue[0].PositionID {
+		t.Errorf("limit 1 gave position %d, want the queue's first (%d)", short[0].PositionID, queue[0].PositionID)
+	}
+}

@@ -1243,5 +1243,25 @@
         "searchHint": "Search the positions carrying {tag}",
         "suggested": "Suggested vocabulary, taken from the literature — never imposed:",
         "suggestionsLabel": "Tag suggestions"
+    },
+    "studyQueue": {
+        "title": "Study queue",
+        "offer": "What this import is worth looking at again",
+        "start": "Walk through",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "cost",
+        "reasonFlagged": "flagged in the source tool",
+        "reasonClose": "close cube decision",
+        "comment": "Comment",
+        "collection": "Collection",
+        "anki": "Anki card",
+        "previous": "Previous",
+        "skip": "Skip",
+        "finish": "Finish",
+        "leave": "Leave",
+        "empty": "This import has nothing worth a second look.",
+        "failed": "The study queue could not be built.",
+        "finished": "Study queue finished: {n} positions walked.",
+        "stopped": "Study queue left."
     }
 }

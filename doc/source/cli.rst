@@ -679,6 +679,11 @@ Affiche le contenu de la base de données.
 
 * ``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au lieu
   de la liste.
+* ``--queue`` — Avec ``--batch`` : la **file d'étude** du lot plutôt que son
+  compte rendu — les positions qui méritent un second regard, dans l'ordre où
+  les parcourir (voir :ref:`file_etude`). Les décisions qui ont coûté quelque
+  chose d'abord, puis les positions marquées dans le logiciel d'origine, puis
+  les décisions de videau serrées ; une position n'y figure qu'une fois.
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
 
 La moitié mesurée du compte rendu est recalculée à chaque appel : un lot dont

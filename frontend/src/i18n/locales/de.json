@@ -1243,5 +1243,25 @@
         "searchHint": "Die Stellungen mit {tag} suchen",
         "suggested": "Empfohlenes Vokabular, aus der Literatur — nie vorgeschrieben:",
         "suggestionsLabel": "Tag-Vorschläge"
+    },
+    "studyQueue": {
+        "title": "Studienliste",
+        "offer": "Was dieser Import erneut anzusehen lohnt",
+        "start": "Durchgehen",
+        "progress": "{i} / {n}",
+        "reasonBlunder": "kostete",
+        "reasonFlagged": "im Ursprungsprogramm markiert",
+        "reasonClose": "knappe Würfelentscheidung",
+        "comment": "Kommentieren",
+        "collection": "Sammlung",
+        "anki": "Anki-Karte",
+        "previous": "Vorherige",
+        "skip": "Überspringen",
+        "finish": "Beenden",
+        "leave": "Verlassen",
+        "empty": "Dieser Import enthält nichts, was einen zweiten Blick lohnt.",
+        "failed": "Die Studienliste konnte nicht erstellt werden.",
+        "finished": "Studienliste beendet: {n} Stellungen durchgegangen.",
+        "stopped": "Studienliste verlassen."
     }
 }
