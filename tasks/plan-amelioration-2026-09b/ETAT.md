@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : vingt issues fermées
+### La session du 2026-09-06 : vingt-et-une issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,6 +105,7 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #269 | I.13 | La bande de comparaison inter-moteurs, et **un bug trouvé en chemin** : `database.SaveAnalysis` écrasait l'analyse de videau d'un autre moteur, alors que l'ADR-0013 décrit le contraire et qu'`ingest/merge.go` accumulait déjà. |
 | #280 | I.24 | Exports CSV (`positions`, `moves`, `analyses`), colonnes tenues comme un **contrat** par un test, notebook Jupyter exécuté chaque nuit en CI. **Parquet refusé, mesuré** : des mégaoctets de dépendance pour ce que `pd.read_csv` lit en une ligne. |
 | #284 | I.28 | L'écran d'accueil. **« Importer mes matchs » enchaîne** base neuve → fichiers → compte rendu (#257) → file d'étude (#259) : la promesse tenue en deux minutes, pas expliquée. |
 | #262 | I.6 | `import XGID=…` (le même verbe qu'`import`, avec un argument) et le bouton « enrichir depuis un fichier ». **OGID écarté ici** : sa grammaire doit d'abord être relevée sur des échantillons réels (#260). |
@@ -113,6 +114,16 @@ chacune close par une release.
 | #258 | I.2 | Le dossier surveillé. **Scrutation, pas `fsnotify`** : le repli devrait exister de toute façon pour les partages réseau, donc il est le seul chemin plutôt que le second. Le Go regarde, l'interface importe — un import surveillé est le même import qu'un glisser-déposer. |
 | #268 | I.12 | **Un match importé sans analyse obtient un PR.** La fiche prescrivait `move_analysis` ; rien ne lit cette table pour les statistiques. Le vrai trou était `best_move_equity_error`, laissé à zéro faute de savoir quel coup avait été joué. |
 | #267 | I.11 | La matrice du videau : le verdict de la position à tous les scores d'un match de 5, 7 ou 9. Commande `cm`, commande CLI `cubematrix`, route `/v1/gammonnet.cubeMatrix`. |
+
+Sur I.13, la moitié « blocs de videau empilés » existait déjà (`AnalysisView`).
+Ce qui manquait était la **réponse en une ligne** — « XG dit double, prend ;
+gammonNet dit pas de double » — et, pour les pions, le meilleur coup **de
+chaque moteur** : la liste des candidats est triée tous moteurs confondus, donc
+son premier élément n'est le meilleur de personne. En chemin, un vrai défaut :
+`database.SaveAnalysis` gardait la seule analyse de videau entrante et perdait
+silencieusement celle d'un moteur importé — exactement ce que le texte de
+l'ADR-0013 affirme ne pas arriver, et ce qu'`ingest/merge.go` faisait déjà
+correctement. Deux chemins, une seule règle désormais, avec deux tests.
 
 Sur I.6, l'enrichissement ne cachait aucun mécanisme neuf : réimporter le même
 match dans un autre format l'enrichit déjà en place. Le bouton n'apporte que

@@ -9,6 +9,7 @@
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import AnalysisView from './AnalysisView.svelte';
+    import EngineComparison from './EngineComparison.svelte';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -345,6 +346,11 @@
 
 <section class="analysis-panel" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
+        <!-- La comparaison inter-moteurs (#269) vit ICI et pas dans le panneau
+             Eval : l'ADR-0017 y réserve UNE décision, celle du moteur
+             embarqué. Elle ne s'affiche que lorsqu'il y a effectivement
+             plusieurs moteurs à comparer. -->
+        <EngineComparison analysis={analysisData} kind={viewKind} />
         <AnalysisView
             analysis={analysisData}
             kind={viewKind}
