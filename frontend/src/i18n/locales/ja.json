@@ -1382,7 +1382,9 @@
         "cost": "{mp} mMWC の損",
         "best": "最善：{move}",
         "gradeFailed": "回答を採点できませんでした。",
-        "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。"
+        "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。",
+        "undoHop": "1手戻す",
+        "resetPlay": "やり直す"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

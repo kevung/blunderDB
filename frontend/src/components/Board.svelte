@@ -20,6 +20,8 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
+    import { quizPlayStore } from '../stores/quizPlayStore.js';
+    import { resetPlay } from '../services/quizPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -133,11 +135,16 @@
         // between its centered (offered) and owner positions immediately.
         const unsubOfferedCube = searchOfferedCubeStore.subscribe(() => scheduleRedraw());
 
+        // Redraw as the quiz's move is played (#294): the board shows the
+        // move being built, one hop per click.
+        const unsubQuizPlay = quizPlayStore.subscribe(() => scheduleRedraw());
+
         return () => {
             unsubPosition();
             unsubSelectedMove();
             unsubAnalysis();
             unsubOfferedCube();
+            unsubQuizPlay();
         };
     }
 
@@ -288,8 +295,17 @@
                 structureMode: searchStructureModeStore,
                 activeTab: activeTabStore,
                 offeredCube: searchOfferedCubeStore,
-                anyModalOpen: isAnyModalOpen
+                anyModalOpen: isAnyModalOpen,
+                quizPlay: quizPlayStore
             },
+            // Le miroir de l'affichage (#294) : une position dont le joueur 2
+            // est au trait est montrée retournée, donc le point CLIQUÉ n'est
+            // pas le point du modèle. La conversion est celle de
+            // mirrorPosition — 25 - p — et le plateau de sortie du joueur au
+            // trait est toujours celui du bas, la position affichée ayant
+            // toujours le joueur au trait en player 0.
+            quizDisplayMirrored: () => isPlayer2Perspective(getDisplayPosition()),
+            resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
             setPreviousDice: (dice) => (previousDice = dice),
             reset: () => (mode === 'EPC' ? resetEPCBoard() : resetBoard()),
@@ -425,7 +441,13 @@
     //   - If Player 2 was on roll (player_on_roll = 1), we need to mirror the stored position
     //     so that Player 1 appears at bottom and Player 2 (who was actually on roll) appears at top
     function getDisplayPosition() {
-        const position = get(positionStore);
+        const stored = get(positionStore);
+        // Pendant une question de quiz, ce qu'on montre est le plateau du coup
+        // EN COURS (#294) : le pion suit le clic. Le reste — dés, videau,
+        // score, et le miroir ci-dessous — vient de la position, inchangée :
+        // la question ne bouge pas parce qu'on déplace un pion.
+        const play = get(quizPlayStore);
+        const position = play ? { ...stored, board: play.board } : stored;
         const matchCtx = get(matchContextStore);
 
         // In EPC mode, always use position as-is (player_on_roll is always 0)

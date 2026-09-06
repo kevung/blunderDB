@@ -641,9 +641,11 @@ export default {
 <h4>Tietovisa: harjoittelun PR</h4>
 <p><code>train quiz</code> esittää neljännen lajin kysymyksiä. Anki-paneeli panee ulkoa opettelemaan; tietovisa <strong>testaa</strong>. Selatusta listasta arvotaan viisi jo analysoitua asemaa, ja päätös on tehtävä:</p>
 <ul>
-<li>siirtopäätöksessä kirjoita siirto näppäimistöllä notaatiossa (<code>13/7 8/7</code>);</li>
+<li>nappulasiirrossa <strong>pelaa siirto laudalla</strong> — napsauta lähtöpistettä ja sitten kohdetta, kerran kutakin noppaa kohti; tai kirjoita siirto näppäimistöllä notaationa (<code>13/7 8/7</code>);</li>
 <li>kuutiopäätöksessä napsauta <em>Ei tuplausta</em>, <em>Tuplaus, hyväksy</em> tai <em>Tuplaus, luovuta</em>.</li>
 </ul>
+<p>Lauta tarjoaa vain sen, mitä voi pelata: napsautus, jota mikään laillinen siirto ei salli, ei liikuta mitään. <em>Kumoa siirto</em> peruu yhden nopan, <em>Aloita alusta</em> palauttaa aseman sellaisena kuin kysymys sen esittää — kaksoisnapsautus laudan ulkopuolella tekee saman. Kysymys itse ei muutu: nopat, tuplauskuutio ja pistetilanne pysyvät aseman omina.</p>
+<p>Kun siirto on pelattu laudalla, <em>Tarkista</em> arvioi sen; näppäimistösyöttö on käytettävissä niin kauan kuin yhtään nappulaa ei ole siirretty. Molemmat reitit käyvät saman arvioinnin läpi.</p>
 <p>Analyysipaneeli pysyy peitettynä, kunnes kysymykseen on vastattu: se kantaa vastauksen, eikä kysymys, jonka vastaus näkyy vieressä, ole kysymys.</p>
 <p>Korjaus pitää kolme lopputulosta erillään, ja niiden sekoittaminen valehtelisi. <strong>Sääntöjenvastainen siirto</strong> ei ole huonosti valittu siirto — se on sääntövirhe. <strong>Laillinen siirto, jota moottori ei arvioinut</strong>, ei ole virhe lainkaan: sillä ei yksinkertaisesti ole hintaa, eikä se maksa istunnolle mitään. Arvioitu siirto maksaa sen, minkä analyysi sanoo, millipisteinä.</p>
 <p>Lopuksi istunto näyttää <strong>tietovisan PR:n</strong>, joka lasketaan samalla kaavalla kuin tilastot laskevat oikealle pelille — 500 × keskimääräinen virhe normalisoituna ekviteettinä. Juuri se tekee luvuista vertailukelpoisia: tietovisan PR 6 ja ottelun PR 6 mittaavat samaa asiaa samalla asteikolla.</p>

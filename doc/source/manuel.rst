@@ -2150,10 +2150,21 @@ Quiz : le PR d'entraînement
 fait mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées
 de la liste parcourue, et il faut décider :
 
-* sur une décision de pions, écrire le coup au clavier, en notation
-  (``13/7 8/7``) ;
+* sur une décision de pions, **jouer le coup sur le damier** — cliquer le point
+  de départ, puis la destination, autant de fois qu'il y a de dés ; ou écrire
+  le coup au clavier, en notation (``13/7 8/7``) ;
 * sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou
   *Double, passe*.
+
+Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal
+n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, *Recommencer*
+remet la position telle que la question la pose — un double-clic hors du
+damier fait la même chose. La question, elle, ne change pas : les dés, le
+videau et le score restent ceux de la position.
+
+Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie au
+clavier reste disponible tant qu'aucun pion n'a bougé. Les deux chemins
+passent par la même correction.
 
 Le panneau Analyse est masqué tant que la question n'a pas reçu de réponse :
 il porte la réponse, et une question dont la réponse est affichée à côté n'est

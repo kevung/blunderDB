@@ -1382,7 +1382,9 @@
         "cost": "Kostet {mp} mMWC",
         "best": "bester: {move}",
         "gradeFailed": "Die Antwort konnte nicht bewertet werden.",
-        "finishedQuiz": "Quiz beendet: {correct}/{n}, Sitzungs-PR {pr}."
+        "finishedQuiz": "Quiz beendet: {correct}/{n}, Sitzungs-PR {pr}.",
+        "undoHop": "Schritt zurück",
+        "resetPlay": "Neu beginnen"
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

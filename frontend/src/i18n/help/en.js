@@ -641,9 +641,11 @@ export default {
 <h4>Quiz: the training PR</h4>
 <p><code>train quiz</code> asks a fourth kind of question. The Anki panel makes you memorise; the quiz <strong>tests</strong>. Five already-analysed positions are drawn from the browsed list, and a decision has to be made:</p>
 <ul>
-<li>on a checker decision, type the move at the keyboard, in notation (<code>13/7 8/7</code>);</li>
+<li>on a checker decision, <strong>play the move on the board</strong> — click the source point, then the destination, once per die; or type the move at the keyboard, in notation (<code>13/7 8/7</code>);</li>
 <li>on a cube decision, click <em>No double</em>, <em>Double, take</em> or <em>Double, pass</em>.</li>
 </ul>
+<p>The board offers only what can be played: a click no legal move allows moves nothing. <em>Undo step</em> goes back one die, <em>Start over</em> restores the position as the question poses it — a double-click outside the board does the same. The question itself does not change: the dice, the cube and the score stay those of the position.</p>
+<p>When a move has been played on the board, <em>Check</em> grades that one; typing stays available as long as no checker has moved. Both paths go through the same grading.</p>
 <p>The Analysis panel is masked until the question has an answer: it carries the answer, and a question whose answer is displayed beside it is not a question.</p>
 <p>The correction keeps three outcomes apart, and collapsing them would lie. An <strong>illegal move</strong> is not a badly chosen move — it is a rules mistake. A <strong>legal move the engine never ranked</strong> is not a mistake at all: it simply has no price, and so costs the session nothing. A ranked move costs what the analysis says it costs, in millipoints.</p>
 <p>At the end, the session shows a <strong>quiz PR</strong> computed by the formula the statistics apply to real play — 500 × mean error in normalised equity. That is what makes the two numbers comparable: a quiz PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>

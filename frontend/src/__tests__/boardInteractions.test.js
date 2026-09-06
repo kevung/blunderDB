@@ -14,6 +14,7 @@ import { writable, get } from 'svelte/store';
 import { boardMetrics } from '../utils/boardGeometry.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
+import { newPlay } from '../services/quizPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -462,5 +463,77 @@ describe('mousedown blurs a focused text field', () => {
         const b = mount({ mode: 'NORMAL' });
         b.fire('mousedown', b.slot(7, 0));
         expect(document.activeElement).not.toBe(input);
+    });
+});
+
+// ── Le coup du quiz joué sur le plateau (#294) ───────────────────────────────
+//
+// Ce que le réducteur ne peut pas vérifier seul : que le point CLIQUÉ devienne
+// le bon point du modèle. Une position dont le joueur 2 est au trait est
+// affichée en miroir, et la conversion 25 - p est exactement le détail qui se
+// découvre six mois plus tard, en jouant un coup qui part du mauvais point.
+describe('the quiz move is played on the board', () => {
+    /** Un plateau monté, puis armé d'un coup de quiz. */
+    function mountQuiz({ mirrored = false, plays, position }) {
+        const b = mount({ mode: 'NORMAL', position });
+        b.deps.stores.quizPlay = writable(newPlay(position, plays));
+        b.deps.quizDisplayMirrored = () => mirrored;
+        return b;
+    }
+
+    function posWith(stacks, mover = 0) {
+        const p = emptyPos();
+        p.board.bearoff = [0, 0];
+        for (const [pt, [n, color]] of Object.entries(stacks)) p.board.points[pt] = { checkers: n, color };
+        p.player_on_roll = mover;
+        return p;
+    }
+
+    const play13to11 = [{ steps: [{ from: 13, to: 11, hit: false }], notation: '13/11', result: {} }];
+
+    test('the clicked source and destination move the checker', () => {
+        const position = posWith({ 13: [5, 0] });
+        const b = mountQuiz({ plays: play13to11, position });
+        b.click(b.slot(13, 0));
+        b.click(b.slot(11, 0));
+        const state = get(b.deps.stores.quizPlay);
+        expect(state.steps).toEqual([{ from: 13, to: 11 }]);
+        expect(state.board.points[11].checkers).toBe(1);
+        b.detach();
+    });
+
+    test('a mirrored board maps the clicked point back to the model', () => {
+        const position = posWith({ 13: [5, 0] });
+        const b = mountQuiz({ mirrored: true, plays: play13to11, position });
+        // En miroir, le point 13 du modèle est dessiné là où le 12 le serait.
+        b.click(b.slot(12, 0));
+        b.click(b.slot(14, 0));
+        expect(get(b.deps.stores.quizPlay).steps).toEqual([{ from: 13, to: 11 }]);
+        b.detach();
+    });
+
+    test('the position itself never moves: it is the question', () => {
+        const position = posWith({ 13: [5, 0] });
+        const b = mountQuiz({ plays: play13to11, position });
+        b.click(b.slot(13, 0));
+        b.click(b.slot(11, 0));
+        expect(b.pos().board.points[13].checkers).toBe(5);
+        b.detach();
+    });
+
+    test('a click no legal play offers moves nothing, and says nothing', () => {
+        const position = posWith({ 13: [5, 0] });
+        const b = mountQuiz({ plays: play13to11, position });
+        b.click(b.slot(13, 0));
+        b.click(b.slot(9, 0));
+        expect(get(b.deps.stores.quizPlay).steps).toEqual([]);
+        b.detach();
+    });
+
+    test('with no move armed, editing is untouched', () => {
+        const b = mount({ mode: 'EDIT' });
+        b.click(b.slot(13, 2));
+        expect(b.pos().board.points[13]).toEqual({ checkers: 3, color: 0 });
+        b.detach();
     });
 });

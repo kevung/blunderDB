@@ -1382,7 +1382,9 @@
         "cost": "Maksaa {mp} mMWC",
         "best": "paras: {move}",
         "gradeFailed": "Vastausta ei voitu arvioida.",
-        "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}."
+        "finishedQuiz": "Tietovisa valmis: {correct}/{n}, istunnon PR {pr}.",
+        "undoHop": "Kumoa siirto",
+        "resetPlay": "Aloita alusta"
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

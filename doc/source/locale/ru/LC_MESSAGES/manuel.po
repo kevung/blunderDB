@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-07 00:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -2092,7 +2092,7 @@ msgstr ""
 "читается из исходного файла либо остаётся неизвестной — и роллаут, данные"
 " которого он не открывает в файле ``.xg`` и который не умеет производить."
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -2109,7 +2109,7 @@ msgstr ""
 "список. Ничего не разрушается: позиции, которые она содержала, останутся "
 "на месте при возврате."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -4891,17 +4891,46 @@ msgstr ""
 
 #: ../../source/manuel.rst:2153
 msgid ""
-"sur une décision de pions, écrire le coup au clavier, en notation (``13/7"
-" 8/7``) ;"
-msgstr "при решении о ходе — набрать ход с клавиатуры, в нотации (``13/7 8/7``);"
+"sur une décision de pions, **jouer le coup sur le damier** — cliquer le "
+"point de départ, puis la destination, autant de fois qu'il y a de dés ; "
+"ou écrire le coup au clavier, en notation (``13/7 8/7``) ;"
+msgstr ""
+"при решении о ходе шашками — **сыграйте ход на доске**: щёлкните "
+"начальный пункт, затем пункт назначения, по одному разу на каждую кость; "
+"либо наберите ход с клавиатуры в нотации (``13/7 8/7``);"
 
-#: ../../source/manuel.rst:2155
+#: ../../source/manuel.rst:2156
 msgid ""
 "sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou "
 "*Double, passe*."
 msgstr "при решении по кубу — нажать *Без дубля*, *Дубль, взять* или *Дубль, пас*."
 
-#: ../../source/manuel.rst:2158
+#: ../../source/manuel.rst:2159
+msgid ""
+"Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal "
+"n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, "
+"*Recommencer* remet la position telle que la question la pose — un "
+"double-clic hors du damier fait la même chose. La question, elle, ne "
+"change pas : les dés, le videau et le score restent ceux de la position."
+msgstr ""
+"Доска предлагает только то, что можно сыграть: щелчок, который не "
+"разрешён ни одним легальным ходом, ничего не двигает. *Отменить шаг* "
+"возвращает на одну кость назад, *Заново* восстанавливает позицию такой, "
+"какой её ставит вопрос, — двойной щелчок вне доски делает то же самое. "
+"Сам вопрос не меняется: кости, куб и счёт остаются теми же, что и в "
+"позиции."
+
+#: ../../source/manuel.rst:2165
+msgid ""
+"Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie "
+"au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux "
+"chemins passent par la même correction."
+msgstr ""
+"Когда ход сыгран на доске, *Проверить* оценивает именно его; ввод с "
+"клавиатуры остаётся доступным, пока ни одна шашка не сдвинута. Оба пути "
+"проходят через одну и ту же проверку."
+
+#: ../../source/manuel.rst:2169
 msgid ""
 "Le panneau Analyse est masqué tant que la question n'a pas reçu de "
 "réponse : il porte la réponse, et une question dont la réponse est "
@@ -4910,7 +4939,7 @@ msgstr ""
 "Панель анализа закрыта, пока на вопрос нет ответа: она несёт ответ, а "
 "вопрос, ответ на который показан рядом, — не вопрос."
 
-#: ../../source/manuel.rst:2162
+#: ../../source/manuel.rst:2173
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -4925,7 +4954,7 @@ msgstr ""
 "просто нет цены, и сессии он ничего не стоит. Оценённый ход стоит "
 "столько, сколько говорит анализ, в миллипунктах."
 
-#: ../../source/manuel.rst:2168
+#: ../../source/manuel.rst:2179
 msgid ""
 "À la fin, la session affiche un **PR de quiz** calculé par la formule que"
 " les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité"
@@ -4938,11 +4967,11 @@ msgstr ""
 " в нормализованной эквити. Именно это делает два числа сравнимыми: PR "
 "викторины 6 и PR матча 6 измеряют одно и то же по одной шкале."
 
-#: ../../source/manuel.rst:2176
+#: ../../source/manuel.rst:2187
 msgid "Panneau Métadonnées"
 msgstr "Панель метаданных"
 
-#: ../../source/manuel.rst:2178
+#: ../../source/manuel.rst:2189
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -4953,7 +4982,7 @@ msgstr ""
 "имя, описание, количество позиций, матчей и партий, версия схемы. "
 "Доступна через команду ``meta``."
 
-#: ../../source/manuel.rst:2182
+#: ../../source/manuel.rst:2193
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -4962,11 +4991,11 @@ msgstr ""
 "Она также показывает, **если она есть**, происхождение базы — см. "
 ":ref:`diffusion_controlee`. У обычной базы этот раздел не отображается."
 
-#: ../../source/manuel.rst:2188
+#: ../../source/manuel.rst:2199
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Распространение базы: происхождение и пароль"
 
-#: ../../source/manuel.rst:2190
+#: ../../source/manuel.rst:2201
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -4977,7 +5006,7 @@ msgstr ""
 "друга механизма, оба необязательные и выбираемые **в момент экспорта**: "
 "пометить файл его происхождением и защитить его паролем."
 
-#: ../../source/manuel.rst:2197
+#: ../../source/manuel.rst:2208
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -4989,11 +5018,11 @@ msgstr ""
 " же самое, что открыть любую другую, и нигде не фиксируется, кто её "
 "открыл, когда и откуда взялось её содержимое."
 
-#: ../../source/manuel.rst:2203
+#: ../../source/manuel.rst:2214
 msgid "Marquer une base de son origine"
 msgstr "Пометить базу её происхождением"
 
-#: ../../source/manuel.rst:2205
+#: ../../source/manuel.rst:2216
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -5004,11 +5033,11 @@ msgstr ""
 "выполнения на время записи. По завершении окно закрывается само, а "
 "результат появляется в строке состояния."
 
-#: ../../source/manuel.rst:2209
+#: ../../source/manuel.rst:2220
 msgid "Trois points méritent l'attention :"
 msgstr "Три момента заслуживают внимания:"
 
-#: ../../source/manuel.rst:2211
+#: ../../source/manuel.rst:2222
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -5018,7 +5047,7 @@ msgstr ""
 "После поиска выгружаются только результаты — окно напоминает об этом "
 "сверху."
 
-#: ../../source/manuel.rst:2214
+#: ../../source/manuel.rst:2225
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -5028,7 +5057,7 @@ msgstr ""
 "усечённой.** Поэтому в списке для каждой коллекции указана охваченная "
 "доля («12/40»), выделенная красным, когда она неполная."
 
-#: ../../source/manuel.rst:2217
+#: ../../source/manuel.rst:2228
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -5038,7 +5067,7 @@ msgstr ""
 "«турнир — матч» не существует и турнир пришёл бы пустым. Флажок остаётся "
 "недоступным, пока не отмечено «включить матчи»."
 
-#: ../../source/manuel.rst:2221
+#: ../../source/manuel.rst:2232
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -5051,13 +5080,13 @@ msgstr ""
 "фильтры* стоит особняком: он экспортирует не содержимое, а ваши "
 "собственные сохранённые запросы, бесполезные в чужой базе."
 
-#: ../../source/manuel.rst:2227
+#: ../../source/manuel.rst:2238
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "При установке флажка **Пометить этот файл его происхождением** появляются"
 " два поля:"
 
-#: ../../source/manuel.rst:2229
+#: ../../source/manuel.rst:2240
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -5067,7 +5096,7 @@ msgstr ""
 " Жана Дюпона — 12 марта 2026». Это поле **обязательно**: пока оно пусто, "
 "кнопка экспорта неактивна."
 
-#: ../../source/manuel.rst:2232
+#: ../../source/manuel.rst:2243
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -5075,7 +5104,7 @@ msgstr ""
 "**Примечание**, необязательное — условия использования, контактный адрес,"
 " просьба не распространять дальше."
 
-#: ../../source/manuel.rst:2235
+#: ../../source/manuel.rst:2246
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -5089,11 +5118,11 @@ msgstr ""
 "представляет собой обычную базу SQLite, а blunderDB — свободная "
 "программа. Она ничему не препятствует: она говорит, откуда файл."
 
-#: ../../source/manuel.rst:2242
+#: ../../source/manuel.rst:2253
 msgid "Identité d'émetteur"
 msgstr "Идентичность автора"
 
-#: ../../source/manuel.rst:2244
+#: ../../source/manuel.rst:2255
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -5106,7 +5135,7 @@ msgstr ""
 "принадлежит человеку, а не базе: все ваши файлы несут один и тот же "
 "публичный отпечаток вида ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:2249
+#: ../../source/manuel.rst:2260
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -5120,7 +5149,7 @@ msgstr ""
 "парольной фразой. **Этот файл позволяет подписывать от вашего имени: не "
 "передавайте его.**"
 
-#: ../../source/manuel.rst:2255
+#: ../../source/manuel.rst:2266
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -5130,7 +5159,7 @@ msgstr ""
 "*Идентичность автора* показывает ваше имя и отпечаток и предлагает "
 "*Сохранить идентичность…*, *Загрузить идентичность…* и *Создать заново…*."
 
-#: ../../source/manuel.rst:2261
+#: ../../source/manuel.rst:2272
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -5143,7 +5172,7 @@ msgstr ""
 "подписывать под вашим прежним отпечатком, и такие отметки останутся "
 "действительными."
 
-#: ../../source/manuel.rst:2266
+#: ../../source/manuel.rst:2277
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -5152,7 +5181,7 @@ msgstr ""
 "После утечки вас защищает не программа: нужно опубликовать новый "
 "отпечаток и объявить прежний недействительным перед вашими получателями."
 
-#: ../../source/manuel.rst:2270
+#: ../../source/manuel.rst:2281
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -5160,11 +5189,11 @@ msgstr ""
 "Создание заново перезаписывает текущий ключ; blunderDB предлагает "
 "сохранить его перед заменой."
 
-#: ../../source/manuel.rst:2274
+#: ../../source/manuel.rst:2285
 msgid "Protéger une base par un mot de passe"
 msgstr "Защита базы паролем"
 
-#: ../../source/manuel.rst:2276
+#: ../../source/manuel.rst:2287
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -5174,7 +5203,7 @@ msgstr ""
 "значок в виде глаза показывает его, **пока его удерживают нажатым**, и "
 "снова скрывает, как только его отпускают."
 
-#: ../../source/manuel.rst:2280
+#: ../../source/manuel.rst:2291
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -5191,7 +5220,7 @@ msgstr ""
 "blunderDB запрашивает пароль и создаёт рядом обычную базу; дальше ничего "
 "не спрашивается."
 
-#: ../../source/manuel.rst:2288
+#: ../../source/manuel.rst:2299
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -5204,7 +5233,7 @@ msgstr ""
 "снят — защищённый файл остаётся у вас, если вы собираетесь его передать, "
 "— а удаление происходит только после успешного открытия."
 
-#: ../../source/manuel.rst:2295
+#: ../../source/manuel.rst:2306
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -5215,7 +5244,7 @@ msgstr ""
 "постороннему открыть файл, забытый в папке загрузок, или вложение, "
 "пересланное по ошибке. Он не защищает от того, кому вы сообщили пароль."
 
-#: ../../source/manuel.rst:2300
+#: ../../source/manuel.rst:2311
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -5223,7 +5252,7 @@ msgstr ""
 "Пароль проверяется при **каждом** открытии, в том числе если файл уже "
 "открывали на этом компьютере ранее."
 
-#: ../../source/manuel.rst:2303
+#: ../../source/manuel.rst:2314
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -5239,7 +5268,7 @@ msgstr ""
 "равно как и любое изменение зашифрованного файла — молча испорченной базы"
 " не получится никогда."
 
-#: ../../source/manuel.rst:2310
+#: ../../source/manuel.rst:2321
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -5247,11 +5276,11 @@ msgstr ""
 "Заголовок защищённого файла остаётся **открытым**: его происхождение "
 "читается и без пароля."
 
-#: ../../source/manuel.rst:2314
+#: ../../source/manuel.rst:2325
 msgid "Lire l'origine d'un fichier"
 msgstr "Как прочитать происхождение файла"
 
-#: ../../source/manuel.rst:2316
+#: ../../source/manuel.rst:2327
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -5263,7 +5292,7 @@ msgstr ""
 "доступный только для чтения; он сообщает, что было записано, кем, когда и"
 " в каком состоянии подпись:"
 
-#: ../../source/manuel.rst:2321
+#: ../../source/manuel.rst:2332
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -5271,7 +5300,7 @@ msgstr ""
 "«✓ подпись проверена — помечено вами»: файл несёт вашу отметку, "
 "нетронутую;"
 
-#: ../../source/manuel.rst:2323
+#: ../../source/manuel.rst:2334
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -5279,15 +5308,15 @@ msgstr ""
 "«✓ подпись проверена»: отметка нетронута и сделана другим ключом — "
 "сравните её отпечаток с тем, который сообщил вам автор;"
 
-#: ../../source/manuel.rst:2325
+#: ../../source/manuel.rst:2336
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ подпись недействительна»: документ был изменён или подделан."
 
-#: ../../source/manuel.rst:2327
+#: ../../source/manuel.rst:2338
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "У обычной базы этот раздел не появляется."
 
-#: ../../source/manuel.rst:2329
+#: ../../source/manuel.rst:2340
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -5301,11 +5330,11 @@ msgstr ""
 "про параметры ``--watermark`` и ``--password`` команды ``export``, а "
 "также про ``identity`` и ``open``."
 
-#: ../../source/manuel.rst:2338
+#: ../../source/manuel.rst:2349
 msgid "Publier une base pour d'autres"
 msgstr "Публикация базы для других"
 
-#: ../../source/manuel.rst:2340
+#: ../../source/manuel.rst:2351
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -5321,7 +5350,7 @@ msgstr ""
 "ничего не записывается, и сообщать службе было бы нечего, даже если бы "
 "она существовала."
 
-#: ../../source/manuel.rst:2346
+#: ../../source/manuel.rst:2357
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -5329,7 +5358,7 @@ msgstr ""
 "То, что делает опубликованную базу пригодной для другого, сводится к "
 "четырём полям, и все они уже есть:"
 
-#: ../../source/manuel.rst:2349
+#: ../../source/manuel.rst:2360
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
@@ -5337,7 +5366,7 @@ msgstr ""
 "**Пользователь** — кто её собрал, под тем именем, которое вы хотите "
 "видеть указанным."
 
-#: ../../source/manuel.rst:2350
+#: ../../source/manuel.rst:2361
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -5346,7 +5375,7 @@ msgstr ""
 "**Описание** — что база содержит, одной фразой, помещающейся в список: "
 "«240 решений по кубу при счёте, с комментариями, средний уровень»."
 
-#: ../../source/manuel.rst:2352
+#: ../../source/manuel.rst:2363
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -5355,7 +5384,7 @@ msgstr ""
 "**Происхождение** (водяного знака) — что это за файл и для кого он был "
 "сделан. Это первое, что получатель читает в панели *Метаданные*."
 
-#: ../../source/manuel.rst:2355
+#: ../../source/manuel.rst:2366
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -5365,7 +5394,7 @@ msgstr ""
 "сравнивая его, получатель убеждается, что файл пришёл от вас, а не от "
 "того, кто взял ваше имя."
 
-#: ../../source/manuel.rst:2359
+#: ../../source/manuel.rst:2370
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -5375,7 +5404,7 @@ msgstr ""
 "просто анонимна, и панель *Метаданные* не показывает тогда раздела "
 "*Происхождение*."
 
-#: ../../source/manuel.rst:2363
+#: ../../source/manuel.rst:2374
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -5486,3 +5515,12 @@ msgstr ""
 
 #~ msgid "Contact, et aucun des plans ci-dessus. L'ouverture atterrit ici."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "sur une décision de pions, écrire "
+#~ "le coup au clavier, en notation "
+#~ "(``13/7 8/7``) ;"
+#~ msgstr ""
+#~ "при решении о ходе — набрать ход"
+#~ " с клавиатуры, в нотации (``13/7 "
+#~ "8/7``);"

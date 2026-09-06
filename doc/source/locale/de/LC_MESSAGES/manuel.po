@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-07 00:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -2175,7 +2175,7 @@ msgstr ""
 "dessen Daten es in einer ``.xg``-Datei nicht öffnet und das es nicht "
 "erzeugen kann."
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -2192,7 +2192,7 @@ msgstr ""
 "dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: "
 "Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
@@ -5087,13 +5087,15 @@ msgstr ""
 
 #: ../../source/manuel.rst:2153
 msgid ""
-"sur une décision de pions, écrire le coup au clavier, en notation (``13/7"
-" 8/7``) ;"
+"sur une décision de pions, **jouer le coup sur le damier** — cliquer le "
+"point de départ, puis la destination, autant de fois qu'il y a de dés ; "
+"ou écrire le coup au clavier, en notation (``13/7 8/7``) ;"
 msgstr ""
-"bei einer Zugentscheidung den Zug auf der Tastatur in Notation eingeben "
-"(``13/7 8/7``);"
+"bei einer Zugentscheidung **den Zug auf dem Brett spielen** — den "
+"Ausgangspunkt anklicken, dann das Ziel, einmal je Würfel; oder den Zug "
+"über die Tastatur in Notation eingeben (``13/7 8/7``);"
 
-#: ../../source/manuel.rst:2155
+#: ../../source/manuel.rst:2156
 msgid ""
 "sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou "
 "*Double, passe*."
@@ -5101,7 +5103,32 @@ msgstr ""
 "bei einer Verdopplungsentscheidung *Kein Doppel*, *Doppel, Annahme* oder "
 "*Doppel, Aufgabe* anklicken."
 
-#: ../../source/manuel.rst:2158
+#: ../../source/manuel.rst:2159
+msgid ""
+"Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal "
+"n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, "
+"*Recommencer* remet la position telle que la question la pose — un "
+"double-clic hors du damier fait la même chose. La question, elle, ne "
+"change pas : les dés, le videau et le score restent ceux de la position."
+msgstr ""
+"Das Brett bietet nur an, was spielbar ist: Ein Klick, den kein legaler "
+"Zug erlaubt, bewegt nichts. *Schritt zurück* nimmt einen Würfel zurück, "
+"*Neu beginnen* stellt die Stellung so wieder her, wie die Frage sie "
+"stellt — ein Doppelklick außerhalb des Bretts tut dasselbe. Die Frage "
+"selbst ändert sich nicht: Würfel, Dopplerwürfel und Spielstand bleiben "
+"die der Stellung."
+
+#: ../../source/manuel.rst:2165
+msgid ""
+"Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie "
+"au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux "
+"chemins passent par la même correction."
+msgstr ""
+"Wurde ein Zug auf dem Brett gespielt, bewertet *Prüfen* diesen; die "
+"Tastatureingabe bleibt verfügbar, solange kein Stein bewegt wurde. Beide "
+"Wege durchlaufen dieselbe Bewertung."
+
+#: ../../source/manuel.rst:2169
 msgid ""
 "Le panneau Analyse est masqué tant que la question n'a pas reçu de "
 "réponse : il porte la réponse, et une question dont la réponse est "
@@ -5111,7 +5138,7 @@ msgstr ""
 "Es trägt die Antwort, und eine Frage, deren Antwort daneben steht, ist "
 "keine Frage."
 
-#: ../../source/manuel.rst:2162
+#: ../../source/manuel.rst:2173
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -5127,7 +5154,7 @@ msgstr ""
 "Sitzung nichts. Ein bewerteter Zug kostet, was die Analyse sagt, in "
 "Millipunkten."
 
-#: ../../source/manuel.rst:2168
+#: ../../source/manuel.rst:2179
 msgid ""
 "À la fin, la session affiche un **PR de quiz** calculé par la formule que"
 " les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité"
@@ -5140,11 +5167,11 @@ msgstr ""
 " in normalisierter Equity. Das macht die beiden Zahlen vergleichbar: Ein "
 "Quiz-PR von 6 und ein Match-PR von 6 messen dasselbe auf derselben Skala."
 
-#: ../../source/manuel.rst:2176
+#: ../../source/manuel.rst:2187
 msgid "Panneau Métadonnées"
 msgstr "Metadaten-Panel"
 
-#: ../../source/manuel.rst:2178
+#: ../../source/manuel.rst:2189
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -5155,7 +5182,7 @@ msgstr ""
 " Datenbank an: Name, Beschreibung, Anzahl der Stellungen, Anzahl der "
 "Matches und Partien, Schemaversion. Erreichbar über den Befehl ``meta``."
 
-#: ../../source/manuel.rst:2182
+#: ../../source/manuel.rst:2193
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -5165,11 +5192,11 @@ msgstr ""
 "siehe :ref:`diffusion_controlee`. Bei einer gewöhnlichen Datenbank "
 "erscheint dieser Abschnitt nicht."
 
-#: ../../source/manuel.rst:2188
+#: ../../source/manuel.rst:2199
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Eine Datenbank weitergeben: Herkunft und Passwort"
 
-#: ../../source/manuel.rst:2190
+#: ../../source/manuel.rst:2201
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -5181,7 +5208,7 @@ msgstr ""
 "Export** zu wählen: die Datei mit ihrer Herkunft zu kennzeichnen und sie "
 "mit einem Passwort zu schützen."
 
-#: ../../source/manuel.rst:2197
+#: ../../source/manuel.rst:2208
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -5193,11 +5220,11 @@ msgstr ""
 "öffnen ist genau wie jede andere zu öffnen, und nirgends wird "
 "festgehalten, wer sie wann geöffnet hat oder woher ihr Inhalt stammt."
 
-#: ../../source/manuel.rst:2203
+#: ../../source/manuel.rst:2214
 msgid "Marquer une base de son origine"
 msgstr "Eine Datenbank mit ihrer Herkunft kennzeichnen"
 
-#: ../../source/manuel.rst:2205
+#: ../../source/manuel.rst:2216
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -5209,11 +5236,11 @@ msgstr ""
 "Es schließt sich nach Abschluss von selbst, und das Ergebnis erscheint in"
 " der Statusleiste."
 
-#: ../../source/manuel.rst:2209
+#: ../../source/manuel.rst:2220
 msgid "Trois points méritent l'attention :"
 msgstr "Drei Punkte verdienen Beachtung:"
 
-#: ../../source/manuel.rst:2211
+#: ../../source/manuel.rst:2222
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -5223,7 +5250,7 @@ msgstr ""
 "gesamte Datenbank. Nach einer Suche werden nur die Treffer exportiert — "
 "das Fenster weist oben darauf hin."
 
-#: ../../source/manuel.rst:2214
+#: ../../source/manuel.rst:2225
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -5234,7 +5261,7 @@ msgstr ""
 " den abgedeckten Anteil („12/40“) und hebt ihn rot hervor, wenn er "
 "unvollständig ist."
 
-#: ../../source/manuel.rst:2217
+#: ../../source/manuel.rst:2228
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -5245,7 +5272,7 @@ msgstr ""
 "leer an. Das Kästchen bleibt deaktiviert, solange „Partien einschließen“ "
 "nicht angehakt ist."
 
-#: ../../source/manuel.rst:2221
+#: ../../source/manuel.rst:2232
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -5259,13 +5286,13 @@ msgstr ""
 " Inhalte, sondern Ihre eigenen gespeicherten Suchen, die in der Datenbank"
 " eines anderen nutzlos sind."
 
-#: ../../source/manuel.rst:2227
+#: ../../source/manuel.rst:2238
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "Ein Häkchen bei **Diese Datei mit ihrer Herkunft kennzeichnen** blendet "
 "zwei Felder ein:"
 
-#: ../../source/manuel.rst:2229
+#: ../../source/manuel.rst:2240
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -5276,7 +5303,7 @@ msgstr ""
 "**verpflichtend**: Solange es leer ist, bleibt die Export-Schaltfläche "
 "inaktiv."
 
-#: ../../source/manuel.rst:2232
+#: ../../source/manuel.rst:2243
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -5284,7 +5311,7 @@ msgstr ""
 "**Hinweis**, optional — Nutzungsbedingungen, eine Kontaktadresse, die "
 "Bitte, die Datei nicht weiterzugeben."
 
-#: ../../source/manuel.rst:2235
+#: ../../source/manuel.rst:2246
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -5299,11 +5326,11 @@ msgstr ""
 "blunderDB ist freie Software. Sie verhindert nichts: Sie sagt, woher die "
 "Datei kommt."
 
-#: ../../source/manuel.rst:2242
+#: ../../source/manuel.rst:2253
 msgid "Identité d'émetteur"
 msgstr "Ausstelleridentität"
 
-#: ../../source/manuel.rst:2244
+#: ../../source/manuel.rst:2255
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -5317,7 +5344,7 @@ msgstr ""
 "Datenbank: Alle Ihre Dateien tragen denselben öffentlichen Fingerabdruck "
 "der Form ``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:2249
+#: ../../source/manuel.rst:2260
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -5332,7 +5359,7 @@ msgstr ""
 "geschützt. **Mit dieser Datei kann in Ihrem Namen signiert werden: Geben "
 "Sie sie nicht weiter.**"
 
-#: ../../source/manuel.rst:2255
+#: ../../source/manuel.rst:2266
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -5343,7 +5370,7 @@ msgstr ""
 "an und bietet *Identität speichern…*, *Identität laden…* und *Neu "
 "erzeugen…* an."
 
-#: ../../source/manuel.rst:2261
+#: ../../source/manuel.rst:2272
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -5356,7 +5383,7 @@ msgstr ""
 "abhandengekommen, kann derjenige, der sie besitzt, weiterhin unter Ihrem "
 "alten Fingerabdruck signieren, und diese Kennzeichnungen bleiben gültig."
 
-#: ../../source/manuel.rst:2266
+#: ../../source/manuel.rst:2277
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -5366,7 +5393,7 @@ msgstr ""
 "Ihren neuen Fingerabdruck zu veröffentlichen und den alten gegenüber "
 "Ihren Empfängern für ungültig zu erklären."
 
-#: ../../source/manuel.rst:2270
+#: ../../source/manuel.rst:2281
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -5374,11 +5401,11 @@ msgstr ""
 "Das Neuerzeugen überschreibt den aktuellen Schlüssel; blunderDB bietet "
 "an, ihn vor dem Ersetzen zu speichern."
 
-#: ../../source/manuel.rst:2274
+#: ../../source/manuel.rst:2285
 msgid "Protéger une base par un mot de passe"
 msgstr "Eine Datenbank mit einem Passwort schützen"
 
-#: ../../source/manuel.rst:2276
+#: ../../source/manuel.rst:2287
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -5388,7 +5415,7 @@ msgstr ""
 "geschützten Datei; das Augensymbol zeigt es an, **solange es gedrückt "
 "gehalten wird**, und verdeckt es wieder, sobald man loslässt."
 
-#: ../../source/manuel.rst:2280
+#: ../../source/manuel.rst:2291
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -5407,7 +5434,7 @@ msgstr ""
 "legt daneben eine gewöhnliche Datenbank an; danach wird nichts mehr "
 "abgefragt."
 
-#: ../../source/manuel.rst:2288
+#: ../../source/manuel.rst:2299
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -5421,7 +5448,7 @@ msgstr ""
 "bleibt Ihnen erhalten, wenn Sie sie weitergeben wollen — und gelöscht "
 "wird erst nach einem erfolgreichen Öffnen."
 
-#: ../../source/manuel.rst:2295
+#: ../../source/manuel.rst:2306
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -5434,7 +5461,7 @@ msgstr ""
 "ankommt. Vor demjenigen, dem Sie das Passwort gegeben haben, schützt es "
 "nicht."
 
-#: ../../source/manuel.rst:2300
+#: ../../source/manuel.rst:2311
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -5442,7 +5469,7 @@ msgstr ""
 "Das Passwort wird bei **jedem** Öffnen geprüft, auch wenn die Datei auf "
 "diesem Rechner schon einmal geöffnet wurde."
 
-#: ../../source/manuel.rst:2303
+#: ../../source/manuel.rst:2314
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -5459,7 +5486,7 @@ msgstr ""
 "verschlüsselten Datei — man erhält nie stillschweigend eine beschädigte "
 "Datenbank."
 
-#: ../../source/manuel.rst:2310
+#: ../../source/manuel.rst:2321
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -5467,11 +5494,11 @@ msgstr ""
 "Der Kopf der geschützten Datei bleibt **unverschlüsselt**: Ihre Herkunft "
 "ist auch ohne Passwort lesbar."
 
-#: ../../source/manuel.rst:2314
+#: ../../source/manuel.rst:2325
 msgid "Lire l'origine d'un fichier"
 msgstr "Die Herkunft einer Datei lesen"
 
-#: ../../source/manuel.rst:2316
+#: ../../source/manuel.rst:2327
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -5483,7 +5510,7 @@ msgstr ""
 "schreibgeschützt ein Abschnitt **Herkunft**, der angibt, was eingetragen "
 "wurde, von wem, wann, und wie es um die Signatur steht:"
 
-#: ../../source/manuel.rst:2321
+#: ../../source/manuel.rst:2332
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -5491,7 +5518,7 @@ msgstr ""
 "„✓ Signatur geprüft — von Ihnen gekennzeichnet“: Die Datei trägt Ihre "
 "Kennzeichnung, unversehrt;"
 
-#: ../../source/manuel.rst:2323
+#: ../../source/manuel.rst:2334
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -5500,15 +5527,15 @@ msgstr ""
 "einem anderen Schlüssel — vergleichen Sie ihren Fingerabdruck mit dem, "
 "den der Ersteller Ihnen mitgeteilt hat;"
 
-#: ../../source/manuel.rst:2325
+#: ../../source/manuel.rst:2336
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "„⚠ Signatur ungültig“: Das Dokument wurde verändert oder gefälscht."
 
-#: ../../source/manuel.rst:2327
+#: ../../source/manuel.rst:2338
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Bei einer gewöhnlichen Datenbank erscheint dieser Abschnitt nicht."
 
-#: ../../source/manuel.rst:2329
+#: ../../source/manuel.rst:2340
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -5523,11 +5550,11 @@ msgstr ""
 "``--watermark`` und ``--password`` von ``export`` sowie für ``identity`` "
 "und ``open``."
 
-#: ../../source/manuel.rst:2338
+#: ../../source/manuel.rst:2349
 msgid "Publier une base pour d'autres"
 msgstr "Eine Datenbank für andere veröffentlichen"
 
-#: ../../source/manuel.rst:2340
+#: ../../source/manuel.rst:2351
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -5543,7 +5570,7 @@ msgstr ""
 "etwas aufgezeichnet, es gäbe also nichts an einen Dienst zu melden, "
 "selbst wenn es einen gäbe."
 
-#: ../../source/manuel.rst:2346
+#: ../../source/manuel.rst:2357
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -5551,7 +5578,7 @@ msgstr ""
 "Was eine veröffentlichte Datenbank für andere brauchbar macht, hängt an "
 "vier Feldern, die alle schon da sind:"
 
-#: ../../source/manuel.rst:2349
+#: ../../source/manuel.rst:2360
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
@@ -5559,7 +5586,7 @@ msgstr ""
 "**Benutzer** — wer sie zusammengestellt hat, unter dem Namen, der genannt"
 " werden soll."
 
-#: ../../source/manuel.rst:2350
+#: ../../source/manuel.rst:2361
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -5569,7 +5596,7 @@ msgstr ""
 "Liste passt: „240 Dopplerentscheidungen beim Stand, kommentiert, "
 "mittleres Niveau“."
 
-#: ../../source/manuel.rst:2352
+#: ../../source/manuel.rst:2363
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -5579,7 +5606,7 @@ msgstr ""
 "erzeugt wurde. Es ist das Erste, was der Empfänger im Panel *Metadaten* "
 "liest."
 
-#: ../../source/manuel.rst:2355
+#: ../../source/manuel.rst:2366
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -5589,7 +5616,7 @@ msgstr ""
 "nicht darin: an seinem Vergleich prüft der Empfänger, dass die Datei von "
 "Ihnen kommt und nicht von jemandem, der Ihren Namen übernommen hat."
 
-#: ../../source/manuel.rst:2359
+#: ../../source/manuel.rst:2370
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -5599,7 +5626,7 @@ msgstr ""
 "brauchbar; sie ist einfach anonym, und das Panel *Metadaten* zeigt dann "
 "keinen Abschnitt *Herkunft*."
 
-#: ../../source/manuel.rst:2363
+#: ../../source/manuel.rst:2374
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -5711,3 +5738,12 @@ msgstr ""
 
 #~ msgid "Contact, et aucun des plans ci-dessus. L'ouverture atterrit ici."
 #~ msgstr ""
+
+#~ msgid ""
+#~ "sur une décision de pions, écrire "
+#~ "le coup au clavier, en notation "
+#~ "(``13/7 8/7``) ;"
+#~ msgstr ""
+#~ "bei einer Zugentscheidung den Zug auf"
+#~ " der Tastatur in Notation eingeben "
+#~ "(``13/7 8/7``);"
