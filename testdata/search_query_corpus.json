@@ -36,6 +36,10 @@
     { "command": "s ph:race", "expected": { "gamePhaseFilter": "race" } },
     { "command": "s ph:race ph:bearoff", "expected": { "gamePhaseFilter": "race;bearoff" } },
     { "command": "s ph:opening p>30", "expected": { "gamePhaseFilter": "opening", "pipCountFilter": "p>30" } },
+    { "command": "s #prime", "expected": { "tagFilter": "#prime" } },
+    { "command": "s #prime #backgame", "expected": { "tagFilter": "#prime;#backgame" } },
+    { "command": "s #Prime", "expected": { "tagFilter": "#prime" } },
+    { "command": "s #prime ph:race", "expected": { "tagFilter": "#prime", "gamePhaseFilter": "race" } },
     { "command": "s co:user", "expected": { "commentOriginFilter": "user" } },
     { "command": "s co co:xg", "expected": { "commentFilter": "has", "commentOriginFilter": "xg" } }
   ]

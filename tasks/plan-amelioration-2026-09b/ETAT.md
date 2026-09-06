@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : quinze issues fermées
+### La session du 2026-09-06 : seize issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,9 +105,17 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #265 | I.9 | Le vocabulaire de tags. Recherche **délimitée** (`#prime` ≠ `#priming`), cumulative (plusieurs tags = « les deux ») ; fenêtre du vocabulaire avec cardinalité, autocomplétion au `#`, `list --type tags`. Zéro schéma, comme la fiche l'annonçait. |
 | #258 | I.2 | Le dossier surveillé. **Scrutation, pas `fsnotify`** : le repli devrait exister de toute façon pour les partages réseau, donc il est le seul chemin plutôt que le second. Le Go regarde, l'interface importe — un import surveillé est le même import qu'un glisser-déposer. |
 | #268 | I.12 | **Un match importé sans analyse obtient un PR.** La fiche prescrivait `move_analysis` ; rien ne lit cette table pour les statistiques. Le vrai trou était `best_move_equity_error`, laissé à zéro faute de savoir quel coup avait été joué. |
 | #267 | I.11 | La matrice du videau : le verdict de la position à tous les scores d'un match de 5, 7 ou 9. Commande `cm`, commande CLI `cubematrix`, route `/v1/gammonnet.cubeMatrix`. |
+
+Sur I.9, un écart : la fiche disait « panneau », c'est une **fenêtre**. On
+consulte un vocabulaire puis on le referme, et cliquer un tag lance une
+recherche qui bascule de toute façon sur les résultats ; une fenêtre qui se
+ferme au clic est exactement ce comportement. Un onzième onglet aurait coûté
+une icône, un raccourci et la place dans la barre, pour une surface qu'on
+n'habite pas.
 
 Sur I.2, deux écarts assumés. La fiche proposait `fsnotify` : ce port scrute,
 parce qu'un dossier XG vit très souvent sur un partage réseau ou un dossier

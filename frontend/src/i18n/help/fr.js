@@ -839,6 +839,10 @@ export default {
 <td>Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Ouvre la table des takepoints avec videau à 2.</td>
 </tr>
@@ -1027,6 +1031,11 @@ export default {
 <td>ph:race</td>
 <td>La position est dans une phase de jeu donnée : <code>opening</code> (ouverture), <code>middlegame</code> (milieu de partie), <code>race</code> (course) ou <code>bearoff</code> (sortie des pions). Répétable (<code>ph:race ph:bearoff</code>). L'étiquette est calculée à partir du plateau, jamais modifiable ; la commande <code>blunderdb repair</code> la recalcule.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>La position porte ce <strong>tag</strong> dans l'un de ses commentaires. Un tag est un <code>#mot</code> écrit dans la prose ; rien ne le déclare. La comparaison est délimitée, donc <code>#prime</code> ne trouve pas <code>#priming</code> — c'est toute la différence avec le filtre de texte, qui cherche une sous-chaîne. Répétable, et les tags se <strong>cumulent</strong> (<code>#prime #backgame</code> demande les deux) : une position porte plusieurs tags, donc en nommer deux veut dire « les deux ».</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

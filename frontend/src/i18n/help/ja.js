@@ -821,6 +821,10 @@ export default {
 <td>キューブ判断のマトリクスを開きます。5・7・9 点マッチのあらゆるスコアにおける現在の局面の判断を示します。</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>タグの語彙を開きます。このデータベースで使われているタグと局面数が並び、クリックすると検索が走ります。</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>キューブ値 2 のテイクポイント表を開きます。</td>
 </tr>
@@ -1009,6 +1013,11 @@ export default {
 <td>ph:race</td>
 <td>局面が特定のゲーム段階にある：<code>opening</code>（序盤）、<code>middlegame</code>（中盤）、<code>race</code>（レース）、<code>bearoff</code>（ベアオフ）。繰り返し指定できる（<code>ph:race ph:bearoff</code>）。このラベルは盤面から導出され、編集はできない。<code>blunderdb repair</code> が再計算する。</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>その局面が、コメントのいずれかにこの<strong>タグ</strong>を持っています。タグとは文章に書いた <code>#語</code> で、何も宣言しません。比較は区切りを見るので、<code>#prime</code> は <code>#priming</code> を拾いません。部分文字列を探すテキストフィルタとの違いはそこにあります。繰り返し指定でき、タグは<strong>重なります</strong>（<code>#prime #backgame</code> は両方を求めます）。局面は複数のタグを持つので、二つ挙げれば「両方」の意味です。</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

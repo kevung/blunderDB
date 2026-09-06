@@ -498,6 +498,10 @@ export function ParsePositionText(arg1) {
   return window['go']['database']['Database']['ParsePositionText'](arg1);
 }
 
+export function RecommendedTags() {
+  return window['go']['database']['Database']['RecommendedTags']();
+}
+
 export function RefreshSearchStatistics() {
   return window['go']['database']['Database']['RefreshSearchStatistics']();
 }
@@ -632,6 +636,10 @@ export function SyncAnkiDeck(arg1) {
 
 export function SyncAnkiDeckWithPositions(arg1, arg2) {
   return window['go']['database']['Database']['SyncAnkiDeckWithPositions'](arg1, arg2);
+}
+
+export function Tags() {
+  return window['go']['database']['Database']['Tags']();
 }
 
 export function TrashCollection(arg1) {

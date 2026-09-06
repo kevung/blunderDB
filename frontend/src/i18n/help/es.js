@@ -836,6 +836,10 @@ export default {
 <td>Abre la matriz del cubo: el veredicto de la posición actual en todos los marcadores de un partido a 5, 7 o 9 puntos.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Abre el vocabulario de etiquetas: las etiquetas usadas en esta base, con el número de posiciones, pulsables para lanzar la búsqueda.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Abre la tabla de takepoints con el cubo a 2.</td>
 </tr>
@@ -1024,6 +1028,11 @@ export default {
 <td>ph:race</td>
 <td>La posición se encuentra en una fase de juego dada: <code>opening</code> (apertura), <code>middlegame</code> (medio juego), <code>race</code> (carrera) o <code>bearoff</code> (retirada de fichas). Repetible (<code>ph:race ph:bearoff</code>). La etiqueta se deriva del tablero y nunca es editable; <code>blunderdb repair</code> la vuelve a calcular.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>La posición lleva esta <strong>etiqueta</strong> en uno de sus comentarios. Una etiqueta es una <code>#palabra</code> escrita en la prosa; nada la declara. La comparación es delimitada, así que <code>#prime</code> no encuentra <code>#priming</code> — esa es toda la diferencia con el filtro de texto, que busca una subcadena. Repetible, y las etiquetas se <strong>acumulan</strong> (<code>#prime #backgame</code> pide ambas): una posición lleva varias etiquetas, así que nombrar dos quiere decir «las dos».</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

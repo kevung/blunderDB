@@ -61,6 +61,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/comments.deleteForPosition           JSON
      POST /v1/comments.listAll                     NDJSON
      POST /v1/comments.search                      NDJSON
+     POST /v1/comments.tags                        JSON
      POST /v1/comments.text                        JSON
      POST /v1/comments.update                      JSON
    exports

@@ -210,6 +210,15 @@ export function parseSearchTokens(filtersOrCommand, command) {
         .filter((f) => typeof f === 'string' && /^co:[a-z]+$/.test(f))
         .map((f) => f.slice(3))
         .join(';');
+    // Tags: `#prime`, repeatable, joined the same way (TagFilter, #265). A tag
+    // names itself, so there is no letter prefix to strip and nothing else can
+    // claim the token. Several tags narrow TOGETHER — a position has many
+    // tags, so naming two means "both", unlike the two closed lists above
+    // where naming two can only mean "either".
+    const tagFilter = filters
+        .filter((f) => typeof f === 'string' && /^#[^\s#]+$/.test(f))
+        .map((f) => f.toLowerCase())
+        .join(';');
     // Exclude `pl"…"` (player filter) and `ph:…` (phase) — both start with 'p'
     // and neither is a pipcount.
     const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
@@ -317,6 +326,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         commentFilter,
         commentOriginFilter,
         gamePhaseFilter,
+        tagFilter,
         player1OutfieldBlotFilter,
         player2OutfieldBlotFilter,
         player1JanBlotFilter,
@@ -378,6 +388,7 @@ export function parseFilterTokens(tokens) {
         posIdsFilter: p.positionIDsFilter,
         phFilter: p.gamePhaseFilter,
         coOriginFilter: p.commentOriginFilter,
+        tagFilter: p.tagFilter,
         dtFilter: p.decisionTypeFilter,
         drFilter: p.diceRollFilter,
         drMode: p.diceRollMode,
@@ -447,6 +458,7 @@ export function parseSearchCommand(command) {
         posIds: p.positionIDsFilter,
         ph: p.gamePhaseFilter,
         coOrigin: p.commentOriginFilter,
+        tags: p.tagFilter,
         commentMode: p.commentFilter === 'none' ? 'none' : p.commentFilter === 'has' ? 'has' : 'contains'
     };
 }
@@ -551,6 +563,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         commentFilter: pf.commentFilter || '',
         commentOriginFilter: pf.commentOriginFilter || '',
         gamePhaseFilter: pf.gamePhaseFilter || '',
+        tagFilter: pf.tagFilter || '',
         player1AbsolutePipCountFilter: pf.player1AbsolutePipCountFilter || '',
         equityFilter: pf.equityFilter || '',
         decisionTypeFilter: pf.decisionTypeFilter || false,

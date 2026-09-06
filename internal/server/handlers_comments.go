@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -27,6 +28,16 @@ type commentSearchReq struct {
 
 type textResp struct {
 	Text string `json:"text"`
+}
+
+// tagsResp carries the vocabulary a tenant has actually built AND the one
+// blunderDB suggests. Both in one answer because a client showing the first
+// wants the second beside it: a fresh library has no tags of its own, and a
+// panel that stays empty until somebody guesses the convention teaches
+// nothing.
+type tagsResp struct {
+	Tags        []domain.TagCount `json:"tags"`
+	Recommended []string          `json:"recommended"`
 }
 
 func (s *Server) commentRoutes() []route {
@@ -57,6 +68,13 @@ func (s *Server) commentRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/comments.search", rpcStream(func(ctx context.Context, scope string, req commentSearchReq) iterComments {
 			return cs().Search(ctx, scope, req.Query)
+		})},
+		// The tag vocabulary (#265). It lives under comments because that is
+		// where a tag lives: nothing declares one, no column holds one, and
+		// the count is the number of POSITIONS a tag would yield.
+		{http.MethodPost, "/v1/comments.tags", rpc(func(ctx context.Context, scope string, _ struct{}) (tagsResp, error) {
+			tags, err := cs().Tags(ctx, scope)
+			return tagsResp{Tags: tags, Recommended: domain.RecommendedTags}, err
 		})},
 	}
 }

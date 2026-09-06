@@ -373,7 +373,8 @@ export async function loadPositionsByFilters({
     positionIDsFilter = '',
     playerFilter = '',
     gamePhaseFilter = '',
-    commentOriginFilter = ''
+    commentOriginFilter = '',
+    tagFilter = ''
 } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
@@ -469,6 +470,7 @@ export async function loadPositionsByFilters({
             exceptDiceFilter,
             gamePhaseFilter,
             commentOriginFilter,
+            tagFilter,
             movePatternFilter,
             dateFilter,
             player1OutfieldBlotFilter,

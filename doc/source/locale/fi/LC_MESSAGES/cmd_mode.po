@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 05:06+0200\n"
+"POT-Creation-Date: 2026-09-06 06:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -162,6 +162,18 @@ msgstr ""
 "ottelun jokaisessa pistetilanteessa."
 
 #: ../../source/cmd_mode.rst:1
+msgid "tags"
+msgstr "tags"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le"
+" nombre de positions, cliquables pour lancer la recherche."
+msgstr ""
+"Avaa tunnistesanaston: tässä tietokannassa käytetyt tunnisteet "
+"asemamäärineen, napsautettavina haun käynnistämiseksi."
+
+#: ../../source/cmd_mode.rst:1
 msgid "tp2"
 msgstr "tp2"
 
@@ -233,7 +245,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Avaa gammon-arvojen taulukon kuution arvolla 4."
 
-#: ../../source/cmd_mode.rst:48
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "Asemat ja navigointi"
 
@@ -366,7 +378,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:73
+#: ../../source/cmd_mode.rst:74
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -402,11 +414,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
 
-#: ../../source/cmd_mode.rst:89
+#: ../../source/cmd_mode.rst:90
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -421,7 +433,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:99
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -441,7 +453,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:107
+#: ../../source/cmd_mode.rst:108
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -451,11 +463,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -464,7 +476,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -590,6 +602,27 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "#prime"
+msgstr "#prime"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte ce **tag** dans l'un de ses commentaires. Un tag est un"
+" ``#mot`` écrit dans la prose ; rien ne le déclare. La comparaison est "
+"délimitée, donc ``#prime`` ne trouve pas ``#priming`` — c'est toute la "
+"différence avec le filtre de texte, qui cherche une sous-chaîne. "
+"Répétable, et les tags se **cumulent** (``#prime #backgame`` demande les "
+"deux) : une position porte plusieurs tags, donc en nommer deux veut dire "
+"« les deux »."
+msgstr ""
+"Asema kantaa tätä **tunnistetta** jossakin kommentissaan. Tunniste on "
+"proosaan kirjoitettu ``#sana``; mikään ei ilmoita sitä. Vertailu on "
+"rajattu, joten ``#prime`` ei löydä sanaa ``#priming`` — juuri siinä on "
+"ero tekstisuodattimeen, joka etsii osamerkkijonoa. Toistettavissa, ja "
+"tunnisteet **kasautuvat** (``#prime #backgame`` pyytää molempia): asema "
+"kantaa useita tunnisteita, joten kahden nimeäminen tarkoittaa ”molempia”."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1335,7 +1368,7 @@ msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. ``pl'Alice'``). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:219
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

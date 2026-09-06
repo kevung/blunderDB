@@ -333,6 +333,24 @@ type SearchFilters struct {
 	// comment that carries a user comment, and honestly returns nothing.
 	CommentOriginFilter string `json:"commentOriginFilter"`
 
+	// TagFilter keeps only positions whose comments carry EVERY tag named: a
+	// ";"-separated list, e.g. "#prime" or "#prime;#backgame" (the #prime
+	// token, issue #265). Empty applies no tag filter.
+	//
+	// AND, where CommentOriginFilter and GamePhaseFilter are OR, and the
+	// difference is in the subject rather than in the grammar: a position has
+	// ONE phase and ONE set of comment origins to choose from, so naming two
+	// can only mean "either"; a position has MANY tags, so naming two means
+	// "both" — which is what "montre-moi mes erreurs en #holding #crunch"
+	// asks. The search grammar writes one token per tag and they compose the
+	// way every other pair of tokens does.
+	//
+	// Matching is DELIMITED: the comment's tags are extracted and compared
+	// whole, so #prime does not match #priming. That is the whole reason this
+	// is its own filter rather than a spelling of SearchText, which is a
+	// substring search and cannot tell the two apart.
+	TagFilter string `json:"tagFilter"`
+
 	// GamePhaseFilter keeps only positions in one of the named phases: a
 	// ";"-separated list of domain.GamePhase tokens, e.g. "race" or
 	// "race;bearoff" (the ph:race token, issue #264). Empty applies no phase

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"iter"
+	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -259,4 +260,60 @@ func (s *CommentStore) Search(ctx context.Context, scope string, query string) i
 		`SELECT `+s.selectCols()+` FROM comment
 		 WHERE `+tenant+` AND text != '' AND text `+s.DB.ILike()+` '%' || ? || '%' ORDER BY id DESC`,
 		append(targs, query)...)
+}
+
+// Tags — see storage.CommentStore.
+//
+// One query, tallied in Go. A tag cannot be found by a GROUP BY: it is a
+// `#word` inside prose, nothing declares it, and no column holds it. So the
+// comment text of the tenant is read once and domain.ExtractTags does the
+// rest — the same extraction the per-tag statistics use, so the vocabulary
+// panel and the statistics can never disagree about what a tag is.
+//
+// Only rows carrying a '#' at all are read: a library where nobody uses tags
+// costs one index-less scan of a column, and one where everybody does reads
+// only the comments that can possibly contribute.
+func (s *CommentStore) Tags(ctx context.Context, scope string) ([]domain.TagCount, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	rows, err := s.DB.Query(ctx,
+		`SELECT position_id, COALESCE(text,'') FROM comment
+		 WHERE `+tenant+` AND text `+s.DB.ILike()+` '%#%'`, targs...)
+	if err != nil {
+		return nil, errf(s.DB, "read tags", err)
+	}
+	defer rows.Close()
+
+	// A tag counts a POSITION once, however many of its comments carry it.
+	seen := map[string]map[int64]bool{}
+	for rows.Next() {
+		var positionID int64
+		var text string
+		if err := rows.Scan(&positionID, &text); err != nil {
+			return nil, errf(s.DB, "scan tags", err)
+		}
+		for _, tag := range domain.ExtractTags(text) {
+			if seen[tag] == nil {
+				seen[tag] = map[int64]bool{}
+			}
+			seen[tag][positionID] = true
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "read tags", err)
+	}
+
+	out := make([]domain.TagCount, 0, len(seen))
+	for tag, positions := range seen {
+		out = append(out, domain.TagCount{Tag: tag, Count: len(positions)})
+	}
+	// Most used first, alphabetically within a count: the panel is read to
+	// find the tags one actually uses, and a stable order is what lets two
+	// runs be compared.
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].Count != out[j].Count {
+			return out[i].Count > out[j].Count
+		}
+		return out[i].Tag < out[j].Tag
+	})
+	return out, nil
 }

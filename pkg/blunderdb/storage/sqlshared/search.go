@@ -571,12 +571,12 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 	// cursor above is drained and its connection is free.
 	var commentTexts map[int64]string
 	var player1MovesByID map[int64]player1Moves
-	if f.SearchText != "" || f.MoveErrorFilter != "" {
+	if f.SearchText != "" || f.TagFilter != "" || f.MoveErrorFilter != "" {
 		ids := make([]int64, len(scanned))
 		for i, row := range scanned {
 			ids[i] = row.pos.ID
 		}
-		if f.SearchText != "" {
+		if f.SearchText != "" || f.TagFilter != "" {
 			commentTexts, err = loadCommentTexts(ctx, s.DB, ids)
 			if err != nil {
 				return nil, errf(s.DB, "search preload comments", err)
@@ -594,6 +594,7 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 	// Built once for the whole scan: the six checks only depend on f, not on
 	// the row being tested.
 	rates := rateFilterChecks(f)
+	wantedTags := domain.ParseTagFilter(f.TagFilter)
 
 	for _, row := range scanned {
 		position, ana := row.pos, row.ana
@@ -688,25 +689,10 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 				}
 			}
 
-			if f.Player1CheckerInZoneFilter != "" && !pos.MatchesPlayer1CheckerInZone(f.Player1CheckerInZoneFilter) {
+			if !matchesZoneAndBlotFilters(pos, f) {
 				return false, nil
 			}
-			if f.Player2CheckerInZoneFilter != "" && !pos.MatchesPlayer2CheckerInZone(f.Player2CheckerInZoneFilter) {
-				return false, nil
-			}
-			if f.Player1OutfieldBlotFilter != "" && !pos.MatchesPlayer1OutfieldBlot(f.Player1OutfieldBlotFilter) {
-				return false, nil
-			}
-			if f.Player2OutfieldBlotFilter != "" && !pos.MatchesPlayer2OutfieldBlot(f.Player2OutfieldBlotFilter) {
-				return false, nil
-			}
-			if f.Player1JanBlotFilter != "" && !pos.MatchesPlayer1JanBlot(f.Player1JanBlotFilter) {
-				return false, nil
-			}
-			if f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter) {
-				return false, nil
-			}
-			if f.SearchText != "" && !matchesSearchTextPreloaded(commentTexts[pos.ID], f.SearchText) {
+			if !matchesCommentFilters(commentTexts[pos.ID], f.SearchText, wantedTags) {
 				return false, nil
 			}
 			if f.DateFilter != "" && !searchfilter.MatchesDateFilter(ana, f.DateFilter) {
@@ -886,6 +872,21 @@ func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilte
 		where.WriteString(" AND " + not + "EXISTS (SELECT 1 FROM comment c" +
 			" WHERE " + cTenant + " AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
 		*args = append(*args, cArgs...)
+	}
+
+	// Tags. This clause is a NARROWING, not the answer: a LIKE cannot tell
+	// #prime from #priming, and telling them apart is the whole point of the
+	// filter (#265). It exists so a tag search does not preload every comment
+	// in the database; the exact, delimited test runs in Go on the survivors
+	// (domain.MatchesAllTags). One EXISTS per tag, because every named tag
+	// must be present — see domain.SearchFilters.TagFilter for why that is
+	// AND where the two lists around it are OR.
+	for _, tag := range domain.ParseTagFilter(f.TagFilter) {
+		cTenant, cArgs := s.DB.TenantFilter("c", scope)
+		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c WHERE " + cTenant +
+			" AND c.position_id = p.id AND COALESCE(c.text, '') " + s.DB.ILike() + " ?)")
+		*args = append(*args, cArgs...)
+		*args = append(*args, "%"+tag+"%")
 	}
 
 	// Comment provenance. A separate EXISTS from the presence filter above:

@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Anki-kortti",
         "restored": "Palautettu: {what}",
         "restoreFailed": "Palautus ei onnistunut: {error}"
+    },
+    "tags": {
+        "title": "Tunnisteiden sanasto",
+        "intro": "Tunniste on kommenttiin kirjoitettu ”#sana”: mitään ei tarvitse ilmoittaa. Napsauta jotakin hakeaksesi sitä kantavat asemat.",
+        "none": "Yhtään tunnistetta ei ole vielä käytetty.",
+        "positions": "{n} asemaa",
+        "searchHint": "Hae asemat, joissa on {tag}",
+        "suggested": "Suositeltu sanasto, kirjallisuudesta poimittu — ei koskaan pakotettu:",
+        "suggestionsLabel": "Tunniste-ehdotukset"
     }
 }

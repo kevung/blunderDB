@@ -656,6 +656,11 @@ Affiche le contenu de la base de données.
   matchs, victoires/défaites, décisions comptées, PR global / pions / videau,
   Snowie ER, erreurs, blunders et chance. C'est le pendant en ligne de commande
   de l'onglet Joueurs du panneau Stats.
+* ``tags`` — Vocabulaire de tags de la base : chaque ``#mot`` écrit dans un
+  commentaire, avec le nombre de **positions** qui le portent, du plus utilisé
+  au moins utilisé. Sur une base sans aucun tag, affiche le vocabulaire
+  recommandé plutôt qu'une liste vide (voir :ref:`tags`). Accepte
+  ``--format json`` et ``--format csv``.
 
 **Options** (type ``stats`` uniquement) :
 

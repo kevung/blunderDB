@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Carta Anki",
         "restored": "Ripristinato: {what}",
         "restoreFailed": "Ripristino impossibile: {error}"
+    },
+    "tags": {
+        "title": "Vocabolario di tag",
+        "intro": "Un tag è una «#parola» scritta in un commento: nulla da dichiarare. Cliccatene uno per cercare le posizioni che lo portano.",
+        "none": "Nessun tag usato per ora.",
+        "positions": "{n} posizioni",
+        "searchHint": "Cercare le posizioni con {tag}",
+        "suggested": "Vocabolario consigliato, tratto dalla letteratura — mai imposto:",
+        "suggestionsLabel": "Suggerimenti di tag"
     }
 }

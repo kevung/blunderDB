@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Anki card",
         "restored": "Restored: {what}",
         "restoreFailed": "Could not restore: {error}"
+    },
+    "tags": {
+        "title": "Tag vocabulary",
+        "intro": "A tag is a “#word” written in a comment: nothing to declare. Click one to search the positions carrying it.",
+        "none": "No tag used yet.",
+        "positions": "{n} positions",
+        "searchHint": "Search the positions carrying {tag}",
+        "suggested": "Suggested vocabulary, taken from the literature — never imposed:",
+        "suggestionsLabel": "Tag suggestions"
     }
 }

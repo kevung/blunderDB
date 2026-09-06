@@ -45,6 +45,7 @@ var corpusField = map[string]string{
 	"individuallyImportedFilter":    "IndividuallyImportedFilter",
 	"flaggedFilter":                 "FlaggedFilter",
 	"gamePhaseFilter":               "GamePhaseFilter",
+	"tagFilter":                     "TagFilter",
 	"commentOriginFilter":           "CommentOriginFilter",
 	"diceRollFilter":                "DiceRollFilter",
 	"diceRollMode":                  "DiceRollMode",

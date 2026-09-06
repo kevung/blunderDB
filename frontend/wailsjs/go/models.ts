@@ -1699,6 +1699,7 @@ export namespace domain {
 	    searchText: string;
 	    commentFilter: string;
 	    commentOriginFilter: string;
+	    tagFilter: string;
 	    gamePhaseFilter: string;
 	    player1AbsolutePipCountFilter: string;
 	    equityFilter: string;
@@ -1751,6 +1752,7 @@ export namespace domain {
 	        this.searchText = source["searchText"];
 	        this.commentFilter = source["commentFilter"];
 	        this.commentOriginFilter = source["commentOriginFilter"];
+	        this.tagFilter = source["tagFilter"];
 	        this.gamePhaseFilter = source["gamePhaseFilter"];
 	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
 	        this.equityFilter = source["equityFilter"];
@@ -1795,6 +1797,20 @@ export namespace domain {
 		    }
 		    return a;
 		}
+	}
+	export class TagCount {
+	    tag: string;
+	    count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TagCount(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tag = source["tag"];
+	        this.count = source["count"];
+	    }
 	}
 	export class Tournament {
 	    id: number;

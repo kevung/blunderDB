@@ -125,6 +125,17 @@ remember what anybody did with it — the Move table supplies it instead
 first recorded occurrence only.
 _Avoid_: user move, chosen move (a candidate is not a played action until a Move records it)
 
+**Tag**:
+A `#word` inside a Comment. Nothing declares one, no column holds one, and that is the
+point: the vocabulary is the user's own prose. blunderDB *suggests* a list drawn from the
+backgammon literature and counts what has actually been used, but a tag absent from the
+suggestion is worth exactly as much as one on it. Matching is DELIMITED — the comment's
+tags are extracted and compared whole, so `#prime` is not `#priming` — which is why a tag
+search is its own filter and not a spelling of the free-text one. Several tags narrow
+together (a Position carries many tags, so naming two means "both"), unlike the phase and
+provenance filters, where a Position has one value and naming two can only mean "either".
+_Avoid_: label, category (both suggest a closed, declared set — a tag is neither)
+
 **Network**:
 The weights, and only the weights — `strehl-prob5-512-512-256-128`. A network changes name
 only when its weights change: neither the search wrapped around it, nor a quantisation, nor a

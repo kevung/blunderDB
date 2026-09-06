@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Anki-Karte",
         "restored": "Wiederhergestellt: {what}",
         "restoreFailed": "Wiederherstellung nicht möglich: {error}"
+    },
+    "tags": {
+        "title": "Tag-Vokabular",
+        "intro": "Ein Tag ist ein „#Wort“ in einem Kommentar: nichts zu deklarieren. Klicken Sie eines an, um die Stellungen zu suchen, die es tragen.",
+        "none": "Noch kein Tag verwendet.",
+        "positions": "{n} Stellungen",
+        "searchHint": "Die Stellungen mit {tag} suchen",
+        "suggested": "Empfohlenes Vokabular, aus der Literatur — nie vorgeschrieben:",
+        "suggestionsLabel": "Tag-Vorschläge"
     }
 }

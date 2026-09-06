@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Tarjeta Anki",
         "restored": "Restaurado: {what}",
         "restoreFailed": "No se pudo restaurar: {error}"
+    },
+    "tags": {
+        "title": "Vocabulario de etiquetas",
+        "intro": "Una etiqueta es una «#palabra» escrita en un comentario: nada que declarar. Haga clic en una para buscar las posiciones que la llevan.",
+        "none": "Ninguna etiqueta usada todavía.",
+        "positions": "{n} posiciones",
+        "searchHint": "Buscar las posiciones con {tag}",
+        "suggested": "Vocabulario recomendado, tomado de la literatura — nunca impuesto:",
+        "suggestionsLabel": "Sugerencias de etiquetas"
     }
 }

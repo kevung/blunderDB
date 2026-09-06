@@ -21,7 +21,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, imports, stats, players (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, imports, stats, players, tags (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -73,6 +73,9 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println()
 		fmt.Println("  # The same table as CSV, for a spreadsheet or a script")
 		fmt.Println("  blunderdb list --db database.db --type players --format csv")
+		fmt.Println()
+		fmt.Println("  # The tag vocabulary of this database, most used first")
+		fmt.Println("  blunderdb list --db database.db --type tags")
 	}
 
 	if err := listCmd.Parse(args); err != nil {
@@ -127,6 +130,8 @@ func (cli *CLI) runList(args []string) error {
 			filter.TournamentIDs = ids
 		}
 		return cli.showStats(filter, *statsMetric, *statsFormat, *statsTopBlunders)
+	case "tags":
+		return cli.listTags(strings.ToLower(*statsFormat))
 	case "players":
 		// Only the match-level filters matter here; the players table covers
 		// every player and splits checker from cube into its own columns, so
@@ -145,7 +150,7 @@ func (cli *CLI) runList(args []string) error {
 		}
 		return cli.showPlayerTable(filter, *statsFormat)
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'imports', 'stats', or 'players')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'imports', 'stats', 'players', or 'tags')", *listType)
 	}
 }
 

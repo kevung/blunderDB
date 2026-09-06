@@ -257,6 +257,8 @@ export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
+export function RecommendedTags():Promise<Array<string>>;
+
 export function RefreshSearchStatistics():Promise<void>;
 
 export function RemoveAnkiCard(arg1:number):Promise<void>;
@@ -324,6 +326,8 @@ export function SwapMatchPlayers(arg1:number):Promise<void>;
 export function SyncAnkiDeck(arg1:number):Promise<void>;
 
 export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function Tags():Promise<Array<domain.TagCount>>;
 
 export function TrashCollection(arg1:number):Promise<number>;
 

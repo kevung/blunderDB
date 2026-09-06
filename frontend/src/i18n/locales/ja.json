@@ -1234,5 +1234,14 @@
         "kindAnkiCard": "Anki カード",
         "restored": "復元しました：{what}",
         "restoreFailed": "復元できませんでした：{error}"
+    },
+    "tags": {
+        "title": "タグの語彙",
+        "intro": "タグはコメントに書いた「#語」です。宣言は要りません。クリックすると、そのタグを持つ局面を検索します。",
+        "none": "まだタグは使われていません。",
+        "positions": "{n} 局面",
+        "searchHint": "{tag} を持つ局面を検索",
+        "suggested": "推奨語彙。文献から取ったもので、強制ではありません：",
+        "suggestionsLabel": "タグの候補"
     }
 }

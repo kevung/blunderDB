@@ -830,6 +830,10 @@ export default {
 <td>Avaa kuutiomatriisin: nykyisen aseman tuomion 5-, 7- tai 9-pisteen ottelun jokaisessa pistetilanteessa.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Avaa tunnistesanaston: tässä tietokannassa käytetyt tunnisteet asemamäärineen, napsautettavina haun käynnistämiseksi.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Avaa take-pisteiden taulukon kuution arvolla 2.</td>
 </tr>
@@ -1018,6 +1022,11 @@ export default {
 <td>ph:race</td>
 <td>Asema on tietyssä pelin vaiheessa: <code>opening</code> (avaus), <code>middlegame</code> (keskipeli), <code>race</code> (kilpajuoksu) tai <code>bearoff</code> (nappuloiden poisto). Toistettavissa (<code>ph:race ph:bearoff</code>). Merkintä johdetaan laudasta eikä sitä voi koskaan muokata; <code>blunderdb repair</code> laskee sen uudelleen.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>Asema kantaa tätä <strong>tunnistetta</strong> jossakin kommentissaan. Tunniste on proosaan kirjoitettu <code>#sana</code>; mikään ei ilmoita sitä. Vertailu on rajattu, joten <code>#prime</code> ei löydä sanaa <code>#priming</code> — juuri siinä on ero tekstisuodattimeen, joka etsii osamerkkijonoa. Toistettavissa, ja tunnisteet <strong>kasautuvat</strong> (<code>#prime #backgame</code> pyytää molempia): asema kantaa useita tunnisteita, joten kahden nimeäminen tarkoittaa ”molempia”.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

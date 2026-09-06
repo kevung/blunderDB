@@ -835,6 +835,10 @@ export default {
 <td>Apre la matrice del cubo: il verdetto della posizione corrente a tutti i punteggi di un incontro da 5, 7 o 9 punti.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Apre il vocabolario di tag: i tag usati in questo database, con il numero di posizioni, cliccabili per lanciare la ricerca.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Apre la tabella dei takepoint con cubo a 2.</td>
 </tr>
@@ -1023,6 +1027,11 @@ export default {
 <td>ph:race</td>
 <td>La posizione si trova in una data fase di gioco: <code>opening</code> (apertura), <code>middlegame</code> (mediogioco), <code>race</code> (corsa) o <code>bearoff</code> (uscita delle pedine). Ripetibile (<code>ph:race ph:bearoff</code>). L'etichetta è derivata dalla tavola e non è mai modificabile; <code>blunderdb repair</code> la ricalcola.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>La posizione porta questo <strong>tag</strong> in uno dei suoi commenti. Un tag è una <code>#parola</code> scritta nella prosa; nulla lo dichiara. Il confronto è delimitato, quindi <code>#prime</code> non trova <code>#priming</code> — è tutta la differenza rispetto al filtro di testo, che cerca una sottostringa. Ripetibile, e i tag si <strong>sommano</strong> (<code>#prime #backgame</code> chiede entrambi): una posizione porta più tag, quindi nominarne due vuol dire «entrambi».</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>
