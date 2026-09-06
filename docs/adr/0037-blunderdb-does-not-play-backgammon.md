@@ -4,7 +4,11 @@
 
 accepted — 2026-09-06. Closes issue #300 (fiche J.10), which had been marked
 "écarté" in the plan since it was written and never had the one line that keeps
-the question from being reopened.
+the question from being reopened. Refined by 0041 (the engine playing a few
+plies out of sight to make a training position). Amended by 0044 (2026-09-07):
+*transcribing* a match played elsewhere lands on most of the surface listed
+below and is accepted — nobody decides, the rules check and never enforce, the
+output is an ordinary Match; the refusal of a play mode stands.
 
 ## Context
 
