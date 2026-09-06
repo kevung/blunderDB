@@ -841,6 +841,23 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_CommentEntry"
                 nullable: true
+  /v1/comments.tags:
+    post:
+      operationId: comments.tags
+      tags: [comments]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tagsResp"
   /v1/comments.text:
     post:
       operationId: comments.text
@@ -2800,6 +2817,9 @@ components:
     domain_SearchFilters:
       type: object
       description: "Opaque: see the Go type domain.SearchFilters (defined outside internal/server, not expanded here)."
+    domain_TagCount:
+      type: object
+      description: "Opaque: see the Go type domain.TagCount (defined outside internal/server, not expanded here)."
     domain_Tournament:
       type: object
       description: "Opaque: see the Go type domain.Tournament (defined outside internal/server, not expanded here)."
@@ -3277,6 +3297,17 @@ components:
           format: int64
         suspended:
           type: boolean
+    tagsResp:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_TagCount"
+        recommended:
+          type: array
+          items:
+            type: string
     textResp:
       type: object
       properties:

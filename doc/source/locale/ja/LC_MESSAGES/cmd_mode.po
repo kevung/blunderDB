@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 05:06+0200\n"
+"POT-Creation-Date: 2026-09-06 06:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -154,6 +154,16 @@ msgid ""
 msgstr "キューブ判断のマトリクスを開きます。5・7・9 点マッチのあらゆるスコアにおける現在の局面の判断を示します。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tags"
+msgstr "tags"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le"
+" nombre de positions, cliquables pour lancer la recherche."
+msgstr "タグの語彙を開きます。このデータベースで使われているタグと局面数が並び、クリックすると検索が走ります。"
+
+#: ../../source/cmd_mode.rst:1
 msgid "tp2"
 msgstr "tp2"
 
@@ -225,7 +235,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "キューブ値 4 のギャモン値表を開きます。"
 
-#: ../../source/cmd_mode.rst:48
+#: ../../source/cmd_mode.rst:49
 msgid "Positions et navigation"
 msgstr "局面とナビゲーション"
 
@@ -350,7 +360,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:73
+#: ../../source/cmd_mode.rst:74
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -386,11 +396,11 @@ msgstr "ss"
 msgid "Chercher parmi les positions actuellement filtrées."
 msgstr "現在フィルタされている局面の中から検索します。"
 
-#: ../../source/cmd_mode.rst:89
+#: ../../source/cmd_mode.rst:90
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -404,7 +414,7 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:99
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -421,7 +431,7 @@ msgstr ""
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:107
+#: ../../source/cmd_mode.rst:108
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -430,18 +440,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:111
+#: ../../source/cmd_mode.rst:112
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:114
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:115
+#: ../../source/cmd_mode.rst:116
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -564,6 +574,25 @@ msgstr ""
 #: ../../source/cmd_mode.rst:1
 msgid "``--phase``"
 msgstr "``--phase``"
+
+#: ../../source/cmd_mode.rst:1
+msgid "#prime"
+msgstr "#prime"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte ce **tag** dans l'un de ses commentaires. Un tag est un"
+" ``#mot`` écrit dans la prose ; rien ne le déclare. La comparaison est "
+"délimitée, donc ``#prime`` ne trouve pas ``#priming`` — c'est toute la "
+"différence avec le filtre de texte, qui cherche une sous-chaîne. "
+"Répétable, et les tags se **cumulent** (``#prime #backgame`` demande les "
+"deux) : une position porte plusieurs tags, donc en nommer deux veut dire "
+"« les deux »."
+msgstr ""
+"その局面が、コメントのいずれかにこの\\ **タグ**\\ を持っています。タグとは文章に書いた ``#語`` "
+"で、何も宣言しません。比較は区切りを見るので、``#prime`` は ``#priming`` "
+"を拾いません。部分文字列を探すテキストフィルタとの違いはそこにあります。繰り返し指定でき、タグは\\ **重なります**\\ （``#prime "
+"#backgame`` は両方を求めます）。局面は複数のタグを持つので、二つ挙げれば「両方」の意味です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1304,7 +1333,7 @@ msgstr ""
 "指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：\\ ``pl'Alice'``\\ "
 "）。大文字・小文字は区別しません。"
 
-#: ../../source/cmd_mode.rst:217
+#: ../../source/cmd_mode.rst:219
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 

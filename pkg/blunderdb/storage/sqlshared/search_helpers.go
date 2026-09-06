@@ -325,3 +325,44 @@ func player1MaxMoveError(analysis *domain.PositionAnalysis, checkerMoves, cubeAc
 	}
 	return maxError, found
 }
+
+// matchesZoneAndBlotFilters is the group of board-shape predicates that need
+// nothing but the position and the filters: checkers in a zone, and blots in
+// the outfield or in the home board, for each player.
+//
+// Extracted from applyGoFilters' predicate because it is a group — six
+// filters, one subject, no dependency on the scan's preloaded data — and
+// because the predicate it came from sits at the linter's complexity ceiling
+// (gocognit 200) and every filter added to it pushes it over.
+func matchesZoneAndBlotFilters(pos domain.Position, f domain.SearchFilters) bool {
+	switch {
+	case f.Player1CheckerInZoneFilter != "" && !pos.MatchesPlayer1CheckerInZone(f.Player1CheckerInZoneFilter):
+		return false
+	case f.Player2CheckerInZoneFilter != "" && !pos.MatchesPlayer2CheckerInZone(f.Player2CheckerInZoneFilter):
+		return false
+	case f.Player1OutfieldBlotFilter != "" && !pos.MatchesPlayer1OutfieldBlot(f.Player1OutfieldBlotFilter):
+		return false
+	case f.Player2OutfieldBlotFilter != "" && !pos.MatchesPlayer2OutfieldBlot(f.Player2OutfieldBlotFilter):
+		return false
+	case f.Player1JanBlotFilter != "" && !pos.MatchesPlayer1JanBlot(f.Player1JanBlotFilter):
+		return false
+	case f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter):
+		return false
+	}
+	return true
+}
+
+// matchesCommentFilters is the pair of predicates read off a position's
+// comment text: the free-text search and the tag search.
+//
+// One text, two rules, and the difference is the point (#265). SearchText is a
+// SUBSTRING search — `t"#prime"` matches "#priming" — while the tag filter
+// extracts the text's tags and compares them whole, so `#prime` does not.
+// wantedTags is already normalised (domain.ParseTagFilter) by the caller,
+// once for the whole scan.
+func matchesCommentFilters(comment, searchText string, wantedTags []string) bool {
+	if searchText != "" && !matchesSearchTextPreloaded(comment, searchText) {
+		return false
+	}
+	return domain.MatchesAllTags(comment, wantedTags)
+}

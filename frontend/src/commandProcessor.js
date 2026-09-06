@@ -102,6 +102,8 @@ export function processCommand(command) {
         openModal(MODAL.MET);
     } else if (command === 'cm') {
         openModal(MODAL.CUBE_MATRIX);
+    } else if (command === 'tags') {
+        openModal(MODAL.TAGS);
     } else if (command === 'tp2_last') {
         openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {

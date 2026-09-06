@@ -19,6 +19,7 @@ export const currentPositionIndexStore = writable(0);
 export const MODAL = {
     MET: 'met',
     CUBE_MATRIX: 'cubeMatrix',
+    TAGS: 'tags',
     TAKE_POINT_2_LAST: 'takePoint2Last',
     TAKE_POINT_2_LIVE: 'takePoint2Live',
     TAKE_POINT_4_LAST: 'takePoint4Last',

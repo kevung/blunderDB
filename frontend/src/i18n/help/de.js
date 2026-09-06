@@ -840,6 +840,10 @@ export default {
 <td>Öffnet die Dopplerwürfel-Matrix: das Urteil der aktuellen Stellung bei jedem Punktestand eines Matches über 5, 7 oder 9 Punkte.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Öffnet das Tag-Vokabular: die in dieser Datenbank verwendeten Tags mit der Zahl der Stellungen, anklickbar zum Starten der Suche.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Öffnet die Takepoint-Tabelle bei Dopplerstand 2.</td>
 </tr>
@@ -1028,6 +1032,11 @@ export default {
 <td>ph:race</td>
 <td>Die Stellung befindet sich in einer bestimmten Spielphase: <code>opening</code> (Eröffnung), <code>middlegame</code> (Mittelspiel), <code>race</code> (Wettlauf) oder <code>bearoff</code> (Auswürfeln). Wiederholbar (<code>ph:race ph:bearoff</code>). Die Kennzeichnung wird aus dem Brett abgeleitet und ist nie editierbar; <code>blunderdb repair</code> berechnet sie neu.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>Die Stellung trägt dieses <strong>Tag</strong> in einem ihrer Kommentare. Ein Tag ist ein <code>#Wort</code> in der Prosa; nichts deklariert es. Der Vergleich ist abgegrenzt, also findet <code>#prime</code> nicht <code>#priming</code> — genau darin liegt der Unterschied zum Textfilter, der eine Teilzeichenkette sucht. Wiederholbar, und Tags <strong>addieren sich</strong> (<code>#prime #backgame</code> verlangt beide): eine Stellung trägt mehrere Tags, zwei zu nennen heißt also „beide“.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 05:47+0200\n"
+"POT-Creation-Date: 2026-09-06 06:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -386,12 +386,12 @@ msgid ""
 msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομένων με προαιρετικά μεταδεδομένα."
 
 #: ../../source/cli.rst:112 ../../source/cli.rst:139 ../../source/cli.rst:320
-#: ../../source/cli.rst:391 ../../source/cli.rst:417 ../../source/cli.rst:754
-#: ../../source/cli.rst:912 ../../source/cli.rst:957 ../../source/cli.rst:1072
-#: ../../source/cli.rst:1248 ../../source/cli.rst:1316
-#: ../../source/cli.rst:1345 ../../source/cli.rst:1479
-#: ../../source/cli.rst:1517 ../../source/cli.rst:1554
-#: ../../source/cli.rst:1584
+#: ../../source/cli.rst:391 ../../source/cli.rst:417 ../../source/cli.rst:759
+#: ../../source/cli.rst:917 ../../source/cli.rst:962 ../../source/cli.rst:1077
+#: ../../source/cli.rst:1253 ../../source/cli.rst:1321
+#: ../../source/cli.rst:1350 ../../source/cli.rst:1484
+#: ../../source/cli.rst:1522 ../../source/cli.rst:1559
+#: ../../source/cli.rst:1589
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -429,8 +429,8 @@ msgstr ""
 "Η επέκταση ``.db`` προστίθεται αυτόματα αν λείπει. Οι γονικοί κατάλογοι "
 "δημιουργούνται όταν χρειάζεται."
 
-#: ../../source/cli.rst:124 ../../source/cli.rst:1118 ../../source/cli.rst:1493
-#: ../../source/cli.rst:1537 ../../source/cli.rst:1596
+#: ../../source/cli.rst:124 ../../source/cli.rst:1123 ../../source/cli.rst:1498
+#: ../../source/cli.rst:1542 ../../source/cli.rst:1601
 msgid "**Exemple:**"
 msgstr "**Παράδειγμα:**"
 
@@ -798,12 +798,12 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` (ένα "
 "έγγραφο που συνοψίζει την εξαγωγή: διαδρομή, μέγεθος σε bytes, πλήθη)."
 
-#: ../../source/cli.rst:348 ../../source/cli.rst:615 ../../source/cli.rst:725
-#: ../../source/cli.rst:761 ../../source/cli.rst:804 ../../source/cli.rst:879
-#: ../../source/cli.rst:932 ../../source/cli.rst:972 ../../source/cli.rst:1038
-#: ../../source/cli.rst:1225 ../../source/cli.rst:1253
-#: ../../source/cli.rst:1328 ../../source/cli.rst:1400
-#: ../../source/cli.rst:1563 ../../source/cli.rst:1625
+#: ../../source/cli.rst:348 ../../source/cli.rst:615 ../../source/cli.rst:730
+#: ../../source/cli.rst:766 ../../source/cli.rst:809 ../../source/cli.rst:884
+#: ../../source/cli.rst:937 ../../source/cli.rst:977 ../../source/cli.rst:1043
+#: ../../source/cli.rst:1230 ../../source/cli.rst:1258
+#: ../../source/cli.rst:1333 ../../source/cli.rst:1405
+#: ../../source/cli.rst:1568 ../../source/cli.rst:1630
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -947,10 +947,10 @@ msgstr "Αναζητά θέσεις στη βάση σύμφωνα με συνδ
 msgid "**Options principales:**"
 msgstr "**Κύριες επιλογές:**"
 
-#: ../../source/cli.rst:441 ../../source/cli.rst:756 ../../source/cli.rst:1074
-#: ../../source/cli.rst:1250 ../../source/cli.rst:1318
-#: ../../source/cli.rst:1347 ../../source/cli.rst:1481
-#: ../../source/cli.rst:1519 ../../source/cli.rst:1556
+#: ../../source/cli.rst:441 ../../source/cli.rst:761 ../../source/cli.rst:1079
+#: ../../source/cli.rst:1255 ../../source/cli.rst:1323
+#: ../../source/cli.rst:1352 ../../source/cli.rst:1486
+#: ../../source/cli.rst:1524 ../../source/cli.rst:1561
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
 
@@ -1329,21 +1329,35 @@ msgstr ""
 "Snowie ER, λάθη, σοβαρά λάθη και τύχη. Είναι το αντίστοιχο από τη γραμμή "
 "εντολών της καρτέλας Παίκτες του πίνακα Στατιστικών."
 
-#: ../../source/cli.rst:660
+#: ../../source/cli.rst:659
+msgid ""
+"``tags`` — Vocabulaire de tags de la base : chaque ``#mot`` écrit dans un"
+" commentaire, avec le nombre de **positions** qui le portent, du plus "
+"utilisé au moins utilisé. Sur une base sans aucun tag, affiche le "
+"vocabulaire recommandé plutôt qu'une liste vide (voir :ref:`tags`). "
+"Accepte ``--format json`` et ``--format csv``."
+msgstr ""
+"``tags`` — Το λεξιλόγιο ετικετών της βάσης: κάθε ``#λέξη`` γραμμένη σε "
+"σχόλιο, με το πλήθος των **θέσεων** που τη φέρουν, με πρώτη τη συχνότερη."
+" Σε μια βάση χωρίς καμία ετικέτα, εμφανίζει το προτεινόμενο λεξιλόγιο "
+"αντί για κενή λίστα (δείτε :ref:`tags`). Δέχεται ``--format json`` και "
+"``--format csv``."
+
+#: ../../source/cli.rst:665
 msgid "**Options** (type ``stats`` uniquement) :"
 msgstr "**Επιλογές** (μόνο τύπος ``stats``):"
 
-#: ../../source/cli.rst:662
+#: ../../source/cli.rst:667
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
 msgstr ""
 "``--metric`` — Εμφανιζόμενη μετρική: ``pr`` ή ``mwc`` (προεπιλογή: "
 "``pr``)."
 
-#: ../../source/cli.rst:663
+#: ../../source/cli.rst:668
 msgid "``--player`` — Restreindre au joueur indiqué."
 msgstr "``--player`` — Περιορισμός στον υποδεικνυόμενο παίκτη."
 
-#: ../../source/cli.rst:664
+#: ../../source/cli.rst:669
 msgid ""
 "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
 " par des virgules)."
@@ -1351,15 +1365,15 @@ msgstr ""
 "``--tournament`` — Περιορισμός σε ένα ή περισσότερα IDs τουρνουά "
 "(χωρισμένα με κόμματα)."
 
-#: ../../source/cli.rst:666
+#: ../../source/cli.rst:671
 msgid "``--from`` — Date de début (AAAA-MM-JJ)."
 msgstr "``--from`` — Ημερομηνία έναρξης (ΕΕΕΕ-ΜΜ-ΗΗ)."
 
-#: ../../source/cli.rst:667
+#: ../../source/cli.rst:672
 msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
 msgstr "``--to`` — Ημερομηνία λήξης (ΕΕΕΕ-ΜΜ-ΗΗ)."
 
-#: ../../source/cli.rst:668
+#: ../../source/cli.rst:673
 msgid ""
 "``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
 "(défaut: ``all``)."
@@ -1367,22 +1381,22 @@ msgstr ""
 "``--decision-type`` — Τύπος απόφασης: ``all``, ``checker`` ή ``cube`` "
 "(προεπιλογή: ``all``)."
 
-#: ../../source/cli.rst:670
+#: ../../source/cli.rst:675
 msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr ""
 "``--top-blunders`` — Αριθμός των χειρότερων λαθών που εμφανίζονται "
 "(προεπιλογή: 10)."
 
-#: ../../source/cli.rst:671 ../../source/cli.rst:677 ../../source/cli.rst:959
-#: ../../source/cli.rst:1251
+#: ../../source/cli.rst:676 ../../source/cli.rst:682 ../../source/cli.rst:964
+#: ../../source/cli.rst:1256
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
 
-#: ../../source/cli.rst:673
+#: ../../source/cli.rst:678
 msgid "**Options** (type ``imports`` uniquement) :"
 msgstr "**Επιλογές** (μόνο τύπος ``imports``):"
 
-#: ../../source/cli.rst:675
+#: ../../source/cli.rst:680
 msgid ""
 "``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au "
 "lieu de la liste."
@@ -1390,7 +1404,7 @@ msgstr ""
 "``--batch`` — Αναγνωριστικό μιας παρτίδας: εμφανίζει την πλήρη αναφορά "
 "της αντί για τη λίστα."
 
-#: ../../source/cli.rst:679
+#: ../../source/cli.rst:684
 msgid ""
 "La moitié mesurée du compte rendu est recalculée à chaque appel : un lot "
 "dont les positions ont été analysées depuis rend les chiffres "
@@ -1400,11 +1414,11 @@ msgstr ""
 "παρτίδα της οποίας οι θέσεις έχουν έκτοτε αναλυθεί επιστρέφει τα σημερινά"
 " νούμερα, όχι εκείνα της ημέρας της εισαγωγής."
 
-#: ../../source/cli.rst:683
+#: ../../source/cli.rst:688
 msgid "**Options** (type ``players`` uniquement) :"
 msgstr "**Επιλογές** (μόνο τύπος ``players``):"
 
-#: ../../source/cli.rst:685
+#: ../../source/cli.rst:690
 msgid ""
 "``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
 "jours d'une compétition."
@@ -1412,11 +1426,11 @@ msgstr ""
 "``--from`` / ``--to`` — Όρια ημερομηνιών (ΕΕΕΕ-ΜΜ-ΗΗ), για παράδειγμα οι "
 "ημέρες μιας διοργάνωσης."
 
-#: ../../source/cli.rst:687
+#: ../../source/cli.rst:692
 msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
 msgstr "``--tournament`` — Περιορισμός σε ένα ή περισσότερα IDs τουρνουά."
 
-#: ../../source/cli.rst:688
+#: ../../source/cli.rst:693
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
@@ -1424,7 +1438,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text``, ``json`` ή ``csv`` (προεπιλογή: "
 "``text``)."
 
-#: ../../source/cli.rst:691
+#: ../../source/cli.rst:696
 msgid ""
 "``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
 "le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
@@ -1434,7 +1448,7 @@ msgstr ""
 "τύπο: ο πίνακας αφορά όλους τους παίκτες και ήδη διαχωρίζει πούλια και "
 "κύβο σε ξεχωριστές στήλες."
 
-#: ../../source/cli.rst:696
+#: ../../source/cli.rst:701
 msgid ""
 "Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
 " à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
@@ -1450,7 +1464,7 @@ msgstr ""
 "ξανά τα αρχεία προέλευσης για να την αποκτήσετε. Η στήλη ``luck_rolls`` "
 "δείχνει σε πόσες ζαριές αναφέρεται ο μέσος όρος."
 
-#: ../../source/cli.rst:703
+#: ../../source/cli.rst:708
 msgid ""
 "Chaque type imprime un bloc par élément, précédé du total trouvé. La "
 "ligne finale rappelle que la liste est tronquée par ``--limit``, dont la "
@@ -1461,19 +1475,19 @@ msgstr ""
 " από την ``--limit``, της οποίας η προεπιλεγμένη τιμή είναι 10 για τις "
 "θέσεις:"
 
-#: ../../source/cli.rst:746
+#: ../../source/cli.rst:751
 msgid "match — Afficher un match"
 msgstr "match — Εμφάνιση αγώνα"
 
-#: ../../source/cli.rst:748
+#: ../../source/cli.rst:753
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr "Εμφανίζει τις θέσεις και τις αναλύσεις ενός εισαγμένου αγώνα."
 
-#: ../../source/cli.rst:757
+#: ../../source/cli.rst:762
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — ID του αγώνα προς εμφάνιση (υποχρεωτικό)."
 
-#: ../../source/cli.rst:758
+#: ../../source/cli.rst:763
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -1481,15 +1495,15 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``json``, ``text`` ή ``summary`` "
 "(προεπιλογή: ``json``)."
 
-#: ../../source/cli.rst:759
+#: ../../source/cli.rst:764
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — Αρχείο εξόδου (προεπιλογή: τυπική έξοδος)."
 
-#: ../../source/cli.rst:770
+#: ../../source/cli.rst:775
 msgid "collection — Gérer les collections"
 msgstr "collection — Διαχείριση συλλογών"
 
-#: ../../source/cli.rst:772
+#: ../../source/cli.rst:777
 msgid ""
 "Gère les collections, ces ensembles de positions choisies à la main dans "
 "le panneau Collections de l'interface graphique. Chaque sous-commande "
@@ -1501,17 +1515,17 @@ msgstr ""
 "``--db``· οι ``list`` και ``show`` δέχονται ``--format text`` "
 "(προεπιλογή), ``json`` ή ``csv``, όπως η ``list``."
 
-#: ../../source/cli.rst:781 ../../source/cli.rst:843 ../../source/cli.rst:1197
+#: ../../source/cli.rst:786 ../../source/cli.rst:848 ../../source/cli.rst:1202
 msgid "**Sous-commandes:**"
 msgstr "**Υποεντολές:**"
 
-#: ../../source/cli.rst:783
+#: ../../source/cli.rst:788
 msgid ""
 "``list`` — Liste des collections : id, nom, nombre de positions, "
 "description."
 msgstr "``list`` — Λίστα των συλλογών: id, όνομα, αριθμός θέσεων, περιγραφή."
 
-#: ../../source/cli.rst:784
+#: ../../source/cli.rst:789
 msgid ""
 "``show --id <id>`` — Positions d'une collection : id, index (le numéro "
 "1-based affiché dans la barre d'état de l'interface graphique), score, "
@@ -1521,7 +1535,7 @@ msgstr ""
 "αρίθμηση από το 1 που εμφανίζεται στη γραμμή κατάστασης της γραφικής "
 "διεπαφής), σκορ, τύπος απόφασης και XGID."
 
-#: ../../source/cli.rst:787
+#: ../../source/cli.rst:792
 msgid ""
 "``create --name <nom> [--description <texte>]`` — Crée une collection "
 "vide."
@@ -1529,7 +1543,7 @@ msgstr ""
 "``create --name <nom> [--description <texte>]`` — Δημιουργεί μια κενή "
 "συλλογή."
 
-#: ../../source/cli.rst:788
+#: ../../source/cli.rst:793
 msgid ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une "
 "collection (la description est conservée si elle n'est pas donnée)."
@@ -1537,7 +1551,7 @@ msgstr ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Μετονομάζει "
 "μια συλλογή (η περιγραφή διατηρείται αν δεν δοθεί)."
 
-#: ../../source/cli.rst:790
+#: ../../source/cli.rst:795
 msgid ""
 "``delete --id <id> [--confirm]`` — Supprime une collection ; ses "
 "positions restent dans la base."
@@ -1545,7 +1559,7 @@ msgstr ""
 "``delete --id <id> [--confirm]`` — Διαγράφει μια συλλογή· οι θέσεις της "
 "παραμένουν στη βάση."
 
-#: ../../source/cli.rst:792
+#: ../../source/cli.rst:797
 msgid ""
 "``export --id <id[,id…]> --out <fichier.db> [--analysis=false] "
 "[--comments=false] [--watermark <texte>] [--watermark-note <texte>]`` — "
@@ -1559,7 +1573,7 @@ msgstr ""
 "κλήσης όπως το παράθυρο εξαγωγής της γραφικής διεπαφής (βλ. την εντολή "
 "``export`` για το υδατογράφημα)."
 
-#: ../../source/cli.rst:798
+#: ../../source/cli.rst:803
 msgid ""
 "Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la "
 "position quand il existe (imports BGF et XGP) ; sinon il est généré "
@@ -1574,7 +1588,7 @@ msgstr ""
 "εναπομείναντα σκορ, καθώς μια αποθηκευμένη θέση δεν διατηρεί το "
 "πραγματικό."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:822
 msgid ""
 "Une base sans collection répond ``No collections found in database`` et "
 "sort tout de même avec le code 0."
@@ -1582,11 +1596,11 @@ msgstr ""
 "Μια βάση χωρίς συλλογή απαντά ``No collections found in database`` και "
 "τερματίζει παρ' όλα αυτά με κωδικό 0."
 
-#: ../../source/cli.rst:833
+#: ../../source/cli.rst:838
 msgid "anki — Paquets de répétition espacée"
 msgstr "anki — Πακέτα επανάληψης με διαστήματα"
 
-#: ../../source/cli.rst:835
+#: ../../source/cli.rst:840
 msgid ""
 "Consulte et entretient les paquets de répétition espacée (FSRS) du "
 "panneau Anki de l'interface graphique. La révision d'une carte demande le"
@@ -1598,7 +1612,7 @@ msgstr ""
 "ταμπλό και παραμένει στη γραφική διεπαφή· η CLI παραθέτει, μετρά και "
 "επανασυγχρονίζει."
 
-#: ../../source/cli.rst:845
+#: ../../source/cli.rst:850
 msgid ""
 "``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
 "de cartes, cartes dues, cartes nouvelles."
@@ -1606,7 +1620,7 @@ msgstr ""
 "``decks [--format text|json|csv]`` — Λίστα των πακέτων: πηγή, αριθμός "
 "καρτών, οφειλόμενες κάρτες, νέες κάρτες."
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:852
 msgid ""
 "``stats --deck <id> [--format text|json]`` — Statistiques de révision "
 "d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
@@ -1616,7 +1630,7 @@ msgstr ""
 "πακέτου: σύνολο, νέες, σε εκμάθηση, προς επανάληψη, οφειλόμενες τώρα, και"
 " οι παράμετροί του FSRS."
 
-#: ../../source/cli.rst:850
+#: ../../source/cli.rst:855
 msgid ""
 "``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
 " arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
@@ -1628,7 +1642,7 @@ msgstr ""
 "(προεπιλογή 30, μέγιστο 365)· η ημέρα 0 απορροφά όλες τις καθυστερημένες "
 "κάρτες· ``--deck 0`` (προεπιλογή) καλύπτει όλα τα πακέτα."
 
-#: ../../source/cli.rst:854
+#: ../../source/cli.rst:859
 msgid ""
 "``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
 " du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
@@ -1638,7 +1652,7 @@ msgstr ""
 "πακέτου που δεν έχει ακόμη μία· οι υπάρχουσες κάρτες διατηρούν τον "
 "προγραμματισμό τους."
 
-#: ../../source/cli.rst:857
+#: ../../source/cli.rst:862
 msgid ""
 "``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
 "paquet, comparée à la cible que son propriétaire a choisie."
@@ -1646,7 +1660,7 @@ msgstr ""
 "``retention --deck <id> [--format text|json]`` — η μετρημένη διατήρηση "
 "μιας τράπουλας, σε σύγκριση με τον στόχο που επέλεξε ο κάτοχός της."
 
-#: ../../source/cli.rst:859
+#: ../../source/cli.rst:864
 msgid ""
 "``card --id <id> --action suspend|unsuspend|bury|remove [--format "
 "text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
@@ -1662,7 +1676,7 @@ msgstr ""
 "της· η *αφαίρεση* τη διαγράφει από την τράπουλα — η ίδια η θέση μένει στη"
 " βιβλιοθήκη, αφού μια τράπουλα δεν είναι παρά μια λίστα μελέτης πάνω της."
 
-#: ../../source/cli.rst:865
+#: ../../source/cli.rst:870
 msgid ""
 "``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
 "révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
@@ -1678,7 +1692,7 @@ msgstr ""
 "με ό,τι σχεδιάζει σήμερα: το μόνο σημείο όπου φαίνεται μια βαθμολογία που"
 " δόθηκε κατά λάθος."
 
-#: ../../source/cli.rst:871
+#: ../../source/cli.rst:876
 msgid ""
 "Un paquet fondé sur une collection relit sa collection. Un paquet fondé "
 "sur une recherche conserve la recherche telle que l'interface graphique "
@@ -1696,11 +1710,11 @@ msgstr ""
 "αναφέρει στην έξοδο σφαλμάτων — ανοίξτε το πακέτο στη γραφική διεπαφή για"
 " να επαναλάβετε την ίδια την αναζήτηση."
 
-#: ../../source/cli.rst:901
+#: ../../source/cli.rst:906
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Μήτρα του κύβου"
 
-#: ../../source/cli.rst:903
+#: ../../source/cli.rst:908
 msgid ""
 "Donne le verdict de videau d'une position à **tous les scores** d'un "
 "match : pour chaque case *away × away*, si la position se double et si "
@@ -1712,13 +1726,13 @@ msgstr ""
 "αποδεκτή. Καθαρός υπολογισμός: καμία βάση δεδομένων δεν ανοίγει, η θέση "
 "δίνεται ως XGID."
 
-#: ../../source/cli.rst:914
+#: ../../source/cli.rst:919
 msgid ""
 "``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : "
 "``text``)."
 msgstr "``--format`` — Μορφή εξόδου: ``text`` ή ``json`` (προεπιλογή: ``text``)."
 
-#: ../../source/cli.rst:915
+#: ../../source/cli.rst:920
 msgid ""
 "``--match-length`` — Longueur du match que la grille couvre, de 1 à 25 "
 "(défaut : 7)."
@@ -1726,13 +1740,13 @@ msgstr ""
 "``--match-length`` — Μήκος αγώνα που καλύπτει το πλέγμα, από 1 έως 25 "
 "(προεπιλογή: 7)."
 
-#: ../../source/cli.rst:917
+#: ../../source/cli.rst:922
 msgid ""
 "``--ply`` — Profondeur de recherche de chaque case, ``0`` ou ``2`` "
 "(défaut : 2)."
 msgstr "``--ply`` — Βάθος αναζήτησης κάθε κελιού, ``0`` ή ``2`` (προεπιλογή: 2)."
 
-#: ../../source/cli.rst:919
+#: ../../source/cli.rst:924
 msgid ""
 "``--prune-k`` — Nombre de coups candidats retenus par le réseau d'élagage"
 " (défaut : 12)."
@@ -1740,7 +1754,7 @@ msgstr ""
 "``--prune-k`` — Πλήθος υποψήφιων κινήσεων που κρατά το δίκτυο κλαδέματος "
 "(προεπιλογή: 12)."
 
-#: ../../source/cli.rst:921
+#: ../../source/cli.rst:926
 msgid ""
 "``--jobs`` — Recherches menées en parallèle (défaut : une par cœur). La "
 "grille est identique quelle que soit la valeur ; seul le temps change."
@@ -1749,7 +1763,7 @@ msgstr ""
 "πυρήνα). Το πλέγμα είναι το ίδιο όποια κι αν είναι η τιμή· αλλάζει μόνο ο"
 " χρόνος."
 
-#: ../../source/cli.rst:924
+#: ../../source/cli.rst:929
 msgid ""
 "Le score propre à la position est ignoré — la grille le remplace — mais "
 "son **videau** est conservé : la question posée est « à quel score "
@@ -1760,7 +1774,7 @@ msgstr ""
 "**κύβος** της διατηρείται: το ερώτημα είναι σε ποιο σκορ θα γύριζα "
 "*αυτόν* τον κύβο. Το πλέγμα είναι μετά το Crawford από άκρη σε άκρη."
 
-#: ../../source/cli.rst:928
+#: ../../source/cli.rst:933
 msgid ""
 "Chaque case est une recherche à part entière, parce que le moteur tient "
 "compte du score : une seule recherche relue à travers des équités de "
@@ -1770,7 +1784,7 @@ msgstr ""
 "σκορ: μία μόνο αναζήτηση διαβασμένη μέσα από διαφορετικές ισοδυναμίες "
 "αγώνα θα ήταν λάθος ακριβώς εκεί που μετράει το σκορ."
 
-#: ../../source/cli.rst:942
+#: ../../source/cli.rst:947
 msgid ""
 "Sortie ``text`` : une grille dont les lignes sont les points restant à "
 "faire au joueur au trait, les colonnes ceux de l'adversaire, puis la "
@@ -1782,11 +1796,11 @@ msgstr ""
 " έπειτα το υπόμνημα των συντομογραφιών ``ND`` / ``DT`` / ``DP`` / ``TG`` "
 "και ο λόγος κάθε κελιού που απορρίφθηκε."
 
-#: ../../source/cli.rst:947
+#: ../../source/cli.rst:952
 msgid "epc — Calculatrice EPC"
 msgstr "epc — Υπολογιστής EPC"
 
-#: ../../source/cli.rst:949
+#: ../../source/cli.rst:954
 msgid ""
 "Calcule l'Effective Pip Count, la probabilité de gain et le verdict de "
 "videau money d'une position de sortie donnée par XGID. Calcul pur : aucun"
@@ -1796,7 +1810,7 @@ msgstr ""
 "ετυμηγορία κύβου money μιας θέσης εξόδου δοσμένης με XGID. Καθαρός "
 "υπολογισμός: δεν εμπλέκεται κανένα αρχείο βάσης δεδομένων."
 
-#: ../../source/cli.rst:960
+#: ../../source/cli.rst:965
 msgid ""
 "``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) "
 "élargissant la base intégrée TS-06-06 (également lue depuis la variable "
@@ -1808,7 +1822,7 @@ msgstr ""
 "περιβάλλοντος ``BLUNDERDB_TS_PATH``). Υπερισχύει η ευρύτερη έγκυρη βάση· "
 "ένα άκυρο αρχείο αγνοείται με προειδοποίηση."
 
-#: ../../source/cli.rst:965
+#: ../../source/cli.rst:970
 msgid ""
 "**Régimes.** Dans le domaine couvert par la base two-sided, la "
 "probabilité de gain et l'analyse money du videau (cubeless, ND, D/T, D/P,"
@@ -1828,11 +1842,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
 "chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
 
-#: ../../source/cli.rst:983
+#: ../../source/cli.rst:988
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Βάσεις bearoff"
 
-#: ../../source/cli.rst:985
+#: ../../source/cli.rst:990
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -1848,7 +1862,7 @@ msgstr ""
 "αριθμητική για το παιχνίδι, όχι για τις θέσεις κάποιου — οπότε καμία δεν "
 "παίρνει ``--db``."
 
-#: ../../source/cli.rst:998
+#: ../../source/cli.rst:1003
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -1858,7 +1872,7 @@ msgstr ""
 "πίνακα με εννέα πούλια ανά παίκτη, ``os8`` για τον μονόπλευρο πίνακα οκτώ"
 " σημείων (το σκέτο ``os`` ισοδυναμεί με ``os6``)."
 
-#: ../../source/cli.rst:1002
+#: ../../source/cli.rst:1007
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -1872,7 +1886,7 @@ msgstr ""
 "οποία μπορεί να βρίσκεται ένα πούλι χωρίς να σωπάσει το EPC (έως δέκα "
 "σημεία)."
 
-#: ../../source/cli.rst:1007
+#: ../../source/cli.rst:1012
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -1881,11 +1895,11 @@ msgstr ""
 "ξεκινήσει, και μετά δείχνει το ποσοστό και τον μετρημένο υπολειπόμενο "
 "χρόνο."
 
-#: ../../source/cli.rst:1010
+#: ../../source/cli.rst:1015
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Αμφίπλευρος τομέας προς υπολογισμό, για παράδειγμα ``6x9``."
 
-#: ../../source/cli.rst:1011
+#: ../../source/cli.rst:1016
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -1893,11 +1907,11 @@ msgstr ""
 "``--os`` — Μονόπλευρος τομέας προς υπολογισμό, σε αριθμό σημείων: 6 έως "
 "12. Απαιτείται ακριβώς ένα από τα δύο."
 
-#: ../../source/cli.rst:1013
+#: ../../source/cli.rst:1018
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Πυρήνες προς χρήση (προεπιλογή: όλοι εκτός από έναν)."
 
-#: ../../source/cli.rst:1014
+#: ../../source/cli.rst:1019
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
@@ -1905,11 +1919,11 @@ msgstr ""
 "``--data-dir`` — Πού γράφεται (προεπιλογή: ο φάκελος δεδομένων της "
 "εφαρμογής)."
 
-#: ../../source/cli.rst:1015
+#: ../../source/cli.rst:1020
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Χωρίς γραμμή προόδου."
 
-#: ../../source/cli.rst:1017
+#: ../../source/cli.rst:1022
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1925,7 +1939,7 @@ msgstr ""
 "αμφίπλευρη σάρωση κάνει παύση· η μονόπλευρη είναι σειριακή και το "
 "``--cores`` δεν της χρησιμεύει."
 
-#: ../../source/cli.rst:1024
+#: ../../source/cli.rst:1029
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1937,7 +1951,7 @@ msgstr ""
 " έχουν υπολογισμό σε παύση. ``--format json`` για σενάριο, ``--cores`` "
 "για αλλαγή της υπόθεσης της εκτίμησης."
 
-#: ../../source/cli.rst:1029
+#: ../../source/cli.rst:1034
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1950,7 +1964,7 @@ msgstr ""
 " εαυτό του). Τερματίζει με σφάλμα στην τελευταία περίπτωση: αυτή η εντολή"
 " φτιάχτηκε για να μπει σε σενάριο."
 
-#: ../../source/cli.rst:1034
+#: ../../source/cli.rst:1039
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1960,11 +1974,11 @@ msgstr ""
 "ενός νεκρού υπολογισμού. Ένας προεπιλεγμένος τομέας ξαναϋπολογίζεται στην"
 " επόμενη εκκίνηση της εφαρμογής· ένας ευρύτερος όχι."
 
-#: ../../source/cli.rst:1056
+#: ../../source/cli.rst:1061
 msgid "analyze — Rattrapage gammonNet"
 msgstr "analyze — Συμπλήρωση gammonNet"
 
-#: ../../source/cli.rst:1058
+#: ../../source/cli.rst:1063
 msgid ""
 "Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
 "rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
@@ -1992,15 +2006,15 @@ msgstr ""
 "για έναν tenant — τρεις διαφορετικές μορφές της ίδιας λειτουργίας, όχι "
 "τρεις ξεχωριστές λογικές (βλ. :ref:`headless`)."
 
-#: ../../source/cli.rst:1075
+#: ../../source/cli.rst:1080
 msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
 msgstr "``--ply`` — Βάθος αναζήτησης (προεπιλογή: 2, η κανονική παράμετρος)."
 
-#: ../../source/cli.rst:1076
+#: ../../source/cli.rst:1081
 msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
 msgstr "``--prune-k`` — Πλάτος κλαδέματος (προεπιλογή: 12, η κανονική παράμετρος)."
 
-#: ../../source/cli.rst:1077
+#: ../../source/cli.rst:1082
 msgid ""
 "``--candidates`` — Nombre de coups candidats conservés par décision de "
 "déplacement (défaut: 10)."
@@ -2008,7 +2022,7 @@ msgstr ""
 "``--candidates`` — Αριθμός υποψήφιων κινήσεων που διατηρούνται ανά "
 "απόφαση κίνησης (προεπιλογή: 10)."
 
-#: ../../source/cli.rst:1079
+#: ../../source/cli.rst:1084
 msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
@@ -2016,7 +2030,7 @@ msgstr ""
 "``--jobs`` — Αριθμός θέσεων που αναλύονται παράλληλα (προεπιλογή: ο "
 "αριθμός των πυρήνων του μηχανήματος)."
 
-#: ../../source/cli.rst:1081
+#: ../../source/cli.rst:1086
 msgid ""
 "``--compare`` — **N'écrit rien** : compare gammonNet aux analyses "
 "importées au lieu de combler des trous (voir plus bas)."
@@ -2024,7 +2038,7 @@ msgstr ""
 "``--compare`` — **Δεν γράφει τίποτα**: συγκρίνει το gammonNet με τις "
 "εισηγμένες αναλύσεις αντί να καλύπτει κενά (βλ. παρακάτω)."
 
-#: ../../source/cli.rst:1083
+#: ../../source/cli.rst:1088
 msgid ""
 "``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions "
 "(0 = toutes)."
@@ -2032,7 +2046,7 @@ msgstr ""
 "``--limit`` — Με το ``--compare``, σταματά μετά από αυτόν τον αριθμό "
 "θέσεων (0 = όλες)."
 
-#: ../../source/cli.rst:1085
+#: ../../source/cli.rst:1090
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
 "ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
@@ -2040,7 +2054,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή, με πρόοδο) ή ``json`` "
 "(ένα και μόνο συνοπτικό έγγραφο, τυπωμένο στο τέλος)."
 
-#: ../../source/cli.rst:1088
+#: ../../source/cli.rst:1093
 msgid ""
 "**Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un "
 "match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a"
@@ -2061,7 +2075,7 @@ msgstr ""
 "αγώνα, γραμμένο κατά την εισαγωγή, είτε το αρχείο έφερε ανάλυση είτε όχι "
 "— ποτέ δεν μαντεύεται."
 
-#: ../../source/cli.rst:1097
+#: ../../source/cli.rst:1102
 msgid ""
 "Une base analysée avec une version antérieure à celle-ci n'a pas besoin "
 "d'être réévaluée : :ref:`repair <cli_repair>` recalcule les colonnes à "
@@ -2071,7 +2085,7 @@ msgstr ""
 "το :ref:`repair <cli_repair>` ξαναϋπολογίζει τις στήλες από ό,τι υπάρχει "
 "ήδη και επιστρέφει το PR σε αυτούς τους αγώνες."
 
-#: ../../source/cli.rst:1101
+#: ../../source/cli.rst:1106
 msgid ""
 "**Le parallélisme** (``--jobs``). Les positions d'un lot sont "
 "indépendantes — aucune recherche n'informe la suivante — donc elles sont "
@@ -2091,7 +2105,7 @@ msgstr ""
 "επηρεάζεται: το Ctrl-C σταματά τη δέσμη πριν από κάθε νέα θέση, και ό,τι "
 "είχε ήδη υπολογιστεί γράφεται."
 
-#: ../../source/cli.rst:1109
+#: ../../source/cli.rst:1114
 msgid ""
 "**La règle du trou** (`ADR-0013 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
@@ -2117,11 +2131,11 @@ msgstr ""
 " δεν χρειάζεται κανένα ημερολόγιο, αφού «οι θέσεις χωρίς ανάλυση» "
 "επανυπολογίζονται σε κάθε εκκίνηση."
 
-#: ../../source/cli.rst:1135
+#: ../../source/cli.rst:1140
 msgid "**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**"
 msgstr "**``--compare``: τι αξίζει το gammonNet στη *δική σας* βάση;**"
 
-#: ../../source/cli.rst:1137
+#: ../../source/cli.rst:1142
 msgid ""
 "La précision du moteur est mesurée ailleurs contre des corpus de "
 "référence et contre la table de bearoff exacte. Aucune de ces mesures ne "
@@ -2137,7 +2151,7 @@ msgstr ""
 "ενσωματωμένη μηχανή με την ανάλυση που ήρθε με το αρχείο, και τι θα "
 "κόστιζε αυτή η διαφωνία;"
 
-#: ../../source/cli.rst:1143
+#: ../../source/cli.rst:1148
 msgid ""
 "``--compare`` répond, et **n'écrit rien**. Ce n'est pas une précaution "
 "mais l'intérêt de la commande : l'ADR-0013 protège inconditionnellement "
@@ -2149,11 +2163,11 @@ msgstr ""
 "εισηγμένη ανάλυση, και η σύγκριση μπορεί έτσι να τρέξει σε μια βάση που "
 "κανείς δεν θέλει να ξαναγραφτεί."
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1153
 msgid "Le compte rendu donne :"
 msgstr "Η αναφορά δίνει:"
 
-#: ../../source/cli.rst:1150
+#: ../../source/cli.rst:1155
 msgid ""
 "le **taux d'accord** sur la meilleure réponse, séparé entre coups de "
 "pions et décisions de videau — les deux n'ont rien à voir et un taux "
@@ -2163,7 +2177,7 @@ msgstr ""
 "κινήσεις πουλιών και αποφάσεις κύβου — τα δύο δεν έχουν σχέση μεταξύ τους"
 " και ένα ενιαίο ποσοστό θα έκρυβε ποιο από τα δύο υστερεί·"
 
-#: ../../source/cli.rst:1153
+#: ../../source/cli.rst:1158
 msgid ""
 "le **coût du désaccord**, tarifé sur l'échelle de l'analyse importée : ce"
 " que le coup préféré par gammonNet vaut *selon le moteur importé*, moins "
@@ -2178,7 +2192,7 @@ msgstr ""
 "μηχανές· η διπλή αποτίμηση μιας διαφωνίας θα προσκαλούσε να διαβαστεί ο "
 "μικρότερος από τους δύο αριθμούς·"
 
-#: ../../source/cli.rst:1158
+#: ../../source/cli.rst:1163
 msgid ""
 "la ventilation **par phase de partie**, qui est ce qui dit *où* les "
 "désaccords se concentrent ;"
@@ -2186,11 +2200,11 @@ msgstr ""
 "την ανάλυση **ανά φάση του παιχνιδιού**, που είναι αυτό που λέει *πού* "
 "συγκεντρώνονται οι διαφωνίες·"
 
-#: ../../source/cli.rst:1160
+#: ../../source/cli.rst:1165
 msgid "les dix désaccords les plus coûteux, position par position."
 msgstr "τις δέκα πιο δαπανηρές διαφωνίες, θέση προς θέση."
 
-#: ../../source/cli.rst:1162
+#: ../../source/cli.rst:1167
 #, no-python-format
 msgid ""
 "Deux moteurs écrivent le même coup différemment — XG note « 13/7 » là où "
@@ -2209,7 +2223,7 @@ msgstr ""
 "αυτό, ένα δοκιμαστικό σώμα έδειχνε 78,8 % συμφωνία αντί για 93,2 % — "
 "δεκαπέντε μονάδες ψευδών διαφωνιών."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1175
 msgid ""
 "Un coup que le moteur importé n'a **pas listé** ne peut pas être tarifé "
 "sur son échelle : il compte comme un désaccord de coût nul plutôt que "
@@ -2219,11 +2233,11 @@ msgstr ""
 "αποτιμηθεί στην κλίμακά της: μετρά ως διαφωνία μηδενικού κόστους αντί για"
 " ένα κόστος επινοημένο."
 
-#: ../../source/cli.rst:1186
+#: ../../source/cli.rst:1191
 msgid "trash — La corbeille"
 msgstr "trash — Ο κάδος"
 
-#: ../../source/cli.rst:1188
+#: ../../source/cli.rst:1193
 msgid ""
 "Ce qui a été supprimé, et de quoi le remettre. Une suppression reste une "
 "suppression : un instantané JSON de ce qui disparaît est écrit avant, et "
@@ -2235,7 +2249,7 @@ msgstr ""
 "άλλο στη βάση δεν γνωρίζει ότι αυτός ο πίνακας υπάρχει — κανένα φίλτρο "
 "αναζήτησης, καμία στατιστική, κανένας κανόνας διατήρησης."
 
-#: ../../source/cli.rst:1199
+#: ../../source/cli.rst:1204
 msgid ""
 "``list`` — Ce qu'il y a dans la corbeille, du plus récemment supprimé au "
 "plus ancien."
@@ -2243,19 +2257,19 @@ msgstr ""
 "``list`` — Τι υπάρχει στον κάδο, από το πιο πρόσφατα διαγραμμένο στο "
 "παλαιότερο."
 
-#: ../../source/cli.rst:1201
+#: ../../source/cli.rst:1206
 msgid "``restore --id N`` — Remet l'entrée N et la retire de la corbeille."
 msgstr ""
 "``restore --id N`` — Επαναφέρει την καταχώριση N και την αφαιρεί από τον "
 "κάδο."
 
-#: ../../source/cli.rst:1202
+#: ../../source/cli.rst:1207
 msgid "``discard --id N`` — Supprime l'entrée N tout de suite, sans la restaurer."
 msgstr ""
 "``discard --id N`` — Διαγράφει την καταχώριση N αμέσως, χωρίς να την "
 "επαναφέρει."
 
-#: ../../source/cli.rst:1203
+#: ../../source/cli.rst:1208
 msgid ""
 "``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a "
 "plus de J jours."
@@ -2263,7 +2277,7 @@ msgstr ""
 "``empty [--older-than Η]`` — Αδειάζει τον κάδο, ή μόνο ό,τι είναι "
 "παλαιότερο από Η ημέρες."
 
-#: ../../source/cli.rst:1205
+#: ../../source/cli.rst:1210
 msgid ""
 "``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour"
 " que le geste soit annulable. ``K`` vaut ``position``, ``collection`` ou "
@@ -2273,7 +2287,7 @@ msgstr ""
 "κάδου**, ώστε η ενέργεια να είναι αναιρέσιμη. Το ``K`` είναι "
 "``position``, ``collection`` ή ``comment``."
 
-#: ../../source/cli.rst:1209
+#: ../../source/cli.rst:1214
 msgid ""
 "**Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit`` "
 "(défaut 50), ``--format`` (``text`` ou ``json``)."
@@ -2281,7 +2295,7 @@ msgstr ""
 "**Κοινές επιλογές:** ``--db`` (υποχρεωτική), ``--kind``, ``--limit`` "
 "(προεπιλογή 50), ``--format`` (``text`` ή ``json``)."
 
-#: ../../source/cli.rst:1212
+#: ../../source/cli.rst:1217
 msgid ""
 "``blunderdb delete`` supprime toujours **sans** filet : un script qui "
 "supprime une position s'attend à ce qu'elle disparaisse, et laisser un "
@@ -2293,7 +2307,7 @@ msgstr ""
 " στιγμιότυπο θα μεγάλωνε ένα αρχείο που κανείς δεν ζήτησε να μεγαλώσει. Η"
 " ``trash delete`` είναι αυτή που κρατά την αναίρεση."
 
-#: ../../source/cli.rst:1217
+#: ../../source/cli.rst:1222
 msgid ""
 "Une restauration de position repasse par la déduplication Zobrist : elle "
 "ne crée jamais de doublon, mais elle ne rend pas son ancien identifiant —"
@@ -2305,7 +2319,7 @@ msgstr ""
 "αναγνωριστικό — η αρχική γραμμή δεν υπάρχει πια. Μια επαναφερμένη θέση "
 "είναι η ίδια θέση, με νέο αριθμό."
 
-#: ../../source/cli.rst:1222
+#: ../../source/cli.rst:1227
 msgid ""
 "Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — "
 "jamais à l'ouverture d'une base."
@@ -2313,15 +2327,15 @@ msgstr ""
 "Ό,τι είναι παλαιότερο από τριάντα ημέρες το διαγράφει η ``blunderdb "
 "vacuum`` — ποτέ το άνοιγμα μιας βάσης."
 
-#: ../../source/cli.rst:1240
+#: ../../source/cli.rst:1245
 msgid "info — Métadonnées de la base"
 msgstr "info — Μεταδεδομένα της βάσης"
 
-#: ../../source/cli.rst:1242
+#: ../../source/cli.rst:1247
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Εμφανίζει τα μεταδεδομένα και τα στατιστικά μιας βάσης δεδομένων."
 
-#: ../../source/cli.rst:1276
+#: ../../source/cli.rst:1281
 msgid ""
 "``--format json`` ajoute l'origine du fichier — ``issuance`` porte le "
 "filigrane s'il y en a un, et l'identité d'émetteur de cette machine :"
@@ -2330,31 +2344,31 @@ msgstr ""
 " φέρει το υδατογράφημα, αν υπάρχει, και την ταυτότητα εκδότη αυτού του "
 "υπολογιστή:"
 
-#: ../../source/cli.rst:1308
+#: ../../source/cli.rst:1313
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Τροποποίηση μεταδεδομένων"
 
-#: ../../source/cli.rst:1310
+#: ../../source/cli.rst:1315
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Τροποποιεί το όνομα χρήστη ή την περιγραφή μιας βάσης δεδομένων."
 
-#: ../../source/cli.rst:1319
+#: ../../source/cli.rst:1324
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Νέο όνομα χρήστη."
 
-#: ../../source/cli.rst:1320
+#: ../../source/cli.rst:1325
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Νέα περιγραφή."
 
-#: ../../source/cli.rst:1321
+#: ../../source/cli.rst:1326
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Διαγραφή του ονόματος χρήστη."
 
-#: ../../source/cli.rst:1322
+#: ../../source/cli.rst:1327
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Διαγραφή της περιγραφής."
 
-#: ../../source/cli.rst:1323
+#: ../../source/cli.rst:1328
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2363,15 +2377,15 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1326
+#: ../../source/cli.rst:1331
 msgid "Au moins une option de modification est requise."
 msgstr "Απαιτείται τουλάχιστον μία επιλογή τροποποίησης."
 
-#: ../../source/cli.rst:1336
+#: ../../source/cli.rst:1341
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Έλεγχος ακεραιότητας"
 
-#: ../../source/cli.rst:1338
+#: ../../source/cli.rst:1343
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -2379,15 +2393,15 @@ msgstr ""
 "Ελέγχει την ακεραιότητα της βάσης δεδομένων και, προαιρετικά, συγκρίνει "
 "έναν αγώνα με το αρχείο προέλευσής του."
 
-#: ../../source/cli.rst:1348
+#: ../../source/cli.rst:1353
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — ID του αγώνα προς έλεγχο."
 
-#: ../../source/cli.rst:1349
+#: ../../source/cli.rst:1354
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — Αρχείο MAT προς σύγκριση (χρησιμοποιείται με ``--match``)."
 
-#: ../../source/cli.rst:1350
+#: ../../source/cli.rst:1355
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(statistiques, orphelins, écart de schéma, et la vérification du match le"
@@ -2397,7 +2411,7 @@ msgstr ""
 "(στατιστικά, ορφανές γραμμές, απόκλιση σχήματος, και ο έλεγχος του ματς "
 "αν υπάρχει)."
 
-#: ../../source/cli.rst:1354
+#: ../../source/cli.rst:1359
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -2407,7 +2421,7 @@ msgstr ""
 "της βάσης. Με το ``--match``, ελέγχει τα δεδομένα του αγώνα και μπορεί να"
 " τα συγκρίνει με το αρχικό αρχείο προέλευσης."
 
-#: ../../source/cli.rst:1358
+#: ../../source/cli.rst:1363
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -2431,7 +2445,7 @@ msgstr ""
 " ούτε σε καμία τράπουλα και απλώς πιάνουν χώρο. Η εντολή τερματίζει και "
 "πάλι με κωδικό 0."
 
-#: ../../source/cli.rst:1368
+#: ../../source/cli.rst:1373
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -2453,7 +2467,7 @@ msgstr ""
 "matches the reference DDL``. Όπως και οι ορφανές γραμμές, μια απόκλιση "
 "σχήματος είναι διαπίστωση, όχι αποτυχία: ο κωδικός εξόδου παραμένει 0."
 
-#: ../../source/cli.rst:1378
+#: ../../source/cli.rst:1383
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -2479,7 +2493,7 @@ msgstr ""
 "satisfies the current DDL``. Άλλη μια διαπίστωση: τίποτα δεν "
 "επιδιορθώνεται και ο κωδικός εξόδου παραμένει 0."
 
-#: ../../source/cli.rst:1389
+#: ../../source/cli.rst:1394
 msgid ""
 "Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
 "``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
@@ -2504,7 +2518,7 @@ msgstr ""
 " υγιής βάση απαντά ``Counters: game_count and move_count agree with the "
 "rows``."
 
-#: ../../source/cli.rst:1408
+#: ../../source/cli.rst:1413
 msgid ""
 "**En faire une garde.** Le code de sortie vaut 0 quoi que la commande "
 "trouve : c'est ``--format json`` qui porte le verdict, et un script doit "
@@ -2514,7 +2528,7 @@ msgstr ""
 "βρει η εντολή: η ``--format json`` είναι αυτή που φέρει την ετυμηγορία, "
 "και ένα σενάριο πρέπει να διαβάσει το ίδιο τους μετρητές."
 
-#: ../../source/cli.rst:1451
+#: ../../source/cli.rst:1456
 msgid ""
 "Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count``"
 " et ``constraint_violation_total``. Non nuls, ils décrivent une base à "
@@ -2524,7 +2538,7 @@ msgstr ""
 " και ``constraint_violation_total``. Όταν δεν είναι μηδενικά, περιγράφουν"
 " βάση που χρειάζεται επισκευή."
 
-#: ../../source/cli.rst:1459
+#: ../../source/cli.rst:1464
 msgid ""
 "``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le "
 "montre : la base qui l'a produit venait d'être importée et affiche déjà "
@@ -2540,11 +2554,11 @@ msgstr ""
 "όχι από τη βάση· μια απόκλιση αφηγείται την εισαγωγή, δεν σημαίνει "
 "αλλοίωση. Κοιτάξτε τον, μη τον χρησιμοποιείτε ως κατώφλι."
 
-#: ../../source/cli.rst:1467
+#: ../../source/cli.rst:1472
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Συμπύκνωση της βάσης δεδομένων"
 
-#: ../../source/cli.rst:1469
+#: ../../source/cli.rst:1474
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -2559,7 +2573,7 @@ msgstr ""
 "να ξεκινήσει μια συμπύκνωση — δεν συμβαίνει ποτέ αυτόματα στο άνοιγμα "
 "μιας βάσης, γιατί το κόστος της είναι απρόβλεπτο σε μεγάλη βάση."
 
-#: ../../source/cli.rst:1482
+#: ../../source/cli.rst:1487
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2568,7 +2582,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, σε bytes)."
 
-#: ../../source/cli.rst:1485
+#: ../../source/cli.rst:1490
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -2588,11 +2602,11 @@ msgstr ""
 " δίσκο, η εντολή αρνείται να ξεκινήσει με ρητό μήνυμα αντί να "
 "διακινδυνεύσει μια διακοπείσα συμπύκνωση."
 
-#: ../../source/cli.rst:1507
+#: ../../source/cli.rst:1512
 msgid "repair — Recalculer les colonnes d'analyse"
 msgstr "repair — Επανυπολογισμός των στηλών ανάλυσης"
 
-#: ../../source/cli.rst:1509
+#: ../../source/cli.rst:1514
 msgid ""
 "Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse "
 "elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas"
@@ -2603,7 +2617,7 @@ msgstr ""
 "θίγονται: αυτό που ξαναγίνεται είναι οι τιμές που είχαν εξαχθεί από "
 "αυτές."
 
-#: ../../source/cli.rst:1520
+#: ../../source/cli.rst:1525
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2612,7 +2626,7 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1523
+#: ../../source/cli.rst:1528
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -2635,7 +2649,7 @@ msgstr ""
 "ανάγνωσης δεν αλλάζει τίποτα στις ήδη γραμμένες γραμμές· αυτή η εντολή "
 "τις ξαναφτιάχνει."
 
-#: ../../source/cli.rst:1533
+#: ../../source/cli.rst:1538
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde à la simple ouverture d'une base "
@@ -2647,11 +2661,11 @@ msgstr ""
 "είναι κάτι που ένα εργαλείο πρέπει να κάνει πίσω από την πλάτη του χρήστη"
 " του."
 
-#: ../../source/cli.rst:1546
+#: ../../source/cli.rst:1551
 msgid "delete — Supprimer des données"
 msgstr "delete — Διαγραφή δεδομένων"
 
-#: ../../source/cli.rst:1548
+#: ../../source/cli.rst:1553
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -2659,19 +2673,19 @@ msgstr ""
 "Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, "
 "αναλύσεις)."
 
-#: ../../source/cli.rst:1557
+#: ../../source/cli.rst:1562
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Τύπος διαγραφής: ``match`` (υποχρεωτικό)."
 
-#: ../../source/cli.rst:1558
+#: ../../source/cli.rst:1563
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID του στοιχείου προς διαγραφή (υποχρεωτικό)."
 
-#: ../../source/cli.rst:1559
+#: ../../source/cli.rst:1564
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Διαγραφή χωρίς αίτημα επιβεβαίωσης."
 
-#: ../../source/cli.rst:1560
+#: ../../source/cli.rst:1565
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2680,11 +2694,11 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1572
+#: ../../source/cli.rst:1577
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Έλεγχος ενός δαίμονα"
 
-#: ../../source/cli.rst:1574
+#: ../../source/cli.rst:1579
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -2698,7 +2712,7 @@ msgstr ""
 "έκδοση), ``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή "
 "τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
 
-#: ../../source/cli.rst:1586
+#: ../../source/cli.rst:1591
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -2709,7 +2723,7 @@ msgstr ""
 "(``:8080``) ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της "
 "διεπαφής loopback."
 
-#: ../../source/cli.rst:1589
+#: ../../source/cli.rst:1594
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -2717,7 +2731,7 @@ msgstr ""
 "``--timeout`` — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (``2s`` από "
 "προεπιλογή)."
 
-#: ../../source/cli.rst:1591
+#: ../../source/cli.rst:1596
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -2729,7 +2743,7 @@ msgstr ""
 "από το ``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα"
 " script ή σε μια μονάδα systemd."
 
-#: ../../source/cli.rst:1605
+#: ../../source/cli.rst:1610
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -2737,11 +2751,11 @@ msgstr ""
 "Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker "
 "inspect`` αναπαράγει για ένα container ``unhealthy``:"
 
-#: ../../source/cli.rst:1613
+#: ../../source/cli.rst:1618
 msgid "completion — Complétion shell"
 msgstr "completion — Συμπλήρωση κελύφους"
 
-#: ../../source/cli.rst:1615
+#: ../../source/cli.rst:1620
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -2757,7 +2771,7 @@ msgstr ""
 "προσφέρεται από τη συμπλήρωση μόλις συνδεθεί, χωρίς τίποτα να χρειάζεται "
 "χειροκίνητη συντήρηση."
 
-#: ../../source/cli.rst:1639
+#: ../../source/cli.rst:1644
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -2775,11 +2789,11 @@ msgstr ""
 "αποθετήριο, οπότε η συμπλήρωση δεν μπορεί ποτέ να αποκλίνει από τον "
 "πίνακα υποεντολών."
 
-#: ../../source/cli.rst:1647
+#: ../../source/cli.rst:1652
 msgid "version — Afficher la version"
 msgstr "version — Εμφάνιση της έκδοσης"
 
-#: ../../source/cli.rst:1649
+#: ../../source/cli.rst:1654
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -2789,34 +2803,34 @@ msgstr ""
 "δεδομένων που γράφει αυτό το εκτελέσιμο· είναι το πρώτο πράγμα που "
 "επισυνάπτεται σε μια αναφορά σφάλματος."
 
-#: ../../source/cli.rst:1658
+#: ../../source/cli.rst:1663
 msgid "Exemples de flux de travail"
 msgstr "Παραδείγματα ροών εργασίας"
 
-#: ../../source/cli.rst:1661
+#: ../../source/cli.rst:1666
 msgid "Import d'un répertoire de tournoi"
 msgstr "Εισαγωγή ενός καταλόγου τουρνουά"
 
-#: ../../source/cli.rst:1670
+#: ../../source/cli.rst:1675
 msgid "Sauvegarde régulière"
 msgstr "Τακτικό αντίγραφο ασφαλείας"
 
-#: ../../source/cli.rst:1677
+#: ../../source/cli.rst:1682
 msgid "Analyse des erreurs"
 msgstr "Ανάλυση σφαλμάτων"
 
-#: ../../source/cli.rst:1689
+#: ../../source/cli.rst:1694
 msgid "Codes de retour"
 msgstr "Κωδικοί εξόδου"
 
-#: ../../source/cli.rst:1691
+#: ../../source/cli.rst:1696
 msgid "``0`` — Succès."
 msgstr "``0`` — Επιτυχία."
 
-#: ../../source/cli.rst:1692
+#: ../../source/cli.rst:1697
 msgid "``1`` — Erreur."
 msgstr "``1`` — Σφάλμα."
 
-#: ../../source/cli.rst:1694
+#: ../../source/cli.rst:1699
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"

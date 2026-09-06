@@ -2178,7 +2178,7 @@ Options:
   -tournament string
     	Filter by tournament IDs, comma-separated (stats only)
   -type string
-    	List type: matches, tournaments, positions, imports, stats, players (required)
+    	List type: matches, tournaments, positions, imports, stats, players, tags (required)
 
 Examples:
   # List all matches
@@ -2208,6 +2208,9 @@ Examples:
 
   # The same table as CSV, for a spreadsheet or a script
   blunderdb list --db database.db --type players --format csv
+
+  # The tag vocabulary of this database, most used first
+  blunderdb list --db database.db --type tags
 ```
 
 ### `blunderdb match`

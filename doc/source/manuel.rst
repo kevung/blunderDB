@@ -557,6 +557,43 @@ Cette distinction a une conséquence visible ailleurs : supprimer un match
 n'efface plus une position sur laquelle **vous** aviez écrit. Une note reprise
 du fichier source, elle, disparaît avec le match qui l'a apportée.
 
+.. _tags:
+
+Les tags
+~~~~~~~~
+
+Un **tag** est un ``#mot`` écrit dans un commentaire. Rien ne le déclare,
+aucune table ne le porte, et c'est voulu : le vocabulaire est votre prose, et
+exiger une déclaration avant de pouvoir taguer transformerait une habitude en
+paperasse.
+
+Ce qui manquait, c'était l'autre moitié : **voir** le vocabulaire qu'on s'est
+construit, et cliquer un tag plutôt que se rappeler comment on l'écrivait. La
+commande ``tags``, ou le bouton ``#`` de la zone de saisie, ouvre la fenêtre du
+vocabulaire : les tags de cette base, chacun avec le **nombre de positions**
+qui le portent, cliquables pour lancer la recherche correspondante. Sous la
+liste figurent les tags recommandés que la base n'utilise pas encore — un
+vocabulaire tiré de la littérature du backgammon (``#blitz``, ``#prime``,
+``#holding``, ``#backgame``, ``#containment``, ``#crunch``, ``#ace-point``,
+``#timing``…), suggéré et jamais imposé : un tag absent de cette liste vaut
+exactement autant qu'un tag qui y figure.
+
+Pendant la frappe, taper ``#`` propose les tags que **cette base** utilise
+déjà, puis les recommandés. C'est ce qui évite d'écrire ``#back-game`` un jour
+et ``#backgame`` le lendemain, ce que rien d'autre ne rattraperait.
+
+La recherche par tag s'écrit ``#prime`` dans la ligne de commande. Elle est
+**délimitée** : ``#prime`` ne trouve pas ``#priming``, là où une recherche de
+texte ordinaire, qui cherche une sous-chaîne, ne sait pas les distinguer.
+Plusieurs tags se **cumulent** — ``s #prime #backgame`` demande les positions
+qui portent les deux — parce qu'une position porte plusieurs tags : en nommer
+deux ne peut vouloir dire que « les deux ». C'est l'inverse du filtre de phase
+ou de provenance, où une position n'a qu'une valeur et où nommer deux valeurs
+ne peut vouloir dire que « l'une ou l'autre ».
+
+La même liste s'obtient hors de l'interface avec ``blunderdb list --type
+tags`` (voir :ref:`cli`).
+
 .. _corbeille:
 
 La corbeille

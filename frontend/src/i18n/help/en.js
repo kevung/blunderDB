@@ -823,6 +823,10 @@ export default {
 <td>Opens the cube matrix: the current position’s verdict at every score of a 5-, 7- or 9-point match.</td>
 </tr>
 <tr>
+<td>tags</td>
+<td>Opens the tag vocabulary: the tags used in this database, with the number of positions, clickable to run the search.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Open the takepoint table with a 2-cube.</td>
 </tr>
@@ -1011,6 +1015,11 @@ export default {
 <td>ph:race</td>
 <td>The position is in a given phase of the game: <code>opening</code>, <code>middlegame</code>, <code>race</code> or <code>bearoff</code>. Repeatable (<code>ph:race ph:bearoff</code>). The label is derived from the board and never editable; <code>blunderdb repair</code> recomputes it.</td>
 <td><code>--phase</code></td>
+</tr>
+<tr>
+<td>#prime</td>
+<td>The position carries this <strong>tag</strong> in one of its comments. A tag is a <code>#word</code> written in the prose; nothing declares it. The comparison is delimited, so <code>#prime</code> does not find <code>#priming</code> — that is the whole difference from the text filter, which looks for a substring. Repeatable, and tags <strong>add up</strong> (<code>#prime #backgame</code> asks for both): a position carries several tags, so naming two means “both”.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>M</td>

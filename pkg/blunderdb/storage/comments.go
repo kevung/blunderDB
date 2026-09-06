@@ -56,4 +56,15 @@ type CommentStore interface {
 
 	// Search streams comment entries whose text matches query.
 	Search(ctx context.Context, scope string, query string) iter.Seq2[*domain.CommentEntry, error]
+
+	// Tags returns the tag vocabulary of the tenant: every `#word` written in
+	// a comment, with the number of POSITIONS carrying it, most used first and
+	// alphabetically within a count (issue #265).
+	//
+	// It lives here, on the comments, because that is where a tag lives: a tag
+	// is not a table and nothing declares one. The counts are over positions
+	// and not comments — a tag written twice on the same position is one
+	// position tagged, and the number shown beside a tag has to be the number
+	// of positions clicking it will yield.
+	Tags(ctx context.Context, scope string) ([]domain.TagCount, error)
 }

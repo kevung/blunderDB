@@ -5,7 +5,8 @@
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, TrashCommentEntry } from '../../wailsjs/go/database/Database.js';
+    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, TrashCommentEntry, Tags, RecommendedTags } from '../../wailsjs/go/database/Database.js';
+    import { MODAL, openModal } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
     import { formatDateTime } from '../utils/format.js';
@@ -19,9 +20,88 @@
     let editingText = $state('');
     let promptText = $state('');
 
+    // Autocomplétion des tags (#265, fiche I.9). Un tag est un `#mot` dans la
+    // prose : rien ne le déclare, et la suggestion ne déclare rien non plus.
+    // Elle propose ce que CETTE base utilise déjà — pour qu'on réécrive
+    // `#backgame` comme la dernière fois plutôt que `#back-game` — et, à
+    // défaut, le vocabulaire recommandé, qui vient de la littérature et pas
+    // d'un calcul de blunderDB.
+    /** @type {string[]} */
+    let tagVocabulary = $state([]);
+    /** @type {string[]} */
+    let tagSuggestions = $state([]);
+    let tagSuggestionIndex = $state(0);
+    let tagWordStart = -1;
+
+    async function loadTagVocabulary() {
+        try {
+            const [used, recommended] = await Promise.all([Tags(), RecommendedTags()]);
+            // Un objet plutôt qu'un Set : la règle svelte/prefer-svelte-reactivity
+            // interdit un Set mutable ici, et rien de tout ceci n'a besoin
+            // d'être réactif — c'est une déduplication locale, jetée à la
+            // ligne suivante.
+            /** @type {Record<string, boolean>} */
+            const seen = {};
+            const out = [];
+            for (const entry of used || []) {
+                if (!seen[entry.tag]) {
+                    seen[entry.tag] = true;
+                    out.push(entry.tag);
+                }
+            }
+            for (const tag of recommended || []) {
+                if (!seen[tag]) {
+                    seen[tag] = true;
+                    out.push(tag);
+                }
+            }
+            tagVocabulary = out;
+        } catch (error) {
+            logger.error('could not read the tag vocabulary:', error);
+            tagVocabulary = [];
+        }
+    }
+
+    /**
+     * Met à jour les suggestions d'après le mot en cours de frappe. Le mot est
+     * délimité par des espaces : c'est la même délimitation que la recherche
+     * par tag, donc ce qui est proposé ici est ce qui sera trouvé là.
+     */
+    function refreshTagSuggestions() {
+        const el = promptEl;
+        if (!el) return;
+        const caret = el.selectionStart ?? promptText.length;
+        const before = promptText.slice(0, caret);
+        const start = Math.max(before.lastIndexOf(' '), before.lastIndexOf('\n')) + 1;
+        const word = before.slice(start);
+        if (!word.startsWith('#') || word.length < 1) {
+            tagSuggestions = [];
+            return;
+        }
+        tagWordStart = start;
+        const prefix = word.toLowerCase();
+        tagSuggestions = tagVocabulary.filter((t) => t.startsWith(prefix) && t !== prefix).slice(0, 8);
+        tagSuggestionIndex = 0;
+    }
+
+    /** @param {string} tag */
+    function applyTagSuggestion(tag) {
+        const el = promptEl;
+        const caret = el?.selectionStart ?? promptText.length;
+        promptText = promptText.slice(0, tagWordStart) + tag + ' ' + promptText.slice(caret);
+        tagSuggestions = [];
+        void tick().then(() => {
+            if (!el) return;
+            const pos = tagWordStart + tag.length + 1;
+            el.focus();
+            el.setSelectionRange(pos, pos);
+        });
+    }
+
     $effect(() => {
         if (visible) {
             loadComments();
+            loadTagVocabulary();
             if (promptEl) promptEl.focus();
         }
     });
@@ -139,6 +219,35 @@
     }
 
     function handlePromptKeyDown(event) {
+        // La liste de suggestions capte d'abord les touches qui la
+        // concernent — et seulement celles-là : tout le reste continue vers
+        // la saisie, y compris Entrée quand aucune suggestion n'est ouverte.
+        if (tagSuggestions.length > 0) {
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                event.stopPropagation();
+                tagSuggestionIndex = (tagSuggestionIndex + 1) % tagSuggestions.length;
+                return;
+            }
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                event.stopPropagation();
+                tagSuggestionIndex = (tagSuggestionIndex - 1 + tagSuggestions.length) % tagSuggestions.length;
+                return;
+            }
+            if (event.key === 'Tab' || (event.key === 'Enter' && !event.shiftKey)) {
+                event.preventDefault();
+                event.stopPropagation();
+                applyTagSuggestion(tagSuggestions[tagSuggestionIndex]);
+                return;
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                tagSuggestions = [];
+                return;
+            }
+        }
         if (event.key === 'Enter' && !event.shiftKey) {
             event.stopPropagation();
             event.preventDefault();
@@ -292,11 +401,64 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea id="commentTextArea" bind:this={promptEl} bind:value={promptText} placeholder={$t('comment.promptPlaceholder')} onkeydown={handlePromptKeyDown} rows="2"></textarea>
+        {#if tagSuggestions.length > 0}
+            <ul class="tag-suggestions" role="listbox" aria-label={$t('tags.suggestionsLabel')}>
+                {#each tagSuggestions as tag, i (tag)}
+                    <li>
+                        <button type="button" class="tag-suggestion" class:selected={i === tagSuggestionIndex} onmousedown={(e) => e.preventDefault()} onclick={() => applyTagSuggestion(tag)}>
+                            {tag}
+                        </button>
+                    </li>
+                {/each}
+            </ul>
+        {/if}
+        <textarea
+            id="commentTextArea"
+            bind:this={promptEl}
+            bind:value={promptText}
+            placeholder={$t('comment.promptPlaceholder')}
+            onkeydown={handlePromptKeyDown}
+            oninput={refreshTagSuggestions}
+            onblur={() => (tagSuggestions = [])}
+            rows="2"></textarea>
+        <button type="button" class="tag-vocabulary-button" onclick={() => openModal(MODAL.TAGS)} title={$t('tags.title')}>#</button>
     </div>
 </div>
 
 <style>
+    .tag-suggestions {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        list-style: none;
+        margin: 0 0 0.2em 0;
+        padding: 0.2em;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        z-index: 10;
+        max-height: 12em;
+        overflow-y: auto;
+    }
+
+    .tag-suggestion {
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 0.1em 0.4em;
+        width: 100%;
+        text-align: left;
+    }
+
+    .tag-suggestion.selected {
+        background: var(--color-surface-alt);
+        font-weight: 600;
+    }
+
+    .tag-vocabulary-button {
+        cursor: pointer;
+        padding: 0 0.5em;
+    }
+
     .comment-panel {
         height: 100%;
         display: flex;
@@ -456,6 +618,11 @@
         border-top: 1px solid #eee;
         padding: 4px 8px;
         background: #fafafa;
+        /* La liste de suggestions se pose au-dessus de la saisie. */
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.3em;
     }
     .prompt textarea {
         width: 100%;
