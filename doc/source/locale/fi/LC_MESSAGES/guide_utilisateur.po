@@ -445,7 +445,7 @@ msgid ""
 " multi-tenant avec Row-Level Security, migration depuis SQLite) et "
 "l'image Docker publiée."
 msgstr ""
-"Katso :ref:`headless` koko toiminnallisuudesta (reitit, monivuokralainen "
+"Katso :ref:`headless` koko toiminnallisuudesta (reitit, monitenant "
 "PostgreSQL-taustajärjestelmä Row-Level Securitylla, siirtyminen "
 "SQLitesta) ja julkaistusta Docker-imagesta."
 

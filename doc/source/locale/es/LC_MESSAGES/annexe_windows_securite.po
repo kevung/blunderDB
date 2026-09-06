@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_windows_securite.rst:4
-msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
-msgstr "Anexo Windows: detección errónea de blunderDB como software malicioso"
+msgid "Annexe Windows : que faire si Windows bloque le lancement"
+msgstr "Anexo Windows: qué hacer si Windows bloquea el inicio"
 
 #: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
@@ -90,9 +90,9 @@ msgid ""
 "ensuite est *Exécuter quand même*."
 msgstr ""
 "Esta captura de pantalla procede de un Windows en inglés. En un Windows "
-"en español, la misma pantalla se titula *Windows protegió su equipo*; el"
-" enlace en el que hay que hacer clic es *Más información*, y el botón "
-"que aparece a continuación es *Ejecutar de todas formas*."
+"en español, la misma pantalla se titula *Windows protegió su equipo*; el "
+"enlace en el que hay que hacer clic es *Más información*, y el botón que "
+"aparece a continuación es *Ejecutar de todas formas*."
 
 #: ../../source/annexe_windows_securite.rst:39
 msgid ""
@@ -104,8 +104,8 @@ msgid ""
 msgstr ""
 "**Dos clics bastan en casi todos los casos** — *Más información*, luego "
 "*Ejecutar de todas formas* — y no hay nada más que hacer: ni exclusión "
-"antivirus, ni ajuste que modificar. La sección siguiente solo concierne"
-" a los raros casos en los que el bloqueo no venía de SmartScreen."
+"antivirus, ni ajuste que modificar. La sección siguiente solo concierne a"
+" los raros casos en los que el bloqueo no venía de SmartScreen."
 
 #: ../../source/annexe_windows_securite.rst:44
 msgid ""
@@ -206,9 +206,7 @@ msgstr ""
 msgid ""
 "Si vous souhaitez malgré tout empêcher la Sécurité Windows d’analyser "
 "blunderDB :"
-msgstr ""
-"Si aun así desea impedir que la Seguridad de Windows analice "
-"blunderDB:"
+msgstr "Si aun así desea impedir que la Seguridad de Windows analice blunderDB:"
 
 #: ../../source/annexe_windows_securite.rst:93
 msgid "**Ouvrir la Sécurité Windows** :"
@@ -297,3 +295,4 @@ msgstr ""
 #: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "En Linux o macOS:"
+

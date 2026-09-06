@@ -50,7 +50,7 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - Le mode serveur est publié en **image Docker** (``ghcr.io/kevung/blunderdb-serve``, amd64 et arm64), gagne la route ``maintenance.vacuum`` et **filigrane ses exports** avec l'identité d'émetteur du serveur (``--identity-dir``).
 - L'évaluateur gammonNet **value ses feuilles avec le videau** : au score, les verdicts de la recherche se rapprochent de ceux d'eXtreme Gammon.
 - Chaque release livre désormais les **manifestes winget et Homebrew** et un bundle Flatpak, en plus des paquets Debian, RPM et AUR.
-- Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et le binaire perd 5,5 Mo de police japonaise inutile.
+- Dans l'interface, la bibliothèque est **paginée** (une base de 50 000 positions ne charge plus tout en mémoire à chaque rafraîchissement), les fenêtres modales partagent un même socle (focus, Échap, accessibilité), le plateau ne redessine que ce qui change, et la police japonaise embarquée est réduite à son sous-ensemble utile (5,5 Mo de moins).
 - Corrections notables : une base importée par « Importer une base » gardait des positions invisibles aux filtres et dédoublées au second import (réparé à l'ouverture), le bouton Fusionner de la fenêtre de fusion des joueurs restait grisé, l'export du serveur était vide, et sous Windows la suppression de la base bearoff téléchargée et ``create --force`` échouaient.
 - Voir :ref:`cli`, :ref:`headless` et :ref:`manuel`.
 

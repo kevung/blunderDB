@@ -50,7 +50,7 @@ func mergeCheckerMoves(existing, incoming []domain.CheckerMove) []domain.Checker
 	}
 	for _, m := range incoming {
 		if existingMove, exists := moveMap[m.Move]; exists {
-			if m.AnalysisDepth >= existingMove.AnalysisDepth {
+			if domain.AnalysisDepthRank(m.AnalysisDepth) >= domain.AnalysisDepthRank(existingMove.AnalysisDepth) {
 				moveMap[m.Move] = m
 			}
 		} else {

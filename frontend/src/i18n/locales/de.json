@@ -1094,6 +1094,14 @@
         "cardLabelAll": "PR Global",
         "cardLabelChecker": "PR Stein",
         "cardLabelCube": "PR Doppler",
+        "grade": {
+            "worldClass": "Weltklasse",
+            "expert": "Experte",
+            "advanced": "Fortgeschritten",
+            "intermediate": "Mittelstufe",
+            "casual": "Gelegenheitsspieler",
+            "beginner": "Anfänger"
+        },
         "tournaments": "Turniere",
         "matches": "Matches",
         "decisions": "Entscheidungen",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_windows_securite.rst:4
-msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
-msgstr "Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware"
+msgid "Annexe Windows : que faire si Windows bloque le lancement"
+msgstr "Anhang Windows: Was tun, wenn Windows den Start blockiert"
 
 #: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
@@ -299,3 +299,4 @@ msgstr ""
 #: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "Unter Linux oder macOS:"
+

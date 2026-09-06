@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -20,8 +20,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_windows_securite.rst:4
-msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
-msgstr "Windows 付録：blunderDB のマルウェアとしての誤検知"
+msgid "Annexe Windows : que faire si Windows bloque le lancement"
+msgstr "Windows 付録：Windows が起動をブロックしたときの対処"
 
 #: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
@@ -176,8 +176,9 @@ msgid ""
 "SHA-256 du fichier téléchargé (section suivante) : c'est elle, et non "
 "l'exclusion, qui atteste que vous exécutez bien le binaire publié."
 msgstr ""
-"ファイルをウイルス対策のスキャンから除外するのは、軽い操作ではありません。除外はパスに対して適用されるため、その後にその場所へ置かれたファイルもすべてスキャンを免れます。まず、ダウンロードしたファイルの "
-"SHA-256 ハッシュを確認してください（次の節）。公開されたバイナリを実際に実行していることを保証するのは、除外設定ではなくこのハッシュです。"
+"ファイルをウイルス対策のスキャンから除外するのは、軽い操作ではありません。除外はパスに対して適用されるため、その後にその場所へ置かれたファイルもすべてスキャンを免れます。まず、ダウンロードしたファイルの"
+" SHA-256 "
+"ハッシュを確認してください（次の節）。公開されたバイナリを実際に実行していることを保証するのは、除外設定ではなくこのハッシュです。"
 
 #: ../../source/annexe_windows_securite.rst:90
 msgid ""
@@ -262,3 +263,4 @@ msgstr ""
 #: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "Linux または macOS の場合："
+

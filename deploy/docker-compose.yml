@@ -47,12 +47,10 @@ services:
       # Row-Level Security: defence-in-depth *inside* the trust boundary
       # Caddy draws above — it does not replace the proxy (ADR-0005).
       BLUNDERDB_RLS: "true"
-      # The bearoff tables are computed on first start and kept under
-      # $XDG_DATA_HOME/blunderdb. The distroless base image sets neither
-      # HOME nor XDG_DATA_HOME: without this the daemon cannot write them
-      # and serves every race in the estimated regime.
-      XDG_DATA_HOME: /data
     volumes:
+      # The bearoff tables are computed on first start and kept under
+      # $XDG_DATA_HOME/blunderdb, which the image sets to /data: without a
+      # volume they are recomputed at every restart of the container.
       - blunderdb-data:/data
     networks:
       - backend

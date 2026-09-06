@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -90,11 +90,11 @@ msgid ""
 "secondes par instruction, plus quelques nouvelles tentatives) et n'échoue"
 " que si l'attente est épuisée, sur un message nommant SQLite :"
 msgstr ""
-"**Si la aplicación está abierta mientras un script escribe.** El archivo"
-" está en modo WAL: una lectura nunca bloquea una escritura, y los dos "
-"programas trabajan sobre la misma base sin estorbarse. Dos escrituras, "
-"en cambio, se suceden — la segunda espera el bloqueo de escritura (diez"
-" segundos por instrucción, más algunos reintentos) y solo falla si se "
+"**Si la aplicación está abierta mientras un script escribe.** El archivo "
+"está en modo WAL: una lectura nunca bloquea una escritura, y los dos "
+"programas trabajan sobre la misma base sin estorbarse. Dos escrituras, en"
+" cambio, se suceden — la segunda espera el bloqueo de escritura (diez "
+"segundos por instrucción, más algunos reintentos) y solo falla si se "
 "agota la espera, con un mensaje que nombra SQLite:"
 
 #: ../../source/cli.rst:40
@@ -128,10 +128,10 @@ msgid ""
 "par un paquet, ou lié depuis un dossier du ``PATH`` (voir "
 ":ref:`telecharge_install`), il s'appelle simplement ``blunderdb``."
 msgstr ""
-"Los ejemplos de esta página escriben ``./blunderdb``: el binario tal "
-"como se descarga, invocado desde la carpeta donde se encuentra. "
-"Instalado por un paquete, o enlazado desde una carpeta del ``PATH`` "
-"(ver :ref:`telecharge_install`), se llama simplemente ``blunderdb``."
+"Los ejemplos de esta página escriben ``./blunderdb``: el binario tal como"
+" se descarga, invocado desde la carpeta donde se encuentra. Instalado por"
+" un paquete, o enlazado desde una carpeta del ``PATH`` (ver "
+":ref:`telecharge_install`), se llama simplemente ``blunderdb``."
 
 #: ../../source/cli.rst:63
 msgid ""
@@ -141,11 +141,11 @@ msgid ""
 "laisse l'option à sa valeur par défaut et traite ``false`` comme un "
 "argument de trop."
 msgstr ""
-"Las opciones booleanas anunciadas «por defecto: sí» se desactivan con "
-"la forma ``--option=false`` — ``--recursive=false``, "
-"``--analysis=false``. La forma separada por un espacio no existe: "
-"``--recursive false`` deja la opción en su valor por defecto y trata "
-"``false`` como un argumento de más."
+"Las opciones booleanas anunciadas «por defecto: sí» se desactivan con la "
+"forma ``--option=false`` — ``--recursive=false``, ``--analysis=false``. "
+"La forma separada por un espacio no existe: ``--recursive false`` deja la"
+" opción en su valor por defecto y trata ``false`` como un argumento de "
+"más."
 
 #: ../../source/cli.rst:69
 msgid "Commandes disponibles"
@@ -385,12 +385,12 @@ msgid ""
 "optionnelles."
 msgstr "Crea un nuevo archivo de base de datos con metadatos opcionales."
 
-#: ../../source/cli.rst:112 ../../source/cli.rst:139 ../../source/cli.rst:286
-#: ../../source/cli.rst:357 ../../source/cli.rst:383 ../../source/cli.rst:700
-#: ../../source/cli.rst:855 ../../source/cli.rst:970 ../../source/cli.rst:1023
-#: ../../source/cli.rst:1091 ../../source/cli.rst:1120
-#: ../../source/cli.rst:1254 ../../source/cli.rst:1290
-#: ../../source/cli.rst:1323 ../../source/cli.rst:1353
+#: ../../source/cli.rst:112 ../../source/cli.rst:139 ../../source/cli.rst:285
+#: ../../source/cli.rst:356 ../../source/cli.rst:382 ../../source/cli.rst:699
+#: ../../source/cli.rst:854 ../../source/cli.rst:969 ../../source/cli.rst:1022
+#: ../../source/cli.rst:1090 ../../source/cli.rst:1119
+#: ../../source/cli.rst:1253 ../../source/cli.rst:1289
+#: ../../source/cli.rst:1322 ../../source/cli.rst:1352
 msgid "**Options:**"
 msgstr "**Opciones:**"
 
@@ -426,8 +426,8 @@ msgstr ""
 "La extensión ``.db`` se añade automáticamente si falta. Los directorios "
 "superiores se crean si es necesario."
 
-#: ../../source/cli.rst:124 ../../source/cli.rst:999 ../../source/cli.rst:1268
-#: ../../source/cli.rst:1306 ../../source/cli.rst:1365
+#: ../../source/cli.rst:124 ../../source/cli.rst:998 ../../source/cli.rst:1267
+#: ../../source/cli.rst:1305 ../../source/cli.rst:1364
 msgid "**Exemple:**"
 msgstr "**Ejemplo:**"
 
@@ -480,22 +480,27 @@ msgstr ""
 "``batch``) no se pudo importar, incluso si otros tuvieron éxito."
 
 #: ../../source/cli.rst:150
-msgid "Le code de retour obéit à trois règles :"
-msgstr "El código de retorno obedece a tres reglas:"
+msgid "Le code de retour obéit à quatre règles :"
+msgstr "El código de retorno obedece a cuatro reglas:"
 
 #: ../../source/cli.rst:152
 msgid ""
-"**rien de nouveau n'a été importé** — chaque fichier a échoué *ou* était "
-"déjà en base — : erreur, que ``--fail-on-error`` soit passé ou non. Un "
-"répertoire relancé sans nouveau fichier sort donc en erreur, avec le "
-"décompte des doublons dans le message ; un script qui relance le même "
-"dossier chaque nuit doit s'attendre à ce code ;"
+"**rien n'a été reconnu** — chaque fichier a échoué — : erreur, que "
+"``--fail-on-error`` soit passé ou non ;"
 msgstr ""
-"**no se importó nada nuevo** — cada archivo falló *o* ya estaba en la "
-"base — : error, se pase o no ``--fail-on-error``. Un directorio relanzado"
-" sin ningún archivo nuevo termina, por tanto, en error, con el recuento "
-"de duplicados en el mensaje; un script que relanza la misma carpeta cada "
-"noche debe esperar este código;"
+"**nada fue reconocido** — cada archivo falló — : error, se pase o no "
+"``--fail-on-error``;"
+
+#: ../../source/cli.rst:154
+msgid ""
+"**que des doublons** — chaque fichier était déjà en base — : succès. Un "
+"répertoire relancé sans nouveau fichier, la nuit ordinaire d'un script, "
+"sort en 0 avec ``duplicates`` seul non nul ;"
+msgstr ""
+"**solo duplicados** — cada archivo ya estaba en la base — : éxito. Un "
+"directorio relanzado sin ningún archivo nuevo, la noche ordinaria de un "
+"script, termina en 0 con ``duplicates`` como único contador distinto de "
+"cero;"
 
 #: ../../source/cli.rst:157
 msgid ""
@@ -541,9 +546,9 @@ msgid ""
 "retoucher."
 msgstr ""
 "Importa posiciones desde un archivo de texto, **una posición JSON por "
-"línea**. Es exactamente lo que escribe ``export --type positions``: los"
-" dos comandos se corresponden, una exportación se reimporta tal cual, "
-"sin retocar nada."
+"línea**. Es exactamente lo que escribe ``export --type positions``: los "
+"dos comandos se corresponden, una exportación se reimporta tal cual, sin "
+"retocar nada."
 
 #: ../../source/cli.rst:208
 msgid ""
@@ -559,8 +564,8 @@ msgid ""
 " position, rien d'autre. Pour déplacer une bibliothèque entière, c'est "
 "``export --type database`` qu'il faut."
 msgstr ""
-"El análisis y los comentarios no viajan por este formato: transporta la"
-" posición, nada más. Para mover una biblioteca entera, hay que usar "
+"El análisis y los comentarios no viajan por este formato: transporta la "
+"posición, nada más. Para mover una biblioteca entera, hay que usar "
 "``export --type database``."
 
 #: ../../source/cli.rst:220
@@ -581,43 +586,39 @@ msgstr ""
 msgid ""
 "Un tableau récapitulatif indique pour chaque fichier si l'import a réussi"
 " (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas "
-"compté comme un échec, mais un lot qui n'en contient que des doublons n'a"
-" rien importé et sort en erreur (voir les trois règles ci-dessus)."
+"compté comme un échec, et un lot qui n'en contient que des doublons est "
+"un succès (voir les règles ci-dessus)."
 msgstr ""
 "Una tabla resumen indica para cada archivo si la importación tuvo éxito "
 "(✓), falló (✗) o fue un duplicado (⊘). Un duplicado no cuenta como un "
-"fallo, pero un lote que solo contiene duplicados no importó nada y "
-"termina en error (véanse las tres reglas anteriores)."
+"fallo, y un lote que solo contiene duplicados es un éxito (véanse las "
+"reglas anteriores)."
 
 #: ../../source/cli.rst:257
 msgid ""
 "``--format json`` en donne la même chose, exploitable par un script : un "
-"objet par fichier dans ``files``, puis les totaux. Un lot qui ne trouve "
-"que des doublons sort en erreur comme un lot fautif (voir les trois "
-"règles ci-dessus) : ce sont ces quatre compteurs qui les distinguent, une"
-" nuit tranquille laissant ``duplicates`` seul non nul et ``failed`` à "
-"zéro."
+"objet par fichier dans ``files``, puis les totaux. Une nuit tranquille "
+"laisse ``duplicates`` seul non nul et ``failed`` à zéro, et le code de "
+"retour à 0 ; seul un lot où rien n'a été reconnu sort en erreur."
 msgstr ""
 "``--format json`` da lo mismo, explotable por un script: un objeto por "
-"archivo en ``files``, luego los totales. Un lote que solo encuentra "
-"duplicados sale en error igual que un lote fallido (ver las tres reglas"
-" anteriores): son estos cuatro contadores los que los distinguen, una "
-"noche tranquila deja solo ``duplicates`` distinto de cero y ``failed`` "
-"en cero."
+"archivo en ``files``, luego los totales. Una noche tranquila deja solo "
+"``duplicates`` distinto de cero y ``failed`` en cero, y el código de "
+"retorno en 0; solo un lote donde nada fue reconocido termina en error."
 
-#: ../../source/cli.rst:278
+#: ../../source/cli.rst:277
 msgid "export — Exporter des données"
 msgstr "export — Exportar datos"
 
-#: ../../source/cli.rst:280
+#: ../../source/cli.rst:279
 msgid "Exporte le contenu de la base vers des fichiers."
 msgstr "Exporta el contenido de la base de datos a archivos."
 
-#: ../../source/cli.rst:288
+#: ../../source/cli.rst:287
 msgid "``--db`` — Base source (obligatoire)."
 msgstr "``--db`` — Base de datos de origen (obligatorio)."
 
-#: ../../source/cli.rst:289
+#: ../../source/cli.rst:288
 msgid ""
 "``--type`` — Type d'export: ``database``, ``positions``, ``matches`` ou "
 "``mat`` (export d'un ou plusieurs matchs en transcription Jellyfish "
@@ -627,7 +628,7 @@ msgstr ""
 "``matches`` o ``mat`` (exportación de una o varias partidas en "
 "transcripción Jellyfish ``.mat``) (obligatorio)."
 
-#: ../../source/cli.rst:292
+#: ../../source/cli.rst:291
 msgid ""
 "``--file`` — Fichier de sortie (obligatoire, sauf pour ``--type mat`` "
 "utilisé avec ``--dir``)."
@@ -635,7 +636,7 @@ msgstr ""
 "``--file`` — Archivo de salida (obligatorio, salvo para ``--type mat`` "
 "utilizado con ``--dir``)."
 
-#: ../../source/cli.rst:294
+#: ../../source/cli.rst:293
 msgid ""
 "``--dir`` — Répertoire de sortie pour l'export ``.mat`` par lot "
 "(plusieurs matchs, un fichier par match ; sans ``--match-ids``, tous les "
@@ -645,31 +646,31 @@ msgstr ""
 "(varias partidas, un archivo por partida; sin ``--match-ids``, se "
 "exportan todas las partidas)."
 
-#: ../../source/cli.rst:297
+#: ../../source/cli.rst:296
 msgid "``--analysis`` — Inclure les analyses (défaut: oui)."
 msgstr "``--analysis`` — Incluir los análisis (por defecto: sí)."
 
-#: ../../source/cli.rst:298
+#: ../../source/cli.rst:297
 msgid "``--comments`` — Inclure les commentaires (défaut: oui)."
 msgstr "``--comments`` — Incluir los comentarios (por defecto: sí)."
 
-#: ../../source/cli.rst:299
+#: ../../source/cli.rst:298
 msgid "``--filters`` — Inclure la bibliothèque de filtres (défaut: oui)."
 msgstr "``--filters`` — Incluir la biblioteca de filtros (por defecto: sí)."
 
-#: ../../source/cli.rst:300
+#: ../../source/cli.rst:299
 msgid "``--played-moves`` — Inclure les coups joués (défaut: oui)."
 msgstr "``--played-moves`` — Incluir las jugadas realizadas (por defecto: sí)."
 
-#: ../../source/cli.rst:301
+#: ../../source/cli.rst:300
 msgid "``--matches`` — Inclure les matchs (défaut: oui)."
 msgstr "``--matches`` — Incluir las partidas (por defecto: sí)."
 
-#: ../../source/cli.rst:302
+#: ../../source/cli.rst:301
 msgid "``--collections`` — Inclure les collections (défaut: non)."
 msgstr "``--collections`` — Incluir las colecciones (por defecto: no)."
 
-#: ../../source/cli.rst:303
+#: ../../source/cli.rst:302
 msgid ""
 "``--collection-ids`` — IDs de collections à exporter (séparés par des "
 "virgules)."
@@ -677,7 +678,7 @@ msgstr ""
 "``--collection-ids`` — IDs de las colecciones a exportar (separados por "
 "comas)."
 
-#: ../../source/cli.rst:304
+#: ../../source/cli.rst:303
 msgid ""
 "``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, "
 "vide = tous)."
@@ -685,7 +686,7 @@ msgstr ""
 "``--match-ids`` — IDs de las partidas a exportar (separados por comas, "
 "vacío = todas)."
 
-#: ../../source/cli.rst:305
+#: ../../source/cli.rst:304
 msgid ""
 "``--tournament-ids`` — IDs de tournois à exporter (séparés par des "
 "virgules)."
@@ -693,7 +694,7 @@ msgstr ""
 "``--tournament-ids`` — IDs de los torneos a exportar (separados por "
 "comas)."
 
-#: ../../source/cli.rst:306
+#: ../../source/cli.rst:305
 msgid ""
 "``--password`` — Enveloppe le résultat dans un conteneur chiffré "
 "(``.dbx``)."
@@ -701,7 +702,7 @@ msgstr ""
 "``--password`` — Envuelve el resultado en un contenedor cifrado "
 "(``.dbx``)."
 
-#: ../../source/cli.rst:307
+#: ../../source/cli.rst:306
 msgid ""
 "``--watermark`` — Écrit une déclaration d'origine **signée** dans le "
 "fichier exporté (voir :ref:`diffusion_controlee`)."
@@ -709,7 +710,7 @@ msgstr ""
 "``--watermark`` — Escribe una declaración de origen **firmada** en el "
 "archivo exportado (véase :ref:`diffusion_controlee`)."
 
-#: ../../source/cli.rst:309
+#: ../../source/cli.rst:308
 msgid ""
 "``--watermark-note`` — Texte libre associé au filigrane (conditions "
 "d'usage, contact) ; utilisé avec ``--watermark``."
@@ -717,7 +718,7 @@ msgstr ""
 "``--watermark-note`` — Texto libre asociado a la filigrana (condiciones "
 "de uso, contacto); se usa con ``--watermark``."
 
-#: ../../source/cli.rst:311
+#: ../../source/cli.rst:310
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (document "
 "résumant l'export: chemin, taille en octets, nombres)."
@@ -725,15 +726,15 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` (un "
 "documento que resume la exportación: ruta, tamaño en bytes, recuentos)."
 
-#: ../../source/cli.rst:314 ../../source/cli.rst:581 ../../source/cli.rst:675
-#: ../../source/cli.rst:707 ../../source/cli.rst:750 ../../source/cli.rst:825
-#: ../../source/cli.rst:870 ../../source/cli.rst:936 ../../source/cli.rst:1028
-#: ../../source/cli.rst:1103 ../../source/cli.rst:1175
-#: ../../source/cli.rst:1332 ../../source/cli.rst:1394
+#: ../../source/cli.rst:313 ../../source/cli.rst:580 ../../source/cli.rst:674
+#: ../../source/cli.rst:706 ../../source/cli.rst:749 ../../source/cli.rst:824
+#: ../../source/cli.rst:869 ../../source/cli.rst:935 ../../source/cli.rst:1027
+#: ../../source/cli.rst:1102 ../../source/cli.rst:1174
+#: ../../source/cli.rst:1331 ../../source/cli.rst:1393
 msgid "**Exemples:**"
 msgstr "**Ejemplos:**"
 
-#: ../../source/cli.rst:333
+#: ../../source/cli.rst:332
 msgid ""
 "Un filigrane est signé avec l'identité d'émetteur locale (voir la "
 "commande ``identity`` ci-dessous) : il est infalsifiable, mais pas "
@@ -757,11 +758,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0007-watermarks-"
 "mark-origin-and-nothing-else.md>`__."
 
-#: ../../source/cli.rst:343
+#: ../../source/cli.rst:342
 msgid "identity — Identité d'émetteur"
 msgstr "identity — Identidad de emisor"
 
-#: ../../source/cli.rst:345
+#: ../../source/cli.rst:344
 msgid ""
 "Affiche ou déplace votre **identité d'émetteur** : la clé Ed25519 qui "
 "signe chaque filigrane. Elle est créée d'elle-même au premier filigrane "
@@ -774,19 +775,19 @@ msgstr ""
 "hay nada que configurar. Pertenece a una persona, no a una base de datos:"
 " todo lo que usted marca lleva una única huella pública."
 
-#: ../../source/cli.rst:359
+#: ../../source/cli.rst:358
 msgid "``--name`` — Change le nom affiché de l'identité."
 msgstr "``--name`` — Cambia el nombre mostrado de la identidad."
 
-#: ../../source/cli.rst:360
+#: ../../source/cli.rst:359
 msgid "``--export`` — Exporte l'identité vers un fichier ``.bdbid``."
 msgstr "``--export`` — Exporta la identidad a un archivo ``.bdbid``."
 
-#: ../../source/cli.rst:361
+#: ../../source/cli.rst:360
 msgid "``--import`` — Importe une identité depuis un fichier ``.bdbid``."
 msgstr "``--import`` — Importa una identidad desde un archivo ``.bdbid``."
 
-#: ../../source/cli.rst:362
+#: ../../source/cli.rst:361
 msgid ""
 "``--passphrase`` — Phrase de passe optionnelle protégeant le fichier "
 "exporté/importé (l'identité locale, elle, est volontairement non "
@@ -796,7 +797,7 @@ msgstr ""
 "exportado/importado (la identidad local queda deliberadamente sin "
 "proteger)."
 
-#: ../../source/cli.rst:364
+#: ../../source/cli.rst:363
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` (nom, "
 "empreinte, chemin de stockage)."
@@ -804,7 +805,7 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(nombre, huella, ruta de almacenamiento)."
 
-#: ../../source/cli.rst:367
+#: ../../source/cli.rst:366
 msgid ""
 "Le fichier exporté permet à quiconque le détient de signer en votre nom —"
 " ne le partagez pas. Renommer ne change qu'un libellé : les fichiers déjà"
@@ -816,11 +817,11 @@ msgstr ""
 " ya marcados conservan el nombre con el que fueron sellados y siguen "
 "verificándose."
 
-#: ../../source/cli.rst:373
+#: ../../source/cli.rst:372
 msgid "open — Ouvrir un fichier protégé"
 msgstr "open — Abrir un archivo protegido"
 
-#: ../../source/cli.rst:375
+#: ../../source/cli.rst:374
 msgid ""
 "Transforme un fichier protégé par mot de passe (``.dbx``) en base "
 "ordinaire. Le mot de passe est demandé une seule fois ; ensuite, c'est un"
@@ -830,15 +831,15 @@ msgstr ""
 "ordinaria. La contraseña se pide una sola vez; después es un archivo "
 "normal."
 
-#: ../../source/cli.rst:385
+#: ../../source/cli.rst:384
 msgid "``--db`` — Fichier ``.dbx`` à ouvrir (obligatoire)."
 msgstr "``--db`` — Archivo ``.dbx`` que se va a abrir (obligatorio)."
 
-#: ../../source/cli.rst:386
+#: ../../source/cli.rst:385
 msgid "``--password`` — Mot de passe du conteneur (obligatoire)."
 msgstr "``--password`` — Contraseña del contenedor (obligatorio)."
 
-#: ../../source/cli.rst:387
+#: ../../source/cli.rst:386
 msgid ""
 "``--file`` — Chemin de sortie pour la base ordinaire (défaut: même nom, "
 "extension ``.db``)."
@@ -846,7 +847,7 @@ msgstr ""
 "``--file`` — Ruta de salida para la base ordinaria (por defecto: mismo "
 "nombre, extensión ``.db``)."
 
-#: ../../source/cli.rst:390
+#: ../../source/cli.rst:389
 msgid ""
 "Ce que le mot de passe protège : le *transport* du fichier — la copie "
 "égarée dans un dossier de téléchargements, la pièce jointe envoyée par "
@@ -860,26 +861,26 @@ msgstr ""
 "cabecera del contenedor está en claro, de modo que ``blunderdb info`` lee"
 " el origen de un archivo protegido sin su contraseña."
 
-#: ../../source/cli.rst:397
+#: ../../source/cli.rst:396
 msgid "search — Rechercher des positions"
 msgstr "search — Buscar posiciones"
 
-#: ../../source/cli.rst:399
+#: ../../source/cli.rst:398
 msgid "Recherche des positions dans la base selon des critères combinables."
 msgstr "Busca posiciones en la base de datos según criterios combinables."
 
-#: ../../source/cli.rst:405
+#: ../../source/cli.rst:404
 msgid "**Options principales:**"
 msgstr "**Opciones principales:**"
 
-#: ../../source/cli.rst:407 ../../source/cli.rst:702 ../../source/cli.rst:972
-#: ../../source/cli.rst:1025 ../../source/cli.rst:1093
-#: ../../source/cli.rst:1122 ../../source/cli.rst:1256
-#: ../../source/cli.rst:1292 ../../source/cli.rst:1325
+#: ../../source/cli.rst:406 ../../source/cli.rst:701 ../../source/cli.rst:971
+#: ../../source/cli.rst:1024 ../../source/cli.rst:1092
+#: ../../source/cli.rst:1121 ../../source/cli.rst:1255
+#: ../../source/cli.rst:1291 ../../source/cli.rst:1324
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Base de datos (obligatorio)."
 
-#: ../../source/cli.rst:408
+#: ../../source/cli.rst:407
 msgid ""
 "``--format`` — Format de sortie: ``table``, ``json`` ou ``xgid`` (défaut:"
 " ``table``)."
@@ -887,11 +888,11 @@ msgstr ""
 "``--format`` — Formato de salida: ``table``, ``json`` o ``xgid`` (por "
 "defecto: ``table``)."
 
-#: ../../source/cli.rst:409
+#: ../../source/cli.rst:408
 msgid "``--limit`` — Nombre maximum de résultats (0 = illimité)."
 msgstr "``--limit`` — Número máximo de resultados (0 = ilimitado)."
 
-#: ../../source/cli.rst:410
+#: ../../source/cli.rst:409
 msgid ""
 "``--offset`` — Ignorer les n premiers résultats avant de commencer à "
 "compter ; avec ``--limit``, c'est la pagination."
@@ -899,11 +900,11 @@ msgstr ""
 "``--offset`` — Ignorar los n primeros resultados antes de empezar a "
 "contar; junto con ``--limit``, es la paginación."
 
-#: ../../source/cli.rst:412
+#: ../../source/cli.rst:411
 msgid "``--export`` — Exporter les résultats vers une nouvelle base."
 msgstr "``--export`` — Exportar los resultados a una nueva base de datos."
 
-#: ../../source/cli.rst:413
+#: ../../source/cli.rst:412
 msgid ""
 "``--query-help`` — Affiche la liste des jetons que ``--query`` comprend, "
 "et s'arrête là. Aucune base n'est ouverte : ``--db`` est inutile."
@@ -911,15 +912,15 @@ msgstr ""
 "``--query-help`` — Muestra la lista de tokens que ``--query`` entiende, y"
 " se detiene ahí. No se abre ninguna base: ``--db`` es inútil."
 
-#: ../../source/cli.rst:416
+#: ../../source/cli.rst:415
 msgid "**Filtres disponibles:**"
 msgstr "**Filtros disponibles:**"
 
-#: ../../source/cli.rst:418
+#: ../../source/cli.rst:417
 msgid "``--decision`` — Type de décision: ``checker`` ou ``cube``."
 msgstr "``--decision`` — Tipo de decisión: ``checker`` o ``cube``."
 
-#: ../../source/cli.rst:419
+#: ../../source/cli.rst:418
 msgid ""
 "``--dice`` — Lancer de dés. ``5,3`` cherche les positions où les deux dés"
 " correspondent (peu importe l'ordre). ``5`` cherche les positions où un 5"
@@ -933,11 +934,11 @@ msgstr ""
 "valor del segundo dado). Implica ``--decision checker`` si no se "
 "especifica ningún valor de ``--decision``."
 
-#: ../../source/cli.rst:424
+#: ../../source/cli.rst:423
 msgid "``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count."
 msgstr "``--pip-min`` / ``--pip-max`` — Intervalo de diferencia de pip count."
 
-#: ../../source/cli.rst:425
+#: ../../source/cli.rst:424
 msgid ""
 "``--winrate-min`` / ``--winrate-max`` — Intervalle de taux de victoire "
 "(%)."
@@ -945,19 +946,19 @@ msgstr ""
 "``--winrate-min`` / ``--winrate-max`` — Intervalo de porcentaje de "
 "victoria (%)."
 
-#: ../../source/cli.rst:426
+#: ../../source/cli.rst:425
 msgid "``--cube`` — Valeur du videau."
 msgstr "``--cube`` — Valor del cubo."
 
-#: ../../source/cli.rst:427
+#: ../../source/cli.rst:426
 msgid "``--score1`` / ``--score2`` — Scores des joueurs."
 msgstr "``--score1`` / ``--score2`` — Marcadores de los jugadores."
 
-#: ../../source/cli.rst:428
+#: ../../source/cli.rst:427
 msgid "``--match-length`` — Longueur du match."
 msgstr "``--match-length`` — Duración del match."
 
-#: ../../source/cli.rst:429
+#: ../../source/cli.rst:428
 msgid ""
 "``--error-min`` — Seuil sur ce que **coûte une erreur dans la position** "
 ": l'écart entre le meilleur coup et le deuxième, ou la plus grande des "
@@ -965,44 +966,44 @@ msgid ""
 "retient les positions où se tromper coûte au moins un dixième de point. "
 "Il ne dit rien de ce qui y a été joué."
 msgstr ""
-"``--error-min`` — Umbral sobre lo que **cuesta un error en la "
-"posición**: la diferencia entre la mejor jugada y la segunda, o el "
-"mayor de los tres errores de cubo. En **puntos de equidad** — "
-"``--error-min 0.1`` conserva las posiciones donde equivocarse cuesta al"
-" menos una décima de punto. No dice nada de lo que se jugó allí."
+"``--error-min`` — Umbral sobre lo que **cuesta un error en la posición**:"
+" la diferencia entre la mejor jugada y la segunda, o el mayor de los tres"
+" errores de cubo. En **puntos de equidad** — ``--error-min 0.1`` conserva"
+" las posiciones donde equivocarse cuesta al menos una décima de punto. No"
+" dice nada de lo que se jugó allí."
 
-#: ../../source/cli.rst:434
+#: ../../source/cli.rst:433
 msgid ""
 "``--move-error-min`` / ``--move-error-max`` — Seuil sur l'erreur du coup "
 "**effectivement joué** par le joueur 1. En **millièmes d'équité** "
 "(millipoints) : ``--move-error-min 50``, soit un vingtième de point. "
 "C'est le jeton ``E`` de la grammaire de recherche, écrit tel quel."
 msgstr ""
-"``--move-error-min`` / ``--move-error-max`` — Umbral sobre el error de "
-"la jugada **efectivamente jugada** por el jugador 1. En **milésimas de"
-" equidad** (milipuntos): ``--move-error-min 50``, es decir, una "
-"veinteava parte de punto. Es el token ``E`` de la gramática de "
-"búsqueda, escrito tal cual."
+"``--move-error-min`` / ``--move-error-max`` — Umbral sobre el error de la"
+" jugada **efectivamente jugada** por el jugador 1. En **milésimas de "
+"equidad** (milipuntos): ``--move-error-min 50``, es decir, una veinteava "
+"parte de punto. Es el token ``E`` de la gramática de búsqueda, escrito "
+"tal cual."
 
-#: ../../source/cli.rst:438
+#: ../../source/cli.rst:437
 msgid "``--has-analysis`` — Uniquement les positions avec analyse."
 msgstr "``--has-analysis`` — Solo las posiciones con análisis."
 
-#: ../../source/cli.rst:439
+#: ../../source/cli.rst:438
 msgid "``--off1-min`` / ``--off2-min`` — Pions sortis minimum (joueur 1/2)."
 msgstr "``--off1-min`` / ``--off2-min`` — Fichas retiradas mínimas (jugador 1/2)."
 
-#: ../../source/cli.rst:440
+#: ../../source/cli.rst:439
 msgid "``--match-ids`` — Filtrer par IDs de matchs (séparés par des virgules)."
 msgstr "``--match-ids`` — Filtrar por IDs de partidas (separados por comas)."
 
-#: ../../source/cli.rst:441
+#: ../../source/cli.rst:440
 msgid ""
 "``--tournament-ids`` — Filtrer par IDs de tournois (séparés par des "
 "virgules)."
 msgstr "``--tournament-ids`` — Filtrar por IDs de torneos (separados por comas)."
 
-#: ../../source/cli.rst:442
+#: ../../source/cli.rst:441
 msgid ""
 "``--position-ids`` — Filtrer par IDs de positions : intervalle ``2,7`` "
 "(positions 2 à 7) ou liste explicite séparée par des points-virgules "
@@ -1012,7 +1013,7 @@ msgstr ""
 "(posiciones 2 a 7) o lista explícita separada por puntos y comas "
 "``5;10;15``."
 
-#: ../../source/cli.rst:445
+#: ../../source/cli.rst:444
 msgid ""
 "``--individual`` — Uniquement les positions importées seules, "
 "c'est-à-dire celles que vous avez ajoutées vous-même et non celles qu'un "
@@ -1021,7 +1022,7 @@ msgstr ""
 "``--individual`` — Solo las posiciones importadas por separado, es decir,"
 " las que usted añadió y no las que trajo la importación de una partida."
 
-#: ../../source/cli.rst:448
+#: ../../source/cli.rst:447
 msgid ""
 "``--flagged`` — Uniquement les positions marquées (*flag*) pour étude "
 "dans le logiciel d'origine (marques eXtreme Gammon). Non rétroactif : les"
@@ -1032,7 +1033,7 @@ msgstr ""
 "partidas ya importadas deben importarse de nuevo para entregar sus "
 "marcas."
 
-#: ../../source/cli.rst:451
+#: ../../source/cli.rst:450
 msgid ""
 "``--has-comment`` — Uniquement les positions portant un commentaire. "
 "L'origine n'est pas distinguée : une note tapée à la main et un "
@@ -1044,7 +1045,7 @@ msgstr ""
 " la importación de una partida cuentan ambos. Los comentarios de partida "
 "o de torneo no se consultan."
 
-#: ../../source/cli.rst:455
+#: ../../source/cli.rst:454
 msgid ""
 "``--no-comment`` — Uniquement les positions sans commentaire. "
 "Mutuellement exclusif avec ``--has-comment``."
@@ -1052,7 +1053,7 @@ msgstr ""
 "``--no-comment`` — Solo las posiciones sin comentario. Mutuamente "
 "excluyente con ``--has-comment``."
 
-#: ../../source/cli.rst:459
+#: ../../source/cli.rst:458
 msgid ""
 "``--error-min`` et ``--move-error-min`` ne mesurent pas la même chose et "
 "**ne prennent pas la même unité** : le facteur est mille. Le premier se "
@@ -1061,29 +1062,29 @@ msgid ""
 "répond à « où ai-je fauté » ; ``--error-min`` répond à « quelles "
 "positions étaient délicates »."
 msgstr ""
-"``--error-min`` y ``--move-error-min`` no miden lo mismo y **no toman "
-"la misma unidad**: el factor es mil. El primero se da en puntos de "
-"equidad (``0.1``), los otros dos en milésimas (``100``) — un punto vale"
-" 1000 milésimas. Es ``--move-error-min`` el que responde a «dónde me "
+"``--error-min`` y ``--move-error-min`` no miden lo mismo y **no toman la "
+"misma unidad**: el factor es mil. El primero se da en puntos de equidad "
+"(``0.1``), los otros dos en milésimas (``100``) — un punto vale 1000 "
+"milésimas. Es ``--move-error-min`` el que responde a «dónde me "
 "equivoqué»; ``--error-min`` responde a «qué posiciones eran delicadas»."
 
-#: ../../source/cli.rst:466
+#: ../../source/cli.rst:465
 msgid "**Ce que search imprime:**"
 msgstr "**Lo que imprime search:**"
 
-#: ../../source/cli.rst:468
+#: ../../source/cli.rst:467
 msgid ""
 "``--format table`` (le défaut) donne une ligne par position : "
 "l'identifiant, le score, la valeur du videau, le type de décision, le "
 "lancer, la meilleure décision et son équité. Les deux dernières colonnes "
 "restent vides pour une position sans analyse."
 msgstr ""
-"``--format table`` (el valor por defecto) da una línea por posición: el"
-" identificador, el score, el valor del cubo, el tipo de decisión, la "
-"tirada, la mejor decisión y su equidad. Las dos últimas columnas quedan"
-" vacías para una posición sin análisis."
+"``--format table`` (el valor por defecto) da una línea por posición: el "
+"identificador, el score, el valor del cubo, el tipo de decisión, la "
+"tirada, la mejor decisión y su equidad. Las dos últimas columnas quedan "
+"vacías para una posición sin análisis."
 
-#: ../../source/cli.rst:485
+#: ../../source/cli.rst:484
 msgid ""
 "``--format json`` donne un tableau des mêmes positions. Les champs sont "
 "``id``, ``score``, ``cube``, ``decision_type`` (``checker`` ou ``cube``) "
@@ -1094,14 +1095,14 @@ msgid ""
 "par ``--export``."
 msgstr ""
 "``--format json`` da un array de las mismas posiciones. Los campos son "
-"``id``, ``score``, ``cube``, ``decision_type`` (``checker`` o ``cube``)"
-" y ``dice``, siempre presentes; ``best_move``, ``equity`` y ``xgid`` "
-"solo aparecen si la posición lleva un análisis que los informa. La "
-"línea ``Found n position(s)`` sigue imprimiéndose antes del array: un "
-"script que solo espera JSON debe saltar la primera línea, o pasar por "
+"``id``, ``score``, ``cube``, ``decision_type`` (``checker`` o ``cube``) y"
+" ``dice``, siempre presentes; ``best_move``, ``equity`` y ``xgid`` solo "
+"aparecen si la posición lleva un análisis que los informa. La línea "
+"``Found n position(s)`` sigue imprimiéndose antes del array: un script "
+"que solo espera JSON debe saltar la primera línea, o pasar por "
 "``--export``."
 
-#: ../../source/cli.rst:513
+#: ../../source/cli.rst:512
 msgid ""
 "``--format xgid`` imprime un XGID par ligne, et **rien d'autre**. Il "
 "n'imprime que les positions dont l'analyse enregistrée porte un XGID : "
@@ -1111,19 +1112,19 @@ msgid ""
 "alors vide. La sous-commande ``collection show``, elle, régénère le XGID "
 "depuis le damier."
 msgstr ""
-"``--format xgid`` imprime un XGID por línea, y **nada más**. Solo "
-"imprime las posiciones cuyo análisis registrado lleva un XGID: una "
-"posición pegada en la aplicación desde una exportación de texto, o un "
-"archivo BGF que transporta uno. Las posiciones aportadas por la "
-"importación de una partida XG, GNUbg o Jellyfish no llevan ninguno, y "
-"la salida queda entonces vacía. El subcomando ``collection show``, por "
-"su parte, regenera el XGID a partir del tablero."
+"``--format xgid`` imprime un XGID por línea, y **nada más**. Solo imprime"
+" las posiciones cuyo análisis registrado lleva un XGID: una posición "
+"pegada en la aplicación desde una exportación de texto, o un archivo BGF "
+"que transporta uno. Las posiciones aportadas por la importación de una "
+"partida XG, GNUbg o Jellyfish no llevan ninguno, y la salida queda "
+"entonces vacía. El subcomando ``collection show``, por su parte, regenera"
+" el XGID a partir del tablero."
 
-#: ../../source/cli.rst:520
+#: ../../source/cli.rst:519
 msgid "**Le langage de requête:**"
 msgstr "**El lenguaje de consulta:**"
 
-#: ../../source/cli.rst:522
+#: ../../source/cli.rst:521
 msgid ""
 "Les drapeaux ci-dessus couvrent une partie des filtres seulement. "
 "``--query`` donne accès au langage de requête de l'application — celui de"
@@ -1137,21 +1138,21 @@ msgstr ""
 "tablero: patrón de movimiento, texto de comentario, jugador, fecha, "
 "equidad, dados excluidos, zonas y blots."
 
-#: ../../source/cli.rst:528
+#: ../../source/cli.rst:527
 msgid ""
 "La grammaire n'est écrite qu'à un seul endroit, :ref:`cmd_filter`. Sa "
 "table donne chaque jeton, sa forme, et le drapeau de ``search`` qui lui "
 "correspond quand il en existe un. Cette page ne la répète pas."
 msgstr ""
-"La gramática solo está escrita en un único lugar, :ref:`cmd_filter`. Su"
-" tabla da cada token, su forma, y la opción de ``search`` que le "
+"La gramática solo está escrita en un único lugar, :ref:`cmd_filter`. Su "
+"tabla da cada token, su forma, y la opción de ``search`` que le "
 "corresponde cuando existe. Esta página no la repite."
 
-#: ../../source/cli.rst:537
+#: ../../source/cli.rst:536
 msgid "``--query-help`` en rappelle la liste sans ouvrir de base :"
 msgstr "``--query-help`` recuerda la lista sin abrir ninguna base:"
 
-#: ../../source/cli.rst:563
+#: ../../source/cli.rst:562
 msgid ""
 "``--query`` remplace les drapeaux de filtre au lieu de s'y ajouter : les "
 "combiner est refusé, avec le nom du drapeau en cause. Les drapeaux qui "
@@ -1164,7 +1165,7 @@ msgstr ""
 "``--format``, ``--limit``, ``--offset``, ``--export`` — siguen siendo "
 "válidas."
 
-#: ../../source/cli.rst:568
+#: ../../source/cli.rst:567
 msgid ""
 "Un jeton que rien ne reconnaît fait échouer la commande plutôt que de "
 "réduire la recherche en silence. Deux limites tiennent à l'absence de "
@@ -1178,37 +1179,37 @@ msgstr ""
 "Un token que nada reconoce hace fallar la orden en lugar de reducir la "
 "búsqueda en silencio. Dos límites derivan de la ausencia de tablero en la"
 " línea de órdenes: el patrón de fichas no se teclea, y los cinco tokens "
-"que leen el tablero — ``cube``, ``score``, ``d``, ``D``/``D1`` y ``x`` —"
-" se comparan aquí con un tablero vacío. Una búsqueda que necesite alguno"
-" de ellos se escribe **enteramente** con opciones, ya que ``--query`` no"
-" se combina con ellos — por ejemplo, las decisiones de cubo con 30 pips"
-" de retraso y un error de al menos 50 milipuntos:"
+"que leen el tablero — ``cube``, ``score``, ``d``, ``D``/``D1`` y ``x`` — "
+"se comparan aquí con un tablero vacío. Una búsqueda que necesite alguno "
+"de ellos se escribe **enteramente** con opciones, ya que ``--query`` no "
+"se combina con ellos — por ejemplo, las decisiones de cubo con 30 pips de"
+" retraso y un error de al menos 50 milipuntos:"
 
-#: ../../source/cli.rst:598
+#: ../../source/cli.rst:597
 msgid "list — Lister le contenu"
 msgstr "list — Listar el contenido"
 
-#: ../../source/cli.rst:600
+#: ../../source/cli.rst:599
 msgid "Affiche le contenu de la base de données."
 msgstr "Muestra el contenido de la base de datos."
 
-#: ../../source/cli.rst:606
+#: ../../source/cli.rst:605
 msgid "**Types:**"
 msgstr "**Tipos:**"
 
-#: ../../source/cli.rst:608
+#: ../../source/cli.rst:607
 msgid "``matches`` — Liste des matchs importés."
 msgstr "``matches`` — Lista de las partidas importadas."
 
-#: ../../source/cli.rst:609
+#: ../../source/cli.rst:608
 msgid "``tournaments`` — Liste des tournois."
 msgstr "``tournaments`` — Lista de los torneos."
 
-#: ../../source/cli.rst:610
+#: ../../source/cli.rst:609
 msgid "``positions`` — Liste des positions (limité à 10 par défaut)."
 msgstr "``positions`` — Lista de posiciones (limitada a 10 por defecto)."
 
-#: ../../source/cli.rst:611
+#: ../../source/cli.rst:610
 msgid ""
 "``stats`` — Rapport de statistiques de performance : PR / Snowie ER / MWC"
 " (global, pions, videau), PR glissant sur les N dernières décisions, top "
@@ -1220,7 +1221,7 @@ msgstr ""
 "peores errores, reparto por acción de cubo e histograma de las magnitudes"
 " de error."
 
-#: ../../source/cli.rst:615
+#: ../../source/cli.rst:614
 msgid ""
 "``players`` — Tableau comparatif, **une ligne par joueur** de la base : "
 "matchs, victoires/défaites, décisions comptées, PR global / pions / "
@@ -1232,19 +1233,19 @@ msgstr ""
 "cubo, Snowie ER, errores, blunders y suerte. Es el equivalente en línea "
 "de comandos de la pestaña Jugadores del panel Estadísticas."
 
-#: ../../source/cli.rst:620
+#: ../../source/cli.rst:619
 msgid "**Options** (type ``stats`` uniquement) :"
 msgstr "**Opciones (solo para el tipo ``stats``):**"
 
-#: ../../source/cli.rst:622
+#: ../../source/cli.rst:621
 msgid "``--metric`` — Métrique affichée: ``pr`` ou ``mwc`` (défaut: ``pr``)."
 msgstr "``--metric`` — Métrica mostrada: ``pr`` o ``mwc`` (por defecto: ``pr``)."
 
-#: ../../source/cli.rst:623
+#: ../../source/cli.rst:622
 msgid "``--player`` — Restreindre au joueur indiqué."
 msgstr "``--player`` — Restringir al jugador indicado."
 
-#: ../../source/cli.rst:624
+#: ../../source/cli.rst:623
 msgid ""
 "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois (séparés"
 " par des virgules)."
@@ -1252,15 +1253,15 @@ msgstr ""
 "``--tournament`` — Restringir a uno o varios IDs de torneos (separados "
 "por comas)."
 
-#: ../../source/cli.rst:626
+#: ../../source/cli.rst:625
 msgid "``--from`` — Date de début (AAAA-MM-JJ)."
 msgstr "``--from`` — Fecha de inicio (AAAA-MM-DD)."
 
-#: ../../source/cli.rst:627
+#: ../../source/cli.rst:626
 msgid "``--to`` — Date de fin (AAAA-MM-JJ)."
 msgstr "``--to`` — Fecha de fin (AAAA-MM-DD)."
 
-#: ../../source/cli.rst:628
+#: ../../source/cli.rst:627
 msgid ""
 "``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube`` "
 "(défaut: ``all``)."
@@ -1268,21 +1269,21 @@ msgstr ""
 "``--decision-type`` — Tipo de decisión: ``all``, ``checker`` o ``cube`` "
 "(por defecto: ``all``)."
 
-#: ../../source/cli.rst:630
+#: ../../source/cli.rst:629
 msgid "``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10)."
 msgstr "``--top-blunders`` — Número de peores errores listados (por defecto: 10)."
 
-#: ../../source/cli.rst:631 ../../source/cli.rst:857 ../../source/cli.rst:1026
+#: ../../source/cli.rst:630 ../../source/cli.rst:856 ../../source/cli.rst:1025
 msgid "``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``)."
 msgstr ""
 "``--format`` — Formato de salida: ``text`` o ``json`` (por defecto: "
 "``text``)."
 
-#: ../../source/cli.rst:633
+#: ../../source/cli.rst:632
 msgid "**Options** (type ``players`` uniquement) :"
 msgstr "**Opciones (solo tipo ``players``):**"
 
-#: ../../source/cli.rst:635
+#: ../../source/cli.rst:634
 msgid ""
 "``--from`` / ``--to`` — Bornes de dates (AAAA-MM-JJ), par exemple les "
 "jours d'une compétition."
@@ -1290,11 +1291,11 @@ msgstr ""
 "``--from`` / ``--to`` — Límites de fechas (AAAA-MM-DD), por ejemplo los "
 "días de una competición."
 
-#: ../../source/cli.rst:637
+#: ../../source/cli.rst:636
 msgid "``--tournament`` — Restreindre à un ou plusieurs IDs de tournois."
 msgstr "``--tournament`` — Restringir a uno o varios IDs de torneos."
 
-#: ../../source/cli.rst:638
+#: ../../source/cli.rst:637
 msgid ""
 "``--format`` — Format de sortie: ``text``, ``json`` ou ``csv`` (défaut: "
 "``text``)."
@@ -1302,7 +1303,7 @@ msgstr ""
 "``--format`` — Formato de salida: ``text``, ``json`` o ``csv`` (por "
 "defecto: ``text``)."
 
-#: ../../source/cli.rst:641
+#: ../../source/cli.rst:640
 msgid ""
 "``--player`` et ``--decision-type`` ne s'appliquent **pas** à ce type : "
 "le tableau porte sur tous les joueurs et ventile déjà pions et videau en "
@@ -1312,7 +1313,7 @@ msgstr ""
 "tabla abarca a todos los jugadores y ya desglosa fichas y cubo en "
 "columnas distintas."
 
-#: ../../source/cli.rst:646
+#: ../../source/cli.rst:645
 msgid ""
 "Un tiret « — » (champ vide en CSV) signale une valeur **jamais mesurée**,"
 " à ne pas confondre avec zéro. C'est le cas de la chance pour tout match "
@@ -1328,29 +1329,29 @@ msgstr ""
 "archivos de origen para obtenerla. La columna ``luck_rolls`` indica sobre"
 " cuántas tiradas se calcula la media."
 
-#: ../../source/cli.rst:653
+#: ../../source/cli.rst:652
 msgid ""
 "Chaque type imprime un bloc par élément, précédé du total trouvé. La "
 "ligne finale rappelle que la liste est tronquée par ``--limit``, dont la "
 "valeur par défaut vaut 10 pour les positions :"
 msgstr ""
-"Cada tipo imprime un bloque por elemento, precedido del total "
-"encontrado. La línea final recuerda que la lista está truncada por "
-"``--limit``, cuyo valor por defecto es 10 para las posiciones:"
+"Cada tipo imprime un bloque por elemento, precedido del total encontrado."
+" La línea final recuerda que la lista está truncada por ``--limit``, cuyo"
+" valor por defecto es 10 para las posiciones:"
 
-#: ../../source/cli.rst:692
+#: ../../source/cli.rst:691
 msgid "match — Afficher un match"
 msgstr "match — Mostrar una partida"
 
-#: ../../source/cli.rst:694
+#: ../../source/cli.rst:693
 msgid "Affiche les positions et analyses d'un match importé."
 msgstr "Muestra las posiciones y los análisis de una partida importada."
 
-#: ../../source/cli.rst:703
+#: ../../source/cli.rst:702
 msgid "``--id`` — ID du match à afficher (obligatoire)."
 msgstr "``--id`` — ID de la partida a mostrar (obligatorio)."
 
-#: ../../source/cli.rst:704
+#: ../../source/cli.rst:703
 msgid ""
 "``--format`` — Format de sortie: ``json``, ``text`` ou ``summary`` "
 "(défaut: ``json``)."
@@ -1358,15 +1359,15 @@ msgstr ""
 "``--format`` — Formato de salida: ``json``, ``text`` o ``summary`` (por "
 "defecto: ``json``)."
 
-#: ../../source/cli.rst:705
+#: ../../source/cli.rst:704
 msgid "``--output`` — Fichier de sortie (défaut: sortie standard)."
 msgstr "``--output`` — Archivo de salida (por defecto: salida estándar)."
 
-#: ../../source/cli.rst:716
+#: ../../source/cli.rst:715
 msgid "collection — Gérer les collections"
 msgstr "collection — Gestionar las colecciones"
 
-#: ../../source/cli.rst:718
+#: ../../source/cli.rst:717
 msgid ""
 "Gère les collections, ces ensembles de positions choisies à la main dans "
 "le panneau Collections de l'interface graphique. Chaque sous-commande "
@@ -1378,11 +1379,11 @@ msgstr ""
 "``--db``; ``list`` y ``show`` aceptan ``--format text`` (por defecto), "
 "``json`` o ``csv``, igual que ``list``."
 
-#: ../../source/cli.rst:727 ../../source/cli.rst:789
+#: ../../source/cli.rst:726 ../../source/cli.rst:788
 msgid "**Sous-commandes:**"
 msgstr "**Subcomandos:**"
 
-#: ../../source/cli.rst:729
+#: ../../source/cli.rst:728
 msgid ""
 "``list`` — Liste des collections : id, nom, nombre de positions, "
 "description."
@@ -1390,7 +1391,7 @@ msgstr ""
 "``list`` — Lista de las colecciones: id, nombre, número de posiciones, "
 "descripción."
 
-#: ../../source/cli.rst:730
+#: ../../source/cli.rst:729
 msgid ""
 "``show --id <id>`` — Positions d'une collection : id, index (le numéro "
 "1-based affiché dans la barre d'état de l'interface graphique), score, "
@@ -1400,7 +1401,7 @@ msgstr ""
 "1-based mostrado en la barra de estado de la interfaz gráfica), "
 "puntuación, tipo de decisión y XGID."
 
-#: ../../source/cli.rst:733
+#: ../../source/cli.rst:732
 msgid ""
 "``create --name <nom> [--description <texte>]`` — Crée une collection "
 "vide."
@@ -1408,7 +1409,7 @@ msgstr ""
 "``create --name <nombre> [--description <texto>]`` — Crea una colección "
 "vacía."
 
-#: ../../source/cli.rst:734
+#: ../../source/cli.rst:733
 msgid ""
 "``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une "
 "collection (la description est conservée si elle n'est pas donnée)."
@@ -1416,7 +1417,7 @@ msgstr ""
 "``rename --id <id> --name <nombre> [--description <texto>]`` — Renombra "
 "una colección (la descripción se conserva si no se indica)."
 
-#: ../../source/cli.rst:736
+#: ../../source/cli.rst:735
 msgid ""
 "``delete --id <id> [--confirm]`` — Supprime une collection ; ses "
 "positions restent dans la base."
@@ -1424,7 +1425,7 @@ msgstr ""
 "``delete --id <id> [--confirm]`` — Elimina una colección; sus posiciones "
 "permanecen en la base de datos."
 
-#: ../../source/cli.rst:738
+#: ../../source/cli.rst:737
 msgid ""
 "``export --id <id[,id…]> --out <fichier.db> [--analysis=false] "
 "[--comments=false] [--watermark <texte>] [--watermark-note <texte>]`` — "
@@ -1438,7 +1439,7 @@ msgstr ""
 "mediante la misma llamada que la ventana de exportación de la interfaz "
 "gráfica (véase el comando ``export`` para la filigrana)."
 
-#: ../../source/cli.rst:744
+#: ../../source/cli.rst:743
 msgid ""
 "Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la "
 "position quand il existe (imports BGF et XGP) ; sinon il est généré "
@@ -1453,19 +1454,19 @@ msgstr ""
 "las dos puntuaciones restantes, ya que una posición guardada no conserva "
 "la verdadera."
 
-#: ../../source/cli.rst:763
+#: ../../source/cli.rst:762
 msgid ""
 "Une base sans collection répond ``No collections found in database`` et "
 "sort tout de même avec le code 0."
 msgstr ""
-"Una base sin colecciones responde ``No collections found in database`` "
-"y aun así termina con el código 0."
+"Una base sin colecciones responde ``No collections found in database`` y "
+"aun así termina con el código 0."
 
-#: ../../source/cli.rst:779
+#: ../../source/cli.rst:778
 msgid "anki — Paquets de répétition espacée"
 msgstr "anki — Mazos de repetición espaciada"
 
-#: ../../source/cli.rst:781
+#: ../../source/cli.rst:780
 msgid ""
 "Consulte et entretient les paquets de répétition espacée (FSRS) du "
 "panneau Anki de l'interface graphique. La révision d'une carte demande le"
@@ -1476,7 +1477,7 @@ msgstr ""
 "Anki de la interfaz gráfica. La revisión de una carta requiere el tablero"
 " y permanece en la interfaz gráfica; la CLI lista, mide y resincroniza."
 
-#: ../../source/cli.rst:791
+#: ../../source/cli.rst:790
 msgid ""
 "``decks [--format text|json|csv]`` — Liste des paquets : source, nombre "
 "de cartes, cartes dues, cartes nouvelles."
@@ -1484,7 +1485,7 @@ msgstr ""
 "``decks [--format text|json|csv]`` — Lista de los mazos: origen, número "
 "de cartas, cartas pendientes, cartas nuevas."
 
-#: ../../source/cli.rst:793
+#: ../../source/cli.rst:792
 msgid ""
 "``stats --deck <id> [--format text|json]`` — Statistiques de révision "
 "d'un paquet : total, nouvelles, en apprentissage, à revoir, dues "
@@ -1494,7 +1495,7 @@ msgstr ""
 " mazo: total, nuevas, en aprendizaje, para repasar, pendientes ahora, y "
 "sus parámetros FSRS."
 
-#: ../../source/cli.rst:796
+#: ../../source/cli.rst:795
 msgid ""
 "``forecast [--deck <id>] [--days <n>] [--format text|json|csv]`` — Cartes"
 " arrivant à échéance par jour civil (UTC) sur les ``n`` prochains jours "
@@ -1506,7 +1507,7 @@ msgstr ""
 " 30, máximo 365); el día 0 absorbe todas las cartas atrasadas; ``--deck "
 "0`` (por defecto) cubre todos los mazos."
 
-#: ../../source/cli.rst:800
+#: ../../source/cli.rst:799
 msgid ""
 "``sync --deck <id>`` — Ajoute une carte pour chaque position de la source"
 " du paquet qui n'en a pas encore ; les cartes existantes gardent leur "
@@ -1516,7 +1517,7 @@ msgstr ""
 "mazo que aún no tenga una; las cartas existentes conservan su "
 "planificación."
 
-#: ../../source/cli.rst:803
+#: ../../source/cli.rst:802
 msgid ""
 "``retention --deck <id> [--format text|json]`` — Rétention mesurée d'un "
 "paquet, comparée à la cible que son propriétaire a choisie."
@@ -1524,7 +1525,7 @@ msgstr ""
 "``retention --deck <id> [--format text|json]`` — retención medida de un "
 "mazo, comparada con el objetivo que eligió su propietario."
 
-#: ../../source/cli.rst:805
+#: ../../source/cli.rst:804
 msgid ""
 "``card --id <id> --action suspend|unsuspend|bury|remove [--format "
 "text|json]`` — Agit sur une carte. *Suspendre* la met de côté sans perdre"
@@ -1540,7 +1541,7 @@ msgstr ""
 "posición sigue en la biblioteca, ya que un mazo no es más que una lista "
 "de estudio puesta encima."
 
-#: ../../source/cli.rst:811
+#: ../../source/cli.rst:810
 msgid ""
 "``log [--deck <id>] [--limit <n>] [--format text|json]`` — Journal des "
 "révisions, la plus récente d'abord (``--deck 0``, le défaut, couvre tous "
@@ -1555,7 +1556,7 @@ msgstr ""
 " que realmente se le dijo al planificador, por oposición a lo que prevé "
 "hoy: el único sitio donde se ve una nota introducida por error."
 
-#: ../../source/cli.rst:817
+#: ../../source/cli.rst:816
 msgid ""
 "Un paquet fondé sur une collection relit sa collection. Un paquet fondé "
 "sur une recherche conserve la recherche telle que l'interface graphique "
@@ -1573,11 +1574,11 @@ msgstr ""
 "guardados y lo indica en la salida de error — abra el mazo en la interfaz"
 " gráfica para volver a ejecutar la búsqueda en sí."
 
-#: ../../source/cli.rst:845
+#: ../../source/cli.rst:844
 msgid "epc — Calculatrice EPC"
 msgstr "epc — Calculadora EPC"
 
-#: ../../source/cli.rst:847
+#: ../../source/cli.rst:846
 msgid ""
 "Calcule l'Effective Pip Count, la probabilité de gain et le verdict de "
 "videau money d'une position de sortie donnée par XGID. Calcul pur : aucun"
@@ -1587,7 +1588,7 @@ msgstr ""
 "veredicto de cubo money de una posición de retirada dada por XGID. "
 "Cálculo puro: no interviene ningún archivo de base de datos."
 
-#: ../../source/cli.rst:858
+#: ../../source/cli.rst:857
 msgid ""
 "``--bearoff-ts`` — Base bearoff two-sided optionnelle (``.bd``) "
 "élargissant la base intégrée TS-06-06 (également lue depuis la variable "
@@ -1599,7 +1600,7 @@ msgstr ""
 "``BLUNDERDB_TS_PATH``). Gana la base válida más amplia; un archivo no "
 "válido se ignora con una advertencia."
 
-#: ../../source/cli.rst:863
+#: ../../source/cli.rst:862
 msgid ""
 "**Régimes.** Dans le domaine couvert par la base two-sided, la "
 "probabilité de gain et l'analyse money du videau (cubeless, ND, D/T, D/P,"
@@ -1619,11 +1620,11 @@ msgstr ""
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0009-race-win-"
 "chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__)."
 
-#: ../../source/cli.rst:881
+#: ../../source/cli.rst:880
 msgid "bearoff — Bases de sortie"
 msgstr "bearoff — Bases de bearoff"
 
-#: ../../source/cli.rst:883
+#: ../../source/cli.rst:882
 msgid ""
 "Fabrique et gère les bases de bearoff. Rien n'est téléchargé et rien "
 "n'est embarqué : une table est calculée ici et vérifiée contre "
@@ -1638,7 +1639,7 @@ msgstr ""
 "datos — una tabla de bearoff es aritmética sobre el juego, no sobre las "
 "posiciones de nadie — así que ninguno toma ``--db``."
 
-#: ../../source/cli.rst:896
+#: ../../source/cli.rst:895
 msgid ""
 "Le domaine s'écrit comme sous ``makebearoff`` : ``6x9`` pour la table "
 "two-sided à neuf pions par joueur, ``os8`` pour la table une face à huit "
@@ -1648,7 +1649,7 @@ msgstr ""
 "dos lados con nueve fichas por jugador, ``os8`` para la tabla de un lado "
 "de ocho puntos (``os`` solo equivale a ``os6``)."
 
-#: ../../source/cli.rst:900
+#: ../../source/cli.rst:899
 msgid ""
 "Les deux familles ne répondent pas à la même question. Une table **deux "
 "faces** élargit le domaine où la probabilité de gain et le verdict de "
@@ -1662,7 +1663,7 @@ msgstr ""
 "distancia a la que una ficha puede estar sin que el EPC se calle (hasta "
 "diez puntos)."
 
-#: ../../source/cli.rst:905
+#: ../../source/cli.rst:904
 msgid ""
 "**generate.** Annonce la taille, la mémoire et le temps estimé avant de "
 "commencer, puis affiche le pourcentage et le temps restant mesuré."
@@ -1670,11 +1671,11 @@ msgstr ""
 "**generate.** Indica el tamaño, la memoria y el tiempo estimado antes de "
 "empezar, y después muestra el porcentaje y el tiempo restante medido."
 
-#: ../../source/cli.rst:908
+#: ../../source/cli.rst:907
 msgid "``--ts`` — Domaine deux faces à calculer, par exemple ``6x9``."
 msgstr "``--ts`` — Dominio de dos lados a calcular, por ejemplo ``6x9``."
 
-#: ../../source/cli.rst:909
+#: ../../source/cli.rst:908
 msgid ""
 "``--os`` — Domaine une face à calculer, en nombre de points : 6 à 12. Un "
 "et un seul des deux est requis."
@@ -1682,11 +1683,11 @@ msgstr ""
 "``--os`` — Dominio de un lado a calcular, en número de puntos: 6 a 12. Se"
 " requiere exactamente uno de los dos."
 
-#: ../../source/cli.rst:911
+#: ../../source/cli.rst:910
 msgid "``--cores`` — Cœurs à utiliser (défaut : tous sauf un)."
 msgstr "``--cores`` — Núcleos a usar (por defecto: todos menos uno)."
 
-#: ../../source/cli.rst:912
+#: ../../source/cli.rst:911
 msgid ""
 "``--data-dir`` — Où écrire (défaut : le dossier de données de "
 "l'application)."
@@ -1694,11 +1695,11 @@ msgstr ""
 "``--data-dir`` — Dónde escribir (por defecto: la carpeta de datos de la "
 "aplicación)."
 
-#: ../../source/cli.rst:913
+#: ../../source/cli.rst:912
 msgid "``--quiet`` — Pas de ligne de progression."
 msgstr "``--quiet`` — Sin línea de progreso."
 
-#: ../../source/cli.rst:915
+#: ../../source/cli.rst:914
 msgid ""
 "**CTRL-C met en pause.** Le signal est capté : l'état est écrit à côté de"
 " la table et la même commande relancée reprend là où elle s'était "
@@ -1714,7 +1715,7 @@ msgstr ""
 " dos lados se pausa; el de un lado es secuencial y ``--cores`` no le "
 "sirve de nada."
 
-#: ../../source/cli.rst:922
+#: ../../source/cli.rst:921
 msgid ""
 "**list.** Chiffre chaque domaine — taille, mémoire, temps sur cette "
 "machine — et dit lesquels sont déjà présents, avec leur verdict, et "
@@ -1726,7 +1727,7 @@ msgstr ""
 "cálculo en pausa. ``--format json`` para un script, ``--cores`` para "
 "cambiar la hipótesis de la estimación."
 
-#: ../../source/cli.rst:927
+#: ../../source/cli.rst:926
 msgid ""
 "**verify.** Répond ``verified`` (les mêmes octets que la référence), "
 "``unverified`` (bien formée, mais aucune empreinte n'est enregistrée pour"
@@ -1738,7 +1739,7 @@ msgstr ""
 "dominio) o ``corrupt`` (el archivo se contradice). Sale con error en el "
 "último caso: este comando está hecho para ponerse en un script."
 
-#: ../../source/cli.rst:932
+#: ../../source/cli.rst:931
 msgid ""
 "**delete.** Retire la table, la reprise en attente et les débris d'un "
 "calcul mort. Un domaine par défaut est recalculé au prochain lancement de"
@@ -1748,11 +1749,11 @@ msgstr ""
 "cálculo muerto. Un dominio predeterminado se recalcula en el siguiente "
 "arranque de la aplicación; uno más amplio no."
 
-#: ../../source/cli.rst:954
+#: ../../source/cli.rst:953
 msgid "analyze — Rattrapage gammonNet"
 msgstr "analyze — Puesta al día gammonNet"
 
-#: ../../source/cli.rst:956
+#: ../../source/cli.rst:955
 msgid ""
 "Écrit une analyse gammonNet pour chaque position qui n'en a aucune — le "
 "rattrapage d'une bibliothèque constituée avant que cette fonctionnalité "
@@ -1780,17 +1781,17 @@ msgstr ""
 "tres formas distintas de la misma operación, no tres lógicas separadas "
 "(véase :ref:`headless`)."
 
-#: ../../source/cli.rst:973
+#: ../../source/cli.rst:972
 msgid "``--ply`` — Profondeur de recherche (défaut: 2, le paramètre canonique)."
 msgstr ""
 "``--ply`` — Profundidad de búsqueda (por defecto: 2, el parámetro "
 "canónico)."
 
-#: ../../source/cli.rst:974
+#: ../../source/cli.rst:973
 msgid "``--prune-k`` — Largeur d'élagage (défaut: 12, le paramètre canonique)."
 msgstr "``--prune-k`` — Anchura de poda (por defecto: 12, el parámetro canónico)."
 
-#: ../../source/cli.rst:975
+#: ../../source/cli.rst:974
 msgid ""
 "``--candidates`` — Nombre de coups candidats conservés par décision de "
 "déplacement (défaut: 10)."
@@ -1798,7 +1799,7 @@ msgstr ""
 "``--candidates`` — Número de jugadas candidatas conservadas por decisión "
 "de fichas (por defecto: 10)."
 
-#: ../../source/cli.rst:977
+#: ../../source/cli.rst:976
 msgid ""
 "``--jobs`` — Nombre de positions analysées en parallèle (défaut: le "
 "nombre de cœurs de la machine)."
@@ -1806,7 +1807,7 @@ msgstr ""
 "``--jobs`` — Número de posiciones analizadas en paralelo (por defecto: el"
 " número de núcleos de la máquina)."
 
-#: ../../source/cli.rst:979
+#: ../../source/cli.rst:978
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut, avec la progression) "
 "ou ``json`` (un seul document récapitulatif, imprimé à la fin)."
@@ -1814,7 +1815,7 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto, con progreso) o "
 "``json`` (un único documento resumen, impreso al final)."
 
-#: ../../source/cli.rst:982
+#: ../../source/cli.rst:981
 msgid ""
 "**Le parallélisme** (``--jobs``). Les positions d'un lot sont "
 "indépendantes — aucune recherche n'informe la suivante — donc elles sont "
@@ -1834,7 +1835,7 @@ msgstr ""
 "detiene el lote antes de cualquier nueva posición, y todo lo ya calculado"
 " se escribe."
 
-#: ../../source/cli.rst:990
+#: ../../source/cli.rst:989
 msgid ""
 "**La règle du trou** (`ADR-0013 "
 "<https://github.com/kevung/blunderDB/blob/main/docs/adr/0013-evaluations-"
@@ -1860,15 +1861,15 @@ msgstr ""
 "registro, puesto que « las posiciones sin análisis » se recalcula en cada"
 " lanzamiento."
 
-#: ../../source/cli.rst:1015
+#: ../../source/cli.rst:1014
 msgid "info — Métadonnées de la base"
 msgstr "info — Metadatos de la base de datos"
 
-#: ../../source/cli.rst:1017
+#: ../../source/cli.rst:1016
 msgid "Affiche les métadonnées et les statistiques d'une base de données."
 msgstr "Muestra los metadatos y las estadísticas de una base de datos."
 
-#: ../../source/cli.rst:1051
+#: ../../source/cli.rst:1050
 msgid ""
 "``--format json`` ajoute l'origine du fichier — ``issuance`` porte le "
 "filigrane s'il y en a un, et l'identité d'émetteur de cette machine :"
@@ -1876,31 +1877,31 @@ msgstr ""
 "``--format json`` añade el origen del archivo — ``issuance`` lleva la "
 "filigrana si la hay, y la identidad de emisor de esta máquina:"
 
-#: ../../source/cli.rst:1083
+#: ../../source/cli.rst:1082
 msgid "edit — Modifier les métadonnées"
 msgstr "edit — Modificar los metadatos"
 
-#: ../../source/cli.rst:1085
+#: ../../source/cli.rst:1084
 msgid "Modifie le nom d'utilisateur ou la description d'une base de données."
 msgstr "Modifica el nombre de usuario o la descripción de una base de datos."
 
-#: ../../source/cli.rst:1094
+#: ../../source/cli.rst:1093
 msgid "``--user`` — Nouveau nom d'utilisateur."
 msgstr "``--user`` — Nuevo nombre de usuario."
 
-#: ../../source/cli.rst:1095
+#: ../../source/cli.rst:1094
 msgid "``--description`` — Nouvelle description."
 msgstr "``--description`` — Nueva descripción."
 
-#: ../../source/cli.rst:1096
+#: ../../source/cli.rst:1095
 msgid "``--clear-user`` — Effacer le nom d'utilisateur."
 msgstr "``--clear-user`` — Borrar el nombre de usuario."
 
-#: ../../source/cli.rst:1097
+#: ../../source/cli.rst:1096
 msgid "``--clear-description`` — Effacer la description."
 msgstr "``--clear-description`` — Borrar la descripción."
 
-#: ../../source/cli.rst:1098
+#: ../../source/cli.rst:1097
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -1909,15 +1910,15 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1101
+#: ../../source/cli.rst:1100
 msgid "Au moins une option de modification est requise."
 msgstr "Se requiere al menos una opción de modificación."
 
-#: ../../source/cli.rst:1111
+#: ../../source/cli.rst:1110
 msgid "verify — Vérifier l'intégrité"
 msgstr "verify — Verificar la integridad"
 
-#: ../../source/cli.rst:1113
+#: ../../source/cli.rst:1112
 msgid ""
 "Vérifie l'intégrité de la base de données et, optionnellement, compare un"
 " match avec son fichier source."
@@ -1925,15 +1926,15 @@ msgstr ""
 "Verifica la integridad de la base de datos y, opcionalmente, compara una "
 "partida con su archivo de origen."
 
-#: ../../source/cli.rst:1123
+#: ../../source/cli.rst:1122
 msgid "``--match`` — ID du match à vérifier."
 msgstr "``--match`` — ID de la partida a verificar."
 
-#: ../../source/cli.rst:1124
+#: ../../source/cli.rst:1123
 msgid "``--mat`` — Fichier MAT à comparer (utilisé avec ``--match``)."
 msgstr "``--mat`` — Archivo MAT a comparar (se usa con ``--match``)."
 
-#: ../../source/cli.rst:1125
+#: ../../source/cli.rst:1124
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
 "(statistiques, orphelins, écart de schéma, et la vérification du match le"
@@ -1943,7 +1944,7 @@ msgstr ""
 "(estadísticas, huérfanos, desviación de esquema, y la verificación del "
 "partido si la hay)."
 
-#: ../../source/cli.rst:1129
+#: ../../source/cli.rst:1128
 msgid ""
 "Sans l'option ``--match``, la commande affiche les statistiques générales"
 " de la base. Avec ``--match``, elle vérifie les données du match et peut "
@@ -1953,7 +1954,7 @@ msgstr ""
 "de la base de datos. Con ``--match``, verifica los datos de la partida y "
 "puede compararlos con el archivo de origen original."
 
-#: ../../source/cli.rst:1133
+#: ../../source/cli.rst:1132
 msgid ""
 "Chaque exécution contrôle aussi l'intégrité référentielle : elle compte "
 "les lignes orphelines — parties sans match, coups sans partie, analyses "
@@ -1976,7 +1977,7 @@ msgstr ""
 "tuviera las suyas; no pertenecen a ningún partido ni a ningún mazo y solo"
 " ocupan espacio. La orden termina igualmente con el código de salida 0."
 
-#: ../../source/cli.rst:1143
+#: ../../source/cli.rst:1142
 msgid ""
 "Chaque exécution compare aussi le schéma à la DDL de référence et liste "
 "les tables, colonnes et index qui manquent à la base. L'ouverture d'une "
@@ -1998,7 +1999,7 @@ msgstr ""
 "reference DDL``. Como los huérfanos, una desviación del esquema es una "
 "constatación, no un fallo: el código de salida sigue siendo 0."
 
-#: ../../source/cli.rst:1153
+#: ../../source/cli.rst:1152
 msgid ""
 "Chaque exécution contrôle enfin les règles que la DDL courante énonce "
 "mais que SQLite ne sait pas ajouter à une table déjà créée : les "
@@ -2023,7 +2024,7 @@ msgstr ""
 " sana responde ``Constraints: every row satisfies the current DDL``. Una "
 "constatación más: no se repara nada y el código de salida sigue siendo 0."
 
-#: ../../source/cli.rst:1164
+#: ../../source/cli.rst:1163
 msgid ""
 "Chaque exécution recalcule enfin les deux compteurs dénormalisés, "
 "``match.game_count`` et ``game.move_count``, à partir des lignes qu'ils "
@@ -2047,28 +2048,27 @@ msgstr ""
 "conviene mirar. Una base sana responde ``Counters: game_count and "
 "move_count agree with the rows``."
 
-#: ../../source/cli.rst:1183
+#: ../../source/cli.rst:1182
 msgid ""
 "**En faire une garde.** Le code de sortie vaut 0 quoi que la commande "
 "trouve : c'est ``--format json`` qui porte le verdict, et un script doit "
 "lire les compteurs lui-même."
 msgstr ""
-"**Convertirlo en una comprobación automática.** El código de salida "
-"vale 0 sea lo que sea lo que encuentre la orden: es ``--format json`` "
-"el que lleva el veredicto, y un script debe leer los contadores por sí"
-" mismo."
+"**Convertirlo en una comprobación automática.** El código de salida vale "
+"0 sea lo que sea lo que encuentre la orden: es ``--format json`` el que "
+"lleva el veredicto, y un script debe leer los contadores por sí mismo."
 
-#: ../../source/cli.rst:1226
+#: ../../source/cli.rst:1225
 msgid ""
 "Trois champs valent une alarme : ``orphan_total``, ``schema_drift_count``"
 " et ``constraint_violation_total``. Non nuls, ils décrivent une base à "
 "réparer."
 msgstr ""
-"Tres campos valen como alarma: ``orphan_total``, "
-"``schema_drift_count`` y ``constraint_violation_total``. Si no son "
-"nulos, describen una base que hay que reparar."
+"Tres campos valen como alarma: ``orphan_total``, ``schema_drift_count`` y"
+" ``constraint_violation_total``. Si no son nulos, describen una base que "
+"hay que reparar."
 
-#: ../../source/cli.rst:1234
+#: ../../source/cli.rst:1233
 msgid ""
 "``counter_drift_total`` n'en fait pas partie, et l'exemple ci-dessus le "
 "montre : la base qui l'a produit venait d'être importée et affiche déjà "
@@ -2077,18 +2077,18 @@ msgid ""
 "un écart raconte l'import, il ne signale pas une corruption. Regardez-le,"
 " ne vous en servez pas comme d'un seuil."
 msgstr ""
-"``counter_drift_total`` no forma parte de ellos, y el ejemplo anterior "
-"lo muestra: la base que lo produjo acababa de ser importada y ya "
-"muestra 53 partidas cuyo contador de jugadas difiere de lo que "
-"contienen las líneas. Estos contadores vienen del archivo de origen, no"
-" de la base; una diferencia cuenta la historia de la importación, no "
-"señala una corrupción. Obsérvelo, no lo use como un umbral."
+"``counter_drift_total`` no forma parte de ellos, y el ejemplo anterior lo"
+" muestra: la base que lo produjo acababa de ser importada y ya muestra 53"
+" partidas cuyo contador de jugadas difiere de lo que contienen las "
+"líneas. Estos contadores vienen del archivo de origen, no de la base; una"
+" diferencia cuenta la historia de la importación, no señala una "
+"corrupción. Obsérvelo, no lo use como un umbral."
 
-#: ../../source/cli.rst:1242
+#: ../../source/cli.rst:1241
 msgid "vacuum — Compacter la base de données"
 msgstr "vacuum — Compactar la base de datos"
 
-#: ../../source/cli.rst:1244
+#: ../../source/cli.rst:1243
 msgid ""
 "Récupère l'espace disque laissé par des suppressions (matchs, tournois, "
 "purges): SQLite ne réduit jamais le fichier tout seul lorsqu'on supprime "
@@ -2103,7 +2103,7 @@ msgstr ""
 "desencadenar una compactación — nunca ocurre automáticamente al abrir una"
 " base, porque su coste es imprevisible en una base grande."
 
-#: ../../source/cli.rst:1257
+#: ../../source/cli.rst:1256
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2112,7 +2112,7 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(``{\"size_before\", \"size_after\", \"reclaimed\"}``, en bytes)."
 
-#: ../../source/cli.rst:1260
+#: ../../source/cli.rst:1259
 msgid ""
 "La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la "
 "taille affichée avant compactage soit honnête, vérifie qu'il reste sur le"
@@ -2132,11 +2132,11 @@ msgstr ""
 "se niega a arrancar con un mensaje explícito en lugar de arriesgar una "
 "compactación interrumpida."
 
-#: ../../source/cli.rst:1280
+#: ../../source/cli.rst:1279
 msgid "repair — Recalculer les colonnes d'analyse"
 msgstr "repair — Recalcular las columnas de análisis"
 
-#: ../../source/cli.rst:1282
+#: ../../source/cli.rst:1281
 msgid ""
 "Recalcule les colonnes scalaires de chaque analyse à partir de l'analyse "
 "elle-même, dont elles ne sont qu'une projection. Les analyses ne sont pas"
@@ -2146,7 +2146,7 @@ msgstr ""
 "análisis, del que no son más que una proyección. Los análisis no se "
 "tocan: lo que se rehace son los valores que se habían extraído de ellos."
 
-#: ../../source/cli.rst:1293
+#: ../../source/cli.rst:1292
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2155,7 +2155,7 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(``{\"changes\": [...]}``)."
 
-#: ../../source/cli.rst:1296
+#: ../../source/cli.rst:1295
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit : l'importeur XG écrit un « pas de double » de"
@@ -2170,7 +2170,7 @@ msgstr ""
 "error de un doble que nunca ocurrió. Arreglar la lectura no cambiaba nada"
 " en las filas ya escritas; este comando las rehace."
 
-#: ../../source/cli.rst:1302
+#: ../../source/cli.rst:1301
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde à la simple ouverture d'une base "
@@ -2181,11 +2181,11 @@ msgstr ""
 "columnas de análisis de todo el mundo por el mero hecho de abrir una base"
 " no es algo que una herramienta deba hacer a espaldas de su usuario."
 
-#: ../../source/cli.rst:1315
+#: ../../source/cli.rst:1314
 msgid "delete — Supprimer des données"
 msgstr "delete — Eliminar datos"
 
-#: ../../source/cli.rst:1317
+#: ../../source/cli.rst:1316
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -2193,19 +2193,19 @@ msgstr ""
 "Elimina una partida y todos los datos asociados (juegos, jugadas, "
 "análisis)."
 
-#: ../../source/cli.rst:1326
+#: ../../source/cli.rst:1325
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Tipo de eliminación: ``match`` (obligatorio)."
 
-#: ../../source/cli.rst:1327
+#: ../../source/cli.rst:1326
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID del elemento a eliminar (obligatorio)."
 
-#: ../../source/cli.rst:1328
+#: ../../source/cli.rst:1327
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Eliminar sin pedir confirmación."
 
-#: ../../source/cli.rst:1329
+#: ../../source/cli.rst:1328
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -2214,11 +2214,11 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:1341
+#: ../../source/cli.rst:1340
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Sondear un demonio"
 
-#: ../../source/cli.rst:1343
+#: ../../source/cli.rst:1342
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -2233,7 +2233,7 @@ msgstr ""
 "esquema obsoleto o nada escucha en la dirección. No se abre ningún "
 "archivo de base de datos."
 
-#: ../../source/cli.rst:1355
+#: ../../source/cli.rst:1354
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -2244,7 +2244,7 @@ msgstr ""
 "o con un host genérico (``0.0.0.0``, ``[::]``) se sondea en la interfaz "
 "de bucle local."
 
-#: ../../source/cli.rst:1358
+#: ../../source/cli.rst:1357
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -2252,7 +2252,7 @@ msgstr ""
 "``--timeout`` — Tiempo tras el cual la sonda abandona (``2s`` por "
 "defecto)."
 
-#: ../../source/cli.rst:1360
+#: ../../source/cli.rst:1359
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -2264,7 +2264,7 @@ msgstr ""
 "desde ``cmd/serve`` también lo entiende. Sirve igualmente en un script o "
 "en una unidad systemd."
 
-#: ../../source/cli.rst:1374
+#: ../../source/cli.rst:1373
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -2272,11 +2272,11 @@ msgstr ""
 "En caso de fallo se muestra el motivo, que ``docker inspect`` reproduce "
 "para un contenedor ``unhealthy``:"
 
-#: ../../source/cli.rst:1382
+#: ../../source/cli.rst:1381
 msgid "completion — Complétion shell"
 msgstr "completion — Autocompletado de shell"
 
-#: ../../source/cli.rst:1384
+#: ../../source/cli.rst:1383
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -2292,7 +2292,7 @@ msgstr ""
 "por tanto en el autocompletado en cuanto se conecta, sin nada que "
 "mantener a mano."
 
-#: ../../source/cli.rst:1408
+#: ../../source/cli.rst:1407
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -2310,11 +2310,11 @@ msgstr ""
 "repositorio, así que el autocompletado nunca puede desviarse de la tabla "
 "de subcomandos."
 
-#: ../../source/cli.rst:1416
+#: ../../source/cli.rst:1415
 msgid "version — Afficher la version"
 msgstr "version — Mostrar la versión"
 
-#: ../../source/cli.rst:1418
+#: ../../source/cli.rst:1417
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -2324,34 +2324,35 @@ msgstr ""
 "escribe este binario; es lo primero que hay que adjuntar a un informe de "
 "error."
 
-#: ../../source/cli.rst:1427
+#: ../../source/cli.rst:1426
 msgid "Exemples de flux de travail"
 msgstr "Ejemplos de flujos de trabajo"
 
-#: ../../source/cli.rst:1430
+#: ../../source/cli.rst:1429
 msgid "Import d'un répertoire de tournoi"
 msgstr "Importar un directorio de torneo"
 
-#: ../../source/cli.rst:1439
+#: ../../source/cli.rst:1438
 msgid "Sauvegarde régulière"
 msgstr "Copia de seguridad periódica"
 
-#: ../../source/cli.rst:1446
+#: ../../source/cli.rst:1445
 msgid "Analyse des erreurs"
 msgstr "Análisis de errores"
 
-#: ../../source/cli.rst:1458
+#: ../../source/cli.rst:1457
 msgid "Codes de retour"
 msgstr "Códigos de salida"
 
-#: ../../source/cli.rst:1460
+#: ../../source/cli.rst:1459
 msgid "``0`` — Succès."
 msgstr "``0`` — Éxito."
 
-#: ../../source/cli.rst:1461
+#: ../../source/cli.rst:1460
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:1463
+#: ../../source/cli.rst:1462
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
+

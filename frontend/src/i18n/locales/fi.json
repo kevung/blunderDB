@@ -1094,6 +1094,14 @@
         "cardLabelAll": "PR Yhteensä",
         "cardLabelChecker": "PR Nappula",
         "cardLabelCube": "PR Kuutio",
+        "grade": {
+            "worldClass": "Maailmanluokka",
+            "expert": "Ekspertti",
+            "advanced": "Edistynyt",
+            "intermediate": "Keskitaso",
+            "casual": "Harrastelija",
+            "beginner": "Aloittelija"
+        },
         "tournaments": "turnausta",
         "matches": "ottelua",
         "decisions": "päätöstä",

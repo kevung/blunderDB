@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -562,10 +562,10 @@ msgstr ""
 "gnubg produces for its domain: its SHA-256 fingerprint is recorded in "
 "blunderDB and was found again. The fingerprints recorded for one-sided "
 "tables (OS-06 to OS-10) are the ones produced by GNUbg 1.08's "
-"``makebearoff`` tool. An *unverified* table is well formed but its "
-"domain has no recorded fingerprint — nothing is held against it, simply"
-" nobody has compared it to the reference. A *corrupt* table contradicts"
-" itself and is never read; it is recomputed."
+"``makebearoff`` tool. An *unverified* table is well formed but its domain"
+" has no recorded fingerprint — nothing is held against it, simply nobody "
+"has compared it to the reference. A *corrupt* table contradicts itself "
+"and is never read; it is recomputed."
 
 #: ../../source/manuel.rst:249
 msgid ""
@@ -1277,8 +1277,8 @@ msgid ""
 "Importer un match, une position ou une autre base ajoute ce qui manque ; "
 "cela ne remplace pas ce qui est déjà là."
 msgstr ""
-"Importing a match, a position or another database adds what is missing;"
-" it does not replace what is already there."
+"Importing a match, a position or another database adds what is missing; "
+"it does not replace what is already there."
 
 #: ../../source/manuel.rst:592
 msgid ""
@@ -1286,9 +1286,9 @@ msgid ""
 "videau, dés, score — qui la reconnaît, jamais le fichier d'où elle vient "
 ": la même position rencontrée dans deux matchs reste une seule ligne."
 msgstr ""
-"**A position is never duplicated.** It is its identity — checkers, cube,"
-" dice, score — that recognises it, never the file it came from: the "
-"same position met in two matches stays a single row."
+"**A position is never duplicated.** It is its identity — checkers, cube, "
+"dice, score — that recognises it, never the file it came from: the same "
+"position met in two matches stays a single row."
 
 #: ../../source/manuel.rst:596
 msgid ""
@@ -1298,8 +1298,8 @@ msgid ""
 "l'autre."
 msgstr ""
 "**One analysis per engine.** eXtreme Gammon, GNUbg, BGBlitz and the "
-"embedded evaluator coexist on the same position, and the Analysis panel"
-" shows where each one came from. Importing one never erases another."
+"embedded evaluator coexist on the same position, and the Analysis panel "
+"shows where each one came from. Importing one never erases another."
 
 #: ../../source/manuel.rst:600
 msgid ""
@@ -1311,13 +1311,13 @@ msgid ""
 "analyse, et *Ré-analyser les positions périmées* laisse intacte toute "
 "position portant une analyse importée (voir :ref:`configuration`)."
 msgstr ""
-"**An imported analysis is never recomputed.** blunderDB stores it as-"
-"is, with its level label (\"3-ply\", \"XG Roller++\", \"Book\"), its "
-"equities, its errors, its probabilities and the roll's luck. The rule "
-"is \"an evaluation only fills a gap\": automatic analysis after import "
-"only visits positions with **no** analysis at all, and *Re-analyze "
-"stale positions* leaves untouched any position carrying an imported "
-"analysis (see :ref:`configuration`)."
+"**An imported analysis is never recomputed.** blunderDB stores it as-is, "
+"with its level label (\"3-ply\", \"XG Roller++\", \"Book\"), its "
+"equities, its errors, its probabilities and the roll's luck. The rule is "
+"\"an evaluation only fills a gap\": automatic analysis after import only "
+"visits positions with **no** analysis at all, and *Re-analyze stale "
+"positions* leaves untouched any position carrying an imported analysis "
+"(see :ref:`configuration`)."
 
 #: ../../source/manuel.rst:608
 msgid ""
@@ -1325,9 +1325,9 @@ msgid ""
 "comme déjà présent ; seules les marques posées dans le logiciel d'origine"
 " sont ajoutées, sans toucher aux commentaires ni aux analyses."
 msgstr ""
-"**Reimporting the same file rewrites nothing.** The match is recognised"
-" as already present; only the flags set in the originating software "
-"are added, without touching comments or analyses."
+"**Reimporting the same file rewrites nothing.** The match is recognised "
+"as already present; only the flags set in the originating software are "
+"added, without touching comments or analyses."
 
 #: ../../source/manuel.rst:612
 msgid ""
@@ -1537,8 +1537,8 @@ msgid ""
 msgstr ""
 "The **Stats** panel lets you analyse your play level and track your "
 "progress over time using the positions imported in the database. It "
-"computes and displays **PR** (Performance Rating) and **MWC cost** (Match "
-"Winning Chance cost) for all positions or a filtered subset."
+"computes and displays **PR** (Performance Rating) and **MWC cost** (Match"
+" Winning Chance cost) for all positions or a filtered subset."
 
 #: ../../source/manuel.rst:718
 msgid "Le panneau Stats est particulièrement utile pour :"
@@ -1546,11 +1546,11 @@ msgstr "The Stats panel is especially useful for:"
 
 #: ../../source/manuel.rst:720
 msgid ""
-"**situer son niveau** par rapport aux bandes de niveau (*World Class*, "
-"*Expert*, *Advanced*…) grâce au PR global ;"
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
 msgstr ""
-"**gauging your level** against the level bands (*World Class*, *Expert*,"
-" *Advanced*…) using the global PR;"
+"**gauging your level** against the level bands (*World Class*, *Expert*, "
+"*Advanced*…) using the global PR;"
 
 #: ../../source/manuel.rst:723
 msgid ""
@@ -1721,21 +1721,21 @@ msgid ""
 msgstr ""
 "The average equity error per counted decision, multiplied by 500 as "
 "eXtreme Gammon and GNUbg do: a PR of 5.0 is worth 0.010 of lost equity "
-"per decision, i.e. 10 millipoints (mpt). The exact counting rule — "
-"which decisions enter the denominator, how the score is converted — is "
-"the one in :ref:`stats_parity`."
+"per decision, i.e. 10 millipoints (mpt). The exact counting rule — which "
+"decisions enter the denominator, how the score is converted — is the one "
+"in :ref:`stats_parity`."
 
 #: ../../source/manuel.rst:801
 msgid ""
 "Les bandes de niveau que le panneau dessine derrière la courbe de "
 "progression sont un **repère indicatif propre à blunderDB** : aucune "
-"publication ne fait autorité sur ces seuils, et l'interface les affiche "
-"en anglais."
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
 msgstr ""
 "The level bands the panel draws behind the progress curve are an "
 "**indicative marker specific to blunderDB**: no publication is "
-"authoritative on these thresholds, and the interface displays them in "
-"English."
+"authoritative on these thresholds. The upper bound of each band is "
+"exclusive: a PR of 4 is *Advanced*, not *Expert*."
 
 #: ../../source/manuel.rst:1
 msgid "Niveau"
@@ -1746,7 +1746,7 @@ msgid "PR"
 msgstr "PR"
 
 #: ../../source/manuel.rst:1
-msgid "World Class"
+msgid "Classe mondiale"
 msgstr "World Class"
 
 #: ../../source/manuel.rst:1
@@ -1762,7 +1762,7 @@ msgid "2 – 4"
 msgstr "2 – 4"
 
 #: ../../source/manuel.rst:1
-msgid "Advanced"
+msgid "Avancé"
 msgstr "Advanced"
 
 #: ../../source/manuel.rst:1
@@ -1770,7 +1770,7 @@ msgid "4 – 6"
 msgstr "4 – 6"
 
 #: ../../source/manuel.rst:1
-msgid "Intermediate"
+msgid "Intermédiaire"
 msgstr "Intermediate"
 
 #: ../../source/manuel.rst:1
@@ -1778,7 +1778,7 @@ msgid "6 – 9"
 msgstr "6 – 9"
 
 #: ../../source/manuel.rst:1
-msgid "Casual"
+msgid "Occasionnel"
 msgstr "Casual"
 
 #: ../../source/manuel.rst:1
@@ -1786,12 +1786,12 @@ msgid "9 – 12"
 msgstr "9 – 12"
 
 #: ../../source/manuel.rst:1
-msgid "Beginner"
+msgid "Débutant"
 msgstr "Beginner"
 
 #: ../../source/manuel.rst:1
-msgid "> 12"
-msgstr "> 12"
+msgid "≥ 12"
+msgstr "≥ 12"
 
 #: ../../source/manuel.rst:818
 msgid "**MWC cost (Match Winning Chance cost)**"
@@ -2109,9 +2109,9 @@ msgid ""
 "(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
 " barre charge les positions de la tranche."
 msgstr ""
-"A histogram distributes errors by magnitude in millipoints (mpt, "
-"buckets: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads "
-"the positions in the bucket."
+"A histogram distributes errors by magnitude in millipoints (mpt, buckets:"
+" 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the "
+"positions in the bucket."
 
 #: ../../source/manuel.rst:971
 msgid "Onglet Joueurs"
@@ -2237,8 +2237,8 @@ msgid ""
 "Chance moyenne par lancer, en millipoints (mpt), signée : positive si les"
 " dés ont été favorables."
 msgstr ""
-"Average luck per roll, in millipoints (mpt), signed: positive if the "
-"dice were favourable."
+"Average luck per roll, in millipoints (mpt), signed: positive if the dice"
+" were favourable."
 
 #: ../../source/manuel.rst:1001
 msgid "Utilisation :"
@@ -2376,8 +2376,8 @@ msgstr ""
 "through the same entry point, that the embedded evaluator uses for its "
 "cube decisions at a match score: the statistics and the engine cannot "
 "diverge on this. It gives its own values up to 25 points to go on each "
-"side; beyond that, it is extended by a Zadeh table computed the same "
-"way as GNUbg's, up to 64."
+"side; beyond that, it is extended by a Zadeh table computed the same way "
+"as GNUbg's, up to 64."
 
 #: ../../source/manuel.rst:1065
 msgid ""
@@ -2420,9 +2420,9 @@ msgstr ""
 " the EPC (Effective Pip Count). It is opened by pressing *CTRL-E*, by "
 "clicking the Eval tab in the lower panel, or by running the ``epc`` "
 "command. This command keeps its original name: the panel was called "
-"*EPC*, then *Bearoff*, before becoming *Eval* — so this is where to look"
-" for what an earlier version called the Bearoff panel, the name now "
-"only naming the tab that configures the bearoff tables."
+"*EPC*, then *Bearoff*, before becoming *Eval* — so this is where to look "
+"for what an earlier version called the Bearoff panel, the name now only "
+"naming the tab that configures the bearoff tables."
 
 #: ../../source/manuel.rst:1088
 msgid ""
@@ -3273,10 +3273,9 @@ msgid ""
 "positions de contact n'ont pas de mesure publiée : ce qui précède ne se "
 "transporte pas à ces cas."
 msgstr ""
-"This measurement covers **money** decisions, in a race. The match-score"
-" verdict — which only this regime can render — and contact positions "
-"have no published measurement: none of the above carries over to those"
-" cases."
+"This measurement covers **money** decisions, in a race. The match-score "
+"verdict — which only this regime can render — and contact positions have "
+"no published measurement: none of the above carries over to those cases."
 
 #: ../../source/manuel.rst:1464
 #, no-python-format
@@ -3956,3 +3955,4 @@ msgstr ""
 "works on a protected file too, without the password. See ``CLI_USAGE.md``"
 " for ``export``'s ``--watermark`` and ``--password`` options, and for "
 "``identity`` and ``open``."
+

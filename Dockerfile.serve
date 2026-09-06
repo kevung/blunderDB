@@ -52,8 +52,16 @@ COPY --from=build --chown=65532:65532 /out/data /data
 COPY --from=build /src/LICENSE /src/THIRD_PARTY.md /usr/share/doc/blunderdb/
 
 # Defaults; override via env (BLUNDERDB_BACKEND/DSN/ADDR/RLS) in compose.
+# XDG_DATA_HOME: the bearoff tables are computed on first start and kept
+# under $XDG_DATA_HOME/blunderdb; distroless sets neither HOME nor
+# XDG_DATA_HOME, so without this the daemon had no data directory at all and
+# served every race in the estimated regime. /data is the volume mount point
+# prepared above — mount a named volume there to keep the tables (and a
+# SQLite database) across restarts.
 ENV BLUNDERDB_BACKEND=postgres \
-    BLUNDERDB_ADDR=:8080
+    BLUNDERDB_ADDR=:8080 \
+    XDG_DATA_HOME=/data
+VOLUME ["/data"]
 EXPOSE 8080
 
 # Readiness probe: the binary's own `healthcheck` subcommand does one GET on

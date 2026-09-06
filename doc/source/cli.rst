@@ -147,13 +147,13 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
 
-Le code de retour obéit à trois règles :
+Le code de retour obéit à quatre règles :
 
-* **rien de nouveau n'a été importé** — chaque fichier a échoué *ou* était
-  déjà en base — : erreur, que ``--fail-on-error`` soit passé ou non. Un
-  répertoire relancé sans nouveau fichier sort donc en erreur, avec le
-  décompte des doublons dans le message ; un script qui relance le même
-  dossier chaque nuit doit s'attendre à ce code ;
+* **rien n'a été reconnu** — chaque fichier a échoué — : erreur, que
+  ``--fail-on-error`` soit passé ou non ;
+* **que des doublons** — chaque fichier était déjà en base — : succès. Un
+  répertoire relancé sans nouveau fichier, la nuit ordinaire d'un script,
+  sort en 0 avec ``duplicates`` seul non nul ;
 * **échec partiel** (certains éléments importés, d'autres refusés) : erreur
   seulement si ``--fail-on-error`` est passé ;
 * au moins un élément nouveau importé, sans ``--fail-on-error`` : succès,
@@ -230,8 +230,8 @@ C'est la méthode la plus efficace pour importer un grand nombre de matchs.
 
 Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
 (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas
-compté comme un échec, mais un lot qui n'en contient que des doublons n'a
-rien importé et sort en erreur (voir les trois règles ci-dessus).
+compté comme un échec, et un lot qui n'en contient que des doublons est un
+succès (voir les règles ci-dessus).
 
 .. code-block:: text
 
@@ -255,10 +255,9 @@ rien importé et sort en erreur (voir les trois règles ci-dessus).
    Total: 3 files | Success: 1 | Duplicates: 1 | Failed: 1 | Positions imported: 341
 
 ``--format json`` en donne la même chose, exploitable par un script : un
-objet par fichier dans ``files``, puis les totaux. Un lot qui ne trouve que
-des doublons sort en erreur comme un lot fautif (voir les trois règles
-ci-dessus) : ce sont ces quatre compteurs qui les distinguent, une nuit
-tranquille laissant ``duplicates`` seul non nul et ``failed`` à zéro.
+objet par fichier dans ``files``, puis les totaux. Une nuit tranquille laisse
+``duplicates`` seul non nul et ``failed`` à zéro, et le code de retour à 0 ;
+seul un lot où rien n'a été reconnu sort en erreur.
 
 .. code-block:: json
 

@@ -17,32 +17,6 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Backend
 
-- **L'image `blunderdb-serve` ne calcule jamais ses tables de bearoff** :
-  `gcr.io/distroless/static-debian12:nonroot` ne pose ni `HOME` ni
-  `XDG_DATA_HOME`, `Dockerfile.serve` non plus ; le démon journalise « could
-  not prepare the bearoff tables; the exact regime will be unavailable » et
-  sert en régime estimé (lot 2 de `tasks/critique-doc-2026-09/`, rédacteur
-  serveur, reproduit). La page headless documente le contournement
-  (`-v blunderdb-data:/data -e XDG_DATA_HOME=/data`) et
-  `deploy/docker-compose.yml` le pose ; le vrai correctif est un
-  `ENV XDG_DATA_HOME=/data` + `VOLUME /data` dans `Dockerfile.serve`.
-- **La fusion des analyses compare les profondeurs comme des chaînes** :
-  `ingest/merge.go:46-56` (dupliqué `database/db_import_common.go:126-132`)
-  décide « la profondeur la plus élevée l'emporte » avec `AnalysisDepth` en
-  string, donc « 2-ply » ≥ « 10-ply ». À corriger par un ordre numérique
-  (ply, puis XG Roller, XG Roller++), avec un test (lot 2, rédacteur manuel).
-- **`search --error-min` laisse passer les positions sans analyse** :
-  `cli_search.go:241` ne `continue` pas quand `analysis == nil`, donc
-  `--error-min 100` renvoie les positions jamais analysées (lot 2, rédacteur
-  CLI, mesuré : 4 positions de la base de test).
-
-- **`import --type batch` sur un dossier déjà importé sort en erreur** (que
-  des doublons ⇒ `successCount == 0` ⇒ exit 1). C'est le cas nominal d'un cron
-  nocturne, et la doc le promettait en succès jusqu'au lot 1 de
-  `tasks/critique-doc-2026-09/` (persona 3, #1). Décider : un lot fait de
-  doublons seuls est-il un succès (exit 0, doublons comptés) ? Si oui,
-  changer le code ET la page CLI ensemble.
-
 - **gammonNet — grouper la valuation du videau sur les candidats.** Le seul levier
   qui reste sur le videau, et il faut le cadrer en amont (`gn_cube.c`) avant de le
   porter. Mesuré le 2026-09-02 en écrivant puis en annulant l'optimisation
@@ -109,21 +83,6 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Frontend
 
-- **Les libellés de niveau de PR de l'interface sont en anglais dans les
-  neuf langues** (`gradeBands.js` : World Class, Expert, …) alors que le
-  manuel les traduit ; et quatre locales traduisaient « cube » par « dé »
-  pour la carte *PR Cube* (de Würfel, el Ζάρι, fi Noppa, it Dado — corrigé
-  dans le lot 2 en Doppler / Κύβος / Kuutio / Cubo). Relire les quatre
-  locales que personne ne relit sur le vocabulaire du videau.
-
-- **Barème de PR : le code et le manuel disaient deux choses** —
-  `frontend/src/components/stats/gradeBands.js` affiche 0-2 / 2-4 / 4-6 /
-  6-9 / 9-12 / 12+ avec des libellés anglais, le manuel annonçait
-  < 3 / 3-5 / 5-8 / 8-12 / > 12. Le manuel est aligné sur le code et
-  qualifié de repère indicatif (lot 2) ; reste à décider quel barème est le
-  bon, à le sourcer, et à traduire les libellés dans `fr.json` et les huit
-  autres.
-
 - **Parseur de recherche unique** : `commandProcessor.parseFilters` et
   `searchFilterService.parseSearchCommand` divergent déjà ; converger vers
   une grammaire unique testée (les deux suites existantes servent de filet
@@ -164,13 +123,6 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passant ».
 ## Ouvert — Produit / docs
 
-- **`doc/source/img/panel_anki.png` est périmée** : capture du 2026-09-03,
-  `AnkiPanel.svelte` a changé de 135 lignes le 2026-09-06 (persona 7, #7).
-  `make screenshots` demande les navigateurs Playwright, qui ne s'installent
-  pas sur le poste de développement ; à régénérer en CI ou sur une machine qui
-  les a, puis relire chaque image. La skill de release a désormais une phase
-  2c pour cela.
-
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
   10 (ADR-0017/0018/0021). → fiche H.7 (#249).
@@ -202,6 +154,20 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   Constaté le 2026-09-03 en refermant l'écart de traduction.
 
 ## Historique — items faits
+
+- **2026-09-06 — suites de la critique de la documentation** (branche
+  `chore/critique-reste`, `tasks/critique-doc-2026-09/`) : l'image
+  `blunderdb-serve` pose `XDG_DATA_HOME=/data` et déclare le volume (elle ne
+  calculait jamais ses tables de bearoff) ; la fusion des analyses classe les
+  profondeurs par `domain.AnalysisDepthRank` au lieu de comparer les chaînes
+  (« 2-ply » l'emportait sur « 10-ply ») ; `search --error-min` ignore les
+  positions sans analyse ; un lot d'import fait de doublons seuls sort en 0 ;
+  les bandes de niveau du PR sont traduites dans les neuf locales
+  (`stats.grade.*`) et le manuel les nomme en français ; quatre locales
+  disaient « dé » pour le videau de la carte *PR Cube* ; les captures
+  `panel_*.png` et `screenshot.png` sont régénérées par `make screenshots`
+  (les navigateurs Playwright sont installés sur ce poste, port 5174).
+  Reste, faute de Windows : les captures SmartScreen en anglais.
 
 - **Job `test-os`** : `continue-on-error: true` retiré, le job est bloquant. Fiche E.1 (#217), fusionnée le 2026-09-03.
 

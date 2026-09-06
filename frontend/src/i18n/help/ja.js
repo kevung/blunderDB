@@ -152,7 +152,8 @@ export default {
 <p><strong>デッキの作成:</strong> <em>New Deck</em> をクリックして、コレクションまたは現在の検索結果からデッキを作成します。検索ベースのデッキは Anki タブがアクティブになると自動的に同期されます。</p>
 <p>
     <strong>復習:</strong> デッキを選択して <em>Study</em> をクリック（またはデッキをダブルクリック）すると、期限が来たカードの復習が始まります。各カードは対応するポジションを ボードに表示します。キー
-    <strong>1</strong>（Again）、<strong>2</strong>（Hard）、<strong>3</strong>（普通）、<strong>4</strong>（Easy）で記憶度を評価します。<strong>Esc</strong> を押すと中断して デッキ一覧に戻ります。
+    <strong>1</strong>（もう一度）、<strong>2</strong>（難しい）、<strong>3</strong>（普通）、<strong>4</strong>（簡単）で記憶度を評価します。<strong>Esc</strong> を押すと中断して
+    デッキ一覧に戻ります。
 </p>
 <p>
     <strong>セッションの制限：</strong> デッキ設定で、1 回のセッションの枚数を制限できます。上限に達するとその旨を伝えてセッションが終わり、自由練習は予定に影響を与えずに続けられます。<em>0</em> は 1

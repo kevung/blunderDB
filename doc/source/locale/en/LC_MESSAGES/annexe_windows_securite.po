@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: 2025-01-22 15:32+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -19,8 +19,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_windows_securite.rst:4
-msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
-msgstr "Windows Annex: False Detection of blunderDB as Malware"
+msgid "Annexe Windows : que faire si Windows bloque le lancement"
+msgstr "Windows Annex: what to do if Windows blocks the launch"
 
 #: ../../source/annexe_windows_securite.rst:6
 msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
@@ -101,10 +101,10 @@ msgid ""
 "suivante ne concerne que les rares cas où le blocage ne venait pas de "
 "SmartScreen."
 msgstr ""
-"**Two clicks are enough in almost every case** — *More Info*, then "
-"*Run anyway* — and there is nothing else to do: no antivirus exclusion, "
-"no setting to change. The following section only covers the rare cases "
-"where the block did not come from SmartScreen."
+"**Two clicks are enough in almost every case** — *More Info*, then *Run "
+"anyway* — and there is nothing else to do: no antivirus exclusion, no "
+"setting to change. The following section only covers the rare cases where"
+" the block did not come from SmartScreen."
 
 #: ../../source/annexe_windows_securite.rst:44
 msgid ""
@@ -288,3 +288,4 @@ msgstr ""
 #: ../../source/annexe_windows_securite.rst:153
 msgid "Sous Linux ou macOS :"
 msgstr "On Linux or macOS:"
+

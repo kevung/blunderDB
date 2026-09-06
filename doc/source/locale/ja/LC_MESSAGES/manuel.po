@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -48,8 +48,8 @@ msgid ""
 "ou en migrant la base, pas en pointant l'application vers une URL."
 msgstr ""
 "ポジションは *.db* "
-"ファイルで表されるデータベースに保存されます。デスクトップアプリケーションはこのファイルを直接開き、ネットワークアドレスを開くことは決してありません。サーバーモード（:ref:`headless`\\ "
-"）は同じバイナリの別のモードであり、一方から他方へ移るにはデータベースをエクスポートするか移行するのであって、アプリケーションを URL "
+"ファイルで表されるデータベースに保存されます。デスクトップアプリケーションはこのファイルを直接開き、ネットワークアドレスを開くことは決してありません。サーバーモード（:ref:`headless`\\"
+" ）は同じバイナリの別のモードであり、一方から他方へ移るにはデータベースをエクスポートするか移行するのであって、アプリケーションを URL "
 "に向けるのではありません。"
 
 #: ../../source/manuel.rst:23
@@ -492,9 +492,9 @@ msgid ""
 "recalculée."
 msgstr ""
 "**検証済みか未検証か。** *検証済み* の表は、その領域について gnubg が出すバイト列そのものです。SHA-256 の指紋が "
-"blunderDB に登録されており、それが再現されました。片面の表（OS-06 から OS-10）について登録されている指紋は、GNUbg 1.08 "
-"の ``makebearoff`` ツールが生成するものです。*未検証* の表は形こそ正しいものの、その領域の指紋が登録されていません — "
-"落ち度があるわけではなく、参照と比べた人がいないだけです。*破損* した表は自分自身と矛盾しており、決して読まれません。再計算されます。"
+"blunderDB に登録されており、それが再現されました。片面の表（OS-06 から OS-10）について登録されている指紋は、GNUbg "
+"1.08 の ``makebearoff`` ツールが生成するものです。*未検証* の表は形こそ正しいものの、その領域の指紋が登録されていません "
+"— 落ち度があるわけではなく、参照と比べた人がいないだけです。*破損* した表は自分自身と矛盾しており、決して読まれません。再計算されます。"
 
 #: ../../source/manuel.rst:249
 msgid ""
@@ -950,8 +950,8 @@ msgid ""
 "E>40``). Le panneau de recherche propose également une case à cocher "
 "*Rechercher dans les résultats actuels* pour la même fonctionnalité."
 msgstr ""
-"現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた ``ss`` コマンドを使用します（例：\\ ``ss nc``\\ "
-"、\\ ``ss E>40``\\ ）。検索パネルには同じ機能のための *現在の結果内を検索* チェックボックスも用意されています。"
+"現在フィルターされているポジションの中で検索を絞り込むには、フィルターを続けた ``ss`` コマンドを使用します（例：\\ ``ss "
+"nc``\\ 、\\ ``ss E>40``\\ ）。検索パネルには同じ機能のための *現在の結果内を検索* チェックボックスも用意されています。"
 
 #: ../../source/manuel.rst:501
 msgid ""
@@ -1117,8 +1117,8 @@ msgid ""
 ": la même position rencontrée dans deux matchs reste une seule ligne."
 msgstr ""
 "**ポジションが重複することはありません。**\\ "
-"それを見分けるのは、チェッカー、キューブ、ダイス、スコアからなるその同一性であって、由来するファイルではありません。二つのマッチで出会った同じポジションは、1 "
-"行のままです。"
+"それを見分けるのは、チェッカー、キューブ、ダイス、スコアからなるその同一性であって、由来するファイルではありません。二つのマッチで出会った同じポジションは、1"
+" 行のままです。"
 
 #: ../../source/manuel.rst:596
 msgid ""
@@ -1141,8 +1141,8 @@ msgid ""
 "position portant une analyse importée (voir :ref:`configuration`)."
 msgstr ""
 "**インポートされた分析が再計算されることはありません。** blunderDB はそれをそのまま、レベルのラベル（「3-ply」「XG "
-"Roller++」「Book」）、エクイティ、エラー、確率、そして出目の運とともに格納します。規則は「評価は穴を埋めるだけ」です。インポート後の自動解析は\\ "
-"**一切**\\ 分析を持たないポジションだけを訪れ、\\ *古くなったポジションを再解析*\\ "
+"Roller++」「Book」）、エクイティ、エラー、確率、そして出目の運とともに格納します。規則は「評価は穴を埋めるだけ」です。インポート後の自動解析は\\"
+" **一切**\\ 分析を持たないポジションだけを訪れ、\\ *古くなったポジションを再解析*\\ "
 "は、インポートされた分析を持つポジションには手を触れません（:ref:`configuration` を参照）。"
 
 #: ../../source/manuel.rst:608
@@ -1340,8 +1340,8 @@ msgid ""
 "positions ou un sous-ensemble filtré."
 msgstr ""
 "**Stats** "
-"パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、\\ "
-"**PR**\\ （\\ *Performance Rating*\\ ）と\\ **MWC cost**\\ （Match Winning "
+"パネルでは、データベースにインポートされたポジションをもとに、自分のプレイレベルを分析し、時間の経過に伴う上達を追跡できます。すべてのポジションまたはフィルターされた部分集合について、\\"
+" **PR**\\ （\\ *Performance Rating*\\ ）と\\ **MWC cost**\\ （Match Winning "
 "Chance cost）の指標を計算して表示します。"
 
 #: ../../source/manuel.rst:718
@@ -1350,11 +1350,11 @@ msgstr "Stats パネルは特に次の用途に役立ちます："
 
 #: ../../source/manuel.rst:720
 msgid ""
-"**situer son niveau** par rapport aux bandes de niveau (*World Class*, "
-"*Expert*, *Advanced*…) grâce au PR global ;"
+"**situer son niveau** par rapport aux bandes de niveau (*Classe "
+"mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
 msgstr ""
-"全体の PR を使って、レベル帯（\\ *ワールドクラス*\\ 、\\ *エキスパート*\\ 、\\ *上級者*\\ など）に対して\\ "
-"**自分のレベルを把握する**\\ 。"
+"全体の PR を使って、レベル帯（\\ *ワールドクラス*\\ 、\\ *エキスパート*\\ "
+"、\\ *上級者*\\ など）に対して\\ **自分のレベルを把握する**\\ 。"
 
 #: ../../source/manuel.rst:723
 msgid ""
@@ -1497,8 +1497,8 @@ msgid ""
 "quelles décisions entrent au dénominateur, comment le score est converti "
 "— est celle de :ref:`stats_parity`."
 msgstr ""
-"カウントされる決定 1 回あたりの平均エクイティエラーに、eXtreme Gammon や GNUbg と同じく 500 を掛けたもの。PR 5,0 は "
-"1 決定あたり 0,010 のエクイティ損失、すなわち 10 "
+"カウントされる決定 1 回あたりの平均エクイティエラーに、eXtreme Gammon や GNUbg と同じく 500 を掛けたもの。PR "
+"5,0 は 1 決定あたり 0,010 のエクイティ損失、すなわち 10 "
 "ミリポイント（mpt）にあたります。正確な計数ルール——どの決定が分母に入るか、スコアがどのように変換されるか——は "
 ":ref:`stats_parity` に定められたものです。"
 
@@ -1506,11 +1506,13 @@ msgstr ""
 msgid ""
 "Les bandes de niveau que le panneau dessine derrière la courbe de "
 "progression sont un **repère indicatif propre à blunderDB** : aucune "
-"publication ne fait autorité sur ces seuils, et l'interface les affiche "
-"en anglais."
+"publication ne fait autorité sur ces seuils. La borne haute de chaque "
+"bande est exclue : un PR de 4 est *Avancé*, pas *Expert*."
 msgstr ""
 "パネルが進捗曲線の背後に描くレベル帯は、\\ **blunderDB 独自の目安**\\ "
-"です。これらのしきい値について権威ある刊行物はなく、インターフェースはそれらを英語で表示します。"
+"です。これらのしきい値について権威ある刊行物はありません。各帯の上限は含ま"
+"れません。PR が 4 の場合は\\ *エキスパート*\\ ではなく\\ *上級者*\\ "
+"です。"
 
 #: ../../source/manuel.rst:1
 msgid "Niveau"
@@ -1521,7 +1523,7 @@ msgid "PR"
 msgstr "PR"
 
 #: ../../source/manuel.rst:1
-msgid "World Class"
+msgid "Classe mondiale"
 msgstr "ワールドクラス"
 
 #: ../../source/manuel.rst:1
@@ -1537,7 +1539,7 @@ msgid "2 – 4"
 msgstr "2 – 4"
 
 #: ../../source/manuel.rst:1
-msgid "Advanced"
+msgid "Avancé"
 msgstr "上級者"
 
 #: ../../source/manuel.rst:1
@@ -1545,7 +1547,7 @@ msgid "4 – 6"
 msgstr "4 – 6"
 
 #: ../../source/manuel.rst:1
-msgid "Intermediate"
+msgid "Intermédiaire"
 msgstr "中級者"
 
 #: ../../source/manuel.rst:1
@@ -1553,7 +1555,7 @@ msgid "6 – 9"
 msgstr "6 – 9"
 
 #: ../../source/manuel.rst:1
-msgid "Casual"
+msgid "Occasionnel"
 msgstr "カジュアル"
 
 #: ../../source/manuel.rst:1
@@ -1561,12 +1563,12 @@ msgid "9 – 12"
 msgstr "9 – 12"
 
 #: ../../source/manuel.rst:1
-msgid "Beginner"
+msgid "Débutant"
 msgstr "初心者"
 
 #: ../../source/manuel.rst:1
-msgid "> 12"
-msgstr "> 12"
+msgid "≥ 12"
+msgstr "≥ 12"
 
 #: ../../source/manuel.rst:818
 msgid "**MWC cost (Match Winning Chance cost)**"
@@ -1850,8 +1852,8 @@ msgid ""
 "(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
 " barre charge les positions de la tranche."
 msgstr ""
-"ヒストグラムが、ミリポイント（mpt）で表した大きさに従ってエラーを分布させます（区分：0–5、5–10、10–25、25–50、50–100、≥ "
-"100）。バーをクリックすると、その区分のポジションが読み込まれます。"
+"ヒストグラムが、ミリポイント（mpt）で表した大きさに従ってエラーを分布させます（区分：0–5、5–10、10–25、25–50、50–100、≥"
+" 100）。バーをクリックすると、その区分のポジションが読み込まれます。"
 
 #: ../../source/manuel.rst:971
 msgid "Onglet Joueurs"
@@ -2047,8 +2049,8 @@ msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
 msgstr ""
-"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} \\text{erreur}_i}{\\text{nombre "
-"total de décisions}}"
+"PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
+"\\text{erreur}_i}{\\text{nombre total de décisions}}"
 
 #: ../../source/manuel.rst:1041
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
@@ -2092,9 +2094,10 @@ msgid ""
 "elle est prolongée par une table de Zadeh calculée comme celle de GNUbg, "
 "jusqu'à 64."
 msgstr ""
-"MWC コストは\\ **MET Kazaross-XG2**\\ から計算されます。これは競技バックギャモンにおける事実上の参照表です。他の MET "
-"を使うソフトウェアの結果とは直接比較できません。これは、内蔵の評価エンジンがスコアでのキューブの決定に使うのとまったく同じ表であり、同じ入口から読まれます。統計とエンジンがこの点で食い違うことはありえません。この表は双方の残りが "
-"25 ポイントまでは固有の値を与え、それを超える範囲は、GNUbg と同じように計算された Zadeh の表によって 64 まで延長されます。"
+"MWC コストは\\ **MET Kazaross-XG2**\\ から計算されます。これは競技バックギャモンにおける事実上の参照表です。他の "
+"MET "
+"を使うソフトウェアの結果とは直接比較できません。これは、内蔵の評価エンジンがスコアでのキューブの決定に使うのとまったく同じ表であり、同じ入口から読まれます。統計とエンジンがこの点で食い違うことはありえません。この表は双方の残りが"
+" 25 ポイントまでは固有の値を与え、それを超える範囲は、GNUbg と同じように計算された Zadeh の表によって 64 まで延長されます。"
 
 #: ../../source/manuel.rst:1065
 msgid ""
@@ -2131,9 +2134,9 @@ msgid ""
 "l'onglet de configuration des tables de sortie."
 msgstr ""
 "**Eval** パネル（*CTRL-E*）は、盤上にあるどんなポジションでもその場で評価します。ベアオフのポジションでは専門化し、さらに "
-"EPC（Effective Pip Count）を計算します。*CTRL-E* を押すか、下部パネルの Eval タブをクリックするか、``epc`` "
-"コマンドを実行すると開きます。このコマンドは元の名前を保っています。パネルは *EPC*\\ 、次に *Bearoff* と呼ばれてから *Eval* "
-"になりました。したがって、以前のバージョンで Bearoff "
+"EPC（Effective Pip Count）を計算します。*CTRL-E* を押すか、下部パネルの Eval "
+"タブをクリックするか、``epc`` コマンドを実行すると開きます。このコマンドは元の名前を保っています。パネルは *EPC*\\ 、次に "
+"*Bearoff* と呼ばれてから *Eval* になりました。したがって、以前のバージョンで Bearoff "
 "パネルと呼ばれていたものは、ここで探すことになります。その名前は今ではベアオフテーブルの設定タブだけを指します。"
 
 #: ../../source/manuel.rst:1088
@@ -3412,3 +3415,4 @@ msgstr ""
 "**ファイルに書き込むことは決してありません**\\ 。保護されたファイルにもパスワードなしで使えます。\\ ``export`` の\\ "
 "``--watermark`` と\\ ``--password``\\ 、および ``identity`` と ``open`` については "
 "``CLI_USAGE.md`` を参照してください。"
+

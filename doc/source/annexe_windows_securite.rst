@@ -1,7 +1,7 @@
 .. _annexe_windows_malware:
 
-Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant
-==========================================================================
+Annexe Windows : que faire si Windows bloque le lancement
+=========================================================
 
 .. note:: Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11.
 

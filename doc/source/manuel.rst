@@ -717,8 +717,8 @@ sous-ensemble filtré.
 
 Le panneau Stats est particulièrement utile pour :
 
-* **situer son niveau** par rapport aux bandes de niveau (*World Class*,
-  *Expert*, *Advanced*…) grâce au PR global ;
+* **situer son niveau** par rapport aux bandes de niveau (*Classe mondiale*,
+  *Expert*, *Avancé*…) grâce au PR global ;
 
 * **suivre sa progression** tournoi après tournoi ou match après match grâce
   aux graphiques de l'onglet Progression ;
@@ -800,20 +800,20 @@ tous les onglets.
 
   Les bandes de niveau que le panneau dessine derrière la courbe de
   progression sont un **repère indicatif propre à blunderDB** : aucune
-  publication ne fait autorité sur ces seuils, et l'interface les affiche en
-  anglais.
+  publication ne fait autorité sur ces seuils. La borne haute de chaque
+  bande est exclue : un PR de 4 est *Avancé*, pas *Expert*.
 
   .. csv-table::
      :header: "Niveau", "PR"
      :widths: 20, 10
      :align: center
 
-     "World Class", "< 2"
+     "Classe mondiale", "< 2"
      "Expert", "2 – 4"
-     "Advanced", "4 – 6"
-     "Intermediate", "6 – 9"
-     "Casual", "9 – 12"
-     "Beginner", "> 12"
+     "Avancé", "4 – 6"
+     "Intermédiaire", "6 – 9"
+     "Occasionnel", "9 – 12"
+     "Débutant", "≥ 12"
 
 **MWC cost (Match Winning Chance cost)**
 

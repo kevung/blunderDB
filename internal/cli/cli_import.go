@@ -24,7 +24,7 @@ func (cli *CLI) runImport(args []string) error {
 	recursive := importCmd.Bool("recursive", true, "Recursively scan subdirectories for batch import")
 	format := importCmd.String("format", "text", "Output format: text or json")
 	failOnError := importCmd.Bool("fail-on-error", false,
-		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported) is an error")
+		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
 	importCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb import [options]")
@@ -327,10 +327,10 @@ type importBatchResult struct {
 // importBatch imports all .xg files from a directory. Like importPosition, it
 // fails the run when nothing at all was imported (every file either errored
 // or was a duplicate), and additionally fails when failOnError is set and any
-// file errored despite others succeeding (#176). A duplicate is not counted
-// as a failure, but a batch made only of duplicates imported nothing and
-// therefore exits non-zero — re-running over an already-imported directory
-// with no new file is an error, the message carrying the duplicate count.
+// file errored despite others succeeding (#176). A duplicate is not a
+// failure: re-running a batch import over a directory that was already
+// imported, with no new file added, stays a success — only a batch where
+// NOTHING was recognised (every file failed) is an error.
 func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool) error {
 	if format != "json" {
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
@@ -534,11 +534,14 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		}
 	}
 
-	// A total failure (nothing imported, whatever the reason) is always an
-	// error; --fail-on-error additionally fails a partial one.
-	if successCount == 0 {
-		return fmt.Errorf("no file was imported from %s (%d duplicate(s), %d failure(s) out of %d file(s))",
-			dirPath, duplicateCount, failCount, len(matchFiles))
+	// Nothing recognised at all (every file failed) is always an error;
+	// --fail-on-error additionally fails a partial one. A directory whose
+	// files are all already in the database imported nothing NEW, but that
+	// is the nominal night of a script re-importing the same folder: it is
+	// a success, the duplicate count says so.
+	if successCount == 0 && duplicateCount == 0 {
+		return fmt.Errorf("no file was imported from %s (%d failure(s) out of %d file(s))",
+			dirPath, failCount, len(matchFiles))
 	}
 	if failOnError && failCount > 0 {
 		return fmt.Errorf("%d of %d file(s) failed to import from %s", failCount, len(matchFiles), dirPath)

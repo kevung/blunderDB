@@ -176,6 +176,14 @@ phrases (« à venir », « en préparation », « pas encore publié », « pr�
 once (H.11, 2026-09) and removed four days later: a page titled "roadmap"
 invites the future back in at every release.
 
+**The guide shows a task, the manual describes a screen.** Eight panels were
+described twice, once in each register, and the two drifted (a "Delete
+Position" with and without a confirmation, k/j swapped). A screen description
+that appears in `guide_utilisateur.rst` becomes a `:ref:` to the manual's
+panel section; a task walk-through does not belong in `manuel.rst`. Apply it
+to any page you touch — it is not a refactor to schedule, it is the rule for
+the next edit.
+
 **A page is proposed with its price.** One French line costs about twenty
 lines of catalogue across the eight translations (measured 2026-09-06: 6 942
 lines of `.rst`, 138 272 of `.po`), half of them in four languages nobody here

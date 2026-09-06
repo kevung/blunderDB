@@ -15,37 +15,11 @@ commande est détaillée. La ligne de commande est accessible en appuyant sur
 la touche ``ESPACE``. Elle permet de combiner avec l'habitude très rapidement
 des filtres et d'utiliser la bibliothèque de filtres.
 
-Recherche de positions en ligne de commande
--------------------------------------------
-
-Pour faire une recherche à l'aide de filtres, 
-
-1. Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche.
-2. Editer la position courante.
-3. Ouvrir la ligne de commande avec la touche ``ESPACE``.
-4. Utiliser la commande ``s`` suivie éventuellement de filtres.
-5. Lancer la recherche avec la touche ``ENTREE``.
-
-.. warning::
-   Ne pas oublier d'effacer la position courante avant de lancer une recherche 
-   (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au 
-   risque de filtrer abusivement des structures de pions.
-
-.. note:: 
-   La liste des filtres disponibles en ligne de commande est fournie dans la
-   section :ref:`cmd_filter` de la liste des commandes.
-
-Recherche dans les résultats courants
--------------------------------------
-
-Il est possible d'affiner une recherche en cherchant parmi les positions
-actuellement filtrées. Cela permet de restreindre progressivement les résultats.
-
-En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``,
-``ss E>40``). La commande ``ss`` fonctionne après une recherche préalable.
-
-La fenêtre de recherche (``CTRL-F``) propose également une case à cocher
-"Rechercher dans les résultats actuels" pour la même fonctionnalité.
+La grammaire de recherche — la commande ``s``, ses jetons, la recherche
+dans les résultats courants avec ``ss`` — est décrite une seule fois, dans
+la section :ref:`cmd_filter` de la liste des commandes ; le panneau de
+recherche lui-même est décrit dans le :ref:`manuel <panneau_recherche>`.
+Cette annexe ne garde que la bibliothèque de filtres et des exemples.
 
 Bibliothèque de filtres
 -----------------------

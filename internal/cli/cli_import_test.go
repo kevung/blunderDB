@@ -130,6 +130,26 @@ func TestCLI_ImportBatch_AllFailedIsAnError(t *testing.T) {
 	}
 }
 
+func TestCLI_ImportBatch_DuplicatesOnlyIsASuccess(t *testing.T) {
+	t.Parallel()
+	cli, dbPath := setupCLIWithDB(t)
+	dir := tempDir(t)
+	src, err := os.ReadFile("testdata/test.xg")
+	if err != nil {
+		t.Fatalf("ReadFile: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "match.xg"), src, 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir}); err != nil {
+		t.Fatalf("first import: %v", err)
+	}
+	// The nominal night of a cron job: the same folder, nothing new.
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir}); err != nil {
+		t.Fatalf("re-importing an already-imported directory must be a success, got: %v", err)
+	}
+}
+
 func TestCLI_ImportBatch_PartialFailureDefaultsToSuccess(t *testing.T) {
 	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)

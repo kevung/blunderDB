@@ -681,20 +681,18 @@ publiée qui prend la place de ``<version>``, et c'est cette forme, jamais
 
    # sqlite
    docker run --rm -p 127.0.0.1:8080:8080 \
-       -v blunderdb-data:/data -e XDG_DATA_HOME=/data \
+       -v blunderdb-data:/data \
        -e BLUNDERDB_BACKEND=sqlite -e BLUNDERDB_DSN=/data/blunderdb.db \
        ghcr.io/kevung/blunderdb-serve:<version>
 
 ``/data`` est le point de montage que l'image prépare, avec les droits de son
-utilisateur non privilégié. Le volume qu'on y monte ne sert pas qu'à la base :
-l'image ne définit ni ``HOME`` ni ``XDG_DATA_HOME``, si bien que le démon n'a,
-tel quel, aucun répertoire de données. Il le dit au démarrage — *could not
-prepare the bearoff tables; the exact regime will be unavailable* — puis sert
-normalement, avec le seul régime estimé sur les positions de sortie. Poser
-``XDG_DATA_HOME=/data`` lui donne ce répertoire : les tables sont calculées une
-fois dans ``/data/blunderdb``, sur le volume, et retrouvées aux démarrages
-suivants. C'est la variable à ajouter dès qu'on tient au verdict exact, et le
-volume à monter pour ne pas repayer le calcul.
+utilisateur non privilégié, et son ``XDG_DATA_HOME`` : le volume qu'on y monte
+ne sert pas qu'à la base, les tables de bearoff y sont calculées une fois,
+dans ``/data/blunderdb``, et retrouvées aux démarrages suivants. Sans volume,
+elles sont recalculées à chaque démarrage du conteneur — quelques secondes —
+et le démon le dit au démarrage s'il ne peut pas les écrire (*could not
+prepare the bearoff tables; the exact regime will be unavailable*), auquel cas
+il sert normalement, avec le seul régime estimé sur les positions de sortie.
 
 L'image porte les étiquettes OCI usuelles (``org.opencontainers.image.source``,
 ``.version``, ``.revision``, ``.licenses``) : ``docker inspect`` dit de quel
@@ -724,6 +722,9 @@ lui seul authentifie l'appelant, lui seul a le droit de poser l'en-tête
 ``X-Tenant-ID``, et il doit **retirer** systématiquement toute valeur envoyée
 par le client avant d'y injecter le tenant authentifié — sans quoi n'importe
 qui peut se faire passer pour n'importe quel tenant en le nommant lui-même.
+Le modèle de menace tient en une phrase : le démon suppose un réseau interne
+de confiance, et quiconque le joint directement est, pour lui, le tenant
+qu'il prétend être.
 Le dépôt fournit un exemple complet, prêt à lancer, dans le répertoire
 `deploy/ <https://github.com/kevung/blunderDB/tree/main/deploy>`__. Il vit dans
 le dépôt git, pas dans l'image conteneur : il faut donc **cloner le dépôt**, ou
@@ -912,8 +913,8 @@ purgé redevient donc exactement un tenant vide, et son entier se réattribue.
 Elle n'est disponible qu'avec le backend PostgreSQL — elle renvoie une erreur
 ``invalid`` sur un backend SQLite, qui n'a pas de notion de tenant.
 
-Vidange et pool de connexions
------------------------------
+Compactage et pool de connexions
+--------------------------------
 
 ``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du
 daemon — le pendant du bouton « Compacter la base » de l'interface graphique

@@ -238,9 +238,10 @@ func (cli *CLI) runSearch(args []string) error {
 		if params.errorMin > 0 || params.hasAnalysis {
 			analysis := analysisMap[pos.ID]
 			if analysis == nil {
-				if params.hasAnalysis {
-					continue
-				}
+				// No analysis: nothing to compare an error threshold against
+				// either — a position never analysed is not "at least 0.1
+				// of error" (it used to slip through --error-min).
+				continue
 			} else if params.errorMin > 0 {
 				hasError := false
 				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {

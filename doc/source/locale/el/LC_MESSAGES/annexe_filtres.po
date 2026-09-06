@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -49,89 +49,27 @@ msgstr ""
 "πλήκτρο ``ΚΕΝΟ``. Επιτρέπει, με τη συνήθεια, να συνδυάζονται πολύ γρήγορα"
 " φίλτρα και να χρησιμοποιείται η βιβλιοθήκη φίλτρων."
 
-#: ../../source/annexe_filtres.rst:19
-msgid "Recherche de positions en ligne de commande"
-msgstr "Αναζήτηση θέσεων από τη γραμμή εντολών"
-
-#: ../../source/annexe_filtres.rst:21
-msgid "Pour faire une recherche à l'aide de filtres,"
-msgstr "Για να πραγματοποιήσετε μια αναζήτηση με τη βοήθεια φίλτρων,"
-
-#: ../../source/annexe_filtres.rst:23
-msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "Πατήστε το πλήκτρο ``TAB`` για να ανοίξετε τον πίνακα αναζήτησης."
-
-#: ../../source/annexe_filtres.rst:24
-msgid "Editer la position courante."
-msgstr "Επεξεργαστείτε την τρέχουσα θέση."
+#: ../../source/annexe_filtres.rst:18
+msgid ""
+"La grammaire de recherche — la commande ``s``, ses jetons, la recherche "
+"dans les résultats courants avec ``ss`` — est décrite une seule fois, "
+"dans la section :ref:`cmd_filter` de la liste des commandes ; le panneau "
+"de recherche lui-même est décrit dans le :ref:`manuel "
+"<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
+"filtres et des exemples."
+msgstr ""
+"Η γραμματική αναζήτησης — η εντολή ``s``, τα λεκτικά της, η αναζήτηση "
+"μέσα στα τρέχοντα αποτελέσματα με ``ss`` — περιγράφεται μία μόνο φορά, "
+"στην ενότητα :ref:`cmd_filter` του καταλόγου των εντολών· ο ίδιος ο "
+"πίνακας αναζήτησης περιγράφεται στο :ref:`εγχειρίδιο "
+"<panneau_recherche>`. Αυτό το παράρτημα κρατά μόνο τη βιβλιοθήκη φίλτρων "
+"και μερικά παραδείγματα."
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "Ανοίξτε τη γραμμή εντολών με το πλήκτρο ``ΚΕΝΟ``."
-
-#: ../../source/annexe_filtres.rst:26
-msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "Χρησιμοποιήστε την εντολή ``s`` ακολουθούμενη προαιρετικά από φίλτρα."
-
-#: ../../source/annexe_filtres.rst:27
-msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "Ξεκινήστε την αναζήτηση με το πλήκτρο ``ENTER``."
-
-#: ../../source/annexe_filtres.rst:30
-msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
-msgstr ""
-"Μην ξεχάσετε να καθαρίσετε την τρέχουσα θέση πριν ξεκινήσετε μια "
-"αναζήτηση (πλήκτρο ``BACKSPACE``), αν αυτή δεν είναι η επιθυμητή, ώστε να"
-" αποφύγετε το υπερβολικό φιλτράρισμα των δομών των πουλιών."
-
-#: ../../source/annexe_filtres.rst:35
-msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" section :ref:`cmd_filter` de la liste des commandes."
-msgstr ""
-"Η λίστα των διαθέσιμων φίλτρων στη γραμμή εντολών παρέχεται στην ενότητα "
-":ref:`cmd_filter` της λίστας εντολών."
-
-#: ../../source/annexe_filtres.rst:39
-msgid "Recherche dans les résultats courants"
-msgstr "Αναζήτηση μέσα στα τρέχοντα αποτελέσματα"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"Il est possible d'affiner une recherche en cherchant parmi les positions "
-"actuellement filtrées. Cela permet de restreindre progressivement les "
-"résultats."
-msgstr ""
-"Είναι δυνατό να βελτιώσετε μια αναζήτηση ψάχνοντας ανάμεσα στις θέσεις "
-"που είναι ήδη φιλτραρισμένες. Αυτό σας επιτρέπει να περιορίζετε σταδιακά "
-"τα αποτελέσματα."
-
-#: ../../source/annexe_filtres.rst:44
-msgid ""
-"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
-msgstr ""
-"Στη γραμμή εντολών, χρησιμοποιήστε την εντολή ``ss`` ακολουθούμενη από "
-"φίλτρα (π.χ.: ``ss nc``, ``ss E>40``). Η εντολή ``ss`` λειτουργεί μετά "
-"από μια προηγούμενη αναζήτηση."
-
-#: ../../source/annexe_filtres.rst:47
-msgid ""
-"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
-msgstr ""
-"Το παράθυρο αναζήτησης (``CTRL-F``) προσφέρει επίσης ένα πλαίσιο ελέγχου "
-"«Αναζήτηση στα τρέχοντα αποτελέσματα» για την ίδια λειτουργία."
-
-#: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
 msgstr "Βιβλιοθήκη φίλτρων"
 
-#: ../../source/annexe_filtres.rst:53
+#: ../../source/annexe_filtres.rst:27
 msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
@@ -139,17 +77,17 @@ msgstr ""
 "Η βιβλιοθήκη φίλτρων επιτρέπει στον χρήστη να αποθηκεύει εντολές "
 "αναζήτησης ώστε να διευκολύνει τις θεματικές του μελέτες."
 
-#: ../../source/annexe_filtres.rst:56
+#: ../../source/annexe_filtres.rst:30
 msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "Για να προσθέσετε ένα φίλτρο στη βιβλιοθήκη,"
 
-#: ../../source/annexe_filtres.rst:58
+#: ../../source/annexe_filtres.rst:32
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
 msgstr ""
 "Εκτελέστε την αναζήτηση που θέλετε να διατηρήσετε (εντολή ``s`` "
 "ακολουθούμενη από φίλτρα)."
 
-#: ../../source/annexe_filtres.rst:59
+#: ../../source/annexe_filtres.rst:33
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Historique*."
@@ -157,21 +95,21 @@ msgstr ""
 "Ανοίξτε τον πίνακα αναζήτησης (``TAB`` ή ``CTRL-F``) και επιλέξτε την "
 "καρτέλα *Historique*."
 
-#: ../../source/annexe_filtres.rst:61
+#: ../../source/annexe_filtres.rst:35
 msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr ""
 "Κάντε κλικ στο εικονίδιο σελιδοδείκτη της αναζήτησης που θέλετε να "
 "αποθηκεύσετε."
 
-#: ../../source/annexe_filtres.rst:62
+#: ../../source/annexe_filtres.rst:36
 msgid "Donner un nom au filtre et valider."
 msgstr "Δώστε ένα όνομα στο φίλτρο και επιβεβαιώστε."
 
-#: ../../source/annexe_filtres.rst:64
+#: ../../source/annexe_filtres.rst:38
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "Για να χρησιμοποιήσετε ένα φίλτρο αποθηκευμένο στη βιβλιοθήκη,"
 
-#: ../../source/annexe_filtres.rst:66
+#: ../../source/annexe_filtres.rst:40
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Enregistrés*."
@@ -179,19 +117,19 @@ msgstr ""
 "Ανοίξτε τον πίνακα αναζήτησης (``TAB`` ή ``CTRL-F``) και επιλέξτε την "
 "καρτέλα *Enregistrés*."
 
-#: ../../source/annexe_filtres.rst:68
+#: ../../source/annexe_filtres.rst:42
 msgid "Rechercher le filtre souhaité."
 msgstr "Αναζητήστε το επιθυμητό φίλτρο."
 
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:43
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Κάντε διπλό κλικ στο φίλτρο για να ξεκινήσετε την αναζήτηση."
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:46
 msgid "Exemples"
 msgstr "Παραδείγματα"
 
-#: ../../source/annexe_filtres.rst:74
+#: ../../source/annexe_filtres.rst:48
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ακολουθούν μερικά παραδείγματα χρήσης των φίλτρων στη γραμμή εντολών:"
 
@@ -388,7 +326,7 @@ msgstr "Λάθη στο τουρνουά 2"
 msgid "s tn2 E>40"
 msgstr "s tn2 E>40"
 
-#: ../../source/annexe_filtres.rst:101
+#: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Παραδείγματα αναζήτησης μέσα στα τρέχοντα αποτελέσματα:"
 
@@ -419,3 +357,4 @@ msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις 
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "ss d"
+

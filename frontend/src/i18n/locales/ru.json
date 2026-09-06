@@ -1094,6 +1094,14 @@
         "cardLabelAll": "PR Общий",
         "cardLabelChecker": "PR Шашка",
         "cardLabelCube": "PR Куб",
+        "grade": {
+            "worldClass": "Мировой класс",
+            "expert": "Эксперт",
+            "advanced": "Продвинутый",
+            "intermediate": "Средний",
+            "casual": "Любитель",
+            "beginner": "Новичок"
+        },
         "tournaments": "турниров",
         "matches": "партий",
         "decisions": "решений",

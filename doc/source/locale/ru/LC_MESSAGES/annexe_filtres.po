@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 03:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -50,88 +50,26 @@ msgstr ""
 "практикой она позволяет очень быстро комбинировать фильтры и использовать"
 " библиотеку фильтров."
 
-#: ../../source/annexe_filtres.rst:19
-msgid "Recherche de positions en ligne de commande"
-msgstr "Поиск позиций в командной строке"
-
-#: ../../source/annexe_filtres.rst:21
-msgid "Pour faire une recherche à l'aide de filtres,"
-msgstr "Для выполнения поиска с помощью фильтров,"
-
-#: ../../source/annexe_filtres.rst:23
-msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
-msgstr "Нажмите клавишу ``TAB``, чтобы открыть панель поиска."
-
-#: ../../source/annexe_filtres.rst:24
-msgid "Editer la position courante."
-msgstr "Отредактируйте текущую позицию."
+#: ../../source/annexe_filtres.rst:18
+msgid ""
+"La grammaire de recherche — la commande ``s``, ses jetons, la recherche "
+"dans les résultats courants avec ``ss`` — est décrite une seule fois, "
+"dans la section :ref:`cmd_filter` de la liste des commandes ; le panneau "
+"de recherche lui-même est décrit dans le :ref:`manuel "
+"<panneau_recherche>`. Cette annexe ne garde que la bibliothèque de "
+"filtres et des exemples."
+msgstr ""
+"Грамматика поиска — команда ``s``, её токены, поиск в текущих результатах с "
+"помощью ``ss`` — описана лишь в одном месте, в разделе :ref:`cmd_filter` "
+"списка команд; сама панель поиска описана в :ref:`руководстве "
+"<panneau_recherche>`. В этом приложении остаются только библиотека фильтров "
+"и примеры."
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
-msgstr "Откройте командную строку клавишей ``ПРОБЕЛ``."
-
-#: ../../source/annexe_filtres.rst:26
-msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
-msgstr "Используйте команду ``s``, при необходимости с фильтрами."
-
-#: ../../source/annexe_filtres.rst:27
-msgid "Lancer la recherche avec la touche ``ENTREE``."
-msgstr "Запустите поиск клавишей ``ВВОД``."
-
-#: ../../source/annexe_filtres.rst:30
-msgid ""
-"Ne pas oublier d'effacer la position courante avant de lancer une "
-"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
-"souhaitée, au risque de filtrer abusivement des structures de pions."
-msgstr ""
-"Не забывайте очищать текущую позицию перед запуском поиска (клавиша "
-"``BACKSPACE``), если она не является нужной, иначе структуры шашек будут "
-"фильтроваться некорректно."
-
-#: ../../source/annexe_filtres.rst:35
-msgid ""
-"La liste des filtres disponibles en ligne de commande est fournie dans la"
-" section :ref:`cmd_filter` de la liste des commandes."
-msgstr ""
-"Список доступных фильтров командной строки приведён в разделе "
-":ref:`cmd_filter` списка команд."
-
-#: ../../source/annexe_filtres.rst:39
-msgid "Recherche dans les résultats courants"
-msgstr "Поиск в текущих результатах"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"Il est possible d'affiner une recherche en cherchant parmi les positions "
-"actuellement filtrées. Cela permet de restreindre progressivement les "
-"résultats."
-msgstr ""
-"Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций."
-" Это позволяет постепенно сужать результаты."
-
-#: ../../source/annexe_filtres.rst:44
-msgid ""
-"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
-"recherche préalable."
-msgstr ""
-"В командной строке используйте команду ``ss`` с фильтрами (напр.: ``ss "
-"nc``, ``ss E>40``). Команда ``ss`` работает после предварительного "
-"поиска."
-
-#: ../../source/annexe_filtres.rst:47
-msgid ""
-"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
-"\"Rechercher dans les résultats actuels\" pour la même fonctionnalité."
-msgstr ""
-"В окне поиска (``CTRL-F``) для того же есть флажок «Искать в текущих "
-"результатах»."
-
-#: ../../source/annexe_filtres.rst:51
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
-#: ../../source/annexe_filtres.rst:53
+#: ../../source/annexe_filtres.rst:27
 msgid ""
 "La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
 "commandes de recherche afin de faciliter ses études thématiques."
@@ -139,17 +77,17 @@ msgstr ""
 "Библиотека фильтров позволяет пользователю сохранять поисковые команды "
 "для удобства тематических исследований."
 
-#: ../../source/annexe_filtres.rst:56
+#: ../../source/annexe_filtres.rst:30
 msgid "Pour ajouter un filtre à la bibliothèque,"
 msgstr "Чтобы добавить фильтр в библиотеку,"
 
-#: ../../source/annexe_filtres.rst:58
+#: ../../source/annexe_filtres.rst:32
 msgid "Lancer la recherche à conserver (commande ``s`` suivie de filtres)."
 msgstr ""
 "Запустите поиск, который нужно сохранить (команда ``s`` с последующими "
 "фильтрами)."
 
-#: ../../source/annexe_filtres.rst:59
+#: ../../source/annexe_filtres.rst:33
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Historique*."
@@ -157,19 +95,19 @@ msgstr ""
 "Откройте панель поиска (``TAB`` или ``CTRL-F``) и выберите вкладку "
 "*Historique*."
 
-#: ../../source/annexe_filtres.rst:61
+#: ../../source/annexe_filtres.rst:35
 msgid "Cliquer sur l'icône signet de la recherche à enregistrer."
 msgstr "Нажмите на значок закладки у поиска, который нужно сохранить."
 
-#: ../../source/annexe_filtres.rst:62
+#: ../../source/annexe_filtres.rst:36
 msgid "Donner un nom au filtre et valider."
 msgstr "Дайте фильтру имя и подтвердите."
 
-#: ../../source/annexe_filtres.rst:64
+#: ../../source/annexe_filtres.rst:38
 msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
 msgstr "Чтобы использовать сохранённый в библиотеке фильтр,"
 
-#: ../../source/annexe_filtres.rst:66
+#: ../../source/annexe_filtres.rst:40
 msgid ""
 "Ouvrir le panneau de recherche (``TAB`` ou ``CTRL-F``) et sélectionner "
 "l'onglet *Enregistrés*."
@@ -177,19 +115,19 @@ msgstr ""
 "Откройте панель поиска (``TAB`` или ``CTRL-F``) и выберите вкладку "
 "*Enregistrés*."
 
-#: ../../source/annexe_filtres.rst:68
+#: ../../source/annexe_filtres.rst:42
 msgid "Rechercher le filtre souhaité."
 msgstr "Найдите нужный фильтр."
 
-#: ../../source/annexe_filtres.rst:69
+#: ../../source/annexe_filtres.rst:43
 msgid "Double cliquer sur le filtre pour lancer la recherche."
 msgstr "Дважды щёлкните на фильтре, чтобы запустить поиск."
 
-#: ../../source/annexe_filtres.rst:72
+#: ../../source/annexe_filtres.rst:46
 msgid "Exemples"
 msgstr "Примеры"
 
-#: ../../source/annexe_filtres.rst:74
+#: ../../source/annexe_filtres.rst:48
 msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
 msgstr "Ниже приведены примеры использования фильтров в командной строке:"
 
@@ -386,7 +324,7 @@ msgstr "s"
 msgid "s tn2 E>40"
 msgstr "s"
 
-#: ../../source/annexe_filtres.rst:101
+#: ../../source/annexe_filtres.rst:75
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Примеры"
 
@@ -417,3 +355,4 @@ msgstr "s"
 #: ../../source/annexe_filtres.rst:1
 msgid "ss d"
 msgstr "s"
+

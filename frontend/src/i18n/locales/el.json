@@ -1094,6 +1094,14 @@
         "cardLabelAll": "PR Συνολικό",
         "cardLabelChecker": "PR Πούλι",
         "cardLabelCube": "PR Κύβος",
+        "grade": {
+            "worldClass": "Παγκόσμια κλάση",
+            "expert": "Ειδικός",
+            "advanced": "Προχωρημένος",
+            "intermediate": "Μέσος",
+            "casual": "Περιστασιακός",
+            "beginner": "Αρχάριος"
+        },
         "tournaments": "τουρνουά",
         "matches": "αγώνες",
         "decisions": "αποφάσεις",
