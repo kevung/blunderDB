@@ -2377,6 +2377,7 @@ export namespace main {
 	    gammonnet_candidates?: number;
 	    gammonnet_auto_analyze?: boolean;
 	    check_for_updates?: boolean;
+	    theme?: string;
 	    watch_folder?: boolean;
 	    watch_folder_path?: string;
 	    watch_folder_interval_seconds?: number;
@@ -2411,6 +2412,7 @@ export namespace main {
 	        this.gammonnet_candidates = source["gammonnet_candidates"];
 	        this.gammonnet_auto_analyze = source["gammonnet_auto_analyze"];
 	        this.check_for_updates = source["check_for_updates"];
+	        this.theme = source["theme"];
 	        this.watch_folder = source["watch_folder"];
 	        this.watch_folder_path = source["watch_folder_path"];
 	        this.watch_folder_interval_seconds = source["watch_folder_interval_seconds"];

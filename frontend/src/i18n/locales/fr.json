@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 laisse la valeur par défaut, dix secondes ; le plancher est de deux secondes. Un fichier n'est importé qu'une fois sa taille stable, pour ne pas lire un match à moitié écrit.",
         "watchOnlyNewNote": "Seuls les fichiers qui APPARAISSENT sont importés : ce que le dossier contient déjà est ignoré. Pour l'importer, utilisez l'import de dossier.",
         "watchRunning": "Surveillance en cours : {folder}",
-        "watchStopped": "Aucune surveillance en cours."
+        "watchStopped": "Aucune surveillance en cours.",
+        "theme": "Thème",
+        "themeNote": "Le thème règle les couleurs de l'interface et propose une palette de plateau. Vous gardez le dernier mot : l'onglet Couleurs continue de régler le plateau, et votre réglage survit au thème.",
+        "theme_system": "Suivre le système",
+        "theme_light": "Clair",
+        "theme_dark": "Sombre",
+        "theme_contrast": "Contraste élevé",
+        "theme_print": "Imprimable"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",

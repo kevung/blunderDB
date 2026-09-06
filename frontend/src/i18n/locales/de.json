@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 behält den Standard von zehn Sekunden; die Untergrenze sind zwei. Eine Datei wird erst importiert, wenn ihre Größe sich nicht mehr ändert, damit nie ein halb geschriebenes Match gelesen wird.",
         "watchOnlyNewNote": "Nur Dateien, die ERSCHEINEN, werden importiert: was der Ordner bereits enthält, wird ignoriert. Dafür gibt es den Ordnerimport.",
         "watchRunning": "Überwachung läuft: {folder}",
-        "watchStopped": "Keine Überwachung aktiv."
+        "watchStopped": "Keine Überwachung aktiv.",
+        "theme": "Thema",
+        "themeNote": "Das Thema legt die Farben der Oberfläche fest und schlägt eine Brettpalette vor. Sie behalten das letzte Wort: der Reiter Farben stellt das Brett weiterhin ein, und Ihre Einstellung überlebt das Thema.",
+        "theme_system": "Dem System folgen",
+        "theme_light": "Hell",
+        "theme_dark": "Dunkel",
+        "theme_contrast": "Hoher Kontrast",
+        "theme_print": "Druckbar"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",

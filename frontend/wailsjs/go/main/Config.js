@@ -78,6 +78,10 @@ export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
 }
 
+export function GetTheme() {
+  return window['go']['main']['Config']['GetTheme']();
+}
+
 export function GetTourSeen() {
   return window['go']['main']['Config']['GetTourSeen']();
 }
@@ -172,6 +176,10 @@ export function SaveStatsFilter(arg1) {
 
 export function SaveTabOrder(arg1) {
   return window['go']['main']['Config']['SaveTabOrder'](arg1);
+}
+
+export function SaveTheme(arg1) {
+  return window['go']['main']['Config']['SaveTheme'](arg1);
 }
 
 export function SaveTourSeen(arg1) {

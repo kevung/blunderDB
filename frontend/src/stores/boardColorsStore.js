@@ -60,3 +60,14 @@ export function resetBoardColors() {
     boardColorsStore.set(next);
     SaveBoardColors(next).catch((err) => logger.error('Failed to save board colors:', err));
 }
+
+// Applique la palette d'un thème nommé (#286, fiche I.30) et la persiste.
+//
+// Le thème PROPOSE une palette ; l'utilisateur garde le dernier mot, puisque
+// l'onglet Couleurs continue de la régler et que son réglage survit — ce qui
+// est le compromis que l'ADR-0038 énonce avec l'ADR-0031.
+export function applyBoardPalette(colors) {
+    const next = sanitize(colors);
+    boardColorsStore.set(next);
+    SaveBoardColors(next).catch((err) => logger.error('Failed to save board colors:', err));
+}

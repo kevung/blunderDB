@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 mantiene il valore predefinito, dieci secondi; il minimo è due. Un file è importato solo quando la sua dimensione si è stabilizzata, per non leggere mai un incontro scritto a metà.",
         "watchOnlyNewNote": "Sono importati solo i file che COMPAIONO: ciò che la cartella contiene già è ignorato. Per quello c'è l'importazione di cartella.",
         "watchRunning": "Sorveglianza in corso: {folder}",
-        "watchStopped": "Nessuna sorveglianza in corso."
+        "watchStopped": "Nessuna sorveglianza in corso.",
+        "theme": "Tema",
+        "themeNote": "Il tema regola i colori dell'interfaccia e propone una tavolozza per la dama. Voi mantenete l'ultima parola: la scheda Colori continua a regolare la dama, e la vostra regolazione sopravvive al tema.",
+        "theme_system": "Seguire il sistema",
+        "theme_light": "Chiaro",
+        "theme_dark": "Scuro",
+        "theme_contrast": "Contrasto elevato",
+        "theme_print": "Stampabile"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",

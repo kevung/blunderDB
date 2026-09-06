@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 keeps the default, ten seconds; the floor is two. A file is imported only once its size has settled, so a half-written match is never read.",
         "watchOnlyNewNote": "Only files that APPEAR are imported: whatever the folder already holds is ignored. To import that, use the folder import.",
         "watchRunning": "Watching: {folder}",
-        "watchStopped": "No watch running."
+        "watchStopped": "No watch running.",
+        "theme": "Theme",
+        "themeNote": "The theme sets the interface colours and proposes a board palette. You keep the last word: the Colours tab still sets the board, and your setting survives the theme.",
+        "theme_system": "Follow the system",
+        "theme_light": "Light",
+        "theme_dark": "Dark",
+        "theme_contrast": "High contrast",
+        "theme_print": "Printable"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",

@@ -150,7 +150,14 @@
         "watchIntervalNote": "0 säilyttää oletuksen, kymmenen sekuntia; alaraja on kaksi. Tiedosto tuodaan vasta kun sen koko on vakiintunut, jottei puoliksi kirjoitettua ottelua koskaan lueta.",
         "watchOnlyNewNote": "Vain ILMESTYVÄT tiedostot tuodaan: se mitä kansiossa jo on, ohitetaan. Sitä varten on kansion tuonti.",
         "watchRunning": "Valvotaan: {folder}",
-        "watchStopped": "Ei valvontaa käynnissä."
+        "watchStopped": "Ei valvontaa käynnissä.",
+        "theme": "Teema",
+        "themeNote": "Teema asettaa käyttöliittymän värit ja ehdottaa lautapalettia. Sinulla on viimeinen sana: Värit-välilehti säätää edelleen laudan, ja asetuksesi säilyy teeman yli.",
+        "theme_system": "Seuraa järjestelmää",
+        "theme_light": "Vaalea",
+        "theme_dark": "Tumma",
+        "theme_contrast": "Suuri kontrasti",
+        "theme_print": "Tulostettava"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
