@@ -89,7 +89,7 @@ chacune close par une release.
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | #300 fermée par **ADR-0037** ; neuf restent, dont plusieurs demandent un arbitrage produit |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
 
-### La session du 2026-09-06 : treize issues fermées
+### La session du 2026-09-06 : quatorze issues fermées
 
 | Issue | Fiche | Ce qui a été livré |
 |---|---|---|
@@ -105,7 +105,19 @@ chacune close par une release.
 | #285 | I.29 | La corbeille, **instantané et non colonne `deleted_at`** (ADR-0036). Restaurer n'est pas symétrique de supprimer, et c'est écrit. |
 | #266 | I.10 | Les mêmes décisions découpées par phase, par étiquette et par score. L'oracle figé des statistiques cesse d'être une contrainte sur l'avenir. |
 | #290 | I.34 | **Doublon de #242**, déjà livré par `bd1d0d992`. Vérifié dans le code plutôt que dans la case. |
+| #268 | I.12 | **Un match importé sans analyse obtient un PR.** La fiche prescrivait `move_analysis` ; rien ne lit cette table pour les statistiques. Le vrai trou était `best_move_equity_error`, laissé à zéro faute de savoir quel coup avait été joué. |
 | #267 | I.11 | La matrice du videau : le verdict de la position à tous les scores d'un match de 5, 7 ou 9. Commande `cm`, commande CLI `cubematrix`, route `/v1/gammonnet.cubeMatrix`. |
+
+Sur I.12, la fiche se trompait de mécanisme et il fallait le dire : elle
+demandait d'écrire une `move_analysis` étiquetée `gammonNet <version>`, mais
+aucune statistique ne lit cette table — elle n'est écrite qu'à l'import et
+relue qu'à l'export `.mat`. Le PR est une somme de `analysis.best_move_equity_error`,
+que le lot gammonNet laissait à zéro : on lui donne une position, et une
+position ne se souvient pas de ce qu'on en a fait. La table `move`, elle, le
+sait, et elle est écrite à l'import qu'un fichier porte une analyse ou non.
+`blunderdb repair` rend donc leur PR aux bases déjà analysées, sans repasser
+le moteur. Mesuré sur `testdata/test.mat` : « aucune analyse à noter » →
+**PR 5,43 sur 284 décisions**, cinq pires décisions nommées.
 
 Deux écarts assumés sur I.11, écrits ici pour n'avoir pas à les redécouvrir :
 la grille est une **fenêtre** et non un onglet du panneau Eval — le panneau est

@@ -54,8 +54,19 @@ ON CONFLICT(position_id) DO UPDATE SET
 // which loads, merges, then calls Save.
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
 	a.PositionID = int(positionID)
-	playedMove := firstOf(a.PlayedMoves)
-	playedCubeAction := firstOf(a.PlayedCubeActions)
+	// The played actions come from the analysis when it states them, and from
+	// the match when it does not — see engine.PlayedActionsFor (#268). The
+	// lookup is skipped entirely when the blob already answers, so an import
+	// carrying its own analysis pays nothing for it.
+	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
+	if playedMove == "" || playedCubeAction == "" {
+		mvMove, mvCube, err := s.playedActionsFromMatch(ctx, positionID)
+		if err != nil {
+			return err
+		}
+		playedMove, playedCubeAction = engine.PlayedActionsFor(
+			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
+	}
 
 	engine.RoundAnalysisForStorage(a)
 	data, err := engine.EncodeAnalysisForStorage(a)
@@ -175,6 +186,30 @@ func firstOf(s []string) string {
 	return ""
 }
 
+// playedActionsFromMatch reads the earliest recorded checker move and cube
+// action for a position from the `move` table — the actions an analysis
+// computed here cannot know (#268). Earliest by move id, so the answer is
+// stable across runs when a deduplicated position was played more than once.
+func (s *analysisStore) playedActionsFromMatch(ctx context.Context, positionID int64) (checkerMove, cubeAction string, err error) {
+	var mv, ca sql.NullString
+	err = s.db.QueryRowContext(ctx, playedActionsSQL, positionID, positionID).Scan(&mv, &ca)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", "", nil
+	}
+	if err != nil {
+		return "", "", fmt.Errorf("sqlite: read played actions for position %d: %w", positionID, err)
+	}
+	return mv.String, ca.String, nil
+}
+
+// playedActionsSQL is one row of two scalar subqueries rather than a join: a
+// position may have several move rows, and each column wants the earliest
+// NON-EMPTY one of its own — a cube action and a checker move are recorded on
+// different rows.
+const playedActionsSQL = `SELECT
+	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = ? AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
+	(SELECT mv.cube_action  FROM move mv WHERE mv.position_id = ? AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)`
+
 // repairPageSize bounds how many analysis rows RepairDenormalisedColumns
 // holds in memory at once (id keyset pagination, both backends): a real
 // database holds tens of thousands of rows at ~600 bytes of compressed blob
@@ -196,6 +231,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		data                                   []byte
 		bestCube                               sql.NullString
 		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
+		// The match's own record of what was played, joined in here rather
+		// than looked up row by row: a repair walks every analysis in the
+		// database (#268).
+		mvMove, mvCube sql.NullString
 	}
 	repaired := 0
 	var lastID int64
@@ -203,15 +242,17 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		var page []row
 		if err := func() error {
 			rows, err := s.db.QueryContext(ctx,
-				`SELECT id, data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
-				 FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, lastID, repairPageSize)
+				`SELECT a.id, a.data, a.best_cube_action, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
+				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
+				        (SELECT mv.cube_action  FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)
+				 FROM analysis a WHERE a.id > ? ORDER BY a.id LIMIT ?`, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("sqlite: repair: read analyses: %w", err)
 			}
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub); err != nil {
+				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -233,7 +274,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				// left about that position.
 				continue
 			}
-			c := engine.PopulateAnalysisColumns(&a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+			playedMove, playedCubeAction := engine.PlayedActionsFor(
+				a.PlayedMoves, a.PlayedCubeActions,
+				[]string{r.mvMove.String}, []string{r.mvCube.String})
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction)
 			if c.BestCubeAction == r.bestCube.String &&
 				c.CubeError == r.cubeErr.Int64 &&
 				c.BestMoveEquityError == r.bestMoveErr.Int64 &&
