@@ -1951,6 +1951,38 @@ un an : une position que l'algorithme reporterait de plusieurs années a quitté
 le paquet sans que vous l'ayez décidé, et votre propre jeu change plus vite que
 cela. Les paquets plus anciens conservent la valeur qu'ils avaient.
 
+.. _micro_entrainements:
+
+Micro-entraînements
+-------------------
+
+Le panneau Anki fait réviser un **jugement** ; les micro-entraînements font
+travailler les trois **calculs** qui se font en partie, sous la pendule, et
+qu'aucune révision espacée ne muscle. La commande ``train`` en lance une
+session de cinq questions :
+
+* ``train pips`` — compter les pions du joueur au trait, sur la position
+  affichée.
+* ``train epc`` — estimer l'EPC de ce même joueur, sur une position de course
+  que le moteur sait évaluer.
+* ``train tp`` — retrouver le point de prise d'une course longue à un score
+  tiré au hasard, celui de la table ``tp2_live``.
+
+La question EST la position affichée : le plateau est celui de l'application,
+et la barre au-dessus ne porte que la question, la saisie et la correction.
+La réponse se tape et se valide au clavier (*Entrée* vérifie, puis passe à la
+suivante ; *Échap* quitte la session).
+
+La tolérance dépend de l'exercice, et elle est dite plutôt que devinée : le
+comptage de pions n'en a **aucune** — une addition juste à un pion près est
+une addition fausse — l'EPC accepte un demi-pion, le point de prise deux
+points de pourcentage. À la fin, la session affiche le nombre de bonnes
+réponses et le temps **médian** par question.
+
+Seul ce résumé est conservé, dans les métadonnées de la base : la session ne
+garde pas la trace question par question, et rien n'est écrit tant qu'elle
+n'est pas terminée. Quitter en cours de route n'enregistre donc rien.
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

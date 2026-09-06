@@ -839,6 +839,10 @@ export default {
 <td>Apre il vocabolario di tag: i tag usati in questo database, con il numero di posizioni, cliccabili per lanciare la ricerca.</td>
 </tr>
 <tr>
+<td>train</td>
+<td>Avvia una sessione di micro-allenamento. Prende un argomento: <code>train pips</code> (conteggio dei pip), <code>train epc</code>, <code>train tp</code> (punto di presa al punteggio). Cinque domande, cronometrate, corrette sul momento.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Apre la tabella dei takepoint con cubo a 2.</td>
 </tr>

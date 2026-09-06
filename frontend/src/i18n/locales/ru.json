@@ -1327,5 +1327,24 @@
         "saved": "Отчёт сохранён: {path}",
         "failed": "Отчёт не удалось составить: {err}",
         "action": "Отчёт HTML…"
+    },
+    "training": {
+        "title": "Тренировка",
+        "progress": "Вопрос {i}/{n}",
+        "drillPips": "Подсчёт пипсов",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Точка взятия",
+        "takePointPrompt": "Счёт {away} (away)",
+        "answer": "Ответ",
+        "check": "Проверить",
+        "next": "Далее",
+        "finish": "Завершить",
+        "leave": "Выйти",
+        "right": "Верно",
+        "wrong": "Неверно",
+        "truth": "ожидалось {value}",
+        "noQuestions": "Для этого упражнения в этой базе нельзя составить вопрос.",
+        "finished": "Тренировка окончена: {correct}/{n}, медианное время {seconds} с.",
+        "usage": "Использование: train <упражнение> ({drills})."
     }
 }

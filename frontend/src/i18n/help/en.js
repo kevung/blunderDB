@@ -827,6 +827,10 @@ export default {
 <td>Opens the tag vocabulary: the tags used in this database, with the number of positions, clickable to run the search.</td>
 </tr>
 <tr>
+<td>train</td>
+<td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score). Five questions, timed, corrected on the spot.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Open the takepoint table with a 2-cube.</td>
 </tr>

@@ -1327,5 +1327,24 @@
         "saved": "Rapporto salvato: {path}",
         "failed": "Il rapporto non ha potuto essere redatto: {err}",
         "action": "Rapporto HTML…"
+    },
+    "training": {
+        "title": "Allenamento",
+        "progress": "Domanda {i}/{n}",
+        "drillPips": "Conteggio dei pip",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Punto di presa",
+        "takePointPrompt": "Punteggio {away} (away)",
+        "answer": "Risposta",
+        "check": "Verifica",
+        "next": "Successiva",
+        "finish": "Termina",
+        "leave": "Esci",
+        "right": "Giusto",
+        "wrong": "Sbagliato",
+        "truth": "atteso {value}",
+        "noQuestions": "Nessuna domanda può essere posta su questa base per questo esercizio.",
+        "finished": "Allenamento terminato: {correct}/{n}, tempo mediano {seconds} s.",
+        "usage": "Uso: train <esercizio> ({drills})."
     }
 }

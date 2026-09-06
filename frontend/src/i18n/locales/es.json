@@ -1327,5 +1327,24 @@
         "saved": "Informe guardado: {path}",
         "failed": "No se ha podido elaborar el informe: {err}",
         "action": "Informe HTML…"
+    },
+    "training": {
+        "title": "Entrenamiento",
+        "progress": "Pregunta {i}/{n}",
+        "drillPips": "Recuento de pips",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Punto de aceptación",
+        "takePointPrompt": "Marcador {away} (away)",
+        "answer": "Respuesta",
+        "check": "Comprobar",
+        "next": "Siguiente",
+        "finish": "Terminar",
+        "leave": "Salir",
+        "right": "Correcto",
+        "wrong": "Incorrecto",
+        "truth": "esperado {value}",
+        "noQuestions": "No se puede formular ninguna pregunta en esta base para este ejercicio.",
+        "finished": "Entrenamiento terminado: {correct}/{n}, tiempo mediano {seconds} s.",
+        "usage": "Uso: train <ejercicio> ({drills})."
     }
 }

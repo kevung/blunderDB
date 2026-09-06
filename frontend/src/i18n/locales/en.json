@@ -1327,5 +1327,24 @@
         "saved": "Report saved: {path}",
         "failed": "The report could not be produced: {err}",
         "action": "HTML report…"
+    },
+    "training": {
+        "title": "Training",
+        "progress": "Question {i}/{n}",
+        "drillPips": "Pip count",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Take point",
+        "takePointPrompt": "Score {away} (away)",
+        "answer": "Answer",
+        "check": "Check",
+        "next": "Next",
+        "finish": "Finish",
+        "leave": "Leave",
+        "right": "Right",
+        "wrong": "Wrong",
+        "truth": "expected {value}",
+        "noQuestions": "No question can be asked on this database for this drill.",
+        "finished": "Training done: {correct}/{n}, median time {seconds} s.",
+        "usage": "Usage: train <drill> ({drills})."
     }
 }

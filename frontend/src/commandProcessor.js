@@ -111,6 +111,12 @@ export function processCommand(command) {
         openModal(MODAL.CUBE_MATRIX);
     } else if (command === 'tags') {
         openModal(MODAL.TAGS);
+    } else if (command.startsWith('train ')) {
+        // `train <exercice>` : pips, epc, tp. Testé AVANT la forme exacte, que
+        // la ligne suivante capte pour ouvrir le choix (#273).
+        callbacks.onTraining?.(command.slice('train '.length).trim());
+    } else if (command === 'train') {
+        callbacks.onTraining?.('');
     } else if (command === 'tp2_last') {
         openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {

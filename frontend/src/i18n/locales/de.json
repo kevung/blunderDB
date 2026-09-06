@@ -1327,5 +1327,24 @@
         "saved": "Bericht gespeichert: {path}",
         "failed": "Der Bericht konnte nicht erstellt werden: {err}",
         "action": "HTML-Bericht…"
+    },
+    "training": {
+        "title": "Training",
+        "progress": "Frage {i}/{n}",
+        "drillPips": "Pip-Zählung",
+        "drillEpc": "EPC",
+        "drillTakePoint": "Annahmepunkt",
+        "takePointPrompt": "Stand {away} (away)",
+        "answer": "Antwort",
+        "check": "Prüfen",
+        "next": "Weiter",
+        "finish": "Beenden",
+        "leave": "Verlassen",
+        "right": "Richtig",
+        "wrong": "Falsch",
+        "truth": "erwartet {value}",
+        "noQuestions": "Für diese Übung lässt sich in dieser Datenbank keine Frage stellen.",
+        "finished": "Training beendet: {correct}/{n}, mittlere Zeit {seconds} s.",
+        "usage": "Verwendung: train <Übung> ({drills})."
     }
 }

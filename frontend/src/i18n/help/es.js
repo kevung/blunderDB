@@ -840,6 +840,10 @@ export default {
 <td>Abre el vocabulario de etiquetas: las etiquetas usadas en esta base, con el número de posiciones, pulsables para lanzar la búsqueda.</td>
 </tr>
 <tr>
+<td>train</td>
+<td>Inicia una sesión de microentrenamiento. Toma un argumento: <code>train pips</code> (recuento de pips), <code>train epc</code>, <code>train tp</code> (punto de aceptación al marcador). Cinco preguntas, cronometradas, corregidas al instante.</td>
+</tr>
+<tr>
 <td>tp2</td>
 <td>Abre la tabla de takepoints con el cubo a 2.</td>
 </tr>

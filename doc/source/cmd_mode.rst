@@ -33,6 +33,7 @@ Opérations globales
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
+   "train", "Lance une session de micro-entraînement. Prend un argument : ``train pips`` (compte de pions), ``train epc``, ``train tp`` (point de prise au score). Cinq questions, chronométrées, corrigées sur-le-champ."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
    "tp2_last", "Ouvre la table des takepoints avec videau à 2 mort."
