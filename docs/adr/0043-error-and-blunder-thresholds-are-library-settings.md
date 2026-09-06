@@ -35,8 +35,9 @@ outside Row-Level Security, whose load/save routes were removed after #156.
 
 2. **They are Library settings**, behind one accessor of the `storage` contract. SQLite
    keeps them in `metadata`, next to the objective; PostgreSQL gets a tenant-scoped
-   key/value table under RLS (schema 2.20.0, PostgreSQL side only — the SQLite DDL does
-   not change, and `CheckVersion` compares the major). `migrate` copies them; `blunderdb
+   key/value table under RLS (migration `021`, inside the existing 2.20.0 — nothing
+   changes on the SQLite side, so `DatabaseVersion` does not move, and a tenant with no
+   row reads the defaults). `migrate` copies them; `blunderdb
    edit` sets them and `info` prints them; the daemon exposes them on a tenant-scoped
    `/v1` route. They are **not** in `issuance.CarriedMetadataKeys`: a threshold is the
    owner's reading habit, not a fact of the positions.
@@ -75,3 +76,6 @@ outside Row-Level Security, whose load/save routes were removed after #156.
 - The error histogram keeps its fixed magnitudes (…50–100, 100+): it shows a distribution,
   not categories, and is documented as such.
 - The manual's status bar section no longer names "one hundred millipoints".
+- The desktop `LoadMetadata` reads four keys by name, so the GUI never even hands the
+  thresholds to an export; the allow-list is the guarantee, and
+  `TestExport_ThresholdsDoNotTravel` holds it against a caller that passes everything.
