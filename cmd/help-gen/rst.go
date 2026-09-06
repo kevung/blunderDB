@@ -297,25 +297,6 @@ func isBullet(line string) bool {
 	return strings.HasPrefix(t, "- ") || strings.HasPrefix(t, "* ")
 }
 
-func splitParagraphs(body []string) []string {
-	var out []string
-	var cur []string
-	for _, l := range body {
-		if strings.TrimSpace(l) == "" {
-			if len(cur) > 0 {
-				out = append(out, strings.Join(cur, " "))
-				cur = nil
-			}
-			continue
-		}
-		cur = append(cur, strings.TrimSpace(l))
-	}
-	if len(cur) > 0 {
-		out = append(out, strings.Join(cur, " "))
-	}
-	return out
-}
-
 // parseCSVTable reads the `:header:` option and the data rows of a
 // `.. csv-table::` directive body, the same way docutils does: each is a CSV
 // record, so a comma inside a quoted cell is data.
