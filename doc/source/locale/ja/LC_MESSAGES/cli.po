@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -859,8 +859,8 @@ msgstr ""
 "どの規則も認識しないトークンは、検索を黙って絞り込むのではなく、コマンドを失敗させます。コマンドラインに盤面がないことから、二つの制限が生じます。駒の配置パターンは入力できません。また\\"
 " ``cube``\\ 、\\ ``score``\\ 、\\ ``D``\\ "
 "は検索用の盤面と比較されますが、ここではそれが空です。これらのいずれかを必要とする検索は、\\ ``--query``\\ "
-"がそれらと組み合わせられないため、\\ **すべて**\\ フラグで書きます — 例えば、30 ピップ遅れている状況でのキューブ判断のうち、少なくとも "
-"50 ミリポイントの誤りがあるものは次のようになります："
+"がそれらと組み合わせられないため、\\ **すべて**\\ フラグで書きます — 例えば、30 "
+"ピップ遅れている状況でのキューブ判断のうち、少なくとも 50 ミリポイントの誤りがあるものは次のようになります："
 
 #: ../../source/cli.rst:414
 msgid "list — Lister le contenu"
@@ -1418,8 +1418,8 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
-"**並列処理**\\ （\\ ``--jobs``\\ ）。バッチ内のポジションは互いに独立しており——どの探索も次の探索に影響しない——そのため "
-"``--jobs`` 個のスレッドに分配され、各スレッドは独自の評価器を持ちます。書き込まれる分析は ``--jobs`` の値に\\ "
+"**並列処理**\\ （\\ ``--jobs``\\ ）。バッチ内のポジションは互いに独立しており——どの探索も次の探索に影響しない——そのため"
+" ``--jobs`` 個のスレッドに分配され、各スレッドは独自の評価器を持ちます。書き込まれる分析は ``--jobs`` の値に\\ "
 "**かかわらず同一**\\ で、変わるのは計算時間だけです。\\ ``--jobs 1`` "
 "はマシンを他の用途のために空けておきます。キャンセルは影響を受けません：Ctrl-C "
 "は新しいポジションに入る前にバッチを停止し、すでに計算済みのものはすべて書き込まれます。"
@@ -1806,34 +1806,46 @@ msgstr ""
 "<shell>``\\ を実行する。リポジトリには何もコミットされないため、補完がサブコマンドのテーブルからずれることは決してない。"
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — バージョンを表示する"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"blunderDB のバージョンと、このバイナリが書き込むデータベーススキーマのバージョンを表示します。バグ報告に最初に添えるべき情報です。"
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "ワークフロー例"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "トーナメントディレクトリのインポート"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "定期バックアップ"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "エラー分析"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "終了コード"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — 成功。"
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — エラー。"
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "これにより、エラー処理を含むスクリプトでCLIを使用できます："
 

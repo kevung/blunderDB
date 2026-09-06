@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -2014,34 +2014,47 @@ msgstr ""
 " dei sottocomandi."
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — Mostrare la versione"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Mostra la versione di blunderDB e quella dello schema di database che questo "
+"binario scrive; è la prima cosa da allegare a una segnalazione di bug."
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "Esempi di flusso di lavoro"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import di una cartella di torneo"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "Backup periodico"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "Analisi degli errori"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "Codici di uscita"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — Successo."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — Errore."
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Questo permette di utilizzare la CLI in script con gestione degli errori:"
 

@@ -1,16 +1,18 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
 # This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
-# SPDX-FileCopyrightText: 2026 Kévin Unger <blunderdb@proton.me>
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 00:14+0200\n"
-"PO-Revision-Date: 2026-04-21 00:00+0200\n"
-"Last-Translator: unger <blunderdb@proton.me>\n"
+"POT-Creation-Date: 2026-09-06 02:28+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
-"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -19,5 +21,5 @@ msgstr ""
 
 #: ../../source/stats.rst:4
 msgid "Cette page a été intégrée dans la section :ref:`stats` du :ref:`manuel`."
-msgstr "This page has been integrated into the :ref:`stats` section of the :ref:`manuel`."
+msgstr ""
 

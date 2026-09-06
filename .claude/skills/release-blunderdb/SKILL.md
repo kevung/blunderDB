@@ -141,7 +141,8 @@ Steps:
 2. For each user-facing change since the last tag (the `feat`/`fix` set from
    Phase 0), make sure the feature is documented in the relevant French `.rst`
    (`manuel.rst`, `guide_utilisateur.rst`, `cmd_mode.rst`, `cli.rst`,
-   `raccourcis.rst`, `stats.rst`, `faq.rst`, the `annexe_*.rst`, etc.). Add or fix
+   `raccourcis.rst`, `stats_parity.rst` and the *Panneau Stats* section of
+   `manuel.rst`, `faq.rst`, the `annexe_*.rst`, etc.). Add or fix
    the French prose first. Keep each file ≤500 lines (project rule); split if
    needed.
 
@@ -151,6 +152,7 @@ Steps:
 
    ```bash
    grep -n "DatabaseVersion =" pkg/blunderdb/domain/domain.go   # vs CLAUDE.md
+   grep -n "2\.[0-9]*\.[0-9]" doc/source/annexe_db_scheme.rst        # the annex names the CURRENT schema once
    grep -nE "go-version|node-version|version: v2" .github/workflows/build.yml
    sed -n '20,45p' main.go                                      # mode dispatch list
    ```
@@ -178,13 +180,13 @@ Steps:
    (one was tried in H.11 and removed four days later).
 
 4. Regenerate **all** translation catalogs so new/changed French strings get
-   fresh `msgid` entries, then translate them. The repo's `doc/README.txt`
-   documents the workflow:
+   fresh `msgid` entries, then translate them. Use the repo script and nothing
+   else — it keeps the gettext output path relative and repairs the
+   `python-format` flag msgmerge re-adds (CLAUDE.md, Documentation):
 
    ```bash
-   cd doc
-   make gettext                                              # extract msgids → build/gettext/*.pot
-   sphinx-intl update -l fr -l en -l de -l el -l es -l fi -l it -l ja -l ru
+   source .venv/bin/activate
+   scripts/doc-po-update.sh
    ```
 
    Then **check translation freshness per language** — this is the "verify the
@@ -415,6 +417,27 @@ change (this repo's CI runners are shared/variable hardware, unlike whatever
 machine last regenerated it); re-run once if a number looks implausible.
 Commit `tasks/bench/baseline.txt` with the Phase 2b packaging-metadata commit
 (or its own small commit) before cutting the release in Phase 3.
+
+---
+
+## Phase 2c — Screenshots
+
+The documentation gallery — `doc/source/_static/screenshot.png` (the product
+page and README hero shot) and `doc/source/img/panel_*.png` (manual and guide)
+— is rendered from the real UI on a mocked backend by `make screenshots`
+(Playwright, showcase dataset). Nothing regenerates it automatically, and a
+panel that changed after its last capture ships a stale picture in nine
+languages and nine PDFs. Every X.Y.0:
+
+```bash
+make screenshots            # needs the Playwright browsers; BLUNDERDB_E2E_PORT if 5173 is taken
+git status --short doc/source/img doc/source/_static
+```
+
+Review each changed image (open it — a capture that moved a modal or lost a
+panel is a regression, not an update) and commit the set with the
+packaging-metadata commit. The `Makefile` says this is "verified at release
+time (skill release-blunderdb)": this phase is that verification.
 
 ---
 

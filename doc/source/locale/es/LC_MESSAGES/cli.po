@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -416,26 +416,26 @@ msgid ""
 "dossier chaque nuit doit s'attendre à ce code ;"
 msgstr ""
 "**no se importó nada nuevo** — cada archivo falló *o* ya estaba en la "
-"base — : error, se pase o no ``--fail-on-error``. Un directorio "
-"relanzado sin ningún archivo nuevo termina, por tanto, en error, con el "
-"recuento de duplicados en el mensaje; un script que relanza la misma "
-"carpeta cada noche debe esperar este código;"
+"base — : error, se pase o no ``--fail-on-error``. Un directorio relanzado"
+" sin ningún archivo nuevo termina, por tanto, en error, con el recuento "
+"de duplicados en el mensaje; un script que relanza la misma carpeta cada "
+"noche debe esperar este código;"
 
 #: ../../source/cli.rst:129
 msgid ""
 "**échec partiel** (certains éléments importés, d'autres refusés) : erreur"
 " seulement si ``--fail-on-error`` est passé ;"
 msgstr ""
-"**fallo parcial** (algunos elementos importados, otros rechazados): "
-"error solo si se pasa ``--fail-on-error``;"
+"**fallo parcial** (algunos elementos importados, otros rechazados): error"
+" solo si se pasa ``--fail-on-error``;"
 
 #: ../../source/cli.rst:131
 msgid ""
 "au moins un élément nouveau importé, sans ``--fail-on-error`` : succès, "
 "les fichiers refusés étant listés dans le tableau."
 msgstr ""
-"al menos un elemento nuevo importado, sin ``--fail-on-error``: éxito, "
-"con los archivos rechazados listados en la tabla."
+"al menos un elemento nuevo importado, sin ``--fail-on-error``: éxito, con"
+" los archivos rechazados listados en la tabla."
 
 #: ../../source/cli.rst:135
 msgid "Import d'un match"
@@ -945,13 +945,13 @@ msgid ""
 "millipoints :"
 msgstr ""
 "Un token que nada reconoce hace fallar la orden en lugar de reducir la "
-"búsqueda en silencio. Dos límites derivan de la ausencia de tablero en "
-"la línea de órdenes: el patrón de fichas no se teclea, y ``cube``, "
-"``score`` y ``D`` se comparan con el tablero de búsqueda, vacío aquí. "
-"Una búsqueda que necesite alguna de ellas se escribe **enteramente** "
-"con opciones, ya que ``--query`` no se combina con ellas — por "
-"ejemplo, las decisiones de cubo con 30 pips de retraso y un error de "
-"al menos 50 milipuntos:"
+"búsqueda en silencio. Dos límites derivan de la ausencia de tablero en la"
+" línea de órdenes: el patrón de fichas no se teclea, y ``cube``, "
+"``score`` y ``D`` se comparan con el tablero de búsqueda, vacío aquí. Una"
+" búsqueda que necesite alguna de ellas se escribe **enteramente** con "
+"opciones, ya que ``--query`` no se combina con ellas — por ejemplo, las "
+"decisiones de cubo con 30 pips de retraso y un error de al menos 50 "
+"milipuntos:"
 
 #: ../../source/cli.rst:414
 msgid "list — Lister le contenu"
@@ -2017,34 +2017,48 @@ msgstr ""
 "de subcomandos."
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — Mostrar la versión"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Muestra la versión de blunderDB y la del esquema de base de datos que "
+"escribe este binario; es lo primero que hay que adjuntar a un informe de "
+"error."
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "Ejemplos de flujos de trabajo"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "Importar un directorio de torneo"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "Copia de seguridad periódica"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "Análisis de errores"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "Códigos de salida"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — Éxito."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
 

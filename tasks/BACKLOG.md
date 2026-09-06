@@ -130,6 +130,13 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passant ».
 ## Ouvert — Produit / docs
 
+- **`doc/source/img/panel_anki.png` est périmée** : capture du 2026-09-03,
+  `AnkiPanel.svelte` a changé de 135 lignes le 2026-09-06 (persona 7, #7).
+  `make screenshots` demande les navigateurs Playwright, qui ne s'installent
+  pas sur le poste de développement ; à régénérer en CI ou sur une machine qui
+  les a, puis relire chaque image. La skill de release a désormais une phase
+  2c pour cela.
+
 - **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
   (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
   10 (ADR-0017/0018/0021). → fiche H.7 (#249).

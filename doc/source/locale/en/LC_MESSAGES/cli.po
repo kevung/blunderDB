@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: 2026-04-20 17:00+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -410,8 +410,8 @@ msgid ""
 "**échec partiel** (certains éléments importés, d'autres refusés) : erreur"
 " seulement si ``--fail-on-error`` est passé ;"
 msgstr ""
-"**partial failure** (some items imported, others rejected): error only "
-"if ``--fail-on-error`` is passed;"
+"**partial failure** (some items imported, others rejected): error only if"
+" ``--fail-on-error`` is passed;"
 
 #: ../../source/cli.rst:131
 msgid ""
@@ -465,8 +465,8 @@ msgid ""
 msgstr ""
 "A summary table shows for each file whether the import succeeded (✓), "
 "failed (✗) or was a duplicate (⊘). A duplicate is not counted as a "
-"failure, but a batch containing only duplicates has imported nothing "
-"and exits in error (see the three rules above)."
+"failure, but a batch containing only duplicates has imported nothing and "
+"exits in error (see the three rules above)."
 
 #: ../../source/cli.rst:176
 msgid "export — Exporter des données"
@@ -1950,34 +1950,47 @@ msgstr ""
 "subcommand table."
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — Show the version"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Prints blunderDB's version and the database schema version this binary "
+"writes; it is the first thing to attach to a bug report."
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "Workflow examples"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import a tournament directory"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "Regular backup"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "Error analysis"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "Exit codes"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — Success."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "This makes the CLI suitable for use in scripts with error handling:"
 

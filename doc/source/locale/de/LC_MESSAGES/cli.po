@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -429,8 +429,8 @@ msgid ""
 "**échec partiel** (certains éléments importés, d'autres refusés) : erreur"
 " seulement si ``--fail-on-error`` est passé ;"
 msgstr ""
-"**teilweiser Fehlschlag** (manche Elemente importiert, andere "
-"abgelehnt): Fehler nur, wenn ``--fail-on-error`` übergeben wird;"
+"**teilweiser Fehlschlag** (manche Elemente importiert, andere abgelehnt):"
+" Fehler nur, wenn ``--fail-on-error`` übergeben wird;"
 
 #: ../../source/cli.rst:131
 msgid ""
@@ -950,10 +950,10 @@ msgstr ""
 "daraus, dass es auf der Kommandozeile kein Brett gibt: Das Steinmuster "
 "lässt sich nicht tippen, und ``cube``, ``score`` und ``D`` vergleichen "
 "mit dem Suchbrett, das hier leer ist. Eine Suche, die eines davon "
-"braucht, wird **vollständig** mit Optionen geschrieben, da sich ``--"
-"query`` nicht mit ihnen kombinieren lässt — zum Beispiel die "
-"Doppler-Entscheidungen mit mindestens 30 Pips Rückstand und einem Fehler "
-"von mindestens 50 Millipoints:"
+"braucht, wird **vollständig** mit Optionen geschrieben, da sich "
+"``--query`` nicht mit ihnen kombinieren lässt — zum Beispiel die Doppler-"
+"Entscheidungen mit mindestens 30 Pips Rückstand und einem Fehler von "
+"mindestens 50 Millipoints:"
 
 #: ../../source/cli.rst:414
 msgid "list — Lister le contenu"
@@ -2029,34 +2029,48 @@ msgstr ""
 "Unterbefehlstabelle abweichen kann."
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — Version anzeigen"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Zeigt die Version von blunderDB und die Version des Datenbankschemas, das "
+"diese Binärdatei schreibt; das ist das Erste, was einem Fehlerbericht "
+"beizulegen ist."
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "Workflow-Beispiele"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "Ein Turnierverzeichnis importieren"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "Regelmäßige Sicherung"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "Fehleranalyse"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "Rückgabecodes"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — Erfolg."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — Fehler."
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Dadurch lässt sich die CLI in Skripten mit Fehlerbehandlung verwenden:"
 

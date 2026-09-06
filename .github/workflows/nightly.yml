@@ -282,6 +282,56 @@ jobs:
   # tracker. A manual, PR-targeted benchstat dispatch (pr_number set) is
   # excluded: that failure already reached the PR via the comment above, and
   # is not the nightly run being red.
+  # docs-linkcheck: the documentation's 49 external links are never followed
+  # by build.yml (network on every PR is slow and flaky) and had never been
+  # followed at all (tasks/critique-doc-2026-09, persona 7 #10). Nightly,
+  # French source only (the eight translations carry the same URLs), and
+  # advisory: a broken link is a report in the run summary, not a red
+  # nightly — sites go down for a night and come back.
+  docs-linkcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: doc/requirements.txt
+
+      - name: Install Sphinx
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./doc/requirements.txt
+
+      - name: Follow every external link of the French source
+        run: |
+          cd doc
+          sphinx-build -q -b linkcheck source build/linkcheck || true
+          {
+            echo "## Documentation link check"
+            echo
+            if grep -q '"status": "broken"' build/linkcheck/output.json 2>/dev/null; then
+              echo '| Page | Link | Reason |'
+              echo '|---|---|---|'
+              python - <<'PY'
+          import json
+          for line in open("build/linkcheck/output.json", encoding="utf-8"):
+              r = json.loads(line)
+              if r.get("status") == "broken":
+                  print(f"| {r['filename']}:{r['lineno']} | {r['uri']} | {r['info'].replace('|', '/')} |")
+          PY
+            else
+              echo "No broken link."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          grep -c '"status": "broken"' build/linkcheck/output.json 2>/dev/null && exit 1 || exit 0
+        shell: bash
+
   notify-on-failure:
     needs: [test-os-full, gammonnet-race-full, benchstat, loadtest]
     if: >-

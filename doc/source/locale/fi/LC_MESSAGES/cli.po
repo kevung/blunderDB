@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-09-06 02:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -476,11 +476,11 @@ msgid ""
 "compté comme un échec, mais un lot qui n'en contient que des doublons n'a"
 " rien importé et sort en erreur (voir les trois règles ci-dessus)."
 msgstr ""
-"Yhteenvetotaulukko näyttää jokaisen tiedoston kohdalla, onnistuiko tuonti "
-"(✓), epäonnistuiko (✗) vai oliko kyseessä kaksoiskappale (⊘). "
+"Yhteenvetotaulukko näyttää jokaisen tiedoston kohdalla, onnistuiko tuonti"
+" (✓), epäonnistuiko (✗) vai oliko kyseessä kaksoiskappale (⊘). "
 "Kaksoiskappaletta ei lasketa epäonnistumiseksi, mutta erä, jossa on "
-"pelkkiä kaksoiskappaleita, ei ole tuonut mitään ja päättyy virheeseen (ks. "
-"kolme sääntöä yllä)."
+"pelkkiä kaksoiskappaleita, ei ole tuonut mitään ja päättyy virheeseen "
+"(ks. kolme sääntöä yllä)."
 
 #: ../../source/cli.rst:176
 msgid "export — Exporter des données"
@@ -941,10 +941,10 @@ msgid ""
 msgstr ""
 "Tunnistamaton osanen kaataa komennon sen sijaan että kaventaisi hakua "
 "hiljaisesti. Kaksi rajoitusta seuraa siitä, ettei komentorivillä ole "
-"lautaa: nappulakuviota ei voi kirjoittaa, ja ``cube``, ``score`` ja ``D`` "
-"vertautuvat hakulautaan, joka on täällä tyhjä. Haku, joka tarvitsee "
-"jotakin näistä, kirjoitetaan **kokonaan** valitsimilla, koska ``--query`` "
-"ei yhdisty niihin — esimerkiksi kuutiopäätökset, joissa pip-ero on "
+"lautaa: nappulakuviota ei voi kirjoittaa, ja ``cube``, ``score`` ja ``D``"
+" vertautuvat hakulautaan, joka on täällä tyhjä. Haku, joka tarvitsee "
+"jotakin näistä, kirjoitetaan **kokonaan** valitsimilla, koska ``--query``"
+" ei yhdisty niihin — esimerkiksi kuutiopäätökset, joissa pip-ero on "
 "vähintään 30 ja virhe vähintään 50 millipistettä:"
 
 #: ../../source/cli.rst:414
@@ -1561,13 +1561,14 @@ msgid ""
 " : Ctrl-C arrête le lot avant toute nouvelle position, et tout ce qui "
 "était déjà calculé est écrit."
 msgstr ""
-"**Rinnakkaisuus** (``--jobs``). Erän asemat ovat toisistaan riippumattomia "
-"— mikään haku ei vaikuta seuraavaan — joten ne jaetaan ``--jobs`` "
-"säikeelle, joista jokaisella on oma evaluaattorinsa. Kirjoitetut analyysit "
-"ovat **identtiset riippumatta siitä, mikä arvo on annettu valitsimelle** "
-"``--jobs``; vain laskenta-aika muuttuu. ``--jobs 1`` jättää koneen "
-"vapaaksi muuhun käyttöön. Keskeytys ei muutu: Ctrl-C pysäyttää erän ennen "
-"jokaista uutta asemaa, ja kaikki jo laskettu kirjoitetaan."
+"**Rinnakkaisuus** (``--jobs``). Erän asemat ovat toisistaan "
+"riippumattomia — mikään haku ei vaikuta seuraavaan — joten ne jaetaan "
+"``--jobs`` säikeelle, joista jokaisella on oma evaluaattorinsa. "
+"Kirjoitetut analyysit ovat **identtiset riippumatta siitä, mikä arvo on "
+"annettu valitsimelle** ``--jobs``; vain laskenta-aika muuttuu. ``--jobs "
+"1`` jättää koneen vapaaksi muuhun käyttöön. Keskeytys ei muutu: Ctrl-C "
+"pysäyttää erän ennen jokaista uutta asemaa, ja kaikki jo laskettu "
+"kirjoitetaan."
 
 #: ../../source/cli.rst:794
 msgid ""
@@ -2002,34 +2003,47 @@ msgstr ""
 " joten täydennys ei voi koskaan poiketa alikomentotaulukosta."
 
 #: ../../source/cli.rst:1131
+msgid "version — Afficher la version"
+msgstr "version — Näytä versio"
+
+#: ../../source/cli.rst:1133
+msgid ""
+"Affiche la version de blunderDB et celle du schéma de base de données que"
+" ce binaire écrit ; c'est la première chose à joindre à un rapport de "
+"bug."
+msgstr ""
+"Näyttää blunderDB:n version ja tämän binäärin kirjoittaman tietokantaskeeman "
+"version; se on ensimmäinen asia, joka liitetään virheraporttiin."
+
+#: ../../source/cli.rst:1142
 msgid "Exemples de flux de travail"
 msgstr "Työnkulkuesimerkkejä"
 
-#: ../../source/cli.rst:1134
+#: ../../source/cli.rst:1145
 msgid "Import d'un répertoire de tournoi"
 msgstr "Turnaushakemiston tuonti"
 
-#: ../../source/cli.rst:1148
+#: ../../source/cli.rst:1159
 msgid "Sauvegarde régulière"
 msgstr "Säännöllinen varmuuskopiointi"
 
-#: ../../source/cli.rst:1156
+#: ../../source/cli.rst:1167
 msgid "Analyse des erreurs"
 msgstr "Virheiden analysointi"
 
-#: ../../source/cli.rst:1167
+#: ../../source/cli.rst:1178
 msgid "Codes de retour"
 msgstr "Paluukoodit"
 
-#: ../../source/cli.rst:1169
+#: ../../source/cli.rst:1180
 msgid "``0`` — Succès."
 msgstr "``0`` — Onnistui."
 
-#: ../../source/cli.rst:1170
+#: ../../source/cli.rst:1181
 msgid "``1`` — Erreur."
 msgstr "``1`` — Virhe."
 
-#: ../../source/cli.rst:1172
+#: ../../source/cli.rst:1183
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr ""
 "Tämä tekee CLI:stä sopivan käytettäväksi skripteissä virheenkäsittelyn "

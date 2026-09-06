@@ -1127,6 +1127,17 @@ moment de la construction, et le cask Homebrew exécute
 ``generate_completions_from_executable``. Rien n'est committé dans le dépôt :
 la complétion ne peut donc jamais dériver de la table des sous-commandes.
 
+version — Afficher la version
+-----------------------------
+
+Affiche la version de blunderDB et celle du schéma de base de données que ce
+binaire écrit ; c'est la première chose à joindre à un rapport de bug.
+
+.. code-block:: bash
+
+   ./blunderdb version
+   # blunderDB version 0.36.0 (database schema 2.19.0)
+
 Exemples de flux de travail
 -----------------------------
 
