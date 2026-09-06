@@ -33,10 +33,11 @@ export const searchStructureModeStore = writable('include');
 export const searchOfferedCubeStore = writable(false);
 
 // boardHasCheckers reports whether a position/board template has any checker set.
+/** @param {{ board?: { points?: Array<{ checkers: number, color: number } | null> } } | null | undefined} position */
 export function boardHasCheckers(position) {
     const points = position?.board?.points;
     if (!points) return false;
-    return points.some((p) => p && p.checkers > 0 && p.color >= 0);
+    return points.some((p) => p != null && p.checkers > 0 && p.color >= 0);
 }
 
 // excludePositionHistoryJSON returns the current exclude board as JSON for storing

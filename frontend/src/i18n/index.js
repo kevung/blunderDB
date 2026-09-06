@@ -41,28 +41,43 @@ export const LANGUAGE_LABELS = {
 // static import: it is the second link of the fallback chain and the seed
 // value of `language`, so it must be available before any async load resolves.
 const localeLoaders = import.meta.glob('./locales/*.json');
+/** @type {Record<string, any>} */
 const messages = { en };
 
+/** @param {string} lang */
 async function ensureLocaleLoaded(lang) {
     if (messages[lang]) return;
     const loader = localeLoaders[`./locales/${lang}.json`];
     if (!loader) return;
-    const mod = await loader();
+    const mod = /** @type {{ default?: any }} */ (await loader());
     messages[lang] = mod.default ?? mod;
 }
 
 // Resolve a dotted key path against a nested dictionary.
+/**
+ * @param {any} dict
+ * @param {string} key
+ */
 function lookup(dict, key) {
     if (!dict) return undefined;
-    return key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), dict);
+    return key.split('.').reduce((/** @type {any} */ o, /** @type {string} */ k) => (o == null ? undefined : o[k]), dict);
 }
 
 // Replace {placeholders} with values from params. Unknown placeholders are left intact.
+/**
+ * @param {unknown} str
+ * @param {Record<string, unknown> | undefined} params
+ */
 function interpolate(str, params) {
     if (typeof str !== 'string' || !params) return str;
     return str.replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m));
 }
 
+/**
+ * @param {string} lang
+ * @param {string} key
+ * @param {Record<string, unknown> | undefined} params
+ */
 function translateFor(lang, key, params) {
     let raw = lookup(messages[lang], key);
     if (raw === undefined && lang !== FALLBACK_LOCALE) {
