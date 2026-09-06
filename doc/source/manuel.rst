@@ -798,6 +798,15 @@ La dernière position visitée dans chaque match est mémorisée et restaurée
 automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match``
 pour afficher ou masquer le panneau.
 
+Le bouton **⊕** d'une ligne enrichit ce match depuis un fichier. Il n'y a rien
+de nouveau derrière : réimporter le même match dans un autre format
+l'enrichit déjà en place — l'empreinte canonique reconnaît qu'il s'agit du
+même match, et les analyses et commentaires du second fichier viennent
+compléter le premier. Ce que le bouton apporte, c'est qu'on le trouve :
+personne ne devine qu'un import est aussi un enrichissement. Le compte rendu
+qui suit dit lequel des deux a eu lieu — « enrichis : 1 » plutôt que
+« importés : 1 ».
+
 Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le
 bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du match.
 
@@ -1492,6 +1501,13 @@ le plus souvent d'une position déjà en main. Deux gestes l'y amènent :
   puis la coller une fois dans le panneau Eval. Le collage accepte aussi un
   XGID venu d'ailleurs (eXtreme Gammon, GNU Backgammon, une autre instance de
   blunderDB) : il suffit qu'il soit dans le presse-papier.
+
+* **La commande** ``import XGID=…`` pour le cas où l'identifiant n'est pas
+  dans le presse-papier mais dans un message, sur un forum lu dans un
+  terminal, ou produit par un script. C'est le même verbe qu'``import`` tout
+  court : sans argument il ouvre un sélecteur de fichiers, avec un argument il
+  lit l'identifiant. Le chemin est ensuite identique à celui du collage — même
+  lecture, même déduplication, même ouverture de la position importée.
 
 Le plateau du panneau Eval est un brouillon : la position y arrive sans son
 identifiant de base, de sorte qu'aucune modification faite ici ne peut

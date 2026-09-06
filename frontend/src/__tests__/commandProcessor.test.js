@@ -464,6 +464,7 @@ describe('processCommand', () => {
             onImportDatabase: vi.fn(),
             onExportDatabase: vi.fn(),
             importPosition: vi.fn(),
+            onImportIdentifier: vi.fn(),
             onSavePosition: vi.fn(),
             onUpdatePosition: vi.fn(),
             onDeletePosition: vi.fn(),
@@ -606,6 +607,21 @@ describe('processCommand', () => {
     test('met opens MET modal', () => {
         processCommand('met');
         expect(get(activeModal)).toBe(MODAL.MET);
+    });
+
+    // `import` sans argument choisit un fichier ; avec un argument il lit
+    // l'identifiant (#262). Deux formes du même verbe, et la seconde ne doit
+    // pas être avalée par la première.
+    test('import without an argument opens the file picker', () => {
+        processCommand('import');
+        expect(callbacks.importPosition).toHaveBeenCalled();
+        expect(callbacks.onImportIdentifier).not.toHaveBeenCalled();
+    });
+
+    test('import with an argument reads the identifier', () => {
+        processCommand('import XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10');
+        expect(callbacks.onImportIdentifier).toHaveBeenCalledWith('XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10');
+        expect(callbacks.importPosition).not.toHaveBeenCalled();
     });
 
     test('cm opens the cube matrix modal', () => {

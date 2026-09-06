@@ -892,7 +892,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Importiert eine oder mehrere Positionen/Matches aus einer Datei (xg, xgp, sgf, mat, txt, bgf).</td>
+<td>Importiert eine oder mehrere Stellungen/Matches aus einer Datei (xg, xgp, sgf, mat, txt, bgf). Mit einem Argument — <code>import XGID=…</code> — liest es die Kennung, statt eine Dateiauswahl zu öffnen, für den Fall, dass sie aus einer Nachricht, einem Forum oder einem Skript kommt.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

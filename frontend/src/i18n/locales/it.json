@@ -540,7 +540,8 @@
         "swappedPlayers": "Giocatori scambiati",
         "tournamentCleared": "Torneo rimosso dal match",
         "tournamentSet": "Torneo \"{name}\" assegnato",
-        "confirmDelete": "Eliminare il match tra {player1} e {player2}?"
+        "confirmDelete": "Eliminare il match tra {player1} e {player2}?",
+        "enrichFromFile": "Arricchire da un file…"
     },
     "collection": {
         "addDescription": "Aggiungi una descrizione…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Posizione eliminata — recuperabile dal cestino (comando «trash»).",
         "watchImportDone": "Cartella sorvegliata: {succeeded} importate, {skipped} ignorate, {failed} fallite",
         "watchImportNotice": "Cartella sorvegliata: {succeeded} importate, {skipped} ignorate, {failed} fallite",
-        "watchImportReport": "Resoconto"
+        "watchImportReport": "Resoconto",
+        "importIdentifierEmpty": "Indicate un identificatore: import XGID=…",
+        "importIdentifierUnknown": "Identificatore non riconosciuto. Per ora è letto solo XGID.",
+        "importIdentifierSaved": "Posizione importata dall'identificatore.",
+        "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}"
     },
     "stats": {
         "title": "Stats",

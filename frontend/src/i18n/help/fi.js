@@ -882,7 +882,7 @@ export default {
 <tbody>
 <tr>
 <td>import, i</td>
-<td>Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, txt, bgf).</td>
+<td>Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, txt, bgf). Argumentin kanssa — <code>import XGID=…</code> — lukee tunnisteen tiedostovalitsimen avaamisen sijaan, kun se tulee viestistä, foorumilta tai skriptistä.</td>
 </tr>
 <tr>
 <td>delete, del, d</td>

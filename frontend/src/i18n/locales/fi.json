@@ -540,7 +540,8 @@
         "swappedPlayers": "Pelaajat vaihdettu",
         "tournamentCleared": "Turnaus poistettu ottelusta",
         "tournamentSet": "Turnaus \"{name}\" asetettu",
-        "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?"
+        "confirmDelete": "Poistetaanko ottelu pelaajien {player1} ja {player2} välillä?",
+        "enrichFromFile": "Rikasta tiedostosta…"
     },
     "collection": {
         "addDescription": "Lisää kuvaus…",
@@ -1109,7 +1110,11 @@
         "positionDeletedUndo": "Asema poistettu — palautettavissa roskakorista (”trash”-komento).",
         "watchImportDone": "Valvottu kansio: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
         "watchImportNotice": "Valvottu kansio: {succeeded} tuotu, {skipped} ohitettu, {failed} epäonnistui",
-        "watchImportReport": "Raportti"
+        "watchImportReport": "Raportti",
+        "importIdentifierEmpty": "Anna tunniste: import XGID=…",
+        "importIdentifierUnknown": "Tuntematon tunniste. Toistaiseksi luetaan vain XGID.",
+        "importIdentifierSaved": "Asema tuotu tunnisteesta.",
+        "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}"
     },
     "stats": {
         "title": "Tilastot",

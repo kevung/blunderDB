@@ -1148,3 +1148,76 @@ export async function analyzeRemainingAfterImport() {
         setStatusBarMessage(tMsg('status.errorStartingAnalysis', { error }));
     }
 }
+
+/**
+ * Importe une position depuis un identifiant TAPÉ, plutôt que collé (#262,
+ * fiche I.6).
+ *
+ * Le presse-papier marche déjà, et c'est le geste courant. Il ne marche pas
+ * quand l'identifiant arrive d'ailleurs : d'un message, d'un forum lu dans un
+ * terminal, d'un script. La commande `import XGID=…` couvre ce cas-là, avec
+ * exactement le même chemin — même analyse du texte, même déduplication, même
+ * ouverture de la position importée.
+ *
+ * OGID n'est pas encore reconnu : sa grammaire doit être relevée sur des
+ * échantillons réels avant qu'on écrive ce lecteur (#260). Un identifiant qui
+ * n'est pas un XGID est donc refusé en le disant, plutôt que deviné.
+ *
+ * @param {string} text
+ */
+export async function importIdentifier(text) {
+    if (!get(databasePathStore)) {
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
+        return null;
+    }
+    const trimmed = (text || '').trim();
+    if (!trimmed) {
+        setStatusBarMessage(tMsg('status.importIdentifierEmpty'));
+        return null;
+    }
+    if (!trimmed.includes('XGID=')) {
+        setStatusBarMessage(tMsg('status.importIdentifierUnknown'));
+        return null;
+    }
+    try {
+        const { positionData, parsedAnalysis } = await parsePositionText(trimmed);
+        const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, tMsg('status.importIdentifierSaved'));
+        if (posID) await showImportedPosition(posID);
+        return posID;
+    } catch (error) {
+        logger.error('could not import the pasted identifier:', error);
+        setStatusBarMessage(tMsg('status.importIdentifierFailed', { error }));
+        return null;
+    } finally {
+        await maybeAutoAnalyzeAfterImport();
+    }
+}
+
+/**
+ * Enrichit un match depuis un fichier (#262, fiche I.6).
+ *
+ * Il n'y a rien de nouveau sous ce bouton, et c'est le propos : réimporter le
+ * même match dans un autre format l'enrichit déjà en place — la déduplication
+ * par empreinte canonique reconnaît qu'il s'agit du même match et fusionne les
+ * analyses et les commentaires du second fichier dans le premier. Ce que le
+ * bouton apporte, c'est de le rendre trouvable : personne ne devine qu'un
+ * import est aussi un enrichissement.
+ *
+ * Le compte rendu qui suit dit lequel des deux a eu lieu — « enrichis : 1 »
+ * plutôt que « importés : 1 ».
+ */
+export async function enrichMatchFromFile() {
+    if (!get(databasePathStore)) {
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
+        return;
+    }
+    let files;
+    try {
+        files = await OpenPositionFilesDialog();
+    } catch (error) {
+        logger.error('could not choose a file to enrich from:', error);
+        return;
+    }
+    if (!files || files.length === 0) return;
+    await importMultipleFiles(files);
+}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 06:14+0200\n"
+"POT-Creation-Date: 2026-09-06 06:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Manuel"
 msgstr "Manuale"
 
-#: ../../source/manuel.rst:7 ../../source/manuel.rst:870
+#: ../../source/manuel.rst:7 ../../source/manuel.rst:879
 msgid "Introduction"
 msgstr "Introduzione"
 
@@ -1107,7 +1107,7 @@ msgstr ""
 "``[number]`` della riga di comando (vedere :ref:`cmd_positions`)."
 
 #: ../../source/manuel.rst:467 ../../source/manuel.rst:480
-#: ../../source/manuel.rst:830
+#: ../../source/manuel.rst:839
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr "Fare riferimento a :ref:`raccourcis` per le scorciatoie disponibili."
 
@@ -1811,6 +1811,26 @@ msgstr ""
 
 #: ../../source/manuel.rst:801
 msgid ""
+"Le bouton **⊕** d'une ligne enrichit ce match depuis un fichier. Il n'y a"
+" rien de nouveau derrière : réimporter le même match dans un autre format"
+" l'enrichit déjà en place — l'empreinte canonique reconnaît qu'il s'agit "
+"du même match, et les analyses et commentaires du second fichier viennent"
+" compléter le premier. Ce que le bouton apporte, c'est qu'on le trouve : "
+"personne ne devine qu'un import est aussi un enrichissement. Le compte "
+"rendu qui suit dit lequel des deux a eu lieu — « enrichis : 1 » plutôt "
+"que « importés : 1 »."
+msgstr ""
+"Il pulsante **⊕** di una riga arricchisce quell'incontro da un file. "
+"Dietro non c'è nulla di nuovo: reimportare lo stesso incontro in un altro"
+" formato lo arricchisce già sul posto — l'impronta canonica riconosce che"
+" si tratta dello stesso incontro, e le analisi e i commenti del secondo "
+"file completano il primo. Ciò che il pulsante apporta è che lo si trova: "
+"nessuno indovina che un'importazione è anche un arricchimento. Il "
+"resoconto che segue dice quale dei due è avvenuto — «arricchiti: 1» "
+"invece di «importati: 1»."
+
+#: ../../source/manuel.rst:810
+msgid ""
 "Chaque match peut être exporté en transcription Jellyfish ``.mat`` via le"
 " bouton ⬇ de la liste des matchs ou le bouton *.mat* de la fiche du "
 "match."
@@ -1819,7 +1839,7 @@ msgstr ""
 "tramite il pulsante ⬇ dell'elenco dei match o il pulsante *.mat* della "
 "scheda del match."
 
-#: ../../source/manuel.rst:804
+#: ../../source/manuel.rst:813
 msgid ""
 "Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre"
 " une fenêtre listant tous les noms de joueurs de la base avec leur nombre"
@@ -1835,7 +1855,7 @@ msgstr ""
 " Utile per unificare le statistiche per giocatore quando uno stesso "
 "giocatore compare con più nomi."
 
-#: ../../source/manuel.rst:810
+#: ../../source/manuel.rst:819
 msgid ""
 "Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-"
 "dessus du plateau : elle rappelle les joueurs en présence (*joueur 1* "
@@ -1859,7 +1879,7 @@ msgstr ""
 " badge « +N » che elenca gli altri al passaggio del mouse. Una posizione "
 "importata da sola, che nessun match referenzia, non mostra nulla."
 
-#: ../../source/manuel.rst:820
+#: ../../source/manuel.rst:829
 msgid ""
 "À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est "
 "affiché d'emblée et la revue débute directement sur la première position,"
@@ -1869,7 +1889,7 @@ msgstr ""
 " mostrato subito e la revisione inizia direttamente sulla prima "
 "posizione, così da cominciare immediatamente la navigazione."
 
-#: ../../source/manuel.rst:824
+#: ../../source/manuel.rst:833
 msgid ""
 "Une base de données ne peut être ouverte en écriture que par une seule "
 "fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre "
@@ -1883,11 +1903,11 @@ msgstr ""
 "e l'analisi restano possibili, ma qualsiasi modifica è disattivata e la "
 "barra del titolo mostra « [sola lettura] »."
 
-#: ../../source/manuel.rst:835 ../../source/manuel.rst:837
+#: ../../source/manuel.rst:844 ../../source/manuel.rst:846
 msgid "Panneau Tournois"
 msgstr "Pannello Tornei"
 
-#: ../../source/manuel.rst:841
+#: ../../source/manuel.rst:850
 msgid ""
 "Le panneau Tournois : un tournoi par ligne, nombre de matchs, PR du "
 "joueur de référence."
@@ -1895,7 +1915,7 @@ msgstr ""
 "Il pannello Tornei: un torneo per riga, numero di partite, PR del "
 "giocatore di riferimento."
 
-#: ../../source/manuel.rst:844
+#: ../../source/manuel.rst:853
 msgid ""
 "Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en "
 "tournois pour un suivi organisé et une analyse statistique par événement."
@@ -1911,7 +1931,7 @@ msgstr ""
 "possono essere filtrate per torneo. Premere *CTRL-Y* per mostrare o "
 "nascondere il pannello."
 
-#: ../../source/manuel.rst:850
+#: ../../source/manuel.rst:859
 msgid ""
 "Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, "
 "GnuBG et BGF nomment leur événement ; à l'import d'un match nouveau, "
@@ -1928,7 +1948,7 @@ msgstr ""
 "match già presente nel database non viene mai riclassificato: "
 "reimportarne il file non disfa la sistemazione fatta a mano."
 
-#: ../../source/manuel.rst:857
+#: ../../source/manuel.rst:866
 msgid ""
 "La colonne **PR** de chaque tournoi affiche le PR du **joueur de "
 "référence** — c'est-à-dire le joueur présent dans le plus grand nombre de"
@@ -1946,11 +1966,11 @@ msgstr ""
 "prestazione. Il nome del giocatore di riferimento appare in un "
 "suggerimento passando sopra il valore."
 
-#: ../../source/manuel.rst:867
+#: ../../source/manuel.rst:876
 msgid "Panneau Stats"
 msgstr "Pannello Stats"
 
-#: ../../source/manuel.rst:872
+#: ../../source/manuel.rst:881
 msgid ""
 "Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
 "progression dans le temps à partir des positions importées dans la base "
@@ -1964,11 +1984,11 @@ msgstr ""
 "(*Performance Rating*) e **MWC cost** (Match Winning Chance cost) per "
 "l'insieme delle posizioni o per un sottoinsieme filtrato."
 
-#: ../../source/manuel.rst:878
+#: ../../source/manuel.rst:887
 msgid "Le panneau Stats est particulièrement utile pour :"
 msgstr "Il pannello Stats è particolarmente utile per:"
 
-#: ../../source/manuel.rst:880
+#: ../../source/manuel.rst:889
 msgid ""
 "**situer son niveau** par rapport aux bandes de niveau (*Classe "
 "mondiale*, *Expert*, *Avancé*…) grâce au PR global ;"
@@ -1976,7 +1996,7 @@ msgstr ""
 "**collocare il proprio livello** rispetto alle fasce di livello (*Classe "
 "mondiale*, *Esperto*, *Avanzato*…) grazie al PR globale;"
 
-#: ../../source/manuel.rst:883
+#: ../../source/manuel.rst:892
 msgid ""
 "**suivre sa progression** tournoi après tournoi ou match après match "
 "grâce aux graphiques de l'onglet Progression ;"
@@ -1984,7 +2004,7 @@ msgstr ""
 "**seguire la propria progressione** torneo dopo torneo o match dopo match"
 " grazie ai grafici della scheda Progressione;"
 
-#: ../../source/manuel.rst:886
+#: ../../source/manuel.rst:895
 msgid ""
 "**identifier ses points faibles** : onglet Erreurs pour voir la "
 "répartition entre coups joués et décisions de videau, et la distribution "
@@ -1994,7 +2014,7 @@ msgstr ""
 "ripartizione tra mosse di pedine e decisioni di cubo e la distribuzione "
 "delle magnitudo d'errore;"
 
-#: ../../source/manuel.rst:890
+#: ../../source/manuel.rst:899
 msgid ""
 "**comparer les joueurs de la base** entre eux, une ligne par joueur, "
 "grâce à l'onglet Joueurs — utile pour suivre une compétition entière ;"
@@ -2003,7 +2023,7 @@ msgstr ""
 "giocatore, grazie alla scheda Giocatori — utile per seguire un'intera "
 "competizione;"
 
-#: ../../source/manuel.rst:893
+#: ../../source/manuel.rst:902
 msgid ""
 "**accéder directement aux positions concernées** en cliquant sur "
 "n'importe quel indicateur (drill-down)."
@@ -2011,23 +2031,23 @@ msgstr ""
 "**accedere direttamente alle posizioni interessate** cliccando su "
 "qualsiasi indicatore (drill-down)."
 
-#: ../../source/manuel.rst:897
+#: ../../source/manuel.rst:906
 msgid "Ouverture du panneau"
 msgstr "Apertura del pannello"
 
-#: ../../source/manuel.rst:899
+#: ../../source/manuel.rst:908
 msgid "Pour ouvrir le panneau Stats :"
 msgstr "Per aprire il pannello Stats:"
 
-#: ../../source/manuel.rst:901
+#: ../../source/manuel.rst:910
 msgid "Appuyer sur *CTRL-D*."
 msgstr "Premere *CTRL-D*."
 
-#: ../../source/manuel.rst:902
+#: ../../source/manuel.rst:911
 msgid "Saisir la commande ``stats`` ou ``st`` dans la ligne de commande."
 msgstr "Digitare il comando ``stats`` o ``st`` nella riga di comando."
 
-#: ../../source/manuel.rst:905
+#: ../../source/manuel.rst:914
 msgid ""
 "Le panneau se rafraîchit automatiquement à chaque modification du filtre."
 " Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ "
@@ -2037,11 +2057,11 @@ msgstr ""
 "ricalcola le statistiche in caso di semplice passaggio PR ↔ MWC: entrambe"
 " le metriche vengono calcolate simultaneamente dal backend."
 
-#: ../../source/manuel.rst:910
+#: ../../source/manuel.rst:919
 msgid "Barre de filtre"
 msgstr "Barra dei filtri"
 
-#: ../../source/manuel.rst:912
+#: ../../source/manuel.rst:921
 msgid ""
 "La barre de filtre, en haut du panneau, permet de restreindre le calcul à"
 " un sous-ensemble de positions."
@@ -2049,11 +2069,11 @@ msgstr ""
 "La barra dei filtri, in alto nel pannello, permette di limitare il "
 "calcolo a un sottoinsieme di posizioni."
 
-#: ../../source/manuel.rst:916
+#: ../../source/manuel.rst:925
 msgid "Perspective joueur"
 msgstr "Prospettiva del giocatore"
 
-#: ../../source/manuel.rst:918
+#: ../../source/manuel.rst:927
 msgid ""
 "La liste déroulante **Joueur** permet de filtrer les statistiques selon "
 "le joueur analysé. blunderDB sélectionne automatiquement le joueur dont "
@@ -2065,7 +2085,7 @@ msgstr ""
 "giocatore il cui nome compare più spesso nel database — modificabile in "
 "qualsiasi momento."
 
-#: ../../source/manuel.rst:923
+#: ../../source/manuel.rst:932
 msgid ""
 "Changer de joueur ne provoque pas de perte de données ; il suffit de re-"
 "sélectionner le joueur précédent dans la liste."
@@ -2073,11 +2093,11 @@ msgstr ""
 "Cambiare giocatore non comporta alcuna perdita di dati; è sufficiente "
 "riselezionare il giocatore precedente dall'elenco."
 
-#: ../../source/manuel.rst:927
+#: ../../source/manuel.rst:936
 msgid "Filtres disponibles"
 msgstr "Filtri disponibili"
 
-#: ../../source/manuel.rst:929
+#: ../../source/manuel.rst:938
 msgid ""
 "**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs "
 "tournois peuvent être sélectionnés simultanément."
@@ -2085,7 +2105,7 @@ msgstr ""
 "**Torneo(i)** — restrizione a uno o più tornei. È possibile selezionare "
 "più tornei contemporaneamente."
 
-#: ../../source/manuel.rst:932
+#: ../../source/manuel.rst:941
 msgid ""
 "**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
 "renseignée, les positions plus récentes sont incluses."
@@ -2093,11 +2113,11 @@ msgstr ""
 "**Date** — intervallo temporale (*Da* … *A*). Se viene indicata solo la "
 "data di inizio, vengono incluse le posizioni più recenti."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:944
 msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
 msgstr "**Tipo di decisione** — Tutti / Mosse di pedine / Decisioni di cubo."
 
-#: ../../source/manuel.rst:937
+#: ../../source/manuel.rst:946
 msgid ""
 "**Longueur de match** — restriction à des longueurs de match précises (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être "
@@ -2106,7 +2126,7 @@ msgstr ""
 "**Lunghezza del match** — restrizione a lunghezze di match specifiche (1,"
 " 3, 5, 7, 9, 11, 13, 15, 21 punti). È possibile combinare più lunghezze."
 
-#: ../../source/manuel.rst:940
+#: ../../source/manuel.rst:949
 msgid ""
 "Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur auto-"
 "détecté)."
@@ -2114,7 +2134,7 @@ msgstr ""
 "Un pulsante **Reset** azzera tutti i filtri (tranne il giocatore rilevato"
 " automaticamente)."
 
-#: ../../source/manuel.rst:944
+#: ../../source/manuel.rst:953
 msgid ""
 "Les filtres sont persistés dans la configuration de blunderDB "
 "(``config.yaml``) et sont restaurés à la prochaine ouverture."
@@ -2122,11 +2142,11 @@ msgstr ""
 "I filtri vengono salvati nella configurazione di blunderDB "
 "(``config.yaml``) e ripristinati all'avvio successivo."
 
-#: ../../source/manuel.rst:948
+#: ../../source/manuel.rst:957
 msgid "Toggle PR / MWC"
 msgstr "Commutazione PR / MWC"
 
-#: ../../source/manuel.rst:950
+#: ../../source/manuel.rst:959
 msgid ""
 "Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée "
 "dans tous les onglets."
@@ -2134,11 +2154,11 @@ msgstr ""
 "Il pulsante **PR / MWC** in alto nel pannello commuta la metrica "
 "visualizzata in tutte le schede."
 
-#: ../../source/manuel.rst:953
+#: ../../source/manuel.rst:962
 msgid "**PR (Performance Rating)**"
 msgstr "**PR (Performance Rating)**"
 
-#: ../../source/manuel.rst:955
+#: ../../source/manuel.rst:964
 msgid ""
 "L'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
 "le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue"
@@ -2152,7 +2172,7 @@ msgstr ""
 "esatta di conteggio — quali decisioni entrano nel denominatore, come il "
 "punteggio viene convertito — è quella di :ref:`stats_parity`."
 
-#: ../../source/manuel.rst:961
+#: ../../source/manuel.rst:970
 msgid ""
 "Les bandes de niveau que le panneau dessine derrière la courbe de "
 "progression sont un **repère indicatif propre à blunderDB** : aucune "
@@ -2220,11 +2240,11 @@ msgstr "Principiante"
 msgid "≥ 12"
 msgstr "≥ 12"
 
-#: ../../source/manuel.rst:978
+#: ../../source/manuel.rst:987
 msgid "**MWC cost (Match Winning Chance cost)**"
 msgstr "**MWC cost (Match Winning Chance cost)**"
 
-#: ../../source/manuel.rst:980
+#: ../../source/manuel.rst:989
 msgid ""
 "Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
 "l'ensemble du jeu de données filtré. Calculé à partir de la MET Kazaross-"
@@ -2234,7 +2254,7 @@ msgstr ""
 "sull'intero set di dati filtrato. Calcolata a partire dalla MET Kazaross-"
 "XG2 integrata in blunderDB."
 
-#: ../../source/manuel.rst:985
+#: ../../source/manuel.rst:994
 msgid ""
 "Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
 "enjeu de match). Ces positions sont exclues du calcul MWC. Les valeurs "
@@ -2246,7 +2266,7 @@ msgstr ""
 "MWC dipendono dalla MET utilizzata; non sono direttamente confrontabili "
 "tra software che usano MET diverse."
 
-#: ../../source/manuel.rst:990
+#: ../../source/manuel.rst:999
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."
@@ -2254,45 +2274,45 @@ msgstr ""
 "La commutazione PR ↔ MWC è istantanea: non viene eseguito alcun ricalcolo"
 " da parte del backend."
 
-#: ../../source/manuel.rst:994
+#: ../../source/manuel.rst:1003
 msgid "Onglet Dashboard"
 msgstr "Scheda Dashboard"
 
-#: ../../source/manuel.rst:996
+#: ../../source/manuel.rst:1005
 msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
 msgstr ""
 "La scheda **Dashboard** offre una visione sintetica degli indicatori "
 "chiave."
 
-#: ../../source/manuel.rst:998
+#: ../../source/manuel.rst:1007
 msgid "Onglet Dashboard du panneau Stats"
 msgstr "Scheda Dashboard del pannello Stats"
 
-#: ../../source/manuel.rst:1002
+#: ../../source/manuel.rst:1011
 msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
 msgstr "La scheda Dashboard: PR globale, PR pedine, PR cubo."
 
-#: ../../source/manuel.rst:1005
+#: ../../source/manuel.rst:1014
 msgid "Cartes de niveau"
 msgstr "Schede di livello"
 
-#: ../../source/manuel.rst:1007
+#: ../../source/manuel.rst:1016
 msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Tre schede visualizzano il PR (o MWC) per:"
 
-#: ../../source/manuel.rst:1009
+#: ../../source/manuel.rst:1018
 msgid "**PR Global** — toutes les décisions (coups + videau) ;"
 msgstr "**PR Globale** — tutte le decisioni (pedine + cubo);"
 
-#: ../../source/manuel.rst:1010
+#: ../../source/manuel.rst:1019
 msgid "**PR Coup** — coups joués seulement ;"
 msgstr "**PR Pedina** — solo mosse di pedine;"
 
-#: ../../source/manuel.rst:1011
+#: ../../source/manuel.rst:1020
 msgid "**PR Cube** — décisions de videau seulement."
 msgstr "**PR Cubo** — solo decisioni di cubo."
 
-#: ../../source/manuel.rst:1013
+#: ../../source/manuel.rst:1022
 msgid ""
 "Cliquer sur une carte charge dans le panneau d'analyse les positions du "
 "sous-ensemble correspondant (drill-down)."
@@ -2300,17 +2320,17 @@ msgstr ""
 "Cliccando su una scheda si caricano nel pannello di analisi le posizioni "
 "del sottoinsieme corrispondente (drill-down)."
 
-#: ../../source/manuel.rst:1017
+#: ../../source/manuel.rst:1026
 msgid "Le nombre total de décisions est affiché en bas de chaque carte au survol."
 msgstr ""
 "Il numero totale di decisioni viene visualizzato in fondo a ciascuna "
 "scheda al passaggio del mouse."
 
-#: ../../source/manuel.rst:1020
+#: ../../source/manuel.rst:1029
 msgid "PR glissant sur N dernières décisions"
 msgstr "PR mobile sulle ultime N decisioni"
 
-#: ../../source/manuel.rst:1022
+#: ../../source/manuel.rst:1031
 msgid ""
 "Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières "
 "décisions (N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la "
@@ -2322,15 +2342,15 @@ msgstr ""
 " I valori in grigio corrispondono a un N superiore al numero di decisioni"
 " disponibili."
 
-#: ../../source/manuel.rst:1027
+#: ../../source/manuel.rst:1036
 msgid "Cliquer sur une valeur charge les *N* dernières positions correspondantes."
 msgstr "Cliccando su un valore si caricano le ultime *N* posizioni corrispondenti."
 
-#: ../../source/manuel.rst:1030
+#: ../../source/manuel.rst:1039
 msgid "Top blunders"
 msgstr "Top blunder"
 
-#: ../../source/manuel.rst:1032
+#: ../../source/manuel.rst:1041
 msgid ""
 "La liste des 10 pires erreurs (ou MWC cost), triées par magnitude "
 "décroissante. Cliquer sur une ligne charge la position concernée dans le "
@@ -2340,19 +2360,19 @@ msgstr ""
 "decrescente. Cliccando su una riga si carica la posizione interessata nel"
 " pannello di analisi."
 
-#: ../../source/manuel.rst:1036
+#: ../../source/manuel.rst:1045
 msgid "Onglet Progression"
 msgstr "Scheda Progressione"
 
-#: ../../source/manuel.rst:1038
+#: ../../source/manuel.rst:1047
 msgid "L'onglet **Progression** présente l'évolution du niveau dans le temps."
 msgstr "La scheda **Progressione** presenta l'evoluzione del livello nel tempo."
 
-#: ../../source/manuel.rst:1041
+#: ../../source/manuel.rst:1050
 msgid "Courbe par tournoi"
 msgstr "Grafico a linee per torneo"
 
-#: ../../source/manuel.rst:1043
+#: ../../source/manuel.rst:1052
 msgid ""
 "Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :"
 " ordre des tournois, axe Y : valeur de la métrique). Des bandes de "
@@ -2362,7 +2382,7 @@ msgstr ""
 "ordine dei tornei, asse Y: valore della metrica). Bande colorate "
 "evidenziano le soglie di livello."
 
-#: ../../source/manuel.rst:1047
+#: ../../source/manuel.rst:1056
 msgid ""
 "Cliquer sur un point du graphique ouvre un menu contextuel avec deux "
 "options :"
@@ -2370,11 +2390,11 @@ msgstr ""
 "Cliccando su un punto del grafico si apre un menu contestuale con due "
 "opzioni:"
 
-#: ../../source/manuel.rst:1049
+#: ../../source/manuel.rst:1058
 msgid "**Ouvrir le tournoi** — ouvre le tournoi dans le panneau Tournois."
 msgstr "**Apri torneo** — apre il torneo nel pannello Tornei."
 
-#: ../../source/manuel.rst:1050
+#: ../../source/manuel.rst:1059
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du tournoi dans le"
 " panneau d'analyse."
@@ -2382,11 +2402,11 @@ msgstr ""
 "**Apri posizioni** — carica tutte le posizioni del torneo nel pannello di"
 " analisi."
 
-#: ../../source/manuel.rst:1054
+#: ../../source/manuel.rst:1063
 msgid "Scatter plot par match"
 msgstr "Scatter plot per match"
 
-#: ../../source/manuel.rst:1056
+#: ../../source/manuel.rst:1065
 msgid ""
 "Un nuage de points représente chaque match (axe X : date, axe Y : PR ou "
 "MWC). La taille du point est proportionnelle au nombre de décisions dans "
@@ -2396,15 +2416,15 @@ msgstr ""
 " PR o MWC). La dimensione del punto è proporzionale al numero di "
 "decisioni nel match."
 
-#: ../../source/manuel.rst:1059
+#: ../../source/manuel.rst:1068
 msgid "Cliquer sur un point ouvre un menu contextuel :"
 msgstr "Cliccando su un punto si apre un menu contestuale:"
 
-#: ../../source/manuel.rst:1061
+#: ../../source/manuel.rst:1070
 msgid "**Ouvrir le match** — ouvre le match dans le panneau des matchs."
 msgstr "**Apri partita** — apre il match nel pannello Match."
 
-#: ../../source/manuel.rst:1062
+#: ../../source/manuel.rst:1071
 msgid ""
 "**Ouvrir les positions** — charge toutes les positions du match dans le "
 "panneau d'analyse."
@@ -2412,27 +2432,27 @@ msgstr ""
 "**Apri posizioni** — carica tutte le posizioni del match nel pannello di "
 "analisi."
 
-#: ../../source/manuel.rst:1066
+#: ../../source/manuel.rst:1075
 msgid "Onglet Erreurs"
 msgstr "Scheda Errori"
 
-#: ../../source/manuel.rst:1068
+#: ../../source/manuel.rst:1077
 msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
 msgstr "La scheda **Errori** scompone le fonti di errore."
 
-#: ../../source/manuel.rst:1070
+#: ../../source/manuel.rst:1079
 msgid "Onglet Erreurs du panneau Stats"
 msgstr "Scheda Errori del pannello Stats"
 
-#: ../../source/manuel.rst:1074
+#: ../../source/manuel.rst:1083
 msgid "L'onglet Erreurs : répartition du PR par action de videau."
 msgstr "La scheda Errori: ripartizione del PR per azione di cubo."
 
-#: ../../source/manuel.rst:1077
+#: ../../source/manuel.rst:1086
 msgid "Répartition par action de videau"
 msgstr "Ripartizione per azione di cubo"
 
-#: ../../source/manuel.rst:1079
+#: ../../source/manuel.rst:1088
 msgid ""
 "Un diagramme en barres affiche le PR (ou MWC) pour chaque type de "
 "décision de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. "
@@ -2444,7 +2464,7 @@ msgstr ""
 "Ogni barra indica inoltre il numero di decisioni e il tasso di blunder in"
 " un suggerimento."
 
-#: ../../source/manuel.rst:1083
+#: ../../source/manuel.rst:1092
 msgid ""
 "Cliquer sur une barre charge les positions correspondant à cette action "
 "de videau, **uniquement celles avec une erreur** (drill-down)."
@@ -2452,11 +2472,11 @@ msgstr ""
 "Cliccando su una barra si caricano le posizioni corrispondenti a "
 "quell'azione di cubo, **solo quelle con un errore** (drill-down)."
 
-#: ../../source/manuel.rst:1087
+#: ../../source/manuel.rst:1096
 msgid "Direction des erreurs de videau"
 msgstr "Direzione degli errori di cubo"
 
-#: ../../source/manuel.rst:1089
+#: ../../source/manuel.rst:1098
 msgid ""
 "La répartition ci-dessus indique *combien* coûtent les décisions de "
 "videau ; ce tableau indique dans *quel sens* elles se trompent."
@@ -2464,7 +2484,7 @@ msgstr ""
 "La ripartizione qui sopra indica *quanto* costano le decisioni di cubo; "
 "questa tabella indica in *quale senso* sbagliano."
 
-#: ../../source/manuel.rst:1092
+#: ../../source/manuel.rst:1101
 msgid ""
 "Une position de videau porte deux décisions prises par deux joueurs "
 "différents, présentées ici en deux lignes :"
@@ -2472,7 +2492,7 @@ msgstr ""
 "Una posizione di cubo porta due decisioni prese da due giocatori diversi,"
 " presentate qui in due righe:"
 
-#: ../../source/manuel.rst:1095
+#: ../../source/manuel.rst:1104
 msgid ""
 "**Offrir** — le joueur qui tient le videau double ou ne double pas. Ses "
 "erreurs sont les **doubles manqués** (il fallait doubler) et les "
@@ -2482,7 +2502,7 @@ msgstr ""
 "errori sono i **doppi mancati** (bisognava raddoppiare) e i **doppi "
 "prematuri** (non bisognava)."
 
-#: ../../source/manuel.rst:1099
+#: ../../source/manuel.rst:1108
 msgid ""
 "**Répondre** — le joueur à qui le videau est offert prend ou passe. Ses "
 "erreurs sont les **passes à tort** (une prise correcte a été passée) et "
@@ -2492,7 +2512,7 @@ msgstr ""
 " I suoi errori sono i **pass errati** (una presa corretta è stata "
 "passata) e le **prese errate** (un pass corretto è stato preso)."
 
-#: ../../source/manuel.rst:1103
+#: ../../source/manuel.rst:1112
 msgid ""
 "Les deux lignes restent séparées à dessein : un joueur peut parfaitement "
 "doubler tard *et* prendre large, et un indicateur unique appellerait cela"
@@ -2502,7 +2522,7 @@ msgstr ""
 "raddoppiare tardi *e* prendere largo, e un indicatore unico chiamerebbe "
 "ciò «equilibrato» perdendo entrambe le metà dell'informazione."
 
-#: ../../source/manuel.rst:1107
+#: ../../source/manuel.rst:1116
 msgid ""
 "Chaque case affiche le nombre de décisions ; l'infobulle donne l'équité "
 "perdue cumulée. Cliquer sur une case charge les positions "
@@ -2512,7 +2532,7 @@ msgstr ""
 "perduta cumulata. Fare clic su una casella carica le posizioni "
 "corrispondenti. Una casella a zero non è cliccabile."
 
-#: ../../source/manuel.rst:1112
+#: ../../source/manuel.rst:1121
 msgid ""
 "Ce tableau compte des décisions, il ne porte pas de jugement. À partir de"
 " quel écart une tendance mérite d'être nommée dépend de l'effectif et "
@@ -2522,11 +2542,11 @@ msgstr ""
 "scarto una tendenza meriti di essere nominata dipende dalla numerosità e "
 "da un punto di riferimento, che non sono dati del motore."
 
-#: ../../source/manuel.rst:1117
+#: ../../source/manuel.rst:1126
 msgid "Répartition Checker / Cube"
 msgstr "Confronto Checker / Cube"
 
-#: ../../source/manuel.rst:1119
+#: ../../source/manuel.rst:1128
 msgid ""
 "Un diagramme comparatif place côte à côte le PR des coups joués et des "
 "décisions de videau. Cliquer sur une barre charge les positions du sous-"
@@ -2536,11 +2556,11 @@ msgstr ""
 "delle decisioni di cubo. Cliccando su una barra si caricano le posizioni "
 "del sottoinsieme con errore."
 
-#: ../../source/manuel.rst:1124
+#: ../../source/manuel.rst:1133
 msgid "Histogramme des magnitudes d'erreur"
 msgstr "Istogramma delle magnitudo d'errore"
 
-#: ../../source/manuel.rst:1126
+#: ../../source/manuel.rst:1135
 msgid ""
 "Un histogramme distribue les erreurs selon leur magnitude en millipoints "
 "(mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur une"
@@ -2550,11 +2570,11 @@ msgstr ""
 "millesimi di punto (fasce: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). "
 "Cliccando su una barra si caricano le posizioni della fascia."
 
-#: ../../source/manuel.rst:1131
+#: ../../source/manuel.rst:1140
 msgid "Onglet Ventilations"
 msgstr "Scheda Ripartizioni"
 
-#: ../../source/manuel.rst:1133
+#: ../../source/manuel.rst:1142
 msgid ""
 "L'onglet **Ventilations** découpe les mêmes décisions que les chiffres "
 "globaux selon trois axes. Aucun d'eux ne redéfinit ce qui compte comme "
@@ -2564,7 +2584,7 @@ msgstr ""
 " globali lungo tre assi. Nessuno di essi ridefinisce ciò che conta come "
 "decisione: sarebbe un secondo PR con lo stesso nome."
 
-#: ../../source/manuel.rst:1137
+#: ../../source/manuel.rst:1146
 msgid ""
 "**Par phase de partie** — ouverture, milieu de partie, course, sortie des"
 " pions. C'est ce qui répond à « mon PR en course contre mon PR en contact"
@@ -2579,7 +2599,7 @@ msgstr ""
 " base le cui fasi non sono mai state calcolate mette tutto sotto *Non "
 "classificata*, e ``blunderdb repair`` la riempie."
 
-#: ../../source/manuel.rst:1143
+#: ../../source/manuel.rst:1152
 msgid ""
 "**Par étiquette** — les ``#mot`` écrits dans les commentaires. Une "
 "position peut en porter plusieurs : **ces lignes ne s'additionnent pas au"
@@ -2591,7 +2611,7 @@ msgstr ""
 "pannello lo dice sotto la tabella. Un'etichetta qualifica, non "
 "partiziona."
 
-#: ../../source/manuel.rst:1148
+#: ../../source/manuel.rst:1157
 msgid ""
 "**Par score** — l'écart au but des deux camps, lu du côté du joueur au "
 "trait, donc du côté de celui qui décide. La ligne *Money* est la partie "
@@ -2605,7 +2625,7 @@ msgstr ""
 "con il suo effettivo visibile** invece che nascosta: troppo poco per "
 "essere letta, ma l'omissione resta verificabile."
 
-#: ../../source/manuel.rst:1153
+#: ../../source/manuel.rst:1162
 msgid ""
 "La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas cet "
 "indicateur sur une position. L'effet pratique est faible — une partie "
@@ -2617,11 +2637,11 @@ msgstr ""
 "Crawford non ha alcuna decisione di cubo — ma l'omissione è reale e vale "
 "meglio scriverla che lasciarla indovinare."
 
-#: ../../source/manuel.rst:1159
+#: ../../source/manuel.rst:1168
 msgid "Onglet Joueurs"
 msgstr "Scheda Giocatori"
 
-#: ../../source/manuel.rst:1161
+#: ../../source/manuel.rst:1170
 msgid ""
 "Les quatre onglets précédents décrivent **un** joueur ; l'onglet "
 "**Joueurs** les compare tous. Il affiche une ligne par joueur de la base,"
@@ -2633,11 +2653,11 @@ msgstr ""
 "base, il che risponde al bisogno di un organizzatore che segue un'intera "
 "competizione più che un singolo giocatore."
 
-#: ../../source/manuel.rst:1166
+#: ../../source/manuel.rst:1175
 msgid "Onglet Joueurs du panneau Stats"
 msgstr "Scheda Giocatori del pannello Stats"
 
-#: ../../source/manuel.rst:1170
+#: ../../source/manuel.rst:1179
 msgid ""
 "L'onglet Joueurs : une ligne par joueur, triable par n'importe quelle "
 "colonne."
@@ -2645,7 +2665,7 @@ msgstr ""
 "La scheda Giocatori: una riga per giocatore, ordinabile per qualsiasi "
 "colonna."
 
-#: ../../source/manuel.rst:1173
+#: ../../source/manuel.rst:1182
 msgid "Colonnes, dans l'ordre :"
 msgstr "Colonne, nell'ordine:"
 
@@ -2747,11 +2767,11 @@ msgstr ""
 "Fortuna media per lancio, in millesimi di punto, con segno: positiva se i"
 " dadi sono stati favorevoli."
 
-#: ../../source/manuel.rst:1189
+#: ../../source/manuel.rst:1198
 msgid "Utilisation :"
 msgstr "Utilizzo:"
 
-#: ../../source/manuel.rst:1191
+#: ../../source/manuel.rst:1200
 msgid ""
 "**Trier** — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié "
 "par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été "
@@ -2764,7 +2784,7 @@ msgstr ""
 " verso dell'ordinamento: uno zero per mancanza di dati non è una "
 "prestazione perfetta."
 
-#: ../../source/manuel.rst:1195
+#: ../../source/manuel.rst:1204
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
@@ -2774,7 +2794,7 @@ msgstr ""
 "giocatore viene selezionato nella barra dei filtri e la visualizzazione "
 "passa alla scheda Dashboard."
 
-#: ../../source/manuel.rst:1198
+#: ../../source/manuel.rst:1207
 msgid ""
 "**Restreindre la période** — les filtres de dates, de tournois et de "
 "longueur de match s'appliquent normalement, ce qui permet de borner le "
@@ -2784,7 +2804,7 @@ msgstr ""
 "match si applicano normalmente, il che consente di delimitare la tabella "
 "alle date di una competizione."
 
-#: ../../source/manuel.rst:1203
+#: ../../source/manuel.rst:1212
 msgid ""
 "Dans cet onglet, la liste **Joueur** et le choix du **type de décision** "
 "sont désactivés : le tableau montre tous les joueurs, et il ventile déjà "
@@ -2794,7 +2814,7 @@ msgstr ""
 "decisione** sono disattivati: la tabella mostra tutti i giocatori e "
 "ripartisce già le decisioni di pedine e di cubo in colonne distinte."
 
-#: ../../source/manuel.rst:1208
+#: ../../source/manuel.rst:1217
 msgid ""
 "Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas "
 "confondre avec zéro. C'est notamment le cas de la colonne Chance pour "
@@ -2810,11 +2830,11 @@ msgstr ""
 "occorre reimportare i file di origine. I formati che non la trasportano "
 "(BGF, Jellyfish ``.mat``) non la forniranno mai."
 
-#: ../../source/manuel.rst:1216
+#: ../../source/manuel.rst:1225
 msgid "Règle d'agrégation"
 msgstr "Regola di aggregazione"
 
-#: ../../source/manuel.rst:1219
+#: ../../source/manuel.rst:1228
 msgid ""
 "Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par la "
 "règle **somme/somme** — jamais comme moyenne des PR individuels des "
@@ -2823,11 +2843,11 @@ msgstr ""
 "Il PR di un torneo (o di un qualsiasi sottoinsieme) è calcolato con la "
 "regola **somma/somma** — mai come media dei PR individuali dei match."
 
-#: ../../source/manuel.rst:1223
+#: ../../source/manuel.rst:1232
 msgid "Formule :"
 msgstr "Formula:"
 
-#: ../../source/manuel.rst:1225
+#: ../../source/manuel.rst:1234
 msgid ""
 "PR_{tournoi} = 500 \\times \\frac{\\sum_{i} "
 "\\text{erreur}_i}{\\text{nombre total de décisions}}"
@@ -2835,27 +2855,27 @@ msgstr ""
 "PR_{torneo} = 500 \\times \\frac{\\sum_{i} "
 "\\text{errore}_i}{\\text{numero totale di decisioni}}"
 
-#: ../../source/manuel.rst:1229
+#: ../../source/manuel.rst:1238
 msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
 msgstr "**Esempio:** un giocatore disputa due match in un torneo —"
 
-#: ../../source/manuel.rst:1231
+#: ../../source/manuel.rst:1240
 msgid "Match A : 10 décisions, 0,100 d'équité perdue → PR = 5,0"
 msgstr "Match A: 10 decisioni, 0,100 di equità persa → PR = 5,0"
 
-#: ../../source/manuel.rst:1232
+#: ../../source/manuel.rst:1241
 msgid "Match B : 90 décisions, 0,540 d'équité perdue → PR = 3,0"
 msgstr "Match B: 90 decisioni, 0,540 di equità persa → PR = 3,0"
 
-#: ../../source/manuel.rst:1234
+#: ../../source/manuel.rst:1243
 msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
 msgstr "Media ingenua dei PR: (5,0 + 3,0) / 2 = **4,0** *(errato)*"
 
-#: ../../source/manuel.rst:1236
+#: ../../source/manuel.rst:1245
 msgid "Règle somme/somme : 500 × 0,640 / (10 + 90) = **3,2** *(correct)*"
 msgstr "Regola somma/somma: 500 × 0,640 / (10 + 90) = **3,2** *(corretto)*"
 
-#: ../../source/manuel.rst:1238
+#: ../../source/manuel.rst:1247
 msgid ""
 "La règle somme/somme est la seule qui résiste à la variation de longueur "
 "des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
@@ -2864,11 +2884,11 @@ msgstr ""
 "di lunghezza dei match (un match a 21 punti pesa più di un match a 1 "
 "punto)."
 
-#: ../../source/manuel.rst:1242
+#: ../../source/manuel.rst:1251
 msgid "MWC : limitations"
 msgstr "MWC: limitazioni"
 
-#: ../../source/manuel.rst:1244
+#: ../../source/manuel.rst:1253
 msgid ""
 "Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
 "référence de facto dans le backgammon compétitif. Les résultats ne sont "
@@ -2889,7 +2909,7 @@ msgstr ""
 " propri valori fino a 25 punti da fare per parte; oltre, viene prolungata"
 " da una tabella di Zadeh calcolata come quella di GNUbg, fino a 64."
 
-#: ../../source/manuel.rst:1253
+#: ../../source/manuel.rst:1262
 msgid ""
 "Les positions *money-game* (sans score de match) sont **exclues** du "
 "calcul MWC. Si votre base de données contient beaucoup de positions "
@@ -2899,7 +2919,7 @@ msgstr ""
 " calcolo MWC. Se il database contiene molte posizioni money-game, il MWC "
 "cost potrebbe essere sottostimato o non disponibile."
 
-#: ../../source/manuel.rst:1257
+#: ../../source/manuel.rst:1266
 msgid ""
 "Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
 "un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
@@ -2909,11 +2929,11 @@ msgstr ""
 "indicatore per singola decisione. Misura l'impatto totale dei tuoi errori"
 " sulle tue probabilità di vittoria."
 
-#: ../../source/manuel.rst:1264
+#: ../../source/manuel.rst:1273
 msgid "Panneau Eval"
 msgstr "Pannello Eval"
 
-#: ../../source/manuel.rst:1266
+#: ../../source/manuel.rst:1275
 msgid ""
 "Le panneau **Eval** (*CTRL-E*) évalue en direct la position posée sur le "
 "plateau, quelle qu'elle soit ; sur une position de bearoff il se "
@@ -2935,7 +2955,7 @@ msgstr ""
 "pannello Bearoff, il nome non designando più che la scheda di "
 "configurazione delle tabelle di uscita."
 
-#: ../../source/manuel.rst:1276
+#: ../../source/manuel.rst:1285
 msgid ""
 "Le panneau montre toujours la **seule décision** que la position posée "
 "sur le plateau appelle — jamais deux à la fois — et les faits qui vont "
@@ -2988,7 +3008,7 @@ msgstr ""
 "(vi figura anche la profondità dell'ultima valutazione) e la casella "
 "*Sfida* formano una fascia a parte, allineata a destra sopra le tabelle."
 
-#: ../../source/manuel.rst:1299
+#: ../../source/manuel.rst:1308
 msgid ""
 "Seule la liste des coups candidats défile — la ligne *avant le jet*, elle"
 " aussi, reste épinglée au-dessus d'elle ; le reste du panneau (faits, "
@@ -3000,7 +3020,7 @@ msgstr ""
 " decisione di cubo) resta sempre visibile, senza alcuna regolazione "
 "particolare della dimensione del pannello."
 
-#: ../../source/manuel.rst:1304
+#: ../../source/manuel.rst:1313
 msgid ""
 "Le tableau de faits et la décision sont calculés par gammonNet, embarqué,"
 " sans XG ni gnubg. Le calcul suit la position sans jamais figer "
@@ -3071,7 +3091,7 @@ msgstr ""
 "l'attribuzione completa (rete Strehl, configurazione gammonNet) figura "
 "nei Ringraziamenti dell'aiuto."
 
-#: ../../source/manuel.rst:1339
+#: ../../source/manuel.rst:1348
 msgid ""
 "L'utilisateur édite la position des pions sur l'ensemble du plateau, "
 "exactement comme en mode édition : clic gauche place un pion du joueur du"
@@ -3092,7 +3112,7 @@ msgstr ""
 "backgammon, cubeless), e la decisione riguarda le pedine o un cubo "
 "generico a seconda che dei dadi siano impostati."
 
-#: ../../source/manuel.rst:1348
+#: ../../source/manuel.rst:1357
 msgid ""
 "Dans chaque tableau de faits, une ligne par joueur — repérée par sa "
 "pastille de couleur, le joueur noir étant toujours en bas. Le premier "
@@ -3121,7 +3141,7 @@ msgstr ""
 " portavano hanno appena cambiato asse, al tiro, in testa alla lista delle"
 " mosse."
 
-#: ../../source/manuel.rst:1361
+#: ../../source/manuel.rst:1370
 msgid ""
 "La décision de videau a toujours la même forme, quelle que soit l'origine"
 " des chiffres — table exacte, régime évalué ou évaluation gammonNet "
@@ -3145,7 +3165,7 @@ msgstr ""
 "scarto lasciata vuota. Quando il cubo è già stato girato, le opzioni si "
 "leggono *nessun riraddoppio*, *riraddoppio/prende*, *riraddoppio/passa*."
 
-#: ../../source/manuel.rst:1371
+#: ../../source/manuel.rst:1380
 msgid ""
 "Une dernière ligne donne le **verdict**. Il prend quatre valeurs : *pas "
 "de double*, *double, prend*, *double, passe* et *trop bon pour doubler*, "
@@ -3163,7 +3183,7 @@ msgstr ""
 "in cui il pannello dice che **non** c'è verdetto, anziché lasciar credere"
 " a un calcolo in corso:"
 
-#: ../../source/manuel.rst:1378
+#: ../../source/manuel.rst:1387
 msgid ""
 "*pas de décision* — le régime n'y a pas droit ; le verdict de videau "
 "n'est jamais estimé (voir le badge *estimé*) ;"
@@ -3171,7 +3191,7 @@ msgstr ""
 "*nessuna decisione* — il regime non ne ha diritto; il verdetto di cubo "
 "non viene mai stimato (vedere il badge *stimato*);"
 
-#: ../../source/manuel.rst:1380
+#: ../../source/manuel.rst:1389
 msgid ""
 "*non évaluable à ce score* — le moteur refuse la position, typiquement un"
 " score hors de l'horizon de la table d'équité de match, c'est-à-dire un "
@@ -3181,7 +3201,7 @@ msgstr ""
 "tipicamente un punteggio fuori dall'orizzonte della tabella di equità di "
 "match, cioè un lato a più di 64 punti da fare;"
 
-#: ../../source/manuel.rst:1383
+#: ../../source/manuel.rst:1392
 msgid ""
 "*videau adverse* et *videau mort (Crawford)* — le videau ne peut pas être"
 " retourné. Les équités restent affichées, à titre indicatif, mais aucune "
@@ -3193,7 +3213,7 @@ msgstr ""
 "opzione porta uno scarto: un errore è ciò che costa una scelta, e qui non"
 " c'è scelta."
 
-#: ../../source/manuel.rst:1388
+#: ../../source/manuel.rst:1397
 msgid ""
 "En money game, les règles **Jacoby** et **Beaver** actives sur la "
 "position apparaissent sous le tableau de videau, en petits badges à côté "
@@ -3207,7 +3227,7 @@ msgstr ""
 " Jacoby non è lo stesso calcolo di quello senza di essa, e nient'altro "
 "sullo schermo lo indicava."
 
-#: ../../source/manuel.rst:1394
+#: ../../source/manuel.rst:1403
 msgid ""
 "Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et"
 " la case *Défi* forment une bande à part, alignée à droite au-dessus des "
@@ -3217,7 +3237,7 @@ msgstr ""
 "motore e la casella *Sfida* formano una fascia a parte, allineata a "
 "destra sopra le tabelle."
 
-#: ../../source/manuel.rst:1398
+#: ../../source/manuel.rst:1407
 msgid ""
 "Le **joueur au trait** et la **position du videau** s'éditent directement"
 " sur le plateau, comme en mode édition : cliquer le rectangle "
@@ -3246,7 +3266,7 @@ msgstr ""
 "chances-are-read-or-convolved-cube-verdicts-are-never-estimated.md>`__) e"
 " come estendere il dominio esatto."
 
-#: ../../source/manuel.rst:1410
+#: ../../source/manuel.rst:1419
 msgid ""
 "Le **score** s'édite lui aussi directement sur le plateau, comme en mode "
 "édition : clic gauche sur le rectangle score d'un joueur décrémente son "
@@ -3275,7 +3295,7 @@ msgstr ""
 " Il badge diventa allora composito (« esatto (vittoria) · valutato (cubo)"
 " ») per dirlo esplicitamente."
 
-#: ../../source/manuel.rst:1423
+#: ../../source/manuel.rst:1432
 msgid ""
 "Les **dés** s'éditent enfin de la même façon, et ce sont eux qui décident"
 " de la question posée : des dés posés font une décision de pions (la "
@@ -3297,7 +3317,7 @@ msgstr ""
 "rettangolo di un giocatore toglie i dadi per porre una domanda di cubo, e"
 " il clic successivo su un dado li rimette com'erano."
 
-#: ../../source/manuel.rst:1432
+#: ../../source/manuel.rst:1441
 msgid ""
 "*RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la "
 "position : plateau vide, score money (-1, -1), pas de dés posés — des "
@@ -3311,11 +3331,11 @@ msgstr ""
 "modifica (7 ovunque, dadi 3-1), per restare coerenti con ciò che il "
 "pannello mostra per impostazione predefinita."
 
-#: ../../source/manuel.rst:1441
+#: ../../source/manuel.rst:1450
 msgid "Matrice du videau"
 msgstr "Matrice del cubo"
 
-#: ../../source/manuel.rst:1443
+#: ../../source/manuel.rst:1452
 msgid ""
 "Une décision de videau n'est pas une propriété du damier. Les mêmes "
 "pions, le même compte de pips, se doublent à 2-away/4-away et ne se "
@@ -3330,7 +3350,7 @@ msgstr ""
 "casella che la posizione porta; la **matrice del cubo** mostra l'intera "
 "griglia."
 
-#: ../../source/manuel.rst:1449
+#: ../../source/manuel.rst:1458
 msgid ""
 "La commande ``cm`` l'ouvre sur la position affichée. Chaque case donne le"
 " verdict à un score : la ligne est le nombre de points qu'il reste à "
@@ -3350,7 +3370,7 @@ msgstr ""
 "mouse, che dà anche le tre equità della casella. Sono proposte tre "
 "lunghezze di incontro: 5, 7 e 9 punti."
 
-#: ../../source/manuel.rst:1458
+#: ../../source/manuel.rst:1467
 msgid ""
 "Le score de la position est remplacé par celui de chaque case ; son "
 "**videau**, lui, est conservé. La grille répond à « à quel score "
@@ -3366,7 +3386,7 @@ msgstr ""
 "in gioco, e una colonna di «non potete raddoppiare» non direbbe nulla "
 "sulla posizione."
 
-#: ../../source/manuel.rst:1465
+#: ../../source/manuel.rst:1474
 msgid ""
 "Chaque case est une recherche à part entière. Le moteur tient compte du "
 "score — il ne joue pas la même partie à 2-away qu'à 7-away —, donc une "
@@ -3384,7 +3404,7 @@ msgstr ""
 " finestra è a riposo: la stessa escalation del resto del pannello, per "
 "una griglia da 9 punti che costa circa un secondo e mezzo."
 
-#: ../../source/manuel.rst:1473
+#: ../../source/manuel.rst:1482
 msgid ""
 "La même grille se calcule hors de l'interface, avec la commande "
 ":ref:`cubematrix <cli_cubematrix>` de la ligne de commande."
@@ -3392,11 +3412,11 @@ msgstr ""
 "La stessa griglia si calcola fuori dall'interfaccia, con il comando "
 ":ref:`cubematrix <cli_cubematrix>` della riga di comando."
 
-#: ../../source/manuel.rst:1479
+#: ../../source/manuel.rst:1488
 msgid "Amener une position dans le panneau Eval"
 msgstr "Portare una posizione nel pannello Eval"
 
-#: ../../source/manuel.rst:1481
+#: ../../source/manuel.rst:1490
 msgid ""
 "Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude "
 "part le plus souvent d'une position déjà en main. Deux gestes l'y amènent"
@@ -3406,7 +3426,7 @@ msgstr ""
 "bearoff, ma lo studio parte il più delle volte da una posizione già in "
 "mano. Due gesti ve la portano:"
 
-#: ../../source/manuel.rst:1484
+#: ../../source/manuel.rst:1493
 msgid ""
 "**Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la "
 "navigation d'un match, puis *Évaluer cette position* : le panneau Eval "
@@ -3422,7 +3442,7 @@ msgstr ""
 "Ricerca, dove il pulsante destro serve già a posizionare le pedine "
 "dell'altro colore."
 
-#: ../../source/manuel.rst:1491
+#: ../../source/manuel.rst:1500
 msgid ""
 "**CTRL-C puis CTRL-V** : copier la position depuis le panneau d'analyse, "
 "puis la coller une fois dans le panneau Eval. Le collage accepte aussi un"
@@ -3434,7 +3454,25 @@ msgstr ""
 "XGID proveniente da altrove (eXtreme Gammon, GNU Backgammon, un'altra "
 "istanza di blunderDB): basta che sia negli appunti."
 
-#: ../../source/manuel.rst:1496
+#: ../../source/manuel.rst:1505
+msgid ""
+"**La commande** ``import XGID=…`` pour le cas où l'identifiant n'est pas "
+"dans le presse-papier mais dans un message, sur un forum lu dans un "
+"terminal, ou produit par un script. C'est le même verbe qu'``import`` "
+"tout court : sans argument il ouvre un sélecteur de fichiers, avec un "
+"argument il lit l'identifiant. Le chemin est ensuite identique à celui du"
+" collage — même lecture, même déduplication, même ouverture de la "
+"position importée."
+msgstr ""
+"**Il comando** ``import XGID=…`` per il caso in cui l'identificatore non "
+"è negli appunti ma in un messaggio, su un forum letto in un terminale, o "
+"prodotto da uno script. È lo stesso verbo di ``import`` da solo: senza "
+"argomento apre un selettore di file, con un argomento legge "
+"l'identificatore. Il percorso è poi identico a quello dell'incollaggio — "
+"stessa lettura, stessa deduplicazione, stessa apertura della posizione "
+"importata."
+
+#: ../../source/manuel.rst:1512
 msgid ""
 "Le plateau du panneau Eval est un brouillon : la position y arrive sans "
 "son identifiant de base, de sorte qu'aucune modification faite ici ne "
@@ -3448,7 +3486,7 @@ msgstr ""
 "del tavoliere vi restano disponibili (pedine, cubo, dadi, punteggio), e "
 "la valutazione segue ogni modifica."
 
-#: ../../source/manuel.rst:1502
+#: ../../source/manuel.rst:1518
 msgid ""
 "Dans l'autre sens, *CTRL-C* copie le plateau du panneau Eval dans le "
 "presse-papier, avec un XGID recalculé à partir des pions posés — donc "
@@ -3463,7 +3501,7 @@ msgstr ""
 "blunderDB. Viaggia soltanto la posizione: la valutazione mostrata dal "
 "pannello non è un record del database e non accompagna la copia."
 
-#: ../../source/manuel.rst:1508
+#: ../../source/manuel.rst:1524
 msgid ""
 "En quittant le panneau Eval, la position consultée auparavant est "
 "restaurée : le brouillon n'est jamais enregistré tout seul."
@@ -3471,7 +3509,7 @@ msgstr ""
 "Uscendo dal pannello Eval, la posizione consultata in precedenza viene "
 "ripristinata: la bozza non viene mai salvata da sola."
 
-#: ../../source/manuel.rst:1511
+#: ../../source/manuel.rst:1527
 msgid ""
 "Lorsque la position est un bearoff pur (tous les pions des deux joueurs "
 "dans leur jan) et qu'aucun dé n'est posé, la décision de videau affiche, "
@@ -3481,7 +3519,7 @@ msgstr ""
 "giocatori nella propria tavola) e nessun dado è impostato, la decisione "
 "di cubo mostra, per il giocatore al tiro:"
 
-#: ../../source/manuel.rst:1515
+#: ../../source/manuel.rst:1531
 msgid ""
 "en régime *exact* : les équités money (cubeless, sans double, "
 "double/prend, double/passe) et le **verdict de videau money** (pas de "
@@ -3494,7 +3532,7 @@ msgstr ""
 "raddoppiare) — fuori dal punteggio di match, vedere sopra per il caso del"
 " punteggio,"
 
-#: ../../source/manuel.rst:1520
+#: ../../source/manuel.rst:1536
 msgid ""
 "en régime *évalué* : les mêmes équités et le même verdict à quatre "
 "valeurs, mais **joués par gammonNet** (recherche + modèle de videau "
@@ -3506,7 +3544,7 @@ msgstr ""
 "anziché letti in una tabella — disponibili **anche al punteggio di "
 "match**, ciò che il regime stimato non ha mai potuto offrire;"
 
-#: ../../source/manuel.rst:1525
+#: ../../source/manuel.rst:1541
 msgid ""
 "en régime *estimé* : le verdict de videau n'est alors volontairement pas "
 "affiché — seule la probabilité de gain, dans le tableau de faits, "
@@ -3516,7 +3554,7 @@ msgstr ""
 "mostrato — resta disponibile soltanto la probabilità di vittoria, nella "
 "tabella dei fatti, accompagnata dal suo margine d'errore."
 
-#: ../../source/manuel.rst:1529
+#: ../../source/manuel.rst:1545
 msgid ""
 "Dès que des dés sont posés sur une position de course, cette décision de "
 "videau *avant le jet* disparaît — le plateau demande alors une décision "
@@ -3533,7 +3571,7 @@ msgstr ""
 " mosse, accanto all'EPC che, invece, resta visualizzato subito a "
 "sinistra."
 
-#: ../../source/manuel.rst:1536
+#: ../../source/manuel.rst:1552
 msgid ""
 "Un badge indique le régime : **exact** (valeur lue dans une base de "
 "données two-sided), **évalué · <profondeur>** (joué par gammonNet — la "
@@ -3555,7 +3593,7 @@ msgstr ""
 "stimato mostrato durante l'attesa. Vedere :ref:`epc_methodologie` per la "
 "definizione precisa dei tre regimi e delle loro ipotesi."
 
-#: ../../source/manuel.rst:1546
+#: ../../source/manuel.rst:1562
 msgid ""
 "**Élargir le domaine exact.** La table calculée au premier lancement "
 "couvre 6 pions par joueur. Deux moyens d'aller au-delà, dans l'onglet "
@@ -3565,7 +3603,7 @@ msgstr ""
 "copre 6 pedine per parte. Due modi per andare oltre, nella scheda "
 "*Bearoff* della configurazione:"
 
-#: ../../source/manuel.rst:1550
+#: ../../source/manuel.rst:1566
 msgid ""
 "calculer une table deux faces plus large — jusqu'à TS-06-15 si la machine"
 " a la mémoire pour. L'onglet annonce la taille, la mémoire et le temps "
@@ -3579,7 +3617,7 @@ msgstr ""
 "si mette in pausa e si riprende. Un calcolo annullato lascia un file "
 "``.part`` che non viene mai letto come una tabella;"
 
-#: ../../source/manuel.rst:1556
+#: ../../source/manuel.rst:1572
 msgid ""
 "indiquer un fichier ``.bd`` two-sided de gnubg quelconque. La base au "
 "domaine le plus large l'emporte automatiquement."
@@ -3587,7 +3625,7 @@ msgstr ""
 "indicare un qualsiasi file ``.bd`` two-sided di gnubg. Il database con il"
 " dominio più ampio prevale automaticamente."
 
-#: ../../source/manuel.rst:1559
+#: ../../source/manuel.rst:1575
 msgid ""
 "**Le plateau du panneau est un brouillon, et il est retenu.** Quitter le "
 "panneau Eval puis y revenir retrouve la position sur laquelle on l'a "
@@ -3607,7 +3645,7 @@ msgstr ""
 "scritto nel database per strada: la bozza non ha identità di posizione, e"
 " la sua valutazione viene ricalcolata all'arrivo anziché trasportata."
 
-#: ../../source/manuel.rst:1568
+#: ../../source/manuel.rst:1584
 msgid ""
 "**Mode défi.** La case *Défi*, dans la bande de badges, active un mode "
 "entraînement : à chaque modification de la position, les valeurs de trois"
@@ -3646,7 +3684,7 @@ msgstr ""
 "campo, poi a pronunciarsi sul cubo o sulla mossa da giocare, prima di "
 "verificare. L'impostazione viene memorizzata."
 
-#: ../../source/manuel.rst:1586
+#: ../../source/manuel.rst:1602
 msgid ""
 "Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
@@ -3654,11 +3692,11 @@ msgstr ""
 "Per chiudere il pannello Eval, premere *CTRL-E* o passare a un'altra "
 "scheda."
 
-#: ../../source/manuel.rst:1591
+#: ../../source/manuel.rst:1607
 msgid "Méthodologie et hypothèses du panneau Eval"
 msgstr "Metodologia e ipotesi del pannello Eval"
 
-#: ../../source/manuel.rst:1593
+#: ../../source/manuel.rst:1609
 msgid ""
 "Chaque valeur affichée par le panneau repose sur des hypothèses précises,"
 " énoncées ici exhaustivement."
@@ -3666,7 +3704,7 @@ msgstr ""
 "Ogni valore mostrato dal pannello si basa su ipotesi precise, enunciate "
 "qui in modo esaustivo."
 
-#: ../../source/manuel.rst:1596
+#: ../../source/manuel.rst:1612
 msgid ""
 "**Domaine.** La *zone course* — probabilité de gain et verdict de videau "
 "— ne traite que le bearoff pur : tous les pions restants des deux joueurs"
@@ -3678,7 +3716,7 @@ msgstr ""
 "giocatori nella loro casa. La posizione è valutata *prima del lancio*; i "
 "dadi eventualmente posati sono ignorati."
 
-#: ../../source/manuel.rst:1601
+#: ../../source/manuel.rst:1617
 msgid ""
 "Les **blocs EPC**, eux, vont plus loin : un camp obtient son EPC dès que "
 "son pion le plus éloigné tient dans la table une face chargée. Avec la "
@@ -3702,7 +3740,7 @@ msgstr ""
 "blocco corsa (« OS-08 ») — senza di esso si leggerebbe « sei » per "
 "difetto e si crederebbe il lato interamente rientrato."
 
-#: ../../source/manuel.rst:1611
+#: ../../source/manuel.rst:1627
 msgid ""
 "**Blocs EPC (toujours exacts).** L'EPC, le nombre moyen de lancers et "
 "l'écart type proviennent de la distribution exacte du nombre de lancers "
@@ -3722,7 +3760,7 @@ msgstr ""
 "*gioco ottimale a un lato*: ogni giocatore minimizza i propri lanci "
 "ignorando l'avversario — è la definizione standard dell'EPC."
 
-#: ../../source/manuel.rst:1620
+#: ../../source/manuel.rst:1636
 msgid ""
 "**Probabilité de gain, régime exact.** Lecture directe dans la base two-"
 "sided disponible la plus large (TS-06-06 calculée au premier lancement, "
@@ -3738,7 +3776,7 @@ msgstr ""
 "ottimale di entrambi i campi: nessuna ipotesi supplementare, errore "
 "limitato alla quantizzazione (< 0,002 %)."
 
-#: ../../source/manuel.rst:1626
+#: ../../source/manuel.rst:1642
 msgid ""
 "**Probabilité de gain, régime estimé.** Hors du domaine de la base : la "
 "probabilité est obtenue en convoluant les deux distributions one-sided "
@@ -3753,7 +3791,7 @@ msgstr ""
 "polinomiale fissa, calibrata offline rispetto al database TS-06-11. Tre "
 "ipotesi:"
 
-#: ../../source/manuel.rst:1632
+#: ../../source/manuel.rst:1648
 msgid ""
 "**indépendance** des deux processus de sortie — structurelle en course, "
 "sans contact il n'y a aucune interaction ;"
@@ -3761,7 +3799,7 @@ msgstr ""
 "**indipendenza** dei due processi di uscita — strutturale in corsa, senza"
 " contatto non c'è alcuna interazione;"
 
-#: ../../source/manuel.rst:1635
+#: ../../source/manuel.rst:1651
 msgid ""
 "**jeu one-sided optimal des deux camps** — c'est *l'approximation* : en "
 "réalité le joueur mené dévie pour jouer la variance et le meneur pour la "
@@ -3774,7 +3812,7 @@ msgstr ""
 "(la convoluzione esagera il vantaggio di chi conduce) che la correzione "
 "assorbe statisticamente;"
 
-#: ../../source/manuel.rst:1640
+#: ../../source/manuel.rst:1656
 msgid ""
 "la **correction** a été calibrée et validée sur le domaine de l'oracle "
 "(jusqu'à 11 pions par joueur). Erreur résiduelle mesurée : écart type "
@@ -3789,7 +3827,7 @@ msgstr ""
 "limite è estrapolato** — la tendenza è monotona ma nessun oracolo la "
 "certifica."
 
-#: ../../source/manuel.rst:1646
+#: ../../source/manuel.rst:1662
 msgid ""
 "**Équités et verdict de videau (régime exact seulement).** Les équités "
 "affichées sont celles du **money game, sans Jacoby**, dans le référentiel"
@@ -3808,7 +3846,7 @@ msgstr ""
 "secondo la regola di GNUbg, validata punto per punto rispetto alla sua "
 "analisi."
 
-#: ../../source/manuel.rst:1654
+#: ../../source/manuel.rst:1670
 #, no-python-format
 msgid ""
 "Les équités cubeful supposent un **jeu de videau optimal des deux camps "
@@ -3833,7 +3871,7 @@ msgstr ""
 "di vittoria, D/T esatto +0,006 contro +0,475 per XG). La **decisione** "
 "mostrata, invece, coincide con quella dei motori."
 
-#: ../../source/manuel.rst:1665
+#: ../../source/manuel.rst:1681
 msgid ""
 "**Probabilité de gain et verdict, régime évalué.** Hors du domaine exact,"
 " la probabilité de gain provient de la sortie brute de gammonNet "
@@ -3853,7 +3891,7 @@ msgstr ""
 " sotto) e consente, unico dei tre regimi insieme all'esatto, un verdetto "
 "**al punteggio di match**."
 
-#: ../../source/manuel.rst:1673
+#: ../../source/manuel.rst:1689
 #, no-python-format
 msgid ""
 "Ce régime a été mesuré, pas seulement supposé, contre la table two-sided "
@@ -3884,7 +3922,7 @@ msgstr ""
 "metodi legittimamente diversi divergono di più su una decisione serrata —"
 " non un errore diffuso che costerebbe equità ovunque."
 
-#: ../../source/manuel.rst:1686
+#: ../../source/manuel.rst:1702
 msgid ""
 "Cette mesure porte sur des décisions **money**, en course. Le verdict au "
 "score de match — que ce régime est seul à savoir rendre — et les "
@@ -3896,7 +3934,7 @@ msgstr ""
 "di contatto non hanno una misura pubblicata: quanto precede non si "
 "trasferisce a questi casi."
 
-#: ../../source/manuel.rst:1690
+#: ../../source/manuel.rst:1706
 msgid ""
 "**Pourquoi pas plus profond que 2 plis ?** Parce que la mesure dit que "
 "cela ne rapporte rien. Une décision de pions coûte 99 ms à 2 plis et 8,4 "
@@ -3917,7 +3955,7 @@ msgstr ""
 "parla di errore. Per decisione, tutti i casi insieme, il guadagno è "
 "0,0000."
 
-#: ../../source/manuel.rst:1699
+#: ../../source/manuel.rst:1715
 msgid ""
 "Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne"
 " vaut rien en général, mais que sur *ce* réseau, avec le filtre "
@@ -3931,7 +3969,7 @@ msgstr ""
 " riproducibile (``TestThreePlyMeasure``) e la conclusione sarà rivalutata"
 " se la rete cambia."
 
-#: ../../source/manuel.rst:1704
+#: ../../source/manuel.rst:1720
 #, no-python-format
 msgid ""
 "**Pourquoi le verdict estimé n'existe-t-il pas ?** Ce qui suit vise "
@@ -3963,7 +4001,7 @@ msgstr ""
 "ricerca che gioca la traiettoria, non un riassunto statistico, a colmare "
 "questa lacuna."
 
-#: ../../source/manuel.rst:1717
+#: ../../source/manuel.rst:1733
 msgid ""
 "Les bases de bearoff sont des tables mathématiques immuables. blunderDB "
 "les calcule lui-même, à l'identique de l'outil ``makebearoff`` de GNUbg —"
@@ -3975,11 +4013,11 @@ msgstr ""
 "per byte — nella scheda *Bearoff* della configurazione o con ``blunderdb "
 "bearoff generate``."
 
-#: ../../source/manuel.rst:1725
+#: ../../source/manuel.rst:1741
 msgid "Panneau Anki"
 msgstr "Pannello Anki"
 
-#: ../../source/manuel.rst:1727
+#: ../../source/manuel.rst:1743
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par "
 "répétition espacée en utilisant l'algorithme FSRS. L'utilisateur peut "
@@ -3989,7 +4027,7 @@ msgstr ""
 " ripetizione dilazionata utilizzando l'algoritmo FSRS. L'utente può "
 "creare mazzi a partire da raccolte o risultati di ricerca."
 
-#: ../../source/manuel.rst:1731
+#: ../../source/manuel.rst:1747
 msgid ""
 "**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
 "partir d'une collection ou des résultats de recherche courants. Les "
@@ -4001,7 +4039,7 @@ msgstr ""
 "basati su una ricerca si sincronizzano automaticamente all'apertura della"
 " scheda Anki."
 
-#: ../../source/manuel.rst:1735
+#: ../../source/manuel.rst:1751
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4017,7 +4055,7 @@ msgstr ""
 "(Difficile), *3* (Bene) o *4* (Facile). Premere *Esc* per interrompere e "
 "tornare all'elenco dei mazzi."
 
-#: ../../source/manuel.rst:1741
+#: ../../source/manuel.rst:1757
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "ou quelle action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou "
@@ -4034,7 +4072,7 @@ msgstr ""
 "portata di mano. Cliccare su una mossa dell'elenco la mostra sul "
 "tavoliere."
 
-#: ../../source/manuel.rst:1748
+#: ../../source/manuel.rst:1764
 msgid ""
 "Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr"
 " de vous, les touches *1* à *4* restent actives. La réponse se remasque à"
@@ -4048,7 +4086,7 @@ msgstr ""
 " a consultare il pannello Eval o il commento della posizione, la si "
 "ritroverà al ritorno."
 
-#: ../../source/manuel.rst:1753
+#: ../../source/manuel.rst:1769
 msgid ""
 "Une position dépourvue d'analyse enregistrée l'indique directement, sans "
 "zone masquée."
@@ -4056,7 +4094,7 @@ msgstr ""
 "Una posizione priva di analisi registrata lo indica direttamente, senza "
 "zona nascosta."
 
-#: ../../source/manuel.rst:1756
+#: ../../source/manuel.rst:1772
 msgid ""
 "**Limiter la séance.** Par défaut, une séance de révision va jusqu'au "
 "bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par "
@@ -4076,7 +4114,7 @@ msgstr ""
 "davvero esaurita. Per continuare comunque c'è l'allenamento libero: "
 "propone altre posizioni senza modificare nulla della pianificazione."
 
-#: ../../source/manuel.rst:1764
+#: ../../source/manuel.rst:1780
 msgid ""
 "Une limite de **0** ne sert aucune carte : c'est un état à part entière, "
 "utile pour geler un paquet le temps de préparer un tournoi, et ce n'est "
@@ -4087,7 +4125,7 @@ msgstr ""
 "utile per congelare un mazzo il tempo di preparare un torneo, e non è la "
 "stessa cosa di «nessun limite». Il pulsante *Study* è allora inattivo."
 
-#: ../../source/manuel.rst:1768
+#: ../../source/manuel.rst:1784
 msgid ""
 "La limite porte sur la **séance**, pas sur la journée. Un paquet "
 "blunderDB est bâti sur une collection ou une recherche : c'est un corpus "
@@ -4101,7 +4139,7 @@ msgstr ""
 "limitato dalla sua dimensione. Un tetto giornaliero non morderebbe mai, "
 "oppure creerebbe un arretrato su un mazzo che stava in una sessione."
 
-#: ../../source/manuel.rst:1774
+#: ../../source/manuel.rst:1790
 msgid ""
 "**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, "
 "lance une session d'entraînement libre : des positions aléatoires du "
@@ -4122,7 +4160,7 @@ msgstr ""
 "lo stato della carta e un pulsante *Avanti* (tasti *1*–*4*) scorre le "
 "posizioni. *Esc* torna all'elenco senza salvare una sessione interrotta."
 
-#: ../../source/manuel.rst:1783
+#: ../../source/manuel.rst:1799
 msgid ""
 "**Écarter une carte, sans la noter.** Pendant une révision, un clic droit"
 " sur l'en-tête de la carte ouvre trois gestes qui la sortent de la séance"
@@ -4132,7 +4170,7 @@ msgstr ""
 "clic destro sull'intestazione della carta offre tre gesti che la tolgono "
 "dalla sessione senza dire nulla allo scheduler:"
 
-#: ../../source/manuel.rst:1787
+#: ../../source/manuel.rst:1803
 msgid ""
 "**Suspendre** — la carte garde son échéancier et ne remonte plus jamais "
 "tant qu'elle est suspendue. C'est la manière de mettre de côté une carte "
@@ -4142,7 +4180,7 @@ msgstr ""
 "è sospesa. È il modo di mettere da parte una carta sbagliata, o non "
 "ancora utile, senza perdere lo storico che vi è legato."
 
-#: ../../source/manuel.rst:1791
+#: ../../source/manuel.rst:1807
 msgid ""
 "**Enterrer** — la carte disparaît jusqu'au lendemain. Contrairement à la "
 "suspension, cela ne dit rien de sa valeur : c'est pour celle que l'on "
@@ -4154,7 +4192,7 @@ msgstr ""
 "vista altrove, o che si preferisce non incrociare due volte in una "
 "serata."
 
-#: ../../source/manuel.rst:1795
+#: ../../source/manuel.rst:1811
 msgid ""
 "**Retirer** — la carte quitte le paquet, après confirmation. La position,"
 " elle, reste dans la base : un paquet est une liste d'étude sur la "
@@ -4164,7 +4202,7 @@ msgstr ""
 "resta nella base: un mazzo è una lista di studio sulla biblioteca, mai "
 "una sua copia."
 
-#: ../../source/manuel.rst:1799
+#: ../../source/manuel.rst:1815
 msgid ""
 "Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est "
 "pas une carte répondue, et elle ne compte pas dans le décompte de la "
@@ -4173,7 +4211,7 @@ msgstr ""
 "Nessuno di questi tre gesti registra un voto: una carta messa da parte "
 "non è una carta risposta, e non conta nel totale della sessione."
 
-#: ../../source/manuel.rst:1802
+#: ../../source/manuel.rst:1818
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -4191,7 +4229,7 @@ msgstr ""
 "regola rende utile il registro — il passato non si riscrive, ma si può "
 "conoscere."
 
-#: ../../source/manuel.rst:1810
+#: ../../source/manuel.rst:1826
 msgid ""
 "**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
 "tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
@@ -4202,7 +4240,7 @@ msgstr ""
 "e mostra la tua progressione. Cliccarci sopra per riprendere da dove ci "
 "si era fermati."
 
-#: ../../source/manuel.rst:1814
+#: ../../source/manuel.rst:1830
 msgid ""
 "**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
 "synchroniser, réinitialiser ou supprimer des paquets (confirmation "
@@ -4216,7 +4254,7 @@ msgstr ""
 "intervallo massimo, casualità) si possono configurare per mazzo nelle "
 "Impostazioni (icona a ingranaggio)."
 
-#: ../../source/manuel.rst:1820
+#: ../../source/manuel.rst:1836
 msgid ""
 "**Rétention : la cible et la mesure.** La *rétention cible* est votre "
 "choix sur le compromis entre charge de travail et qualité du rappel : "
@@ -4236,7 +4274,7 @@ msgstr ""
 "ripassi la misura non viene mostrata: si leggerebbe come un fatto mentre "
 "è solo rumore."
 
-#: ../../source/manuel.rst:1829
+#: ../../source/manuel.rst:1845
 msgid ""
 "Changer la rétention **n'est pas rétroactif** : chaque carte adopte le "
 "nouveau rythme à sa prochaine révision, et les échéances déjà fixées ne "
@@ -4246,7 +4284,7 @@ msgstr ""
 "ritmo al ripasso successivo, e le scadenze già fissate non si spostano. "
 "L'effetto è quindi graduale, e invisibile il giorno stesso."
 
-#: ../../source/manuel.rst:1833
+#: ../../source/manuel.rst:1849
 msgid ""
 "L'*intervalle maximum* borne l'espacement. Un paquet créé récemment "
 "démarre à un an : une position que l'algorithme reporterait de plusieurs "
@@ -4260,11 +4298,11 @@ msgstr ""
 "gioco cambia più in fretta di così. I mazzi più vecchi conservano il "
 "valore che avevano."
 
-#: ../../source/manuel.rst:1841
+#: ../../source/manuel.rst:1857
 msgid "Panneau Métadonnées"
 msgstr "Pannello Metadati"
 
-#: ../../source/manuel.rst:1843
+#: ../../source/manuel.rst:1859
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -4275,7 +4313,7 @@ msgstr ""
 " corrente: nome, descrizione, numero di posizioni, numero di match e di "
 "partite, versione dello schema. Accessibile tramite il comando ``meta``."
 
-#: ../../source/manuel.rst:1847
+#: ../../source/manuel.rst:1863
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -4285,11 +4323,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Un database ordinario non mostra questa "
 "sezione."
 
-#: ../../source/manuel.rst:1853
+#: ../../source/manuel.rst:1869
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Distribuire un database: origine e password"
 
-#: ../../source/manuel.rst:1855
+#: ../../source/manuel.rst:1871
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -4301,7 +4339,7 @@ msgstr ""
 "**al momento dell'esportazione**: contrassegnare il file con la sua "
 "origine e proteggerlo con una password."
 
-#: ../../source/manuel.rst:1862
+#: ../../source/manuel.rst:1878
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -4314,11 +4352,11 @@ msgstr ""
 "parte viene annotato chi lo ha aperto, quando, né da dove proviene il suo"
 " contenuto."
 
-#: ../../source/manuel.rst:1868
+#: ../../source/manuel.rst:1884
 msgid "Marquer une base de son origine"
 msgstr "Contrassegnare un database con la sua origine"
 
-#: ../../source/manuel.rst:1870
+#: ../../source/manuel.rst:1886
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -4329,11 +4367,11 @@ msgstr ""
 "sovrapposto ad esso durante la scrittura, un indicatore di avanzamento. "
 "Si chiude da sola al termine e il risultato appare nella barra di stato."
 
-#: ../../source/manuel.rst:1874
+#: ../../source/manuel.rst:1890
 msgid "Trois points méritent l'attention :"
 msgstr "Tre punti meritano attenzione:"
 
-#: ../../source/manuel.rst:1876
+#: ../../source/manuel.rst:1892
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -4343,7 +4381,7 @@ msgstr ""
 "l'intero database. Dopo una ricerca vengono esportati solo i risultati: "
 "la finestra lo ricorda in alto."
 
-#: ../../source/manuel.rst:1879
+#: ../../source/manuel.rst:1895
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -4353,7 +4391,7 @@ msgstr ""
 "troncata.** L'elenco mostra quindi, per ogni raccolta, la parte coperta "
 "(«12/40») e la segnala in rosso quando è parziale."
 
-#: ../../source/manuel.rst:1882
+#: ../../source/manuel.rst:1898
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -4364,7 +4402,7 @@ msgstr ""
 "vuoto. La casella resta disattivata finché non è selezionato «includi i "
 "match»."
 
-#: ../../source/manuel.rst:1886
+#: ../../source/manuel.rst:1902
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -4377,13 +4415,13 @@ msgstr ""
 "filtri salvati* è a sé stante: non esporta contenuti ma le tue ricerche "
 "salvate, inutili nel database di qualcun altro."
 
-#: ../../source/manuel.rst:1892
+#: ../../source/manuel.rst:1908
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "Selezionando **Contrassegna questo file con la sua origine** compaiono "
 "due campi:"
 
-#: ../../source/manuel.rst:1894
+#: ../../source/manuel.rst:1910
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -4394,7 +4432,7 @@ msgstr ""
 "**obbligatorio**: finché è vuoto, il pulsante di esportazione resta "
 "inattivo."
 
-#: ../../source/manuel.rst:1897
+#: ../../source/manuel.rst:1913
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -4402,7 +4440,7 @@ msgstr ""
 "**Nota**, facoltativa — condizioni d'uso, indirizzo di contatto, la "
 "richiesta di non ridistribuire."
 
-#: ../../source/manuel.rst:1900
+#: ../../source/manuel.rst:1916
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -4416,11 +4454,11 @@ msgstr ""
 "distribuito è un normale database SQLite e blunderDB è software libero. "
 "Non impedisce nulla: dice da dove viene il file."
 
-#: ../../source/manuel.rst:1907
+#: ../../source/manuel.rst:1923
 msgid "Identité d'émetteur"
 msgstr "Identità dell'emittente"
 
-#: ../../source/manuel.rst:1909
+#: ../../source/manuel.rst:1925
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -4434,7 +4472,7 @@ msgstr ""
 "file recano la stessa impronta pubblica, nella forma "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:1914
+#: ../../source/manuel.rst:1930
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -4448,7 +4486,7 @@ msgstr ""
 "protetto da una passphrase. **Questo file permette di firmare a tuo nome:"
 " non condividerlo.**"
 
-#: ../../source/manuel.rst:1920
+#: ../../source/manuel.rst:1936
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -4458,7 +4496,7 @@ msgstr ""
 "scheda *Identità dell'emittente* mostra il tuo nome e la tua impronta e "
 "propone *Salva identità…*, *Carica identità…* e *Rigenera…*."
 
-#: ../../source/manuel.rst:1926
+#: ../../source/manuel.rst:1942
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -4471,7 +4509,7 @@ msgstr ""
 "firmare con la tua vecchia impronta, e quei contrassegni resteranno "
 "validi."
 
-#: ../../source/manuel.rst:1931
+#: ../../source/manuel.rst:1947
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -4480,7 +4518,7 @@ msgstr ""
 "Ciò che ti protegge dopo una fuga non è il software: è pubblicare la tua "
 "nuova impronta e disconoscere la vecchia presso i tuoi destinatari."
 
-#: ../../source/manuel.rst:1935
+#: ../../source/manuel.rst:1951
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -4488,11 +4526,11 @@ msgstr ""
 "La rigenerazione sovrascrive la chiave attuale; blunderDB propone di "
 "salvarla prima di sostituirla."
 
-#: ../../source/manuel.rst:1939
+#: ../../source/manuel.rst:1955
 msgid "Protéger une base par un mot de passe"
 msgstr "Proteggere un database con una password"
 
-#: ../../source/manuel.rst:1941
+#: ../../source/manuel.rst:1957
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -4502,7 +4540,7 @@ msgstr ""
 "protetto; l'icona a forma di occhio la mostra **finché la si tiene "
 "premuta** e la nasconde di nuovo appena la si rilascia."
 
-#: ../../source/manuel.rst:1945
+#: ../../source/manuel.rst:1961
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -4520,7 +4558,7 @@ msgstr ""
 "blunderDB chiede allora la password e installa accanto un database "
 "ordinario; in seguito non viene più chiesto nulla."
 
-#: ../../source/manuel.rst:1953
+#: ../../source/manuel.rst:1969
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -4534,7 +4572,7 @@ msgstr ""
 "se intendi trasmetterlo — e l'eliminazione avviene solo dopo un'apertura "
 "riuscita."
 
-#: ../../source/manuel.rst:1960
+#: ../../source/manuel.rst:1976
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -4546,7 +4584,7 @@ msgstr ""
 "download o un allegato inoltrato per errore. Non protegge da colui al "
 "quale hai dato la password."
 
-#: ../../source/manuel.rst:1965
+#: ../../source/manuel.rst:1981
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -4554,7 +4592,7 @@ msgstr ""
 "La password viene verificata a **ogni** apertura, anche quando il file è "
 "già stato aperto in precedenza su quel computer."
 
-#: ../../source/manuel.rst:1968
+#: ../../source/manuel.rst:1984
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -4570,7 +4608,7 @@ msgstr ""
 "come tale, e così pure qualsiasi alterazione del file cifrato — non si "
 "ottiene mai in silenzio un database corrotto."
 
-#: ../../source/manuel.rst:1975
+#: ../../source/manuel.rst:1991
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -4578,11 +4616,11 @@ msgstr ""
 "L'intestazione del file protetto resta **in chiaro**: la sua origine "
 "rimane leggibile senza la password."
 
-#: ../../source/manuel.rst:1979
+#: ../../source/manuel.rst:1995
 msgid "Lire l'origine d'un fichier"
 msgstr "Leggere l'origine di un file"
 
-#: ../../source/manuel.rst:1981
+#: ../../source/manuel.rst:1997
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -4594,7 +4632,7 @@ msgstr ""
 "in sola lettura, che indica ciò che è stato iscritto, da chi, quando, e "
 "lo stato della firma:"
 
-#: ../../source/manuel.rst:1986
+#: ../../source/manuel.rst:2002
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -4602,7 +4640,7 @@ msgstr ""
 "«✓ firma verificata — contrassegnato da te»: il file reca il tuo "
 "contrassegno, intatto;"
 
-#: ../../source/manuel.rst:1988
+#: ../../source/manuel.rst:2004
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -4611,15 +4649,15 @@ msgstr ""
 "chiave — confronta la sua impronta con quella che l'autore ti ha "
 "comunicato;"
 
-#: ../../source/manuel.rst:1990
+#: ../../source/manuel.rst:2006
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "«⚠ firma non valida»: il documento è stato modificato o contraffatto."
 
-#: ../../source/manuel.rst:1992
+#: ../../source/manuel.rst:2008
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Questa sezione non compare in un database ordinario."
 
-#: ../../source/manuel.rst:1994
+#: ../../source/manuel.rst:2010
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -4633,11 +4671,11 @@ msgstr ""
 " le opzioni ``--watermark`` e ``--password`` di ``export``, nonché per "
 "``identity`` e ``open``."
 
-#: ../../source/manuel.rst:2003
+#: ../../source/manuel.rst:2019
 msgid "Publier une base pour d'autres"
 msgstr "Pubblicare una base per altri"
 
-#: ../../source/manuel.rst:2005
+#: ../../source/manuel.rst:2021
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -4653,7 +4691,7 @@ msgstr ""
 "registrato nulla, e non ci sarebbe quindi nulla da comunicare a un "
 "servizio, anche se esistesse."
 
-#: ../../source/manuel.rst:2011
+#: ../../source/manuel.rst:2027
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -4661,13 +4699,13 @@ msgstr ""
 "Ciò che rende una base pubblicata utilizzabile da un altro si riduce a "
 "quattro campi, tutti già presenti:"
 
-#: ../../source/manuel.rst:2014
+#: ../../source/manuel.rst:2030
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Utente** — chi l'ha costituita, con il nome che vuoi veder citato."
 
-#: ../../source/manuel.rst:2015
+#: ../../source/manuel.rst:2031
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -4677,7 +4715,7 @@ msgstr ""
 "elenco: «240 decisioni di cubo al punteggio, commentate, livello "
 "intermedio»."
 
-#: ../../source/manuel.rst:2017
+#: ../../source/manuel.rst:2033
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -4687,7 +4725,7 @@ msgstr ""
 "stato prodotto. È la prima cosa che il destinatario legge nel pannello "
 "*Metadati*."
 
-#: ../../source/manuel.rst:2020
+#: ../../source/manuel.rst:2036
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -4697,7 +4735,7 @@ msgstr ""
 "confrontandola che il destinatario verifica che il file viene da te e non"
 " da qualcuno che ha ripreso il tuo nome."
 
-#: ../../source/manuel.rst:2024
+#: ../../source/manuel.rst:2040
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -4707,7 +4745,7 @@ msgstr ""
 "semplicemente anonima, e il pannello *Metadati* non mostra allora alcuna "
 "sezione *Provenienza*."
 
-#: ../../source/manuel.rst:2028
+#: ../../source/manuel.rst:2044
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"

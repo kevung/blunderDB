@@ -61,7 +61,7 @@
         handleOpenCollection,
         addSearchToFilterLibrary
     } from './services/positionService.js';
-    import { importDatabase, importPosition, handleFileDrop } from './services/importService.js';
+    import { importDatabase, importPosition, handleFileDrop, importIdentifier } from './services/importService.js';
     import { exportDatabase } from './services/exportService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
@@ -279,6 +279,7 @@
             onImportDatabase: importDatabase,
             onExportDatabase: exportDatabase,
             importPosition,
+            onImportIdentifier: importIdentifier,
             onSavePosition: saveCurrentPosition,
             onUpdatePosition: updatePosition,
             onDeletePosition: deletePosition,
