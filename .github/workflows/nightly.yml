@@ -332,8 +332,77 @@ jobs:
           grep -c '"status": "broken"' build/linkcheck/output.json 2>/dev/null && exit 1 || exit 0
         shell: bash
 
+  # The example notebook (I.24, #280). A notebook that is not run is a
+  # notebook that has stopped working without anybody noticing: the CSV column
+  # it reads was renamed, the CLI flag moved. This job builds a small database
+  # from testdata/, exports the three CSVs and executes every cell.
+  #
+  # It asserts NOTHING about the numbers — they are a fixture's, not a claim.
+  # It asserts that the notebook still runs against today's export, which is
+  # the only thing that can rot here.
+  notebook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Setup GoLang
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+
+      - name: Install the notebook's dependencies
+        run: python -m pip install --quiet pandas matplotlib nbclient nbformat ipykernel
+        shell: bash
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Build a database, export it, and run the notebook
+        run: |
+          set -euo pipefail
+          go build -o /tmp/blunderdb .
+          work=$(mktemp -d)
+          cp notebooks/blunderdb-analyse.ipynb "$work/"
+
+          /tmp/blunderdb create --db "$work/nb.db"
+          /tmp/blunderdb import --db "$work/nb.db" --type match --file testdata/test.mat
+          # 0-ply: the notebook needs analyses to exist, not to be deep, and a
+          # 2-ply sweep of 341 positions is minutes this job should not spend.
+          /tmp/blunderdb analyze --db "$work/nb.db" --ply 0
+          for kind in positions moves analyses; do
+            /tmp/blunderdb list --db "$work/nb.db" --type "$kind" --format csv > "$work/$kind.csv"
+          done
+
+          # Every export must have more than its header: an empty CSV would let
+          # the notebook "pass" over nothing.
+          for kind in positions moves analyses; do
+            lines=$(wc -l < "$work/$kind.csv")
+            echo "$kind.csv: $lines line(s)"
+            [ "$lines" -gt 1 ]
+          done
+
+          cd "$work"
+          MPLBACKEND=Agg python -c "
+          import nbformat
+          from nbclient import NotebookClient
+          nb = nbformat.read('blunderdb-analyse.ipynb', as_version=4)
+          NotebookClient(nb, timeout=300, kernel_name='python3').execute()
+          print('notebook executed')
+          "
+        shell: bash
+
   notify-on-failure:
-    needs: [test-os-full, gammonnet-race-full, benchstat, loadtest]
+    needs: [test-os-full, gammonnet-race-full, benchstat, loadtest, notebook]
     if: >-
       always() && contains(needs.*.result, 'failure') &&
       !(github.event_name == 'workflow_dispatch' && inputs.pr_number != '')

@@ -21,7 +21,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, imports, stats, players, tags (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 
 	// Stats-specific flags (only used when --type stats)
@@ -81,6 +81,11 @@ func (cli *CLI) runList(args []string) error {
 		fmt.Println()
 		fmt.Println("  # The tag vocabulary of this database, most used first")
 		fmt.Println("  blunderdb list --db database.db --type tags")
+		fmt.Println()
+		fmt.Println("  # Tabular exports, for a notebook or a spreadsheet")
+		fmt.Println("  blunderdb list --db database.db --type positions --format csv > positions.csv")
+		fmt.Println("  blunderdb list --db database.db --type moves     --format csv > moves.csv")
+		fmt.Println("  blunderdb list --db database.db --type analyses  --format csv > analyses.csv")
 	}
 
 	if err := listCmd.Parse(args); err != nil {
@@ -110,7 +115,20 @@ func (cli *CLI) runList(args []string) error {
 	case "tournaments":
 		return cli.listTournaments(*limit)
 	case "positions":
+		if strings.ToLower(*statsFormat) == "csv" {
+			return cli.exportPositionsCSV(exportLimit(listCmd, *limit))
+		}
 		return cli.listPositions(*limit)
+	case "moves":
+		if strings.ToLower(*statsFormat) != "csv" {
+			return fmt.Errorf("--type moves is a tabular export: add --format csv")
+		}
+		return cli.exportMovesCSV(exportLimit(listCmd, *limit))
+	case "analyses":
+		if strings.ToLower(*statsFormat) != "csv" {
+			return fmt.Errorf("--type analyses is a tabular export: add --format csv")
+		}
+		return cli.exportAnalysesCSV(exportLimit(listCmd, *limit))
 	case "imports":
 		return cli.listImports(*limit, *batchID, strings.ToLower(*statsFormat), *importQueue)
 	case "stats":
@@ -155,7 +173,7 @@ func (cli *CLI) runList(args []string) error {
 		}
 		return cli.showPlayerTable(filter, *statsFormat)
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'imports', 'stats', 'players', or 'tags')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'moves', 'analyses', 'imports', 'stats', 'players', or 'tags')", *listType)
 	}
 }
 
@@ -632,4 +650,25 @@ func orDash(s string) string {
 		return "—"
 	}
 	return s
+}
+
+// exportLimit is --limit as a tabular export must read it: unbounded unless
+// the user asked for a bound.
+//
+// `--limit` defaults to 10 because a `list` printed to a terminal should not
+// scroll a database past the reader. An export is the opposite case: it is
+// redirected to a file and read by a program, and silently truncating it at
+// ten rows would be a trap nobody notices until the figures are wrong. So the
+// default is ignored here, and only a --limit the user actually typed applies.
+func exportLimit(fs *flag.FlagSet, limit int) int {
+	explicit := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == "limit" {
+			explicit = true
+		}
+	})
+	if !explicit {
+		return 0
+	}
+	return limit
 }
