@@ -21,7 +21,7 @@ executable, five modes, dispatched on `os.Args[1]` in `main.go`:
 - `serve` → **HTTP + JSON daemon** (SQLite or multi-tenant PostgreSQL backend)
 - `call` → generic in-process dispatcher over the same handlers (scripting/tests)
 - `migrate` → copy a SQLite database into PostgreSQL under a tenant
-- `create|import|export|identity|open|list|match|collection|anki|bearoff|verify|vacuum|repair|delete|healthcheck|completion|help|version|info|edit|search|epc|analyze` →
+- `analyze|anki|bearoff|collection|completion|create|cubematrix|delete|edit|epc|export|healthcheck|help|identity|import|info|list|match|open|repair|search|trash|vacuum|verify|version` →
   **CLI**. The names live in one place — `handlers()` in `internal/cli/cli.go`
   (`cli.CommandNames()` is the exported, sorted view `cmd/cli-doc-gen` walks);
   `main.go` asks `cli.IsCommand`. Never re-introduce a second list there.

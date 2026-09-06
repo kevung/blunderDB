@@ -467,8 +467,9 @@ cliquer dans la barre d'outils sur le bouton *Supprimer la position*.
 
 .. tip:: En ligne de commande, exécuter ``d``.
 
-.. caution:: La suppression de la position est définitive ; une confirmation
-   est demandée avant.
+.. caution:: Une confirmation est demandée avant. La suppression a bien lieu,
+   mais une copie de la position est gardée trente jours : voir
+   :ref:`corbeille`.
 
 Import une position depuis XG
 -----------------------------
