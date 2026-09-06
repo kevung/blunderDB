@@ -2,7 +2,7 @@
 
 ## Status
 
-proposed — decided 2026-09-07 in a design interview, before any code. Replaces the
+accepted — decided 2026-09-07 in a design interview, before any code. Replaces the
 training *bar* that I.17 (#273) and J.4 (#294) shipped; keeps their judge, their session
 PR and the move-on-the-board reducer (`quizPlay.js`, merged 2026-09-07). Extends 0025 and
 0026 (what an Anki card is, see 0042); leans on 0037 (what "the engine plays a few

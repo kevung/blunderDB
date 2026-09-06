@@ -2,7 +2,7 @@
 
 ## Status
 
-proposed — decided 2026-09-07, with 0040. Extends 0025 (what a review card asks) and
+accepted — decided 2026-09-07, with 0040. Extends 0025 (what a review card asks) and
 0026 (how a finite deck is paced): a deck of scores is finite by construction and is paced
 like any other. Changes the card schema, which is why it has its own record.
 

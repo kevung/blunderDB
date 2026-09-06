@@ -2,7 +2,7 @@
 
 ## Status
 
-proposed — decided 2026-09-07, with 0040. Refines 0037: the engine playing a few plies
+accepted — decided 2026-09-07, with 0040. Refines 0037: the engine playing a few plies
 against itself, out of sight, to *make* a position is not a play mode, and this record
 says where the line is. The bearoff domain leans on 0027 (exact tables) and 0012 (the
 regimes an Evaluation question may find itself in).
