@@ -52,6 +52,7 @@ const (
 	whyServerEPC        = "the CLI's `epc` computes from an XGID without a database; the daemon's positions.epc takes a position"
 	whyMetadata         = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
+	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
@@ -85,6 +86,7 @@ var serverOnly = map[string]string{
 	// Pure functions of the domain, with no storage behind them. The GUI and
 	// the CLI import the package and call them in Go; only an HTTP client
 	// needs them as routes.
+	"/v1/gammonnet.cubeMatrix": whyEnginePure,
 	"/v1/positions.fromXGID":   whyPureDomain,
 	"/v1/positions.legalMoves": whyPureDomain,
 	"/v1/search.parse":         whyPureDomain,
