@@ -184,6 +184,24 @@ Fermée aussi : **#300** (J.10, « jouer contre gammonNet »), par **ADR-0037** 
 la fiche demandait « une ligne dans une ADR pour ne pas rouvrir la question »,
 elle a maintenant sa page.
 
+### Où en est le lot I au 2026-09-06, en fin de session
+
+Fermées cette session : #257, #258, #259, #261, #262, #263, #264, #265, #266,
+#267, #268, #269, #270, #272, #274, #278, #279, #280, #281, #284, #285, #286,
+#288, #289, #290, plus #127 et #300. Reste, dans ce lot :
+
+| Issue | Fiche | État |
+|---|---|---|
+| #260 | I.4 | **Bloquée par la fiche elle-même.** Le rapport P9 exige des échantillons OGID réels versés en `testdata/` avant d'écrire le lecteur. En attendant, `import XGID=…` (#262) refuse un identifiant non-XGID en le disant, plutôt que de le deviner. |
+| #271 | I.15 | Deux moitiés : drapeaux visibles (S, déjà à moitié fait par C.3 — Jacoby et beaver s'affichent déjà sous le verdict), et MET configurable par base, qui demande une décision amont (l'ADR-0016 refuse un réglage global rendant deux analyses incomparables). |
+| #273 | I.17 | Micro-entraînements. Prototype de J.4. |
+| #275 | I.19 | Statistiques d'étude corrélées au jeu réel. Dépend de la classification J.1 pour être autre chose qu'une courbe. |
+| #276 | I.20 | Cartes de videau chaînées. **Demande un bump de schéma** (une carte doit porter SA question) : à grouper dans une vague 2.20.0. |
+| #277 | I.21 | Parcours pédagogiques. Nouveau concept dans CONTEXT.md → ADR d'abord. |
+| #282 | I.26 | Trois sous-fonctionnalités indépendantes (collections vivantes, jeton `n>3`, deux joueurs côte à côte). |
+| #283 | I.27 | Grammaire d'intentions. Prérequis D.3 puis B.18 — tous deux faits ; la fiche reste entière. |
+| #287 | I.31 | Neuf conforts indépendants, « S chacune ». Se ferme par lots, pas d'un coup. |
+
 ### Ce qui ne se fera pas par un agent
 
 - **#102** (vidéo de démo) demande un enregistrement d'écran commenté par un
