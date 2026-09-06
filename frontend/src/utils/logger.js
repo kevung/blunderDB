@@ -11,9 +11,13 @@
 const isDev = import.meta.env.DEV;
 
 export const logger = {
+    /** @param {...unknown} args */
     log: (...args) => isDev && console.log(...args),
+    /** @param {...unknown} args */
     warn: (...args) => isDev && console.warn(...args),
+    /** @param {...unknown} args */
     error: (...args) => console.error(...args),
+    /** @param {...unknown} args */
     debug: (...args) => isDev && console.debug(...args),
     perf
 };
