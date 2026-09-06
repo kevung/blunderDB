@@ -1271,7 +1271,12 @@
         "gameType_mutualholding": "Mutual holding",
         "gameType_holding": "Holding",
         "gameType_contact": "Contact",
-        "gameType_over": "Over"
+        "gameType_over": "Over",
+        "compareColumn": "Cmp.",
+        "compareToggle": "Compare {name}",
+        "compareTitle": "{a} and {b}, side by side",
+        "compareClear": "Clear",
+        "compareBlunderRate": "Blunders / 100 dec."
     },
     "trash": {
         "title": "Trash",

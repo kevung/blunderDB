@@ -496,7 +496,10 @@ export default {
 <li><strong>Sort</strong> — click a column header. The table opens sorted by ascending PR, best player first. Players for whom nothing was measured stay at the bottom whichever way the sort goes: a zero for lack of data is not a perfect performance.</li>
 <li><strong>Open a player's detail</strong> — click a row. The player is selected in the filter bar and the display switches to the Dashboard tab.</li>
 <li><strong>Narrow the period</strong> — the date, tournament and match-length filters apply as usual, which makes it possible to bound the table to the dates of a competition.</li>
+<li><strong>Compare two players</strong> — tick the box in the first column on two rows. A block appears above the table and sets their figures face to face; ticking a third player replaces the older of the two. The box does not select the row: ticking compares, clicking opens the detail.</li>
 </ul>
+<p>In that block, <strong>only the rates get a verdict</strong>, and the better of the two is set in bold. Three figures never get one, and it is worth saying why. <strong>Luck</strong> is not a quality: a luckier player is not a better one. <strong>Matches, record and decisions</strong> say what the rates are worth, but putting them in competition would let whoever simply played more win. The <strong>blunder count</strong> does not compare raw — twelve out of a thousand decisions beat ten out of a hundred — so the block adds a <em>Blunders / 100 dec.</em> line, which does compare, and leaves the count beside it as context.</p>
+<p>A tie is not a win: it is set in bold on neither side. A rate with nothing behind it shows as “—” and decides nothing.</p>
 <div class="admonition note">
 <p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
 </div>

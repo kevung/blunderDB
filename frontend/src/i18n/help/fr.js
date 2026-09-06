@@ -496,7 +496,10 @@ export default {
 <li><strong>Trier</strong> — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré restent en bas quel que soit le sens du tri : un zéro faute de données n'est pas une performance parfaite.</li>
 <li><strong>Ouvrir le détail d'un joueur</strong> — cliquez sur une ligne. Le joueur est sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet Dashboard.</li>
 <li><strong>Restreindre la période</strong> — les filtres de dates, de tournois et de longueur de match s'appliquent normalement, ce qui permet de borner le tableau aux dates d'une compétition.</li>
+<li><strong>Comparer deux joueurs</strong> — cochez la case de la première colonne sur deux lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.</li>
 </ul>
+<p>Dans ce bloc, <strong>seuls les taux reçoivent un verdict</strong>, et le meilleur des deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire pourquoi. La <strong>chance</strong> n'est pas une qualité : un joueur plus chanceux n'est pas meilleur. Les <strong>matchs, le bilan et les décisions</strong> situent ce que les taux valent, mais les mettre en compétition ferait gagner celui qui a simplement joué davantage. Le <strong>nombre de blunders</strong> ne se compare pas brut — douze sur mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne <em>Blunders / 100 déc.</em> qui, elle, se compare, et laisse le compte à côté comme contexte.</p>
+<p>Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.</p>
 <div class="admonition note">
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
