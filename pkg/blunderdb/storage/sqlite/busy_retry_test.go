@@ -11,7 +11,6 @@ import (
 	"database/sql"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 // openBusyDB opens a connection to path with busy_timeout(0): any write that
@@ -90,26 +89,34 @@ func TestRetryOnBusy_RecoversOnceTheLockClears(t *testing.T) {
 		t.Fatalf("hold the write lock: %v", err)
 	}
 
-	released := make(chan struct{})
-	go func() {
-		time.Sleep(60 * time.Millisecond)
-		_ = tx.Commit()
-		close(released)
-	}()
-
+	// The lock is released BETWEEN two attempts, and the attempt count is what
+	// says when — not a clock.
+	//
+	// This used to hold the lock in a goroutine for 60 ms while retryOnBusy
+	// spent a 310 ms budget of backoff around it, and read as "the release
+	// wins the race". It is a race all the same, and the hostile image lost it
+	// on 2026-09-07: the failure took 0.50 s, the budget exhausted to its last
+	// attempt, because `tx.Commit()` fsyncs and an overlay filesystem can take
+	// longer over that than every backoff put together. Nothing about the
+	// behaviour under test needs a clock: what it must prove is that a busy
+	// error stops being retried the moment the write succeeds.
 	contender := openBusyDB(t, path)
 	attempts := 0
 	err = retryOnBusy(func() error {
 		attempts++
+		if attempts == 2 {
+			if commitErr := tx.Commit(); commitErr != nil {
+				t.Fatalf("release the write lock: %v", commitErr)
+			}
+		}
 		_, execErr := contender.ExecContext(ctx, `INSERT INTO position (zobrist_hash, decision_type, state) VALUES (?, ?, ?)`, int64(2), 0, "")
 		return execErr
 	})
-	<-released
 	if err != nil {
 		t.Fatalf("retryOnBusy did not recover once the lock cleared: %v", err)
 	}
-	if attempts < 2 {
-		t.Fatalf("attempts = %d, want at least 2 (the lock was held past the first try)", attempts)
+	if attempts != 2 {
+		t.Fatalf("attempts = %d, want exactly 2: the first is refused by the held lock, the second succeeds", attempts)
 	}
 }
 
