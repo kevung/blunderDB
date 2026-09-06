@@ -1362,6 +1362,14 @@ Positions are analysed --jobs at a time, on that many cores: the
 positions of a batch are independent, so the result is the same
 whatever --jobs says. Use --jobs 1 to leave the machine free.
 
+--compare answers a different question and WRITES NOTHING: on the
+positions carrying an analysis somebody else wrote (XG, GNUbg,
+BGBlitz), how often does gammonNet name the same best move or the
+same cube action, and what would following it have cost on the
+imported analysis's own scale? The answer is broken down by game
+phase, which is what says where the disagreements sit. Use --limit
+to ask the question of a sample rather than of a whole library.
+
 A position gammonNet declines to evaluate (a match score beyond
 its MET, a cube state it refuses) is reported separately at the
 end, as "refused": not a failure, and not retried to no effect.
@@ -1369,12 +1377,16 @@ end, as "refused": not a failure, and not retried to no effect.
 Options:
   -candidates int
     	Candidate moves kept per checker decision (default 10)
+  -compare
+    	Compare gammonNet against the imported analyses instead of writing anything
   -db string
     	Path to the database file (required)
   -format string
     	Output format: text or json (default "text")
   -jobs int
     	Positions analysed in parallel (one CPU each) (default 16)
+  -limit int
+    	With --compare: stop after this many positions (0 = all)
   -ply int
     	Search depth (canonical: 2, k=12) (default 2)
   -prune-k int
@@ -1387,6 +1399,7 @@ Examples:
   blunderdb analyze --db database.db --jobs 1
   blunderdb analyze --db database.db --stale --ply 3
   blunderdb analyze --db database.db --format json
+  blunderdb analyze --db database.db --compare --limit 500
 ```
 
 ### `blunderdb anki card`

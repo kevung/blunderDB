@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:12+0200\n"
+"POT-Creation-Date: 2026-09-06 03:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -450,11 +450,46 @@ msgstr ""
 " ενότητα «Πίνακας Eval» και «Μεθοδολογία και υποθέσεις του πίνακα Eval» "
 "στο εγχειρίδιο."
 
-#: ../../source/faq.rst:208
+#: ../../source/faq.rst:206
+#, no-python-format
+msgid ""
+"**Ce que cela vaut, en chiffres.** Sur les positions de bearoff que la "
+"table exacte intégrée couvre — le seul endroit où un oracle existe — "
+"gammonNet à 2 plis rend le **même verdict de videau dans 93,4 % des "
+"cas**, et le désaccord se concentre exactement au point de prise (61 % "
+"d'accord à moins de 1 % du point de prise, 94 % au-delà de 10 %) : c'est "
+"là que deux méthodes légitimes divergent le plus sur une décision serrée,"
+" pas une erreur diffuse. Le détail et la méthode sont dans « Méthodologie"
+" et hypothèses du panneau Eval »."
+msgstr ""
+"**Τι αξίζει αυτό, σε αριθμούς.** Στις θέσεις μαζέματος που καλύπτει ο "
+"ενσωματωμένος ακριβής πίνακας — το μόνο σημείο όπου υπάρχει μαντείο — το "
+"gammonNet στα 2 ply δίνει την **ίδια ετυμηγορία κύβου στο 93,4 % των "
+"περιπτώσεων**, και η διαφωνία συγκεντρώνεται ακριβώς στο σημείο αποδοχής "
+"(61 % συμφωνία σε απόσταση μικρότερη του 1 % από το σημείο αποδοχής, 94 %"
+" πέρα από το 10 %): εκεί δύο θεμιτές μέθοδοι αποκλίνουν περισσότερο σε "
+"μια οριακή απόφαση, δεν πρόκειται για διάχυτο σφάλμα. Η λεπτομέρεια και η"
+" μέθοδος βρίσκονται στο «Μεθοδολογία και παραδοχές του πίνακα Eval»."
+
+#: ../../source/faq.rst:214
+msgid ""
+"Pour la même question posée de **votre** bibliothèque plutôt que d'un "
+"corpus de référence, ``blunderdb analyze --compare`` compare le moteur "
+"embarqué aux analyses venues de vos fichiers XG ou GNUbg — accord sur la "
+"meilleure réponse, coût des désaccords, ventilation par phase de partie —"
+" **sans rien écrire**."
+msgstr ""
+"Για το ίδιο ερώτημα τεθειμένο στη **δική σας** βάση αντί σε ένα σώμα "
+"αναφοράς, το ``blunderdb analyze --compare`` συγκρίνει την ενσωματωμένη "
+"μηχανή με τις αναλύσεις που ήρθαν από τα αρχεία XG ή GNUbg σας — συμφωνία"
+" στην καλύτερη απάντηση, κόστος των διαφωνιών, ανάλυση ανά φάση του "
+"παιχνιδιού — **χωρίς να γράφει τίποτα**."
+
+#: ../../source/faq.rst:221
 msgid "Quelle est la différence entre le PR et le Snowie Error Rate?"
 msgstr "Ποια είναι η διαφορά μεταξύ του PR και του Snowie Error Rate;"
 
-#: ../../source/faq.rst:210
+#: ../../source/faq.rst:223
 msgid ""
 "Le PR (Performance Rating) est la moyenne des erreurs d'équité "
 "(normalisée, en millièmes de point) sur l'ensemble des décisions comptées"
@@ -474,11 +509,11 @@ msgstr ""
 " με τις συμβάσεις των eXtreme Gammon και GNUbg (δείτε :ref:`stats_parity`"
 " για τη λεπτομέρεια των κανόνων υπολογισμού)."
 
-#: ../../source/faq.rst:220
+#: ../../source/faq.rst:233
 msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
 msgstr "Διαθέτει το blunderDB διεπαφή γραμμής εντολών;"
 
-#: ../../source/faq.rst:222
+#: ../../source/faq.rst:235
 msgid ""
 "Oui, blunderDB dispose d'une interface en ligne de commande (CLI) "
 "permettant d'effectuer sans interface graphique des opérations telles que"
@@ -492,11 +527,11 @@ msgstr ""
 "στατιστικών, κ.λπ. Συμβουλευτείτε την τεκμηρίωση CLI για περισσότερες "
 "λεπτομέρειες."
 
-#: ../../source/faq.rst:230
+#: ../../source/faq.rst:243
 msgid "blunderDB propose-t-il un mode serveur?"
 msgstr "Προσφέρει το blunderDB λειτουργία διακομιστή;"
 
-#: ../../source/faq.rst:232
+#: ../../source/faq.rst:245
 msgid ""
 "Oui, un mode « headless » facultatif : le même binaire, lancé avec "
 "``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un "
@@ -522,11 +557,11 @@ msgstr ""
 "μάθημα «Ανάπτυξη της λειτουργίας διακομιστή πίσω από έναν proxy» στον "
 "οδηγό χρήσης."
 
-#: ../../source/faq.rst:245
+#: ../../source/faq.rst:258
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;"
 
-#: ../../source/faq.rst:247
+#: ../../source/faq.rst:260
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
@@ -534,11 +569,11 @@ msgstr ""
 "Ναι, απολύτως (και μάλιστα ενθαρρύνεται!). Το blunderDB διανέμεται υπό "
 "την άδεια MIT."
 
-#: ../../source/faq.rst:251
+#: ../../source/faq.rst:264
 msgid "Où sont stockées mes données?"
 msgstr "Πού αποθηκεύονται τα δεδομένα μου;"
 
-#: ../../source/faq.rst:253
+#: ../../source/faq.rst:266
 msgid ""
 "Sur votre disque, dans le fichier ``.db`` que vous avez choisi en créant "
 "la base : aucun compte, aucun serveur, aucune synchronisation par défaut."
@@ -553,11 +588,11 @@ msgstr ""
 "εξ αποστάσεως, και σε αυτή την περίπτωση εσείς φιλοξενείτε αυτόν τον "
 "διακομιστή."
 
-#: ../../source/faq.rst:261
+#: ../../source/faq.rst:274
 msgid "Puis-je partager une base avec un autre joueur?"
 msgstr "Μπορώ να μοιραστώ μια βάση δεδομένων με άλλον παίκτη;"
 
-#: ../../source/faq.rst:263
+#: ../../source/faq.rst:276
 msgid ""
 "Oui : une base blunderDB est un simple fichier, il suffit de le copier ou"
 " de l'envoyer. Pour diffuser une base à un tiers, deux mécanismes "
@@ -580,11 +615,11 @@ msgstr ""
 "κρυπτογραφημένο αρχείο ``.dbx``. Δείτε :ref:`diffusion_controlee` στο "
 "εγχειρίδιο."
 
-#: ../../source/faq.rst:274
+#: ../../source/faq.rst:287
 msgid "Quel format de données utilise blunderDB?"
 msgstr "Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;"
 
-#: ../../source/faq.rst:276
+#: ../../source/faq.rst:289
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -592,11 +627,11 @@ msgstr ""
 "Η βάση δεδομένων είναι ένα απλό αρχείο SQLite. Έτσι, ελλείψει του "
 "blunderDB, μπορεί να ανοιχτεί με οποιονδήποτε επεξεργαστή αρχείων SQLite."
 
-#: ../../source/faq.rst:281
+#: ../../source/faq.rst:294
 msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;"
 
-#: ../../source/faq.rst:283
+#: ../../source/faq.rst:296
 msgid ""
 "Je voulais une interface accessible, mais pensée pour un usage avancé et "
 "soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
@@ -609,7 +644,7 @@ msgstr ""
 "συντομεύσεις πληκτρολογίου εξυπηρετούν αυτή τη χρήση, χωρίς να είναι "
 "υποχρεωτικές."
 
-#: ../../source/faq.rst:288
+#: ../../source/faq.rst:301
 msgid ""
 "Je souhaitais par ailleurs blunderDB léger, autonome, sans installation "
 "et disponible pour différentes plateformes, d'où mon choix du langage Go "
@@ -625,7 +660,7 @@ msgstr ""
 "για να περιέχει μια βάση δεδομένων. Η μορφή αρχείου SQLite φαινόταν η "
 "ιδανική επιλογή."
 
-#: ../../source/faq.rst:295
+#: ../../source/faq.rst:308
 msgid ""
 "Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
 "copier, sauvegarder ou envoyer à un autre joueur."
@@ -633,7 +668,7 @@ msgstr ""
 "Μου ήταν επίσης σημαντικό μια βάση να παραμένει ένα απλό αρχείο, που "
 "μπορεί κανείς να αντιγράψει, να αποθηκεύσει ή να στείλει σε άλλον παίκτη."
 
-#: ../../source/faq.rst:298
+#: ../../source/faq.rst:311
 msgid ""
 "Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
@@ -648,11 +683,11 @@ msgstr ""
 "παραμένει ωστόσο η εφαρμογή επιφάνειας εργασίας. Δείτε :ref:`cli` και "
 ":ref:`headless`."
 
-#: ../../source/faq.rst:306
+#: ../../source/faq.rst:319
 msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;"
 
-#: ../../source/faq.rst:308
+#: ../../source/faq.rst:321
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données SQLite qui stocke les "
@@ -662,7 +697,7 @@ msgstr ""
 "το σύνολο των λειτουργιών στη βάση δεδομένων SQLite που αποθηκεύει τις "
 "θέσεις."
 
-#: ../../source/faq.rst:312
+#: ../../source/faq.rst:325
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -671,7 +706,7 @@ msgstr ""
 "υπεύθυνο για την απόδοση της γραφικής διεπαφής και του ταμπλό του "
 "Backgammon."
 
-#: ../../source/faq.rst:315
+#: ../../source/faq.rst:328
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -681,11 +716,11 @@ msgstr ""
 "επιτρέπει την παραγωγή εγγενών εφαρμογών επιφάνειας εργασίας για Windows,"
 " Linux και macOS."
 
-#: ../../source/faq.rst:319
+#: ../../source/faq.rst:332
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "Η βάση δεδομένων διαχειρίζεται από το `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:321
+#: ../../source/faq.rst:334
 msgid ""
 "Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
 "<https://www.postgresql.org/>`_ à la place de Sqlite pour les "
@@ -695,7 +730,7 @@ msgstr ""
 "<https://www.postgresql.org/>`_ αντί της SQLite για εγκαταστάσεις "
 "πολλαπλών χρηστών."
 
-#: ../../source/faq.rst:325
+#: ../../source/faq.rst:338
 msgid ""
 "L'évaluateur embarqué (`gammonNet "
 "<https://github.com/kevung/gammonNet>`_, MIT) est un réseau de neurones "
@@ -709,7 +744,7 @@ msgstr ""
 "οποιαδήποτε θέση χωρίς σύνδεση, χωρίς XG ή GNUbg. Δείτε «Τι αξίζει ο "
 "ενσωματωμένος αξιολογητής;» παρακάτω."
 
-#: ../../source/faq.rst:330
+#: ../../source/faq.rst:343
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -717,19 +752,19 @@ msgstr ""
 "Για περισσότερες πληροφορίες, δείτε το `αποθετήριο GitHub του blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:333
+#: ../../source/faq.rst:346
 msgid "Sur quelles plateformes blunderDB fonctionne-t-il?"
 msgstr "Σε ποιες πλατφόρμες λειτουργεί το blunderDB;"
 
-#: ../../source/faq.rst:335
+#: ../../source/faq.rst:348
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "Το blunderDB λειτουργεί σε Windows, Linux και Mac."
 
-#: ../../source/faq.rst:338
+#: ../../source/faq.rst:351
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Από πού προέρχεται το εικονίδιο του blunderDB;"
 
-#: ../../source/faq.rst:340
+#: ../../source/faq.rst:353
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

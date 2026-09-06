@@ -788,6 +788,10 @@ trois logiques distinctes (voir :ref:`headless`).
   déplacement (défaut: 10).
 * ``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre
   de cœurs de la machine).
+* ``--compare`` — **N'écrit rien** : compare gammonNet aux analyses importées
+  au lieu de combler des trous (voir plus bas).
+* ``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions
+  (0 = toutes).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
   ``json`` (un seul document récapitulatif, imprimé à la fin).
 
@@ -823,6 +827,58 @@ positions sans analyse » est recalculé à chaque lancement.
 
    # Sur un seul cœur, pour laisser la machine à autre chose
    ./blunderdb analyze --db base.db --jobs 1
+
+.. _analyze_compare:
+
+**``--compare`` : que vaut gammonNet sur *votre* bibliothèque ?**
+
+La précision du moteur est mesurée ailleurs contre des corpus de référence et
+contre la table de bearoff exacte. Aucune de ces mesures ne répond à la
+question qu'un utilisateur se pose vraiment, qui porte sur **ses** positions :
+sur les matchs importés d'XG, où le moteur embarqué est-il en désaccord avec
+l'analyse venue du fichier, et que coûterait ce désaccord ?
+
+``--compare`` répond, et **n'écrit rien**. Ce n'est pas une précaution mais
+l'intérêt de la commande : l'ADR-0013 protège inconditionnellement une analyse
+importée, et la comparaison peut donc se lancer sur une bibliothèque qu'on ne
+veut surtout pas voir réécrite.
+
+Le compte rendu donne :
+
+* le **taux d'accord** sur la meilleure réponse, séparé entre coups de pions
+  et décisions de videau — les deux n'ont rien à voir et un taux unique
+  cacherait lequel des deux décroche ;
+* le **coût du désaccord**, tarifé sur l'échelle de l'analyse importée : ce
+  que le coup préféré par gammonNet vaut *selon le moteur importé*, moins ce
+  que vaut son propre meilleur coup. Ce sens est le seul que les deux moteurs
+  puissent chiffrer ensemble ; tarifer un désaccord deux fois inviterait à
+  lire le plus petit des deux nombres ;
+* la ventilation **par phase de partie**, qui est ce qui dit *où* les
+  désaccords se concentrent ;
+* les dix désaccords les plus coûteux, position par position.
+
+Deux moteurs écrivent le même coup différemment — XG note « 13/7 » là où
+gammonNet écrit « 13/8 8/7 », les frappes sont marquées d'un côté et pas de
+l'autre, la répétition est parfois condensée en « (2) ». Ces différences sont
+du dialecte et non du désaccord : la comparaison ramène les deux notations à
+une forme canonique avant de les comparer. Sans cela, un corpus de test
+affichait 78,8 % d'accord au lieu de 93,2 % — quinze points de faux
+désaccords.
+
+Un coup que le moteur importé n'a **pas listé** ne peut pas être tarifé sur
+son échelle : il compte comme un désaccord de coût nul plutôt que d'un coût
+inventé.
+
+.. code-block:: bash
+
+   # Comparer sur un échantillon de 500 positions
+   ./blunderdb analyze --db base.db --compare --limit 500
+
+   # compared: 118 decision(s)  (refused 2, failed 0)
+   # same best answer: 93.2% (110/118)
+   #   checker play:   93.7% (59/63)
+   #   cube decision:  92.7% (51/55)
+   # ...
 
 info — Métadonnées de la base
 ------------------------------

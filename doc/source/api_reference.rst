@@ -78,6 +78,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    gammonnet
      POST /v1/gammonnet.analyzeMissing             custom
      POST /v1/gammonnet.analyzeMissing.cancel      custom
+     POST /v1/gammonnet.compare                    custom
      POST /v1/gammonnet.sweepStale                 custom
    history
      POST /v1/history.clear                        JSON

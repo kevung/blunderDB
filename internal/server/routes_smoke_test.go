@@ -57,6 +57,10 @@ var customContentTypes = map[string][]string{
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
+	// gammonnet.compare is hand-written but NOT streamed: it writes nothing,
+	// so there is no partial state to report progress into, and its answer is
+	// one small object (#270).
+	"/v1/gammonnet.compare": {"application/json"},
 	// search.query streams positions like search.find; it is hand-written only
 	// so an unreadable query is refused before the 200 is committed (B.18).
 	"/v1/search.query": {ndjsonContentType},

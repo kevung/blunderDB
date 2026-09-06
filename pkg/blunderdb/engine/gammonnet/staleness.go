@@ -57,3 +57,31 @@ func IsStaleAnalysis(a *domain.PositionAnalysis, targetDepth string) bool {
 	}
 	return sawAny && allOurs && anyStale
 }
+
+// IsOurAnalysis reports whether every entry of a was written by gammonNet,
+// whatever version. It is IsStaleAnalysis's first half, exported because the
+// comparison sweep (#270) needs the opposite question — which positions carry
+// an analysis somebody ELSE wrote, and are therefore worth comparing against.
+//
+// An analysis with no entry at all is nobody's and answers false.
+func IsOurAnalysis(a *domain.PositionAnalysis) bool {
+	if a == nil {
+		return false
+	}
+	ours, sawAny := true, false
+	check := func(engine string) {
+		sawAny = true
+		if !strings.HasPrefix(engine, engineVersionPrefix) {
+			ours = false
+		}
+	}
+	if a.CheckerAnalysis != nil {
+		for _, m := range a.CheckerAnalysis.Moves {
+			check(m.AnalysisEngine)
+		}
+	}
+	if a.DoublingCubeAnalysis != nil {
+		check(a.DoublingCubeAnalysis.AnalysisEngine)
+	}
+	return sawAny && ours
+}

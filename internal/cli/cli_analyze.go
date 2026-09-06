@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
 // runAnalyze handles the analyze command: gammonNet's catch-up sweep (#130,
@@ -32,6 +33,8 @@ func (cli *CLI) runAnalyze(args []string) error {
 	candidates := analyzeCmd.Int("candidates", 10, "Candidate moves kept per checker decision")
 	jobs := analyzeCmd.Int("jobs", runtime.NumCPU(), "Positions analysed in parallel (one CPU each)")
 	stale := analyzeCmd.Bool("stale", false, "Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps")
+	compare := analyzeCmd.Bool("compare", false, "Compare gammonNet against the imported analyses instead of writing anything")
+	limit := analyzeCmd.Int("limit", 0, "With --compare: stop after this many positions (0 = all)")
 	format := analyzeCmd.String("format", "text", "Output format: text or json")
 
 	analyzeCmd.Usage = func() {
@@ -56,6 +59,14 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("positions of a batch are independent, so the result is the same")
 		fmt.Println("whatever --jobs says. Use --jobs 1 to leave the machine free.")
 		fmt.Println()
+		fmt.Println("--compare answers a different question and WRITES NOTHING: on the")
+		fmt.Println("positions carrying an analysis somebody else wrote (XG, GNUbg,")
+		fmt.Println("BGBlitz), how often does gammonNet name the same best move or the")
+		fmt.Println("same cube action, and what would following it have cost on the")
+		fmt.Println("imported analysis's own scale? The answer is broken down by game")
+		fmt.Println("phase, which is what says where the disagreements sit. Use --limit")
+		fmt.Println("to ask the question of a sample rather than of a whole library.")
+		fmt.Println()
 		fmt.Println("A position gammonNet declines to evaluate (a match score beyond")
 		fmt.Println("its MET, a cube state it refuses) is reported separately at the")
 		fmt.Println("end, as \"refused\": not a failure, and not retried to no effect.")
@@ -68,6 +79,7 @@ func (cli *CLI) runAnalyze(args []string) error {
 		fmt.Println("  blunderdb analyze --db database.db --jobs 1")
 		fmt.Println("  blunderdb analyze --db database.db --stale --ply 3")
 		fmt.Println("  blunderdb analyze --db database.db --format json")
+		fmt.Println("  blunderdb analyze --db database.db --compare --limit 500")
 	}
 
 	if err := analyzeCmd.Parse(args); err != nil {
@@ -85,8 +97,16 @@ func (cli *CLI) runAnalyze(args []string) error {
 	}
 	text := formatLower != "json"
 
+	if *compare && *stale {
+		return fmt.Errorf("--compare and --stale ask different questions: --compare writes nothing, --stale rewrites; pick one")
+	}
+
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
+	}
+
+	if *compare {
+		return cli.runAnalyzeCompare(*ply, *pruneK, *candidates, *jobs, *limit, text)
 	}
 
 	var (
@@ -197,4 +217,77 @@ type analyzeResult struct {
 	PruneK     int  `json:"prune_k"`
 	Candidates int  `json:"candidates"`
 	Jobs       int  `json:"jobs"`
+}
+
+// runAnalyzeCompare is `blunderdb analyze --compare` (issue #270, fiche I.14):
+// how does the embedded engine differ from the analyses that came in with the
+// user's files, on the user's own positions?
+//
+// It writes nothing. That is not a precaution but the point: ADR-0013
+// protects an imported analysis unconditionally, and the value of this command
+// is precisely that it can be run on a library one is not willing to have
+// rewritten.
+func (cli *CLI) runAnalyzeCompare(ply, pruneK, candidates, jobs, limit int, text bool) error {
+	total, err := cli.db.CountPositionsWithForeignAnalysis()
+	if err != nil {
+		return fmt.Errorf("counting positions to compare: %w", err)
+	}
+	if total == 0 {
+		if text {
+			fmt.Println("Nothing to compare: no position carries an analysis written by another engine.")
+			return nil
+		}
+		return printJSON(gammonnet.Aggregate(nil))
+	}
+	if limit > 0 && limit < total {
+		total = limit
+	}
+	if jobs < 1 {
+		jobs = 1
+	}
+	if text {
+		fmt.Printf("Comparing gammonNet with the imported analyses of %d position(s) (%d-ply, k=%d, %d job(s))...\n",
+			total, ply, pruneK, jobs)
+		fmt.Println("Nothing is written.")
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+	defer signal.Stop(sig)
+	go func() {
+		if _, ok := <-sig; ok {
+			if text {
+				fmt.Println("\nCancelling...")
+			}
+			cancel()
+		}
+	}()
+
+	lastReported := -1
+	onProgress := func(done, total int) {
+		if !text {
+			return
+		}
+		pct := done * 100 / total
+		if done == total || done == 1 || pct/5 != lastReported/5 {
+			fmt.Printf("  %d/%d (%d%%)\n", done, total, pct)
+		}
+		lastReported = pct
+	}
+
+	cmp, err := cli.db.CompareWithGammonNet(ctx, ply, pruneK, candidates, jobs, limit, onProgress)
+	if err != nil && ctx.Err() == nil {
+		return fmt.Errorf("comparison failed: %w", err)
+	}
+	if !text {
+		return printJSON(cmp)
+	}
+	if ctx.Err() != nil {
+		fmt.Println("Cancelled; reporting what was compared.")
+	}
+	fmt.Println()
+	fmt.Print(cmp.String())
+	return nil
 }

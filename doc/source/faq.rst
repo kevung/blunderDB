@@ -203,6 +203,19 @@ ou de GNUbg quand elles existent — les deux sources cohabitent, une colonne
 indique l'origine de chaque analyse. Voir la section « Panneau Eval » et
 « Méthodologie et hypothèses du panneau Eval » du manuel.
 
+**Ce que cela vaut, en chiffres.** Sur les positions de bearoff que la table
+exacte intégrée couvre — le seul endroit où un oracle existe — gammonNet à
+2 plis rend le **même verdict de videau dans 93,4 % des cas**, et le désaccord
+se concentre exactement au point de prise (61 % d'accord à moins de 1 % du
+point de prise, 94 % au-delà de 10 %) : c'est là que deux méthodes légitimes
+divergent le plus sur une décision serrée, pas une erreur diffuse. Le détail
+et la méthode sont dans « Méthodologie et hypothèses du panneau Eval ».
+
+Pour la même question posée de **votre** bibliothèque plutôt que d'un corpus
+de référence, ``blunderdb analyze --compare`` compare le moteur embarqué aux
+analyses venues de vos fichiers XG ou GNUbg — accord sur la meilleure réponse,
+coût des désaccords, ventilation par phase de partie — **sans rien écrire**.
+
 
 Quelle est la différence entre le PR et le Snowie Error Rate?
 ----------------------------------------------------------------
