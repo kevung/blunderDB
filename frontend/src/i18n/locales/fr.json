@@ -996,6 +996,7 @@
         "legendDoublePass": "double, refus",
         "legendTooGood": "trop bon",
         "legendRefused": "non évaluable",
+        "currentScore": "score de la position",
         "note": "Le score de la position est remplacé par celui de chaque case ; son videau, lui, est conservé. La grille est post-Crawford : pendant la partie Crawford le videau n'est pas en jeu."
     },
     "met": {

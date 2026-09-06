@@ -996,6 +996,7 @@
         "legendDoublePass": "doblar, pasar",
         "legendTooGood": "demasiado bueno",
         "legendRefused": "no evaluable",
+        "currentScore": "marcador de la posición",
         "note": "El marcador propio de la posición se sustituye por el de cada casilla; su cubo se conserva. La cuadrícula es posterior a Crawford: durante la partida Crawford el cubo no está en juego."
     },
     "met": {

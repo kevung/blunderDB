@@ -10,7 +10,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { cubeDecision, cubeTurnability, isMoneyPosition, CUBE_OPTIONS, DECISION_STATE } from '../utils/cubeDecision.js';
+import { cubeDecision, cubeTurnability, currentScoreCell, isMoneyPosition, CUBE_OPTIONS, DECISION_STATE } from '../utils/cubeDecision.js';
 
 const money = { cubeless: 0.4, no_double: 0.55, double_take: 0.71, double_pass: 1.0, verdict: 'double_take' };
 
@@ -169,5 +169,48 @@ describe('isMoneyPosition', () => {
     test('a missing position or score defaults to money, like cubeTurnability', () => {
         expect(isMoneyPosition(undefined)).toBe(true);
         expect(isMoneyPosition({})).toBe(true);
+    });
+});
+
+// #330: the cube matrix shows the whole grid, and the reader starts from « ma
+// case, et autour d'elle ». The rule is entirely about the away-score
+// sentinels — which is why it lives here, beside the two other functions that
+// read them, and is tested without a grid.
+describe('currentScoreCell', () => {
+    const at = (score, onRoll, len) => currentScoreCell({ score, player_on_roll: onRoll }, len);
+
+    test('the cell is the away pair, rows held by the player on roll', () => {
+        expect(at([4, 6], 0, 7)).toEqual({ awayOnRoll: 4, awayOpponent: 6 });
+        // Same score, other player deciding: the pair is read from his side.
+        expect(at([4, 6], 1, 7)).toEqual({ awayOnRoll: 6, awayOpponent: 4 });
+    });
+
+    test('the post-Crawford 1-away sentinel is the grid row 1', () => {
+        expect(at([0, 3], 0, 5)).toEqual({ awayOnRoll: 1, awayOpponent: 3 });
+        expect(at([3, 0], 0, 5)).toEqual({ awayOnRoll: 3, awayOpponent: 1 });
+    });
+
+    test('money designates nothing — there is no away score to point at', () => {
+        expect(at([-1, -1], 0, 7)).toBeNull();
+        expect(at([-1, 5], 0, 7)).toBeNull(); // malformed, half-money
+        expect(currentScoreCell(null, 7)).toBeNull();
+    });
+
+    test('the Crawford game designates nothing — the grid is post-Crawford', () => {
+        expect(at([1, 5], 0, 7)).toBeNull();
+        expect(at([5, 1], 0, 7)).toBeNull();
+    });
+
+    test('an away beyond the grid designates nothing, on either axis', () => {
+        expect(at([9, 2], 0, 7)).toBeNull();
+        expect(at([2, 9], 0, 7)).toBeNull();
+        expect(at([9, 2], 0, 9)).toEqual({ awayOnRoll: 9, awayOpponent: 2 });
+    });
+
+    test('changing the displayed length moves or removes the cell', () => {
+        const pos = { score: [3, 6], player_on_roll: 0 };
+        expect(currentScoreCell(pos, 5)).toBeNull(); // 6-away has no cell in a 5 grid
+        expect(currentScoreCell(pos, 7)).toEqual({ awayOnRoll: 3, awayOpponent: 6 });
+        expect(currentScoreCell(pos, 9)).toEqual({ awayOnRoll: 3, awayOpponent: 6 });
     });
 });

@@ -996,6 +996,7 @@
         "legendDoublePass": "raddoppio, rifiuto",
         "legendTooGood": "troppo buono",
         "legendRefused": "non valutabile",
+        "currentScore": "punteggio della posizione",
         "note": "Il punteggio della posizione è sostituito da quello di ogni cella; il suo cubo è conservato. La griglia è post-Crawford: durante la partita Crawford il cubo non è in gioco."
     },
     "met": {
