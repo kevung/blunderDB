@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 18:13+0200\n"
+"POT-Creation-Date: 2026-09-06 22:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1537,15 +1537,15 @@ msgstr "Корзина"
 
 #: ../../source/manuel.rst:683
 msgid ""
-"Supprimer une position, une collection ou un commentaire passe désormais "
-"par une **corbeille** : la suppression a bien lieu, mais une copie de ce "
-"qui disparaît est gardée trente jours. La commande ``trash`` ouvre la "
-"fenêtre qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
+"Supprimer une position, une collection ou un commentaire passe par une "
+"**corbeille** : la suppression a bien lieu, mais une copie de ce qui "
+"disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre"
+" qui les liste, avec pour chacune *Restaurer* et *Supprimer*."
 msgstr ""
-"Удаление позиции, коллекции или комментария теперь проходит через "
-"**корзину**: удаление действительно происходит, но копия исчезающего "
-"хранится тридцать дней. Команда ``trash`` открывает окно со списком, где "
-"у каждой записи есть *Восстановить* и *Удалить*."
+"Удаление позиции, коллекции или комментария проходит через **корзину**: "
+"удаление действительно происходит, но копия исчезающего хранится тридцать"
+" дней. Команда ``trash`` открывает окно со списком, где у каждой записи "
+"есть *Восстановить* и *Удалить*."
 
 #: ../../source/manuel.rst:688
 msgid ""
@@ -2092,7 +2092,7 @@ msgstr ""
 "читается из исходного файла либо остаётся неизвестной — и роллаут, данные"
 " которого он не открывает в файле ``.xg`` и который не умеет производить."
 
-#: ../../source/manuel.rst:928
+#: ../../source/manuel.rst:926
 msgid ""
 "Une collection peut être **vivante** : sa composition n'est plus une "
 "liste faite à la main mais le résultat d'une **recherche**, réévalué "
@@ -2109,7 +2109,7 @@ msgstr ""
 "список. Ничего не разрушается: позиции, которые она содержала, останутся "
 "на месте при возврате."
 
-#: ../../source/manuel.rst:935
+#: ../../source/manuel.rst:933
 msgid ""
 "Une collection vivante dont la requête porte un jeton que cette version "
 "ne connaît plus **refuse de s'ouvrir** en le disant, plutôt que de "
