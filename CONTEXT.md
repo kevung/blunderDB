@@ -125,6 +125,27 @@ remember what anybody did with it — the Move table supplies it instead
 first recorded occurrence only.
 _Avoid_: user move, chosen move (a candidate is not a played action until a Move records it)
 
+**Error**:
+A decision whose cost — the gap between the Played action and the best one, in the
+Position's Referential — reaches the library's *error threshold*. Every number that
+counts "errors" (a match sheet, a player's row, the study queue an import proposes) uses
+this one line; a decision below it is imprecise, not wrong.
+_Avoid_: mistake, inaccuracy, doubtful (gnubg's word for its own lowest tier)
+
+**Blunder**:
+An Error whose cost reaches the library's *blunder threshold*. Every Blunder is an Error;
+the statistics, the library counter in the status bar and the search it opens agree on the
+set, and a Position played several ways is scored by the largest of its recorded costs
+(see Deduplication). The word is never a fixed number: it means whatever this library says.
+_Avoid_: bad move, hall of shame, "0.100" (a value, not a term)
+
+**Library setting**:
+A preference that belongs to the library rather than to the machine — the two thresholds
+above, the Performance Rating objective — so that the same file counts the same blunders
+wherever it is opened, and so a daemon tenant carries its own. It is not carried by an
+export: a threshold is the owner's reading habit, not a fact of the positions.
+_Avoid_: preference, option, configuration (those follow the machine)
+
 **Tag**:
 A `#word` inside a Comment. Nothing declares one, no column holds one, and that is the
 point: the vocabulary is the user's own prose. blunderDB *suggests* a list drawn from the
