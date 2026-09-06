@@ -293,9 +293,15 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	}
 
 	// 1. What cost something, worst first. This is what the user came for.
+	// The ORDER BY repeats the select list's COALESCE rather than the bare
+	// expression: PostgreSQL requires every ORDER BY expression of a SELECT
+	// DISTINCT to appear in the select list, and `x` is not `COALESCE(x, 0)`
+	// to it. Wrapping also settles a dialect divergence for free — SQLite
+	// sorts NULLs last in DESC, PostgreSQL first — though this pass never
+	// sees one, its WHERE excluding them.
 	blunders, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyBlunder,
 		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{domain.StudyBlunderThresholdMP},
-		` ORDER BY `+statsErrExpr+` DESC, p.id ASC`)
+		` ORDER BY COALESCE(`+statsErrExpr+`, 0) DESC, p.id ASC`)
 	if err != nil {
 		return nil, err
 	}

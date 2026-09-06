@@ -83,7 +83,7 @@ var wantIndexes = []string{
 	"idx_position_cube_response",
 	"idx_position_decision_dice", "idx_position_decision_pip",
 	"idx_position_dice", "idx_position_flagged", "idx_position_game_phase",
-	"idx_position_individual",
+	"idx_position_game_type", "idx_position_individual",
 	"idx_position_no_contact", "idx_position_off",
 	"idx_position_pip_1", "idx_position_pip_diff",
 	"idx_position_score_cube", "idx_position_zobrist",
