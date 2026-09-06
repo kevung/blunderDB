@@ -1,7 +1,7 @@
 # État d'exécution du plan 2026-09b
 
-Dernière mise à jour : **2026-09-05** (quatrième session — audit de reprise, puis
-exécution des vagues 0 à 3 et publication de la **0.36.0**). Ce
+Dernière mise à jour : **2026-09-06** (cinquième session — vague 4, lot I : la
+vague de schéma 2.19.0 et les trois premières fiches produit). Ce
 fichier est le point de reprise : il dit ce qui est fusionné, ce qui attend dans une
 branche, et ce qui reste. Le plan lui-même est dans [README.md](README.md) ; les
 fiches sont dans les fichiers de lot, chacune avec le numéro de son issue GitHub.
@@ -84,10 +84,47 @@ chacune close par une release.
 | **1 — release** | | | ✅ **0.36.0** publiée le 2026-09-05 |
 | **2 — lot G** | Fusion bloquée reprise, puis les fiches restantes | #233, #236, #238, #240, #241 | ✅ ; #237, #239, #242 restent (voir plus bas) |
 | **3 — bearoff** | Les deux générateurs, les empreintes, rien d'embarqué | #305, #306, #307 | ✅ ; #308-#311 restent |
-| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | à faire |
+| **4 — lot I** | 34 fiches produit, par paquets thématiques | #257-#290 | en cours : #257, #263, #264 fermées |
 | **5 — moteur/amont** | Mesure 2-ply contre la table exacte, noyau NEON, décisions amont | #127, #151, #200 | à faire |
 | **6 — lot J** | Dix chantiers de fond, **chacun une décision produit avant toute ligne de code** | #291-#300 | à faire |
 | **7 — hors code** | Vidéo de démo : enregistrement humain, pas une tâche d'agent | #102 | à faire |
+
+### La vague de schéma 2.19.0 (2026-09-06)
+
+Les quatre changements de schéma que le lot I demandait sont faits **en un seul
+saut de version**, comme le plan le prévoyait, plutôt qu'en quatre montées
+successives du même fichier :
+
+- `position.game_phase` — **ADR-0035**. Étiquette dérivée du plateau seul,
+  jamais modifiable, recalculée par `blunderdb repair`. Trois de ses quatre
+  frontières sont celles de gnubg et sont sourcées (P5) ; la quatrième est une
+  constante nommée, `OpeningDisplacementMax`, comme P5 le demande. Le numéro de
+  coup n'entre pas dans le calcul, contre ce que la fiche proposait : une
+  position se rencontre au coup 3 d'un match et au coup 30 d'un autre.
+- `comment.origin` (#263) — et surtout la clause qui manquait au prédicat de
+  rétention dans ses **trois** copies : un commentaire écrit par l'utilisateur
+  retient sa position à la suppression du match.
+- `import_batch` + `match.import_batch_id` (#257) et `trash` (#285, **ADR-0036**)
+  — créées dans la même vague pour que le reste du lot n'ait pas à rouvrir le
+  schéma. La corbeille est un **instantané**, pas une colonne `deleted_at` :
+  aucun des cinquante filtres, aucune des deux implémentations de statistiques,
+  aucun prédicat de rétention n'a eu à apprendre son existence. **#285 reste à
+  faire** : le socle est là, les gestes ne le sont pas.
+
+Fermées : **#264**, **#263**, **#257**. Trouvé en chemin : 340 lignes de
+`commentStore` mortes dans les deux backends.
+
+### Le piège des catalogues, payé deux fois
+
+Les deux premiers commits de la session ont rempli les `.po` avec **polib**, qui
+enveloppe les lignes autrement que sphinx-intl : 17 000 lignes réécrites dans
+`manuel.po` pour six phrases ajoutées. C'est exactement ce que CLAUDE.md
+interdit, et la règle y était déjà. Les catalogues sont repartis de `792503bca`
+et refaits ; la vague coûte 5 900 lignes au lieu de 28 000.
+
+`scripts/po-fill.py` existe maintenant pour cela : il modifie le catalogue **en
+tant que texte** et ne touche que les entrées qu'on lui demande de remplir.
+CLAUDE.md le nomme. **Ne jamais charger un `.po` dans polib pour le sauver.**
 
 ### Ce qui est livré à moitié, et pourquoi
 
