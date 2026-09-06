@@ -5,32 +5,28 @@
  * modal. ModalHost renders one modal per key, so adding a table here is the
  * whole job — no template to touch.
  *
- * `precision` is the decimal count of the cells; `colOffset` / `rowOffset`
- * are the labels of the first column / row (the tables start at 2-away or
- * 3-away, never at 1).
+ * The tables themselves — their values, their `precision`, and the away their
+ * first row and column stand for — are declared once in
+ * services/referenceTables.js, which the Scores exercise reads too (ADR-0040
+ * règle 4). This file only says which of them a modal shows, and under what
+ * title.
  */
 import { MODAL } from '../stores/uiStore.js';
-import { takePoint2LastTable } from '../stores/takePoint2LastTable';
-import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
-import { takePoint4LastTable } from '../stores/takePoint4LastTable';
-import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
-import { gammonValue1Table } from '../stores/gammonValue1Table';
-import { gammonValue2Table } from '../stores/gammonValue2Table';
-import { gammonValue4Table } from '../stores/gammonValue4Table';
+import { REFERENCE_TABLES } from '../services/referenceTables.js';
 
-const takePoint2Live = { data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 };
-const takePoint2Last = { data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 };
-const takePoint4Live = { data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 };
-const takePoint4Last = { data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 };
+const takePoint2Live = REFERENCE_TABLES['tp2.live'];
+const takePoint2Last = REFERENCE_TABLES['tp2.last'];
+const takePoint4Live = REFERENCE_TABLES['tp4.live'];
+const takePoint4Last = REFERENCE_TABLES['tp4.last'];
 
 export const MODAL_TABLES = Object.freeze({
     [MODAL.TAKE_POINT_2_LAST]: [takePoint2Last],
     [MODAL.TAKE_POINT_2_LIVE]: [takePoint2Live],
     [MODAL.TAKE_POINT_4_LAST]: [takePoint4Last],
     [MODAL.TAKE_POINT_4_LIVE]: [takePoint4Live],
-    [MODAL.GAMMON_VALUE_1]: [{ data: gammonValue1Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 2 }],
-    [MODAL.GAMMON_VALUE_2]: [{ data: gammonValue2Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 3 }],
-    [MODAL.GAMMON_VALUE_4]: [{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }],
+    [MODAL.GAMMON_VALUE_1]: [REFERENCE_TABLES.gv1],
+    [MODAL.GAMMON_VALUE_2]: [REFERENCE_TABLES.gv2],
+    [MODAL.GAMMON_VALUE_4]: [REFERENCE_TABLES.gv4],
     [MODAL.TAKE_POINT_2]: [
         { title: 'Long Races', ...takePoint2Live },
         { title: 'Last Roll', ...takePoint2Last }
