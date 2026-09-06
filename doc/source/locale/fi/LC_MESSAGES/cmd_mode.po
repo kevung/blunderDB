@@ -6,17 +6,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  blunderDB\n"
+"Project-Id-Version: blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-05 03:17+0200\n"
+"POT-Creation-Date: 2026-09-06 02:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fi\n"
 "Language-Team: fi <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/cmd_mode.rst:4
@@ -25,16 +25,16 @@ msgstr "Komentoluettelo"
 
 #: ../../source/cmd_mode.rst:6
 msgid ""
-"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant "
-"sur la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
+"La ligne de commande, située dans la barre d'état, s'ouvre en appuyant sur "
+"la touche *ESPACE*. Lors de la saisie d'une commande, une liste de "
 "suggestions apparaît automatiquement : la touche *TAB* (ou *MAJ-TAB*) "
 "parcourt les propositions et complète la commande, tandis que *ÉCHAP* "
-"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les "
-"touches *HAUT* et *BAS* restent réservées à l'historique des commandes."
+"referme la liste (un second *ÉCHAP* ferme la ligne de commande). Les touches"
+" *HAUT* et *BAS* restent réservées à l'historique des commandes."
 msgstr ""
 "Komentorivi, joka sijaitsee tilarivillä, avataan painamalla "
-"*VÄLILYÖNTI*-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy"
-" automaattisesti: *TAB*-näppäin (tai *VAIHTO-TAB*) selaa ehdotuksia ja "
+"*VÄLILYÖNTI*-näppäintä. Komentoa kirjoitettaessa ehdotusluettelo ilmestyy "
+"automaattisesti: *TAB*-näppäin (tai *VAIHTO-TAB*) selaa ehdotuksia ja "
 "täydentää komennon, kun taas *ESC* sulkee luettelon (toinen *ESC* sulkee "
 "komentorivin). *YLÖS*- ja *ALAS*-näppäimet on edelleen varattu "
 "komentohistorialle."
@@ -133,8 +133,8 @@ msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et "
-"verdict de videau en bearoff)."
+"Ouvre le panneau Eval (Effective Pip Count, probabilité de gain et verdict "
+"de videau en bearoff)."
 msgstr ""
 "Avaa Eval-paneelin (Effective Pip Count, voittotodennäköisyys ja "
 "kuutiopäätös bearoffissa)."
@@ -160,8 +160,10 @@ msgid "tp2_live"
 msgstr "tp2_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgstr ""
+"Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp2_last"
@@ -184,8 +186,10 @@ msgid "tp4_live"
 msgstr "tp4_live"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
-msgstr "Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille."
+msgid ""
+"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgstr ""
+"Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille."
 
 #: ../../source/cmd_mode.rst:1
 msgid "tp4_last"
@@ -229,11 +233,11 @@ msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
-" txt, bgf)."
-msgstr ""
-"Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, "
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
 "txt, bgf)."
+msgstr ""
+"Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, txt, "
+"bgf)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "delete, del, d"
@@ -273,8 +277,8 @@ msgstr "history, hi"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans "
-"son onglet *Historique*)."
+"Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son"
+" onglet *Historique*)."
 msgstr "Avaa hakupaneeli (hakuhistoria löytyy sen *Historique*-välilehdeltä)."
 
 #: ../../source/cmd_mode.rst:1
@@ -413,8 +417,10 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
-msgstr "Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta)."
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr ""
+"Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "D1"
@@ -422,11 +428,11 @@ msgstr "D1"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position vérifie le lancer de dés sur le premier dé uniquement (la "
-"valeur du premier dé apparaît sur l'un des deux dés de la position)."
+"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
+" du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
-"Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen "
-"nopan arvo esiintyy jommassakummassa aseman nopassa)."
+"Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen nopan "
+"arvo esiintyy jommassakummassa aseman nopassa)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "xD65"
@@ -434,13 +440,13 @@ msgstr "xD65"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe "
-"l'ordre). La valeur est indiquée dans le jeton ; répétable pour exclure "
-"plusieurs lancers (``xD65 xD54``)."
+"La position n'a **pas** été jouée avec le lancer 6-5 (peu importe l'ordre). "
+"La valeur est indiquée dans le jeton ; répétable pour exclure plusieurs "
+"lancers (``xD65 xD54``)."
 msgstr ""
-"Asemaa **ei** ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo"
-" ilmoitetaan tunnuksessa; toistettavissa useiden heittojen "
-"poissulkemiseksi (``xD65 xD54``)."
+"Asemaa **ei** ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo "
+"ilmoitetaan tunnuksessa; toistettavissa useiden heittojen poissulkemiseksi "
+"(``xD65 xD54``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -449,6 +455,23 @@ msgstr "nc"
 #: ../../source/cmd_mode.rst:1
 msgid "La position est sans contact."
 msgstr "Asema on ilman kontaktia."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ph:race"
+msgstr "ph:race"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position est dans une phase de jeu donnée : ``opening`` (ouverture), "
+"``middlegame`` (milieu de partie), ``race`` (course) ou ``bearoff`` (sortie "
+"des pions). Répétable (``ph:race ph:bearoff``). L'étiquette est calculée à "
+"partir du plateau, jamais modifiable ; la commande ``blunderdb repair`` la "
+"recalcule."
+msgstr ""
+"Asema on tietyssä pelin vaiheessa: ``opening`` (avaus), ``middlegame`` "
+"(keskipeli), ``race`` (kilpajuoksu) tai ``bearoff`` (nappuloiden poisto). "
+"Toistettavissa (``ph:race ph:bearoff``). Merkintä johdetaan laudasta eikä "
+"sitä voi koskaan muokata; ``blunderdb repair`` laskee sen uudelleen."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -463,7 +486,8 @@ msgid "i"
 msgstr "i"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a été importée seule, et non apportée par l'import d'un match."
+msgid ""
+"La position a été importée seule, et non apportée par l'import d'un match."
 msgstr "Asema on tuotu erikseen, eikä se tullut ottelun tuonnin mukana."
 
 #: ../../source/cmd_mode.rst:1
@@ -567,7 +591,8 @@ msgid "E>x"
 msgstr "E>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on suurempi kuin x."
 
 #: ../../source/cmd_mode.rst:1
@@ -575,7 +600,8 @@ msgid "E<x"
 msgstr "E<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on pienempi kuin x."
 
 #: ../../source/cmd_mode.rst:1
@@ -584,8 +610,8 @@ msgstr "Ex,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre"
-" x et y."
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
+"et y."
 msgstr "Pelaajan 1 tekemän siirron virhe (millipisteinä) on välillä x–y."
 
 #: ../../source/cmd_mode.rst:1
@@ -1003,6 +1029,20 @@ msgid "La position ne porte aucun commentaire."
 msgstr "Asemassa ei ole kommenttia."
 
 #: ../../source/cmd_mode.rst:1
+msgid "co:user"
+msgstr "co:user"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire d'une provenance donnée : ``user`` (écrit "
+"par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un match) ou "
+"``unknown``. Répétable (``co:xg co:gnubg``)."
+msgstr ""
+"Asemaan liittyy tietystä lähteestä peräisin oleva kommentti: ``user`` (sinun"
+" kirjoittamasi), ``xg``, ``gnubg``, ``bgf`` (ottelun tuonnin mukana tullut) "
+"tai ``unknown``. Toistettavissa (``co:xg co:gnubg``)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "m'motif1,motif2,...\\'"
 msgstr "m'kuvio1,kuvio2,...\\'"
 
@@ -1098,13 +1138,13 @@ msgstr "pl'nimi'"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
+"Rechercher les positions issues d'un match impliquant le joueur indiqué, sur"
+" l'un ou l'autre camp (ex: pl'Alice'). La casse est ignorée."
 msgstr ""
 "Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa "
 "puolella (esim. pl'Alice'). Kirjainkoolla ei ole väliä."
 
-#: ../../source/cmd_mode.rst:186
+#: ../../source/cmd_mode.rst:188
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 
@@ -1115,4 +1155,3 @@ msgstr "clear, cl"
 #: ../../source/cmd_mode.rst:1
 msgid "Efface l'historique des commandes."
 msgstr "Tyhjentää komentohistorian."
-

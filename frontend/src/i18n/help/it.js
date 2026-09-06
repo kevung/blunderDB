@@ -950,6 +950,10 @@ export default {
 <td>La posizione è senza contatto.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>La posizione si trova in una data fase di gioco: <code>opening</code> (apertura), <code>middlegame</code> (mediogioco), <code>race</code> (corsa) o <code>bearoff</code> (uscita delle pedine). Ripetibile (<code>ph:race ph:bearoff</code>). L'etichetta è derivata dalla tavola e non è mai modificabile; <code>blunderdb repair</code> la ricalcola.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La posizione o quella speculare verifica i filtri.</td>
 </tr>
@@ -1216,6 +1220,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>La posizione non ha alcun commento.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>La posizione porta un commento di una data provenienza: <code>user</code> (scritto da te), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (portato dall'importazione di una partita) o <code>unknown</code>. Ripetibile (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'schema1,schema2,...'</td>

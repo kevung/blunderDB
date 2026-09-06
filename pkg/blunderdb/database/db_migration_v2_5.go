@@ -848,3 +848,27 @@ func (d *Database) retireRuleFlagsFromZobrist(ctx context.Context) error {
 		"rehashed", rehashed, "merged", merged)
 	return nil
 }
+
+// migrate_2_18_0_to_2_19_0 is the 2.19.0 wave: the four schema changes the
+// product lot asks for, applied in one open rather than in four successive
+// upgrades of the same file (tasks/plan-amelioration-2026-09b, lot I).
+//
+//   - position.game_phase — the derived phase label (issue #264, ADR-0035).
+//   - comment.origin — who wrote a comment (issue #263).
+//   - import_batch + match.import_batch_id — the end-of-import report's
+//     unit of account (issue #257).
+//   - trash — the snapshot table undo restores from (issue #285, ADR-0036).
+//
+// The columns and tables themselves are added by EnsureSchema, which derives
+// what is missing from schemaStatements and runs right AFTER the chain. So
+// this step has nothing to create — and cannot do the one thing that does need
+// writing, the game_phase backfill, because the column it would write does not
+// exist yet. It records the request instead; runMigrationChain honours it once
+// EnsureSchema has been through.
+//
+// The backfill cannot be an UPDATE ... SET game_phase = <expression> either:
+// the classification reads the board out of the compact `state` encoding.
+func (d *Database) migrate_2_18_0_to_2_19_0(context.Context) error {
+	d.pendingPhaseBackfill = true
+	return nil
+}

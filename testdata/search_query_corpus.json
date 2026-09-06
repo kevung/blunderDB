@@ -32,6 +32,11 @@
     { "command": "s t\"big win\"", "expected": { "searchText": "t\"big win\"" } },
     { "command": "s m\"24/18 13/11\"", "expected": { "movePatternFilter": "m\"24/18 13/11\"" } },
     { "command": "s pl\"Kévin Unger\" p>120", "expected": { "playerFilter": "pl\"Kévin Unger\"", "pipCountFilter": "p>120" } },
-    { "command": "s cube p>30 w>50 E>0.05 nc", "expected": { "includeCube": true, "pipCountFilter": "p>30", "winRateFilter": "w>50", "moveErrorFilter": "E>0.05", "noContactFilter": true } }
+    { "command": "s cube p>30 w>50 E>0.05 nc", "expected": { "includeCube": true, "pipCountFilter": "p>30", "winRateFilter": "w>50", "moveErrorFilter": "E>0.05", "noContactFilter": true } },
+    { "command": "s ph:race", "expected": { "gamePhaseFilter": "race" } },
+    { "command": "s ph:race ph:bearoff", "expected": { "gamePhaseFilter": "race;bearoff" } },
+    { "command": "s ph:opening p>30", "expected": { "gamePhaseFilter": "opening", "pipCountFilter": "p>30" } },
+    { "command": "s co:user", "expected": { "commentOriginFilter": "user" } },
+    { "command": "s co co:xg", "expected": { "commentFilter": "has", "commentOriginFilter": "xg" } }
   ]
 }

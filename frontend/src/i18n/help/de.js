@@ -955,6 +955,10 @@ export default {
 <td>Die Position ist kontaktlos.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>Die Stellung befindet sich in einer bestimmten Spielphase: <code>opening</code> (Eröffnung), <code>middlegame</code> (Mittelspiel), <code>race</code> (Wettlauf) oder <code>bearoff</code> (Auswürfeln). Wiederholbar (<code>ph:race ph:bearoff</code>). Die Kennzeichnung wird aus dem Brett abgeleitet und ist nie editierbar; <code>blunderdb repair</code> berechnet sie neu.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Die Position oder ihr Spiegelbild erfüllt die Filter.</td>
 </tr>
@@ -1221,6 +1225,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>Die Position hat keinen Kommentar.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>Die Stellung trägt einen Kommentar einer bestimmten Herkunft: <code>user</code> (von Ihnen geschrieben), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (durch einen Partie-Import mitgebracht) oder <code>unknown</code>. Wiederholbar (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'muster1,muster2,...'</td>

@@ -15,6 +15,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 type searchFlags struct {
@@ -47,6 +49,8 @@ type searchFlags struct {
 	flagged           *bool
 	hasComment        *bool
 	noComment         *bool
+	phase             *string
+	commentOrigin     *string
 	query             *string
 	queryHelp         *bool
 }
@@ -87,6 +91,8 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		flagged:           fs.Bool("flagged", false, "Only positions you marked for study in the source tool (eXtreme Gammon flags)"),
 		hasComment:        fs.Bool("has-comment", false, "Only positions carrying a comment (whatever its origin — yours or an imported note)"),
 		noComment:         fs.Bool("no-comment", false, "Only positions carrying no comment"),
+		phase:             fs.String("phase", "", "Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see `blunderdb repair`)"),
+		commentOrigin:     fs.String("comment-origin", "", "Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown"),
 		query:             fs.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags"),
 		queryHelp:         fs.Bool("query-help", false, "List the tokens --query understands, and exit"),
 	}
@@ -293,8 +299,26 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		commentFilter = "none"
 	}
 
+	// A closed vocabulary is worth refusing on rather than filtering silently:
+	// `--phase raceing` would otherwise return nothing and look like an answer.
+	phaseFilter, err := normaliseClosedList(*f.phase, "--phase", func(v string) bool {
+		_, ok := domain.ParseGamePhase(v)
+		return ok
+	})
+	if err != nil {
+		return SearchFilters{}, err
+	}
+	originFilter, err := normaliseClosedList(*f.commentOrigin, "--comment-origin", func(v string) bool {
+		return string(domain.ParseCommentOrigin(v)) == strings.ToLower(strings.TrimSpace(v))
+	})
+	if err != nil {
+		return SearchFilters{}, err
+	}
+
 	return SearchFilters{
 		Filter:                  filter,
+		GamePhaseFilter:         phaseFilter,
+		CommentOriginFilter:     originFilter,
 		IncludeCube:             includeCube,
 		IncludeScore:            includeScore,
 		PipCountFilter:          pipCountFilter,
@@ -313,4 +337,24 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		FlaggedFilter:              *f.flagged,
 		CommentFilter:              commentFilter,
 	}, nil
+}
+
+// normaliseClosedList turns a comma-separated flag value into the
+// ";"-separated form the filter fields hold, refusing any item the vocabulary
+// does not contain. Refusing matters more here than elsewhere: an unknown
+// value in a closed list filters everything out, so a typo would come back as
+// an empty result set that looks like an answer.
+func normaliseClosedList(value, flagName string, valid func(string) bool) (string, error) {
+	var out []string
+	for _, item := range strings.Split(value, ",") {
+		item = strings.ToLower(strings.TrimSpace(item))
+		if item == "" {
+			continue
+		}
+		if !valid(item) {
+			return "", fmt.Errorf("%s: unknown value %q", flagName, item)
+		}
+		out = append(out, item)
+	}
+	return strings.Join(out, ";"), nil
 }

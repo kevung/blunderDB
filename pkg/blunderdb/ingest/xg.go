@@ -42,6 +42,7 @@ func MapXG(path string) (*MatchGraph, error) {
 	rawMarks := parseRawMoveMarks(segments)
 
 	graph := &MatchGraph{
+		CommentOrigin: domain.CommentOriginXG,
 		Match: domain.Match{
 			Player1Name:   match.Metadata.Player1Name,
 			Player2Name:   match.Metadata.Player2Name,

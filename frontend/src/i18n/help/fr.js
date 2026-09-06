@@ -954,6 +954,10 @@ export default {
 <td>La position est sans contact.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>La position est dans une phase de jeu donnée : <code>opening</code> (ouverture), <code>middlegame</code> (milieu de partie), <code>race</code> (course) ou <code>bearoff</code> (sortie des pions). Répétable (<code>ph:race ph:bearoff</code>). L'étiquette est calculée à partir du plateau, jamais modifiable ; la commande <code>blunderdb repair</code> la recalcule.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>La position ou celle miroir vérifie les filtres.</td>
 </tr>
@@ -1220,6 +1224,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>La position ne porte aucun commentaire.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>La position porte un commentaire d'une provenance donnée : <code>user</code> (écrit par vous), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (apporté par l'import d'un match) ou <code>unknown</code>. Répétable (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'motif1,motif2,...'</td>

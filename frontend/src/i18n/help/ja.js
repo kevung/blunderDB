@@ -933,6 +933,10 @@ export default {
 <td>局面が接触のない状態です。</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>局面が特定のゲーム段階にある：<code>opening</code>（序盤）、<code>middlegame</code>（中盤）、<code>race</code>（レース）、<code>bearoff</code>（ベアオフ）。繰り返し指定できる（<code>ph:race ph:bearoff</code>）。このラベルは盤面から導出され、編集はできない。<code>blunderdb repair</code> が再計算する。</td>
+</tr>
+<tr>
 <td>M</td>
 <td>局面またはその鏡像がフィルタを満たします。</td>
 </tr>
@@ -1199,6 +1203,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>局面にコメントが付いていない。</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>局面が特定の出所のコメントを持つ：<code>user</code>（自分で書いたもの）、<code>xg</code>、<code>gnubg</code>、<code>bgf</code>（マッチのインポートで持ち込まれたもの）、<code>unknown</code>。繰り返し指定できる（<code>co:xg co:gnubg</code>）。</td>
 </tr>
 <tr>
 <td>m'motif1,motif2,...'</td>

@@ -945,6 +945,10 @@ export default {
 <td>Позиция без контакта.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>Позиция находится в заданной фазе игры: <code>opening</code> (дебют), <code>middlegame</code> (миттельшпиль), <code>race</code> (гонка) или <code>bearoff</code> (снятие шашек). Повторяемый (<code>ph:race ph:bearoff</code>). Метка выводится из доски и никогда не редактируется; команда <code>blunderdb repair</code> пересчитывает её.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Позиция или её зеркальное отражение соответствуют фильтрам.</td>
 </tr>
@@ -1211,6 +1215,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>Позиция не содержит комментария.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>Позиция несёт комментарий заданного происхождения: <code>user</code> (написанный вами), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (пришедший с импортом матча) или <code>unknown</code>. Повторяемый (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'motif1,motif2,...'</td>

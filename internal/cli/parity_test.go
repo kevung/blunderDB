@@ -256,6 +256,7 @@ var databaseParity = map[string]parityEntry{
 	"UpdateTournamentComment":          {Server: "/v1/tournaments.updateComment", Why: whyGUIEdit},
 	"RemoveAnkiCard":                   {CLI: "anki card", Server: "/v1/anki.removeCard"},
 	"RepairAnalyses":                   {CLI: "repair", Server: "/v1/analyses.repair"},
+	"RepairGamePhases":                 {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
 	"SetAnkiCardSuspended":             {CLI: "anki card", Server: "/v1/anki.suspendCard"},
 	"Vacuum":                           {CLI: "vacuum", Server: "/ops/maintenance.vacuum"},
 }

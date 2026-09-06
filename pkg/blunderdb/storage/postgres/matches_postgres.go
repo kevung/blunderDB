@@ -281,34 +281,33 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 // user did on a position that merely happened to occur in it.
 //
 // A position is held by: another match's move; membership in a collection; an
-// Anki card built from it; or having been imported individually, which says the
-// user brought it in deliberately (docs/adr/0001).
+// Anki card built from it; a comment the USER wrote on it (#263); having been
+// imported individually, which says the user brought it in deliberately
+// (docs/adr/0001); or the study mark the source tool carried, since deleting a
+// match must not delete the very positions the `fl` filter exists to surface
+// (docs/adr/0006).
 //
 // Two things deliberately do NOT hold a position, because neither is evidence
 // the user did anything with it:
 //   - an analysis: it arrives with the match, and every match position has one,
 //     so counting it would mean never purging anything;
-//   - a comment: match importers attach the source file's per-move notes as
-//     comments (see ingest/xg.go), so a comment is not necessarily the user's.
-//     A note the user wrote on a match position is therefore still lost when the
-//     match is deleted — to keep such a position, put it in a collection or save
-//     it, which marks it individually imported.
-//   - the user flagged it for study in the source tool: same reasoning as
-//     individually_imported — deleting a match must not delete the very
-//     positions the `fl` filter exists to surface (docs/adr/0006).
+//   - a comment that is not the user's: match importers attach the source
+//     file's per-move notes as comments (see ingest/xg.go), and until 2.19.0
+//     nothing told them apart from a note the user typed — so no comment held a
+//     position at all, and a note the user had written was lost with the match.
+//     A comment now carries its origin; only origin = 'user' holds. An imported
+//     note, or one written before the column existed ('unknown'), still does
+//     not, which leaves the rows of every older database judged as they always
+//     were.
 //
 // Phrased as a WHERE-clause fragment correlated against the outer `position`
-// row (id, tenant_id, individually_imported, flagged) rather than a
-// standalone query — see deleteOrphanedPositions, which embeds it directly
-// into a set-based DELETE instead of running it once per candidate position
-// (P9: the per-row EXISTS check used to be the dominant cost of deleting or
-// swapping a large match). Each EXISTS also filters on tenant_id, matching
-// every other query in this file — position_id is a globally unique key so
-// this is not a correctness fix (no cross-tenant collision is possible), just
-// consistency and letting the planner use the tenant-scoped indexes.
+// row rather than a standalone query — see deleteOrphanedPositions, which
+// embeds it directly into a set-based DELETE instead of running it once per
+// candidate position.
 const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id AND tenant_id = position.tenant_id)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id AND tenant_id = position.tenant_id)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id AND tenant_id = position.tenant_id)
+	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = position.id AND tenant_id = position.tenant_id AND origin = 'user')
 	                       OR position.individually_imported
 	                       OR position.flagged`
 

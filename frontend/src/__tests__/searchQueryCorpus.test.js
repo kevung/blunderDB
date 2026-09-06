@@ -84,7 +84,9 @@ const SHORT_TO_LONG = {
     matchIDs: 'matchIDsFilter',
     tournamentIDs: 'tournamentIDsFilter',
     xd: 'exceptDiceFilter',
-    posIds: 'positionIDsFilter'
+    posIds: 'positionIDsFilter',
+    ph: 'gamePhaseFilter',
+    coOrigin: 'commentOriginFilter'
 };
 const LONG_TO_SHORT = Object.fromEntries(Object.entries(SHORT_TO_LONG).map(([short, long]) => [long, short]));
 

@@ -701,3 +701,18 @@ func (p *Position) MatchesNoContact() bool {
 	// Compare indices to determine if there is no contact
 	return furthestPlayerChecker < furthestOpponentChecker
 }
+
+// SplitFilterList splits a ";"-separated filter value into its non-empty,
+// trimmed, lower-cased items, in the order they were written. It is what
+// CommentOriginFilter and GamePhaseFilter hold: a short closed list, kept as
+// one string because that is the shape the frontend has always sent and the
+// shape ExceptDiceFilter established.
+func SplitFilterList(s string) []string {
+	var out []string
+	for _, part := range strings.Split(s, ";") {
+		if p := strings.ToLower(strings.TrimSpace(part)); p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}

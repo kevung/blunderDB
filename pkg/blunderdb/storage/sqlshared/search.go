@@ -146,16 +146,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// On PostgreSQL the subquery carries tenant_id as well as position_id: it
 	// is what idx_comment_position is keyed on, and RLS aside, a scope must
 	// never read across tenants.
-	if f.CommentFilter == "has" || f.CommentFilter == "none" {
-		cTenant, cArgs := s.DB.TenantFilter("c", scope)
-		not := ""
-		if f.CommentFilter == "none" {
-			not = "NOT "
-		}
-		where.WriteString(" AND " + not + "EXISTS (SELECT 1 FROM comment c" +
-			" WHERE " + cTenant + " AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
-		args = append(args, cArgs...)
-	}
+	s.appendClosedListClauses(scope, f, &where, &args)
 
 	if f.MatchIDsFilter != "" || f.TournamentIDsFilter != "" {
 		var allMatchIDs []int64
@@ -871,4 +862,61 @@ func boolToInt(p *bool) int {
 		return 1
 	}
 	return 0
+}
+
+// appendClosedListClauses adds the filters whose value comes from a short
+// closed vocabulary rather than being a number or a free string: whether a
+// comment is there at all (`co`/`xco`), where it came from (`co:user`, #263)
+// and the position's derived phase (`ph:race`, #264, ADR-0035).
+//
+// A method of its own because buildWhere sits at .golangci.yml's statement
+// ceiling and every filter added to it pushes it over — and because these
+// share a shape nothing else in the query has: read a ";"-separated list
+// against a fixed vocabulary, drop what it does not recognise, emit an IN.
+func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) {
+	// Comment presence: `co` (has one) / `xco` (has none). Asking for both is
+	// contradictory rather than ambiguous; "none" wins and the search comes
+	// back empty, which is the honest answer.
+	if f.CommentFilter == "has" || f.CommentFilter == "none" {
+		cTenant, cArgs := s.DB.TenantFilter("c", scope)
+		not := ""
+		if f.CommentFilter == "none" {
+			not = "NOT "
+		}
+		where.WriteString(" AND " + not + "EXISTS (SELECT 1 FROM comment c" +
+			" WHERE " + cTenant + " AND c.position_id = p.id AND COALESCE(c.text, '') <> '')")
+		*args = append(*args, cArgs...)
+	}
+
+	// Comment provenance. A separate EXISTS from the presence filter above:
+	// the two are independent AND clauses, so `xco co:user` yields nothing
+	// rather than being rejected as contradictory — the same treatment
+	// `xco t"blot"` already gets.
+	if origins := domain.SplitFilterList(f.CommentOriginFilter); len(origins) > 0 {
+		cTenant, cArgs := s.DB.TenantFilter("c", scope)
+		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c WHERE " + cTenant +
+			" AND c.position_id = p.id AND COALESCE(c.text, '') <> '' AND c.origin IN (" +
+			Placeholders(len(origins)) + "))")
+		*args = append(*args, cArgs...)
+		for _, o := range origins {
+			*args = append(*args, string(domain.ParseCommentOrigin(o)))
+		}
+	}
+
+	// Derived phase (ADR-0035): one indexed column, never reclassified at
+	// query time. An unrecognised name is dropped rather than refused here —
+	// the CLI and the command bar are where a typo is named; a filter whose
+	// every value is unknown simply does not narrow.
+	if phases := domain.SplitFilterList(f.GamePhaseFilter); len(phases) > 0 {
+		var codes []any
+		for _, name := range phases {
+			if ph, ok := domain.ParseGamePhase(name); ok {
+				codes = append(codes, int(ph))
+			}
+		}
+		if len(codes) > 0 {
+			where.WriteString(" AND p.game_phase IN (" + Placeholders(len(codes)) + ")")
+			*args = append(*args, codes...)
+		}
+	}
 }

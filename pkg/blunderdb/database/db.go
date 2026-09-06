@@ -25,8 +25,13 @@ type Database struct {
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
-	lock              *fileLock                           // single-writer advisory lock on the open file (nil for :memory:/read-only)
-	readOnly          bool                                // opened read-only because another instance holds the write lock
+	// pendingPhaseBackfill is raised by the 2.19.0 migration step and cleared
+	// by runMigrationChain once EnsureSchema has added position.game_phase.
+	// A migration step cannot write a column the schema pass has not created
+	// yet, and the phase backfill is the only 2.19.0 change that writes at all.
+	pendingPhaseBackfill bool
+	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
+	readOnly             bool      // opened read-only because another instance holds the write lock
 }
 
 // acquireFileLock takes the single-writer advisory lock for a file-backed

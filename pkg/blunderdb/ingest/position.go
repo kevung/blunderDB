@@ -149,7 +149,7 @@ func WritePosition(ctx context.Context, tx storage.Tx, scope string, g *Position
 		return 0, fmt.Errorf("ingest: nil position graph")
 	}
 	g.Position.IndividuallyImported = true
-	return savePositionWithAnalyses(ctx, tx, scope, g.Position, g.Analyses, nil)
+	return savePositionWithAnalyses(ctx, tx, scope, g.Position, g.Analyses, nil, domain.CommentOriginUnknown)
 }
 
 // PositionImporter implements Importer for single-position files. It dispatches

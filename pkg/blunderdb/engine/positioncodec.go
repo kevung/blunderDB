@@ -19,10 +19,14 @@ type PositionColumns struct {
 	BackCheckers1 int
 	BackCheckers2 int
 	NoContact     bool
-	Occupancy1    uint32
-	Occupancy2    uint32
-	PointMask1    uint32
-	PointMask2    uint32
+	// GamePhase is the derived phase label (ADR-0035, issue #264). It is
+	// computed here so every writer of a position — import, edit, repair —
+	// stores the same value, and recomputed rather than carried.
+	GamePhase  domain.GamePhase
+	Occupancy1 uint32
+	Occupancy2 uint32
+	PointMask1 uint32
+	PointMask2 uint32
 	// mirrors of Position fields for indexed columns
 	CubeValue int
 	CubeOwner int
@@ -64,6 +68,7 @@ func PopulatePositionColumns(p *domain.Position) PositionColumns {
 	}
 
 	c.NoContact = norm.MatchesNoContact()
+	c.GamePhase = ClassifyGamePhase(&norm)
 
 	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = OccupancyMasks(&norm.Board)
 

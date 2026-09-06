@@ -82,6 +82,15 @@ func (s *Server) positionRoutes() []route {
 			}
 			return ps().Update(ctx, scope, req.Position)
 		})},
+		// Reclassification de la phase dérivée (ADR-0035). Explicite et jamais
+		// automatique, comme /v1/analyses.repair : la phase se recalcule quand
+		// la règle change, pas à chaque ouverture. Le compte rendu dit combien
+		// de lignes ont RÉELLEMENT changé — « quelque chose avait bougé » se
+		// distingue de « ça a tourné ».
+		{http.MethodPost, "/v1/positions.reclassifyPhases", rpc(func(ctx context.Context, scope string, _ struct{}) (reclassifyResp, error) {
+			n, err := ps().ReclassifyPhases(ctx, scope)
+			return reclassifyResp{Reclassified: n}, err
+		})},
 		{http.MethodPost, "/v1/positions.load", rpc(func(ctx context.Context, scope string, req idReq) (*domain.Position, error) {
 			return ps().Load(ctx, scope, req.ID)
 		})},
@@ -183,4 +192,9 @@ func (s *Server) positionRoutes() []route {
 			return ps().LoadByIDs(ctx, scope, req.IDs)
 		})},
 	}
+}
+
+// reclassifyResp reports how many positions had their derived phase rewritten.
+type reclassifyResp struct {
+	Reclassified int `json:"reclassified"`
 }

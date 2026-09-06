@@ -50,14 +50,44 @@ the take/pass — because the source records one decision and blunderDB splits i
 _Avoid_: bookmark, starred, favourite — a Flagged Position is durable and read-only; a
 transient "come back to this" list is a Collection.
 
+**Game phase**:
+Which part of the game a Position stands in: *opening*, *middlegame*, *race* or *bearoff*.
+A **derived** label — computed from the board alone, stored in an indexed column, never
+editable, and recomputed by `blunderdb repair` (ADR-0035). Three of its four boundaries
+are gnubg's and are sourced; where the opening stops is a stated convention, not a
+standard. It is not a *type of game* (holding, backgame, blitz…): those are a separate,
+larger classification that no publication gives thresholds for.
+_Avoid_: game type, position class, stage
+
+**Comment origin**:
+Who wrote a Comment: the user, or the importer of the file it came in with (`xg`,
+`gnubg`, `bgf`), or `unknown` for a Comment written before the column existed. It is a
+fact of how the row entered the database — but EDITING a Comment makes it the user's,
+because after the edit the sentence is theirs. It is what lets the Orphan purge tell a
+note the user typed from a per-move remark lifted out of a file.
+_Avoid_: comment author, comment source
+
+**Import batch**:
+One import the user launched, with what it read and what it found. Matches point back at
+their batch, which is what lets the end-of-import report speak about *this file* rather
+than about the database. Deleting a batch never deletes its matches.
+
+**Trash**:
+What was deleted, kept for thirty days so it can be put back. A *snapshot*, not a
+soft-delete flag: the delete really happens, and a JSON copy of what was deleted is
+written first, so no search filter, statistic or retention rule has to know about it
+(ADR-0036). `blunderdb vacuum` empties it; an export never carries it.
+_Avoid_: recycle bin, archive, soft delete
+
 **Orphan purge**:
 The sweep that runs when a Match is deleted: each Position the Match referenced is removed
 unless something else still holds it. What "holds" a Position is a deliberate list — another
-Match's move, Collection membership, an Anki card, or being individually imported. Neither an
-Analysis nor a Comment holds a Position: both can arrive *with* the Match (importers attach the
-source file's per-move notes as Comments), so neither is evidence the user did anything. A note
-the user wrote on a Match-sourced Position is therefore still lost when the Match is deleted —
-to keep such a Position, put it in a Collection or save it.
+Match's move, Collection membership, an Anki card, a Comment the *user* wrote, or being
+individually imported. An Analysis never holds a Position: every Match position has one, so
+counting it would mean never purging anything. Neither does a Comment that is not the
+user's — importers attach the source file's per-move notes as Comments, and until the
+Comment origin existed no Comment held anything, which is why a note the user had written
+was lost with the Match.
 
 ### Knowing what a position is worth
 

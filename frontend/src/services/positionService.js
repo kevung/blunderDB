@@ -371,7 +371,9 @@ export async function loadPositionsByFilters({
     diceRollMode = 'both',
     exceptDiceFilter = '',
     positionIDsFilter = '',
-    playerFilter = ''
+    playerFilter = '',
+    gamePhaseFilter = '',
+    commentOriginFilter = ''
 } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
@@ -465,6 +467,8 @@ export async function loadPositionsByFilters({
             diceRollFilter,
             diceRollMode,
             exceptDiceFilter,
+            gamePhaseFilter,
+            commentOriginFilter,
             movePatternFilter,
             dateFilter,
             player1OutfieldBlotFilter,

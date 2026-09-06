@@ -40,6 +40,7 @@ func MapBGF(path string) (*MatchGraph, error) {
 	}
 
 	graph := &MatchGraph{
+		CommentOrigin: domain.CommentOriginBGF,
 		Match: domain.Match{
 			Player1Name:   bgfGetString(data, "nameGreen"),
 			Player2Name:   bgfGetString(data, "nameRed"),

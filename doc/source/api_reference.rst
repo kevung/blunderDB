@@ -127,6 +127,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.load                       JSON
      POST /v1/positions.loadByIds                  JSON
      POST /v1/positions.parseText                  JSON
+     POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.save                       JSON
      POST /v1/positions.update                     JSON
    search

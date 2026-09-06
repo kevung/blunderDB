@@ -953,6 +953,10 @@ export default {
 <td>Η θέση είναι χωρίς επαφή.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>Η θέση βρίσκεται σε μια δεδομένη φάση του παιχνιδιού: <code>opening</code> (άνοιγμα), <code>middlegame</code> (μέσο παιχνίδι), <code>race</code> (κούρσα) ή <code>bearoff</code> (μάζεμα). Επαναλαμβανόμενο (<code>ph:race ph:bearoff</code>). Η ετικέτα προκύπτει από το ταμπλό και δεν είναι ποτέ επεξεργάσιμη· η εντολή <code>blunderdb repair</code> την υπολογίζει ξανά.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Η θέση ή η κατοπτρική της επαληθεύει τα φίλτρα.</td>
 </tr>
@@ -1219,6 +1223,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>Η θέση δεν φέρει κανένα σχόλιο.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>Η θέση φέρει σχόλιο δεδομένης προέλευσης: <code>user</code> (γραμμένο από εσάς), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (που ήρθε με την εισαγωγή ενός αγώνα) ή <code>unknown</code>. Επαναλαμβανόμενο (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'pattern1,pattern2,...'</td>

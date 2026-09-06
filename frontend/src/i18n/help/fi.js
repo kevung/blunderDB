@@ -944,6 +944,10 @@ export default {
 <td>Asema on ilman kontaktia.</td>
 </tr>
 <tr>
+<td>ph:race</td>
+<td>Asema on tietyssä pelin vaiheessa: <code>opening</code> (avaus), <code>middlegame</code> (keskipeli), <code>race</code> (kilpajuoksu) tai <code>bearoff</code> (nappuloiden poisto). Toistettavissa (<code>ph:race ph:bearoff</code>). Merkintä johdetaan laudasta eikä sitä voi koskaan muokata; <code>blunderdb repair</code> laskee sen uudelleen.</td>
+</tr>
+<tr>
 <td>M</td>
 <td>Asema tai sen peilikuva vastaa suodattimia.</td>
 </tr>
@@ -1210,6 +1214,10 @@ export default {
 <tr>
 <td>xco</td>
 <td>Asemassa ei ole kommenttia.</td>
+</tr>
+<tr>
+<td>co:user</td>
+<td>Asemaan liittyy tietystä lähteestä peräisin oleva kommentti: <code>user</code> (sinun kirjoittamasi), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (ottelun tuonnin mukana tullut) tai <code>unknown</code>. Toistettavissa (<code>co:xg co:gnubg</code>).</td>
 </tr>
 <tr>
 <td>m'kuvio1,kuvio2,...'</td>

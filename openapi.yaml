@@ -1773,6 +1773,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/parser_Result"
+  /v1/positions.reclassifyPhases:
+    post:
+      operationId: positions.reclassifyPhases
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/reclassifyResp"
   /v1/positions.save:
     post:
       operationId: positions.save
@@ -2841,6 +2858,12 @@ components:
     race_Result:
       type: object
       description: "Opaque: see the Go type race.Result (defined outside internal/server, not expanded here)."
+    reclassifyResp:
+      type: object
+      properties:
+        reclassified:
+          type: integer
+          format: int32
     reorderMatchesReq:
       type: object
       properties:

@@ -134,3 +134,12 @@ version and the issuance document) and is **not** tenant-scoped — which is
 why it must hold no per-tenant data: the daemon exposes it read-only
 (`metadata.version`), and the session state that used to sit in it moved to
 `session_state` in `013` (#156).
+- `018_game_phase.sql` — `position.game_phase`, the derived phase label
+  (issue #264, ADR-0035) and its index. No SQL backfill is possible: the
+  classification reads the board out of the compact `state` encoding, so
+  existing rows stay at 0 (unknown) until a repair pass rewrites them.
+- `019_product_wave_2_19_0.sql` — the rest of the 2.19.0 wave: `comment.origin`
+  (#263), `import_batch` + `match.import_batch_id` (#257) and `trash` (#285),
+  with the `tenant_isolation` policy on the two new tenant-scoped tables.
+  `origin` defaults to `'unknown'`, never `'user'` — see the file's header.
+  Schema-visible: bumped `domain.DatabaseVersion` to 2.19.0.

@@ -65,6 +65,10 @@ var schemaStatements = []string{
 		back_checkers_1   INTEGER,
 		back_checkers_2   INTEGER,
 		no_contact        INTEGER,
+		-- Derived phase label (2.19.0, issue #264): 0 unknown, 1 opening,
+		-- 2 middlegame, 3 race, 4 bearoff. Written by every path that writes
+		-- a position, recomputed by the repair pass, never edited.
+		game_phase        INTEGER NOT NULL DEFAULT 0,
 		occupancy_1       INTEGER,
 		occupancy_2       INTEGER,
 		point_mask_1      INTEGER,
@@ -108,6 +112,12 @@ var schemaStatements = []string{
 		text TEXT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		modified_at DATETIME,
+		-- Who wrote this comment (2.19.0, issue #263): 'user', 'xg', 'gnubg',
+		-- 'bgf' or 'unknown'. The default is deliberately 'unknown' and not
+		-- 'user': a row that predates the column has no provenance, and
+		-- claiming the user wrote it would make the purge spare positions it
+		-- has always dropped.
+		origin TEXT NOT NULL DEFAULT 'unknown',
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS metadata (
@@ -146,6 +156,25 @@ var schemaStatements = []string{
 		value TEXT,
 		PRIMARY KEY (scope, key)
 	)`,
+	// One row per import the user launched (2.19.0, issue #257). It is what
+	// lets the end-of-import report say "this file", rather than "the
+	// database": the matches an import wrote point back at their batch, and
+	// the batch holds the counts the report shows. Deleting a batch never
+	// deletes its matches — hence ON DELETE SET NULL on the match side.
+	`CREATE TABLE IF NOT EXISTS import_batch (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		started_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+		finished_at DATETIME,
+		-- What was imported: a file path, a folder, or a short label for a
+		-- paste. Shown to the user verbatim, so never normalised here.
+		source TEXT NOT NULL DEFAULT '',
+		-- xg | gnubg | bgf | mat | db | position | mixed
+		format TEXT NOT NULL DEFAULT '',
+		-- The report's figures as a JSON object (see domain.ImportBatchCounts).
+		-- JSON rather than columns because the report gains figures over time
+		-- and each one would otherwise be a schema bump.
+		counts TEXT NOT NULL DEFAULT '{}'
+	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		player1_name TEXT,
@@ -163,7 +192,8 @@ var schemaStatements = []string{
 		last_visited_position INTEGER DEFAULT -1,
 		canonical_hash TEXT,
 		comment TEXT DEFAULT '',
-		tournament_sort_order INTEGER DEFAULT 0
+		tournament_sort_order INTEGER DEFAULT 0,
+		import_batch_id INTEGER REFERENCES import_batch(id) ON DELETE SET NULL
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
 	`CREATE TABLE IF NOT EXISTS game (
@@ -226,6 +256,26 @@ var schemaStatements = []string{
 		UNIQUE(collection_id, position_id)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`,
+	// The trash (2.19.0, issue #285): a SNAPSHOT of what was deleted, not a
+	// deleted_at column on each table. See docs/adr/0036. A row here is dead
+	// weight the live queries never see, which is the whole point: none of the
+	// fifty search filters, none of the statistics, and neither backend's
+	// retention predicate had to learn about it.
+	`CREATE TABLE IF NOT EXISTS trash (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		-- position | collection | comment | anki_card
+		kind TEXT NOT NULL,
+		-- What to show in the trash list ("Position 412", a collection name…).
+		label TEXT NOT NULL DEFAULT '',
+		-- Everything needed to put it back, as JSON. A position snapshot holds
+		-- its board and its Zobrist hash: restoring re-Saves it, so it comes
+		-- back on the SAME row as before if nothing else took the hash, and
+		-- merges into the existing row if something did.
+		payload TEXT NOT NULL,
+		deleted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_trash_deleted_at ON trash(deleted_at)`,
+	`CREATE INDEX IF NOT EXISTS idx_trash_kind ON trash(kind, deleted_at)`,
 	`CREATE TABLE IF NOT EXISTS tournament (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
@@ -346,12 +396,13 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_is_close_cube  ON analysis(is_close_cube) WHERE is_close_cube = 1`,
 	// The comment-presence filter (`co`/`xco`) probes this table once per search
 	// with an EXISTS subquery; without the index that is a full comment scan.
-	`CREATE        INDEX IF NOT EXISTS idx_comment_position        ON comment(position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_comment_position        ON comment(position_id, origin)`,
 	// Range filters that previously had no supporting index (full scans).
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_1 ON position(back_checkers_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position(back_checkers_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position(pip_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_no_contact     ON position(no_contact) WHERE no_contact = 1`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_game_phase     ON position(game_phase)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon1    ON analysis(player1_backgammon_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win2           ON analysis(player2_win_rate)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
