@@ -1268,5 +1268,19 @@
         "failed": "学習キューを作成できませんでした。",
         "finished": "学習キューを終えました：{n} 局面。",
         "stopped": "学習キューをやめました。"
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "あなたのバックギャモン局面データベース。マッチを取り込み、見直したいものを探し、自分の打ち方を測ります。",
+        "importTitle": "自分のマッチを取り込む",
+        "importNote": "新しいデータベースに、XG・GNU Backgammon・Jellyfish・BGBlitz のファイルを取り込み、二分であなたの PR と最悪の判断を表示します。",
+        "demoTitle": "サンプルのデータベースを開く",
+        "demoNote": "3 つのマッチ、コレクション、コメント、Anki デッキ。何も持ち込まずに一通り試せます。",
+        "tourTitle": "ガイドツアー",
+        "tourNote": "画面をパネルごとに一巡します。",
+        "openTitle": "データベースを開く",
+        "openNote": "すでにお持ちの .db ファイル。",
+        "resume": "{name} を開き直す",
+        "dismiss": "データベースを開かずに進む"
     }
 }

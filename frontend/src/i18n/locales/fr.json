@@ -1268,5 +1268,19 @@
         "failed": "La file d'étude n'a pas pu être construite.",
         "finished": "File d'étude terminée : {n} positions parcourues.",
         "stopped": "File d'étude quittée."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "Votre base de positions de backgammon : importez vos matchs, cherchez ce que vous voulez revoir, mesurez ce que vous jouez.",
+        "importTitle": "Importer mes matchs",
+        "importNote": "Une base neuve, vos fichiers XG, GNU Backgammon, Jellyfish ou BGBlitz, et votre PR avec vos pires décisions en deux minutes.",
+        "demoTitle": "Ouvrir la base d'exemple",
+        "demoNote": "Trois matchs, des collections, des commentaires et un paquet Anki : de quoi tout essayer sans rien apporter.",
+        "tourTitle": "Visite guidée",
+        "tourNote": "Le tour de l'interface, panneau par panneau.",
+        "openTitle": "Ouvrir une base",
+        "openNote": "Un fichier .db que vous avez déjà.",
+        "resume": "Reprendre {name}",
+        "dismiss": "Continuer sans ouvrir de base"
     }
 }

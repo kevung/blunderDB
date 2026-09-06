@@ -1268,5 +1268,19 @@
         "failed": "La coda di studio non ha potuto essere costruita.",
         "finished": "Coda di studio terminata: {n} posizioni percorse.",
         "stopped": "Coda di studio abbandonata."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "La vostra base di posizioni di backgammon: importate i vostri incontri, cercate ciò che volete rivedere, misurate ciò che giocate.",
+        "importTitle": "Importare i miei incontri",
+        "importNote": "Una base nuova, i vostri file XG, GNU Backgammon, Jellyfish o BGBlitz, e il vostro PR con le peggiori decisioni in due minuti.",
+        "demoTitle": "Aprire la base d'esempio",
+        "demoNote": "Tre incontri, collezioni, commenti e un mazzo Anki: abbastanza per provare tutto senza portare nulla.",
+        "tourTitle": "Visita guidata",
+        "tourNote": "Un giro dell'interfaccia, pannello per pannello.",
+        "openTitle": "Aprire una base",
+        "openNote": "Un file .db che avete già.",
+        "resume": "Riprendere {name}",
+        "dismiss": "Continuare senza aprire una base"
     }
 }

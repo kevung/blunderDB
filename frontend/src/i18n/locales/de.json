@@ -1268,5 +1268,19 @@
         "failed": "Die Studienliste konnte nicht erstellt werden.",
         "finished": "Studienliste beendet: {n} Stellungen durchgegangen.",
         "stopped": "Studienliste verlassen."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "Ihre Backgammon-Stellungsdatenbank: importieren Sie Ihre Matches, suchen Sie, was Sie wiedersehen wollen, messen Sie, was Sie spielen.",
+        "importTitle": "Meine Matches importieren",
+        "importNote": "Eine neue Datenbank, Ihre Dateien aus XG, GNU Backgammon, Jellyfish oder BGBlitz, und Ihr PR mit Ihren schlimmsten Entscheidungen in zwei Minuten.",
+        "demoTitle": "Beispieldatenbank öffnen",
+        "demoNote": "Drei Matches, Sammlungen, Kommentare und ein Anki-Stapel: genug, um alles auszuprobieren, ohne etwas mitzubringen.",
+        "tourTitle": "Geführte Tour",
+        "tourNote": "Ein Rundgang durch die Oberfläche, Panel für Panel.",
+        "openTitle": "Datenbank öffnen",
+        "openNote": "Eine .db-Datei, die Sie schon haben.",
+        "resume": "{name} wieder öffnen",
+        "dismiss": "Ohne Datenbank fortfahren"
     }
 }

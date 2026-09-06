@@ -1268,5 +1268,19 @@
         "failed": "No se ha podido construir la cola de estudio.",
         "finished": "Cola de estudio terminada: {n} posiciones recorridas.",
         "stopped": "Cola de estudio abandonada."
+    },
+    "home": {
+        "title": "blunderDB",
+        "lede": "Su base de posiciones de backgammon: importe sus partidos, busque lo que quiera revisar, mida lo que juega.",
+        "importTitle": "Importar mis partidos",
+        "importNote": "Una base nueva, sus ficheros de XG, GNU Backgammon, Jellyfish o BGBlitz, y su PR con sus peores decisiones en dos minutos.",
+        "demoTitle": "Abrir la base de ejemplo",
+        "demoNote": "Tres partidos, colecciones, comentarios y un mazo Anki: lo suficiente para probarlo todo sin aportar nada.",
+        "tourTitle": "Visita guiada",
+        "tourNote": "Un recorrido por la interfaz, panel a panel.",
+        "openTitle": "Abrir una base",
+        "openNote": "Un fichero .db que ya tiene.",
+        "resume": "Retomar {name}",
+        "dismiss": "Continuar sin abrir una base"
     }
 }
