@@ -171,6 +171,21 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('inscrire un retardataire', counted, 5);
     });
 
+    // « reprendre les inscrits d'un tournoi précédent | ≤ 4 clics pour vingt joueurs ». Le
+    // nombre d'inscrits ne change rien au compte, et c'est tout l'intérêt : retaper trente noms
+    // tous les mois est le premier abandon possible du logiciel.
+    test('reprendre les inscrits du mois dernier tient dans son budget', async ({ page }) => {
+        await openDirection(page);
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-tab-players"]'));
+            await g.click(page.locator('.directory .head'));
+            await g.click(page.locator('.directory .sources li button').first());
+            await expect(page.locator('.players tbody tr')).toHaveCount(ENTRANTS.length * 2);
+        });
+        budget('reprendre les inscrits d’un tournoi précédent', counted, 4);
+    });
+
     // « de "nouveau tournoi" à la première ronde lancée | ≤ 8 clics hors saisie des noms ».
     // C'est LE coût d'entrée, mesuré de bout en bout depuis rien : pas de tournoi, pas de
     // direction, pas d'inscrit.
@@ -207,5 +222,32 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
         });
         budget('de « nouveau tournoi » à la première ronde', counted, 8);
+    });
+
+    // Le même coût d'entrée, mais AVEC l'annuaire : plus un seul nom à taper. C'est la mesure
+    // qui compte pour un directeur de club, celui qui dirige les mêmes trente personnes tous
+    // les mois.
+    test('le coût d’entrée avec l’annuaire, sans taper un seul nom', async ({ page }) => {
+        await openTournaments(page, { directed: false });
+
+        const counted = await countGestures(page, async (g) => {
+            const add = page.locator('#tournamentPanel .add-input.name');
+            await g.click(add);
+            await add.fill('Open de Lyon, avril');
+            await g.press('Enter');
+            await g.click(page.locator('#tournamentPanel tbody tr').first());
+            await g.click(page.locator('#tournamentPanel .direction-btn'));
+
+            await g.click(page.locator('[data-testid="direction-tab-players"]'));
+            await g.click(page.locator('.directory .head'));
+            await g.click(page.locator('.directory .sources li button').first());
+            await expect(page.locator('.players tbody tr')).toHaveCount(ENTRANTS.length);
+
+            await g.click(page.locator('[data-testid="direction-tab-direction"]'));
+            await g.click(page.locator('.proposals .all'));
+            await g.click(page.locator('.proposals .confirm .primary'));
+            await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
+        });
+        budget('coût d’entrée avec l’annuaire', counted, 10);
     });
 });

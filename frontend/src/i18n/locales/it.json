@@ -2077,6 +2077,28 @@
             "roundHint": "Quale turno stampare. Il più recente per impostazione predefinita.",
             "latest": "il più recente",
             "error": "Impossibile scrivere il foglio degli abbinamenti."
+        },
+        "directory": {
+            "title": "Rubrica ({n})",
+            "hint": "Tutti gli iscritti di tutti i tuoi tornei, visti come un'unica lista. Nulla è memorizzato: eliminare una direzione ne toglie gli iscritti.",
+            "takeAgain": "Riprendere gli iscritti di un torneo",
+            "entrants": "{n} iscritti",
+            "take": "Riprendi",
+            "empty": "Nessun torneo diretto per ora: la rubrica si riempirà da sé.",
+            "export": "Copia la rubrica (CSV)",
+            "exportHint": "La rubrica va negli appunti; incollala in un foglio di calcolo.",
+            "importHint": "oppure incolla un CSV qui sotto (nome, club, punteggio)",
+            "paste": "nome, club, punteggio",
+            "read": "Leggi",
+            "willEnter": "{n} righe pronte da iscrivere.",
+            "skipped": "Riga {line} letta come intestazione ({text}).",
+            "confirm": "Iscrivi",
+            "copied": "Rubrica copiata negli appunti.",
+            "failed": "Impossibile riprendere questi iscritti.",
+            "errors": {
+                "noName": "Riga {line}: nessun nome.",
+                "badRating": "Riga {line}: «{text}» non è un punteggio."
+            }
         }
     }
 }

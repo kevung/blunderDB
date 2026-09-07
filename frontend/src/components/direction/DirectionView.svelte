@@ -17,6 +17,7 @@
     import { logger } from '../../utils/logger.js';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
+    import DirectoryPanel from './DirectoryPanel.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
     import LastDecision from './LastDecision.svelte';
@@ -68,7 +69,13 @@
         chooseDirectionOutputDir,
         forgetDirectionOutputDir,
         writePairingSheet,
-        directionRounds
+        directionRounds,
+        directory,
+        directorySources,
+        takeEntrantsFrom,
+        directoryCSV,
+        parseDirectoryCSV,
+        enterParticipants
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -130,6 +137,8 @@
     let unattached = $state([]);
     let configPreview = $state(null);
     let rounds = $state(0);
+    let dirEntries = $state([]);
+    let dirSources = $state([]);
     let sheetRound = $state(0);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
@@ -158,6 +167,10 @@
             if (path === null) statusBarTextStore.set(tMsg('direction.display.error'));
         });
         directionRounds().then((n) => (rounds = n));
+        // L'annuaire est DÉRIVÉ de toutes les Directions de la base : il change dès qu'un
+        // inscrit entre quelque part, y compris ici.
+        directory().then((e) => (dirEntries = e));
+        directorySources().then((s) => (dirSources = s));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -220,6 +233,20 @@
             return;
         }
         BrowserOpenURL('file://' + path);
+    }
+
+    /* L'annuaire : reprendre les inscrits d'un tournoi précédent est UN clic, et c'est tout le
+       sujet — retaper trente noms tous les mois est le premier abandon possible du logiciel. */
+    const onTakeEntrants = (sourceId) => act(() => takeEntrantsFrom(sourceId), 'direction.directory.failed');
+    const onImportEntrants = (rows) => act(() => enterParticipants(rows), 'direction.directory.failed');
+    async function onExportDirectory() {
+        try {
+            await navigator.clipboard.writeText(await directoryCSV());
+            statusBarTextStore.set(tMsg('direction.directory.copied'));
+        } catch (e) {
+            logger.error('direction: directory export failed', e);
+            statusBarTextStore.set(tMsg('direction.directory.failed'));
+        }
     }
 
     async function onOpenPage() {
@@ -426,6 +453,7 @@
         {:else if tab === 'brackets'}
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
+            <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
             <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} />
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>

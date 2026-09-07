@@ -149,6 +149,14 @@ export function DirectionRounds(arg1:number):Promise<number>;
 
 export function DirectionStore():Promise<direction.Store>;
 
+export function Directory():Promise<Array<database.DirectoryEntry>>;
+
+export function DirectoryCSV():Promise<string>;
+
+export function DirectoryEntrants(arg1:number):Promise<Array<database.DirectoryEntry>>;
+
+export function DirectorySources():Promise<Array<database.DirectorySource>>;
+
 export function DiscardFromTrash(arg1:number):Promise<void>;
 
 export function EmptyTrash(arg1:number):Promise<number>;
@@ -352,6 +360,8 @@ export function OpenDatabase(arg1:string):Promise<void>;
 export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function OpenTranscription(arg1:number):Promise<database.TranscriptionState>;
+
+export function ParseDirectoryCSV(arg1:string):Promise<database.DirectoryImport>;
 
 export function ParsePositionText(arg1:string):Promise<parser.Result>;
 

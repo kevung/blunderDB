@@ -75,7 +75,10 @@ const DYNAMIC_PREFIXES = [
     // Les mots du RENDU de la page d'affichage (#386) : en-têtes de colonne, états d'une table.
     // Ils ne sont jamais lus par le front — ils partent au backend, qui écrit la page en Go et
     // rend `term.<code>` par le même catalogue. Voir `pkg/blunderdb/direction/labeler.go`.
-    'direction.term.'
+    'direction.term.',
+    // Les erreurs d'un CSV d'annuaire (#391) sont des CODES rendus par l'interface —
+    // `$t(`direction.directory.errors.${e.code}`)` — comme tout ce qui vient du backend.
+    'direction.directory.errors.'
 ];
 
 function sourceFiles(dir) {

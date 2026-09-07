@@ -2077,6 +2077,28 @@
             "roundHint": "Welche Runde gedruckt wird. Standardmäßig die jüngste.",
             "latest": "jüngste",
             "error": "Das Paarungsblatt konnte nicht geschrieben werden."
+        },
+        "directory": {
+            "title": "Verzeichnis ({n})",
+            "hint": "Alle Teilnehmer all Ihrer Turniere als eine Liste. Nichts wird gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus.",
+            "takeAgain": "Teilnehmer eines Turniers erneut übernehmen",
+            "entrants": "{n} Teilnehmer",
+            "take": "Übernehmen",
+            "empty": "Noch kein geleitetes Turnier: Das Verzeichnis füllt sich von selbst.",
+            "export": "Verzeichnis kopieren (CSV)",
+            "exportHint": "Das Verzeichnis geht in die Zwischenablage; in eine Tabelle einfügen.",
+            "importHint": "oder unten ein CSV einfügen (Name, Verein, Wertung)",
+            "paste": "Name, Verein, Wertung",
+            "read": "Lesen",
+            "willEnter": "{n} Zeilen bereit zur Aufnahme.",
+            "skipped": "Zeile {line} als Kopfzeile gelesen ({text}).",
+            "confirm": "Aufnehmen",
+            "copied": "Verzeichnis in die Zwischenablage kopiert.",
+            "failed": "Diese Teilnehmer konnten nicht übernommen werden.",
+            "errors": {
+                "noName": "Zeile {line}: kein Name.",
+                "badRating": "Zeile {line}: „{text}“ ist keine Wertung."
+            }
         }
     }
 }
