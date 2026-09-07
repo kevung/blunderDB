@@ -58,6 +58,9 @@ func (b binder) LibrarySettings() storage.LibrarySettingsStore {
 func (b binder) Transcriptions() storage.TranscriptionStore {
 	return &sqlshared.TranscriptionStore{DB: b.shared()}
 }
+func (b binder) Training() storage.TrainingStore {
+	return &sqlshared.TrainingStore{DB: b.shared()}
+}
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a

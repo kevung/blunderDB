@@ -49,6 +49,19 @@ afterEach(() => {
     openPanels.set(new Set());
 });
 
+describe('TabbedPanel — l’ordre par défaut', () => {
+    // L'onglet Entraînement prend place entre Eval et Anki : l'ordre est celui
+    // de « calculer / retenir » (ADR-0040 règle 1), et c'est un critère
+    // d'acceptation de #320, pas une préférence de rangement.
+    test('Entraînement est entre Eval et Anki, et visible par défaut', () => {
+        const { container } = mount();
+        const ids = [...container.querySelectorAll('[role="tab"]')].map((tab) => tab.getAttribute('data-testid'));
+        expect(ids).toContain('tab-training');
+        expect(ids.indexOf('tab-training')).toBe(ids.indexOf('tab-epc') + 1);
+        expect(ids.indexOf('tab-anki')).toBe(ids.indexOf('tab-training') + 1);
+    });
+});
+
 describe('TabbedPanel — roles', () => {
     test('the tab bar exposes role="tablist" and each tab role="tab"', () => {
         const { container } = mount();

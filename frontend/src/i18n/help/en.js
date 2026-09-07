@@ -637,18 +637,38 @@ export default {
 <p><strong>Retention: the target and the measurement.</strong> The <em>target retention</em> is your own choice on the trade-off between workload and quality of recall: the higher it is, the shorter the intervals and the more you review. Alongside it, the Settings show the <strong>measured retention</strong> over your own reviews — information, never a control loop: blunderDB does not change your target to chase your success rate. Below some twenty reviews the measurement is not shown: it would read as a fact when it is only noise.</p>
 <p>Changing the retention <strong>is not retroactive</strong>: each card takes up the new pace at its next review, and the due dates already set do not move. The effect is therefore gradual, and invisible on the day itself.</p>
 <p>The <em>maximum interval</em> bounds the spacing. A recently created deck starts at one year: a position the algorithm would push back by several years has left the deck without you deciding so, and your own game changes faster than that. Older decks keep the value they had.</p>
-<h3>Micro-trainings</h3>
-<p>The Anki panel makes you revise a <strong>judgement</strong>; the micro-trainings work the three <strong>computations</strong> that happen at the table, on the clock, and that no amount of spaced repetition builds. The <code>train</code> command starts a five-question session:</p>
+<h3>Training Panel</h3>
+<p>The <strong>Anki</strong> panel reviews what is <strong>retained</strong>; the <strong>Training</strong> panel drills what is <strong>calculated</strong>, against the clock. It opens with <code>CTRL-J</code>, with the toolbar button placed right after « Position aléatoire », or with the <code>train</code> command.</p>
+<p>At rest, the panel shows the launcher and the summary of past sessions.</p>
+<h4>The launcher</h4>
+<p>Three choices, then « Démarrer »:</p>
 <ul>
-<li><code>train pips</code> — count the pips of the player on roll, on the position shown.</li>
-<li><code>train epc</code> — estimate that same player's EPC, on a race position the engine can evaluate.</li>
-<li><code>train tp</code> — recall the take point of a long race at a randomly drawn score, the one in the <code>tp2_live</code> table.</li>
+<li>the <strong>exercise</strong> — <em>Scores</em> or <em>Pions</em> (pips);</li>
+<li>the <strong>source</strong> of the question, when the exercise has several — <em>Plateau</em> (the position as it stands) or <em>Base</em> (a position of the browsed list);</li>
+<li>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</li>
 </ul>
-<p>The question IS the position shown: the board is the application's own, and the bar above it carries only the question, the input and the correction. The answer is typed and validated at the keyboard (<em>Enter</em> checks, then moves on; <em>Esc</em> leaves the session).</p>
-<p>The tolerance depends on the drill, and it is stated rather than guessed: the pip count has <strong>none</strong> — an addition right to within one pip is a wrong addition — the EPC accepts half a pip, the take point two percentage points. At the end, the session shows the number of right answers and the <strong>median</strong> time per question.</p>
+<p><code>train scores</code> and <code>train pips</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>.</p>
+<h4>The two exercises</h4>
+<p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L'adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>
+<p>Each column carries only the cells the reference tables — those the <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> and <code>gv4</code> commands display — define for its face: three numbers at 2a-2a, fourteen at most, and a single column at a level score. A row neither face defines does not appear on the card — so there is no « n/a » cell to guess. Both faces are there because a cube decision at a score needs both: the corrected take point combines both players' gammon values, and it is the opponent's take point that says whether your double passes.</p>
+<p><strong>Pions</strong> (pips) asks for the pip count of <strong>both</strong> sides. The board's pip count is hidden while the question is open; « Révéler » shows it — <strong>even if you had hidden the pip count</strong> with <code>p</code>, since the answer would otherwise stay invisible and the exercise unverifiable. It is a mask and not a setting: your own choice is not changed, and it takes over again at the next question. The <em>Plateau</em> source asks one question about the position shown, and only one; the <em>Base</em> source draws a new position for every question and brings it onto the board.</p>
+<h4>Answering</h4>
+<p>The gesture is <strong>declared</strong>: you work it out in your head, you click « Révéler », and the truth appears. Every number is then <strong>right by default</strong> — you click the one you got wrong to mark it a <strong>fault</strong> (<em>Tab</em> then <em>Space</em> does the same from the keyboard), and a second click clears the mark. Nothing is typed: a pip count or a table cell is right or wrong, and writing it teaches nothing reading it does not.</p>
+<p>The clock starts when the question appears and stops at « Révéler »; ticking faults is not timed. With a limit, a question still unanswered at the deadline reveals itself and counts <strong>out of time</strong>: every one of its numbers is wrong, and its time does not enter the median — one does not measure an answer that was not given.</p>
+<p>« Suivante » records the question and asks another. The session has no fixed length: it runs until « Terminer », which writes it to the journal, or « Quitter », which discards it. Every button is in the panel; the board shows the question and its answer, it carries no control.</p>
+<h4>The journal and the summary</h4>
+<p>Finished sessions are kept in the library itself — so they travel with the file — and without any cap. At rest, the panel shows one line per exercise: the number of sessions, the fault rate, the median time and, from ten sessions on, the <strong>trend</strong>, that is the gap between the fault rate of the last ten sessions and that of all of them — negative, you are improving.</p>
+<p>Clicking the exercise's name unfolds the detail <strong>by number type</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». That detail is what makes the journal worth keeping, and it counts by type and not by face: the same cell of the same table, seen from either side, is one single weakness.</p>
+<h3>Micro-trainings: EPC and quiz</h3>
+<p>Two exercises are still answered from the keyboard, in a bar shown above the board. The <code>train</code> command followed by their name starts a session of five questions:</p>
+<ul>
+<li><code>train epc</code> — estimate the EPC of the player on roll, on a race position the engine can evaluate;</li>
+<li><code>train quiz</code> — decide, on an already analysed position.</li>
+</ul>
+<p>The question IS the position shown: the board is the application's own, and the bar carries only the question, the input and the correction. The answer is typed and confirmed from the keyboard (<em>Enter</em> checks, then moves on; <em>Esc</em> leaves the session). The EPC accepts half a pip of deviation, the granularity at which it changes a race decision. At the end, the session shows the number of right answers and the <strong>median</strong> time per question.</p>
 <p>Only that summary is kept, in the database metadata: the session keeps no question-by-question trace, and nothing is written until it is finished. Leaving halfway therefore records nothing.</p>
 <h4>Quiz: the training PR</h4>
-<p><code>train quiz</code> asks a fourth kind of question. The Anki panel makes you memorise; the quiz <strong>tests</strong>. Five already-analysed positions are drawn from the browsed list, and a decision has to be made:</p>
+<p><code>train quiz</code> asks a question of another nature. The Anki panel makes you memorise; the quiz <strong>tests</strong>. Five already analysed positions are drawn from the browsed list, and a decision has to be made:</p>
 <ul>
 <li>on a checker decision, <strong>play the move on the board</strong> — click the source point, then the destination, once per die; or type the move at the keyboard, in notation (<code>13/7 8/7</code>);</li>
 <li>on a cube decision, click <em>No double</em>, <em>Double, take</em> or <em>Double, pass</em>.</li>
@@ -913,6 +933,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Show/hide the comments.</td>
+</tr>
+<tr>
+<td>CTRL-J</td>
+<td>Show/hide the Training panel.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1347,7 +1371,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Starts a micro-training session. Takes an argument: <code>train pips</code> (pip count), <code>train epc</code>, <code>train tp</code> (take point at a match score), <code>train quiz</code> (the move or the cube action, graded against the stored analysis). Five questions, timed, corrected on the spot.</td>
+<td>Opens the Training panel. With an argument, it opens and starts: <code>train scores</code> (the score card of a randomly drawn score; <code>train tp</code> and <code>train takepoint</code> are synonyms), <code>train pips</code> (the pip count of both sides). <code>train epc</code> and <code>train quiz</code> start the bar's two micro-trainings.</td>
 </tr>
 <tr>
 <td>tp2</td>

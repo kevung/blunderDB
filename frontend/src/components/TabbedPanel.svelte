@@ -17,6 +17,7 @@
     import { t } from '../i18n';
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
+    import { applyTabOrder } from '../services/tabOrder.js';
     import ContextMenu from './ContextMenu.svelte';
 
     import AnalysisPanel from './AnalysisPanel.svelte';
@@ -29,6 +30,7 @@
     import StatsPanel from './stats/StatsPanel.svelte';
     import EPCPanel from './EPCPanel.svelte';
     import AnkiPanel from './AnkiPanel.svelte';
+    import TrainingPanel from './TrainingPanel.svelte';
 
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
@@ -45,6 +47,10 @@
         { id: 'analysis', labelKey: 'tabbedPanel.analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
         { id: 'comments', labelKey: 'tabbedPanel.comments', icon: 'comments', shortcut: 'Ctrl+P' },
         { id: 'epc', labelKey: 'tabbedPanel.epc', icon: 'epc', shortcut: 'Ctrl+E' },
+        // Entraînement entre Eval et Anki : l'ordre est celui de « calculer /
+        // retenir » (ADR-0040 règle 1). Anki fait réviser ce qui se RETIENT,
+        // l'Entraînement fait travailler ce qui se CALCULE.
+        { id: 'training', labelKey: 'tabbedPanel.training', icon: 'training', shortcut: 'Ctrl+J' },
         { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
         { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
         { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }
@@ -65,23 +71,10 @@
         refreshAnkiDue();
     });
 
-    // Reorders DEFAULT_TABS according to a persisted id list, appending any
-    // tab the persisted list predates (a new tab shipped since) at the end so
-    // it is never silently lost from the bar.
-    function applyOrder(order) {
-        if (!Array.isArray(order) || order.length === 0) return [...DEFAULT_TABS];
-        const byId = new Map(DEFAULT_TABS.map((tab) => [tab.id, tab]));
-        const ordered = order.map((id) => byId.get(id)).filter(Boolean);
-        for (const tab of DEFAULT_TABS) {
-            if (!order.includes(tab.id)) ordered.push(tab);
-        }
-        return ordered;
-    }
-
     onMount(async () => {
         try {
             const [order, hidden] = await Promise.all([GetTabOrder(), GetHiddenTabs()]);
-            tabs = applyOrder(order);
+            tabs = applyTabOrder(DEFAULT_TABS, order);
             for (const id of hidden || []) {
                 if (DEFAULT_TABS.some((tab) => tab.id === id)) hiddenIds.add(id);
             }
@@ -333,6 +326,8 @@
                             stroke-linejoin="round"
                             d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"
                         />
+                    {:else if tab.icon === 'training'}
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     {:else if tab.icon === 'anki'}
                         <path
                             stroke-linecap="round"
@@ -384,6 +379,8 @@
             <CollectionPanel {onOpenCollection} />
         {:else if $activeTabStore === 'anki'}
             <AnkiPanel />
+        {:else if $activeTabStore === 'training'}
+            <TrainingPanel />
         {:else if $activeTabStore === 'matches'}
             <MatchPanel />
         {:else if $activeTabStore === 'tournaments'}

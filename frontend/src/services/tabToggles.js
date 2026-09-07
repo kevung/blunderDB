@@ -32,6 +32,7 @@ const TAB_TOGGLES = Object.freeze({
     },
     metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
     anki: { tab: 'anki' },
+    training: { tab: 'training' },
     matches: { tab: 'matches' },
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },
@@ -88,11 +89,33 @@ export function toggleTab(id) {
     activeTabStore.set(entry.tab);
 }
 
+/**
+ * Sélectionne l'onglet de `id` sans le refermer s'il est déjà celui qui
+ * s'affiche — ce que veut une commande qui DÉMARRE quelque chose dans
+ * l'onglet (`train scores`), par opposition aux raccourcis « Afficher/cacher ».
+ * Rend `true` quand l'onglet est bien affiché à la sortie, `false` quand un
+ * refus (pas de base ouverte) l'a empêché.
+ * @param {string} id
+ */
+export function showTab(id) {
+    const entry = TAB_TOGGLES[id];
+    if (!entry) throw new Error(`showTab: unknown tab '${id}'`);
+    if (get(activeTabStore) === entry.tab) return true;
+    toggleTab(id);
+    return get(activeTabStore) === entry.tab;
+}
+
 export const toggleAnalysisPanel = () => toggleTab('analysis');
 export const toggleCommentPanel = () => toggleTab('comments');
 // Bound to the `meta` command and Ctrl+M (a tab, not a modal).
 export const toggleMetadataPanel = () => toggleTab('metadata');
 export const toggleAnkiPanel = () => toggleTab('anki');
+export const toggleTrainingPanel = () => toggleTab('training');
+// Ouvrir, et non basculer : `cmd_mode.rst` dit « Ouvre le panneau
+// Entraînement », et le bouton de barre d'outils l'ouvre lui aussi (#320).
+// Refermer l'onglet sous une session en cours laissait le chronomètre courir
+// hors écran. Ctrl+J reste la bascule que `raccourcis.rst` documente.
+export const showTrainingPanel = () => showTab('training');
 export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
 export const toggleTournamentPanel = () => toggleTab('tournaments');

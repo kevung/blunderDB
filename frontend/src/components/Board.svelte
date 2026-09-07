@@ -11,7 +11,8 @@
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, showPipcountStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, pipcountVisibleStore, activeTabStore } from '../stores/uiStore';
+    import { subscribeBoardRedrawTriggers as subscribeSharedRedrawTriggers } from '../services/boardRedraw.js';
     import { searchStructureModeStore, searchOfferedCubeStore } from '../stores/searchExcludePositionStore';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { sendPositionToEval } from '../services/positionService.js';
@@ -33,7 +34,11 @@
     // with the active tab (see that file's {#if} — same fix as AnalysisPanel's stuck
     // selectedMoveStore).
     let showComment = $derived($activeTabStore === 'comments');
-    let showPipcount = $derived($showPipcountStore);
+    // La préférence de l'utilisateur, sauf pendant une question de Pions, qui
+    // la surcharge (uiStore.pipcountVisibleStore, #320). La valeur est LUE ici
+    // et redessinée par l'abonnement de boardRedraw.js : sans lui, elle
+    // changerait sans que l'écran bouge.
+    let showPipcount = $derived($pipcountVisibleStore);
 
     let canvasCfg = {
         aspectFactor: 0.72
@@ -93,13 +98,13 @@
         });
     }
 
-    // Svelte 5 invariant exception (CLAUDE.md): four stores each mark the
-    // board dirty for unrelated reasons (position navigation, a move picked
-    // in the analysis panel, analysis reloading, the take/pass "offered cube"
-    // toggle) and drawBoard() re-reads every one of them regardless of which
-    // one changed, so an $effect per store would buy nothing over a single
-    // grouped subscription — it would just multiply the places carrying this
-    // exception by four. Grouping them here keeps it to one documented spot.
+    // Svelte 5 invariant exception (CLAUDE.md): plusieurs stores salissent le
+    // plateau pour des raisons sans rapport (navigation, coup choisi dans le
+    // panneau Analyse, analyse rechargée, bascule « videau offert », coup de
+    // quiz joué, visibilité du pipcount) et drawBoard() les relit tous quel
+    // que soit celui qui a changé — un $effect par store n'achèterait rien
+    // qu'un abonnement groupé n'achète, il multiplierait seulement les
+    // endroits qui portent cette exception.
     // positionStore's callback additionally carries a business rule that must
     // run before scheduleRedraw() fires: reset the selected move only on a
     // *real* navigation (position id change), not on every store tick (board
@@ -123,28 +128,16 @@
             scheduleRedraw();
         });
 
-        // Redraw when a move is selected/hovered in the analysis panel so its
-        // arrows appear (or clear) on the board.
-        const unsubSelectedMove = selectedMoveStore.subscribe(() => scheduleRedraw());
-
-        // Redraw when analysis loads/changes so the offered cube (take/pass
-        // decisions) appears for the displayed position outside match mode.
-        const unsubAnalysis = analysisStore.subscribe(() => scheduleRedraw());
-
-        // Redraw when the take/pass "offered cube" mode toggles so the cube moves
-        // between its centered (offered) and owner positions immediately.
-        const unsubOfferedCube = searchOfferedCubeStore.subscribe(() => scheduleRedraw());
-
-        // Redraw as the quiz's move is played (#294): the board shows the
-        // move being built, one hop per click.
-        const unsubQuizPlay = quizPlayStore.subscribe(() => scheduleRedraw());
+        // Les autres déclencheurs sont déclarés dans services/boardRedraw.js —
+        // une liste nommée, hors du composant, parce qu'un store oublié ici ne
+        // se voyait nulle part : Board.svelte n'a pas de test de rendu, et
+        // c'est ainsi que le masque du pipcount de #320 se calculait sans que
+        // l'écran bouge.
+        const unsubShared = subscribeSharedRedrawTriggers(scheduleRedraw);
 
         return () => {
             unsubPosition();
-            unsubSelectedMove();
-            unsubAnalysis();
-            unsubOfferedCube();
-            unsubQuizPlay();
+            unsubShared();
         };
     }
 

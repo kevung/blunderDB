@@ -199,7 +199,8 @@
         "togglePipcount": "Pipcount ein-/ausblenden",
         "updatePosition": "Position aktualisieren",
         "tour": "Geführte Touren",
-        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint (Strg+Umschalt+I)"
+        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint (Strg+Umschalt+I)",
+        "training": "Training"
     },
     "tour": {
         "next": "Weiter",
@@ -1044,7 +1045,8 @@
         "hideTab": "Diesen Tab ausblenden",
         "showTab": "Anzeigen: {tab}",
         "hiddenTabs": "Ausgeblendete Tabs",
-        "ankiDue": "{n} Karten zu wiederholen"
+        "ankiDue": "{n} Karten zu wiederholen",
+        "training": "Training"
     },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
@@ -1372,10 +1374,7 @@
     "training": {
         "title": "Training",
         "progress": "Frage {i}/{n}",
-        "drillPips": "Pip-Zählung",
         "drillEpc": "EPC",
-        "drillTakePoint": "Annahmepunkt",
-        "takePointPrompt": "Stand {away} (away)",
         "answer": "Antwort",
         "check": "Prüfen",
         "next": "Weiter",
@@ -1384,7 +1383,6 @@
         "right": "Richtig",
         "wrong": "Falsch",
         "truth": "erwartet {value}",
-        "noQuestions": "Für diese Übung lässt sich in dieser Datenbank keine Frage stellen.",
         "finished": "Training beendet: {correct}/{n}, mittlere Zeit {seconds} s.",
         "usage": "Verwendung: train <Übung> ({drills}).",
         "drillQuiz": "Quiz",
@@ -1399,7 +1397,51 @@
         "gradeFailed": "Die Antwort konnte nicht bewertet werden.",
         "finishedQuiz": "Quiz beendet: {correct}/{n}, Sitzungs-PR {pr}.",
         "undoHop": "Schritt zurück",
-        "resetPlay": "Neu beginnen"
+        "resetPlay": "Neu beginnen",
+        "exercise": {
+            "scores": "Stände",
+            "pips": "Pips"
+        },
+        "sources": {
+            "board": "Brett",
+            "library": "Datenbank"
+        },
+        "exerciseLabel": "Übung",
+        "source": "Quelle",
+        "limit": "Zeit je Frage",
+        "limitNone": "Keine",
+        "limitSeconds": "{n} s",
+        "start": "Starten",
+        "reveal": "Aufdecken",
+        "outOfTime": "Zeit abgelaufen",
+        "questionCount": "Frage {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Klicken Sie die Zahl an, die Sie falsch hatten.",
+        "faceYou": "Sie",
+        "faceOpponent": "Der Gegner",
+        "scoreCaption": "Stand {a}/{b} away",
+        "summary": "Bilanz",
+        "noSession": "Keine Sitzung",
+        "sessionsCount": "{n} Sitzungen",
+        "faultRate": "{faults}/{asked} Fehler ({rate} %)",
+        "meanDeviation": "Mittlere Abweichung {value}",
+        "medianTime": "Median {n} s",
+        "trend": "Tendenz {value} Pkt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Unbekannte Übung: {exercise}.",
+        "noQuestion": "Es kann keine Frage gestellt werden: diese Datenbank oder diese Quelle liefert keine.",
+        "journalFailed": "Die Sitzung konnte nicht ins Journal geschrieben werden.",
+        "numbers": {
+            "tp2Live": "Annahmepunkt 2 · langes Rennen",
+            "tp2Last": "Annahmepunkt 2 · letzter Wurf",
+            "tp4Live": "Annahmepunkt 4 · langes Rennen",
+            "tp4Last": "Annahmepunkt 4 · letzter Wurf",
+            "gv1": "Gammonwert 1",
+            "gv2": "Gammonwert 2",
+            "gv4": "Gammonwert 4"
+        },
+        "retry": "Erneut versuchen"
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

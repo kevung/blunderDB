@@ -14,18 +14,20 @@ import (
 // which every pooled connection but one did before issue #157 was fixed —
 // and the rows outlive that bug in databases written back then.
 type OrphanCounts struct {
-	GamesWithoutMatch       int64 `json:"games_without_match"`
-	MovesWithoutGame        int64 `json:"moves_without_game"`
-	MoveAnalysesWithoutMove int64 `json:"move_analyses_without_move"`
-	AnalysesWithoutPosition int64 `json:"analyses_without_position"`
-	ReviewsWithoutDeck      int64 `json:"reviews_without_deck"`
-	ReviewsWithoutPosition  int64 `json:"reviews_without_position"`
+	GamesWithoutMatch           int64 `json:"games_without_match"`
+	MovesWithoutGame            int64 `json:"moves_without_game"`
+	MoveAnalysesWithoutMove     int64 `json:"move_analyses_without_move"`
+	AnalysesWithoutPosition     int64 `json:"analyses_without_position"`
+	ReviewsWithoutDeck          int64 `json:"reviews_without_deck"`
+	ReviewsWithoutPosition      int64 `json:"reviews_without_position"`
+	TrainingItemsWithoutSession int64 `json:"training_items_without_session"`
 }
 
-// Total is the number of orphaned rows across all six relations.
+// Total is the number of orphaned rows across all seven relations.
 func (o OrphanCounts) Total() int64 {
 	return o.GamesWithoutMatch + o.MovesWithoutGame + o.MoveAnalysesWithoutMove +
-		o.AnalysesWithoutPosition + o.ReviewsWithoutDeck + o.ReviewsWithoutPosition
+		o.AnalysesWithoutPosition + o.ReviewsWithoutDeck + o.ReviewsWithoutPosition +
+		o.TrainingItemsWithoutSession
 }
 
 // orphanQueries counts, per child table, the rows whose parent no longer
@@ -59,6 +61,11 @@ var orphanQueries = []struct {
 	{"anki_review_log without position",
 		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN position p ON p.id = l.position_id WHERE p.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutPosition }},
+	// The Training journal (2.21.0, issue #320): an item without its session
+	// is a fault the per-number detail would count against nobody's session.
+	{"training_item without session",
+		`SELECT COUNT(*) FROM training_item i LEFT JOIN training_session s ON s.id = i.session_id WHERE s.id IS NULL`,
+		func(o *OrphanCounts) *int64 { return &o.TrainingItemsWithoutSession }},
 }
 
 // CountOrphans counts the child rows whose parent row is missing (see

@@ -199,7 +199,8 @@
         "togglePipcount": "Toggle Pipcount",
         "updatePosition": "Update Position",
         "tour": "Guided tours",
-        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined (Ctrl+Shift+I)"
+        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined (Ctrl+Shift+I)",
+        "training": "Training"
     },
     "tour": {
         "next": "Next",
@@ -1044,7 +1045,8 @@
         "hideTab": "Hide this tab",
         "showTab": "Show: {tab}",
         "hiddenTabs": "Hidden tabs",
-        "ankiDue": "{n} cards to review"
+        "ankiDue": "{n} cards to review",
+        "training": "Training"
     },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
@@ -1372,10 +1374,7 @@
     "training": {
         "title": "Training",
         "progress": "Question {i}/{n}",
-        "drillPips": "Pip count",
         "drillEpc": "EPC",
-        "drillTakePoint": "Take point",
-        "takePointPrompt": "Score {away} (away)",
         "answer": "Answer",
         "check": "Check",
         "next": "Next",
@@ -1384,7 +1383,6 @@
         "right": "Right",
         "wrong": "Wrong",
         "truth": "expected {value}",
-        "noQuestions": "No question can be asked on this database for this drill.",
         "finished": "Training done: {correct}/{n}, median time {seconds} s.",
         "usage": "Usage: train <drill> ({drills}).",
         "drillQuiz": "Quiz",
@@ -1399,7 +1397,51 @@
         "gradeFailed": "The answer could not be graded.",
         "finishedQuiz": "Quiz done: {correct}/{n}, session PR {pr}.",
         "undoHop": "Undo step",
-        "resetPlay": "Start over"
+        "resetPlay": "Start over",
+        "exercise": {
+            "scores": "Scores",
+            "pips": "Pips"
+        },
+        "sources": {
+            "board": "Board",
+            "library": "Library"
+        },
+        "exerciseLabel": "Exercise",
+        "source": "Source",
+        "limit": "Limit per question",
+        "limitNone": "None",
+        "limitSeconds": "{n} s",
+        "start": "Start",
+        "reveal": "Reveal",
+        "outOfTime": "Out of time",
+        "questionCount": "Question {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Click the number you got wrong.",
+        "faceYou": "You",
+        "faceOpponent": "The opponent",
+        "scoreCaption": "Score {a}/{b} away",
+        "summary": "Summary",
+        "noSession": "No session",
+        "sessionsCount": "{n} sessions",
+        "faultRate": "{faults}/{asked} faults ({rate} %)",
+        "meanDeviation": "Mean deviation {value}",
+        "medianTime": "Median {n} s",
+        "trend": "Trend {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Unknown exercise: {exercise}.",
+        "noQuestion": "No question can be asked: this library or this source provides none.",
+        "journalFailed": "The session could not be written to the journal.",
+        "numbers": {
+            "tp2Live": "Take point 2 · long race",
+            "tp2Last": "Take point 2 · last roll",
+            "tp4Live": "Take point 4 · long race",
+            "tp4Last": "Take point 4 · last roll",
+            "gv1": "Gammon value 1",
+            "gv2": "Gammon value 2",
+            "gv4": "Gammon value 4"
+        },
+        "retry": "Retry"
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

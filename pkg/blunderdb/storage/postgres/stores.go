@@ -56,6 +56,9 @@ func (b binder) LibrarySettings() storage.LibrarySettingsStore {
 func (b binder) Transcriptions() storage.TranscriptionStore {
 	return &sqlshared.TranscriptionStore{DB: b.shared()}
 }
+func (b binder) Training() storage.TrainingStore {
+	return &sqlshared.TrainingStore{DB: b.shared()}
+}
 
 // withTx runs fn inside a transaction started from db. The pgx.Tx is passed to
 // fn as an execer; when db is already a transaction the pgx.Tx is a

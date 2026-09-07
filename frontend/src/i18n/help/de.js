@@ -637,18 +637,38 @@ export default {
 <p><strong>Retention: Ziel und Messung.</strong> Die <em>Ziel-Retention</em> ist Ihre Entscheidung über den Kompromiss zwischen Arbeitsaufwand und Erinnerungsqualität: Je höher sie ist, desto kürzer werden die Intervalle und desto mehr wiederholen Sie. Daneben zeigen die Einstellungen die <strong>gemessene Retention</strong> über Ihre eigenen Wiederholungen an — eine Information, niemals eine Steuerung: blunderDB ändert Ihr Ziel nicht, um Ihrer Erfolgsquote hinterherzulaufen. Unter etwa zwanzig Wiederholungen wird die Messung nicht angezeigt: Sie läse sich als Tatsache, obwohl sie nur Rauschen ist.</p>
 <p>Eine Änderung der Retention <strong>wirkt nicht rückwirkend</strong>: Jede Karte übernimmt den neuen Rhythmus bei ihrer nächsten Wiederholung, und die bereits festgelegten Fälligkeiten verschieben sich nicht. Die Wirkung ist also allmählich und am selben Tag unsichtbar.</p>
 <p>Das <em>maximale Intervall</em> begrenzt die Abstände. Ein neu angelegtes Deck beginnt bei einem Jahr: Eine Stellung, die der Algorithmus um mehrere Jahre verschieben würde, hat das Deck verlassen, ohne dass Sie es entschieden hätten, und Ihr eigenes Spiel ändert sich schneller als das. Ältere Decks behalten den Wert, den sie hatten.</p>
-<h3>Micro-Trainings</h3>
-<p>Das Anki-Panel lässt ein <strong>Urteil</strong> wiederholen; die Micro-Trainings üben die drei <strong>Berechnungen</strong>, die am Tisch unter Zeitdruck anfallen und die keine verteilte Wiederholung aufbaut. Der Befehl <code>train</code> startet eine Sitzung mit fünf Fragen:</p>
+<h3>Training-Panel</h3>
+<p>Das <strong>Anki</strong>-Panel wiederholt, was <strong>behalten</strong> wird; das <strong>Training</strong>-Panel übt, was <strong>gerechnet</strong> wird, unter Zeitdruck. Es öffnet sich mit <code>CTRL-J</code>, über die Schaltfläche der Werkzeugleiste direkt nach « Position aléatoire » oder über den Befehl <code>train</code>.</p>
+<p>In Ruhe zeigt das Panel den Starter und die Bilanz der vergangenen Sitzungen.</p>
+<h4>Der Starter</h4>
+<p>Drei Auswahlen, dann « Démarrer »:</p>
 <ul>
-<li><code>train pips</code> — die Pips des Spielers am Zug zählen, auf der gezeigten Stellung.</li>
-<li><code>train epc</code> — den EPC desselben Spielers schätzen, auf einer Rennstellung, die die Engine auswerten kann.</li>
-<li><code>train tp</code> — den Annahmepunkt eines langen Rennens bei einem zufällig gezogenen Stand nennen, den der Tabelle <code>tp2_live</code>.</li>
+<li>die <strong>Übung</strong> — <em>Scores</em> (Stände) oder <em>Pions</em> (Pips);</li>
+<li>die <strong>Quelle</strong> der Frage, wenn die Übung mehrere hat — <em>Plateau</em> (die Stellung, wie sie ist) oder <em>Base</em> (eine Stellung der durchblätterten Liste);</li>
+<li>das <strong>Zeitlimit je Frage</strong> — keines, 15, 30 oder 60 Sekunden.</li>
 </ul>
-<p>Die Frage IST die gezeigte Stellung: Das Brett ist das der Anwendung, und die Leiste darüber trägt nur die Frage, die Eingabe und die Korrektur. Die Antwort wird auf der Tastatur eingegeben und bestätigt (<em>Enter</em> prüft und geht dann weiter; <em>Esc</em> verlässt die Sitzung).</p>
-<p>Die Toleranz hängt von der Übung ab und wird genannt statt erraten: Die Pip-Zählung hat <strong>keine</strong> — eine auf einen Pip genaue Addition ist eine falsche Addition — der EPC erlaubt einen halben Pip, der Annahmepunkt zwei Prozentpunkte. Am Ende zeigt die Sitzung die Zahl der richtigen Antworten und die <strong>mittlere</strong> Zeit je Frage.</p>
+<p><code>train scores</code> und <code>train pips</code> öffnen das Panel und starten sofort; <code>train tp</code> und <code>train takepoint</code> sind Synonyme von <code>train scores</code>.</p>
+<h4>Die beiden Übungen</h4>
+<p><strong>Scores</strong> zieht einen der 36 ungeordneten Stände von 2 bis 9 away und zeigt eine <strong>Standkarte</strong>: zwei Spalten — <em>Vous</em> (Sie) und <em>L'adversaire</em> (der Gegner) — und sieben Zeilen — den Annahmepunkt beim Würfel 2 und beim Würfel 4, jeweils für das lange Rennen und für den letzten Wurf, dann den Gammonwert bei den Würfeln 1, 2 und 4.</p>
+<p>Jede Spalte trägt nur die Felder, welche die Referenztabellen — jene, welche die Befehle <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> und <code>gv4</code> anzeigen — für ihre Seite definieren: drei Zahlen bei 2a-2a, höchstens vierzehn und nur eine Spalte bei gleichem Stand. Eine Zeile, die keine der beiden Seiten definiert, erscheint nicht auf der Karte — es gibt also kein « n/a »-Feld zu erraten. Beide Seiten stehen da, weil eine Verdopplungsentscheidung beim Stand beide braucht: der korrigierte Annahmepunkt verbindet die Gammonwerte beider Spieler, und es ist der Annahmepunkt des Gegners, der sagt, ob Ihre Verdopplung durchgeht.</p>
+<p><strong>Pions</strong> (Pips) fragt nach der Pip-Zahl <strong>beider</strong> Seiten. Die Pip-Zahl des Bretts ist verdeckt, solange die Frage offen ist; « Révéler » zeigt sie — <strong>auch wenn Sie die Pip-Zahl mit <code>p</code> ausgeblendet hatten</strong>, denn sonst bliebe die Antwort unsichtbar und die Übung nicht überprüfbar. Es ist eine Maske und keine Einstellung: Ihre eigene Wahl wird nicht verändert und gilt ab der nächsten Frage wieder. Die Quelle <em>Plateau</em> stellt eine Frage zur angezeigten Stellung, und nur eine; die Quelle <em>Base</em> zieht für jede Frage eine neue Stellung und bringt sie aufs Brett.</p>
+<h4>Antworten</h4>
+<p>Die Geste ist <strong>deklariert</strong>: Sie rechnen im Kopf, Sie klicken « Révéler », und die Wahrheit erscheint. Jede Zahl gilt dann <strong>standardmäßig als richtig</strong> — Sie klicken jene an, die Sie falsch hatten, um sie als <strong>Fehler</strong> zu markieren (<em>Tab</em> und dann <em>Leertaste</em> tut dasselbe über die Tastatur), und ein zweiter Klick hebt die Markierung auf. Nichts wird getippt: eine Pip-Zahl oder ein Tabellenfeld ist richtig oder falsch, und es zu schreiben lehrt nichts, was es zu lesen nicht lehrt.</p>
+<p>Die Uhr läuft ab dem Erscheinen der Frage und hält bei « Révéler » an; das Ankreuzen der Fehler wird nicht gestoppt. Mit einem Limit deckt sich eine bei Ablauf noch unbeantwortete Frage selbst auf und zählt als <strong>Zeit abgelaufen</strong>: alle ihre Zahlen sind falsch, und ihre Zeit geht nicht in den Median ein — man misst keine Antwort, die nicht gegeben wurde.</p>
+<p>« Suivante » speichert die Frage und stellt eine neue. Die Sitzung hat keine feste Länge: sie läuft bis « Terminer », das sie ins Journal schreibt, oder « Quitter », das sie verwirft. Alle Schaltflächen sind im Panel; das Brett zeigt die Frage und ihre Antwort, es trägt keine Bedienelemente.</p>
+<h4>Das Journal und die Bilanz</h4>
+<p>Beendete Sitzungen bleiben in der Datenbank selbst erhalten — sie folgen also der Datei — und ohne Obergrenze. In Ruhe zeigt das Panel eine Zeile je Übung: die Zahl der Sitzungen, die Fehlerquote, die mittlere Zeit und, ab zehn Sitzungen, die <strong>Tendenz</strong>, also den Abstand zwischen der Fehlerquote der letzten zehn Sitzungen und der aller — negativ, Sie werden besser.</p>
+<p>Ein Klick auf den Namen der Übung klappt das Detail <strong>je Zahlentyp</strong> auf: « Point de prise 4 · dernier lancer, 6 / 9 ». Dieses Detail macht den Wert des Journals aus, und es zählt nach Typ und nicht nach Seite: dasselbe Feld derselben Tabelle, von der einen oder der anderen Seite gesehen, ist eine einzige Schwäche.</p>
+<h3>Micro-Trainings: EPC und Quiz</h3>
+<p>Zwei Übungen werden noch über die Tastatur beantwortet, in einer Leiste über dem Brett. Der Befehl <code>train</code> gefolgt von ihrem Namen startet eine Sitzung mit fünf Fragen:</p>
+<ul>
+<li><code>train epc</code> — den EPC des Spielers am Zug schätzen, auf einer Rennstellung, die die Engine auswerten kann;</li>
+<li><code>train quiz</code> — entscheiden, auf einer bereits ausgewerteten Stellung.</li>
+</ul>
+<p>Die Frage IST die angezeigte Stellung: das Brett ist das der Anwendung, und die Leiste trägt nur die Frage, die Eingabe und die Korrektur. Die Antwort wird über die Tastatur getippt und bestätigt (<em>Eingabe</em> prüft und geht dann weiter; <em>Esc</em> verlässt die Sitzung). Der EPC akzeptiert einen halben Pip Abweichung, die Granularität, bei der er eine Rennentscheidung ändert. Am Ende zeigt die Sitzung die Zahl der richtigen Antworten und die <strong>mittlere</strong> Zeit je Frage.</p>
 <p>Nur diese Zusammenfassung wird gespeichert, in den Metadaten der Datenbank: Die Sitzung hält keine Spur Frage für Frage fest, und nichts wird geschrieben, solange sie nicht beendet ist. Ein Abbruch auf halbem Weg speichert also nichts.</p>
 <h4>Quiz: der Trainings-PR</h4>
-<p><code>train quiz</code> stellt eine vierte Art von Frage. Das Anki-Panel lässt auswendig lernen; das Quiz <strong>prüft</strong>. Fünf bereits ausgewertete Stellungen werden aus der durchblätterten Liste gezogen, und es ist zu entscheiden:</p>
+<p><code>train quiz</code> stellt eine Frage anderer Art. Das Anki-Panel lässt auswendig lernen; das Quiz <strong>prüft</strong>. Fünf bereits ausgewertete Stellungen werden aus der durchblätterten Liste gezogen, und es ist zu entscheiden:</p>
 <ul>
 <li>bei einer Zugentscheidung <strong>den Zug auf dem Brett spielen</strong> — den Ausgangspunkt anklicken, dann das Ziel, einmal je Würfel; oder den Zug über die Tastatur in Notation eingeben (<code>13/7 8/7</code>);</li>
 <li>bei einer Verdopplungsentscheidung <em>Kein Doppel</em>, <em>Doppel, Annahme</em> oder <em>Doppel, Aufgabe</em> anklicken.</li>
@@ -913,6 +933,10 @@ export default {
 <tr>
 <td>STRG-P</td>
 <td>Die Kommentare ein-/ausblenden.</td>
+</tr>
+<tr>
+<td>CTRL-J</td>
+<td>Training-Panel anzeigen/verbergen.</td>
 </tr>
 <tr>
 <td>STRG-K</td>
@@ -1347,7 +1371,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Startet eine Micro-Training-Sitzung. Nimmt ein Argument: <code>train pips</code> (Pip-Zählung), <code>train epc</code>, <code>train tp</code> (Annahmepunkt beim Matchstand), <code>train quiz</code> (der Zug oder die Verdopplungsentscheidung, bewertet gegen die gespeicherte Analyse). Fünf Fragen, auf Zeit, sofort korrigiert.</td>
+<td>Öffnet das Training-Panel. Mit einem Argument öffnet und startet es: <code>train scores</code> (die Standkarte eines zufällig gezogenen Standes; <code>train tp</code> und <code>train takepoint</code> sind Synonyme), <code>train pips</code> (die Pip-Zahl beider Seiten). <code>train epc</code> und <code>train quiz</code> starten die beiden Micro-Trainings der Leiste.</td>
 </tr>
 <tr>
 <td>tp2</td>

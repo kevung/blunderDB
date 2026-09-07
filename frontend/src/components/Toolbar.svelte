@@ -17,7 +17,8 @@
         gotoPosition,
         togglePipcount,
         loadRandomPosition,
-        reloadAllPositions
+        reloadAllPositions,
+        showTrainingPanel
     } from '../services/positionService.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
 
@@ -365,6 +366,22 @@
                 stroke-linejoin="round"
                 d="M14.5 14.5c.12.069.384-.166.592-.525.207-.358.278-.705.158-.774-.12-.07-.384.166-.592.524-.207.36-.278.706-.158.775Zm3.25 1.5c.12.069.384-.166.592-.525.207-.358.278-.705.158-.774-.12-.07-.384.166-.592.524-.207.36-.278.706-.158.775ZM9.5 14.5c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775Zm0 3.25c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775ZM6.25 16c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775Zm0-3.201c-.12.07-.384-.166-.592-.524-.207-.36-.278-.706-.158-.775.12-.069.384.166.592.525.207.358.278.705.158.774Zm6.5-5.549a.75.25 0 0 1-.75.25.75.25 0 0 1-.75-.25A.75.25 0 0 1 12 7a.75.25 0 0 1 .75.25ZM21 7.5l-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"
             ></path>
+        </svg>
+    </button>
+
+    <!-- Juste après « Position aléatoire » : les deux sont des gestes
+         d'exercice, pas de gestion (ADR-0040 règle 1). -->
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            showTrainingPanel(e);
+        }}
+        aria-label={$t('toolbar.training')}
+        title="{$t('toolbar.training')} (Ctrl+J)"
+        disabled={!databasePath}
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
     </button>
 

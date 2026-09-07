@@ -262,6 +262,10 @@ export function LoadSearchHistory():Promise<Array<database.SearchHistory>>;
 
 export function LoadSessionState():Promise<database.SessionState>;
 
+export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.TrainingNumberStat>>;
+
+export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
+
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
 export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:number):Promise<void>;
@@ -325,6 +329,8 @@ export function SavePosition(arg1:domain.Position):Promise<number>;
 export function SaveSearchHistory(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SaveSessionState(arg1:database.SessionState):Promise<void>;
+
+export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 

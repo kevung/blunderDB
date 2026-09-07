@@ -34,7 +34,7 @@ Opérations globales
    "cm", "Ouvre la matrice du videau : le verdict de la position courante à tous les scores d'un match de 5, 7 ou 9 points."
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
    "log", "Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient."
-   "train", "Lance une session de micro-entraînement. Prend un argument : ``train pips`` (compte de pions), ``train epc``, ``train tp`` (point de prise au score), ``train quiz`` (le coup ou l'action de videau, notés contre l'analyse enregistrée). Cinq questions, chronométrées, corrigées sur-le-champ."
+   "train", "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : ``train scores`` (la fiche de score d'un score tiré au sort ; ``train tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le compte de pions des deux camps). ``train epc`` et ``train quiz`` lancent les deux micro-entraînements de la bande."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
    "tp2_last", "Ouvre la table des takepoints avec videau à 2 mort."

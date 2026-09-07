@@ -17,7 +17,8 @@ import (
 // TestPurgeOrderMatchesRLSTables (purge_order_test.go) fails loudly if a
 // table is added to one list and not the other.
 var purgeOrder = []string{
-	"move_analysis", "anki_review_log", "collection_position",
+	"move_analysis", "anki_review_log", "collection_position", "training_item",
+	"training_session",
 	"comment", "analysis", "move", "anki_card", "game",
 	"collection", "anki_deck", "transcription", "match", "tournament", "position",
 	"filter_library", "command_history", "search_history", "session_state",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 03:08+0200\n"
+"POT-Creation-Date: 2026-09-07 03:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -4999,70 +4999,249 @@ msgstr ""
 "nopeammin. Vanhemmat pakat säilyttävät sen arvon, joka niillä oli."
 
 #: ../../source/manuel.rst:2171
-msgid "Micro-entraînements"
-msgstr "Mikroharjoitukset"
+msgid "Panneau Entraînement"
+msgstr "Harjoittelu-paneeli"
 
 #: ../../source/manuel.rst:2173
 msgid ""
-"Le panneau Anki fait réviser un **jugement** ; les micro-entraînements "
-"font travailler les trois **calculs** qui se font en partie, sous la "
-"pendule, et qu'aucune révision espacée ne muscle. La commande ``train`` "
-"en lance une session de cinq questions :"
+"Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
+"**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
+"Il s'ouvre par ``CTRL-J``, par le bouton de la barre d'outils placé juste"
+" après « Position aléatoire », ou par la commande ``train``."
 msgstr ""
-"Anki-paneeli kertaa **arviota**; mikroharjoitukset harjoittavat kolmea "
-"**laskutoimitusta**, jotka tehdään pelipöydässä kellon käydessä ja joita "
-"mikään kertausväli ei kasvata. Komento ``train`` aloittaa viiden "
-"kysymyksen istunnon:"
+"**Anki**-paneeli kertaa sitä, mikä **muistetaan**; "
+"**Harjoittelu**-paneeli harjoittaa sitä, mikä **lasketaan**, kellon "
+"käydessä. Se avautuu näppäimillä ``CTRL-J``, työkalupalkin painikkeesta "
+"heti kohdan « Position aléatoire » jälkeen tai komennolla ``train``."
 
 #: ../../source/manuel.rst:2178
-msgid ""
-"``train pips`` — compter les pions du joueur au trait, sur la position "
-"affichée."
-msgstr "``train pips`` — laske vuorossa olevan pelaajan pipit näytetystä asemasta."
+msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."
+msgstr "Levossa paneeli näyttää aloittimen ja aiempien istuntojen yhteenvedon."
 
-#: ../../source/manuel.rst:2180
-msgid ""
-"``train epc`` — estimer l'EPC de ce même joueur, sur une position de "
-"course que le moteur sait évaluer."
-msgstr ""
-"``train epc`` — arvioi saman pelaajan EPC kilpajuoksuasemasta, jonka "
-"moottori osaa arvioida."
+#: ../../source/manuel.rst:2181
+msgid "Le lanceur"
+msgstr "Aloitin"
 
-#: ../../source/manuel.rst:2182
-msgid ""
-"``train tp`` — retrouver le point de prise d'une course longue à un score"
-" tiré au hasard, celui de la table ``tp2_live``."
-msgstr ""
-"``train tp`` — palauta mieleen pitkän kilpajuoksun hyväksymispiste "
-"satunnaisesti arvotussa tilanteessa, taulukon ``tp2_live`` mukaan."
+#: ../../source/manuel.rst:2183
+msgid "Trois choix, puis « Démarrer » :"
+msgstr "Kolme valintaa, sitten « Démarrer »:"
 
 #: ../../source/manuel.rst:2185
-msgid ""
-"La question EST la position affichée : le plateau est celui de "
-"l'application, et la barre au-dessus ne porte que la question, la saisie "
-"et la correction. La réponse se tape et se valide au clavier (*Entrée* "
-"vérifie, puis passe à la suivante ; *Échap* quitte la session)."
-msgstr ""
-"Kysymys ON näytetty asema: lauta on sovelluksen oma, ja sen yläpuolinen "
-"palkki kantaa vain kysymyksen, syötteen ja korjauksen. Vastaus "
-"kirjoitetaan ja vahvistetaan näppäimistöllä (*Enter* tarkistaa ja siirtyy"
-" eteenpäin, *Esc* poistuu istunnosta)."
+msgid "l'**exercice** — *Scores* ou *Pions* ;"
+msgstr "**harjoitus** — *Scores* (tilanteet) tai *Pions* (pipit);"
 
-#: ../../source/manuel.rst:2190
+#: ../../source/manuel.rst:2186
 msgid ""
-"La tolérance dépend de l'exercice, et elle est dite plutôt que devinée : "
-"le comptage de pions n'en a **aucune** — une addition juste à un pion "
-"près est une addition fausse — l'EPC accepte un demi-pion, le point de "
-"prise deux points de pourcentage. À la fin, la session affiche le nombre "
-"de bonnes réponses et le temps **médian** par question."
+"la **source** de la question, quand l'exercice en a plusieurs — *Plateau*"
+" (la position telle qu'elle est) ou *Base* (une position de la liste "
+"parcourue) ;"
 msgstr ""
-"Toleranssi riippuu harjoituksesta, ja se sanotaan eikä arvata: pip-"
-"laskennassa sitä **ei ole** — yhden pipin päähän oikea yhteenlasku on "
-"väärä yhteenlasku — EPC sallii puoli pipiä, hyväksymispiste kaksi "
-"prosenttiyksikköä. Lopuksi istunto näyttää oikeiden vastausten määrän ja "
-"**mediaaniajan** kysymystä kohti."
+"kysymyksen **lähde**, kun harjoituksella on useita — *Plateau* (asema "
+"sellaisenaan) tai *Base* (asema selatusta listasta);"
+
+#: ../../source/manuel.rst:2189
+msgid "la **limite par question** — aucune, 15, 30 ou 60 secondes."
+msgstr "**aikaraja kysymystä kohti** — ei rajaa, 15, 30 tai 60 sekuntia."
+
+#: ../../source/manuel.rst:2191
+msgid ""
+"``train scores`` et ``train pips`` ouvrent le panneau et démarrent "
+"directement ; ``train tp`` et ``train takepoint`` sont des synonymes de "
+"``train scores``."
+msgstr ""
+"``train scores`` ja ``train pips`` avaavat paneelin ja aloittavat heti; "
+"``train tp`` ja ``train takepoint`` ovat komennon ``train scores`` "
+"synonyymejä."
 
 #: ../../source/manuel.rst:2196
+msgid "Les deux exercices"
+msgstr "Kaksi harjoitusta"
+
+#: ../../source/manuel.rst:2198
+msgid ""
+"**Scores** tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et "
+"affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire*"
+" — et sept lignes — le point de prise au videau 2 puis au videau 4, "
+"chacun en course longue et au dernier lancer, puis la valeur du gammon "
+"aux videaux 1, 2 et 4."
+msgstr ""
+"**Scores** arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away"
+" ja näyttää **tilannekortin**: kaksi saraketta — *Vous* (sinä) ja "
+"*L'adversaire* (vastustaja) — ja seitsemän riviä — hyväksymispiste "
+"kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja "
+"viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4."
+
+#: ../../source/manuel.rst:2203
+msgid ""
+"Chaque colonne ne porte que les cases que les tables de référence — "
+"celles qu'affichent les commandes ``tp2_live``, ``tp2_last``, "
+"``tp4_live``, ``tp4_last``, ``gv1``, ``gv2`` et ``gv4`` — définissent "
+"pour sa face : trois nombres à 2a-2a, quatorze au plus, et une seule "
+"colonne à score égal. Une ligne qu'aucune des deux faces ne définit ne "
+"figure pas sur la fiche — il n'y a donc aucune case « sans objet » à "
+"deviner. Les deux faces sont là parce qu'une décision de videau au score "
+"a besoin des deux : le point de prise corrigé combine les valeurs de "
+"gammon des deux joueurs, et c'est le point de prise de l'adversaire qui "
+"dit si votre double passe."
+msgstr ""
+"Kukin sarake kantaa vain ne ruudut, jotka viitetaulukot — ne, jotka "
+"komennot ``tp2_live``, ``tp2_last``, ``tp4_live``, ``tp4_last``, ``gv1``,"
+" ``gv2`` ja ``gv4`` näyttävät — määrittelevät sen puolelle: kolme lukua "
+"tilanteessa 2a-2a, enintään neljätoista, ja vain yksi sarake "
+"tasatilanteessa. Rivi, jota kumpikaan puoli ei määrittele, ei esiinny "
+"kortilla — arvattavaa « n/a »-ruutua ei siis ole. Molemmat puolet ovat "
+"mukana, koska kuutiopäätös tilanteessa tarvitsee kummankin: korjattu "
+"hyväksymispiste yhdistää molempien pelaajien gammonarvot, ja juuri "
+"vastustajan hyväksymispiste kertoo, meneekö tuplauksesi läpi."
+
+#: ../../source/manuel.rst:2214
+msgid ""
+"**Pions** demande le compte de pions des **deux** camps. Le pipcount du "
+"plateau est masqué tant que la question est ouverte ; « Révéler » "
+"l'affiche — **même si vous aviez masqué le pipcount** avec ``p``, sans "
+"quoi la réponse resterait invisible et l'exercice invérifiable. C'est un "
+"masque et non un réglage : votre choix n'est pas modifié, et il reprend "
+"la main dès la question suivante. La source *Plateau* pose une question "
+"sur la position affichée, et une seule ; la source *Base* tire une "
+"nouvelle position à chaque question et l'amène sur le plateau."
+msgstr ""
+"**Pions** (pipit) kysyy **molempien** osapuolten pip-lukua. Laudan pip-"
+"luku on piilotettu niin kauan kuin kysymys on auki; « Révéler » näyttää "
+"sen — **vaikka olisit piilottanut pip-luvun** näppäimellä ``p``, sillä "
+"muuten vastaus jäisi näkymättömiin eikä harjoitusta voisi tarkistaa. Kyse"
+" on peitteestä eikä asetuksesta: omaa valintaasi ei muuteta, ja se palaa "
+"voimaan seuraavassa kysymyksessä. Lähde *Plateau* esittää yhden "
+"kysymyksen näytetystä asemasta, ja vain yhden; lähde *Base* arpoo uuden "
+"aseman joka kysymykseen ja tuo sen laudalle."
+
+#: ../../source/manuel.rst:2224
+msgid "Répondre"
+msgstr "Vastaaminen"
+
+#: ../../source/manuel.rst:2226
+msgid ""
+"Le geste est **déclaré** : vous calculez de tête, vous cliquez « Révéler "
+"», et la vérité s'affiche. Chaque nombre est alors **juste par défaut** —"
+" vous cliquez celui que vous avez raté pour le marquer **faute** (*Tab* "
+"puis *Espace* fait le même geste au clavier), et un second clic annule la"
+" marque. Rien ne se tape : un compte de pions ou une case de table est "
+"juste ou faux, et l'écrire n'apprend rien de plus que de le lire."
+msgstr ""
+"Ele on **ilmoitettu**: lasket päässäsi, napsautat « Révéler », ja totuus "
+"ilmestyy. Jokainen luku on tällöin **oletuksena oikein** — napsautat "
+"sitä, jonka menit väärin, merkitäksesi sen **virheeksi** (*Sarkain* ja "
+"sitten *Välilyönti* tekee saman näppäimistöltä), ja toinen napsautus "
+"poistaa merkinnän. Mitään ei kirjoiteta: pip-luku tai taulukon ruutu on "
+"oikein tai väärin, eikä sen kirjoittaminen opeta enempää kuin sen "
+"lukeminen."
+
+#: ../../source/manuel.rst:2233
+msgid ""
+"Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
+"» ; cocher ses fautes n'est pas chronométré. Avec une limite, une "
+"question restée sans réponse à l'échéance se révèle seule et compte "
+"**hors délai** : tous ses nombres sont faux, et son temps n'entre pas "
+"dans la médiane — on ne mesure pas une réponse qui n'a pas été donnée."
+msgstr ""
+"Kello käynnistyy kysymyksen ilmestyessä ja pysähtyy kohdassa « Révéler »;"
+" virheiden merkitseminen ei ole ajastettua. Aikarajan kanssa kysymys, "
+"joka on määräaikaan mennessä yhä vastaamatta, paljastuu itsestään ja "
+"lasketaan **ajan ylittäneeksi**: kaikki sen luvut ovat väärin, eikä sen "
+"aika mene mediaaniin — vastausta, jota ei annettu, ei mitata."
+
+#: ../../source/manuel.rst:2239
+msgid ""
+"« Suivante » enregistre la question et en pose une autre. La session n'a "
+"pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au "
+"journal, ou « Quitter », qui la jette. Tous les boutons sont dans le "
+"panneau ; le plateau montre la question et sa réponse, il ne porte aucune"
+" commande."
+msgstr ""
+"« Suivante » tallentaa kysymyksen ja esittää uuden. Istunnolla ei ole "
+"kiinteää pituutta: se kestää kunnes « Terminer », joka kirjoittaa sen "
+"päiväkirjaan, tai « Quitter », joka hylkää sen. Kaikki painikkeet ovat "
+"paneelissa; lauta näyttää kysymyksen ja sen vastauksen, se ei kanna "
+"yhtään säädintä."
+
+#: ../../source/manuel.rst:2245
+msgid "Le journal et le bilan"
+msgstr "Päiväkirja ja yhteenveto"
+
+#: ../../source/manuel.rst:2247
+msgid ""
+"Les sessions terminées sont conservées dans la base elle-même — elles "
+"suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
+"une ligne par exercice : le nombre de sessions, le taux de fautes, le "
+"temps médian et, à partir de dix sessions, la **tendance**, c'est-à-dire "
+"l'écart entre le taux de fautes des dix dernières sessions et celui de "
+"toutes — négatif, vous progressez."
+msgstr ""
+"Päättyneet istunnot säilyvät itse tietokannassa — ne siis seuraavat "
+"tiedostoa — eikä niillä ole ylärajaa. Levossa paneeli näyttää yhden rivin"
+" harjoitusta kohti: istuntojen määrän, virheprosentin, mediaaniajan ja, "
+"kymmenestä istunnosta alkaen, **suuntauksen**, eli eron kymmenen "
+"viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin "
+"välillä — negatiivisena edistyt."
+
+#: ../../source/manuel.rst:2254
+msgid ""
+"Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
+"Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
+"l'intérêt du journal, et il compte par type et non par face : la même "
+"case de la même table, vue d'un côté ou de l'autre, est une seule "
+"faiblesse."
+msgstr ""
+"Harjoituksen nimeä napsauttamalla avautuu erittely **lukutyypeittäin**: «"
+" Point de prise 4 · dernier lancer, 6 / 9 ». Juuri tämä erittely tekee "
+"päiväkirjasta hyödyllisen, ja se laskee tyypin eikä puolen mukaan: saman "
+"taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja "
+"sama heikkous."
+
+#: ../../source/manuel.rst:2262
+msgid "Micro-entraînements : EPC et quiz"
+msgstr "Mikroharjoitukset: EPC ja tietovisa"
+
+#: ../../source/manuel.rst:2264
+msgid ""
+"Deux exercices se répondent encore au clavier, dans une bande affichée "
+"au-dessus du plateau. La commande ``train`` suivie de leur nom lance une "
+"session de cinq questions :"
+msgstr ""
+"Kaksi harjoitusta vastataan yhä näppäimistöltä, laudan yläpuolella "
+"näkyvässä palkissa. Komento ``train`` ja harjoituksen nimi aloittaa "
+"viiden kysymyksen istunnon:"
+
+#: ../../source/manuel.rst:2268
+msgid ""
+"``train epc`` — estimer l'EPC du joueur au trait, sur une position de "
+"course que le moteur sait évaluer ;"
+msgstr ""
+"``train epc`` — arvioi vuorossa olevan pelaajan EPC kilpajuoksuasemasta, "
+"jonka moottori osaa arvioida;"
+
+#: ../../source/manuel.rst:2270
+msgid "``train quiz`` — décider, sur une position déjà analysée."
+msgstr "``train quiz`` — päätä, jo analysoidusta asemasta."
+
+#: ../../source/manuel.rst:2272
+msgid ""
+"La question EST la position affichée : le plateau est celui de "
+"l'application, et la bande ne porte que la question, la saisie et la "
+"correction. La réponse se tape et se valide au clavier (*Entrée* vérifie,"
+" puis passe à la suivante ; *Échap* quitte la session). L'EPC accepte un "
+"demi-pion d'écart, la granularité à laquelle il change une décision de "
+"course. À la fin, la session affiche le nombre de bonnes réponses et le "
+"temps **médian** par question."
+msgstr ""
+"Kysymys ON näytetty asema: lauta on sovelluksen oma, ja palkki kantaa "
+"vain kysymyksen, syötön ja korjauksen. Vastaus kirjoitetaan ja "
+"vahvistetaan näppäimistöltä (*Enter* tarkistaa ja siirtyy sitten "
+"seuraavaan; *Esc* poistuu istunnosta). EPC hyväksyy puolen pipin "
+"poikkeaman, sen tarkkuuden, jolla se muuttaa kilpajuoksupäätöksen. "
+"Lopuksi istunto näyttää oikeiden vastausten määrän ja **mediaaniajan** "
+"kysymystä kohti."
+
+#: ../../source/manuel.rst:2279
 msgid ""
 "Seul ce résumé est conservé, dans les métadonnées de la base : la session"
 " ne garde pas la trace question par question, et rien n'est écrit tant "
@@ -5073,21 +5252,21 @@ msgstr ""
 "säilytä jälkeä kysymys kysymykseltä, eikä mitään kirjoiteta ennen kuin se"
 " on päättynyt. Kesken poistuminen ei siis tallenna mitään."
 
-#: ../../source/manuel.rst:2201
+#: ../../source/manuel.rst:2284
 msgid "Quiz : le PR d'entraînement"
 msgstr "Tietovisa: harjoittelun PR"
 
-#: ../../source/manuel.rst:2203
+#: ../../source/manuel.rst:2286
 msgid ""
-"``train quiz`` pose un quatrième exercice, d'une autre nature. Le panneau"
-" Anki fait mémoriser ; le quiz **teste**. Cinq positions déjà analysées "
-"sont tirées de la liste parcourue, et il faut décider :"
+"``train quiz`` pose une question d'une autre nature. Le panneau Anki fait"
+" mémoriser ; le quiz **teste**. Cinq positions déjà analysées sont tirées"
+" de la liste parcourue, et il faut décider :"
 msgstr ""
-"``train quiz`` esittää neljännen lajin kysymyksiä. Anki-paneeli panee "
-"ulkoa opettelemaan; tietovisa **testaa**. Selatusta listasta arvotaan "
-"viisi jo analysoitua asemaa, ja päätös on tehtävä:"
+"``train quiz`` esittää toisenlaisen kysymyksen. Anki-paneeli panee ulkoa "
+"opettelemaan; tietovisa **testaa**. Selatusta listasta arvotaan viisi jo "
+"analysoitua asemaa, ja päätös on tehtävä:"
 
-#: ../../source/manuel.rst:2207
+#: ../../source/manuel.rst:2290
 msgid ""
 "sur une décision de pions, **jouer le coup sur le damier** — cliquer le "
 "point de départ, puis la destination, autant de fois qu'il y a de dés ; "
@@ -5097,7 +5276,7 @@ msgstr ""
 "sitten kohdetta, kerran kutakin noppaa kohti; tai kirjoita siirto "
 "näppäimistöllä notaationa (``13/7 8/7``);"
 
-#: ../../source/manuel.rst:2210
+#: ../../source/manuel.rst:2293
 msgid ""
 "sur une décision de videau, cliquer *Pas de double*, *Double, prend* ou "
 "*Double, passe*."
@@ -5105,7 +5284,7 @@ msgstr ""
 "kuutiopäätöksessä napsauta *Ei tuplausta*, *Tuplaus, hyväksy* tai "
 "*Tuplaus, luovuta*."
 
-#: ../../source/manuel.rst:2213
+#: ../../source/manuel.rst:2296
 msgid ""
 "Le damier n'offre que ce qui est jouable : un clic qu'aucun coup légal "
 "n'autorise ne déplace rien. *Annuler le pas* revient d'un dé, "
@@ -5119,7 +5298,7 @@ msgstr ""
 "kaksoisnapsautus laudan ulkopuolella tekee saman. Kysymys itse ei muutu: "
 "nopat, tuplauskuutio ja pistetilanne pysyvät aseman omina."
 
-#: ../../source/manuel.rst:2219
+#: ../../source/manuel.rst:2302
 msgid ""
 "Quand un coup est joué sur le damier, *Vérifier* le juge lui ; la saisie "
 "au clavier reste disponible tant qu'aucun pion n'a bougé. Les deux "
@@ -5129,7 +5308,7 @@ msgstr ""
 "on käytettävissä niin kauan kuin yhtään nappulaa ei ole siirretty. "
 "Molemmat reitit käyvät saman arvioinnin läpi."
 
-#: ../../source/manuel.rst:2223
+#: ../../source/manuel.rst:2306
 msgid ""
 "Le panneau Analyse est masqué tant que la question n'a pas reçu de "
 "réponse : il porte la réponse, et une question dont la réponse est "
@@ -5139,7 +5318,7 @@ msgstr ""
 "kantaa vastauksen, eikä kysymys, jonka vastaus näkyy vieressä, ole "
 "kysymys."
 
-#: ../../source/manuel.rst:2227
+#: ../../source/manuel.rst:2310
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -5155,7 +5334,7 @@ msgstr ""
 "maksa istunnolle mitään. Arvioitu siirto maksaa sen, minkä analyysi "
 "sanoo, millipisteinä."
 
-#: ../../source/manuel.rst:2233
+#: ../../source/manuel.rst:2316
 msgid ""
 "À la fin, la session affiche un **PR de quiz** calculé par la formule que"
 " les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité"
@@ -5169,11 +5348,11 @@ msgstr ""
 "vertailukelpoisia: tietovisan PR 6 ja ottelun PR 6 mittaavat samaa asiaa "
 "samalla asteikolla."
 
-#: ../../source/manuel.rst:2241
+#: ../../source/manuel.rst:2324
 msgid "Panneau Métadonnées"
 msgstr "Metatietopaneeli"
 
-#: ../../source/manuel.rst:2243
+#: ../../source/manuel.rst:2326
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -5184,7 +5363,7 @@ msgstr ""
 "kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. "
 "Käytettävissä komennolla ``meta``."
 
-#: ../../source/manuel.rst:2247
+#: ../../source/manuel.rst:2330
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -5194,11 +5373,11 @@ msgstr ""
 ":ref:`diffusion_controlee`. Tavallisessa tietokannassa tätä osiota ei "
 "näy."
 
-#: ../../source/manuel.rst:2253
+#: ../../source/manuel.rst:2336
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "Tietokannan jakaminen: alkuperä ja salasana"
 
-#: ../../source/manuel.rst:2255
+#: ../../source/manuel.rst:2338
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -5210,7 +5389,7 @@ msgstr ""
 "valittavia: tiedoston merkitseminen alkuperällään ja sen suojaaminen "
 "salasanalla."
 
-#: ../../source/manuel.rst:2262
+#: ../../source/manuel.rst:2345
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -5223,11 +5402,11 @@ msgstr ""
 "eikä missään kirjata, kuka sen avasi, milloin, tai mistä sen sisältö on "
 "peräisin."
 
-#: ../../source/manuel.rst:2268
+#: ../../source/manuel.rst:2351
 msgid "Marquer une base de son origine"
 msgstr "Tietokannan merkitseminen alkuperällään"
 
-#: ../../source/manuel.rst:2270
+#: ../../source/manuel.rst:2353
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -5238,11 +5417,11 @@ msgstr ""
 "ajaksi asettuva edistymisnäkymä. Ikkuna sulkeutuu itsestään "
 "valmistuttuaan, ja tulos näkyy tilapalkissa."
 
-#: ../../source/manuel.rst:2274
+#: ../../source/manuel.rst:2357
 msgid "Trois points méritent l'attention :"
 msgstr "Kolme seikkaa ansaitsee huomiota:"
 
-#: ../../source/manuel.rst:2276
+#: ../../source/manuel.rst:2359
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -5252,7 +5431,7 @@ msgstr ""
 "tietokantaa. Haun jälkeen viedään vain tulokset — ikkuna muistuttaa siitä"
 " yläreunassa."
 
-#: ../../source/manuel.rst:2279
+#: ../../source/manuel.rst:2362
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -5262,7 +5441,7 @@ msgstr ""
 "vaillinaisena.** Siksi luettelo näyttää kunkin kokoelman katetun osuuden "
 "(”12/40”) ja merkitsee sen punaisella, kun se on osittainen."
 
-#: ../../source/manuel.rst:2282
+#: ../../source/manuel.rst:2365
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -5272,7 +5451,7 @@ msgstr ""
 "–ottelu-yhteyttä ei ole ja turnaus saapuisi tyhjänä. Valintaruutu pysyy "
 "poissa käytöstä, kunnes ”sisällytä ottelut” on valittu."
 
-#: ../../source/manuel.rst:2286
+#: ../../source/manuel.rst:2369
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -5286,13 +5465,13 @@ msgstr ""
 "omat tallennetut hakusi, joista ei ole hyötyä jonkun toisen "
 "tietokannassa."
 
-#: ../../source/manuel.rst:2292
+#: ../../source/manuel.rst:2375
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr ""
 "Valinta **Merkitse tämä tiedosto alkuperällään** tuo näkyviin kaksi "
 "kenttää:"
 
-#: ../../source/manuel.rst:2294
+#: ../../source/manuel.rst:2377
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -5303,7 +5482,7 @@ msgstr ""
 "**pakollinen**: niin kauan kuin se on tyhjä, vientipainike pysyy "
 "passiivisena."
 
-#: ../../source/manuel.rst:2297
+#: ../../source/manuel.rst:2380
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
@@ -5311,7 +5490,7 @@ msgstr ""
 "**Huomautus**, valinnainen — käyttöehdot, yhteysosoite, pyyntö olla "
 "jakamatta eteenpäin."
 
-#: ../../source/manuel.rst:2300
+#: ../../source/manuel.rst:2383
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -5326,11 +5505,11 @@ msgstr ""
 "ohjelmisto. Merkintä ei estä mitään: se kertoo, mistä tiedosto on "
 "peräisin."
 
-#: ../../source/manuel.rst:2307
+#: ../../source/manuel.rst:2390
 msgid "Identité d'émetteur"
 msgstr "Merkitsijän identiteetti"
 
-#: ../../source/manuel.rst:2309
+#: ../../source/manuel.rst:2392
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -5344,7 +5523,7 @@ msgstr ""
 "tiedostoissasi on sama julkinen sormenjälki muotoa "
 "``A3F1-9C24-7B05-E1D8``."
 
-#: ../../source/manuel.rst:2314
+#: ../../source/manuel.rst:2397
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -5358,7 +5537,7 @@ msgstr ""
 "salalauseella suojattuna. **Tällä tiedostolla voi allekirjoittaa sinun "
 "nimissäsi: älä jaa sitä.**"
 
-#: ../../source/manuel.rst:2320
+#: ../../source/manuel.rst:2403
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -5368,7 +5547,7 @@ msgstr ""
 "-välilehti näyttää nimesi ja sormenjälkesi ja tarjoaa toiminnot *Tallenna"
 " identiteetti…*, *Lataa identiteetti…* ja *Luo uusi…*."
 
-#: ../../source/manuel.rst:2326
+#: ../../source/manuel.rst:2409
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -5381,7 +5560,7 @@ msgstr ""
 " allekirjoittamista vanhalla sormenjäljelläsi, ja nuo merkinnät pysyvät "
 "pätevinä."
 
-#: ../../source/manuel.rst:2331
+#: ../../source/manuel.rst:2414
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
@@ -5391,7 +5570,7 @@ msgstr ""
 " uuden sormenjälkesi ja ilmoitat vastaanottajillesi vanhan "
 "pätemättömäksi."
 
-#: ../../source/manuel.rst:2335
+#: ../../source/manuel.rst:2418
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
@@ -5399,11 +5578,11 @@ msgstr ""
 "Uuden luominen korvaa nykyisen avaimen; blunderDB tarjoaa mahdollisuutta "
 "tallentaa se ennen korvaamista."
 
-#: ../../source/manuel.rst:2339
+#: ../../source/manuel.rst:2422
 msgid "Protéger une base par un mot de passe"
 msgstr "Tietokannan suojaaminen salasanalla"
 
-#: ../../source/manuel.rst:2341
+#: ../../source/manuel.rst:2424
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -5413,7 +5592,7 @@ msgstr ""
 "avattaessa; silmäkuvake näyttää sen **niin kauan kuin sitä pidetään "
 "painettuna** ja peittää sen taas heti, kun ote irrotetaan."
 
-#: ../../source/manuel.rst:2345
+#: ../../source/manuel.rst:2428
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -5431,7 +5610,7 @@ msgstr ""
 "kysyy tällöin salasanan ja asentaa viereen tavallisen tietokannan; sen "
 "jälkeen mitään ei enää kysytä."
 
-#: ../../source/manuel.rst:2353
+#: ../../source/manuel.rst:2436
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -5444,7 +5623,7 @@ msgstr ""
 " oletuksena valittuna — suojattu tiedosto jää sinulle, jos aiot välittää "
 "sen eteenpäin — ja poisto tapahtuu vasta onnistuneen avaamisen jälkeen."
 
-#: ../../source/manuel.rst:2360
+#: ../../source/manuel.rst:2443
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -5456,7 +5635,7 @@ msgstr ""
 "vahingossa edelleen lähetettyä liitettä. Se ei suojaa siltä, jolle olet "
 "antanut salasanan."
 
-#: ../../source/manuel.rst:2365
+#: ../../source/manuel.rst:2448
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
@@ -5464,7 +5643,7 @@ msgstr ""
 "Salasana tarkistetaan **joka** avauskerralla, myös silloin kun tiedosto "
 "on jo aiemmin avattu tällä koneella."
 
-#: ../../source/manuel.rst:2368
+#: ../../source/manuel.rst:2451
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -5480,7 +5659,7 @@ msgstr ""
 "samoin mikä tahansa salatun tiedoston muuttaminen — vioittunutta "
 "tietokantaa ei koskaan saada hiljaisesti."
 
-#: ../../source/manuel.rst:2375
+#: ../../source/manuel.rst:2458
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
@@ -5488,11 +5667,11 @@ msgstr ""
 "Suojatun tiedoston otsake pysyy **salaamattomana**: sen alkuperä on "
 "luettavissa ilman salasanaa."
 
-#: ../../source/manuel.rst:2379
+#: ../../source/manuel.rst:2462
 msgid "Lire l'origine d'un fichier"
 msgstr "Tiedoston alkuperän lukeminen"
 
-#: ../../source/manuel.rst:2381
+#: ../../source/manuel.rst:2464
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -5504,7 +5683,7 @@ msgstr ""
 "joka kertoo, mitä on kirjattu, kenen toimesta, milloin, ja missä tilassa "
 "allekirjoitus on:"
 
-#: ../../source/manuel.rst:2386
+#: ../../source/manuel.rst:2469
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
@@ -5512,7 +5691,7 @@ msgstr ""
 "”✓ allekirjoitus varmennettu — sinun merkitsemäsi”: tiedostossa on oma "
 "merkintäsi ehjänä;"
 
-#: ../../source/manuel.rst:2388
+#: ../../source/manuel.rst:2471
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
@@ -5521,17 +5700,17 @@ msgstr ""
 "avaimesta — vertaa sen sormenjälkeä siihen, jonka tekijä on sinulle "
 "kertonut;"
 
-#: ../../source/manuel.rst:2390
+#: ../../source/manuel.rst:2473
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr ""
 "”⚠ virheellinen allekirjoitus”: asiakirjaa on muutettu tai se on "
 "väärennetty."
 
-#: ../../source/manuel.rst:2392
+#: ../../source/manuel.rst:2475
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "Tavallisessa tietokannassa tätä osiota ei näy."
 
-#: ../../source/manuel.rst:2394
+#: ../../source/manuel.rst:2477
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -5545,11 +5724,11 @@ msgstr ""
 "komennon ``export`` valitsimista ``--watermark`` ja ``--password`` sekä "
 "komennoista ``identity`` ja ``open``."
 
-#: ../../source/manuel.rst:2403
+#: ../../source/manuel.rst:2486
 msgid "Publier une base pour d'autres"
 msgstr "Tietokannan julkaiseminen muille"
 
-#: ../../source/manuel.rst:2405
+#: ../../source/manuel.rst:2488
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -5564,7 +5743,7 @@ msgstr ""
 "rakenteesta: tiedoston vastaanottajan puolella ei koskaan kirjata mitään,"
 " joten palvelulle ei olisi mitään ilmoitettavaa, vaikka sellainen olisi."
 
-#: ../../source/manuel.rst:2411
+#: ../../source/manuel.rst:2494
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
@@ -5572,13 +5751,13 @@ msgstr ""
 "Se, mikä tekee julkaistusta tietokannasta toisen käytettävän, tiivistyy "
 "neljään kenttään, jotka ovat kaikki jo olemassa:"
 
-#: ../../source/manuel.rst:2414
+#: ../../source/manuel.rst:2497
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**Käyttäjä** — kuka sen kokosi, sillä nimellä, jonka haluat mainittavan."
 
-#: ../../source/manuel.rst:2415
+#: ../../source/manuel.rst:2498
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
@@ -5587,7 +5766,7 @@ msgstr ""
 "**Kuvaus** — mitä tietokanta sisältää, yhdessä lauseessa, joka mahtuu "
 "luetteloon: «240 tuplauspäätöstä tilanteessa, kommentoituna, keskitaso»."
 
-#: ../../source/manuel.rst:2417
+#: ../../source/manuel.rst:2500
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -5597,7 +5776,7 @@ msgstr ""
 "tuotettiin. Se on ensimmäinen asia, jonka vastaanottaja lukee "
 "*Metatiedot*-paneelista."
 
-#: ../../source/manuel.rst:2420
+#: ../../source/manuel.rst:2503
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -5607,7 +5786,7 @@ msgstr ""
 "sisällä: sitä vertaamalla vastaanottaja varmistaa, että tiedosto tulee "
 "sinulta eikä joltakulta, joka on ottanut nimesi."
 
-#: ../../source/manuel.rst:2424
+#: ../../source/manuel.rst:2507
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -5616,7 +5795,7 @@ msgstr ""
 "Ilman vesileimaa julkaistu tietokanta on täysin käyttökelpoinen; se on "
 "vain nimetön, eikä *Metatiedot*-paneeli näytä silloin *Alkuperä*-osiota."
 
-#: ../../source/manuel.rst:2428
+#: ../../source/manuel.rst:2511
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -5856,3 +6035,61 @@ msgstr ""
 
 #~ msgid "Nombre d'erreurs graves (au moins 0,100 EMG)."
 #~ msgstr "Vakavien virheiden määrä (vähintään 0,100 EMG)."
+
+#~ msgid ""
+#~ "Le panneau Anki fait réviser un "
+#~ "**jugement** ; les micro-entraînements "
+#~ "font travailler les trois **calculs** "
+#~ "qui se font en partie, sous la "
+#~ "pendule, et qu'aucune révision espacée "
+#~ "ne muscle. La commande ``train`` en "
+#~ "lance une session de cinq questions "
+#~ ":"
+#~ msgstr ""
+#~ "Anki-paneeli kertaa **arviota**; "
+#~ "mikroharjoitukset harjoittavat kolmea "
+#~ "**laskutoimitusta**, jotka tehdään pelipöydässä "
+#~ "kellon käydessä ja joita mikään "
+#~ "kertausväli ei kasvata. Komento ``train`` "
+#~ "aloittaa viiden kysymyksen istunnon:"
+
+#~ msgid ""
+#~ "``train pips`` — compter les pions "
+#~ "du joueur au trait, sur la "
+#~ "position affichée."
+#~ msgstr ""
+#~ "``train pips`` — laske vuorossa olevan"
+#~ " pelaajan pipit näytetystä asemasta."
+
+#~ msgid ""
+#~ "``train tp`` — retrouver le point "
+#~ "de prise d'une course longue à un"
+#~ " score tiré au hasard, celui de "
+#~ "la table ``tp2_live``."
+#~ msgstr ""
+#~ "``train tp`` — palauta mieleen pitkän"
+#~ " kilpajuoksun hyväksymispiste satunnaisesti "
+#~ "arvotussa tilanteessa, taulukon ``tp2_live`` "
+#~ "mukaan."
+
+#~ msgid ""
+#~ "La tolérance dépend de l'exercice, et"
+#~ " elle est dite plutôt que devinée "
+#~ ": le comptage de pions n'en a "
+#~ "**aucune** — une addition juste à "
+#~ "un pion près est une addition "
+#~ "fausse — l'EPC accepte un demi-"
+#~ "pion, le point de prise deux "
+#~ "points de pourcentage. À la fin, "
+#~ "la session affiche le nombre de "
+#~ "bonnes réponses et le temps **médian**"
+#~ " par question."
+#~ msgstr ""
+#~ "Toleranssi riippuu harjoituksesta, ja se "
+#~ "sanotaan eikä arvata: pip-laskennassa "
+#~ "sitä **ei ole** — yhden pipin "
+#~ "päähän oikea yhteenlasku on väärä "
+#~ "yhteenlasku — EPC sallii puoli pipiä,"
+#~ " hyväksymispiste kaksi prosenttiyksikköä. Lopuksi"
+#~ " istunto näyttää oikeiden vastausten määrän"
+#~ " ja **mediaaniajan** kysymystä kohti."

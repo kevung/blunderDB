@@ -817,10 +817,13 @@ export async function updateEPC(position) {
 // keep one import.
 export {
     toggleTab,
+    showTab,
     toggleAnalysisPanel,
     toggleCommentPanel,
     toggleMetadataPanel,
     toggleAnkiPanel,
+    toggleTrainingPanel,
+    showTrainingPanel,
     toggleMatchPanel,
     toggleCollectionPanelAction,
     toggleTournamentPanel,

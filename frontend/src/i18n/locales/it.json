@@ -199,7 +199,8 @@
         "togglePipcount": "Attiva/disattiva conteggio pip",
         "updatePosition": "Aggiorna posizione",
         "tour": "Tour guidati",
-        "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati (Ctrl+Maiusc+I)"
+        "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati (Ctrl+Maiusc+I)",
+        "training": "Allenamento"
     },
     "tour": {
         "next": "Avanti",
@@ -1044,7 +1045,8 @@
         "hideTab": "Nascondi questa scheda",
         "showTab": "Mostra: {tab}",
         "hiddenTabs": "Schede nascoste",
-        "ankiDue": "{n} carte da ripassare"
+        "ankiDue": "{n} carte da ripassare",
+        "training": "Allenamento"
     },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
@@ -1372,10 +1374,7 @@
     "training": {
         "title": "Allenamento",
         "progress": "Domanda {i}/{n}",
-        "drillPips": "Conteggio dei pip",
         "drillEpc": "EPC",
-        "drillTakePoint": "Punto di presa",
-        "takePointPrompt": "Punteggio {away} (away)",
         "answer": "Risposta",
         "check": "Verifica",
         "next": "Successiva",
@@ -1384,7 +1383,6 @@
         "right": "Giusto",
         "wrong": "Sbagliato",
         "truth": "atteso {value}",
-        "noQuestions": "Nessuna domanda può essere posta su questa base per questo esercizio.",
         "finished": "Allenamento terminato: {correct}/{n}, tempo mediano {seconds} s.",
         "usage": "Uso: train <esercizio> ({drills}).",
         "drillQuiz": "Quiz",
@@ -1399,7 +1397,51 @@
         "gradeFailed": "Non è stato possibile valutare la risposta.",
         "finishedQuiz": "Quiz terminato: {correct}/{n}, PR di sessione {pr}.",
         "undoHop": "Annulla passo",
-        "resetPlay": "Ricomincia"
+        "resetPlay": "Ricomincia",
+        "exercise": {
+            "scores": "Punteggi",
+            "pips": "Pip"
+        },
+        "sources": {
+            "board": "Tavoliere",
+            "library": "Base"
+        },
+        "exerciseLabel": "Esercizio",
+        "source": "Fonte",
+        "limit": "Limite per domanda",
+        "limitNone": "Nessuno",
+        "limitSeconds": "{n} s",
+        "start": "Iniziare",
+        "reveal": "Rivelare",
+        "outOfTime": "Fuori tempo",
+        "questionCount": "Domanda {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Fare clic sul numero sbagliato.",
+        "faceYou": "Lei",
+        "faceOpponent": "L'avversario",
+        "scoreCaption": "Punteggio {a}/{b} away",
+        "summary": "Bilancio",
+        "noSession": "Nessuna sessione",
+        "sessionsCount": "{n} sessioni",
+        "faultRate": "{faults}/{asked} errori ({rate} %)",
+        "meanDeviation": "Scarto medio {value}",
+        "medianTime": "Mediana {n} s",
+        "trend": "Tendenza {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Esercizio sconosciuto: {exercise}.",
+        "noQuestion": "Nessuna domanda può essere posta: questa base o questa fonte non ne fornisce.",
+        "journalFailed": "La sessione non è stata registrata nel diario.",
+        "numbers": {
+            "tp2Live": "Punto di presa 2 · corsa lunga",
+            "tp2Last": "Punto di presa 2 · ultimo lancio",
+            "tp4Live": "Punto di presa 4 · corsa lunga",
+            "tp4Last": "Punto di presa 4 · ultimo lancio",
+            "gv1": "Valore del gammon 1",
+            "gv2": "Valore del gammon 2",
+            "gv4": "Valore del gammon 4"
+        },
+        "retry": "Riprovare"
     },
     "explain": {
         "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

@@ -199,7 +199,8 @@
         "togglePipcount": "Afficher/masquer le pipcount",
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
-        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés (Ctrl+Maj+I)"
+        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés (Ctrl+Maj+I)",
+        "training": "Entraînement"
     },
     "tour": {
         "next": "Suivant",
@@ -1044,7 +1045,8 @@
         "hideTab": "Masquer cet onglet",
         "showTab": "Afficher : {tab}",
         "hiddenTabs": "Onglets masqués",
-        "ankiDue": "{n} cartes à réviser"
+        "ankiDue": "{n} cartes à réviser",
+        "training": "Entraînement"
     },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
@@ -1372,10 +1374,7 @@
     "training": {
         "title": "Entraînement",
         "progress": "Question {i}/{n}",
-        "drillPips": "Compte de pions",
         "drillEpc": "EPC",
-        "drillTakePoint": "Point de prise",
-        "takePointPrompt": "Score {away} (away)",
         "answer": "Réponse",
         "check": "Vérifier",
         "next": "Suivante",
@@ -1384,7 +1383,6 @@
         "right": "Juste",
         "wrong": "Faux",
         "truth": "attendu {value}",
-        "noQuestions": "Aucune question ne peut être posée sur cette base pour cet exercice.",
         "finished": "Entraînement terminé : {correct}/{n}, temps médian {seconds} s.",
         "usage": "Utilisation : train <exercice> ({drills}).",
         "drillQuiz": "Quiz",
@@ -1399,7 +1397,51 @@
         "gradeFailed": "La réponse n'a pas pu être jugée.",
         "finishedQuiz": "Quiz terminé : {correct}/{n}, PR de session {pr}.",
         "undoHop": "Annuler le pas",
-        "resetPlay": "Recommencer"
+        "resetPlay": "Recommencer",
+        "exercise": {
+            "scores": "Scores",
+            "pips": "Pions"
+        },
+        "sources": {
+            "board": "Plateau",
+            "library": "Base"
+        },
+        "exerciseLabel": "Exercice",
+        "source": "Source",
+        "limit": "Limite par question",
+        "limitNone": "Aucune",
+        "limitSeconds": "{n} s",
+        "start": "Démarrer",
+        "reveal": "Révéler",
+        "outOfTime": "Hors délai",
+        "questionCount": "Question {n}",
+        "elapsed": "{n} s",
+        "elapsedOfLimit": "{n} / {limit} s",
+        "faultHint": "Cliquez le nombre que vous avez raté.",
+        "faceYou": "Vous",
+        "faceOpponent": "L'adversaire",
+        "scoreCaption": "Score {a}/{b} away",
+        "summary": "Bilan",
+        "noSession": "Aucune session",
+        "sessionsCount": "{n} sessions",
+        "faultRate": "{faults}/{asked} fautes ({rate} %)",
+        "meanDeviation": "Écart moyen {value}",
+        "medianTime": "Médiane {n} s",
+        "trend": "Tendance {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "Exercice inconnu : {exercise}.",
+        "noQuestion": "Aucune question ne peut être posée : cette base ou cette source n'en fournit pas.",
+        "journalFailed": "La session n'a pas pu être enregistrée au journal.",
+        "numbers": {
+            "tp2Live": "Point de prise 2 · course longue",
+            "tp2Last": "Point de prise 2 · dernier lancer",
+            "tp4Live": "Point de prise 4 · course longue",
+            "tp4Last": "Point de prise 4 · dernier lancer",
+            "gv1": "Valeur du gammon 1",
+            "gv2": "Valeur du gammon 2",
+            "gv4": "Valeur du gammon 4"
+        },
+        "retry": "Réessayer"
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

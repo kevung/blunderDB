@@ -637,18 +637,38 @@ export default {
 <p><strong>Retención: el objetivo y la medida.</strong> La <em>retención objetivo</em> es su elección sobre el compromiso entre carga de trabajo y calidad del recuerdo: cuanto más alta, más se acortan los intervalos y más repasa. Frente a ella, los Ajustes muestran la <strong>retención medida</strong> sobre sus propios repasos — una información, nunca un mando: blunderDB no modifica su objetivo para perseguir su tasa de acierto. Por debajo de una veintena de repasos, la medida no se muestra: se leería como un hecho cuando sólo es ruido.</p>
 <p>Cambiar la retención <strong>no es retroactivo</strong>: cada carta adopta el nuevo ritmo en su próximo repaso, y los vencimientos ya fijados no se mueven. El efecto es, por tanto, progresivo e invisible el mismo día.</p>
 <p>El <em>intervalo máximo</em> acota el espaciado. Un mazo creado recientemente arranca en un año: una posición que el algoritmo aplazaría varios años ha abandonado el mazo sin que usted lo haya decidido, y su propio juego cambia más deprisa que eso. Los mazos más antiguos conservan el valor que tenían.</p>
-<h3>Microentrenamientos</h3>
-<p>El panel Anki hace repasar un <strong>juicio</strong>; los microentrenamientos trabajan los tres <strong>cálculos</strong> que se hacen en la mesa, con el reloj, y que ninguna repetición espaciada desarrolla. El comando <code>train</code> inicia una sesión de cinco preguntas:</p>
+<h3>Panel Entrenamiento</h3>
+<p>El panel <strong>Anki</strong> repasa lo que se <strong>retiene</strong>; el panel <strong>Entrenamiento</strong> ejercita lo que se <strong>calcula</strong>, contra el reloj. Se abre con <code>CTRL-J</code>, con el botón de la barra de herramientas situado justo después de « Position aléatoire », o con la orden <code>train</code>.</p>
+<p>En reposo, el panel muestra el lanzador y el balance de las sesiones pasadas.</p>
+<h4>El lanzador</h4>
+<p>Tres opciones, y luego « Démarrer »:</p>
 <ul>
-<li><code>train pips</code> — contar los pips del jugador que mueve, sobre la posición mostrada.</li>
-<li><code>train epc</code> — estimar el EPC de ese mismo jugador, sobre una posición de carrera que el motor sabe evaluar.</li>
-<li><code>train tp</code> — recordar el punto de aceptación de una carrera larga en un marcador sorteado al azar, el de la tabla <code>tp2_live</code>.</li>
+<li>el <strong>ejercicio</strong> — <em>Scores</em> (marcadores) o <em>Pions</em> (pips);</li>
+<li>la <strong>fuente</strong> de la pregunta, cuando el ejercicio tiene varias — <em>Plateau</em> (la posición tal cual) o <em>Base</em> (una posición de la lista recorrida);</li>
+<li>el <strong>límite por pregunta</strong> — ninguno, 15, 30 o 60 segundos.</li>
 </ul>
-<p>La pregunta ES la posición mostrada: el tablero es el de la aplicación, y la barra superior solo lleva la pregunta, la entrada y la corrección. La respuesta se escribe y se valida con el teclado (<em>Intro</em> comprueba y luego pasa a la siguiente; <em>Esc</em> abandona la sesión).</p>
-<p>La tolerancia depende del ejercicio, y se declara en vez de adivinarse: el recuento de pips no tiene <strong>ninguna</strong> — una suma exacta salvo un pip es una suma equivocada — el EPC acepta medio pip, el punto de aceptación dos puntos porcentuales. Al final, la sesión muestra el número de aciertos y el tiempo <strong>mediano</strong> por pregunta.</p>
+<p><code>train scores</code> y <code>train pips</code> abren el panel y arrancan directamente; <code>train tp</code> y <code>train takepoint</code> son sinónimos de <code>train scores</code>.</p>
+<h4>Los dos ejercicios</h4>
+<p><strong>Scores</strong> sortea uno de los 36 marcadores no ordenados de 2 a 9 away y muestra una <strong>ficha de marcador</strong>: dos columnas — <em>Vous</em> (usted) y <em>L'adversaire</em> (el adversario) — y siete filas — el punto de aceptación con cubo 2 y luego con cubo 4, cada uno en carrera larga y en la última tirada, y después el valor del gammon con los cubos 1, 2 y 4.</p>
+<p>Cada columna solo lleva las casillas que las tablas de referencia — las que muestran las órdenes <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> y <code>gv4</code> — definen para su cara: tres números en 2a-2a, catorce como máximo, y una sola columna con marcador igualado. Una fila que ninguna de las dos caras define no aparece en la ficha, así que no hay ninguna casilla « n/a » que adivinar. Ambas caras están ahí porque una decisión de cubo con marcador necesita las dos: el punto de aceptación corregido combina los valores de gammon de ambos jugadores, y es el punto de aceptación del adversario el que dice si su doble pasa.</p>
+<p><strong>Pions</strong> (pips) pide el recuento de pips de <strong>ambos</strong> bandos. El pipcount del tablero queda oculto mientras la pregunta está abierta; « Révéler » lo muestra — <strong>incluso si usted había ocultado el pipcount</strong> con <code>p</code>, pues de lo contrario la respuesta quedaría invisible y el ejercicio no se podría verificar. Es una máscara y no un ajuste: su propia elección no se modifica y vuelve a mandar en la pregunta siguiente. La fuente <em>Plateau</em> plantea una pregunta sobre la posición mostrada, y solo una; la fuente <em>Base</em> saca una posición nueva en cada pregunta y la lleva al tablero.</p>
+<h4>Responder</h4>
+<p>El gesto es <strong>declarado</strong>: usted calcula de cabeza, hace clic en « Révéler », y aparece la verdad. Cada número es entonces <strong>correcto por defecto</strong> — usted hace clic en el que ha fallado para marcarlo como <strong>fallo</strong> (<em>Tab</em> y luego <em>Espacio</em> hace lo mismo desde el teclado), y un segundo clic quita la marca. No se escribe nada: un recuento de pips o una casilla de tabla es correcta o falsa, y escribirla no enseña nada más que leerla.</p>
+<p>El cronómetro arranca al mostrarse la pregunta y se detiene en « Révéler »; marcar los fallos no está cronometrado. Con un límite, una pregunta sin respuesta al vencimiento se revela sola y cuenta <strong>fuera de tiempo</strong>: todos sus números son falsos, y su tiempo no entra en la mediana — no se mide una respuesta que no se ha dado.</p>
+<p>« Suivante » registra la pregunta y plantea otra. La sesión no tiene una duración fijada: dura hasta « Terminer », que la escribe en el diario, o « Quitter », que la descarta. Todos los botones están en el panel; el tablero muestra la pregunta y su respuesta, no lleva ningún control.</p>
+<h4>El diario y el balance</h4>
+<p>Las sesiones terminadas se conservan en la propia base — así que siguen al archivo — y sin límite. En reposo, el panel muestra una línea por ejercicio: el número de sesiones, la tasa de fallos, el tiempo mediano y, a partir de diez sesiones, la <strong>tendencia</strong>, es decir la diferencia entre la tasa de fallos de las diez últimas sesiones y la de todas — negativa, usted progresa.</p>
+<p>Al hacer clic en el nombre del ejercicio se despliega el detalle <strong>por tipo de número</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Ese detalle es lo que da valor al diario, y cuenta por tipo y no por cara: la misma casilla de la misma tabla, vista de un lado o del otro, es una sola debilidad.</p>
+<h3>Micro-entrenamientos: EPC y quiz</h3>
+<p>Dos ejercicios se siguen respondiendo con el teclado, en una barra mostrada encima del tablero. La orden <code>train</code> seguida de su nombre lanza una sesión de cinco preguntas:</p>
+<ul>
+<li><code>train epc</code> — estimar el EPC del jugador en turno, sobre una posición de carrera que el motor sabe evaluar;</li>
+<li><code>train quiz</code> — decidir, sobre una posición ya analizada.</li>
+</ul>
+<p>La pregunta ES la posición mostrada: el tablero es el de la aplicación, y la barra solo lleva la pregunta, la entrada y la corrección. La respuesta se escribe y se valida con el teclado (<em>Intro</em> comprueba y luego pasa a la siguiente; <em>Esc</em> sale de la sesión). El EPC acepta medio pip de desviación, la granularidad a la que cambia una decisión de carrera. Al final, la sesión muestra el número de aciertos y el tiempo <strong>mediano</strong> por pregunta.</p>
 <p>Solo se conserva ese resumen, en los metadatos de la base: la sesión no guarda rastro pregunta por pregunta, y no se escribe nada hasta que termina. Salir a mitad de camino, por tanto, no registra nada.</p>
 <h4>Cuestionario: el PR de entrenamiento</h4>
-<p><code>train quiz</code> plantea un cuarto tipo de pregunta. El panel Anki hace memorizar; el cuestionario <strong>pone a prueba</strong>. Se extraen cinco posiciones ya analizadas de la lista recorrida, y hay que decidir:</p>
+<p><code>train quiz</code> plantea una pregunta de otra naturaleza. El panel Anki hace memorizar; el quiz <strong>pone a prueba</strong>. Se extraen cinco posiciones ya analizadas de la lista recorrida, y hay que decidir:</p>
 <ul>
 <li>en una decisión de fichas, <strong>juegue el movimiento en el tablero</strong> — haga clic en el punto de origen y luego en el destino, una vez por dado; o escriba el movimiento con el teclado, en notación (<code>13/7 8/7</code>);</li>
 <li>en una decisión de cubo, pulsar <em>Sin doblar</em>, <em>Doblar, aceptar</em> o <em>Doblar, pasar</em>.</li>
@@ -913,6 +933,10 @@ export default {
 <tr>
 <td>CTRL-P</td>
 <td>Mostrar/ocultar los comentarios.</td>
+</tr>
+<tr>
+<td>CTRL-J</td>
+<td>Mostrar/ocultar el panel Entrenamiento.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1347,7 +1371,7 @@ export default {
 </tr>
 <tr>
 <td>train</td>
-<td>Inicia una sesión de microentrenamiento. Toma un argumento: <code>train pips</code> (recuento de pips), <code>train epc</code>, <code>train tp</code> (punto de aceptación al marcador), <code>train quiz</code> (la jugada o la acción de cubo, calificadas contra el análisis guardado). Cinco preguntas, cronometradas, corregidas al instante.</td>
+<td>Abre el panel Entrenamiento. Con un argumento, lo abre y lo inicia: <code>train scores</code> (la ficha de marcador de un marcador sorteado; <code>train tp</code> y <code>train takepoint</code> son sinónimos), <code>train pips</code> (el recuento de pips de ambos bandos). <code>train epc</code> y <code>train quiz</code> lanzan los dos micro-entrenamientos de la barra.</td>
 </tr>
 <tr>
 <td>tp2</td>

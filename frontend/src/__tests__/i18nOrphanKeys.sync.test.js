@@ -44,7 +44,9 @@ const DYNAMIC_PREFIXES = [
     'config.theme_',
     'config.thresholdPreset_',
     'explain.',
-    'stats.gameType_'
+    'stats.gameType_',
+    'training.exercise.',
+    'training.sources.'
 ];
 
 function sourceFiles(dir) {

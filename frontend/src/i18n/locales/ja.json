@@ -199,7 +199,8 @@
         "togglePipcount": "pip カウント表示切替",
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
-        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される（Ctrl+Shift+I）"
+        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される（Ctrl+Shift+I）",
+        "training": "トレーニング"
     },
     "tour": {
         "next": "次へ",
@@ -1044,7 +1045,8 @@
         "hideTab": "このタブを非表示にする",
         "showTab": "表示: {tab}",
         "hiddenTabs": "非表示のタブ",
-        "ankiDue": "復習待ち {n} 枚"
+        "ankiDue": "復習待ち {n} 枚",
+        "training": "トレーニング"
     },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
@@ -1372,10 +1374,7 @@
     "training": {
         "title": "トレーニング",
         "progress": "問題 {i}/{n}",
-        "drillPips": "ピップカウント",
         "drillEpc": "EPC",
-        "drillTakePoint": "テイクポイント",
-        "takePointPrompt": "スコア {away}（away）",
         "answer": "回答",
         "check": "判定",
         "next": "次へ",
@@ -1384,7 +1383,6 @@
         "right": "正解",
         "wrong": "不正解",
         "truth": "正解は {value}",
-        "noQuestions": "このデータベースではこの練習の問題を作れません。",
         "finished": "トレーニング終了：{correct}/{n}、中央値 {seconds} 秒。",
         "usage": "使い方：train <練習>（{drills}）。",
         "drillQuiz": "クイズ",
@@ -1399,7 +1397,51 @@
         "gradeFailed": "回答を採点できませんでした。",
         "finishedQuiz": "クイズ終了：{correct}/{n}、セッション PR {pr}。",
         "undoHop": "1手戻す",
-        "resetPlay": "やり直す"
+        "resetPlay": "やり直す",
+        "exercise": {
+            "scores": "スコア",
+            "pips": "ピップ"
+        },
+        "sources": {
+            "board": "盤面",
+            "library": "データベース"
+        },
+        "exerciseLabel": "エクササイズ",
+        "source": "ソース",
+        "limit": "1問あたりの制限",
+        "limitNone": "なし",
+        "limitSeconds": "{n} 秒",
+        "start": "開始",
+        "reveal": "公開",
+        "outOfTime": "時間切れ",
+        "questionCount": "問題 {n}",
+        "elapsed": "{n} 秒",
+        "elapsedOfLimit": "{n} / {limit} 秒",
+        "faultHint": "間違えた数値をクリックしてください。",
+        "faceYou": "あなた",
+        "faceOpponent": "相手",
+        "scoreCaption": "スコア {a}/{b} away",
+        "summary": "集計",
+        "noSession": "セッションなし",
+        "sessionsCount": "{n} セッション",
+        "faultRate": "{faults}/{asked} 誤り ({rate} %)",
+        "meanDeviation": "平均誤差 {value}",
+        "medianTime": "中央値 {n} 秒",
+        "trend": "傾向 {value} pt",
+        "detailFaults": "{faults} / {asked}",
+        "unknownExercise": "不明なエクササイズ: {exercise}。",
+        "noQuestion": "問題を出せません: このデータベースまたはこのソースには出題できるものがありません。",
+        "journalFailed": "セッションをジャーナルに記録できませんでした。",
+        "numbers": {
+            "tp2Live": "テイクポイント 2 · ロングレース",
+            "tp2Last": "テイクポイント 2 · ラストロール",
+            "tp4Live": "テイクポイント 4 · ロングレース",
+            "tp4Last": "テイクポイント 4 · ラストロール",
+            "gv1": "ギャモン価値 1",
+            "gv2": "ギャモン価値 2",
+            "gv4": "ギャモン価値 4"
+        },
+        "retry": "再試行"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

@@ -63,6 +63,7 @@ const (
 	whyPostgresOnly     = "PostgreSQL-only, and the Database wrapper is SQLite-only (storage/postgres has no desktop face)"
 	whyMatchScoped      = "the daemon serves a library, and the match-scoped sweep exists for the transcription that has just written a match (ADR-0045 §8), which `serve` exposes nothing of (ADR-0045 §9, ADR-0039); a client of the daemon asks for the library sweep it already has"
 	whyCtxVariant       = "context.Context variant of the method above (B.13, #181): the daemon already threads its request's own context through Storage directly and never calls the Database wrapper; this one is for the CLI, whose long-running commands (search, list --type stats, export) now cancel on Ctrl-C the way analyze already did"
+	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): the questions are drawn, timed and revealed in the tab, and a session exists only because someone answered it. The CLI and the daemon gain nothing in v1 — a script has no session to run, an HTTP client nothing to record — and the two tables live in the library, so a journal written on the desktop travels with the file"
 )
 
 // serverOnly is the other half of the parity check (G.14, #242).
@@ -228,6 +229,8 @@ var databaseParity = map[string]parityEntry{
 	"LoadPositionsByFiltersCoreCtx":     {Why: whyCtxVariant},
 	"LoadSearchHistory":                 {Server: "/v1/searchHistory.list", Why: whyGUIState},
 	"LoadSessionState":                  {Server: "/v1/session.load", Why: whyGUIState},
+	"LoadTrainingNumberStats":           {Why: whyTrainingJournal},
+	"LoadTrainingSessions":              {Why: whyTrainingJournal},
 	"MergePlayers":                      {Server: "/v1/matches.mergePlayers", Why: whyGUIEdit},
 	"MovePositionBetweenCollections":    {Server: "/v1/collections.movePosition", Why: whyGUIEdit},
 	"OpenDatabase":                      {Why: whyLifecycle},
@@ -255,6 +258,7 @@ var databaseParity = map[string]parityEntry{
 	"SavePosition":                      {CLI: "import --type position", Server: "/v1/positions.save"},
 	"SaveSearchHistory":                 {Server: "/v1/searchHistory.save", Why: whyGUIState},
 	"SaveSessionState":                  {Server: "/v1/session.save", Why: whyGUIState},
+	"SaveTrainingSession":               {Why: whyTrainingJournal},
 	"SearchComments":                    {Server: "/v1/comments.search", Why: "the CLI reaches comments through `search --has-comment`; full-text search over them is the GUI's comment browser"},
 	"SetMatchTournamentByName":          {Server: "/v1/tournaments.setMatchByName", Why: whyGUIEdit},
 	"SetMigrationProgress":              {Why: "progress callback of the GUI's migration dialog"},

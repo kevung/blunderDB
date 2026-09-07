@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 04:17+0200\n"
+"POT-Creation-Date: 2026-09-07 01:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -316,6 +316,14 @@ msgid "Afficher/cacher les commentaires."
 msgstr "コメントを表示/非表示にする。"
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-J"
+msgstr "CTRL-J"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Entraînement."
+msgstr "トレーニングパネルの表示/非表示。"
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-K"
 msgstr "CTRL-K"
 
@@ -379,7 +387,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:115
+#: ../../source/raccourcis.rst:116
 msgid "Onglets de vues"
 msgstr "ビュータブ"
 
@@ -431,7 +439,7 @@ msgstr "タブをダブルクリック"
 msgid "Renommer la vue."
 msgstr "ビューの名前を変更する。"
 
-#: ../../source/raccourcis.rst:132
+#: ../../source/raccourcis.rst:133
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -451,7 +459,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:145
+#: ../../source/raccourcis.rst:146
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
@@ -471,7 +479,7 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:158
+#: ../../source/raccourcis.rst:159
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
@@ -483,7 +491,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:171
+#: ../../source/raccourcis.rst:172
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -517,7 +525,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:187
+#: ../../source/raccourcis.rst:188
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
@@ -525,7 +533,7 @@ msgstr "Eval パネル"
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:202
+#: ../../source/raccourcis.rst:203
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -561,7 +569,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:220
+#: ../../source/raccourcis.rst:221
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -615,7 +623,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:238
+#: ../../source/raccourcis.rst:239
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -645,7 +653,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:254
+#: ../../source/raccourcis.rst:255
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -669,7 +677,7 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:270
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 
@@ -724,4 +732,3 @@ msgstr "?, CTRL-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "ヘルプを閉じる。"
-

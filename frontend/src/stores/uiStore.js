@@ -1,5 +1,7 @@
 import { writable, derived } from 'svelte/store';
 
+import { trainingPipOverrideStore } from './trainingTabStore.js';
+
 /**
  * Le texte de la barre d'état : soit une chaîne déjà traduite, soit un
  * descripteur rendu par `tMsg()`, que la barre retraduit à chaque
@@ -129,3 +131,16 @@ export const dbMutationCounterStore = writable(0);
 export const positionReloadTriggerStore = writable(0);
 
 export const showPipcountStore = writable(true);
+
+/**
+ * Le pipcount est-il visible sur le plateau ? La préférence de l'utilisateur
+ * (`showPipcountStore`, la touche `p`), sauf pendant une question de Pions
+ * (#320), qui la surcharge le temps de sa question.
+ *
+ * Le plateau lit CE store et rien d'autre, et s'y abonne pour repeindre :
+ * écrire un store ne peint pas — `drawBoard()` lit sa valeur impérativement
+ * dans une frame, donc une visibilité qui change sans déclencher de repaint ne
+ * change rien à l'écran. C'est le défaut que `togglePipcount` contournait en
+ * poussant `positionStore` ; l'abonnement le règle à la source.
+ */
+export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore], ([$preference, $override]) => ($override === null ? $preference : $override));

@@ -18,6 +18,7 @@ import {
     toggleCommentPanel,
     toggleMetadataPanel,
     toggleAnkiPanel,
+    toggleTrainingPanel,
     toggleCollectionPanelAction,
     toggleMatchPanel,
     toggleTournamentPanel,
@@ -377,6 +378,9 @@ export function handleKeyDown(event) {
         toggleHelpModal();
     } else if (event.ctrlKey && letter('m')) {
         toggleMetadataPanel();
+    } else if (event.ctrlKey && letter('j')) {
+        event.preventDefault();
+        toggleTrainingPanel();
     } else if (event.ctrlKey && letter('k')) {
         toggleAnkiPanel();
     } else if (event.ctrlKey && letter('t')) {
