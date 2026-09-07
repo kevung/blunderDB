@@ -291,6 +291,8 @@ export default {
 <p>Heti kun toinen noppa putoaa, kaikki heiton <strong>lailliset siirrot</strong> luetellaan sisäisen moottorin järjestäminä, ensimmäinen valmiiksi valittuna ja sen nuolet laudalla. Tämä järjestys on arvio: se näytetään, sitä ei koskaan kirjoiteta tietokantaan. Kun moottori ei ole käytettävissä, siirrot luetellaan ilman järjestystä ja paneeli kertoo sen.</p>
 <p>Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat sama heitto.</p>
 <p>Laudan pisteen napsautus jättää vain siitä lähtevät siirrot. Tämä on kaukana listalla olevan siirron ele: kahdenteentoista ehdokkaaseen pääsy maksaa kolmetoista näppäintä, kun suodattimella niitä jää vain kaksi tai kolme. Suodatin ei muuta luonnosta, se kaventaa listaa näytöllä; seuraava heitto poistaa sen.</p>
+<p>Laudalla pelattu siirto säästää noppien lukemiselta. Niin kauan kuin yhtään noppaa ei ole syötetty, napsautus nappulaan ja sitten sen kohteeseen — tai veto toisesta toiseen — pelaa siirron laudalla laillisten siirtojen rajoissa; valitun nappulan tarjoamat kohteet syttyvät. Molemmat nopat päätellään askelista: 13/7 ja sitten 8/7 kertoo 6-1 ilman että numeroa on näppäilty, ja toiminto kirjataan heti kun siirto on valmis. Askelpalautin kumoaa viimeisen askeleen, numero hylkää siirron ja palaa noppien syöttöön, ja kaksoisnapsautus laudan ulkopuolella aloittaa sen alusta. Kun useampi heitto tuottaa saman siirron — ulosnosto, jonka useampi noppa kattaa, tai noppa jota ei voi pelata — mitään ei kirjata ja kolmio jättää napsautettaviksi vain nuo heitot: heittoa ei koskaan arvata pelin katsojan puolesta.</p>
+<p>Laiton siirto kirjataan sellaisena kuin se pelattiin. Painike « Vapaa siirto » vapauttaa laudan: nappulat liikkuvat ilman mitään tarkistusta, ja « Tämä lauta on pelattu siirto » kirjaa saadun laudan. Viereinen merkintäkenttä tekee saman näppäimistöltä: <code>13/7 8/7*</code>, <code>bar/22</code> tai <code>6/off</code> kirjoitetaan ja kirjataan ENTER-näppäimellä. Molemmat vaativat, että heiton nopat syötetään ensin, sillä laiton siirto ei kerro mikä heitto sen tuotti. Kumpaa tahansa näistä kahdesta tiestä syötetty siirto, joka osoittautuu lailliseksi, pysyy tavallisena siirtona — vertailu tehdään saadusta laudasta, ei koskaan eleen alkuperästä; muuten se merkitään litteroinnissa « laiton siirto », ja <code>.mat</code>-vienti varoittaa ennen tiedoston kirjoittamista, koskaan kieltäytymättä.</p>
 <p>Noppien alla rivi kertoo syötön tilan: heitto vielä korjattavissa, ehdokas valittuna, tanssi itsestään kirjattuna, tasatulos uudelleen heitettävänä, tuplaukseen odotettu vastaus, antautumisen jälkeen odotettu taso, korjaus paikallaan, siirto ”tarkistettavaksi” jonka heitto on muuttunut, ja epäjohdonmukaisuus jonka viimeinen toiminto jätti jälkeensä.</p>
 <p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
@@ -1332,6 +1334,14 @@ export default {
 <tr>
 <td>Napsautus (laudan pisteessä)</td>
 <td>Jäljelle jäävät vain ehdokkaat, joiden siirto lähtee tästä pisteestä; toinen piste kaventaa lisää, napsautus jo suodatetussa pisteessä poistaa sen, ja napsautus laudan ulkopuolella poistaa suodatuksen.</td>
+</tr>
+<tr>
+<td>Napsautus, vetäminen (ei syötettyä noppaa)</td>
+<td>Pelaa siirto suoraan laudalla: nappula kulkee napsautetusta pisteestä kohteeseensa laillisten siirtojen rajoissa, ja molemmat nopat päätellään pelatuista askelista.</td>
+</tr>
+<tr>
+<td>ASKELPALAUTIN (siirto kesken laudalla)</td>
+<td>Kumoa viimeinen laudalla pelattu askel.</td>
 </tr>
 <tr>
 <td>ENTER</td>

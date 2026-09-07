@@ -1106,6 +1106,30 @@ geste du coup lointain : descendre au douzième candidat coûte treize touches, 
 où le filtre n'en laisse que deux ou trois. Le filtre ne change rien au
 brouillon, il réduit la liste à l'écran ; le jet suivant le lève.
 
+Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi,
+un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre —
+joue le coup sur le damier, contraint aux coups légaux ; les destinations
+offertes par le pion choisi s'allument. Les deux dés se déduisent des pas :
+jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est
+enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un
+chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic
+hors du damier le reprend depuis le début. Quand plusieurs jets produisent le
+même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable —
+rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
+jet n'est jamais deviné à la place de celui qui regarde la partie.
+
+Un coup illégal se transcrit tel qu'il a été joué. Le bouton « Déplacement
+libre » libère le damier : les pions se déplacent sans aucune vérification, et
+« Ce plateau est le coup joué » enregistre le plateau obtenu. Le champ de
+notation, à côté, fait la même chose au clavier : ``13/7 8/7*``, ``bar/22`` ou
+``6/off`` s'écrivent et s'enregistrent par ENTREE. Les deux demandent que les
+dés du jet soient saisis d'abord, un coup illégal ne disant pas quel jet l'a
+produit. Un coup saisi par l'un de ces deux chemins qui se trouve être légal
+reste un coup ordinaire — la comparaison se fait sur le plateau obtenu, jamais
+sur la provenance du geste ; sinon il est marqué « coup illégal » dans le
+transcript, et l'export ``.mat`` avertit avant d'écrire le fichier, sans jamais
+refuser.
+
 Sous les dés, une ligne dit l'état de la saisie : le jet encore corrigeable, le
 candidat choisi, la danse enregistrée d'office, l'égalité à relancer, la
 réponse attendue à un double, le niveau attendu après une résignation, la

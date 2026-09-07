@@ -104,7 +104,10 @@ describe('le triangle des jets dans le panneau', () => {
                 { Kind: 'select_candidate', Candidate: 0 }
             ])
         );
-        const [pos] = LegalMoves.mock.calls[0];
+        // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
+        // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
+        // et non par son rang dans la liste des appels.
+        const [pos] = LegalMoves.mock.calls.find(([p]) => p.dice[0] === 3 && p.dice[1] === 1);
         expect(pos.dice).toEqual([3, 1]);
     });
 

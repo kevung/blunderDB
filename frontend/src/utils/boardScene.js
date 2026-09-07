@@ -450,9 +450,53 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
 }
 
 /**
+ * Les points que le coup en cours offre : d'où un pas peut partir (un anneau
+ * autour du pion du dessus) et où le pion choisi peut aller (un disque à la
+ * place qu'il prendrait). C'est le retour visuel du coup joué au plateau —
+ * quiz (#294) et transcription (T2.3) — et il ne dit rien d'autre que ce que
+ * `quizPlaySourcesStore` et `quizPlayTargetsStore` contiennent.
+ *
+ * Dessiné APRÈS les pions et avant les flèches : un anneau sous une pile ne se
+ * verrait pas, et le point choisi doit rester lisible.
+ *
+ * @param {any} two
+ * @param {any} geom
+ * @param {any} cfg
+ * @param {any} position
+ * @param {{sources?: Iterable<number>, targets?: Iterable<number>, selected?: number|null}} opts
+ */
+export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
+    const sources = [...(opts.sources ?? [])];
+    const targets = [...(opts.targets ?? [])];
+    if (sources.length === 0 && targets.length === 0) return;
+
+    const cs = geom.checkerSize;
+    const radius = cs * 0.42;
+    const count = (point) => (point === BEAROFF_POINT ? 0 : (position.board.points[point]?.checkers ?? 0));
+
+    for (const point of targets) {
+        const centre = stackSlotCenter(geom, cfg, point, Math.min(count(point), 4));
+        if (!centre) continue;
+        const disc = two.makeCircle(centre.x, centre.y, radius);
+        disc.fill = 'rgba(255, 214, 102, 0.38)';
+        disc.stroke = 'rgba(255, 214, 102, 0.9)';
+        disc.linewidth = Math.max(cs * 0.06, 1.5);
+    }
+
+    for (const point of sources) {
+        const centre = stackSlotCenter(geom, cfg, point, Math.min(Math.max(count(point) - 1, 0), 4));
+        if (!centre) continue;
+        const ring = two.makeCircle(centre.x, centre.y, radius);
+        ring.fill = 'transparent';
+        ring.stroke = point === opts.selected ? 'rgba(255, 107, 107, 0.95)' : 'rgba(255, 214, 102, 0.9)';
+        ring.linewidth = Math.max(cs * (point === opts.selected ? 0.12 : 0.08), 2);
+    }
+}
+
+/**
  * Everything that depends on the position. `opts`: offeredCube (draw the
- * cube as offered, take/pass), showPipcount, moves (arrows). Returns the
- * cube's box for hit-testing.
+ * cube as offered, take/pass), showPipcount, moves (arrows), play (les points
+ * offerts par le coup en cours). Returns the cube's box for hit-testing.
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     const box = drawDoublingCube(two, geom, cfg, position, !!opts.offeredCube);
@@ -461,6 +505,7 @@ export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     if (opts.showPipcount) drawPipCounts(two, geom, position);
     drawDice(two, geom, cfg, position);
     drawScores(two, geom, cfg, position);
+    drawPlayHighlights(two, geom, cfg, position, opts.play ?? {});
     drawMoveArrows(two, geom, cfg, position, opts.moves);
     return box;
 }

@@ -98,6 +98,14 @@ export const COMMAND = Object.freeze({
     CLEAR: 'clear',
     VALIDATE: 'validate',
     SELECT: 'select',
+    /**
+     * Le coup posé PAR SES PAS et non par un rang dans la liste : celui joué au
+     * plateau, dont les dés se déduisent (T2.3), et celui qui n'est dans aucune
+     * liste parce qu'il est illégal (T2.4). Aucune touche ne le produit — il
+     * naît d'un geste de souris ou d'une notation tapée — mais il est nommé ici
+     * avec les autres, pour que le panneau les traduise tous au même endroit.
+     */
+    ENTER_PLAY: 'enter_play',
     DANCE: 'dance',
     DOUBLE: 'double',
     TAKE: 'take',
