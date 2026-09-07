@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:01+0200\n"
+"POT-Creation-Date: 2026-09-07 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -858,6 +858,19 @@ msgstr ""
 "между двумя клавишами отменяет, ничего не записав."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le videau)"
+msgstr "Щелчок (по кубу)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Proposer un double pour le camp au trait, comme la touche d. Devant une "
+"offre, le videau ne répond pas : la prise et la passe sont dans la rangée"
+" de boutons."
+msgstr ""
+"Предложить удвоение за сторону, у которой ход, как клавиша d. На "
+"предложение куб не отвечает: принять и пас находятся в ряду кнопок."
+
+#: ../../source/raccourcis.rst:1
 msgid "GAUCHE, h"
 msgstr "LEFT, h"
 
@@ -880,6 +893,19 @@ msgstr "Щелчок (по ячейке)"
 #: ../../source/raccourcis.rst:1
 msgid "Placer le curseur sur cette action."
 msgstr "Поставить курсор на это действие."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit (sur une cellule)"
+msgstr "Щелчок правой кнопкой (по ячейке)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir les corrections de cette action : insérer avant, insérer après, "
+"supprimer, changer de camp. Le curseur est amené sur la cellule au "
+"passage."
+msgstr ""
+"Открыть исправления этого действия: вставить до, вставить после, удалить,"
+" сменить сторону. Курсор при этом переводится на ячейку."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-ENTREE"
@@ -941,7 +967,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:311
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -949,7 +975,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:312
+#: ../../source/raccourcis.rst:314
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -966,7 +992,7 @@ msgstr ""
 " броска, а ход помечается «к проверке» до подтверждения. Перемещение "
 "курсора вперёд или назад после изменения записывает исправление попутно."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -983,7 +1009,7 @@ msgstr ""
 "самовольно, и курсор после каждого жеста встаёт на первое из них. Стек "
 "отмены живёт в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:328
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -992,7 +1018,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:335
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

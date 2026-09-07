@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:01+0200\n"
+"POT-Creation-Date: 2026-09-07 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -865,6 +865,19 @@ msgstr ""
 "backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le videau)"
+msgstr "Napsautus (tuplauskuutiota)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Proposer un double pour le camp au trait, comme la touche d. Devant une "
+"offre, le videau ne répond pas : la prise et la passe sont dans la rangée"
+" de boutons."
+msgstr ""
+"Tarjoa tuplausta vuorossa olevalle puolelle, kuten d-näppäin. Tarjoukseen"
+" kuutio ei vastaa: vastaanotto ja passaus ovat painikerivillä."
+
+#: ../../source/raccourcis.rst:1
 msgid "GAUCHE, h"
 msgstr "VASEN, h"
 
@@ -887,6 +900,19 @@ msgstr "Napsautus (solua)"
 #: ../../source/raccourcis.rst:1
 msgid "Placer le curseur sur cette action."
 msgstr "Vie kohdistin tähän toimintoon."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit (sur une cellule)"
+msgstr "Napsautus hiiren oikealla (solua)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir les corrections de cette action : insérer avant, insérer après, "
+"supprimer, changer de camp. Le curseur est amené sur la cellule au "
+"passage."
+msgstr ""
+"Avaa kyseisen toiminnon korjaukset: lisää ennen, lisää jälkeen, poista, "
+"vaihda puolta. Kohdistin tuodaan solun päälle samalla."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-ENTREE"
@@ -948,7 +974,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:311
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -956,7 +982,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:312
+#: ../../source/raccourcis.rst:314
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -974,7 +1000,7 @@ msgstr ""
 "”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
 "taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -992,7 +1018,7 @@ msgstr ""
 " jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
 "luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:328
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1001,7 +1027,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:335
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 

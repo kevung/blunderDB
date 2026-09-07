@@ -1149,6 +1149,19 @@ sur la provenance du geste ; sinon il est marqué « coup illégal » dans le
 transcript, et l'export ``.mat`` avertit avant d'écrire le fichier, sans jamais
 refuser.
 
+Sous le triangle, la rangée **Doubler**, **Prendre**, **Passer**,
+**Abandonner** reprend à la souris les quatre gestes de videau. Elle dit de qui
+est le tour : le camp au trait annonce — doubler, abandonner — ou le camp d'en
+face répond — prendre, passer ; jamais les quatre à la fois, et un bouton dont
+le geste ne répondrait à rien reste éteint. Le clavier, lui, ne refuse jamais
+rien : un bouton éteint est une cible qu'on n'offre pas, pas un geste interdit.
+« Abandonner » n'enregistre rien encore : la rangée devient les trois niveaux —
+simple, gammon, backgammon — et « Annuler », qui reprend la touche ÉCHAP. Le
+videau dessiné sur le plateau est la seconde cible de ces gestes : un clic
+dessus propose un double. Devant une offre il ne répond pas — la prise et la
+passe sont deux réponses symétriques et vivent ensemble dans la rangée, un clic
+chacune.
+
 Sous les dés, une ligne dit l'état de la saisie : le jet encore corrigeable, le
 candidat choisi, la danse enregistrée d'office, l'égalité à relancer, la
 réponse attendue à un double, le niveau attendu après une résignation, la
@@ -1172,6 +1185,11 @@ joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette
 cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est
 ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
 bouton pour le copier.
+
+Un clic droit sur une cellule ouvre les corrections de cette action — insérer
+avant, insérer après, supprimer, changer de camp — et amène le curseur dessus au
+passage ; ce sont les mêmes gestes que la barre de correction et que les touches,
+et le menu du navigateur n'est retiré que là.
 
 La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit
 le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le

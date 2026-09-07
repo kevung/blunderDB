@@ -21,6 +21,12 @@
 
   The cube is three keys: `d` doubles or redoubles, `t` takes, `p` passes, each
   of them validating a play left selected before it (fonctionnel.md §6 flux 5-7).
+  Les quatre gestes de videau ont un second déclencheur, à la souris (T2.5) : la
+  rangée [D] [T] [P] [R] sous le triangle des jets, et le videau dessiné sur le
+  plateau, qui propose un double. Ce ne sont que des déclencheurs — ils passent
+  par la machine des touches puis par `applyResult`, la suite d'une frappe —, et
+  un clic droit sur une cellule du Transcript ouvre de même les quatre gestes de
+  correction, le Cursor mené d'abord jusqu'à la cellule.
   A game ends by a pass, by a bear-off or past the cube — the score advances, the
   Crawford game is derived, and the next opening is expected, all of it read off
   the Replay and none of it computed here.
@@ -73,9 +79,27 @@
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
-    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState, enterDicePair, enterSingleDie, DICE_KINDS } from '../services/transcriptionKeys.js';
+    import {
+        PHASE,
+        COMMAND,
+        pressKey,
+        applyCandidates,
+        selectCandidate,
+        cursorCommands,
+        initialKeyState,
+        enterDicePair,
+        enterSingleDie,
+        cubeGesture,
+        beginResign,
+        resignWithLevel,
+        cancelResign,
+        menuCommands,
+        DICE_KINDS
+    } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import DiceTriangle from './DiceTriangle.svelte';
+    import CubeActionRow from './CubeActionRow.svelte';
+    import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
     import {
@@ -86,6 +110,7 @@
         transcriptionHistoryActionStore,
         transcriptionPointFilterStore,
         transcriptionCandidateStepsStore,
+        transcriptionCubeRequestStore,
         setTranscription,
         clearTranscription,
         resetTranscriptionKeys,
@@ -627,6 +652,98 @@
         panelEl?.focus({ preventScroll: true });
     }
 
+    // ── le videau à la souris (T2.5) ─────────────────────────────────────
+    //
+    // Deux cibles pour les mêmes quatre gestes : la rangée [D] [T] [P] [R] du
+    // panneau, et le videau DESSINÉ sur le plateau, qui propose un double.
+    // Aucune des deux n'écrit de règle : elles passent par `cubeGesture` et
+    // `beginResign`, qui sont le corps des touches `d`/`t`/`p`/`r`, puis par
+    // `applyResult`, qui est la suite d'une frappe. Le budget d'ux.md §4.2 —
+    // double puis prise à la souris, 3,4 s — se lit donc en clics : deux, un
+    // par Action, et rien entre les deux.
+
+    /** Un des trois gestes de videau : double, prise, passe. */
+    function sendCube(kind) {
+        if (!draft) return;
+        applyResult(cubeGesture(get(transcriptionKeyStore), kind));
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** `[R]` : la résignation annoncée, son niveau attendu. Rien n'est écrit. */
+    function startResign() {
+        if (!draft) return;
+        applyResult(beginResign(get(transcriptionKeyStore)));
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** Le niveau donné au clic — le second des deux gestes d'une résignation. */
+    function pickResignLevel(level) {
+        if (!draft) return;
+        applyResult(resignWithLevel(get(transcriptionKeyStore), level));
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    /** La résignation abandonnée : le bouton qui double `Échap`. */
+    function abortResign() {
+        if (!draft) return;
+        applyResult(cancelResign(get(transcriptionKeyStore)));
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    // Le videau cliqué sur le plateau. Le plateau POSE la demande et ne juge
+    // rien (utils/boardInteractions.js) ; c'est ici qu'on sait ce que le
+    // document attend, et une demande qui tombe devant une offre — où la
+    // réponse appartient au camp d'en face, pas au videau — est simplement
+    // jetée. Même chemin que `Ctrl+Z`, pour la même raison.
+    $effect(() => {
+        const wanted = $transcriptionCubeRequestStore;
+        if (!wanted) return;
+        transcriptionCubeRequestStore.set(null);
+        if (!draft || !canCubeAct) return;
+        sendCube(COMMAND.DOUBLE);
+    });
+
+    // ── le menu contextuel du Transcript (T2.5) ──────────────────────────
+    //
+    // Clic droit sur une cellule : insérer avant, insérer après, supprimer,
+    // changer de camp. Ce sont `i`, `a`, `x` et `s`, et ils agissent sur
+    // l'Action AU CURSOR — le menu commence donc par y mener le Cursor
+    // (`menuCommands`), ce qui est le `h`×k de la relecture au clavier, en un
+    // clic. Le clic droit place aussi le Cursor sans rien corriger : c'est la
+    // correction en place, qui n'a pas d'entrée au menu parce qu'elle n'est
+    // pas un geste — c'est retaper.
+
+    let transcriptMenu = $state(null);
+
+    function openTranscriptMenu(index, at) {
+        if (!draft) return;
+        transcriptMenu = { index, x: at.x, y: at.y };
+    }
+
+    /** Une entrée du menu : le Cursor mené à la cellule, puis la correction. */
+    function menuCommand(index, kind) {
+        if (!draft) return;
+        const ann = get(transcriptionStore)?.annotated;
+        if (!ann) return;
+        resetTranscriptionKeys();
+        ranked = [];
+        unranked = false;
+        danced = false;
+        run(menuCommands(ann.cursor ?? 0, index, kind)).then(settleCursor);
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    let transcriptMenuItems = $derived.by(() => {
+        if (!transcriptMenu) return [];
+        const at = transcriptMenu.index;
+        return [
+            { label: $t('transcription.insertBefore'), onClick: () => menuCommand(at, COMMAND.INSERT_BEFORE) },
+            { label: $t('transcription.insertAfter'), onClick: () => menuCommand(at, COMMAND.INSERT_AFTER) },
+            { label: $t('transcription.delete'), onClick: () => menuCommand(at, COMMAND.DELETE) },
+            { label: $t('transcription.flipSide'), onClick: () => menuCommand(at, COMMAND.FLIP_SIDE) }
+        ];
+    });
+
     // ── the keyboard ─────────────────────────────────────────────────────
     //
     // The panel handles its own keys while it has focus (ux.md §3): the digits
@@ -666,7 +783,24 @@
         if (!result.handled) return;
         event.preventDefault();
         event.stopPropagation();
+        applyResult(result);
+    }
 
+    /**
+     * La suite d'un geste, quelle que soit la main qui l'a donné : une touche,
+     * une case du triangle, un bouton de la rangée du videau, le videau du
+     * plateau.
+     *
+     * Elle est écrite UNE fois, ici, parce que le second déclencheur de T2.5
+     * n'est qu'un déclencheur : la machine (services/transcriptionKeys.js) rend
+     * le même couple `{state, commands}` d'où qu'il vienne, et tout ce qui suit
+     * — la liste jetée, l'ordre des allers-retours, le réarmement du Cursor —
+     * doit être le même, sans quoi un bouton et sa touche finiraient par
+     * diverger sur un état que personne ne teste.
+     *
+     * @param {{state: object, commands: {kind: string}[]}} result
+     */
+    function applyResult(result) {
         // A roll that is starting again, or one that has just been validated,
         // leaves a list that belongs to nobody: it goes before the gestures do,
         // so no `select` can address it any more.
@@ -750,6 +884,9 @@
         // plus se dessiner ni prendre les clics du damier.
         quizPlayStore.set(null);
         boardPlayArmed = false;
+        // Un clic sur le videau resté sans réponse ne doit pas être servi au
+        // remontage du panneau (T2.5).
+        transcriptionCubeRequestStore.set(null);
     });
 
     // The panel takes the keyboard as soon as a draft is open: the whole point
@@ -895,6 +1032,22 @@
     // videau, pendant une résignation ou une fois le match fini, il n'y a pas de
     // dé à donner et une cible qui ne répond à rien vaut moins que pas de cible.
     let diceEntryOpen = $derived(!!draft && !matchOver && !awaitingAnswer && keys.phase !== PHASE.RESIGN && DICE_KINDS.has(expects));
+
+    // La rangée [D] [T] [P] [R] (T2.5). Elle dit de qui est le tour : le camp
+    // au trait annonce (double, résignation), ou le camp d'en face répond
+    // (prise, passe) — jamais les quatre à la fois. Un bouton éteint n'est pas
+    // un refus : le clavier prend `d` partout, et l'Incohérence qui en sort est
+    // marquée (ADR-0044) ; la rangée, elle, est une cible, et une cible qui ne
+    // répondrait à rien vaut moins que pas de cible — la même règle que celle
+    // qui retire le triangle des jets devant une réponse au videau.
+    //
+    // Match fini : la rangée disparaît avec le triangle. Il n'y a plus de
+    // partie à doubler ni à abandonner, et le clavier reste là pour qui veut
+    // transcrire une Action au-delà de la fin.
+    let resigning = $derived(keys.phase === PHASE.RESIGN);
+    let cubeRowOpen = $derived(!!draft && !matchOver);
+    let canCubeAct = $derived(cubeRowOpen && !awaitingAnswer && !resigning);
+    let canCubeAnswer = $derived(cubeRowOpen && awaitingAnswer);
 
     // ── le filtre par point de départ (T2.2) ─────────────────────────────
     //
@@ -1238,6 +1391,15 @@
                         <DiceTriangle single={expects === 'opening'} allowed={rollsAllowed} onPick={pickDice} onDie={pickDie} />
                     {/if}
 
+                    {#if cubeRowOpen}
+                        <!-- La rangée [D] [T] [P] [R] de la maquette
+                             (ux.md §2), SOUS le triangle : les gestes de
+                             videau sont rares au regard des jets, et la
+                             colonne se lit de haut en bas dans l'ordre de ce
+                             qui sert. -->
+                        <CubeActionRow canAct={canCubeAct} canAnswer={canCubeAnswer} {resigning} onGesture={sendCube} onResign={startResign} onLevel={pickResignLevel} onCancelResign={abortResign} />
+                    {/if}
+
                     {#if handEntryOpen}
                         <!-- Le coup au plateau (T2.3) et ses deux replis (T2.4).
                              La bascule et la notation sont SOUS le triangle :
@@ -1351,13 +1513,24 @@
                 </div>
 
                 <div class="transcript-col">
-                    <TranscriptView {annotated} cursor={annotated?.cursor ?? 0} players={[playerName(0), playerName(1)]} {matText} onSelect={selectAction} onMatToggle={(open) => (matOpen = open)} />
+                    <TranscriptView
+                        {annotated}
+                        cursor={annotated?.cursor ?? 0}
+                        players={[playerName(0), playerName(1)]}
+                        {matText}
+                        onSelect={selectAction}
+                        onMenu={openTranscriptMenu}
+                        onMatToggle={(open) => (matOpen = open)}
+                    />
                 </div>
             </div>
         </div>
     {/if}
     {#if error}
         <p class="error">{error}</p>
+    {/if}
+    {#if transcriptMenu}
+        <ContextMenu x={transcriptMenu.x} y={transcriptMenu.y} items={transcriptMenuItems} onClose={() => (transcriptMenu = null)} />
     {/if}
 </section>
 

@@ -56,7 +56,10 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         // Le filtre des candidats d'une transcription (T2.2) : vide partout
         // ailleurs, et le clic ne concerne alors pas le panneau.
         transcriptionFilter: writable(/** @type {number[]} */ ([])),
-        transcriptionCandidates: writable(/** @type {any[]} */ ([]))
+        transcriptionCandidates: writable(/** @type {any[]} */ ([])),
+        // Le videau cliqué pendant une transcription (T2.5) : null tant que
+        // rien n'a été demandé, et le panneau le remet à null en servant.
+        transcriptionCube: writable(/** @type {string|null} */ (null))
     };
     const state = { mode, previousDice: [3, 1], cubeBox: cubeBox(geom, position, false) };
     const deps = {
@@ -737,6 +740,71 @@ describe('le filtre des candidats par point de départ (T2.2)', () => {
         const b = mountTranscription({ candidates: CANDIDATES });
         b.click(b.slot(13, 0), 2);
         expect(filter(b)).toEqual([]);
+        b.detach();
+    });
+});
+
+// ── Le videau cliqué pendant une transcription (T2.5) ───────────────────────
+//
+// Le plateau ne fait que POSER la demande dans un magasin ; c'est le panneau
+// qui en fait un double, parce que lui seul tient le brouillon et sait ce que
+// le document attend. Ce qui se mesure ici est donc la CIBLE : le videau, en
+// mode TRANSCRIBE, au bouton gauche, et rien d'autre.
+
+describe('le clic sur le videau, en transcription', () => {
+    const cubeOf = (b) => get(b.stores.transcriptionCube);
+
+    test('un clic gauche sur le videau demande un double', () => {
+        const b = mount({ mode: 'TRANSCRIBE' });
+        b.click(b.state.cubeBox, 0);
+        expect(cubeOf(b)).toBe('double');
+        b.detach();
+    });
+
+    // La position n'est pas éditée : en TRANSCRIBE le plateau montre l'Action
+    // du Cursor, il ne se modifie pas au clic (ADR-0045 règle 9).
+    test('la position ne bouge pas', () => {
+        const b = mount({ mode: 'TRANSCRIBE' });
+        const before = JSON.stringify(b.pos());
+        b.click(b.state.cubeBox, 0);
+        expect(JSON.stringify(b.pos())).toBe(before);
+        b.detach();
+    });
+
+    test('à côté du videau, rien n’est demandé', () => {
+        const b = mount({ mode: 'TRANSCRIBE' });
+        b.click({ x: b.state.cubeBox.x, y: b.state.cubeBox.y + b.state.cubeBox.size }, 0);
+        expect(cubeOf(b)).toBeNull();
+        b.detach();
+    });
+
+    // Le bouton droit ouvre le menu de la position, ici comme ailleurs.
+    test('le bouton droit ne demande pas de double', () => {
+        const b = mount({ mode: 'TRANSCRIBE' });
+        b.click(b.state.cubeBox, 2);
+        expect(cubeOf(b)).toBeNull();
+        b.detach();
+    });
+
+    // En EDIT et en EPC le videau s'ÉDITE (applyCubeClick) : la demande de
+    // transcription ne doit pas s'y glisser.
+    test('hors du mode TRANSCRIBE, le videau s’édite comme avant', () => {
+        for (const mode of ['EDIT', 'EPC', 'NORMAL']) {
+            const b = mount({ mode });
+            b.click(b.state.cubeBox, 0);
+            expect(cubeOf(b), mode).toBeNull();
+            b.detach();
+        }
+    });
+
+    // Un coup joué au plateau arme `quizPlay`, qui avale TOUS les clics du
+    // damier : le videau est essayé avant lui, sans quoi la cible serait morte
+    // pendant tout un tour de pions.
+    test('un coup en cours au plateau n’avale pas le clic du videau', () => {
+        const b = mount({ mode: 'TRANSCRIBE' });
+        b.stores.quizPlay.set(newFreePlay(b.pos()));
+        b.click(b.state.cubeBox, 0);
+        expect(cubeOf(b)).toBe('double');
         b.detach();
     });
 });

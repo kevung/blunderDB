@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:01+0200\n"
+"POT-Creation-Date: 2026-09-07 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -865,6 +865,20 @@ msgstr ""
 "backgammon. Esc fra i due tasti annulla senza registrare nulla."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le videau)"
+msgstr "Clic (sul cubo)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Proposer un double pour le camp au trait, comme la touche d. Devant une "
+"offre, le videau ne répond pas : la prise et la passe sont dans la rangée"
+" de boutons."
+msgstr ""
+"Proporre un raddoppio per il campo di turno, come il tasto d. Davanti a "
+"un'offerta il cubo non risponde: accettare e passare sono nella riga di "
+"pulsanti."
+
+#: ../../source/raccourcis.rst:1
 msgid "GAUCHE, h"
 msgstr "SINISTRA, h"
 
@@ -887,6 +901,19 @@ msgstr "Clic (su una cella)"
 #: ../../source/raccourcis.rst:1
 msgid "Placer le curseur sur cette action."
 msgstr "Portare il cursore su questa azione."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit (sur une cellule)"
+msgstr "Clic destro (su una cella)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir les corrections de cette action : insérer avant, insérer après, "
+"supprimer, changer de camp. Le curseur est amené sur la cellule au "
+"passage."
+msgstr ""
+"Aprire le correzioni di questa azione: inserisci prima, inserisci dopo, "
+"elimina, cambia campo. Il cursore viene portato sulla cella al passaggio."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-ENTREE"
@@ -948,7 +975,7 @@ msgstr "CTRL-MAIUSC-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Ripristinare il gesto annullato."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:311
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -956,7 +983,7 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:312
+#: ../../source/raccourcis.rst:314
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -974,7 +1001,7 @@ msgstr ""
 "convalida. Avanzare o arretrare il cursore dopo aver cambiato qualcosa "
 "registra la correzione al passaggio."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -991,7 +1018,7 @@ msgstr ""
 "e il cursore si posiziona sulla prima di esse dopo ogni gesto. La pila di"
 " annullamento vive in memoria: va persa alla chiusura della bozza."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:328
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1001,7 +1028,7 @@ msgstr ""
 "la trascrizione e la barra della bozza — è descritto in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:335
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 

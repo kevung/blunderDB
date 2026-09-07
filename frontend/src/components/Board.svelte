@@ -23,7 +23,7 @@
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
     import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
-    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore } from '../stores/transcriptionStore.js';
+    import { transcriptionPointFilterStore, transcriptionCandidateStepsStore, transcriptionCubeRequestStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
@@ -296,7 +296,10 @@
                 // plateau le POSE au clic, le panneau le lit. Aucune des deux
                 // n'appelle l'autre.
                 transcriptionFilter: transcriptionPointFilterStore,
-                transcriptionCandidates: transcriptionCandidateStepsStore
+                transcriptionCandidates: transcriptionCandidateStepsStore,
+                // Le videau cliqué pendant une transcription (T2.5) : le
+                // plateau pose la demande, le panneau en fait un double.
+                transcriptionCube: transcriptionCubeRequestStore
             },
             // Le miroir de l'affichage (#294) : une position dont le joueur 2
             // est au trait est montrée retournée, donc le point CLIQUÉ n'est

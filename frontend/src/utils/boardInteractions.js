@@ -214,7 +214,8 @@ function stepDie(value, button) {
  *   cfg                  Board.svelte's boardCfg (orientation, widthFactor read live)
  *   getCubeBox()         { x, y, size } where the cube was last drawn
  *   stores               { position, structureMode, activeTab, offeredCube, anyModalOpen,
- *                          quizPlay, transcriptionFilter, transcriptionCandidates }
+ *                          quizPlay, transcriptionFilter, transcriptionCandidates,
+ *                          transcriptionCube }
  *   getPreviousDice()    dice saved when a player rectangle cleared them
  *   setPreviousDice(d)
  *   reset()              blank the board (double-click outside, mode-specific)
@@ -318,6 +319,43 @@ export function attachBoardInteractions(canvas, deps) {
         const { checkerPoint } = checkerAt(x, y);
         if (checkerPoint < 0 || checkerPoint > 25) return null;
         return deps.quizDisplayMirrored?.() ? 25 - checkerPoint : checkerPoint;
+    }
+
+    /**
+     * Le clic sur le VIDEAU pendant une transcription (T2.5) : le camp au trait
+     * propose un double, exactement comme la touche `d`.
+     *
+     * Le plateau ne fait que POSER la demande dans un magasin que le panneau
+     * lit (`transcriptionCubeRequestStore`) : c'est lui qui tient le brouillon
+     * et l'aller-retour Wails, et lui seul sait ce que le document attend. Le
+     * plateau ne juge donc pas davantage que la touche — un double sans le
+     * videau, en partie Crawford ou au plafond reste transcriptible, et
+     * l'Incohérence est marquée (ADR-0044).
+     *
+     * Ce que le clic ne fait PAS : répondre. Devant une offre, la cible unique
+     * qu'est le videau porterait celle des deux réponses qu'on aurait choisie —
+     * la prise, la passe restant sans cible — et la même cible créerait alors
+     * deux Actions différentes selon un état que l'œil, occupé par la vidéo,
+     * ne relit pas. Les deux réponses sont symétriques et vivent ensemble dans
+     * la rangée `[T] [P]`, un clic chacune : le budget d'ux.md §4.2 est le même
+     * (deux clics), et un clic tombé à contretemps n'y écrit rien.
+     *
+     * Rend `true` quand le geste est pris, sur le modèle de `quizClick` — et il
+     * est essayé le PREMIER, parce qu'un coup joué au plateau arme `quizPlay`,
+     * qui avale sinon tous les clics du damier.
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
+    function transcriptionCubeClick(event, x, y) {
+        if (!stores.transcriptionCube || deps.getMode() !== 'TRANSCRIBE') return false;
+        // Le bouton droit ouvre le menu de la position, ici comme ailleurs.
+        if (event.button !== 0) return false;
+        const box = deps.getCubeBox();
+        if (!box || Math.abs(x - box.x) > box.size / 2 || Math.abs(y - box.y) > box.size / 2) return false;
+        log('transcription cube clicked');
+        stores.transcriptionCube.set('double');
+        return true;
     }
 
     /**
@@ -430,6 +468,9 @@ export function attachBoardInteractions(canvas, deps) {
         }
         {
             const { x, y } = toDrawing(event);
+            // Le videau d'abord : il est hors du damier, donc aucun des deux
+            // gestes qui suivent ne le vise, et tous deux avalent le clic.
+            if (transcriptionCubeClick(event, x, y)) return;
             if (quizClick(event, x, y)) return;
             if (transcriptionClick(event, x, y)) return;
         }
