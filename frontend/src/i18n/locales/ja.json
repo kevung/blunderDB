@@ -1792,6 +1792,13 @@
             "error": "結果を記録できませんでした。",
             "more": "その他",
             "apply": "適用"
+        },
+        "last": {
+            "result": "{winner} が {loser} に勝利",
+            "started": "{a} – {b} 開始",
+            "correct": "訂正",
+            "cancel": "この試合を取り消す",
+            "whoWon": "勝者は？"
         }
     }
 }

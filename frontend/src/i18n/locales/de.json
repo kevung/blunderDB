@@ -1792,6 +1792,13 @@
             "error": "Das Ergebnis konnte nicht gespeichert werden.",
             "more": "Mehr",
             "apply": "Anwenden"
+        },
+        "last": {
+            "result": "{winner} schlägt {loser}",
+            "started": "{a} – {b} gestartet",
+            "correct": "Korrigieren",
+            "cancel": "Diese Partie abbrechen",
+            "whoWon": "Wer hat gewonnen?"
         }
     }
 }

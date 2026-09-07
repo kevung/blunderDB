@@ -18,6 +18,7 @@
     import DirectionSettings from './DirectionSettings.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
+    import LastDecision from './LastDecision.svelte';
     import { renderWarning } from './labels.js';
     import {
         directionStore,
@@ -34,7 +35,9 @@
         enterResult,
         enterForfeit,
         moveMatchToTable,
-        cancelMatch
+        cancelMatch,
+        lastDecision,
+        correctResult
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -87,6 +90,7 @@
     let busy = $state(false);
     let free = $state([]);
     let cells = $state([]);
+    let last = $state(null);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
        stockée. C'est la même règle que pour le classement et les arbres. */
@@ -95,6 +99,7 @@
         void view?.eventCount;
         freeParticipants().then((p) => (free = p));
         tableGrid().then((c) => (cells = c));
+        lastDecision().then((l) => (last = l));
     });
 
     /* Le temps écoulé d'un match avance sans qu'aucun événement ne soit écrit : la grille se
@@ -120,6 +125,7 @@
     const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
     const onMove = (m, table) => act(() => moveMatchToTable(m, table), 'direction.result.error');
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
+    const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
 
     function playerName(id) {
         const p = (view?.players || []).find((x) => x.id === id);
@@ -210,6 +216,7 @@
                 {/if}
                 <ProposalList proposals={view?.proposals || []} players={free} {busy} onConfirm={confirm} onConfirmAll={confirmAll} onManual={manual} />
                 <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} />
+                <LastDecision {last} {busy} {onCorrect} onCancelMatch={onCancel} />
                 <section class="waiting">
                     <h3>{$t('direction.waiting.title', { n: free.length })}</h3>
                     <p>{free.map((p) => p.name).join(' · ')}</p>

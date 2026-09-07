@@ -134,6 +134,10 @@ export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
 
+export function CorrectResult(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['CorrectResult'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
 export function CountMatchPositionsToAnalyze(arg1) {
   return window['go']['database']['Database']['CountMatchPositionsToAnalyze'](arg1);
 }
@@ -276,6 +280,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
 
 export function FinishImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
+}
+
+export function FinishedMatches(arg1, arg2) {
+  return window['go']['database']['Database']['FinishedMatches'](arg1, arg2);
 }
 
 export function FreeParticipants(arg1) {
@@ -496,6 +504,10 @@ export function IsProtectedCopyPath(arg1) {
 
 export function IsReadOnly() {
   return window['go']['database']['Database']['IsReadOnly']();
+}
+
+export function LastDecision(arg1) {
+  return window['go']['database']['Database']['LastDecision'](arg1);
 }
 
 export function ListDirections() {

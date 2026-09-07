@@ -1792,6 +1792,13 @@
             "error": "Impossibile registrare questo risultato.",
             "more": "Altro",
             "apply": "Applica"
+        },
+        "last": {
+            "result": "{winner} batte {loser}",
+            "started": "{a} – {b} avviata",
+            "correct": "Correggi",
+            "cancel": "Annulla questa partita",
+            "whoWon": "Chi ha vinto?"
         }
     }
 }

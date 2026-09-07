@@ -1792,6 +1792,13 @@
             "error": "Tulosta ei voitu kirjata.",
             "more": "Lisää",
             "apply": "Käytä"
+        },
+        "last": {
+            "result": "{winner} voitti pelaajan {loser}",
+            "started": "{a} – {b} aloitettu",
+            "correct": "Korjaa",
+            "cancel": "Peruuta tämä ottelu",
+            "whoWon": "Kuka voitti?"
         }
     }
 }

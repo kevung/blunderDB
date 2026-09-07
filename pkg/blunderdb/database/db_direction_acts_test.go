@@ -24,7 +24,9 @@ func startedDirection(t *testing.T, d *Database, n int) int64 {
 	var players []string
 	for i := 0; i < n; i++ {
 		id := string(rune('a'+i%26)) + string(rune('a'+i/26))
-		players = append(players, `{"id":"`+id+`","name":"`+id+`"}`)
+		// Le nom diffère de l'identifiant : c'est ainsi qu'un test voit qu'une vue montre
+		// bien un nom là où elle doit en montrer un.
+		players = append(players, `{"id":"`+id+`","name":"Joueur `+id+`"}`)
 	}
 	if err := d.StartDirection(tID, 7, "["+strings.Join(players, ",")+"]"); err != nil {
 		t.Fatal(err)
