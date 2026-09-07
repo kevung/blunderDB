@@ -1853,6 +1853,17 @@
                 "leaving": "leaving after their match"
             },
             "error": "Could not record this entry."
+        },
+        "bracket": {
+            "current": "current",
+            "notDrawn": "not drawn yet",
+            "pending": "—",
+            "running": "running",
+            "walkover": "bye",
+            "skipped": "not played",
+            "byes": "Byes",
+            "playoff": "Playoff between {players} for {spots} place(s).",
+            "none": "No bracket yet."
         }
     }
 }

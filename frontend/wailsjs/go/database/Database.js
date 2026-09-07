@@ -46,6 +46,10 @@ export function BeginImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['BeginImportBatch'](arg1, arg2);
 }
 
+export function Brackets(arg1) {
+  return window['go']['database']['Database']['Brackets'](arg1);
+}
+
 export function BuryAnkiCard(arg1) {
   return window['go']['database']['Database']['BuryAnkiCard'](arg1);
 }

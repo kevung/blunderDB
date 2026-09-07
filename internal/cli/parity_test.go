@@ -248,6 +248,7 @@ var databaseParity = map[string]parityEntry{
 	"LoadSearchHistory":                 {Server: "/v1/searchHistory.list", Why: whyGUIState},
 	"LoadSessionState":                  {Server: "/v1/session.load", Why: whyGUIState},
 	"AddParticipant":                    {Why: whyDirection},
+	"Brackets":                          {Why: whyDirection},
 	"CancelMatch":                       {Why: whyDirection},
 	"EnterParticipants":                 {Why: whyDirection},
 	"EntrySuggestions":                  {Why: whyDirection},

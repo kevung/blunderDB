@@ -1853,6 +1853,17 @@
                 "leaving": "esce dopo la partita"
             },
             "error": "Impossibile registrare questa iscrizione."
+        },
+        "bracket": {
+            "current": "in corso",
+            "notDrawn": "non ancora sorteggiato",
+            "pending": "—",
+            "running": "in corso",
+            "walkover": "esente",
+            "skipped": "non giocata",
+            "byes": "Esenzioni",
+            "playoff": "Spareggio tra {players} per {spots} posto/i.",
+            "none": "Nessun tabellone per ora."
         }
     }
 }

@@ -35,6 +35,8 @@ export function ApplyTranscriptionGesture(arg1:number,arg2:transcript.Gesture):P
 
 export function BeginImportBatch(arg1:string,arg2:string):Promise<number>;
 
+export function Brackets(arg1:number):Promise<Array<database.BracketPhase>>;
+
 export function BuryAnkiCard(arg1:number):Promise<void>;
 
 export function CancelImport():Promise<void>;

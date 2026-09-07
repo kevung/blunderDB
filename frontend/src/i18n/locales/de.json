@@ -1853,6 +1853,17 @@
                 "leaving": "geht nach der Partie"
             },
             "error": "Der Eintrag konnte nicht gespeichert werden."
+        },
+        "bracket": {
+            "current": "laufend",
+            "notDrawn": "noch nicht ausgelost",
+            "pending": "—",
+            "running": "läuft",
+            "walkover": "Freilos",
+            "skipped": "nicht gespielt",
+            "byes": "Freilose",
+            "playoff": "Entscheidung zwischen {players} um {spots} Platz/Plätze.",
+            "none": "Noch kein Tableau."
         }
     }
 }
