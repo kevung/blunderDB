@@ -531,7 +531,12 @@
         // et les charger ferait taper par-dessus lui. Le moteur dit lequel des
         // deux c'est (`entry.replacing`), le panneau ne le devine pas.
         const inserting = ann.entry != null && ann.entry.replacing === false;
-        if (inserting || !info?.has_position || (info.kind !== 'checker' && info.kind !== 'dance')) {
+        // `unrecorded` est là exprès : le jet est connu, le coup ne l'est pas, et
+        // poser le curseur dessus est justement le moment où l'utilisateur peut le
+        // renseigner. Les candidats de ce jet sont donc listés comme pour tout
+        // autre coup ; aucun n'est présélectionné puisque rien n'a été consigné.
+        const playable = info?.kind === 'checker' || info?.kind === 'dance' || info?.kind === 'unrecorded';
+        if (inserting || !info?.has_position || !playable) {
             resetTranscriptionKeys();
             return;
         }

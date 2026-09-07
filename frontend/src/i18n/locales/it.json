@@ -1180,7 +1180,8 @@
             "double_turn": "doppio turno",
             "impossible_cube": "azione di cubo impossibile",
             "past_end": "oltre la fine del match",
-            "inconsistent_dice": "mossa incoerente con il lancio"
+            "inconsistent_dice": "mossa incoerente con il lancio",
+            "unrecorded_move": "mossa non registrata"
         }
     },
     "transcript": {
@@ -1193,6 +1194,7 @@
         "opening": "Apertura {a}-{b}",
         "openingTie": "Apertura {a}-{b}: si ritira",
         "dance": "danza",
+        "unrecorded": "non registrata",
         "doubles": "Raddoppia → {n}",
         "takes": "Accetta",
         "drops": "Rifiuta",
@@ -1212,7 +1214,8 @@
             "double_turn": "doppio turno",
             "impossible_cube": "raddoppio impossibile",
             "past_end": "oltre la fine",
-            "inconsistent_dice": "dadi incoerenti"
+            "inconsistent_dice": "dadi incoerenti",
+            "unrecorded_move": "mossa non registrata"
         }
     },
     "status": {

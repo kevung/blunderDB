@@ -290,8 +290,9 @@ func kitchenSinkDoc(t *testing.T) Document {
 		Action{Side: domain.White, Kind: KindTake},
 		Action{Side: domain.Black, Kind: KindChecker, Dice: [2]int{2, 1},
 			Steps: []domain.CheckerStep{{From: 13, To: 8}}}, // the play does not use the roll
-		Action{Side: domain.White, Kind: KindPass}, // nothing to answer: the game ends here
-		opening(domain.Black, 5, 2),                // past the end from now on
+		Action{Side: domain.White, Kind: KindPass},                           // nothing to answer: the game ends here
+		Action{Side: domain.Black, Kind: KindUnrecorded, Dice: [2]int{4, 2}}, // the record does not say what was played
+		opening(domain.Black, 5, 2),                                          // past the end from now on
 		Action{Side: domain.Black, Kind: KindResign, Level: 2},
 		Action{Side: domain.White, Kind: "no such kind"},
 	)
@@ -305,12 +306,12 @@ func kitchenSinkDoc(t *testing.T) Document {
 			found[inc.Kind] = true
 		}
 	}
-	for _, k := range []Kind{KindOpening, KindChecker, KindDance, KindDouble, KindTake, KindPass, KindResign} {
+	for _, k := range []Kind{KindOpening, KindChecker, KindDance, KindUnrecorded, KindDouble, KindTake, KindPass, KindResign} {
 		if !kinds[k] {
 			t.Fatalf("the fixture no longer covers kind %q", k)
 		}
 	}
-	for _, k := range []InconsistencyKind{IllegalMove, DoubleTurn, ImpossibleCube, PastEnd, InconsistentDice} {
+	for _, k := range []InconsistencyKind{IllegalMove, DoubleTurn, ImpossibleCube, PastEnd, InconsistentDice, UnrecordedMove} {
 		if !found[k] {
 			t.Fatalf("the fixture no longer raises %q", k)
 		}

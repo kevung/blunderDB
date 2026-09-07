@@ -1180,7 +1180,8 @@
             "double_turn": "kaksi siirtoa peräkkäin",
             "impossible_cube": "mahdoton kuutiotoiminto",
             "past_end": "ottelun päättymisen jälkeen",
-            "inconsistent_dice": "siirto ei vastaa heittoa"
+            "inconsistent_dice": "siirto ei vastaa heittoa",
+            "unrecorded_move": "kirjaamaton siirto"
         }
     },
     "transcript": {
@@ -1193,6 +1194,7 @@
         "opening": "Avaus {a}-{b}",
         "openingTie": "Avaus {a}-{b}: heitetään uudelleen",
         "dance": "ei siirtoa",
+        "unrecorded": "ei kirjattu",
         "doubles": "Tuplaa → {n}",
         "takes": "Ottaa",
         "drops": "Luovuttaa",
@@ -1212,7 +1214,8 @@
             "double_turn": "kaksoisvuoro",
             "impossible_cube": "mahdoton tuplaus",
             "past_end": "ottelun päättymisen jälkeen",
-            "inconsistent_dice": "epäjohdonmukaiset nopat"
+            "inconsistent_dice": "epäjohdonmukaiset nopat",
+            "unrecorded_move": "kirjaamaton siirto"
         }
     },
     "status": {

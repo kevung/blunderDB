@@ -544,3 +544,22 @@ func matLine(t *testing.T, dir, want string) string {
 	t.Fatalf("no line %q in test.mat", want)
 	return ""
 }
+
+// TestRenderMATKeepsUnrecordedMove: a play gnubg did not record is stored as "???"
+// and must go back out as "???". It is the one cell that looks empty and is not: a
+// dance says the player could not move, "???" says the file does not say what they
+// played, and rendering the second as the first writes a claim into the file.
+func TestRenderMATKeepsUnrecordedMove(t *testing.T) {
+	m := &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7}
+	games := []*domain.Game{{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}}}
+	moves := map[int64][]*domain.Move{
+		1: {
+			{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+			{Player: -1, MoveType: "checker", Dice: [2]int32{5, 3}, CheckerMove: "???"},
+		},
+	}
+	out := RenderMAT(m, games, moves)
+	if !strings.Contains(out, "53: ???") {
+		t.Fatalf("the unrecorded play lost its mark:\n%s", out)
+	}
+}

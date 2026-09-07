@@ -1165,8 +1165,11 @@ ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
 qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
 plateau à la position de l'action visée et affiche ses candidats, le coup joué
 sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
-action au-delà de la fin du match, dés incohérents) décore sa cellule et se
-nomme dans une info-bulle. Les parties se replient ; celle du curseur est
+action au-delà de la fin du match, dés incohérents, coup non consigné) décore sa
+cellule et se nomme dans une info-bulle. Le coup non consigné est le cas d'un
+fichier ``.mat`` relu : gnubg y écrit ``???`` quand il n'a pas gardé le coup
+joué, le jet est connu et le coup ne l'est pas, et poser le curseur sur cette
+cellule propose les coups de ce jet pour le renseigner. Les parties se replient ; celle du curseur est
 ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
 bouton pour le copier.
 

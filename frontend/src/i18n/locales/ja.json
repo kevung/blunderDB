@@ -1180,7 +1180,8 @@
             "double_turn": "手番の重複",
             "impossible_cube": "不可能なキューブアクション",
             "past_end": "マッチ終了後",
-            "inconsistent_dice": "出目と矛盾するムーブ"
+            "inconsistent_dice": "出目と矛盾するムーブ",
+            "unrecorded_move": "記録されていないムーブ"
         }
     },
     "transcript": {
@@ -1193,6 +1194,7 @@
         "opening": "オープニング {a}-{b}",
         "openingTie": "オープニング {a}-{b}：振り直し",
         "dance": "ダンス",
+        "unrecorded": "記録なし",
         "doubles": "ダブル → {n}",
         "takes": "テイク",
         "drops": "パス",
@@ -1212,7 +1214,8 @@
             "double_turn": "手番の重複",
             "impossible_cube": "不可能なキューブ操作",
             "past_end": "試合終了後",
-            "inconsistent_dice": "ダイスの不一致"
+            "inconsistent_dice": "ダイスの不一致",
+            "unrecorded_move": "記録のない手"
         }
     },
     "status": {

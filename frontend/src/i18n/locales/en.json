@@ -1180,7 +1180,8 @@
             "double_turn": "double turn",
             "impossible_cube": "impossible cube action",
             "past_end": "past the end of the match",
-            "inconsistent_dice": "play inconsistent with the roll"
+            "inconsistent_dice": "play inconsistent with the roll",
+            "unrecorded_move": "unrecorded play"
         }
     },
     "transcript": {
@@ -1193,6 +1194,7 @@
         "opening": "Opening {a}-{b}",
         "openingTie": "Opening {a}-{b}: roll again",
         "dance": "dance",
+        "unrecorded": "not recorded",
         "doubles": "Doubles → {n}",
         "takes": "Takes",
         "drops": "Drops",
@@ -1212,7 +1214,8 @@
             "double_turn": "double turn",
             "impossible_cube": "impossible cube action",
             "past_end": "past the end",
-            "inconsistent_dice": "inconsistent dice"
+            "inconsistent_dice": "inconsistent dice",
+            "unrecorded_move": "unrecorded play"
         }
     },
     "status": {

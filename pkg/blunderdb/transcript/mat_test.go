@@ -171,6 +171,14 @@ func compareRecords(t *testing.T, game int, want, got []gnubgparser.MoveRecord) 
 			t.Errorf("game %d record %d: play %q (%s) rendered as %q (%s)",
 				game, i+1, w.MoveString, wp, g.MoveString, gp)
 		}
+		// The decoded Move is all -1 for BOTH a dance and a play the file did not
+		// record, so the pairs above say nothing about them: the mark is the only
+		// difference, and the round trip has to keep it. A "???" that came back as
+		// a dance would put a blank cell in the file where gnubg wrote a question.
+		if isUnrecorded(w.MoveString) != isUnrecorded(g.MoveString) {
+			t.Errorf("game %d record %d: %q rendered as %q — an unrecorded play and a dance are not the same cell",
+				game, i+1, w.MoveString, g.MoveString)
+		}
 	}
 }
 
@@ -193,4 +201,110 @@ func summarise(records []gnubgparser.MoveRecord) string {
 		b.WriteString(" ")
 	}
 	return b.String()
+}
+
+// unrecordedFixtureCount is how many "???" cells testdata/test.mat carries — a gnuBG
+// export of a club match where three plays were never written down.
+const unrecordedFixtureCount = 3
+
+// TestFromMATUnrecordedIsNotADance is the whole point of KindUnrecorded: a .mat cell
+// with no play in it means one of two things, and reading both as a dance was a
+// falsehood the round trip carried back into the file.
+//
+// A cell holding only its dice says the player COULD NOT play. A cell holding "???"
+// says gnubg did not record what they played. The parser decodes both to an empty
+// Move, so the two are told apart by the mark alone.
+func TestFromMATUnrecordedIsNotADance(t *testing.T) {
+	// A dance and an unrecorded play, side by side, on a board that allows plenty:
+	// the opening roll leaves both players everything to play, so a dance here would
+	// be flagged illegal and an unrecorded play must not be.
+	const text = ` 1 point match
+
+ Game 1
+ A : 0                           B : 0
+  1) 31: 8/5 6/5                 65:                         
+  2) 42: ???                     
+`
+	doc, err := FromMAT(text)
+	if err != nil {
+		t.Fatalf("FromMAT: %v", err)
+	}
+	var kinds []Kind
+	for _, a := range doc.Actions {
+		if a.Kind != KindOpening {
+			kinds = append(kinds, a.Kind)
+		}
+	}
+	want := []Kind{KindChecker, KindDance, KindUnrecorded}
+	if len(kinds) != len(want) {
+		t.Fatalf("kinds %v, want %v", kinds, want)
+	}
+	for i := range want {
+		if kinds[i] != want[i] {
+			t.Fatalf("kinds %v, want %v", kinds, want)
+		}
+	}
+
+	// The dance is the one the roll contradicts, and it says so; the unrecorded play
+	// is reported for what it is and never as an impossible dance.
+	ann := Replay(doc, 0)
+	found := map[Kind][]InconsistencyKind{}
+	for _, info := range ann.Actions {
+		for _, bad := range info.Inconsistencies {
+			found[info.Kind] = append(found[info.Kind], bad.Kind)
+		}
+	}
+	if got := found[KindDance]; len(got) != 1 || got[0] != IllegalMove {
+		t.Errorf("the dance carries %v, want one illegal_move — the roll allowed a play", got)
+	}
+	if got := found[KindUnrecorded]; len(got) != 1 || got[0] != UnrecordedMove {
+		t.Errorf("the unrecorded play carries %v, want one unrecorded_move", got)
+	}
+	if got := found[KindChecker]; len(got) != 0 {
+		t.Errorf("the legal play carries %v, want nothing", got)
+	}
+}
+
+// TestFromMATUnrecordedFixture holds the real file: the three "???" of test.mat are
+// read as unrecorded plays, each one reported, and no dance of the file is called
+// impossible any more.
+func TestFromMATUnrecordedFixture(t *testing.T) {
+	doc, _ := loadFixture(t, "../../../testdata/test.mat")
+	ann := Replay(doc, 0)
+
+	unrecorded, reported := 0, 0
+	for _, info := range ann.Actions {
+		for _, bad := range info.Inconsistencies {
+			if bad.Kind == IllegalMove && info.Kind == KindDance {
+				t.Errorf("action %d: a dance of the file is called impossible — %s", info.Index, bad.Detail)
+			}
+		}
+		if info.Kind != KindUnrecorded {
+			continue
+		}
+		unrecorded++
+		if info.Notation != UnrecordedNotation {
+			t.Errorf("action %d: notation %q, want %q", info.Index, info.Notation, UnrecordedNotation)
+		}
+		for _, bad := range info.Inconsistencies {
+			if bad.Kind == UnrecordedMove {
+				reported++
+			}
+		}
+	}
+	if unrecorded != unrecordedFixtureCount || reported != unrecordedFixtureCount {
+		t.Errorf("%d unrecorded plays, %d reported: the fixture has %d",
+			unrecorded, reported, unrecordedFixtureCount)
+	}
+}
+
+// TestRenderMATGivesBackTheQuestionMarks is the round trip on the text itself: what
+// went in as "???" comes out as "???", in the same number. Rendering it as a dance
+// would write a .mat that claims the player could not move.
+func TestRenderMATGivesBackTheQuestionMarks(t *testing.T) {
+	doc, _ := loadFixture(t, "../../../testdata/test.mat")
+	out := ingest.RenderMAT(MatchParts(doc))
+	if n := strings.Count(out, UnrecordedNotation); n != unrecordedFixtureCount {
+		t.Errorf("%d %q cells rendered, want %d:\n%s", n, UnrecordedNotation, unrecordedFixtureCount, out)
+	}
 }

@@ -1180,7 +1180,8 @@
             "double_turn": "διπλή σειρά",
             "impossible_cube": "αδύνατη ενέργεια κύβου",
             "past_end": "μετά το τέλος του αγώνα",
-            "inconsistent_dice": "κίνηση ασύμβατη με τη ζαριά"
+            "inconsistent_dice": "κίνηση ασύμβατη με τη ζαριά",
+            "unrecorded_move": "μη καταγεγραμμένη κίνηση"
         }
     },
     "transcript": {
@@ -1193,6 +1194,7 @@
         "opening": "Άνοιγμα {a}-{b}",
         "openingTie": "Άνοιγμα {a}-{b}: νέα ριξιά",
         "dance": "χορός",
+        "unrecorded": "μη καταγεγραμμένη",
         "doubles": "Διπλασιάζει → {n}",
         "takes": "Δέχεται",
         "drops": "Παραιτείται",
@@ -1212,7 +1214,8 @@
             "double_turn": "διπλή σειρά",
             "impossible_cube": "αδύνατη ενέργεια κύβου",
             "past_end": "μετά το τέλος",
-            "inconsistent_dice": "ασυνεπή ζάρια"
+            "inconsistent_dice": "ασυνεπή ζάρια",
+            "unrecorded_move": "μη καταγεγραμμένη κίνηση"
         }
     },
     "status": {

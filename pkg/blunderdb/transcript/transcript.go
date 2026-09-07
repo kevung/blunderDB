@@ -73,6 +73,13 @@ const (
 	KindChecker Kind = "checker"
 	// KindDance is a roll that allowed no play at all.
 	KindDance Kind = "dance"
+	// KindUnrecorded is a roll whose play was NOT WRITTEN DOWN. It is not a dance:
+	// the player did move, and the record simply does not say how. gnubg spells it
+	// "???" in a .mat cell, and a transcription that reads one must give it back
+	// unchanged — rendering it as a dance would put a play in the file that nobody
+	// made. The board it leaves is unknown, so the replay carries the previous one
+	// forward and marks the Action (fonctionnel.md §1.4, "coup non consigné").
+	KindUnrecorded Kind = "unrecorded"
 	// KindDouble is a double or a redouble. Its answer is a separate Action.
 	KindDouble Kind = "double"
 	// KindTake accepts the double that precedes it; the cube doubles and changes hands.
@@ -83,6 +90,13 @@ const (
 	// It produces no Move — only the winner and the points of the Game (ADR-0045 §6).
 	KindResign Kind = "resign"
 )
+
+// UnrecordedNotation is how a play the record does not carry is written: the three
+// question marks gnubg puts in the cell. It is the notation a KindUnrecorded Action
+// takes, the CheckerMove the saved Move carries, and what ingest.RenderMAT writes
+// back — one spelling, so a "???" read from a .mat comes out of the round trip as
+// the same "???".
+const UnrecordedNotation = "???"
 
 // Action is one player's act. Side and Kind are common to all of them; the remaining
 // fields belong to one Kind each (fonctionnel.md §1.2).
