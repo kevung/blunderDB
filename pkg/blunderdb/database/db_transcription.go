@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
@@ -137,6 +138,27 @@ func (d *Database) OpenTranscription(id int64) (*TranscriptionState, error) {
 	}
 	d.openTranscript(id, doc)
 	return &TranscriptionState{ID: id, Annotated: transcript.Replay(doc, 0)}, nil
+}
+
+// TranscriptionMAT renders the open draft as the .mat text a Jellyfish or a
+// gnubg reader would take. It is the SAME renderer the library's matches go
+// through — transcript.MatchParts builds the graph, ingest.RenderMAT writes
+// it — because the panel's ".mat text" pane is a view of the export and not a
+// second opinion about it: a transcript written twice drifts, and the one the
+// user reads must be the one the file will hold.
+//
+// Nothing is written: no row, no file, no Match. A draft with Inconsistencies
+// renders all the same (ADR-0044 — nothing is refused); an illegal play goes
+// out as played, which is what the export dialog warns about.
+func (d *Database) TranscriptionMAT(id int64) (string, error) {
+	d.transcriptMu.Lock()
+	defer d.transcriptMu.Unlock()
+
+	ed, err := d.session(id)
+	if err != nil {
+		return "", err
+	}
+	return ingest.RenderMAT(transcript.MatchParts(ed.Doc)), nil
 }
 
 // CloseTranscription ends a draft: the row is deleted and the session

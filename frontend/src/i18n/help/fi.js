@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Hylkää kesken oleva syöttö.</td>
 </tr>
+<tr>
+<td>VASEN, h</td>
+<td>Siirrä kohdistinta yksi toiminto taaksepäin siirtoluettelossa.</td>
+</tr>
+<tr>
+<td>OIKEA, l</td>
+<td>Siirrä kohdistinta yksi toiminto eteenpäin.</td>
+</tr>
+<tr>
+<td>Napsautus (solua)</td>
+<td>Vie kohdistin tähän toimintoon.</td>
+</tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
+<p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

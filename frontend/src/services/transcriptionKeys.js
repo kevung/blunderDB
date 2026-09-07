@@ -60,7 +60,9 @@ export const COMMAND = Object.freeze({
     CLEAR: 'clear',
     VALIDATE: 'validate',
     SELECT: 'select',
-    DANCE: 'dance'
+    DANCE: 'dance',
+    CURSOR_BACK: 'cursor_back',
+    CURSOR_FORWARD: 'cursor_forward'
 });
 
 /** Les sortes d'Action dont la saisie passe par deux dés. */
@@ -97,6 +99,36 @@ export function dieOf(event) {
     return m ? Number(m[1]) : 0;
 }
 
+/**
+ * +1 (Action suivante), −1 (précédente), 0 sinon : `h`/`l` et gauche/droite.
+ *
+ * Le Cursor est une CELLULE du Transcript et les deux colonnes sont les deux
+ * camps : le déplacer d'une Action, c'est passer d'une cellule à l'autre, donc
+ * d'un camp à l'autre. D'où l'axe horizontal, quand `j`/`k` gardent le vertical
+ * pour la liste des candidats (ux.md §3).
+ */
+export function cursorDelta(event) {
+    if (isBareLetter(event, 'h') || event.key === 'ArrowLeft') return -1;
+    if (isBareLetter(event, 'l') || event.key === 'ArrowRight') return 1;
+    return 0;
+}
+
+/**
+ * Les gestes qui mènent le Cursor de `from` à `to` — ce qu'un clic sur une
+ * cellule du Transcript demande. Le moteur ne connaît que « recule » et
+ * « avance » (`cursor_back`/`cursor_forward` d'apply.go), qui rechargent
+ * l'Action visée : un saut est donc la répétition du pas, et non un geste de
+ * plus à écrire côté Go pour la souris seule.
+ *
+ * @param {number} from
+ * @param {number} to
+ * @returns {{kind: string}[]}
+ */
+export function cursorCommands(from, to) {
+    const kind = to < from ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD;
+    return Array.from({ length: Math.abs(to - from) }, () => ({ kind }));
+}
+
 /** +1 (candidat suivant), −1 (précédent), 0 sinon : `j`/`k` et bas/haut. */
 export function selectionDelta(event) {
     if (isBareLetter(event, 'j') || event.key === 'ArrowDown') return 1;
@@ -121,6 +153,20 @@ const clamp = (n, max) => Math.min(Math.max(n, 0), max);
  * @returns {{handled: boolean, state: object, commands: {kind: string, value?: number, index?: number}[]}}
  */
 export function pressKey(state, event, { expects = 'checker' } = {}) {
+    // Le Cursor se déplace depuis TOUT état (ux.md §3, ligne « tout ») : c'est
+    // le geste de la relecture, et il doit marcher pendant une saisie de dés
+    // comme devant une réponse au videau. Il est donc lu avant tout le reste,
+    // et il rend la machine à son état initial — le panneau la réarme sur
+    // l'Action visée, dont le moteur recharge dés et coup.
+    const step = cursorDelta(event);
+    if (step !== 0) {
+        return {
+            handled: true,
+            state: initialKeyState(),
+            commands: [{ kind: step < 0 ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD }]
+        };
+    }
+
     // Une réponse à un double n'est pas une saisie de dés : ses touches sont
     // `t`/`p` et elles sont à T1.4. Rien n'est avalé ici en attendant.
     if (!DICE_KINDS.has(expects)) return ignored(state);

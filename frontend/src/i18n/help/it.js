@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abbandonare l'inserimento in corso.</td>
 </tr>
+<tr>
+<td>SINISTRA, h</td>
+<td>Arretrare il cursore di un'azione nella trascrizione.</td>
+</tr>
+<tr>
+<td>DESTRA, l</td>
+<td>Avanzare il cursore di un'azione.</td>
+</tr>
+<tr>
+<td>Clic (su una cella)</td>
+<td>Portare il cursore su questa azione.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
+<p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

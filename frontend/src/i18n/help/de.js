@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Die laufende Eingabe verwerfen.</td>
 </tr>
+<tr>
+<td>LINKS, h</td>
+<td>Den Cursor im Transkript um eine Aktion zurücksetzen.</td>
+</tr>
+<tr>
+<td>RECHTS, l</td>
+<td>Den Cursor um eine Aktion vorrücken.</td>
+</tr>
+<tr>
+<td>Klick (auf eine Zelle)</td>
+<td>Den Cursor auf diese Aktion setzen.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
+<p>Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe, Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten <code>.mat</code>-Text des Entwurfs mit einer Schaltfläche zum Kopieren.</p>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

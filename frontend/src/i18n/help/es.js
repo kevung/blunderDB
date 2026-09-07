@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abandonar la entrada en curso.</td>
 </tr>
+<tr>
+<td>IZQUIERDA, h</td>
+<td>Retroceder el cursor una acción en la transcripción.</td>
+</tr>
+<tr>
+<td>DERECHA, l</td>
+<td>Avanzar el cursor una acción.</td>
+</tr>
+<tr>
+<td>Clic (en una celda)</td>
+<td>Situar el cursor en esa acción.</td>
+</tr>
 </tbody>
 </table>
 <p>Una tirada que no permite ningún movimiento registra el baile por sí sola, sin pulsación adicional.</p>
+<p>La transcripción ocupa la mitad derecha del panel: una columna por jugador, una fila por turno, la acción de doblaje y el final de la partida en la columna de quien actúa. La celda del cursor está enmarcada; al mover el cursor, el tablero vuelve a la posición de la acción señalada y muestra sus candidatas, con la jugada registrada seleccionada. Una incoherencia (jugada ilegal, turno doble, doblaje imposible, acción más allá del final del match, dados incoherentes) decora su celda y se nombra en un mensaje emergente. Las partidas se pliegan; la del cursor queda abierta. Un panel desplegable muestra el texto <code>.mat</code> exacto del borrador, con un botón para copiarlo.</p>
 <h3>Panel de ayuda</h3>
 <table>
 <thead>

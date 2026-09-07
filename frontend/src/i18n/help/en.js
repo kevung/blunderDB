@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abandon the entry in progress.</td>
 </tr>
+<tr>
+<td>LEFT, h</td>
+<td>Move the cursor back one action in the transcript.</td>
+</tr>
+<tr>
+<td>RIGHT, l</td>
+<td>Move the cursor forward one action.</td>
+</tr>
+<tr>
+<td>Click (on a cell)</td>
+<td>Put the cursor on that action.</td>
+</tr>
 </tbody>
 </table>
 <p>A roll that allows no play records the dance on its own, with no extra keystroke.</p>
+<p>The transcript takes the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice) decorates its cell and is named in a tooltip. Games can be folded; the cursor's game is open. A collapsible pane shows the draft's exact <code>.mat</code> text, with a button to copy it.</p>
 <h3>Help Panel</h3>
 <table>
 <thead>

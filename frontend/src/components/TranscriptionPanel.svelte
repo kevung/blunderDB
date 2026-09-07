@@ -19,8 +19,15 @@
   panel's own — EvaluatePositionImmediate — and the table is the Eval panel's own
   component, mounted here exactly as EPCPanel mounts it.
 
-  What is not here yet: the cube (T1.4), the resignation (T1.5), the Transcript
-  column (T1.6), correcting through the Cursor (T1.7), saving (T1.9).
+  The right half is the Transcript (T1.6): TranscriptView draws the two
+  columns of the score sheet, the Cursor cell is framed, `h`/`l` and the left
+  and right arrows walk it from cell to cell — from camp to camp — and a click
+  on a cell does the same with the mouse. Moving it reloads the board on the
+  Action aimed at and lists its candidates with the play that was recorded
+  selected.
+
+  What is not here yet: the cube (T1.4), the resignation (T1.5), correcting
+  through the Cursor (T1.7), saving (T1.9).
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -37,10 +44,11 @@
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
-    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate } from '../services/transcriptionKeys.js';
+    import { PHASE, COMMAND, pressKey, applyCandidates, selectCandidate, cursorCommands, initialKeyState } from '../services/transcriptionKeys.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
+    import TranscriptView from './TranscriptView.svelte';
     import { transcriptionListStore, transcriptionStore, transcriptionKeyStore, setTranscription, clearTranscription, resetTranscriptionKeys } from '../stores/transcriptionStore.js';
-    import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture } from '../../wailsjs/go/database/Database.js';
+    import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { get } from 'svelte/store';
@@ -191,6 +199,10 @@
                 return { Kind: 'validate' };
             case COMMAND.DANCE:
                 return { Kind: 'dance' };
+            case COMMAND.CURSOR_BACK:
+                return { Kind: 'cursor_back' };
+            case COMMAND.CURSOR_FORWARD:
+                return { Kind: 'cursor_forward' };
             case COMMAND.SELECT: {
                 const entry = ranked[command.index];
                 return entry ? { Kind: 'select_candidate', Candidate: entry.gen } : null;
@@ -303,6 +315,72 @@
         await run(next.commands);
     }
 
+    // ── the Cursor ───────────────────────────────────────────────────────
+    //
+    // Moving it is the engine's business (`cursor_back`/`cursor_forward` reload
+    // the Action's dice and play into the Entry); what the panel owes is the
+    // rest of the screen — the board, which follows annotated.cursor on its
+    // own, and the candidate list, which has to be asked for again because it
+    // is an Evaluation and is never stored (ADR-0045 rule 8).
+
+    /**
+     * Re-arms the panel on the Action the Cursor landed on: its candidates,
+     * with the play that was RECORDED selected. A cell that is not a checker
+     * play — an opening, a cube action, the end of the document — leaves the
+     * keyboard machine at rest.
+     */
+    async function settleCursor() {
+        const ann = get(transcriptionStore)?.annotated;
+        if (!ann) return;
+        const info = (ann.actions ?? [])[ann.cursor ?? 0];
+        ranked = [];
+        unranked = false;
+        danced = false;
+
+        if (!info?.has_position || (info.kind !== 'checker' && info.kind !== 'dance')) {
+            resetTranscriptionKeys();
+            return;
+        }
+
+        const pos = { ...structuredClone(info.before), id: 0 };
+        const generation = ++candidateGeneration;
+        let answer;
+        try {
+            answer = await computeCandidates(pos);
+        } catch (err) {
+            logger.error('The legal plays of the Action under the cursor failed:', err);
+            error = String(err);
+            return;
+        }
+        if (generation !== candidateGeneration) return;
+
+        ranked = answer.list;
+        unranked = answer.unranked;
+        danced = answer.list.length === 0;
+
+        // The play as it was written down, found by its notation: the ranking
+        // is a list of the SAME plays, so the recorded one is in it — unless
+        // the play is illegal, and then the first candidate stands in.
+        const played = ranked.findIndex((row) => row.move.move === info.notation);
+        transcriptionKeyStore.set({
+            ...initialKeyState(),
+            phase: PHASE.ROLL,
+            dice: [info.before.dice?.[0] ?? 0, info.before.dice?.[1] ?? 0],
+            candidateCount: ranked.length,
+            selected: played >= 0 ? played : 0
+        });
+    }
+
+    /** A click on a cell of the Transcript: the Cursor walks to that Action. */
+    function selectAction(index) {
+        const ann = get(transcriptionStore)?.annotated;
+        if (!ann) return;
+        const from = ann.cursor ?? 0;
+        if (index === from) return;
+        run(cursorCommands(from, index)).then(settleCursor);
+        panelEl?.focus({ preventScroll: true });
+    }
+
     function chooseCandidate(index) {
         const next = selectCandidate(get(transcriptionKeyStore), index);
         transcriptionKeyStore.set(next.state);
@@ -338,7 +416,8 @@
         danced = false;
 
         transcriptionKeyStore.set(result.state);
-        run(result.commands).then(settleCandidates);
+        const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        run(result.commands).then(walks ? settleCursor : settleCandidates);
     }
 
     onMount(() => {
@@ -373,7 +452,7 @@
         const current = at >= 0 && at < actions.length ? actions[at] : null;
         const base = current?.has_position ? current.before : ann.next?.position;
         if (!base) return null;
-        const rolled = !opening && dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
+        const rolled = (!opening || current) && dice[0] > 0 && dice[1] > 0 ? [dice[0], dice[1]] : [0, 0];
         return { ...structuredClone(base), id: 0, dice: rolled };
     }
 
@@ -444,6 +523,33 @@
     // Which referential the equity column is stated in (ADR-0016 point 6,
     // ADR-0019): money points at money play, normalised match equity at a score.
     let isMoney = $derived(isMoneyPosition(annotated?.next?.position));
+
+    // ── the .mat text ────────────────────────────────────────────────────
+    //
+    // Rendered by the SAME renderer the library's matches go through
+    // (TranscriptionMAT → transcript.MatchParts → ingest.RenderMAT): the pane
+    // shows the file that would be written, not a second opinion about it.
+    // It is fetched only while the pane is unfolded, and again at every change
+    // of the document, so a folded pane costs no round trip per keystroke.
+    let matOpen = $state(false);
+    let matText = $state('');
+
+    $effect(() => {
+        const id = draft?.id;
+        void annotated;
+        if (!matOpen || id == null) return;
+        let live = true;
+        TranscriptionMAT(id)
+            .then((text) => {
+                if (live) matText = text ?? '';
+            })
+            .catch((err) => {
+                logger.error('The .mat text of a transcription draft failed:', err);
+            });
+        return () => {
+            live = false;
+        };
+    });
 </script>
 
 <section class="transcription-panel" id="transcriptionPanel" aria-label={$t('transcription.title')} tabindex="-1" bind:this={panelEl}>
@@ -498,53 +604,61 @@
                 <span class="badge on-roll">{playerName(sideOnRoll)}</span>
             </div>
 
-            <div class="entry">
-                <span class="entry-label">
-                    {expects === 'opening' ? $t('transcription.openingPrompt') : $t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
-                </span>
-                <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
-                <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
-            </div>
-
-            {#if keys.tie}
-                <p class="hint">{$t('transcription.tie')}</p>
-            {:else if expects === 'opening'}
-                <p class="hint">{$t('transcription.openingHint')}</p>
-            {:else if danced}
-                <p class="hint">{$t('transcription.dance')}</p>
-            {:else if keys.phase === PHASE.ROLL}
-                <!-- Les deux états d'ux.md §3 sont DITS, parce qu'un même écran
-                     y répond de deux façons opposées au même chiffre : tant que
-                     la liste n'a pas été touchée il recommence le jet, après il
-                     valide. Une différence invisible serait un piège. -->
-                <p class="hint">{$t('transcription.correctable')}</p>
-            {:else if keys.phase === PHASE.CANDIDATE}
-                <p class="hint">{$t('transcription.chosen')}</p>
-            {/if}
-
-            {#if ranked.length}
-                {#if unranked}
-                    <p class="hint">{$t('transcription.unranked')}</p>
-                    <ol class="plain-candidates">
-                        {#each ranked as row, index (row.gen)}
-                            <li>
-                                <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
-                            </li>
-                        {/each}
-                    </ol>
-                {:else}
-                    <div class="candidates">
-                        <CandidateMovesTable
-                            moves={rankedMoves}
-                            selectedMove={$selectedMoveStore}
-                            onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
-                            showProvenance={false}
-                            baseline={null}
-                            {isMoney}
-                        />
+            <div class="draft-body">
+                <div class="entry-col">
+                    <div class="entry">
+                        <span class="entry-label">
+                            {expects === 'opening' ? $t('transcription.openingPrompt') : $t('transcription.rollPrompt', { player: playerName(sideOnRoll) })}
+                        </span>
+                        <span class="die" class:filled={keys.dice[0] > 0}>{dieCells[0]}</span>
+                        <span class="die" class:filled={keys.dice[1] > 0}>{dieCells[1]}</span>
                     </div>
-                {/if}
-            {/if}
+
+                    {#if keys.tie}
+                        <p class="hint">{$t('transcription.tie')}</p>
+                    {:else if expects === 'opening'}
+                        <p class="hint">{$t('transcription.openingHint')}</p>
+                    {:else if danced}
+                        <p class="hint">{$t('transcription.dance')}</p>
+                    {:else if keys.phase === PHASE.ROLL}
+                        <!-- Les deux états d'ux.md §3 sont DITS, parce qu'un même écran
+                             y répond de deux façons opposées au même chiffre : tant que
+                             la liste n'a pas été touchée il recommence le jet, après il
+                             valide. Une différence invisible serait un piège. -->
+                        <p class="hint">{$t('transcription.correctable')}</p>
+                    {:else if keys.phase === PHASE.CANDIDATE}
+                        <p class="hint">{$t('transcription.chosen')}</p>
+                    {/if}
+
+                    {#if ranked.length}
+                        {#if unranked}
+                            <p class="hint">{$t('transcription.unranked')}</p>
+                            <ol class="plain-candidates">
+                                {#each ranked as row, index (row.gen)}
+                                    <li>
+                                        <button class="plain-candidate" class:selected={index === keys.selected} onclick={() => chooseCandidate(index)}>{row.move.move}</button>
+                                    </li>
+                                {/each}
+                            </ol>
+                        {:else}
+                            <div class="candidates">
+                                <CandidateMovesTable
+                                    moves={rankedMoves}
+                                    selectedMove={$selectedMoveStore}
+                                    onRowClick={(move) => chooseCandidate(rankedMoves.indexOf(move))}
+                                    showProvenance={false}
+                                    baseline={null}
+                                    {isMoney}
+                                />
+                            </div>
+                        {/if}
+                    {/if}
+                </div>
+
+                <div class="transcript-col">
+                    <TranscriptView {annotated} cursor={annotated?.cursor ?? 0} players={[playerName(0), playerName(1)]} {matText} onSelect={selectAction} onMatToggle={(open) => (matOpen = open)} />
+                </div>
+            </div>
         </div>
     {/if}
     {#if error}
@@ -688,6 +802,25 @@
 
     .plain-candidate.selected {
         font-weight: 600;
+    }
+
+    /* Saisie à gauche, Transcript à droite (ux.md §2). Chaque colonne défile
+       dans sa propre boîte : la page, elle, ne défile jamais latéralement. */
+    .draft-body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        min-height: 0;
+    }
+
+    .entry-col,
+    .transcript-col {
+        display: flex;
+        flex: 1 1 18em;
+        flex-direction: column;
+        gap: var(--space-2);
+        min-width: 0;
+        min-height: 0;
     }
 
     .hint {

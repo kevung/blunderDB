@@ -734,6 +734,10 @@ export function Tags() {
   return window['go']['database']['Database']['Tags']();
 }
 
+export function TranscriptionMAT(arg1) {
+  return window['go']['database']['Database']['TranscriptionMAT'](arg1);
+}
+
 export function TrashCollection(arg1) {
   return window['go']['database']['Database']['TrashCollection'](arg1);
 }

@@ -1089,6 +1089,38 @@
         "correctable": "Jet corrigeable : un chiffre le recommence, Entrée valide le coup.",
         "chosen": "Coup choisi : un chiffre valide et ouvre le jet suivant."
     },
+    "transcript": {
+        "title": "Transcript",
+        "game": "Partie {n}",
+        "turn": "Tour",
+        "crawford": "Crawford",
+        "player1": "Joueur 1",
+        "player2": "Joueur 2",
+        "opening": "Ouverture {a}-{b}",
+        "openingTie": "Ouverture {a}-{b} : relance",
+        "dance": "danse",
+        "doubles": "Double → {n}",
+        "takes": "Prend",
+        "drops": "Passe",
+        "resigns": "Abandonne ({level})",
+        "resignSingle": "simple",
+        "resignGammon": "gammon",
+        "resignBackgammon": "backgammon",
+        "wins": "Gagne {n} points",
+        "winsOne": "Gagne 1 point",
+        "empty": "Aucune action pour l'instant.",
+        "matPane": "Texte .mat",
+        "copy": "Copier",
+        "copied": "Copié",
+        "flawed": "Incohérence : {names}",
+        "inconsistency": {
+            "illegal_move": "coup illégal",
+            "double_turn": "double trait",
+            "impossible_cube": "videau impossible",
+            "past_end": "au-delà de la fin",
+            "inconsistent_dice": "dés incohérents"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
         "boardSvgNotFound": "SVG du plateau introuvable",

@@ -1315,9 +1315,22 @@ export default {
 <td>Esc</td>
 <td>Abandonner la saisie en cours.</td>
 </tr>
+<tr>
+<td>GAUCHE, h</td>
+<td>Reculer le curseur d'une action dans le transcript.</td>
+</tr>
+<tr>
+<td>DROITE, l</td>
+<td>Avancer le curseur d'une action.</td>
+</tr>
+<tr>
+<td>Clic (sur une cellule)</td>
+<td>Placer le curseur sur cette action.</td>
+</tr>
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
+<p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

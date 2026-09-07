@@ -1089,6 +1089,38 @@
         "correctable": "Wurf noch korrigierbar: eine Ziffer beginnt ihn neu, Eingabe erfasst den Zug.",
         "chosen": "Zug gewählt: eine Ziffer erfasst ihn und öffnet den nächsten Wurf."
     },
+    "transcript": {
+        "title": "Transkript",
+        "game": "Partie {n}",
+        "turn": "Zug",
+        "crawford": "Crawford",
+        "player1": "Spieler 1",
+        "player2": "Spieler 2",
+        "opening": "Eröffnung {a}-{b}",
+        "openingTie": "Eröffnung {a}-{b}: neu würfeln",
+        "dance": "kein Zug",
+        "doubles": "Doppelt → {n}",
+        "takes": "Nimmt an",
+        "drops": "Gibt auf",
+        "resigns": "Gibt auf ({level})",
+        "resignSingle": "einfach",
+        "resignGammon": "Gammon",
+        "resignBackgammon": "Backgammon",
+        "wins": "Gewinnt {n} Punkte",
+        "winsOne": "Gewinnt 1 Punkt",
+        "empty": "Noch keine Aktion.",
+        "matPane": ".mat-Text",
+        "copy": "Kopieren",
+        "copied": "Kopiert",
+        "flawed": "Unstimmigkeit: {names}",
+        "inconsistency": {
+            "illegal_move": "unerlaubter Zug",
+            "double_turn": "doppelter Zug",
+            "impossible_cube": "unmögliche Dopplerabgabe",
+            "past_end": "nach dem Matchende",
+            "inconsistent_dice": "unstimmige Würfel"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
         "boardSvgNotFound": "Brett-SVG nicht gefunden",

@@ -1089,6 +1089,38 @@
         "correctable": "Η ζαριά διορθώνεται ακόμη: ένα ψηφίο την ξαναρχίζει, το Enter καταγράφει την κίνηση.",
         "chosen": "Κίνηση επιλεγμένη: ένα ψηφίο την καταγράφει και ανοίγει την επόμενη ζαριά."
     },
+    "transcript": {
+        "title": "Καταγραφή",
+        "game": "Παρτίδα {n}",
+        "turn": "Γύρος",
+        "crawford": "Crawford",
+        "player1": "Παίκτης 1",
+        "player2": "Παίκτης 2",
+        "opening": "Άνοιγμα {a}-{b}",
+        "openingTie": "Άνοιγμα {a}-{b}: νέα ριξιά",
+        "dance": "χορός",
+        "doubles": "Διπλασιάζει → {n}",
+        "takes": "Δέχεται",
+        "drops": "Παραιτείται",
+        "resigns": "Παραιτείται ({level})",
+        "resignSingle": "απλό",
+        "resignGammon": "gammon",
+        "resignBackgammon": "backgammon",
+        "wins": "Κερδίζει {n} πόντους",
+        "winsOne": "Κερδίζει 1 πόντο",
+        "empty": "Καμία ενέργεια ακόμη.",
+        "matPane": "Κείμενο .mat",
+        "copy": "Αντιγραφή",
+        "copied": "Αντιγράφηκε",
+        "flawed": "Ασυνέπεια: {names}",
+        "inconsistency": {
+            "illegal_move": "παράνομη κίνηση",
+            "double_turn": "διπλή σειρά",
+            "impossible_cube": "αδύνατη ενέργεια κύβου",
+            "past_end": "μετά το τέλος",
+            "inconsistent_dice": "ασυνεπή ζάρια"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Η εικόνα ταμπλό + ανάλυσης αντιγράφηκε στο πρόχειρο",
         "boardSvgNotFound": "Το SVG του ταμπλό δεν βρέθηκε",

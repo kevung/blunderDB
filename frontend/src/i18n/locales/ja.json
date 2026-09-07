@@ -1089,6 +1089,38 @@
         "correctable": "出目はまだ訂正できます：数字で振り直し、Enter で着手を記録します。",
         "chosen": "着手を選択しました：数字で記録し、次の出目に進みます。"
     },
+    "transcript": {
+        "title": "棋譜",
+        "game": "第 {n} ゲーム",
+        "turn": "手番",
+        "crawford": "クロフォード",
+        "player1": "プレイヤー 1",
+        "player2": "プレイヤー 2",
+        "opening": "オープニング {a}-{b}",
+        "openingTie": "オープニング {a}-{b}：振り直し",
+        "dance": "ダンス",
+        "doubles": "ダブル → {n}",
+        "takes": "テイク",
+        "drops": "パス",
+        "resigns": "レジグン（{level}）",
+        "resignSingle": "シングル",
+        "resignGammon": "ギャモン",
+        "resignBackgammon": "バックギャモン",
+        "wins": "{n} ポイント獲得",
+        "winsOne": "1 ポイント獲得",
+        "empty": "まだアクションがありません。",
+        "matPane": ".mat テキスト",
+        "copy": "コピー",
+        "copied": "コピーしました",
+        "flawed": "不整合：{names}",
+        "inconsistency": {
+            "illegal_move": "不正な手",
+            "double_turn": "手番の重複",
+            "impossible_cube": "不可能なキューブ操作",
+            "past_end": "試合終了後",
+            "inconsistent_dice": "ダイスの不一致"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
         "boardSvgNotFound": "ボードのSVGが見つかりません",

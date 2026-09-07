@@ -377,6 +377,8 @@ export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promis
 
 export function Tags():Promise<Array<domain.TagCount>>;
 
+export function TranscriptionMAT(arg1:number):Promise<string>;
+
 export function TrashCollection(arg1:number):Promise<number>;
 
 export function TrashCommentEntry(arg1:number):Promise<number>;

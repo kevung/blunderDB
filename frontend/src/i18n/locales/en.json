@@ -1089,6 +1089,38 @@
         "correctable": "Roll still correctable: a digit starts it again, Enter records the play.",
         "chosen": "Play chosen: a digit records it and opens the next roll."
     },
+    "transcript": {
+        "title": "Transcript",
+        "game": "Game {n}",
+        "turn": "Turn",
+        "crawford": "Crawford",
+        "player1": "Player 1",
+        "player2": "Player 2",
+        "opening": "Opening {a}-{b}",
+        "openingTie": "Opening {a}-{b}: roll again",
+        "dance": "dance",
+        "doubles": "Doubles → {n}",
+        "takes": "Takes",
+        "drops": "Drops",
+        "resigns": "Resigns ({level})",
+        "resignSingle": "single",
+        "resignGammon": "gammon",
+        "resignBackgammon": "backgammon",
+        "wins": "Wins {n} points",
+        "winsOne": "Wins 1 point",
+        "empty": "No action yet.",
+        "matPane": ".mat text",
+        "copy": "Copy",
+        "copied": "Copied",
+        "flawed": "Inconsistency: {names}",
+        "inconsistency": {
+            "illegal_move": "illegal move",
+            "double_turn": "double turn",
+            "impossible_cube": "impossible cube action",
+            "past_end": "past the end",
+            "inconsistent_dice": "inconsistent dice"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
         "boardSvgNotFound": "Board SVG not found",

@@ -1089,6 +1089,38 @@
         "correctable": "Heitto on yhä korjattavissa: numero aloittaa sen alusta, Enter kirjaa siirron.",
         "chosen": "Siirto valittu: numero kirjaa sen ja avaa seuraavan heiton."
     },
+    "transcript": {
+        "title": "Siirtoluettelo",
+        "game": "Peli {n}",
+        "turn": "Vuoro",
+        "crawford": "Crawford",
+        "player1": "Pelaaja 1",
+        "player2": "Pelaaja 2",
+        "opening": "Avaus {a}-{b}",
+        "openingTie": "Avaus {a}-{b}: heitetään uudelleen",
+        "dance": "ei siirtoa",
+        "doubles": "Tuplaa → {n}",
+        "takes": "Ottaa",
+        "drops": "Luovuttaa",
+        "resigns": "Luovuttaa ({level})",
+        "resignSingle": "yksinkertainen",
+        "resignGammon": "gammon",
+        "resignBackgammon": "backgammon",
+        "wins": "Voittaa {n} pistettä",
+        "winsOne": "Voittaa 1 pisteen",
+        "empty": "Ei vielä toimintoja.",
+        "matPane": ".mat-teksti",
+        "copy": "Kopioi",
+        "copied": "Kopioitu",
+        "flawed": "Epäjohdonmukaisuus: {names}",
+        "inconsistency": {
+            "illegal_move": "laiton siirto",
+            "double_turn": "kaksoisvuoro",
+            "impossible_cube": "mahdoton tuplaus",
+            "past_end": "ottelun päättymisen jälkeen",
+            "inconsistent_dice": "epäjohdonmukaiset nopat"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
         "boardSvgNotFound": "Laudan SVG:tä ei löytynyt",

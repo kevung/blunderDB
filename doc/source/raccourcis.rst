@@ -287,9 +287,22 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."
+   "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
+   "DROITE, l", "Avancer le curseur d'une action."
+   "Clic (sur une cellule)", "Placer le curseur sur cette action."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Le transcript occupe la moitié droite du panneau : une colonne par joueur, une
+ligne par tour, l'action de videau et la fin de partie dans la colonne de celui
+qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le
+plateau à la position de l'action visée et affiche ses candidats, le coup joué
+sélectionné. Une incohérence (coup illégal, double trait, videau impossible,
+action au-delà de la fin du match, dés incohérents) décore sa cellule et se
+nomme dans une info-bulle. Les parties se replient ; celle du curseur est
+ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
+bouton pour le copier.
 
 .. _raccourcis_help_panel:
 
