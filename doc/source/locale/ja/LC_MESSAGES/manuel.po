@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:40+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -4021,6 +4021,7 @@ msgid "Panneau Anki"
 msgstr "Anki パネル"
 
 #: ../../source/manuel.rst:2065
+#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
@@ -4028,7 +4029,7 @@ msgid ""
 " aussi être un score."
 msgstr ""
 "**Anki** パネル（\\ *CTRL-K*\\ ）では、FSRS "
-"アルゴリズムを使った間隔反復で学習できます。カードは一つの問いを立てます。多くはコレクションや検索から取ったポジションですが、スコアであることもあります。"
+"アルゴリズムを使った間隔反復によってポジションを学習できます。ユーザーはコレクションや検索結果からデッキを作成できます。"
 
 #: ../../source/manuel.rst:2070
 msgid ""
@@ -4052,9 +4053,9 @@ msgid ""
 "révision, et elle se contracte volontairement. Le bouton de "
 "synchronisation le régénère."
 msgstr ""
-"**スコア表のデッキ。** 三つめのソース\\ *スコア表*\\ が求めるのは名前だけです。blunderDB が 2 から 9 away "
-"までの順序を問わない 36 のスコアでデッキを満たし、スコアのカードは\\ :ref:`スコア練習 "
-"<panneau_entrainement>`\\ "
+"**スコア表のデッキ。** 三つめのソース\\\\ *スコア表*\\\\ が求めるのは名前だけです。blunderDB が 2 から 9 away"
+" までの順序を問わない 36 のスコアでデッキを満たし、スコアのカードは\\\\ :ref:`スコア練習 "
+"<panneau_entrainement>`\\\\ "
 "が表示するのと同じ表——両者のテイクポイントとギャモン値——になります。このデッキは自分で作ったときにだけ存在します。初日に 36 "
 "枚の期限が来るのは復習の負債であり、それは意図して負うものだからです。同期ボタンで作り直せます。"
 
@@ -4067,11 +4068,13 @@ msgid ""
 "révisions Anki, et les statistiques d'Anki ignorent les sessions "
 "d'Entraînement."
 msgstr ""
-"二つの場所は同じ仕事をしません。スコア練習はこれらの数を\\ **時計の下で**\\ 思い出させ、その速さを測ります。デッキはそれらを\\ "
-"**時間をかけて保たせ**\\ 、速さは何も測りません。二つの履歴は別々のままです。トレーニングの記録は Anki の復習を見ませんし、Anki "
+"二つの場所は同じ仕事をしません。スコア練習はこれらの数を\\\\ **時計の下で**\\\\ "
+"思い出させ、その速さを測ります。デッキはそれらを\\\\ **時間をかけて保たせ**\\\\ "
+"、速さは何も測りません。二つの履歴は別々のままです。トレーニングの記録は Anki の復習を見ませんし、Anki "
 "の統計はトレーニングのセッションを見ません。"
 
 #: ../../source/manuel.rst:2088
+#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4082,7 +4085,7 @@ msgid ""
 "paquets."
 msgstr ""
 "**復習：** デッキを選択してから *Study* "
-"をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。ポジションのカードはポジションをボード上に表示し、スコアのカードはスコアを告げてボードをそのままにします。あなたの想起度を"
+"をクリックする（またはデッキをダブルクリックする）と、期限の来たカードの復習を開始できます。各カードは対応するポジションをボード上に表示します。あなたの想起度を"
 " *1*\\ （もう一度）、\\ *2*\\ （難しい）、\\ *3*\\ （普通）、または *4*\\ （簡単）のキーで評価してください。\\ "
 "*Esc* を押すと停止してデッキのリストに戻ります。"
 
@@ -4110,6 +4113,7 @@ msgid ""
 msgstr "それぞれが自分の評価と自分の予定を保ちます。一枚のカードの二段階ではなく、二枚のカードです。連なりは期日を前倒ししません。すでに期日を迎えたカードの順序を決めるだけです。二枚は同時に生まれるので初回は同時に期日を迎えます。役に立つのはまさにそこです。"
 
 #: ../../source/manuel.rst:2107
+#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -4121,11 +4125,8 @@ msgid ""
 "boutons d'évaluation, qui restent à leur place et à portée. Cliquer sur "
 "un coup de la liste le montre sur le plateau."
 msgstr ""
-"**答えを表示する：** カードは問いを立てます——どの手を打つか、どのキューブアクションを取るか、あるいはスコアがどの数を持つか。考えてから "
-"*SPACE* "
-"を押す（または隠された領域をクリックする）と答えが現れます：分析タブが示すのと同じ、そのポジションに記録された分析、あるいはスコアの表がまるごと現れます。表にチェックするものはありません。Anki"
-" "
-"は記憶を計画するのであって計算を測るのではなく、誤りを数えるのはトレーニングの仕事です。答えは評価ボタンの下に表示され、ボタンはそのままの位置で手の届くところに残ります。リストの手をクリックするとボード上に表示されます。"
+"**答えを表示する：** カードは問いを立てます——どの手を打つか、あるいはどのキューブアクションを取るか。考えてから *SPACE* "
+"を押す（または隠された領域をクリックする）と答えが現れます：分析タブが示すのと同じ、そのポジションに記録された分析です。答えは評価ボタンの下に表示され、ボタンはそのままの位置で手の届くところに残ります。リストの手をクリックするとボード上に表示されます。"
 
 #: ../../source/manuel.rst:2117
 msgid ""
@@ -4248,6 +4249,7 @@ msgid ""
 msgstr "この 3 つはいずれも評価を記録しません。脇へ置いたカードは答えたカードではなく、セッションの集計にも入りません。"
 
 #: ../../source/manuel.rst:2171
+#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -4259,7 +4261,7 @@ msgid ""
 "savoir ce qu'il a été."
 msgstr ""
 "**復習の記録。** デッキの設定にある *復習の記録* ボタンは、スケジューラに何を **伝えたか** を示します — "
-"日時、対象（局面の番号、またはスコア）、評価、状態、与えられた間隔 — "
+"日時、局面、評価、状態、与えられた間隔 — "
 "これから何をする予定かではありません。誤って入れた評価が見えるのはここだけです。そこで直すことはできません。予定表は手の届かないところにあり、まさにその規則が記録を有用にしています。過去は書き換えられませんが、知ることはできます。"
 
 #: ../../source/manuel.rst:2180
@@ -4324,6 +4326,7 @@ msgid "Panneau Entraînement"
 msgstr "トレーニングパネル"
 
 #: ../../source/manuel.rst:2213
+#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
@@ -4332,10 +4335,9 @@ msgid ""
 "score relève des deux : elle se calcule ici et se retient dans un "
 ":ref:`paquet de fiches de score <panneau_anki>`."
 msgstr ""
-"**Anki** パネルは\\ **記憶する**\\ ものを復習させ、\\ **トレーニング**\\ パネルは時計の下で\\ **計算する**\\"
-" ものを鍛えます。``CTRL-J``、ツールバーの « Position aléatoire » の直後に置かれたボタン、またはコマンド "
-"``train`` で開きます。スコア表は両方にまたがります。ここで計算し、\\ :ref:`スコア表のデッキ <panneau_anki>`\\"
-" で記憶します。"
+"**Anki** "
+"パネルは**記憶する**ものを復習させ、**トレーニング**パネルは時計の下で**計算する**ものを鍛えます。``CTRL-J``、ツールバーの "
+"« Position aléatoire » の直後に置かれたボタン、またはコマンド ``train`` で開きます。"
 
 #: ../../source/manuel.rst:2220
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

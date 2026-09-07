@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:55+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -823,7 +823,31 @@ msgstr ""
 "μπάκγκαμον. Το Esc ανάμεσα στα δύο πλήκτρα ακυρώνει χωρίς να καταγραφεί "
 "τίποτε."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "ΑΡΙΣΤΕΡΑ, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Μετακίνηση του δρομέα μία ενέργεια πίσω στην καταγραφή."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "ΔΕΞΙΑ, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Μετακίνηση του δρομέα μία ενέργεια εμπρός."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Κλικ (σε ένα κελί)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Τοποθέτηση του δρομέα σε αυτήν την ενέργεια."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -831,7 +855,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -846,20 +870,37 @@ msgstr ""
 "επόμενης παρτίδας."
 
 #: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"Η καταγραφή καταλαμβάνει το δεξί μισό του πίνακα: μία στήλη ανά παίκτη, "
+"μία γραμμή ανά γύρο, η ενέργεια του κύβου και το τέλος της παρτίδας στη "
+"στήλη εκείνου που ενεργεί. Το κελί του δρομέα είναι πλαισιωμένο· η "
+"μετακίνηση του δρομέα επαναφέρει το ταμπλό στη θέση της ενέργειας που "
+"στοχεύεται και εμφανίζει τις υποψήφιες κινήσεις της, με επιλεγμένη την "
+"κίνηση που παίχτηκε. Μια ασυνέπεια (παράνομη κίνηση, διπλή σειρά, αδύνατη"
+" ενέργεια κύβου, ενέργεια μετά το τέλος του αγώνα, ασυνεπή ζάρια) "
+"διακοσμεί το κελί της και ονομάζεται σε επεξήγηση. Οι παρτίδες "
+"αναδιπλώνονται· εκείνη του δρομέα παραμένει ανοιχτή. Ένα αναπτυσσόμενο "
+"πλαίσιο δείχνει το ακριβές κείμενο ``.mat`` του προσχεδίου, με ένα κουμπί"
+" αντιγραφής."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "ΑΡΙΣΤΕΡΑ, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Προηγούμενη καρτέλα."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "ΔΕΞΙΑ, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

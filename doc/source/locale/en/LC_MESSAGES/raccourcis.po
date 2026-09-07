@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:55+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -810,7 +810,31 @@ msgstr ""
 "Give the game up for the side on roll: single, gammon or backgammon. "
 "Escape between the two keys cancels without recording anything."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LEFT, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Move the cursor back one action in the transcript."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RIGHT, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Move the cursor forward one action."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Click (on a cell)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Put the cursor on that action."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -818,7 +842,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -832,20 +856,35 @@ msgstr ""
 "the dice, and the opening of the next game is expected."
 
 #: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"The transcript takes the right half of the panel: one column per player, "
+"one row per turn, the cube action and the end of the game in the column "
+"of whoever acted. The cursor's cell is framed; moving the cursor brings "
+"the board back to the position of the action aimed at and lists its "
+"candidates, with the play that was recorded selected. An inconsistency "
+"(illegal move, double turn, impossible cube action, action past the end "
+"of the match, inconsistent dice) decorates its cell and is named in a "
+"tooltip. Games can be folded; the cursor's game is open. A collapsible "
+"pane shows the draft's exact ``.mat`` text, with a button to copy it."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "LEFT, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Previous tab."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "RIGHT, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:55+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -824,7 +824,31 @@ msgstr ""
 "Backgammon. Esc zwischen den beiden Tasten bricht ab, ohne etwas "
 "aufzuzeichnen."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LINKS, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Den Cursor im Transkript um eine Aktion zurücksetzen."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RECHTS, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Den Cursor um eine Aktion vorrücken."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Klick (auf eine Zelle)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Den Cursor auf diese Aktion setzen."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -832,7 +856,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -847,20 +871,36 @@ msgstr ""
 "Eröffnung der nächsten Partie wird erwartet."
 
 #: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je "
+"Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der "
+"Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der "
+"Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten "
+"Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine"
+" Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe,"
+" Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und "
+"wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie"
+" des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten "
+"``.mat``-Text des Entwurfs mit einer Schaltfläche zum Kopieren."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "LINKS, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Vorheriger Reiter."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "RECHTS, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

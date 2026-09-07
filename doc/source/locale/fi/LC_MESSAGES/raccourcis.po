@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:55+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -814,7 +814,31 @@ msgstr ""
 "Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai "
 "backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään."
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "VASEN, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "Siirrä kohdistinta yksi toiminto taaksepäin siirtoluettelossa."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "OIKEA, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "Siirrä kohdistinta yksi toiminto eteenpäin."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "Napsautus (solua)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "Vie kohdistin tähän toimintoon."
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -822,7 +846,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -836,20 +860,36 @@ msgstr ""
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
 #: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa "
+"kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen "
+"sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta "
+"siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää "
+"sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton "
+"siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen "
+"toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään "
+"työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. "
+"Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
+" sen kopioimiseen."
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "VASEN, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "Edellinen välilehti."
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "OIKEA, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

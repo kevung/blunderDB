@@ -1110,6 +1110,38 @@
             "inconsistent_dice": "mossa incoerente con il lancio"
         }
     },
+    "transcript": {
+        "title": "Trascrizione",
+        "game": "Partita {n}",
+        "turn": "Turno",
+        "crawford": "Crawford",
+        "player1": "Giocatore 1",
+        "player2": "Giocatore 2",
+        "opening": "Apertura {a}-{b}",
+        "openingTie": "Apertura {a}-{b}: si ritira",
+        "dance": "danza",
+        "doubles": "Raddoppia → {n}",
+        "takes": "Accetta",
+        "drops": "Rifiuta",
+        "resigns": "Abbandona ({level})",
+        "resignSingle": "semplice",
+        "resignGammon": "gammon",
+        "resignBackgammon": "backgammon",
+        "wins": "Vince {n} punti",
+        "winsOne": "Vince 1 punto",
+        "empty": "Nessuna azione per ora.",
+        "matPane": "Testo .mat",
+        "copy": "Copia",
+        "copied": "Copiato",
+        "flawed": "Incoerenza: {names}",
+        "inconsistency": {
+            "illegal_move": "mossa illegale",
+            "double_turn": "doppio turno",
+            "impossible_cube": "raddoppio impossibile",
+            "past_end": "oltre la fine",
+            "inconsistent_dice": "dadi incoerenti"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
         "boardSvgNotFound": "SVG del board non trovato",

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:55+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -789,13 +789,37 @@ msgid ""
 "backgammon. Esc entre les deux touches annule sans rien enregistrer."
 msgstr "手番の側がゲームを投了する。シングル、ギャモン、バックギャモン。二つのキーの間に Esc を押すと何も記録せずに取り消す。"
 
-#: ../../source/raccourcis.rst:295
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, h"
+msgstr "LEFT, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer le curseur d'une action dans le transcript."
+msgstr "棋譜内でカーソルを 1 アクション戻します。"
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, l"
+msgstr "RIGHT, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Avancer le curseur d'une action."
+msgstr "カーソルを 1 アクション進めます。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic (sur une cellule)"
+msgstr "クリック（セルの上で）"
+
+#: ../../source/raccourcis.rst:1
+msgid "Placer le curseur sur cette action."
+msgstr "そのアクションにカーソルを置きます。"
+
+#: ../../source/raccourcis.rst:298
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
 msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:301
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -805,20 +829,29 @@ msgid ""
 msgstr "ゲームはパス、レジグン、または十五個目のチェッカーのベアオフ（シングル、ギャモン、バックギャモンにキューブの値を掛ける）で終わる。得点、クロフォードゲーム、マッチの終了はダイスの上に表示され、次のゲームのオープニングが待たれる。"
 
 #: ../../source/raccourcis.rst:306
+msgid ""
+"Le transcript occupe la moitié droite du panneau : une colonne par "
+"joueur, une ligne par tour, l'action de videau et la fin de partie dans "
+"la colonne de celui qui agit. La cellule du curseur est encadrée ; "
+"déplacer le curseur ramène le plateau à la position de l'action visée et "
+"affiche ses candidats, le coup joué sélectionné. Une incohérence (coup "
+"illégal, double trait, videau impossible, action au-delà de la fin du "
+"match, dés incohérents) décore sa cellule et se nomme dans une info-"
+"bulle. Les parties se replient ; celle du curseur est ouverte. Un volet "
+"dépliable montre le texte ``.mat`` exact du brouillon, avec un bouton "
+"pour le copier."
+msgstr ""
+"棋譜はパネルの右半分を占めます。プレイヤーごとに 1 列、手番ごとに 1 行で、キューブの action "
+"とゲームの終了は、それを行った側の列に入ります。カーソルのセルは枠で囲まれます。カーソルを動かすと、盤面は対象アクションの局面に戻り、その候補手が表示され、実際に指された手が選択されます。不整合（不正な手、手番の重複、不可能なキューブ操作、試合終了後のアクション、ダイスの不一致）はセルを装飾し、ツールチップで名前が示されます。ゲームは折りたたむことができ、カーソルのあるゲームは開いたままです。展開できる欄にドラフトの正確な"
+" ``.mat`` テキストが表示され、コピーするボタンが付いています。"
+
+#: ../../source/raccourcis.rst:319
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE, h"
-msgstr "LEFT, h"
-
-#: ../../source/raccourcis.rst:1
 msgid "Onglet précédent."
 msgstr "前のタブ。"
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE, l"
-msgstr "RIGHT, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Onglet suivant."

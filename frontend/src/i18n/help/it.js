@@ -615,14 +615,12 @@ export default {
 <p>Le basi di bearoff sono tabelle matematiche immutabili. blunderDB le calcola da sé, identiche allo strumento <code>makebearoff</code> di GNUbg — byte per byte — nella scheda <em>Bearoff</em> della configurazione o con <code>blunderdb bearoff generate</code>.</p>
 </div>
 <h3>Pannello Anki</h3>
-<p>Il pannello <strong>Anki</strong> (<em>CTRL-K</em>) permette di studiare tramite ripetizione dilazionata, utilizzando l'algoritmo FSRS. Una carta pone una domanda: il più delle volte una posizione, tratta da una raccolta o da una ricerca; può anche essere un punteggio.</p>
+<p>Il pannello <strong>Anki</strong> (<em>CTRL-K</em>) permette di studiare le posizioni tramite ripetizione dilazionata utilizzando l'algoritmo FSRS. L'utente può creare mazzi a partire da raccolte o risultati di ricerca.</p>
 <p><strong>Creazione di mazzi:</strong> Cliccare su <em>New Deck</em> per creare un mazzo a partire da una raccolta o dai risultati di ricerca correnti. I mazzi basati su una ricerca si sincronizzano automaticamente all'apertura della scheda Anki.</p>
-<p><strong>Un mazzo di schede di punteggio.</strong> La terza sorgente, <em>Schede di punteggio</em>, non chiede altro che un nome: blunderDB riempie il mazzo con i 36 punteggi non ordinati da 2 a 9 away, e la carta di un punteggio è la scheda che l'esercizio Punteggi mostra — punti di presa e valori di gammon, entrambe le facce. Questo mazzo esiste solo se lo si crea: 36 carte in scadenza il primo giorno sono un debito di ripasso, e lo si contrae di proposito. Il pulsante di sincronizzazione lo rigenera.</p>
-<p>I due posti non fanno lo stesso lavoro. L'esercizio Punteggi fa ritrovare quei numeri <strong>sotto l'orologio</strong> e ne misura la velocità; il mazzo li fa <strong>durare nel tempo</strong> e non ne misura nulla. Le due storie restano separate: il registro dell'Allenamento ignora i ripassi di Anki, e le statistiche di Anki ignorano le sessioni di Allenamento.</p>
-<p><strong>Revisione:</strong> Selezionare un mazzo e poi cliccare su <em>Study</em> (oppure fare doppio clic su un mazzo) per iniziare la revisione delle carte in scadenza. Una carta di posizione mostra la posizione sul board; una carta di punteggio annuncia il punteggio e lascia il board com'è. Valutare il proprio richiamo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Bene) o <em>4</em> (Facile). Premere <em>Esc</em> per interrompere e tornare all'elenco dei mazzi.</p>
+<p><strong>Revisione:</strong> Selezionare un mazzo e poi cliccare su <em>Study</em> (oppure fare doppio clic su un mazzo) per iniziare la revisione delle carte in scadenza. Ogni carta mostra la posizione corrispondente sul board. Valutare il proprio richiamo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Bene) o <em>4</em> (Facile). Premere <em>Esc</em> per interrompere e tornare all'elenco dei mazzi.</p>
 <p><strong>Le decisioni di cubo fanno due carte, concatenate.</strong> Una decisione di cubo è due domande — «raddoppio?», poi «presa?» — e blunderDB le registra da sempre come due posizioni. Un mazzo che ne seleziona una sola metà riceve l'altra: la decisione è completata, non ampliata. E quando entrambe sono dovute, la seconda arriva <strong>immediatamente</strong> dopo la prima.</p>
 <p>Ciascuna conserva il proprio voto e il proprio calendario: non sono due tempi di una stessa carta, sono due carte. La concatenazione non anticipa alcuna scadenza — ordina le carte già dovute, nulla di più. Nascendo insieme, sono dovute insieme la prima volta, ed è lì che serve.</p>
-<p><strong>Mostrare la risposta:</strong> La carta pone una domanda — quale mossa giocare, quale azione di cubo, o quali numeri porta un punteggio. Riflettere, poi premere <em>SPAZIO</em> (o cliccare sulla zona nascosta) per svelare la risposta: l'analisi registrata della posizione, così come la presenta la scheda Analisi, oppure la scheda del punteggio, intera. Su una scheda non c'è nulla da spuntare: Anki pianifica una memoria, non misura un calcolo — gli errori li conta l'Allenamento. Appare sotto i pulsanti di valutazione, che restano al loro posto e a portata di mano. Cliccare su una mossa dell'elenco la mostra sul tavoliere.</p>
+<p><strong>Mostrare la risposta:</strong> La carta pone una domanda — quale mossa giocare, o quale azione di cubo. Riflettere, poi premere <em>SPAZIO</em> (o cliccare sulla zona nascosta) per svelare la risposta: l'analisi registrata della posizione, così come la presenta la scheda Analisi. Appare sotto i pulsanti di valutazione, che restano al loro posto e a portata di mano. Cliccare su una mossa dell'elenco la mostra sul tavoliere.</p>
 <p>Nulla obbliga a svelare la risposta per valutare: se si è sicuri, i tasti da <em>1</em> a <em>4</em> restano attivi. La risposta viene nascosta di nuovo alla carta successiva, ma non se si cambia semplicemente scheda — si vada pure a consultare il pannello Eval o il commento della posizione, la si ritroverà al ritorno.</p>
 <p>Una posizione priva di analisi registrata lo indica direttamente, senza zona nascosta.</p>
 <p><strong>Limitare la sessione.</strong> Per impostazione predefinita una sessione di ripasso arriva fino in fondo alle carte in scadenza. Puoi limitarla a un numero di carte, per mazzo, nelle Impostazioni: spunta <em>Limita la sessione</em> e indica quante carte deve servire una sessione. Quando il limite è raggiunto, la sessione si ferma dicendolo — il messaggio distingue «limite raggiunto, ancora tante carte in scadenza» da una coda davvero esaurita. Per continuare comunque c'è l'allenamento libero: propone altre posizioni senza modificare nulla della pianificazione.</p>
@@ -636,14 +634,14 @@ export default {
 <li><strong>Togliere</strong> — la carta lascia il mazzo, previa conferma. La posizione resta nella base: un mazzo è una lista di studio sulla biblioteca, mai una sua copia.</li>
 </ul>
 <p>Nessuno di questi tre gesti registra un voto: una carta messa da parte non è una carta risposta, e non conta nel totale della sessione.</p>
-<p><strong>Registro dei ripassi.</strong> Nelle Impostazioni di un mazzo, il pulsante <em>Registro dei ripassi</em> mostra ciò che è stato <strong>detto</strong> allo scheduler — data, argomento (il numero della posizione, o il punteggio), voto, stato, intervallo concesso — in contrasto con ciò che prevede. È l'unico posto dove si vede un voto inserito per errore. Lì non si corregge: il calendario resta fuori portata, e proprio questa regola rende utile il registro — il passato non si riscrive, ma si può conoscere.</p>
+<p><strong>Registro dei ripassi.</strong> Nelle Impostazioni di un mazzo, il pulsante <em>Registro dei ripassi</em> mostra ciò che è stato <strong>detto</strong> allo scheduler — data, posizione, voto, stato, intervallo concesso — in contrasto con ciò che prevede. È l'unico posto dove si vede un voto inserito per errore. Lì non si corregge: il calendario resta fuori portata, e proprio questa regola rende utile il registro — il passato non si riscrive, ma si può conoscere.</p>
 <p><strong>Interruzione/Ripresa:</strong> È possibile interrompere una sessione di revisione in qualsiasi momento con <em>Esc</em>. Il pulsante cambia in <em>Resume</em> e mostra la tua progressione. Cliccarci sopra per riprendere da dove ci si era fermati.</p>
 <p><strong>Gestione dei mazzi:</strong> Usare i pulsanti d'azione per rinominare, sincronizzare, reimpostare o eliminare i mazzi (viene chiesta conferma per queste ultime due azioni). I parametri FSRS (ritenzione obiettivo, intervallo massimo, casualità) si possono configurare per mazzo nelle Impostazioni (icona a ingranaggio).</p>
 <p><strong>Ritenzione: l'obiettivo e la misura.</strong> La <em>ritenzione obiettivo</em> è la tua scelta sul compromesso fra carico di lavoro e qualità del richiamo: più è alta, più gli intervalli si accorciano e più ripassi. Accanto, le Impostazioni mostrano la <strong>ritenzione misurata</strong> sui tuoi stessi ripassi — un'informazione, mai un comando: blunderDB non modifica il tuo obiettivo per inseguire il tuo tasso di successo. Sotto una ventina di ripassi la misura non viene mostrata: si leggerebbe come un fatto mentre è solo rumore.</p>
 <p>Cambiare la ritenzione <strong>non è retroattivo</strong>: ogni carta adotta il nuovo ritmo al ripasso successivo, e le scadenze già fissate non si spostano. L'effetto è quindi graduale, e invisibile il giorno stesso.</p>
 <p>L'<em>intervallo massimo</em> limita la spaziatura. Un mazzo creato di recente parte da un anno: una posizione che l'algoritmo rimanderebbe di diversi anni ha lasciato il mazzo senza che tu l'abbia deciso, e il tuo stesso gioco cambia più in fretta di così. I mazzi più vecchi conservano il valore che avevano.</p>
 <h3>Pannello Allenamento</h3>
-<p>Il pannello <strong>Anki</strong> fa ripassare ciò che si <strong>ricorda</strong>; il pannello <strong>Allenamento</strong> fa lavorare ciò che si <strong>calcola</strong>, sotto l'orologio. Si apre con <code>CTRL-J</code>, con il pulsante della barra degli strumenti posto subito dopo « Position aléatoire », oppure con il comando <code>train</code>. La scheda di punteggio appartiene a entrambi: qui si calcola e in un mazzo di schede di punteggio si ricorda.</p>
+<p>Il pannello <strong>Anki</strong> fa ripassare ciò che si <strong>ricorda</strong>; il pannello <strong>Allenamento</strong> fa lavorare ciò che si <strong>calcola</strong>, sotto l'orologio. Si apre con <code>CTRL-J</code>, con il pulsante della barra degli strumenti posto subito dopo « Position aléatoire », oppure con il comando <code>train</code>.</p>
 <p>A riposo, il pannello mostra l'avvio e il bilancio delle sessioni passate.</p>
 <h4>L'avvio</h4>
 <p>Tre scelte, poi « Démarrer »:</p>
@@ -1318,25 +1316,21 @@ export default {
 <td>Abbandonare l'inserimento in corso.</td>
 </tr>
 <tr>
-<td>d</td>
-<td>Raddoppiare o ri-raddoppiare: la mossa selezionata viene convalidata al passaggio, con un solo tasto.</td>
+<td>SINISTRA, h</td>
+<td>Arretrare il cursore di un'azione nella trascrizione.</td>
 </tr>
 <tr>
-<td>t</td>
-<td>Accettare il raddoppio proposto: il cubo passa a chi accetta al valore raddoppiato e chi ha raddoppiato torna a tirare.</td>
+<td>DESTRA, l</td>
+<td>Avanzare il cursore di un'azione.</td>
 </tr>
 <tr>
-<td>p</td>
-<td>Rifiutare il raddoppio proposto: la partita è vinta al valore che il cubo aveva prima del raddoppio.</td>
-</tr>
-<tr>
-<td>r poi 1, 2 o 3</td>
-<td>Abbandonare la partita per il lato di turno: semplice, gammon o backgammon. Esc fra i due tasti annulla senza registrare nulla.</td>
+<td>Clic (su una cella)</td>
+<td>Portare il cursore su questa azione.</td>
 </tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
-<p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
+<p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

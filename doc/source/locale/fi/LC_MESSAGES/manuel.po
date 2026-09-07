@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:40+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -4748,15 +4748,16 @@ msgid "Panneau Anki"
 msgstr "Anki-paneeli"
 
 #: ../../source/manuel.rst:2065
+#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
 "souvent une position, tirée d'une collection ou d'une recherche ; ce peut"
 " aussi être un score."
 msgstr ""
-"**Anki-paneeli** (*CTRL-K*) mahdollistaa opiskelun välitoistolla FSRS-"
-"algoritmia käyttäen. Kortti esittää yhden kysymyksen: useimmiten aseman, "
-"joka on peräisin kokoelmasta tai hausta; se voi olla myös pistetilanne."
+"**Anki-paneeli** (*CTRL-K*) mahdollistaa asemien opiskelun välitoistolla "
+"FSRS-algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai "
+"hakutuloksista."
 
 #: ../../source/manuel.rst:2070
 msgid ""
@@ -4804,6 +4805,7 @@ msgstr ""
 " tilastot näe harjoitteluistuntoja."
 
 #: ../../source/manuel.rst:2088
+#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4814,11 +4816,10 @@ msgid ""
 "paquets."
 msgstr ""
 "**Kertaaminen:** Valitse pakka ja napsauta *Study* (tai kaksoisnapsauta "
-"pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Asemakortti "
-"näyttää aseman laudalla; tilannekortti ilmoittaa tilanteen ja jättää "
-"laudan ennalleen. Arvioi muistamisesi näppäimillä *1* (Uudelleen), *2* "
-"(Vaikea), *3* (Hyvä) tai *4* (Helppo). Paina *Esc* lopettaaksesi ja "
-"palataksesi pakkaluetteloon."
+"pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti"
+" näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä *1* "
+"(Uudelleen), *2* (Vaikea), *3* (Hyvä) tai *4* (Helppo). Paina *Esc* "
+"lopettaaksesi ja palataksesi pakkaluetteloon."
 
 #: ../../source/manuel.rst:2095
 msgid ""
@@ -4850,6 +4851,7 @@ msgstr ""
 " siinä siitä on hyötyä."
 
 #: ../../source/manuel.rst:2107
+#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -4862,14 +4864,12 @@ msgid ""
 "un coup de la liste le montre sur le plateau."
 msgstr ""
 "**Vastauksen näyttäminen:** Kortti esittää kysymyksen — mikä siirto "
-"pelataan, mikä kuutiotoimi tehdään, tai mitä lukuja tilanne kantaa. "
-"Mieti, ja paina sitten *VÄLILYÖNTI* (tai napsauta peitettyä aluetta) "
-"paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin "
-"Analyysi-välilehti sen esittää, tai tilanteen taulukon kokonaan. "
-"Taulukossa ei ole mitään rastitettavaa: Anki aikatauluttaa muistin, se ei"
-" mittaa laskutoimitusta — virheet laskee Harjoittelu. Se ilmestyy "
-"arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. "
-"Listan siirron napsauttaminen näyttää sen laudalla."
+"pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten "
+"*VÄLILYÖNTI* (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: "
+"aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen "
+"esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät "
+"paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen "
+"laudalla."
 
 #: ../../source/manuel.rst:2117
 msgid ""
@@ -5009,6 +5009,7 @@ msgstr ""
 "ole vastattu kortti, eikä se lasketa istunnon summaan."
 
 #: ../../source/manuel.rst:2171
+#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -5020,12 +5021,11 @@ msgid ""
 "savoir ce qu'il a été."
 msgstr ""
 "**Kertausloki.** Pakan asetuksissa *Kertausloki*-painike näyttää, mitä "
-"ajoittajalle **kerrottiin** — päivä, aihe (aseman numero tai tilanne), "
-"arvosana, tila, myönnetty väli — vastakohtana sille, mitä se "
-"suunnittelee. Vain täällä näkee vahingossa annetun arvosanan. Siellä sitä"
-" ei voi korjata: aikataulu pysyy ulottumattomissa, ja juuri se sääntö "
-"tekee lokista hyödyllisen — menneisyyttä ei voi kirjoittaa uusiksi, mutta"
-" sen voi tietää."
+"ajoittajalle **kerrottiin** — päivä, asema, arvosana, tila, myönnetty "
+"väli — vastakohtana sille, mitä se suunnittelee. Vain täällä näkee "
+"vahingossa annetun arvosanan. Siellä sitä ei voi korjata: aikataulu pysyy"
+" ulottumattomissa, ja juuri se sääntö tekee lokista hyödyllisen — "
+"menneisyyttä ei voi kirjoittaa uusiksi, mutta sen voi tietää."
 
 #: ../../source/manuel.rst:2180
 msgid ""
@@ -5098,6 +5098,7 @@ msgid "Panneau Entraînement"
 msgstr "Harjoittelu-paneeli"
 
 #: ../../source/manuel.rst:2213
+#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
@@ -5109,9 +5110,7 @@ msgstr ""
 "**Anki**-paneeli kertaa sitä, mikä **muistetaan**; "
 "**Harjoittelu**-paneeli harjoittaa sitä, mikä **lasketaan**, kellon "
 "käydessä. Se avautuu näppäimillä ``CTRL-J``, työkalupalkin painikkeesta "
-"heti kohdan « Position aléatoire » jälkeen tai komennolla ``train``. "
-"Tilannetaulukko kuuluu molempiin: täällä se lasketaan ja "
-":ref:`tilannekorttien pakassa <panneau_anki>` se muistetaan."
+"heti kohdan « Position aléatoire » jälkeen tai komennolla ``train``."
 
 #: ../../source/manuel.rst:2220
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."

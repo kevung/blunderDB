@@ -1110,6 +1110,38 @@
             "inconsistent_dice": "ход не соответствует броску"
         }
     },
+    "transcript": {
+        "title": "Запись",
+        "game": "Партия {n}",
+        "turn": "Ход",
+        "crawford": "Кроуфорд",
+        "player1": "Игрок 1",
+        "player2": "Игрок 2",
+        "opening": "Открытие {a}-{b}",
+        "openingTie": "Открытие {a}-{b}: переброс",
+        "dance": "нет хода",
+        "doubles": "Удваивает → {n}",
+        "takes": "Принимает",
+        "drops": "Пасует",
+        "resigns": "Сдаётся ({level})",
+        "resignSingle": "обычная",
+        "resignGammon": "гаммон",
+        "resignBackgammon": "бэкгаммон",
+        "wins": "Выигрывает {n} очк.",
+        "winsOne": "Выигрывает 1 очко",
+        "empty": "Пока нет действий.",
+        "matPane": "Текст .mat",
+        "copy": "Копировать",
+        "copied": "Скопировано",
+        "flawed": "Несогласованность: {names}",
+        "inconsistency": {
+            "illegal_move": "недопустимый ход",
+            "double_turn": "двойной ход",
+            "impossible_cube": "невозможное действие с кубом",
+            "past_end": "после конца матча",
+            "inconsistent_dice": "несогласованные кости"
+        }
+    },
     "status": {
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
         "boardSvgNotFound": "SVG доски не найден",

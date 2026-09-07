@@ -86,7 +86,9 @@ export const COMMAND = Object.freeze({
     DOUBLE: 'double',
     TAKE: 'take',
     PASS: 'pass',
-    RESIGN: 'resign'
+    RESIGN: 'resign',
+    CURSOR_BACK: 'cursor_back',
+    CURSOR_FORWARD: 'cursor_forward'
 });
 
 /** Les sortes d'Action dont la saisie passe par deux dés. */
@@ -129,6 +131,36 @@ export function dieOf(event) {
     return m ? Number(m[1]) : 0;
 }
 
+/**
+ * +1 (Action suivante), −1 (précédente), 0 sinon : `h`/`l` et gauche/droite.
+ *
+ * Le Cursor est une CELLULE du Transcript et les deux colonnes sont les deux
+ * camps : le déplacer d'une Action, c'est passer d'une cellule à l'autre, donc
+ * d'un camp à l'autre. D'où l'axe horizontal, quand `j`/`k` gardent le vertical
+ * pour la liste des candidats (ux.md §3).
+ */
+export function cursorDelta(event) {
+    if (isBareLetter(event, 'h') || event.key === 'ArrowLeft') return -1;
+    if (isBareLetter(event, 'l') || event.key === 'ArrowRight') return 1;
+    return 0;
+}
+
+/**
+ * Les gestes qui mènent le Cursor de `from` à `to` — ce qu'un clic sur une
+ * cellule du Transcript demande. Le moteur ne connaît que « recule » et
+ * « avance » (`cursor_back`/`cursor_forward` d'apply.go), qui rechargent
+ * l'Action visée : un saut est donc la répétition du pas, et non un geste de
+ * plus à écrire côté Go pour la souris seule.
+ *
+ * @param {number} from
+ * @param {number} to
+ * @returns {{kind: string}[]}
+ */
+export function cursorCommands(from, to) {
+    const kind = to < from ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD;
+    return Array.from({ length: Math.abs(to - from) }, () => ({ kind }));
+}
+
 /** +1 (candidat suivant), −1 (précédent), 0 sinon : `j`/`k` et bas/haut. */
 export function selectionDelta(event) {
     if (isBareLetter(event, 'j') || event.key === 'ArrowDown') return 1;
@@ -157,6 +189,22 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     // chiffres SONT des niveaux et non des dés, et rien d'autre ne doit passer
     // entre `r` et la touche qui la termine.
     if (state.phase === PHASE.RESIGN) return resignLevel(state, event);
+
+    // Le Cursor se déplace depuis tout état de saisie ordinaire (ux.md §3,
+    // ligne « tout ») : c'est le geste de la relecture, et il doit marcher
+    // pendant une saisie de dés comme devant une réponse au videau. Il rend la
+    // machine à son état initial — le panneau la réarme sur l'Action visée.
+    //
+    // Il est lu APRÈS la phase de résignation : celle-ci est un état modal
+    // bref, entre `r` et le chiffre du niveau, où rien d'autre ne doit passer.
+    const step = cursorDelta(event);
+    if (step !== 0) {
+        return {
+            handled: true,
+            state: initialKeyState(),
+            commands: [{ kind: step < 0 ? COMMAND.CURSOR_BACK : COMMAND.CURSOR_FORWARD }]
+        };
+    }
 
     // `r` ouvre l'attente du niveau depuis n'importe quel état, et l'état
     // d'avant est mis de côté : `Échap` le rend intact, la résignation

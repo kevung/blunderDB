@@ -615,14 +615,12 @@ export default {
 <p>Bearoff-tietokannat ovat muuttumattomia matemaattisia taulukoita. blunderDB laskee ne itse, samoin kuin GNUbg:n <code>makebearoff</code>-työkalu — tavu tavulta — asetusten <em>Bearoff</em>-välilehdellä tai komennolla <code>blunderdb bearoff generate</code>.</p>
 </div>
 <h3>Anki-paneeli</h3>
-<p><strong>Anki-paneeli</strong> (<em>CTRL-K</em>) mahdollistaa opiskelun välitoistolla FSRS-algoritmia käyttäen. Kortti esittää yhden kysymyksen: useimmiten aseman, joka on peräisin kokoelmasta tai hausta; se voi olla myös pistetilanne.</p>
+<p><strong>Anki-paneeli</strong> (<em>CTRL-K</em>) mahdollistaa asemien opiskelun välitoistolla FSRS-algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai hakutuloksista.</p>
 <p><strong>Pakkojen luominen:</strong> Napsauta <em>New Deck</em> luodaksesi pakan kokoelmasta tai nykyisistä hakutuloksista. Hakuun perustuvat pakat synkronoituvat automaattisesti, kun Anki-välilehti avataan.</p>
-<p><strong>Tilannekorttien pakka.</strong> Kolmas lähde, <em>Tilannekortit</em>, ei pyydä muuta kuin nimen: blunderDB täyttää pakan 36:lla järjestämättömällä tilanteella väliltä 2–9 away, ja tilanteen kortti on sama taulukko, jonka Tilanteet-harjoitus näyttää — hyväksymispisteet ja gammon-arvot, molemmat puolet. Tämä pakka on olemassa vain, jos luot sen: 36 ensimmäisenä päivänä erääntyvää korttia on kertausvelkaa, ja se otetaan tietoisesti. Synkronointipainike luo pakan uudelleen.</p>
-<p>Nämä kaksi paikkaa eivät tee samaa työtä. Tilanteet-harjoitus panee palauttamaan nämä luvut <strong>kellon käydessä</strong> ja mittaa nopeuden; pakka panee ne <strong>kestämään ajassa</strong> eikä mittaa siitä mitään. Kaksi tarinaa pysyvät erillään: Harjoittelun loki ei näe Anki-kertauksia, eivätkä Ankin tilastot näe harjoitteluistuntoja.</p>
-<p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Asemakortti näyttää aseman laudalla; tilannekortti ilmoittaa tilanteen ja jättää laudan ennalleen. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
+<p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
 <p><strong>Kuutiopäätöksistä tulee kaksi korttia, ketjutettuina.</strong> Kuutiopäätös on kaksi kysymystä — ”tuplaus?”, sitten ”hyväksy?” — ja blunderDB on aina tallentanut ne kahtena asemana. Pakka, joka valitsee vain toisen puolikkaan, saa toisenkin: päätös täydennetään, ei laajenneta. Ja kun molemmat ovat vuorossa, toinen tulee <strong>heti</strong> ensimmäisen jälkeen.</p>
 <p>Kumpikin säilyttää oman arvosanansa ja oman aikataulunsa: nämä eivät ole yhden kortin kaksi vaihetta, vaan kaksi korttia. Ketjutus ei aikaista mitään eräpäivää — se järjestää jo erääntyneet kortit, ei muuta. Koska ne syntyvät yhdessä, ne erääntyvät yhdessä ensimmäisellä kerralla, ja juuri siinä siitä on hyötyä.</p>
-<p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan, mikä kuutiotoimi tehdään, tai mitä lukuja tilanne kantaa. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää, tai tilanteen taulukon kokonaan. Taulukossa ei ole mitään rastitettavaa: Anki aikatauluttaa muistin, se ei mittaa laskutoimitusta — virheet laskee Harjoittelu. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
+<p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
 <p>Mikään ei pakota paljastamaan vastausta arviointia varten: jos olet varma, näppäimet *1*–*4* pysyvät käytössä. Vastaus peittyy uudelleen seuraavan kortin kohdalla, mutta ei silloin, kun vain vaihdat välilehteä — käy katsomassa Eval-paneelia tai aseman kommenttia, vastaus odottaa palatessasi.</p>
 <p>Asema, jolla ei ole tallennettua analyysiä, ilmoittaa sen suoraan ilman peitettyä aluetta.</p>
 <p><strong>Istunnon rajaaminen.</strong> Oletuksena kertausistunto käy läpi kaikki erääntyneet kortit. Voit rajata sen korttimäärään pakkakohtaisesti Asetuksissa: rastita <em>Rajaa istunto</em> ja ilmoita, montako korttia istunnon tulee tarjota. Kun raja täyttyy, istunto päättyy ja kertoo siitä — viesti erottaa tilanteen ”raja täynnä, näin monta korttia yhä erääntyneenä” aidosti tyhjästä jonosta. Jos haluat silti jatkaa, vapaa harjoittelu on olemassa: se tarjoaa muita asemia muuttamatta aikataulusta mitään.</p>
@@ -636,14 +634,14 @@ export default {
 <li><strong>Poista</strong> — kortti lähtee pakasta vahvistuksen jälkeen. Asema itse jää tietokantaan: pakka on opiskelulista kirjaston yli, ei koskaan sen kopio.</li>
 </ul>
 <p>Mikään näistä kolmesta ei kirjaa arvosanaa: syrjään siirretty kortti ei ole vastattu kortti, eikä se lasketa istunnon summaan.</p>
-<p><strong>Kertausloki.</strong> Pakan asetuksissa <em>Kertausloki</em>-painike näyttää, mitä ajoittajalle <strong>kerrottiin</strong> — päivä, aihe (aseman numero tai tilanne), arvosana, tila, myönnetty väli — vastakohtana sille, mitä se suunnittelee. Vain täällä näkee vahingossa annetun arvosanan. Siellä sitä ei voi korjata: aikataulu pysyy ulottumattomissa, ja juuri se sääntö tekee lokista hyödyllisen — menneisyyttä ei voi kirjoittaa uusiksi, mutta sen voi tietää.</p>
+<p><strong>Kertausloki.</strong> Pakan asetuksissa <em>Kertausloki</em>-painike näyttää, mitä ajoittajalle <strong>kerrottiin</strong> — päivä, asema, arvosana, tila, myönnetty väli — vastakohtana sille, mitä se suunnittelee. Vain täällä näkee vahingossa annetun arvosanan. Siellä sitä ei voi korjata: aikataulu pysyy ulottumattomissa, ja juuri se sääntö tekee lokista hyödyllisen — menneisyyttä ei voi kirjoittaa uusiksi, mutta sen voi tietää.</p>
 <p><strong>Keskeytys/Jatkaminen:</strong> Voit keskeyttää kertausistunnon milloin tahansa näppäimellä <em>Esc</em>. Painike muuttuu muotoon <em>Resume</em> ja näyttää edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit.</p>
 <p><strong>Pakkojen hallinta:</strong> Toimintopainikkeilla voi nimetä uudelleen, synkronoida, nollata tai poistaa pakkoja (kahdesta viimeksi mainitusta pyydetään vahvistus). FSRS-parametrit (tavoitepysyvyys, enimmäisväli, satunnaisuus) asetetaan pakkakohtaisesti Asetuksissa (rattikuvake).</p>
 <p><strong>Pysyvyys: tavoite ja mittaus.</strong> <em>Tavoitepysyvyys</em> on sinun valintasi työmäärän ja mieleenpalautuksen laadun välisessä vaihtokaupassa: mitä korkeampi se on, sitä lyhyemmiksi välit käyvät ja sitä enemmän kertaat. Sen rinnalla Asetukset näyttävät <strong>mitatun pysyvyyden</strong> omista kertauksistasi — tieto, ei koskaan ohjaus: blunderDB ei muuta tavoitettasi jahdatakseen onnistumisprosenttiasi. Alle parinkymmenen kertauksen mittausta ei näytetä: se luettaisiin tosiasiaksi, vaikka se on pelkkää kohinaa.</p>
 <p>Pysyvyyden muuttaminen <strong>ei vaikuta taannehtivasti</strong>: kukin kortti omaksuu uuden tahdin seuraavassa kertauksessaan, eivätkä jo asetetut eräpäivät siirry. Vaikutus on siis vähittäinen eikä näy samana päivänä.</p>
 <p><em>Enimmäisväli</em> rajaa välistyksen. Äskettäin luotu pakka lähtee vuodesta: asema, jonka algoritmi siirtäisi useiden vuosien päähän, on poistunut pakasta ilman että olet niin päättänyt, ja oma pelisi muuttuu sitä nopeammin. Vanhemmat pakat säilyttävät sen arvon, joka niillä oli.</p>
 <h3>Harjoittelu-paneeli</h3>
-<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code>CTRL-J</code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code>train</code>. Tilannetaulukko kuuluu molempiin: täällä se lasketaan ja tilannekorttien pakassa se muistetaan.</p>
+<p><strong>Anki</strong>-paneeli kertaa sitä, mikä <strong>muistetaan</strong>; <strong>Harjoittelu</strong>-paneeli harjoittaa sitä, mikä <strong>lasketaan</strong>, kellon käydessä. Se avautuu näppäimillä <code>CTRL-J</code>, työkalupalkin painikkeesta heti kohdan « Position aléatoire » jälkeen tai komennolla <code>train</code>.</p>
 <p>Levossa paneeli näyttää aloittimen ja aiempien istuntojen yhteenvedon.</p>
 <h4>Aloitin</h4>
 <p>Kolme valintaa, sitten « Démarrer »:</p>
@@ -1318,25 +1316,21 @@ export default {
 <td>Hylkää kesken oleva syöttö.</td>
 </tr>
 <tr>
-<td>d</td>
-<td>Tuplaa tai uudelleentuplaa: valittu siirto vahvistetaan samalla, yhdellä ainoalla näppäimellä.</td>
+<td>VASEN, h</td>
+<td>Siirrä kohdistinta yksi toiminto taaksepäin siirtoluettelossa.</td>
 </tr>
 <tr>
-<td>t</td>
-<td>Ota tarjottu tuplaus: kuutio siirtyy ottajalle kaksinkertaiseen arvoon ja tuplaaja heittää uudelleen.</td>
+<td>OIKEA, l</td>
+<td>Siirrä kohdistinta yksi toiminto eteenpäin.</td>
 </tr>
 <tr>
-<td>p</td>
-<td>Luovuta tarjotun tuplauksen edessä: peli voitetaan sillä arvolla, joka kuutiolla oli ennen tuplausta.</td>
-</tr>
-<tr>
-<td>r ja sitten 1, 2 tai 3</td>
-<td>Luovuta peli vuorossa olevan puolesta: yksinkertainen, gammon tai backgammon. Esc näppäinten välissä peruuttaa tallentamatta mitään.</td>
+<td>Napsautus (solua)</td>
+<td>Vie kohdistin tähän toimintoon.</td>
 </tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
-<p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
+<p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

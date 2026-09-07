@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 04:40+0200\n"
+"POT-Creation-Date: 2026-09-07 05:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -4813,16 +4813,16 @@ msgid "Panneau Anki"
 msgstr "Panel Anki"
 
 #: ../../source/manuel.rst:2065
+#, fuzzy
 msgid ""
 "Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, "
 "en utilisant l'algorithme FSRS. Une carte pose une question : le plus "
 "souvent une position, tirée d'une collection ou d'une recherche ; ce peut"
 " aussi être un score."
 msgstr ""
-"El panel **Anki** (*CTRL-K*) permite estudiar mediante repetición "
-"espaciada, utilizando el algoritmo FSRS. Una carta plantea una pregunta: "
-"casi siempre una posición, tomada de una colección o de una búsqueda; "
-"también puede ser un marcador."
+"El panel **Anki** (*CTRL-K*) permite estudiar posiciones mediante "
+"repetición espaciada utilizando el algoritmo FSRS. El usuario puede crear"
+" mazos a partir de colecciones o de resultados de búsqueda."
 
 #: ../../source/manuel.rst:2070
 msgid ""
@@ -4872,6 +4872,7 @@ msgstr ""
 "Anki, y las estadísticas de Anki ignoran las sesiones de Entrenamiento."
 
 #: ../../source/manuel.rst:2088
+#, fuzzy
 msgid ""
 "**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
 "double-cliquez sur un paquet) pour commencer la révision des cartes dues."
@@ -4882,11 +4883,10 @@ msgid ""
 "paquets."
 msgstr ""
 "**Repaso:** Seleccione un mazo y luego haga clic en *Study* (o haga doble"
-" clic en un mazo) para empezar a repasar las cartas pendientes. Una carta"
-" de posición muestra la posición en el tablero; una carta de marcador "
-"anuncia el marcador y deja el tablero tal como está. Evalúe su recuerdo "
-"con las teclas *1* (Repetir), *2* (Difícil), *3* (Bien) o *4* (Fácil). "
-"Pulse *Esc* para detenerse y volver a la lista de mazos."
+" clic en un mazo) para empezar a repasar las cartas pendientes. Cada "
+"carta muestra la posición correspondiente en el tablero. Evalúe su "
+"recuerdo con las teclas *1* (Repetir), *2* (Difícil), *3* (Bien) o *4* "
+"(Fácil). Pulse *Esc* para detenerse y volver a la lista de mazos."
 
 #: ../../source/manuel.rst:2095
 msgid ""
@@ -4917,6 +4917,7 @@ msgstr ""
 "nacen juntas, vencen juntas la primera vez, y ahí es donde sirve."
 
 #: ../../source/manuel.rst:2107
+#, fuzzy
 msgid ""
 "**Afficher la réponse :** La carte pose une question — quel coup jouer, "
 "quelle action de videau, ou quels nombres porte un score. Réfléchissez, "
@@ -4929,14 +4930,11 @@ msgid ""
 "un coup de la liste le montre sur le plateau."
 msgstr ""
 "**Mostrar la respuesta:** La carta plantea una pregunta — qué jugada "
-"jugar, qué acción de cubo, o qué números lleva un marcador. Reflexione y "
-"luego pulse *ESPACIO* (o haga clic en la zona oculta) para desvelar la "
-"respuesta: el análisis registrado de la posición, tal como lo presenta la"
-" pestaña Análisis, o la ficha del marcador, entera. En una ficha no hay "
-"nada que marcar: Anki planifica una memoria, no mide un cálculo — las "
-"faltas las cuenta el Entrenamiento. Aparece bajo los botones de "
-"evaluación, que permanecen en su sitio y al alcance. Hacer clic en una "
-"jugada de la lista la muestra en el tablero."
+"jugar, o qué acción de cubo. Reflexione y luego pulse *ESPACIO* (o haga "
+"clic en la zona oculta) para desvelar la respuesta: el análisis "
+"registrado de la posición, tal como lo presenta la pestaña Análisis. "
+"Aparece bajo los botones de evaluación, que permanecen en su sitio y al "
+"alcance. Hacer clic en una jugada de la lista la muestra en el tablero."
 
 #: ../../source/manuel.rst:2117
 msgid ""
@@ -5077,6 +5075,7 @@ msgstr ""
 "es una tarjeta respondida, y no cuenta en el total de la sesión."
 
 #: ../../source/manuel.rst:2171
+#, fuzzy
 msgid ""
 "**Journal des révisions.** Dans les Paramètres d'un paquet, le bouton "
 "*Journal des révisions* montre ce que le planificateur a été **dit** — "
@@ -5088,12 +5087,12 @@ msgid ""
 "savoir ce qu'il a été."
 msgstr ""
 "**Registro de repasos.** En los Ajustes de un mazo, el botón *Registro de"
-" repasos* muestra lo que se le **dijo** al planificador — fecha, tema (el"
-" número de la posición, o el marcador), nota, estado, intervalo concedido"
-" — frente a lo que planea. Es el único sitio donde se ve una nota "
-"introducida por error. Allí no se corrige: la programación queda fuera de"
-" alcance, y esa regla es justamente lo que hace útil el registro — el "
-"pasado no se reescribe, pero se puede conocer."
+" repasos* muestra lo que se le **dijo** al planificador — fecha, "
+"posición, nota, estado, intervalo concedido — frente a lo que planea. Es "
+"el único sitio donde se ve una nota introducida por error. Allí no se "
+"corrige: la programación queda fuera de alcance, y esa regla es "
+"justamente lo que hace útil el registro — el pasado no se reescribe, pero"
+" se puede conocer."
 
 #: ../../source/manuel.rst:2180
 msgid ""
@@ -5168,6 +5167,7 @@ msgid "Panneau Entraînement"
 msgstr "Panel Entrenamiento"
 
 #: ../../source/manuel.rst:2213
+#, fuzzy
 msgid ""
 "Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau "
 "**Entraînement** fait travailler ce qui se **calcule**, sous la pendule. "
@@ -5179,9 +5179,7 @@ msgstr ""
 "El panel **Anki** repasa lo que se **retiene**; el panel "
 "**Entrenamiento** ejercita lo que se **calcula**, contra el reloj. Se "
 "abre con ``CTRL-J``, con el botón de la barra de herramientas situado "
-"justo después de « Position aléatoire », o con la orden ``train``. La "
-"ficha de marcador pertenece a los dos: aquí se calcula y en un :ref:`mazo"
-" de fichas de marcador <panneau_anki>` se retiene."
+"justo después de « Position aléatoire », o con la orden ``train``."
 
 #: ../../source/manuel.rst:2220
 msgid "Au repos, le panneau montre le lanceur et le bilan des sessions passées."
