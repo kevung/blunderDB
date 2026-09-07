@@ -347,7 +347,7 @@
         <span class="state">{$t(`direction.state.${state}`)}</span>
         <nav>
             {#each tabs as item (item.id)}
-                <button type="button" class:active={tab === item.id} onclick={() => (tab = item.id)}>{$t(item.labelKey)}</button>
+                <button type="button" data-testid="direction-tab-{item.id}" class:active={tab === item.id} onclick={() => (tab = item.id)}>{$t(item.labelKey)}</button>
             {/each}
         </nav>
         <span class="spacer"></span>
@@ -367,7 +367,7 @@
         {#if tab === 'settings'}
             <DirectionSettings
                 bind:config
-                {state}
+                directionState={state}
                 tournamentName={view?.config?.name || ''}
                 entrantCount={view?.players?.length || 0}
                 onApply={apply}
