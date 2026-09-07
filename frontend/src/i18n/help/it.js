@@ -205,8 +205,6 @@ export default {
 </div>
 <p>Il comando <code>like</code> risponde a una domanda diversa da quella dei token: sostituisce la lista percorsa con le posizioni più <strong>vicine</strong> a quella corrente, dalla più vicina alla più lontana. La vicinanza è una distanza di trasporto, espressa in pip di pedina — la quantità di movimento di pedine che separa le due posizioni — e il punto di vista è sempre quello del giocatore di turno. Non è un filtro: la somiglianza <strong>ordina</strong> l'intera biblioteca invece di restringerla, e quindi non si combina con i token.</p>
 <p>Il token <code>n</code> conta gli <strong>incontri</strong>: <code>n&gt;3</code> tiene le posizioni a cui arrivano più di tre mosse, in tutti gli incontri. È un'altra domanda rispetto a «cosa ho sbagliato» — una posizione incontrata venti volte e giocata bene diciannove resta quella da sapere a memoria. Si contano le mosse, non gli incontri: la stessa posizione due volte in un incontro conta due, perché erano due decisioni.</p>
-<p>Una frase a parole può sostituire i token, con il comando <code>ask</code>: <code>ask my cube blunders at a score</code>. La frase è <strong>tradotta in token</strong>, scritti nella barra dei comandi — si rileggono, poi si lancia. Nulla è indovinato e nulla lascia la macchina: il vocabolario è fisso, la stessa frase dà sempre la stessa interrogazione, e ciò che non è stato compreso viene <strong>detto</strong> anziché passato sotto silenzio. Una traduzione sbagliata si vede così prima di restituire risultati sbagliati, e i token si imparano leggendoli.</p>
-<p>Due intenzioni non sono token e si pongono sulla tavola di ricerca anziché nella riga: «cubo» o «pedine» (il tipo di decisione) e «al punteggio» o «money». <code>ask</code> le pone lì.</p>
 <p>Il <strong>piano di gioco</strong> è una seconda etichetta derivata, accanto alla fase, e risponde alla domanda che un pacchetto di filtri salvati non sa porre: «mostrami i miei errori in holding game». Token <code>gt:</code>, ripetibile (<code>gt:holding gt:mutualholding</code>), dal punto di vista del <strong>giocatore di turno</strong> — il piano in cui la decisione veniva presa.</p>
 <p>I dieci piani riconosciuti, nell'ordine in cui le regole li esauriscono, dal più specifico al più generale:</p>
 <ul>
@@ -550,6 +548,7 @@ export default {
 <h4>Matrice del cubo</h4>
 <p>Una decisione di cubo non è una proprietà della dama. Le stesse pedine, lo stesso conteggio dei pip, si raddoppiano a 2-away/4-away e non si raddoppiano a 4-away/2-away; chi ha imparato la risposta money ha imparato una sola casella di una griglia. Il pannello Eval mostra la casella che la posizione porta; la <strong>matrice del cubo</strong> mostra l'intera griglia.</p>
 <p>Il comando <code>cm</code> la apre sulla posizione visualizzata. Ogni casella dà il verdetto a un punteggio: la riga è il numero di punti che restano da fare al giocatore di turno, la colonna quelli dell'avversario. I quattro verdetti si scrivono <em>ND</em> (niente raddoppio), <em>DP</em> (raddoppio, presa), <em>DR</em> (raddoppio, rifiuto) e <em>TB</em> (troppo buono); una casella rifiutata dal motore porta un punto interrogativo e spiega perché al passaggio del mouse, che dà anche le tre equità della casella. Sono proposte tre lunghezze di incontro: 5, 7 e 9 punti.</p>
+<p>La casella del punteggio che la posizione porta davvero è incorniciata, e le sue intestazioni di riga e di colonna sottolineate: la lettura parte da lì, «la mia casella, e ciò che la circonda». Lo è non appena i due punteggi <em>away</em> della posizione entrano nella griglia mostrata; cambiare lunghezza la sposta o la toglie. Una posizione money, la partita Crawford o un <em>away</em> oltre la griglia non ne indicano alcuna: non c'è casella da mostrare, e mostrarne una approssimativa sarebbe falso.</p>
 <p>Il punteggio della posizione è sostituito da quello di ogni casella; il suo <strong>cubo</strong> è conservato. La griglia risponde a quale punteggio girerei <em>questo</em> cubo, non a ciò che farebbe una posizione centrata. È post-Crawford da un capo all'altro: durante la partita Crawford il cubo non è in gioco, e una colonna di «non potete raddoppiare» non direbbe nulla sulla posizione.</p>
 <p>Ogni casella è una ricerca a sé. Il motore tiene conto del punteggio — non gioca la stessa partita a 2-away e a 7-away — quindi una sola ricerca riletta attraverso equità di incontro diverse sarebbe falsa esattamente dove il punteggio conta. La griglia arriva prima in 0-ply, poi si ricalcola alla profondità di visualizzazione configurata una volta che la finestra è a riposo: la stessa escalation del resto del pannello, per una griglia da 9 punti che costa circa un secondo e mezzo.</p>
 <p>La stessa griglia si calcola fuori dall'interfaccia, con il comando cubematrix della riga di comando.</p>
@@ -1362,10 +1361,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Apre il registro attività: le ultime duecento righe del file di log, con il necessario per copiarle in un rapporto o aprire la cartella che le contiene.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Traduce una frase a parole — francese o inglese — in token di ricerca: <code>ask my cube blunders at a score</code>. I token vengono scritti nella barra dei comandi, non eseguiti: si rileggono, poi Invio. Ciò che non è stato compreso viene detto, mai indovinato.</td>
 </tr>
 <tr>
 <td>like</td>

@@ -210,10 +210,19 @@ nombre de rencontres (chaîne `move → game → match`) ; dans Stats Joueurs,
 cocher deux joueurs et superposer leurs indicateurs et les positions où l'un a
 bien joué et l'autre non.
 
-### I.27 — Grammaire d'intentions dans la ligne de commande [M] — club (#283)
-`s mes blunders de videau au score` traduit en jetons visibles, hors ligne,
-déterministe (option 3 de #38). Prérequis : D.3 puis B.18 (une seule
-grammaire), sinon c'est un troisième parseur. Anglais + français d'abord.
+### I.27 — Grammaire d'intentions dans la ligne de commande — ÉCARTÉE (#283)
+Écrite (b175386e8, commande `ask`, `search --intent`, `/v1/search.intent`) puis
+**retirée avant toute version publiée**. La traduction reposait sur une liste
+fermée de dix-huit règles de vocabulaire : elle ne rattrape jamais la phrase
+qu'un joueur écrit vraiment, et la rendre utile demandait un corpus de phrases
+et une liste à étendre à la main sans fin. Ce qu'elle savait faire,
+l'autocomplétion de la barre de commande le fait déjà.
+
+Le besoin passe à **J.9 (#299)**, l'assistant facultatif via Ollama, avec le
+seul contrat qui méritait de survivre : une intention rend des **jetons
+visibles**, validés par la grammaire existante (`Parse` refuse un jeton inconnu),
+**préparés dans la barre de commande et jamais lancés** — l'utilisateur relit
+avant de chercher, donc une traduction fausse se voit avant des résultats faux.
 
 ## Interface et plateforme
 

@@ -205,8 +205,6 @@ export default {
 </div>
 <p>Komento <code>like</code> vastaa eri kysymykseen kuin tunnukset: se korvaa selatun listan nykyistä <strong>lähimmillä</strong> asemilla, lähimmästä kaukaisimpaan. Läheisyys on kuljetusetäisyys nappulapipeinä — se määrä nappuloiden liikettä, joka erottaa asemat — ja näkökulma on aina vuorossa olevan pelaajan. Se ei ole suodatin: samankaltaisuus <strong>järjestää</strong> koko kirjaston sen sijaan että rajaisi sitä, eikä siksi yhdisty tunnuksiin.</p>
 <p>Tunnus <code>n</code> laskee <strong>kohtaamisia</strong>: <code>n&gt;3</code> säilyttää asemat, joihin johtaa yli kolme siirtoa, kaikissa otteluissa. Se on eri kysymys kuin ”missä menin vikaan” — kaksikymmentä kertaa kohdattu ja yhdeksäntoista kertaa oikein pelattu asema on yhä se, joka pitää osata ulkoa. Lasketaan siirrot, ei otteluita: sama asema kahdesti yhdessä ottelussa on kaksi, koska ne olivat kaksi päätöstä.</p>
-<p>Sanallinen lause voi korvata tunnukset <code>ask</code>-komennolla: <code>ask my cube blunders at a score</code>. Lause <strong>käännetään tunnuksiksi</strong>, jotka kirjoitetaan komentoriville — lue ne ja aja sitten. Mitään ei arvata eikä mikään lähde koneelta: sanasto on kiinteä, sama lause antaa aina saman kyselyn, ja se mitä ei ymmärretty <strong>sanotaan</strong> eikä sivuuteta. Väärä käännös näkyy siis ennen kuin se palauttaa vääriä tuloksia, ja tunnukset oppii lukemalla ne.</p>
-<p>Kaksi aikomusta eivät ole tunnuksia ja asetetaan hakulaudalle rivin sijaan: ”kuutio” tai ”siirto” (päätöksen laji) ja ”ottelutilanteessa” tai ”money”. <code>ask</code> asettaa ne sinne.</p>
 <p><strong>Pelisuunnitelma</strong> on toinen johdettu merkintä vaiheen rinnalla, ja se vastaa kysymykseen, jota nippu tallennettuja suodattimia ei osaa esittää: ”näytä virheeni holding gamessa”. Tunnus <code>gt:</code>, toistettavissa (<code>gt:holding gt:mutualholding</code>), vuorossa olevan <strong>pelaajan</strong> näkökulmasta — sen suunnitelman, jossa päätös tehtiin.</p>
 <p>Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne käyvät läpi, tarkimmasta yleisimpään:</p>
 <ul>
@@ -550,6 +548,7 @@ export default {
 <h4>Tuplauskuution matriisi</h4>
 <p>Kuutiopäätös ei ole laudan ominaisuus. Samat nappulat ja sama pip-luku tuplataan tilanteessa 2-away/4-away eikä tuplata tilanteessa 4-away/2-away; se joka on oppinut money-vastauksen on oppinut yhden ruudun ruudukosta. Eval-paneeli näyttää sen ruudun, jonka asema kantaa; <strong>tuplauskuution matriisi</strong> näyttää koko ruudukon.</p>
 <p>Komento <code>cm</code> avaa sen näytöllä olevalle asemalle. Kukin ruutu antaa tuomion yhdessä pistetilanteessa: rivi on vuorossa olevan pelaajan vielä tarvitsemien pisteiden määrä, sarake vastustajan. Neljä tuomiota kirjoitetaan <em>ET</em> (ei tuplausta), <em>TO</em> (tuplaus, otto), <em>TP</em> (tuplaus, pass) ja <em>LH</em> (liian hyvä); moottorin hylkäämässä ruudussa on kysymysmerkki, ja osoitin kertoo syyn sekä ruudun kolme ekviteettiä. Tarjolla on kolme ottelupituutta: 5, 7 ja 9 pistettä.</p>
+<p>Ruutu, joka vastaa aseman todellista pistetilannetta, on kehystetty ja sen rivi- ja sarakeotsikot alleviivattu: lukeminen alkaa siitä, ”minun ruutuni ja sen ympäristö”. Kehys ilmestyy heti, kun aseman molemmat <em>away</em>-tilanteet mahtuvat näytettyyn ruudukkoon; pituuden vaihtaminen siirtää kehyksen tai poistaa sen. Money-asema, Crawford-peli tai ruudukon ulkopuolelle jäävä <em>away</em> eivät osoita mitään ruutua: näytettävää ruutua ei ole, ja likimääräisen näyttäminen olisi väärin.</p>
 <p>Aseman pistetilanne korvataan kunkin ruudun tilanteella; sen <strong>kuutio</strong> säilyy. Ruudukko vastaa kysymykseen, missä pistetilanteessa kääntäisin <em>tämän</em> kuution, ei siihen mitä keskitetty asema tekisi. Se on kauttaaltaan Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä, eikä sarake ”et saa tuplata” kertoisi asemasta mitään.</p>
 <p>Jokainen ruutu on oma hakunsa. Moottori ottaa pistetilanteen huomioon — se ei pelaa samaa peliä tilanteessa 2-away kuin 7-away — joten yksi ainoa haku luettuna eri otteluekviteettien läpi olisi väärässä juuri siellä, missä pistetilanne merkitsee. Ruudukko saapuu ensin 0-plyllä ja laskeutuu uudelleen määritetyllä näyttösyvyydellä, kun ikkuna on levossa: sama porrastus kuin muualla paneelissa, ja 9 pisteen ruudukko maksaa noin puolitoista sekuntia.</p>
 <p>Sama ruudukko lasketaan käyttöliittymän ulkopuolella komentorivin komennolla cubematrix.</p>
@@ -1362,10 +1361,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Avaa toimintalokin: lokitiedoston kaksisataa viimeistä riviä, sekä keinot kopioida ne raporttiin tai avata ne sisältävä kansio.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Kääntää sanallisen lauseen — ranskaksi tai englanniksi — hakutunnuksiksi: <code>ask my cube blunders at a score</code>. Tunnukset kirjoitetaan komentoriville, niitä ei suoriteta: lue ne ja paina sitten Enter. Se mitä ei ymmärretty, sanotaan, ei koskaan arvata.</td>
 </tr>
 <tr>
 <td>like</td>

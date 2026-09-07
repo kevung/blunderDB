@@ -35,6 +35,9 @@ type ogidReq struct {
 type similarReq struct {
 	PositionID int64 `json:"positionId"`
 	Limit      int   `json:"limit"`
+	// MaxDistance drops neighbours beyond this many checker-pips (0 = none).
+	// A ranking whose ceiling nothing passes comes back empty (ADR-0043).
+	MaxDistance int `json:"maxDistance,omitempty"`
 }
 
 // parseTextReq carries pasted clipboard / file text to parse into a position.
@@ -197,19 +200,22 @@ func (s *Server) positionRoutes() []route {
 			}
 			return race.Evaluate(req.Position), nil
 		})},
-		// « Des positions comme celle-ci » (#293). Un balayage exhaustif, donc
-		// des voisins EXACTS : sous cent mille positions un index approximatif
-		// coûterait sa cohérence pour un rappel moindre (P7).
+		// « Des positions comme celle-ci » (#293, ADR-0043). Un balayage
+		// exhaustif, donc des voisins EXACTS : sous cent mille positions un
+		// index approximatif coûterait sa cohérence pour un rappel moindre
+		// (P7). Le classement se prend DANS la classe de la cible.
 		{http.MethodPost, "/v1/positions.similar", rpc(func(ctx context.Context, scope string, req similarReq) ([]storage.SimilarPosition, error) {
 			pos, err := ps().Load(ctx, scope, req.PositionID)
 			if err != nil {
 				return nil, err
 			}
-			limit := req.Limit
-			if limit <= 0 {
-				limit = 10
+			opts := storage.ClassOf(pos)
+			opts.Limit = req.Limit
+			if opts.Limit <= 0 {
+				opts.Limit = 10
 			}
-			return ps().Similar(ctx, scope, pos, limit)
+			opts.MaxDistance = req.MaxDistance
+			return ps().Similar(ctx, scope, pos, opts)
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)

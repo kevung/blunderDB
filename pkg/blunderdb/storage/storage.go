@@ -62,6 +62,7 @@ type Stores interface {
 	Metadata() MetadataStore
 	ImportBatches() ImportBatchStore
 	Trash() TrashStore
+	Transcriptions() TranscriptionStore
 	Training() TrainingStore
 }
 

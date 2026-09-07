@@ -54,10 +54,41 @@ type MatchStore interface {
 	// UpdateComment sets the free-text comment on a match.
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 
+	// ReplaceHeader rewrites the header columns of an existing match in place,
+	// from m: the two names, the event, location and round, the length, the
+	// date, the two hashes and the game count. The id, the import date, the
+	// tournament, the comment and the last-visited position are NOT touched —
+	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
+	// them is a property of the transcript being re-saved.
+	//
+	// Update is the user's edit of a match's identity (two names and a date);
+	// this is the writer re-stating what the match now contains.
+	ReplaceHeader(ctx context.Context, scope string, id int64, m *domain.Match) error
+
 	// DeleteCascade removes a match and all of its games, moves and analyses.
 	// The implementation runs the whole multi-table cascade atomically; when
 	// reached through a Tx it joins that transaction (D2).
 	DeleteCascade(ctx context.Context, scope string, id int64) error
+
+	// DeleteGames removes every game of a match — and, by cascade, its moves
+	// and move analyses — while LEAVING the match row itself. It returns the
+	// ids of the positions those moves referenced, the candidates for the
+	// orphan purge.
+	//
+	// It does NOT purge them: the caller rewrites the match's games first, so
+	// that a position both versions share is still held when the predicate is
+	// finally asked. Purging here would delete every position of the match that
+	// nothing else holds — analysis included — and the rewrite would put it back
+	// under a new id, which is exactly what a replacement must not do.
+	// PurgeOrphanPositions is the second half.
+	DeleteGames(ctx context.Context, scope string, matchID int64) (positionIDs []int64, err error)
+
+	// PurgeOrphanPositions deletes each of the given positions that nothing
+	// holds any more, by the same retention predicate DeleteCascade applies.
+	// Positions still held — by another move, a collection, an Anki card, a
+	// comment the user wrote, an individual import or a study mark — are left
+	// alone, and so are ids that no longer exist.
+	PurgeOrphanPositions(ctx context.Context, scope string, positionIDs []int64) error
 
 	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
 	// stored positions accordingly).

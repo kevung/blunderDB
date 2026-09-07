@@ -997,6 +997,7 @@
         "legendDoublePass": "doblar, pasar",
         "legendTooGood": "demasiado bueno",
         "legendRefused": "no evaluable",
+        "currentScore": "marcador de la posición",
         "note": "El marcador propio de la posición se sustituye por el de cada casilla; su cubo se conserva. La cuadrícula es posterior a Crawford: durante la partida Crawford el cubo no está en juego."
     },
     "met": {
@@ -1448,13 +1449,6 @@
         "failed": "La búsqueda de posiciones cercanas ha fallado.",
         "none": "Ninguna posición cercana en esta base.",
         "found": "{n} posiciones cercanas, de {nearest} a {farthest} pips de ficha."
-    },
-    "intent": {
-        "empty": "Describa con palabras lo que busca.",
-        "failed": "No se ha podido traducir la frase.",
-        "understoodNothing": "Nada entendido en: {words}",
-        "understood": "Entendido: {matched}. Revise la línea y pulse Intro.",
-        "partly": "Entendido: {matched}. No entendido: {words}. Revise la línea y pulse Intro."
     },
     "log": {
         "title": "Registro de actividad",

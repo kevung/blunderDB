@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.21.0"
+	DatabaseVersion = "2.22.0"
 )
 
 // Anki deck source types
@@ -303,6 +303,20 @@ type Position struct {
 	// import of the same position unmarked can never clear it. Nothing in
 	// blunderDB sets or clears it. See CONTEXT.md and docs/adr/0006.
 	Flagged bool `json:"flagged"`
+}
+
+// IsMoney reports whether the position is played for money rather than at a
+// match score: both away scores sit at the -1 sentinel CONTEXT.md describes.
+//
+// This is THE form of the question, and it lives here so there is only one.
+// It had two independent, silently divergent spellings before #190/C.3 —
+// `Score[0] < 0 && Score[1] < 0` in one place, `Score[0] != -1 ||
+// Score[1] != -1` in another — which agreed on a clean score and disagreed on
+// a malformed one. Anything asking "money or match" reads this method:
+// gammonnet.IsMoneyPosition delegates to it, and so does the equivalence
+// class a similarity ranking is taken inside (ADR-0043).
+func (p *Position) IsMoney() bool {
+	return p.Score[0] < 0 && p.Score[1] < 0
 }
 
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
@@ -736,6 +750,13 @@ type Match struct {
 	// import. Set by the importer, never by a user gesture; deleting the batch
 	// clears it (ON DELETE SET NULL) and leaves the match alone.
 	ImportBatchID int64 `json:"import_batch_id,omitempty"`
+
+	// Transcriber is who typed the match in, and it lives in memory only:
+	// there is no match.transcriber column and this field is never read back
+	// from the database. A match that arrives from a file has no transcriber —
+	// only a graph built by the transcription engine (ADR-0045) sets it, on its
+	// way to RenderMAT, which writes it as the .mat's [Transcriber] header.
+	Transcriber string `json:"transcriber,omitempty"`
 }
 
 type Game struct {

@@ -997,6 +997,7 @@
         "legendDoublePass": "Doppel, Pass",
         "legendTooGood": "zu gut",
         "legendRefused": "nicht bewertbar",
+        "currentScore": "Punktestand der Position",
         "note": "Der Punktestand der Position wird durch den jeder Zelle ersetzt; ihr Dopplerwürfel bleibt erhalten. Das Raster gilt nach Crawford: während des Crawford-Spiels ist der Würfel nicht im Spiel."
     },
     "met": {
@@ -1448,13 +1449,6 @@
         "failed": "Die Suche nach nahen Stellungen ist fehlgeschlagen.",
         "none": "Keine nahe Stellung in dieser Datenbank.",
         "found": "{n} nahe Stellungen, von {nearest} bis {farthest} Stein-Pips."
-    },
-    "intent": {
-        "empty": "Beschreiben Sie in Worten, was Sie suchen.",
-        "failed": "Der Satz konnte nicht übersetzt werden.",
-        "understoodNothing": "Nichts verstanden in: {words}",
-        "understood": "Verstanden: {matched}. Zeile prüfen, dann Enter.",
-        "partly": "Verstanden: {matched}. Nicht verstanden: {words}. Zeile prüfen, dann Enter."
     },
     "log": {
         "title": "Aktivitätsprotokoll",

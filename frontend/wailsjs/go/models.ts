@@ -2802,61 +2802,6 @@ export namespace race {
 
 }
 
-export namespace searchquery {
-	
-	export class BoardHint {
-	    decision?: string;
-	    score?: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new BoardHint(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.decision = source["decision"];
-	        this.score = source["score"];
-	    }
-	}
-	export class Intent {
-	    tokens: string[];
-	    board: BoardHint;
-	    matched: string[];
-	    ignored: string[];
-	
-	    static createFrom(source: any = {}) {
-	        return new Intent(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.tokens = source["tokens"];
-	        this.board = this.convertValues(source["board"], BoardHint);
-	        this.matched = source["matched"];
-	        this.ignored = source["ignored"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-
-}
-
 export namespace sqlite {
 	
 	export class SchemaDrift {

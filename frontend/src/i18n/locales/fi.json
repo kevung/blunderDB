@@ -997,6 +997,7 @@
         "legendDoublePass": "tuplaus, pass",
         "legendTooGood": "liian hyvä",
         "legendRefused": "ei arvioitavissa",
+        "currentScore": "aseman pistetilanne",
         "note": "Aseman oma pistetilanne korvataan kunkin ruudun tilanteella; sen kuutio säilyy. Ruudukko on Crawfordin jälkeinen: Crawford-pelissä kuutio ei ole pelissä."
     },
     "met": {
@@ -1448,13 +1449,6 @@
         "failed": "Läheisten asemien haku epäonnistui.",
         "none": "Ei läheisiä asemia tässä tietokannassa.",
         "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä."
-    },
-    "intent": {
-        "empty": "Kuvaile sanoin, mitä etsit.",
-        "failed": "Lausetta ei voitu kääntää.",
-        "understoodNothing": "Mitään ei ymmärretty: {words}",
-        "understood": "Ymmärretty: {matched}. Lue rivi ja paina Enter.",
-        "partly": "Ymmärretty: {matched}. Ei ymmärretty: {words}. Lue rivi ja paina Enter."
     },
     "log": {
         "title": "Toimintaloki",

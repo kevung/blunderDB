@@ -997,6 +997,7 @@
         "legendDoublePass": "double, refus",
         "legendTooGood": "trop bon",
         "legendRefused": "non évaluable",
+        "currentScore": "score de la position",
         "note": "Le score de la position est remplacé par celui de chaque case ; son videau, lui, est conservé. La grille est post-Crawford : pendant la partie Crawford le videau n'est pas en jeu."
     },
     "met": {
@@ -1448,13 +1449,6 @@
         "failed": "La recherche de positions proches a échoué.",
         "none": "Aucune position proche dans cette base.",
         "found": "{n} positions proches, de {nearest} à {farthest} pions-pas."
-    },
-    "intent": {
-        "empty": "Décrivez ce que vous cherchez, en toutes lettres.",
-        "failed": "La phrase n'a pas pu être traduite.",
-        "understoodNothing": "Rien de compris dans : {words}",
-        "understood": "Compris : {matched}. Relisez la ligne, puis Entrée.",
-        "partly": "Compris : {matched}. Non compris : {words}. Relisez la ligne, puis Entrée."
     },
     "log": {
         "title": "Journal d'activité",

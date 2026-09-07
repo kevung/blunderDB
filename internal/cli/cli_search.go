@@ -41,9 +41,10 @@ type searchParams struct {
 	format      string
 	outputDB    string
 	// like is the id of a position whose NEIGHBOURS are wanted (#293). It is
-	// not a filter: similarity is a ranking over the whole library, not a
-	// predicate the SQL scan can narrow on, so it replaces the query rather
-	// than joining it.
+	// not a filter: similarity RANKS its set, it does not narrow one, so it
+	// replaces the query rather than joining it. The set it ranks is the
+	// target's own class — same kind of decision, same regime for a cube
+	// decision, another match (ADR-0043).
 	like int
 }
 
@@ -103,43 +104,11 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 		}, *f.dbPath, nil
 	}
 
-	// --intent is a translation, not a filter: it produces the tokens a phrase
-	// means and then runs them through the SAME grammar --query uses. It is
-	// resolved here, before anything else, so the rest of the command sees a
-	// perfectly ordinary query.
-	if strings.TrimSpace(*f.intent) != "" {
-		if named := filterFlagsSet(searchCmd); len(named) > 1 {
-			return nil, "", fmt.Errorf("--intent cannot be combined with the filter flags (%s): it produces a query, so put the whole request in the phrase", strings.Join(named, ", "))
-		}
-		it := searchquery.TranslateIntent(*f.intent)
-		if len(it.Tokens) == 0 {
-			return nil, "", fmt.Errorf("--intent understood nothing in %q (unread: %s)", *f.intent, strings.Join(it.Ignored, " "))
-		}
-		fmt.Fprintf(os.Stderr, "intent: %s → %s\n", strings.Join(it.Matched, ", "), strings.Join(it.Tokens, " "))
-		if len(it.Ignored) > 0 {
-			fmt.Fprintf(os.Stderr, "note: not understood: %s\n", strings.Join(it.Ignored, " "))
-		}
-		// The two intentions that are not tokens set the SEARCH BOARD, which
-		// the CLI has none of: they are named rather than silently dropped.
-		if it.Board.Decision != "" || it.Board.Score != "" {
-			fmt.Fprintf(os.Stderr, "note: %q describes the search board (decision %q, score %q), which the CLI has none of — use the application for that part\n",
-				*f.intent, it.Board.Decision, it.Board.Score)
-		}
-		filters, diags := searchquery.Parse(strings.Join(it.Tokens, " "))
-		return &searchParams{
-			filters: filters,
-			diags:   diags,
-			limit:   *f.limit,
-			offset:  *f.offset,
-			format:  strings.ToLower(*f.format),
-		}, *f.dbPath, nil
-	}
-
 	// --like ranks, it does not narrow: combining it with filters would need a
 	// precedence rule and would quietly change what the ranking is over.
 	if *f.like > 0 {
 		if named := filterFlagsSet(searchCmd); len(named) > 1 {
-			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks the whole library, it does not narrow it", strings.Join(named, ", "))
+			return nil, "", fmt.Errorf("--like cannot be combined with the filter flags (%s): similarity ranks a set, it does not narrow one", strings.Join(named, ", "))
 		}
 		return &searchParams{
 			like:   *f.like,
@@ -170,7 +139,7 @@ func parseSearchFlags(args []string) (*searchParams, string, error) {
 func filterFlagsSet(fs *flag.FlagSet) []string {
 	passthrough := map[string]bool{
 		"db": true, "format": true, "limit": true, "offset": true,
-		"export": true, "query": true, "query-help": true, "like": true, "intent": true,
+		"export": true, "query": true, "query-help": true, "like": true,
 	}
 	var named []string
 	fs.Visit(func(f *flag.Flag) {

@@ -764,19 +764,6 @@ bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
 sur les coups, pas sur les matchs : la même position deux fois dans un match
 compte pour deux, parce que c'étaient deux décisions.
 
-Une phrase en toutes lettres peut remplacer les jetons, avec la commande
-``ask`` : ``ask mes blunders de videau au score``. La phrase est **traduite en
-jetons**, écrits dans la barre de commande — on les relit, puis on lance. Rien
-n'est deviné et rien ne part sur le réseau : le vocabulaire est fixe, la même
-phrase rend toujours la même requête, et ce qui n'a pas été compris est
-**dit** plutôt que passé sous silence. Une traduction fausse se voit ainsi
-avant de renvoyer des résultats faux, et les jetons s'apprennent en les
-lisant.
-
-Deux intentions ne sont pas des jetons et se posent sur le plateau de
-recherche plutôt que dans la ligne : « de videau » ou « de pions » (le type de
-décision) et « au score » ou « en argent ». ``ask`` les y pose.
-
 Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
 elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
 poser : « montre-moi mes erreurs en holding game ». Jeton ``gt:``, répétable
@@ -1722,6 +1709,14 @@ quatre verdicts s'écrivent *PD* (pas de double), *DP* (double, prend), *DR*
 point d'interrogation et dit pourquoi au survol, qui donne aussi les trois
 équités de la case. Trois longueurs de match sont proposées : 5, 7 et 9
 points.
+
+La case du score que la position porte réellement est encadrée, et ses deux
+en-têtes de ligne et de colonne soulignés : la lecture part de là, « ma case,
+et autour d'elle ». Elle l'est dès que les deux scores *away* de la position
+tiennent dans la grille affichée ; changer de longueur la déplace ou la
+retire. Une position money, la partie Crawford, ou un *away* au-delà de la
+grille n'en désignent aucune : il n'y a pas de case à montrer, et en montrer
+une approchante serait faux.
 
 Le score de la position est remplacé par celui de chaque case ; son
 **videau**, lui, est conservé. La grille répond à « à quel score

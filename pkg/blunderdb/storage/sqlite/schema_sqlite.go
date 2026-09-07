@@ -232,6 +232,27 @@ var schemaStatements = []string{
 		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 	)`,
+	// A transcription is a DRAFT (ADR-0045): the match a user is typing in,
+	// before it is worth a row in match/game/move. It is one opaque JSON
+	// document plus the handful of columns the library list needs to show it
+	// without parsing anything. The document carries its OWN format_version,
+	// so a change to its shape is a version of the document and never a
+	// DatabaseVersion migration (#334).
+	//
+	// match_id is the Match the draft has already produced, NULL while it has
+	// produced none. ON DELETE SET NULL rather than CASCADE: deleting the
+	// saved match must not destroy the typing that produced it — the draft
+	// simply becomes one that was never saved.
+	`CREATE TABLE IF NOT EXISTS transcription (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		format_version TEXT NOT NULL,
+		match_id INTEGER REFERENCES match(id) ON DELETE SET NULL,
+		label TEXT DEFAULT '',
+		document TEXT NOT NULL
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_transcription_match ON transcription(match_id)`,
 	`CREATE TABLE IF NOT EXISTS move_analysis (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		move_id INTEGER,
@@ -291,7 +312,7 @@ var schemaStatements = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_deleted_at ON trash(deleted_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_trash_kind ON trash(kind, deleted_at)`,
-	// The Training journal (2.21.0, issue #320): two tables, not a JSON key of
+	// The Training journal (2.22.0, issue #320): two tables, not a JSON key of
 	// `metadata`, because the per-number detail is the whole point — « tp4
 	// dernier lancer : 6 fautes sur 9 » — and a blob that grows by one entry
 	// per revealed number is a register a table settles (ADR-0040 rule 6). No

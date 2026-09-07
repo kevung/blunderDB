@@ -1145,6 +1145,8 @@ trois logiques distinctes (voir :ref:`headless`).
   déplacement (défaut: 10).
 * ``--jobs`` — Nombre de positions analysées en parallèle (défaut: le nombre
   de cœurs de la machine).
+* ``--match`` — Restreint le lot aux positions d'un seul match (0, le défaut,
+  signifie toute la bibliothèque).
 * ``--compare`` — **N'écrit rien** : compare gammonNet aux analyses importées
   au lieu de combler des trous (voir plus bas).
 * ``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions
@@ -1164,6 +1166,16 @@ n'est jamais deviné.
 Une base analysée avec une version antérieure à celle-ci n'a pas besoin d'être
 réévaluée : :ref:`repair <cli_repair>` recalcule les colonnes à partir de ce
 qui est déjà en base et rend leur PR à ces matchs.
+
+**Un seul match** (``--match``). Avec l'identifiant qu'affiche
+``list --type matches``, le lot ne parcourt que les positions de ce match :
+même règle du trou, mêmes garanties, portée plus étroite. Un match qui vient
+d'être importé reçoit ses analyses sans que le reste de la bibliothèque soit
+balayé, et un match corrigé puis analysé une seconde fois ne coûte que les
+positions créées par la correction, puisque toutes les autres portent déjà une
+analyse. L'option ne se combine ni avec ``--stale`` ni avec ``--compare``, qui
+regardent tous deux des positions ayant déjà une analyse : demander les deux
+est une erreur, plutôt qu'une portée silencieusement ignorée.
 
 **Le parallélisme** (``--jobs``). Les positions d'un lot sont indépendantes —
 aucune recherche n'informe la suivante — donc elles sont réparties sur
@@ -1196,6 +1208,9 @@ positions sans analyse » est recalculé à chaque lancement.
    # Done.
 
    ./blunderdb analyze --db base.db --jobs 1
+
+   # Un seul match, celui qui vient d'être importé
+   ./blunderdb analyze --db base.db --match 12
 
 .. _analyze_compare:
 

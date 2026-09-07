@@ -1,4 +1,4 @@
--- Forward migration: the 2.21.0 wave — the Training journal (issue #320).
+-- Forward migration: the 2.22.0 wave — the Training journal (issue #320).
 --
 -- Two tables, not a JSON key of `metadata`: the per-number detail is the whole
 -- point of the journal ("tp4 last roll: 6 faults in 9"), and a blob that grows
