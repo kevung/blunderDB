@@ -203,7 +203,8 @@ export default {
 <div class="admonition note">
 <p>La etiqueta la recalcula el comando <code>blunderdb repair</code>. En una base abierta por primera vez con esta versión, el cálculo se hace una vez, al abrirla. Una base cuyas fases nunca se han calculado no devuelve nada para <code>ph:</code> — nada, en lugar de una respuesta falsa.</p>
 </div>
-<p>El comando <code>like</code> responde a una pregunta distinta de la de los tokens: sustituye la lista recorrida por las posiciones más <strong>cercanas</strong> a la actual, de la más cercana a la más lejana. La cercanía es una distancia de transporte, expresada en pips de ficha — la cantidad de movimiento de fichas que separa ambas posiciones — y el punto de vista es siempre el del jugador que mueve. No es un filtro: la similitud <strong>ordena</strong> toda la biblioteca en vez de restringirla, y por tanto no se combina con los tokens.</p>
+<p>El token <code>like</code> <strong>ordena</strong> en vez de restringir: su presencia clasifica el resultado por distancia creciente a una posición objetivo — <code>like</code> la actual, <code>like42</code> la de índice 42 — y los demás tokens restringen el conjunto así ordenado, de modo que <code>s like42 E&gt;80</code> se lee «las vecinas de la 42 donde fallé». La distancia es una distancia de transporte en pips de ficha, la cantidad de movimiento de fichas que separa dos posiciones, vista del jugador que mueve.</p>
+<p>Una vecina es el mismo <strong>problema</strong>, no el mismo dibujo: la clasificación se toma dentro de la clase del objetivo — mismo tipo de decisión, mismo régimen (dinero o partido) para una decisión de cubo, y un partido distinto del suyo, pues las posiciones que la rodean en su propia partida son sus estructuras más cercanas sin ser jamás sus vecinas. Los dados, el marcador y el cubo quedan fuera de la clase; los tokens ordinarios los filtran cuando se quiere. <code>like42*</code> amplía la clase a todos los tipos de decisión y a ambos regímenes, nunca al partido del objetivo; <code>like&lt;12</code> descarta lo que está a más de doce pips de ficha. Una clasificación que no encuentra nada devuelve una lista vacía y lo dice, en vez de diez posiciones sin relación.</p>
 <p>El token <code>n</code> cuenta <strong>encuentros</strong>: <code>n&gt;3</code> conserva las posiciones a las que llegan más de tres jugadas, en todos los partidos. Es otra pregunta distinta de «qué he fallado» — una posición encontrada veinte veces y bien jugada diecinueve sigue siendo la que hay que saber de memoria. Se cuentan las jugadas, no los partidos: la misma posición dos veces en un partido cuenta dos, porque fueron dos decisiones.</p>
 <p>El <strong>plan de juego</strong> es una segunda etiqueta derivada, junto a la fase, y responde a la pregunta que un paquete de filtros guardados no sabe plantear: «muéstrame mis errores en holding game». Token <code>gt:</code>, repetible (<code>gt:holding gt:mutualholding</code>), desde el punto de vista del <strong>jugador que mueve</strong> — el plan en el que se tomaba la decisión.</p>
 <p>Los diez planes reconocidos, en el orden en que las reglas los agotan, del más específico al más general:</p>
@@ -1339,10 +1340,6 @@ export default {
 <td>Abre el registro de actividad: las últimas doscientas líneas del archivo de registro, con lo necesario para copiarlas en un informe o abrir la carpeta que las contiene.</td>
 </tr>
 <tr>
-<td>like</td>
-<td>Sustituye la lista recorrida por las posiciones más cercanas a la actual — o a aquella cuyo índice se indica (<code>like 42</code>). La cercanía es una distancia de transporte en pips de ficha: no es un filtro, ordena toda la base en vez de restringirla, y por tanto no se combina con los tokens de búsqueda.</td>
-</tr>
-<tr>
 <td>train</td>
 <td>Inicia una sesión de microentrenamiento. Toma un argumento: <code>train pips</code> (recuento de pips), <code>train epc</code>, <code>train tp</code> (punto de aceptación al marcador), <code>train quiz</code> (la jugada o la acción de cubo, calificadas contra el análisis guardado). Cinco preguntas, cronometradas, corregidas al instante.</td>
 </tr>
@@ -1481,6 +1478,7 @@ export default {
 <h3>Filtros de búsqueda</h3>
 <p>Esta tabla es la referencia de la gramática de búsqueda: la línea de comandos, la biblioteca de filtros y la opción <code>--query</code> de <code>blunderdb search</code> leen todos los mismos tokens. La columna <em>Equivalente CLI</em> da, cuando existe, la opción de <code>search</code> que hace lo mismo (ver Interfaz de línea de comandos (CLI)); un guion señala un filtro que solo la gramática expresa.</p>
 <p>Cinco tokens no llevan su valor: lo leen en el tablero de búsqueda. <code>cube</code> y <code>score</code> retoman el cubo y el score puestos en él, <code>d</code> el tipo de decisión, <code>D</code> y <code>D1</code> los dados, <code>x</code> la estructura dibujada en la pestaña <em>Excepto</em>. Una tirada nunca se escribe entonces en el token: <code>D65</code> no existe, solo la forma de exclusión lleva sus cifras (<code>xD65</code>). En la línea de comandos, donde no hay tablero, estos tokens se comparan con un tablero vacío; son las opciones de la tercera columna las que hay que emplear ahí.</p>
+<p>Un solo token <strong>ordena</strong> en vez de restringir: <code>like</code> clasifica el resultado por distancia creciente a una posición objetivo, y todos los demás tokens restringen el conjunto así ordenado.</p>
 <p>Los errores y las equidades se cuentan en <strong>milésimas de equidad</strong> — los <em>milipuntos</em> de la tabla siguiente: <code>E&gt;100</code> conserva las jugadas que costaron al menos una décima de punto, valiendo un punto 1000 milésimas.</p>
 <p>Dos búsquedas completas:</p>
 <ul>
@@ -1949,6 +1947,11 @@ export default {
 <tr>
 <td><code>pl'nombre'</code></td>
 <td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (ej: <code>pl'Alice'</code>). No distingue mayúsculas y minúsculas.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>like, like42, like&lt;12, like42*</td>
+<td>Ordena el resultado por distancia creciente a una posición objetivo, en vez de restringirlo: <code>like</code> toma la posición actual, <code>like42</code> la de índice 42, <code>like&lt;12</code> descarta lo que está a más de doce pips de ficha, <code>like42*</code> amplía la clase del objetivo a todos los tipos de decisión y a ambos regímenes, dinero y partido. Ver Panel de Búsqueda.</td>
 <td>—</td>
 </tr>
 </tbody>

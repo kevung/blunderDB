@@ -82,6 +82,7 @@ type idsReq struct {
 
 func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
+	ss := func() storage.SearchStore { return s.opts.Storage.Search() }
 	return []route{
 		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (idResp, error) {
 			if req.Position == nil {
@@ -205,17 +206,18 @@ func (s *Server) positionRoutes() []route {
 		// index approximatif coûterait sa cohérence pour un rappel moindre
 		// (P7). Le classement se prend DANS la classe de la cible.
 		{http.MethodPost, "/v1/positions.similar", rpc(func(ctx context.Context, scope string, req similarReq) ([]storage.SimilarPosition, error) {
-			pos, err := ps().Load(ctx, scope, req.PositionID)
-			if err != nil {
-				return nil, err
+			if req.PositionID <= 0 {
+				return nil, errMissing("positionId")
 			}
-			opts := storage.ClassOf(pos)
-			opts.Limit = req.Limit
-			if opts.Limit <= 0 {
-				opts.Limit = 10
+			limit := req.Limit
+			if limit <= 0 {
+				limit = 10
 			}
-			opts.MaxDistance = req.MaxDistance
-			return ps().Similar(ctx, scope, pos, opts)
+			return ss().Rank(ctx, scope, domain.SearchFilters{
+				LikeFilter:      true,
+				LikeTargetID:    req.PositionID,
+				LikeMaxDistance: req.MaxDistance,
+			}, storage.ListOpts{Limit: limit})
 		})},
 		{http.MethodPost, "/v1/positions.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return ps().Delete(ctx, scope, req.ID)

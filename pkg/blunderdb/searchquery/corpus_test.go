@@ -66,6 +66,10 @@ var corpusField = map[string]string{
 	"player2CheckerInZoneFilter":    "Player2CheckerInZoneFilter",
 	"player1AbsolutePipCountFilter": "Player1AbsolutePipCountFilter",
 	"equityFilter":                  "EquityFilter",
+	"likeFilter":                    "LikeFilter",
+	"likeTargetId":                  "LikeTargetID",
+	"likeMaxDistance":               "LikeMaxDistance",
+	"likeWidened":                   "LikeWidened",
 	"dateFilter":                    "DateFilter",
 	"movePatternFilter":             "MovePatternFilter",
 	"searchText":                    "SearchText",
@@ -164,6 +168,16 @@ func assertField(t *testing.T, key string, fv reflect.Value, want any) {
 		}
 		if fv.String() != wantStr {
 			t.Errorf("%s = %q, want %q", key, fv.String(), wantStr)
+		}
+	case reflect.Int, reflect.Int64:
+		// JSON has one number type, so a corpus count arrives as a float64
+		// whatever the Go field's width.
+		wantNum, ok := want.(float64)
+		if !ok {
+			t.Fatalf("corpus key %q expects %T, field is an integer", key, want)
+		}
+		if fv.Int() != int64(wantNum) {
+			t.Errorf("%s = %d, want %d", key, fv.Int(), int64(wantNum))
 		}
 	default:
 		t.Fatalf("corpus key %q maps to an unsupported field kind %s", key, fv.Kind())

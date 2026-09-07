@@ -62,6 +62,7 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -111,6 +112,11 @@ var (
 	phaseRe  = regexp.MustCompile(`^ph:[a-z]+$`)
 	originRe = regexp.MustCompile(`^co:[a-z]+$`)
 	typeRe   = regexp.MustCompile(`^gt:[a-z-]+$`)
+	// `like`, `like42`, `like<12`, `like42<12*` — the one token that RANKS.
+	// Matched by shape rather than by prefix, for the reason `n` is: a prefix
+	// rule would claim any word starting with "like" and turn a typo into a
+	// silent reordering of the result.
+	likeRe = regexp.MustCompile(`^like(\d+)?(?:<(\d+))?(\*)?$`)
 	// n>3, n<10, n3,5 or a bare n4 ("exactly four").
 	encounterRe = regexp.MustCompile(`^n(?:[<>]\d+|\d+(?:,\d+)?)$`)
 	// A tag names itself: `#prime`. No letter prefix, so nothing else can
@@ -266,6 +272,20 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// have claimed `nonsense` and turned a typo into a silent filter — the
 	// collision `ph:`/`p` already taught this parser that lesson once.
 	f.EncounterFilter = exact(first(func(s string) bool { return encounterRe.MatchString(s) }))
+	// `like` ranks; it is claimed here, among the shape-matched tokens, and
+	// BEFORE the prefix rules below would have had a chance at it.
+	if tok := first(func(s string) bool { return likeRe.MatchString(s) }); tok != "" {
+		m := likeRe.FindStringSubmatch(tok)
+		f.LikeFilter = true
+		if m[1] != "" {
+			id, _ := strconv.ParseInt(m[1], 10, 64)
+			f.LikeTargetID = id
+		}
+		if m[2] != "" {
+			f.LikeMaxDistance, _ = strconv.Atoi(m[2])
+		}
+		f.LikeWidened = m[3] != ""
+	}
 	f.EquityFilter = first(prefix("e"))
 	f.DateFilter = first(prefix("T"))
 	f.Player1OutfieldBlotFilter = first(prefix("bo"))
@@ -369,6 +389,19 @@ func Format(f domain.SearchFilters) string {
 		}
 	}
 	flag(f.NoContactFilter, "nc")
+	if f.LikeFilter {
+		tok := "like"
+		if f.LikeTargetID > 0 {
+			tok += strconv.FormatInt(f.LikeTargetID, 10)
+		}
+		if f.LikeMaxDistance > 0 {
+			tok += "<" + strconv.Itoa(f.LikeMaxDistance)
+		}
+		if f.LikeWidened {
+			tok += "*"
+		}
+		add(tok)
+	}
 	flag(f.MirrorFilter, "M")
 	flag(f.IndividuallyImportedFilter, "i")
 	flag(f.FlaggedFilter, "fl")
@@ -451,6 +484,10 @@ var FieldTokens = map[string]string{
 	"GamePhaseFilter":               "ph:",
 	"GameTypeFilter":                "gt:",
 	"EncounterFilter":               "n",
+	"LikeFilter":                    "like",
+	"LikeTargetID":                  "like",
+	"LikeMaxDistance":               "like<",
+	"LikeWidened":                   "like*",
 	"TagFilter":                     "#",
 	"PipCountFilter":                "p",
 	"Player1AbsolutePipCountFilter": "P",
