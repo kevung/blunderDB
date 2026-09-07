@@ -736,6 +736,13 @@ type Match struct {
 	// import. Set by the importer, never by a user gesture; deleting the batch
 	// clears it (ON DELETE SET NULL) and leaves the match alone.
 	ImportBatchID int64 `json:"import_batch_id,omitempty"`
+
+	// Transcriber is who typed the match in, and it lives in memory only:
+	// there is no match.transcriber column and this field is never read back
+	// from the database. A match that arrives from a file has no transcriber —
+	// only a graph built by the transcription engine (ADR-0045) sets it, on its
+	// way to RenderMAT, which writes it as the .mat's [Transcriber] header.
+	Transcriber string `json:"transcriber,omitempty"`
 }
 
 type Game struct {

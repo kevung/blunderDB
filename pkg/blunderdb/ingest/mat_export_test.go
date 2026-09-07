@@ -289,3 +289,133 @@ func TestRenderMATBlanksCannotMove(t *testing.T) {
 		t.Fatalf("the danced roll should still show its dice \"64:\":\n%s", out)
 	}
 }
+
+// TestRenderMATOptionalHeaders: a match that knows where it was played, in
+// which round, on which day and by whose hand writes the four PGN-style headers
+// gnubg/XG already read, and gnubgparser reads all four back. Before this, a
+// transcribed .mat lost the lot at every export.
+func TestRenderMATOptionalHeaders(t *testing.T) {
+	m := &domain.Match{
+		Player1Name: "Alice",
+		Player2Name: "Bob",
+		MatchLength: 7,
+		Event:       "Open de Paris",
+		Location:    "Paris",
+		Round:       "Quarter-final",
+		MatchDate:   time.Date(2025, 11, 8, 0, 0, 0, 0, time.UTC),
+		Transcriber: "Kévin Unger",
+	}
+	games := []*domain.Game{
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+	}
+	moves := map[int64][]*domain.Move{
+		1: {{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}},
+	}
+
+	out := RenderMAT(m, games, moves)
+	for _, want := range []string{
+		`; [Event "Open de Paris"]`,
+		`; [Site "Paris"]`,
+		`; [Round "Quarter-final"]`,
+		`; [EventDate "2025.11.08"]`,
+		`; [Transcriber "Kévin Unger"]`,
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("missing header %s in:\n%s", want, out)
+		}
+	}
+
+	parsed, err := gnubgparser.ParseMAT(strings.NewReader(out))
+	if err != nil {
+		t.Fatalf("re-parse: %v\n%s", err, out)
+	}
+	md := parsed.Metadata
+	if md.Event != "Open de Paris" {
+		t.Errorf("Event = %q, want %q", md.Event, "Open de Paris")
+	}
+	if md.Place != "Paris" {
+		t.Errorf("Site = %q, want %q", md.Place, "Paris")
+	}
+	if md.Round != "Quarter-final" {
+		t.Errorf("Round = %q, want %q", md.Round, "Quarter-final")
+	}
+	// The parser normalises the dotted header back to an ISO date.
+	if md.Date != "2025-11-08" {
+		t.Errorf("EventDate = %q, want %q", md.Date, "2025-11-08")
+	}
+	if md.Annotator != "Kévin Unger" {
+		t.Errorf("Transcriber = %q, want %q", md.Annotator, "Kévin Unger")
+	}
+}
+
+// TestRenderMATOmitsEmptyHeaders: an unknown place, round, date or transcriber
+// writes no header at all — never `[Site ""]`, which would come back in as an
+// empty string and turn "we do not know" into "nowhere".
+func TestRenderMATOmitsEmptyHeaders(t *testing.T) {
+	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+	games := []*domain.Game{
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 1},
+	}
+	moves := map[int64][]*domain.Move{
+		1: {{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}},
+	}
+	out := RenderMAT(m, games, moves)
+	for _, unwanted := range []string{"[Event", "[Site", "[Round", "[EventDate", "[Transcriber"} {
+		if strings.Contains(out, unwanted) {
+			t.Errorf("unset field must write no %s header:\n%s", unwanted, out)
+		}
+	}
+	if _, err := gnubgparser.ParseMAT(strings.NewReader(out)); err != nil {
+		t.Fatalf("re-parse: %v\n%s", err, out)
+	}
+}
+
+// TestRenderMATGameEndsWithoutLastMove: a game won by a resignation (or by a
+// pass whose offer is the last thing recorded) produces no move of its own —
+// ADR-0045 §6 puts the result on the Game, not in `move`. The transcript must
+// therefore close on its bare " Wins N points" line, with no invented move
+// before it, and still re-parse.
+func TestRenderMATGameEndsWithoutLastMove(t *testing.T) {
+	m := &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+	games := []*domain.Game{
+		// Alice wins 2 points; nothing in `moves` says how — a resignation.
+		{ID: 1, GameNumber: 1, InitialScore: [2]int32{0, 0}, Winner: 0, PointsWon: 2},
+	}
+	moves := map[int64][]*domain.Move{
+		1: {
+			{Player: 1, MoveType: "checker", Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"},
+			{Player: -1, MoveType: "checker", Dice: [2]int32{6, 4}, CheckerMove: "24/18 13/9"},
+		},
+	}
+	out := RenderMAT(m, games, moves)
+	if !strings.Contains(out, " Wins 2 points") {
+		t.Fatalf("missing the result line:\n%s", out)
+	}
+	// Exactly the two moves given, on one numbered line: no third, fictitious
+	// cell invented to carry the result.
+	if n := strings.Count(out, ")"); n != 1 {
+		t.Errorf("expected 1 numbered move line, got %d:\n%s", n, out)
+	}
+
+	parsed, err := gnubgparser.ParseMAT(strings.NewReader(out))
+	if err != nil {
+		t.Fatalf("re-parse: %v\n%s", err, out)
+	}
+	g := parsed.Games[0]
+	if g.Points != 2 {
+		t.Errorf("points = %d, want 2", g.Points)
+	}
+	if n := countChecker(g.Moves); n != 2 {
+		t.Errorf("checker moves = %d, want 2\n%s", n, out)
+	}
+
+	// The extreme case: a game that ends before anyone rolls (a resignation
+	// offered and accepted at the opening) has no move line whatsoever.
+	empty := RenderMAT(m, games, map[int64][]*domain.Move{})
+	if strings.Contains(empty, ")") {
+		t.Errorf("a game with no move must write no numbered line:\n%s", empty)
+	}
+	if _, err := gnubgparser.ParseMAT(strings.NewReader(empty)); err != nil {
+		t.Fatalf("re-parse move-less game: %v\n%s", err, empty)
+	}
+}
