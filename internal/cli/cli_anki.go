@@ -183,9 +183,20 @@ func ankiSourceLabel(d AnkiDeck) string {
 		return fmt.Sprintf("collection %d", d.SourceID)
 	case AnkiSourceSearch:
 		return "search"
+	case domain.AnkiSourceScores:
+		return "score sheets"
 	default:
 		return d.SourceType
 	}
+}
+
+// ankiSubjectLabel names what a logged review was about: the position for a
+// position card, the score for a score card.
+func ankiSubjectLabel(e domain.AnkiReviewLog) string {
+	if e.Kind == domain.AnkiKindScore {
+		return e.Key + " away"
+	}
+	return e.Key
 }
 
 // ── stats ────────────────────────────────────────────────────────────────────
@@ -493,10 +504,14 @@ func (cli *CLI) runAnkiLog(args []string) error {
 			return nil
 		}
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-		fmt.Fprintln(w, "REVIEWED AT\tDECK\tCARD\tPOSITION\tGRADE\tINTERVAL")
+		// "SUBJECT" and not "POSITION": since 2.23.0 a review can be of a
+		// score card, which names a score and no position at all (ADR-0042).
+		// The column shows the card's key, which is the position id for a
+		// position card — the same number the header used to promise.
+		fmt.Fprintln(w, "REVIEWED AT\tDECK\tCARD\tSUBJECT\tGRADE\tINTERVAL")
 		for _, e := range entries {
-			fmt.Fprintf(w, "%s\t%d\t%d\t%d\t%s\t%dd\n",
-				e.ReviewedAt, e.DeckID, e.CardID, e.PositionID, ankiGradeLabel(e.Rating), e.ScheduledDays)
+			fmt.Fprintf(w, "%s\t%d\t%d\t%s\t%s\t%dd\n",
+				e.ReviewedAt, e.DeckID, e.CardID, ankiSubjectLabel(e), ankiGradeLabel(e.Rating), e.ScheduledDays)
 		}
 		return w.Flush()
 	default:

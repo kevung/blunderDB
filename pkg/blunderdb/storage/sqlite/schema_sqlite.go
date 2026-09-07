@@ -379,10 +379,20 @@ var schemaStatements = []string{
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`,
+	// A card asks about a position OR a score (2.23.0, issue #324, ADR-0042):
+	// `kind` says which, `key` names it — the position's id as text, or the
+	// unordered score "3:5". position_id is therefore NULLABLE: it is the
+	// foreign key of a position card and nothing at all for a score card, and
+	// a 0 pointing at no row would be exactly the lie the ADR rejects. An
+	// existing database is rebuilt into this shape by the 2.23.0 migration
+	// step, which is the one thing EnsureSchema cannot do (it adds columns,
+	// it does not relax a constraint).
 	`CREATE TABLE IF NOT EXISTS anki_card (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		deck_id INTEGER NOT NULL,
-		position_id INTEGER NOT NULL,
+		kind TEXT NOT NULL DEFAULT 'position',
+		key TEXT NOT NULL DEFAULT '',
+		position_id INTEGER,
 		due DATETIME DEFAULT CURRENT_TIMESTAMP,
 		stability REAL DEFAULT 0,
 		difficulty REAL DEFAULT 0,
@@ -395,14 +405,18 @@ var schemaStatements = []string{
 		suspended INTEGER NOT NULL DEFAULT 0,
 		buried_until DATETIME,
 		FOREIGN KEY(deck_id) REFERENCES anki_deck(id) ON DELETE CASCADE,
-		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
-		UNIQUE(deck_id, position_id)
+		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
+	// kind/key and a nullable position_id, for the same reason as anki_card
+	// above: the journal records what was reviewed, and since 2.23.0 that can
+	// be a score.
 	`CREATE TABLE IF NOT EXISTS anki_review_log (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		card_id INTEGER NOT NULL,
 		deck_id INTEGER NOT NULL,
-		position_id INTEGER NOT NULL,
+		kind TEXT NOT NULL DEFAULT 'position',
+		key TEXT NOT NULL DEFAULT '',
+		position_id INTEGER,
 		rating INTEGER NOT NULL,
 		state INTEGER NOT NULL DEFAULT 0,
 		stability REAL DEFAULT 0,
@@ -425,6 +439,13 @@ var schemaStatements = []string{
 		CHECK (rating BETWEEN 1 AND 4)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_deck ON anki_card(deck_id)`,
+	// A card's identity within its deck, stated as an INDEX and not as a table
+	// constraint on purpose: EnsureSchema builds indexes on an existing
+	// database and cannot add a constraint, and this is the index the sync's
+	// "ON CONFLICT (deck_id, kind, key)" needs in order to be a no-op rather
+	// than a duplicate. It replaces UNIQUE(deck_id, position_id), which said
+	// the same thing about the only kind of card that existed before 2.23.0.
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_anki_card_identity ON anki_card(deck_id, kind, key)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`,
@@ -581,6 +602,21 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	return nil
+}
+
+// CreateTableSQL returns the fresh-database DDL of one table, as
+// schemaStatements states it. It exists for the rare migration that has to
+// REBUILD a table rather than add to it — SQLite relaxes no constraint through
+// ALTER TABLE — so that the rebuilt table is built from the one schema and not
+// from a copy of it going stale in a migration file.
+func CreateTableSQL(name string) (string, error) {
+	prefix := "CREATE TABLE IF NOT EXISTS " + name + " ("
+	for _, stmt := range schemaStatements {
+		if strings.HasPrefix(stmt, prefix) {
+			return stmt, nil
+		}
+	}
+	return "", fmt.Errorf("sqlite: no table %q in the schema", name)
 }
 
 // SchemaDrift is what a database lacks against the reference schema

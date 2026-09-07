@@ -13,6 +13,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -2761,5 +2762,145 @@ func TestMigrate_2_19_0_to_2_22_0_TrainingJournal(t *testing.T) {
 	}
 	if len(stats) != 1 || stats[0].NumberType != "gv1" || stats[0].Faults != 1 {
 		t.Errorf("LoadTrainingNumberStats = %+v, want one gv1 with 1 fault", stats)
+	}
+}
+
+// TestMigrate_2_22_0_to_2_23_0_AnkiCardKinds walks the step that lets an Anki
+// card be something other than a position (issue #324, ADR-0042) over a
+// database holding the two anki tables in their pre-2.23.0 shape — the shape
+// createOldDatabase does not build, because every other test gets them fresh
+// from EnsureSchema and would never see the rebuild at all.
+//
+// What the step owes the user, in order: the cards already there keep their
+// meaning and gain a key; the review journal keeps its rows and its foreign
+// keys through the rebuild; and a card with no position becomes writable,
+// which is the whole point.
+func TestMigrate_2_22_0_to_2_23_0_AnkiCardKinds(t *testing.T) {
+	t.Parallel()
+	tmpDir := tempDir(t)
+	dbPath := filepath.Join(tmpDir, "test_v2220.db")
+	createOldDatabase(t, dbPath, "2.22.0")
+
+	// The anki tables as 2.22.0 declared them: position_id mandatory, and a
+	// deck holding one card per position.
+	func() {
+		db, err := sql.Open("sqlite", dbPath)
+		if err != nil {
+			t.Fatalf("open the old database: %v", err)
+		}
+		defer db.Close()
+		if _, err := db.Exec(`
+			CREATE TABLE anki_deck (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				name TEXT NOT NULL,
+				description TEXT DEFAULT '',
+				source_type TEXT NOT NULL DEFAULT 'collection',
+				source_id INTEGER DEFAULT 0,
+				source_command TEXT DEFAULT '',
+				request_retention REAL DEFAULT 0.9,
+				maximum_interval REAL DEFAULT 36500,
+				enable_fuzz INTEGER DEFAULT 1,
+				session_limit INTEGER,
+				created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+				updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			);
+			CREATE TABLE anki_card (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				deck_id INTEGER NOT NULL,
+				position_id INTEGER NOT NULL,
+				due DATETIME DEFAULT CURRENT_TIMESTAMP,
+				stability REAL DEFAULT 0,
+				difficulty REAL DEFAULT 0,
+				elapsed_days INTEGER DEFAULT 0,
+				scheduled_days INTEGER DEFAULT 0,
+				reps INTEGER DEFAULT 0,
+				lapses INTEGER DEFAULT 0,
+				state INTEGER DEFAULT 0,
+				last_review DATETIME DEFAULT '',
+				suspended INTEGER NOT NULL DEFAULT 0,
+				buried_until DATETIME,
+				FOREIGN KEY(deck_id) REFERENCES anki_deck(id) ON DELETE CASCADE,
+				FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+				UNIQUE(deck_id, position_id)
+			);
+			CREATE TABLE anki_review_log (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				card_id INTEGER NOT NULL,
+				deck_id INTEGER NOT NULL,
+				position_id INTEGER NOT NULL,
+				rating INTEGER NOT NULL,
+				state INTEGER NOT NULL DEFAULT 0,
+				stability REAL DEFAULT 0,
+				difficulty REAL DEFAULT 0,
+				elapsed_days INTEGER DEFAULT 0,
+				scheduled_days INTEGER DEFAULT 0,
+				reviewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+			);
+			INSERT INTO position (id, state) VALUES (7, '');
+			INSERT INTO anki_deck (id, name) VALUES (1, 'blunders');
+			INSERT INTO anki_card (id, deck_id, position_id) VALUES (3, 1, 7);
+			INSERT INTO anki_review_log (id, card_id, deck_id, position_id, rating)
+				VALUES (5, 3, 1, 7, 3);
+		`); err != nil {
+			t.Fatalf("build the 2.22.0 anki tables: %v", err)
+		}
+	}()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.22.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	defer d.db.Close()
+
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration: got %s (err %v), want %s", v, err, DatabaseVersion)
+	}
+
+	// The card that was there is a position card, and its key names the
+	// position it always named.
+	var kind, key string
+	if err := d.db.QueryRow(`SELECT kind, key FROM anki_card WHERE id = 3`).Scan(&kind, &key); err != nil {
+		t.Fatalf("read the migrated card: %v", err)
+	}
+	if kind != domain.AnkiKindPosition || key != "7" {
+		t.Errorf("migrated card: got kind %q key %q, want %q / \"7\"", kind, key, domain.AnkiKindPosition)
+	}
+	if err := d.db.QueryRow(`SELECT kind, key FROM anki_review_log WHERE id = 5`).Scan(&kind, &key); err != nil {
+		t.Fatalf("read the migrated review: %v", err)
+	}
+	if kind != domain.AnkiKindPosition || key != "7" {
+		t.Errorf("migrated review: got kind %q key %q, want %q / \"7\"", kind, key, domain.AnkiKindPosition)
+	}
+
+	// The journal survived the rebuild of its own table — and came out of it
+	// with the foreign keys a fresh database declares and it never had.
+	var reviews int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM anki_review_log`).Scan(&reviews); err != nil {
+		t.Fatalf("count the reviews: %v", err)
+	}
+	if reviews != 1 {
+		t.Errorf("reviews after the rebuild: got %d, want 1 — the rebuild must not lose the journal", reviews)
+	}
+	var fks int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM pragma_foreign_key_list('anki_review_log')`).Scan(&fks); err != nil {
+		t.Fatalf("read the review log's foreign keys: %v", err)
+	}
+	if fks != 3 {
+		t.Errorf("review log foreign keys: got %d, want 3 (card, deck, position)", fks)
+	}
+
+	// And the point of the whole step: a card that asks about a score, with no
+	// position at all, is writable.
+	if _, err := d.db.Exec(
+		`INSERT INTO anki_card (deck_id, kind, key, position_id) VALUES (1, ?, '3:5', NULL)`,
+		domain.AnkiKindScore); err != nil {
+		t.Fatalf("insert a score card: %v", err)
+	}
+	// Twice is once: the deck holds one card per question.
+	if _, err := d.db.Exec(
+		`INSERT INTO anki_card (deck_id, kind, key, position_id) VALUES (1, ?, '3:5', NULL)`,
+		domain.AnkiKindScore); err == nil {
+		t.Error("inserting the same score twice in one deck must fail on idx_anki_card_identity")
 	}
 }

@@ -402,3 +402,111 @@ func testAnkiCubePairsAreChained(t *testing.T, s storage.Storage) {
 		t.Errorf("a checker decision has no other half: got %v, want ErrNotFound", err)
 	}
 }
+
+// testAnkiScoreDeckHoldsScores pins what a deck of score cards is (ADR-0042):
+// the application states its content, a card of it names a score and no
+// position, and it is reviewed and logged like any other card.
+//
+// The last part is the point of the case. Everything the review path does with
+// a card used to go through its position — loading it, excluding it from a
+// draw, writing it into the journal — and a card that has none must travel
+// that whole path without one, on both backends.
+func testAnkiScoreDeckHoldsScores(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	deckID, err := s.Anki().CreateDeck(ctx, "", "scores", "", domain.AnkiSourceScores, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	// The user enters no score: syncing the deck is what fills it.
+	if err := s.Anki().Sync(ctx, "", deckID); err != nil {
+		t.Fatalf("Sync: %v", err)
+	}
+	stats, err := s.Anki().DeckStats(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("DeckStats: %v", err)
+	}
+	want := len(domain.UnorderedScoreKeys())
+	if want != 36 {
+		t.Fatalf("UnorderedScoreKeys: got %d keys, want the 36 unordered scores of 2-9 away", want)
+	}
+	if stats.TotalCount != want || stats.DueCount != want {
+		t.Fatalf("DeckStats: got %+v, want %d cards, all due", stats, want)
+	}
+
+	// A score deck holds no position, so the deck's position list is empty —
+	// and empty rather than a row of zeroes, which is what a NULL position_id
+	// scanned as a number would have produced.
+	for range s.Anki().DeckPositions(ctx, "", deckID) {
+		t.Fatalf("DeckPositions of a score deck: got a position, want none")
+	}
+
+	card, err := s.Anki().NextCard(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("NextCard: %v", err)
+	}
+	if card.Card.Kind != domain.AnkiKindScore {
+		t.Errorf("NextCard kind: got %q, want %q", card.Card.Kind, domain.AnkiKindScore)
+	}
+	if card.Card.PositionID != 0 {
+		t.Errorf("NextCard position: got %d, want none", card.Card.PositionID)
+	}
+	if _, _, err := domain.ParseScoreKey(card.Card.Key); err != nil {
+		t.Errorf("NextCard key %q: %v", card.Card.Key, err)
+	}
+	if card.Position.ID != 0 {
+		t.Errorf("NextCard carried a position: %+v", card.Position)
+	}
+
+	// A cube pairing is a fact about two positions; a score card has none, so
+	// there is nothing to chain and nothing to fail on.
+	if _, err := s.Anki().LinkedCard(ctx, "", deckID, card.Card.ID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("LinkedCard of a score card: got %v, want ErrNotFound", err)
+	}
+
+	// Cram draws from the deck; the exclusion names a position, which this
+	// card does not have, so it must still serve a card rather than nothing.
+	if _, err := s.Anki().RandomCard(ctx, "", deckID, 0); err != nil {
+		t.Errorf("RandomCard: %v", err)
+	}
+
+	reviewedKey := card.Card.Key
+	if _, err := s.Anki().ReviewCard(ctx, "", card.Card.ID, 3); err != nil {
+		t.Fatalf("ReviewCard: %v", err)
+	}
+	var logged *domain.AnkiReviewLog
+	for l, err := range s.Anki().ReviewLog(ctx, "", deckID, 10) {
+		if err != nil {
+			t.Fatalf("ReviewLog: %v", err)
+		}
+		logged = l
+		break
+	}
+	if logged == nil {
+		t.Fatalf("ReviewLog: no entry after a review")
+	}
+	if logged.Kind != domain.AnkiKindScore || logged.Key != reviewedKey {
+		t.Errorf("ReviewLog entry: got kind %q key %q, want %q / %q",
+			logged.Kind, logged.Key, domain.AnkiKindScore, reviewedKey)
+	}
+	if logged.PositionID != 0 {
+		t.Errorf("ReviewLog entry position: got %d, want none", logged.PositionID)
+	}
+
+	// Regenerating the deck states the same 36 keys again: no card is
+	// duplicated, and the one just graded keeps the schedule it was given.
+	if err := s.Anki().Sync(ctx, "", deckID); err != nil {
+		t.Fatalf("Sync again: %v", err)
+	}
+	stats, err = s.Anki().DeckStats(ctx, "", deckID)
+	if err != nil {
+		t.Fatalf("DeckStats: %v", err)
+	}
+	if stats.TotalCount != want {
+		t.Errorf("DeckStats after a second sync: got %d cards, want %d", stats.TotalCount, want)
+	}
+	if stats.DueCount != want-1 {
+		t.Errorf("DueCount after a second sync: got %d, want %d — the reviewed card kept its schedule",
+			stats.DueCount, want-1)
+	}
+}

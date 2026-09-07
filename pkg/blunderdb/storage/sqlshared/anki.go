@@ -224,30 +224,68 @@ func (s *AnkiStore) Sync(ctx context.Context, scope string, deckID int64) error 
 				positionIDs = append(positionIDs, pid)
 			}
 		}
+	case domain.AnkiSourceScores:
+		// The application fills this one, and the user enters nothing
+		// (ADR-0042 rule 2). Syncing it again is how a deck follows a change
+		// in the reference tables: the keys are re-stated, and every card
+		// already there keeps its schedule.
+		return s.syncCards(ctx, scope, deckID, domain.AnkiKindScore, domain.UnorderedScoreKeys())
 	}
 	return s.SyncWithPositions(ctx, scope, deckID, positionIDs)
 }
 
 // SyncWithPositions adds a card for every position not yet in the deck and
 // touches the deck's updated_at. Existing cards keep their scheduling state.
-// The insert's own conflict-avoidance is the plain SQL-standard
-// "ON CONFLICT ... DO NOTHING", which SQLite (>= 3.24, same as the metadata/
-// session upserts elsewhere in this package) and PostgreSQL both execute
-// identically — no INSERT OR IGNORE/dialect split needed here.
+// It is syncCards for position cards: the position ids ARE the keys, written
+// as text, which is what makes "every existing card is a position card with
+// its id as key" (ADR-0042) true of new cards too and not only of migrated
+// ones.
 func (s *AnkiStore) SyncWithPositions(ctx context.Context, scope string, deckID int64, positionIDs []int64) error {
 	// Une décision de videau est deux questions (#276) : si la source en
 	// sélectionne une moitié, l'autre complète la décision plutôt que
 	// d'ajouter autre chose. Voir anki_cube_pairs.go.
 	positionIDs = completeCubePairs(ctx, s.DB, scope, positionIDs)
+	keys := make([]string, 0, len(positionIDs))
+	for _, pid := range positionIDs {
+		keys = append(keys, strconv.FormatInt(pid, 10))
+	}
+	return s.syncCards(ctx, scope, deckID, domain.AnkiKindPosition, keys)
+}
+
+// syncCards adds a card for every (kind, key) not yet in the deck and touches
+// the deck's updated_at. Existing cards keep their scheduling state — this is
+// the operation a deck is "regenerated" with, and regenerating must never cost
+// the user their history.
+//
+// A position card also fills position_id, so the foreign key holds it to a
+// real row and a deleted position takes its card with it. A card of any other
+// kind leaves it NULL: there is no position, and a 0 would be a lie the
+// schema would then have to tolerate everywhere.
+// The insert's conflict-avoidance is the plain SQL-standard "ON CONFLICT ...
+// DO NOTHING", which SQLite (>= 3.24, same as the metadata/session upserts
+// elsewhere in this package) and PostgreSQL both execute identically — no
+// INSERT OR IGNORE/dialect split needed here. It names (deck_id, kind, key),
+// the unique index idx_anki_card_identity, and not the pair
+// (deck_id, position_id) it replaced: a deck holds one card per question,
+// whatever the question is about.
+func (s *AnkiStore) syncCards(ctx context.Context, scope string, deckID int64, kind string, keys []string) error {
 	err := s.DB.Transact(ctx, func(tx Execer) error {
 		now := ankiNow()
-		for _, pid := range positionIDs {
+		for _, key := range keys {
 			cols, args := tx.TenantColumns(scope)
-			cols = append(cols, "deck_id", "position_id", "due", "state")
-			args = append(args, deckID, pid, now, 0)
+			cols = append(cols, "deck_id", "kind", "key", "position_id", "due", "state")
+			var positionID any
+			if kind == domain.AnkiKindPosition {
+				pid, err := strconv.ParseInt(key, 10, 64)
+				if err != nil {
+					return fmt.Errorf("position card key %q: %w", key, err)
+				}
+				positionID = pid
+			}
+			args = append(args, deckID, kind, key, positionID, now, 0)
 			if _, err := tx.Exec(ctx,
 				`INSERT INTO anki_card (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)
-				 ON CONFLICT (deck_id, position_id) DO NOTHING`, args...); err != nil {
+				 ON CONFLICT (deck_id, kind, key) DO NOTHING`, args...); err != nil {
 				return err
 			}
 		}
@@ -273,7 +311,8 @@ func (s *AnkiStore) DeckPositions(ctx context.Context, scope string, deckID int6
 	return func(yield func(*domain.Position, error) bool) {
 		tenant, targs := s.DB.TenantFilter("", scope)
 		rows, err := s.DB.Query(ctx,
-			`SELECT position_id FROM anki_card WHERE deck_id = ? AND `+tenant+` ORDER BY position_id ASC`,
+			`SELECT position_id FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND `+tenant+`
+			 ORDER BY position_id ASC`,
 			append([]any{deckID}, targs...)...)
 		if err != nil {
 			yield(nil, errf(s.DB, "anki deck positions", err))
@@ -341,19 +380,40 @@ func (s *AnkiStore) DeckStats(ctx context.Context, scope string, deckID int64) (
 
 // ankiCardCols reads a domain.AnkiCard.
 func (s *AnkiStore) ankiCardCols() string {
-	return `id, deck_id, position_id, ` + s.DB.TimestampText("due") + `, stability, difficulty,
+	return `id, deck_id, kind, key, position_id, ` + s.DB.TimestampText("due") + `, stability, difficulty,
 		elapsed_days, scheduled_days, reps, lapses, state, ` + s.DB.TimestampText("last_review")
 }
 
 func scanAnkiCard(sc interface{ Scan(...any) error }) (domain.AnkiCard, error) {
 	var c domain.AnkiCard
-	if err := sc.Scan(&c.ID, &c.DeckID, &c.PositionID,
+	// position_id is NULL on every card that is not a position (ADR-0042):
+	// scanned through a pointer, and surfaced as 0 in the domain, where Kind
+	// is what says whether that 0 means anything.
+	var positionID *int64
+	if err := sc.Scan(&c.ID, &c.DeckID, &c.Kind, &c.Key, &positionID,
 		&c.Due, &c.Stability, &c.Difficulty,
 		&c.ElapsedDays, &c.ScheduledDays, &c.Reps, &c.Lapses, &c.State,
 		&c.LastReview); err != nil {
 		return domain.AnkiCard{}, err
 	}
+	if positionID != nil {
+		c.PositionID = *positionID
+	}
 	return c, nil
+}
+
+// reviewCardFor pairs a card with the position it asks about — nothing at all
+// when it asks about something else (a score card's whole question is its
+// Key, which the review view renders itself).
+func (s *AnkiStore) reviewCardFor(ctx context.Context, scope string, card domain.AnkiCard) (*domain.AnkiReviewCard, error) {
+	if card.Kind != domain.AnkiKindPosition {
+		return &domain.AnkiReviewCard{Card: card}, nil
+	}
+	pos, err := s.Positions.Load(ctx, scope, card.PositionID)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.AnkiReviewCard{Card: card, Position: *pos}, nil
 }
 
 // ankiAvailable is the predicate that excludes suspended and still-buried
@@ -408,11 +468,11 @@ func (s *AnkiStore) NextCard(ctx context.Context, scope string, deckID int64) (*
 		}
 		return nil, errf(s.DB, fmt.Sprintf("next anki card of deck %d", deckID), err)
 	}
-	pos, err := s.Positions.Load(ctx, scope, card.PositionID)
+	rc, err := s.reviewCardFor(ctx, scope, card)
 	if err != nil {
 		return nil, errf(s.DB, fmt.Sprintf("next anki card of deck %d", deckID), err)
 	}
-	return &domain.AnkiReviewCard{Card: card, Position: *pos}, nil
+	return rc, nil
 }
 
 // randomCard draws one card of the deck at random, optionally skipping
@@ -423,7 +483,11 @@ func (s *AnkiStore) randomCard(ctx context.Context, scope string, deckID, exclud
 	query := `SELECT ` + s.ankiCardCols() + ` FROM anki_card WHERE deck_id = ? AND ` + tenant
 	args := append([]any{deckID}, targs...)
 	if excludePositionID != 0 {
-		query += ` AND position_id != ?`
+		// A card without a position is never what this excludes: the caller
+		// names the position it has just served, and `position_id != ?` is
+		// UNKNOWN — therefore false — on a NULL, which would filter out every
+		// score card in the deck instead of one.
+		query += ` AND (position_id IS NULL OR position_id != ?)`
 		args = append(args, excludePositionID)
 	}
 	query += ` ORDER BY RANDOM() LIMIT 1`
@@ -452,11 +516,11 @@ func (s *AnkiStore) RandomCard(ctx context.Context, scope string, deckID, exclud
 		}
 		return nil, errf(s.DB, fmt.Sprintf("random anki card of deck %d", deckID), err)
 	}
-	pos, err := s.Positions.Load(ctx, scope, card.PositionID)
+	rc, err := s.reviewCardFor(ctx, scope, card)
 	if err != nil {
 		return nil, errf(s.DB, fmt.Sprintf("random anki card of deck %d", deckID), err)
 	}
-	return &domain.AnkiReviewCard{Card: card, Position: *pos}, nil
+	return rc, nil
 }
 
 // ReviewCard records a review rating against a card, advances its FSRS
@@ -517,9 +581,13 @@ func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 			return err
 		}
 		cols, cargs := tx.TenantColumns(scope)
-		cols = append(cols, "card_id", "deck_id", "position_id", "rating", "state",
+		cols = append(cols, "card_id", "deck_id", "kind", "key", "position_id", "rating", "state",
 			"stability", "difficulty", "elapsed_days", "scheduled_days", "reviewed_at")
-		cargs = append(cargs, log.CardID, log.DeckID, log.PositionID, log.Rating, log.State,
+		var logPositionID any
+		if card.Kind == domain.AnkiKindPosition {
+			logPositionID = log.PositionID
+		}
+		cargs = append(cargs, log.CardID, log.DeckID, card.Kind, card.Key, logPositionID, log.Rating, log.State,
 			log.Stability, log.Difficulty, log.ElapsedDays, log.ScheduledDays, log.ReviewedAt)
 		if _, err := tx.Exec(ctx,
 			`INSERT INTO anki_review_log (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`,
@@ -539,11 +607,11 @@ func (s *AnkiStore) ReviewCard(ctx context.Context, scope string, cardID int64, 
 	if err != nil {
 		return nil, errf(s.DB, fmt.Sprintf("review anki card %d", cardID), err)
 	}
-	pos, err := s.Positions.Load(ctx, scope, nextCard.PositionID)
+	rc, err := s.reviewCardFor(ctx, scope, nextCard)
 	if err != nil {
 		return nil, errf(s.DB, fmt.Sprintf("review anki card %d", cardID), err)
 	}
-	return &domain.AnkiReviewCard{Card: nextCard, Position: *pos}, nil
+	return rc, nil
 }
 
 // checkAnkiRowAffected maps a no-op update/delete to storage.ErrNotFound.
@@ -602,15 +670,19 @@ func (s *AnkiStore) RemoveCard(ctx context.Context, scope string, cardID int64) 
 
 // reviewLogCols reads a domain.AnkiReviewLog.
 func (s *AnkiStore) reviewLogCols() string {
-	return `id, card_id, deck_id, position_id, rating, state,
+	return `id, card_id, deck_id, kind, key, position_id, rating, state,
 		stability, difficulty, elapsed_days, scheduled_days, ` + s.DB.TimestampText("reviewed_at")
 }
 
 func scanReviewLog(sc interface{ Scan(...any) error }) (domain.AnkiReviewLog, error) {
 	var l domain.AnkiReviewLog
-	if err := sc.Scan(&l.ID, &l.CardID, &l.DeckID, &l.PositionID, &l.Rating, &l.State,
+	var positionID *int64
+	if err := sc.Scan(&l.ID, &l.CardID, &l.DeckID, &l.Kind, &l.Key, &positionID, &l.Rating, &l.State,
 		&l.Stability, &l.Difficulty, &l.ElapsedDays, &l.ScheduledDays, &l.ReviewedAt); err != nil {
 		return domain.AnkiReviewLog{}, err
+	}
+	if positionID != nil {
+		l.PositionID = *positionID
 	}
 	return l, nil
 }

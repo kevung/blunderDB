@@ -58,8 +58,13 @@ var orphanQueries = []struct {
 	{"anki_review_log without deck",
 		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN anki_deck d ON d.id = l.deck_id WHERE d.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutDeck }},
+	// "IS NOT NULL" and not a missing filter: since 2.23.0 a review can be of
+	// a score card (ADR-0042), whose position_id is NULL by design. A row
+	// that names no position is not an orphan — an orphan names one that is
+	// gone.
 	{"anki_review_log without position",
-		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN position p ON p.id = l.position_id WHERE p.id IS NULL`,
+		`SELECT COUNT(*) FROM anki_review_log l LEFT JOIN position p ON p.id = l.position_id
+		 WHERE l.position_id IS NOT NULL AND p.id IS NULL`,
 		func(o *OrphanCounts) *int64 { return &o.ReviewsWithoutPosition }},
 	// The Training journal (2.21.0, issue #320): an item without its session
 	// is a fault the per-number detail would count against nobody's session.

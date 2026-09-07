@@ -2042,17 +2042,33 @@ résumé statistique, qui comble ce trou.
 Panneau Anki
 ------------
 
-Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par répétition
-espacée en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets
-à partir de collections ou de résultats de recherche.
+Le panneau **Anki** (*CTRL-K*) permet d'étudier par répétition espacée, en
+utilisant l'algorithme FSRS. Une carte pose une question : le plus souvent une
+position, tirée d'une collection ou d'une recherche ; ce peut aussi être un
+score.
 
 **Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à partir
 d'une collection ou des résultats de recherche courants. Les paquets basés sur
 une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.
 
+**Un paquet de fiches de score.** La troisième source, *Fiches de score*, ne
+demande rien d'autre qu'un nom : blunderDB remplit le paquet avec les 36 scores
+non ordonnés de 2 à 9 away, et la carte d'un score est la fiche que
+l':ref:`exercice Scores <panneau_entrainement>` affiche — points de prise et
+valeurs de gammon, les deux faces. Ce paquet n'existe que si vous le créez :
+36 cartes dues le premier jour sont une dette de révision, et elle se contracte
+volontairement. Le bouton de synchronisation le régénère.
+
+Les deux endroits ne font pas le même travail. L'exercice Scores fait
+retrouver ces nombres **sous la pendule** et mesure la vitesse ; le paquet les
+fait **tenir dans le temps** et n'en mesure rien. Les deux histoires restent
+séparées : le journal de l'Entraînement ignore les révisions Anki, et les
+statistiques d'Anki ignorent les sessions d'Entraînement.
+
 **Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-cliquez
-sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
-la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+sur un paquet) pour commencer la révision des cartes dues. Une carte de position
+affiche la position sur le plateau ; une carte de score annonce le score et
+laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
@@ -2068,10 +2084,13 @@ temps d'une même carte, ce sont deux cartes. L'enchaînement n'avance aucune
 échéance — il ordonne les cartes déjà dues, rien de plus. Les deux naissant
 ensemble, elles sont dues ensemble la première fois, et c'est là qu'il sert.
 
-**Afficher la réponse :** La carte pose une question — quel coup jouer, ou quelle
-action de videau. Réfléchissez, puis appuyez sur *ESPACE* (ou cliquez sur la zone
-masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle
-que l'onglet Analyse la présente. Elle apparaît sous les boutons d'évaluation,
+**Afficher la réponse :** La carte pose une question — quel coup jouer, quelle
+action de videau, ou quels nombres porte un score. Réfléchissez, puis appuyez sur
+*ESPACE* (ou cliquez sur la zone masquée) pour dévoiler la réponse : l'analyse
+enregistrée de la position, telle que l'onglet Analyse la présente, ou la fiche
+du score, entière. Sur une fiche il n'y a rien à cocher : Anki planifie une
+mémoire, il ne mesure pas un calcul — c'est l'Entraînement qui compte les
+fautes. Elle apparaît sous les boutons d'évaluation,
 qui restent à leur place et à portée. Cliquer sur un coup de la liste le montre
 sur le plateau.
 
@@ -2130,8 +2149,9 @@ Aucun de ces trois gestes n'enregistre de note : une carte écartée n'est pas
 une carte répondue, et elle ne compte pas dans le décompte de la séance.
 
 **Journal des révisions.** Dans les Paramètres d'un paquet, le bouton *Journal
-des révisions* montre ce que le planificateur a été **dit** — date, position,
-note, état, intervalle accordé — par opposition à ce qu'il prévoit. C'est le
+des révisions* montre ce que le planificateur a été **dit** — date, sujet
+(le numéro de la position, ou le score), note, état, intervalle accordé — par
+opposition à ce qu'il prévoit. C'est le
 seul endroit où une note entrée par erreur se voit. Elle ne s'y corrige pas :
 l'échéancier reste hors de portée, et cette règle est précisément ce qui rend
 le journal utile — on ne peut pas réécrire le passé, mais on peut savoir ce
@@ -2173,7 +2193,9 @@ Panneau Entraînement
 Le panneau **Anki** fait réviser ce qui se **retient** ; le panneau
 **Entraînement** fait travailler ce qui se **calcule**, sous la pendule. Il
 s'ouvre par ``CTRL-J``, par le bouton de la barre d'outils placé juste après
-« Position aléatoire », ou par la commande ``train``.
+« Position aléatoire », ou par la commande ``train``. La fiche de score relève
+des deux : elle se calcule ici et se retient dans un
+:ref:`paquet de fiches de score <panneau_anki>`.
 
 Au repos, le panneau montre le lanceur et le bilan des sessions passées.
 

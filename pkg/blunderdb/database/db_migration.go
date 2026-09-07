@@ -84,6 +84,7 @@ var migrationSteps = []migrationStep{
 	{"2.19.0", "2.20.0", (*Database).migrate_2_19_0_to_2_20_0},
 	{"2.20.0", "2.21.0", (*Database).migrate_2_20_0_to_2_21_0},
 	{"2.21.0", "2.22.0", (*Database).migrate_2_21_0_to_2_22_0},
+	{"2.22.0", "2.23.0", (*Database).migrate_2_22_0_to_2_23_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -179,6 +180,22 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 		if n > 0 {
 			slog.Info("classified the phase of the stored positions", "positions", n)
+		}
+	}
+
+	// Teach the anki tables that a card can be a score, on the open that
+	// crosses 2.23.0 (issue #324, ADR-0042). Here rather than in the migration
+	// step for the 2.19.0 reason — the `kind`/`key` columns it fills are
+	// created by ensureAllTablesExist just above — and because it ends by
+	// calling that pass a second time: the identity index cannot be built
+	// while every key is still empty.
+	if d.pendingAnkiCardKinds {
+		d.pendingAnkiCardKinds = false
+		if err := d.repairAnkiCardKinds(ctx); err != nil {
+			return fmt.Errorf("teaching the anki cards their kind: %w", err)
+		}
+		if err := d.ensureAllTablesExist(); err != nil {
+			return err
 		}
 	}
 

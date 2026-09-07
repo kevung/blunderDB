@@ -15,7 +15,9 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // migrate_2_5_0_to_2_6_0 adds the is_close_cube column to analysis and backfills
@@ -926,4 +928,190 @@ func (d *Database) migrate_2_20_0_to_2_21_0(context.Context) error {
 // which is the one thing the journal exists for, and no view ever read it.
 func (d *Database) migrate_2_21_0_to_2_22_0(context.Context) error {
 	return nil
+}
+
+// migrate_2_22_0_to_2_23_0 is the 2.23.0 wave.
+//
+//   - anki_card.kind / anki_card.key, and the same pair on anki_review_log —
+//     an Anki card can be a score (issue #324, ADR-0042). A position card is
+//     `position` with its id as key; a score card is `score` with the
+//     unordered score ("3:5"), and its position_id is NULL.
+//
+// The two columns are declared in schemaStatements, so EnsureSchema adds them
+// to an existing database right after this chain. What it cannot do is the
+// rest: fill the key of the cards that already exist, and relax
+// position_id's NOT NULL — SQLite adds columns through ALTER TABLE and
+// relaxes nothing. Both are therefore deferred to repairAnkiCardKinds, which
+// runMigrationChain calls once the schema pass has been through.
+func (d *Database) migrate_2_22_0_to_2_23_0(context.Context) error {
+	d.pendingAnkiCardKinds = true
+	return nil
+}
+
+// repairAnkiCardKinds brings the two anki tables of an existing database into
+// the 2.23.0 shape: every card that was there before is a `position` card with
+// its id as key (nothing old changes meaning, ADR-0042), and position_id
+// becomes nullable so a score card can hold nothing there rather than a 0
+// pointing at no row.
+//
+// It is idempotent: the backfill only touches the rows the schema pass left
+// with an empty key, and each table is rebuilt only while its position_id is
+// still NOT NULL.
+func (d *Database) repairAnkiCardKinds(ctx context.Context) error {
+	for _, table := range []string{"anki_card", "anki_review_log"} {
+		if _, err := d.db.ExecContext(ctx,
+			`UPDATE `+table+` SET kind = ?, key = CAST(position_id AS TEXT)
+			 WHERE key = '' AND position_id IS NOT NULL`, domain.AnkiKindPosition); err != nil {
+			return fmt.Errorf("%s: backfilling the key: %w", table, err)
+		}
+		notNull, err := columnIsNotNull(ctx, d.db, table, "position_id")
+		if err != nil {
+			return err
+		}
+		if !notNull {
+			continue
+		}
+		if err := rebuildTable(ctx, d.db, table); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// columnIsNotNull reports whether a column of an existing table carries NOT
+// NULL, read off PRAGMA table_info.
+func columnIsNotNull(ctx context.Context, db *sql.DB, table, column string) (bool, error) {
+	rows, err := db.QueryContext(ctx, `PRAGMA table_info(`+table+`)`)
+	if err != nil {
+		return false, fmt.Errorf("%s: reading the columns: %w", table, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			cid, notNull, pk int
+			name, typ        string
+			dflt             sql.NullString
+		)
+		if err := rows.Scan(&cid, &name, &typ, &notNull, &dflt, &pk); err != nil {
+			return false, fmt.Errorf("%s: reading the columns: %w", table, err)
+		}
+		if name == column {
+			return notNull != 0, nil
+		}
+	}
+	return false, rows.Err()
+}
+
+// rebuildTable replaces a table with the one schemaStatements declares today,
+// carrying every column the two shapes share across. It is SQLite's documented
+// twelve-step ALTER (create, copy, drop, rename), and it is the only way to
+// relax a constraint on a table that already exists.
+//
+// Two precautions the procedure requires and this code takes. Foreign keys are
+// turned OFF for the duration, on a connection PINNED for the purpose: dropping
+// the old table with them on would cascade its children away — the review log
+// is exactly such a child — and a PRAGMA reaches one pooled connection only.
+// And the copy names its columns rather than doing SELECT *, so a column added
+// since (kind, key) is simply left to its default instead of shifting the copy
+// by one.
+//
+// It is used on the anki tables, which hold cards and review events — thousands
+// of rows, not the hundreds of thousands the position table holds. That is what
+// makes a rebuild affordable here and not there (see schemaStatements, which
+// declines to rebuild `position` for its CHECK constraints).
+func rebuildTable(ctx context.Context, db *sql.DB, table string) error {
+	createSQL, err := sqlite.CreateTableSQL(table)
+	if err != nil {
+		return err
+	}
+	tmp := table + "_rebuild"
+	createTmp := strings.Replace(createSQL, "CREATE TABLE IF NOT EXISTS "+table+" (",
+		"CREATE TABLE "+tmp+" (", 1)
+
+	conn, err := db.Conn(ctx)
+	if err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	defer conn.Close()
+	// Outside any transaction, and undone before the connection goes back to
+	// the pool — see the doc comment.
+	if _, err := conn.ExecContext(ctx, `PRAGMA foreign_keys = OFF`); err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	defer func() { _, _ = conn.ExecContext(ctx, `PRAGMA foreign_keys = ON`) }()
+
+	if _, err := conn.ExecContext(ctx, `DROP TABLE IF EXISTS `+tmp); err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	if _, err := conn.ExecContext(ctx, createTmp); err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	shared, err := sharedColumns(ctx, conn, table, tmp)
+	if err != nil {
+		return err
+	}
+	cols := strings.Join(shared, ", ")
+
+	tx, err := conn.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	defer func() { _ = tx.Rollback() }()
+	if _, err := tx.ExecContext(ctx,
+		`INSERT INTO `+tmp+` (`+cols+`) SELECT `+cols+` FROM `+table); err != nil {
+		return fmt.Errorf("%s: rebuilding, copying the rows: %w", table, err)
+	}
+	if _, err := tx.ExecContext(ctx, `DROP TABLE `+table); err != nil {
+		return fmt.Errorf("%s: rebuilding, dropping the old table: %w", table, err)
+	}
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE `+tmp+` RENAME TO `+table); err != nil {
+		return fmt.Errorf("%s: rebuilding, renaming: %w", table, err)
+	}
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("%s: rebuilding: %w", table, err)
+	}
+	slog.Info("anki table rebuilt so a card can be something other than a position", "table", table)
+	return nil
+}
+
+// sharedColumns lists the columns two tables have in common, in the order the
+// destination declares them.
+func sharedColumns(ctx context.Context, conn *sql.Conn, src, dst string) ([]string, error) {
+	names := func(table string) (map[string]bool, []string, error) {
+		rows, err := conn.QueryContext(ctx, `PRAGMA table_info(`+table+`)`)
+		if err != nil {
+			return nil, nil, fmt.Errorf("%s: reading the columns: %w", table, err)
+		}
+		defer rows.Close()
+		set := map[string]bool{}
+		var order []string
+		for rows.Next() {
+			var (
+				cid, notNull, pk int
+				name, typ        string
+				dflt             sql.NullString
+			)
+			if err := rows.Scan(&cid, &name, &typ, &notNull, &dflt, &pk); err != nil {
+				return nil, nil, fmt.Errorf("%s: reading the columns: %w", table, err)
+			}
+			set[name] = true
+			order = append(order, name)
+		}
+		return set, order, rows.Err()
+	}
+	srcSet, _, err := names(src)
+	if err != nil {
+		return nil, err
+	}
+	_, dstOrder, err := names(dst)
+	if err != nil {
+		return nil, err
+	}
+	var shared []string
+	for _, c := range dstOrder {
+		if srcSet[c] {
+			shared = append(shared, c)
+		}
+	}
+	return shared, nil
 }
