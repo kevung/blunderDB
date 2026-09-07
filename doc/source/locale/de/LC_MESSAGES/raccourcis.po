@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 09:15+0200\n"
+"POT-Creation-Date: 2026-09-07 09:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -800,6 +800,28 @@ msgstr ""
 "Filter auf."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic, glisser (aucun dé saisi)"
+msgstr "Klick, Ziehen (kein Würfel eingegeben)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
+" destination, contraint aux coups légaux, et les deux dés se déduisent "
+"des pas joués."
+msgstr ""
+"Den Zug direkt auf dem Brett spielen: Der Stein geht vom angeklickten "
+"Punkt zu seinem Ziel, auf die legalen Züge beschränkt, und die beiden "
+"Würfel ergeben sich aus den gespielten Schritten."
+
+#: ../../source/raccourcis.rst:1
+msgid "RETOUR ARRIERE (coup en cours au plateau)"
+msgstr "RÜCKTASTE (Zug wird gerade auf dem Brett gespielt)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Défaire le dernier pas joué au plateau."
+msgstr "Den letzten auf dem Brett gespielten Schritt zurücknehmen."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Den ausgewählten Zug erfassen (der letzte Zug einer Partie)."
 
@@ -937,7 +959,7 @@ msgstr "STRG-UMSCHALT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Die rückgängig gemachte Geste wiederherstellen."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:309
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -945,7 +967,7 @@ msgstr ""
 "Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne "
 "zusätzlichen Tastendruck."
 
-#: ../../source/raccourcis.rst:310
+#: ../../source/raccourcis.rst:312
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -964,7 +986,7 @@ msgstr ""
 "gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:319
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -982,7 +1004,7 @@ msgstr ""
 "nach jeder Geste auf die erste von ihnen. Der Rückgängig-Stapel liegt im "
 "Arbeitsspeicher: Er geht verloren, sobald der Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:324
+#: ../../source/raccourcis.rst:326
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -995,7 +1017,7 @@ msgstr ""
 " der Hand an der Maus transkribiert. Ein Feld je Wurf, nie zwei: 3-1 und "
 "1-3 sind derselbe Wurf."
 
-#: ../../source/raccourcis.rst:329
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Le filtre par point de départ est le geste du coup lointain. Descendre au"
 " douzième candidat coûte treize touches ; un clic sur le point d'où part "
@@ -1012,7 +1034,37 @@ msgstr ""
 "Bildschirm eingeengt, die Tasten j und k laufen durch die eingeengte "
 "Liste, und der nächste Wurf hebt den Filter auf."
 
-#: ../../source/raccourcis.rst:336
+#: ../../source/raccourcis.rst:338
+msgid ""
+"Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est "
+"saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un"
+" à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les"
+" destinations offertes par le pion choisi s'allument. Les deux dés se "
+"déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait "
+"été tapé, et l'action est enregistrée dès que le coup est achevé. Retour "
+"arrière défait le dernier pas, un chiffre abandonne le coup et revient à "
+"la saisie par les dés, et un double-clic hors du damier le reprend depuis"
+" le début. Quand plusieurs jets produisent le même coup — une sortie que "
+"plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est "
+"enregistré et le triangle ne laisse cliquables que ces jets-là : le jet "
+"n'est jamais deviné à la place de celui qui regarde la partie."
+msgstr ""
+"Ein auf dem Brett gespielter Zug erspart das Ablesen der Würfel. Solange "
+"kein Würfel eingegeben ist, spielt ein Klick auf einen Stein und dann auf"
+" sein Ziel — oder ein Ziehen vom einen zum anderen — den Zug auf dem "
+"Brett, auf die legalen Züge beschränkt; die Ziele, die der gewählte Stein"
+" anbietet, leuchten auf. Die beiden Würfel ergeben sich aus den "
+"Schritten: 13/7 und dann 8/7 zu spielen sagt 6-1, ohne dass eine Ziffer "
+"getippt wurde, und die Aktion wird erfasst, sobald der Zug vollständig "
+"ist. Die Rücktaste nimmt den letzten Schritt zurück, eine Ziffer bricht "
+"den Zug ab und kehrt zur Würfeleingabe zurück, und ein Doppelklick "
+"außerhalb des Bretts beginnt ihn von vorn. Wenn mehrere Würfe denselben "
+"Zug ergeben — ein Auswürfeln, das mehrere Würfel decken, ein nicht "
+"spielbarer Würfel — wird nichts erfasst, und das Dreieck lässt nur diese "
+"Würfe anklickbar: Der Wurf wird nie anstelle dessen erraten, der die "
+"Partie betrachtet."
+
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1026,7 +1078,7 @@ msgstr ""
 "Partie und Matchende werden dann über den Würfeln angezeigt, und die "
 "Eröffnung der nächsten Partie wird erwartet."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1050,7 +1102,7 @@ msgstr ""
 " des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten "
 "``.mat``-Text des Entwurfs mit einer Schaltfläche zum Kopieren."
 
-#: ../../source/raccourcis.rst:351
+#: ../../source/raccourcis.rst:365
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -1073,7 +1125,7 @@ msgstr ""
 "Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der "
 "Bibliothek."
 
-#: ../../source/raccourcis.rst:360
+#: ../../source/raccourcis.rst:374
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1085,7 +1137,7 @@ msgstr ""
 "wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden "
 "(„Invalid move“) und danach abweichen."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:382
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
@@ -1132,3 +1184,55 @@ msgstr "?, STRG-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "Hilfe schließen."
+
+#~ msgid ""
+#~ "Un coup illégal se transcrit tel "
+#~ "qu'il a été joué. Le bouton « "
+#~ "Déplacement libre » libère le damier "
+#~ ": les pions se déplacent sans "
+#~ "aucune vérification, et « Ce plateau "
+#~ "est le coup joué » enregistre le"
+#~ " plateau obtenu. Le champ de "
+#~ "notation, à côté, fait la même "
+#~ "chose au clavier : ``13/7 8/7*``, "
+#~ "``bar/22`` ou ``6/off`` s'écrivent et "
+#~ "s'enregistrent par ENTREE. Les deux "
+#~ "demandent que les dés du jet "
+#~ "soient saisis d'abord, un coup illégal"
+#~ " ne disant pas quel jet l'a "
+#~ "produit. Un coup saisi par l'un de"
+#~ " ces deux chemins qui se trouve "
+#~ "être légal reste un coup ordinaire "
+#~ "— la comparaison se fait sur le"
+#~ " plateau obtenu, jamais sur la "
+#~ "provenance du geste ; sinon il est"
+#~ " marqué « coup illégal » dans "
+#~ "le transcript, et l'export ``.mat`` "
+#~ "avertit avant d'écrire le fichier, sans"
+#~ " jamais refuser."
+#~ msgstr ""
+#~ "Ein illegaler Zug wird so erfasst, "
+#~ "wie er gespielt wurde. Die Schaltfläche"
+#~ " « Freies Versetzen » gibt das "
+#~ "Brett frei: Die Steine bewegen sich "
+#~ "ohne jede Prüfung, und « Dieses "
+#~ "Brett ist der gespielte Zug » "
+#~ "erfasst das erhaltene Brett. Das "
+#~ "Notationsfeld daneben tut dasselbe über "
+#~ "die Tastatur: ``13/7 8/7*``, ``bar/22`` "
+#~ "oder ``6/off`` werden geschrieben und "
+#~ "mit EINGABE erfasst. Beide verlangen, "
+#~ "dass zuerst die Würfel des Wurfs "
+#~ "eingegeben werden, da ein illegaler Zug"
+#~ " nicht sagt, welcher Wurf ihn "
+#~ "hervorgebracht hat. Ein über einen "
+#~ "dieser beiden Wege erfasster Zug, der"
+#~ " sich als legal erweist, bleibt ein"
+#~ " gewöhnlicher Zug — verglichen wird "
+#~ "das erhaltene Brett, nie die Herkunft"
+#~ " der Geste; sonst wird er im "
+#~ "Transkript als « illegaler Zug » "
+#~ "markiert, und der ``.mat``-Export warnt, "
+#~ "bevor er die Datei schreibt, ohne "
+#~ "sich je zu verweigern."
+

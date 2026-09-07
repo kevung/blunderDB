@@ -286,6 +286,8 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "Clic (sur une ligne)", "Sélectionner ce candidat."
    "Clic (sur le triangle des jets)", "Saisir le jet d'un seul geste : la case porte les deux dés, doubles sur la diagonale. Pendant l'ouverture, le triangle laisse la place à une rangée de six dés, un clic donnant le dé d'un camp."
    "Clic (sur un point du damier)", "Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre."
+   "Clic, glisser (aucun dé saisi)", "Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués."
+   "RETOUR ARRIERE (coup en cours au plateau)", "Défaire le dernier pas joué au plateau."
    "ENTREE", "Valider le coup sélectionné (dernier coup d'une partie)."
    "RETOUR ARRIERE", "Effacer les deux dés saisis."
    "Esc", "Abandonner la saisie en cours."
@@ -332,6 +334,18 @@ ne laisse que les coups qui en partent, et il ne reste que deux ou trois touches
 à faire. Le filtre ne change rien au brouillon : la liste est réduite à
 l'écran, les touches j et k parcourent la liste réduite, et le jet suivant lève
 le filtre.
+
+Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi,
+un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre —
+joue le coup sur le damier, contraint aux coups légaux ; les destinations
+offertes par le pion choisi s'allument. Les deux dés se déduisent des pas :
+jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est
+enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un
+chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic
+hors du damier le reprend depuis le début. Quand plusieurs jets produisent le
+même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable —
+rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
+jet n'est jamais deviné à la place de celui qui regarde la partie.
 
 Une partie se termine par une passe, par une résignation ou par la sortie du
 quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du

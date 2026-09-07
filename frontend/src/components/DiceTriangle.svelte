@@ -46,7 +46,15 @@
     // `onPick(high, low)` rend le jet, dé fort d'abord — l'ordre de la
     // notation, celui que porte l'étiquette de la case.
     // `onDie(die)` rend le dé unique de la rangée.
-    let { single = false, onPick = () => {}, onDie = () => {} } = $props();
+    //
+    // `allowed` : les seules cases encore possibles, en clés « 31 », dé fort
+    // d'abord. `null` veut dire « toutes », l'état ordinaire. Le coup joué au
+    // plateau (T2.3) s'en sert pour montrer les jets que les pas déjà joués
+    // laissent vivants, et pour n'offrir que ceux-là quand plusieurs restent :
+    // une case éteinte enregistrerait un jet que les pions démentent.
+    let { single = false, allowed = null, onPick = () => {}, onDie = () => {} } = $props();
+
+    const enabled = (high, low) => allowed === null || allowed.has(`${high}${low}`);
 
     const FACES = [1, 2, 3, 4, 5, 6];
 </script>
@@ -66,6 +74,7 @@
                         type="button"
                         class="die-cell"
                         class:double={low === high}
+                        disabled={!enabled(high, low)}
                         title={$t('transcription.rollTitle', { a: high, b: low })}
                         aria-label={$t('transcription.rollTitle', { a: high, b: low })}
                         onclick={() => onPick(high, low)}>{high}{low}</button
@@ -109,9 +118,17 @@
         cursor: pointer;
     }
 
-    .die-cell:hover {
+    .die-cell:hover:not(:disabled) {
         background: var(--color-surface-alt);
         color: var(--color-primary);
+    }
+
+    /* Une case éteinte est un jet que les pions déjà joués démentent : elle se
+       lit encore — le triangle garde sa forme, donc les positions apprises —
+       mais elle ne se clique plus. */
+    .die-cell:disabled {
+        color: var(--color-text-muted);
+        cursor: default;
     }
 
     /* Les doubles tiennent la diagonale ; le gras la dit sans ajouter de

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 09:15+0200\n"
+"POT-Creation-Date: 2026-09-07 09:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -787,6 +787,27 @@ msgstr ""
 "его, а щелчок вне доски снимает фильтр целиком."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic, glisser (aucun dé saisi)"
+msgstr "Щелчок, перетаскивание (кости не введены)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
+" destination, contraint aux coups légaux, et les deux dés se déduisent "
+"des pas joués."
+msgstr ""
+"Сыграть ход прямо на доске: шашка идёт из выбранного пункта к своей цели "
+"в пределах законных ходов, а обе кости выводятся из сыгранных шагов."
+
+#: ../../source/raccourcis.rst:1
+msgid "RETOUR ARRIERE (coup en cours au plateau)"
+msgstr "BACKSPACE (ход разыгрывается на доске)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Défaire le dernier pas joué au plateau."
+msgstr "Отменить последний шаг, сыгранный на доске."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Записать выбранный ход (последний ход партии)."
 
@@ -920,7 +941,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:309
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -928,7 +949,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:310
+#: ../../source/raccourcis.rst:312
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -945,7 +966,7 @@ msgstr ""
 " броска, а ход помечается «к проверке» до подтверждения. Перемещение "
 "курсора вперёд или назад после изменения записывает исправление попутно."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:319
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -962,7 +983,7 @@ msgstr ""
 "самовольно, и курсор после каждого жеста встаёт на первое из них. Стек "
 "отмены живёт в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:324
+#: ../../source/raccourcis.rst:326
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -975,7 +996,7 @@ msgstr ""
 " с рукой на мыши. Одна клетка на бросок, никогда не две: 3-1 и 1-3 — это "
 "один и тот же бросок."
 
-#: ../../source/raccourcis.rst:329
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Le filtre par point de départ est le geste du coup lointain. Descendre au"
 " douzième candidat coûte treize touches ; un clic sur le point d'où part "
@@ -991,7 +1012,35 @@ msgstr ""
 "черновике: список сужается на экране, клавиши j и k проходят по суженному"
 " списку, а следующий бросок снимает фильтр."
 
-#: ../../source/raccourcis.rst:336
+#: ../../source/raccourcis.rst:338
+msgid ""
+"Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est "
+"saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un"
+" à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les"
+" destinations offertes par le pion choisi s'allument. Les deux dés se "
+"déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait "
+"été tapé, et l'action est enregistrée dès que le coup est achevé. Retour "
+"arrière défait le dernier pas, un chiffre abandonne le coup et revient à "
+"la saisie par les dés, et un double-clic hors du damier le reprend depuis"
+" le début. Quand plusieurs jets produisent le même coup — une sortie que "
+"plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est "
+"enregistré et le triangle ne laisse cliquables que ces jets-là : le jet "
+"n'est jamais deviné à la place de celui qui regarde la partie."
+msgstr ""
+"Ход, сыгранный на доске, избавляет от чтения костей. Пока не введена ни "
+"одна кость, щелчок по шашке, а затем по её цели — или перетаскивание от "
+"одной к другой — играет ход на доске в пределах законных ходов; цели, "
+"которые предлагает выбранная шашка, подсвечиваются. Обе кости выводятся "
+"из шагов: сыграть 13/7, затем 8/7 означает 6-1, хотя ни одна цифра не "
+"была набрана, и действие записывается, как только ход завершён. Backspace"
+" отменяет последний шаг, цифра оставляет ход и возвращает к вводу костей,"
+" а двойной щелчок вне доски начинает его заново. Когда один и тот же ход "
+"дают несколько бросков — выброс, который покрывают несколько костей, или "
+"неиграбельная кость — ничего не записывается, и в треугольнике остаются "
+"нажимаемыми только эти броски: бросок никогда не угадывается за того, кто"
+" смотрит партию."
+
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1004,7 +1053,7 @@ msgstr ""
 " партия Кроуфорда и окончание матча показываются тогда над кубиками, и "
 "ожидается открытие следующей партии."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1028,7 +1077,7 @@ msgstr ""
 "Разворачиваемая панель показывает точный текст ``.mat`` черновика и "
 "кнопку для его копирования."
 
-#: ../../source/raccourcis.rst:351
+#: ../../source/raccourcis.rst:365
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -1050,7 +1099,7 @@ msgstr ""
 "черновик после подтверждения; уже сохранённый матч остаётся в библиотеке "
 "окончательно."
 
-#: ../../source/raccourcis.rst:360
+#: ../../source/raccourcis.rst:374
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1062,7 +1111,7 @@ msgstr ""
 "сыгран, с предупреждением, что gnubg и XG отметят его («Invalid move») и "
 "дальше разойдутся."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:382
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -1109,3 +1158,52 @@ msgstr "?, CTRL-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "Закрыть справку."
+
+#~ msgid ""
+#~ "Un coup illégal se transcrit tel "
+#~ "qu'il a été joué. Le bouton « "
+#~ "Déplacement libre » libère le damier "
+#~ ": les pions se déplacent sans "
+#~ "aucune vérification, et « Ce plateau "
+#~ "est le coup joué » enregistre le"
+#~ " plateau obtenu. Le champ de "
+#~ "notation, à côté, fait la même "
+#~ "chose au clavier : ``13/7 8/7*``, "
+#~ "``bar/22`` ou ``6/off`` s'écrivent et "
+#~ "s'enregistrent par ENTREE. Les deux "
+#~ "demandent que les dés du jet "
+#~ "soient saisis d'abord, un coup illégal"
+#~ " ne disant pas quel jet l'a "
+#~ "produit. Un coup saisi par l'un de"
+#~ " ces deux chemins qui se trouve "
+#~ "être légal reste un coup ordinaire "
+#~ "— la comparaison se fait sur le"
+#~ " plateau obtenu, jamais sur la "
+#~ "provenance du geste ; sinon il est"
+#~ " marqué « coup illégal » dans "
+#~ "le transcript, et l'export ``.mat`` "
+#~ "avertit avant d'écrire le fichier, sans"
+#~ " jamais refuser."
+#~ msgstr ""
+#~ "Недопустимый ход записывается так, как "
+#~ "он был сыгран. Кнопка « Свободное "
+#~ "перемещение » освобождает доску: шашки "
+#~ "двигаются без всякой проверки, а « "
+#~ "Эта доска — сыгранный ход » "
+#~ "записывает полученную доску. Поле нотации "
+#~ "рядом делает то же самое с "
+#~ "клавиатуры: ``13/7 8/7*``, ``bar/22`` или "
+#~ "``6/off`` пишутся и записываются по "
+#~ "ENTER. Оба требуют, чтобы сначала были"
+#~ " введены кости броска, поскольку "
+#~ "недопустимый ход не говорит, каким "
+#~ "броском он получен. Ход, введённый одним"
+#~ " из этих двух путей и оказавшийся "
+#~ "законным, остаётся обычным ходом — "
+#~ "сравнение идёт по полученной доске, а"
+#~ " не по происхождению жеста; иначе он"
+#~ " помечается « недопустимый ход » в"
+#~ " транскрипте, и экспорт ``.mat`` "
+#~ "предупреждает перед записью файла, никогда "
+#~ "не отказывая."
+

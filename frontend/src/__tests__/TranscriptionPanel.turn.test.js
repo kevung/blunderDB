@@ -112,7 +112,10 @@ describe('le tour de pions', () => {
         await vi.waitFor(() => expect(EvaluatePositionImmediate).toHaveBeenCalled());
 
         // Le jet et le camp sont posés sur la position du Cursor.
-        const [pos] = LegalMoves.mock.calls[0];
+        // `LegalMoves` est appelée aussi pour armer le coup joué au plateau —
+        // une fois par jet, T2.3 — donc l'appel visé ici est nommé par son jet
+        // et non par son rang dans la liste des appels.
+        const [pos] = LegalMoves.mock.calls.find(([p]) => p.dice[0] === 3 && p.dice[1] === 1);
         expect(pos.dice).toEqual([3, 1]);
         expect(pos.player_on_roll).toBe(0);
 

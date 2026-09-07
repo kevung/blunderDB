@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 09:15+0200\n"
+"POT-Creation-Date: 2026-09-07 09:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -791,6 +791,28 @@ msgstr ""
 "sen, ja napsautus laudan ulkopuolella poistaa suodatuksen."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic, glisser (aucun dé saisi)"
+msgstr "Napsautus, vetäminen (ei syötettyä noppaa)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Jouer le coup directement sur le damier : le pion va du point cliqué à sa"
+" destination, contraint aux coups légaux, et les deux dés se déduisent "
+"des pas joués."
+msgstr ""
+"Pelaa siirto suoraan laudalla: nappula kulkee napsautetusta pisteestä "
+"kohteeseensa laillisten siirtojen rajoissa, ja molemmat nopat päätellään "
+"pelatuista askelista."
+
+#: ../../source/raccourcis.rst:1
+msgid "RETOUR ARRIERE (coup en cours au plateau)"
+msgstr "ASKELPALAUTIN (siirto kesken laudalla)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Défaire le dernier pas joué au plateau."
+msgstr "Kumoa viimeinen laudalla pelattu askel."
+
+#: ../../source/raccourcis.rst:1
 msgid "Valider le coup sélectionné (dernier coup d'une partie)."
 msgstr "Kirjaa valittu siirto (pelin viimeinen siirto)."
 
@@ -926,7 +948,7 @@ msgstr "CTRL-VAIHTO-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Tee kumottu ele uudelleen."
 
-#: ../../source/raccourcis.rst:307
+#: ../../source/raccourcis.rst:309
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -934,7 +956,7 @@ msgstr ""
 "Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman "
 "lisänäppäintä."
 
-#: ../../source/raccourcis.rst:310
+#: ../../source/raccourcis.rst:312
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -952,7 +974,7 @@ msgstr ""
 "”tarkistettavaksi” hyväksyntään asti. Kohdistimen siirtäminen eteen- tai "
 "taaksepäin muutoksen jälkeen tallentaa korjauksen samalla."
 
-#: ../../source/raccourcis.rst:317
+#: ../../source/raccourcis.rst:319
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -970,7 +992,7 @@ msgstr ""
 " jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun "
 "luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:324
+#: ../../source/raccourcis.rst:326
 msgid ""
 "Le triangle des vingt et un jets est posé sous les deux cases du jet, à "
 "côté du clavier et non à sa place : deux chiffres restent deux fois plus "
@@ -983,7 +1005,7 @@ msgstr ""
 "hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat "
 "sama heitto."
 
-#: ../../source/raccourcis.rst:329
+#: ../../source/raccourcis.rst:331
 msgid ""
 "Le filtre par point de départ est le geste du coup lointain. Descendre au"
 " douzième candidat coûte treize touches ; un clic sur le point d'où part "
@@ -999,7 +1021,35 @@ msgstr ""
 "muuta luonnoksessa mitään: lista kapenee näytöllä, näppäimet j ja k "
 "kulkevat kavennettua listaa, ja seuraava heitto poistaa suodatuksen."
 
-#: ../../source/raccourcis.rst:336
+#: ../../source/raccourcis.rst:338
+msgid ""
+"Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est "
+"saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un"
+" à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les"
+" destinations offertes par le pion choisi s'allument. Les deux dés se "
+"déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait "
+"été tapé, et l'action est enregistrée dès que le coup est achevé. Retour "
+"arrière défait le dernier pas, un chiffre abandonne le coup et revient à "
+"la saisie par les dés, et un double-clic hors du damier le reprend depuis"
+" le début. Quand plusieurs jets produisent le même coup — une sortie que "
+"plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est "
+"enregistré et le triangle ne laisse cliquables que ces jets-là : le jet "
+"n'est jamais deviné à la place de celui qui regarde la partie."
+msgstr ""
+"Laudalla pelattu siirto säästää noppien lukemiselta. Niin kauan kuin "
+"yhtään noppaa ei ole syötetty, napsautus nappulaan ja sitten sen "
+"kohteeseen — tai veto toisesta toiseen — pelaa siirron laudalla "
+"laillisten siirtojen rajoissa; valitun nappulan tarjoamat kohteet "
+"syttyvät. Molemmat nopat päätellään askelista: 13/7 ja sitten 8/7 kertoo "
+"6-1 ilman että numeroa on näppäilty, ja toiminto kirjataan heti kun "
+"siirto on valmis. Askelpalautin kumoaa viimeisen askeleen, numero hylkää "
+"siirron ja palaa noppien syöttöön, ja kaksoisnapsautus laudan "
+"ulkopuolella aloittaa sen alusta. Kun useampi heitto tuottaa saman "
+"siirron — ulosnosto, jonka useampi noppa kattaa, tai noppa jota ei voi "
+"pelata — mitään ei kirjata ja kolmio jättää napsautettaviksi vain nuo "
+"heitot: heittoa ei koskaan arvata pelin katsojan puolesta."
+
+#: ../../source/raccourcis.rst:350
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -1012,7 +1062,7 @@ msgstr ""
 "arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään "
 "tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan."
 
-#: ../../source/raccourcis.rst:341
+#: ../../source/raccourcis.rst:355
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -1036,7 +1086,7 @@ msgstr ""
 "Avattava paneeli näyttää luonnoksen tarkan ``.mat``-tekstin ja painikkeen"
 " sen kopioimiseen."
 
-#: ../../source/raccourcis.rst:351
+#: ../../source/raccourcis.rst:365
 msgid ""
 "La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
 "écrit le match dans la bibliothèque : créé la première fois, remplacé "
@@ -1057,7 +1107,7 @@ msgstr ""
 "sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen "
 "vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena."
 
-#: ../../source/raccourcis.rst:360
+#: ../../source/raccourcis.rst:374
 msgid ""
 "Un brouillon qui porte des incohérences est enregistré tout de même, "
 "après un avertissement : rien n'est refusé. Un coup illégal est exporté "
@@ -1069,7 +1119,7 @@ msgstr ""
 "kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä "
 "(”Invalid move”) ja poikkeavat siitä eteenpäin."
 
-#: ../../source/raccourcis.rst:368
+#: ../../source/raccourcis.rst:382
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
@@ -1116,3 +1166,51 @@ msgstr "?, CTRL-F, Esc"
 #: ../../source/raccourcis.rst:1
 msgid "Fermer l'aide."
 msgstr "Sulje ohje."
+
+#~ msgid ""
+#~ "Un coup illégal se transcrit tel "
+#~ "qu'il a été joué. Le bouton « "
+#~ "Déplacement libre » libère le damier "
+#~ ": les pions se déplacent sans "
+#~ "aucune vérification, et « Ce plateau "
+#~ "est le coup joué » enregistre le"
+#~ " plateau obtenu. Le champ de "
+#~ "notation, à côté, fait la même "
+#~ "chose au clavier : ``13/7 8/7*``, "
+#~ "``bar/22`` ou ``6/off`` s'écrivent et "
+#~ "s'enregistrent par ENTREE. Les deux "
+#~ "demandent que les dés du jet "
+#~ "soient saisis d'abord, un coup illégal"
+#~ " ne disant pas quel jet l'a "
+#~ "produit. Un coup saisi par l'un de"
+#~ " ces deux chemins qui se trouve "
+#~ "être légal reste un coup ordinaire "
+#~ "— la comparaison se fait sur le"
+#~ " plateau obtenu, jamais sur la "
+#~ "provenance du geste ; sinon il est"
+#~ " marqué « coup illégal » dans "
+#~ "le transcript, et l'export ``.mat`` "
+#~ "avertit avant d'écrire le fichier, sans"
+#~ " jamais refuser."
+#~ msgstr ""
+#~ "Laiton siirto kirjataan sellaisena kuin "
+#~ "se pelattiin. Painike « Vapaa siirto "
+#~ "» vapauttaa laudan: nappulat liikkuvat "
+#~ "ilman mitään tarkistusta, ja « Tämä "
+#~ "lauta on pelattu siirto » kirjaa "
+#~ "saadun laudan. Viereinen merkintäkenttä tekee"
+#~ " saman näppäimistöltä: ``13/7 8/7*``, "
+#~ "``bar/22`` tai ``6/off`` kirjoitetaan ja "
+#~ "kirjataan ENTER-näppäimellä. Molemmat "
+#~ "vaativat, että heiton nopat syötetään "
+#~ "ensin, sillä laiton siirto ei kerro "
+#~ "mikä heitto sen tuotti. Kumpaa tahansa"
+#~ " näistä kahdesta tiestä syötetty siirto,"
+#~ " joka osoittautuu lailliseksi, pysyy "
+#~ "tavallisena siirtona — vertailu tehdään "
+#~ "saadusta laudasta, ei koskaan eleen "
+#~ "alkuperästä; muuten se merkitään "
+#~ "litteroinnissa « laiton siirto », ja "
+#~ "``.mat``-vienti varoittaa ennen tiedoston "
+#~ "kirjoittamista, koskaan kieltäytymättä."
+

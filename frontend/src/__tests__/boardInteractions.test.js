@@ -15,6 +15,7 @@ import { boardMetrics } from '../utils/boardGeometry.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
 import { newPlay } from '../services/quizPlay.js';
+import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
 
 const W = 1000;
 const H = 720;
@@ -549,6 +550,94 @@ describe('the quiz move is played on the board', () => {
         const b = mount({ mode: 'EDIT' });
         b.click(b.slot(13, 2));
         expect(b.pos().board.points[13]).toEqual({ checkers: 3, color: 0 });
+        b.detach();
+    });
+});
+
+describe('le coup joué au plateau d’une transcription (T2.3)', () => {
+    /**
+     * @param {Record<number, [number, number]>} stacks
+     */
+    function posWith(stacks, mover = 0) {
+        const p = emptyPos();
+        p.board.bearoff = [0, 0];
+        p.dice = [0, 0];
+        for (const [pt, [n, color]] of Object.entries(stacks)) p.board.points[Number(pt)] = { checkers: n, color };
+        p.player_on_roll = mover;
+        return p;
+    }
+
+    const step = (from, to) => ({ from, to, hit: false });
+    const play = (...steps) => ({ steps, notation: '', result: {} });
+    const POSITION = posWith({ 13: [5, 0], 8: [3, 0], 6: [5, 0] });
+    const BY_ROLL = [
+        { dice: [6, 1], plays: [play(step(13, 7), step(8, 7))] },
+        { dice: [6, 6], plays: [play(step(13, 7), step(13, 7), step(8, 2), step(8, 2))] }
+    ];
+
+    /** Un plateau monté sur le coup d'une transcription. */
+    function mountPlay() {
+        const b = mount({ mode: 'TRANSCRIBE', position: POSITION });
+        b.stores.quizPlay.set(newBoardPlay(POSITION, BY_ROLL));
+        return b;
+    }
+
+    // Le budget d'ux.md §4.1 compte UN P B B par pas : c'est le glissé, pas
+    // deux clics. Sans lui, quatre pas coûteraient huit gestes et le double
+    // sortirait du budget.
+    test('un glissé joue le pas en un seul geste', () => {
+        const b = mountPlay();
+        b.drag(b.slot(13, 0), b.slot(7, 0));
+        expect(get(b.stores.quizPlay).steps).toEqual([{ from: 13, to: 7 }]);
+        b.detach();
+    });
+
+    test('deux clics font exactement ce que fait le glissé', () => {
+        const dragged = mountPlay();
+        dragged.drag(dragged.slot(13, 0), dragged.slot(7, 0));
+        const byDrag = get(dragged.stores.quizPlay);
+        dragged.detach();
+
+        const clicked = mountPlay();
+        clicked.click(clicked.slot(13, 0));
+        clicked.click(clicked.slot(7, 0));
+        expect(get(clicked.stores.quizPlay).steps).toEqual(byDrag.steps);
+        clicked.detach();
+    });
+
+    // La recette de la fiche : quatre pas, quatre gestes, et les deux dés du
+    // double déduits sans qu'un chiffre ait été tapé.
+    test('un double se joue en quatre glissés et déduit 6-6', () => {
+        const b = mountPlay();
+        const hops = [
+            [13, 7],
+            [13, 7],
+            [8, 2],
+            [8, 2]
+        ];
+        let gestures = 0;
+        for (const [from, to] of hops) {
+            b.drag(b.slot(from, 0), b.slot(to, 0));
+            gestures += 1;
+        }
+        expect(gestures).toBe(4);
+        const state = get(b.stores.quizPlay);
+        expect(state.steps).toHaveLength(4);
+        expect(deducedDice(state)).toEqual([6, 6]);
+        b.detach();
+    });
+
+    test('un glissé qu’aucun coup légal n’offre ne déplace rien', () => {
+        const b = mountPlay();
+        b.drag(b.slot(13, 0), b.slot(3, 0));
+        expect(get(b.stores.quizPlay).steps).toEqual([]);
+        b.detach();
+    });
+
+    test('la position du brouillon ne bouge pas sous le coup joué', () => {
+        const b = mountPlay();
+        b.drag(b.slot(13, 0), b.slot(7, 0));
+        expect(b.pos().board.points[13].checkers).toBe(5);
         b.detach();
     });
 });

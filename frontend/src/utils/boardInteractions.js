@@ -225,6 +225,8 @@ export function attachBoardInteractions(canvas, deps) {
     const log = (...args) => deps.logger?.log(...args);
     let startMousePos = null;
     let lastExceptClick = null;
+    // Le point d'où un glissé est parti, quand la pression a choisi une source.
+    let boardPress = null;
 
     const editable = () => isEditable(deps.getMode());
     const metrics = () => {
@@ -379,13 +381,36 @@ export function attachBoardInteractions(canvas, deps) {
         if (event.button !== 0) return true;
         const target = quizTargetAt(x, y);
         if (target === null) return true;
-        stores.quizPlay.update((/** @type {import('../services/quizPlay.js').PlayState} */ s) => {
+        stores.quizPlay.update((/** @type {any} */ s) => {
             if (s.selected === null) return selectSource(s, target);
             const played = playHop(s, s.selected, target);
             // Le clic qui ne joue rien re-choisit une source : on change d'avis
             // sur le pion à bouger sans avoir à déselectionner d'abord.
             return played === s ? selectSource(s, target) : played;
         });
+        // Une pression qui vient de CHOISIR une source ouvre un glissé : si le
+        // bouton se relâche ailleurs, le pas est joué et le pion aura suivi la
+        // souris en un seul geste au lieu de deux clics (ux.md §4.1, un P B B
+        // par pas). Deux clics restent possibles et donnent le même état.
+        const after = get(stores.quizPlay);
+        boardPress = state.selected === null && after?.selected === target ? target : null;
+        return true;
+    }
+
+    /**
+     * La fin d'un glissé : le pion lâché sur `to`. Rend `true` quand le geste
+     * était bien un glissé du coup en cours — l'édition ne doit alors pas voir
+     * ce relâchement.
+     * @param {MouseEvent} event
+     */
+    function boardPlayDrop(event) {
+        const from = boardPress;
+        boardPress = null;
+        if (from === null || !stores.quizPlay) return false;
+        const { x, y } = toDrawing(event);
+        const target = quizTargetAt(x, y);
+        if (target === null || target === from) return true;
+        stores.quizPlay.update((/** @type {any} */ s) => (s && s.selected === from ? playHop(s, from, target) : s));
         return true;
     }
 
@@ -413,6 +438,9 @@ export function attachBoardInteractions(canvas, deps) {
 
     function onMouseUp(event) {
         event.preventDefault();
+        // Avant la garde d'édition : le glissé du coup joué au plateau vit dans
+        // un mode qui n'édite pas la position (TRANSCRIBE, et le quiz).
+        if (boardPlayDrop(event)) return;
         if (!editable() || !startMousePos) return;
         const end = { ...toDrawing(event), button: event.button };
 

@@ -1314,6 +1314,14 @@ export default {
 <td>Ne garder que les candidats dont un pas part de ce point ; un second point réduit encore, un clic sur le point déjà filtré l'enlève, et un clic hors du damier lève le filtre.</td>
 </tr>
 <tr>
+<td>Clic, glisser (aucun dé saisi)</td>
+<td>Jouer le coup directement sur le damier : le pion va du point cliqué à sa destination, contraint aux coups légaux, et les deux dés se déduisent des pas joués.</td>
+</tr>
+<tr>
+<td>RETOUR ARRIERE (coup en cours au plateau)</td>
+<td>Défaire le dernier pas joué au plateau.</td>
+</tr>
+<tr>
 <td>ENTREE</td>
 <td>Valider le coup sélectionné (dernier coup d'une partie).</td>
 </tr>
@@ -1388,6 +1396,7 @@ export default {
 <p>Rien n'est refusé ni supprimé : insérer une action du même camp que sa voisine crée un double trait, supprimer une action peut en créer un autre, changer un camp peut rendre illégaux les coups qui suivent. Ces incohérences sont marquées dans le transcript, jamais corrigées d'office, et le curseur se place sur la première d'entre elles après chaque geste. La pile d'annulation vit en mémoire : elle est perdue à la fermeture du brouillon.</p>
 <p>Le triangle des vingt et un jets est posé sous les deux cases du jet, à côté du clavier et non à sa place : deux chiffres restent deux fois plus rapides qu'un clic, et le triangle est là pour qui transcrit la souris à la main. Une case par jet, jamais deux : 3-1 et 1-3 sont le même jet.</p>
 <p>Le filtre par point de départ est le geste du coup lointain. Descendre au douzième candidat coûte treize touches ; un clic sur le point d'où part le coup ne laisse que les coups qui en partent, et il ne reste que deux ou trois touches à faire. Le filtre ne change rien au brouillon : la liste est réduite à l'écran, les touches j et k parcourent la liste réduite, et le jet suivant lève le filtre.</p>
+<p>Le coup joué au plateau dispense de lire les dés. Tant qu'aucun dé n'est saisi, un clic sur un pion puis sur sa destination — ou un glissé de l'un à l'autre — joue le coup sur le damier, contraint aux coups légaux ; les destinations offertes par le pion choisi s'allument. Les deux dés se déduisent des pas : jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic hors du damier le reprend depuis le début. Quand plusieurs jets produisent le même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable — rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le jet n'est jamais deviné à la place de celui qui regarde la partie.</p>
 <p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
 <p>La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. La barre du brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un match déjà enregistré reste dans la bibliothèque, définitif.</p>

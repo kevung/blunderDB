@@ -22,9 +22,9 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
     import { transcriptionPointFilterStore, transcriptionCandidateStepsStore } from '../stores/transcriptionStore.js';
-    import { resetPlay } from '../services/quizPlay.js';
+    import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -305,7 +305,7 @@
             // trait est toujours celui du bas, la position affichée ayant
             // toujours le joueur au trait en player 0.
             quizDisplayMirrored: () => isPlayer2Perspective(getDisplayPosition()),
-            resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetPlay(s, get(positionStore)) : s)),
+            resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
             setPreviousDice: (dice) => (previousDice = dice),
             reset: () => (mode === 'EPC' ? resetEPCBoard() : resetBoard()),
@@ -526,6 +526,31 @@
     // Move notation uses the stored (normalised) numbering; in match mode with
     // player 2 on roll the display is mirrored (point i → 25 - i), so the
     // arrows must be too.
+    // Les points que le coup en cours offre (#294 pour le quiz, T2.3 pour la
+    // transcription), dans les numéros de la position AFFICHÉE : le plateau est
+    // retourné quand le camp au trait est le joueur 2, et un anneau posé sur le
+    // point 24 du modèle doit alors se dessiner sur le point 1 de l'écran —
+    // exactement la conversion que le clic fait dans l'autre sens.
+    function playHighlights(flip) {
+        const play = get(quizPlayStore);
+        if (!play) return {};
+        const shown = (point) => (flip && point >= 0 && point <= 25 ? 25 - point : point);
+        // Le point CHOISI est toujours marqué : le pion pris en main doit se
+        // voir, même quand la liste des sources ne l'offre plus.
+        const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
+        // Les points de DÉPART ne s'allument qu'une fois le coup engagé — un
+        // pion pris en main, ou un pas déjà joué. Au départ ils sont presque
+        // tous jouables (vingt et un jets possibles pendant une transcription,
+        // T2.3), et un damier constellé d'anneaux à chaque tour serait du bruit
+        // posé sur le chemin du clavier, qui est le chemin ordinaire.
+        const engaged = play.steps.length > 0 || picked.length > 0;
+        return {
+            sources: engaged ? [...new Set([...$quizPlaySourcesStore, ...picked])].map(shown) : [],
+            targets: [...$quizPlayTargetsStore].map(shown),
+            selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
+        };
+    }
+
     function selectedMoveArrows() {
         const moves = parseMoveNotation(selectedMove);
         if (moves.length === 0) return moves;
@@ -581,6 +606,7 @@
         cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
             offeredCube: isOfferedCube(position),
             showPipcount,
+            play: playHighlights(flip),
             moves: selectedMoveArrows()
         });
 

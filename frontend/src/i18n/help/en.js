@@ -1314,6 +1314,14 @@ export default {
 <td>Keep only the candidates with a step leaving that point; a second point narrows further, a click on the point already filtered removes it, and a click off the board lifts the filter.</td>
 </tr>
 <tr>
+<td>Click, drag (no die entered)</td>
+<td>Play the move straight on the board: the checker goes from the clicked point to its destination, constrained to the legal plays, and the two dice follow from the steps played.</td>
+</tr>
+<tr>
+<td>BACKSPACE (move being played on the board)</td>
+<td>Undo the last step played on the board.</td>
+</tr>
+<tr>
 <td>ENTER</td>
 <td>Record the selected play (the last play of a game).</td>
 </tr>
@@ -1388,6 +1396,7 @@ export default {
 <p>Nothing is refused and nothing is deleted: inserting an action of the same side as its neighbour creates a double turn, deleting an action may create another one, changing a side may make the plays that follow illegal. These inconsistencies are marked in the transcript, never corrected on your behalf, and the cursor lands on the first of them after every gesture. The undo stack lives in memory: it is lost when the draft is closed.</p>
 <p>The triangle of the twenty-one rolls sits under the two roll cells, beside the keyboard and not in its place: two digits remain twice as fast as a click, and the triangle is there for whoever transcribes with a hand on the mouse. One cell per roll, never two: 3-1 and 1-3 are the same roll.</p>
 <p>The filter by starting point is the gesture for a play far down the list. Reaching the twelfth candidate costs thirteen keystrokes; a click on the point the play leaves from keeps only the plays leaving it, and two or three keystrokes are left to make. The filter changes nothing in the draft: the list is narrowed on screen, the j and k keys walk the narrowed list, and the next roll lifts the filter.</p>
+<p>A move played on the board spares you reading the dice. As long as no die has been entered, a click on a checker then on its destination — or a drag from one to the other — plays the move on the board, constrained to the legal plays; the destinations the chosen checker offers light up. The two dice follow from the steps: playing 13/7 then 8/7 says 6-1 without a digit having been typed, and the action is recorded as soon as the move is complete. Backspace undoes the last step, a digit abandons the move and goes back to entering the dice, and a double-click off the board starts it again. When several rolls make the same move — a bear-off several dice cover, a die that cannot be played — nothing is recorded and the triangle leaves only those rolls clickable: the roll is never guessed in place of the person watching the game.</p>
 <p>A game ends by a pass, by a resignation or by bearing off the fifteenth checker (single, gammon or backgammon, times the value of the cube). The score, the Crawford game and the end of the match are then shown above the dice, and the opening of the next game is expected.</p>
 <p>The transcript takes the right half of the panel: one column per player, one row per turn, the cube action and the end of the game in the column of whoever acted. The cursor's cell is framed; moving the cursor brings the board back to the position of the action aimed at and lists its candidates, with the play that was recorded selected. An inconsistency (illegal move, double turn, impossible cube action, action past the end of the match, inconsistent dice) decorates its cell and is named in a tooltip. Games can be folded; the cursor's game is open. A collapsible pane shows the draft's exact <code>.mat</code> text, with a button to copy it.</p>
 <p>The draft bar carries three buttons. “Save” (CTRL-ENTER) writes the match into the library: created the first time, replaced afterwards under the same identifier, and the analysis of the new positions alone starts at once, with its progress and its cancellation in the status bar. The draft bar states where it stands: never saved, saved so long ago, or modified since. “Export .mat” writes the match to a Jellyfish file, exactly as it was typed. “Close draft” deletes the draft after a confirmation; a match already saved stays in the library, final.</p>

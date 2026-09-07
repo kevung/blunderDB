@@ -1314,6 +1314,14 @@ export default {
 <td>Jäljelle jäävät vain ehdokkaat, joiden siirto lähtee tästä pisteestä; toinen piste kaventaa lisää, napsautus jo suodatetussa pisteessä poistaa sen, ja napsautus laudan ulkopuolella poistaa suodatuksen.</td>
 </tr>
 <tr>
+<td>Napsautus, vetäminen (ei syötettyä noppaa)</td>
+<td>Pelaa siirto suoraan laudalla: nappula kulkee napsautetusta pisteestä kohteeseensa laillisten siirtojen rajoissa, ja molemmat nopat päätellään pelatuista askelista.</td>
+</tr>
+<tr>
+<td>ASKELPALAUTIN (siirto kesken laudalla)</td>
+<td>Kumoa viimeinen laudalla pelattu askel.</td>
+</tr>
+<tr>
 <td>ENTER</td>
 <td>Kirjaa valittu siirto (pelin viimeinen siirto).</td>
 </tr>
@@ -1388,6 +1396,7 @@ export default {
 <p>Mitään ei hylätä eikä poisteta: naapurinsa kanssa samalle puolelle lisätty toiminto luo kaksoisvuoron, toiminnon poistaminen voi luoda toisen, puolen vaihtaminen voi tehdä seuraavista siirroista laittomia. Nämä epäjohdonmukaisuudet merkitään transkriptiin, niitä ei koskaan korjata automaattisesti, ja kohdistin asettuu ensimmäisen niistä kohdalle jokaisen eleen jälkeen. Kumoamispino elää muistissa: se menetetään, kun luonnos suljetaan.</p>
 <p>Kahdenkymmenenyhden heiton kolmio on heiton kahden ruudun alla, näppäimistön vierellä eikä sen tilalla: kaksi numeroa on yhä kaksi kertaa nopeampi kuin napsautus, ja kolmio on sitä varten, joka kirjaa käsi hiirellä. Yksi ruutu heittoa kohti, ei koskaan kahta: 3-1 ja 1-3 ovat sama heitto.</p>
 <p>Lähtöpisteen mukainen suodatus on kaukana listalla olevan siirron ele. Kahdenteentoista ehdokkaaseen laskeutuminen maksaa kolmetoista näppäilyä; napsautus pisteeseen, josta siirto lähtee, jättää jäljelle vain sieltä lähtevät siirrot, ja jäljelle jää kaksi tai kolme näppäilyä. Suodatus ei muuta luonnoksessa mitään: lista kapenee näytöllä, näppäimet j ja k kulkevat kavennettua listaa, ja seuraava heitto poistaa suodatuksen.</p>
+<p>Laudalla pelattu siirto säästää noppien lukemiselta. Niin kauan kuin yhtään noppaa ei ole syötetty, napsautus nappulaan ja sitten sen kohteeseen — tai veto toisesta toiseen — pelaa siirron laudalla laillisten siirtojen rajoissa; valitun nappulan tarjoamat kohteet syttyvät. Molemmat nopat päätellään askelista: 13/7 ja sitten 8/7 kertoo 6-1 ilman että numeroa on näppäilty, ja toiminto kirjataan heti kun siirto on valmis. Askelpalautin kumoaa viimeisen askeleen, numero hylkää siirron ja palaa noppien syöttöön, ja kaksoisnapsautus laudan ulkopuolella aloittaa sen alusta. Kun useampi heitto tuottaa saman siirron — ulosnosto, jonka useampi noppa kattaa, tai noppa jota ei voi pelata — mitään ei kirjata ja kolmio jättää napsautettaviksi vain nuo heitot: heittoa ei koskaan arvata pelin katsojan puolesta.</p>
 <p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
 <p>Luonnospalkissa on kolme painiketta. ”Tallenna” (CTRL-ENTER) kirjoittaa ottelun kirjastoon: se luodaan ensimmäisellä kerralla, korvataan sen jälkeen samalla tunnisteella, ja pelkkien uusien asemien analyysi alkaa heti, edistyminen ja peruutus tilarivillä. Luonnospalkki kertoo tilan: ei koskaan tallennettu, tallennettu jokin aika sitten, tai muokattu sen jälkeen. ”Vie .mat” kirjoittaa ottelun Jellyfish-tiedostoon juuri sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena.</p>
