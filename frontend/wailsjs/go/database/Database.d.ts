@@ -158,6 +158,8 @@ export function GetIssuanceInfo():Promise<domain.IssuanceInfo>;
 
 export function GetLastVisitedMatch():Promise<domain.Match>;
 
+export function GetLibrarySettings():Promise<storage.LibrarySettings>;
+
 export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
 export function GetMatchByID(arg1:number):Promise<domain.Match>;
@@ -317,6 +319,8 @@ export function SaveFilter(arg1:string,arg2:string):Promise<void>;
 export function SaveIndividualPosition(arg1:domain.Position):Promise<database.IndividualSaveResult>;
 
 export function SaveLastVisitedPosition(arg1:number,arg2:number):Promise<void>;
+
+export function SaveLibrarySettings(arg1:storage.LibrarySettings):Promise<void>;
 
 export function SaveMetadata(arg1:Record<string, string>):Promise<void>;
 

@@ -246,7 +246,7 @@ La surface métier suit le schéma ``POST /v1/<famille>.<méthode>`` (par exempl
 ``/v1/positions.save``, ``/v1/matches.get``). Les familles couvrent les
 positions, analyses, matchs, commentaires, collections, tournois, cartes Anki,
 filtres, sessions, historique (recherche et commandes), recherche,
-métadonnées, statistiques, import et export. Les endpoints de listing
+métadonnées, réglages de bibliothèque, statistiques, import et export. Les endpoints de listing
 renvoient un flux NDJSON (un objet JSON par ligne). Le serveur s'arrête
 proprement sur ``SIGINT`` / ``SIGTERM``.
 
@@ -718,6 +718,17 @@ compte exact : les paquets Anki et leurs cartes, la bibliothèque de filtres,
 les historiques de recherche et de commandes, et l'état de session. Ce sont des
 données d'usage de l'application de bureau ; les positions auxquelles elles
 renvoient, elles, ont bien été déplacées.
+
+Les **seuils d'erreur et de blunder**, eux, sont copiés : ce ne sont pas des
+données d'usage mais l'habitude de lecture dont dépendent les comptes, et un
+tenant qui compterait autrement que le fichier dont il vient ferait de la
+migration un changement de sens muet.
+
+Le tenant règle les siens par ``POST /v1/librarySettings.load`` et
+``/v1/librarySettings.save``. Contrairement à ``metadata``, qui est une
+infrastructure globale exposée en lecture seule, la table des réglages porte un
+``tenant_id`` et vit sous Row-Level Security : un tenant qui écrit ses seuils
+n'atteint que ses propres lignes.
 
 .. _headless_poste_serveur:
 

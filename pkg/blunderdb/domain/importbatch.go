@@ -158,9 +158,10 @@ type StudyQueueEntry struct {
 // hundred positions.
 const MaxStudyQueue = 50
 
-// StudyBlunderThresholdMP is the error, in millipoints, at or above which a
-// decision earns its place in the queue. 50 mMWC — half of what the statistics
-// call a blunder (100), because the queue is a study list and not a hall of
-// shame: the decisions worth revisiting start well below the ones worth being
-// ashamed of.
-const StudyBlunderThresholdMP = 50
+// The error, in millipoints, at or above which a decision earns its place in
+// the queue is no longer stated here. It is the library's own error threshold
+// (storage.LibrarySettings, ADR-0046) — the queue asks "what is worth
+// revisiting", which is what an Error is, so it reads the same line every
+// other count reads. Its default is the 50 this constant held: half of what
+// the statistics call a blunder, because the queue is a study list and not a
+// hall of shame.

@@ -15,6 +15,14 @@ type Counts struct {
 	IndividualPositions int `json:"individual_positions"`
 	// AnkiCards is the number of study cards across every deck.
 	AnkiCards int `json:"anki_cards"`
+
+	// Blunders is the number of Positions the library calls Blunders: those
+	// whose largest recorded cost reaches its blunder threshold
+	// (LibrarySettings, ADR-0046). It is the number the status bar's library
+	// counter shows, and it is deliberately the set the search behind that
+	// counter returns — a Position played several ways is scored by the
+	// largest of its plays (#167), not by the denormalised first one.
+	Blunders int `json:"blunders"`
 }
 
 // MetadataStore persists the database-level key/value metadata: schema

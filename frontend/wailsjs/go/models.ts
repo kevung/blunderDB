@@ -2825,6 +2825,20 @@ export namespace sqlite {
 
 export namespace storage {
 	
+	export class LibrarySettings {
+	    errorThresholdMP: number;
+	    blunderThresholdMP: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LibrarySettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.errorThresholdMP = source["errorThresholdMP"];
+	        this.blunderThresholdMP = source["blunderThresholdMP"];
+	    }
+	}
 	export class ListOpts {
 	    Limit: number;
 	    Offset: number;

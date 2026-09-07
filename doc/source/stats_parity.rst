@@ -146,15 +146,21 @@ Conséquence à connaître en lisant l'onglet Joueurs : **victoires + défaites 
 Erreurs et blunders
 ~~~~~~~~~~~~~~~~~~~
 
-Une décision est comptée comme **erreur** dès que l'erreur d'équité associée est
-strictement positive, et comme **blunder** lorsqu'elle atteint **0,100 EMG**
-(100 mpt). La comparaison est *inclusive* : une erreur d'exactement
-0,100 est un blunder, dans tous les écrans (répartition par action de videau,
-détail de match, tableau des joueurs).
+Une décision est comptée comme **erreur** dès que l'erreur d'équité associée
+atteint le **seuil d'erreur** de la bibliothèque, et comme **blunder** dès
+qu'elle atteint son **seuil de blunder**. Les deux se règlent dans l'onglet
+*Bibliothèque* de la configuration et valent par défaut **0,050** et
+**0,100 EMG** (50 et 100 mpt). La comparaison est *inclusive* : une erreur
+d'exactement 0,100 est un blunder au seuil par défaut, dans tous les écrans
+(répartition par action de videau, détail de match, tableau des joueurs), et
+la même paire sert au compteur de la barre d'état et à la liste proposée
+après un import.
 
-Ce seuil est propre à blunderDB : gnuBG classe les coups en trois crans
-(``0.03`` douteux, ``0.06`` mauvais, ``0.12`` très mauvais —
-``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique.
+Ces seuils sont propres à chaque bibliothèque, et les valeurs par défaut sont
+propres à blunderDB : gnuBG classe les coups en trois crans (``0.03`` douteux,
+``0.06`` mauvais, ``0.12`` très mauvais — ``gnubg/gnubg.c:281–286``) plutôt
+qu'en une catégorie unique, et eXtreme Gammon trace les siennes à 0,020 et
+0,080. Les deux sont proposés comme préréglages.
 
 
 Décisions comptées au dénominateur du PR

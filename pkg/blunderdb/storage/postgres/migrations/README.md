@@ -149,3 +149,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   has already produced (`ON DELETE SET NULL`, composite FK on
   `(tenant_id, id)`). Schema-visible: bumped `domain.DatabaseVersion` to
   2.21.0.
+- `022_library_settings.sql` — `library_settings`, the tenant-scoped key/value
+  table holding the library's error and blunder thresholds (ADR-0046). No
+  `DatabaseVersion` bump: nothing changes on the SQLite side, where the same
+  two rows live in the file's own `metadata` table. Creates no row — a tenant
+  that set no threshold reads the defaults, which are the constants every
+  consumer used before.

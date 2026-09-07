@@ -70,7 +70,7 @@ export default {
 <li>la ligne de commande, accessible en appuyant sur la touche <em>ESPACE</em>,</li>
 <li>un message d'information lié à une opération réalisée par l'utilisateur,</li>
 <li>l'index de la position courante, suivi du nombre de positions dans la bibliothèque courante (ou les informations de coup/partie lors de la navigation dans un match),</li>
-<li>le <strong>compteur de bibliothèque</strong> — « 412 positions · 38 blunders · 5 matchs » — où chaque nombre <strong>ouvre ce qu'il compte</strong> : les positions, la recherche <code>E&gt;100</code> préparée dans la ligne de commande, ou la liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders est celui des statistiques, cent millipoints : deux seuils feraient dire deux choses au même mot.</li>
+<li>le <strong>compteur de bibliothèque</strong> — « 412 positions · 38 blunders · 5 matchs » — où chaque nombre <strong>ouvre ce qu'il compte</strong> : les positions, la recherche <code>E&gt;</code> préparée dans la ligne de commande au seuil de la bibliothèque, ou la liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders est celui de la bibliothèque, réglé dans l'onglet <em>Bibliothèque</em> de la configuration et partagé avec les statistiques : deux seuils feraient dire deux choses au même mot. Le compteur promet exactement ce que le lien ouvre, y compris pour une position jouée de plusieurs façons, qui vaut son coût le plus élevé.</li>
 </ul>
 <div class="admonition note">
 <p>Dans le cas de positions issues d'une recherche par l'utilisateur, le nombre de positions indiqué dans la barre d'état correspond au nombre de positions filtrées.</p>
@@ -88,10 +88,11 @@ export default {
 </ul>
 <p>Les vues sont enregistrées avec l'état de session de la base de données et restaurées à sa réouverture.</p>
 <h3>Configuration</h3>
-<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en six onglets :</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en sept onglets :</p>
 <ul>
 <li><strong>Interface</strong> — langue, échelle d'affichage, position du panneau ;</li>
 <li><strong>Couleurs</strong> — les couleurs du plateau ;</li>
+<li><strong>Bibliothèque</strong> — ce qui appartient à la base ouverte : les seuils d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;</li>
 <li><strong>Bearoff</strong> — les tables de sortie utilisées par le panneau Eval ;</li>
 <li><strong>gammonNet</strong> — les réglages de l'évaluateur embarqué, décrits ci-dessous ;</li>
 <li><strong>Dossier surveillé</strong> — l'import automatique des matchs qui arrivent dans un dossier, décrit ci-dessous ;</li>
@@ -101,6 +102,11 @@ export default {
 <p>Vous gardez le dernier mot, et le mécanisme le garantit plutôt que de le promettre : l'onglet <em>Couleurs</em> continue de régler le plateau directement, et une couleur choisie après le thème est la vôtre. Au démarrage, seuls les jetons de l'interface sont appliqués, jamais la palette du plateau — celle que vous avez réglée est déjà chargée, et la réécrire à chaque lancement effacerait votre travail une session à la fois. Voir <code>ADR-0038 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md&gt;</code>__.</p>
 <p><em>Suivre le système</em> est le réglage par défaut : il obéit à la préférence clair/sombre du bureau, y compris lorsqu'elle change en cours de session. Un outil n'impose pas son clair ou son sombre à un bureau qui a déjà tranché.</p>
 <p>L'onglet <em>Interface</em> permet aussi de choisir la langue parmi l'anglais, le français, l'allemand, l'italien, l'espagnol, le finnois, le japonais, le grec et le russe. L'ensemble de l'interface (barre d'outils, panneaux, messages, aide) est traduit dans la langue sélectionnée. Le choix de la langue est enregistré et conservé d'une session à l'autre.</p>
+<p>L'onglet <em>Bibliothèque</em> réunit ce qui appartient au fichier ouvert et non à la machine. Il est vide tant qu'aucune base n'est ouverte, et il le dit.</p>
+<p>Il porte d'abord les deux <strong>seuils</strong> qui décident du vocabulaire de toute l'application : une décision est une <strong>erreur</strong> dès que son coût atteint le seuil d'erreur, et cette erreur est un <strong>blunder</strong> dès qu'il atteint le seuil de blunder. Tout blunder est une erreur, donc le premier seuil ne peut pas dépasser le second, et blunderDB refuse la paire inversée. Les valeurs sont saisies en équité — « 0,080 » — l'unité de toutes les tables ; la ligne de commande, elle, parle en millipoints, si bien que le seuil 0,080 s'écrit <code>E&gt;80</code> dans une recherche.</p>
+<p>Ces seuils suivent le fichier, pas l'ordinateur : la même base compte les mêmes blunders partout où on l'ouvre, <code>blunderdb info</code> les affiche, et <code>blunderdb edit --error-threshold</code> / <code>--blunder-threshold</code> les règle. Ils ne voyagent pas dans un export : un seuil est une habitude de lecture, pas un fait des positions.</p>
+<p>Trois <strong>préréglages</strong> sont proposés d'un clic, chacun sous le nom du programme qui a tracé cette ligne : blunderDB (0,050 / 0,100), XG (0,020 / 0,080) et gnubg (0,040 / 0,080). Par défaut, une bibliothèque lit 0,050 et 0,100.</p>
+<p>Ce qu'ils changent, à l'écran : le nombre de blunders du compteur de la barre d'état et la recherche que son lien prépare, les colonnes « Erreurs » et « Blunders » des statistiques et du tableau des joueurs, et la liste des positions que blunderDB propose de revoir après un import.</p>
 <p>Le même onglet propose aussi le bouton <strong>Compacter la base</strong>, qui récupère l'espace disque laissé par les suppressions (matchs, tournois, purges) : la base de données ne rétrécit jamais toute seule quand on supprime des données, il faut demander explicitement ce compactage. L'opération peut prendre du temps sur une grosse base et nécessite, temporairement, environ deux fois sa taille en espace disque libre (blunderDB refuse de démarrer plutôt que de risquer un compactage interrompu) ; une confirmation est donc demandée avant de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche ensuite dans la barre d'état. La même opération est disponible en ligne de commande via <code>blunderdb vacuum</code> (voir Interface en ligne de commande (CLI)).</p>
 <p>Le bouton <strong>Ouvrir le dossier des journaux</strong>, juste en dessous, ouvre le dossier contenant le journal de l'application — utile pour joindre des détails à un signalement de problème, en particulier quand blunderDB est lancé depuis un raccourci ou un double-clic, sans terminal attaché pour afficher quoi que ce soit.</p>
 <p>La case <strong>Vérifier les mises à jour au démarrage</strong>, désactivée par défaut, interroge une fois la page des dernières versions du dépôt GitHub à chaque lancement et affiche, dans la barre d'état, un message si une version plus récente est disponible — jamais une fenêtre qui bloque l'utilisation. Cette vérification reste désactivée automatiquement sur une installation passée par un gestionnaire de paquets (Flatpak, Homebrew, un paquet de distribution…) : c'est ce canal-là qui gère alors les mises à jour, pas blunderDB lui-même.</p>
@@ -119,7 +125,7 @@ export default {
 <p><strong>Pause et reprise.</strong> Pendant le calcul, la progression affiche le temps restant <em>mesuré</em>, et deux boutons distincts : <em>Pause</em> et <em>Annuler</em>. La pause écrit l'état du calcul à côté de la table ; le relancer reprend là où il s'est arrêté au lieu de tout recommencer. Annuler ne garde rien. Fermer la fenêtre de configuration n'interrompt rien — le calcul continue en arrière-plan.</p>
 <p>Un calcul mis en pause se retrouve au lancement suivant, nommé et chiffré (« TS-06-09 interrompue à 43 % »), avec <em>Reprendre</em> et <em>Supprimer</em>. Rien ne redémarre tout seul : c'est l'utilisateur qui a demandé l'arrêt.</p>
 <p>L'onglet permet enfin de pointer vers un fichier <code>.bd</code> two-sided externe, par exemple une base produite par gnubg lui-même : la table au domaine le plus large l'emporte.</p>
-<p>L'onglet <em>Général</em> porte enfin <strong>Réparer les analyses</strong> : les colonnes d'analyse que la recherche et les statistiques interrogent sont une projection des analyses stockées, lesquelles restent intactes. Un défaut de projection se répare donc sans rien réimporter. C'est explicite et jamais automatique — réécrire les colonnes d'analyse de quelqu'un au seul motif qu'il ouvre sa base n'est pas une chose qu'un outil doit faire dans son dos. Le même <code>blunderdb repair</code> est disponible en ligne de commande.</p>
+<p>L'onglet <em>Bibliothèque</em> porte enfin <strong>Réparer les analyses</strong> : les colonnes d'analyse que la recherche et les statistiques interrogent sont une projection des analyses stockées, lesquelles restent intactes. Un défaut de projection se répare donc sans rien réimporter. C'est explicite et jamais automatique — réécrire les colonnes d'analyse de quelqu'un au seul motif qu'il ouvre sa base n'est pas une chose qu'un outil doit faire dans son dos. Le même <code>blunderdb repair</code> est disponible en ligne de commande.</p>
 <p>L'onglet <strong>gammonNet</strong> règle l'évaluateur embarqué (voir <code>ADR-0011 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0011-gammonnet-is-ported-to-go-and-the-representation-boundary-sits-at-the-evaluator-s-edge.md&gt;</code>__). Deux profondeurs de recherche y sont réglables, nommées et conservées séparément — abaisser l'une ne modifie jamais l'autre :</p>
 <ul>
 <li><strong>Profondeur d'affichage</strong> — le confort interactif pendant l'édition du plateau ; jamais écrite en base.</li>
@@ -482,7 +488,7 @@ export default {
 </tr>
 <tr>
 <td>Blunders</td>
-<td>Nombre d'erreurs graves (au moins 0,100 EMG).</td>
+<td>Nombre d'erreurs atteignant le seuil de blunder de la bibliothèque (0,100 EMG par défaut).</td>
 </tr>
 <tr>
 <td>Chance</td>

@@ -79,13 +79,22 @@ func (cli *CLI) runInfo(args []string) error {
 		return fmt.Errorf("failed to get database stats: %w", err)
 	}
 
+	// The library's own thresholds (ADR-0046). They are printed because the
+	// blunder count just above depends on them: a number of blunders without
+	// the line it was drawn at cannot be compared with anybody else's.
+	settings, err := cli.db.GetLibrarySettings()
+	if err != nil {
+		return fmt.Errorf("failed to read library settings: %w", err)
+	}
+
 	// Format output
 	if strings.ToLower(*format) == "json" {
 		output := map[string]interface{}{
-			"path":     *dbPath,
-			"metadata": metadata,
-			"stats":    stats,
-			"issuance": iss,
+			"path":             *dbPath,
+			"metadata":         metadata,
+			"stats":            stats,
+			"library_settings": settings,
+			"issuance":         iss,
 		}
 		jsonData, err := json.MarshalIndent(output, "", "  ")
 		if err != nil {
@@ -127,6 +136,13 @@ func (cli *CLI) runInfo(args []string) error {
 		if moveCount, ok := stats["move_count"].(int64); ok {
 			fmt.Printf("  Moves: %d\n", moveCount)
 		}
+		if blunderCount, ok := stats["blunder_count"].(int64); ok {
+			fmt.Printf("  Blunders: %d\n", blunderCount)
+		}
+
+		fmt.Println("\nThresholds (millipoints):")
+		fmt.Printf("  Error: %d\n", settings.ErrorThresholdMP)
+		fmt.Printf("  Blunder: %d\n", settings.BlunderThresholdMP)
 
 		printIssuance(iss)
 	}

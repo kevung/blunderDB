@@ -19,9 +19,10 @@ import (
 // argument count and the shape of the destinations passed to Scan matter.
 type fakeDialect struct{}
 
-func (fakeDialect) Name() string              { return "fake" }
-func (fakeDialect) ScopeColumn() string       { return "scope" }
-func (fakeDialect) ScopeArg(scope string) any { return scope }
+func (fakeDialect) Name() string                         { return "fake" }
+func (fakeDialect) ScopeColumn() string                  { return "scope" }
+func (fakeDialect) LibrarySettingsTable() (string, bool) { return "metadata", false }
+func (fakeDialect) ScopeArg(scope string) any            { return scope }
 func (fakeDialect) TenantFilter(alias, scope string) (string, []any) {
 	return "1=1", nil
 }

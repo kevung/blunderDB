@@ -33,11 +33,12 @@ type StatsStore struct{ DB Execer }
 // shared with the search store's move-error filter.
 const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
 
-// blunderThresholdMP is the error threshold (in stored millipoints units) at or
-// above which a decision is counted as a blunder. 100 ≈ 0.1 EMG. The comparison
-// is inclusive everywhere — an error of exactly 0.100 is a blunder in the cube
-// breakdown as it already was in MatchDetail.
-const blunderThresholdMP = 100
+// The two thresholds this file draws its lines at — an Error, and the Blunder
+// an Error becomes — are no longer constants: they are the library's own
+// settings (storage.LibrarySettings, ADR-0046), read once per entry point and
+// carried down. A library that never set them reads 50 and 100, which is what
+// the constants said. The comparison stays inclusive everywhere — a cost of
+// exactly the threshold is on the wrong side of the line.
 
 // countedExpr renders the SQL predicate selecting the decisions that count
 // toward PR and decision tallies (XG semantics):
@@ -379,6 +380,10 @@ func (s *StatsStore) PlayerNames(ctx context.Context, scope string) ([]storage.P
 // MatchDetail computes per-player statistics for the given match, scoped to
 // the tenant.
 func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int64) (*storage.MatchDetailStats, error) {
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("MatchDetail settings: %w", err)
+	}
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	query := `SELECT mv.player, p.decision_type, COALESCE(mv.cube_action,''),
 		(` + statsErrExpr + `) as err_mp,
@@ -446,8 +451,8 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 			mwcLoss = 0
 		}
 
-		isError := errMP > 0
-		isBlunder := errMP >= blunderThresholdMP
+		isError := errMP >= int64(settings.ErrorThresholdMP)
+		isBlunder := errMP >= int64(settings.BlunderThresholdMP)
 		isTake := cubeAction == "Take" || cubeAction == "Pass"
 
 		acc := &p1
@@ -788,6 +793,10 @@ func (s *StatsStore) buildMatchWhereClause(scope string, filter storage.StatsFil
 // lives in storage.BuildPlayerRows.
 func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
 	d := s.DB
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable settings: %w", err)
+	}
 	f := playerTableFilter(filter)
 	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
 	baseWhere, baseArgs := s.buildBaseWhereClause(scope, f)
@@ -798,11 +807,11 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	rows, err := s.DB.Query(ctx,
 		`SELECT `+moverNameExpr+` AS pname, p.decision_type,`+
 			` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+`, COUNT(*),`+
-			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) > 0 THEN 1 ELSE 0 END),0)`)+`,`+
+			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+`,`+
 			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+` `+
 			statsBaseJoin+statsWhere+
 			` GROUP BY pname, p.decision_type`,
-		append([]any{blunderThresholdMP}, statsArgs...)...)
+		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, statsArgs...)...)
 	if err != nil {
 		return nil, fmt.Errorf("PlayerTable decisions: %w", err)
 	}

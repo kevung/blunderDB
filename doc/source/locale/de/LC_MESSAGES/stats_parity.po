@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 03:03+0200\n"
+"POT-Creation-Date: 2026-09-07 01:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -50,9 +50,9 @@ msgid ""
 "Gammon et de gnuBG : l'erreur moyenne d'équité, multipliée par 500."
 msgstr ""
 "Der PR (in gnuBG auch „error rate per decision“ genannt) misst die "
-"durchschnittlichen Fehlerkosten pro gezählter Entscheidung, auf der "
-"Skala von eXtreme Gammon und gnuBG: den durchschnittlichen Equity-"
-"Fehler, multipliziert mit 500."
+"durchschnittlichen Fehlerkosten pro gezählter Entscheidung, auf der Skala"
+" von eXtreme Gammon und gnuBG: den durchschnittlichen Equity-Fehler, "
+"multipliziert mit 500."
 
 #: ../../source/stats_parity.rst:26
 msgid ""
@@ -92,10 +92,10 @@ msgstr ""
 "Der Faktor 500 ist die Konvention von XG und gnuBG (vgl. "
 "``gnubg/formatgs.c:399–409``). Das ist keine Umrechnung in Millipunkte: "
 "ein durchschnittlicher Equity-Fehler von 0,010 — also 10 Millipunkte "
-"(mpt) — ergibt einen PR von 5,0. Die Fehler einer Position dagegen "
-"lassen sich direkt in Millipunkten lesen, also in Tausendsteln der "
-"Equity: die Blunder-Schwelle weiter unten, die Suchfilter ``e>`` und "
-"``E>``, das Größenordnungs-Histogramm des Stats-Panels."
+"(mpt) — ergibt einen PR von 5,0. Die Fehler einer Position dagegen lassen"
+" sich direkt in Millipunkten lesen, also in Tausendsteln der Equity: die "
+"Blunder-Schwelle weiter unten, die Suchfilter ``e>`` und ``E>``, das "
+"Größenordnungs-Histogramm des Stats-Panels."
 
 #: ../../source/stats_parity.rst:43
 msgid "Snowie Error Rate"
@@ -347,44 +347,59 @@ msgstr "Fehler und Blunders"
 #: ../../source/stats_parity.rst:149
 msgid ""
 "Une décision est comptée comme **erreur** dès que l'erreur d'équité "
-"associée est strictement positive, et comme **blunder** lorsqu'elle "
-"atteint **0,100 EMG** (100 mpt). La comparaison est *inclusive* : une "
-"erreur d'exactement 0,100 est un blunder, dans tous les écrans "
-"(répartition par action de videau, détail de match, tableau des joueurs)."
+"associée atteint le **seuil d'erreur** de la bibliothèque, et comme "
+"**blunder** dès qu'elle atteint son **seuil de blunder**. Les deux se "
+"règlent dans l'onglet *Bibliothèque* de la configuration et valent par "
+"défaut **0,050** et **0,100 EMG** (50 et 100 mpt). La comparaison est "
+"*inclusive* : une erreur d'exactement 0,100 est un blunder au seuil par "
+"défaut, dans tous les écrans (répartition par action de videau, détail de"
+" match, tableau des joueurs), et la même paire sert au compteur de la "
+"barre d'état et à la liste proposée après un import."
 msgstr ""
 "Eine Entscheidung zählt als **Fehler**, sobald der zugehörige Equity-"
-"Fehler strikt positiv ist, und als **Blunder**, wenn er **0,100 EMG** "
-"(100 Millipunkte) erreicht. Der Vergleich ist *einschließend*: Ein Fehler"
-" von genau 0,100 ist ein Blunder, in allen Ansichten (Aufteilung nach "
-"Doppler-Aktion, Match-Detail, Spielertabelle)."
+"Fehler die **Fehlerschwelle** der Bibliothek erreicht, und als "
+"**Blunder**, sobald er ihre **Blunder-Schwelle** erreicht. Beide werden "
+"in der Registerkarte *Bibliothek* der Konfiguration eingestellt und "
+"betragen standardmäßig **0,050** und **0,100 EMG** (50 und 100 mpt). Der "
+"Vergleich ist *inklusiv*: Ein Fehler von genau 0,100 ist bei der "
+"Standardschwelle ein Blunder, auf allen Bildschirmen (Aufschlüsselung "
+"nach Cube-Aktion, Matchdetail, Spielertabelle), und dasselbe Paar dient "
+"dem Zähler der Statusleiste und der nach einem Import vorgeschlagenen "
+"Liste."
 
-#: ../../source/stats_parity.rst:155
+#: ../../source/stats_parity.rst:159
 msgid ""
-"Ce seuil est propre à blunderDB : gnuBG classe les coups en trois crans "
+"Ces seuils sont propres à chaque bibliothèque, et les valeurs par défaut "
+"sont propres à blunderDB : gnuBG classe les coups en trois crans "
 "(``0.03`` douteux, ``0.06`` mauvais, ``0.12`` très mauvais — "
-"``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique."
+"``gnubg/gnubg.c:281–286``) plutôt qu'en une catégorie unique, et eXtreme "
+"Gammon trace les siennes à 0,020 et 0,080. Les deux sont proposés comme "
+"préréglages."
 msgstr ""
-"Diese Schwelle ist blunderDB-eigen: gnuBG stuft Züge in drei Stufen ein "
-"(``0.03`` zweifelhaft, ``0.06`` schlecht, ``0.12`` sehr schlecht — "
-"``gnubg/gnubg.c:281–286``) statt in eine einzige Kategorie."
+"Diese Schwellenwerte sind jeder Bibliothek eigen, und die Standardwerte "
+"sind blunderDB eigen: gnuBG stuft die Züge in drei Stufen ein (``0.03`` "
+"zweifelhaft, ``0.06`` schlecht, ``0.12`` sehr schlecht — "
+"``gnubg/gnubg.c:281–286``) statt in eine einzige Kategorie, und eXtreme "
+"Gammon zieht seine eigenen bei 0,020 und 0,080. Beide werden als "
+"Voreinstellungen angeboten."
 
-#: ../../source/stats_parity.rst:161
+#: ../../source/stats_parity.rst:167
 msgid "Décisions comptées au dénominateur du PR"
 msgstr "Im PR-Nenner gezählte Entscheidungen"
 
-#: ../../source/stats_parity.rst:163
+#: ../../source/stats_parity.rst:169
 msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
 msgstr "blunderDB folgt denselben Ausschlussregeln wie XG und gnuBG."
 
-#: ../../source/stats_parity.rst:166
+#: ../../source/stats_parity.rst:172
 msgid "Coups de pions — décisions comptées"
 msgstr "Steinzüge — gezählte Entscheidungen"
 
-#: ../../source/stats_parity.rst:168
+#: ../../source/stats_parity.rst:174
 msgid "Seuls les **coups non-forcés** sont comptés :"
 msgstr "Nur **nicht erzwungene Züge** werden gezählt:"
 
-#: ../../source/stats_parity.rst:170
+#: ../../source/stats_parity.rst:176
 msgid ""
 "Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves =="
 " 1`` dans ``gnubg/analysis.c:458``)."
@@ -392,7 +407,7 @@ msgstr ""
 "Ein Zug ist **erzwungen**, wenn der Würfel nur einen einzigen legalen Zug"
 " zulässt (``cMoves == 1`` in ``gnubg/analysis.c:458``)."
 
-#: ../../source/stats_parity.rst:172
+#: ../../source/stats_parity.rst:178
 msgid ""
 "Les coups forcés ont une erreur nulle par définition : le joueur n'avait "
 "pas le choix. Les inclure dans le dénominateur abaisserait "
@@ -402,15 +417,15 @@ msgstr ""
 " hatte keine Wahl. Sie in den Nenner einzubeziehen würde den PR künstlich"
 " senken."
 
-#: ../../source/stats_parity.rst:176
+#: ../../source/stats_parity.rst:182
 msgid "Décisions de cube — décisions comptées"
 msgstr "Cube-Entscheidungen — gezählte Entscheidungen"
 
-#: ../../source/stats_parity.rst:178
+#: ../../source/stats_parity.rst:184
 msgid "Seules les **décisions de cube proches** sont comptées :"
 msgstr "Nur **knappe Cube-Entscheidungen** werden gezählt:"
 
-#: ../../source/stats_parity.rst:180
+#: ../../source/stats_parity.rst:186
 msgid ""
 "Une décision cube est **proche** si elle se situe dans la fenêtre "
 "d'équité ``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
@@ -420,7 +435,7 @@ msgstr ""
 "Fensters ``[-0.16, +0.16]`` um den Verdopplungspunkt liegt (Prädikat "
 "``isCloseCubedecision`` in ``gnubg/eval.c:5088–5100``)."
 
-#: ../../source/stats_parity.rst:183
+#: ../../source/stats_parity.rst:189
 msgid ""
 "Un « No Double » trivial (équité très négative ou très positive) n'est "
 "pas une vraie décision stratégique ; l'inclure gonflerait le dénominateur"
@@ -430,56 +445,56 @@ msgstr ""
 "keine echte strategische Entscheidung; es einzubeziehen würde den Nenner "
 "aufblähen und den PR drücken."
 
-#: ../../source/stats_parity.rst:188
+#: ../../source/stats_parity.rst:194
 msgid "Résumé du filtre"
 msgstr "Zusammenfassung des Filters"
 
-#: ../../source/stats_parity.rst:191
+#: ../../source/stats_parity.rst:197
 msgid "Type de décision"
 msgstr "Entscheidungstyp"
 
-#: ../../source/stats_parity.rst:191
+#: ../../source/stats_parity.rst:197
 #, no-python-brace-format
 msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
 msgstr "Enthalten in :math:`N_\\text{compté}` (PR)"
 
-#: ../../source/stats_parity.rst:193
+#: ../../source/stats_parity.rst:199
 msgid "Coup non-forcé"
 msgstr "Nicht erzwungener Zug"
 
-#: ../../source/stats_parity.rst:193 ../../source/stats_parity.rst:197
+#: ../../source/stats_parity.rst:199 ../../source/stats_parity.rst:203
 msgid "Oui"
 msgstr "Ja"
 
-#: ../../source/stats_parity.rst:195
+#: ../../source/stats_parity.rst:201
 msgid "Coup forcé"
 msgstr "Erzwungener Zug"
 
-#: ../../source/stats_parity.rst:195 ../../source/stats_parity.rst:199
+#: ../../source/stats_parity.rst:201 ../../source/stats_parity.rst:205
 msgid "Non"
 msgstr "Nein"
 
-#: ../../source/stats_parity.rst:197
+#: ../../source/stats_parity.rst:203
 msgid "Cube proche"
 msgstr "Knapper Cube"
 
-#: ../../source/stats_parity.rst:199
+#: ../../source/stats_parity.rst:205
 msgid "No Double trivial"
 msgstr "Triviales No Double"
 
-#: ../../source/stats_parity.rst:201
+#: ../../source/stats_parity.rst:207
 msgid "Take / Pass"
 msgstr "Take / Pass"
 
-#: ../../source/stats_parity.rst:201
+#: ../../source/stats_parity.rst:207
 msgid "Toujours (ce sont des réponses au double)"
 msgstr "Immer (dies sind Antworten auf ein Double)"
 
-#: ../../source/stats_parity.rst:206
+#: ../../source/stats_parity.rst:212
 msgid "Correspondance blunderDB ↔ XG ↔ gnuBG"
 msgstr "Übereinstimmung blunderDB ↔ XG ↔ gnuBG"
 
-#: ../../source/stats_parity.rst:208
+#: ../../source/stats_parity.rst:214
 msgid ""
 "Les métriques sont alignées dans les limites ci-dessous. Ce sont des "
 "**bornes vérifiées par la suite de tests**, et non des écarts moyens : le"
@@ -493,109 +508,109 @@ msgid ""
 msgstr ""
 "Die Kennzahlen stimmen innerhalb der unten angegebenen Grenzen überein. "
 "Dies sind **durch die Testsuite geprüfte Grenzwerte**, keine "
-"durchschnittlichen Abweichungen: Der Test vergleicht match für match die"
-" Zahlen von blunderDB mit den für die Referenzmatches des Repositorys "
-"gespeicherten Werten und schlägt fehl, sobald eine einzige Abweichung "
-"den Grenzwert überschreitet. Die XG-Referenzen umfassen zwei Matches — "
-"eines vollständig (317 gezählte Entscheidungen, 156 und 161 pro "
-"Spieler), das andere auf seinen reinen PR reduziert, mit einem auf 0,15 "
-"angehobenen Grenzwert wegen eines nicht zugeordneten Zuges; die gnuBG-"
-"Referenzen umfassen zwei weitere Matches. Die Version von eXtreme "
-"Gammon, die diese Zahlen erzeugt hat, ist nicht vermerkt."
+"durchschnittlichen Abweichungen: Der Test vergleicht match für match die "
+"Zahlen von blunderDB mit den für die Referenzmatches des Repositorys "
+"gespeicherten Werten und schlägt fehl, sobald eine einzige Abweichung den"
+" Grenzwert überschreitet. Die XG-Referenzen umfassen zwei Matches — eines"
+" vollständig (317 gezählte Entscheidungen, 156 und 161 pro Spieler), das "
+"andere auf seinen reinen PR reduziert, mit einem auf 0,15 angehobenen "
+"Grenzwert wegen eines nicht zugeordneten Zuges; die gnuBG-Referenzen "
+"umfassen zwei weitere Matches. Die Version von eXtreme Gammon, die diese "
+"Zahlen erzeugt hat, ist nicht vermerkt."
 
-#: ../../source/stats_parity.rst:219
+#: ../../source/stats_parity.rst:225
 msgid "Comparaison XG ↔ blunderDB (même moteur d'analyse)"
 msgstr "Vergleich XG ↔ blunderDB (gleiche Analyse-Engine)"
 
-#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:228 ../../source/stats_parity.rst:245
 msgid "Métrique"
 msgstr "Kennzahl"
 
-#: ../../source/stats_parity.rst:222 ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:228 ../../source/stats_parity.rst:245
 msgid "Écart maximal"
 msgstr "Maximale Abweichung"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:230
 msgid "Décisions totales"
 msgstr "Entscheidungen gesamt"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:230
 msgid "≤ 5"
 msgstr "≤ 5"
 
-#: ../../source/stats_parity.rst:226
+#: ../../source/stats_parity.rst:232
 msgid "Coups non-forcés"
 msgstr "Nicht erzwungene Züge"
 
-#: ../../source/stats_parity.rst:226
+#: ../../source/stats_parity.rst:232
 msgid "≤ 7"
 msgstr "≤ 7"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:234
 msgid "PR"
 msgstr "PR"
 
-#: ../../source/stats_parity.rst:228
+#: ../../source/stats_parity.rst:234
 msgid "≤ 0.10"
 msgstr "≤ 0.10"
 
-#: ../../source/stats_parity.rst:230 ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:236 ../../source/stats_parity.rst:249
 msgid "Perte MWC"
 msgstr "MWC-Verlust"
 
-#: ../../source/stats_parity.rst:230
+#: ../../source/stats_parity.rst:236
 msgid "≤ 1.0 pp"
 msgstr "≤ 1.0 pp"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:238
 msgid "Equity total (EMG)"
 msgstr "Gesamt-Equity (EMG)"
 
-#: ../../source/stats_parity.rst:232
+#: ../../source/stats_parity.rst:238
 msgid "≤ 0.05"
 msgstr "≤ 0.05"
 
-#: ../../source/stats_parity.rst:236
+#: ../../source/stats_parity.rst:242
 msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
 msgstr "Vergleich gnuBG ↔ blunderDB (SGF-Import — unterschiedliche Engines)"
 
-#: ../../source/stats_parity.rst:239
+#: ../../source/stats_parity.rst:245
 msgid "Cause principale"
 msgstr "Hauptursache"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "PR (checker)"
 msgstr "PR (Checker)"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "≤ 0.20"
 msgstr "≤ 0.20"
 
-#: ../../source/stats_parity.rst:241
+#: ../../source/stats_parity.rst:247
 msgid "equity cross-engine"
 msgstr "Engine-übergreifende Equity-Unterschiede"
 
-#: ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:249
 msgid "≤ 3.5 pp"
 msgstr "≤ 3.5 pp"
 
-#: ../../source/stats_parity.rst:243
+#: ../../source/stats_parity.rst:249
 msgid "close-cube SGF incomplet"
 msgstr "unvollständige Close-Cube-Daten im SGF"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "Snowie ER"
 msgstr "Snowie ER"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "≤ 0.50"
 msgstr "≤ 0.50"
 
-#: ../../source/stats_parity.rst:245
+#: ../../source/stats_parity.rst:251
 msgid "forcés sans analyse (SGF)"
 msgstr "erzwungene Züge ohne Analyse (SGF)"
 
-#: ../../source/stats_parity.rst:250
+#: ../../source/stats_parity.rst:256
 msgid ""
 "Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
 "forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
@@ -607,11 +622,11 @@ msgstr ""
 "erkennen kann. Dies führt zu einer strukturellen Abweichung bei der "
 "Snowie ER (leicht abweichender Nenner)."
 
-#: ../../source/stats_parity.rst:257
+#: ../../source/stats_parity.rst:263
 msgid "Valider vos propres chiffres"
 msgstr "Eigene Zahlen überprüfen"
 
-#: ../../source/stats_parity.rst:259
+#: ../../source/stats_parity.rst:265
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
@@ -619,7 +634,7 @@ msgstr ""
 "Wenn Ihre PR- oder MWC-Werte von den XG-Zahlen abweichen, prüfen Sie die "
 "folgenden Punkte:"
 
-#: ../../source/stats_parity.rst:262
+#: ../../source/stats_parity.rst:268
 #, no-python-brace-format
 msgid ""
 "**Analyses complètes** — Le PR ne peut être calculé que sur les positions"
@@ -630,7 +645,7 @@ msgstr ""
 "werden, die über eine Analyse verfügen. Positionen ohne Analyse zählen "
 "als Fehler null, gehen aber nicht in :math:`N_\\text{compté}` ein."
 
-#: ../../source/stats_parity.rst:266
+#: ../../source/stats_parity.rst:272
 msgid ""
 "**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
 "s'aligne sur le comportement observé des versions récentes."
@@ -638,7 +653,7 @@ msgstr ""
 "**XG-Version** — XG kann seine Berechnungen zwischen Versionen ändern. "
 "blunderDB orientiert sich am beobachteten Verhalten aktueller Versionen."
 
-#: ../../source/stats_parity.rst:269
+#: ../../source/stats_parity.rst:275
 msgid ""
 "**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
 "importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut "
@@ -648,7 +663,7 @@ msgstr ""
 "den Cube-Kennzahlen (siehe Tabelle oben), da die Datei keine "
 "vollständigen Analysen für alle Cube-Entscheidungen enthält."
 
-#: ../../source/stats_parity.rst:273
+#: ../../source/stats_parity.rst:279
 msgid ""
 "**Migration de base** — Après mise à jour de blunderDB, les bases "
 "existantes sont migrées automatiquement. Faire une sauvegarde avant "
@@ -658,11 +673,11 @@ msgstr ""
 "bestehende Datenbanken automatisch migriert. Erstellen Sie eine "
 "Sicherung, bevor Sie eine Datenbank mit einer neuen Version öffnen."
 
-#: ../../source/stats_parity.rst:279
+#: ../../source/stats_parity.rst:285
 msgid "Référence gnuBG"
 msgstr "gnuBG-Referenz"
 
-#: ../../source/stats_parity.rst:281
+#: ../../source/stats_parity.rst:287
 msgid ""
 "Les formules ont été vérifiées dans les fichiers source suivants (dépôt "
 "gnuBG) :"
@@ -670,15 +685,15 @@ msgstr ""
 "Die Formeln wurden anhand der folgenden Quelldateien (gnuBG-Repository) "
 "überprüft:"
 
-#: ../../source/stats_parity.rst:283
+#: ../../source/stats_parity.rst:289
 msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
 msgstr "``gnubg/formatgs.c:399–409`` — PR („Error rate per decision“)."
 
-#: ../../source/stats_parity.rst:284
+#: ../../source/stats_parity.rst:290
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
-#: ../../source/stats_parity.rst:285
+#: ../../source/stats_parity.rst:291
 msgid ""
 "``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés"
 " (``cMoves > 1``)."
@@ -686,11 +701,11 @@ msgstr ""
 "``gnubg/analysis.c:458–462`` — Checker-Akkumulation, Ausschluss "
 "erzwungener Züge (``cMoves > 1``)."
 
-#: ../../source/stats_parity.rst:286
+#: ../../source/stats_parity.rst:292
 msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
 msgstr "``gnubg/analysis.c:1430–1474`` — Umrechnung EMG → MWC pro Entscheidung."
 
-#: ../../source/stats_parity.rst:287
+#: ../../source/stats_parity.rst:293
 msgid ""
 "``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
 "(``eq2mwc``)."
@@ -698,7 +713,7 @@ msgstr ""
 "``gnubg/analysis.c:1449–1464`` — Akkumulation des MWC-Verlusts "
 "(``eq2mwc``)."
 
-#: ../../source/stats_parity.rst:288
+#: ../../source/stats_parity.rst:294
 msgid ""
 "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
 "0.16)."

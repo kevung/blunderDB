@@ -100,6 +100,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.report                       JSON
      POST /v1/imports.studyQueue                   JSON
      POST /v1/imports.xg                           custom
+   librarySettings
+     POST /v1/librarySettings.load                 JSON
+     POST /v1/librarySettings.save                 JSON
    maintenance
      POST /ops/maintenance.vacuum                  custom
    matches

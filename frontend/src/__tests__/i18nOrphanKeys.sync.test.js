@@ -42,6 +42,7 @@ const DYNAMIC_PREFIXES = [
     'config.bearoffVerdict_',
     'stats.grade.',
     'config.theme_',
+    'config.thresholdPreset_',
     'explain.',
     'stats.gameType_',
     'training.exercise.',

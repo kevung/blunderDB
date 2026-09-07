@@ -21,6 +21,7 @@ func (b binder) shared() sqlshared.Execer { return shared(b) }
 
 func (shared) Name() string                             { return "sqlite" }
 func (shared) ScopeColumn() string                      { return "scope" }
+func (shared) LibrarySettingsTable() (string, bool)     { return "metadata", false }
 func (shared) ScopeArg(scope string) any                { return scope }
 func (shared) TenantFilter(_, _ string) (string, []any) { return "1=1", nil }
 func (shared) TenantColumns(string) ([]string, []any)   { return nil, nil }
