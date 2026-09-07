@@ -22,4 +22,5 @@ msgstr ""
 #: ../../source/stats.rst:4
 msgid "Cette page a été intégrée dans la section :ref:`stats` du :ref:`manuel`."
 msgstr ""
-
+"Diese Seite wurde in den Abschnitt :ref:`stats` des :ref:`manuel` "
+"übernommen."

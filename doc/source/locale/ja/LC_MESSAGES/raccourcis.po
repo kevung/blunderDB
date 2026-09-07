@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:24+0200\n"
+"POT-Creation-Date: 2026-09-07 16:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -396,6 +396,56 @@ msgid "Afficher/cacher le panneau Transcription (brouillons de matchs)."
 msgstr "記譜パネルを表示/非表示にする（マッチの下書き）。"
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-MAJ-D"
+msgstr "CTRL-MAJ-D"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
+msgstr "大会を進行するための「大会」パネルの表示・非表示。"
+
+#: ../../source/raccourcis.rst:1
+msgid "J / K"
+msgstr "J / K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
+msgstr "運営中の大会の提案リストで、下へ・上へ移動します。"
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTRÉE"
+msgstr "ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dans la file des propositions : confirmer la proposition choisie."
+msgstr "提案リストで、選択中の提案を確定します。"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE / DROITE"
+msgstr "← / →"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Dans la fiche de résultat : le joueur de gauche gagne, celui de droite "
+"gagne."
+msgstr "結果カードで、左のプレイヤーの勝ち、右のプレイヤーの勝ち。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Z"
+msgstr "CTRL-Z"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre la dernière décision d'un tournoi dirigé."
+msgstr "運営中の大会の直前の決定をやり直します。"
+
+#: ../../source/raccourcis.rst:1
+msgid "ÉCHAP"
+msgstr "ESC"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer la fiche de résultat ou la reprise en cours."
+msgstr "結果カード、または実行中のやり直しを閉じます。"
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 
@@ -403,7 +453,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "ヘルプを表示/非表示にする。"
 
-#: ../../source/raccourcis.rst:118
+#: ../../source/raccourcis.rst:124
 msgid "Onglets de vues"
 msgstr "ビュータブ"
 
@@ -455,7 +505,7 @@ msgstr "タブをダブルクリック"
 msgid "Renommer la vue."
 msgstr "ビューの名前を変更する。"
 
-#: ../../source/raccourcis.rst:135
+#: ../../source/raccourcis.rst:141
 msgid "Ligne de commande"
 msgstr "コマンドライン"
 
@@ -475,7 +525,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "コマンド履歴を下方向に参照する。"
 
-#: ../../source/raccourcis.rst:148
+#: ../../source/raccourcis.rst:154
 msgid "Historique de recherche"
 msgstr "検索履歴"
 
@@ -495,7 +545,7 @@ msgstr "ダブルクリック"
 msgid "Exécuter la recherche."
 msgstr "検索を実行する。"
 
-#: ../../source/raccourcis.rst:161
+#: ../../source/raccourcis.rst:167
 msgid "Bibliothèque de filtres"
 msgstr "フィルターライブラリ"
 
@@ -507,7 +557,7 @@ msgstr "フィルターを選択/選択解除する（ポジションを表示�
 msgid "Exécuter la recherche du filtre."
 msgstr "フィルター検索を実行する。"
 
-#: ../../source/raccourcis.rst:174
+#: ../../source/raccourcis.rst:180
 msgid "Panneau d'analyse"
 msgstr "分析パネル"
 
@@ -541,7 +591,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
 
-#: ../../source/raccourcis.rst:190
+#: ../../source/raccourcis.rst:196
 msgid "Panneau Eval"
 msgstr "Eval パネル"
 
@@ -549,7 +599,7 @@ msgstr "Eval パネル"
 msgid "Désélectionner le coup."
 msgstr "手の選択を解除する。"
 
-#: ../../source/raccourcis.rst:205
+#: ../../source/raccourcis.rst:211
 msgid "Panneau des matchs"
 msgstr "マッチパネル"
 
@@ -585,7 +635,7 @@ msgstr "選択したマッチを削除する。"
 msgid "Désélectionner/fermer le panneau."
 msgstr "選択を解除する/パネルを閉じる。"
 
-#: ../../source/raccourcis.rst:223
+#: ../../source/raccourcis.rst:229
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Ankiパネル（間隔反復）"
 
@@ -639,7 +689,7 @@ msgstr "ピップカウントの表示／非表示（一般のショートカッ
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"
 
-#: ../../source/raccourcis.rst:241
+#: ../../source/raccourcis.rst:247
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
 
@@ -669,7 +719,7 @@ msgid ""
 "sinon désélectionner le tournoi, sinon fermer le panneau (par paliers)."
 msgstr "編集中ならそれを取り消し、そうでなければマッチ追加の検索をクリアし、そうでなければトーナメントの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:257
+#: ../../source/raccourcis.rst:263
 msgid "Panneau des collections"
 msgstr "コレクションパネル"
 
@@ -693,11 +743,11 @@ msgid ""
 "sinon fermer le panneau (par paliers)."
 msgstr "コレクション一覧に戻り、そうでなければコレクションの選択を解除し、そうでなければパネルを閉じる（段階的に）。"
 
-#: ../../source/raccourcis.rst:272
+#: ../../source/raccourcis.rst:278
 msgid "Panneau Transcription"
 msgstr "トランスクリプションパネル"
 
-#: ../../source/raccourcis.rst:274
+#: ../../source/raccourcis.rst:280
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est "
 "ouvert."
@@ -923,10 +973,6 @@ msgid "Donner l'action du curseur à l'autre camp."
 msgstr "カーソル位置のアクションを相手の手番にします。"
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-Z"
-msgstr "CTRL-Z"
-
-#: ../../source/raccourcis.rst:1
 msgid "Annuler le dernier geste sur le brouillon."
 msgstr "下書きに対する直前の操作を元に戻します。"
 
@@ -938,13 +984,13 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "元に戻した操作をやり直します。"
 
-#: ../../source/raccourcis.rst:311
+#: ../../source/raccourcis.rst:317
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
 msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
 
-#: ../../source/raccourcis.rst:314
+#: ../../source/raccourcis.rst:320
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -955,7 +1001,7 @@ msgid ""
 " la correction au passage."
 msgstr "カーソルをあるアクションまで戻して入力し直すと、そのアクションをその場で修正できます。確定するとアクションが置き換えられ、カーソルは元の位置に戻ります。ダイスを修正しても記録済みの手が新しいロールの合法手のままであれば、その手は保たれます。そうでない場合は新しいロールの最初の候補が提示され、その手は確定するまで「要確認」と表示されます。何かを変更したあとでカーソルを前後に動かすと、その際に修正が記録されます。"
 
-#: ../../source/raccourcis.rst:321
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -966,7 +1012,7 @@ msgid ""
 "brouillon."
 msgstr "拒否されるものも削除されるものもありません。隣と同じ手番のアクションを挿入すれば二重手番になり、アクションを削除すれば別の二重手番が生じることがあり、手番を変えれば以降の手が不正になることがあります。これらの不整合はトランスクリプトに印が付き、勝手に修正されることはありません。カーソルは操作のたびにその最初の不整合へ移動します。取り消し履歴はメモリ上にあり、下書きを閉じると失われます。"
 
-#: ../../source/raccourcis.rst:328
+#: ../../source/raccourcis.rst:334
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -975,7 +1021,7 @@ msgstr ""
 "パネルそのもの — 下書き一覧、作成、入力、棋譜、下書きのバー — は :ref:`panneau_transcription` "
 "で説明されています。"
 
-#: ../../source/raccourcis.rst:335
+#: ../../source/raccourcis.rst:341
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 
@@ -1135,9 +1181,3 @@ msgstr "ヘルプを閉じる。"
 #~ msgstr ""
 #~ "不整合のある下書きも、警告のうえでそのまま保存されます。拒否されるものはありません。不正な着手は打たれたとおりに書き出され、gnubg"
 #~ " と XG がそれを「Invalid move」と表示し、以降は食い違うという警告が出ます。"
-
-msgid "CTRL-MAJ-D"
-msgstr "CTRL-MAJ-D"
-
-msgid "Afficher/cacher le panneau Tournois pour diriger un tournoi."
-msgstr "大会を進行するための「大会」パネルの表示・非表示。"

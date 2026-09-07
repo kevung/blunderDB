@@ -180,6 +180,44 @@ cartes à réviser selon l'algorithme FSRS (répétition espacée).
 Voir :ref:`panneau_anki` pour le détail des paramètres (limiter la séance,
 taux de rétention visé, réinitialisation d'un paquet).
 
+Diriger son premier tournoi
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Un dimanche de club, trente-deux joueurs, deux heures avant le premier match.
+Ce tutoriel va de la salle vide à la première ronde lancée.
+
+#. **Créer le tournoi.** Panneau Tournois (*CTRL-MAJ-D*), taper le nom du
+   tournoi dans le champ du bas, *Entrée*. Ouvrir la ligne créée, puis
+   **Diriger ce tournoi** : le tournoi remplace le plateau au centre de la
+   fenêtre.
+
+#. **Choisir le format.** L'onglet *Réglages* s'ouvre sur six formats de club.
+   Cliquer le premier — un suisse à deux vies qui bascule sur un tableau —
+   suffit pour commencer ; le nombre de tables se règle juste en dessous.
+
+#. **Inscrire.** Onglet *Joueurs*, taper un nom, *Entrée*, recommencer : le
+   champ garde le focus et se vide tout seul. Si le club a déjà dirigé un
+   tournoi, l'**annuaire** évite de tout retaper — *Reprendre* les inscrits du
+   mois dernier est un clic.
+
+#. **Lancer la première ronde.** Onglet *Direction*, bouton **Tout lancer**, puis
+   *Confirmer* : le moteur a tiré les appariements et posé les matchs sur les
+   tables.
+
+#. **Saisir les résultats.** Un clic sur une table occupée, un clic sur le nom
+   du gagnant. Le score est facultatif. Une erreur vue tout de suite se reprend
+   sous la grille, en deux clics.
+
+#. **Continuer.** Les propositions suivantes apparaissent d'elles-mêmes à mesure
+   que les tables se libèrent. Le badge de l'onglet Tournois prévient quand il y
+   a quelque chose à confirmer, même en travaillant ailleurs dans blunderDB.
+
+#. **Clore.** Onglet *Classement*, **Clore le tournoi** : le classement final est
+   figé, les prix calculés, et le CSV se copie pour la comptabilité du club.
+
+Voir :ref:`diriger_un_tournoi` pour le détail de chaque vue, l'affichage de la
+salle, la feuille d'appariements imprimable et les réglages en cours de tournoi.
+
 .. _tuto_serveur_proxy:
 
 Déployer le mode serveur derrière un proxy

@@ -311,6 +311,38 @@ export default {
 <p><strong>Turnauspaneeli</strong> (<em>CTRL-Y</em>) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats-paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla <em>CTRL-Y</em>.</p>
 <p>Turnaukset täyttyvät itsestään tuonnin yhteydessä. XG-, GnuBG- ja BGF-tiedostot nimeävät tapahtumansa; kun uusi ottelu tuodaan, blunderDB sijoittaa sen tämännimiseen turnaukseen ja luo turnauksen, jos sitä ei vielä ole. Turnauksen päivämäärä ja paikka jäävät tyhjiksi — ne täytetään täällä. Tietokannassa jo olevaa ottelua ei koskaan siirretä: sen tiedoston tuominen uudelleen ei kumoa käsin tehtyä järjestelyä.</p>
 <p>Kunkin turnauksen <strong>PR</strong>-sarake näyttää <strong>viitepelaajan</strong> PR-arvon — eli sen pelaajan, joka esiintyy turnauksen useimmissa otteluissa (tasatilanteessa se, joka teki eniten päätöksiä). PR ei siis sekoita omaa peliäsi vastustajiesi peliin: omissa turnauksissasi se kuvastaa yksin sinun suoritustasi. Viitepelaajan nimi näkyy työkaluvihjeenä, kun viet osoittimen arvon päälle.</p>
+<h3>Turnauksen johtaminen</h3>
+<p>blunderDB osaa <strong>johtaa</strong> turnauksen, ei vain arkistoida sitä. Johtamisen kantaa <strong>Nicomaque</strong>-moottori, tekijänään Nicolas Harmand: se pitää muodon, paritukset, kaaviot ja sijoitukset; blunderDB antaa sille käyttöliittymän ja säilyttää sen ottelut. Paneelin palkin <strong>ⓘ</strong>-painike muistuttaa tästä ja johtaa moottorin repositorioon ja dokumentaatioon.</p>
+<p>Johdettava turnaus valitaan Turnauspaneeli -paneelista (<em>CTRL-VAIHTO-D</em>, komento <code>direct</code>): avaa turnaus ja valitse <strong>Johda tätä turnausta</strong>. Jo johdettu turnaus näyttää tilansa nimensä vieressä ja painike muuttuu muotoon <strong>Avaa</strong>. Niin kauan kuin johtaminen on auki, pääalue näyttää turnauksen <strong>laudan sijasta</strong> — blunderDB:n ainoa poikkeus tästä säännöstä; mille tahansa muulle välilehdelle siirtyminen tuo laudan takaisin.</p>
+<p>Johtamisella on kolme tilaa: <strong>valmistelussa</strong>, kunnes yhtään ottelua ei ole aloitettu, sitten <strong>käynnissä</strong>, ja <strong>päätetty</strong>, kun sijoitukset on lukittu. Päätetyn turnauksen voi avata uudelleen, ja se kysyy vahvistusta: loppusijoitus lakkaa olemasta lopullinen.</p>
+<p>Kaikki päätetty kirjoitetaan <strong>lokiin</strong>, eikä mitään muuta kirjoiteta. Sijoitukset, kaaviot, ehdotukset ja varoitukset toistetaan tästä lokista joka avauksella: sähkökatko ei maksa mitään, eikä korjaus koskaan pyyhi tapahtunutta — se lisätään siihen.</p>
+<h4>Johtamissivu</h4>
+<p>Täällä johtaja viettää suurimman osan ajastaan. Ylhäältä alas: moottorin <strong>varoitukset</strong>, jotka pysyvät näkyvissä eivätkä koskaan estä mitään; <strong>Tulosta lomake</strong> -painike parituksille; <strong>ehdotuslista</strong>; <strong>pöytäruudukko</strong>; <strong>viimeisin päätös</strong>; ja vapaat pelaajat.</p>
+<p>Ehdotus vahvistetaan <strong>yhdellä napsautuksella</strong> <em>Aloita</em>-painikkeesta. <strong>Aloita kaikki</strong> vahvistaa koko listan kahdella napsautuksella, näytettyään sen ensin. ”Ohita toistaiseksi” ei kirjoita mitään: moottori on deterministinen, ja ehdotus palaa samanlaisena seuraavalla kerralla. <em>Muodosta pari käsin</em> on aina tarjolla — moottori ehdottaa, johtaja päättää.</p>
+<p>Ehdotus voi kantaa moottorin huomautuksen: vapaata pöytää ei ole, tai ottelun odotettu päättyminen osuisi tauolle. Se on aloitettavissa kummassakin tapauksessa. Kun vaihe toimii <strong>mikrokierroksin</strong>, lista näyttää jäljellä olevan ajan seuraavaan erään; määräajan tullen ehdotukset ilmestyvät itsestään, eikä mikään käynnisty itsekseen.</p>
+<h4>Tuloskortti</h4>
+<p>Napsautus varattuun pöytään avaa ottelun kortin. Siinä on kaksi suurta kohdetta: <strong>kummankin pelaajan nimi</strong>. Voittajan napsauttaminen kirjaa tuloksen — kaksi napsautusta kaikkiaan, pöytä mukaan lukien. Voittaja on ainoa vaadittu tieto; tulos on vapaa, toinen, molemmat tai ei kumpaakaan.</p>
+<p>Kortin <strong>⋯</strong>-painike avaa sen, mitä tarvitaan harvoin: luovutuksen, vapaan huomautuksen (”aika loppui”, ”keskeytti syystä…”), ottelun siirron toiseen pöytään ja sen peruutuksen.</p>
+<p>Heti huomattu kirjausvirhe perutaan kahdella napsautuksella ruudukon alta: <strong>Korjaa</strong> viimeisin päätös, sitten oikea voittaja (<em>CTRL-Z</em> avaa saman peruutuksen). Vanhempi korjaus tehdään historiasta.</p>
+<h4>Pelaajat</h4>
+<p><strong>Pelaajat</strong>-välilehti ilmoittaa, korjaa ja poistaa. Ilmoittautumiskenttä säilyttää kohdistuksen ja tyhjenee jokaisen nimen jälkeen: kaksikymmentä pelaajaa ilmoitetaan pelkällä näppäimistöllä. Täydennys tarjoaa tietokannan pelaajia; yhden valitseminen lukitsee sen tarkan kirjoitusasun, jonka hänen ottelunsa kantavat, ja esitäyttää luokituksen hänen PR:llään.</p>
+<p><strong>Hakemisto</strong> kokoaa kaikkien tietokannan johdettujen turnausten osallistujat, nimen mukaan yhdistettyinä, viimeisimmän ilmoittautumisen seuran ja luokituksen kera. Sitä ei koskaan tallenneta: johtamisen poistaminen poistaa siitä sen osallistujat. Aiemman turnauksen osallistujien ottaminen on yksi napsautus, olipa heitä kuinka monta tahansa; hakemisto viedään CSV:nä ja luetaan takaisin liitettynä.</p>
+<p>Arvonnan jälkeen saapuva <strong>myöhästyjä</strong> ottaa vapaan vapaakierroksen, jos kaaviossa on sellainen, ja käyttöliittymä kirjoittaa kentän viereen, mihin hän tulee mukaan, ennen vahvistusta. Jos vapaata paikkaa ei ole, hänet ilmoitetaan silti ja näkymä kertoo, mihin vaiheeseen hän tulee. Jo tehtyä arvontaa ei koskaan tehdä uudelleen.</p>
+<p>Poistuminen tapahtuu <em>heti</em> tai <em>käynnissä olevan ottelun jälkeen</em>, sen mukaan lähteekö pelaaja saman tien vai pelaako loppuun.</p>
+<h4>Kaaviot, paikat, sijoitukset, historia</h4>
+<p><strong>Kaaviot</strong>-välilehti piirtää kaaviot ja sveitsiläisessä myös elämätaulukon. Jo pelattu ottelu kantaa siinä tuloksensa; ottelu, josta moottori huomauttaa, on merkitty paikalleen.</p>
+<p><strong>Paikat</strong>-välilehti yhdistää turnauksen kirjastoon. Jokainen turnauksen ottelu on paikka, joka täytetään kahdella tavalla: kirjaamalla ottelu heti (Litterointipaneeli) tai liittämällä siihen jo tuotu ottelu. <strong>Mitään ei liitetä päättelemällä</strong>: nimien yhteensattuma on ehdotus hyväksyttäväksi, osittaista osumaa ei edes ehdoteta, ja jos liitetyn ottelun tiedosto on ristiriidassa kirjatun tuloksen kanssa, ero näytetään ratkaisematta sitä — turnauksen aikana johtajan sana pätee.</p>
+<p><strong>Sijoitukset</strong>-välilehti näyttää nykyiset sijoitukset osio kerrallaan, palkintoineen jos palkintopotti on asetettu. Kaksi tasapisteissä olevaa jakavat sijan ja palkinnon. <strong>Päätä turnaus</strong> lukitsee loppusijoituksen; sijoitukset viedään CSV:nä käyttöliittymän kielellä.</p>
+<p><strong>Historia</strong>-välilehti on loki selkokielisenä: rivi päätöstä kohti, järjestyksessä, suodatettavissa pelaajan tai ottelun mukaan. Sitä johtaja lukee uudelleen kiistan jälkeen, ja siellä vanhempi päätös korjataan tai kommentoidaan.</p>
+<h4>Asetukset</h4>
+<p><strong>Asetukset</strong>-välilehti avautuu <strong>nimettyihin muotoihin</strong>: kuusi käyttövalmista seuraturnausta, joista ensimmäistä suositellaan. Yhden valitseminen riittää aloittamiseen; kentät pysyvät muokattavina jälkeenpäin.</p>
+<p>Täällä asetetaan: vaiheet ja niiden ottelupituus, kaavion pituudet kierroksittain (”15, 13, 11” luetaan viimeisestä kierroksesta taaksepäin), pöytien määrä, päivän tauot, palkintopotti (osallistumismaksu, seuran pidätys, asteikko osioittain) ja näyttökansio.</p>
+<p>Asetukset pysyvät saatavilla <strong>turnauksen aikana</strong>: vaihtorajan laskeminen kello 22 aikaisemman lopetuksen vuoksi, lohdutuskaavion lisääminen lauantai-iltana. Vain kaksi asiaa on silloin lukittu — avatun vaiheen muoto ja sen jakamien elämien määrä — ja ne näkyvät harmaina perusteluineen. Tallentaminen kesken turnauksen näyttää ensin listan siitä, mikä muuttuu, ja pyytää vahvistuksen.</p>
+<p><strong>Sijoitukset</strong> (seeding) on valinta, oletuksena pois: moottorin tutkimus päätyy siihen, ettei suojattuja sijoituksia käytetä, mikä on backgammonin nykyinen tapa. Päällä pelaajat asetetaan luokituksen mukaan.</p>
+<h4>Salin näyttö</h4>
+<p>Turnausta katsotaan. <strong>Näyttökansion</strong> valitseminen asetuksista riittää kertaheitolla: blunderDB kirjoittaa sinne itsenäisen HTML-sivun uudelleen jokaisen tapahtuman kohdalla, ja sivu latautuu itsestään. Se aukeaa offline-tilassa, toisella näytöllä tai heijastettuna, eikä lataa ulkopuolisia resursseja. <em>Avaa selaimessa</em> näyttää sen heti.</p>
+<p><strong>Parituslomake</strong> asetetaan ilmoittautumispöydälle: yksi napsautus <em>Tulosta lomake</em> avaa järjestelmän tulostusikkunan. Rivi ottelua kohti — kaksi pelaajaa, pituus, pöytä, kaksi tyhjää ruutua tulokselle — ja kolmenkymmenenkahden pelaajan kierros mahtuu yhdelle A4-sivulle.</p>
+<p>Käyttöliittymän ulkopuolella alikomento <code>blunderdb tournament</code> lukee johdetun turnauksen ilman graafista käyttöliittymää: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> ja <code>export</code>. Katso Komentoriviliittymä (CLI).</p>
 <h3>Stats-paneeli</h3>
 <h4>Johdanto</h4>
 <p><strong>Stats-paneeli</strong> mahdollistaa oman pelitason analysoinnin ja kehityksen seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se laskee ja näyttää tunnusluvut <strong>PR</strong> (<em>Performance Rating</em>) ja <strong>MWC cost</strong> (Match Winning Chance cost) kaikille asemille tai suodatetulle osajoukolle.</p>
@@ -1008,6 +1040,26 @@ export default {
 <tr>
 <td>CTRL-MAJ-D</td>
 <td>Näytä/piilota Turnaukset-paneeli turnauksen johtamista varten.</td>
+</tr>
+<tr>
+<td>J / K</td>
+<td>Johdetun turnauksen ehdotuslistassa: alas, ylös.</td>
+</tr>
+<tr>
+<td>ENTER</td>
+<td>Ehdotuslistassa: vahvista valittu ehdotus.</td>
+</tr>
+<tr>
+<td>VASEN / OIKEA</td>
+<td>Tuloskortissa: vasemmanpuoleinen pelaaja voittaa, oikeanpuoleinen voittaa.</td>
+</tr>
+<tr>
+<td>CTRL-Z</td>
+<td>Peru johdetun turnauksen viimeisin päätös.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Sulje tuloskortti tai käynnissä oleva peruutus.</td>
 </tr>
 <tr>
 <td>?</td>

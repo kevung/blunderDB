@@ -311,6 +311,38 @@ export default {
 <p>Das Panel <strong>Turniere</strong> (<em>CTRL-Y</em>) ermöglicht es, Matches in Turnieren zu gruppieren, um eine organisierte Nachverfolgung und eine statistische Analyse pro Veranstaltung zu ermöglichen. Turniere können erstellt, umbenannt und gelöscht werden; Matches können ihnen zugeordnet werden. Die Statistiken des Stats-Panels können nach Turnier gefiltert werden. Drücken Sie <em>CTRL-Y</em>, um das Panel ein- oder auszublenden.</p>
 <p>Turniere füllen sich beim Import von selbst. XG-, GnuBG- und BGF-Dateien nennen ihr Event; wird ein neues Match importiert, ordnet blunderDB es dem Turnier dieses Namens zu und legt dieses an, falls es noch nicht existiert. Datum und Ort des Turniers bleiben leer — hier werden sie eingetragen. Ein Match, das bereits in der Datenbank ist, wird nie umsortiert: seine Datei erneut zu importieren macht eine von Hand vorgenommene Einordnung nicht rückgängig.</p>
 <p>Die Spalte <strong>PR</strong> jedes Turniers zeigt den PR des <strong>Referenzspielers</strong> — also des Spielers, der in den meisten Partien des Turniers vorkommt (bei Gleichstand derjenige mit den meisten Entscheidungen). Der PR vermischt Ihr Spiel also nicht mit dem Ihrer Gegner: Bei Ihren eigenen Turnieren spiegelt er allein Ihre Leistung wider. Der Name des Referenzspielers erscheint als Tooltip, wenn Sie den Wert überfahren.</p>
+<h3>Ein Turnier leiten</h3>
+<p>blunderDB kann ein Turnier <strong>leiten</strong> und nicht nur ablegen. Die Leitung trägt die Engine <strong>Nicomaque</strong> von Nicolas Harmand: Sie hält das Format, die Paarungen, die Tableaus und die Wertung; blunderDB gibt ihr eine Oberfläche und bewahrt ihre Matches. Die Schaltfläche <strong>ⓘ</strong> in der Leiste des Panels erinnert an diesen Dank und führt zum Repository und zur Dokumentation der Engine.</p>
+<p>Ein geleitetes Turnier wird im Panel Turnier-Panel gewählt (<em>STRG-UMSCHALT-D</em>, Befehl <code>direct</code>): ein Turnier öffnen, dann <strong>Dieses Turnier leiten</strong>. Ein bereits geleitetes Turnier zeigt seinen Zustand neben dem Namen, und die Schaltfläche heißt dann <strong>Öffnen</strong>. Solange eine Leitung offen ist, zeigt der Hauptbereich das Turnier <strong>anstelle des Bretts</strong> — die einzige Ausnahme von dieser Regel in blunderDB; jeder andere Reiter holt das Brett zurück.</p>
+<p>Eine Leitung hat drei Zustände: <strong>in Vorbereitung</strong>, solange kein Match gestartet wurde, danach <strong>laufend</strong>, und <strong>abgeschlossen</strong>, sobald die Wertung fixiert ist. Ein abgeschlossenes Turnier lässt sich wieder öffnen, mit Rückfrage: Die Endwertung ist dann nicht mehr endgültig.</p>
+<p>Alles Entschiedene wird in ein <strong>Journal</strong> geschrieben, und sonst nichts. Wertung, Tableaus, Vorschläge und Warnungen werden bei jedem Öffnen aus diesem Journal abgespielt: Ein Stromausfall kostet nichts, und eine Korrektur löscht nie, was geschehen ist — sie kommt hinzu.</p>
+<h4>Die Leitungsseite</h4>
+<p>Hier verbringt die Turnierleitung die meiste Zeit. Von oben nach unten: die <strong>Warnungen</strong> der Engine, die sichtbar bleiben und nie etwas blockieren; die Schaltfläche <strong>Blatt drucken</strong> für die Paarungen; die <strong>Vorschlagsliste</strong>; das <strong>Tischraster</strong>; die <strong>letzte Entscheidung</strong>; und die freien Spieler.</p>
+<p>Ein Vorschlag wird mit <strong>einem Klick</strong> auf <em>Starten</em> bestätigt. <strong>Alle starten</strong> bestätigt die ganze Liste in zwei Klicks, nachdem sie gezeigt wurde. „Vorerst übergehen“ schreibt nichts: Die Engine ist deterministisch, und der Vorschlag kommt beim nächsten Aufruf unverändert zurück. <em>Von Hand paaren</em> steht jederzeit offen — die Engine schlägt vor, die Leitung entscheidet.</p>
+<p>Ein Vorschlag kann eine Anmerkung der Engine tragen: kein freier Tisch, oder ein Matchende, das in eine Pause fiele. Startbar bleibt er in beiden Fällen. Läuft eine Phase in <strong>Mikrorunden</strong>, zeigt die Liste die verbleibende Zeit bis zum nächsten Block; zum Termin erscheinen die Vorschläge von selbst, und nichts startet von allein.</p>
+<h4>Die Ergebniskarte</h4>
+<p>Ein Klick auf einen besetzten Tisch öffnet die Karte des Matches. Sie zeigt zwei große Flächen: die <strong>Namen der beiden Spieler</strong>. Ein Klick auf den Sieger trägt das Ergebnis ein — zwei Klicks insgesamt, Tisch inbegriffen. Verlangt wird nur der Sieger; das Ergebnis ist frei, eines von beiden, beide oder keines.</p>
+<p>Die Schaltfläche <strong>⋯</strong> der Karte klappt auf, was selten gebraucht wird: kampflose Wertung, eine freie Anmerkung („Zeit abgelaufen“, „aufgegeben wegen …“), das Verschieben des Matches auf einen anderen Tisch und seine Annullierung.</p>
+<p>Ein sofort bemerkter Eingabefehler wird unter dem Raster in zwei Klicks zurückgenommen: die letzte Entscheidung <strong>korrigieren</strong>, dann den richtigen Sieger (<em>STRG-Z</em> öffnet dieselbe Rücknahme). Eine ältere Korrektur erfolgt über den Verlauf.</p>
+<h4>Die Spieler</h4>
+<p>Der Reiter <strong>Spieler</strong> meldet an, korrigiert und zieht zurück. Das Meldefeld behält den Fokus und leert sich nach jedem Namen: Zwanzig Spieler werden allein über die Tastatur gemeldet. Die Autovervollständigung bietet die Spieler der Datenbank an; wer einen wählt, legt die genaue Schreibweise fest, die dessen Matches tragen, und übernimmt seinen PR als Wertung.</p>
+<p>Das <strong>Verzeichnis</strong> fasst die Teilnehmer aller geleiteten Turniere der Datenbank zusammen, nach Namen entdoppelt, mit Verein und Wertung ihrer letzten Meldung. Es wird nie gespeichert: Wird eine Leitung gelöscht, verschwinden ihre Teilnehmer daraus. Die Teilnehmer eines früheren Turniers zu übernehmen ist ein Klick, wie viele es auch sind; das Verzeichnis wird als CSV ausgegeben und eingefügt wieder eingelesen.</p>
+<p>Ein <strong>Nachzügler</strong>, der nach der Auslosung kommt, nimmt ein freies Freilos, wenn das Tableau eines bietet, und die Oberfläche schreibt neben das Feld, wo er einsteigt, bevor bestätigt wird. Ist kein Platz frei, wird er dennoch gemeldet, und die Ansicht sagt, in welcher Phase er einsteigt. Keine bereits erfolgte Auslosung wird wiederholt.</p>
+<p>Ein Rückzug erfolgt <em>jetzt</em> oder <em>nach dem laufenden Match</em>, je nachdem, ob der Spieler sofort geht oder zu Ende spielt.</p>
+<h4>Tableaus, Plätze, Wertung, Verlauf</h4>
+<p>Der Reiter <strong>Tableaus</strong> zeichnet die Tableaus und, bei einem Schweizer System, die Lebenstabelle. Ein bereits gespieltes Match trägt dort sein Ergebnis; ein Match, das die Engine beanstandet, ist an Ort und Stelle markiert.</p>
+<p>Der Reiter <strong>Plätze</strong> verbindet das Turnier mit der Bibliothek. Jedes Match des Turniers ist ein Platz, der auf zwei Wegen gefüllt wird: das Match sofort transkribieren (Transkriptions-Panel) oder ein bereits importiertes Match daran hängen. <strong>Nichts wird durch Schlussfolgerung angehängt</strong>: Eine Namensgleichheit ist ein Vorschlag zum Annehmen, eine teilweise Übereinstimmung wird nicht einmal vorgeschlagen, und widerspricht die Datei eines angehängten Matches dem eingetragenen Ergebnis, wird die Abweichung gezeigt, ohne aufgelöst zu werden — während eines Turniers gilt das Wort der Leitung.</p>
+<p>Der Reiter <strong>Wertung</strong> zeigt die laufende Wertung, Abschnitt für Abschnitt, mit den Preisen, sofern ein Preisgeld eingestellt ist. Zwei Gleichplatzierte teilen sich Platz und Preis. <strong>Turnier abschließen</strong> fixiert die Endwertung; die Wertung wird als CSV ausgegeben, in der Sprache der Oberfläche.</p>
+<p>Der Reiter <strong>Verlauf</strong> ist das Journal im Klartext: eine Zeile je Entscheidung, in der Reihenfolge, filterbar nach Spieler oder Match. Das liest eine Turnierleitung nach einem Einspruch nach, und dort wird eine ältere Entscheidung korrigiert oder mit einer Notiz versehen.</p>
+<h4>Die Einstellungen</h4>
+<p>Der Reiter <strong>Einstellungen</strong> öffnet sich mit <strong>benannten Formaten</strong>: sechs gebrauchsfertige Vereinsturniere, das erste davon empfohlen. Eines zu wählen genügt zum Anfangen; die Felder bleiben danach änderbar.</p>
+<p>Hier wird eingestellt: die Phasen und ihre Matchlänge, die Längen Runde für Runde eines Tableaus („15, 13, 11“ liest sich von der letzten Runde rückwärts), die Anzahl der Tische, die Pausen des Tages, das Preisgeld (Startgeld, Einbehalt des Vereins, Verteilung je Abschnitt) und der Anzeigeordner.</p>
+<p>Die Einstellungen bleiben <strong>während des Turniers</strong> erreichbar: um 22 Uhr den Umschaltpunkt senken, um früher fertig zu werden, oder am Samstagabend eine Trostrunde hinzufügen. Nur zwei Dinge sind dann fixiert — das Format einer eröffneten Phase und die Anzahl der Leben, die sie vergeben hat — und sie sind mit ihrer Begründung ausgegraut. Ein Speichern während des Turniers zeigt zuerst die Liste dessen, was sich ändert, und fragt nach.</p>
+<p>Die <strong>Setzliste</strong> ist eine Option, standardmäßig aus: Die Studie der Engine kommt zu „keine geschützten Setzplätze“, was der heutigen Backgammon-Kultur entspricht. Eingeschaltet werden die Spieler nach Wertung gesetzt.</p>
+<h4>Die Saalanzeige</h4>
+<p>Ein Turnier wird angesehen. Einen <strong>Anzeigeordner</strong> in den Einstellungen zu wählen genügt ein für alle Mal: blunderDB schreibt dort bei jedem Ereignis eine eigenständige HTML-Seite neu, und die Seite lädt sich selbst nach. Sie öffnet sich offline, auf einem zweiten Bildschirm oder per Beamer, und lädt keine externe Ressource. <em>Im Browser öffnen</em> zeigt sie sofort.</p>
+<p>Das <strong>Paarungsblatt</strong> liegt auf dem Empfangstisch: Ein Klick auf <em>Blatt drucken</em> öffnet den Druckdialog des Systems. Eine Zeile je Match — die beiden Spieler, die Länge, der Tisch, zwei leere Kästchen für das Ergebnis — und eine Runde mit zweiunddreißig Spielern passt auf eine A4-Seite.</p>
+<p>Außerhalb der Oberfläche liest der Unterbefehl <code>blunderdb tournament</code> ein geleitetes Turnier ohne grafische Oberfläche: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> und <code>export</code>. Siehe Befehlszeilenschnittstelle (CLI).</p>
 <h3>Stats-Panel</h3>
 <h4>Einführung</h4>
 <p>Das Panel <strong>Stats</strong> ermöglicht es, das eigene Spielniveau zu analysieren und den Fortschritt im Zeitverlauf anhand der in die Datenbank importierten Stellungen zu verfolgen. Es berechnet und zeigt die Kennzahlen <strong>PR</strong> (Performance Rating) und <strong>MWC cost</strong> (Match Winning Chance cost) für alle Stellungen oder eine gefilterte Teilmenge an.</p>
@@ -1008,6 +1040,26 @@ export default {
 <tr>
 <td>CTRL-MAJ-D</td>
 <td>Turnier-Panel zum Leiten eines Turniers ein-/ausblenden.</td>
+</tr>
+<tr>
+<td>J / K</td>
+<td>In der Vorschlagsliste eines geleiteten Turniers: abwärts, aufwärts.</td>
+</tr>
+<tr>
+<td>EINGABE</td>
+<td>In der Vorschlagsliste: den gewählten Vorschlag bestätigen.</td>
+</tr>
+<tr>
+<td>LINKS / RECHTS</td>
+<td>In der Ergebniskarte: der linke Spieler gewinnt, der rechte gewinnt.</td>
+</tr>
+<tr>
+<td>STRG-Z</td>
+<td>Die letzte Entscheidung eines geleiteten Turniers zurücknehmen.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Die Ergebniskarte oder die laufende Rücknahme schließen.</td>
 </tr>
 <tr>
 <td>?</td>
