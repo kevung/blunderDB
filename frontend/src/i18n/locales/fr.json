@@ -1726,7 +1726,14 @@
             "addBreak": "Ajouter une pause",
             "removeBreak": "Retirer",
             "batch": "Micro-rondes",
-            "batchHint": "Apparier par lots, toutes les N minutes, pour que l'heure d'annonce d'un résultat ne choisisse plus l'adversaire. 0 : au fil de l'eau."
+            "batchHint": "Apparier par lots, toutes les N minutes, pour que l'heure d'annonce d'un résultat ne choisisse plus l'adversaire. 0 : au fil de l'eau.",
+            "lengths": "Longueurs par tour",
+            "lengthsHint": "Longueur tour par tour, DU DERNIER VERS LE PREMIER : « 15, 13, 11 » = finale en 15, demies en 13, quarts en 11. Vide : la longueur de la phase.",
+            "lengthsPlaceholder": "15, 13, 11",
+            "lengthLate": "Longueur de fin",
+            "lengthLateHint": "Allonger les matchs quand il ne reste plus que quelques joueurs en vie. 0 : jamais.",
+            "lateThreshold": "À partir de",
+            "lateThresholdHint": "Nombre de joueurs encore en vie à partir duquel les matchs s'allongent."
         },
         "tabs": {
             "direction": "Direction",
@@ -1890,7 +1897,13 @@
                 "withdrawn": "retiré",
                 "leaving": "part après son match"
             },
-            "error": "Impossible d’enregistrer cette inscription."
+            "error": "Impossible d’enregistrer cette inscription.",
+            "entersAt": "entre",
+            "slotHint": "Où ce joueur entrera. Une place d'exemption libre, ou plus tard : aucun tirage n'est refait.",
+            "later": "plus tard",
+            "willEnter": "{player} entrera : {where}",
+            "noEntry": "{player} est inscrit mais n'entre dans aucune phase.",
+            "phaseN": "phase {n}"
         },
         "bracket": {
             "current": "en cours",

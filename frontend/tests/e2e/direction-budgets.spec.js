@@ -171,6 +171,29 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('inscrire un retardataire', counted, 5);
     });
 
+    // Le même budget, mais pour le VRAI retardataire : celui qui arrive après le tirage, quand
+    // une place d'exemption est encore libre. L'interface dit où il entre AVANT de valider, et
+    // cela ne coûte pas un geste de plus — la destination est écrite à côté du champ.
+    test('un retardataire prend une place libre sans geste de plus', async ({ page }) => {
+        await openDirection(page);
+        const before = ENTRANTS.length;
+
+        const counted = await countGestures(page, async (g) => {
+            await g.click(page.locator('[data-testid="direction-tab-players"]'));
+            // La destination est lisible avant toute saisie.
+            await expect(page.locator('.players .entry .slot')).toBeVisible();
+            const name = page.locator('.players .entry input').first();
+            await g.click(name);
+            await name.fill('Yanis Ferrand');
+            await g.click(page.locator('.players .entry button[type="submit"]'));
+            await expect(page.locator('.players tbody tr')).toHaveCount(before + 1);
+        });
+        budget('inscrire un retardataire sur une place libre', counted, 5);
+        // La place a été prise : il n'en reste aucune, et le choix disparaît plutôt que de
+        // proposer une liste vide.
+        await expect(page.locator('.players .entry .slot')).toHaveCount(0);
+    });
+
     // « reprendre les inscrits d'un tournoi précédent | ≤ 4 clics pour vingt joueurs ». Le
     // nombre d'inscrits ne change rien au compte, et c'est tout l'intérêt : retaper trente noms
     // tous les mois est le premier abandon possible du logiciel.

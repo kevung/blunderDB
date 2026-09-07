@@ -1726,7 +1726,14 @@
             "addBreak": "Añadir una pausa",
             "removeBreak": "Quitar",
             "batch": "Microrrondas",
-            "batchHint": "Emparejar por lotes, cada N minutos, para que la hora de anunciar un resultado ya no elija al rival. 0: sobre la marcha."
+            "batchHint": "Emparejar por lotes, cada N minutos, para que la hora de anunciar un resultado ya no elija al rival. 0: sobre la marcha.",
+            "lengths": "Longitudes por ronda",
+            "lengthsHint": "Longitud ronda por ronda, DE LA ÚLTIMA A LA PRIMERA: «15, 13, 11» = final a 15, semis a 13, cuartos a 11. Vacío: la longitud de la fase.",
+            "lengthsPlaceholder": "15, 13, 11",
+            "lengthLate": "Longitud final",
+            "lengthLateHint": "Alargar los partidos cuando solo quedan unos pocos jugadores vivos. 0: nunca.",
+            "lateThreshold": "A partir de",
+            "lateThresholdHint": "Número de jugadores aún vivos a partir del cual los partidos se alargan."
         },
         "tabs": {
             "direction": "Dirección",
@@ -1890,7 +1897,13 @@
                 "withdrawn": "retirado",
                 "leaving": "se va tras su partida"
             },
-            "error": "No se ha podido registrar esta inscripción."
+            "error": "No se ha podido registrar esta inscripción.",
+            "entersAt": "entra",
+            "slotHint": "Dónde entrará este jugador. Un bye libre, o más tarde: ningún sorteo se rehace.",
+            "later": "más tarde",
+            "willEnter": "{player} entrará: {where}",
+            "noEntry": "{player} está inscrito pero no entra en ninguna fase.",
+            "phaseN": "fase {n}"
         },
         "bracket": {
             "current": "en curso",

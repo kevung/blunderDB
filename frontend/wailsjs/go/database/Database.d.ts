@@ -21,6 +21,8 @@ export function AddMatchToTournament(arg1:number,arg2:number):Promise<void>;
 
 export function AddParticipant(arg1:number,arg2:string,arg3:string,arg4:number):Promise<database.DirectionView>;
 
+export function AddParticipantAtSlot(arg1:number,arg2:string,arg3:string,arg4:number,arg5:string,arg6:string):Promise<database.DirectionView>;
+
 export function AddPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function AddPositionsToCollection(arg1:number,arg2:Array<number>):Promise<void>;
@@ -140,6 +142,8 @@ export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 export function DeleteTournament(arg1:number):Promise<void>;
 
 export function DetachMatchFromSlot(arg1:number,arg2:string):Promise<void>;
+
+export function DirectionFreeSlots(arg1:number):Promise<Array<database.FreeSlot>>;
 
 export function DirectionPageHTML(arg1:number):Promise<string>;
 

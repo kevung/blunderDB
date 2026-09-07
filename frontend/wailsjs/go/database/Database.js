@@ -18,6 +18,10 @@ export function AddParticipant(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['AddParticipant'](arg1, arg2, arg3, arg4);
 }
 
+export function AddParticipantAtSlot(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['AddParticipantAtSlot'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
 export function AddPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['AddPositionToCollection'](arg1, arg2);
 }
@@ -256,6 +260,10 @@ export function DeleteTournament(arg1) {
 
 export function DetachMatchFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['DetachMatchFromSlot'](arg1, arg2);
+}
+
+export function DirectionFreeSlots(arg1) {
+  return window['go']['database']['Database']['DirectionFreeSlots'](arg1);
 }
 
 export function DirectionPageHTML(arg1) {

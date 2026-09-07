@@ -75,7 +75,9 @@
         takeEntrantsFrom,
         directoryCSV,
         parseDirectoryCSV,
-        enterParticipants
+        enterParticipants,
+        freeSlots,
+        addParticipantAtSlot
     } from '../../stores/directionStore';
 
     const view = $derived($directionStore);
@@ -139,6 +141,7 @@
     let rounds = $state(0);
     let dirEntries = $state([]);
     let dirSources = $state([]);
+    let openSlots = $state([]);
     let sheetRound = $state(0);
 
     /* La file d'attente est DÉRIVÉE : elle se recalcule à chaque changement de la vue, jamais
@@ -171,6 +174,8 @@
         // inscrit entre quelque part, y compris ici.
         directory().then((e) => (dirEntries = e));
         directorySources().then((s) => (dirSources = s));
+        // Les places d'exemption encore libres : ce qu'on propose à un retardataire (#392).
+        freeSlots().then((s) => (openSlots = s));
     });
 
     /* Les Players de la base ne changent pas pendant un tournoi : une seule lecture suffit. */
@@ -207,6 +212,7 @@
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
     const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
     const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
+    const onAddAtSlot = (n, c, r, section, key) => act(() => addParticipantAtSlot(n, c, r, section, key), 'direction.players.error');
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
     const onWithdraw = (i, after) => act(() => withdrawParticipant(i, after), 'direction.players.error');
 
@@ -454,7 +460,7 @@
             <BracketsView {phases} onOpenMatch={openBracketMatch} />
         {:else if tab === 'players'}
             <DirectoryPanel sources={dirSources} entries={dirEntries} {busy} onTake={onTakeEntrants} onExport={onExportDirectory} onParse={parseDirectoryCSV} onImport={onImportEntrants} />
-            <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} />
+            <PlayersView {rows} {suggestions} {busy} started={state !== 'draft'} {onAdd} {onUpdate} {onWithdraw} slots={openSlots} infos={view?.infos || []} {onAddAtSlot} />
         {:else}
             <p class="placeholder">{$t('direction.tabs.notYet')}</p>
         {/if}
