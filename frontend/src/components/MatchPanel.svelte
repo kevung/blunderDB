@@ -43,6 +43,8 @@
     import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
+    import { transcriptionListStore } from '../stores/transcriptionStore.js';
+    import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
     let matches = $state([]);
     let selectedMatch = $state(null);
@@ -178,6 +180,15 @@
                 logger.error('Error loading matches:', error);
                 matches = [];
             }
+            // The drafts ride along with the matches: they are refreshed on
+            // the same three occasions (the panel opens, the library changes,
+            // an import lands), and a draft written before a crash must be
+            // here the moment the library is reopened. Deliberately NOT
+            // awaited: onMount awaits this function before installing the
+            // panel's keyboard handler, and a second round trip in front of it
+            // would leave the panel deaf for a frame longer. The band is
+            // reactive; it appears when the list does.
+            void refreshTranscriptionDrafts();
         });
     }
 
@@ -644,6 +655,19 @@
             <div class="match-list-toolbar">
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
+            <!-- One line per draft being transcribed: the match it will become
+                 is not here yet, so this is where the user finds it again after
+                 a crash (integration.md §4). Clicking opens the tab it is typed in. -->
+            {#if $transcriptionListStore.length > 0}
+                <div class="draft-band">
+                    {#each $transcriptionListStore as draft (draft.id)}
+                        <button class="draft-line" onclick={showTranscriptionTab} title={$t('transcription.openDraftTooltip')}>
+                            <span class="draft-tag">{$t('transcription.draftInProgress')}</span>
+                            <span class="draft-name">{draftLabel(draft, $t('transcription.unnamed'))}</span>
+                        </button>
+                    {/each}
+                </div>
+            {/if}
             <PanelTable
                 bind:this={table}
                 rows={sortedMatches}
@@ -1057,6 +1081,36 @@
         padding: 4px 8px;
         border-bottom: 1px solid #e0e0e0;
         background: #fafafa;
+    }
+
+    /* The drafts being transcribed, one line each, above the matches they are
+       not yet. Deliberately quiet: a draft is a promise of a match, not one. */
+    .draft-band {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .draft-line {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-2);
+        padding: var(--space-1) var(--space-2);
+        border: none;
+        background: none;
+        color: var(--color-text);
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .draft-line:hover {
+        background: var(--color-surface-alt);
+    }
+
+    .draft-tag {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
     }
 
     .toolbar-btn {

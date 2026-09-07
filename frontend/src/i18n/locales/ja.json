@@ -1066,6 +1066,8 @@
         "money": "マネー",
         "points": "{n} 点",
         "notSaved": "未保存",
+        "draftInProgress": "作成中の下書き",
+        "openDraftTooltip": "「記譜」タブを開く",
         "unnamed": "名称未設定"
     },
     "status": {

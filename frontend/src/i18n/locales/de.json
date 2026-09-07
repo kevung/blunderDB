@@ -1066,6 +1066,8 @@
         "money": "Geldspiel",
         "points": "{n} Pkt.",
         "notSaved": "nicht gespeichert",
+        "draftInProgress": "Entwurf in Arbeit",
+        "openDraftTooltip": "Registerkarte Transkription öffnen",
         "unnamed": "Ohne Namen"
     },
     "status": {

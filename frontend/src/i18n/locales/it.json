@@ -1066,6 +1066,8 @@
         "money": "Money",
         "points": "{n} pti",
         "notSaved": "non salvata",
+        "draftInProgress": "Bozza in corso",
+        "openDraftTooltip": "Apri la scheda Trascrizione",
         "unnamed": "Senza nome"
     },
     "status": {
