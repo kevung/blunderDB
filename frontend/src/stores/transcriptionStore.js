@@ -99,6 +99,9 @@ export function clearTranscription() {
     // ouvert il n'y a plus de jet, donc plus rien à filtrer.
     transcriptionPointFilterStore.set([]);
     transcriptionCandidateStepsStore.set([]);
+    // Un clic sur le videau resté sans réponse ne doit pas servir le brouillon
+    // suivant (T2.5).
+    transcriptionCubeRequestStore.set(null);
 }
 
 /**
@@ -148,3 +151,17 @@ export const transcriptionCandidateStepsStore = writable([]);
 export function resetTranscriptionPointFilter() {
     transcriptionPointFilterStore.set([]);
 }
+
+/**
+ * Le videau cliqué sur le plateau (T2.5), `null` quand la demande a été servie.
+ *
+ * Le plateau POSE la demande, le panneau la sert : c'est le chemin de
+ * `transcriptionHistoryActionStore` pour `Ctrl+Z`, et il est ici pour la même
+ * raison — le geste naît sur une surface qui ne tient ni le brouillon ni
+ * l'aller-retour Wails. Le plateau ne juge donc rien : il dit « le videau a été
+ * cliqué », et c'est le panneau, qui sait ce que le document attend, qui en
+ * fait un double ou qui laisse tomber la demande.
+ *
+ * @type {import('svelte/store').Writable<'double'|null>}
+ */
+export const transcriptionCubeRequestStore = writable(null);

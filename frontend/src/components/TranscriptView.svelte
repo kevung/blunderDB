@@ -17,8 +17,8 @@
   It knows nothing about transcription either — no draft, no gesture, no
   Cursor gesture — so that the Match panel can mount it one day on a stored
   match (tasks/transcription/integration.md §4): it takes an index to frame and
-  calls back with the index that was clicked, and what those indices mean is
-  the caller's business.
+  calls back with the index that was clicked — or right-clicked, `onMenu` —, and
+  what those indices mean is the caller's business.
 
   The one thing it computes is the LAYOUT — which cell of which row an Action
   goes in — because that is a fact about the two columns and about nothing
@@ -102,6 +102,17 @@
         matText = '',
         /** Told when a cell is clicked: `(index) => void`. */
         onSelect = null,
+        /**
+         * Told when a cell is RIGHT-clicked: `(index, {x, y}) => void`, in
+         * client pixels. The caller opens whatever menu it wants there; this
+         * component knows no gesture and offers none.
+         *
+         * The native menu is suppressed on those cells, and only there: the
+         * right button means something else in the rest of the application,
+         * and a Transcript that swallowed it everywhere would take away the
+         * browser's own menu from the panel around it (fiche T2.5).
+         */
+        onMenu = null,
         /** Told when the `.mat` pane is folded or unfolded: `(open) => void`. */
         onMatToggle = null,
         /** Overrides the copy button's action; the clipboard by default. */
@@ -313,6 +324,11 @@
                 aria-current={framed ? 'true' : undefined}
                 title={flaws.length ? flawTitle(flaws) : undefined}
                 onclick={() => onSelect(c.index)}
+                oncontextmenu={(event) => {
+                    if (!onMenu) return;
+                    event.preventDefault();
+                    onMenu(c.index, { x: event.clientX, y: event.clientY });
+                }}
             >
                 {cellText(c)}{#if flaws.length}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}
             </button>

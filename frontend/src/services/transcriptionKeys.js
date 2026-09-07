@@ -44,6 +44,11 @@
  * elle attend un niveau, met l'état d'avant de côté et le rend tel quel si
  * `Échap` tombe entre les deux — « résignation gammon » coûte `r` `2`.
  *
+ * Les quatre ont un second déclencheur, à la souris : la rangée `[D] [T] [P]
+ * [R]` du panneau et le clic sur le videau dessiné (T2.5). Il ne double pas la
+ * règle — [cubeGesture], [beginResign] et [resignWithLevel] sont le corps même
+ * de ces touches, appelé par elles.
+ *
  * Ce que ces touches ne font PAS : juger. Doubler sans posséder le videau, en
  * partie Crawford ou au-delà du plafond reste transcriptible — c'est une
  * Incohérence du Replay, marquée et jamais refusée (ADR-0044, fonctionnel.md
@@ -258,7 +263,7 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     // d'avant est mis de côté : `Échap` le rend intact, la résignation
     // « annule sans effet » (ux.md §3, fiche T1.5).
     if (isBareLetter(event, 'r')) {
-        return { handled: true, state: { ...initialKeyState(), phase: PHASE.RESIGN, resume: state }, commands: [] };
+        return { handled: true, ...beginResign(state) };
     }
 
     // `d` double ou redouble depuis n'importe quel état de saisie. Une seule
@@ -272,7 +277,7 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     // Incohérence est MARQUÉE, jamais refusée (ADR-0044). Le moteur la pose,
     // le panneau l'affiche.
     if (isBareLetter(event, 'd')) {
-        return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.DOUBLE }] };
+        return { handled: true, ...cubeGesture(state, COMMAND.DOUBLE) };
     }
 
     // `t`/`p` ne répondent qu'à une offre. Ce n'est pas un refus : sans double
@@ -280,8 +285,8 @@ export function pressKey(state, event, { expects = 'checker' } = {}) {
     // disponible pour le répartiteur global (ux.md §3 : « réponse attendue |
     // t / p »).
     if (expects === 'take') {
-        if (isBareLetter(event, 't')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.TAKE }] };
-        if (isBareLetter(event, 'p')) return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.PASS }] };
+        if (isBareLetter(event, 't')) return { handled: true, ...cubeGesture(state, COMMAND.TAKE) };
+        if (isBareLetter(event, 'p')) return { handled: true, ...cubeGesture(state, COMMAND.PASS) };
     }
 
     // Une réponse à un double n'est pas une saisie de dés : ses touches sont
@@ -360,12 +365,76 @@ function editCommand(event) {
  * document (fonctionnel.md §1.2).
  */
 function resignLevel(state, event) {
-    if (event.key === 'Escape') {
-        return { handled: true, state: state.resume ?? initialKeyState(), commands: [] };
-    }
+    if (event.key === 'Escape') return { handled: true, ...cancelResign(state) };
     const level = dieOf(event);
     if (!RESIGN_LEVELS.has(level)) return swallowed(state);
-    return { handled: true, state: initialKeyState(), commands: [{ kind: COMMAND.RESIGN, value: level }] };
+    return { handled: true, ...resignWithLevel(state, level) };
+}
+
+/**
+ * Un geste de videau donné au CLIC : le bouton `[D]`, `[T]` ou `[P]` de la
+ * rangée, et le clic sur le videau dessiné sur le plateau (T2.5).
+ *
+ * C'est le corps même des touches `d`, `t` et `p` — elles l'appellent — et non
+ * un second chemin qui leur ressemblerait. Ce que la touche ne fait pas, le
+ * bouton ne le fait donc pas non plus : aucun `validate` n'est émis devant le
+ * geste, parce que le moteur valide de lui-même le candidat resté en attente
+ * (`transcript.cubeGesture`), et rien n'est jugé — doubler sans posséder le
+ * videau reste transcriptible, l'Incohérence est marquée (ADR-0044).
+ *
+ * Ce qui distingue le bouton de la touche est AILLEURS, dans le panneau : un
+ * bouton s'éteint là où son geste ne répond à rien, quand la touche, elle, ne
+ * refuse jamais.
+ *
+ * @param {object} state
+ * @param {string} kind - COMMAND.DOUBLE, COMMAND.TAKE ou COMMAND.PASS
+ * @returns {{state: object, commands: {kind: string}[]}}
+ */
+export function cubeGesture(state, kind) {
+    return { state: initialKeyState(), commands: [{ kind }] };
+}
+
+/**
+ * La résignation annoncée, son niveau attendu : ce que fait `r`, et ce que fait
+ * le bouton `[R]` de la rangée.
+ *
+ * Les deux mènent au même état modal, celui qui met l'état d'avant de côté pour
+ * qu'`Échap` — ou le bouton « Annuler » qui le double — le rende intact. Le
+ * niveau se donne ensuite d'un chiffre ou d'un clic, en un geste : la
+ * résignation coûte deux gestes à la souris comme au clavier (ux.md §4.2).
+ */
+export function beginResign(state) {
+    return { state: { ...initialKeyState(), phase: PHASE.RESIGN, resume: state }, commands: [] };
+}
+
+/** Le niveau donné : `1`/`2`/`3` au clavier, un des trois boutons à la souris. */
+export function resignWithLevel(state, level) {
+    if (!RESIGN_LEVELS.has(level)) return { state, commands: [] };
+    return { state: initialKeyState(), commands: [{ kind: COMMAND.RESIGN, value: level }] };
+}
+
+/** La résignation abandonnée : `Échap`, ou le bouton qui le double. */
+export function cancelResign(state) {
+    return { state: state.resume ?? initialKeyState(), commands: [] };
+}
+
+/**
+ * Les gestes d'une entrée du menu contextuel du Transcript (T2.5) : le Cursor
+ * mené jusqu'à la cellule cliquée, puis la correction elle-même.
+ *
+ * C'est mot pour mot ce que coûte la relecture au clavier — `h`×k puis `x`, la
+ * ligne « coup en double » d'ux.md §4.3 — et c'est voulu : `i`, `a`, `x` et `s`
+ * agissent sur l'Action AU CURSOR, si bien qu'un clic droit sur une cellule
+ * lointaine doit d'abord y amener le Cursor. Le moteur ne connaît que le pas
+ * (`cursor_back`/`cursor_forward`), et un saut est la répétition du pas : rien
+ * n'est ajouté côté Go pour la souris.
+ *
+ * @param {number} from - le Cursor actuel
+ * @param {number} to - la cellule cliquée
+ * @param {string} kind - COMMAND.INSERT_BEFORE, INSERT_AFTER, DELETE ou FLIP_SIDE
+ */
+export function menuCommands(from, to, kind) {
+    return [...cursorCommands(from, to), { kind }];
 }
 
 /**

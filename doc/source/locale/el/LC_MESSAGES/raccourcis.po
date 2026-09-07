@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 10:01+0200\n"
+"POT-Creation-Date: 2026-09-07 10:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -874,6 +874,20 @@ msgstr ""
 "τίποτε."
 
 #: ../../source/raccourcis.rst:1
+msgid "Clic (sur le videau)"
+msgstr "Κλικ (στον κύβο)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Proposer un double pour le camp au trait, comme la touche d. Devant une "
+"offre, le videau ne répond pas : la prise et la passe sont dans la rangée"
+" de boutons."
+msgstr ""
+"Πρόταση διπλασιασμού για την πλευρά που παίζει, όπως το πλήκτρο d. "
+"Μπροστά σε μια προσφορά ο κύβος δεν απαντά: η αποδοχή και το πάσο "
+"βρίσκονται στη σειρά των κουμπιών."
+
+#: ../../source/raccourcis.rst:1
 msgid "GAUCHE, h"
 msgstr "ΑΡΙΣΤΕΡΑ, h"
 
@@ -896,6 +910,19 @@ msgstr "Κλικ (σε ένα κελί)"
 #: ../../source/raccourcis.rst:1
 msgid "Placer le curseur sur cette action."
 msgstr "Τοποθέτηση του δρομέα σε αυτήν την ενέργεια."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit (sur une cellule)"
+msgstr "Δεξί κλικ (σε ένα κελί)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir les corrections de cette action : insérer avant, insérer après, "
+"supprimer, changer de camp. Le curseur est amené sur la cellule au "
+"passage."
+msgstr ""
+"Άνοιγμα των διορθώσεων αυτής της ενέργειας: εισαγωγή πριν, εισαγωγή μετά,"
+" διαγραφή, αλλαγή πλευράς. Ο δρομέας φέρνεται στο κελί στο πέρασμα."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-ENTREE"
@@ -957,7 +984,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Επανάληψη της κίνησης που αναιρέθηκε."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:311
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -965,7 +992,7 @@ msgstr ""
 "Μια ζαριά που δεν επιτρέπει καμία κίνηση καταγράφει τον χορό από μόνη "
 "της, χωρίς επιπλέον πλήκτρο."
 
-#: ../../source/raccourcis.rst:312
+#: ../../source/raccourcis.rst:314
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était. "
@@ -984,7 +1011,7 @@ msgstr ""
 "μετακίνηση του δρομέα εμπρός ή πίσω μετά από κάποια αλλαγή καταγράφει τη "
 "διόρθωση στο πέρασμα."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1002,7 +1029,7 @@ msgstr ""
 "δρομέας τοποθετείται στην πρώτη από αυτές μετά από κάθε κίνηση. Η στοίβα "
 "αναιρέσεων ζει στη μνήμη: χάνεται με το κλείσιμο του πρόχειρου."
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:328
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1012,7 +1039,7 @@ msgstr ""
 "καταγραφή και η γραμμή του προσχεδίου — περιγράφεται στο "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:333
+#: ../../source/raccourcis.rst:335
 msgid "Panneau d'aide"
 msgstr "Πίνακας βοήθειας"
 
