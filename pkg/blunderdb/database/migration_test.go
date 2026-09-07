@@ -2763,3 +2763,98 @@ func TestMigrate_2_19_0_to_2_22_0_TrainingJournal(t *testing.T) {
 		t.Errorf("LoadTrainingNumberStats = %+v, want one gv1 with 1 fault", stats)
 	}
 }
+
+// TestDirectionSchema_2_23_0 covers the 2.23.0 wave: the Direction of a
+// Tournament and the Slot a Match fills (issue #365, ADR-0047).
+//
+// The append-only rule is the one worth a test. It is not a database
+// constraint — SQLite has no way to forbid an UPDATE on a table — so what the
+// test pins is the shape that makes the rule enforceable: a composite primary
+// key on (tournament_id, seq), so a second write at the same sequence number
+// collides instead of silently overwriting the first.
+func TestDirectionSchema_2_23_0(t *testing.T) {
+	d := newTestDB(t)
+	ctx := context.Background()
+
+	tID, err := d.CreateTournament("Open de Lyon", "2026-09-07", "Lyon")
+	if err != nil {
+		t.Fatalf("create tournament: %v", err)
+	}
+
+	if _, err := d.db.ExecContext(ctx,
+		`INSERT INTO direction (tournament_id, format_version, engine_version, state, config)
+		 VALUES (?, 1, 'v0.1.0', 'draft', '{}')`, tID); err != nil {
+		t.Fatalf("insert direction: %v", err)
+	}
+	for seq := 0; seq < 3; seq++ {
+		if _, err := d.db.ExecContext(ctx,
+			`INSERT INTO direction_event (tournament_id, seq, kind, time, payload)
+			 VALUES (?, ?, 'created', CURRENT_TIMESTAMP, '{}')`, tID, seq); err != nil {
+			t.Fatalf("insert event %d: %v", seq, err)
+		}
+	}
+
+	// Append-only: writing sequence 1 again collides rather than replacing it.
+	if _, err := d.db.ExecContext(ctx,
+		`INSERT INTO direction_event (tournament_id, seq, kind, time, payload)
+		 VALUES (?, 1, 'result', CURRENT_TIMESTAMP, '{}')`, tID); err == nil {
+		t.Error("a second event at the same sequence number must collide: the log is append-only")
+	}
+
+	// Deleting the Tournament takes its Direction with it and unlinks its
+	// Matches, which is the rule ADR-0047 states: the Matches keep their data.
+	res, err := d.db.ExecContext(ctx, `INSERT INTO match (player1_name, player2_name, match_length) VALUES ('a', 'b', 7)`)
+	if err != nil {
+		t.Fatalf("create match: %v", err)
+	}
+	mID, err := res.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := d.AddMatchToTournament(tID, mID); err != nil {
+		t.Fatalf("add match: %v", err)
+	}
+	if _, err := d.db.ExecContext(ctx,
+		`UPDATE match SET direction_match_id = 'M1' WHERE id = ?`, mID); err != nil {
+		t.Fatalf("fill slot: %v", err)
+	}
+	// A Slot carries at most one Match: a second Match on the same slot collides.
+	res2, err := d.db.ExecContext(ctx, `INSERT INTO match (player1_name, player2_name, match_length) VALUES ('c', 'd', 7)`)
+	if err != nil {
+		t.Fatalf("create second match: %v", err)
+	}
+	m2, err := res2.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := d.AddMatchToTournament(tID, m2); err != nil {
+		t.Fatalf("add second match: %v", err)
+	}
+	if _, err := d.db.ExecContext(ctx,
+		`UPDATE match SET direction_match_id = 'M1' WHERE id = ?`, m2); err == nil {
+		t.Error("two Matches on the same Slot must collide")
+	}
+	// But several Matches with no slot coexist: the partial index leaves the
+	// empty string free, and that is what every ordinary Match carries.
+	if _, err := d.db.ExecContext(ctx,
+		`UPDATE match SET direction_match_id = '' WHERE id = ?`, m2); err != nil {
+		t.Errorf("a Match with no Slot must be allowed alongside another: %v", err)
+	}
+
+	if err := d.DeleteTournament(tID); err != nil {
+		t.Fatalf("delete tournament: %v", err)
+	}
+	var n int
+	if err := d.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM direction_event WHERE tournament_id = ?`, tID).Scan(&n); err != nil {
+		t.Fatalf("count events: %v", err)
+	}
+	if n != 0 {
+		t.Errorf("deleting the Tournament must take its Direction with it, %d event(s) left", n)
+	}
+	if err := d.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match WHERE id = ?`, mID).Scan(&n); err != nil {
+		t.Fatalf("count matches: %v", err)
+	}
+	if n != 1 {
+		t.Error("deleting the Tournament unlinks its Matches, it does not delete them")
+	}
+}
