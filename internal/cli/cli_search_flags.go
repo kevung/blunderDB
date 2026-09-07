@@ -96,7 +96,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		noComment:         fs.Bool("no-comment", false, "Only positions carrying no comment"),
 		phase:             fs.String("phase", "", "Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see `blunderdb repair`)"),
 		gameType:          fs.String("game-type", "", "Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see `blunderdb repair`)"),
-		like:              fs.Int("like", 0, "Rank the whole library by how close it stands to this position id, nearest first (replaces the query rather than narrowing it)"),
+		like:              fs.Int("like", 0, "Rank this position's neighbours, nearest first: same kind of decision, same regime for a cube decision, met in another match (replaces the query rather than narrowing it)"),
 		intent:            fs.String("intent", "", "Translate a plain phrase (French or English) into search tokens and run them; prints what was understood and what was not"),
 		commentOrigin:     fs.String("comment-origin", "", "Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown"),
 		query:             fs.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags"),

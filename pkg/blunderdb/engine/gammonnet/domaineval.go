@@ -145,7 +145,7 @@ func CubeOwnerOf(pos *domain.Position) CubeOwner {
 // ConfigForPosition below now names instead of silently refusing under the
 // same message as a genuine horizon refusal.
 func IsMoneyPosition(pos *domain.Position) bool {
-	return pos.Score[0] < 0 && pos.Score[1] < 0
+	return pos.IsMoney()
 }
 
 // ConfigForPosition is THE search configuration gammonNet runs for pos: the
