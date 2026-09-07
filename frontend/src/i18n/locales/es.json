@@ -1153,7 +1153,8 @@
             "double_turn": "doble turno",
             "impossible_cube": "acción de cubo imposible",
             "past_end": "más allá del final del partido",
-            "inconsistent_dice": "jugada incoherente con la tirada"
+            "inconsistent_dice": "jugada incoherente con la tirada",
+            "unrecorded_move": "jugada no registrada"
         }
     },
     "transcript": {
@@ -1166,6 +1167,7 @@
         "opening": "Apertura {a}-{b}",
         "openingTie": "Apertura {a}-{b}: se repite",
         "dance": "baila",
+        "unrecorded": "no registrada",
         "doubles": "Doble → {n}",
         "takes": "Acepta",
         "drops": "Rechaza",
@@ -1185,7 +1187,8 @@
             "double_turn": "turno doble",
             "impossible_cube": "doblaje imposible",
             "past_end": "más allá del final",
-            "inconsistent_dice": "dados incoherentes"
+            "inconsistent_dice": "dados incoherentes",
+            "unrecorded_move": "jugada no registrada"
         }
     },
     "status": {

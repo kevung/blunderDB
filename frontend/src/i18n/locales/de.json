@@ -1153,7 +1153,8 @@
             "double_turn": "doppelter Zug",
             "impossible_cube": "unmögliche Dopplerwürfel-Aktion",
             "past_end": "nach dem Ende des Matches",
-            "inconsistent_dice": "Zug passt nicht zum Wurf"
+            "inconsistent_dice": "Zug passt nicht zum Wurf",
+            "unrecorded_move": "nicht aufgezeichneter Zug"
         }
     },
     "transcript": {
@@ -1166,6 +1167,7 @@
         "opening": "Eröffnung {a}-{b}",
         "openingTie": "Eröffnung {a}-{b}: neu würfeln",
         "dance": "kein Zug",
+        "unrecorded": "nicht aufgezeichnet",
         "doubles": "Doppelt → {n}",
         "takes": "Nimmt an",
         "drops": "Gibt auf",
@@ -1185,7 +1187,8 @@
             "double_turn": "doppelter Zug",
             "impossible_cube": "unmögliche Dopplerabgabe",
             "past_end": "nach dem Matchende",
-            "inconsistent_dice": "unstimmige Würfel"
+            "inconsistent_dice": "unstimmige Würfel",
+            "unrecorded_move": "nicht aufgezeichneter Zug"
         }
     },
     "status": {

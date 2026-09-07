@@ -170,14 +170,15 @@
 
     // The keys are written out rather than assembled: a key built at runtime
     // (`'transcript.inconsistency.' + kind`) is invisible to the guard that
-    // hunts orphaned translations, and the five Inconsistencies of
+    // hunts orphaned translations, and the six Inconsistencies of
     // fonctionnel.md §1.4 are a closed list anyway.
     const FLAW_KEY = {
         illegal_move: 'transcript.inconsistency.illegal_move',
         double_turn: 'transcript.inconsistency.double_turn',
         impossible_cube: 'transcript.inconsistency.impossible_cube',
         past_end: 'transcript.inconsistency.past_end',
-        inconsistent_dice: 'transcript.inconsistency.inconsistent_dice'
+        inconsistent_dice: 'transcript.inconsistency.inconsistent_dice',
+        unrecorded_move: 'transcript.inconsistency.unrecorded_move'
     };
     const RESIGN_KEY = { 1: 'transcript.resignSingle', 2: 'transcript.resignGammon', 3: 'transcript.resignBackgammon' };
 
@@ -197,6 +198,11 @@
                 return `${dice[0]}${dice[1]}: ${info.notation ?? ''}`.trim();
             case 'dance':
                 return `${dice[0]}${dice[1]}: ${$t('transcript.dance')}`;
+            case 'unrecorded':
+                // The roll is known, the play is not. It is named, never left to
+                // look like a dance: the file says nobody wrote the play down, and
+                // the cell has to say the same thing.
+                return `${dice[0]}${dice[1]}: ${$t('transcript.unrecorded')}`;
             case 'double':
                 // The value the cube reaches. `before.cube.value` is the log2
                 // exponent everywhere in blunderDB (see the XGID contract), and

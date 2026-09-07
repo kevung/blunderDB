@@ -1153,7 +1153,8 @@
             "double_turn": "два хода подряд",
             "impossible_cube": "невозможное действие с кубом",
             "past_end": "после окончания матча",
-            "inconsistent_dice": "ход не соответствует броску"
+            "inconsistent_dice": "ход не соответствует броску",
+            "unrecorded_move": "незаписанный ход"
         }
     },
     "transcript": {
@@ -1166,6 +1167,7 @@
         "opening": "Открытие {a}-{b}",
         "openingTie": "Открытие {a}-{b}: переброс",
         "dance": "нет хода",
+        "unrecorded": "не записан",
         "doubles": "Удваивает → {n}",
         "takes": "Принимает",
         "drops": "Пасует",
@@ -1185,7 +1187,8 @@
             "double_turn": "двойной ход",
             "impossible_cube": "невозможное действие с кубом",
             "past_end": "после конца матча",
-            "inconsistent_dice": "несогласованные кости"
+            "inconsistent_dice": "несогласованные кости",
+            "unrecorded_move": "незаписанный ход"
         }
     },
     "status": {

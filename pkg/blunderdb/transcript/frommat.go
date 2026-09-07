@@ -157,14 +157,32 @@ func statedResult(games []gnubgparser.Game, i, matchLength int) (winner, points 
 // checkerAction turns one play of the file into an Action. The from/to pairs are kept
 // as the file wrote them — the Replay recomputes the hits and the board they leave, and
 // says whether any legal play reaches it.
+//
+// A cell with no play in it is TWO different facts, and the difference is the whole of
+// this function. A cell holding nothing but its dice (or the "Cannot Move" some writers
+// put there) says the player could not play: a dance. A cell holding "???" says gnubg
+// did not write down what was played — the player moved, and the record is silent. The
+// parser's decoded Move is all -1 in both cases, so the raw MoveString is what separates
+// them, and it is the only thing that does.
 func checkerAction(rec *gnubgparser.MoveRecord) Action {
 	side := rec.Player
 	dice := [2]int{rec.Dice[0], rec.Dice[1]}
+	if isUnrecorded(rec.MoveString) {
+		return Action{Side: side, Kind: KindUnrecorded, Dice: dice}
+	}
 	steps := absoluteSteps(rec.Move, side)
 	if len(steps) == 0 {
 		return Action{Side: side, Kind: KindDance, Dice: dice}
 	}
 	return Action{Side: side, Kind: KindChecker, Dice: dice, Steps: steps}
+}
+
+// isUnrecorded recognises gnubg's mark for a play it did not record: a cell made of
+// question marks and nothing else. The count is not fixed at three on purpose — the
+// mark is what it means, not how long it is — but an empty cell is a dance, never this.
+func isUnrecorded(moveString string) bool {
+	s := strings.TrimSpace(moveString)
+	return s != "" && strings.Trim(s, "?") == ""
 }
 
 // absoluteSteps converts the parser's player-relative points (0..23 for points 1..24,

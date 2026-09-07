@@ -456,7 +456,8 @@ _Avoid_: transcription (the draft), move list
 
 **Action** (of a Transcription):
 One player's act at one moment of the match: a roll and the checker play it was used for
-(or the dance it forced), a double or redouble, a take, a pass, a resignation. A double and
+(or the dance it forced, or the mark that says the play was never written down), a double
+or redouble, a take, a pass, a resignation. A double and
 its answer are two Actions, each with its own Position and Decision. An Action *owns its
 side*: proposed by the trait at entry, the side belongs to the Action once recorded, so
 inserting or deleting an Action never changes who played the ones after it. When the
@@ -485,7 +486,10 @@ A derived fact a Replay attaches to an Action, shown to the user and refused by 
 an *illegal move* (the board it left is reachable by no legal play from the board before
 it), a *double turn* (two consecutive Actions of the same side), an *impossible cube
 action* (a double by a player who does not hold the cube, an answer with no offer), an
-Action *past the end* of the match after its length was shortened. An Inconsistency is
+Action *past the end* of the match after its length was shortened, an *unrecorded move*
+(the roll is known and the play is not — gnubg writes "???" in the cell; the players did
+nothing wrong, the RECORD is incomplete, and every board after it is unchecked). An
+Inconsistency is
 kept and marked — never deleted by the software, never written into the saved Match as
 data — and the Cursor jumps to the first one after a Replay. An illegal move exported to
 a `.mat` is exported as played, with a warning that gnubg and XG will flag it and diverge

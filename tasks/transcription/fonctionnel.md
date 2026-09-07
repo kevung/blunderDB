@@ -38,6 +38,7 @@ change ensuite que par le geste « changer de camp ».
 | `opening` | `dice[2]` : dé du J1, dé du J2 | rien de propre ; fixe le `side` et le jet de la première Action `checker` ; une égalité reste dans le document (affichée « relance ») et ne produit ni Move ni Position |
 | `checker` | `dice[2]`, `steps[]` (`from`, `to`, `hit`) ; `board_after` **seulement** si le coup est illégal | un Move `checker` avec sa notation et la Position d'avant le coup |
 | `dance` | `dice[2]` | un Move `checker` « Cannot Move », sa Position |
+| `unrecorded` | `dice[2]` | un Move `checker` de notation `???`, sa Position ; le coup a été joué, le fichier ne dit pas lequel |
 | `double` | — | un Move `cube` `Double`, sa Position (décision du doubleur) |
 | `take` | — | un Move `cube` `Take`, sa Position (décision du preneur, videau au niveau offert) |
 | `pass` | — | un Move `cube` `Pass`, sa Position ; termine la partie |
@@ -82,6 +83,13 @@ l'Incohérence « au-delà de la fin ».
 | videau impossible | `double` par un camp qui ne possède pas le videau (ni centré) ; `double` en partie Crawford ; `take`/`pass` sans `double` juste avant ; `double` avec un videau déjà au plafond `max_cube` s'il est défini | oui |
 | au-delà de la fin | Action après que le match est gagné | oui |
 | dés incohérents | `checker` dont les `steps` n'utilisent pas les dés de l'Action (cas produit par une correction de jet) | oui, requalifie le coup en illégal |
+| coup non consigné | Action `unrecorded` : le jet est connu, le coup ne l'est pas (`???` dans un `.mat` de gnubg) | oui, le plateau d'avant est reconduit et tout ce qui suit est invérifiable |
+
+Le **coup non consigné** n'est pas une danse. Une cellule qui ne porte que ses dés dit que
+le joueur n'a **pas pu** jouer ; une cellule `???` dit que gnubg n'a **pas consigné** ce
+qu'il a joué. Le décodage du parseur est vide dans les deux cas, seule la marque les
+distingue, et la rendre en danse écrirait dans le fichier une affirmation que personne n'a
+faite. Le constat porte sur le *dossier*, jamais sur les joueurs.
 
 Aucune Incohérence n'est refusée, aucune n'est supprimée par le logiciel, aucune n'est une
 donnée du Match enregistré. Après un Replay, le Cursor saute à la première.
@@ -168,6 +176,8 @@ repart. Aucun état n'est stocké pour cela.
   la résignation comme telle, les coups illégaux comme tels, l'analyse, les commentaires.
 - **Coup illégal** : exporté tel que joué ; le dialogue avertit que gnubg et XG signaleront
   « Invalid move » et divergeront ensuite ; l'export n'est jamais refusé.
+- **Coup non consigné** : lu `???`, rendu `???`. L'aller-retour d'un `.mat` de gnubg qui en
+  porte redonne le même nombre de cellules `???`, jamais des danses.
 - **Aller-retour** : `gnubgparser.ParseMAT(ingest.RenderMAT(transcript.MatchParts(doc)))`
   redonne le même graphe (test de
   table sur des `.mat` réels du dépôt et sur des documents synthétiques couvrant chaque

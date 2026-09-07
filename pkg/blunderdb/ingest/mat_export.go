@@ -218,6 +218,11 @@ func movesToPlays(moves []*domain.Move) []play {
 		// Checker move: "DD: notation". A forced no-move (dance) is stored as the
 		// display marker "Cannot Move"; a .mat leaves the cell blank after the
 		// dice, so emit dice only for it (and for an empty notation).
+		//
+		// A play the record does not carry is NOT that: it is stored as "???", the
+		// mark gnubg itself writes, and it goes out as it came in. Blanking it here
+		// would turn a play nobody wrote down into a dance the player never had —
+		// see transcript.KindUnrecorded.
 		cell := fmt.Sprintf("%d%d:", mv.Dice[0], mv.Dice[1])
 		if mv.CheckerMove != "" && mv.CheckerMove != "Cannot Move" {
 			cell += " " + mv.CheckerMove

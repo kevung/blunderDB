@@ -1153,7 +1153,8 @@
             "double_turn": "double trait",
             "impossible_cube": "action de videau impossible",
             "past_end": "au-delà de la fin du match",
-            "inconsistent_dice": "coup incohérent avec le jet"
+            "inconsistent_dice": "coup incohérent avec le jet",
+            "unrecorded_move": "coup non consigné"
         }
     },
     "transcript": {
@@ -1166,6 +1167,7 @@
         "opening": "Ouverture {a}-{b}",
         "openingTie": "Ouverture {a}-{b} : relance",
         "dance": "danse",
+        "unrecorded": "non consigné",
         "doubles": "Double → {n}",
         "takes": "Prend",
         "drops": "Passe",
@@ -1185,7 +1187,8 @@
             "double_turn": "double trait",
             "impossible_cube": "videau impossible",
             "past_end": "au-delà de la fin",
-            "inconsistent_dice": "dés incohérents"
+            "inconsistent_dice": "dés incohérents",
+            "unrecorded_move": "coup non consigné"
         }
     },
     "status": {

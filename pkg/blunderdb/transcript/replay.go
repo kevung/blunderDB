@@ -6,7 +6,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// InconsistencyKind names one of the five facts a Replay can find (fonctionnel.md §1.4).
+// InconsistencyKind names one of the six facts a Replay can find (fonctionnel.md §1.4).
 // Every one of them is derived at each Replay, shown, and kept: none is stored on an
 // Action, none is written into the saved Match, and none is ever a refusal.
 type InconsistencyKind string
@@ -28,6 +28,10 @@ const (
 	// is what correcting a roll under a kept play produces. It requalifies the play as
 	// illegal.
 	InconsistentDice InconsistencyKind = "inconsistent_dice"
+	// UnrecordedMove: the roll is known, the play is not — a KindUnrecorded Action,
+	// which a .mat writes "???". Nothing is wrong with the match; the RECORD is
+	// incomplete, and everything after it stands on a board nobody can check.
+	UnrecordedMove InconsistencyKind = "unrecorded_move"
 )
 
 // Inconsistency is one derived fact about one Action, with the sentence the panel shows.
@@ -54,7 +58,8 @@ type ActionInfo struct {
 	// steps match, or the Action's own BoardAfter when no legal play reaches it.
 	After domain.Board `json:"after"`
 
-	// Notation is the play as a transcript writes it, "Cannot Move" for a dance.
+	// Notation is the play as a transcript writes it, "Cannot Move" for a dance and
+	// "???" for a play the record does not carry.
 	Notation string `json:"notation,omitempty"`
 
 	GameIndex  int    `json:"game_index"`
@@ -521,13 +526,21 @@ func (s *state) step(i int, a Action) ActionInfo {
 			}
 		}
 
-	case KindChecker, KindDance:
+	case KindChecker, KindDance, KindUnrecorded:
 		s.ensureGame()
 		pos := s.position(a.Side, a.Dice, domain.CheckerAction, s.cube)
 		info.Before, info.HasPosition = pos, true
 		legal := domain.LegalMoves(&pos)
 
-		if a.Kind == KindDance {
+		if a.Kind == KindUnrecorded {
+			// The play is missing, not absent: the board it left is unknown, and the
+			// last known one is carried forward so the replay can go on. Nothing is
+			// checked against the rules here — there is nothing to check — and the
+			// finding says the record is incomplete, never that the players erred.
+			info.After = s.board
+			info.Notation = UnrecordedNotation
+			info.add(UnrecordedMove, "the record does not say what was played")
+		} else if a.Kind == KindDance {
 			info.After = s.board
 			info.Notation = "Cannot Move"
 			if len(legal) > 0 {

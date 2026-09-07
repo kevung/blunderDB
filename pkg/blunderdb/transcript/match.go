@@ -91,7 +91,11 @@ func Build(doc Document) Parts {
 			Player:     sideToXG(info.Side),
 		}
 		switch info.Kind {
-		case KindChecker, KindDance:
+		// A play that was not recorded is a Move like any other: the roll is known,
+		// and its notation is the "???" the file used, which is what an export must
+		// give back. Inventing a play for it, or blanking the cell into a dance,
+		// would put in the file something nobody did.
+		case KindChecker, KindDance, KindUnrecorded:
 			mv.MoveType = "checker"
 			mv.Dice = [2]int32{int32(info.Before.Dice[0]), int32(info.Before.Dice[1])}
 			mv.CheckerMove = info.Notation
