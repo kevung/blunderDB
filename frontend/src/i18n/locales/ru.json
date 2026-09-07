@@ -1280,7 +1280,12 @@
         "gameType_mutualholding": "Взаимные якоря",
         "gameType_holding": "Якорь",
         "gameType_contact": "Контакт",
-        "gameType_over": "Окончена"
+        "gameType_over": "Окончена",
+        "compareColumn": "Сравн.",
+        "compareToggle": "Сравнить {name}",
+        "compareTitle": "{a} и {b}, рядом",
+        "compareClear": "Очистить",
+        "compareBlunderRate": "Бландеры / 100 реш."
     },
     "trash": {
         "title": "Корзина",
@@ -1410,13 +1415,6 @@
         "failed": "Поиск близких позиций не удался.",
         "none": "В этой базе нет близких позиций.",
         "found": "{n} близких позиций, от {nearest} до {farthest} шашко-пипсов."
-    },
-    "intent": {
-        "empty": "Опишите словами, что вы ищете.",
-        "failed": "Фразу не удалось перевести.",
-        "understoodNothing": "Ничего не понято в: {words}",
-        "understood": "Понято: {matched}. Проверьте строку, затем Enter.",
-        "partly": "Понято: {matched}. Не понято: {words}. Проверьте строку, затем Enter."
     },
     "log": {
         "title": "Журнал работы",

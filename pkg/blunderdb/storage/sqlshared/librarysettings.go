@@ -8,7 +8,7 @@ import (
 )
 
 // LibrarySettingsStore implements storage.LibrarySettingsStore over the two
-// key/value rows of ADR-0043. The SQL is one statement per operation on both
+// key/value rows of ADR-0046. The SQL is one statement per operation on both
 // backends; only the table and whether it is scoped differ, and the Dialect
 // answers that (LibrarySettingsTable):
 //

@@ -211,8 +211,6 @@ export default {
 </div>
 <p>El comando <code>like</code> responde a una pregunta distinta de la de los tokens: sustituye la lista recorrida por las posiciones más <strong>cercanas</strong> a la actual, de la más cercana a la más lejana. La cercanía es una distancia de transporte, expresada en pips de ficha — la cantidad de movimiento de fichas que separa ambas posiciones — y el punto de vista es siempre el del jugador que mueve. No es un filtro: la similitud <strong>ordena</strong> toda la biblioteca en vez de restringirla, y por tanto no se combina con los tokens.</p>
 <p>El token <code>n</code> cuenta <strong>encuentros</strong>: <code>n&gt;3</code> conserva las posiciones a las que llegan más de tres jugadas, en todos los partidos. Es otra pregunta distinta de «qué he fallado» — una posición encontrada veinte veces y bien jugada diecinueve sigue siendo la que hay que saber de memoria. Se cuentan las jugadas, no los partidos: la misma posición dos veces en un partido cuenta dos, porque fueron dos decisiones.</p>
-<p>Una frase en palabras puede sustituir a los tokens, con el comando <code>ask</code>: <code>ask my cube blunders at a score</code>. La frase se <strong>traduce a tokens</strong>, escritos en la barra de comandos — se releen y luego se lanza. Nada se adivina y nada sale de la máquina: el vocabulario es fijo, la misma frase da siempre la misma consulta, y lo que no se ha entendido se <strong>dice</strong> en lugar de pasarse por alto. Una traducción equivocada se ve así antes de devolver resultados equivocados, y los tokens se aprenden leyéndolos.</p>
-<p>Dos intenciones no son tokens y se ponen en el tablero de búsqueda en vez de en la línea: «cubo» o «fichas» (el tipo de decisión) y «al marcador» o «money». <code>ask</code> las pone allí.</p>
 <p>El <strong>plan de juego</strong> es una segunda etiqueta derivada, junto a la fase, y responde a la pregunta que un paquete de filtros guardados no sabe plantear: «muéstrame mis errores en holding game». Token <code>gt:</code>, repetible (<code>gt:holding gt:mutualholding</code>), desde el punto de vista del <strong>jugador que mueve</strong> — el plan en el que se tomaba la decisión.</p>
 <p>Los diez planes reconocidos, en el orden en que las reglas los agotan, del más específico al más general:</p>
 <ul>
@@ -502,7 +500,10 @@ export default {
 <li><strong>Ordenar</strong> — haga clic en un encabezado de columna. La tabla se abre ordenada por PR creciente, mejor jugador primero. Los jugadores de los que nada se ha medido permanecen abajo sea cual sea el sentido de la ordenación: un cero por falta de datos no es una actuación perfecta.</li>
 <li><strong>Abrir el detalle de un jugador</strong> — haga clic en una fila. El jugador queda seleccionado en la barra de filtros y la vista cambia a la pestaña Dashboard.</li>
 <li><strong>Restringir el periodo</strong> — los filtros de fechas, de torneos y de longitud de partida se aplican con normalidad, lo que permite acotar la tabla a las fechas de una competición.</li>
+<li><strong>Comparar dos jugadores</strong> — marque la casilla de la primera columna en dos filas. Sobre la tabla aparece un bloque que enfrenta sus indicadores; marcar a un tercer jugador sustituye al más antiguo de los dos. La casilla no selecciona la fila: marcar compara, hacer clic abre el detalle.</li>
 </ul>
+<p>En ese bloque <strong>solo las tasas reciben un veredicto</strong>, y la mejor de las dos va en negrita. Tres indicadores no lo reciben nunca, y vale la pena decir por qué. La <strong>suerte</strong> no es una cualidad: un jugador más afortunado no es mejor. Los <strong>partidos, el balance y las decisiones</strong> dicen lo que valen las tasas, pero ponerlos en competición haría ganar a quien simplemente jugó más. El <strong>número de blunders</strong> no se compara en bruto — doce sobre mil decisiones valen más que diez sobre cien —, por eso el bloque añade una línea <em>Blunders / 100 dec.</em> que sí se compara, y deja el recuento al lado como contexto.</p>
+<p>Un empate no es una victoria: no se pone en negrita en ningún lado. Una tasa sin nada detrás se muestra como «—» y no decide nada.</p>
 <div class="admonition note">
 <p>En esta pestaña, la lista <strong>Jugador</strong> y la elección del <strong>tipo de decisión</strong> están desactivadas: la tabla muestra a todos los jugadores y ya desglosa las decisiones de fichas y de cubo en columnas distintas.</p>
 </div>
@@ -1341,10 +1342,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Abre el registro de actividad: las últimas doscientas líneas del archivo de registro, con lo necesario para copiarlas en un informe o abrir la carpeta que las contiene.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Traduce una frase en palabras — francés o inglés — a tokens de búsqueda: <code>ask my cube blunders at a score</code>. Los tokens se escriben en la barra de comandos, no se ejecutan: se releen y luego Intro. Lo que no se ha entendido se dice, nunca se adivina.</td>
 </tr>
 <tr>
 <td>like</td>

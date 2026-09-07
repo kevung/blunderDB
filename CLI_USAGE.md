@@ -1100,7 +1100,7 @@ At least one edit option is required.
 # Clear description
 ./blunderDB edit --db database.db --clear-description
 
-# Draw the library's own lines: XG's thresholds (ADR-0043)
+# Draw the library's own lines: XG's thresholds (ADR-0046)
 ./blunderDB edit --db database.db --error-threshold 20 --blunder-threshold 80
 ```
 
@@ -2484,8 +2484,6 @@ Options:
     	Only positions carrying a comment (whatever its origin — yours or an imported note)
   -individual
     	Only positions imported on their own, not as part of a match
-  -intent string
-    	Translate a plain phrase (French or English) into search tokens and run them; prints what was understood and what was not
   -like int
     	Rank the whole library by how close it stands to this position id, nearest first (replaces the query rather than narrowing it)
   -limit int

@@ -36,7 +36,7 @@ var purgeOrder = []string{
 // this repo. PurgeTenant derives the numeric tenant_id internally. The
 // global metadata table is never touched: since schema 2.17.0 it holds no
 // per-tenant row (the session moved to session_state, #156, and the library
-// settings never lived there — ADR-0043).
+// settings never lived there — ADR-0046).
 //
 // PostgreSQL-only, like ApplyRLS/DropRLS (rls_postgres.go) — there is no
 // SQLite equivalent (single-user desktop databases have no tenant to purge).

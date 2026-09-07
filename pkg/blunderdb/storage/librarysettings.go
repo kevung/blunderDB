@@ -7,7 +7,7 @@ import (
 )
 
 // LibrarySettings are the reading habits that belong to the library rather
-// than to the machine (ADR-0043, CONTEXT.md "Library setting"): where the line
+// than to the machine (ADR-0046, CONTEXT.md "Library setting"): where the line
 // between a decision worth revisiting and a decision worth being ashamed of is
 // drawn. They travel with the file, so the same database counts the same
 // blunders wherever it is opened, and a daemon tenant carries its own.

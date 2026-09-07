@@ -92,7 +92,7 @@ type Dialect interface {
 	ScopeArg(scope string) any
 
 	// LibrarySettingsTable names the table holding the library's own
-	// settings (ADR-0043) and says whether it is confined by ScopeColumn.
+	// settings (ADR-0046) and says whether it is confined by ScopeColumn.
 	// The two backends genuinely differ here rather than incidentally: the
 	// SQLite file keeps them in its metadata table, which it already has and
 	// which is the library; PostgreSQL's metadata is database infrastructure

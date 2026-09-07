@@ -105,7 +105,7 @@ func (cli *CLI) runEdit(args []string) error {
 		return fmt.Errorf("failed to save metadata: %w", err)
 	}
 
-	// The library's own settings (ADR-0043) are not metadata rows on every
+	// The library's own settings (ADR-0046) are not metadata rows on every
 	// backend, so they go through their own accessor. Either threshold can be
 	// set alone: the other keeps the value the library already had, and the
 	// pair is validated as a pair, so raising one past the other is refused

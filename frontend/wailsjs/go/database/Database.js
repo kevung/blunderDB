@@ -686,10 +686,6 @@ export function Tags() {
   return window['go']['database']['Database']['Tags']();
 }
 
-export function TranslateIntent(arg1) {
-  return window['go']['database']['Database']['TranslateIntent'](arg1);
-}
-
 export function TrashCollection(arg1) {
   return window['go']['database']['Database']['TrashCollection'](arg1);
 }

@@ -20,7 +20,7 @@ type versionResp struct {
 // routes are gone for good (ADR-0005: the daemon has no privileged tenant),
 // and the session state has its own tenant-scoped table.
 //
-// The library's own settings (ADR-0043) are served here too, and they ARE
+// The library's own settings (ADR-0046) are served here too, and they ARE
 // writable: they are per-tenant data in a per-tenant table (library_settings,
 // under Row-Level Security), so a tenant setting its own thresholds reaches
 // nothing but its own rows — the very property metadata.save lacked.

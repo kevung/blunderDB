@@ -160,7 +160,7 @@ const MaxStudyQueue = 50
 
 // The error, in millipoints, at or above which a decision earns its place in
 // the queue is no longer stated here. It is the library's own error threshold
-// (storage.LibrarySettings, ADR-0043) — the queue asks "what is worth
+// (storage.LibrarySettings, ADR-0046) — the queue asks "what is worth
 // revisiting", which is what an Error is, so it reads the same line every
 // other count reads. Its default is the 50 this constant held: half of what
 // the statistics call a blunder, because the queue is a study list and not a

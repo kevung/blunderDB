@@ -1280,7 +1280,12 @@
         "gameType_mutualholding": "Molemminpuolinen ankkuri",
         "gameType_holding": "Ankkuri",
         "gameType_contact": "Kontakti",
-        "gameType_over": "Päättynyt"
+        "gameType_over": "Päättynyt",
+        "compareColumn": "Vert.",
+        "compareToggle": "Vertaa {name}",
+        "compareTitle": "{a} ja {b} rinnakkain",
+        "compareClear": "Tyhjennä",
+        "compareBlunderRate": "Blunderit / 100 päät."
     },
     "trash": {
         "title": "Roskakori",
@@ -1410,13 +1415,6 @@
         "failed": "Läheisten asemien haku epäonnistui.",
         "none": "Ei läheisiä asemia tässä tietokannassa.",
         "found": "{n} läheistä asemaa, {nearest}–{farthest} nappulapipiä."
-    },
-    "intent": {
-        "empty": "Kuvaile sanoin, mitä etsit.",
-        "failed": "Lausetta ei voitu kääntää.",
-        "understoodNothing": "Mitään ei ymmärretty: {words}",
-        "understood": "Ymmärretty: {matched}. Lue rivi ja paina Enter.",
-        "partly": "Ymmärretty: {matched}. Ei ymmärretty: {words}. Lue rivi ja paina Enter."
     },
     "log": {
         "title": "Toimintaloki",

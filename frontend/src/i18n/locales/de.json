@@ -1280,7 +1280,12 @@
         "gameType_mutualholding": "Gegenseitiges Holding",
         "gameType_holding": "Holding",
         "gameType_contact": "Kontakt",
-        "gameType_over": "Beendet"
+        "gameType_over": "Beendet",
+        "compareColumn": "Vgl.",
+        "compareToggle": "{name} vergleichen",
+        "compareTitle": "{a} und {b} nebeneinander",
+        "compareClear": "Löschen",
+        "compareBlunderRate": "Blunder / 100 Entsch."
     },
     "trash": {
         "title": "Papierkorb",
@@ -1410,13 +1415,6 @@
         "failed": "Die Suche nach nahen Stellungen ist fehlgeschlagen.",
         "none": "Keine nahe Stellung in dieser Datenbank.",
         "found": "{n} nahe Stellungen, von {nearest} bis {farthest} Stein-Pips."
-    },
-    "intent": {
-        "empty": "Beschreiben Sie in Worten, was Sie suchen.",
-        "failed": "Der Satz konnte nicht übersetzt werden.",
-        "understoodNothing": "Nichts verstanden in: {words}",
-        "understood": "Verstanden: {matched}. Zeile prüfen, dann Enter.",
-        "partly": "Verstanden: {matched}. Nicht verstanden: {words}. Zeile prüfen, dann Enter."
     },
     "log": {
         "title": "Aktivitätsprotokoll",

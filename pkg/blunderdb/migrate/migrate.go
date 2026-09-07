@@ -10,7 +10,7 @@
 // membership). App-state families (anki decks/cards, filter library, search and
 // command history, session state) are intentionally NOT migrated yet: they
 // are lower-value for a data migration. The library's own settings — the error
-// and blunder thresholds of ADR-0043 — ARE carried: they are not app state but
+// and blunder thresholds of ADR-0046 — ARE carried: they are not app state but
 // the reading habit the counts depend on, and a tenant that counted differently
 // from its source file would make the migration a silent change of meaning. Their per-tenant scoping is in place
 // (each has a tenant-scoped table, session_state since schema 2.17.0). See
@@ -167,7 +167,7 @@ func (m *mover) run(rep *Report) error {
 	return nil
 }
 
-// copyLibrarySettings carries the library's own thresholds across (ADR-0043).
+// copyLibrarySettings carries the library's own thresholds across (ADR-0046).
 // They are two integers, not a family — nothing counts them in the Report —
 // but leaving them behind would make the migrated tenant count different
 // blunders from the file it came from, which is the one thing the setting

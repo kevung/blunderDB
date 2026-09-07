@@ -1,5 +1,5 @@
 // Contract cases for the library's own settings — the error and blunder
-// thresholds of ADR-0043. The two backends store them in different tables
+// thresholds of ADR-0046. The two backends store them in different tables
 // (metadata on SQLite, the tenant-scoped library_settings on PostgreSQL), so
 // what is held identical here is the behaviour: the defaults a library that
 // never set them reads, the nesting rule, and the round trip.

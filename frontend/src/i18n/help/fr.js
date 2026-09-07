@@ -211,8 +211,6 @@ export default {
 </div>
 <p>La commande <code>like</code> répond à une autre question que les jetons : elle remplace la liste parcourue par les positions les plus <strong>proches</strong> de la position courante, de la plus proche à la plus lointaine. La proximité est une distance de transport, exprimée en pions-pas — la quantité de mouvement de pions qui sépare les deux positions — et le point de vue est toujours celui du joueur au trait. Ce n'est pas un filtre : la similarité <strong>classe</strong> toute la bibliothèque au lieu de la restreindre, et ne se combine donc pas avec les jetons.</p>
 <p>Le jeton <code>n</code> compte les <strong>rencontres</strong> : <code>n&gt;3</code> retient les positions auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une autre question que « qu'ai-je raté » — une position rencontrée vingt fois et bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte sur les coups, pas sur les matchs : la même position deux fois dans un match compte pour deux, parce que c'étaient deux décisions.</p>
-<p>Une phrase en toutes lettres peut remplacer les jetons, avec la commande <code>ask</code> : <code>ask mes blunders de videau au score</code>. La phrase est <strong>traduite en jetons</strong>, écrits dans la barre de commande — on les relit, puis on lance. Rien n'est deviné et rien ne part sur le réseau : le vocabulaire est fixe, la même phrase rend toujours la même requête, et ce qui n'a pas été compris est <strong>dit</strong> plutôt que passé sous silence. Une traduction fausse se voit ainsi avant de renvoyer des résultats faux, et les jetons s'apprennent en les lisant.</p>
-<p>Deux intentions ne sont pas des jetons et se posent sur le plateau de recherche plutôt que dans la ligne : « de videau » ou « de pions » (le type de décision) et « au score » ou « en argent ». <code>ask</code> les y pose.</p>
 <p>Le <strong>plan de jeu</strong> est une seconde étiquette dérivée, à côté de la phase, et elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas poser : « montre-moi mes erreurs en holding game ». Jeton <code>gt:</code>, répétable (<code>gt:holding gt:mutualholding</code>), du point de vue du <strong>joueur au trait</strong> — le plan dans lequel se prenait la décision.</p>
 <p>Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus spécifique au plus général :</p>
 <ul>
@@ -502,7 +500,10 @@ export default {
 <li><strong>Trier</strong> — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré restent en bas quel que soit le sens du tri : un zéro faute de données n'est pas une performance parfaite.</li>
 <li><strong>Ouvrir le détail d'un joueur</strong> — cliquez sur une ligne. Le joueur est sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet Dashboard.</li>
 <li><strong>Restreindre la période</strong> — les filtres de dates, de tournois et de longueur de match s'appliquent normalement, ce qui permet de borner le tableau aux dates d'une compétition.</li>
+<li><strong>Comparer deux joueurs</strong> — cochez la case de la première colonne sur deux lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.</li>
 </ul>
+<p>Dans ce bloc, <strong>seuls les taux reçoivent un verdict</strong>, et le meilleur des deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire pourquoi. La <strong>chance</strong> n'est pas une qualité : un joueur plus chanceux n'est pas meilleur. Les <strong>matchs, le bilan et les décisions</strong> situent ce que les taux valent, mais les mettre en compétition ferait gagner celui qui a simplement joué davantage. Le <strong>nombre de blunders</strong> ne se compare pas brut — douze sur mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne <em>Blunders / 100 déc.</em> qui, elle, se compare, et laisse le compte à côté comme contexte.</p>
+<p>Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.</p>
 <div class="admonition note">
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
@@ -1341,10 +1342,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Traduit une phrase en toutes lettres — français ou anglais — en jetons de recherche : <code>ask mes blunders de videau au score</code>. Les jetons sont écrits dans la barre de commande, pas lancés : on les relit, puis Entrée. Ce qui n'a pas été compris est dit, jamais deviné.</td>
 </tr>
 <tr>
 <td>like</td>

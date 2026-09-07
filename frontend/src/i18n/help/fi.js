@@ -211,8 +211,6 @@ export default {
 </div>
 <p>Komento <code>like</code> vastaa eri kysymykseen kuin tunnukset: se korvaa selatun listan nykyistä <strong>lähimmillä</strong> asemilla, lähimmästä kaukaisimpaan. Läheisyys on kuljetusetäisyys nappulapipeinä — se määrä nappuloiden liikettä, joka erottaa asemat — ja näkökulma on aina vuorossa olevan pelaajan. Se ei ole suodatin: samankaltaisuus <strong>järjestää</strong> koko kirjaston sen sijaan että rajaisi sitä, eikä siksi yhdisty tunnuksiin.</p>
 <p>Tunnus <code>n</code> laskee <strong>kohtaamisia</strong>: <code>n&gt;3</code> säilyttää asemat, joihin johtaa yli kolme siirtoa, kaikissa otteluissa. Se on eri kysymys kuin ”missä menin vikaan” — kaksikymmentä kertaa kohdattu ja yhdeksäntoista kertaa oikein pelattu asema on yhä se, joka pitää osata ulkoa. Lasketaan siirrot, ei otteluita: sama asema kahdesti yhdessä ottelussa on kaksi, koska ne olivat kaksi päätöstä.</p>
-<p>Sanallinen lause voi korvata tunnukset <code>ask</code>-komennolla: <code>ask my cube blunders at a score</code>. Lause <strong>käännetään tunnuksiksi</strong>, jotka kirjoitetaan komentoriville — lue ne ja aja sitten. Mitään ei arvata eikä mikään lähde koneelta: sanasto on kiinteä, sama lause antaa aina saman kyselyn, ja se mitä ei ymmärretty <strong>sanotaan</strong> eikä sivuuteta. Väärä käännös näkyy siis ennen kuin se palauttaa vääriä tuloksia, ja tunnukset oppii lukemalla ne.</p>
-<p>Kaksi aikomusta eivät ole tunnuksia ja asetetaan hakulaudalle rivin sijaan: ”kuutio” tai ”siirto” (päätöksen laji) ja ”ottelutilanteessa” tai ”money”. <code>ask</code> asettaa ne sinne.</p>
 <p><strong>Pelisuunnitelma</strong> on toinen johdettu merkintä vaiheen rinnalla, ja se vastaa kysymykseen, jota nippu tallennettuja suodattimia ei osaa esittää: ”näytä virheeni holding gamessa”. Tunnus <code>gt:</code>, toistettavissa (<code>gt:holding gt:mutualholding</code>), vuorossa olevan <strong>pelaajan</strong> näkökulmasta — sen suunnitelman, jossa päätös tehtiin.</p>
 <p>Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne käyvät läpi, tarkimmasta yleisimpään:</p>
 <ul>
@@ -502,7 +500,10 @@ export default {
 <li><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</li>
 <li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Dashboard-välilehdelle.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
+<li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
 </ul>
+<p>Lohkossa <strong>vain suhdeluvut saavat tuomion</strong>, ja parempi kahdesta lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. <strong>Onni</strong> ei ole ansio: onnekkaampi pelaaja ei ole parempi. <strong>Ottelut, tulos ja päätökset</strong> kertovat mitä suhdeluvut ovat arvoltaan, mutta niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. <strong>Blundereiden määrää</strong> ei verrata raakana — kaksitoista tuhannesta päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin <em>Blunderit / 100 päät.</em>, joka on vertailukelpoinen, ja jättää määrän viereen taustaksi.</p>
+<p>Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise mitään.</p>
 <div class="admonition note">
 <p>Tällä välilehdellä <strong>Pelaaja</strong>-luettelo ja <strong>päätöstyypin</strong> valinta ovat poissa käytöstä: taulukko näyttää kaikki pelaajat ja erittelee nappula- ja kuutiopäätökset jo omiin sarakkeisiinsa.</p>
 </div>
@@ -1341,10 +1342,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Avaa toimintalokin: lokitiedoston kaksisataa viimeistä riviä, sekä keinot kopioida ne raporttiin tai avata ne sisältävä kansio.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Kääntää sanallisen lauseen — ranskaksi tai englanniksi — hakutunnuksiksi: <code>ask my cube blunders at a score</code>. Tunnukset kirjoitetaan komentoriville, niitä ei suoriteta: lue ne ja paina sitten Enter. Se mitä ei ymmärretty, sanotaan, ei koskaan arvata.</td>
 </tr>
 <tr>
 <td>like</td>

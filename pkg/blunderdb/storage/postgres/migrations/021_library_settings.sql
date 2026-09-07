@@ -1,5 +1,5 @@
 -- Forward migration: the library's own settings — the error and blunder
--- thresholds — get a tenant-scoped table (ADR-0043).
+-- thresholds — get a tenant-scoped table (ADR-0046).
 --
 -- On the desktop the two rows live in the SQLite file's metadata table, next
 -- to the Performance Rating objective: metadata there IS the library. Here it

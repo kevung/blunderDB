@@ -33,7 +33,7 @@ type statsQuery struct {
 	whereSQL string
 	baseArgs []any
 	// settings is the library's own reading of "error" and "blunder"
-	// (ADR-0043), read once at the top of Compute and carried to every pass
+	// (ADR-0046), read once at the top of Compute and carried to every pass
 	// so a single run cannot draw the line in two places.
 	settings storage.LibrarySettings
 }

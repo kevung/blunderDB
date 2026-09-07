@@ -390,7 +390,7 @@
     // Compacts the currently open database file. Goes through the same
     // Database.Vacuum() the CLI's `blunderdb vacuum` uses (CLI/GUI parity) —
     // WAL checkpoint, free-space guard, VACUUM, ANALYZE all happen there.
-    // Les seuils de la bibliothèque (ADR-0043). Ils sont saisis en équité —
+    // Les seuils de la bibliothèque (ADR-0046). Ils sont saisis en équité —
     // « 0,080 », l'unité de toutes les tables de l'application — et stockés en
     // millipoints, l'unité que parle la ligne de commande. La conversion est
     // dans le service, faite une fois.
@@ -778,7 +778,7 @@
                 <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
             </div>
         {:else if activeTab === 'library'}
-            <!-- L'onglet Bibliothèque (ADR-0043) : ce qui suit le fichier, et
+            <!-- L'onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, et
                  non la machine. Les deux seuils y sont, et les deux actions
                  qui portent sur la base ouverte — compacter et réparer —
                  qui vivaient jusque-là parmi des réglages de machine sans le

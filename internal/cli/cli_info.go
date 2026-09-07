@@ -79,7 +79,7 @@ func (cli *CLI) runInfo(args []string) error {
 		return fmt.Errorf("failed to get database stats: %w", err)
 	}
 
-	// The library's own thresholds (ADR-0043). They are printed because the
+	// The library's own thresholds (ADR-0046). They are printed because the
 	// blunder count just above depends on them: a number of blunders without
 	// the line it was drawn at cannot be compared with anybody else's.
 	settings, err := cli.db.GetLibrarySettings()

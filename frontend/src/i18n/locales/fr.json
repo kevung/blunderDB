@@ -1280,7 +1280,12 @@
         "gameType_mutualholding": "Tenue mutuelle",
         "gameType_holding": "Tenue",
         "gameType_contact": "Contact",
-        "gameType_over": "Terminée"
+        "gameType_over": "Terminée",
+        "compareColumn": "Comp.",
+        "compareToggle": "Comparer {name}",
+        "compareTitle": "{a} et {b}, côte à côte",
+        "compareClear": "Effacer",
+        "compareBlunderRate": "Blunders / 100 déc."
     },
     "trash": {
         "title": "Corbeille",
@@ -1410,13 +1415,6 @@
         "failed": "La recherche de positions proches a échoué.",
         "none": "Aucune position proche dans cette base.",
         "found": "{n} positions proches, de {nearest} à {farthest} pions-pas."
-    },
-    "intent": {
-        "empty": "Décrivez ce que vous cherchez, en toutes lettres.",
-        "failed": "La phrase n'a pas pu être traduite.",
-        "understoodNothing": "Rien de compris dans : {words}",
-        "understood": "Compris : {matched}. Relisez la ligne, puis Entrée.",
-        "partly": "Compris : {matched}. Non compris : {words}. Relisez la ligne, puis Entrée."
     },
     "log": {
         "title": "Journal d'activité",

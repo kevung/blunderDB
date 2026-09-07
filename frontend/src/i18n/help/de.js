@@ -211,8 +211,6 @@ export default {
 </div>
 <p>Der Befehl <code>like</code> beantwortet eine andere Frage als die Token: Er ersetzt die durchblätterte Liste durch die Stellungen, die der aktuellen am <strong>nächsten</strong> stehen, die nächste zuerst. Die Nähe ist eine Transportdistanz in Stein-Pips — die Menge an Steinbewegung, die die beiden Stellungen trennt — und der Blickwinkel ist immer der des Spielers am Zug. Es ist kein Filter: Die Ähnlichkeit <strong>ordnet</strong> die ganze Datenbank, statt sie einzuschränken, und lässt sich daher nicht mit den Token kombinieren.</p>
 <p>Das Token <code>n</code> zählt <strong>Begegnungen</strong>: <code>n&gt;3</code> behält die Stellungen, die mehr als drei Züge erreichen, über alle Matches hinweg. Das ist eine andere Frage als „was habe ich falsch gemacht“ — eine Stellung, die zwanzigmal vorkam und neunzehnmal richtig gespielt wurde, ist immer noch die, die man auswendig können muss. Gezählt werden Züge, nicht Matches: dieselbe Stellung zweimal in einem Match zählt zweimal, denn das waren zwei Entscheidungen.</p>
-<p>Ein Satz in Worten kann die Token ersetzen, mit dem Befehl <code>ask</code>: <code>ask my cube blunders at a score</code>. Der Satz wird <strong>in Token übersetzt</strong>, die in die Befehlszeile geschrieben werden — durchlesen, dann ausführen. Nichts wird erraten und nichts verlässt den Rechner: Das Vokabular ist fest, derselbe Satz ergibt immer dieselbe Abfrage, und was nicht verstanden wurde, wird <strong>gesagt</strong> statt übergangen. Eine falsche Übersetzung sieht man so, bevor sie falsche Ergebnisse liefert, und die Token lernt man beim Lesen.</p>
-<p>Zwei Absichten sind keine Token und werden auf dem Suchbrett gesetzt statt in der Zeile: „Verdopplung“ oder „Zug“ (die Art der Entscheidung) und „bei Matchstand“ oder „Money“. <code>ask</code> setzt sie dort.</p>
 <p>Der <strong>Spielplan</strong> ist ein zweites abgeleitetes Etikett neben der Phase, und es beantwortet die Frage, die ein Bündel gespeicherter Filter nicht stellen kann: „zeig mir meine Fehler im Holding Game“. Token <code>gt:</code>, wiederholbar (<code>gt:holding gt:mutualholding</code>), aus Sicht des <strong>Spielers am Zug</strong> — des Plans, in dem die Entscheidung fiel.</p>
 <p>Die zehn erkannten Pläne, in der Reihenfolge, in der die Regeln sie abarbeiten, vom Spezifischsten zum Allgemeinsten:</p>
 <ul>
@@ -502,7 +500,10 @@ export default {
 <li><strong>Sortieren</strong> — auf eine Spaltenüberschrift klicken. Die Tabelle öffnet sich nach aufsteigendem PR sortiert, bester Spieler zuerst. Spieler, bei denen nichts gemessen wurde, bleiben unabhängig von der Sortierrichtung unten: eine Null mangels Daten ist keine perfekte Leistung.</li>
 <li><strong>Details eines Spielers öffnen</strong> — auf eine Zeile klicken. Der Spieler wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter Dashboard.</li>
 <li><strong>Zeitraum einschränken</strong> — die Filter für Datum, Turnier und Matchlänge gelten wie gewohnt, wodurch sich die Tabelle auf die Tage eines Turniers begrenzen lässt.</li>
+<li><strong>Zwei Spieler vergleichen</strong> — setzen Sie in der ersten Spalte bei zwei Zeilen ein Häkchen. Über der Tabelle erscheint ein Block, der ihre Kennzahlen gegenüberstellt; ein dritter Spieler ersetzt den älteren der beiden. Das Häkchen wählt die Zeile nicht aus: Ankreuzen vergleicht, Klicken öffnet die Detailansicht.</li>
 </ul>
+<p>In diesem Block <strong>erhalten nur die Raten ein Urteil</strong>, und die bessere der beiden steht fett. Drei Kennzahlen erhalten nie eines, und es lohnt sich zu sagen, warum. <strong>Glück</strong> ist keine Qualität: Wer mehr Glück hatte, spielt nicht besser. <strong>Partien, Bilanz und Entscheidungen</strong> sagen, was die Raten wert sind, doch sie gegeneinander zu stellen ließe schlicht den gewinnen, der mehr gespielt hat. Die <strong>Zahl der Blunder</strong> lässt sich nicht roh vergleichen — zwölf auf tausend Entscheidungen sind besser als zehn auf hundert —, deshalb ergänzt der Block eine Zeile <em>Blunder / 100 Entsch.</em>, die sich vergleichen lässt, und lässt die Zahl daneben als Kontext stehen.</p>
+<p>Ein Gleichstand ist kein Sieg: Er wird auf keiner Seite fett gesetzt. Eine Rate ohne Datengrundlage erscheint als „—“ und entscheidet nichts.</p>
 <div class="admonition note">
 <p>In diesem Reiter sind die Liste <strong>Spieler</strong> und die Wahl des <strong>Entscheidungstyps</strong> deaktiviert: Die Tabelle zeigt alle Spieler und teilt Steine- und Doppler-Entscheidungen bereits in getrennte Spalten auf.</p>
 </div>
@@ -1341,10 +1342,6 @@ export default {
 <tr>
 <td>log</td>
 <td>Öffnet das Aktivitätsprotokoll: die letzten zweihundert Zeilen der Protokolldatei, mit dem Nötigen, um sie für einen Bericht zu kopieren oder den Ordner zu öffnen, der sie enthält.</td>
-</tr>
-<tr>
-<td>ask</td>
-<td>Übersetzt einen Satz in Worten — Französisch oder Englisch — in Suchtoken: <code>ask my cube blunders at a score</code>. Die Token werden in die Befehlszeile geschrieben, nicht ausgeführt: durchlesen, dann Enter. Was nicht verstanden wurde, wird gesagt, nie erraten.</td>
 </tr>
 <tr>
 <td>like</td>

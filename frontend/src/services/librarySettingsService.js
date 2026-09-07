@@ -1,7 +1,7 @@
 import { GetLibrarySettings, SaveLibrarySettings } from '../../wailsjs/go/database/Database.js';
 import { logger } from '../utils/logger.js';
 
-// Les réglages de la bibliothèque (ADR-0043) : les deux seuils qui décident de
+// Les réglages de la bibliothèque (ADR-0046) : les deux seuils qui décident de
 // ce qu'est une erreur et de ce qu'est un blunder.
 //
 // Ils vivent dans la bibliothèque, pas dans la configuration de la machine :

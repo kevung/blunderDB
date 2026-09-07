@@ -517,7 +517,7 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	}
 
 	// Count blunders (#287): the Positions the library calls Blunders, at the
-	// threshold the library itself sets (ADR-0043) and by the same rule the
+	// threshold the library itself sets (ADR-0046) and by the same rule the
 	// search behind the status bar's link uses — a Position played several
 	// ways is scored by the largest of its plays (#167). The SQL is NOT
 	// restated here: this used to be a fourth hand-written copy of the
@@ -538,7 +538,7 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 }
 
 // GetLibrarySettings returns the library's error and blunder thresholds
-// (ADR-0043). A library that has never set them reads the defaults.
+// (ADR-0046). A library that has never set them reads the defaults.
 func (d *Database) GetLibrarySettings() (storage.LibrarySettings, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

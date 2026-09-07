@@ -796,19 +796,6 @@ bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
 sur les coups, pas sur les matchs : la même position deux fois dans un match
 compte pour deux, parce que c'étaient deux décisions.
 
-Une phrase en toutes lettres peut remplacer les jetons, avec la commande
-``ask`` : ``ask mes blunders de videau au score``. La phrase est **traduite en
-jetons**, écrits dans la barre de commande — on les relit, puis on lance. Rien
-n'est deviné et rien ne part sur le réseau : le vocabulaire est fixe, la même
-phrase rend toujours la même requête, et ce qui n'a pas été compris est
-**dit** plutôt que passé sous silence. Une traduction fausse se voit ainsi
-avant de renvoyer des résultats faux, et les jetons s'apprennent en les
-lisant.
-
-Deux intentions ne sont pas des jetons et se posent sur le plateau de
-recherche plutôt que dans la ligne : « de videau » ou « de pions » (le type de
-décision) et « au score » ou « en argent ». ``ask`` les y pose.
-
 Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
 elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
 poser : « montre-moi mes erreurs en holding game ». Jeton ``gt:``, répétable
@@ -1473,6 +1460,23 @@ Utilisation :
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
+* **Comparer deux joueurs** — cochez la case de la première colonne sur deux
+  lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à
+  face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne
+  sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.
+
+Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des deux
+est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire
+pourquoi. La **chance** n'est pas une qualité : un joueur plus chanceux n'est
+pas meilleur. Les **matchs, le bilan et les décisions** situent ce que les taux
+valent, mais les mettre en compétition ferait gagner celui qui a simplement
+joué davantage. Le **nombre de blunders** ne se compare pas brut — douze sur
+mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une
+ligne *Blunders / 100 déc.* qui, elle, se compare, et laisse le compte à côté
+comme contexte.
+
+Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. Un
+taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
 
 .. note::
    Dans cet onglet, la liste **Joueur** et le choix du **type de décision** sont

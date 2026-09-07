@@ -304,7 +304,7 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	// to it. Wrapping also settles a dialect divergence for free — SQLite
 	// sorts NULLs last in DESC, PostgreSQL first — though this pass never
 	// sees one, its WHERE excluding them.
-	// The line is the library's error threshold (ADR-0043), not a constant of
+	// The line is the library's error threshold (ADR-0046), not a constant of
 	// its own: this queue asks "what is worth revisiting", which is precisely
 	// what an Error is. Its default is the 50 millipoints the constant said,
 	// so a library that sets nothing gets exactly the queue it got before.

@@ -25,7 +25,7 @@ n'a été abandonnée ; six restent ouvertes sur une moitié nommée.
 | I.17 — micro-entraînements | #273 | `train pips`, `train epc`, `train tp` | — (fermée) |
 | I.19 — étude vs jeu réel | #275 | `list --type study`, ventilation par plan de jeu | — (fermée) |
 | I.26 — collections vivantes | #282 | collection vivante, jeton `n>` | les deux joueurs côte à côte dans Stats |
-| I.27 — grammaire d'intentions | #283 | `ask`, `search --intent`, route | — (fermée) |
+| I.27 — grammaire d'intentions | #283 | **livrée puis retirée** : liste fermée de 18 règles, valeur trop faible | rien — le besoin passe à J.9 (#299) |
 | J.1 — classification | #291 | plan de jeu (`gt:`), thèmes d'erreur (via #298) | J.1c, les erreurs récurrentes |
 | J.3 — similarité | #293 | `like`, `search --like`, route, contrat | — (fermée) |
 | J.4 — quiz | #294 | notation, videau, PR de quiz sur l'échelle du jeu réel | jouer le coup **sur le damier** |
@@ -247,7 +247,7 @@ Fermées cette session : #257, #258, #259, #261, #262, #263, #264, #265, #266,
 | #276 | I.20 | Cartes de videau chaînées. **Demande un bump de schéma** (une carte doit porter SA question) : à grouper dans une vague 2.20.0. |
 | #277 | I.21 | Parcours pédagogiques. Nouveau concept dans CONTEXT.md → ADR d'abord. |
 | #282 | I.26 | Trois sous-fonctionnalités indépendantes (collections vivantes, jeton `n>3`, deux joueurs côte à côte). |
-| #283 | I.27 | Grammaire d'intentions. Prérequis D.3 puis B.18 — tous deux faits ; la fiche reste entière. |
+| #283 | I.27 | **Écartée.** La grammaire a été écrite (b175386e8) puis retirée avant toute version publiée : une liste fermée de dix-huit règles ne rattrape pas la phrase qu'un joueur écrit vraiment, et ce qu'elle savait faire, l'autocomplétion de la barre le fait déjà. Le besoin passe à J.9 (#299). |
 | #287 | I.31 | Neuf conforts indépendants, « S chacune ». Se ferme par lots, pas d'un coup. |
 
 ### Ce qui ne se fera pas par un agent

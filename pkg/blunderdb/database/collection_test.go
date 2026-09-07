@@ -469,7 +469,7 @@ func TestExportCollections_MetadataAllowListAndWatermark(t *testing.T) {
 	}
 }
 
-// TestExport_ThresholdsDoNotTravel pins ADR-0043's boundary: the library's own
+// TestExport_ThresholdsDoNotTravel pins ADR-0046's boundary: the library's own
 // error and blunder thresholds are stored as metadata rows on SQLite, and the
 // allow-list is what keeps them home. They are the owner's reading habit, not
 // a fact of the positions, and a recipient who opened the file would otherwise

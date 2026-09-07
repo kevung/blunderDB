@@ -34,7 +34,7 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 
 // The two thresholds this file draws its lines at — an Error, and the Blunder
 // an Error becomes — are no longer constants: they are the library's own
-// settings (storage.LibrarySettings, ADR-0043), read once per entry point and
+// settings (storage.LibrarySettings, ADR-0046), read once per entry point and
 // carried down. A library that never set them reads 50 and 100, which is what
 // the constants said. The comparison stays inclusive everywhere — a cost of
 // exactly the threshold is on the wrong side of the line.
