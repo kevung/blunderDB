@@ -14,6 +14,10 @@
 # BGBlitz game and a .mat transcript with no analysis, which the gammonNet
 # sweep below fills — plus three collections, ten tagged comments and an
 # Anki deck with a simulated review journal (see scripts/demodb/main.go).
+# Since issue #397 it also carries a DIRECTED tournament: a Swiss of
+# thirty-two on the edge of switching to the bracket, with matches played,
+# matches running and proposals waiting, so a director sees a room running
+# before directing their own (scripts/demodb/direction.go).
 # The summary at the end reopens the file, so the compaction that leaves it
 # in rollback-journal mode runs before it — keep that order.
 # The analyses are written at the canonical 2-ply so the demo shows exactly

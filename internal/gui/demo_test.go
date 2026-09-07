@@ -64,6 +64,36 @@ func TestDemoDatabaseIsCurrent(t *testing.T) {
 // become unique and a table keeps the foreign keys it was created with. The
 // demo is compared against the DDL a fresh database is bootstrapped from,
 // statement by statement.
+// TestDemoDatabaseShowsARoomRunning: the demonstration carries a DIRECTED tournament (issue
+// #397). The entry cost is a first-rank constraint of that work, and nothing reduces it like
+// seeing a room running before directing one's own — so opening the demo and the Tournament tab
+// must show one, with no setting to change first.
+func TestDemoDatabaseShowsARoomRunning(t *testing.T) {
+	db := openDemoRaw(t)
+	var directions, events int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM direction`).Scan(&directions); err != nil {
+		t.Fatalf("counting directions: %v", err)
+	}
+	if directions != 1 {
+		t.Fatalf("the demo carries %d directed tournaments, want 1: run scripts/build-demo-db.sh", directions)
+	}
+	if err := db.QueryRow(`SELECT COUNT(*) FROM direction_event`).Scan(&events); err != nil {
+		t.Fatalf("counting direction events: %v", err)
+	}
+	// Thirty-two entries, a draw and three rounds played leave a journal of some length; the
+	// bound is loose on purpose — what matters is that it is a tournament and not a stub.
+	if events < 100 {
+		t.Errorf("the demo direction has %d events: too few to show a room running", events)
+	}
+	var state string
+	if err := db.QueryRow(`SELECT state FROM direction`).Scan(&state); err != nil {
+		t.Fatalf("reading the direction state: %v", err)
+	}
+	if state != "running" {
+		t.Errorf("the demo direction is %q, want a tournament under way", state)
+	}
+}
+
 func TestDemoDatabaseHasTheCurrentSchema(t *testing.T) {
 	demo := schemaStatementsOf(t, openDemoRaw(t))
 
