@@ -212,7 +212,9 @@ chaque Action ; un plantage ne perd que la pile d'annulation.
   ainsi : « filtré par clic sur le point de départ » et « coup joué au plateau » passent par
   un point du damier, dessiné par two.js et sans cible DOM — les viser à la coordonnée
   donnerait une spec instable pour une mesure que `transcriptionFilter.test.js` fait déjà en
-  comptant clics et touches. La ligne « videau à la souris » de §4.2 attend T2.5. Le conflit
+  comptant clics et touches. La ligne « videau à la souris » de §4.2 est mesurée par
+  `transcriptionKeys.cubeMouse.test.js`, livré avec le videau à la souris (#353) : deux
+  clics, `H + 2×(P+2B) + H = 3,4 s`. Le conflit
   de port avec gammonGo est paré par `BLUNDERDB_E2E_PORT`
   (`frontend/playwright.config.js`).
 - **Latence** — MESURÉE le 2026-09-07, le seuil de 20 ms annoncé ici était faux d'un facteur
