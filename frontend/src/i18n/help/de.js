@@ -1345,11 +1345,17 @@ export default {
 <td>Klick (auf eine Zelle)</td>
 <td>Den Cursor auf diese Aktion setzen.</td>
 </tr>
+<tr>
+<td>STRG-EINGABE</td>
+<td>Den Entwurf als Match speichern.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
 <p>Eine Partie endet durch ein Aufgeben, durch eine Resignation oder durch das Auswürfeln des fünfzehnten Steins (einfach, Gammon oder Backgammon, multipliziert mit dem Wert des Dopplerwürfels). Punktestand, Crawford-Partie und Matchende werden dann über den Würfeln angezeigt, und die Eröffnung der nächsten Partie wird erwartet.</p>
 <p>Das Transkript nimmt die rechte Hälfte des Panels ein: eine Spalte je Spieler, eine Zeile je Zug, die Dopplerabgabe und das Partieende in der Spalte dessen, der handelt. Die Zelle des Cursors ist umrahmt; wird der Cursor bewegt, zeigt das Brett wieder die Position der angesteuerten Aktion und deren Kandidaten, wobei der gespielte Zug ausgewählt ist. Eine Unstimmigkeit (unerlaubter Zug, doppelter Zug, unmögliche Dopplerabgabe, Aktion nach dem Matchende, unstimmige Würfel) markiert ihre Zelle und wird in einem Tooltip benannt. Partien lassen sich einklappen; die Partie des Cursors ist offen. Ein aufklappbarer Bereich zeigt den exakten <code>.mat</code>-Text des Entwurfs mit einer Schaltfläche zum Kopieren.</p>
+<p>Die Entwurfsleiste trägt drei Schaltflächen. „Speichern“ (STRG-EINGABE) schreibt das Match in die Bibliothek: beim ersten Mal angelegt, danach unter derselben Kennung ersetzt, und die Analyse allein der neuen Positionen beginnt sofort, mit Fortschritt und Abbruch in der Statusleiste. Die Entwurfsleiste nennt den Zustand: nie gespeichert, vor so und so langer Zeit gespeichert, oder seitdem geändert. „.mat exportieren“ schreibt das Match in eine Jellyfish-Datei, genau so, wie es eingegeben wurde. „Entwurf schließen“ löscht den Entwurf nach einer Bestätigung; ein bereits gespeichertes Match bleibt endgültig in der Bibliothek.</p>
+<p>Ein Entwurf mit Unstimmigkeiten wird trotzdem gespeichert, nach einer Warnung: nichts wird abgelehnt. Ein unmöglicher Zug wird so exportiert, wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden („Invalid move“) und danach abweichen.</p>
 <h3>Hilfe-Fenster</h3>
 <table>
 <thead>

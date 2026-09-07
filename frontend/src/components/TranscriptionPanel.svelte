@@ -37,7 +37,15 @@
   Action aimed at and lists its candidates with the play that was recorded
   selected.
 
-  What is not here yet: correcting through the Cursor (T1.7), saving (T1.9).
+  La barre du brouillon porte enfin les trois gestes qui le font sortir de
+  lui-même (T1.9) : « Enregistrer » (Ctrl+Entrée) en fait un Match — créé la
+  première fois, remplacé ensuite, même `id` — puis lance l'analyse ciblée
+  dont la barre d'état montre la progression ; « Exporter .mat » écrit le
+  fichier tel que le match a été tapé ; « Fermer le brouillon » supprime la
+  ligne. Un avertissement précède les deux premiers quand le document porte
+  des incohérences ou un coup illégal, et n'oppose jamais de refus (ADR-0044).
+  Le calcul de tout cela est dans services/transcriptionSave.js ; ici il n'y a
+  que des boutons.
 
   The panel is a CLIENT of the Go engine (ADR-0045 rule 9): every gesture goes
   to ApplyTranscriptionGesture and comes back as a whole annotated document. It
@@ -61,6 +69,7 @@
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
     import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+    import { saveDraft, exportDraftMat, closeDraft, draftSaveState, transcriptionSaveStore, resetTranscriptionSave } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
 
     // The length a first draft is offered when the library holds none. It is
@@ -167,12 +176,66 @@
     }
 
     // Back to the list. The draft stays in the library and stays open on the Go
-    // side — closing it for good (deleting the row) is its own gesture, with a
-    // confirmation, and belongs to T1.9.
+    // side — closing it for good (deleting the row) is its own gesture, with
+    // its confirmation, and it is handleClose below.
     function backToList() {
         clearTranscription();
         refresh();
     }
+
+    // ── enregistrer, exporter, fermer (T1.9) ─────────────────────────────
+    //
+    // Trois boutons, trois appels au service. `busy` sert de verrou : un
+    // enregistrement en cours ne doit pas être relancé par un second Ctrl+Entrée
+    // — le remplacement réécrit le match entier.
+
+    async function handleSave() {
+        if (busy || !draft) return;
+        busy = true;
+        try {
+            if (await saveDraft(draft)) {
+                error = '';
+                await refresh();
+            }
+        } finally {
+            busy = false;
+        }
+    }
+
+    async function handleExport() {
+        if (busy || !draft) return;
+        busy = true;
+        try {
+            await exportDraftMat(draft);
+        } finally {
+            busy = false;
+        }
+    }
+
+    async function handleClose() {
+        if (busy || !draft) return;
+        busy = true;
+        try {
+            if (await closeDraft(draft)) {
+                clearTranscription();
+                resetTranscriptionSave();
+                await refresh();
+            }
+        } finally {
+            busy = false;
+        }
+    }
+
+    // « enregistré il y a 3 min » vieillit tout seul : sans cette horloge la
+    // phrase resterait celle de l'enregistrement.
+    let nowTick = $state(Date.now());
+    $effect(() => {
+        if (!draft) return;
+        const handle = setInterval(() => (nowTick = Date.now()), 30000);
+        return () => clearInterval(handle);
+    });
+
+    let saveState = $derived(draftSaveState(draft, $transcriptionSaveStore, nowTick));
 
     // ── the gestures ─────────────────────────────────────────────────────
     //
@@ -423,6 +486,18 @@
 
     function handleKeyDown(event) {
         if (!draft) return;
+        // Ctrl+Entrée enregistre. Ctrl+S ne peut pas : le dispatcher global le
+        // tient pour « sauver la position » (keyboardService.js), et
+        // isAlwaysGlobal renvoie vrai pour tout combo Ctrl — ce qui veut aussi
+        // dire que panelKeyGuard laisserait passer celui-ci. Il est donc pris
+        // AVANT la garde, et arrêté net pour que le dispatcher ne le revoie pas.
+        if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            if (!panelEl?.contains(document.activeElement)) return;
+            event.preventDefault();
+            event.stopPropagation();
+            handleSave();
+            return;
+        }
         if (panelKeyGuard(event)) return;
         if (!panelEl?.contains(document.activeElement)) return;
 
@@ -661,6 +736,10 @@
                 <span class="badge">{$t('transcription.gameNumber', { n: gameNumber })}</span>
                 <span class="badge">{cubeLabel}</span>
                 <span class="badge on-roll">{playerName(sideOnRoll)}</span>
+                <span class="badge save-state">{$t(saveState.key, saveState.params)}</span>
+                <button class="new-btn" onclick={handleSave} disabled={busy} title={$t('transcription.saveTooltip')}>{$t('transcription.save')}</button>
+                <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
+                <button class="new-btn" onclick={handleClose} disabled={busy} title={$t('transcription.closeDraftTooltip')}>{$t('transcription.closeDraft')}</button>
             </div>
 
             {#if matchOver}

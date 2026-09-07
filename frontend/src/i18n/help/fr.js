@@ -1345,11 +1345,17 @@ export default {
 <td>Clic (sur une cellule)</td>
 <td>Placer le curseur sur cette action.</td>
 </tr>
+<tr>
+<td>CTRL-ENTREE</td>
+<td>Enregistrer le brouillon en match.</td>
+</tr>
 </tbody>
 </table>
 <p>Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche supplémentaire.</p>
 <p>Une partie se termine par une passe, par une résignation ou par la sortie du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur du videau). Le score, la partie Crawford et la fin du match sont alors affichés au-dessus des dés, et l'ouverture de la partie suivante est attendue.</p>
 <p>Le transcript occupe la moitié droite du panneau : une colonne par joueur, une ligne par tour, l'action de videau et la fin de partie dans la colonne de celui qui agit. La cellule du curseur est encadrée ; déplacer le curseur ramène le plateau à la position de l'action visée et affiche ses candidats, le coup joué sélectionné. Une incohérence (coup illégal, double trait, videau impossible, action au-delà de la fin du match, dés incohérents) décore sa cellule et se nomme dans une info-bulle. Les parties se replient ; celle du curseur est ouverte. Un volet dépliable montre le texte <code>.mat</code> exact du brouillon, avec un bouton pour le copier.</p>
+<p>La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt, avec sa progression et son annulation dans la barre d'état. La barre du brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un match déjà enregistré reste dans la bibliothèque, définitif.</p>
+<p>Un brouillon qui porte des incohérences est enregistré tout de même, après un avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et divergeront ensuite.</p>
 <h3>Panneau d'aide</h3>
 <table>
 <thead>

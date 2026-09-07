@@ -294,6 +294,7 @@ Le panneau prend ces touches lorsqu'il a le focus et qu'un brouillon est ouvert.
    "GAUCHE, h", "Reculer le curseur d'une action dans le transcript."
    "DROITE, l", "Avancer le curseur d'une action."
    "Clic (sur une cellule)", "Placer le curseur sur cette action."
+   "CTRL-ENTREE", "Enregistrer le brouillon en match."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
@@ -312,6 +313,20 @@ action au-delà de la fin du match, dés incohérents) décore sa cellule et se
 nomme dans une info-bulle. Les parties se replient ; celle du curseur est
 ouverte. Un volet dépliable montre le texte ``.mat`` exact du brouillon, avec un
 bouton pour le copier.
+
+La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) écrit
+le match dans la bibliothèque : créé la première fois, remplacé ensuite sous le
+même identifiant, et l'analyse des seules positions nouvelles démarre aussitôt,
+avec sa progression et son annulation dans la barre d'état. La barre du
+brouillon dit son état : jamais enregistré, enregistré il y a tant, ou modifié
+depuis. « Exporter .mat » écrit le match dans un fichier Jellyfish, tel qu'il a
+été tapé. « Fermer le brouillon » supprime le brouillon après confirmation ; un
+match déjà enregistré reste dans la bibliothèque, définitif.
+
+Un brouillon qui porte des incohérences est enregistré tout de même, après un
+avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
+joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
+divergeront ensuite.
 
 .. _raccourcis_help_panel:
 

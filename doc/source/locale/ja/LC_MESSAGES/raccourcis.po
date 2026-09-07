@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 05:17+0200\n"
+"POT-Creation-Date: 2026-09-07 08:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -813,13 +813,21 @@ msgstr "クリック（セルの上で）"
 msgid "Placer le curseur sur cette action."
 msgstr "そのアクションにカーソルを置きます。"
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ENTREE"
+msgstr "CTRL-ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer le brouillon en match."
+msgstr "下書きをマッチとして保存する。"
+
+#: ../../source/raccourcis.rst:299
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
 msgstr "どの着手も許さない出目は、追加のキー操作なしにダンスを記録します。"
 
-#: ../../source/raccourcis.rst:301
+#: ../../source/raccourcis.rst:302
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -828,7 +836,7 @@ msgid ""
 "attendue."
 msgstr "ゲームはパス、レジグン、または十五個目のチェッカーのベアオフ（シングル、ギャモン、バックギャモンにキューブの値を掛ける）で終わる。得点、クロフォードゲーム、マッチの終了はダイスの上に表示され、次のゲームのオープニングが待たれる。"
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -845,7 +853,34 @@ msgstr ""
 "とゲームの終了は、それを行った側の列に入ります。カーソルのセルは枠で囲まれます。カーソルを動かすと、盤面は対象アクションの局面に戻り、その候補手が表示され、実際に指された手が選択されます。不整合（不正な手、手番の重複、不可能なキューブ操作、試合終了後のアクション、ダイスの不一致）はセルを装飾し、ツールチップで名前が示されます。ゲームは折りたたむことができ、カーソルのあるゲームは開いたままです。展開できる欄にドラフトの正確な"
 " ``.mat`` テキストが表示され、コピーするボタンが付いています。"
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:317
+msgid ""
+"La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
+"écrit le match dans la bibliothèque : créé la première fois, remplacé "
+"ensuite sous le même identifiant, et l'analyse des seules positions "
+"nouvelles démarre aussitôt, avec sa progression et son annulation dans la"
+" barre d'état. La barre du brouillon dit son état : jamais enregistré, "
+"enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le "
+"match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le "
+"brouillon » supprime le brouillon après confirmation ; un match déjà "
+"enregistré reste dans la bibliothèque, définitif."
+msgstr ""
+"下書きのバーには三つのボタンがあります。「保存」（CTRL-"
+"ENTER）はマッチをライブラリに書き込みます。初回は作成され、以降は同じ識別子のまま置き換えられ、新しい位置だけの解析がただちに始まります。その進捗と中止はステータスバーに出ます。下書きのバーは状態を示します。未保存、いつ保存されたか、あるいは保存後に変更あり。「.mat"
+" を書き出す」はマッチを Jellyfish "
+"ファイルに、入力されたとおりに書き出します。「下書きを閉じる」は確認のうえ下書きを削除します。すでに保存されたマッチはライブラリに残り、確定します。"
+
+#: ../../source/raccourcis.rst:326
+msgid ""
+"Un brouillon qui porte des incohérences est enregistré tout de même, "
+"après un avertissement : rien n'est refusé. Un coup illégal est exporté "
+"tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront"
+" (« Invalid move ») et divergeront ensuite."
+msgstr ""
+"不整合のある下書きも、警告のうえでそのまま保存されます。拒否されるものはありません。不正な着手は打たれたとおりに書き出され、gnubg と XG "
+"がそれを「Invalid move」と表示し、以降は食い違うという警告が出ます。"
+
+#: ../../source/raccourcis.rst:334
 msgid "Panneau d'aide"
 msgstr "ヘルプパネル"
 

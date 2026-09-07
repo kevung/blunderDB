@@ -147,6 +147,8 @@ export function ExportMatchMAT(arg1:number,arg2:string):Promise<void>;
 
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:string,arg7:string):Promise<void>;
 
+export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
+
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
 
 export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
@@ -379,6 +381,8 @@ export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
+export function SaveTranscriptionAsMatch(arg1:number):Promise<database.TranscriptionSaveResult>;
+
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
@@ -404,6 +408,8 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
+
+export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
 

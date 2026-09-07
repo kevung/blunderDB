@@ -1345,11 +1345,17 @@ export default {
 <td>Napsautus (solua)</td>
 <td>Vie kohdistin tähän toimintoon.</td>
 </tr>
+<tr>
+<td>CTRL-ENTER</td>
+<td>Tallenna luonnos otteluksi.</td>
+</tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
 <p>Peli päättyy luovutukseen, antautumiseen tai viidennentoista nappulan ulosjuoksuun (yksinkertainen, gammon tai backgammon, kerrottuna kuution arvolla). Pistetilanne, Crawford-peli ja ottelun päättyminen näytetään tällöin noppien yläpuolella, ja seuraavan pelin avausta odotetaan.</p>
 <p>Siirtoluettelo täyttää paneelin oikean puoliskon: yksi sarake pelaajaa kohti, yksi rivi vuoroa kohti, tuplaustoiminto ja pelin loppu sen sarakkeessa, joka toimii. Kohdistimen solu on kehystetty; kohdistinta siirrettäessä lauta palaa kohteena olevan toiminnon asemaan ja näyttää sen vaihtoehdot, kirjattu siirto valittuna. Epäjohdonmukaisuus (laiton siirto, kaksoisvuoro, mahdoton tuplaus, ottelun päättymisen jälkeinen toiminto, epäjohdonmukaiset nopat) merkitsee solunsa ja nimetään työkaluvihjeessä. Pelit voi taittaa kokoon; kohdistimen peli on auki. Avattava paneeli näyttää luonnoksen tarkan <code>.mat</code>-tekstin ja painikkeen sen kopioimiseen.</p>
+<p>Luonnospalkissa on kolme painiketta. ”Tallenna” (CTRL-ENTER) kirjoittaa ottelun kirjastoon: se luodaan ensimmäisellä kerralla, korvataan sen jälkeen samalla tunnisteella, ja pelkkien uusien asemien analyysi alkaa heti, edistyminen ja peruutus tilarivillä. Luonnospalkki kertoo tilan: ei koskaan tallennettu, tallennettu jokin aika sitten, tai muokattu sen jälkeen. ”Vie .mat” kirjoittaa ottelun Jellyfish-tiedostoon juuri sellaisena kuin se kirjoitettiin. ”Sulje luonnos” poistaa luonnoksen vahvistuksen jälkeen; jo tallennettu ottelu jää kirjastoon lopullisena.</p>
+<p>Luonnos, jossa on epäjohdonmukaisuuksia, tallennetaan silti varoituksen jälkeen: mitään ei torjuta. Sääntöjenvastainen siirto viedään sellaisena kuin se pelattiin, varoituksella että gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat siitä eteenpäin.</p>
 <h3>Ohjepaneeli</h3>
 <table>
 <thead>

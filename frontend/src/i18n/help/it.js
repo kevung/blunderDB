@@ -1345,11 +1345,17 @@ export default {
 <td>Clic (su una cella)</td>
 <td>Portare il cursore su questa azione.</td>
 </tr>
+<tr>
+<td>CTRL-INVIO</td>
+<td>Salvare la bozza come partita.</td>
+</tr>
 </tbody>
 </table>
 <p>Un tiro che non consente alcuna mossa registra la danza da sé, senza un tasto in più.</p>
 <p>Una partita finisce con un rifiuto, con un abbandono o con l'uscita della quindicesima pedina (semplice, gammon o backgammon, moltiplicata per il valore del cubo). Il punteggio, la partita Crawford e la fine del match sono allora mostrati sopra i dadi, e si attende l'apertura della partita successiva.</p>
 <p>La trascrizione occupa la metà destra del pannello: una colonna per giocatore, una riga per turno, l'azione di raddoppio e la fine della partita nella colonna di chi agisce. La cella del cursore è incorniciata; spostando il cursore la damiera torna alla posizione dell'azione mirata e ne mostra le candidate, con la mossa giocata selezionata. Un'incoerenza (mossa illegale, doppio turno, raddoppio impossibile, azione oltre la fine del match, dadi incoerenti) decora la sua cella ed è nominata in un suggerimento. Le partite si richiudono; quella del cursore resta aperta. Un pannello a scomparsa mostra il testo <code>.mat</code> esatto della bozza, con un pulsante per copiarlo.</p>
+<p>La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la partita nella libreria: creata la prima volta, sostituita in seguito con lo stesso identificatore, e l'analisi delle sole posizioni nuove parte subito, con il suo avanzamento e il suo annullamento nella barra di stato. La barra della bozza ne dice lo stato: mai salvata, salvata da tanto, o modificata da allora. «Esporta .mat» scrive la partita in un file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la bozza dopo una conferma; una partita già salvata resta nella libreria, definitiva.</p>
+<p>Una bozza che contiene incoerenze viene salvata comunque, dopo un avvertimento: nulla viene rifiutato. Una mossa illegale è esportata così come è stata giocata, con l'avvertimento che gnubg e XG la segnaleranno («Invalid move») e divergeranno da lì.</p>
 <h3>Pannello di aiuto</h3>
 <table>
 <thead>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 05:17+0200\n"
+"POT-Creation-Date: 2026-09-07 08:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -838,7 +838,15 @@ msgstr "Clic (su una cella)"
 msgid "Placer le curseur sur cette action."
 msgstr "Portare il cursore su questa azione."
 
-#: ../../source/raccourcis.rst:298
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-ENTREE"
+msgstr "CTRL-INVIO"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer le brouillon en match."
+msgstr "Salvare la bozza come partita."
+
+#: ../../source/raccourcis.rst:299
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -846,7 +854,7 @@ msgstr ""
 "Un tiro che non consente alcuna mossa registra la danza da sé, senza un "
 "tasto in più."
 
-#: ../../source/raccourcis.rst:301
+#: ../../source/raccourcis.rst:302
 msgid ""
 "Une partie se termine par une passe, par une résignation ou par la sortie"
 " du quinzième pion (simple, gammon ou backgammon, multiplié par la valeur"
@@ -860,7 +868,7 @@ msgstr ""
 "sono allora mostrati sopra i dadi, e si attende l'apertura della partita "
 "successiva."
 
-#: ../../source/raccourcis.rst:306
+#: ../../source/raccourcis.rst:307
 msgid ""
 "Le transcript occupe la moitié droite du panneau : une colonne par "
 "joueur, une ligne par tour, l'action de videau et la fin de partie dans "
@@ -884,7 +892,41 @@ msgstr ""
 "Un pannello a scomparsa mostra il testo ``.mat`` esatto della bozza, con "
 "un pulsante per copiarlo."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:317
+msgid ""
+"La barre du brouillon porte trois boutons. « Enregistrer » (CTRL-ENTREE) "
+"écrit le match dans la bibliothèque : créé la première fois, remplacé "
+"ensuite sous le même identifiant, et l'analyse des seules positions "
+"nouvelles démarre aussitôt, avec sa progression et son annulation dans la"
+" barre d'état. La barre du brouillon dit son état : jamais enregistré, "
+"enregistré il y a tant, ou modifié depuis. « Exporter .mat » écrit le "
+"match dans un fichier Jellyfish, tel qu'il a été tapé. « Fermer le "
+"brouillon » supprime le brouillon après confirmation ; un match déjà "
+"enregistré reste dans la bibliothèque, définitif."
+msgstr ""
+"La barra della bozza porta tre pulsanti. «Salva» (CTRL-INVIO) scrive la "
+"partita nella libreria: creata la prima volta, sostituita in seguito con "
+"lo stesso identificatore, e l'analisi delle sole posizioni nuove parte "
+"subito, con il suo avanzamento e il suo annullamento nella barra di "
+"stato. La barra della bozza ne dice lo stato: mai salvata, salvata da "
+"tanto, o modificata da allora. «Esporta .mat» scrive la partita in un "
+"file Jellyfish, così come è stata digitata. «Chiudi la bozza» elimina la "
+"bozza dopo una conferma; una partita già salvata resta nella libreria, "
+"definitiva."
+
+#: ../../source/raccourcis.rst:326
+msgid ""
+"Un brouillon qui porte des incohérences est enregistré tout de même, "
+"après un avertissement : rien n'est refusé. Un coup illégal est exporté "
+"tel qu'il a été joué, avec l'avertissement que gnubg et XG le signaleront"
+" (« Invalid move ») et divergeront ensuite."
+msgstr ""
+"Una bozza che contiene incoerenze viene salvata comunque, dopo un "
+"avvertimento: nulla viene rifiutato. Una mossa illegale è esportata così "
+"come è stata giocata, con l'avvertimento che gnubg e XG la segnaleranno "
+"(«Invalid move») e divergeranno da lì."
+
+#: ../../source/raccourcis.rst:334
 msgid "Panneau d'aide"
 msgstr "Pannello di aiuto"
 
