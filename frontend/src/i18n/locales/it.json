@@ -1720,7 +1720,8 @@
             "standings": "Classifica",
             "history": "Cronologia",
             "settings": "Impostazioni",
-            "notYet": "Questa vista arriva con il suo lotto."
+            "notYet": "Questa vista arriva con il suo lotto.",
+            "slots": "Partite"
         },
         "label": {
             "swiss_group": "{losses} loss(es), match {match}",
@@ -1935,6 +1936,25 @@
             "docs": "La documentazione",
             "version": "Versione integrata: {version}",
             "open": "Informazioni sul motore"
+        },
+        "slots": {
+            "title": "Posti ({filled} di {total} occupati)",
+            "where": "Dove",
+            "players": "Giocatori",
+            "match": "Partita",
+            "open": "Apri",
+            "draft": "bozza",
+            "detach": "Scollega",
+            "transcribe": "Trascrivi",
+            "transcribeHint": "Apre una bozza con l’intestazione già compilata e riserva il posto.",
+            "attach": "Collega",
+            "disagrees": "discorda",
+            "none": "Nessuna partita avviata.",
+            "unattached": "{n} partite importate non occupano alcun posto.",
+            "dismiss": "Nascondi",
+            "noSuggestion": "nessun posto evidente",
+            "noneSuggested": "Nessuna di queste partite porta entrambi i nomi di un posto: collegale a mano.",
+            "error": "Impossibile collegare questa partita."
         }
     }
 }

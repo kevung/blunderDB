@@ -1720,7 +1720,8 @@
             "standings": "Sarjataulukko",
             "history": "Historia",
             "settings": "Asetukset",
-            "notYet": "Tämä näkymä tulee omassa erässään."
+            "notYet": "Tämä näkymä tulee omassa erässään.",
+            "slots": "Ottelut"
         },
         "label": {
             "swiss_group": "{losses} loss(es), match {match}",
@@ -1935,6 +1936,25 @@
             "docs": "Dokumentaatio",
             "version": "Sisällytetty versio: {version}",
             "open": "Tietoja moottorista"
+        },
+        "slots": {
+            "title": "Paikat ({filled}/{total} täytetty)",
+            "where": "Missä",
+            "players": "Pelaajat",
+            "match": "Ottelu",
+            "open": "Avaa",
+            "draft": "luonnos",
+            "detach": "Irrota",
+            "transcribe": "Kirjaa",
+            "transcribeHint": "Avaa luonnoksen valmiilla otsikolla ja varaa paikan.",
+            "attach": "Liitä",
+            "disagrees": "ristiriita",
+            "none": "Yhtään ottelua ei ole aloitettu.",
+            "unattached": "{n} tuotua ottelua ei täytä yhtään paikkaa.",
+            "dismiss": "Piilota",
+            "noSuggestion": "ei ilmeistä paikkaa",
+            "noneSuggested": "Yksikään näistä otteluista ei kanna paikan molempia nimiä: liitä käsin.",
+            "error": "Ottelua ei voitu liittää."
         }
     }
 }

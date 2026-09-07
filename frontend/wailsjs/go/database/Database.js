@@ -46,6 +46,10 @@ export function ApplyTranscriptionGesture(arg1, arg2) {
   return window['go']['database']['Database']['ApplyTranscriptionGesture'](arg1, arg2);
 }
 
+export function AttachMatchToSlot(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['AttachMatchToSlot'](arg1, arg2, arg3);
+}
+
 export function BeginImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['BeginImportBatch'](arg1, arg2);
 }
@@ -100,6 +104,10 @@ export function ClearCommandHistory() {
 
 export function ClearSessionState() {
   return window['go']['database']['Database']['ClearSessionState']();
+}
+
+export function Clock(arg1) {
+  return window['go']['database']['Database']['Clock'](arg1);
 }
 
 export function Close() {
@@ -244,6 +252,10 @@ export function DeleteSearchHistoryEntry(arg1) {
 
 export function DeleteTournament(arg1) {
   return window['go']['database']['Database']['DeleteTournament'](arg1);
+}
+
+export function DetachMatchFromSlot(arg1, arg2) {
+  return window['go']['database']['Database']['DetachMatchFromSlot'](arg1, arg2);
 }
 
 export function DirectionStore() {
@@ -838,6 +850,14 @@ export function SinceLastGesture(arg1, arg2) {
   return window['go']['database']['Database']['SinceLastGesture'](arg1, arg2);
 }
 
+export function SlotOfMatch(arg1) {
+  return window['go']['database']['Database']['SlotOfMatch'](arg1);
+}
+
+export function Slots(arg1) {
+  return window['go']['database']['Database']['Slots'](arg1);
+}
+
 export function Standings(arg1) {
   return window['go']['database']['Database']['Standings'](arg1);
 }
@@ -848,6 +868,10 @@ export function StandingsCSV(arg1) {
 
 export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['database']['Database']['StartMatchManually'](arg1, arg2, arg3, arg4, arg5);
+}
+
+export function StartTranscriptionFromSlot(arg1, arg2) {
+  return window['go']['database']['Database']['StartTranscriptionFromSlot'](arg1, arg2);
 }
 
 export function StudyImpact(arg1) {
@@ -896,6 +920,10 @@ export function TrashCommentEntry(arg1) {
 
 export function TrashPosition(arg1) {
   return window['go']['database']['Database']['TrashPosition'](arg1);
+}
+
+export function UnattachedMatches(arg1) {
+  return window['go']['database']['Database']['UnattachedMatches'](arg1);
 }
 
 export function UpdateAnkiDeck(arg1, arg2, arg3) {

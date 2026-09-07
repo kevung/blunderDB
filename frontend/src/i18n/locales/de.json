@@ -1720,7 +1720,8 @@
             "standings": "Rangliste",
             "history": "Verlauf",
             "settings": "Einstellungen",
-            "notYet": "Diese Ansicht kommt mit ihrem eigenen Paket."
+            "notYet": "Diese Ansicht kommt mit ihrem eigenen Paket.",
+            "slots": "Partien"
         },
         "label": {
             "swiss_group": "{losses} Niederlage(n), Partie {match}",
@@ -1935,6 +1936,25 @@
             "docs": "Die Dokumentation",
             "version": "Eingebettete Version: {version}",
             "open": "Über die Engine"
+        },
+        "slots": {
+            "title": "Plätze ({filled} von {total} belegt)",
+            "where": "Wo",
+            "players": "Spieler",
+            "match": "Partie",
+            "open": "Öffnen",
+            "draft": "Entwurf",
+            "detach": "Lösen",
+            "transcribe": "Erfassen",
+            "transcribeHint": "Öffnet einen Entwurf mit ausgefülltem Kopf und reserviert den Platz.",
+            "attach": "Zuordnen",
+            "disagrees": "Abweichung",
+            "none": "Keine Partie gestartet.",
+            "unattached": "{n} importierte Partien belegen keinen Platz.",
+            "dismiss": "Ausblenden",
+            "noSuggestion": "kein offensichtlicher Platz",
+            "noneSuggested": "Keine dieser Partien trägt beide Namen eines Platzes: von Hand zuordnen.",
+            "error": "Die Partie konnte nicht zugeordnet werden."
         }
     }
 }
